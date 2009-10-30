@@ -248,8 +248,15 @@ class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 					$route->setName($routeConfiguration['name']);
 				}
 				$route->setUriPattern($routeConfiguration['uriPattern']);
-				if (isset($routeConfiguration['defaults'])) $route->setDefaults($routeConfiguration['defaults']);
-				if (isset($routeConfiguration['routeParts'])) $route->setRoutePartsConfiguration($routeConfiguration['routeParts']);
+				if (isset($routeConfiguration['defaults'])) {
+					$route->setDefaults($routeConfiguration['defaults']);
+				}
+				if (isset($routeConfiguration['routeParts'])) {
+					$route->setRoutePartsConfiguration($routeConfiguration['routeParts']);
+				}
+				if (isset($routeConfiguration['toLowerCase'])) {
+					$route->setLowerCase($routeConfiguration['toLowerCase']);
+				}
 				$this->routes[] = $route;
 			}
 			$this->routesCreated = TRUE;

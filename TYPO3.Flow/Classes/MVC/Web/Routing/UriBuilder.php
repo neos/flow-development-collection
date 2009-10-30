@@ -176,13 +176,13 @@ class UriBuilder {
 	/**
 	 * Specifies the format of the target (e.g. "html" or "xml")
 	 *
-	 * @param string $format (e.g. "html" or "xml")
+	 * @param string $format (e.g. "html" or "xml"), will be transformed to lowercase!
 	 * @return \F3\FLOW3\MVC\Web\Routing\UriBuilder the current UriBuilder to allow method chaining
 	 * @api
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setFormat($format) {
-		$this->format = $format;
+		$this->format = strtolower($format);
 		return $this;
 	}
 
@@ -306,22 +306,22 @@ class UriBuilder {
 	 */
 	public function uriFor($actionName = NULL, $controllerArguments = array(), $controllerName = NULL, $packageKey = NULL, $subPackageKey = NULL) {
 		if ($actionName !== NULL) {
-			$controllerArguments['@action'] = $actionName;
+			$controllerArguments['@action'] = strtolower($actionName);
 		}
 		if ($controllerName !== NULL) {
-			$controllerArguments['@controller'] = $controllerName;
+			$controllerArguments['@controller'] = strtolower($controllerName);
 		} else {
-			$controllerArguments['@controller'] = $this->request->getControllerName();
+			$controllerArguments['@controller'] = strtolower($this->request->getControllerName());
 		}
 		if ($packageKey === NULL) {
 			$packageKey = $this->request->getControllerPackageKey();
 		}
-		$controllerArguments['@package'] = $packageKey;
+		$controllerArguments['@package'] = strtolower($packageKey);
 		if (strlen($subPackageKey) === 0) {
 			$subPackageKey = $this->request->getControllerSubpackageKey();
 		}
 		if (strlen($subPackageKey) > 0) {
-			$controllerArguments['@subpackage'] = $subPackageKey;
+			$controllerArguments['@subpackage'] = strtolower($subPackageKey);
 		}
 		if ($this->format !== '') {
 			$controllerArguments['@format'] = $this->format;

@@ -96,6 +96,22 @@ interface RoutePartInterface {
 	 */
 	public function isOptional();
 
+ 	/**
+	 * Specifies whether this Route part should be converted to lower case when resolved.
+	 *
+	 * @param boolean $lowerCase TRUE: this Route part is converted to lower case. FALSE: this Route part is not altered.
+	 * @return void
+	 */
+	public function setLowerCase($lowerCase);
+
+	/**
+	 * Getter for $this->lowerCase.
+	 *
+	 * @return boolean TRUE if this Route part will be converted to lower case, otherwise FALSE.
+	 * @see setLowerCase()
+	 */
+	public function isLowerCase();
+
 	/**
 	 * Defines options for this Route Part.
 	 * Options can be used to enrich a route part with parameters or settings like case sensivitity.

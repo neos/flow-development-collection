@@ -779,7 +779,7 @@ public function editAction(\F3\Foo\Model\Customer $customer) {
   name: 'Homepage'
   uriPattern: ''
   defaults:
-    @package: Demo</programlisting>
+    '@package': Demo</programlisting>
         </example><note>
           <para>name is optional, but it's recommended to set a name for all
           routes to make debugging easier.</para>
@@ -831,9 +831,9 @@ public function editAction(\F3\Foo\Model\Customer $customer) {
   name: 'Static demo route'
   uriPattern: 'my/demo'
   defaults:
-    @package:    Demo
-    @controller: Customer
-    @action:     list</programlisting></para>
+    '@package':    Demo
+    '@controller': Customer
+    '@action':     list</programlisting></para>
             </example></para>
         </section>
 
@@ -851,8 +851,8 @@ public function editAction(\F3\Foo\Model\Customer $customer) {
   name: 'Dynamic demo route'
   uriPattern: 'my/demo/{@action}'
   defaults:
-    @package:    Demo
-    @controller: Customer</programlisting></para>
+    '@package':    Demo
+    '@controller': Customer</programlisting></para>
             </example>Now <uri>http://localhost/my/demo/list</uri> calls the
           <methodname>listAction</methodname> just like in the previous
           example.</para>
@@ -876,9 +876,9 @@ public function editAction(\F3\Foo\Model\Customer $customer) {
   name: 'Dynamic demo route'
   uriPattern: 'clients/{sortOrder}.{@format}'
   defaults:
-    @package:    Demo
-    @controller: Customer
-    @action:     list</programlisting>
+    '@package':    Demo
+    '@controller': Customer
+    '@action':     list</programlisting>
             </example></para>
 
           <para>Browsing to <uri>http://localhost/clients/descending.xml</uri>
@@ -941,8 +941,8 @@ public function editAction(\F3\Foo\Model\Customer $customer) {
   name: 'Blog route'
   uriPattern: 'blogs/{blog}/{@action}'
   defaults:
-    @package:    Blog
-    @controller: Blog
+    '@package':    Blog
+    '@controller': Blog
   routeParts:
     blog:
       handler: F3\Blog\RoutePartHandlers\BlogRoutePartHandler</programlisting>
@@ -967,9 +967,9 @@ public function editAction(\F3\Foo\Model\Customer $customer) {
   name: 'Dynamic demo route'
   uriPattern: 'my/demo(/{@action}.html)'
   defaults:
-    @package:    'Demo'
-    @controller: 'Customer'
-    @action:     'list'</programlisting></para>
+    '@package':    'Demo'
+    '@controller': 'Customer'
+    '@action':     'list'</programlisting></para>
           </example>
 
           <note>
@@ -981,6 +981,55 @@ public function editAction(\F3\Foo\Model\Customer $customer) {
             <para>You have to define default values for all optional dynamic
             route parts.</para>
           </note>
+        </section>
+
+        <section>
+          <title>Case sensitivity</title>
+
+          <para>By Default the case is not changed when creating URIs. The
+          following example with a username of "Kasper" will result in
+          <uri>http://localhost/Users/Kasper</uri><example>
+              <title>Route with default case handling</title>
+
+              <para><programlisting language="yaml">--
+  uriPattern: 'Users/{username}'
+  defaults:
+    @package:    'Demo'
+    @controller: 'Customer'
+    @action:     'show'</programlisting></para>
+            </example></para>
+
+          <para>You can change this behavior for routes and/or dynamic route
+          parts:<example>
+              <title>Route with customised case handling</title>
+
+              <para><programlisting language="yaml">--
+  uriPattern: 'Users/{username}'
+  defaults:
+    @package:    'Demo'
+    @controller: 'Customer'
+    @action:     'show'
+  toLowerCase: true
+  routeParts:
+    username:
+      toLowerCase: false</programlisting></para>
+            </example>This will change the default behavior for this route and
+          reset it for the username route part. Given the same username of
+          "Kasper" the resulting URI will now be
+          <uri>http://localhost/users/Kasper</uri> (note the lower case "u" in
+          "users").</para>
+
+          <note>
+            <para>The predefined route parts @package, @subpackage,
+            @controller, @action and @format are an exception, they're always
+            lower cased!</para>
+          </note>
+
+          <para>Matching of incoming URIs is always done case insensitive. So
+          both "Users/Kasper" and "users/Kasper" will match, and the value of
+          the dynamic part will never be changed. If you want to handle data
+          coming in through dynamic route parts case-insensitive, you need to
+          handle that in your own code.</para>
         </section>
       </section>
     </section>
@@ -1001,20 +1050,20 @@ public function editAction(\F3\Foo\Model\Customer $customer) {
   name: 'Customer routes'
   uriPattern: '/clients/{@action}'
   defaults:
-    @controller: Customer
+    '@controller': Customer
 
 --
   name: 'Standard routes'
   uriPattern: '/{@action}'
   defaults:
-    @controller: Standard
+    '@controller': Standard
 
 --
   name: 'Fallback'
   uriPattern: ''
   defaults:
-    @controller: Standard
-    @action:     index</programlisting>
+    '@controller': Standard
+    '@action':     index</programlisting>
         </example></para>
 
       <para>And in your global <filename>Routes.yaml</filename>:<example>
@@ -1024,8 +1073,8 @@ public function editAction(\F3\Foo\Model\Customer $customer) {
   name: 'Demo subroutes'
   uriPattern: 'demo&lt;DemoSubroutes&gt;(.{@format})'
   defaults:
-    @package: Demo
-    @format:  html
+    '@package': Demo
+    '@format':  html
   subRoutes:
     DemoSubroutes:
       package: Demo</programlisting>
@@ -1043,26 +1092,26 @@ public function editAction(\F3\Foo\Model\Customer $customer) {
   name: 'Demo subroutes :: Customer routes'
   uriPattern: 'demo/clients/{@action}(.{@format})'
   defaults:
-    @package: Demo
-    @format:  html
-    @controller: Customer
+    '@package': Demo
+    '@format':  html
+    '@controller': Customer
 
 --
   name: 'Demo subroutes :: Standard routes'
   uriPattern: 'demo/{@action}(.{@format})'
   defaults:
-    @package: Demo
-    @format:  html
-    @controller: Standard
+    '@package': Demo
+    '@format':  html
+    '@controller': Standard
 
 --
   name: 'Demo subroutes :: Fallback'
   uriPattern: 'demo(.{@format})'
   defaults:
-    @package: Demo
-    @format:  html
-    @controller: Standard
-    @action:     index</programlisting>
+    '@package': Demo
+    '@format':  html
+    '@controller': Standard
+    '@action':     index</programlisting>
 
           <para>You can even reference multiple subroutes from one route -
           that will create one route for all possible combinations.</para>

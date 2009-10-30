@@ -49,7 +49,6 @@ class StaticRoutePart extends \F3\FLOW3\MVC\Web\Routing\AbstractRoutePart {
 	 * @return boolean TRUE if Route Part matched $requestPath, otherwise FALSE.
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @todo add configurable case sensitivity
 	 */
 	public function match(&$requestPath) {
 		if ($this->name === NULL || $this->name === '') {
@@ -59,7 +58,7 @@ class StaticRoutePart extends \F3\FLOW3\MVC\Web\Routing\AbstractRoutePart {
 			return FALSE;
 		}
 		$valueToMatch = \F3\PHP6\Functions::substr($requestPath, 0, \F3\PHP6\Functions::strlen($this->name));
-		if (\F3\PHP6\Functions::strtolower($valueToMatch) != \F3\PHP6\Functions::strtolower($this->name)) {
+		if ($valueToMatch !== $this->name) {
 			return FALSE;
 		}
 		$requestPath = \F3\PHP6\Functions::substr($requestPath, \F3\PHP6\Functions::strlen($valueToMatch));
@@ -74,13 +73,15 @@ class StaticRoutePart extends \F3\FLOW3\MVC\Web\Routing\AbstractRoutePart {
 	 * @return boolean
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @todo add configurable case sensitivity
 	 */
 	public function resolve(array &$routeValues) {
 		if ($this->name === NULL || $this->name === '') {
 			return FALSE;
 		}
-		$this->value = \F3\PHP6\Functions::strtolower($this->name);
+		$this->value = $this->name;
+		if ($this->lowerCase) {
+			$this->value = \F3\PHP6\Functions::strtolower($this->value);
+		}
 		return TRUE;
 	}
 }

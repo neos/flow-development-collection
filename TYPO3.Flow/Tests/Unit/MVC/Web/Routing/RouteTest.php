@@ -679,6 +679,31 @@ class RouteTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
+	public function resolvesDoesNotAlterTheCaseOfMatchingUriByDefault() {
+		$this->route->setUriPattern('CamelCase/{someKey}');
+		$this->routeValues = array('someKey' => 'CamelCase');
+
+		$this->assertTrue($this->route->resolves($this->routeValues));
+		$this->assertEquals('CamelCase/CamelCase', $this->route->getMatchingURI());
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function resolvesLowerCasesMatchingUriIfToLowerCaseIsSet() {
+		$this->route->setUriPattern('CamelCase/{someKey}');
+		$this->route->setLowerCase(TRUE);
+		$this->routeValues = array('someKey' => 'CamelCase');
+
+		$this->assertTrue($this->route->resolves($this->routeValues));
+		$this->assertEquals('camelcase/camelcase', $this->route->getMatchingURI());
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
 	public function routeCantBeResolvedIfASpecifiedValueIsNotEqualToItsDefaultValue() {
 		$this->route->setUriPattern('');
 		$this->route->setDefaults(array('key1' => 'value1', 'key2' => 'value2'));

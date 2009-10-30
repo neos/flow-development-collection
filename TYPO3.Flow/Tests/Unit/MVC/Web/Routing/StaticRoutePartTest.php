@@ -100,6 +100,18 @@ class StaticRoutePartTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
+	public function staticRoutePartDoesNotMatchIfCaseOfRequestPathIsNotEqualToTheName() {
+		$routePart = new \F3\FLOW3\MVC\Web\Routing\StaticRoutePart();
+		$routePart->setName('SomeName');
+		$requestPath = 'somename';
+
+		$this->assertFalse($routePart->match($requestPath), 'Static Route Part should not match if case of name is not equal to case of request path.');
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
 	public function valueIsNullAfterUnsuccessfulMatch() {
 		$routePart = new \F3\FLOW3\MVC\Web\Routing\StaticRoutePart();
 		$routePart->setName('foo');
@@ -189,6 +201,33 @@ class StaticRoutePartTest extends \F3\Testing\BaseTestCase {
 
 		$this->assertTrue($routePart->resolve($routeValues));
 		$this->assertEquals(array('@controller' => 'foo', '@action' => 'bar'), $routeValues, 'when resolve() is called on Static Route Part, specified routeValues-array should never be changed');
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function staticRoutePartDoesNotAlterCaseOfNameWhenCallingResolveByDefault() {
+		$routePart = new \F3\FLOW3\MVC\Web\Routing\StaticRoutePart();
+		$routePart->setName('SomeName');
+		$routeValues = array();
+
+		$routePart->resolve($routeValues);
+		$this->assertEquals('SomeName', $routePart->getValue(), 'By default Static Route Part should not alter the case of name');
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function staticRoutePartLowerCasesValueIfSpecified() {
+		$routePart = new \F3\FLOW3\MVC\Web\Routing\StaticRoutePart();
+		$routePart->setName('SomeName');
+		$routePart->setLowerCase(TRUE);
+		$routeValues = array();
+
+		$routePart->resolve($routeValues);
+		$this->assertEquals('somename', $routePart->getValue(), 'Static Route Part should lowercase the value if lowerCase is true');
 	}
 
 }

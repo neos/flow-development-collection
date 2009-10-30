@@ -263,6 +263,33 @@ class DynamicRoutePartTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
+	public function dynamicRoutePartDoesNotAlterCaseOfValueWhenCallingResolveByDefault() {
+		$routePart = new \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart();
+		$routePart->setName('Foo');
+		$routeValues = array('Foo' => 'Bar');
+
+		$this->assertTrue($routePart->resolve($routeValues));
+		$this->assertEquals('Bar', $routePart->getValue(), 'By default Dynamic Route Part should not alter the case of route values.');
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function dynamicRoutePartLowerCasesValueIfSpecified() {
+		$routePart = new \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart();
+		$routePart->setName('Foo');
+		$routePart->setLowerCase(TRUE);
+		$routeValues = array('Foo' => 'Bar');
+
+		$this->assertTrue($routePart->resolve($routeValues));
+		$this->assertEquals('bar', $routePart->getValue(), 'Dynamic Route Part should lowercase the value if lowerCase is true.');
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
 	public function resolveReturnsFalseIfNoCorrespondingValueIsGiven() {
 		$routePart = new \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart();
 		$routePart->setName('foo');
@@ -324,5 +351,6 @@ class DynamicRoutePartTest extends \F3\Testing\BaseTestCase {
 		$this->assertFalse($routePart->resolve($routeValues));
 		$this->assertNull($routePart->getValue(), 'Dynamic Route Part value should be NULL when call to resolve() was not successful.');
 	}
+
 }
 ?>

@@ -52,9 +52,17 @@ class Route {
 
 	/**
 	 * URI Pattern of this route
+	 *
 	 * @var string
 	 */
 	protected $uriPattern = NULL;
+
+ 	/**
+	 * Specifies whether Route Parts of this Route should be converted to lower case when resolved.
+	 *
+	 * @var boolean
+	 */
+	protected $lowerCase = FALSE;
 
 	/**
 	 * Contains the routing results (indexed by "package", "controller" and
@@ -199,6 +207,29 @@ class Route {
 		return $this->uriPattern;
 	}
 
+ 	/**
+	 * Specifies whether Route parts of this route should be converted to lower case when resolved.
+	 * This setting can be overwritten for all dynamic Route parts.
+	 *
+	 * @param boolean $lowerCase TRUE: Route parts are converted to lower case by default. FALSE: Route parts are not altered.
+	 * @return void
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function setLowerCase($lowerCase) {
+		$this->lowerCase = $lowerCase;
+	}
+
+	/**
+	 * Getter for $this->lowerCase.
+	 *
+	 * @return boolean TRUE if this Route part will be converted to lower case, otherwise FALSE.
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @see setLowerCase()
+	 */
+	public function isLowerCase() {
+		return $this->lowerCase;
+	}
+
 	/**
 	 * By default all Dynamic Route Parts are resolved by
 	 * \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart.
@@ -332,7 +363,6 @@ class Route {
 		$matchingURI = '';
 		$requireOptionalRouteParts = FALSE;
 		$matchingOptionalUriPortion = '';
-		$matchingUriPart = '';
 		foreach ($this->routeParts as $routePart) {
 			if (!$routePart->resolve($routeValues)) {
 				if (!$routePart->hasDefaultValue()) {
@@ -359,15 +389,12 @@ class Route {
 			// Remove remaining route values of applied default values:
 		foreach ($this->defaults as $key => $defaultValue) {
 			if (isset($routeValues[$key])) {
-				if ($routeValues[$key] !== $defaultValue) {
+				if (\F3\PHP6\Functions::strtolower($routeValues[$key]) !== \F3\PHP6\Functions::strtolower($defaultValue)) {
 					return FALSE;
 				}
 				unset($routeValues[$key]);
 			}
 		}
-
-			// turn URI to lowercase. @todo this should be configurable
-		$matchingURI = \F3\PHP6\Functions::strtolower($matchingURI);
 
 			// add query string
 		if (count($routeValues) > 0) {
@@ -425,7 +452,7 @@ class Route {
 		preg_match_all(self::PATTERN_EXTRACTROUTEPARTS, $this->uriPattern, $matches, PREG_SET_ORDER);
 
 		$lastRoutePart = NULL;
-		foreach ($matches as $matchIndex => $match) {
+		foreach ($matches as $match) {
 			$routePartType = empty($match['dynamic']) ? self::ROUTEPART_TYPE_STATIC : self::ROUTEPART_TYPE_DYNAMIC;
 			$routePartName = $match['content'];
 			if (!empty($match['optionalStart'])) {
@@ -460,8 +487,14 @@ class Route {
 			}
 			$routePart->setName($routePartName);
 			$routePart->setOptional($currentRoutePartIsOptional);
+			if ($this->lowerCase) {
+				$routePart->setLowerCase(TRUE);
+			}
 			if (isset($this->routePartsConfiguration[$routePartName]['options'])) {
 				$routePart->setOptions($this->routePartsConfiguration[$routePartName]['options']);
+			}
+			if (isset($this->routePartsConfiguration[$routePartName]['toLowerCase'])) {
+				$routePart->setLowerCase($this->routePartsConfiguration[$routePartName]['toLowerCase']);
 			}
 
 			$this->routeParts[] = $routePart;

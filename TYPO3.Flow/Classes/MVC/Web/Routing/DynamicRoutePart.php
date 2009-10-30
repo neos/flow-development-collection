@@ -189,6 +189,9 @@ class DynamicRoutePart extends \F3\FLOW3\MVC\Web\Routing\AbstractRoutePart imple
 			return FALSE;
 		}
 		$this->value = $value;
+		if ($this->lowerCase) {
+			$this->value = \F3\PHP6\Functions::strtolower($this->value);
+		}
 		return TRUE;
 	}
 }

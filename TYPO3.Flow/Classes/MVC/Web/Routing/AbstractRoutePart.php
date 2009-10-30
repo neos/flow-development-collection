@@ -58,6 +58,13 @@ abstract class AbstractRoutePart implements \F3\FLOW3\MVC\Web\Routing\RoutePartI
 	 */
 	protected $isOptional = FALSE;
 
+ 	/**
+	 * Specifies whether this Route Part should be converted to lower case when resolved.
+	 *
+	 * @var boolean
+	 */
+	protected $lowerCase = FALSE;
+
 	/**
 	 * Contains options for this Route Part.
 	 *
@@ -158,6 +165,28 @@ abstract class AbstractRoutePart implements \F3\FLOW3\MVC\Web\Routing\RoutePartI
 	 */
 	public function isOptional() {
 		return $this->isOptional;
+	}
+
+ 	/**
+	 * Specifies whether this Route part should be converted to lower case when resolved.
+	 *
+	 * @param boolean $lowerCase TRUE: this Route part is converted to lower case. FALSE: this Route part is not altered.
+	 * @return void
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function setLowerCase($lowerCase) {
+		$this->lowerCase = $lowerCase;
+	}
+
+	/**
+	 * Getter for $this->lowerCase.
+	 *
+	 * @return boolean TRUE if this Route part will be converted to lower case, otherwise FALSE.
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @see setLowerCase()
+	 */
+	public function isLowerCase() {
+		return $this->lowerCase;
 	}
 
 	/**
