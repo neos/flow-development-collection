@@ -105,6 +105,13 @@ class Service {
 	protected $staticMethods = array();
 
 	/**
+	 * Array of class names and names of their sub classes as $className => TRUE
+	 *
+	 * @var array
+	 */
+	protected $subClasses = array();
+
+	/**
 	 * Array of tags and the names of classes which are tagged with them
 	 *
 	 * @var array
@@ -173,6 +180,12 @@ class Service {
 	 * @var array<\F3\FLOW3\Reflection\ClassSchema>
 	 */
 	protected $classSchemata = array();
+
+	/**
+	 * An array of class names which are currently being forgotten by forgetClass(). Acts as a safeguard against infinite loops.
+	 * @var array
+	 */
+	protected $classesCurrentlyBeingForgotten = array();
 
 	/**
 	 * Sets the cache
@@ -336,6 +349,23 @@ class Service {
 			if (array_search($className, $classNames) !== FALSE) $interfaceNamesFound[] = $interfaceName;
 		}
 		return $interfaceNamesFound;
+	}
+
+	/**
+	 * Searches for and returns all names of classes inheriting the specified class.
+	 * If no class inheriting the given class was found, an empty array is returned.
+	 *
+	 * @param string $className Name of the parent class
+	 * @return array An array of names of those classes being a direct or indirect subclass of the specified class
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @throws \F3\FLOW3\Reflection\Exception if the ReflectionService has not yet been initialized
+	 * @throws \InvalidArgumentException if the given class does not exist
+	 * @api
+	 */
+	public function getAllSubClassNamesForClass($className) {
+		if ($this->initialized !== TRUE) throw new \F3\FLOW3\Reflection\Exception('Reflection has not yet been initialized.', 1257168041);
+		if (class_exists($className) === FALSE) throw new \InvalidArgumentException('"' . $className . '" does not exist or is not the name of a class.', 1257168042);
+		return (isset($this->subClasses[$className])) ? array_keys($this->subClasses[$className]) : array();
 	}
 
 	/**
@@ -731,6 +761,11 @@ class Service {
 		if ($constructor instanceof \ReflectionMethod) {
 			$this->classConstructorMethodNames[$className] = $constructor->getName();
 		}
+
+		foreach($this->getParentClasses($class) as $parentClass) {
+			$this->subClasses[$parentClass->getName()][$className] = TRUE;
+		}
+
 		foreach ($class->getInterfaces() as $interface) {
 			if (!isset($this->abstractClasses[$className])) {
 				$this->interfaceImplementations[$interface->getName()][] = $className;
@@ -786,6 +821,22 @@ class Service {
 			}
 		}
 		ksort($this->reflectedClassNames);
+	}
+
+	/**
+	 * Finds all parent classes of the given class
+	 *
+	 * @param \ReflectionClass $class The class to reflect
+	 * @return array<\ReflectionClass>
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function getParentClasses(\ReflectionClass $class, array $parentClasses = array()) {
+		$parentClass = $class->getParentClass();
+		if ($parentClass !== FALSE) {
+			$parentClasses[] = $parentClass;
+			$parentClasses = $this->getParentClasses($parentClass, $parentClasses);
+		}
+		return $parentClasses;
 	}
 
 	/**
@@ -884,9 +935,20 @@ class Service {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function forgetClass($className) {
+		if (isset($this->classesCurrentlyBeingForgotten[$className])) {
+			$this->systemLogger->log('Detected recursion while forgetting class ' . $className, LOG_WARNING);
+			return;
+		}
+		$this->classesCurrentlyBeingForgotten[$className] = TRUE;
+
 		foreach ($this->interfaceImplementations as $interfaceName => $interfaceImplementations) {
 			$index = array_search($className, $interfaceImplementations);
 			if ($index !== FALSE) unset($this->interfaceImplementations[$interfaceName][$index]);
+		}
+		if (isset($this->subClasses[$className])) {
+			foreach (array_keys($this->subClasses[$className]) as $subClassName) {
+				$this->forgetClass($subClassName);
+			}
 		}
 
 		foreach ($this->taggedClasses as $tag => $classNames) {
@@ -899,6 +961,7 @@ class Service {
 			'classConstructorMethodNames',
 			'classPropertyNames',
 			'classTagsValues',
+			'subClasses',
 			'finalClasses',
 			'finalMethods',
 			'staticMethods',
@@ -913,6 +976,7 @@ class Service {
 			}
 		}
 		unset($this->reflectedClassNames[$className]);
+		unset($this->classesCurrentlyBeingForgotten[$className]);
 	}
 
 	/**
@@ -955,6 +1019,7 @@ class Service {
 			'classPropertyNames',
 			'classSchemata',
 			'classTagsValues',
+			'subClasses',
 			'finalClasses',
 			'finalMethods',
 			'staticMethods',

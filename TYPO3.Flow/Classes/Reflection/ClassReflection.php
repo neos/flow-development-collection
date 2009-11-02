@@ -150,7 +150,7 @@ class ClassReflection extends \ReflectionClass {
 	 */
 	public function getParentClass() {
 		$parentClass = parent::getParentClass();
-		return ($parentClass === NULL) ? NULL : new \F3\FLOW3\Reflection\ClassReflection($parentClass->getName());
+		return ($parentClass === FALSE) ? FALSE : new \F3\FLOW3\Reflection\ClassReflection($parentClass->getName());
 	}
 
 	/**

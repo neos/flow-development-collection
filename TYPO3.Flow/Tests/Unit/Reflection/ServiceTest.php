@@ -28,6 +28,9 @@ require_once('Fixture/DummyInterface3.php');
 require_once('Fixture/ImplementationOfDummyInterface1.php');
 require_once('Fixture/Implementation1OfDummyInterface3.php');
 require_once('Fixture/Implementation2OfDummyInterface3.php');
+require_once('Fixture/ParentClass1.php');
+require_once('Fixture/SubClassOfParentClass1.php');
+require_once('Fixture/SubClassOfSubClassOfParentClass1.php');
 require_once('Fixture/ProxyOfImplementationOfDummyInterface1.php');
 require_once('Fixture/TaggedClass1.php');
 require_once('Fixture/TaggedClass2.php');
@@ -231,6 +234,50 @@ class ServiceTest extends \F3\Testing\BaseTestCase {
 
 		$detectedClassNames = $reflectionService->getAllImplementationClassNamesForInterface('F3\FLOW3\Tests\Reflection\Fixture\DummyInterface2');
 		$this->assertEquals(array(), $detectedClassNames);
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getAllSubClassNamesForClassReturnsEmptyArrayIfNoClassInheritsTheClass() {
+		$availableClassNames = array(
+			'F3\FLOW3\Tests\Reflection\Fixture\DummyClass',
+			'F3\FLOW3\Tests\Reflection\Fixture\ParentClass1'
+		);
+		$reflectionService = new \F3\FLOW3\Reflection\Service();
+		$reflectionService->setCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
+		$reflectionService->injectSystemLogger($this->getMock('F3\FLOW3\Log\SystemLoggerInterface'));
+		$reflectionService->initialize($availableClassNames);
+
+		$detectedClassNames = $reflectionService->getAllSubClassNamesForClass('F3\FLOW3\Tests\Reflection\Fixture\DummyClass');
+		$this->assertEquals(array(), $detectedClassNames);
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getAllSubClassNamesForClassReturnsArrayOfSubClasses() {
+		$availableClassNames = array(
+			'F3\FLOW3\Tests\Reflection\Fixture\DummyClass',
+			'F3\FLOW3\Tests\Reflection\Fixture\ParentClass1',
+			'F3\FLOW3\Tests\Reflection\Fixture\SubClassOfParentClass1',
+			'F3\FLOW3\Tests\Reflection\Fixture\SubClassOfSubClassOfParentClass1',
+		);
+
+		$expectedClassNames = array(
+			'F3\FLOW3\Tests\Reflection\Fixture\SubClassOfParentClass1',
+			'F3\FLOW3\Tests\Reflection\Fixture\SubClassOfSubClassOfParentClass1',
+		);
+
+		$reflectionService = new \F3\FLOW3\Reflection\Service();
+		$reflectionService->setCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
+		$reflectionService->injectSystemLogger($this->getMock('F3\FLOW3\Log\SystemLoggerInterface'));
+		$reflectionService->initialize($availableClassNames);
+
+		$detectedClassNames = $reflectionService->getAllSubClassNamesForClass('F3\FLOW3\Tests\Reflection\Fixture\ParentClass1');
+		$this->assertEquals($expectedClassNames, $detectedClassNames);
 	}
 
 	/**
