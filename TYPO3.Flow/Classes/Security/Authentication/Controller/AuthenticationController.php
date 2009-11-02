@@ -30,7 +30,7 @@ namespace F3\FLOW3\Security\Authentication\Controller;
  */
 class AuthenticationController extends \F3\FLOW3\MVC\Controller\ActionController {
 
-        /**
+	/**
 	 * The authentication manager
 	 * @var \F3\FLOW3\Security\Authentication\ManagerInterface
 	 */
