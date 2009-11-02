@@ -148,6 +148,9 @@ class ValidatorResolverTest extends \F3\Testing\BaseTestCase {
 			array('$var Baz(Foo="5"), Bar(Quux="123")', array('argumentName' => 'var', 'validators' => array(
 							array('validatorName' => 'Baz', 'validatorOptions' => array('Foo' => '5')),
 							array('validatorName' => 'Bar', 'validatorOptions' => array('Quux' => '123'))))),
+			array('$var Baz(Foo="2"), Bar(Quux=123, Pax="a weird \"string\" with *freaky* \\stuff")', array('argumentName' => 'var', 'validators' => array(
+							array('validatorName' => 'Baz', 'validatorOptions' => array('Foo' => '2')),
+							array('validatorName' => 'Bar', 'validatorOptions' => array('Quux' => '123', 'Pax' => 'a weird "string" with *freaky* \\stuff'))))),
 		);
 	}
 
