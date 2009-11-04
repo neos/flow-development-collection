@@ -40,7 +40,10 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	 * StreamWrapper setup. But since the dummy stream wrapper is removed again,
 	 * this does not do any harm. And registering the "real" wrappers a second
 	 * time doesn't do harm, either.
-	 * 
+	 *
+	 * What is an issue is the static object factory being set to a mocked one,
+	 * be careful...
+	 *
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
@@ -64,6 +67,9 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 		$this->assertArrayHasKey($wrapperSchemeName, \F3\FLOW3\Resource\StreamWrapper::getRegisteredStreamWrappers());
 		$this->assertContains($wrapperSchemeName, stream_get_wrappers());
 		stream_wrapper_unregister($wrapperSchemeName);
+
+			// set the real object factory again...
+		\F3\FLOW3\Resource\StreamWrapper::setObjectFactory($this->objectFactory);
 	}
 
 }
