@@ -261,7 +261,7 @@ class GeneratorService {
 	protected function buildRenderingContext($contextVariables) {
 		$variableContainer = $this->objectFactory->create('F3\Fluid\Core\ViewHelper\TemplateVariableContainer', $contextVariables);
 		$renderingConfiguration = $this->objectFactory->create('F3\Fluid\Core\Rendering\RenderingConfiguration');
-		$renderingConfiguration->setObjectAccessorPostProcessor($this->objectFactory->create('F3\Fluid\Core\Rendering\HTMLSpecialCharsPostProcessor'));
+		$renderingConfiguration->setObjectAccessorPostProcessor($this->objectFactory->create('F3\Fluid\Core\Rendering\HtmlSpecialCharsPostProcessor'));
 
 		$renderingContext = $this->objectFactory->create('F3\Fluid\Core\Rendering\RenderingContext');
 		$renderingContext->setTemplateVariableContainer($variableContainer);
