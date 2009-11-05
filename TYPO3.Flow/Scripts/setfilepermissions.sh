@@ -23,11 +23,27 @@ if [ "$#" != "3" ]; then
 	exit 1
 fi
 
-echo Setting file permissions, this might take a minute ...
-
 COMMANDLINE_USER="$1"
 WEBSERVER_USER="$2"
 WEBSERVER_GROUP="$3"
+
+echo
+echo "Checking permissions from here upwards..."
+
+unset PARENT_PATH
+PARENT_PATH_PARTS=$(pwd | awk 'BEGIN{FS="/"}{for (i=1; i < NF; i++) print $i}')
+for PARENT_PATH_PART in $PARENT_PATH_PARTS ; do
+	PARENT_PATH="$PARENT_PATH/$PARENT_PATH_PART"
+	sudo -u $WEBSERVER_USER test -x "$PARENT_PATH"
+	if [ $? -gt 0 ]; then
+		echo "  $PARENT_PATH is NOT searchable (executable) for user $WEBSERVER_USER!"
+		echo "  You need to fix this yourself, I don't know you preferred permissions..."
+		exit 1
+	fi
+done
+
+echo
+echo "Setting file permissions, this might take a minute ..."
 
 find . -type d -exec chmod 2770 {} \;
 find . -type f -exec chmod 660 {} \;
