@@ -109,11 +109,11 @@ class RouterCachingAspect {
 			return $this->resolveCache->get($cacheIdentifier);
 		}
 
-		$matchingURI = $joinPoint->getAdviceChain()->proceed($joinPoint);
-		if ($matchingURI !== '') {
-			$this->resolveCache->set($cacheIdentifier, $matchingURI);
+		$matchingUri = $joinPoint->getAdviceChain()->proceed($joinPoint);
+		if ($matchingUri !== '') {
+			$this->resolveCache->set($cacheIdentifier, $matchingUri);
 		}
-		return $matchingURI;
+		return $matchingUri;
 	}
 }
 ?>

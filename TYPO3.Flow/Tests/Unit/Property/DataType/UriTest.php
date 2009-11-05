@@ -28,7 +28,7 @@ namespace F3\FLOW3\Property\DataType;
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class URITest extends \F3\Testing\BaseTestCase {
+class UriTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * Checks if a complete URI with all parts is transformed into an object correctly.
@@ -36,20 +36,20 @@ class URITest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function constructorParsesAFullBlownURIStringCorrectly() {
-		$URIString = 'http://username:password@subdomain.domain.com:8080/path1/path2/index.php?argument1=value1&argument2=value2&argument3[subargument1]=subvalue1#anchor';
-		$URI = new \F3\FLOW3\Property\DataType\URI($URIString);
+	public function constructorParsesAFullBlownUriStringCorrectly() {
+		$uriString = 'http://username:password@subdomain.domain.com:8080/path1/path2/index.php?argument1=value1&argument2=value2&argument3[subargument1]=subvalue1#anchor';
+		$uri = new \F3\FLOW3\Property\DataType\Uri($uriString);
 
 		$check = (
-			$URI->getScheme() == 'http' &&
-			$URI->getUsername() == 'username' &&
-			$URI->getPassword() == 'password' &&
-			$URI->getHost() == 'subdomain.domain.com' &&
-			$URI->getPort() === 8080 &&
-			$URI->getPath() == '/path1/path2/index.php' &&
-			$URI->getQuery() == 'argument1=value1&argument2=value2&argument3[subargument1]=subvalue1' &&
-			$URI->getArguments() == array('argument1' => 'value1', 'argument2' => 'value2', 'argument3' => array('subargument1' => 'subvalue1')) &&
-			$URI->getFragment() == 'anchor'
+			$uri->getScheme() == 'http' &&
+			$uri->getUsername() == 'username' &&
+			$uri->getPassword() == 'password' &&
+			$uri->getHost() == 'subdomain.domain.com' &&
+			$uri->getPort() === 8080 &&
+			$uri->getPath() == '/path1/path2/index.php' &&
+			$uri->getQuery() == 'argument1=value1&argument2=value2&argument3[subargument1]=subvalue1' &&
+			$uri->getArguments() == array('argument1' => 'value1', 'argument2' => 'value2', 'argument3' => array('subargument1' => 'subvalue1')) &&
+			$uri->getFragment() == 'anchor'
 		);
 		$this->assertTrue($check, 'The valid and complete URI has not been correctly transformed to an URI object');
 	}
@@ -59,15 +59,15 @@ class URITest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function constructorParsesArgumentsWithSpecialCharactersCorrectly() {
-		$URIString = 'http://www.typo3.com/path1/?argumentäöü1=' . urlencode('valueåø€œ');
-		$URI = new \F3\FLOW3\Property\DataType\URI($URIString);
+		$uriString = 'http://www.typo3.com/path1/?argumentäöü1=' . urlencode('valueåø€œ');
+		$uri = new \F3\FLOW3\Property\DataType\Uri($uriString);
 
 		$check = (
-			$URI->getScheme() == 'http' &&
-			$URI->getHost() == 'www.typo3.com' &&
-			$URI->getPath() == '/path1/' &&
-			$URI->getQuery() == 'argumentäöü1=value%C3%A5%C3%B8%E2%82%AC%C5%93' &&
-			$URI->getArguments() == array('argumentäöü1' => 'valueåø€œ')
+			$uri->getScheme() == 'http' &&
+			$uri->getHost() == 'www.typo3.com' &&
+			$uri->getPath() == '/path1/' &&
+			$uri->getQuery() == 'argumentäöü1=value%C3%A5%C3%B8%E2%82%AC%C5%93' &&
+			$uri->getArguments() == array('argumentäöü1' => 'valueåø€œ')
 		);
 		$this->assertTrue($check, 'The URI with special arguments has not been correctly transformed to an URI object');
 	}
@@ -79,9 +79,9 @@ class URITest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function stringRepresentationIsCorrect() {
-		$URIString = 'http://username:password@subdomain.domain.com:1234/pathx1/pathx2/index.php?argument1=value1&argument2=value2&argument3[subargument1]=subvalue1#anchorman';
-		$URI = new \F3\FLOW3\Property\DataType\URI($URIString);
-		$this->assertEquals($URIString, (string)$URI, 'The string representation of the URI is not equal to the original URI string.');
+		$uriString = 'http://username:password@subdomain.domain.com:1234/pathx1/pathx2/index.php?argument1=value1&argument2=value2&argument3[subargument1]=subvalue1#anchorman';
+		$uri = new \F3\FLOW3\Property\DataType\Uri($uriString);
+		$this->assertEquals($uriString, (string)$uri, 'The string representation of the URI is not equal to the original URI string.');
 	}
 }
 ?>

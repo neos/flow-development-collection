@@ -63,15 +63,15 @@ class RouterTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function resolveIteratesOverTheRegisteredRoutesAndReturnsTheMatchingURIIfAny() {
+	public function resolveIteratesOverTheRegisteredRoutesAndReturnsTheMatchingUriIfAny() {
 		$routeValues = array('foo' => 'bar');
 
 		$route1 = $this->getMock('F3\FLOW3\MVC\Web\Routing\Route', array('resolves'), array(), '', FALSE);
 		$route1->expects($this->once())->method('resolves')->with($routeValues)->will($this->returnValue(FALSE));
 
-		$route2 = $this->getMock('F3\FLOW3\MVC\Web\Routing\Route', array('resolves', 'getMatchingURI'), array(), '', FALSE);
+		$route2 = $this->getMock('F3\FLOW3\MVC\Web\Routing\Route', array('resolves', 'getMatchingUri'), array(), '', FALSE);
 		$route2->expects($this->once())->method('resolves')->with($routeValues)->will($this->returnValue(TRUE));
-		$route2->expects($this->once())->method('getMatchingURI')->will($this->returnValue('route2'));
+		$route2->expects($this->once())->method('getMatchingUri')->will($this->returnValue('route2'));
 
 		$route3 = $this->getMock('F3\FLOW3\MVC\Web\Routing\Route', array('resolves'), array(), '', FALSE);
 
@@ -81,8 +81,8 @@ class RouterTest extends \F3\Testing\BaseTestCase {
 		$router->expects($this->once())->method('createRoutesFromConfiguration');
 		$router->_set('routes', $mockRoutes);
 
-		$matchingURI = $router->resolve($routeValues);
-		$this->assertSame('route2', $matchingURI);
+		$matchingUri = $router->resolve($routeValues);
+		$this->assertSame('route2', $matchingUri);
 	}
 
 	/**

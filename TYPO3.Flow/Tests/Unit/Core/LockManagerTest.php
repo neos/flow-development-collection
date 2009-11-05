@@ -38,11 +38,11 @@ class LockManagerTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initializeObjectSetsTheLockedStatusToTrueIfALockFileExists() {
-		$temporaryDirectoryURL = \vfsStream::url('TestDirectory') . '/';
-		file_put_contents($temporaryDirectoryURL . 'FLOW3.lock', '');
+		$temporaryDirectoryUrl = \vfsStream::url('TestDirectory') . '/';
+		file_put_contents($temporaryDirectoryUrl . 'FLOW3.lock', '');
 
 		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment');
-		$mockEnvironment->expects($this->once())->method('getPathToTemporaryDirectory')->will($this->returnValue($temporaryDirectoryURL));
+		$mockEnvironment->expects($this->once())->method('getPathToTemporaryDirectory')->will($this->returnValue($temporaryDirectoryUrl));
 
 		$lockManager = new \F3\FLOW3\Core\LockManager();
 		$lockManager->injectEnvironment($mockEnvironment);
@@ -56,19 +56,19 @@ class LockManagerTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initializeObjectRemovesALockFileIfItsOlderThanTheMaximumTime() {
-		$temporaryDirectoryURL = \vfsStream::url('TestDirectory') . '/';
-		file_put_contents($temporaryDirectoryURL . 'FLOW3.lock', '');
+		$temporaryDirectoryUrl = \vfsStream::url('TestDirectory') . '/';
+		file_put_contents($temporaryDirectoryUrl . 'FLOW3.lock', '');
 		\vfsStreamWrapper::getRoot()->getChild('FLOW3.lock')->setFilemtime(time() - \F3\FLOW3\Core\LockManager::LOCKFILE_MAXIMUM_AGE - 2);
 
 		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment');
-		$mockEnvironment->expects($this->once())->method('getPathToTemporaryDirectory')->will($this->returnValue($temporaryDirectoryURL));
+		$mockEnvironment->expects($this->once())->method('getPathToTemporaryDirectory')->will($this->returnValue($temporaryDirectoryUrl));
 
 		$lockManager = new \F3\FLOW3\Core\LockManager();
 		$lockManager->injectEnvironment($mockEnvironment);
 		$lockManager->initializeObject();
 
 		$this->assertFalse($lockManager->isSiteLocked());
-		$this->assertFalse(file_exists($temporaryDirectoryURL . 'FLOW3.lock'));
+		$this->assertFalse(file_exists($temporaryDirectoryUrl . 'FLOW3.lock'));
 	}
 
 	/**
@@ -76,10 +76,10 @@ class LockManagerTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function lockSiteCreatesALockFileAndSetsTheStatusToLocked() {
-		$temporaryDirectoryURL = \vfsStream::url('TestDirectory') . '/';
+		$temporaryDirectoryUrl = \vfsStream::url('TestDirectory') . '/';
 
 		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment');
-		$mockEnvironment->expects($this->once())->method('getPathToTemporaryDirectory')->will($this->returnValue($temporaryDirectoryURL));
+		$mockEnvironment->expects($this->once())->method('getPathToTemporaryDirectory')->will($this->returnValue($temporaryDirectoryUrl));
 
 		$mockLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
 
@@ -98,11 +98,11 @@ class LockManagerTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function unlockSiteRemovesTheLockFileAndResetsTheLockStatus() {
-		$temporaryDirectoryURL = \vfsStream::url('TestDirectory') . '/';
-		file_put_contents($temporaryDirectoryURL . 'FLOW3.lock', '');
+		$temporaryDirectoryUrl = \vfsStream::url('TestDirectory') . '/';
+		file_put_contents($temporaryDirectoryUrl . 'FLOW3.lock', '');
 
 		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment');
-		$mockEnvironment->expects($this->once())->method('getPathToTemporaryDirectory')->will($this->returnValue($temporaryDirectoryURL));
+		$mockEnvironment->expects($this->once())->method('getPathToTemporaryDirectory')->will($this->returnValue($temporaryDirectoryUrl));
 
 		$mockLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
 
@@ -114,7 +114,7 @@ class LockManagerTest extends \F3\Testing\BaseTestCase {
 		$lockManager->unlockSite();
 
 		$this->assertFalse($lockManager->isSiteLocked());
-		$this->assertFalse(file_exists($temporaryDirectoryURL . 'FLOW3.lock'));
+		$this->assertFalse(file_exists($temporaryDirectoryUrl . 'FLOW3.lock'));
 	}
 }
 ?>

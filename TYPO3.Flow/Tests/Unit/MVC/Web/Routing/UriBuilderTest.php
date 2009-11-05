@@ -219,7 +219,7 @@ class UriBuilderTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function buildPrependsBaseUriIfCreateAbsoluteUriIsSet() {
 		$this->router->expects($this->once())->method('resolve')->will($this->returnValue('resolvedUri'));
-		$this->request->expects($this->once())->method('getBaseURI')->will($this->returnValue('BaseUri/'));
+		$this->request->expects($this->once())->method('getBaseUri')->will($this->returnValue('BaseUri/'));
 
 		$this->uriBuilder->setCreateAbsoluteUri(TRUE);
 

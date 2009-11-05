@@ -28,7 +28,7 @@ namespace F3\FLOW3\Package\MetaData;
  * @version $Id:F3\FLOW3\Package\Test.php 201 2007-03-30 11:18:30Z robert $
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class XMLReaderTest extends \F3\Testing\BaseTestCase {
+class XmlReaderTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * Test the actual reading of a Package.xml file. This test
@@ -38,18 +38,18 @@ class XMLReaderTest extends \F3\Testing\BaseTestCase {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function readPackageMetaDataReadsPackageXML() {
+	public function readPackageMetaDataReadsPackageXml() {
 		$mockPackage = $this->getMock('F3\FLOW3\Package\PackageInterface');
 
 		$mockPackage->expects($this->atLeastOnce())
 			->method('getMetaPath')
-			->will($this->returnValue(__DIR__ . '/../Fixtures/XMLReaderTest/'));
+			->will($this->returnValue(__DIR__ . '/../Fixtures/XmlReaderTest/'));
 
 		$mockPackage->expects($this->any())
 			->method('getPackageKey')
 			->will($this->returnValue('YetAnotherTestPackage'));
 
-		$metaReader = new \F3\FLOW3\Package\MetaData\XMLReader();
+		$metaReader = new \F3\FLOW3\Package\MetaData\XmlReader();
 
 		$packageMetaData = $metaReader->readPackageMetaData($mockPackage);
 

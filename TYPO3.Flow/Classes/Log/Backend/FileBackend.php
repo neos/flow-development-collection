@@ -41,7 +41,7 @@ class FileBackend extends \F3\FLOW3\Log\Backend\AbstractBackend {
 	/**
 	 * @var string
 	 */
-	protected $logFileURL = '';
+	protected $logFileUrl = '';
 
 	/**
 	 * @var integer
@@ -67,13 +67,13 @@ class FileBackend extends \F3\FLOW3\Log\Backend\AbstractBackend {
 	 * Sets URL pointing to the log file. Usually the full directory and
 	 * the filename, however any valid stream URL is possible.
 	 *
-	 * @param string $logFileURL URL pointing to the log file
+	 * @param string $logFileUrl URL pointing to the log file
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
-	public function setLogFileURL($logFileURL) {
-		$this->logFileURL = $logFileURL;
+	public function setLogFileURL($logFileUrl) {
+		$this->logFileUrl = $logFileUrl;
 	}
 
 	/**
@@ -138,30 +138,30 @@ class FileBackend extends \F3\FLOW3\Log\Backend\AbstractBackend {
 			LOG_DEBUG   => 'DEBUG    ',
 		);
 
-		if (file_exists($this->logFileURL) && $this->maximumLogFileSize > 0 && filesize($this->logFileURL) > $this->maximumLogFileSize) {
+		if (file_exists($this->logFileUrl) && $this->maximumLogFileSize > 0 && filesize($this->logFileUrl) > $this->maximumLogFileSize) {
 			$this->rotateLogFile();
 		}
 
-		if (file_exists($this->logFileURL)) {
-			$this->fileHandle = fopen($this->logFileURL, 'at');
+		if (file_exists($this->logFileUrl)) {
+			$this->fileHandle = fopen($this->logFileUrl, 'at');
 		} else {
-			$logPath = dirname($this->logFileURL);
+			$logPath = dirname($this->logFileUrl);
 			if (!is_dir($logPath)) {
-				if ($this->createParentDirectories === FALSE) throw new \F3\FLOW3\Log\Exception\CouldNotOpenResource('Could not open log file "' . $this->logFileURL . '" for write access because the parent directory does not exist.', 1243931200);
+				if ($this->createParentDirectories === FALSE) throw new \F3\FLOW3\Log\Exception\CouldNotOpenResource('Could not open log file "' . $this->logFileUrl . '" for write access because the parent directory does not exist.', 1243931200);
 				\F3\FLOW3\Utility\Files::createDirectoryRecursively($logPath);
 			}
 
-			$this->fileHandle = fopen($this->logFileURL, 'at');
-			if ($this->fileHandle === FALSE) throw new \F3\FLOW3\Log\Exception\CouldNotOpenResource('Could not open log file "' . $this->logFileURL . '" for write access.', 1243588980);
+			$this->fileHandle = fopen($this->logFileUrl, 'at');
+			if ($this->fileHandle === FALSE) throw new \F3\FLOW3\Log\Exception\CouldNotOpenResource('Could not open log file "' . $this->logFileUrl . '" for write access.', 1243588980);
 
 			$streamMeta = stream_get_meta_data($this->fileHandle);
 			if ($streamMeta['wrapper_type'] === 'plainfile') {
 				fclose($this->fileHandle);
-				chmod($this->logFileURL, 0666);
-				$this->fileHandle = fopen($this->logFileURL, 'at');
+				chmod($this->logFileUrl, 0666);
+				$this->fileHandle = fopen($this->logFileUrl, 'at');
 			}
 		}
-		if ($this->fileHandle === FALSE) throw new \F3\FLOW3\Log\Exception\CouldNotOpenResource('Could not open log file "' . $this->logFileURL . '" for write access.', 1229448440);
+		if ($this->fileHandle === FALSE) throw new \F3\FLOW3\Log\Exception\CouldNotOpenResource('Could not open log file "' . $this->logFileUrl . '" for write access.', 1229448440);
 	}
 
 	/**
@@ -172,29 +172,29 @@ class FileBackend extends \F3\FLOW3\Log\Backend\AbstractBackend {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function rotateLogFile() {
-		if (file_exists($this->logFileURL . '.lock')) {
+		if (file_exists($this->logFileUrl . '.lock')) {
 			return;
 		} else {
-			touch($this->logFileURL . '.lock');
+			touch($this->logFileUrl . '.lock');
 		}
 
 		if ($this->logFilesToKeep === 0) {
-			unlink($this->logFileURL);
+			unlink($this->logFileUrl);
 		} else {
 			for ($logFileCount = $this->logFilesToKeep; $logFileCount > 0; --$logFileCount ) {
-				$rotatedLogFileURL =  $this->logFileURL . '.' . $logFileCount;
-				if (file_exists($rotatedLogFileURL)) {
+				$rotatedLogFileUrl =  $this->logFileUrl . '.' . $logFileCount;
+				if (file_exists($rotatedLogFileUrl)) {
 					if ($logFileCount == $this->logFilesToKeep) {
-						unlink($rotatedLogFileURL);
+						unlink($rotatedLogFileUrl);
 					} else {
-						rename($rotatedLogFileURL, $this->logFileURL . '.' . ($logFileCount+1));
+						rename($rotatedLogFileUrl, $this->logFileUrl . '.' . ($logFileCount+1));
 					}
 				}
 			}
-			rename($this->logFileURL, $this->logFileURL . '.1');
+			rename($this->logFileUrl, $this->logFileUrl . '.1');
 		}
 
-		unlink($this->logFileURL . '.lock');
+		unlink($this->logFileUrl . '.lock');
 	}
 
 	/**

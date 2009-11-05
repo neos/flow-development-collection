@@ -53,9 +53,9 @@ class ModificationTimeStrategyTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getFileStatusReturnsStatusUnchangedIfFileDoesNotExistAndDidNotExistEarlier() {
-		$fileURL = \vfsStream::url('testDirectory') . '/test.txt';
+		$fileUrl = \vfsStream::url('testDirectory') . '/test.txt';
 
-		$status = $this->strategy->getFileStatus($fileURL);
+		$status = $this->strategy->getFileStatus($fileUrl);
 		$this->assertSame(\F3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_UNCHANGED, $status);
 	}
 
@@ -64,12 +64,12 @@ class ModificationTimeStrategyTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getFileStatusReturnsStatusUnchangedIfFileExistedAndTheModificationTimeDidNotChange() {
-		$fileURL = \vfsStream::url('testDirectory') . '/test.txt';
-		file_put_contents($fileURL, 'test data');
+		$fileUrl = \vfsStream::url('testDirectory') . '/test.txt';
+		file_put_contents($fileUrl, 'test data');
 
-		$this->strategy->getFileStatus($fileURL);
+		$this->strategy->getFileStatus($fileUrl);
 		clearstatcache();
-		$status = $this->strategy->getFileStatus($fileURL);
+		$status = $this->strategy->getFileStatus($fileUrl);
 
 		$this->assertSame(\F3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_UNCHANGED, $status);
 	}
@@ -79,10 +79,10 @@ class ModificationTimeStrategyTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getFileStatusDetectsANewlyCreatedFile() {
-		$fileURL = \vfsStream::url('testDirectory') . '/test.txt';
-		file_put_contents($fileURL, 'test data');
+		$fileUrl = \vfsStream::url('testDirectory') . '/test.txt';
+		file_put_contents($fileUrl, 'test data');
 
-		$status = $this->strategy->getFileStatus($fileURL);
+		$status = $this->strategy->getFileStatus($fileUrl);
 		$this->assertSame(\F3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_CREATED, $status);
 	}
 
@@ -91,12 +91,12 @@ class ModificationTimeStrategyTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getFileStatusDetectsADeletedFile() {
-		$fileURL = \vfsStream::url('testDirectory') . '/test.txt';
-		file_put_contents($fileURL, 'test data');
+		$fileUrl = \vfsStream::url('testDirectory') . '/test.txt';
+		file_put_contents($fileUrl, 'test data');
 
-		$this->strategy->getFileStatus($fileURL);
-		unlink($fileURL);
-		$status = $this->strategy->getFileStatus($fileURL);
+		$this->strategy->getFileStatus($fileUrl);
+		unlink($fileUrl);
+		$status = $this->strategy->getFileStatus($fileUrl);
 
 		$this->assertSame(\F3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_DELETED, $status);
 	}
@@ -106,13 +106,13 @@ class ModificationTimeStrategyTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getFileStatusReturnsStatusChangedIfTheFileExistedEarlierButTheModificationTimeHasChangedSinceThen() {
-		$fileURL = \vfsStream::url('testDirectory') . '/test.txt';
-		file_put_contents($fileURL, 'test data');
+		$fileUrl = \vfsStream::url('testDirectory') . '/test.txt';
+		file_put_contents($fileUrl, 'test data');
 
-		$this->strategy->getFileStatus($fileURL);
+		$this->strategy->getFileStatus($fileUrl);
 		\vfsStreamWrapper::getRoot()->getChild('test.txt')->setFilemtime(time() + 5);
 		clearstatcache();
-		$status = $this->strategy->getFileStatus($fileURL);
+		$status = $this->strategy->getFileStatus($fileUrl);
 
 		$this->assertSame(\F3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_CHANGED, $status);
 	}

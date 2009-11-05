@@ -142,8 +142,8 @@ class AbstractControllerTest extends \F3\Testing\BaseTestCase {
 		$mockUriBuilder->expects($this->once())->method('reset')->will($this->returnValue($mockUriBuilder));
 		$mockUriBuilder->expects($this->once())->method('uriFor')->with('show', $arguments, 'Stuff', 'Super', 'Duper\Package')->will($this->returnValue('the uri'));
 
-		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\AbstractController'), array('redirectToURI'), array(), '', FALSE);
-		$controller->expects($this->once())->method('redirectToURI')->with('the uri');
+		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\AbstractController'), array('redirectToUri'), array(), '', FALSE);
+		$controller->expects($this->once())->method('redirectToUri')->with('the uri');
 		$controller->_set('uriBuilder', $mockUriBuilder);
 		$controller->_set('request', $mockRequest);
 		$controller->_set('response', $mockResponse);

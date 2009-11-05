@@ -356,7 +356,7 @@ class UriBuilder {
 			$uri = 'index.php/' . $uri;
 		}
 		if ($this->createAbsoluteUri === TRUE) {
-			$uri = $this->request->getBaseURI() . $uri;
+			$uri = $this->request->getBaseUri() . $uri;
 		}
 		return $uri;
 	}

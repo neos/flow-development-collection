@@ -36,9 +36,9 @@ class RequestTest extends \F3\Testing\BaseTestCase {
 	protected $request;
 
 	/**
-	 * @var \F3\FLOW3\Property\DataType\URI
+	 * @var \F3\FLOW3\Property\DataType\Uri
 	 */
-	protected $requestURI;
+	protected $requestUri;
 
 	/**
 	 * Sets up this test case
@@ -50,8 +50,8 @@ class RequestTest extends \F3\Testing\BaseTestCase {
 		$this->environment->SERVER['ORIG_SCRIPT_NAME'] = '/path1/path2/index.php';
 		$this->environment->SERVER['SCRIPT_NAME'] = '/path1/path2/index.php';
 
-		$URIString = 'http://username:password@subdomain.domain.com:8080/path1/path2/index.php?argument1=value1&argument2=value2#anchor';
-		$this->requestURI = new \F3\FLOW3\Property\DataType\URI($URIString);
+		$uriString = 'http://username:password@subdomain.domain.com:8080/path1/path2/index.php?argument1=value1&argument2=value2#anchor';
+		$this->requestUri = new \F3\FLOW3\Property\DataType\Uri($uriString);
 	}
 
 	/**
@@ -69,13 +69,13 @@ class RequestTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getRequestURIreturnsCorrectURI() {
+	public function getRequestUriReturnsCorrectUri() {
 		$request = new \F3\FLOW3\MVC\Web\Request();
 		$request->injectEnvironment($this->environment);
-		$request->setRequestURI($this->requestURI);
+		$request->setRequestUri($this->requestUri);
 
-		$this->assertEquals($this->requestURI, $request->getRequestURI(), 'request->getRequestURI() did not return the expected URI.');
-		$this->assertNotSame($this->requestURI, $request->getRequestURI(), 'request->getRequestURI() returned the same URI which is dangerous ...');
+		$this->assertEquals($this->requestUri, $request->getRequestUri(), 'request->getRequestUri() did not return the expected URI.');
+		$this->assertNotSame($this->requestUri, $request->getRequestUri(), 'request->getRequestUri() returned the same URI which is dangerous ...');
 	}
 
 	/**
@@ -84,18 +84,18 @@ class RequestTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getBaseURIdetectsSimpleURICorrectly() {
+	public function getBaseUriDetectsSimpleUriCorrectly() {
 		$this->environment->SERVER['ORIG_SCRIPT_NAME'] = NULL;
 		$this->environment->SERVER['SCRIPT_NAME'] = '/';
 
-		$requestURI = new \F3\FLOW3\Property\DataType\URI('http://www.server.com/index.php');
-		$expectedBaseURI = new \F3\FLOW3\Property\DataType\URI('http://www.server.com/');
+		$requestUri = new \F3\FLOW3\Property\DataType\Uri('http://www.server.com/index.php');
+		$expectedBaseUri = new \F3\FLOW3\Property\DataType\Uri('http://www.server.com/');
 
 		$request = new \F3\FLOW3\MVC\Web\Request();
 		$request->injectEnvironment($this->environment);
-		$request->setRequestURI($requestURI);
+		$request->setRequestUri($requestUri);
 
-		$this->assertEquals($expectedBaseURI, $request->getBaseURI(), 'The returned baseURI is not as expected.');
+		$this->assertEquals($expectedBaseUri, $request->getBaseUri(), 'The returned baseUri is not as expected.');
 	}
 
 	/**
@@ -104,18 +104,18 @@ class RequestTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getBaseURIdetectsURIWithSubDirectoryCorrectly() {
+	public function getBaseUriDetectsUriWithSubDirectoryCorrectly() {
 		$this->environment->SERVER['ORIG_SCRIPT_NAME'] = NULL;
 		$this->environment->SERVER['SCRIPT_NAME'] = '/path1/path2/index.php';
 
-		$requestURI = new \F3\FLOW3\Property\DataType\URI('http://www.server.com/path1/path2/index.php');
-		$expectedBaseURI = new \F3\FLOW3\Property\DataType\URI('http://www.server.com/path1/path2/');
+		$requestUri = new \F3\FLOW3\Property\DataType\Uri('http://www.server.com/path1/path2/index.php');
+		$expectedBaseUri = new \F3\FLOW3\Property\DataType\Uri('http://www.server.com/path1/path2/');
 
 		$request = new \F3\FLOW3\MVC\Web\Request();
 		$request->injectEnvironment($this->environment);
-		$request->setRequestURI($requestURI);
+		$request->setRequestUri($requestUri);
 
-		$this->assertEquals($expectedBaseURI, $request->getBaseURI(), 'The returned baseURI is not as expected.');
+		$this->assertEquals($expectedBaseUri, $request->getBaseUri(), 'The returned baseUri is not as expected.');
 	}
 
 	/**

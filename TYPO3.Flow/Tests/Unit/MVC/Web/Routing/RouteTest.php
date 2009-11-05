@@ -647,7 +647,7 @@ class RouteTest extends \F3\Testing\BaseTestCase {
 		$this->routeValues = array('key1' => 'value1', 'key2' => 'value2', 'key3' => 'value3', 'key4' => 'value4');
 
 		$this->assertTrue($this->route->resolves($this->routeValues));
-		$this->assertEquals('value1-value2/value3.value4.xml', $this->route->getMatchingURI());
+		$this->assertEquals('value1-value2/value3.value4.xml', $this->route->getMatchingUri());
 	}
 
 	/**
@@ -660,7 +660,7 @@ class RouteTest extends \F3\Testing\BaseTestCase {
 		$this->routeValues = array('key1' => 'value1', 'key2' => 'value2', 'key3' => 'value3', 'key4' => 'value4', 'nonexistingkey' => 'foo');
 
 		$this->assertTrue($this->route->resolves($this->routeValues));
-		$this->assertEquals('value1-value2/value3.value4.xml?nonexistingkey=foo', $this->route->getMatchingURI());
+		$this->assertEquals('value1-value2/value3.value4.xml?nonexistingkey=foo', $this->route->getMatchingUri());
 	}
 
 	/**
@@ -684,7 +684,7 @@ class RouteTest extends \F3\Testing\BaseTestCase {
 		$this->routeValues = array('someKey' => 'CamelCase');
 
 		$this->assertTrue($this->route->resolves($this->routeValues));
-		$this->assertEquals('CamelCase/CamelCase', $this->route->getMatchingURI());
+		$this->assertEquals('CamelCase/CamelCase', $this->route->getMatchingUri());
 	}
 
 	/**
@@ -697,7 +697,7 @@ class RouteTest extends \F3\Testing\BaseTestCase {
 		$this->routeValues = array('someKey' => 'CamelCase');
 
 		$this->assertTrue($this->route->resolves($this->routeValues));
-		$this->assertEquals('camelcase/camelcase', $this->route->getMatchingURI());
+		$this->assertEquals('camelcase/camelcase', $this->route->getMatchingUri());
 	}
 
 	/**
@@ -725,7 +725,7 @@ class RouteTest extends \F3\Testing\BaseTestCase {
 
 		$this->routeValues = array('differentKey' => 'value1');
 		$this->assertFalse($this->route->resolves($this->routeValues));
-		$this->assertNull($this->route->getMatchingURI());
+		$this->assertNull($this->route->getMatchingUri());
 	}
 
 	/**
@@ -746,19 +746,19 @@ class RouteTest extends \F3\Testing\BaseTestCase {
 		$this->mockObjectManager->expects($this->once())->method('getObject')->with('F3\FLOW3\MVC\Fixture\Web\Routing\MockRoutePartHandler')->will($this->returnValue($mockRoutePartHandler));
 		$this->route->resolves($this->routeValues);
 
-		$this->assertEquals('_resolve_invoked_/value2', $this->route->getMatchingURI());
+		$this->assertEquals('_resolve_invoked_/value2', $this->route->getMatchingUri());
 	}
 
 	/**
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function resolvesAppendsRemainingRouteValuesToMatchingURI() {
+	public function resolvesAppendsRemainingRouteValuesToMatchingUri() {
 		$this->route->setUriPattern('foo');
 		$this->route->_set('isParsed', TRUE);
 		$this->route->resolves(array('foo' => 'bar', 'baz' => array('foo2' => 'bar2')));
 
-		$actualResult = $this->route->getMatchingURI();
+		$actualResult = $this->route->getMatchingUri();
 		$expectedResult = '?foo=bar&baz%5Bfoo2%5D=bar2';
 
 		$this->assertEquals($expectedResult, $actualResult);
@@ -804,7 +804,7 @@ class RouteTest extends \F3\Testing\BaseTestCase {
 		$this->route->_set('isParsed', TRUE);
 		$this->route->resolves(array('foo' => 'bar', 'someObject' => $object1, 'baz' => array('someOtherObject' => $object2)));
 
-		$actualResult = $this->route->getMatchingURI();
+		$actualResult = $this->route->getMatchingUri();
 		$expectedResult = '?foo=bar&someObject%5B__identity%5D=uuid1&baz%5BsomeOtherObject%5D%5B__identity%5D=uuid2';
 
 		$this->assertEquals($expectedResult, $actualResult);

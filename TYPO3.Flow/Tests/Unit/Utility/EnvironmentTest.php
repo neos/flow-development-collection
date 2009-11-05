@@ -84,16 +84,16 @@ class EnvironmentTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function getRequestURIReturnsExpectedURIWhenUsingPathInfo() {
-		$expectedURIString = 'http://flow3.typo3.org/is/the/base/for/typo3?5=0';
+	public function getRequestUriReturnsExpectedUriWhenUsingPathInfo() {
+		$expectedUriString = 'http://flow3.typo3.org/is/the/base/for/typo3?5=0';
 		$environment = new \F3\FLOW3\Utility\MockEnvironment();
 		$environment->SERVER = array(
 			'HTTP_HOST' => 'flow3.typo3.org',
 			'QUERY_STRING' => '5=0',
 			'PATH_INFO' => '/is/the/base/for/typo3'
 		);
-		$returnedURIString = (string)$environment->getRequestURI();
-		$this->assertEquals($expectedURIString, $returnedURIString, 'The URI returned did not match the expected value.');
+		$returnedUriString = (string)$environment->getRequestUri();
+		$this->assertEquals($expectedUriString, $returnedUriString, 'The URI returned did not match the expected value.');
 	}
 
 	/**

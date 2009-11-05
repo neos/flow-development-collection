@@ -42,7 +42,7 @@ final class StandardView extends \F3\FLOW3\MVC\View\AbstractView {
 		if (!is_object($this->controllerContext->getRequest())) throw new \F3\FLOW3\MVC\Exception('Can\'t render view without request object.', 1192450280);
 		$template = file_get_contents($this->getTemplatePathAndFilename());
 		if ($this->controllerContext->getRequest() instanceof \F3\FLOW3\MVC\Web\Request) {
-			$template = str_replace('###BASEURI###', $this->controllerContext->getRequest()->getBaseURI(), $template);
+			$template = str_replace('###BASEURI###', $this->controllerContext->getRequest()->getBaseUri(), $template);
 		}
 		return $template;
 	}

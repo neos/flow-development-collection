@@ -291,7 +291,7 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 		$uri = $this->uriBuilder
 			->reset()
 			->uriFor($actionName, $arguments, $controllerName, $packageKey, $subpackageKey);
-		$this->redirectToURI($uri, $delay, $statusCode);
+		$this->redirectToUri($uri, $delay, $statusCode);
 	}
 
 	/**
@@ -299,7 +299,7 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	 *
 	 * NOTE: This method only supports web requests and will throw an exception if used with other request types.
 	 *
-	 * @param mixed $uri Either a string representation of a URI or a \F3\FLOW3\Property\DataType\URI object
+	 * @param mixed $uri Either a string representation of a URI or a \F3\FLOW3\Property\DataType\Uri object
 	 * @param integer $delay (optional) The delay in seconds. Default is no delay.
 	 * @param integer $statusCode (optional) The HTTP status code for the redirect. Default is "303 See Other"
 	 * @throws \F3\FLOW3\MVC\Exception\UnsupportedRequestType If the request is not a web request
@@ -307,10 +307,10 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
-	protected function redirectToURI($uri, $delay = 0, $statusCode = 303) {
+	protected function redirectToUri($uri, $delay = 0, $statusCode = 303) {
 		if (!$this->request instanceof \F3\FLOW3\MVC\Web\Request) throw new \F3\FLOW3\MVC\Exception\UnsupportedRequestType('redirect() only supports web requests.', 1220539734);
 
-		$uri = $this->request->getBaseURI() . (string)$uri;
+		$uri = $this->request->getBaseUri() . (string)$uri;
 		$escapedUri = htmlentities($uri, ENT_QUOTES, 'utf-8');
 		$this->response->setContent('<html><head><meta http-equiv="refresh" content="' . intval($delay) . ';url=' . $escapedUri . '"/></head></html>');
 		$this->response->setStatus($statusCode);

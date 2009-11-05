@@ -96,9 +96,9 @@ class NotFoundViewTest extends \F3\Testing\BaseTestCase {
 		$mockRequest = $this->getMock('\F3\FLOW3\MVC\RequestInterface');
 		$this->controllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($mockRequest));
 
-		$templateURL = \vfsStream::url('testDirectory') . '/template.html';
-		file_put_contents($templateURL, 'template content');
-		$this->view->expects($this->once())->method('getTemplatePathAndFilename')->will($this->returnValue($templateURL));
+		$templateUrl = \vfsStream::url('testDirectory') . '/template.html';
+		file_put_contents($templateUrl, 'template content');
+		$this->view->expects($this->once())->method('getTemplatePathAndFilename')->will($this->returnValue($templateUrl));
 
 		$this->assertSame('template content', $this->view->render());
 	}
@@ -111,9 +111,9 @@ class NotFoundViewTest extends \F3\Testing\BaseTestCase {
 		$mockRequest = $this->getMock('\F3\FLOW3\MVC\RequestInterface');
 		$this->controllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($mockRequest));
 
-		$templateURL = \vfsStream::url('testDirectory') . '/template.html';
-		file_put_contents($templateURL, 'error message: ###ERROR_MESSAGE###');
-		$this->view->expects($this->once())->method('getTemplatePathAndFilename')->will($this->returnValue($templateURL));
+		$templateUrl = \vfsStream::url('testDirectory') . '/template.html';
+		file_put_contents($templateUrl, 'error message: ###ERROR_MESSAGE###');
+		$this->view->expects($this->once())->method('getTemplatePathAndFilename')->will($this->returnValue($templateUrl));
 
 		$this->view->assign('errorMessage', 'some error message');
 
@@ -128,9 +128,9 @@ class NotFoundViewTest extends \F3\Testing\BaseTestCase {
 		$mockRequest = $this->getMock('\F3\FLOW3\MVC\RequestInterface');
 		$this->controllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($mockRequest));
 
-		$templateURL = \vfsStream::url('testDirectory') . '/template.html';
-		file_put_contents($templateURL, 'error message: ###ERROR_MESSAGE###');
-		$this->view->expects($this->once())->method('getTemplatePathAndFilename')->will($this->returnValue($templateURL));
+		$templateUrl = \vfsStream::url('testDirectory') . '/template.html';
+		file_put_contents($templateUrl, 'error message: ###ERROR_MESSAGE###');
+		$this->view->expects($this->once())->method('getTemplatePathAndFilename')->will($this->returnValue($templateUrl));
 
 		$this->assertSame('error message: ', $this->view->render());
 	}
@@ -140,13 +140,13 @@ class NotFoundViewTest extends \F3\Testing\BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function renderReplacesBaseUriMarkerIfRequestIsWebRequest() {
-		$mockRequest = $this->getMock('\F3\FLOW3\MVC\Web\Request', array('getBaseURI'));
-		$mockRequest->expects($this->any())->method('getBaseURI')->will($this->returnValue('someBaseUri'));
+		$mockRequest = $this->getMock('\F3\FLOW3\MVC\Web\Request', array('getBaseUri'));
+		$mockRequest->expects($this->any())->method('getBaseUri')->will($this->returnValue('someBaseUri'));
 		$this->controllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($mockRequest));
 
-		$templateURL = \vfsStream::url('testDirectory') . '/template.html';
-		file_put_contents($templateURL, 'base URI: ###BASEURI###');
-		$this->view->expects($this->once())->method('getTemplatePathAndFilename')->will($this->returnValue($templateURL));
+		$templateUrl = \vfsStream::url('testDirectory') . '/template.html';
+		file_put_contents($templateUrl, 'base URI: ###BASEURI###');
+		$this->view->expects($this->once())->method('getTemplatePathAndFilename')->will($this->returnValue($templateUrl));
 
 		$this->assertSame('base URI: someBaseUri', $this->view->render());
 	}
@@ -157,12 +157,12 @@ class NotFoundViewTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function renderDoesNotReplaceBaseUriMarkerIfRequestIsNoWebRequest() {
 		$mockRequest = $this->getMock('\F3\FLOW3\MVC\RequestInterface');
-		$mockRequest->expects($this->never())->method('getBaseURI');
+		$mockRequest->expects($this->never())->method('getBaseUri');
 		$this->controllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($mockRequest));
 
-		$templateURL = \vfsStream::url('testDirectory') . '/template.html';
-		file_put_contents($templateURL, 'base URI: ###BASEURI###');
-		$this->view->expects($this->once())->method('getTemplatePathAndFilename')->will($this->returnValue($templateURL));
+		$templateUrl = \vfsStream::url('testDirectory') . '/template.html';
+		file_put_contents($templateUrl, 'base URI: ###BASEURI###');
+		$this->view->expects($this->once())->method('getTemplatePathAndFilename')->will($this->returnValue($templateUrl));
 
 		$this->assertSame('base URI: ###BASEURI###', $this->view->render());
 	}

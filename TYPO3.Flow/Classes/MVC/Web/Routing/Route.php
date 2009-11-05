@@ -78,7 +78,7 @@ class Route {
 	 *
 	 * @var string
 	 */
-	protected $matchingURI;
+	protected $matchingUri;
 
 	/**
 	 * Contains associative array of Route Part options
@@ -275,8 +275,8 @@ class Route {
 	 * @return string A string containing the corresponding uri (excluding protocol and host)
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function getMatchingURI() {
-		return $this->matchingURI;
+	public function getMatchingUri() {
+		return $this->matchingUri;
 	}
 
 	/**
@@ -349,10 +349,10 @@ class Route {
 	 * @param array $routeValues An array containing key/value pairs to be resolved to uri segments
 	 * @return boolean TRUE if this Route corresponds to the given $routeValues, otherwise FALSE
 	 * @author Bastian Waidelich <bastian@typo3.org>
-	 * @see getMatchingURI()
+	 * @see getMatchingUri()
 	 */
 	public function resolves(array $routeValues) {
-		$this->matchingURI = NULL;
+		$this->matchingUri = NULL;
 		if ($this->uriPattern === NULL) {
 			return FALSE;
 		}
@@ -360,7 +360,7 @@ class Route {
 			$this->parse();
 		}
 
-		$matchingURI = '';
+		$matchingUri = '';
 		$requireOptionalRouteParts = FALSE;
 		$matchingOptionalUriPortion = '';
 		foreach ($this->routeParts as $routePart) {
@@ -370,7 +370,7 @@ class Route {
 				}
 			}
 			if (!$routePart->isOptional()) {
-				$matchingURI .= $routePart->hasValue() ? $routePart->getValue() : $routePart->getDefaultValue();
+				$matchingUri .= $routePart->hasValue() ? $routePart->getValue() : $routePart->getDefaultValue();
 				$requireOptionalRouteParts = FALSE;
 				continue;
 			}
@@ -381,7 +381,7 @@ class Route {
 				$matchingOptionalUriPortion .= $routePart->getDefaultValue();
 			}
 			if ($requireOptionalRouteParts) {
-				$matchingURI .= $matchingOptionalUriPortion;
+				$matchingUri .= $matchingOptionalUriPortion;
 				$matchingOptionalUriPortion = '';
 			}
 		}
@@ -399,9 +399,9 @@ class Route {
 			// add query string
 		if (count($routeValues) > 0) {
 			$routeValues = $this->convertDomainObjectsToIdentityArrays($routeValues);
-			$matchingURI .= '?' . http_build_query($routeValues, NULL, '&');
+			$matchingUri .= '?' . http_build_query($routeValues, NULL, '&');
 		}
-		$this->matchingURI = $matchingURI;
+		$this->matchingUri = $matchingUri;
 		return TRUE;
 	}
 

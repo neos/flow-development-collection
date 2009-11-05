@@ -63,7 +63,7 @@ class TextValidatorTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function textValidatorReturnsFalseForAStringWithHTML() {
+	public function textValidatorReturnsFalseForAStringWithHtml() {
 		$textValidator = $this->getMock('F3\FLOW3\Validation\Validator\TextValidator', array('addError'), array(), '', FALSE);
 		$this->assertFalse($textValidator->isValid('<span style="color: #BBBBBB;">a nice text</span>'));
 	}
@@ -72,7 +72,7 @@ class TextValidatorTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function textValidatorReturnsFalseForAStringWithPercentEncodedHTML() {
+	public function textValidatorReturnsFalseForAStringWithPercentEncodedHtml() {
 		$this->markTestIncomplete('The text validator currently allows percent encoded HTML!');
 		$textValidator = $this->getMock('F3\FLOW3\Validation\Validator\TextValidator', array('addError'), array(), '', FALSE);
 		$this->assertFalse($textValidator->isValid('%3cspan style="color: #BBBBBB;"%3ea nice text%3c/span%3e'));
@@ -82,7 +82,7 @@ class TextValidatorTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function textValidatorCreatesTheCorrectErrorIfTheSubjectContainsHTMLEntities() {
+	public function textValidatorCreatesTheCorrectErrorIfTheSubjectContainsHtmlEntities() {
 		$textValidator = $this->getMock('F3\FLOW3\Validation\Validator\TextValidator', array('addError'), array(), '', FALSE);
 		$textValidator->expects($this->once())->method('addError')->with('The given subject was not a valid text (contained XML tags). Got: "<span style="color: #BBBBBB;">a nice text</span>"', 1221565786);
 		$textValidator->isValid('<span style="color: #BBBBBB;">a nice text</span>');

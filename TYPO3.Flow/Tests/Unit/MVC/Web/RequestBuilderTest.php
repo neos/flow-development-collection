@@ -38,9 +38,9 @@ class RequestBuilderTest extends \F3\Testing\BaseTestCase {
 	protected $mockRequest;
 
 	/**
-	 * @var \F3\FLOW3\Property\DataType\URI
+	 * @var \F3\FLOW3\Property\DataType\Uri
 	 */
-	protected $mockRequestURI;
+	protected $mockRequestUri;
 
 	/**
 	 * @var \F3\FLOW3\Utility\Environment
@@ -69,14 +69,14 @@ class RequestBuilderTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setUp() {
-		$this->mockRequestURI = $this->getMock('F3\FLOW3\Property\DataType\URI', array(), array(), '', FALSE);
-		$this->mockRequestURI->expects($this->once())->method('getArguments')->will($this->returnValue(array('someArgument' => 'GETArgument')));
+		$this->mockRequestUri = $this->getMock('F3\FLOW3\Property\DataType\Uri', array(), array(), '', FALSE);
+		$this->mockRequestUri->expects($this->once())->method('getArguments')->will($this->returnValue(array('someArgument' => 'GETArgument')));
 
 		$this->mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
-		$this->mockEnvironment->expects($this->any())->method('getRequestURI')->will($this->returnValue($this->mockRequestURI));
+		$this->mockEnvironment->expects($this->any())->method('getRequestUri')->will($this->returnValue($this->mockRequestUri));
 
 		$this->mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
-		$this->mockRequest->expects($this->any())->method('getRequestURI')->will($this->returnValue($this->mockRequestURI));
+		$this->mockRequest->expects($this->any())->method('getRequestUri')->will($this->returnValue($this->mockRequestUri));
 
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
 		$mockObjectFactory->expects($this->once())->method('create')->will($this->returnValue($this->mockRequest));
@@ -105,8 +105,8 @@ class RequestBuilderTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function buildSetsTheRequestURIInTheRequestObject() {
-		$this->mockRequest->expects($this->once())->method('setRequestURI')->with($this->equalTo($this->mockRequestURI));
+	public function buildSetsTheRequestUriInTheRequestObject() {
+		$this->mockRequest->expects($this->once())->method('setRequestUri')->with($this->equalTo($this->mockRequestUri));
 		$this->builder->build();
 	}
 

@@ -30,7 +30,7 @@ namespace F3\FLOW3\Property\DataType;
  * @api
  * @scope prototype
  */
-class URI {
+class Uri {
 
 	const PATTERN_MATCH_SCHEME = '/^[a-zA-Z][a-zA-Z0-9\+\-\.]*$/';
 	const PATTERN_MATCH_USERNAME = '/^(?:[a-zA-Z0-9_~!&\',;=\.\-\$\(\)\*\+]|(?:%[0-9a-fA-F]{2}))*$/';
@@ -88,26 +88,26 @@ class URI {
 	/**
 	 * Constructs the URI object from a string
 	 *
-	 * @param string $URIString String representation of the URI
+	 * @param string $uriString String representation of the URI
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
-	public function __construct($URIString) {
-		if (!is_string($URIString)) throw new \InvalidArgumentException('The URI must be a valid string.', 1176550571);
+	public function __construct($uriString) {
+		if (!is_string($uriString)) throw new \InvalidArgumentException('The URI must be a valid string.', 1176550571);
 
-		$URIParts = parse_url($URIString);
-		if (is_array($URIParts)) {
-			$this->scheme = isset($URIParts['scheme']) ? $URIParts['scheme'] : NULL;
-			$this->username = isset($URIParts['user']) ? $URIParts['user'] : NULL;
-			$this->password = isset($URIParts['pass']) ? $URIParts['pass'] : NULL;
-			$this->host = isset($URIParts['host']) ? $URIParts['host'] : NULL;
-			$this->port = isset($URIParts['port']) ? $URIParts['port'] : NULL;
-			$this->path = isset($URIParts['path']) ? $URIParts['path'] : NULL;
-			if (isset($URIParts['query'])) {
-				$this->setQuery ($URIParts['query']);
+		$uriParts = parse_url($uriString);
+		if (is_array($uriParts)) {
+			$this->scheme = isset($uriParts['scheme']) ? $uriParts['scheme'] : NULL;
+			$this->username = isset($uriParts['user']) ? $uriParts['user'] : NULL;
+			$this->password = isset($uriParts['pass']) ? $uriParts['pass'] : NULL;
+			$this->host = isset($uriParts['host']) ? $uriParts['host'] : NULL;
+			$this->port = isset($uriParts['port']) ? $uriParts['port'] : NULL;
+			$this->path = isset($uriParts['path']) ? $uriParts['path'] : NULL;
+			if (isset($uriParts['query'])) {
+				$this->setQuery ($uriParts['query']);
 			}
-			$this->fragment = isset($URIParts['fragment']) ? $URIParts['fragment'] : NULL;
+			$this->fragment = isset($uriParts['fragment']) ? $uriParts['fragment'] : NULL;
 		}
 	}
 
@@ -342,24 +342,24 @@ class URI {
 	 * @api
 	 */
 	public function __toString() {
-		$URIString = '';
+		$uriString = '';
 
-		$URIString .= isset($this->scheme) ? $this->scheme . '://' : '';
+		$uriString .= isset($this->scheme) ? $this->scheme . '://' : '';
 		if (isset($this->username)) {
 			if (isset($this->password)) {
-				$URIString .= $this->username . ':' . $this->password . '@';
+				$uriString .= $this->username . ':' . $this->password . '@';
 			} else {
-				$URIString .= $this->username . '@';
+				$uriString .= $this->username . '@';
 			}
 		}
-		$URIString .= $this->host;
-		$URIString .= isset($this->port) ? ':' . $this->port : '';
+		$uriString .= $this->host;
+		$uriString .= isset($this->port) ? ':' . $this->port : '';
 		if (isset($this->path)) {
-			$URIString .= $this->path;
-			$URIString .= isset($this->query) ? '?' . $this->query : '';
-			$URIString .= isset($this->fragment) ? '#' . $this->fragment : '';
+			$uriString .= $this->path;
+			$uriString .= isset($this->query) ? '?' . $this->query : '';
+			$uriString .= isset($this->fragment) ? '#' . $this->fragment : '';
 		}
-		return $URIString;
+		return $uriString;
 	}
 }
 

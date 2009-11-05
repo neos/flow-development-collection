@@ -30,7 +30,7 @@ require_once('vfs/vfsStream.php');
  * @version $Id:F3\FLOW3\Package\Test.php 201 2007-03-30 11:18:30Z robert $
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class XMLWriterTest extends \F3\Testing\BaseTestCase {
+class XmlWriterTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @author Robert Lemke <robert@typo3.org>
@@ -63,9 +63,9 @@ class XMLWriterTest extends \F3\Testing\BaseTestCase {
 		$meta->addConstraint(new \F3\FLOW3\Package\MetaData\SystemConstraint('depends', 'PHP', NULL, '5.3.0'));
 		$meta->addConstraint(new \F3\FLOW3\Package\MetaData\SystemConstraint('suggests', 'Memory', '16M'));
 
-		$metaWriter = new \F3\FLOW3\Package\MetaData\XMLWriter();
+		$metaWriter = new \F3\FLOW3\Package\MetaData\XmlWriter();
 		$metaWriter->writePackageMetaData($mockPackage, $meta);
-		$this->assertXmlFileEqualsXmlFile($packageMetaDataPath . 'Package.xml', __DIR__ . '/../Fixtures/XMLWriterTest/Package.xml');
+		$this->assertXmlFileEqualsXmlFile($packageMetaDataPath . 'Package.xml', __DIR__ . '/../Fixtures/XmlWriterTest/Package.xml');
 	}
 }
 ?>

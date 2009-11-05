@@ -228,20 +228,20 @@ class Environment {
 	/**
 	 * Returns the request URI
 	 *
-	 * @return \F3\FLOW3\Property\DataType\URI The request URI consisting of protocol, path and query, eg. http://typo3.org/xyz/index.php/arg1/arg2/arg3/?arg1,arg2,arg3&p1=parameter1&p2[key]=value
+	 * @return \F3\FLOW3\Property\DataType\Uri The request URI consisting of protocol, path and query, eg. http://typo3.org/xyz/index.php/arg1/arg2/arg3/?arg1,arg2,arg3&p1=parameter1&p2[key]=value
 	 * @author Kasper Skårhøj <kasperYYYY@typo3.com>
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
-	public function getRequestURI() {
+	public function getRequestUri() {
 		if (isset($this->SERVER['PATH_INFO'])) {
-			$requestURIString = $this->getRequestProtocol() . '://' . $this->getHTTPHost() . $this->SERVER['PATH_INFO'] . (strlen($this->SERVER['QUERY_STRING']) ? '?' . $this->SERVER['QUERY_STRING'] : '');
+			$requestUriString = $this->getRequestProtocol() . '://' . $this->getHTTPHost() . $this->SERVER['PATH_INFO'] . (strlen($this->SERVER['QUERY_STRING']) ? '?' . $this->SERVER['QUERY_STRING'] : '');
 		} else {
-			$requestURIString = $this->getRequestProtocol() . '://' . $this->getHTTPHost() . '/';
+			$requestUriString = $this->getRequestProtocol() . '://' . $this->getHTTPHost() . '/';
 		}
 
-		$requestURI = new \F3\FLOW3\Property\DataType\URI($requestURIString);
-		return $requestURI;
+		$requestUri = new \F3\FLOW3\Property\DataType\Uri($requestUriString);
+		return $requestUri;
 	}
 
 	/**

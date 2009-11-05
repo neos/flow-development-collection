@@ -45,8 +45,8 @@ class FileBackendTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function theLogFileIsOpenedWithOpen() {
-		$logFileURL = \vfsStream::url('testDirectory') . '/test.log';
-		$backend = new \F3\FLOW3\Log\Backend\FileBackend(array('logFileURL' => $logFileURL));
+		$logFileUrl = \vfsStream::url('testDirectory') . '/test.log';
+		$backend = new \F3\FLOW3\Log\Backend\FileBackend(array('logFileUrl' => $logFileUrl));
 		$backend->open();
 		$this->assertTrue(\vfsStreamWrapper::getRoot()->hasChild('test.log'));
 	}
@@ -57,8 +57,8 @@ class FileBackendTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function openDoesNotCreateParentDirectoriesByDefault() {
-		$logFileURL = \vfsStream::url('testDirectory') . '/foo/test.log';
-		$backend = new \F3\FLOW3\Log\Backend\FileBackend(array('logFileURL' => $logFileURL));
+		$logFileUrl = \vfsStream::url('testDirectory') . '/foo/test.log';
+		$backend = new \F3\FLOW3\Log\Backend\FileBackend(array('logFileUrl' => $logFileUrl));
 		$backend->open();
 	}
 
@@ -67,8 +67,8 @@ class FileBackendTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function openCreatesParentDirectoriesIfTheOptionSaysSo() {
-		$logFileURL = \vfsStream::url('testDirectory') . '/foo/test.log';
-		$backend = new \F3\FLOW3\Log\Backend\FileBackend(array('logFileURL' => $logFileURL, 'createParentDirectories' => TRUE));
+		$logFileUrl = \vfsStream::url('testDirectory') . '/foo/test.log';
+		$backend = new \F3\FLOW3\Log\Backend\FileBackend(array('logFileUrl' => $logFileUrl, 'createParentDirectories' => TRUE));
 		$backend->open();
 		$this->assertTrue(\vfsStreamWrapper::getRoot()->hasChild('foo'));
 	}
@@ -78,8 +78,8 @@ class FileBackendTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function appendRendersALogEntryAndAppendsItToTheLogfile() {
-		$logFileURL = \vfsStream::url('testDirectory') . '/test.log';
-		$backend = new \F3\FLOW3\Log\Backend\FileBackend(array('logFileURL' => $logFileURL));
+		$logFileUrl = \vfsStream::url('testDirectory') . '/test.log';
+		$backend = new \F3\FLOW3\Log\Backend\FileBackend(array('logFileUrl' => $logFileUrl));
 		$backend->open();
 
 		$backend->append('foo');
@@ -92,8 +92,8 @@ class FileBackendTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function appendIgnoresMessagesAboveTheSeverityThreshold() {
-		$logFileURL = \vfsStream::url('testDirectory') . '/test.log';
-		$backend = new \F3\FLOW3\Log\Backend\FileBackend(array('logFileURL' => $logFileURL));
+		$logFileUrl = \vfsStream::url('testDirectory') . '/test.log';
+		$backend = new \F3\FLOW3\Log\Backend\FileBackend(array('logFileUrl' => $logFileUrl));
 		$backend->setSeverityThreshold(LOG_EMERG);
 		$backend->open();
 
@@ -109,10 +109,10 @@ class FileBackendTest extends \F3\Testing\BaseTestCase {
 	public function logFileIsRotatedIfMaximumSizeIsExceeded() {
 		$this->markTestSkipped('vfsStream does not support touch() and rename()...');
 
-		$logFileURL = \vfsStream::url('testDirectory') . '/test.log';
-		file_put_contents($logFileURL, 'twentybytesofcontent');
+		$logFileUrl = \vfsStream::url('testDirectory') . '/test.log';
+		file_put_contents($logFileUrl, 'twentybytesofcontent');
 
-		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Log\Backend\FileBackend'), array('dummy'), array(array('logFileURL' => $logFileURL)));
+		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Log\Backend\FileBackend'), array('dummy'), array(array('logFileUrl' => $logFileUrl)));
 		$backend->_set('maximumLogFileSize', 10);
 		$backend->setLogFilesToKeep(1);
 		$backend->open();

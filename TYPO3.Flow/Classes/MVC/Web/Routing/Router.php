@@ -226,7 +226,7 @@ class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 
 		foreach ($this->routes as $route) {
 			if ($route->resolves($routeValues)) {
-				return $route->getMatchingURI();
+				return $route->getMatchingUri();
 			}
 		}
 		return '';

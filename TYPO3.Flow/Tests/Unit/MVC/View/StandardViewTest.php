@@ -88,8 +88,8 @@ class StandardViewTest extends \F3\Testing\BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function renderReturnsContentOfTemplateAndReplacesBaseUriMarkerIfRequestIsWebRequest() {
-		$mockRequest = $this->getMock('\F3\FLOW3\MVC\Web\Request', array('getBaseURI'));
-		$mockRequest->expects($this->any())->method('getBaseURI')->will($this->returnValue('someBaseUri'));
+		$mockRequest = $this->getMock('\F3\FLOW3\MVC\Web\Request', array('getBaseUri'));
+		$mockRequest->expects($this->any())->method('getBaseUri')->will($this->returnValue('someBaseUri'));
 		$this->controllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($mockRequest));
 
 		$templateContent = file_get_contents(FLOW3_PATH_FLOW3 . 'Resources/Private/MVC/StandardView_Template.html');
@@ -104,7 +104,7 @@ class StandardViewTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function renderReturnsContentOfTemplateAndReplacesBaseUriMarkerIfRequestIsNoWebRequest() {
 		$mockRequest = $this->getMock('\F3\FLOW3\MVC\RequestInterface');
-		$mockRequest->expects($this->never())->method('getBaseURI');
+		$mockRequest->expects($this->never())->method('getBaseUri');
 		$this->controllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($mockRequest));
 
 		$templateContent = file_get_contents(FLOW3_PATH_FLOW3 . 'Resources/Private/MVC/StandardView_Template.html');

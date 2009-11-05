@@ -48,14 +48,14 @@ class Request extends \F3\FLOW3\MVC\Request {
 	protected $environment;
 
 	/**
-	 * @var \F3\FLOW3\Property\DataType\URI The request URI
+	 * @var \F3\FLOW3\Property\DataType\Uri The request URI
 	 */
-	protected $requestURI;
+	protected $requestUri;
 
 	/**
-	 * @var \F3\FLOW3\Property\DataType\URI The base URI for this request - ie. the host and path leading to the index.php
+	 * @var \F3\FLOW3\Property\DataType\Uri The base URI for this request - ie. the host and path leading to the index.php
 	 */
-	protected $baseURI;
+	protected $baseUri;
 
 	/**
 	 * @var boolean TRUE if the HMAC of this request could be verified, FALSE otherwise.
@@ -101,25 +101,25 @@ class Request extends \F3\FLOW3\MVC\Request {
 	/**
 	 * Sets the request URI
 	 *
-	 * @param \F3\FLOW3\Property\DataType\URI $requestURI URI of this web request
+	 * @param \F3\FLOW3\Property\DataType\Uri $requestUri URI of this web request
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
-	public function setRequestURI(\F3\FLOW3\Property\DataType\URI $requestURI) {
-		$this->requestURI = clone $requestURI;
-		$this->baseURI = $this->detectBaseURI($requestURI);
+	public function setRequestUri(\F3\FLOW3\Property\DataType\Uri $requestUri) {
+		$this->requestUri = clone $requestUri;
+		$this->baseUri = $this->detectBaseUri($requestUri);
 	}
 
 	/**
 	 * Returns the request URI
 	 *
-	 * @return \F3\FLOW3\Property\DataType\URI URI of this web request
+	 * @return \F3\FLOW3\Property\DataType\Uri URI of this web request
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
-	public function getRequestURI() {
-		return $this->requestURI;
+	public function getRequestUri() {
+		return $this->requestUri;
 	}
 
 	/**
@@ -130,48 +130,48 @@ class Request extends \F3\FLOW3\MVC\Request {
 	 * @api
 	 */
 	public function getRequestPath() {
-		return $this->requestURI->getPath();
+		return $this->requestUri->getPath();
 	}
 
 	/**
 	 * Sets the base URI for this request.
 	 *
-	 * @param \F3\FLOW3\Property\DataType\URI $baseURI New base URI
+	 * @param \F3\FLOW3\Property\DataType\Uri $baseUri New base URI
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
-	public function setBaseURI(\F3\FLOW3\Property\DataType\URI $baseURI) {
-		$this->baseURI = clone $baseURI;
+	public function setBaseUri(\F3\FLOW3\Property\DataType\Uri $baseUri) {
+		$this->baseUri = clone $baseUri;
 	}
 
 	/**
 	 * Returns the base URI
 	 *
-	 * @return \F3\FLOW3\Property\DataType\URI Base URI of this web request
+	 * @return \F3\FLOW3\Property\DataType\Uri Base URI of this web request
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
-	public function getBaseURI() {
-		return $this->baseURI;
+	public function getBaseUri() {
+		return $this->baseUri;
 	}
 
 	/**
 	 * Tries to detect the base URI of this request and returns it.
 	 *
-	 * @param \F3\FLOW3\Property\DataType\URI $requestURI URI of this web request
-	 * @return \F3\FLOW3\Property\DataType\URI The detected base URI
+	 * @param \F3\FLOW3\Property\DataType\Uri $requestUri URI of this web request
+	 * @return \F3\FLOW3\Property\DataType\Uri The detected base URI
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function detectBaseURI(\F3\FLOW3\Property\DataType\URI $requestURI) {
-		$baseURI = clone $requestURI;
-		$baseURI->setQuery(NULL);
-		$baseURI->setFragment(NULL);
+	protected function detectBaseUri(\F3\FLOW3\Property\DataType\Uri $requestUri) {
+		$baseUri = clone $requestUri;
+		$baseUri->setQuery(NULL);
+		$baseUri->setFragment(NULL);
 
 		$requestPathSegments = explode('/', $this->environment->getScriptRequestPathAndName());
 		array_pop($requestPathSegments);
-		$baseURI->setPath(implode('/', $requestPathSegments) . '/');
-		return $baseURI;
+		$baseUri->setPath(implode('/', $requestPathSegments) . '/');
+		return $baseUri;
 	}
 
 	/**

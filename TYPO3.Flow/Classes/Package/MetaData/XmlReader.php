@@ -28,7 +28,7 @@ namespace F3\FLOW3\Package\MetaData;
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class XMLReader implements \F3\FLOW3\Package\MetaData\ReaderInterface {
+class XmlReader implements \F3\FLOW3\Package\MetaData\ReaderInterface {
 
 	/**
 	 * Read the package metadata for the given package from the

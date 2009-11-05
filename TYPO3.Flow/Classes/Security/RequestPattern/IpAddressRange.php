@@ -29,7 +29,7 @@ namespace F3\FLOW3\Security\RequestPattern;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
-class IPAddressRange implements \F3\FLOW3\Security\RequestPatternInterface {
+class IpAddressRange implements \F3\FLOW3\Security\RequestPatternInterface {
 
 	/**
 	 * @var string The address range

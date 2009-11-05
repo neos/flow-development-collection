@@ -311,11 +311,11 @@ F3\FLOW3\Package\Documentation\Format:
   scope: prototype
 
 F3\FLOW3\Package\MetaData\ReaderInterface:
-  className: F3\FLOW3\Package\MetaData\XMLReader
+  className: F3\FLOW3\Package\MetaData\XmlReader
 
 F3\FLOW3\Package\MetaData\WriterInterface:
   autowiring: off
-  className: F3\FLOW3\Package\MetaData\XMLWriter
+  className: F3\FLOW3\Package\MetaData\XmlWriter
 
 #                                                                          #
 # Reflection                                                               #
