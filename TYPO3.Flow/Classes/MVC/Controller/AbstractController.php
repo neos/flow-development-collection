@@ -104,6 +104,12 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	protected $supportedRequestTypes = array('F3\FLOW3\MVC\Request');
 
 	/**
+	 * Contains the controller context
+	 * @var \F3\FLOW3\MVC\Controller\ControllerContext
+	 */
+	protected $controllerContext;
+
+	/**
 	 * The flash messages. Use $this->flashMessageContainer->add(...) to add a new Flash
 	 * Message.
 	 *
@@ -219,28 +225,19 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 
 		$this->initializeControllerArgumentsBaseValidators();
 		$this->mapRequestArgumentsToControllerArguments();
+		$this->controllerContext = $this->objectFactory->create('F3\FLOW3\MVC\Controller\ControllerContext', $this->request, $this->response, $this->arguments, $this->argumentsMappingResults, $this->uriBuilder, $this->flashMessageContainer);
 	}
 
 	/**
-	 * Initialize the controller context
+	 * Returns this controller's context.
+	 * Note that the context is only available after processRequest() has been called.
 	 *
-	 * @return \F3\FLOW3\MVC\Controller\ControllerContext ControllerContext to be passed to the view
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @return \F3\FLOW3\MVC\Controller\ControllerContext The current controller context
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
-	protected function buildControllerContext() {
-		$controllerContext = $this->objectFactory->create('F3\FLOW3\MVC\Controller\ControllerContext');
-		$controllerContext->setRequest($this->request);
-		$controllerContext->setResponse($this->response);
-		if ($this->arguments !== NULL) {
-			$controllerContext->setArguments($this->arguments);
-		}
-		if ($this->argumentsMappingResults !== NULL) {
-			$controllerContext->setArgumentsMappingResults($this->argumentsMappingResults);
-		}
-		$controllerContext->setUriBuilder($this->uriBuilder);
-		$controllerContext->setFlashMessageContainer($this->flashMessageContainer);
-		return $controllerContext;
+	public function getControllerContext() {
+		return $this->controllerContext;
 	}
 
 	/**

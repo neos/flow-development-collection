@@ -34,9 +34,8 @@ interface ViewInterface {
 	/**
 	 * Sets the current controller context
 	 *
-	 * @param \F3\FLOW3\MVC\Controller\ControllerContext $controllerContext
+	 * @param \F3\FLOW3\MVC\Controller\ControllerContext $controllerContext Context of the controller associated with this view
 	 * @return void
-	 * @api
 	 */
 	public function setControllerContext(\F3\FLOW3\MVC\Controller\ControllerContext $controllerContext);
 

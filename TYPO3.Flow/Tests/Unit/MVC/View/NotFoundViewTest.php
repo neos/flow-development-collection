@@ -73,7 +73,7 @@ class NotFoundViewTest extends \F3\Testing\BaseTestCase {
 
 		$this->view = $this->getMock('F3\FLOW3\MVC\View\NotFoundView', array('getTemplatePathAndFilename'), array($this->objectFactory, $this->packageManager, $this->resourceManager, $this->objectManager));
 
-		$this->controllerContext = $this->getMock('F3\FLOW3\MVC\Controller\ControllerContext', array('getRequest'));
+		$this->controllerContext = $this->getMock('F3\FLOW3\MVC\Controller\ControllerContext', array('getRequest'), array(), '', FALSE);
 		$this->view->setControllerContext($this->controllerContext);
 	}
 

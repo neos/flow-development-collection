@@ -23,7 +23,10 @@ namespace F3\FLOW3\MVC\Controller;
  *                                                                        */
 
 /**
- * The controller context contains information from the controller
+ * The controller context holds information about the request, response, arguments
+ * and further details of a controller. Instances of this class act as a container
+ * for conveniently passing the information to other classes who need it, usually
+ * views being views or view helpers.
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
@@ -63,14 +66,23 @@ class ControllerContext {
 	protected $flashMessageContainer;
 
 	/**
-	 * Set the request of the controller
+	 * Constructs this context
 	 *
 	 * @param \F3\FLOW3\MVC\RequestInterface $request
-	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @param \F3\FLOW3\MVC\ResponseInterface $response
+	 * @param \F3\FLOW3\MVC\Controller\Arguments $arguments
+	 * @param \F3\FLOW3\Property\MappingResults $argumentsMappingResults
+	 * @param \F3\FLOW3\MVC\Web\Routing\UriBuilder $uriBuilder
+	 * @param \F3\FLOW3\MVC\Controller\FlashMessageContainer $flashMessageContainer The flash messages
 	 */
-	public function setRequest(\F3\FLOW3\MVC\RequestInterface $request) {
+	public function __construct(\F3\FLOW3\MVC\RequestInterface $request, \F3\FLOW3\MVC\ResponseInterface $response, \F3\FLOW3\MVC\Controller\Arguments $arguments,
+			\F3\FLOW3\Property\MappingResults $argumentsMappingResults, \F3\FLOW3\MVC\Web\Routing\UriBuilder $uriBuilder, \F3\FLOW3\MVC\Controller\FlashMessageContainer $flashMessageContainer) {
 		$this->request = $request;
+		$this->response = $response;
+		$this->arguments = $arguments;
+		$this->argumentsMappingResults = $argumentsMappingResults;
+		$this->uriBuilder = $uriBuilder;
+		$this->flashMessageContainer = $flashMessageContainer;
 	}
 
 	/**
@@ -85,17 +97,6 @@ class ControllerContext {
 	}
 
 	/**
-	 * Set the response of the controller
-	 *
-	 * @param \F3\FLOW3\MVC\ResponseInterface $response
-	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 */
-	public function setResponse(\F3\FLOW3\MVC\ResponseInterface $response) {
-		$this->response = $response;
-	}
-
-	/**
 	 * Get the response of the controller
 	 *
 	 * @return \F3\FLOW3\MVC\RequestInterface
@@ -104,17 +105,6 @@ class ControllerContext {
 	 */
 	public function getResponse() {
 		return $this->response;
-	}
-
-	/**
-	 * Set the arguments of the controller
-	 *
-	 * @param \F3\FLOW3\MVC\Controller\Arguments $arguments
-	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 */
-	public function setArguments(\F3\FLOW3\MVC\Controller\Arguments $arguments) {
-		$this->arguments = $arguments;
 	}
 
 	/**
@@ -129,17 +119,6 @@ class ControllerContext {
 	}
 
 	/**
-	 * Set the arguments mapping results of the controller
-	 *
-	 * @param \F3\FLOW3\Property\MappingResults $argumentsMappingResults
-	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 */
-	public function setArgumentsMappingResults(\F3\FLOW3\Property\MappingResults $argumentsMappingResults) {
-		$this->argumentsMappingResults = $argumentsMappingResults;
-	}
-
-	/**
 	 * Get the arguments mapping results of the controller
 	 *
 	 * @return \F3\FLOW3\Property\MappingResults
@@ -151,15 +130,8 @@ class ControllerContext {
 	}
 
 	/**
-	 * \F3\FLOW3\MVC\Web\Routing\UriBuilder $uriBuilder
-	 * @return void
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	public function setUriBuilder(\F3\FLOW3\MVC\Web\Routing\UriBuilder $uriBuilder) {
-		$this->uriBuilder = $uriBuilder;
-	}
-
-	/**
+	 * Returns the URI Builder bound to this context
+	 *
 	 * @return \F3\FLOW3\MVC\Web\Routing\UriBuilder
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @api
@@ -177,17 +149,6 @@ class ControllerContext {
 	 */
 	public function getFlashMessageContainer() {
 		return $this->flashMessageContainer;
-	}
-
-	/**
-	 * Set the flash message object.
-	 *
-	 * @param \F3\FLOW3\MVC\Controller\FlashMessageContainer $flashMessageContainer The flash messages
-	 * @return void
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 */
-	public function setFlashMessageContainer(\F3\FLOW3\MVC\Controller\FlashMessageContainer $flashMessageContainer) {
-		$this->flashMessageContainer = $flashMessageContainer;
 	}
 }
 ?>

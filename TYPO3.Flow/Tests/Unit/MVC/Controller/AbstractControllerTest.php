@@ -48,54 +48,24 @@ class AbstractControllerTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function processRequestSetsTheDispatchedFlagOfTheRequest() {
+	public function processRequestSetsTheDispatchedFlagOfTheRequestAndBuildsTheControllerContext() {
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request');
 		$mockRequest->expects($this->once())->method('setDispatched')->with(TRUE);
 
 		$mockResponse = $this->getMock('F3\FLOW3\MVC\Web\Response');
 
 		$mockUriBuilder = $this->getMock('F3\FLOW3\MVC\Web\Routing\UriBuilder');
+		$mockControllerContext = $this->getMock('F3\FLOW3\MVC\Controller\ControllerContext', array(), array(), '', FALSE);
 
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
-		$mockObjectFactory->expects($this->once())->method('create')->with('F3\FLOW3\MVC\Web\Routing\UriBuilder')->will($this->returnValue($mockUriBuilder));
+		$mockObjectFactory->expects($this->at(0))->method('create')->with('F3\FLOW3\MVC\Web\Routing\UriBuilder')->will($this->returnValue($mockUriBuilder));
+		$mockObjectFactory->expects($this->at(1))->method('create')->with('F3\FLOW3\MVC\Controller\ControllerContext')->will($this->returnValue($mockControllerContext));
 
-		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\AbstractController'), array('initializeArguments', 'initializeControllerArgumentsBaseValidators', 'mapRequestArgumentsToControllerArguments'), array(), '', FALSE);
+		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\AbstractController'), array('initializeArguments', 'initializeControllerArgumentsBaseValidators', 'mapRequestArgumentsToControllerArguments', 'buildControllerContext'), array(), '', FALSE);
 		$controller->_set('objectFactory', $mockObjectFactory);
 		$controller->processRequest($mockRequest, $mockResponse);
-	}
 
-	/**
-	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	public function buildControllerContextCreatesControllerContextWithRequiredPropeties() {
-		$mockRequest = $this->getMock('F3\FLOW3\MVC\RequestInterface');
-		$mockResponse = $this->getMock('F3\FLOW3\MVC\ResponseInterface');
-		$mockArguments = $this->getMock('F3\FLOW3\MVC\Controller\Arguments', array(), array(), '', FALSE);
-		$mockArgumentsMappingResults = $this->getMock('F3\FLOW3\Property\MappingResults');
-		$mockUriBuilder = $this->getMock('F3\FLOW3\MVC\Web\Routing\UriBuilder');
-		$mockFlashMessageContainer = $this->getMock('F3\FLOW3\MVC\Controller\FlashMessageContainer');
-
-		$mockControllerContext = $this->getMock('F3\FLOW3\MVC\Controller\ControllerContext');
-		$mockControllerContext->expects($this->once())->method('setRequest')->with($mockRequest);
-		$mockControllerContext->expects($this->once())->method('setResponse')->with($mockResponse);
-		$mockControllerContext->expects($this->once())->method('setArguments')->with($mockArguments);
-		$mockControllerContext->expects($this->once())->method('setArgumentsMappingResults')->with($mockArgumentsMappingResults);
-		$mockControllerContext->expects($this->once())->method('setUriBuilder')->with($mockUriBuilder);
-		$mockControllerContext->expects($this->once())->method('setFlashMessageContainer')->with($mockFlashMessageContainer);
-
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
-		$mockObjectFactory->expects($this->once())->method('create')->with('F3\FLOW3\MVC\Controller\ControllerContext')->will($this->returnValue($mockControllerContext));
-
-		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\AbstractController'), array('dummy'), array(), '', FALSE);
-		$controller->_set('objectFactory', $mockObjectFactory);
-		$controller->_set('uriBuilder', $mockUriBuilder);
-		$controller->_set('request', $mockRequest);
-		$controller->_set('response', $mockResponse);
-		$controller->_set('arguments', $mockArguments);
-		$controller->_set('argumentsMappingResults', $mockArgumentsMappingResults);
-		$controller->_set('flashMessageContainer', $mockFlashMessageContainer);
-		$controller->_call('buildControllerContext');
+		$this->assertSame($mockControllerContext, $controller->getControllerContext());
 	}
 
 	/**

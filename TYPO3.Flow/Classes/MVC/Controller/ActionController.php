@@ -129,6 +129,7 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 		}
 
 		$this->mapRequestArgumentsToControllerArguments();
+		$this->controllerContext = $this->objectFactory->create('F3\FLOW3\MVC\Controller\ControllerContext', $this->request, $this->response, $this->arguments, $this->argumentsMappingResults, $this->uriBuilder, $this->flashMessageContainer);
 		$this->checkRequestHash();
 		$this->view = $this->resolveView();
 		if ($this->view !== NULL) {
@@ -263,8 +264,7 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 */
 	protected function resolveView() {
 		$view = $this->objectFactory->create('F3\Fluid\View\TemplateView');
-		$controllerContext = $this->buildControllerContext();
-		$view->setControllerContext($controllerContext);
+		$view->setControllerContext($this->controllerContext);
 		if ($view->hasTemplate() === FALSE) {
 			$viewObjectName = $this->resolveViewObjectName();
 			if ($viewObjectName !== FALSE) {
@@ -273,9 +273,8 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 				$view = $this->objectFactory->create('F3\FLOW3\MVC\View\NotFoundView');
 				$view->assign('errorMessage', 'No template was found. View could not be resolved for action "' . $this->request->getControllerActionName() . '"');
 			}
-			$view->setControllerContext($controllerContext);
+			$view->setControllerContext($this->controllerContext);
 		}
-
 		return $view;
 	}
 

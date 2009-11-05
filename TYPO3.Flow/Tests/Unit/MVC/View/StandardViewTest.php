@@ -68,7 +68,7 @@ class StandardViewTest extends \F3\Testing\BaseTestCase {
 
 		$this->view = new \F3\FLOW3\MVC\View\StandardView($this->objectFactory, $this->packageManager, $this->resourceManager, $this->objectManager);
 
-		$this->controllerContext = $this->getMock('F3\FLOW3\MVC\Controller\ControllerContext', array('getRequest'));
+		$this->controllerContext = $this->getMock('F3\FLOW3\MVC\Controller\ControllerContext', array('getRequest'), array(), '', FALSE);
 		$this->view->setControllerContext($this->controllerContext);
 	}
 

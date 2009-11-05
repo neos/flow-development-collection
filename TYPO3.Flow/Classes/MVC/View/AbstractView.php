@@ -81,6 +81,17 @@ abstract class AbstractView implements \F3\FLOW3\MVC\View\ViewInterface {
 	}
 
 	/**
+	 * Sets the current controller context
+	 *
+	 * @param \F3\FLOW3\MVC\Controller\ControllerContext $controllerContext
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setControllerContext(\F3\FLOW3\MVC\Controller\ControllerContext $controllerContext) {
+		$this->controllerContext = $controllerContext;
+	}
+
+	/**
 	 * Initializes the view after all dependencies have been injected
 	 *
 	 * @return void
@@ -88,17 +99,6 @@ abstract class AbstractView implements \F3\FLOW3\MVC\View\ViewInterface {
 	 */
 	public function initializeObject() {
 		$this->initializeView();
-	}
-
-	/**
-	 * Sets the current controller context
-	 *
-	 * @param \F3\FLOW3\MVC\Controller\ControllerContext $controllerContext
-	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 */
-	public function setControllerContext(\F3\FLOW3\MVC\Controller\ControllerContext $controllerContext) {
-		$this->controllerContext = $controllerContext;
 	}
 
 	/**
