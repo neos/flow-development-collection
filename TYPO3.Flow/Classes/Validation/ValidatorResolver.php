@@ -296,12 +296,12 @@ class ValidatorResolver {
 	}
 
 	/**
-	 * Removes escapings from a given argument string.
+	 * Removes escapings from a given argument string and trims the outermost
+	 * quotes.
 	 * 
 	 * This method is meant as a helper for regular expression results.
 	 *
 	 * @param string &$quotedValue Value to unquote
-	 * @return string Unquoted value
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
