@@ -82,7 +82,7 @@ class NotFoundController extends \F3\FLOW3\MVC\Controller\AbstractController imp
 	 */
 	public function processRequest(\F3\FLOW3\MVC\RequestInterface $request, \F3\FLOW3\MVC\ResponseInterface $response) {
 		parent::processRequest($request, $response);
-		$this->notFoundView->setControllerContext($this->controllerContext());
+		$this->notFoundView->setControllerContext($this->controllerContext);
 		if ($this->exception !== NULL) {
 			$this->notFoundView->assign('errorMessage', $this->exception->getMessage());
 		}
