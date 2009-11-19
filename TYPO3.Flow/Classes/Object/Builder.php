@@ -145,13 +145,14 @@ class Builder {
 			if ($customFactoryClassName !== NULL) {
 				$customFactory = $this->objectManager->getObject($customFactoryClassName);
 				$object = call_user_func_array(array($customFactory, $objectConfiguration->getFactoryMethodName()), $preparedArguments);
+				if (!is_object($object)) {
+					throw new \F3\FLOW3\Object\Exception\CannotBuildObject('Custom factory "' . $customFactoryClassName . '->' . $objectConfiguration->getFactoryMethodName() . '()" did not return an object while building object "' . $objectName . '" (Configuration source: ' . $objectConfiguration->getConfigurationSourceHint() . ')', 1257766990);
+				}
 			} else {
 				$object = $this->instantiateClass($className, $preparedArguments);
-			}
-
-			if (!is_object($object)) {
-				$errorMessage = error_get_last();
-				throw new \F3\FLOW3\Object\Exception\CannotBuildObject('A parse error ocurred while trying to build a new object of type ' . $className . ' (' . $errorMessage['message'] . ').', 1187164523);
+				if (!is_object($object)) {
+					throw new \F3\FLOW3\Object\Exception\CannotBuildObject('Could not instantiate class ' . $className . ' while building object "' . $objectName . '"', 1187164523);
+				}
 			}
 
 			if ($object instanceof \F3\FLOW3\AOP\ProxyInterface) {

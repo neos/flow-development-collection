@@ -94,7 +94,7 @@ class Logger implements \F3\FLOW3\Log\SystemLoggerInterface {
 			$className = isset($backtrace[1]['class']) ? $backtrace[1]['class'] : '';
 			$methodName = isset($backtrace[1]['function']) ? $backtrace[1]['function'] : '';
 			$explodedClassName = explode('\\', $className);
-			$packageKey = $explodedClassName[1];
+			$packageKey = isset($explodedClassName[1]) ? $explodedClassName[1] : '';
 		}
 		foreach ($this->backends as $backend) {
 			$backend->append($message, $severity, $additionalData, $packageKey, $className, $methodName);
