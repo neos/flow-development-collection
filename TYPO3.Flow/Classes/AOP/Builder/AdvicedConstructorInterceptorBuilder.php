@@ -60,7 +60,7 @@ class AdvicedConstructorInterceptorBuilder extends \F3\FLOW3\AOP\Builder\Abstrac
 			unset ($this->methodIsInAdviceMode[\'__construct\']);
 		}
 ';
-		$methodDocumentation = $this->buildMethodDocumentation($declaringClassName, $methodName);
+		$methodDocumentation = $this->buildMethodDocumentation($declaringClassName, '__construct');
 		$methodParametersCode = $this->buildMethodParametersCode($declaringClassName, '__construct', TRUE);
 
 		$constructorCode = '

@@ -47,7 +47,7 @@ class EmptyConstructorInterceptorBuilder extends \F3\FLOW3\AOP\Builder\AbstractM
 
 		$callParentCode = '';
 		$parametersCode = '';
-		$methodDocumentation = $this->buildMethodDocumentation($declaringClassName, $methodName);
+		$methodDocumentation = $this->buildMethodDocumentation($declaringClassName, '__construct');
 		if (method_exists($declaringClassName, '__construct')) {
 			$parametersCode = $this->buildMethodParametersCode($declaringClassName, '__construct', TRUE);
 			$callParentCode = 'parent::__construct(' . $this->buildSavedConstructorParametersCode($declaringClassName) . ');';

@@ -121,6 +121,9 @@ abstract class AbstractMethodInterceptorBuilder {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function buildMethodDocumentation($className, $methodName) {
+
+		if ($className === NULL || $methodName === NULL) return '';
+
 		$methodDocumentation = '';
 		$methodTags = $this->reflectionService->getMethodTagsValues($className, $methodName);
 		$ignoredTags = $this->reflectionService->getIgnoredTags();
