@@ -25,7 +25,7 @@ namespace F3\FLOW3\Security\Authentication\Provider;
 /**
  * An authentication provider that authenticates
  * F3\FLOW3\Security\Authentication\Token\UsernamePassword tokens.
- * The accounts are stored in the CR.
+ * The accounts are stored in the Content Repository.
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
@@ -69,12 +69,12 @@ class UsernamePasswordCR implements \F3\FLOW3\Security\Authentication\ProviderIn
 	/**
 	 * Returns TRUE if the given token can be authenticated by this provider
 	 *
-	 * @param F3\FLOW3\Security\Authentication\TokenInterface $token The token that should be authenticated
+	 * @param F3\FLOW3\Security\Authentication\TokenInterface $authenticationToken The token that should be authenticated
 	 * @return boolean TRUE if the given token class can be authenticated by this provider
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function canAuthenticate(\F3\FLOW3\Security\Authentication\TokenInterface $token) {
-		if ($token->getAuthenticationProviderName() === $this->name) return TRUE;
+	public function canAuthenticate(\F3\FLOW3\Security\Authentication\TokenInterface $authenticationToken) {
+		if ($authenticationToken->getAuthenticationProviderName() === $this->name) return TRUE;
 		return FALSE;
 	}
 
@@ -101,7 +101,9 @@ class UsernamePasswordCR implements \F3\FLOW3\Security\Authentication\ProviderIn
 		$account = NULL;
 		$credentials = $authenticationToken->getCredentials();
 
-		if (is_array($credentials) && isset($credentials['username'])) $account = $this->accountRepository->findByAccountIdentifierAndAuthenticationProviderName($credentials['username'], $this->name);
+		if (is_array($credentials) && isset($credentials['username'])) {
+			$account = $this->accountRepository->findByAccountIdentifierAndAuthenticationProviderName($credentials['username'], $this->name);
+		}
 
 		if (is_object($account)) {
 			list($passwordHash, $salt) = explode(',', $account->getCredentialsSource());

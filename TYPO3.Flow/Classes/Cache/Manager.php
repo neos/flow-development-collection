@@ -190,7 +190,7 @@ class Manager {
 	 * @api
 	 */
 	public function flushCachesByTag($tag) {
-		$this->systemLogger->log(sprintf('Flushing caches by tag "%s".', $tag), LOG_NOTICE);
+		$this->systemLogger->log(sprintf('Flushing caches by tag "%s".', $tag), LOG_DEBUG);
 		foreach ($this->caches as $cache) {
 			$cache->flushByTag($tag);
 		}

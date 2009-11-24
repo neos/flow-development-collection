@@ -85,6 +85,14 @@ interface JoinPointInterface {
 	public function getAdviceChain();
 
 	/**
+	 * If an exception was thrown by the target method
+	 * Only makes sense for After Throwing advices.
+	 *
+	 * @return boolean
+	 */
+	public function hasException();
+
+	/**
 	 * Returns the exception which has been thrown in the target method.
 	 * If no exception has been thrown, NULL is returned.
 	 * Only makes sense for After Throwing advices.

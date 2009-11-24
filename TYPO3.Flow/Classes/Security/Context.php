@@ -123,8 +123,9 @@ class Context {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getAuthenticationTokens() {
-		if ($this->separateTokensPerformed === FALSE) $this->separateActiveAndInactiveTokens();
-
+		if ($this->separateTokensPerformed === FALSE) {
+			$this->separateActiveAndInactiveTokens();
+		}
 		return $this->activeTokens;
 	}
 

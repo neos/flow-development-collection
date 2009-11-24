@@ -23,7 +23,7 @@ namespace F3\FLOW3\Security\Authentication;
  *                                                                        */
 
 /**
- * The default authentication manager, which uses different \F3\FLOW3\Security\Authentication\Providers
+ * The default authentication manager, which relies on Authentication Providers
  * to authenticate the tokens stored in the security context.
  *
  * @version $Id$
@@ -120,6 +120,16 @@ class ProviderManager implements \F3\FLOW3\Security\Authentication\ManagerInterf
 	}
 
 	/**
+	 * Returns the security context
+	 *
+	 * @return \F3\FLOW3\Security\Context $securityContext The security context of the current request
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getSecurityContext() {
+		return $this->securityContext;
+	}
+
+	/**
 	 * Returns clean tokens this manager is responsible for.
 	 * Note: The order of the tokens in the array is important, as the tokens will be authenticated in the given order.
 	 *
@@ -133,7 +143,7 @@ class ProviderManager implements \F3\FLOW3\Security\Authentication\ManagerInterf
 	/**
 	 * Tries to authenticate the tokens in the security context (in the given order)
 	 * with the available authentication providers, if needed.
-	 * If securityContext->authenticateAllTokens() returns TRUE all tokens have be authenticated,
+	 * If securityContext->authenticateAllTokens() returns TRUE all tokens have to be authenticated,
 	 * otherwise there has to be at least one authenticated token to have a valid authentication.
 	 *
 	 * Note: This method sets the 'authenticationPerformed' flag in the security context. You have to
@@ -148,11 +158,14 @@ class ProviderManager implements \F3\FLOW3\Security\Authentication\ManagerInterf
 		$allTokensAreAuthenticated = TRUE;
 		if ($this->securityContext === NULL) throw new \F3\FLOW3\Security\Exception('Cannot authenticate because no security context has been set.', 1232978667);
 
-		foreach ($this->securityContext->getAuthenticationTokens() as $token) {
-			foreach ($this->providers as $provider) {
-				if ($provider->canAuthenticate($token)
-					&& $token->getAuthenticationStatus() === \F3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_NEEDED) {
+		$tokens = $this->securityContext->getAuthenticationTokens();
+		if (count($tokens) === 0) {
+			throw new \F3\FLOW3\Security\Exception\AuthenticationRequired('The security context contained no tokens which could be authenticated.', 1258721059);
+		}
 
+		foreach ($tokens as $token) {
+			foreach ($this->providers as $provider) {
+				if ($provider->canAuthenticate($token) && $token->getAuthenticationStatus() === \F3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_NEEDED) {
 					$provider->authenticate($token);
 					break;
 				}
@@ -162,22 +175,21 @@ class ProviderManager implements \F3\FLOW3\Security\Authentication\ManagerInterf
 			if (!$token->isAuthenticated() && $this->securityContext->authenticateAllTokens()) throw new \F3\FLOW3\Security\Exception\AuthenticationRequired('Could not authenticate all tokens, but authenticateAllTokens was set to TRUE.', 1222203912);
 			$allTokensAreAuthenticated &= $token->isAuthenticated();
 		}
-
-		if ($allTokensAreAuthenticated) return;
-
-		throw new \F3\FLOW3\Security\Exception\AuthenticationRequired('Could not authenticate any token.', 1222204027);
+		if (!$allTokensAreAuthenticated) {
+			throw new \F3\FLOW3\Security\Exception\AuthenticationRequired('Could not authenticate any token. Might be missing or wrong credentials or no authentication provider matched.', 1222204027);
+		}
 	}
 
-         /**
-	 * Logs all acitve authentication tokens out
+	/**
+	 * Logout all active authentication tokens
 	 *
 	 * @return void
 	 */
 	public function logout() {
-            foreach ($this->securityContext->getAuthenticationTokens() as $token) {
-                    $token->setAuthenticationStatus(\F3\FLOW3\Security\Authentication\TokenInterface::NO_CREDENTIALS_GIVEN);
-            }
-        }
+		foreach ($this->securityContext->getAuthenticationTokens() as $token) {
+			$token->setAuthenticationStatus(\F3\FLOW3\Security\Authentication\TokenInterface::NO_CREDENTIALS_GIVEN);
+		}
+	}
 
 	/**
 	 * Builds the provider and token objects based on the given configuration
@@ -193,7 +205,6 @@ class ProviderManager implements \F3\FLOW3\Security\Authentication\ManagerInterf
 
 			$providerObjectName = $this->providerResolver->resolveProviderClass((string)$providerConfiguration['providerClass']);
 			if ($providerObjectName === NULL) throw new \F3\FLOW3\Security\Exception\InvalidAuthenticationProvider('The configured authentication provider "' . $providerConfiguration['providerClass'] . '" could not be found!', 1237330453);
-
 			$providerOptions = array();
 			if (isset($providerConfiguration['options']) && is_array($providerConfiguration['options'])) $providerOptions = $providerConfiguration['options'];
 

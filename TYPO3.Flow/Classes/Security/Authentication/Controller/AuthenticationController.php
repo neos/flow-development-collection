@@ -37,12 +37,6 @@ class AuthenticationController extends \F3\FLOW3\MVC\Controller\ActionController
 	protected $authenticationManager;
 
 	/**
-	 * The current security context
-	 * @var \F3\FLOW3\Security\Context
-	 */
-	protected $securityContext;
-
-	/**
 	 * Inject the authentication manager
 	 *
 	 * @param \F3\FLOW3\Security\Authentication\ManagerInterface $authenticationManager The authentication manager
@@ -51,17 +45,6 @@ class AuthenticationController extends \F3\FLOW3\MVC\Controller\ActionController
 	 */
 	public function injectAuthenticationManager(\F3\FLOW3\Security\Authentication\ManagerInterface $authenticationManager) {
 		$this->authenticationManager = $authenticationManager;
-	}
-
-	/**
-	 * Inject the security context holder and fetch the current security context from it
-	 *
-	 * @param \F3\FLOW3\Security\ContextHolderInterface $securityContextHolder The security context holder
-	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function injectSecurityContextHolder(\F3\FLOW3\Security\ContextHolderInterface $securityContextHolder) {
-		$this->securityContext = $securityContextHolder->getContext();
 	}
 
 	/**

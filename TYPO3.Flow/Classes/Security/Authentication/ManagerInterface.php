@@ -50,6 +50,13 @@ interface ManagerInterface {
 	public function setSecurityContext(\F3\FLOW3\Security\Context $securityContext);
 
 	/**
+	 * Returns the security context
+	 *
+	 * @return \F3\FLOW3\Security\Context $securityContext The security context of the current request
+	 */
+	public function getSecurityContext();
+
+	/**
 	 * Tries to authenticate the tokens in the security context, if needed.
 	 * (Have a look at the \F3\FLOW3\Security\Authentication\TokenManager for an implementation example)
 	 *
@@ -57,7 +64,7 @@ interface ManagerInterface {
 	 */
 	public function authenticate();
 
-        /**
+	/**
 	 * Logs all acitve authentication tokens out
 	 *
 	 * @return void

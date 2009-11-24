@@ -169,8 +169,6 @@ security:
     providers:
       DefaultProvider:
         providerClass: UsernamePasswordCR
-        requestPatterns:
-         controllerObjectName: F3\FLOW3\Security\.*
 
     # If set to TRUE, authentication will only succeed, if all active tokens (authentication mechanisms)
     # can be authenticated.

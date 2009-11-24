@@ -29,6 +29,7 @@ namespace F3\FLOW3\AOP;
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
+ * @api
  */
 class JoinPoint implements \F3\FLOW3\AOP\JoinPointInterface {
 
@@ -96,6 +97,7 @@ class JoinPoint implements \F3\FLOW3\AOP\JoinPointInterface {
 	 * Returns the reference to the proxy class instance
 	 *
 	 * @return \F3\FLOW3\AOP\ProxyInterface
+	 * @api
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getProxy() {
@@ -106,6 +108,7 @@ class JoinPoint implements \F3\FLOW3\AOP\JoinPointInterface {
 	 * Returns the class name of the target class this join point refers to
 	 *
 	 * @return string The class name
+	 * @api
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getClassName() {
@@ -116,6 +119,7 @@ class JoinPoint implements \F3\FLOW3\AOP\JoinPointInterface {
 	 * Returns the method name of the method this join point refers to
 	 *
 	 * @return string The method name
+	 * @api
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getMethodName() {
@@ -126,6 +130,7 @@ class JoinPoint implements \F3\FLOW3\AOP\JoinPointInterface {
 	 * Returns an array of arguments which have been passed to the target method
 	 *
 	 * @return array Array of arguments
+	 * @api
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getMethodArguments() {
@@ -137,6 +142,7 @@ class JoinPoint implements \F3\FLOW3\AOP\JoinPointInterface {
 	 *
 	 * @param  string $argumentName Name of the argument
 	 * @return mixed Value of the argument
+	 * @api
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getMethodArgument($argumentName) {
@@ -150,6 +156,7 @@ class JoinPoint implements \F3\FLOW3\AOP\JoinPointInterface {
 	 *
 	 * @param  string $argumentName Name of the argument to check
 	 * @return boolean TRUE if the argument exists
+	 * @api
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function isMethodArgument($argumentName) {
@@ -160,10 +167,23 @@ class JoinPoint implements \F3\FLOW3\AOP\JoinPointInterface {
 	 * Returns the advice chain related to this join point
 	 *
 	 * @return \F3\FLOW3\AOP\Advice\AdviceChainInterface The advice chain
+	 * @api
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getAdviceChain() {
 		return $this->adviceChain;
+	}
+
+	/**
+	 * If an exception was thrown by the target method
+	 * Only makes sense for After Throwing advices.
+	 *
+	 * @return boolean
+	 * @api
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function hasException() {
+		return $this->exception !== NULL;
 	}
 
 	/**
@@ -172,6 +192,7 @@ class JoinPoint implements \F3\FLOW3\AOP\JoinPointInterface {
 	 * Only makes sense for After Throwing advices.
 	 *
 	 * @return mixed The exception thrown or NULL
+	 * @api
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getException() {
@@ -183,6 +204,7 @@ class JoinPoint implements \F3\FLOW3\AOP\JoinPointInterface {
 	 * available for afterReturning advices.
 	 *
 	 * @return mixed Result of the method invocation
+	 * @api
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getResult() {
