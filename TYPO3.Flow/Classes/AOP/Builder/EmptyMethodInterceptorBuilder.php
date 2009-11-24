@@ -46,8 +46,8 @@ class EmptyMethodInterceptorBuilder extends \F3\FLOW3\AOP\Builder\AbstractMethod
 
 		$declaringClassName = $interceptedMethods[$methodName]['declaringClassName'];
 
-		$methodParametersDocumentation = '';
-		$methodParametersCode = $this->buildMethodParametersCode($declaringClassName, $methodName, TRUE, $methodParametersDocumentation);
+		$methodDocumentation = $this->buildMethodDocumentation($declaringClassName, $methodName);
+		$methodParametersCode = $this->buildMethodParametersCode($declaringClassName, $methodName, TRUE);
 
 		$staticKeyword = $this->reflectionService->isMethodStatic($declaringClassName, $methodName) ? 'static ' : '';
 
@@ -55,7 +55,7 @@ class EmptyMethodInterceptorBuilder extends \F3\FLOW3\AOP\Builder\AbstractMethod
 	/**
 	 * Placeholder for the method ' . $methodName . '() declared in
 	 * ' . $declaringClassName . '.
-	 * ' . $methodParametersDocumentation . '
+	 * ' . $methodDocumentation . '
 	 * @return void
 	 */
 	' . $staticKeyword . 'public function ' . $methodName . '(' . $methodParametersCode . ') {}

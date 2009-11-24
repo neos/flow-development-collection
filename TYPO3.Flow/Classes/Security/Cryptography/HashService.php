@@ -31,6 +31,25 @@ namespace F3\FLOW3\Security\Cryptography;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  */
 class HashService {
+
+	/**
+	 * A private, unique key used for encryption tasks.
+	 * @var string
+	 */
+	protected $encryptionKey;
+
+	/**
+	 * @param array $settings
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@dambekalns.de>
+	 */
+	public function injectSettings(array $settings) {
+		if (empty($settings['security']['cryptography']['HashService']['encryptionKey'])) {
+			throw new \F3\FLOW3\Security\Exception\MissingConfiguration('You must configure an encryption key for the HashService', 1258991855);
+		}
+		$this->encryptionKey = $settings['security']['cryptography']['HashService']['encryptionKey'];
+	}
+
 	/**
 	 * Generate a hash (HMAC) for a given string
 	 *
@@ -39,26 +58,24 @@ class HashService {
 	 * @throws F3\FLOW3\Security\Exception\InvalidArgumentForHashGeneration if something else than a string was given as parameter
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @todo Mark as API once it is more stable
-	 * @todo encryption key has to come from somewhere else
 	 */
-	public function generateHash($string) {
+	public function generateHmac($string) {
 		if (!is_string($string)) throw new \F3\FLOW3\Security\Exception\InvalidArgumentForHashGeneration('A hash can only be generated for a string, but "' . gettype($string) . '" was given.', 1255069587);
-		$encryptionKey = '7nN5#n8guP/oA9Bq95x=e/x}.hL[:7yv1BJcWrB0AYQ5WJ!KGd';
 
-		return hash_hmac('sha1', $string, $encryptionKey);
+		return hash_hmac('sha1', $string, $this->encryptionKey);
 	}
 
 	/**
-	 * Test if a string $string has the hash given by $hash.
+	 * Test if a string $string matches the HMAC given by $hash.
 	 *
 	 * @param string $string The string which should be validated
-	 * @param string $hash The hash of the string
+	 * @param string $hmac The hash of the string
 	 * @return boolean TRUE if string and hash fit together, FALSE otherwise.
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @todo Mark as API once it is more stable
 	 */
-	public function validateHash($string, $hash) {
-		return ($this->generateHash($string) === $hash);
+	public function validateHmac($string, $hmac) {
+		return ($this->generateHmac($string) === $hmac);
 	}
 }
 ?>

@@ -172,7 +172,7 @@ class Service {
 	 *
 	 * @var array
 	 */
-	protected $ignoredTags = array('package', 'subpackage', 'license', 'copyright', 'author', 'version', 'const');
+	protected $ignoredTags = array('package', 'subpackage', 'license', 'copyright', 'author', 'version', 'const', 'see', 'todo');
 
 	/**
 	 * Schemata of all classes which need to be persisted
@@ -265,6 +265,17 @@ class Service {
 		if ($this->cachedClassNames !== $this->reflectedClassNames) {
 			$this->saveToCache();
 		}
+	}
+
+	/**
+	 * Returns an array with annotations that are ignored while reflecting class 
+	 * and method annotations.
+	 * 
+	 * @return array
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getIgnoredTags() {
+		return $this->ignoredTags;
 	}
 
 	/**

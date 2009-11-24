@@ -65,11 +65,10 @@ abstract class AbstractMethodInterceptorBuilder {
 	 * @param string $className Name of the class the method is declared in
 	 * @param string $methodName Name of the method to create the parameters code for
 	 * @param boolean $addTypeAndDefaultValue Adds the type and default value for each parameters (if any)
-	 * @param string $methodParametersDocumentation Passed by reference, will contain the DocComment for the given method
 	 * @return string A comma speparated list of parameters
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function buildMethodParametersCode($className, $methodName, $addTypeAndDefaultValue, &$methodParametersDocumentation = '') {
+	public function buildMethodParametersCode($className, $methodName, $addTypeAndDefaultValue) {
 		$methodParametersCode = '';
 		$methodParameterTypeName = '';
 		$defaultValue = '';
@@ -80,7 +79,6 @@ abstract class AbstractMethodInterceptorBuilder {
 		$methodParameters = $this->reflectionService->getMethodParameters($className, $methodName);
 		if (count($methodParameters) > 0) {
 			$methodParametersCount = 0;
-			$methodParameterComments = $this->reflectionService->getMethodTagsValues($className, $methodName);
 			foreach ($methodParameters as $methodParameterName => $methodParameterInfo) {
 				if ($addTypeAndDefaultValue) {
 					if ($methodParameterInfo['array'] === TRUE) {
@@ -88,17 +86,6 @@ abstract class AbstractMethodInterceptorBuilder {
 					} else {
 						$methodParameterTypeName = ($methodParameterInfo['class'] === NULL) ? '' : '\\' . $methodParameterInfo['class'];
 					}
-					$methodParameterDocumentationTypeName = ($methodParameterTypeName ? $methodParameterTypeName : 'unknown_type' );
-					if (isset($methodParameterComments['param'][$methodParameterInfo['position']])) {
-						$explodedComment = explode(' ', $methodParameterComments['param'][$methodParameterInfo['position']]);
-						if ($methodParameterDocumentationTypeName === 'unknown_type') {
-							$methodParameterDocumentationTypeName = $explodedComment[0];
-						}
-						$methodParameterComment = isset($explodedComment[2]) ? ' ' . implode(' ', array_slice($explodedComment, 2)) : '';
-					} else {
-						$methodParameterComment = '';
-					}
-					$methodParametersDocumentation .= "\n\t * @param  " . $methodParameterDocumentationTypeName . " $" . $methodParameterName . $methodParameterComment;
 					if ($methodParameterInfo['optional'] === TRUE) {
 						$rawDefaultValue = $methodParameterInfo['defaultValue'];
 						if ($rawDefaultValue === NULL) {
@@ -117,11 +104,34 @@ abstract class AbstractMethodInterceptorBuilder {
 				$methodParametersCode .= ($methodParametersCount > 0 ? ', ' : '') . ($methodParameterTypeName ? $methodParameterTypeName . ' ' : '') . $byReferenceSign . '$' . $methodParameterName . $defaultValue;
 				$methodParametersCount ++;
 			}
-			if (isset($methodParameterComments['return'])) {
-				$methodParametersDocumentation  .= "\n\t * @return " . implode(' ', $methodParameterComments['return']);
+		}
+
+		return $methodParametersCode;
+	}
+
+	/**
+	 *
+	/**
+	 * Builds the method docblock for the specified method keeping the vital
+	 * annotations to be used in a method interceptor in the proxy class.
+	 *
+	 * @param string $className Name of the class the method is declared in
+	 * @param string $methodName Name of the method to create the parameters code for
+	 * @return string $methodDocumentation Passed by reference, will contain the DocComment for the given method
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function buildMethodDocumentation($className, $methodName) {
+		$methodDocumentation = '';
+		$methodTags = $this->reflectionService->getMethodTagsValues($className, $methodName);
+		$ignoredTags = $this->reflectionService->getIgnoredTags();
+		foreach ($methodTags as $tag => $values) {
+			if (!in_array($tag, $ignoredTags)) {
+				foreach ($values as $value) {
+					$methodDocumentation  .= chr(10) . chr(9) . ' * @' . $tag . ' ' . $value;
+				}
 			}
 		}
-		return $methodParametersCode;
+		return $methodDocumentation;
 	}
 
 	/**

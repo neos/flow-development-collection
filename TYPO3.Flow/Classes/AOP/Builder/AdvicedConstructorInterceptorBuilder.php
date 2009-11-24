@@ -60,14 +60,13 @@ class AdvicedConstructorInterceptorBuilder extends \F3\FLOW3\AOP\Builder\Abstrac
 			unset ($this->methodIsInAdviceMode[\'__construct\']);
 		}
 ';
-		$methodParametersDocumentation = '';
-		$methodParametersCode = $this->buildMethodParametersCode($declaringClassName, '__construct', TRUE, $methodParametersDocumentation);
+		$methodDocumentation = $this->buildMethodDocumentation($declaringClassName, $methodName);
+		$methodParametersCode = $this->buildMethodParametersCode($declaringClassName, '__construct', TRUE);
 
 		$constructorCode = '
 	/**
 	 * Interceptor for the constructor __construct().
-	 * ' . $methodParametersDocumentation . '
-	 * @return mixed Result of the advice chain or the original method
+	 * ' . $methodDocumentation . '
 	 */
 	public function __construct(' . $methodParametersCode .') {
 		$this->originalConstructorArguments = array(' . $this->buildMethodArgumentsArrayCode($declaringClassName, '__construct') . ');

@@ -47,16 +47,16 @@ class EmptyConstructorInterceptorBuilder extends \F3\FLOW3\AOP\Builder\AbstractM
 
 		$callParentCode = '';
 		$parametersCode = '';
-		$parametersDocumentation = '';
+		$methodDocumentation = $this->buildMethodDocumentation($declaringClassName, $methodName);
 		if (method_exists($declaringClassName, '__construct')) {
-			$parametersCode = $this->buildMethodParametersCode($declaringClassName, '__construct', TRUE, $parametersDocumentation);
+			$parametersCode = $this->buildMethodParametersCode($declaringClassName, '__construct', TRUE);
 			$callParentCode = 'parent::__construct(' . $this->buildSavedConstructorParametersCode($declaringClassName) . ');';
 		}
 
 		$constructorCode = '
 	/**
 	 * Non-advised constructor interceptor.
-	 * ' . $parametersDocumentation . '
+	 * ' . $methodDocumentation . '
 	 */
 	public function __construct(' . $parametersCode . ') {
 		$this->originalConstructorArguments = array(' . $this->buildMethodArgumentsArrayCode($declaringClassName, '__construct') . ');

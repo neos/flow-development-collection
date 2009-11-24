@@ -389,24 +389,25 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 * @return void
 	 * @throws F3\FLOW3\MVC\Exception\InvalidOrMissingRequestHash In case request hash checking failed
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function checkRequestHash() {
 		if (!($this->request instanceof \F3\FLOW3\MVC\Web\Request)) {
-			return; // We only want to check it for now for web requests.
+				// only check it for web requests for now.
+			return;
 		}
-		if ($this->request->isHmacVerified()) return; // all good
 
-		$verificationNeeded = FALSE;
-		foreach ($this->arguments as $argument) {
-			if ($argument->getOrigin() == \F3\FLOW3\MVC\Controller\Argument::ORIGIN_NEWLY_CREATED
-			 || $argument->getOrigin() == \F3\FLOW3\MVC\Controller\Argument::ORIGIN_PERSISTENCE_AND_MODIFIED) {
-				$verificationNeeded = TRUE;
-			}
-		}
-		if ($verificationNeeded) {
+		if (!$this->request->isHmacVerified()) {
 			$methodTagsValues = $this->reflectionService->getMethodTagsValues(get_class($this), $this->actionMethodName);
-			if (!isset($methodTagsValues['dontverifyrequesthash'])) {
-				throw new \F3\FLOW3\MVC\Exception\InvalidOrMissingRequestHash('Request hash (HMAC) checking failed. The parameter __hmac was invalid or not set, and objects were modified.', 1255082824);
+			if (isset($methodTagsValues['dontverifyrequesthash'])) {
+				return;
+			}
+
+			foreach ($this->arguments as $argument) {
+				if ($argument->getOrigin() === \F3\FLOW3\MVC\Controller\Argument::ORIGIN_NEWLY_CREATED
+				 || $argument->getOrigin() === \F3\FLOW3\MVC\Controller\Argument::ORIGIN_PERSISTENCE_AND_MODIFIED) {
+					throw new \F3\FLOW3\MVC\Exception\InvalidOrMissingRequestHash('Request hash (HMAC) checking failed. The parameter __hmac was invalid or not set, and objects were modified.', 1255082824);
+				}
 			}
 		}
 	}

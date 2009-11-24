@@ -49,16 +49,16 @@ class AdvicedMethodInterceptorBuilder extends \F3\FLOW3\AOP\Builder\AbstractMeth
 		$methodInterceptorCode = '';
 		$advicesCode = $this->buildAdvicesCode($groupedAdvices, $methodName, $targetClassName);
 
-		$methodParametersDocumentation = '';
-		$methodParametersCode = $this->buildMethodParametersCode($declaringClassName, $methodName, TRUE, $methodParametersDocumentation);
+		$methodDocumentation = $this->buildMethodDocumentation($declaringClassName, $methodName);
+		$methodParametersCode = $this->buildMethodParametersCode($declaringClassName, $methodName, TRUE);
 
 		$staticKeyword = $this->reflectionService->isMethodStatic($declaringClassName, $methodName) ? 'static ' : '';
 
 		$methodInterceptorCode .= '
 	/**
 	 * Interceptor for the method ' . $methodName . '().
-	 * ' . $methodParametersDocumentation . '
-	 * @return mixed Result of the advice chain or the original method
+	 * ' . $methodDocumentation . '
+	 * @return mixed Result of the advice chain or the original method (see earlier @return annotation)
 	 */
 	' . $staticKeyword . 'public function ' . $methodName . '(' . $methodParametersCode . ') {
 ';

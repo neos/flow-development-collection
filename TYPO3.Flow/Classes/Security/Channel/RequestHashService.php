@@ -82,7 +82,7 @@ class RequestHashService {
 					if (isset($currentPosition[$formFieldPart]) && is_array($currentPosition[$formFieldPart])) {
 						throw new \F3\FLOW3\Security\Exception\InvalidArgumentForRequestHashGeneration('The form field name "' . $formField . '" collides with a previous form field name which declared the field as array. (Array overridden by String)', 1255072587);
 					}
-					// Last iteration - add a string
+						// Last iteration - add a string
 					if ($formFieldPart === '') {
 						$currentPosition[] = 1;
 					} else {
@@ -111,7 +111,7 @@ class RequestHashService {
 	 */
 	protected function serializeAndHashFormFieldArray($formFieldArray) {
 		$serializedFormFieldArray = serialize($formFieldArray);
-		return $serializedFormFieldArray . $this->hashService->generateHash($serializedFormFieldArray);
+		return $serializedFormFieldArray . $this->hashService->generateHmac($serializedFormFieldArray);
 	}
 
 	/**
@@ -133,9 +133,9 @@ class RequestHashService {
 		}
 		$serializedFieldNames = substr($hmac, 0, -40); // TODO: Constant for hash length needs to be introduced
 		$hash = substr($hmac, -40);
-		if ($this->hashService->validateHash($serializedFieldNames, $hash)) {
+		if ($this->hashService->validateHmac($serializedFieldNames, $hash)) {
 			$requestArguments = $request->getArguments();
-			// Unset framework arguments
+				// Unset framework arguments
 			unset($requestArguments['__referrer']);
 			unset($requestArguments['__hmac']);
 			if ($this->checkFieldNameInclusion($requestArguments, unserialize($serializedFieldNames))) {
@@ -168,7 +168,7 @@ class RequestHashService {
 			} elseif (!is_array($requestArguments[$argumentName]) && !is_array($allowedFields[$argumentName])) {
 				// do nothing, as this is allowed
 			} else {
-				// different types - error
+					// different types - error
 				return FALSE;
 			}
 		}
