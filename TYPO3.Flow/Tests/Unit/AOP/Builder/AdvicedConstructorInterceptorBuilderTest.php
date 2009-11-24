@@ -56,7 +56,6 @@ class AdvicedConstructorInterceptorBuilderTest extends \F3\Testing\BaseTestCase 
 	/**
 	 * Interceptor for the constructor __construct().
 	 * ' . '
-	 * @return mixed Result of the advice chain or the original method
 	 */
 	public function __construct(PARAMETERSCODE) {
 		$this->originalConstructorArguments = array(ARGUMENTSARRAYCODE);

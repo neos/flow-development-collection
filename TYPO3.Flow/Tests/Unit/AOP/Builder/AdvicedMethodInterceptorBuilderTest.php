@@ -56,7 +56,7 @@ class AdvicedMethodInterceptorBuilderTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * Interceptor for the method foo().
 	 * ' . '
-	 * @return mixed Result of the advice chain or the original method
+	 * @return mixed Result of the advice chain or the original method (see earlier @return annotation)
 	 */
 	public function foo(PARAMETERSCODE1) {
 
@@ -119,7 +119,7 @@ class AdvicedMethodInterceptorBuilderTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * Interceptor for the method __wakeup().
 	 * ' . '
-	 * @return mixed Result of the advice chain or the original method
+	 * @return mixed Result of the advice chain or the original method (see earlier @return annotation)
 	 */
 	public function __wakeup(PARAMETERSCODE1) {
 

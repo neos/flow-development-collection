@@ -87,38 +87,40 @@ class AbstractMethodInterceptorBuilderTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function buildMethodParametersCodeRendersDocCommentForTheDocumentedAndUndocumentedParameters() {
+	public function buildMethodDocumentationRendersKeepsVitalAnnotations() {
 		$className = uniqid('TestClass');
 		eval('
 			class ' . $className . ' {
 				/**
 				 * @param string $arg1 Argument1
 				 * @param array $arg2 Argument2
-				 * @param \WrongDocumentedType $arg3 Argument3
+				 * @param \ArrayObject $arg3 Argument3
 				 * @return string ReturnValue
+				 * @validate $arg1 FooBar
+				 * @dontvalidate $arg3
+				 * @todo ingore this
+				 * @see something less important
 				 */
-				public function foo($arg1, array $arg2, \ArrayObject $arg3, $arg4= "foo", $arg5 = TRUE) {}
+				public function foo($arg1, array $arg2, \ArrayObject $arg3) {}
 			}
 		');
 
 		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service', array('loadFromCache', 'saveToCache'), array(), '', FALSE, TRUE);
 		$mockReflectionService->initialize(array($className));
 
-		$expectedParametersDocumentation = '
-	 * @param  string $arg1 Argument1
-	 * @param  array $arg2 Argument2
-	 * @param  \ArrayObject $arg3 Argument3
-	 * @param  unknown_type $arg4
-	 * @param  unknown_type $arg5
-	 * @return string ReturnValue';
-
-		$actualParametersDocumentation = '';
+		$expectedMethodDocumentation = '
+	 * @param string $arg1 Argument1
+	 * @param array $arg2 Argument2
+	 * @param \ArrayObject $arg3 Argument3
+	 * @return string ReturnValue
+	 * @validate $arg1 FooBar
+	 * @dontvalidate $arg3';
 
 		$builder = $this->getMock('F3\FLOW3\AOP\Builder\AbstractMethodInterceptorBuilder', array('build'), array(), '', FALSE);
 		$builder->injectReflectionService($mockReflectionService);
 
-		$builder->buildMethodParametersCode($className, 'foo', TRUE, $actualParametersDocumentation);
-		$this->assertSame($expectedParametersDocumentation, $actualParametersDocumentation);
+		$actualMethodDocumentation = $builder->buildMethodDocumentation($className, 'foo');
+		$this->assertSame($expectedMethodDocumentation, $actualMethodDocumentation);
 	}
 
 	/**

@@ -147,8 +147,8 @@ class RequestHashServiceTest extends \F3\Testing\BaseTestCase {
 		);
 		$mockHash = '12345';
 
-		$hashService = $this->getMock('F3\FLOW3\Security\Cryptography\HashService', array('generateHash'));
-		$hashService->expects($this->once())->method('generateHash')->with(serialize($formFieldArray))->will($this->returnValue($mockHash));
+		$hashService = $this->getMock('F3\FLOW3\Security\Cryptography\HashService', array('generateHmac'));
+		$hashService->expects($this->once())->method('generateHmac')->with(serialize($formFieldArray))->will($this->returnValue($mockHash));
 
 		$requestHashService = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Security\Channel\RequestHashService'), array('dummy'));
 		$requestHashService->injectHashService($hashService);
@@ -193,8 +193,8 @@ class RequestHashServiceTest extends \F3\Testing\BaseTestCase {
 		$request->expects($this->once())->method('getArgument')->with('__hmac')->will($this->returnValue('11111' . '0000000000000000000000000000000000000000'));
 		$request->expects($this->once())->method('setHmacVerified')->with(FALSE);
 
-		$hashService = $this->getMock('F3\FLOW3\Security\Cryptography\HashService', array('validateHash'));
-		$hashService->expects($this->once())->method('validateHash')->with('11111', '0000000000000000000000000000000000000000')->will($this->returnValue(FALSE));
+		$hashService = $this->getMock('F3\FLOW3\Security\Cryptography\HashService', array('validateHmac'));
+		$hashService->expects($this->once())->method('validateHmac')->with('11111', '0000000000000000000000000000000000000000')->will($this->returnValue(FALSE));
 
 		$requestHashService = new \F3\FLOW3\Security\Channel\RequestHashService;
 		$requestHashService->injectHashService($hashService);
@@ -217,8 +217,8 @@ class RequestHashServiceTest extends \F3\Testing\BaseTestCase {
 		)));
 		$request->expects($this->once())->method('setHmacVerified')->with(TRUE);
 
-		$hashService = $this->getMock('F3\FLOW3\Security\Cryptography\HashService', array('validateHash'));
-		$hashService->expects($this->once())->method('validateHash')->with($data, '0000000000000000000000000000000000000000')->will($this->returnValue(TRUE));
+		$hashService = $this->getMock('F3\FLOW3\Security\Cryptography\HashService', array('validateHmac'));
+		$hashService->expects($this->once())->method('validateHmac')->with($data, '0000000000000000000000000000000000000000')->will($this->returnValue(TRUE));
 
 		$requestHashService = $this->getMock('F3\FLOW3\Security\Channel\RequestHashService', array('checkFieldNameInclusion'));
 		$requestHashService->expects($this->once())->method('checkFieldNameInclusion')->with(array('a' => 'bla'), array('a' => 1))->will($this->returnValue(TRUE));
@@ -243,8 +243,8 @@ class RequestHashServiceTest extends \F3\Testing\BaseTestCase {
 		)));
 		$request->expects($this->once())->method('setHmacVerified')->with(FALSE);
 
-		$hashService = $this->getMock('F3\FLOW3\Security\Cryptography\HashService', array('validateHash'));
-		$hashService->expects($this->once())->method('validateHash')->with($data, '0000000000000000000000000000000000000000')->will($this->returnValue(TRUE));
+		$hashService = $this->getMock('F3\FLOW3\Security\Cryptography\HashService', array('validateHmac'));
+		$hashService->expects($this->once())->method('validateHmac')->with($data, '0000000000000000000000000000000000000000')->will($this->returnValue(TRUE));
 
 		$requestHashService = $this->getMock('F3\FLOW3\Security\Channel\RequestHashService', array('checkFieldNameInclusion'));
 		$requestHashService->expects($this->once())->method('checkFieldNameInclusion')->with(array('a' => 'bla', 'b' => 'blubb'), array('a' => 1))->will($this->returnValue(FALSE));

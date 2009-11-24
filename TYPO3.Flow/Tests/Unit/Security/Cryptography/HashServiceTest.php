@@ -40,8 +40,8 @@ class HashServiceTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Sebastian Kurfürst
 	 */
-	public function generateHashReturnsHashStringIfStringIsGiven() {
-		$hash = $this->hashService->generateHash('asdf');
+	public function generateHmacReturnsHashStringIfStringIsGiven() {
+		$hash = $this->hashService->generateHmac('asdf');
 		$this->assertTrue(is_string($hash));
 	}
 
@@ -49,8 +49,8 @@ class HashServiceTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Sebastian Kurfürst
 	 */
-	public function generateHashReturnsHashStringWhichContainsSomeSalt() {
-		$hash = $this->hashService->generateHash('asdf');
+	public function generateHmacReturnsHashStringWhichContainsSomeSalt() {
+		$hash = $this->hashService->generateHmac('asdf');
 		$this->assertNotEquals(sha1('asdf'), $hash);
 	}
 
@@ -58,9 +58,9 @@ class HashServiceTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Sebastian Kurfürst
 	 */
-	public function generateHashReturnsDifferentHashStringsForDifferentInputStrings() {
-		$hash1 = $this->hashService->generateHash('asdf');
-		$hash2 = $this->hashService->generateHash('blubb');
+	public function generateHmacReturnsDifferentHashStringsForDifferentInputStrings() {
+		$hash1 = $this->hashService->generateHmac('asdf');
+		$hash2 = $this->hashService->generateHmac('blubb');
 		$this->assertNotEquals($hash1, $hash2);
 	}
 
@@ -69,8 +69,8 @@ class HashServiceTest extends \F3\Testing\BaseTestCase {
 	 * @expectedException F3\FLOW3\Security\Exception\InvalidArgumentForHashGeneration
 	 * @author Sebastian Kurfürst
 	 */
-	public function generateHashThrowsExceptionIfNoStringGiven() {
-		$hash = $this->hashService->generateHash(NULL);
+	public function generateHmacThrowsExceptionIfNoStringGiven() {
+		$hash = $this->hashService->generateHmac(NULL);
 	}
 
 	/**
@@ -79,8 +79,8 @@ class HashServiceTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function generatedHashCanBeValidatedAgain() {
 		$string = 'asdf';
-		$hash = $this->hashService->generateHash($string);
-		$this->assertTrue($this->hashService->validateHash($string, $hash));
+		$hash = $this->hashService->generateHmac($string);
+		$this->assertTrue($this->hashService->validateHmac($string, $hash));
 	}
 
 	/**
@@ -90,7 +90,7 @@ class HashServiceTest extends \F3\Testing\BaseTestCase {
 	public function generatedHashWillNotBeValidatedIfHashHasBeenChanged() {
 		$string = 'asdf';
 		$hash = 'myhash';
-		$this->assertFalse($this->hashService->validateHash($string, $hash));
+		$this->assertFalse($this->hashService->validateHmac($string, $hash));
 	}
 }
 ?>
