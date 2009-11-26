@@ -217,7 +217,7 @@ security:
 
   cryptography:
 
-    HashService:
+    hashService:
 
       # A key used for various tasks, must be unique for a setup!
       encryptionKey: 

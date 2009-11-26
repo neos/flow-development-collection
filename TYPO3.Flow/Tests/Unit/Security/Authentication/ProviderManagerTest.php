@@ -331,7 +331,7 @@ class ProviderManagerTest extends \F3\Testing\BaseTestCase {
 		$mockProviderManager->authenticate();
 	}
 
-        /**
+	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */

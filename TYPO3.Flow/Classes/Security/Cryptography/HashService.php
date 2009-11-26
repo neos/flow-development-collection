@@ -44,10 +44,10 @@ class HashService {
 	 * @author Karsten Dambekalns <karsten@dambekalns.de>
 	 */
 	public function injectSettings(array $settings) {
-		if (empty($settings['security']['cryptography']['HashService']['encryptionKey'])) {
+		if (empty($settings['security']['cryptography']['hashService']['encryptionKey'])) {
 			throw new \F3\FLOW3\Security\Exception\MissingConfiguration('You must configure an encryption key for the HashService', 1258991855);
 		}
-		$this->encryptionKey = $settings['security']['cryptography']['HashService']['encryptionKey'];
+		$this->encryptionKey = $settings['security']['cryptography']['hashService']['encryptionKey'];
 	}
 
 	/**
