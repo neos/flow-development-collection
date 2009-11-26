@@ -97,11 +97,7 @@ class RouterCachingAspect {
 	 */
 	public function cacheResolveCall(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$routeValues = $joinPoint->getMethodArgument('routeValues');
-		foreach ($routeValues as $k => $v) {
-			if (is_object($v)) {
-				$routeValues[$k] = spl_object_hash($v);
-			}
-		}
+		$routeValues = $this->convertObjectsToHashes($routeValues);
 		\F3\FLOW3\Utility\Arrays::sortKeysRecursively($routeValues);
 
 		$cacheIdentifier = md5(http_build_query($routeValues));
@@ -114,6 +110,24 @@ class RouterCachingAspect {
 			$this->resolveCache->set($cacheIdentifier, $matchingUri);
 		}
 		return $matchingUri;
+	}
+
+	/**
+	 * Recursively converts objects in an array to their spl object hashes
+	 *
+	 * @param array $routeValues the array to be processed
+	 * @return array the modified array
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	protected function convertObjectsToHashes(array $routeValues) {
+		foreach ($routeValues as &$value) {
+			if (is_object($value)) {
+				$value = spl_object_hash($value);
+			} elseif (is_array($value)) {
+				$value = $this->convertObjectsToHashes($value);
+			}
+		}
+		return $routeValues;
 	}
 }
 ?>
