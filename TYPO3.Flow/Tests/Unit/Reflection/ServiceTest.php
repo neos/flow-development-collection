@@ -106,7 +106,8 @@ class ServiceTest extends \F3\Testing\BaseTestCase {
 			'F3\FLOW3\Tests\Reflection\Fixture\DummyClass',
 		);
 		$reflectionService = new \F3\FLOW3\Reflection\Service();
-		$reflectionService->setCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
+		$reflectionService->setStatusCache($this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array(), array(), '', FALSE));
+		$reflectionService->setDataCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
 		$reflectionService->injectSystemLogger($this->getMock('F3\FLOW3\Log\SystemLoggerInterface'));
 		$reflectionService->initialize($availableClassNames);
 
@@ -125,7 +126,8 @@ class ServiceTest extends \F3\Testing\BaseTestCase {
 			'F3\FLOW3\Tests\Reflection\Fixture\ImplementationOfDummyInterface1'
 		);
 		$reflectionService = new \F3\FLOW3\Reflection\Service();
-		$reflectionService->setCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
+		$reflectionService->setStatusCache($this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array(), array(), '', FALSE));
+		$reflectionService->setDataCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
 		$reflectionService->injectSystemLogger($this->getMock('F3\FLOW3\Log\SystemLoggerInterface'));
 		$reflectionService->initialize($classNames);
 		$className = $reflectionService->getDefaultImplementationClassNameForInterface('F3\FLOW3\Tests\Reflection\Fixture\DummyInterface1');
@@ -144,7 +146,8 @@ class ServiceTest extends \F3\Testing\BaseTestCase {
 			'F3\FLOW3\Tests\Reflection\Fixture\ImplementationOfDummyInterface1'
 		);
 		$reflectionService = new \F3\FLOW3\Reflection\Service();
-		$reflectionService->setCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
+		$reflectionService->setStatusCache($this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array(), array(), '', FALSE));
+		$reflectionService->setDataCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
 		$reflectionService->injectSystemLogger($this->getMock('F3\FLOW3\Log\SystemLoggerInterface'));
 		$reflectionService->initialize($classNames);
 		$className = $reflectionService->getDefaultImplementationClassNameForInterface('F3\FLOW3\Tests\Reflection\Fixture\DummyInterface2');
@@ -169,7 +172,8 @@ class ServiceTest extends \F3\Testing\BaseTestCase {
 			'F3\FLOW3\Tests\Reflection\Fixture\ProxyOfImplementationOfDummyInterface1',
 		);
 		$reflectionService = new \F3\FLOW3\Reflection\Service();
-		$reflectionService->setCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
+		$reflectionService->setStatusCache($this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array(), array(), '', FALSE));
+		$reflectionService->setDataCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
 		$reflectionService->injectSystemLogger($this->getMock('F3\FLOW3\Log\SystemLoggerInterface'));
 		$reflectionService->initialize($classNames);
 		$className = $reflectionService->getDefaultImplementationClassNameForInterface('F3\FLOW3\Tests\Reflection\Fixture\DummyInterface1');
@@ -181,7 +185,8 @@ class ServiceTest extends \F3\Testing\BaseTestCase {
 			'F3\FLOW3\Tests\Reflection\Fixture\ImplementationOfDummyInterface1',
 		);
 		$reflectionService = new \F3\FLOW3\Reflection\Service();
-		$reflectionService->setCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
+		$reflectionService->setStatusCache($this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array(), array(), '', FALSE));
+		$reflectionService->setDataCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
 		$reflectionService->injectSystemLogger($this->getMock('F3\FLOW3\Log\SystemLoggerInterface'));
 		$reflectionService->initialize($classNames);
 		$className = $reflectionService->getDefaultImplementationClassNameForInterface('F3\FLOW3\Tests\Reflection\Fixture\DummyInterface1');
@@ -207,7 +212,8 @@ class ServiceTest extends \F3\Testing\BaseTestCase {
 		);
 
 		$reflectionService = new \F3\FLOW3\Reflection\Service();
-		$reflectionService->setCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
+		$reflectionService->setStatusCache($this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array(), array(), '', FALSE));
+		$reflectionService->setDataCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
 		$reflectionService->injectSystemLogger($this->getMock('F3\FLOW3\Log\SystemLoggerInterface'));
 		$reflectionService->initialize($availableClassNames);
 		$detectedClassNames = $reflectionService->getAllImplementationClassNamesForInterface('F3\FLOW3\Tests\Reflection\Fixture\DummyInterface3');
@@ -228,7 +234,8 @@ class ServiceTest extends \F3\Testing\BaseTestCase {
 			'F3\FLOW3\Tests\Reflection\Fixture\Implementation2OfDummyInterface3'
 		);
 		$reflectionService = new \F3\FLOW3\Reflection\Service();
-		$reflectionService->setCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
+		$reflectionService->setStatusCache($this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array(), array(), '', FALSE));
+		$reflectionService->setDataCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
 		$reflectionService->injectSystemLogger($this->getMock('F3\FLOW3\Log\SystemLoggerInterface'));
 		$reflectionService->initialize($availableClassNames);
 
@@ -246,7 +253,8 @@ class ServiceTest extends \F3\Testing\BaseTestCase {
 			'F3\FLOW3\Tests\Reflection\Fixture\ParentClass1'
 		);
 		$reflectionService = new \F3\FLOW3\Reflection\Service();
-		$reflectionService->setCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
+		$reflectionService->setStatusCache($this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array(), array(), '', FALSE));
+		$reflectionService->setDataCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
 		$reflectionService->injectSystemLogger($this->getMock('F3\FLOW3\Log\SystemLoggerInterface'));
 		$reflectionService->initialize($availableClassNames);
 
@@ -272,7 +280,8 @@ class ServiceTest extends \F3\Testing\BaseTestCase {
 		);
 
 		$reflectionService = new \F3\FLOW3\Reflection\Service();
-		$reflectionService->setCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
+		$reflectionService->setStatusCache($this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array(), array(), '', FALSE));
+		$reflectionService->setDataCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
 		$reflectionService->injectSystemLogger($this->getMock('F3\FLOW3\Log\SystemLoggerInterface'));
 		$reflectionService->initialize($availableClassNames);
 
@@ -290,7 +299,8 @@ class ServiceTest extends \F3\Testing\BaseTestCase {
 			'F3\FLOW3\Tests\Reflection\Fixture\TaggedClass2',
 		);
 		$reflectionService = new \F3\FLOW3\Reflection\Service();
-		$reflectionService->setCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
+		$reflectionService->setStatusCache($this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array(), array(), '', FALSE));
+		$reflectionService->setDataCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
 		$reflectionService->injectSystemLogger($this->getMock('F3\FLOW3\Log\SystemLoggerInterface'));
 		$reflectionService->initialize($availableClassNames);
 
@@ -310,7 +320,8 @@ class ServiceTest extends \F3\Testing\BaseTestCase {
 			'F3\FLOW3\Tests\Reflection\Fixture\TaggedClass3',
 		);
 		$reflectionService = new \F3\FLOW3\Reflection\Service();
-		$reflectionService->setCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
+		$reflectionService->setStatusCache($this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array(), array(), '', FALSE));
+		$reflectionService->setDataCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
 		$reflectionService->injectSystemLogger($this->getMock('F3\FLOW3\Log\SystemLoggerInterface'));
 		$reflectionService->initialize($availableClassNames);
 
@@ -329,7 +340,8 @@ class ServiceTest extends \F3\Testing\BaseTestCase {
 			'F3\FLOW3\Tests\Reflection\Fixture\TaggedClass3',
 		);
 		$reflectionService = new \F3\FLOW3\Reflection\Service();
-		$reflectionService->setCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
+		$reflectionService->setStatusCache($this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array(), array(), '', FALSE));
+		$reflectionService->setDataCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
 		$reflectionService->injectSystemLogger($this->getMock('F3\FLOW3\Log\SystemLoggerInterface'));
 		$reflectionService->initialize($availableClassNames);
 
@@ -349,7 +361,8 @@ class ServiceTest extends \F3\Testing\BaseTestCase {
 			'F3\FLOW3\Tests\Reflection\Fixture\TaggedClass2',
 		);
 		$reflectionService = new \F3\FLOW3\Reflection\Service();
-		$reflectionService->setCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
+		$reflectionService->setStatusCache($this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array(), array(), '', FALSE));
+		$reflectionService->setDataCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
 		$reflectionService->injectSystemLogger($this->getMock('F3\FLOW3\Log\SystemLoggerInterface'));
 		$reflectionService->initialize($availableClassNames);
 
@@ -368,7 +381,8 @@ class ServiceTest extends \F3\Testing\BaseTestCase {
 			'F3\FLOW3\Tests\Reflection\Fixture\DummyAbstractClass',
 		);
 		$reflectionService = new \F3\FLOW3\Reflection\Service();
-		$reflectionService->setCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
+		$reflectionService->setStatusCache($this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array(), array(), '', FALSE));
+		$reflectionService->setDataCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
 		$reflectionService->injectSystemLogger($this->getMock('F3\FLOW3\Log\SystemLoggerInterface'));
 		$reflectionService->initialize($availableClassNames);
 
@@ -386,7 +400,8 @@ class ServiceTest extends \F3\Testing\BaseTestCase {
 			'F3\FLOW3\Tests\Reflection\Fixture\DummyFinalClass',
 		);
 		$reflectionService = new \F3\FLOW3\Reflection\Service();
-		$reflectionService->setCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
+		$reflectionService->setStatusCache($this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array(), array(), '', FALSE));
+		$reflectionService->setDataCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
 		$reflectionService->injectSystemLogger($this->getMock('F3\FLOW3\Log\SystemLoggerInterface'));
 		$reflectionService->initialize($availableClassNames);
 
@@ -404,7 +419,8 @@ class ServiceTest extends \F3\Testing\BaseTestCase {
 			'F3\FLOW3\Tests\Reflection\Fixture\DummyClassWithMethods',
 		);
 		$reflectionService = new \F3\FLOW3\Reflection\Service();
-		$reflectionService->setCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
+		$reflectionService->setStatusCache($this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array(), array(), '', FALSE));
+		$reflectionService->setDataCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
 		$reflectionService->injectSystemLogger($this->getMock('F3\FLOW3\Log\SystemLoggerInterface'));
 		$reflectionService->initialize($availableClassNames);
 
@@ -423,7 +439,8 @@ class ServiceTest extends \F3\Testing\BaseTestCase {
 			'F3\FLOW3\Tests\Reflection\Fixture\DummyClassWithProperties',
 		);
 		$reflectionService = new \F3\FLOW3\Reflection\Service();
-		$reflectionService->setCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
+		$reflectionService->setStatusCache($this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array(), array(), '', FALSE));
+		$reflectionService->setDataCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
 		$reflectionService->injectSystemLogger($this->getMock('F3\FLOW3\Log\SystemLoggerInterface'));
 		$reflectionService->initialize($availableClassNames);
 
@@ -441,7 +458,8 @@ class ServiceTest extends \F3\Testing\BaseTestCase {
 			'F3\FLOW3\Tests\Reflection\Fixture\DummyClassWithMethods',
 		);
 		$reflectionService = new \F3\FLOW3\Reflection\Service();
-		$reflectionService->setCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
+		$reflectionService->setStatusCache($this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array(), array(), '', FALSE));
+		$reflectionService->setDataCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
 		$reflectionService->injectSystemLogger($this->getMock('F3\FLOW3\Log\SystemLoggerInterface'));
 		$reflectionService->initialize($availableClassNames);
 
@@ -460,7 +478,8 @@ class ServiceTest extends \F3\Testing\BaseTestCase {
 			'F3\FLOW3\Tests\Reflection\Fixture\DummyClassWithMethods',
 		);
 		$reflectionService = new \F3\FLOW3\Reflection\Service();
-		$reflectionService->setCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
+		$reflectionService->setStatusCache($this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array(), array(), '', FALSE));
+		$reflectionService->setDataCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
 		$reflectionService->injectSystemLogger($this->getMock('F3\FLOW3\Log\SystemLoggerInterface'));
 		$reflectionService->initialize($availableClassNames);
 
@@ -485,7 +504,8 @@ class ServiceTest extends \F3\Testing\BaseTestCase {
 			'F3\FLOW3\Tests\Reflection\Fixture\DummyClassWithProperties',
 		);
 		$reflectionService = new \F3\FLOW3\Reflection\Service();
-		$reflectionService->setCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
+		$reflectionService->setStatusCache($this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array(), array(), '', FALSE));
+		$reflectionService->setDataCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
 		$reflectionService->injectSystemLogger($this->getMock('F3\FLOW3\Log\SystemLoggerInterface'));
 		$reflectionService->initialize($availableClassNames);
 
@@ -504,7 +524,8 @@ class ServiceTest extends \F3\Testing\BaseTestCase {
 			'F3\FLOW3\Tests\Reflection\Fixture\DummyClassWithProperties',
 		);
 		$reflectionService = new \F3\FLOW3\Reflection\Service();
-		$reflectionService->setCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
+		$reflectionService->setStatusCache($this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array(), array(), '', FALSE));
+		$reflectionService->setDataCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
 		$reflectionService->injectSystemLogger($this->getMock('F3\FLOW3\Log\SystemLoggerInterface'));
 		$reflectionService->initialize($availableClassNames);
 
@@ -525,7 +546,8 @@ class ServiceTest extends \F3\Testing\BaseTestCase {
 			'F3\FLOW3\Tests\Reflection\Fixture\DummyClassWithProperties',
 		);
 		$reflectionService = new \F3\FLOW3\Reflection\Service();
-		$reflectionService->setCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
+		$reflectionService->setStatusCache($this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array(), array(), '', FALSE));
+		$reflectionService->setDataCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
 		$reflectionService->injectSystemLogger($this->getMock('F3\FLOW3\Log\SystemLoggerInterface'));
 		$reflectionService->initialize($availableClassNames);
 
@@ -544,7 +566,8 @@ class ServiceTest extends \F3\Testing\BaseTestCase {
 			'F3\FLOW3\Tests\Reflection\Fixture\DummyClassWithProperties',
 		);
 		$reflectionService = new \F3\FLOW3\Reflection\Service();
-		$reflectionService->setCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
+		$reflectionService->setStatusCache($this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array(), array(), '', FALSE));
+		$reflectionService->setDataCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
 		$reflectionService->injectSystemLogger($this->getMock('F3\FLOW3\Log\SystemLoggerInterface'));
 		$reflectionService->initialize($availableClassNames);
 
@@ -563,7 +586,8 @@ class ServiceTest extends \F3\Testing\BaseTestCase {
 			'F3\FLOW3\Tests\Reflection\Fixture\DummyClassWithProperties',
 		);
 		$reflectionService = new \F3\FLOW3\Reflection\Service();
-		$reflectionService->setCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
+		$reflectionService->setStatusCache($this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array(), array(), '', FALSE));
+		$reflectionService->setDataCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
 		$reflectionService->injectSystemLogger($this->getMock('F3\FLOW3\Log\SystemLoggerInterface'));
 		$reflectionService->initialize($availableClassNames);
 
@@ -581,7 +605,8 @@ class ServiceTest extends \F3\Testing\BaseTestCase {
 			'F3\FLOW3\Tests\Reflection\Fixture\ImplementationOfDummyInterface1'
 		);
 		$reflectionService = new \F3\FLOW3\Reflection\Service();
-		$reflectionService->setCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
+		$reflectionService->setStatusCache($this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array(), array(), '', FALSE));
+		$reflectionService->setDataCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
 		$reflectionService->injectSystemLogger($this->getMock('F3\FLOW3\Log\SystemLoggerInterface'));
 		$reflectionService->initialize($availableClassNames);
 

@@ -39,9 +39,14 @@ class Service {
 	protected $initialized = FALSE;
 
 	/**
+	 * @var \F3\FLOW3\Cache\Frontend\StringFrontend
+	 */
+	protected $statusCache;
+
+	/**
 	 * @var \F3\FLOW3\Cache\Frontend\VariableFrontend
 	 */
-	protected $cache;
+	protected $dataCache;
 
 	/**
 	 * @var \F3\FLOW3\Log\SystemLoggerInterface
@@ -188,7 +193,20 @@ class Service {
 	protected $classesCurrentlyBeingForgotten = array();
 
 	/**
-	 * Sets the cache
+	 * Sets the status cache
+	 *
+	 * The cache must be set before initializing the Reflection Service
+	 *
+	 * @param \F3\FLOW3\Cache\Frontend\StringFrontend $cache Cache for the reflection service
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function setStatusCache(\F3\FLOW3\Cache\Frontend\StringFrontend $cache) {
+		$this->statusCache = $cache;
+	}
+
+	/**
+	 * Sets the data cache
 	 *
 	 * The cache must be set before initializing the Reflection Service
 	 *
@@ -196,8 +214,8 @@ class Service {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setCache(\F3\FLOW3\Cache\Frontend\VariableFrontend $cache) {
-		$this->cache = $cache;
+	public function setDataCache(\F3\FLOW3\Cache\Frontend\VariableFrontend $cache) {
+		$this->dataCache = $cache;
 	}
 
 	/**
@@ -932,7 +950,7 @@ class Service {
 	 */
 	protected function forgetChangedClasses() {
 		foreach (array_keys($this->reflectedClassNames) as $className) {
-			if (!$this->cache->has(str_replace('\\', '_', $className))) {
+			if (!$this->statusCache->has(str_replace('\\', '_', $className))) {
 				$this->forgetClass($className);
 			}
 		}
@@ -997,8 +1015,8 @@ class Service {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function loadFromCache() {
-		if ($this->cache->has('ReflectionData')) {
-			$data = $this->cache->get('ReflectionData');
+		if ($this->dataCache->has('ReflectionData')) {
+			$data = $this->dataCache->get('ReflectionData');
 			foreach ($data as $propertyName => $propertyValue) {
 				$this->$propertyName = $propertyValue;
 			}
@@ -1014,12 +1032,12 @@ class Service {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function saveToCache() {
-		if (!is_object($this->cache)) throw new \F3\FLOW3\Reflection\Exception('A cache must be injected before initializing the Reflection Service.', 1232044697);
+		if (!is_object($this->dataCache)) throw new \F3\FLOW3\Reflection\Exception('A cache must be injected before initializing the Reflection Service.', 1232044697);
 
 		$nonCachedClassNames = array_diff_assoc($this->reflectedClassNames, $this->cachedClassNames);
 		$this->log('Found ' . count($nonCachedClassNames) . ' classes whose reflection data was not cached previously.', LOG_DEBUG);
 		foreach (array_keys($nonCachedClassNames) as $className) {
-			$this->cache->set(str_replace('\\', '_', $className), '', array($this->cache->getClassTag($className)));
+			$this->statusCache->set(str_replace('\\', '_', $className), '', array($this->statusCache->getClassTag($className)));
 		}
 
 		$data = array();
@@ -1044,7 +1062,7 @@ class Service {
 		foreach ($propertyNames as $propertyName) {
 			$data[$propertyName] = $this->$propertyName;
 		}
-		$this->cache->set('ReflectionData', $data);
+		$this->dataCache->set('ReflectionData', $data);
 		$this->cachedClassNames = $this->reflectedClassNames;
 	}
 

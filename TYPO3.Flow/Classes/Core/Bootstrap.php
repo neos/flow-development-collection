@@ -496,7 +496,8 @@ final class Bootstrap {
 	 */
 	public function initializeReflection() {
 		$this->reflectionService = $this->objectManager->getObject('F3\FLOW3\Reflection\Service');
-		$this->reflectionService->setCache($this->cacheManager->getCache('FLOW3_Reflection'));
+		$this->reflectionService->setStatusCache($this->cacheManager->getCache('FLOW3_ReflectionStatus'));
+		$this->reflectionService->setDataCache($this->cacheManager->getCache('FLOW3_ReflectionData'));
 		$this->reflectionService->injectSystemLogger($this->systemLogger);
 
 		$availableClassNames = array();
