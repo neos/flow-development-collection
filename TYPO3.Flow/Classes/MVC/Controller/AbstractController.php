@@ -361,14 +361,14 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function mapRequestArgumentsToControllerArguments() {
-		$optionalPropertyNames = array();
-		$allPropertyNames = $this->arguments->getArgumentNames();
-		foreach ($allPropertyNames as $propertyName) {
-			if ($this->arguments[$propertyName]->isRequired() === FALSE) $optionalPropertyNames[] = $propertyName;
+		$optionalArgumentNames = array();
+		$allArgumentNames = $this->arguments->getArgumentNames();
+		foreach ($allArgumentNames as $argumentName) {
+			if ($this->arguments[$argumentName]->isRequired() === FALSE) $optionalArgumentNames[] = $argumentName;
 		}
 
 		$validator = $this->objectManager->getObject('F3\FLOW3\MVC\Controller\ArgumentsValidator');
-		$this->propertyMapper->mapAndValidate($allPropertyNames, $this->request->getArguments(), $this->arguments, $optionalPropertyNames, $validator);
+		$this->propertyMapper->mapAndValidate($allArgumentNames, $this->request->getArguments(), $this->arguments, $optionalArgumentNames, $validator);
 
 		$this->argumentsMappingResults = $this->propertyMapper->getMappingResults();
 	}

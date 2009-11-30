@@ -189,12 +189,12 @@ class UsernamePassword implements \F3\FLOW3\Security\Authentication\TokenInterfa
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function updateCredentials() {
-		$POSTArguments = $this->environment->getRawPOSTArguments();
-		if (isset($POSTArguments['F3\FLOW3\Security\Authentication\Token\UsernamePassword::username'])
-			&& isset($POSTArguments['F3\FLOW3\Security\Authentication\Token\UsernamePassword::password'])) {
+		$postArguments = $this->environment->getRawPostArguments();
+		if (isset($postArguments['F3\FLOW3\Security\Authentication\Token\UsernamePassword::username'])
+			&& isset($postArguments['F3\FLOW3\Security\Authentication\Token\UsernamePassword::password'])) {
 
-			$this->credentials['username'] = $POSTArguments['F3\FLOW3\Security\Authentication\Token\UsernamePassword::username'];
-			$this->credentials['password'] = $POSTArguments['F3\FLOW3\Security\Authentication\Token\UsernamePassword::password'];
+			$this->credentials['username'] = $postArguments['F3\FLOW3\Security\Authentication\Token\UsernamePassword::username'];
+			$this->credentials['password'] = $postArguments['F3\FLOW3\Security\Authentication\Token\UsernamePassword::password'];
 
 			$this->setAuthenticationStatus(self::AUTHENTICATION_NEEDED);
 		}

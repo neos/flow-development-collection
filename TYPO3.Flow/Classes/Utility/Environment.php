@@ -324,7 +324,7 @@ class Environment {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
-	public function getRawGETArguments() {
+	public function getRawGetArguments() {
 		return $this->GET;
 	}
 
@@ -335,7 +335,7 @@ class Environment {
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
-	public function getRawPOSTArguments() {
+	public function getRawPostArguments() {
 		return $this->POST;
 	}
 

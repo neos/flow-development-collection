@@ -152,7 +152,7 @@ class RequestBuilderTest extends \F3\Testing\BaseTestCase {
 			}
 		};
 		$this->mockRequest->expects($this->any())->method('getMethod')->will($this->returnValue('POST'));
-		$this->mockEnvironment->expects($this->any())->method('getRawPOSTArguments')->will($this->returnValue(array('someArgument' => 'POSTArgument')));
+		$this->mockEnvironment->expects($this->any())->method('getRawPostArguments')->will($this->returnValue(array('someArgument' => 'POSTArgument')));
 		$this->mockRequest->expects($this->exactly(2))->method('setArgument')->will($this->returnCallback($setArgumentCallback));
 		$this->builder->build();
 		$this->assertEquals('POSTArgument', $argument);

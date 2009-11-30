@@ -639,10 +639,10 @@ $this-&gt;accountRepository-&gt;add($account);</programlisting>
         <para>The username/password token is implemented in the class
         <literal>F3\FLOW3\Security\Authentication\Token\UsernamePassword</literal>.
         It fetches the credentials from the HTTP POST data, look at the
-        following program listing for details:<programlisting language="php">$POSTArguments = $environment-&gt;getRawPOSTArguments();
+        following program listing for details:<programlisting language="php">$postArguments = $environment-&gt;getRawPostArguments();
 
-$credentials['username'] = $POSTArguments['F3\FLOW3\Security\Authentication\Token\UsernamePassword::username'];
-$credentials['password'] = $POSTArguments['F3\FLOW3\Security\Authentication\Token\UsernamePassword::password'];
+$credentials['username'] = $postArguments['F3\FLOW3\Security\Authentication\Token\UsernamePassword::username'];
+$credentials['password'] = $postArguments['F3\FLOW3\Security\Authentication\Token\UsernamePassword::password'];
 </programlisting><note>
             <para>The token expects a plaintext password in the POST data.
             That does not mean, you have to transfer plaintext passwords,

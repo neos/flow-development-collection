@@ -35,16 +35,16 @@ class UsernamePasswordTest extends \F3\Testing\BaseTestCase {
 	 * @category unit
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function credentialsAreSetCorrectlyFromPOSTArguments() {
+	public function credentialsAreSetCorrectlyFromPostArguments() {
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
 
-		$POSTArguments = array(
+		$postArguments = array(
 			'F3\FLOW3\Security\Authentication\Token\UsernamePassword::username' => 'FLOW3',
 			'F3\FLOW3\Security\Authentication\Token\UsernamePassword::password' => 'verysecurepassword'
 		);
 
 		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
-		$mockEnvironment->expects($this->once())->method('getRawPOSTArguments')->will($this->returnValue($POSTArguments));
+		$mockEnvironment->expects($this->once())->method('getRawPostArguments')->will($this->returnValue($postArguments));
 
 		$token = new \F3\FLOW3\Security\Authentication\Token\UsernamePassword();
 		$token->injectObjectFactory($mockObjectFactory);
@@ -95,13 +95,13 @@ class UsernamePasswordTest extends \F3\Testing\BaseTestCase {
 	public function updateCredentialsSetsTheCorrectAuthenticationStatusIfNewCredentialsArrived() {
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
 
-		$POSTArguments = array(
+		$postArguments = array(
 			'F3\FLOW3\Security\Authentication\Token\UsernamePassword::username' => 'FLOW3',
 			'F3\FLOW3\Security\Authentication\Token\UsernamePassword::password' => 'verysecurepassword'
 		);
 
 		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
-		$mockEnvironment->expects($this->once())->method('getRawPOSTArguments')->will($this->returnValue($POSTArguments));
+		$mockEnvironment->expects($this->once())->method('getRawPostArguments')->will($this->returnValue($postArguments));
 
 		$token = new \F3\FLOW3\Security\Authentication\Token\UsernamePassword();
 		$token->injectObjectFactory($mockObjectFactory);

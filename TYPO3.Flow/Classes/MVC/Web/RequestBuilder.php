@@ -131,7 +131,7 @@ class RequestBuilder {
 		}
 		switch ($request->getMethod()) {
 			case 'POST' :
-				foreach ($this->environment->getRawPOSTArguments() as $argumentName => $argumentValue) {
+				foreach ($this->environment->getRawPostArguments() as $argumentName => $argumentValue) {
 					$request->setArgument($argumentName, $argumentValue);
 				}
 			break;
