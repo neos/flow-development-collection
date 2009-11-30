@@ -53,6 +53,14 @@ interface QueryInterface {
 	public function execute();
 
 	/**
+	 * Executes the number of matching objects for the query
+	 *
+	 * @return integer The number of matching objects
+	 * @api
+	 */
+	public function count();
+
+	/**
 	 * Sets the property names to order the result by. Expected like this:
 	 * array(
 	 *  'foo' => \F3\FLOW3\Persistence\QueryInterface::ORDER_ASCENDING,
