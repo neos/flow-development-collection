@@ -252,7 +252,7 @@ final class Bootstrap {
 		$this->configurationManager->injectConfigurationSource(new \F3\FLOW3\Configuration\Source\YAMLSource());
 		$this->configurationManager->setPackages(array('FLOW3' => $this->FLOW3Package));
 
-		$this->settings = $this->configurationManager->getSettings('FLOW3');
+		$this->settings = $this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_SETTINGS, 'FLOW3');
 	}
 
 	/**

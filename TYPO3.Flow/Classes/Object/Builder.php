@@ -344,7 +344,7 @@ class Builder {
 						} else {
 							if (strpos($argumentValue, '.') !== FALSE) {
 								$settingPath = explode('.', $argumentValue);
-								$settings = $this->configurationManager->getSettings(array_shift($settingPath));
+								$settings = $this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_SETTINGS, array_shift($settingPath));
 								$argumentValue = \F3\FLOW3\Utility\Arrays::getValueByPath($settings, $settingPath);
 							}
 							$preparedArguments[] = $this->objectManager->getObject($argumentValue);
@@ -356,10 +356,10 @@ class Builder {
 					case \F3\FLOW3\Object\Configuration\ConfigurationArgument::ARGUMENT_TYPES_SETTING:
 						if (strpos($argumentValue, '.') !== FALSE) {
 							$settingPath = explode('.', $argumentValue);
-							$settings = $this->configurationManager->getSettings(array_shift($settingPath));
+							$settings = $this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_SETTINGS, array_shift($settingPath));
 							$value = \F3\FLOW3\Utility\Arrays::getValueByPath($settings, $settingPath);
 						} else {
-							$value = $this->configurationManager->getSettings($argumentValue);
+							$value = $this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_SETTINGS, $argumentValue);
 						}
 						$preparedArguments[] = $value;
 					break;
@@ -389,7 +389,7 @@ class Builder {
 					} else {
 						if (strpos($propertyValue, '.') !== FALSE) {
 							$settingPath = explode('.', $propertyValue);
-							$settings = $this->configurationManager->getSettings(array_shift($settingPath));
+							$settings = $this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_SETTINGS, array_shift($settingPath));
 							$propertyValue = \F3\FLOW3\Utility\Arrays::getValueByPath($settings, $settingPath);
 						}
 						$preparedValue = $this->objectManager->getObject($propertyValue);
@@ -401,10 +401,10 @@ class Builder {
 				case \F3\FLOW3\Object\Configuration\ConfigurationProperty::PROPERTY_TYPES_SETTING:
 					if (strpos($propertyValue, '.') !== FALSE) {
 						$settingPath = explode('.', $propertyValue);
-						$settings = $this->configurationManager->getSettings(array_shift($settingPath));
+						$settings = $this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_SETTINGS, array_shift($settingPath));
 						$preparedValue = \F3\FLOW3\Utility\Arrays::getValueByPath($settings, $settingPath);
 					} else {
-						$preparedValue = $this->configurationManager->getSettings($propertyValue);
+						$preparedValue = $this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_SETTINGS, $propertyValue);
 					}
 				break;
 			}

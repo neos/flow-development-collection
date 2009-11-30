@@ -129,7 +129,7 @@ class PointcutSettingFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInte
 
 		if (count($configurationKeys) > 0) {
 			$settingPackageKey = array_shift($configurationKeys);
-			$settingValue = $this->configurationManager->getSettings($settingPackageKey);
+			$settingValue = $this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_SETTINGS, $settingPackageKey);
 			foreach ($configurationKeys as $currentKey) {
 				if (!isset($settingValue[$currentKey])) throw new \F3\FLOW3\AOP\Exception\InvalidPointcutExpression('The given configuration path in the pointcut designator "setting" did not exist. Got: "' . $settingComparisonExpression[0] . '"', 1230035614);
 				$settingValue = $settingValue[$currentKey];

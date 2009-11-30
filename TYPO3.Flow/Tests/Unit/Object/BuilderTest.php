@@ -199,7 +199,7 @@ class BuilderTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function autowiringDetectsInjectSettingsMethodAndInjectsTheSettingsOfTheObjectsPackage() {
 		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array(), array(), '', FALSE);
-		$mockConfigurationManager->expects($this->once())->method('getSettings')->with('FLOW3')->will($this->returnValue(array('the settings')));
+		$mockConfigurationManager->expects($this->once())->method('getConfiguration')->with(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_SETTINGS, 'FLOW3')->will($this->returnValue(array('the settings')));
 		$this->objectBuilder->injectConfigurationManager($mockConfigurationManager);
 
 		$objectName = 'F3\FLOW3\Tests\Object\Fixture\ClassWithInjectSettingsMethod';
@@ -300,7 +300,7 @@ class BuilderTest extends \F3\Testing\BaseTestCase {
 	public function theValueOfSettingsCanBeInjectedThroughArgumentsOfTypeSetting() {
 		$settings = array('Bar' => array('Baz' => 'TheValue'));
 		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array(), array(), '', FALSE);
-		$mockConfigurationManager->expects($this->once())->method('getSettings')->with('Foo')->will($this->returnValue($settings));
+		$mockConfigurationManager->expects($this->once())->method('getConfiguration')->with(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_SETTINGS, 'Foo')->will($this->returnValue($settings));
 
 		$this->objectBuilder->injectConfigurationManager($mockConfigurationManager);
 
@@ -321,7 +321,7 @@ class BuilderTest extends \F3\Testing\BaseTestCase {
 	public function theValueOfSettingsCanBeInjectedThroughPropertiesOfTypeSetting() {
 		$settings = array('Bar' => array('Baz' => 'TheValue'));
 		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array(), array(), '', FALSE);
-		$mockConfigurationManager->expects($this->once())->method('getSettings')->with('Foo')->will($this->returnValue($settings));
+		$mockConfigurationManager->expects($this->once())->method('getConfiguration')->with(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_SETTINGS, 'Foo')->will($this->returnValue($settings));
 
 		$this->objectBuilder->injectConfigurationManager($mockConfigurationManager);
 
@@ -455,7 +455,7 @@ class BuilderTest extends \F3\Testing\BaseTestCase {
 		$this->mockObjectManager->expects($this->once())->method('getObject')->with('F3\Virtual\Foo')->will($this->returnValue(new \stdClass));
 
 		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array(), array(), '', FALSE);
-		$mockConfigurationManager->expects($this->once())->method('getSettings')->with('FLOW3')->will($this->returnValue(array('foo' => 'F3\Virtual\Foo')));
+		$mockConfigurationManager->expects($this->once())->method('getConfiguration')->with(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_SETTINGS, 'FLOW3')->will($this->returnValue(array('foo' => 'F3\Virtual\Foo')));
 		$this->objectBuilder->injectConfigurationManager($mockConfigurationManager);
 
 		$objectConfiguration = new \F3\FLOW3\Object\Configuration\Configuration('F3\FLOW3\Tests\Object\Fixture\ClassWithOptionalArguments');
@@ -474,7 +474,7 @@ class BuilderTest extends \F3\Testing\BaseTestCase {
 		$this->mockObjectManager->expects($this->once())->method('getObject')->with('F3\Virtual\Foo')->will($this->returnValue(new \stdClass));
 
 		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array(), array(), '', FALSE);
-		$mockConfigurationManager->expects($this->once())->method('getSettings')->with('FLOW3')->will($this->returnValue(array('foo' => 'F3\Virtual\Foo')));
+		$mockConfigurationManager->expects($this->once())->method('getConfiguration')->with(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_SETTINGS, 'FLOW3')->will($this->returnValue(array('foo' => 'F3\Virtual\Foo')));
 		$this->objectBuilder->injectConfigurationManager($mockConfigurationManager);
 
 		$objectConfiguration = new \F3\FLOW3\Object\Configuration\Configuration('F3\FLOW3\Tests\Object\Fixture\BasicClass');

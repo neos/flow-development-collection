@@ -126,7 +126,6 @@
             After all configuration files form these directories have been
             parsed, the resulting configuration containers are protected
             against further introduction of new options.</para>
-
           </listitem>
         </varlistentry>
 
@@ -321,7 +320,7 @@ class SomeClass {
 	 * @return void
 	 */
 	public function theMethod() {
-		$mySettings = $this-&gt;configurationManager-&gt;getSettings('Demo');
+		$mySettings = $this-&gt;configurationManager-&gt;getConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_SETTINGS, 'Demo');
 		echo ($mySettings-&gt;administrator-&gt;name);
 		echo ($mySettings-&gt;administrator-&gt;email);
 	}
@@ -340,9 +339,10 @@ class SomeClass {
       requesting.</para>
 
       <para>Bottom line is that you should be highly aware of what you're
-      doing when working with these special options. Usually there are much
-      better ways to get the desired information (e.g. ask the Object Manager
-      for object configuration).</para>
+      doing when working with these special options and that they might change
+      in a later version of FLOW3. Usually there are much better ways to get
+      the desired information (e.g. ask the Object Manager for object
+      configuration).</para>
     </section>
   </section>
 

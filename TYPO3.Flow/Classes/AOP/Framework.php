@@ -174,14 +174,14 @@ class Framework {
 	}
 
 	/**
-	 * Injects a reference to the configuration manager
+	 * Injects the FLOW3 settings
 	 *
-	 * @param \F3\FLOW3\Configuration\Manager $configurationManager The configuration manager
+	 * @param array $settings The settings
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectConfigurationManager(\F3\FLOW3\Configuration\Manager $configurationManager) {
-		$this->settings = $configurationManager->getSettings('FLOW3');
+	public function injectSettings(array $settings) {
+		$this->settings = $settings;
 	}
 
 	/**
