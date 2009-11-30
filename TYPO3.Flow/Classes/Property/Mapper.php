@@ -310,7 +310,10 @@ class Mapper {
 		} elseif (is_array($propertyValue)) {
 			if (isset($propertyValue['__identity'])) {
 				$existingObject = (is_array($propertyValue['__identity'])) ? $this->findObjectByIdentityProperties($propertyValue['__identity'], $targetType) : $this->persistenceManager->getBackend()->getObjectByIdentifier($propertyValue['__identity']);
-				if ($existingObject === FALSE) throw new \F3\FLOW3\Property\Exception\TargetNotFound('Querying the repository for the specified object was not successful.', 1237305720);
+				if ($existingObject === FALSE) {
+					throw new \F3\FLOW3\Property\Exception\TargetNotFound('Querying the repository for the specified object was not successful.', 1237305720);
+				}
+
 				unset($propertyValue['__identity']);
 				if (count($propertyValue) === 0) {
 					$propertyValue = $existingObject;
@@ -338,7 +341,8 @@ class Mapper {
 	 *
 	 * @param array $identityProperties Property names and values to search for
 	 * @param string $type The object type to look for
-	 * @return mixed Either the object matching the identity or, if none or more than one object was found, FALSE
+	 * @return mixed Either the object matching the identity or FALSE if no object was found
+	 * @throws \RuntimeException if more than one object was found
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
@@ -367,11 +371,12 @@ class Mapper {
 		}
 
 		$objects = $query->matching($constraint)->execute();
-		if (count($objects) === 1 ) {
+		if (count($objects) === 1) {
 			return current($objects);
-		} else {
-			$this->mappingResults->addError($this->objectFactory->create('F3\FLOW3\Error\Error', 'Querying the repository for object by properties (' . implode(', ', array_keys($identityProperties)) . ') resulted in ' . count($objects) . ' objects instead of one.' , 1237305719), '--none--');
+		} elseif (count($objects) === 0) {
 			return FALSE;
+		} else {
+			throw new \RuntimeException('More than one object was returned for the given identity, this is a constraint violation.', 1259612399);
 		}
 	}
 
