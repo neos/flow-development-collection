@@ -37,14 +37,6 @@
       </varlistentry>
 
       <varlistentry>
-        <term><filename>FLOW3.yaml</filename></term>
-
-        <listitem>
-          <para>Contains settings for the FLOW3 package.</para>
-        </listitem>
-      </varlistentry>
-
-      <varlistentry>
         <term><filename>Routes.yaml</filename></term>
 
         <listitem>
@@ -135,9 +127,6 @@
             parsed, the resulting configuration containers are protected
             against further introduction of new options.</para>
 
-            <para>Note that <filename>FLOW3.yaml</filename> files are only
-            allowed in the <package>FLOW3</package> package and are ignored in
-            any other package configuration directory.</para>
           </listitem>
         </varlistentry>
 
@@ -368,10 +357,11 @@ class SomeClass {
     effect until you manually flush the respective caches.</para>
 
     <para>This feature can be configure through a switch in the
-    <filename>FLOW3.yaml</filename> file:</para>
+    <filename>Settings.yaml</filename> file:</para>
 
-    <programlisting language="yaml">configuration:
-  compileConfigurationFiles: y</programlisting>
+    <programlisting language="yaml">FLOW3:
+  configuration:
+    compileConfigurationFiles: y</programlisting>
 
     <para>When enabled, the configuration manager will compile all loaded
     configuration into a PHP file which will be loaded in subsequent calls

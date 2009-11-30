@@ -365,7 +365,7 @@ F3\FLOW3\Security\Cryptography\RSAWalletServiceInterface:
 #                                                                          #
 
 F3\FLOW3\Session\SessionInterface:
-  className: F3\FLOW3\Session\PHPSession
+  className: F3\FLOW3\Session\TransientSession
 
 #                                                                          #
 # SignalSlot                                                               #

@@ -298,18 +298,25 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function loadSettingsLoadsSettingsForFLOW3OnlyWhenTheGivenPackagesContainOnlyTheFLOW3Package() {
-		$mockFLOW3Package = $this->getMock('F3\FLOW3\Package\Package', array(), array(), '', FALSE);
+		$mockPackage = $this->getMock('F3\FLOW3\Package\Package', array(), array(), '', FALSE);
 
 		$mockConfigurationSource = $this->getMock('F3\FLOW3\Configuration\Source\SourceInterface', array('load', 'save'));
-		$mockConfigurationSource->expects($this->exactly(3))->method('load')->will($this->onConsecutiveCalls(array('foo' => 'bar'), array('baz' => 'quux'), array('foo' => 'flow')));
+		$mockConfigurationSource->expects($this->exactly(6))->method('load')->will(
+			$this->onConsecutiveCalls(
+				array('FLOW3' => array('foo' => 'bar')),
+				array('FLOW3' => array('baz' => 'quux')),
+				array('FLOW3' => array('foo' => 'flow')),
+				array('Foo' => array('aaa' => 'bbb')),
+				array('Foo' => array('ccc' => 'ddd')),
+				array('Foo' => array())
+			)
+		);
 
 		$configurationManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Configuration\Manager'), array('postProcessSettings'), array(), '', FALSE);
-		$configurationManager->expects($this->once())->method('postProcessSettings');
+		$configurationManager->expects($this->exactly(2))->method('postProcessSettings');
 
 		$configurationManager->_set('configurationSource', $mockConfigurationSource);
 		$configurationManager->_set('context', 'FooContext');
-
-		$configurationManager->_call('loadSettings', array('FLOW3' => $mockFLOW3Package));
 
 		$expectedSettings = array(
 			'foo' => 'flow',
@@ -318,9 +325,16 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 				'context' => 'FooContext'
 			)
  		);
-		$actualSettings = $configurationManager->getSettings('FLOW3');
 
+ 		$configurationManager->setPackages(array('FLOW3' => $mockPackage));
+		$actualSettings = $configurationManager->getSettings('FLOW3');
 		$this->assertSame($expectedSettings, $actualSettings);
+
+		$configurationManager->_set('configurations', array('Settings' => array()));
+
+ 		$configurationManager->setPackages(array('Foo' => $mockPackage, 'FLOW3' => $mockPackage));
+		$actualSettings = $configurationManager->getSettings('FLOW3');
+		$this->assertSame(array(), $actualSettings);
 	}
 
 	/**

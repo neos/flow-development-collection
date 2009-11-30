@@ -41,7 +41,7 @@ final class Bootstrap {
 	/**
 	 * FLOW3's Subversion revision
 	 */
-	const REVISION = '$Revision: 2956$';
+	const REVISION = '$Revision$';
 
 	/**
 	 * Required PHP version

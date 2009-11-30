@@ -234,14 +234,10 @@ class Manager {
 	 * The result is stored in the configuration manager's settings registry
 	 * and can be retrieved with the getSettings() method.
 	 *
-	 * This method also has special support for FLOW3 settings which are not stored
-	 * in a "Settings.yaml" file like the package's settings but reside in dedicated
-	 * "FLOW3.yaml" files.
-	 *
 	 * This method is usually run twice: early in the boot sequence to load FLOW3
 	 * settings and later to load the remaining settings.
 	 *
-	 * @param array $packages An array of Package objects
+	 * @param array<F3\FLOW3\Package\PackageInterface> $packages An array of Package objects, indexed by package key
 	 * @return void
 	 * @see getSettings()
 	 * @author Robert Lemke <robert@typo3.org>
@@ -250,17 +246,18 @@ class Manager {
 		$this->cacheNeedsUpdate = TRUE;
 
 		if (count($packages) === 1 && isset($packages['FLOW3'])) {
-			$settings = $this->configurationSource->load(FLOW3_PATH_FLOW3 . 'Configuration/FLOW3');
-			$settings = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($settings, $this->configurationSource->load(FLOW3_PATH_CONFIGURATION . 'FLOW3', TRUE));
-			$settings = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($settings, $this->configurationSource->load(FLOW3_PATH_CONFIGURATION . $this->context . '/FLOW3', TRUE));
+			$settings = $this->configurationSource->load(FLOW3_PATH_FLOW3 . 'Configuration/' . self::CONFIGURATION_TYPE_SETTINGS);
+			$settings = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($settings, $this->configurationSource->load(FLOW3_PATH_CONFIGURATION . self::CONFIGURATION_TYPE_SETTINGS, TRUE));
+			$settings = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($settings, $this->configurationSource->load(FLOW3_PATH_CONFIGURATION . $this->context . '/' . self::CONFIGURATION_TYPE_SETTINGS, TRUE));
 
 			$this->postProcessSettings($settings);
-			$this->configurations[self::CONFIGURATION_TYPE_SETTINGS]['FLOW3'] = $settings;
+			$this->configurations[self::CONFIGURATION_TYPE_SETTINGS] = $settings;
 			$this->configurations[self::CONFIGURATION_TYPE_SETTINGS]['FLOW3']['core']['context'] = $this->context;
-		} else {
+		} elseif (count($packages) > 1) {
 			$settings = array();
-			if (isset($packages['FLOW3'])) unset ($packages['FLOW3']);
-
+			if (isset($packages['FLOW3'])) {
+				unset ($packages['FLOW3']);
+			}
 			foreach ($packages as $packageKey => $package) {
 				if (!isset($settings[$packageKey])) {
 					$settings[$packageKey] = array();
@@ -378,9 +375,10 @@ class Manager {
 			\F3\FLOW3\Utility\Files::createDirectoryRecursively($configurationCachePath );
 		}
 		$cachePathAndFilename = $configurationCachePath  . $this->context . 'Configurations.php';
+		$currentRevision = \F3\FLOW3\Core\Bootstrap::REVISION;
 		$includeCachedConfigurationsCode = <<< "EOD"
 <?php
-	if (file_exists('$cachePathAndFilename')) {
+	if (file_exists('$cachePathAndFilename') && \F3\FLOW3\Core\Bootstrap::REVISION == '$currentRevision') {
 		return require '$cachePathAndFilename';
 	} else {
 		unlink(__FILE__);

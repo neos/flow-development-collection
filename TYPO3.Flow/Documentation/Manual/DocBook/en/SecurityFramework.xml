@@ -21,11 +21,11 @@
 
     <para>Before you can use any of the described features in this chapter you
     will have to enable the security framework. This is done as follows in the
-    FLOW3.yaml configuration file:<example>
-        <title>Example: Enable the security features in the FLOW3.yaml
+    Settings.yaml configuration file:<example>
+        <title>Example: Enable the security features in the Settings.yaml
         configuration file</title>
 
-        <programlisting language="yaml">security: enable: yes</programlisting>
+        <programlisting language="yaml">FLOW3: security: enable: yes</programlisting>
       </example></para>
 
     <para>After that, the security framework engages with FLOW3 by vowing in
@@ -84,13 +84,14 @@
       <para>The configuration for this default provider, which is shipped with
       FLOW3's default configuration looks like this:<example>
           <title>Configuration of the default UsernamePassword authentication
-          mechanism in FLOW3.yaml</title>
+          mechanism in Settings.yaml</title>
 
-          <programlisting language="yaml">security:
-  authentication:
-    providers:
-      DefaultProvider:
-        providerClass: UsernamePasswordCR</programlisting>
+          <programlisting language="yaml">FLOW3:
+  security:
+    authentication:
+      providers:
+        DefaultProvider:
+          providerClass: UsernamePasswordCR</programlisting>
         </example></para>
 
       <para>This registers the <literal>UsernamePasswordCR</literal>
@@ -276,7 +277,7 @@
       provider. This provider - account connection is stored in a property of
       the account object named
       "<literal>authenticationProviderName</literal>". Appropriate getters and
-      setters are provided. The provider name is configured in the FLOW3.yaml
+      setters are provided. The provider name is configured in the Settings.yaml
       file. If you look back to the default configuration, you'll find the
       name of the default authentication provider:
       "<literal>DefaultProvider</literal>". Besides that, each account has
@@ -954,26 +955,27 @@ $credentials['password'] = $POSTArguments['F3\FLOW3\Security\Authentication\Toke
       <para>Of course you are able to configure as many requests filters as
       you like. Have a look at the following example to get an idea how a
       firewall configuration will look like:<example>
-          <title>Example firewall configuration in the FLOW3.yaml file</title>
+          <title>Example firewall configuration in the Settings.yaml file</title>
 
-          <para><programlisting language="yaml">security:
-  firewall:
-    rejectAll: n
+          <para><programlisting language="yaml">FLOW3:
+  security:
+    firewall:
+      rejectAll: n
 
-    filters:
-      -
-        patternType:  URL
-        patternValue: /some/url/.*
-        interceptor:  AccessGrant
-      -
-        patternType:  URL
-        patternValue: /some/url/blocked.*
-        interceptor:  AccessDeny
-      -
-        patternType:  F3\MyPackage\Security\MyOwnRequestPattern
-        patternValue: some pattern value
-        interceptor:  F3\MyPackage\Security\MyOwnSecurityInterceptor</programlisting></para>
-        </example><note>
+      filters:
+        -
+          patternType:  URL
+          patternValue: /some/url/.*
+          interceptor:  AccessGrant
+        -
+          patternType:  URL
+          patternValue: /some/url/blocked.*
+          interceptor:  AccessDeny
+        -
+          patternType:  F3\MyPackage\Security\MyOwnRequestPattern
+          patternValue: some pattern value
+          interceptor:  F3\MyPackage\Security\MyOwnSecurityInterceptor</programlisting></para>
+          </example><note>
           <para>As you can see, you can easily use your own implementations
           for request patterns and security interceptors.</para>
         </note><note>
@@ -1016,14 +1018,15 @@ $credentials['password'] = $POSTArguments['F3\FLOW3\Security\Authentication\Toke
     there is an example configuration, that will proclaim the roles
     <literal>Administrator</literal>, <literal>Customer</literal>, and
     <literal>PrivilegedCustomer</literal> to the system.<example>
-        <title>Example roles definition in the FLOW3.yaml file</title>
+        <title>Example roles definition in the Settings.yaml file</title>
 
-        <para><programlisting language="yaml">security:
-  policy:
-    roles:
-      Administrator: []
-      Customer: []
-      PrivilegedCustomer: [Customer]</programlisting></para>
+        <para><programlisting language="yaml">FLOW3:
+  security:
+    policy:
+      roles:
+        Administrator: []
+        Customer: []
+        PrivilegedCustomer: [Customer]</programlisting></para>
       </example><note>
         <para>The role <literal>PrivilegedCustomer</literal> is configured as
         a sub role of <literal>Customer</literal>, i.e. it will inherit the
@@ -1037,14 +1040,15 @@ $credentials['password'] = $POSTArguments['F3\FLOW3\Security\Authentication\Toke
     allowed to access a certain resource. The policy configuration deals only
     with method resources, access to other resources like content will be
     handled by the content repository.<example>
-        <title>Example resources definition in the FLOW3.yaml file</title>
+        <title>Example resources definition in the Settings.yaml file</title>
 
-        <para><programlisting language="yaml">security:
-  policy:
-    resources:
-      update: "method(F3\FooPackage\SomeClass-&gt;update.*())"
-      delete: "method(F3\FooPackage\.*-&gt;delete.*())"
-      modify: "update || delete"</programlisting></para>
+        <para><programlisting language="yaml">FLOW3:
+  security:
+    policy:
+      resources:
+        update: "method(F3\FooPackage\SomeClass-&gt;update.*())"
+        delete: "method(F3\FooPackage\.*-&gt;delete.*())"
+        modify: "update || delete"</programlisting></para>
       </example></para>
 
     <para>Each resource is defined by a unique name and so called pointcut
@@ -1065,21 +1069,22 @@ $credentials['password'] = $POSTArguments['F3\FLOW3\Security\Authentication\Toke
 
     <para>The last step is to connect resources with roles by assigning access
     privileges. Let's have a look at an example for such ACL entries:<example>
-        <title>Example for ACL entry definitions in the FLOW3.yaml
+        <title>Example for ACL entry definitions in the Settings.yaml
         file</title>
 
-        <para><programlisting language="yaml">security:
-  policy:
-    acls:
-      Administrator:
-        modify: ACCESS_GRANT
+        <para><programlisting language="yaml">FLOW3:
+  security:
+    policy:
+      acls:
+        Administrator:
+          modify: ACCESS_GRANT
     
-      Customer:
-        modify: ACCESS_DENY
+        Customer:
+          modify: ACCESS_DENY
 
-      PrivilegedCustomer:
-        update: ACCESS_GRANT
-        delete: ACCESS_DENY
+        PrivilegedCustomer:
+          update: ACCESS_GRANT
+          delete: ACCESS_DENY
 </programlisting></para>
       </example>This will end up in <literal>Administrators</literal> being
     able to call all <literal>update*</literal> methods in the class
