@@ -469,20 +469,20 @@ public function processRequest(\F3\FLOW3\MVC\RequestInterface $request, \F3\FLOW
 
         <itemizedlist>
           <listitem>
-            <para><methodname>initializedView()</methodname> is called in
-            order to resolve, set and initialize a view which matches the
-            current action.</para>
+            <para><methodname>initializeView()</methodname> is called in order
+            to resolve, set and initialize a view which matches the current
+            action.</para>
           </listitem>
 
           <listitem>
-            <para><methodname>initializedAction()</methodname> is called after
+            <para><methodname>initializeAction()</methodname> is called after
             the view has been initialized and the automatic registration of
             arguments is done. At that point, the argument's values are still
             empty and have not been validated.</para>
           </listitem>
 
           <listitem>
-            <para><methodname>initializedFooAction()</methodname> where
+            <para><methodname>initializeFooAction()</methodname> where
             <methodname>Foo</methodname> is the name of the action, is called
             only before an action of that name is called.</para>
           </listitem>
