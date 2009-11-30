@@ -492,9 +492,10 @@ EOD;
 
 		$configurationManager->_call('saveConfigurationCache');
 
+		$currentRevision = \F3\FLOW3\Core\Bootstrap::REVISION;
 		$expectedInclusionCode = <<< "EOD"
 <?php
-	if (file_exists('vfs://FLOW3/TemporaryDirectory/Configuration/FooContextConfigurations.php')) {
+	if (file_exists('vfs://FLOW3/TemporaryDirectory/Configuration/FooContextConfigurations.php') && \F3\FLOW3\Core\Bootstrap::REVISION === '$currentRevision') {
 		return require 'vfs://FLOW3/TemporaryDirectory/Configuration/FooContextConfigurations.php';
 	} else {
 		unlink(__FILE__);

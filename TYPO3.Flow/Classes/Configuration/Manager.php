@@ -378,7 +378,7 @@ class Manager {
 		$currentRevision = \F3\FLOW3\Core\Bootstrap::REVISION;
 		$includeCachedConfigurationsCode = <<< "EOD"
 <?php
-	if (file_exists('$cachePathAndFilename') && \F3\FLOW3\Core\Bootstrap::REVISION == '$currentRevision') {
+	if (file_exists('$cachePathAndFilename') && \F3\FLOW3\Core\Bootstrap::REVISION === '$currentRevision') {
 		return require '$cachePathAndFilename';
 	} else {
 		unlink(__FILE__);
