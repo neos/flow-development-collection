@@ -108,7 +108,7 @@ class FileBackend extends \F3\FLOW3\Log\Backend\AbstractBackend {
 	/**
 	 * If a new log file is started, keep this number of old log files.
 	 *
-	 * @param integer $maximumLogFileSize
+	 * @param integer $logFilesToKeep Number of old log files to keep
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api

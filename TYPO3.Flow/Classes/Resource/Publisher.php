@@ -150,7 +150,7 @@ class Publisher {
 	/**
 	 * Sets the cache strategy to use for resource files
 	 *
-	 * @param integer $strategy One of the MIRROR_MODE_* constants
+	 * @param integer $mirrorMode One of the MIRROR_MODE_* constants
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */

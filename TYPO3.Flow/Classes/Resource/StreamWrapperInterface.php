@@ -232,7 +232,7 @@ interface StreamWrapperInterface {
 	 * @param string $path Specifies the URL that was passed to the original function.
 	 * @param string $mode The mode used to open the file, as detailed for fopen().
 	 * @param integer $options Holds additional flags set by the streams API.
-	 * @param string &$opened path If the path is opened successfully, and STREAM_USE_PATH is set in options, opened_path should be set to the full path of the file/resource that was actually opened.
+	 * @param string &$openedPathAndFileName path If the path is opened successfully, and STREAM_USE_PATH is set in options, opened_path should be set to the full path of the file/resource that was actually opened.
 	 * @return boolean TRUE on success or FALSE on failure.
 	 * @api
 	 */
@@ -293,8 +293,8 @@ interface StreamWrapperInterface {
 	 *  STREAM_OPTION_WRITE_BUFFER: the requested buffer size.
 	 *
 	 * @param integer $option
-	 * @param integer $arg1
-	 * @param integer $arg2
+	 * @param integer $argument1
+	 * @param integer $argument2
 	 * @return boolean TRUE on success or FALSE on failure. If option is not implemented, FALSE should be returned.
 	 * @api
 	 */

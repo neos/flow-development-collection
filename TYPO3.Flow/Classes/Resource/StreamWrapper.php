@@ -310,7 +310,7 @@ class StreamWrapper {
 	 * @param string $path Specifies the URL that was passed to the original function.
 	 * @param string $mode The mode used to open the file, as detailed for fopen().
 	 * @param integer $options Holds additional flags set by the streams API.
-	 * @param string &$opened path If the path is opened successfully, and STREAM_USE_PATH is set in options, opened_path should be set to the full path of the file/resource that was actually opened.
+	 * @param string &$opened_path path If the path is opened successfully, and STREAM_USE_PATH is set in options, opened_path should be set to the full path of the file/resource that was actually opened.
 	 * @return boolean TRUE on success or FALSE on failure.
 	 */
 	public function stream_open($path, $mode, $options, &$opened_path) {

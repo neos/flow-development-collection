@@ -197,7 +197,7 @@ class MemcachedBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	/**
 	 * Initializes the identifier prefix when setting the cache.
 	 *
-	 * @param $cache \F3\FLOW3\Cache\Frontend\FrontendInterface
+	 * @param \F3\FLOW3\Cache\Frontend\FrontendInterface $cache
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */

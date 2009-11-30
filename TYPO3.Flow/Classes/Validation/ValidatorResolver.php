@@ -143,6 +143,8 @@ class ValidatorResolver {
 	 * - by the data type specified in the @param annotations
 	 * - additional validators specified in the @validate annotations of a method
 	 *
+	 * @param string $className
+	 * @param string $methodName
 	 * @return array An Array of ValidatorConjunctions for each method parameters.
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Sebastian Kurfürst <sbastian@typo3.org>

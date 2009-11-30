@@ -153,11 +153,11 @@ class RequestHashService {
 	 * Check if every element in $requestArguments is in $allowedFields as well.
 	 *
 	 * @param array $requestArguments
-	 * @param array $allowedFiels
+	 * @param array $allowedFields
 	 * @return boolean TRUE if ALL fields inside requestArguments are in $allowedFields, FALSE otherwise.
 	 */
 	protected function checkFieldNameInclusion(array $requestArguments, array $allowedFields) {
-		foreach ($requestArguments as $argumentName => $argumentValue) {
+		foreach (array_keys($requestArguments) as $argumentName) {
 			if (!isset($allowedFields[$argumentName])) {
 				return FALSE;
 			}
