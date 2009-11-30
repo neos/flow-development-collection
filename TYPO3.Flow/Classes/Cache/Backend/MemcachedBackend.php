@@ -228,9 +228,9 @@ class MemcachedBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 		if (strlen($this->identifierPrefix . $entryIdentifier) > 250) throw new \InvalidArgumentException('Could not set value. Key more than 250 characters (' . $this->identifierPrefix . $entryIdentifier . ').', 1232969508);
 		if (!$this->cache instanceof \F3\FLOW3\Cache\Frontend\FrontendInterface) throw new \F3\FLOW3\Cache\Exception('No cache frontend has been set yet via setCache().', 1207149215);
 		if (!is_string($data)) throw new \F3\FLOW3\Cache\Exception\InvalidData('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1207149231);
-		$this->systemLogger->log(sprintf('Cache %s: setting entry "%s".', $this->cache->getIdentifier(), $entryIdentifier), LOG_DEBUG);
+		$this->systemLogger->log(sprintf('Cache %s: setting entry "%s".', $this->cacheIdentifier, $entryIdentifier), LOG_DEBUG);
 
-		$tags[] = '%MEMCACHEBE%' . $this->cache->getIdentifier();
+		$tags[] = '%MEMCACHEBE%' . $this->cacheIdentifier;
 		$expiration = $lifetime !== NULL ? $lifetime : $this->defaultLifetime;
 
 		try {
@@ -302,7 +302,7 @@ class MemcachedBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @api
 	 */
 	public function remove($entryIdentifier) {
-		$this->systemLogger->log(sprintf('Cache %s: removing entry "%s".', $this->cache->getIdentifier(), $entryIdentifier), LOG_DEBUG);
+		$this->systemLogger->log(sprintf('Cache %s: removing entry "%s".', $this->cacheIdentifier, $entryIdentifier), LOG_DEBUG);
 		$this->removeIdentifierFromAllTags($entryIdentifier);
 		return $this->memcache->delete($this->identifierPrefix . $entryIdentifier);
 	}
@@ -348,7 +348,7 @@ class MemcachedBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	public function flush() {
 		if (!$this->cache instanceof \F3\FLOW3\Cache\Frontend\FrontendInterface) throw new \F3\FLOW3\Cache\Exception('Yet no cache frontend has been set via setCache().', 1204111376);
 
-		$this->flushByTag('%MEMCACHEBE%' . $this->cache->getIdentifier());
+		$this->flushByTag('%MEMCACHEBE%' . $this->cacheIdentifier);
 	}
 
 	/**
@@ -361,7 +361,7 @@ class MemcachedBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 */
 	public function flushByTag($tag) {
 		$identifiers = $this->findIdentifiersByTag($tag);
-		$this->systemLogger->log(sprintf('Cache %s: removing %s entries matching tag "%s"', $this->cache->getIdentifier(), count($identifiers), $tag), LOG_INFO);
+		$this->systemLogger->log(sprintf('Cache %s: removing %s entries matching tag "%s"', $this->cacheIdentifier, count($identifiers), $tag), LOG_INFO);
 		foreach ($identifiers as $identifier) {
 			$this->remove($identifier);
 		}
@@ -480,7 +480,7 @@ class MemcachedBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @api
 	 */
 	public function collectGarbage() {
-		$this->systemLogger->log(sprintf('Cache %s: garbage collection is done by memcached', $this->cache->getIdentifier()), LOG_INFO);
+		$this->systemLogger->log(sprintf('Cache %s: garbage collection is done by memcached', $this->cacheIdentifier), LOG_INFO);
 	}
 
 }

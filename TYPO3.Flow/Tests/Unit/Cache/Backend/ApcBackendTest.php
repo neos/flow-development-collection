@@ -28,7 +28,7 @@ namespace F3\FLOW3\Cache\Backend;
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class APCBackendTest extends \F3\Testing\BaseTestCase {
+class ApcBackendTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @var \F3\FLOW3\Utility\Environment
@@ -56,7 +56,7 @@ class APCBackendTest extends \F3\Testing\BaseTestCase {
 	 * @expectedException \F3\FLOW3\Cache\Exception
 	 */
 	public function setThrowsExceptionIfNoFrontEndHasBeenSet() {
-		$backend = new \F3\FLOW3\Cache\Backend\APCBackend('Testing');
+		$backend = new \F3\FLOW3\Cache\Backend\ApcBackend('Testing');
 		$backend->injectEnvironment($this->environment);
 		$data = 'Some data';
 		$identifier = 'MyIdentifier';
@@ -222,14 +222,14 @@ class APCBackendTest extends \F3\Testing\BaseTestCase {
 
 		$thisCache = $this->getMock('F3\FLOW3\Cache\Frontend\FrontendInterface', array(), array(), '', FALSE);
 		$thisCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('thisCache'));
-		$thisBackend = new \F3\FLOW3\Cache\Backend\APCBackend('Testing');
+		$thisBackend = new \F3\FLOW3\Cache\Backend\ApcBackend('Testing');
 		$thisBackend->injectEnvironment($this->environment);
 		$thisBackend->injectSystemLogger($mockSystemLogger);
 		$thisBackend->setCache($thisCache);
 
 		$thatCache = $this->getMock('F3\FLOW3\Cache\Frontend\FrontendInterface', array(), array(), '', FALSE);
 		$thatCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('thatCache'));
-		$thatBackend = new \F3\FLOW3\Cache\Backend\APCBackend('Testing');
+		$thatBackend = new \F3\FLOW3\Cache\Backend\ApcBackend('Testing');
 		$thatBackend->injectEnvironment($this->environment);
 		$thatBackend->injectSystemLogger($mockSystemLogger);
 		$thatBackend->setCache($thatCache);
@@ -261,14 +261,13 @@ class APCBackendTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * Sets up the APC backend used for testing
 	 *
-	 * @param array $backendOptions Options for the APC backend
-	 * @return \F3\FLOW3\Cache\Backend\APCBackend
+	 * @return \F3\FLOW3\Cache\Backend\ApcBackend
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function setUpBackend(array $backendOptions = array()) {
+	protected function setUpBackend() {
 		$mockSystemLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
 		$cache = $this->getMock('F3\FLOW3\Cache\Frontend\FrontendInterface', array(), array(), '', FALSE);
-		$backend = new \F3\FLOW3\Cache\Backend\APCBackend('Testing');
+		$backend = new \F3\FLOW3\Cache\Backend\ApcBackend('Testing');
 		$backend->injectEnvironment($this->environment);
 		$backend->injectSystemLogger($mockSystemLogger);
 		$backend->setCache($cache);

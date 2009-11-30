@@ -154,7 +154,7 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	public function set($entryIdentifier, $data, array $tags = array(), $lifetime = NULL) {
 		if (!$this->cache instanceof \F3\FLOW3\Cache\Frontend\FrontendInterface) throw new \F3\FLOW3\Cache\Exception('No cache frontend has been set yet via setCache().', 1204111375);
 		if (!is_string($data)) throw new \F3\FLOW3\Cache\Exception\InvalidData('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1204481674);
-		$this->systemLogger->log(sprintf('Cache %s: setting entry "%s".', $this->cache->getIdentifier(), $entryIdentifier), LOG_DEBUG);
+		$this->systemLogger->log(sprintf('Cache %s: setting entry "%s".', $this->cacheIdentifier, $entryIdentifier), LOG_DEBUG);
 
 		$expirytime = $this->calculateExpiryTime($lifetime);
 		$cacheEntryPath = $this->renderCacheEntryPath($entryIdentifier);
@@ -201,7 +201,7 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 			mkdir($tagPath);
 			if (!is_writable($tagPath)) throw new \F3\FLOW3\Cache\Exception('The tag directory "' . $tagPath . '" could not be created.', 1238242144);
 		}
-		$tagPathAndFilename = $tagPath . $this->cache->getIdentifier() . self::SEPARATOR . $entryIdentifier;
+		$tagPathAndFilename = $tagPath . $this->cacheIdentifier . self::SEPARATOR . $entryIdentifier;
 		if (strlen($tagPathAndFilename) > $this->maximumPathLength) {
 			throw new \F3\FLOW3\Cache\Exception('The length of the tag path "' . $tagPathAndFilename . '" is ' . strlen($tagPathAndFilename) . ' characters long and exceeds the maximum path length of ' . $this->maximumPathLength . '. Please consider setting the temporaryDirectoryBase option to a shorter path. ', 1248710426);
 		}
@@ -244,7 +244,7 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @api
 	 */
 	public function remove($entryIdentifier) {
-		$this->systemLogger->log(sprintf('Cache %s: removing entry "%s".', $this->cache->getIdentifier(), $entryIdentifier), LOG_DEBUG);
+		$this->systemLogger->log(sprintf('Cache %s: removing entry "%s".', $this->cacheIdentifier, $entryIdentifier), LOG_DEBUG);
 
 		$pathAndFilename = $this->renderCacheEntryPath($entryIdentifier) . $entryIdentifier;
 		if (!file_exists($pathAndFilename)) return FALSE;
@@ -270,7 +270,7 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 		if (!$this->cache instanceof \F3\FLOW3\Cache\Frontend\FrontendInterface) throw new \F3\FLOW3\Cache\Exception('Yet no cache frontend has been set via setCache().', 1204111376);
 
 		$path = $this->cacheDirectory . 'Tags/';
-		$pattern = $path . $tag . '/' . $this->cache->getIdentifier() . self::SEPARATOR . '*';
+		$pattern = $path . $tag . '/' . $this->cacheIdentifier . self::SEPARATOR . '*';
 		$filesFound = glob($pattern);
 		if ($filesFound === FALSE || count($filesFound) === 0) return array();
 
@@ -294,7 +294,7 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	public function flush() {
 		if (!$this->cache instanceof \F3\FLOW3\Cache\Frontend\FrontendInterface) throw new \F3\FLOW3\Cache\Exception('Yet no cache frontend has been set via setCache().', 1204111376);
 
-		$path = $this->cacheDirectory . 'Data/' . $this->cache->getIdentifier() . '/';
+		$path = $this->cacheDirectory . 'Data/' . $this->cacheIdentifier . '/';
 		$pattern = $path . '*/*/*';
 		$filesFound = glob($pattern);
 		if ($filesFound === FALSE || count($filesFound) === 0) return;
@@ -316,7 +316,7 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 		$identifiers = $this->findIdentifiersByTag($tag);
 		if (count($identifiers) === 0) return;
 
-		$this->systemLogger->log(sprintf('Cache %s: removing %s entries matching tag "%s"', $this->cache->getIdentifier(), count($identifiers), $tag), LOG_INFO);
+		$this->systemLogger->log(sprintf('Cache %s: removing %s entries matching tag "%s"', $this->cacheIdentifier, count($identifiers), $tag), LOG_INFO);
 		foreach ($identifiers as $entryIdentifier) {
 			$this->remove($entryIdentifier);
 		}
@@ -346,14 +346,14 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	public function collectGarbage() {
 		if (!$this->cache instanceof \F3\FLOW3\Cache\Frontend\FrontendInterface) throw new \F3\FLOW3\Cache\Exception('Yet no cache frontend has been set via setCache().', 1222686150);
 
-		$pattern = $this->cacheDirectory . 'Data/' . $this->cache->getIdentifier() . '/*/*/*';
+		$pattern = $this->cacheDirectory . 'Data/' . $this->cacheIdentifier . '/*/*/*';
 		$filesFound = glob($pattern);
 		foreach ($filesFound as $cacheFilename) {
 			if ($this->isCacheFileExpired($cacheFilename)) {
 				$this->remove(basename($cacheFilename));
 			}
 		}
-		$this->systemLogger->log(sprintf('Cache %s: removed %s files during garbage collection', $this->cache->getIdentifier(), count($filesFound)), LOG_INFO);
+		$this->systemLogger->log(sprintf('Cache %s: removed %s files during garbage collection', $this->cacheIdentifier, count($filesFound)), LOG_INFO);
 	}
 
 	/**
@@ -366,7 +366,7 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 */
 	protected function renderCacheEntryPath($identifier) {
 		$identifierHash = sha1($identifier);
-		return $this->cacheDirectory . 'Data/' . $this->cache->getIdentifier() . '/' . $identifierHash[0] . '/' . $identifierHash[1] . '/';
+		return $this->cacheDirectory . 'Data/' . $this->cacheIdentifier . '/' . $identifierHash[0] . '/' . $identifierHash[1] . '/';
 	}
 
 	/**
@@ -401,7 +401,7 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 		if (!$this->cache instanceof \F3\FLOW3\Cache\Frontend\FrontendInterface) throw new \F3\FLOW3\Cache\Exception('Yet no cache frontend has been set via setCache().', 1204111376);
 
 		$path = $this->cacheDirectory . 'Tags/';
-		$pattern = $path . '*/' . $this->cache->getIdentifier() . self::SEPARATOR . $entryIdentifier;
+		$pattern = $path . '*/' . $this->cacheIdentifier . self::SEPARATOR . $entryIdentifier;
 		return glob($pattern);
 	}
 }

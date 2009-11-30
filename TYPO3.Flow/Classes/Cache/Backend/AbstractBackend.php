@@ -41,6 +41,11 @@ abstract class AbstractBackend implements \F3\FLOW3\Cache\Backend\BackendInterfa
 	protected $cache;
 
 	/**
+	 * @var string
+	 */
+	protected $cacheIdentifier;
+
+	/**
 	 * @var \F3\FLOW3\SignalSlot\Dispatcher
 	 */
 	protected $signalDispatcher;
@@ -104,6 +109,7 @@ abstract class AbstractBackend implements \F3\FLOW3\Cache\Backend\BackendInterfa
 	 */
 	public function setCache(\F3\FLOW3\Cache\Frontend\FrontendInterface $cache) {
 		$this->cache = $cache;
+		$this->cacheIdentifier = $this->cache->getIdentifier();
 	}
 
 	/**

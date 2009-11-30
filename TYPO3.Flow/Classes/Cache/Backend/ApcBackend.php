@@ -49,7 +49,7 @@ namespace F3\FLOW3\Cache\Backend;
  * @api
  * @scope prototype
  */
-class APCBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
+class ApcBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 
 	/**
 	 * A prefix to seperate stored data from other data possible stored in the APC
@@ -66,6 +66,11 @@ class APCBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @var \F3\FLOW3\Log\SystemLoggerInterface
 	 */
 	protected $systemLogger;
+
+	/**
+	 * @var string
+	 */
+	protected $cacheIdentifier;
 
 	/**
 	 * Constructs this backend
@@ -105,7 +110,7 @@ class APCBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	/**
 	 * Initializes the identifier prefix when setting the cache.
 	 *
-	 * @param $cache \F3\FLOW3\Cache\Frontend\FrontendInterface
+	 * @param \F3\FLOW3\Cache\Frontend\FrontendInterface $cache
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -134,9 +139,9 @@ class APCBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	public function set($entryIdentifier, $data, array $tags = array(), $lifetime = NULL) {
 		if (!$this->cache instanceof \F3\FLOW3\Cache\Frontend\FrontendInterface) throw new \F3\FLOW3\Cache\Exception('No cache frontend has been set yet via setCache().', 1232986818);
 		if (!is_string($data)) throw new \F3\FLOW3\Cache\Exception\InvalidData('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1232986825);
-		$this->systemLogger->log(sprintf('Cache %s: setting entry "%s".', $this->cache->getIdentifier(), $entryIdentifier), LOG_DEBUG);
+		$this->systemLogger->log(sprintf('Cache %s: setting entry "%s".', $this->cacheIdentifier, $entryIdentifier), LOG_DEBUG);
 
-		$tags[] = '%APCBE%' . $this->cache->getIdentifier();
+		$tags[] = '%APCBE%' . $this->cacheIdentifier;
 		$expiration = $lifetime !== NULL ? $lifetime : $this->defaultLifetime;
 
 		$success = apc_store($this->identifierPrefix . $entryIdentifier, $data, $expiration);
@@ -189,7 +194,7 @@ class APCBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @api
 	 */
 	public function remove($entryIdentifier) {
-		$this->systemLogger->log(sprintf('Cache %s: removing entry "%s".', $this->cache->getIdentifier(), $entryIdentifier), LOG_DEBUG);
+		$this->systemLogger->log(sprintf('Cache %s: removing entry "%s".', $this->cacheIdentifier, $entryIdentifier), LOG_DEBUG);
 		$this->removeIdentifierFromAllTags($entryIdentifier);
 		return apc_delete($this->identifierPrefix . $entryIdentifier);
 	}
@@ -237,7 +242,7 @@ class APCBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 */
 	public function flush() {
 		if (!$this->cache instanceof \F3\FLOW3\Cache\Frontend\FrontendInterface) throw new \F3\FLOW3\Cache\Exception('Yet no cache frontend has been set via setCache().', 1232986971);
-		$this->flushByTag('%APCBE%' . $this->cache->getIdentifier());
+		$this->flushByTag('%APCBE%' . $this->cacheIdentifier);
 	}
 
 	/**
@@ -250,7 +255,7 @@ class APCBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 */
 	public function flushByTag($tag) {
 		$identifiers = $this->findIdentifiersByTag($tag);
-		$this->systemLogger->log(sprintf('Cache %s: removing %s entries matching tag "%s"', $this->cache->getIdentifier(), count($identifiers), $tag), LOG_INFO);
+		$this->systemLogger->log(sprintf('Cache %s: removing %s entries matching tag "%s"', $this->cacheIdentifier, count($identifiers), $tag), LOG_INFO);
 		foreach ($identifiers as $identifier) {
 			$this->remove($identifier);
 		}
@@ -370,7 +375,7 @@ class APCBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @api
 	 */
 	public function collectGarbage() {
-		$this->systemLogger->log(sprintf('Cache %s: garbage collection is done by APC', $this->cache->getIdentifier()), LOG_INFO);
+		$this->systemLogger->log(sprintf('Cache %s: garbage collection is done by APC', $this->cacheIdentifier), LOG_INFO);
 	}
 
 }
