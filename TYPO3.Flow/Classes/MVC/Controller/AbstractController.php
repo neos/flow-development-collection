@@ -56,7 +56,7 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	protected $settings;
 
 	/**
-	 * @var \F3\FLOW3\Property\Mapper
+	 * @var \F3\FLOW3\Property\PropertyMapper
 	 * @api
 	 */
 	protected $propertyMapper;
@@ -154,11 +154,11 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	/**
 	 * Injects the property mapper
 	 *
-	 * @param \F3\FLOW3\Property\Mapper $propertyMapper The property mapper
+	 * @param \F3\FLOW3\Property\PropertyMapper $propertyMapper The property mapper
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectPropertyMapper(\F3\FLOW3\Property\Mapper $propertyMapper) {
+	public function injectPropertyMapper(\F3\FLOW3\Property\PropertyMapper $propertyMapper) {
 		$this->propertyMapper = $propertyMapper;
 	}
 

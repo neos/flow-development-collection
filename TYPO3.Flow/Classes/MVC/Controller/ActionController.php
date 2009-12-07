@@ -130,7 +130,6 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 
 		$this->mapRequestArgumentsToControllerArguments();
 		$this->controllerContext = $this->objectFactory->create('F3\FLOW3\MVC\Controller\ControllerContext', $this->request, $this->response, $this->arguments, $this->argumentsMappingResults, $this->uriBuilder, $this->flashMessageContainer);
-		$this->checkRequestHash();
 		$this->view = $this->resolveView();
 		if ($this->view !== NULL) {
 			$this->view->assign('settings', $this->settings);
@@ -379,37 +378,6 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 */
 	protected function getErrorFlashMessage() {
 		return 'An error occurred while trying to call ' . get_class($this) . '->' . $this->actionMethodName . '()';
-	}
-
-	/**
-	 * Checks the request hash (HMAC), if arguments have been touched by the property mapper.
-	 *
-	 * In case the @dontverifyrequesthash-Annotation has been set, this suppresses the exception.
-	 *
-	 * @return void
-	 * @throws F3\FLOW3\MVC\Exception\InvalidOrMissingRequestHash In case request hash checking failed
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	protected function checkRequestHash() {
-		if (!($this->request instanceof \F3\FLOW3\MVC\Web\Request)) {
-				// only check it for web requests for now.
-			return;
-		}
-
-		if (!$this->request->isHmacVerified()) {
-			$methodTagsValues = $this->reflectionService->getMethodTagsValues(get_class($this), $this->actionMethodName);
-			if (isset($methodTagsValues['dontverifyrequesthash'])) {
-				return;
-			}
-
-			foreach ($this->arguments as $argument) {
-				if ($argument->getOrigin() === \F3\FLOW3\MVC\Controller\Argument::ORIGIN_NEWLY_CREATED
-				 || $argument->getOrigin() === \F3\FLOW3\MVC\Controller\Argument::ORIGIN_PERSISTENCE_AND_MODIFIED) {
-					throw new \F3\FLOW3\MVC\Exception\InvalidOrMissingRequestHash('Request hash (HMAC) checking failed. The parameter __hmac was invalid or not set, and objects were modified.', 1255082824);
-				}
-			}
-		}
 	}
 }
 ?>

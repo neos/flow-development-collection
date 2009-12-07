@@ -28,7 +28,7 @@ WEBSERVER_USER="$2"
 WEBSERVER_GROUP="$3"
 
 echo
-echo "Checking permissions from here upwards..."
+echo "Checking permissions from here upwards ..."
 
 unset PARENT_PATH
 PARENT_PATH_PARTS=$(pwd | awk 'BEGIN{FS="/"}{for (i=1; i < NF; i++) print $i}')
@@ -37,7 +37,7 @@ for PARENT_PATH_PART in $PARENT_PATH_PARTS ; do
 	sudo -u $WEBSERVER_USER test -x "$PARENT_PATH"
 	if [ $? -gt 0 ]; then
 		echo "  $PARENT_PATH is NOT searchable (executable) for user $WEBSERVER_USER!"
-		echo "  You need to fix this yourself, I don't know you preferred permissions..."
+		echo "  Sorry, you need to fix this yourself, I don't know your preferred permissions ..."
 		exit 1
 	fi
 done

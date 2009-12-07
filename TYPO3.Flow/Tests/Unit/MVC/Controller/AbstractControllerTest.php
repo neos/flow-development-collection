@@ -228,7 +228,7 @@ class AbstractControllerTest extends \F3\Testing\BaseTestCase {
 
 		$mockMappingResults = $this->getMock('F3\FLOW3\Property\MappingResults');
 
-		$mockPropertyMapper = $this->getMock('F3\FLOW3\Property\Mapper', array(), array(), '', FALSE);
+		$mockPropertyMapper = $this->getMock('F3\FLOW3\Property\PropertyMapper', array(), array(), '', FALSE);
 		$mockPropertyMapper->expects($this->once())->method('mapAndValidate')->
 			with(array('foo', 'bar'), array('requestFoo', 'requestBar'), $mockArguments, array(), $mockValidator)->
 			will($this->returnValue(TRUE));

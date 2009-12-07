@@ -154,6 +154,34 @@ class ObjectAccess {
 	}
 
 	/**
+	 * Tells if the value of the specified property can be set by this Object Accessor.
+	 *
+	 * @param object $object Object containting the property
+	 * @param string $propertyName Name of the property to check
+	 * @return boolean
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	static public function isPropertySettable($object, $propertyName) {
+		if (!is_object($object)) throw new \InvalidArgumentException('$object must be an object, ' . gettype($object). ' given.', 1259828920);
+		if (array_search($propertyName, array_keys(get_class_vars(get_class($object)))) !== FALSE) return TRUE;
+		return method_exists($object, 'set' . ucfirst($propertyName));
+	}
+
+	/**
+	 * Tells if the value of the specified property can be retrieved by this Object Accessor.
+	 *
+	 * @param object $object Object containting the property
+	 * @param string $propertyName Name of the property to check
+	 * @return boolean
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	static public function isPropertyGettable($object, $propertyName) {
+		if (!is_object($object)) throw new \InvalidArgumentException('$object must be an object, ' . gettype($object). ' given.', 1259828921);
+		if (array_search($propertyName, array_keys(get_class_vars(get_class($object)))) !== FALSE) return TRUE;
+		return method_exists($object, 'get' . ucfirst($propertyName));
+	}
+
+	/**
 	 * Get all properties (names and their current values) of the current
 	 * $object that are accessible through this class.
 	 *

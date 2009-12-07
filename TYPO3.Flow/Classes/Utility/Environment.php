@@ -63,6 +63,12 @@ class Environment {
 	protected $POST;
 
 	/**
+	 * A local copy of the _FILES super global
+	 * @var array
+	 */
+	protected $FILES;
+
+	/**
 	 * A lower case string specifying the currently used Server API. See php_sapi_name()/PHP_SAPI for possible values
 	 * @var string
 	 */
@@ -108,8 +114,8 @@ class Environment {
 
 	/**
 	 * Initializes the environment instance. Copies the superglobals $_SERVER,
-	 * $_GET, $_POST to local variables and replaces the superglobals to avoid
-	 * their use.
+	 * $_GET, $_POST, $_FILES to local variables and replaces the superglobals
+	 * to block their use.
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
@@ -119,10 +125,12 @@ class Environment {
 			$this->SERVER = $_SERVER;
 			$this->GET = $_GET;
 			$this->POST = $_POST;
+			$this->FILES = $this->untangleFilesArray($_FILES);
 
 			$_SERVER = new \F3\FLOW3\Utility\SuperGlobalReplacement('_SERVER', 'Please use the API of ' . __CLASS__ . ' instead of accessing the superglobal directly.');
 			$_GET = new \F3\FLOW3\Utility\SuperGlobalReplacement('_GET', 'Please use the Request object which is built by the Request Handler instead of accessing the _GET superglobal directly.');
 			$_POST = new \F3\FLOW3\Utility\SuperGlobalReplacement('_POST', 'Please use the Request object which is built by the Request Handler instead of accessing the _POST superglobal directly.');
+			$_FILES = new \F3\FLOW3\Utility\SuperGlobalReplacement('_FILES', 'Please use the Request object which is built by the Request Handler instead of accessing the _FILES superglobal directly.');
 		}
 	}
 
@@ -340,6 +348,26 @@ class Environment {
 	}
 
 	/**
+	 * Returns the FILES arguments array from the _FILES superglobal. It applies
+	 * some helpful processing to the data before it is returned, so that arrays
+	 * of uploaded files are "deinterweaved" to be more as one would expect.
+	 *
+	 * Nested array uploads are untangled in a smiliar way, so that you always
+	 * get a nice and clean array of the form
+	 *  argumentName => array(name, tmp_name, error, size, type)
+	 * where argumentName can be a nested array if needed:
+	 *  form field name "foo[bar]" leads to
+	 *  argumentName foo => array(bar => array(...))
+	 *
+	 * @return array Unfiltered, raw, insecure, tainted files
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
+	 */
+	public function getUploadedFiles() {
+		return $this->FILES;
+	}
+
+	/**
 	 * Returns the unfiltered, raw, unchecked SERVER superglobal
 	 * If available, please always use an alternative method of this API.
 	 *
@@ -368,6 +396,88 @@ class Environment {
 			$this->temporaryDirectory = $this->createTemporaryDirectory($fallBackTemporaryDirectoryBase);
 		}
 		return $this->temporaryDirectory;
+	}
+
+	/**
+	 * Retrieves the maximum path lenght that is valid in the current environment.
+	 *
+	 * @return integer The maximum available path length
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function getMaximumPathLength() {
+		return PHP_MAXPATHLEN;
+	}
+
+	/**
+	 * Whether or not URL rewriting is enabled.
+	 *
+	 * @return boolean
+	 * @author Karsten Dambekalns <karsten@typo3.org
+	 */
+	public function isRewriteEnabled() {
+		return (boolean)getenv('FLOW3_REWRITEURLS');
+	}
+
+	/**
+	 * Transforms the convoluted _FILES superglobal into a manageable form.
+	 *
+	 * @param array $convolutedFiles The _FILES superglobal
+	 * @return array Untangled files
+	 */
+	protected function untangleFilesArray(array $convolutedFiles) {
+		$untangledFiles = array();
+
+		$fieldPaths = array();
+		foreach ($convolutedFiles as $firstLevelFieldName => $fieldInformation) {
+			if (!is_array($fieldInformation['error'])) {
+				$fieldPaths[] = array($firstLevelFieldName);
+			} else {
+				$newFieldPaths = $this->calculateFieldPaths($fieldInformation['error'], $firstLevelFieldName);
+				array_walk($newFieldPaths,
+					function(&$value, $key) {
+						$value = explode('/', $value);
+					}
+				);
+				$fieldPaths = array_merge($fieldPaths, $newFieldPaths);
+			}
+		}
+
+		foreach ($fieldPaths as $fieldPath) {
+			if (count($fieldPath) === 1) {
+				$fileInformation = $convolutedFiles[$fieldPath{0}];
+			} else {
+				$fileInformation = array();
+				foreach ($convolutedFiles[$fieldPath{0}] as $key => $subStructure) {
+					$fileInformation[$key] = \F3\FLOW3\Utility\Arrays::getValueByPath($subStructure, array_slice($fieldPath, 1));
+				}
+			}
+			$untangledFiles = \F3\FLOW3\Utility\Arrays::setValueByPath($untangledFiles, $fieldPath, $fileInformation);
+		}
+		return $untangledFiles;
+	}
+
+	/**
+	 *  Returns and array of all possibles "field paths" for the given array.
+	 *
+	 *  @param array $structure The array to walk through
+	 *  @return array An array of paths (as strings) in the format "key1/key2/key3" ...
+	 *  @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function calculateFieldPaths(array $structure, $firstLevelFieldName = NULL) {
+		$fieldPaths = array();
+		if (is_array($structure)) {
+			foreach ($structure as $key => $subStructure) {
+				$fieldPath = ($firstLevelFieldName !== NULL ? $firstLevelFieldName . '/' : '') . $key;
+				if (is_array($subStructure)) {
+					foreach($this->calculateFieldPaths($subStructure) as $subFieldPath) {
+						$fieldPaths[] = $fieldPath . '/' . $subFieldPath;
+					}
+				} else {
+					$fieldPaths[] = $fieldPath;
+				}
+			}
+		}
+		return $fieldPaths;
 	}
 
 	/**
@@ -405,26 +515,6 @@ class Environment {
 		}
 
 		return $temporaryDirectory;
-	}
-
-	/**
-	 * Retrieves the maximum path lenght that is valid in the current environment.
-	 *
-	 * @return integer The maximum available path length
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	public function getMaximumPathLength() {
-		return PHP_MAXPATHLEN;
-	}
-
-	/**
-	 * Whether or not URL rewriting is enabled.
-	 *
-	 * @return boolean
-	 * @author Karsten Dambekalns <karsten@typo3.org
-	 */
-	public function isRewriteEnabled() {
-		return (boolean)getenv('FLOW3_REWRITEURLS');
 	}
 }
 ?>

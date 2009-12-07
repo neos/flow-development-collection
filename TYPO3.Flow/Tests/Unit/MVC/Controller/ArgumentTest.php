@@ -126,7 +126,7 @@ class ArgumentTest extends \F3\Testing\BaseTestCase {
 		$object = new \stdClass();
 
 		$mockClassSchema = $this->getMock('F3\FLOW3\Reflection\ClassSchema', array(), array() ,'', FALSE);
-		$mockPropertyMapper = $this->getMock('F3\FLOW3\Property\Mapper');
+		$mockPropertyMapper = $this->getMock('F3\FLOW3\Property\PropertyMapper');
 		$mockPropertyMapper->expects($this->once())->method('map')->with(array('foo'), array('foo' => 'bar'), 'stdClass')->will($this->returnValue($object));
 
 		$argument = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\Argument'), array('dummy'), array(), '', FALSE);
@@ -166,7 +166,7 @@ class ArgumentTest extends \F3\Testing\BaseTestCase {
 		$object = new \stdClass();
 		$object->title = 'Hello';
 
-		$mockPropertyMapper = $this->getMock('F3\FLOW3\Property\Mapper');
+		$mockPropertyMapper = $this->getMock('F3\FLOW3\Property\PropertyMapper');
 		$mockPropertyMapper->expects($this->once())->method('map')->with(array('title'), array('title' => 'Hello'), 'stdClass')->will($this->returnValue($object));
 
 		$argument = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\Argument'), array('findObjectByIdentityUUID'), array(), '', FALSE);

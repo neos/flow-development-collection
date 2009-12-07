@@ -46,7 +46,7 @@ namespace F3\FLOW3\Property;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */
-class Mapper {
+class PropertyMapper {
 
 	/**
 	 * A preg pattern to match against UUIDs
@@ -61,9 +61,15 @@ class Mapper {
 	protected $mappingResults;
 
 	/**
-	 * @var \F3\FLOW3\Object\FactoryInterface
+	 * A list of property editor instances, indexed by the object type they are designed for
+	 * @var array
 	 */
-	protected $objectFactory;
+	protected $objectConverters = array();
+
+	/**
+	 * @var \F3\FLOW3\Object\ManagerInterface
+	 */
+	protected $objectManager;
 
 	/**
 	 * @var \F3\FLOW3\Validation\ValidatorResolver
@@ -88,12 +94,12 @@ class Mapper {
 	/**
 	 * Injects the object factory
 	 *
-	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory
+	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectObjectFactory(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
-		$this->objectFactory = $objectFactory;
+	public function injectObjectManager(\F3\FLOW3\Object\ManagerInterface $objectManager) {
+		$this->objectManager = $objectManager;
 	}
 
 	/**
@@ -141,6 +147,21 @@ class Mapper {
 	}
 
 	/**
+	 * Initializes this Property Mapper
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function initializeObject() {
+		foreach($this->reflectionService->getAllImplementationClassNamesForInterface('F3\FLOW3\Property\ObjectConverterInterface') as $objectConverterClassName) {
+			$objectConverter = $this->objectManager->getObject($objectConverterClassName);
+			foreach ($objectConverter->getSupportedTypes() as $supportedType) {
+				$this->objectConverters[$supportedType] = $objectConverter;
+			}
+		}
+	}
+
+	/**
 	 * Maps the given properties to the target object and validates the properties according to the defined
 	 * validators. If the result object is not valid, the operation will be undone (the target object remains
 	 * unchanged) and this method returns FALSE.
@@ -179,22 +200,6 @@ class Mapper {
 	}
 
 	/**
-	 * Add errors to the mapping result from an object validator (property errors).
-	 *
-	 * @param array $errors Array of \F3\FLOW3\Validation\PropertyError
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 * @return void
-	 */
-	protected function addErrorsFromObjectValidator(array $errors) {
-		foreach ($errors as $error) {
-			if ($error instanceof \F3\FLOW3\Validation\PropertyError) {
-				$propertyName = $error->getPropertyName();
-				$this->mappingResults->addError($error, $propertyName);
-			}
-		}
-	}
-
-	/**
 	 * Maps the given properties to the target object WITHOUT VALIDATING THE RESULT.
 	 * If the properties could be set, this method returns TRUE, otherwise FALSE.
 	 * Returning TRUE does not mean that the target object is valid and secure!
@@ -212,20 +217,16 @@ class Mapper {
 	 */
 	public function map(array $propertyNames, $source, &$target, $optionalPropertyNames = array()) {
 		if (!is_object($source) && !is_array($source)) throw new \F3\FLOW3\Property\Exception\InvalidSource('The source object must be a valid object or array, ' . gettype($target) . ' given.', 1187807099);
-
 		if (is_string($target) && strpos($target, '\\') !== FALSE) {
 			return $this->transformToObject($source, $target, '--none--');
 		}
+		$this->mappingResults = $this->objectManager->getObject('F3\FLOW3\Property\MappingResults');
 
-		if (!is_object($target) && !is_array($target)) throw new \F3\FLOW3\Property\Exception\InvalidTarget('The target object must be a valid object or array, ' . gettype($target) . ' given.', 1187807099);
+		if (!is_object($target) && !is_array($target)) throw new \F3\FLOW3\Property\Exception\InvalidTarget('The target must be a valid object, class name or array, ' . gettype($target) . ' given.', 1187807099);
 
-		$this->mappingResults = $this->objectFactory->create('F3\FLOW3\Property\MappingResults');
 		if (is_object($target)) {
-			if ($target instanceof \F3\FLOW3\AOP\ProxyInterface) {
-				$targetClassSchema = $this->reflectionService->getClassSchema($target->FLOW3_AOP_Proxy_getProxyTargetClassName());
-			} else {
-				$targetClassSchema = $this->reflectionService->getClassSchema(get_class($target));
-			}
+			$targetClassName = ($target instanceof \F3\FLOW3\AOP\ProxyInterface) ? $target->FLOW3_AOP_Proxy_getProxyTargetClassName() : get_class($target);
+			$targetClassSchema = $this->reflectionService->getClassSchema($targetClassName);
 		} else {
 			$targetClassSchema = NULL;
 		}
@@ -241,7 +242,7 @@ class Mapper {
 			}
 
 			if ($propertyValue === NULL && !in_array($propertyName, $optionalPropertyNames)) {
-				$this->mappingResults->addError($this->objectFactory->create('F3\FLOW3\Error\Error', "Required property '$propertyName' does not exist." , 1236785359), $propertyName);
+				$this->mappingResults->addError($this->objectManager->getObject('F3\FLOW3\Error\Error', "Required property '$propertyName' does not exist." , 1236785359), $propertyName);
 			} else {
 				if ($targetClassSchema !== NULL && $targetClassSchema->hasProperty($propertyName)) {
 					$propertyMetaData = $targetClassSchema->getProperty($propertyName);
@@ -252,10 +253,9 @@ class Mapper {
 							$objects[] = $this->transformToObject($value, $propertyMetaData['elementType'], $propertyName);
 						}
 
-							// make sure we hand out what is expected
 						if ($propertyMetaData['type'] === 'ArrayObject') {
 							$propertyValue = new \ArrayObject($objects);
-						} elseif ($propertyMetaData['type']=== 'SplObjectStorage') {
+						} elseif ($propertyMetaData['type'] === 'SplObjectStorage') {
 							$propertyValue = new \SplObjectStorage();
 							foreach ($objects as $object) {
 								$propertyValue->attach($object);
@@ -267,13 +267,13 @@ class Mapper {
 						$propertyValue = $this->transformToObject($propertyValue, $propertyMetaData['type'], $propertyName);
 					}
 				} elseif ($targetClassSchema !== NULL) {
-					$this->mappingResults->addError($this->objectFactory->create('F3\FLOW3\Error\Error', "Property '$propertyName' does not exist in target class schema." , 1251813614), $propertyName);
+					$this->mappingResults->addError($this->objectManager->getObject('F3\FLOW3\Error\Error', "Property '$propertyName' does not exist in target class schema." , 1251813614), $propertyName);
 				}
 
 				if (is_array($target)) {
 					$target[$propertyName] = $propertyValue;
 				} elseif (\F3\FLOW3\Reflection\ObjectAccess::setProperty($target, $propertyName, $propertyValue) === FALSE) {
-					$this->mappingResults->addError($this->objectFactory->create('F3\FLOW3\Error\Error', "Property '$propertyName' could not be set." , 1236783102), $propertyName);
+					$this->mappingResults->addError($this->objectManager->getObject('F3\FLOW3\Error\Error', "Property '$propertyName' could not be set." , 1236783102), $propertyName);
 				}
 			}
 		}
@@ -293,6 +293,22 @@ class Mapper {
 	}
 
 	/**
+	 * Add errors to the mapping result from an object validator (property errors).
+	 *
+	 * @param array $errors Array of \F3\FLOW3\Validation\PropertyError
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @return void
+	 */
+	protected function addErrorsFromObjectValidator(array $errors) {
+		foreach ($errors as $error) {
+			if ($error instanceof \F3\FLOW3\Validation\PropertyError) {
+				$propertyName = $error->getPropertyName();
+				$this->mappingResults->addError($error, $propertyName);
+			}
+		}
+	}
+
+	/**
 	 * Transforms strings with UUIDs or arrays with UUIDs/identity properties
 	 * into the requested type, if possible.
 	 *
@@ -303,9 +319,9 @@ class Mapper {
 	 */
 	protected function transformToObject($propertyValue, $targetType, $propertyName) {
 		if (is_string($propertyValue) && preg_match(self::PATTERN_MATCH_UUID, $propertyValue) === 1) {
-			$propertyValue = $this->persistenceManager->getBackend()->getObjectByIdentifier($propertyValue);
-			if ($propertyValue === FALSE) {
-				$this->mappingResults->addError($this->objectFactory->create('F3\FLOW3\Error\Error', 'Querying the repository for the specified object with UUID ' . $propertyValue . ' was not successful.' , 1249379517), $propertyName);
+			$object = $this->persistenceManager->getBackend()->getObjectByIdentifier($propertyValue);
+			if ($object === FALSE) {
+				$this->mappingResults->addError($this->objectManager->getObject('F3\FLOW3\Error\Error', 'Querying the repository for the specified object with UUID ' . $propertyValue . ' was not successful.' , 1249379517), $propertyName);
 			}
 		} elseif (is_array($propertyValue)) {
 			if (isset($propertyValue['__identity'])) {
@@ -316,24 +332,31 @@ class Mapper {
 
 				unset($propertyValue['__identity']);
 				if (count($propertyValue) === 0) {
-					$propertyValue = $existingObject;
+					$object = $existingObject;
 				} elseif ($existingObject !== NULL) {
 					$newObject = clone $existingObject;
 					if ($this->map(array_keys($propertyValue), $propertyValue, $newObject)) {
-						$propertyValue = $newObject;
+						$object = $newObject;
 					}
 				}
 			} else {
-				$newObject = $this->objectFactory->create($targetType);
-				if ($this->map(array_keys($propertyValue), $propertyValue, $newObject)) {
-					$propertyValue = $newObject;
+				if (isset($this->objectConverters[$targetType])) {
+					$conversionResult = $this->objectConverters[$targetType]->convertFrom($propertyValue);
+					if (is_object($conversionResult)) {
+						return $conversionResult;
+					}
 				}
+				$newObject = $this->objectManager->getObject($targetType);
+				if ($this->map(array_keys($propertyValue), $propertyValue, $newObject)) {
+					return $newObject;
+				}
+				throw new \F3\FLOW3\Property\Exception\InvalidTarget('Values could not be mapped to new object of type ' .$targetType . ' for property "' . $propertyName . '". (Map errors: ' . implode (' - ', $this->mappingResults->getErrors()) . ')' , 1259770027);
 			}
 		} else {
 			throw new \InvalidArgumentException('transformToObject() accepts only strings and arrays.', 1251814355);
 		}
 
-		return $propertyValue;
+		return $object;
 	}
 
 	/**

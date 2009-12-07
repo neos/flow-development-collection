@@ -37,7 +37,7 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * This test indeed messes with some of the static stuff concerning our
-	 * StreamWrapper setup. But since the dummy stream wrapper is removed again,
+	 * StreamWrapperAdapter setup. But since the dummy stream wrapper is removed again,
 	 * this does not do any harm. And registering the "real" wrappers a second
 	 * time doesn't do harm, either.
 	 *
@@ -50,26 +50,26 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	public function initializeStreamWrappersRegistersFoundStreamWrappers() {
 		$wrapperClassName = uniqid('MockWrapper');
 		$wrapperSchemeName = $wrapperClassName . 'scheme';
-		eval('class ' . $wrapperClassName . ' extends \F3\FLOW3\Resource\PackageStreamWrapper { static public function getScheme() { return \'' . $wrapperSchemeName . '\'; } }');
-		$mockStreamWrapper = new $wrapperClassName();
+		eval('class ' . $wrapperClassName . ' extends \F3\FLOW3\Resource\PackageResourceStreamWrapper { static public function getScheme() { return \'' . $wrapperSchemeName . '\'; } }');
+		$mockStreamWrapperAdapter = new $wrapperClassName();
 
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
 
 		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service');
-		$mockReflectionService->expects($this->once())->method('getAllImplementationClassNamesForInterface')->with('F3\FLOW3\Resource\StreamWrapperInterface')->will($this->returnValue(array(get_class($mockStreamWrapper))));
+		$mockReflectionService->expects($this->once())->method('getAllImplementationClassNamesForInterface')->with('F3\FLOW3\Resource\StreamWrapperInterface')->will($this->returnValue(array(get_class($mockStreamWrapperAdapter))));
 
 		$resourceManager = new \F3\FLOW3\Resource\Manager(array());
 		$resourceManager->injectObjectFactory($mockObjectFactory);
 		$resourceManager->injectReflectionService($mockReflectionService);
 		$resourceManager->initializeStreamWrappers();
 
-		$this->assertContains(get_class($mockStreamWrapper), \F3\FLOW3\Resource\StreamWrapper::getRegisteredStreamWrappers());
-		$this->assertArrayHasKey($wrapperSchemeName, \F3\FLOW3\Resource\StreamWrapper::getRegisteredStreamWrappers());
+		$this->assertContains(get_class($mockStreamWrapperAdapter), \F3\FLOW3\Resource\StreamWrapperAdapter::getRegisteredStreamWrappers());
+		$this->assertArrayHasKey($wrapperSchemeName, \F3\FLOW3\Resource\StreamWrapperAdapter::getRegisteredStreamWrappers());
 		$this->assertContains($wrapperSchemeName, stream_get_wrappers());
 		stream_wrapper_unregister($wrapperSchemeName);
 
 			// set the real object factory again...
-		\F3\FLOW3\Resource\StreamWrapper::setObjectFactory($this->objectFactory);
+		\F3\FLOW3\Resource\StreamWrapperAdapter::setObjectFactory($this->objectFactory);
 	}
 
 }

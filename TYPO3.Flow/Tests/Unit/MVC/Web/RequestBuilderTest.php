@@ -68,7 +68,7 @@ class RequestBuilderTest extends \F3\Testing\BaseTestCase {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setUp() {
+	protected function setUpRequestBuilder() {
 		$this->mockRequestUri = $this->getMock('F3\FLOW3\Property\DataType\Uri', array(), array(), '', FALSE);
 		$this->mockRequestUri->expects($this->once())->method('getArguments')->will($this->returnValue(array('someArgument' => 'GETArgument')));
 
@@ -98,6 +98,7 @@ class RequestBuilderTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function buildReturnsAWebRequestObject() {
+		$this->setUpRequestBuilder();
 		$this->assertSame($this->mockRequest, $this->builder->build());
 	}
 
@@ -106,6 +107,7 @@ class RequestBuilderTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function buildSetsTheRequestUriInTheRequestObject() {
+		$this->setUpRequestBuilder();
 		$this->mockRequest->expects($this->once())->method('setRequestUri')->with($this->equalTo($this->mockRequestUri));
 		$this->builder->build();
 	}
@@ -115,6 +117,7 @@ class RequestBuilderTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function buildInvokesTheRouteMethodOfTheRouter() {
+		$this->setUpRequestBuilder();
 		$this->mockRouter->expects($this->once())->method('route');
 		$this->builder->build();
 	}
@@ -124,6 +127,7 @@ class RequestBuilderTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function buildDetectsTheRequestMethodAndSetsItInTheRequestObject() {
+		$this->setUpRequestBuilder();
 		$this->mockEnvironment->expects($this->any())->method('getRequestMethod')->will($this->returnValue('GET'));
 		$this->mockRequest->expects($this->once())->method('setMethod')->with($this->equalTo('GET'));
 		$this->builder->build();
@@ -134,6 +138,7 @@ class RequestBuilderTest extends \F3\Testing\BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function buildSetGETArgumentsFromRequest() {
+		$this->setUpRequestBuilder();
 		$this->mockRequest->expects($this->once())->method('setArgument')->with('someArgument', 'GETArgument');
 		$this->builder->build();
 	}
@@ -142,7 +147,9 @@ class RequestBuilderTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function buildSetPOSTArgumentsFromRequest() {
+	public function buildSetsPOSTArgumentsFromRequest() {
+		$this->setUpRequestBuilder();
+
 		$argument = NULL;
 		$setArgumentCallback = function() use (&$argument) {
 			$args = func_get_args();
@@ -151,11 +158,118 @@ class RequestBuilderTest extends \F3\Testing\BaseTestCase {
 				$argument = $args[1];
 			}
 		};
+
 		$this->mockRequest->expects($this->any())->method('getMethod')->will($this->returnValue('POST'));
 		$this->mockEnvironment->expects($this->any())->method('getRawPostArguments')->will($this->returnValue(array('someArgument' => 'POSTArgument')));
+		$this->mockEnvironment->expects($this->any())->method('getUploadedFiles')->will($this->returnValue(array()));
 		$this->mockRequest->expects($this->exactly(2))->method('setArgument')->will($this->returnCallback($setArgumentCallback));
 		$this->builder->build();
 		$this->assertEquals('POSTArgument', $argument);
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setArgumentsFromRawRequestDataMergesUploadedFilesInformationIntoRequestArguments() {
+		$uploadedFiles = array (
+			'a0' => array (
+				'a1' => array(
+					'name' => 'a.txt',
+					'type' => 'text/plain',
+					'tmp_name' => '/private/var/tmp/phpbqXsYt',
+					'error' => 0,
+					'size' => 100,
+				),
+			),
+			'd0' => array (
+				'd1' => array(
+					'd2' => array(
+						'd3' => array(
+							'name' => 'd.txt',
+							'type' => 'text/plain',
+							'tmp_name' => '/private/var/tmp/phprR3fax',
+							'error' => 0,
+							'size' => 400,
+						),
+					),
+				),
+			),
+			'e0' => array (
+				'e1' => array(
+					'e2' => array(
+						0 => array(
+							'name' => 'e_one.txt',
+							'type' => 'text/plain',
+							'tmp_name' => '/private/var/tmp/php01fitB',
+							'error' => 0,
+							'size' => 510,
+						)
+					)
+				)
+			)
+		);
+
+		$postArguments = array(
+			'a0' => array('a1POST' => 'postValue'),
+			'e0' => array('e1' => array('e2' => 'will be overwritten'))
+		);
+
+		$expectedArguments = array (
+			'a0' => array (
+				'a1POST' => 'postValue',
+				'a1' => array (
+					'name' => 'a.txt',
+					'type' => 'text/plain',
+					'tmp_name' => '/private/var/tmp/phpbqXsYt',
+					'error' => 0,
+					'size' => 100,
+				),
+			),
+			'e0' => array (
+				'e1' => array (
+					'e2' => array (
+						0 => array (
+							'name' => 'e_one.txt',
+							'type' => 'text/plain',
+							'tmp_name' => '/private/var/tmp/php01fitB',
+							'error' => 0,
+							'size' => 510,
+						),
+					),
+				),
+			),
+			'd0' => array (
+				'd1' => array (
+					'd2' => array (
+						'd3' => array (
+							'name' => 'd.txt',
+							'type' => 'text/plain',
+							'tmp_name' => '/private/var/tmp/phprR3fax',
+							'error' => 0,
+							'size' => 400,
+						)
+					)
+				)
+			)
+		);
+
+		$mockRequestUri = $this->getMock('F3\FLOW3\Property\DataType\Uri', array(), array(), '', FALSE);
+		$mockRequestUri->expects($this->once())->method('getArguments')->will($this->returnValue(array()));
+
+		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
+		$mockEnvironment->expects($this->any())->method('getRawPostArguments')->will($this->returnValue($postArguments));
+		$mockEnvironment->expects($this->any())->method('getUploadedFiles')->will($this->returnValue($uploadedFiles));
+
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array('getMethod', 'getRequestUri'), array(), '', FALSE);
+		$mockRequest->expects($this->any())->method('getRequestUri')->will($this->returnValue($mockRequestUri));
+		$mockRequest->expects($this->any())->method('getMethod')->will($this->returnValue('POST'));
+
+		$builder = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Web\RequestBuilder'), array('dummy'), array(), '', FALSE);
+		$builder->injectEnvironment($mockEnvironment);
+		$builder->_call('setArgumentsFromRawRequestData', $mockRequest);
+
+		$this->assertSame($expectedArguments, $mockRequest->getArguments());
 	}
 }
 ?>

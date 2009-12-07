@@ -134,7 +134,17 @@ class RequestBuilder {
 				foreach ($this->environment->getRawPostArguments() as $argumentName => $argumentValue) {
 					$request->setArgument($argumentName, $argumentValue);
 				}
-			break;
+				foreach ($this->environment->getUploadedFiles() as $argumentName => $argumentValue) {
+					if ($request->hasArgument($argumentName)) {
+						$existingArgumentValue = $request->getArgument($argumentName);
+						if (is_array($existingArgumentValue)) {
+							$request->setArgument($argumentName, \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($existingArgumentValue, $argumentValue));
+						}
+					} else {
+						$request->setArgument($argumentName, $argumentValue);
+					}
+				}
+				break;
 #			case 'PUT' :
 #				$putArguments = array();
 #				parse_str(file_get_contents("php://input"), $putArguments);

@@ -61,9 +61,9 @@ class EnvironmentTest extends \F3\Testing\BaseTestCase {
 		$environment = new \F3\FLOW3\Utility\MockEnvironment();
 		$environment->SERVER = array(
 			'SCRIPT_FILENAME' => '/this/is/the/file.php'
-		);
-		$returnedPathAndFilename = $environment->getScriptPathAndFilename();
-		$this->assertEquals($expectedPathAndFilename, $returnedPathAndFilename, 'The returned path did not match the expected value.');
+			);
+			$returnedPathAndFilename = $environment->getScriptPathAndFilename();
+			$this->assertEquals($expectedPathAndFilename, $returnedPathAndFilename, 'The returned path did not match the expected value.');
 	}
 
 	/**
@@ -75,9 +75,9 @@ class EnvironmentTest extends \F3\Testing\BaseTestCase {
 		$environment = new \F3\FLOW3\Utility\MockEnvironment();
 		$environment->SERVER = array(
 			'SCRIPT_FILENAME' => '\\this\\is\\the\\file.php'
-		);
-		$returnedPathAndFilename = $environment->getScriptPathAndFilename();
-		$this->assertEquals($expectedPathAndFilename, $returnedPathAndFilename, 'The returned path did not match the expected value.');
+			);
+			$returnedPathAndFilename = $environment->getScriptPathAndFilename();
+			$this->assertEquals($expectedPathAndFilename, $returnedPathAndFilename, 'The returned path did not match the expected value.');
 	}
 
 	/**
@@ -91,9 +91,19 @@ class EnvironmentTest extends \F3\Testing\BaseTestCase {
 			'HTTP_HOST' => 'flow3.typo3.org',
 			'QUERY_STRING' => '5=0',
 			'PATH_INFO' => '/is/the/base/for/typo3'
-		);
-		$returnedUriString = (string)$environment->getRequestUri();
-		$this->assertEquals($expectedUriString, $returnedUriString, 'The URI returned did not match the expected value.');
+			);
+			$returnedUriString = (string)$environment->getRequestUri();
+			$this->assertEquals($expectedUriString, $returnedUriString, 'The URI returned did not match the expected value.');
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getUploadedFilesJustReturnsThePreviouslyUntangledFILESVariable() {
+		$environment = new \F3\FLOW3\Utility\MockEnvironment();
+		$environment->FILES = array('foo' => 'bar');
+		$this->assertEquals(array('foo' => 'bar'), $environment->getUploadedFiles());
 	}
 
 	/**
@@ -164,6 +174,201 @@ class EnvironmentTest extends \F3\Testing\BaseTestCase {
 		$environment->injectSystemLogger($mockSystemLogger);
 
 		$environment->_call('createTemporaryDirectory', $path);
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function untangleFilesArrayTransformsTheFilesSuperglobalIntoAMangeableForm() {
+		$convolutedFiles = array (
+			'a0' => array (
+				'name' => array (
+					'a1' => 'a.txt',
+				),
+				'type' => array (
+					'a1' => 'text/plain',
+				),
+				'tmp_name' => array (
+					'a1' => '/private/var/tmp/phpbqXsYt',
+				),
+				'error' => array (
+					'a1' => 0,
+				),
+				'size' => array (
+					'a1' => 100,
+				),
+			),
+			'b0' => array (
+				'name' => array (
+					'b1' => 'b.txt',
+				),
+				'type' => array (
+					'b1' => 'text/plain',
+				),
+				'tmp_name' => array (
+					'b1' => '/private/var/tmp/phpvZ6oUD',
+				),
+				'error' => array (
+					'b1' => 0,
+				),
+				'size' => array (
+					'b1' => 200,
+				),
+			),
+			'c' => array (
+				'name' => 'c.txt',
+				'type' => 'text/plain',
+				'tmp_name' => '/private/var/tmp/phpS9KMNw',
+				'error' => 0,
+				'size' => 300,
+			),
+			'd0' => array (
+				'name' => array (
+					'd1' => array (
+						'd2' => array (
+							'd3' => 'd.txt',
+						),
+					),
+				),
+				'type' => array (
+					'd1' => array(
+						'd2' => array (
+							'd3' => 'text/plain',
+							),
+						),
+					),
+				'tmp_name' => array (
+					'd1' => array (
+						'd2' => array(
+							'd3' => '/private/var/tmp/phprR3fax',
+						),
+					),
+				),
+				'error' => array (
+					'd1' => array (
+						'd2' => array(
+							'd3' => 0,
+						),
+					),
+				),
+				'size' => array (
+					'd1' => array (
+						'd2' => array(
+							'd3' => 400,
+						),
+					),
+				),
+			),
+			'e0' => array (
+				'name' => array (
+					'e1' => array (
+						'e2' => array (
+							0 => 'e_one.txt',
+							1 => 'e_two.txt',
+						),
+					),
+				),
+				'type' => array (
+					'e1' => array (
+						'e2' => array (
+							0 => 'text/plain',
+							1 => 'text/plain',
+						),
+					),
+				),
+				'tmp_name' => array (
+					'e1' => array (
+						'e2' => array (
+							0 => '/private/var/tmp/php01fitB',
+							1 => '/private/var/tmp/phpUUB2cv',
+						),
+					),
+				),
+				'error' => array (
+					'e1' => array (
+						'e2' => array (
+							0 => 0,
+							1 => 0,
+						),
+					),
+				),
+				'size' => array (
+					'e1' => array (
+						'e2' => array (
+							0 => 510,
+							1 => 520,
+						)
+					)
+				)
+			)
+		);
+
+		$untangledFiles = array (
+			'a0' => array (
+				'a1' => array(
+					'name' => 'a.txt',
+					'type' => 'text/plain',
+					'tmp_name' => '/private/var/tmp/phpbqXsYt',
+					'error' => 0,
+					'size' => 100,
+				),
+			),
+			'b0' => array (
+				'b1' => array(
+					'name' => 'b.txt',
+					'type' => 'text/plain',
+					'tmp_name' => '/private/var/tmp/phpvZ6oUD',
+					'error' => 0,
+					'size' => 200,
+				)
+			),
+			'c' => array (
+				'name' => 'c.txt',
+				'type' => 'text/plain',
+				'tmp_name' => '/private/var/tmp/phpS9KMNw',
+				'error' => 0,
+				'size' => 300,
+			),
+			'd0' => array (
+				'd1' => array(
+					'd2' => array(
+						'd3' => array(
+							'name' => 'd.txt',
+							'type' => 'text/plain',
+							'tmp_name' => '/private/var/tmp/phprR3fax',
+							'error' => 0,
+							'size' => 400,
+						),
+					),
+				),
+			),
+			'e0' => array (
+				'e1' => array(
+					'e2' => array(
+						0 => array(
+							'name' => 'e_one.txt',
+							'type' => 'text/plain',
+							'tmp_name' => '/private/var/tmp/php01fitB',
+							'error' => 0,
+							'size' => 510,
+						),
+						1 => array(
+							'name' => 'e_two.txt',
+							'type' => 'text/plain',
+							'tmp_name' => '/private/var/tmp/phpUUB2cv',
+							'error' => 0,
+							'size' => 520,
+						)
+					)
+				)
+			)
+		);
+
+		$environment = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Utility\Environment'), array('dummy'), array(), '', FALSE);
+		$result = $environment->_call('untangleFilesArray', $convolutedFiles);
+
+		$this->assertSame($untangledFiles, $result);
 	}
 }
 ?>

@@ -86,7 +86,7 @@ class Framework {
 	 * Hardcoded list of FLOW3 sub packages (first 12 characters) which must be immune to AOP proxying for security, technical or conceptual reasons.
 	 * @var array
 	 */
-	protected $blacklistedSubPackages = array('F3\FLOW3\AOP', 'F3\FLOW3\Cac', 'F3\FLOW3\Con', 'F3\FLOW3\Err', 'F3\FLOW3\Eve', 'F3\FLOW3\Loc', 'F3\FLOW3\Log', 'F3\FLOW3\Obj', 'F3\FLOW3\Pac', 'F3\FLOW3\Per', 'F3\FLOW3\Pro', 'F3\FLOW3\Ref', 'F3\FLOW3\Res', 'F3\FLOW3\Uti', 'F3\FLOW3\Val');
+	protected $blacklistedSubPackages = array('F3\FLOW3\AOP', 'F3\FLOW3\Cac', 'F3\FLOW3\Con', 'F3\FLOW3\Err', 'F3\FLOW3\Eve', 'F3\FLOW3\Loc', 'F3\FLOW3\Log', 'F3\FLOW3\Obj', 'F3\FLOW3\Pac', 'F3\FLOW3\Per', 'F3\FLOW3\Pro', 'F3\FLOW3\Ref', 'F3\FLOW3\Uti', 'F3\FLOW3\Val');
 
 	/**
 	 * A registry of all known aspects

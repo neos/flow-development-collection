@@ -59,7 +59,7 @@ class Argument {
 	protected $persistenceManager;
 
 	/**
-	 * @var \F3\FLOW3\Property\Mapper
+	 * @var \F3\FLOW3\Property\PropertyMapper
 	 */
 	protected $propertyMapper;
 
@@ -203,11 +203,11 @@ class Argument {
 	/**
 	 * Injects the Property Mapper
 	 *
-	 * @param \F3\FLOW3\Property\Mapper $propertyMapper
+	 * @param \F3\FLOW3\Property\PropertyMapper $propertyMapper
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectPropertyMapper(\F3\FLOW3\Property\Mapper $propertyMapper) {
+	public function injectPropertyMapper(\F3\FLOW3\Property\PropertyMapper $propertyMapper) {
 		$this->propertyMapper = $propertyMapper;
 	}
 

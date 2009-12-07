@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Tests\Reflection\Fixture;
+namespace F3\FLOW3\Property;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,60 +23,34 @@ namespace F3\FLOW3\Tests\Reflection\Fixture;
  *                                                                        */
 
 /**
- * Fixture class with getters and setters
+ * Interface for an Object Converter
  *
- * @version $Id$
+ * All classes implementing this interface are automatically registered as object converters
+ * for the Property Mapper
+ *
+ * @version $Id: Mapper.php 3531 2009-11-30 20:46:05Z k-fish $
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @api
  */
-class DummyClassWithGettersAndSetters {
+interface ObjectConverterInterface {
 
-	protected $property;
-	protected $anotherProperty;
-	protected $property2;
+	/**
+	 * Returns a list of fully qualified class names of those classes which are supported
+	 * by this property editor.
+	 *
+	 * @return array<string>
+	 * @api
+	 */
+	public function getSupportedTypes();
 
-	protected $protectedProperty;
+	/**
+	 * Converts the given string, array or number to an object supported by the converter.
+	 *
+	 * @return mixed An object or boolean FALSE if the input format is not supported or could not be converted for other reasons
+	 * @api
+	 */
+	public function convertFrom($source);
 
-	public $publicProperty;
-	public $publicProperty2 = 42;
-
-	public function setProperty($property) {
-		$this->property = $property;
-	}
-
-	public function getProperty() {
-		return $this->property;
-	}
-
-	public function setAnotherProperty($anotherProperty) {
-		$this->anotherProperty = $anotherProperty;
-	}
-
-	public function getAnotherProperty() {
-		return $this->anotherProperty;
-	}
-
-	public function getProperty2() {
-		return $this->property2;
-	}
-	public function setProperty2($property2) {
-		$this->property2 = $property2;
-	}
-
-	protected function getProtectedProperty() {
-		return '42';
-	}
-
-	protected function setProtectedProperty($value) {
-		$this->protectedProperty = $value;
-	}
-
-	protected function getPrivateProperty() {
-		return '21';
-	}
-
-	protected function setWriteOnlyMagicProperty($value) {
-	}
 }
-
 
 ?>

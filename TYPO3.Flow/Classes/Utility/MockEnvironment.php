@@ -47,6 +47,11 @@ class MockEnvironment extends \F3\FLOW3\Utility\Environment {
 	public $POST;
 
 	/**
+	 * @var array A local copy of the _FILES super global.
+	 */
+	public $FILES;
+
+	/**
 	 * @var string A lower case string specifying the currently used Server API. See php_sapi_name()/PHP_SAPI for possible values.
 	 */
 	public $SAPIName;

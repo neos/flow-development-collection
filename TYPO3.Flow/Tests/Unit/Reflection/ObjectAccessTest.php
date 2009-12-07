@@ -171,6 +171,30 @@ class ObjectAccessTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function isPropertySettableTellsIfAPropertyCanBeSet() {
+		$this->assertTrue(\F3\FLOW3\Reflection\ObjectAccess::isPropertySettable($this->dummyObject, 'writeOnlyMagicProperty'));
+		$this->assertTrue(\F3\FLOW3\Reflection\ObjectAccess::isPropertySettable($this->dummyObject, 'publicProperty'));
+		$this->assertTrue(\F3\FLOW3\Reflection\ObjectAccess::isPropertySettable($this->dummyObject, 'property'));
+
+		$this->assertFalse(\F3\FLOW3\Reflection\ObjectAccess::isPropertySettable($this->dummyObject, 'privateProperty'));
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function isPropertyGettableTellsIfAPropertyCanBeRetrieved() {
+		$this->assertTrue(\F3\FLOW3\Reflection\ObjectAccess::isPropertyGettable($this->dummyObject, 'privateProperty'));
+		$this->assertTrue(\F3\FLOW3\Reflection\ObjectAccess::isPropertyGettable($this->dummyObject, 'publicProperty'));
+		$this->assertTrue(\F3\FLOW3\Reflection\ObjectAccess::isPropertyGettable($this->dummyObject, 'property'));
+
+		$this->assertFalse(\F3\FLOW3\Reflection\ObjectAccess::isPropertyGettable($this->dummyObject, 'writeOnlyMagicProperty'));
+	}
+
+	/**
+	 * @test
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function getPropertyPathCanRecursivelyGetPropertiesOfAnObject() {

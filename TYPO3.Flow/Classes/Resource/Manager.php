@@ -28,7 +28,6 @@ namespace F3\FLOW3\Resource;
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
- * @scope singleton
  */
 class Manager {
 
@@ -119,20 +118,20 @@ class Manager {
 	/**
 	 * Check for implementations of F3\FLOW3\Resource\StreamWrapperInterface and
 	 * register them.
-	 * 
+	 *
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function initializeStreamWrappers() {
-		\F3\FLOW3\Resource\StreamWrapper::setObjectFactory($this->objectFactory);
+		\F3\FLOW3\Resource\StreamWrapperAdapter::setObjectFactory($this->objectFactory);
 		$streamWrapperClassNames = $this->reflectionService->getAllImplementationClassNamesForInterface('F3\FLOW3\Resource\StreamWrapperInterface');
 		foreach ($streamWrapperClassNames as $streamWrapperClassName) {
 			$scheme = $streamWrapperClassName::getScheme();
 			if (in_array($scheme, stream_get_wrappers())) {
 				stream_wrapper_unregister($scheme);
 			}
-			stream_wrapper_register($scheme, '\F3\FLOW3\Resource\StreamWrapper');
-			\F3\FLOW3\Resource\StreamWrapper::registerStreamWrapper($scheme, $streamWrapperClassName);
+			stream_wrapper_register($scheme, '\F3\FLOW3\Resource\StreamWrapperAdapter');
+			\F3\FLOW3\Resource\StreamWrapperAdapter::registerStreamWrapper($scheme, $streamWrapperClassName);
 		}
 	}
 

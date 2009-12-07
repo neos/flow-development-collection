@@ -170,6 +170,28 @@ class Arrays {
 	}
 
 	/**
+	 * Sets the given value in a nested array by following the specifed path.
+	 *
+	 * @param array $array The array
+	 * @param array $path The path to follow, ie. a simple array of keys
+	 * @param mixed The value to set
+	 * @return array The modified array
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	static public function setValueByPath(array $array, array $path, $value) {
+		$key = array_shift($path);
+		if (count($path) === 0) {
+			$array[$key] = $value;
+		} else {
+			if (!isset($array[$key]) || !is_array($array[$key])) {
+				$array[$key] = array();
+			}
+			$array[$key] = self::setValueByPath($array[$key], $path, $value);
+		}
+		return $array;
+	}
+
+	/**
 	 * Sorts multidimensional arrays by recursively calling ksort on its elements.
 	 *
 	 * @param array $array the array to sort

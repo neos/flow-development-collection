@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Tests\Reflection\Fixture;
+namespace F3\FLOW3\Resource;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,60 +23,51 @@ namespace F3\FLOW3\Tests\Reflection\Fixture;
  *                                                                        */
 
 /**
- * Fixture class with getters and setters
+ * Model describing a resource
  *
- * @version $Id$
+ * @version $Id: Publisher.php 3523 2009-11-30 14:53:36Z k-fish $
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @scope prototype
+ * @valueobject
  */
-class DummyClassWithGettersAndSetters {
+class Resource {
 
-	protected $property;
-	protected $anotherProperty;
-	protected $property2;
+	/**
+	 * @var string
+	 */
+	protected $hash;
 
-	protected $protectedProperty;
-
-	public $publicProperty;
-	public $publicProperty2 = 42;
-
-	public function setProperty($property) {
-		$this->property = $property;
+	/**
+	 * Constructs this resource
+	 *
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function __construct($hash) {
+		if (!is_string($hash) || strlen($hash) !== 40) {
+			throw new \InvalidArgumentException('A valid sha1 hash must be passed to this constructor.', 1259748358);
+		}
+		$this->hash = $hash;
 	}
 
-	public function getProperty() {
-		return $this->property;
+	/**
+	 * Returns the hash of this resource
+	 *
+	 * @return string A 40 character hexadecimal sha1 hash over the content of this resource
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getHash() {
+		return $this->hash;
 	}
 
-	public function setAnotherProperty($anotherProperty) {
-		$this->anotherProperty = $anotherProperty;
-	}
-
-	public function getAnotherProperty() {
-		return $this->anotherProperty;
-	}
-
-	public function getProperty2() {
-		return $this->property2;
-	}
-	public function setProperty2($property2) {
-		$this->property2 = $property2;
-	}
-
-	protected function getProtectedProperty() {
-		return '42';
-	}
-
-	protected function setProtectedProperty($value) {
-		$this->protectedProperty = $value;
-	}
-
-	protected function getPrivateProperty() {
-		return '21';
-	}
-
-	protected function setWriteOnlyMagicProperty($value) {
+	/**
+	 * Returns the URI of the – probably private – storing location for the payload of this resource.
+	 *
+	 * @return \F3\FLOW3\Property\DataType\Uri
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getStoreUri() {
+		return new \F3\FLOW3\Property\DataType\Uri(FLOW3_PATH_DATA . 'Persistent/Resources/' . $this->hash);
 	}
 }
-
 
 ?>
