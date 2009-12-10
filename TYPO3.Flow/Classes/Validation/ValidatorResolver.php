@@ -103,14 +103,14 @@ class ValidatorResolver {
 	 * the F3\FLOW3\Validation\Validator\ValidatorInterface or NULL if no validator
 	 * could be resolved.
 	 *
-	 * @param string $validatorName Either one of the built-in data types or fully qualified validator class name
+	 * @param string $validatorType Either one of the built-in data types or fully qualified validator class name
 	 * @param array $validatorOptions Options to be passed to the validator
 	 * @return F3\FLOW3\Validation\Validator\ValidatorResolver Validator Resolver or NULL if none found.
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function createValidator($validatorName, array $validatorOptions = array()) {
-		$validatorClassName = $this->resolveValidatorObjectName($validatorName);
+	public function createValidator($validatorType, array $validatorOptions = array()) {
+		$validatorClassName = $this->resolveValidatorObjectName($validatorType);
 		if ($validatorClassName === FALSE) return NULL;
 		$validator = $this->objectManager->getObject($validatorClassName);
 		if (!($validator instanceof \F3\FLOW3\Validation\Validator\ValidatorInterface)) {
@@ -320,31 +320,31 @@ class ValidatorResolver {
 	}
 
 	/**
-	 * Returns an object of an appropriate validator for the given class. If no validator is available
-	 * NULL is returned
+	 * Returns an object of an appropriate validator for the given type. If no
+	 * validator is available NULL is returned
 	 *
-	 * @param string $validatorName Either the fully qualified class name of the validator or the short name of a built-in validator
+	 * @param string $validatorType Either the fully qualified class name of the validator or the short name of a built-in validator
 	 * @return string Name of the validator object or FALSE
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function resolveValidatorObjectName($validatorName) {
-		if ($this->objectManager->isObjectRegistered($validatorName)) return $validatorName;
+	protected function resolveValidatorObjectName($validatorType) {
+		if ($this->objectManager->isObjectRegistered($validatorType)) return $validatorType;
 
-		$possibleClassName = 'F3\FLOW3\Validation\Validator\\' . $this->unifyDataType($validatorName) . 'Validator';
+		$possibleClassName = 'F3\FLOW3\Validation\Validator\\' . $this->getValidatorType($validatorType) . 'Validator';
 		if ($this->objectManager->isObjectRegistered($possibleClassName)) return $possibleClassName;
 
 		return FALSE;
 	}
 
 	/**
-	 * Preprocess data types. Used to map primitive PHP types to DataTypes in FLOW3.
+	 * Used to map PHP types to validator types.
 	 *
 	 * @param string $type Data type to unify
 	 * @return string unified data type
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	protected function unifyDataType($type) {
+	protected function getValidatorType($type) {
 		switch ($type) {
 			case 'int':
 				$type = 'Integer';

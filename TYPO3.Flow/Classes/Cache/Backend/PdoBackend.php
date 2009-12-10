@@ -367,7 +367,7 @@ class PdoBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	protected function createCacheTables() {
 		try {
 			$pdoHelper = $this->objectFactory->create('F3\FLOW3\Utility\PdoHelper', $this->dataSourceName, $this->username, $this->password);
-			$pdoHelper->importSql(FLOW3_PATH_FLOW3 . 'Resources/Private/Cache/SQL/CachePdoBackend.sql');
+			$pdoHelper->importSql(FLOW3_PATH_FLOW3 . 'Resources/Private/Cache/SQL/DDL.sql');
 		} catch (\PDOException $e) {
 			throw new \RuntimeException('Could not create cache tables with DSN "' . $this->dataSourceName . '". PDO error: ' . $e->getMessage(), 1259576985);
 		}

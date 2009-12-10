@@ -39,7 +39,7 @@ class ClassSchema {
 	/**
 	 * Specifies the allowed property types.
 	 */
-	const ALLOWED_TYPES_PATTERN = '/^\\\\?(?P<type>integer|int|float|boolean|string|DateTime|F3\\\\[a-zA-Z0-9\\\\]+|array|ArrayObject|SplObjectStorage)(?:<(?P<elementType>[a-zA-Z0-9\\\\]+)>)?/';
+	const ALLOWED_TYPES_PATTERN = '/^\\\\?(?P<type>integer|int|float|double|boolean|bool|string|DateTime|F3\\\\[a-zA-Z0-9\\\\]+|array|ArrayObject|SplObjectStorage)(?:<(?P<elementType>[a-zA-Z0-9\\\\]+)>)?/';
 
 	/**
 	 * Name of the class this schema is referring to
@@ -115,8 +115,8 @@ class ClassSchema {
 	public function addProperty($name, $type, $lazy = FALSE) {
 		$matches = array();
 		if (preg_match(self::ALLOWED_TYPES_PATTERN, $type, $matches)) {
-			$type = ($matches['type'] === 'int') ? 'integer' : $matches['type'];
-			$elementType = isset($matches['elementType']) ? $matches['elementType'] : NULL;
+			$type = $this->normalizeType($matches['type']);
+			$elementType = isset($matches['elementType']) ? $this->normalizeType($matches['elementType']) : NULL;
 
 			if ($elementType !== NULL && !in_array($type, array('array', 'ArrayObject', 'SplObjectStorage'))) {
 				throw new \F3\FLOW3\Reflection\Exception\InvalidPropertyType('Property  of type "' . $type . '" must not have an element type hint (' . $elementType . ').', 1248103053);
@@ -265,5 +265,29 @@ class ClassSchema {
 		return $this->identityProperties;
 	}
 
+	/**
+	 * normalize data types so they match the PHP type names:
+	 *  int -> integer
+	 *  float -> double
+	 *  bool -> boolean
+	 *
+	 * @param string $type Data type to unify
+	 * @return string unified data type
+	 *  @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function normalizeType($type) {
+		switch ($type) {
+			case 'int':
+				$type = 'integer';
+				break;
+			case 'bool':
+				$type = 'boolean';
+				break;
+			case 'double':
+				$type = 'float';
+				break;
+		}
+		return $type;
+	}
 }
 ?>
