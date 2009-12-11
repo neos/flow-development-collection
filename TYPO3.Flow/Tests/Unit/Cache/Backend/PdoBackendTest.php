@@ -253,7 +253,7 @@ class PdoBackendTest extends \F3\Testing\BaseTestCase {
 		\F3\FLOW3\Utility\Files::createDirectoryRecursively($this->fixtureFolder);
 		$this->fixtureDB = uniqid('Cache') . '.db';
 		$pdoHelper = new \F3\FLOW3\Utility\PdoHelper('sqlite:' . $this->fixtureFolder . $this->fixtureDB, '', '');
-		$pdoHelper->importSql(FLOW3_PATH_FLOW3 . 'Resources/Private/Cache/SQL/CachePdoBackend.sql');
+		$pdoHelper->importSql(FLOW3_PATH_FLOW3 . 'Resources/Private/Cache/SQL/DDL.sql');
 
 		$mockSystemLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
 		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\FrontendInterface', array(), array(), '', FALSE);

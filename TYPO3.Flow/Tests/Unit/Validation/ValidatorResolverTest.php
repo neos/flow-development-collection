@@ -406,10 +406,10 @@ class ValidatorResolverTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function resolveValidatorObjectNameCallsUnifyDataType() {
+	public function resolveValidatorObjectNameCallsGetValidatorType() {
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface');
-		$mockValidator = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Validation\ValidatorResolver'), array('unifyDataType'), array($mockObjectManager));
-		$mockValidator->expects($this->once())->method('unifyDataType')->with('someDataType');
+		$mockValidator = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Validation\ValidatorResolver'), array('getValidatorType'), array($mockObjectManager));
+		$mockValidator->expects($this->once())->method('getValidatorType')->with('someDataType');
 		$mockValidator->_call('resolveValidatorObjectName', 'someDataType');
 	}
 
@@ -417,30 +417,30 @@ class ValidatorResolverTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function unifyDataTypeCorrectlyRenamesPHPDataTypes() {
+	public function getValidatorTypeCorrectlyRenamesPhpDataTypes() {
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface');
 		$mockValidator = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Validation\ValidatorResolver'), array('dummy'), array($mockObjectManager), '', FALSE);
-		$this->assertEquals('Integer', $mockValidator->_call('unifyDataType', 'integer'));
-		$this->assertEquals('Integer', $mockValidator->_call('unifyDataType', 'int'));
-		$this->assertEquals('String', $mockValidator->_call('unifyDataType', 'string'));
-		$this->assertEquals('Array', $mockValidator->_call('unifyDataType', 'array'));
-		$this->assertEquals('Float', $mockValidator->_call('unifyDataType', 'float'));
-		$this->assertEquals('Float', $mockValidator->_call('unifyDataType', 'double'));
-		$this->assertEquals('Boolean', $mockValidator->_call('unifyDataType', 'boolean'));
-		$this->assertEquals('Boolean', $mockValidator->_call('unifyDataType', 'bool'));
-		$this->assertEquals('Boolean', $mockValidator->_call('unifyDataType', 'bool'));
-		$this->assertEquals('Number', $mockValidator->_call('unifyDataType', 'number'));
-		$this->assertEquals('Number', $mockValidator->_call('unifyDataType', 'numeric'));
+		$this->assertEquals('Integer', $mockValidator->_call('getValidatorType', 'integer'));
+		$this->assertEquals('Integer', $mockValidator->_call('getValidatorType', 'int'));
+		$this->assertEquals('String', $mockValidator->_call('getValidatorType', 'string'));
+		$this->assertEquals('Array', $mockValidator->_call('getValidatorType', 'array'));
+		$this->assertEquals('Float', $mockValidator->_call('getValidatorType', 'float'));
+		$this->assertEquals('Float', $mockValidator->_call('getValidatorType', 'double'));
+		$this->assertEquals('Boolean', $mockValidator->_call('getValidatorType', 'boolean'));
+		$this->assertEquals('Boolean', $mockValidator->_call('getValidatorType', 'bool'));
+		$this->assertEquals('Boolean', $mockValidator->_call('getValidatorType', 'bool'));
+		$this->assertEquals('Number', $mockValidator->_call('getValidatorType', 'number'));
+		$this->assertEquals('Number', $mockValidator->_call('getValidatorType', 'numeric'));
 	}
 
 	/**
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function unifyDataTypeRenamesMixedToRaw() {
+	public function getValidatorTypeRenamesMixedToRaw() {
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface');
 		$mockValidator = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Validation\ValidatorResolver'), array('dummy'), array($mockObjectManager), '', FALSE);
-		$this->assertEquals('Raw', $mockValidator->_call('unifyDataType', 'mixed'));
+		$this->assertEquals('Raw', $mockValidator->_call('getValidatorType', 'mixed'));
 	}
 }
 
