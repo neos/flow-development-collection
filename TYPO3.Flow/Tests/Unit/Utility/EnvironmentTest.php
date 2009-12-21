@@ -87,6 +87,7 @@ class EnvironmentTest extends \F3\Testing\BaseTestCase {
 	public function getRequestUriReturnsExpectedUriWhenUsingPathInfo() {
 		$expectedUriString = 'http://flow3.typo3.org/is/the/base/for/typo3?5=0';
 		$environment = new \F3\FLOW3\Utility\MockEnvironment();
+		$environment->SAPIName = 'apache';
 		$environment->SERVER = array(
 			'HTTP_HOST' => 'flow3.typo3.org',
 			'QUERY_STRING' => '5=0',

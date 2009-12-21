@@ -189,6 +189,9 @@ class FileSystemPublishingTarget extends \F3\FLOW3\Resource\Publishing\AbstractR
 	 */
 	protected function detectResourcesBaseUri() {
 		$uri = $this->environment->getRequestUri();
+		if ($uri === FALSE){
+			return;
+		}
 		$uri->setQuery(NULL);
 		$uri->setFragment(NULL);
 		$requestPathSegments = explode('/', $this->environment->getScriptRequestPathAndName());

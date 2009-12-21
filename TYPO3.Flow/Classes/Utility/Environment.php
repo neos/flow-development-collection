@@ -242,6 +242,9 @@ class Environment {
 	 * @api
 	 */
 	public function getRequestUri() {
+		if ($this->SAPIName === 'cli') {
+			return FALSE;
+		}
 		if (isset($this->SERVER['PATH_INFO'])) {
 			$requestUriString = $this->getRequestProtocol() . '://' . $this->getHTTPHost() . $this->SERVER['PATH_INFO'] . (strlen($this->SERVER['QUERY_STRING']) ? '?' . $this->SERVER['QUERY_STRING'] : '');
 		} else {
