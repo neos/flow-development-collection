@@ -567,6 +567,23 @@ class Service {
 	}
 
 	/**
+	 * Tells if the specified method is tagged with the given tag
+	 *
+	 * @param string $className Name of the class containing the method
+	 * @param string $methodName Name of the method to analyze
+	 * @param string $tag Tag to check for
+	 * @return boolean TRUE if the method is tagged with $tag, otherwise FALSE
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
+	 */
+	public function isMethodTaggedWith($className, $methodName, $tag) {
+		if (!isset($this->reflectedClassNames[$className])) $this->reflectClass($className);
+		if (!isset($this->methodTagsValues[$className])) return FALSE;
+		if (!isset($this->methodTagsValues[$className][$methodName])) return FALSE;
+		return isset($this->classTagsValues[$className][$methodName][$tag]);
+	}
+
+	/**
 	 * Returns the names of all methods of the specified class
 	 *
 	 * @param string $className Name of the class to return the method names of

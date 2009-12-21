@@ -137,7 +137,6 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 	 * @api
 	 */
 	public function isPackageAvailable($packageKey) {
-		if (!is_string($packageKey)) throw new \InvalidArgumentException('The package key must be of type string, ' . gettype($packageKey) . ' given.', 1200402593);
 		return (isset($this->packages[$packageKey]));
 	}
 
@@ -150,7 +149,6 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 	 * @api
 	 */
 	public function isPackageActive($packageKey) {
-		if (!is_string($packageKey)) throw new InvalidArgumentException('The package key must be of type string, ' . gettype($packageKey) . ' given.', 1200402593);
 		return (isset($this->activePackages[$packageKey]));
 	}
 

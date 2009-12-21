@@ -590,11 +590,10 @@ final class Bootstrap {
 	 * @see initialize()
 	 */
 	public function initializeResources() {
-		$resourceManager = $this->objectManager->getObject('F3\FLOW3\Resource\Manager', $this->settings['resource']);
-		$resourceManager->initializeStreamWrappers();
-
+		$resourceManager = $this->objectManager->getObject('F3\FLOW3\Resource\ResourceManager', $this->settings['resource']);
+		$resourceManager->initialize();
 		if (FLOW3_SAPITYPE === 'Web') {
-			$resourceManager->preparePublicPackageResourcesForWebAccess($this->packageManager->getActivePackages());
+			$resourceManager->publishPublicPackageResources($this->packageManager->getActivePackages());
 		}
 	}
 

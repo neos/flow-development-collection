@@ -41,7 +41,7 @@ class StandardViewTest extends \F3\Testing\BaseTestCase {
 	protected $packageManager;
 
 	/**
-	 * @var \F3\FLOW3\Resource\Manager
+	 * @var \F3\FLOW3\Resource\ResourceManager
 	 */
 	protected $recourceManager;
 
@@ -63,7 +63,7 @@ class StandardViewTest extends \F3\Testing\BaseTestCase {
 	public function setUp() {
 		$this->objectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface', array(), array(), '', FALSE);
 		$this->packageManager = $this->getMock('F3\FLOW3\Package\ManagerInterface', array(), array(), '', FALSE);
-		$this->resourceManager = $this->getMock('F3\FLOW3\Resource\Manager', array(), array(), '', FALSE);
+		$this->resourceManager = $this->getMock('F3\FLOW3\Resource\ResourceManager', array(), array(), '', FALSE);
 		$this->objectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface', array(), array(), '', FALSE);
 
 		$this->view = new \F3\FLOW3\MVC\View\StandardView($this->objectFactory, $this->packageManager, $this->resourceManager, $this->objectManager);

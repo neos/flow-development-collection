@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\MVC\View;
+namespace F3\FLOW3\Reflection\Exception;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,39 +23,13 @@ namespace F3\FLOW3\MVC\View;
  *                                                                        */
 
 /**
- * Testcase for the MVC EmptyView
+ * An "Unknown Class" exception
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @api
  */
-class EmptyViewTest extends \F3\Testing\BaseTestCase {
-
-	/**
-	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	public function renderReturnsEmptyString() {
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface', array(), array(), '', FALSE);
-		$mockPackageManager = $this->getMock('F3\FLOW3\Package\ManagerInterface', array(), array(), '', FALSE);
-		$mockResourceManager = $this->getMock('F3\FLOW3\Resource\ResourceManager', array(), array(), '', FALSE);
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface', array(), array(), '', FALSE);
-
-		$view = new \F3\FLOW3\MVC\View\EmptyView($mockObjectFactory, $mockPackageManager, $mockResourceManager, $mockObjectManager);
-		$this->assertEquals('', $view->render());
-	}
-
-	/**
-	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	public function callingNonExistingMethodsWontThrowAnException() {
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface', array(), array(), '', FALSE);
-		$mockPackageManager = $this->getMock('F3\FLOW3\Package\ManagerInterface', array(), array(), '', FALSE);
-		$mockResourceManager = $this->getMock('F3\FLOW3\Resource\ResourceManager', array(), array(), '', FALSE);
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface', array(), array(), '', FALSE);
-
-		$view = new \F3\FLOW3\MVC\View\EmptyView($mockObjectFactory, $mockPackageManager, $mockResourceManager, $mockObjectManager);
-		$view->nonExistingMethod();
-	}
+class UnknownClass extends \F3\FLOW3\Reflection\Exception {
 }
+
 ?>

@@ -63,7 +63,7 @@
 
   <xi:include href="ConfigurationFramework.xml" />
 
-  <xi:include href="ResourceManager.xml" />
+  <xi:include href="ResourceManagement.xml" />
 
   <xi:include href="MVCFramework.xml" />
 

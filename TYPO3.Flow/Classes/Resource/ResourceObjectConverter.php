@@ -31,19 +31,19 @@ namespace F3\FLOW3\Resource;
 class ResourceObjectConverter implements \F3\FLOW3\Property\ObjectConverterInterface {
 
 	/**
-	 * @var F3\FLOW3\Object\ManagerInterface
+	 * @var F3\FLOW3\Object\FactoryInterface
 	 */
-	protected $objectManager;
+	protected $objectFactory;
 
 	/**
-	 * Injects the object manager
+	 * Injects the object factory
 	 *
-	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager
+	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectObjectManager(\F3\FLOW3\Object\ManagerInterface $objectManager) {
-		$this->objectManager = $objectManager;
+	public function injectObjectFactory(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
+		$this->objectFactory = $objectFactory;
 	}
 
 	/**
@@ -64,18 +64,26 @@ class ResourceObjectConverter implements \F3\FLOW3\Property\ObjectConverterInter
 	 * and moves the temporary upload file to the persistent resources directory.
 	 *
 	 * @return mixed An object or boolean FALSE if the input format is not supported or could not be converted for other reasons
+	 * @throws \F3\FLOW3\Resource\Exception if an error with the uploaded file occurred.
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function convertFrom($source) {
 		if (is_array($source)) {
-			if (!isset($source['tmp_name'])) return FALSE;
-			$hash = sha1_file($source['tmp_name']);
-			$newPathAndFilename = FLOW3_PATH_DATA . 'Persistent/Resources/' . $hash;
-			move_uploaded_file($source['tmp_name'], $newPathAndFilename);
+			if (empty($source['tmp_name'])) return FALSE;
 
-			return $this->objectManager->getObject('F3\FLOW3\Resource\Resource', $hash);
-		} elseif (is_string($source) && strlen($source) === 40) {
-			return $this->objectManager->getObject('F3\FLOW3\Resource\Resource', $source);
+			$pathInfo = pathinfo($source['name']);
+			if (!isset($pathInfo['extension']) || substr(strtolower($pathInfo['extension']), -3, 3) === 'php') {
+				throw new \F3\FLOW3\Resource\Exception('Invalid resource: ".php" or empty file extensions are not allowed.', 1260895946);
+			}
+			$resource = $this->objectFactory->create('F3\FLOW3\Resource\Resource', sha1_file($source['tmp_name']), $pathInfo['extension']);
+
+			$newPathAndFilename = FLOW3_PATH_DATA . 'Persistent/Resources/' . $resource->getHash();
+			try {
+	 			move_uploaded_file($source['tmp_name'], $newPathAndFilename);
+			} catch (\Exception $exception) {
+				throw new \F3\FLOW3\Resource\Exception('Could not move uploaded file. (' . $exception->getMessage() . ')', 1260874112);
+			}
+			return $resource;
 		} else {
 			return FALSE;
 		}

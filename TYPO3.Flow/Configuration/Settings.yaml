@@ -114,24 +114,19 @@ FLOW3:
     detectClassChanges: n
   
   resource:
-    
-    # Settings for the resource caching mechanism
-    cache:
-  
-      # The path for the public resources mirror, relative to the Web/ directory
-      publicPath: Resources/
-  
-      # The strategy to use when caching files for public resources. Specify either
-      # "none", "package" or "file"
-      strategy: package
-  
-    # Settings for the resource publisher
-    publisher:
-  
-      # The mode to use when mirroring files into the document root, either 'copy'
-      # or 'link'
-      mirrorMode: copy
-  
+    publishing:
+
+      # If enabled, the publisher will check if the static resources of active packages
+      # have changed and if so publishes them again. If disabled, static package resources
+      # are only published once and changes are unnoticed until the related cache is flushed.
+      detectPackageResourceChanges: n
+
+      # Options for the File System publishing target
+      fileSystem:
+
+        # Strategy for mirroring files: Either "copy" or "link"
+        mirrorMode: copy
+
   security:
   
     enable: y
@@ -235,7 +230,7 @@ FLOW3:
       # Where to store session data in the filesystem. If this is empty, a default
       # location is used (Data/Temporary/<hash>/Sessions/).
       savePath: 
-  
+
   utility:
     environment:
       

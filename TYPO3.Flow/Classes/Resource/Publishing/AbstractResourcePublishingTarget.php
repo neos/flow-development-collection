@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Resource;
+namespace F3\FLOW3\Resource\Publishing;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,69 +23,35 @@ namespace F3\FLOW3\Resource;
  *                                                                        */
 
 /**
- * Model describing a resource
+ * Resource publishing targets provide methods to publish resources to a certain
+ * channel, such as the local file system or a content delivery network.
  *
- * @version $Id: Publisher.php 3523 2009-11-30 14:53:36Z k-fish $
+ * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
- * @scope prototype
- * @valueobject
  */
-class Resource {
+abstract class AbstractResourcePublishingTarget implements \F3\FLOW3\Resource\Publishing\ResourcePublishingTargetInterface {
 
 	/**
-	 * @var string
-	 */
-	protected $hash;
-
-	/**
-	 * @var string
-	 */
-	protected $fileExtension;
-
-	/**
-	 * Constructs this resource
+	 * Rewrites the given resource title to a human readable but still URI compatible string.
 	 *
+	 * @param string $title The raw resource title
+	 * @return string The rewritten title
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct($hash, $fileExtension) {
-		if (!is_string($hash) || strlen($hash) !== 40) {
-			throw new \InvalidArgumentException('A valid sha1 hash must be passed to this constructor.', 1259748358);
-		}
-		if (!is_string($fileExtension) || substr(strtolower($fileExtension), -3, 3) === 'php') {
-			throw new \InvalidArgumentException('A valid file extension must be passed to this constructor.', 1259748359);
-		}
-		$this->hash = $hash;
-		$this->fileExtension = strtolower($fileExtension);
+	protected function rewriteTitleForUri($title) {
+		return preg_replace(array('/ /', '/_/', '/[^a-z^A-Z^\-^0-9]/'), array('-', '-', ''), $title);
 	}
 
 	/**
-	 * Returns the hash of this resource
+	 * Returns the private path to the source of the given resource.
 	 *
-	 * @return string A 40 character hexadecimal sha1 hash over the content of this resource
+	 * @param Resource $resource
+	 * @return mixed The full path and filename to the source of the given resource or FALSE if the resource file doesn't exist
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getHash() {
-		return $this->hash;
-	}
-
-	/**
-	 * Returns the file extension used for this resource
-	 *
-	 * @return string The file extension used for this resource
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getFileExtension() {
-		return $this->fileExtension;
-	}
-
-	/**
-	 * Returns the mime type for this resource
-	 * 
-	 * @return string The mime type
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getMimeType() {
-		return \F3\FLOW3\Utility\FileTypes::getMimeTypeFromFilename('x.' . $this->fileExtension);
+	protected function getPersistentResourceSourcePathAndFilename(\F3\FLOW3\Resource\Resource $resource) {
+		$pathAndFilename = FLOW3_PATH_DATA . 'Persistent/Resources/' . $resource->getHash();
+		return (file_exists($pathAndFilename)) ? $pathAndFilename : FALSE;
 	}
 }
 

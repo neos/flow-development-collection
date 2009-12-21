@@ -344,8 +344,21 @@ F3\FLOW3\Reflection\Service:
 #                                                                          #
 
 F3\FLOW3\Resource\ClassLoader: []
-F3\FLOW3\Resource\Publisher: []
-F3\FLOW3\Resource\Manager: []
+F3\FLOW3\Resource\Publishing\ResourcePublisher:
+  properties:
+    resourcePublishingTarget:
+      object: F3\FLOW3\Resource\Publishing\FileSystemPublishingTarget
+F3\FLOW3\Resource\Publishing\ResourcePublishingTargetInterface: []
+F3\FLOW3\Resource\Publishing\FileSystemPublishingTarget: []
+F3\FLOW3\Resource\ResourceManager:
+  properties:
+    statusCache:
+      object:
+        factoryClassName: F3\FLOW3\Cache\Manager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: FLOW3_Resource_Status
 
 #                                                                          #
 # Security                                                                 #

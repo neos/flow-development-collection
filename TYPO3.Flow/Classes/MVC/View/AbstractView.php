@@ -43,7 +43,7 @@ abstract class AbstractView implements \F3\FLOW3\MVC\View\ViewInterface {
 	protected $packageManager;
 
 	/**
-	 * @var \F3\FLOW3\Resource\ManagerInterface
+	 * @var \F3\FLOW3\Resource\ResourceManagerInterface
 	 */
 	protected $resourceManager;
 
@@ -68,12 +68,12 @@ abstract class AbstractView implements \F3\FLOW3\MVC\View\ViewInterface {
 	 *
 	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory A reference to the Object Factory
 	 * @param \F3\FLOW3\Package\ManagerInterface $packageManager A reference to the Package Manager
-	 * @param \F3\FLOW3\Resource\Manager $resourceManager A reference to the Resource Manager
+	 * @param \F3\FLOW3\Resource\ResourceManager $resourceManager A reference to the Resource Manager
 	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager A reference to the Object Manager
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(\F3\FLOW3\Object\FactoryInterface $objectFactory, \F3\FLOW3\Package\ManagerInterface $packageManager, \F3\FLOW3\Resource\Manager $resourceManager, \F3\FLOW3\Object\ManagerInterface $objectManager) {
+	public function __construct(\F3\FLOW3\Object\FactoryInterface $objectFactory, \F3\FLOW3\Package\ManagerInterface $packageManager, \F3\FLOW3\Resource\ResourceManager $resourceManager, \F3\FLOW3\Object\ManagerInterface $objectManager) {
 		$this->objectFactory = $objectFactory;
 		$this->objectManager = $objectManager;
 		$this->packageManager = $packageManager;

@@ -43,7 +43,7 @@ class NotFoundViewTest extends \F3\Testing\BaseTestCase {
 	protected $packageManager;
 
 	/**
-	 * @var \F3\FLOW3\Resource\Manager
+	 * @var \F3\FLOW3\Resource\ResourceManager
 	 */
 	protected $recourceManager;
 
@@ -68,7 +68,7 @@ class NotFoundViewTest extends \F3\Testing\BaseTestCase {
 
 		$this->objectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface', array(), array(), '', FALSE);
 		$this->packageManager = $this->getMock('F3\FLOW3\Package\ManagerInterface', array(), array(), '', FALSE);
-		$this->resourceManager = $this->getMock('F3\FLOW3\Resource\Manager', array(), array(), '', FALSE);
+		$this->resourceManager = $this->getMock('F3\FLOW3\Resource\ResourceManager', array(), array(), '', FALSE);
 		$this->objectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface', array(), array(), '', FALSE);
 
 		$this->view = $this->getMock('F3\FLOW3\MVC\View\NotFoundView', array('getTemplatePathAndFilename'), array($this->objectFactory, $this->packageManager, $this->resourceManager, $this->objectManager));
@@ -174,7 +174,7 @@ class NotFoundViewTest extends \F3\Testing\BaseTestCase {
 	public function callingNonExistingMethodsWontThrowAnException() {
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface', array(), array(), '', FALSE);
 		$mockPackageManager = $this->getMock('F3\FLOW3\Package\ManagerInterface', array(), array(), '', FALSE);
-		$mockResourceManager = $this->getMock('F3\FLOW3\Resource\Manager', array(), array(), '', FALSE);
+		$mockResourceManager = $this->getMock('F3\FLOW3\Resource\ResourceManager', array(), array(), '', FALSE);
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface', array(), array(), '', FALSE);
 
 		$view = new \F3\FLOW3\MVC\View\NotFoundView($mockObjectFactory, $mockPackageManager, $mockResourceManager, $mockObjectManager);

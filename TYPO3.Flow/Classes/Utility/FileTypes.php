@@ -412,7 +412,7 @@ class FileTypes {
 	 * @return string
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	static public function mimeTypeFromFilename($filename) {
+	static public function getMimeTypeFromFilename($filename) {
 		$pathinfo = pathinfo($filename);
 		if (!isset($pathinfo['extension'])) {
 			return 'application/octet-stream';
@@ -428,7 +428,7 @@ class FileTypes {
 	 * @return string
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	static public function mediaTypeFromFilename($filename) {
+	static public function getMediaTypeFromFilename($filename) {
 		$pathinfo = pathinfo($filename);
 		if (!isset($pathinfo['extension'])) {
 			return '';
@@ -436,6 +436,5 @@ class FileTypes {
 			return isset(self::$extensionToMediaType[$pathinfo['extension']]) ? self::$extensionToMediaType[$pathinfo['extension']] : '';
 		}
 	}
-
 }
 ?>

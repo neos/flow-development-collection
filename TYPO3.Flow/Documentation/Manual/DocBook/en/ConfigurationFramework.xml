@@ -277,8 +277,8 @@ class SomeClass {
 	 * @return void
 	 */
 	public function theMethod() {
-		echo ($this-&gt;settings-&gt;administrator-&gt;name);
-		echo ($this-&gt;settings-&gt;administrator-&gt;email);
+		echo ($this-&gt;settings['administrator']['name']);
+		echo ($this-&gt;settings['administrator']['email']);
 	}
 }</programlisting>
       </example>

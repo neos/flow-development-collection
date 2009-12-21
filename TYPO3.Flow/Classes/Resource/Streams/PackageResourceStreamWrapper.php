@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Resource;
+namespace F3\FLOW3\Resource\Streams;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -29,7 +29,7 @@ namespace F3\FLOW3\Resource;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
-class PackageResourceStreamWrapper implements \F3\FLOW3\Resource\StreamWrapperInterface {
+class PackageResourceStreamWrapper implements \F3\FLOW3\Resource\Streams\StreamWrapperInterface {
 
 	/**
 	 * @var resource
@@ -328,11 +328,11 @@ class PackageResourceStreamWrapper implements \F3\FLOW3\Resource\StreamWrapperIn
 	 * @param string $path Specifies the URL that was passed to the original function.
 	 * @param string $mode The mode used to open the file, as detailed for fopen().
 	 * @param integer $options Holds additional flags set by the streams API.
-	 * @param string &$openedPathAndFileName If the path is opened successfully, and STREAM_USE_PATH is set in options, opened_path should be set to the full path of the file/resource that was actually opened.
+	 * @param string &$openedPathAndFilename If the path is opened successfully, and STREAM_USE_PATH is set in options, opened_path should be set to the full path of the file/resource that was actually opened.
 	 * @return boolean TRUE on success or FALSE on failure.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function open($path, $mode, $options, &$openedPathAndFileName) {
+	public function open($path, $mode, $options, &$openedPathAndFilename) {
 		$this->checkScheme($path);
 
 		$uri = $this->objectFactory->create('F3\FLOW3\Property\DataType\Uri', $path);

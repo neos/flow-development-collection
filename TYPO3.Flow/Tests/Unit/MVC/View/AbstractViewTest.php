@@ -37,7 +37,7 @@ class AbstractViewTest extends \F3\Testing\BaseTestCase {
 	public function constructorSetsDependencies() {
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface', array(), array(), '', FALSE);
 		$mockPackageManager = $this->getMock('F3\FLOW3\Package\ManagerInterface', array(), array(), '', FALSE);
-		$mockResourceManager = $this->getMock('F3\FLOW3\Resource\Manager', array(), array(), '', FALSE);
+		$mockResourceManager = $this->getMock('F3\FLOW3\Resource\ResourceManager', array(), array(), '', FALSE);
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface', array(), array(), '', FALSE);
 
 		$view = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\View\AbstractView'), array('render'), array($mockObjectFactory, $mockPackageManager, $mockResourceManager, $mockObjectManager));

@@ -66,8 +66,8 @@
       </listitem>
 
       <listitem>
-        <para>The <emphasis>Resource</emphasis> Manager contains functions for
-        providing, caching, securing and retrieving resources.</para>
+        <para>The <emphasis>Resource</emphasis> module contains functions for
+        publishing, caching, securing and retrieving resources.</para>
       </listitem>
 
       <listitem>

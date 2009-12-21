@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Resource;
+namespace F3\FLOW3\Resource\Streams;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,90 +23,27 @@ namespace F3\FLOW3\Resource;
  *                                                                        */
 
 /**
- * A generic stream wrapper sitting between PHP and stream wrappers implementing
- * \F3\FLOW3\Resource\StreamWrapperInterface.
+ * A stream wrapper interface. Modeled after the PHP streamWrapper class
+ * prototype. Check http://php.net/streamwrapper for details on that.
  *
- * The resource manager will register configured stream wrappers with this class,
- * enabling the use of FLOW3 goodies like DI in those stream wrappers.
- *
- * Instances of this class are created by PHP itself and therefore are unknown
- * to FLOW3's object registry.
- *
+ * We divert from the PHP prototype in the following:
+ *  * better method names
+ *  * methods that should not be implemented in the PHP prototype when not being
+ *    supported (like mkdir) must throw a \BadMethodCallException instead.
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
- * @scope prototype
+ * @api
  */
-class StreamWrapperAdapter {
+interface StreamWrapperInterface {
 
 	/**
-	 * @var \F3\FLOW3\Object\FactoryInterface
+	 * Returns the scheme ("protocol") this wrapper handles.
+	 * 
+	 * @return string
+	 * @api
 	 */
-	static protected $objectFactory;
-
-	/**
-	 * @var array
-	 */
-	static protected $registeredStreamWrappers = array();
-
-	/**
-	 * @var resource
-	 */
-	public $context ;
-
-	/**
-	 * @var \F3\FLOW3\Resource\StreamWrapperInterface
-	 */
-	protected $streamWrapper;
-
-	/**
-	 * Set the object factory.
-	 *
-	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	static public function setObjectFactory(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
-		self::$objectFactory = $objectFactory;
-	}
-
-	/**
-	 * Register a stream wrapper. Later registrations for a scheme will override
-	 * earlier ones without warning.
-	 *
-	 * @param string $scheme
-	 * @param string $objectName
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	static public function registerStreamWrapper($scheme, $objectName) {
-		self::$registeredStreamWrappers[$scheme] = $objectName;
-	}
-
-	/**
-	 * Returns the stream wrappers registered with this class.
-	 *
-	 * @return array
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	static public function getRegisteredStreamWrappers() {
-		return self::$registeredStreamWrappers;
-	}
-
-	/**
-	 * Create the internal stream wrapper if needed.
-	 *
-	 * @param string $path The path to fetch the scheme from.
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	protected function createStreamWrapper($path) {
-		if ($this->streamWrapper === NULL) {
-			$explodedPath = explode(':', $path, 2);
-			$scheme = array_shift($explodedPath);
-			$this->streamWrapper = self::$objectFactory->create(self::$registeredStreamWrappers[$scheme]);
-		}
-	}
+	static public function getScheme();
 
 	/**
 	 * Close directory handle.
@@ -117,10 +54,9 @@ class StreamWrapperAdapter {
 	 * the directory stream should be released.
 	 *
 	 * @return boolean TRUE on success or FALSE on failure.
+	 * @api
 	 */
-	public function dir_closedir() {
-		return $this->streamWrapper->closeDirectory();
-	}
+	public function closeDirectory();
 
 	/**
 	 * Open directory handle.
@@ -130,11 +66,9 @@ class StreamWrapperAdapter {
 	 * @param string $path Specifies the URL that was passed to opendir().
 	 * @param int $options Whether or not to enforce safe_mode (0x04).
 	 * @return boolean TRUE on success or FALSE on failure.
+	 * @api
 	 */
-	public function dir_opendir($path, $options) {
-		$this->createStreamWrapper($path);
-		return $this->streamWrapper->openDirectory($path, $options);
-	}
+	public function openDirectory($path, $options);
 
 	/**
 	 * Read entry from directory handle.
@@ -142,10 +76,9 @@ class StreamWrapperAdapter {
 	 * This method is called in response to readdir().
 	 *
 	 * @return string Should return string representing the next filename, or FALSE if there is no next file.
+	 * @api
 	 */
-	public function dir_readdir() {
-		return $this->streamWrapper->readDirectory();
-	}
+	public function readDirectory();
 
 	/**
 	 * Rewind directory handle.
@@ -157,29 +90,40 @@ class StreamWrapperAdapter {
 	 * by dir_opendir().
 	 *
 	 * @return boolean TRUE on success or FALSE on failure.
+	 * @api
 	 */
-	public function dir_rewinddir() {
-		return $this->streamWrapper->rewindDirectory();
-	}
+	public function rewindDirectory();
 
 	/**
 	 * Create a directory.
 	 *
 	 * This method is called in response to mkdir().
 	 *
-	 * Note: In order for the appropriate error message to be returned this
-	 * method should not be defined if the wrapper does not support creating
-	 * directories.
+	 * Note: If the wrapper does not support creating directories it must throw
+	 * a \BadMethodCallException.
 	 *
 	 * @param string $path Directory which should be created.
 	 * @param integer $mode The value passed to mkdir().
 	 * @param integer $options A bitwise mask of values, such as STREAM_MKDIR_RECURSIVE.
 	 * @return boolean TRUE on success or FALSE on failure.
+	 * @api
 	 */
-	public function mkdir($path, $mode,$options) {
-		$this->createStreamWrapper($path);
-		return $this->streamWrapper->makeDirectory($path, $mode, $options);
-	}
+	public function makeDirectory($path, $mode,$options);
+
+	/**
+	 * Removes a directory.
+	 *
+	 * This method is called in response to rmdir().
+	 *
+	 * Note: If the wrapper does not support creating directories it must throw
+	 * a \BadMethodCallException.
+	 *
+	 * @param string $path The directory URL which should be removed.
+	 * @param integer $options A bitwise mask of values, such as STREAM_MKDIR_RECURSIVE.
+	 * @return boolean TRUE on success or FALSE on failure.
+	 * @api
+	 */
+	public function removeDirectory($path, $options);
 
 	/**
 	 * Renames a file or directory.
@@ -188,48 +132,23 @@ class StreamWrapperAdapter {
 	 *
 	 * Should attempt to rename path_from to path_to.
 	 *
-	 * Note: In order for the appropriate error message to be returned this
-	 * method should not be defined if the wrapper does not support creating
-	 * directories.
-	 *
-	 * @param string $path_from The URL to the current file.
-	 * @param string $path_to The URL which the path_from should be renamed to.
+	 * @param string $source The URL to the current file.
+	 * @param string $target The URL which the path_from should be renamed to.
 	 * @return boolean TRUE on success or FALSE on failure.
+	 * @api
 	 */
-	public function rename($path_from, $path_to) {
-		$this->createStreamWrapper($path);
-		return $this->streamWrapper->rename($path_from, $path_to);
-	}
-
-	/**
-	 * Removes a directory.
-	 *
-	 * This method is called in response to rmdir().
-	 *
-	 * Note: In order for the appropriate error message to be returned this
-	 * method should not be defined if the wrapper does not support creating
-	 * directories.
-	 *
-	 * @param string $path The directory URL which should be removed.
-	 * @param integer $options A bitwise mask of values, such as STREAM_MKDIR_RECURSIVE.
-	 * @return boolean TRUE on success or FALSE on failure.
-	 */
-	public function rmdir($path, $options) {
-		$this->createStreamWrapper($path);
-		return $this->streamWrapper->removeDirectory($path, $options);
-	}
+	public function rename($source, $target);
 
 	/**
 	 * Retrieve the underlaying resource.
 	 *
 	 * This method is called in response to stream_select().
 	 *
-	 * @param integer $cast_as Can be STREAM_CAST_FOR_SELECT when stream_select() is calling stream_cast() or STREAM_CAST_AS_STREAM when stream_cast() is called for other uses.
+	 * @param integer $castType Can be STREAM_CAST_FOR_SELECT when stream_select() is calling stream_cast() or STREAM_CAST_AS_STREAM when stream_cast() is called for other uses.
 	 * @return resource Should return the underlying stream resource used by the wrapper, or FALSE.
+	 * @api
 	 */
-	public function stream_cast($cast_as) {
-		return $this->streamWrapper->cast($cast_as);
-	}
+	public function cast($castType);
 
 	/**
 	 * Close an resource.
@@ -240,10 +159,9 @@ class StreamWrapperAdapter {
 	 * released.
 	 *
 	 * @return void
+	 * @api
 	 */
-	public function stream_close() {
-		$this->streamWrapper->close();
-	}
+	public function close();
 
 	/**
 	 * Tests for end-of-file on a file pointer.
@@ -251,10 +169,9 @@ class StreamWrapperAdapter {
 	 * This method is called in response to feof().
 	 *
 	 * @return boolean Should return TRUE if the read/write position is at the end of the stream and if no more data is available to be read, or FALSE otherwise.
+	 * @api
 	 */
-	public function stream_eof() {
-		return $this->streamWrapper->isAtEof();
-	}
+	public function isAtEof();
 
 	/**
 	 * Flushes the output.
@@ -267,36 +184,36 @@ class StreamWrapperAdapter {
 	 * Note: If not implemented, FALSE is assumed as the return value.
 	 *
 	 * @return boolean Should return TRUE if the cached data was successfully stored (or if there was no data to store), or FALSE if the data could not be stored.
+	 * @api
 	 */
-	public function stream_flush() {
-		return $this->streamWrapper->flush();
-	}
+	public function flush();
 
 	/**
 	 * Advisory file locking.
 	 *
 	 * This method is called in response to flock(), when file_put_contents()
-	 * (when flags contains LOCK_EX), stream_set_blocking() and when closing the
-	 * stream (LOCK_UN).
+	 * (when flags contains LOCK_EX), stream_set_blocking().
 	 *
 	 * $operation is one of the following:
 	 *  LOCK_SH to acquire a shared lock (reader).
 	 *  LOCK_EX to acquire an exclusive lock (writer).
-	 *  LOCK_UN to release a lock (shared or exclusive).
 	 *  LOCK_NB if you don't want flock() to block while locking.
 	 *
 	 * @param integer $operation One of the LOCK_* constants
 	 * @return boolean TRUE on success or FALSE on failure.
+	 * @api
 	 */
-	public function stream_lock($operation) {
-		switch ($operation) {
-			case LOCK_UN:
-				$this->streamWrapper->unlock();
-			break;
-			default:
-				$this->streamWrapper->lock($operation);
-		}
-	}
+	public function lock($operation);
+
+	/**
+	 * Advisory file locking.
+	 *
+	 * This method is called when closing the stream (LOCK_UN).
+	 *
+	 * @return boolean TRUE on success or FALSE on failure.
+	 * @api
+	 */
+	public function unlock();
 
 	/**
 	 * Opens file or URL.
@@ -304,7 +221,7 @@ class StreamWrapperAdapter {
 	 * This method is called immediately after the wrapper is initialized (f.e.
 	 * by fopen() and file_get_contents()).
 	 *
-	 * $optiosn can hold one of the following values OR'd together:
+	 * $options can hold one of the following values OR'd together:
 	 *  STREAM_USE_PATH
 	 *    If path is relative, search for the resource using the include_path.
 	 *  STREAM_REPORT_ERRORS
@@ -315,13 +232,11 @@ class StreamWrapperAdapter {
 	 * @param string $path Specifies the URL that was passed to the original function.
 	 * @param string $mode The mode used to open the file, as detailed for fopen().
 	 * @param integer $options Holds additional flags set by the streams API.
-	 * @param string &$opened_path path If the path is opened successfully, and STREAM_USE_PATH is set in options, opened_path should be set to the full path of the file/resource that was actually opened.
+	 * @param string &$openedPathAndFilename path If the path is opened successfully, and STREAM_USE_PATH is set in options, opened_path should be set to the full path of the file/resource that was actually opened.
 	 * @return boolean TRUE on success or FALSE on failure.
+	 * @api
 	 */
-	public function stream_open($path, $mode, $options, &$opened_path) {
-		$this->createStreamWrapper($path);
-		return $this->streamWrapper->open($path, $mode, $options, $opened_path);
-	}
+	public function open($path, $mode, $options, &$openedPathAndFilename);
 
 	/**
 	 * Read from stream.
@@ -333,10 +248,9 @@ class StreamWrapperAdapter {
 	 *
 	 * @param integer $count How many bytes of data from the current position should be returned.
 	 * @return string If there are less than count bytes available, return as many as are available. If no more data is available, return either FALSE or an empty string.
+	 * @api
 	 */
-	public function stream_read($count) {
-		return $this->streamWrapper->read($count);
-	}
+	public function read($count);
 
 	/**
 	 * Seeks to specific location in a stream.
@@ -354,10 +268,9 @@ class StreamWrapperAdapter {
 	 * @param integer $offset The stream offset to seek to.
 	 * @param integer $whence
 	 * @return boolean TRUE on success or FALSE on failure.
+	 * @api
 	 */
-	public function stream_seek($offset, $whence = SEEK_SET) {
-		return $this->streamWrapper->seek($offset, $whence);
-	}
+	public function seek($offset, $whence = SEEK_SET);
 
 	/**
 	 * Change stream options.
@@ -380,24 +293,12 @@ class StreamWrapperAdapter {
 	 *  STREAM_OPTION_WRITE_BUFFER: the requested buffer size.
 	 *
 	 * @param integer $option
-	 * @param integer $arg1
-	 * @param integer $arg2
+	 * @param integer $argument1
+	 * @param integer $argument2
 	 * @return boolean TRUE on success or FALSE on failure. If option is not implemented, FALSE should be returned.
+	 * @api
 	 */
-	public function stream_set_option($option, $arg1, $arg2) {
-		return $this->streamWrapper->setOption($option, $arg1, $arg2);
-	}
-
-	/**
-	 * Retrieve information about a file resource.
-	 *
-	 * This method is called in response to fstat().
-	 *
-	 * @return array See http://php.net/stat
-	 */
-	public function stream_stat() {
-		return $this->streamWrapper->resourceStat();
-	}
+	public function setOption($option, $argument1, $argument2);
 
 	/**
 	 * Retrieve the current position of a stream.
@@ -405,10 +306,9 @@ class StreamWrapperAdapter {
 	 * This method is called in response to ftell().
 	 *
 	 * @return int Should return the current position of the stream.
+	 * @api
 	 */
-	public function stream_tell() {
-		return $this->streamWrapper->tell();
-	}
+	public function tell();
 
 	/**
 	 * Write to stream.
@@ -423,10 +323,9 @@ class StreamWrapperAdapter {
 	 *
 	 * @param string $data Should be stored into the underlying stream.
 	 * @return int Should return the number of bytes that were successfully stored, or 0 if none could be stored.
+	 * @api
 	 */
-	public function stream_write($data) {
-		return $this->streamWrapper->write($data);
-	}
+	public function write($data);
 
 	/**
 	 * Delete a file.
@@ -439,11 +338,19 @@ class StreamWrapperAdapter {
 	 *
 	 * @param string $path The file URL which should be deleted.
 	 * @return boolean TRUE on success or FALSE on failure.
+	 * @api
 	 */
-	public function unlink($path) {
-		$this->createStreamWrapper($path);
-		return $this->streamWrapper->unlink($path);
-	}
+	public function unlink($path);
+
+	/**
+	 * Retrieve information about a file resource.
+	 *
+	 * This method is called in response to fstat().
+	 *
+	 * @return array See http://php.net/stat
+	 * @api
+	 */
+	public function resourceStat();
 
 	/**
 	 * Retrieve information about a file.
@@ -465,11 +372,9 @@ class StreamWrapperAdapter {
 	 * @param string $path The file path or URL to stat. Note that in the case of a URL, it must be a :// delimited URL. Other URL forms are not supported.
 	 * @param integer $flags Holds additional flags set by the streams API.
 	 * @return array Should return as many elements as stat() does. Unknown or unavailable values should be set to a rational value (usually 0).
+	 * @api
 	 */
-	public function url_stat($path, $flags) {
-		$this->createStreamWrapper($path);
-		return $this->streamWrapper->pathStat($path, $flags);
-	}
+	public function pathStat($path, $flags);
 
 }
 

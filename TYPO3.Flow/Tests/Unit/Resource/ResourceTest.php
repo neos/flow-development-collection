@@ -23,69 +23,65 @@ namespace F3\FLOW3\Resource;
  *                                                                        */
 
 /**
- * Model describing a resource
+ * Testcase for the Resource class
  *
- * @version $Id: Publisher.php 3523 2009-11-30 14:53:36Z k-fish $
+ * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
- * @scope prototype
- * @valueobject
  */
-class Resource {
+class ResourceTest extends \F3\Testing\BaseTestCase {
 
 	/**
-	 * @var string
-	 */
-	protected $hash;
-
-	/**
-	 * @var string
-	 */
-	protected $fileExtension;
-
-	/**
-	 * Constructs this resource
-	 *
+	 * @test
+	 * @expectedException \InvalidArgumentException
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct($hash, $fileExtension) {
-		if (!is_string($hash) || strlen($hash) !== 40) {
-			throw new \InvalidArgumentException('A valid sha1 hash must be passed to this constructor.', 1259748358);
-		}
-		if (!is_string($fileExtension) || substr(strtolower($fileExtension), -3, 3) === 'php') {
-			throw new \InvalidArgumentException('A valid file extension must be passed to this constructor.', 1259748359);
-		}
-		$this->hash = $hash;
-		$this->fileExtension = strtolower($fileExtension);
+	public function constructThrowsExceptionOnFormallyInvalidHash() {
+		$resource = new \F3\FLOW3\Resource\Resource('69e73da3ce0ad08c717b7b9f1c759182d64', 'png');
 	}
 
 	/**
-	 * Returns the hash of this resource
-	 *
-	 * @return string A 40 character hexadecimal sha1 hash over the content of this resource
+	 * @test
+	 * @expectedException \InvalidArgumentException
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getHash() {
-		return $this->hash;
+	public function constructThrowsExceptionIfFileExtensionIsPhp() {
+		$resource = new \F3\FLOW3\Resource\Resource('69e73da3ce0ad08c717b7b9f1c759182d6650944', 'php');
 	}
 
 	/**
-	 * Returns the file extension used for this resource
-	 *
-	 * @return string The file extension used for this resource
+	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getFileExtension() {
-		return $this->fileExtension;
+	public function constructStoresTheGivenFileExtensionInLowerCase() {
+		$resource = new \F3\FLOW3\Resource\Resource('69e73da3ce0ad08c717b7b9f1c759182d6650944', 'Jpeg');
+		$this->assertSame('jpeg', $resource->getFileExtension());
 	}
 
 	/**
-	 * Returns the mime type for this resource
-	 * 
-	 * @return string The mime type
+	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getMimeType() {
-		return \F3\FLOW3\Utility\FileTypes::getMimeTypeFromFilename('x.' . $this->fileExtension);
+	public function getHashReturnsTheResourceHash() {
+		$hash = '69e73da3ce0ad08c717b7b9f1c759182d6650944';
+		$resource = new \F3\FLOW3\Resource\Resource($hash, 'Jpeg');
+		$this->assertSame($hash, $resource->getHash());
+	}
+
+	/**
+	 * @test 
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getMimeTypeReturnsMimeTypeBasedOnFileExtension() {
+		$hash = '69e73da3ce0ad08c717b7b9f1c759182d6650944';
+
+		$resource = new \F3\FLOW3\Resource\Resource($hash, 'jpg');
+		$this->assertSame('image/jpeg', $resource->getMimeType());
+
+		$resource = new \F3\FLOW3\Resource\Resource($hash, 'zip');
+		$this->assertSame('application/x-zip-compressed', $resource->getMimeType());
+
+		$resource = new \F3\FLOW3\Resource\Resource($hash, 'someunknownextension');
+		$this->assertSame('application/octet-stream', $resource->getMimeType());
 	}
 }
 
