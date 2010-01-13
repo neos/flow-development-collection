@@ -57,6 +57,81 @@ class SessionTest extends \F3\Testing\BaseTestCase {
 		$this->assertFalse($reconstitutedObjects->contains($someObject));
 	}
 
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function hasObjectReturnsTrueForRegisteredObject() {
+		$object1 = new \stdClass();
+		$object2 = new \stdClass();
+		$session = new \F3\FLOW3\Persistence\Session();
+		$session->registerObject($object1, 12345);
+
+		$this->assertTrue($session->hasObject($object1), 'Session claims it does not have registered object.');
+		$this->assertFalse($session->hasObject($object2), 'Session claims it does have unregistered object.');
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function hasIdentifierReturnsTrueForRegisteredObject() {
+		$object1 = new \stdClass();
+		$object2 = new \stdClass();
+		$session = new \F3\FLOW3\Persistence\Session();
+		$session->registerObject($object1, 12345);
+
+		$this->assertTrue($session->hasIdentifier('12345'), 'Session claims it does not have registered object.');
+		$this->assertFalse($session->hasIdentifier('67890'), 'Session claims it does have unregistered object.');
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getIdentifierByObjectReturnsRegisteredUUIDForObject() {
+		$object = new \stdClass();
+		$session = new \F3\FLOW3\Persistence\Session();
+		$session->registerObject($object, 12345);
+
+		$this->assertEquals($session->getIdentifierByObject($object), 12345, 'Did not get UUID registered for object.');
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getObjectByIdentifierReturnsRegisteredObjectForUUID() {
+		$object = new \stdClass();
+		$session = new \F3\FLOW3\Persistence\Session();
+		$session->registerObject($object, 12345);
+
+		$this->assertSame($session->getObjectByIdentifier('12345'), $object, 'Did not get object registered for UUID.');
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function unregisterObjectRemovesRegisteredObject() {
+		$object1 = new \stdClass();
+		$object2 = new \stdClass();
+		$session = new \F3\FLOW3\Persistence\Session();
+		$session->registerObject($object1, 12345);
+		$session->registerObject($object2, 67890);
+
+		$this->assertTrue($session->hasObject($object1), 'Session claims it does not have registered object.');
+		$this->assertTrue($session->hasIdentifier('12345'), 'Session claims it does not have registered object.');
+		$this->assertTrue($session->hasObject($object1), 'Session claims it does not have registered object.');
+		$this->assertTrue($session->hasIdentifier('67890'), 'Session claims it does not have registered object.');
+
+		$session->unregisterObject($object1);
+
+		$this->assertFalse($session->hasObject($object1), 'Session claims it does have unregistered object.');
+		$this->assertFalse($session->hasIdentifier('12345'), 'Session claims it does not have registered object.');
+		$this->assertTrue($session->hasObject($object2), 'Session claims it does not have registered object.');
+		$this->assertTrue($session->hasIdentifier('67890'), 'Session claims it does not have registered object.');
+	}
 
 }
 ?>

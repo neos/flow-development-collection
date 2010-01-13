@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Persistence;
+namespace F3\FLOW3\Persistence\QOM;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,81 +23,67 @@ namespace F3\FLOW3\Persistence;
  *                                                                        */
 
 /**
- * The FLOW3 Persistence Manager interface
+ * Evaluates to the value (or values, if multi-valued) of a property.
+ *
+ * If, for a tuple, the selector node does not have a property named property,
+ * the operand evaluates to null.
+ *
+ * The query is invalid if:
+ *
+ * selector is not the name of a selector in the query, or
+ * property is not a syntactically valid property name.
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
+ * @scope prototype
  */
-interface ManagerInterface {
+class PropertyValue extends \F3\FLOW3\Persistence\QOM\DynamicOperand {
 
 	/**
-	 * Set settings for the persistence layer
-	 *
-	 * @param array $settings
+	 * @var string
 	 */
-	public function setSettings(array $settings);
+	protected $selectorName;
 
 	/**
-	 * Initializes the persistence manager
-	 *
-	 * @return void
+	 * @var string
 	 */
-	public function initialize();
+	protected $propertyName;
 
 	/**
-	 * Returns the current persistence session
+	 * Constructs this PropertyValue instance
 	 *
-	 * @return \F3\FLOW3\Persistence\Session
+	 * @param string $propertyName
+	 * @param string $selectorName
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function getSession();
+	public function __construct($propertyName, $selectorName = '') {
+		$this->propertyName = $propertyName;
+		$this->selectorName = $selectorName;
+	}
 
 	/**
-	 * Returns the persistence backend
+	 * Gets the name of the selector against which to evaluate this operand.
 	 *
-	 * @return \F3\FLOW3\Persistence\BackendInterface
+	 * @return string the selector name; non-null
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
-	public function getBackend();
+	public function getSelectorName() {
+		return $this->selectorName;
+	}
 
 	/**
-	 * Commits new objects and changes to objects in the current persistence
-	 * session into the backend
+	 * Gets the name of the property.
 	 *
-	 * @return void
+	 * @return string the property name; non-null
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
-	public function persistAll();
-
-	/**
-	 * Checks if the given object has ever been persisted.
-	 *
-	 * @param object $object The object to check
-	 * @return boolean TRUE if the object is new, FALSE if the object exists in the repository
-	 */
-	public function isNewObject($object);
-
-	/**
-	 * Returns the (internal) identifier for the object, if it is known to the
-	 * backend. Otherwise NULL is returned.
-	 *
-	 * Note: this returns an identifier even if the object has not been
-	 * persisted in case of AOP-managed entities. Use isNewObject() if you need
-	 * to distinguish those cases.
-	 *
-	 * @param object $object
-	 * @return string The identifier for the object if it is known, or NULL
-	 */
-	public function getIdentifierByObject($object);
-
-	/**
-	 * Returns the object with the (internal) identifier, if it is known to the
-	 * backend. Otherwise NULL is returned.
-	 *
-	 * @param string $identifier
-	 * @return object The object for the identifier if it is known, or NULL
-	 */
-	public function getObjectByIdentifier($identifier);
+	public function getPropertyName() {
+		return $this->propertyName;
+	}
 
 }
+
 ?>

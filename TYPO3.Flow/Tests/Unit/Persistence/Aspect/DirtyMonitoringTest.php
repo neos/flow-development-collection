@@ -118,27 +118,189 @@ class DirtyMonitoringTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function isDirtyDetectsChangesInObjects() {
-		$mockClassSchema = $this->getMock('F3\FLOW3\Reflection\ClassSchema', array(), array('SomeClass'));
-		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service');
-		$mockReflectionService->expects($this->any())->method('getClassSchema')->will($this->returnValue($mockClassSchema));
-		$aspect = new \F3\FLOW3\Persistence\Aspect\DirtyMonitoring();
-		$aspect->injectReflectionService($mockReflectionService);
+	public function isDirtyDetectsChangesInObjectsByCallingAreObjectsDifferent() {
 		$value = new \stdClass();
-		$valueClone = clone $value;
 		$object = $this->getMock('F3\FLOW3\AOP\ProxyInterface');
 		$object->expects($this->any())->method('FLOW3_AOP_Proxy_getProperty')->with('foo')->will($this->returnValue($value));
-		$object->FLOW3_Persistence_cleanProperties = array('foo' => $valueClone);
+		$object->FLOW3_Persistence_cleanProperties = array('foo' => clone $value);
+
 		$mockAdviceChain = $this->getMock('F3\FLOW3\AOP\Advice\AdviceChain', array(), array(), '', FALSE);
 		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface');
 		$mockJoinPoint->expects($this->any())->method('getAdviceChain')->will($this->returnValue($mockAdviceChain));
 		$mockJoinPoint->expects($this->any())->method('getProxy')->will($this->returnValue($object));
 		$mockJoinPoint->expects($this->any())->method('getMethodArgument')->will($this->returnValue('foo'));
 
-		$this->assertFalse($aspect->isDirty($mockJoinPoint));
+		$mockClassSchema = $this->getMock('F3\FLOW3\Reflection\ClassSchema', array(), array('SomeClass'));
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service');
+		$mockReflectionService->expects($this->any())->method('getClassSchema')->will($this->returnValue($mockClassSchema));
 
-		$valueClone->someChange = TRUE;
+		$aspect = $this->getMock('F3\FLOW3\Persistence\Aspect\DirtyMonitoring', array('areObjectsDifferent'));
+		$aspect->injectReflectionService($mockReflectionService);
+		$aspect->expects($this->any())->method('areObjectsDifferent')->will($this->returnValue(TRUE));
+
 		$this->assertTrue($aspect->isDirty($mockJoinPoint));
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function areObjectsDifferentConsidersClonedPlainObjectAsEqual() {
+		$aspect = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Aspect\DirtyMonitoring'), array('dummy'));
+
+		$object1 = new \stdClass();
+		$object1->foo = 'bar';
+		$object2 = clone $object1;
+		$this->assertFalse($aspect->_call('areObjectsDifferent', $object1, $object2));
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function areObjectsDifferentConsidersEqualPlainObjectAsEqual() {
+		$mockClassSchema = $this->getMock('F3\FLOW3\Reflection\ClassSchema', array(), array('SomeClass'));
+		$mockClassSchema->expects($this->any())->method('getProperties')->will($this->returnValue(array()));
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service');
+		$mockReflectionService->expects($this->any())->method('getClassSchema')->will($this->returnValue($mockClassSchema));
+
+		$aspect = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Aspect\DirtyMonitoring'), array('dummy'));
+		$aspect->injectReflectionService($mockReflectionService);
+
+		$object1 = new \stdClass();
+		$object1->foo = 'bar';
+		$object2 = new \stdClass();
+		$object2->foo = 'bar';
+		$this->assertFalse($aspect->_call('areObjectsDifferent', $object1, $object2));
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function areObjectsDifferentConsidersDifferentPlainObjectsOfSameTypeAsDifferent() {
+		$mockClassSchema = $this->getMock('F3\FLOW3\Reflection\ClassSchema', array(), array('SomeClass'));
+		$mockClassSchema->expects($this->any())->method('getProperties')->will($this->returnValue(array()));
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service');
+		$mockReflectionService->expects($this->any())->method('getClassSchema')->will($this->returnValue($mockClassSchema));
+
+		$aspect = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Aspect\DirtyMonitoring'), array('dummy'));
+		$aspect->injectReflectionService($mockReflectionService);
+
+		$object1 = new \stdClass();
+		$object1->foo = 'bar';
+		$object2 = new \stdClass();
+		$object2->foo = 'baz';
+		$this->assertTrue($aspect->_call('areObjectsDifferent', $object1, $object2));
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function areObjectsDifferentConsidersPlainObjectsOfDifferentTypeAsDifferent() {
+		$mockClassSchema = $this->getMock('F3\FLOW3\Reflection\ClassSchema', array(), array('SomeClass'));
+		$mockClassSchema->expects($this->any())->method('getProperties')->will($this->returnValue(array()));
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service');
+		$mockReflectionService->expects($this->any())->method('getClassSchema')->will($this->returnValue($mockClassSchema));
+
+		$aspect = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Aspect\DirtyMonitoring'), array('dummy'));
+		$aspect->injectReflectionService($mockReflectionService);
+
+		$object1 = new \stdClass();
+		$object2 = new \DateTime();
+		$this->assertTrue($aspect->_call('areObjectsDifferent', $object1, $object2));
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function areObjectsDifferentChecksPropertiesFromClassSchema() {
+		$mockClassSchema = $this->getMock('F3\FLOW3\Reflection\ClassSchema', array(), array('SomeClass'));
+		$mockClassSchema->expects($this->any())->method('getProperties')->will($this->returnValue(array('foo' => array())));
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service');
+		$mockReflectionService->expects($this->any())->method('getClassSchema')->will($this->returnValue($mockClassSchema));
+
+		$aspect = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Aspect\DirtyMonitoring'), array('dummy'));
+		$aspect->injectReflectionService($mockReflectionService);
+
+		$object1 = $this->getMock('F3\FLOW3\AOP\ProxyInterface');
+		$object1->expects($this->any())->method('FLOW3_AOP_Proxy_getProxyTargetClassName')->will($this->returnValue(get_class($object1)));
+		$object1->expects($this->at(1))->method('FLOW3_AOP_Proxy_getProperty')->will($this->returnValue('bar'));
+		$object1->expects($this->at(2))->method('FLOW3_AOP_Proxy_getProperty')->will($this->returnValue('baz'));
+		$object1->foo = 'exists';
+		$object2 = clone $object1;
+
+		$this->assertTrue($aspect->_call('areObjectsDifferent', $object1, $object2));
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function areObjectsDifferentUsesStrictComparisonOnObjectsInProperties() {
+		$mockClassSchema = $this->getMock('F3\FLOW3\Reflection\ClassSchema', array(), array('SomeClass'));
+		$mockClassSchema->expects($this->any())->method('getProperties')->will($this->returnValue(array('foo' => array())));
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service');
+		$mockReflectionService->expects($this->any())->method('getClassSchema')->will($this->returnValue($mockClassSchema));
+
+		$aspect = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Aspect\DirtyMonitoring'), array('dummy'));
+		$aspect->injectReflectionService($mockReflectionService);
+
+		$object1 = $this->getMock('F3\FLOW3\AOP\ProxyInterface');
+		$object1->expects($this->any())->method('FLOW3_AOP_Proxy_getProxyTargetClassName')->will($this->returnValue(get_class($object1)));
+		$object1->expects($this->at(1))->method('FLOW3_AOP_Proxy_getProperty')->will($this->returnValue(new \stdClass()));
+		$object1->expects($this->at(2))->method('FLOW3_AOP_Proxy_getProperty')->will($this->returnValue(new \stdClass()));
+		$object1->foo = 'exists';
+		$object2 = clone $object1;
+
+		$this->assertTrue($aspect->_call('areObjectsDifferent', $object1, $object2));
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function areObjectsDifferentIgnoresExtraProperties() {
+		$mockClassSchema = $this->getMock('F3\FLOW3\Reflection\ClassSchema', array(), array('SomeClass'));
+		$mockClassSchema->expects($this->any())->method('getProperties')->will($this->returnValue(array('foo' => array())));
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service');
+		$mockReflectionService->expects($this->any())->method('getClassSchema')->will($this->returnValue($mockClassSchema));
+
+		$aspect = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Aspect\DirtyMonitoring'), array('dummy'));
+		$aspect->injectReflectionService($mockReflectionService);
+
+		$object1 = $this->getMock('F3\FLOW3\AOP\ProxyInterface');
+		$object1->expects($this->any())->method('FLOW3_AOP_Proxy_getProxyTargetClassName')->will($this->returnValue(get_class($object1)));
+		$object1->expects($this->exactly(2))->method('FLOW3_AOP_Proxy_getProperty')->will($this->returnValue('bar'));
+		$object1->foo = 'exists';
+		$object2 = clone $object1;
+		$object2->quux = 'exists';
+
+		$this->assertFalse($aspect->_call('areObjectsDifferent', $object1, $object2));
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function areObjectsDifferentDetectsMissingProperties() {
+		$mockClassSchema = $this->getMock('F3\FLOW3\Reflection\ClassSchema', array(), array('SomeClass'));
+		$mockClassSchema->expects($this->any())->method('getProperties')->will($this->returnValue(array('foo' => array())));
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service');
+		$mockReflectionService->expects($this->any())->method('getClassSchema')->will($this->returnValue($mockClassSchema));
+
+		$aspect = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Aspect\DirtyMonitoring'), array('dummy'));
+		$aspect->injectReflectionService($mockReflectionService);
+
+		$object1 = $this->getMock('F3\FLOW3\AOP\ProxyInterface');
+		$object1->expects($this->any())->method('FLOW3_AOP_Proxy_getProxyTargetClassName')->will($this->returnValue(get_class($object1)));
+		$object1->foo = 'bar';
+		$object2 = clone $object1;
+		unset($object2->foo);
+
+		$this->assertTrue($aspect->_call('areObjectsDifferent', $object1, $object2));
 	}
 
 	/**

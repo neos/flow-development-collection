@@ -573,10 +573,8 @@ final class Bootstrap {
 	 */
 	public function initializePersistence() {
 		if ($this->settings['persistence']['enable'] === TRUE) {
-			$repository = $this->objectManager->getObject('F3\PHPCR\RepositoryInterface');
-			$session = $repository->login();
-			$persistenceBackend = $this->objectManager->getObject('F3\FLOW3\Persistence\BackendInterface', $session);
-			$persistenceManager = $this->objectManager->getObject('F3\FLOW3\Persistence\ManagerInterface', $persistenceBackend);
+			$persistenceManager = $this->objectManager->getObject('F3\FLOW3\Persistence\ManagerInterface');
+			$persistenceManager->setSettings($this->settings['persistence']);
 			$persistenceManager->initialize();
 		}
 	}

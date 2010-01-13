@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Persistence;
+namespace F3\FLOW3\Persistence\QOM;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,81 +23,63 @@ namespace F3\FLOW3\Persistence;
  *                                                                        */
 
 /**
- * The FLOW3 Persistence Manager interface
+ * Selects a subset of the objects in the persistence layer based on object type.
+ *
+ * A selector selects every node in the repository, subject to access control
+ * constraints, that is instanceof $className
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
+ * @scope prototype
  */
-interface ManagerInterface {
+class Selector {
 
 	/**
-	 * Set settings for the persistence layer
-	 *
-	 * @param array $settings
+	 * @var string
 	 */
-	public function setSettings(array $settings);
+	protected $className;
 
 	/**
-	 * Initializes the persistence manager
-	 *
-	 * @return void
+	 * @var string
 	 */
-	public function initialize();
+	protected $selectorName;
 
 	/**
-	 * Returns the current persistence session
+	 * Constructs the Selector instance
 	 *
-	 * @return \F3\FLOW3\Persistence\Session
+	 * @param string $selectorName
+	 * @param string $className
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function getSession();
+	public function __construct($selectorName, $className) {
+		$this->selectorName = $selectorName;
+		$this->className = $className;
+	}
 
 	/**
-	 * Returns the persistence backend
+	 * Gets the name of the required class.
 	 *
-	 * @return \F3\FLOW3\Persistence\BackendInterface
+	 * @return string the node type name; non-null
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
-	public function getBackend();
+	public function getClassName() {
+		return $this->className;
+	}
 
 	/**
-	 * Commits new objects and changes to objects in the current persistence
-	 * session into the backend
+	 * Gets the selector name.
+	 * A selector's name can be used elsewhere in the query to identify the selector.
 	 *
-	 * @return void
+	 * @return string the selector name; non-null
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
-	public function persistAll();
-
-	/**
-	 * Checks if the given object has ever been persisted.
-	 *
-	 * @param object $object The object to check
-	 * @return boolean TRUE if the object is new, FALSE if the object exists in the repository
-	 */
-	public function isNewObject($object);
-
-	/**
-	 * Returns the (internal) identifier for the object, if it is known to the
-	 * backend. Otherwise NULL is returned.
-	 *
-	 * Note: this returns an identifier even if the object has not been
-	 * persisted in case of AOP-managed entities. Use isNewObject() if you need
-	 * to distinguish those cases.
-	 *
-	 * @param object $object
-	 * @return string The identifier for the object if it is known, or NULL
-	 */
-	public function getIdentifierByObject($object);
-
-	/**
-	 * Returns the object with the (internal) identifier, if it is known to the
-	 * backend. Otherwise NULL is returned.
-	 *
-	 * @param string $identifier
-	 * @return object The object for the identifier if it is known, or NULL
-	 */
-	public function getObjectByIdentifier($identifier);
+	public function getSelectorName() {
+		return $this->selectorName;
+	}
 
 }
+
 ?>

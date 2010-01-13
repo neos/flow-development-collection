@@ -67,12 +67,6 @@ class ObjectSerializer {
 	protected $persistenceManager;
 
 	/**
-	 * The query factory
-	 * @var F3\FLOW3\Persistence\QueryFactoryInterface
-	 */
-	protected $queryFactory;
-
-	/**
 	 * Injects the object manager
 	 *
 	 * @param F3\FLOW3\Object\Manager $objectManager The object manager
@@ -117,20 +111,9 @@ class ObjectSerializer {
 	}
 
 	/**
-	 * Injects the query factory
+	 * Clears the internal state, discarding all stored objects.
 	 *
-	 * @param F3\FLOW3\Persistence\QueryFactoryInterface $queryFactory The query factory
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function injectQueryFactory(\F3\FLOW3\Persistence\QueryFactoryInterface $queryFactory) {
-		$this->queryFactory = $queryFactory;
-	}
-
-	/**
-	 *
-	 *
-	 * @return
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function clearState() {
@@ -183,13 +166,13 @@ class ObjectSerializer {
 			} else if (is_object($propertyValue)
 						&& $propertyValue instanceof \F3\FLOW3\AOP\ProxyInterface
 						&& $propertyValue instanceof \F3\FLOW3\Persistence\Aspect\DirtyMonitoringInterface
-						&& $this->persistenceManager->getBackend()->isNewObject($propertyValue) === FALSE
+						&& $this->persistenceManager->isNewObject($propertyValue) === FALSE
 						&& ($this->reflectionService->isClassTaggedWith($propertyClassName, 'entity')
 							|| $this->reflectionService->isClassTaggedWith($propertyClassName, 'valueobject'))) {
 
 				$propertyArray[$propertyName]['type'] = 'persistenceObject';
 				$propertyArray[$propertyName]['value']['className'] = $propertyValue->FLOW3_AOP_Proxy_getProxyTargetClassName();
-				$propertyArray[$propertyName]['value']['UUID'] = $this->persistenceManager->getBackend()->getIdentifierByObject($propertyValue);
+				$propertyArray[$propertyName]['value']['UUID'] = $this->persistenceManager->getIdentifierByObject($propertyValue);
 
 			} else if (is_object($propertyValue)) {
 				$propertyObjectName = $this->objectManager->getObjectNameByClassName($propertyClassName);
@@ -388,15 +371,12 @@ class ObjectSerializer {
 	 * Reconstitutes a persistence object (entity or valueobject) identified by the given UUID.
 	 *
 	 * @param string $className The class name of the object to retrieve
-	 * @param string $UUID The UUID of the object
+	 * @param string $uuid The UUID of the object
 	 * @return object The reconstituted persistence object, NULL if none was found
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	protected function reconstitutePersistenceObject($className, $UUID) {
-		$query = $this->queryFactory->create($className);
-		$objects = $query->matching($query->withUUID($UUID))->execute();
-		if (count($objects) === 1) return current($objects);
-		return NULL;
+	protected function reconstitutePersistenceObject($className, $uuid) {
+		return $this->persistenceManager->getObjectByIdentifier($uuid);
 	}
 }
 

@@ -11,47 +11,47 @@
 
 FLOW3:
   aop:
-    
+
     # Enable or disable the whole AOP framework.
     #
     # Note that certain features depend on and might not work anymore if you
     # disable the AOP framework.
     enable: y
-  
+
   configuration:
-  
+
     # Enables the configuration file cache which compiles YAML files into
     # much faster to load PHP files.
-    # 
+    #
     # NOTE: You must clear all caches right after switching this option OFF
     compileConfigurationFiles: n
-  
+
   core:
-  
+
     # FLOW3's application context
     # This setting is automatically set by the configuration manager and can't be set manually.
     context: ''
-  
+
   error:
-  
+
     exceptionHandler:
-    
+
       # Defines the global, last-resort exception handler.
       # The specified class must implement \F3\FLOW3\Error\ExceptionHandlerInterface
       className: F3\FLOW3\Error\ProductionExceptionHandler
-  
+
     errorHandler:
-    
+
       # Defines the global, last-resort error handler.
       className: F3\FLOW3\Error\ErrorHandler
-  
+
       # Defines which errors should result in an exception thrown - all other error
       # levels will be silently ignored. Only errors that can be handled in an
       # user-defined error handler are affected, of course.
       exceptionalErrors: [%E_USER_ERROR%, %E_RECOVERABLE_ERROR%]
-  
+
   log:
-  
+
     # Settings for FLOW3's default system logger
     systemLogger:
       backend: F3\FLOW3\Log\Backend\FileBackend
@@ -61,12 +61,12 @@ FLOW3:
          severityThreshold: %LOG_INFO%
          maximumLogFileSize: 10485760
          logFilesToKeep: 1
-  
+
   locale:
-    
+
     # The default locale identifier.
     defaultLocaleIdentifier: en_Latn_EN
-    
+
     # The default locale.
     #
     # This configuration option is automatically filled by FLOW3's locale
@@ -81,30 +81,36 @@ FLOW3:
     # It is recommended that all objects which are in need of some information
     # about the locale use the locale object stored in this setting.
     defaultLocale:
-  
+
   monitor:
-  
-    # The File Monitoring detects changes in class and resource files and 
+
+    # The File Monitoring detects changes in class and resource files and
     # automatically flushes the dependent caches (such as the reflection cache).
     # This mechanism comes with a speed penalty and should therefore be disabled in
     # production context.
     fileMonitor:
       enable: n
       changeDetectionStrategy: F3\FLOW3\Monitor\ChangeDetectionStrategy\ModificationTimeStrategy
-  
+
   mvc:
-  
+
     # Object name of the controller to use if no other controller could be resolved
     # matching the request.
     notFoundController: F3\FLOW3\MVC\Controller\NotFoundController
-  
+
   persistence:
-    
+
     # Whether to enable FLOW3's persistence manager or not.
     enable: y
-  
+
+    # Options for the default PDO backend
+    backendOptions:
+      dataSourceName: 'sqlite:%FLOW3_PATH_DATA%Persistent/Objects.db'
+      username:
+      password:
+
   reflection:
-  
+
     # Detection of class changes
     #
     # If turned on, the Reflection Service will check its own cache if class changes have
@@ -112,7 +118,7 @@ FLOW3:
     # Note that turning this option on comes with a speed penalty and should be switched
     # off in production context.
     detectClassChanges: n
-  
+
   resource:
     publishing:
 
@@ -128,19 +134,19 @@ FLOW3:
         mirrorMode: copy
 
   security:
-  
+
     enable: y
-  
+
     firewall:
-      
+
       # If set to yes, the firewall will reject any request that is not
       # explicitly allowed by a configured request filter.
       rejectAll: n
-      
+
       # The filter configuration for the firewall. Here is an example configuration array:
       #
       # filters:
-      # 	-	
+      # 	-
       #     patternType:  URL
       #     patternValue: /some/url/.*
       #     interceptor:  AccessGrant
@@ -152,9 +158,9 @@ FLOW3:
       # If the objects are in the namespace "\F3\FLOW3\Security" it is enough to specify
       # the last name of the classname, e.g. AccessGrant
       filters: []
-  
+
     authentication:
-  
+
       # Array of authentication providers that should be used for authentication.
       # If you define a request pattern, the provider will only be called if the pattern
       # matches the current request. If the objects are in the namespace
@@ -165,20 +171,20 @@ FLOW3:
       providers:
         DefaultProvider:
           providerClass: UsernamePasswordCR
-  
+
       # If set to TRUE, authentication will only succeed, if all active tokens (authentication mechanisms)
       # can be authenticated.
       authenticateAllTokens: FALSE
-  
+
     authorization:
       # An array of access decision voters that should vote when access decisions are made
       accessDecisionVoters: [F3\FLOW3\Security\Authorization\Voter\ACL]
-  
+
       # If this is set to TRUE access will be granted even if all voters abstain
       allowAccessIfAllVotersAbstain: FALSE
-  
+
     policy:
-      
+
       # The security policy resources configuration. Here is an example configuration array:
       #
       # resources:
@@ -187,7 +193,7 @@ FLOW3:
       #   theIntegrativeResource: "theOneAndOnlyResource || theOtherLonelyResource"
       #
       resources: []
-      
+
       # The security policy roles configuration. Here is an example configuration array:
       #
       # roles:
@@ -197,7 +203,7 @@ FLOW3:
       #   PRIVILEGED_CUSTOMER: [CUSTOMER]
       #
       roles: []
-      
+
       # The security policy acls configuration connects the resources with the roles by assigning
       # privileges. Here is an example configuration array:
       #
@@ -210,30 +216,30 @@ FLOW3:
       #      deleteMethods:          ACCESS_DENY
       #      MyPackageUpdateMethods: ACCESS_DENY
       acls: []
-  
+
     cryptography:
-  
+
       hashService:
-  
+
         # A key used for various tasks, must be unique for a setup!
-        encryptionKey: 
-  
+        encryptionKey:
+
       RSAWalletServicePHP:
-  
+
         # Defines the openSSL configuration used for key handling.
         # See the PHP openSSL documentation for possible settings.
         openSSLConfiguration: []
-  
+
   session:
     PHPSession:
-  
+
       # Where to store session data in the filesystem. If this is empty, a default
       # location is used (Data/Temporary/<hash>/Sessions/).
-      savePath: 
+      savePath:
 
   utility:
     environment:
-      
+
       # Defines the base directory which FLOW3 may use for storing different kinds
       # of temporary files.
       # The directory must be writable and FLOW3 will automatically create a sub

@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Persistence;
+namespace F3\FLOW3\Persistence\QOM;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,81 +23,72 @@ namespace F3\FLOW3\Persistence;
  *                                                                        */
 
 /**
- * The FLOW3 Persistence Manager interface
+ * Performs a logical conjunction of two other constraints.
+ *
+ * To satisfy the And constraint, a tuple must satisfy both constraint1 and
+ * constraint2.
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
+ * @scope prototype
  */
-interface ManagerInterface {
+class LogicalAnd extends \F3\FLOW3\Persistence\QOM\Constraint {
 
 	/**
-	 * Set settings for the persistence layer
-	 *
-	 * @param array $settings
+	 * @var \F3\FLOW3\Persistence\QOM\Constraint
 	 */
-	public function setSettings(array $settings);
+	protected $constraint1;
 
 	/**
-	 * Initializes the persistence manager
+	 * @var \F3\FLOW3\Persistence\QOM\Constraint
+	 */
+	protected $constraint2;
+
+	/**
 	 *
+	 * @param \F3\FLOW3\Persistence\QOM\Constraint $constraint1
+	 * @param \F3\FLOW3\Persistence\QOM\Constraint $constraint2
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function __construct(\F3\FLOW3\Persistence\QOM\Constraint $constraint1, \F3\FLOW3\Persistence\QOM\Constraint $constraint2) {
+		$this->constraint1 = $constraint1;
+		$this->constraint2 = $constraint2;
+	}
+
+	/**
+	 * Fills an array with the names of all bound variables in the constraints
+	 *
+	 * @param array &$boundVariables
 	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function initialize();
+	public function collectBoundVariableNames(&$boundVariables) {
+		$this->constraint1->collectBoundVariableNames($boundVariables);
+		$this->constraint2->collectBoundVariableNames($boundVariables);
+	}
 
 	/**
-	 * Returns the current persistence session
+	 * Gets the first constraint.
 	 *
-	 * @return \F3\FLOW3\Persistence\Session
-	 */
-	public function getSession();
-
-	/**
-	 * Returns the persistence backend
-	 *
-	 * @return \F3\FLOW3\Persistence\BackendInterface
+	 * @return \F3\FLOW3\Persistence\QOM\Constraint the constraint; non-null
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
-	public function getBackend();
+	public function getConstraint1() {
+		return $this->constraint1;
+	}
 
 	/**
-	 * Commits new objects and changes to objects in the current persistence
-	 * session into the backend
+	 * Gets the second constraint.
 	 *
-	 * @return void
+	 * @return \F3\FLOW3\Persistence\QOM\Constraint the constraint; non-null
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
-	public function persistAll();
-
-	/**
-	 * Checks if the given object has ever been persisted.
-	 *
-	 * @param object $object The object to check
-	 * @return boolean TRUE if the object is new, FALSE if the object exists in the repository
-	 */
-	public function isNewObject($object);
-
-	/**
-	 * Returns the (internal) identifier for the object, if it is known to the
-	 * backend. Otherwise NULL is returned.
-	 *
-	 * Note: this returns an identifier even if the object has not been
-	 * persisted in case of AOP-managed entities. Use isNewObject() if you need
-	 * to distinguish those cases.
-	 *
-	 * @param object $object
-	 * @return string The identifier for the object if it is known, or NULL
-	 */
-	public function getIdentifierByObject($object);
-
-	/**
-	 * Returns the object with the (internal) identifier, if it is known to the
-	 * backend. Otherwise NULL is returned.
-	 *
-	 * @param string $identifier
-	 * @return object The object for the identifier if it is known, or NULL
-	 */
-	public function getObjectByIdentifier($identifier);
+	public function getConstraint2() {
+		return $this->constraint2;
+	}
 
 }
 ?>

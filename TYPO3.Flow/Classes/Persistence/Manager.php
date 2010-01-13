@@ -39,6 +39,11 @@ class Manager implements \F3\FLOW3\Persistence\ManagerInterface {
 	protected $reflectionService;
 
 	/**
+	 * @var \F3\FLOW3\Persistence\DataMapper
+	 */
+	protected $dataMapper;
+
+	/**
 	 * @var \F3\FLOW3\Persistence\BackendInterface
 	 */
 	protected $backend;
@@ -46,7 +51,7 @@ class Manager implements \F3\FLOW3\Persistence\ManagerInterface {
 	/**
 	 * @var \F3\FLOW3\Persistence\Session
 	 */
-	protected $session;
+	protected $persistenceSession;
 
 	/**
 	 * @var \F3\FLOW3\Object\ManagerInterface
@@ -54,14 +59,9 @@ class Manager implements \F3\FLOW3\Persistence\ManagerInterface {
 	protected $objectManager;
 
 	/**
-	 * Constructor
-	 *
-	 * @param \F3\FLOW3\Persistence\BackendInterface $backend the backend to use for persistence
-	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @var array
 	 */
-	public function __construct(\F3\FLOW3\Persistence\BackendInterface $backend) {
-		$this->backend = $backend;
-	}
+	protected $settings;
 
 	/**
 	 * Injects the reflection service
@@ -75,14 +75,35 @@ class Manager implements \F3\FLOW3\Persistence\ManagerInterface {
 	}
 
 	/**
+	 * Injects the data mapper
+	 *
+	 * @param \F3\FLOW3\Persistence\DataMapper $dataMapper
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function injectDataMapper(\F3\FLOW3\Persistence\DataMapper $dataMapper) {
+		$this->dataMapper = $dataMapper;
+	}
+
+	/**
+	 * Injects the backend to use
+	 *
+	 * @param \F3\FLOW3\Persistence\BackendInterface $backend the backend to use for persistence
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function injectBackend(\F3\FLOW3\Persistence\BackendInterface $backend) {
+		$this->backend = $backend;
+	}
+
+	/**
 	 * Injects the persistence session
 	 *
-	 * @param \F3\FLOW3\Persistence\Session $session The persistence session
+	 * @param \F3\FLOW3\Persistence\Session $persistenceSession The persistence session
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectSession(\F3\FLOW3\Persistence\Session $session) {
-		$this->session = $session;
+	public function injectPersistenceSession(\F3\FLOW3\Persistence\Session $persistenceSession) {
+		$this->persistenceSession = $persistenceSession;
 	}
 
 	/**
@@ -97,6 +118,16 @@ class Manager implements \F3\FLOW3\Persistence\ManagerInterface {
 	}
 
 	/**
+	 * Set settings for the persistence layer
+	 *
+	 * @param array $settings
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function setSettings(array $settings) {
+		$this->settings = $settings;
+	}
+
+	/**
 	 * Initializes the persistence manager
 	 *
 	 * @return void
@@ -104,7 +135,7 @@ class Manager implements \F3\FLOW3\Persistence\ManagerInterface {
 	 */
 	public function initialize() {
 		if (!$this->backend instanceof \F3\FLOW3\Persistence\BackendInterface) throw new \F3\FLOW3\Persistence\Exception\MissingBackend('A persistence backend must be set prior to initializing the persistence manager.', 1215508456);
-		$this->backend->initialize($this->reflectionService->getClassSchemata());
+		$this->backend->initialize($this->settings['backendOptions']);
 	}
 
 	/**
@@ -114,7 +145,7 @@ class Manager implements \F3\FLOW3\Persistence\ManagerInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getSession() {
-		return $this->session;
+		return $this->persistenceSession;
 	}
 
 	/**
@@ -139,30 +170,88 @@ class Manager implements \F3\FLOW3\Persistence\ManagerInterface {
 	 */
 	public function persistAll() {
 		$aggregateRootObjects = new \SplObjectStorage();
-		$removedObjects = new \SplObjectStorage();
+		$deletedEntities = new \SplObjectStorage();
 
 			// fetch and inspect objects from all known repositories
 		$repositoryClassNames = $this->reflectionService->getAllImplementationClassNamesForInterface('F3\FLOW3\Persistence\RepositoryInterface');
 		foreach ($repositoryClassNames as $repositoryClassName) {
 			$repository = $this->objectManager->getObject($repositoryClassName);
 			$aggregateRootObjects->addAll($repository->getAddedObjects());
-			$removedObjects->addAll($repository->getRemovedObjects());
+			$deletedEntities->addAll($repository->getRemovedObjects());
 		}
 
-		$aggregateRootObjects->addAll($this->session->getReconstitutedObjects());
+		$aggregateRootObjects->addAll($this->persistenceSession->getReconstitutedObjects());
 
 			// hand in only aggregate roots, leaving handling of subobjects to
 			// the underlying storage layer
 		$this->backend->setAggregateRootObjects($aggregateRootObjects);
-		$this->backend->setDeletedObjects($removedObjects);
+		$this->backend->setDeletedEntities($deletedEntities);
 		$this->backend->commit();
 
 			// this needs to unregister more than just those, as at least some of
 			// the subobjects are supposed to go away as well...
 			// OTOH those do no harm, changes to the unused ones should not happen,
 			// so all they do is eat some memory.
-		foreach($removedObjects as $removedObject) {
-			$this->session->unregisterReconstitutedObject($removedObject);
+		foreach($deletedEntities as $deletedEntity) {
+			$this->persistenceSession->unregisterReconstitutedObject($deletedEntity);
+		}
+	}
+
+	/**
+	 * Checks if the given object has ever been persisted.
+	 *
+	 * @param object $object The object to check
+	 * @return boolean TRUE if the object is new, FALSE if the object exists in the persistence session
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function isNewObject($object) {
+		return ($this->persistenceSession->hasObject($object) === FALSE);
+	}
+
+	/**
+	 * Returns the (internal) identifier for the object, if it is known to the
+	 * backend. Otherwise NULL is returned.
+	 *
+	 * Note: this returns an identifier even if the object has not been
+	 * persisted in case of AOP-managed entities. Use isNewObject() if you need
+	 * to distinguish those cases.
+	 *
+	 * @param object $object
+	 * @return string The identifier for the object
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getIdentifierByObject($object) {
+		if ($this->persistenceSession->hasObject($object)) {
+			return $this->persistenceSession->getIdentifierByObject($object);
+		} elseif ($object instanceof \F3\FLOW3\AOP\ProxyInterface && $object->FLOW3_AOP_Proxy_hasProperty('FLOW3_Persistence_Entity_UUID')) {
+				// entities created get an UUID set through AOP
+			return $object->FLOW3_AOP_Proxy_getProperty('FLOW3_Persistence_Entity_UUID');
+		} elseif ($object instanceof \F3\FLOW3\AOP\ProxyInterface && $object->FLOW3_AOP_Proxy_hasProperty('FLOW3_Persistence_ValueObject_Hash')) {
+				// valueobjects created get a hash set through AOP
+			return $object->FLOW3_AOP_Proxy_getProperty('FLOW3_Persistence_ValueObject_Hash');
+		} else {
+			return NULL;
+		}
+	}
+
+	/**
+	 * Returns the object with the (internal) identifier, if it is known to the
+	 * backend. Otherwise NULL is returned.
+	 *
+	 * @param string $identifier
+	 * @return object The object for the identifier if it is known, or NULL
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getObjectByIdentifier($identifier) {
+		if ($this->persistenceSession->hasIdentifier($identifier)) {
+			return $this->persistenceSession->getObjectByIdentifier($identifier);
+		} else {
+			$objectRecord = $this->backend->getObjectRecord($identifier);
+			if ($objectRecord !== FALSE) {
+				return $this->dataMapper->mapSingleObject($objectRecord);
+			} else {
+				return NULL;
+			}
 		}
 	}
 }

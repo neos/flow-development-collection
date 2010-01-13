@@ -515,13 +515,11 @@ class PropertyMapperTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function transformToObjectConvertsAnUUIDStringToAnObject() {
+	public function transformToObjectConvertsAnUuidStringToAnObject() {
 		$UUID = 'e104e469-9030-4b98-babf-3990f07dd3f1';
 		$existingObject = new \stdClass();
-		$mockPersistenceBackend = $this->getMock('F3\FLOW3\Persistence\BackendInterface');
-		$mockPersistenceBackend->expects($this->once())->method('getObjectByIdentifier')->with($UUID)->will($this->returnValue($existingObject));
 		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\ManagerInterface');
-		$mockPersistenceManager->expects($this->once())->method('getBackend')->will($this->returnValue($mockPersistenceBackend));
+		$mockPersistenceManager->expects($this->once())->method('getObjectByIdentifier')->with($UUID)->will($this->returnValue($existingObject));
 
 		$mapper = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Property\PropertyMapper'), array('dummy'));
 		$mapper->injectPersistenceManager($mockPersistenceManager);
@@ -535,10 +533,8 @@ class PropertyMapperTest extends \F3\Testing\BaseTestCase {
 	public function transformToObjectConvertsAnIdentityArrayContainingAnUUIDToAnObject() {
 		$UUID = 'e104e469-9030-4b98-babf-3990f07dd3f1';
 		$existingObject = new \stdClass();
-		$mockPersistenceBackend = $this->getMock('F3\FLOW3\Persistence\BackendInterface');
-		$mockPersistenceBackend->expects($this->once())->method('getObjectByIdentifier')->with($UUID)->will($this->returnValue($existingObject));
 		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\ManagerInterface');
-		$mockPersistenceManager->expects($this->once())->method('getBackend')->will($this->returnValue($mockPersistenceBackend));
+		$mockPersistenceManager->expects($this->once())->method('getObjectByIdentifier')->with($UUID)->will($this->returnValue($existingObject));
 
 		$mapper = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Property\PropertyMapper'), array('dummy'));
 		$mapper->injectPersistenceManager($mockPersistenceManager);

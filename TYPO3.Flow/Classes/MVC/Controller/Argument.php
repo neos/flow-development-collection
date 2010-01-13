@@ -455,7 +455,7 @@ class Argument {
 				// The target object is an Entity or ValueObject.
 			if (is_string($value) && preg_match(self::PATTERN_MATCH_UUID, $value) === 1) {
 				$this->origin = self::ORIGIN_PERSISTENCE;
-				$transformedValue = $this->persistenceManager->getBackend()->getObjectByIdentifier($value);
+				$transformedValue = $this->persistenceManager->getObjectByIdentifier($value);
 			} elseif (is_array($value)) {
 				if (array_keys($value) === array('__identity')) { // If there is only an __identity array _and nothing else_, then the property mapper will not clone the object.
 					$this->origin = self::ORIGIN_PERSISTENCE;

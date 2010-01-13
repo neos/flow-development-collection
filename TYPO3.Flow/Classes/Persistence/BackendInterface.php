@@ -33,9 +33,10 @@ interface BackendInterface {
 	/**
 	 * Initializes the backend
 	 *
+	 * @param array $options
 	 * @return void
 	 */
-	public function initialize();
+	public function initialize(array $options);
 
 	/**
 	 * Sets the aggregate root objects
@@ -46,12 +47,12 @@ interface BackendInterface {
 	public function setAggregateRootObjects(\SplObjectStorage $objects);
 
 	/**
-	 * Sets the deleted objects
+	 * Sets the deleted entities
 	 *
-	 * @param \SplObjectStorage $objects
+	 * @param \SplObjectStorage $entities
 	 * @return void
 	 */
-	public function setDeletedObjects(\SplObjectStorage $objects);
+	public function setDeletedEntities(\SplObjectStorage $entities);
 
 	/**
 	 * Commits the current persistence session
@@ -59,36 +60,6 @@ interface BackendInterface {
 	 * @return void
 	 */
 	public function commit();
-
-	/**
-	 * Returns the (internal) identifier for the object, if it is known to the
-	 * backend. Otherwise NULL is returned.
-	 *
-	 * Note: this returns an identifier even if the object has not been
-	 * persisted, in case of AOP-managed entities. Use isNewObject() if you need
-	 * to distinguish those cases.
-	 *
-	 * @param object $object
-	 * @return string The identifier for the object if it is known, or NULL
-	 */
-	public function getIdentifierByObject($object);
-
-	/**
-	 * Returns the object with the (internal) identifier, if it is known to the
-	 * backend. Otherwise NULL is returned.
-	 *
-	 * @param string $identifier
-	 * @return object The object for the identifier if it is known, or NULL
-	 */
-	public function getObjectByIdentifier($identifier);
-
-	/**
-	 * Checks if the given object has ever been persisted.
-	 *
-	 * @param object $object The object to check
-	 * @return boolean TRUE if the object is new, FALSE if the object exists in the repository
-	 */
-	public function isNewObject($object);
 
 	/**
 	 * Replaces the given object by the second object.

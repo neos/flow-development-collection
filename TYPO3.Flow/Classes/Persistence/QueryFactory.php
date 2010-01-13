@@ -23,81 +23,41 @@ namespace F3\FLOW3\Persistence;
  *                                                                        */
 
 /**
- * The FLOW3 Persistence Manager interface
+ * The QueryFactory used to create queries against the storage backend
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */
-interface ManagerInterface {
+class QueryFactory implements \F3\FLOW3\Persistence\QueryFactoryInterface {
 
 	/**
-	 * Set settings for the persistence layer
-	 *
-	 * @param array $settings
+	 * @var \F3\FLOW3\Object\FactoryInterface
 	 */
-	public function setSettings(array $settings);
+	protected $objectFactory;
 
 	/**
-	 * Initializes the persistence manager
+	 * Injects the FLOW3 object factory
 	 *
+	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory
 	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function initialize();
+	public function injectObjectFactory(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
+		$this->objectFactory = $objectFactory;
+	}
 
 	/**
-	 * Returns the current persistence session
+	 * Creates a query object working on the given class name
 	 *
-	 * @return \F3\FLOW3\Persistence\Session
-	 */
-	public function getSession();
-
-	/**
-	 * Returns the persistence backend
-	 *
-	 * @return \F3\FLOW3\Persistence\BackendInterface
+	 * @param string $className
+	 * @return \F3\FLOW3\Persistence\Query
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
-	public function getBackend();
-
-	/**
-	 * Commits new objects and changes to objects in the current persistence
-	 * session into the backend
-	 *
-	 * @return void
-	 * @api
-	 */
-	public function persistAll();
-
-	/**
-	 * Checks if the given object has ever been persisted.
-	 *
-	 * @param object $object The object to check
-	 * @return boolean TRUE if the object is new, FALSE if the object exists in the repository
-	 */
-	public function isNewObject($object);
-
-	/**
-	 * Returns the (internal) identifier for the object, if it is known to the
-	 * backend. Otherwise NULL is returned.
-	 *
-	 * Note: this returns an identifier even if the object has not been
-	 * persisted in case of AOP-managed entities. Use isNewObject() if you need
-	 * to distinguish those cases.
-	 *
-	 * @param object $object
-	 * @return string The identifier for the object if it is known, or NULL
-	 */
-	public function getIdentifierByObject($object);
-
-	/**
-	 * Returns the object with the (internal) identifier, if it is known to the
-	 * backend. Otherwise NULL is returned.
-	 *
-	 * @param string $identifier
-	 * @return object The object for the identifier if it is known, or NULL
-	 */
-	public function getObjectByIdentifier($identifier);
+	public function create($className) {
+		return $this->objectFactory->create('F3\FLOW3\Persistence\Query', $className);
+	}
 
 }
 ?>

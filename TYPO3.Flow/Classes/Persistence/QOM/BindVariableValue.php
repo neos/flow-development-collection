@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Persistence\Aspect;
+namespace F3\FLOW3\Persistence\QOM;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,55 +23,53 @@ namespace F3\FLOW3\Persistence\Aspect;
  *                                                                        */
 
 /**
- * An interface used to introduce certain methods to support object persistence
+ * Evaluates to the value of a bind variable.
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @api
+ * @scope prototype
  */
-interface DirtyMonitoringInterface {
+class BindVariableValue extends \F3\FLOW3\Persistence\QOM\StaticOperand {
 
 	/**
-	 * If the monitored object has ever been persisted
-	 *
-	 * @return boolean TRUE if the object is new, otherwise FALSE
+	 * @var string
 	 */
-	public function FLOW3_Persistence_isNew();
+	protected $variableName;
 
 	/**
-	 * If the monitored object is a clone of another object
+	 * Constructs this BindVariableValue instance
 	 *
-	 * @return boolean TRUE if the object is a clone, otherwise FALSE
+	 * @param string $variableName
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function FLOW3_Persistence_isClone();
+	public function __construct($variableName) {
+		$this->variableName = $variableName;
+	}
 
 	/**
-	 * If the specified property of the reconstituted object has been modified
-	 * since it woke up (or is new or cloned).
+	 * Fills an array with the names of all bound variables in the operand
 	 *
-	 * @param string $propertyName Name of the property to check
-	 * @return boolean TRUE if the given property has been modified
-	 */
-	public function FLOW3_Persistence_isDirty($propertyName);
-
-	/**
-	 * Resets the dirty flags of properties to signal that the object is clean
-	 * clean (e.g. after being persisted).
-	 *
-	 * The method takes an optional argument $propertyName to mark only the
-	 * specified property as clean. This was used in conjunction with lazy
-	 * loading...
-	 *
-	 * @param string $propertyName Name of the property to mark clean, if NULL all will be marked clean
+	 * @param array &$boundVariables
 	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function FLOW3_Persistence_memorizeCleanState($propertyName = NULL);
+	public function collectBoundVariableNames(&$boundVariables) {
+		$boundVariables[$this->variableName] = NULL;
+	}
+
 
 	/**
-	 * Introduces a clone method
+	 * Gets the name of the bind variable.
 	 *
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @return string the bind variable name; non-null
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
-	public function __clone();
+	public function getBindVariableName() {
+		return $this->variableName;
+	}
+
 }
+
 ?>

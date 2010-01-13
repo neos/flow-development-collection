@@ -341,7 +341,7 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function serializeObjectAsPropertyArraySerializesOnlyTheUUIDOfEntityObjectsIfTheyAreNotMarkedAsNew() {
+	public function serializeObjectAsPropertyArraySerializesOnlyTheUuidOfEntityObjectsIfTheyAreNotMarkedAsNew() {
 		$sessionClassName = uniqid('dummyClass');
 		eval('class ' . $sessionClassName . ' {
 			public $entityProperty;
@@ -364,12 +364,9 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 
 		$entityObject = new $entityClassName();
 
-		$mockPersistenceBackend = $this->getMock('F3\FLOW3\Persistence\BackendInterface', array(), array(), '', FALSE);
-		$mockPersistenceBackend->expects($this->once())->method('isNewObject')->with($entityObject)->will($this->returnValue(FALSE));
-		$mockPersistenceBackend->expects($this->once())->method('getIdentifierByObject')->with($entityObject)->will($this->returnValue('someUUID'));
-
 		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\ManagerInterface', array(), array(), '', FALSE);
-		$mockPersistenceManager->expects($this->any())->method('getBackend')->will($this->returnValue($mockPersistenceBackend));
+		$mockPersistenceManager->expects($this->once())->method('isNewObject')->with($entityObject)->will($this->returnValue(FALSE));
+		$mockPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($entityObject)->will($this->returnValue('someUUID'));
 
 		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service', array(), array(), '', FALSE);
 		$mockReflectionService->expects($this->any())->method('getClassPropertyNames')->with($sessionClassName)->will($this->returnValue(array('entityProperty')));
@@ -403,7 +400,7 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function serializeObjectAsPropertyArraySerializessOnlyTheUUIDOfPersistenceValueobjectsIfTheyAreNotMarkedAsNew() {
+	public function serializeObjectAsPropertyArraySerializessOnlyTheUuidOfPersistenceValueobjectsIfTheyAreNotMarkedAsNew() {
 		$sessionClassName = uniqid('dummyClass');
 		eval('class ' . $sessionClassName . ' {
 			public $entityProperty;
@@ -426,12 +423,9 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 
 		$entityObject = new $entityClassName();
 
-		$mockPersistenceBackend = $this->getMock('F3\FLOW3\Persistence\BackendInterface', array(), array(), '', FALSE);
-		$mockPersistenceBackend->expects($this->once())->method('isNewObject')->with($entityObject)->will($this->returnValue(FALSE));
-		$mockPersistenceBackend->expects($this->once())->method('getIdentifierByObject')->with($entityObject)->will($this->returnValue('someUUID'));
-
 		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\ManagerInterface', array(), array(), '', FALSE);
-		$mockPersistenceManager->expects($this->any())->method('getBackend')->will($this->returnValue($mockPersistenceBackend));
+		$mockPersistenceManager->expects($this->once())->method('isNewObject')->with($entityObject)->will($this->returnValue(FALSE));
+		$mockPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($entityObject)->will($this->returnValue('someUUID'));
 
 		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service', array(), array(), '', FALSE);
 		$mockReflectionService->expects($this->any())->method('getClassPropertyNames')->with($sessionClassName)->will($this->returnValue(array('entityProperty')));
@@ -1068,17 +1062,12 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function reconstitutePersistenceObjectRetrievesTheObjectCorrectlyFromThePersistenceFramework() {
-		$mockQuery = $this->getMock('F3\FLOW3\Persistence\QueryInterface', array());
-		$mockQuery->expects($this->once())->method('withUUID')->with('someUUID')->will($this->returnValue('UUIDQuery'));
-		$mockQuery->expects($this->once())->method('matching')->with('UUIDQuery')->will($this->returnValue($mockQuery));
-		$mockQuery->expects($this->once())->method('execute')->will($this->returnValue(array('theObject')));
-
-		$mockQueryFactory = $this->getMock('F3\FLOW3\Persistence\QueryFactoryInterface');
-		$mockQueryFactory->expects($this->once())->method('create')->with('someClassName')->will($this->returnValue($mockQuery));
+		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\ManagerInterface', array(), array(), '', FALSE);
+		$mockPersistenceManager->expects($this->once())->method('getObjectByIdentifier')->with('someUUID')->will($this->returnValue('theObject'));
 
 		$objectSerializer = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\ObjectSerializer'), array('dummy'), array(), '', FALSE);
-		$objectSerializer->injectQueryFactory($mockQueryFactory);
-
+		$objectSerializer->injectPersistenceManager($mockPersistenceManager);
+	
 		$this->assertEquals('theObject', $objectSerializer->_call('reconstitutePersistenceObject', 'someClassName', 'someUUID'));
 	}
 }

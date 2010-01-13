@@ -181,18 +181,36 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function findByUUIDCreatesQueryAndReturnsResultOfExecuteCall() {
+	public function findByUUIDReturnsResultOfGetObjectByIdentifierCall() {
 		$fakeUUID = '123-456';
+		$object = new \stdClass();
 
-		$mockQuery = $this->getMock('F3\FLOW3\Persistence\QueryInterface');
-		$mockQuery->expects($this->once())->method('withUUID')->with($fakeUUID)->will($this->returnValue('matchCriteria'));
-		$mockQuery->expects($this->once())->method('matching')->with('matchCriteria')->will($this->returnValue($mockQuery));
-		$mockQuery->expects($this->once())->method('execute')->will($this->returnValue(array('one', 'two')));
+		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\ManagerInterface');
+		$mockPersistenceManager->expects($this->once())->method('getObjectByIdentifier')->with($fakeUUID)->will($this->returnValue($object));
 
-		$repository = $this->getMock('F3\FLOW3\Persistence\Repository', array('createQuery'));
-		$repository->expects($this->once())->method('createQuery')->will($this->returnValue($mockQuery));
+		$repository = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Repository'), array('createQuery'));
+		$repository->injectPersistenceManager($mockPersistenceManager);
+		$repository->_set('objectType', 'stdClass');
 
-		$this->assertSame('one', $repository->findByUUID($fakeUUID));
+		$this->assertSame($object, $repository->findByUUID($fakeUUID));
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function findByUUIDReturnsNullIfObjectOfMismatchingTypeWasFoundByGetObjectByIdentifierCall() {
+		$fakeUUID = '123-456';
+		$object = new \stdClass();
+
+		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\ManagerInterface');
+		$mockPersistenceManager->expects($this->once())->method('getObjectByIdentifier')->with($fakeUUID)->will($this->returnValue($object));
+
+		$repository = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Repository'), array('createQuery'));
+		$repository->injectPersistenceManager($mockPersistenceManager);
+		$repository->_set('objectType', 'otherExpectedClass');
+
+		$this->assertNULL($repository->findByUUID($fakeUUID));
 	}
 
 	/**
@@ -209,7 +227,6 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 		$newObject = new \stdClass;
 
 		$mockPersistenceBackend = $this->getMock('F3\FLOW3\Persistence\BackendInterface');
-		$mockPersistenceBackend->expects($this->once())->method('getIdentifierByObject')->with($existingObject)->will($this->returnValue('86ea8820-19f6-11de-8c30-0800200c9a66'));
 		$mockPersistenceBackend->expects($this->once())->method('replaceObject')->with($existingObject, $newObject);
 
 		$mockPersistenceSession = $this->getMock('F3\FLOW3\Persistence\Session', array(), array(), '', FALSE);
@@ -217,6 +234,7 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 		$mockPersistenceSession->expects($this->once())->method('registerReconstitutedObject')->with($newObject);
 
 		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\ManagerInterface');
+		$mockPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($existingObject)->will($this->returnValue('86ea8820-19f6-11de-8c30-0800200c9a66'));
 		$mockPersistenceManager->expects($this->once())->method('getBackend')->will($this->returnValue($mockPersistenceBackend));
 		$mockPersistenceManager->expects($this->once())->method('getSession')->will($this->returnValue($mockPersistenceSession));
 
@@ -244,13 +262,13 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 		$removedObjects->attach($existingObject);
 
 		$mockPersistenceBackend = $this->getMock('F3\FLOW3\Persistence\BackendInterface');
-		$mockPersistenceBackend->expects($this->once())->method('getIdentifierByObject')->with($existingObject)->will($this->returnValue('86ea8820-19f6-11de-8c30-0800200c9a66'));
-
+	
 		$mockPersistenceSession = $this->getMock('F3\FLOW3\Persistence\Session', array(), array(), '', FALSE);
 		$mockPersistenceSession->expects($this->once())->method('unregisterReconstitutedObject')->with($existingObject);
 		$mockPersistenceSession->expects($this->once())->method('registerReconstitutedObject')->with($newObject);
 
 		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\ManagerInterface');
+		$mockPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($existingObject)->will($this->returnValue('86ea8820-19f6-11de-8c30-0800200c9a66'));
 		$mockPersistenceManager->expects($this->once())->method('getBackend')->will($this->returnValue($mockPersistenceBackend));
 		$mockPersistenceManager->expects($this->once())->method('getSession')->will($this->returnValue($mockPersistenceSession));
 
@@ -280,14 +298,11 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 		$addedObjects = new \SPLObjectStorage;
 		$addedObjects->attach($existingObject);
 
-		$mockPersistenceBackend = $this->getMock('F3\FLOW3\Persistence\BackendInterface');
-		$mockPersistenceBackend->expects($this->once())->method('getIdentifierByObject')->with($existingObject)->will($this->returnValue(NULL));
-
 		$mockPersistenceSession = $this->getMock('F3\FLOW3\Persistence\Session', array(), array(), '', FALSE);
 
 		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\ManagerInterface');
+		$mockPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($existingObject)->will($this->returnValue(NULL));
 		$mockPersistenceManager->expects($this->once())->method('getSession')->will($this->returnValue($mockPersistenceSession));
-		$mockPersistenceManager->expects($this->once())->method('getBackend')->will($this->returnValue($mockPersistenceBackend));
 
 		$repository = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Repository'), array('dummy'));
 		$repository->injectPersistenceManager($mockPersistenceManager);
@@ -315,17 +330,14 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function updateReplacesAnObjectWithTheSameUUIDByTheGivenObject() {
+	public function updateReplacesAnObjectWithTheSameUuidByTheGivenObject() {
 		$existingObject = new \stdClass;
 		$modifiedObject = $this->getMock('FooBar' . uniqid(), array('FLOW3_Persistence_isClone'));
 		$modifiedObject->expects($this->once())->method('FLOW3_Persistence_isClone')->will($this->returnValue(TRUE));
 
-		$mockPersistenceBackend = $this->getMock('F3\FLOW3\Persistence\BackendInterface');
-		$mockPersistenceBackend->expects($this->once())->method('getIdentifierByObject')->with($modifiedObject)->will($this->returnValue('86ea8820-19f6-11de-8c30-0800200c9a66'));
-		$mockPersistenceBackend->expects($this->once())->method('getObjectByIdentifier')->with('86ea8820-19f6-11de-8c30-0800200c9a66')->will($this->returnValue($existingObject));
-
 		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\ManagerInterface');
-		$mockPersistenceManager->expects($this->any())->method('getBackend')->will($this->returnValue($mockPersistenceBackend));
+		$mockPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($modifiedObject)->will($this->returnValue('86ea8820-19f6-11de-8c30-0800200c9a66'));
+		$mockPersistenceManager->expects($this->once())->method('getObjectByIdentifier')->with('86ea8820-19f6-11de-8c30-0800200c9a66')->will($this->returnValue($existingObject));
 
 		$repository = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Repository'), array('replaceObject'));
 		$repository->expects($this->once())->method('replaceObject')->with($existingObject, $modifiedObject);
@@ -431,7 +443,7 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException F3\FLOW3\Error\Exception
+	 * @expectedException Exception
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function magicCallMethodTriggersAnErrorIfUnknownMethodsAreCalled() {

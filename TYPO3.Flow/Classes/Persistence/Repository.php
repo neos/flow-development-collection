@@ -138,7 +138,8 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	}
 
 	/**
-	 * Replaces an object by another after checking that existing and new objects have the right types
+	 * Replaces an object by another after checking that existing and new
+	 * objects have the right types
 	 *
 	 * @param object $existingObject The existing object
 	 * @param object $newObject The new object
@@ -158,20 +159,20 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	}
 
 	/**
-	 * Replaces an object by another without any further checks. Instead of calling this method, always call replace().
+	 * Replaces an object by another without any further checks. Instead of
+	 * calling this method, always call replace().
 	 *
 	 * @param object $existingObject The existing object
 	 * @param object $newObject The new object
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function replaceObject($existingObject, $newObject) {
-		$backend = $this->persistenceManager->getBackend();
-		$session = $this->persistenceManager->getSession();
-		$uuid = $backend->getIdentifierByObject($existingObject);
+		$persistenceSession = $this->persistenceManager->getSession();
+		$uuid = $this->persistenceManager->getIdentifierByObject($existingObject);
 		if ($uuid !== NULL) {
-			$backend->replaceObject($existingObject, $newObject);
-			$session->unregisterReconstitutedObject($existingObject);
-			$session->registerReconstitutedObject($newObject);
+			$this->persistenceManager->getBackend()->replaceObject($existingObject, $newObject);
+			$persistenceSession->unregisterReconstitutedObject($existingObject);
+			$persistenceSession->registerReconstitutedObject($newObject);
 
 			if ($this->removedObjects->contains($existingObject)) {
 				$this->removedObjects->detach($existingObject);
@@ -188,8 +189,10 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	}
 
 	/**
-	 * Loop through all properties of the $newObject and call update() on them if they are entities/valueobjects.
-	 * This makes sure that changes to subobjects of a given object are persisted as well.
+	 * Loop through all properties of the $newObject and call update() on them
+	 * if they are entities/valueobjects.
+	 * This makes sure that changes to subobjects of a given object are
+	 * persisted as well.
 	 *
 	 * @param object $newObject The new object to loop over
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
@@ -197,7 +200,7 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	protected function updateRecursively($newObject) {
 		$propertiesOfNewObject = \F3\FLOW3\Reflection\ObjectAccess::getAccessibleProperties($newObject);
 
-		foreach ($propertiesOfNewObject as $propertyName => $subObject) {
+		foreach ($propertiesOfNewObject as $subObject) {
 			if ($subObject instanceof \F3\FLOW3\Persistence\Aspect\DirtyMonitoringInterface && $subObject->FLOW3_Persistence_isClone()) {
 				$this->updateObject($subObject);
 				$this->updateRecursively($subObject);
@@ -206,7 +209,8 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	}
 
 	/**
-	 * Replaces an existing object with the same identifier by the given object after checking the type of the object fits to the repositories type
+	 * Replaces an existing object with the same identifier by the given object
+	 * after checking the type of the object fits to the repositories type
 	 *
 	 * @param object $modifiedObject The modified object
 	 * @author Robert Lemke <robert@typo3.org>
@@ -232,10 +236,9 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function updateObject($modifiedObject) {
-		$backend = $this->persistenceManager->getBackend();
-		$uuid = $backend->getIdentifierByObject($modifiedObject);
+		$uuid = $this->persistenceManager->getIdentifierByObject($modifiedObject);
 		if ($uuid !== NULL) {
-			$existingObject = $backend->getObjectByIdentifier($uuid);
+			$existingObject = $this->persistenceManager->getObjectByIdentifier($uuid);
 			$this->replaceObject($existingObject, $modifiedObject);
 		} else {
 			throw new \F3\FLOW3\Persistence\Exception\UnknownObject('The "modified object" is does not have an existing counterpart in this repository.', 1249479819);
@@ -280,17 +283,20 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	}
 
 	/**
-	 * Finds an object matching the given identifier.
+	 * Finds an object matching the given UUID.
 	 *
-	 * @param string $uuid The identifier of the object to find
+	 * @param string $uuid The UUID of the object to find
 	 * @return object The matching object if found, otherwise NULL
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function findByUUID($uuid) {
-		$query = $this->createQuery();
-		$result = $query->matching($query->withUUID($uuid))->execute();
-		return current($result);
+		$object = $this->persistenceManager->getObjectByIdentifier($uuid);
+		if (is_a($object, $this->objectType)) {
+			return $object;
+		} else {
+			return NULL;
+		}
 	}
 
 	/**

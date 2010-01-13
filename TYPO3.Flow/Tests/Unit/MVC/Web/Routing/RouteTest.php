@@ -715,9 +715,11 @@ class RouteTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @todo mock object factory
 	 */
 	public function matchingRequestPathIsNullAfterUnsuccessfulResolve() {
-		$this->route = new \F3\FLOW3\MVC\Web\Routing\Route($this->objectFactory, $this->objectManager);
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface');
+		$this->route = new \F3\FLOW3\MVC\Web\Routing\Route($this->objectFactory, $mockObjectManager);
 		$this->route->setUriPattern('{key1}');
 		$this->routeValues = array('key1' => 'value1');
 
@@ -769,14 +771,11 @@ class RouteTest extends \F3\Testing\BaseTestCase {
 	 * @expectedException \F3\FLOW3\MVC\Exception\InvalidArgumentValue
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function resolvesThrowExceptionIfRouteValuesContainsObjectsWithoutIdentity() {
+	public function resolvesThrowsExceptionIfRouteValuesContainsObjectsWithoutIdentity() {
 		$objectWithoutIdentity = new \stdClass();
 
-		$mockPersistenceBackend = $this->getMock('F3\FLOW3\Persistence\BackendInterface');
-		$mockPersistenceBackend->expects($this->once())->method('getIdentifierByObject')->with($objectWithoutIdentity)->will($this->returnValue(FALSE));
-
 		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\ManagerInterface');
-		$mockPersistenceManager->expects($this->once())->method('getBackend')->will($this->returnValue($mockPersistenceBackend));
+		$mockPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($objectWithoutIdentity)->will($this->returnValue(FALSE));
 		$this->route->injectPersistenceManager($mockPersistenceManager);
 
 		$this->route->setUriPattern('foo');
@@ -788,16 +787,14 @@ class RouteTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function resolvesRecursivelyConvertsDomainObjectsIntoAUUIDIdentity() {
+	public function resolvesRecursivelyConvertsDomainObjectsIntoAUuidIdentity() {
 		$object1 = new \stdClass();
 		$object2 = new \stdClass();
 
-		$mockPersistenceBackend = $this->getMock('F3\FLOW3\Persistence\BackendInterface');
-		$mockPersistenceBackend->expects($this->at(0))->method('getIdentifierByObject')->with($object1)->will($this->returnValue('uuid1'));
-		$mockPersistenceBackend->expects($this->at(1))->method('getIdentifierByObject')->with($object2)->will($this->returnValue('uuid2'));
 
 		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\ManagerInterface');
-		$mockPersistenceManager->expects($this->atLeastOnce())->method('getBackend')->will($this->returnValue($mockPersistenceBackend));
+		$mockPersistenceManager->expects($this->at(0))->method('getIdentifierByObject')->with($object1)->will($this->returnValue('uuid1'));
+		$mockPersistenceManager->expects($this->at(1))->method('getIdentifierByObject')->with($object2)->will($this->returnValue('uuid2'));
 		$this->route->injectPersistenceManager($mockPersistenceManager);
 
 		$this->route->setUriPattern('foo');

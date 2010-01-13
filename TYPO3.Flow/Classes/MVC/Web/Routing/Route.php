@@ -416,7 +416,7 @@ class Route {
 	protected function convertDomainObjectsToIdentityArrays(array $routeValues) {
 		foreach ($routeValues as $routeValueKey => $routeValue) {
 			if (is_object($routeValue)) {
-				$uuid = $this->persistenceManager->getBackend()->getIdentifierByObject($routeValue);
+				$uuid = $this->persistenceManager->getIdentifierByObject($routeValue);
 				if ($uuid === FALSE) {
 					throw new \F3\FLOW3\MVC\Exception\InvalidArgumentValue('Route value "' . $routeValueKey . '" is an object but is unknown to the persistence manager.', 1242417960);
 				}

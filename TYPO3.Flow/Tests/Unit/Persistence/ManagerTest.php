@@ -39,15 +39,14 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function initializeInitializesBackendWithClassSchemata() {
-		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service');
-		$mockReflectionService->expects($this->any())->method('getClassSchemata')->will($this->returnValue(array('Foo' => 'Bar')));
+	public function initializeInitializesBackendWithBackendOptions() {
 		$mockBackend = $this->getMock('F3\FLOW3\Persistence\BackendInterface');
 		$mockBackend->expects($this->once())->method('initialize')->with(array('Foo' => 'Bar'));
 
-		$manager = new \F3\FLOW3\Persistence\Manager($mockBackend);
-		$manager->injectReflectionService($mockReflectionService);
+		$manager = new \F3\FLOW3\Persistence\Manager();
+		$manager->injectBackend($mockBackend);
 
+		$manager->setSettings(array('backendOptions' => array('Foo' => 'Bar')));
 		$manager->initialize();
 	}
 
@@ -61,9 +60,10 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 		$mockBackend = $this->getMock('F3\FLOW3\Persistence\BackendInterface');
 		$session = new \F3\FLOW3\Persistence\Session();
 
-		$manager = new \F3\FLOW3\Persistence\Manager($mockBackend);
+		$manager = new \F3\FLOW3\Persistence\Manager();
+		$manager->injectBackend($mockBackend);
 		$manager->injectReflectionService($mockReflectionService);
-		$manager->injectSession($session);
+		$manager->injectPersistenceSession($session);
 
 		$manager->persistAll();
 	}
@@ -97,10 +97,11 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 		$objectStorage->attach($entity2);
 		$mockBackend->expects($this->once())->method('setAggregateRootObjects')->with($objectStorage);
 
-		$manager = new \F3\FLOW3\Persistence\Manager($mockBackend);
+		$manager = new \F3\FLOW3\Persistence\Manager();
+		$manager->injectBackend($mockBackend);
 		$manager->injectReflectionService($mockReflectionService);
 		$manager->injectObjectManager($mockObjectManager);
-		$manager->injectSession($session);
+		$manager->injectPersistenceSession($session);
 
 		$manager->persistAll();
 	}
@@ -123,9 +124,10 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 			// this is the really important assertion!
 		$mockBackend->expects($this->once())->method('setAggregateRootObjects')->with($objectStorage);
 
-		$manager = new \F3\FLOW3\Persistence\Manager($mockBackend);
+		$manager = new \F3\FLOW3\Persistence\Manager();
+		$manager->injectBackend($mockBackend);
 		$manager->injectReflectionService($mockReflectionService);
-		$manager->injectSession($session);
+		$manager->injectPersistenceSession($session);
 
 		$manager->persistAll();
 	}
@@ -154,11 +156,12 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 			// this is the really important assertion!
 		$deletedObjectStorage = new \SplObjectStorage();
 		$deletedObjectStorage->attach($entity1);
-		$mockBackend->expects($this->once())->method('setDeletedObjects')->with($deletedObjectStorage);
+		$mockBackend->expects($this->once())->method('setDeletedEntities')->with($deletedObjectStorage);
 
-		$manager = new \F3\FLOW3\Persistence\Manager($mockBackend);
+		$manager = new \F3\FLOW3\Persistence\Manager();
+		$manager->injectBackend($mockBackend);
 		$manager->injectReflectionService($mockReflectionService);
-		$manager->injectSession($session);
+		$manager->injectPersistenceSession($session);
 		$manager->injectObjectManager($mockObjectManager);
 
 		$manager->persistAll();

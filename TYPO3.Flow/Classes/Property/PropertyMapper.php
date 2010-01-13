@@ -319,13 +319,13 @@ class PropertyMapper {
 	 */
 	protected function transformToObject($propertyValue, $targetType, $propertyName) {
 		if (is_string($propertyValue) && preg_match(self::PATTERN_MATCH_UUID, $propertyValue) === 1) {
-			$object = $this->persistenceManager->getBackend()->getObjectByIdentifier($propertyValue);
+			$object = $this->persistenceManager->getObjectByIdentifier($propertyValue);
 			if ($object === FALSE) {
 				$this->mappingResults->addError($this->objectManager->getObject('F3\FLOW3\Error\Error', 'Querying the repository for the specified object with UUID ' . $propertyValue . ' was not successful.' , 1249379517), $propertyName);
 			}
 		} elseif (is_array($propertyValue)) {
 			if (isset($propertyValue['__identity'])) {
-				$existingObject = (is_array($propertyValue['__identity'])) ? $this->findObjectByIdentityProperties($propertyValue['__identity'], $targetType) : $this->persistenceManager->getBackend()->getObjectByIdentifier($propertyValue['__identity']);
+				$existingObject = (is_array($propertyValue['__identity'])) ? $this->findObjectByIdentityProperties($propertyValue['__identity'], $targetType) : $this->persistenceManager->getObjectByIdentifier($propertyValue['__identity']);
 				if ($existingObject === FALSE) {
 					throw new \F3\FLOW3\Property\Exception\TargetNotFound('Querying the repository for the specified object was not successful.', 1237305720);
 				}

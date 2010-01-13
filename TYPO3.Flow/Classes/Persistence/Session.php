@@ -23,7 +23,8 @@ namespace F3\FLOW3\Persistence;
  *                                                                        */
 
 /**
- * The persistence session - acts as a Unit of Work for FLOW3's persistence framework.
+ * The persistence session - acts as a UoW and Identity Map for FLOW3's
+ * persistence framework.
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
@@ -38,12 +39,23 @@ class Session {
 	protected $reconstitutedObjects;
 
 	/**
+	 * @var \SplObjectStorage
+	 */
+	protected $objectMap;
+
+	/**
+	 * @var array
+	 */
+	protected $identifierMap = array();
+
+	/**
 	 * Constructs a new Session
 	 *
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function __construct() {
 		$this->reconstitutedObjects = new \SplObjectStorage();
+		$this->objectMap = new \SplObjectStorage();
 	}
 
 	/**
@@ -76,6 +88,74 @@ class Session {
 	 */
 	public function getReconstitutedObjects() {
 		return $this->reconstitutedObjects;
+	}
+
+	/**
+	 * Checks whether the given object is known to the identity map
+	 *
+	 * @param object $object
+	 * @return boolean
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function hasObject($object) {
+		return $this->objectMap->contains($object);
+	}
+
+	/**
+	 * Checks whether the given identifier is known to the identity map
+	 *
+	 * @param string $identifier
+	 * @return boolean
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function hasIdentifier($identifier) {
+		return array_key_exists($identifier, $this->identifierMap);
+	}
+
+	/**
+	 * Returns the object for the given identifier
+	 *
+	 * @param string $identifier
+	 * @return object
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getObjectByIdentifier($identifier) {
+		return $this->identifierMap[$identifier];
+	}
+
+	/**
+	 * Returns the identifier for the given object
+	 *
+	 * @param object $object
+	 * @return string
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getIdentifierByObject($object) {
+		return $this->objectMap[$object];
+	}
+
+	/**
+	 * Register an identifier for an object
+	 *
+	 * @param object $object
+	 * @param string $identifier
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function registerObject($object, $identifier) {
+		$this->objectMap[$object] = $identifier;
+		$this->identifierMap[$identifier] = $object;
+	}
+
+	/**
+	 * Unregister an object
+	 *
+	 * @param string $object
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function unregisterObject($object) {
+		unset($this->identifierMap[$this->objectMap[$object]]);
+		$this->objectMap->detach($object);
 	}
 
 }

@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Persistence\Aspect;
+namespace F3\FLOW3\Persistence\QOM;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,55 +23,53 @@ namespace F3\FLOW3\Persistence\Aspect;
  *                                                                        */
 
 /**
- * An interface used to introduce certain methods to support object persistence
+ * An operand to a binary operation specified by a Comparison.
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @api
+ * @scope prototype
  */
-interface DirtyMonitoringInterface {
+class Ordering {
 
 	/**
-	 * If the monitored object has ever been persisted
+	 * Construct an Ordering instance.
 	 *
-	 * @return boolean TRUE if the object is new, otherwise FALSE
+	 * @param \F3\FLOW3\Persistence\QOM\DynamicOperand $operand
+	 * @param string $order either QueryInterface.ORDER_ASCENDING or QueryInterface.ORDER_DESCENDING
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function FLOW3_Persistence_isNew();
+	public function __construct(\F3\FLOW3\Persistence\QOM\DynamicOperand $operand, $order) {
+		if ($order !== \F3\FLOW3\Persistence\QueryInterface::ORDER_ASCENDING
+			&& $order !== \F3\FLOW3\Persistence\QueryInterface::ORDER_DESCENDING) {
+				throw new \InvalidArgumentException('Illegal order requested.', 1260291954);
+			}
+		$this->operand = $operand;
+		$this->order = $order;
+	}
 
 	/**
-	 * If the monitored object is a clone of another object
+	 * The operand by which to order.
 	 *
-	 * @return boolean TRUE if the object is a clone, otherwise FALSE
+	 * @return \F3\FLOW3\Persistence\QOM\DynamicOperand the operand; non-null
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
-	public function FLOW3_Persistence_isClone();
+	public function getOperand() {
+		return $this->operand;
+	}
 
 	/**
-	 * If the specified property of the reconstituted object has been modified
-	 * since it woke up (or is new or cloned).
+	 * Gets the order.
 	 *
-	 * @param string $propertyName Name of the property to check
-	 * @return boolean TRUE if the given property has been modified
+	 * @return string either QueryInterface.ORDER_ASCENDING or QueryInterface.ORDER_DESCENDING
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
-	public function FLOW3_Persistence_isDirty($propertyName);
+	public function getOrder() {
+		return $this->order;
+	}
 
-	/**
-	 * Resets the dirty flags of properties to signal that the object is clean
-	 * clean (e.g. after being persisted).
-	 *
-	 * The method takes an optional argument $propertyName to mark only the
-	 * specified property as clean. This was used in conjunction with lazy
-	 * loading...
-	 *
-	 * @param string $propertyName Name of the property to mark clean, if NULL all will be marked clean
-	 * @return void
-	 */
-	public function FLOW3_Persistence_memorizeCleanState($propertyName = NULL);
-
-	/**
-	 * Introduces a clone method
-	 *
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function __clone();
 }
+
 ?>

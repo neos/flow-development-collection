@@ -39,6 +39,48 @@ namespace F3\FLOW3\Persistence;
 interface QueryInterface {
 
 	/**
+	 * The '=' comparison operator.
+	 * @api
+	*/
+	const OPERATOR_EQUAL_TO = 1;
+
+	/**
+	 * The '!=' comparison operator.
+	 * @api
+	*/
+	const OPERATOR_NOT_EQUAL_TO = 2;
+
+	/**
+	 * The '<' comparison operator.
+	 * @api
+	*/
+	const OPERATOR_LESS_THAN = 3;
+
+	/**
+	 * The '<=' comparison operator.
+	 * @api
+	*/
+	const OPERATOR_LESS_THAN_OR_EQUAL_TO = 4;
+
+	/**
+	 * The '>' comparison operator.
+	 * @api
+	*/
+	const OPERATOR_GREATER_THAN = 5;
+
+	/**
+	 * The '>=' comparison operator.
+	 * @api
+	*/
+	const OPERATOR_GREATER_THAN_OR_EQUAL_TO = 6;
+
+	/**
+	 * The 'like' comparison operator.
+	 * @api
+	*/
+	const OPERATOR_LIKE = 7;
+
+	/**
 	 * Constants representing the direction when ordering result sets.
 	 */
 	const ORDER_ASCENDING = 'ASC';
@@ -131,15 +173,6 @@ interface QueryInterface {
 	 * @api
 	 */
 	public function logicalNot($constraint);
-
-	/**
-	 * Matches against the (internal) identifier.
-	 *
-	 * @param string $uuid An identifier to match against
-	 * @return object
-	 * @api
-	 */
-	public function withUUID($uuid);
 
 	/**
 	 * Returns an equals criterion used for matching objects against a query

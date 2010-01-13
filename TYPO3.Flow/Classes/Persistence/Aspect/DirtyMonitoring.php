@@ -80,6 +80,29 @@ class DirtyMonitoring {
 	}
 
 	/**
+	 * After returning advice, generates the value hash for the object
+	 *
+	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
+	 * @return void
+	 * @afterreturning classTaggedWith(valueobject) && method(.*->__construct())
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function generateValueHash(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+		$proxy = $joinPoint->getProxy();
+		$hashSource = '';
+		foreach (array_keys($this->reflectionService->getClassSchema($joinPoint->getClassName())->getProperties()) as $propertyName) {
+			if (!is_object($proxy->FLOW3_AOP_Proxy_getProperty($propertyName))) {
+				$hashSource .= $proxy->FLOW3_AOP_Proxy_getProperty($propertyName);
+			} elseif (property_exists($proxy, 'FLOW3_Persistence_Entity_UUID')) {
+				$hashSource .= $proxy->FLOW3_Persistence_Entity_UUID;
+			} elseif (property_exists($proxy, 'FLOW3_Persistence_ValueObject_Hash')) {
+				$hashSource .= $proxy->FLOW3_Persistence_Entity_UUID;
+			}
+		}
+		$proxy->FLOW3_Persistence_ValueObject_Hash = sha1($hashSource);
+	}
+
+	/**
 	 * Around advice, implements the FLOW3_Persistence_isNew() method introduced above
 	 *
 	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
@@ -125,32 +148,72 @@ class DirtyMonitoring {
 
 		$proxy = $joinPoint->getProxy();
 
-		if (property_exists($proxy, 'FLOW3_Persistence_cleanProperties')) {
-			$isDirty = FALSE;
+		if (property_exists($proxy, 'FLOW3_Persistence_cleanProperties') && !property_exists($proxy, 'FLOW3_Persistence_clone')) {
 			$uuidPropertyName = $this->reflectionService->getClassSchema($joinPoint->getClassName())->getUUIDPropertyName();
 			if ($uuidPropertyName !== NULL && !property_exists($proxy, 'FLOW3_Persistence_clone') && $proxy->FLOW3_AOP_Proxy_getProperty($uuidPropertyName) !== $proxy->FLOW3_Persistence_cleanProperties[$uuidPropertyName]) {
 				throw new \F3\FLOW3\Persistence\Exception\TooDirty('My property "' . $uuidPropertyName . '" tagged as @uuid has been modified, that is simply too much.', 1222871239);
 			}
 
 			if (is_object($proxy->FLOW3_Persistence_cleanProperties[$joinPoint->getMethodArgument('propertyName')])) {
-				if ($proxy->FLOW3_Persistence_cleanProperties[$joinPoint->getMethodArgument('propertyName')] != $proxy->FLOW3_AOP_Proxy_getProperty($joinPoint->getMethodArgument('propertyName'))) {
-					$isDirty = TRUE;
+				if ($this->areObjectsDifferent(
+						$proxy->FLOW3_Persistence_cleanProperties[$joinPoint->getMethodArgument('propertyName')],
+						$proxy->FLOW3_AOP_Proxy_getProperty($joinPoint->getMethodArgument('propertyName'))
+					)) {
+					return TRUE;
 				}
 			} else {
 				if ($proxy->FLOW3_Persistence_cleanProperties[$joinPoint->getMethodArgument('propertyName')] !== $proxy->FLOW3_AOP_Proxy_getProperty($joinPoint->getMethodArgument('propertyName'))) {
-					$isDirty = TRUE;
+					return TRUE;
 				}
 			}
 		} else {
-			$isDirty = TRUE;
+			return TRUE;
 		}
 
-		return $isDirty;
+		return FALSE;
+	}
+
+	/**
+	 * Compares two objects non-recursively by the properties known in their
+	 * class schema if possible. Otherwise a regular non-strict comparison is
+	 * made.
+	 *
+	 * @param object $object1
+	 * @param object $object2
+	 * @return boolean
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function areObjectsDifferent($object1, $object2) {
+		if (!($object1 instanceof $object2)) {
+			return TRUE;
+		}
+
+		if (!($object1 instanceof \F3\FLOW3\AOP\ProxyInterface) || $object1 instanceof \DateTime || $object1 instanceof \SplObjectStorage) {
+			return $object1 != $object2;
+		}
+		
+		$propertyNames = array_keys($this->reflectionService->getClassSchema($object1->FLOW3_AOP_Proxy_getProxyTargetClassName())->getProperties());
+		foreach ($propertyNames as $propertyName) {
+			if (!(property_exists($object1, $propertyName) && property_exists($object2, $propertyName))) {
+				return TRUE;
+			}
+			$p1 = $object1->FLOW3_AOP_Proxy_getProperty($propertyName);
+			$p2 = $object2->FLOW3_AOP_Proxy_getProperty($propertyName);
+			if ($p1 !== $p2) {
+				return TRUE;
+			}
+		}
+
+		return FALSE;
 	}
 
 	/**
 	 * Register an object's clean state, e.g. after it has been reconstituted
 	 * from the FLOW3 persistence layer
+	 *
+	 * The method takes an optional argument $propertyName to mark only the
+	 * specified property as clean. This was used in conjunction with lazy
+	 * loading...
 	 *
 	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint
 	 * @return void
