@@ -174,7 +174,7 @@ class Arrays {
 	 *
 	 * @param array $array The array
 	 * @param array $path The path to follow, ie. a simple array of keys
-	 * @param mixed The value to set
+	 * @param mixed $value The value to set
 	 * @return array The modified array
 	 * @author Robert Lemke <robert@typo3.org>
 	 */

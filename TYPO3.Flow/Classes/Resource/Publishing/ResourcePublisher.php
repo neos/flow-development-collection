@@ -38,7 +38,7 @@ class ResourcePublisher {
 	/**
 	 * Injects the resource publishing target
 	 * 
-	 * @param ResourcePublishingTargetInterface $resourcePublishingTarget
+	 * @param \F3\FLOW3\Resource\Publishing\ResourcePublishingTargetInterface $resourcePublishingTarget
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */

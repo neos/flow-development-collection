@@ -45,7 +45,7 @@ abstract class AbstractResourcePublishingTarget implements \F3\FLOW3\Resource\Pu
 	/**
 	 * Returns the private path to the source of the given resource.
 	 *
-	 * @param Resource $resource
+	 * @param \F3\FLOW3\Resource\Resource $resource
 	 * @return mixed The full path and filename to the source of the given resource or FALSE if the resource file doesn't exist
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
