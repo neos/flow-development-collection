@@ -356,7 +356,7 @@ EOD;
 	 * Post processes the given configuration array by replacing constants with their
 	 * actual value.
 	 *
-	 * @param array &$settings The settings to post process. The results are stored directly in the given array
+	 * @param array &$configurations The configuration to post process. The results are stored directly in the given array
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */

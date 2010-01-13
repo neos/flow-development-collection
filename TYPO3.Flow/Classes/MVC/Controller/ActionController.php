@@ -247,6 +247,8 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 			$this->response->appendContent($this->view->render());
 		} elseif (is_string($actionResult) && strlen($actionResult) > 0) {
 			$this->response->appendContent($actionResult);
+		} elseif (is_object($actionResult) && method_exists($actionResult, '__toString')) {
+			$this->response->appendContent((string)$actionResult);
 		}
 	}
 

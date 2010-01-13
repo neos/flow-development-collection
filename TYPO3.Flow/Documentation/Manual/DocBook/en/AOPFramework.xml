@@ -121,7 +121,7 @@
           <term>Pointcut</term>
 
           <listitem>
-            <para>The pointcut defines a set of joinpoints which need to be
+            <para>The pointcut defines a set of join points which need to be
             matched before running an advice. The pointcut is configured by a
             <firstterm>pointcut expression</firstterm> which defines when and
             where an advice should be executed. FLOW3 uses methods in an
@@ -361,7 +361,7 @@ class FooSecurityAspect {
     contains two pieces of information: The pointcut name, defined by the
     methodname, and the poincut expression, declared by an annotation. The
     following pointcut will match the execution of methods whose name starts
-    with <quote>delete</quote>, mo matter in which class they are
+    with <quote>delete</quote>, no matter in which class they are
     defined:</para>
 
     <example>
@@ -370,10 +370,10 @@ class FooSecurityAspect {
       <programlisting language="php">/**
  * A pointcut which matches all methods whose name starts with "delete".
  *
- * @pointcut method(.*-&gt;delete.*())<co xml:id="co.pointcutdeclaration.1"/>
+ * @pointcut method(.*-&gt;delete.*())<co xml:id="co.pointcutdeclaration.1" />
  * @author John Doe &lt;john@typo3.org&gt;
  */
-public function <co xml:id="co.pointcutdeclaration.2"/>deleteMethods() {}</programlisting>
+public function <co xml:id="co.pointcutdeclaration.2" />deleteMethods() {}</programlisting>
 
       <calloutlist>
         <callout arearefs="co.pointcutdeclaration.1">
@@ -852,7 +852,7 @@ public function myAroundAdvice(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
             <imageobject>
               <imagedata contentdepth="100%"
                          fileref="AOPFramework_AdviceChain.png" scalefit="1"
-                         width="100%"/>
+                         width="100%"></imagedata>
             </imageobject>
           </mediaobject>
         </figure></para>
@@ -1056,7 +1056,7 @@ class IntroductionAspect {
           <imageobject>
             <imagedata contentdepth="100%"
                        fileref="AOPFramework_ProxyBuildingProcess.png"
-                       scalefit="1" width="100%"/>
+                       scalefit="1" width="100%"></imagedata>
           </imageobject>
         </mediaobject>
       </figure>

@@ -23,7 +23,7 @@ namespace F3\FLOW3\Security\Cryptography;
  *                                                                        */
 
 /**
- * A RSA key
+ * An RSA key
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later

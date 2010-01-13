@@ -52,24 +52,25 @@ class ObjectAccess {
 	 * - if public property exists, return the value of it.
 	 * - else, throw exception
 	 *
-	 * @param object $object Object to get the property from
+	 * @param mixed $subject Object or array to get the property from
 	 * @param string $propertyName name of the property to retrieve
 	 * @return object Value of the property.
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	static public function getProperty($object, $propertyName) {
-		if (!is_object($object) && !is_array($object)) throw new \InvalidArgumentException('$object must be an object or array, ' . gettype($object). ' given.', 1237301367);
+	static public function getProperty($subject, $propertyName) {
+		if (!is_object($subject) && !is_array($subject)) throw new \InvalidArgumentException('$subject must be an object or array, ' . gettype($subject). ' given.', 1237301367);
 		if (!is_string($propertyName)) throw new \InvalidArgumentException('Given property name is not of type string.', 1231178303);
 
-		if (is_array($object) && array_key_exists($propertyName, $object)) {
-			return $object[$propertyName];
-		} elseif (is_callable(array($object, $getterMethodName = self::buildGetterMethodName($propertyName)))) {
-			return call_user_func(array($object, $getterMethodName));
-		} elseif ($object instanceof \ArrayAccess && isset($object[$propertyName])) {
-			return $object[$propertyName];
-		} elseif (array_key_exists($propertyName, get_object_vars($object))) {
-			return $object->$propertyName;
+		if (is_array($subject) && array_key_exists($propertyName, $subject)) {
+			return $subject[$propertyName];
+		}
+		if (is_callable(array($subject, $getterMethodName = self::buildGetterMethodName($propertyName)))) {
+			return call_user_func(array($subject, $getterMethodName));
+		} elseif ($subject instanceof \ArrayAccess && isset($subject[$propertyName])) {
+			return $subject[$propertyName];
+		} elseif (array_key_exists($propertyName, get_object_vars($subject))) {
+			return $subject->$propertyName;
 		}
 		return NULL;
 	}

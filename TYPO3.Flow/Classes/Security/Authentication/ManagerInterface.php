@@ -24,7 +24,8 @@ namespace F3\FLOW3\Security\Authentication;
 
 /**
  * Contract for an authentication manager.
- * Has to add a \F3\FLOW3\Security\Authentication\TokenInterface to the securit context
+ *
+ * Has to add a \F3\FLOW3\Security\Authentication\TokenInterface to the security context
  * Might set a UserDetailsService, RequestPattern and AuthenticationEntryPoint (from configuration).
  *
  * @version $Id$
@@ -65,7 +66,7 @@ interface ManagerInterface {
 	public function authenticate();
 
 	/**
-	 * Logs all acitve authentication tokens out
+	 * Logs all active authentication tokens out
 	 *
 	 * @return void
 	 */

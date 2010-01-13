@@ -47,7 +47,7 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	 *
 	 * @var string
 	 */
-	protected $controllerObjectNamePattern = 'F3\@package\Controller\@controllerController';
+	protected $controllerObjectNamePattern = 'F3\@package\@subpackage\Controller\@controllerController';
 
 	/**
 	 * Package key of the controller which is supposed to handle this request.
@@ -151,13 +151,11 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	 * @api
 	 */
 	public function getControllerObjectName() {
-		$packageKey = $this->controllerPackageKey;
-		if ($this->controllerSubpackageKey !== NULL && $this->controllerSubpackageKey !== '') {
-			$packageKey .= '\\' . $this->controllerSubpackageKey;
-		}
 		$possibleObjectName = $this->controllerObjectNamePattern;
-		$possibleObjectName = str_replace('@package', $packageKey, $possibleObjectName);
+		$possibleObjectName = str_replace('@package', $this->controllerPackageKey, $possibleObjectName);
+		$possibleObjectName = str_replace('@subpackage', $this->controllerSubpackageKey, $possibleObjectName);
 		$possibleObjectName = str_replace('@controller', $this->controllerName, $possibleObjectName);
+		$possibleObjectName = str_replace('\\\\', '\\', $possibleObjectName);
 		$lowercaseObjectName = strtolower($possibleObjectName);
 
 		$objectName = $this->objectManager->getCaseSensitiveObjectName($lowercaseObjectName);
