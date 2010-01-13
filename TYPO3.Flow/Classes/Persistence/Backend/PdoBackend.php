@@ -622,7 +622,8 @@ class PdoBackend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 			$statementHandle = $this->databaseHandle->prepare('SELECT "identifier", "type" AS "classname" FROM "valueobjects" WHERE "identifier"=?');
 		}
 		$statementHandle->execute(array($identifier));
-		return current($this->processObjectRecords($statementHandle));
+		$objects = $this->processObjectRecords($statementHandle);
+		return current($objects);
 	}
 
 	/**

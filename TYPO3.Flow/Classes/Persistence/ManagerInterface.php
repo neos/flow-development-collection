@@ -74,6 +74,7 @@ interface ManagerInterface {
 	 *
 	 * @param object $object The object to check
 	 * @return boolean TRUE if the object is new, FALSE if the object exists in the repository
+	 * @api
 	 */
 	public function isNewObject($object);
 
@@ -87,6 +88,7 @@ interface ManagerInterface {
 	 *
 	 * @param object $object
 	 * @return string The identifier for the object if it is known, or NULL
+	 * @api
 	 */
 	public function getIdentifierByObject($object);
 
@@ -96,6 +98,7 @@ interface ManagerInterface {
 	 *
 	 * @param string $identifier
 	 * @return object The object for the identifier if it is known, or NULL
+	 * @api
 	 */
 	public function getObjectByIdentifier($identifier);
 

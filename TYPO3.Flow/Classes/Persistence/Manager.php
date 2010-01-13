@@ -203,6 +203,7 @@ class Manager implements \F3\FLOW3\Persistence\ManagerInterface {
 	 * @param object $object The object to check
 	 * @return boolean TRUE if the object is new, FALSE if the object exists in the persistence session
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function isNewObject($object) {
 		return ($this->persistenceSession->hasObject($object) === FALSE);
@@ -219,6 +220,7 @@ class Manager implements \F3\FLOW3\Persistence\ManagerInterface {
 	 * @param object $object
 	 * @return string The identifier for the object
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getIdentifierByObject($object) {
 		if ($this->persistenceSession->hasObject($object)) {
@@ -241,6 +243,7 @@ class Manager implements \F3\FLOW3\Persistence\ManagerInterface {
 	 * @param string $identifier
 	 * @return object The object for the identifier if it is known, or NULL
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getObjectByIdentifier($identifier) {
 		if ($this->persistenceSession->hasIdentifier($identifier)) {
