@@ -231,6 +231,7 @@ class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 				return $route->getMatchingUri();
 			}
 		}
+		$this->systemLogger->log('Router resolve(): No route matched ' . str_replace(chr(10), '', var_export($routeValues, TRUE)) . '.', LOG_NOTICE);
 		return '';
 	}
 

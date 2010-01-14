@@ -216,6 +216,8 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	 * Sets the name of the controller which is supposed to handle the request.
 	 * Note: This is not the object name of the controller!
 	 *
+	 * Examples: "Standard", "Account", ...
+	 *
 	 * @param string $controllerName Name of the controller
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
@@ -230,7 +232,7 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	 * Returns the object name of the controller supposed to handle this request, if one
 	 * was set already (if not, the name of the default controller is returned)
 	 *
-	 * @return string Object name of the controller
+	 * @return string Name of the controller
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
