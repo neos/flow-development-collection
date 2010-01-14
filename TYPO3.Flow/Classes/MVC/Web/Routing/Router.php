@@ -156,11 +156,13 @@ class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 	}
 
 	/**
-	 * Sets package key, subpackage key, controller name, action name and format of the current request.
+	 * Sets package key, subpackage key, controller name, action name and format
+	 * of the current request.
 	 *
 	 * @param array $arguments
 	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @see \F3\FLOW3\MVC\Web\Request
 	 * @api
 	 */
@@ -168,16 +170,16 @@ class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 		foreach($arguments as $argumentName => $argumentValue) {
 			switch ($argumentName) {
 				case '@package' :
-					$this->request->setControllerPackageKey(strtolower($argumentValue));
+					$this->request->setControllerPackageKey($argumentValue);
 				break;
 				case '@subpackage' :
-					$this->request->setControllerSubpackageKey(strtolower($argumentValue));
+					$this->request->setControllerSubpackageKey($argumentValue);
 				break;
 				case '@controller' :
-					$this->request->setControllerName(strtolower($argumentValue));
+					$this->request->setControllerName($argumentValue);
 				break;
 				case '@action' :
-					$this->request->setControllerActionName(strtolower($argumentValue));
+					$this->request->setControllerActionName(lcfirst($argumentValue));
 				break;
 				case '@format' :
 					$this->request->setFormat(strtolower($argumentValue));

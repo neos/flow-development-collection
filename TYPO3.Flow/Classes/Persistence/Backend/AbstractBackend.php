@@ -275,7 +275,7 @@ abstract class AbstractBackend implements \F3\FLOW3\Persistence\BackendInterface
 				throw new \F3\FLOW3\Persistence\Exception\UnexpectedType('Expected property of type ' . $expectedType . ', but got ' . get_class($value), 1244465558);
 			}
 		} elseif ($expectedType !== $this->getType($value)) {
-			throw new \F3\FLOW3\Persistence\Exception\UnexpectedType('Expected property of type ' . $expectedType . ', but got ' . gettype($value), 1244465558);
+			throw new \F3\FLOW3\Persistence\Exception\UnexpectedType('Expected property of type ' . $expectedType . ', but got ' . gettype($value), 1244465559);
 		}
 	}
 

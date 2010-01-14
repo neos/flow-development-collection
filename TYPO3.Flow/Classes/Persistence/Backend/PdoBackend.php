@@ -301,13 +301,18 @@ class PdoBackend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 	}
 
 	/**
-	 * Creates a unix timestamp from the given DateTime object.
+	 * Creates a unix timestamp from the given DateTime object. If NULL is given
+	 * NULL will be returned.
 	 *
 	 * @param \DateTime $dateTime
 	 * @return integer
 	 */
-	protected function processDateTime(\DateTime $dateTime) {
-		return $dateTime->getTimestamp();
+	protected function processDateTime(\DateTime $dateTime = NULL) {
+		if ($dateTime instanceof \DateTime) {
+			return $dateTime->getTimestamp();
+		} else {
+			return NULL;
+		}
 	}
 
 	/**

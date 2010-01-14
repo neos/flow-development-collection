@@ -155,10 +155,16 @@ class DataMapper {
 			if (isset($propertyValues[$propertyName]) && $propertyValues[$propertyName]['value'] !== NULL) {
 				switch ($propertyData['type']) {
 					case 'integer':
+						$propertyValue = (int) $propertyValues[$propertyName]['value']['value'];
+					break;
 					case 'float':
+						$propertyValue = (float) $propertyValues[$propertyName]['value']['value'];
+					break;
 					case 'boolean':
+						$propertyValue = (boolean) $propertyValues[$propertyName]['value']['value'];
+					break;
 					case 'string':
-						$propertyValue = $propertyValues[$propertyName]['value']['value'];
+						$propertyValue = (string) $propertyValues[$propertyName]['value']['value'];
 					break;
 					case 'array':
 						$propertyValue = $this->mapArray($propertyValues[$propertyName]['value']);
@@ -185,16 +191,21 @@ class DataMapper {
 	}
 
 	/**
-	 * Creates a \DateTime from an unix timestamp.
+	 * Creates a \DateTime from an unix timestamp. If the input is not an integer
+	 * NULL is returned.
 	 *
 	 * @param integer $timestamp
 	 * @return \DateTime
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function mapDateTime($timestamp) {
-		$datetime = new \DateTime();
-		$datetime->setTimestamp($timestamp);
-		return $datetime;
+		if (is_integer($timestamp)) {
+			$datetime = new \DateTime();
+			$datetime->setTimestamp($timestamp);
+			return $datetime;
+		} else {
+			return NULL;
+		}
 	}
 
 	/**
