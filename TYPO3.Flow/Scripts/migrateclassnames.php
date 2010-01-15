@@ -21,15 +21,45 @@ declare(ENCODING = 'utf-8');
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-exit ('This script currently only supports the migration of the FLOW3 distribution itself.');
-
 require (__DIR__ . '/../Classes/Utility/Files.php');
 
 define('FLOW3_SAPITYPE', (PHP_SAPI === 'cli' ? 'CLI' : 'Web'));
+
+if (FLOW3_SAPITYPE !== 'CLI') exit ('This script can only be executed from the command line.');
+
 define('FLOW3_PATH_FLOW3', str_replace('//', '/', str_replace('\\', '/', (realpath(__DIR__ . '/../') . '/'))));
-define('FLOW3_PATH_ROOT', realpath(FLOW3_PATH_FLOW3 . '/../../../') . '/');
-define('FLOW3_PATH_PACKAGES', FLOW3_PATH_ROOT . 'Packages/');
+
+if (isset($_SERVER['FLOW3_ROOTPATH'])) {
+	$rootPath = str_replace('//', '/', str_replace('\\', '/', (realpath($_SERVER['FLOW3_ROOTPATH'])))) . '/';
+	$testPath = str_replace('//', '/', str_replace('\\', '/', (realpath($rootPath . 'Packages/Framework/FLOW3')))) . '/';
+	if ($testPath !== FLOW3_PATH_FLOW3) {
+		exit('FLOW3: Invalid root path. (Error #1248964375)' . PHP_EOL . '"' . $rootPath . 'Packages/Framework/FLOW3' .'" does not lead to' . PHP_EOL . '"' . FLOW3_PATH_FLOW3 .'"' . PHP_EOL);
+	}
+	define('FLOW3_PATH_ROOT', $rootPath);
+	unset($rootPath);
+	unset($testPath);
+}
+
+if (!defined('FLOW3_PATH_ROOT')) {
+	exit('FLOW3: No root path defined in environment variable FLOW3_ROOTPATH (Error #1248964376)' . PHP_EOL);
+}
+if (!isset($_SERVER['FLOW3_WEBPATH']) || !is_dir($_SERVER['FLOW3_WEBPATH'])) {
+	exit('FLOW3: No web path defined in environment variable FLOW3_WEBPATH or directory does not exist (Error #1249046843)' . PHP_EOL);
+}
+
+define('FLOW3_PATH_WEB', \F3\FLOW3\Utility\Files::getUnixStylePath(realpath($_SERVER['FLOW3_WEBPATH'])) . '/');
 define('FLOW3_PATH_CONFIGURATION', FLOW3_PATH_ROOT . 'Configuration/');
+define('FLOW3_PATH_DATA', FLOW3_PATH_ROOT . 'Data/');
+define('FLOW3_PATH_PACKAGES', FLOW3_PATH_ROOT . 'Packages/');
+
+echo "
+FLOW3 1.0.0 alpha 7 class names migration script.
+
+This script scans PHP, YAML and XML files of all installed packages for
+occurrences of class and interface names which have been changed for
+FLOW3 1.0.0 alpha 7 and replaces them by the new names.
+
+";
 
 $classNameReplacementMap = array(
 	'F3\FLOW3\AOP\Exception\CircularPointcutReference' => 'F3\FLOW3\AOP\Exception\CircularPointcutReferenceException',
@@ -200,65 +230,41 @@ $classNameReplacementMap = array(
 	'F3\YAML\YAML' => 'F3\YAML\Yaml',
 );
 
+$phpFiles = \F3\FLOW3\Utility\Files::readDirectoryRecursively(FLOW3_PATH_PACKAGES, '.php', TRUE);
+$yamlFiles = \F3\FLOW3\Utility\Files::readDirectoryRecursively(FLOW3_PATH_PACKAGES, '.yaml', TRUE);
+$xmlFiles = \F3\FLOW3\Utility\Files::readDirectoryRecursively(FLOW3_PATH_PACKAGES, '.xml', TRUE);
+$configurationFiles = \F3\FLOW3\Utility\Files::readDirectoryRecursively(FLOW3_PATH_CONFIGURATION, '.yaml', TRUE);
 
-
-$phpFiles = \F3\FLOW3\Utility\Files::readDirectoryRecursively(__DIR__ . '/../../../../', '.php', TRUE);
-$yamlFiles = \F3\FLOW3\Utility\Files::readDirectoryRecursively(__DIR__ . '/../../../../', '.yaml', TRUE);
-$xmlFiles = \F3\FLOW3\Utility\Files::readDirectoryRecursively(__DIR__ . '/../../../../', '.xml', TRUE);
-
-$allPathsAndFilenames = array_merge($phpFiles, $yamlFiles, $xmlFiles);
-unset($allPathsAndFilenames[(array_search(realpath(__FILE__), $allPathsAndFilenames))]);
+$allPathsAndFilenames = array_merge($phpFiles, $yamlFiles, $xmlFiles, $configurationFiles);
 
 foreach ($allPathsAndFilenames as $pathAndFilename) {
-	echo '> ' . $pathAndFilename . chr(10);
 	$pathInfo = pathinfo($pathAndFilename);
 	if (!isset($pathInfo['filename'])) continue;
 
-	$pathSegments = explode('/', (substr($pathAndFilename, strlen(FLOW3_PATH_PACKAGES))));
-	if (isset($pathSegments[2]) && $pathSegments[2] === 'Resources') continue;
+	if (strpos($pathAndFilename, 'Packages/Framework/') !== FALSE) continue;
+	if ($pathAndFilename === __FILE__) continue;
 
 	$file = file_get_contents($pathAndFilename);
 	$fileBackup = $file;
-	$newPathAndFilename = $pathAndFilename;
 
 	foreach ($classNameReplacementMap as $oldClassName => $newClassName) {
 		$file = preg_replace('/([^a-zA-Z])' . str_replace('\\', '\\\\', $oldClassName) . '([^a-zA-Z])/', '$1' . $newClassName . '$2', $file);
 	}
-	
-	if ($pathInfo['extension'] == 'php') {
-		if (count($pathSegments) > 1) {
-			list(, $packageKey) = $pathSegments;
-			
-			if ($pathSegments[2] == 'Classes') {
-				$oldFullyQualifiedClassName = substr('F3\\' . $packageKey. '\\' . implode('\\', array_slice($pathSegments, 3)), 0, -4);
-				if (isset($classNameReplacementMap[$oldFullyQualifiedClassName])) {
-					$oldClassName = implode('', array_slice(explode('\\', $oldFullyQualifiedClassName), -1, 1));
-					$newClassName = implode('', array_slice(explode('\\', $classNameReplacementMap[$oldFullyQualifiedClassName]), -1, 1));
-					$file = preg_replace('/([class|interface]) ' . $oldClassName . ' /', '$1 ' . $newClassName . ' ', $file);
-					$newPathAndFilename = $pathInfo['dirname'] . '/' . $newClassName . '.php';
-				}
-			} elseif ($pathSegments[2] == 'Tests') {
-				$oldFullyQualifiedTestcaseClassName = substr('F3\\' . $packageKey. '\\' . implode('\\', array_slice($pathSegments, 4)), 0, -4);
-				$fullyQualifiedTestSubjectClassName = substr($oldFullyQualifiedTestcaseClassName, 0, -4);
-				if (isset($classNameReplacementMap[$fullyQualifiedTestSubjectClassName])) {
-					$oldTestcaseClassName = implode('', array_slice(explode('\\', $oldFullyQualifiedTestcaseClassName), -1, 1));
-					$newTestcaseClassName = implode('', array_slice(explode('\\', $classNameReplacementMap[$fullyQualifiedTestSubjectClassName] . 'Test'), -1, 1));
-					$file = preg_replace('/(class )' . $oldTestcaseClassName . ' /', 'class ' . $newTestcaseClassName . ' ', $file);
-					$newPathAndFilename = $pathInfo['dirname'] . '/' . $newTestcaseClassName . '.php';
-				}
-			}
-		}
+
+	if ($pathInfo['extension'] == 'yaml') {
+		$file = str_replace('UsernamePasswordCR', 'F3\FLOW3\Security\Authentication\Provider\PersistedUsernamePasswordProvider', $file);
 	}
-	
+
 	if ($file !== $fileBackup) {
+		echo 'Updated           ' . $pathAndFilename . chr(10);
 		file_put_contents($pathAndFilename, $file);
-		if ($newPathAndFilename !== $pathAndFilename) {
-			system('svn mv ' . escapeshellarg($pathAndFilename) . ' ' . escapeshellarg($newPathAndFilename) . chr(10));
-		}
+	} else {
+		echo 'No need to update ' . $pathAndFilename . chr(10);
 	}
 
 	unset($file);
-	unset($fileBackup);
 }
+
+echo "\nDone.\n";
 
 ?>
