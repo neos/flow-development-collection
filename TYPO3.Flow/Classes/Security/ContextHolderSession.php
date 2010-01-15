@@ -38,50 +38,50 @@ class ContextHolderSession implements \F3\FLOW3\Security\ContextHolderInterface 
 	protected $context;
 
 	/**
-	 * @var F3\FLOW3\Object\FactoryInterface
+	 * @var F3\FLOW3\Object\ObjectFactoryInterface
 	 */
 	protected $objectFactory = NULL;
 
 	/**
-	 * @var F3\FLOW3\Object\ManagerInterface
+	 * @var F3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager = NULL;
 
 	/**
-	 * @var F3\FLOW3\Security\Authentication\ManagerInterface
+	 * @var F3\FLOW3\Security\Authentication\AuthenticationManagerInterface
 	 */
 	protected $authenticationManager = NULL;
 
 	/**
 	 * Inject the object factory
 	 *
-	 * @param F3\FLOW3\Object\FactoryInterface $objectFactory The object factory
+	 * @param F3\FLOW3\Object\ObjectFactoryInterface $objectFactory The object factory
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function injectObjectFactory(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
+	public function injectObjectFactory(\F3\FLOW3\Object\ObjectFactoryInterface $objectFactory) {
 		$this->objectFactory = $objectFactory;
 	}
 
 	/**
 	 * Inject the object manager
 	 *
-	 * @param F3\FLOW3\Object\ManagerInterface $objectManager The object manager
+	 * @param F3\FLOW3\Object\ObjectManagerInterface $objectManager The object manager
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function injectObjectManager(\F3\FLOW3\Object\ManagerInterface $objectManager) {
+	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
 	}
 
 	/**
 	 * Inject the authentication manager
 	 *
-	 * @param F3\FLOW3\Security\Authentication\ManagerInterface $authenticationManager The authentication manager
+	 * @param F3\FLOW3\Security\Authentication\AuthenticationManagerInterface $authenticationManager The authentication manager
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function injectAuthenticationManager(\F3\FLOW3\Security\Authentication\ManagerInterface $authenticationManager) {
+	public function injectAuthenticationManager(\F3\FLOW3\Security\Authentication\AuthenticationManagerInterface $authenticationManager) {
 		$this->authenticationManager = $authenticationManager;
 	}
 
@@ -100,7 +100,7 @@ class ContextHolderSession implements \F3\FLOW3\Security\ContextHolderInterface 
 	 * Returns the current \F3\FLOW3\Security\Context.
 	 *
 	 * @return F3\FLOW3\Security\Context The current security context
-	 * @throws F3\FLOW3\Security\Exception\NoContextAvailable if no context is available (i.e. initializeContext() has not been called)
+	 * @throws F3\FLOW3\Security\Exception\NoContextAvailableException if no context is available (i.e. initializeContext() has not been called)
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
@@ -108,7 +108,7 @@ class ContextHolderSession implements \F3\FLOW3\Security\ContextHolderInterface 
 		if ($this->context instanceof \F3\FLOW3\Security\Context) {
 			return $this->context;
 		} else {
-			throw new \F3\FLOW3\Security\Exception\NoContextAvailable('No context found in session, did you call initializeContext()?', 1225800610);
+			throw new \F3\FLOW3\Security\Exception\NoContextAvailableException('No context found in session, did you call initializeContext()?', 1225800610);
 		}
 	}
 

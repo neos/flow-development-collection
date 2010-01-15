@@ -109,7 +109,7 @@ class ArgumentsTest extends \F3\Testing\BaseTestCase {
 		try {
 			$arguments->getArgument('someArgument');
 			$this->fail('getArgument() did not throw an exception although the specified argument does not exist.');
-		} catch (\F3\FLOW3\MVC\Exception\NoSuchArgument $exception) {
+		} catch (\F3\FLOW3\MVC\Exception\NoSuchArgumentException $exception) {
 		}
 	}
 

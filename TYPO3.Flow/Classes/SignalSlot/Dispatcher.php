@@ -34,7 +34,7 @@ namespace F3\FLOW3\SignalSlot;
 class Dispatcher {
 
 	/**
-	 * @var \F3\FLOW3\Object\ManagerInterface
+	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
@@ -54,11 +54,11 @@ class Dispatcher {
 	/**
 	 * Injects the object manager
 	 *
-	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager
+	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectObjectManager(\F3\FLOW3\Object\ManagerInterface $objectManager) {
+	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
 	}
 
@@ -115,7 +115,7 @@ class Dispatcher {
 	 * @param string $signalMethodName Method name of the signal
 	 * @param array $signalArguments arguments passed to the signal method
 	 * @return void
-	 * @throws \F3\FLOW3\SignalSlot\Exception\InvalidSlot if the slot is not valid
+	 * @throws \F3\FLOW3\SignalSlot\Exception\InvalidSlotException if the slot is not valid
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
@@ -127,7 +127,7 @@ class Dispatcher {
 				$object = $slotInformation['object'];
 			} else {
 				if (!$this->objectManager->isObjectRegistered($slotInformation['class'])) {
-					throw new \F3\FLOW3\SignalSlot\Exception\InvalidSlot('The given class "' . $slotInformation['class'] . '" is not a registered object.', 1245673367);
+					throw new \F3\FLOW3\SignalSlot\Exception\InvalidSlotException('The given class "' . $slotInformation['class'] . '" is not a registered object.', 1245673367);
 				}
 				$object = $this->objectManager->getObject($slotInformation['class']);
 			}
@@ -135,7 +135,7 @@ class Dispatcher {
 			if ($slotInformation['omitSignalInformation'] !== TRUE) array_unshift($slotArguments, $signalClassName . '::' . $signalMethodName);
 			$this->systemLogger->log(sprintf('  to slot %s::%s.', get_class($object), $slotInformation['method']), LOG_DEBUG);
 			if (!method_exists($object, $slotInformation['method'])) {
-				throw new \F3\FLOW3\SignalSlot\Exception\InvalidSlot('The slot method ' . get_class($object) . '->' . $slotInformation['method'] . '() does not exist.', 1245673368);
+				throw new \F3\FLOW3\SignalSlot\Exception\InvalidSlotException('The slot method ' . get_class($object) . '->' . $slotInformation['method'] . '() does not exist.', 1245673368);
 			}
 			call_user_func_array(array($object, $slotInformation['method']), $slotArguments);
 		}

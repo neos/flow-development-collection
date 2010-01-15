@@ -40,7 +40,7 @@ namespace F3\FLOW3\Resource\Streams;
 class StreamWrapperAdapter {
 
 	/**
-	 * @var \F3\FLOW3\Object\FactoryInterface
+	 * @var \F3\FLOW3\Object\ObjectFactoryInterface
 	 */
 	static protected $objectFactory;
 
@@ -62,11 +62,11 @@ class StreamWrapperAdapter {
 	/**
 	 * Set the object factory.
 	 *
-	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory
+	 * @param \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	static public function setObjectFactory(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
+	static public function setObjectFactory(\F3\FLOW3\Object\ObjectFactoryInterface $objectFactory) {
 		self::$objectFactory = $objectFactory;
 	}
 

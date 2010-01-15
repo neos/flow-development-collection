@@ -146,7 +146,7 @@ class JoinPoint implements \F3\FLOW3\AOP\JoinPointInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getMethodArgument($argumentName) {
-		if (!array_key_exists($argumentName, $this->methodArguments)) throw new \F3\FLOW3\AOP\Exception\InvalidArgument('The argument "' . $argumentName . '" does not exist in method ' . $this->className . '->' . $this->methodName, 1172750905);
+		if (!array_key_exists($argumentName, $this->methodArguments)) throw new \F3\FLOW3\AOP\Exception\InvalidArgumentException('The argument "' . $argumentName . '" does not exist in method ' . $this->className . '->' . $this->methodName, 1172750905);
 		return $this->methodArguments[$argumentName];
 	}
 

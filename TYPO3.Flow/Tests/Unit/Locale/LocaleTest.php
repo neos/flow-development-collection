@@ -38,19 +38,19 @@ class LocaleTest extends \F3\Testing\BaseTestCase {
 		try {
 			new \F3\FLOW3\Locale\Locale('');
 			$this->fail('Empty string');
-		} catch(\F3\FLOW3\Locale\Exception\InvalidLocaleIdentifier $exception) {
+		} catch(\F3\FLOW3\Locale\Exception\InvalidLocaleIdentifierException $exception) {
 		}
 
 		try {
 			new \F3\FLOW3\Locale\Locale('E');
 			$this->fail('Single letter');
-		} catch(\F3\FLOW3\Locale\Exception\InvalidLocaleIdentifier $exception) {
+		} catch(\F3\FLOW3\Locale\Exception\InvalidLocaleIdentifierException $exception) {
 		}
 
 		try {
 			new \F3\FLOW3\Locale\Locale('deDE');
 			$this->fail('No underscore');
-		} catch(\F3\FLOW3\Locale\Exception\InvalidLocaleIdentifier $exception) {
+		} catch(\F3\FLOW3\Locale\Exception\InvalidLocaleIdentifierException $exception) {
 		}
 	}
 

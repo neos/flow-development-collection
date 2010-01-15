@@ -34,21 +34,21 @@ class PackageTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \F3\FLOW3\Package\Exception\InvalidPackagePath
+	 * @expectedException \F3\FLOW3\Package\Exception\InvalidPackagePathException
 	 * @author  Robert Lemke <robert@typo3.org>
 	 */
 	public function constructThrowsPackageDoesNotExistException() {
-		$mockPackageManager = $this->getMock('F3\FLOW3\Package\Manager', array(), array(), '', FALSE);
+		$mockPackageManager = $this->getMock('F3\FLOW3\Package\PackageManager', array(), array(), '', FALSE);
 		new \F3\FLOW3\Package\Package('TestPackage', './ThisPackageSurelyDoesNotExist', $mockPackageManager);
 	}
 
 	/**
 	 * @test
-	 * @expectedException \F3\FLOW3\Package\Exception\InvalidPackageKey
+	 * @expectedException \F3\FLOW3\Package\Exception\InvalidPackageKeyException
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function constructRejectsInvalidPackageKeys() {
-		$mockPackageManager = $this->getMock('F3\FLOW3\Package\Manager', array(), array(), '', FALSE);
+		$mockPackageManager = $this->getMock('F3\FLOW3\Package\PackageManager', array(), array(), '', FALSE);
 		new \F3\FLOW3\Package\Package('Invalid*PackageKey', './TestPackage/', $mockPackageManager);
 	}
 
@@ -109,7 +109,7 @@ class PackageTest extends \F3\Testing\BaseTestCase {
 
 		$package = new \F3\FLOW3\Package\Package('FLOW3', $packagePath);
 
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\ObjectFactoryInterface');
 		$mockObjectFactory->expects($this->once())
 			->method('create')
 			->with('F3\FLOW3\Package\Documentation', $package, 'Manual', $packagePath . 'Documentation/Manual/')

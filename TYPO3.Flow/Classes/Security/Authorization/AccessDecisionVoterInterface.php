@@ -42,7 +42,7 @@ interface AccessDecisionVoterInterface {
 	 * @param \F3\FLOW3\Security\Context $securityContext The current securit context
 	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The joinpoint to vote for
 	 * @return integer One of: VOTE_GRANT, VOTE_ABSTAIN, VOTE_DENY
-	 * @throws \F3\FLOW3\Security\Exception\AccessDenied If access is not granted
+	 * @throws \F3\FLOW3\Security\Exception\AccessDeniedException If access is not granted
 	 */
 	public function voteForJoinPoint(\F3\FLOW3\Security\Context $securityContext, \F3\FLOW3\AOP\JoinPointInterface $joinPoint);
 
@@ -52,7 +52,7 @@ interface AccessDecisionVoterInterface {
 	 * @param \F3\FLOW3\Security\Context $securityContext The current securit context
 	 * @param string $resource The resource to vote for
 	 * @return integer One of: VOTE_GRANT, VOTE_ABSTAIN, VOTE_DENY
-	 * @throws \F3\FLOW3\Security\Exception\AccessDenied If access is not granted
+	 * @throws \F3\FLOW3\Security\Exception\AccessDeniedException If access is not granted
 	 */
 	public function voteForResource(\F3\FLOW3\Security\Context $securityContext, $resource);
 }

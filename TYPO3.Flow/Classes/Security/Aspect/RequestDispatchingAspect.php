@@ -119,7 +119,7 @@ class RequestDispatchingAspect {
 		$request = $joinPoint->getMethodArgument('request');
 		$response = $joinPoint->getMethodArgument('response');
 
-		if (!$exception instanceof \F3\FLOW3\Security\Exception\AuthenticationRequired) throw $exception;
+		if (!$exception instanceof \F3\FLOW3\Security\Exception\AuthenticationRequiredException) throw $exception;
 
 		$entryPointFound = FALSE;
 		foreach ($this->securityContextHolder->getContext()->getAuthenticationTokens() as $token) {

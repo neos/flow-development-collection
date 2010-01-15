@@ -149,7 +149,7 @@ class ConfigurationBuilderTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \F3\FLOW3\Object\Exception\InvalidObjectConfiguration
+	 * @expectedException \F3\FLOW3\Object\Exception\InvalidObjectConfigurationException
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function invalidOptionResultsInException() {

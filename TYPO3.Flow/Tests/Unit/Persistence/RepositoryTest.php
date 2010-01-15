@@ -185,7 +185,7 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 		$fakeUUID = '123-456';
 		$object = new \stdClass();
 
-		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\ManagerInterface');
+		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\PersistenceManagerInterface');
 		$mockPersistenceManager->expects($this->once())->method('getObjectByIdentifier')->with($fakeUUID)->will($this->returnValue($object));
 
 		$repository = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Repository'), array('createQuery'));
@@ -203,7 +203,7 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 		$fakeUUID = '123-456';
 		$object = new \stdClass();
 
-		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\ManagerInterface');
+		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\PersistenceManagerInterface');
 		$mockPersistenceManager->expects($this->once())->method('getObjectByIdentifier')->with($fakeUUID)->will($this->returnValue($object));
 
 		$repository = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Repository'), array('createQuery'));
@@ -233,7 +233,7 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 		$mockPersistenceSession->expects($this->once())->method('unregisterReconstitutedObject')->with($existingObject);
 		$mockPersistenceSession->expects($this->once())->method('registerReconstitutedObject')->with($newObject);
 
-		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\ManagerInterface');
+		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\PersistenceManagerInterface');
 		$mockPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($existingObject)->will($this->returnValue('86ea8820-19f6-11de-8c30-0800200c9a66'));
 		$mockPersistenceManager->expects($this->once())->method('getBackend')->will($this->returnValue($mockPersistenceBackend));
 		$mockPersistenceManager->expects($this->once())->method('getSession')->will($this->returnValue($mockPersistenceSession));
@@ -267,7 +267,7 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 		$mockPersistenceSession->expects($this->once())->method('unregisterReconstitutedObject')->with($existingObject);
 		$mockPersistenceSession->expects($this->once())->method('registerReconstitutedObject')->with($newObject);
 
-		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\ManagerInterface');
+		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\PersistenceManagerInterface');
 		$mockPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($existingObject)->will($this->returnValue('86ea8820-19f6-11de-8c30-0800200c9a66'));
 		$mockPersistenceManager->expects($this->once())->method('getBackend')->will($this->returnValue($mockPersistenceBackend));
 		$mockPersistenceManager->expects($this->once())->method('getSession')->will($this->returnValue($mockPersistenceSession));
@@ -300,7 +300,7 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 
 		$mockPersistenceSession = $this->getMock('F3\FLOW3\Persistence\Session', array(), array(), '', FALSE);
 
-		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\ManagerInterface');
+		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\PersistenceManagerInterface');
 		$mockPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($existingObject)->will($this->returnValue(NULL));
 		$mockPersistenceManager->expects($this->once())->method('getSession')->will($this->returnValue($mockPersistenceSession));
 
@@ -316,7 +316,7 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException F3\FLOW3\Persistence\Exception\IllegalObjectType
+	 * @expectedException F3\FLOW3\Persistence\Exception\IllegalObjectTypeException
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function replaceChecksObjectType() {
@@ -335,7 +335,7 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 		$modifiedObject = $this->getMock('FooBar' . uniqid(), array('FLOW3_Persistence_isClone'));
 		$modifiedObject->expects($this->once())->method('FLOW3_Persistence_isClone')->will($this->returnValue(TRUE));
 
-		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\ManagerInterface');
+		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\PersistenceManagerInterface');
 		$mockPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($modifiedObject)->will($this->returnValue('86ea8820-19f6-11de-8c30-0800200c9a66'));
 		$mockPersistenceManager->expects($this->once())->method('getObjectByIdentifier')->with('86ea8820-19f6-11de-8c30-0800200c9a66')->will($this->returnValue($existingObject));
 
@@ -349,7 +349,7 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \F3\FLOW3\Persistence\Exception\IllegalObjectType
+	 * @expectedException \F3\FLOW3\Persistence\Exception\IllegalObjectTypeException
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function updateRejectsNonClonedObjects() {
@@ -364,7 +364,7 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \F3\FLOW3\Persistence\Exception\IllegalObjectType
+	 * @expectedException \F3\FLOW3\Persistence\Exception\IllegalObjectTypeException
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function updateRejectsObjectsOfWrongType() {
@@ -453,7 +453,7 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException F3\FLOW3\Persistence\Exception\IllegalObjectType
+	 * @expectedException F3\FLOW3\Persistence\Exception\IllegalObjectTypeException
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function addChecksObjectType() {
@@ -465,7 +465,7 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException F3\FLOW3\Persistence\Exception\IllegalObjectType
+	 * @expectedException F3\FLOW3\Persistence\Exception\IllegalObjectTypeException
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function removeChecksObjectType() {

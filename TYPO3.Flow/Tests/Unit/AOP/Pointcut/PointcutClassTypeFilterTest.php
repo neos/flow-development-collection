@@ -35,7 +35,7 @@ class PointcutClassTypeFilterTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function matchesTellsIfTheOneOfTheInterfaceNamesTheClassImplementsMatchesTheGivenRegularExpression() {
-		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service', array('getInterfaceNamesImplementedByClass'), array(), '', FALSE, TRUE);
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService', array('getInterfaceNamesImplementedByClass'), array(), '', FALSE, TRUE);
 		$mockReflectionService->expects($this->any())->method('getInterfaceNamesImplementedByClass')->with('Foo')->will($this->returnValue(array('Bar', 'Baz', 'Fu', 'Uta')));
 
 		$filter = new \F3\FLOW3\AOP\Pointcut\PointcutClassTypeFilter('.*ar');

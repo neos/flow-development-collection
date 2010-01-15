@@ -47,34 +47,34 @@ class PackageResourceStreamWrapper implements \F3\FLOW3\Resource\Streams\StreamW
 	protected $uri;
 
 	/**
-	 * @var \F3\FLOW3\Package\ManagerInterface
+	 * @var \F3\FLOW3\Package\PackageManagerInterface
 	 */
 	protected $packageManager;
 
 	/**
-	 * @var \F3\FLOW3\Object\FactoryInterface
+	 * @var \F3\FLOW3\Object\ObjectFactoryInterface
 	 */
 	protected $objectFactory;
 
 	/**
 	 * Injects a package manager.
 	 *
-	 * @param \F3\FLOW3\Package\ManagerInterface $packageManager
+	 * @param \F3\FLOW3\Package\PackageManagerInterface $packageManager
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectPackageManager(\F3\FLOW3\Package\ManagerInterface $packageManager) {
+	public function injectPackageManager(\F3\FLOW3\Package\PackageManagerInterface $packageManager) {
 		$this->packageManager = $packageManager;
 	}
 
 	/**
 	 * Injects an object factory.
 	 *
-	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory
+	 * @param \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectObjectFactory(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
+	public function injectObjectFactory(\F3\FLOW3\Object\ObjectFactoryInterface $objectFactory) {
 		$this->objectFactory = $objectFactory;
 	}
 

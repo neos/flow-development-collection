@@ -35,12 +35,12 @@ class RequestTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function theDefaultPatternForBuildingTheControllerObjectNameIsPackageKeyControllerControllerNameController() {
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface');
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
 		$mockObjectManager->expects($this->once())->method('getCaseSensitiveObjectName')
 			->with($this->equalTo('f3\testpackage\controller\foocontroller'))
 			->will($this->returnValue('F3\TestPackage\Controller\FooController'));
 
-		$mockPackageManager = $this->getMock('F3\FLOW3\Package\ManagerInterface');
+		$mockPackageManager = $this->getMock('F3\FLOW3\Package\PackageManagerInterface');
 		$mockPackageManager->expects($this->once())->method('getCaseSensitivePackageKey')
 			->will($this->returnValue('TestPackage'));
 
@@ -57,12 +57,12 @@ class RequestTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function lowerCasePackageKeysAndObjectNamesAreConvertedToTheRealObjectName() {
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface');
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
 		$mockObjectManager->expects($this->once())->method('getCaseSensitiveObjectName')
 			->with($this->equalTo('f3\testpackage\bar\baz\controller\foocontroller'))
 			->will($this->returnValue('F3\TestPackage\Bar\Baz\Controller\FooController'));
 
-		$mockPackageManager = $this->getMock('F3\FLOW3\Package\ManagerInterface');
+		$mockPackageManager = $this->getMock('F3\FLOW3\Package\PackageManagerInterface');
 		$mockPackageManager->expects($this->once())->method('getCaseSensitivePackageKey')
 			->with($this->equalTo('testpackage'))
 			->will($this->returnValue('TestPackage'));
@@ -83,12 +83,12 @@ class RequestTest extends \F3\Testing\BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getControllerObjectNameReturnsAnEmptyStringIfTheResolvedControllerDoesNotExist() {
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface');
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
 		$mockObjectManager->expects($this->once())->method('getCaseSensitiveObjectName')
 			->with($this->equalTo('f3\testpackage\controller\foocontroller'))
 			->will($this->returnValue(FALSE));
 
-		$mockPackageManager = $this->getMock('F3\FLOW3\Package\ManagerInterface');
+		$mockPackageManager = $this->getMock('F3\FLOW3\Package\PackageManagerInterface');
 		$mockPackageManager->expects($this->once())->method('getCaseSensitivePackageKey')
 			->with($this->equalTo('testpackage'))
 			->will($this->returnValue('TestPackage'));
@@ -154,7 +154,7 @@ class RequestTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function thePackageKeyOfTheControllerCanBeSetAndRetrieved() {
-		$mockPackageManager = $this->getMock('F3\FLOW3\Package\ManagerInterface');
+		$mockPackageManager = $this->getMock('F3\FLOW3\Package\PackageManagerInterface');
 		$mockPackageManager->expects($this->once())->method('getCaseSensitivePackageKey')
 			->will($this->returnValue('TestPackage'));
 
@@ -170,7 +170,7 @@ class RequestTest extends \F3\Testing\BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function invalidPackageKeysAreRejected() {
-		$mockPackageManager = $this->getMock('F3\FLOW3\Package\ManagerInterface');
+		$mockPackageManager = $this->getMock('F3\FLOW3\Package\PackageManagerInterface');
 		$mockPackageManager->expects($this->once())->method('getCaseSensitivePackageKey')
 			->will($this->returnValue(FALSE));
 

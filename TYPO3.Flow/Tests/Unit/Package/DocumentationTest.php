@@ -71,7 +71,7 @@ class DocumentationTest extends \F3\Testing\BaseTestCase {
 		
 		$mockDocumentationFormat = $this->getMock('F3\FLOW3\Package\Documentation\Format', array('dummy'), array(), '', FALSE);
 		
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\ObjectFactoryInterface');
 		$mockObjectFactory->expects($this->once())
 			->method('create')
 			->with('F3\FLOW3\Package\Documentation\Format', 'DocBook', $documentationPath . 'DocBook/')

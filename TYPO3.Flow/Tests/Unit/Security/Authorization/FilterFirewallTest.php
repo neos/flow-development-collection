@@ -69,7 +69,7 @@ class FilterFirewallTest extends \F3\Testing\BaseTestCase {
 			}
 		};
 
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface', array(), array(), '', FALSE);
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
 		$mockObjectManager->expects($this->any())->method('getObject')->will($this->returnCallback($getObjectCallback));
 		$mockPatternResolver = $this->getMock('F3\FLOW3\Security\RequestPatternResolver', array(), array(), '', FALSE);
 		$mockPatternResolver->expects($this->any())->method('resolveRequestPatternClass')->will($this->returnCallback($resolveRequestPatternClassCallback));
@@ -125,7 +125,7 @@ class FilterFirewallTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @category unit
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @expectedException \F3\FLOW3\Security\Exception\AccessDenied
+	 * @expectedException \F3\FLOW3\Security\Exception\AccessDeniedException
 	 */
 	public function ifRejectAllIsSetAndNoFilterExplicitlyAllowsTheRequestAPermissionDeniedExceptionIsThrown() {
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request');

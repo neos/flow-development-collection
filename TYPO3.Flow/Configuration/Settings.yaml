@@ -165,12 +165,12 @@ FLOW3:
       # If you define a request pattern, the provider will only be called if the pattern
       # matches the current request. If the objects are in the namespace
       # "\F3\FLOW3\Security" it is sufficient to specify the last name of the classname,
-      # e.g. UsernamePassword
+      # e.g. PersistedUsernamePasswordProvider
       # Note: Authentication will be performed in the given order of the providers.
       # So make sure, that the primary authentication method is the first array entry.
       providers:
         DefaultProvider:
-          providerClass: UsernamePasswordCR
+          providerClass: PersistedUsernamePasswordProvider
 
       # If set to TRUE, authentication will only succeed, if all active tokens (authentication mechanisms)
       # can be authenticated.
@@ -178,7 +178,7 @@ FLOW3:
 
     authorization:
       # An array of access decision voters that should vote when access decisions are made
-      accessDecisionVoters: [F3\FLOW3\Security\Authorization\Voter\ACL]
+      accessDecisionVoters: [F3\FLOW3\Security\Authorization\Voter\Acl]
 
       # If this is set to TRUE access will be granted even if all voters abstain
       allowAccessIfAllVotersAbstain: FALSE

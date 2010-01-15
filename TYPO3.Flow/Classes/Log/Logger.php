@@ -65,12 +65,12 @@ class Logger implements \F3\FLOW3\Log\SystemLoggerInterface {
 	 *
 	 * @param \F3\FLOW3\Log\Backend\BackendInterface $backend The backend to remove
 	 * @return void
-	 * @throws \F3\FLOW3\Log\Exception\NoSuchBackend if the given backend is unknown to this logger
+	 * @throws \F3\FLOW3\Log\Exception\NoSuchBackendException if the given backend is unknown to this logger
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function removeBackend(\F3\FLOW3\Log\Backend\BackendInterface $backend) {
-		if (!$this->backends->contains($backend)) throw new \F3\FLOW3\Log\Exception\NoSuchBackend('Backend is unknown to this logger.', 1229430381);
+		if (!$this->backends->contains($backend)) throw new \F3\FLOW3\Log\Exception\NoSuchBackendException('Backend is unknown to this logger.', 1229430381);
 		$backend->close();
 		$this->backends->detach($backend);
 	}

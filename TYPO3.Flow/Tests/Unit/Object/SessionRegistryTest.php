@@ -33,7 +33,7 @@ class SessionRegistryTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @expectedException F3\FLOW3\Object\Exception\InvalidObject
+	 * @expectedException F3\FLOW3\Object\Exception\InvalidObjectException
 	 */
 	public function putObjectThrowsAnExceptionOnInvalidObjects() {
 		$sessionRegistry = $this->getMock('F3\FLOW3\Object\SessionRegistry', array('dummy'), array(), '', FALSE);
@@ -43,7 +43,7 @@ class SessionRegistryTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @expectedException F3\FLOW3\Object\Exception\InvalidObjectName
+	 * @expectedException F3\FLOW3\Object\Exception\InvalidObjectNameException
 	 */
 	public function putObjectThrowsAnExceptionOnInvalidObjectName() {
 		$className = uniqid('DummyClass');
@@ -147,7 +147,7 @@ class SessionRegistryTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @expectedException F3\FLOW3\Object\Exception\InvalidObjectName
+	 * @expectedException F3\FLOW3\Object\Exception\InvalidObjectNameException
 	 */
 	public function removeObjectThrowsAnExceptionIfTheObjectDoesntExist() {
 		$sessionRegistry = $this->getMock('F3\FLOW3\Object\SessionRegistry', array('dummy'), array(), '', FALSE);
@@ -174,7 +174,7 @@ class SessionRegistryTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @expectedException F3\FLOW3\Object\Exception\InvalidObjectName
+	 * @expectedException F3\FLOW3\Object\Exception\InvalidObjectNameException
 	 */
 	public function getObjectThrowsAnExceptionIfTheObjectDoesntExist() {
 		$objectName = uniqid('DummyClass');

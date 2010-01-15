@@ -120,7 +120,7 @@ class GenericObjectValidatorTest extends \F3\Testing\BaseTestCase {
 		$mockPropertyError = $this->getMock('F3\FLOW3\Validation\PropertyError', array('addErrors'), array('foo'));
 		$mockPropertyError->expects($this->once())->method('addErrors')->with(array('error'));
 
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\ObjectFactoryInterface');
 		$mockObjectFactory->expects($this->once())->method('create')->with('F3\FLOW3\Validation\PropertyError', 'foo')->will($this->returnValue($mockPropertyError));
 
 		$validator = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Validation\Validator\GenericObjectValidator'), array('dummy'), array(), '', FALSE);

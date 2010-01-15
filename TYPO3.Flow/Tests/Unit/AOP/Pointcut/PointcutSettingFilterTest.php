@@ -36,10 +36,10 @@ class PointcutSettingFilterTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function filterMatchesOnConfigurationSettingSetToTrue() {
-		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array(), array(), '', FALSE);
+		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\ConfigurationManager', array(), array(), '', FALSE);
 
 		$settings['foo']['bar']['baz']['value'] = TRUE;
-		$mockConfigurationManager->expects($this->atLeastOnce())->method('getConfiguration')->with(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_SETTINGS, 'package')->will($this->returnValue($settings));
+		$mockConfigurationManager->expects($this->atLeastOnce())->method('getConfiguration')->with(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'package')->will($this->returnValue($settings));
 
 		$filter = new \F3\FLOW3\AOP\Pointcut\PointcutSettingFilter('package.foo.bar.baz.value');
 		$filter->injectConfigurationManager($mockConfigurationManager);
@@ -53,10 +53,10 @@ class PointcutSettingFilterTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function filterMatchesOnConfigurationSettingSetToFalse() {
-		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array(), array(), '', FALSE);
+		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\ConfigurationManager', array(), array(), '', FALSE);
 
 		$settings['foo']['bar']['baz']['value'] = FALSE;
-		$mockConfigurationManager->expects($this->atLeastOnce())->method('getConfiguration')->with(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_SETTINGS, 'package')->will($this->returnValue($settings));
+		$mockConfigurationManager->expects($this->atLeastOnce())->method('getConfiguration')->with(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'package')->will($this->returnValue($settings));
 
 		$filter = new \F3\FLOW3\AOP\Pointcut\PointcutSettingFilter('package.foo.bar.baz.value');
 		$filter->injectConfigurationManager($mockConfigurationManager);
@@ -68,13 +68,13 @@ class PointcutSettingFilterTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * author
-	 * @expectedException F3\FLOW3\AOP\Exception\InvalidPointcutExpression
+	 * @expectedException F3\FLOW3\AOP\Exception\InvalidPointcutExpressionException
 	 */
 	public function filterThrowsAnExceptionForNotExistingConfigurationSetting() {
-		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array(), array(), '', FALSE);
+		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\ConfigurationManager', array(), array(), '', FALSE);
 
 		$settings['foo']['bar']['baz']['value'] = TRUE;
-		$mockConfigurationManager->expects($this->atLeastOnce())->method('getConfiguration')->with(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_SETTINGS, 'package')->will($this->returnValue($settings));
+		$mockConfigurationManager->expects($this->atLeastOnce())->method('getConfiguration')->with(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'package')->will($this->returnValue($settings));
 
 		$filter = new \F3\FLOW3\AOP\Pointcut\PointcutSettingFilter('package.foo.foozy.baz.value');
 		$filter->injectConfigurationManager($mockConfigurationManager);
@@ -87,10 +87,10 @@ class PointcutSettingFilterTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function filterDoesNotMatchOnConfigurationSettingThatIsNotBoolean() {
-		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array(), array(), '', FALSE);
+		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\ConfigurationManager', array(), array(), '', FALSE);
 
 		$settings['foo']['bar']['baz']['value'] = 'not boolean';
-		$mockConfigurationManager->expects($this->atLeastOnce())->method('getConfiguration')->with(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_SETTINGS, 'package')->will($this->returnValue($settings));
+		$mockConfigurationManager->expects($this->atLeastOnce())->method('getConfiguration')->with(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'package')->will($this->returnValue($settings));
 
 		$filter = new \F3\FLOW3\AOP\Pointcut\PointcutSettingFilter('package.foo.bar.baz.value');
 		$filter->injectConfigurationManager($mockConfigurationManager);
@@ -104,10 +104,10 @@ class PointcutSettingFilterTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function filterCanHandleMissingSpacesInTheConfigurationSettingPath() {
-		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array(), array(), '', FALSE);
+		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\ConfigurationManager', array(), array(), '', FALSE);
 
 		$settings['foo']['bar']['baz']['value'] = TRUE;
-		$mockConfigurationManager->expects($this->atLeastOnce())->method('getConfiguration')->with(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_SETTINGS, 'package')->will($this->returnValue($settings));
+		$mockConfigurationManager->expects($this->atLeastOnce())->method('getConfiguration')->with(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'package')->will($this->returnValue($settings));
 
 		$filter = new \F3\FLOW3\AOP\Pointcut\PointcutSettingFilter('package.foo.bar.baz.value');
 		$filter->injectConfigurationManager($mockConfigurationManager);
@@ -121,10 +121,10 @@ class PointcutSettingFilterTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function filterMatchesOnAConditionSetInSingleQuotes() {
-		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array(), array(), '', FALSE);
+		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\ConfigurationManager', array(), array(), '', FALSE);
 
 		$settings['foo']['bar']['baz']['value'] = 'option value';
-		$mockConfigurationManager->expects($this->atLeastOnce())->method('getConfiguration')->with(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_SETTINGS, 'package')->will($this->returnValue($settings));
+		$mockConfigurationManager->expects($this->atLeastOnce())->method('getConfiguration')->with(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'package')->will($this->returnValue($settings));
 
 		$filter = new \F3\FLOW3\AOP\Pointcut\PointcutSettingFilter('package.foo.bar.baz.value = \'option value\'');
 		$filter->injectConfigurationManager($mockConfigurationManager);
@@ -138,10 +138,10 @@ class PointcutSettingFilterTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function filterMatchesOnAConditionSetInDoubleQuotes() {
-		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array(), array(), '', FALSE);
+		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\ConfigurationManager', array(), array(), '', FALSE);
 
 		$settings['foo']['bar']['baz']['value'] = 'option value';
-		$mockConfigurationManager->expects($this->atLeastOnce())->method('getConfiguration')->with(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_SETTINGS, 'package')->will($this->returnValue($settings));
+		$mockConfigurationManager->expects($this->atLeastOnce())->method('getConfiguration')->with(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'package')->will($this->returnValue($settings));
 
 		$filter = new \F3\FLOW3\AOP\Pointcut\PointcutSettingFilter('package.foo.bar.baz.value = "option value"');
 		$filter->injectConfigurationManager($mockConfigurationManager);
@@ -155,10 +155,10 @@ class PointcutSettingFilterTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function filterDoesNotMatchOnAFalseCondition() {
-		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array(), array(), '', FALSE);
+		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\ConfigurationManager', array(), array(), '', FALSE);
 
 		$settings['foo']['bar']['baz']['value'] = 'some other value';
-		$mockConfigurationManager->expects($this->atLeastOnce())->method('getConfiguration')->with(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_SETTINGS, 'package')->will($this->returnValue($settings));
+		$mockConfigurationManager->expects($this->atLeastOnce())->method('getConfiguration')->with(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'package')->will($this->returnValue($settings));
 
 		$filter = new \F3\FLOW3\AOP\Pointcut\PointcutSettingFilter('package.foo.bar.baz.value = \'some value\'');
 		$filter->injectConfigurationManager($mockConfigurationManager);
@@ -169,10 +169,10 @@ class PointcutSettingFilterTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @expectedException F3\FLOW3\AOP\Exception\InvalidPointcutExpression
+	 * @expectedException F3\FLOW3\AOP\Exception\InvalidPointcutExpressionException
 	 */
 	public function filterThrowsAnExceptionForAnIncorectCondition() {
-		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array(), array(), '', FALSE);
+		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\ConfigurationManager', array(), array(), '', FALSE);
 
 		$settings['foo']['bar']['baz']['value'] = 'option value';
 

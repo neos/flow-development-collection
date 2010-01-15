@@ -35,18 +35,18 @@ namespace F3\FLOW3\Object;
 class ClassFileManipulator {
 
 	/**
-	 * @var \F3\FLOW3\Object\ManagerInterface
+	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
 	 * Constructs the class file manipulator
 	 *
-	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager The object manager
+	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager The object manager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(\F3\FLOW3\Object\ManagerInterface $objectManager) {
+	public function __construct(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
 	}
 

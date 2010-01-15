@@ -34,7 +34,7 @@ class PointcutMethodNameFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterI
 	const PATTERN_MATCHVISIBILITYMODIFIER = '/(|public|protected)/';
 
 	/**
-	 * @var F3\FLOW3\Reflection\Service
+	 * @var F3\FLOW3\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
@@ -58,18 +58,18 @@ class PointcutMethodNameFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterI
 	 */
 	public function __construct($methodNameFilterExpression, $methodVisibility = NULL) {
 		$this->methodNameFilterExpression = $methodNameFilterExpression;
-		if (preg_match(self::PATTERN_MATCHVISIBILITYMODIFIER, $methodVisibility) !== 1) throw new \F3\FLOW3\AOP\Exception\InvalidPointcutExpression('Invalid method visibility modifier.', 1172494794);
+		if (preg_match(self::PATTERN_MATCHVISIBILITYMODIFIER, $methodVisibility) !== 1) throw new \F3\FLOW3\AOP\Exception\InvalidPointcutExpressionException('Invalid method visibility modifier.', 1172494794);
 		$this->methodVisibility = $methodVisibility;
 	}
 
 	/**
 	 * Injects the reflection service
 	 *
-	 * @param F3\FLOW3\Reflection\Service $reflectionService The reflection service
+	 * @param F3\FLOW3\Reflection\ReflectionService $reflectionService The reflection service
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectReflectionService(\F3\FLOW3\Reflection\Service $reflectionService) {
+	public function injectReflectionService(\F3\FLOW3\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
 	}
 

@@ -66,11 +66,11 @@ class PointcutSettingFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInte
 	/**
 	 * Injects the configuration manager
 	 *
-	 * @param \F3\FLOW3\Configuration\Manager $configurationManager
+	 * @param \F3\FLOW3\Configuration\ConfigurationManager $configurationManager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectConfigurationManager(\F3\FLOW3\Configuration\Manager $configurationManager) {
+	public function injectConfigurationManager(\F3\FLOW3\Configuration\ConfigurationManager $configurationManager) {
 		$this->configurationManager = $configurationManager;
 	}
 
@@ -121,7 +121,7 @@ class PointcutSettingFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInte
 			} elseif (isset($matches['DoubleQuotedString']) && $matches['DoubleQuotedString'] !== '') {
 				$this->condition = $matches['DoubleQuotedString'];
 			} else {
-				throw new \F3\FLOW3\AOP\Exception\InvalidPointcutExpression('The given condition has a syntax error (Make sure to set quotes correctly). Got: "' . $settingComparisonExpression[1] . '"', 1230047529);
+				throw new \F3\FLOW3\AOP\Exception\InvalidPointcutExpressionException('The given condition has a syntax error (Make sure to set quotes correctly). Got: "' . $settingComparisonExpression[1] . '"', 1230047529);
 			}
 		}
 
@@ -129,9 +129,9 @@ class PointcutSettingFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInte
 
 		if (count($configurationKeys) > 0) {
 			$settingPackageKey = array_shift($configurationKeys);
-			$settingValue = $this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_SETTINGS, $settingPackageKey);
+			$settingValue = $this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, $settingPackageKey);
 			foreach ($configurationKeys as $currentKey) {
-				if (!isset($settingValue[$currentKey])) throw new \F3\FLOW3\AOP\Exception\InvalidPointcutExpression('The given configuration path in the pointcut designator "setting" did not exist. Got: "' . $settingComparisonExpression[0] . '"', 1230035614);
+				if (!isset($settingValue[$currentKey])) throw new \F3\FLOW3\AOP\Exception\InvalidPointcutExpressionException('The given configuration path in the pointcut designator "setting" did not exist. Got: "' . $settingComparisonExpression[0] . '"', 1230035614);
 				$settingValue = $settingValue[$currentKey];
 			}
 			$this->actualSettingValue = $settingValue;

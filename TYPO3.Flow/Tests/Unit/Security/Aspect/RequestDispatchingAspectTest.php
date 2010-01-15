@@ -64,7 +64,7 @@ class RequestDispatchingAspectTest extends \F3\Testing\BaseTestCase {
 	public function blockIllegalRequestsCallsTheFirewallWithTheGivenRequest() {
 		$request = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
 		$response = $this->getMock('F3\FLOW3\MVC\Web\Response', array(), array(), '', FALSE);
-		$exception = new \F3\FLOW3\Security\Exception\AuthenticationRequired();
+		$exception = new \F3\FLOW3\Security\Exception\AuthenticationRequiredException();
 
 		$getMethodArgumentCallback = function() use (&$request, &$response) {
 			$args = func_get_args();
@@ -94,7 +94,7 @@ class RequestDispatchingAspectTest extends \F3\Testing\BaseTestCase {
 	public function forwardAuthenticationRequiredExceptionsToAnAuthenticationEntryPointBasicallyWorks() {
 		$request = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
 		$response = $this->getMock('F3\FLOW3\MVC\Web\Response', array(), array(), '', FALSE);
-		$exception = new \F3\FLOW3\Security\Exception\AuthenticationRequired('AuthenticationRequired Exception! Bad...', 1237212410);
+		$exception = new \F3\FLOW3\Security\Exception\AuthenticationRequiredException('AuthenticationRequired Exception! Bad...', 1237212410);
 
 		$getMethodArgumentCallback = function() use (&$request, &$response) {
 			$args = func_get_args();
@@ -132,12 +132,12 @@ class RequestDispatchingAspectTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @expectedException \F3\FLOW3\Security\Exception\AuthenticationRequired
+	 * @expectedException \F3\FLOW3\Security\Exception\AuthenticationRequiredException
 	 */
 	public function forwardAuthenticationRequiredExceptionsToAnAuthenticationEntryPointThrowsTheOriginalExceptionIfNoEntryPointIsAvailable() {
 		$request = $request = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
 		$response = $this->getMock('F3\FLOW3\MVC\Web\Response', array(), array(), '', FALSE);
-		$exception = new \F3\FLOW3\Security\Exception\AuthenticationRequired('AuthenticationRequired Exception! Bad...', 1237212410);
+		$exception = new \F3\FLOW3\Security\Exception\AuthenticationRequiredException('AuthenticationRequired Exception! Bad...', 1237212410);
 
 		$getMethodArgumentCallback = function() use (&$request, &$response) {
 			$args = func_get_args();

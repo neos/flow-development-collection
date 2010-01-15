@@ -92,7 +92,7 @@ class PointcutFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 		if ($this->pointcut === NULL) {
 			$this->pointcut = $this->aopFramework->findPointcut($this->aspectClassName, $this->pointcutMethodName);
 		}
-		if ($this->pointcut === FALSE) throw new \F3\FLOW3\AOP\Exception\UnknownPointcut('No pointcut "' . $this->pointcutMethodName . '" found in aspect class "' . $this->aspectClassName . '" .', 1172223694);
+		if ($this->pointcut === FALSE) throw new \F3\FLOW3\AOP\Exception\UnknownPointcutException('No pointcut "' . $this->pointcutMethodName . '" found in aspect class "' . $this->aspectClassName . '" .', 1172223694);
 		return $this->pointcut->matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier);
 	}
 }

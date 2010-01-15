@@ -32,7 +32,7 @@ namespace F3\FLOW3\Security\Authentication\Token;
 class UsernamePassword implements \F3\FLOW3\Security\Authentication\TokenInterface {
 
 	/**
-	 * @var \F3\FLOW3\Object\FactoryInterface
+	 * @var \F3\FLOW3\Object\ObjectFactoryInterface
 	 */
 	protected $objectFactory;
 
@@ -78,11 +78,11 @@ class UsernamePassword implements \F3\FLOW3\Security\Authentication\TokenInterfa
 	/**
 	 * Injects the object factory
 	 *
-	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory The object factory
+	 * @param \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory The object factory
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectObjectFactory(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
+	public function injectObjectFactory(\F3\FLOW3\Object\ObjectFactoryInterface $objectFactory) {
 		$this->objectFactory = $objectFactory;
 	}
 
@@ -244,15 +244,15 @@ class UsernamePassword implements \F3\FLOW3\Security\Authentication\TokenInterfa
 	}
 
 	/**
-	 * Sets the authentication status. Usually called by the responsible \F3\FLOW3\Security\Authentication\ManagerInterface
+	 * Sets the authentication status. Usually called by the responsible \F3\FLOW3\Security\Authentication\AuthenticationManagerInterface
 	 *
 	 * @param integer $authenticationStatus One of NO_CREDENTIALS_GIVEN, WRONG_CREDENTIALS, AUTHENTICATION_SUCCESSFUL, AUTHENTICATION_NEEDED
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @throws F3\FLOW3\Security\Exception\InvalidAuthenticationStatus
+	 * @throws F3\FLOW3\Security\Exception\InvalidAuthenticationStatusException
 	 */
 	public function setAuthenticationStatus($authenticationStatus) {
-		if (!in_array($authenticationStatus, array(self::NO_CREDENTIALS_GIVEN, self::WRONG_CREDENTIALS, self::AUTHENTICATION_SUCCESSFUL, self::AUTHENTICATION_NEEDED))) throw new \F3\FLOW3\Security\Exception\InvalidAuthenticationStatus('Invalid authentication status.', 1237224453);
+		if (!in_array($authenticationStatus, array(self::NO_CREDENTIALS_GIVEN, self::WRONG_CREDENTIALS, self::AUTHENTICATION_SUCCESSFUL, self::AUTHENTICATION_NEEDED))) throw new \F3\FLOW3\Security\Exception\InvalidAuthenticationStatusException('Invalid authentication status.', 1237224453);
 
 		$this->authenticationStatus = $authenticationStatus;
 	}

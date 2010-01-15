@@ -40,7 +40,7 @@ class AlphanumericValidator extends \F3\FLOW3\Validation\Validator\AbstractValid
 	 *
 	 * @param mixed $value The value that should be validated
 	 * @return boolean TRUE if the value is valid, FALSE if an error occured
-	 * @throws \F3\FLOW3\Validation\Exception\InvalidSubject if this validator cannot validate the given value
+	 * @throws \F3\FLOW3\Validation\Exception\InvalidSubjectException if this validator cannot validate the given value
 	 * @api
 	 */
 	public function isValid($value) {

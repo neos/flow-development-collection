@@ -127,11 +127,11 @@ class RESTControllerTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \F3\FLOW3\MVC\Exception\StopAction
+	 * @expectedException \F3\FLOW3\MVC\Exception\StopActionException
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function aPUTRequestWithoutIdWillThrowAStatus400() {
-		$throwStopException = function() { throw new \F3\FLOW3\MVC\Exception\StopAction(); };
+		$throwStopException = function() { throw new \F3\FLOW3\MVC\Exception\StopActionException(); };
 
 		$mockResponse = $this->getMock('F3\FLOW3\MVC\Web\Response', array(), array(), '', FALSE);
 
@@ -169,11 +169,11 @@ class RESTControllerTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \F3\FLOW3\MVC\Exception\StopAction
+	 * @expectedException \F3\FLOW3\MVC\Exception\StopActionException
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function aDELETERequestWithoutIdWillThrowAStatus400() {
-		$throwStopException = function() { throw new \F3\FLOW3\MVC\Exception\StopAction(); };
+		$throwStopException = function() { throw new \F3\FLOW3\MVC\Exception\StopActionException(); };
 
 		$mockResponse = $this->getMock('F3\FLOW3\MVC\Web\Response', array(), array(), '', FALSE);
 

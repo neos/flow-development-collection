@@ -51,7 +51,7 @@ interface BackendInterface {
 	 * @return void
 	 * @throws \F3\FLOW3\Cache\Exception if no cache frontend has been set.
 	 * @throws \InvalidArgumentException if the identifier is not valid
-	 * @throws \F3\FLOW3\Cache\Exception\InvalidData if $data is not a string
+	 * @throws \F3\FLOW3\Cache\Exception\InvalidDataException if $data is not a string
 	 * @api
 	 */
 	public function set($entryIdentifier, $data, array $tags = array(), $lifetime = NULL);

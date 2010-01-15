@@ -124,7 +124,7 @@ class ConjunctionValidatorTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @expectedException F3\FLOW3\Validation\Exception\NoSuchValidator
+	 * @expectedException F3\FLOW3\Validation\Exception\NoSuchValidatorException
 	 */
 	public function removingANotExistingValidatorIndexThrowsException() {
 		$validatorConjunction = new \F3\FLOW3\Validation\Validator\ConjunctionValidator();

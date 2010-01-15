@@ -66,7 +66,7 @@ class HashServiceTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException F3\FLOW3\Security\Exception\InvalidArgumentForHashGeneration
+	 * @expectedException F3\FLOW3\Security\Exception\InvalidArgumentForHashGenerationException
 	 * @author Sebastian Kurfürst
 	 */
 	public function generateHmacThrowsExceptionIfNoStringGiven() {

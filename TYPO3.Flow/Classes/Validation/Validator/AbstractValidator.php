@@ -32,7 +32,7 @@ namespace F3\FLOW3\Validation\Validator;
 abstract class AbstractValidator implements \F3\FLOW3\Validation\Validator\ValidatorInterface {
 
 	/**
-	 * @var \F3\FLOW3\Object\FactoryInterface
+	 * @var \F3\FLOW3\Object\ObjectFactoryInterface
 	 */
 	protected $objectFactory;
 
@@ -49,11 +49,11 @@ abstract class AbstractValidator implements \F3\FLOW3\Validation\Validator\Valid
 	/**
 	 * Injector for the object factory
 	 *
-	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory A object factory implementation
+	 * @param \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory A object factory implementation
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
-	public function injectObjectFactory(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
+	public function injectObjectFactory(\F3\FLOW3\Object\ObjectFactoryInterface $objectFactory) {
 		$this->objectFactory = $objectFactory;
 	}
 

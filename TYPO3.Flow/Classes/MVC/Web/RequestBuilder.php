@@ -31,7 +31,7 @@ namespace F3\FLOW3\MVC\Web;
 class RequestBuilder {
 
 	/**
-	 * @var \F3\FLOW3\Object\FactoryInterface $objectFactory
+	 * @var \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory
 	 */
 	protected $objectFactory;
 
@@ -41,7 +41,7 @@ class RequestBuilder {
 	protected $environment;
 
 	/**
-	 * @var \F3\FLOW3\Configuration\Manager
+	 * @var \F3\FLOW3\Configuration\ConfigurationManager
 	 */
 	protected $configurationManager;
 
@@ -53,11 +53,11 @@ class RequestBuilder {
 	/**
 	 * Injects the object factory
 	 *
-	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory A reference to the object factory
+	 * @param \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory A reference to the object factory
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectObjectFactory(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
+	public function injectObjectFactory(\F3\FLOW3\Object\ObjectFactoryInterface $objectFactory) {
 		$this->objectFactory = $objectFactory;
 	}
 
@@ -75,11 +75,11 @@ class RequestBuilder {
 	/**
 	 * Injects the configuration manager
 	 *
-	 * @param \F3\FLOW3\Configuration\Manager $configurationManager A reference to the configuration manager
+	 * @param \F3\FLOW3\Configuration\ConfigurationManager $configurationManager A reference to the configuration manager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectConfigurationManager(\F3\FLOW3\Configuration\Manager $configurationManager) {
+	public function injectConfigurationManager(\F3\FLOW3\Configuration\ConfigurationManager $configurationManager) {
 		$this->configurationManager = $configurationManager;
 	}
 
@@ -108,7 +108,7 @@ class RequestBuilder {
 		$request->setMethod($this->environment->getRequestMethod());
 		$this->setArgumentsFromRawRequestData($request);
 
-		$routesConfiguration = $this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_ROUTES);
+		$routesConfiguration = $this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_ROUTES);
 		$this->router->setRoutesConfiguration($routesConfiguration);
 		$this->router->route($request);
 

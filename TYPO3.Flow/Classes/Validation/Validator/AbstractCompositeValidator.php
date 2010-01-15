@@ -99,7 +99,7 @@ abstract class AbstractCompositeValidator implements \F3\FLOW3\Validation\Valida
 	 * @api
 	 */
 	public function removeValidator(\F3\FLOW3\Validation\Validator\ValidatorInterface $validator) {
-		if (!$this->validators->contains($validator)) throw new \F3\FLOW3\Validation\Exception\NoSuchValidator('Cannot remove validator because its not in the conjunction.', 1207020177);
+		if (!$this->validators->contains($validator)) throw new \F3\FLOW3\Validation\Exception\NoSuchValidatorException('Cannot remove validator because its not in the conjunction.', 1207020177);
 		$this->validators->detach($validator);
 	}
 

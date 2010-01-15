@@ -32,7 +32,7 @@ namespace F3\FLOW3\Security\ACL;
 class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 
 	/**
-	 * @var \F3\FLOW3\Object\FactoryInterface $objectFactory The object manager
+	 * @var \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory The object manager
 	 */
 	protected $objectFactory = NULL;
 
@@ -75,11 +75,11 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	/**
 	 * Injects the object factory
 	 *
-	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory
+	 * @param \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectObjectFactory(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
+	public function injectObjectFactory(\F3\FLOW3\Object\ObjectFactoryInterface $objectFactory) {
 		$this->objectFactory = $objectFactory;
 	}
 
@@ -180,12 +180,12 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	 *
 	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The joinpoint for which the roles should be returned
 	 * @return array Array of roles
-	 * @throws \F3\FLOW3\Security\Exception\NoEntryInPolicy
+	 * @throws \F3\FLOW3\Security\Exception\NoEntryInPolicyException
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getRoles(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$methodIdentifier = $joinPoint->getClassName() . '->' . $joinPoint->getMethodName();
-		if (!isset($this->acls[$methodIdentifier])) throw new \F3\FLOW3\Security\Exception\NoEntryInPolicy('The given joinpoint was not found in the policy cache. Most likely you have to recreate the AOP proxy classes.', 1222084767);
+		if (!isset($this->acls[$methodIdentifier])) throw new \F3\FLOW3\Security\Exception\NoEntryInPolicyException('The given joinpoint was not found in the policy cache. Most likely you have to recreate the AOP proxy classes.', 1222084767);
 
 		$roles = array();
 		foreach (array_keys($this->acls[$methodIdentifier]) as $roleIdentifier) {
@@ -206,7 +206,7 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	 */
 	public function getPrivilegesForJoinPoint(\F3\FLOW3\Security\ACL\Role $role, \F3\FLOW3\AOP\JoinPointInterface $joinPoint, $privilegeType = '') {
 		$methodIdentifier = $joinPoint->getClassName() . '->' . $joinPoint->getMethodName();
-		if (!isset($this->acls[$methodIdentifier])) throw new \F3\FLOW3\Security\Exception\NoEntryInPolicy('The given joinpoint was not found in the policy cache. Most likely you have to recreate the AOP proxy classes.', 1222100851);
+		if (!isset($this->acls[$methodIdentifier])) throw new \F3\FLOW3\Security\Exception\NoEntryInPolicyException('The given joinpoint was not found in the policy cache. Most likely you have to recreate the AOP proxy classes.', 1222100851);
 
 		$privileges = $this->parsePrivileges($methodIdentifier, (string)$role, $privilegeType);
 		if (!is_array($privileges)) return array();
@@ -228,7 +228,7 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 				$accessDenyPrivilege = $this->objectFactory->create('F3\FLOW3\Security\ACL\Privilege', 'ACCESS', FALSE);
 				return array($accessDenyPrivilege);
 			} else {
-				throw new \F3\FLOW3\Security\Exception\NoEntryInPolicy('The given resource was not found in the policy cache. Most likely you have to recreate the AOP proxy classes.', 1248348214);
+				throw new \F3\FLOW3\Security\Exception\NoEntryInPolicyException('The given resource was not found in the policy cache. Most likely you have to recreate the AOP proxy classes.', 1248348214);
 			}
 		}
 

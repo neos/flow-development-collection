@@ -57,7 +57,7 @@ interface LoggerInterface {
 	 *
 	 * @param \F3\FLOW3\Log\Backend\BackendInterface $backend The backend to remove
 	 * @return void
-	 * @throws \F3\FLOW3\Log\Exception\NoSuchBackend if the given backend is unknown to this logger
+	 * @throws \F3\FLOW3\Log\Exception\NoSuchBackendException if the given backend is unknown to this logger
 	 * @api
 	 */
 	public function removeBackend(\F3\FLOW3\Log\Backend\BackendInterface $backend);

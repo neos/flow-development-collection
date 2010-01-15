@@ -35,7 +35,7 @@ class ProxyClassBuilderTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function buildProxyClassReturnsFalseIfNoMethodsWereInterceptedNorInterfacesIntroduced() {
-		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service');
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService');
 		$mockReflectionService->expects($this->any())->method('getClassMethodNames')->will($this->returnValue(array()));
 
 		$builder = $this->getMock('F3\FLOW3\AOP\Builder\ProxyClassBuilder', array('dummy'), array(), '', FALSE);
@@ -59,7 +59,7 @@ class ProxyClassBuilderTest extends \F3\Testing\BaseTestCase {
 
 		$mockIntroduction = $this->getMock('F3\FLOW3\AOP\Introduction', array(), array(), '', FALSE);
 
-		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service');
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService');
 		$mockReflectionService->expects($this->once())->method('isClassImplementationOf')->with($targetClassName, 'F3\FLOW3\AOP\ProxyInterface')->will($this->returnValue(FALSE));
 
 		$methodsToMock = array('getMatchingIntroductions', 'getInterfaceNamesFromIntroductions', 'getMethodsFromTargetClass', 'getIntroducedMethodsFromIntroductions', 'addConstructorToInterceptedMethods', 'getAdvicedMethodsInformation', 'getProxyNamespace', 'renderProxyClassName', 'buildClassAnnotationsCode', 'buildIntroducedInterfacesCode', 'buildMethodsInterceptorCode', 'buildMethodsAndAdvicesArrayCode');
@@ -103,7 +103,7 @@ class ProxyClassBuilderTest extends \F3\Testing\BaseTestCase {
 			array($className, 'bar'),
 		);
 
-		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service');
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService');
 		$mockReflectionService->expects($this->any())->method('getClassMethodNames')->with($className)->will($this->returnValue(array('foo', 'bar')));
 
 		$builder = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\AOP\Builder\ProxyClassBuilder'), array('dummy'), array(), '', FALSE);
@@ -129,7 +129,7 @@ class ProxyClassBuilderTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function buildMethodsAndAdvicesArrayCodeConvertsTheMethodsAndAdvicesArrayIntoProperCode() {
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface');
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
 
 		$mockAdvice1 = $this->getMock('F3\FLOW3\AOP\Advice\AroundAdvice', array(), array('Aspect1', 'advice1', $mockObjectManager), '', TRUE);
 		$mockAdvice1->expects($this->once())->method('getAspectObjectName')->will($this->returnValue('Aspect1'));
@@ -379,7 +379,7 @@ class ProxyClassBuilderTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getAdvicedMethodsInformationCompilesInformationAboutWhichAdvicesHaveBeenWovenIntoWhichMethods() {
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface');
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
 
 		$mockAdvice1 = $this->getMock('F3\FLOW3\AOP\Advice\AroundAdvice', array(), array('Aspect1', 'advice1', $mockObjectManager), '', TRUE);
 		$mockAdvice1->expects($this->once())->method('getAspectObjectName')->will($this->returnValue('Aspect1'));
@@ -426,7 +426,7 @@ class ProxyClassBuilderTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function buildClassAnnotationsCodeCreatesReadyToInsertCodeContainingAnnotationsOfTheGivenClass() {
-		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service');
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService');
 		$mockReflectionService->expects($this->any())->method('getClassTagsValues')->with('TestClass')->will($this->returnValue(array('foo' => array('bar', 'baz'), 'author' => array('me'))));
 
 		$expectedCode = ' * @foo bar baz' . chr(10) .' * @author me' . chr(10);

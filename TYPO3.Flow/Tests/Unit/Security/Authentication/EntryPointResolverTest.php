@@ -33,10 +33,10 @@ class EntryPointResolverTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @expectedException \F3\FLOW3\Security\Exception\NoEntryPointFound
+	 * @expectedException \F3\FLOW3\Security\Exception\NoEntryPointFoundException
 	 */
 	public function resolveEntryPointClassThrowsAnExceptionIfNoEntryPointIsAvailable() {
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\Manager', array(), array(), '', FALSE);
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManager', array(), array(), '', FALSE);
 		$mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->will($this->returnValue(FALSE));
 
 		$entryPointResolver = new \F3\FLOW3\Security\Authentication\EntryPointResolver($mockObjectManager);
@@ -57,7 +57,7 @@ class EntryPointResolverTest extends \F3\Testing\BaseTestCase {
 			return FALSE;
 		};
 
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\Manager', array(), array(), '', FALSE);
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManager', array(), array(), '', FALSE);
 		$mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->will($this->returnCallback($getCaseSensitiveObjectNameCallback));
 
 		$entryPointResolver = new \F3\FLOW3\Security\Authentication\EntryPointResolver($mockObjectManager);
@@ -71,7 +71,7 @@ class EntryPointResolverTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function resolveEntryPointClassReturnsTheCorrectRequestPatternForACompleteClassName() {
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\Manager', array(), array(), '', FALSE);
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManager', array(), array(), '', FALSE);
 		$mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->with('ExistingEntryPointClass')->will($this->returnValue('ExistingEntryPointClass'));
 
 		$entryPointResolver = new \F3\FLOW3\Security\Authentication\EntryPointResolver($mockObjectManager);

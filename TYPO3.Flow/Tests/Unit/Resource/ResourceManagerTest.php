@@ -58,9 +58,9 @@ class ResourceManagerTest extends \F3\Testing\BaseTestCase {
 		eval('class ' . $wrapperClassName . ' extends \F3\FLOW3\Resource\Streams\PackageResourceStreamWrapper { static public function getScheme() { return \'' . $wrapperSchemeName . '\'; } }');
 		$mockStreamWrapperAdapter = new $wrapperClassName();
 
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\ObjectFactoryInterface');
 
-		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service');
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService');
 		$mockReflectionService->expects($this->once())->method('getAllImplementationClassNamesForInterface')->with('F3\FLOW3\Resource\Streams\StreamWrapperInterface')->will($this->returnValue(array(get_class($mockStreamWrapperAdapter))));
 
 		$resourceManager = new \F3\FLOW3\Resource\ResourceManager();
@@ -153,7 +153,7 @@ class ResourceManagerTest extends \F3\Testing\BaseTestCase {
 
 		$mockResource = $this->getMock('F3\FLOW3\Resource\Resource', array(), array(), '', FALSE);
 
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\ObjectFactoryInterface');
 		$mockObjectFactory->expects($this->once())->method('create')->with('F3\FLOW3\Resource\Resource', $hash, 'txt')->will($this->returnValue($mockResource));
 
 		$resourceManager = $this->getMock($this->buildAccessibleProxy('\F3\FLOW3\Resource\ResourceManager'), array('dummy'), array(), '', FALSE);

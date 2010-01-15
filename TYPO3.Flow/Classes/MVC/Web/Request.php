@@ -79,11 +79,11 @@ class Request extends \F3\FLOW3\MVC\Request {
 	 * @param string $method Name of the request method
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws \F3\FLOW3\MVC\Exception\InvalidRequestMethod if the request method is not supported
+	 * @throws \F3\FLOW3\MVC\Exception\InvalidRequestMethodException if the request method is not supported
 	 * @api
 	 */
 	public function setMethod($method) {
-		if ($method === '' || (strtoupper($method) !== $method)) throw new \F3\FLOW3\MVC\Exception\InvalidRequestMethod('The request method "' . $method . '" is not supported.', 1217778382);
+		if ($method === '' || (strtoupper($method) !== $method)) throw new \F3\FLOW3\MVC\Exception\InvalidRequestMethodException('The request method "' . $method . '" is not supported.', 1217778382);
 		$this->method = $method;
 	}
 

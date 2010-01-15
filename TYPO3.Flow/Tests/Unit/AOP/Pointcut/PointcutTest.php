@@ -49,7 +49,7 @@ class PointcutTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException F3\FLOW3\AOP\Exception\CircularPointcutReference
+	 * @expectedException F3\FLOW3\AOP\Exception\CircularPointcutReferenceException
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function matchesDetectsCircularMatchesAndThrowsAndException() {

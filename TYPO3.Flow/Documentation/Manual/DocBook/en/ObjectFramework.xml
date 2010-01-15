@@ -172,7 +172,7 @@ class SomeClass {
       <para><programlisting language="php">$myFreshObject = $objectFactory-&gt;create('F3\MyPackage\MyClassName');</programlisting></para>
 
       <para>The Object Factory
-      (<classname>\F3\FLOW3\Object\FactoryInterface</classname>) itself is a
+      (<classname>\F3\FLOW3\Object\ObjectFactoryInterface</classname>) itself is a
       Singleton and can be acquired like any other object of that scope (see
       next section).</para>
 
@@ -205,7 +205,7 @@ class SomeClass {
 class SampleClass {
 
 	/**
-	 * @var \F3\FLOW3\Object\FactoryInterface
+	 * @var \F3\FLOW3\Object\ObjectFactoryInterface
 	 */
 	protected $objectFactory;
 
@@ -214,9 +214,9 @@ class SampleClass {
 	 * The Object Factory will automatically be passed (injected) by the object 
 	 * framework on instantiating this class.
 	 *
-	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory The object factory
+	 * @param \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory The object factory
 	 */
-	public function __construct(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
+	public function __construct(\F3\FLOW3\Object\ObjectFactoryInterface $objectFactory) {
 		$this-&gt;objectFactory = $objectFactory;
 	}
 }</programlisting>
@@ -237,7 +237,7 @@ class SampleClass {
       of the <classname>ObjectManager</classname> itself, again by taking
       advantage of constructor injection:</para>
 
-      <programlisting language="php">public function __construct(\F3\FLOW3\Object\ManagerInterface $objectManager) {
+      <programlisting language="php">public function __construct(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 	$this-&gt;objectManager = $objectManager;
 }</programlisting>
 
@@ -474,7 +474,7 @@ Destructing object ...</screen>
 
       <para>For a list of available methods please refer to the API
       documentation of the interface
-      <classname>F3\FLOW3\Object\ManagerInterface</classname>.</para>
+      <classname>F3\FLOW3\Object\ObjectManagerInterface</classname>.</para>
     </section>
 
     <section>
@@ -1436,7 +1436,7 @@ class Foo {
       all important settings and dependencies. As we have seen previously, a
       cache consists of a frontend, a backend and configuration options for
       that backend. Instead of creating and configuring these objects on your
-      own, you can use the <classname>F3\FLOW3\Cache\Factory</classname> which
+      own, you can use the <classname>F3\FLOW3\Cache\CacheFactory</classname> which
       provides a convenient <methodname>create</methodname> method taking care
       of all the rest.</para>
 
@@ -1451,7 +1451,7 @@ class Foo {
         <title>Sample configuration for a Custom Factory</title>
 
         <programlisting language="yaml">F3\FLOW3\Cache\CacheInterface:
-  factoryClassName: F3\FLOW3\Cache\Factory
+  factoryClassName: F3\FLOW3\Cache\CacheFactory
   factoryMethodName: create</programlisting>
       </example>
 
@@ -1467,7 +1467,7 @@ class Foo {
         arguments</title>
 
         <programlisting language="yaml">F3\FLOW3\Cache\CacheInterface:
-  factoryClassName: F3\FLOW3\Cache\Factory
+  factoryClassName: F3\FLOW3\Cache\CacheFactory
   arguments:
     2: value: F3\FLOW3\Cache\VariableCache
     3: value: F3\FLOW3\Cache\Backend\File
@@ -1481,7 +1481,7 @@ class Foo {
       </example>
 
       <para><varname>$objectFactory</varname> is a reference to the
-      <classname>F3\FLOW3\Object\Factory</classname>. The argument with the
+      <classname>F3\FLOW3\Object\ObjectFactory</classname>. The argument with the
       value <literal>MyCache</literal> is passed to the Cache Factory as the
       first parameter. The required second and third argument and the optional
       fourth parameter are automatically built from the values defined in the

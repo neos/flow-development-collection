@@ -609,7 +609,7 @@ $this-&gt;accountRepository-&gt;add($account);</programlisting>
 
         <para>The implementation of the corresponding authentication provider
         resides in the class
-        <literal>F3\FLOW3\Security\Authentication\Provider\UsernamePasswordCR</literal>.
+        <literal>F3\FLOW3\Security\Authentication\Provider\PersistedUsernamePasswordProvider</literal>.
         It is able to authenticate tokens of the type
         <literal>F3\FLOW3\Security\Authentication\Token\UsernamePassword</literal>.
         It expects a credentials array in the token which looks like
@@ -689,7 +689,7 @@ $credentials['password'] = $postArguments['F3\FLOW3\Security\Authentication\Toke
 
       <para>After that you'll have to implement your own authentication
       strategy by providing a class, that implements the interface
-      <literal>F3\FLOW3\Security\Authentication\ProviderInterface</literal>:</para>
+      <literal>F3\FLOW3\Security\Authentication\AuthenticationProviderInterface</literal>:</para>
 
       <orderedlist>
         <listitem>
@@ -855,9 +855,9 @@ $credentials['password'] = $postArguments['F3\FLOW3\Security\Authentication\Toke
       Then you have to register your custom voter as shown
       below:<programlisting language="yaml">security:
   authorization:
-    accessDecisionVoters: [F3\FLOW3\Security\Authorization\Voter\ACL, F3\MyPackage\Security\MyCustomVoter]</programlisting><note>
+    accessDecisionVoters: [F3\FLOW3\Security\Authorization\Voter\Acl, F3\MyPackage\Security\MyCustomVoter]</programlisting><note>
           <para>By default there is always one voter registered:
-          <literal>F3\FLOW3\Security\Authorization\Voter\ACL</literal>. This
+          <literal>F3\FLOW3\Security\Authorization\Voter\Acl</literal>. This
           voter connect the authorization system to the ACL component, by
           return a vote depending on the configured security policy. Read the
           section about ACLs, to learn more about the default policy handling

@@ -36,18 +36,18 @@ namespace F3\FLOW3\Security\Authorization\Interceptor;
 class RequireAuthentication implements \F3\FLOW3\Security\Authorization\InterceptorInterface {
 
 	/**
-	 * @var \F3\FLOW3\Security\Authentication\ManagerInterface The authentication manager
+	 * @var \F3\FLOW3\Security\Authentication\AuthenticationManagerInterface The authentication manager
 	 */
 	protected $authenticationManager = NULL;
 
 	/**
 	 * Constructor.
 	 *
-	 * @param \F3\FLOW3\Security\Authentication\ManagerInterface $authenticationManager The authentication Manager
+	 * @param \F3\FLOW3\Security\Authentication\AuthenticationManagerInterface $authenticationManager The authentication Manager
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function __construct(\F3\FLOW3\Security\Authentication\ManagerInterface $authenticationManager) {
+	public function __construct(\F3\FLOW3\Security\Authentication\AuthenticationManagerInterface $authenticationManager) {
 		$this->authenticationManager = $authenticationManager;
 	}
 

@@ -49,7 +49,7 @@ class LoggingAspect {
 	/**
 	 * Logs calls and results of the authenticate() method of the Authentication Manager
 	 *
-	 * @after within(F3\FLOW3\Security\Authentication\ManagerInterface) && method(.*->authenticate())
+	 * @after within(F3\FLOW3\Security\Authentication\AuthenticationManagerInterface) && method(.*->authenticate())
 	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
 	 * @return mixed The result of the target method if it has not been intercepted
 	 * @author Robert Lemke <robert@typo3.org>
@@ -67,7 +67,7 @@ class LoggingAspect {
 	/**
 	 * Logs calls and results of the logout() method of the Authentication Manager
 	 *
-	 * @afterreturning within(F3\FLOW3\Security\Authentication\ManagerInterface) && method(.*->logout())
+	 * @afterreturning within(F3\FLOW3\Security\Authentication\AuthenticationManagerInterface) && method(.*->logout())
 	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
 	 * @return mixed The result of the target method if it has not been intercepted
 	 * @author Robert Lemke <robert@typo3.org>
@@ -86,7 +86,7 @@ class LoggingAspect {
 	/**
 	 * Logs calls and results of the authenticate() method of the UsernamePasswordCR Authentication Provider
 	 *
-	 * @afterreturning method(F3\FLOW3\Security\Authentication\Provider\UsernamePasswordCR->authenticate())
+	 * @afterreturning method(F3\FLOW3\Security\Authentication\Provider\PersistedUsernamePasswordProvider->authenticate())
 	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
 	 * @return mixed The result of the target method if it has not been intercepted
 	 * @author Robert Lemke <robert@typo3.org>
@@ -97,13 +97,13 @@ class LoggingAspect {
 
 		switch ($token->getAuthenticationStatus()) {
 			case \F3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL :
-				$this->systemLogger->log('Successfully authenticated user "' . $credentials['username'] . '".', LOG_INFO, array(), 'FLOW3', 'F3\FLOW3\Security\Authentication\Provider\UsernamePasswordCR', 'authenticate');
+				$this->systemLogger->log('Successfully authenticated user "' . $credentials['username'] . '".', LOG_INFO, array(), 'FLOW3', 'F3\FLOW3\Security\Authentication\Provider\PersistedUsernamePasswordProvider', 'authenticate');
 			break;
 			case \F3\FLOW3\Security\Authentication\TokenInterface::WRONG_CREDENTIALS :
-				$this->systemLogger->log('Wrong password given for user "' . $credentials['username'] . '".', LOG_WARNING, array(), 'FLOW3', 'F3\FLOW3\Security\Authentication\Provider\UsernamePasswordCR', 'authenticate');
+				$this->systemLogger->log('Wrong password given for user "' . $credentials['username'] . '".', LOG_WARNING, array(), 'FLOW3', 'F3\FLOW3\Security\Authentication\Provider\PersistedUsernamePasswordProvider', 'authenticate');
 			break;
 			case \F3\FLOW3\Security\Authentication\TokenInterface::NO_CREDENTIALS_GIVEN :
-				$this->systemLogger->log('No credentials given or no account found with username "' . $credentials['username'] . '".', LOG_WARNING, array(), 'FLOW3', 'F3\FLOW3\Security\Authentication\Provider\UsernamePasswordCR', 'authenticate');
+				$this->systemLogger->log('No credentials given or no account found with username "' . $credentials['username'] . '".', LOG_WARNING, array(), 'FLOW3', 'F3\FLOW3\Security\Authentication\Provider\PersistedUsernamePasswordProvider', 'authenticate');
 			break;
 		}
 	}

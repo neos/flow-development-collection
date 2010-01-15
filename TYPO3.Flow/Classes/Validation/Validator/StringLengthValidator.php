@@ -41,7 +41,7 @@ class StringLengthValidator extends \F3\FLOW3\Validation\Validator\AbstractValid
 	 *
 	 * @param mixed $value The value that should be validated
 	 * @return boolean TRUE if the value is valid, FALSE if an error occured
-	 * @throws F3\FLOW3\Validation\Exception\InvalidSubject
+	 * @throws F3\FLOW3\Validation\Exception\InvalidSubjectException
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
@@ -50,10 +50,10 @@ class StringLengthValidator extends \F3\FLOW3\Validation\Validator\AbstractValid
 		$this->errors = array();
 		if (isset($this->options['minimum']) && isset($this->options['maximum'])
 			&& $this->options['maximum'] < $this->options['minimum']) {
-			throw new \F3\FLOW3\Validation\Exception\InvalidValidationOptions('The \'maximum\' is shorter than the \'minimum\' in the StringLengthValidator.', 1238107096);
+			throw new \F3\FLOW3\Validation\Exception\InvalidValidationOptionsException('The \'maximum\' is shorter than the \'minimum\' in the StringLengthValidator.', 1238107096);
 		}
 
-		if (is_object($value) && !method_exists($value, '__toString')) throw new \F3\FLOW3\Validation\Exception\InvalidSubject('The given object could not be converted to a string.', 1238110957);
+		if (is_object($value) && !method_exists($value, '__toString')) throw new \F3\FLOW3\Validation\Exception\InvalidSubjectException('The given object could not be converted to a string.', 1238110957);
 
 		$stringLength = \F3\PHP6\Functions::strlen($value);
 		$isValid = TRUE;

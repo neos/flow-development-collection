@@ -86,7 +86,7 @@ class SessionRegistry implements \F3\FLOW3\Object\RegistryInterface {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getObject($objectName) {
-		if (!$this->objectExists($objectName)) throw new \F3\FLOW3\Object\Exception\InvalidObjectName('Object "' . $objectName . '" does not exist in the session object registry.', 1246574394);
+		if (!$this->objectExists($objectName)) throw new \F3\FLOW3\Object\Exception\InvalidObjectNameException('Object "' . $objectName . '" does not exist in the session object registry.', 1246574394);
 
 		return $this->objects[$objectName];
 	}
@@ -100,8 +100,8 @@ class SessionRegistry implements \F3\FLOW3\Object\RegistryInterface {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function putObject($objectName, $object) {
-		if (!is_string($objectName) || strlen($objectName) === 0) throw new \F3\FLOW3\Object\Exception\InvalidObjectName('No valid object name specified.', 1246543470);
-		if (!is_object($object)) throw new \F3\FLOW3\Object\Exception\InvalidObject('$object must be of type Object', 1246544555);
+		if (!is_string($objectName) || strlen($objectName) === 0) throw new \F3\FLOW3\Object\Exception\InvalidObjectNameException('No valid object name specified.', 1246543470);
+		if (!is_object($object)) throw new \F3\FLOW3\Object\Exception\InvalidObjectException('$object must be of type Object', 1246544555);
 
 		$this->objects[$objectName] = $object;
 	}
@@ -114,7 +114,7 @@ class SessionRegistry implements \F3\FLOW3\Object\RegistryInterface {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function removeObject($objectName) {
-		if (!$this->objectExists($objectName)) throw new \F3\FLOW3\Object\Exception\InvalidObjectName('Object "' . $objectName . '" does not exist in the session object registry.', 1246572692);
+		if (!$this->objectExists($objectName)) throw new \F3\FLOW3\Object\Exception\InvalidObjectNameException('Object "' . $objectName . '" does not exist in the session object registry.', 1246572692);
 		unset ($this->objects[$objectName]);
 	}
 

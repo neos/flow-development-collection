@@ -40,7 +40,7 @@ class PointcutClassNameFilterTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function matchesTellsIfTheSpecifiedRegularExpressionMatchesTheGivenClassName() {
-		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service', array(), array(), '', FALSE);
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService', array(), array(), '', FALSE);
 		$mockReflectionService->expects($this->any())->method('isClassFinal')->will($this->returnValue(FALSE));
 		$mockReflectionService->expects($this->any())->method('isMethodFinal')->will($this->returnValue(FALSE));
 
@@ -69,7 +69,7 @@ class PointcutClassNameFilterTest extends \F3\Testing\BaseTestCase {
 			final class $className { }"
 		);
 
-		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service', array('loadFromCache', 'saveToCache'), array(), '', FALSE, TRUE);
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'saveToCache'), array(), '', FALSE, TRUE);
 		$mockReflectionService->initialize(array($className));
 
 		$classFilter = new \F3\FLOW3\AOP\Pointcut\PointcutClassNameFilter('F3\Virtual\Foo\Bar');
@@ -92,7 +92,7 @@ class PointcutClassNameFilterTest extends \F3\Testing\BaseTestCase {
 			}"
 		);
 
-		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service', array('loadFromCache', 'saveToCache'), array(), '', FALSE, TRUE);
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'saveToCache'), array(), '', FALSE, TRUE);
 		$mockReflectionService->initialize(array($className));
 
 		$classFilter = new \F3\FLOW3\AOP\Pointcut\PointcutClassNameFilter('F3\Virtual\Foo\Bar');

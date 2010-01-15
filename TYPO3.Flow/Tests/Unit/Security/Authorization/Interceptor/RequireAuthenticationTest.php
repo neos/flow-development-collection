@@ -36,7 +36,7 @@ class RequireAuthenticationTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function invokeCallsTheAuthenticationManagerToPerformAuthentication() {
-		$authenticationManager = $this->getMock('F3\FLOW3\Security\Authentication\ManagerInterface');
+		$authenticationManager = $this->getMock('F3\FLOW3\Security\Authentication\AuthenticationManagerInterface');
 
 		$authenticationManager->expects($this->once())->method('authenticate');
 

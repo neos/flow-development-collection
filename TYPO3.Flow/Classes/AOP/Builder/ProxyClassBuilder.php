@@ -33,7 +33,7 @@ class ProxyClassBuilder {
 	const PROXYCLASSSUFFIX = '_AOPProxy';
 
 	/**
-	 * @var F3\FLOW3\Reflection\Service
+	 * @var F3\FLOW3\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
@@ -52,11 +52,11 @@ class ProxyClassBuilder {
 	/**
 	 * Injects the reflection service
 	 *
-	 * @param \F3\FLOW3\Reflection\Service $reflectionService The reflection service
+	 * @param \F3\FLOW3\Reflection\ReflectionService $reflectionService The reflection service
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectReflectionService(\F3\FLOW3\Reflection\Service $reflectionService) {
+	public function injectReflectionService(\F3\FLOW3\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
 	}
 
@@ -136,7 +136,7 @@ class ProxyClassBuilder {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function buildProxyClass($targetClassName, array $aspectContainers, $context) {
-		if ($this->reflectionService->isClassImplementationOf($targetClassName, 'F3\FLOW3\AOP\ProxyInterface')) throw new \F3\FLOW3\AOP\Exception\InvalidTargetClass('Cannot proxy class "' . $targetClassName . '" because it is already an AOP proxy class.', 1238858632);
+		if ($this->reflectionService->isClassImplementationOf($targetClassName, 'F3\FLOW3\AOP\ProxyInterface')) throw new \F3\FLOW3\AOP\Exception\InvalidTargetClassException('Cannot proxy class "' . $targetClassName . '" because it is already an AOP proxy class.', 1238858632);
 
 		$introductions = $this->getMatchingIntroductions($aspectContainers, $targetClassName);
 		$introducedInterfaces = $this->getInterfaceNamesFromIntroductions($introductions);

@@ -45,7 +45,7 @@ class PdoBackendTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function initializeCallsToParentAndConnectsToDatabase() {
-		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service');
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService');
 		$mockReflectionService->expects($this->once())->method('getClassSchemata');
 		$backend = $this->getMock('F3\FLOW3\Persistence\Backend\PdoBackend', array('connect'));
 		$backend->expects($this->once())->method('connect');

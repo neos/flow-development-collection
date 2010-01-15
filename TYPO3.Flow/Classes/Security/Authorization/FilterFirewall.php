@@ -31,7 +31,7 @@ namespace F3\FLOW3\Security\Authorization;
 class FilterFirewall implements \F3\FLOW3\Security\Authorization\FirewallInterface {
 
 	/**
-	 * @var \F3\FLOW3\Object\Manager The object manager
+	 * @var \F3\FLOW3\Object\ObjectManager The object manager
 	 */
 	protected $objectManager = NULL;
 
@@ -58,12 +58,12 @@ class FilterFirewall implements \F3\FLOW3\Security\Authorization\FirewallInterfa
 	/**
 	 * Constructor.
 	 *
-	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager The object manager
+	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager The object manager
 	 * @param \F3\FLOW3\Security\RequestPatternResolver $requestPatternResolver The request pattern resolver
 	 * @param \F3\FLOW3\Security\Authorization\InterceptorResolver $interceptorResolver The interceptor resolver
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function __construct(\F3\FLOW3\Object\ManagerInterface $objectManager,
+	public function __construct(\F3\FLOW3\Object\ObjectManagerInterface $objectManager,
 			\F3\FLOW3\Security\RequestPatternResolver $requestPatternResolver,
 			\F3\FLOW3\Security\Authorization\InterceptorResolver $interceptorResolver) {
 
@@ -90,7 +90,7 @@ class FilterFirewall implements \F3\FLOW3\Security\Authorization\FirewallInterfa
 	 *
 	 * @param \F3\FLOW3\MVC\RequestInterface $request The request to be analyzed
 	 * @return void
-	 * @throws \F3\FLOW3\Security\Exception\AccessDenied if the
+	 * @throws \F3\FLOW3\Security\Exception\AccessDeniedException if the
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function blockIllegalRequests(\F3\FLOW3\MVC\RequestInterface $request) {
@@ -98,7 +98,7 @@ class FilterFirewall implements \F3\FLOW3\Security\Authorization\FirewallInterfa
 		foreach($this->filters as $filter) {
 			if($filter->filterRequest($request)) $filterMatched = TRUE;
 		}
-		if ($this->rejectAll && !$filterMatched) throw new \F3\FLOW3\Security\Exception\AccessDenied('The requst was blocked, because no request filter explicitly allowed it.', 1216923741);
+		if ($this->rejectAll && !$filterMatched) throw new \F3\FLOW3\Security\Exception\AccessDeniedException('The requst was blocked, because no request filter explicitly allowed it.', 1216923741);
 	}
 
 	/**

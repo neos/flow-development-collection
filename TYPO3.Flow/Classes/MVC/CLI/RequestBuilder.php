@@ -31,12 +31,12 @@ namespace F3\FLOW3\MVC\CLI;
 class RequestBuilder {
 
 	/**
-	 * @var \F3\FLOW3\Object\ManagerInterface
+	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
-	 * @var \F3\FLOW3\Object\FactoryInterface
+	 * @var \F3\FLOW3\Object\ObjectFactoryInterface
 	 */
 	protected $objectFactory;
 
@@ -48,13 +48,13 @@ class RequestBuilder {
 	/**
 	 * Constructs the CLI Request Builder
 	 *
-	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager A reference to the object manager
-	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory A reference to the object factory
+	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager A reference to the object manager
+	 * @param \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory A reference to the object factory
 	 * @param \F3\FLOW3\Utility\Environment $environment The environment
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(\F3\FLOW3\Object\ManagerInterface $objectManager, \F3\FLOW3\Object\FactoryInterface $objectFactory, \F3\FLOW3\Utility\Environment $environment) {
+	public function __construct(\F3\FLOW3\Object\ObjectManagerInterface $objectManager, \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory, \F3\FLOW3\Utility\Environment $environment) {
 		$this->objectManager = $objectManager;
 		$this->objectFactory = $objectFactory;
 		$this->environment = $environment;
@@ -223,7 +223,7 @@ class RequestBuilder {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function buildCommandArrayFromRawCommandData(array $rawCommand) {
-		if (count($rawCommand) === 2) throw new \F3\FLOW3\MVC\Exception\InvalidFormat('For CLI calls you need to specify either only a package or package, controller and action.', 1222252361);
+		if (count($rawCommand) === 2) throw new \F3\FLOW3\MVC\Exception\InvalidFormatException('For CLI calls you need to specify either only a package or package, controller and action.', 1222252361);
 
 		$command = array(
 			'package' => NULL,

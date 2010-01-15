@@ -47,7 +47,7 @@ interface ControllerInterface {
 	 * @param \F3\FLOW3\MVC\RequestInterface $request The request object
 	 * @param \F3\FLOW3\MVC\ResponseInterface $response The response, modified by the controller
 	 * @return void
-	 * @throws \F3\FLOW3\MVC\Exception\UnsupportedRequestType if the controller doesn't support the current request type
+	 * @throws \F3\FLOW3\MVC\Exception\UnsupportedRequestTypeException if the controller doesn't support the current request type
 	 * @api
 	 */
 	public function processRequest(\F3\FLOW3\MVC\RequestInterface $request, \F3\FLOW3\MVC\ResponseInterface $response);

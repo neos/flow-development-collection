@@ -41,9 +41,9 @@ class ClassWithSetterAndPropertyInjection {
 	protected $secondDependency;
 
 	/**
-	 * @param F3\FLOW3\Object\ManagerInterface
+	 * @param F3\FLOW3\Object\ObjectManagerInterface
 	 */
-	public function injectFirstDependency(\F3\FLOW3\Object\ManagerInterface $firstDependency) {
+	public function injectFirstDependency(\F3\FLOW3\Object\ObjectManagerInterface $firstDependency) {
 		$this->firstDependency = $firstDependency;
 	}
 

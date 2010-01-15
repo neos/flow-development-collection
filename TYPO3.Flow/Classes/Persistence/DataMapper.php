@@ -31,12 +31,12 @@ namespace F3\FLOW3\Persistence;
 class DataMapper {
 
 	/**
-	 * @var \F3\FLOW3\Object\ManagerInterface
+	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
-	 * @var \F3\FLOW3\Object\Builder
+	 * @var \F3\FLOW3\Object\ObjectBuilder
 	 */
 	protected $objectBuilder;
 
@@ -46,29 +46,29 @@ class DataMapper {
 	protected $persistenceSession;
 
 	/**
-	 * @var \F3\FLOW3\Reflection\Service
+	 * @var \F3\FLOW3\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
 	/**
 	 * Injects the object manager
 	 *
-	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager
+	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectObjectManager(\F3\FLOW3\Object\ManagerInterface $objectManager) {
+	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
 	}
 
 	/**
 	 * Injects the object builder
 	 *
-	 * @param \F3\FLOW3\Object\Builder $objectBuilder
+	 * @param \F3\FLOW3\Object\ObjectBuilder $objectBuilder
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectObjectBuilder(\F3\FLOW3\Object\Builder $objectBuilder) {
+	public function injectObjectBuilder(\F3\FLOW3\Object\ObjectBuilder $objectBuilder) {
 		$this->objectBuilder = $objectBuilder;
 	}
 
@@ -86,11 +86,11 @@ class DataMapper {
 	/**
 	 * Injects a Reflection Service instance used for processing objects
 	 *
-	 * @param \F3\FLOW3\Reflection\Service $reflectionService
+	 * @param \F3\FLOW3\Reflection\ReflectionService $reflectionService
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectReflectionService(\F3\FLOW3\Reflection\Service $reflectionService) {
+	public function injectReflectionService(\F3\FLOW3\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
 	}
 

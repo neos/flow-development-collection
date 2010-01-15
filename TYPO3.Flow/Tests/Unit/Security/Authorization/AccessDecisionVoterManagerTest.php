@@ -32,7 +32,7 @@ class AccessDecisionVoterManagerTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException F3\FLOW3\Security\Exception\AccessDenied
+	 * @expectedException F3\FLOW3\Security\Exception\AccessDeniedException
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function decideOnJoinPointThrowsAnExceptionIfOneVoterReturnsADenyVote() {
@@ -55,7 +55,7 @@ class AccessDecisionVoterManagerTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException F3\FLOW3\Security\Exception\AccessDenied
+	 * @expectedException F3\FLOW3\Security\Exception\AccessDeniedException
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function decideOnJoinPointThrowsAnExceptionIfAllVotersAbstainAndAllowAccessIfAllVotersAbstainIsFalse() {
@@ -124,7 +124,7 @@ class AccessDecisionVoterManagerTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException F3\FLOW3\Security\Exception\AccessDenied
+	 * @expectedException F3\FLOW3\Security\Exception\AccessDeniedException
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function decideOnResourceThrowsAnExceptionIfOneVoterReturnsADenyVote() {
@@ -146,7 +146,7 @@ class AccessDecisionVoterManagerTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException F3\FLOW3\Security\Exception\AccessDenied
+	 * @expectedException F3\FLOW3\Security\Exception\AccessDeniedException
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function decideOnResourceThrowsAnExceptionIfAllVotersAbstainAndAllowAccessIfAllVotersAbstainIsFalse() {

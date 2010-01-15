@@ -36,7 +36,7 @@ class PolicyEnforcementTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function invokeCallsTheAuthenticationManager() {
-		$authenticationManager = $this->getMock('F3\FLOW3\Security\Authentication\ManagerInterface');
+		$authenticationManager = $this->getMock('F3\FLOW3\Security\Authentication\AuthenticationManagerInterface');
 		$accessDecisionManager = $this->getMock('F3\FLOW3\Security\Authorization\AccessDecisionManagerInterface');
 		$joinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface');
 
@@ -54,7 +54,7 @@ class PolicyEnforcementTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function invokeCallsTheAccessDecisionManagerToDecideOnTheCurrentJoinPoint() {
-		$authenticationManager = $this->getMock('F3\FLOW3\Security\Authentication\ManagerInterface');
+		$authenticationManager = $this->getMock('F3\FLOW3\Security\Authentication\AuthenticationManagerInterface');
 		$accessDecisionManager = $this->getMock('F3\FLOW3\Security\Authorization\AccessDecisionManagerInterface');
 		$joinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface');
 

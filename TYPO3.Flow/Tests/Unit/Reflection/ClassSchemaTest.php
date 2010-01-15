@@ -148,7 +148,7 @@ class ClassSchemaTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @dataProvider invalidPropertyTypes()
 	 * @test
-	 * @expectedException \F3\FLOW3\Reflection\Exception\InvalidPropertyType
+	 * @expectedException \F3\FLOW3\Reflection\Exception\InvalidPropertyTypeException
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function addPropertyRejectsInvalidPropertyTypes($propertyType) {

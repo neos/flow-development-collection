@@ -42,7 +42,7 @@ class AfterThrowingAdvice implements \F3\FLOW3\AOP\Advice\AdviceInterface {
 	protected $adviceMethodName;
 
 	/**
-	 * @var \F3\FLOW3\Object\ManagerInterface A reference to the Object Manager
+	 * @var \F3\FLOW3\Object\ObjectManagerInterface A reference to the Object Manager
 	 */
 	protected $objectManager;
 
@@ -51,11 +51,11 @@ class AfterThrowingAdvice implements \F3\FLOW3\AOP\Advice\AdviceInterface {
 	 *
 	 * @param string $aspectObjectName Name of the aspect object containing the advice
 	 * @param string $adviceMethodName Name of the advice method
-	 * @param  \F3\FLOW3\Object\ManagerInterface $objectManager A reference to the object manager
+	 * @param  \F3\FLOW3\Object\ObjectManagerInterface $objectManager A reference to the object manager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct($aspectObjectName, $adviceMethodName, \F3\FLOW3\Object\ManagerInterface $objectManager) {
+	public function __construct($aspectObjectName, $adviceMethodName, \F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->aspectObjectName = $aspectObjectName;
 		$this->adviceMethodName = $adviceMethodName;
 		$this->objectManager = $objectManager;

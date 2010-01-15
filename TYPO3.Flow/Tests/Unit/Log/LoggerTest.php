@@ -91,7 +91,7 @@ class LoggerTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \F3\FLOW3\Log\Exception\NoSuchBackend
+	 * @expectedException \F3\FLOW3\Log\Exception\NoSuchBackendException
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function removeThrowsAnExceptionOnTryingToRemoveABackendNotPreviouslyAdded() {

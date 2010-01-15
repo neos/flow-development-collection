@@ -31,7 +31,7 @@ namespace F3\FLOW3\MVC\CLI;
 class RequestHandler implements \F3\FLOW3\MVC\RequestHandlerInterface {
 
 	/**
-	 * @var \F3\FLOW3\Object\FactoryInterface Reference to the object factory
+	 * @var \F3\FLOW3\Object\ObjectFactoryInterface Reference to the object factory
 	 */
 	protected $objectFactory;
 
@@ -58,7 +58,7 @@ class RequestHandler implements \F3\FLOW3\MVC\RequestHandlerInterface {
 	/**
 	 * Constructs the CLI Request Handler
 	 *
-	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory A reference to the object factory
+	 * @param \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory A reference to the object factory
 	 * @param \F3\FLOW3\Utility\Environment $utilityEnvironment A reference to the environment
 	 * @param \F3\FLOW3\MVC\Dispatcher $dispatcher The request dispatcher
 	 * @param \F3\FLOW3\MVC\CLI\RequestBuilder $requestBuilder The request builder
@@ -66,7 +66,7 @@ class RequestHandler implements \F3\FLOW3\MVC\RequestHandlerInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct(
-			\F3\FLOW3\Object\FactoryInterface $objectFactory,
+			\F3\FLOW3\Object\ObjectFactoryInterface $objectFactory,
 			\F3\FLOW3\Utility\Environment $utilityEnvironment,
 			\F3\FLOW3\MVC\Dispatcher $dispatcher,
 			\F3\FLOW3\MVC\CLI\RequestBuilder $requestBuilder) {

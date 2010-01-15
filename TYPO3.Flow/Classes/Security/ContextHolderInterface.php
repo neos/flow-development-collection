@@ -45,7 +45,7 @@ interface ContextHolderInterface {
 	 * Returns the current security context.
 	 *
 	 * @return \F3\FLOW3\Security\ContextThe current security context
-	 * @throws \F3\FLOW3\Security\Exception\NoContextAvailable if no context is available
+	 * @throws \F3\FLOW3\Security\Exception\NoContextAvailableException if no context is available
 	 */
 	public function getContext();
 

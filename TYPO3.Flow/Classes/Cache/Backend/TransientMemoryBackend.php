@@ -56,7 +56,7 @@ class TransientMemoryBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 */
 	public function set($entryIdentifier, $data, array $tags = array(), $lifetime = NULL) {
 		if (!$this->cache instanceof \F3\FLOW3\Cache\Frontend\FrontendInterface) throw new \F3\FLOW3\Cache\Exception('No cache frontend has been set yet via setCache().', 1238244992);
-		if (!is_string($data)) throw new \F3\FLOW3\Cache\Exception\InvalidData('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1238244993);
+		if (!is_string($data)) throw new \F3\FLOW3\Cache\Exception\InvalidDataException('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1238244993);
 		$this->entries[$entryIdentifier] = $data;
 		foreach ($tags as $tag) {
 			$this->tagsAndEntries[$tag][$entryIdentifier] = TRUE;

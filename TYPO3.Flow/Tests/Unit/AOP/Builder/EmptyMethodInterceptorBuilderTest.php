@@ -49,7 +49,7 @@ class EmptyMethodInterceptorBuilderTest extends \F3\Testing\BaseTestCase {
 			)
 		);
 
-		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service', array('loadFromCache', 'saveToCache'), array(), '', FALSE, TRUE);
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'saveToCache'), array(), '', FALSE, TRUE);
 		$mockReflectionService->initialize(array($className));
 
 		$expectedCode = '
@@ -89,7 +89,7 @@ class EmptyMethodInterceptorBuilderTest extends \F3\Testing\BaseTestCase {
 			)
 		);
 
-		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service', array('loadFromCache', 'saveToCache'), array(), '', FALSE, TRUE);
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'saveToCache'), array(), '', FALSE, TRUE);
 		$mockReflectionService->initialize(array($className));
 
 		$expectedCode = '

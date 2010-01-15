@@ -33,7 +33,7 @@ class UriTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @expectedException F3\FLOW3\Security\Exception\RequestTypeNotSupported
+	 * @expectedException F3\FLOW3\Security\Exception\RequestTypeNotSupportedException
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function anExceptionIsThrownIfTheGivenRequestObjectIsNotSupported() {

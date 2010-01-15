@@ -126,7 +126,7 @@ class ConfigurationTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException F3\FLOW3\Object\Exception\InvalidClass
+	 * @expectedException F3\FLOW3\Object\Exception\InvalidClassException
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setFactoryClassNameRejectsNamesOfNonExistingNlasses() {

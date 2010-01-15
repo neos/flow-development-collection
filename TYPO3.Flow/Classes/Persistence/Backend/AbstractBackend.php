@@ -33,7 +33,7 @@ namespace F3\FLOW3\Persistence\Backend;
 abstract class AbstractBackend implements \F3\FLOW3\Persistence\BackendInterface {
 
 	/**
-	 * @var \F3\FLOW3\Reflection\Service
+	 * @var \F3\FLOW3\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
@@ -70,11 +70,11 @@ abstract class AbstractBackend implements \F3\FLOW3\Persistence\BackendInterface
 	/**
 	 * Injects a Reflection Service instance used for processing objects
 	 *
-	 * @param \F3\FLOW3\Reflection\Service $reflectionService
+	 * @param \F3\FLOW3\Reflection\ReflectionService $reflectionService
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectReflectionService(\F3\FLOW3\Reflection\Service $reflectionService) {
+	public function injectReflectionService(\F3\FLOW3\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
 	}
 
@@ -177,7 +177,7 @@ abstract class AbstractBackend implements \F3\FLOW3\Persistence\BackendInterface
 	 */
 	public function replaceObject($existingObject, $newObject) {
 		$existingUUID = $this->persistenceSession->getIdentifierByObject($existingObject);
-		if ($existingUUID === NULL) throw new \F3\FLOW3\Persistence\Exception\UnknownObject('The given object is unknown to the persistence session.', 1238070163);
+		if ($existingUUID === NULL) throw new \F3\FLOW3\Persistence\Exception\UnknownObjectException('The given object is unknown to the persistence session.', 1238070163);
 
 		$this->persistenceSession->unregisterObject($existingObject);
 		$this->persistenceSession->registerObject($newObject, $existingUUID);
@@ -262,7 +262,7 @@ abstract class AbstractBackend implements \F3\FLOW3\Persistence\BackendInterface
 	 * @param string $expectedType The expected type
 	 * @param mixed $value The value to check
 	 * @return void
-	 * @throws \F3\FLOW3\Persistence\Exception\UnexpectedType
+	 * @throws \F3\FLOW3\Persistence\Exception\UnexpectedTypeException
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function checkType($expectedType, $value) {
@@ -272,10 +272,10 @@ abstract class AbstractBackend implements \F3\FLOW3\Persistence\BackendInterface
 
 		if (is_object($value)) {
 			if (!($value instanceof $expectedType)) {
-				throw new \F3\FLOW3\Persistence\Exception\UnexpectedType('Expected property of type ' . $expectedType . ', but got ' . get_class($value), 1244465558);
+				throw new \F3\FLOW3\Persistence\Exception\UnexpectedTypeException('Expected property of type ' . $expectedType . ', but got ' . get_class($value), 1244465558);
 			}
 		} elseif ($expectedType !== $this->getType($value)) {
-			throw new \F3\FLOW3\Persistence\Exception\UnexpectedType('Expected property of type ' . $expectedType . ', but got ' . gettype($value), 1244465559);
+			throw new \F3\FLOW3\Persistence\Exception\UnexpectedTypeException('Expected property of type ' . $expectedType . ', but got ' . gettype($value), 1244465559);
 		}
 	}
 

@@ -33,7 +33,7 @@ namespace F3\FLOW3\MVC\Controller;
 class Arguments extends \ArrayObject {
 
 	/**
-	 * @var \F3\FLOW3\Object\FactoryInterface A reference to the object factory
+	 * @var \F3\FLOW3\Object\ObjectFactoryInterface A reference to the object factory
 	 */
 	protected $objectFactory;
 
@@ -45,11 +45,11 @@ class Arguments extends \ArrayObject {
 	/**
 	 * Constructs this Arguments object
 	 *
-	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory
-	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager
+	 * @param \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory
+	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
+	public function __construct(\F3\FLOW3\Object\ObjectFactoryInterface $objectFactory) {
 		$this->objectFactory = $objectFactory;
 		parent::__construct();
 	}
@@ -124,13 +124,13 @@ class Arguments extends \ArrayObject {
 	 *
 	 * @param mixed $offset Offset
 	 * @return \F3\FLOW3\MVC\Controller\Argument The requested argument object
-	 * @throws \F3\FLOW3\MVC\Exception\NoSuchArgument if the argument does not exist
+	 * @throws \F3\FLOW3\MVC\Exception\NoSuchArgumentException if the argument does not exist
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @api
 	 */
 	public function offsetGet($offset) {
 		$translatedOffset = $this->translateToLongArgumentName($offset);
-		if ($translatedOffset === '') throw new \F3\FLOW3\MVC\Exception\NoSuchArgument('An argument "' . $offset . '" does not exist.', 1216909923);
+		if ($translatedOffset === '') throw new \F3\FLOW3\MVC\Exception\NoSuchArgumentException('An argument "' . $offset . '" does not exist.', 1216909923);
 		return parent::offsetGet($translatedOffset);
 	}
 
@@ -177,7 +177,7 @@ class Arguments extends \ArrayObject {
 	 *
 	 * @param string $argumentName Name of the argument to retrieve
 	 * @return \F3\FLOW3\MVC\Controller\Argument
-	 * @throws \F3\FLOW3\MVC\Exception\NoSuchArgument
+	 * @throws \F3\FLOW3\MVC\Exception\NoSuchArgumentException
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */

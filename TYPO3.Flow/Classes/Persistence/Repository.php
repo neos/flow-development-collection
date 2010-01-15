@@ -51,7 +51,7 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	protected $queryFactory;
 
 	/**
-	 * @var \F3\FLOW3\Persistence\ManagerInterface
+	 * @var \F3\FLOW3\Persistence\PersistenceManagerInterface
 	 */
 	protected $persistenceManager;
 
@@ -86,11 +86,11 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	/**
 	 * Injects the persistence manager
 	 *
-	 * @param \F3\FLOW3\Persistence\ManagerInterface $persistenceManager
+	 * @param \F3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectPersistenceManager(\F3\FLOW3\Persistence\ManagerInterface $persistenceManager) {
+	public function injectPersistenceManager(\F3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager) {
 		$this->persistenceManager = $persistenceManager;
 	}
 
@@ -105,7 +105,7 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	 */
 	public function add($object) {
 		if (!($object instanceof $this->objectType)) {
-			throw new \F3\FLOW3\Persistence\Exception\IllegalObjectType('The object given to add() was not of the type (' . $this->objectType . ') this repository manages.', 1248363335);
+			throw new \F3\FLOW3\Persistence\Exception\IllegalObjectTypeException('The object given to add() was not of the type (' . $this->objectType . ') this repository manages.', 1248363335);
 		}
 
 		$this->addedObjects->attach($object);
@@ -127,7 +127,7 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	 */
 	public function remove($object) {
 		if (!($object instanceof $this->objectType)) {
-			throw new \F3\FLOW3\Persistence\Exception\IllegalObjectType('The object given to remove() was not of the type (' . $this->objectType . ') this repository manages.', 1248363426);
+			throw new \F3\FLOW3\Persistence\Exception\IllegalObjectTypeException('The object given to remove() was not of the type (' . $this->objectType . ') this repository manages.', 1248363426);
 		}
 
 		if ($this->addedObjects->contains($object)) {
@@ -148,10 +148,10 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	 */
 	public function replace($existingObject, $newObject) {
 		if (!($existingObject instanceof $this->objectType)) {
-			throw new \F3\FLOW3\Persistence\Exception\IllegalObjectType('The existing object given to replace was not of the type (' . $this->objectType . ') this repository manages.', 1248363434);
+			throw new \F3\FLOW3\Persistence\Exception\IllegalObjectTypeException('The existing object given to replace was not of the type (' . $this->objectType . ') this repository manages.', 1248363434);
 		}
 		if (!($newObject instanceof $this->objectType)) {
-			throw new \F3\FLOW3\Persistence\Exception\IllegalObjectType('The new object given to replace was not of the type (' . $this->objectType . ') this repository manages.', 1248363439);
+			throw new \F3\FLOW3\Persistence\Exception\IllegalObjectTypeException('The new object given to replace was not of the type (' . $this->objectType . ') this repository manages.', 1248363439);
 		}
 
 		$this->replaceObject($existingObject, $newObject);
@@ -182,7 +182,7 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 			$this->addedObjects->detach($existingObject);
 			$this->addedObjects->attach($newObject);
 		} else {
-			throw new \F3\FLOW3\Persistence\Exception\UnknownObject('The "existing object" is unknown to the persistence backend.', 1238068475);
+			throw new \F3\FLOW3\Persistence\Exception\UnknownObjectException('The "existing object" is unknown to the persistence backend.', 1238068475);
 		}
 
 		$this->updateRecursively($newObject);
@@ -218,11 +218,11 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	 */
 	public function update($modifiedObject) {
 		if (!($modifiedObject instanceof $this->objectType)) {
-			throw new \F3\FLOW3\Persistence\Exception\IllegalObjectType('The modified object given to update() was not of the type (' . $this->objectType . ') this repository manages.', 1249479625);
+			throw new \F3\FLOW3\Persistence\Exception\IllegalObjectTypeException('The modified object given to update() was not of the type (' . $this->objectType . ') this repository manages.', 1249479625);
 		}
 
 		if ($modifiedObject->FLOW3_Persistence_isClone() !== TRUE) {
-			throw new \F3\FLOW3\Persistence\Exception\IllegalObjectType('The object given to update() was not a clone of a persistent object.', 1253631553);
+			throw new \F3\FLOW3\Persistence\Exception\IllegalObjectTypeException('The object given to update() was not a clone of a persistent object.', 1253631553);
 		}
 
 		$this->updateObject($modifiedObject);
@@ -241,7 +241,7 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 			$existingObject = $this->persistenceManager->getObjectByIdentifier($uuid);
 			$this->replaceObject($existingObject, $modifiedObject);
 		} else {
-			throw new \F3\FLOW3\Persistence\Exception\UnknownObject('The "modified object" is does not have an existing counterpart in this repository.', 1249479819);
+			throw new \F3\FLOW3\Persistence\Exception\UnknownObjectException('The "modified object" is does not have an existing counterpart in this repository.', 1249479819);
 		}
 	}
 

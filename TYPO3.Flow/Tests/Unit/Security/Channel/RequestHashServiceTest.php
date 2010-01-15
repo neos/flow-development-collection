@@ -127,7 +127,7 @@ class RequestHashServiceTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @dataProvider dataProviderForGenerateRequestHashWithUnallowedValues
-	 * @expectedException F3\FLOW3\Security\Exception\InvalidArgumentForRequestHashGeneration
+	 * @expectedException F3\FLOW3\Security\Exception\InvalidArgumentForRequestHashGenerationException
 	 */
 	public function generateRequestHashThrowsExceptionInWrongCases($input) {
 		$requestHashService = $this->getMock('F3\FLOW3\Security\Channel\RequestHashService', array('serializeAndHashFormFieldArray'));
@@ -172,7 +172,7 @@ class RequestHashServiceTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException F3\FLOW3\Security\Exception\SyntacticallyWrongRequestHash
+	 * @expectedException F3\FLOW3\Security\Exception\SyntacticallyWrongRequestHashException
 	 * @author Sebastian Kurfürst
 	 */
 	public function verifyRequestHashThrowsExceptionIfHmacIsShortherThan40Characters() {

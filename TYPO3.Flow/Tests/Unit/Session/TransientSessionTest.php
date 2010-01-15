@@ -51,7 +51,7 @@ class TransientSessionTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \F3\FLOW3\Session\Exception\SessionNotStarted
+	 * @expectedException \F3\FLOW3\Session\Exception\SessionNotStartedException
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function tryingToGetTheSessionIdWithoutStartingTheSessionThrowsAnException() {

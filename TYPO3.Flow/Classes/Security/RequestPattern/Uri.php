@@ -75,11 +75,11 @@ class Uri implements \F3\FLOW3\Security\RequestPatternInterface {
 	 *
 	 * @param \F3\FLOW3\MVC\RequestInterface $request The request that should be matched
 	 * @return boolean TRUE if the pattern matched, FALSE otherwise
-	 * @throws \F3\FLOW3\Security\Exception\RequestTypeNotSupported
+	 * @throws \F3\FLOW3\Security\Exception\RequestTypeNotSupportedException
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function matchRequest(\F3\FLOW3\MVC\RequestInterface $request) {
-		if (!($request instanceof \F3\FLOW3\MVC\Web\Request)) throw new \F3\FLOW3\Security\Exception\RequestTypeNotSupported('The given request type is not supported.', 1216903641);
+		if (!($request instanceof \F3\FLOW3\MVC\Web\Request)) throw new \F3\FLOW3\Security\Exception\RequestTypeNotSupportedException('The given request type is not supported.', 1216903641);
 
 		return (boolean)preg_match('/^' . str_replace('/', '\/', $this->uriPattern) . '$/', $request->getRequestUri()->getPath());
 	}

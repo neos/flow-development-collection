@@ -32,7 +32,7 @@ namespace F3\FLOW3\AOP\Pointcut;
 class PointcutMethodTaggedWithFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 
 	/**
-	 * @var F3\FLOW3\Reflection\Service
+	 * @var F3\FLOW3\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
@@ -55,11 +55,11 @@ class PointcutMethodTaggedWithFilter implements \F3\FLOW3\AOP\Pointcut\PointcutF
 	/**
 	 * Injects the reflection service
 	 *
-	 * @param F3\FLOW3\Reflection\Service $reflectionService The reflection service
+	 * @param F3\FLOW3\Reflection\ReflectionService $reflectionService The reflection service
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectReflectionService(\F3\FLOW3\Reflection\Service $reflectionService) {
+	public function injectReflectionService(\F3\FLOW3\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
 	}
 

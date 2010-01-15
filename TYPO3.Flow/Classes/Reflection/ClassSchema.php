@@ -119,7 +119,7 @@ class ClassSchema {
 			$elementType = isset($matches['elementType']) ? $this->normalizeType($matches['elementType']) : NULL;
 
 			if ($elementType !== NULL && !in_array($type, array('array', 'ArrayObject', 'SplObjectStorage'))) {
-				throw new \F3\FLOW3\Reflection\Exception\InvalidPropertyType('Property  of type "' . $type . '" must not have an element type hint (' . $elementType . ').', 1248103053);
+				throw new \F3\FLOW3\Reflection\Exception\InvalidPropertyTypeException('Property  of type "' . $type . '" must not have an element type hint (' . $elementType . ').', 1248103053);
 			}
 
 			$this->properties[$name] = array(
@@ -128,7 +128,7 @@ class ClassSchema {
 				'lazy' => $lazy
 			);
 		} else {
-			throw new \F3\FLOW3\Reflection\Exception\InvalidPropertyType('Invalid property type encountered: ' . $type, 1220387528);
+			throw new \F3\FLOW3\Reflection\Exception\InvalidPropertyTypeException('Invalid property type encountered: ' . $type, 1220387528);
 		}
 	}
 

@@ -134,7 +134,7 @@ class RequestTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \F3\FLOW3\MVC\Exception\InvalidRequestMethod
+	 * @expectedException \F3\FLOW3\MVC\Exception\InvalidRequestMethodException
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function requestMethodsWhichAreNotCompletelyUpperCaseAreRejected() {

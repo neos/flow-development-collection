@@ -44,8 +44,8 @@ class PropertyMapperTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function setUp() {
 		$this->mappingResults = new \F3\FLOW3\Property\MappingResults();
-		$this->mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service');
-		$this->mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface');
+		$this->mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService');
+		$this->mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
 	}
 
 	/**
@@ -165,7 +165,7 @@ class PropertyMapperTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @expectedException \F3\FLOW3\Property\Exception\InvalidTarget
+	 * @expectedException \F3\FLOW3\Property\Exception\InvalidTargetException
 	 */
 	public function mapExpectsTheTargetToBeAStringContainingClassNameOrAnObjectOrAnArray() {
 		$this->mockObjectManager->expects($this->once())->method('getObject')->with('F3\FLOW3\Property\MappingResults')->will($this->returnValue($this->mappingResults));
@@ -518,7 +518,7 @@ class PropertyMapperTest extends \F3\Testing\BaseTestCase {
 	public function transformToObjectConvertsAnUuidStringToAnObject() {
 		$UUID = 'e104e469-9030-4b98-babf-3990f07dd3f1';
 		$existingObject = new \stdClass();
-		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\ManagerInterface');
+		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\PersistenceManagerInterface');
 		$mockPersistenceManager->expects($this->once())->method('getObjectByIdentifier')->with($UUID)->will($this->returnValue($existingObject));
 
 		$mapper = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Property\PropertyMapper'), array('dummy'));
@@ -533,7 +533,7 @@ class PropertyMapperTest extends \F3\Testing\BaseTestCase {
 	public function transformToObjectConvertsAnIdentityArrayContainingAnUUIDToAnObject() {
 		$UUID = 'e104e469-9030-4b98-babf-3990f07dd3f1';
 		$existingObject = new \stdClass();
-		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\ManagerInterface');
+		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\PersistenceManagerInterface');
 		$mockPersistenceManager->expects($this->once())->method('getObjectByIdentifier')->with($UUID)->will($this->returnValue($existingObject));
 
 		$mapper = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Property\PropertyMapper'), array('dummy'));
@@ -578,7 +578,7 @@ class PropertyMapperTest extends \F3\Testing\BaseTestCase {
 		$theValue = array('property1' => 'value1', 'property2' => 'value2');
 		$theObject = new \stdClass();
 
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface');
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
 		$mockObjectManager->expects($this->at(0))->method('getObject')->with('F3\Foo\Bar')->will($this->returnValue($theObject));
 
 		$mapper = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Property\PropertyMapper'), array('map'));

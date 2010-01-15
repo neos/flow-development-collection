@@ -58,7 +58,7 @@ interface RequestInterface {
 	 * controller name
 	 *
 	 * @return string The controller's Object Name
-	 * @throws \F3\FLOW3\MVC\Exception\NoSuchController if the controller does not exist
+	 * @throws \F3\FLOW3\MVC\Exception\NoSuchControllerException if the controller does not exist
 	 * @api
 	 */
 	public function getControllerObjectName();
@@ -68,7 +68,7 @@ interface RequestInterface {
 	 *
 	 * @param string $packageKey The package key.
 	 * @return void
-	 * @throws \F3\FLOW3\MVC\Exception\InvalidPackageKey if the package key is not valid
+	 * @throws \F3\FLOW3\MVC\Exception\InvalidPackageKeyException if the package key is not valid
 	 * @api
 	 */
 	public function setControllerPackageKey($packageKey);
@@ -124,7 +124,7 @@ interface RequestInterface {
 	 *
 	 * @param string $actionName Name of the action to execute by the controller
 	 * @return void
-	 * @throws \F3\FLOW3\MVC\Exception\InvalidActionName if the action name is not valid
+	 * @throws \F3\FLOW3\MVC\Exception\InvalidActionNameException if the action name is not valid
 	 * @api
 	 */
 	public function setControllerActionName($actionName);
@@ -163,7 +163,7 @@ interface RequestInterface {
 	 *
 	 * @param string $argumentName Name of the argument
 	 * @return string Value of the argument
-	 * @throws \F3\FLOW3\MVC\Exception\NoSuchArgument if such an argument does not exist
+	 * @throws \F3\FLOW3\MVC\Exception\NoSuchArgumentException if such an argument does not exist
 	 * @api
 	 */
 	public function getArgument($argumentName);

@@ -43,7 +43,7 @@ class HashService {
 	 */
 	public function injectSettings(array $settings) {
 		if (empty($settings['security']['cryptography']['hashService']['encryptionKey'])) {
-			throw new \F3\FLOW3\Security\Exception\MissingConfiguration('You must configure an encryption key for the HashService', 1258991855);
+			throw new \F3\FLOW3\Security\Exception\MissingConfigurationException('You must configure an encryption key for the HashService', 1258991855);
 		}
 		$this->encryptionKey = $settings['security']['cryptography']['hashService']['encryptionKey'];
 	}
@@ -53,12 +53,12 @@ class HashService {
 	 *
 	 * @param string $string The string for which a hash should be generated
 	 * @return string The hash of the string
-	 * @throws F3\FLOW3\Security\Exception\InvalidArgumentForHashGeneration if something else than a string was given as parameter
+	 * @throws F3\FLOW3\Security\Exception\InvalidArgumentForHashGenerationException if something else than a string was given as parameter
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @todo Mark as API once it is more stable
 	 */
 	public function generateHmac($string) {
-		if (!is_string($string)) throw new \F3\FLOW3\Security\Exception\InvalidArgumentForHashGeneration('A hash can only be generated for a string, but "' . gettype($string) . '" was given.', 1255069587);
+		if (!is_string($string)) throw new \F3\FLOW3\Security\Exception\InvalidArgumentForHashGenerationException('A hash can only be generated for a string, but "' . gettype($string) . '" was given.', 1255069587);
 
 		return hash_hmac('sha1', $string, $this->encryptionKey);
 	}

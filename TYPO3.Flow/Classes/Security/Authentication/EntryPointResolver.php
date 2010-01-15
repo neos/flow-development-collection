@@ -32,18 +32,18 @@ namespace F3\FLOW3\Security\Authentication;
 class EntryPointResolver {
 
 	/**
-	 * @var \F3\FLOW3\Object\ManagerInterface The object manager
+	 * @var \F3\FLOW3\Object\ObjectManagerInterface The object manager
 	 */
 	protected $objectManager;
 
 	/**
 	 * Constructor.
 	 *
-	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager The object manager
+	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager The object manager
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function __construct(\F3\FLOW3\Object\ManagerInterface $objectManager) {
+	public function __construct(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
 	}
 
@@ -52,7 +52,7 @@ class EntryPointResolver {
 	 *
 	 * @param string $name The (short) name of the entry point
 	 * @return string The class name of the entry point, NULL if no class was found.
-	 * @throws \F3\FLOW3\Security\Exception\NoEntryPointFound
+	 * @throws \F3\FLOW3\Security\Exception\NoEntryPointFoundException
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function resolveEntryPointClass($name) {
@@ -64,7 +64,7 @@ class EntryPointResolver {
 		$resolvedObjectName = $this->objectManager->getCaseSensitiveObjectName('F3\FLOW3\Security\Authentication\EntryPoint\\' . $name);
 		if ($resolvedObjectName !== FALSE) return $resolvedObjectName;
 
-		throw new \F3\FLOW3\Security\Exception\NoEntryPointFound('An entry point with the name: "' . $name . '" could not be resolved.', 1236767282);
+		throw new \F3\FLOW3\Security\Exception\NoEntryPointFoundException('An entry point with the name: "' . $name . '" could not be resolved.', 1236767282);
 	}
 }
 ?>

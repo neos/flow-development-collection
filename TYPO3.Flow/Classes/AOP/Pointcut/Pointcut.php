@@ -98,14 +98,14 @@ class Pointcut {
 	 * @param string $methodDeclaringClassName Name of the class the method was originally declared in
 	 * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
 	 * @return boolean TRUE if class and method match this point cut, otherwise FALSE
-	 * @throws F3\FLOW3\AOP\Exception\CircularPointcutReference if a circular pointcut reference was detected
+	 * @throws F3\FLOW3\AOP\Exception\CircularPointcutReferenceException if a circular pointcut reference was detected
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier) {
 		if ($this->pointcutQueryIdentifier === $pointcutQueryIdentifier) {
 			$this->recursionLevel ++;
 			if ($this->recursionLevel > self::MAXIMUM_RECURSIONS) {
-				throw new \F3\FLOW3\AOP\Exception\CircularPointcutReference('Circular pointcut reference detected in ' . $this->aspectClassName . '->' . $this->pointcutMethodName . ', too many recursions (Query identifier: ' . $pointcutQueryIdentifier . ').', 1172416172);
+				throw new \F3\FLOW3\AOP\Exception\CircularPointcutReferenceException('Circular pointcut reference detected in ' . $this->aspectClassName . '->' . $this->pointcutMethodName . ', too many recursions (Query identifier: ' . $pointcutQueryIdentifier . ').', 1172416172);
 			}
 		} else {
 			$this->pointcutQueryIdentifier = $pointcutQueryIdentifier;

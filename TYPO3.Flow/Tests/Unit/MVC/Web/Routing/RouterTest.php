@@ -51,7 +51,7 @@ class RouterTest extends \F3\Testing\BaseTestCase {
 		$route3 = $this->getMock('F3\FLOW3\MVC\Web\Routing\Route', array('setUriPattern', 'setDefaults'), array(), '', FALSE);
 		$route3->expects($this->once())->method('setUriPattern')->with($this->equalTo('number3'));
 
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface', array('create'));
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\ObjectFactoryInterface', array('create'));
 		$mockObjectFactory->expects($this->exactly(3))->method('create')->will($this->onConsecutiveCalls($route1, $route2, $route3));
 
 		$router = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Web\Routing\Router'), array('dummy'));

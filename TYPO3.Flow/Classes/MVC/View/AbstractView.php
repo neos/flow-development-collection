@@ -33,12 +33,12 @@ namespace F3\FLOW3\MVC\View;
 abstract class AbstractView implements \F3\FLOW3\MVC\View\ViewInterface {
 
 	/**
-	 * @var \F3\FLOW3\Object\FactoryInterface A reference to the Object Factory
+	 * @var \F3\FLOW3\Object\ObjectFactoryInterface A reference to the Object Factory
 	 */
 	protected $objectFactory;
 
 	/**
-	 * @var \F3\FLOW3\Package\ManagerInterface
+	 * @var \F3\FLOW3\Package\PackageManagerInterface
 	 */
 	protected $packageManager;
 
@@ -48,12 +48,12 @@ abstract class AbstractView implements \F3\FLOW3\MVC\View\ViewInterface {
 	protected $resourceManager;
 
 	/**
-	 * @var \F3\FLOW3\Object\ManagerInterface
+	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
-	 * @var \F3\FLOW3\MVC\Controller\ControllerContext
+	 * @var \F3\FLOW3\MVC\Controller\Context
 	 */
 	protected $controllerContext;
 
@@ -66,14 +66,14 @@ abstract class AbstractView implements \F3\FLOW3\MVC\View\ViewInterface {
 	/**
 	 * Constructs the view.
 	 *
-	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory A reference to the Object Factory
-	 * @param \F3\FLOW3\Package\ManagerInterface $packageManager A reference to the Package Manager
+	 * @param \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory A reference to the Object Factory
+	 * @param \F3\FLOW3\Package\PackageManagerInterface $packageManager A reference to the Package Manager
 	 * @param \F3\FLOW3\Resource\ResourceManager $resourceManager A reference to the Resource Manager
-	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager A reference to the Object Manager
+	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager A reference to the Object Manager
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(\F3\FLOW3\Object\FactoryInterface $objectFactory, \F3\FLOW3\Package\ManagerInterface $packageManager, \F3\FLOW3\Resource\ResourceManager $resourceManager, \F3\FLOW3\Object\ManagerInterface $objectManager) {
+	public function __construct(\F3\FLOW3\Object\ObjectFactoryInterface $objectFactory, \F3\FLOW3\Package\PackageManagerInterface $packageManager, \F3\FLOW3\Resource\ResourceManager $resourceManager, \F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->objectFactory = $objectFactory;
 		$this->objectManager = $objectManager;
 		$this->packageManager = $packageManager;
@@ -83,11 +83,11 @@ abstract class AbstractView implements \F3\FLOW3\MVC\View\ViewInterface {
 	/**
 	 * Sets the current controller context
 	 *
-	 * @param \F3\FLOW3\MVC\Controller\ControllerContext $controllerContext
+	 * @param \F3\FLOW3\MVC\Controller\Context $controllerContext
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setControllerContext(\F3\FLOW3\MVC\Controller\ControllerContext $controllerContext) {
+	public function setControllerContext(\F3\FLOW3\MVC\Controller\Context $controllerContext) {
 		$this->controllerContext = $controllerContext;
 	}
 

@@ -33,12 +33,12 @@ require_once(__DIR__ . '/../../Fixture/Web/Routing/MockRoutePartHandler.php');
 class RouteTest extends \F3\Testing\BaseTestCase {
 
 	/**
-	 * @var \F3\FLOW3\Object\Factory
+	 * @var \F3\FLOW3\Object\ObjectFactory
 	 */
 	protected $mockObjectFactory;
 
 	/**
-	 * @var \F3\FLOW3\Object\ManagerInterface
+	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $mockObjectManager;
 
@@ -53,9 +53,9 @@ class RouteTest extends \F3\Testing\BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setUp() {
-		$this->mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
+		$this->mockObjectFactory = $this->getMock('F3\FLOW3\Object\ObjectFactoryInterface');
 		$this->mockObjectFactory->expects($this->any())->method('create')->will($this->returnCallback(array($this, 'objectFactoryCallBack')));
-		$this->mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface');
+		$this->mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
 		$this->route = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Web\Routing\Route'), array('dummy'), array($this->mockObjectFactory, $this->mockObjectManager));
 	}
 
@@ -115,7 +115,7 @@ class RouteTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \F3\FLOW3\MVC\Exception\InvalidRoutePartHandler
+	 * @expectedException \F3\FLOW3\MVC\Exception\InvalidRoutePartHandlerException
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function settingInvalidRoutePartHandlerThrowsException() {
@@ -135,7 +135,7 @@ class RouteTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \F3\FLOW3\MVC\Exception\InvalidUriPattern
+	 * @expectedException \F3\FLOW3\MVC\Exception\InvalidUriPatternException
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function uriPatternWithTrailingSlashThrowsException() {
@@ -145,7 +145,7 @@ class RouteTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \F3\FLOW3\MVC\Exception\InvalidUriPattern
+	 * @expectedException \F3\FLOW3\MVC\Exception\InvalidUriPatternException
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function uriPatternWithLeadingSlashThrowsException() {
@@ -155,7 +155,7 @@ class RouteTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \F3\FLOW3\MVC\Exception\InvalidUriPattern
+	 * @expectedException \F3\FLOW3\MVC\Exception\InvalidUriPatternException
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function uriPatternWithSuccessiveDynamicRoutepartsThrowsException() {
@@ -165,7 +165,7 @@ class RouteTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \F3\FLOW3\MVC\Exception\InvalidUriPattern
+	 * @expectedException \F3\FLOW3\MVC\Exception\InvalidUriPatternException
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function uriPatternWithSuccessiveOptionalSectionsThrowsException() {
@@ -175,7 +175,7 @@ class RouteTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \F3\FLOW3\MVC\Exception\InvalidUriPattern
+	 * @expectedException \F3\FLOW3\MVC\Exception\InvalidUriPatternException
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function uriPatternWithUnterminatedOptionalSectionsThrowsException() {
@@ -185,7 +185,7 @@ class RouteTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \F3\FLOW3\MVC\Exception\InvalidUriPattern
+	 * @expectedException \F3\FLOW3\MVC\Exception\InvalidUriPatternException
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function uriPatternWithUnopenedOptionalSectionsThrowsException() {
@@ -718,7 +718,7 @@ class RouteTest extends \F3\Testing\BaseTestCase {
 	 * @todo mock object factory
 	 */
 	public function matchingRequestPathIsNullAfterUnsuccessfulResolve() {
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface');
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
 		$this->route = new \F3\FLOW3\MVC\Web\Routing\Route($this->objectFactory, $mockObjectManager);
 		$this->route->setUriPattern('{key1}');
 		$this->routeValues = array('key1' => 'value1');
@@ -768,13 +768,13 @@ class RouteTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \F3\FLOW3\MVC\Exception\InvalidArgumentValue
+	 * @expectedException \F3\FLOW3\MVC\Exception\InvalidArgumentValueException
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function resolvesThrowsExceptionIfRouteValuesContainsObjectsWithoutIdentity() {
 		$objectWithoutIdentity = new \stdClass();
 
-		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\ManagerInterface');
+		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\PersistenceManagerInterface');
 		$mockPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($objectWithoutIdentity)->will($this->returnValue(FALSE));
 		$this->route->injectPersistenceManager($mockPersistenceManager);
 
@@ -792,7 +792,7 @@ class RouteTest extends \F3\Testing\BaseTestCase {
 		$object2 = new \stdClass();
 
 
-		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\ManagerInterface');
+		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\PersistenceManagerInterface');
 		$mockPersistenceManager->expects($this->at(0))->method('getIdentifierByObject')->with($object1)->will($this->returnValue('uuid1'));
 		$mockPersistenceManager->expects($this->at(1))->method('getIdentifierByObject')->with($object2)->will($this->returnValue('uuid2'));
 		$this->route->injectPersistenceManager($mockPersistenceManager);

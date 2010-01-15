@@ -75,12 +75,12 @@ class RequestHashService {
 				if (substr($formFieldPart, -1) == ']') $formFieldPart = substr($formFieldPart, 0, -1); // Strip off closing ] if needed
 
 				if (!is_array($currentPosition)) {
-					throw new \F3\FLOW3\Security\Exception\InvalidArgumentForRequestHashGeneration('The form field name "' . $formField . '" collides with a previous form field name which declared the field as string. (String overridden by Array)', 1255072196);
+					throw new \F3\FLOW3\Security\Exception\InvalidArgumentForRequestHashGenerationException('The form field name "' . $formField . '" collides with a previous form field name which declared the field as string. (String overridden by Array)', 1255072196);
 				}
 
 				if ($i == count($formFieldParts) - 1) {
 					if (isset($currentPosition[$formFieldPart]) && is_array($currentPosition[$formFieldPart])) {
-						throw new \F3\FLOW3\Security\Exception\InvalidArgumentForRequestHashGeneration('The form field name "' . $formField . '" collides with a previous form field name which declared the field as array. (Array overridden by String)', 1255072587);
+						throw new \F3\FLOW3\Security\Exception\InvalidArgumentForRequestHashGenerationException('The form field name "' . $formField . '" collides with a previous form field name which declared the field as array. (Array overridden by String)', 1255072587);
 					}
 						// Last iteration - add a string
 					if ($formFieldPart === '') {
@@ -90,7 +90,7 @@ class RequestHashService {
 					}
 				} else {
 					if ($formFieldPart === '') {
-						throw new \F3\FLOW3\Security\Exception\InvalidArgumentForRequestHashGeneration('The form field name "' . $formField . '" is invalid. Reason: "[]" used not as last argument.', 1255072832);
+						throw new \F3\FLOW3\Security\Exception\InvalidArgumentForRequestHashGenerationException('The form field name "' . $formField . '" is invalid. Reason: "[]" used not as last argument.', 1255072832);
 					}
 					if (!isset($currentPosition[$formFieldPart])) {
 						$currentPosition[$formFieldPart] = array();
@@ -129,7 +129,7 @@ class RequestHashService {
 		}
 		$hmac = $request->getArgument('__hmac');
 		if (strlen($hmac) < 40) {
-			throw new \F3\FLOW3\Security\Exception\SyntacticallyWrongRequestHash('Request hash too short. This is a probably manipulation attempt!', 1255089361);
+			throw new \F3\FLOW3\Security\Exception\SyntacticallyWrongRequestHashException('Request hash too short. This is a probably manipulation attempt!', 1255089361);
 		}
 		$serializedFieldNames = substr($hmac, 0, -40); // TODO: Constant for hash length needs to be introduced
 		$hash = substr($hmac, -40);

@@ -36,7 +36,7 @@ class UsernamePasswordTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function credentialsAreSetCorrectlyFromPostArguments() {
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\ObjectFactoryInterface');
 
 		$postArguments = array(
 			'F3\FLOW3\Security\Authentication\Token\UsernamePassword::username' => 'FLOW3',
@@ -93,7 +93,7 @@ class UsernamePasswordTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function updateCredentialsSetsTheCorrectAuthenticationStatusIfNewCredentialsArrived() {
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\ObjectFactoryInterface');
 
 		$postArguments = array(
 			'F3\FLOW3\Security\Authentication\Token\UsernamePassword::username' => 'FLOW3',
@@ -115,7 +115,7 @@ class UsernamePasswordTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @expectedException \F3\FLOW3\Security\Exception\InvalidAuthenticationStatus
+	 * @expectedException \F3\FLOW3\Security\Exception\InvalidAuthenticationStatusException
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function setAuthenticationStatusThrowsAnExceptionForAnInvalidStatus() {

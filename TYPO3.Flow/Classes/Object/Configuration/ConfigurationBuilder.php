@@ -61,7 +61,7 @@ class ConfigurationBuilder {
 							} elseif (isset($propertyValue['setting'])) {
 								$property = new \F3\FLOW3\Object\Configuration\ConfigurationProperty($propertyName, $propertyValue['setting'], \F3\FLOW3\Object\Configuration\ConfigurationProperty::PROPERTY_TYPES_SETTING);
 							} else {
-								throw new \F3\FLOW3\Object\Exception\InvalidObjectConfiguration('Invalid configuration syntax. Expecting "value", "object" or "setting" as value for property "' . $propertyName . '", instead found "' . (is_array($propertyValue) ? implode(', ', array_keys($propertyValue)) : $propertyValue) . '" (source: ' . $objectConfiguration->getConfigurationSourceHint() . ')', 1230563249);
+								throw new \F3\FLOW3\Object\Exception\InvalidObjectConfigurationException('Invalid configuration syntax. Expecting "value", "object" or "setting" as value for property "' . $propertyName . '", instead found "' . (is_array($propertyValue) ? implode(', ', array_keys($propertyValue)) : $propertyValue) . '" (source: ' . $objectConfiguration->getConfigurationSourceHint() . ')', 1230563249);
 							}
 							$objectConfiguration->setProperty($property);
 						}
@@ -77,7 +77,7 @@ class ConfigurationBuilder {
 							} elseif (isset($argumentValue['setting'])) {
 								$argument = new \F3\FLOW3\Object\Configuration\ConfigurationArgument($argumentName, $argumentValue['setting'], \F3\FLOW3\Object\Configuration\ConfigurationArgument::ARGUMENT_TYPES_SETTING);
 							} else {
-								throw new \F3\FLOW3\Object\Exception\InvalidObjectConfiguration('Invalid configuration syntax. Expecting "value", "object" or "setting" as value for argument "' . $argumentName . '", instead found "' . (is_array($argumentValue) ? implode(', ', array_keys($argumentValue)) : $argumentValue) . '" (source: ' . $objectConfiguration->getConfigurationSourceHint() . ')', 1230563250);
+								throw new \F3\FLOW3\Object\Exception\InvalidObjectConfigurationException('Invalid configuration syntax. Expecting "value", "object" or "setting" as value for argument "' . $argumentName . '", instead found "' . (is_array($argumentValue) ? implode(', ', array_keys($argumentValue)) : $argumentValue) . '" (source: ' . $objectConfiguration->getConfigurationSourceHint() . ')', 1230563250);
 							}
 							$objectConfiguration->setArgument($argument);
 						}
@@ -96,7 +96,7 @@ class ConfigurationBuilder {
 					$objectConfiguration->$methodName($optionValue === TRUE);
 				break;
 				default:
-					throw new \F3\FLOW3\Object\Exception\InvalidObjectConfiguration('Invalid configuration option "' . $optionName . '" (source: ' . $objectConfiguration->getConfigurationSourceHint() . ')', 1167574981);
+					throw new \F3\FLOW3\Object\Exception\InvalidObjectConfigurationException('Invalid configuration option "' . $optionName . '" (source: ' . $objectConfiguration->getConfigurationSourceHint() . ')', 1167574981);
 			}
 		}
 		return $objectConfiguration;
@@ -107,11 +107,11 @@ class ConfigurationBuilder {
 	 *
 	 * @param  string $value Value of the option
 	 * @return integer The scope translated into a scope constant
-	 * @throws \F3\FLOW3\Object\Exception\InvalidObjectConfiguration if an invalid scope has been specified
+	 * @throws \F3\FLOW3\Object\Exception\InvalidObjectConfigurationException if an invalid scope has been specified
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	static protected function parseScope($value) {
-		if (!in_array($value, array('singleton', 'prototype', 'session'))) throw new \F3\FLOW3\Object\Exception\InvalidObjectConfiguration('Invalid scope', 1167574991);
+		if (!in_array($value, array('singleton', 'prototype', 'session'))) throw new \F3\FLOW3\Object\Exception\InvalidObjectConfigurationException('Invalid scope', 1167574991);
 		return $value;
 	}
 

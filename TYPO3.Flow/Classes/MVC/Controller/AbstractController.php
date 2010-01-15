@@ -32,13 +32,13 @@ namespace F3\FLOW3\MVC\Controller;
 abstract class AbstractController implements \F3\FLOW3\MVC\Controller\ControllerInterface {
 
 	/**
-	 * @var \F3\FLOW3\Object\FactoryInterface
+	 * @var \F3\FLOW3\Object\ObjectFactoryInterface
 	 * @api
 	 */
 	protected $objectFactory;
 
 	/**
-	 * @var \F3\FLOW3\Object\ManagerInterface
+	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 * @api
 	 */
 	protected $objectManager;
@@ -105,7 +105,7 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 
 	/**
 	 * Contains the controller context
-	 * @var \F3\FLOW3\MVC\Controller\ControllerContext
+	 * @var \F3\FLOW3\MVC\Controller\Context
 	 */
 	protected $controllerContext;
 
@@ -121,10 +121,10 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	/**
 	 * Constructs the controller.
 	 *
-	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory A reference to the Object Factory
+	 * @param \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory A reference to the Object Factory
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
+	public function __construct(\F3\FLOW3\Object\ObjectFactoryInterface $objectFactory) {
 		$this->arguments = $objectFactory->create('F3\FLOW3\MVC\Controller\Arguments');
 		$this->objectFactory = $objectFactory;
 	}
@@ -143,11 +143,11 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	/**
 	 * Injects the object manager
 	 *
-	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager
+	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectObjectManager(\F3\FLOW3\Object\ManagerInterface $objectManager) {
+	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
 	}
 
@@ -209,12 +209,12 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	 * @param \F3\FLOW3\MVC\RequestInterface $request The request object
 	 * @param \F3\FLOW3\MVC\ResponseInterface $response The response, modified by this handler
 	 * @return void
-	 * @throws \F3\FLOW3\MVC\Exception\UnsupportedRequestType if the controller doesn't support the current request type
+	 * @throws \F3\FLOW3\MVC\Exception\UnsupportedRequestTypeException if the controller doesn't support the current request type
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function processRequest(\F3\FLOW3\MVC\RequestInterface $request, \F3\FLOW3\MVC\ResponseInterface $response) {
-		if (!$this->canProcessRequest($request)) throw new \F3\FLOW3\MVC\Exception\UnsupportedRequestType(get_class($this) . ' does not support requests of type "' . get_class($request) . '". Supported types are: ' . implode(' ', $this->supportedRequestTypes) , 1187701131);
+		if (!$this->canProcessRequest($request)) throw new \F3\FLOW3\MVC\Exception\UnsupportedRequestTypeException(get_class($this) . ' does not support requests of type "' . get_class($request) . '". Supported types are: ' . implode(' ', $this->supportedRequestTypes) , 1187701131);
 
 		$this->request = $request;
 		$this->request->setDispatched(TRUE);
@@ -225,14 +225,14 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 
 		$this->initializeControllerArgumentsBaseValidators();
 		$this->mapRequestArgumentsToControllerArguments();
-		$this->controllerContext = $this->objectFactory->create('F3\FLOW3\MVC\Controller\ControllerContext', $this->request, $this->response, $this->arguments, $this->argumentsMappingResults, $this->uriBuilder, $this->flashMessageContainer);
+		$this->controllerContext = $this->objectFactory->create('F3\FLOW3\MVC\Controller\Context', $this->request, $this->response, $this->arguments, $this->argumentsMappingResults, $this->uriBuilder, $this->flashMessageContainer);
 	}
 
 	/**
 	 * Returns this controller's context.
 	 * Note that the context is only available after processRequest() has been called.
 	 *
-	 * @return \F3\FLOW3\MVC\Controller\ControllerContext The current controller context
+	 * @return \F3\FLOW3\MVC\Controller\Context The current controller context
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
@@ -248,7 +248,7 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	 * @param string $packageKey Key of the package containing the controller to forward to. If not specified, the current package is assumed.
 	 * @param array $arguments Arguments to pass to the target action
 	 * @return void
-	 * @throws \F3\FLOW3\MVC\Exception\StopAction
+	 * @throws \F3\FLOW3\MVC\Exception\StopActionException
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
@@ -259,7 +259,7 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 		if ($controllerName !== NULL) $this->request->setControllerName($controllerName);
 		if ($packageKey !== NULL) $this->request->setControllerPackageKey($packageKey);
 		if ($arguments !== NULL) $this->request->setArguments($arguments);
-		throw new \F3\FLOW3\MVC\Exception\StopAction();
+		throw new \F3\FLOW3\MVC\Exception\StopActionException();
 	}
 
 	/**
@@ -276,12 +276,12 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	 * @param integer $statusCode (optional) The HTTP status code for the redirect. Default is "303 See Other"
 	 * @param \F3\FLOW3\MVC\Controller\Arguments $arguments Arguments to pass to the target action
 	 * @return void
-	 * @throws \F3\FLOW3\MVC\Exception\StopAction
+	 * @throws \F3\FLOW3\MVC\Exception\StopActionException
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	protected function redirect($actionName, $controllerName = NULL, $packageKey = NULL, array $arguments = NULL, $delay = 0, $statusCode = 303) {
-		if (!$this->request instanceof \F3\FLOW3\MVC\Web\Request) throw new \F3\FLOW3\MVC\Exception\UnsupportedRequestType('redirect() only supports web requests.', 1238101344);
+		if (!$this->request instanceof \F3\FLOW3\MVC\Web\Request) throw new \F3\FLOW3\MVC\Exception\UnsupportedRequestTypeException('redirect() only supports web requests.', 1238101344);
 
 		if ($packageKey !== NULL && strpos($packageKey, '\\') !== FALSE) {
 			list($packageKey, $subpackageKey) = explode('\\', $packageKey, 2);
@@ -302,20 +302,20 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	 * @param mixed $uri Either a string representation of a URI or a \F3\FLOW3\Property\DataType\Uri object
 	 * @param integer $delay (optional) The delay in seconds. Default is no delay.
 	 * @param integer $statusCode (optional) The HTTP status code for the redirect. Default is "303 See Other"
-	 * @throws \F3\FLOW3\MVC\Exception\UnsupportedRequestType If the request is not a web request
-	 * @throws \F3\FLOW3\MVC\Exception\StopAction
+	 * @throws \F3\FLOW3\MVC\Exception\UnsupportedRequestTypeException If the request is not a web request
+	 * @throws \F3\FLOW3\MVC\Exception\StopActionException
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	protected function redirectToUri($uri, $delay = 0, $statusCode = 303) {
-		if (!$this->request instanceof \F3\FLOW3\MVC\Web\Request) throw new \F3\FLOW3\MVC\Exception\UnsupportedRequestType('redirect() only supports web requests.', 1220539734);
+		if (!$this->request instanceof \F3\FLOW3\MVC\Web\Request) throw new \F3\FLOW3\MVC\Exception\UnsupportedRequestTypeException('redirect() only supports web requests.', 1220539734);
 
 		$uri = $this->request->getBaseUri() . (string)$uri;
 		$escapedUri = htmlentities($uri, ENT_QUOTES, 'utf-8');
 		$this->response->setContent('<html><head><meta http-equiv="refresh" content="' . intval($delay) . ';url=' . $escapedUri . '"/></head></html>');
 		$this->response->setStatus($statusCode);
 		$this->response->setHeader('Location', (string)$uri);
-		throw new \F3\FLOW3\MVC\Exception\StopAction();
+		throw new \F3\FLOW3\MVC\Exception\StopActionException();
 	}
 
 	/**
@@ -326,18 +326,18 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	 * @param integer $statusCode The HTTP status code
 	 * @param string $statusMessage A custom HTTP status message
 	 * @param string $content Body content which further explains the status
-	 * @throws \F3\FLOW3\MVC\Exception\UnsupportedRequestType If the request is not a web request
-	 * @throws \F3\FLOW3\MVC\Exception\StopAction
+	 * @throws \F3\FLOW3\MVC\Exception\UnsupportedRequestTypeException If the request is not a web request
+	 * @throws \F3\FLOW3\MVC\Exception\StopActionException
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	protected function throwStatus($statusCode, $statusMessage = NULL, $content = NULL) {
-		if (!$this->request instanceof \F3\FLOW3\MVC\Web\Request) throw new \F3\FLOW3\MVC\Exception\UnsupportedRequestType('throwStatus() only supports web requests.', 1220539739);
+		if (!$this->request instanceof \F3\FLOW3\MVC\Web\Request) throw new \F3\FLOW3\MVC\Exception\UnsupportedRequestTypeException('throwStatus() only supports web requests.', 1220539739);
 
 		$this->response->setStatus($statusCode, $statusMessage);
 		if ($content === NULL) $content = $this->response->getStatus();
 		$this->response->setContent($content);
-		throw new \F3\FLOW3\MVC\Exception\StopAction();
+		throw new \F3\FLOW3\MVC\Exception\StopActionException();
 	}
 
 	/**

@@ -36,7 +36,7 @@ class PointcutExpressionParserTest extends \F3\Testing\BaseTestCase {
 	protected $mockObjectFactory;
 
 	/**
-	 * @var \F3\FLOW3\Object\ManagerInterface
+	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $mockObjectManager;
 
@@ -46,13 +46,13 @@ class PointcutExpressionParserTest extends \F3\Testing\BaseTestCase {
 	 * @return void
 	 */
 	public function setup() {
-		$this->mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface', array(), array(), '', FALSE);
-		$this->mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface', array(), array(), '', FALSE);
+		$this->mockObjectFactory = $this->getMock('F3\FLOW3\Object\ObjectFactoryInterface', array(), array(), '', FALSE);
+		$this->mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
 	}
 
 	/**
 	 * @test
-	 * @expectedException \F3\FLOW3\AOP\Exception\InvalidPointcutExpression
+	 * @expectedException \F3\FLOW3\AOP\Exception\InvalidPointcutExpressionException
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function parseThrowsExceptionIfPointcutExpressionIsNotAString() {
@@ -62,7 +62,7 @@ class PointcutExpressionParserTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \F3\FLOW3\AOP\Exception\InvalidPointcutExpression
+	 * @expectedException \F3\FLOW3\AOP\Exception\InvalidPointcutExpressionException
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function parseThrowsExceptionIfThePointcutExpressionContainsNoDesignator() {
@@ -202,7 +202,7 @@ class PointcutExpressionParserTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \F3\FLOW3\AOP\Exception\InvalidPointcutExpression
+	 * @expectedException \F3\FLOW3\AOP\Exception\InvalidPointcutExpressionException
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function parseDesignatorMethodThrowsAnExceptionIfTheExpressionLacksTheClassMethodArrow() {
@@ -247,7 +247,7 @@ class PointcutExpressionParserTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \F3\FLOW3\AOP\Exception\InvalidPointcutExpression
+	 * @expectedException \F3\FLOW3\AOP\Exception\InvalidPointcutExpressionException
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function parseDesignatorPointcutThrowsAnExceptionIfTheExpressionLacksTheAspectClassMethodArrow() {
@@ -275,7 +275,7 @@ class PointcutExpressionParserTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \F3\FLOW3\AOP\Exception\InvalidPointcutExpression
+	 * @expectedException \F3\FLOW3\AOP\Exception\InvalidPointcutExpressionException
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function parseDesignatorFilterThrowsAnExceptionIfACustomFilterDoesNotImplementThePointcutFilterInterface() {

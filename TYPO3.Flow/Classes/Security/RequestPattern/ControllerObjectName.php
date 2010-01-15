@@ -73,7 +73,7 @@ class ControllerObjectName implements \F3\FLOW3\Security\RequestPatternInterface
 	 *
 	 * @param \F3\FLOW3\MVC\RequestInterface $request The request that should be matched
 	 * @return boolean TRUE if the pattern matched, FALSE otherwise
-	 * @throws \F3\FLOW3\Security\Exception\RequestTypeNotSupported
+	 * @throws \F3\FLOW3\Security\Exception\RequestTypeNotSupportedException
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function matchRequest(\F3\FLOW3\MVC\RequestInterface $request) {

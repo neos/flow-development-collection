@@ -185,7 +185,7 @@ TYPO3CR:
 
   # The storage backend configuration
   storage:
-    backend: 'F3\TYPO3CR\Storage\Backend\PDO'
+    backend: 'F3\TYPO3CR\Storage\Backend\Pdo'
     backendOptions:
       dataSourceName: 'sqlite:%FLOW3_PATH_DATA%Persistent/TYPO3CR.db'
       username: 
@@ -299,17 +299,17 @@ class SomeClass {
 class SomeClass {
 
 	/**
-	 * @var \F3\FLOW3\Configuration\Manager
+	 * @var \F3\FLOW3\Configuration\ConfigurationManager
  	 */
 	protected $configurationManager;
 
 	/**
 	 * Inject the Configuration Manager
 	 *
-	 * @param \F3\FLOW3\Configuration\Manager $configurationManager
+	 * @param \F3\FLOW3\Configuration\ConfigurationManager $configurationManager
 	 * @return void
 	 */
-	public function injectConfigurationManager(\F3\FLOW3\Configuration\Manager ⏎
+	public function injectConfigurationManager(\F3\FLOW3\Configuration\ConfigurationManager ⏎
     $configurationManager) {
 		$this-&gt;configurationManager = $configurationManager;
 	}
@@ -320,7 +320,7 @@ class SomeClass {
 	 * @return void
 	 */
 	public function theMethod() {
-		$mySettings = $this-&gt;configurationManager-&gt;getConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_SETTINGS, 'Demo');
+		$mySettings = $this-&gt;configurationManager-&gt;getConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Demo');
 		echo ($mySettings-&gt;administrator-&gt;name);
 		echo ($mySettings-&gt;administrator-&gt;email);
 	}

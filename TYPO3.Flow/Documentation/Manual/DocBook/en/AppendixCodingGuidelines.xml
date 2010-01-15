@@ -329,7 +329,7 @@ public function getContextName() {
 
             <tbody>
               <row>
-                <entry>\F3\FLOW3\Session\PHPSession</entry>
+                <entry>\F3\FLOW3\Session\PhpSession</entry>
 
                 <entry>PHPSession</entry>
 
@@ -385,7 +385,7 @@ public function getContextName() {
 
             <tbody>
               <row>
-                <entry>\F3\FLOW3\Object\Manager</entry>
+                <entry>\F3\FLOW3\Object\ObjectManager</entry>
 
                 <entry>Manager</entry>
 
@@ -403,7 +403,7 @@ public function getContextName() {
               </row>
 
               <row>
-                <entry>\F3\FLOW3\Object\Builder</entry>
+                <entry>\F3\FLOW3\Object\ObjectBuilder</entry>
 
                 <entry>Builder</entry>
 
@@ -413,7 +413,7 @@ public function getContextName() {
               </row>
 
               <row>
-                <entry>\F3\FLOW3\Object\Factory</entry>
+                <entry>\F3\FLOW3\Object\ObjectFactory</entry>
 
                 <entry>Factory</entry>
 
@@ -490,7 +490,7 @@ public function getContextName() {
             </listitem>
 
             <listitem>
-              <para><classname>\F3\FLOW3\Object\ManagerInterface</classname></para>
+              <para><classname>\F3\FLOW3\Object\ObjectManagerInterface</classname></para>
             </listitem>
 
             <listitem>
@@ -745,7 +745,7 @@ public function getContextName() {
                   <para><filename>FLOW3/Package/Manager.php</filename></para>
 
                   <para>Contains the class
-                  <classname>\F3\FLOW3\Package\Manager</classname> which is
+                  <classname>\F3\FLOW3\Package\PackageManager</classname> which is
                   part of the package <package>\F3\FLOW3</package></para>
                 </listitem>
 
@@ -1537,7 +1537,7 @@ public function fooBar() {
 
         <literallayout>+ \F3\FLOW3\Exception
   + \F3\FLOW3\Object\Exception
-    + \F3\FLOW3\Object\Exception\InvalidObjectName</literallayout>
+    + \F3\FLOW3\Object\Exception\InvalidObjectNameException</literallayout>
 
         <section>
           <title>Throwing an exception</title>

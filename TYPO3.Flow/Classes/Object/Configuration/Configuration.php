@@ -162,7 +162,7 @@ class Configuration {
 	 * @return void
 	 */
 	public function setFactoryClassName($className) {
-		if (!class_exists($className, TRUE)) throw new \F3\FLOW3\Object\Exception\InvalidClass('"' . $className . '" is not a valid class name or a class of that name does not exist.', 1229697796);
+		if (!class_exists($className, TRUE)) throw new \F3\FLOW3\Object\Exception\InvalidClassException('"' . $className . '" is not a valid class name or a class of that name does not exist.', 1229697796);
 		$this->factoryClassName= $className;
 	}
 

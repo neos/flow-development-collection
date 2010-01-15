@@ -32,14 +32,14 @@ class AbstractControllerTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException F3\FLOW3\MVC\Exception\UnsupportedRequestType
+	 * @expectedException F3\FLOW3\MVC\Exception\UnsupportedRequestTypeException
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function processRequestWillThrowAnExceptionIfTheGivenRequestIsNotSupported() {
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request');
 		$mockResponse = $this->getMock('F3\FLOW3\MVC\Web\Response');
 
-		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\AbstractController'), array('mapRequestArgumentsToControllerArguments'), array($this->getMock('F3\FLOW3\Object\FactoryInterface')), '', FALSE);
+		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\AbstractController'), array('mapRequestArgumentsToControllerArguments'), array($this->getMock('F3\FLOW3\Object\ObjectFactoryInterface')), '', FALSE);
 		$controller->_set('supportedRequestTypes', array('F3\Something\Request'));
 		$controller->processRequest($mockRequest, $mockResponse);
 	}
@@ -55,11 +55,11 @@ class AbstractControllerTest extends \F3\Testing\BaseTestCase {
 		$mockResponse = $this->getMock('F3\FLOW3\MVC\Web\Response');
 
 		$mockUriBuilder = $this->getMock('F3\FLOW3\MVC\Web\Routing\UriBuilder');
-		$mockControllerContext = $this->getMock('F3\FLOW3\MVC\Controller\ControllerContext', array(), array(), '', FALSE);
+		$mockControllerContext = $this->getMock('F3\FLOW3\MVC\Controller\Context', array(), array(), '', FALSE);
 
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\ObjectFactoryInterface');
 		$mockObjectFactory->expects($this->at(0))->method('create')->with('F3\FLOW3\MVC\Web\Routing\UriBuilder')->will($this->returnValue($mockUriBuilder));
-		$mockObjectFactory->expects($this->at(1))->method('create')->with('F3\FLOW3\MVC\Controller\ControllerContext')->will($this->returnValue($mockControllerContext));
+		$mockObjectFactory->expects($this->at(1))->method('create')->with('F3\FLOW3\MVC\Controller\Context')->will($this->returnValue($mockControllerContext));
 
 		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\AbstractController'), array('initializeArguments', 'initializeControllerArgumentsBaseValidators', 'mapRequestArgumentsToControllerArguments', 'buildControllerContext'), array(), '', FALSE);
 		$controller->_set('objectFactory', $mockObjectFactory);
@@ -70,7 +70,7 @@ class AbstractControllerTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \F3\FLOW3\MVC\Exception\StopAction
+	 * @expectedException \F3\FLOW3\MVC\Exception\StopActionException
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
@@ -88,7 +88,7 @@ class AbstractControllerTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \F3\FLOW3\MVC\Exception\StopAction
+	 * @expectedException \F3\FLOW3\MVC\Exception\StopActionException
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
@@ -110,7 +110,7 @@ class AbstractControllerTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \F3\FLOW3\MVC\Exception\StopAction
+	 * @expectedException \F3\FLOW3\MVC\Exception\StopActionException
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
@@ -152,7 +152,7 @@ class AbstractControllerTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \F3\FLOW3\MVC\Exception\StopAction
+	 * @expectedException \F3\FLOW3\MVC\Exception\StopActionException
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function throwStatusSetsTheSpecifiedStatusHeaderAndStopsTheCurrentAction() {
@@ -174,7 +174,7 @@ class AbstractControllerTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initializeControllerArgumentsBaseValidatorsRegistersValidatorsDeclaredInTheArgumentModels() {
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\ObjectFactoryInterface');
 
 		$mockValidators = array(
 			'foo' => $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface'),
@@ -207,11 +207,11 @@ class AbstractControllerTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function mapRequestArgumentsToControllerArgumentsPreparesInformationAndValidatorsAndMapsAndValidates() {
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\ObjectFactoryInterface');
 
 		$mockValidator = $this->getMock('F3\FLOW3\MVC\Controller\ArgumentsValidator', array(), array(), '', FALSE);
 
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface');
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
 		$mockObjectManager->expects($this->once())->method('getObject')->with('F3\FLOW3\MVC\Controller\ArgumentsValidator')->will($this->returnValue($mockValidator));
 
 		$mockArgumentFoo = $this->getMock('F3\FLOW3\MVC\Controller\Argument', array(), array('foo', 'fooType'));

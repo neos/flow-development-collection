@@ -44,13 +44,13 @@ class ObjectSerializer {
 
 	/**
 	 * The object manager
-	 * @var F3\FLOW3\Object\Manager
+	 * @var F3\FLOW3\Object\ObjectManager
 	 */
 	protected $objectManager;
 
 	/**
 	 * The object builder
-	 * @var F3\FLOW3\Object\Builder
+	 * @var F3\FLOW3\Object\ObjectBuilder
 	 */
 	protected $objectBuilder;
 
@@ -62,51 +62,51 @@ class ObjectSerializer {
 
 	/**
 	 * The persistence manager
-	 * @var F3\FLOW3\Persistence\ManagerInterface
+	 * @var F3\FLOW3\Persistence\PersistenceManagerInterface
 	 */
 	protected $persistenceManager;
 
 	/**
 	 * Injects the object manager
 	 *
-	 * @param F3\FLOW3\Object\Manager $objectManager The object manager
+	 * @param F3\FLOW3\Object\ObjectManager $objectManager The object manager
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function injectObjectManager(\F3\FLOW3\Object\Manager $objectManager) {
+	public function injectObjectManager(\F3\FLOW3\Object\ObjectManager $objectManager) {
 		$this->objectManager = $objectManager;
 	}
 
 	/**
 	 * Injects the object builder
 	 *
-	 * @param F3\FLOW3\Object\Builder $objectBuilder The object builder
+	 * @param F3\FLOW3\Object\ObjectBuilder $objectBuilder The object builder
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function injectObjectBuilder(\F3\FLOW3\Object\Builder $objectBuilder) {
+	public function injectObjectBuilder(\F3\FLOW3\Object\ObjectBuilder $objectBuilder) {
 		$this->objectBuilder = $objectBuilder;
 	}
 
 	/**
 	 * Injects the reflection service
 	 *
-	 * @param F3\FLOW3\Reflection\Service $reflectionService The reflection service
+	 * @param F3\FLOW3\Reflection\ReflectionService $reflectionService The reflection service
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function injectReflectionService(\F3\FLOW3\Reflection\Service $reflectionService) {
+	public function injectReflectionService(\F3\FLOW3\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
 	}
 
 	/**
 	 * Inject the persistence manager
 	 *
-	 * @param F3\FLOW3\Persistence\ManagerInterface $persistenceManager The persistence manager
+	 * @param F3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager The persistence manager
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function injectPersistenceManager(\F3\FLOW3\Persistence\ManagerInterface $persistenceManager) {
+	public function injectPersistenceManager(\F3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager) {
 		$this->persistenceManager = $persistenceManager;
 	}
 
@@ -263,7 +263,7 @@ class ObjectSerializer {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function createEmptyObject($className) {
-		if (!class_exists($className)) throw new \F3\FLOW3\Object\Exception\UnknownClass('Could not reconstitute object from the session, because class "' . $className . '" does not exist.', 1246717390);
+		if (!class_exists($className)) throw new \F3\FLOW3\Object\Exception\UnknownClassException('Could not reconstitute object from the session, because class "' . $className . '" does not exist.', 1246717390);
 
 		return unserialize('O:' . strlen($className) . ':"' . $className . '":0:{};');
 	}

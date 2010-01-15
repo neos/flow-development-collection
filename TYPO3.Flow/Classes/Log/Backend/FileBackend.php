@@ -147,12 +147,12 @@ class FileBackend extends \F3\FLOW3\Log\Backend\AbstractBackend {
 		} else {
 			$logPath = dirname($this->logFileUrl);
 			if (!is_dir($logPath)) {
-				if ($this->createParentDirectories === FALSE) throw new \F3\FLOW3\Log\Exception\CouldNotOpenResource('Could not open log file "' . $this->logFileUrl . '" for write access because the parent directory does not exist.', 1243931200);
+				if ($this->createParentDirectories === FALSE) throw new \F3\FLOW3\Log\Exception\CouldNotOpenResourceException('Could not open log file "' . $this->logFileUrl . '" for write access because the parent directory does not exist.', 1243931200);
 				\F3\FLOW3\Utility\Files::createDirectoryRecursively($logPath);
 			}
 
 			$this->fileHandle = fopen($this->logFileUrl, 'at');
-			if ($this->fileHandle === FALSE) throw new \F3\FLOW3\Log\Exception\CouldNotOpenResource('Could not open log file "' . $this->logFileUrl . '" for write access.', 1243588980);
+			if ($this->fileHandle === FALSE) throw new \F3\FLOW3\Log\Exception\CouldNotOpenResourceException('Could not open log file "' . $this->logFileUrl . '" for write access.', 1243588980);
 
 			$streamMeta = stream_get_meta_data($this->fileHandle);
 			if ($streamMeta['wrapper_type'] === 'plainfile') {
@@ -161,7 +161,7 @@ class FileBackend extends \F3\FLOW3\Log\Backend\AbstractBackend {
 				$this->fileHandle = fopen($this->logFileUrl, 'at');
 			}
 		}
-		if ($this->fileHandle === FALSE) throw new \F3\FLOW3\Log\Exception\CouldNotOpenResource('Could not open log file "' . $this->logFileUrl . '" for write access.', 1229448440);
+		if ($this->fileHandle === FALSE) throw new \F3\FLOW3\Log\Exception\CouldNotOpenResourceException('Could not open log file "' . $this->logFileUrl . '" for write access.', 1229448440);
 	}
 
 	/**

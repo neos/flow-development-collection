@@ -67,7 +67,7 @@ class PropertyMapper {
 	protected $objectConverters = array();
 
 	/**
-	 * @var \F3\FLOW3\Object\ManagerInterface
+	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
@@ -77,12 +77,12 @@ class PropertyMapper {
 	protected $validatorResolver;
 
 	/**
-	 * @var \F3\FLOW3\Reflection\Service
+	 * @var \F3\FLOW3\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
 	/**
-	 * @var \F3\FLOW3\Persistence\ManagerInterface
+	 * @var \F3\FLOW3\Persistence\PersistenceManagerInterface
 	 */
 	protected $persistenceManager;
 
@@ -94,11 +94,11 @@ class PropertyMapper {
 	/**
 	 * Injects the object factory
 	 *
-	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager
+	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectObjectManager(\F3\FLOW3\Object\ManagerInterface $objectManager) {
+	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
 	}
 
@@ -116,22 +116,22 @@ class PropertyMapper {
 	/**
 	 * Injects the Reflection Service
 	 *
-	 * @param \F3\FLOW3\Reflection\Service $reflectionService
+	 * @param \F3\FLOW3\Reflection\ReflectionService $reflectionService
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectReflectionService(\F3\FLOW3\Reflection\Service $reflectionService) {
+	public function injectReflectionService(\F3\FLOW3\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
 	}
 
 	/**
 	 * Injects the persistence manager
 	 *
-	 * @param \F3\FLOW3\Persistence\ManagerInterface $persistenceManager
+	 * @param \F3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectPersistenceManager(\F3\FLOW3\Persistence\ManagerInterface $persistenceManager) {
+	public function injectPersistenceManager(\F3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager) {
 		$this->persistenceManager = $persistenceManager;
 	}
 
@@ -216,13 +216,13 @@ class PropertyMapper {
 	 * @api
 	 */
 	public function map(array $propertyNames, $source, &$target, $optionalPropertyNames = array()) {
-		if (!is_object($source) && !is_array($source)) throw new \F3\FLOW3\Property\Exception\InvalidSource('The source object must be a valid object or array, ' . gettype($target) . ' given.', 1187807099);
+		if (!is_object($source) && !is_array($source)) throw new \F3\FLOW3\Property\Exception\InvalidSourceException('The source object must be a valid object or array, ' . gettype($target) . ' given.', 1187807099);
 		if (is_string($target) && strpos($target, '\\') !== FALSE) {
 			return $this->transformToObject($source, $target, '--none--');
 		}
 		$this->mappingResults = $this->objectManager->getObject('F3\FLOW3\Property\MappingResults');
 
-		if (!is_object($target) && !is_array($target)) throw new \F3\FLOW3\Property\Exception\InvalidTarget('The target must be a valid object, class name or array, ' . gettype($target) . ' given.', 1187807099);
+		if (!is_object($target) && !is_array($target)) throw new \F3\FLOW3\Property\Exception\InvalidTargetException('The target must be a valid object, class name or array, ' . gettype($target) . ' given.', 1187807099);
 
 		if (is_object($target)) {
 			$targetClassName = ($target instanceof \F3\FLOW3\AOP\ProxyInterface) ? $target->FLOW3_AOP_Proxy_getProxyTargetClassName() : get_class($target);
@@ -327,7 +327,7 @@ class PropertyMapper {
 			if (isset($propertyValue['__identity'])) {
 				$existingObject = (is_array($propertyValue['__identity'])) ? $this->findObjectByIdentityProperties($propertyValue['__identity'], $targetType) : $this->persistenceManager->getObjectByIdentifier($propertyValue['__identity']);
 				if ($existingObject === FALSE) {
-					throw new \F3\FLOW3\Property\Exception\TargetNotFound('Querying the repository for the specified object was not successful.', 1237305720);
+					throw new \F3\FLOW3\Property\Exception\TargetNotFoundException('Querying the repository for the specified object was not successful.', 1237305720);
 				}
 
 				unset($propertyValue['__identity']);
@@ -350,7 +350,7 @@ class PropertyMapper {
 				if ($this->map(array_keys($propertyValue), $propertyValue, $newObject)) {
 					return $newObject;
 				}
-				throw new \F3\FLOW3\Property\Exception\InvalidTarget('Values could not be mapped to new object of type ' .$targetType . ' for property "' . $propertyName . '". (Map errors: ' . implode (' - ', $this->mappingResults->getErrors()) . ')' , 1259770027);
+				throw new \F3\FLOW3\Property\Exception\InvalidTargetException('Values could not be mapped to new object of type ' .$targetType . ' for property "' . $propertyName . '". (Map errors: ' . implode (' - ', $this->mappingResults->getErrors()) . ')' , 1259770027);
 			}
 		} else {
 			throw new \InvalidArgumentException('transformToObject() accepts only strings and arrays.', 1251814355);

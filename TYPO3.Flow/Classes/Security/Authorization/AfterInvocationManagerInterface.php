@@ -37,7 +37,7 @@ interface AfterInvocationManagerInterface {
 	 * @param object $object The return object to be processed
 	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The joinpoint of the returning method
 	 * @return boolean TRUE if access is granted, FALSE if the manager abstains from decision
-	 * @throws \F3\FLOW3\Security\Exception\AccessDenied If access is not granted
+	 * @throws \F3\FLOW3\Security\Exception\AccessDeniedException If access is not granted
 	 */
 	public function process(\F3\FLOW3\Security\Context $securityContext, $object, \F3\FLOW3\AOP\JoinPointInterface $joinPoint);
 

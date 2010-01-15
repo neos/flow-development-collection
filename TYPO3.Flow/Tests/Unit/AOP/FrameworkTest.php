@@ -39,12 +39,12 @@ class FrameworkTest extends \F3\Testing\BaseTestCase {
 	protected $accessibleFrameworkClassName;
 
 	/**
-	 * @var \F3\FLOW3\Object\ManagerInterface
+	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $mockObjectManager;
 
 	/**
-	 * @var \F3\FLOW3\Object\FactoryInterface
+	 * @var \F3\FLOW3\Object\ObjectFactoryInterface
 	 */
 	protected $mockObjectFactory;
 
@@ -55,8 +55,8 @@ class FrameworkTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setUp() {
-		$this->mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface');
-		$this->mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
+		$this->mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
+		$this->mockObjectFactory = $this->getMock('F3\FLOW3\Object\ObjectFactoryInterface');
 
 	}
 
@@ -85,7 +85,7 @@ class FrameworkTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function buildAspectContainerThrowsExceptionIfTheClassIsTaggedAsAspectButContainsNoAdvice() {
-		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service');
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService');
 		$mockReflectionService->expects($this->any())->method('isClassReflected')->with('TestAspect')->will($this->returnValue(TRUE));
 		$mockReflectionService->expects($this->any())->method('isClassTaggedWith')->with('TestAspect', 'aspect')->will($this->returnValue(TRUE));
 		$mockReflectionService->expects($this->any())->method('getClassMethodNames')->will($this->returnValue(array()));
@@ -102,7 +102,7 @@ class FrameworkTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function buildAspectContainerDetectsAllSupportedKindsOfAdviceAndPointcutsAndIntroductions() {
-		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service', array('loadFromCache', 'saveToCache'), array(), '', FALSE, TRUE);
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'saveToCache'), array(), '', FALSE, TRUE);
 		$mockReflectionService->initialize(array('F3\FLOW3\Tests\AOP\Fixture\AspectClassWithAllAdviceTypes'));
 
 		$mockPointcutExpressionParser = $this->getMock('F3\FLOW3\AOP\Pointcut\PointcutExpressionParser', array('parse'), array(), '', FALSE);

@@ -57,7 +57,7 @@ class Package implements PackageInterface {
 	protected $packagePath;
 
 	/**
-	 * @var \F3\FLOW3\Object\FactoryInterface
+	 * @var \F3\FLOW3\Object\ObjectFactoryInterface
 	 */
 	protected $objectFactory;
 
@@ -81,14 +81,14 @@ class Package implements PackageInterface {
 	 *
 	 * @param string $packageKey Key of this package
 	 * @param string $packagePath Absolute path to the package's main directory
-	 * @throws \F3\FLOW3\Package\Exception\InvalidPackageKey if an invalid package key was passed
-	 * @throws \F3\FLOW3\Package\Exception\InvalidPackagePath if an invalid package path was passed
+	 * @throws \F3\FLOW3\Package\Exception\InvalidPackageKeyException if an invalid package key was passed
+	 * @throws \F3\FLOW3\Package\Exception\InvalidPackagePathException if an invalid package path was passed
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct($packageKey, $packagePath) {
-		if (preg_match(self::PATTERN_MATCH_PACKAGEKEY, $packageKey) !== 1) throw new \F3\FLOW3\Package\Exception\InvalidPackageKey('"' . $packageKey . '" is not a valid package key.', 1217959510);
-		if (!is_dir($packagePath)) throw new \F3\FLOW3\Package\Exception\InvalidPackagePath('Package path does not exist or is no directory.', 1166631889);
-		if (substr($packagePath, -1, 1) != '/') throw new \F3\FLOW3\Package\Exception\InvalidPackagePath('Package path has no trailing forward slash.', 1166633720);
+		if (preg_match(self::PATTERN_MATCH_PACKAGEKEY, $packageKey) !== 1) throw new \F3\FLOW3\Package\Exception\InvalidPackageKeyException('"' . $packageKey . '" is not a valid package key.', 1217959510);
+		if (!is_dir($packagePath)) throw new \F3\FLOW3\Package\Exception\InvalidPackagePathException('Package path does not exist or is no directory.', 1166631889);
+		if (substr($packagePath, -1, 1) != '/') throw new \F3\FLOW3\Package\Exception\InvalidPackagePathException('Package path has no trailing forward slash.', 1166633720);
 
 		$this->packageKey = $packageKey;
 		$this->packagePath = $packagePath;
@@ -97,11 +97,11 @@ class Package implements PackageInterface {
 	/**
 	 * Injects the Object Factory
 	 *
-	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory
+	 * @param \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function injectObjectFactory(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
+	public function injectObjectFactory(\F3\FLOW3\Object\ObjectFactoryInterface $objectFactory) {
 		$this->objectFactory = $objectFactory;
 	}
 

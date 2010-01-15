@@ -132,7 +132,7 @@ class StringLengthValidatorTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException F3\FLOW3\Validation\Exception\InvalidValidationOptions
+	 * @expectedException F3\FLOW3\Validation\Exception\InvalidValidationOptionsException
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function stringLengthValidatorThrowsAnExceptionIfMinLengthIsGreaterThanMaxLength() {
@@ -177,7 +177,7 @@ class StringLengthValidatorTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException F3\FLOW3\Validation\Exception\InvalidSubject
+	 * @expectedException F3\FLOW3\Validation\Exception\InvalidSubjectException
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function stringLengthValidatorThrowsAnExceptionIfTheGivenObjectCanNotBeConvertedToAString() {

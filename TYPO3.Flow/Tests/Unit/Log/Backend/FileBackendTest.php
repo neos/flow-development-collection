@@ -53,7 +53,7 @@ class FileBackendTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \F3\FLOW3\Log\Exception\CouldNotOpenResource
+	 * @expectedException \F3\FLOW3\Log\Exception\CouldNotOpenResourceException
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function openDoesNotCreateParentDirectoriesByDefault() {

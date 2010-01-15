@@ -39,7 +39,7 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	protected $type;
 
 	/**
-	 * @var \F3\FLOW3\Object\FactoryInterface
+	 * @var \F3\FLOW3\Object\ObjectFactoryInterface
 	 */
 	protected $objectFactory;
 
@@ -49,7 +49,7 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	protected $dataMapper;
 
 	/**
-	 * @var \F3\FLOW3\Persistence\ManagerInterface
+	 * @var \F3\FLOW3\Persistence\PersistenceManagerInterface
 	 */
 	protected $persistenceManager;
 
@@ -102,11 +102,11 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	/**
 	 * Injects the FLOW3 object factory
 	 *
-	 * @param \F3\FLOW3\Object\FactoryInterface $qomFactory
+	 * @param \F3\FLOW3\Object\ObjectFactoryInterface $qomFactory
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectObjectFactory(\F3\FLOW3\Object\FactoryInterface $qomFactory) {
+	public function injectObjectFactory(\F3\FLOW3\Object\ObjectFactoryInterface $qomFactory) {
 		$this->objectFactory = $qomFactory;
 	}
 
@@ -124,11 +124,11 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	/**
 	 * Injects the persistence manager
 	 *
-	 * @param \F3\FLOW3\Persistence\ManagerInterface $persistenceManager
+	 * @param \F3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectPersistenceManager(\F3\FLOW3\Persistence\ManagerInterface $persistenceManager) {
+	public function injectPersistenceManager(\F3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager) {
 		$this->persistenceManager = $persistenceManager;
 	}
 

@@ -33,7 +33,7 @@ class PointcutFilterTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \F3\FLOW3\AOP\Exception\UnknownPointcut
+	 * @expectedException \F3\FLOW3\AOP\Exception\UnknownPointcutException
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function matchesThrowsAnExceptionIfTheSpecifiedPointcutDoesNotExist() {

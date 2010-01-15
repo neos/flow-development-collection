@@ -38,7 +38,7 @@ class AbstractBackendTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function initializeAsksReflectionServiceForClassSchemata() {
-		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service');
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService');
 		$mockReflectionService->expects($this->once())->method('getClassSchemata');
 		$backend = $this->getMock('F3\FLOW3\Persistence\Backend\AbstractBackend', array('dummy'));
 		$backend->injectReflectionService($mockReflectionService);
@@ -260,7 +260,7 @@ class AbstractBackendTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \F3\FLOW3\Persistence\Exception\UnexpectedType
+	 * @expectedException \F3\FLOW3\Persistence\Exception\UnexpectedTypeException
 	 * @dataProvider typesAndInvalidValuesForCheckType
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */

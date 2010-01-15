@@ -34,11 +34,11 @@ class AccessDeny implements \F3\FLOW3\Security\Authorization\InterceptorInterfac
 	 * Invokes nothing, always throws an AccessDenied Exception.
 	 *
 	 * @return boolean Always returns FALSE
-	 * @throws \F3\FLOW3\Security\Exception\AccessDenied
+	 * @throws \F3\FLOW3\Security\Exception\AccessDeniedException
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function invoke() {
-		throw new \F3\FLOW3\Security\Exception\AccessDenied('You are not allowed to perform this action.', 1216919280);
+		throw new \F3\FLOW3\Security\Exception\AccessDeniedException('You are not allowed to perform this action.', 1216919280);
 
 		return FALSE;
 	}

@@ -49,8 +49,8 @@ class RequestBuilderTest extends \F3\Testing\BaseTestCase {
 	public function setUp() {
 		$this->mockRequest = $this->getMock('F3\FLOW3\MVC\CLI\Request');
 
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface');
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\ObjectFactoryInterface');
 		$mockObjectFactory->expects($this->once())->method('create')->with('F3\FLOW3\MVC\CLI\Request')->will($this->returnValue($this->mockRequest));
 
 		$this->environment = new \F3\FLOW3\Utility\MockEnvironment();
@@ -98,7 +98,7 @@ class RequestBuilderTest extends \F3\Testing\BaseTestCase {
 	 *
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @expectedException \F3\FLOW3\MVC\Exception\InvalidFormat
+	 * @expectedException \F3\FLOW3\MVC\Exception\InvalidFormatException
 	 */
 	public function CLIAccessWithPackageAndControllerNameThrowsInvalidFormatException() {
 		$this->environment->SERVER['argc'] = 3;

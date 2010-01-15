@@ -90,7 +90,7 @@ class DispatcherTest extends \F3\Testing\BaseTestCase {
 		$arguments = array();
 		$mockSlot = function() use (&$arguments) { $arguments =  func_get_args(); };
 
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface');
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
 		$mockSystemLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
 
 		$dispatcher = new \F3\FLOW3\SignalSlot\Dispatcher();
@@ -111,7 +111,7 @@ class DispatcherTest extends \F3\Testing\BaseTestCase {
 		eval ('class ' . $slotClassName . ' { function slot($foo, $baz) { $this->arguments = array($foo, $baz); } }');
 		$mockSlot = new $slotClassName();
 
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface');
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
 		$mockObjectManager->expects($this->once())->method('isObjectRegistered')->with($slotClassName)->will($this->returnValue(TRUE));
 		$mockObjectManager->expects($this->once())->method('getObject')->with($slotClassName)->will($this->returnValue($mockSlot));
 
@@ -128,11 +128,11 @@ class DispatcherTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \F3\FLOW3\SignalSlot\Exception\InvalidSlot
+	 * @expectedException \F3\FLOW3\SignalSlot\Exception\InvalidSlotException
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function dispatchThrowsAnExceptionIfTheSpecifiedClassOfASlotIsUnknown() {
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface');
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
 		$mockObjectManager->expects($this->once())->method('isObjectRegistered')->with('NonExistingClassName')->will($this->returnValue(FALSE));
 
 		$mockSystemLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
@@ -146,7 +146,7 @@ class DispatcherTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \F3\FLOW3\SignalSlot\Exception\InvalidSlot
+	 * @expectedException \F3\FLOW3\SignalSlot\Exception\InvalidSlotException
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function dispatchThrowsAnExceptionIfTheSpecifiedSlotMethodDoesNotExist() {
@@ -154,7 +154,7 @@ class DispatcherTest extends \F3\Testing\BaseTestCase {
 		eval ('class ' . $slotClassName . ' { function slot($foo, $baz) { $this->arguments = array($foo, $baz); } }');
 		$mockSlot = new $slotClassName();
 
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface');
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
 		$mockObjectManager->expects($this->once())->method('isObjectRegistered')->with($slotClassName)->will($this->returnValue(TRUE));
 		$mockObjectManager->expects($this->once())->method('getObject')->with($slotClassName)->will($this->returnValue($mockSlot));
 
@@ -177,7 +177,7 @@ class DispatcherTest extends \F3\Testing\BaseTestCase {
 		$arguments = array();
 		$mockSlot = function() use (&$arguments) { $arguments =  func_get_args(); };
 
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface');
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
 		$mockSystemLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
 
 		$dispatcher = new \F3\FLOW3\SignalSlot\Dispatcher();

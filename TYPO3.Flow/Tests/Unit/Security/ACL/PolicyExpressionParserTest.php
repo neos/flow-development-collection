@@ -33,7 +33,7 @@ class PolicyExpressionParserTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @expectedException \F3\FLOW3\AOP\Exception\InvalidPointcutExpression
+	 * @expectedException \F3\FLOW3\AOP\Exception\InvalidPointcutExpressionException
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function parseThrowsAnExceptionIfAResourceReferencesAnUndefinedResource() {
@@ -43,10 +43,10 @@ class PolicyExpressionParserTest extends \F3\Testing\BaseTestCase {
 
 		$mockPointcutFilterComposite = $this->getMock('F3\FLOW3\AOP\Pointcut\PointcutFilterComposite', array(), array(), '', FALSE);
 
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface', array(), array(), '', FALSE);
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\ObjectFactoryInterface', array(), array(), '', FALSE);
 		$mockObjectFactory->expects($this->any())->method('create')->with('F3\FLOW3\AOP\Pointcut\PointcutFilterComposite')->will($this->returnValue($mockPointcutFilterComposite));
 
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface', array(), array(), '', FALSE);
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
 
 		$parser =new \F3\FLOW3\Security\ACL\PolicyExpressionParser();
 		$parser->injectObjectFactory($mockObjectFactory);
@@ -59,7 +59,7 @@ class PolicyExpressionParserTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @expectedException \F3\FLOW3\Security\Exception\CircularResourceDefinitionDetected
+	 * @expectedException \F3\FLOW3\Security\Exception\CircularResourceDefinitionDetectedException
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function parseThrowsAnExceptionIfTheResourceTreeContainsCircularReferences() {
@@ -72,10 +72,10 @@ class PolicyExpressionParserTest extends \F3\Testing\BaseTestCase {
 
 		$mockPointcutFilterComposite = $this->getMock('F3\FLOW3\AOP\Pointcut\PointcutFilterComposite', array(), array(), '', FALSE);
 
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface', array(), array(), '', FALSE);
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\ObjectFactoryInterface', array(), array(), '', FALSE);
 		$mockObjectFactory->expects($this->any())->method('create')->with('F3\FLOW3\AOP\Pointcut\PointcutFilterComposite')->will($this->returnValue($mockPointcutFilterComposite));
 
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface', array(), array(), '', FALSE);
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
 
 		$parser =new \F3\FLOW3\Security\ACL\PolicyExpressionParser();
 		$parser->injectObjectFactory($mockObjectFactory);
@@ -100,10 +100,10 @@ class PolicyExpressionParserTest extends \F3\Testing\BaseTestCase {
 
 		$mockPointcutFilterComposite = $this->getMock('F3\FLOW3\AOP\Pointcut\PointcutFilterComposite', array(), array(), '', FALSE);
 
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface', array(), array(), '', FALSE);
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\ObjectFactoryInterface', array(), array(), '', FALSE);
 		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($mockPointcutFilterComposite));
 
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface', array(), array(), '', FALSE);
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
 
 		$parser =new \F3\FLOW3\Security\ACL\PolicyExpressionParser();
 		$parser->injectObjectFactory($mockObjectFactory);

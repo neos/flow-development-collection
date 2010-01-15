@@ -62,22 +62,22 @@ final class Bootstrap {
 	protected $siteLocked = FALSE;
 
 	/**
-	 * @var \F3\FLOW3\Configuration\Manager
+	 * @var \F3\FLOW3\Configuration\ConfigurationManager
 	 */
 	protected $configurationManager;
 
 	/**
-	 * @var \F3\FLOW3\Object\ManagerInterface
+	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
-	 * @var \F3\FLOW3\Object\FactoryInterface
+	 * @var \F3\FLOW3\Object\ObjectFactoryInterface
 	 */
 	protected $objectFactory;
 
 	/**
-	 * @var \F3\FLOW3\Package\ManagerInterface
+	 * @var \F3\FLOW3\Package\PackageManagerInterface
 	 */
 	protected $packageManager;
 
@@ -93,7 +93,7 @@ final class Bootstrap {
 	protected $classLoader;
 
 	/**
-	 * @var \F3\FLOW3\Reflection\Service
+	 * @var \F3\FLOW3\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
@@ -248,11 +248,11 @@ final class Bootstrap {
 	 * @see initialize()
 	 */
 	public function initializeConfiguration() {
-		$this->configurationManager = new \F3\FLOW3\Configuration\Manager($this->context);
-		$this->configurationManager->injectConfigurationSource(new \F3\FLOW3\Configuration\Source\YAMLSource());
+		$this->configurationManager = new \F3\FLOW3\Configuration\ConfigurationManager($this->context);
+		$this->configurationManager->injectConfigurationSource(new \F3\FLOW3\Configuration\Source\YamlSource());
 		$this->configurationManager->setPackages(array('FLOW3' => $this->FLOW3Package));
 
-		$this->settings = $this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_SETTINGS, 'FLOW3');
+		$this->settings = $this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'FLOW3');
 	}
 
 	/**
@@ -276,16 +276,16 @@ final class Bootstrap {
 	 * @see initialize()
 	 */
 	public function initializeObjectManager() {
-		$this->objectFactory = new \F3\FLOW3\Object\Factory();
+		$this->objectFactory = new \F3\FLOW3\Object\ObjectFactory();
 
-		$objectBuilder = new \F3\FLOW3\Object\Builder;
+		$objectBuilder = new \F3\FLOW3\Object\ObjectBuilder;
 		$objectBuilder->injectConfigurationManager($this->configurationManager);
 
 		$singletonObjectsRegistry = new \F3\FLOW3\Object\TransientRegistry;
 
-		$preliminaryReflectionService = new \F3\FLOW3\Reflection\Service();
+		$preliminaryReflectionService = new \F3\FLOW3\Reflection\ReflectionService();
 
-		$this->objectManager = new \F3\FLOW3\Object\Manager();
+		$this->objectManager = new \F3\FLOW3\Object\ObjectManager();
 		$this->objectManager->injectSingletonObjectsRegistry($singletonObjectsRegistry);
 		$this->objectManager->injectObjectBuilder($objectBuilder);
 		$this->objectManager->injectObjectFactory($this->objectFactory);
@@ -296,11 +296,11 @@ final class Bootstrap {
 		$this->objectManager->initializeManager();
 
 			// Remove the preliminary reflection service and rebuild it, this time with the proper object configuration:
-		$singletonObjectsRegistry->removeObject('F3\FLOW3\Reflection\Service');
-		$this->objectManager->injectReflectionService($this->objectManager->getObject('F3\FLOW3\Reflection\Service'));
+		$singletonObjectsRegistry->removeObject('F3\FLOW3\Reflection\ReflectionService');
+		$this->objectManager->injectReflectionService($this->objectManager->getObject('F3\FLOW3\Reflection\ReflectionService'));
 
 		$singletonObjectsRegistry->putObject('F3\FLOW3\Resource\ClassLoader', $this->classLoader);
-		$singletonObjectsRegistry->putObject('F3\FLOW3\Configuration\Manager', $this->configurationManager);
+		$singletonObjectsRegistry->putObject('F3\FLOW3\Configuration\ConfigurationManager', $this->configurationManager);
 		$this->configurationManager->injectEnvironment($this->objectManager->getObject('F3\FLOW3\Utility\Environment'));
 	}
 
@@ -338,14 +338,14 @@ final class Bootstrap {
 	 * @see initialize()
 	 */
 	public function initializePackages() {
-		$this->packageManager = $this->objectManager->getObject('F3\FLOW3\Package\ManagerInterface');
+		$this->packageManager = $this->objectManager->getObject('F3\FLOW3\Package\PackageManagerInterface');
 		$this->packageManager->initialize();
 		$activePackages = $this->packageManager->getActivePackages();
 		$this->classLoader->setPackages($activePackages);
 		$this->configurationManager->setPackages($activePackages);
 
 		foreach ($activePackages as $packageKey => $package) {
-			$packageConfiguration = $this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_PACKAGE, $packageKey);
+			$packageConfiguration = $this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_PACKAGE, $packageKey);
 			$this->evaluatePackageConfiguration($package, $packageConfiguration);
 		}
 
@@ -361,7 +361,7 @@ final class Bootstrap {
 	public function initializeSignalsSlots() {
 		$this->signalSlotDispatcher = $this->objectManager->getObject('F3\FLOW3\SignalSlot\Dispatcher');
 
-		$signalsSlotsConfiguration = $this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_SIGNALSSLOTS);
+		$signalsSlotsConfiguration = $this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SIGNALSSLOTS);
 		foreach ($signalsSlotsConfiguration as $signalClassName => $signalSubConfiguration) {
 			if (is_array($signalSubConfiguration)) {
 				foreach ($signalSubConfiguration as $signalMethodName => $slotConfigurations) {
@@ -389,11 +389,11 @@ final class Bootstrap {
 	 * @see initialize()
 	 */
 	public function initializeCache() {
-		$this->cacheManager = $this->objectManager->getObject('F3\FLOW3\Cache\Manager');
-		$this->cacheManager->setCacheConfigurations($this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_CACHES));
+		$this->cacheManager = $this->objectManager->getObject('F3\FLOW3\Cache\CacheManager');
+		$this->cacheManager->setCacheConfigurations($this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_CACHES));
 		$this->cacheManager->initialize();
 
-		$cacheFactory = $this->objectManager->getObject('F3\FLOW3\Cache\Factory');
+		$cacheFactory = $this->objectManager->getObject('F3\FLOW3\Cache\CacheFactory');
 		$cacheFactory->setCacheManager($this->cacheManager);
 
 		$coreCache= $this->cacheManager->getCache('FLOW3_Core');
@@ -495,7 +495,7 @@ final class Bootstrap {
 	 * @see initialize()
 	 */
 	public function initializeReflection() {
-		$this->reflectionService = $this->objectManager->getObject('F3\FLOW3\Reflection\Service');
+		$this->reflectionService = $this->objectManager->getObject('F3\FLOW3\Reflection\ReflectionService');
 		$this->reflectionService->setStatusCache($this->cacheManager->getCache('FLOW3_ReflectionStatus'));
 		$this->reflectionService->setDataCache($this->cacheManager->getCache('FLOW3_ReflectionData'));
 		$this->reflectionService->injectSystemLogger($this->systemLogger);
@@ -573,7 +573,7 @@ final class Bootstrap {
 	 */
 	public function initializePersistence() {
 		if ($this->settings['persistence']['enable'] === TRUE) {
-			$persistenceManager = $this->objectManager->getObject('F3\FLOW3\Persistence\ManagerInterface');
+			$persistenceManager = $this->objectManager->getObject('F3\FLOW3\Persistence\PersistenceManagerInterface');
 			$persistenceManager->setSettings($this->settings['persistence']);
 			$persistenceManager->initialize();
 		}
@@ -610,7 +610,7 @@ final class Bootstrap {
 			$requestHandler->handleRequest();
 
 			if ($this->settings['persistence']['enable'] === TRUE) {
-				$this->objectManager->getObject('F3\FLOW3\Persistence\ManagerInterface')->persistAll();
+				$this->objectManager->getObject('F3\FLOW3\Persistence\PersistenceManagerInterface')->persistAll();
 			}
 
 			$this->emitFinishedNormalRun();
