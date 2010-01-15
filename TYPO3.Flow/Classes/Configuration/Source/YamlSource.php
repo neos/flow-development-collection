@@ -25,7 +25,7 @@ namespace F3\FLOW3\Configuration\Source;
 /**
  * Configuration source based on YAML files
  *
- * @version $Id$
+ * @version $Id: YamlSource.php -1   $
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */

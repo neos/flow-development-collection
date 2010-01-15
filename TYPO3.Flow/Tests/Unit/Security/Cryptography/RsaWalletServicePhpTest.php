@@ -25,7 +25,7 @@ namespace F3\FLOW3\Security\Cryptography;
 /**
  * Testcase for for the PHP (OpenSSL) based RSAWalletService
  *
- * @version $Id$
+ * @version $Id: RsaWalletServicePhpTest.php -1   $
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  */
 class RsaWalletServicePhpTest extends \F3\Testing\BaseTestCase {

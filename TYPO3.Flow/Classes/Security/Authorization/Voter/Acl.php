@@ -25,7 +25,7 @@ namespace F3\FLOW3\Security\Authorization\Voter;
 /**
  * An access decision voter, that asks the FLOW3 ACLService for a decision.
  *
- * @version $Id$
+ * @version $Id: Acl.php -1   $
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class Acl implements \F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface {
