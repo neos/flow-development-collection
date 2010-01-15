@@ -31,13 +31,13 @@ namespace F3\Kickstart\Service;
 class GeneratorService {
 
 	/**
-	 * @var \F3\FLOW3\Object\FactoryInterface
+	 * @var \F3\FLOW3\Object\ObjectFactoryInterface
 	 * @inject
 	 */
 	protected $objectFactory;
 
 	/**
-	 * @var \F3\FLOW3\Package\ManagerInterface
+	 * @var \F3\FLOW3\Package\PackageManagerInterface
 	 * @inject
 	 */
 	protected $packageManager;

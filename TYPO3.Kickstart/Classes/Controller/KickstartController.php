@@ -31,7 +31,7 @@ namespace F3\Kickstart\Controller;
 class KickstartController extends \F3\FLOW3\MVC\Controller\ActionController {
 
 	/**
-	 * @var \F3\FLOW3\Package\ManagerInterface
+	 * @var \F3\FLOW3\Package\PackageManagerInterface
 	 * @inject
 	 */
 	protected $packageManager;
