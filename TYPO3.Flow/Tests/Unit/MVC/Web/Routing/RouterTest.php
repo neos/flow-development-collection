@@ -35,6 +35,8 @@ class RouterTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setRoutesConfigurationParsesTheGivenConfigurationAndBuildsRouteObjectsFromIt() {
+		$mockLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
+
 		$routesConfiguration = array();
 		$routesConfiguration['route1']['uriPattern'] = 'number1';
 		$routesConfiguration['route2']['uriPattern'] = 'number2';
@@ -53,6 +55,7 @@ class RouterTest extends \F3\Testing\BaseTestCase {
 		$mockObjectFactory->expects($this->exactly(3))->method('create')->will($this->onConsecutiveCalls($route1, $route2, $route3));
 
 		$router = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Web\Routing\Router'), array('dummy'));
+		$router->injectSystemLogger($mockLogger);
 		$router->_set('objectFactory', $mockObjectFactory);
 		$router->setRoutesConfiguration($routesConfiguration);
 		$router->resolve(array());
