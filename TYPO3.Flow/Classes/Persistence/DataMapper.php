@@ -199,9 +199,9 @@ class DataMapper {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function mapDateTime($timestamp) {
-		if (is_integer($timestamp)) {
+		if ($timestamp !== NULL) {
 			$datetime = new \DateTime();
-			$datetime->setTimestamp($timestamp);
+			$datetime->setTimestamp((integer) $timestamp);
 			return $datetime;
 		} else {
 			return NULL;
