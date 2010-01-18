@@ -66,9 +66,9 @@
         <title>Supported scopes</title>
 
         <tgroup cols="2">
-          <colspec colwidth="1*" />
+          <colspec colwidth="1*"/>
 
-          <colspec colwidth="3*" />
+          <colspec colwidth="3*"/>
 
           <thead>
             <row>
@@ -172,9 +172,9 @@ class SomeClass {
       <para><programlisting language="php">$myFreshObject = $objectFactory-&gt;create('F3\MyPackage\MyClassName');</programlisting></para>
 
       <para>The Object Factory
-      (<classname>\F3\FLOW3\Object\ObjectFactoryInterface</classname>) itself is a
-      Singleton and can be acquired like any other object of that scope (see
-      next section).</para>
+      (<classname>\F3\FLOW3\Object\ObjectFactoryInterface</classname>) itself
+      is a Singleton and can be acquired like any other object of that scope
+      (see next section).</para>
 
       <para>Analog to <function>new</function> it is possible to pass
       arguments a constructor of the class being instantiated - they are
@@ -1119,7 +1119,7 @@ public function injectGreeter(\F3\MyPackage\Greeter $greeter) {
 }
 
 public function someAction() {
-	$greeter-&gt;sayHelloTo('Heike');
+	$this-&gt;greeter-&gt;sayHelloTo('Heike');
 }</programlisting>
       </example>
 
@@ -1436,9 +1436,9 @@ class Foo {
       all important settings and dependencies. As we have seen previously, a
       cache consists of a frontend, a backend and configuration options for
       that backend. Instead of creating and configuring these objects on your
-      own, you can use the <classname>F3\FLOW3\Cache\CacheFactory</classname> which
-      provides a convenient <methodname>create</methodname> method taking care
-      of all the rest.</para>
+      own, you can use the <classname>F3\FLOW3\Cache\CacheFactory</classname>
+      which provides a convenient <methodname>create</methodname> method
+      taking care of all the rest.</para>
 
       <programlisting language="php">$myCache = $cacheFactory-&gt;create('MyCache', 'F3\FLOW3\Cache\VariableCache', ↩
     'F3\FLOW3\Cache\Backend\File', array('cacheDirectory' =&gt; '/tmp'));</programlisting>
@@ -1481,11 +1481,11 @@ class Foo {
       </example>
 
       <para><varname>$objectFactory</varname> is a reference to the
-      <classname>F3\FLOW3\Object\ObjectFactory</classname>. The argument with the
-      value <literal>MyCache</literal> is passed to the Cache Factory as the
-      first parameter. The required second and third argument and the optional
-      fourth parameter are automatically built from the values defined in the
-      object configuration.</para>
+      <classname>F3\FLOW3\Object\ObjectFactory</classname>. The argument with
+      the value <literal>MyCache</literal> is passed to the Cache Factory as
+      the first parameter. The required second and third argument and the
+      optional fourth parameter are automatically built from the values
+      defined in the object configuration.</para>
     </section>
 
     <section>

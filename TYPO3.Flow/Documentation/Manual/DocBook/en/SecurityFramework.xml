@@ -277,9 +277,9 @@
       provider. This provider - account connection is stored in a property of
       the account object named
       "<literal>authenticationProviderName</literal>". Appropriate getters and
-      setters are provided. The provider name is configured in the Settings.yaml
-      file. If you look back to the default configuration, you'll find the
-      name of the default authentication provider:
+      setters are provided. The provider name is configured in the
+      Settings.yaml file. If you look back to the default configuration,
+      you'll find the name of the default authentication provider:
       "<literal>DefaultProvider</literal>". Besides that, each account has
       another property called "<literal>credentialsSource</literal>", which
       points to the place or describes the credentials needed for this
@@ -412,7 +412,7 @@ $this-&gt;accountRepository-&gt;add($account);</programlisting>
         authentication manager to always authenticate all configured providers
         and to make sure that every single provider returned a positive
         authentication status to its token. This option is by disabled by
-        default and can be enable with the following
+        default and can be enabled with the following
         configuration:<programlisting language="yaml">security: authentication: authenticateAllTokens: yes</programlisting></para>
       </section>
 
@@ -599,7 +599,7 @@ $this-&gt;accountRepository-&gt;add($account);</programlisting>
       <para>This section explains the details of each authentication mechanism
       shipped with FLOW3. Mainly the configuration options and usage will be
       exposed, if you want to know more about the entire authentication
-      process and how the components will work together, pleas have a look in
+      process and how the components will work together, please have a look in
       the previous sections.</para>
 
       <section>
@@ -822,9 +822,9 @@ $credentials['password'] = $postArguments['F3\FLOW3\Security\Authentication\Toke
       the authorization process, to make sure that the authentication status
       is up to date. Then an access decision manager is called, which has to
       decide, if it is allowed to call the intercepted method. If not it
-      throws an access denied exception. If you want, could implement your own
-      access decision manager. However, there is a very flexible one shipped
-      with FLOW3
+      throws an access denied exception. If you want, you could implement your
+      own access decision manager. However, there is a very flexible one
+      shipped with FLOW3
       (<literal>F3\FLOW3\Security\Authorization\AccessDecisionVoterManager</literal>),
       which uses the following voting process to meet its decision:</para>
 
@@ -955,7 +955,8 @@ $credentials['password'] = $postArguments['F3\FLOW3\Security\Authentication\Toke
       <para>Of course you are able to configure as many requests filters as
       you like. Have a look at the following example to get an idea how a
       firewall configuration will look like:<example>
-          <title>Example firewall configuration in the Settings.yaml file</title>
+          <title>Example firewall configuration in the Settings.yaml
+          file</title>
 
           <para><programlisting language="yaml">FLOW3:
   security:
@@ -975,7 +976,7 @@ $credentials['password'] = $postArguments['F3\FLOW3\Security\Authentication\Toke
           patternType:  F3\MyPackage\Security\MyOwnRequestPattern
           patternValue: some pattern value
           interceptor:  F3\MyPackage\Security\MyOwnSecurityInterceptor</programlisting></para>
-          </example><note>
+        </example><note>
           <para>As you can see, you can easily use your own implementations
           for request patterns and security interceptors.</para>
         </note><note>
@@ -1010,7 +1011,7 @@ $credentials['password'] = $postArguments['F3\FLOW3\Security\Authentication\Toke
 
     <para>In the section about authentication so called granted authorities
     were introduced. A granted authority can be attached to an users security
-    context, to determine the which rights should be granted to her. I.e. the
+    context, to determine which rights should be granted to her. I.e. the
     access rights of a user are decoupled from the user object itself, making
     it a lot more flexible, if you want to change them. Another word for
     granted authority is role. In FLOW3 a role or granted authority is mainly
@@ -1168,12 +1169,12 @@ $credentials['password'] = $postArguments['F3\FLOW3\Security\Authentication\Toke
   <section xml:id="ChannelSecurity">
     <title>Channel security</title>
 
-    <para></para>
+    <para/>
   </section>
 
   <section>
     <title>Cryptography</title>
 
-    <para></para>
+    <para/>
   </section>
 </chapter>
