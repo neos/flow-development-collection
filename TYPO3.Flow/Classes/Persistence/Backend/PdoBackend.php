@@ -327,12 +327,12 @@ class PdoBackend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 	 * @param array $previousArray the previously persisted state of the array
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function processArray(array $array, $parentIdentifier, array $previousArray = NULL) {
+	protected function processArray(array $array = NULL, $parentIdentifier, array $previousArray = NULL) {
 			// remove objects removed from array since reconstitution
 		if ($previousArray !== NULL) {
 			foreach ($previousArray as $value) {
 				if (is_object($value) && !($value instanceof \DateTime || $value instanceof \SplObjectStorage)) {
-					if (!in_array($value, $array, TRUE)) {
+					if ($array === NULL || !in_array($value, $array, TRUE)) {
 						if ($this->classSchemata[$value->FLOW3_AOP_Proxy_getProxyTargetClassName()]->getModelType() === \F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY
 								&& $this->classSchemata[$value->FLOW3_AOP_Proxy_getProxyTargetClassName()]->isAggregateRoot() === FALSE) {
 							$this->removeEntity($value);
@@ -342,6 +342,10 @@ class PdoBackend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 					}
 				}
 			}
+		}
+
+		if ($array === NULL) {
+			return NULL;
 		}
 
 		$values = array();
@@ -385,13 +389,13 @@ class PdoBackend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 	 * @param \SplObjectStorage $previousObjectStorage the previously persisted state of the SplObjectStorage
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function processSplObjectStorage(\SplObjectStorage $splObjectStorage, $parentIdentifier, \SplObjectStorage $previousObjectStorage = NULL) {
+	protected function processSplObjectStorage(\SplObjectStorage $splObjectStorage = NULL, $parentIdentifier, \SplObjectStorage $previousObjectStorage = NULL) {
 		$values = array();
 
 			// remove objects detached since reconstitution
 		if ($previousObjectStorage !== NULL) {
 			foreach ($previousObjectStorage as $object) {
-				if (!$splObjectStorage->contains($object)) {
+				if ($splObjectStorage === NULL || !$splObjectStorage->contains($object)) {
 					if ($this->classSchemata[$object->FLOW3_AOP_Proxy_getProxyTargetClassName()]->getModelType() === \F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY
 							&& $this->classSchemata[$object->FLOW3_AOP_Proxy_getProxyTargetClassName()]->isAggregateRoot() === FALSE) {
 						$this->removeEntity($object);
@@ -400,6 +404,10 @@ class PdoBackend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 					}
 				}
 			}
+		}
+
+		if ($splObjectStorage === NULL) {
+			return NULL;
 		}
 
 		foreach ($splObjectStorage as $object) {

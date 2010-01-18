@@ -970,6 +970,36 @@ class PdoBackendTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
+	public function processDateTimeHandlesNullInputByReturningNull() {
+		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\PdoBackend'), array('dummy'));
+
+		$this->assertNull($backend->_call('processDateTime', NULL, 'fakeUuid'));
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function processArrayHandlesNullInputByReturningNull() {
+		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\PdoBackend'), array('dummy'));
+
+		$this->assertNull($backend->_call('processArray', NULL, 'fakeUuid'));
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function processSplObjectStorageHandlesNullInputByReturningNull() {
+		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\PdoBackend'), array('dummy'));
+
+		$this->assertNull($backend->_call('processSplObjectStorage', NULL, 'fakeUuid'));
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
 	public function aggregateRootObjectsFoundWhenPersistingThatAreNotAmongAggregateRootObjectsCollectedFromRepositoriesArePersisted() {
 		$otherClassName = 'OtherClass' . uniqid();
 		$fullOtherClassName = 'F3\\FLOW3\Persistence\\Tests\\' . $otherClassName;
