@@ -237,7 +237,13 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	 * @api
 	 */
 	public function getControllerName() {
-		return $this->controllerName;
+		$controllerObjectName = $this->getControllerObjectName();
+		if ($controllerObjectName !== '')  {
+				// from last backslash to (end -10 chars for Controller)
+			return substr($controllerObjectName, strrpos($controllerObjectName, '\\')+1, -10);
+		} else {
+			return $this->controllerName;
+		}
 	}
 
 	/**
