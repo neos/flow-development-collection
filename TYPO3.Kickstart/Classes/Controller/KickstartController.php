@@ -82,6 +82,10 @@ class KickstartController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function generatePackageAction($packageKey) {
+		if (!$this->packageManager->isPackageKeyValid($packageKey)) {
+			return 'Package key "' . $packageKey . '" is not valid. Only UpperCamelCase with alphanumeric characters and underscore, please!' . PHP_EOL;
+		}
+
 		if ($this->packageManager->isPackageAvailable($packageKey)) {
 			return 'Package "' . $packageKey . '" already exists.' . PHP_EOL;
 		}
@@ -103,6 +107,9 @@ class KickstartController extends \F3\FLOW3\MVC\Controller\ActionController {
 		$subpackageName = '';
 		if (strpos('/', $packageKey) !== FALSE) {
 			list($packageKey, $subpackageName) = explode('/', $packageKey, 2);
+		}
+		if (!$this->packageManager->isPackageKeyValid($packageKey)) {
+			return 'Package key "' . $packageKey . '" is not valid. Only UpperCamelCase with alphanumeric characters and underscore, please!' . PHP_EOL;
 		}
 		if (!$this->packageManager->isPackageAvailable($packageKey)) {
 			return 'Package "' . $packageKey . '" is not available.' . PHP_EOL;
@@ -126,6 +133,9 @@ class KickstartController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function generateModelAction($packageKey, $modelName) {
+		if (!$this->packageManager->isPackageKeyValid($packageKey)) {
+			return 'Package key "' . $packageKey . '" is not valid. Only UpperCamelCase with alphanumeric characters and underscore, please!' . PHP_EOL;
+		}
 		if (!$this->packageManager->isPackageAvailable($packageKey)) {
 			return 'Package "' . $packageKey . '" is not available.' . PHP_EOL;
 		}
@@ -155,6 +165,9 @@ class KickstartController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function generateRepositoryAction($packageKey, $modelName) {
+		if (!$this->packageManager->isPackageKeyValid($packageKey)) {
+			return 'Package key "' . $packageKey . '" is not valid. Only UpperCamelCase with alphanumeric characters and underscore, please!' . PHP_EOL;
+		}
 		if (!$this->packageManager->isPackageAvailable($packageKey)) {
 			return 'Package "' . $packageKey . '" is not available.' . PHP_EOL;
 		}
