@@ -68,8 +68,8 @@
 
     <note>
       <para>It is important to completely ignore the fact that resources are
-      stored as files somewhere in FLOW3's directory structure – you only deal
-      with resource objects.</para>
+      stored as files somewhere in FLOW3's directory structure – you should
+      only deal with resource objects.</para>
     </note>
 
     <para>New persistent resources can be created by either importing or
@@ -253,7 +253,7 @@
       <title>Persistent Resources</title>
 
       <para>Persistent resources are published on demand because FLOW3 cannot
-      know which resources are meant to public and which ones are to kept
+      know which resources are meant to be public and which ones are to kept
       private. The trigger for publishing persistent resources is the
       generation of its public web URI. A very common way to do that is
       displaying a resource in a Fluid template:</para>
@@ -293,9 +293,9 @@
       a little speed penalty and in some cases the size of duplicated
       resources can become an issue.</para>
 
-      <para>If your operating systems supports symbolic links, you can speed
-      up the publication process by telling FLOW3 to create symlinks instead
-      of copies. This can be achieved through some setting in FLOW3's
+      <para>If your operating system supports symbolic links, you can speed up
+      the publication process by telling FLOW3 to create symlinks instead of
+      copies. This can be achieved through some setting in FLOW3's
       <filename>Settings.yaml</filename>:</para>
 
       <programlisting language="yaml">FLOW3:
@@ -311,7 +311,7 @@
     <title>Resource Stream Wrapper</title>
 
     <para>Static resources are often used by packages internally. Typical use
-    case are templates, XML, YAML or other data files and images for further
+    cases are templates, XML, YAML or other data files and images for further
     processing. You might be tempted to refer to these files by using one of
     the <constant>FLOW3_PATH_*</constant> constants or by creating a path
     relative to your package. A much better and more convenient way is using
