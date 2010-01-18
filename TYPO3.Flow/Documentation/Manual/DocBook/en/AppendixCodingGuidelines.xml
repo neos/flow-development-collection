@@ -186,32 +186,20 @@ public function getContextName() {
       proper names and in the end they all lead to better readable,
       manageable, stable and secure code.</para>
 
-      <para><itemizedlist>
-          <listitem>
-            <para>As a general note, english words (or abbreviations if
-            neccessary) must be used for all class names, method names,
-            comments, variables names, database table and field names.
-            Although PHP6 allows for using funny japanese, tibetian or
-            don't-know-what characters, the consensus is that english is much
-            better to read for the most of us.</para>
-          </listitem>
-
-          <listitem>
-            <para>If acronyms or abbreviations are embedded in names, keep
-            them in the case they usually are, i.e. keep
-            <acronym>URL</acronym> uppercase, also when used in a method name
-            like <methodname>getURLForLink()</methodname>,
-            <classname>ACMEManager</classname> etc.</para>
-          </listitem>
-        </itemizedlist></para>
+      <para>As a general note, english words (or abbreviations if neccessary)
+      must be used for all class names, method names, comments, variables
+      names, database table and field names. Although PHP6 allows for using
+      funny japanese, tibetian or don't-know-what characters, the consensus is
+      that english is much better to read for the most of us.</para>
 
       <section>
         <title>Package names</title>
 
-        <para>All package names are written in
-        <package>UpperCamelCase</package>. In order to avoid problems with
-        different filesystems, only the characters a-z, A-Z and 0-9 are
-        allowed for package names – don't use special characters.</para>
+        <para>All package names are start with an uppercase character and
+        usually are written in <package>UpperCamelCase</package>. In order to
+        avoid problems with different filesystems, only the characters a-z,
+        A-Z, 0-9 and the dash sign "-" are allowed for package names – don't
+        use special characters.</para>
       </section>
 
       <section>
@@ -220,13 +208,18 @@ public function getContextName() {
         <para><itemizedlist>
             <listitem>
               <para>Only the characters a-z, A-Z and 0-9 are allowed for
-              namespace and class names – don't use special characters.</para>
+              namespace and class names.</para>
             </listitem>
 
             <listitem>
-              <para>All namespace and class names are written in
-              <classname>UpperCamelCase</classname>, all uppercase names are
-              allowed only for well established abbreviations.</para>
+              <para>Namespaces are usually written in UpperCamelCase but
+              variations are allowed for well established names and
+              abbreviations.</para>
+            </listitem>
+
+            <listitem>
+              <para>Class names are always written in
+              <classname>UpperCamelCase</classname>.</para>
             </listitem>
 
             <listitem>
@@ -244,22 +237,23 @@ public function getContextName() {
             </listitem>
 
             <listitem>
-              <para>The name of abstract classes should start with the word
-              "Abstract".</para>
+              <para>The name of abstract classes must start with the word
+              "Abstract", class names of aspects must end with the word
+              "Aspect".</para>
             </listitem>
           </itemizedlist></para>
 
-        <para>A few examples follow:</para>
+        <para>A few examples:</para>
 
         <table>
           <title>Incorrect naming of namespaces and classes</title>
 
           <tgroup cols="3">
-            <colspec colwidth="3*"/>
+            <colspec colwidth="3*" />
 
-            <colspec colwidth="2*"/>
+            <colspec colwidth="2*" />
 
-            <colspec colwidth="5*"/>
+            <colspec colwidth="5*" />
 
             <thead>
               <row>
@@ -273,9 +267,9 @@ public function getContextName() {
 
             <tbody>
               <row>
-                <entry>\F3\FLOW3\Session\PHP</entry>
+                <entry>\F3\FLOW3\Session\Php</entry>
 
-                <entry>PHP</entry>
+                <entry>Php</entry>
 
                 <entry>The class is not a representation of PHP!</entry>
               </row>
@@ -303,6 +297,14 @@ public function getContextName() {
 
                 <entry>Not allowed, "Default" is a reserved keyword</entry>
               </row>
+
+              <row>
+                <entry>\F3\FLOW3\Object\Manager</entry>
+
+                <entry>Manager</entry>
+
+                <entry>Just "Manager" is too fuzzy</entry>
+              </row>
             </tbody>
           </tgroup>
         </table>
@@ -311,11 +313,11 @@ public function getContextName() {
           <title>Correct naming of namespaces and classes</title>
 
           <tgroup cols="3">
-            <colspec colwidth="3*"/>
+            <colspec colwidth="3*" />
 
-            <colspec colwidth="2*"/>
+            <colspec colwidth="2*" />
 
-            <colspec colwidth="5*"/>
+            <colspec colwidth="5*" />
 
             <thead>
               <row>
@@ -359,6 +361,14 @@ public function getContextName() {
 
                 <entry>The standard controller</entry>
               </row>
+
+              <row>
+                <entry>\F3\FLOW3\Object\ObjectManager</entry>
+
+                <entry>ObjectController</entry>
+
+                <entry>"ObjectManager" is clearer</entry>
+              </row>
             </tbody>
           </tgroup>
         </table>
@@ -367,11 +377,11 @@ public function getContextName() {
           <title>Edge cases in naming of namespaces and classes</title>
 
           <tgroup cols="3">
-            <colspec colwidth="3*"/>
+            <colspec colwidth="3*" />
 
-            <colspec colwidth="2*"/>
+            <colspec colwidth="2*" />
 
-            <colspec colwidth="5*"/>
+            <colspec colwidth="5*" />
 
             <thead>
               <row>
@@ -385,43 +395,6 @@ public function getContextName() {
 
             <tbody>
               <row>
-                <entry>\F3\FLOW3\Object\ObjectManager</entry>
-
-                <entry>Manager</entry>
-
-                <entry>If it's the only manager in that namespace, it's
-                okay</entry>
-              </row>
-
-              <row>
-                <entry>\F3\Foo\Bar\Builder</entry>
-
-                <entry>Builder</entry>
-
-                <entry>If it's clear what the builder builds (Bar?), it's
-                okay</entry>
-              </row>
-
-              <row>
-                <entry>\F3\FLOW3\Object\ObjectBuilder</entry>
-
-                <entry>Builder</entry>
-
-                <entry>Problem: There's a "ConfigurationBuilder" in the same
-                namespace, therefore better rename the Builder to
-                ObjectBuilder</entry>
-              </row>
-
-              <row>
-                <entry>\F3\FLOW3\Object\ObjectFactory</entry>
-
-                <entry>Factory</entry>
-
-                <entry>As long as it is the only factory in that namespace,
-                okay</entry>
-              </row>
-
-              <row>
                 <entry>\F3\FLOW3\MVC\ControllerInterface</entry>
 
                 <entry>ControllerInterface</entry>
@@ -433,7 +406,7 @@ public function getContextName() {
               <row>
                 <entry>\F3\FLOW3\MVC\Controller\ControllerInterface</entry>
 
-                <entry/>
+                <entry></entry>
 
                 <entry>Better</entry>
               </row>
@@ -450,7 +423,7 @@ public function getContextName() {
               <row>
                 <entry>\F3\FLOW3\Cache\Backend\AbstractBackend</entry>
 
-                <entry/>
+                <entry></entry>
 
                 <entry>Better</entry>
               </row>
@@ -477,9 +450,9 @@ public function getContextName() {
         names – don't use special characters.</para>
 
         <para>All interface names are written in
-        <classname>UpperCamelCase</classname>, all uppercase names are allowed
-        for well established abbreviations. Interface names must be adjectives
-        or nouns and have the Interface suffix. A few examples follow:</para>
+        <classname>UpperCamelCase</classname>. Interface names must be
+        adjectives or nouns and have the Interface suffix. A few examples
+        follow:</para>
 
         <example>
           <title>Correct naming of interfaces</title>
@@ -498,7 +471,7 @@ public function getContextName() {
             </listitem>
 
             <listitem>
-              <para><classname>\F3\MyPackage\MyObject\MyHTMLParserInterface</classname></para>
+              <para><classname>\F3\MyPackage\MyObject\MyHtmlParserInterface</classname></para>
             </listitem>
           </itemizedlist>
         </example>
@@ -508,10 +481,10 @@ public function getContextName() {
         <title>Exception names</title>
 
         <para>Exception naming basically follows the rules for naming classes.
-        There are two possible types of exceptio Generic exceptions and
+        There are two possible types of exceptions: generic exceptions and
         specific exceptions. Generic exceptions should be named "Exception"
         preceeded by their namespace. Specific exceptions should reside in
-        their own sub-namespace and must not contain the word
+        their own sub-namespace end with the word
         <literal>Exception</literal>.</para>
 
         <example>
@@ -523,7 +496,7 @@ public function getContextName() {
             </listitem>
 
             <listitem>
-              <para><classname>\F3\FLOW3\Object\Exception\InvalidClassName</classname></para>
+              <para><classname>\F3\FLOW3\Object\Exception\InvalidClassNameException</classname></para>
             </listitem>
 
             <listitem>
@@ -531,7 +504,7 @@ public function getContextName() {
             </listitem>
 
             <listitem>
-              <para><classname>\F3\MyPackage\MyObject\Exception\OutOfCoffee</classname></para>
+              <para><classname>\F3\MyPackage\MyObject\Exception\OutOfCoffeeException</classname></para>
             </listitem>
           </itemizedlist>
         </example>
@@ -540,8 +513,7 @@ public function getContextName() {
       <section>
         <title>Method names</title>
 
-        <para>All method names are written in lowerCamelCase, all uppercase
-        names are allowed for well established abbreviations. In order to
+        <para>All method names are written in lowerCamelCase. In order to
         avoid problems with different filesystems, only the characters a-z,
         A-Z and 0-9 are allowed for method names – don't use special
         characters.</para>
@@ -570,7 +542,7 @@ public function getContextName() {
             </listitem>
 
             <listitem>
-              <para><methodname>singYMCALoudly()</methodname></para>
+              <para><methodname>singYmcaLoudly()</methodname></para>
             </listitem>
 
             <listitem>
@@ -745,8 +717,9 @@ public function getContextName() {
                   <para><filename>FLOW3/Package/Manager.php</filename></para>
 
                   <para>Contains the class
-                  <classname>\F3\FLOW3\Package\PackageManager</classname> which is
-                  part of the package <package>\F3\FLOW3</package></para>
+                  <classname>\F3\FLOW3\Package\PackageManager</classname>
+                  which is part of the package
+                  <package>\F3\FLOW3</package></para>
                 </listitem>
 
                 <listitem>
@@ -803,7 +776,7 @@ public function getContextName() {
       <section>
         <title>Arrays</title>
 
-        <para/>
+        <para></para>
       </section>
 
       <section>
@@ -823,7 +796,7 @@ class MyObject {
       <section>
         <title>Functions and methods</title>
 
-        <para/>
+        <para></para>
       </section>
 
       <section>
@@ -1673,7 +1646,7 @@ if ($foo !== $bar))        // GOOD</programlisting></para>
 
               <mediaobject>
                 <imageobject>
-                  <imagedata fileref="AppendixCodingGuidelines_TrueFalse.jpg"/>
+                  <imagedata fileref="AppendixCodingGuidelines_TrueFalse.jpg"></imagedata>
                 </imageobject>
               </mediaobject>
             </figure></para>
