@@ -449,15 +449,17 @@ class PdoBackend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 				$propertyData['type']
 			));
 
-			foreach ($propertyData['value'] as $valueData) {
-				$statementHandle = $this->databaseHandle->prepare('INSERT INTO "properties_data" ("parent", "name", "index", "type", "' . $this->getTypeName($valueData['type']) . '") VALUES (?, ?, ?, ?, ?)');
-				$statementHandle->execute(array(
-					$propertyData['parent'],
-					$propertyName,
-					$valueData['index'],
-					$this->getTypeName($valueData['type']),
-					$valueData['value']
-				));
+			if (is_array($propertyData['value'])) {
+				foreach ($propertyData['value'] as $valueData) {
+					$statementHandle = $this->databaseHandle->prepare('INSERT INTO "properties_data" ("parent", "name", "index", "type", "' . $this->getTypeName($valueData['type']) . '") VALUES (?, ?, ?, ?, ?)');
+					$statementHandle->execute(array(
+						$propertyData['parent'],
+						$propertyName,
+						$valueData['index'],
+						$this->getTypeName($valueData['type']),
+						$valueData['value']
+					));
+				}
 			}
 		}
 	}
