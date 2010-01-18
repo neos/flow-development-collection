@@ -62,15 +62,20 @@ class ObjectAccess {
 		if (!is_object($subject) && !is_array($subject)) throw new \InvalidArgumentException('$subject must be an object or array, ' . gettype($subject). ' given.', 1237301367);
 		if (!is_string($propertyName)) throw new \InvalidArgumentException('Given property name is not of type string.', 1231178303);
 
-		if (is_array($subject) && array_key_exists($propertyName, $subject)) {
-			return $subject[$propertyName];
-		}
-		if (is_callable(array($subject, $getterMethodName = self::buildGetterMethodName($propertyName)))) {
-			return call_user_func(array($subject, $getterMethodName));
-		} elseif ($subject instanceof \ArrayAccess && isset($subject[$propertyName])) {
-			return $subject[$propertyName];
-		} elseif (array_key_exists($propertyName, get_object_vars($subject))) {
-			return $subject->$propertyName;
+		if (is_array($subject)) {
+			if (array_key_exists($propertyName, $subject)) {
+				return $subject[$propertyName];
+			} else {
+				return NULL;
+			}
+		} else {
+			if (is_callable(array($subject, $getterMethodName = self::buildGetterMethodName($propertyName)))) {
+				return call_user_func(array($subject, $getterMethodName));
+			} elseif ($subject instanceof \ArrayAccess && isset($subject[$propertyName])) {
+				return $subject[$propertyName];
+			} elseif (array_key_exists($propertyName, get_object_vars($subject))) {
+				return $subject->$propertyName;
+			}
 		}
 		return NULL;
 	}

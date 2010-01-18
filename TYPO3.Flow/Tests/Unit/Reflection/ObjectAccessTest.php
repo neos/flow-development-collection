@@ -72,6 +72,15 @@ class ObjectAccessTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getPropertyReturnsNullIfArrayKeyDoesNotExist() {
+		$property = \F3\FLOW3\Reflection\ObjectAccess::getProperty(array(), 'notExistingProperty');
+		$this->assertNull($property);
+	}
+
+	/**
+	 * @test
 	 * @expectedException \InvalidArgumentException
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
