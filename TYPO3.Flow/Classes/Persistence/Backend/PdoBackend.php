@@ -775,7 +775,7 @@ class PdoBackend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 	protected function parseOrderings(array $orderings, array $sql) {
 		foreach ($orderings as $propertyName => $order) {
 			$sql['fields'][] = '"_orderingtable' . count($sql['orderings']) . '"."' . $propertyName . '"';
-			$sql['tables'][] = 'LEFT JOIN (SELECT "parent", COALESCE("string", CAST("integer" AS TEXT), CAST("float" AS TEXT), CAST("datetime" AS TEXT), "boolean", "object") AS "' . $propertyName . '" FROM "properties_data" WHERE "name" = ' . $this->databaseHandle->quote($propertyName) . ') AS "_orderingtable' . count($sql['orderings']) . '" ON "_orderingtable' . count($sql['orderings']) . '"."parent" = "d"."parent"';
+			$sql['tables'][] = 'LEFT JOIN (SELECT "parent", COALESCE("string", CAST("integer" AS CHAR), CAST("float" AS CHAR), CAST("datetime" AS CHAR), "boolean", "object") AS "' . $propertyName . '" FROM "properties_data" WHERE "name" = ' . $this->databaseHandle->quote($propertyName) . ') AS "_orderingtable' . count($sql['orderings']) . '" ON "_orderingtable' . count($sql['orderings']) . '"."parent" = "d"."parent"';
 			$sql['orderings'][] = '"_orderingtable' . count($sql['orderings']) . '"."' . $propertyName . '" ' . $order;
 		}
 		return $sql;
@@ -859,7 +859,7 @@ class PdoBackend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 		} elseif ($operand instanceof \F3\FLOW3\Persistence\QOM\PropertyValue) {
 			$selectorName = $operand->getSelectorName();
 			$operator = $this->resolveOperator($operator);
-			$coalesce = 'COALESCE("' . $selectorName . 'properties' . count($parameters) . '"."string", CAST("' . $selectorName . 'properties' . count($parameters) . '"."integer" AS TEXT), CAST("' . $selectorName . 'properties' . count($parameters) . '"."float" AS TEXT), CAST("' . $selectorName . 'properties' . count($parameters) . '"."datetime" AS TEXT), "' . $selectorName . 'properties' . count($parameters) . '"."boolean", "' . $selectorName . 'properties' . count($parameters) . '"."object")';
+			$coalesce = 'COALESCE("' . $selectorName . 'properties' . count($parameters) . '"."string", CAST("' . $selectorName . 'properties' . count($parameters) . '"."integer" AS CHAR), CAST("' . $selectorName . 'properties' . count($parameters) . '"."float" AS CHAR), CAST("' . $selectorName . 'properties' . count($parameters) . '"."datetime" AS CHAR), "' . $selectorName . 'properties' . count($parameters) . '"."boolean", "' . $selectorName . 'properties' . count($parameters) . '"."object")';
 			$constraintSQL = '("' . $selectorName . 'properties' . count($parameters) . '"."name" = ? AND ';
 			if ($valueFunction === NULL) {
 				$constraintSQL .= $coalesce . ' ' . $operator . ' ?';
