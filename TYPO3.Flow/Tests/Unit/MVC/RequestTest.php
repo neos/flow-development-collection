@@ -165,6 +165,18 @@ class RequestTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
+	public function theControllerNameWillBeExtractedFromTheControllerObjectNameToAssureTheCorrectCase() {
+		$request = $this->getMock('F3\FLOW3\MVC\Request', array('getControllerObjectName'), array(), '', FALSE);
+		$request->expects($this->once())->method('getControllerObjectName')->will($this->returnValue('F3\MyPackage\Controller\Foo\BarController'));
+
+		$request->setControllerName('foo\bar');
+		$this->assertEquals('Foo\Bar', $request->getControllerName());
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
 	public function thePackageKeyOfTheControllerCanBeSetAndRetrieved() {
 		$mockPackageManager = $this->getMock('F3\FLOW3\Package\PackageManagerInterface');
 		$mockPackageManager->expects($this->once())->method('getCaseSensitivePackageKey')

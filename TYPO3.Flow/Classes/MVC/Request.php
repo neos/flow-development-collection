@@ -239,8 +239,10 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	public function getControllerName() {
 		$controllerObjectName = $this->getControllerObjectName();
 		if ($controllerObjectName !== '')  {
-				// from last backslash to (end -10 chars for Controller)
-			return substr($controllerObjectName, strrpos($controllerObjectName, '\\')+1, -10);
+				// Extract the controller name from the controller object name to assure that
+				// the case is correct.
+				// Note: Controller name can also contain sub structure like "Foo\Bar\Baz"
+			return substr($controllerObjectName, -(strlen($this->controllerName)+10), -10);
 		} else {
 			return $this->controllerName;
 		}
