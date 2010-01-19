@@ -162,7 +162,7 @@ class ResourceManager {
 		}
 		
 		$hash = sha1_file($temporaryTargetPathAndFilename);
-		$finalTargetPathAndFilename = $this->persistentResourcesStorageBaseUri . $hash . '.' . $pathInfo['extension'];
+		$finalTargetPathAndFilename = $this->persistentResourcesStorageBaseUri . $hash;
 		if (copy($temporaryTargetPathAndFilename, $finalTargetPathAndFilename) === FALSE) {
 			return FALSE;
 		}

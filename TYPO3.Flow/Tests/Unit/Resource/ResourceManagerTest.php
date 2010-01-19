@@ -162,7 +162,7 @@ class ResourceManagerTest extends \F3\Testing\BaseTestCase {
 
 		$actualResource = $resourceManager->importResource('vfs://Foo/SomeResource.txt');
 		$this->assertSame($mockResource, $actualResource);
-		$this->assertFileEquals('vfs://Foo/SomeResource.txt', 'vfs://Foo/Persistent/Resources/' . $hash . '.txt');
+		$this->assertFileEquals('vfs://Foo/SomeResource.txt', 'vfs://Foo/Persistent/Resources/' . $hash);
 	}
 }
 
