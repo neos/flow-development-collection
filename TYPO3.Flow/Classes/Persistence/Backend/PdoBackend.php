@@ -750,7 +750,7 @@ class PdoBackend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 	 */
 	protected function parseQuery(\F3\FLOW3\Persistence\QueryInterface $query, array &$sql, array &$parameters) {
 		$parameters[] = $query->getType();
-		$sql['fields'][] = '"_entity"."identifier"';
+		$sql['fields'][] = '"_entity"."identifier" AS "identifier"';
 		$sql['fields'][] = '"_entity"."type" AS "classname"';
 		if ($query->getConstraint() === NULL) {
 			$sql['tables'][] = '"entities" AS "_entity"';
