@@ -70,7 +70,11 @@ class EmailAddressValidatorTest extends \F3\Testing\BaseTestCase {
 			array('@typo3.org'),
 			array('someone@typo3.'),
 			array('local@192.168.2'),
-			array('local@192.168.270.1')
+			array('local@192.168.270.1'),
+			array('foo@bar.com' . chr(0)),
+			array('foo@bar.org' . chr(10)),
+			array('andreas@foerthner@example.com'),
+			array('some@one.net ')
 		);
 	}
 

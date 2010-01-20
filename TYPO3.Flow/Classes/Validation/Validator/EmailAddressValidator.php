@@ -133,7 +133,7 @@ class EmailAddressValidator extends \F3\FLOW3\Validation\Validator\AbstractValid
 	public function isValid($value) {
 		$this->errors = array();
 		if(is_string($value) && preg_match('
-				/
+				/^
 					[a-z0-9!#$%&\'*+\/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&\'*+\/=?^_`{|}~-]+)*
 					@
 					(?:
@@ -141,8 +141,7 @@ class EmailAddressValidator extends \F3\FLOW3\Validation\Validator\AbstractValid
 						localhost|
 						(?:(?:\d{1,2}|1\d{1,2}|2[0-5][0-5])\.){3}(?:(?:\d{1,2}|1\d{1,2}|2[0-5][0-5]))
 					)
-					\b
-				/ix', $value)) return TRUE;
+				$/Dix', $value)) return TRUE;
 		$this->addError('The given subject was not a valid email address. Got: "' . $value . '"', 1221559976);
 		return FALSE;
 	}
