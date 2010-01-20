@@ -45,16 +45,18 @@ class ObjectAccess {
 	/**
 	 * Get a property of a given object.
 	 * Tries to get the property the following ways:
-	 * - if the target is an array, and this has this property, we call it.
+	 * - if the target is an array, and has this property, we call it.
+	 * - if public getter method exists, call it.
 	 * - if the target object is an instance of ArrayAccess, it gets the property
 	 *   on it if it exists.
-	 * - if public getter method exists, call it.
 	 * - if public property exists, return the value of it.
 	 * - else, throw exception
 	 *
 	 * @param mixed $subject Object or array to get the property from
 	 * @param string $propertyName name of the property to retrieve
 	 * @return object Value of the property.
+	 * @throws \InvalidArgumentException in case $subject was not an object or $propertyName was not a string
+	 * @throws \RuntimeException if the property was not accessible
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
@@ -65,8 +67,6 @@ class ObjectAccess {
 		if (is_array($subject)) {
 			if (array_key_exists($propertyName, $subject)) {
 				return $subject[$propertyName];
-			} else {
-				return NULL;
 			}
 		} else {
 			if (is_callable(array($subject, $getterMethodName = self::buildGetterMethodName($propertyName)))) {
@@ -77,7 +77,8 @@ class ObjectAccess {
 				return $subject->$propertyName;
 			}
 		}
-		return NULL;
+
+		throw new \RuntimeException('The property "' . $propertyName . '" on the subject was not accessible.', 1263391473);
 	}
 
 	/**
@@ -87,14 +88,16 @@ class ObjectAccess {
 	 *
 	 * @param object $object
 	 * @param string $propertyPath
-	 * @return object Value of the property
+	 * @return mixed Value of the property
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	static public function getPropertyPath($object, $propertyPath) {
 		$propertyPathSegments = explode('.', $propertyPath);
 		foreach ($propertyPathSegments as $pathSegment) {
+			if (!self::isPropertyGettable($object, $pathSegment)) {
+				return NULL;
+			}
 			$object = self::getProperty($object, $pathSegment);
-			if ($object === NULL) return NULL;
 		}
 		return $object;
 	}
@@ -111,8 +114,8 @@ class ObjectAccess {
 	 * @param object $object The target object
 	 * @param string $propertyName Name of the property to set
 	 * @param object $propertyValue Value of the property
-	 * @return void
-	 * @throws \F3\FLOW3\Reflection\Exception if property was could not be set
+	 * @return boolean TRUE if the property could be set, FALSE otherwise
+	 * @throws \InvalidArgumentException in case $object was not an object or $propertyName was not a string
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Robert Lemke <robert@typo3.org>
 	 */

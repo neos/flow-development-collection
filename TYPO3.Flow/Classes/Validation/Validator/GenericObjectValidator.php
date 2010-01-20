@@ -91,7 +91,14 @@ class GenericObjectValidator extends \F3\FLOW3\Validation\Validator\AbstractObje
 
 		$result = TRUE;
 		foreach ($this->propertyValidators[$propertyName] as $validator) {
-			if ($validator->isValid(\F3\FLOW3\Reflection\ObjectAccess::getProperty($object, $propertyName)) === FALSE) {
+			if (\F3\FLOW3\Reflection\ObjectAccess::isPropertyGettable($object, $propertyName)) {
+				$propertyValue = \F3\FLOW3\Reflection\ObjectAccess::getProperty($object, $propertyName);
+			} else {
+				$propertyReflection = new \F3\FLOW3\Reflection\PropertyReflection(get_class($object), $propertyName);
+				$propertyReflection->setAccessible(TRUE);
+				$propertyValue = $propertyReflection->getValue($object);
+			}
+			if ($validator->isValid($propertyValue) === FALSE) {
 				$this->addErrorsForProperty($validator->getErrors(), $propertyName);
 				$result = FALSE;
 			}
@@ -123,7 +130,7 @@ class GenericObjectValidator extends \F3\FLOW3\Validation\Validator\AbstractObje
 	 */
 	public function addPropertyValidator($propertyName, \F3\FLOW3\Validation\Validator\ValidatorInterface $validator) {
 		if (!isset($this->propertyValidators[$propertyName])) {
-			$this->propertyValidators[$propertyName] = new \SPLObjectStorage;
+			$this->propertyValidators[$propertyName] = new \SplObjectStorage();
 		}
 		$this->propertyValidators[$propertyName]->attach($validator);
 	}

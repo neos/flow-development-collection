@@ -63,20 +63,21 @@ class ObjectAccessTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
+	 * @expectedException \RuntimeException
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function getPropertyReturnsNullIfPropertyDoesNotExist() {
-		$property = \F3\FLOW3\Reflection\ObjectAccess::getProperty($this->dummyObject, 'notExistingProperty');
-		$this->assertNull($property);
+	public function getPropertyReturnsThrowsExceptionIfPropertyDoesNotExist() {
+		\F3\FLOW3\Reflection\ObjectAccess::getProperty($this->dummyObject, 'notExistingProperty');
 	}
 
 	/**
 	 * @test
+	 * @expectedException \RuntimeException
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function getPropertyReturnsNullIfArrayKeyDoesNotExist() {
-		$property = \F3\FLOW3\Reflection\ObjectAccess::getProperty(array(), 'notExistingProperty');
-		$this->assertNull($property);
+	public function getPropertyReturnsThrowsExceptionIfArrayKeyDoesNotExist() {
+		\F3\FLOW3\Reflection\ObjectAccess::getProperty(array(), 'notExistingProperty');
 	}
 
 	/**
@@ -214,6 +215,18 @@ class ObjectAccessTest extends \F3\Testing\BaseTestCase {
 		$expected = 'test';
 		$actual = \F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($this->dummyObject, 'property2.property');
 		$this->assertEquals($expected, $actual);
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getPropertyPathReturnsNullForNonExistingPropertyPath() {
+		$alternativeObject = new \F3\FLOW3\Tests\Reflection\Fixture\DummyClassWithGettersAndSetters();
+		$alternativeObject->setProperty(new \stdClass());
+		$this->dummyObject->setProperty2($alternativeObject);
+
+		$this->assertNull(\F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($this->dummyObject, 'property2.property.not.existing'));
 	}
 
 }
