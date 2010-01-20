@@ -87,11 +87,6 @@ class PropertyReflection extends \ReflectionProperty {
 	 * @throws \F3\FLOW3\Reflection\Exception
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @todo Maybe support private properties as well, as of PHP 5.3.0 we can do
-	 *   $obj = new Foo;
-	 *   $prop = new ReflectionProperty('Foo', 'y'); // y is private member
-	 *   $prop->setAccessible(true);
-	 *   var_dump($prop->getValue($obj)); // int(2)
 	 */
 	public function getValue($object = NULL) {
 		if (!is_object($object)) throw new \F3\FLOW3\Reflection\Exception('$object is of type ' . gettype($object) . ', instance of class ' . $this->class . ' expected.', 1210859212);

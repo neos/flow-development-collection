@@ -23,13 +23,13 @@ namespace F3\FLOW3\Reflection;
  *                                                                        */
 
 /**
- * Testcase for Reflection Method
+ * Testcase for MethodReflection
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
-class MethodTest extends \F3\Testing\BaseTestCase {
+class MethodReflectionTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @var mixed
