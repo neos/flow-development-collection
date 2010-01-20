@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Persistence;
+namespace F3\FLOW3\Persistence\Backend\GenericPdo;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -28,7 +28,7 @@ namespace F3\FLOW3\Persistence;
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class DataMapper {
+class DataMapper implements \F3\FLOW3\Persistence\DataMapperInterface {
 
 	/**
 	 * @var \F3\FLOW3\Object\ObjectManagerInterface
@@ -95,30 +95,31 @@ class DataMapper {
 	}
 
 	/**
-	 * Maps the (aggregate root) nodes and registers them as reconstituted
-	 * with the session.
+	 * Maps the (aggregate root) node data and registers the objects as
+	 * reconstituted with the session.
 	 *
-	 * @param array $objectRows
+	 * @param array $objectsData
 	 * @return array
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function map(array $objectRows) {
+	public function mapToObjects(array $objectsData) {
 		$objects = array();
-		foreach ($objectRows as $objectRow) {
-			$objects[] = $this->mapSingleObject($objectRow);
+		foreach ($objectsData as $objectData) {
+			$objects[] = $this->mapToObject($objectData);
 		}
 
 		return $objects;
 	}
 
 	/**
-	 * Maps a single record into the object it represents
+	 * Maps a single record into the object it represents and registers it as
+	 * reconstituted with the session.
 	 *
 	 * @param array $objectData
 	 * @return object
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function mapSingleObject(array $objectData) {
+	public function mapToObject(array $objectData) {
 		if ($this->persistenceSession->hasIdentifier($objectData['identifier'])) {
 			return $this->persistenceSession->getObjectByIdentifier($objectData['identifier']);
 		} else {
@@ -176,7 +177,7 @@ class DataMapper {
 						$propertyValue = $this->mapSplObjectStorage($propertyValues[$propertyName]['value']);
 					break;
 					default:
-						$propertyValue = $this->mapSingleObject($propertyValues[$propertyName]['value']['value']);
+						$propertyValue = $this->mapToObject($propertyValues[$propertyName]['value']['value']);
 					break;
 				}
 
@@ -236,7 +237,7 @@ class DataMapper {
 						$array[$key] = $this->mapSplObjectStorage($arrayValue['value']);
 				break;
 				default:
-					$array[$key] = $this->mapSingleObject($arrayValue['value']);
+					$array[$key] = $this->mapToObject($arrayValue['value']);
 				break;
 			}
 		}
@@ -255,7 +256,7 @@ class DataMapper {
 	protected function mapSplObjectStorage(array $arrayValues) {
 		$objectStorage = new \SplObjectStorage();
 		foreach ($arrayValues as $arrayValue) {
-			$objectStorage->attach($this->mapSingleObject($arrayValue['value']));
+			$objectStorage->attach($this->mapToObject($arrayValue['value']));
 		}
 
 		return $objectStorage;

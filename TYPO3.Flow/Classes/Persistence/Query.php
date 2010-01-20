@@ -44,7 +44,7 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	protected $objectFactory;
 
 	/**
-	 * @var \F3\FLOW3\Persistence\DataMapper
+	 * @var \F3\FLOW3\Persistence\DataMapperInterface
 	 */
 	protected $dataMapper;
 
@@ -113,11 +113,11 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	/**
 	 * Injects the DataMapper to map records to objects
 	 *
-	 * @param \F3\FLOW3\Persistence\DataMapper $dataMapper
+	 * @param \F3\FLOW3\Persistence\DataMapperInterface $dataMapper
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectDataMapper(\F3\FLOW3\Persistence\DataMapper $dataMapper) {
+	public function injectDataMapper(\F3\FLOW3\Persistence\DataMapperInterface $dataMapper) {
 		$this->dataMapper = $dataMapper;
 	}
 
@@ -151,7 +151,7 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 * @api
 	 */
 	public function execute() {
-		return $this->dataMapper->map($this->persistenceManager->getBackend()->getObjectRecordsByQuery($this));
+		return $this->dataMapper->mapToObjects($this->persistenceManager->getBackend()->getObjectDataByQuery($this));
 	}
 
 	/**

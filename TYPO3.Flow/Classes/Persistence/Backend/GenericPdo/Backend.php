@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Persistence\Backend;
+namespace F3\FLOW3\Persistence\Backend\GenericPdo;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -28,7 +28,7 @@ namespace F3\FLOW3\Persistence\Backend;
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class PdoBackend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
+class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 
 	/**
 	 * @var \F3\FLOW3\Object\ObjectFactoryInterface
@@ -606,20 +606,19 @@ class PdoBackend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 	 * @todo optimize so properties are ignored and the db is asked for the count only
 	 */
 	public function getObjectCountByQuery(\F3\FLOW3\Persistence\QueryInterface $query) {
-		return count($this->getObjectRecordsByQuery($query));
+		return count($this->getObjectDataByQuery($query));
 	}
 
 	/**
-	 * Returns the data for the record with the given identifier., be it an entity or
-	 * value object.
+	 * Returns the object data for the given identifier.
 	 *
 	 * @param string $identifier The UUID or Hash of the object
 	 * @return array
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function getObjectRecord($identifier) {
+	public function getObjectDataByIdentifier($identifier) {
 		$this->knownRecords = array();
-		return $this->_getObjectRecord($identifier);
+		return $this->_getObjectData($identifier);
 	}
 
 	/**
@@ -627,10 +626,10 @@ class PdoBackend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 	 * value object. The data is recursively populated for the references found.
 	 *
 	 * @param string $identifier The UUID or Hash of the object
-	 * @return object<
+	 * @return object
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function _getObjectRecord($identifier) {
+	protected function _getObjectData($identifier) {
 		if ($this->hasEntityRecord($identifier)) {
 			$statementHandle = $this->databaseHandle->prepare('SELECT "identifier", "type" AS "classname" FROM "entities" WHERE "identifier"=?');
 		} else {
@@ -642,13 +641,13 @@ class PdoBackend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 	}
 
 	/**
-	 * Returns the objects matching the $query.
+	 * Returns the object data matching the $query.
 	 *
 	 * @param \F3\FLOW3\Persistence\QueryInterface $query
-	 * @return array<object>
+	 * @return array
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function getObjectRecordsByQuery(\F3\FLOW3\Persistence\QueryInterface $query) {
+	public function getObjectDataByQuery(\F3\FLOW3\Persistence\QueryInterface $query) {
 		$parameters = array();
 		$this->knownRecords = array();
 
@@ -701,12 +700,12 @@ class PdoBackend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 	 * @return mixed
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function getValue(array $data) {
+	protected function getValue(array $data) {
 		if ($data['type'] === 'object') {
 			if (isset($this->knownRecords[$data['object']])) {
 				return array('identifier' => $data['object']);
 			} else {
-				return $this->_getObjectRecord($data['object']);
+				return $this->_getObjectData($data['object']);
 			}
 		} else {
 			return $data[$data['type']];

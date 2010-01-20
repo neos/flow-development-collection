@@ -27,6 +27,7 @@ namespace F3\FLOW3\Persistence;
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @api
  */
 interface BackendInterface {
 
@@ -35,6 +36,7 @@ interface BackendInterface {
 	 *
 	 * @param array $options
 	 * @return void
+	 * @api
 	 */
 	public function initialize(array $options);
 
@@ -43,6 +45,7 @@ interface BackendInterface {
 	 *
 	 * @param \SplObjectStorage $objects
 	 * @return void
+	 * @api
 	 */
 	public function setAggregateRootObjects(\SplObjectStorage $objects);
 
@@ -51,15 +54,9 @@ interface BackendInterface {
 	 *
 	 * @param \SplObjectStorage $entities
 	 * @return void
+	 * @api
 	 */
 	public function setDeletedEntities(\SplObjectStorage $entities);
-
-	/**
-	 * Commits the current persistence session
-	 *
-	 * @return void
-	 */
-	public function commit();
 
 	/**
 	 * Replaces the given object by the second object.
@@ -75,7 +72,44 @@ interface BackendInterface {
 	 * @param object $existingObject The existing object
 	 * @param object $newObject The new object
 	 * @return void
+	 * @api
 	 */
 	public function replaceObject($existingObject, $newObject);
+
+	/**
+	 * Commits the current persistence session
+	 *
+	 * @return void
+	 * @api
+	 */
+	public function commit();
+
+	/**
+	 * Returns the number of items matching the query.
+	 *
+	 * @param \F3\FLOW3\Persistence\QueryInterface $query
+	 * @return integer
+	 * @api
+	 */
+	public function getObjectCountByQuery(\F3\FLOW3\Persistence\QueryInterface $query);
+
+	/**
+	 * Returns the object data matching the $query.
+	 *
+	 * @param \F3\FLOW3\Persistence\QueryInterface $query
+	 * @return array
+	 * @api
+	 */
+	public function getObjectDataByQuery(\F3\FLOW3\Persistence\QueryInterface $query);
+
+	/**
+	 * Returns the object data for the given identifier.
+	 *
+	 * @param string $identifier The UUID or Hash of the object
+	 * @return array
+	 * @api
+	 */
+	public function getObjectDataByIdentifier($identifier);
+
 }
 ?>

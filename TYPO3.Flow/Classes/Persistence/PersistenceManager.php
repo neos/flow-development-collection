@@ -39,7 +39,7 @@ class PersistenceManager implements \F3\FLOW3\Persistence\PersistenceManagerInte
 	protected $reflectionService;
 
 	/**
-	 * @var \F3\FLOW3\Persistence\DataMapper
+	 * @var \F3\FLOW3\Persistence\DataMapperInterface
 	 */
 	protected $dataMapper;
 
@@ -77,11 +77,11 @@ class PersistenceManager implements \F3\FLOW3\Persistence\PersistenceManagerInte
 	/**
 	 * Injects the data mapper
 	 *
-	 * @param \F3\FLOW3\Persistence\DataMapper $dataMapper
+	 * @param \F3\FLOW3\Persistence\DataMapperInterface $dataMapper
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectDataMapper(\F3\FLOW3\Persistence\DataMapper $dataMapper) {
+	public function injectDataMapper(\F3\FLOW3\Persistence\DataMapperInterface $dataMapper) {
 		$this->dataMapper = $dataMapper;
 	}
 
@@ -249,9 +249,9 @@ class PersistenceManager implements \F3\FLOW3\Persistence\PersistenceManagerInte
 		if ($this->persistenceSession->hasIdentifier($identifier)) {
 			return $this->persistenceSession->getObjectByIdentifier($identifier);
 		} else {
-			$objectRecord = $this->backend->getObjectRecord($identifier);
-			if ($objectRecord !== FALSE) {
-				return $this->dataMapper->mapSingleObject($objectRecord);
+			$objectData = $this->backend->getObjectDataByIdentifier($identifier);
+			if ($objectData !== FALSE) {
+				return $this->dataMapper->mapToObject($objectData);
 			} else {
 				return NULL;
 			}
