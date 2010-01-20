@@ -40,7 +40,7 @@ class AbstractBackendTest extends \F3\Testing\BaseTestCase {
 	public function initializeAsksReflectionServiceForClassSchemata() {
 		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService');
 		$mockReflectionService->expects($this->once())->method('getClassSchemata');
-		$backend = $this->getMock('F3\FLOW3\Persistence\Backend\AbstractBackend', array('dummy'));
+		$backend = $this->getMockForAbstractClass('F3\FLOW3\Persistence\Backend\AbstractBackend');
 		$backend->injectReflectionService($mockReflectionService);
 		$backend->initialize(array());
 	}
@@ -50,7 +50,7 @@ class AbstractBackendTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function commitDelegatesToPersistObjectsAndProcessDeletedObjects() {
-		$backend = $this->getMock('F3\FLOW3\Persistence\Backend\AbstractBackend', array('persistObjects', 'processDeletedObjects'));
+		$backend = $this->getMock('F3\FLOW3\Persistence\Backend\AbstractBackend', array('persistObjects', 'processDeletedObjects', 'getObjectCountByQuery', 'getObjectDataByQuery', 'getObjectDataByIdentifier'));
 		$backend->expects($this->once())->method('persistObjects');
 		$backend->expects($this->once())->method('processDeletedObjects');
 		$backend->commit();
@@ -65,7 +65,7 @@ class AbstractBackendTest extends \F3\Testing\BaseTestCase {
 		$objects->attach(new \stdClass());
 		$objects->attach(new \stdClass());
 
-		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\AbstractBackend'), array('persistObject'));
+		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\AbstractBackend'), array('persistObject', 'getObjectCountByQuery', 'getObjectDataByQuery', 'getObjectDataByIdentifier'));
 		$backend->expects($this->exactly(2))->method('persistObject');
 		$backend->setAggregateRootObjects($objects);
 		$backend->_call('persistObjects');
@@ -84,7 +84,7 @@ class AbstractBackendTest extends \F3\Testing\BaseTestCase {
 		$mockSession->expects($this->at(0))->method('hasObject')->with($object)->will($this->returnValue(TRUE));
 		$mockSession->expects($this->at(1))->method('unregisterObject')->with($object);
 
-		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\AbstractBackend'), array('removeEntity'));
+		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\AbstractBackend'), array('removeEntity', 'getObjectCountByQuery', 'getObjectDataByQuery', 'getObjectDataByIdentifier'));
 		$backend->injectPersistenceSession($mockSession);
 		$backend->expects($this->once())->method('removeEntity')->with($object);
 		$backend->setDeletedEntities($objects);
@@ -104,7 +104,7 @@ class AbstractBackendTest extends \F3\Testing\BaseTestCase {
 		$mockSession->expects($this->at(0))->method('hasObject')->with($object)->will($this->returnValue(FALSE));
 		$mockSession->expects($this->never())->method('unregisterObject');
 
-		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\AbstractBackend'), array('removeEntity'));
+		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\AbstractBackend'), array('removeEntity', 'getObjectCountByQuery', 'getObjectDataByQuery', 'getObjectDataByIdentifier'));
 		$backend->injectPersistenceSession($mockSession);
 		$backend->expects($this->never())->method('removeEntity');
 		$backend->setDeletedEntities($objects);
@@ -125,7 +125,7 @@ class AbstractBackendTest extends \F3\Testing\BaseTestCase {
 		$mockSession->expects($this->once())->method('registerObject')->with($newObject, 'the uuid');
 		$mockSession->expects($this->once())->method('getIdentifierByObject')->with($existingObject)->will($this->returnValue('the uuid'));
 
-		$backend = $this->getMock('F3\FLOW3\Persistence\Backend\AbstractBackend', array('getUuidByObject'), array(), '', FALSE);
+		$backend = $this->getMock('F3\FLOW3\Persistence\Backend\AbstractBackend', array('getUuidByObject', 'getObjectCountByQuery', 'getObjectDataByQuery', 'getObjectDataByIdentifier'));
 		$backend->injectPersistenceSession($mockSession);
 		$backend->replaceObject($existingObject, $newObject);
 	}
@@ -143,7 +143,7 @@ class AbstractBackendTest extends \F3\Testing\BaseTestCase {
 		$mockPersistenceSession = $this->getMock('F3\FLOW3\Persistence\Session');
 		$mockPersistenceSession->expects($this->once())->method('hasObject')->with($knownObject)->will($this->returnValue(TRUE));
 		$mockPersistenceSession->expects($this->once())->method('getIdentifierByObject')->with($knownObject)->will($this->returnValue($fakeUUID));
-		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\AbstractBackend'), array('dummy'));
+		$backend = $this->getMockForAbstractClass($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\AbstractBackend'));
 		$backend->injectPersistenceSession($mockPersistenceSession);
 
 		$this->assertEquals($fakeUUID, $backend->_call('getIdentifierByObject', $knownObject));
@@ -163,7 +163,7 @@ class AbstractBackendTest extends \F3\Testing\BaseTestCase {
 		$mockPersistenceSession = $this->getMock('F3\FLOW3\Persistence\Session');
 		$mockPersistenceSession->expects($this->once())->method('hasObject')->with($knownObject)->will($this->returnValue(FALSE));
 
-		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\AbstractBackend'), array('dummy'));
+		$backend = $this->getMockForAbstractClass($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\AbstractBackend'));
 		$backend->injectPersistenceSession($mockPersistenceSession);
 
 		$this->assertEquals('fakeUUID', $backend->_call('getIdentifierByObject', $knownObject));
@@ -184,7 +184,7 @@ class AbstractBackendTest extends \F3\Testing\BaseTestCase {
 		$mockPersistenceSession = $this->getMock('F3\FLOW3\Persistence\Session');
 		$mockPersistenceSession->expects($this->once())->method('hasObject')->with($knownObject)->will($this->returnValue(FALSE));
 
-		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\AbstractBackend'), array('dummy'));
+		$backend = $this->getMockForAbstractClass($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\AbstractBackend'));
 		$backend->injectPersistenceSession($mockPersistenceSession);
 
 		$this->assertEquals('fakeHash', $backend->_call('getIdentifierByObject', $knownObject));
@@ -202,7 +202,7 @@ class AbstractBackendTest extends \F3\Testing\BaseTestCase {
 		$mockPersistenceSession = $this->getMock('F3\FLOW3\Persistence\Session');
 		$mockPersistenceSession->expects($this->once())->method('hasObject')->with($unknownObject)->will($this->returnValue(FALSE));
 
-		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\AbstractBackend'), array('dummy'));
+		$backend = $this->getMockForAbstractClass($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\AbstractBackend'));
 		$backend->injectPersistenceSession($mockPersistenceSession);
 
 		$this->assertNull($backend->_call('getIdentifierByObject', $unknownObject));
@@ -223,7 +223,7 @@ class AbstractBackendTest extends \F3\Testing\BaseTestCase {
 		$mockPersistenceSession = $this->getMock('F3\FLOW3\Persistence\Session');
 		$mockPersistenceSession->expects($this->once())->method('hasObject')->with($unknownObject)->will($this->returnValue(FALSE));
 
-		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\AbstractBackend'), array('dummy'));
+		$backend = $this->getMockForAbstractClass($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\AbstractBackend'));
 		$backend->injectPersistenceSession($mockPersistenceSession);
 
 		$this->assertNull($backend->_call('getIdentifierByObject', $unknownObject));
@@ -234,7 +234,7 @@ class AbstractBackendTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function checkTypeSkipsCheckForNullValue() {
-		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\AbstractBackend'), array('dummy'));
+		$backend = $this->getMockForAbstractClass($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\AbstractBackend'));
 			// would throw an exception if it would check the type...
 		$backend->_call('checkType', 'cannotBeValid', NULL);
 	}
@@ -265,7 +265,7 @@ class AbstractBackendTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function checkTypeThrowsExceptionOnMismatch($type, $value) {
-		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\AbstractBackend'), array('dummy'));
+		$backend = $this->getMockForAbstractClass($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\AbstractBackend'));
 		$backend->_call('checkType', $type, $value);
 	}
 
@@ -289,7 +289,7 @@ class AbstractBackendTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function checkTypeReturnsOnMatch($type, $value) {
-		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\AbstractBackend'), array('dummy'));
+		$backend = $this->getMockForAbstractClass($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\AbstractBackend'));
 		$backend->_call('checkType', $type, $value);
 	}
 
@@ -303,7 +303,7 @@ class AbstractBackendTest extends \F3\Testing\BaseTestCase {
 			'testProperty' => 'cleanValue'
 		);
 
-		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\AbstractBackend'), array('dummy'));
+		$backend = $this->getMockForAbstractClass($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\AbstractBackend'));
 		$this->assertSame('cleanValue', $backend->_call('getCleanState', $object, 'testProperty'));
 	}
 
@@ -314,7 +314,7 @@ class AbstractBackendTest extends \F3\Testing\BaseTestCase {
 	public function getCleanStateReturnsNullIfNoCleanStateIsAvailable() {
 		$object = new \stdClass();
 
-		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\AbstractBackend'), array('dummy'));
+		$backend = $this->getMockForAbstractClass($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\AbstractBackend'));
 		$this->assertNull($backend->_call('getCleanState', $object, 'testProperty'));
 	}
 
@@ -326,7 +326,7 @@ class AbstractBackendTest extends \F3\Testing\BaseTestCase {
 		$object = new \stdClass();
 		$object->FLOW3_Persistence_cleanProperties = array();
 
-		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\AbstractBackend'), array('dummy'));
+		$backend = $this->getMockForAbstractClass($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\AbstractBackend'));
 		$this->assertNull($backend->_call('getCleanState', $object, 'testProperty'));
 	}
 
@@ -335,7 +335,7 @@ class AbstractBackendTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getTypeNormalizesDoubleToFloat() {
-		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\AbstractBackend'), array('dummy'));
+		$backend = $this->getMockForAbstractClass($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\AbstractBackend'));
 		$this->assertEquals('float', $backend->_call('getType', 1.234));
 	}
 
@@ -344,7 +344,7 @@ class AbstractBackendTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getTypeReturnsClassNameForObjects() {
-		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\AbstractBackend'), array('dummy'));
+		$backend = $this->getMockForAbstractClass($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\AbstractBackend'));
 		$this->assertEquals('stdClass', $backend->_call('getType', new \stdClass()));
 	}
 
