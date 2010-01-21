@@ -187,7 +187,7 @@ class DataMapper implements \F3\FLOW3\Persistence\DataMapperInterface {
 			}
 		}
 
-		$uuidPropertyName = $classSchema->getUUIDPropertyName();
+		$uuidPropertyName = $classSchema->getUuidPropertyName();
 		$object->FLOW3_AOP_Proxy_setProperty(($uuidPropertyName !== NULL ? $uuidPropertyName : 'FLOW3_Persistence_Entity_UUID'), $identifier);
 	}
 

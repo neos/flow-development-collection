@@ -757,7 +757,11 @@ class ReflectionService {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getClassSchema($classNameOrObject) {
-		$className = is_object($classNameOrObject) ? get_class($classNameOrObject) : $classNameOrObject;
+		if (is_object($classNameOrObject)) {
+			$className = ($classNameOrObject instanceof \F3\FLOW3\AOP\ProxyInterface) ? $classNameOrObject->FLOW3_AOP_Proxy_getProxyTargetClassName() : get_class($classNameOrObject);
+		} else {
+			$className = $classNameOrObject;
+		}
 		return isset($this->classSchemata[$className]) ? $this->classSchemata[$className] : NULL;
 	}
 
@@ -780,6 +784,9 @@ class ReflectionService {
 			foreach (array_diff($classNamesToReflect, $reflectedClassNames) as $className) {
 				$this->reflectClass($className);
 				if ($this->isClassTaggedWith($className, 'entity') || $this->isClassTaggedWith($className, 'valueobject')) {
+					if (current($this->getClassTagValues($className, 'scope')) !== 'prototype') {
+						throw new \F3\FLOW3\Reflection\Exception('Classes tagged as @entity or @valueobject must be of @scope prototype (affected class: '  . $className . ')!', 1264103349);
+					}
 					$classNamesToBuildSchemaFor[] = $className;
 				}
 			}
@@ -912,7 +919,7 @@ class ReflectionService {
 					$classSchema->addProperty($propertyName, implode(' ', $this->getPropertyTagValues($className, $propertyName, 'var')), $this->isPropertyTaggedWith($className, $propertyName, 'lazy'));
 				}
 				if ($this->isPropertyTaggedWith($className, $propertyName, 'uuid')) {
-					$classSchema->setUUIDPropertyName($propertyName);
+					$classSchema->setUuidPropertyName($propertyName);
 				}
 				if ($this->isPropertyTaggedWith($className, $propertyName, 'identity')) {
 					$classSchema->markAsIdentityProperty($propertyName);

@@ -148,7 +148,7 @@ class ClassSchemaTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @dataProvider invalidPropertyTypes()
 	 * @test
-	 * @expectedException \F3\FLOW3\Reflection\Exception\InvalidPropertyTypeException
+	 * @expectedException \InvalidArgumentException
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function addPropertyRejectsInvalidPropertyTypes($propertyType) {
@@ -169,6 +169,49 @@ class ClassSchemaTest extends \F3\Testing\BaseTestCase {
 		$properties = $classSchema->getProperties();
 		$this->assertEquals('array', $properties['a']['type']);
 		$this->assertEquals('\F3\FLOW3\Foo', $properties['a']['elementType']);
+	}
+
+	/**
+	 * @test
+	 * @expectedException \RuntimeException
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function setUuidPropertyNameThrowsExceptionForValueObjects() {
+		$classSchema = new \F3\FLOW3\Reflection\ClassSchema('SomeClass');
+		$classSchema->setModelType(\F3\FLOW3\Reflection\ClassSchema::MODELTYPE_VALUEOBJECT);
+		$classSchema->setUuidPropertyName('foo');
+	}
+
+	/**
+	 * @test
+	 * @expectedException \RuntimeException
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function markAsIdentityPropertyThrowsExceptionForValueObjects() {
+		$classSchema = new \F3\FLOW3\Reflection\ClassSchema('SomeClass');
+		$classSchema->setModelType(\F3\FLOW3\Reflection\ClassSchema::MODELTYPE_VALUEOBJECT);
+		$classSchema->markAsIdentityProperty('foo');
+	}
+
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function setModelTypeResetsUuidPropertyNameAndIdentityPropertiesForValueObjects() {
+		$classSchema = new \F3\FLOW3\Reflection\ClassSchema('SomeClass');
+		$classSchema->setModelType(\F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY);
+		$classSchema->addProperty('foo', 'string');
+		$classSchema->addProperty('bar', 'string');
+		$classSchema->setUuidPropertyName('foo');
+		$classSchema->markAsIdentityProperty('bar');
+		$this->assertSame('foo', $classSchema->getUuidPropertyName());
+		$this->assertSame(array('bar' => 'string'), $classSchema->getIdentityProperties());
+
+		$classSchema->setModelType(\F3\FLOW3\Reflection\ClassSchema::MODELTYPE_VALUEOBJECT);
+
+		$this->assertNull($classSchema->getUuidPropertyName());
+		$this->assertSame(array(), $classSchema->getIdentityProperties());
 	}
 
 }

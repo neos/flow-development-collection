@@ -110,7 +110,7 @@ abstract class AbstractSqlBackend extends \F3\FLOW3\Persistence\Backend\Abstract
 			case \F3\FLOW3\Persistence\QueryInterface::OPERATOR_GREATER_THAN_OR_EQUAL_TO:
 				$operator = '>=';
 				break;
-			case \F3\FLOW3\Persistence\QueryInterface::JCR_OPERATOR_LIKE:
+			case \F3\FLOW3\Persistence\QueryInterface::OPERATOR_LIKE:
 				$operator = 'LIKE';
 				break;
 			default:

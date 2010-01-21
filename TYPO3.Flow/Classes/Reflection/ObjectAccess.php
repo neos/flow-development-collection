@@ -59,6 +59,7 @@ class ObjectAccess {
 	 * @throws \RuntimeException if the property was not accessible
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	static public function getProperty($subject, $propertyName) {
 		if (!is_object($subject) && !is_array($subject)) throw new \InvalidArgumentException('$subject must be an object or array, ' . gettype($subject). ' given.', 1237301367);
@@ -90,14 +91,16 @@ class ObjectAccess {
 	 * @param string $propertyPath
 	 * @return mixed Value of the property
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	static public function getPropertyPath($object, $propertyPath) {
 		$propertyPathSegments = explode('.', $propertyPath);
 		foreach ($propertyPathSegments as $pathSegment) {
-			if (!self::isPropertyGettable($object, $pathSegment)) {
+			if (is_object($object) && self::isPropertyGettable($object, $pathSegment)) {
+				$object = self::getProperty($object, $pathSegment);
+			} else {
 				return NULL;
 			}
-			$object = self::getProperty($object, $pathSegment);
 		}
 		return $object;
 	}
@@ -136,23 +139,49 @@ class ObjectAccess {
 	}
 
 	/**
-	 * Returns an array of properties which can be get/set with the getProperty
-	 * and setProperty methods.
+	 * Returns an array of properties which can be get with the getProperty()
+	 * method.
+	 * Includes the following properties:
+	 * - which can be get through a public getter method.
+	 * - public properties which can be directly get.
+	 *
+	 * @param object $object Object to receive property names for
+	 * @return array Array of all gettable property names
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	static public function getGettablePropertyNames($object) {
+		if (!is_object($object)) throw new \InvalidArgumentException('$object must be an object, ' . gettype($object). ' given.', 1237301369);
+		$declaredPropertyNames = array_keys(get_class_vars(get_class($object)));
+
+		foreach (get_class_methods($object) as $methodName) {
+			if (substr($methodName, 0, 3) === 'get' && is_callable(array($object, $methodName))) {
+				$declaredPropertyNames[] = lcfirst(substr($methodName, 3));
+			}
+		}
+
+		$propertyNames = array_unique($declaredPropertyNames);
+		sort($propertyNames);
+		return $propertyNames;
+	}
+
+	/**
+	 * Returns an array of properties which can be set with the setProperty()
+	 * method.
 	 * Includes the following properties:
 	 * - which can be set through a public setter method.
 	 * - public properties which can be directly set.
 	 *
 	 * @param object $object Object to receive property names for
-	 * @return array Array of all declared property names
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 * @todo What to do with ArrayAccess and arrays?
+	 * @return array Array of all settable property names
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	static public function getAccessiblePropertyNames($object) {
-		if (!is_object($object)) throw new \InvalidArgumentException('$object must be an object, ' . gettype($object). ' given.', 1237301369);
+	static public function getSettablePropertyNames($object) {
+		if (!is_object($object)) throw new \InvalidArgumentException('$object must be an object, ' . gettype($object). ' given.', 1264022994);
 		$declaredPropertyNames = array_keys(get_class_vars(get_class($object)));
 
 		foreach (get_class_methods($object) as $methodName) {
-			if (substr($methodName, 0, 3) === 'get') {
+			if (substr($methodName, 0, 3) === 'set' && is_callable(array($object, $methodName))) {
 				$declaredPropertyNames[] = lcfirst(substr($methodName, 3));
 			}
 		}
@@ -173,7 +202,7 @@ class ObjectAccess {
 	static public function isPropertySettable($object, $propertyName) {
 		if (!is_object($object)) throw new \InvalidArgumentException('$object must be an object, ' . gettype($object). ' given.', 1259828920);
 		if (array_search($propertyName, array_keys(get_class_vars(get_class($object)))) !== FALSE) return TRUE;
-		return method_exists($object, 'set' . ucfirst($propertyName));
+		return is_callable(array($object, self::buildSetterMethodName($propertyName)));
 	}
 
 	/**
@@ -187,7 +216,7 @@ class ObjectAccess {
 	static public function isPropertyGettable($object, $propertyName) {
 		if (!is_object($object)) throw new \InvalidArgumentException('$object must be an object, ' . gettype($object). ' given.', 1259828921);
 		if (array_search($propertyName, array_keys(get_class_vars(get_class($object)))) !== FALSE) return TRUE;
-		return method_exists($object, 'get' . ucfirst($propertyName));
+		return is_callable(array($object, self::buildGetterMethodName($propertyName)));
 	}
 
 	/**
@@ -199,10 +228,10 @@ class ObjectAccess {
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @todo What to do with ArrayAccess
 	 */
-	static public function getAccessibleProperties($object) {
+	static public function getGettableProperties($object) {
 		if (!is_object($object)) throw new \InvalidArgumentException('$object must be an object, ' . gettype($object). ' given.', 1237301370);
 		$properties = array();
-		foreach (self::getAccessiblePropertyNames($object) as $propertyName) {
+		foreach (self::getGettablePropertyNames($object) as $propertyName) {
 			$properties[$propertyName] = self::getProperty($object, $propertyName);
 		}
 		return $properties;
@@ -212,24 +241,24 @@ class ObjectAccess {
 	 * Build the getter method name for a given property by capitalizing the
 	 * first letter of the property, and prepending it with "get".
 	 *
-	 * @param string $property Name of the property
+	 * @param string $propertyName Name of the property
 	 * @return string Name of the getter method name
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	static protected function buildGetterMethodName($property) {
-		return 'get' . ucfirst($property);
+	static public function buildGetterMethodName($propertyName) {
+		return 'get' . ucfirst($propertyName);
 	}
 
 	/**
 	 * Build the setter method name for a given property by capitalizing the
 	 * first letter of the property, and prepending it with "set".
 	 *
-	 * @param string $property Name of the property
+	 * @param string $propertyName Name of the property
 	 * @return string Name of the setter method name
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	static protected function buildSetterMethodName($property) {
-		return 'set' . ucfirst($property);
+	static public function buildSetterMethodName($propertyName) {
+		return 'set' . ucfirst($propertyName);
 	}
 }
 

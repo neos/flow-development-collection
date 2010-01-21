@@ -50,10 +50,6 @@ class ClassWithSetters {
 	 */
 	public $property4;
 
-	public function setProperty1($value) {
-		$this->property1 = $value;
-	}
-
 	public function setProperty3($value) {
 		$this->property3 = $value;
 	}

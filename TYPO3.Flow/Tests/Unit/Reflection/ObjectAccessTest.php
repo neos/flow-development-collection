@@ -158,18 +158,28 @@ class ObjectAccessTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	public function getAccessiblePropertyNamesReturnsAllPropertiesWhichAreAvailable() {
-		$declaredPropertyNames = \F3\FLOW3\Reflection\ObjectAccess::getAccessiblePropertyNames($this->dummyObject);
+	public function getGettablePropertyNamesReturnsAllPropertiesWhichAreAvailable() {
+		$gettablePropertyNames = \F3\FLOW3\Reflection\ObjectAccess::getGettablePropertyNames($this->dummyObject);
 		$expectedPropertyNames = array('anotherProperty', 'property', 'property2', 'publicProperty', 'publicProperty2');
-		$this->assertEquals($declaredPropertyNames, $expectedPropertyNames, 'getAccessiblePropertyNames returns not all public properties.');
+		$this->assertEquals($gettablePropertyNames, $expectedPropertyNames, 'getGettablePropertyNames returns not all gettable properties.');
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getSettablePropertyNamesReturnsAllPropertiesWhichAreAvailable() {
+		$settablePropertyNames = \F3\FLOW3\Reflection\ObjectAccess::getSettablePropertyNames($this->dummyObject);
+		$expectedPropertyNames = array('anotherProperty', 'property', 'property2', 'publicProperty', 'publicProperty2', 'writeOnlyMagicProperty');
+		$this->assertEquals($settablePropertyNames, $expectedPropertyNames, 'getSettablePropertyNames returns not all settable properties.');
 	}
 
 	/**
 	 * @test
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	public function getAccessiblePropertiesReturnsTheCorrectValuesForAllProperties() {
-		$allProperties = \F3\FLOW3\Reflection\ObjectAccess::getAccessibleProperties($this->dummyObject);
+	public function getGettablePropertiesReturnsTheCorrectValuesForAllProperties() {
+		$allProperties = \F3\FLOW3\Reflection\ObjectAccess::getGettableProperties($this->dummyObject);
 		$expectedProperties = array(
 			'anotherProperty' => 42,
 			'property' => 'string1',
@@ -196,10 +206,10 @@ class ObjectAccessTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function isPropertyGettableTellsIfAPropertyCanBeRetrieved() {
-		$this->assertTrue(\F3\FLOW3\Reflection\ObjectAccess::isPropertyGettable($this->dummyObject, 'privateProperty'));
 		$this->assertTrue(\F3\FLOW3\Reflection\ObjectAccess::isPropertyGettable($this->dummyObject, 'publicProperty'));
 		$this->assertTrue(\F3\FLOW3\Reflection\ObjectAccess::isPropertyGettable($this->dummyObject, 'property'));
 
+		$this->assertFalse(\F3\FLOW3\Reflection\ObjectAccess::isPropertyGettable($this->dummyObject, 'privateProperty'));
 		$this->assertFalse(\F3\FLOW3\Reflection\ObjectAccess::isPropertyGettable($this->dummyObject, 'writeOnlyMagicProperty'));
 	}
 

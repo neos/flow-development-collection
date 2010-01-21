@@ -778,6 +778,31 @@ class ReflectionServiceTest extends \F3\Testing\BaseTestCase {
 		$this->assertTrue($builtClassSchema->isAggregateRoot());
 	}
 
+	/**
+	 * @test
+	 * @expectedException \F3\FLOW3\Reflection\Exception
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function entitiesMustBePrototype() {
+		$reflectionService = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Reflection\ReflectionService'), array('reflectClass', 'isClassTaggedWith', 'getClassTagValues', 'buildClassSchemata'));
+		$reflectionService->expects($this->any())->method('isClassTaggedWith')->will($this->returnValue(TRUE));
+		$reflectionService->expects($this->any())->method('getClassTagValues')->will($this->returnValue(array()));
+
+		$reflectionService->_call('reflectEmergedClasses',array('Quux'));
+	}
+
+	/**
+	 * @test
+	 * @expectedException \F3\FLOW3\Reflection\Exception
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function valueObjectsMustBePrototype() {
+		$reflectionService = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Reflection\ReflectionService'), array('reflectClass', 'isClassTaggedWith', 'getClassTagValues', 'buildClassSchemata'));
+		$reflectionService->expects($this->any())->method('isClassTaggedWith')->will($this->onConsecutiveCalls(FALSE, TRUE));
+		$reflectionService->expects($this->any())->method('getClassTagValues')->will($this->returnValue(array()));
+
+		$reflectionService->_call('reflectEmergedClasses',array('Quux'));
+	}
 }
 
 ?>

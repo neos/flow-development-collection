@@ -106,30 +106,19 @@ class ClassSchema {
 	 * Adds (defines) a specific property and its type.
 	 *
 	 * @param string $name Name of the property
-	 * @param string $type Type of the property (see ALLOWED_TYPES_PATTERN)
+	 * @param string $type Type of the property
 	 * @param boolean $lazy Whether the property should be lazy-loaded when reconstituting
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function addProperty($name, $type, $lazy = FALSE) {
-		$matches = array();
-		if (preg_match(self::ALLOWED_TYPES_PATTERN, $type, $matches)) {
-			$type = $this->normalizeType($matches['type']);
-			$elementType = isset($matches['elementType']) ? $this->normalizeType($matches['elementType']) : NULL;
-
-			if ($elementType !== NULL && !in_array($type, array('array', 'ArrayObject', 'SplObjectStorage'))) {
-				throw new \F3\FLOW3\Reflection\Exception\InvalidPropertyTypeException('Property  of type "' . $type . '" must not have an element type hint (' . $elementType . ').', 1248103053);
-			}
-
-			$this->properties[$name] = array(
-				'type' => $type,
-				'elementType' => $elementType,
-				'lazy' => $lazy
-			);
-		} else {
-			throw new \F3\FLOW3\Reflection\Exception\InvalidPropertyTypeException('Invalid property type encountered: ' . $type, 1220387528);
-		}
+		$type = \F3\FLOW3\Utility\TypeHandling::parseType($type);
+		$this->properties[$name] = array(
+			'type' => $type['type'],
+			'elementType' => $type['elementType'],
+			'lazy' => $lazy
+		);
 	}
 
 	/**
@@ -163,6 +152,10 @@ class ClassSchema {
 	public function setModelType($modelType) {
 		if ($modelType < self::MODELTYPE_ENTITY || $modelType > self::MODELTYPE_VALUEOBJECT) throw new \InvalidArgumentException('"' . $modelType . '" is an invalid model type.', 1212519195);
 		$this->modelType = $modelType;
+		if ($modelType === self::MODELTYPE_VALUEOBJECT) {
+			$this->uuidPropertyName = NULL;
+			$this->identityProperties = array();
+		}
 	}
 
 	/**
@@ -216,7 +209,8 @@ class ClassSchema {
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function setUUIDPropertyName($propertyName) {
+	public function setUuidPropertyName($propertyName) {
+		if ($this->modelType === self::MODELTYPE_VALUEOBJECT) throw new \RuntimeException('Value objects must not have a @uuid property', 1264102076);
 		if (!array_key_exists($propertyName, $this->properties)) {
 			throw new \InvalidArgumentException('Property "' . $propertyName . '" must be added to the class schema before it can be marked as UUID property.', 1233863842);
 		}
@@ -230,7 +224,7 @@ class ClassSchema {
 	 * @return string
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function getUUIDPropertyName() {
+	public function getUuidPropertyName() {
 		return $this->uuidPropertyName;
 	}
 
@@ -244,6 +238,7 @@ class ClassSchema {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function markAsIdentityProperty($propertyName) {
+		if ($this->modelType === self::MODELTYPE_VALUEOBJECT) throw new \RuntimeException('Value objects must not have @identity properties', 1264102084);
 		if (!array_key_exists($propertyName, $this->properties)) {
 			throw new \InvalidArgumentException('Property "' . $propertyName . '" must be added to the class schema before it can be marked as identity property.', 1233775407);
 		}
@@ -265,29 +260,5 @@ class ClassSchema {
 		return $this->identityProperties;
 	}
 
-	/**
-	 * normalize data types so they match the PHP type names:
-	 *  int -> integer
-	 *  float -> double
-	 *  bool -> boolean
-	 *
-	 * @param string $type Data type to unify
-	 * @return string unified data type
-	 *  @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	protected function normalizeType($type) {
-		switch ($type) {
-			case 'int':
-				$type = 'integer';
-				break;
-			case 'bool':
-				$type = 'boolean';
-				break;
-			case 'double':
-				$type = 'float';
-				break;
-		}
-		return $type;
-	}
 }
 ?>

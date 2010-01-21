@@ -162,8 +162,8 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 		$className = $object->FLOW3_AOP_Proxy_getProxyTargetClassName();
 		$classSchema = $this->classSchemata[$className];
 
-		if ($classSchema->getUUIDPropertyName() !== NULL) {
-			$identifier = $object->FLOW3_AOP_Proxy_getProperty($classSchema->getUUIDPropertyName());
+		if ($classSchema->getUuidPropertyName() !== NULL) {
+			$identifier = $object->FLOW3_AOP_Proxy_getProperty($classSchema->getUuidPropertyName());
 		} elseif ($object instanceof \F3\FLOW3\AOP\ProxyInterface && $object->FLOW3_AOP_Proxy_hasProperty('FLOW3_Persistence_Entity_UUID')) {
 			$identifier = $object->FLOW3_AOP_Proxy_getProperty('FLOW3_Persistence_Entity_UUID');
 		} elseif ($object instanceof \F3\FLOW3\AOP\ProxyInterface && $object->FLOW3_AOP_Proxy_hasProperty('FLOW3_Persistence_ValueObject_Hash')) {

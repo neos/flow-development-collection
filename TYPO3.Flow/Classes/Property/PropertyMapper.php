@@ -225,8 +225,7 @@ class PropertyMapper {
 		if (!is_object($target) && !is_array($target)) throw new \F3\FLOW3\Property\Exception\InvalidTargetException('The target must be a valid object, class name or array, ' . gettype($target) . ' given.', 1187807099);
 
 		if (is_object($target)) {
-			$targetClassName = ($target instanceof \F3\FLOW3\AOP\ProxyInterface) ? $target->FLOW3_AOP_Proxy_getProxyTargetClassName() : get_class($target);
-			$targetClassSchema = $this->reflectionService->getClassSchema($targetClassName);
+			$targetClassSchema = $this->reflectionService->getClassSchema($target);
 		} else {
 			$targetClassSchema = NULL;
 		}
@@ -237,25 +236,35 @@ class PropertyMapper {
 				if (isset($source[$propertyName])) {
 					$propertyValue = $source[$propertyName];
 				}
-			} else {
+			} elseif (\F3\FLOW3\Reflection\ObjectAccess::isPropertyGettable($source, $propertyName)) {
 				$propertyValue = \F3\FLOW3\Reflection\ObjectAccess::getProperty($source, $propertyName);
 			}
 
 			if ($propertyValue === NULL && !in_array($propertyName, $optionalPropertyNames)) {
-				$this->mappingResults->addError($this->objectManager->getObject('F3\FLOW3\Error\Error', "Required property '$propertyName' does not exist." , 1236785359), $propertyName);
+				$this->mappingResults->addError($this->objectManager->getObject('F3\FLOW3\Error\Error', "Required property '$propertyName' does not exist in source." , 1236785359), $propertyName);
 			} else {
-				if ($targetClassSchema !== NULL && $targetClassSchema->hasProperty($propertyName)) {
-					$propertyMetaData = $targetClassSchema->getProperty($propertyName);
+				if (method_exists($target, \F3\FLOW3\Reflection\ObjectAccess::buildSetterMethodName($propertyName))
+						&& is_callable(array($target, \F3\FLOW3\Reflection\ObjectAccess::buildSetterMethodName($propertyName)))) {
+					$targetClassName = ($target instanceof \F3\FLOW3\AOP\ProxyInterface) ? $target->FLOW3_AOP_Proxy_getProxyTargetClassName() : get_class($target);
+					$methodParameter = current($this->reflectionService->getMethodParameters($targetClassName, \F3\FLOW3\Reflection\ObjectAccess::buildSetterMethodName($propertyName)));
+					$targetPropertyType = \F3\FLOW3\Utility\TypeHandling::parseType($methodParameter['type']);
+				} elseif ($targetClassSchema !== NULL && $targetClassSchema->hasProperty($propertyName)) {
+					$targetPropertyType = $targetClassSchema->getProperty($propertyName);
+				} elseif ($targetClassSchema !== NULL) {
+					$this->mappingResults->addError($this->objectManager->getObject('F3\FLOW3\Error\Error', "Property '$propertyName' does not exist in target class schema." , 1251813614), $propertyName);
+					continue;
+				}
 
-					if (in_array($propertyMetaData['type'], array('array', 'ArrayObject', 'SplObjectStorage')) && strpos($propertyMetaData['elementType'], '\\') !== FALSE) {
+				if (isset($targetPropertyType)) {
+					if (in_array($targetPropertyType['type'], array('array', 'ArrayObject', 'SplObjectStorage')) && strpos($targetPropertyType['elementType'], '\\') !== FALSE) {
 						$objects = array();
 						foreach ($propertyValue as $value) {
-							$objects[] = $this->transformToObject($value, $propertyMetaData['elementType'], $propertyName);
+							$objects[] = $this->transformToObject($value, $targetPropertyType['elementType'], $propertyName);
 						}
 
-						if ($propertyMetaData['type'] === 'ArrayObject') {
+						if ($targetPropertyType['type'] === 'ArrayObject') {
 							$propertyValue = new \ArrayObject($objects);
-						} elseif ($propertyMetaData['type'] === 'SplObjectStorage') {
+						} elseif ($targetPropertyType['type'] === 'SplObjectStorage') {
 							$propertyValue = new \SplObjectStorage();
 							foreach ($objects as $object) {
 								$propertyValue->attach($object);
@@ -263,11 +272,9 @@ class PropertyMapper {
 						} else {
 							$propertyValue = $objects;
 						}
-					} elseif (strpos($propertyMetaData['type'], '\\') !== FALSE) {
-						$propertyValue = $this->transformToObject($propertyValue, $propertyMetaData['type'], $propertyName);
+					} elseif (strpos($targetPropertyType['type'], '\\') !== FALSE) {
+						$propertyValue = $this->transformToObject($propertyValue, $targetPropertyType['type'], $propertyName);
 					}
-				} elseif ($targetClassSchema !== NULL) {
-					$this->mappingResults->addError($this->objectManager->getObject('F3\FLOW3\Error\Error', "Property '$propertyName' does not exist in target class schema." , 1251813614), $propertyName);
 				}
 
 				if (is_array($target)) {

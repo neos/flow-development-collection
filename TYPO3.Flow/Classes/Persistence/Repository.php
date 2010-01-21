@@ -189,8 +189,8 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	}
 
 	/**
-	 * Loop through all properties of the $newObject and call update() on them
-	 * if they are entities/valueobjects.
+	 * Loop through all gettable properties of the $newObject and call update()
+	 * on them if they are entities/valueobjects.
 	 * This makes sure that changes to subobjects of a given object are
 	 * persisted as well.
 	 *
@@ -198,7 +198,7 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	protected function updateRecursively($newObject) {
-		$propertiesOfNewObject = \F3\FLOW3\Reflection\ObjectAccess::getAccessibleProperties($newObject);
+		$propertiesOfNewObject = \F3\FLOW3\Reflection\ObjectAccess::getGettableProperties($newObject);
 
 		foreach ($propertiesOfNewObject as $subObject) {
 			if ($subObject instanceof \F3\FLOW3\Persistence\Aspect\DirtyMonitoringInterface && $subObject->FLOW3_Persistence_isClone()) {

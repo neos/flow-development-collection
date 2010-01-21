@@ -206,6 +206,7 @@ class PropertyMapperTest extends \F3\Testing\BaseTestCase {
 		);
 
 		$mapper = new \F3\FLOW3\Property\PropertyMapper();
+		$this->mockReflectionService->expects($this->once())->method('getMethodParameters')->will($this->returnValue(array('property3' => array('type' => 'array'))));
 		$mapper->injectReflectionService($this->mockReflectionService);
 		$mapper->injectObjectManager($this->mockObjectManager);
 		$result = $mapper->map(array('property1', 'property2', 'property3', 'property4'), $source, $target);
@@ -215,7 +216,7 @@ class PropertyMapperTest extends \F3\Testing\BaseTestCase {
 		$this->assertEquals($source['property3'], $target->property3, 'Property 3 has not the expected value.');
 		$this->assertEquals($source['property4'], $target->property4, 'Property 4 has not the expected value.');
 
-		$this->assertEquals(FALSE, $result);
+		$this->assertFalse($result);
 
 		$errors = $this->mappingResults->getErrors();
 		$this->assertSame('Error1', $errors['property2']->getMessage());
@@ -293,12 +294,13 @@ class PropertyMapperTest extends \F3\Testing\BaseTestCase {
 		$this->mockObjectManager->expects($this->once())->method('getObject')->with('F3\FLOW3\Property\MappingResults')->will($this->returnValue($this->mappingResults));
 
 		$source = new \F3\FLOW3\Fixtures\ClassWithSetters();
-		$source->setProperty1('Hallo');
-		$source->setProperty3('It is already late in the evening and I am curious which special characters my mac keyboard can do. «∑€®†Ω¨⁄øπ•±å‚∂ƒ©ªº∆@œæ¥≈ç√∫~µ∞…––çµ∫≤∞. Amazing :-) ');
+		$source->property1 = 'Hallo';
+		$source->property3 = 'It is already late in the evening and I am curious which special characters my mac keyboard can do. «∑€®†Ω¨⁄øπ•±å‚∂ƒ©ªº∆@œæ¥≈ç√∫~µ∞…––çµ∫≤∞. Amazing :-) ';
 
 		$target = new \F3\FLOW3\Fixtures\ClassWithSetters();
 		$mapper = new \F3\FLOW3\Property\PropertyMapper();
 		$mapper->injectObjectManager($this->mockObjectManager);
+		$this->mockReflectionService->expects($this->once())->method('getMethodParameters')->will($this->returnValue(array('property3' => array('type' => 'string'))));
 		$mapper->injectReflectionService($this->mockReflectionService);
 		$mapper->map(array('property1', 'property3'), $source, $target);
 		$this->assertEquals($source, $target);
@@ -423,7 +425,7 @@ class PropertyMapperTest extends \F3\Testing\BaseTestCase {
 		$classSchema->addProperty('property1', 'SplObjectStorage<\stdClass>');
 
 		$existingObject = new \stdClass();
-		$this->mockReflectionService->expects($this->once())->method('getClassSchema')->with('F3\FLOW3\Fixtures\ClassWithSetters')->will($this->returnValue($classSchema));
+		$this->mockReflectionService->expects($this->once())->method('getClassSchema')->will($this->returnValue($classSchema));
 		$mapper = $this->getMock('F3\FLOW3\Property\PropertyMapper', array('transformToObject'));
 		$mapper->expects($this->once())->method('transformToObject')->with($source['property1'][0], '\stdClass', 'property1')->will($this->returnValue($existingObject));
 		$mapper->injectReflectionService($this->mockReflectionService);
@@ -449,7 +451,7 @@ class PropertyMapperTest extends \F3\Testing\BaseTestCase {
 		$classSchema->addProperty('property1', 'ArrayObject<\stdClass>');
 
 		$existingObject = new \stdClass();
-		$this->mockReflectionService->expects($this->once())->method('getClassSchema')->with('F3\FLOW3\Fixtures\ClassWithSetters')->will($this->returnValue($classSchema));
+		$this->mockReflectionService->expects($this->once())->method('getClassSchema')->will($this->returnValue($classSchema));
 		$mapper = new \F3\FLOW3\Property\PropertyMapper();
 		$mapper = $this->getMock('F3\FLOW3\Property\PropertyMapper', array('transformToObject'));
 		$mapper->expects($this->once())->method('transformToObject')->with($source['property1'][0], '\stdClass', 'property1')->will($this->returnValue($existingObject));
@@ -477,7 +479,7 @@ class PropertyMapperTest extends \F3\Testing\BaseTestCase {
 		$classSchema->addProperty('property1', 'array<\stdClass>');
 
 		$existingObject = new \stdClass();
-		$this->mockReflectionService->expects($this->once())->method('getClassSchema')->with('F3\FLOW3\Fixtures\ClassWithSetters')->will($this->returnValue($classSchema));
+		$this->mockReflectionService->expects($this->once())->method('getClassSchema')->will($this->returnValue($classSchema));
 		$mapper = $this->getMock('F3\FLOW3\Property\PropertyMapper', array('transformToObject'));
 		$mapper->expects($this->once())->method('transformToObject')->with($source['property1'][0], '\stdClass', 'property1')->will($this->returnValue($existingObject));
 		$mapper->injectReflectionService($this->mockReflectionService);
@@ -502,7 +504,7 @@ class PropertyMapperTest extends \F3\Testing\BaseTestCase {
 		$classSchema = new \F3\FLOW3\Reflection\ClassSchema('F3\FLOW3\Fixture\Validation\ClassWithSetters');
 		$classSchema->addProperty('property1', '\F3\Foo\Bar');
 
-		$this->mockReflectionService->expects($this->once())->method('getClassSchema')->with('F3\FLOW3\Fixtures\ClassWithSetters')->will($this->returnValue($classSchema));
+		$this->mockReflectionService->expects($this->once())->method('getClassSchema')->will($this->returnValue($classSchema));
 		$mapper = $this->getMock('F3\FLOW3\Property\PropertyMapper', array('transformToObject'));
 		$mapper->expects($this->once())->method('transformToObject')->with($source['property1'], 'F3\Foo\Bar', 'property1');
 		$mapper->injectReflectionService($this->mockReflectionService);
