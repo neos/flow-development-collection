@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <chapter version="5.0" xml:id="flow3.packagemanager"
          xmlns="http://docbook.org/ns/docbook"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
          xmlns:ns6="http://www.w3.org/1999/xlink"
          xmlns:ns5="http://www.w3.org/2000/svg"
          xmlns:ns4="http://www.w3.org/1999/xhtml"
@@ -366,11 +367,59 @@
     <title>Importing and Installing Packages</title>
 
     <para>At this time the features for import and installation of packages
-    have not been implemented. The current behavior is that all directories
-    which are found below the <filename>Packages</filename> folder are assumed
-    to be packages and are active by default. Just make sure that you created
-    a <filename>Package.xml</filename> file in the <filename>Meta</filename>
+    have not been implemented fully. The current behavior is that all
+    directories which are found below the <filename>Packages</filename> folder
+    are assumed to be packages. Just make sure that you created a
+    <filename>Package.xml</filename> file in the <filename>Meta</filename>
     directory of your package.</para>
+
+    <para>If no <filename>PackageStates.yaml</filename> exists in your
+    <filename>Configuration</filename> folder, it will be created and all
+    found packages will be activated. If
+    <filename>PackageStates.yaml</filename> exists, you can use the package
+    manager to activate and deactivate packages through the FLOW3 command line
+    script. The script <filename>flow3</filename> resides in the main
+    directory of the FLOW3 distribution. From a Unix shell you should be able
+    to run the script by entering <command>./flow3</command>:</para>
+
+    <screen>myhost:tutorial johndoe$ <command>./flow3</command> 
+FLOW3 Command Line Interface
+
+usage: flow3 &lt;options&gt; &lt;command&gt;
+
+Options:
+
+  -h, --help        - print this message
+  -p, --production  - execute in production context
+
+Available commands:
+
+  package list available           - list available packages
+  package list active              - list active packages
+  package create &lt;package-key&gt;     - create a new package
+  package activate &lt;package-key&gt;   - activate a package
+  package deactivate &lt;package-key&gt; - deactivate a package
+  package delete &lt;package-key&gt;     - delete a package
+</screen>
+
+    <para>Depending on your FLOW3 version you'll see more or less the above
+    available commands listed.</para>
+
+    <note>
+      <para>We haven't developed a Windows batch script yet so for the time
+      being you'll have to call FLOW3 manually. Before you can run the FLOW3
+      command line script you need to set some environment variables:<screen>c:\&gt; <command>set FLOW3_CONTEXT=Development</command>
+c:\&gt; <command>set FLOW3_ROOTPATH=C:\xampp\htdocs\tutorial</command>
+c:\&gt; <command>set FLOW3_WEBPATH=C:\xampp\htdocs\tutorial\Web</command></screen>If
+      you like to make those variable settings permanent, so they are valid
+      for more than just the current shell session, you can use the
+      <command>setx</command> command:<screen>c:\&gt; <command>setx FLOW3_CONTEXT Development</command>
+c:\&gt; <command>setx FLOW3_ROOTPATH C:\xampp\htdocs\tutorial</command>
+c:\&gt; <command>setX FLOW3_WEBPATH C:\xampp\htdocs\tutorial\Web</command></screen></para>
+
+      <para>Listing the available packages is then as easy as typing:<screen>c:\&gt; (<command>php Packages\Framework\FLOW3\Scripts\FLOW3.php
+         FLOW3 Package PackageManager listavailable)</command></screen></para>
+    </note>
   </section>
 
   <section xml:id="flow3.packagemanager.packagemanager">
