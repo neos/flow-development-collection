@@ -30,7 +30,7 @@ declare(ENCODING = 'utf-8');
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  */
 
-version_compare(phpversion(), '5.3.0', '>') or die('Because FLOW3 uses namespaces, it requires at least PHP 5.3.0, you have ' . phpversion() . ' (Error #<a href="http://typo3.org/go/exception/1246258365">1246258365</a>)' . PHP_EOL);
+version_compare(phpversion(), '5.3.0', '>=') or die('Because FLOW3 uses namespaces, it requires at least PHP 5.3.0, you have ' . phpversion() . ' (Error #<a href="http://typo3.org/go/exception/1246258365">1246258365</a>)' . PHP_EOL);
 require(__DIR__ . '/../Classes/Core/Bootstrap.php');
 
 	// Need to take this detour because PHP < 5.3.0 would die with a parse error, not displaying our message above
