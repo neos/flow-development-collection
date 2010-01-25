@@ -56,7 +56,7 @@ class PropertyMapper {
 
 	/**
 	 * Results of the last mapping operation
-	 * @var \F3\FLOW3\Propert\MappingResults
+	 * @var \F3\FLOW3\Property\MappingResults
 	 */
 	protected $mappingResults;
 
@@ -323,7 +323,7 @@ class PropertyMapper {
 	 * @param mixed $propertyValue The value to transform, string or array
 	 * @param string $targetType The type to transform to
 	 * @param string $propertyName In case of an error we add this to the error message
-	 * @return object
+	 * @return object The object, when no transformation was possible this may return NULL as well
 	 */
 	protected function transformToObject($propertyValue, $targetType, $propertyName) {
 		if (is_string($propertyValue) && preg_match(self::PATTERN_MATCH_UUID, $propertyValue) === 1) {
@@ -350,7 +350,10 @@ class PropertyMapper {
 			} else {
 				if (isset($this->objectConverters[$targetType])) {
 					$conversionResult = $this->objectConverters[$targetType]->convertFrom($propertyValue);
-					if (is_object($conversionResult)) {
+					if ($conversionResult instanceof \F3\FLOW3\Error\Error) {
+						$this->mappingResults->addError($conversionResult, $propertyName);
+						return NULL;
+					} elseif (is_object($conversionResult) || $conversionResult === NULL) {
 						return $conversionResult;
 					}
 				}

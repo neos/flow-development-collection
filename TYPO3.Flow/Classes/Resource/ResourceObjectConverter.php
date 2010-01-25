@@ -63,17 +63,18 @@ class ResourceObjectConverter implements \F3\FLOW3\Property\ObjectConverterInter
 	 * If the input format is an array, this method assumes the resource to be a fresh file upload
 	 * and moves the temporary upload file to the persistent resources directory.
 	 *
-	 * @return mixed An object or boolean FALSE if the input format is not supported or could not be converted for other reasons
+	 * @return object An object or an instance of F3\FLOW3\Error\Error if the input format is not supported or could not be converted for other reasons
 	 * @throws \F3\FLOW3\Resource\Exception if an error with the uploaded file occurred.
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function convertFrom($source) {
 		if (is_array($source)) {
-			if (empty($source['tmp_name'])) return FALSE;
+			if ($source['error'] === \UPLOAD_ERR_NO_FILE) return NULL;
+			if ($source['error'] !== \UPLOAD_ERR_OK) return $this->objectFactory->create('F3\FLOW3\Error\Error', \F3\FLOW3\Utility\Files::getUploadErrorMessage($source['error']) , 1264440823);
 
 			$pathInfo = pathinfo($source['name']);
 			if (!isset($pathInfo['extension']) || substr(strtolower($pathInfo['extension']), -3, 3) === 'php') {
-				throw new \F3\FLOW3\Resource\Exception('Invalid resource: ".php" or empty file extensions are not allowed.', 1260895946);
+				return $this->objectFactory->create('F3\FLOW3\Error\Error', 'Invalid resource: ".php" or empty file extensions are not allowed.' , 1260895946);
 			}
 			$resource = $this->objectFactory->create('F3\FLOW3\Resource\Resource', sha1_file($source['tmp_name']), $pathInfo['extension']);
 
@@ -85,7 +86,7 @@ class ResourceObjectConverter implements \F3\FLOW3\Property\ObjectConverterInter
 			}
 			return $resource;
 		} else {
-			return FALSE;
+			return $this->objectFactory->create('F3\FLOW3\Error\Error', 'The source for conversion to a resource object was not an array.' , 1264440811);
 		}
 	}
 }
