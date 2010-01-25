@@ -246,7 +246,8 @@ class PropertyMapper {
 				if (method_exists($target, \F3\FLOW3\Reflection\ObjectAccess::buildSetterMethodName($propertyName))
 						&& is_callable(array($target, \F3\FLOW3\Reflection\ObjectAccess::buildSetterMethodName($propertyName)))) {
 					$targetClassName = ($target instanceof \F3\FLOW3\AOP\ProxyInterface) ? $target->FLOW3_AOP_Proxy_getProxyTargetClassName() : get_class($target);
-					$methodParameter = current($this->reflectionService->getMethodParameters($targetClassName, \F3\FLOW3\Reflection\ObjectAccess::buildSetterMethodName($propertyName)));
+					$methodParameters = $this->reflectionService->getMethodParameters($targetClassName, \F3\FLOW3\Reflection\ObjectAccess::buildSetterMethodName($propertyName));
+					$methodParameter = current($methodParameters);
 					$targetPropertyType = \F3\FLOW3\Utility\TypeHandling::parseType($methodParameter['type']);
 				} elseif ($targetClassSchema !== NULL && $targetClassSchema->hasProperty($propertyName)) {
 					$targetPropertyType = $targetClassSchema->getProperty($propertyName);
