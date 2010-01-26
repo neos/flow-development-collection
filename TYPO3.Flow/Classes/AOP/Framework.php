@@ -63,9 +63,9 @@ class Framework {
 	protected $proxyClassBuilder;
 
 	/**
-	 * @var \F3\FLOW3\Cache\Frontend\StringFrontend
+	 * @var \F3\FLOW3\Cache\Frontend\PhpFrontend
 	 */
-	protected $proxyClassCodesCache;
+	protected $proxyClassesCache;
 
 	/**
 	 * @var \F3\FLOW3\Cache\Frontend\VariableFrontend
@@ -143,12 +143,12 @@ class Framework {
 	/**
 	 * Injects the cache for storing proxy class code
 	 *
-	 * @param \F3\FLOW3\Cache\Frontend\StringFrontend $proxyClassCodesCache
+	 * @param \F3\FLOW3\Cache\Frontend\PhpFrontend $proxyClassesCache
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectProxyClassCodesCache(\F3\FLOW3\Cache\Frontend\StringFrontend $proxyClassCodesCache) {
-		$this->proxyClassCodesCache = $proxyClassCodesCache;
+	public function injectProxyClassesCache(\F3\FLOW3\Cache\Frontend\PhpFrontend $proxyClassesCache) {
+		$this->proxyClassesCache = $proxyClassesCache;
 	}
 
 	/**
@@ -244,7 +244,7 @@ class Framework {
 				$validProxyClassesCount = 0;
 				$outdatedProxyClassesCount = 0;
 				foreach ($this->targetAndProxyClassNames as $targetClassName => $proxyClassName) {
-					if ($this->proxyClassCodesCache->has(str_replace('\\', '_', $proxyClassName))) {
+					if ($this->proxyClassesCache->has(str_replace('\\', '_', $proxyClassName))) {
 						$validProxyClassesCount ++;
 						$dirtyTargetClassNames = array_diff($dirtyTargetClassNames, array($targetClassName));
 					} else {
@@ -255,7 +255,7 @@ class Framework {
 				$this->systemLogger->log(sprintf('At least one target class changed, aspects unchanged. Found %s valid and %s outdated proxy classes.', $validProxyClassesCount, $outdatedProxyClassesCount), LOG_INFO);
 			} else {
 				$this->systemLogger->log(sprintf('At least one aspect changed, rebuilding proxy classes for %s target classes.', count($actualTargetClassNames)), LOG_INFO);
-				$this->proxyClassCodesCache->flush();
+				$this->proxyClassesCache->flush();
 				$this->targetAndProxyClassNames = array();
 			}
 
@@ -264,7 +264,7 @@ class Framework {
 				if ($proxyBuildResult !== FALSE) {
 					$this->targetAndProxyClassNames[$targetClassName] = $proxyBuildResult['proxyClassName'];
 					$this->systemLogger->log(sprintf('Built proxy class "%s" for target class "%s" (length: %s).', $proxyBuildResult['proxyClassName'], $targetClassName, strlen($proxyBuildResult['proxyClassCode'])), LOG_DEBUG);
-					$this->proxyClassCodesCache->set(str_replace('\\', '_', $proxyBuildResult['proxyClassName']), $proxyBuildResult['proxyClassCode'], array($this->proxyClassCodesCache->getClassTag($targetClassName)));
+					$this->proxyClassesCache->set(str_replace('\\', '_', $proxyBuildResult['proxyClassName']), $proxyBuildResult['proxyClassCode'], array($this->proxyClassesCache->getClassTag($targetClassName)));
 				} else {
 					unset($this->targetAndProxyClassNames[$targetClassName]);
 				}
@@ -278,17 +278,14 @@ class Framework {
 			$this->proxyBuildInformationCache->set('targetAndProxyClassNames', $this->targetAndProxyClassNames);
 			$this->proxyBuildInformationCache->set('aspectClassNames', $actualAspectClassNames, $aspectClassesTags);
 			$this->proxyBuildInformationCache->set('targetClassNames', $actualTargetClassNames);
-			$this->proxyBuildInformationCache->set('allProxyClassesUpToDate', '', array($this->proxyClassCodesCache->getClassTag()));
+			$this->proxyBuildInformationCache->set('allProxyClassesUpToDate', '', array($this->proxyClassesCache->getClassTag()));
 		}
 
 		foreach ($this->targetAndProxyClassNames as $targetClassName => $proxyClassName) {
 			if (class_exists($proxyClassName, FALSE)) throw new \F3\FLOW3\AOP\Exception('Class ' . $proxyClassName . ' already exists.', 1229361833);
-			if (!$this->proxyClassCodesCache->has(str_replace('\\', '_', $proxyClassName))) throw new \F3\FLOW3\AOP\Exception('No proxy class code for class "' . $proxyClassName . '" found in cache.', 1229362833);
+			if (!$this->proxyClassesCache->has(str_replace('\\', '_', $proxyClassName))) throw new \F3\FLOW3\AOP\Exception('No proxy class code for class "' . $proxyClassName . '" found in cache.', 1229362833);
 
-			$result = eval($this->proxyClassCodesCache->get(str_replace('\\', '_', $proxyClassName)));
-			if ($result === FALSE) {
-				throw new \F3\FLOW3\AOP\Exception('Parse error in proxy code for class ' . $proxyClassName, 1251208326);
-			}
+			$this->proxyClassesCache->requireOnce(str_replace('\\', '_', $proxyClassName));
 
 			foreach ($objectConfigurations as $objectName => $objectConfiguration) {
 				if ($objectConfiguration->getClassName() === $targetClassName) {

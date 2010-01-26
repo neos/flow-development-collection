@@ -30,12 +30,14 @@ namespace F3\FLOW3\Cache\Backend;
  * @api
  * @scope prototype
  */
-class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
+class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend implements \F3\FLOW3\Cache\Backend\PhpCapableBackendInterface {
 
 	const SEPARATOR = '^';
 
 	const EXPIRYTIME_FORMAT = 'YmdHis';
 	const EXPIRYTIME_LENGTH = 14;
+
+	const DATASIZE_DIGITS = 10;
 
 	/**
 	 * Directory where the files are stored.
@@ -53,14 +55,6 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @var \F3\FLOW3\Log\SystemLoggerInterface
 	 */
 	protected $systemLogger;
-
-	/**
-	 * Maximum allowed file path length in the current environment.
-	 * Will be set in initializeObject()
-	 *
-	 * @var integer
-	 */
-	protected $maximumPathLength = NULL;
 
 	/**
 	 * Injects the environment utility
@@ -85,46 +79,26 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	}
 
 	/**
-	 * Initializes the default cache directory
+	 * Sets a reference to the cache frontend which uses this backend and
+	 * initializes the default cache directory
 	 *
 	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function initializeObject() {
-		if ($this->cacheDirectory === '') {
-			$cacheDirectory = $this->environment->getPathToTemporaryDirectory() . 'Cache/';
+	public function setCache(\F3\FLOW3\Cache\Frontend\FrontendInterface $cache) {
+		parent::setCache($cache);
+
+		$cacheDirectory = $this->environment->getPathToTemporaryDirectory() . 'Cache/' . $this->cacheIdentifier . '/';
+		if (!is_writable($cacheDirectory)) {
 			try {
-				$this->setCacheDirectory($cacheDirectory);
-			} catch(\F3\FLOW3\Cache\Exception $exception) {
+				\F3\FLOW3\Utility\Files::createDirectoryRecursively($cacheDirectory);
+			} catch (\F3\FLOW3\Utility\Exception $exception) {
+				throw new \F3\FLOW3\Cache\Exception('The cache directory "' . $cacheDirectory . '" could not be created.', 1264426237);
 			}
 		}
-		if ($this->maximumPathLength === NULL) {
-			$this->maximumPathLength = $this->environment->getMaximumPathLength();
-		}
-	}
+		if (!is_dir($cacheDirectory)) throw new \F3\FLOW3\Cache\Exception('The cache directory "' . $cacheDirectory . '" does not exist.', 1203965199);
+		if (!is_writable($cacheDirectory)) throw new \F3\FLOW3\Cache\Exception('The cache directory "' . $cacheDirectory . '" is not writable.', 1203965200);
 
-	/**
-	 * Sets the directory where the cache files are stored.
-	 *
-	 * @param string $cacheDirectory The directory
-	 * @return void
-	 * @throws \F3\FLOW3\Cache\Exception if the directory does not exist, is not writable or could not be created.
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @api
-	 */
-	public function setCacheDirectory($cacheDirectory) {
-		if ($cacheDirectory[strlen($cacheDirectory)-1] !== '/') {
-			$cacheDirectory .= '/';
-		}
-		if (!is_writable($cacheDirectory)) {
-			\F3\FLOW3\Utility\Files::createDirectoryRecursively($cacheDirectory);
-		}
-		if (!is_dir($cacheDirectory)) throw new \F3\FLOW3\Cache\Exception('The directory "' . $cacheDirectory . '" does not exist.', 1203965199);
-		if (!is_writable($cacheDirectory)) throw new \F3\FLOW3\Cache\Exception('The directory "' . $cacheDirectory . '" is not writable.', 1203965200);
-
-		$tagsDirectory = $cacheDirectory . 'Tags/';
-		if (!is_writable($tagsDirectory)) {
-			\F3\FLOW3\Utility\Files::createDirectoryRecursively($tagsDirectory);
-		}
 		$this->cacheDirectory = $cacheDirectory;
 	}
 
@@ -154,58 +128,27 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	public function set($entryIdentifier, $data, array $tags = array(), $lifetime = NULL) {
 		if (!$this->cache instanceof \F3\FLOW3\Cache\Frontend\FrontendInterface) throw new \F3\FLOW3\Cache\Exception('No cache frontend has been set yet via setCache().', 1204111375);
 		if (!is_string($data)) throw new \F3\FLOW3\Cache\Exception\InvalidDataException('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1204481674);
-		$this->systemLogger->log(sprintf('Cache %s: setting entry "%s".', $this->cacheIdentifier, $entryIdentifier), LOG_DEBUG);
-
-		$expirytime = $this->calculateExpiryTime($lifetime);
-		$cacheEntryPath = $this->renderCacheEntryPath($entryIdentifier);
-		if (!is_writable($cacheEntryPath)) {
-			try {
-				\F3\FLOW3\Utility\Files::createDirectoryRecursively($cacheEntryPath);
-			} catch(\Exception $exception) {
-			}
-			if (!is_writable($cacheEntryPath)) throw new \F3\FLOW3\Cache\Exception('The cache directory "' . $cacheEntryPath . '" could not be created.', 1204026250);
-		}
 
 		$this->remove($entryIdentifier);
 
-		$data = $expirytime->format(self::EXPIRYTIME_FORMAT) . $data;
-		$cacheEntryPathAndFilename = $cacheEntryPath . uniqid() . '.temp';
-		if (strlen($cacheEntryPathAndFilename) > $this->maximumPathLength) {
-			throw new \F3\FLOW3\Cache\Exception('The length of the temporary cache file path "' . $cacheEntryPathAndFilename . '" is ' . strlen($cacheEntryPathAndFilename) . ' characters long and exceeds the maximum path length of ' . $this->maximumPathLength . '. Please consider setting the temporaryDirectoryBase option to a shorter path. ', 1248710426);
+		$temporaryCacheEntryPathAndFilename = $this->cacheDirectory . uniqid() . '.temp';
+		if (strlen($temporaryCacheEntryPathAndFilename) > $this->environment->getMaximumPathLength()) {
+			throw new \F3\FLOW3\Cache\Exception('The length of the temporary cache file path "' . $temporaryCacheEntryPathAndFilename . '" is ' . strlen($temporaryCacheEntryPathAndFilename) . ' characters long and exceeds the maximum path length of ' . $this->environment->getMaximumPathLength() . '. Please consider setting the temporaryDirectoryBase option to a shorter path. ', 1248710426);
 		}
-		$result = file_put_contents($cacheEntryPathAndFilename, $data);
-		if ($result === FALSE) throw new \F3\FLOW3\Cache\Exception('The temporary cache file "' . $cacheEntryPathAndFilename . '" could not be written.', 1204026251);
-		for ($i=0; $i<5; $i++) {
-			$result = rename($cacheEntryPathAndFilename, $cacheEntryPath . $entryIdentifier);
-			if ($result === TRUE) break;
-		}
-		if ($result === FALSE) throw new \F3\FLOW3\Cache\Exception('The cache file "' . $entryIdentifier . '" could not be written.', 1222361632);
 
-		foreach ($tags as $tag) {
-			$this->setTag($entryIdentifier, $tag);
-		}
-	}
+		$expiryTime = ($lifetime === NULL) ? 0 : (time() + $lifetime);
+		$metaData = str_pad($expiryTime, self::EXPIRYTIME_LENGTH) . implode(' ', $tags) . str_pad(strlen($data), self::DATASIZE_DIGITS);
+		$result = file_put_contents($temporaryCacheEntryPathAndFilename, $data . $metaData);
 
-	/**
-	 * Creates a tag that is associated with the given cache identifier
-	 *
-	 * @param string $entryIdentifier An identifier for this specific cache entry
-	 * @param string $tag Tag to associate with this cache entry
-	 * @return void
-	 * @throws \F3\FLOW3\Cache\Exception if the tag path is not writable or exceeds the maximum allowed path length
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	protected function setTag($entryIdentifier, $tag) {
-		$tagPath = $this->cacheDirectory . 'Tags/' . $tag . '/';
-		if (!is_writable($tagPath)) {
-			mkdir($tagPath);
-			if (!is_writable($tagPath)) throw new \F3\FLOW3\Cache\Exception('The tag directory "' . $tagPath . '" could not be created.', 1238242144);
+		if ($result === FALSE) throw new \F3\FLOW3\Cache\Exception('The temporary cache file "' . $temporaryCacheEntryPathAndFilename . '" could not be written.', 1204026251);
+		$i = 0;
+		$cacheEntryPathAndFilename = $this->cacheDirectory . $entryIdentifier;
+		while (!rename($temporaryCacheEntryPathAndFilename, $cacheEntryPathAndFilename) && $i < 5) {
+			$i++;
 		}
-		$tagPathAndFilename = $tagPath . $this->cacheIdentifier . self::SEPARATOR . $entryIdentifier;
-		if (strlen($tagPathAndFilename) > $this->maximumPathLength) {
-			throw new \F3\FLOW3\Cache\Exception('The length of the tag path "' . $tagPathAndFilename . '" is ' . strlen($tagPathAndFilename) . ' characters long and exceeds the maximum path length of ' . $this->maximumPathLength . '. Please consider setting the temporaryDirectoryBase option to a shorter path. ', 1248710426);
-		}
-		touch($tagPathAndFilename);
+		if ($result === FALSE) throw new \F3\FLOW3\Cache\Exception('The cache file "' . $cacheEntryPathAndFilename . '" could not be written.', 1222361632);
+
+		$this->systemLogger->log(sprintf('Cache %s: set entry "%s".', $this->cacheIdentifier, $entryIdentifier), LOG_DEBUG);
 	}
 
 	/**
@@ -218,8 +161,12 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @api
 	 */
 	public function get($entryIdentifier) {
-		$pathAndFilename = $this->renderCacheEntryPath($entryIdentifier) . $entryIdentifier;
-		return ($this->isCacheFileExpired($pathAndFilename)) ? FALSE : file_get_contents($pathAndFilename, NULL, NULL, self::EXPIRYTIME_LENGTH);
+		$pathAndFilename = $this->cacheDirectory . $entryIdentifier;
+		if ($this->isCacheFileExpired($pathAndFilename)) {
+			return FALSE;
+		}
+		$dataSize = (integer)file_get_contents($pathAndFilename, NULL, NULL, filesize($pathAndFilename) - self::DATASIZE_DIGITS, self::DATASIZE_DIGITS);
+		return file_get_contents($pathAndFilename, NULL, NULL, 0, $dataSize);
 	}
 
 	/**
@@ -231,7 +178,7 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @api
 	 */
 	public function has($entryIdentifier) {
-		return !$this->isCacheFileExpired($this->renderCacheEntryPath($entryIdentifier) . $entryIdentifier);
+		return !$this->isCacheFileExpired($this->cacheDirectory . $entryIdentifier);
 	}
 
 	/**
@@ -244,15 +191,15 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @api
 	 */
 	public function remove($entryIdentifier) {
-		$this->systemLogger->log(sprintf('Cache %s: removing entry "%s".', $this->cacheIdentifier, $entryIdentifier), LOG_DEBUG);
-
-		$pathAndFilename = $this->renderCacheEntryPath($entryIdentifier) . $entryIdentifier;
+		$pathAndFilename = $this->cacheDirectory . $entryIdentifier;
 		if (!file_exists($pathAndFilename)) return FALSE;
 		if (unlink ($pathAndFilename) === FALSE) return FALSE;
 		foreach($this->findTagFilesByEntry($entryIdentifier) as $pathAndFilename) {
 			if (!file_exists($pathAndFilename)) return FALSE;
 			if (unlink ($pathAndFilename) === FALSE) return FALSE;
 		}
+
+		$this->systemLogger->log(sprintf('Cache %s: removed entry "%s".', $this->cacheIdentifier, $entryIdentifier), LOG_DEBUG);
 		return TRUE;
 	}
 
@@ -260,28 +207,28 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * Finds and returns all cache entry identifiers which are tagged by the
 	 * specified tag.
 	 *
-	 * @param string $tag The tag to search for
+	 * @param string $searchedTag The tag to search for
 	 * @return array An array with identifiers of all matching entries. An empty array if no entries matched
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
-	public function findIdentifiersByTag($tag) {
-		if (!$this->cache instanceof \F3\FLOW3\Cache\Frontend\FrontendInterface) throw new \F3\FLOW3\Cache\Exception('Yet no cache frontend has been set via setCache().', 1204111376);
+	public function findIdentifiersByTag($searchedTag) {
+		$entryIdentifiers = array();
+		$now = time();
+		for($directoryIterator = new \DirectoryIterator($this->cacheDirectory); $directoryIterator->valid(); $directoryIterator->next()) {
+			if ($directoryIterator->isDot()) continue;
 
-		$path = $this->cacheDirectory . 'Tags/';
-		$pattern = $path . $tag . '/' . $this->cacheIdentifier . self::SEPARATOR . '*';
-		$filesFound = glob($pattern);
-		if ($filesFound === FALSE || count($filesFound) === 0) return array();
+			$cacheEntryPathAndFilename = $directoryIterator->getPathname();
+			$index = (integer) file_get_contents($cacheEntryPathAndFilename, NULL, NULL, filesize($cacheEntryPathAndFilename) - self::DATASIZE_DIGITS, self::DATASIZE_DIGITS);
+			$metaData = file_get_contents($cacheEntryPathAndFilename, NULL, NULL, $index);
 
-		$cacheEntries = array();
-		foreach ($filesFound as $filename) {
-			list(,$entryIdentifier) = explode(self::SEPARATOR, basename($filename));
-			if ($this->has($entryIdentifier)) {
-				$cacheEntries[$entryIdentifier] = $entryIdentifier;
+			$expiryTime = (integer)substr($metaData, 0, self::EXPIRYTIME_LENGTH);
+			if ($expiryTime !== 0 && $expiryTime < $now) continue;
+			if (in_array($searchedTag, explode(' ', substr($metaData, self::EXPIRYTIME_LENGTH, -self::DATASIZE_DIGITS)))) {
+				$entryIdentifiers[] = $directoryIterator->getFilename();
 			}
 		}
-		return array_values($cacheEntries);
+		return $entryIdentifiers;
 	}
 
 	/**
@@ -292,16 +239,8 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @api
 	 */
 	public function flush() {
-		if (!$this->cache instanceof \F3\FLOW3\Cache\Frontend\FrontendInterface) throw new \F3\FLOW3\Cache\Exception('Yet no cache frontend has been set via setCache().', 1204111376);
-
-		$path = $this->cacheDirectory . 'Data/' . $this->cacheIdentifier . '/';
-		$pattern = $path . '*/*/*';
-		$filesFound = glob($pattern);
-		if ($filesFound === FALSE || count($filesFound) === 0) return;
-
-		foreach ($filesFound as $filename) {
-			$this->remove(basename($filename));
-		}
+		\F3\FLOW3\Utility\Files::emptyDirectoryRecursively($this->cacheDirectory);
+		$this->systemLogger->log('Cache %s: flushed all entries.', LOG_INFO);
 	}
 
 	/**
@@ -316,24 +255,27 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 		$identifiers = $this->findIdentifiersByTag($tag);
 		if (count($identifiers) === 0) return;
 
-		$this->systemLogger->log(sprintf('Cache %s: removing %s entries matching tag "%s"', $this->cacheIdentifier, count($identifiers), $tag), LOG_INFO);
 		foreach ($identifiers as $entryIdentifier) {
 			$this->remove($entryIdentifier);
 		}
+		$this->systemLogger->log(sprintf('Cache %s: removed %s entries matching tag "%s"', $this->cacheIdentifier, count($identifiers), $tag), LOG_INFO);
 	}
 
 	/**
 	 * Checks if the given cache entry files are still valid or if their
 	 * lifetime has exceeded.
 	 *
-	 * @param string $cacheFilename
+	 * @param string $cacheEntryPathAndFilename
 	 * @return boolean
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
-	protected function isCacheFileExpired($cacheFilename) {
-		$timestamp = (file_exists($cacheFilename)) ? file_get_contents($cacheFilename, NULL, NULL, 0, self::EXPIRYTIME_LENGTH) : 1;
-		return $timestamp < gmdate(self::EXPIRYTIME_FORMAT);
+	protected function isCacheFileExpired($cacheEntryPathAndFilename) {
+		if (!file_exists($cacheEntryPathAndFilename)) return TRUE;
+
+		$index = (integer) file_get_contents($cacheEntryPathAndFilename, NULL, NULL, filesize($cacheEntryPathAndFilename) - self::DATASIZE_DIGITS, self::DATASIZE_DIGITS);
+		$expiryTime = file_get_contents($cacheEntryPathAndFilename, NULL, NULL, $index, self::EXPIRYTIME_LENGTH);
+		return ($expiryTime != 0 && $expiryTime < time());
 	}
 
 	/**
@@ -357,19 +299,6 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	}
 
 	/**
-	 * Renders the full path (excluding file name) leading to the given cache entry.
-	 * Doesn't check if such a cache entry really exists.
-	 *
-	 * @param string $identifier Identifier for the cache entry
-	 * @return string Absolute path leading to the directory containing the cache entry
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	protected function renderCacheEntryPath($identifier) {
-		$identifierHash = sha1($identifier);
-		return $this->cacheDirectory . 'Data/' . $this->cacheIdentifier . '/' . $identifierHash[0] . '/' . $identifierHash[1] . '/';
-	}
-
-	/**
 	 * Tries to find the cache entry for the specified identifier.
 	 * Usually only one cache entry should be found - if more than one exist, this
 	 * is due to some error or crash.
@@ -382,7 +311,7 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	protected function findCacheFilesByIdentifier($entryIdentifier) {
 		if (!$this->cache instanceof \F3\FLOW3\Cache\Frontend\FrontendInterface) throw new \F3\FLOW3\Cache\Exception('Yet no cache frontend has been set via setCache().', 1204111376);
 
-		$pattern = $this->renderCacheEntryPath($entryIdentifier) . $entryIdentifier;
+		$pattern = $this->cacheDirectory . $entryIdentifier;
 		$filesFound = glob($pattern);
 		if ($filesFound === FALSE || count($filesFound) === 0) return FALSE;
 		return $filesFound;
@@ -403,6 +332,18 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 		$path = $this->cacheDirectory . 'Tags/';
 		$pattern = $path . '*/' . $this->cacheIdentifier . self::SEPARATOR . $entryIdentifier;
 		return glob($pattern);
+	}
+
+	/**
+	 * Loads PHP code from the cache and require_onces it right away.
+	 *
+	 * @param string $entryIdentifier An identifier which describes the cache entry to load
+	 * @return mixed Potential return value from the include operation
+	 * @api
+	 */
+	public function requireOnce($entryIdentifier) {
+		$pathAndFilename = $this->cacheDirectory . $entryIdentifier;
+		return ($this->isCacheFileExpired($pathAndFilename)) ? FALSE : require_once($pathAndFilename);
 	}
 }
 ?>

@@ -719,7 +719,7 @@ class RouteTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function matchingRequestPathIsNullAfterUnsuccessfulResolve() {
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$this->route = new \F3\FLOW3\MVC\Web\Routing\Route($this->objectFactory, $mockObjectManager);
+		$this->route = new \F3\FLOW3\MVC\Web\Routing\Route($this->mockObjectFactory, $mockObjectManager);
 		$this->route->setUriPattern('{key1}');
 		$this->routeValues = array('key1' => 'value1');
 

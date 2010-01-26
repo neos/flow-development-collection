@@ -389,7 +389,7 @@ class Route {
 			// Remove remaining route values of applied default values:
 		foreach ($this->defaults as $key => $defaultValue) {
 			if (isset($routeValues[$key])) {
-				if (\F3\PHP6\Functions::strtolower($routeValues[$key]) !== \F3\PHP6\Functions::strtolower($defaultValue)) {
+				if (strtolower($routeValues[$key]) !== strtolower($defaultValue)) {
 					return FALSE;
 				}
 				unset($routeValues[$key]);

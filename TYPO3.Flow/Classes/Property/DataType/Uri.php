@@ -132,7 +132,7 @@ class Uri {
 	 */
 	public function setScheme($scheme) {
 		if (preg_match(self::PATTERN_MATCH_SCHEME, $scheme) === 1) {
-			$this->scheme = \F3\PHP6\Functions::strtolower($scheme);
+			$this->scheme = strtolower($scheme);
 		} else {
 			throw new \InvalidArgumentException('"' . $scheme . '" is not a valid scheme.', 1184071237);
 		}

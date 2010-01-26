@@ -115,16 +115,17 @@ class Files {
 		if (!is_dir($path)) throw new \F3\FLOW3\Utility\Exception('"' . $path . '" is no directory.', 1169047616);
 
 		$directoryIterator = new \RecursiveDirectoryIterator($path);
-		foreach ($fileIterator = new \RecursiveIteratorIterator($directoryIterator) as $filename) {
-			if (!$fileIterator->isDot() && @unlink($filename) === FALSE) {
+		foreach(new \RecursiveIteratorIterator($directoryIterator) as $fileInfo) {
+			if (substr($fileInfo->getFilename(), 0, 1) !== '.' && @unlink($fileInfo->getPathname()) === FALSE) {
 				throw new \F3\FLOW3\Utility\Exception('Cannot unlink file "' . $filename . '".', 1169047619);
 			}
 		}
-		foreach ($directoryIterator as $subDirectoryName) {
-			if (!$directoryIterator->isDot()) self::removeDirectoryRecursively($subDirectoryName);
+		foreach ($directoryIterator as $fileInfo) {
+			if ($fileInfo->isDir() && substr($fileInfo->getFilename(), 0, 1) !== '.') {
+				self::removeDirectoryRecursively($fileInfo->getPathname());
+			}
 		}
 	}
-
 	/**
 	 * Deletes all files, directories and subdirectories from the specified
 	 * directory. Contrary to emptyDirectoryRecursively() this function will

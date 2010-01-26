@@ -22,8 +22,9 @@ Default:
 ##
 # Definition of caches used by FLOW3:
 #
-FLOW3_AOP_ProxyClassCodes:
-  frontend: F3\FLOW3\Cache\Frontend\StringFrontend
+FLOW3_AOP_ProxyClasses:
+  frontend: F3\FLOW3\Cache\Frontend\PhpFrontend
+  backend: F3\FLOW3\Cache\Backend\FileBackend
 FLOW3_AOP_ProxyBuildInformation: []
 FLOW3_AOP_TargetClassInformation: []
 FLOW3_Cache_ClassFiles: []

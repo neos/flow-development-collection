@@ -55,7 +55,7 @@ class StringLengthValidator extends \F3\FLOW3\Validation\Validator\AbstractValid
 
 		if (is_object($value) && !method_exists($value, '__toString')) throw new \F3\FLOW3\Validation\Exception\InvalidSubjectException('The given object could not be converted to a string.', 1238110957);
 
-		$stringLength = \F3\PHP6\Functions::strlen($value);
+		$stringLength = strlen($value);
 		$isValid = TRUE;
 		if (isset($this->options['minimum']) && $stringLength < $this->options['minimum']) $isValid = FALSE;
 		if (isset($this->options['maximum']) && $stringLength > $this->options['maximum']) $isValid = FALSE;

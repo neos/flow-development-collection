@@ -52,8 +52,7 @@ class ResourcePublisher {
 	 *
 	 * @param string $sourcePath Path containing the resources to publish
 	 * @param string $relativeTargetPath Path relative to the public resources directory where the given resources are mirrored to
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @return boolean TRUE if publication succeeded or FALSE if the resources could not be published
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function publishStaticResources($sourcePath, $relativeTargetPath) {

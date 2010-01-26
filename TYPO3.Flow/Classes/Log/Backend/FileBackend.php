@@ -265,7 +265,7 @@ class FileBackend extends \F3\FLOW3\Log\Backend\AbstractBackend {
 			}
 		} else {
 			if (is_object($var)) {
-				$output .= str_repeat(' ', $spaces) . ' [ OBJECT: ' . \F3\PHP6\Functions::strtoupper(get_class($var)) . ' ]:' . PHP_EOL;
+				$output .= str_repeat(' ', $spaces) . ' [ OBJECT: ' . strtoupper(get_class($var)) . ' ]:' . PHP_EOL;
 				if (is_array(get_object_vars ($var))) {
 					foreach (get_object_vars ($var) as $objVarName => $objVarValue) {
 						if (is_array($objVarValue) || is_object($objVarValue)) {

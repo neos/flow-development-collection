@@ -178,7 +178,7 @@ class RequestBuilder {
 		$convertedName = '';
 
 		foreach ($argumentName as $part) {
-			$convertedName .= ($convertedName !== '') ? \F3\PHP6\Functions::ucfirst($part) : $part;
+			$convertedName .= ($convertedName !== '') ? ucfirst($part) : $part;
 		}
 
 		return $convertedName;

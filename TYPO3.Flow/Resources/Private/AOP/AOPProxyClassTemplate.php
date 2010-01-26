@@ -1,3 +1,4 @@
+declare(ENCODING = 'utf-8');
 namespace ###PROXY_NAMESPACE###;
 
 /**

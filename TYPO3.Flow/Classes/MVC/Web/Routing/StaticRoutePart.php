@@ -57,11 +57,12 @@ class StaticRoutePart extends \F3\FLOW3\MVC\Web\Routing\AbstractRoutePart {
 		if ($requestPath === '') {
 			return FALSE;
 		}
-		$valueToMatch = \F3\PHP6\Functions::substr($requestPath, 0, \F3\PHP6\Functions::strlen($this->name));
+		$valueToMatch = substr($requestPath, 0, strlen($this->name));
 		if ($valueToMatch !== $this->name) {
 			return FALSE;
 		}
-		$requestPath = \F3\PHP6\Functions::substr($requestPath, \F3\PHP6\Functions::strlen($valueToMatch));
+		$shortenedRequestPath = substr($requestPath, strlen($valueToMatch));
+		$requestPath = ($shortenedRequestPath !== FALSE) ? $shortenedRequestPath : '';
 
 		return TRUE;
 	}
@@ -80,7 +81,7 @@ class StaticRoutePart extends \F3\FLOW3\MVC\Web\Routing\AbstractRoutePart {
 		}
 		$this->value = $this->name;
 		if ($this->lowerCase) {
-			$this->value = \F3\PHP6\Functions::strtolower($this->value);
+			$this->value = strtolower($this->value);
 		}
 		return TRUE;
 	}

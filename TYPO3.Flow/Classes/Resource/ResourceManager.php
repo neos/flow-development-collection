@@ -190,15 +190,15 @@ class ResourceManager {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function publishPublicPackageResources(array $activePackages) {
-		if ($this->settings['resource']['publishing']['detectPackageResourceChanges'] === FALSE &&
-			$this->statusCache->has('packageResourcesPublished')) {
+		if ($this->settings['resource']['publishing']['detectPackageResourceChanges'] === FALSE && $this->statusCache->has('packageResourcesPublished')) {
 			return;
 		}
-
 		foreach ($activePackages as $packageKey => $package) {
 			$this->resourcePublisher->publishStaticResources($package->getResourcesPath() . 'Public/', 'Packages/' . $packageKey . '/');
 		}
-		$this->statusCache->set('packageResourcesPublished', 'y', array(\F3\FLOW3\Cache\Frontend\FrontendInterface::TAG_PACKAGE));
+		if (!$this->statusCache->has('packageResourcesPublished')) {
+			$this->statusCache->set('packageResourcesPublished', 'y', array(\F3\FLOW3\Cache\Frontend\FrontendInterface::TAG_PACKAGE));
+		}
 	}
 }
 

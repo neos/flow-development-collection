@@ -21,13 +21,13 @@ F3\FLOW3\AOP\Framework:
       object: F3\FLOW3\Reflection\ReflectionService
     pointcutExpressionParser:
       object: F3\FLOW3\AOP\Pointcut\PointcutExpressionParser
-    proxyClassCodesCache:
+    proxyClassesCache:
       object:
         factoryClassName: F3\FLOW3\Cache\CacheManager
         factoryMethodName: getCache
         arguments:
           1:
-            value: FLOW3_AOP_ProxyClassCodes
+            value: FLOW3_AOP_ProxyClasses
     targetClassInformationCache:
       object:
         factoryClassName: F3\FLOW3\Cache\CacheManager
@@ -151,16 +151,18 @@ F3\FLOW3\Cache\Backend\PdoBackend:
 F3\FLOW3\Cache\Backend\NullBackend:
   autowiring: off
   scope: prototype
+F3\FLOW3\Cache\Backend\TransientMemoryBackend:
+  autowiring: off
+  scope: prototype
 F3\FLOW3\Cache\Frontend\VariableFrontend:
   autowiring: off
   scope: prototype
 F3\FLOW3\Cache\Frontend\StringFrontend:
   autowiring: off
   scope: prototype
-F3\FLOW3\Cache\Backend\TransientMemoryBackend:
+F3\FLOW3\Cache\Frontend\PhpFrontend:
   autowiring: off
   scope: prototype
-
 F3\FLOW3\Cache\Controller\CacheManagerController:
   properties:
     cacheManager:
