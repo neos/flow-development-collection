@@ -34,19 +34,9 @@ class ArgumentsTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function argumentsObjectIsOfScopePrototype() {
-		$arguments1 = $this->objectManager->getObject('F3\FLOW3\MVC\Controller\Arguments');
-		$arguments2 = $this->objectManager->getObject('F3\FLOW3\MVC\Controller\Arguments');
-		$this->assertNotSame($arguments1, $arguments2, 'The arguments object is not of scope prototype!');
-	}
-
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
 	public function addingAnArgumentManuallyWorks() {
-		$arguments = $this->objectManager->getObject('F3\FLOW3\MVC\Controller\Arguments');
-		$newArgument = $this->objectManager->getObject('F3\FLOW3\MVC\Controller\Argument', 'argumentName1234');
+		$arguments = new \F3\FLOW3\MVC\Controller\Arguments($this->getMock('F3\FLOW3\Object\ObjectFactoryInterface'));
+		$newArgument = new \F3\FLOW3\MVC\Controller\Argument('argumentName1234', 'Text');
 
 		$arguments->addArgument($newArgument);
 		$this->assertSame($newArgument, $arguments->getArgument('argumentName1234'), 'The added and retrieved argument is not the same.');
@@ -57,12 +47,12 @@ class ArgumentsTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function addingAnArgumentReplacesArgumentWithSameName() {
-		$arguments = $this->objectManager->getObject('F3\FLOW3\MVC\Controller\Arguments');
+		$arguments = new \F3\FLOW3\MVC\Controller\Arguments($this->getMock('F3\FLOW3\Object\ObjectFactoryInterface'));
 
-		$firstArgument = $this->objectManager->getObject('F3\FLOW3\MVC\Controller\Argument', 'argumentName1234');
+		$firstArgument = new \F3\FLOW3\MVC\Controller\Argument('argumentName1234', 'Text');
 		$arguments->addArgument($firstArgument);
 
-		$secondArgument = $this->objectManager->getObject('F3\FLOW3\MVC\Controller\Argument', 'argumentName1234');
+		$secondArgument = new \F3\FLOW3\MVC\Controller\Argument('argumentName1234', 'Text');
 		$arguments->addArgument($secondArgument);
 
 		$this->assertSame($secondArgument, $arguments->getArgument('argumentName1234'), 'The added and retrieved argument is not the same.');
@@ -72,19 +62,9 @@ class ArgumentsTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function addNewArgumentProvidesFluentInterface() {
-		$arguments = $this->objectManager->getObject('F3\FLOW3\MVC\Controller\Arguments');
-		$newArgument = $arguments->addNewArgument('someArgument');
-		$this->assertType('F3\FLOW3\MVC\Controller\Argument', $newArgument, 'addNewArgument() did not return an argument object.');
-	}
-
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
 	public function addingArgumentThroughArrayAccessWorks() {
-		$arguments = $this->objectManager->getObject('F3\FLOW3\MVC\Controller\Arguments');
-		$argument = $this->objectManager->getObject('F3\FLOW3\MVC\Controller\Argument', 'argumentName1234');
+		$arguments = new \F3\FLOW3\MVC\Controller\Arguments($this->getMock('F3\FLOW3\Object\ObjectFactoryInterface'));
+		$argument = new \F3\FLOW3\MVC\Controller\Argument('argumentName1234', 'Text');
 		$arguments[] = $argument;
 		$this->assertTrue($arguments->hasArgument('argumentName1234'), 'Added argument does not exist.');
 		$this->assertSame($argument, $arguments->getArgument('argumentName1234'), 'Added and retrieved arguments are not the same.');
@@ -95,7 +75,12 @@ class ArgumentsTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function retrievingArgumentThroughArrayAccessWorks() {
-		$arguments = $this->objectManager->getObject('F3\FLOW3\MVC\Controller\Arguments');
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\ObjectFactoryInterface');
+		$mockObjectFactory->expects($this->once())->method('create')
+				->with('F3\FLOW3\MVC\Controller\Argument', 'someArgument', 'Text')
+				->will($this->returnValue(new \F3\FLOW3\MVC\Controller\Argument('someArgument', 'Text')));
+
+		$arguments = new \F3\FLOW3\MVC\Controller\Arguments($mockObjectFactory);
 		$newArgument = $arguments->addNewArgument('someArgument');
 		$this->assertSame($newArgument, $arguments['someArgument'], 'Argument retrieved by array access is not the one we added.');
 	}
@@ -118,7 +103,12 @@ class ArgumentsTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function issetReturnsCorrectResult() {
-		$arguments = $this->objectManager->getObject('F3\FLOW3\MVC\Controller\Arguments');
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\ObjectFactoryInterface');
+		$mockObjectFactory->expects($this->once())->method('create')
+				->with('F3\FLOW3\MVC\Controller\Argument', 'someArgument', 'Text')
+				->will($this->returnValue(new \F3\FLOW3\MVC\Controller\Argument('someArgument', 'Text')));
+
+		$arguments = new \F3\FLOW3\MVC\Controller\Arguments($mockObjectFactory);
 		$this->assertFalse(isset($arguments['someArgument']), 'isset() did not return FALSE.');
 		$arguments->addNewArgument('someArgument');
 		$this->assertTrue(isset($arguments['someArgument']), 'isset() did not return TRUE.');
@@ -129,7 +119,15 @@ class ArgumentsTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getArgumentNamesReturnsNamesOfAddedArguments() {
-		$arguments = $this->objectManager->getObject('F3\FLOW3\MVC\Controller\Arguments');
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\ObjectFactoryInterface');
+		$mockObjectFactory->expects($this->exactly(3))->method('create')
+				->will($this->onConsecutiveCalls(
+						new \F3\FLOW3\MVC\Controller\Argument('first', 'Text'),
+						new \F3\FLOW3\MVC\Controller\Argument('second', 'Text'),
+						new \F3\FLOW3\MVC\Controller\Argument('third', 'Text')
+				));
+
+		$arguments = new \F3\FLOW3\MVC\Controller\Arguments($mockObjectFactory);
 		$arguments->addNewArgument('first');
 		$arguments->addNewArgument('second');
 		$arguments->addNewArgument('third');
@@ -143,7 +141,15 @@ class ArgumentsTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getArgumentShortNamesReturnsShortNamesOfAddedArguments() {
-		$arguments = $this->objectManager->getObject('F3\FLOW3\MVC\Controller\Arguments');
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\ObjectFactoryInterface');
+		$mockObjectFactory->expects($this->exactly(3))->method('create')
+				->will($this->onConsecutiveCalls(
+						new \F3\FLOW3\MVC\Controller\Argument('first', 'Text'),
+						new \F3\FLOW3\MVC\Controller\Argument('second', 'Text'),
+						new \F3\FLOW3\MVC\Controller\Argument('third', 'Text')
+				));
+
+		$arguments = new \F3\FLOW3\MVC\Controller\Arguments($mockObjectFactory);
 		$argument = $arguments->addNewArgument('first')->setShortName('a');
 		$arguments->addNewArgument('second')->setShortName('b');
 		$arguments->addNewArgument('third')->setShortName('c');
@@ -157,8 +163,12 @@ class ArgumentsTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function addNewArgumentCreatesAndAddsNewArgument() {
-		$arguments = $this->objectManager->getObject('F3\FLOW3\MVC\Controller\Arguments');
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\ObjectFactoryInterface');
+		$mockObjectFactory->expects($this->once())->method('create')
+				->with('F3\FLOW3\MVC\Controller\Argument', 'dummyName', 'Text')
+				->will($this->returnValue(new \F3\FLOW3\MVC\Controller\Argument('dummyName', 'Text')));
 
+		$arguments = new \F3\FLOW3\MVC\Controller\Arguments($mockObjectFactory);
 		$addedArgument = $arguments->addNewArgument('dummyName');
 		$this->assertType('F3\FLOW3\MVC\Controller\Argument', $addedArgument, 'addNewArgument() either did not add a new argument or did not return it.');
 
@@ -173,10 +183,14 @@ class ArgumentsTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function addNewArgumentAssumesTextDataTypeByDefault() {
-		$arguments = $this->objectManager->getObject('F3\FLOW3\MVC\Controller\Arguments');
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\ObjectFactoryInterface');
+		$mockObjectFactory->expects($this->once())->method('create')
+				->with('F3\FLOW3\MVC\Controller\Argument', 'dummyName', 'Text')
+				->will($this->returnValue(new \F3\FLOW3\MVC\Controller\Argument('someArgument', 'Text')));
+
+		$arguments = new \F3\FLOW3\MVC\Controller\Arguments($mockObjectFactory);
 
 		$addedArgument = $arguments->addNewArgument('dummyName');
-		$this->assertEquals('Text', $addedArgument->getDataType(), 'addNewArgument() did not create an argument of type "Text" by default.');
 	}
 
 	/**
@@ -184,7 +198,12 @@ class ArgumentsTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function addNewArgumentCanAddArgumentsMarkedAsRequired() {
-		$arguments = $this->objectManager->getObject('F3\FLOW3\MVC\Controller\Arguments');
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\ObjectFactoryInterface');
+		$mockObjectFactory->expects($this->once())->method('create')
+				->with('F3\FLOW3\MVC\Controller\Argument', 'dummyName', 'Text')
+				->will($this->returnValue(new \F3\FLOW3\MVC\Controller\Argument('someArgument', 'Text')));
+
+		$arguments = new \F3\FLOW3\MVC\Controller\Arguments($mockObjectFactory);
 
 		$addedArgument = $arguments->addNewArgument('dummyName', 'Text', TRUE);
 		$this->assertTrue($addedArgument->isRequired(), 'addNewArgument() did not create an argument that is marked as required.');
@@ -195,7 +214,12 @@ class ArgumentsTest extends \F3\Testing\BaseTestCase {
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function addNewArgumentCanAddArgumentsMarkedAsOptionalWithDefaultValues() {
-		$arguments = $this->objectManager->getObject('F3\FLOW3\MVC\Controller\Arguments');
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\ObjectFactoryInterface');
+		$mockObjectFactory->expects($this->once())->method('create')
+				->with('F3\FLOW3\MVC\Controller\Argument', 'dummyName', 'Text')
+				->will($this->returnValue(new \F3\FLOW3\MVC\Controller\Argument('someArgument', 'Text')));
+
+		$arguments = new \F3\FLOW3\MVC\Controller\Arguments($mockObjectFactory);
 
 		$defaultValue = 'Default Value 42';
 		$addedArgument = $arguments->addNewArgument('dummyName', 'Text', FALSE, $defaultValue);
@@ -218,15 +242,11 @@ class ArgumentsTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function removeAllClearsAllArguments() {
 		$arguments = $this->objectManager->getObject('F3\FLOW3\MVC\Controller\Arguments');
-		$arguments->addNewArgument('foo');
+		$arguments->addArgument(new \F3\FLOW3\MVC\Controller\Argument('foo', 'Text'));
 
 		$arguments->removeAll();
 
 		$this->assertFalse($arguments->hasArgument('foo'));
-
-		$arguments->addNewArgument('bar');
-
-		$this->assertTrue($arguments->hasArgument('bar'));
 	}
 }
 ?>

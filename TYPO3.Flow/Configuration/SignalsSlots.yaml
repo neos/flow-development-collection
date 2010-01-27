@@ -9,7 +9,11 @@
 F3\FLOW3\Monitor\FileMonitor:
   filesHaveChanged:
     - [ F3\FLOW3\Core\LockManager, lockSite ]
-    
+
 F3\FLOW3\Core\Bootstrap:
   finishedNormalRun:
     - [ F3\FLOW3\Core\LockManager, unlockSite ]
+
+F3\FLOW3\Persistence\Backend\GenericPdo\Backend:
+  removingObject:
+    - [ F3\FLOW3\Resource\ResourceManager, deleteResource, y ]

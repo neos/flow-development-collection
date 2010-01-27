@@ -370,7 +370,7 @@ final class Bootstrap {
 						foreach ($slotConfigurations as $slotConfiguration) {
 							if (is_array($slotConfiguration)) {
 								if (isset($slotConfiguration[0]) && isset($slotConfiguration[1])) {
-									$omitSignalInformation = (isset($slotConfiguration[2])) ? $slotConfiguration[2] : FALSE;
+									$omitSignalInformation = (isset($slotConfiguration[2])) ? TRUE : FALSE;
 									$this->signalSlotDispatcher->connect($signalClassName, $signalMethodName, $slotConfiguration[0], $slotConfiguration[1], $omitSignalInformation);
 								}
 							}

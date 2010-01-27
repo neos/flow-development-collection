@@ -124,6 +124,9 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function removePropertiesByParentEmitsExpectedSql() {
+		$parent = new \stdClass();
+		$persistenceSession = new \F3\FLOW3\Persistence\Session();
+		$persistenceSession->registerObject($parent, 'identifier');
 		$mockDeletePropertyStatement = $this->getMock('PDOStatement');
 		$mockDeletePropertyStatement->expects($this->once())->method('execute')->with(array('identifier'));
 		$mockDeleteDataStatement = $this->getMock('PDOStatement');
@@ -132,9 +135,9 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$mockPdo->expects($this->at(0))->method('prepare')->with('DELETE FROM "properties_data" WHERE "parent"=?')->will($this->returnValue($mockDeleteDataStatement));
 		$mockPdo->expects($this->at(1))->method('prepare')->with('DELETE FROM "properties" WHERE "parent"=?')->will($this->returnValue($mockDeletePropertyStatement));
 		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('dummy'));
-		$backend->injectPersistenceSession(new \F3\FLOW3\Persistence\Session());
+		$backend->injectPersistenceSession($persistenceSession);
 		$backend->_set('databaseHandle', $mockPdo);
-		$backend->_call('removePropertiesByParent', 'identifier');
+		$backend->_call('removePropertiesByParent', $parent);
 	}
 
 	/**
@@ -157,7 +160,9 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$persistenceSession = new \F3\FLOW3\Persistence\Session();
 		$persistenceSession->registerObject($oldObject, '');
 
-		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('createObjectRecord'));
+		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('createObjectRecord', 'emitPersistedNewObject', 'emitPersistedUpdatedObject'));
+		$backend->expects($this->once())->method('emitPersistedNewObject')->with($newObject);
+		$backend->expects($this->never())->method('emitPersistedUpdatedObject');
 		$backend->expects($this->once())->method('createObjectRecord');
 		$backend->injectPersistenceSession($persistenceSession);
 		$backend->_set('classSchemata', array($fullClassName => new \F3\FLOW3\Reflection\ClassSchema($fullClassName)));
@@ -245,7 +250,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$mockSession->expects($this->at(1))->method('hasObject')->with($this->attribute($this->equalTo('B'), 'FLOW3_Persistence_Entity_UUID'))->will($this->returnValue(FALSE));
 		$mockSession->expects($this->at(2))->method('hasObject')->with($this->attribute($this->equalTo('C'), 'FLOW3_Persistence_Entity_UUID'))->will($this->returnValue(FALSE));
 
-		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('createObjectRecord', 'setProperties'));
+		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('createObjectRecord', 'setProperties', 'emitPersistedNewObject', 'emitPersistedUpdatedObject'));
 		$backend->expects($this->exactly(3))->method('createObjectRecord')->will($this->onConsecutiveCalls('A', 'B', 'C'));
 		$excpectedPropertiesOfA = array(
 			'sub' => array(
@@ -290,8 +295,8 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 			)
 		);
 		$backend->expects($this->at(3))->method('setProperties')->with($excpectedPropertiesOfC);
-		$backend->expects($this->at(4))->method('setProperties')->with($excpectedPropertiesOfB);
-		$backend->expects($this->at(5))->method('setProperties')->with($excpectedPropertiesOfA);
+		$backend->expects($this->at(5))->method('setProperties')->with($excpectedPropertiesOfB);
+		$backend->expects($this->at(7))->method('setProperties')->with($excpectedPropertiesOfA);
 		$backend->injectPersistenceSession($mockSession);
 		$backend->setAggregateRootObjects($aggregateRootObjects);
 		$backend->_set('classSchemata', array($fullClassName1 => $classSchema1, $fullClassName2 => $classSchema2, $fullClassName3 => $classSchema3));
@@ -449,8 +454,9 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 				)
 			)
 		);
-		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('setProperties'));
+		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('setProperties', 'emitPersistedNewObject', 'emitPersistedUpdatedObject'));
 		$backend->expects($this->once())->method('setProperties')->with($expectedProperties);
+		$backend->expects($this->once())->method('emitPersistedUpdatedObject');
 		$backend->injectPersistenceSession($persistenceSession);
 		$backend->_set('visitedDuringPersistence', new \SplObjectStorage());
 		$backend->_set('classSchemata', array($fullClassName => $classSchema));
@@ -504,7 +510,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$classSchema->addProperty('date', 'DateTime');
 
 			// ... and here we go
-		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('setProperties'));
+		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('setProperties', 'emitPersistedNewObject', 'emitPersistedUpdatedObject'));
 		$backend->expects($this->once())->method('setProperties')->with($expectedProperties);
 		$backend->injectPersistenceSession($persistenceSession);
 		$backend->_set('visitedDuringPersistence', new \SplObjectStorage());
@@ -537,7 +543,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$persistenceSession = new \F3\FLOW3\Persistence\Session();
 		$persistenceSession->registerObject($object, $identifier);
 
-		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('checkType', 'setProperties'));
+		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('checkType', 'setProperties', 'emitPersistedNewObject', 'emitPersistedUpdatedObject'));
 		$backend->injectPersistenceSession($persistenceSession);
 		$backend->_set('visitedDuringPersistence', new \SplObjectStorage());
 		$backend->_set('classSchemata', array($fullClassName => $classSchema));
@@ -638,12 +644,12 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$mockSession->expects($this->exactly(5))->method('hasObject')->will($this->onConsecutiveCalls(FALSE, FALSE, FALSE, TRUE, TRUE));
 		$mockSession->expects($this->exactly(2))->method('getIdentifierByObject')->with($V)->will($this->returnValue($V->FLOW3_Persistence_ValueObject_Hash));
 
-		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('createObjectRecord', 'setProperties'));
+		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('createObjectRecord', 'setProperties', 'emitPersistedNewObject', 'emitPersistedUpdatedObject'));
 		$backend->expects($this->at(0))->method('createObjectRecord')->with($A)->will($this->returnValue('fakeUuidA'));
 		$backend->expects($this->at(1))->method('createObjectRecord')->with($V)->will($this->returnValue('fakeHash'));
-		$backend->expects($this->at(2))->method('setProperties')->with($expectedPropertiesForA);
-		$backend->expects($this->at(3))->method('createObjectRecord')->with($B)->will($this->returnValue('fakeUuidB'));
-		$backend->expects($this->at(4))->method('setProperties')->with($expectedPropertiesForB);
+		$backend->expects($this->at(3))->method('setProperties')->with($expectedPropertiesForA);
+		$backend->expects($this->at(5))->method('createObjectRecord')->with($B)->will($this->returnValue('fakeUuidB'));
+		$backend->expects($this->at(6))->method('setProperties')->with($expectedPropertiesForB);
 
 		$backend->injectPersistenceSession($mockSession);
 		$backend->_set('classSchemata', array('F3\TYPO3CR\Tests\Fixtures\AnEntity' => $entityClassSchema, 'F3\TYPO3CR\Tests\Fixtures\AValue' => $valueClassSchema));
@@ -721,11 +727,11 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$persistenceSession->registerObject($B, 'fakeUuidB');
 
 			// ... and here we go
-		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('createObjectRecord', 'setProperties'));
+		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('createObjectRecord', 'setProperties', 'emitPersistedNewObject', 'emitPersistedUpdatedObject'));
 		$backend->injectPersistenceSession($persistenceSession);
 		$backend->expects($this->never())->method('createObjectRecord');
 		$backend->expects($this->at(0))->method('setProperties')->with($expectedPropertiesForB);
-		$backend->expects($this->at(1))->method('setProperties')->with($expectedPropertiesForA);
+		$backend->expects($this->at(2))->method('setProperties')->with($expectedPropertiesForA);
 
 		$backend->_set('visitedDuringPersistence', new \SplObjectStorage());
 		$backend->_set('classSchemata', array('F3\TYPO3CR\Tests\Fixtures\AnEntity' => $classSchema));
@@ -779,7 +785,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$persistenceSession->registerObject($A, 'fakeUuidA');
 
 			// ... and here we go
-		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('createObjectRecord', 'setProperties'));
+		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('createObjectRecord', 'setProperties', 'emitPersistedNewObject', 'emitPersistedUpdatedObject'));
 		$backend->injectPersistenceSession($persistenceSession);
 		$backend->expects($this->never())->method('createObjectRecord');
 		$backend->expects($this->once())->method('setProperties')->with($expectedPropertiesForA);
@@ -1045,7 +1051,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$persistenceSession = new \F3\FLOW3\Persistence\Session();
 		$persistenceSession->registerObject($someAggregateRootObject, '');
 
-		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('createObjectRecord', 'setProperties'));
+		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('createObjectRecord', 'setProperties', 'emitPersistedNewObject', 'emitPersistedUpdatedObject'));
 		$backend->expects($this->once())->method('createObjectRecord')->with($otherAggregateRootObject);
 		$backend->injectPersistenceSession($persistenceSession);
 		$backend->setAggregateRootObjects($aggregateRootObjects);
@@ -1107,7 +1113,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$persistenceSession = new \F3\FLOW3\Persistence\Session();
 		$persistenceSession->registerObject($someAggregateRootObject, '');
 
-		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('createObjectRecord'));
+		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('createObjectRecord', 'emitPersistedNewObject', 'emitPersistedUpdatedObject'));
 		$backend->expects($this->once())->method('createObjectRecord')->with($otherAggregateRootObject);
 		$backend->injectPersistenceSession($persistenceSession);
 		$backend->setAggregateRootObjects($aggregateRootObjects);
@@ -1214,15 +1220,22 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$mockPdo = $this->getMock('PdoInterface');
 		$mockPdo->expects($this->once())->method('prepare')->with('SELECT "identifier", "type" FROM "entities" WHERE "identifier" IN (SELECT DISTINCT "object" FROM "properties_data" WHERE "parent"=?)')->will($this->returnValue($mockStatement));
 
-		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('removeEntity'));
-		$backend->expects($this->once())->method('removeEntity')->with('goaway');
+		$object1 = new \stdClass();
+		$object2 = new \stdClass();
+		$persistenceSession = new \F3\FLOW3\Persistence\Session();
+		$persistenceSession->registerObject($object1, 'fakeUuid1');
+		$persistenceSession->registerObject($object2, 'goaway');
+
+		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('removeEntity', 'emitRemovedObject'));
+		$backend->injectPersistenceSession($persistenceSession);
+		$backend->expects($this->once())->method('removeEntity')->with($object2);
 		$backend->_set('databaseHandle', $mockPdo);
 		$backend->_set('classSchemata', array(
 			'FooBar' => $fooBarClassSchema,
 			'Quux' => $quuxClassSchema
 		));
 
-		$backend->_call('removeEntitiesByParent', 'fakeUuid1');
+		$backend->_call('removeEntitiesByParent', $object1);
 	}
 
 	/**
@@ -1236,85 +1249,71 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$mockPdo = $this->getMock('PdoInterface');
 		$mockPdo->expects($this->once())->method('prepare')->with('SELECT "identifier" FROM "valueobjects" WHERE "identifier" IN (SELECT DISTINCT "object" FROM "properties_data" WHERE "parent"=?)')->will($this->returnValue($mockStatement));
 
-		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('getValueObjectUsageCount', 'removeValueObject'));
-		$backend->expects($this->at(0))->method('getValueObjectUsageCount')->with('fakeHash1')->will($this->returnValue(2));
-		$backend->expects($this->at(1))->method('getValueObjectUsageCount')->with('fakeHash2')->will($this->returnValue(1));
-		$backend->expects($this->at(2))->method('removeValueObject')->with('fakeHash2');
-		$backend->_set('databaseHandle', $mockPdo);
-
-		$backend->_call('removeValueObjectsByParent', 'fakeUuid');
-	}
-
-	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function removeEntityEmitsExpectedSql() {
-		$mockStatement = $this->getMock('PDOStatement');
-		$mockStatement->expects($this->once())->method('execute')->with(array('fakeUuid'));
-		$mockPdo = $this->getMock('PdoInterface');
-		$mockPdo->expects($this->once())->method('prepare')->with('DELETE FROM "entities" WHERE "identifier"=?')->will($this->returnValue($mockStatement));
-
-		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('removeEntitiesByParent', 'removeValueObjectsByParent', 'removePropertiesByParent'));
-		$backend->expects($this->once())->method('removeEntitiesByParent')->with('fakeUuid');
-		$backend->expects($this->once())->method('removeValueObjectsByParent')->with('fakeUuid');
-		$backend->expects($this->once())->method('removePropertiesByParent')->with('fakeUuid');
-		$backend->_set('databaseHandle', $mockPdo);
-
-		$backend->_call('removeEntity', 'fakeUuid');
-	}
-
-	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function removeEntityAcceptsObjectAsSubject() {
-		$entity = new \stdClass();
-		
+		$parent = new \stdClass();
+		$object1 = new \stdClass();
+		$object2 = new \stdClass();
 		$persistenceSession = new \F3\FLOW3\Persistence\Session();
-		$persistenceSession->registerObject($entity, 'fakeUuid');
+		$persistenceSession->registerObject($parent, 'fakeUuid');
+		$persistenceSession->registerObject($object1, 'fakeHash1');
+		$persistenceSession->registerObject($object2, 'fakeHash2');
 
-		$mockStatement = $this->getMock('PDOStatement');
-		$mockStatement->expects($this->once())->method('execute')->with(array('fakeUuid'));
-		$mockPdo = $this->getMock('PdoInterface');
-		$mockPdo->expects($this->once())->method('prepare')->with('DELETE FROM "entities" WHERE "identifier"=?')->will($this->returnValue($mockStatement));
-
-		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('removeEntitiesByParent', 'removeValueObjectsByParent', 'removePropertiesByParent'));
-		$backend->expects($this->once())->method('removeEntitiesByParent')->with('fakeUuid');
-		$backend->expects($this->once())->method('removeValueObjectsByParent')->with('fakeUuid');
-		$backend->expects($this->once())->method('removePropertiesByParent')->with('fakeUuid');
+		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('getValueObjectUsageCount', 'removeValueObject'));
 		$backend->injectPersistenceSession($persistenceSession);
+		$backend->expects($this->at(0))->method('getValueObjectUsageCount')->with($object1)->will($this->returnValue(2));
+		$backend->expects($this->at(1))->method('getValueObjectUsageCount')->with($object2)->will($this->returnValue(1));
+		$backend->expects($this->at(2))->method('removeValueObject')->with($object2);
 		$backend->_set('databaseHandle', $mockPdo);
 
-		$backend->_call('removeEntity', $entity);
+		$backend->_call('removeValueObjectsByParent', $parent);
 	}
 
 	/**
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function removeValueObjectEmitsExpectedSql($subject = 'fakeHash') {
+	public function removeEntityEmitsExpectedSqlAndRemovedObjectSignal() {
+		$mockStatement = $this->getMock('PDOStatement');
+		$mockStatement->expects($this->once())->method('execute')->with(array('fakeUuid'));
+		$mockPdo = $this->getMock('PdoInterface');
+		$mockPdo->expects($this->once())->method('prepare')->with('DELETE FROM "entities" WHERE "identifier"=?')->will($this->returnValue($mockStatement));
+
+		$object = new \stdClass();
+		$persistenceSession = new \F3\FLOW3\Persistence\Session();
+		$persistenceSession->registerObject($object, 'fakeUuid');
+
+		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('removeEntitiesByParent', 'removeValueObjectsByParent', 'removePropertiesByParent', 'emitRemovedObject'));
+		$backend->injectPersistenceSession($persistenceSession);
+		$backend->expects($this->once())->method('emitRemovedObject')->with($object);
+		$backend->expects($this->once())->method('removeEntitiesByParent')->with($object);
+		$backend->expects($this->once())->method('removeValueObjectsByParent')->with($object);
+		$backend->expects($this->once())->method('removePropertiesByParent')->with($object);
+		$backend->_set('databaseHandle', $mockPdo);
+
+		$backend->_call('removeEntity', $object);
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function removeValueObjectEmitsExpectedSqlAndRemovedObjectSignal($subject = 'fakeHash') {
 		$mockStatement = $this->getMock('PDOStatement');
 		$mockStatement->expects($this->once())->method('execute')->with(array('fakeHash'));
 		$mockPdo = $this->getMock('PdoInterface');
 		$mockPdo->expects($this->once())->method('prepare')->with('DELETE FROM "valueobjects" WHERE "identifier"=?')->will($this->returnValue($mockStatement));
 
-		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('removeValueObjectsByParent', 'removePropertiesByParent'));
-		$backend->expects($this->once())->method('removeValueObjectsByParent')->with('fakeHash');
-		$backend->expects($this->once())->method('removePropertiesByParent')->with('fakeHash');
+		$subject = new \stdClass();
+		$persistenceSession = new \F3\FLOW3\Persistence\Session();
+		$persistenceSession->registerObject($subject, 'fakeHash');
+
+		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('removeValueObjectsByParent', 'removePropertiesByParent', 'emitRemovedObject'));
+		$backend->injectPersistenceSession($persistenceSession);
+		$backend->expects($this->once())->method('emitRemovedObject')->with($subject);
+		$backend->expects($this->once())->method('removeValueObjectsByParent')->with($subject);
+		$backend->expects($this->once())->method('removePropertiesByParent')->with($subject);
 		$backend->_set('databaseHandle', $mockPdo);
 
 		$backend->_call('removeValueObject', $subject);
-	}
-
-	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function removeValueObjectAcceptsObjectAsSubject() {
-		$valueObject = new \stdClass();
-		$valueObject->FLOW3_Persistence_ValueObject_Hash = 'fakeHash';
-		$this->removeValueObjectEmitsExpectedSql($valueObject);
 	}
 
 	/**
@@ -1327,20 +1326,15 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$mockPdo = $this->getMock('PdoInterface');
 		$mockPdo->expects($this->once())->method('prepare')->with('SELECT COUNT(DISTINCT "parent") FROM "properties_data" WHERE "object"=?')->will($this->returnValue($mockStatement));
 
+		$subject = new \stdClass();
+		$persistenceSession = new \F3\FLOW3\Persistence\Session();
+		$persistenceSession->registerObject($subject, 'fakeHash');
+
 		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('dummy'));
+		$backend->injectPersistenceSession($persistenceSession);
 		$backend->_set('databaseHandle', $mockPdo);
 
 		$backend->_call('getValueObjectUsageCount', $subject);
-	}
-
-	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function getValueObjectUsageCountAcceptsObjectAsSubject() {
-		$valueObject = new \stdClass();
-		$valueObject->FLOW3_Persistence_ValueObject_Hash = 'fakeHash';
-		$this->getValueObjectUsageCountEmitsExpectedSql($valueObject);
 	}
 
 	/**

@@ -47,6 +47,11 @@ class ResourceManager {
 	protected $resourcePublisher;
 
 	/**
+	 * @var \F3\FLOW3\Utility\Environment
+	 */
+	protected $environment;
+
+	/**
 	 * @var \F3\FLOW3\Cache\Frontend\StringFrontend
 	 */
 	protected $statusCache;
@@ -92,6 +97,17 @@ class ResourceManager {
 	 */
 	public function injectReflectionService(\F3\FLOW3\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
+	}
+
+	/**
+	 * Injects the environment
+	 *
+	 * @param \F3\FLOW3\Utility\Environment $environment
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function injectEnvironment(\F3\FLOW3\Utility\Environment $environment) {
+		$this->environment = $environment;
 	}
 
 	/**
@@ -144,7 +160,7 @@ class ResourceManager {
 	 * Imports a resource (file) from the given location as a persistent resource.
 	 * On a successful import this method returns a Resource object representing the
 	 * newly imported persistent resource.
-	 * 
+	 *
 	 * @param string $uri An URI (can also be a path and filename) pointing to the resource to import
 	 * @return mixed A resource object representing the imported resource or FALSE if an error occurred.
 	 * @author Robert Lemke <robert@typo3.org>
@@ -156,18 +172,57 @@ class ResourceManager {
 			return FALSE;
 		}
 
-		$temporaryTargetPathAndFilename = tempnam(md5(FLOW3_PATH_ROOT), 'FLOW3_ResourceImport_');
+		$temporaryTargetPathAndFilename = $this->environment->getPathToTemporaryDirectory() . uniqid('FLOW3_ResourceImport_');
 		if (copy($uri, $temporaryTargetPathAndFilename) === FALSE) {
 			return FALSE;
 		}
-		
+
 		$hash = sha1_file($temporaryTargetPathAndFilename);
 		$finalTargetPathAndFilename = $this->persistentResourcesStorageBaseUri . $hash;
-		if (copy($temporaryTargetPathAndFilename, $finalTargetPathAndFilename) === FALSE) {
+		if (rename($temporaryTargetPathAndFilename, $finalTargetPathAndFilename) === FALSE) {
+			unlink($temporaryTargetPathAndFilename);
 			return FALSE;
 		}
-		unlink($temporaryTargetPathAndFilename);
 		return $this->objectFactory->create('F3\FLOW3\Resource\Resource', $hash, $pathInfo['extension']);
+	}
+
+	/**
+	 * Imports a resource (file) from the given upload info array as a persistent
+	 * resource.
+	 * On a successful import this method returns a Resource object representing
+	 * the newly imported persistent resource.
+	 *
+	 * @param array $uploadInfo An array detailing the resource to import (expected keys: name, tmp_name)
+	 * @return mixed A resource object representing the imported resource or FALSE if an error occurred.
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function importUploadedResource(array $uploadInfo) {
+		$pathInfo = pathinfo($uploadInfo['name']);
+		if (!isset($pathInfo['extension']) || substr(strtolower($pathInfo['extension']), -3, 3) === 'php' ) {
+			return FALSE;
+		}
+
+		$hash = sha1_file($uploadInfo['tmp_name']);
+		$finalTargetPathAndFilename = $this->persistentResourcesStorageBaseUri . $hash;
+		if (move_uploaded_file($uploadInfo['tmp_name'], $finalTargetPathAndFilename) === FALSE) {
+			return FALSE;
+		}
+		return $this->objectFactory->create('F3\FLOW3\Resource\Resource', $hash, $pathInfo['extension']);
+	}
+
+	/**
+	 * Deletes the file represented by the given resource instance.
+	 *
+	 * @param \F3\FLOW3\Resource\Resource $resource
+	 * @return boolean
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function deleteResource($resource) {
+		if ($resource instanceof \F3\FLOW3\Resource\Resource) {
+			if (is_file($this->persistentResourcesStorageBaseUri . $resource->getHash())) {
+				unlink($this->persistentResourcesStorageBaseUri . $resource->getHash());
+			}
+		}
 	}
 
 	/**

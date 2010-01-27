@@ -234,7 +234,7 @@ F3\FLOW3\Monitor\FileMonitor:
   properties:
     changeDetectionStrategy:
       object: FLOW3.monitor.fileMonitor.changeDetectionStrategy
-    signalSlotDispatcher:
+    signalDispatcher:
       object: F3\FLOW3\SignalSlot\Dispatcher
     systemLogger:
       object: F3\FLOW3\Log\SystemLoggerInterface
@@ -330,6 +330,14 @@ F3\FLOW3\Package\MetaData\ReaderInterface:
 F3\FLOW3\Package\MetaData\WriterInterface:
   autowiring: off
   className: F3\FLOW3\Package\MetaData\XmlWriter
+
+#                                                                          #
+# Persistence                                                              #
+#                                                                          #
+F3\FLOW3\Persistence\Backend\AbstractBackend:
+  properties:
+    signalDispatcher:
+      object: F3\FLOW3\SignalSlot\Dispatcher
 
 #                                                                          #
 # Reflection                                                               #

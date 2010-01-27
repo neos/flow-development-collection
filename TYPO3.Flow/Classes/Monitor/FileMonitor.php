@@ -45,7 +45,7 @@ class FileMonitor {
 	/**
 	 * @var \F3\FLOW3\SignalSlot\Dispatcher
 	 */
-	protected $signalSlotDispatcher;
+	protected $signalDispatcher;
 
 	/**
 	 * @var \F3\FLOW3\Log\SystemLoggerInterface
@@ -104,12 +104,12 @@ class FileMonitor {
 	 * Injects the Singal Slot Dispatcher because classes of the Monitor subpackage cannot be proxied by the AOP
 	 * framework because it is not initialized at the time the monitoring is used.
 	 *
-	 * @param \F3\FLOW3\SignalSlot\Dispatcher $signalSlotDispatcher The Signal Slot Dispatcher
+	 * @param \F3\FLOW3\SignalSlot\Dispatcher $signalDispatcher The Signal Slot Dispatcher
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectSignalSlotDispatcher(\F3\FLOW3\SignalSlot\Dispatcher $signalSlotDispatcher) {
-		$this->signalSlotDispatcher = $signalSlotDispatcher;
+	public function injectSignalDispatcher(\F3\FLOW3\SignalSlot\Dispatcher $signalDispatcher) {
+		$this->signalDispatcher = $signalDispatcher;
 	}
 
 	/**
@@ -276,7 +276,7 @@ class FileMonitor {
 	 * @api
 	 */
 	protected function emitFilesHaveChanged($monitorIdentifier, array $changedFiles) {
-		$this->signalSlotDispatcher->dispatch(__CLASS__, __FUNCTION__, func_get_args());
+		$this->signalDispatcher->dispatch(__CLASS__, __FUNCTION__, func_get_args());
 	}
 
 	/**
@@ -290,7 +290,7 @@ class FileMonitor {
 	 * @api
 	 */
 	protected function emitDirectoriesHaveChanged($monitorIdentifier, array $changedDirectories) {
-		$this->signalSlotDispatcher->dispatch(__CLASS__, __FUNCTION__, func_get_args());
+		$this->signalDispatcher->dispatch(__CLASS__, __FUNCTION__, func_get_args());
 	}
 
 	/**

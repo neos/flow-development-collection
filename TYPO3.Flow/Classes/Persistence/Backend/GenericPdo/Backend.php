@@ -31,6 +31,18 @@ namespace F3\FLOW3\Persistence\Backend\GenericPdo;
 class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 
 	/**
+	 * An object that was reconstituted
+	 * @var integer
+	 */
+	const OBJECT_RECONSTITUTED = 1;
+
+	/**
+	 * An object that is new
+	 * @var integer
+	 */
+	const OBJECT_NEW = 2;
+
+	/**
 	 * @var \F3\FLOW3\Object\ObjectFactoryInterface
 	 */
 	protected $objectFactory;
@@ -203,8 +215,10 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 
 		if ($this->persistenceSession->hasObject($object)) {
 			$identifier = $this->persistenceSession->getIdentifierByObject($object);
+			$objectState = self::OBJECT_RECONSTITUTED;
 		} else {
 			$identifier = $this->createObjectRecord($object, $parentIdentifier);
+			$objectState = self::OBJECT_NEW;
 		}
 
 		$this->visitedDuringPersistence[$object] = $identifier;
@@ -291,6 +305,12 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 
 		if (count($properties)) {
 			$this->setProperties($properties);
+			if ($objectState === self::OBJECT_RECONSTITUTED) {
+				$this->emitPersistedUpdatedObject($object);
+			}
+		}
+		if ($objectState === self::OBJECT_NEW) {
+			$this->emitPersistedNewObject($object);
 		}
 
 		if ($classSchema->getModelType() === \F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY) {
@@ -483,10 +503,11 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 	/**
 	 * Removes all properties attached to the given $parent.
 	 *
-	 * @param string $parentIdentifier
+	 * @param object $parent
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function removePropertiesByParent($parentIdentifier) {
+	protected function removePropertiesByParent($parent) {
+		$parentIdentifier = $this->persistenceSession->getIdentifierByObject($parent);
 		$statementHandle = $this->databaseHandle->prepare('DELETE FROM "properties_data" WHERE "parent"=?');
 		$statementHandle->execute(array($parentIdentifier));
 		$statementHandle = $this->databaseHandle->prepare('DELETE FROM "properties" WHERE "parent"=?');
@@ -497,15 +518,15 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 	 * Removes all referenced entities (which are not aggregate roots) of the
 	 * given $parent.
 	 *
-	 * @param string $parentIdentifier
+	 * @param object $parent
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function removeEntitiesByParent($parentIdentifier) {
+	protected function removeEntitiesByParent($parent) {
 		$statementHandle = $this->databaseHandle->prepare('SELECT "identifier", "type" FROM "entities" WHERE "identifier" IN (SELECT DISTINCT "object" FROM "properties_data" WHERE "parent"=?)');
-		$statementHandle->execute(array($parentIdentifier));
+		$statementHandle->execute(array($this->persistenceSession->getIdentifierByObject($parent)));
 		foreach ($statementHandle->fetchAll(\PDO::FETCH_ASSOC) as $entityRow) {
 			if ($this->classSchemata[$entityRow['type']]->isAggregateRoot() !== TRUE) {
-				$this->removeEntity($entityRow['identifier']);
+				$this->removeEntity($this->persistenceSession->getObjectByIdentifier($entityRow['identifier']));
 			}
 		}
 	}
@@ -514,72 +535,66 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 	 * Remove all referenced value objects (that are used only once at the time
 	 * of action) of the given $parent
 	 *
-	 * @param string $parentIdentifier
+	 * @param object $parent
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function removeValueObjectsByParent($parentIdentifier) {
+	protected function removeValueObjectsByParent($parent) {
 		$statementHandle = $this->databaseHandle->prepare('SELECT "identifier" FROM "valueobjects" WHERE "identifier" IN (SELECT DISTINCT "object" FROM "properties_data" WHERE "parent"=?)');
-		$statementHandle->execute(array($parentIdentifier));
+		$statementHandle->execute(array($this->persistenceSession->getIdentifierByObject($parent)));
 		while ($valueObjectIdentifier = $statementHandle->fetchColumn()) {
-			if ($this->getValueObjectUsageCount($valueObjectIdentifier) === 1) {
-				$this->removeValueObject($valueObjectIdentifier);
+			$valueObject = $this->persistenceSession->getObjectByIdentifier($valueObjectIdentifier);
+			if ($this->getValueObjectUsageCount($valueObject) === 1) {
+				$this->removeValueObject($valueObject);
 			}
 		}
 	}
 
 	/**
-	 * Removes an entity and all objects contained within it's bundary.
+	 * Removes an entity and all objects contained within it's boundary.
 	 *
-	 * @param mixed $subject An object or it's (internal) identifier
+	 * @param object $object An object
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function removeEntity($subject) {
-		if (is_object($subject)) {
-			$subject = $this->persistenceSession->getIdentifierByObject($subject);
-		}
-
-		$this->removeEntitiesByParent($subject);
-		$this->removeValueObjectsByParent($subject);
-		$this->removePropertiesByParent($subject);
+	protected function removeEntity($object) {
+		$this->removeEntitiesByParent($object);
+		$this->removeValueObjectsByParent($object);
+		$this->removePropertiesByParent($object);
 
 		$statementHandle = $this->databaseHandle->prepare('DELETE FROM "entities" WHERE "identifier"=?');
-		$statementHandle->execute(array($subject));
+		$statementHandle->execute(array($this->persistenceSession->getIdentifierByObject($object)));
+
+		$this->emitRemovedObject($object);
 	}
 
 	/**
 	 * Removes a value objects.
 	 *
-	 * @param mixed $subject An object or it's (internal) identifier
+	 * @param object $object
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function removeValueObject($subject) {
-		if (is_object($subject)) {
-			$subject = $subject->FLOW3_Persistence_ValueObject_Hash;
-		}
-
-		$this->removeValueObjectsByParent($subject);
-		$this->removePropertiesByParent($subject);
+	protected function removeValueObject($object) {
+		$this->removeValueObjectsByParent($object);
+		$this->removePropertiesByParent($object);
 
 		$statementHandle = $this->databaseHandle->prepare('DELETE FROM "valueobjects" WHERE "identifier"=?');
-		$statementHandle->execute(array($subject));
+		$statementHandle->execute(array($this->persistenceSession->getIdentifierByObject($object)));
+
+		$this->emitRemovedObject($object);
 	}
 
 	/**
 	 * Checks how often a value object is used by other objects.
 	 *
-	 * @param mixed $subject An object or it's (internal) identifier
+	 * @param object $object
 	 * @return integer
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function getValueObjectUsageCount($subject) {
-		if (is_object($subject)) {
-			$subject = $subject->FLOW3_Persistence_ValueObject_Hash;
-		}
+	protected function getValueObjectUsageCount($object) {
 		$statementHandle = $this->databaseHandle->prepare('SELECT COUNT(DISTINCT "parent") FROM "properties_data" WHERE "object"=?');
-		$statementHandle->execute(array($subject));
-		return $statementHandle->fetchColumn();
+		$statementHandle->execute(array($this->persistenceSession->getIdentifierByObject($object)));
+		return (integer)$statementHandle->fetchColumn();
 	}
 
 	/**

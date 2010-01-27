@@ -36,6 +36,11 @@ class ResourceObjectConverter implements \F3\FLOW3\Property\ObjectConverterInter
 	protected $objectFactory;
 
 	/**
+	 * @var \F3\FLOW3\Resource\ResourceManager
+	 */
+	protected $resourceManager;
+
+	/**
 	 * Injects the object factory
 	 *
 	 * @param \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory
@@ -44,6 +49,17 @@ class ResourceObjectConverter implements \F3\FLOW3\Property\ObjectConverterInter
 	 */
 	public function injectObjectFactory(\F3\FLOW3\Object\ObjectFactoryInterface $objectFactory) {
 		$this->objectFactory = $objectFactory;
+	}
+
+	/**
+	 * Injects the resource manager
+	 *
+	 * @param \F3\FLOW3\Resource\ResourceManager $resourceManager
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function injectResourceManager(\F3\FLOW3\Resource\ResourceManager $resourceManager) {
+		$this->resourceManager = $resourceManager;
 	}
 
 	/**
@@ -60,31 +76,26 @@ class ResourceObjectConverter implements \F3\FLOW3\Property\ObjectConverterInter
 	/**
 	 * Converts the given string or array to a Resource object.
 	 *
-	 * If the input format is an array, this method assumes the resource to be a fresh file upload
-	 * and moves the temporary upload file to the persistent resources directory.
+	 * If the input format is an array, this method assumes the resource to be a
+	 * fresh file upload and imports the temporary upload file through the
+	 * resource manager.
 	 *
+	 * @param array $source The upload info (expected keys: error, name, tmp_name)
 	 * @return object An object or an instance of F3\FLOW3\Error\Error if the input format is not supported or could not be converted for other reasons
-	 * @throws \F3\FLOW3\Resource\Exception if an error with the uploaded file occurred.
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function convertFrom($source) {
 		if (is_array($source)) {
 			if ($source['error'] === \UPLOAD_ERR_NO_FILE) return NULL;
 			if ($source['error'] !== \UPLOAD_ERR_OK) return $this->objectFactory->create('F3\FLOW3\Error\Error', \F3\FLOW3\Utility\Files::getUploadErrorMessage($source['error']) , 1264440823);
 
-			$pathInfo = pathinfo($source['name']);
-			if (!isset($pathInfo['extension']) || substr(strtolower($pathInfo['extension']), -3, 3) === 'php') {
-				return $this->objectFactory->create('F3\FLOW3\Error\Error', 'Invalid resource: ".php" or empty file extensions are not allowed.' , 1260895946);
+			$resource = $this->resourceManager->importUploadedResource($source);
+			if ($resource === FALSE) {
+				return $this->objectFactory->create('F3\FLOW3\Error\Error', 'The resource manager could not create a resource instance.' , 1264517906);
+			} else {
+				return $resource;
 			}
-			$resource = $this->objectFactory->create('F3\FLOW3\Resource\Resource', sha1_file($source['tmp_name']), $pathInfo['extension']);
-
-			$newPathAndFilename = FLOW3_PATH_DATA . 'Persistent/Resources/' . $resource->getHash();
-			try {
-	 			move_uploaded_file($source['tmp_name'], $newPathAndFilename);
-			} catch (\Exception $exception) {
-				throw new \F3\FLOW3\Resource\Exception('Could not move uploaded file. (' . $exception->getMessage() . ')', 1260874112);
-			}
-			return $resource;
 		} else {
 			return $this->objectFactory->create('F3\FLOW3\Error\Error', 'The source for conversion to a resource object was not an array.' , 1264440811);
 		}

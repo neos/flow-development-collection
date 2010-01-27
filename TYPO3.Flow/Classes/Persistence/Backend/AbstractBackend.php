@@ -43,6 +43,11 @@ abstract class AbstractBackend implements \F3\FLOW3\Persistence\BackendInterface
 	protected $persistenceSession;
 
 	/**
+	 * @var \F3\FLOW3\SignalSlot\Dispatcher
+	 */
+	protected $signalDispatcher;
+
+	/**
 	 * @var \SplObjectStorage
 	 */
 	protected $aggregateRootObjects;
@@ -87,6 +92,57 @@ abstract class AbstractBackend implements \F3\FLOW3\Persistence\BackendInterface
 	 */
 	public function injectPersistenceSession(\F3\FLOW3\Persistence\Session $persistenceSession) {
 		$this->persistenceSession = $persistenceSession;
+	}
+
+	/**
+	 * Injects the Singal Slot Dispatcher (because classes of the Persistence
+	 * subpackage are blacklisted by the AOP framework).
+	 *
+	 * @param \F3\FLOW3\SignalSlot\Dispatcher $signalDispatcher The Signal Slot Dispatcher
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function injectSignalDispatcher(\F3\FLOW3\SignalSlot\Dispatcher $signalDispatcher) {
+		$this->signalDispatcher = $signalDispatcher;
+	}
+
+	/**
+	 * Signalizes that the given object has been removed
+	 *
+	 * @param object $object The object that will be removed
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @signal
+	 * @api
+	 */
+	protected function emitRemovedObject($object) {
+		$this->signalDispatcher->dispatch(__CLASS__, __FUNCTION__, func_get_args());
+	}
+
+	/**
+	 * Signalizes that the given object has been persisted (the first time)
+	 *
+	 * @param object $object The object that will be persisted
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @signal
+	 * @api
+	 */
+	protected function emitPersistedNewObject($object) {
+		$this->signalDispatcher->dispatch(__CLASS__, __FUNCTION__, func_get_args());
+	}
+
+	/**
+	 * Signalizes that the given object has been persisted (updated)
+	 *
+	 * @param object $object The object that will be persisted
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @signal
+	 * @api
+	 */
+	protected function emitPersistedUpdatedObject($object) {
+		$this->signalDispatcher->dispatch(__CLASS__, __FUNCTION__, func_get_args());
 	}
 
 	/**

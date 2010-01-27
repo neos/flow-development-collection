@@ -148,6 +148,7 @@ class ResourceManagerTest extends \F3\Testing\BaseTestCase {
 		file_put_contents('vfs://Foo/SomeResource.txt', '12345');
 		$hash = sha1_file('vfs://Foo/SomeResource.txt');
 
+		mkdir('vfs://Foo/Temporary');
 		mkdir('vfs://Foo/Persistent');
 		mkdir('vfs://Foo/Persistent/Resources');
 
@@ -155,10 +156,13 @@ class ResourceManagerTest extends \F3\Testing\BaseTestCase {
 
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\ObjectFactoryInterface');
 		$mockObjectFactory->expects($this->once())->method('create')->with('F3\FLOW3\Resource\Resource', $hash, 'txt')->will($this->returnValue($mockResource));
+		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment');
+		$mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue('vfs://Foo/Temporary/'));
 
 		$resourceManager = $this->getMock($this->buildAccessibleProxy('\F3\FLOW3\Resource\ResourceManager'), array('dummy'), array(), '', FALSE);
 		$resourceManager->_set('persistentResourcesStorageBaseUri', 'vfs://Foo/Persistent/Resources/');
 		$resourceManager->injectObjectFactory($mockObjectFactory);
+		$resourceManager->injectEnvironment($mockEnvironment);
 
 		$actualResource = $resourceManager->importResource('vfs://Foo/SomeResource.txt');
 		$this->assertSame($mockResource, $actualResource);
