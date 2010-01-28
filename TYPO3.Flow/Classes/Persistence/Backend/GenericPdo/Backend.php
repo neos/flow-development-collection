@@ -772,7 +772,7 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 		} else {
 			$sql['tables'][] = '"entities" AS "_entity" INNER JOIN "properties_data" AS "d" ON "_entity"."identifier" = "d"."parent"';
 			$sql['where'][] = '"_entity"."type"=? AND ';
-			$this->parseConstraint($query->getConstraint(), $sql, $parameters, $query->getOperands());
+			$this->parseConstraint($query->getConstraint(), $sql, $parameters);
 		}
 		if ($query->getOrderings() !== NULL) {
 			$sql = $this->parseOrderings($query->getOrderings(), $sql);
@@ -801,29 +801,28 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 	 * @param \F3\FLOW3\Persistence\QOM\Constraint $constraint
 	 * @param array &$sql
 	 * @param array &$parameters
-	 * @param array $operands
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function parseConstraint(\F3\FLOW3\Persistence\QOM\Constraint $constraint, array &$sql, array &$parameters, array $operands) {
+	protected function parseConstraint(\F3\FLOW3\Persistence\QOM\Constraint $constraint, array &$sql, array &$parameters) {
 		if ($constraint instanceof \F3\FLOW3\Persistence\QOM\LogicalAnd) {
 			$sql['where'][] = '(';
-			$this->parseConstraint($constraint->getConstraint1(), $sql, $parameters, $operands);
+			$this->parseConstraint($constraint->getConstraint1(), $sql, $parameters);
 			$sql['where'][] = ' AND ';
-			$this->parseConstraint($constraint->getConstraint2(), $sql, $parameters, $operands);
+			$this->parseConstraint($constraint->getConstraint2(), $sql, $parameters);
 			$sql['where'][] = ') ';
 		} elseif ($constraint instanceof \F3\FLOW3\Persistence\QOM\LogicalOr) {
 			$sql['where'][] = '(';
-			$this->parseConstraint($constraint->getConstraint1(), $sql, $parameters, $operands);
+			$this->parseConstraint($constraint->getConstraint1(), $sql, $parameters);
 			$sql['where'][] = ' OR ';
-			$this->parseConstraint($constraint->getConstraint2(), $sql, $parameters, $operands);
+			$this->parseConstraint($constraint->getConstraint2(), $sql, $parameters);
 			$sql['where'][] = ') ';
 		} elseif ($constraint instanceof \F3\FLOW3\Persistence\QOM\LogicalNot) {
 			$sql['where'][] = '(NOT ';
-			$this->parseConstraint($constraint->getConstraint(), $sql, $parameters, $operands);
+			$this->parseConstraint($constraint->getConstraint(), $sql, $parameters);
 			$sql['where'][] = ') ';
 		} elseif ($constraint instanceof \F3\FLOW3\Persistence\QOM\Comparison) {
-			$this->parseComparison($constraint, $sql, $parameters, $operands);
+			$this->parseComparison($constraint, $sql, $parameters);
 		}
 	}
 
@@ -833,24 +832,35 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 	 * @param \F3\FLOW3\Persistence\QOM\Comparison $comparison The comparison to parse
 	 * @param array &$sql SQL query parts to add to
 	 * @param array &$parameters Parameters to bind to the SQL
-	 * @param array $operands The bound variables in the query and their values
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function parseComparison(\F3\FLOW3\Persistence\QOM\Comparison $comparison, array &$sql, array &$parameters, array $operands) {
-		$this->parseDynamicOperand($comparison->getOperand1(), $comparison->getOperator(), $sql, $parameters);
-
-		if ($comparison->getOperand2() instanceof \F3\FLOW3\Persistence\QOM\BindVariableValue) {
-			$value = $operands[$comparison->getOperand2()->getBindVariableName()];
-			if ($value instanceof \DateTime) {
-				$parameters[] = $value->getTimestamp();
-			} elseif (is_object($value)) {
-				$parameters[] = $this->getIdentifierByObject($value);
-			} else {
-				$parameters[] = $value;
+	protected function parseComparison(\F3\FLOW3\Persistence\QOM\Comparison $comparison, array &$sql, array &$parameters) {
+		if ($comparison->getOperator() === \F3\FLOW3\Persistence\QueryInterface::OPERATOR_IN) {
+			$this->parseDynamicOperand($comparison->getOperand1(), $comparison->getOperator(), $sql, $parameters, NULL, $comparison->getOperand2());
+			foreach ($comparison->getOperand2() as $value) {
+				$parameters[] = $this->getPlainValue($value);
 			}
-		} elseif ($comparison->getOperand2() instanceof \F3\FLOW3\Persistence\QOM\Literal) {
-			$parameters[] = $comparison->getOperand2()->getLiteralValue();
+		} else {
+			$this->parseDynamicOperand($comparison->getOperand1(), $comparison->getOperator(), $sql, $parameters);
+			$parameters[] = $this->getPlainValue($comparison->getOperand2());
+		}
+	}
+
+	/**
+	 * Returns a plain value, i.e. objects are flattened out if possible.
+	 *
+	 * @param mixed $input
+	 * @return mixed
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function getPlainValue($input) {
+		if ($input instanceof \DateTime) {
+			return $input->getTimestamp();
+		} elseif (is_object($input) && $this->getIdentifierByObject($input) !== NULL) {
+			return $this->getIdentifierByObject($input);
+		} else {
+			return $input;
 		}
 	}
 
@@ -865,24 +875,42 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function parseDynamicOperand(\F3\FLOW3\Persistence\QOM\DynamicOperand $operand, $operator, array &$sql, array &$parameters, $valueFunction = NULL) {
+	protected function parseDynamicOperand(\F3\FLOW3\Persistence\QOM\DynamicOperand $operand, $operator, array &$sql, array &$parameters, $valueFunction = NULL, $operand2 = NULL) {
 		if ($operand instanceof \F3\FLOW3\Persistence\QOM\LowerCase) {
 			$this->parseDynamicOperand($operand->getOperand(), $operator, $sql, $parameters, 'LOWER');
 		} elseif ($operand instanceof \F3\FLOW3\Persistence\QOM\UpperCase) {
 			$this->parseDynamicOperand($operand->getOperand(), $operator, $sql, $parameters, 'UPPER');
 		} elseif ($operand instanceof \F3\FLOW3\Persistence\QOM\PropertyValue) {
 			$selectorName = $operand->getSelectorName();
-			$operator = $this->resolveOperator($operator);
-			$coalesce = 'COALESCE("' . $selectorName . 'properties' . count($parameters) . '"."string", CAST("' . $selectorName . 'properties' . count($parameters) . '"."integer" AS CHAR), CAST("' . $selectorName . 'properties' . count($parameters) . '"."float" AS CHAR), CAST("' . $selectorName . 'properties' . count($parameters) . '"."datetime" AS CHAR), "' . $selectorName . 'properties' . count($parameters) . '"."boolean", "' . $selectorName . 'properties' . count($parameters) . '"."object")';
-			$constraintSQL = '("' . $selectorName . 'properties' . count($parameters) . '"."name" = ? AND ';
-			if ($valueFunction === NULL) {
-				$constraintSQL .= $coalesce . ' ' . $operator . ' ?';
-			} else {
-				$constraintSQL .= '' . $valueFunction . '(' . $coalesce . ') ' . $operator . ' ?';
+			$where = '';
+			switch ($operator) {
+				case \F3\FLOW3\Persistence\QueryInterface::OPERATOR_IN:
+					$coalesce = 'COALESCE("' . $selectorName . 'properties' . count($parameters) . '"."string", CAST("' . $selectorName . 'properties' . count($parameters) . '"."integer" AS CHAR), CAST("' . $selectorName . 'properties' . count($parameters) . '"."float" AS CHAR), CAST("' . $selectorName . 'properties' . count($parameters) . '"."datetime" AS CHAR), "' . $selectorName . 'properties' . count($parameters) . '"."boolean", "' . $selectorName . 'properties' . count($parameters) . '"."object")';
+					$where = '("' . $selectorName . 'properties' . count($parameters) . '"."name" = ? AND ';
+					if ($valueFunction === NULL) {
+						$where .= $coalesce . ' IN (';
+					} else {
+						$where .= '' . $valueFunction . '(' . $coalesce . ') IN (';
+					}
+					$where .= implode(',', array_fill(0, count($operand2), '?')) . ')) ';
+				break;
+				case \F3\FLOW3\Persistence\QueryInterface::OPERATOR_CONTAINS:
+						// in our data structure we can do this using equality...
+					$operator = \F3\FLOW3\Persistence\QueryInterface::OPERATOR_EQUAL_TO;
+				default:
+					$operator = $this->resolveOperator($operator);
+					$coalesce = 'COALESCE("' . $selectorName . 'properties' . count($parameters) . '"."string", CAST("' . $selectorName . 'properties' . count($parameters) . '"."integer" AS CHAR), CAST("' . $selectorName . 'properties' . count($parameters) . '"."float" AS CHAR), CAST("' . $selectorName . 'properties' . count($parameters) . '"."datetime" AS CHAR), "' . $selectorName . 'properties' . count($parameters) . '"."boolean", "' . $selectorName . 'properties' . count($parameters) . '"."object")';
+					$where = '("' . $selectorName . 'properties' . count($parameters) . '"."name" = ? AND ';
+					if ($valueFunction === NULL) {
+						$where .= $coalesce . ' ' . $operator . ' ?';
+					} else {
+						$where .= '' . $valueFunction . '(' . $coalesce . ') ' . $operator . ' ?';
+					}
+					$where .= ') ';
+				break;
 			}
-			$constraintSQL .= ') ';
 
-			$sql['where'][] = $constraintSQL;
+			$sql['where'][] = $where;
 			$sql['tables'][] = 'INNER JOIN "properties_data" AS "' . $selectorName . 'properties' . count($parameters) . '" ON "' . $selectorName . '"."identifier" = "' . $selectorName . 'properties' . count($parameters) . '"."parent"';
 			$parameters[] = $operand->getPropertyName();
 		}

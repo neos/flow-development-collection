@@ -83,7 +83,7 @@ class Comparison extends \F3\FLOW3\Persistence\QOM\Constraint {
 	protected $operator;
 
 	/**
-	 * @var \F3\FLOW3\Persistence\QOM\StaticOperand
+	 * @var mixed
 	 */
 	protected $operand2;
 
@@ -91,25 +91,14 @@ class Comparison extends \F3\FLOW3\Persistence\QOM\Constraint {
 	 * Constructs this Comparison instance
 	 *
 	 * @param \F3\FLOW3\Persistence\QOM\DynamicOperand $operand1
-	 * @param unknown_type $operator
-	 * @param \F3\FLOW3\Persistence\QOM\StaticOperand $operand2
+	 * @param integer $operator one of \F3\FLOW3\Persistence\QueryInterface.OPERATOR_*
+	 * @param mixed $operand2
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(\F3\FLOW3\Persistence\QOM\DynamicOperand $operand1, $operator, \F3\FLOW3\Persistence\QOM\StaticOperand $operand2) {
+	public function __construct(\F3\FLOW3\Persistence\QOM\DynamicOperand $operand1, $operator, $operand2) {
 		$this->operand1 = $operand1;
 		$this->operator = $operator;
 		$this->operand2 = $operand2;
-	}
-
-	/**
-	 * Fills an array with the names of all bound variables in the operand
-	 *
-	 * @param array &$boundVariables
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function collectBoundVariableNames(&$boundVariables) {
-		$this->operand2->collectBoundVariablenames($boundVariables);
 	}
 
 	/**
@@ -127,7 +116,7 @@ class Comparison extends \F3\FLOW3\Persistence\QOM\Constraint {
 	/**
 	 * Gets the operator.
 	 *
-	 * @return string one of \F3\FLOW3\Persistence\QueryInterface.OPERATOR_*
+	 * @return integer one of \F3\FLOW3\Persistence\QueryInterface.OPERATOR_*
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
@@ -138,7 +127,7 @@ class Comparison extends \F3\FLOW3\Persistence\QOM\Constraint {
 	/**
 	 * Gets the second operand.
 	 *
-	 * @return \F3\FLOW3\Persistence\QOM\StaticOperand the operand; non-null
+	 * @return mixed
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */

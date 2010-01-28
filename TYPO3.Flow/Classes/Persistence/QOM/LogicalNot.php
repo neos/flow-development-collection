@@ -49,17 +49,6 @@ class LogicalNot extends \F3\FLOW3\Persistence\QOM\Constraint {
 	}
 
 	/**
-	 * Fills an array with the names of all bound variables in the constraint
-	 *
-	 * @param array &$boundVariables
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function collectBoundVariableNames(&$boundVariables) {
-		$this->constraint->collectBoundVariableNames($boundVariables);
-	}
-
-	/**
 	 * Gets the constraint negated by this Not constraint.
 	 *
 	 * @return \F3\FLOW3\Persistence\QOM\Constraint the constraint; non-null

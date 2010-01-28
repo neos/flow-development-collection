@@ -81,6 +81,18 @@ interface QueryInterface {
 	const OPERATOR_LIKE = 7;
 
 	/**
+	 * The 'contains' comparison operator.
+	 * @api
+	*/
+	const OPERATOR_CONTAINS = 8;
+
+	/**
+	 * The 'in' comparison operator.
+	 * @api
+	*/
+	const OPERATOR_IN = 9;
+
+	/**
 	 * Constants representing the direction when ordering result sets.
 	 */
 	const ORDER_ASCENDING = 'ASC';
@@ -194,6 +206,28 @@ interface QueryInterface {
 	 * @api
 	 */
 	public function like($propertyName, $operand);
+
+	/**
+	 * Returns a "contains" criterion used for matching objects against a query.
+	 * It matches if the multivalued property contains the given operand.
+	 *
+	 * @param string $propertyName The name of the (multivalued) property to compare against
+	 * @param mixed $operand The value to compare with
+	 * @return object
+	 * @api
+	 */
+	public function contains($propertyName, $operand);
+
+	/**
+	 * Returns an "in" criterion used for matching objects against a query. It
+	 * matches if the property's value is contained in the multivalued operand.
+	 *
+	 * @param string $propertyName The name of the property to compare against
+	 * @param mixed $operand The value to compare with, multivalued
+	 * @return object
+	 * @api
+	 */
+	public function in($propertyName, $operand);
 
 	/**
 	 * Returns a less than criterion used for matching objects against a query

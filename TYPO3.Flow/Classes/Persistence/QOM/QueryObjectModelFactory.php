@@ -38,51 +38,14 @@ class QueryObjectModelFactory {
 	protected $objectFactory;
 
 	/**
-	 * Constructs the QOM Factory
+	 * Injects the object factory
 	 *
 	 * @param \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory
+	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(\F3\FLOW3\Object\ObjectFactoryInterface $objectFactory) {
+	public function injectObjectFactory(\F3\FLOW3\Object\ObjectFactoryInterface $objectFactory) {
 		$this->objectFactory = $objectFactory;
-	}
-
-	/**
-	 * Creates a query with one or more selectors.
-	 *
-	 * If the query is invalid, this method throws an InvalidQueryException.
-	 * See the individual QOM factory methods for the validity criteria of each
-	 * query element.
-	 *
-	 * @param \F3\FLOW3\Persistence\QOM\Selector $source the selector; non-null
-	 * @param \F3\FLOW3\Persistence\QOM\Constraint $constraint the constraint, or null if none
-	 * @param array $orderings zero or more orderings; null is equivalent to a zero-length array
-	 * @param array $columns the columns; null is equivalent to a zero-length array
-	 * @return \F3\FLOW3\Persistence\QOM\QueryObjectModel the query; non-null
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @api
-	 */
-	public function createQuery(\F3\FLOW3\Persistence\QOM\Selector $source, $constraint, array $orderings, array $columns) {
-		$query =  $this->objectFactory->create('F3\FLOW3\Persistence\QOM\QueryObjectModel', $source, $constraint, $orderings, $columns);
-		$query->setSession($this->session);
-		return $query;
-	}
-
-	/**
-	 * Selects a subset of the objects in the persistence layer based on
-	 * $className.
-	 *
-	 * @param string $className the name of the required class; non-null
-	 * @param string $selectorName the selector name; optional
-	 * @return \F3\FLOW3\Persistence\QOM\Selector the selector
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @api
-	 */
-	public function selector($className, $selectorName = '') {
-		if ($selectorName === '') {
-			$selectorName = $className;
-		}
-		return $this->objectFactory->create('F3\FLOW3\Persistence\QOM\Selector', $selectorName, $className);
 	}
 
 	/**
@@ -128,12 +91,12 @@ class QueryObjectModelFactory {
 	 *
 	 * @param \F3\FLOW3\Persistence\QOM\DynamicOperand $operand1 the first operand; non-null
 	 * @param string $operator the operator; one of QueryObjectModelConstants.JCR_OPERATOR_*
-	 * @param \F3\FLOW3\Persistence\QOM\StaticOperand $operand2 the second operand; non-null
+	 * @param mixed $operand2 the second operand; non-null
 	 * @return \F3\FLOW3\Persistence\QOM\Comparison the constraint; non-null
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
-	public function comparison(\F3\FLOW3\Persistence\QOM\DynamicOperand $operand1, $operator, \F3\FLOW3\Persistence\QOM\StaticOperand $operand2) {
+	public function comparison(\F3\FLOW3\Persistence\QOM\DynamicOperand $operand1, $operator, $operand2) {
 		return $this->objectFactory->create('F3\FLOW3\Persistence\QOM\Comparison', $operand1, $operator, $operand2);
 	}
 
@@ -172,58 +135,6 @@ class QueryObjectModelFactory {
 	 */
 	public function upperCase(\F3\FLOW3\Persistence\QOM\DynamicOperand $operand) {
 		return $this->objectFactory->create('F3\FLOW3\Persistence\QOM\UpperCase', $operand);
-	}
-
-	/**
-	 * Evaluates to the value of a bind variable.
-	 *
-	 * @param string $bindVariableName the bind variable name; non-null
-	 * @return \F3\FLOW3\Persistence\QOM\BindVariableValue the operand; non-null
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @api
-	 */
-	public function bindVariable($bindVariableName) {
-		return $this->objectFactory->create('F3\FLOW3\Persistence\QOM\BindVariableValue', $bindVariableName);
-	}
-
-	/**
-	 * Evaluates to a literal value.
-	 *
-	 * The query is invalid if no value is bound to $literalValue.
-	 *
-	 * @param \F3\PHPCR\Value $literalValue the value
-	 * @return \F3\PHPCR\Value the operand; non-null
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @api
-	 */
-	public function literal(\F3\PHPCR\Value $literalValue) {
-		return $this->objectFactory->create('F3\FLOW3\Persistence\QOM\Literal', $literalValue->getString());
-	}
-
-	/**
-	 * Orders by the value of the specified operand, in ascending order.
-	 *
-	 * The query is invalid if $operand does not evaluate to a scalar value.
-	 *
-	 * @param \F3\FLOW3\Persistence\QOM\DynamicOperand $operand the operand by which to order; non-null
-	 * @return \F3\FLOW3\Persistence\QOM\Ordering the ordering
-	 * @api
-	 */
-	public function ascending(\F3\FLOW3\Persistence\QOM\DynamicOperand $operand) {
-		return $this->objectFactory->create('F3\FLOW3\Persistence\QOM\Ordering', $operand, \F3\FLOW3\Persistence\QOM\QueryObjectModelConstants::JCR_ORDER_ASCENDING);
-	}
-
-	/**
-	 * Orders by the value of the specified operand, in descending order.
-	 *
-	 * The query is invalid if $operand does not evaluate to a scalar value.
-	 *
-	 * @param \F3\FLOW3\Persistence\QOM\DynamicOperand $operand the operand by which to order; non-null
-	 * @return \F3\FLOW3\Persistence\QOM\Ordering the ordering
-	 * @api
-	 */
-	public function descending(\F3\FLOW3\Persistence\QOM\DynamicOperand $operand) {
-		return $this->objectFactory->create('F3\FLOW3\Persistence\QOM\Ordering', $operand, \F3\FLOW3\Persistence\QOM\QueryObjectModelConstants::JCR_ORDER_DESCENDING);
 	}
 
 }

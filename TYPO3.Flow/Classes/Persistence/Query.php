@@ -59,11 +59,6 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	protected $qomFactory;
 
 	/**
-	 * An array of named variables and their values from the operators
-	 * @var array
-	 */
-	protected $operands = array();
-	/**
 	 * @var \F3\FLOW3\Persistence\QOM\Constraint
 	 */
 	protected $constraint;
@@ -292,16 +287,6 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	}
 
 	/**
-	 * Returns the operands bound to this query.
-	 *
-	 * @return array<\F3\FLOW3\Persistence\QOM\Operand>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function getOperands() {
-		return $this->operands;
-	}
-
-	/**
 	 * Performs a logical conjunction of the two given constraints.
 	 *
 	 * @param object $constraint1 First constraint
@@ -360,18 +345,16 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 			$comparison = $this->qomFactory->comparison(
 				$this->qomFactory->propertyValue($propertyName, '_entity'),
 				\F3\FLOW3\Persistence\QueryInterface::OPERATOR_EQUAL_TO,
-				$this->qomFactory->bindVariable($propertyName)
+				$operand
 			);
-			$this->operands[$propertyName] = $operand;
 		} else {
 			$comparison = $this->qomFactory->comparison(
 				$this->qomFactory->lowerCase(
 					$this->qomFactory->propertyValue($propertyName, '_entity')
 				),
 				\F3\FLOW3\Persistence\QueryInterface::OPERATOR_EQUAL_TO,
-				$this->qomFactory->bindVariable($propertyName)
+				strtolower($operand)
 			);
-			$this->operands[$propertyName] = strtolower($operand);
 		}
 
 		return $comparison;
@@ -387,11 +370,50 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 * @api
 	 */
 	public function like($propertyName, $operand) {
-		$this->operands[$propertyName] = $operand;
 		return $this->qomFactory->comparison(
 			$this->qomFactory->propertyValue($propertyName, '_entity'),
 			\F3\FLOW3\Persistence\QueryInterface::OPERATOR_LIKE,
-			$this->qomFactory->bindVariable($propertyName)
+			$operand
+		);
+	}
+
+	/**
+	 * Returns a "contains" criterion used for matching objects against a query.
+	 * It matches if the multivalued property contains the given operand.
+	 *
+	 * @param string $propertyName The name of the (multivalued) property to compare against
+	 * @param mixed $operand The value to compare with
+	 * @return \F3\FLOW3\Persistence\QOM\Comparison
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
+	 */
+	public function contains($propertyName, $operand){
+		return $this->qomFactory->comparison(
+			$this->qomFactory->propertyValue($propertyName, '_entity'),
+			\F3\FLOW3\Persistence\QueryInterface::OPERATOR_CONTAINS,
+			$operand
+		);
+	}
+
+	/**
+	 * Returns an "in" criterion used for matching objects against a query. It
+	 * matches if the property's value is contained in the multivalued operand.
+	 *
+	 * @param string $propertyName The name of the property to compare against
+	 * @param mixed $operand The value to compare with, multivalued
+	 * @return \F3\FLOW3\Persistence\QOM\Comparison
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
+	 */
+	public function in($propertyName, $operand) {
+		if (!is_array($operand) && (!$operand instanceof \ArrayAccess) && (!$operand instanceof \Traversable)) {
+			throw new \F3\FLOW3\Persistence\Exception\UnexpectedTypeException('The "in" operator must be given a mutlivalued operand (array, ArrayAccess, Traversable).', 1264678095);
+		}
+
+		return $this->qomFactory->comparison(
+			$this->qomFactory->propertyValue($propertyName, '_entity'),
+			\F3\FLOW3\Persistence\QueryInterface::OPERATOR_IN,
+			$operand
 		);
 	}
 
@@ -405,11 +427,10 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 * @api
 	 */
 	public function lessThan($propertyName, $operand) {
-		$this->operands[$propertyName] = $operand;
 		return $this->qomFactory->comparison(
 			$this->qomFactory->propertyValue($propertyName, '_entity'),
 			\F3\FLOW3\Persistence\QueryInterface::OPERATOR_LESS_THAN,
-			$this->qomFactory->bindVariable($propertyName)
+			$operand
 		);
 	}
 
@@ -423,11 +444,10 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 * @api
 	 */
 	public function lessThanOrEqual($propertyName, $operand) {
-		$this->operands[$propertyName] = $operand;
 		return $this->qomFactory->comparison(
 			$this->qomFactory->propertyValue($propertyName, '_entity'),
 			\F3\FLOW3\Persistence\QueryInterface::OPERATOR_LESS_THAN_OR_EQUAL_TO,
-			$this->qomFactory->bindVariable($propertyName)
+			$operand
 		);
 	}
 
@@ -441,11 +461,10 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 * @api
 	 */
 	public function greaterThan($propertyName, $operand) {
-		$this->operands[$propertyName] = $operand;
 		return $this->qomFactory->comparison(
 			$this->qomFactory->propertyValue($propertyName, '_entity'),
 			\F3\FLOW3\Persistence\QueryInterface::OPERATOR_GREATER_THAN,
-			$this->qomFactory->bindVariable($propertyName)
+			$operand
 		);
 	}
 
@@ -459,11 +478,10 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 * @api
 	 */
 	public function greaterThanOrEqual($propertyName, $operand) {
-		$this->operands[$propertyName] = $operand;
 		return $this->qomFactory->comparison(
 			$this->qomFactory->propertyValue($propertyName, '_entity'),
 			\F3\FLOW3\Persistence\QueryInterface::OPERATOR_GREATER_THAN_OR_EQUAL_TO,
-			$this->qomFactory->bindVariable($propertyName)
+			$operand
 		);
 	}
 

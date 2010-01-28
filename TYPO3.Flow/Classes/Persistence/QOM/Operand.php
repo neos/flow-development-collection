@@ -31,16 +31,6 @@ namespace F3\FLOW3\Persistence\QOM;
  */
 class Operand {
 
-	/**
-	 * Used to collect variables bound in the query.
-	 *
-	 * @param array &$boundVariables
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function collectBoundVariableNames(&$boundVariables) {
-	}
-
 }
 
 ?>

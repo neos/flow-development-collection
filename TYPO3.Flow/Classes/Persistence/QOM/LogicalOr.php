@@ -59,18 +59,6 @@ class LogicalOr extends \F3\FLOW3\Persistence\QOM\Constraint {
 	}
 
 	/**
-	 * Fills an array with the names of all bound variables in the constraints
-	 *
-	 * @param array &$boundVariables
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function collectBoundVariableNames(&$boundVariables) {
-		$this->constraint1->collectBoundVariablenames($boundVariables);
-		$this->constraint2->collectBoundVariablenames($boundVariables);
-	}
-
-	/**
 	 * Gets the first constraint.
 	 *
 	 * @return \F3\FLOW3\Persistence\QOM\Constraint the constraint; non-null
