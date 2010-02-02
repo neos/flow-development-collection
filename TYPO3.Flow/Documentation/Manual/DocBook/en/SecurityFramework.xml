@@ -324,7 +324,7 @@ $roles = array(
 
 $account-&gt;setAccountIdentifier($username);
 $account-&gt;setCredentialsSource($credentials);
-$account-&gt;setAuthenticationProviderName('TYPO3BEProvider');
+$account-&gt;setAuthenticationProviderName('DefaultProvider');
 $account-&gt;setRoles($roles);
 
 $this-&gt;accountRepository-&gt;add($account);</programlisting>
