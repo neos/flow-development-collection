@@ -75,7 +75,7 @@
       This mechanism, implemented in a so called authentication provider,
       authenticates an user account by checking an username and password
       against accounts stored in the content repository. <footnote>
-          <para>The details about the <literal>UsernamePasswordCR</literal>
+          <para>The details about the <literal>PersistedUsernamePasswordProvider</literal>
           provider are explained below, in the section about <link
           linkend="AuthenticationMechanismsShippedWithFLOW3" os="">FLOW3's
           built in providers</link>.</para>
@@ -91,10 +91,10 @@
     authentication:
       providers:
         DefaultProvider:
-          providerClass: UsernamePasswordCR</programlisting>
+          providerClass: PersistedUsernamePasswordProvider</programlisting>
         </example></para>
 
-      <para>This registers the <literal>UsernamePasswordCR</literal>
+      <para>This registers the <literal>PersistedUsernamePasswordProvider</literal>
       authentication provider under the name
       "<literal>DefaultProvider</literal>" as the only, global authentication
       mechanism. To successfully authenticate an account with this default
@@ -235,13 +235,13 @@
         authentication providers in the configured order. A provider
         implements a specific authentication mechanism and is therefore
         responsible for a specific token type. E.g. the already mentioned
-        <literal>UsernamePasswordCR</literal> provider is able to authenticate
+        <literal>PersistedUsernamePasswordProvider</literal> provider is able to authenticate
         the <literal>UsernamePassword</literal> token.</para>
 
         <para>After checking the credentials, it is the responsibility of an
         authentication provider to set the correct authentication status (see
-        above) and so called <literal>GrantedAuthorities</literal> in its
-        corresponding token. The <literal>GrantedAuthorityInterface</literal>
+        above) and so called <literal>Roles</literal> in its
+        corresponding token. The <literal>RoleInterface</literal>
         resides in the <literal>F3\FLOW3\Security\Authentication</literal>
         namespace and the default implementation are <literal>Role</literal>
         objects (see the ACL section).</para>
@@ -284,7 +284,7 @@
       another property called "<literal>credentialsSource</literal>", which
       points to the place or describes the credentials needed for this
       account. This could be a LDAP query string, or in case of the
-      <literal>UsernamePasswordCR</literal> provider, the username, password
+      <literal>PersistedUsernamePasswordProvider</literal> provider, the username, password
       hash and salt are stored directly in this member variable.</para>
 
       <para>It is the responsibility of the authentication provider to check
@@ -331,7 +331,7 @@ $this-&gt;accountRepository-&gt;add($account);</programlisting>
           </example></para>
 
         <para>The way the credentials are coded is completely up to the
-        authentication provider. The <literal>UsernamePasswordCR</literal>
+        authentication provider. The <literal>PersistedUsernamePasswordProvider</literal>
         provider expects a simple salted password hash. As account identifier
         the username is used, of course. You can also see, that there is a
         role object added to the account. This is used by the ACL system and
@@ -362,7 +362,7 @@ $this-&gt;accountRepository-&gt;add($account);</programlisting>
   authentication:
     providers:
       DefaultProvider:
-        providerClass: UsernamePasswordCR</programlisting></para>
+        providerClass: PersistedUsernamePasswordProvider</programlisting></para>
 
         <para>If you have a closer look at this configuration, you can see,
         that the word providers is plural. That means, you have the
@@ -385,7 +385,7 @@ $this-&gt;accountRepository-&gt;add($account);</programlisting>
         providerClass: F3\MyCoolPackage\Security\Authentication\MyLDAPProvider
         options: 'Some LDAP configuration options'
       DefaultProvider:
-        providerClass: UsernamePasswordCR</programlisting></para>
+        providerClass: PersistedUsernamePasswordProvider</programlisting></para>
           </example></para>
 
         <para>This will advice the authentication manager to first
@@ -437,7 +437,7 @@ $this-&gt;accountRepository-&gt;add($account);</programlisting>
         requestPatterns:
          controllerObjectName: F3\MyApplication\AdministrationArea\.*
       DefaultProvider:
-        providerClass: UsernamePasswordCR
+        providerClass: PersistedUsernamePasswordProvider
         requestPatterns:
          controllerObjectName: F3\MyApplication\UserArea\.*</programlisting></para>
           </example></para>
@@ -537,7 +537,7 @@ $this-&gt;accountRepository-&gt;add($account);</programlisting>
   authentication:
     providers:
       DefaultProvider:
-        providerClass: UsernamePasswordCR
+        providerClass: PersistedUsernamePasswordProvider
         entryPoint:
           WebRedirect:
             uri: login/</programlisting>
@@ -720,7 +720,7 @@ $credentials['password'] = $postArguments['F3\FLOW3\Security\Authentication\Toke
           to set the correct status (possible values are defined as constants
           in the token interface and explained above). If authentication
           succeeds you might also want to set an account in the given token,
-          to add some granted authorities to the current security context.
+          to add some roles to the current security context.
           However, here is the recommended way of what should be done in this
           method and if you don't have really good reasons, you shouldn't
           deviate from this procedure.</para>
@@ -759,7 +759,7 @@ $credentials['password'] = $postArguments['F3\FLOW3\Security\Authentication\Toke
 
             <listitem>
               <para>Set the account in the authentication token, if
-              authentication succeeded. This will add the granted authorities
+              authentication succeeded. This will add the roles
               of this token to the security context.</para>
             </listitem>
           </orderedlist>
@@ -1009,12 +1009,12 @@ $credentials['password'] = $postArguments['F3\FLOW3\Security\Authentication\Toke
 
     <bridgehead>Roles</bridgehead>
 
-    <para>In the section about authentication so called granted authorities
-    were introduced. A granted authority can be attached to an users security
+    <para>In the section about authentication so called roles
+    were introduced. A role can be attached to an users security
     context, to determine which rights should be granted to her. I.e. the
     access rights of a user are decoupled from the user object itself, making
     it a lot more flexible, if you want to change them. Another word for
-    granted authority is role. In FLOW3 a role or granted authority is mainly
+    role is role. In FLOW3 a role or role is mainly
     just a string, which must be unique in the whole FLOW3 instance. Following
     there is an example configuration, that will proclaim the roles
     <literal>Administrator</literal>, <literal>Customer</literal>, and
@@ -1139,28 +1139,28 @@ $credentials['password'] = $postArguments['F3\FLOW3\Security\Authentication\Toke
       </section>
 
       <section>
-        <title><literal>ifGrantedAuthority</literal> view helper</title>
+        <title><literal>ifHasRole</literal> view helper</title>
 
         <para>This view helper is pretty similar to the
         <literal>ifAccess</literal> view helper, however it does not check the
         access privilege for a given resource, but the availability of a
-        certain granted authority. E.g. you could check, if the current user
+        certain role. E.g. you could check, if the current user
         has the <literal>Administrator</literal> role assigned:<example>
-            <title>Example for the <literal>ifGrantedAuthority</literal> view
+            <title>Example for the <literal>ifHasRole</literal> view
             helper</title>
 
-            <para><programlisting language="xml">&lt;f:security.ifGrantedAuthority grantedAuthority="Administrator"&gt;
-  This is being shown in case you have the Administrator granted authority (aka role).
-&lt;/f:security.ifGrantedAuthority&gt;
+            <para><programlisting language="xml">&lt;f:security.ifHasRole role="Administrator"&gt;
+  This is being shown in case you have the Administrator role (aka role).
+&lt;/f:security.ifHasRole&gt;
 
-&lt;f:security.ifGrantedAuthority grantedAuthority="Administrator"&gt;
+&lt;f:security.ifHasRole role="Administrator"&gt;
   &lt;f:then&gt;
-    This is being shown in case you have the granted authority.
+    This is being shown in case you have the role.
   &lt;/f:then&gt;
   &lt;f:else&gt;
-    This is being displayed in case you do not have the granted authority.
+    This is being displayed in case you do not have the role.
   &lt;/f:else&gt;
-&lt;/f:security.ifGrantedAuthority&gt;</programlisting></para>
+&lt;/f:security.ifHasRole&gt;</programlisting></para>
           </example></para>
       </section>
     </section>

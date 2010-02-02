@@ -84,14 +84,14 @@ class LoggingAspect {
 	}
 
 	/**
-	 * Logs calls and results of the authenticate() method of the UsernamePasswordCR Authentication Provider
+	 * Logs calls and results of the authenticate() method of the PersistedUsernamePasswordProvider Authentication Provider
 	 *
 	 * @afterreturning method(F3\FLOW3\Security\Authentication\Provider\PersistedUsernamePasswordProvider->authenticate())
 	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
 	 * @return mixed The result of the target method if it has not been intercepted
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function logUsernamePasswordCRAuthenticate(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function logPersistedUsernamePasswordProviderAuthenticate(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$token = $joinPoint->getMethodArgument('authenticationToken');
 		$credentials = $token->getCredentials();
 
