@@ -240,7 +240,7 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend implements \F3
 	 */
 	public function flush() {
 		\F3\FLOW3\Utility\Files::emptyDirectoryRecursively($this->cacheDirectory);
-		$this->systemLogger->log('Cache %s: flushed all entries.', LOG_INFO);
+		$this->systemLogger->log(sprintf('Cache %s: flushed all entries.', $this->cacheIdentifier), LOG_INFO);
 	}
 
 	/**

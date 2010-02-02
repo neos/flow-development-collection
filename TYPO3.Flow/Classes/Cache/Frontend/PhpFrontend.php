@@ -36,7 +36,7 @@ class PhpFrontend extends \F3\FLOW3\Cache\Frontend\StringFrontend {
 	 * Constructs the cache
 	 *
 	 * @param string $identifier A identifier which describes this cache
-	 * @param \F3\FLOW3\Cache\Backend\PhpCapableInterface $backend Backend to be used for this cache
+	 * @param \F3\FLOW3\Cache\Backend\PhpCapableBackendInterface $backend Backend to be used for this cache
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct($identifier, \F3\FLOW3\Cache\Backend\PhpCapableBackendInterface $backend) {
