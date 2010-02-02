@@ -232,12 +232,12 @@ class UsernamePassword implements \F3\FLOW3\Security\Authentication\TokenInterfa
 	}
 
 	/**
-	 * Returns the currently valid granted authorities.
+	 * Returns the currently valid roles.
 	 *
-	 * @return array Array of F3\FLOW3\Security\Authentication\GrantedAuthority objects
+	 * @return array Array of F3\FLOW3\Security\Authentication\Role objects
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function getGrantedAuthorities() {
+	public function getRoles() {
 		if ($this->account !== NULL && $this->isAuthenticated()) return $this->account->getRoles();
 
 		return array();

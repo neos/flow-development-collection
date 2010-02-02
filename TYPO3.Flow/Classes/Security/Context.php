@@ -24,7 +24,7 @@ namespace F3\FLOW3\Security;
 
 /**
  * This is the default implementation of a security context, which holds current security information
- * like GrantedAuthorities oder details auf authenticated users.
+ * like Roles oder details auf authenticated users.
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
@@ -153,31 +153,31 @@ class Context {
 	}
 
 	/**
-	 * Returns the granted authorities of all active and authenticated tokens
+	 * Returns the roles of all active and authenticated tokens
 	 *
-	 * @return array Array of F3\FLOW3\Security\Authentication\GrantedAuthorityInterface objects
+	 * @return array Array of F3\FLOW3\Security\ACL\Role objects
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function getGrantedAuthorities() {
-		$grantedAuthorities = array();
+	public function getRoles() {
+		$roles = array();
 		foreach ($this->getAuthenticationTokens() as $token) {
-			if ($token->isAuthenticated()) $grantedAuthorities = array_merge($grantedAuthorities, $token->getGrantedAuthorities());
+			if ($token->isAuthenticated()) $roles = array_merge($roles, $token->getRoles());
 		}
 
-		return $grantedAuthorities;
+		return $roles;
 	}
 
 	/**
 	 * Returns TRUE, if at least one of the currently authenticated tokens holds
-	 * a granted authority with the given string representation
+	 * a role with the given string representation
 	 *
-	 * @param string $grantedAuthority The string representation of the granted authority to search for
-	 * @return boolean TRUE, if a granted authority with the given string representation was found
+	 * @param string $role The string representation of the role to search for
+	 * @return boolean TRUE, if a role with the given string representation was found
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function hasGrantedAuthority($grantedAuthority) {
+	public function hasRole($role) {
 		foreach ($this->getAuthenticationTokens() as $token) {
-			if ($token->isAuthenticated() && in_array($grantedAuthority, $token->getGrantedAuthorities())) return TRUE;
+			if ($token->isAuthenticated() && in_array($role, $token->getRoles())) return TRUE;
 		}
 
 		return FALSE;

@@ -23,14 +23,14 @@ namespace F3\FLOW3\Security\ACL;
  *                                                                        */
 
 /**
- * A role (granted authority) for the ACLService. These roles can be structured in a tree.
+ * A role (role) for the ACLService. These roles can be structured in a tree.
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  * @entity
  */
-class Role implements \F3\FLOW3\Security\Authentication\GrantedAuthorityInterface {
+class Role {
 
 	/**
 	 * The string identifier of this role

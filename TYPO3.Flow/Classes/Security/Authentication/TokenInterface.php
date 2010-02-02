@@ -132,11 +132,11 @@ interface TokenInterface {
 	public function getCredentials();
 
 	/**
-	 * Returns the currently valid granted authorities.
+	 * Returns the currently valid roles.
 	 *
-	 * @return array Array of \F3\FLOW3\Security\Authentication\GrantedAuthority objects
+	 * @return array Array of \F3\FLOW3\Security\Authentication\Role objects
 	 */
-	public function getGrantedAuthorities();
+	public function getRoles();
 
 	/**
 	 * Sets the authentication status. Usually called by the responsible \F3\FLOW3\Security\Authentication\AuthenticationManagerInterface

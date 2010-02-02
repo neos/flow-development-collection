@@ -57,8 +57,8 @@ class Acl implements \F3\FLOW3\Security\Authorization\AccessDecisionVoterInterfa
 	public function voteForJoinPoint(\F3\FLOW3\Security\Context $securityContext, \F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$accessGrants = 0;
 		$accessDenies = 0;
-		foreach ($securityContext->getGrantedAuthorities() as $grantedAuthority) {
-			$privileges = $this->policyService->getPrivilegesForJoinPoint($grantedAuthority, $joinPoint, 'ACCESS');
+		foreach ($securityContext->getRoles() as $role) {
+			$privileges = $this->policyService->getPrivilegesForJoinPoint($role, $joinPoint, 'ACCESS');
 			if (!isset($privileges[0])) continue;
 
 			if ($privileges[0]->isGrant()) $accessGrants++;
@@ -81,8 +81,8 @@ class Acl implements \F3\FLOW3\Security\Authorization\AccessDecisionVoterInterfa
 	public function voteForResource(\F3\FLOW3\Security\Context $securityContext, $resource) {
 		$accessGrants = 0;
 		$accessDenies = 0;
-		foreach ($securityContext->getGrantedAuthorities() as $grantedAuthority) {
-			$privileges = $this->policyService->getPrivilegesForResource($grantedAuthority, $resource);
+		foreach ($securityContext->getRoles() as $role) {
+			$privileges = $this->policyService->getPrivilegesForResource($role, $resource);
 			if (!isset($privileges[0])) continue;
 
 			if ($privileges[0]->isGrant()) $accessGrants++;
