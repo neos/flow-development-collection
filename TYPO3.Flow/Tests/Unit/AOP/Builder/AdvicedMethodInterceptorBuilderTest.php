@@ -60,7 +60,7 @@ class AdvicedMethodInterceptorBuilderTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function foo(PARAMETERSCODE1) {
 
-		if (isset($this->methodIsInAdviceMode[\'foo\'])) {
+		if (isset($this->FLOW3_AOP_Proxy_methodIsInAdviceMode[\'foo\'])) {
 
 			$result = parent::foo(PARAMETERSCODE2);
 
@@ -72,9 +72,9 @@ class AdvicedMethodInterceptorBuilderTest extends \F3\Testing\BaseTestCase {
 				\'arg4\' => $arg4,
 				\'arg5\' => $arg5,
 			);
-			$this->methodIsInAdviceMode[\'foo\'] = TRUE;
+			$this->FLOW3_AOP_Proxy_methodIsInAdviceMode[\'foo\'] = TRUE;
 			ADVICESCODE
-			unset ($this->methodIsInAdviceMode[\'foo\']);
+			unset ($this->FLOW3_AOP_Proxy_methodIsInAdviceMode[\'foo\']);
 		}
 		return $result;
 
@@ -123,7 +123,7 @@ class AdvicedMethodInterceptorBuilderTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function __wakeup(PARAMETERSCODE1) {
 
-		if (isset($this->methodIsInAdviceMode[\'__wakeup\'])) {
+		if (isset($this->FLOW3_AOP_Proxy_methodIsInAdviceMode[\'__wakeup\'])) {
 
 			$result = parent::__wakeup(PARAMETERSCODE2);
 
@@ -132,9 +132,9 @@ class AdvicedMethodInterceptorBuilderTest extends \F3\Testing\BaseTestCase {
 				\'arg1\' => $arg1,
 				\'arg2\' => $arg2,
 			);
-			$this->methodIsInAdviceMode[\'__wakeup\'] = TRUE;
+			$this->FLOW3_AOP_Proxy_methodIsInAdviceMode[\'__wakeup\'] = TRUE;
 			ADVICESCODE
-			unset ($this->methodIsInAdviceMode[\'__wakeup\']);
+			unset ($this->FLOW3_AOP_Proxy_methodIsInAdviceMode[\'__wakeup\']);
 		}
 		return $result;
 

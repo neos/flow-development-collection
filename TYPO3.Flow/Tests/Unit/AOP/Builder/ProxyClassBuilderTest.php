@@ -127,6 +127,7 @@ class ProxyClassBuilderTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function buildMethodsAndAdvicesArrayCodeConvertsTheMethodsAndAdvicesArrayIntoProperCode() {
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
@@ -145,25 +146,28 @@ class ProxyClassBuilderTest extends \F3\Testing\BaseTestCase {
 				'groupedAdvices' => array(
 					get_class($mockAdvice1) => array($mockAdvice1),
 					get_class($mockAdvice2) => array($mockAdvice2),
-				)
+				),
+				'runtimeEvaluationsClosureCode' => 'runtimeEvaluationsClosureCode'
 			)
 		);
 
 		$expectedCode = "
-		\$this->targetMethodsAndGroupedAdvices = array(
+		\$this->FLOW3_AOP_Proxy_targetMethodsAndGroupedAdvices = array(
 			'fooMethod' => array(
 				'$mockAdvice1ClassName' => array(
-					new \\$mockAdvice1ClassName('Aspect1', 'advice1', \$this->objectManager),
+					new \\$mockAdvice1ClassName('Aspect1', 'advice1', \$objectManager, runtimeEvaluationsClosureCode),
 				),
 				'$mockAdvice2ClassName' => array(
-					new \\$mockAdvice2ClassName('Aspect2', 'advice2', \$this->objectManager),
+					new \\$mockAdvice2ClassName('Aspect2', 'advice2', \$objectManager, runtimeEvaluationsClosureCode),
 				),
 			),
 		);" . chr(10);
 
 
 		$builder = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\AOP\Builder\ProxyClassBuilder'), array('dummy'), array(), '', FALSE);
+
 		$actualCode = $builder->_call('buildMethodsAndAdvicesArrayCode', $methodsAndAdvices);
+
 		$this->assertSame($expectedCode, $actualCode);
 	}
 
@@ -210,13 +214,16 @@ class ProxyClassBuilderTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function addAdvicedMethodsToInterceptedMethodsTraversesAspectsAndAdvisorsToCompileAdvicesAndInterceptedMethods() {
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService');
+		$mockReflectionService->expects($this->any())->method('isMethodFinal')->will($this->returnValue(FALSE));
 
 		$targetClassName = 'TargetClass';
 		$methods = array(array('Foo', 'foo'), array('Bar', 'bar'));
 
-		$mockPointcut1 = $this->getMock('F3\FLOW3\AOP\Pointcut\Pointcut', array('matches'), array(), '', FALSE);
+		$mockPointcut1 = $this->getMock('F3\FLOW3\AOP\Pointcut\Pointcut', array('matches', 'getRuntimeEvaluationsClosureCode'), array(), '', FALSE);
 		$mockPointcut1->expects($this->at(0))->method('matches')->with('TargetClass', 'foo')->will($this->returnValue(FALSE));
 		$mockPointcut1->expects($this->at(1))->method('matches')->with('TargetClass', 'bar')->will($this->returnValue(TRUE));
+		$mockPointcut1->expects($this->once())->method('getRuntimeEvaluationsClosureCode')->will($this->returnValue('evaluateSomething'));
 
 		$mockAdvice1 = $this->getMock('F3\FLOW3\AOP\Advice\AroundAdvice', array('dummy'), array(), '', FALSE);
 
@@ -229,6 +236,7 @@ class ProxyClassBuilderTest extends \F3\Testing\BaseTestCase {
 
 		$aspectContainers = array($mockAspectContainer1);
 		$builder = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\AOP\Builder\ProxyClassBuilder'), array('dummy'), array(), '', FALSE);
+		$builder->injectReflectionService($mockReflectionService);
 		$actualInterceptedMethods = array();
 		$builder->_callRef('addAdvicedMethodsToInterceptedMethods', $actualInterceptedMethods, $methods, $targetClassName, $aspectContainers);
 
@@ -237,7 +245,51 @@ class ProxyClassBuilderTest extends \F3\Testing\BaseTestCase {
 				'groupedAdvices' => array(
 					get_class($mockAdvice1) => array($mockAdvice1),
 				),
-				'declaringClassName' => 'Bar'
+				'declaringClassName' => 'Bar',
+				'runtimeEvaluationsClosureCode' => 'evaluateSomething',
+			)
+		);
+		$this->assertSame($expectedInterceptedMethods, $actualInterceptedMethods);
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function addAdvicedMethodsDoesNotAddFinalMethodsToInterceptedMethods() {
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService');
+		$mockReflectionService->expects($this->at(0))->method('isMethodFinal')->will($this->returnValue(TRUE));
+		$mockReflectionService->expects($this->at(1))->method('isMethodFinal')->will($this->returnValue(FALSE));
+
+		$targetClassName = 'TargetClass';
+		$methods = array(array('Foo', 'foo'), array('Bar', 'bar'));
+
+		$mockPointcut1 = $this->getMock('F3\FLOW3\AOP\Pointcut\Pointcut', array('matches', 'getRuntimeEvaluationsClosureCode'), array(), '', FALSE);
+		$mockPointcut1->expects($this->once())->method('matches')->with('TargetClass', 'bar')->will($this->returnValue(TRUE));
+		$mockPointcut1->expects($this->once())->method('getRuntimeEvaluationsClosureCode')->will($this->returnValue('evaluateSomething'));
+
+		$mockAdvice1 = $this->getMock('F3\FLOW3\AOP\Advice\AroundAdvice', array('dummy'), array(), '', FALSE);
+
+		$mockAdvisor1 = $this->getMock('F3\FLOW3\AOP\Advisor', array('getPointcut', 'getAdvice'), array(), '', FALSE);
+		$mockAdvisor1->expects($this->once())->method('getPointcut')->will($this->returnValue($mockPointcut1));
+		$mockAdvisor1->expects($this->once())->method('getAdvice')->will($this->returnValue($mockAdvice1));
+
+		$mockAspectContainer1 = $this->getMock('F3\FLOW3\AOP\AspectContainer', array('getAdvisors'), array(), '', FALSE);
+		$mockAspectContainer1->expects($this->once())->method('getAdvisors')->will($this->returnValue(array($mockAdvisor1)));
+
+		$aspectContainers = array($mockAspectContainer1);
+		$builder = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\AOP\Builder\ProxyClassBuilder'), array('dummy'), array(), '', FALSE);
+		$builder->injectReflectionService($mockReflectionService);
+		$actualInterceptedMethods = array();
+		$builder->_callRef('addAdvicedMethodsToInterceptedMethods', $actualInterceptedMethods, $methods, $targetClassName, $aspectContainers);
+
+		$expectedInterceptedMethods = array(
+			'bar' => array(
+				'groupedAdvices' => array(
+					get_class($mockAdvice1) => array($mockAdvice1),
+				),
+				'declaringClassName' => 'Bar',
+				'runtimeEvaluationsClosureCode' => 'evaluateSomething',
 			)
 		);
 		$this->assertSame($expectedInterceptedMethods, $actualInterceptedMethods);

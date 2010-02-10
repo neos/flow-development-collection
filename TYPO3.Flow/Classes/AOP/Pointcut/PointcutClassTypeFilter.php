@@ -82,6 +82,26 @@ class PointcutClassTypeFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterIn
 		}
 		return ($matches);
 	}
+
+	/**
+	 * Returns TRUE if this filter holds runtime evaluations for a previously matched pointcut
+	 *
+	 * @return boolean TRUE if this filter has runtime evaluations
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function hasRuntimeEvaluationsDefinition() {
+		return FALSE;
+	}
+
+	/**
+	 * Returns runtime evaluations for the pointcut.
+	 *
+	 * @return array Runtime evaluations
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getRuntimeEvaluationsDefinition() {
+		return array();
+	}
 }
 
 ?>

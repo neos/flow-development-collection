@@ -11,37 +11,37 @@ class ###PROXY_CLASS_NAME### extends \###TARGET_CLASS_NAME### implements ###INTR
 	 * An array of target method names and their advices grouped by advice type
 	 * @var array
 	 */
-	protected $targetMethodsAndGroupedAdvices = array();
+	protected $FLOW3_AOP_Proxy_targetMethodsAndGroupedAdvices = array();
 
 	/**
 	 * An array of method names and the advices grouped by advice type in the order of their invocation
 	 * @var array
 	 */
-	protected $groupedAdviceChains = array();
+	protected $FLOW3_AOP_Proxy_groupedAdviceChains = array();
 
 	/**
 	 * An array of method names and their state: If set to TRUE, an advice for that method is currently being executed
 	 * @var array
 	 */
-	protected $methodIsInAdviceMode = array();
+	protected $FLOW3_AOP_Proxy_methodIsInAdviceMode = array();
 
 	/**
 	 * Holds the original constructor arguments.
 	 * @var array
 	 */
-	protected $originalConstructorArguments = array();
+	protected $FLOW3_AOP_Proxy_originalConstructorArguments = array();
 
 	/**
 	 * @var \F3\FLOW3\Object\ObjectFactoryInterface
 	 * @inject
 	 */
-	protected $objectFactory;
+	protected $FLOW3_AOP_Proxy_objectFactory;
 
 	/**
 	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 * @inject
 	 */
-	protected $objectManager;
+	protected $FLOW3_AOP_Proxy_objectManager;
 ###METHODS_INTERCEPTOR_CODE###
 	/**
 	 * Declares methods and advices
@@ -50,6 +50,8 @@ class ###PROXY_CLASS_NAME### extends \###TARGET_CLASS_NAME### implements ###INTR
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function FLOW3_AOP_Proxy_declareMethodsAndAdvices() {
+		$currentObject = $this;
+		$objectManager = $this->FLOW3_AOP_Proxy_objectManager;
 ###METHODS_AND_ADVICES_ARRAY_CODE###
 	}
 
@@ -61,7 +63,7 @@ class ###PROXY_CLASS_NAME### extends \###TARGET_CLASS_NAME### implements ###INTR
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
-		if (isset($this->methodIsInAdviceMode[$joinPoint->getMethodName()])) {
+		if (isset($this->FLOW3_AOP_Proxy_methodIsInAdviceMode[$joinPoint->getMethodName()])) {
 			if ($joinPoint->getMethodName() === '__construct') {
 				return call_user_func_array(array($this, 'FLOW3_AOP_Proxy_construct'), $joinPoint->getMethodArguments());
 			} else {
@@ -126,15 +128,15 @@ class ###PROXY_CLASS_NAME### extends \###TARGET_CLASS_NAME### implements ###INTR
 	 */
 	protected function FLOW3_AOP_Proxy_getAdviceChains($methodName) {
 		$adviceChains = NULL;
-		if (is_array($this->groupedAdviceChains)) {
-			if (isset($this->groupedAdviceChains[$methodName])) {
-				$adviceChains = $this->groupedAdviceChains[$methodName];
+		if (is_array($this->FLOW3_AOP_Proxy_groupedAdviceChains)) {
+			if (isset($this->FLOW3_AOP_Proxy_groupedAdviceChains[$methodName])) {
+				$adviceChains = $this->FLOW3_AOP_Proxy_groupedAdviceChains[$methodName];
 			} else {
-				if (isset($this->targetMethodsAndGroupedAdvices[$methodName])) {
-					$groupedAdvices = $this->targetMethodsAndGroupedAdvices[$methodName];
+				if (isset($this->FLOW3_AOP_Proxy_targetMethodsAndGroupedAdvices[$methodName])) {
+					$groupedAdvices = $this->FLOW3_AOP_Proxy_targetMethodsAndGroupedAdvices[$methodName];
 					if (isset($groupedAdvices['F3\FLOW3\AOP\Advice\AroundAdvice'])) {
-						$this->groupedAdviceChains[$methodName]['F3\FLOW3\AOP\Advice\AroundAdvice'] = new \F3\FLOW3\AOP\Advice\AdviceChain($groupedAdvices['F3\FLOW3\AOP\Advice\AroundAdvice'], $this);
-						$adviceChains = $this->groupedAdviceChains[$methodName];
+						$this->FLOW3_AOP_Proxy_groupedAdviceChains[$methodName]['F3\FLOW3\AOP\Advice\AroundAdvice'] = new \F3\FLOW3\AOP\Advice\AdviceChain($groupedAdvices['F3\FLOW3\AOP\Advice\AroundAdvice'], $this);
+						$adviceChains = $this->FLOW3_AOP_Proxy_groupedAdviceChains[$methodName];
 					}
 				}
 			}

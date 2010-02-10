@@ -156,13 +156,13 @@ class ProxyClassBuilder {
 		$advicedMethodsInformation = $this->getAdvicedMethodsInformation($interceptedMethods);
 
 		$proxyClassTokens = array(
-			'CLASS_ANNOTATIONS' => $this->buildClassAnnotationsCode($targetClassName),
-			'PROXY_NAMESPACE' => $proxyNamespace,
-			'PROXY_CLASS_NAME' => $proxyClassName,
-			'TARGET_CLASS_NAME' => $targetClassName,
-			'INTRODUCED_INTERFACES' => $this->buildIntroducedInterfacesCode($introducedInterfaces),
-			'METHODS_AND_ADVICES_ARRAY_CODE' => $this->buildMethodsAndAdvicesArrayCode($interceptedMethods),
-			'METHODS_INTERCEPTOR_CODE' => $this->buildMethodsInterceptorCode($interceptedMethods, $targetClassName)
+				'CLASS_ANNOTATIONS' => $this->buildClassAnnotationsCode($targetClassName),
+				'PROXY_NAMESPACE' => $proxyNamespace,
+				'PROXY_CLASS_NAME' => $proxyClassName,
+				'TARGET_CLASS_NAME' => $targetClassName,
+				'INTRODUCED_INTERFACES' => $this->buildIntroducedInterfacesCode($introducedInterfaces),
+				'METHODS_AND_ADVICES_ARRAY_CODE' => $this->buildMethodsAndAdvicesArrayCode($interceptedMethods),
+				'METHODS_INTERCEPTOR_CODE' => $this->buildMethodsInterceptorCode($interceptedMethods, $targetClassName)
 		);
 
 		$proxyCode = $this->proxyClassTemplate;
@@ -213,10 +213,10 @@ class ProxyClassBuilder {
 	 *
 	 * Example:
 	 *
-	 *	$this->targetMethodsAndGroupedAdvices = array(
+	 *	$this->FLOW3_AOP_Proxy_targetMethodsAndGroupedAdvices = array(
 	 *		'getSomeProperty' => array(
 	 *			'F3\FLOW3\AOP\Advice\AroundAdvice' => array(
-	 *				$this->objectFactory->create('F3\FLOW3\AOP\Advice\AroundAdvice', 'F3\Foo\SomeAspect', 'aroundAdvice'),
+	 *				new \F3\FLOW3\AOP\Advice\AroundAdvice('F3\Foo\SomeAspect', 'aroundAdvice', $objectManager, function() { ... }),
 	 *			),
 	 *		),
 	 *	);
@@ -225,18 +225,19 @@ class ProxyClassBuilder {
 	 * @param array $methodsAndGroupedAdvices An array of method names and grouped advice objects
 	 * @return string PHP code for the content of an array of target method names and advice objects
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @see buildProxyClass()
 	 */
 	protected function buildMethodsAndAdvicesArrayCode(array $methodsAndGroupedAdvices) {
 		if (count($methodsAndGroupedAdvices) < 1) return '';
 
-		$methodsAndAdvicesArrayCode = "\n\t\t\$this->targetMethodsAndGroupedAdvices = array(\n";
+		$methodsAndAdvicesArrayCode = "\n\t\t\$this->FLOW3_AOP_Proxy_targetMethodsAndGroupedAdvices = array(\n";
 		foreach ($methodsAndGroupedAdvices as $methodName => $advicesAndDeclaringClass) {
 			$methodsAndAdvicesArrayCode .= "\t\t\t'" . $methodName . "' => array(\n";
 			foreach ($advicesAndDeclaringClass['groupedAdvices'] as $adviceType => $advices) {
 				$methodsAndAdvicesArrayCode .= "\t\t\t\t'" . $adviceType . "' => array(\n";
 				foreach ($advices as $advice) {
-					$methodsAndAdvicesArrayCode .= "\t\t\t\t\tnew \\" . get_class($advice) . "('" . $advice->getAspectObjectName() . "', '" . $advice->getAdviceMethodName() . "', \$this->objectManager),\n";
+					$methodsAndAdvicesArrayCode .= "\t\t\t\t\tnew \\" . get_class($advice) . "('" . $advice->getAspectObjectName() . "', '" . $advice->getAdviceMethodName() . "', \$objectManager, " . $methodsAndGroupedAdvices[$methodName]['runtimeEvaluationsClosureCode'] . "),\n";
 				}
 				$methodsAndAdvicesArrayCode .= "\t\t\t\t),\n";
 			}
@@ -290,10 +291,14 @@ class ProxyClassBuilder {
 				$pointcut = $advisor->getPointcut();
 				foreach ($methods as $method) {
 					list($methodDeclaringClassName, $methodName) = $method;
+
+					if ($this->reflectionService->isMethodFinal($targetClassName, $methodName)) continue;
+
 					if ($pointcut->matches($targetClassName, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier)) {
 						$advice = $advisor->getAdvice();
 						$interceptedMethods[$methodName]['groupedAdvices'][get_class($advice)][] = $advice;
 						$interceptedMethods[$methodName]['declaringClassName'] = $methodDeclaringClassName;
+						$interceptedMethods[$methodName]['runtimeEvaluationsClosureCode'] = $pointcut->getRuntimeEvaluationsClosureCode();
 					}
 					$pointcutQueryIdentifier ++;
 				}
@@ -411,8 +416,8 @@ class ProxyClassBuilder {
 			foreach ($interceptionInformation['groupedAdvices'] as $adviceType => $advices) {
 				foreach ($advices as $advice) {
 					$advicedMethodsInformation[$methodName][$adviceType][] = array (
-						'aspectObjectName' => $advice->getAspectObjectName(),
-						'adviceMethodName' => $advice->getAdviceMethodName()
+							'aspectObjectName' => $advice->getAspectObjectName(),
+							'adviceMethodName' => $advice->getAdviceMethodName()
 					);
 				}
 			}

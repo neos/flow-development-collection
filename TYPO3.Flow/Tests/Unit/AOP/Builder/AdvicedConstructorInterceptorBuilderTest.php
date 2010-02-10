@@ -58,7 +58,7 @@ class AdvicedConstructorInterceptorBuilderTest extends \F3\Testing\BaseTestCase 
 	 * ' . '
 	 */
 	public function __construct(PARAMETERSCODE) {
-		$this->originalConstructorArguments = array(ARGUMENTSARRAYCODE);
+		$this->FLOW3_AOP_Proxy_originalConstructorArguments = array(ARGUMENTSARRAYCODE);
 	}
 
 	/**
@@ -69,13 +69,13 @@ class AdvicedConstructorInterceptorBuilderTest extends \F3\Testing\BaseTestCase 
 		$this->FLOW3_AOP_Proxy_declareMethodsAndAdvices();
 		$result = NULL;
 		' . '
-		if (isset($this->methodIsInAdviceMode[\'__construct\'])) {
+		if (isset($this->FLOW3_AOP_Proxy_methodIsInAdviceMode[\'__construct\'])) {
 			parent::__construct(SAVEDCONSTRUCTORPARAMETERSCODE);
 		} else {
-			$methodArguments = $this->originalConstructorArguments;
-			$this->methodIsInAdviceMode[\'__construct\'] = TRUE;
+			$methodArguments = $this->FLOW3_AOP_Proxy_originalConstructorArguments;
+			$this->FLOW3_AOP_Proxy_methodIsInAdviceMode[\'__construct\'] = TRUE;
 			ADVICESCODE
-			unset ($this->methodIsInAdviceMode[\'__construct\']);
+			unset ($this->FLOW3_AOP_Proxy_methodIsInAdviceMode[\'__construct\']);
 		}
 
 		return $result;

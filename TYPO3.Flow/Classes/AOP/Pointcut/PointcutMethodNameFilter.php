@@ -49,6 +49,11 @@ class PointcutMethodNameFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterI
 	protected $methodVisibility = NULL;
 
 	/**
+	 * @var array Array with constraints for method arguments
+	 */
+	protected $methodArgumentConstraints = array();
+
+	/**
 	 * Constructor - initializes the filter with the name filter pattern
 	 *
 	 * @param string $methodNameFilterExpression A regular expression which filters method names
@@ -56,10 +61,11 @@ class PointcutMethodNameFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterI
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct($methodNameFilterExpression, $methodVisibility = NULL) {
+	public function __construct($methodNameFilterExpression, $methodVisibility = NULL, $methodArgumentConstraints = array()) {
 		$this->methodNameFilterExpression = $methodNameFilterExpression;
 		if (preg_match(self::PATTERN_MATCHVISIBILITYMODIFIER, $methodVisibility) !== 1) throw new \F3\FLOW3\AOP\Exception\InvalidPointcutExpressionException('Invalid method visibility modifier.', 1172494794);
 		$this->methodVisibility = $methodVisibility;
+        $this->methodArgumentConstraints = $methodArgumentConstraints;
 	}
 
 	/**
@@ -83,6 +89,7 @@ class PointcutMethodNameFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterI
 	 * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
 	 * @return boolean TRUE if the class matches, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier) {
 		$matchResult = preg_match('/^' . $this->methodNameFilterExpression . '$/', $methodName);
@@ -102,7 +109,37 @@ class PointcutMethodNameFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterI
 		}
 		$isNotFinal = ($methodDeclaringClassName === NULL) || (!$this->reflectionService->isMethodFinal($methodDeclaringClassName, $methodName));
 
-		return $methodNameMatches && $visibilityMatches && $isNotFinal;
+		$argumentsConstraintsMatch = TRUE;
+		$methodArguments = ($methodDeclaringClassName === NULL ? array() : $this->reflectionService->getMethodParameters($methodDeclaringClassName, $methodName));
+		foreach ($this->methodArgumentConstraints as $argumentName => $constraintDefinition) {
+			$objectAccess = explode('.', $argumentName, 2);
+			$argumentName = $objectAccess[0];
+			$argumentsConstraintsMatch = $argumentsConstraintsMatch && array_key_exists($argumentName, $methodArguments);
+		}
+
+		return $methodNameMatches && $visibilityMatches && $isNotFinal && $argumentsConstraintsMatch;
+	}
+
+	/**
+	 * Returns TRUE if this filter holds runtime evaluations for a previously matched pointcut
+	 *
+	 * @return boolean TRUE if this filter has runtime evaluations
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function hasRuntimeEvaluationsDefinition() {
+		return (count($this->methodArgumentConstraints) > 0);
+	}
+
+	/**
+	 * Returns runtime evaluations for a previously matched pointcut
+	 *
+	 * @return array Runtime evaluations
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getRuntimeEvaluationsDefinition() {
+		return array(
+			'methodArgumentConstraints' => $this->methodArgumentConstraints
+		);
 	}
 }
 

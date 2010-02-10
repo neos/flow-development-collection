@@ -51,13 +51,13 @@ class AdvicedConstructorInterceptorBuilder extends \F3\FLOW3\AOP\Builder\Abstrac
 		}
 
 		$interceptionCode = '
-		if (isset($this->methodIsInAdviceMode[\'__construct\'])) {
+		if (isset($this->FLOW3_AOP_Proxy_methodIsInAdviceMode[\'__construct\'])) {
 			' . $callParentCode . '
 		} else {
-			$methodArguments = $this->originalConstructorArguments;
-			$this->methodIsInAdviceMode[\'__construct\'] = TRUE;
+			$methodArguments = $this->FLOW3_AOP_Proxy_originalConstructorArguments;
+			$this->FLOW3_AOP_Proxy_methodIsInAdviceMode[\'__construct\'] = TRUE;
 			' . $this->buildAdvicesCode($interceptedMethods['__construct']['groupedAdvices'], '__construct', $targetClassName) . '
-			unset ($this->methodIsInAdviceMode[\'__construct\']);
+			unset ($this->FLOW3_AOP_Proxy_methodIsInAdviceMode[\'__construct\']);
 		}
 ';
 		$methodDocumentation = $this->buildMethodDocumentation($declaringClassName, '__construct');
@@ -69,7 +69,7 @@ class AdvicedConstructorInterceptorBuilder extends \F3\FLOW3\AOP\Builder\Abstrac
 	 * ' . $methodDocumentation . '
 	 */
 	public function __construct(' . $methodParametersCode .') {
-		$this->originalConstructorArguments = array(' . $this->buildMethodArgumentsArrayCode($declaringClassName, '__construct') . ');
+		$this->FLOW3_AOP_Proxy_originalConstructorArguments = array(' . $this->buildMethodArgumentsArrayCode($declaringClassName, '__construct') . ');
 	}
 
 	/**

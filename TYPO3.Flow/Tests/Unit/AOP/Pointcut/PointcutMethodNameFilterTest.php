@@ -106,5 +106,63 @@ class PointcutMethodNameFilterTest extends \F3\Testing\BaseTestCase {
 		$this->assertTrue($methodNameFilter->matches(__CLASS__, 'someProtectedMethod', $className, 1));
 		$this->assertFalse($methodNameFilter->matches(__CLASS__, 'somePrivateMethod', $className, 1));
 	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function matchesChecksTheAvailablityOfAnArgumentNameIfArgumentConstraintsHaveBeenConfigured() {
+		$className = uniqid('TestClass');
+		eval("
+			class $className {
+				public function somePublicMethod(\$arg1) {}
+				public function someOtherPublicMethod(\$arg1, \$arg2 = 'default') {}
+				public function someThirdMethod(\$arg1, \$arg2, \$arg3 = 'default') {}
+			}"
+		);
+
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'saveToCache'), array(), '', FALSE, TRUE);
+		$mockReflectionService->initialize(array($className));
+
+		$argumentConstraints = array(
+			'arg1' => array(
+				'operator' => '==',
+				'value' => 'someValue'
+			),
+			'arg2.some.sub.object' => array(
+				'operator' => '==',
+				'value' => 'someValue'
+			)
+		);
+
+		$methodNameFilter = new \F3\FLOW3\AOP\Pointcut\PointcutMethodNameFilter('some.*', null, $argumentConstraints);
+		$methodNameFilter->injectReflectionService($mockReflectionService);
+
+		$this->assertFalse($methodNameFilter->matches(__CLASS__, 'somePublicMethod', $className, 1));
+		$this->assertTrue($methodNameFilter->matches(__CLASS__, 'someOtherPublicMethod', $className, 1));
+		$this->assertTrue($methodNameFilter->matches(__CLASS__, 'someThirdMethod', $className, 1));
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getRuntimeEvaluationsReturnsTheMethodArgumentConstraintsDefinitions() {
+		$argumentConstraints = array(
+			'arg2' => array(
+				'operator' => '==',
+				'value' => 'someValue'
+			)
+		);
+
+		$expectedRuntimeEvaluations = array(
+			'methodArgumentConstraints' => $argumentConstraints
+		);
+
+		$methodNameFilter = new \F3\FLOW3\AOP\Pointcut\PointcutMethodNameFilter('some.*', null, $argumentConstraints);
+
+		$this->assertEquals($expectedRuntimeEvaluations, $methodNameFilter->getRuntimeEvaluationsDefinition(), 'The argument constraint definitions have not been returned as expected.');
+	}
 }
+
 ?>

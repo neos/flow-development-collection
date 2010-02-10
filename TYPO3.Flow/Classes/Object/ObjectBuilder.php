@@ -156,8 +156,8 @@ class ObjectBuilder {
 			}
 
 			if ($object instanceof \F3\FLOW3\AOP\ProxyInterface) {
-				$object->FLOW3_AOP_Proxy_setProperty('objectManager', $this->objectManager);
-				$object->FLOW3_AOP_Proxy_setProperty('objectFactory', $this->objectFactory);
+				$object->FLOW3_AOP_Proxy_setProperty('FLOW3_AOP_Proxy_objectManager', $this->objectManager);
+				$object->FLOW3_AOP_Proxy_setProperty('FLOW3_AOP_Proxy_objectFactory', $this->objectFactory);
 				$object->FLOW3_AOP_Proxy_construct();
 			}
 			$this->injectProperties($setterProperties, $object);

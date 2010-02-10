@@ -58,7 +58,7 @@ class EmptyConstructorInterceptorBuilderTest extends \F3\Testing\BaseTestCase {
 	 * ' . '
 	 */
 	public function __construct(PARAMETERSCODE) {
-		$this->originalConstructorArguments = array(PARAMETERSARRAYCODE);
+		$this->FLOW3_AOP_Proxy_originalConstructorArguments = array(PARAMETERSARRAYCODE);
 	}
 
 	/**

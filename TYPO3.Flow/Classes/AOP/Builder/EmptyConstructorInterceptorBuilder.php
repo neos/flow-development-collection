@@ -59,7 +59,7 @@ class EmptyConstructorInterceptorBuilder extends \F3\FLOW3\AOP\Builder\AbstractM
 	 * ' . $methodDocumentation . '
 	 */
 	public function __construct(' . $parametersCode . ') {
-		$this->originalConstructorArguments = array(' . $this->buildMethodArgumentsArrayCode($declaringClassName, '__construct') . ');
+		$this->FLOW3_AOP_Proxy_originalConstructorArguments = array(' . $this->buildMethodArgumentsArrayCode($declaringClassName, '__construct') . ');
 	}
 
 	/**

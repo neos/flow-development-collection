@@ -194,7 +194,7 @@ class AbstractMethodInterceptorBuilderTest extends \F3\Testing\BaseTestCase {
 		$builder = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\AOP\Builder\EmptyConstructorInterceptorBuilder'), array('dummy'), array(), '', FALSE);
 		$builder->injectReflectionService($mockReflectionService);
 
-		$expectedCode = '$this->originalConstructorArguments[\'arg1\'], $this->originalConstructorArguments[\'arg2\'], $this->originalConstructorArguments[\'arg3\'], $this->originalConstructorArguments[\'arg4\'], $this->originalConstructorArguments[\'arg5\']';
+		$expectedCode = '$this->FLOW3_AOP_Proxy_originalConstructorArguments[\'arg1\'], $this->FLOW3_AOP_Proxy_originalConstructorArguments[\'arg2\'], $this->FLOW3_AOP_Proxy_originalConstructorArguments[\'arg3\'], $this->FLOW3_AOP_Proxy_originalConstructorArguments[\'arg4\'], $this->FLOW3_AOP_Proxy_originalConstructorArguments[\'arg5\']';
 		$actualCode = $builder->_call('buildSavedConstructorParametersCode', $className);
 
 		$this->assertSame($expectedCode, $actualCode);
@@ -218,7 +218,7 @@ class AbstractMethodInterceptorBuilderTest extends \F3\Testing\BaseTestCase {
 
 		} catch (\Exception $exception) {
 
-			$advices = $this->targetMethodsAndGroupedAdvices[\'foo\'][\'F3\FLOW3\AOP\Advice\AfterThrowingAdvice\'];
+			$advices = $this->FLOW3_AOP_Proxy_targetMethodsAndGroupedAdvices[\'foo\'][\'F3\FLOW3\AOP\Advice\AfterThrowingAdvice\'];
 			$joinPoint = new \F3\FLOW3\AOP\JoinPoint($this, \'TargetClass\', \'foo\', $methodArguments, NULL, NULL, $exception);
 			foreach ($advices as $advice) {
 				$advice->invoke($joinPoint);
@@ -246,7 +246,7 @@ class AbstractMethodInterceptorBuilderTest extends \F3\Testing\BaseTestCase {
 		$afterAdviceInvoked = FALSE;
 		try {
 
-			$advices = $this->targetMethodsAndGroupedAdvices[\'foo\'][\'F3\FLOW3\AOP\Advice\BeforeAdvice\'];
+			$advices = $this->FLOW3_AOP_Proxy_targetMethodsAndGroupedAdvices[\'foo\'][\'F3\FLOW3\AOP\Advice\BeforeAdvice\'];
 			$joinPoint = new \F3\FLOW3\AOP\JoinPoint($this, \'TargetClass\', \'foo\', $methodArguments);
 			foreach ($advices as $advice) {
 				$advice->invoke($joinPoint);
@@ -257,7 +257,7 @@ class AbstractMethodInterceptorBuilderTest extends \F3\Testing\BaseTestCase {
 			$adviceChain->rewind();
 			$result = $adviceChain->proceed(new \F3\FLOW3\AOP\JoinPoint($this, \'TargetClass\', \'foo\', $methodArguments, $adviceChain));
 
-			$advices = $this->targetMethodsAndGroupedAdvices[\'foo\'][\'F3\FLOW3\AOP\Advice\AfterAdvice\'];
+			$advices = $this->FLOW3_AOP_Proxy_targetMethodsAndGroupedAdvices[\'foo\'][\'F3\FLOW3\AOP\Advice\AfterAdvice\'];
 			$joinPoint = new \F3\FLOW3\AOP\JoinPoint($this, \'TargetClass\', \'foo\', $methodArguments, NULL, $result);
 			$afterAdviceInvoked = TRUE;
 			foreach ($advices as $advice) {
@@ -267,7 +267,7 @@ class AbstractMethodInterceptorBuilderTest extends \F3\Testing\BaseTestCase {
 		} catch (\Exception $exception) {
 
 			if (!$afterAdviceInvoked) {
-				$advices = $this->targetMethodsAndGroupedAdvices[\'foo\'][\'F3\FLOW3\AOP\Advice\AfterAdvice\'];
+				$advices = $this->FLOW3_AOP_Proxy_targetMethodsAndGroupedAdvices[\'foo\'][\'F3\FLOW3\AOP\Advice\AfterAdvice\'];
 				$joinPoint = new \F3\FLOW3\AOP\JoinPoint($this, \'TargetClass\', \'foo\', $methodArguments, NULL, NULL, $exception);
 				foreach ($advices as $advice) {
 					$advice->invoke($joinPoint);

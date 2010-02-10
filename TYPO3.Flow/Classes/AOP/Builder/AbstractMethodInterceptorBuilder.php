@@ -87,7 +87,7 @@ abstract class AbstractMethodInterceptorBuilder {
 						$methodParameterTypeName = ($methodParameterInfo['class'] === NULL) ? '' : '\\' . $methodParameterInfo['class'];
 					}
 					if ($methodParameterInfo['optional'] === TRUE) {
-						$rawDefaultValue = $methodParameterInfo['defaultValue'];
+						$rawDefaultValue = (isset($methodParameterInfo['defaultValue']) ? $methodParameterInfo['defaultValue'] : NULL);
 						if ($rawDefaultValue === NULL) {
 							$defaultValue = ' = NULL';
 						} elseif (is_bool($rawDefaultValue)) {
@@ -176,7 +176,7 @@ abstract class AbstractMethodInterceptorBuilder {
 		if ($methodParametersCount > 0) {
 			foreach ($methodParameters as $methodParameterName => $methodParameterInfo) {
 				$methodParametersCount--;
-				$parametersCode .= '$this->originalConstructorArguments[\'' . $methodParameterName . '\']' . ($methodParametersCount > 0 ? ', ' : '');
+				$parametersCode .= '$this->FLOW3_AOP_Proxy_originalConstructorArguments[\'' . $methodParameterName . '\']' . ($methodParametersCount > 0 ? ', ' : '');
 			}
 		}
 		return $parametersCode;
@@ -200,7 +200,7 @@ abstract class AbstractMethodInterceptorBuilder {
 
 		if (isset ($groupedAdvices['F3\FLOW3\AOP\Advice\BeforeAdvice'])) {
 			$advicesCode .= '
-			$advices = $this->targetMethodsAndGroupedAdvices[\'' . $methodName . '\'][\'F3\FLOW3\AOP\Advice\BeforeAdvice\'];
+			$advices = $this->FLOW3_AOP_Proxy_targetMethodsAndGroupedAdvices[\'' . $methodName . '\'][\'F3\FLOW3\AOP\Advice\BeforeAdvice\'];
 			$joinPoint = new \F3\FLOW3\AOP\JoinPoint($this, \'' . $targetClassName . '\', \'' . $methodName . '\', $methodArguments);
 			foreach ($advices as $advice) {
 				$advice->invoke($joinPoint);
@@ -224,7 +224,7 @@ abstract class AbstractMethodInterceptorBuilder {
 
 		if (isset ($groupedAdvices['F3\FLOW3\AOP\Advice\AfterReturningAdvice'])) {
 			$advicesCode .= '
-			$advices = $this->targetMethodsAndGroupedAdvices[\'' . $methodName . '\'][\'F3\FLOW3\AOP\Advice\AfterReturningAdvice\'];
+			$advices = $this->FLOW3_AOP_Proxy_targetMethodsAndGroupedAdvices[\'' . $methodName . '\'][\'F3\FLOW3\AOP\Advice\AfterReturningAdvice\'];
 			$joinPoint = new \F3\FLOW3\AOP\JoinPoint($this, \'' . $targetClassName . '\', \'' . $methodName . '\', $methodArguments, NULL, $result);
 			foreach ($advices as $advice) {
 				$advice->invoke($joinPoint);
@@ -234,7 +234,7 @@ abstract class AbstractMethodInterceptorBuilder {
 
 		if (isset ($groupedAdvices['F3\FLOW3\AOP\Advice\AfterAdvice'])) {
 			$advicesCode .= '
-			$advices = $this->targetMethodsAndGroupedAdvices[\'' . $methodName . '\'][\'F3\FLOW3\AOP\Advice\AfterAdvice\'];
+			$advices = $this->FLOW3_AOP_Proxy_targetMethodsAndGroupedAdvices[\'' . $methodName . '\'][\'F3\FLOW3\AOP\Advice\AfterAdvice\'];
 			$joinPoint = new \F3\FLOW3\AOP\JoinPoint($this, \'' . $targetClassName . '\', \'' . $methodName . '\', $methodArguments, NULL, $result);
 			$afterAdviceInvoked = TRUE;
 			foreach ($advices as $advice) {
@@ -251,7 +251,7 @@ abstract class AbstractMethodInterceptorBuilder {
 
 		if (isset ($groupedAdvices['F3\FLOW3\AOP\Advice\AfterThrowingAdvice'])) {
 			$advicesCode .= '
-			$advices = $this->targetMethodsAndGroupedAdvices[\'' . $methodName . '\'][\'F3\FLOW3\AOP\Advice\AfterThrowingAdvice\'];
+			$advices = $this->FLOW3_AOP_Proxy_targetMethodsAndGroupedAdvices[\'' . $methodName . '\'][\'F3\FLOW3\AOP\Advice\AfterThrowingAdvice\'];
 			$joinPoint = new \F3\FLOW3\AOP\JoinPoint($this, \'' . $targetClassName . '\', \'' . $methodName . '\', $methodArguments, NULL, NULL, $exception);
 			foreach ($advices as $advice) {
 				$advice->invoke($joinPoint);
@@ -262,7 +262,7 @@ abstract class AbstractMethodInterceptorBuilder {
 		if (isset ($groupedAdvices['F3\FLOW3\AOP\Advice\AfterAdvice'])) {
 			$advicesCode .= '
 			if (!$afterAdviceInvoked) {
-				$advices = $this->targetMethodsAndGroupedAdvices[\'' . $methodName . '\'][\'F3\FLOW3\AOP\Advice\AfterAdvice\'];
+				$advices = $this->FLOW3_AOP_Proxy_targetMethodsAndGroupedAdvices[\'' . $methodName . '\'][\'F3\FLOW3\AOP\Advice\AfterAdvice\'];
 				$joinPoint = new \F3\FLOW3\AOP\JoinPoint($this, \'' . $targetClassName . '\', \'' . $methodName . '\', $methodArguments, NULL, NULL, $exception);
 				foreach ($advices as $advice) {
 					$advice->invoke($joinPoint);

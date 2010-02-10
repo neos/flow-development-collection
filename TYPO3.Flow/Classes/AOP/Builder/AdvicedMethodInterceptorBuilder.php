@@ -64,7 +64,7 @@ class AdvicedMethodInterceptorBuilder extends \F3\FLOW3\AOP\Builder\AbstractMeth
 ';
 		if ($methodName !== NULL || $methodName === '__wakeup') {
 			$methodInterceptorCode .= '
-		if (isset($this->methodIsInAdviceMode[\'' . $methodName . '\'])) {
+		if (isset($this->FLOW3_AOP_Proxy_methodIsInAdviceMode[\'' . $methodName . '\'])) {
 ';
 
 			if ($declaringClassName === NULL || interface_exists($declaringClassName, TRUE)) {
@@ -80,9 +80,9 @@ class AdvicedMethodInterceptorBuilder extends \F3\FLOW3\AOP\Builder\AbstractMeth
 		} else {';
 			$methodInterceptorCode .= '
 			$methodArguments = array(' . $this->buildMethodArgumentsArrayCode($declaringClassName, $methodName) . ');
-			$this->methodIsInAdviceMode[\'' . $methodName . '\'] = TRUE;
+			$this->FLOW3_AOP_Proxy_methodIsInAdviceMode[\'' . $methodName . '\'] = TRUE;
 			' . $advicesCode . '
-			unset ($this->methodIsInAdviceMode[\'' . $methodName . '\']);
+			unset ($this->FLOW3_AOP_Proxy_methodIsInAdviceMode[\'' . $methodName . '\']);
 		}
 		return $result;
 ';

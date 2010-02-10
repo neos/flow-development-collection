@@ -111,6 +111,7 @@ class Pointcut {
 			$this->pointcutQueryIdentifier = $pointcutQueryIdentifier;
 			$this->recursionLevel = 0;
 		}
+
 		return $this->pointcutFilterComposite->matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier);
 	}
 
@@ -143,6 +144,36 @@ class Pointcut {
 	 */
 	public function getPointcutMethodName() {
 		return $this->pointcutMethodName;
+	}
+
+	/**
+	 * Returns TRUE if this filter holds runtime evaluations for a previously matched pointcut
+	 *
+	 * @return boolean TRUE if this filter has runtime evaluations
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function hasRuntimeEvaluationsDefinition() {
+		return $this->pointcutFilterComposite->hasRuntimeEvaluationsDefinition();
+	}
+
+	/**
+	 * Returns runtime evaluations for the pointcut.
+	 *
+	 * @return array Runtime evaluations
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getRuntimeEvaluationsDefinition() {
+		return $this->pointcutFilterComposite->getRuntimeEvaluationsDefinition();
+	}
+
+	/**
+	 * Returns the PHP code (closure) that evaluates the runtime evaluations
+	 *
+	 * @return string The closure code
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getRuntimeEvaluationsClosureCode() {
+		return $this->pointcutFilterComposite->getRuntimeEvaluationsClosureCode();
 	}
 }
 ?>

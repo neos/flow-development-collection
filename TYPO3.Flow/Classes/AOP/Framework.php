@@ -491,28 +491,5 @@ class Framework {
 		if (count($aspectContainer->getAdvisors()) < 1 && count($aspectContainer->getPointcuts()) < 1 && count($aspectContainer->getIntroductions()) < 1) throw new \F3\FLOW3\AOP\Exception('The class "' . $aspectClassName . '" is tagged to be an aspect but doesn\'t contain advices nor pointcut or introduction declarations.', 1169124534);
 		return $aspectContainer;
 	}
-
-	/**
-	 * Tests for all specified classes if they match one or more pointcuts and if so
-	 * builds an AOP proxy class which contains interceptor code. Returns all class
-	 * names (and the name of their new proxy class) of those classes which needed to
-	 * be proxied.
-	 *
-	 * @param array $classNames Class names to take into consideration.
-	 * @param array $aspectContainers Aspect containers whose pointcuts are matched against the specified classes.
-	 * @param string $context The application context to build proxy classes for.
-	 * @return array $proxyBuildResults An array which contains at least the proxy class name and the generated code, indexed by the target class names
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	protected function buildProxyClasses(array $classNames, array $aspectContainers, $context) {
-		$proxyBuildResults = array();
-		foreach ($classNames as $targetClassName) {
-			$proxyBuildResult = $this->proxyClassBuilder->buildProxyClass($targetClassName, $aspectContainers, $context);
-			if ($proxyBuildResult !== FALSE) {
-				$proxyBuildResults[$targetClassName] = $proxyBuildResult;
-			}
-		}
-		return $proxyBuildResults;
-	}
 }
 ?>

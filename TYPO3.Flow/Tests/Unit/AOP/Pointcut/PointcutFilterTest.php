@@ -70,5 +70,34 @@ class PointcutFilterTest extends \F3\Testing\BaseTestCase {
 		$pointcutFilter->injectAOPFramework($mockAOPFramework);
 		$this->assertSame('the result', $pointcutFilter->matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier));
 	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getRuntimeEvaluationsDefinitionReturnsTheDefinitionArrayFromThePointcut() {
+		$mockPointcut = $this->getMock('F3\FLOW3\AOP\Pointcut\Pointcut', array(), array(), '', FALSE);
+		$mockPointcut->expects($this->once())->method('getRuntimeEvaluationsDefinition')->will($this->returnValue(array('evaluations')));
+
+		$mockAOPFramework = $this->getMock('F3\FLOW3\AOP\Framework', array('findPointcut'), array(), '', FALSE);
+		$mockAOPFramework->expects($this->once())->method('findPointcut')->with('Aspect', 'pointcut')->will($this->returnValue($mockPointcut));
+
+		$pointcutFilter = new \F3\FLOW3\AOP\Pointcut\PointcutFilter('Aspect', 'pointcut');
+		$pointcutFilter->injectAOPFramework($mockAOPFramework);
+		$this->assertEquals(array('evaluations'), $pointcutFilter->getRuntimeEvaluationsDefinition(), 'Something different from an array was returned.');
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getRuntimeEvaluationsDefinitionReturnsAnEmptyArrayIfThePointcutDoesNotExist() {
+		$mockAOPFramework = $this->getMock('F3\FLOW3\AOP\Framework', array('findPointcut'), array(), '', FALSE);
+		$mockAOPFramework->expects($this->once())->method('findPointcut')->with('Aspect', 'pointcut')->will($this->returnValue(FALSE));
+
+		$pointcutFilter = new \F3\FLOW3\AOP\Pointcut\PointcutFilter('Aspect', 'pointcut');
+		$pointcutFilter->injectAOPFramework($mockAOPFramework);
+		$this->assertEquals(array(), $pointcutFilter->getRuntimeEvaluationsDefinition(), 'The definition array has not been returned as exptected.');
+	}
 }
 ?>

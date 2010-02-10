@@ -34,8 +34,34 @@ namespace F3\FLOW3\AOP\Pointcut;
 class PointcutExpressionParser {
 
 	const PATTERN_SPLITBYOPERATOR = '/\s*(\&\&|\|\|)\s*/';
-	const PATTERN_MATCHPOINTCUTDESIGNATOR = '/^\s*(classTaggedWith|class|methodTaggedWith|method|within|filter|setting)/';
+	const PATTERN_MATCHPOINTCUTDESIGNATOR = '/^\s*(classTaggedWith|class|methodTaggedWith|method|within|filter|setting|evaluate)/';
 	const PATTERN_MATCHVISIBILITYMODIFIER = '/(public|protected)/';
+	const PATTERN_MATCHRUNTIMEEVALUATIONSDEFINITION = '/(?:
+														(?:
+															\s*(   "(?:\\\"|[^"])*"
+																|\(.*?\)
+																|\'(?:\\\\\'|[^\'])*\'
+																|[a-zA-Z0-9\-_.]+
+															)
+															\s*(==|!=|<=|>=|<|>|in|contains)\s*
+															(   "(?:\\\"|[^"])*"
+																|\(.*?\)
+																|\'(?:\\\\\'|[^\'])*\'
+																|[a-zA-Z0-9\-_.]+
+															)
+														 )
+														 \s*,{0,1}?
+													 )+
+												   /x';
+	const PATTERN_MATCHRUNTIMEEVALUATIONSOPERATORINLIST = '/(?:
+																	\s*(
+																		"(?:\\\"|[^"])*"
+																		|\'(?:\\\\\'|[^\'])*\'
+																		|(?:[a-zA-Z0-9\-_.])+
+																	)
+																	\s*,{0,1}?
+																)+
+																/x';
 
 	/**
 	 * @var \F3\FLOW3\Object\ObjectFactoryInterface
@@ -112,7 +138,10 @@ class PointcutExpressionParser {
 					case 'setting' :
 						$parseMethodName = 'parseDesignator' . ucfirst($pointcutDesignator);
 						$this->$parseMethodName($operator, $signaturePattern, $pointcutFilterComposite);
-					break;
+						break;
+					case 'evaluate' :
+						$this->parseRuntimeEvaluations($operator, $signaturePattern, $pointcutFilterComposite);
+						break;
 					default :
 						throw new \F3\FLOW3\AOP\Exception('Support for pointcut designator "' . $pointcutDesignator . '" has not been implemented (yet).', 1168874740);
 				}
@@ -182,10 +211,12 @@ class PointcutExpressionParser {
 		if (strpos($methodPattern, '(') === FALSE ) throw new \F3\FLOW3\AOP\Exception\InvalidPointcutExpressionException('Syntax error: "(" expected in "' . $methodPattern . '".', 1169144299);
 
 		$methodNamePattern = substr($methodPattern, 0, (strpos($methodPattern, '(')));
+        $methodArgumentPattern = substr($methodPattern, strpos($methodPattern, '(')+1, -1);
+        $methodArgumentConstraints = $this->getArgumentConstraintsFromMethodArgumentsPattern($methodArgumentPattern);
 
 		$subComposite = $this->objectFactory->create('F3\FLOW3\AOP\Pointcut\PointcutFilterComposite');
 		$subComposite->addFilter('&&', $this->objectFactory->create('F3\FLOW3\AOP\Pointcut\PointcutClassNameFilter', $classPattern));
-		$subComposite->addFilter('&&', $this->objectFactory->create('F3\FLOW3\AOP\Pointcut\PointcutMethodNameFilter', $methodNamePattern, $methodVisibility));
+		$subComposite->addFilter('&&', $this->objectFactory->create('F3\FLOW3\AOP\Pointcut\PointcutMethodNameFilter', $methodNamePattern, $methodVisibility, $methodArgumentConstraints));
 
 		$pointcutFilterComposite->addFilter($operator, $subComposite);
 	}
@@ -250,6 +281,25 @@ class PointcutExpressionParser {
 	}
 
 	/**
+	 * Adds runtime evaluations to the poincut filter composite
+	 *
+	 * @param string $operator The operator
+	 * @param string $runtimeEvaluations The runtime evaluations string
+	 * @param \F3\FLOW3\AOP\Pointcut\PointcutFilterComposite $pointcutFilterComposite An instance of the pointcut filter composite. The result (ie. the custom filter) will be added to this composite object.
+	 * @return void
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	protected function parseRuntimeEvaluations($operator, $runtimeEvaluations, \F3\FLOW3\AOP\Pointcut\PointcutFilterComposite $pointcutFilterComposite) {
+		$runtimeEvaluationsDefintion = array(
+			$operator => array(
+				'evaluateConditions' => $this->getRuntimeEvaluationConditionsFromEvaluateString($runtimeEvaluations)
+			)
+		);
+
+		$pointcutFilterComposite->setGlobalRuntimeEvaluationsDefinition($runtimeEvaluationsDefintion);
+	}
+
+	/**
 	 * Returns the substring of $string which is enclosed by parentheses
 	 * of the first level.
 	 *
@@ -294,5 +344,66 @@ class PointcutExpressionParser {
 		}
 		return $visibility;
 	}
+
+        /**
+         * Parses the method arguments pattern and returns the corresponding constraints array
+         *
+         * @param string $methodArgumentsPattern The arguments pattern defined in the pointcut expression
+         * @return array The corresponding constraints array
+         * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+         */
+        protected function getArgumentConstraintsFromMethodArgumentsPattern($methodArgumentsPattern) {
+            $matches = array();
+			$argumentConstraints = array();
+
+			preg_match_all(self::PATTERN_MATCHRUNTIMEEVALUATIONSDEFINITION, $methodArgumentsPattern, $matches);
+
+            for ($i = 0; $i < count($matches[0]); $i++) {
+                if ($matches[2][$i] === 'in') {
+                    $inList = array();
+
+                    trim($matches[3][$i], '()');
+                    preg_match_all(self::PATTERN_MATCHRUNTIMEEVALUATIONSOPERATORINLIST, $matches[3][$i], $inList);
+
+                    $matches[3][$i] = $inList[1];
+                }
+
+				$argumentConstraints[$matches[1][$i]]['operator'][] = $matches[2][$i];
+				$argumentConstraints[$matches[1][$i]]['value'][] = $matches[3][$i];
+			}
+            return $argumentConstraints;
+        }
+
+		/**
+         * Parses the evaluate string for runtime evaluations and returns the corresponding conditions array
+         *
+         * @param string $evaluateString The evaluate string defined in the pointcut expression
+         * @return array The corresponding constraints array
+         * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+         */
+		protected function getRuntimeEvaluationConditionsFromEvaluateString($evaluateString) {
+			$matches = array();
+			$runtimeEvaluationConditions = array();
+			
+			preg_match_all(self::PATTERN_MATCHRUNTIMEEVALUATIONSDEFINITION, $evaluateString, $matches);
+
+            for ($i = 0; $i < count($matches[0]); $i++) {
+                if ($matches[2][$i] === 'in') {
+                    $inList = array();
+
+                    trim($matches[3][$i], '()');
+                    preg_match_all(self::PATTERN_MATCHRUNTIMEEVALUATIONSOPERATORINLIST, $matches[3][$i], $inList);
+
+                    $matches[3][$i] = $inList[1];
+                }
+
+				$runtimeEvaluationConditions[] = array(
+					'operator' => $matches[2][$i],
+					'leftValue' => $matches[1][$i],
+					'rightValue' => $matches[3][$i],
+				);
+			}
+			return $runtimeEvaluationConditions;
+		}
 }
 ?>

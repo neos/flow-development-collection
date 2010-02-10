@@ -39,6 +39,17 @@ class PointcutFilterComposite implements \F3\FLOW3\AOP\Pointcut\PointcutFilterIn
 	 */
 	protected $filters = array();
 
+		/**
+	 * @var array An array of runtime evaluations
+	 */
+	protected $runtimeEvaluationsDefinition = array();
+
+
+	/**
+	 * @var array An array of global runtime evaluations
+	 */
+	protected $globalRuntimeEvaluationsDefinition = array();
+
 	/**
 	 * Checks if the specified class and method match the registered class-
 	 * and method filter patterns.
@@ -51,24 +62,48 @@ class PointcutFilterComposite implements \F3\FLOW3\AOP\Pointcut\PointcutFilterIn
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier) {
+		$this->runtimeEvaluationsDefinition = array();
 		$matches = TRUE;
 		foreach ($this->filters as $operatorAndFilter) {
 			list($operator, $filter) = $operatorAndFilter;
+
+			$currentFilterMatches = $filter->matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier);
+			$currentRuntimeEvaluationsDefintion = $filter->getRuntimeEvaluationsDefinition();
+
 			switch ($operator) {
 				case '&&' :
-					$matches = $matches && $filter->matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier);
+					if ($currentFilterMatches === TRUE && $filter->hasRuntimeEvaluationsDefinition()) {
+						if (!isset($this->runtimeEvaluationsDefinition[$operator])) $this->runtimeEvaluationsDefinition[$operator] = array();
+						$this->runtimeEvaluationsDefinition[$operator] = array_merge_recursive($this->runtimeEvaluationsDefinition[$operator], $currentRuntimeEvaluationsDefintion);
+					}
+					$matches = $matches && $currentFilterMatches;
 				break;
 				case '&&!' :
-					$matches = $matches && (!$filter->matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier));
+					if ($currentFilterMatches === TRUE && $filter->hasRuntimeEvaluationsDefinition()) {
+						if (!isset($this->runtimeEvaluationsDefinition[$operator])) $this->runtimeEvaluationsDefinition[$operator] = array();
+						$this->runtimeEvaluationsDefinition[$operator] = array_merge_recursive($this->runtimeEvaluationsDefinition[$operator], $currentRuntimeEvaluationsDefintion);
+						$currentFilterMatches = FALSE;
+					}
+					$matches = $matches && (!$currentFilterMatches);
 				break;
 				case '||' :
-					$matches = $matches || $filter->matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier);
+					if ($currentFilterMatches === TRUE && $filter->hasRuntimeEvaluationsDefinition()) {
+						if (!isset($this->runtimeEvaluationsDefinition[$operator])) $this->runtimeEvaluationsDefinition[$operator] = array();
+						$this->runtimeEvaluationsDefinition[$operator] = array_merge_recursive($this->runtimeEvaluationsDefinition[$operator], $currentRuntimeEvaluationsDefintion);
+					}
+					$matches = $matches || $currentFilterMatches;
 				break;
 				case '||!' :
-					$matches = $matches || (!$filter->matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier));
+					if ($currentFilterMatches === TRUE && $filter->hasRuntimeEvaluationsDefinition()) {
+						if (!isset($this->runtimeEvaluationsDefinition[$operator])) $this->runtimeEvaluationsDefinition[$operator] = array();
+						$this->runtimeEvaluationsDefinition[$operator] = array_merge_recursive($this->runtimeEvaluationsDefinition[$operator], $currentRuntimeEvaluationsDefintion);
+						$currentFilterMatches = FALSE;
+					}
+					$matches = $matches || (!$currentFilterMatches);
 				break;
 			}
 		}
+
 		return $matches;
 	}
 
@@ -82,6 +117,228 @@ class PointcutFilterComposite implements \F3\FLOW3\AOP\Pointcut\PointcutFilterIn
 	 */
 	public function addFilter($operator, \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface $filter) {
 		$this->filters[] = array($operator, $filter);
+	}
+
+	/**
+	 * Returns TRUE if this filter holds runtime evaluations for a previously matched pointcut
+	 *
+	 * @return boolean TRUE if this filter has runtime evaluations
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function hasRuntimeEvaluationsDefinition() {
+		return (count($this->runtimeEvaluationsDefinition) > 0);
+	}
+
+	/**
+	 * Returns runtime evaluations for the pointcut.
+	 *
+	 * @return array Runtime evaluations
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getRuntimeEvaluationsDefinition() {
+		return array_merge_recursive($this->globalRuntimeEvaluationsDefinition, $this->runtimeEvaluationsDefinition);
+	}
+
+	/**
+	 * Sets static runtime evaluations for to pointcut, that will be used for every
+	 * method this compsite matches
+	 *
+	 * @param array Runtime evaluations to be added
+	 * @return void
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function setGlobalRuntimeEvaluationsDefinition(array $runtimeEvaluations) {
+		$this->globalRuntimeEvaluationsDefinition = $runtimeEvaluations;
+	}
+
+	/**
+	 * Returns the PHP code (closure) that can evaluate the runtime evaluations
+	 *
+	 * @return string The closure code
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getRuntimeEvaluationsClosureCode() {
+		$globalObjects = array();
+		$conditionCode = $this->buildRuntimeEvaluationsConditionCode('', $this->getRuntimeEvaluationsDefinition(), $globalObjects);
+
+		if ($conditionCode !== '') {
+			return "\n\t\t\t\t\t\tfunction(\\F3\\FLOW3\\AOP\\JoinPointInterface \$joinPoint) use (\$currentObject, \$objectManager) {\n\t\t\t\t\t\t\t" .
+					implode("\n\t\t\t\t\t\t\t", $globalObjects) .
+					"\n\t\t\t\t\t\t\treturn " . $conditionCode . ';' .
+					"\n\t\t\t\t\t\t}";
+		} else {
+			return 'NULL';
+		}
+	}
+
+	/**
+	 * Returns the PHP code of the conditions used for runtime evaluations
+	 *
+	 * @param string $operator The operator for the given condition
+	 * @param array $conditions Condition array
+	 * @param array $globalObjects An array of code that instantiates all global objects needed in the condition code
+	 * @return string The condition code
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	protected function buildRuntimeEvaluationsConditionCode($operator, array $conditions, array &$globalObjects = array()) {
+		$conditionsCode = array();
+
+		if (count($conditions) === 0) return '';
+
+		if (isset($conditions['evaluateConditions']) && is_array($conditions['evaluateConditions'])) {
+			$conditionsCode[] = $this->buildGlobalRuntimeEvaluationsConditionCode($conditions['evaluateConditions'], $globalObjects);
+			unset($conditions['evaluateConditions']);
+		}
+
+		if (isset($conditions['methodArgumentConstraints']) && is_array($conditions['methodArgumentConstraints'])) {
+			$conditionsCode[] = $this->buildMethodArgumentsEvaluationConditionCode($conditions['methodArgumentConstraints'], $globalObjects);
+			unset($conditions['methodArgumentConstraints']);
+		}
+
+		$subConditionsCode = '';
+		if (count($conditions) > 1) {
+			$isFirst = TRUE;
+			foreach ($conditions as $subOperator => $subCondition) {
+				$negateCurrentSubCondition = FALSE;
+				if ($subOperator === '&&!') {
+					$subOperator = '&&';
+					$negateCurrentSubCondition = TRUE;
+				} else if ($subOperator === '||!') {
+					$subOperator = '||';
+					$negateCurrentSubCondition = TRUE;
+				}
+
+				$currentSubConditionsCode = $this->buildRuntimeEvaluationsConditionCode($subOperator, $subCondition, $globalObjects);
+				if ($negateCurrentSubCondition === TRUE) $currentSubConditionsCode = '(!' . $currentSubConditionsCode . ')';
+
+				$subConditionsCode .= ($isFirst === TRUE ? '(' : ' ' . $subOperator . ' ') . $currentSubConditionsCode;
+				$isFirst = FALSE;
+			}
+			$subConditionsCode .= ')';
+
+			$conditionsCode[] = $subConditionsCode;
+
+		} else if (count($conditions) === 1) {
+			$subOperator = key($conditions);
+			$conditionsCode[] = $this->buildRuntimeEvaluationsConditionCode($subOperator, current($conditions), $globalObjects);
+		}
+
+		$negateCondition = FALSE;
+		if ($operator === '&&!') {
+			$operator = '&&';
+			$negateCondition = TRUE;
+		} else if ($operator === '||!') {
+			$operator = '||';
+			$negateCondition = TRUE;
+		}
+
+		$resultCode = implode(' ' . $operator . ' ', $conditionsCode);
+
+		if (count($conditionsCode) > 1) $resultCode = '(' . $resultCode . ')';
+		if ($negateCondition === TRUE) $resultCode = '(!' . $resultCode . ')';
+
+		return $resultCode;
+	}
+
+	/**
+	 * Returns the PHP code of the conditions used argument runtime evaluations
+	 *
+	 * @param array $conditions Condition array
+	 * @param array $globalObjects An array of code that instantiates all global objects needed in the condition code
+	 * @return string The arguments condition code
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	protected function buildMethodArgumentsEvaluationConditionCode(array $conditions, array &$globalObjects = array()) {
+		$argumentConstraintsConditionsCode = '';
+
+		$isFirst = TRUE;
+		foreach ($conditions as $argumentName => $argumentConstraint) {
+
+			$objectAccess = explode('.', $argumentName, 2);
+			if (count($objectAccess) === 2) {
+				$leftValue = 'F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($joinPoint->getMethodArgument(\'' . $objectAccess[0] . '\'), \'' . $objectAccess[1] . '\')';
+			} else {
+				$leftValue = '$joinPoint->getMethodArgument(\'' . $argumentName . '\')';
+			}
+
+			for ($i = 0; $i < count($argumentConstraint['operator']); $i++) {
+				$rightValue = $this->buildArgumentEvaluationAccessCode($argumentConstraint['value'][$i], $globalObjects);
+
+				if ($argumentConstraint['operator'][$i] === 'in') {
+					$argumentConstraintsConditionsCode .= ($isFirst === TRUE ? '(' : ' && ') . 'in_array(' . $leftValue . ', array(' . $rightValue . '))';
+				} else {
+					$argumentConstraintsConditionsCode .= ($isFirst === TRUE ? '(' : ' && ') . $leftValue . ' ' . $argumentConstraint['operator'][$i] . ' ' . $rightValue;
+				}
+
+				$isFirst = FALSE;
+			}
+		}
+
+		return $argumentConstraintsConditionsCode . ')';
+	}
+
+	/**
+	 * Returns the PHP code of the conditions used for global runtime evaluations
+	 *
+	 * @param array $conditions Condition array
+	 * @param array $globalObjects An array of code that instantiates all global objects needed in the condition code
+	 * @return string The condition code
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	protected function buildGlobalRuntimeEvaluationsConditionCode(array $conditions, array &$globalObjects = array()) {
+		$evaluateConditionsCode = '';
+
+		$isFirst = TRUE;
+		foreach ($conditions as $constraint) {
+			$leftValue = $this->buildArgumentEvaluationAccessCode($constraint['leftValue'], $globalObjects);
+			$rightValue = $this->buildArgumentEvaluationAccessCode($constraint['rightValue'], $globalObjects);
+
+			if ($constraint['operator'] === 'in') {
+				$evaluateConditionsCode .= ($isFirst === TRUE ? '(' : ' && ') . 'in_array(' . $leftValue . ', array(' . $rightValue . '))';
+			} else {
+				$evaluateConditionsCode .= ($isFirst === TRUE ? '(' : ' && ') . $leftValue . ' ' . $constraint['operator'] . ' ' . $rightValue;
+			}
+
+			$isFirst = FALSE;
+		}
+
+		return $evaluateConditionsCode . ')';
+	}
+
+	/**
+	 * Returns the PHP code used to access one argument of a runtime evaluation
+	 *
+	 * @param mixed $argumentAccess The unparsed argument access, might be string or array
+	 * @param array $globalObjects An array of code that instantiates all global objects needed in the condition code
+	 * @return string The condition code
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	protected function buildArgumentEvaluationAccessCode($argumentAccess, array &$globalObjects = array()) {
+		$argumentAccessCode = '';
+
+		if (is_array($argumentAccess)) {
+			$valuesAccessCodes = array();
+			foreach ($argumentAccess as $singleValue) {
+				$valuesAccessCodes[] = $this->buildArgumentEvaluationAccessCode($singleValue);
+			}
+			$argumentAccessCode = implode(', ', $valuesAccessCodes);
+
+		} else {
+			$objectAccess = explode('.', $argumentAccess, 2);
+			if (count($objectAccess) === 2 && $objectAccess[0] === 'current') {
+				$objectAccess = explode('.', $objectAccess[1], 2);
+				$argumentAccessCode = 'F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($' . $objectAccess[0] . ', \'' . $objectAccess[1] . '\')';
+
+				if ($objectAccess[0] === 'party') $globalObjects['party'] = '$party = $objectManager->getObject(\'F3\\FLOW3\\Security\\ContextHolderInterface\')->getContext()->getParty();';
+
+			} else if (count($objectAccess) === 2 && $objectAccess[0] === 'this') {
+				$argumentAccessCode = 'F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($currentObject, \'' . $objectAccess[1] . '\')';
+			} else {
+				$argumentAccessCode = $argumentAccess;
+			}
+		}
+
+		return $argumentAccessCode;
 	}
 }
 ?>

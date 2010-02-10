@@ -113,5 +113,23 @@ class PointcutTest extends \F3\Testing\BaseTestCase {
 		$pointcut = $this->getMock('F3\FLOW3\AOP\Pointcut\Pointcut', array('dummy'), array($pointcutExpression, $mockPointcutFilterComposite, $aspectClassName, 'PointcutMethod'), '', TRUE);
 		$this->assertSame('PointcutMethod', $pointcut->getPointcutMethodName());
 	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getRuntimeEvaluationsReturnsTheRuntimeEvaluationsDefinitionOfTheContainedPointcutFilterComposite() {
+		$pointcutExpression = 'ThePointcutExpression';
+		$aspectClassName = 'TheAspect';
+		$className = 'TheClass';
+		$methodName = 'TheMethod';
+
+		$mockPointcutFilterComposite = $this->getMock('F3\FLOW3\AOP\Pointcut\PointcutFilterComposite', array(), array(), '', FALSE);
+		$mockPointcutFilterComposite->expects($this->once())->method('getRuntimeEvaluationsDefinition')->will($this->returnValue(array('runtimeEvaluationsDefinition')));
+
+		$pointcut = new \F3\FLOW3\AOP\Pointcut\Pointcut($pointcutExpression, $mockPointcutFilterComposite, $aspectClassName, $className);
+
+		$this->assertEquals(array('runtimeEvaluationsDefinition'), $pointcut->getRuntimeEvaluationsDefinition(), 'The runtime evaluations definition has not been returned as expected.');
+	}
 }
 ?>

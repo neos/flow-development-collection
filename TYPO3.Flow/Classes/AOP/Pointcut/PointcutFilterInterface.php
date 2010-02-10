@@ -42,6 +42,20 @@ interface PointcutFilterInterface {
 	 * @return boolean TRUE if the class / method match, otherwise FALSE
 	 */
 	public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier);
+
+	/**
+	 * Returns TRUE if this filter holds runtime evaluations for a previously matched pointcut
+	 *
+	 * @return boolean TRUE if this filter has runtime evaluations
+	 */
+	public function hasRuntimeEvaluationsDefinition();
+
+	/**
+	 * Returns runtime evaluations for a previously matched pointcut
+	 *
+	 * @return array Runtime evaluations
+	 */
+	public function getRuntimeEvaluationsDefinition();
 }
 
 ?>
