@@ -37,10 +37,20 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	protected $objectFactory = NULL;
 
 	/**
-	 * The FLOW3 Settings
+	 * The FLOW3 settings
 	 * @var array
 	 */
-	protected $settings = NULL;
+	protected $settings = array();
+
+	/**
+	 * @var \F3\FLOW3\Configuration\ConfigurationManager
+	 */
+	protected $configurationManager;
+
+	/**
+	 * @var array
+	 */
+	protected $policy = array();
 
 	/**
 	 * @var \F3\FLOW3\Cache\Frontend\VariableFrontend The cached acl entries
@@ -95,6 +105,17 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	}
 
 	/**
+	 * Injects the configuration manager
+	 *
+	 * @param \F3\FLOW3\Configuration\ConfigurationManager $configurationManager The configuration manager
+	 * @return void
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function injectConfigurationManager(\F3\FLOW3\Configuration\ConfigurationManager $configurationManager) {
+		$this->configurationManager = $configurationManager;
+	}
+
+	/**
 	 * Injects the ACL cache
 	 *
 	 * @param F3\FLOW3\Cache\Frontend\VariableFrontend $cache The cache
@@ -123,8 +144,9 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initializeObject() {
-		$this->roles = $this->settings['security']['policy']['roles'];
-		$this->resources = $this->settings['security']['policy']['resources'];
+		$this->policy = $this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_POLICY);
+		$this->roles = $this->policy['roles'];
+		$this->resources = $this->policy['resources'];
 
 		if ($this->cache->has('acls')) {
 			$this->acls = $this->cache->get('acls');
@@ -149,8 +171,8 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 		$matches = FALSE;
 
 		if (count($this->filters) === 0) {
-			$this->policyExpressionParser->setResourcesTree($this->settings['security']['policy']['resources']);
-			foreach ($this->settings['security']['policy']['acls'] as $role => $acl) {
+			$this->policyExpressionParser->setResourcesTree($this->policy['resources']);
+			foreach ($this->policy['acls'] as $role => $acl) {
 				foreach ($acl as $resource => $privilege) {
 					$resourceTrace = array();
 					$this->filters[$role][$resource] = $this->policyExpressionParser->parse($resource, $resourceTrace);
@@ -166,7 +188,7 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 			foreach ($filtersForRole as $resource => $filter) {
 				if ($filter->matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier)) {
 					$methodIdentifier = $className . '->' . $methodName;
-					$this->acls[$methodIdentifier][$role][] = $this->settings['security']['policy']['acls'][$role][$resource];
+					$this->acls[$methodIdentifier][$role][] = $this->policy['acls'][$role][$resource];
 					$matches = TRUE;
 				}
 			}

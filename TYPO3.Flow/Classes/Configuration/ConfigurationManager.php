@@ -37,7 +37,7 @@ class ConfigurationManager {
 	const CONFIGURATION_TYPE_PACKAGE = 'Package';
 	const CONFIGURATION_TYPE_PACKAGESTATES = 'PackageStates';
 	const CONFIGURATION_TYPE_ROUTES = 'Routes';
-	const CONFIGURATION_TYPE_SECURITY = 'Security';
+	const CONFIGURATION_TYPE_POLICY = 'Policy';
 	const CONFIGURATION_TYPE_SETTINGS = 'Settings';
 	const CONFIGURATION_TYPE_SIGNALSSLOTS = 'SignalsSlots';
 
@@ -140,6 +140,7 @@ class ConfigurationManager {
 			case self::CONFIGURATION_TYPE_SIGNALSSLOTS :
 			case self::CONFIGURATION_TYPE_CACHES :
 			case self::CONFIGURATION_TYPE_PACKAGESTATES :
+			case self::CONFIGURATION_TYPE_POLICY :
 				if (!isset($this->configurations[$configurationType])) {
 					$this->loadConfiguration($configurationType, $this->packages);
 				}
@@ -270,7 +271,7 @@ class ConfigurationManager {
 				}
 			break;
 			case self::CONFIGURATION_TYPE_CACHES :
-			case self::CONFIGURATION_TYPE_SECURITY :
+			case self::CONFIGURATION_TYPE_POLICY :
 			case self::CONFIGURATION_TYPE_SIGNALSSLOTS :
 				$this->configurations[$configurationType] = array();
 				foreach ($packages as $packageKey => $package) {
@@ -297,7 +298,7 @@ class ConfigurationManager {
 
 		switch ($configurationType) {
 			case self::CONFIGURATION_TYPE_CACHES :
-			case self::CONFIGURATION_TYPE_SECURITY :
+			case self::CONFIGURATION_TYPE_POLICY :
 			case self::CONFIGURATION_TYPE_SIGNALSSLOTS :
 			case self::CONFIGURATION_TYPE_ROUTES :
 			case self::CONFIGURATION_TYPE_PACKAGESTATES :

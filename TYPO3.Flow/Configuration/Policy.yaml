@@ -1,0 +1,43 @@
+#                                                                        #
+# Security policy for the FLOW3 Framework                                #
+#                                                                        #
+# This file contains the default security policy configuration for the   #
+# FLOW3 Framework. Don't modify this file but add configuration options  #
+# to the Policy.yaml file in the in global Configuration/ directory      #
+# instead.                                                               #
+
+# @package FLOW3
+# @version $Id:  $
+
+
+# The security policy resources configuration. Here is an example configuration array:
+#
+# resources:
+#   theOneAndOnlyResource:  "method(F3\FooPackage\SomeClass->setSomeProperty())"
+#   theOtherLonelyResource: "method(F3\FooPackage\BasicClassValidator->.*())"
+#   theIntegrativeResource: "theOneAndOnlyResource || theOtherLonelyResource"
+#
+resources: []
+
+# The security policy roles configuration. Here is an example configuration array:
+#
+# roles:
+#   ADMINISTRATOR: []
+#   DEVELOPER: []
+#   CUSTOMER:
+#   PRIVILEGED_CUSTOMER: [CUSTOMER]
+#
+roles: []
+
+# The security policy acls configuration connects the resources with the roles by assigning
+# privileges. Here is an example configuration array:
+#
+# acls:
+#   ADMINISTRATOR:
+#     deleteMethods:           ACCESS_GRANT
+#     MyPackageUpdateMethods:  ACCESS_DENY
+#
+#    CUSTOMER:
+#      deleteMethods:          ACCESS_DENY
+#      MyPackageUpdateMethods: ACCESS_DENY
+acls: []

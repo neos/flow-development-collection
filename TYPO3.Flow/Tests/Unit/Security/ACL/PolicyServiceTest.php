@@ -33,30 +33,58 @@ class PolicyServiceTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @test
 	 * @category unit
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function thePolicyIsLoadedCorrectlyFromTheConfigurationManager() {
+		$policy = array(
+			'roles' => array('THE_ROLE' => array()),
+			'resources' => array('theResource' => 'method(Foo->bar())'),
+			'acls' => array('THE_ROLE' => array('theResource' => 'ACCESS_GRANT'))
+		);
+
+		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\ConfigurationManager', array(), array(), '', FALSE);
+		$mockConfigurationManager->expects($this->once())->method('getConfiguration')->with(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_POLICY)->will($this->returnValue($policy));
+
+		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
+		$mockCache->expects($this->once())->method('has')->will($this->returnValue(FALSE));
+
+		$policyService = new \F3\FLOW3\Security\ACL\PolicyService();
+		$policyService->injectCache($mockCache);
+		$policyService->injectConfigurationManager($mockConfigurationManager);
+
+		$policyService->initializeObject();
+	}
+
+	/**
+	 * @test
+	 * @category unit
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function matchesAsksThePolicyExpressionParserToBuildPointcutFiltersAndChecksIfTheyMatchTheGivenClassAndMethod() {
 		$settings = array(
 			'security' => array(
-				'enable' => TRUE,
-				'policy' => array(
-					'roles' => array('THE_ROLE' => array()),
-					'resources' => array('theResource' => 'method(Foo->bar())'),
-					'acls' => array('THE_ROLE' => array('theResource' => 'ACCESS_GRANT'))
-				)
+				'enable' => TRUE
 			)
+		);
+
+		$policy = array(
+			'roles' => array('THE_ROLE' => array()),
+			'resources' => array('theResource' => 'method(Foo->bar())'),
+			'acls' => array('THE_ROLE' => array('theResource' => 'ACCESS_GRANT'))
 		);
 
 		$mockFilter = $this->getMock('F3\FLOW3\AOP\Pointcut\PointcutFilterComposite', array(), array(), '', FALSE);
 		$mockFilter->expects($this->once())->method('matches')->with('Foo', 'bar', 'Baz')->will($this->returnValue(TRUE));
 
 		$mockPolicyExpressionParser = $this->getMock('F3\FLOW3\Security\ACL\PolicyExpressionParser', array(), array(), '', FALSE);
-		$mockPolicyExpressionParser->expects($this->once())->method('setResourcesTree')->with($settings['security']['policy']['resources']);
+		$mockPolicyExpressionParser->expects($this->once())->method('setResourcesTree')->with($policy['resources']);
 		$mockPolicyExpressionParser->expects($this->once())->method('parse')->with('theResource')->will($this->returnValue($mockFilter));
 
-		$policyService = new \F3\FLOW3\Security\ACL\PolicyService();
+		$accessibleProxyClassName = $this->buildAccessibleProxy('F3\FLOW3\Security\ACL\PolicyService');
+		$policyService = new $accessibleProxyClassName();
 		$policyService->injectPolicyExpressionParser($mockPolicyExpressionParser);
 		$policyService->injectSettings($settings);
+		$policyService->_set('policy', $policy);
 
 		$this->assertTrue($policyService->matches('Foo', 'bar', 'Baz', 1));
 	}
@@ -82,25 +110,28 @@ class PolicyServiceTest extends \F3\Testing\BaseTestCase {
 	public function matchesStoresMatchedACLsInAnArrayForLaterCaching() {
 		$settings = array(
 			'security' => array(
-				'enable' => TRUE,
-				'policy' => array(
-					'roles' => array('THE_ROLE' => array()),
-					'resources' => array('theResource' => 'method(Foo->bar())'),
-					'acls' => array('THE_ROLE' => array('theResource' => 'ACCESS_GRANT'))
+				'enable' => TRUE
 				)
-			)
+		);
+
+		$policy = array(
+			'roles' => array('THE_ROLE' => array()),
+			'resources' => array('theResource' => 'method(Foo->bar())'),
+			'acls' => array('THE_ROLE' => array('theResource' => 'ACCESS_GRANT'))
 		);
 
 		$mockFilter = $this->getMock('F3\FLOW3\AOP\Pointcut\PointcutFilterComposite', array(), array(), '', FALSE);
 		$mockFilter->expects($this->once())->method('matches')->with('Foo', 'bar', 'Baz')->will($this->returnValue(TRUE));
 
 		$mockPolicyExpressionParser = $this->getMock('F3\FLOW3\Security\ACL\PolicyExpressionParser', array(), array(), '', FALSE);
-		$mockPolicyExpressionParser->expects($this->once())->method('setResourcesTree')->with($settings['security']['policy']['resources']);
+		$mockPolicyExpressionParser->expects($this->once())->method('setResourcesTree')->with($policy['resources']);
 		$mockPolicyExpressionParser->expects($this->once())->method('parse')->with('theResource')->will($this->returnValue($mockFilter));
 
-		$policyService = new \F3\FLOW3\Security\ACL\PolicyService();
+		$accessibleProxyClassName = $this->buildAccessibleProxy('F3\FLOW3\Security\ACL\PolicyService');
+		$policyService = new $accessibleProxyClassName();
 		$policyService->injectPolicyExpressionParser($mockPolicyExpressionParser);
 		$policyService->injectSettings($settings);
+		$policyService->_set('policy', $policy);
 
 		$policyService->matches('Foo', 'bar', 'Baz', 1);
 

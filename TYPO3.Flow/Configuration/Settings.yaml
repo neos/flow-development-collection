@@ -183,40 +183,6 @@ FLOW3:
       # If this is set to TRUE access will be granted even if all voters abstain
       allowAccessIfAllVotersAbstain: FALSE
 
-    policy:
-
-      # The security policy resources configuration. Here is an example configuration array:
-      #
-      # resources:
-      #   theOneAndOnlyResource:  "method(F3\FooPackage\SomeClass->setSomeProperty())"
-      #   theOtherLonelyResource: "method(F3\FooPackage\BasicClassValidator->.*())"
-      #   theIntegrativeResource: "theOneAndOnlyResource || theOtherLonelyResource"
-      #
-      resources: []
-
-      # The security policy roles configuration. Here is an example configuration array:
-      #
-      # roles:
-      #   ADMINISTRATOR: []
-      #   DEVELOPER: []
-      #   CUSTOMER:
-      #   PRIVILEGED_CUSTOMER: [CUSTOMER]
-      #
-      roles: []
-
-      # The security policy acls configuration connects the resources with the roles by assigning
-      # privileges. Here is an example configuration array:
-      #
-      # acls:
-      #   ADMINISTRATOR:
-      #     deleteMethods:           ACCESS_GRANT
-      #     MyPackageUpdateMethods:  ACCESS_DENY
-      #
-      #    CUSTOMER:
-      #      deleteMethods:          ACCESS_DENY
-      #      MyPackageUpdateMethods: ACCESS_DENY
-      acls: []
-
     cryptography:
 
       hashService:
