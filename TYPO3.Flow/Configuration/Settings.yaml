@@ -178,7 +178,7 @@ FLOW3:
 
     authorization:
       # An array of access decision voters that should vote when access decisions are made
-      accessDecisionVoters: [F3\FLOW3\Security\Authorization\Voter\Acl]
+      accessDecisionVoters: [F3\FLOW3\Security\Authorization\Voter\Policy]
 
       # If this is set to TRUE access will be granted even if all voters abstain
       allowAccessIfAllVotersAbstain: FALSE

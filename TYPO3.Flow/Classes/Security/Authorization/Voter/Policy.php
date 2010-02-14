@@ -23,32 +23,32 @@ namespace F3\FLOW3\Security\Authorization\Voter;
  *                                                                        */
 
 /**
- * An access decision voter, that asks the FLOW3 ACLService for a decision.
+ * An access decision voter, that asks the FLOW3 PolicyService for a decision.
  *
- * @version $Id: Acl.php -1   $
+ * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class Acl implements \F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface {
+class Policy implements \F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface {
 
 	/**
 	 * The policy service
-	 * @var \F3\FLOW3\Security\ACL\PolicyService
+	 * @var \F3\FLOW3\Security\Policy\PolicyService
 	 */
 	protected $policyService;
 
 	/**
 	 * Constructor.
 	 *
-	 * @param F3\FLOW3\Security\ACL\PolicyService $policyService The policy service
+	 * @param F3\FLOW3\Security\Policy\PolicyService $policyService The policy service
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function __construct(\F3\FLOW3\Security\ACL\PolicyService $policyService) {
+	public function __construct(\F3\FLOW3\Security\Policy\PolicyService $policyService) {
 		$this->policyService = $policyService;
 	}
 
 	/**
-	 * This is the default Acl voter, it votes for the ACCESS privilege for the given join point
+	 * This is the default Policy voter, it votes for the ACCESS privilege for the given join point
 	 *
 	 * @param F3\FLOW3\Security\Context $securityContext The current securit context
 	 * @param F3\FLOW3\AOP\JoinPointInterface $joinPoint The joinpoint to vote for
@@ -72,7 +72,7 @@ class Acl implements \F3\FLOW3\Security\Authorization\AccessDecisionVoterInterfa
 	}
 
 	/**
-	 * This is the default Acl voter, it votes for the ACCESS privilege for the given resource
+	 * This is the default Policy voter, it votes for the ACCESS privilege for the given resource
 	 *
 	 * @param F3\FLOW3\Security\Context $securityContext The current securit context
 	 * @param string $resource The resource to vote for

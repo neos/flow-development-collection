@@ -155,7 +155,7 @@ class Context {
 	/**
 	 * Returns the roles of all active and authenticated tokens
 	 *
-	 * @return array Array of F3\FLOW3\Security\ACL\Role objects
+	 * @return array Array of F3\FLOW3\Security\Policy\Role objects
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getRoles() {

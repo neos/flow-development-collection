@@ -374,7 +374,7 @@ F3\FLOW3\Resource\ResourceManager:
 # Security                                                                 #
 #                                                                          #
 
-F3\FLOW3\Security\ACL\PolicyService:
+F3\FLOW3\Security\Policy\PolicyService:
   properties:
     cache:
       object:
