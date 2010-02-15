@@ -32,12 +32,6 @@ class ###PROXY_CLASS_NAME### extends \###TARGET_CLASS_NAME### implements ###INTR
 	protected $FLOW3_AOP_Proxy_originalConstructorArguments = array();
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectFactoryInterface
-	 * @inject
-	 */
-	protected $FLOW3_AOP_Proxy_objectFactory;
-
-	/**
 	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 * @inject
 	 */

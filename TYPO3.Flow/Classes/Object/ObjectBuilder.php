@@ -188,8 +188,7 @@ class ObjectBuilder {
 		if (!in_array('F3\FLOW3\AOP\ProxyInterface', class_implements($className))) throw new \F3\FLOW3\Object\Exception\CannotReconstituteObjectException('Cannot create empty instance of the class "' . $className . '" because it does not implement the AOP Proxy Interface.', 1234386924);
 
 		$object = unserialize('O:' . strlen($className) . ':"' . $className . '":0:{};');
-		$object->FLOW3_AOP_Proxy_setProperty('objectFactory', $this->objectFactory);
-		$object->FLOW3_AOP_Proxy_setProperty('objectManager', $this->objectManager);
+		$object->FLOW3_AOP_Proxy_setProperty('FLOW3_AOP_Proxy_objectManager', $this->objectManager);
 		$object->FLOW3_AOP_Proxy_declareMethodsAndAdvices();
 
 		return $object;
