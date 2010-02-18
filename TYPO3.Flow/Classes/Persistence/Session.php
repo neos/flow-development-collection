@@ -36,7 +36,14 @@ class Session {
 	 *
 	 * @var \SplObjectStorage
 	 */
-	protected $reconstitutedObjects;
+	protected $reconstitutedEntities;
+
+	/**
+	 * Reconstituted entity data (effectively their clean state)
+	 *
+	 * @var array
+	 */
+	protected $reconstitutedEntitiesData = array();
 
 	/**
 	 * @var \SplObjectStorage
@@ -54,40 +61,177 @@ class Session {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function __construct() {
-		$this->reconstitutedObjects = new \SplObjectStorage();
+		$this->reconstitutedEntities = new \SplObjectStorage();
 		$this->objectMap = new \SplObjectStorage();
 	}
 
 	/**
-	 * Registers a reconstituted object
+	 * Registers data for a reconstituted object.
 	 *
-	 * @param object $object
+	 * $entityData must be like follows:
+	 * array(
+	 *  'identifier' => '<the-uuid-for-this-entity>',
+	 *  'classname' => '<The\Class\Name>',
+	 *  'properties' => array(
+	 *   '<name>' => array(
+	 *    'type' => '...',
+	 *    'multivalue' => boolean,
+	 *    'value => array(
+	 *      'index' => ...,
+	 *      'type' => '...'
+	 *      'value' => ...
+	 *   )
+	 *  )
+	 * )
+	 *
+	 * @param object $entity
+	 * @param array $entityData
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function registerReconstitutedObject($object) {
-		$this->reconstitutedObjects->attach($object);
+	public function registerReconstitutedEntity($entity, array $entityData) {
+		$this->reconstitutedEntities->attach($entity);
+		$this->reconstitutedEntitiesData[$entityData['identifier']] = $entityData;
 	}
 
 	/**
-	 * Unregisters a reconstituted object
+	 * Replace a reconstituted object, leaves the clean data unchanged.
 	 *
-	 * @param object $object
+	 * @param object $oldEntity
+	 * @param object $newEntity
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function unregisterReconstitutedObject($object) {
-		$this->reconstitutedObjects->detach($object);
+	public function replaceReconstitutedEntity($oldEntity, $newEntity) {
+		$this->reconstitutedEntities->detach($oldEntity);
+		$this->reconstitutedEntities->attach($newEntity);
 	}
 
 	/**
-	 * Returns all objects which have been registered as reconstituted objects
+	 * Unregisters data for a reconstituted object
 	 *
-	 * @return array All reconstituted objects
+	 * @param object $entity
+	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function getReconstitutedObjects() {
-		return $this->reconstitutedObjects;
+	public function unregisterReconstitutedEntity($entity) {
+		$this->reconstitutedEntities->detach($entity);
+		unset($this->reconstitutedEntitiesData[$this->getIdentifierByObject($entity)]);
+	}
+
+	/**
+	 * Returns all objects which have been registered as reconstituted
+	 *
+	 * @return \SplObjectStorage All reconstituted objects
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getReconstitutedEntities() {
+		return $this->reconstitutedEntities;
+	}
+
+	/**
+	 * Tells whether the given object is a reconstituted entity.
+	 *
+	 * @param object $entity
+	 * @return boolean
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function isReconstitutedEntity($entity) {
+		return $this->reconstitutedEntities->contains($entity);
+	}
+
+	/**
+	 * Checks whether the given property was changed in the object since it was
+	 * reconstituted. Returns TRUE for unknown objects in all cases!
+	 *
+	 * @param object $object
+	 * @param string $propertyName
+	 * @return boolean
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function isDirty($object, $propertyName) {
+		if ($this->isReconstitutedEntity($object) === FALSE) {
+			return TRUE;
+		}
+
+		$identifier = $this->getIdentifierByObject($object);
+		$cleanData =& $this->reconstitutedEntitiesData[$identifier]['properties'][$propertyName];
+		$currentValue = $object->FLOW3_AOP_Proxy_getProperty($propertyName);
+
+		if ($currentValue === NULL && $cleanData['value'] === NULL) {
+			return FALSE;
+		}
+
+		if ($cleanData['multivalue']) {
+			if (count($cleanData['value']) > 0 && count($cleanData['value']) === count($currentValue)) {
+				if ($currentValue instanceof \SplObjectStorage) {
+					$cleanIdentifiers = array();
+					foreach ($cleanData['value'] as $cleanObjectData) {
+						$cleanIdentifiers[] = $cleanObjectData['value']['identifier'];
+					}
+					sort($cleanIdentifiers);
+					$currentIdentifiers = array();
+					foreach ($currentValue as $currentObject) {
+						if (property_exists($currentObject, 'FLOW3_Persistence_Entity_UUID')) {
+							$currentIdentifiers[] = $currentObject->FLOW3_Persistence_Entity_UUID;
+						} elseif (property_exists($currentObject, 'FLOW3_Persistence_ValueObject_Hash')) {
+							$currentIdentifiers[] = $currentObject->FLOW3_Persistence_ValueObject_Hash;
+						}
+					}
+					sort($currentIdentifiers);
+					if ($cleanIdentifiers !== $currentIdentifiers) {
+						return TRUE;
+					}
+				} else {
+					foreach ($cleanData['value'] as $cleanObjectData) {
+						if (!isset($currentValue[$cleanObjectData['index']])) {
+							return TRUE;
+						}
+						if ($this->isPropertyDirty($cleanObjectData['type'], $cleanObjectData['value'], $currentValue[$cleanObjectData['index']]) === TRUE) {
+							return TRUE;
+						}
+					}
+				}
+			} elseif (count($cleanData['value']) > 0 || count($currentValue) > 0) {
+				return TRUE;
+			}
+			return FALSE;
+		} else {
+			return $this->isPropertyDirty($cleanData['type'], $cleanData['value'], $currentValue);
+		}
+	}
+
+	/**
+	 * Checks the $value against the $cleanState.
+	 *
+	 * @param string $type
+	 * @param mixed $previousValue
+	 * @param mixed $currentValue
+	 * @return boolan
+	 */
+	protected function isPropertyDirty($type, $previousValue, $currentValue) {
+		switch ($type) {
+			case 'integer':
+				if ($currentValue === (int) $previousValue) return FALSE;
+			break;
+			case 'float':
+				if ($currentValue === (float) $previousValue) return FALSE;
+			break;
+			case 'boolean':
+				if ($currentValue === (boolean) $previousValue) return FALSE;
+			break;
+			case 'string':
+				if ($currentValue === (string) $previousValue) return FALSE;
+			break;
+			case 'DateTime':
+				if ($currentValue instanceof \DateTime && $currentValue->getTimestamp() === (int) $previousValue) return FALSE;
+			break;
+			default:
+				if (is_object($currentValue) && property_exists($currentValue, 'FLOW3_Persistence_Entity_UUID') && $currentValue->FLOW3_Persistence_Entity_UUID === $previousValue['identifier']) return FALSE;
+				if (is_object($currentValue) && property_exists($currentValue, 'FLOW3_Persistence_ValueObject_Hash') && $currentValue->FLOW3_Persistence_ValueObject_Hash === $previousValue['identifier']) return FALSE;
+			break;
+		}
+		return TRUE;
 	}
 
 	/**

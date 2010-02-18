@@ -165,7 +165,7 @@ class ObjectSerializer {
 
 			} else if (is_object($propertyValue)
 						&& $propertyValue instanceof \F3\FLOW3\AOP\ProxyInterface
-						&& $propertyValue instanceof \F3\FLOW3\Persistence\Aspect\DirtyMonitoringInterface
+						&& $propertyValue instanceof \F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface
 						&& $this->persistenceManager->isNewObject($propertyValue) === FALSE
 						&& ($this->reflectionService->isClassTaggedWith($propertyClassName, 'entity')
 							|| $this->reflectionService->isClassTaggedWith($propertyClassName, 'valueobject'))) {

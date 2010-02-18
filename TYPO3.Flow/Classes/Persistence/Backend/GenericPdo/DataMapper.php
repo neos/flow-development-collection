@@ -129,11 +129,12 @@ class DataMapper implements \F3\FLOW3\Persistence\DataMapperInterface {
 
 			$object = $this->objectBuilder->createEmptyObject($className, $objectConfiguration);
 			$this->persistenceSession->registerObject($object, $objectData['identifier']);
+			if ($classSchema->getModelType() === \F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY) {
+				$this->persistenceSession->registerReconstitutedEntity($object, $objectData);
+			}
 
 			$this->objectBuilder->reinjectDependencies($object, $objectConfiguration);
 			$this->thawProperties($object, $objectData['identifier'], $objectData, $classSchema);
-			$object->FLOW3_Persistence_memorizeCleanState();
-			$this->persistenceSession->registerReconstitutedObject($object);
 
 			return $object;
 		}
@@ -150,35 +151,46 @@ class DataMapper implements \F3\FLOW3\Persistence\DataMapperInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function thawProperties(\F3\FLOW3\AOP\ProxyInterface $object, $identifier, array $objectData, \F3\FLOW3\Reflection\ClassSchema $classSchema) {
-		$propertyValues = $objectData['propertyData'];
+		$propertyValues = $objectData['properties'];
 		foreach ($classSchema->getProperties() as $propertyName => $propertyData) {
 			$propertyValue = NULL;
-			if (isset($propertyValues[$propertyName]) && $propertyValues[$propertyName]['value'] !== NULL) {
-				switch ($propertyData['type']) {
-					case 'integer':
-						$propertyValue = (int) $propertyValues[$propertyName]['value']['value'];
-					break;
-					case 'float':
-						$propertyValue = (float) $propertyValues[$propertyName]['value']['value'];
-					break;
-					case 'boolean':
-						$propertyValue = (boolean) $propertyValues[$propertyName]['value']['value'];
-					break;
-					case 'string':
-						$propertyValue = (string) $propertyValues[$propertyName]['value']['value'];
-					break;
-					case 'array':
-						$propertyValue = $this->mapArray($propertyValues[$propertyName]['value']);
-					break;
-					case 'DateTime':
-						$propertyValue = $this->mapDateTime($propertyValues[$propertyName]['value']['value']);
-					break;
-					case 'SplObjectStorage':
-						$propertyValue = $this->mapSplObjectStorage($propertyValues[$propertyName]['value']);
-					break;
-					default:
-						$propertyValue = $this->mapToObject($propertyValues[$propertyName]['value']['value']);
-					break;
+			if (isset($propertyValues[$propertyName])) {
+				if ($propertyValues[$propertyName]['value'] !== NULL) {
+					switch ($propertyData['type']) {
+						case 'integer':
+							$propertyValue = (int) $propertyValues[$propertyName]['value'];
+						break;
+						case 'float':
+							$propertyValue = (float) $propertyValues[$propertyName]['value'];
+						break;
+						case 'boolean':
+							$propertyValue = (boolean) $propertyValues[$propertyName]['value'];
+						break;
+						case 'string':
+							$propertyValue = (string) $propertyValues[$propertyName]['value'];
+						break;
+						case 'array':
+							$propertyValue = $this->mapArray($propertyValues[$propertyName]['value']);
+						break;
+						case 'SplObjectStorage':
+							$propertyValue = $this->mapSplObjectStorage($propertyValues[$propertyName]['value']);
+						break;
+						case 'DateTime':
+							$propertyValue = $this->mapDateTime($propertyValues[$propertyName]['value']);
+						break;
+						default:
+							$propertyValue = $this->mapToObject($propertyValues[$propertyName]['value']);
+						break;
+					}
+				} else {
+					switch ($propertyData['type']) {
+						case 'array':
+							$propertyValue = $this->mapArray($propertyValues[$propertyName]['value']);
+						break;
+						case 'SplObjectStorage':
+							$propertyValue = $this->mapSplObjectStorage($propertyValues[$propertyName]['value']);
+						break;
+					}
 				}
 
 				if ($propertyValue !== NULL) {
@@ -187,8 +199,12 @@ class DataMapper implements \F3\FLOW3\Persistence\DataMapperInterface {
 			}
 		}
 
-		$uuidPropertyName = $classSchema->getUuidPropertyName();
-		$object->FLOW3_AOP_Proxy_setProperty(($uuidPropertyName !== NULL ? $uuidPropertyName : 'FLOW3_Persistence_Entity_UUID'), $identifier);
+		if ($classSchema->getModelType() === \F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY) {
+			$uuidPropertyName = $classSchema->getUuidPropertyName();
+			$object->FLOW3_AOP_Proxy_setProperty(($uuidPropertyName !== NULL ? $uuidPropertyName : 'FLOW3_Persistence_Entity_UUID'), $identifier);
+		} else {
+			$object->FLOW3_Persistence_ValueObject_Hash = $identifier;
+		}
 	}
 
 	/**
@@ -200,13 +216,9 @@ class DataMapper implements \F3\FLOW3\Persistence\DataMapperInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function mapDateTime($timestamp) {
-		if ($timestamp !== NULL) {
-			$datetime = new \DateTime();
-			$datetime->setTimestamp((integer) $timestamp);
-			return $datetime;
-		} else {
-			return NULL;
-		}
+		$datetime = new \DateTime();
+		$datetime->setTimestamp((integer) $timestamp);
+		return $datetime;
 	}
 
 	/**
@@ -217,28 +229,40 @@ class DataMapper implements \F3\FLOW3\Persistence\DataMapperInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo remove the check on the node/property names and use name pattern
 	 */
-	protected function mapArray(array $arrayValues) {
+	protected function mapArray(array $arrayValues = NULL) {
+		if ($arrayValues === NULL) return array();
+
 		$array = array();
-		foreach ($arrayValues as $key => $arrayValue) {
-			switch ($arrayValue['type']) {
-				case 'integer':
-				case 'float':
-				case 'boolean':
-				case 'string':
-					$array[$key] = $arrayValue['value'];
-				break;
-				case 'DateTime':
-					$array[$key] = $this->mapDateTime($arrayValue['value']);
-				break;
-				case 'array':
-					throw new \RuntimeException('no nested arrays, please', 1260541003);
-				break;
-				case 'SplObjectStorage':
-						$array[$key] = $this->mapSplObjectStorage($arrayValue['value']);
-				break;
-				default:
-					$array[$key] = $this->mapToObject($arrayValue['value']);
-				break;
+		foreach ($arrayValues as $arrayValue) {
+			if ($arrayValue['value'] === NULL) {
+				$array[$arrayValue['index']] = NULL;
+			} else {
+				switch ($arrayValue['type']) {
+					case 'integer':
+						$array[$arrayValue['index']] = (int) $arrayValue['value'];
+					break;
+					case 'float':
+						$array[$arrayValue['index']] = (float) $arrayValue['value'];
+					break;
+					case 'boolean':
+						$array[$arrayValue['index']] = (boolean) $arrayValue['value'];
+					break;
+					case 'string':
+						$array[$arrayValue['index']] = (string) $arrayValue['value'];
+					break;
+					case 'DateTime':
+						$array[$arrayValue['index']] = $this->mapDateTime($arrayValue['value']);
+					break;
+					case 'array':
+						throw new \RuntimeException('no nested arrays, please', 1260541003);
+					break;
+					case 'SplObjectStorage':
+						$array[$arrayValue['index']] = $this->mapSplObjectStorage($arrayValue['value']);
+					break;
+					default:
+						$array[$arrayValue['index']] = $this->mapToObject($arrayValue['value']);
+					break;
+				}
 			}
 		}
 
@@ -253,10 +277,14 @@ class DataMapper implements \F3\FLOW3\Persistence\DataMapperInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo restore information attached to objects?
 	 */
-	protected function mapSplObjectStorage(array $arrayValues) {
+	protected function mapSplObjectStorage(array $arrayValues = NULL) {
 		$objectStorage = new \SplObjectStorage();
+		if ($arrayValues === NULL) return $objectStorage;
+
 		foreach ($arrayValues as $arrayValue) {
-			$objectStorage->attach($this->mapToObject($arrayValue['value']));
+			if ($arrayValue['value'] !== NULL) {
+				$objectStorage->attach($this->mapToObject($arrayValue['value']));
+			}
 		}
 
 		return $objectStorage;

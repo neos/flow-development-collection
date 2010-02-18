@@ -167,12 +167,8 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function replaceObject($existingObject, $newObject) {
-		$persistenceSession = $this->persistenceManager->getSession();
-		$uuid = $this->persistenceManager->getIdentifierByObject($existingObject);
-		if ($uuid !== NULL) {
-			$this->persistenceManager->getBackend()->replaceObject($existingObject, $newObject);
-			$persistenceSession->unregisterReconstitutedObject($existingObject);
-			$persistenceSession->registerReconstitutedObject($newObject);
+		if ($this->persistenceManager->getIdentifierByObject($existingObject) !== NULL) {
+			$this->persistenceManager->replaceObject($existingObject, $newObject);
 
 			if ($this->removedObjects->contains($existingObject)) {
 				$this->removedObjects->detach($existingObject);
@@ -201,7 +197,7 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 		$propertiesOfNewObject = \F3\FLOW3\Reflection\ObjectAccess::getGettableProperties($newObject);
 
 		foreach ($propertiesOfNewObject as $subObject) {
-			if ($subObject instanceof \F3\FLOW3\Persistence\Aspect\DirtyMonitoringInterface && $subObject->FLOW3_Persistence_isClone()) {
+			if ($subObject instanceof \F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface && $subObject->FLOW3_Persistence_isClone()) {
 				$this->updateObject($subObject);
 				$this->updateRecursively($subObject);
 			}
@@ -229,8 +225,15 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	}
 
 	/**
-	 * Replaces an existing object with the same identifier by the given object without any further checks.
+	 * Replaces an existing object with the same identifier by the given object
+	 * without any further checks.
 	 * Never use this method directly, always use update().
+	 *
+	 * Note:
+	 * The code may look funny, but the two calls to the $ersistenceManager
+	 * yield different results - getIdentifierByObject() in this case returns the
+	 * identifier stored inside the $modifiedObject, whereas getObjectByIdentifier()
+	 * returns the existing object from the object map in the session.
 	 *
 	 * @param object $modifiedObject The modified object
 	 * @author Robert Lemke <robert@typo3.org>

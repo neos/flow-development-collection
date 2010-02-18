@@ -146,7 +146,7 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 * @api
 	 */
 	public function execute() {
-		return $this->dataMapper->mapToObjects($this->persistenceManager->getBackend()->getObjectDataByQuery($this));
+		return $this->dataMapper->mapToObjects($this->persistenceManager->getObjectDataByQuery($this));
 	}
 
 	/**
@@ -157,7 +157,7 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 * @api
 	 */
 	public function count() {
-		return $this->persistenceManager->getBackend()->getObjectCountByQuery($this);
+		return $this->persistenceManager->getObjectCountByQuery($this);
 	}
 
 	/**

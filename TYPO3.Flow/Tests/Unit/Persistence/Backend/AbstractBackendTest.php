@@ -65,7 +65,10 @@ class AbstractBackendTest extends \F3\Testing\BaseTestCase {
 		$objects->attach(new \stdClass());
 		$objects->attach(new \stdClass());
 
+		$mockPersistenceSession = $this->getMock('F3\FLOW3\Persistence\Session');
+		$mockPersistenceSession->expects($this->once())->method('getReconstitutedEntities')->will($this->returnValue(new \SplObjectStorage));
 		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\AbstractBackend'), array('persistObject', 'getObjectCountByQuery', 'getObjectDataByQuery', 'getObjectDataByIdentifier'));
+		$backend->injectPersistenceSession($mockPersistenceSession);
 		$backend->expects($this->exactly(2))->method('persistObject');
 		$backend->setAggregateRootObjects($objects);
 		$backend->_call('persistObjects');
@@ -109,25 +112,6 @@ class AbstractBackendTest extends \F3\Testing\BaseTestCase {
 		$backend->expects($this->never())->method('removeEntity');
 		$backend->setDeletedEntities($objects);
 		$backend->_call('processDeletedObjects');
-	}
-
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function replaceObjectUnregistersTheExistingObjectAndRegistersTheNewObjectAtTheSession() {
-		$existingObject = new \stdClass();
-		$newObject = new \stdClass();
-
-		$mockSession = $this->getMock('F3\FLOW3\Persistence\Session');
-		$mockSession->expects($this->once())->method('unregisterObject')->with($existingObject);
-		$mockSession->expects($this->once())->method('registerObject')->with($newObject, 'the uuid');
-		$mockSession->expects($this->once())->method('getIdentifierByObject')->with($existingObject)->will($this->returnValue('the uuid'));
-
-		$backend = $this->getMock('F3\FLOW3\Persistence\Backend\AbstractBackend', array('getUuidByObject', 'getObjectCountByQuery', 'getObjectDataByQuery', 'getObjectDataByIdentifier'));
-		$backend->injectPersistenceSession($mockSession);
-		$backend->replaceObject($existingObject, $newObject);
 	}
 
 	/**

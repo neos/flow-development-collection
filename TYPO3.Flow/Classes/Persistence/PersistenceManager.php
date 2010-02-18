@@ -139,24 +139,55 @@ class PersistenceManager implements \F3\FLOW3\Persistence\PersistenceManagerInte
 	}
 
 	/**
-	 * Returns the current persistence session
+	 * Replaces the given object by the second object.
 	 *
-	 * @return \F3\FLOW3\Persistence\Session
+	 * This method will unregister the existing object at the identity map and
+	 * register the new object instead. The existing object must therefore
+	 * already be registered at the identity map which is the case for all
+	 * reconstituted objects.
+	 *
+	 * The new object will be identified by the UUID which formerly belonged
+	 * to the existing object. The existing object looses its uuid.
+	 *
+	 * @param object $existingObject The existing object
+	 * @param object $newObject The new object
+	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function getSession() {
-		return $this->persistenceSession;
+	public function replaceObject($existingObject, $newObject) {
+		$existingUuid = $this->persistenceSession->getIdentifierByObject($existingObject);
+		if ($existingUuid === NULL) throw new \F3\FLOW3\Persistence\Exception\UnknownObjectException('The given object is unknown to the persistence session.', 1238070163);
+
+		$this->persistenceSession->replaceReconstitutedEntity($existingObject, $newObject);
+
+		$this->persistenceSession->unregisterObject($existingObject);
+		$this->persistenceSession->registerObject($newObject, $existingUuid);
 	}
 
+
 	/**
-	 * Returns the persistence backend
+	 * Returns the number of records matching the query.
 	 *
-	 * @return \F3\FLOW3\Persistence\BackendInterface
+	 * @param \F3\FLOW3\Persistence\QueryInterface $query
+	 * @return integer
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
-	public function getBackend() {
-		return $this->backend;
+	public function getObjectCountByQuery(\F3\FLOW3\Persistence\QueryInterface $query) {
+		return $this->backend->getObjectCountByQuery($query);
+	}
+
+	/**
+	 * Returns the object data matching the $query.
+	 *
+	 * @param \F3\FLOW3\Persistence\QueryInterface $query
+	 * @return array
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
+	 */
+	public function getObjectDataByQuery(\F3\FLOW3\Persistence\QueryInterface $query) {
+		return $this->backend->getObjectDataByQuery($query);
 	}
 
 	/**
@@ -180,10 +211,10 @@ class PersistenceManager implements \F3\FLOW3\Persistence\PersistenceManagerInte
 			$deletedEntities->addAll($repository->getRemovedObjects());
 		}
 
-		$aggregateRootObjects->addAll($this->persistenceSession->getReconstitutedObjects());
-
 			// hand in only aggregate roots, leaving handling of subobjects to
 			// the underlying storage layer
+			// reconstituted entities must be fetched from the session and checked
+			// for changes by the underlying backend as well!
 		$this->backend->setAggregateRootObjects($aggregateRootObjects);
 		$this->backend->setDeletedEntities($deletedEntities);
 		$this->backend->commit();
@@ -193,7 +224,7 @@ class PersistenceManager implements \F3\FLOW3\Persistence\PersistenceManagerInte
 			// OTOH those do no harm, changes to the unused ones should not happen,
 			// so all they do is eat some memory.
 		foreach($deletedEntities as $deletedEntity) {
-			$this->persistenceSession->unregisterReconstitutedObject($deletedEntity);
+			$this->persistenceSession->unregisterReconstitutedEntity($deletedEntity);
 		}
 	}
 
@@ -211,11 +242,11 @@ class PersistenceManager implements \F3\FLOW3\Persistence\PersistenceManagerInte
 
 	/**
 	 * Returns the (internal) identifier for the object, if it is known to the
-	 * backend. Otherwise NULL is returned.
+	 * persistence. Otherwise NULL is returned.
 	 *
 	 * Note: this returns an identifier even if the object has not been
-	 * persisted in case of AOP-managed entities. Use isNewObject() if you need
-	 * to distinguish those cases.
+	 * persisted in case of AOP-managed entities and value objects. Use
+	 * isNewObject() if you need to distinguish those cases.
 	 *
 	 * @param object $object
 	 * @return string The identifier for the object
@@ -225,12 +256,12 @@ class PersistenceManager implements \F3\FLOW3\Persistence\PersistenceManagerInte
 	public function getIdentifierByObject($object) {
 		if ($this->persistenceSession->hasObject($object)) {
 			return $this->persistenceSession->getIdentifierByObject($object);
-		} elseif ($object instanceof \F3\FLOW3\AOP\ProxyInterface && $object->FLOW3_AOP_Proxy_hasProperty('FLOW3_Persistence_Entity_UUID')) {
+		} elseif (property_exists($object, 'FLOW3_Persistence_Entity_UUID')) {
 				// entities created get an UUID set through AOP
-			return $object->FLOW3_AOP_Proxy_getProperty('FLOW3_Persistence_Entity_UUID');
-		} elseif ($object instanceof \F3\FLOW3\AOP\ProxyInterface && $object->FLOW3_AOP_Proxy_hasProperty('FLOW3_Persistence_ValueObject_Hash')) {
+			return $object->FLOW3_Persistence_Entity_UUID;
+		} elseif (property_exists($object, 'FLOW3_Persistence_ValueObject_Hash')) {
 				// valueobjects created get a hash set through AOP
-			return $object->FLOW3_AOP_Proxy_getProperty('FLOW3_Persistence_ValueObject_Hash');
+			return $object->FLOW3_Persistence_ValueObject_Hash;
 		} else {
 			return NULL;
 		}

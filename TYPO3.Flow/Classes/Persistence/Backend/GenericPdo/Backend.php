@@ -31,18 +31,6 @@ namespace F3\FLOW3\Persistence\Backend\GenericPdo;
 class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 
 	/**
-	 * An object that was reconstituted
-	 * @var integer
-	 */
-	const OBJECT_RECONSTITUTED = 1;
-
-	/**
-	 * An object that is new
-	 * @var integer
-	 */
-	const OBJECT_NEW = 2;
-
-	/**
 	 * @var \F3\FLOW3\Object\ObjectFactoryInterface
 	 */
 	protected $objectFactory;
@@ -124,6 +112,20 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 	}
 
 	/**
+	 * Commits the current persistence session. Wrap the whole process in a
+	 * transaction, this gives massive speedups with SQLite (and still some when
+	 * using InnoDB tables in MySQL).
+	 *
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function commit() {
+		$this->databaseHandle->beginTransaction();
+		parent::commit();
+		$this->databaseHandle->commit();
+	}
+
+	/**
 	 * Checks if an object with the given UUID or hash is persisted.
 	 *
 	 * @param string $identifier
@@ -146,19 +148,6 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 	protected function hasValueobjectRecord($identifier) {
 		$statementHandle = $this->databaseHandle->prepare('SELECT COUNT("identifier") FROM "valueobjects" WHERE "identifier"=?');
 		$statementHandle->execute(array($identifier));
-		return ($statementHandle->fetchColumn() > 0);
-	}
-
-	/**
-	 * Checks if the property with $propertyName is present for the $parent.
-	 *
-	 * @param string $parent
-	 * @param string $propertyName
-	 * @return boolean
-	 */
-	protected function hasProperty($parent, $propertyName) {
-		$statementHandle = $this->databaseHandle->prepare('SELECT COUNT("parent") FROM "properties" WHERE "parent"=? AND "name"=?');
-		$statementHandle->execute(array($parent, $propertyName));
 		return ($statementHandle->fetchColumn() > 0);
 	}
 
@@ -211,113 +200,108 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function persistObject($object, $parentIdentifier = NULL) {
+		if (isset($this->visitedDuringPersistence[$object])) {
+			return $this->visitedDuringPersistence[$object];
+		}
+
 		$classSchema = $this->classSchemata[$object->FLOW3_AOP_Proxy_getProxyTargetClassName()];
 
 		if ($this->persistenceSession->hasObject($object)) {
 			$identifier = $this->persistenceSession->getIdentifierByObject($object);
-			$objectState = self::OBJECT_RECONSTITUTED;
+			$objectState = self::OBJECTSTATE_RECONSTITUTED;
+			if ($classSchema->getModelType() === \F3\FLOW3\Reflection\ClassSchema::MODELTYPE_VALUEOBJECT) {
+				return $identifier;
+			}
 		} else {
 			$identifier = $this->createObjectRecord($object, $parentIdentifier);
-			$objectState = self::OBJECT_NEW;
+			$objectState = self::OBJECTSTATE_NEW;
 		}
 
 		$this->visitedDuringPersistence[$object] = $identifier;
 
-		$properties = array();
-		foreach ($classSchema->getProperties() as $propertyName => $propertyMetaData) {
+		$objectData = array(
+			'identifier' => $identifier,
+			'classname' => $classSchema->getClassName(),
+			'properties' => $this->collectProperties($classSchema->getProperties(), $object, $identifier)
+		);
+		if (count($objectData['properties'])) {
+			$this->setProperties($objectData, $objectState);
+		}
+		if ($classSchema->getModelType() === \F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY) {
+			$this->persistenceSession->registerReconstitutedEntity($object, $objectData);
+		}
+		$this->emitPersistedObject($object, $objectState);
+
+		return $identifier;
+	}
+
+	/**
+	 *
+	 * @param array $properties The properties to collect (as per class schema)
+	 * @param object $object The object to work on
+	 * @param string $identifier The object's identifier
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function collectProperties(array $properties, $object, $identifier) {
+		$propertyData = array();
+		foreach ($properties as $propertyName => $propertyMetaData) {
 			$propertyValue = $object->FLOW3_AOP_Proxy_getProperty($propertyName);
 			$propertyType = $propertyMetaData['type'];
 
 			$this->checkType($propertyType, $propertyValue);
 
-				// handle only dirty properties here
-			if ($object instanceof \F3\FLOW3\Persistence\Aspect\DirtyMonitoringInterface && $object->FLOW3_Persistence_isDirty($propertyName)) {
+				// handle all objects now, because even clean ones need to be traversed
+				// as dirty checking is not recursive
+			if ($propertyValue instanceof \F3\FLOW3\AOP\ProxyInterface) {
+				if ($this->persistenceSession->isDirty($object, $propertyName)) {
+					$propertyData[$propertyName] = array(
+						'type' => $propertyType,
+						'multivalue' => FALSE,
+						'value' => array(
+							'identifier' => $this->persistObject($propertyValue, $identifier)
+						)
+					);
+				} else {
+					$this->persistObject($propertyValue, $identifier);
+				}
+			} elseif ($this->persistenceSession->isDirty($object, $propertyName)) {
 				switch ($propertyType) {
-					case 'DateTime':
-						$properties[$propertyName] = array(
-							'parent' => $identifier,
+					case 'integer':
+					case 'float':
+					case 'string':
+					case 'boolean':
+						$propertyData[$propertyName] = array(
 							'type' => $propertyType,
 							'multivalue' => FALSE,
-							'value' => array(array(
-								'value' => $this->processDateTime($propertyValue),
-								'index' => NULL,
-								'type' => $propertyType,
-							))
+							'value' => $propertyValue
+						);
+					break;
+					case 'DateTime':
+						$propertyData[$propertyName] = array(
+							'type' => 'DateTime',
+							'multivalue' => FALSE,
+							'value' => $this->processDateTime($propertyValue)
 						);
 					break;
 					case 'array':
-						$properties[$propertyName] = array(
-							'parent' => $identifier,
-							'type' => $propertyType,
+						$propertyData[$propertyName] = array(
+							'type' => 'array',
 							'multivalue' => TRUE,
 							'value' => $this->processArray($propertyValue, $identifier, $this->getCleanState($object, $propertyName))
 						);
 					break;
 					case 'SplObjectStorage':
-						$properties[$propertyName] = array(
-							'parent' => $identifier,
-							'type' => $propertyType,
+						$propertyData[$propertyName] = array(
+							'type' => 'SplObjectStorage',
 							'multivalue' => TRUE,
 							'value' => $this->processSplObjectStorage($propertyValue, $identifier, $this->getCleanState($object, $propertyName))
 						);
 					break;
-					case 'integer':
-					case 'float':
-					case 'string':
-					case 'boolean':
-						$properties[$propertyName] = array(
-							'parent' => $identifier,
-							'type' => $propertyType,
-							'multivalue' => FALSE,
-							'value' => array(array(
-								'value' => $propertyValue,
-								'index' => NULL,
-								'type' => $propertyType
-							))
-						);
 				}
 			}
-
-				// handle all objects now, because even clean ones need to be traversed
-				// as dirty checking is not recursive
-			if (is_object($propertyValue) && $propertyValue instanceof \F3\FLOW3\AOP\ProxyInterface) {
-				if ($object->FLOW3_Persistence_isDirty($propertyName)) {
-					$properties[$propertyName] = array(
-						'parent' => $identifier,
-						'type' => $propertyType,
-						'multivalue' => FALSE,
-						'value' => array(array(
-							'index' => NULL,
-							'type' => $propertyType
-						))
-					);
-					if ($this->visitedDuringPersistence->contains($propertyValue)) {
-						$properties[$propertyName]['value'][0]['value'] = $this->visitedDuringPersistence[$propertyValue];
-					} else {
-						$properties[$propertyName]['value'][0]['value'] = $this->persistObject($propertyValue, $identifier);
-					}
-				} elseif (!$this->visitedDuringPersistence->contains($propertyValue)) {
-					$this->persistObject($propertyValue, $identifier);
-				}
-			}
-
 		}
 
-		if (count($properties)) {
-			$this->setProperties($properties);
-			if ($objectState === self::OBJECT_RECONSTITUTED) {
-				$this->emitPersistedUpdatedObject($object);
-			}
-		}
-		if ($objectState === self::OBJECT_NEW) {
-			$this->emitPersistedNewObject($object);
-		}
-
-		if ($classSchema->getModelType() === \F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY) {
-			$object->FLOW3_Persistence_memorizeCleanState();
-		}
-
-		return $identifier;
+		return $propertyData;
 	}
 
 	/**
@@ -372,25 +356,25 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 		foreach ($array as $key => $value) {
 			if ($value instanceof \DateTime) {
 				$values[] = array(
-					'value' => $value->getTimestamp(),
+					'type' => 'DateTime',
 					'index' => $key,
-					'type' => 'datetime'
+					'value' => $value->getTimestamp()
 				);
 			} elseif ($value instanceof \SplObjectStorage) {
 				throw new \RuntimeException('SplObjectStorage instances in arrays are not uspported - missing feature?!?', 1261048721);
 			} elseif (is_object($value)) {
 				$values[] = array(
-					'value' => $this->persistObject($value, $parentIdentifier),
+					'type' => $this->getType($value),
 					'index' => $key,
-					'type' => $this->getType($value)
+					'value' => array('identifier' => $this->persistObject($value, $parentIdentifier))
 				);
 			} elseif (is_array($value)) {
 				throw new \RuntimeException('Nested arrays cannot be persisted - missing feature?!?', 1260284934);
 			} else {
 				$values[] = array(
-					'value' => $value,
+					'type' => $this->getType($value),
 					'index' => $key,
-					'type' => $this->getType($value)
+					'value' => $value
 				);
 			}
 		}
@@ -433,15 +417,15 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 		foreach ($splObjectStorage as $object) {
 			if ($object instanceof \DateTime) {
 				$values[] = array(
-					'value' => $object->getTimestamp(),
+					'type' => 'DateTime',
 					'index' => NULL,
-					'type' => 'datetime'
+					'value' => $object->getTimestamp()
 				);
 			} else {
 				$values[] = array(
-					'value' => $this->persistObject($object, $parentIdentifier),
+					'type' => $this->getType($object),
 					'index' => NULL,
-					'type' => $this->getType($object)
+					'value' => array('identifier' => $this->persistObject($object, $parentIdentifier))
 				);
 			}
 		}
@@ -450,34 +434,65 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 	}
 
 	/**
-	 * Persists the given properties to the database.
+	 * Persists the given properties to the database. $objectData is expected to
+	 * look like this:
+	 * array(
+	 *  'identifier' => '<the-uuid-for-this-entity>',
+	 *  'classname' => '<The\Class\Name>',
+	 *  'properties' => array(
+	 *   '<name>' => array(
+	 *    'type' => '...',
+	 *    'multivalue' => boolean,
+	 *    'value => array(
+	 *      'index' => ...,
+	 *      'type' => '...'
+	 *      'value' => ...
+	 *   )
+	 *  )
+	 * )
 	 *
-	 * @param array $properties
+	 * @param array $objectData
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function setProperties(array $properties) {
+	protected function setProperties(array $objectData, $objectState) {
 		$insertPropertyStatementHandle = $this->databaseHandle->prepare('INSERT INTO "properties" ("parent", "name", "multivalue", "type") VALUES (?, ?, ?, ?)');
-		foreach ($properties as $propertyName => $propertyData) {
-			if ($this->hasProperty($propertyData['parent'], $propertyName)) {
-				$this->removeProperties(array($propertyName => array('parent' => $propertyData['parent'])));
+		foreach ($objectData['properties'] as $propertyName => $propertyData) {
+			
+				// optimize into one call to removeProperties
+			if ($objectState === self::OBJECTSTATE_RECONSTITUTED) {
+				$this->removeProperties(array($propertyName => array('parent' => $objectData['identifier'])));
 			}
+
 			$insertPropertyStatementHandle->execute(array(
-				$propertyData['parent'],
+				$objectData['identifier'],
 				$propertyName,
 				(integer)$propertyData['multivalue'],
 				$propertyData['type']
 			));
 
-			if (is_array($propertyData['value'])) {
-				foreach ($propertyData['value'] as $valueData) {
-					$statementHandle = $this->databaseHandle->prepare('INSERT INTO "properties_data" ("parent", "name", "index", "type", "' . $this->getTypeName($valueData['type']) . '") VALUES (?, ?, ?, ?, ?)');
+			if ($propertyData['value'] === NULL) {
+				// we don't store those in properties_data
+			} else {
+				if ($propertyData['multivalue']) {
+					foreach ($propertyData['value'] as $valueData) {
+						$statementHandle = $this->databaseHandle->prepare('INSERT INTO "properties_data" ("parent", "name", "index", "type", "' . $this->getTypeName($valueData['type']) . '") VALUES (?, ?, ?, ?, ?)');
+						$statementHandle->execute(array(
+							$objectData['identifier'],
+							$propertyName,
+							$valueData['index'],
+							$valueData['type'],
+							is_array($valueData['value']) ? $valueData['value']['identifier'] : $valueData['value']
+						));
+					}
+				} else {
+					$statementHandle = $this->databaseHandle->prepare('INSERT INTO "properties_data" ("parent", "name", "index", "type", "' . $this->getTypeName($propertyData['type']) . '") VALUES (?, ?, ?, ?, ?)');
 					$statementHandle->execute(array(
-						$propertyData['parent'],
+						$objectData['identifier'],
 						$propertyName,
-						$valueData['index'],
-						$this->getTypeName($valueData['type']),
-						$valueData['value']
+						NULL,
+						$propertyData['type'],
+						is_array($propertyData['value']) ? $propertyData['value']['identifier'] : $propertyData['value']
 					));
 				}
 			}
@@ -671,11 +686,13 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 		$statementHandle = $this->databaseHandle->prepare($sql);
 		$statementHandle->execute($parameters);
 
-		$objects = $this->processObjectRecords($statementHandle);
-		return $objects;
+		$objectData = $this->processObjectRecords($statementHandle);
+		return $objectData;
 	}
 
 	/**
+	 * Returns raw data for an object in the form of an array. See
+	 * BackendInterface for details.
 	 *
 	 * @param \PDOStatement $statementHandle
 	 * @return array
@@ -684,24 +701,36 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 	protected function processObjectRecords(\PDOStatement $statementHandle) {
 		$objectData = array();
 		$propertyStatement = $this->databaseHandle->prepare('SELECT p."name", p."multivalue", d."index", d."type", d."string", d."integer", d."float", d."datetime", d."boolean", d."object" FROM "properties" AS p LEFT JOIN "properties_data" AS d ON p."parent"=d."parent" AND p."name"=d."name" WHERE p."parent"=?');
-		foreach ($statementHandle->fetchAll(\PDO::FETCH_ASSOC) as $entityRow) {
-			$this->knownRecords[$entityRow['identifier']] = TRUE;
-			$propertyData = array();
-			$propertyStatement->execute(array($entityRow['identifier']));
+
+		foreach ($statementHandle->fetchAll(\PDO::FETCH_ASSOC) as $objectRow) {
+			$this->knownRecords[$objectRow['identifier']] = TRUE;
+			$properties = array();
+			$propertyStatement->execute(array($objectRow['identifier']));
+
 			foreach ($propertyStatement->fetchAll(\PDO::FETCH_ASSOC) as $propertyRow) {
+					// we have a value on shelf
 				if (isset($propertyRow['type'])) {
-					if ($propertyRow['multivalue']==1 && isset($propertyRow['index'])) {
-						$propertyData[$propertyRow['name']]['value'][$propertyRow['index']] = array('type' => $propertyRow['type'], 'value' => $this->getValue($propertyRow));
-					} elseif ($propertyRow['multivalue']==1) {
-						$propertyData[$propertyRow['name']]['value'][] = array('type' => $propertyRow['type'], 'value' => $this->getValue($propertyRow));
+					if ($propertyRow['multivalue'] == 1) {
+						$properties[$propertyRow['name']]['type'] = $propertyRow['type'];
+						$properties[$propertyRow['name']]['multivalue'] = TRUE;
+						$properties[$propertyRow['name']]['value'][] = array('type' => $propertyRow['type'], 'index' => $propertyRow['index'], 'value' => $this->getValue($propertyRow));
 					} else {
-						$propertyData[$propertyRow['name']]['value'] = array('type' => $propertyRow['type'], 'value' => $this->getValue($propertyRow));
+						$properties[$propertyRow['name']] = array(
+							'type' => $propertyRow['type'],
+							'multivalue' => FALSE,
+							'value' => $this->getValue($propertyRow)
+						);
 					}
+					// a NULL value
 				} else {
-					$propertyData[$propertyRow['name']]['value'] = array();
+					$properties[$propertyRow['name']] = array(
+						'type' => $propertyRow['type'],
+						'multivalue' => ($propertyRow['multivalue'] == 1), 
+						'value' => NULL
+					);
 				}
 			}
-			$objectData[] = array('identifier' => $entityRow['identifier'], 'classname' => $entityRow['classname'], 'propertyData' => $propertyData);
+			$objectData[] = array('identifier' => $objectRow['identifier'], 'classname' => $objectRow['classname'], 'properties' => $properties);
 		}
 
 		return $objectData;
@@ -716,14 +745,17 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function getValue(array $data) {
-		if ($data['type'] === 'object') {
-			if (isset($this->knownRecords[$data['object']])) {
-				return array('identifier' => $data['object']);
-			} else {
-				return $this->_getObjectData($data['object']);
-			}
-		} else {
-			return $data[$data['type']];
+		$typename = $this->getTypeName($data['type']);
+		switch ($typename) {
+			case 'object':
+				if (isset($this->knownRecords[$data['object']])) {
+					return array('identifier' => $data['object']);
+				} else {
+					return $this->_getObjectData($data['object']);
+				}
+				break;
+			default:
+				return $data[$typename];
 		}
 	}
 

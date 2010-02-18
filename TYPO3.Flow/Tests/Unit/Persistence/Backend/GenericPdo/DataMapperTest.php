@@ -70,12 +70,12 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function mapToObjectReconstitutesExpectedObjectForNodeAndRegistersItWithIdentitymapToObjects() {
 		$mockEntityClassName = uniqid('Entity');
-		$mockEntity = $this->getMock('F3\FLOW3\AOP\ProxyInterface', array('FLOW3_Persistence_memorizeCleanState', 'FLOW3_AOP_Proxy_construct', 'FLOW3_AOP_Proxy_invokeJoinPoint', 'FLOW3_AOP_Proxy_hasProperty', 'FLOW3_AOP_Proxy_getProperty', 'FLOW3_AOP_Proxy_setProperty', 'FLOW3_AOP_Proxy_getProxyTargetClassName'));
-		$mockEntity->expects($this->once())->method('FLOW3_Persistence_memorizeCleanState');
+		$mockEntity = $this->getMock('F3\FLOW3\AOP\ProxyInterface', array('FLOW3_AOP_Proxy_construct', 'FLOW3_AOP_Proxy_invokeJoinPoint', 'FLOW3_AOP_Proxy_hasProperty', 'FLOW3_AOP_Proxy_getProperty', 'FLOW3_AOP_Proxy_setProperty', 'FLOW3_AOP_Proxy_getProxyTargetClassName'));
 
 		$objectData = array('identifier' => '1234', 'classname' => $mockEntityClassName);
 
 		$mockClassSchema = $this->getMock('F3\FLOW3\Reflection\ClassSchema', array(), array(), '', FALSE);
+		$mockClassSchema->expects($this->any())->method('getModelType')->will($this->returnValue(\F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY));
 		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService', array(), array(), '', FALSE);
 		$mockReflectionService->expects($this->any())->method('getClassSchema')->with($mockEntityClassName)->will($this->returnValue($mockClassSchema));
 		$mockObjectConfiguration = $this->getMock('F3\FLOW3\Object\Configuration\Configuration', array(), array(), '', FALSE);
@@ -85,7 +85,7 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 		$mockObjectBuilder->expects($this->once())->method('createEmptyObject')->with($mockEntityClassName, $mockObjectConfiguration)->will($this->returnValue($mockEntity));
 		$mockObjectBuilder->expects($this->once())->method('reinjectDependencies')->with($mockEntity, $mockObjectConfiguration);
 		$mockSession = $this->getMock('F3\FLOW3\Persistence\Session');
-		$mockSession->expects($this->once())->method('registerReconstitutedObject')->with($mockEntity);
+		$mockSession->expects($this->once())->method('registerReconstitutedEntity')->with($mockEntity, $objectData);
 		$mockSession->expects($this->once())->method('registerObject')->with($mockEntity, '1234');
 
 		$dataMapper = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\DataMapper'), array('thawProperties'));
@@ -110,18 +110,26 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 
 		$objectData = array(
 			'identifier' => '1234',
-			'propertyData' => array(
+			'properties' => array(
 				'firstProperty' => array(
-					'value' => array('value' => 'firstValue')
+					'type' => 'string',
+					'multivalue' => FALSE,
+					'value' => 'firstValue'
 				),
 				'secondProperty' => array(
-					'value' => array('value' => 1234)
+					'type' => 'integer',
+					'multivalue' => FALSE,
+					'value' => 1234
 				),
 				'thirdProperty' => array(
-					'value' => array('value' => 1.234)
+					'type' => 'float',
+					'multivalue' => FALSE,
+					'value' => 1.234
 				),
 				'fourthProperty' => array(
-					'value' => array('value' => FALSE)
+					'type' => 'boolean',
+					'multivalue' => FALSE,
+					'value' => FALSE
 				)
 			)
 		);
@@ -144,7 +152,16 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 		$object = $this->getMock('F3\FLOW3\AOP\ProxyInterface');
 		$object->expects($this->once())->method('FLOW3_AOP_Proxy_setProperty')->with('FLOW3_Persistence_Entity_UUID', 'c254d2e0-825a-11de-8a39-0800200c9a66');
 
-		$objectData = array('identifier' => 'c254d2e0-825a-11de-8a39-0800200c9a66', 'propertyData' => array());
+		$objectData = array(
+			'identifier' => 'c254d2e0-825a-11de-8a39-0800200c9a66',
+			'properties' => array(
+				'firstProperty' => array(
+					'type' => 'string',
+					'multivalue' => FALSE,
+					'value' => NULL
+				)
+			)
+		);
 
 		$classSchema = new \F3\FLOW3\Reflection\ClassSchema('F3\Post');
 		$classSchema->addProperty('firstProperty', 'string');
@@ -166,7 +183,7 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 
 		$objectData = array(
 			'identifier' => 'c254d2e0-825a-11de-8a39-0800200c9a66',
-			'propertyData' => array()
+			'properties' => array()
 		);
 
 		$classSchema = new \F3\FLOW3\Reflection\ClassSchema('F3\Post');
@@ -188,7 +205,7 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 
 		$objectData = array(
 			'identifier' => 'c254d2e0-825a-11de-8a39-0800200c9a66',
-			'propertyData' => array()
+			'properties' => array()
 		);
 
 		$classSchema = $this->getMock('F3\FLOW3\Reflection\ClassSchema', array('getUuidPropertyName'), array('F3\Post'));
@@ -207,18 +224,26 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 
 		$objectData = array(
 			'identifier' => '1234',
-			'propertyData' => array(
+			'properties' => array(
 				'firstProperty' => array(
-					'value' => array('value' => 'theMappedArray')
+					'type' => 'array',
+					'multivalue' => TRUE,
+					'value' => array(array('type' => 'string', 'index' => 0, 'value' => 'theMappedArray'))
 				),
 				'secondProperty' => array(
-					'value' => array('value' => 'theMappedSplObjectStorage')
+					'type' => 'SplObjectStorage',
+					'multivalue' => TRUE,
+					'value' => array(array('type' => 'Some\Object', 'index' => NULL, 'value' => 'theMappedSplObjectStorage'))
 				),
 				'thirdProperty' => array(
-					'value' => array('value' => 'theUnixtime')
+					'type' => 'DateTime',
+					'multivalue' => FALSE,
+					'value' => 'theUnixtime'
 				),
 				'fourthProperty' => array(
-					'value' => array('value' => array('value' => 'theMappedObject'))
+					'type' => '\F3\Some\Domain\Model',
+					'multivalue' => FALSE,
+					'value' => array('identifier' => 'theMappedObjectIdentifier')
 				)
 			)
 		);
@@ -230,10 +255,10 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 		$classSchema->addProperty('fourthProperty', '\F3\Some\Domain\Model');
 
 		$dataMapper = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\DataMapper'), array('mapDateTime', 'mapArray', 'mapSplObjectStorage', 'mapToObject'));
-		$dataMapper->expects($this->at(0))->method('mapArray')->with($objectData['propertyData']['firstProperty']['value']);
-		$dataMapper->expects($this->at(1))->method('mapSplObjectStorage')->with($objectData['propertyData']['secondProperty']['value']);
-		$dataMapper->expects($this->at(2))->method('mapDateTime')->with($objectData['propertyData']['thirdProperty']['value']['value']);
-		$dataMapper->expects($this->at(3))->method('mapToObject')->with($objectData['propertyData']['fourthProperty']['value']['value']);
+		$dataMapper->expects($this->at(0))->method('mapArray')->with($objectData['properties']['firstProperty']['value']);
+		$dataMapper->expects($this->at(1))->method('mapSplObjectStorage')->with($objectData['properties']['secondProperty']['value']);
+		$dataMapper->expects($this->at(2))->method('mapDateTime')->with($objectData['properties']['thirdProperty']['value']);
+		$dataMapper->expects($this->at(3))->method('mapToObject')->with($objectData['properties']['fourthProperty']['value']);
 		$dataMapper->_call('thawProperties', $object, $objectData['identifier'], $objectData, $classSchema);
 	}
 
@@ -289,30 +314,37 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 		$arrayValues = array(
 			'one' => array(
 				'type' => 'string',
+				'index' => 'one',
 				'value' => 'onetwothreefour'
 			),
 			'two' => array(
 				'type' => 'integer',
+				'index' => 'two',
 				'value' => 1234
 			),
 			'three' => array(
 				'type' => 'float',
+				'index' => 'three',
 				'value' =>  1.234
 			),
 			'four' => array(
 				'type' => 'boolean',
+				'index' => 'four',
 				'value' => FALSE
 			),
 			'five' => array(
 				'type' => 'DateTime',
+				'index' => 'five',
 				'value' => $dateTime->getTimestamp()
 			),
 			'six' => array(
 				'type' => 'stdClass',
+				'index' => 'six',
 				'value' => array('mappedObject')
 			),
 			'seven' => array(
 				'type' => 'SplObjectStorage',
+				'index' => 'seven',
 				'value' => array('mappedObject')
 			)
 		);
@@ -333,7 +365,9 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 	public function mapArrayThrowsExceptionOnNestedArray() {
 		$arrayValues = array(
 			'one' => array(
-				'type' => 'array'
+				'type' => 'array',
+				'index' => 0,
+				'value' => 'foo'
 			)
 		);
 		$dataMapper = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\DataMapper'), array('dummy'));

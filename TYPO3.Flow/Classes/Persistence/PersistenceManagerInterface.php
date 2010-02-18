@@ -46,19 +46,40 @@ interface PersistenceManagerInterface {
 	public function initialize();
 
 	/**
-	 * Returns the current persistence session
+	 * Returns the number of records matching the query.
 	 *
-	 * @return \F3\FLOW3\Persistence\Session
-	 */
-	public function getSession();
-
-	/**
-	 * Returns the persistence backend
-	 *
-	 * @return \F3\FLOW3\Persistence\BackendInterface
+	 * @param \F3\FLOW3\Persistence\QueryInterface $query
+	 * @return integer
 	 * @api
 	 */
-	public function getBackend();
+	public function getObjectCountByQuery(\F3\FLOW3\Persistence\QueryInterface $query);
+
+	/**
+	 * Returns the object data matching the $query.
+	 *
+	 * @param \F3\FLOW3\Persistence\QueryInterface $query
+	 * @return array
+	 * @api
+	 */
+	public function getObjectDataByQuery(\F3\FLOW3\Persistence\QueryInterface $query);
+
+	/**
+	 * Replaces the given object by the second object.
+	 *
+	 * This method will unregister the existing object at the identity map and
+	 * register the new object instead. The existing object must therefore
+	 * already be registered at the identity map which is the case for all
+	 * reconstituted objects.
+	 *
+	 * The new object will be identified by the uuid which formerly belonged
+	 * to the existing object. The existing object looses its uuid.
+	 *
+	 * @param object $existingObject The existing object
+	 * @param object $newObject The new object
+	 * @return void
+	 * @api
+	 */
+	public function replaceObject($existingObject, $newObject);
 
 	/**
 	 * Commits new objects and changes to objects in the current persistence

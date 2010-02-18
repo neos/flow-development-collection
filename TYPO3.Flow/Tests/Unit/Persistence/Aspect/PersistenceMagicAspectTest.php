@@ -23,55 +23,41 @@ namespace F3\FLOW3\Persistence\Aspect;
  *                                                                        */
 
 /**
- * An interface used to introduce certain methods to support object persistence
+ * Testcase for the PersistenceMagicAspect
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-interface DirtyMonitoringInterface {
+class PersistenceMagicAspectTest extends \F3\Testing\BaseTestCase {
 
 	/**
-	 * If the monitored object has ever been persisted
-	 *
-	 * @return boolean TRUE if the object is new, otherwise FALSE
-	 */
-	public function FLOW3_Persistence_isNew();
-
-	/**
-	 * If the monitored object is a clone of another object
-	 *
-	 * @return boolean TRUE if the object is a clone, otherwise FALSE
-	 */
-	public function FLOW3_Persistence_isClone();
-
-	/**
-	 * If the specified property of the reconstituted object has been modified
-	 * since it woke up (or is new or cloned).
-	 *
-	 * @param string $propertyName Name of the property to check
-	 * @return boolean TRUE if the given property has been modified
-	 */
-	public function FLOW3_Persistence_isDirty($propertyName);
-
-	/**
-	 * Resets the dirty flags of properties to signal that the object is clean
-	 * clean (e.g. after being persisted).
-	 *
-	 * The method takes an optional argument $propertyName to mark only the
-	 * specified property as clean. This was used in conjunction with lazy
-	 * loading...
-	 *
-	 * @param string $propertyName Name of the property to mark clean, if NULL all will be marked clean
-	 * @return void
-	 */
-	public function FLOW3_Persistence_memorizeCleanState($propertyName = NULL);
-
-	/**
-	 * Introduces a clone method
-	 *
+	 * @test
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __clone();
+	public function cloneObjectMarksTheObjectAsCloned() {
+		$aspect = new \F3\FLOW3\Persistence\Aspect\PersistenceMagicAspect();
+
+		$object = new \stdClass();
+		$object->FLOW3_Persistence_cleanProperties = array('foo');
+
+		$mockAdviceChain = $this->getMock('F3\FLOW3\AOP\Advice\AdviceChain', array(), array(), '', FALSE);
+
+		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface');
+		$mockJoinPoint->expects($this->any())->method('getAdviceChain')->will($this->returnValue($mockAdviceChain));
+		$mockJoinPoint->expects($this->any())->method('getProxy')->will($this->returnValue($object));
+
+		$this->assertFalse($aspect->isClone($mockJoinPoint));
+		$aspect->cloneObject($mockJoinPoint);
+		$this->assertTrue($aspect->isClone($mockJoinPoint));
+	}
+
+	/**
+	 * @test
+	 */
+	public function generateValueHashUsesIdentifierOrHashOfSubObjects() {
+		$this->markTestIncomplete();
+	}
 }
+
 ?>

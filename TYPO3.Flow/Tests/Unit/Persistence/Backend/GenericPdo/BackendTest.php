@@ -89,22 +89,6 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function hasPropertyEmitsExpectedSql() {
-		$mockStatement = $this->getMock('PDOStatement');
-		$mockStatement->expects($this->once())->method('execute')->with(array('identifier', 'propertyname'));
-		$mockStatement->expects($this->once())->method('fetchColumn');
-		$mockPdo = $this->getMock('PdoInterface');
-		$mockPdo->expects($this->once())->method('prepare')->with('SELECT COUNT("parent") FROM "properties" WHERE "parent"=? AND "name"=?')->will($this->returnValue($mockStatement));
-		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('dummy'));
-		$backend->injectPersistenceSession(new \F3\FLOW3\Persistence\Session());
-		$backend->_set('databaseHandle', $mockPdo);
-		$backend->_call('hasProperty', 'identifier', 'propertyname');
-	}
-
-	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
 	public function removePropertiesEmitsExpectedSql() {
 		$mockDeletePropertyStatement = $this->getMock('PDOStatement');
 		$mockDeletePropertyStatement->expects($this->once())->method('execute')->with(array('identifier', 'propertyname'));
@@ -160,9 +144,8 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$persistenceSession = new \F3\FLOW3\Persistence\Session();
 		$persistenceSession->registerObject($oldObject, '');
 
-		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('createObjectRecord', 'emitPersistedNewObject', 'emitPersistedUpdatedObject'));
-		$backend->expects($this->once())->method('emitPersistedNewObject')->with($newObject);
-		$backend->expects($this->never())->method('emitPersistedUpdatedObject');
+		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('createObjectRecord', 'emitPersistedObject'));
+		$backend->expects($this->exactly(2))->method('emitPersistedObject');
 		$backend->expects($this->once())->method('createObjectRecord');
 		$backend->injectPersistenceSession($persistenceSession);
 		$backend->_set('classSchemata', array($fullClassName => new \F3\FLOW3\Reflection\ClassSchema($fullClassName)));
@@ -181,7 +164,6 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$className1 = 'SomeClass' . uniqid();
 		$fullClassName1 = $namespace . '\\' . $className1;
 		eval('namespace ' . $namespace . '; class ' . $className1 . ' implements \F3\FLOW3\AOP\ProxyInterface {
-			protected $FLOW3_Persistence_isNew = TRUE;
 			protected $FLOW3_Persistence_Entity_UUID = \'A\';
 			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return get_class($this); }
 			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
@@ -189,14 +171,10 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 			public function FLOW3_AOP_Proxy_hasProperty($propertyName) { return TRUE; }
 			public function FLOW3_AOP_Proxy_getProperty($propertyName) { return $this->$propertyName; }
 			public function FLOW3_AOP_Proxy_setProperty($propertyName, $value) {}
-			public function FLOW3_Persistence_isNew() { return $this->FLOW3_Persistence_isNew; }
-			public function FLOW3_Persistence_isDirty($propertyName) { return $this->FLOW3_Persistence_isNew; }
-			public function FLOW3_Persistence_memorizeCleanState($propertyName = NULL) { $this->FLOW3_Persistence_isNew = FALSE; }
 		}');
 		$className2 = 'SomeClass' . uniqid();
 		$fullClassName2 = $namespace . '\\' . $className2;
 		eval('namespace ' . $namespace . '; class ' . $className2 . ' implements \F3\FLOW3\AOP\ProxyInterface {
-			protected $FLOW3_Persistence_isNew = TRUE;
 			protected $FLOW3_Persistence_Entity_UUID = \'B\';
 			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return get_class($this); }
 			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
@@ -204,14 +182,10 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 			public function FLOW3_AOP_Proxy_hasProperty($propertyName) { return TRUE; }
 			public function FLOW3_AOP_Proxy_getProperty($propertyName) { return $this->$propertyName; }
 			public function FLOW3_AOP_Proxy_setProperty($propertyName, $value) {}
-			public function FLOW3_Persistence_isNew() { return $this->FLOW3_Persistence_isNew; }
-			public function FLOW3_Persistence_isDirty($propertyName) { return $this->FLOW3_Persistence_isNew; }
-			public function FLOW3_Persistence_memorizeCleanState($propertyName = NULL) { $this->FLOW3_Persistence_isNew = FALSE; }
 		}');
 		$className3 = 'SomeClass' . uniqid();
 		$fullClassName3 = $namespace . '\\' . $className3;
 		eval('namespace ' . $namespace . '; class ' . $className3 . ' implements \F3\FLOW3\AOP\ProxyInterface {
-			protected $FLOW3_Persistence_isNew = TRUE;
 			protected $FLOW3_Persistence_Entity_UUID = \'C\';
 			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return get_class($this); }
 			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
@@ -219,9 +193,6 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 			public function FLOW3_AOP_Proxy_hasProperty($propertyName) { return TRUE; }
 			public function FLOW3_AOP_Proxy_getProperty($propertyName) { return $this->$propertyName; }
 			public function FLOW3_AOP_Proxy_setProperty($propertyName, $value) {}
-			public function FLOW3_Persistence_isNew() { return $this->FLOW3_Persistence_isNew; }
-			public function FLOW3_Persistence_isDirty($propertyName) { return $this->FLOW3_Persistence_isNew; }
-			public function FLOW3_Persistence_memorizeCleanState($propertyName = NULL) { $this->FLOW3_Persistence_isNew = FALSE; }
 		}');
 		$objectA = new $fullClassName1();
 		$objectB = new $fullClassName2();
@@ -243,53 +214,50 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$classSchema3->setModelType(\F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY);
 		$classSchema3->addProperty('sub', $fullClassName2);
 
-		$mockSession = $this->getMock('F3\FLOW3\Persistence\Session');
+		$mockSession = $this->getMock('F3\FLOW3\Persistence\Session', array('hasObject'));
 		$mockSession->expects($this->at(0))->method('hasObject')->with($this->attribute($this->equalTo('A'), 'FLOW3_Persistence_Entity_UUID'))->will($this->returnValue(FALSE));
 			// the following fails although the same object is present, nethr equalTo nor identicalTo work...
 		//$mockSession->expects($this->at(0))->method('hasObject')->/*with($this->identicalTo($objectA))->*/will($this->returnValue(FALSE));
 		$mockSession->expects($this->at(1))->method('hasObject')->with($this->attribute($this->equalTo('B'), 'FLOW3_Persistence_Entity_UUID'))->will($this->returnValue(FALSE));
 		$mockSession->expects($this->at(2))->method('hasObject')->with($this->attribute($this->equalTo('C'), 'FLOW3_Persistence_Entity_UUID'))->will($this->returnValue(FALSE));
 
-		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('createObjectRecord', 'setProperties', 'emitPersistedNewObject', 'emitPersistedUpdatedObject'));
+		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('createObjectRecord', 'setProperties', 'emitPersistedObject'));
 		$backend->expects($this->exactly(3))->method('createObjectRecord')->will($this->onConsecutiveCalls('A', 'B', 'C'));
 		$excpectedPropertiesOfA = array(
-			'sub' => array(
-				'parent' => 'A',
-				'type' => $fullClassName2,
-				'multivalue' => NULL,
-				'value' => array(
-					array(
-						'index' => NULL,
-						'type' => $fullClassName2,
-						'value' => 'B'
+			'identifier' => 'A',
+			'classname' => $fullClassName1,
+			'properties' => array(
+				'sub' => array(
+					'type' => $fullClassName2,
+					'multivalue' => FALSE,
+					'value' => array(
+						'identifier' => 'B'
 					)
 				)
 			)
 		);
 		$excpectedPropertiesOfB = array(
-			'sub' => array(
-				'parent' => 'B',
-				'type' => $fullClassName3,
-				'multivalue' => NULL,
-				'value' => array(
-					array(
-						'index' => NULL,
-						'type' => $fullClassName3,
-						'value' => 'C'
+			'identifier' => 'B',
+			'classname' => $fullClassName2,
+			'properties' => array(
+				'sub' => array(
+					'type' => $fullClassName3,
+					'multivalue' => FALSE,
+					'value' => array(
+						'identifier' => 'C'
 					)
 				)
 			)
 		);
 		$excpectedPropertiesOfC = array(
-			'sub' => array(
-				'parent' => 'C',
-				'type' => $fullClassName2,
-				'multivalue' => NULL,
-				'value' => array(
-					array(
-						'index' => NULL,
-						'type' => $fullClassName2,
-						'value' => 'B'
+			'identifier' => 'C',
+			'classname' => $fullClassName3,
+			'properties' => array(
+				'sub' => array(
+					'type' => $fullClassName2,
+					'multivalue' => FALSE,
+					'value' => array(
+						'identifier' => 'B'
 					)
 				)
 			)
@@ -421,14 +389,10 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$className = 'SomeClass' . uniqid();
 		$fullClassName = 'F3\\FLOW3\Persistence\\Tests\\' . $className;
 		$identifier = \F3\FLOW3\Utility\Algorithms::generateUUID();
-		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $className . ' implements \F3\FLOW3\Persistence\Aspect\DirtyMonitoringInterface{
+		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $className . ' implements \F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface{
 			public $simpleString = \'simpleValue\';
-			protected $dirty = TRUE;
-			public function FLOW3_Persistence_isNew() { return FALSE; }
-			public function FLOW3_Persistence_isDirty($propertyName) { return $this->dirty; }
 			public function FLOW3_Persistence_isClone() {}
 			public function __clone() {}
-			public function FLOW3_Persistence_memorizeCleanState($propertyName = NULL) { $this->dirty = FALSE; }
 			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return \'' . $fullClassName . '\'; }
 			public function FLOW3_AOP_Proxy_getProperty($propertyName) { return $this->$propertyName; }
 		}');
@@ -437,33 +401,29 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$classSchema = new \F3\FLOW3\Reflection\ClassSchema($fullClassName);
 		$classSchema->setModelType(\F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY);
 		$classSchema->addProperty('simpleString', 'string');
-		$persistenceSession = new \F3\FLOW3\Persistence\Session();
-		$persistenceSession->registerObject($dirtyObject, $identifier);
+		$mockPersistenceSession = $this->getMock('F3\FLOW3\Persistence\Session', array('isDirty'));
+		$mockPersistenceSession->expects($this->once())->method('isDirty')->will($this->returnValue(TRUE));
+		$mockPersistenceSession->registerObject($dirtyObject, $identifier);
 
 		$expectedProperties = array(
-			'simpleString' => array(
-				'parent' => $identifier,
-				'type' => 'string',
-				'multivalue' => NULL,
-				'value' => array(
-					array(
-						'index' => NULL,
-						'type' => 'string',
-						'value' => 'simpleValue'
-					)
+			'identifier' => $identifier,
+			'classname' => $fullClassName,
+			'properties' => array(
+				'simpleString' => array(
+					'type' => 'string',
+					'multivalue' => FALSE,
+					'value' => 'simpleValue'
 				)
 			)
 		);
-		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('setProperties', 'emitPersistedNewObject', 'emitPersistedUpdatedObject'));
+		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('setProperties', 'emitPersistedObject'));
 		$backend->expects($this->once())->method('setProperties')->with($expectedProperties);
-		$backend->expects($this->once())->method('emitPersistedUpdatedObject');
-		$backend->injectPersistenceSession($persistenceSession);
+		$backend->expects($this->once())->method('emitPersistedObject', \F3\FLOW3\Persistence\Backend\AbstractBackend::OBJECTSTATE_RECONSTITUTED);
+		$backend->injectPersistenceSession($mockPersistenceSession);
 		$backend->_set('visitedDuringPersistence', new \SplObjectStorage());
 		$backend->_set('classSchemata', array($fullClassName => $classSchema));
 
-		$this->assertTrue($dirtyObject->FLOW3_Persistence_isDirty('simpleString'));
 		$backend->_call('persistObject', $dirtyObject);
-		$this->assertFalse($dirtyObject->FLOW3_Persistence_isDirty('simpleString'));
 	}
 
 	/**
@@ -473,7 +433,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 	public function persistObjectProcessesObjectsWithDateTimeMember() {
 		$className = 'SomeClass' . uniqid();
 		$fullClassName = 'F3\\FLOW3\Persistence\\Tests\\' . $className;
-		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $className . ' implements \F3\FLOW3\Persistence\Aspect\DirtyMonitoringInterface {
+		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $className . ' implements \F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface {
 			public $date;
 			public function FLOW3_Persistence_isNew() { return TRUE; }
 			public function FLOW3_Persistence_isDirty($propertyName) { return TRUE; }
@@ -489,16 +449,13 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$newObject->FLOW3_Persistence_Entity_UUID = NULL;
 
 		$expectedProperties = array(
-			'date' => array(
-				'parent' => NULL,
-				'type' => 'DateTime',
-				'multivalue' => NULL,
-				'value' => array(
-					array(
-						'index' => NULL,
-						'type' => 'DateTime',
-						'value' => $date->getTimestamp()
-					)
+			'identifier' => NULL,
+			'classname' => $fullClassName,
+			'properties' => array(
+				'date' => array(
+					'type' => 'DateTime',
+					'multivalue' => FALSE,
+					'value' => $date->getTimestamp()
 				)
 			)
 		);
@@ -510,7 +467,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$classSchema->addProperty('date', 'DateTime');
 
 			// ... and here we go
-		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('setProperties', 'emitPersistedNewObject', 'emitPersistedUpdatedObject'));
+		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('setProperties', 'emitPersistedObject'));
 		$backend->expects($this->once())->method('setProperties')->with($expectedProperties);
 		$backend->injectPersistenceSession($persistenceSession);
 		$backend->_set('visitedDuringPersistence', new \SplObjectStorage());
@@ -543,7 +500,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$persistenceSession = new \F3\FLOW3\Persistence\Session();
 		$persistenceSession->registerObject($object, $identifier);
 
-		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('checkType', 'setProperties', 'emitPersistedNewObject', 'emitPersistedUpdatedObject'));
+		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('checkType', 'setProperties', 'emitPersistedObject'));
 		$backend->injectPersistenceSession($persistenceSession);
 		$backend->_set('visitedDuringPersistence', new \SplObjectStorage());
 		$backend->_set('classSchemata', array($fullClassName => $classSchema));
@@ -573,83 +530,80 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$aggregateRootObjects->attach($B);
 
 		$expectedPropertiesForA = array(
-			'name' => array(
-				'parent' => 'fakeUuidA',
-				'type' => 'string',
-				'multivalue' => FALSE,
-				'value' => array(
-					'0' => array(
-						'value' => 'A',
-						'index' => NULL,
-						'type' => 'string'
-					)
-				)
-			),
-			'members' => array(
-				'parent' => 'fakeUuidA',
-				'type' => 'array',
-				'multivalue' => TRUE,
-				'value' => array(
-					'0' => array(
-						'value' => 'fakeHash',
-						'index' => '0',
-						'type' => 'F3\TYPO3CR\Tests\Fixtures\AValue'
+			'identifier' => 'fakeUuidA',
+			'classname' => 'F3\TYPO3CR\Tests\Fixtures\AnEntity',
+			'properties' => array(
+				'name' => array(
+					'type' => 'string',
+					'multivalue' => FALSE,
+					'value' => 'A',
+				),
+				'members' => array(
+					'type' => 'array',
+					'multivalue' => TRUE,
+					'value' => array(
+						array(
+							'type' => 'F3\TYPO3CR\Tests\Fixtures\AValue',
+							'index' => '0',
+							'value' => array(
+								'identifier' => 'fakeHash'
+							)
+						)
 					)
 				)
 			)
 		);
 		$expectedPropertiesForB = array(
-			'name' => array(
-				'parent' => 'fakeUuidB',
-				'type' => 'string',
-				'multivalue' => FALSE,
-				'value' => array(
-					'0' => array(
-						'value' => 'B',
-						'index' => NULL,
-						'type' => 'string'
-					)
-				)
-			),
-			'members' => array(
-				'parent' => 'fakeUuidB',
-				'type' => 'array',
-				'multivalue' => TRUE,
-				'value' => array(
-					'0' => array(
-						'value' => 'fakeHash',
-						'index' => '0',
-						'type' => 'F3\TYPO3CR\Tests\Fixtures\AValue'
-					),
-					'1' => array(
-						'value' => 'fakeHash',
-						'index' => '1',
-						'type' => 'F3\TYPO3CR\Tests\Fixtures\AValue'
+			'identifier' => 'fakeUuidB',
+			'classname' => 'F3\TYPO3CR\Tests\Fixtures\AnEntity',
+			'properties' => array(
+				'name' => array(
+					'type' => 'string',
+					'multivalue' => FALSE,
+					'value' => 'B',
+				),
+				'members' => array(
+					'type' => 'array',
+					'multivalue' => TRUE,
+					'value' => array(
+						array(
+							'type' => 'F3\TYPO3CR\Tests\Fixtures\AValue',
+							'index' => '0',
+							'value' => array(
+								'identifier' => 'fakeHash'
+							)
+						),
+						array(
+							'type' => 'F3\TYPO3CR\Tests\Fixtures\AValue',
+							'index' => '1',
+							'value' => array(
+								'identifier' => 'fakeHash'
+							)
+						)
 					)
 				)
 			)
 		);
 
 			// set up needed infrastructure
-		$entityClassSchema = new \F3\FLOW3\Reflection\ClassSchema('F3\TYPO3CR\Tests\Fixture\AnEntity');
+		$entityClassSchema = new \F3\FLOW3\Reflection\ClassSchema('F3\TYPO3CR\Tests\Fixtures\AnEntity');
 		$entityClassSchema->setModelType(\F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY);
 		$entityClassSchema->addProperty('name', 'string');
 		$entityClassSchema->addProperty('members', 'array');
-		$valueClassSchema = new \F3\FLOW3\Reflection\ClassSchema('F3\TYPO3CR\Tests\Fixture\AValue');
+		$valueClassSchema = new \F3\FLOW3\Reflection\ClassSchema('F3\TYPO3CR\Tests\Fixtures\AValue');
 		$valueClassSchema->setModelType(\F3\FLOW3\Reflection\ClassSchema::MODELTYPE_VALUEOBJECT);
 		$valueClassSchema->addProperty('name', 'string');
 
 			// ... and here we go
-		$mockSession = $this->getMock('F3\FLOW3\Persistence\Session');
-		$mockSession->expects($this->exactly(5))->method('hasObject')->will($this->onConsecutiveCalls(FALSE, FALSE, FALSE, TRUE, TRUE));
-		$mockSession->expects($this->exactly(2))->method('getIdentifierByObject')->with($V)->will($this->returnValue($V->FLOW3_Persistence_ValueObject_Hash));
+		$mockSession = $this->getMock('F3\FLOW3\Persistence\Session', array('hasObject'));
+		$mockSession->expects($this->exactly(3))->method('hasObject')->will($this->onConsecutiveCalls(FALSE, FALSE, FALSE));
 
-		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('createObjectRecord', 'setProperties', 'emitPersistedNewObject', 'emitPersistedUpdatedObject'));
+		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('createObjectRecord', 'setProperties', 'emitPersistedObject'));
 		$backend->expects($this->at(0))->method('createObjectRecord')->with($A)->will($this->returnValue('fakeUuidA'));
 		$backend->expects($this->at(1))->method('createObjectRecord')->with($V)->will($this->returnValue('fakeHash'));
-		$backend->expects($this->at(3))->method('setProperties')->with($expectedPropertiesForA);
-		$backend->expects($this->at(5))->method('createObjectRecord')->with($B)->will($this->returnValue('fakeUuidB'));
-		$backend->expects($this->at(6))->method('setProperties')->with($expectedPropertiesForB);
+		$backend->expects($this->at(4))->method('setProperties')->with($expectedPropertiesForA);
+		$backend->expects($this->at(6))->method('createObjectRecord')->with($B)->will($this->returnValue('fakeUuidB'));
+		$backend->expects($this->at(7))->method('setProperties')->with($expectedPropertiesForB);
 
 		$backend->injectPersistenceSession($mockSession);
 		$backend->_set('classSchemata', array('F3\TYPO3CR\Tests\Fixtures\AnEntity' => $entityClassSchema, 'F3\TYPO3CR\Tests\Fixtures\AValue' => $valueClassSchema));
@@ -671,54 +625,46 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$A->addObject($B);
 
 		$expectedPropertiesForB = array(
-			'name' => array(
-				'parent' => 'fakeUuidB',
-				'type' => 'string',
-				'multivalue' => FALSE,
-				'value' => array(
-					'0' => array(
-						'value' => 'B',
-						'index' => NULL,
-						'type' => 'string'
-					)
+			'identifier' => 'fakeUuidB',
+			'classname' => 'F3\TYPO3CR\Tests\Fixtures\AnEntity',
+			'properties' => array(
+				'name' => array(
+					'type' => 'string',
+					'multivalue' => FALSE,
+					'value' => 'B'
+				),
+				'objects' => array(
+					'type' => 'SplObjectStorage',
+					'multivalue' => TRUE,
+					'value' => array()
 				)
-			),
-			'objects' => array(
-				'parent' => 'fakeUuidB',
-				'type' => 'SplObjectStorage',
-				'multivalue' => TRUE,
-				'value' => array()
 			)
 		);
 		$expectedPropertiesForA = array(
-			'name' => array(
-				'parent' => 'fakeUuidA',
-				'type' => 'string',
-				'multivalue' => FALSE,
-				'value' => array(
-					'0' => array(
-						'value' => 'A',
-						'index' => NULL,
-						'type' => 'string'
+			'identifier' => 'fakeUuidA',
+			'classname' => 'F3\TYPO3CR\Tests\Fixtures\AnEntity',
+			'properties' => array(
+				'name' => array(
+					'type' => 'string',
+					'multivalue' => FALSE,
+					'value' => 'A'
+				),
+				'objects' => array(
+					'type' => 'SplObjectStorage',
+					'multivalue' => TRUE,
+					'value' => array(
+						array(
+							'type' => 'F3\TYPO3CR\Tests\Fixtures\AnEntity',
+							'index' => NULL,
+							'value' => array('identifier' => 'fakeUuidB'),
+						),
 					)
-				)
-			),
-			'objects' => array(
-				'parent' => 'fakeUuidA',
-				'type' => 'SplObjectStorage',
-				'multivalue' => TRUE,
-				'value' => array(
-					array(
-						'value' => 'fakeUuidB',
-						'index' => NULL,
-						'type' => 'F3\TYPO3CR\Tests\Fixtures\AnEntity'
-					),
 				)
 			)
 		);
 
 			// set up needed infrastructure
-		$classSchema = new \F3\FLOW3\Reflection\ClassSchema('F3\TYPO3CR\Tests\AnEntity');
+		$classSchema = new \F3\FLOW3\Reflection\ClassSchema('F3\TYPO3CR\Tests\Fixtures\AnEntity');
 		$classSchema->setModelType(\F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY);
 		$classSchema->addProperty('name', 'string');
 		$classSchema->addProperty('objects', 'SplObjectStorage');
@@ -727,7 +673,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$persistenceSession->registerObject($B, 'fakeUuidB');
 
 			// ... and here we go
-		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('createObjectRecord', 'setProperties', 'emitPersistedNewObject', 'emitPersistedUpdatedObject'));
+		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('createObjectRecord', 'setProperties', 'emitPersistedObject'));
 		$backend->injectPersistenceSession($persistenceSession);
 		$backend->expects($this->never())->method('createObjectRecord');
 		$backend->expects($this->at(0))->method('setProperties')->with($expectedPropertiesForB);
@@ -745,39 +691,35 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 	public function dateTimeInSplObjectStorageIsStoredAsExpected() {
 			// set up object
 		$A = new \F3\TYPO3CR\Tests\Fixtures\AnEntity('A');
-		$A->FLOW3_Persistence_Entity_UUID = 'fakeUuuidA';
+		$A->FLOW3_Persistence_Entity_UUID = 'fakeUuidA';
 		$dateTime = new \DateTime;
 		$A->addObject($dateTime);
 
 		$expectedPropertiesForA = array(
-			'name' => array(
-				'parent' => 'fakeUuidA',
-				'type' => 'string',
-				'multivalue' => FALSE,
-				'value' => array(
-					'0' => array(
-						'value' => 'A',
-						'index' => NULL,
-						'type' => 'string'
+			'identifier' => 'fakeUuidA',
+			'classname' => 'F3\TYPO3CR\Tests\Fixtures\AnEntity',
+			'properties' => array(
+				'name' => array(
+					'type' => 'string',
+					'multivalue' => FALSE,
+					'value' => 'A'
+				),
+				'objects' => array(
+					'type' => 'SplObjectStorage',
+					'multivalue' => TRUE,
+					'value' => array(
+						array(
+							'type' => 'DateTime',
+							'index' => NULL,
+							'value' => $dateTime->getTimestamp()
+						),
 					)
-				)
-			),
-			'objects' => array(
-				'parent' => 'fakeUuidA',
-				'type' => 'SplObjectStorage',
-				'multivalue' => TRUE,
-				'value' => array(
-					array(
-						'value' => $dateTime->getTimestamp(),
-						'index' => NULL,
-						'type' => 'datetime'
-					),
 				)
 			)
 		);
 
 			// set up needed infrastructure
-		$classSchema = new \F3\FLOW3\Reflection\ClassSchema('F3\TYPO3CR\Tests\AnEntity');
+		$classSchema = new \F3\FLOW3\Reflection\ClassSchema('F3\TYPO3CR\Tests\Fixtures\AnEntity');
 		$classSchema->setModelType(\F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY);
 		$classSchema->addProperty('name', 'string');
 		$classSchema->addProperty('objects', 'SplObjectStorage');
@@ -785,7 +727,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$persistenceSession->registerObject($A, 'fakeUuidA');
 
 			// ... and here we go
-		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('createObjectRecord', 'setProperties', 'emitPersistedNewObject', 'emitPersistedUpdatedObject'));
+		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('createObjectRecord', 'setProperties', 'emitPersistedObject'));
 		$backend->injectPersistenceSession($persistenceSession);
 		$backend->expects($this->never())->method('createObjectRecord');
 		$backend->expects($this->once())->method('setProperties')->with($expectedPropertiesForA);
@@ -929,14 +871,14 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 
 		$expected = array(
 			array(
-				'value' => 'bar',
-				'index' => 'foo',
 				'type' => 'string',
+				'index' => 'foo',
+				'value' => 'bar'
 			),
 			array(
-				'value' => $dateTime->getTimestamp(),
+				'type' => 'DateTime',
 				'index' => 'date',
-				'type' => 'datetime',
+				'value' => $dateTime->getTimestamp()
 			)
 		);
 
@@ -1051,69 +993,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$persistenceSession = new \F3\FLOW3\Persistence\Session();
 		$persistenceSession->registerObject($someAggregateRootObject, '');
 
-		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('createObjectRecord', 'setProperties', 'emitPersistedNewObject', 'emitPersistedUpdatedObject'));
-		$backend->expects($this->once())->method('createObjectRecord')->with($otherAggregateRootObject);
-		$backend->injectPersistenceSession($persistenceSession);
-		$backend->setAggregateRootObjects($aggregateRootObjects);
-		$backend->_set('visitedDuringPersistence', new \SplObjectStorage());
-		$backend->_set('classSchemata', array(
-			$fullOtherClassName => $otherClassSchema,
-			$fullSomeClassName => $someClassSchema
-		));
-		$backend->_call('persistObjects');
-	}
-
-
-	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function objectsFoundInCleanPropertiesAreTraversed() {
-		$otherClassName = 'OtherClass' . uniqid();
-		$fullOtherClassName = 'F3\\FLOW3\Persistence\\Tests\\' . $otherClassName;
-		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $otherClassName . ' implements \F3\FLOW3\AOP\ProxyInterface {
-			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return \'' . $fullOtherClassName . '\';}
-			public function FLOW3_AOP_Proxy_construct() {}
-			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
-			public function FLOW3_AOP_Proxy_hasProperty($propertyName) { return TRUE; }
-			public function FLOW3_AOP_Proxy_getProperty($propertyName) { return NULL; }
-			public function FLOW3_AOP_Proxy_setProperty($propertyName, $value) {}
-			public function FLOW3_Persistence_isNew() { return TRUE; }
-			public function FLOW3_Persistence_isDirty($propertyName) { return TRUE; }
-			public function FLOW3_Persistence_memorizeCleanState($propertyName = NULL) {}
-		}');
-		$someClassName = 'SomeClass' . uniqid();
-		$fullSomeClassName = 'F3\\FLOW3\Persistence\\Tests\\' . $someClassName;
-		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $someClassName . ' implements \F3\FLOW3\AOP\ProxyInterface {
-			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return \'' . $fullSomeClassName . '\';}
-			public function FLOW3_AOP_Proxy_construct() {}
-			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
-			public function FLOW3_AOP_Proxy_hasProperty($propertyName) { return TRUE; }
-			public function FLOW3_AOP_Proxy_getProperty($propertyName) { return $this->$propertyName; }
-			public function FLOW3_AOP_Proxy_setProperty($propertyName, $value) {}
-			public function FLOW3_Persistence_isNew() { return TRUE; }
-			public function FLOW3_Persistence_isDirty($propertyName) { return FALSE; }
-			public function FLOW3_Persistence_memorizeCleanState($propertyName = NULL) {}
-		}');
-		$otherAggregateRootObject = new $fullOtherClassName();
-		$someAggregateRootObject = new $fullSomeClassName();
-		$someAggregateRootObject->property = $otherAggregateRootObject;
-
-		$otherClassSchema = new \F3\FLOW3\Reflection\ClassSchema($otherClassName);
-		$otherClassSchema->setModelType(\F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY);
-		$otherClassSchema->setAggregateRoot(TRUE);
-		$someClassSchema = new \F3\FLOW3\Reflection\ClassSchema($someClassName);
-		$someClassSchema->setModelType(\F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY);
-		$someClassSchema->setAggregateRoot(TRUE);
-		$someClassSchema->addProperty('property', $fullOtherClassName);
-
-		$aggregateRootObjects = new \SplObjectStorage();
-		$aggregateRootObjects->attach($someAggregateRootObject);
-
-		$persistenceSession = new \F3\FLOW3\Persistence\Session();
-		$persistenceSession->registerObject($someAggregateRootObject, '');
-
-		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('createObjectRecord', 'emitPersistedNewObject', 'emitPersistedUpdatedObject'));
+		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('createObjectRecord', 'setProperties', 'emitPersistedObject'));
 		$backend->expects($this->once())->method('createObjectRecord')->with($otherAggregateRootObject);
 		$backend->injectPersistenceSession($persistenceSession);
 		$backend->setAggregateRootObjects($aggregateRootObjects);
@@ -1131,47 +1011,44 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function setPropertiesByParentEmitsExpectedSql() {
 		$propertyData = array(
-			'singleValue' => array(
-				'parent' => 'identifier',
-				'type' => 'propertyType',
-				'multivalue' => FALSE,
-				'value' => array(array(
+			'identifier' => 'identifier',
+			'classname' => 'F3\TYPO3CR\Tests\Fixtures\AnEntity',
+			'properties' => array(
+				'singleValue' => array(
+					'type' => 'string',
+					'multivalue' => FALSE,
 					'value' => 'propertyValue',
-					'index' => NULL,
-					'type' => 'string'
-					))
 				),
-			'multiValue' => array(
-				'parent' => 'identifier',
-				'type' => 'SplObjectStorage',
-				'multivalue' => TRUE,
-				'value' => array(
-					array(
-						'value' => '1',
-						'index' => NULL,
-						'type' => 'datetime'
-					),
-					array(
-						'value' => '2',
-						'index' => NULL,
-						'type' => 'datetime'
+				'multiValue' => array(
+					'type' => 'SplObjectStorage',
+					'multivalue' => TRUE,
+					'value' => array(
+						array(
+							'type' => 'DateTime',
+							'index' => NULL,
+							'value' => 1
+						),
+						array(
+							'type' => 'DateTime',
+							'index' => NULL,
+							'value' => 2
+						)
 					)
-				)
-			),
-			'keyedMultiValue' => array(
-				'parent' => 'identifier',
-				'type' => 'array',
-				'multivalue' => TRUE,
-				'value' => array(
-					'one' => array(
-						'value' => '1234',
-						'index' => 'one',
-						'type' => '\FooBar'
-					),
-					'two' => array(
-						'value' => '5678',
-						'index' => 'two',
-						'type' => '\FooBar'
+				),
+				'keyedMultiValue' => array(
+					'type' => 'array',
+					'multivalue' => TRUE,
+					'value' => array(
+						array(
+							'type' => '\FooBar',
+							'index' => 'one',
+							'value' => '1234'
+						),
+						array(
+							'type' => '\FooBar',
+							'index' => 'two',
+							'value' => '5678'
+						)
 					)
 				)
 			)
@@ -1179,13 +1056,13 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 
 
 		$mockInsertPropertyStatement = $this->getMock('PDOStatement');
-		$mockInsertPropertyStatement->expects($this->at(0))->method('execute')->with(array('identifier', 'singleValue', 0, 'propertyType'));
+		$mockInsertPropertyStatement->expects($this->at(0))->method('execute')->with(array('identifier', 'singleValue', 0, 'string'));
 		$mockInsertDataStatement = $this->getMock('PDOStatement');
 		$mockInsertDataStatement->expects($this->at(0))->method('execute')->with(array('identifier', 'singleValue', NULL, 'string', 'propertyValue'));
-		$mockInsertDataStatement->expects($this->at(1))->method('execute')->with(array('identifier', 'multiValue', NULL, 'datetime', '1'));
-		$mockInsertDataStatement->expects($this->at(2))->method('execute')->with(array('identifier', 'multiValue', NULL, 'datetime', '2'));
-		$mockInsertDataStatement->expects($this->at(3))->method('execute')->with(array('identifier', 'keyedMultiValue', 'one', 'object', '1234'));
-		$mockInsertDataStatement->expects($this->at(4))->method('execute')->with(array('identifier', 'keyedMultiValue', 'two', 'object', '5678'));
+		$mockInsertDataStatement->expects($this->at(1))->method('execute')->with(array('identifier', 'multiValue', NULL, 'DateTime', '1'));
+		$mockInsertDataStatement->expects($this->at(2))->method('execute')->with(array('identifier', 'multiValue', NULL, 'DateTime', '2'));
+		$mockInsertDataStatement->expects($this->at(3))->method('execute')->with(array('identifier', 'keyedMultiValue', 'one', '\FooBar', '1234'));
+		$mockInsertDataStatement->expects($this->at(4))->method('execute')->with(array('identifier', 'keyedMultiValue', 'two', '\FooBar', '5678'));
 		$mockPdo = $this->getMock('PdoInterface');
 		$mockPdo->expects($this->at(0))->method('prepare')->with('INSERT INTO "properties" ("parent", "name", "multivalue", "type") VALUES (?, ?, ?, ?)')->will($this->returnValue($mockInsertPropertyStatement));
 		$mockPdo->expects($this->at(1))->method('prepare')->with('INSERT INTO "properties_data" ("parent", "name", "index", "type", "string") VALUES (?, ?, ?, ?, ?)')->will($this->returnValue($mockInsertDataStatement));
@@ -1194,13 +1071,12 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$mockPdo->expects($this->at(4))->method('prepare')->with('INSERT INTO "properties_data" ("parent", "name", "index", "type", "object") VALUES (?, ?, ?, ?, ?)')->will($this->returnValue($mockInsertDataStatement));
 		$mockPdo->expects($this->at(5))->method('prepare')->with('INSERT INTO "properties_data" ("parent", "name", "index", "type", "object") VALUES (?, ?, ?, ?, ?)')->will($this->returnValue($mockInsertDataStatement));
 
-		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('hasProperty', 'removeProperties'));
+		$backendProxyClassName = $this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend');
+		$backend = new $backendProxyClassName();
 		$backend->injectPersistenceSession(new \F3\FLOW3\Persistence\Session());
-		$backend->expects($this->at(0))->method('hasProperty')->with('identifier', 'singleValue')->will($this->returnValue(TRUE));
-		$backend->expects($this->at(1))->method('removeProperties')->with(array('singleValue' => array('parent' => 'identifier')));
 		$backend->_set('databaseHandle', $mockPdo);
 
-		$backend->_call('setProperties', $propertyData);
+		$backend->_call('setProperties', $propertyData, \F3\FLOW3\Persistence\Backend\AbstractBackend::OBJECTSTATE_NEW);
 	}
 
 	/**

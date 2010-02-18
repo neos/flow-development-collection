@@ -33,6 +33,18 @@ namespace F3\FLOW3\Persistence\Backend;
 abstract class AbstractBackend implements \F3\FLOW3\Persistence\BackendInterface {
 
 	/**
+	 * An object that was reconstituted
+	 * @var integer
+	 */
+	const OBJECTSTATE_RECONSTITUTED = 1;
+
+	/**
+	 * An object that is new
+	 * @var integer
+	 */
+	const OBJECTSTATE_NEW = 2;
+
+	/**
 	 * @var \F3\FLOW3\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
@@ -120,28 +132,16 @@ abstract class AbstractBackend implements \F3\FLOW3\Persistence\BackendInterface
 	}
 
 	/**
-	 * Signalizes that the given object has been persisted (the first time)
+	 * Signalizes that the given object has been persisted
 	 *
 	 * @param object $object The object that will be persisted
+	 * @param integer $objectState The state, see self::OBJECTSTATE_*
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @signal
 	 * @api
 	 */
-	protected function emitPersistedNewObject($object) {
-		$this->signalDispatcher->dispatch(__CLASS__, __FUNCTION__, func_get_args());
-	}
-
-	/**
-	 * Signalizes that the given object has been persisted (updated)
-	 *
-	 * @param object $object The object that will be persisted
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @signal
-	 * @api
-	 */
-	protected function emitPersistedUpdatedObject($object) {
+	protected function emitPersistedObject($object, $objectState) {
 		$this->signalDispatcher->dispatch(__CLASS__, __FUNCTION__, func_get_args());
 	}
 
@@ -215,31 +215,6 @@ abstract class AbstractBackend implements \F3\FLOW3\Persistence\BackendInterface
 	}
 
 	/**
-	 * Replaces the given object by the second object.
-	 *
-	 * This method will unregister the existing object at the identity map and
-	 * register the new object instead. The existing object must therefore
-	 * already be registered at the identity map which is the case for all
-	 * reconstituted objects.
-	 *
-	 * The new object will be identified by the UUID which formerly belonged
-	 * to the existing object. The existing object looses its uuid.
-	 *
-	 * @param object $existingObject The existing object
-	 * @param object $newObject The new object
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function replaceObject($existingObject, $newObject) {
-		$existingUUID = $this->persistenceSession->getIdentifierByObject($existingObject);
-		if ($existingUUID === NULL) throw new \F3\FLOW3\Persistence\Exception\UnknownObjectException('The given object is unknown to the persistence session.', 1238070163);
-
-		$this->persistenceSession->unregisterObject($existingObject);
-		$this->persistenceSession->registerObject($newObject, $existingUUID);
-	}
-
-	/**
 	 * Commits the current persistence session.
 	 *
 	 * @return void
@@ -251,7 +226,7 @@ abstract class AbstractBackend implements \F3\FLOW3\Persistence\BackendInterface
 	}
 
 	/**
-	 * Create a node for all aggregate roots first, then traverse object graph.
+	 * First persist new objects, then check reconstituted entites.
 	 *
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
@@ -260,6 +235,9 @@ abstract class AbstractBackend implements \F3\FLOW3\Persistence\BackendInterface
 		$this->visitedDuringPersistence = new \SplObjectStorage();
 		foreach ($this->aggregateRootObjects as $object) {
 			$this->persistObject($object);
+		}
+		foreach ($this->persistenceSession->getReconstitutedEntities() as $entity) {
+			$this->persistObject($entity);
 		}
 	}
 

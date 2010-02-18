@@ -348,7 +348,7 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 		}');
 
 		$entityClassName = uniqid('entityClass');
-		eval('class ' . $entityClassName . ' implements \F3\FLOW3\Persistence\Aspect\DirtyMonitoringInterface, \F3\FLOW3\AOP\ProxyInterface {
+		eval('class ' . $entityClassName . ' implements \F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface, \F3\FLOW3\AOP\ProxyInterface {
 			public function FLOW3_AOP_Proxy_construct() {}
 			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
 			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return get_class($this); }
@@ -407,7 +407,7 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 		}');
 
 		$entityClassName = uniqid('entityClass');
-		eval('class ' . $entityClassName . ' implements \F3\FLOW3\Persistence\Aspect\DirtyMonitoringInterface, \F3\FLOW3\AOP\ProxyInterface {
+		eval('class ' . $entityClassName . ' implements \F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface, \F3\FLOW3\AOP\ProxyInterface {
 			public function FLOW3_AOP_Proxy_construct() {}
 			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
 			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return get_class($this); }

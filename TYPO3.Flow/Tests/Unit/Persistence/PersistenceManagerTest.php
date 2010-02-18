@@ -110,32 +110,6 @@ class PersistenceManagerTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function persistAllFindsReconstitutedObjects() {
-		$dirtyEntity = new \F3\FLOW3\Tests\Persistence\Fixture\Model\DirtyEntity();
-		$session = new \F3\FLOW3\Persistence\Session();
-		$session->registerReconstitutedObject($dirtyEntity);
-
-		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService');
-		$mockReflectionService->expects($this->any())->method('getAllImplementationClassNamesForInterface')->will($this->returnValue(array()));
-		$mockReflectionService->expects($this->any())->method('getClassPropertyNames')->will($this->returnValue(array()));
-		$mockBackend = $this->getMock('F3\FLOW3\Persistence\BackendInterface');
-		$objectStorage = new \SplObjectStorage();
-		$objectStorage->attach($dirtyEntity);
-			// this is the really important assertion!
-		$mockBackend->expects($this->once())->method('setAggregateRootObjects')->with($objectStorage);
-
-		$manager = new \F3\FLOW3\Persistence\PersistenceManager();
-		$manager->injectBackend($mockBackend);
-		$manager->injectReflectionService($mockReflectionService);
-		$manager->injectPersistenceSession($session);
-
-		$manager->persistAll();
-	}
-
-	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
 	public function persistAllFetchesRemovedObjects() {
 		$entity1 = new \F3\FLOW3\Tests\Persistence\Fixture\Model\CleanEntity();
 		$entity3 = new \F3\FLOW3\Tests\Persistence\Fixture\Model\CleanEntity();
@@ -149,8 +123,10 @@ class PersistenceManagerTest extends \F3\Testing\BaseTestCase {
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
 		$mockObjectManager->expects($this->once())->method('getObject')->with('F3\FLOW3\Persistence\Repository')->will($this->returnValue($repository));
 		$session = new \F3\FLOW3\Persistence\Session();
-		$session->registerReconstitutedObject($entity1);
-		$session->registerReconstitutedObject($entity3);
+		$session->registerObject($entity1, 'fakeUuid1');
+		$session->registerReconstitutedEntity($entity1, array('identifier' => 'fakeUuid1'));
+		$session->registerObject($entity3, 'fakeUuid2');
+		$session->registerReconstitutedEntity($entity3, array('identifier' => 'fakeUuid2'));
 
 		$mockBackend = $this->getMock('F3\FLOW3\Persistence\BackendInterface');
 			// this is the really important assertion!
@@ -166,8 +142,151 @@ class PersistenceManagerTest extends \F3\Testing\BaseTestCase {
 
 		$manager->persistAll();
 
-		$this->assertTrue($session->getReconstitutedObjects()->contains($entity3));
+		$this->assertTrue($session->getReconstitutedEntities()->contains($entity3));
 	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function replaceObjectUnregistersTheExistingObjectAndRegistersTheNewObjectAfterReplacingTheReconstitutedEntity() {
+		$existingObject = new \stdClass();
+		$newObject = new \stdClass();
+
+		$mockSession = $this->getMock('F3\FLOW3\Persistence\Session');
+		$mockSession->expects($this->at(0))->method('getIdentifierByObject')->with($existingObject)->will($this->returnValue('the uuid'));
+		$mockSession->expects($this->at(1))->method('replaceReconstitutedEntity')->with($existingObject, $newObject);
+		$mockSession->expects($this->at(2))->method('unregisterObject')->with($existingObject);
+		$mockSession->expects($this->at(3))->method('registerObject')->with($newObject, 'the uuid');
+
+		$manager = new \F3\FLOW3\Persistence\PersistenceManager();
+		$manager->injectPersistenceSession($mockSession);
+		$manager->replaceObject($existingObject, $newObject);
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getIdentifierByObjectReturnsIdentifierFromSessionIfAvailable() {
+		$fakeUuid = 'fakeUuid';
+		$object = new \stdClass();
+
+		$mockSession = $this->getMock('F3\FLOW3\Persistence\Session');
+		$mockSession->expects($this->once())->method('hasObject')->with($object)->will($this->returnValue(TRUE));
+		$mockSession->expects($this->once())->method('getIdentifierByObject')->with($object)->will($this->returnValue($fakeUuid));
+
+		$manager = new \F3\FLOW3\Persistence\PersistenceManager();
+		$manager->injectPersistenceSession($mockSession);
+
+		$this->assertEquals($manager->getIdentifierByObject($object), $fakeUuid);
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getIdentifierByObjectReturnsUuidForEntitiesUnknownToSession() {
+		$fakeUuid = 'fakeUuid';
+		$object = new \stdClass();
+		$object->FLOW3_Persistence_Entity_UUID = $fakeUuid;
+
+		$manager = new \F3\FLOW3\Persistence\PersistenceManager();
+		$manager->injectPersistenceSession($this->getMock('F3\FLOW3\Persistence\Session'));
+
+		$this->assertEquals($manager->getIdentifierByObject($object), $fakeUuid);
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getIdentifierByObjectReturnsHashForValueObjectsUnknownToSession() {
+		$fakeHash = 'fakeHash';
+		$object = new \stdClass();
+		$object->FLOW3_Persistence_ValueObject_Hash = $fakeHash;
+
+		$manager = new \F3\FLOW3\Persistence\PersistenceManager();
+		$manager->injectPersistenceSession($this->getMock('F3\FLOW3\Persistence\Session'));
+
+		$this->assertEquals($manager->getIdentifierByObject($object), $fakeHash);
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getIdentifierByObjectReturnsNullForUnknownObjectsWithoutPersistenceMagic() {
+		$manager = new \F3\FLOW3\Persistence\PersistenceManager();
+		$manager->injectPersistenceSession($this->getMock('F3\FLOW3\Persistence\Session'));
+
+		$this->assertNull($manager->getIdentifierByObject(new \stdClass()));
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getObjectByIdentifierReturnsObjectFromSessionIfAvailable() {
+		$fakeUuid = 'fakeUuid';
+		$object = new \stdClass();
+
+		$mockSession = $this->getMock('F3\FLOW3\Persistence\Session');
+		$mockSession->expects($this->once())->method('hasIdentifier')->with($fakeUuid)->will($this->returnValue(TRUE));
+		$mockSession->expects($this->once())->method('getObjectByIdentifier')->with($fakeUuid)->will($this->returnValue($object));
+
+		$manager = new \F3\FLOW3\Persistence\PersistenceManager();
+		$manager->injectPersistenceSession($mockSession);
+
+		$this->assertEquals($manager->getObjectByIdentifier($fakeUuid), $object);
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getObjectByIdentifierReturnsObjectFromPersistenceIfAvailable() {
+		$fakeUuid = 'fakeUuid';
+		$object = new \stdClass();
+
+		$mockSession = $this->getMock('F3\FLOW3\Persistence\Session');
+		$mockSession->expects($this->once())->method('hasIdentifier')->with($fakeUuid)->will($this->returnValue(FALSE));
+
+		$mockBackend = $this->getMock('F3\FLOW3\Persistence\BackendInterface');
+		$mockBackend->expects($this->once())->method('getObjectDataByIdentifier')->with($fakeUuid)->will($this->returnValue(array()));
+
+		$mockDataMapper = $this->getMock('F3\FLOW3\Persistence\DataMapperInterface');
+		$mockDataMapper->expects($this->once())->method('mapToObject')->will($this->returnValue($object));
+
+		$manager = new \F3\FLOW3\Persistence\PersistenceManager();
+		$manager->injectPersistenceSession($mockSession);
+		$manager->injectBackend($mockBackend);
+		$manager->injectDataMapper($mockDataMapper);
+
+		$this->assertEquals($manager->getObjectByIdentifier($fakeUuid), $object);
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getObjectByIdentifierReturnsNullForUnknownObject() {
+		$fakeUuid = 'fakeUuid';
+
+		$mockSession = $this->getMock('F3\FLOW3\Persistence\Session');
+		$mockSession->expects($this->once())->method('hasIdentifier')->with($fakeUuid)->will($this->returnValue(FALSE));
+
+		$mockBackend = $this->getMock('F3\FLOW3\Persistence\BackendInterface');
+		$mockBackend->expects($this->once())->method('getObjectDataByIdentifier')->with($fakeUuid)->will($this->returnValue(FALSE));
+
+		$manager = new \F3\FLOW3\Persistence\PersistenceManager();
+		$manager->injectPersistenceSession($mockSession);
+		$manager->injectBackend($mockBackend);
+
+		$this->assertNull($manager->getObjectByIdentifier($fakeUuid));
+	}
+
 }
 
 ?>
