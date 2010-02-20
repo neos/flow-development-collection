@@ -62,27 +62,12 @@ class PointcutExpressionParser {
 																	\s*,{0,1}?
 																)+
 																/x';
-
-	/**
-	 * @var \F3\FLOW3\Object\ObjectFactoryInterface
-	 */
-	protected $objectFactory;
+	const PATTERN_MATCHMETHODNAMEANDARGUMENTS = '/^(?P<MethodName>.*)\((?P<MethodArguments>.*)\)$/';
 
 	/**
 	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
-
-	/**
-	 * Injects the object factory
-	 *
-	 * @param \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function injectObjectFactory(\F3\FLOW3\Object\ObjectFactoryInterface $objectFactory) {
-		$this->objectFactory = $objectFactory;
-	}
 
 	/**
 	 * Injects the object manager
@@ -108,7 +93,7 @@ class PointcutExpressionParser {
 	public function parse($pointcutExpression) {
 		if (!is_string($pointcutExpression) || strlen($pointcutExpression) === 0) throw new \F3\FLOW3\AOP\Exception\InvalidPointcutExpressionException('Pointcut expression must be a valid string, ' . gettype($pointcutExpression) . ' given.', 1168874738);
 
-		$pointcutFilterComposite = $this->objectFactory->create('F3\FLOW3\AOP\Pointcut\PointcutFilterComposite');
+		$pointcutFilterComposite = $this->objectManager->create('F3\FLOW3\AOP\Pointcut\PointcutFilterComposite');
 		$pointcutExpressionParts = preg_split(self::PATTERN_SPLITBYOPERATOR, $pointcutExpression, -1, PREG_SPLIT_DELIM_CAPTURE);
 
 		for ($partIndex = 0; $partIndex < count($pointcutExpressionParts); $partIndex += 2) {
@@ -161,7 +146,7 @@ class PointcutExpressionParser {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function parseDesignatorClassTaggedWith($operator, $classTagPattern, \F3\FLOW3\AOP\Pointcut\PointcutFilterComposite $pointcutFilterComposite) {
-		$pointcutFilterComposite->addFilter($operator, $this->objectFactory->create('F3\FLOW3\AOP\Pointcut\PointcutClassTaggedWithFilter', $classTagPattern));
+		$pointcutFilterComposite->addFilter($operator, $this->objectManager->create('F3\FLOW3\AOP\Pointcut\PointcutClassTaggedWithFilter', $classTagPattern));
 	}
 
 	/**
@@ -175,7 +160,7 @@ class PointcutExpressionParser {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function parseDesignatorClass($operator, $classPattern, \F3\FLOW3\AOP\Pointcut\PointcutFilterComposite $pointcutFilterComposite) {
-		$pointcutFilterComposite->addFilter($operator, $this->objectFactory->create('F3\FLOW3\AOP\Pointcut\PointcutClassNameFilter', $classPattern));
+		$pointcutFilterComposite->addFilter($operator, $this->objectManager->create('F3\FLOW3\AOP\Pointcut\PointcutClassNameFilter', $classPattern));
 	}
 
 	/**
@@ -189,7 +174,7 @@ class PointcutExpressionParser {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function parseDesignatorMethodTaggedWith($operator, $methodTagPattern, \F3\FLOW3\AOP\Pointcut\PointcutFilterComposite $pointcutFilterComposite) {
-		$pointcutFilterComposite->addFilter($operator, $this->objectFactory->create('F3\FLOW3\AOP\Pointcut\PointcutMethodTaggedWithFilter', $methodTagPattern));
+		$pointcutFilterComposite->addFilter($operator, $this->objectManager->create('F3\FLOW3\AOP\Pointcut\PointcutMethodTaggedWithFilter', $methodTagPattern));
 	}
 
 	/**
@@ -210,13 +195,16 @@ class PointcutExpressionParser {
 		list($classPattern, $methodPattern) = explode ('->', $signaturePattern, 2);
 		if (strpos($methodPattern, '(') === FALSE ) throw new \F3\FLOW3\AOP\Exception\InvalidPointcutExpressionException('Syntax error: "(" expected in "' . $methodPattern . '".', 1169144299);
 
-		$methodNamePattern = substr($methodPattern, 0, (strpos($methodPattern, '(')));
-        $methodArgumentPattern = substr($methodPattern, strpos($methodPattern, '(')+1, -1);
-        $methodArgumentConstraints = $this->getArgumentConstraintsFromMethodArgumentsPattern($methodArgumentPattern);
+		$matches = array();
+		preg_match(self::PATTERN_MATCHMETHODNAMEANDARGUMENTS, $methodPattern, $matches);
 
-		$subComposite = $this->objectFactory->create('F3\FLOW3\AOP\Pointcut\PointcutFilterComposite');
-		$subComposite->addFilter('&&', $this->objectFactory->create('F3\FLOW3\AOP\Pointcut\PointcutClassNameFilter', $classPattern));
-		$subComposite->addFilter('&&', $this->objectFactory->create('F3\FLOW3\AOP\Pointcut\PointcutMethodNameFilter', $methodNamePattern, $methodVisibility, $methodArgumentConstraints));
+		$methodNamePattern = $matches['MethodName'];
+		$methodArgumentPattern = $matches['MethodArguments'];
+		$methodArgumentConstraints = $this->getArgumentConstraintsFromMethodArgumentsPattern($methodArgumentPattern);
+
+		$subComposite = $this->objectManager->create('F3\FLOW3\AOP\Pointcut\PointcutFilterComposite');
+		$subComposite->addFilter('&&', $this->objectManager->create('F3\FLOW3\AOP\Pointcut\PointcutClassNameFilter', $classPattern));
+		$subComposite->addFilter('&&', $this->objectManager->create('F3\FLOW3\AOP\Pointcut\PointcutMethodNameFilter', $methodNamePattern, $methodVisibility, $methodArgumentConstraints));
 
 		$pointcutFilterComposite->addFilter($operator, $subComposite);
 	}
@@ -231,7 +219,7 @@ class PointcutExpressionParser {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function parseDesignatorWithin($operator, $signaturePattern, \F3\FLOW3\AOP\Pointcut\PointcutFilterComposite $pointcutFilterComposite) {
-		$pointcutFilterComposite->addFilter($operator, $this->objectFactory->create('F3\FLOW3\AOP\Pointcut\PointcutClassTypeFilter', $signaturePattern));
+		$pointcutFilterComposite->addFilter($operator, $this->objectManager->create('F3\FLOW3\AOP\Pointcut\PointcutClassTypeFilter', $signaturePattern));
 	}
 
 	/**
@@ -249,7 +237,7 @@ class PointcutExpressionParser {
 	protected function parseDesignatorPointcut($operator, $pointcutExpression, \F3\FLOW3\AOP\Pointcut\PointcutFilterComposite $pointcutFilterComposite) {
 		if (strpos($pointcutExpression, '->') === FALSE) throw new \F3\FLOW3\AOP\Exception\InvalidPointcutExpressionException('Syntax error: "->" expected in "' . $pointcutExpression . '".', 1172219205);
 		list($aspectClassName, $pointcutMethodName) = explode ('->', $pointcutExpression, 2);
-		$pointcutFilterComposite->addFilter($operator, $this->objectFactory->create('F3\FLOW3\AOP\Pointcut\PointcutFilter', $aspectClassName, $pointcutMethodName));
+		$pointcutFilterComposite->addFilter($operator, $this->objectManager->create('F3\FLOW3\AOP\Pointcut\PointcutFilter', $aspectClassName, $pointcutMethodName));
 	}
 
 	/**
@@ -277,7 +265,7 @@ class PointcutExpressionParser {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function parseDesignatorSetting($operator, $configurationPath, \F3\FLOW3\AOP\Pointcut\PointcutFilterComposite $pointcutFilterComposite) {
-		$pointcutFilterComposite->addFilter($operator, $this->objectFactory->create('F3\FLOW3\AOP\Pointcut\PointcutSettingFilter', $configurationPath));
+		$pointcutFilterComposite->addFilter($operator, $this->objectManager->create('F3\FLOW3\AOP\Pointcut\PointcutSettingFilter', $configurationPath));
 	}
 
 	/**

@@ -93,6 +93,7 @@ class PointcutMethodNameFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterI
 	 */
 	public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier) {
 		$matchResult = preg_match('/^' . $this->methodNameFilterExpression . '$/', $methodName);
+
 		if ($matchResult === FALSE) {
 			throw new \F3\FLOW3\AOP\Exception('Error in regular expression', 1168876915);
 		}
