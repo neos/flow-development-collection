@@ -47,7 +47,7 @@ class GenericObjectValidatorTest extends \F3\Testing\BaseTestCase {
 		$mockPropertyValidators = array('foo' => 'validator', 'bar' => 'validator');
 		$mockObject = $this->getMock(uniqid('FooBar'), array('getFoo', 'getBar'));
 
-		$validator = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Validation\Validator\GenericObjectValidator'), array('addError', 'addErrorsForProperty', 'isPropertyValid'));
+		$validator = $this->getAccessibleMock('F3\FLOW3\Validation\Validator\GenericObjectValidator', array('addError', 'addErrorsForProperty', 'isPropertyValid'));
 		$validator->_set('propertyValidators', $mockPropertyValidators);
 
 		$validator->expects($this->at(0))->method('isPropertyValid')->with($mockObject, 'foo')->will($this->returnValue(TRUE));
@@ -64,7 +64,7 @@ class GenericObjectValidatorTest extends \F3\Testing\BaseTestCase {
 		$mockPropertyValidators = array('foo' => 'validator', 'bar' => 'validator');
 		$mockObject = $this->getMock(uniqid('FooBar'), array('getFoo', 'getBar'));
 
-		$validator = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Validation\Validator\GenericObjectValidator'), array('addError', 'addErrorsForProperty', 'isPropertyValid'));
+		$validator = $this->getAccessibleMock('F3\FLOW3\Validation\Validator\GenericObjectValidator', array('addError', 'addErrorsForProperty', 'isPropertyValid'));
 		$validator->_set('propertyValidators', $mockPropertyValidators);
 
 		$validator->expects($this->at(0))->method('isPropertyValid')->with($mockObject, 'foo')->will($this->returnValue(FALSE));
@@ -86,7 +86,7 @@ class GenericObjectValidatorTest extends \F3\Testing\BaseTestCase {
 		$mockPropertyValidators = array('foo' => array($mockValidator1, $mockValidator2));
 		$mockObject = $this->getMock(uniqid('FooBar'), array('getFoo'));
 
-		$validator = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Validation\Validator\GenericObjectValidator'), array('addErrorsForProperty'));
+		$validator = $this->getAccessibleMock('F3\FLOW3\Validation\Validator\GenericObjectValidator', array('addErrorsForProperty'));
 		$validator->_set('propertyValidators', $mockPropertyValidators);
 
 		$this->assertEquals(FALSE, $validator->isPropertyValid($mockObject, 'foo'));
@@ -104,7 +104,7 @@ class GenericObjectValidatorTest extends \F3\Testing\BaseTestCase {
 		$mockPropertyValidators = array('foo' => array($mockValidator));
 		$mockObject = $this->getMock(uniqid('FooBar'), array('getFoo'));
 
-		$validator = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Validation\Validator\GenericObjectValidator'), array('addErrorsForProperty'));
+		$validator = $this->getAccessibleMock('F3\FLOW3\Validation\Validator\GenericObjectValidator', array('addErrorsForProperty'));
 		$validator->_set('propertyValidators', $mockPropertyValidators);
 
 		$validator->expects($this->once())->method('addErrorsForProperty')->with(array('error'), 'foo');
@@ -120,11 +120,11 @@ class GenericObjectValidatorTest extends \F3\Testing\BaseTestCase {
 		$mockPropertyError = $this->getMock('F3\FLOW3\Validation\PropertyError', array('addErrors'), array('foo'));
 		$mockPropertyError->expects($this->once())->method('addErrors')->with(array('error'));
 
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\ObjectFactoryInterface');
-		$mockObjectFactory->expects($this->once())->method('create')->with('F3\FLOW3\Validation\PropertyError', 'foo')->will($this->returnValue($mockPropertyError));
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
+		$mockObjectManager->expects($this->once())->method('create')->with('F3\FLOW3\Validation\PropertyError', 'foo')->will($this->returnValue($mockPropertyError));
 
-		$validator = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Validation\Validator\GenericObjectValidator'), array('dummy'));
-		$validator->_set('objectFactory', $mockObjectFactory);
+		$validator = $this->getAccessibleMock('F3\FLOW3\Validation\Validator\GenericObjectValidator', array('dummy'));
+		$validator->_set('objectManager', $mockObjectManager);
 		$validator->_call('addErrorsForProperty', array('error'), 'foo');
 
 		$errors = $validator->_get('errors');

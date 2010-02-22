@@ -17,27 +17,29 @@
 F3\FLOW3\AOP\Framework:
   autowiring: off
   properties:
+    objectManager:
+      object: F3\FLOW3\Object\ObjectManagerInterface
     reflectionService:
       object: F3\FLOW3\Reflection\ReflectionService
     pointcutExpressionParser:
       object: F3\FLOW3\AOP\Pointcut\PointcutExpressionParser
     proxyClassesCache:
       object:
-        factoryClassName: F3\FLOW3\Cache\CacheManager
+        factoryObjectName: F3\FLOW3\Cache\CacheManager
         factoryMethodName: getCache
         arguments:
           1:
             value: FLOW3_AOP_ProxyClasses
     targetClassInformationCache:
       object:
-        factoryClassName: F3\FLOW3\Cache\CacheManager
+        factoryObjectName: F3\FLOW3\Cache\CacheManager
         factoryMethodName: getCache
         arguments:
           1:
             value: FLOW3_AOP_TargetClassInformation
     proxyBuildInformationCache:
       object:
-        factoryClassName: F3\FLOW3\Cache\CacheManager
+        factoryObjectName: F3\FLOW3\Cache\CacheManager
         factoryMethodName: getCache
         arguments:
           1:
@@ -48,45 +50,112 @@ F3\FLOW3\AOP\Framework:
       object: F3\FLOW3\AOP\Builder\ProxyClassBuilder
     systemLogger:
       object: F3\FLOW3\Log\SystemLoggerInterface
-F3\FLOW3\AOP\Builder\AdvicedConstructorInterceptorBuilder: []
-F3\FLOW3\AOP\Builder\AdvicedMethodInterceptorBuilder: []
 F3\FLOW3\AOP\Advisor:
   scope: prototype
 F3\FLOW3\AOP\Advice\AfterReturningAdvice:
   scope: prototype
+  arguments:
+    3:
+      object: F3\FLOW3\Object\ObjectManagerInterface
 F3\FLOW3\AOP\Advice\AfterThrowingAdvice:
   scope: prototype
+  arguments:
+    3:
+      object: F3\FLOW3\Object\ObjectManagerInterface
 F3\FLOW3\AOP\Advice\AfterAdvice:
   scope: prototype
+  arguments:
+    3:
+      object: F3\FLOW3\Object\ObjectManagerInterface
 F3\FLOW3\AOP\Advice\AroundAdvice:
   scope: prototype
+  arguments:
+    3:
+      object: F3\FLOW3\Object\ObjectManagerInterface
+F3\FLOW3\AOP\Advice\AroundAdvice:
+  scope: prototype
+  arguments:
+    3:
+      object: F3\FLOW3\Object\ObjectManagerInterface
 F3\FLOW3\AOP\Advice\BeforeAdvice:
   scope: prototype
-F3\FLOW3\AOP\Builder\EmptyConstructorInterceptorBuilder: []
-F3\FLOW3\AOP\Builder\EmptyMethodInterceptorBuilder: []
+  arguments:
+    3:
+      object: F3\FLOW3\Object\ObjectManagerInterface
+F3\FLOW3\AOP\Builder\AdvicedConstructorInterceptorBuilder:
+  properties:
+    reflectionService:
+      object: F3\FLOW3\Reflection\ReflectionService
+F3\FLOW3\AOP\Builder\AdvicedMethodInterceptorBuilder:
+  properties:
+    reflectionService:
+      object: F3\FLOW3\Reflection\ReflectionService
+F3\FLOW3\AOP\Builder\EmptyConstructorInterceptorBuilder:
+  properties:
+    reflectionService:
+      object: F3\FLOW3\Reflection\ReflectionService
+F3\FLOW3\AOP\Builder\EmptyMethodInterceptorBuilder:
+  properties:
+    reflectionService:
+      object: F3\FLOW3\Reflection\ReflectionService
+F3\FLOW3\AOP\Builder\ProxyClassBuilder:
+  properties:
+    reflectionService:
+      object: F3\FLOW3\Reflection\ReflectionService
+    emptyConstructorInterceptorBuilder:
+      object: F3\FLOW3\AOP\Builder\EmptyConstructorInterceptorBuilder
+    advicedConstructorInterceptorBuilder:
+      object: F3\FLOW3\AOP\Builder\AdvicedConstructorInterceptorBuilder
+    emptyMethodInterceptorBuilder:
+      object: F3\FLOW3\AOP\Builder\EmptyMethodInterceptorBuilder
+    advicedMethodInterceptorBuilder:
+      object: F3\FLOW3\AOP\Builder\AdvicedMethodInterceptorBuilder
 F3\FLOW3\AOP\Introduction:
   scope: prototype
-F3\FLOW3\AOP\Builder\ProxyClassBuilder: []
 F3\FLOW3\AOP\Pointcut\Pointcut:
   className: F3\FLOW3\AOP\Pointcut\Pointcut
   scope: prototype
 F3\FLOW3\AOP\Pointcut\PointcutClassNameFilter:
   scope: prototype
+  properties:
+    reflectionService:
+      object: F3\FLOW3\Reflection\ReflectionService
 F3\FLOW3\AOP\Pointcut\PointcutClassTaggedWithFilter:
   scope: prototype
+  properties:
+    reflectionService:
+      object: F3\FLOW3\Reflection\ReflectionService
 F3\FLOW3\AOP\Pointcut\PointcutClassTypeFilter:
   scope: prototype
-F3\FLOW3\AOP\Pointcut\PointcutExpressionParser: []
+  properties:
+    reflectionService:
+      object: F3\FLOW3\Reflection\ReflectionService
+F3\FLOW3\AOP\Pointcut\PointcutExpressionParser:
+  properties:
+    objectManager:
+      object: F3\FLOW3\Object\ObjectManagerInterface
 F3\FLOW3\AOP\Pointcut\PointcutFilter:
   scope: prototype
+  properties:
+    aopFramework:
+      object: F3\FLOW3\AOP\Framework
 F3\FLOW3\AOP\Pointcut\PointcutFilterComposite:
   scope: prototype
 F3\FLOW3\AOP\Pointcut\PointcutMethodNameFilter:
   scope: prototype
+  properties:
+    reflectionService:
+      object: F3\FLOW3\Reflection\ReflectionService
 F3\FLOW3\AOP\Pointcut\PointcutMethodTaggedWithFilter:
   scope: prototype
+  properties:
+    reflectionService:
+      object: F3\FLOW3\Reflection\ReflectionService
 F3\FLOW3\AOP\Pointcut\PointcutSettingFilter:
   scope: prototype
+  properties:
+    configurationManager:
+      object: F3\FLOW3\Configuration\ConfigurationManager
 
 #                                                                          #
 # Cache                                                                    #
@@ -104,8 +173,6 @@ F3\FLOW3\Cache\CacheFactory:
   arguments:
     1:
       object: F3\FLOW3\Object\ObjectManagerInterface
-    2:
-      object: F3\FLOW3\Object\ObjectFactoryInterface
 F3\FLOW3\Cache\Backend\FileBackend:
   autowiring: off
   scope: prototype
@@ -140,8 +207,8 @@ F3\FLOW3\Cache\Backend\PdoBackend:
   autowiring: off
   scope: prototype
   properties:
-    objectFactory:
-      object: F3\FLOW3\Object\ObjectFactoryInterface
+    objectManager:
+      object: F3\FLOW3\Object\ObjectManagerInterface
     environment:
       object: F3\FLOW3\Utility\Environment
     signalDispatcher:
@@ -189,7 +256,10 @@ F3\FLOW3\Core\LockManager:
 # Log                                                                      #
 #                                                                          #
 
-F3\FLOW3\Log\LoggerFactory: []
+F3\FLOW3\Log\LoggerFactory:
+  arguments:
+    1:
+      object: F3\FLOW3\Object\ObjectManagerInterface
 F3\FLOW3\Log\Logger:
   autowiring: off
   scope: prototype
@@ -201,7 +271,7 @@ F3\FLOW3\Log\Backend\NullBackend:
   scope: prototype
 F3\FLOW3\Log\SystemLoggerInterface:
   autowiring: off
-  factoryClassName: F3\FLOW3\Log\LoggerFactory
+  factoryObjectName: F3\FLOW3\Log\LoggerFactory
   className: F3\FLOW3\Log\Logger
   arguments:
     1:
@@ -222,7 +292,7 @@ F3\FLOW3\Monitor\ChangeDetectionStrategy\ModificationTimeStrategy:
   properties:
     cache:
       object:
-        factoryClassName: F3\FLOW3\Cache\CacheManager
+        factoryObjectName: F3\FLOW3\Cache\CacheManager
         factoryMethodName: getCache
         arguments:
           1:
@@ -240,7 +310,7 @@ F3\FLOW3\Monitor\FileMonitor:
       object: F3\FLOW3\Log\SystemLoggerInterface
     cache:
       object:
-        factoryClassName: F3\FLOW3\Cache\CacheManager
+        factoryObjectName: F3\FLOW3\Cache\CacheManager
         factoryMethodName: getCache
         arguments:
           1:
@@ -254,29 +324,41 @@ F3\FLOW3\MVC\Web\Routing\Aspect\RouterCachingAspect:
   properties:
     findMatchResultsCache:
       object:
-        factoryClassName: F3\FLOW3\Cache\CacheManager
+        factoryObjectName: F3\FLOW3\Cache\CacheManager
         factoryMethodName: getCache
         arguments:
           1:
             value: FLOW3_MVC_Web_Routing_FindMatchResults
     resolveCache:
       object:
-        factoryClassName: F3\FLOW3\Cache\CacheManager
+        factoryObjectName: F3\FLOW3\Cache\CacheManager
         factoryMethodName: getCache
         arguments:
           1:
             value: FLOW3_MVC_Web_Routing_Resolve
 
+F3\FLOW3\MVC\Dispatcher:
+  arguments:
+    1:
+      object: F3\FLOW3\Object\ObjectManagerInterface
+
 #                                                                          #
 # Object                                                                   #
 #                                                                          #
+
+F3\FLOW3\Object\ObjectManagerInterface:
+  className: F3\FLOW3\Object\ObjectManager
+
+F3\FLOW3\Object\ObjectFactoryInterface:
+  className: F3\FLOW3\Object\ObjectFactory
+  properties:
+    objectManager:
+      object: F3\FLOW3\Object\ObjectManagerInterface
 
 F3\FLOW3\Object\ObjectSerializer:
   properties:
     objectManager:
       object: F3\FLOW3\Object\ObjectManagerInterface
-    objectBuilder:
-      object: F3\FLOW3\Object\ObjectBuilder
     queryFactory:
       object: F3\FLOW3\Persistence\QueryFactoryInterface
     persistenceManager:
@@ -289,6 +371,13 @@ F3\FLOW3\Object\SessionRegistry:
     objectSerializer:
       object: F3\FLOW3\Object\ObjectSerializer
 
+F3\FLOW3\Object\Container\ObjectContainerBuilder:
+  properties:
+    reflectionService:
+      object: F3\FLOW3\Reflection\ReflectionService
+    configurationManager:
+      object: F3\FLOW3\Configuration\ConfigurationManager
+
 #                                                                          #
 # Package                                                                  #
 #                                                                          #
@@ -297,8 +386,8 @@ F3\FLOW3\Package\PackageManagerInterface:
   autowiring: off
   className: F3\FLOW3\Package\PackageManager
   properties:
-    objectFactory:
-      object: F3\FLOW3\Object\ObjectFactoryInterface
+    objectManager:
+      object: F3\FLOW3\Object\ObjectManagerInterface
     packageMetaDataWriter:
       object: F3\FLOW3\Package\MetaData\WriterInterface
     configurationManager:
@@ -313,8 +402,8 @@ F3\FLOW3\Package\Package:
   autowiring: off
   scope: prototype
   properties:
-    objectFactory:
-      object: F3\FLOW3\Object\ObjectFactoryInterface
+    objectManager:
+      object: F3\FLOW3\Object\ObjectManagerInterface
     metaDataReader:
       object: F3\FLOW3\Package\MetaData\ReaderInterface
 
@@ -364,7 +453,7 @@ F3\FLOW3\Resource\ResourceManager:
   properties:
     statusCache:
       object:
-        factoryClassName: F3\FLOW3\Cache\CacheManager
+        factoryObjectName: F3\FLOW3\Cache\CacheManager
         factoryMethodName: getCache
         arguments:
           1:
@@ -374,22 +463,46 @@ F3\FLOW3\Resource\ResourceManager:
 # Security                                                                 #
 #                                                                          #
 
+F3\FLOW3\Security\Authentication\AuthenticationProviderManager:
+  arguments:
+    1:
+      object: F3\FLOW3\Object\ObjectManagerInterface
+    2:
+      object: F3\FLOW3\Security\Authentication\AuthenticationProviderResolver
+    3:
+      object: F3\FLOW3\Security\RequestPatternResolver
+    4:
+      object: F3\FLOW3\Security\Authentication\EntryPointResolver
+
+F3\FLOW3\Security\Policy\PolicyExpressionParser:
+  properties:
+    objectManager:
+      object: F3\FLOW3\Object\ObjectManagerInterface
+
 F3\FLOW3\Security\Policy\PolicyService:
   properties:
     cache:
       object:
-        factoryClassName: F3\FLOW3\Cache\CacheManager
+        factoryObjectName: F3\FLOW3\Cache\CacheManager
         factoryMethodName: getCache
         arguments:
           1:
             value: FLOW3_Security_Policy
+    objectManager:
+      object: F3\FLOW3\Object\ObjectManagerInterface
+    configurationManager:
+      object: F3\FLOW3\Configuration\ConfigurationManager
+    policyExpressionParser:
+      object: F3\FLOW3\Security\Policy\PolicyExpressionParser
+    settings:
+      setting: FLOW3
 
 F3\FLOW3\Security\Cryptography\RsaWalletServiceInterface:
   className: F3\FLOW3\Security\Cryptography\RsaWalletServicePhp
   properties:
     keystoreCache:
       object:
-        factoryClassName: F3\FLOW3\Cache\CacheManager
+        factoryObjectName: F3\FLOW3\Cache\CacheManager
         factoryMethodName: getCache
         arguments:
           1:
@@ -401,6 +514,11 @@ F3\FLOW3\Security\Cryptography\RsaWalletServiceInterface:
 
 F3\FLOW3\Session\SessionInterface:
   className: F3\FLOW3\Session\PhpSession
+  properties:
+    settings:
+      setting: FLOW3
+    environment:
+      object: F3\FLOW3\Utility\Environment
 
 #                                                                          #
 # SignalSlot                                                               #
@@ -423,8 +541,6 @@ F3\FLOW3\Utility\Environment:
   properties:
     temporaryDirectoryBase:
       setting: FLOW3.utility.environment.temporaryDirectoryBase
-    systemLogger:
-      object: F3\FLOW3\Log\SystemLoggerInterface
     context:
       setting: FLOW3.core.context
 

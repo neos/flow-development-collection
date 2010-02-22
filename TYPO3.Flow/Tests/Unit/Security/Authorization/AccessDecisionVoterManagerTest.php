@@ -46,7 +46,7 @@ class AccessDecisionVoterManagerTest extends \F3\Testing\BaseTestCase {
 		$voter3 = $this->getMock('F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface', array(), array(), '', FALSE);
 		$voter3->expects($this->any())->method('voteForJoinPoint')->with($mockContext, $mockJoinPoint)->will($this->returnValue(\F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface::VOTE_DENY));
 
-		$voterManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Security\Authorization\AccessDecisionVoterManager'), array('dummy'), array(), '', FALSE);
+		$voterManager = $this->getAccessibleMock('F3\FLOW3\Security\Authorization\AccessDecisionVoterManager', array('dummy'), array(), '', FALSE);
 		$voterManager->_set('accessDecisionVoters', array($voter1, $voter2, $voter3));
 		$voterManager->_set('securityContext', $mockContext);
 
@@ -69,7 +69,7 @@ class AccessDecisionVoterManagerTest extends \F3\Testing\BaseTestCase {
 		$voter3 = $this->getMock('F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface', array(), array(), '', FALSE);
 		$voter3->expects($this->any())->method('voteForJoinPoint')->with($mockContext, $mockJoinPoint)->will($this->returnValue(\F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface::VOTE_ABSTAIN));
 
-		$voterManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Security\Authorization\AccessDecisionVoterManager'), array('dummy'), array(), '', FALSE);
+		$voterManager = $this->getAccessibleMock('F3\FLOW3\Security\Authorization\AccessDecisionVoterManager', array('dummy'), array(), '', FALSE);
 		$voterManager->_set('accessDecisionVoters', array($voter1, $voter2, $voter3));
 		$voterManager->_set('allowAccessIfAllAbstain', FALSE);
 		$voterManager->_set('securityContext', $mockContext);
@@ -92,7 +92,7 @@ class AccessDecisionVoterManagerTest extends \F3\Testing\BaseTestCase {
 		$voter3 = $this->getMock('F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface', array(), array(), '', FALSE);
 		$voter3->expects($this->any())->method('voteForJoinPoint')->with($mockContext, $mockJoinPoint)->will($this->returnValue(\F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface::VOTE_ABSTAIN));
 
-		$voterManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Security\Authorization\AccessDecisionVoterManager'), array('dummy'), array(), '', FALSE);
+		$voterManager = $this->getAccessibleMock('F3\FLOW3\Security\Authorization\AccessDecisionVoterManager', array('dummy'), array(), '', FALSE);
 		$voterManager->_set('accessDecisionVoters', array($voter1, $voter2, $voter3));
 		$voterManager->_set('allowAccessIfAllAbstain', TRUE);
 		$voterManager->_set('securityContext', $mockContext);
@@ -115,7 +115,7 @@ class AccessDecisionVoterManagerTest extends \F3\Testing\BaseTestCase {
 		$voter3 = $this->getMock('F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface', array(), array(), '', FALSE);
 		$voter3->expects($this->any())->method('voteForJoinPoint')->with($mockContext, $mockJoinPoint)->will($this->returnValue(\F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface::VOTE_ABSTAIN));
 
-		$voterManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Security\Authorization\AccessDecisionVoterManager'), array('dummy'), array(), '', FALSE);
+		$voterManager = $this->getAccessibleMock('F3\FLOW3\Security\Authorization\AccessDecisionVoterManager', array('dummy'), array(), '', FALSE);
 		$voterManager->_set('accessDecisionVoters', array($voter1, $voter2, $voter3));
 		$voterManager->_set('securityContext', $mockContext);
 
@@ -137,7 +137,7 @@ class AccessDecisionVoterManagerTest extends \F3\Testing\BaseTestCase {
 		$voter3 = $this->getMock('F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface', array(), array(), '', FALSE);
 		$voter3->expects($this->any())->method('voteForResource')->with($mockContext, 'myResource')->will($this->returnValue(\F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface::VOTE_DENY));
 
-		$voterManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Security\Authorization\AccessDecisionVoterManager'), array('dummy'), array(), '', FALSE);
+		$voterManager = $this->getAccessibleMock('F3\FLOW3\Security\Authorization\AccessDecisionVoterManager', array('dummy'), array(), '', FALSE);
 		$voterManager->_set('accessDecisionVoters', array($voter1, $voter2, $voter3));
 		$voterManager->_set('securityContext', $mockContext);
 
@@ -159,7 +159,7 @@ class AccessDecisionVoterManagerTest extends \F3\Testing\BaseTestCase {
 		$voter3 = $this->getMock('F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface', array(), array(), '', FALSE);
 		$voter3->expects($this->any())->method('voteForResource')->with($mockContext, 'myResource')->will($this->returnValue(\F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface::VOTE_ABSTAIN));
 
-		$voterManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Security\Authorization\AccessDecisionVoterManager'), array('dummy'), array(), '', FALSE);
+		$voterManager = $this->getAccessibleMock('F3\FLOW3\Security\Authorization\AccessDecisionVoterManager', array('dummy'), array(), '', FALSE);
 		$voterManager->_set('accessDecisionVoters', array($voter1, $voter2, $voter3));
 		$voterManager->_set('allowAccessIfAllAbstain', FALSE);
 		$voterManager->_set('securityContext', $mockContext);
@@ -181,7 +181,7 @@ class AccessDecisionVoterManagerTest extends \F3\Testing\BaseTestCase {
 		$voter3 = $this->getMock('F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface', array(), array(), '', FALSE);
 		$voter3->expects($this->any())->method('voteForResource')->with($mockContext, 'myResource')->will($this->returnValue(\F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface::VOTE_ABSTAIN));
 
-		$voterManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Security\Authorization\AccessDecisionVoterManager'), array('dummy'), array(), '', FALSE);
+		$voterManager = $this->getAccessibleMock('F3\FLOW3\Security\Authorization\AccessDecisionVoterManager', array('dummy'), array(), '', FALSE);
 		$voterManager->_set('accessDecisionVoters', array($voter1, $voter2, $voter3));
 		$voterManager->_set('allowAccessIfAllAbstain', TRUE);
 		$voterManager->_set('securityContext', $mockContext);
@@ -203,7 +203,7 @@ class AccessDecisionVoterManagerTest extends \F3\Testing\BaseTestCase {
 		$voter3 = $this->getMock('F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface', array(), array(), '', FALSE);
 		$voter3->expects($this->any())->method('voteForResource')->with($mockContext, 'myResource')->will($this->returnValue(\F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface::VOTE_ABSTAIN));
 
-		$voterManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Security\Authorization\AccessDecisionVoterManager'), array('dummy'), array(), '', FALSE);
+		$voterManager = $this->getAccessibleMock('F3\FLOW3\Security\Authorization\AccessDecisionVoterManager', array('dummy'), array(), '', FALSE);
 		$voterManager->_set('accessDecisionVoters', array($voter1, $voter2, $voter3));
 		$voterManager->_set('securityContext', $mockContext);
 

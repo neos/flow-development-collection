@@ -121,11 +121,11 @@ class Dispatcher {
 			}
 		}
 		if ($exception !== NULL) {
-			$controller = $this->objectManager->getObject($this->settings['mvc']['notFoundController']);
+			$controller = $this->objectManager->get($this->settings['mvc']['notFoundController']);
 			if (!$controller instanceof \F3\FLOW3\MVC\Controller\NotFoundControllerInterface) throw new \F3\FLOW3\MVC\Exception\InvalidControllerException('The NotFoundController must implement "\F3\FLOW3\MVC\Controller\NotFoundControllerInterface", ' . (is_object($controller) ? get_class($controller) : gettype($controller)) . ' given.', 1246714416);
 			$controller->setException($exception);
 		} else {
-			$controller = $this->objectManager->getObject($controllerObjectName);
+			$controller = $this->objectManager->get($controllerObjectName);
 			if (!$controller instanceof \F3\FLOW3\MVC\Controller\ControllerInterface) throw new \F3\FLOW3\MVC\Exception\InvalidControllerException('Invalid controller "' . $request->getControllerObjectName() . '". The controller must be a valid request handling controller, ' . (is_object($controller) ? get_class($controller) : gettype($controller)) . ' given.', 1202921619);
 		}
 		return $controller;

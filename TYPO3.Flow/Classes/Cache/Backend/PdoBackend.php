@@ -33,9 +33,9 @@ namespace F3\FLOW3\Cache\Backend;
 class PdoBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectFactoryInterface
+	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 */
-	protected $objectFactory;
+	protected $objectManager;
 
 	/**
 	 * @var \F3\FLOW3\Utility\Environment
@@ -79,14 +79,14 @@ class PdoBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	protected $pdoDriver;
 
 	/**
-	 * Injects the Object Factory
+	 * Injects the Object Manager
 	 *
-	 * @param \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory
+	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectObjectFactory(\F3\FLOW3\Object\ObjectFactoryInterface $objectFactory) {
-		$this->objectFactory = $objectFactory;
+	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
+		$this->objectManager = $objectManager;
 	}
 
 	/**
@@ -366,7 +366,7 @@ class PdoBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 */
 	protected function createCacheTables() {
 		try {
-			$pdoHelper = $this->objectFactory->create('F3\FLOW3\Utility\PdoHelper', $this->dataSourceName, $this->username, $this->password);
+			$pdoHelper = $this->objectManager->create('F3\FLOW3\Utility\PdoHelper', $this->dataSourceName, $this->username, $this->password);
 			$pdoHelper->importSql(FLOW3_PATH_FLOW3 . 'Resources/Private/Cache/SQL/DDL.sql');
 		} catch (\PDOException $e) {
 			throw new \RuntimeException('Could not create cache tables with DSN "' . $this->dataSourceName . '". PDO error: ' . $e->getMessage(), 1259576985);

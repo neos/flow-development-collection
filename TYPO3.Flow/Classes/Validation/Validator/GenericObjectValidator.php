@@ -114,7 +114,7 @@ class GenericObjectValidator extends \F3\FLOW3\Validation\Validator\AbstractObje
 	 */
 	protected function addErrorsForProperty($errors, $propertyName) {
 		if (!isset($this->errors[$propertyName])) {
-			$this->errors[$propertyName] = $this->objectFactory->create('F3\FLOW3\Validation\PropertyError', $propertyName);
+			$this->errors[$propertyName] = $this->objectManager->create('F3\FLOW3\Validation\PropertyError', $propertyName);
 		}
 		$this->errors[$propertyName]->addErrors($errors);
 	}

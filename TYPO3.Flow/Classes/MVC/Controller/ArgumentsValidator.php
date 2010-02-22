@@ -111,7 +111,7 @@ class ArgumentsValidator extends \F3\FLOW3\Validation\Validator\AbstractObjectVa
 	 */
 	protected function addErrorsForArgument(array $errors, $argumentName) {
 		if (!isset($this->errors[$argumentName])) {
-			$this->errors[$argumentName] = $this->objectFactory->create('F3\FLOW3\MVC\Controller\ArgumentError', $argumentName);
+			$this->errors[$argumentName] = $this->objectManager->create('F3\FLOW3\MVC\Controller\ArgumentError', $argumentName);
 		}
 		$this->errors[$argumentName]->addErrors($errors);
 	}

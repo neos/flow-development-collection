@@ -34,7 +34,7 @@ class ReconstitutableClassWithSimpleProperties implements \F3\FLOW3\AOP\ProxyInt
 	 *
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct($someArgument, \F3\FLOW3\Object\ObjectFactoryInterface $FLOW3_AOP_Proxy_objectFactory) {
+	public function __construct($someArgument, \F3\FLOW3\Object\ObjectManagerInterface $FLOW3_AOP_Proxy_objectManager) {
 		$this->constructorHasBeenCalled = TRUE;
 	}
 

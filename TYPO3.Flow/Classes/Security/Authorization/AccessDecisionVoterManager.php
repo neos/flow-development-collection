@@ -31,12 +31,6 @@ namespace F3\FLOW3\Security\Authorization;
 class AccessDecisionVoterManager implements \F3\FLOW3\Security\Authorization\AccessDecisionManagerInterface {
 
 	/**
-	 * The object factory
-	 * @var \F3\FLOW3\Object\ObjectFactoryInterface
-	 */
-	protected $objectFactory;
-
-	/**
 	 * The object manager
 	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 */
@@ -69,7 +63,6 @@ class AccessDecisionVoterManager implements \F3\FLOW3\Security\Authorization\Acc
 	 */
 	public function __construct(\F3\FLOW3\Object\ObjectManagerInterface $objectManager, \F3\FLOW3\Security\ContextHolderInterface $securityContextHolder) {
 		$this->objectManager = $objectManager;
-		$this->objectFactory = $this->objectManager->getObjectFactory();
 		$this->securityContext = $securityContextHolder->getContext();
 	}
 
@@ -174,9 +167,9 @@ class AccessDecisionVoterManager implements \F3\FLOW3\Security\Authorization\Acc
 	 */
 	protected function createAccessDecisionVoters(array $voterClassNames) {
 		foreach ($voterClassNames as $voterClassName) {
-			if (!$this->objectManager->isObjectRegistered($voterClassName)) throw new \F3\FLOW3\Security\Exception\VoterNotFoundException('No voter of type ' . $voterClassName . ' found!', 1222267934);
+			if (!$this->objectManager->isRegistered($voterClassName)) throw new \F3\FLOW3\Security\Exception\VoterNotFoundException('No voter of type ' . $voterClassName . ' found!', 1222267934);
 
-			$voter = $this->objectManager->getObject($voterClassName);
+			$voter = $this->objectManager->get($voterClassName);
 			if (!($voter instanceof \F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface)) throw new \F3\FLOW3\Security\Exception\VoterNotFoundException('The found voter class did not implement \F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface', 1222268008);
 
 			$this->accessDecisionVoters[] = $voter;

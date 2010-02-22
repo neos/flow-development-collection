@@ -33,9 +33,9 @@ namespace F3\FLOW3\MVC\Controller;
 class Arguments extends \ArrayObject {
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectFactoryInterface A reference to the object factory
+	 * @var \F3\FLOW3\Object\ObjectManagerInterface A reference to the object factory
 	 */
-	protected $objectFactory;
+	protected $objectManager;
 
 	/**
 	 * @var array Names of the arguments contained by this object
@@ -45,12 +45,12 @@ class Arguments extends \ArrayObject {
 	/**
 	 * Constructs this Arguments object
 	 *
-	 * @param \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory
+	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
 	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(\F3\FLOW3\Object\ObjectFactoryInterface $objectFactory) {
-		$this->objectFactory = $objectFactory;
+	public function __construct(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
+		$this->objectManager = $objectManager;
 		parent::__construct();
 	}
 
@@ -148,7 +148,7 @@ class Arguments extends \ArrayObject {
 	 * @api
 	 */
 	public function addNewArgument($name, $dataType = 'Text', $isRequired = TRUE, $defaultValue = NULL) {
-		$argument = $this->objectFactory->create('F3\FLOW3\MVC\Controller\Argument', $name, $dataType);
+		$argument = $this->objectManager->create('F3\FLOW3\MVC\Controller\Argument', $name, $dataType);
 		$argument->setRequired($isRequired);
 		$argument->setDefaultValue($defaultValue);
 

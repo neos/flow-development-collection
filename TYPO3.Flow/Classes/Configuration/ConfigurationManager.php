@@ -146,8 +146,17 @@ class ConfigurationManager {
 				}
 				return isset($this->configurations[$configurationType]) ? $this->configurations[$configurationType] : array();;
 
-			case self::CONFIGURATION_TYPE_PACKAGE :
 			case self::CONFIGURATION_TYPE_SETTINGS :
+				if ($packageKey === NULL) {
+					foreach ($this->packages as $package) {
+						if (!isset($this->configurations[self::CONFIGURATION_TYPE_SETTINGS][$package->getPackageKey()])) {
+							$this->loadConfiguration($configurationType, $this->packages);
+							break;
+						}
+						return $this->configurations[self::CONFIGURATION_TYPE_SETTINGS];
+					}
+				}
+			case self::CONFIGURATION_TYPE_PACKAGE :
 			case self::CONFIGURATION_TYPE_OBJECTS :
 				if ($packageKey === NULL) throw new \InvalidArgumentException('No package specified.', 1233336279);
 				if (!isset($this->configurations[$configurationType][$packageKey])) {

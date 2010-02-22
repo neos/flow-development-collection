@@ -31,9 +31,9 @@ namespace F3\FLOW3\Resource;
 class ResourceObjectConverter implements \F3\FLOW3\Property\ObjectConverterInterface {
 
 	/**
-	 * @var F3\FLOW3\Object\ObjectFactoryInterface
+	 * @var F3\FLOW3\Object\ObjectManagerInterface
 	 */
-	protected $objectFactory;
+	protected $objectManager;
 
 	/**
 	 * @var \F3\FLOW3\Resource\ResourceManager
@@ -43,12 +43,12 @@ class ResourceObjectConverter implements \F3\FLOW3\Property\ObjectConverterInter
 	/**
 	 * Injects the object factory
 	 *
-	 * @param \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory
+	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectObjectFactory(\F3\FLOW3\Object\ObjectFactoryInterface $objectFactory) {
-		$this->objectFactory = $objectFactory;
+	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
+		$this->objectManager = $objectManager;
 	}
 
 	/**
@@ -88,16 +88,16 @@ class ResourceObjectConverter implements \F3\FLOW3\Property\ObjectConverterInter
 	public function convertFrom($source) {
 		if (is_array($source)) {
 			if ($source['error'] === \UPLOAD_ERR_NO_FILE) return NULL;
-			if ($source['error'] !== \UPLOAD_ERR_OK) return $this->objectFactory->create('F3\FLOW3\Error\Error', \F3\FLOW3\Utility\Files::getUploadErrorMessage($source['error']) , 1264440823);
+			if ($source['error'] !== \UPLOAD_ERR_OK) return $this->objectManager->create('F3\FLOW3\Error\Error', \F3\FLOW3\Utility\Files::getUploadErrorMessage($source['error']) , 1264440823);
 
 			$resource = $this->resourceManager->importUploadedResource($source);
 			if ($resource === FALSE) {
-				return $this->objectFactory->create('F3\FLOW3\Error\Error', 'The resource manager could not create a resource instance.' , 1264517906);
+				return $this->objectManager->create('F3\FLOW3\Error\Error', 'The resource manager could not create a resource instance.' , 1264517906);
 			} else {
 				return $resource;
 			}
 		} else {
-			return $this->objectFactory->create('F3\FLOW3\Error\Error', 'The source for conversion to a resource object was not an array.' , 1264440811);
+			return $this->objectManager->create('F3\FLOW3\Error\Error', 'The source for conversion to a resource object was not an array.' , 1264440811);
 		}
 	}
 }

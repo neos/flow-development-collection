@@ -43,19 +43,19 @@ final class RsaWalletServicePhp implements \F3\FLOW3\Security\Cryptography\RsaWa
 	protected $keystoreCache;
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectFactoryInterface
+	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 */
-	protected $objectFactory;
+	protected $objectManager;
 
 	/**
 	 * Injects the object factory
 	 *
-	 * @param \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory The object factory
+	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager The object factory
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function injectObjectFactory(\F3\FLOW3\Object\ObjectFactoryInterface $objectFactory) {
-		$this->objectFactory = $objectFactory;
+	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
+		$this->objectManager = $objectManager;
 	}
 
 	/**
@@ -102,8 +102,8 @@ final class RsaWalletServicePhp implements \F3\FLOW3\Security\Cryptography\RsaWa
 		$privateKeyString = $this->getPrivateKeyString($keyResource);
 		$publicKeyString = $this->getPublicKeyString($keyResource);
 
-		$privateKey = $this->objectFactory->create('F3\FLOW3\Security\Cryptography\OpenSslRsaKey', $modulus, $privateKeyString);
-		$publicKey = $this->objectFactory->create('F3\FLOW3\Security\Cryptography\OpenSslRsaKey', $modulus, $publicKeyString);
+		$privateKey = $this->objectManager->create('F3\FLOW3\Security\Cryptography\OpenSslRsaKey', $modulus, $privateKeyString);
+		$publicKey = $this->objectManager->create('F3\FLOW3\Security\Cryptography\OpenSslRsaKey', $modulus, $publicKeyString);
 
 		return $this->storeKeyPair($publicKey, $privateKey, $usedForPasswords);
 	}

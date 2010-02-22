@@ -156,44 +156,6 @@ class EnvironmentTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	public function createTemporaryDirectoryLogsToSystemLogIfTemporaryDirectoryBaseIsLongComparedToMaximumPathLength() {
-		\vfsStreamWrapper::register();
-		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('t1'));
-		$path = \vfsStream::url('t1') . '/some/temporary/path/';
-
-		$environment = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Utility\Environment'), array('getMaximumPathLength'), array(), '', FALSE);
-		$environment->expects($this->any())->method('getMaximumPathLength')->will($this->returnValue(248));
-
-		$mockSystemLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
-		$mockSystemLogger->expects($this->once())->method('log')->with('The path to your temporary directory is ' . strlen($path) . ' characters long. The maximum path length of your system is only 248. Please consider setting the temporaryDirectoryBase option to a shorter path.', LOG_WARNING);
-		$environment->injectSystemLogger($mockSystemLogger);
-
-		$environment->_call('createTemporaryDirectory', $path);
-	}
-
-	/**
-	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	public function createTemporaryDirectoryDoesNotLogToSystemLogIfTemporaryDirectoryBaseIsShortComparedToMaximumPathLength() {
-		\vfsStreamWrapper::register();
-		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('t2'));
-		$path = \vfsStream::url('t2') . '/some/temporary/path/';
-
-		$environment = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Utility\Environment'), array('getMaximumPathLength'), array(), '', FALSE);
-		$environment->expects($this->any())->method('getMaximumPathLength')->will($this->returnValue(500));
-
-		$mockSystemLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
-		$mockSystemLogger->expects($this->never())->method('log');
-		$environment->injectSystemLogger($mockSystemLogger);
-
-		$environment->_call('createTemporaryDirectory', $path);
-	}
-
-	/**
-	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function untangleFilesArrayTransformsTheFilesSuperglobalIntoAMangeableForm() {
@@ -381,7 +343,7 @@ class EnvironmentTest extends \F3\Testing\BaseTestCase {
 			)
 		);
 
-		$environment = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Utility\Environment'), array('dummy'), array(), '', FALSE);
+		$environment = $this->getAccessibleMock('F3\FLOW3\Utility\Environment', array('dummy'), array(), '', FALSE);
 		$result = $environment->_call('untangleFilesArray', $convolutedFiles);
 
 		$this->assertSame($untangledFiles, $result);

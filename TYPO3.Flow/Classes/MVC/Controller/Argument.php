@@ -44,11 +44,6 @@ class Argument {
 	protected $objectManager;
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectFactoryInterface
-	 */
-	protected $objectFactory;
-
-	/**
 	 * @var \F3\FLOW3\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
@@ -165,17 +160,6 @@ class Argument {
 	 */
 	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
-	}
-
-	/**
-	 * Injects the Object Factory
-	 *
-	 * @param \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function injectObjectFactory(\F3\FLOW3\Object\ObjectFactoryInterface $objectFactory) {
-		$this->objectFactory = $objectFactory;
 	}
 
 	/**
@@ -364,10 +348,10 @@ class Argument {
 	 * @api
 	 */
 	public function setNewValidatorConjunction(array $objectNames) {
-		$this->validator = $this->objectFactory->create('F3\FLOW3\Validation\Validator\ConjunctionValidator');
+		$this->validator = $this->objectManager->create('F3\FLOW3\Validation\Validator\ConjunctionValidator');
 		foreach ($objectNames as $objectName) {
-			if (!$this->objectManager->isObjectRegistered($objectName)) $objectName = 'F3\FLOW3\Validation\Validator\\' . $objectName;
-			$this->validator->addValidator($this->objectManager->getObject($objectName));
+			if (!$this->objectManager->isRegistered($objectName)) $objectName = 'F3\FLOW3\Validation\Validator\\' . $objectName;
+			$this->validator->addValidator($this->objectManager->get($objectName));
 		}
 		return $this;
 	}
@@ -391,7 +375,7 @@ class Argument {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function setFilter($filter) {
-		$this->filter = ($filter instanceof \F3\FLOW3\Validation\Filter\FilterInterface) ? $filter : $this->objectManager->getObject($filter);
+		$this->filter = ($filter instanceof \F3\FLOW3\Validation\Filter\FilterInterface) ? $filter : $this->objectManager->get($filter);
 		return $this;
 	}
 

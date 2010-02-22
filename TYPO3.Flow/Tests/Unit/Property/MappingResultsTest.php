@@ -37,7 +37,7 @@ class MappingResultsTest extends \F3\Testing\BaseTestCase {
 	public function addErrorSetsErrorForProperty() {
 		$mockError = $this->getMock('F3\FLOW3\Validation\PropertyError', array('dummy'), array('foo'));
 		
-		$mappingResults = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Property\MappingResults'), array('dummy'), array(), '', FALSE);
+		$mappingResults = $this->getAccessibleMock('F3\FLOW3\Property\MappingResults', array('dummy'), array(), '', FALSE);
 		$mappingResults->addError($mockError, 'foo');
 		
 		$this->assertEquals($mockError, $mappingResults->getErrorForProperty('foo'));

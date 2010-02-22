@@ -110,11 +110,11 @@ class FilterFirewall implements \F3\FLOW3\Security\Authorization\FirewallInterfa
 	 */
 	protected function buildFiltersFromSettings(array $filterSettings) {
 		foreach($filterSettings as $singleFilterSettings) {
-			$requestPattern = $this->objectManager->getObject($this->requestPatternResolver->resolveRequestPatternClass($singleFilterSettings['patternType']));
+			$requestPattern = $this->objectManager->get($this->requestPatternResolver->resolveRequestPatternClass($singleFilterSettings['patternType']));
 			$requestPattern->setPattern($singleFilterSettings['patternValue']);
-			$interceptor = $this->objectManager->getObject($this->interceptorResolver->resolveInterceptorClass($singleFilterSettings['interceptor']));
+			$interceptor = $this->objectManager->get($this->interceptorResolver->resolveInterceptorClass($singleFilterSettings['interceptor']));
 
-			$this->filters[] = $this->objectManager->getObject('F3\FLOW3\Security\Authorization\RequestFilter', $requestPattern, $interceptor);
+			$this->filters[] = $this->objectManager->get('F3\FLOW3\Security\Authorization\RequestFilter', $requestPattern, $interceptor);
 		}
 	}
 }

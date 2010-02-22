@@ -31,9 +31,9 @@ namespace F3\FLOW3\MVC\CLI;
 class RequestHandler implements \F3\FLOW3\MVC\RequestHandlerInterface {
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectFactoryInterface Reference to the object factory
+	 * @var \F3\FLOW3\Object\ObjectManagerInterface Reference to the object factory
 	 */
-	protected $objectFactory;
+	protected $objectManager;
 
 	/**
 	 * @var \F3\FLOW3\Utility\Environment Reference to the environment utility object
@@ -58,7 +58,7 @@ class RequestHandler implements \F3\FLOW3\MVC\RequestHandlerInterface {
 	/**
 	 * Constructs the CLI Request Handler
 	 *
-	 * @param \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory A reference to the object factory
+	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager A reference to the object factory
 	 * @param \F3\FLOW3\Utility\Environment $utilityEnvironment A reference to the environment
 	 * @param \F3\FLOW3\MVC\Dispatcher $dispatcher The request dispatcher
 	 * @param \F3\FLOW3\MVC\CLI\RequestBuilder $requestBuilder The request builder
@@ -66,11 +66,11 @@ class RequestHandler implements \F3\FLOW3\MVC\RequestHandlerInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct(
-			\F3\FLOW3\Object\ObjectFactoryInterface $objectFactory,
+			\F3\FLOW3\Object\ObjectManagerInterface $objectManager,
 			\F3\FLOW3\Utility\Environment $utilityEnvironment,
 			\F3\FLOW3\MVC\Dispatcher $dispatcher,
 			\F3\FLOW3\MVC\CLI\RequestBuilder $requestBuilder) {
-		$this->objectFactory = $objectFactory;
+		$this->objectManager = $objectManager;
 		$this->utilityEnvironment = $utilityEnvironment;
 		$this->dispatcher = $dispatcher;
 		$this->requestBuilder = $requestBuilder;
@@ -84,7 +84,7 @@ class RequestHandler implements \F3\FLOW3\MVC\RequestHandlerInterface {
 	 */
 	public function handleRequest() {
 		$request = $this->requestBuilder->build();
-		$response = $this->objectFactory->create('F3\FLOW3\MVC\CLI\Response');
+		$response = $this->objectManager->create('F3\FLOW3\MVC\CLI\Response');
 		$this->dispatcher->dispatch($request, $response);
 		$response->send();
 	}

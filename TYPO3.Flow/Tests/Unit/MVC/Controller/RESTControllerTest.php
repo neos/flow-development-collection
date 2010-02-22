@@ -39,7 +39,7 @@ class RESTControllerTest extends \F3\Testing\BaseTestCase {
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
 		$mockRequest->expects($this->exactly(2))->method('getControllerActionName')->will($this->returnValue('foo'));
 
-		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\RESTController'), array('fooAction'), array(), '', FALSE);
+		$controller = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\RESTController', array('fooAction'), array(), '', FALSE);
 		$controller->_set('request', $mockRequest);
 		$result = $controller->_call('resolveActionMethodName');
 
@@ -61,7 +61,7 @@ class RESTControllerTest extends \F3\Testing\BaseTestCase {
 
 		$mockRequest->expects($this->at(4))->method('getControllerActionName')->will($this->returnValue('list'));
 
-		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\RESTController'), array('listAction'), array(), '', FALSE);
+		$controller = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\RESTController', array('listAction'), array(), '', FALSE);
 		$controller->_set('request', $mockRequest);
 		$result = $controller->_call('resolveActionMethodName');
 	}
@@ -81,7 +81,7 @@ class RESTControllerTest extends \F3\Testing\BaseTestCase {
 
 		$mockRequest->expects($this->at(4))->method('getControllerActionName')->will($this->returnValue('show'));
 
-		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\RESTController'), array('showAction'), array(), '', FALSE);
+		$controller = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\RESTController', array('showAction'), array(), '', FALSE);
 		$controller->_set('request', $mockRequest);
 		$result = $controller->_call('resolveActionMethodName');
 	}
@@ -100,7 +100,7 @@ class RESTControllerTest extends \F3\Testing\BaseTestCase {
 
 		$mockRequest->expects($this->at(3))->method('getControllerActionName')->will($this->returnValue('create'));
 
-		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\RESTController'), array('createAction'), array(), '', FALSE);
+		$controller = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\RESTController', array('createAction'), array(), '', FALSE);
 		$controller->_set('request', $mockRequest);
 		$result = $controller->_call('resolveActionMethodName');
 	}
@@ -120,7 +120,7 @@ class RESTControllerTest extends \F3\Testing\BaseTestCase {
 
 		$mockRequest->expects($this->at(4))->method('getControllerActionName')->will($this->returnValue('update'));
 
-		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\RESTController'), array('updateAction'), array(), '', FALSE);
+		$controller = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\RESTController', array('updateAction'), array(), '', FALSE);
 		$controller->_set('request', $mockRequest);
 		$result = $controller->_call('resolveActionMethodName');
 	}
@@ -140,7 +140,7 @@ class RESTControllerTest extends \F3\Testing\BaseTestCase {
 		$mockRequest->expects($this->once())->method('getMethod')->will($this->returnValue('PUT'));
 		$mockRequest->expects($this->once())->method('hasArgument')->with('id')->will($this->returnValue(FALSE));
 
-		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\RESTController'), array('throwStatus'), array(), '', FALSE);
+		$controller = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\RESTController', array('throwStatus'), array(), '', FALSE);
 		$controller->expects($this->once())->method('throwStatus')->with(400)->will($this->returnCallBack(array($throwStopException, '__invoke')));
 		$controller->_set('request', $mockRequest);
 		$controller->_set('response', $mockResponse);
@@ -162,7 +162,7 @@ class RESTControllerTest extends \F3\Testing\BaseTestCase {
 
 		$mockRequest->expects($this->at(4))->method('getControllerActionName')->will($this->returnValue('delete'));
 
-		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\RESTController'), array('deleteAction'), array(), '', FALSE);
+		$controller = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\RESTController', array('deleteAction'), array(), '', FALSE);
 		$controller->_set('request', $mockRequest);
 		$result = $controller->_call('resolveActionMethodName');
 	}
@@ -182,7 +182,7 @@ class RESTControllerTest extends \F3\Testing\BaseTestCase {
 		$mockRequest->expects($this->once())->method('getMethod')->will($this->returnValue('DELETE'));
 		$mockRequest->expects($this->once())->method('hasArgument')->with('id')->will($this->returnValue(FALSE));
 
-		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\RESTController'), array('throwStatus'), array(), '', FALSE);
+		$controller = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\RESTController', array('throwStatus'), array(), '', FALSE);
 		$controller->expects($this->once())->method('throwStatus')->with(400)->will($this->returnCallBack(array($throwStopException, '__invoke')));
 		$controller->_set('request', $mockRequest);
 		$controller->_set('response', $mockResponse);

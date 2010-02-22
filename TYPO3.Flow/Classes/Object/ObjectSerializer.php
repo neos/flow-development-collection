@@ -49,12 +49,6 @@ class ObjectSerializer {
 	protected $objectManager;
 
 	/**
-	 * The object builder
-	 * @var F3\FLOW3\Object\ObjectBuilder
-	 */
-	protected $objectBuilder;
-
-	/**
 	 * The reflection service
 	 * @var F3\FLOW3\Reflection\ServiceInterface
 	 */
@@ -75,17 +69,6 @@ class ObjectSerializer {
 	 */
 	public function injectObjectManager(\F3\FLOW3\Object\ObjectManager $objectManager) {
 		$this->objectManager = $objectManager;
-	}
-
-	/**
-	 * Injects the object builder
-	 *
-	 * @param F3\FLOW3\Object\ObjectBuilder $objectBuilder The object builder
-	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function injectObjectBuilder(\F3\FLOW3\Object\ObjectBuilder $objectBuilder) {
-		$this->objectBuilder = $objectBuilder;
 	}
 
 	/**
@@ -129,28 +112,30 @@ class ObjectSerializer {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function serializeObjectAsPropertyArray($objectName, $object) {
-		if (isset($this->objectsAsArray[$objectName])) return $this->objectsAsArray;
+		if (isset($this->objectsAsArray[$objectName])) {
+			return $this->objectsAsArray;
+		}
 
 		$className = get_class($object);
 
 		$propertyArray = array();
 		foreach ($this->reflectionService->getClassPropertyNames($className) as $propertyName) {
-			$propertyValue = '';
 
 			if ($this->reflectionService->isPropertyTaggedWith($className, $propertyName, 'transient')) continue;
 
 			if ($object instanceof \F3\FLOW3\AOP\ProxyInterface) {
 				$propertyValue = $object->FLOW3_AOP_Proxy_getProperty($propertyName);
-
 			} else {
 				$propertyReflection = new \F3\FLOW3\Reflection\PropertyReflection($className, $propertyName);
 				$propertyValue = $propertyReflection->getValue($object);
 			}
 
 			$propertyClassName = '';
-			if (is_object($propertyValue)) $propertyClassName = get_class($propertyValue);
+			if (is_object($propertyValue)) {
+				$propertyClassName = get_class($propertyValue);
+			}
 
-			if (is_object($propertyValue) && $propertyClassName === 'SplObjectStorage') {
+			if ($propertyClassName === 'SplObjectStorage') {
 				$propertyArray[$propertyName]['type'] = 'SplObjectStorage';
 				$propertyArray[$propertyName]['value'] = array();
 
@@ -159,32 +144,31 @@ class ObjectSerializer {
 					$propertyArray[$propertyName]['value'][] = $objectHash;
 					$this->serializeObjectAsPropertyArray($objectHash, $storedObject);
 				}
-			} else if (is_object($propertyValue) && $propertyValue instanceof \ArrayObject) {
+			} elseif (is_object($propertyValue) && $propertyValue instanceof \ArrayObject) {
 				$propertyArray[$propertyName]['type'] = 'ArrayObject';
 				$propertyArray[$propertyName]['value'] = $this->buildStorageArrayForArrayProperty($propertyValue->getArrayCopy());
 
-			} else if (is_object($propertyValue)
+			} elseif (is_object($propertyValue)
 						&& $propertyValue instanceof \F3\FLOW3\AOP\ProxyInterface
 						&& $propertyValue instanceof \F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface
 						&& $this->persistenceManager->isNewObject($propertyValue) === FALSE
 						&& ($this->reflectionService->isClassTaggedWith($propertyClassName, 'entity')
-							|| $this->reflectionService->isClassTaggedWith($propertyClassName, 'valueobject'))) {
+						|| $this->reflectionService->isClassTaggedWith($propertyClassName, 'valueobject'))) {
 
 				$propertyArray[$propertyName]['type'] = 'persistenceObject';
 				$propertyArray[$propertyName]['value']['className'] = $propertyValue->FLOW3_AOP_Proxy_getProxyTargetClassName();
 				$propertyArray[$propertyName]['value']['UUID'] = $this->persistenceManager->getIdentifierByObject($propertyValue);
 
-			} else if (is_object($propertyValue)) {
+			} elseif (is_object($propertyValue)) {
 				$propertyObjectName = $this->objectManager->getObjectNameByClassName($propertyClassName);
-				$objectConfiguration = $this->objectManager->getObjectConfiguration($propertyObjectName);
-				if ($objectConfiguration->getScope() === 'singleton') continue;
+				if ($this->objectManager->getScope($propertyObjectName) === \F3\FLOW3\Object\Configuration\Configuration::SCOPE_SINGLETON) continue;
 
 				$objectHash = spl_object_hash($propertyValue);
 				$propertyArray[$propertyName]['type'] = 'object';
 				$propertyArray[$propertyName]['value'] = $objectHash;
 				$this->serializeObjectAsPropertyArray($objectHash, $propertyValue);
 
-			} else if (is_array($propertyValue)) {
+			} elseif (is_array($propertyValue)) {
 				$propertyArray[$propertyName]['type'] = 'array';
 				$propertyArray[$propertyName]['value'] = $this->buildStorageArrayForArrayProperty($propertyValue);
 
@@ -214,7 +198,7 @@ class ObjectSerializer {
 		$objects = array();
 
 		foreach ($this->objectsAsArray as $objectName => $objectData) {
-			if (!$this->objectManager->isObjectRegistered($objectName)) continue;
+			if (!$this->objectManager->isRegistered($objectName)) continue;
 			$objects[$objectName] = $this->reconstituteObject($objectData);
 		}
 
@@ -256,19 +240,6 @@ class ObjectSerializer {
 	}
 
 	/**
-	 * Reconstitutes an empty object without calling the constructor.
-	 *
-	 * @param string $className The class of which the object should be created
-	 * @return object The created object
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	protected function createEmptyObject($className) {
-		if (!class_exists($className)) throw new \F3\FLOW3\Object\Exception\UnknownClassException('Could not reconstitute object from the session, because class "' . $className . '" does not exist.', 1246717390);
-
-		return unserialize('O:' . strlen($className) . ':"' . $className . '":0:{};');
-	}
-
-	/**
 	 * Reconstitutes an object from a serialized object without calling the constructor.
 	 *
 	 * @param array $objectData The object data array
@@ -276,7 +247,7 @@ class ObjectSerializer {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function reconstituteObject(array $objectData) {
-		$object = $this->createEmptyObject($objectData['className']);
+		$object = $this->objectManager->recreate($objectData['className']);
 
 		foreach ($objectData['properties'] as $propertyName => $propertyData) {
 			switch($propertyData['type']) {
@@ -300,15 +271,14 @@ class ObjectSerializer {
 					break;
 			}
 
-			$reflectionProperty = new \ReflectionProperty(get_class($object), $propertyName);
-			$reflectionProperty->setAccessible(TRUE);
-			$reflectionProperty->setValue($object, $propertyValue);
+			if ($object instanceof \F3\FLOW3\AOP\ProxyInterface) {
+				$object->FLOW3_AOP_Proxy_setProperty($propertyName, $propertyValue);
+			} else {
+				$reflectionProperty = new \ReflectionProperty(get_class($object), $propertyName);
+				$reflectionProperty->setAccessible(TRUE);
+				$reflectionProperty->setValue($object, $propertyValue);
+			}
 		}
-
-		$objectName = $this->objectManager->getObjectNameByClassName($objectData['className']);
-		$objectConfigruation = $this->objectManager->getObjectConfiguration($objectName);
-		$this->objectBuilder->reinjectDependencies($object, $objectConfigruation);
-		$this->objectManager->registerShutdownObject($object, $objectConfigruation->getLifecycleShutdownMethodName());
 
 		return $object;
 	}

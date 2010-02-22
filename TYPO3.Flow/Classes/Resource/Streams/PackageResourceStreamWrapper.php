@@ -52,9 +52,9 @@ class PackageResourceStreamWrapper implements \F3\FLOW3\Resource\Streams\StreamW
 	protected $packageManager;
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectFactoryInterface
+	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 */
-	protected $objectFactory;
+	protected $objectManager;
 
 	/**
 	 * Injects a package manager.
@@ -70,12 +70,12 @@ class PackageResourceStreamWrapper implements \F3\FLOW3\Resource\Streams\StreamW
 	/**
 	 * Injects an object factory.
 	 *
-	 * @param \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory
+	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectObjectFactory(\F3\FLOW3\Object\ObjectFactoryInterface $objectFactory) {
-		$this->objectFactory = $objectFactory;
+	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
+		$this->objectManager = $objectManager;
 	}
 
 	/**
@@ -129,7 +129,7 @@ class PackageResourceStreamWrapper implements \F3\FLOW3\Resource\Streams\StreamW
 	public function openDirectory($path, $options) {
 		$this->checkScheme($path);
 
-		$uri = $this->objectFactory->create('F3\FLOW3\Property\DataType\Uri', $path);
+		$uri = $this->objectManager->create('F3\FLOW3\Property\DataType\Uri', $path);
 		$package = $this->packageManager->getPackage($uri->getHost());
 		$path = \F3\FLOW3\Utility\Files::concatenatePaths(array($package->getResourcesPath(), $uri->getPath()));
 		$handle = opendir($path);
@@ -182,7 +182,7 @@ class PackageResourceStreamWrapper implements \F3\FLOW3\Resource\Streams\StreamW
 	public function makeDirectory($path, $mode, $options) {
 		$this->checkScheme($path);
 
-		$uri = $this->objectFactory->create('F3\FLOW3\Property\DataType\Uri', $path);
+		$uri = $this->objectManager->create('F3\FLOW3\Property\DataType\Uri', $path);
 		$package = $this->packageManager->getPackage($uri->getHost());
 		$path = \F3\FLOW3\Utility\Files::concatenatePaths(array($package->getResourcesPath(), $uri->getPath()));
 		mkdir($path, $mode, $options & STREAM_MKDIR_RECURSIVE);
@@ -335,7 +335,7 @@ class PackageResourceStreamWrapper implements \F3\FLOW3\Resource\Streams\StreamW
 	public function open($path, $mode, $options, &$openedPathAndFilename) {
 		$this->checkScheme($path);
 
-		$uri = $this->objectFactory->create('F3\FLOW3\Property\DataType\Uri', $path);
+		$uri = $this->objectManager->create('F3\FLOW3\Property\DataType\Uri', $path);
 		$package = $this->packageManager->getPackage($uri->getHost());
 		$pathAndFilename = \F3\FLOW3\Utility\Files::concatenatePaths(array($package->getResourcesPath(), $uri->getPath()));
 		$this->handle = fopen($pathAndFilename, $mode);
@@ -497,7 +497,7 @@ class PackageResourceStreamWrapper implements \F3\FLOW3\Resource\Streams\StreamW
 	public function pathStat($path, $flags) {
 		$this->checkScheme($path);
 
-		$uri = $this->objectFactory->create('F3\FLOW3\Property\DataType\Uri', $path);
+		$uri = $this->objectManager->create('F3\FLOW3\Property\DataType\Uri', $path);
 		$package = $this->packageManager->getPackage($uri->getHost());
 		$path = \F3\FLOW3\Utility\Files::concatenatePaths(array($package->getResourcesPath(), $uri->getPath()));
 		if (file_exists($path)) {

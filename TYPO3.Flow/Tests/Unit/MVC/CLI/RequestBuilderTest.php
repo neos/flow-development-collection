@@ -50,14 +50,13 @@ class RequestBuilderTest extends \F3\Testing\BaseTestCase {
 		$this->mockRequest = $this->getMock('F3\FLOW3\MVC\CLI\Request');
 
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\ObjectFactoryInterface');
-		$mockObjectFactory->expects($this->once())->method('create')->with('F3\FLOW3\MVC\CLI\Request')->will($this->returnValue($this->mockRequest));
+		$mockObjectManager->expects($this->once())->method('create')->with('F3\FLOW3\MVC\CLI\Request')->will($this->returnValue($this->mockRequest));
 
 		$this->environment = new \F3\FLOW3\Utility\MockEnvironment();
 		$this->environment->SERVER['argc'] = 0;
 		$this->environment->SERVER['argv'] = array();
 
-		$this->requestBuilder = new \F3\FLOW3\MVC\CLI\RequestBuilder($mockObjectManager, $mockObjectFactory, $this->environment);
+		$this->requestBuilder = new \F3\FLOW3\MVC\CLI\RequestBuilder($mockObjectManager, $this->environment);
 	}
 
 	/**

@@ -114,7 +114,7 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 		$this->request->setDispatched(TRUE);
 		$this->response = $response;
 
-		$this->uriBuilder = $this->objectFactory->create('F3\FLOW3\MVC\Web\Routing\UriBuilder');
+		$this->uriBuilder = $this->objectManager->create('F3\FLOW3\MVC\Web\Routing\UriBuilder');
 		$this->uriBuilder->setRequest($request);
 
 		$this->actionMethodName = $this->resolveActionMethodName();
@@ -129,7 +129,7 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 		}
 
 		$this->mapRequestArgumentsToControllerArguments();
-		$this->controllerContext = $this->objectFactory->create('F3\FLOW3\MVC\Controller\Context', $this->request, $this->response, $this->arguments, $this->argumentsMappingResults, $this->uriBuilder, $this->flashMessageContainer);
+		$this->controllerContext = $this->objectManager->create('F3\FLOW3\MVC\Controller\Context', $this->request, $this->response, $this->arguments, $this->argumentsMappingResults, $this->uriBuilder, $this->flashMessageContainer);
 		$this->view = $this->resolveView();
 		if ($this->view !== NULL) {
 			$this->view->assign('settings', $this->settings);
@@ -264,14 +264,14 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 * @api
 	 */
 	protected function resolveView() {
-		$view = $this->objectFactory->create('F3\Fluid\View\TemplateView');
+		$view = $this->objectManager->create('F3\Fluid\View\TemplateView');
 		$view->setControllerContext($this->controllerContext);
 		if ($view->hasTemplate() === FALSE) {
 			$viewObjectName = $this->resolveViewObjectName();
 			if ($viewObjectName !== FALSE) {
-				$view = $this->objectFactory->create($viewObjectName);
+				$view = $this->objectManager->create($viewObjectName);
 			} else {
-				$view = $this->objectFactory->create('F3\FLOW3\MVC\View\NotFoundView');
+				$view = $this->objectManager->create('F3\FLOW3\MVC\View\NotFoundView');
 				$view->assign('errorMessage', 'No template was found. View could not be resolved for action "' . $this->request->getControllerActionName() . '"');
 			}
 			$view->setControllerContext($this->controllerContext);

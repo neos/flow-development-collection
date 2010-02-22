@@ -107,7 +107,7 @@ class ConjunctionValidatorTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function removingAValidatorOfTheValidatorConjunctionWorks() {
-		$validatorConjunction = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Validation\Validator\ConjunctionValidator'), array('dummy'), array(), '', TRUE);
+		$validatorConjunction = $this->getAccessibleMock('F3\FLOW3\Validation\Validator\ConjunctionValidator', array('dummy'), array(), '', TRUE);
 
 		$validator1 = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
 		$validator2 = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');

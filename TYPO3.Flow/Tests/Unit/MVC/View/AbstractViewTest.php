@@ -35,13 +35,13 @@ class AbstractViewTest extends \F3\Testing\BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function constructorSetsDependencies() {
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\ObjectFactoryInterface', array(), array(), '', FALSE);
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
 		$mockPackageManager = $this->getMock('F3\FLOW3\Package\PackageManagerInterface', array(), array(), '', FALSE);
 		$mockResourceManager = $this->getMock('F3\FLOW3\Resource\ResourceManager', array(), array(), '', FALSE);
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
 
-		$view = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\View\AbstractView'), array('render'), array($mockObjectFactory, $mockPackageManager, $mockResourceManager, $mockObjectManager));
-		$this->assertSame($mockObjectFactory, $view->_get('objectFactory'));
+		$view = $this->getAccessibleMock('F3\FLOW3\MVC\View\AbstractView', array('render'), array($mockObjectManager, $mockPackageManager, $mockResourceManager));
+		$this->assertSame($mockObjectManager, $view->_get('objectManager'));
 		$this->assertSame($mockPackageManager, $view->_get('packageManager'));
 		$this->assertSame($mockResourceManager, $view->_get('resourceManager'));
 		$this->assertSame($mockObjectManager, $view->_get('objectManager'));
@@ -52,7 +52,7 @@ class AbstractViewTest extends \F3\Testing\BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function initializeViewIsCalledUponObjectInitialization() {
-		$view = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\View\AbstractView'), array('initializeView', 'render'), array(), '', FALSE);
+		$view = $this->getAccessibleMock('F3\FLOW3\MVC\View\AbstractView', array('initializeView', 'render'), array(), '', FALSE);
 		$view->expects($this->once())->method('initializeView');
 		$view->initializeObject();
 	}
@@ -62,7 +62,7 @@ class AbstractViewTest extends \F3\Testing\BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function assignStoresValueInViewDataCollection() {
-		$view = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\View\AbstractView'), array('render'), array(), '', FALSE);
+		$view = $this->getAccessibleMock('F3\FLOW3\MVC\View\AbstractView', array('render'), array(), '', FALSE);
 		$view->assign('someKey', 'someValue');
 		$view->assign('someOtherKey', 'someOtherValue');
 
@@ -74,7 +74,7 @@ class AbstractViewTest extends \F3\Testing\BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function assignReturnsTheViewToEnableChaining() {
-		$abstractView = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\View\AbstractView'), array('render'), array(), '', FALSE);
+		$abstractView = $this->getAccessibleMock('F3\FLOW3\MVC\View\AbstractView', array('render'), array(), '', FALSE);
 		$actualResult = $abstractView->assign('someKey', 'someValue');
 
 		$this->assertSame($abstractView, $actualResult);
@@ -85,7 +85,7 @@ class AbstractViewTest extends \F3\Testing\BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function assignMultipleAllowsToSetMultipleValues() {
-		$abstractView = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\View\AbstractView'), array('render'), array(), '', FALSE);
+		$abstractView = $this->getAccessibleMock('F3\FLOW3\MVC\View\AbstractView', array('render'), array(), '', FALSE);
 		$abstractView->assignMultiple(array('someKey' => 'someValue', 'someOtherKey' => 'someOtherValue'));
 
 		$this->assertEquals(array('someKey' => 'someValue', 'someOtherKey' => 'someOtherValue'), $abstractView->_get('viewData'));

@@ -72,7 +72,7 @@ class RsaWalletServicePhpTest extends \F3\Testing\BaseTestCase {
 		$mockCache->expects($this->any())->method('has')->will($this->returnCallback($hasCallBack, '__invoke'));
 
 		$RSAWalletService = new RSAWalletServicePHP();
-		$RSAWalletService->injectObjectFactory($this->objectFactory);
+		$RSAWalletService->injectObjectManager($this->objectManager);
 		$RSAWalletService->injectKeystoreCache($mockCache);
 
 		$keyPairUUID = $RSAWalletService->generateNewKeypair();
@@ -113,7 +113,7 @@ class RsaWalletServicePhpTest extends \F3\Testing\BaseTestCase {
 		$mockCache->expects($this->any())->method('has')->will($this->returnCallback($hasCallBack, '__invoke'));
 
 		$RSAWalletService = new RSAWalletServicePHP();
-		$RSAWalletService->injectObjectFactory($this->objectFactory);
+		$RSAWalletService->injectObjectManager($this->objectManager);
 		$RSAWalletService->injectKeystoreCache($mockCache);
 
 		$keyPairUUID = $RSAWalletService->generateNewKeypair();
@@ -154,7 +154,7 @@ class RsaWalletServicePhpTest extends \F3\Testing\BaseTestCase {
 		$mockCache->expects($this->any())->method('has')->will($this->returnCallback($hasCallBack, '__invoke'));
 
 		$RSAWalletService = new RSAWalletServicePHP();
-		$RSAWalletService->injectObjectFactory($this->objectFactory);
+		$RSAWalletService->injectObjectManager($this->objectManager);
 		$RSAWalletService->injectKeystoreCache($mockCache);
 
 		$keyPairUUID = $RSAWalletService->generateNewKeypair();
@@ -196,7 +196,7 @@ class RsaWalletServicePhpTest extends \F3\Testing\BaseTestCase {
 		$mockCache->expects($this->any())->method('has')->will($this->returnCallback($hasCallBack, '__invoke'));
 
 		$RSAWalletService = new RSAWalletServicePHP();
-		$RSAWalletService->injectObjectFactory($this->objectFactory);
+		$RSAWalletService->injectObjectManager($this->objectManager);
 		$RSAWalletService->injectKeystoreCache($mockCache);
 
 		$keyPairUUID = $RSAWalletService->generateNewKeypair(TRUE);

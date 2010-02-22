@@ -43,7 +43,7 @@ class YamlSource implements \F3\FLOW3\Configuration\Source\SourceInterface {
 	public function load($pathAndFilename) {
 		if (file_exists($pathAndFilename . '.yaml')) {
 			try {
-				$configuration = \F3\YAML\Yaml::loadFile($pathAndFilename . '.yaml');
+				$configuration = \F3\FLOW3\Configuration\Source\YamlParser::loadFile($pathAndFilename . '.yaml');
 			} catch (\F3\FLOW3\Error\Exception $exception) {
 				throw new \F3\FLOW3\Configuration\Exception\ParseErrorException('A parse error occurred while parsing file "' . $pathAndFilename . '.yaml". Error message: ' . $exception->getMessage(), 1232014321);
 			}
@@ -66,7 +66,7 @@ class YamlSource implements \F3\FLOW3\Configuration\Source\SourceInterface {
 		if (file_exists($pathAndFilename . '.yaml')) {
 			$header = $this->getHeaderFromFile($pathAndFilename . '.yaml');
 		}
-		$yaml = \F3\YAML\Yaml::dump($configuration);
+		$yaml = \F3\FLOW3\Configuration\Source\YamlParser::dump($configuration);
 		file_put_contents($pathAndFilename . '.yaml', $header . PHP_EOL . $yaml);
 	}
 

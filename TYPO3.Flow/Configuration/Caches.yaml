@@ -33,16 +33,6 @@ FLOW3_Configuration: []
 FLOW3_Core:
   frontend: F3\FLOW3\Cache\Frontend\StringFrontend
 FLOW3_Monitor: []
-FLOW3_ReflectionStatus:
-  frontend: F3\FLOW3\Cache\Frontend\StringFrontend
-FLOW3_ReflectionData: []
-FLOW3_Resource_Status:
-  frontend: F3\FLOW3\Cache\Frontend\StringFrontend
-FLOW3_Security_Policy: []
-FLOW3_Security_Cryptography_RSAWallet:
-  backendOptions:
-    defaultLifetime: 30
-FLOW3_Object_Configurations: []
 FLOW3_MVC_Web_Routing_FindMatchResults:
   backend: F3\FLOW3\Cache\Backend\TransientMemoryBackend
   backendOptions:
@@ -52,3 +42,13 @@ FLOW3_MVC_Web_Routing_Resolve:
   backend: F3\FLOW3\Cache\Backend\TransientMemoryBackend
   backendOptions:
     defaultLifetime: 0
+FLOW3_Object_Configurations: []
+FLOW3_ReflectionStatus:
+  frontend: F3\FLOW3\Cache\Frontend\StringFrontend
+FLOW3_ReflectionData: []
+FLOW3_Resource_Status:
+  frontend: F3\FLOW3\Cache\Frontend\StringFrontend
+FLOW3_Security_Policy: []
+FLOW3_Security_Cryptography_RSAWallet:
+  backendOptions:
+    defaultLifetime: 30

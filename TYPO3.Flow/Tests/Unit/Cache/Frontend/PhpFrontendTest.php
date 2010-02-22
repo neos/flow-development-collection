@@ -52,7 +52,7 @@ class PhpFrontendTest extends \F3\Testing\BaseTestCase {
 		$mockBackend = $this->getMock('F3\FLOW3\Cache\Backend\PhpCapableBackendInterface', array(), array(), '', FALSE);
 		$mockBackend->expects($this->once())->method('set')->with('Foo-Bar', $modifiedSourceCode, array('tags'), 1234);
 
-		$cache = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Cache\Frontend\PhpFrontend'), array('dummy'), array(), '', FALSE);
+		$cache = $this->getAccessibleMock('F3\FLOW3\Cache\Frontend\PhpFrontend', array('dummy'), array(), '', FALSE);
 		$cache->_set('backend', $mockBackend);
 		$cache->set('Foo-Bar', $originalSourceCode, array('tags'), 1234);
 	}
@@ -75,7 +75,7 @@ class PhpFrontendTest extends \F3\Testing\BaseTestCase {
 		$mockBackend = $this->getMock('F3\FLOW3\Cache\Backend\PhpCapableBackendInterface', array(), array(), '', FALSE);
 		$mockBackend->expects($this->once())->method('requireOnce')->with('Foo-Bar')->will($this->returnValue('hello world!'));
 
-		$cache = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Cache\Frontend\PhpFrontend'), array('dummy'), array(), '', FALSE);
+		$cache = $this->getAccessibleMock('F3\FLOW3\Cache\Frontend\PhpFrontend', array('dummy'), array(), '', FALSE);
 		$cache->_set('backend', $mockBackend);
 
 		$result = $cache->requireOnce('Foo-Bar');

@@ -72,7 +72,7 @@ class PhpSession implements \F3\FLOW3\Session\SessionInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function injectSettings(array $settings) {
-		$this->settings = $settings['session'];
+		$this->settings = $settings;
 	}
 
 	/**
@@ -94,10 +94,10 @@ class PhpSession implements \F3\FLOW3\Session\SessionInterface {
 	 */
 	public function start() {
 		if ($this->started === FALSE) {
-			if (empty($this->settings['PHPSession']['savePath'])) {
+			if (empty($this->settings['session']['PHPSession']['savePath'])) {
 				$sessionsPath = \F3\FLOW3\Utility\Files::concatenatePaths(array($this->environment->getPathToTemporaryDirectory(), 'Sessions'));
 			} else {
-				$sessionsPath = $this->settings['PHPSession']['savePath'];
+				$sessionsPath = $this->settings['session']['PHPSession']['savePath'];
 			}
 			if (!file_exists($sessionsPath)) {
 				mkdir($sessionsPath);

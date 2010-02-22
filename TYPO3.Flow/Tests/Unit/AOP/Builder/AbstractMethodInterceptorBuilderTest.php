@@ -128,7 +128,7 @@ class AbstractMethodInterceptorBuilderTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function buildMethodParametersCodeReturnsAnEmptyStringIfTheClassNameIsNULL() {
-		$builder = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\AOP\Builder\AbstractMethodInterceptorBuilder'), array('build'), array(), '', FALSE);
+		$builder = $this->getAccessibleMock('F3\FLOW3\AOP\Builder\AbstractMethodInterceptorBuilder', array('build'), array(), '', FALSE);
 
 		$parametersDocumentation = '';
 		$actualCode = $builder->buildMethodParametersCode(NULL, 'foo', TRUE, $parametersDocumentation);
@@ -158,7 +158,7 @@ class AbstractMethodInterceptorBuilderTest extends \F3\Testing\BaseTestCase {
 				'arg5' => \$arg5,
 			";
 
-		$builder = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\AOP\Builder\AbstractMethodInterceptorBuilder'), array('build'), array(), '', FALSE);
+		$builder = $this->getAccessibleMock('F3\FLOW3\AOP\Builder\AbstractMethodInterceptorBuilder', array('build'), array(), '', FALSE);
 		$builder->injectReflectionService($mockReflectionService);
 
 		$actualCode = $builder->_call('buildMethodArgumentsArrayCode', $className, 'foo');
@@ -170,7 +170,7 @@ class AbstractMethodInterceptorBuilderTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function buildMethodArgumentsArrayCodeReturnsAnEmptyStringIfTheClassNameIsNULL() {
-		$builder = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\AOP\Builder\AbstractMethodInterceptorBuilder'), array('build'), array(), '', FALSE);
+		$builder = $this->getAccessibleMock('F3\FLOW3\AOP\Builder\AbstractMethodInterceptorBuilder', array('build'), array(), '', FALSE);
 
 		$actualCode = $builder->_call('buildMethodArgumentsArrayCode', NULL, 'foo');
 		$this->assertSame('', $actualCode);
@@ -191,7 +191,7 @@ class AbstractMethodInterceptorBuilderTest extends \F3\Testing\BaseTestCase {
 		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'saveToCache'), array(), '', FALSE, TRUE);
 		$mockReflectionService->initialize(array($className));
 
-		$builder = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\AOP\Builder\EmptyConstructorInterceptorBuilder'), array('dummy'), array(), '', FALSE);
+		$builder = $this->getAccessibleMock('F3\FLOW3\AOP\Builder\EmptyConstructorInterceptorBuilder', array('dummy'), array(), '', FALSE);
 		$builder->injectReflectionService($mockReflectionService);
 
 		$expectedCode = '$this->FLOW3_AOP_Proxy_originalConstructorArguments[\'arg1\'], $this->FLOW3_AOP_Proxy_originalConstructorArguments[\'arg2\'], $this->FLOW3_AOP_Proxy_originalConstructorArguments[\'arg3\'], $this->FLOW3_AOP_Proxy_originalConstructorArguments[\'arg4\'], $this->FLOW3_AOP_Proxy_originalConstructorArguments[\'arg5\']';
@@ -226,7 +226,7 @@ class AbstractMethodInterceptorBuilderTest extends \F3\Testing\BaseTestCase {
 
 		}' . chr(10);
 
-		$builder = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\AOP\Builder\AbstractMethodInterceptorBuilder'), array('build'), array(), '', FALSE);
+		$builder = $this->getAccessibleMock('F3\FLOW3\AOP\Builder\AbstractMethodInterceptorBuilder', array('build'), array(), '', FALSE);
 		$actualCode = $builder->_call('buildAdvicesCode', $groupedAdvices, 'foo', 'TargetClass');
 		$this->assertSame($expectedCode, $actualCode);
 	}
@@ -276,7 +276,7 @@ class AbstractMethodInterceptorBuilderTest extends \F3\Testing\BaseTestCase {
 
 		}' . chr(10);
 
-		$builder = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\AOP\Builder\AbstractMethodInterceptorBuilder'), array('build'), array(), '', FALSE);
+		$builder = $this->getAccessibleMock('F3\FLOW3\AOP\Builder\AbstractMethodInterceptorBuilder', array('build'), array(), '', FALSE);
 		$actualCode = $builder->_call('buildAdvicesCode', $groupedAdvices, 'foo', 'TargetClass');
 		$this->assertSame($expectedCode, $actualCode);
 	}

@@ -46,11 +46,12 @@ class ResourceManagerTest extends \F3\Testing\BaseTestCase {
 	 * this does not do any harm. And registering the "real" wrappers a second
 	 * time doesn't do harm, either.
 	 *
-	 * What is an issue is the static object factory being set to a mocked one,
+	 * What is an issue is the static object manager being set to a mocked one,
 	 * be careful...
 	 *
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initializeRegistersFoundStreamWrappers() {
 		$wrapperClassName = uniqid('MockWrapper');
@@ -58,13 +59,18 @@ class ResourceManagerTest extends \F3\Testing\BaseTestCase {
 		eval('class ' . $wrapperClassName . ' extends \F3\FLOW3\Resource\Streams\PackageResourceStreamWrapper { static public function getScheme() { return \'' . $wrapperSchemeName . '\'; } }');
 		$mockStreamWrapperAdapter = new $wrapperClassName();
 
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\ObjectFactoryInterface');
+		$streamWrapperAdapterReflection = new \ReflectionClass('F3\FLOW3\Resource\Streams\StreamWrapperAdapter');
+		$property = $streamWrapperAdapterReflection->getProperty('objectManager');
+		$property->setAccessible(TRUE);
+		$originalObjectManager = $property->getValue();
+
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
 
 		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService');
 		$mockReflectionService->expects($this->once())->method('getAllImplementationClassNamesForInterface')->with('F3\FLOW3\Resource\Streams\StreamWrapperInterface')->will($this->returnValue(array(get_class($mockStreamWrapperAdapter))));
 
 		$resourceManager = new \F3\FLOW3\Resource\ResourceManager();
-		$resourceManager->injectObjectFactory($mockObjectFactory);
+		$resourceManager->injectObjectManager($mockObjectManager);
 		$resourceManager->injectReflectionService($mockReflectionService);
 		$resourceManager->initialize();
 
@@ -74,7 +80,7 @@ class ResourceManagerTest extends \F3\Testing\BaseTestCase {
 		stream_wrapper_unregister($wrapperSchemeName);
 
 			// set the real object factory again...
-		\F3\FLOW3\Resource\Streams\StreamWrapperAdapter::setObjectFactory($this->objectFactory);
+		\F3\FLOW3\Resource\Streams\StreamWrapperAdapter::injectObjectManager($originalObjectManager);
 	}
 
 	/**
@@ -132,7 +138,7 @@ class ResourceManagerTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPersistentResourcesStorageBaseUriProvidesTheUriAtAWellKnownPlace() {
-		$resourceManager = $this->getMock($this->buildAccessibleProxy('\F3\FLOW3\Resource\ResourceManager'), array('dummy'), array(), '', FALSE);
+		$resourceManager = $this->getAccessibleMock('\F3\FLOW3\Resource\ResourceManager', array('dummy'), array(), '', FALSE);
 		$resourceManager->_set('persistentResourcesStorageBaseUri', 'vfs://Foo/Bar/');
 
 		$actualUri = $resourceManager->getPersistentResourcesStorageBaseUri();
@@ -154,14 +160,14 @@ class ResourceManagerTest extends \F3\Testing\BaseTestCase {
 
 		$mockResource = $this->getMock('F3\FLOW3\Resource\Resource', array(), array(), '', FALSE);
 
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\ObjectFactoryInterface');
-		$mockObjectFactory->expects($this->once())->method('create')->with('F3\FLOW3\Resource\Resource', $hash, 'txt')->will($this->returnValue($mockResource));
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
+		$mockObjectManager->expects($this->once())->method('create')->with('F3\FLOW3\Resource\Resource', $hash, 'txt')->will($this->returnValue($mockResource));
 		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment');
 		$mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue('vfs://Foo/Temporary/'));
 
-		$resourceManager = $this->getMock($this->buildAccessibleProxy('\F3\FLOW3\Resource\ResourceManager'), array('dummy'), array(), '', FALSE);
+		$resourceManager = $this->getAccessibleMock('\F3\FLOW3\Resource\ResourceManager', array('dummy'), array(), '', FALSE);
 		$resourceManager->_set('persistentResourcesStorageBaseUri', 'vfs://Foo/Persistent/Resources/');
-		$resourceManager->injectObjectFactory($mockObjectFactory);
+		$resourceManager->injectObjectManager($mockObjectManager);
 		$resourceManager->injectEnvironment($mockEnvironment);
 
 		$actualResource = $resourceManager->importResource('vfs://Foo/SomeResource.txt');

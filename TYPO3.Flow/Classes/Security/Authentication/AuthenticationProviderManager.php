@@ -87,7 +87,6 @@ class AuthenticationProviderManager implements \F3\FLOW3\Security\Authentication
 			\F3\FLOW3\Security\Authentication\AuthenticationProviderResolver $providerResolver,
 			\F3\FLOW3\Security\RequestPatternResolver $requestPatternResolver,
 			\F3\FLOW3\Security\Authentication\EntryPointResolver $entryPointResolver) {
-
 		$this->objectManager = $objectManager;
 		$this->providerResolver = $providerResolver;
 		$this->requestPatternResolver = $requestPatternResolver;
@@ -208,11 +207,11 @@ class AuthenticationProviderManager implements \F3\FLOW3\Security\Authentication
 			$providerOptions = array();
 			if (isset($providerConfiguration['options']) && is_array($providerConfiguration['options'])) $providerOptions = $providerConfiguration['options'];
 
-			$providerInstance = $this->objectManager->getObject($providerObjectName, $providerName, $providerOptions);
+			$providerInstance = $this->objectManager->get($providerObjectName, $providerName, $providerOptions);
 			$this->providers[] = $providerInstance;
 
 			foreach ($providerInstance->getTokenClassNames() as $tokenClassName) {
-				$tokenInstance = $this->objectManager->getObject($tokenClassName);
+				$tokenInstance = $this->objectManager->get($tokenClassName);
 				$tokenInstance->setAuthenticationProviderName($providerName);
 				$this->tokens[] = $tokenInstance;
 			}
@@ -220,7 +219,7 @@ class AuthenticationProviderManager implements \F3\FLOW3\Security\Authentication
 			if (isset($providerConfiguration['requestPatterns']) && is_array($providerConfiguration['requestPatterns'])) {
 				$requestPatterns = array();
 				foreach($providerConfiguration['requestPatterns'] as $patternType => $patternConfiguration) {
-					$requestPattern = $this->objectManager->getObject($this->requestPatternResolver->resolveRequestPatternClass($patternType));
+					$requestPattern = $this->objectManager->get($this->requestPatternResolver->resolveRequestPatternClass($patternType));
 					$requestPattern->setPattern($patternConfiguration);
 					$requestPatterns[] = $requestPattern;
 				}
@@ -231,7 +230,7 @@ class AuthenticationProviderManager implements \F3\FLOW3\Security\Authentication
 				reset($providerConfiguration['entryPoint']);
 				$entryPointObjectName = key($providerConfiguration['entryPoint']);
 
-				$entryPoint = $this->objectManager->getObject($this->entryPointResolver->resolveEntryPointClass($entryPointObjectName));
+				$entryPoint = $this->objectManager->get($this->entryPointResolver->resolveEntryPointClass($entryPointObjectName));
 				$entryPoint->setOptions($providerConfiguration['entryPoint'][$entryPointObjectName]);
 
 				$tokenInstance->setAuthenticationEntryPoint($entryPoint);

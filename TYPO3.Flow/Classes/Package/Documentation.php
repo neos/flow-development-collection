@@ -47,9 +47,9 @@ class Documentation {
 	protected $documentationPath;
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectFactoryInterface
+	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 */
-	protected $objectFactory;
+	protected $objectManager;
 
 	/**
 	 * Constructor
@@ -68,12 +68,12 @@ class Documentation {
 	/**
 	 * Injects the Object Factory
 	 *
-	 * @param \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory
+	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function injectObjectFactory(\F3\FLOW3\Object\ObjectFactoryInterface $objectFactory) {
-		$this->objectFactory = $objectFactory;
+	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
+		$this->objectManager = $objectManager;
 	}
 
 	/**
@@ -124,7 +124,7 @@ class Documentation {
 		while ($documentationFormatsDirectoryIterator->valid()) {
 			$filename = $documentationFormatsDirectoryIterator->getFilename();
 			if ($filename[0] != '.' && $documentationFormatsDirectoryIterator->isDir()) {
-				$documentationFormat = $this->objectFactory->create('F3\FLOW3\Package\Documentation\Format', $filename, $this->documentationPath . $filename . '/');
+				$documentationFormat = $this->objectManager->create('F3\FLOW3\Package\Documentation\Format', $filename, $this->documentationPath . $filename . '/');
 				$documentationFormats[$filename] = $documentationFormat;
 			}
 			$documentationFormatsDirectoryIterator->next();

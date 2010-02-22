@@ -38,11 +38,6 @@ class ContextHolderSession implements \F3\FLOW3\Security\ContextHolderInterface 
 	protected $context;
 
 	/**
-	 * @var F3\FLOW3\Object\ObjectFactoryInterface
-	 */
-	protected $objectFactory = NULL;
-
-	/**
 	 * @var F3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager = NULL;
@@ -51,17 +46,6 @@ class ContextHolderSession implements \F3\FLOW3\Security\ContextHolderInterface 
 	 * @var F3\FLOW3\Security\Authentication\AuthenticationManagerInterface
 	 */
 	protected $authenticationManager = NULL;
-
-	/**
-	 * Inject the object factory
-	 *
-	 * @param F3\FLOW3\Object\ObjectFactoryInterface $objectFactory The object factory
-	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function injectObjectFactory(\F3\FLOW3\Object\ObjectFactoryInterface $objectFactory) {
-		$this->objectFactory = $objectFactory;
-	}
 
 	/**
 	 * Inject the object manager
@@ -122,7 +106,7 @@ class ContextHolderSession implements \F3\FLOW3\Security\ContextHolderInterface 
 	 */
 	public function initializeContext(\F3\FLOW3\MVC\RequestInterface $request) {
 		if (!($this->context instanceof \F3\FLOW3\Security\Context)) {
-			$this->context = $this->objectFactory->create('F3\FLOW3\Security\Context');
+			$this->context = $this->objectManager->create('F3\FLOW3\Security\Context');
 		}
 		$this->context->setRequest($request);
 

@@ -66,7 +66,7 @@ class SessionRegistryTest extends \F3\Testing\BaseTestCase {
 		$mockObject1 = $this->getMock($className1);
 		$mockObject2 = $this->getMock($className2);
 
-		$sessionRegistry = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\SessionRegistry'), array('dummy'), array(), '', FALSE);
+		$sessionRegistry = $this->getAccessibleMock('F3\FLOW3\Object\SessionRegistry', array('dummy'), array(), '', FALSE);
 		$sessionRegistry->putObject($className1, $mockObject1);
 		$sessionRegistry->putObject($className2, $mockObject2);
 
@@ -101,7 +101,7 @@ class SessionRegistryTest extends \F3\Testing\BaseTestCase {
 		$mockSession = $this->getMock('F3\FLOW3\Session\SessionInterface', array(), array(), '', FALSE);
 		$mockSession->expects($this->once())->method('putData')->with('F3_FLOW3_Object_SessionRegistry', $serializedObjectsArray);
 
-		$sessionRegistry = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\SessionRegistry'), array('storeObjectAsPropertyArray'), array(), '');
+		$sessionRegistry = $this->getAccessibleMock('F3\FLOW3\Object\SessionRegistry', array('storeObjectAsPropertyArray'), array(), '');
 		$sessionRegistry->injectSession($mockSession);
 		$sessionRegistry->injectObjectSerializer($mockObjectSerializer);
 		$sessionRegistry->_set('objects', $objects);
@@ -119,7 +119,7 @@ class SessionRegistryTest extends \F3\Testing\BaseTestCase {
 		$mockObjectSerializer = $this->getMock('F3\FLOW3\Object\ObjectSerializer', array(), array(), '', FALSE);
 		$mockObjectSerializer->expects($this->once())->method('clearState');
 
-		$sessionRegistry = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\SessionRegistry'), array('storeObjectAsPropertyArray'), array(), '');
+		$sessionRegistry = $this->getAccessibleMock('F3\FLOW3\Object\SessionRegistry', array('storeObjectAsPropertyArray'), array(), '');
 		$sessionRegistry->injectSession($mockSession);
 		$sessionRegistry->injectObjectSerializer($mockObjectSerializer);
 
@@ -136,7 +136,7 @@ class SessionRegistryTest extends \F3\Testing\BaseTestCase {
 		eval('class ' . $className . ' {}');
 		$mockObject = $this->getMock($className);
 
-		$sessionRegistry = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\SessionRegistry'), array('dummy'), array(), '', FALSE);
+		$sessionRegistry = $this->getAccessibleMock('F3\FLOW3\Object\SessionRegistry', array('dummy'), array(), '', FALSE);
 		$sessionRegistry->putObject($className, $mockObject);
 		$sessionRegistry->removeObject($className);
 
@@ -182,7 +182,7 @@ class SessionRegistryTest extends \F3\Testing\BaseTestCase {
 		$sessionRegistry = $this->getMock('F3\FLOW3\Object\SessionRegistry', array('objectExists', 'initialize'), array(), '', FALSE);
 		$sessionRegistry->expects($this->once())->method('objectExists')->with($objectName)->will($this->returnValue(FALSE));
 
-		$sessionRegistry->getObject($objectName);
+		$sessionRegistry->get($objectName);
 	}
 
 	/**
@@ -193,11 +193,11 @@ class SessionRegistryTest extends \F3\Testing\BaseTestCase {
 		$objectName = uniqid('DummyClass');
 		$object = new \stdClass();
 
-		$sessionRegistry = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\SessionRegistry'), array('objectExists', 'initialize'), array(), '', FALSE);
+		$sessionRegistry = $this->getAccessibleMock('F3\FLOW3\Object\SessionRegistry', array('objectExists', 'initialize'), array(), '', FALSE);
 		$sessionRegistry->expects($this->once())->method('objectExists')->with($objectName)->will($this->returnValue(TRUE));
 		$sessionRegistry->_set('objects', array($objectName => $object));
 
-		$this->assertSame($object, $sessionRegistry->getObject($objectName));
+		$this->assertSame($object, $sessionRegistry->get($objectName));
 	}
 
 	/**
@@ -213,7 +213,7 @@ class SessionRegistryTest extends \F3\Testing\BaseTestCase {
 		$mockObjectSerializer = $this->getMock('F3\FLOW3\Object\ObjectSerializer', array(), array(), '', FALSE);
 		$mockObjectSerializer->expects($this->once())->method('deserializeObjectsArray')->with($objectsArray)->will($this->returnValue(array('many', 'deserialized', 'objects')));
 
-		$sessionRegistry = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\SessionRegistry'), array('dummy'), array(), '', FALSE);
+		$sessionRegistry = $this->getAccessibleMock('F3\FLOW3\Object\SessionRegistry', array('dummy'), array(), '', FALSE);
 		$sessionRegistry->injectSession($mockSession);
 		$sessionRegistry->injectObjectSerializer($mockObjectSerializer);
 
@@ -235,7 +235,7 @@ class SessionRegistryTest extends \F3\Testing\BaseTestCase {
 		$mockObjectSerializer = $this->getMock('F3\FLOW3\Object\ObjectSerializer', array(), array(), '', FALSE);
 		$mockObjectSerializer->expects($this->never())->method('deserializeObjectsArray');
 
-		$sessionRegistry = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\SessionRegistry'), array('dummy'), array(), '', FALSE);
+		$sessionRegistry = $this->getAccessibleMock('F3\FLOW3\Object\SessionRegistry', array('dummy'), array(), '', FALSE);
 		$sessionRegistry->injectSession($mockSession);
 		$sessionRegistry->injectObjectSerializer($mockObjectSerializer);
 

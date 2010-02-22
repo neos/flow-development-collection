@@ -31,9 +31,9 @@ namespace F3\FLOW3\Persistence\Backend\GenericPdo;
 class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectFactoryInterface
+	 * @var \F3\FLOW3\Object\objectManagerInterface
 	 */
-	protected $objectFactory;
+	protected $objectManager;
 
 	/**
 	 * @var \PDO
@@ -53,12 +53,12 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 	/**
 	 * Injects the Object Factory
 	 *
-	 * @param \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory
+	 * @param \F3\FLOW3\Object\objectManagerInterface $objectManager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectObjectFactory(\F3\FLOW3\Object\ObjectFactoryInterface $objectFactory) {
-		$this->objectFactory = $objectFactory;
+	public function injectobjectManager(\F3\FLOW3\Object\objectManagerInterface $objectManager) {
+		$this->objectManager = $objectManager;
 	}
 
 	/**
@@ -104,7 +104,7 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 	 */
 	protected function createTables() {
 		try {
-			$pdoHelper = $this->objectFactory->create('F3\FLOW3\Utility\PdoHelper', $this->dataSourceName, $this->username, $this->password);
+			$pdoHelper = $this->objectManager->create('F3\FLOW3\Utility\PdoHelper', $this->dataSourceName, $this->username, $this->password);
 			$pdoHelper->importSql(FLOW3_PATH_FLOW3 . 'Resources/Private/Persistence/SQL/DDL.sql');
 		} catch (\PDOException $e) {
 			throw new \RuntimeException('Could not create persistence tables with DSN "' . $this->dataSourceName . '". PDO error: ' . $e->getMessage(), 1259701414);

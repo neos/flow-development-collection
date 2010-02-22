@@ -52,9 +52,9 @@ class ConfigurationTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function setScopeOnlyAcceptsValidValues() {
 		try {
-			$this->objectConfiguration->setScope('singleton');
-			$this->objectConfiguration->setScope('prototype');
-			$this->objectConfiguration->setScope('session');
+			$this->objectConfiguration->setScope(\F3\FLOW3\Object\Configuration\Configuration::SCOPE_SINGLETON);
+			$this->objectConfiguration->setScope(\F3\FLOW3\Object\Configuration\Configuration::SCOPE_PROTOTYPE);
+			$this->objectConfiguration->setScope(\F3\FLOW3\Object\Configuration\Configuration::SCOPE_SESSION);
 		} catch (\Exception $exception) {
 			$this->fail('setScope throwed an exception although the values were valid.');
 		}
@@ -119,9 +119,9 @@ class ConfigurationTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setFactoryClassNameAcceptsValidClassNames() {
-		$this->objectConfiguration->setFactoryClassName(__CLASS__);
-		$this->assertSame(__CLASS__, $this->objectConfiguration->getFactoryClassName());
+	public function setFactoryObjectNameAcceptsValidClassNames() {
+		$this->objectConfiguration->setFactoryObjectName(__CLASS__);
+		$this->assertSame(__CLASS__, $this->objectConfiguration->getFactoryObjectName());
 	}
 
 	/**
@@ -129,8 +129,8 @@ class ConfigurationTest extends \F3\Testing\BaseTestCase {
 	 * @expectedException F3\FLOW3\Object\Exception\InvalidClassException
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setFactoryClassNameRejectsNamesOfNonExistingNlasses() {
-		$this->objectConfiguration->setFactoryClassName('F3\Virtual\NonExistingClass');
+	public function setFactoryObjectNameRejectsNamesOfNonExistingNlasses() {
+		$this->objectConfiguration->setFactoryObjectName('F3\Virtual\NonExistingClass');
 	}
 
 	/**

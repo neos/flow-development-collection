@@ -112,8 +112,8 @@ class DispatcherTest extends \F3\Testing\BaseTestCase {
 		$mockSlot = new $slotClassName();
 
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->once())->method('isObjectRegistered')->with($slotClassName)->will($this->returnValue(TRUE));
-		$mockObjectManager->expects($this->once())->method('getObject')->with($slotClassName)->will($this->returnValue($mockSlot));
+		$mockObjectManager->expects($this->once())->method('isRegistered')->with($slotClassName)->will($this->returnValue(TRUE));
+		$mockObjectManager->expects($this->once())->method('get')->with($slotClassName)->will($this->returnValue($mockSlot));
 
 		$mockSystemLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
 
@@ -133,7 +133,7 @@ class DispatcherTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function dispatchThrowsAnExceptionIfTheSpecifiedClassOfASlotIsUnknown() {
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->once())->method('isObjectRegistered')->with('NonExistingClassName')->will($this->returnValue(FALSE));
+		$mockObjectManager->expects($this->once())->method('isRegistered')->with('NonExistingClassName')->will($this->returnValue(FALSE));
 
 		$mockSystemLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
 
@@ -155,8 +155,8 @@ class DispatcherTest extends \F3\Testing\BaseTestCase {
 		$mockSlot = new $slotClassName();
 
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->once())->method('isObjectRegistered')->with($slotClassName)->will($this->returnValue(TRUE));
-		$mockObjectManager->expects($this->once())->method('getObject')->with($slotClassName)->will($this->returnValue($mockSlot));
+		$mockObjectManager->expects($this->once())->method('isRegistered')->with($slotClassName)->will($this->returnValue(TRUE));
+		$mockObjectManager->expects($this->once())->method('get')->with($slotClassName)->will($this->returnValue($mockSlot));
 
 		$mockSystemLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
 

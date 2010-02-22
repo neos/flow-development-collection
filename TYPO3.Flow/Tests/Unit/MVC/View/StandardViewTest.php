@@ -31,9 +31,9 @@ namespace F3\FLOW3\MVC\View;
 class StandardViewTest extends \F3\Testing\BaseTestCase {
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectFactoryInterface
+	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 */
-	protected $objectFactory;
+	protected $objectManager;
 
 	/**
 	 * @var \F3\FLOW3\Package\PackageManagerInterface
@@ -46,11 +46,6 @@ class StandardViewTest extends \F3\Testing\BaseTestCase {
 	protected $recourceManager;
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
-	 */
-	protected $objectManager;
-
-	/**
 	 * @var \F3\FLOW3\MVC\Controller\Context
 	 */
 	protected $controllerContext;
@@ -61,12 +56,11 @@ class StandardViewTest extends \F3\Testing\BaseTestCase {
 	protected $view;
 
 	public function setUp() {
-		$this->objectFactory = $this->getMock('F3\FLOW3\Object\ObjectFactoryInterface', array(), array(), '', FALSE);
+		$this->objectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
 		$this->packageManager = $this->getMock('F3\FLOW3\Package\PackageManagerInterface', array(), array(), '', FALSE);
 		$this->resourceManager = $this->getMock('F3\FLOW3\Resource\ResourceManager', array(), array(), '', FALSE);
-		$this->objectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
 
-		$this->view = new \F3\FLOW3\MVC\View\StandardView($this->objectFactory, $this->packageManager, $this->resourceManager, $this->objectManager);
+		$this->view = new \F3\FLOW3\MVC\View\StandardView($this->objectManager, $this->packageManager, $this->resourceManager);
 
 		$this->controllerContext = $this->getMock('F3\FLOW3\MVC\Controller\Context', array('getRequest'), array(), '', FALSE);
 		$this->view->setControllerContext($this->controllerContext);

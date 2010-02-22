@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Object;
+namespace F3\FLOW3\Object\Container;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,47 +23,16 @@ namespace F3\FLOW3\Object;
  *                                                                        */
 
 /**
- * Object Object Cache Interface
+ * Contract for the Object Container
  *
  * @version $Id$
- * @author Robert Lemke <robert@typo3.org>
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-interface RegistryInterface {
+interface ObjectContainerInterface {
 
-	/**
-	 * Returns an object from the registry. If an instance of the required
-	 * object does not exist yet, an exception is thrown.
-	 *
-	 * @param string $objectName Name of the object to return an object of
-	 * @return object The object
-	 */
-	public function getObject($objectName);
+	const SCOPE_PROTOTYPE = 1;
+	const SCOPE_SINGLETON = 2;
+	const SCOPE_SESSION = 3;
 
-	/**
-	 * Put an object into the registry.
-	 *
-	 * @param string $objectName Name of the object the object is made for
-	 * @param object $object The object to store in the registry
-	 * @return void
-	 */
-	public function putObject($objectName, $object);
-
-	/**
-	 * Remove an object from the registry.
-	 *
-	 * @param string $objectName Name of the object to remove the object for
-	 * @return void
-	 */
-	public function removeObject($objectName);
-
-	/**
-	 * Checks if an object of the given object already exists in the object registry.
-	 *
-	 * @param string $objectName Name of the object to check for an object
-	 * @return boolean TRUE if an object exists, otherwise FALSE
-	 */
-	public function objectExists($objectName);
 }
-
 ?>

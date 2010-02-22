@@ -51,7 +51,7 @@ class PackageManagerControllerTest extends \F3\Testing\BaseTestCase {
 		$mockPackageManager->expects($this->once())->method('isPackageKeyValid')->with('SomeNewPackage')->will($this->returnValue(FALSE));
 		$mockPackageManager->expects($this->never())->method('createPackage');
 
-		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Package\Controller\PackageManagerController'), array('dummy'), array(), '', FALSE);
+		$controller = $this->getAccessibleMock('F3\FLOW3\Package\Controller\PackageManagerController', array('dummy'), array(), '', FALSE);
 		$controller->_set('packageManager', $mockPackageManager);
 
 		$controller->createAction('SomeNewPackage');
@@ -67,7 +67,7 @@ class PackageManagerControllerTest extends \F3\Testing\BaseTestCase {
 		$mockPackageManager->expects($this->once())->method('isPackageAvailable')->with('SomeNewPackage')->will($this->returnValue(TRUE));
 		$mockPackageManager->expects($this->never())->method('createPackage');
 
-		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Package\Controller\PackageManagerController'), array('dummy'), array(), '', FALSE);
+		$controller = $this->getAccessibleMock('F3\FLOW3\Package\Controller\PackageManagerController', array('dummy'), array(), '', FALSE);
 		$controller->_set('packageManager', $mockPackageManager);
 
 		$controller->createAction('SomeNewPackage');
@@ -85,7 +85,7 @@ class PackageManagerControllerTest extends \F3\Testing\BaseTestCase {
 		$mockPackageManager->expects($this->any())->method('isPackageAvailable')->will($this->returnValue(FALSE));
 		$mockPackageManager->expects($this->once())->method('createPackage')->with('SomeNewPackage')->will($this->returnValue($mockPackage));
 
-		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Package\Controller\PackageManagerController'), array('dummy'), array(), '', FALSE);
+		$controller = $this->getAccessibleMock('F3\FLOW3\Package\Controller\PackageManagerController', array('dummy'), array(), '', FALSE);
 		$controller->_set('packageManager', $mockPackageManager);
 
 		$controller->createAction('SomeNewPackage');

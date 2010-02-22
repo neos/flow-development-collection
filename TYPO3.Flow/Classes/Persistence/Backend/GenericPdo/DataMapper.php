@@ -36,11 +36,6 @@ class DataMapper implements \F3\FLOW3\Persistence\DataMapperInterface {
 	protected $objectManager;
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectBuilder
-	 */
-	protected $objectBuilder;
-
-	/**
 	 * @var \F3\FLOW3\Persistence\Session
 	 */
 	protected $persistenceSession;
@@ -59,17 +54,6 @@ class DataMapper implements \F3\FLOW3\Persistence\DataMapperInterface {
 	 */
 	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
-	}
-
-	/**
-	 * Injects the object builder
-	 *
-	 * @param \F3\FLOW3\Object\ObjectBuilder $objectBuilder
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function injectObjectBuilder(\F3\FLOW3\Object\ObjectBuilder $objectBuilder) {
-		$this->objectBuilder = $objectBuilder;
 	}
 
 	/**
@@ -125,15 +109,14 @@ class DataMapper implements \F3\FLOW3\Persistence\DataMapperInterface {
 		} else {
 			$className = $objectData['classname'];
 			$classSchema = $this->reflectionService->getClassSchema($className);
-			$objectConfiguration = $this->objectManager->getObjectConfiguration($className);
 
-			$object = $this->objectBuilder->createEmptyObject($className, $objectConfiguration);
+				// We expect that the object name === AOP proxy target class name of the model:
+			$object = $this->objectManager->recreate($className);
 			$this->persistenceSession->registerObject($object, $objectData['identifier']);
 			if ($classSchema->getModelType() === \F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY) {
 				$this->persistenceSession->registerReconstitutedEntity($object, $objectData);
 			}
 
-			$this->objectBuilder->reinjectDependencies($object, $objectConfiguration);
 			$this->thawProperties($object, $objectData['identifier'], $objectData, $classSchema);
 
 			return $object;

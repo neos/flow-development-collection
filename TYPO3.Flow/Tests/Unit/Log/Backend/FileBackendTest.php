@@ -112,7 +112,7 @@ class FileBackendTest extends \F3\Testing\BaseTestCase {
 		$logFileUrl = \vfsStream::url('testDirectory') . '/test.log';
 		file_put_contents($logFileUrl, 'twentybytesofcontent');
 
-		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Log\Backend\FileBackend'), array('dummy'), array(array('logFileUrl' => $logFileUrl)));
+		$backend = $this->getAccessibleMock('F3\FLOW3\Log\Backend\FileBackend', array('dummy'), array(array('logFileUrl' => $logFileUrl)));
 		$backend->_set('maximumLogFileSize', 10);
 		$backend->setLogFilesToKeep(1);
 		$backend->open();

@@ -82,7 +82,7 @@ class DispatcherTest extends \F3\Testing\BaseTestCase {
 		$mockController->expects($this->once())->method('setException')->with($this->isInstanceOf('F3\FLOW3\MVC\Controller\Exception\InvalidControllerException'));
 
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->once())->method('getObject')->with($this->equalTo('F3\TestPackage\TheCustomNotFoundController'))->will($this->returnValue($mockController));
+		$mockObjectManager->expects($this->once())->method('get')->with($this->equalTo('F3\TestPackage\TheCustomNotFoundController'))->will($this->returnValue($mockController));
 
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\RequestInterface');
 		$mockRequest->expects($this->any())->method('getControllerPackageKey')->will($this->returnValue('TestPackage'));
@@ -92,7 +92,7 @@ class DispatcherTest extends \F3\Testing\BaseTestCase {
 		$mockPackageManager->expects($this->once())->method('isPackageAvailable')->with($this->equalTo('TestPackage'))->will($this->returnValue(TRUE));
 		$mockPackageManager->expects($this->once())->method('isPackageActive')->with($this->equalTo('TestPackage'))->will($this->returnValue(TRUE));
 
-		$dispatcher = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Dispatcher'), array('dummy'), array($mockObjectManager), '', TRUE);
+		$dispatcher = $this->getAccessibleMock('F3\FLOW3\MVC\Dispatcher', array('dummy'), array($mockObjectManager), '', TRUE);
 		$dispatcher->injectSettings(array('mvc' => array('notFoundController' => 'F3\TestPackage\TheCustomNotFoundController')));
 		$dispatcher->injectPackageManager($mockPackageManager);
 
@@ -108,7 +108,7 @@ class DispatcherTest extends \F3\Testing\BaseTestCase {
 		$mockController->expects($this->once())->method('setException')->with($this->isInstanceOf('F3\FLOW3\MVC\Controller\Exception\InvalidPackageException'));
 
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->once())->method('getObject')->with($this->equalTo('F3\TestPackage\TheCustomNotFoundController'))->will($this->returnValue($mockController));
+		$mockObjectManager->expects($this->once())->method('get')->with($this->equalTo('F3\TestPackage\TheCustomNotFoundController'))->will($this->returnValue($mockController));
 
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\RequestInterface');
 		$mockRequest->expects($this->any())->method('getControllerPackageKey')->will($this->returnValue('TestPackage'));
@@ -116,7 +116,7 @@ class DispatcherTest extends \F3\Testing\BaseTestCase {
 		$mockPackageManager = $this->getMock('F3\FLOW3\Package\PackageManager', array(), array(), '', FALSE);
 		$mockPackageManager->expects($this->once())->method('isPackageAvailable')->with($this->equalTo('TestPackage'))->will($this->returnValue(FALSE));
 
-		$dispatcher = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Dispatcher'), array('dummy'), array($mockObjectManager), '', TRUE);
+		$dispatcher = $this->getAccessibleMock('F3\FLOW3\MVC\Dispatcher', array('dummy'), array($mockObjectManager), '', TRUE);
 		$dispatcher->injectSettings(array('mvc' => array('notFoundController' => 'F3\TestPackage\TheCustomNotFoundController')));
 		$dispatcher->injectPackageManager($mockPackageManager);
 
@@ -132,7 +132,7 @@ class DispatcherTest extends \F3\Testing\BaseTestCase {
 		$mockController->expects($this->once())->method('setException')->with($this->isInstanceOf('F3\FLOW3\MVC\Controller\Exception\InactivePackageException'));
 
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->once())->method('getObject')->with($this->equalTo('F3\TestPackage\TheCustomNotFoundController'))->will($this->returnValue($mockController));
+		$mockObjectManager->expects($this->once())->method('get')->with($this->equalTo('F3\TestPackage\TheCustomNotFoundController'))->will($this->returnValue($mockController));
 
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\RequestInterface');
 		$mockRequest->expects($this->any())->method('getControllerPackageKey')->will($this->returnValue('TestPackage'));
@@ -141,7 +141,7 @@ class DispatcherTest extends \F3\Testing\BaseTestCase {
 		$mockPackageManager->expects($this->once())->method('isPackageAvailable')->with($this->equalTo('TestPackage'))->will($this->returnValue(TRUE));
 		$mockPackageManager->expects($this->once())->method('isPackageActive')->with($this->equalTo('TestPackage'))->will($this->returnValue(FALSE));
 
-		$dispatcher = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Dispatcher'), array('dummy'), array($mockObjectManager), '', TRUE);
+		$dispatcher = $this->getAccessibleMock('F3\FLOW3\MVC\Dispatcher', array('dummy'), array($mockObjectManager), '', TRUE);
 		$dispatcher->injectSettings(array('mvc' => array('notFoundController' => 'F3\TestPackage\TheCustomNotFoundController')));
 		$dispatcher->injectPackageManager($mockPackageManager);
 

@@ -46,7 +46,7 @@ class PersistenceManagerTest extends \F3\Testing\BaseTestCase {
 		$manager = new \F3\FLOW3\Persistence\PersistenceManager();
 		$manager->injectBackend($mockBackend);
 
-		$manager->setSettings(array('backendOptions' => array('Foo' => 'Bar')));
+		$manager->injectSettings(array('persistence' => array('backendOptions' => array('Foo' => 'Bar'))));
 		$manager->initialize();
 	}
 
@@ -82,14 +82,14 @@ class PersistenceManagerTest extends \F3\Testing\BaseTestCase {
 		$entity2->someReference = $entity31;
 		$entity2->someReferenceArray = array($entity32, $entity33);
 
-		$repository = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Repository'), array('dummy'));
+		$repository = $this->getAccessibleMock('F3\FLOW3\Persistence\Repository', array('dummy'));
 		$repository->_set('objectType', get_class($entity2));
 		$repository->add($entity2);
 
 		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService');
 		$mockReflectionService->expects($this->once())->method('getAllImplementationClassNamesForInterface')->with('F3\FLOW3\Persistence\RepositoryInterface')->will($this->returnValue(array('F3\FLOW3\Persistence\Repository')));
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->once())->method('getObject')->with('F3\FLOW3\Persistence\Repository')->will($this->returnValue($repository));
+		$mockObjectManager->expects($this->once())->method('get')->with('F3\FLOW3\Persistence\Repository')->will($this->returnValue($repository));
 		$session = new \F3\FLOW3\Persistence\Session();
 		$mockBackend = $this->getMock('F3\FLOW3\Persistence\BackendInterface');
 			// this is the really important assertion!
@@ -114,14 +114,14 @@ class PersistenceManagerTest extends \F3\Testing\BaseTestCase {
 		$entity1 = new \F3\FLOW3\Tests\Persistence\Fixture\Model\CleanEntity();
 		$entity3 = new \F3\FLOW3\Tests\Persistence\Fixture\Model\CleanEntity();
 
-		$repository = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Repository'), array('dummy'));
+		$repository = $this->getAccessibleMock('F3\FLOW3\Persistence\Repository', array('dummy'));
 		$repository->_set('objectType', get_class($entity1));
 		$repository->remove($entity1);
 
 		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService');
 		$mockReflectionService->expects($this->once())->method('getAllImplementationClassNamesForInterface')->with('F3\FLOW3\Persistence\RepositoryInterface')->will($this->returnValue(array('F3\FLOW3\Persistence\Repository')));
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->once())->method('getObject')->with('F3\FLOW3\Persistence\Repository')->will($this->returnValue($repository));
+		$mockObjectManager->expects($this->once())->method('get')->with('F3\FLOW3\Persistence\Repository')->will($this->returnValue($repository));
 		$session = new \F3\FLOW3\Persistence\Session();
 		$session->registerObject($entity1, 'fakeUuid1');
 		$session->registerReconstitutedEntity($entity1, array('identifier' => 'fakeUuid1'));

@@ -118,12 +118,12 @@ class PersistenceManager implements \F3\FLOW3\Persistence\PersistenceManagerInte
 	}
 
 	/**
-	 * Set settings for the persistence layer
+	 * Injects the FLOW3 settings
 	 *
 	 * @param array $settings
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function setSettings(array $settings) {
+	public function injectSettings(array $settings) {
 		$this->settings = $settings;
 	}
 
@@ -135,7 +135,7 @@ class PersistenceManager implements \F3\FLOW3\Persistence\PersistenceManagerInte
 	 */
 	public function initialize() {
 		if (!$this->backend instanceof \F3\FLOW3\Persistence\BackendInterface) throw new \F3\FLOW3\Persistence\Exception\MissingBackendException('A persistence backend must be set prior to initializing the persistence manager.', 1215508456);
-		$this->backend->initialize($this->settings['backendOptions']);
+		$this->backend->initialize($this->settings['persistence']['backendOptions']);
 	}
 
 	/**
@@ -206,7 +206,7 @@ class PersistenceManager implements \F3\FLOW3\Persistence\PersistenceManagerInte
 			// fetch and inspect objects from all known repositories
 		$repositoryClassNames = $this->reflectionService->getAllImplementationClassNamesForInterface('F3\FLOW3\Persistence\RepositoryInterface');
 		foreach ($repositoryClassNames as $repositoryClassName) {
-			$repository = $this->objectManager->getObject($repositoryClassName);
+			$repository = $this->objectManager->get($repositoryClassName);
 			$aggregateRootObjects->addAll($repository->getAddedObjects());
 			$deletedEntities->addAll($repository->getRemovedObjects());
 		}

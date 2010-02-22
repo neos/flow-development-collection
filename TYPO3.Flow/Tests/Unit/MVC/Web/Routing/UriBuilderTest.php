@@ -56,7 +56,7 @@ class UriBuilderTest extends \F3\Testing\BaseTestCase {
 		$environment = $this->getMock('F3\FLOW3\Utility\Environment', array('isRewriteEnabled'), array(), '', FALSE);
 		$environment->expects($this->any())->method('isRewriteEnabled')->will($this->returnValue(1));
 
-		$this->uriBuilder = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Web\Routing\UriBuilder'), array('dummy'));
+		$this->uriBuilder = $this->getAccessibleMock('F3\FLOW3\MVC\Web\Routing\UriBuilder', array('dummy'));
 		$this->uriBuilder->injectRouter($this->router);
 		$this->uriBuilder->injectEnvironment($environment);
 		$this->uriBuilder->setRequest($this->request);

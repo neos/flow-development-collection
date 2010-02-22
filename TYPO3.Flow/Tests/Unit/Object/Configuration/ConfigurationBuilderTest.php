@@ -35,13 +35,13 @@ class ConfigurationBuilderTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function allBasicOptionsAreSetCorrectly() {
-		$factoryClassName = uniqid('ConfigurationBuilderTest');
-		eval('class ' . $factoryClassName . ' { public function manufacture() {} } ');
+		$factoryObjectName = uniqid('ConfigurationBuilderTest');
+		eval('class ' . $factoryObjectName . ' { public function manufacture() {} } ');
 
 		$configurationArray = array();
 		$configurationArray['scope'] = 'prototype';
 		$configurationArray['className'] = __CLASS__;
-		$configurationArray['factoryClassName'] = $factoryClassName;
+		$configurationArray['factoryObjectName'] = $factoryObjectName;
 		$configurationArray['factoryMethodName'] = 'manufacture';
 		$configurationArray['lifecycleInitializationMethodName'] = 'initializationMethod';
 		$configurationArray['lifecycleShutdownMethodName'] = 'shutdownMethod';
@@ -50,7 +50,7 @@ class ConfigurationBuilderTest extends \F3\Testing\BaseTestCase {
 		$objectConfiguration = new \F3\FLOW3\Object\Configuration\Configuration('TestObject', __CLASS__);
 		$objectConfiguration->setScope(\F3\FLOW3\Object\Configuration\Configuration::SCOPE_PROTOTYPE);
 		$objectConfiguration->setClassName(__CLASS__);
-		$objectConfiguration->setFactoryClassName($factoryClassName);
+		$objectConfiguration->setFactoryObjectName($factoryObjectName);
 		$objectConfiguration->setFactoryMethodName('manufacture');
 		$objectConfiguration->setLifecycleInitializationMethodName('initializationMethod');
 		$objectConfiguration->setLifecycleShutdownMethodName('shutdownMethod');

@@ -37,12 +37,7 @@ class ContextHolderSessionTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function setUp() {
-		$mockObjectConfiguration = $this->getMock('F3\FLOW3\Object\Configuration\Configuration', array(), array(), '', FALSE);
-		$mockObjectBuilder = $this->getMock('F3\FLOW3\Object\ObjectBuilder', array(), array(), '', FALSE);
-
-		$this->mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManager', array('getObject', 'getObjectConfiguration', 'reinjectDependencies'), array(), '', FALSE);
-		$this->mockObjectManager->expects($this->any())->method('getObjectConfiguration')->will($this->returnValue($mockObjectConfiguration));
-		$this->mockObjectManager->expects($this->any())->method('getObject')->will($this->returnValue($mockObjectBuilder));
+		$this->mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManager', array('get', 'create', 'recreate'), array(), '', FALSE);
 	}
 
 	/**
@@ -71,9 +66,8 @@ class ContextHolderSessionTest extends \F3\Testing\BaseTestCase {
 
 		$mockAuthenticationManager->expects($this->any())->method('getTokens')->will($this->returnValue(array()));
 
-		$securityContextHolder = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Security\ContextHolderSession'), array('dummy'));
+		$securityContextHolder = $this->getAccessibleMock('F3\FLOW3\Security\ContextHolderSession', array('dummy'));
 		$securityContextHolder->injectObjectManager($this->mockObjectManager);
-		$securityContextHolder->injectObjectFactory($this->objectFactory);
 		$securityContextHolder->injectAuthenticationManager($mockAuthenticationManager);
 		$securityContextHolder->_set('context', $mockContext);
 
@@ -86,6 +80,10 @@ class ContextHolderSessionTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function securityContextCallsTheAuthenticationManagerToSetItsTokens() {
+		$mockContext = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
+
+		$this->mockObjectManager->expects($this->once())->method('create')->with('F3\FLOW3\Security\Context')->will($this->returnValue($mockContext));
+
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\RequestInterface');
 		$mockAuthenticationManager = $this->getMock('F3\FLOW3\Security\Authentication\AuthenticationManagerInterface');
 
@@ -93,7 +91,6 @@ class ContextHolderSessionTest extends \F3\Testing\BaseTestCase {
 
 		$securityContextHolder = new \F3\FLOW3\Security\ContextHolderSession();
 		$securityContextHolder->injectObjectManager($this->mockObjectManager);
-		$securityContextHolder->injectObjectFactory($this->objectFactory);
 		$securityContextHolder->injectAuthenticationManager($mockAuthenticationManager);
 
 		$securityContextHolder->initializeContext($mockRequest);
@@ -127,9 +124,8 @@ class ContextHolderSessionTest extends \F3\Testing\BaseTestCase {
 		$mockContext->expects($this->once())->method('getAuthenticationTokens')->will($this->returnValue($tokensFromTheSession));
 		$mockContext->expects($this->once())->method('setAuthenticationTokens')->with($this->identicalTo($mergedTokens));
 
-		$securityContextHolder = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Security\ContextHolderSession'), array('dummy'));
+		$securityContextHolder = $this->getAccessibleMock('F3\FLOW3\Security\ContextHolderSession', array('dummy'));
 		$securityContextHolder->injectObjectManager($this->mockObjectManager);
-		$securityContextHolder->injectObjectFactory($this->objectFactory);
 		$securityContextHolder->injectAuthenticationManager($mockAuthenticationManager);
 		$securityContextHolder->_set('context', $mockContext);
 
@@ -156,9 +152,8 @@ class ContextHolderSessionTest extends \F3\Testing\BaseTestCase {
 		$mockContext->expects($this->once())->method('getAuthenticationTokens')->will($this->returnValue(array()));
 		$mockAuthenticationManager->expects($this->once())->method('getTokens')->will($this->returnValue(array($mockToken1, $mockToken2, $mockToken3)));
 
-		$securityContextHolder = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Security\ContextHolderSession'), array('dummy'));
+		$securityContextHolder = $this->getAccessibleMock('F3\FLOW3\Security\ContextHolderSession', array('dummy'));
 		$securityContextHolder->injectObjectManager($this->mockObjectManager);
-		$securityContextHolder->injectObjectFactory($this->objectFactory);
 		$securityContextHolder->injectAuthenticationManager($mockAuthenticationManager);
 		$securityContextHolder->_set('context', $mockContext);
 
@@ -179,9 +174,8 @@ class ContextHolderSessionTest extends \F3\Testing\BaseTestCase {
 		$mockAuthenticationManager->expects($this->once())->method('getTokens')->will($this->returnValue(array()));
 		$mockAuthenticationManager->expects($this->once())->method('setSecurityContext')->with($mockContext);
 
-		$securityContextHolder = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Security\ContextHolderSession'), array('dummy'));
+		$securityContextHolder = $this->getAccessibleMock('F3\FLOW3\Security\ContextHolderSession', array('dummy'));
 		$securityContextHolder->injectObjectManager($this->mockObjectManager);
-		$securityContextHolder->injectObjectFactory($this->objectFactory);
 		$securityContextHolder->injectAuthenticationManager($mockAuthenticationManager);
 		$securityContextHolder->_set('context', $mockContext);
 
@@ -242,7 +236,7 @@ class ContextHolderSessionTest extends \F3\Testing\BaseTestCase {
 		$token6->expects($this->once())->method('hasRequestPatterns')->will($this->returnValue(TRUE));
 		$token6->expects($this->once())->method('getRequestPatterns')->will($this->returnValue(array($abstainingRequestPattern, $matchingRequestPattern, $matchingRequestPattern)));
 
-		$securityContextHolder = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Security\ContextHolderSession'), array('dummy'), array(), '', FALSE);
+		$securityContextHolder = $this->getAccessibleMock('F3\FLOW3\Security\ContextHolderSession', array('dummy'), array(), '', FALSE);
 		$resultTokens = $securityContextHolder->_call('filterInactiveTokens', array($token1, $token2, $token3, $token4, $token5, $token6), $request);
 
 		$this->assertEquals(array($token1, $token2, $token4, $token6), $resultTokens);

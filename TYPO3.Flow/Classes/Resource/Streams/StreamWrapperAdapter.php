@@ -40,9 +40,9 @@ namespace F3\FLOW3\Resource\Streams;
 class StreamWrapperAdapter {
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectFactoryInterface
+	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 */
-	static protected $objectFactory;
+	static protected $objectManager;
 
 	/**
 	 * @var array
@@ -60,14 +60,14 @@ class StreamWrapperAdapter {
 	protected $streamWrapper;
 
 	/**
-	 * Set the object factory.
+	 * Injects the Object Manager.
 	 *
-	 * @param \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory
+	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	static public function setObjectFactory(\F3\FLOW3\Object\ObjectFactoryInterface $objectFactory) {
-		self::$objectFactory = $objectFactory;
+	static public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
+		self::$objectManager = $objectManager;
 	}
 
 	/**
@@ -104,7 +104,7 @@ class StreamWrapperAdapter {
 		if ($this->streamWrapper === NULL) {
 			$explodedPath = explode(':', $path, 2);
 			$scheme = array_shift($explodedPath);
-			$this->streamWrapper = self::$objectFactory->create(self::$registeredStreamWrappers[$scheme]);
+			$this->streamWrapper = self::$objectManager->create(self::$registeredStreamWrappers[$scheme]);
 		}
 	}
 

@@ -41,13 +41,6 @@ class CacheFactory {
 	protected $objectManager;
 
 	/**
-	 * A reference to the object factory
-	 *
-	 * @var \F3\FLOW3\Object\ObjectFactoryInterface
-	 */
-	protected $objectFactory;
-
-	/**
 	 * A reference to the cache manager
 	 *
 	 * @var \F3\FLOW3\Cache\CacheManager
@@ -58,12 +51,10 @@ class CacheFactory {
 	 * Constructs this cache factory
 	 *
 	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager A reference to the object manager
-	 * @param \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory A reference to the object factory
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(\F3\FLOW3\Object\ObjectManagerInterface $objectManager, \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory) {
+	public function __construct(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
-		$this->objectFactory = $objectFactory;
 	}
 
 	/**
@@ -93,9 +84,9 @@ class CacheFactory {
 	 */
 	public function create($cacheIdentifier, $cacheObjectName, $backendObjectName, array $backendOptions = array()) {
 		$context = $this->objectManager->getContext();
-		$backend = $this->objectFactory->create($backendObjectName, $context, $backendOptions);
+		$backend = $this->objectManager->create($backendObjectName, $context, $backendOptions);
 		if (!$backend instanceof \F3\FLOW3\Cache\Backend\BackendInterface) throw new \F3\FLOW3\Cache\Exception\InvalidBackendException('"' . $backendObjectName . '" is not a valid cache backend object.', 1216304301);
-		$cache = $this->objectFactory->create($cacheObjectName, $cacheIdentifier, $backend);
+		$cache = $this->objectManager->create($cacheObjectName, $cacheIdentifier, $backend);
 		if (!$cache instanceof \F3\FLOW3\Cache\Frontend\FrontendInterface) throw new \F3\FLOW3\Cache\Exception\InvalidCacheException('"' . $cacheObjectName . '" is not a valid cache frontend object.', 1216304300);
 
 		$this->cacheManager->registerCache($cache);

@@ -33,12 +33,7 @@ require_once(__DIR__ . '/../../Fixture/Web/Routing/MockRoutePartHandler.php');
 class RouteTest extends \F3\Testing\BaseTestCase {
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectFactory
-	 */
-	protected $mockObjectFactory;
-
-	/**
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
+	 * @var \F3\FLOW3\Object\ObjectManager
 	 */
 	protected $mockObjectManager;
 
@@ -53,17 +48,16 @@ class RouteTest extends \F3\Testing\BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setUp() {
-		$this->mockObjectFactory = $this->getMock('F3\FLOW3\Object\ObjectFactoryInterface');
-		$this->mockObjectFactory->expects($this->any())->method('create')->will($this->returnCallback(array($this, 'objectFactoryCallBack')));
 		$this->mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$this->route = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Web\Routing\Route'), array('dummy'), array($this->mockObjectFactory, $this->mockObjectManager));
+		$this->mockObjectManager->expects($this->any())->method('create')->will($this->returnCallback(array($this, 'objectManagerCallBack')));
+		$this->route = $this->getAccessibleMock('F3\FLOW3\MVC\Web\Routing\Route', array('dummy'), array($this->mockObjectManager, $this->mockObjectManager));
 	}
 
 	/**
 	 * @return object but only mocks
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function objectFactoryCallBack() {
+	public function objectManagerCallBack() {
 		$arguments = func_get_args();
 		$objectName = array_shift($arguments);
 		return $this->getMock($objectName, array('dummy'), $arguments);
@@ -108,7 +102,7 @@ class RouteTest extends \F3\Testing\BaseTestCase {
 			)
 		);
 		$mockRoutePartHandler = $this->getMock('F3\FLOW3\MVC\Web\Routing\DynamicRoutePartInterface');
-		$this->mockObjectManager->expects($this->once())->method('getObject')->with('SomeRoutePartHandler')->will($this->returnValue($mockRoutePartHandler));
+		$this->mockObjectManager->expects($this->once())->method('get')->with('SomeRoutePartHandler')->will($this->returnValue($mockRoutePartHandler));
 
 		$this->route->parse();
 	}
@@ -128,7 +122,7 @@ class RouteTest extends \F3\Testing\BaseTestCase {
 			)
 		);
 		$mockRoutePartHandler = $this->getMock('F3\FLOW3\MVC\Web\Routing\StaticRoutePart');
-		$this->mockObjectManager->expects($this->once())->method('getObject')->with('F3\FLOW3\MVC\Web\Routing\StaticRoutePart')->will($this->returnValue($mockRoutePartHandler));
+		$this->mockObjectManager->expects($this->once())->method('get')->with('F3\FLOW3\MVC\Web\Routing\StaticRoutePart')->will($this->returnValue($mockRoutePartHandler));
 
 		$this->route->parse();
 	}
@@ -368,7 +362,7 @@ class RouteTest extends \F3\Testing\BaseTestCase {
 			)
 		);
 		$mockRoutePartHandler = new \F3\FLOW3\MVC\Fixture\Web\Routing\MockRoutePartHandler();
-		$this->mockObjectManager->expects($this->once())->method('getObject')->with('F3\FLOW3\MVC\Fixture\Web\Routing\MockRoutePartHandler')->will($this->returnValue($mockRoutePartHandler));
+		$this->mockObjectManager->expects($this->once())->method('get')->with('F3\FLOW3\MVC\Fixture\Web\Routing\MockRoutePartHandler')->will($this->returnValue($mockRoutePartHandler));
 		$this->route->matches('foo/bar');
 
 		$this->assertEquals(array('key1' => '_match_invoked_', 'key2' => 'bar'), $this->route->getMatchResults());
@@ -719,7 +713,7 @@ class RouteTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function matchingRequestPathIsNullAfterUnsuccessfulResolve() {
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$this->route = new \F3\FLOW3\MVC\Web\Routing\Route($this->mockObjectFactory, $mockObjectManager);
+		$this->route = new \F3\FLOW3\MVC\Web\Routing\Route($this->mockObjectManager, $mockObjectManager);
 		$this->route->setUriPattern('{key1}');
 		$this->routeValues = array('key1' => 'value1');
 
@@ -745,7 +739,7 @@ class RouteTest extends \F3\Testing\BaseTestCase {
 		);
 		$this->routeValues = array('key2' => 'value2');
 		$mockRoutePartHandler = new \F3\FLOW3\MVC\Fixture\Web\Routing\MockRoutePartHandler();
-		$this->mockObjectManager->expects($this->once())->method('getObject')->with('F3\FLOW3\MVC\Fixture\Web\Routing\MockRoutePartHandler')->will($this->returnValue($mockRoutePartHandler));
+		$this->mockObjectManager->expects($this->once())->method('get')->with('F3\FLOW3\MVC\Fixture\Web\Routing\MockRoutePartHandler')->will($this->returnValue($mockRoutePartHandler));
 		$this->route->resolves($this->routeValues);
 
 		$this->assertEquals('_resolve_invoked_/value2', $this->route->getMatchingUri());

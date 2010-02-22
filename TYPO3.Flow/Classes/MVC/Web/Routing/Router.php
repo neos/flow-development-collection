@@ -37,11 +37,6 @@ class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 	protected $objectManager;
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectFactoryInterface
-	 */
-	protected $objectFactory;
-
-	/**
 	 * @var \F3\FLOW3\Utility\Environment
 	 */
 	protected $environment;
@@ -84,17 +79,6 @@ class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 	 */
 	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
-	}
-
-	/**
-	 * Injects the object factory
-	 *
-	 * @param \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function injectObjectFactory(\F3\FLOW3\Object\ObjectFactoryInterface $objectFactory) {
-		$this->objectFactory = $objectFactory;
 	}
 
 	/**
@@ -246,7 +230,7 @@ class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 		if ($this->routesCreated === FALSE) {
 			$this->routes = array();
 			foreach ($this->routesConfiguration as $routeConfiguration) {
-				$route = $this->objectFactory->create('F3\FLOW3\MVC\Web\Routing\Route');
+				$route = $this->objectManager->create('F3\FLOW3\MVC\Web\Routing\Route');
 				if (isset($routeConfiguration['name'])) {
 					$route->setName($routeConfiguration['name']);
 				}

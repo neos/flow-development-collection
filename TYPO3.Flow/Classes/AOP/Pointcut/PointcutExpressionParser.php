@@ -250,7 +250,7 @@ class PointcutExpressionParser {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function parseDesignatorFilter($operator, $filterObjectName, \F3\FLOW3\AOP\Pointcut\PointcutFilterComposite $pointcutFilterComposite) {
-		$customFilter = $this->objectManager->getObject($filterObjectName);
+		$customFilter = $this->objectManager->get($filterObjectName);
 		if (!$customFilter instanceof \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface) throw new \F3\FLOW3\AOP\Exception\InvalidPointcutExpressionException('Invalid custom filter: "' . $filterObjectName . '" does not implement the required PoincutFilterInterface.', 1231871755);
 		$pointcutFilterComposite->addFilter($operator, $customFilter);
 	}

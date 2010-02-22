@@ -29,7 +29,7 @@ namespace F3\FLOW3\Object;
  * @version $Id: TransientRegistry.php 2293 2009-05-20 18:14:45Z robert $
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class SessionRegistry implements \F3\FLOW3\Object\RegistryInterface {
+class SessionRegistry {
 
 	/**
 	 * Location where objects are stored in memory
@@ -85,7 +85,7 @@ class SessionRegistry implements \F3\FLOW3\Object\RegistryInterface {
 	 * @return object The object
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function getObject($objectName) {
+	public function get($objectName) {
 		if (!$this->objectExists($objectName)) throw new \F3\FLOW3\Object\Exception\InvalidObjectNameException('Object "' . $objectName . '" does not exist in the session object registry.', 1246574394);
 
 		return $this->objects[$objectName];

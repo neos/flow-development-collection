@@ -68,6 +68,7 @@ class AbstractBackendTest extends \F3\Testing\BaseTestCase {
 		$mockPersistenceSession = $this->getMock('F3\FLOW3\Persistence\Session');
 		$mockPersistenceSession->expects($this->once())->method('getReconstitutedEntities')->will($this->returnValue(new \SplObjectStorage));
 		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\AbstractBackend'), array('persistObject', 'getObjectCountByQuery', 'getObjectDataByQuery', 'getObjectDataByIdentifier'));
+
 		$backend->injectPersistenceSession($mockPersistenceSession);
 		$backend->expects($this->exactly(2))->method('persistObject');
 		$backend->setAggregateRootObjects($objects);
@@ -87,7 +88,7 @@ class AbstractBackendTest extends \F3\Testing\BaseTestCase {
 		$mockSession->expects($this->at(0))->method('hasObject')->with($object)->will($this->returnValue(TRUE));
 		$mockSession->expects($this->at(1))->method('unregisterObject')->with($object);
 
-		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\AbstractBackend'), array('removeEntity', 'getObjectCountByQuery', 'getObjectDataByQuery', 'getObjectDataByIdentifier'));
+		$backend = $this->getAccessibleMock('F3\FLOW3\Persistence\Backend\AbstractBackend', array('removeEntity', 'getObjectCountByQuery', 'getObjectDataByQuery', 'getObjectDataByIdentifier'));
 		$backend->injectPersistenceSession($mockSession);
 		$backend->expects($this->once())->method('removeEntity')->with($object);
 		$backend->setDeletedEntities($objects);
@@ -107,7 +108,7 @@ class AbstractBackendTest extends \F3\Testing\BaseTestCase {
 		$mockSession->expects($this->at(0))->method('hasObject')->with($object)->will($this->returnValue(FALSE));
 		$mockSession->expects($this->never())->method('unregisterObject');
 
-		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\AbstractBackend'), array('removeEntity', 'getObjectCountByQuery', 'getObjectDataByQuery', 'getObjectDataByIdentifier'));
+		$backend = $this->getAccessibleMock('F3\FLOW3\Persistence\Backend\AbstractBackend', array('removeEntity', 'getObjectCountByQuery', 'getObjectDataByQuery', 'getObjectDataByIdentifier'));
 		$backend->injectPersistenceSession($mockSession);
 		$backend->expects($this->never())->method('removeEntity');
 		$backend->setDeletedEntities($objects);

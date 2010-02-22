@@ -36,7 +36,7 @@ class UsernamePasswordTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function credentialsAreSetCorrectlyFromPostArguments() {
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\ObjectFactoryInterface');
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
 
 		$postArguments = array(
 			'F3\FLOW3\Security\Authentication\Token\UsernamePassword::username' => 'FLOW3',
@@ -47,7 +47,7 @@ class UsernamePasswordTest extends \F3\Testing\BaseTestCase {
 		$mockEnvironment->expects($this->once())->method('getRawPostArguments')->will($this->returnValue($postArguments));
 
 		$token = new \F3\FLOW3\Security\Authentication\Token\UsernamePassword();
-		$token->injectObjectFactory($mockObjectFactory);
+		$token->injectObjectManager($mockObjectManager);
 		$token->injectEnvironment($mockEnvironment);
 
 		$token->updateCredentials();
@@ -93,7 +93,7 @@ class UsernamePasswordTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function updateCredentialsSetsTheCorrectAuthenticationStatusIfNewCredentialsArrived() {
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\ObjectFactoryInterface');
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
 
 		$postArguments = array(
 			'F3\FLOW3\Security\Authentication\Token\UsernamePassword::username' => 'FLOW3',
@@ -104,7 +104,7 @@ class UsernamePasswordTest extends \F3\Testing\BaseTestCase {
 		$mockEnvironment->expects($this->once())->method('getRawPostArguments')->will($this->returnValue($postArguments));
 
 		$token = new \F3\FLOW3\Security\Authentication\Token\UsernamePassword();
-		$token->injectObjectFactory($mockObjectFactory);
+		$token->injectObjectManager($mockObjectManager);
 		$token->injectEnvironment($mockEnvironment);
 
 		$token->updateCredentials();

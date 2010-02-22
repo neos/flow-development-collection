@@ -39,9 +39,9 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	protected $type;
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectFactoryInterface
+	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 */
-	protected $objectFactory;
+	protected $objectManager;
 
 	/**
 	 * @var \F3\FLOW3\Persistence\DataMapperInterface
@@ -97,12 +97,12 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	/**
 	 * Injects the FLOW3 object factory
 	 *
-	 * @param \F3\FLOW3\Object\ObjectFactoryInterface $qomFactory
+	 * @param \F3\FLOW3\Object\ObjectManagerInterface $qomFactory
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectObjectFactory(\F3\FLOW3\Object\ObjectFactoryInterface $qomFactory) {
-		$this->objectFactory = $qomFactory;
+	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $qomFactory) {
+		$this->objectManager = $qomFactory;
 	}
 
 	/**

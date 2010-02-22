@@ -70,7 +70,7 @@ class FilterFirewallTest extends \F3\Testing\BaseTestCase {
 		};
 
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
-		$mockObjectManager->expects($this->any())->method('getObject')->will($this->returnCallback($getObjectCallback));
+		$mockObjectManager->expects($this->any())->method('get')->will($this->returnCallback($getObjectCallback));
 		$mockPatternResolver = $this->getMock('F3\FLOW3\Security\RequestPatternResolver', array(), array(), '', FALSE);
 		$mockPatternResolver->expects($this->any())->method('resolveRequestPatternClass')->will($this->returnCallback($resolveRequestPatternClassCallback));
 		$mockInterceptorResolver = $this->getMock('F3\FLOW3\Security\Authorization\InterceptorResolver', array(), array(), '', FALSE);
@@ -89,7 +89,7 @@ class FilterFirewallTest extends \F3\Testing\BaseTestCase {
 			)
 		);
 
-		$firewall = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Security\Authorization\FilterFirewall'), array('blockIllegalRequests'), array(), '', FALSE);
+		$firewall = $this->getAccessibleMock('F3\FLOW3\Security\Authorization\FilterFirewall', array('blockIllegalRequests'), array(), '', FALSE);
 		$firewall->_set('objectManager', $mockObjectManager);
 		$firewall->_set('requestPatternResolver', $mockPatternResolver);
 		$firewall->_set('interceptorResolver', $mockInterceptorResolver);
@@ -115,7 +115,7 @@ class FilterFirewallTest extends \F3\Testing\BaseTestCase {
 		$mockFilter3 = $this->getMock('F3\FLOW3\Security\Authorization\RequestFilter', array(), array(), '', FALSE);
 		$mockFilter3->expects($this->once())->method('filterRequest')->with($mockRequest);
 
-		$firewall = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Security\Authorization\FilterFirewall'), array('dummy'), array(), '', FALSE);
+		$firewall = $this->getAccessibleMock('F3\FLOW3\Security\Authorization\FilterFirewall', array('dummy'), array(), '', FALSE);
 		$firewall->_set('filters', array($mockFilter1, $mockFilter2, $mockFilter3));
 
 		$firewall->blockIllegalRequests($mockRequest);
@@ -137,7 +137,7 @@ class FilterFirewallTest extends \F3\Testing\BaseTestCase {
 		$mockFilter3 = $this->getMock('F3\FLOW3\Security\Authorization\RequestFilter', array(), array(), '', FALSE);
 		$mockFilter3->expects($this->once())->method('filterRequest')->with($mockRequest)->will($this->returnValue(FALSE));
 
-		$firewall = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Security\Authorization\FilterFirewall'), array('dummy'), array(), '', FALSE);
+		$firewall = $this->getAccessibleMock('F3\FLOW3\Security\Authorization\FilterFirewall', array('dummy'), array(), '', FALSE);
 		$firewall->_set('filters', array($mockFilter1, $mockFilter2, $mockFilter3));
 		$firewall->_set('rejectAll', TRUE);
 

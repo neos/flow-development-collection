@@ -65,7 +65,7 @@ class AuthenticationProviderManagerTest extends \F3\Testing\BaseTestCase {
 		$mockProviderResolver = $this->getMock('F3\FLOW3\Security\Authentication\AuthenticationProviderResolver', array(), array(), '', FALSE);
 		$mockProviderResolver->expects($this->any())->method('resolveProviderClass')->will($this->returnCallback($resolveProviderClassCallback));
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
-		$mockObjectManager->expects($this->any())->method('getObject')->will($this->returnCallback($getObjectCallback));
+		$mockObjectManager->expects($this->any())->method('get')->will($this->returnCallback($getObjectCallback));
 
 		$providerConfiguration = array(
 			'MyProvider' => array(
@@ -78,7 +78,7 @@ class AuthenticationProviderManagerTest extends \F3\Testing\BaseTestCase {
 			),
 		);
 
-		$mockProviderManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Security\Authentication\AuthenticationProviderManager'), array('authenticate'), array(), '', FALSE);
+		$mockProviderManager = $this->getAccessibleMock('F3\FLOW3\Security\Authentication\AuthenticationProviderManager', array('authenticate'), array(), '', FALSE);
 		$mockProviderManager->_set('objectManager', $mockObjectManager);
 		$mockProviderManager->_set('providerResolver', $mockProviderResolver);
 
@@ -130,7 +130,7 @@ class AuthenticationProviderManagerTest extends \F3\Testing\BaseTestCase {
 		$mockProviderResolver = $this->getMock('F3\FLOW3\Security\Authentication\AuthenticationProviderResolver', array(), array(), '', FALSE);
 		$mockProviderResolver->expects($this->any())->method('resolveProviderClass')->will($this->returnValue('provider1'));
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
-		$mockObjectManager->expects($this->any())->method('getObject')->will($this->returnCallback($getObjectCallback));
+		$mockObjectManager->expects($this->any())->method('get')->will($this->returnCallback($getObjectCallback));
 
 		$providerConfiguration = array(
 			'MyProvider' => array(
@@ -142,7 +142,7 @@ class AuthenticationProviderManagerTest extends \F3\Testing\BaseTestCase {
 			),
 		);
 
-		$mockProviderManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Security\Authentication\AuthenticationProviderManager'), array('authenticate'), array(), '', FALSE);
+		$mockProviderManager = $this->getAccessibleMock('F3\FLOW3\Security\Authentication\AuthenticationProviderManager', array('authenticate'), array(), '', FALSE);
 		$mockProviderManager->_set('objectManager', $mockObjectManager);
 		$mockProviderManager->_set('providerResolver', $mockProviderResolver);
 		$mockProviderManager->_set('requestPatternResolver', $mockPatternResolver);
@@ -185,7 +185,7 @@ class AuthenticationProviderManagerTest extends \F3\Testing\BaseTestCase {
 		$mockProviderResolver = $this->getMock('F3\FLOW3\Security\Authentication\AuthenticationProviderResolver', array(), array(), '', FALSE);
 		$mockProviderResolver->expects($this->any())->method('resolveProviderClass')->will($this->returnValue('provider1'));
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
-		$mockObjectManager->expects($this->any())->method('getObject')->will($this->returnCallback($getObjectCallback));
+		$mockObjectManager->expects($this->any())->method('get')->will($this->returnCallback($getObjectCallback));
 
 		$providerConfiguration = array(
 			'MyProvider' => array(
@@ -200,7 +200,7 @@ class AuthenticationProviderManagerTest extends \F3\Testing\BaseTestCase {
 			)
 		);
 
-		$mockProviderManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Security\Authentication\AuthenticationProviderManager'), array('authenticate'), array(), '', FALSE);
+		$mockProviderManager = $this->getAccessibleMock('F3\FLOW3\Security\Authentication\AuthenticationProviderManager', array('authenticate'), array(), '', FALSE);
 		$mockProviderManager->_set('objectManager', $mockObjectManager);
 		$mockProviderManager->_set('providerResolver', $mockProviderResolver);
 		$mockProviderManager->_set('entryPointResolver', $mockEntryPointResolver);
@@ -242,7 +242,7 @@ class AuthenticationProviderManagerTest extends \F3\Testing\BaseTestCase {
 		$securityContext->expects($this->atLeastOnce())->method('authenticateAllTokens')->will($this->returnValue(TRUE));
 		$securityContext->expects($this->atLeastOnce())->method('getAuthenticationTokens')->will($this->returnValue(array($mockToken1, $mockToken2)));
 
-		$mockProviderManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Security\Authentication\AuthenticationProviderManager'), array('dummy'), array(), '', FALSE);
+		$mockProviderManager = $this->getAccessibleMock('F3\FLOW3\Security\Authentication\AuthenticationProviderManager', array('dummy'), array(), '', FALSE);
 		$mockProviderManager->_set('providers', array($mockProvider1, $mockProvider2));
 		$mockProviderManager->_set('securityContext', $securityContext);
 
@@ -275,7 +275,7 @@ class AuthenticationProviderManagerTest extends \F3\Testing\BaseTestCase {
 		$securityContext->expects($this->atLeastOnce())->method('authenticateAllTokens')->will($this->returnValue(FALSE));
 		$securityContext->expects($this->atLeastOnce())->method('getAuthenticationTokens')->will($this->returnValue(array($mockToken1, $mockToken2, $mockToken3)));
 
-		$mockProviderManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Security\Authentication\AuthenticationProviderManager'), array('dummy'), array(), '', FALSE);
+		$mockProviderManager = $this->getAccessibleMock('F3\FLOW3\Security\Authentication\AuthenticationProviderManager', array('dummy'), array(), '', FALSE);
 		$mockProviderManager->_set('providers', array($mockProvider));
 		$mockProviderManager->_set('securityContext', $securityContext);
 
@@ -299,7 +299,7 @@ class AuthenticationProviderManagerTest extends \F3\Testing\BaseTestCase {
 
 		$securityContext->expects($this->atLeastOnce())->method('getAuthenticationTokens')->will($this->returnValue(array($token1, $token2)));
 
-		$mockProviderManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Security\Authentication\AuthenticationProviderManager'), array('dummy'), array(), '', FALSE);
+		$mockProviderManager = $this->getAccessibleMock('F3\FLOW3\Security\Authentication\AuthenticationProviderManager', array('dummy'), array(), '', FALSE);
 		$mockProviderManager->_set('providers', array());
 		$mockProviderManager->_set('securityContext', $securityContext);
 
@@ -324,7 +324,7 @@ class AuthenticationProviderManagerTest extends \F3\Testing\BaseTestCase {
 		$securityContext->expects($this->atLeastOnce())->method('getAuthenticationTokens')->will($this->returnValue(array($token1, $token2)));
 		$securityContext->expects($this->atLeastOnce())->method('authenticateAllTokens')->will($this->returnValue(TRUE));
 
-		$mockProviderManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Security\Authentication\AuthenticationProviderManager'), array('dummy'), array(), '', FALSE);
+		$mockProviderManager = $this->getAccessibleMock('F3\FLOW3\Security\Authentication\AuthenticationProviderManager', array('dummy'), array(), '', FALSE);
 		$mockProviderManager->_set('providers', array());
 		$mockProviderManager->_set('securityContext', $securityContext);
 
@@ -358,7 +358,7 @@ class AuthenticationProviderManagerTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function noTokensAndProvidersAreBuiltIfTheConfigurationArrayIsEmpty() {
-		$mockProviderManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Security\Authentication\AuthenticationProviderManager'), array('authenticate'), array(), '', FALSE);
+		$mockProviderManager = $this->getAccessibleMock('F3\FLOW3\Security\Authentication\AuthenticationProviderManager', array('authenticate'), array(), '', FALSE);
 		$mockProviderManager->_call('buildProvidersAndTokensFromConfiguration', array());
 
 		$providers = $mockProviderManager->_get('providers');
@@ -384,7 +384,7 @@ class AuthenticationProviderManagerTest extends \F3\Testing\BaseTestCase {
 		$mockProviderResolver = $this->getMock('F3\FLOW3\Security\Authentication\AuthenticationProviderResolver', array(), array(), '', FALSE);
 		$mockProviderResolver->expects($this->once())->method('resolveProviderClass')->will($this->returnValue(NULL));
 
-		$mockProviderManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Security\Authentication\AuthenticationProviderManager'), array('authenticate'), array(), '', FALSE);
+		$mockProviderManager = $this->getAccessibleMock('F3\FLOW3\Security\Authentication\AuthenticationProviderManager', array('authenticate'), array(), '', FALSE);
 		$mockProviderManager->_set('providerResolver', $mockProviderResolver);
 
 		$mockProviderManager->_call('buildProvidersAndTokensFromConfiguration', $providerConfiguration);

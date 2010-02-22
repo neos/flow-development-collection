@@ -106,7 +106,7 @@ class ProxyClassBuilderTest extends \F3\Testing\BaseTestCase {
 		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService');
 		$mockReflectionService->expects($this->any())->method('getClassMethodNames')->with($className)->will($this->returnValue(array('foo', 'bar')));
 
-		$builder = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\AOP\Builder\ProxyClassBuilder'), array('dummy'), array(), '', FALSE);
+		$builder = $this->getAccessibleMock('F3\FLOW3\AOP\Builder\ProxyClassBuilder', array('dummy'), array(), '', FALSE);
 		$builder->injectReflectionService($mockReflectionService);
 		$actualMethodNames = $builder->_call('getMethodsFromTargetClass', $className);
 		$this->assertSame($expectedMethodNames, $actualMethodNames);
@@ -117,7 +117,7 @@ class ProxyClassBuilderTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function buildIntroducedInterfacesCodePreparesListOfInterfacesForProxyClassCode() {
-		$builder = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\AOP\Builder\ProxyClassBuilder'), array('dummy'), array(), '', FALSE);
+		$builder = $this->getAccessibleMock('F3\FLOW3\AOP\Builder\ProxyClassBuilder', array('dummy'), array(), '', FALSE);
 
 		$this->assertSame('', $builder->_call('buildIntroducedInterfacesCode', array()));
 		$this->assertSame('Foo, ', $builder->_call('buildIntroducedInterfacesCode', array('Foo')));
@@ -164,7 +164,7 @@ class ProxyClassBuilderTest extends \F3\Testing\BaseTestCase {
 		);" . chr(10);
 
 
-		$builder = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\AOP\Builder\ProxyClassBuilder'), array('dummy'), array(), '', FALSE);
+		$builder = $this->getAccessibleMock('F3\FLOW3\AOP\Builder\ProxyClassBuilder', array('dummy'), array(), '', FALSE);
 
 		$actualCode = $builder->_call('buildMethodsAndAdvicesArrayCode', $methodsAndAdvices);
 
@@ -186,7 +186,7 @@ class ProxyClassBuilderTest extends \F3\Testing\BaseTestCase {
 		$mockAdvicedMethodInterceptorBuilder = $this->getMock('F3\FLOW3\AOP\Builder\AdvicedMethodInterceptorBuilder', array('build'), array(), '', FALSE);
 		$mockAdvicedMethodInterceptorBuilder->expects($this->once())->method('build')->will($this->returnValue('AdvicedMethod'));
 
-		$builder = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\AOP\Builder\ProxyClassBuilder'), array('dummy'), array(), '', FALSE);
+		$builder = $this->getAccessibleMock('F3\FLOW3\AOP\Builder\ProxyClassBuilder', array('dummy'), array(), '', FALSE);
 		$builder->injectEmptyConstructorInterceptorBuilder($mockEmptyConstructorInterceptorBuilder);
 		$builder->injectEmptyMethodInterceptorBuilder($mockEmptyMethodInterceptorBuilder);
 		$builder->injectAdvicedConstructorInterceptorBuilder($mockAdvicedConstructorInterceptorBuilder);
@@ -235,7 +235,7 @@ class ProxyClassBuilderTest extends \F3\Testing\BaseTestCase {
 		$mockAspectContainer1->expects($this->once())->method('getAdvisors')->will($this->returnValue(array($mockAdvisor1)));
 
 		$aspectContainers = array($mockAspectContainer1);
-		$builder = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\AOP\Builder\ProxyClassBuilder'), array('dummy'), array(), '', FALSE);
+		$builder = $this->getAccessibleMock('F3\FLOW3\AOP\Builder\ProxyClassBuilder', array('dummy'), array(), '', FALSE);
 		$builder->injectReflectionService($mockReflectionService);
 		$actualInterceptedMethods = array();
 		$builder->_callRef('addAdvicedMethodsToInterceptedMethods', $actualInterceptedMethods, $methods, $targetClassName, $aspectContainers);
@@ -302,7 +302,7 @@ class ProxyClassBuilderTest extends \F3\Testing\BaseTestCase {
 	public function addIntroducedMethodsToInterceptedMethodsAddsSpecifiedMethodsToTheInterceptedMethodsListIfItIsNotAlreadyThere() {
 		$targetClassName = 'TargetClass';
 		$methods = array(array('Foo', 'foo'), array('Bar', 'bar'));
-		$builder = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\AOP\Builder\ProxyClassBuilder'), array('dummy'), array(), '', FALSE);
+		$builder = $this->getAccessibleMock('F3\FLOW3\AOP\Builder\ProxyClassBuilder', array('dummy'), array(), '', FALSE);
 
 		$actualInterceptedMethods = array(
 			'foo' => array(
@@ -333,7 +333,7 @@ class ProxyClassBuilderTest extends \F3\Testing\BaseTestCase {
 		$targetClassName = uniqid('TargetClass');
 		eval("class $targetClassName { public function __construct() {} }");
 
-		$builder = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\AOP\Builder\ProxyClassBuilder'), array('dummy'), array(), '', FALSE);
+		$builder = $this->getAccessibleMock('F3\FLOW3\AOP\Builder\ProxyClassBuilder', array('dummy'), array(), '', FALSE);
 
 		$actualInterceptedMethods = array(
 			'foo' => array(
@@ -385,7 +385,7 @@ class ProxyClassBuilderTest extends \F3\Testing\BaseTestCase {
 
 		$aspectContainers = array($mockAspectContainer1, $mockAspectContainer2);
 
-		$builder = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\AOP\Builder\ProxyClassBuilder'), array('dummy'), array(), '', FALSE);
+		$builder = $this->getAccessibleMock('F3\FLOW3\AOP\Builder\ProxyClassBuilder', array('dummy'), array(), '', FALSE);
 		$actualMatchingIntroductions = $builder->_call('getMatchingIntroductions', $aspectContainers, $targetClassName);
 		$this->assertSame(array($mockIntroduction2), $actualMatchingIntroductions);
 	}
@@ -402,7 +402,7 @@ class ProxyClassBuilderTest extends \F3\Testing\BaseTestCase {
 		$mockIntroduction2->expects($this->once())->method('getInterfaceName')->will($this->returnValue('Bar'));
 
 		$mockIntroductions = array($mockIntroduction1, $mockIntroduction2);
-		$builder = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\AOP\Builder\ProxyClassBuilder'), array('dummy'), array(), '', FALSE);
+		$builder = $this->getAccessibleMock('F3\FLOW3\AOP\Builder\ProxyClassBuilder', array('dummy'), array(), '', FALSE);
 		$actualInterfaceNames = $builder->_call('getInterfaceNamesFromIntroductions', $mockIntroductions);
 
 		$this->assertSame(array('\Foo', '\Bar'), $actualInterfaceNames);
@@ -420,7 +420,7 @@ class ProxyClassBuilderTest extends \F3\Testing\BaseTestCase {
 		$mockIntroduction2->expects($this->once())->method('getInterfaceName')->will($this->returnValue('Bar'));
 
 		$mockIntroductions = array($mockIntroduction1, $mockIntroduction2);
-		$builder = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\AOP\Builder\ProxyClassBuilder'), array('dummy'), array(), '', FALSE);
+		$builder = $this->getAccessibleMock('F3\FLOW3\AOP\Builder\ProxyClassBuilder', array('dummy'), array(), '', FALSE);
 		$actualInterfaceNames = $builder->_call('getInterfaceNamesFromIntroductions', $mockIntroductions);
 
 		$this->assertSame(array('\Foo', '\Bar'), $actualInterfaceNames);
@@ -468,7 +468,7 @@ class ProxyClassBuilderTest extends \F3\Testing\BaseTestCase {
 			)
 		);
 
-		$builder = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\AOP\Builder\ProxyClassBuilder'), array('dummy'), array(), '', FALSE);
+		$builder = $this->getAccessibleMock('F3\FLOW3\AOP\Builder\ProxyClassBuilder', array('dummy'), array(), '', FALSE);
 		$actualInformation = $builder->_call('getAdvicedMethodsInformation', $interceptedMethods);
 		$this->assertSame($expectedInformation, $actualInformation);
 	}
@@ -483,7 +483,7 @@ class ProxyClassBuilderTest extends \F3\Testing\BaseTestCase {
 
 		$expectedCode = ' * @foo bar baz' . chr(10) .' * @author me' . chr(10);
 
-		$builder = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\AOP\Builder\ProxyClassBuilder'), array('dummy'), array(), '', FALSE);
+		$builder = $this->getAccessibleMock('F3\FLOW3\AOP\Builder\ProxyClassBuilder', array('dummy'), array(), '', FALSE);
 		$builder->injectReflectionService($mockReflectionService);
 		$actualCode = $builder->_call('buildClassAnnotationsCode', 'TestClass');
 
@@ -496,7 +496,7 @@ class ProxyClassBuilderTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function renderProxyClassNameRendersAUniqueClassNameEvenIfAProxyClassNameForThatTargetClassAlreadyExists() {
 		$className = uniqid('TestClass');
-		$builder = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\AOP\Builder\ProxyClassBuilder'), array('dummy'), array(), '', FALSE);
+		$builder = $this->getAccessibleMock('F3\FLOW3\AOP\Builder\ProxyClassBuilder', array('dummy'), array(), '', FALSE);
 
 		$actualClassName = $builder->_call('renderProxyClassName', $className, 'Testing');
 		$this->assertSame($className . '_AOPProxy_Testing', $actualClassName);
@@ -515,7 +515,7 @@ class ProxyClassBuilderTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getProxyNameSpaceExtractsTheNamespaceOfTheGivenFullQualifiedClassName() {
-		$builder = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\AOP\Builder\ProxyClassBuilder'), array('dummy'), array(), '', FALSE);
+		$builder = $this->getAccessibleMock('F3\FLOW3\AOP\Builder\ProxyClassBuilder', array('dummy'), array(), '', FALSE);
 		$namespace = $builder->_call('getProxyNameSpace', __CLASS__);
 		$this->assertSame(__NAMESPACE__, $namespace);
 	}

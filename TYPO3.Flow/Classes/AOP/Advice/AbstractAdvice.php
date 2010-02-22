@@ -85,7 +85,7 @@ class AbstractAdvice implements \F3\FLOW3\AOP\Advice\AdviceInterface {
 	public function invoke(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		if ($this->runtimeEvaluator !== NULL && $this->runtimeEvaluator->__invoke($joinPoint) === FALSE) return;
 
-		$adviceObject = $this->objectManager->getObject($this->aspectObjectName);
+		$adviceObject = $this->objectManager->get($this->aspectObjectName);
 		$methodName = $this->adviceMethodName;
 		$adviceObject->$methodName($joinPoint);
 	}

@@ -57,9 +57,9 @@ class Package implements PackageInterface {
 	protected $packagePath;
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectFactoryInterface
+	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 */
-	protected $objectFactory;
+	protected $objectManager;
 
 	/**
 	 * @var \F3\FLOW3\Package\MetaData\ReaderInterface
@@ -95,14 +95,14 @@ class Package implements PackageInterface {
 	}
 
 	/**
-	 * Injects the Object Factory
+	 * Injects the Object Manager
 	 *
-	 * @param \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory
+	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function injectObjectFactory(\F3\FLOW3\Object\ObjectFactoryInterface $objectFactory) {
-		$this->objectFactory = $objectFactory;
+	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
+		$this->objectManager = $objectManager;
 	}
 
 	/**
@@ -236,7 +236,7 @@ class Package implements PackageInterface {
 				$filename = $documentationsDirectoryIterator->getFilename();
 				if ($filename[0] != '.' && $documentationsDirectoryIterator->isDir()) {
 					$filename = $documentationsDirectoryIterator->getFilename();
-					$documentation = $this->objectFactory->create('F3\FLOW3\Package\Documentation', $this, $filename, $documentationPath . $filename . '/');
+					$documentation = $this->objectManager->create('F3\FLOW3\Package\Documentation', $this, $filename, $documentationPath . $filename . '/');
 					$documentations[$filename] = $documentation;
 				}
 				$documentationsDirectoryIterator->next();

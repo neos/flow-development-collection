@@ -213,7 +213,7 @@ class PointcutFilterCompositeTest extends \F3\Testing\BaseTestCase {
 									)))));
 
 		$expectedResult = "\n\t\t\t\t\t\tfunction(\\F3\\FLOW3\\AOP\\JoinPointInterface \$joinPoint) use (\$currentObject, \$objectManager) {\n" .
-								"\t\t\t\t\t\t\t\$party = \$objectManager->getObject('F3\\FLOW3\\Security\\ContextHolderInterface')->getContext()->getParty();\n" .
+								"\t\t\t\t\t\t\t\$party = \$objectManager->get('F3\\FLOW3\\Security\\ContextHolderInterface')->getContext()->getParty();\n" .
 								"\t\t\t\t\t\t\treturn (((F3\FLOW3\Reflection\ObjectAccess::getPropertyPath(\$currentObject, 'some.thing') != F3\FLOW3\Reflection\ObjectAccess::getPropertyPath(\$party, 'name')) && (\$joinPoint->getMethodArgument('identifier') > 3 && \$joinPoint->getMethodArgument('identifier') <= 5)) || (\$joinPoint->getMethodArgument('identifier') == 42));\n" .
 								"\t\t\t\t\t\t}";
 
@@ -261,7 +261,7 @@ class PointcutFilterCompositeTest extends \F3\Testing\BaseTestCase {
 									)))));
 
 		$expectedResult = "\n\t\t\t\t\t\tfunction(\\F3\\FLOW3\\AOP\\JoinPointInterface \$joinPoint) use (\$currentObject, \$objectManager) {\n" .
-								"\t\t\t\t\t\t\t\$party = \$objectManager->getObject('F3\\FLOW3\\Security\\ContextHolderInterface')->getContext()->getParty();\n" .
+								"\t\t\t\t\t\t\t\$party = \$objectManager->get('F3\\FLOW3\\Security\\ContextHolderInterface')->getContext()->getParty();\n" .
 								"\t\t\t\t\t\t\treturn (((F3\FLOW3\Reflection\ObjectAccess::getPropertyPath(\$currentObject, 'some.thing') != F3\FLOW3\Reflection\ObjectAccess::getPropertyPath(\$party, 'name')) && (!(\$joinPoint->getMethodArgument('identifier') > 3 && \$joinPoint->getMethodArgument('identifier') <= 5))) || (!(\$joinPoint->getMethodArgument('identifier') == 42)));\n" .
 								"\t\t\t\t\t\t}";
 

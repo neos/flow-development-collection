@@ -21,8 +21,6 @@
 				<system type="PHPExtension">SPL</system>
 				<system minVersion="1.2.0" type="PHPExtension">json</system>
 				<system type="PHPExtension">session</system>
-				<package>PHP6</package>
-				<package>YAML</package>
 				<package>Fluid</package>
 		</depends>
 		<conflicts>

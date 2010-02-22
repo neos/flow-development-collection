@@ -37,9 +37,9 @@ class PackageManager implements \F3\FLOW3\Package\PackageManagerInterface {
 	protected $packageMetaDataWriter;
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectFactoryInterface
+	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 */
-	protected $objectFactory;
+	protected $objectManager;
 
 	/**
 	 * @var \F3\FLOW3\Configuration\ConfigurationManager
@@ -65,13 +65,6 @@ class PackageManager implements \F3\FLOW3\Package\PackageManagerInterface {
 	protected $activePackages = array();
 
 	/**
-	 * Array of package keys that are protected and that must not be removed.
-	 * These packages will also be loaded even when not activated.
-	 * @var array
-	 */
-	protected $protectedPackages = array('FLOW3', 'PHP6', 'YAML');
-
-	/**
 	 * Injects a Package MetaData Writer
 	 *
 	 * @param \F3\FLOW3\Package\MetaData\WriterInterface $packageMetaDataWriter A package meta data writer instance to write package metadata
@@ -83,14 +76,14 @@ class PackageManager implements \F3\FLOW3\Package\PackageManagerInterface {
 	}
 
 	/**
-	 * Injects the Object Factory
+	 * Injects the Object Manager
 	 *
-	 * @param \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory
+	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectObjectFactory(\F3\FLOW3\Object\ObjectFactoryInterface $objectFactory) {
-		$this->objectFactory = $objectFactory;
+	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
+		$this->objectManager = $objectManager;
 	}
 
 	/**
@@ -121,7 +114,7 @@ class PackageManager implements \F3\FLOW3\Package\PackageManagerInterface {
 		}
 
 		foreach ($this->packages as $packageKey => $package) {
-			if (in_array($packageKey, $this->protectedPackages) || (isset($packageStatesConfiguration[$packageKey]['state']) && $packageStatesConfiguration[$packageKey]['state'] == 'active')) {
+			if ($packageKey === 'FLOW3' || (isset($packageStatesConfiguration[$packageKey]['state']) && $packageStatesConfiguration[$packageKey]['state'] == 'active')) {
 				$this->activePackages[$packageKey] = $package;
 			}
 		}
@@ -219,18 +212,6 @@ class PackageManager implements \F3\FLOW3\Package\PackageManagerInterface {
 	}
 
 	/**
-	 * Check if the given package key is protected. Protected package keys
-	 * cannot be removed (e.g. FLOW3 can't remove FLOW3).
-	 *
-	 * @param string $packageKey The package key to check for protection
-	 * @return boolean If the package key is protected
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 */
-	public function isPackageKeyProtected($packageKey) {
-		return in_array($packageKey, $this->protectedPackages);
-	}
-
-	/**
 	 * Create a package, given the package key
 	 *
 	 * @param string $packageKey The package key of the new package
@@ -245,7 +226,7 @@ class PackageManager implements \F3\FLOW3\Package\PackageManagerInterface {
 		if ($this->isPackageAvailable($packageKey)) throw new \F3\FLOW3\Package\Exception\PackageKeyAlreadyExistsException('The package key "' . $packageKey . '" already exists', 1220722873);
 
 		if ($packageMetaData === NULL) {
-			$packageMetaData = $this->objectFactory->create('F3\FLOW3\Package\MetaData', $packageKey);
+			$packageMetaData = $this->objectManager->create('F3\FLOW3\Package\MetaData', $packageKey);
 		}
 
 		if ($packagesPath === '') {
@@ -270,7 +251,7 @@ class PackageManager implements \F3\FLOW3\Package\PackageManagerInterface {
 			\F3\FLOW3\Utility\Files::createDirectoryRecursively($packagePath . $path);
 		}
 
-		$package = $this->objectFactory->create('F3\FLOW3\Package\Package', $packageKey, $packagePath);
+		$package = $this->objectManager->create('F3\FLOW3\Package\Package', $packageKey, $packagePath);
 		$result = $this->packageMetaDataWriter->writePackageMetaData($package, $packageMetaData);
 		if ($result === FALSE) throw new \F3\FLOW3\Package\Exception('Error while writing the package meta data information at "' . $packagePath . '"', 1232625240);
 
@@ -347,7 +328,7 @@ class PackageManager implements \F3\FLOW3\Package\PackageManagerInterface {
 	 * @api
 	 */
 	public function deletePackage($packageKey) {
-		if ($this->isPackageKeyProtected($packageKey)) throw new \F3\FLOW3\Package\Exception\ProtectedPackageKeyException('The package "' . $packageKey . '" is protected and can not be removed.', 1220722120);
+		if ($packageKey === 'FLOW3') throw new \F3\FLOW3\Package\Exception\ProtectedPackageKeyException('The package "' . $packageKey . '" is protected and can not be removed.', 1220722120);
 		if (!$this->isPackageAvailable($packageKey)) throw new \F3\FLOW3\Package\Exception\UnknownPackageException('Package "' . $packageKey . '" is not available and can not be removed though.', 1166543253);
 		if ($this->isPackageActive($packageKey)) {
 			$this->deactivatePackage($packageKey);
@@ -369,7 +350,7 @@ class PackageManager implements \F3\FLOW3\Package\PackageManagerInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function scanAvailablePackages() {
-		$this->packages = array('FLOW3' => $this->objectFactory->create('F3\FLOW3\Package\Package', 'FLOW3', FLOW3_PATH_FLOW3));
+		$this->packages = array('FLOW3' => $this->objectManager->create('F3\FLOW3\Package\Package', 'FLOW3', FLOW3_PATH_FLOW3));
 		foreach (new \DirectoryIterator(FLOW3_PATH_PACKAGES) as $parentFileInfo) {
 			$parentFilename = $parentFileInfo->getFilename();
 			if ($parentFilename[0] === '.' || !$parentFileInfo->isDir()) continue;
@@ -381,7 +362,7 @@ class PackageManager implements \F3\FLOW3\Package\PackageManagerInterface {
 					if (isset($this->packages[$childFilename])) {
 						throw new \F3\FLOW3\Package\Exception\DuplicatePackageException('Detected a duplicate package, remove either "' . $this->packages[$childFilename]->getPackagePath() . '" or "' . $packagePath . '".', 1253716811);
 					}
-					$this->packages[$childFilename] = $this->objectFactory->create('F3\FLOW3\Package\Package', $childFilename, $packagePath);
+					$this->packages[$childFilename] = $this->objectManager->create('F3\FLOW3\Package\Package', $childFilename, $packagePath);
 				}
 			}
 		}

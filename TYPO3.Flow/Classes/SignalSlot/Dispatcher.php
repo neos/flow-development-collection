@@ -126,10 +126,10 @@ class Dispatcher {
 			if (isset($slotInformation['object'])) {
 				$object = $slotInformation['object'];
 			} else {
-				if (!$this->objectManager->isObjectRegistered($slotInformation['class'])) {
+				if (!$this->objectManager->isRegistered($slotInformation['class'])) {
 					throw new \F3\FLOW3\SignalSlot\Exception\InvalidSlotException('The given class "' . $slotInformation['class'] . '" is not a registered object.', 1245673367);
 				}
-				$object = $this->objectManager->getObject($slotInformation['class']);
+				$object = $this->objectManager->get($slotInformation['class']);
 			}
 			$slotArguments = $signalArguments;
 			if ($slotInformation['omitSignalInformation'] !== TRUE) array_unshift($slotArguments, $signalClassName . '::' . $signalMethodName);

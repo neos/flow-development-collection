@@ -173,11 +173,9 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 		$mockReflectionService->expects($this->at(0))->method('getClassPropertyNames')->with($className1)->will($this->returnValue(array('objectProperty')));
 		$mockReflectionService->expects($this->at(2))->method('getClassPropertyNames')->with($className2)->will($this->returnValue(array()));
 
-		$mockPrototypeObjectConfiguration = $this->getMock('F3\FLOW3\Object\Configuration\Configuration', array(), array(), '', FALSE);
-		$mockPrototypeObjectConfiguration->expects($this->any())->method('getScope')->will($this->returnValue('prototype'));
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManager', array(), array(), '', FALSE);
 		$mockObjectManager->expects($this->once())->method('getObjectNameByClassName')->with($className2)->will($this->returnValue('objectName2'));
-		$mockObjectManager->expects($this->once())->method('getObjectConfiguration')->with('objectName2')->will($this->returnValue($mockPrototypeObjectConfiguration));
+		$mockObjectManager->expects($this->once())->method('getScope')->with('objectName2')->will($this->returnValue(\F3\FLOW3\Object\Configuration\Configuration::SCOPE_PROTOTYPE));
 
 		$objectSerializer = $this->getMock('F3\FLOW3\Object\ObjectSerializer', array('dummy'), array(), '', FALSE);
 		$objectSerializer->injectReflectionService($mockReflectionService);
@@ -245,22 +243,15 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 		$mockReflectionService->expects($this->at(0))->method('getClassPropertyNames')->with($className)->will($this->returnValue(array('property1', 'property2', 'property3')));
 		$mockReflectionService->expects($this->any())->method('getClassPropertyNames')->will($this->returnValue(array()));
 
-		$mockSingletonObjectConfiguration = $this->getMock('F3\FLOW3\Object\Configuration\Configuration', array(), array(), '', FALSE);
-		$mockSingletonObjectConfiguration->expects($this->any())->method('getScope')->will($this->returnValue('singleton'));
-		$mockPrototypeObjectConfiguration = $this->getMock('F3\FLOW3\Object\Configuration\Configuration', array(), array(), '', FALSE);
-		$mockPrototypeObjectConfiguration->expects($this->any())->method('getScope')->will($this->returnValue('prototype'));
-		$mockSessionObjectConfiguration = $this->getMock('F3\FLOW3\Object\Configuration\Configuration', array(), array(), '', FALSE);
-		$mockSessionObjectConfiguration->expects($this->any())->method('getScope')->will($this->returnValue('session'));
-
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManager', array(), array(), '', FALSE);
 		$mockObjectManager->expects($this->at(0))->method('getObjectNameByClassName')->with($propertyClassName1)->will($this->returnValue('propertyObjectName1'));
-		$mockObjectManager->expects($this->at(1))->method('getObjectConfiguration')->with('propertyObjectName1')->will($this->returnValue($mockPrototypeObjectConfiguration));
+		$mockObjectManager->expects($this->at(1))->method('getScope')->with('propertyObjectName1')->will($this->returnValue(\F3\FLOW3\Object\Configuration\Configuration::SCOPE_PROTOTYPE));
 		$mockObjectManager->expects($this->at(2))->method('getObjectNameByClassName')->with($propertyClassName2)->will($this->returnValue('propertyObjectName2'));
-		$mockObjectManager->expects($this->at(3))->method('getObjectConfiguration')->with('propertyObjectName2')->will($this->returnValue($mockSingletonObjectConfiguration));
+		$mockObjectManager->expects($this->at(3))->method('getScope')->with('propertyObjectName2')->will($this->returnValue(\F3\FLOW3\Object\Configuration\Configuration::SCOPE_SINGLETON));
 		$mockObjectManager->expects($this->at(4))->method('getObjectNameByClassName')->with($propertyClassName3)->will($this->returnValue('propertyObjectName3'));
-		$mockObjectManager->expects($this->at(5))->method('getObjectConfiguration')->with('propertyObjectName3')->will($this->returnValue($mockSessionObjectConfiguration));
+		$mockObjectManager->expects($this->at(5))->method('getScope')->with('propertyObjectName3')->will($this->returnValue(\F3\FLOW3\Object\Configuration\Configuration::SCOPE_SESSION));
 
-		$objectSerializer = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\ObjectSerializer'), array('dummy'), array(), '', FALSE);
+		$objectSerializer = $this->getAccessibleMock('F3\FLOW3\Object\ObjectSerializer', array('dummy'), array(), '', FALSE);
 		$objectSerializer->injectReflectionService($mockReflectionService);
 		$objectSerializer->injectObjectManager($mockObjectManager);
 		$objectSerializer->_set('objects', array($className => $object));
@@ -468,7 +459,7 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 		);
 
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManager', array(), array(), '', FALSE);
-		$mockObjectManager->expects($this->any())->method('isObjectRegistered')->will($this->returnValue(FALSE));
+		$mockObjectManager->expects($this->any())->method('isRegistered')->will($this->returnValue(FALSE));
 
 		$objectSerializerClassName = $this->buildAccessibleProxy('F3\FLOW3\Object\ObjectSerializer');
 		$objectSerializer = new $objectSerializerClassName($this->getMock('F3\FLOW3\Session\SessionInterface', array(), array(), '', FALSE));
@@ -512,14 +503,14 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 		);
 
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManager', array(), array(), '', FALSE);
-		$mockObjectManager->expects($this->at(0))->method('isObjectRegistered')->with($className1)->will($this->returnValue(TRUE));
-		$mockObjectManager->expects($this->at(1))->method('isObjectRegistered')->with($className2)->will($this->returnValue(TRUE));
-		$mockObjectManager->expects($this->at(2))->method('isObjectRegistered')->with('someReferencedObject1')->will($this->returnValue(FALSE));
-		$mockObjectManager->expects($this->at(3))->method('isObjectRegistered')->with($className3)->will($this->returnValue(TRUE));
-		$mockObjectManager->expects($this->at(4))->method('isObjectRegistered')->with('someReferencedObject2')->will($this->returnValue(FALSE));
-		$mockObjectManager->expects($this->at(5))->method('isObjectRegistered')->with('someReferencedObject3')->will($this->returnValue(FALSE));
+		$mockObjectManager->expects($this->at(0))->method('isRegistered')->with($className1)->will($this->returnValue(TRUE));
+		$mockObjectManager->expects($this->at(1))->method('isRegistered')->with($className2)->will($this->returnValue(TRUE));
+		$mockObjectManager->expects($this->at(2))->method('isRegistered')->with('someReferencedObject1')->will($this->returnValue(FALSE));
+		$mockObjectManager->expects($this->at(3))->method('isRegistered')->with($className3)->will($this->returnValue(TRUE));
+		$mockObjectManager->expects($this->at(4))->method('isRegistered')->with('someReferencedObject2')->will($this->returnValue(FALSE));
+		$mockObjectManager->expects($this->at(5))->method('isRegistered')->with('someReferencedObject3')->will($this->returnValue(FALSE));
 
-		$objectSerializer = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\ObjectSerializer'), array('reconstituteObject', 'createEmptyObject'), array(), '', FALSE);
+		$objectSerializer = $this->getAccessibleMock('F3\FLOW3\Object\ObjectSerializer', array('reconstituteObject', 'createEmptyObject'), array(), '', FALSE);
 		$objectSerializer->expects($this->at(0))->method('reconstituteObject')->with($objectsAsArray[$className1])->will($this->returnValue($object1));
 		$objectSerializer->expects($this->at(1))->method('reconstituteObject')->with($objectsAsArray[$className2])->will($this->returnValue($object2));
 		$objectSerializer->expects($this->at(2))->method('reconstituteObject')->with($objectsAsArray[$className3])->will($this->returnValue($object3));
@@ -584,7 +575,7 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 		$mockObject = $this->getMock($className);
 		$objectName = spl_object_hash($mockObject);
 
-		$objectSerializer = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\ObjectSerializer'), array('serializeObjectAsPropertyArray'), array(), '', FALSE);
+		$objectSerializer = $this->getAccessibleMock('F3\FLOW3\Object\ObjectSerializer', array('serializeObjectAsPropertyArray'), array(), '', FALSE);
 		$objectSerializer->expects($this->once())->method('serializeObjectAsPropertyArray')->with($objectName, $mockObject);
 
 		$arrayProperty = array(
@@ -693,49 +684,7 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function createEmptyObjectReturnsAnObjectOfTheSpecifiedType() {
-		$className = uniqid('dummyClass');
-		eval('class ' . $className . ' {}');
-
-		$objectSerializer = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\ObjectSerializer'), array('dummy'), array(), '', FALSE);
-
-		$object = $objectSerializer->_call('createEmptyObject', $className);
-		$this->assertType($className, $object);
-	}
-
-	/**
-	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function createEmptyObjectPreventsThatTheConstructorOfTheTargetObjectIsCalled() {
-		$className = uniqid('dummyClass');
-		eval('class ' . $className . ' {
-			public $constructorHasBeenCalled = FALSE;
-			public function __construct() { $this->constructorHasBeenCalled = TRUE; }
-		}');
-
-		$objectSerializer = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\ObjectSerializer'), array('dummy'), array(), '', FALSE);
-
-		$object = $objectSerializer->_call('createEmptyObject', $className);
-		$this->assertFalse($object->constructorHasBeenCalled);
-	}
-
-	/**
-	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @expectedException F3\FLOW3\Object\Exception\UnknownClassException
-	 */
-	public function createEmptyObjectThrowsAnExceptionIfTheClassDoesNotExist() {
-		$className = uniqid('notExistingClass');
-
-		$objectSerializer = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\ObjectSerializer'), array('dummy'), array(), '', FALSE);
-		$object = $objectSerializer->_call('createEmptyObject', $className);
-	}
-
-	/**
-	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function reconstituteObjectCallsTheCorrectReconstitutePropertyTypeFunctionsAndSetsTheValuesInTheObject() {
 		$emptyClassName = uniqid('emptyClass');
@@ -792,19 +741,14 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 			)
 		);
 
-		$mockObjectBuilder = $this->getMock('F3\FLOW3\Object\ObjectBuilder', array(), array(), '', FALSE);
-
-		$mockObjectConfiguration = $this->getMock('F3\FLOW3\Object\Configuration\Configuration', array(), array(), '', FALSE);
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManager', array(), array(), '', FALSE);
-		$mockObjectManager->expects($this->any())->method('getObjectConfiguration')->will($this->returnValue($mockObjectConfiguration));
+		$mockObjectManager->expects($this->at(0))->method('recreate')->with($className)->will($this->returnValue(new $className()));
+		$mockObjectManager->expects($this->at(1))->method('recreate')->with('emptyClass')->will($this->returnValue($emptyObject));
 
-		$objectSerializer = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\ObjectSerializer'), array('createEmptyObject', 'reconstituteArray', 'reconstituteSplObjectStorage', 'reconstitutePersistenceObject'), array(), '', FALSE);
-		$objectSerializer->injectObjectBuilder($mockObjectBuilder);
+		$objectSerializer = $this->getAccessibleMock('F3\FLOW3\Object\ObjectSerializer', array('reconstituteArray', 'reconstituteSplObjectStorage', 'reconstitutePersistenceObject'), array(), '', FALSE);
 		$objectSerializer->injectObjectManager($mockObjectManager);
-		$objectSerializer->expects($this->at(0))->method('createEmptyObject')->with($className)->will($this->returnValue(new $className()));
-		$objectSerializer->expects($this->at(3))->method('createEmptyObject')->with('emptyClass')->will($this->returnValue($emptyObject));
-		$objectSerializer->expects($this->at(1))->method('reconstituteArray')->with('arrayPropertyValue')->will($this->returnValue('arrayPropertyValue'));
-		$objectSerializer->expects($this->at(2))->method('reconstituteArray')->with('arrayObjectPropertyValue')->will($this->returnValue(array('arrayObjectPropertyValue')));
+		$objectSerializer->expects($this->at(0))->method('reconstituteArray')->with('arrayPropertyValue')->will($this->returnValue('arrayPropertyValue'));
+		$objectSerializer->expects($this->at(1))->method('reconstituteArray')->with('arrayObjectPropertyValue')->will($this->returnValue(array('arrayObjectPropertyValue')));
 		$objectSerializer->expects($this->once())->method('reconstituteSplObjectStorage')->with('splObjectStoragePropertyValue')->will($this->returnValue('splObjectStoragePropertyValue'));
 		$objectSerializer->expects($this->once())->method('reconstitutePersistenceObject')->with('persistenceObjectClassName', 'persistenceObjectUUID')->will($this->returnValue('persistenceObjectPropertyValue'));
 
@@ -830,58 +774,8 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function reconstituteObjectReinjectsDependencies() {
-		$className = uniqid('someClass');
-		eval('class ' . $className . ' {}');
-		$object = new $className();
-
-		$mockObjectConfiguration = $this->getMock('F3\FLOW3\Object\Configuration\Configuration', array(), array(), '', FALSE);
-
-		$mockObjectBuilder = $this->getMock('F3\FLOW3\Object\ObjectBuilder', array(), array(), '', FALSE);
-		$mockObjectBuilder->expects($this->once())->method('reinjectDependencies')->with($object, $mockObjectConfiguration);
-
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManager', array(), array(), '', FALSE);
-		$mockObjectManager->expects($this->once())->method('getObjectNameByClassName')->with($className)->will($this->returnValue('objectName'));
-		$mockObjectManager->expects($this->once())->method('getObjectConfiguration')->with('objectName')->will($this->returnValue($mockObjectConfiguration));
-
-		$objectSerializer = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\ObjectSerializer'), array('createEmptyObject'), array(), '', FALSE);
-		$objectSerializer->expects($this->once())->method('createEmptyObject')->with($className)->will($this->returnValue($object));
-		$objectSerializer->injectObjectBuilder($mockObjectBuilder);
-		$objectSerializer->injectObjectManager($mockObjectManager);
-		$objectSerializer->_call('reconstituteObject', array('className' => $className, 'properties' => array()));
-	}
-
-	/**
-	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function reconstituteObjectRegistersShutdownObjects() {
-		$className = uniqid('someClass');
-		eval('class ' . $className . ' {}');
-		$object = new $className();
-
-		$mockObjectConfiguration = $this->getMock('F3\FLOW3\Object\Configuration\Configuration', array(), array(), '', FALSE);
-		$mockObjectConfiguration->expects($this->any())->method('getLifecycleShutdownMethodName')->will($this->returnValue('shutdownMethodName'));
-
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManager', array(), array(), '', FALSE);
-		$mockObjectManager->expects($this->once())->method('getObjectNameByClassName')->with($className)->will($this->returnValue('objectName'));
-		$mockObjectManager->expects($this->once())->method('getObjectConfiguration')->with('objectName')->will($this->returnValue($mockObjectConfiguration));
-		$mockObjectManager->expects($this->once())->method('registerShutdownObject')->with($object, 'shutdownMethodName');
-
-		$objectSerializer = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\ObjectSerializer'), array('createEmptyObject'), array(), '', FALSE);
-		$objectSerializer->expects($this->once())->method('createEmptyObject')->with($className)->will($this->returnValue($object));
-		$objectSerializer->injectObjectBuilder($this->getMock('F3\FLOW3\Object\ObjectBuilder', array(), array(), '', FALSE));
-		$objectSerializer->injectObjectManager($mockObjectManager);
-
-		$objectSerializer->_call('reconstituteObject', array('className' => $className, 'properties' => array()));
-	}
-
-	/**
-	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
 	public function reconstituteArrayWorks() {
-		$objectSerializer = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\ObjectSerializer'), array('dummy'), array(), '', FALSE);
+		$objectSerializer = $this->getAccessibleMock('F3\FLOW3\Object\ObjectSerializer', array('dummy'), array(), '', FALSE);
 
 		$dataArray = array(
 			'key1' => array(
@@ -931,7 +825,7 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 			)
 		);
 
-		$objectSerializer = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\ObjectSerializer'), array('reconstituteObject'), array(), '', FALSE);
+		$objectSerializer = $this->getAccessibleMock('F3\FLOW3\Object\ObjectSerializer', array('reconstituteObject'), array(), '', FALSE);
 		$objectSerializer->expects($this->once())->method('reconstituteObject')->with(array('className' => 'some object','properties' => 'properties',))->will($this->returnValue('reconstituted object'));
 		$objectSerializer->_set('objectsAsArray', $objectsAsArray);
 
@@ -967,7 +861,7 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 			)
 		);
 
-		$objectSerializer = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\ObjectSerializer'), array('reconstituteSplObjectStorage'), array(), '', FALSE);
+		$objectSerializer = $this->getAccessibleMock('F3\FLOW3\Object\ObjectSerializer', array('reconstituteSplObjectStorage'), array(), '', FALSE);
 		$objectSerializer->expects($this->once())->method('reconstituteSplObjectStorage')->with('some object', array('className' => 'some object','properties' => 'properties',))->will($this->returnValue('reconstituted object'));
 		$objectSerializer->_set('objectsAsArray', $objectsAsArray);
 
@@ -1003,7 +897,7 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 			)
 		);
 
-		$objectSerializer = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\ObjectSerializer'), array('reconstitutePersistenceObject'), array(), '', FALSE);
+		$objectSerializer = $this->getAccessibleMock('F3\FLOW3\Object\ObjectSerializer', array('reconstitutePersistenceObject'), array(), '', FALSE);
 		$objectSerializer->expects($this->once())->method('reconstitutePersistenceObject')->with('persistenceObjectClassName', 'someUUID')->will($this->returnValue('reconstituted object'));
 		$objectSerializer->_set('objectsAsArray', $objectsAsArray);
 
@@ -1042,7 +936,7 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 			'some other object' => array('object2 data')
 		);
 
-		$objectSerializer = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\ObjectSerializer'), array('reconstituteObject'), array(), '', FALSE);
+		$objectSerializer = $this->getAccessibleMock('F3\FLOW3\Object\ObjectSerializer', array('reconstituteObject'), array(), '', FALSE);
 		$objectSerializer->expects($this->at(0))->method('reconstituteObject')->with(array('object1 data'))->will($this->returnValue($mockObject1));
 		$objectSerializer->expects($this->at(1))->method('reconstituteObject')->with(array('object2 data'))->will($this->returnValue($mockObject2));
 		$objectSerializer->_set('objectsAsArray', $objectsAsArray);
@@ -1065,7 +959,7 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\PersistenceManagerInterface', array(), array(), '', FALSE);
 		$mockPersistenceManager->expects($this->once())->method('getObjectByIdentifier')->with('someUUID')->will($this->returnValue('theObject'));
 
-		$objectSerializer = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\ObjectSerializer'), array('dummy'), array(), '', FALSE);
+		$objectSerializer = $this->getAccessibleMock('F3\FLOW3\Object\ObjectSerializer', array('dummy'), array(), '', FALSE);
 		$objectSerializer->injectPersistenceManager($mockPersistenceManager);
 	
 		$this->assertEquals('theObject', $objectSerializer->_call('reconstitutePersistenceObject', 'someClassName', 'someUUID'));

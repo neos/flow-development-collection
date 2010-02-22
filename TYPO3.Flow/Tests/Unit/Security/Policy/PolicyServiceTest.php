@@ -234,9 +234,11 @@ class PolicyServiceTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function parsePrivilegesReturnsTheCorrectPrivilegesArray() {
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
+
 		$policyServiceClassName = $this->buildAccessibleProxy('F3\FLOW3\Security\Policy\PolicyService');
 		$policyService = new $policyServiceClassName();
-		$policyService->injectObjectFactory($this->objectFactory);
+		$policyService->injectObjectManager($mockObjectManager);
 
 		$policyService->_set('acls', array('className->methodName' => array('parentRole2' => array('ACCESS_GRANT'), 'myRole' => array('ACCESS_DENY'), 'parentRole1' => array('CUSTOMPRIVILEGE_GRANT'))));
 		$policyService->_set('roles', array('myRole' => array('parentRole1', 'parentRole2'), 'parentRole1' => NULL, 'parentRole2' => array()));
@@ -246,6 +248,10 @@ class PolicyServiceTest extends \F3\Testing\BaseTestCase {
 			new \F3\FLOW3\Security\Policy\Privilege('CUSTOMPRIVILEGE', TRUE),
 			new \F3\FLOW3\Security\Policy\Privilege('ACCESS', FALSE),
 		);
+
+		$mockObjectManager->expects($this->at(0))->method('create')->with('F3\FLOW3\Security\Policy\Privilege', 'ACCESS', FALSE)->will($this->returnValue($expectedPrivileges[2]));
+		$mockObjectManager->expects($this->at(1))->method('create')->with('F3\FLOW3\Security\Policy\Privilege', 'CUSTOMPRIVILEGE', TRUE)->will($this->returnValue($expectedPrivileges[1]));
+		$mockObjectManager->expects($this->at(2))->method('create')->with('F3\FLOW3\Security\Policy\Privilege', 'ACCESS', TRUE)->will($this->returnValue($expectedPrivileges[0]));
 
 		$this->assertEquals($expectedPrivileges, $policyService->_call('parsePrivileges', 'className->methodName', 'myRole', ''));
 
@@ -258,10 +264,11 @@ class PolicyServiceTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function getPrivilegesForResourceReturnsAnAccessDenyPrivilegeIfAskedForAResourceThatIsNotConnectedToAPolicyEntry() {
 		$mockRole = $this->getMock('F3\FLOW3\Security\Policy\Role', array(), array(), '', FALSE);
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
 
 		$policyServiceClassName = $this->buildAccessibleProxy('F3\FLOW3\Security\Policy\PolicyService');
 		$policyService = new $policyServiceClassName();
-		$policyService->injectObjectFactory($this->objectFactory);
+		$policyService->injectObjectManager($mockObjectManager);
 
 		$policyService->_set('acls', array());
 		$policyService->_set('resources', array('someResourceNotConnectedToAPolicyEntry' => 'someDefinition'));
@@ -269,6 +276,8 @@ class PolicyServiceTest extends \F3\Testing\BaseTestCase {
 		$expectedPrivilege = array(
 			new \F3\FLOW3\Security\Policy\Privilege('ACCESS', FALSE),
 		);
+
+		$mockObjectManager->expects($this->once())->method('create')->with('F3\FLOW3\Security\Policy\Privilege', 'ACCESS', FALSE)->will($this->returnValue($expectedPrivilege[0]));
 
 		$this->assertEquals($expectedPrivilege, $policyService->_call('getPrivilegesForResource', $mockRole, 'someResourceNotConnectedToAPolicyEntry'));
 

@@ -41,7 +41,7 @@ class AroundAdviceTest extends \F3\Testing\BaseTestCase {
 		$mockAspect->expects($this->once())->method('someMethod')->with($mockJoinPoint)->will($this->returnValue('result'));
 
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
-		$mockObjectManager->expects($this->once())->method('getObject')->with('aspectObjectName')->will($this->returnValue($mockAspect));
+		$mockObjectManager->expects($this->once())->method('get')->with('aspectObjectName')->will($this->returnValue($mockAspect));
 
 		$advice = new AroundAdvice('aspectObjectName', 'someMethod', $mockObjectManager, function(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) { if ($joinPoint !== NULL) return TRUE; });
 		$result = $advice->invoke($mockJoinPoint);
@@ -64,7 +64,7 @@ class AroundAdviceTest extends \F3\Testing\BaseTestCase {
 		$mockAspect->expects($this->never())->method('someMethod');
 
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
-		$mockObjectManager->expects($this->any())->method('getObject')->will($this->returnValue($mockAspect));
+		$mockObjectManager->expects($this->any())->method('get')->will($this->returnValue($mockAspect));
 
 		$advice = new AroundAdvice('aspectObjectName', 'someMethod', $mockObjectManager, function(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) { if ($joinPoint !== NULL) return FALSE; });
 		$result = $advice->invoke($mockJoinPoint);

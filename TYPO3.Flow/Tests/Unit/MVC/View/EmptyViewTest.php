@@ -35,12 +35,12 @@ class EmptyViewTest extends \F3\Testing\BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function renderReturnsEmptyString() {
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\ObjectFactoryInterface', array(), array(), '', FALSE);
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
 		$mockPackageManager = $this->getMock('F3\FLOW3\Package\PackageManagerInterface', array(), array(), '', FALSE);
 		$mockResourceManager = $this->getMock('F3\FLOW3\Resource\ResourceManager', array(), array(), '', FALSE);
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
 
-		$view = new \F3\FLOW3\MVC\View\EmptyView($mockObjectFactory, $mockPackageManager, $mockResourceManager, $mockObjectManager);
+		$view = new \F3\FLOW3\MVC\View\EmptyView($mockObjectManager, $mockPackageManager, $mockResourceManager);
 		$this->assertEquals('', $view->render());
 	}
 
@@ -49,12 +49,12 @@ class EmptyViewTest extends \F3\Testing\BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function callingNonExistingMethodsWontThrowAnException() {
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\ObjectFactoryInterface', array(), array(), '', FALSE);
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
 		$mockPackageManager = $this->getMock('F3\FLOW3\Package\PackageManagerInterface', array(), array(), '', FALSE);
 		$mockResourceManager = $this->getMock('F3\FLOW3\Resource\ResourceManager', array(), array(), '', FALSE);
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
 
-		$view = new \F3\FLOW3\MVC\View\EmptyView($mockObjectFactory, $mockPackageManager, $mockResourceManager, $mockObjectManager);
+		$view = new \F3\FLOW3\MVC\View\EmptyView($mockObjectManager, $mockPackageManager, $mockResourceManager);
 		$view->nonExistingMethod();
 	}
 }

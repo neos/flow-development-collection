@@ -32,15 +32,15 @@ namespace F3\FLOW3\Security\Policy;
 class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory The object manager
+	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 */
-	protected $objectFactory = NULL;
+	protected $objectManager;
 
 	/**
 	 * The FLOW3 settings
 	 * @var array
 	 */
-	protected $settings = array();
+	protected $settings;
 
 	/**
 	 * @var \F3\FLOW3\Configuration\ConfigurationManager
@@ -53,7 +53,7 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	protected $policy = array();
 
 	/**
-	 * @var \F3\FLOW3\Cache\Frontend\VariableFrontend The cached acl entries
+	 * @var \F3\FLOW3\Cache\Frontend\VariableFrontend
 	 */
 	protected $cache;
 
@@ -63,34 +63,37 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	protected $policyExpressionParser;
 
 	/**
-	 * @var array All configured resources
+	 * All configured resources
+	 * @var array
 	 */
 	protected $resources = array();
 
 	/**
-	 * @var array The roles tree array
+	 * @var array
 	 */
 	protected $roles = array();
 
 	/**
-	 * @var array Array of pointcut filters used to match against the configured policy.
+	 * Array of pointcut filters used to match against the configured policy.
+	 * @var array
 	 */
 	public $filters = array();
 
 	/**
-	 * @var array A multidimensional array used containing the roles and privileges for each intercepted method
+	 * A multidimensional array used containing the roles and privileges for each intercepted method
+	 * @var array 
 	 */
 	public $acls = array();
 
 	/**
-	 * Injects the object factory
+	 * Injects the object manager
 	 *
-	 * @param \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory
+	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectObjectFactory(\F3\FLOW3\Object\ObjectFactoryInterface $objectFactory) {
-		$this->objectFactory = $objectFactory;
+	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
+		$this->objectManager = $objectManager;
 	}
 
 	/**
@@ -231,7 +234,7 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 
 		$roles = array();
 		foreach (array_keys($this->acls[$methodIdentifier]) as $roleIdentifier) {
-			$roles[] = $this->objectFactory->create('F3\FLOW3\Security\Policy\Role', $roleIdentifier);
+			$roles[] = $this->objectManager->create('F3\FLOW3\Security\Policy\Role', $roleIdentifier);
 		}
 
 		return $roles;
@@ -267,7 +270,7 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	public function getPrivilegesForResource(\F3\FLOW3\Security\Policy\Role $role, $resource) {
 		if (!isset($this->acls[$resource])) {
 			if (isset($this->resources[$resource])) {
-				$accessDenyPrivilege = $this->objectFactory->create('F3\FLOW3\Security\Policy\Privilege', 'ACCESS', FALSE);
+				$accessDenyPrivilege = $this->objectManager->create('F3\FLOW3\Security\Policy\Privilege', 'ACCESS', FALSE);
 				return array($accessDenyPrivilege);
 			} else {
 				throw new \F3\FLOW3\Security\Exception\NoEntryInPolicyException('The given resource was not found in the policy cache. Most likely you have to recreate the AOP proxy classes.', 1248348214);
@@ -299,7 +302,7 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 
 			if ($privilegeType !== '' && $privilegeType !== $matches[1]) continue;
 
-			$privileges[] = $this->objectFactory->create('F3\FLOW3\Security\Policy\Privilege', $matches[1], ($matches[2] === 'GRANT' ? TRUE : FALSE));
+			$privileges[] = $this->objectManager->create('F3\FLOW3\Security\Policy\Privilege', $matches[1], ($matches[2] === 'GRANT' ? TRUE : FALSE));
 		}
 
 		if (is_array($this->roles[$role])) {

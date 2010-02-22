@@ -84,7 +84,7 @@ class ConfigurationBuilder {
 					}
 				break;
 				case 'className':
-				case 'factoryClassName' :
+				case 'factoryObjectName' :
 				case 'factoryMethodName' :
 				case 'lifecycleInitializationMethodName':
 				case 'lifecycleShutdownMethodName':
@@ -111,8 +111,16 @@ class ConfigurationBuilder {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	static protected function parseScope($value) {
-		if (!in_array($value, array('singleton', 'prototype', 'session'))) throw new \F3\FLOW3\Object\Exception\InvalidObjectConfigurationException('Invalid scope', 1167574991);
-		return $value;
+		switch ($value) {
+			case 'singleton':
+				return \F3\FLOW3\Object\Configuration\Configuration::SCOPE_SINGLETON;
+			case 'prototype':
+				return \F3\FLOW3\Object\Configuration\Configuration::SCOPE_PROTOTYPE;
+			case 'session':
+				return \F3\FLOW3\Object\Configuration\Configuration::SCOPE_SESSION;
+			default:
+				throw new \F3\FLOW3\Object\Exception\InvalidObjectConfigurationException('Invalid scope', 1167574991);
+		}
 	}
 
 	/**

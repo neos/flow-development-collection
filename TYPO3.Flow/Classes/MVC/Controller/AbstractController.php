@@ -32,16 +32,16 @@ namespace F3\FLOW3\MVC\Controller;
 abstract class AbstractController implements \F3\FLOW3\MVC\Controller\ControllerInterface {
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectFactoryInterface
-	 * @api
-	 */
-	protected $objectFactory;
-
-	/**
 	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 * @api
 	 */
 	protected $objectManager;
+
+	/**
+	 * @var \F3\FLOW3\Object\ObjectFactoryInterface
+	 * @deprecated since 1.0.0 alpha 8
+	 */
+	protected $objectFactory;
 
 	/**
 	 * @var \F3\FLOW3\MVC\Web\Routing\UriBuilder
@@ -121,12 +121,14 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	/**
 	 * Constructs the controller.
 	 *
-	 * @param \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory A reference to the Object Factory
+	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager A reference to the Object Factory
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(\F3\FLOW3\Object\ObjectFactoryInterface $objectFactory) {
-		$this->arguments = $objectFactory->create('F3\FLOW3\MVC\Controller\Arguments');
-		$this->objectFactory = $objectFactory;
+	public function __construct(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
+		$this->arguments = $objectManager->create('F3\FLOW3\MVC\Controller\Arguments');
+		$this->objectManager = $objectManager;
+			// For backwards compatibility:
+		$this->objectFactory = $objectManager;
 	}
 
 	/**
@@ -138,17 +140,6 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	 */
 	public function injectSettings(array $settings) {
 		$this->settings = $settings;
-	}
-
-	/**
-	 * Injects the object manager
-	 *
-	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
-		$this->objectManager = $objectManager;
 	}
 
 	/**
@@ -220,12 +211,12 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 		$this->request->setDispatched(TRUE);
 		$this->response = $response;
 
-		$this->uriBuilder = $this->objectFactory->create('F3\FLOW3\MVC\Web\Routing\UriBuilder');
+		$this->uriBuilder = $this->objectManager->create('F3\FLOW3\MVC\Web\Routing\UriBuilder');
 		$this->uriBuilder->setRequest($request);
 
 		$this->initializeControllerArgumentsBaseValidators();
 		$this->mapRequestArgumentsToControllerArguments();
-		$this->controllerContext = $this->objectFactory->create('F3\FLOW3\MVC\Controller\Context', $this->request, $this->response, $this->arguments, $this->argumentsMappingResults, $this->uriBuilder, $this->flashMessageContainer);
+		$this->controllerContext = $this->objectManager->create('F3\FLOW3\MVC\Controller\Context', $this->request, $this->response, $this->arguments, $this->argumentsMappingResults, $this->uriBuilder, $this->flashMessageContainer);
 	}
 
 	/**
@@ -367,7 +358,7 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 			if ($this->arguments[$argumentName]->isRequired() === FALSE) $optionalArgumentNames[] = $argumentName;
 		}
 
-		$validator = $this->objectManager->getObject('F3\FLOW3\MVC\Controller\ArgumentsValidator');
+		$validator = $this->objectManager->get('F3\FLOW3\MVC\Controller\ArgumentsValidator');
 		$this->propertyMapper->mapAndValidate($allArgumentNames, $this->request->getArguments(), $this->arguments, $optionalArgumentNames, $validator);
 
 		$this->argumentsMappingResults = $this->propertyMapper->getMappingResults();

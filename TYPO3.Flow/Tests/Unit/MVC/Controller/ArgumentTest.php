@@ -36,15 +36,9 @@ class ArgumentTest extends \F3\Testing\BaseTestCase {
 	protected $mockObjectManager;
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectFactoryInterface
-	 */
-	protected $mockObjectFactory;
-
-	/**
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setUp() {
-		$this->mockObjectFactory = $this->getMock('F3\FLOW3\Object\ObjectFactoryInterface');
 		$this->mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
 	}
 
@@ -106,7 +100,7 @@ class ArgumentTest extends \F3\Testing\BaseTestCase {
 		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\PersistenceManagerInterface');
 		$mockPersistenceManager->expects($this->once())->method('getObjectByIdentifier')->with('e104e469-9030-4b98-babf-3990f07dd3f1')->will($this->returnValue($object));
 
-		$argument = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\Argument'), array('findObjectByIdentityUUID'), array(), '', FALSE);
+		$argument = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\Argument', array('findObjectByIdentityUUID'), array(), '', FALSE);
 		$argument->injectPersistenceManager($mockPersistenceManager);
 		$argument->_set('dataTypeClassSchema', $mockClassSchema);
 		$argument->_set('dataType', 'stdClass');
@@ -127,7 +121,7 @@ class ArgumentTest extends \F3\Testing\BaseTestCase {
 		$mockPropertyMapper = $this->getMock('F3\FLOW3\Property\PropertyMapper');
 		$mockPropertyMapper->expects($this->once())->method('map')->with(array('foo'), array('foo' => 'bar'), 'stdClass')->will($this->returnValue($object));
 
-		$argument = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\Argument'), array('dummy'), array(), '', FALSE);
+		$argument = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\Argument', array('dummy'), array(), '', FALSE);
 		$argument->injectPropertyMapper($mockPropertyMapper);
 		$argument->_set('dataTypeClassSchema', $mockClassSchema);
 		$argument->_set('dataType', 'stdClass');
@@ -147,7 +141,7 @@ class ArgumentTest extends \F3\Testing\BaseTestCase {
 		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\PersistenceManagerInterface');
 		$mockPersistenceManager->expects($this->once())->method('getObjectByIdentifier')->will($this->returnValue(new \stdClass()));
 
-		$argument = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\Argument'), array('findObjectByIdentityUUID'), array(), '', FALSE);
+		$argument = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\Argument', array('findObjectByIdentityUUID'), array(), '', FALSE);
 		$argument->injectPersistenceManager($mockPersistenceManager);
 		$argument->_set('dataTypeClassSchema', $mockClassSchema);
 		$argument->_set('dataType', 'ArrayObject');
@@ -165,7 +159,7 @@ class ArgumentTest extends \F3\Testing\BaseTestCase {
 		$mockPropertyMapper = $this->getMock('F3\FLOW3\Property\PropertyMapper');
 		$mockPropertyMapper->expects($this->once())->method('map')->with(array('title'), array('title' => 'Hello'), 'stdClass')->will($this->returnValue($object));
 
-		$argument = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\Argument'), array('findObjectByIdentityUUID'), array(), '', FALSE);
+		$argument = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\Argument', array('findObjectByIdentityUUID'), array(), '', FALSE);
 		$argument->_set('dataType', 'stdClass');
 		$argument->injectPropertyMapper($mockPropertyMapper);
 
@@ -181,7 +175,7 @@ class ArgumentTest extends \F3\Testing\BaseTestCase {
 	 * @expectedException \F3\FLOW3\MVC\Exception\InvalidArgumentValueException
 	 */
 	public function setValueThrowsExceptionIfComplexObjectShouldBeGeneratedFromStringAndDataTypeClassSchemaIsNotSet() {
-		$argument = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\Argument'), array('findObjectByIdentityUUID'), array(), '', FALSE);
+		$argument = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\Argument', array('findObjectByIdentityUUID'), array(), '', FALSE);
 		$argument->_set('dataType', 'stdClass');
 
 		$argument->setValue(42);
@@ -216,8 +210,8 @@ class ArgumentTest extends \F3\Testing\BaseTestCase {
 	public function dataTypeValidatorCanBeAFullClassName() {
 		$this->markTestIncomplete();
 
-		$this->mockObjectManager->expects($this->once())->method('isObjectRegistered')->with('F3\FLOW3\Validation\Validator\TextValidator')->will($this->returnValue(TRUE));
-		$this->mockObjectManager->expects($this->any())->method('getObject')->with('F3\FLOW3\Validation\Validator\TextValidator')->will($this->returnValue($this->getMock('F3\FLOW3\Validation\Validator\TextValidator')));
+		$this->mockObjectManager->expects($this->once())->method('isRegistered')->with('F3\FLOW3\Validation\Validator\TextValidator')->will($this->returnValue(TRUE));
+		$this->mockObjectManager->expects($this->any())->method('get')->with('F3\FLOW3\Validation\Validator\TextValidator')->will($this->returnValue($this->getMock('F3\FLOW3\Validation\Validator\TextValidator')));
 
 		$argument = new \F3\FLOW3\MVC\Controller\Argument('SomeArgument', 'F3\FLOW3\Validation\Validator\TextValidator');
 		$argument->injectObjectManager($this->mockObjectManager);
@@ -233,8 +227,8 @@ class ArgumentTest extends \F3\Testing\BaseTestCase {
 	public function dataTypeValidatorCanBeAShortName() {
 		$this->markTestIncomplete();
 
-		$this->mockObjectManager->expects($this->once())->method('isObjectRegistered')->with('F3\FLOW3\Validation\Validator\TextValidator')->will($this->returnValue(TRUE));
-		$this->mockObjectManager->expects($this->any())->method('getObject')->with('F3\FLOW3\Validation\Validator\TextValidator')->will($this->returnValue($this->getMock('F3\FLOW3\Validation\Validator\TextValidator')));
+		$this->mockObjectManager->expects($this->once())->method('isRegistered')->with('F3\FLOW3\Validation\Validator\TextValidator')->will($this->returnValue(TRUE));
+		$this->mockObjectManager->expects($this->any())->method('get')->with('F3\FLOW3\Validation\Validator\TextValidator')->will($this->returnValue($this->getMock('F3\FLOW3\Validation\Validator\TextValidator')));
 
 		$argument = new \F3\FLOW3\MVC\Controller\Argument('SomeArgument', 'Text');
 		$argument->injectObjectManager($this->mockObjectManager);
@@ -247,10 +241,10 @@ class ArgumentTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function setNewValidatorConjunctionCreatesANewValidatorConjunctionObject() {
-		$this->mockObjectFactory->expects($this->once())->method('create')->with('F3\FLOW3\Validation\Validator\ConjunctionValidator')->will($this->returnValue($this->getMock('F3\FLOW3\Validation\Validator\ConjunctionValidator')));
+		$this->mockObjectManager->expects($this->once())->method('create')->with('F3\FLOW3\Validation\Validator\ConjunctionValidator')->will($this->returnValue($this->getMock('F3\FLOW3\Validation\Validator\ConjunctionValidator')));
 
 		$argument = new \F3\FLOW3\MVC\Controller\Argument('dummy', 'Text');
-		$argument->injectObjectFactory($this->mockObjectFactory);
+		$argument->injectObjectManager($this->mockObjectManager);
 		$argument->setNewValidatorConjunction(array());
 
 		$this->assertType('F3\FLOW3\Validation\Validator\ConjunctionValidator', $argument->getValidator(), 'The returned validator is not a chain as expected.');
@@ -268,14 +262,14 @@ class ArgumentTest extends \F3\Testing\BaseTestCase {
 		$mockValidatorChain->expects($this->at(0))->method('addValidator')->with($mockValidator1);
 		$mockValidatorChain->expects($this->at(1))->method('addValidator')->with($mockValidator2);
 
-		$this->mockObjectFactory->expects($this->once())->method('create')->with('F3\FLOW3\Validation\Validator\ConjunctionValidator')->will($this->returnValue($mockValidatorChain));
+		$this->mockObjectManager->expects($this->once())->method('create')->with('F3\FLOW3\Validation\Validator\ConjunctionValidator')->will($this->returnValue($mockValidatorChain));
 
-		$this->mockObjectManager->expects($this->any())->method('isObjectRegistered')->will($this->returnValue(TRUE));
-		$this->mockObjectManager->expects($this->exactly(2))->method('getObject')->will($this->onConsecutiveCalls($mockValidator1, $mockValidator2));
+		$this->mockObjectManager->expects($this->any())->method('isRegistered')->will($this->returnValue(TRUE));
+		$this->mockObjectManager->expects($this->exactly(2))->method('get')->will($this->onConsecutiveCalls($mockValidator1, $mockValidator2));
 
-		$argument = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\Argument'), array('dummy'), array(), '', FALSE);
+		$argument = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\Argument', array('dummy'), array(), '', FALSE);
 		$argument->_set('objectManager', $this->mockObjectManager);
-		$argument->_set('objectFactory', $this->mockObjectFactory);
+		$argument->_set('objectManager', $this->mockObjectManager);
 
 		$argument->setNewValidatorConjunction(array('Validator1', 'Validator2'));
 	}
@@ -292,14 +286,14 @@ class ArgumentTest extends \F3\Testing\BaseTestCase {
 		$mockValidatorChain->expects($this->at(0))->method('addValidator')->with($mockValidator1);
 		$mockValidatorChain->expects($this->at(1))->method('addValidator')->with($mockValidator2);
 
-		$this->mockObjectFactory->expects($this->once())->method('create')->with('F3\FLOW3\Validation\Validator\ConjunctionValidator')->will($this->returnValue($mockValidatorChain));
+		$this->mockObjectManager->expects($this->once())->method('create')->with('F3\FLOW3\Validation\Validator\ConjunctionValidator')->will($this->returnValue($mockValidatorChain));
 
-		$this->mockObjectManager->expects($this->any())->method('isObjectRegistered')->will($this->returnValue(FALSE));
-		$this->mockObjectManager->expects($this->exactly(2))->method('getObject')->will($this->onConsecutiveCalls($mockValidator1, $mockValidator2));
+		$this->mockObjectManager->expects($this->any())->method('isRegistered')->will($this->returnValue(FALSE));
+		$this->mockObjectManager->expects($this->exactly(2))->method('get')->will($this->onConsecutiveCalls($mockValidator1, $mockValidator2));
 
-		$argument = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\Argument'), array('dummy'), array(), '', FALSE);
+		$argument = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\Argument', array('dummy'), array(), '', FALSE);
 		$argument->_set('objectManager', $this->mockObjectManager);
-		$argument->_set('objectFactory', $this->mockObjectFactory);
+		$argument->_set('objectManager', $this->mockObjectManager);
 
 		$argument->setNewValidatorConjunction(array('Validator1', 'Validator2'));
 	}
@@ -310,7 +304,7 @@ class ArgumentTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function setDefaultValueReallySetsDefaultValue() {
 		$argument = new \F3\FLOW3\MVC\Controller\Argument('dummy', 'Text');
-		$argument->injectObjectFactory($this->mockObjectFactory);
+		$argument->injectObjectManager($this->mockObjectManager);
 		$argument->setDefaultValue(42);
 
 		$this->assertEquals(42, $argument->getValue(), 'The default value was not stored in the Argument.');

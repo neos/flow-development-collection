@@ -150,7 +150,7 @@ class RequestHashServiceTest extends \F3\Testing\BaseTestCase {
 		$hashService = $this->getMock('F3\FLOW3\Security\Cryptography\HashService', array('generateHmac'));
 		$hashService->expects($this->once())->method('generateHmac')->with(serialize($formFieldArray))->will($this->returnValue($mockHash));
 
-		$requestHashService = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Security\Channel\RequestHashService'), array('dummy'));
+		$requestHashService = $this->getAccessibleMock('F3\FLOW3\Security\Channel\RequestHashService', array('dummy'));
 		$requestHashService->injectHashService($hashService);
 
 		$expected = serialize($formFieldArray) . $mockHash;
@@ -163,7 +163,7 @@ class RequestHashServiceTest extends \F3\Testing\BaseTestCase {
 	 * @author Sebastian Kurfürst
 	 */
 	public function verifyRequestHashSetsHmacVerifiedToFalseIfRequestDoesNotHaveAnHmacArgument() {
-		$request = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Web\Request'), array('hasArgument', 'setHmacVerified'));
+		$request = $this->getAccessibleMock('F3\FLOW3\MVC\Web\Request', array('hasArgument', 'setHmacVerified'));
 		$request->expects($this->once())->method('hasArgument')->with('__hmac')->will($this->returnValue(FALSE));
 		$request->expects($this->once())->method('setHmacVerified')->with(FALSE);
 		$requestHashService = new \F3\FLOW3\Security\Channel\RequestHashService;
@@ -176,7 +176,7 @@ class RequestHashServiceTest extends \F3\Testing\BaseTestCase {
 	 * @author Sebastian Kurfürst
 	 */
 	public function verifyRequestHashThrowsExceptionIfHmacIsShortherThan40Characters() {
-		$request = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Web\Request'), array('hasArgument', 'getArgument', 'setHmacVerified'));
+		$request = $this->getAccessibleMock('F3\FLOW3\MVC\Web\Request', array('hasArgument', 'getArgument', 'setHmacVerified'));
 		$request->expects($this->once())->method('hasArgument')->with('__hmac')->will($this->returnValue(TRUE));
 		$request->expects($this->once())->method('getArgument')->with('__hmac')->will($this->returnValue('abc'));
 		$requestHashService = new \F3\FLOW3\Security\Channel\RequestHashService;
@@ -188,7 +188,7 @@ class RequestHashServiceTest extends \F3\Testing\BaseTestCase {
 	 * @author Sebastian Kurfürst
 	 */
 	public function verifyRequestHashValidatesTheHashAndSetsHmacVerifiedToFalseIfHashCouldNotBeVerified() {
-		$request = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Web\Request'), array('hasArgument', 'getArgument', 'setHmacVerified'));
+		$request = $this->getAccessibleMock('F3\FLOW3\MVC\Web\Request', array('hasArgument', 'getArgument', 'setHmacVerified'));
 		$request->expects($this->once())->method('hasArgument')->with('__hmac')->will($this->returnValue(TRUE));
 		$request->expects($this->once())->method('getArgument')->with('__hmac')->will($this->returnValue('11111' . '0000000000000000000000000000000000000000'));
 		$request->expects($this->once())->method('setHmacVerified')->with(FALSE);
@@ -207,7 +207,7 @@ class RequestHashServiceTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function verifyRequestHashValidatesTheHashAndSetsHmacVerifiedToTrueIfArgumentsAreIncludedInTheAllowedArgumentList() {
 		$data = serialize(array('a' => 1));
-		$request = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Web\Request'), array('hasArgument', 'getArgument', 'getArguments', 'setHmacVerified'));
+		$request = $this->getAccessibleMock('F3\FLOW3\MVC\Web\Request', array('hasArgument', 'getArgument', 'getArguments', 'setHmacVerified'));
 		$request->expects($this->once())->method('hasArgument')->with('__hmac')->will($this->returnValue(TRUE));
 		$request->expects($this->once())->method('getArgument')->with('__hmac')->will($this->returnValue($data . '0000000000000000000000000000000000000000'));
 		$request->expects($this->once())->method('getArguments')->will($this->returnValue(array(
@@ -232,7 +232,7 @@ class RequestHashServiceTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function verifyRequestHashValidatesTheHashAndSetsHmacVerifiedToFalseIfNotAllArgumentsAreIncludedInTheAllowedArgumentList() {
 		$data = serialize(array('a' => 1));
-		$request = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Web\Request'), array('hasArgument', 'getArgument', 'getArguments', 'setHmacVerified'));
+		$request = $this->getAccessibleMock('F3\FLOW3\MVC\Web\Request', array('hasArgument', 'getArgument', 'getArguments', 'setHmacVerified'));
 		$request->expects($this->once())->method('hasArgument')->with('__hmac')->will($this->returnValue(TRUE));
 		$request->expects($this->once())->method('getArgument')->with('__hmac')->will($this->returnValue($data . '0000000000000000000000000000000000000000'));
 		$request->expects($this->once())->method('getArguments')->will($this->returnValue(array(
@@ -395,7 +395,7 @@ class RequestHashServiceTest extends \F3\Testing\BaseTestCase {
 	 * @dataProvider dataProviderForCheckFieldNameInclusion
 	 */
 	public function checkFieldNameInclusionWorks($requestArguments, $allowedFields, $expectedResult) {
-		$requestHashService = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Security\Channel\RequestHashService'), array('dummy'));
+		$requestHashService = $this->getAccessibleMock('F3\FLOW3\Security\Channel\RequestHashService', array('dummy'));
 		$this->assertEquals($expectedResult, $requestHashService->_call('checkFieldNameInclusion', $requestArguments, $allowedFields));
 	}
 }

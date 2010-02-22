@@ -329,7 +329,7 @@ class PointcutFilterComposite implements \F3\FLOW3\AOP\Pointcut\PointcutFilterIn
 				$objectAccess = explode('.', $objectAccess[1], 2);
 				$argumentAccessCode = 'F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($' . $objectAccess[0] . ', \'' . $objectAccess[1] . '\')';
 
-				if ($objectAccess[0] === 'party') $globalObjects['party'] = '$party = $objectManager->getObject(\'F3\\FLOW3\\Security\\ContextHolderInterface\')->getContext()->getParty();';
+				if ($objectAccess[0] === 'party') $globalObjects['party'] = '$party = $objectManager->get(\'F3\\FLOW3\\Security\\ContextHolderInterface\')->getContext()->getParty();';
 
 			} else if (count($objectAccess) === 2 && $objectAccess[0] === 'this') {
 				$argumentAccessCode = 'F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($currentObject, \'' . $objectAccess[1] . '\')';

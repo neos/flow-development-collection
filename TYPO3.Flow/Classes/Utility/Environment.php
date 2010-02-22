@@ -86,22 +86,6 @@ class Environment {
 	protected $temporaryDirectory = NULL;
 
 	/**
-	 * @var \F3\FLOW3\Log\SystemLoggerInterface
-	 */
-	protected $systemLogger;
-
-	/**
-	 * Injects the system logger
-	 *
-	 * @param \F3\FLOW3\Log\SystemLoggerInterface $systemLogger
-	 * @return void
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	public function injectSystemLogger(\F3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
-		$this->systemLogger = $systemLogger;
-	}
-
-	/**
 	 * Sets the FLOW3 context
 	 *
 	 * @param string $context The FLOW3 context
@@ -494,11 +478,6 @@ class Environment {
 	protected function createTemporaryDirectory($temporaryDirectoryBase) {
 		$temporaryDirectoryBase = \F3\FLOW3\Utility\Files::getUnixStylePath($temporaryDirectoryBase);
 		if (substr($temporaryDirectoryBase, -1, 1) !== '/') $temporaryDirectoryBase .= '/';
-
-		$maximumPathLength = $this->getMaximumPathLength();
-		if (strlen($temporaryDirectoryBase) > ($maximumPathLength - 230)) {
-			$this->systemLogger->log('The path to your temporary directory is ' . strlen($temporaryDirectoryBase) . ' characters long. The maximum path length of your system is only ' . $maximumPathLength . '. Please consider setting the temporaryDirectoryBase option to a shorter path.', LOG_WARNING);
-		}
 
 		$processUser = extension_loaded('posix') ? posix_getpwuid(posix_geteuid()) : array('name' => 'default');
 		$pathHash = substr(md5(FLOW3_PATH_WEB . $this->getSAPIName() . $processUser['name'] . $this->context), 0, 12);

@@ -25,7 +25,7 @@ namespace F3\FLOW3\Object;
 /**
  * This class is used to manipulate the PHP source code of certain registered
  * objects. Specifically the "new" operator is replaced by a call to the
- * getObject() method of the object manager.
+ * get() method of the object manager.
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
@@ -127,15 +127,15 @@ class ClassFileManipulator {
 				if ($tokens[$index + 1][0] === '(') {
 					$index++;
 					$constructorArguments = $this->parseConstructorArguments($tokens, $index);
-					if ($this->objectManager->isObjectRegistered($className)) {
-						$targetCode .= '$GLOBALS[\'TYPO3\']->getObjectManager()->getObject'  . '(\'' . $className . '\', ' . $constructorArguments . ')' . $whitespace;
+					if ($this->objectManager->isRegistered($className)) {
+						$targetCode .= '$GLOBALS[\'TYPO3\']->getObjectManager()->get'  . '(\'' . $className . '\', ' . $constructorArguments . ')' . $whitespace;
 						$newOperatorHasBeenReplaced = TRUE;
 					} else {
 						$targetCode .= 'new'  . $whitespace . $className . '(' . $constructorArguments . ')';
 					}
 				} else {
-					if ($this->objectManager->isObjectRegistered($className)) {
-						$targetCode .= '$GLOBALS[\'TYPO3\']->getObjectManager()->getObject'  . '(\'' . $className . '\')' . $whitespace;
+					if ($this->objectManager->isRegistered($className)) {
+						$targetCode .= '$GLOBALS[\'TYPO3\']->getObjectManager()->get'  . '(\'' . $className . '\')' . $whitespace;
 						$newOperatorHasBeenReplaced = TRUE;
 					} else {
 						$targetCode .= 'new'  . $whitespace . $className;

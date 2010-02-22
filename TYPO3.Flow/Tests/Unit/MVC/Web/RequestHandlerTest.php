@@ -44,13 +44,13 @@ class RequestHandlerTest extends \F3\Testing\BaseTestCase {
 		$mockRequestBuilder = $this->getMock('F3\FLOW3\MVC\Web\RequestBuilder', array(), array(), '', FALSE);
 		$mockRequestBuilder->expects($this->once())->method('build')->will($this->returnValue($mockRequest));
 
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\ObjectFactoryInterface');
-		$mockObjectFactory->expects($this->once())->method('create')->with('F3\FLOW3\MVC\Web\Response')->will($this->returnValue($mockResponse));
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
+		$mockObjectManager->expects($this->once())->method('create')->with('F3\FLOW3\MVC\Web\Response')->will($this->returnValue($mockResponse));
 
 		$mockDispatcher = $this->getMock('F3\FLOW3\MVC\Dispatcher', array(), array(), '', FALSE);
 		$mockDispatcher->expects($this->once())->method('dispatch')->with($mockRequest, $mockResponse);
 
-		$requestHandler = new \F3\FLOW3\MVC\Web\RequestHandler($mockObjectFactory, $mockEnvironment, $mockDispatcher, $mockRequestBuilder);
+		$requestHandler = new \F3\FLOW3\MVC\Web\RequestHandler($mockObjectManager, $mockEnvironment, $mockDispatcher, $mockRequestBuilder);
 		$requestHandler->handleRequest();
 	}
 }

@@ -32,11 +32,11 @@ namespace F3\FLOW3\Persistence;
 interface PersistenceManagerInterface {
 
 	/**
-	 * Set settings for the persistence layer
+	 * Injects the FLOW3 settings
 	 *
 	 * @param array $settings
 	 */
-	public function setSettings(array $settings);
+	public function injectSettings(array $settings);
 
 	/**
 	 * Initializes the persistence manager

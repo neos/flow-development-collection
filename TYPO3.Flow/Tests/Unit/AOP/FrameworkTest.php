@@ -44,11 +44,6 @@ class FrameworkTest extends \F3\Testing\BaseTestCase {
 	protected $mockObjectManager;
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectFactoryInterface
-	 */
-	protected $mockObjectFactory;
-
-	/**
 	 * Set up this testcase
 	 *
 	 * @return void
@@ -56,7 +51,6 @@ class FrameworkTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function setUp() {
 		$this->mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$this->mockObjectFactory = $this->getMock('F3\FLOW3\Object\ObjectFactoryInterface');
 
 	}
 
@@ -70,7 +64,7 @@ class FrameworkTest extends \F3\Testing\BaseTestCase {
 		$container2 = $this->getMock('F3\FLOW3\AOP\AspectContainer', array(), array(), '', FALSE);
 		$expectedAspectContainers = array('Foo' => $container1, 'Baz' => $container2);
 
-		$framework = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\AOP\Framework'), array('buildAspectContainer'), array(), '', FALSE);
+		$framework = $this->getAccessibleMock('F3\FLOW3\AOP\Framework', array('buildAspectContainer'), array(), '', FALSE);
 		$framework->expects($this->at(0))->method('buildAspectContainer')->with('Foo')->will($this->returnValue($container1));
 		$framework->expects($this->at(1))->method('buildAspectContainer')->with('Bar')->will($this->returnValue(FALSE));
 		$framework->expects($this->at(2))->method('buildAspectContainer')->with('Baz')->will($this->returnValue($container2));
@@ -91,7 +85,7 @@ class FrameworkTest extends \F3\Testing\BaseTestCase {
 		$mockReflectionService->expects($this->any())->method('getClassMethodNames')->will($this->returnValue(array()));
 		$mockReflectionService->expects($this->any())->method('getClassPropertyNames')->will($this->returnValue(array()));
 
-		$framework = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\AOP\Framework'), array('dummy'), array(), '', FALSE, TRUE);
+		$framework = $this->getAccessibleMock('F3\FLOW3\AOP\Framework', array('dummy'), array(), '', FALSE, TRUE);
 		$framework->injectReflectionService($mockReflectionService);
 
 		$framework->_call('buildAspectContainer', 'TestAspect');
@@ -108,9 +102,10 @@ class FrameworkTest extends \F3\Testing\BaseTestCase {
 		$mockPointcutExpressionParser = $this->getMock('F3\FLOW3\AOP\Pointcut\PointcutExpressionParser', array('parse'), array(), '', FALSE);
 		$mockPointcutExpressionParser->expects($this->any())->method('parse')->will($this->returnCallBack(array($this, 'pointcutFilterCompositeCallBack')));
 
-		$this->mockObjectFactory->expects($this->any())->method('create')->will($this->returnCallBack(array($this, 'objectFactoryCallBack')));
+		$this->mockObjectManager->expects($this->any())->method('create')->will($this->returnCallBack(array($this, 'objectManagerCallBack')));
 
-		$framework = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\AOP\Framework'), array('dummy'), array($this->mockObjectManager, $this->mockObjectFactory), '', TRUE, TRUE);
+		$framework = $this->getAccessibleMock('F3\FLOW3\AOP\Framework', array('dummy'), array(), '', TRUE, TRUE);
+		$framework->injectObjectManager($this->mockObjectManager);
 		$framework->injectReflectionService($mockReflectionService);
 		$framework->injectPointcutExpressionParser($mockPointcutExpressionParser);
 
@@ -156,7 +151,7 @@ class FrameworkTest extends \F3\Testing\BaseTestCase {
 	 * @return object but only mocks except for \F3\FLOW3\AOP\Advisor
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function objectFactoryCallBack() {
+	public function objectManagerCallBack() {
 		$arguments = array_merge(func_get_args(), array($this->mockObjectManager));
 		$objectName = array_shift($arguments);
 		switch ($objectName) {

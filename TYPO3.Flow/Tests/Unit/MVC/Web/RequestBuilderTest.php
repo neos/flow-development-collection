@@ -78,8 +78,8 @@ class RequestBuilderTest extends \F3\Testing\BaseTestCase {
 		$this->mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
 		$this->mockRequest->expects($this->any())->method('getRequestUri')->will($this->returnValue($this->mockRequestUri));
 
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\ObjectFactoryInterface');
-		$mockObjectFactory->expects($this->once())->method('create')->will($this->returnValue($this->mockRequest));
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
+		$mockObjectManager->expects($this->once())->method('create')->will($this->returnValue($this->mockRequest));
 
 		$this->mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\ConfigurationManager', array('getConfiguration'), array(), '', FALSE);
 		$this->mockConfigurationManager->expects($this->once())->method('getConfiguration')->will($this->returnValue(array()));
@@ -87,7 +87,7 @@ class RequestBuilderTest extends \F3\Testing\BaseTestCase {
 		$this->mockRouter = $this->getMock('F3\FLOW3\MVC\Web\Routing\RouterInterface', array('route', 'setRoutesConfiguration', 'resolve'));
 
 		$this->builder = new \F3\FLOW3\MVC\Web\RequestBuilder();
-		$this->builder->injectObjectFactory($mockObjectFactory);
+		$this->builder->injectObjectManager($mockObjectManager);
 		$this->builder->injectEnvironment($this->mockEnvironment);
 		$this->builder->injectConfigurationManager($this->mockConfigurationManager);
 		$this->builder->injectRouter($this->mockRouter);
@@ -265,7 +265,7 @@ class RequestBuilderTest extends \F3\Testing\BaseTestCase {
 		$mockRequest->expects($this->any())->method('getRequestUri')->will($this->returnValue($mockRequestUri));
 		$mockRequest->expects($this->any())->method('getMethod')->will($this->returnValue('POST'));
 
-		$builder = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Web\RequestBuilder'), array('dummy'), array(), '', FALSE);
+		$builder = $this->getAccessibleMock('F3\FLOW3\MVC\Web\RequestBuilder', array('dummy'), array(), '', FALSE);
 		$builder->injectEnvironment($mockEnvironment);
 		$builder->_call('setArgumentsFromRawRequestData', $mockRequest);
 

@@ -38,24 +38,9 @@ class ObjectManager implements \F3\FLOW3\Object\ObjectManagerInterface {
 	protected $context = 'Development';
 
 	/**
-	 * @var \F3\FLOW3\Reflection\ReflectionService
+	 * @var \F3\FLOW3\Resource\ClassLoader
 	 */
-	protected $reflectionService;
-
-	/**
-	 * @var \F3\FLOW3\Object\TransientRegistry
-	 */
-	protected $singletonObjectsRegistry;
-
-	/**
-	 * @var \F3\FLOW3\Object\SessionRegistry
-	 */
-	protected $sessionObjectsRegistry;
-
-	/**
-	 * @var \F3\FLOW3\Object\ObjectBuilder
-	 */
-	protected $objectBuilder;
+	protected $classLoader;
 
 	/**
 	 * @var \F3\FLOW3\Configuration\ConfigurationManager
@@ -63,115 +48,29 @@ class ObjectManager implements \F3\FLOW3\Object\ObjectManagerInterface {
 	protected $configurationManager;
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectFactoryInterface
+	 * @var string
 	 */
-	protected $objectFactory;
+	protected $staticObjectContainerPathAndFilename;
 
 	/**
-	 * An array of all registered objects. The case sensitive object name is the key, a lower-cased variant is the value.
-	 * @var array
+	 * @var \F3\FLOW3\Object\ObjectContainerInterface
 	 */
-	protected $registeredObjects = array();
+	protected $objectContainer;
 
 	/**
-	 * An array of all registered classes. The class name is the key, the object name the value.
-	 * @var array
+	 * @var \F3\FLOW3\Cache\Frontend\PhpFrontend
 	 */
-	protected $registeredClasses = array();
+	protected $objectContainerClassesCache;
 
 	/**
-	 * Array of class names which must not be registered as objects automatically. Class names may also be regular expressions.
-	 * @var array
-	 */
-	protected $objectRegistrationClassBlacklist = array(
-		'F3\FLOW3\AOP\.*',
-		'F3\FLOW3\Object.*',
-		'F3\FLOW3\Package.*',
-		'F3\FLOW3\Reflection.*'
-	);
-
-	/**
-	 * An array of all registered object configurations
-	 * @var array
-	 */
-	protected $objectConfigurations = array();
-
-	/**
-	 * Objects whose shutdown method should be called on shutdown. Each entry is an array with an object / shutdown method name pair.
-	 */
-	protected $shutdownObjects = array();
-
-	/**
-	 * Injects the singleton objects registry
-	 *
-	 * @param \F3\FLOW3\Object\TransientRegistry $singletonObjectsRegistry The singleton objects registry
+	 * Injects the class loader
+	 * 
+	 * @param \F3\FLOW3\Resource\ClassLoader $classLoader
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectSingletonObjectsRegistry(\F3\FLOW3\Object\TransientRegistry $singletonObjectsRegistry) {
-		$this->singletonObjectsRegistry = $singletonObjectsRegistry;
-	}
-
-	/**
-	 * Injects the session objects registry
-	 *
-	 * @param \F3\FLOW3\Object\SessionRegistry $sessionObjectsRegistry The session objects registry
-	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function injectSessionObjectsRegistry(\F3\FLOW3\Object\SessionRegistry $sessionObjectsRegistry) {
-		$this->sessionObjectsRegistry = $sessionObjectsRegistry;
-	}
-
-	/**
-	 * Injects the object builder
-	 *
-	 * @param \F3\FLOW3\Object\ObjectBuilder $objectBuilder The object builder
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function injectObjectBuilder(\F3\FLOW3\Object\ObjectBuilder $objectBuilder) {
-		$this->objectBuilder = $objectBuilder;
-	}
-
-	/**
-	 * Injects the Reflection Service
-	 *
-	 * The singleton object registry and object builder must have been injected before the Reflection Service
-	 * can be injected.
-	 *
-	 * This method will usually be called twice during one boot sequence: The first time a preliminary
-	 * reflection service is injected which is yet uninitialized and does not provide caching. After
-	 * the most important FLOW3 objects have been registered, the final reflection service is injected,
-	 * this time with caching.
-	 *
-	 * @param \F3\FLOW3\Reflection\ReflectionService $reflectionService The Reflection Service
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function injectReflectionService(\F3\FLOW3\Reflection\ReflectionService $reflectionService) {
-		if (!is_object($this->singletonObjectsRegistry) && !is_object($this->objectBuilder)) throw new \F3\FLOW3\Object\Exception\UnresolvedDependenciesException('No Object Registry or Object Builder has been injected into the Object Manager', 1231252863);
-		$this->reflectionService = $reflectionService;
-		if (!isset($this->registeredObjects['F3\FLOW3\Reflection\ReflectionService'])) {
-			$this->registeredObjects['F3\FLOW3\Reflection\ReflectionService'] = 'f3\flow3\reflection\reflectionservice';
-			$this->registeredClasses['F3\FLOW3\Reflection\ReflectionService'] = 'F3\FLOW3\Reflection\ReflectionService';
-			$this->objectConfigurations['F3\FLOW3\Reflection\ReflectionService'] = new \F3\FLOW3\Object\Configuration\Configuration('F3\FLOW3\Reflection\ReflectionService');
-		}
-		$this->singletonObjectsRegistry->putObject('F3\FLOW3\Reflection\ReflectionService', $this->reflectionService);
-		$this->objectBuilder->injectReflectionService($this->reflectionService);
-	}
-
-	/**
-	 * Injects the object factory
-	 * Note that the object builder and singleton object registry must have been injected before the object factory
-	 * can be injected.
-	 *
-	 * @param \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory The object factory
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function injectObjectFactory(\F3\FLOW3\Object\ObjectFactoryInterface $objectFactory) {
-		$this->objectFactory = $objectFactory;
+	public function injectClassLoader(\F3\FLOW3\Resource\ClassLoader $classLoader) {
+		$this->classLoader = $classLoader;
 	}
 
 	/**
@@ -186,71 +85,83 @@ class ObjectManager implements \F3\FLOW3\Object\ObjectManagerInterface {
 	}
 
 	/**
-	 * Injects the cache for storing object configurations
+	 * Pre-initializes the Object Manager: In case a Static Object Container already exists,
+	 * it is loaded and intialized. If that is not the case, the Dynamic Object Container
+	 * is instantiated and used.
 	 *
-	 * @param \F3\FLOW3\Cache\Frontend\VariableFrontend $objectConfigurationsCache
 	 * @return void
+	 * @see initialize()
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectObjectConfigurationsCache(\F3\FLOW3\Cache\Frontend\VariableFrontend $objectConfigurationsCache) {
-		$this->objectConfigurationsCache = $objectConfigurationsCache;
-	}
+	public function initialize() {
+		$settings = $this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'FLOW3');
 
-	/**
-	 * Initializes the Object ObjectManager and its collaborators
-	 *
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function initializeManager() {
-		$rawFLOW3ObjectConfigurations = $this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_OBJECTS, 'FLOW3');
-		foreach ($rawFLOW3ObjectConfigurations as $objectName => $rawFLOW3ObjectConfiguration) {
-			$this->setObjectConfiguration(\F3\FLOW3\Object\Configuration\ConfigurationBuilder::buildFromConfigurationArray($objectName, $rawFLOW3ObjectConfiguration, 'FLOW3 Object ObjectManager (pre-initialization)'));
+		$environment = new \F3\FLOW3\Utility\Environment();
+		$environment->setContext($this->context);
+		$environment->setTemporaryDirectoryBase($settings['utility']['environment']['temporaryDirectoryBase']);
+		$environment->initializeObject();
+
+		$this->staticObjectContainerPathAndFilename = $environment->getPathToTemporaryDirectory() . 'StaticObjectContainer.php';
+
+		if (file_exists($this->staticObjectContainerPathAndFilename)) {
+			require_once($this->staticObjectContainerPathAndFilename);
+			$this->objectContainer = new \F3\FLOW3\Object\Container\StaticObjectContainer();
+		} else {
+			$rawFLOW3ObjectConfigurations = $this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_OBJECTS, 'FLOW3');
+			$parsedObjectConfigurations = array();
+			foreach ($rawFLOW3ObjectConfigurations as $objectName => $rawFLOW3ObjectConfiguration) {
+				$parsedObjectConfigurations[$objectName] = \F3\FLOW3\Object\Configuration\ConfigurationBuilder::buildFromConfigurationArray($objectName, $rawFLOW3ObjectConfiguration, 'FLOW3 Object Manager (pre-initialization)');
+			}
+			$this->objectContainer = new \F3\FLOW3\Object\Container\DynamicObjectContainer();
+			$this->objectContainer->setObjectConfigurations($parsedObjectConfigurations);
 		}
 
-		$this->registerObject('F3\FLOW3\Object\ObjectManagerInterface', __CLASS__, $this);
-		$this->registerObject('F3\FLOW3\Object\ObjectBuilder',  get_class($this->objectBuilder), $this->objectBuilder);
-		$this->registerObject('F3\FLOW3\Object\ObjectFactoryInterface', get_class($this->objectFactory), $this->objectFactory);
-		$this->registerObject('F3\FLOW3\Object\RegistryInterface',  get_class($this->singletonObjectsRegistry), $this->singletonObjectsRegistry);
+		$this->objectContainer->injectSettings($this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS));
+		$this->objectContainer->setInstance('F3\FLOW3\Object\ObjectManagerInterface', $this);
+		$this->objectContainer->setInstance('F3\FLOW3\Resource\ClassLoader', $this->classLoader);
+		$this->objectContainer->setInstance('F3\FLOW3\Utility\Environment', $environment);
 
-		$this->objectBuilder->injectObjectManager($this);
-		$this->objectBuilder->injectObjectFactory($this->objectFactory);
-
-		$this->objectFactory->injectObjectManager($this);
-		$this->objectFactory->injectObjectBuilder($this->objectBuilder);
+		$this->objectContainer->setInstance('F3\FLOW3\Configuration\ConfigurationManager', $this->configurationManager);
+		$this->configurationManager->injectEnvironment($environment);
 	}
 
 	/**
-	 * Initializes the object framework and loads the object configuration
+	 * 
 	 *
 	 * @param array $activePackages An array of active packages of which objects should be considered
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @see initialize()
 	 */
-	public function initializeObjects(array $activePackages) {
-		if ($this->objectConfigurationsCache->has('baseObjectConfigurations')) {
-			$this->setObjectConfigurations($this->objectConfigurationsCache->get('baseObjectConfigurations'));
+	public function initializeObjectContainer(array $activePackages) {
+		if (!$this->objectContainer instanceof \F3\FLOW3\Object\Container\StaticObjectContainer) {
+			$objectContainerBuilder = $this->get('F3\FLOW3\Object\Container\ObjectContainerBuilder');
+			$objectConfigurations = $this->buildPackageObjectConfigurations($activePackages);
+
+			$aopFramework = $this->get('F3\FLOW3\AOP\Framework');
+			$aopFramework->initialize($objectConfigurations);
+
+			file_put_contents($this->staticObjectContainerPathAndFilename, $objectContainerBuilder->buildObjectContainer($objectConfigurations));
+
+			require_once($this->staticObjectContainerPathAndFilename);
+			$newObjectContainer = new \F3\FLOW3\Object\Container\StaticObjectContainer();
+			$newObjectContainer->import($this->objectContainer);
+			$this->objectContainer = $newObjectContainer;
 		} else {
-			$this->registerAndConfigureAllPackageObjects($activePackages);
-			$this->objectConfigurationsCache->set('baseObjectConfigurations', $this->objectConfigurations, array($this->objectConfigurationsCache->getClassTag()));
+			$aopFramework = $this->get('F3\FLOW3\AOP\Framework');
+			$aopFramework->loadProxyClasses();
 		}
+		
+		$this->objectContainer->injectSettings($this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS));
 	}
 
 	/**
-	 * Shuts the object manager down and calls the shutdown methods of all objects
-	 * which are configured for it.
+	 * Initializes the session scope of the object container
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function shutdown() {
-		foreach ($this->shutdownObjects as $objectAndMethodName) {
-			list($object, $methodName) = $objectAndMethodName;
-			if (method_exists($object, $methodName) && is_callable(array($object, $methodName))) {
-				$object->$methodName();
-			}
-		}
+	public function initializeObjectContainerSession() {
+		$this->objectContainer->initializeSession();
 	}
 
 	/**
@@ -285,147 +196,65 @@ class ObjectManager implements \F3\FLOW3\Object\ObjectManagerInterface {
 		return $this->context;
 	}
 
-
-	/**
-	 * Returns a reference to the object factory used by the object manager.
-	 *
-	 * @return \F3\FLOW3\Object\ObjectFactoryInterface
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getObjectFactory() {
-		return $this->objectFactory;
-	}
-
 	/**
 	 * Returns a fresh or existing instance of the object specified by $objectName.
 	 *
 	 * Important:
 	 *
 	 * If possible, instances of Prototype objects should always be created with the
-	 * Object Factory's create() method and Singleton objects should rather be
+	 * Object Manager's create() method and Singleton objects should rather be
 	 * injected by some type of Dependency Injection.
 	 *
 	 * @param string $objectName The name of the object to return an instance of
 	 * @return object The object instance
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
+	 */
+	public function get($objectName) {
+		return call_user_func_array(array($this->objectContainer, 'get'), func_get_args());
+	}
+
+	/**
+	 * Creates a fresh instance of the object specified by $objectName.
+	 *
+	 * This factory method can only create objects of the scope prototype.
+	 * Singleton objects must be either injected by some type of Dependency Injection or
+	 * if that is not possible, be retrieved by the get() method of the
+	 * Object Manager
+	 *
+	 * You must use either Dependency Injection or this factory method for instantiation
+	 * of your objects if you need FLOW3's object management capabilities (including
+	 * AOP, Security and Persistence). It is absolutely okay and often advisable to
+	 * use the "new" operator for instantiation in your automated tests.
+	 *
+	 * @param string $objectName The name of the object to create
+	 * @return object The new object instance
+	 * @throws \InvalidArgumentException if the object name starts with a backslash
 	 * @throws \F3\FLOW3\Object\Exception\UnknownObjectException if an object with the given name does not exist
+	 * @throws \F3\FLOW3\Object\Exception\WrongScopeException if the specified object is not configured as Prototype
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @since 1.0.0 alpha 8
 	 * @api
 	 */
-	public function getObject($objectName) {
-		if (!$this->isObjectRegistered($objectName)) throw new \F3\FLOW3\Object\Exception\UnknownObjectException('Object "' . $objectName . '" is not registered.', 1166550023);
-
-		switch ($this->objectConfigurations[$objectName]->getScope()) {
-			case 'prototype' :
-				$object = call_user_func_array(array($this->objectFactory, 'create'), func_get_args());
-				break;
-			case 'singleton' :
-				if ($this->singletonObjectsRegistry->objectExists($objectName)) {
-					$object = $this->singletonObjectsRegistry->getObject($objectName);
-				} else {
-					$arguments = array_slice(func_get_args(), 1);
-					$overridingArguments = $this->getOverridingArguments($arguments);
-					$object = $this->objectBuilder->createObject($objectName, $this->objectConfigurations[$objectName], $overridingArguments);
-					$this->singletonObjectsRegistry->putObject($objectName, $object);
-					$this->registerShutdownObject($object, $this->objectConfigurations[$objectName]->getLifecycleShutdownMethodName());
-				}
-				break;
-			case 'session' :
-				if ($this->sessionObjectsRegistry === NULL) throw new \F3\FLOW3\Object\Exception('The session objects registry has not been injected correctly into the object manager.', 1247211113);
-
-				if ($this->sessionObjectsRegistry->objectExists($objectName)) {
-					$object = $this->sessionObjectsRegistry->getObject($objectName);
-				} else {
-					$arguments = array_slice(func_get_args(), 1);
-					$overridingArguments = $this->getOverridingArguments($arguments);
-					$object = $this->objectBuilder->createObject($objectName, $this->objectConfigurations[$objectName], $overridingArguments);
-					$this->sessionObjectsRegistry->putObject($objectName, $object);
-					$this->registerShutdownObject($object, $this->objectConfigurations[$objectName]->getLifecycleShutdownMethodName());
-				}
-				break;
-		}
-
-		return $object;
+	public function create($objectName) {
+		return call_user_func_array(array($this->objectContainer, 'create'), func_get_args());
 	}
 
 	/**
-	 * Registers the given class as an object.
+	 * Creates an instance of the specified object without calling its constructor.
+	 * Subsequently reinjects the object's dependencies.
 	 *
-	 * Note: When registering an object after FLOW3 has been initialized, it
-	 * won't get picked up by AOP, so do not expect to be able to register
-	 * entities or anything else relying in AOP to work.
+	 * This method is mainly used by the persistence and the session sub package.
 	 *
-	 * @param string $objectName The unique identifier of the object
-	 * @param string $className The class name which provides the functionality for this object. Same as object name by default.
-	 * @param object $object If the object has been instantiated prior to registration (which should be avoided whenever possible), it can be passed here.
-	 * @return void
+	 * Note: The object must be of scope prototype or session which means that
+	 *       the object container won't store an instance of the recreated object.
+	 *
+	 * @param string $objectName Name of the object to create a skeleton for
+	 * @return object The recreated, uninitialized (ie. w/ uncalled constructor) object
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws \F3\FLOW3\Object\Exception\ObjectAlreadyRegisteredException if the object has already been registered
-	 * @throws \F3\FLOW3\Object\Exception\InvalidObjectException if the passed $object is not a valid instance of $className
-	 * @api
 	 */
-	public function registerObject($objectName, $className = NULL, $object = NULL) {
-		if ($this->isObjectRegistered($objectName)) throw new \F3\FLOW3\Object\Exception\ObjectAlreadyRegisteredException('The object ' . $objectName . ' is already registered.', 1184160573);
-		if ($className === NULL) {
-			$className = $objectName;
-		}
-		if (!class_exists($className, TRUE) || interface_exists($className)) throw new \F3\FLOW3\Object\Exception\UnknownClassException('The specified class "' . $className . '" does not exist (or is no class) and therefore cannot be registered as an object.', 1200239063);
-
-		if ($object !== NULL) {
-			if (!is_object($object) || !$object instanceof $className) throw new \F3\FLOW3\Object\Exception\InvalidObjectException('The object instance must be a valid instance of the specified class (' . $className . ').', 1183742379);
-			$this->singletonObjectsRegistry->putObject($objectName, $object);
-		}
-
-		$this->objectConfigurations[$objectName] = new \F3\FLOW3\Object\Configuration\Configuration($objectName, $className);
-
-		if ($this->reflectionService->isClassTaggedWith($className, 'scope')) {
-			$scope = trim(implode('', $this->reflectionService->getClassTagValues($className, 'scope')));
-			$this->objectConfigurations[$objectName]->setScope($scope);
-		}
-		$this->registeredObjects[$objectName] = strtolower($objectName);
-		$this->registeredClasses[$className] = $objectName;
-	}
-
-	/**
-	 * Register the given interface as an object type
-	 *
-	 * @param  string $objectName The name of the object type
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @api
-	 */
-	public function registerObjectType($objectName) {
-		$className = $this->reflectionService->getDefaultImplementationClassNameForInterface($objectName);
-		$objectConfiguration = new \F3\FLOW3\Object\Configuration\Configuration($objectName);
-		if ($className !== FALSE) {
-			$objectConfiguration->setClassName($className);
-			if ($this->reflectionService->isClassTaggedWith($className, 'scope')) {
-				$scope = trim(implode('', $this->reflectionService->getClassTagValues($className, 'scope')));
-				$objectConfiguration->setScope($scope);
-			}
-			$this->registeredClasses[$className] = $objectName;
-		} else {
-		}
-		$this->registeredObjects[$objectName] = strtolower($objectName);
-		$this->objectConfigurations[$objectName] = $objectConfiguration;
-	}
-
-	/**
-	 * Unregisters the specified object
-	 *
-	 * @param string $objectName The explicit object name
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws \F3\FLOW3\Object\Exception\UnknownObjectException if the specified object has not been registered before
-	 * @api
-	 */
-	public function unregisterObject($objectName) {
-		if (!$this->isObjectRegistered($objectName)) throw new \F3\FLOW3\Object\Exception\UnknownObjectException('Object "' . $objectName . '" is not registered.', 1167473433);
-		if ($this->singletonObjectsRegistry->objectExists($objectName)) {
-			$this->singletonObjectsRegistry->removeObject($objectName);
-		}
-		unset($this->registeredClasses[$this->objectConfigurations[$objectName]->getClassName()]);
-		unset($this->registeredObjects[$objectName]);
-		unset($this->objectConfigurations[$objectName]);
+	public function recreate($objectName) {
+		return $this->objectContainer->recreate($objectName);
 	}
 
 	/**
@@ -435,29 +264,11 @@ class ObjectManager implements \F3\FLOW3\Object\ObjectManagerInterface {
 	 * @param  string $objectName Name of the object
 	 * @return boolean TRUE if the object has been registered, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws \InvalidArgumentException if $objectName is not a valid string
+	 * @since 1.0.0 alpha 8
 	 * @api
 	 */
-	public function isObjectRegistered($objectName) {
-		if (!is_string($objectName)) throw new \InvalidArgumentException('The object name must be of type string, ' . gettype($objectName) . ' given.', 1181907931);
-		return isset($this->registeredObjects[$objectName]);
-	}
-
-	/**
-	 * Registers an object so that its shutdown method is called when the object framework
-	 * is being shut down.
-	 *
-	 * Note that objects are registered automatically by the Object ObjectManager and the
-	 * Object Factory and this method usually is not needed by user code.
-	 *
-	 * @param object $object The object to register
-	 * @param string $shutdownMethodName Name of the shutdown method to call
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @api
-	 */
-	public function registerShutdownObject($object, $shutdownMethodName) {
-		$this->shutdownObjects[spl_object_hash($object)] = array($object, $shutdownMethodName);
+	public function isRegistered($objectName) {
+		return $this->objectContainer->isRegistered($objectName);
 	}
 
 	/**
@@ -473,12 +284,10 @@ class ObjectManager implements \F3\FLOW3\Object\ObjectManagerInterface {
 	 * @param  string $caseInsensitiveObjectName The object name in lower-, upper- or mixed case
 	 * @return mixed Either the mixed case object name or FALSE if no object of that name was found.
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws \InvalidArgumentException if $caseInsensitiveObjectName is not a valid string
 	 * @api
 	 */
 	public function getCaseSensitiveObjectName($caseInsensitiveObjectName) {
-		if (!is_string($caseInsensitiveObjectName)) throw new \InvalidArgumentException('The object name must be of type string, ' . gettype($caseInsensitiveObjectName) . ' given.', 1186655552);
-		return array_search(strtolower($caseInsensitiveObjectName), $this->registeredObjects);
+		return $this->objectContainer->getCaseSensitiveObjectName($caseInsensitiveObjectName);
 	}
 
 	/**
@@ -490,8 +299,18 @@ class ObjectManager implements \F3\FLOW3\Object\ObjectManagerInterface {
 	 * @api
 	 */
 	public function getObjectNameByClassName($className) {
-		if (!isset($this->registeredClasses[$className])) throw new \F3\FLOW3\Object\Exception\UnknownClassException('The given class "' . $className . '" is not registered.', 1247133805);
-		return $this->registeredClasses[$className];
+		return $this->objectContainer->getObjectNameByClassName($className);
+	}
+
+	/**
+	 * Returns the scope of the specified object.
+	 * 
+	 * @param string $objectName The object name
+	 * @return integer One of the Configuration::SCOPE_ constants
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getScope($objectName) {
+		return $this->objectContainer->getScope($objectName);
 	}
 
 	/**
@@ -504,186 +323,120 @@ class ObjectManager implements \F3\FLOW3\Object\ObjectManagerInterface {
 	 * @api
 	 */
 	public function getRegisteredObjects() {
-		return $this->registeredObjects;
+#		return $this->registeredObjects;
 	}
 
 	/**
-	 * Returns an array of (cloned) configuration objects for all registered objects.
-	 *
-	 * @return array Array of \F3\FLOW3\Object\Configuration\Configuration objects, indexed by object name
+	 * Discards the cached Static Object Container in order to rebuild it on the
+	 * next script run.
+	 * 
+	 * This method is called by a signal emitted when files change.
+	 * 
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getObjectConfigurations() {
-		$objectConfigurations = array();
-		foreach (array_keys($this->objectConfigurations) as $objectName) {
-			$objectConfigurations[$objectName] = clone $this->objectConfigurations[$objectName];
-		}
-		return $objectConfigurations;
-	}
-
-	/**
-	 * Returns the configuration object of a certain object
-	 *
-	 * @param string $objectName Name of the object to fetch the configuration for
-	 * @return \F3\FLOW3\Object\Configuration\Configuration The object configuration
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws \F3\FLOW3\Object\Exception\UnknownObjectException if the specified object has not been registered
-	 */
-	public function getObjectConfiguration($objectName) {
-		if (!$this->isObjectRegistered($objectName)) throw new \F3\FLOW3\Object\Exception\UnknownObjectException('Object "' . $objectName . '" is not registered.', 1167993004);
-		return clone $this->objectConfigurations[$objectName];
-	}
-
-	/**
-	 * Sets the object configurations for all objects found in the
-	 * $newObjectConfigurations array.
-	 *
-	 * @param array $newObjectConfigurations Array of \F3\FLOW3\Object\Configuration\Configuration instances
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function setObjectConfigurations(array $newObjectConfigurations) {
-		foreach ($newObjectConfigurations as $newObjectConfiguration) {
-			if (!$newObjectConfiguration instanceof \F3\FLOW3\Object\Configuration\Configuration) throw new \InvalidArgumentException('The new object configuration must be an instance of \F3\FLOW3\Object\Configuration\Configuration', 1167826954);
-			$this->setObjectConfiguration($newObjectConfiguration);
+	public function flushStaticObjectContainer($signalName, $monitorIdentifier, $changedFiles) {
+		if ($monitorIdentifier === 'FLOW3_ClassFiles' && file_exists($this->staticObjectContainerPathAndFilename)) {
+			unlink ($this->staticObjectContainerPathAndFilename);
 		}
 	}
 
 	/**
-	 * Sets the object configuration for a specific object.
+	 * Shuts the object manager down and calls the shutdown methods of all objects
+	 * which are configured for it.
 	 *
-	 * @param \F3\FLOW3\Object\Configuration\Configuration $newObjectConfiguration The new object configuration
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setObjectConfiguration(\F3\FLOW3\Object\Configuration\Configuration $newObjectConfiguration) {
-		$objectName = $newObjectConfiguration->getObjectName();
-
-		if (isset($this->objectConfigurations[$objectName])) {
-			$oldClassName = $this->objectConfigurations[$objectName]->getClassName();
-			unset($this->registeredClasses[$oldClassName]);
-		}
-
-		$this->registeredClasses[$newObjectConfiguration->getClassName()] = $objectName;
-		$this->objectConfigurations[$objectName] = clone $newObjectConfiguration;
-		$this->registeredObjects[$objectName] = strtolower($objectName);
+	public function shutdown() {
+		$this->objectContainer->shutdown();
 	}
 
 	/**
-	 * Sets the name of the class implementing the specified object.
-	 * This is a convenience method which loads the configuration of the given
-	 * object, sets the class name and saves the configuration again.
+	 * Returns a fresh or existing instance of the object specified by $objectName.
 	 *
-	 * @param string $objectName Name of the object to set the class name for
-	 * @param string $className Name of the class to set
-	 * @return void
+	 * Important:
+	 *
+	 * If possible, instances of Prototype objects should always be created with the
+	 * Object Factory's create() method and Singleton objects should rather be
+	 * injected by some type of Dependency Injection.
+	 *
+	 * @param string $objectName The name of the object to return an instance of
+	 * @return object The object instance
+	 * @deprecated since 1.0.0 alpha 8
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws \F3\FLOW3\Object\Exception\UnknownObjectException on trying to set the class name of an unknown object
-	 * @throws \F3\FLOW3\Object\Exception\UnknownClassException if the class does not exist
 	 */
-	public function setObjectClassName($objectName, $className) {
-		if (!$this->isObjectRegistered($objectName)) throw new \F3\FLOW3\Object\Exception\UnknownObjectException('Tried to set class name of non existent object "' . $objectName . '"', 1185524488);
-		if (!class_exists($className)) throw new \F3\FLOW3\Object\Exception\UnknownClassException('Tried to set the class name of object "' . $objectName . '" but a class "' . $className . '" does not exist.', 1185524499);
-		$objectConfiguration = $this->getObjectConfiguration($objectName);
-		$objectConfiguration->setClassName($className);
-		$this->setObjectConfiguration($objectConfiguration);
+	public function getObject($objectName) {
+		return call_user_func_array(array($this->objectContainer, 'get'), func_get_args());
 	}
 
 	/**
-	 * Traverses through all active packages and registers their classes as
-	 * objects at the object manager. Finally the object configuration
-	 * defined by the package is loaded and applied to the registered objects.
+	 * Returns TRUE if an object with the given name has already
+	 * been registered.
+	 *
+	 * @param  string $objectName Name of the object
+	 * @return boolean TRUE if the object has been registered, otherwise FALSE
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @deprecated since 1.0.0 alpha 8
+	 */
+	public function isObjectRegistered($objectName) {
+		return $this->isRegistered($objectName);
+	}
+
+	/**
+	 * Traverses through all active packages and builds a base object configuration
+	 * for all of their classes. Finally merges additional objects configurations
+	 * into the overall configuration and returns the result.
 	 *
 	 * @param array $packages The packages whose classes should be registered
-	 * @return void
+	 * @return array<F3\FLOW3\Object\Configuration\Configuration> Object configurations
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function registerAndConfigureAllPackageObjects(array $packages) {
-		$objectTypes = array();
+	protected function buildPackageObjectConfigurations(array $packages) {
+		$reflectionService = $this->get('F3\FLOW3\Reflection\ReflectionService');
+
+		$objectConfigurations = array();
 		$availableClassNames = array();
 
 		foreach ($packages as $packageKey => $package) {
 			foreach (array_keys($package->getClassFiles()) as $className) {
-				if (!$this->classNameIsBlacklisted($className)) {
+				if (substr($className, -9, 9) !== 'Exception' && substr($className, 0, 8) !== 'Abstract') {
 					$availableClassNames[] = $className;
 				}
 			}
 		}
 
 		foreach ($availableClassNames as $className) {
+			$objectName = $className;
+
 			if (substr($className, -9, 9) === 'Interface') {
-				$objectTypes[] = $className;
-				if (!isset($this->registeredObjects[$className])) {
-					$this->registerObjectType($className);
+				$defaultImplementationClassName = $reflectionService->getDefaultImplementationClassNameForInterface($className);
+				if ($defaultImplementationClassName === FALSE) {
+					continue;
 				}
-			} else {
-				if (!isset($this->registeredObjects[$className])) {
-					if (!$this->reflectionService->isClassAbstract($className)) {
-						$this->registerObject($className, $className);
-					}
-				}
+				$className = $defaultImplementationClassName;
 			}
+			$rawObjectConfiguration = array('className' => $className);
+
+			if ($reflectionService->isClassTaggedWith($className, 'scope')) {
+				$rawObjectConfiguration['scope'] = implode('', $reflectionService->getClassTagValues($className, 'scope'));
+			}
+			$objectConfigurations[$objectName] = \F3\FLOW3\Object\Configuration\ConfigurationBuilder::buildFromConfigurationArray($objectName, $rawObjectConfiguration, 'Automatic class registration');
 		}
 
 		foreach (array_keys($packages) as $packageKey) {
 			$rawObjectConfigurations = $this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_OBJECTS, $packageKey);
 			foreach ($rawObjectConfigurations as $objectName => $rawObjectConfiguration) {
 				$objectName = str_replace('_', '\\', $objectName);
-				if (!isset($this->registeredObjects[$objectName])) {
+				if (!isset($objectConfigurations[$objectName]) && substr($objectName, -9, 9) !== 'Interface') {
 					throw new \F3\FLOW3\Object\Exception\InvalidObjectConfigurationException('Tried to configure unknown object "' . $objectName . '" in package "' . $packageKey. '".', 1184926175);
 				}
 				if (is_array($rawObjectConfiguration)) {
-					$existingObjectConfiguration = (isset($this->objectConfigurations[$objectName])) ? $this->objectConfigurations[$objectName] : NULL;
-					$this->objectConfigurations[$objectName] = \F3\FLOW3\Object\Configuration\ConfigurationBuilder::buildFromConfigurationArray($objectName, $rawObjectConfiguration, 'Package ' . $packageKey, $existingObjectConfiguration);
+					$existingObjectConfiguration = (isset($objectConfigurations[$objectName])) ? $objectConfigurations[$objectName] : NULL;
+					$objectConfigurations[$objectName] = \F3\FLOW3\Object\Configuration\ConfigurationBuilder::buildFromConfigurationArray($objectName, $rawObjectConfiguration, 'Package ' . $packageKey, $existingObjectConfiguration);
 				}
 			}
 		}
-	}
-
-	/**
-	 * Checks if the given class name appears on in the object blacklist.
-	 *
-	 * @param string $className The class name to check. May be a regular expression.
-	 * @return boolean TRUE if the class has been blacklisted, otherwise FALSE
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	protected function classNameIsBlacklisted($className) {
-		foreach ($this->objectRegistrationClassBlacklist as $blacklistedClassName) {
-		if ($className === $blacklistedClassName || preg_match('/^' . str_replace('\\', '\\\\', $blacklistedClassName) . '$/', $className)) {
-				return TRUE;
-			}
-		}
-		return FALSE;
-	}
-
-	/**
-	 * Returns straight-value constructor arguments for an object by creating appropriate
-	 * \F3\FLOW3\Object\Configuration\ConfigurationArgument objects.
-	 *
-	 * @param array $argumentValues Array of argument values. Index must start at "0" for parameter "1" etc.
-	 * @return array An array of \F3\FLOW3\Object\Configuration\ConfigurationArgument which can be passed to the object builder
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @see create()
-	 */
-	protected function getOverridingArguments(array $argumentValues) {
-		$argumentObjects = array();
-		foreach ($argumentValues as $index => $value) {
-			$argumentObjects[$index + 1] = new \F3\FLOW3\Object\Configuration\ConfigurationArgument($index + 1, $value, \F3\FLOW3\Object\Configuration\ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE);
-		}
-		return $argumentObjects;
-	}
-
-	/**
-	 * Controls cloning of the object manager. Cloning should only be used within unit tests.
-	 *
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function __clone() {
-		$this->singletonObjectsRegistry = clone $this->singletonObjectsRegistry;
-
-		$this->objectFactory = clone $this->objectFactory;
-		$this->objectFactory->injectObjectManager($this);
+		return $objectConfigurations;
 	}
 }
 

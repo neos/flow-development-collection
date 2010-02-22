@@ -32,15 +32,7 @@ namespace F3\FLOW3\Object;
 interface ObjectManagerInterface {
 
 	/**
-	 * Shuts the object manager down and calls the shutdown methods of all objects
-	 * which are configured for it.
-	 *
-	 * @return void
-	 */
-	public function shutdown();
-
-	/**
-	 * Sets the Object Manager to a specific context. All operations related to objects
+	 * Sets the Object ObjectManager to a specific context. All operations related to objects
 	 * will be carried out based on the configuration for the current context.
 	 *
 	 * The context should be set as early as possible, preferably before any object has been
@@ -48,9 +40,9 @@ interface ObjectManagerInterface {
 	 *
 	 * By default the context is set to "default". Although the context can be freely chosen,
 	 * the following contexts are explicitly supported by FLOW3:
-	 * "default", "production", "development", "testing", "profiling"
+	 * "Production", "Development", "Testing", "Profiling", "Staging"
 	 *
-	 * @param string $context Name of the context
+	 * @param  string $context Name of the context
 	 * @return void
 	 */
 	public function setContext($context);
@@ -58,18 +50,125 @@ interface ObjectManagerInterface {
 	/**
 	 * Returns the name of the currently set context.
 	 *
-	 * @return string Name of the current context
+	 * @return  string Name of the current context
 	 * @api
 	 */
 	public function getContext();
 
+	/**
+	 * Returns a fresh or existing instance of the object specified by $objectName.
+	 *
+	 * Important:
+	 *
+	 * If possible, instances of Prototype objects should always be created with the
+	 * Object Manager's create() method and Singleton objects should rather be
+	 * injected by some type of Dependency Injection.
+	 *
+	 * @param string $objectName The name of the object to return an instance of
+	 * @return object The object instance
+	 * @api
+	 */
+	public function get($objectName);
 
 	/**
-	 * Returns a reference to the object factory used by the object manager.
+	 * Creates a fresh instance of the object specified by $objectName.
 	 *
-	 * @return \F3\FLOW3\Object\ObjectFactoryInterface
+	 * This factory method can only create objects of the scope prototype.
+	 * Singleton objects must be either injected by some type of Dependency Injection or
+	 * if that is not possible, be retrieved by the get() method of the
+	 * Object Manager
+	 *
+	 * You must use either Dependency Injection or this factory method for instantiation
+	 * of your objects if you need FLOW3's object management capabilities (including
+	 * AOP, Security and Persistence). It is absolutely okay and often advisable to
+	 * use the "new" operator for instantiation in your automated tests.
+	 *
+	 * @param string $objectName The name of the object to create
+	 * @return object The new object instance
+	 * @throws \InvalidArgumentException if the object name starts with a backslash
+	 * @throws \F3\FLOW3\Object\Exception\UnknownObjectException if an object with the given name does not exist
+	 * @throws \F3\FLOW3\Object\Exception\WrongScopeException if the specified object is not configured as Prototype
+	 * @since 1.0.0 alpha 8
+	 * @api
 	 */
-	public function getObjectFactory();
+	public function create($objectName);
+
+	/**
+	 * Creates an instance of the specified object without calling its constructor.
+	 * Subsequently reinjects the object's dependencies.
+	 *
+	 * This method is mainly used by the persistence and the session sub package.
+	 *
+	 * Note: The object must be of scope prototype or session which means that
+	 *       the object container won't store an instance of the recreated object.
+	 *
+	 * @param string $objectName Name of the object to create a skeleton for
+	 * @return object The recreated, uninitialized (ie. w/ uncalled constructor) object
+	 */
+	public function recreate($objectName);
+
+	/**
+	 * Returns TRUE if an object with the given name has already
+	 * been registered.
+	 *
+	 * @param  string $objectName Name of the object
+	 * @return boolean TRUE if the object has been registered, otherwise FALSE
+	 * @since 1.0.0 alpha 8
+	 * @api
+	 */
+	public function isRegistered($objectName);
+
+	/**
+	 * Returns the case sensitive object name of an object specified by a
+	 * case insensitive object name. If no object of that name exists,
+	 * FALSE is returned.
+	 *
+	 * In general, the case sensitive variant is used everywhere in FLOW3,
+	 * however there might be special situations in which the
+	 * case sensitive name is not available. This method helps you in these
+	 * rare cases.
+	 *
+	 * @param  string $caseInsensitiveObjectName The object name in lower-, upper- or mixed case
+	 * @return mixed Either the mixed case object name or FALSE if no object of that name was found.
+	 * @api
+	 */
+	public function getCaseSensitiveObjectName($caseInsensitiveObjectName);
+
+	/**
+	 * Returns the object name corresponding to a given class name.
+	 *
+	 * @param string $className The class name
+	 * @return string The object name corresponding to the given class name
+	 * @api
+	 */
+	public function getObjectNameByClassName($className);
+
+	/**
+	 * Returns the scope of the specified object.
+	 *
+	 * @param string $objectName The object name
+	 * @return integer One of the Configuration::SCOPE_ constants
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getScope($objectName);
+
+	/**
+	 * Returns an array of object names of all registered objects.
+	 * The mixed case object name are used as the array's keys while each
+	 * value is the lower cased variant of its respective key.
+	 *
+	 * @return array An array of object names - mixed case in the key and lower case in the value.
+	 * @api
+	 */
+	public function getRegisteredObjects();
+
+	/**
+	 * Shuts the object manager down and calls the shutdown methods of all objects
+	 * which are configured for it.
+	 *
+	 * @return void
+	 */
+	public function shutdown();
 
 	/**
 	 * Returns a fresh or existing instance of the object specified by $objectName.
@@ -82,119 +181,20 @@ interface ObjectManagerInterface {
 	 *
 	 * @param string $objectName The name of the object to return an instance of
 	 * @return object The object instance
-	 * @throws \F3\FLOW3\Object\Exception\UnknownObjectException if an object with the given name does not exist
-	 * @api
+	 * @deprecated since 1.0.0 alpha 8
 	 */
 	public function getObject($objectName);
-
-	/**
-	 * Registers the given class as an object
-	 *
-	 * @param string $objectName The unique identifier of the object
-	 * @param string $className The class name which provides the functionality for this object. Same as object name by default.
-	 * @return void
-	 * @api
-	 */
-	public function registerObject($objectName, $className = NULL);
-
-	/**
-	 * Unregisters the specified object
-	 *
-	 * @param string $objectName The explicit object name
-	 * @return void
-	 * @api
-	 */
-	public function unregisterObject($objectName);
 
 	/**
 	 * Returns TRUE if an object with the given name has already
 	 * been registered.
 	 *
-	 * @param string $objectName Name of the object
+	 * @param  string $objectName Name of the object
 	 * @return boolean TRUE if the object has been registered, otherwise FALSE
-	 * @api
+	 * @deprecated since 1.0.0 alpha 8
 	 */
 	public function isObjectRegistered($objectName);
 
-	/**
-	 * Registers an object so that its shutdown method is called when the object framework
-	 * is being shut down.
-	 *
-	 * Note that objects are registered automatically by the Object Manager and the
-	 * Object Factory and this method usually is not needed by user code.
-	 *
-	 * @param object $object The object to register
-	 * @param string $shutdownMethodName Name of the shutdown method to call
-	 * @return void
-	 * @api
-	 */
-	public function registerShutdownObject($object, $shutdownMethodName);
-
-	/**
-	 * Returns the case sensitive object name of an object specified by a
-	 * case insensitive object name. If no object of that name exists,
-	 * FALSE is returned.
-	 *
-	 * In general, the case sensitive variant is used everywhere in the TYPO3
-	 * framework, however there might be special situations in which the
-	 * case senstivie name is not available.
-	 *
-	 * @param string $caseInsensitiveObjectName The object name in lower-, upper- or mixed case
-	 * @return mixed Either the mixed case object name or FALSE if no object of that name was found.
-	 * @api
-	 */
-	public function getCaseSensitiveObjectName($caseInsensitiveObjectName);
-
-	/**
-	 * Returns an array of configuration objects for all registered objects.
-	 *
-	 * @return arrray Array of \F3\FLOW3\Object\Configuration\Configuration objects, indexed by object name
-	 */
-	public function getObjectConfigurations();
-
-	/**
-	 * Returns the configuration object of a certain object
-	 *
-	 * @param string $objectName Name of the object to fetch the configuration for
-	 * @return \F3\FLOW3\Object\Configuration\Configuration The object configuration
-	 */
-	public function getObjectConfiguration($objectName);
-
-	/**
-	 * Sets the object configurations for all objects found in the
-	 * $newObjectConfigurations array.
-	 *
-	 * NOTE: Only objects which have been registered previously can be
-	 *       configured. Trying to configure an unregistered object will
-	 *       result in an exception thrown.
-	 *
-	 * @param array $newObjectConfigurations Array of \F3\FLOW3\Object\Configuration\Configuration instances
-	 * @return void
-	 */
-	public function setObjectConfigurations(array $newObjectConfigurations);
-
-	/**
-	 * Sets the object configuration for a specific object
-	 *
-	 * NOTE: Only objects which have been registered previously can be
-	 *       configured. Trying to configure an unregistered object will
-	 *       result in an exception thrown.
-	 *
-	 * @param \F3\FLOW3\Object\Configuration\Configuration $newObjectConfiguration The new object configuration
-	 * @return void
-	 */
-	public function setObjectConfiguration(\F3\FLOW3\Object\Configuration\Configuration $newObjectConfiguration);
-
-	/**
-	 * Sets the name of the class implementing the specified object.
-	 * This is a convenience method which loads the configuration of the given
-	 * object, sets the class name and saves the configuration again.
-	 *
-	 * @param string $objectName Name of the object to set the class name for
-	 * @param string $className Name of the class to set
-	 * @return void
-	 */
-	public function setObjectClassName($objectName, $className);
 }
 
 ?>

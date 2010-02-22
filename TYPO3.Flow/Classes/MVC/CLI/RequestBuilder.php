@@ -36,11 +36,6 @@ class RequestBuilder {
 	protected $objectManager;
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectFactoryInterface
-	 */
-	protected $objectFactory;
-
-	/**
 	 * @var \F3\FLOW3\Utility\Environment
 	 */
 	protected $environment;
@@ -49,14 +44,12 @@ class RequestBuilder {
 	 * Constructs the CLI Request Builder
 	 *
 	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager A reference to the object manager
-	 * @param \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory A reference to the object factory
 	 * @param \F3\FLOW3\Utility\Environment $environment The environment
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(\F3\FLOW3\Object\ObjectManagerInterface $objectManager, \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory, \F3\FLOW3\Utility\Environment $environment) {
+	public function __construct(\F3\FLOW3\Object\ObjectManagerInterface $objectManager, \F3\FLOW3\Utility\Environment $environment) {
 		$this->objectManager = $objectManager;
-		$this->objectFactory = $objectFactory;
 		$this->environment = $environment;
 	}
 
@@ -69,7 +62,7 @@ class RequestBuilder {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function build() {
-		$request = $this->objectFactory->create('F3\FLOW3\MVC\CLI\Request');
+		$request = $this->objectManager->create('F3\FLOW3\MVC\CLI\Request');
 		if ($this->environment->getCommandLineArgumentCount() < 2) {
 			$request->setControllerPackageKey('FLOW3');
 			$request->setControllerSubpackageKey('MVC');

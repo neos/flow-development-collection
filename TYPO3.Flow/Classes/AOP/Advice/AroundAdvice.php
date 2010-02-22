@@ -44,7 +44,7 @@ class AroundAdvice extends \F3\FLOW3\AOP\Advice\AbstractAdvice implements \F3\FL
 			return $joinPoint->getAdviceChain()->proceed($joinPoint);
 		}
 
-		$adviceObject = $this->objectManager->getObject($this->aspectObjectName);
+		$adviceObject = $this->objectManager->get($this->aspectObjectName);
 		$methodName = $this->adviceMethodName;
 		return $adviceObject->$methodName($joinPoint);
 	}

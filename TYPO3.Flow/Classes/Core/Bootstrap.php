@@ -23,11 +23,9 @@ namespace F3\FLOW3\Core;
  *                                                                        */
 
 	// Those are needed before the autoloader is active
-require(__DIR__ . '/../Utility/Files.php');
-require(__DIR__ . '/../Package/PackageInterface.php');
-require(__DIR__ . '/../Package/Package.php');
-
-BootStrap::defineConstants();
+require_once(__DIR__ . '/../Utility/Files.php');
+require_once(__DIR__ . '/../Package/PackageInterface.php');
+require_once(__DIR__ . '/../Package/Package.php');
 
 /**
  * General purpose central core hyper FLOW3 bootstrap class
@@ -72,11 +70,6 @@ final class Bootstrap {
 	protected $objectManager;
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectFactoryInterface
-	 */
-	protected $objectFactory;
-
-	/**
 	 * @var \F3\FLOW3\Package\PackageManagerInterface
 	 */
 	protected $packageManager;
@@ -114,7 +107,7 @@ final class Bootstrap {
 
 	/**
 	 * The settings for the FLOW3 package
-	 * @var \F3\FLOW3\Configuration\Container
+	 * @var array
 	 */
 	protected $settings;
 
@@ -125,8 +118,10 @@ final class Bootstrap {
 	 * @return void
 	 */
 	public static function defineConstants() {
+		if (!defined('FLOW3_PATH_FLOW3')) {
+			define('FLOW3_PATH_FLOW3', str_replace('//', '/', str_replace('\\', '/', (realpath(__DIR__ . '/../../') . '/'))));
+		}
 		define('FLOW3_SAPITYPE', (PHP_SAPI === 'cli' ? 'CLI' : 'Web'));
-		define('FLOW3_PATH_FLOW3', str_replace('//', '/', str_replace('\\', '/', (realpath(__DIR__ . '/../../') . '/'))));
 
 		if (isset($_SERVER['FLOW3_ROOTPATH'])) {
 			$rootPath = str_replace('//', '/', str_replace('\\', '/', (realpath($_SERVER['FLOW3_ROOTPATH'])))) . '/';
@@ -201,19 +196,13 @@ final class Bootstrap {
 
 		$this->initializePackages();
 
-		if ($this->packageManager->isPackageActive('FirePHP')) {
-			$this->objectManager->registerObject('F3\FirePHP\Core');
-			$this->objectManager->getObject('F3\FirePHP\Core');
-		}
-
 		$this->initializeSignalsSlots();
 		$this->initializeCache();
 		$this->initializeFileMonitor();
 		$this->initializeReflection();
-		$this->initializeObjects();
-		$this->initializeAOP();
+		$this->initializeObjectContainer();
 		$this->initializePersistence();
-		$this->initializeSession();
+		$this->initializeObjectContainerSession();
 		$this->initializeResources();
 		$this->initializeLocale();
 	}
@@ -226,17 +215,9 @@ final class Bootstrap {
 	 * @see initialize()
 	 */
 	public function initializeClassLoader() {
-		if (!class_exists('F3\FLOW3\Resource\ClassLoader', FALSE)) {
-			require(FLOW3_PATH_FLOW3 . 'Classes/Resource/ClassLoader.php');
-		}
-
-		$initialPackages = array(
-			'FLOW3' => $this->FLOW3Package,
-			'YAML' => new \F3\FLOW3\Package\Package('YAML', FLOW3_PATH_FLOW3 . '../YAML/')
-		);
-
+		require_once(FLOW3_PATH_FLOW3 . 'Classes/Resource/ClassLoader.php');
 		$this->classLoader = new \F3\FLOW3\Resource\ClassLoader();
-		$this->classLoader->setPackages($initialPackages);
+		$this->classLoader->setPackages(array('FLOW3' => $this->FLOW3Package));
 		spl_autoload_register(array($this->classLoader, 'loadClass'));
 	}
 
@@ -276,32 +257,12 @@ final class Bootstrap {
 	 * @see initialize()
 	 */
 	public function initializeObjectManager() {
-		$this->objectFactory = new \F3\FLOW3\Object\ObjectFactory();
-
-		$objectBuilder = new \F3\FLOW3\Object\ObjectBuilder;
-		$objectBuilder->injectConfigurationManager($this->configurationManager);
-
-		$singletonObjectsRegistry = new \F3\FLOW3\Object\TransientRegistry;
-
-		$preliminaryReflectionService = new \F3\FLOW3\Reflection\ReflectionService();
-
 		$this->objectManager = new \F3\FLOW3\Object\ObjectManager();
-		$this->objectManager->injectSingletonObjectsRegistry($singletonObjectsRegistry);
-		$this->objectManager->injectObjectBuilder($objectBuilder);
-		$this->objectManager->injectObjectFactory($this->objectFactory);
-		$this->objectManager->injectReflectionService($preliminaryReflectionService);
+		$this->objectManager->injectClassLoader($this->classLoader);
 		$this->objectManager->injectConfigurationManager($this->configurationManager);
 		$this->objectManager->setContext($this->context);
 
-		$this->objectManager->initializeManager();
-
-			// Remove the preliminary reflection service and rebuild it, this time with the proper object configuration:
-		$singletonObjectsRegistry->removeObject('F3\FLOW3\Reflection\ReflectionService');
-		$this->objectManager->injectReflectionService($this->objectManager->getObject('F3\FLOW3\Reflection\ReflectionService'));
-
-		$singletonObjectsRegistry->putObject('F3\FLOW3\Resource\ClassLoader', $this->classLoader);
-		$singletonObjectsRegistry->putObject('F3\FLOW3\Configuration\ConfigurationManager', $this->configurationManager);
-		$this->configurationManager->injectEnvironment($this->objectManager->getObject('F3\FLOW3\Utility\Environment'));
+		$this->objectManager->initialize();
 	}
 
 	/**
@@ -311,7 +272,7 @@ final class Bootstrap {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initializeSystemLogger() {
-		$this->systemLogger = $this->objectManager->getObject('F3\FLOW3\Log\SystemLoggerInterface');
+		$this->systemLogger = $this->objectManager->get('F3\FLOW3\Log\SystemLoggerInterface');
 		$this->systemLogger->log(sprintf('--- Launching FLOW3 in %s context. ---', $this->context), LOG_INFO);
 		$this->exceptionHandler->injectSystemLogger($this->systemLogger);
 	}
@@ -324,7 +285,7 @@ final class Bootstrap {
 	 * @see initialize()
 	 */
 	public function initializeLockManager() {
-		$lockManager = $this->objectManager->getObject('F3\FLOW3\Core\LockManager');
+		$lockManager = $this->objectManager->get('F3\FLOW3\Core\LockManager');
 		$this->siteLocked = $lockManager->isSiteLocked();
 		$this->exceptionHandler->injectLockManager($lockManager);
 	}
@@ -338,7 +299,7 @@ final class Bootstrap {
 	 * @see initialize()
 	 */
 	public function initializePackages() {
-		$this->packageManager = $this->objectManager->getObject('F3\FLOW3\Package\PackageManagerInterface');
+		$this->packageManager = $this->objectManager->get('F3\FLOW3\Package\PackageManagerInterface');
 		$this->packageManager->initialize();
 		$activePackages = $this->packageManager->getActivePackages();
 		$this->classLoader->setPackages($activePackages);
@@ -348,7 +309,6 @@ final class Bootstrap {
 			$packageConfiguration = $this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_PACKAGE, $packageKey);
 			$this->evaluatePackageConfiguration($package, $packageConfiguration);
 		}
-
 	}
 
 	/**
@@ -359,7 +319,7 @@ final class Bootstrap {
 	 * @see intialize()
 	 */
 	public function initializeSignalsSlots() {
-		$this->signalSlotDispatcher = $this->objectManager->getObject('F3\FLOW3\SignalSlot\Dispatcher');
+		$this->signalSlotDispatcher = $this->objectManager->get('F3\FLOW3\SignalSlot\Dispatcher');
 
 		$signalsSlotsConfiguration = $this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SIGNALSSLOTS);
 		foreach ($signalsSlotsConfiguration as $signalClassName => $signalSubConfiguration) {
@@ -389,11 +349,11 @@ final class Bootstrap {
 	 * @see initialize()
 	 */
 	public function initializeCache() {
-		$this->cacheManager = $this->objectManager->getObject('F3\FLOW3\Cache\CacheManager');
+		$this->cacheManager = $this->objectManager->get('F3\FLOW3\Cache\CacheManager');
 		$this->cacheManager->setCacheConfigurations($this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_CACHES));
 		$this->cacheManager->initialize();
 
-		$cacheFactory = $this->objectManager->getObject('F3\FLOW3\Cache\CacheFactory');
+		$cacheFactory = $this->objectManager->get('F3\FLOW3\Cache\CacheFactory');
 		$cacheFactory->setCacheManager($this->cacheManager);
 
 		$coreCache= $this->cacheManager->getCache('FLOW3_Core');
@@ -428,7 +388,7 @@ final class Bootstrap {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function monitorClassFiles() {
-		$monitor = $this->objectManager->getObject('F3\FLOW3\Monitor\FileMonitor', 'FLOW3_ClassFiles');
+		$monitor = $this->objectManager->create('F3\FLOW3\Monitor\FileMonitor', 'FLOW3_ClassFiles');
 
 		foreach ($this->packageManager->getActivePackages() as $package) {
 			$classesPath = $package->getClassesPath();
@@ -467,7 +427,7 @@ final class Bootstrap {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function monitorRoutesConfigurationFiles() {
-		$monitor = $this->objectManager->getObject('F3\FLOW3\Monitor\FileMonitor', 'FLOW3_RoutesConfigurationFiles');
+		$monitor = $this->objectManager->create('F3\FLOW3\Monitor\FileMonitor', 'FLOW3_RoutesConfigurationFiles');
 		$monitor->monitorFile(FLOW3_PATH_CONFIGURATION . 'Routes.yaml');
 		$monitor->monitorFile(FLOW3_PATH_CONFIGURATION . $this->context . '/Routes.yaml');
 
@@ -495,7 +455,7 @@ final class Bootstrap {
 	 * @see initialize()
 	 */
 	public function initializeReflection() {
-		$this->reflectionService = $this->objectManager->getObject('F3\FLOW3\Reflection\ReflectionService');
+		$this->reflectionService = $this->objectManager->get('F3\FLOW3\Reflection\ReflectionService');
 		$this->reflectionService->setStatusCache($this->cacheManager->getCache('FLOW3_ReflectionStatus'));
 		$this->reflectionService->setDataCache($this->cacheManager->getCache('FLOW3_ReflectionData'));
 		$this->reflectionService->injectSystemLogger($this->systemLogger);
@@ -510,31 +470,14 @@ final class Bootstrap {
 	}
 
 	/**
-	 * Initializes the object configuration
+	 * Initializes the Object Container
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @see initialize()
 	 */
-	public function initializeObjects() {
-		$this->objectManager->injectObjectConfigurationsCache($this->cacheManager->getCache('FLOW3_Object_Configurations'));
-		$this->objectManager->initializeObjects($this->packageManager->getActivePackages());
-	}
-
-	/**
-	 * Initializes the AOP framework
-	 *
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @see initialize()
-	 */
-	public function initializeAOP() {
-		if ($this->settings['aop']['enable'] === TRUE) {
-			$objectConfigurations = $this->objectManager->getObjectConfigurations();
-			$AOPFramework = $this->objectManager->getObject('F3\FLOW3\AOP\Framework', $this->objectManager, $this->objectFactory);
-			$AOPFramework->initialize($objectConfigurations);
-			$this->objectManager->setObjectConfigurations($objectConfigurations);
-		}
+	public function initializeObjectContainer() {
+		$this->objectManager->initializeObjectContainer($this->packageManager->getActivePackages());
 	}
 
 	/**
@@ -545,23 +488,7 @@ final class Bootstrap {
 	 * @see intialize()
 	 */
 	public function initializeLocale() {
-		$this->objectManager->getObject('F3\FLOW3\Locale\Service', $this->settings)->initialize();
-	}
-
-	/**
-	 * Initializes the session
-	 *
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function initializeSession() {
-		$session = $this->objectManager->getObject('F3\FLOW3\Session\SessionInterface');
-		$session->start();
-
-		$sessionObjectsRegistry = $this->objectManager->getObject('F3\FLOW3\Object\SessionRegistry');
-		$sessionObjectsRegistry->initialize();
-		$this->objectManager->injectSessionObjectsRegistry($sessionObjectsRegistry);
+#		$this->objectManager->get('F3\FLOW3\Locale\Service')->initialize();
 	}
 
 	/**
@@ -572,11 +499,19 @@ final class Bootstrap {
 	 * @see initialize()
 	 */
 	public function initializePersistence() {
-		if ($this->settings['persistence']['enable'] === TRUE) {
-			$persistenceManager = $this->objectManager->getObject('F3\FLOW3\Persistence\PersistenceManagerInterface');
-			$persistenceManager->setSettings($this->settings['persistence']);
-			$persistenceManager->initialize();
-		}
+		$persistenceManager = $this->objectManager->get('F3\FLOW3\Persistence\PersistenceManagerInterface');
+		$persistenceManager->initialize();
+	}
+
+	/**
+	 * Initializes the Object Container's session scope
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @see initialize()
+	 */
+	public function initializeObjectContainerSession() {
+		$this->objectManager->initializeObjectContainerSession();
 	}
 
 	/**
@@ -588,7 +523,7 @@ final class Bootstrap {
 	 * @see initialize()
 	 */
 	public function initializeResources() {
-		$resourceManager = $this->objectManager->getObject('F3\FLOW3\Resource\ResourceManager', $this->settings['resource']);
+		$resourceManager = $this->objectManager->get('F3\FLOW3\Resource\ResourceManager');
 		$resourceManager->initialize();
 		if (FLOW3_SAPITYPE === 'Web') {
 			$resourceManager->publishPublicPackageResources($this->packageManager->getActivePackages());
@@ -605,23 +540,20 @@ final class Bootstrap {
 	 */
 	public function run() {
 		if (!$this->siteLocked) {
-			$requestHandlerResolver = $this->objectManager->getObject('F3\FLOW3\MVC\RequestHandlerResolver');
+			$requestHandlerResolver = $this->objectManager->get('F3\FLOW3\MVC\RequestHandlerResolver');
 			$requestHandler = $requestHandlerResolver->resolveRequestHandler();
 			$requestHandler->handleRequest();
 
-			if ($this->settings['persistence']['enable'] === TRUE) {
-				$this->objectManager->getObject('F3\FLOW3\Persistence\PersistenceManagerInterface')->persistAll();
-			}
+			$this->objectManager->get('F3\FLOW3\Persistence\PersistenceManagerInterface')->persistAll();
 
 			$this->emitFinishedNormalRun();
 			$this->systemLogger->log('Shutting down ...', LOG_INFO);
 
 			$this->configurationManager->shutdown();
 			$this->objectManager->shutdown();
-			$this->reflectionService->shutdown();
 
-			$this->objectManager->getObject('F3\FLOW3\Object\SessionRegistry')->writeDataToSession();
-			$this->objectManager->getObject('F3\FLOW3\Session\SessionInterface')->close();
+			$this->objectManager->get('F3\FLOW3\Object\SessionRegistry')->writeDataToSession();
+			$this->objectManager->get('F3\FLOW3\Session\SessionInterface')->close();
 		} else {
 			header('HTTP/1.1 503 Service Temporarily Unavailable');
 			readfile('package://FLOW3/Private/Core/LockHoldingStackPage.html');
@@ -690,7 +622,7 @@ final class Bootstrap {
 	protected function evaluatePackageConfiguration(\F3\FLOW3\Package\PackageInterface $package, array $packageConfiguration) {
 		if (isset($packageConfiguration['classLoader'])) {
 			if (isset($packageConfiguration['classLoader']['specialClassNameAndPaths'])) {
-				$classLoader = $this->objectManager->getObject('F3\FLOW3\Resource\ClassLoader');
+				$classLoader = $this->objectManager->get('F3\FLOW3\Resource\ClassLoader');
 				foreach ($packageConfiguration['classLoader']['specialClassNameAndPaths'] as $className => $classFilePathAndName) {
 					$classFilePathAndName = str_replace('%PATH_PACKAGE%', $package->getPackagePath(), $classFilePathAndName);
 					$classFilePathAndName = str_replace('%PATH_PACKAGE_CLASSES%', $package->getClassesPath(), $classFilePathAndName);

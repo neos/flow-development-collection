@@ -1451,7 +1451,7 @@ class Foo {
         <title>Sample configuration for a Custom Factory</title>
 
         <programlisting language="yaml">F3\FLOW3\Cache\CacheInterface:
-  factoryClassName: F3\FLOW3\Cache\CacheFactory
+  factoryObjectName: F3\FLOW3\Cache\CacheFactory
   factoryMethodName: create</programlisting>
       </example>
 
@@ -1467,7 +1467,7 @@ class Foo {
         arguments</title>
 
         <programlisting language="yaml">F3\FLOW3\Cache\CacheInterface:
-  factoryClassName: F3\FLOW3\Cache\CacheFactory
+  factoryObjectName: F3\FLOW3\Cache\CacheFactory
   arguments:
     2: value: F3\FLOW3\Cache\VariableCache
     3: value: F3\FLOW3\Cache\Backend\File

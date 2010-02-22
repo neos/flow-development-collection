@@ -32,9 +32,9 @@ namespace F3\FLOW3\Resource;
 class ResourceManager {
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectFactoryInterface
+	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 */
-	protected $objectFactory;
+	protected $objectManager;
 
 	/**
 	 * @var \F3\FLOW3\Reflection\ReflectionService
@@ -69,12 +69,12 @@ class ResourceManager {
 	/**
 	 * Injects the cache manager
 	 *
-	 * @param \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory
+	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectObjectFactory(\F3\FLOW3\Object\ObjectFactoryInterface $objectFactory) {
-		$this->objectFactory = $objectFactory;
+	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
+		$this->objectManager = $objectManager;
 	}
 
 	/**
@@ -140,7 +140,7 @@ class ResourceManager {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function initialize() {
-		\F3\FLOW3\Resource\Streams\StreamWrapperAdapter::setObjectFactory($this->objectFactory);
+		\F3\FLOW3\Resource\Streams\StreamWrapperAdapter::injectObjectManager($this->objectManager);
 		$streamWrapperClassNames = $this->reflectionService->getAllImplementationClassNamesForInterface('F3\FLOW3\Resource\Streams\StreamWrapperInterface');
 		foreach ($streamWrapperClassNames as $streamWrapperClassName) {
 			$scheme = $streamWrapperClassName::getScheme();
@@ -183,7 +183,7 @@ class ResourceManager {
 			unlink($temporaryTargetPathAndFilename);
 			return FALSE;
 		}
-		return $this->objectFactory->create('F3\FLOW3\Resource\Resource', $hash, $pathInfo['extension']);
+		return $this->objectManager->create('F3\FLOW3\Resource\Resource', $hash, $pathInfo['extension']);
 	}
 
 	/**
@@ -207,7 +207,7 @@ class ResourceManager {
 		if (move_uploaded_file($uploadInfo['tmp_name'], $finalTargetPathAndFilename) === FALSE) {
 			return FALSE;
 		}
-		return $this->objectFactory->create('F3\FLOW3\Resource\Resource', $hash, $pathInfo['extension']);
+		return $this->objectManager->create('F3\FLOW3\Resource\Resource', $hash, $pathInfo['extension']);
 	}
 
 	/**

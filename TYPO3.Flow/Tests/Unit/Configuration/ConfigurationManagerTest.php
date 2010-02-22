@@ -22,8 +22,6 @@ namespace F3\FLOW3\Configuration;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-require_once('vfs/vfsStream.php');
-
 /**
  * Testcase for the configuration manager
  *
@@ -37,7 +35,7 @@ class ConfigurationManagerTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function constructLoadsPotentiallyExistingCachedConfiguration() {
-		$configurationManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Configuration\ConfigurationManager'), array('loadConfigurationCache'), array(), '', FALSE);
+		$configurationManager = $this->getAccessibleMock('F3\FLOW3\Configuration\ConfigurationManager', array('loadConfigurationCache'), array(), '', FALSE);
 		$configurationManager->expects($this->once())->method('loadConfigurationCache');
 
 		$configurationManager->__construct('Testing');
@@ -51,7 +49,7 @@ class ConfigurationManagerTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getSettingsReturnsSettingsOfTheGivenPackage() {
-		$configurationManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Configuration\ConfigurationManager'), array('getConfiguration'), array(), '', FALSE);
+		$configurationManager = $this->getAccessibleMock('F3\FLOW3\Configuration\ConfigurationManager', array('getConfiguration'), array(), '', FALSE);
 		$configurationManager->expects($this->once())->method('getConfiguration')->with(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'SomePackage')
 			->will($this->returnValue(array('foo' => 'bar')));
 
@@ -68,7 +66,7 @@ class ConfigurationManagerTest extends \F3\Testing\BaseTestCase {
 			\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS => array(),
 		);
 
-		$configurationManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Configuration\ConfigurationManager'), array('loadConfiguration'), array(), '', FALSE);
+		$configurationManager = $this->getAccessibleMock('F3\FLOW3\Configuration\ConfigurationManager', array('loadConfiguration'), array(), '', FALSE);
 		$configurationManager->_set('configurations', $initialConfigurations);
 
 		$configurationManager->expects($this->once())->method('loadConfiguration')->with(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS);
@@ -87,7 +85,7 @@ class ConfigurationManagerTest extends \F3\Testing\BaseTestCase {
 			)
 		);
 
-		$configurationManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Configuration\ConfigurationManager'), array('dummy'), array(), '', FALSE);
+		$configurationManager = $this->getAccessibleMock('F3\FLOW3\Configuration\ConfigurationManager', array('dummy'), array(), '', FALSE);
 		$configurationManager->_set('configurations', $configurations);
 
 		$actualConfiguration = $configurationManager->getConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_PACKAGE, 'SomePackage');
@@ -101,7 +99,7 @@ class ConfigurationManagerTest extends \F3\Testing\BaseTestCase {
 	public function getConfigurationForTypePackageOrObjectLoadsConfigurationIfNecessary() {
 		$packages = array('SomePackage' => $this->getMock('F3\FLOW3\Package\Package', array(), array(), '', FALSE));
 
-		$configurationManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Configuration\ConfigurationManager'), array('loadConfiguration'), array(), '', FALSE);
+		$configurationManager = $this->getAccessibleMock('F3\FLOW3\Configuration\ConfigurationManager', array('loadConfiguration'), array(), '', FALSE);
 		$configurationManager->_set('configurations', array(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_PACKAGE => array()));
 		$configurationManager->setPackages($packages);
 		$configurationManager->expects($this->once())->method('loadConfiguration')->with(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_PACKAGE, $packages);
@@ -118,7 +116,7 @@ class ConfigurationManagerTest extends \F3\Testing\BaseTestCase {
 			\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SIGNALSSLOTS => array('foo' => 'bar'),
 		);
 
-		$configurationManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Configuration\ConfigurationManager'), array('loadConfiguration'), array(), '', FALSE);
+		$configurationManager = $this->getAccessibleMock('F3\FLOW3\Configuration\ConfigurationManager', array('loadConfiguration'), array(), '', FALSE);
 		$configurationManager->_set('configurations', $initialConfigurations);
 
 		$configurationManager->expects($this->at(0))->method('loadConfiguration')->with(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_ROUTES);
@@ -148,7 +146,7 @@ class ConfigurationManagerTest extends \F3\Testing\BaseTestCase {
 			\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_PACKAGESTATES => array('packagestates')
 		);
 
-		$configurationManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Configuration\ConfigurationManager'), array('loadConfiguration'), array(), '', FALSE);
+		$configurationManager = $this->getAccessibleMock('F3\FLOW3\Configuration\ConfigurationManager', array('loadConfiguration'), array(), '', FALSE);
 		$configurationManager->_set('configurations', $expectedConfigurations);
 		$configurationManager->expects($this->never())->method('loadConfiguration');
 
@@ -165,7 +163,7 @@ class ConfigurationManagerTest extends \F3\Testing\BaseTestCase {
 	public function setConfigurationAllowsForUpdatingPackageStates() {
 		$expectedPackageStates = array('Foo' => array('active' => TRUE));
 
-		$configurationManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Configuration\ConfigurationManager'), array('dummy'), array(), '', FALSE);
+		$configurationManager = $this->getAccessibleMock('F3\FLOW3\Configuration\ConfigurationManager', array('dummy'), array(), '', FALSE);
 		$configurationManager->setConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_PACKAGESTATES, $expectedPackageStates);
 
 		$actualConfiguration = $configurationManager->_get('configurations');
@@ -189,7 +187,7 @@ class ConfigurationManagerTest extends \F3\Testing\BaseTestCase {
 			\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SIGNALSSLOTS
 		);
 
-		$configurationManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Configuration\ConfigurationManager'), array('dummy'), array(), '', FALSE);
+		$configurationManager = $this->getAccessibleMock('F3\FLOW3\Configuration\ConfigurationManager', array('dummy'), array(), '', FALSE);
 		foreach ($unsupportedConfigurationTypes as $configurationType) {
 			try {
 				$configurationManager->setConfiguration($configurationType, array());
@@ -209,7 +207,7 @@ class ConfigurationManagerTest extends \F3\Testing\BaseTestCase {
 		$mockConfigurationSource = $this->getMock('F3\FLOW3\Configuration\Source\SourceInterface');
 		$mockConfigurationSource->expects($this->once())->method('save')->with(FLOW3_PATH_CONFIGURATION . \F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_PACKAGESTATES, $configurations[\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_PACKAGESTATES]);
 
-		$configurationManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Configuration\ConfigurationManager'), array('dummy'), array(), '', FALSE);
+		$configurationManager = $this->getAccessibleMock('F3\FLOW3\Configuration\ConfigurationManager', array('dummy'), array(), '', FALSE);
 		$configurationManager->_set('configurations', $configurations);
 		$configurationManager->injectConfigurationSource($mockConfigurationSource);
 
@@ -234,7 +232,7 @@ class ConfigurationManagerTest extends \F3\Testing\BaseTestCase {
 
 		$mockConfigurationSource = $this->getMock('F3\FLOW3\Configuration\Source\SourceInterface');
 
-		$configurationManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Configuration\ConfigurationManager'), array('dummy'), array(), '', FALSE);
+		$configurationManager = $this->getAccessibleMock('F3\FLOW3\Configuration\ConfigurationManager', array('dummy'), array(), '', FALSE);
 		$configurationManager->injectConfigurationSource($mockConfigurationSource);
 
 		foreach ($unsupportedConfigurationTypes as $configurationType) {
@@ -253,7 +251,7 @@ class ConfigurationManagerTest extends \F3\Testing\BaseTestCase {
 	public function shutdownSavesConfigurationCacheIfNeccessary() {
 		$configurations[\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS]['FLOW3']['configuration']['compileConfigurationFiles'] = TRUE;
 
-		$configurationManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Configuration\ConfigurationManager'), array('saveConfigurationCache'), array(), '', FALSE);
+		$configurationManager = $this->getAccessibleMock('F3\FLOW3\Configuration\ConfigurationManager', array('saveConfigurationCache'), array(), '', FALSE);
 		$configurationManager->expects($this->once())->method('saveConfigurationCache');
 		$configurationManager->_set('configurations', $configurations);
 		$configurationManager->_set('cacheNeedsUpdate', TRUE);
@@ -266,7 +264,7 @@ class ConfigurationManagerTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function shutdownOmmitsSavingTheConfigurationCacheIfNotNeccessary() {
-		$configurationManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Configuration\ConfigurationManager'), array('saveConfigurationCache'), array(), '', FALSE);
+		$configurationManager = $this->getAccessibleMock('F3\FLOW3\Configuration\ConfigurationManager', array('saveConfigurationCache'), array(), '', FALSE);
 		$configurationManager->expects($this->never())->method('saveConfigurationCache');
 
 		$configurations[\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS]['FLOW3']['configuration']['compileConfigurationFiles'] = FALSE;
@@ -299,7 +297,7 @@ class ConfigurationManagerTest extends \F3\Testing\BaseTestCase {
 			)
 		);
 
-		$configurationManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Configuration\ConfigurationManager'), array('postProcessConfiguration'), array(), '', FALSE);
+		$configurationManager = $this->getAccessibleMock('F3\FLOW3\Configuration\ConfigurationManager', array('postProcessConfiguration'), array(), '', FALSE);
 		$configurationManager->expects($this->exactly(2))->method('postProcessConfiguration');
 
 		$configurationManager->_set('configurationSource', $mockConfigurationSource);
@@ -347,7 +345,7 @@ class ConfigurationManagerTest extends \F3\Testing\BaseTestCase {
 			'PackageC' => $mockPackageC
 		);
 
-		$configurationManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Configuration\ConfigurationManager'), array('postProcessConfiguration'), array(), '', FALSE);
+		$configurationManager = $this->getAccessibleMock('F3\FLOW3\Configuration\ConfigurationManager', array('postProcessConfiguration'), array(), '', FALSE);
 		$configurationManager->_set('configurationSource', $mockConfigurationSource);
 		$configurationManager->_set('context', 'Testing');
 
@@ -435,7 +433,7 @@ EOD;
 		$includeCachedConfigurationsPathAndFilename = \vfsStream::url('FLOW3/IncludeCachedConfigurations.php');
 		file_put_contents($includeCachedConfigurationsPathAndFilename, $configurationsCode);
 
-		$configurationManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Configuration\ConfigurationManager'), array('postProcessConfiguration'), array(), '', FALSE);
+		$configurationManager = $this->getAccessibleMock('F3\FLOW3\Configuration\ConfigurationManager', array('postProcessConfiguration'), array(), '', FALSE);
 
 		$configurationManager->_set('includeCachedConfigurationsPathAndFilename', 'notfound.php');
 		$configurationManager->_set('configurations', array('foo' => 'untouched'));
@@ -471,7 +469,7 @@ EOD;
 		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array('getPathToTemporaryDirectory'), array(), '', FALSE);
 		$mockEnvironment->expects($this->once())->method('getPathToTemporaryDirectory')->will($this->returnValue($temporaryDirectoryPath));
 
-		$configurationManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Configuration\ConfigurationManager'), array('postProcessConfiguration'), array(), '', FALSE);
+		$configurationManager = $this->getAccessibleMock('F3\FLOW3\Configuration\ConfigurationManager', array('postProcessConfiguration'), array(), '', FALSE);
 		$configurationManager->injectEnvironment($mockEnvironment);
 		$configurationManager->_set('includeCachedConfigurationsPathAndFilename', $includeCachedConfigurationsPathAndFilename);
 		$configurationManager->_set('context', 'FooContext');
@@ -511,7 +509,7 @@ EOD;
 			)
 		);
 
-		$configurationManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Configuration\ConfigurationManager'), array('dummy'), array(), '', FALSE);
+		$configurationManager = $this->getAccessibleMock('F3\FLOW3\Configuration\ConfigurationManager', array('dummy'), array(), '', FALSE);
 		$configurationManager->_callRef('postProcessConfiguration', $settings);
 
 		$this->assertSame(PHP_VERSION, $settings['baz']);

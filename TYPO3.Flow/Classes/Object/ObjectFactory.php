@@ -40,16 +40,6 @@ class ObjectFactory implements \F3\FLOW3\Object\ObjectFactoryInterface {
 	protected $objectManager;
 
 	/**
-	 * @var \F3\FLOW3\Object\RegistryInterface Holds an instance of the Object Object Cache
-	 */
-	protected $singletonObjectsRegistry;
-
-	/**
-	 * @var \F3\FLOW3\Object\ObjectBuilder Holds an instance of the Object Object Builder
-	 */
-	protected $objectBuilder;
-
-	/**
 	 * Injects the object manager
 	 *
 	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
@@ -61,22 +51,11 @@ class ObjectFactory implements \F3\FLOW3\Object\ObjectFactoryInterface {
 	}
 
 	/**
-	 * Injects the object builder
-	 *
-	 * @param \F3\FLOW3\Object\ObjectBuilder $objectBuilder
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function injectObjectBuilder(\F3\FLOW3\Object\ObjectBuilder $objectBuilder) {
-		$this->objectBuilder = $objectBuilder;
-	}
-
-	/**
 	 * Creates a fresh instance of the object specified by $objectName.
 	 *
 	 * This factory method can only create objects of the scope prototype.
 	 * Singleton objects must be either injected by some type of Dependency Injection or
-	 * if that is not possible, be retrieved by the getObject() method of the
+	 * if that is not possible, be retrieved by the get() method of the
 	 * Object Manager
 	 *
 	 * You must use either Dependency Injection or this factory method for instantiation
@@ -93,43 +72,7 @@ class ObjectFactory implements \F3\FLOW3\Object\ObjectFactoryInterface {
 	 * @api
 	 */
 	public function create($objectName) {
-		if ($objectName{0} === '\\') throw new \InvalidArgumentException('The object name must not start with a backslash, "' . $objectName . '" given.', 1243272770);
-		if (!$this->objectManager->isObjectRegistered($objectName)) throw new \F3\FLOW3\Object\Exception\UnknownObjectException('Object "' . $objectName . '" is not registered.', 1166550023);
-
-		$objectConfiguration = $this->objectManager->getObjectConfiguration($objectName);
-		if ($objectConfiguration->getScope() != 'prototype') throw new \F3\FLOW3\Object\Exception\WrongScopeException('Object "' . $objectName . '" is of scope ' . $objectConfiguration->getScope() . ' but only prototype is supported by create()', 1225385285);
-
-		$overridingArguments = self::convertArgumentValuesToArgumentObjects(array_slice(func_get_args(), 1));
-		$object =  $this->objectBuilder->createObject($objectName, $objectConfiguration, $overridingArguments);
-		$this->objectManager->registerShutdownObject($object, $objectConfiguration->getLifecycleShutdownMethodName());
-		return $object;
-	}
-
-	/**
-	 * Returns straight-value constructor arguments by creating appropriate
-	 * \F3\FLOW3\Object\Configuration\ConfigurationArgument objects.
-	 *
-	 * @param array $argumentValues Array of argument values. Index must start at "0" for parameter "1" etc.
-	 * @return array An array of \F3\FLOW3\Object\Configuration\ConfigurationArgument which can be passed to the object builder
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @see create()
-	 */
-	static protected function convertArgumentValuesToArgumentObjects(array $argumentValues) {
-		$argumentObjects = array();
-		foreach ($argumentValues as $index => $value) {
-			$argumentObjects[$index + 1] = new \F3\FLOW3\Object\Configuration\ConfigurationArgument($index + 1, $value, \F3\FLOW3\Object\Configuration\ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE);
-		}
-		return $argumentObjects;
-	}
-
-	/**
-	 * Controls cloning of the object factory. Cloning should only be used within unit tests.
-	 *
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function __clone() {
-		$this->objectBuilder = clone $this->objectBuilder;
+		return call_user_func_array(array($this->objectManager, 'create'), func_get_args());
 	}
 }
 ?>

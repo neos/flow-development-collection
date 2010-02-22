@@ -33,9 +33,9 @@ require_once('vfs/vfsStream.php');
 class NotFoundViewTest extends \F3\Testing\BaseTestCase {
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectFactoryInterface
+	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 */
-	protected $objectFactory;
+	protected $objectManager;
 
 	/**
 	 * @var \F3\FLOW3\Package\PackageManagerInterface
@@ -46,11 +46,6 @@ class NotFoundViewTest extends \F3\Testing\BaseTestCase {
 	 * @var \F3\FLOW3\Resource\ResourceManager
 	 */
 	protected $recourceManager;
-
-	/**
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
-	 */
-	protected $objectManager;
 
 	/**
 	 * @var \F3\FLOW3\MVC\Controller\Context
@@ -66,12 +61,11 @@ class NotFoundViewTest extends \F3\Testing\BaseTestCase {
 		\vfsStreamWrapper::register();
 		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('testDirectory'));
 
-		$this->objectFactory = $this->getMock('F3\FLOW3\Object\ObjectFactoryInterface', array(), array(), '', FALSE);
-		$this->packageManager = $this->getMock('F3\FLOW3\Package\PackageManagerInterface', array(), array(), '', FALSE);
+		$this->objectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
+		$this->packageManager = $this->getMock('F3\FLOW3\Package\PackageManagerInterface');
 		$this->resourceManager = $this->getMock('F3\FLOW3\Resource\ResourceManager', array(), array(), '', FALSE);
-		$this->objectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
 
-		$this->view = $this->getMock('F3\FLOW3\MVC\View\NotFoundView', array('getTemplatePathAndFilename'), array($this->objectFactory, $this->packageManager, $this->resourceManager, $this->objectManager));
+		$this->view = $this->getMock('F3\FLOW3\MVC\View\NotFoundView', array('getTemplatePathAndFilename'), array($this->objectManager, $this->packageManager, $this->resourceManager));
 
 		$this->controllerContext = $this->getMock('F3\FLOW3\MVC\Controller\Context', array('getRequest'), array(), '', FALSE);
 		$this->view->setControllerContext($this->controllerContext);
@@ -172,12 +166,12 @@ class NotFoundViewTest extends \F3\Testing\BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function callingNonExistingMethodsWontThrowAnException() {
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\ObjectFactoryInterface', array(), array(), '', FALSE);
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
 		$mockPackageManager = $this->getMock('F3\FLOW3\Package\PackageManagerInterface', array(), array(), '', FALSE);
 		$mockResourceManager = $this->getMock('F3\FLOW3\Resource\ResourceManager', array(), array(), '', FALSE);
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
 
-		$view = new \F3\FLOW3\MVC\View\NotFoundView($mockObjectFactory, $mockPackageManager, $mockResourceManager, $mockObjectManager);
+		$view = new \F3\FLOW3\MVC\View\NotFoundView($mockObjectManager, $mockPackageManager, $mockResourceManager, $mockObjectManager);
 		$view->nonExistingMethod();
 	}
 }

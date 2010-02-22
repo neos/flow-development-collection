@@ -33,19 +33,19 @@ namespace F3\FLOW3\Persistence\QOM;
 class QueryObjectModelFactory {
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectFactoryInterface
+	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 */
-	protected $objectFactory;
+	protected $objectManager;
 
 	/**
 	 * Injects the object factory
 	 *
-	 * @param \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory
+	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectObjectFactory(\F3\FLOW3\Object\ObjectFactoryInterface $objectFactory) {
-		$this->objectFactory = $objectFactory;
+	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
+		$this->objectManager = $objectManager;
 	}
 
 	/**
@@ -58,7 +58,7 @@ class QueryObjectModelFactory {
 	 * @api
 	 */
 	public function _and(\F3\FLOW3\Persistence\QOM\Constraint $constraint1, \F3\FLOW3\Persistence\QOM\Constraint $constraint2) {
-		return $this->objectFactory->create('F3\FLOW3\Persistence\QOM\LogicalAnd', $constraint1, $constraint2);
+		return $this->objectManager->create('F3\FLOW3\Persistence\QOM\LogicalAnd', $constraint1, $constraint2);
 	}
 
 	/**
@@ -71,7 +71,7 @@ class QueryObjectModelFactory {
 	 * @api
 	 */
 	public function _or(\F3\FLOW3\Persistence\QOM\Constraint $constraint1, \F3\FLOW3\Persistence\QOM\Constraint $constraint2) {
-		return $this->objectFactory->create('F3\FLOW3\Persistence\QOM\LogicalOr', $constraint1, $constraint2);
+		return $this->objectManager->create('F3\FLOW3\Persistence\QOM\LogicalOr', $constraint1, $constraint2);
 	}
 
 	/**
@@ -83,7 +83,7 @@ class QueryObjectModelFactory {
 	 * @api
 	 */
 	public function not(\F3\FLOW3\Persistence\QOM\Constraint $constraint) {
-		return $this->objectFactory->create('F3\FLOW3\Persistence\QOM\LogicalNot', $constraint);
+		return $this->objectManager->create('F3\FLOW3\Persistence\QOM\LogicalNot', $constraint);
 	}
 
 	/**
@@ -97,7 +97,7 @@ class QueryObjectModelFactory {
 	 * @api
 	 */
 	public function comparison(\F3\FLOW3\Persistence\QOM\DynamicOperand $operand1, $operator, $operand2) {
-		return $this->objectFactory->create('F3\FLOW3\Persistence\QOM\Comparison', $operand1, $operator, $operand2);
+		return $this->objectManager->create('F3\FLOW3\Persistence\QOM\Comparison', $operand1, $operator, $operand2);
 	}
 
 	/**
@@ -110,7 +110,7 @@ class QueryObjectModelFactory {
 	 * @api
 	 */
 	public function propertyValue($propertyName, $selectorName = '') {
-		return $this->objectFactory->create('F3\FLOW3\Persistence\QOM\PropertyValue', $propertyName, $selectorName);
+		return $this->objectManager->create('F3\FLOW3\Persistence\QOM\PropertyValue', $propertyName, $selectorName);
 	}
 
 	/**
@@ -122,7 +122,7 @@ class QueryObjectModelFactory {
 	 * @api
 	 */
 	public function lowerCase(\F3\FLOW3\Persistence\QOM\DynamicOperand $operand) {
-		return $this->objectFactory->create('F3\FLOW3\Persistence\QOM\LowerCase', $operand);
+		return $this->objectManager->create('F3\FLOW3\Persistence\QOM\LowerCase', $operand);
 	}
 
 	/**
@@ -134,7 +134,7 @@ class QueryObjectModelFactory {
 	 * @api
 	 */
 	public function upperCase(\F3\FLOW3\Persistence\QOM\DynamicOperand $operand) {
-		return $this->objectFactory->create('F3\FLOW3\Persistence\QOM\UpperCase', $operand);
+		return $this->objectManager->create('F3\FLOW3\Persistence\QOM\UpperCase', $operand);
 	}
 
 }

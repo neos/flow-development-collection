@@ -45,7 +45,7 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function addActuallyAddsAnObjectToTheInternalObjectsArray() {
 		$someObject = new \stdClass();
-		$repository = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Repository'), array('dummy'));
+		$repository = $this->getAccessibleMock('F3\FLOW3\Persistence\Repository', array('dummy'));
 		$repository->_set('objectType', get_class($someObject));
 		$repository->add($someObject);
 
@@ -61,7 +61,7 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 		$object2 = new \stdClass();
 		$object3 = new \stdClass();
 
-		$repository = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Repository'), array('dummy'));
+		$repository = $this->getAccessibleMock('F3\FLOW3\Persistence\Repository', array('dummy'));
 		$repository->_set('objectType', get_class($object1));
 		$repository->add($object1);
 		$repository->add($object2);
@@ -83,7 +83,7 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 		$object2 = new \ArrayObject(array('val' => '2'));
 		$object3 = new \ArrayObject(array('val' => '3'));
 
-		$repository = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Repository'), array('dummy'));
+		$repository = $this->getAccessibleMock('F3\FLOW3\Persistence\Repository', array('dummy'));
 		$repository->_set('objectType', get_class($object1));
 		$repository->add($object1);
 		$repository->add($object2);
@@ -108,7 +108,7 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function removeRetainsObjectForObjectsNotInCurrentSession() {
 		$object = new \ArrayObject(array('val' => '1'));
-		$repository = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Repository'), array('dummy'));
+		$repository = $this->getAccessibleMock('F3\FLOW3\Persistence\Repository', array('dummy'));
 		$repository->_set('objectType', get_class($object));
 		$repository->remove($object);
 
@@ -154,7 +154,7 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 		$mockQueryFactory = $this->getMock('F3\FLOW3\Persistence\QueryFactoryInterface');
 		$mockQueryFactory->expects($this->once())->method('create')->with('ExpectedType');
 
-		$repository = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Repository'), array('dummy'));
+		$repository = $this->getAccessibleMock('F3\FLOW3\Persistence\Repository', array('dummy'));
 		$repository->_set('objectType', 'ExpectedType');
 		$repository->injectQueryFactory($mockQueryFactory);
 
@@ -188,7 +188,7 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\PersistenceManagerInterface');
 		$mockPersistenceManager->expects($this->once())->method('getObjectByIdentifier')->with($fakeUUID)->will($this->returnValue($object));
 
-		$repository = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Repository'), array('createQuery'));
+		$repository = $this->getAccessibleMock('F3\FLOW3\Persistence\Repository', array('createQuery'));
 		$repository->injectPersistenceManager($mockPersistenceManager);
 		$repository->_set('objectType', 'stdClass');
 
@@ -206,7 +206,7 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\PersistenceManagerInterface');
 		$mockPersistenceManager->expects($this->once())->method('getObjectByIdentifier')->with($fakeUUID)->will($this->returnValue($object));
 
-		$repository = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Repository'), array('createQuery'));
+		$repository = $this->getAccessibleMock('F3\FLOW3\Persistence\Repository', array('createQuery'));
 		$repository->injectPersistenceManager($mockPersistenceManager);
 		$repository->_set('objectType', 'otherExpectedClass');
 
@@ -230,7 +230,7 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 		$mockPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($existingObject)->will($this->returnValue('86ea8820-19f6-11de-8c30-0800200c9a66'));
 		$mockPersistenceManager->expects($this->once())->method('replaceObject')->with($existingObject, $newObject);
 
-		$repository = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Repository'), array('dummy'));
+		$repository = $this->getAccessibleMock('F3\FLOW3\Persistence\Repository', array('dummy'));
 		$repository->_set('objectType', get_class($newObject));
 		$repository->injectPersistenceManager($mockPersistenceManager);
 		$repository->replace($existingObject, $newObject);
@@ -257,7 +257,7 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 		$mockPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($existingObject)->will($this->returnValue('86ea8820-19f6-11de-8c30-0800200c9a66'));
 		$mockPersistenceManager->expects($this->once())->method('replaceObject')->with($existingObject, $newObject);
 
-		$repository = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Repository'), array('dummy'));
+		$repository = $this->getAccessibleMock('F3\FLOW3\Persistence\Repository', array('dummy'));
 		$repository->_set('objectType', get_class($newObject));
 		$repository->injectPersistenceManager($mockPersistenceManager);
 		$repository->_set('removedObjects', $removedObjects);
@@ -287,7 +287,7 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 		$mockPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($existingObject)->will($this->returnValue(NULL));
 		$mockPersistenceManager->expects($this->never())->method('replaceObject');
 
-		$repository = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Repository'), array('dummy'));
+		$repository = $this->getAccessibleMock('F3\FLOW3\Persistence\Repository', array('dummy'));
 		$repository->injectPersistenceManager($mockPersistenceManager);
 		$repository->_set('objectType', get_class($newObject));
 		$repository->_set('addedObjects', $addedObjects);
@@ -303,7 +303,7 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function replaceChecksObjectType() {
-		$repository = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Repository'), array('dummy'));
+		$repository = $this->getAccessibleMock('F3\FLOW3\Persistence\Repository', array('dummy'));
 		$repository->_set('objectType', 'ExpectedObjectType');
 
 		$repository->replace(new \stdClass(), new \stdClass());
@@ -322,7 +322,7 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 		$mockPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($modifiedObject)->will($this->returnValue('86ea8820-19f6-11de-8c30-0800200c9a66'));
 		$mockPersistenceManager->expects($this->once())->method('getObjectByIdentifier')->with('86ea8820-19f6-11de-8c30-0800200c9a66')->will($this->returnValue($existingObject));
 
-		$repository = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Repository'), array('replaceObject'));
+		$repository = $this->getAccessibleMock('F3\FLOW3\Persistence\Repository', array('replaceObject'));
 		$repository->expects($this->once())->method('replaceObject')->with($existingObject, $modifiedObject);
 
 		$repository->_set('objectType', get_class($modifiedObject));
@@ -339,7 +339,7 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 		$someObject = $this->getMock('FooBar' . uniqid(), array('FLOW3_Persistence_isClone'));
 		$someObject->expects($this->once())->method('FLOW3_Persistence_isClone')->will($this->returnValue(FALSE));
 
-		$repository = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Repository'), array('dummy'));
+		$repository = $this->getAccessibleMock('F3\FLOW3\Persistence\Repository', array('dummy'));
 		$repository->_set('objectType', get_class($someObject));
 
 		$repository->update($someObject);
@@ -351,7 +351,7 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function updateRejectsObjectsOfWrongType() {
-		$repository = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Repository'), array('dummy'));
+		$repository = $this->getAccessibleMock('F3\FLOW3\Persistence\Repository', array('dummy'));
 		$repository->_set('objectType', 'Foo');
 		$repository->update(new \stdClass());
 	}
@@ -361,7 +361,7 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function updateRecursivelyCallsUpdateObjectOnSubobjects() {
-		$repository = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Repository'), array('updateObject'));
+		$repository = $this->getAccessibleMock('F3\FLOW3\Persistence\Repository', array('updateObject'));
 		$className = 'Object' . uniqid();
 		eval('class ' . $className . ' implements \F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface {
 			public function FLOW3_Persistence_isNew() { return FALSE; }
@@ -440,7 +440,7 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function addChecksObjectType() {
-		$repository = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Repository'), array('dummy'));
+		$repository = $this->getAccessibleMock('F3\FLOW3\Persistence\Repository', array('dummy'));
 		$repository->_set('objectType', 'ExpectedObjectType');
 
 		$repository->add(new \stdClass());
@@ -452,7 +452,7 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function removeChecksObjectType() {
-		$repository = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Repository'), array('dummy'));
+		$repository = $this->getAccessibleMock('F3\FLOW3\Persistence\Repository', array('dummy'));
 		$repository->_set('objectType', 'ExpectedObjectType');
 
 		$repository->remove(new \stdClass());

@@ -34,9 +34,9 @@ class Configuration {
 	const AUTOWIRING_MODE_OFF = 0;
 	const AUTOWIRING_MODE_ON = 1;
 
-	const SCOPE_PROTOTYPE = 'prototype';
-	const SCOPE_SINGLETON = 'singleton';
-	const SCOPE_SESSION = 'session';
+	const SCOPE_PROTOTYPE = 1;
+	const SCOPE_SINGLETON = 2;
+	const SCOPE_SESSION = 3;
 
 	/**
 	 * Name of the object
@@ -54,19 +54,19 @@ class Configuration {
 	 * If set, specifies the factory class used to create this object
 	 * @var string
 	 */
-	protected $factoryClassName;
+	protected $factoryObjectName;
 
 	/**
-	 * Name of the factory method. Only used if $factoryClassName is set.
+	 * Name of the factory method. Only used if $factoryObjectName is set.
 	 * @var string
 	 */
 	protected $factoryMethodName = 'create';
 
 	/**
-	 * Instantiation scope for this object - overrides value set via annotation in the implementation class. Options supported by FLOW3 are are "prototype", "singleton" and "session"
+	 * Instantiation scope for this object - overrides value set via annotation in the implementation class. Options supported by FLOW3
 	 * @var string
 	 */
-	protected $scope = 'singleton';
+	protected $scope = self::SCOPE_SINGLETON;
 
 	/**
 	 * Arguments of the constructor detected by reflection
@@ -161,9 +161,9 @@ class Configuration {
 	 * @param string $className Valid class name of a factory
 	 * @return void
 	 */
-	public function setFactoryClassName($className) {
+	public function setFactoryObjectName($className) {
 		if (!class_exists($className, TRUE)) throw new \F3\FLOW3\Object\Exception\InvalidClassException('"' . $className . '" is not a valid class name or a class of that name does not exist.', 1229697796);
-		$this->factoryClassName= $className;
+		$this->factoryObjectName= $className;
 	}
 
 	/**
@@ -172,8 +172,8 @@ class Configuration {
 	 * @return string The factory class name
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getFactoryClassName() {
-		return $this->factoryClassName;
+	public function getFactoryObjectName() {
+		return $this->factoryObjectName;
 	}
 
 	/**
@@ -201,19 +201,19 @@ class Configuration {
 	/**
 	 * Setter function for property "scope"
 	 *
-	 * @param string $scope Name of the scope
+	 * @param integer $scope Name of the scope
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setScope($scope) {
-		if (!is_string($scope))  throw new \InvalidArgumentException('Scope must be a string value.', 1167820928);
+		if ($scope < 1 || $scope > 3) throw new \InvalidArgumentException('Invalid scope', 1264605660);
 		$this->scope = $scope;
 	}
 
 	/**
 	 * Returns the scope for this object
 	 *
-	 * @return string The scope ("prototype", "singleton" ...)
+	 * @return string The scope, one of the SCOPE constants
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getScope() {

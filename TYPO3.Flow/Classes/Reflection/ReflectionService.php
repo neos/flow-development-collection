@@ -279,7 +279,7 @@ class ReflectionService {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function shutdown() {
+	public function shutdownObject() {
 		if ($this->cachedClassNames !== $this->reflectedClassNames) {
 			$this->saveToCache();
 		}

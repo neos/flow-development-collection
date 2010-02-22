@@ -46,18 +46,6 @@ class PdoBackendTest extends \F3\Testing\BaseTestCase {
 	protected $fixtureDB;
 
 	/**
-	 * Clean up after the tests
-	 *
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function tearDown() {
-		if ($this->fixtureDB) {
-			\F3\FLOW3\Utility\Files::removeDirectoryRecursively($this->fixtureFolder);
-		}
-	}
-
-	/**
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @expectedException \F3\FLOW3\Cache\Exception
@@ -246,10 +234,11 @@ class PdoBackendTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function setUpBackend() {
-		$environment = $this->objectManager->getObject('F3\FLOW3\Utility\Environment');
-		$this->fixtureFolder = $environment->getPathToTemporaryDirectory() . 'FLOW3/Tests/';
+		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment');
+		$this->fixtureFolder = sys_get_temp_dir() . 'FLOW3PdoBackendTest/';
 		\F3\FLOW3\Utility\Files::createDirectoryRecursively($this->fixtureFolder);
 		$this->fixtureDB = uniqid('Cache') . '.db';
+
 		$pdoHelper = new \F3\FLOW3\Utility\PdoHelper('sqlite:' . $this->fixtureFolder . $this->fixtureDB, '', '');
 		$pdoHelper->importSql(FLOW3_PATH_FLOW3 . 'Resources/Private/Cache/SQL/DDL.sql');
 
@@ -258,13 +247,25 @@ class PdoBackendTest extends \F3\Testing\BaseTestCase {
 		$mockCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('TestCache'));
 
 		$backend = new \F3\FLOW3\Cache\Backend\PdoBackend('Testing');
-		$backend->injectEnvironment($environment);
+		$backend->injectEnvironment($mockEnvironment);
 		$backend->injectSystemLogger($mockSystemLogger);
 		$backend->setCache($mockCache);
 		$backend->setDataSourceName('sqlite:' . $this->fixtureFolder . $this->fixtureDB);
 		$backend->initializeObject();
 
 		return $backend;
+	}
+
+	/**
+	 * Clean up after the tests
+	 *
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function tearDown() {
+		if ($this->fixtureDB) {
+			\F3\FLOW3\Utility\Files::removeDirectoryRecursively($this->fixtureFolder);
+		}
 	}
 
 }

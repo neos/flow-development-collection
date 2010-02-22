@@ -31,9 +31,9 @@ namespace F3\FLOW3\Locale;
 class Service {
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectFactoryInterface
+	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 */
-	protected $objectFactory;
+	protected $objectManager;
 
 	/**
 	 * @var array
@@ -53,12 +53,12 @@ class Service {
 	/**
 	 * Injects the object factory
 	 *
-	 * @param \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory A reference to the object factory
+	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager A reference to the object factory
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectObjectFactory(\F3\FLOW3\Object\ObjectFactoryInterface $objectFactory) {
-		$this->objectFactory = $objectFactory;
+	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
+		$this->objectManager = $objectManager;
 	}
 
 	/**
@@ -68,7 +68,7 @@ class Service {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initialize() {
-		$locale = $this->objectFactory->create('F3\FLOW3\Locale\Locale', $this->settings['locale']['defaultLocaleIdentifier']);
+		$locale = $this->objectManager->create('F3\FLOW3\Locale\Locale', $this->settings['locale']['defaultLocaleIdentifier']);
 		$this->settings['locale']['defaultLocale'] = $locale;
 	}
 

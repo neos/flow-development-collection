@@ -104,11 +104,6 @@ class Route {
 	protected $routeParts = array();
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectFactoryInterface
-	 */
-	protected $objectFactory;
-
-	/**
 	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
@@ -121,12 +116,10 @@ class Route {
 	/**
 	 * Constructor
 	 *
-	 * @param \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory
 	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function __construct(\F3\FLOW3\Object\ObjectFactoryInterface $objectFactory, \F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
-		$this->objectFactory = $objectFactory;
+	public function __construct(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
 	}
 
@@ -468,19 +461,19 @@ class Route {
 						throw new \F3\FLOW3\MVC\Exception\InvalidUriPatternException('the URI pattern "' . $this->uriPattern . '" of route "' . $this->getName() . '" contains succesive Dynamic Route Parts, which is not allowed.', 1218446975);
 					}
 					if (isset($this->routePartsConfiguration[$routePartName]['handler'])) {
-						$routePart = $this->objectManager->getObject($this->routePartsConfiguration[$routePartName]['handler']);
+						$routePart = $this->objectManager->get($this->routePartsConfiguration[$routePartName]['handler']);
 						if (!$routePart instanceof \F3\FLOW3\MVC\Web\Routing\DynamicRoutePartInterface) {
 							throw new \F3\FLOW3\MVC\Exception\InvalidRoutePartHandlerException('routePart handlers must implement "\F3\FLOW3\MVC\Web\Routing\DynamicRoutePartInterface" in route "' . $this->getName() . '"', 1218480972);
 						}
 					} else {
-						$routePart = $this->objectFactory->create('F3\FLOW3\MVC\Web\Routing\DynamicRoutePart');
+						$routePart = $this->objectManager->create('F3\FLOW3\MVC\Web\Routing\DynamicRoutePart');
 					}
 					if (isset($this->defaults[$routePartName])) {
 						$routePart->setDefaultValue($this->defaults[$routePartName]);
 					}
 					break;
 				case self::ROUTEPART_TYPE_STATIC:
-					$routePart = $this->objectFactory->create('F3\FLOW3\MVC\Web\Routing\StaticRoutePart');
+					$routePart = $this->objectManager->create('F3\FLOW3\MVC\Web\Routing\StaticRoutePart');
 					if ($lastRoutePart !== NULL && $lastRoutePart instanceof \F3\FLOW3\MVC\Web\Routing\DynamicRoutePartInterface) {
 						$lastRoutePart->setSplitString($routePartName);
 					}

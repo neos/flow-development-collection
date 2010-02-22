@@ -154,7 +154,7 @@ class PropertyMapper {
 	 */
 	public function initializeObject() {
 		foreach($this->reflectionService->getAllImplementationClassNamesForInterface('F3\FLOW3\Property\ObjectConverterInterface') as $objectConverterClassName) {
-			$objectConverter = $this->objectManager->getObject($objectConverterClassName);
+			$objectConverter = $this->objectManager->get($objectConverterClassName);
 			foreach ($objectConverter->getSupportedTypes() as $supportedType) {
 				$this->objectConverters[$supportedType] = $objectConverter;
 			}
@@ -220,7 +220,7 @@ class PropertyMapper {
 		if (is_string($target) && strpos($target, '\\') !== FALSE) {
 			return $this->transformToObject($source, $target, '--none--');
 		}
-		$this->mappingResults = $this->objectManager->getObject('F3\FLOW3\Property\MappingResults');
+		$this->mappingResults = $this->objectManager->get('F3\FLOW3\Property\MappingResults');
 
 		if (!is_object($target) && !is_array($target)) throw new \F3\FLOW3\Property\Exception\InvalidTargetException('The target must be a valid object, class name or array, ' . gettype($target) . ' given.', 1187807099);
 
@@ -241,7 +241,7 @@ class PropertyMapper {
 			}
 
 			if ($propertyValue === NULL && !in_array($propertyName, $optionalPropertyNames)) {
-				$this->mappingResults->addError($this->objectManager->getObject('F3\FLOW3\Error\Error', "Required property '$propertyName' does not exist in source." , 1236785359), $propertyName);
+				$this->mappingResults->addError($this->objectManager->get('F3\FLOW3\Error\Error', "Required property '$propertyName' does not exist in source." , 1236785359), $propertyName);
 			} else {
 				if (method_exists($target, \F3\FLOW3\Reflection\ObjectAccess::buildSetterMethodName($propertyName))
 						&& is_callable(array($target, \F3\FLOW3\Reflection\ObjectAccess::buildSetterMethodName($propertyName)))) {
@@ -252,7 +252,7 @@ class PropertyMapper {
 				} elseif ($targetClassSchema !== NULL && $targetClassSchema->hasProperty($propertyName)) {
 					$targetPropertyType = $targetClassSchema->getProperty($propertyName);
 				} elseif ($targetClassSchema !== NULL) {
-					$this->mappingResults->addError($this->objectManager->getObject('F3\FLOW3\Error\Error', "Property '$propertyName' does not exist in target class schema." , 1251813614), $propertyName);
+					$this->mappingResults->addError($this->objectManager->get('F3\FLOW3\Error\Error', "Property '$propertyName' does not exist in target class schema." , 1251813614), $propertyName);
 					continue;
 				}
 
@@ -281,7 +281,7 @@ class PropertyMapper {
 				if (is_array($target)) {
 					$target[$propertyName] = $propertyValue;
 				} elseif (\F3\FLOW3\Reflection\ObjectAccess::setProperty($target, $propertyName, $propertyValue) === FALSE) {
-					$this->mappingResults->addError($this->objectManager->getObject('F3\FLOW3\Error\Error', "Property '$propertyName' could not be set." , 1236783102), $propertyName);
+					$this->mappingResults->addError($this->objectManager->get('F3\FLOW3\Error\Error', "Property '$propertyName' could not be set." , 1236783102), $propertyName);
 				}
 			}
 		}
@@ -329,7 +329,7 @@ class PropertyMapper {
 		if (is_string($propertyValue) && preg_match(self::PATTERN_MATCH_UUID, $propertyValue) === 1) {
 			$object = $this->persistenceManager->getObjectByIdentifier($propertyValue);
 			if ($object === FALSE) {
-				$this->mappingResults->addError($this->objectManager->getObject('F3\FLOW3\Error\Error', 'Querying the repository for the specified object with UUID ' . $propertyValue . ' was not successful.' , 1249379517), $propertyName);
+				$this->mappingResults->addError($this->objectManager->get('F3\FLOW3\Error\Error', 'Querying the repository for the specified object with UUID ' . $propertyValue . ' was not successful.' , 1249379517), $propertyName);
 			}
 		} elseif (is_array($propertyValue)) {
 			if (isset($propertyValue['__identity'])) {
@@ -357,7 +357,7 @@ class PropertyMapper {
 						return $conversionResult;
 					}
 				}
-				$newObject = $this->objectManager->getObject($targetType);
+				$newObject = $this->objectManager->get($targetType);
 				if ($this->map(array_keys($propertyValue), $propertyValue, $newObject)) {
 					return $newObject;
 				}

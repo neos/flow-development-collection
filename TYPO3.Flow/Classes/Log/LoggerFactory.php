@@ -34,18 +34,18 @@ class LoggerFactory {
 	/**
 	 * A reference to the object factory
 	 *
-	 * @var \F3\FLOW3\Object\ObjectFactoryInterface
+	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 */
-	protected $objectFactory;
+	protected $objectManager;
 
 	/**
 	 * Constructs this factory
 	 *
-	 * @param \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory A reference to the object factory
+	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager A reference to the object factory
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(\F3\FLOW3\Object\ObjectFactoryInterface $objectFactory) {
-		$this->objectFactory = $objectFactory;
+	public function __construct(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
+		$this->objectManager = $objectManager;
 	}
 
 	/**
@@ -60,17 +60,17 @@ class LoggerFactory {
 	 * @api
 	 */
 	public function create($identifier, $loggerObjectName, $backendObjectNames, array $backendOptions = array()) {
-		$logger = $this->objectFactory->create($loggerObjectName);
+		$logger = $this->objectManager->create($loggerObjectName);
 
 		if (is_array($backendObjectNames)) {
 			foreach ($backendObjectNames as $i => $backendObjectName) {
 				if (isset($backendOptions[$i])) {
-					$backend = $this->objectFactory->create($backendObjectName, $backendOptions[$i]);
+					$backend = $this->objectManager->create($backendObjectName, $backendOptions[$i]);
 					$logger->addBackend($backend);
 				}
 			}
 		} else {
-			$backend = $this->objectFactory->create($backendObjectNames, $backendOptions);
+			$backend = $this->objectManager->create($backendObjectNames, $backendOptions);
 			$logger->addBackend($backend);
 		}
 		return $logger;

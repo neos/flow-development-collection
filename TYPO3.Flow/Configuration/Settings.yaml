@@ -100,9 +100,6 @@ FLOW3:
 
   persistence:
 
-    # Whether to enable FLOW3's persistence manager or not.
-    enable: y
-
     # Options for the default PDO backend
     backendOptions:
       dataSourceName: 'sqlite:%FLOW3_PATH_DATA%Persistent/Objects.db'
