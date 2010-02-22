@@ -38,6 +38,7 @@ class EnvironmentTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function getPathToTemporaryDirectoryReturnsPathWithTrailingSlash() {
 		$environment = new \F3\FLOW3\Utility\Environment();
+		$environment->setTemporaryDirectoryBase(sys_get_temp_dir('FLOW3EnvironmentTest'));
 		$path = $environment->getPathToTemporaryDirectory();
 		$this->assertEquals('/', substr($path, -1, 1), 'The temporary path did not end with slash.');
 	}
@@ -48,6 +49,8 @@ class EnvironmentTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function getPathToTemporaryDirectoryReturnsAnExistingPath() {
 		$environment = new \F3\FLOW3\Utility\Environment();
+		$environment->setTemporaryDirectoryBase(sys_get_temp_dir('FLOW3EnvironmentTest'));
+
 		$path = $environment->getPathToTemporaryDirectory();
 		$this->assertTrue(file_exists($path), 'The temporary path does not exist.');
 	}

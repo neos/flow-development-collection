@@ -53,23 +53,12 @@ class ObjectFactory implements \F3\FLOW3\Object\ObjectFactoryInterface {
 	/**
 	 * Creates a fresh instance of the object specified by $objectName.
 	 *
-	 * This factory method can only create objects of the scope prototype.
-	 * Singleton objects must be either injected by some type of Dependency Injection or
-	 * if that is not possible, be retrieved by the get() method of the
-	 * Object Manager
-	 *
-	 * You must use either Dependency Injection or this factory method for instantiation
-	 * of your objects if you need FLOW3's object management capabilities (including
-	 * AOP, Security and Persistence). It is absolutely okay and often advisable to
-	 * use the "new" operator for instantiation in your automated tests.
+	 * This method is deprecated, use the Object Manager's create() method instead.
 	 *
 	 * @param string $objectName The name of the object to create
 	 * @return object The new object instance
-	 * @throws \InvalidArgumentException if the object name starts with a backslash
-	 * @throws \F3\FLOW3\Object\Exception\UnknownObjectException if an object with the given name does not exist
-	 * @throws \F3\FLOW3\Object\Exception\WrongScopeException if the specified object is not configured as Prototype
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @api
+	 * @deprecated since 1.0.0 alpha 8
 	 */
 	public function create($objectName) {
 		return call_user_func_array(array($this->objectManager, 'create'), func_get_args());
