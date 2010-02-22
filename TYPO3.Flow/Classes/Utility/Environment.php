@@ -245,14 +245,12 @@ class Environment {
 		if ($this->SAPIName === 'cli') {
 			return FALSE;
 		}
-		if (isset($this->SERVER['PATH_INFO'])) {
-			$requestUriString = $this->getRequestProtocol() . '://' . $this->getHTTPHost() . $this->SERVER['PATH_INFO'] . (strlen($this->SERVER['QUERY_STRING']) ? '?' . $this->SERVER['QUERY_STRING'] : '');
-		} else {
-			$requestUriString = $this->getRequestProtocol() . '://' . $this->getHTTPHost() . '/';
-		}
 
-		$requestUri = new \F3\FLOW3\Property\DataType\Uri($requestUriString);
-		return $requestUri;
+		if (substr_compare($this->SERVER['REQUEST_URI'], '/index.php', 0, 10, TRUE) === 0) {
+			return new \F3\FLOW3\Property\DataType\Uri($this->getRequestProtocol() . '://' . $this->getHTTPHost() . (substr($this->SERVER['REQUEST_URI'], 10) ?: '/'));
+		} else {
+			return new \F3\FLOW3\Property\DataType\Uri($this->getRequestProtocol() . '://' . $this->getHTTPHost() . $this->SERVER['REQUEST_URI']);
+		}
 	}
 
 	/**

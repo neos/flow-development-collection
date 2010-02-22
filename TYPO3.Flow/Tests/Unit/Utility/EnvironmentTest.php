@@ -84,14 +84,29 @@ class EnvironmentTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function getRequestUriReturnsExpectedUriWhenUsingPathInfo() {
+	public function getRequestUriReturnsExpectedUriWhenUsingPlainRequests() {
 		$expectedUriString = 'http://flow3.typo3.org/is/the/base/for/typo3?5=0';
 		$environment = new \F3\FLOW3\Utility\MockEnvironment();
 		$environment->SAPIName = 'apache';
 		$environment->SERVER = array(
 			'HTTP_HOST' => 'flow3.typo3.org',
-			'QUERY_STRING' => '5=0',
-			'PATH_INFO' => '/is/the/base/for/typo3'
+			'REQUEST_URI' => '/index.php/is/the/base/for/typo3?5=0'
+			);
+			$returnedUriString = (string)$environment->getRequestUri();
+			$this->assertEquals($expectedUriString, $returnedUriString, 'The URI returned did not match the expected value.');
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getRequestUriReturnsExpectedUriWhenUsingRewriteStyleRequests() {
+		$expectedUriString = 'http://flow3.typo3.org/is/the/base/for/typo3?5=0';
+		$environment = new \F3\FLOW3\Utility\MockEnvironment();
+		$environment->SAPIName = 'apache';
+		$environment->SERVER = array(
+			'HTTP_HOST' => 'flow3.typo3.org',
+			'REQUEST_URI' => '/is/the/base/for/typo3?5=0'
 			);
 			$returnedUriString = (string)$environment->getRequestUri();
 			$this->assertEquals($expectedUriString, $returnedUriString, 'The URI returned did not match the expected value.');
