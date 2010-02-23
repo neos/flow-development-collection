@@ -57,7 +57,7 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectobjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
+	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
 	}
 

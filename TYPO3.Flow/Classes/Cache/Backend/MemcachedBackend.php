@@ -251,7 +251,7 @@ class MemcachedBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 				$this->addTagsToTagIndex($tags);
 				$this->addIdentifierToTags($entryIdentifier, $tags);
 			}
-		} catch(\F3\FLOW3\Error\Exception $exception) {
+		} catch (\Exception $exception) {
 			throw new \F3\FLOW3\Cache\Exception('Could not set value. ' . $exception->getMessage(), 1207208100);
 		}
 	}

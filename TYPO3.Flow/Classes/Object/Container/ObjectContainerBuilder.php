@@ -45,6 +45,11 @@ class ObjectContainerBuilder {
 	protected $createdMethodNumbers = array();
 
 	/**
+	 * @var array
+	 */
+	protected $objectConfigurations;
+
+	/**
 	 * Injects the Reflection Service
 	 *
 	 * @param \F3\FLOW3\Reflection\ReflectionService $reflectionService The Reflection Service
@@ -65,11 +70,6 @@ class ObjectContainerBuilder {
 	public function injectConfigurationManager(\F3\FLOW3\Configuration\ConfigurationManager $configurationManager) {
 		$this->configurationManager = $configurationManager;
 	}
-
-	/**
-	 * @var array
-	 */
-	protected $objectConfigurations;
 
 	/**
 	 * Generates PHP code of a static object container reflecting the given object
@@ -260,7 +260,8 @@ class ObjectContainerBuilder {
 	/**
 	 *
 	 * @param array $arguments
-	 * @return <type>
+	 * @return string
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function buildCreateInstanceArgumentsAssignments(array $arguments) {
 		$assignments = array();
@@ -318,11 +319,12 @@ class ObjectContainerBuilder {
 	/**
 	 *
 	 * @param string $objectName
-	 * @param <type> $className
-	 * @param <type> $properties
-	 * @return <type>
+	 * @param string $className
+	 * @param array $properties
+	 * @return string
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function buildPropertyInjectionCommands($objectName, $className, $properties) {
+	protected function buildPropertyInjectionCommands($objectName, $className, array $properties) {
 		$commands = array();
 
 		foreach ($properties as $propertyName => $property) {
@@ -384,11 +386,12 @@ class ObjectContainerBuilder {
 
 	/**
 	 *
-	 * @param <type> $className
-	 * @param <type> $arguments
-	 * @param <type> $customFactoryObjectName
-	 * @param <type> $customFactoryMethodName
-	 * @return <type>
+	 * @param string $className
+	 * @param string $arguments
+	 * @param string $customFactoryObjectName
+	 * @param string $customFactoryMethodName
+	 * @return string
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function buildCreateInstanceCommand($className, $arguments, $customFactoryObjectName, $customFactoryMethodName) {
 		if (!isset($this->objectConfigurations[$customFactoryObjectName])) {
@@ -422,8 +425,9 @@ class ObjectContainerBuilder {
 
 	/**
 	 *
-	 * @param <type> $className
-	 * @return <type>
+	 * @param string $className
+	 * @return string
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function buildRecreateInstanceCommand($className) {
 		$command = "\n\t\t\$o = unserialize('O:" . strlen($className) . ":\"$className\":0:{};');";
@@ -437,8 +441,9 @@ class ObjectContainerBuilder {
 
 	/**
 	 *
-	 * @param Configuration $objectConfiguration
+	 * @param \F3\FLOW3\Object\Configuration\Configuration $objectConfiguration
 	 * @return string
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function buildLifecycleInitializationCommand(\F3\FLOW3\Object\Configuration\Configuration $objectConfiguration) {
 		$command = '';
@@ -451,8 +456,9 @@ class ObjectContainerBuilder {
 
 	/**
 	 *
-	 * @param Configuration $objectConfiguration
+	 * @param \F3\FLOW3\Object\Configuration\Configuration $objectConfiguration
 	 * @return string
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function buildLifecycleShutdownRegistrationCommand(\F3\FLOW3\Object\Configuration\Configuration $objectConfiguration) {
 		$command = '';
@@ -464,9 +470,12 @@ class ObjectContainerBuilder {
 	}
 
 	/**
-	 *
+	 * @param string $customFactoryObjectName
+	 * @param string $customFactoryMethodName
+	 * @param array $arguments
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function buildCustomFactoryCall($customFactoryObjectName, $customFactoryMethodName, $arguments) {
+	protected function buildCustomFactoryCall($customFactoryObjectName, $customFactoryMethodName, array $arguments) {
 		$argumentsCode = $this->buildMethodParametersCode($arguments);
 
 		if ($this->objectConfigurations[$customFactoryObjectName]->getScope() === \F3\FLOW3\Object\Configuration\Configuration::SCOPE_PROTOTYPE) {
@@ -477,8 +486,12 @@ class ObjectContainerBuilder {
 		return $customFactoryCall;
 	}
 
-
-
+	/**
+	 *
+	 * @param array $arguments
+	 * @return string
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
 	protected function buildMethodParametersCode(array $arguments) {
 		$preparedArguments = array();
 

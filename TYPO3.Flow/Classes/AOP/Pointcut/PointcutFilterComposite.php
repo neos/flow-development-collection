@@ -143,7 +143,7 @@ class PointcutFilterComposite implements \F3\FLOW3\AOP\Pointcut\PointcutFilterIn
 	 * Sets static runtime evaluations for to pointcut, that will be used for every
 	 * method this compsite matches
 	 *
-	 * @param array Runtime evaluations to be added
+	 * @param array $runtimeEvaluations Runtime evaluations to be added
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
