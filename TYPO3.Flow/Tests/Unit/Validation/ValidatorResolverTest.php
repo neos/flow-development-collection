@@ -428,7 +428,6 @@ class ValidatorResolverTest extends \F3\Testing\BaseTestCase {
 		$this->assertEquals('Float', $mockValidator->_call('getValidatorType', 'double'));
 		$this->assertEquals('Boolean', $mockValidator->_call('getValidatorType', 'boolean'));
 		$this->assertEquals('Boolean', $mockValidator->_call('getValidatorType', 'bool'));
-		$this->assertEquals('Boolean', $mockValidator->_call('getValidatorType', 'bool'));
 		$this->assertEquals('Number', $mockValidator->_call('getValidatorType', 'number'));
 		$this->assertEquals('Number', $mockValidator->_call('getValidatorType', 'numeric'));
 	}

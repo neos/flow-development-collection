@@ -25,7 +25,7 @@ namespace F3\FLOW3\Security\Cryptography;
 /**
  * Testcase for for the PHP (OpenSSL) based RSAWalletService
  *
- * @version $Id: RsaWalletServicePhpTest.php -1   $
+ * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  */
 class RsaWalletServicePhpTest extends \F3\Testing\BaseTestCase {
@@ -36,10 +36,41 @@ class RsaWalletServicePhpTest extends \F3\Testing\BaseTestCase {
 	 *
 	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setUp() {
 		if (!function_exists('openssl_pkey_new')) {
 			$this->markTestSkipped('openssl_pkey_new() not available');
+		} else {
+			$objectManagerCallback = function() {
+				return new \F3\FLOW3\Security\Cryptography\OpenSslRsaKey(func_get_arg(1), func_get_arg(2));
+			};
+			$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
+			$mockObjectManager->expects($this->any())->method('create')->will($this->returnCallback($objectManagerCallback));
+
+			$currentKeys = array();
+			$setCallBack = function() use (&$currentKeys) {
+				$args = func_get_args();
+				$currentKeys[$args[0]] = $args[1];
+			};
+			$getCallBack = function() use (&$currentKeys) {
+				$args = func_get_args();
+				return $currentKeys[$args[0]];
+			};
+			$hasCallBack = function() use (&$currentKeys) {
+				$args = func_get_args();
+				return isset($currentKeys[$args[0]]);
+			};
+			$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
+			$mockCache->expects($this->any())->method('set')->will($this->returnCallback($setCallBack));
+			$mockCache->expects($this->any())->method('get')->will($this->returnCallback($getCallBack));
+			$mockCache->expects($this->any())->method('has')->will($this->returnCallback($hasCallBack));
+
+			$this->rsaWalletService = new RsaWalletServicePhp();
+			$this->rsaWalletService->injectObjectManager($mockObjectManager);
+			$this->rsaWalletService->injectKeystoreCache($mockCache);
+
+			$this->keyPairUuid = $this->rsaWalletService->generateNewKeypair();
 		}
 	}
 
@@ -49,39 +80,11 @@ class RsaWalletServicePhpTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function encryptingAndDecryptingBasicallyWorks() {
-		$currentKeys = array();
-
-		$setCallBack = function() use (&$currentKeys) {
-			$args = func_get_args();
-			$currentKeys[$args[0]] = $args[1];
-		};
-
-		$getCallBack = function() use (&$currentKeys) {
-			$args = func_get_args();
-			return $currentKeys[$args[0]];
-		};
-
-		$hasCallBack = function() use (&$currentKeys) {
-			$args = func_get_args();
-			return isset($currentKeys[$args[0]]);
-		};
-
-		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
-		$mockCache->expects($this->any())->method('set')->will($this->returnCallback($setCallBack, '__invoke'));
-		$mockCache->expects($this->any())->method('get')->will($this->returnCallback($getCallBack, '__invoke'));
-		$mockCache->expects($this->any())->method('has')->will($this->returnCallback($hasCallBack, '__invoke'));
-
-		$RSAWalletService = new RSAWalletServicePHP();
-		$RSAWalletService->injectObjectManager($this->objectManager);
-		$RSAWalletService->injectKeystoreCache($mockCache);
-
-		$keyPairUUID = $RSAWalletService->generateNewKeypair();
-
 		$plaintext = 'some very sensitive data!';
-		$ciphertext = $RSAWalletService->encryptWithPublicKey($plaintext, $keyPairUUID);
+		$ciphertext = $this->rsaWalletService->encryptWithPublicKey($plaintext, $this->keyPairUuid);
 
 		$this->assertNotEquals($ciphertext, $plaintext);
-		$this->assertEquals($plaintext, $RSAWalletService->decrypt($ciphertext, $keyPairUUID));
+		$this->assertEquals($plaintext, $this->rsaWalletService->decrypt($ciphertext, $this->keyPairUuid));
 	}
 
 	/**
@@ -90,39 +93,12 @@ class RsaWalletServicePhpTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function checkRSAEncryptedPasswordReturnsTrueForACorrectPassword() {
-		$currentKeys = array();
-
-		$setCallBack = function() use (&$currentKeys) {
-			$args = func_get_args();
-			$currentKeys[$args[0]] = $args[1];
-		};
-
-		$getCallBack = function() use (&$currentKeys) {
-			$args = func_get_args();
-			return $currentKeys[$args[0]];
-		};
-
-		$hasCallBack = function() use (&$currentKeys) {
-			$args = func_get_args();
-			return isset($currentKeys[$args[0]]);
-		};
-
-		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
-		$mockCache->expects($this->any())->method('set')->will($this->returnCallback($setCallBack, '__invoke'));
-		$mockCache->expects($this->any())->method('get')->will($this->returnCallback($getCallBack, '__invoke'));
-		$mockCache->expects($this->any())->method('has')->will($this->returnCallback($hasCallBack, '__invoke'));
-
-		$RSAWalletService = new RSAWalletServicePHP();
-		$RSAWalletService->injectObjectManager($this->objectManager);
-		$RSAWalletService->injectKeystoreCache($mockCache);
-
-		$keyPairUUID = $RSAWalletService->generateNewKeypair();
-		$encryptedPassword = $RSAWalletService->encryptWithPublicKey('password', $keyPairUUID);
+		$encryptedPassword = $this->rsaWalletService->encryptWithPublicKey('password', $this->keyPairUuid);
 
 		$passwordHash = 'af1e8a52451786a6b3bf78838e03a0a2';
 		$salt = 'a709157e66e0197cafa0c2ba99f6e252';
 
-		$this->assertTrue($RSAWalletService->checkRSAEncryptedPassword($encryptedPassword, $passwordHash, $salt, $keyPairUUID));
+		$this->assertTrue($this->rsaWalletService->checkRSAEncryptedPassword($encryptedPassword, $passwordHash, $salt, $this->keyPairUuid));
 	}
 
 	/**
@@ -131,39 +107,12 @@ class RsaWalletServicePhpTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function checkRSAEncryptedPasswordReturnsFalseForAnIncorrectPassword() {
-		$currentKeys = array();
-
-		$setCallBack = function() use (&$currentKeys) {
-			$args = func_get_args();
-			$currentKeys[$args[0]] = $args[1];
-		};
-
-		$getCallBack = function() use (&$currentKeys) {
-			$args = func_get_args();
-			return $currentKeys[$args[0]];
-		};
-
-		$hasCallBack = function() use (&$currentKeys) {
-			$args = func_get_args();
-			return isset($currentKeys[$args[0]]);
-		};
-
-		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
-		$mockCache->expects($this->any())->method('set')->will($this->returnCallback($setCallBack, '__invoke'));
-		$mockCache->expects($this->any())->method('get')->will($this->returnCallback($getCallBack, '__invoke'));
-		$mockCache->expects($this->any())->method('has')->will($this->returnCallback($hasCallBack, '__invoke'));
-
-		$RSAWalletService = new RSAWalletServicePHP();
-		$RSAWalletService->injectObjectManager($this->objectManager);
-		$RSAWalletService->injectKeystoreCache($mockCache);
-
-		$keyPairUUID = $RSAWalletService->generateNewKeypair();
-		$encryptedPassword = $RSAWalletService->encryptWithPublicKey('wrong password', $keyPairUUID);
+		$encryptedPassword = $this->rsaWalletService->encryptWithPublicKey('wrong password', $this->keyPairUuid);
 
 		$passwordHash = 'af1e8a52451786a6b3bf78838e03a0a2';
 		$salt = 'a709157e66e0197cafa0c2ba99f6e252';
 
-		$this->assertFalse($RSAWalletService->checkRSAEncryptedPassword($encryptedPassword, $passwordHash, $salt, $keyPairUUID));
+		$this->assertFalse($this->rsaWalletService->checkRSAEncryptedPassword($encryptedPassword, $passwordHash, $salt, $this->keyPairUuid));
 	}
 
 	/**
@@ -173,34 +122,8 @@ class RsaWalletServicePhpTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function decryptingWithAKeypairUUIDMarkedForPasswordUsageThrowsAnException() {
-		$currentKeys = array();
-
-		$setCallBack = function() use (&$currentKeys) {
-			$args = func_get_args();
-			$currentKeys[$args[0]] = $args[1];
-		};
-
-		$getCallBack = function() use (&$currentKeys) {
-			$args = func_get_args();
-			return $currentKeys[$args[0]];
-		};
-
-		$hasCallBack = function() use (&$currentKeys) {
-			$args = func_get_args();
-			return isset($currentKeys[$args[0]]);
-		};
-
-		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
-		$mockCache->expects($this->any())->method('set')->will($this->returnCallback($setCallBack, '__invoke'));
-		$mockCache->expects($this->any())->method('get')->will($this->returnCallback($getCallBack, '__invoke'));
-		$mockCache->expects($this->any())->method('has')->will($this->returnCallback($hasCallBack, '__invoke'));
-
-		$RSAWalletService = new RSAWalletServicePHP();
-		$RSAWalletService->injectObjectManager($this->objectManager);
-		$RSAWalletService->injectKeystoreCache($mockCache);
-
-		$keyPairUUID = $RSAWalletService->generateNewKeypair(TRUE);
-		$decryptedPassword = $RSAWalletService->decrypt('some cipher', $keyPairUUID);
+		$this->keyPairUuid = $this->rsaWalletService->generateNewKeypair(TRUE);
+		$this->rsaWalletService->decrypt('some cipher', $this->keyPairUuid);
 	}
 }
 ?>

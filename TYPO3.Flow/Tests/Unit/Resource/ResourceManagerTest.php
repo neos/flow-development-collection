@@ -80,7 +80,9 @@ class ResourceManagerTest extends \F3\Testing\BaseTestCase {
 		stream_wrapper_unregister($wrapperSchemeName);
 
 			// set the real object factory again...
-		\F3\FLOW3\Resource\Streams\StreamWrapperAdapter::injectObjectManager($originalObjectManager);
+		if ($originalObjectManager !== NULL) {
+			\F3\FLOW3\Resource\Streams\StreamWrapperAdapter::injectObjectManager($originalObjectManager);
+		}
 	}
 
 	/**

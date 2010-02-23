@@ -80,7 +80,7 @@ class ReflectionServiceTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function initializeForgetsChangedClassesIfSettingsSaySo() {
 		$reflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'forgetChangedClasses', 'reflectEmergedClasses'), array(), '', FALSE);
-		$reflectionService->injectSettings(array('reflection' => array('detectClassChanges' => TRUE)));
+		$reflectionService->injectSettings(array('monitor' => array('detectClassChanges' => TRUE)));
 		$reflectionService->expects($this->once())->method('forgetChangedClasses');
 		$reflectionService->initialize(array(__CLASS__));
 	}
