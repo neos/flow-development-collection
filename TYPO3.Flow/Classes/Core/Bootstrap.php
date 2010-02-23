@@ -374,7 +374,7 @@ final class Bootstrap {
 	 * @see initialize()
 	 */
 	public function initializeFileMonitor() {
-		if ($this->settings['monitor']['fileMonitor']['enable'] === TRUE) {
+		if ($this->settings['monitor']['detectClassChanges'] === TRUE) {
 			$this->monitorClassFiles();
 			$this->monitorRoutesConfigurationFiles();
 		}

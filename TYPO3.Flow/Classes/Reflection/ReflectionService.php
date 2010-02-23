@@ -226,9 +226,7 @@ class ReflectionService {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectSettings(array $settings) {
-		if (isset($settings['reflection']['detectClassChanges'])) {
-			$this->detectClassChanges = $settings['reflection']['detectClassChanges'] ? TRUE : FALSE;
-		}
+		$this->detectClassChanges = $settings['monitor']['detectClassChanges'] ? TRUE : FALSE;
 	}
 
 	/**

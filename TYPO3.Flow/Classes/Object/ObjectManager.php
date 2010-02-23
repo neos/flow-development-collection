@@ -85,12 +85,11 @@ class ObjectManager implements \F3\FLOW3\Object\ObjectManagerInterface {
 	}
 
 	/**
-	 * Pre-initializes the Object Manager: In case a Static Object Container already exists,
-	 * it is loaded and intialized. If that is not the case, the Dynamic Object Container
+	 * Pre-initializes the Object Manager: In case a static object container already exists,
+	 * it is loaded and intialized. If that is not the case, the dynamic object container
 	 * is instantiated and used.
 	 *
 	 * @return void
-	 * @see initialize()
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initialize() {
@@ -103,7 +102,7 @@ class ObjectManager implements \F3\FLOW3\Object\ObjectManagerInterface {
 
 		$this->staticObjectContainerPathAndFilename = $environment->getPathToTemporaryDirectory() . 'StaticObjectContainer.php';
 
-		if (file_exists($this->staticObjectContainerPathAndFilename)) {
+		if ($settings['monitor']['detectClassChanges'] === FALSE && file_exists($this->staticObjectContainerPathAndFilename)) {
 			require_once($this->staticObjectContainerPathAndFilename);
 			$this->objectContainer = new \F3\FLOW3\Object\Container\StaticObjectContainer();
 		} else {
@@ -126,31 +125,41 @@ class ObjectManager implements \F3\FLOW3\Object\ObjectManagerInterface {
 	}
 
 	/**
-	 * 
+	 * Initializes the object container for further use by other packages.
+	 *
+	 * If the static object container is already active, this method will only load the
+	 * AOP proxy classes and inject the settings of all packages into the static object
+	 * container.
+	 *
+	 * If the dynamic object container is still in charge, a static object container is
+	 * built and all runtime information is transfered from the dynamic object container
+	 * to the freshly built static object container.
+	 * After the transfer this method will switch to the static object container.
 	 *
 	 * @param array $activePackages An array of active packages of which objects should be considered
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initializeObjectContainer(array $activePackages) {
-		if (!$this->objectContainer instanceof \F3\FLOW3\Object\Container\StaticObjectContainer) {
-			$objectContainerBuilder = $this->get('F3\FLOW3\Object\Container\ObjectContainerBuilder');
+		if (!file_exists($this->staticObjectContainerPathAndFilename)) {
 			$objectConfigurations = $this->buildPackageObjectConfigurations($activePackages);
 
-			$aopFramework = $this->get('F3\FLOW3\AOP\Framework');
-			$aopFramework->initialize($objectConfigurations);
+			$this->get('F3\FLOW3\AOP\Framework')->initialize($objectConfigurations);
 
+			$objectContainerBuilder = $this->get('F3\FLOW3\Object\Container\ObjectContainerBuilder');
 			file_put_contents($this->staticObjectContainerPathAndFilename, $objectContainerBuilder->buildObjectContainer($objectConfigurations));
+		} else {
+			$this->get('F3\FLOW3\AOP\Framework')->loadProxyClasses();
+		}
 
+		if (!$this->objectContainer instanceof \F3\FLOW3\Object\Container\StaticObjectContainer) {
 			require_once($this->staticObjectContainerPathAndFilename);
 			$newObjectContainer = new \F3\FLOW3\Object\Container\StaticObjectContainer();
 			$newObjectContainer->import($this->objectContainer);
 			$this->objectContainer = $newObjectContainer;
-		} else {
-			$aopFramework = $this->get('F3\FLOW3\AOP\Framework');
-			$aopFramework->loadProxyClasses();
 		}
-		
+
+
 		$this->objectContainer->injectSettings($this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS));
 	}
 

@@ -87,7 +87,7 @@ class ObjectContainerBuilder {
 			'BUILD_METHODS' => $this->buildBuildMethods()
 		);
 
-		$objectContainerCode = file_get_contents(FLOW3_PATH_FLOW3 . 'Resources/Private/Object/StaticObjectContainerTemplate.php');
+		$objectContainerCode = file_get_contents(FLOW3_PATH_FLOW3 . 'Resources/Private/Object/StaticObjectContainerTemplate.phpt');
 		foreach ($tokens as $token => $value) {
 			$objectContainerCode = str_replace('###' . $token . '###', $value, $objectContainerCode);
 		}

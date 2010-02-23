@@ -10,13 +10,6 @@
 # @version $Id:  $
 
 FLOW3:
-  aop:
-
-    # Enable or disable the whole AOP framework.
-    #
-    # Note that certain features depend on and might not work anymore if you
-    # disable the AOP framework.
-    enable: y
 
   configuration:
 
@@ -88,9 +81,7 @@ FLOW3:
     # automatically flushes the dependent caches (such as the reflection cache).
     # This mechanism comes with a speed penalty and should therefore be disabled in
     # production context.
-    fileMonitor:
-      enable: n
-      changeDetectionStrategy: F3\FLOW3\Monitor\ChangeDetectionStrategy\ModificationTimeStrategy
+    detectClassChanges: n
 
   mvc:
 
@@ -105,16 +96,6 @@ FLOW3:
       dataSourceName: 'sqlite:%FLOW3_PATH_DATA%Persistent/Objects.db'
       username:
       password:
-
-  reflection:
-
-    # Detection of class changes
-    #
-    # If turned on, the Reflection Service will check its own cache if class changes have
-    # been detected by the File Monitor. This requires that file monitoring is enabled.
-    # Note that turning this option on comes with a speed penalty and should be switched
-    # off in production context.
-    detectClassChanges: n
 
   resource:
     publishing:

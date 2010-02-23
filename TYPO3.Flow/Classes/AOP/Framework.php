@@ -96,12 +96,6 @@ class Framework {
 	protected $targetAndProxyClassNames;
 
 	/**
-	 * Flag which signals if this class has already been initialized.
-	 * @var boolean
-	 */
-	protected $isInitialized = FALSE;
-
-	/**
 	 * Injects the Object Manager
 	 *
 	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager The object manager
@@ -214,9 +208,6 @@ class Framework {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initialize(array &$objectConfigurations) {
-		if ($this->isInitialized) throw new \F3\FLOW3\AOP\Exception('The AOP framework has already been initialized!', 1169550994);
-		$this->isInitialized = TRUE;
-
 		if ($this->proxyBuildInformationCache->has('targetAndProxyClassNames')) {
 			$this->targetAndProxyClassNames = $this->proxyBuildInformationCache->get('targetAndProxyClassNames');
 		}
@@ -306,16 +297,6 @@ class Framework {
 	}
 
 	/**
-	 * If the AOP Framework has been initialized already.
-	 *
-	 * @return boolean If the AOP framework has been initialized
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function isInitialized() {
-		return $this->isInitialized;
-	}
-
-	/**
 	 * Traverses the aspect containers to find a pointcut from the aspect class name
 	 * and pointcut method name
 	 *
@@ -325,7 +306,6 @@ class Framework {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function findPointcut($aspectClassName, $pointcutMethodName) {
-		if (!$this->isInitialized) throw new \F3\FLOW3\AOP\Exception('The AOP framework has not yet been initialized!', 1207216396);
 		if (!isset($this->aspectContainers[$aspectClassName])) return FALSE;
 		foreach ($this->aspectContainers[$aspectClassName]->getPointcuts() as $pointcut) {
 			if ($pointcut->getPointcutMethodName() === $pointcutMethodName) {

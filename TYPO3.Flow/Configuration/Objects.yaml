@@ -288,7 +288,6 @@ F3\FLOW3\Log\SystemLoggerInterface:
 #                                                                          #
 
 F3\FLOW3\Monitor\ChangeDetectionStrategy\ModificationTimeStrategy:
-  autowiring: off
   properties:
     cache:
       object:
@@ -300,10 +299,9 @@ F3\FLOW3\Monitor\ChangeDetectionStrategy\ModificationTimeStrategy:
 
 F3\FLOW3\Monitor\FileMonitor:
   scope: prototype
-  autowiring: off
   properties:
     changeDetectionStrategy:
-      object: FLOW3.monitor.fileMonitor.changeDetectionStrategy
+      object: F3\FLOW3\Monitor\ChangeDetectionStrategy\ModificationTimeStrategy
     signalDispatcher:
       object: F3\FLOW3\SignalSlot\Dispatcher
     systemLogger:

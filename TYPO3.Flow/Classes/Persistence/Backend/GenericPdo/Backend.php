@@ -31,7 +31,7 @@ namespace F3\FLOW3\Persistence\Backend\GenericPdo;
 class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 
 	/**
-	 * @var \F3\FLOW3\Object\objectManagerInterface
+	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
@@ -53,11 +53,11 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 	/**
 	 * Injects the Object Factory
 	 *
-	 * @param \F3\FLOW3\Object\objectManagerInterface $objectManager
+	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectobjectManager(\F3\FLOW3\Object\objectManagerInterface $objectManager) {
+	public function injectobjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
 	}
 
@@ -205,7 +205,6 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 		}
 
 		$classSchema = $this->classSchemata[$object->FLOW3_AOP_Proxy_getProxyTargetClassName()];
-
 		if ($this->persistenceSession->hasObject($object)) {
 			$identifier = $this->persistenceSession->getIdentifierByObject($object);
 			$objectState = self::OBJECTSTATE_RECONSTITUTED;
