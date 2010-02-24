@@ -55,6 +55,55 @@
     is important that all objects are instantiated only through the object
     framework.</para>
 
+    <important>
+      <para>As a general rule of thumb for those not developing the FLOW3 core
+      itself but your very own packages:<itemizedlist>
+          <listitem>
+            <para>Use <function>new</function> only in your unit tests, or
+            when instantiating exceptions.</para>
+          </listitem>
+
+          <listitem>
+            <para>Use Dependency Injection whenever possible for retrieving
+            singletons.</para>
+          </listitem>
+
+          <listitem>
+            <para>Use <function>create()</function> for instantiating
+            prototypes</para>
+          </listitem>
+        </itemizedlist>If you use <function>new</function> instead of FLOW3's
+      functions,<itemizedlist>
+          <listitem>
+            <para>you won't get dependencies injected</para>
+          </listitem>
+
+          <listitem>
+            <para>you won't get automatically built AOP proxy classes</para>
+          </listitem>
+
+          <listitem>
+            <para>FLOW3 cannot manage the singleton or session scope of that
+            object</para>
+          </listitem>
+
+          <listitem>
+            <para>the security framework doesn't know / care about your
+            object</para>
+          </listitem>
+
+          <listitem>
+            <para>your object cannot be persisted</para>
+          </listitem>
+        </itemizedlist>In some parts of FLOW3 itself you might see
+      <function>new</function> being used, e.g. for the Reflection Service.
+      Here the case is a bit different because it is part of the FLOW3 core.
+      We have a hen and egg problem there due to the challenge that the
+      Reflection Service must be available even before the Object Framework is
+      initialized. But these special cases really only occur in the FLOW3
+      package.</para>
+    </important>
+
     <section>
       <title>Object Scopes</title>
 
