@@ -153,16 +153,6 @@ interface ObjectManagerInterface {
 	public function getScope($objectName);
 
 	/**
-	 * Returns an array of object names of all registered objects.
-	 * The mixed case object name are used as the array's keys while each
-	 * value is the lower cased variant of its respective key.
-	 *
-	 * @return array An array of object names - mixed case in the key and lower case in the value.
-	 * @api
-	 */
-	public function getRegisteredObjects();
-
-	/**
 	 * Shuts the object manager down and calls the shutdown methods of all objects
 	 * which are configured for it.
 	 *

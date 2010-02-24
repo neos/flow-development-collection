@@ -177,7 +177,6 @@ abstract class AbstractObjectContainer implements \F3\FLOW3\Object\Container\Obj
 	 * @param  string $objectName Name of the object
 	 * @return boolean TRUE if the object has been registered, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @api
 	 */
 	public function isRegistered($objectName) {
 		return isset($this->objects[$objectName]);
@@ -198,7 +197,6 @@ abstract class AbstractObjectContainer implements \F3\FLOW3\Object\Container\Obj
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getCaseSensitiveObjectName($caseInsensitiveObjectName) {
-		if (!is_string($caseInsensitiveObjectName)) throw new \InvalidArgumentException('The object name must be of type string, ' . gettype($caseInsensitiveObjectName) . ' given.', 1186655552);
 		$lowerCasedObjectName = strtolower($caseInsensitiveObjectName);
 		foreach ($this->objects as $objectName => $information) {
 			if ($information['l'] === $lowerCasedObjectName) {

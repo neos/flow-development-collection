@@ -53,6 +53,11 @@ class ObjectManager implements \F3\FLOW3\Object\ObjectManagerInterface {
 	protected $staticObjectContainerPathAndFilename;
 
 	/**
+	 * @var string
+	 */
+	protected $staticObjectContainerClassName = 'F3\FLOW3\Object\Container\StaticObjectContainer';
+
+	/**
 	 * @var \F3\FLOW3\Object\ObjectContainerInterface
 	 */
 	protected $objectContainer;
@@ -61,6 +66,7 @@ class ObjectManager implements \F3\FLOW3\Object\ObjectManagerInterface {
 	 * @var \F3\FLOW3\Cache\Frontend\PhpFrontend
 	 */
 	protected $objectContainerClassesCache;
+
 
 	/**
 	 * Injects the class loader
@@ -104,7 +110,7 @@ class ObjectManager implements \F3\FLOW3\Object\ObjectManagerInterface {
 
 		if ($settings['monitor']['detectClassChanges'] === FALSE && file_exists($this->staticObjectContainerPathAndFilename)) {
 			require_once($this->staticObjectContainerPathAndFilename);
-			$this->objectContainer = new \F3\FLOW3\Object\Container\StaticObjectContainer();
+			$this->objectContainer = new $this->staticObjectContainerClassName;
 		} else {
 			$rawFLOW3ObjectConfigurations = $this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_OBJECTS, 'FLOW3');
 			$parsedObjectConfigurations = array();
@@ -152,9 +158,9 @@ class ObjectManager implements \F3\FLOW3\Object\ObjectManagerInterface {
 			$this->get('F3\FLOW3\AOP\Framework')->loadProxyClasses();
 		}
 
-		if (!$this->objectContainer instanceof \F3\FLOW3\Object\Container\StaticObjectContainer) {
-			require_once($this->staticObjectContainerPathAndFilename);
-			$newObjectContainer = new \F3\FLOW3\Object\Container\StaticObjectContainer();
+		if (!$this->objectContainer instanceof $this->staticObjectContainerClassName) {
+			require($this->staticObjectContainerPathAndFilename);
+			$newObjectContainer = new $this->staticObjectContainerClassName;
 			$newObjectContainer->import($this->objectContainer);
 			$this->objectContainer = $newObjectContainer;
 		}
@@ -169,7 +175,7 @@ class ObjectManager implements \F3\FLOW3\Object\ObjectManagerInterface {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function initializeObjectContainerSession() {
+	public function initializeSession() {
 		$this->objectContainer->initializeSession();
 	}
 
@@ -213,6 +219,11 @@ class ObjectManager implements \F3\FLOW3\Object\ObjectManagerInterface {
 	 * If possible, instances of Prototype objects should always be created with the
 	 * Object Manager's create() method and Singleton objects should rather be
 	 * injected by some type of Dependency Injection.
+	 *
+	 * Note: Additional arguments to this function are only passed to the object
+	 * container's get method for when the object is a prototype. Any argument
+	 * besides $objectName is ignored if the target object is in singleton or session
+	 * scope.
 	 *
 	 * @param string $objectName The name of the object to return an instance of
 	 * @return object The object instance
@@ -323,19 +334,6 @@ class ObjectManager implements \F3\FLOW3\Object\ObjectManagerInterface {
 	}
 
 	/**
-	 * Returns an array of object names of all registered objects.
-	 * The mixed case object name are used as the array's keys while each
-	 * value is the lower cased variant of its respective key.
-	 *
-	 * @return array An array of object names - mixed case in the key and lower case in the value.
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @api
-	 */
-	public function getRegisteredObjects() {
-#		return $this->registeredObjects;
-	}
-
-	/**
 	 * Discards the cached Static Object Container in order to rebuild it on the
 	 * next script run.
 	 * 
@@ -418,11 +416,10 @@ class ObjectManager implements \F3\FLOW3\Object\ObjectManagerInterface {
 			$objectName = $className;
 
 			if (substr($className, -9, 9) === 'Interface') {
-				$defaultImplementationClassName = $reflectionService->getDefaultImplementationClassNameForInterface($className);
-				if ($defaultImplementationClassName === FALSE) {
+				$className = $reflectionService->getDefaultImplementationClassNameForInterface($className);
+				if ($className === FALSE) {
 					continue;
 				}
-				$className = $defaultImplementationClassName;
 			}
 			$rawObjectConfiguration = array('className' => $className);
 
