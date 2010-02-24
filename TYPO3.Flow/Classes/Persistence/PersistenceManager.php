@@ -160,8 +160,9 @@ class PersistenceManager implements \F3\FLOW3\Persistence\PersistenceManagerInte
 		if ($existingUuid === NULL) throw new \F3\FLOW3\Persistence\Exception\UnknownObjectException('The given object is unknown to the persistence session.', 1238070163);
 
 		$this->persistenceSession->replaceReconstitutedEntity($existingObject, $newObject);
-
-		$this->persistenceSession->unregisterObject($existingObject);
+			// We simply register again. This way the PM stills knows the old
+			// object, but whenever asked for the object via identifier it will
+			// return the new one.
 		$this->persistenceSession->registerObject($newObject, $existingUuid);
 	}
 

@@ -157,8 +157,7 @@ class PersistenceManagerTest extends \F3\Testing\BaseTestCase {
 		$mockSession = $this->getMock('F3\FLOW3\Persistence\Session');
 		$mockSession->expects($this->at(0))->method('getIdentifierByObject')->with($existingObject)->will($this->returnValue('the uuid'));
 		$mockSession->expects($this->at(1))->method('replaceReconstitutedEntity')->with($existingObject, $newObject);
-		$mockSession->expects($this->at(2))->method('unregisterObject')->with($existingObject);
-		$mockSession->expects($this->at(3))->method('registerObject')->with($newObject, 'the uuid');
+		$mockSession->expects($this->at(2))->method('registerObject')->with($newObject, 'the uuid');
 
 		$manager = new \F3\FLOW3\Persistence\PersistenceManager();
 		$manager->injectPersistenceSession($mockSession);
