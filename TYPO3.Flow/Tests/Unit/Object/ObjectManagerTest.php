@@ -30,6 +30,8 @@ namespace F3\FLOW3\Object;
  */
 class ObjectManagerTest extends \F3\Testing\BaseTestCase {
 
+	protected $mockStaticObjectContainerClassName;
+
 	/**
 	 * Sets up this test case
 	 *
@@ -38,6 +40,8 @@ class ObjectManagerTest extends \F3\Testing\BaseTestCase {
 	public function setUp() {
 		\vfsStreamWrapper::register();
 		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('Base'));
+
+		$this->mockStaticObjectContainerClassName = get_class($this->getMock('F3\FLOW3\Object\Container\StaticObjectContainerInterface'));
 	}
 
 	/**
@@ -53,12 +57,12 @@ class ObjectManagerTest extends \F3\Testing\BaseTestCase {
 		\F3\FLOW3\Utility\Files::createDirectoryRecursively($temporaryDirectory);
 
 		$id = uniqid('staticObjectContainerInclusionProval');
-		$staticObjectContainerCode = "
+		$staticObjectContainerInclusionProvalCode = "
 			<?php
 				define('$id', TRUE);
 			?>
 		";
-		file_put_contents($temporaryDirectory . 'StaticObjectContainer.php', $staticObjectContainerCode);
+		file_put_contents($temporaryDirectory . 'StaticObjectContainer.php', $staticObjectContainerInclusionProvalCode);
 
 		$settings = array();
 		$settings['FLOW3']['monitor']['detectClassChanges'] = FALSE;
@@ -69,13 +73,14 @@ class ObjectManagerTest extends \F3\Testing\BaseTestCase {
 		$mockConfigurationManager->expects($this->at(1))->method('getConfiguration')->with(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS)->will($this->returnValue($settings));
 
 		$objectManager = $this->getAccessibleMock('F3\FLOW3\Object\ObjectManager', array('dummy'));
+		$objectManager->_set('staticObjectContainerClassName', $this->mockStaticObjectContainerClassName);
 		$objectManager->injectConfigurationManager($mockConfigurationManager);
 		$objectManager->injectClassLoader($this->getMock('F3\FLOW3\Resource\ClassLoader', array(), array(), '', FALSE));
 
 		$objectManager->initialize();
 
 		$this->assertTrue(defined($id));
-		$this->assertType('F3\FLOW3\Object\Container\StaticObjectContainer', $objectManager->_get('objectContainer'));
+		$this->assertType($this->mockStaticObjectContainerClassName, $objectManager->_get('objectContainer'));
 	}
 
 	/**
@@ -103,6 +108,7 @@ class ObjectManagerTest extends \F3\Testing\BaseTestCase {
 		$mockConfigurationManager->expects($this->at(2))->method('getConfiguration')->with(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS)->will($this->returnValue($settings));
 
 		$objectManager = $this->getAccessibleMock('F3\FLOW3\Object\ObjectManager', array('dummy'));
+		$objectManager->_set('staticObjectContainerClassName', $this->mockStaticObjectContainerClassName);
 		$objectManager->injectConfigurationManager($mockConfigurationManager);
 
 		$objectManager->initialize();
@@ -123,7 +129,7 @@ class ObjectManagerTest extends \F3\Testing\BaseTestCase {
 		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\ConfigurationManager', array(), array(), '', FALSE);
 		$mockConfigurationManager->expects($this->once())->method('getConfiguration')->with(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS)->will($this->returnValue($mockSettings));
 
-		$mockObjectContainer = $this->getMock('F3\FLOW3\Object\Container\StaticObjectContainer', array(), array(), '', FALSE);
+		$mockObjectContainer = $this->getMock('F3\FLOW3\Object\Container\StaticObjectContainerInterface');
 		$mockObjectContainer->expects($this->once())->method('injectSettings')->with($mockSettings);
 
 		$mockAopFramework = $this->getMock('F3\FLOW3\AOP\Framework', array(), array(), '', FALSE);
@@ -133,6 +139,7 @@ class ObjectManagerTest extends \F3\Testing\BaseTestCase {
 		$objectManager = $this->getAccessibleMock('F3\FLOW3\Object\ObjectManager', array('get'));
 		$objectManager->expects($this->once())->method('get')->with('F3\FLOW3\AOP\Framework')->will($this->returnValue($mockAopFramework));
 		$objectManager->injectConfigurationManager($mockConfigurationManager);
+		$objectManager->_set('staticObjectContainerClassName', get_class($mockObjectContainer));
 		$objectManager->_set('staticObjectContainerPathAndFilename', 'vfs://Base/Temporary/StaticObjectContainer.php');
 		$objectManager->_set('objectContainer', $mockObjectContainer);
 
@@ -160,8 +167,6 @@ class ObjectManagerTest extends \F3\Testing\BaseTestCase {
 		$mockConfigurationManager->expects($this->once())->method('getConfiguration')->with(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS)->will($this->returnValue($mockSettings));
 
 		$mockDynamicObjectContainer = $this->getMock('F3\FLOW3\Object\Container\DynamicObjectContainer', array(), array(), '', FALSE);
-		$mockDynamicObjectContainer->expects($this->once())->method('getInstances')->will($this->returnValue(array()));
-		$mockDynamicObjectContainer->expects($this->once())->method('getShutdownObjects')->will($this->returnValue(array()));
 
 		$mockObjectContainerBuilder = $this->getMock('F3\FLOW3\Object\Container\ObjectContainerBuilder', array(), array(), '', FALSE);
 		$mockObjectContainerBuilder->expects($this->once())->method('buildObjectContainer')->with($mockObjectConfigurations)->will($this->returnValue($staticObjectContainerCode));
@@ -175,12 +180,13 @@ class ObjectManagerTest extends \F3\Testing\BaseTestCase {
 		$objectManager->expects($this->at(2))->method('get')->with('F3\FLOW3\Object\Container\ObjectContainerBuilder')->will($this->returnValue($mockObjectContainerBuilder));
 
 		$objectManager->injectConfigurationManager($mockConfigurationManager);
+		$objectManager->_set('staticObjectContainerClassName', $this->mockStaticObjectContainerClassName);
 		$objectManager->_set('staticObjectContainerPathAndFilename', 'vfs://Base/Temporary/StaticObjectContainer.php');
 		$objectManager->_set('objectContainer', $mockDynamicObjectContainer);
 
 		$objectManager->initializeObjectContainer($mockActivePackages);
 
-		$this->assertType('F3\FLOW3\Object\Container\StaticObjectContainer', $objectManager->_get('objectContainer'));
+		$this->assertType($this->mockStaticObjectContainerClassName, $objectManager->_get('objectContainer'));
 		$this->assertTrue(defined($id));
 	}
 
@@ -205,8 +211,6 @@ class ObjectManagerTest extends \F3\Testing\BaseTestCase {
 		$mockConfigurationManager->expects($this->once())->method('getConfiguration')->with(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS)->will($this->returnValue($mockSettings));
 
 		$mockDynamicObjectContainer = $this->getMock('F3\FLOW3\Object\Container\DynamicObjectContainer', array(), array(), '', FALSE);
-		$mockDynamicObjectContainer->expects($this->once())->method('getInstances')->will($this->returnValue(array()));
-		$mockDynamicObjectContainer->expects($this->once())->method('getShutdownObjects')->will($this->returnValue(array()));
 
 		$mockAopFramework = $this->getMock('F3\FLOW3\AOP\Framework', array(), array(), '', FALSE);
 		$mockAopFramework->expects($this->once())->method('loadProxyClasses');
@@ -215,12 +219,13 @@ class ObjectManagerTest extends \F3\Testing\BaseTestCase {
 		$objectManager->expects($this->once())->method('get')->with('F3\FLOW3\AOP\Framework')->will($this->returnValue($mockAopFramework));
 
 		$objectManager->injectConfigurationManager($mockConfigurationManager);
+		$objectManager->_set('staticObjectContainerClassName', $this->mockStaticObjectContainerClassName);
 		$objectManager->_set('staticObjectContainerPathAndFilename', 'vfs://Base/Temporary/StaticObjectContainer.php');
 		$objectManager->_set('objectContainer', $mockDynamicObjectContainer);
 
 		$objectManager->initializeObjectContainer($mockActivePackages);
 
-		$this->assertType('F3\FLOW3\Object\Container\StaticObjectContainer', $objectManager->_get('objectContainer'));
+		$this->assertType($this->mockStaticObjectContainerClassName, $objectManager->_get('objectContainer'));
 		$this->assertTrue(defined($id));
 	}
 
@@ -229,10 +234,11 @@ class ObjectManagerTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initalizeSessionInitializesTheSessionScopeOfTheObjectContainer() {
-		$mockObjectContainer = $this->getMock('F3\FLOW3\Object\Container\StaticObjectContainer');
+		$mockObjectContainer = $this->getMock('F3\FLOW3\Object\Container\StaticObjectContainerInterface', array(), array(), '', FALSE);
 		$mockObjectContainer->expects($this->once())->method('initializeSession');
 
 		$objectManager = $this->getAccessibleMock('F3\FLOW3\Object\ObjectManager', array('dummy'));
+		$objectManager->_set('staticObjectContainerClassName', get_class($mockObjectContainer));
 		$objectManager->_set('objectContainer', $mockObjectContainer);
 
 		$objectManager->initializeSession();
@@ -266,7 +272,7 @@ class ObjectManagerTest extends \F3\Testing\BaseTestCase {
 	public function getForwardsTheCallToTheCurrentObjectContainer() {
 		$expectedObject = new \stdClass();
 
-		$mockObjectContainer = $this->getMock('F3\FLOW3\Object\Container\ObjectContainerInterface', array('get'), array(), '', FALSE);
+		$mockObjectContainer = $this->getMock('F3\FLOW3\Object\Container\StaticObjectContainerInterface');
 		$mockObjectContainer->expects($this->once())->method('get')->with('someObjectName', 'someArgument')->will($this->returnValue($expectedObject));
 
 		$objectManager = $this->getAccessibleMock('F3\FLOW3\Object\ObjectManager', array('dummy'));
@@ -283,7 +289,7 @@ class ObjectManagerTest extends \F3\Testing\BaseTestCase {
 	public function createForwardsTheCallToTheCurrentObjectContainer() {
 		$expectedObject = new \stdClass();
 
-		$mockObjectContainer = $this->getMock('F3\FLOW3\Object\Container\ObjectContainerInterface', array('create'), array(), '', FALSE);
+		$mockObjectContainer = $this->getMock('F3\FLOW3\Object\Container\StaticObjectContainerInterface');
 		$mockObjectContainer->expects($this->once())->method('create')->with('someObjectName', 'someArgument')->will($this->returnValue($expectedObject));
 
 		$objectManager = $this->getAccessibleMock('F3\FLOW3\Object\ObjectManager', array('dummy'));
@@ -300,7 +306,7 @@ class ObjectManagerTest extends \F3\Testing\BaseTestCase {
 	public function recreateForwardsTheCallToTheCurrentObjectContainer() {
 		$expectedObject = new \stdClass();
 
-		$mockObjectContainer = $this->getMock('F3\FLOW3\Object\Container\ObjectContainerInterface', array('recreate'), array(), '', FALSE);
+		$mockObjectContainer = $this->getMock('F3\FLOW3\Object\Container\StaticObjectContainerInterface');
 		$mockObjectContainer->expects($this->once())->method('recreate')->with('someObjectName')->will($this->returnValue($expectedObject));
 
 		$objectManager = $this->getAccessibleMock('F3\FLOW3\Object\ObjectManager', array('dummy'));
@@ -315,7 +321,7 @@ class ObjectManagerTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function isRegisteredForwardsTheCallToTheCurrentObjectContainer() {
-		$mockObjectContainer = $this->getMock('F3\FLOW3\Object\Container\ObjectContainerInterface', array('isRegistered'), array(), '', FALSE);
+		$mockObjectContainer = $this->getMock('F3\FLOW3\Object\Container\StaticObjectContainerInterface');
 		$mockObjectContainer->expects($this->once())->method('isRegistered')->with('someObjectName')->will($this->returnValue(TRUE));
 
 		$objectManager = $this->getAccessibleMock('F3\FLOW3\Object\ObjectManager', array('dummy'));
@@ -329,7 +335,7 @@ class ObjectManagerTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getCaseSensitiveObjectNameForwardsTheCallToTheCurrentObjectContainer() {
-		$mockObjectContainer = $this->getMock('F3\FLOW3\Object\Container\ObjectContainerInterface', array('getCaseSensitiveObjectName'), array(), '', FALSE);
+		$mockObjectContainer = $this->getMock('F3\FLOW3\Object\Container\StaticObjectContainerInterface');
 		$mockObjectContainer->expects($this->once())->method('getCaseSensitiveObjectName')->with('SOMEObjectName')->will($this->returnValue('someObjectName'));
 
 		$objectManager = $this->getAccessibleMock('F3\FLOW3\Object\ObjectManager', array('dummy'));
@@ -343,7 +349,7 @@ class ObjectManagerTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getObjectNameByClassNameForwardsTheCallToTheCurrentObjectContainer() {
-		$mockObjectContainer = $this->getMock('F3\FLOW3\Object\Container\ObjectContainerInterface', array('getObjectNameByClassName'), array(), '', FALSE);
+		$mockObjectContainer = $this->getMock('F3\FLOW3\Object\Container\StaticObjectContainerInterface');
 		$mockObjectContainer->expects($this->once())->method('getObjectNameByClassName')->with('SomeClassName')->will($this->returnValue('SomeObjectName'));
 
 		$objectManager = $this->getAccessibleMock('F3\FLOW3\Object\ObjectManager', array('dummy'));
@@ -357,7 +363,7 @@ class ObjectManagerTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getScopeForwardsTheCallToTheCurrentObjectContainer() {
-		$mockObjectContainer = $this->getMock('F3\FLOW3\Object\Container\ObjectContainerInterface', array('getScope'), array(), '', FALSE);
+		$mockObjectContainer = $this->getMock('F3\FLOW3\Object\Container\StaticObjectContainerInterface');
 		$mockObjectContainer->expects($this->once())->method('getScope')->with('SomeObjectName')->will($this->returnValue('Prototype'));
 
 		$objectManager = $this->getAccessibleMock('F3\FLOW3\Object\ObjectManager', array('dummy'));
@@ -386,10 +392,11 @@ class ObjectManagerTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function shutdownForwardsTheCallToTheCurrentObjectContainer() {
-		$mockObjectContainer = $this->getMock('F3\FLOW3\Object\Container\ObjectContainerInterface', array('shutdown'), array(), '', FALSE);
+		$mockObjectContainer = $this->getMock('F3\FLOW3\Object\Container\StaticObjectContainerInterface');
 		$mockObjectContainer->expects($this->once())->method('shutdown');
 
 		$objectManager = $this->getAccessibleMock('F3\FLOW3\Object\ObjectManager', array('dummy'));
+		$objectManager->_set('staticObjectContainerClassName', $this->mockStaticObjectContainerClassName);
 		$objectManager->_set('objectContainer', $mockObjectContainer);
 
 		$objectManager->shutdown();
@@ -401,10 +408,11 @@ class ObjectManagerTest extends \F3\Testing\BaseTestCase {
 	 * @deprecated since 1.0.0 alpha 8
 	 */
 	public function isObjectRegisteredForwardsTheCallToTheCurrentObjectContainer() {
-		$mockObjectContainer = $this->getMock('F3\FLOW3\Object\Container\ObjectContainerInterface', array('isRegistered'), array(), '', FALSE);
+		$mockObjectContainer = $this->getMock('F3\FLOW3\Object\Container\StaticObjectContainerInterface');
 		$mockObjectContainer->expects($this->once())->method('isRegistered')->with('someObjectName')->will($this->returnValue(TRUE));
 
 		$objectManager = $this->getAccessibleMock('F3\FLOW3\Object\ObjectManager', array('dummy'));
+		$objectManager->_set('staticObjectContainerClassName', $this->mockStaticObjectContainerClassName);
 		$objectManager->_set('objectContainer', $mockObjectContainer);
 
 		$this->assertTrue($objectManager->isObjectRegistered('someObjectName'));
@@ -418,10 +426,11 @@ class ObjectManagerTest extends \F3\Testing\BaseTestCase {
 	public function getObjectForwardsTheCallToTheCurrentObjectContainer() {
 		$expectedObject = new \stdClass();
 
-		$mockObjectContainer = $this->getMock('F3\FLOW3\Object\Container\ObjectContainerInterface', array('get'), array(), '', FALSE);
+		$mockObjectContainer = $this->getMock('F3\FLOW3\Object\Container\StaticObjectContainerInterface');
 		$mockObjectContainer->expects($this->once())->method('get')->with('someObjectName', 'someArgument')->will($this->returnValue($expectedObject));
 
 		$objectManager = $this->getAccessibleMock('F3\FLOW3\Object\ObjectManager', array('dummy'));
+		$objectManager->_set('staticObjectContainerClassName', $this->mockStaticObjectContainerClassName);
 		$objectManager->_set('objectContainer', $mockObjectContainer);
 
 		$actualObject = $objectManager->getObject('someObjectName', 'someArgument');
@@ -476,7 +485,6 @@ class ObjectManagerTest extends \F3\Testing\BaseTestCase {
 		$this->assertSame(array($className1, $className2, $className3, $className4), array_keys($actualObjectConfigurations));
 		$this->assertSame($className1, $actualObjectConfigurations[$className1]->getClassName());
 		$this->assertSame(\F3\FLOW3\Object\Configuration\Configuration::SCOPE_PROTOTYPE, $actualObjectConfigurations[$className1]->getScope());
-#		$this->assertSame(\F3\FLOW3\Object\Configuration\Configuration::SCOPE_SESSION, $actualObjectConfigurations[$className4]->getScope());
 		$this->assertSame('Baz', $actualObjectConfigurations[$className3]->getClassName());
 	}
 
