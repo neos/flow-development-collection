@@ -202,7 +202,7 @@ final class Bootstrap {
 		$this->initializeReflection();
 		$this->initializeObjectContainer();
 		$this->initializePersistence();
-		$this->initializeObjectContainerSession();
+		$this->initializeSession();
 		$this->initializeResources();
 		$this->initializeLocale();
 	}
@@ -510,8 +510,8 @@ final class Bootstrap {
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @see initialize()
 	 */
-	public function initializeObjectContainerSession() {
-		$this->objectManager->initializeObjectContainerSession();
+	public function initializeSession() {
+		$this->objectManager->initializeSession();
 	}
 
 	/**
