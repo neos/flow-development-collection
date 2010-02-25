@@ -400,6 +400,9 @@ class Environment {
 	 * @author Karsten Dambekalns <karsten@typo3.org
 	 */
 	public function isRewriteEnabled() {
+		if (getenv('REDIRECT_FLOW3_REWRITEURLS')) {
+			return TRUE;
+		}
 		return (boolean)getenv('FLOW3_REWRITEURLS');
 	}
 

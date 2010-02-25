@@ -37,7 +37,12 @@ require(__DIR__ . '/../Classes/Core/Bootstrap.php');
 $className = '\F3\FLOW3\Core\Bootstrap';
 $className::defineConstants();
 
-$flow3 = new $className(getenv('FLOW3_CONTEXT'));
+$context = getenv('FLOW3_CONTEXT');
+if ($context == '') {
+	$context = getenv('REDIRECT_FLOW3_CONTEXT');
+}
+
+$flow3 = new $className($context);
 $flow3->initialize();
 $flow3->run();
 
