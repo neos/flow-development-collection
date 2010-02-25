@@ -194,9 +194,7 @@ class FileSystemPublishingTarget extends \F3\FLOW3\Resource\Publishing\AbstractR
 		}
 		$uri->setQuery(NULL);
 		$uri->setFragment(NULL);
-		$requestPathSegments = explode('/', $this->environment->getScriptRequestPathAndName());
-		array_pop($requestPathSegments);
-		$uri->setPath(implode('/', $requestPathSegments) . '/');
+		$uri->setPath($this->environment->getScriptRequestPath());
 
 		$this->resourcesBaseUri = $uri . substr($this->resourcesPublishingPath, strlen(FLOW3_PATH_WEB));
 	}

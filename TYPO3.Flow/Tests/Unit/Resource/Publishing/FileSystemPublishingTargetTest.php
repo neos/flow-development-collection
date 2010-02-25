@@ -276,6 +276,7 @@ class FileSystemPublishingTargetTest extends \F3\Testing\BaseTestCase {
 	public function detectResourcesBaseUriDetectsUriWithSubDirectoryCorrectly() {
 		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
 		$mockEnvironment->expects($this->once())->method('getRequestUri')->will($this->returnValue(new \F3\FLOW3\Property\DataType\Uri('http://www.server.com/path1/path2/')));
+		$mockEnvironment->expects($this->once())->method('getScriptRequestPath')->will($this->returnValue(new \F3\FLOW3\Property\DataType\Uri('/')));
 
 		$expectedBaseUri = 'http://www.server.com/_Resources/';
 

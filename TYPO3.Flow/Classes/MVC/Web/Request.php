@@ -108,7 +108,7 @@ class Request extends \F3\FLOW3\MVC\Request {
 	 */
 	public function setRequestUri(\F3\FLOW3\Property\DataType\Uri $requestUri) {
 		$this->requestUri = clone $requestUri;
-		$this->baseUri = $this->detectBaseUri($requestUri);
+		$this->baseUri = $this->environment->detectBaseUri($requestUri);
 	}
 
 	/**
@@ -130,7 +130,7 @@ class Request extends \F3\FLOW3\MVC\Request {
 	 * @api
 	 */
 	public function getRequestPath() {
-		return substr($this->requestUri, strlen($this->baseUri));
+		return $this->requestUri->getPath();
 	}
 
 	/**
@@ -154,24 +154,6 @@ class Request extends \F3\FLOW3\MVC\Request {
 	 */
 	public function getBaseUri() {
 		return $this->baseUri;
-	}
-
-	/**
-	 * Tries to detect the base URI of this request and returns it.
-	 *
-	 * @param \F3\FLOW3\Property\DataType\Uri $requestUri URI of this web request
-	 * @return \F3\FLOW3\Property\DataType\Uri The detected base URI
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	protected function detectBaseUri(\F3\FLOW3\Property\DataType\Uri $requestUri) {
-		$baseUri = clone $requestUri;
-		$baseUri->setQuery(NULL);
-		$baseUri->setFragment(NULL);
-
-		$requestPathSegments = explode('/', $this->environment->getScriptRequestPathAndName());
-		array_pop($requestPathSegments);
-		$baseUri->setPath(implode('/', $requestPathSegments) . '/');
-		return $baseUri;
 	}
 
 	/**

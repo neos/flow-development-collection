@@ -202,14 +202,15 @@ class Environment {
 	 * Returns the protocol (http or https) used in the request
 	 *
 	 * @return string The used protol, either http or https
-	 * @author Kasper Skårhøj <kasperYYYY@typo3.com>
+	 * @author Kasper Skårhøj <kasper@typo3.com>
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function getRequestProtocol() {
 		$protocol = 'http';
-		if (isset($this->SERVER['SSL_SESSION_ID'])) $protocol = 'https';
-		if (isset($this->SERVER['HTTPS'])) {
+		if (isset($this->SERVER['SSL_SESSION_ID'])) {
+			$protocol = 'https';
+		} elseif (isset($this->SERVER['HTTPS'])) {
 			if ($this->SERVER['HTTPS'] === 'on' || strcmp($this->SERVER['HTTPS'], '1') === 0) {
 				$protocol = 'https';
 			}
@@ -218,12 +219,20 @@ class Environment {
 	}
 
 	/**
-	 * Returns the Full URI of the request, including the correct protocol, host and path.
-	 * Note that the past in this URI _contains_ the full base URI which means that its
-	 * not always a relative path to the base URI.
+	 * Returns the full URI of the request, including the correct protocol, host and path.
+	 *
+	 * This is always the request URI relevant to FLOW3, so in case of FLOW3 being
+	 * in a subdirectory instead of the document root, the path to that subdirectory
+	 * will not be in the returned URI path. Likewise index.php, if present, will be
+	 * removed. Examples:
+	 * http://your.host.com/package/controller/action -> http://your.host.com/package/controller/action
+	 * http://your.host.com/index.php/package/controller/action -> http://your.host.com/package/controller/action
+	 * http://your.host.com/sub/Web/package/controller/action -> http://your.host.com/package/controller/action
+	 * http://your.host.com/sub/Web/index.php/package/controller/action -> http://your.host.com/package/controller/action
 	 *
 	 * @return \F3\FLOW3\Property\DataType\Uri The request URI consisting of protocol, path and query
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function getRequestUri() {
@@ -231,15 +240,34 @@ class Environment {
 			return FALSE;
 		}
 
-		if (substr_compare($this->SERVER['REQUEST_URI'], '/index.php', 0, 10, TRUE) === 0) {
-			return new \F3\FLOW3\Property\DataType\Uri($this->getRequestProtocol() . '://' . $this->getHTTPHost() . (substr($this->SERVER['REQUEST_URI'], 10) ?: '/'));
+		if (strstr($this->SERVER['REQUEST_URI'], $this->SERVER['SCRIPT_NAME'])) {
+			return new \F3\FLOW3\Property\DataType\Uri($this->getRequestProtocol() . '://' . $this->getHTTPHost() . (str_replace($this->SERVER['SCRIPT_NAME'], '', $this->SERVER['REQUEST_URI']) ?: '/'));
+		} elseif (substr_count($this->SERVER['SCRIPT_NAME'], '/') > 1) {
+			return new \F3\FLOW3\Property\DataType\Uri($this->getRequestProtocol() . '://' . $this->getHTTPHost() . (str_replace(dirname($this->SERVER['SCRIPT_NAME']), '', $this->SERVER['REQUEST_URI']) ?: '/'));
 		} else {
 			return new \F3\FLOW3\Property\DataType\Uri($this->getRequestProtocol() . '://' . $this->getHTTPHost() . $this->SERVER['REQUEST_URI']);
 		}
 	}
 
 	/**
-	 * Returns the full, absolute path and the file name of the executed PHP file
+	 * Tries to detect the base URI of request and returns it.
+	 *
+	 * @param \F3\FLOW3\Property\DataType\Uri $requestUri URI of the request
+	 * @return \F3\FLOW3\Property\DataType\Uri The detected base URI
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
+	 */
+	public function detectBaseUri(\F3\FLOW3\Property\DataType\Uri $requestUri) {
+		$baseUri = clone $requestUri;
+		$baseUri->setQuery(NULL);
+		$baseUri->setFragment(NULL);
+		$baseUri->setPath($this->getScriptRequestPath());
+		return $baseUri;
+	}
+
+	/**
+	 * Returns the full, absolute path and the file name of the executed PHP
+	 * file (on the server, not as in the request URI).
 	 *
 	 * @return string The full path and file name of the PHP script
 	 * @author Robert Lemke <robert@typo3.org>
@@ -257,9 +285,23 @@ class Environment {
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
-	public function getScriptRequestPathAndName() {
+	public function getScriptRequestPathAndFilename() {
 		if (isset($this->SERVER['SCRIPT_NAME'])) return $this->SERVER['SCRIPT_NAME'];
 		if (isset($this->SERVER['ORIG_SCRIPT_NAME'])) return $this->SERVER['ORIG_SCRIPT_NAME'];
+	}
+
+	/**
+	 * Returns the relative path (ie. relative to the web root) to the script as
+	 * it was accessed through the webserver.
+	 *
+	 * @return string Relative path to the PHP script as accessed through the web
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
+	 */
+	public function getScriptRequestPath() {
+		$requestPathSegments = explode('/', $this->getScriptRequestPathAndFilename());
+		array_pop($requestPathSegments);
+		return implode('/', $requestPathSegments) . '/';
 	}
 
 	/**
