@@ -218,10 +218,11 @@ class Environment {
 	}
 
 	/**
-	 * Returns the request URI
+	 * Returns the Full URI of the request, including the correct protocol, host and path.
+	 * Note that the past in this URI _contains_ the full base URI which means that its
+	 * not always a relative path to the base URI.
 	 *
-	 * @return \F3\FLOW3\Property\DataType\Uri The request URI consisting of protocol, path and query, eg. http://typo3.org/xyz/index.php/arg1/arg2/arg3/?arg1,arg2,arg3&p1=parameter1&p2[key]=value
-	 * @author Kasper Skårhøj <kasperYYYY@typo3.com>
+	 * @return \F3\FLOW3\Property\DataType\Uri The request URI consisting of protocol, path and query
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */

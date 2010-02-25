@@ -130,7 +130,7 @@ class Request extends \F3\FLOW3\MVC\Request {
 	 * @api
 	 */
 	public function getRequestPath() {
-		return $this->requestUri->getPath();
+		return substr($this->requestUri, strlen($this->baseUri));
 	}
 
 	/**
