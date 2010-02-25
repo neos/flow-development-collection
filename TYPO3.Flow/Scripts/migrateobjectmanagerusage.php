@@ -29,7 +29,11 @@ if (FLOW3_SAPITYPE !== 'CLI') exit ('This script can only be executed from the c
 
 define('FLOW3_PATH_FLOW3', str_replace('//', '/', str_replace('\\', '/', (realpath(__DIR__ . '/../') . '/'))));
 
-if (isset($_SERVER['FLOW3_ROOTPATH'])) {
+$rootPath = isset($_SERVER['FLOW3_ROOTPATH']) ? $_SERVER['FLOW3_ROOTPATH'] : FALSE;
+if ($rootPath === FALSE && isset($_SERVER['REDIRECT_FLOW3_ROOTPATH'])) {
+	$rootPath = $_SERVER['REDIRECT_FLOW3_ROOTPATH'];
+}
+if ($rootPath !== FALSE) {
 	$rootPath = str_replace('//', '/', str_replace('\\', '/', (realpath($_SERVER['FLOW3_ROOTPATH'])))) . '/';
 	$testPath = str_replace('//', '/', str_replace('\\', '/', (realpath($rootPath . 'Packages/Framework/FLOW3')))) . '/';
 	if ($testPath !== FLOW3_PATH_FLOW3) {
