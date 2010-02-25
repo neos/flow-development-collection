@@ -128,7 +128,7 @@ final class Bootstrap {
 			$rootPath = $_SERVER['REDIRECT_FLOW3_ROOTPATH'];
 		}
 		if ($rootPath !== FALSE) {
-			$rootPath = str_replace('//', '/', str_replace('\\', '/', (realpath($_SERVER['FLOW3_ROOTPATH'])))) . '/';
+			$rootPath = str_replace('//', '/', str_replace('\\', '/', (realpath($rootPath)))) . '/';
 			$testPath = str_replace('//', '/', str_replace('\\', '/', (realpath($rootPath . 'Packages/Framework/FLOW3')))) . '/';
 			if ($testPath !== FLOW3_PATH_FLOW3) {
 				exit('FLOW3: Invalid root path. (Error #1248964375)' . PHP_EOL . '"' . $rootPath . 'Packages/Framework/FLOW3' .'" does not lead to' . PHP_EOL . '"' . FLOW3_PATH_FLOW3 .'"' . PHP_EOL);
