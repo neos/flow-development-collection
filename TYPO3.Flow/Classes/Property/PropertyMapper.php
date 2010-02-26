@@ -275,6 +275,9 @@ class PropertyMapper {
 						}
 					} elseif (strpos($targetPropertyType['type'], '\\') !== FALSE) {
 						$propertyValue = $this->transformToObject($propertyValue, $targetPropertyType['type'], $propertyName);
+						if ($propertyValue === NULL) {
+							continue;
+						}
 					}
 				}
 
