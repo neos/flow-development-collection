@@ -53,14 +53,11 @@ class Request extends \F3\FLOW3\MVC\Request {
 	protected $requestUri;
 
 	/**
-	 * @var \F3\FLOW3\Property\DataType\Uri The base URI for this request - ie. the host and path leading to the index.php
+	 * The base URI for this request - ie. the host and path leading to which all FLOW3 URI paths are relative
+	 *
+	 * @var \F3\FLOW3\Property\DataType\Uri
 	 */
 	protected $baseUri;
-
-	/**
-	 * @var boolean TRUE if the HMAC of this request could be verified, FALSE otherwise.
-	 */
-	protected $hmacVerified = FALSE;
 
 	/**
 	 * Injects the environment
@@ -71,6 +68,8 @@ class Request extends \F3\FLOW3\MVC\Request {
 	 */
 	public function injectEnvironment(\F3\FLOW3\Utility\Environment $environment) {
 		$this->environment = $environment;
+		$this->requestUri = $environment->getRequestUri();
+		$this->baseUri = $environment->getBaseUri();
 	}
 
 	/**
@@ -99,19 +98,6 @@ class Request extends \F3\FLOW3\MVC\Request {
 	}
 
 	/**
-	 * Sets the request URI
-	 *
-	 * @param \F3\FLOW3\Property\DataType\Uri $requestUri URI of this web request
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @api
-	 */
-	public function setRequestUri(\F3\FLOW3\Property\DataType\Uri $requestUri) {
-		$this->requestUri = clone $requestUri;
-		$this->baseUri = $this->environment->detectBaseUri($requestUri);
-	}
-
-	/**
 	 * Returns the request URI
 	 *
 	 * @return \F3\FLOW3\Property\DataType\Uri URI of this web request
@@ -123,32 +109,9 @@ class Request extends \F3\FLOW3\MVC\Request {
 	}
 
 	/**
-	 * Returns the request path of the URI
-	 *
-	 * @return string
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 * @api
-	 */
-	public function getRequestPath() {
-		return $this->requestUri->getPath();
-	}
-
-	/**
-	 * Sets the base URI for this request.
-	 *
-	 * @param \F3\FLOW3\Property\DataType\Uri $baseUri New base URI
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @api
-	 */
-	public function setBaseUri(\F3\FLOW3\Property\DataType\Uri $baseUri) {
-		$this->baseUri = clone $baseUri;
-	}
-
-	/**
 	 * Returns the base URI
 	 *
-	 * @return \F3\FLOW3\Property\DataType\Uri Base URI of this web request
+	 * @return \F3\FLOW3\Property\DataType\Uri URI of this web request
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
@@ -157,24 +120,15 @@ class Request extends \F3\FLOW3\MVC\Request {
 	}
 
 	/**
-	 * Setter for HMAC verification flag.
+	 * Returns the the request path relative to the base URI
 	 *
-	 * @param boolean $hmacVerified TRUE if request could be verified, FALSE otherwise.
-	 * @return void
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @return string
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
-	public function setHmacVerified($hmacVerified) {
-		$this->hmacVerified = (boolean)$hmacVerified;
+	public function getRoutePath() {
+		return substr($this->requestUri->getPath(), strlen($this->baseUri->getPath()));
 	}
 
-	/**
-	 * Could the request be verified via a HMAC?
-	 *
-	 * @return boolean TRUE if request could be verified, FALSE otherwise.
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 */
-	public function isHmacVerified() {
-		return $this->hmacVerified;
-	}
 }
 ?>

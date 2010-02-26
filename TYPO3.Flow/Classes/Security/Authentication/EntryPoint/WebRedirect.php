@@ -71,10 +71,12 @@ class WebRedirect implements \F3\FLOW3\Security\Authentication\EntryPointInterfa
 		if (!$this->canForward($request)) throw new \F3\FLOW3\Security\Exception\RequestTypeNotSupportedException('Unsupported request type for authentication entry point given.', 1237282462);
 		if (!is_array($this->options) || !isset($this->options['uri'])) throw new \F3\FLOW3\Security\Exception\MissingConfigurationException('The configuration for the WebRedirect authentication entry point is incorrect or missing.', 1237282583);
 
-		$escapedUri = htmlentities($this->options['uri'], ENT_QUOTES, 'utf-8');
+		$plainUri = (strpos('://', $this->options['uri'] !== FALSE)) ? $this->options['uri'] : $request->getBaseUri() . $this->options['uri'];
+		$escapedUri = htmlentities($plainUri, ENT_QUOTES, 'utf-8');
+
 		$response->setContent('<html><head><meta http-equiv="refresh" content="0;url=' . $escapedUri . '"/></head></html>');
 		$response->setStatus(303);
-		$response->setHeader('Location', (string)$this->options['uri']);
+		$response->setHeader('Location', $plainUri);
 
 	}
 }

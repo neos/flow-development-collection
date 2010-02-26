@@ -127,15 +127,15 @@ interface RoutePartInterface {
 	public function getOptions();
 
 	/**
-	 * Checks whether this Route Part corresponds to the given $requestPath.
+	 * Checks whether this Route Part corresponds to the given $routePath.
 	 * This method does not only check if the Route Part matches. It can also
-	 * shorten the $requestPath by the matching substring when matching is successful.
-	 * This is why $requestPath has to be passed by reference.
+	 * shorten the $routePath by the matching substring when matching is successful.
+	 * This is why $routePath has to be passed by reference.
 	 *
-	 * @param string &$requestPath The request path to be matched - without query parameters, host and fragment.
-	 * @return boolean TRUE if Route Part matched $requestPath, otherwise FALSE.
+	 * @param string &$routePath The request path to be matched - without query parameters, host and fragment.
+	 * @return boolean TRUE if Route Part matched $routePath, otherwise FALSE.
 	 */
-	public function match(&$requestPath);
+	public function match(&$routePath);
 
 	/**
 	 * Checks whether this Route Part corresponds to the given $routeValues.

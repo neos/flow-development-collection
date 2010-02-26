@@ -106,16 +106,6 @@ class RequestBuilderTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function buildSetsTheRequestUriInTheRequestObject() {
-		$this->setUpRequestBuilder();
-		$this->mockRequest->expects($this->once())->method('setRequestUri')->with($this->equalTo($this->mockRequestUri));
-		$this->builder->build();
-	}
-
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
 	public function buildInvokesTheRouteMethodOfTheRouter() {
 		$this->setUpRequestBuilder();
 		$this->mockRouter->expects($this->once())->method('route');

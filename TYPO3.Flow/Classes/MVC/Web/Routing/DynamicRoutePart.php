@@ -53,44 +53,44 @@ class DynamicRoutePart extends \F3\FLOW3\MVC\Web\Routing\AbstractRoutePart imple
 	}
 
 	/**
-	 * Checks whether this Dynamic Route Part corresponds to the given $requestPath.
+	 * Checks whether this Dynamic Route Part corresponds to the given $routePath.
 	 *
 	 * On successful match this method sets $this->value to the corresponding uriPart
-	 * and shortens $requestPath respectively.
+	 * and shortens $routePath respectively.
 	 *
-	 * @param string $requestPath The request path to be matched - without query parameters, host and fragment.
-	 * @return boolean TRUE if Route Part matched $requestPath, otherwise FALSE.
+	 * @param string $routePath The request path to be matched - without query parameters, host and fragment.
+	 * @return boolean TRUE if Route Part matched $routePath, otherwise FALSE.
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	final public function match(&$requestPath) {
+	final public function match(&$routePath) {
 		$this->value = NULL;
 		if ($this->name === NULL || $this->name === '') {
 			return FALSE;
 		}
-		$valueToMatch = $this->findValueToMatch($requestPath);
+		$valueToMatch = $this->findValueToMatch($routePath);
 		if (!$this->matchValue($valueToMatch)) {
 			return FALSE;
 		}
-		$this->removeMatchingPortionFromRequestPath($requestPath, $valueToMatch);
+		$this->removeMatchingPortionFromRequestPath($routePath, $valueToMatch);
 
 		return TRUE;
 	}
 
 	/**
-	 * Returns the first part of $requestPath.
+	 * Returns the first part of $routePath.
 	 * If a split string is set, only the first part of the value until location of the splitString is returned.
 	 * This method can be overridden by custom RoutePartHandlers to implement custom matching mechanisms.
 	 *
-	 * @param string $requestPath The request path to be matched
-	 * @return string value to match, or an empty string if $requestPath is empty or split string was not found
+	 * @param string $routePath The request path to be matched
+	 * @return string value to match, or an empty string if $routePath is empty or split string was not found
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @api
 	 */
-	protected function findValueToMatch($requestPath) {
-		if (!isset($requestPath) || $requestPath === '' || $requestPath[0] === '/') {
+	protected function findValueToMatch($routePath) {
+		if (!isset($routePath) || $routePath === '' || $routePath[0] === '/') {
 			return '';
 		}
-		$valueToMatch = $requestPath;
+		$valueToMatch = $routePath;
 		if ($this->splitString !== '') {
 			$splitStringPosition = strpos($valueToMatch, $this->splitString);
 			if ($splitStringPosition !== FALSE) {
@@ -122,18 +122,18 @@ class DynamicRoutePart extends \F3\FLOW3\MVC\Web\Routing\AbstractRoutePart imple
 	}
 
 	/**
-	 * Removes matching part from $requestPath.
+	 * Removes matching part from $routePath.
 	 * This method can be overridden by custom RoutePartHandlers to implement custom matching mechanisms.
 	 *
-	 * @param string $requestPath The request path to be matched
+	 * @param string $routePath The request path to be matched
 	 * @param string $valueToMatch The matching value
 	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @api
 	 */
-	protected function removeMatchingPortionFromRequestPath(&$requestPath, $valueToMatch) {
+	protected function removeMatchingPortionFromRequestPath(&$routePath, $valueToMatch) {
 		if ($valueToMatch !== NULL && $valueToMatch !== '') {
-			$requestPath = substr($requestPath, strlen($valueToMatch));
+			$routePath = substr($routePath, strlen($valueToMatch));
 		}
 	}
 

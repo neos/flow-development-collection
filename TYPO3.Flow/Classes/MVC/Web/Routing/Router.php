@@ -126,8 +126,8 @@ class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 	 */
 	public function route(\F3\FLOW3\MVC\Web\Request $request) {
 		$this->request = $request;
-		$requestPath = $this->request->getRequestPath();
-		$matchResults = $this->findMatchResults($requestPath);
+		$routePath = $this->request->getRoutePath();
+		$matchResults = $this->findMatchResults($routePath);
 		if ($matchResults !== NULL) {
 			$this->setControllerKeysAndFormat($matchResults);
 			foreach ($matchResults as $argumentName => $argumentValue) {
@@ -178,22 +178,22 @@ class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 	 * route could be found.
 	 * Note: calls of this message are cached by RouterCachingAspect
 	 *
-	 * @param string $requestPath The request path
+	 * @param string $routePath The route path
 	 * @return array results of the matching route
 	 * @see route()
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	protected function findMatchResults($requestPath) {
+	protected function findMatchResults($routePath) {
 		$this->createRoutesFromConfiguration();
 
 		foreach ($this->routes as $route) {
-			if ($route->matches($requestPath)) {
+			if ($route->matches($routePath)) {
 				$matchResults = $route->getMatchResults();
-				$this->systemLogger->log('Router route(): Route "' . $route->getName() . '" matched the request path "' . $requestPath . '".', LOG_DEBUG);
+				$this->systemLogger->log('Router route(): Route "' . $route->getName() . '" matched the path "' . $routePath . '".', LOG_DEBUG);
 				return $matchResults;
 			}
 		}
-		$this->systemLogger->log('Router route(): No route matched the request path "' . $requestPath . '".', LOG_NOTICE);
+		$this->systemLogger->log('Router route(): No route matched the route path "' . $routePath . '".', LOG_NOTICE);
 		return NULL;
 	}
 

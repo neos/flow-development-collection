@@ -86,6 +86,11 @@ class Environment {
 	protected $temporaryDirectory = NULL;
 
 	/**
+	 * @var F3\FLOW3\Property\DataType\Uri
+	 */
+	protected $baseUri;
+
+	/**
 	 * Sets the FLOW3 context
 	 *
 	 * @param string $context The FLOW3 context
@@ -202,7 +207,7 @@ class Environment {
 	 * Returns the protocol (http or https) used in the request
 	 *
 	 * @return string The used protol, either http or https
-	 * @author Kasper Skårhøj <kasper@typo3.com>
+	 * @author Kasper Skårhøj <kasperYYYY@typo3.com>
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
@@ -219,20 +224,14 @@ class Environment {
 	}
 
 	/**
-	 * Returns the full URI of the request, including the correct protocol, host and path.
+	 * Returns the Full URI of the request, including the correct protocol, host and path.
+	 * Note that the past in this URI _contains_ the full base URI which means that its
+	 * not always a relative path to the base URI.
 	 *
-	 * This is always the request URI relevant to FLOW3, so in case of FLOW3 being
-	 * in a subdirectory instead of the document root, the path to that subdirectory
-	 * will not be in the returned URI path. Likewise index.php, if present, will be
-	 * removed. Examples:
-	 * http://your.host.com/package/controller/action -> http://your.host.com/package/controller/action
-	 * http://your.host.com/index.php/package/controller/action -> http://your.host.com/package/controller/action
-	 * http://your.host.com/sub/Web/package/controller/action -> http://your.host.com/package/controller/action
-	 * http://your.host.com/sub/Web/index.php/package/controller/action -> http://your.host.com/package/controller/action
+	 * The script name "index.php" will be removed if it exists.
 	 *
-	 * @return \F3\FLOW3\Property\DataType\Uri The request URI consisting of protocol, path and query
+	 * @return \F3\FLOW3\Property\DataType\Uri The request URI
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function getRequestUri() {
@@ -240,29 +239,20 @@ class Environment {
 			return FALSE;
 		}
 
-		if (strstr($this->SERVER['REQUEST_URI'], $this->SERVER['SCRIPT_NAME'])) {
-			return new \F3\FLOW3\Property\DataType\Uri($this->getRequestProtocol() . '://' . $this->getHTTPHost() . (str_replace($this->SERVER['SCRIPT_NAME'], '', $this->SERVER['REQUEST_URI']) ?: '/'));
-		} elseif (substr_count($this->SERVER['SCRIPT_NAME'], '/') > 1) {
-			return new \F3\FLOW3\Property\DataType\Uri($this->getRequestProtocol() . '://' . $this->getHTTPHost() . (str_replace(dirname($this->SERVER['SCRIPT_NAME']), '', $this->SERVER['REQUEST_URI']) ?: '/'));
-		} else {
-			return new \F3\FLOW3\Property\DataType\Uri($this->getRequestProtocol() . '://' . $this->getHTTPHost() . $this->SERVER['REQUEST_URI']);
-		}
+		return new \F3\FLOW3\Property\DataType\Uri($this->getRequestProtocol() . '://' . $this->getHTTPHost() . str_replace('/index.php' , '', $this->SERVER['REQUEST_URI']));
 	}
 
 	/**
-	 * Tries to detect the base URI of request and returns it.
+	 * Returns the current base URI which is the root FLOW3's relative URIs.
 	 *
-	 * @param \F3\FLOW3\Property\DataType\Uri $requestUri URI of the request
-	 * @return \F3\FLOW3\Property\DataType\Uri The detected base URI
+	 * @return \F3\FLOW3\Property\DataType\Uri The base URI
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @api
 	 */
-	public function detectBaseUri(\F3\FLOW3\Property\DataType\Uri $requestUri) {
-		$baseUri = clone $requestUri;
-		$baseUri->setQuery(NULL);
-		$baseUri->setFragment(NULL);
-		$baseUri->setPath($this->getScriptRequestPath());
-		return $baseUri;
+	public function getBaseUri() {
+		if ($this->baseUri === NULL) {
+			$this->detectBaseUri();
+		}
+		return $this->baseUri;
 	}
 
 	/**
@@ -447,6 +437,19 @@ class Environment {
 			return TRUE;
 		}
 		return (boolean)getenv('FLOW3_REWRITEURLS');
+	}
+
+	/**
+	 * Tries to detect the base URI of request.
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function detectBaseUri() {
+		$this->baseUri = $this->getRequestUri();
+		$this->baseUri->setQuery(NULL);
+		$this->baseUri->setFragment(NULL);
+		$this->baseUri->setPath($this->getScriptRequestPath());
 	}
 
 	/**

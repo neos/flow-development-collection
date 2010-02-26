@@ -69,51 +69,26 @@ class RequestTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getRequestUriReturnsCorrectUri() {
-		$request = new \F3\FLOW3\MVC\Web\Request();
-		$request->injectEnvironment($this->environment);
-		$request->setRequestUri($this->requestUri);
+	public function getRequestUriReturnsTheBaseUriDetectedByTheEnvironmentClass() {
+		$expectedRequestUri = new \F3\FLOW3\Property\DataType\Uri('http://www.server.com/foo/bar');
 
-		$this->assertEquals($this->requestUri, $request->getRequestUri(), 'request->getRequestUri() did not return the expected URI.');
-		$this->assertNotSame($this->requestUri, $request->getRequestUri(), 'request->getRequestUri() returned the same URI which is dangerous ...');
+		$request = $this->getAccessibleMock('F3\FLOW3\MVC\Web\Request', array('dummy'));
+		$request->_set('requestUri', $expectedRequestUri);
+
+		$this->assertEquals($expectedRequestUri, $request->getRequestUri());
 	}
 
 	/**
-	 * Checks if the test URI is detected correctly as the base URI
+	 * Returns the base URI of the current request.
 	 *
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getBaseUriDetectsSimpleUriCorrectly() {
-		$this->environment->SERVER['ORIG_SCRIPT_NAME'] = NULL;
-		$this->environment->SERVER['SCRIPT_NAME'] = '/';
-
-		$requestUri = new \F3\FLOW3\Property\DataType\Uri('http://www.server.com/index.php');
+	public function getBaseUriReturnsTheBaseUriDetectedByTheEnvironmentClass() {
 		$expectedBaseUri = new \F3\FLOW3\Property\DataType\Uri('http://www.server.com/');
 
-		$request = new \F3\FLOW3\MVC\Web\Request();
-		$request->injectEnvironment($this->environment);
-		$request->setRequestUri($requestUri);
-
-		$this->assertEquals($expectedBaseUri, $request->getBaseUri(), 'The returned baseUri is not as expected.');
-	}
-
-	/**
-	 * Checks if the base URI is detected correctly when TYPO3 resides in a subdirectory of the web root.
-	 *
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getBaseUriDetectsUriWithSubDirectoryCorrectly() {
-		$this->environment->SERVER['ORIG_SCRIPT_NAME'] = NULL;
-		$this->environment->SERVER['SCRIPT_NAME'] = '/path1/path2/index.php';
-
-		$requestUri = new \F3\FLOW3\Property\DataType\Uri('http://www.server.com/path1/path2/index.php');
-		$expectedBaseUri = new \F3\FLOW3\Property\DataType\Uri('http://www.server.com/path1/path2/');
-
-		$request = new \F3\FLOW3\MVC\Web\Request();
-		$request->injectEnvironment($this->environment);
-		$request->setRequestUri($requestUri);
+		$request = $this->getAccessibleMock('F3\FLOW3\MVC\Web\Request', array('dummy'));
+		$request->_set('baseUri', $expectedBaseUri);
 
 		$this->assertEquals($expectedBaseUri, $request->getBaseUri(), 'The returned baseUri is not as expected.');
 	}
@@ -155,20 +130,6 @@ class RequestTest extends \F3\Testing\BaseTestCase {
 		$this->assertEquals($errors, $request->getErrors());
 	}
 
-	/**
-	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org
-	 */
-	public function hmacVerifiedCanBeSetAndRetrieved() {
-		$request = new \F3\FLOW3\MVC\Web\Request();
-
-		$this->assertFalse($request->isHmacVerified());
-
-		$request->setHmacVerified(TRUE);
-		$this->assertTrue($request->isHmacVerified());
-
-		$request->setHmacVerified(FALSE);
-		$this->assertFalse($request->isHmacVerified());
-	}
+	
 }
 ?>

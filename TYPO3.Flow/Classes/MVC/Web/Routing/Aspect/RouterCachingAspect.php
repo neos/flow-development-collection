@@ -72,9 +72,9 @@ class RouterCachingAspect {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function cacheMatchingCall(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
-		$requestPath = $joinPoint->getMethodArgument('requestPath');
+		$routePath = $joinPoint->getMethodArgument('routePath');
 
-		$cacheIdentifier = md5($requestPath);
+		$cacheIdentifier = md5($routePath);
 		if ($this->findMatchResultsCache->has($cacheIdentifier)) {
 			return $this->findMatchResultsCache->get($cacheIdentifier);
 		}

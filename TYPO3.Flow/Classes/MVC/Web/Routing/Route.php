@@ -273,19 +273,19 @@ class Route {
 	}
 
 	/**
-	 * Checks whether $requestPath corresponds to this Route.
+	 * Checks whether $routePath corresponds to this Route.
 	 * If all Route Parts match successfully TRUE is returned and
 	 * $this->matchResults contains an array combining Route default values and
 	 * calculated matchResults from the individual Route Parts.
 	 *
-	 * @param string $requestPath the request path without protocol, host and query string
-	 * @return boolean TRUE if this Route corresponds to the given $requestPath, otherwise FALSE
+	 * @param string $routePath the route path without protocol, host and query string
+	 * @return boolean TRUE if this Route corresponds to the given $routePath, otherwise FALSE
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @see getMatchResults()
 	 */
-	public function matches($requestPath) {
+	public function matches($routePath) {
 		$this->matchResults = NULL;
-		if ($requestPath === NULL) {
+		if ($routePath === NULL) {
 			return FALSE;
 		}
 		if ($this->uriPattern === NULL) {
@@ -296,7 +296,7 @@ class Route {
 		}
 		$matchResults = array();
 
-		$requestPath = trim($requestPath, '/');
+		$routePath = trim($routePath, '/');
 		$skipOptionalParts = FALSE;
 		$optionalPartCount = 0;
 		foreach ($this->routeParts as $routePart) {
@@ -312,7 +312,7 @@ class Route {
 				$optionalPartCount = 0;
 				$skipOptionalParts = FALSE;
 			}
-			if (!$routePart->match($requestPath)) {
+			if (!$routePart->match($routePath)) {
 				if ($routePart->isOptional() && $optionalPartCount === 1) {
 					if ($routePart->getDefaultValue() === NULL) {
 						return FALSE;
@@ -326,7 +326,7 @@ class Route {
 				$matchResults[$routePart->getName()] = $routePart->getValue();
 			}
 		}
-		if (strlen($requestPath) > 0) {
+		if (strlen($routePath) > 0) {
 			return FALSE;
 		}
 		$this->matchResults = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($this->defaults, $matchResults);

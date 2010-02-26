@@ -97,7 +97,7 @@ class RouterTest extends \F3\Testing\BaseTestCase {
 		$router->expects($this->once())->method('findMatchResults')->with('foo')->will($this->returnValue(array('@package' => 'MyPackage')));
 
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
-		$mockRequest->expects($this->once())->method('getRequestPath')->will($this->returnValue('foo'));
+		$mockRequest->expects($this->once())->method('getRoutePath')->will($this->returnValue('foo'));
 		$mockRequest->expects($this->once())->method('getArguments')->will($this->returnValue(array()));
 		$mockRequest->expects($this->once())->method('setControllerPackageKey')->with($this->equalTo('MyPackage'));
 
@@ -113,7 +113,7 @@ class RouterTest extends \F3\Testing\BaseTestCase {
 		$router->expects($this->once())->method('findMatchResults')->with('foo')->will($this->returnValue(array('@subpackage' => 'MySubpackage')));
 		
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
-		$mockRequest->expects($this->once())->method('getRequestPath')->will($this->returnValue('foo'));
+		$mockRequest->expects($this->once())->method('getRoutePath')->will($this->returnValue('foo'));
 		$mockRequest->expects($this->once())->method('getArguments')->will($this->returnValue(array()));
 		$mockRequest->expects($this->once())->method('setControllerSubpackageKey')->with($this->equalTo('MySubpackage'));
 		
@@ -129,7 +129,7 @@ class RouterTest extends \F3\Testing\BaseTestCase {
 		$router->expects($this->once())->method('findMatchResults')->with('foo')->will($this->returnValue(array('@controller' => 'MyController')));
 		
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
-		$mockRequest->expects($this->once())->method('getRequestPath')->will($this->returnValue('foo'));
+		$mockRequest->expects($this->once())->method('getRoutePath')->will($this->returnValue('foo'));
 		$mockRequest->expects($this->once())->method('getArguments')->will($this->returnValue(array()));
 		$mockRequest->expects($this->once())->method('setControllerName')->with($this->equalTo('MyController'));
 		
@@ -145,7 +145,7 @@ class RouterTest extends \F3\Testing\BaseTestCase {
 		$router->expects($this->once())->method('findMatchResults')->with('foo')->will($this->returnValue(array('@action' => 'MyAction')));
 		
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
-		$mockRequest->expects($this->once())->method('getRequestPath')->will($this->returnValue('foo'));
+		$mockRequest->expects($this->once())->method('getRoutePath')->will($this->returnValue('foo'));
 		$mockRequest->expects($this->once())->method('getArguments')->will($this->returnValue(array()));
 		$mockRequest->expects($this->once())->method('setControllerActionName')->with($this->equalTo('myAction'));
 		
@@ -161,7 +161,7 @@ class RouterTest extends \F3\Testing\BaseTestCase {
 		$router->expects($this->once())->method('findMatchResults')->with('foo')->will($this->returnValue(array('@format' => 'myFormat')));
 		
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
-		$mockRequest->expects($this->once())->method('getRequestPath')->will($this->returnValue('foo'));
+		$mockRequest->expects($this->once())->method('getRoutePath')->will($this->returnValue('foo'));
 		$mockRequest->expects($this->once())->method('getArguments')->will($this->returnValue(array()));
 		$mockRequest->expects($this->once())->method('setFormat')->with($this->equalTo('myformat'));
 		
@@ -182,7 +182,7 @@ class RouterTest extends \F3\Testing\BaseTestCase {
 		$router->expects($this->once())->method('findMatchResults')->with('foo')->will($this->returnValue(array('@package' => 'MyPackage')));
 
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
-		$mockRequest->expects($this->once())->method('getRequestPath')->will($this->returnValue('foo'));
+		$mockRequest->expects($this->once())->method('getRoutePath')->will($this->returnValue('foo'));
 		$mockRequest->expects($this->any())->method('getArguments')->will($this->returnValue(array('@package' => 'OverwrittenPackage')));
 		$mockRequest->expects($this->exactly(2))->method('setControllerPackageKey')->will($this->returnCallback($setControllerPackageKeyCallback));
 
@@ -205,7 +205,7 @@ class RouterTest extends \F3\Testing\BaseTestCase {
 		$router->expects($this->once())->method('findMatchResults')->with('foo')->will($this->returnValue(array('@subpackage' => 'MySubpackage')));
 
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
-		$mockRequest->expects($this->once())->method('getRequestPath')->will($this->returnValue('foo'));
+		$mockRequest->expects($this->once())->method('getRoutePath')->will($this->returnValue('foo'));
 		$mockRequest->expects($this->any())->method('getArguments')->will($this->returnValue(array('@subpackage' => 'OverwrittenSubpackage')));
 		$mockRequest->expects($this->exactly(2))->method('setControllerSubpackageKey')->will($this->returnCallback($setControllerSubpackageKeyCallback));
 
@@ -228,7 +228,7 @@ class RouterTest extends \F3\Testing\BaseTestCase {
 		$router->expects($this->once())->method('findMatchResults')->with('foo')->will($this->returnValue(array('@controller' => 'MyController')));
 
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
-		$mockRequest->expects($this->once())->method('getRequestPath')->will($this->returnValue('foo'));
+		$mockRequest->expects($this->once())->method('getRoutePath')->will($this->returnValue('foo'));
 		$mockRequest->expects($this->any())->method('getArguments')->will($this->returnValue(array('@controller' => 'OverwrittenController')));
 		$mockRequest->expects($this->exactly(2))->method('setControllerName')->will($this->returnCallback($setControllerNameCallback));
 
@@ -251,7 +251,7 @@ class RouterTest extends \F3\Testing\BaseTestCase {
 		$router->expects($this->once())->method('findMatchResults')->with('foo')->will($this->returnValue(array('@action' => 'myAction')));
 
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
-		$mockRequest->expects($this->once())->method('getRequestPath')->will($this->returnValue('foo'));
+		$mockRequest->expects($this->once())->method('getRoutePath')->will($this->returnValue('foo'));
 		$mockRequest->expects($this->any())->method('getArguments')->will($this->returnValue(array('@action' => 'overwrittenAction')));
 		$mockRequest->expects($this->exactly(2))->method('setControllerActionName')->will($this->returnCallback($setControllerActionNameCallback));
 
@@ -274,7 +274,7 @@ class RouterTest extends \F3\Testing\BaseTestCase {
 		$router->expects($this->once())->method('findMatchResults')->with('foo')->will($this->returnValue(array('@format' => 'myFormat')));
 
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
-		$mockRequest->expects($this->once())->method('getRequestPath')->will($this->returnValue('foo'));
+		$mockRequest->expects($this->once())->method('getRoutePath')->will($this->returnValue('foo'));
 		$mockRequest->expects($this->any())->method('getArguments')->will($this->returnValue(array('@format' => 'overwrittenFormat')));
 		$mockRequest->expects($this->exactly(2))->method('setFormat')->will($this->returnCallback($setFormatCallback));
 

@@ -42,11 +42,11 @@ class DynamicRoutePartTest extends \F3\Testing\BaseTestCase {
 		$routePart = new \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart();
 		$routePart->setName('foo');
 
-		$requestPath = NULL;
-		$this->assertFalse($routePart->match($requestPath), 'Dynamic Route Part should not match if $requestPath is NULL.');
+		$routePath = NULL;
+		$this->assertFalse($routePart->match($routePath), 'Dynamic Route Part should not match if $routePath is NULL.');
 
-		$requestPath = '';
-		$this->assertFalse($routePart->match($requestPath), 'Dynamic Route Part should not match if $requestPath is empty.');
+		$routePath = '';
+		$this->assertFalse($routePart->match($routePath), 'Dynamic Route Part should not match if $routePath is empty.');
 
 	}
 
@@ -59,8 +59,8 @@ class DynamicRoutePartTest extends \F3\Testing\BaseTestCase {
 		$routePart->setName('foo');
 		$routePart->setDefaultValue('bar');
 
-		$requestPath = '';
-		$this->assertFalse($routePart->match($requestPath), 'Dynamic Route Part should not match if $requestPath is empty.');
+		$routePath = '';
+		$this->assertFalse($routePart->match($routePath), 'Dynamic Route Part should not match if $routePath is empty.');
 	}
 
 	/**
@@ -69,9 +69,9 @@ class DynamicRoutePartTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function dynamicRoutePartDoesNotMatchIfNameIsNotSet() {
 		$routePart = new \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart();
-		$requestPath = 'foo';
+		$routePath = 'foo';
 
-		$this->assertFalse($routePart->match($requestPath), 'Dynamic Route Part should not match if name is not set.');
+		$this->assertFalse($routePart->match($routePath), 'Dynamic Route Part should not match if name is not set.');
 	}
 
 
@@ -85,8 +85,8 @@ class DynamicRoutePartTest extends \F3\Testing\BaseTestCase {
 		$routePart->setDefaultValue('bar');
 		$routePart->setSplitString('/');
 
-		$requestPath = 'firstSegment/secondSegment';
-		$routePart->match($requestPath);
+		$routePath = 'firstSegment/secondSegment';
+		$routePart->match($routePath);
 
 		$this->assertEquals('firstSegment', $routePart->getValue(), 'value of Dynamic Route Part should be equal to first request path segment after successful match.');
 	}
@@ -100,11 +100,11 @@ class DynamicRoutePartTest extends \F3\Testing\BaseTestCase {
 		$routePart->setName('foo');
 		$routePart->setSplitString('/');
 
-		$requestPath = 'foo/bar';
-		$routePart->match($requestPath);
+		$routePath = 'foo/bar';
+		$routePart->match($routePath);
 
-		$requestPath = '/bar';
-		$routePart->match($requestPath);
+		$routePath = '/bar';
+		$routePart->match($routePath);
 		$this->assertNull($routePart->getValue(), 'Dynamic Route Part value should be NULL after unsuccessful match.');
 	}
 
@@ -112,15 +112,15 @@ class DynamicRoutePartTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function requestPathIsShortenedByOneSegmentAfterSuccessfulMatch() {
+	public function routePathIsShortenedByOneSegmentAfterSuccessfulMatch() {
 		$routePart = new \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart();
 		$routePart->setName('bar');
 		$routePart->setSplitString('/');
 
-		$requestPath = 'bar/foo/test';
-		$routePart->match($requestPath);
+		$routePath = 'bar/foo/test';
+		$routePart->match($routePath);
 
-		$this->assertSame('/foo/test', $requestPath, 'Dynamic Route Part should shorten request path by one segment on successful match.');
+		$this->assertSame('/foo/test', $routePath, 'Dynamic Route Part should shorten request path by one segment on successful match.');
 	}
 
 	/**
@@ -131,9 +131,9 @@ class DynamicRoutePartTest extends \F3\Testing\BaseTestCase {
 		$routePart = new \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart();
 		$routePart->setName('foo');
 
-		$requestPath = 'foo/bar';
+		$routePath = 'foo/bar';
 
-		$this->assertFalse($routePart->match($requestPath), 'Dynamic Route Part should not match if request Path has more than one segment and no split string is set.');
+		$this->assertFalse($routePart->match($routePath), 'Dynamic Route Part should not match if request Path has more than one segment and no split string is set.');
 	}
 
 	/**
@@ -145,9 +145,9 @@ class DynamicRoutePartTest extends \F3\Testing\BaseTestCase {
 		$routePart->setName('foo');
 		$routePart->setSplitString('not-existing');
 
-		$requestPath = 'foo/bar';
+		$routePath = 'foo/bar';
 
-		$this->assertFalse($routePart->match($requestPath), 'Dynamic Route Part should not match if request Path has more than one segment and does not contain split string.');
+		$this->assertFalse($routePart->match($routePath), 'Dynamic Route Part should not match if request Path has more than one segment and does not contain split string.');
 	}
 
 	/**
@@ -158,9 +158,9 @@ class DynamicRoutePartTest extends \F3\Testing\BaseTestCase {
 		$routePart = new \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart();
 		$routePart->setName('foo');
 
-		$requestPath = 'bar';
+		$routePath = 'bar';
 
-		$this->assertTrue($routePart->match($requestPath));
+		$this->assertTrue($routePart->match($routePath));
 		$this->assertEquals('bar', $routePart->getValue(), 'Dynamic Route Part should match if request Path has only one segment and no split string is set.');
 	}
 
@@ -173,9 +173,9 @@ class DynamicRoutePartTest extends \F3\Testing\BaseTestCase {
 		$routePart->setName('foo');
 		$routePart->setSplitString('not-existing');
 
-		$requestPath = 'bar';
+		$routePath = 'bar';
 
-		$this->assertTrue($routePart->match($requestPath));
+		$this->assertTrue($routePart->match($routePath));
 		$this->assertEquals('bar', $routePart->getValue(), 'Dynamic Route Part should match if request Path has only one segment and does not contain split string.');
 	}
 
@@ -188,9 +188,9 @@ class DynamicRoutePartTest extends \F3\Testing\BaseTestCase {
 		$routePart->setName('foo');
 		$routePart->setSplitString('-');
 
-		$requestPath = '-foo/bar';
+		$routePath = '-foo/bar';
 
-		$this->assertFalse($routePart->match($requestPath), 'Dynamic Route Part should not match if split string is first character of current request path.');
+		$this->assertFalse($routePart->match($routePath), 'Dynamic Route Part should not match if split string is first character of current request path.');
 	}
 
 	/**
@@ -202,8 +202,8 @@ class DynamicRoutePartTest extends \F3\Testing\BaseTestCase {
 		$routePart->setName('foo');
 		$routePart->setSplitString('_-_');
 
-		$requestPath = 'foo_-_bar';
-		$this->assertTrue($routePart->match($requestPath), 'Dynamic Route Part with a split string of "_-_" should match request path of "foo_-_bar".');
+		$routePath = 'foo_-_bar';
+		$this->assertTrue($routePart->match($routePath), 'Dynamic Route Part with a split string of "_-_" should match request path of "foo_-_bar".');
 	}
 
 	/*                                                                        *

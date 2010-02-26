@@ -42,27 +42,27 @@ class StaticRoutePart extends \F3\FLOW3\MVC\Web\Routing\AbstractRoutePart {
 	}
 
 	/**
-	 * Checks whether this Static Route Part correspond to the given $requestPath.
-	 * This is TRUE if $requestPath is not empty and the first part is equal to the Route Part name.
+	 * Checks whether this Static Route Part correspond to the given $routePath.
+	 * This is TRUE if $routePath is not empty and the first part is equal to the Route Part name.
 	 *
-	 * @param string $requestPath The request path to be matched - without query parameters, host and fragment.
-	 * @return boolean TRUE if Route Part matched $requestPath, otherwise FALSE.
+	 * @param string $routePath The request path to be matched - without query parameters, host and fragment.
+	 * @return boolean TRUE if Route Part matched $routePath, otherwise FALSE.
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function match(&$requestPath) {
+	public function match(&$routePath) {
 		if ($this->name === NULL || $this->name === '') {
 			return FALSE;
 		}
-		if ($requestPath === '') {
+		if ($routePath === '') {
 			return FALSE;
 		}
-		$valueToMatch = substr($requestPath, 0, strlen($this->name));
+		$valueToMatch = substr($routePath, 0, strlen($this->name));
 		if ($valueToMatch !== $this->name) {
 			return FALSE;
 		}
-		$shortenedRequestPath = substr($requestPath, strlen($valueToMatch));
-		$requestPath = ($shortenedRequestPath !== FALSE) ? $shortenedRequestPath : '';
+		$shortenedRequestPath = substr($routePath, strlen($valueToMatch));
+		$routePath = ($shortenedRequestPath !== FALSE) ? $shortenedRequestPath : '';
 
 		return TRUE;
 	}

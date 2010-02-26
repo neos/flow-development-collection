@@ -198,7 +198,7 @@ class RouteTest extends \F3\Testing\BaseTestCase {
 	public function routeDoesNotMatchIfRequestPathIsNull() {
 		$this->route->setUriPattern('');
 
-		$this->assertFalse($this->route->matches(NULL), 'Route should not match if requestPath is NULL.');
+		$this->assertFalse($this->route->matches(NULL), 'Route should not match if routePath is NULL.');
 	}
 
 	/**

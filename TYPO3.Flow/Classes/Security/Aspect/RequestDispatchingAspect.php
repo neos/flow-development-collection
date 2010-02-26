@@ -90,22 +90,6 @@ class RequestDispatchingAspect {
 	}
 
 	/**
-	 * Advices the dispatch method to check the HMAC.
-	 *
-	 * @around method(F3\FLOW3\MVC\Dispatcher->dispatch()) && setting(FLOW3.security.enable)
-	 * @param F3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
-	 * @return mixed Result of the advice chain
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 */
-	public function checkRequestHash(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
-		$request = $joinPoint->getMethodArgument('request');
-		if ($request instanceof \F3\FLOW3\MVC\Web\Request) {
-			$this->requestHashService->verifyRequest($request);
-		}
-		return $joinPoint->getAdviceChain()->proceed($joinPoint);
-	}
-
-	/**
 	 * Catches AuthenticationRequired Exceptions and tries to call an authentication entry point,
 	 * if available.
 	 *

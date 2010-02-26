@@ -111,7 +111,7 @@ class EnvironmentTest extends \F3\Testing\BaseTestCase {
 				)
 			),
 			array(
-				new \F3\FLOW3\Property\DataType\Uri('http://flow3.typo3.org/is/the/base/for/typo3?5=0'),
+				new \F3\FLOW3\Property\DataType\Uri('http://flow3.typo3.org/Web/is/the/base/for/typo3?5=0'),
 				array(
 					'HTTP_HOST' => 'flow3.typo3.org',
 					'SCRIPT_NAME' => '/Web/index.php',
@@ -127,13 +127,21 @@ class EnvironmentTest extends \F3\Testing\BaseTestCase {
 				)
 			),
 			array(
-				new \F3\FLOW3\Property\DataType\Uri('http://flow3.typo3.org/is/the/base/for/typo3?5=0'),
+				new \F3\FLOW3\Property\DataType\Uri('http://flow3.typo3.org/Web/is/the/base/for/typo3?5=0'),
 				array(
 					'HTTP_HOST' => 'flow3.typo3.org',
 					'SCRIPT_NAME' => '/Web/index.php',
 					'REQUEST_URI' => '/Web/is/the/base/for/typo3?5=0'
 				)
 			),
+			array(
+				new \F3\FLOW3\Property\DataType\Uri('http://flow3.typo3.org/dev/flow3/blog/Web/posts/index'),
+				array(
+					'HTTP_HOST' => 'flow3.typo3.org',
+					'SCRIPT_NAME' => '/dev/flow3/blog/Web/index.php',
+					'REQUEST_URI' => '/dev/flow3/blog/Web/posts/index'
+				)
+			)
 		);
 	}
 
@@ -146,8 +154,8 @@ class EnvironmentTest extends \F3\Testing\BaseTestCase {
 		$environment = new \F3\FLOW3\Utility\MockEnvironment();
 		$environment->SAPIName = 'apache';
 		$environment->SERVER = $SERVER;
-			$returnedUriString = (string)$environment->getRequestUri();
-			$this->assertEquals((string)$expectedUri, $returnedUriString, 'The URI returned did not match the expected value.');
+		$returnedUriString = (string)$environment->getRequestUri();
+		$this->assertEquals((string)$expectedUri, $returnedUriString, 'The URI returned did not match the expected value.');
 	}
 
 	/**
@@ -178,13 +186,13 @@ class EnvironmentTest extends \F3\Testing\BaseTestCase {
 	 * @dataProvider requestUriBaseUriScriptNameTuples
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function detectBaseUriReturnsExpectedUriWhenUsingPlainRequests($requestUri, $expectedBaseUri, $SCRIPT_NAME) {
-		$environment = new \F3\FLOW3\Utility\MockEnvironment();
-		$environment->SAPIName = 'apache';
-		$environment->SERVER = array('SCRIPT_NAME' => $SCRIPT_NAME);
+	public function detectBaseUriRendersExpectedUriWhenUsingPlainRequests($requestUri, $expectedBaseUri, $SCRIPT_NAME) {
+		$environment = $this->getAccessibleMock('F3\FLOW3\Utility\Environment', array('getRequestUri'));
+		$environment->expects($this->once())->method('getRequestUri')->will($this->returnValue($requestUri));
+		$environment->_set('SAPIName', 'apache');
+		$environment->_set('SERVER', array('SCRIPT_NAME' => $SCRIPT_NAME));
 
-		$returnedUri = $environment->detectBaseUri($requestUri);
-		$this->assertEquals((string)$expectedBaseUri, (string)$returnedUri, 'The URI returned did not match the expected value.');
+		$this->assertEquals((string)$expectedBaseUri, (string)$environment->getBaseUri());
 	}
 
 	/**

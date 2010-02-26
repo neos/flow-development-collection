@@ -42,11 +42,11 @@ class StaticRoutePartTest extends \F3\Testing\BaseTestCase {
 		$routePart = new \F3\FLOW3\MVC\Web\Routing\StaticRoutePart();
 		$routePart->setName('foo');
 
-		$requestPath = NULL;
-		$this->assertFalse($routePart->match($requestPath), 'Static Route Part should never match if $requestPath is NULL.');
+		$routePath = NULL;
+		$this->assertFalse($routePart->match($routePath), 'Static Route Part should never match if $routePath is NULL.');
 
-		$requestPath = '';
-		$this->assertFalse($routePart->match($requestPath), 'Static Route Part should never match if $requestPath is empty.');
+		$routePath = '';
+		$this->assertFalse($routePart->match($routePath), 'Static Route Part should never match if $routePath is empty.');
 	}
 
 	/**
@@ -58,8 +58,8 @@ class StaticRoutePartTest extends \F3\Testing\BaseTestCase {
 		$routePart->setName('foo');
 		$routePart->setDefaultValue('bar');
 
-		$requestPath = '';
-		$this->assertFalse($routePart->match($requestPath), 'Static Route Part should never match if $requestPath is empty.');
+		$routePath = '';
+		$this->assertFalse($routePart->match($routePath), 'Static Route Part should never match if $routePath is empty.');
 	}
 
 	/**
@@ -68,8 +68,8 @@ class StaticRoutePartTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function staticRoutePartDoesNotMatchIfUnnamed() {
 		$routePart = new \F3\FLOW3\MVC\Web\Routing\StaticRoutePart();
-		$requestPath = 'foo/bar';
-		$this->assertFalse($routePart->match($requestPath), 'Static Route Part should not match if name is not set.');
+		$routePath = 'foo/bar';
+		$this->assertFalse($routePart->match($routePath), 'Static Route Part should not match if name is not set.');
 	}
 
 	/**
@@ -79,9 +79,9 @@ class StaticRoutePartTest extends \F3\Testing\BaseTestCase {
 	public function staticRoutePartDoesNotMatchIfNameIsNotEqualToBeginningOfRequestPath() {
 		$routePart = new \F3\FLOW3\MVC\Web\Routing\StaticRoutePart();
 		$routePart->setName('foo');
-		$requestPath = 'bar/foo';
+		$routePath = 'bar/foo';
 
-		$this->assertFalse($routePart->match($requestPath), 'Static Route Part should not match if name is not equal to beginning of request path.');
+		$this->assertFalse($routePart->match($routePath), 'Static Route Part should not match if name is not equal to beginning of request path.');
 	}
 
 	/**
@@ -91,9 +91,9 @@ class StaticRoutePartTest extends \F3\Testing\BaseTestCase {
 	public function staticRoutePartMatchesIfNameIsEqualToBeginningOfRequestPath() {
 		$routePart = new \F3\FLOW3\MVC\Web\Routing\StaticRoutePart();
 		$routePart->setName('foo');
-		$requestPath = 'foo/bar';
+		$routePath = 'foo/bar';
 
-		$this->assertTrue($routePart->match($requestPath), 'Static Route Part should match if name equals beginning of request path.');
+		$this->assertTrue($routePart->match($routePath), 'Static Route Part should match if name equals beginning of request path.');
 	}
 
 	/**
@@ -103,9 +103,9 @@ class StaticRoutePartTest extends \F3\Testing\BaseTestCase {
 	public function staticRoutePartDoesNotMatchIfCaseOfRequestPathIsNotEqualToTheName() {
 		$routePart = new \F3\FLOW3\MVC\Web\Routing\StaticRoutePart();
 		$routePart->setName('SomeName');
-		$requestPath = 'somename';
+		$routePath = 'somename';
 
-		$this->assertFalse($routePart->match($requestPath), 'Static Route Part should not match if case of name is not equal to case of request path.');
+		$this->assertFalse($routePart->match($routePath), 'Static Route Part should not match if case of name is not equal to case of request path.');
 	}
 
 	/**
@@ -116,11 +116,11 @@ class StaticRoutePartTest extends \F3\Testing\BaseTestCase {
 		$routePart = new \F3\FLOW3\MVC\Web\Routing\StaticRoutePart();
 		$routePart->setName('foo');
 
-		$requestPath = 'foo/bar';
-		$this->assertTrue($routePart->match($requestPath));
+		$routePath = 'foo/bar';
+		$this->assertTrue($routePart->match($routePath));
 
-		$requestPath = 'bar/foo';
-		$this->assertFalse($routePart->match($requestPath));
+		$routePath = 'bar/foo';
+		$this->assertFalse($routePart->match($routePath));
 		$this->assertNull($routePart->getValue(), 'Static Route Part value should be NULL after unsuccessful match.');
 	}
 
@@ -128,26 +128,26 @@ class StaticRoutePartTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function requestPathIsNotModifiedAfterUnsuccessfulMatch() {
+	public function routePathIsNotModifiedAfterUnsuccessfulMatch() {
 		$routePart = new \F3\FLOW3\MVC\Web\Routing\StaticRoutePart();
 		$routePart->setName('bar');
 
-		$requestPath = 'foo/bar';
-		$this->assertFalse($routePart->match($requestPath));
-		$this->assertSame('foo/bar', $requestPath, 'Static Route Part should not change $requestPath on unsuccessful match.');
+		$routePath = 'foo/bar';
+		$this->assertFalse($routePart->match($routePath));
+		$this->assertSame('foo/bar', $routePath, 'Static Route Part should not change $routePath on unsuccessful match.');
 	}
 
 	/**
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function requestPathIsShortenedByMatchingPartOnSuccessfulMatch() {
+	public function routePathIsShortenedByMatchingPartOnSuccessfulMatch() {
 		$routePart = new \F3\FLOW3\MVC\Web\Routing\StaticRoutePart();
 		$routePart->setName('bar/');
-		$requestPath = 'bar/foo/test';
+		$routePath = 'bar/foo/test';
 
-		$this->assertTrue($routePart->match($requestPath));
-		$this->assertSame('foo/test', $requestPath, 'Static Route Part should shorten $requestPath by matching substring on successful match.');
+		$this->assertTrue($routePart->match($routePath));
+		$this->assertSame('foo/test', $routePath, 'Static Route Part should shorten $routePath by matching substring on successful match.');
 	}
 
 	/*                                                                        *

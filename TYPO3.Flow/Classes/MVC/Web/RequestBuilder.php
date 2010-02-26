@@ -104,7 +104,6 @@ class RequestBuilder {
 	public function build() {
 		$request = $this->objectManager->create('F3\FLOW3\MVC\Web\Request');
 		$request->injectEnvironment($this->environment);
-		$request->setRequestUri($this->environment->getRequestUri());
 		$request->setMethod($this->environment->getRequestMethod());
 		$this->setArgumentsFromRawRequestData($request);
 
