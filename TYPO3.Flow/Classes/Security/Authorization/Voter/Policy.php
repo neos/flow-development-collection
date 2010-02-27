@@ -48,7 +48,7 @@ class Policy implements \F3\FLOW3\Security\Authorization\AccessDecisionVoterInte
 	}
 
 	/**
-	 * This is the default Policy voter, it votes for the ACCESS privilege for the given join point
+	 * This is the default Policy voter, it votes for the access privilege for the given join point
 	 *
 	 * @param F3\FLOW3\Security\Context $securityContext The current securit context
 	 * @param F3\FLOW3\AOP\JoinPointInterface $joinPoint The joinpoint to vote for
@@ -58,11 +58,12 @@ class Policy implements \F3\FLOW3\Security\Authorization\AccessDecisionVoterInte
 		$accessGrants = 0;
 		$accessDenies = 0;
 		foreach ($securityContext->getRoles() as $role) {
-			$privileges = $this->policyService->getPrivilegesForJoinPoint($role, $joinPoint, 'ACCESS');
-			if (!isset($privileges[0])) continue;
+			$privileges = $this->policyService->getPrivilegesForJoinPoint($role, $joinPoint);
 
-			if ($privileges[0]->isGrant()) $accessGrants++;
-			else $accessDenies++;
+			foreach ($privileges as $privilege) {
+				if ($privilege === \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT) $accessGrants++;
+				else $accessDenies++;
+			}
 		}
 
 		if ($accessDenies > 0) return self::VOTE_DENY;
@@ -72,7 +73,7 @@ class Policy implements \F3\FLOW3\Security\Authorization\AccessDecisionVoterInte
 	}
 
 	/**
-	 * This is the default Policy voter, it votes for the ACCESS privilege for the given resource
+	 * This is the default Policy voter, it votes for the access privilege for the given resource
 	 *
 	 * @param F3\FLOW3\Security\Context $securityContext The current securit context
 	 * @param string $resource The resource to vote for
@@ -82,10 +83,10 @@ class Policy implements \F3\FLOW3\Security\Authorization\AccessDecisionVoterInte
 		$accessGrants = 0;
 		$accessDenies = 0;
 		foreach ($securityContext->getRoles() as $role) {
-			$privileges = $this->policyService->getPrivilegesForResource($role, $resource);
-			if (!isset($privileges[0])) continue;
+			$privilege = $this->policyService->getPrivilegeForResource($role, $resource);
+			if ($privilege === NULL) continue;
 
-			if ($privileges[0]->isGrant()) $accessGrants++;
+			if ($privilege === \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT) $accessGrants++;
 			else $accessDenies++;
 		}
 

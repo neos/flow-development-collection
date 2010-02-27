@@ -35,7 +35,7 @@ class PolicyTest extends \F3\Testing\BaseTestCase {
 	 * @category unit
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function voteForJoinPointAbstainsIfNoAccessPrivilegeWasConfigured() {
+	public function voteForJoinPointAbstainsIfNoPrivilegeWasConfigured() {
 		$mockRoleAdministrator = $this->getMock('F3\FLOW3\Security\Policy\Role', array(), array(), uniqid('role1'), FALSE);
 		$mockRoleAdministrator->expects($this->any())->method('__toString')->will($this->returnValue('ADMINISTRATOR'));
 
@@ -46,15 +46,8 @@ class PolicyTest extends \F3\Testing\BaseTestCase {
 		$mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue(array($mockRoleAdministrator, $mockRoleCustomer)));
 		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface');
 
-		$getPrivilegesCallback = function() use (&$mockCustomDenyPrivilege, &$mockCustomDenyPrivilege2) {
-			$args = func_get_args();
-
-			if ($args[2] !== 'ACCESS') return array($mockCustomDenyPrivilege, $mockCustomDenyPrivilege2);
-			else return array();
-		};
-
 		$mockPolicyService = $this->getMock('F3\FLOW3\Security\Policy\PolicyService');
-		$mockPolicyService->expects($this->any())->method('getPrivilegesForJoinPoint')->will($this->returnCallback($getPrivilegesCallback));
+		$mockPolicyService->expects($this->any())->method('getPrivilegesForJoinPoint')->will($this->returnValue(array()));
 
 		$Policy = new Policy($mockPolicyService);
 		$this->assertEquals($Policy->voteForJoinPoint($mockSecurityContext, $mockJoinPoint), Policy::VOTE_ABSTAIN, 'The wrong vote was returned!');
@@ -81,31 +74,26 @@ class PolicyTest extends \F3\Testing\BaseTestCase {
 	 * @category unit
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function voteForJoinPointDeniesAccessIfAnAccessDenyPrivilegeWasConfiguredForOneOfTheRoles() {
-		$mockAccessDenyPrivilege = $this->getMock('F3\FLOW3\Security\Policy\Privilege', array(), array(), '', FALSE);
-		$mockAccessDenyPrivilege->expects($this->any())->method('isGrant')->will($this->returnValue(FALSE));
-		$mockAccessDenyPrivilege->expects($this->any())->method('isDeny')->will($this->returnValue(TRUE));
-		$mockAccessDenyPrivilege->expects($this->any())->method('__toString')->will($this->returnValue('ACCESS'));
-
+	public function voteForJoinPointDeniesAccessIfADenyPrivilegeWasConfiguredForOneOfTheRoles() {
 		$role1ClassName = uniqid('role1');
 		$role2ClassName = uniqid('role2');
 
 		$mockRoleAdministrator = $this->getMock('F3\FLOW3\Security\Policy\Role', array(), array(), $role1ClassName, FALSE);
-		$mockRoleAdministrator->expects($this->any())->method('__toString')->will($this->returnValue('ADMINISTRATOR'));
+		$mockRoleAdministrator->expects($this->any())->method('__toString')->will($this->returnValue('Administrator'));
 
 		$mockRoleCustomer = $this->getMock('F3\FLOW3\Security\Policy\Role', array(), array(), $role2ClassName, FALSE);
-		$mockRoleCustomer->expects($this->any())->method('__toString')->will($this->returnValue('CUSTOMER'));
+		$mockRoleCustomer->expects($this->any())->method('__toString')->will($this->returnValue('Customer'));
 
 		$mockSecurityContext = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
 		$mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue(array($mockRoleAdministrator, $mockRoleCustomer)));
 		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface');
 
-		$getPrivilegesCallback = function() use (&$mockAccessDenyPrivilege, &$role1ClassName) {
+		$getPrivilegesCallback = function() use (&$role1ClassName) {
 			$args = func_get_args();
 			if ($args[0] instanceof $role1ClassName) {
-				return array($mockAccessDenyPrivilege);
+				return array(\F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY);
 			} else {
-				return array();
+				return array(\F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT);
 			}
 		};
 
@@ -121,29 +109,24 @@ class PolicyTest extends \F3\Testing\BaseTestCase {
 	 * @category unit
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function voteForJoinPointGrantsAccessIfAnAccessGrantPrivilegeAndNoAccessDenyPrivilegeWasConfigured() {
-		$mockAccessGrantPrivilege = $this->getMock('F3\FLOW3\Security\Policy\Privilege', array(), array(), '', FALSE);
-		$mockAccessGrantPrivilege->expects($this->any())->method('isGrant')->will($this->returnValue(TRUE));
-		$mockAccessGrantPrivilege->expects($this->any())->method('isDeny')->will($this->returnValue(FALSE));
-		$mockAccessGrantPrivilege->expects($this->any())->method('__toString')->will($this->returnValue('ACCESS'));
-
+	public function voteForJoinPointGrantsAccessIfAGrantPrivilegeAndNoDenyPrivilegeWasConfigured() {
 		$role1ClassName = uniqid('role1');
 		$role2ClassName = uniqid('role2');
 
 		$mockRoleAdministrator = $this->getMock('F3\FLOW3\Security\Policy\Role', array(), array(), $role1ClassName, FALSE);
-		$mockRoleAdministrator->expects($this->any())->method('__toString')->will($this->returnValue('ADMINISTRATOR'));
+		$mockRoleAdministrator->expects($this->any())->method('__toString')->will($this->returnValue('Administrator'));
 
 		$mockRoleCustomer = $this->getMock('F3\FLOW3\Security\Policy\Role', array(), array(), $role2ClassName, FALSE);
-		$mockRoleCustomer->expects($this->any())->method('__toString')->will($this->returnValue('CUSTOMER'));
+		$mockRoleCustomer->expects($this->any())->method('__toString')->will($this->returnValue('Customer'));
 
 		$mockSecurityContext = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
 		$mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue(array($mockRoleAdministrator, $mockRoleCustomer)));
 		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface');
 
-		$getPrivilegesCallback = function() use (&$mockAccessGrantPrivilege, &$role1ClassName) {
+		$getPrivilegesCallback = function() use (&$role1ClassName) {
 			$args = func_get_args();
 			if ($args[0] instanceof $role1ClassName) {
-				return array($mockAccessGrantPrivilege);
+				return array(\F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT);
 			} else {
 				return array();
 			}
@@ -167,8 +150,8 @@ class PolicyTest extends \F3\Testing\BaseTestCase {
 
 		$mockPolicyService = $this->getMock('F3\FLOW3\Security\Policy\PolicyService', array(), array(), '', FALSE);
 
-		$Policy = new Policy($mockPolicyService);
-		$this->assertEquals($Policy->voteForResource($mockSecurityContext, 'myResource'), Policy::VOTE_ABSTAIN, 'The wrong vote was returned!');
+		$voter = new Policy($mockPolicyService);
+		$this->assertEquals($voter->voteForResource($mockSecurityContext, 'myResource'), Policy::VOTE_ABSTAIN, 'The wrong vote was returned!');
 	}
 
 	/**
@@ -176,12 +159,7 @@ class PolicyTest extends \F3\Testing\BaseTestCase {
 	 * @category unit
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function voteForResourceDeniesAccessIfAnAccessDenyPrivilegeWasConfiguredForOneOfTheRoles() {
-		$mockAccessDenyPrivilege = $this->getMock('F3\FLOW3\Security\Policy\Privilege', array(), array(), '', FALSE);
-		$mockAccessDenyPrivilege->expects($this->any())->method('isGrant')->will($this->returnValue(FALSE));
-		$mockAccessDenyPrivilege->expects($this->any())->method('isDeny')->will($this->returnValue(TRUE));
-		$mockAccessDenyPrivilege->expects($this->any())->method('__toString')->will($this->returnValue('ACCESS'));
-
+	public function voteForResourceDeniesAccessIfADenyPrivilegeWasConfiguredForOneOfTheRoles() {
 		$role1ClassName = uniqid('role1');
 		$role2ClassName = uniqid('role2');
 
@@ -194,17 +172,17 @@ class PolicyTest extends \F3\Testing\BaseTestCase {
 		$mockSecurityContext = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
 		$mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue(array($mockRoleAdministrator, $mockRoleCustomer)));
 
-		$getPrivilegesCallback = function() use (&$mockAccessDenyPrivilege, &$role1ClassName) {
+		$getPrivilegeCallback = function() use (&$role1ClassName) {
 			$args = func_get_args();
 			if ($args[0] instanceof $role1ClassName) {
-				return array($mockAccessDenyPrivilege);
+				return array(\F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY);
 			} else {
 				return array();
 			}
 		};
 
 		$mockPolicyService = $this->getMock('F3\FLOW3\Security\Policy\PolicyService');
-		$mockPolicyService->expects($this->any())->method('getPrivilegesForResource')->will($this->returnCallback($getPrivilegesCallback));
+		$mockPolicyService->expects($this->any())->method('getPrivilegeForResource')->will($this->returnCallback($getPrivilegeCallback));
 
 		$Policy = new Policy($mockPolicyService);
 		$this->assertEquals($Policy->voteForResource($mockSecurityContext, 'myResource'), Policy::VOTE_DENY , 'The wrong vote was returned!');
@@ -215,35 +193,30 @@ class PolicyTest extends \F3\Testing\BaseTestCase {
 	 * @category unit
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function voteForResourceGrantsAccessIfAnAccessGrantPrivilegeAndNoAccessDenyPrivilegeWasConfigured() {
-		$mockAccessGrantPrivilege = $this->getMock('F3\FLOW3\Security\Policy\Privilege', array(), array(), '', FALSE);
-		$mockAccessGrantPrivilege->expects($this->any())->method('isGrant')->will($this->returnValue(TRUE));
-		$mockAccessGrantPrivilege->expects($this->any())->method('isDeny')->will($this->returnValue(FALSE));
-		$mockAccessGrantPrivilege->expects($this->any())->method('__toString')->will($this->returnValue('ACCESS'));
-
+	public function voteForResourceGrantsAccessIfAGrantPrivilegeAndNoDenyPrivilegeWasConfigured() {
 		$role1ClassName = uniqid('role1');
 		$role2ClassName = uniqid('role2');
 
 		$mockRoleAdministrator = $this->getMock('F3\FLOW3\Security\Policy\Role', array(), array(), $role1ClassName, FALSE);
-		$mockRoleAdministrator->expects($this->any())->method('__toString')->will($this->returnValue('ADMINISTRATOR'));
+		$mockRoleAdministrator->expects($this->any())->method('__toString')->will($this->returnValue('Administrator'));
 
 		$mockRoleCustomer = $this->getMock('F3\FLOW3\Security\Policy\Role', array(), array(), $role2ClassName, FALSE);
-		$mockRoleCustomer->expects($this->any())->method('__toString')->will($this->returnValue('CUSTOMER'));
+		$mockRoleCustomer->expects($this->any())->method('__toString')->will($this->returnValue('Customer'));
 
 		$mockSecurityContext = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
 		$mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue(array($mockRoleAdministrator, $mockRoleCustomer)));
 
-		$getPrivilegesCallback = function() use (&$mockAccessGrantPrivilege, &$role1ClassName) {
+		$getPrivilegesCallback = function() use (&$role1ClassName) {
 			$args = func_get_args();
 			if ($args[0] instanceof $role1ClassName) {
-				return array($mockAccessGrantPrivilege);
+				return \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT;
 			} else {
-				return array();
+				return NULL;
 			}
 		};
 
 		$mockPolicyService = $this->getMock('F3\FLOW3\Security\Policy\PolicyService');
-		$mockPolicyService->expects($this->any())->method('getPrivilegesForResource')->will($this->returnCallback($getPrivilegesCallback));
+		$mockPolicyService->expects($this->any())->method('getPrivilegeForResource')->will($this->returnCallback($getPrivilegesCallback));
 
 		$Policy = new Policy($mockPolicyService);
 		$this->assertEquals($Policy->voteForResource($mockSecurityContext, 'myResource'), Policy::VOTE_GRANT , 'The wrong vote was returned!');

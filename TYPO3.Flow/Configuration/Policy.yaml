@@ -10,22 +10,26 @@
 # @version $Id:  $
 
 
-# The security policy resources configuration. Here is an example configuration array:
+# The security policy resources configuration. Note: As a convention you have to prefix
+# your package's namespace for your resource definitions!
+#
+# Here is an example configuration array:
 #
 # resources:
-#   theOneAndOnlyResource:  "method(F3\FooPackage\SomeClass->setSomeProperty())"
-#   theOtherLonelyResource: "method(F3\FooPackage\BasicClassValidator->.*())"
-#   theIntegrativeResource: "theOneAndOnlyResource || theOtherLonelyResource"
+#   methods:
+#     F3_FooPackage_PropertySetter:  "method(F3\FooPackage\SomeClass->setSomeProperty())"
+#     F3_FooPackage_BasicValidator: "method(F3\FooPackage\BasicClassValidator->.*())"
+#     F3_FooPackage_CombinedResource: "theOneAndOnlyResource || theOtherLonelyResource"
 #
 resources: []
 
 # The security policy roles configuration. Here is an example configuration array:
 #
 # roles:
-#   ADMINISTRATOR: []
-#   DEVELOPER: []
-#   CUSTOMER:
-#   PRIVILEGED_CUSTOMER: [CUSTOMER]
+#   Administrator: []
+#   Developer: []
+#   Customer:
+#   PrivilegedCustomer: [Customer]
 #
 roles: []
 
@@ -33,11 +37,11 @@ roles: []
 # privileges. Here is an example configuration array:
 #
 # acls:
-#   ADMINISTRATOR:
-#     deleteMethods:           ACCESS_GRANT
-#     MyPackageUpdateMethods:  ACCESS_DENY
+#   Administrator:
+#     deleteMethods:           GRANT
+#     MyPackageUpdateMethods:  DENY
 #
-#    CUSTOMER:
-#      deleteMethods:          ACCESS_DENY
-#      MyPackageUpdateMethods: ACCESS_DENY
+#   Customer:
+#     deleteMethods:          DENY
+#     MyPackageUpdateMethods: DENY
 acls: []

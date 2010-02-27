@@ -31,6 +31,10 @@ namespace F3\FLOW3\Security\Policy;
  */
 class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 
+	const
+		PRIVILEGE_GRANT = 1,
+		PRIVILEGE_DENY = 2;
+
 	/**
 	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 */
@@ -148,8 +152,6 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	 */
 	public function initializeObject() {
 		$this->policy = $this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_POLICY);
-		$this->roles = $this->policy['roles'];
-		$this->resources = $this->policy['resources'];
 
 		if ($this->cache->has('acls')) {
 			$this->acls = $this->cache->get('acls');
@@ -174,14 +176,24 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 		$matches = FALSE;
 
 		if (count($this->filters) === 0) {
-			$this->policyExpressionParser->setResourcesTree($this->policy['resources']);
+			$methodResources = (isset($this->policy['resources']['methods']) ? $this->policy['resources']['methods'] : array());
+			$this->policyExpressionParser->setResourcesTree($methodResources);
+
 			foreach ($this->policy['acls'] as $role => $acl) {
 				foreach ($acl as $resource => $privilege) {
 					$resourceTrace = array();
 					$this->filters[$role][$resource] = $this->policyExpressionParser->parse($resource, $resourceTrace);
 
 					foreach ($resourceTrace as $currentResource) {
-						$this->acls[$currentResource][$role][] = $privilege;
+						$policyForResource = array();
+						if ($privilege === 'GRANT') $policyForResource['privilege'] = self::PRIVILEGE_GRANT;
+						else if ($privilege === 'DENY') $policyForResource['privilege'] = self::PRIVILEGE_DENY;
+						else throw new \F3\FLOW3\Security\Exception\InvalidPrivilegeException('Invalid privilege defined in security policy. An ACL entry may have only one of the privileges GRANT or DENY, but we got:' . $privilege . ' for role : ' . $role . ' and resource: ' . $resource, 1267311437);
+
+						if ($this->filters[$role][$resource]->hasRuntimeEvaluationsDefinition() === TRUE)  $policyForResource['runtimeEvaluationsClosureCode'] = $this->filters[$role][$resource]->getRuntimeEvaluationsClosureCode();
+						else $policyForResource['runtimeEvaluationsClosureCode'] = FALSE;
+
+						$this->acls[$currentResource][$role] = $policyForResource;
 					}
 				}
 			}
@@ -191,7 +203,17 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 			foreach ($filtersForRole as $resource => $filter) {
 				if ($filter->matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier)) {
 					$methodIdentifier = $className . '->' . $methodName;
-					$this->acls[$methodIdentifier][$role][] = $this->policy['acls'][$role][$resource];
+
+					$policyForJoinPoint = array();
+
+					if ($this->policy['acls'][$role][$resource] === 'GRANT') $policyForJoinPoint['privilege'] = self::PRIVILEGE_GRANT;
+					else if ($this->policy['acls'][$role][$resource] === 'DENY') $policyForJoinPoint['privilege'] = self::PRIVILEGE_DENY;
+					else throw new \F3\FLOW3\Security\Exception\InvalidPrivilegeException('Invalid privilege defined in security policy. An ACL entry may have only one of the privileges GRANT or DENY, but we got:' . $this->policy['acls'][$role][$resource] . ' for role : ' . $role . ' and resource: ' . $resource, 1267308533);
+
+					if ($filter->hasRuntimeEvaluationsDefinition() === TRUE)  $policyForJoinPoint['runtimeEvaluationsClosureCode'] = $filter->getRuntimeEvaluationsClosureCode();
+					else $policyForJoinPoint['runtimeEvaluationsClosureCode'] = FALSE;
+
+					$this->acls[$methodIdentifier][$role][$resource] = $policyForJoinPoint;
 					$matches = TRUE;
 				}
 			}
@@ -241,75 +263,58 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	}
 
 	/**
-	 * Returns the privileges a specific role has for the given joinpoint
+	 * Returns the privileges a specific role has for the given joinpoint. The returned array
+	 * contains the privilege's resource as key of each privilege.
 	 *
 	 * @param \F3\FLOW3\Security\Policy\Role $role The role for which the privileges should be returned
 	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The joinpoint for which the privileges should be returned
-	 * @param string $privilegeType If set we check only for this type of privilege
 	 * @return array Array of privileges
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function getPrivilegesForJoinPoint(\F3\FLOW3\Security\Policy\Role $role, \F3\FLOW3\AOP\JoinPointInterface $joinPoint, $privilegeType = '') {
+	public function getPrivilegesForJoinPoint(\F3\FLOW3\Security\Policy\Role $role, \F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$methodIdentifier = $joinPoint->getClassName() . '->' . $joinPoint->getMethodName();
-		if (!isset($this->acls[$methodIdentifier])) throw new \F3\FLOW3\Security\Exception\NoEntryInPolicyException('The given joinpoint was not found in the policy cache. Most likely you have to recreate the AOP proxy classes.', 1222100851);
+		$roleIdentifier = (string)$role;
 
-		$privileges = $this->parsePrivileges($methodIdentifier, (string)$role, $privilegeType);
-		if (!is_array($privileges)) return array();
+		if (!isset($this->acls[$methodIdentifier])) throw new \F3\FLOW3\Security\Exception\NoEntryInPolicyException('The given joinpoint was not found in the policy cache. Most likely you have to recreate the AOP proxy classes.', 1222100851);
+		if (!isset($this->acls[$methodIdentifier][$roleIdentifier])) return array();
+
+		$privileges = array();
+		foreach ($this->acls[$methodIdentifier][$roleIdentifier] as $resource => $privilegeConfiguration) {
+			if ($privilegeConfiguration['runtimeEvaluationsClosureCode'] !== FALSE) {
+				eval('$runtimeEvaluator = ' . $privilegeConfiguration['runtimeEvaluationsClosureCode']);
+				if ($runtimeEvaluator->__invoke() === FALSE) continue;
+			}
+
+			$privileges[$resource] = $privilegeConfiguration['privilege'];
+		}
 
 		return $privileges;
 	}
 
 	/**
-	 * Returns the privileges a specific role has for the given resource
+	 * Returns the privilege a specific role has for the given resource
 	 *
 	 * @param \F3\FLOW3\Security\Policy\Role $role The role for which the privileges should be returned
 	 * @param string $resource The resource for which the privileges should be returned
-	 * @return array Array of privileges
+	 * @return integer One of: PRIVILEGE_GRANT, PRIVILEGE_DENY
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function getPrivilegesForResource(\F3\FLOW3\Security\Policy\Role $role, $resource) {
+	public function getPrivilegeForResource(\F3\FLOW3\Security\Policy\Role $role, $resource) {
 		if (!isset($this->acls[$resource])) {
 			if (isset($this->resources[$resource])) {
-				$accessDenyPrivilege = $this->objectManager->create('F3\FLOW3\Security\Policy\Privilege', 'ACCESS', FALSE);
-				return array($accessDenyPrivilege);
+				return self::PRIVILEGE_DENY;
 			} else {
 				throw new \F3\FLOW3\Security\Exception\NoEntryInPolicyException('The given resource was not found in the policy cache. Most likely you have to recreate the AOP proxy classes.', 1248348214);
 			}
 		}
 
-		$privileges = $this->parsePrivileges($resource, (string)$role, '');
-		if (!is_array($privileges)) return array();
-
-		return $privileges;
-	}
-
-	/**
-	 * Parses the privileges for the specified identifier and role
-	 *
-	 * @param string $identifier The identifier (class->method or resource) to parse the privileges for
-	 * @param string $role The string representation of a role to parse the privileges for
-	 * @param string $privilegeType If set, only the privilege of the given type will be parsed
-	 * @return array Parsed privileges
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	protected function parsePrivileges($identifier, $role, $privilegeType) {
-		$privileges = array();
-
-		if (!isset($this->acls[$identifier][$role])) return NULL;
-
-		foreach ($this->acls[$identifier][$role] as $privilegeString) {
-			preg_match('/^(.+)_(GRANT|DENY)$/', $privilegeString, $matches);
-
-			if ($privilegeType !== '' && $privilegeType !== $matches[1]) continue;
-
-			$privileges[] = $this->objectManager->create('F3\FLOW3\Security\Policy\Privilege', $matches[1], ($matches[2] === 'GRANT' ? TRUE : FALSE));
+		$roleIdentifier = (string)$role;
+		if ($this->acls[$resource][$roleIdentifier]['runtimeEvaluationsClosureCode'] !== FALSE) {
+				eval('$runtimeEvaluator = ' . $this->acls[$resource][$roleIdentifier]['runtimeEvaluationsClosureCode']);
+				if ($runtimeEvaluator->__invoke() === FALSE) return self::PRIVILEGE_DENY;
 		}
 
-		if (is_array($this->roles[$role])) {
-			foreach ($this->roles[$role] as $parentRole) $privileges = array_merge($this->parsePrivileges($identifier, $parentRole, $privilegeType), $privileges);
-		}
-
-		return $privileges;
+		return $this->acls[$resource][$roleIdentifier]['privilege'];
 	}
 
 	/**
