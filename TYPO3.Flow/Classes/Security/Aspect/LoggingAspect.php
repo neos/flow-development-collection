@@ -84,9 +84,9 @@ class LoggingAspect {
 	}
 
 	/**
-	 * Logs calls and results of the authenticate() method of the PersistedUsernamePasswordProvider Authentication Provider
+	 * Logs calls and results of the authenticate() method of an authentication provider
 	 *
-	 * @afterreturning method(F3\FLOW3\Security\Authentication\Provider\PersistedUsernamePasswordProvider->authenticate())
+	 * @afterreturning within(F3\FLOW3\Security\Authentication\AuthenticationProviderInterface) && method(.*->authenticate())
 	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
 	 * @return mixed The result of the target method if it has not been intercepted
 	 * @author Robert Lemke <robert@typo3.org>
