@@ -8,16 +8,16 @@
 # Default route to the FLOW3 Authentication Controller
 
 -
-  name: 'Authenticate with action'
-  uriPattern: 'flow3/authenticate/{@action}'
+  name: 'Authentication with action'
+  uriPattern: 'flow3/authentication/{@action}'
   defaults:
     '@package':    'FLOW3'
     '@subpackage': 'Security\Authentication'
     '@controller': 'Authentication'
 
 -
-  name: 'Authenticate'
-  uriPattern: 'flow3/authenticate'
+  name: 'Authentication'
+  uriPattern: 'flow3/authentication'
   defaults:
     '@package':    'FLOW3'
     '@subpackage': 'Security\Authentication'

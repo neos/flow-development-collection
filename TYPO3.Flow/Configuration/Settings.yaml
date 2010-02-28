@@ -149,6 +149,9 @@ FLOW3:
       providers:
         DefaultProvider:
           providerClass: PersistedUsernamePasswordProvider
+          entryPoint:
+            webRedirect:
+              uri: flow3/authentication
 
       # If set to TRUE, authentication will only succeed, if all active tokens (authentication mechanisms)
       # can be authenticated.

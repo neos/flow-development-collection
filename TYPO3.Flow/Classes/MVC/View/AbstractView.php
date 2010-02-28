@@ -53,10 +53,11 @@ abstract class AbstractView implements \F3\FLOW3\MVC\View\ViewInterface {
 	protected $controllerContext;
 
 	/**
-	 * @var array view data collection.
+	 * View variables and their values
+	 * @var array
 	 * @see assign()
 	 */
-	protected $viewData = array();
+	protected $variables = array();
 
 	/**
 	 * Constructs the view.
@@ -95,7 +96,7 @@ abstract class AbstractView implements \F3\FLOW3\MVC\View\ViewInterface {
 	}
 
 	/**
-	 * Add a variable to $this->viewData.
+	 * Add a variable to $this->variables.
 	 * Can be chained, so $this->view->assign(..., ...)->assign(..., ...); is possible,
 	 *
 	 * @param string $key Key of variable
@@ -106,12 +107,12 @@ abstract class AbstractView implements \F3\FLOW3\MVC\View\ViewInterface {
 	 * @api
 	 */
 	public function assign($key, $value) {
-		$this->viewData[$key] = $value;
+		$this->variables[$key] = $value;
 		return $this;
 	}
 
 	/**
-	 * Add multiple variables to $this->viewData.
+	 * Add multiple variables to $this->variables.
 	 *
 	 * @param array $values array in the format array(key1 => value1, key2 => value2).
 	 * @return void

@@ -66,7 +66,7 @@ class AbstractViewTest extends \F3\Testing\BaseTestCase {
 		$view->assign('someKey', 'someValue');
 		$view->assign('someOtherKey', 'someOtherValue');
 
-		$this->assertEquals(array('someKey' => 'someValue', 'someOtherKey' => 'someOtherValue'), $view->_get('viewData'));
+		$this->assertEquals(array('someKey' => 'someValue', 'someOtherKey' => 'someOtherValue'), $view->_get('variables'));
 	}
 
 	/**
@@ -88,7 +88,7 @@ class AbstractViewTest extends \F3\Testing\BaseTestCase {
 		$abstractView = $this->getAccessibleMock('F3\FLOW3\MVC\View\AbstractView', array('render'), array(), '', FALSE);
 		$abstractView->assignMultiple(array('someKey' => 'someValue', 'someOtherKey' => 'someOtherValue'));
 
-		$this->assertEquals(array('someKey' => 'someValue', 'someOtherKey' => 'someOtherValue'), $abstractView->_get('viewData'));
+		$this->assertEquals(array('someKey' => 'someValue', 'someOtherKey' => 'someOtherValue'), $abstractView->_get('variables'));
 	}
 }
 ?>

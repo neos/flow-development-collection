@@ -49,7 +49,7 @@ class NotFoundView extends \F3\FLOW3\MVC\View\AbstractView {
 			$template = str_replace('###BASEURI###', $this->controllerContext->getRequest()->getBaseUri(), $template);
 		}
 
-		$errorMessage = isset($this->viewData['errorMessage']) ? $this->viewData['errorMessage'] : '';
+		$errorMessage = isset($this->variables['errorMessage']) ? $this->variables['errorMessage'] : '';
 		$template = str_replace('###ERROR_MESSAGE###', $errorMessage, $template);
 		return $template;
 	}
