@@ -53,5 +53,39 @@ class RequestHandlerTest extends \F3\Testing\BaseTestCase {
 		$requestHandler = new \F3\FLOW3\MVC\Web\RequestHandler($mockObjectManager, $mockEnvironment, $mockDispatcher, $mockRequestBuilder);
 		$requestHandler->handleRequest();
 	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function handleRequestSetsAContentTypeHeaderAccordingToCertainFormats() {
+		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment');
+
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
+		$mockRequest->expects($this->at(0))->method('getFormat')->will($this->returnValue('rss.xml'));
+		$mockRequest->expects($this->at(1))->method('getFormat')->will($this->returnValue('rss'));
+		$mockRequest->expects($this->at(2))->method('getFormat')->will($this->returnValue('atom.xml'));
+		$mockRequest->expects($this->at(3))->method('getFormat')->will($this->returnValue('atom'));
+
+		$mockResponse = $this->getMock('F3\FLOW3\MVC\Web\Response', array(), array(), '', FALSE);
+		$mockResponse->expects($this->at(0))->method('setHeader')->with('Content-Type', 'application/rss+xml');
+		$mockResponse->expects($this->at(2))->method('setHeader')->with('Content-Type', 'application/rss+xml');
+		$mockResponse->expects($this->at(4))->method('setHeader')->with('Content-Type', 'application/atom+xml');
+		$mockResponse->expects($this->at(6))->method('setHeader')->with('Content-Type', 'application/atom+xml');
+
+		$mockRequestBuilder = $this->getMock('F3\FLOW3\MVC\Web\RequestBuilder', array(), array(), '', FALSE);
+		$mockRequestBuilder->expects($this->exactly(4))->method('build')->will($this->returnValue($mockRequest));
+
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
+		$mockObjectManager->expects($this->exactly(4))->method('create')->with('F3\FLOW3\MVC\Web\Response')->will($this->returnValue($mockResponse));
+
+		$mockDispatcher = $this->getMock('F3\FLOW3\MVC\Dispatcher', array(), array(), '', FALSE);
+
+		$requestHandler = new \F3\FLOW3\MVC\Web\RequestHandler($mockObjectManager, $mockEnvironment, $mockDispatcher, $mockRequestBuilder);
+		$requestHandler->handleRequest();
+		$requestHandler->handleRequest();
+		$requestHandler->handleRequest();
+		$requestHandler->handleRequest();
+	}
 }
 ?>

@@ -80,6 +80,18 @@ class RequestHandler implements \F3\FLOW3\MVC\RequestHandlerInterface {
 	public function handleRequest() {
 		$request = $this->requestBuilder->build();
 		$response = $this->objectManager->create('F3\FLOW3\MVC\Web\Response');
+
+		switch ($request->getFormat()) {
+			case 'rss.xml' :
+			case 'rss' :
+				$response->setHeader('Content-Type', 'application/rss+xml');
+				break;
+			case 'atom.xml' :
+			case 'atom' :
+				$response->setHeader('Content-Type', 'application/atom+xml');
+				break;
+		}
+
 		$this->dispatcher->dispatch($request, $response);
 		$response->send();
 	}
