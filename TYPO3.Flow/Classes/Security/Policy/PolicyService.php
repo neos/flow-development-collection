@@ -281,8 +281,9 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 		$privileges = array();
 		foreach ($this->acls[$methodIdentifier][$roleIdentifier] as $resource => $privilegeConfiguration) {
 			if ($privilegeConfiguration['runtimeEvaluationsClosureCode'] !== FALSE) {
-				eval('$runtimeEvaluator = ' . $privilegeConfiguration['runtimeEvaluationsClosureCode']);
-				if ($runtimeEvaluator->__invoke() === FALSE) continue;
+				$objectManager = $this->objectManager;
+				eval('$runtimeEvaluator = ' . $privilegeConfiguration['runtimeEvaluationsClosureCode'] . ';');
+				if ($runtimeEvaluator->__invoke($joinPoint) === FALSE) continue;
 			}
 
 			$privileges[$resource] = $privilegeConfiguration['privilege'];
@@ -292,7 +293,9 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	}
 
 	/**
-	 * Returns the privilege a specific role has for the given resource
+	 * Returns the privilege a specific role has for the given resource.
+	 * Note: Resources with runtime evaluations return always a PRIVILEGE_DENY!
+	 * @see getPrivilegesForJoinPoint() instead, if you need privileges for them.
 	 *
 	 * @param \F3\FLOW3\Security\Policy\Role $role The role for which the privileges should be returned
 	 * @param string $resource The resource for which the privileges should be returned
@@ -310,8 +313,7 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 
 		$roleIdentifier = (string)$role;
 		if ($this->acls[$resource][$roleIdentifier]['runtimeEvaluationsClosureCode'] !== FALSE) {
-				eval('$runtimeEvaluator = ' . $this->acls[$resource][$roleIdentifier]['runtimeEvaluationsClosureCode']);
-				if ($runtimeEvaluator->__invoke() === FALSE) return self::PRIVILEGE_DENY;
+			return self::PRIVILEGE_DENY;
 		}
 
 		return $this->acls[$resource][$roleIdentifier]['privilege'];

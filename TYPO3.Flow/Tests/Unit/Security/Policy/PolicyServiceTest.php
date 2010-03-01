@@ -352,14 +352,14 @@ class PolicyServiceTest extends \F3\Testing\BaseTestCase {
 	 * @category unit
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function getPrivilegeForResourceReturnsNullIfThePrivilegesRuntimeEvaluationsDidNotEvaluateToTrue() {
+	public function getPrivilegeForResourceReturnsADenyPrivilegeIfTheResourceHasRuntimeEvaluationsDefined() {
 		$mockRole = $this->getMock('F3\FLOW3\Security\Policy\Role', array(), array(), '', FALSE);
 		$mockRole->expects($this->once())->method('__toString')->will($this->returnValue('role1'));
 
 		$aclsCache = array(
 						'someResource' => array(
 								'role1' => array(
-									'runtimeEvaluationsClosureCode' => 'function () { return FALSE; };',
+									'runtimeEvaluationsClosureCode' => 'function () { return TRUE; };',
 									'privilege' => PolicyService::PRIVILEGE_GRANT
 								)
 							)

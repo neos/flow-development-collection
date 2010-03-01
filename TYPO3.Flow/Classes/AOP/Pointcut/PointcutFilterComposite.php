@@ -162,8 +162,9 @@ class PointcutFilterComposite implements \F3\FLOW3\AOP\Pointcut\PointcutFilterIn
 		$conditionCode = $this->buildRuntimeEvaluationsConditionCode('', $this->getRuntimeEvaluationsDefinition(), $globalObjects);
 
 		if ($conditionCode !== '') {
-			return "\n\t\t\t\t\t\tfunction(\\F3\\FLOW3\\AOP\\JoinPointInterface \$joinPoint) use (\$currentObject, \$objectManager) {\n\t\t\t\t\t\t\t" .
-					implode("\n\t\t\t\t\t\t\t", $globalObjects) .
+			return "\n\t\t\t\t\t\tfunction(\\F3\\FLOW3\\AOP\\JoinPointInterface \$joinPoint) use (\$objectManager) {\n" .
+					"\t\t\t\t\t\t\t\$currentObject = \$joinPoint->getProxy();\n" .
+					"\t\t\t\t\t\t\t" . implode("\n\t\t\t\t\t\t\t", $globalObjects) .
 					"\n\t\t\t\t\t\t\treturn " . $conditionCode . ';' .
 					"\n\t\t\t\t\t\t}";
 		} else {
