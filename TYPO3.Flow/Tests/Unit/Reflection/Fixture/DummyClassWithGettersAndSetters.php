@@ -33,6 +33,7 @@ class DummyClassWithGettersAndSetters {
 	protected $property;
 	protected $anotherProperty;
 	protected $property2;
+	protected $booleanProperty = TRUE;
 
 	protected $protectedProperty;
 
@@ -68,6 +69,10 @@ class DummyClassWithGettersAndSetters {
 
 	protected function setProtectedProperty($value) {
 		$this->protectedProperty = $value;
+	}
+
+	public function isBooleanProperty() {
+		return 'method called ' . $this->booleanProperty;
 	}
 
 	protected function getPrivateProperty() {

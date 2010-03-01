@@ -70,8 +70,10 @@ class ObjectAccess {
 				return $subject[$propertyName];
 			}
 		} else {
-			if (is_callable(array($subject, $getterMethodName = self::buildGetterMethodName($propertyName)))) {
-				return call_user_func(array($subject, $getterMethodName));
+			if (is_callable(array($subject, 'get' . ucfirst($propertyName)))) {
+				return call_user_func(array($subject, 'get' . ucfirst($propertyName)));
+			} elseif (is_callable(array($subject, 'is' . ucfirst($propertyName)))) {
+				return call_user_func(array($subject, 'is' . ucfirst($propertyName)));
 			} elseif ($subject instanceof \ArrayAccess && isset($subject[$propertyName])) {
 				return $subject[$propertyName];
 			} elseif (array_key_exists($propertyName, get_object_vars($subject))) {
@@ -155,8 +157,13 @@ class ObjectAccess {
 		$declaredPropertyNames = array_keys(get_class_vars(get_class($object)));
 
 		foreach (get_class_methods($object) as $methodName) {
-			if (substr($methodName, 0, 3) === 'get' && is_callable(array($object, $methodName))) {
-				$declaredPropertyNames[] = lcfirst(substr($methodName, 3));
+			if (is_callable(array($object, $methodName))) {
+				if (substr($methodName, 0, 2) === 'is') {
+					$declaredPropertyNames[] = lcfirst(substr($methodName, 2));
+				}
+				if (substr($methodName, 0, 3) === 'get') {
+					$declaredPropertyNames[] = lcfirst(substr($methodName, 3));
+				}
 			}
 		}
 
@@ -216,7 +223,8 @@ class ObjectAccess {
 	static public function isPropertyGettable($object, $propertyName) {
 		if (!is_object($object)) throw new \InvalidArgumentException('$object must be an object, ' . gettype($object). ' given.', 1259828921);
 		if (array_search($propertyName, array_keys(get_class_vars(get_class($object)))) !== FALSE) return TRUE;
-		return is_callable(array($object, self::buildGetterMethodName($propertyName)));
+		if (is_callable(array($object, 'get' . ucfirst($propertyName)))) return TRUE;
+		return is_callable(array($object, 'is' . ucfirst($propertyName)));
 	}
 
 	/**
@@ -235,18 +243,6 @@ class ObjectAccess {
 			$properties[$propertyName] = self::getProperty($object, $propertyName);
 		}
 		return $properties;
-	}
-
-	/**
-	 * Build the getter method name for a given property by capitalizing the
-	 * first letter of the property, and prepending it with "get".
-	 *
-	 * @param string $propertyName Name of the property
-	 * @return string Name of the getter method name
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 */
-	static public function buildGetterMethodName($propertyName) {
-		return 'get' . ucfirst($propertyName);
 	}
 
 	/**

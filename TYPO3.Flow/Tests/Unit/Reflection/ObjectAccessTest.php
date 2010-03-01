@@ -82,6 +82,15 @@ class ObjectAccessTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getPropertyTriesToCallABooleanGetterMethodIfItExists() {
+		$property = \F3\FLOW3\Reflection\ObjectAccess::getProperty($this->dummyObject, 'booleanProperty');
+		$this->assertSame('method called 1', $property);
+	}
+
+	/**
+	 * @test
 	 * @expectedException \InvalidArgumentException
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
@@ -160,7 +169,7 @@ class ObjectAccessTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function getGettablePropertyNamesReturnsAllPropertiesWhichAreAvailable() {
 		$gettablePropertyNames = \F3\FLOW3\Reflection\ObjectAccess::getGettablePropertyNames($this->dummyObject);
-		$expectedPropertyNames = array('anotherProperty', 'property', 'property2', 'publicProperty', 'publicProperty2');
+		$expectedPropertyNames = array('anotherProperty', 'booleanProperty', 'property', 'property2', 'publicProperty', 'publicProperty2');
 		$this->assertEquals($gettablePropertyNames, $expectedPropertyNames, 'getGettablePropertyNames returns not all gettable properties.');
 	}
 
@@ -182,6 +191,7 @@ class ObjectAccessTest extends \F3\Testing\BaseTestCase {
 		$allProperties = \F3\FLOW3\Reflection\ObjectAccess::getGettableProperties($this->dummyObject);
 		$expectedProperties = array(
 			'anotherProperty' => 42,
+			'booleanProperty' => TRUE,
 			'property' => 'string1',
 			'property2' => NULL,
 			'publicProperty' => NULL,
@@ -208,6 +218,7 @@ class ObjectAccessTest extends \F3\Testing\BaseTestCase {
 	public function isPropertyGettableTellsIfAPropertyCanBeRetrieved() {
 		$this->assertTrue(\F3\FLOW3\Reflection\ObjectAccess::isPropertyGettable($this->dummyObject, 'publicProperty'));
 		$this->assertTrue(\F3\FLOW3\Reflection\ObjectAccess::isPropertyGettable($this->dummyObject, 'property'));
+		$this->assertTrue(\F3\FLOW3\Reflection\ObjectAccess::isPropertyGettable($this->dummyObject, 'booleanProperty'));
 
 		$this->assertFalse(\F3\FLOW3\Reflection\ObjectAccess::isPropertyGettable($this->dummyObject, 'privateProperty'));
 		$this->assertFalse(\F3\FLOW3\Reflection\ObjectAccess::isPropertyGettable($this->dummyObject, 'writeOnlyMagicProperty'));
