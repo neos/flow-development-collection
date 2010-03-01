@@ -32,9 +32,9 @@ namespace F3\FLOW3\Security\Aspect;
 class RequestDispatchingAspect {
 
 	/**
-	 * @var F3\FLOW3\Security\ContextHolderInterface A reference to the security contextholder
+	 * @var F3\FLOW3\Security\Context A reference to the security context
 	 */
-	protected $securityContextHolder;
+	protected $securityContext;
 
 	/**
 	 * @var F3\FLOW3\Security\Auhtorization\FirewallInterface A reference to the firewall
@@ -49,13 +49,13 @@ class RequestDispatchingAspect {
 	/**
 	 * Constructor
 	 *
-	 * @param F3\FLOW3\Security\ContextHolderInterface $securityContextHolder
+	 * @param F3\FLOW3\Security\Context $securityContext
 	 * @param F3\FLOW3\Security\Authorization\FirewallInterface $firewall
 	 * @param F3\FLOW3\Security\Channel\RequestHashService $requestHashService
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(\F3\FLOW3\Security\ContextHolderInterface $securityContextHolder, \F3\FLOW3\Security\Authorization\FirewallInterface $firewall, \F3\FLOW3\Security\Channel\RequestHashService $requestHashService) {
-		$this->securityContextHolder = $securityContextHolder;
+	public function __construct(\F3\FLOW3\Security\Context $securityContext, \F3\FLOW3\Security\Authorization\FirewallInterface $firewall, \F3\FLOW3\Security\Channel\RequestHashService $requestHashService) {
+		$this->securityContext = $securityContext;
 		$this->firewall = $firewall;
 		$this->requestHashService = $requestHashService;
 	}
@@ -70,7 +70,7 @@ class RequestDispatchingAspect {
 	 */
 	public function initializeSecurity(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$request = $joinPoint->getMethodArgument('request');
-		$this->securityContextHolder->initializeContext($request);
+		$this->securityContext->initialize($request);
 		return $joinPoint->getAdviceChain()->proceed($joinPoint);
 	}
 
@@ -106,7 +106,7 @@ class RequestDispatchingAspect {
 		if (!$exception instanceof \F3\FLOW3\Security\Exception\AuthenticationRequiredException) throw $exception;
 
 		$entryPointFound = FALSE;
-		foreach ($this->securityContextHolder->getContext()->getAuthenticationTokens() as $token) {
+		foreach ($this->securityContext->getAuthenticationTokens() as $token) {
 			$entryPoint = $token->getAuthenticationEntryPoint();
 
 			if ($entryPoint !== NULL && $entryPoint->canForward($request)) {

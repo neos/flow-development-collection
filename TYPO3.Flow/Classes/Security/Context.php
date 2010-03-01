@@ -28,7 +28,7 @@ namespace F3\FLOW3\Security;
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
- * @scope prototype
+ * @scope session
  */
 class Context {
 
@@ -72,6 +72,38 @@ class Context {
 	protected $separateTokensPerformed = FALSE;
 
 	/**
+	 * @var F3\FLOW3\Object\ObjectManagerInterface
+	 */
+	protected $objectManager = NULL;
+
+	/**
+	 * @var F3\FLOW3\Security\Authentication\AuthenticationManagerInterface
+	 */
+	protected $authenticationManager = NULL;
+
+	/**
+	 * Inject the object manager
+	 *
+	 * @param F3\FLOW3\Object\ObjectManagerInterface $objectManager The object manager
+	 * @return void
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
+		$this->objectManager = $objectManager;
+	}
+
+	/**
+	 * Inject the authentication manager
+	 *
+	 * @param F3\FLOW3\Security\Authentication\AuthenticationManagerInterface $authenticationManager The authentication manager
+	 * @return void
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function injectAuthenticationManager(\F3\FLOW3\Security\Authentication\AuthenticationManagerInterface $authenticationManager) {
+		$this->authenticationManager = $authenticationManager;
+	}
+
+	/**
 	 * Injects the configuration settings
 	 *
 	 * @param array $settings
@@ -83,25 +115,22 @@ class Context {
 	}
 
 	/**
-	 * Sets the authentication tokens in the context, usually called by the security context holder
+	 * Initializes the security context for the given request.
 	 *
-	 * @param array $tokens Array of \F3\FLOW3\Security\Authentication\TokenInterface objects
+	 * @param F3\FLOW3\MVC\RequestInterface $request The request the context should be initialized for
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function setAuthenticationTokens(array $tokens) {
-		$this->activeTokens = $tokens;
-	}
-
-	/**
-	 * Sets the request the context is used for.
-	 *
-	 * @param \F3\FLOW3\MVC\RequestInterface $request The current request
-	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function setRequest(\F3\FLOW3\MVC\RequestInterface $request) {
+	public function initialize(\F3\FLOW3\MVC\RequestInterface $request) {
 		$this->request = $request;
+		$this->authenticationManager->setSecurityContext($this);
+
+		$managerTokens = $this->filterInactiveTokens($this->authenticationManager->getTokens(), $request);
+		$mergedTokens = $this->mergeTokens($managerTokens, $this->tokens);
+
+		$this->updateTokens($mergedTokens);
+		$this->activeTokens = $mergedTokens;
 	}
 
 	/**
@@ -184,6 +213,21 @@ class Context {
 	}
 
 	/**
+	 * Clears the security context.
+	 *
+	 * @return void
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function clearContext() {
+		$this->tokens = NULL;
+		$this->activeTokens = NULL;
+		$this->inactiveTokens = NULL;
+		$this->request = NULL;
+		$this->separateTokensPerformed = FALSE;
+		$this->authenticateAllTokens = FALSE;
+	}
+
+	/**
 	 * Stores all active tokens in $this->activeTokens, all others in $this->inactiveTokens
 	 *
 	 * @return void
@@ -211,6 +255,85 @@ class Context {
 			} else {
 				$this->activeTokens[] = $token;
 			}
+		}
+	}
+
+		/**
+	 * Merges the session and manager tokens. All manager tokens types will be in the result array
+	 * If a specific type is found in the session this token replaces the one I(of the same type)
+	 * given by the manager.
+	 *
+	 * @param array $managerTokens Array of tokens provided by the authentication manager
+	 * @param array $sessionTokens Array of tokens resotored from the session
+	 * @return array Array of \F3\FLOW3\Security\Authentication\TokenInterface objects
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	protected function mergeTokens($managerTokens, $sessionTokens) {
+		$resultTokens = array();
+
+		if (!is_array($managerTokens)) return $resultTokens;
+
+		foreach ($managerTokens as $managerToken) {
+			$noCorrespondingSessionTokenFound = TRUE;
+
+			if (!is_array($sessionTokens)) continue;
+
+			foreach ($sessionTokens as $sessionToken) {
+				$managerTokenClass = get_class($managerToken);
+
+				if ($sessionToken instanceof $managerTokenClass) {
+					$resultTokens[] = $sessionToken;
+					$noCorrespondingSessionTokenFound = FALSE;
+				}
+			}
+
+			if ($noCorrespondingSessionTokenFound) $resultTokens[] = $managerToken;
+		}
+
+		return $resultTokens;
+	}
+
+	/**
+	 * Filters all tokens that don't match for the given request.
+	 *
+	 * @param array $tokens The token array to be filtered
+	 * @param F3\FLOW3\MVC\RequestInterface $request The request object
+	 * @return array The filtered token array
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	protected function filterInactiveTokens(array $tokens, \F3\FLOW3\MVC\RequestInterface $request) {
+		$activeTokens = array();
+
+		foreach ($tokens as $token) {
+			if ($token->hasRequestPatterns()) {
+				$requestPatterns = $token->getRequestPatterns();
+				$tokenIsActive = TRUE;
+
+				foreach ($requestPatterns as $requestPattern) {
+					if ($requestPattern->canMatch($request)) {
+						$tokenIsActive &= $requestPattern->matchRequest($request);
+					}
+				}
+				if ($tokenIsActive) $activeTokens[] = $token;
+
+			} else {
+				$activeTokens[] = $token;
+			}
+		}
+
+		return $activeTokens;
+	}
+
+	/**
+	 * Updates the token credentials for all tokens in the given array.
+	 *
+	 * @param array $tokens Array of authentication tokens the credentials should be updated for
+	 * @return void
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	protected function updateTokens(array $tokens) {
+		foreach ($tokens as $token) {
+			$token->updateCredentials();
 		}
 	}
 

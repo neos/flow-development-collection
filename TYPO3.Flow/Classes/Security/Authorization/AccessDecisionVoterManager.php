@@ -58,12 +58,13 @@ class AccessDecisionVoterManager implements \F3\FLOW3\Security\Authorization\Acc
 	 * Constructor.
 	 *
 	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager The object manager
+	 * @param \F3\FLOW3\Security\Context $securityContext The security context
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function __construct(\F3\FLOW3\Object\ObjectManagerInterface $objectManager, \F3\FLOW3\Security\ContextHolderInterface $securityContextHolder) {
+	public function __construct(\F3\FLOW3\Object\ObjectManagerInterface $objectManager, \F3\FLOW3\Security\Context $securityContext) {
 		$this->objectManager = $objectManager;
-		$this->securityContext = $securityContextHolder->getContext();
+		$this->securityContext = $securityContext;
 	}
 
 	/**
