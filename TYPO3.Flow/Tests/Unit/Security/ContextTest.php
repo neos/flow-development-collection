@@ -468,5 +468,34 @@ class ContextTest extends \F3\Testing\BaseTestCase {
 		$this->assertTrue($securityContext->hasRole('LicenseToKill'));
 		$this->assertFalse($securityContext->hasRole('Customer'));
 	}
+
+	/**
+	 * @test
+	 * @category unit
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getPartyAsksTheCorrectAuthenticationTokenAndReturnsItsParty() {
+		$mockParty = $this->getMock('F3\Party\Domain\Model\Party');
+
+		$mockAccount = $this->getMock('F3\Party\Domain\Model\Account');
+		$mockAccount->expects($this->once())->method('getParty')->will($this->returnValue($mockParty));
+
+		$token1 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), uniqid('token1'));
+		$token1->expects($this->any())->method('isAuthenticated')->will($this->returnValue(FALSE));
+		$token1->expects($this->never())->method('getAccount');
+
+		$token2 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), uniqid('token2'));
+		$token2->expects($this->any())->method('isAuthenticated')->will($this->returnValue(TRUE));
+		$token2->expects($this->once())->method('getAccount')->will($this->returnValue($mockAccount));
+
+		$token3 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), uniqid('token3'));
+		$token3->expects($this->any())->method('isAuthenticated')->will($this->returnValue(TRUE));
+		$token3->expects($this->never())->method('getAccount');
+
+		$mockContext = $this->getAccessibleMock('F3\FLOW3\Security\Context', array('getAuthenticationTokens'), array(), '', FALSE);
+		$mockContext->expects($this->once())->method('getAuthenticationTokens')->will($this->returnValue(array($token1, $token2, $token3)));
+
+		$this->assertEquals($mockParty, $mockContext->getParty());
+	}
 }
 ?>

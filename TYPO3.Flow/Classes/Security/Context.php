@@ -213,6 +213,23 @@ class Context {
 	}
 
 	/**
+	 * Returns the party of the first authenticated authentication token.
+	 * Note: There might be a different party authenticated in one of the latter tokens,
+	 * if you need it you'll have to fetch it directly from the token.
+	 * (@see getAuthenticationTokens())
+	 *
+	 * @return \F3\Party\Domain\Model\Party The authenticated party
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getParty() {
+		foreach ($this->getAuthenticationTokens() as $token) {
+			if ($token->isAuthenticated() === TRUE) return $token->getAccount()->getParty();
+		}
+
+		return NULL;
+	}
+
+	/**
 	 * Clears the security context.
 	 *
 	 * @return void
@@ -260,7 +277,7 @@ class Context {
 
 		/**
 	 * Merges the session and manager tokens. All manager tokens types will be in the result array
-	 * If a specific type is found in the session this token replaces the one I(of the same type)
+	 * If a specific type is found in the session this token replaces the one (of the same type)
 	 * given by the manager.
 	 *
 	 * @param array $managerTokens Array of tokens provided by the authentication manager
