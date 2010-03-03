@@ -29,47 +29,36 @@ namespace F3\FLOW3\MVC\Controller;
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class StandardController extends \F3\FLOW3\MVC\Controller\AbstractController {
+class StandardController extends \F3\FLOW3\MVC\Controller\ActionController {
 
 	/**
-	 * @var \F3\FLOW3\MVC\View\StandardView
-	 */
-	protected $standardView;
-
-	/**
-	 * Injects the StandardView.
+	 * Overrides the standard resolveView method
 	 *
-	 * @param \F3\FLOW3\MVC\View\StandardView $standardView
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @return \F3\FLOW3\MVC\View\ViewInterface $view The view
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectStandardView(\F3\FLOW3\MVC\View\StandardView $standardView) {
-		$this->standardView = $standardView;
+	protected function resolveView() {
+		$view = $this->objectManager->create('F3\Fluid\View\TemplateView');
+		$view->setControllerContext($this->controllerContext);
+		$view->setTemplatePathAndFilename(FLOW3_PATH_FLOW3 . 'Resources/Private/MVC/StandardView_Template.html');
+		return $view;
 	}
 
 	/**
-	 * Processes a generic request and fills the response with the default view
+	 * Displays the default view
 	 *
-	 * @param \F3\FLOW3\MVC\RequestInterface $request The request
-	 * @param \F3\FLOW3\MVC\ResponseInterface $response The response
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function processRequest(\F3\FLOW3\MVC\RequestInterface $request, \F3\FLOW3\MVC\ResponseInterface $response) {
-		parent::processRequest($request, $response);
-		$this->standardView->setControllerContext($this->controllerContext());
-		switch (get_class($request)) {
-			case 'F3\FLOW3\MVC\Web\Request' :
-				$response->setContent($this->standardView->render());
-				break;
-			default :
-				$response->setContent(
-					"\nWelcome to FLOW3!\n\n" .
-					"This is the default view of the FLOW3 MVC object. You see this message because no \n" .
-					"other view is available. Please refer to the Developer's Guide for more information \n" .
-					"how to create and configure one.\n\n" .
-					"Have fun! The FLOW3 Development Team\n"
-				);
+	public function indexAction() {
+
+		if (!$this->request instanceof \F3\FLOW3\MVC\Web\Request) {
+			return
+				"\nWelcome to FLOW3!\n\n" .
+				"This is the default view of the FLOW3 MVC object. You see this message because no \n" .
+				"other view is available. Please refer to the Developer's Guide for more information \n" .
+				"how to create and configure one.\n\n" .
+				"Have fun! The FLOW3 Development Team\n";
 		}
 	}
 }

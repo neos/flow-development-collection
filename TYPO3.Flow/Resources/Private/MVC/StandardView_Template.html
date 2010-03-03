@@ -3,7 +3,7 @@
 <html>
 	<head>
 		<title>FLOW3 - Standard View</title>
-		<base href="###BASEURI###" />
+		<f:base/>
 		<style type="text/css">
 			body {
 				font-family: Helvetica, Arial, sans-serif;
@@ -27,7 +27,7 @@
 				width: 500px;
 				height: 360px;
 				background: none;
-				background-image: url(Resources/Packages/FLOW3/MVC/StandardView_FloatingWindow.png);
+				background-image: url({f:uri.resource(path:'MVC/StandardView_FloatingWindow.png')});
 
 			}
 
@@ -63,7 +63,7 @@
 			<div class="F3_WidgetLibrary_Widgets_FloatingWindow">
 				<div class="F3_WidgetLibrary_Widgets_Window_TitleBar">FLOW3 - Standard View</div>
 				<div class="F3_WidgetLibrary_Widgets_Window_Body">
-					<img src="Resources/Packages/FLOW3/MVC/StandardView_Package.png" class="StandardView_Package" alt="Nice packshot of imaginary FLOW3 box" />
+					<img src="{f:uri.resource(path:'MVC/StandardView_Package.png')}" class="StandardView_Package" alt="Nice packshot of imaginary FLOW3 box" />
 					<h1>Welcome to FLOW3!</h1>
 
 					<p>This is the default view of the FLOW3 MVC component. You see this message because no
