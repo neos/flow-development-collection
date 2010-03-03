@@ -461,7 +461,25 @@ public function <co xml:id="co.pointcutdeclaration.2" />deleteMethods() {}</prog
             method execution join points anyway, we decided to simplify things
             by allowing only a more general <function>method</function>
             designator.</para>
-          </note></para>
+          </note>The <literal>method()</literal> designator also supports so
+        called runtime evaluations, meaning you can specify values for the
+        method's arguments. If those argument values do not match the adivce
+        won't be executed. The following example should give you an idea how
+        this works:</para>
+
+        <example>
+          <title>runtime evaluations for the method() pointcut
+          designator</title>
+
+          <para><code>method(F3\MyPackage\MyClass-&gt;update(title == "FLOW3",
+          overwrite == TRUE))</code></para>
+        </example>
+
+        <para>Besides the method arguments you can also access the properties
+        of the current object or a global object like the party that is
+        currently authenticated. A detailed description of the runtime
+        evaluations possibilites is described below in the section about the
+        <literal>evaluate()</literal> pointcut filter.</para>
       </section>
 
       <section>
@@ -607,6 +625,69 @@ public function <co xml:id="co.pointcutdeclaration.2" />deleteMethods() {}</prog
 
           <para><code>filter(F3\MyPackage\MyCustomPointcutFilter)</code></para>
         </example>
+      </section>
+
+      <section>
+        <title>evaluate()</title>
+
+        <para>The <literal>evaluate()</literal> designator is used to execute
+        advices depending on constraints that have to be evaluated during
+        runtime. This could be a specific value for a method argument (see the
+        <literal>method()</literal> designator) or checking a certain property
+        of the current object or accessing a global object like the currently
+        authenticated party. In general you can access object properties by
+        the <literal>.</literal> syntax and global objects are registered
+        under the <literal>current.</literal> keyword. Here is an example for
+        the possibilities:</para>
+
+        <example>
+          <title>evaluate() pointcut designator</title>
+
+          <para>Matches if the property <literal>name</literal> of the global
+          party object (the currently authenticated party of the security
+          framework) is equal to "<literal>Andi</literal>":</para>
+
+          <para><code>evaluate(current.party.name == "Andi")</code></para>
+
+          <para>Matches if the property <literal>someProperty</literal> of
+          <literal>someObject</literal> which is a property of the current
+          object (the object the advice will be executed in) is equals to the
+          name of the current <literal>party</literal>:</para>
+
+          <para><code>evaluate(this.someObject.someProperty ==
+          current.party.name)</code></para>
+
+          <para>Matches if the property <literal>someProperty</literal> of the
+          current object is equal to one of the values
+          <literal>TRUE</literal>, "<literal>someString</literal>" or the
+          address of the current <literal>party</literal>:</para>
+
+          <para><code>evaluate(this.someProperty in (TRUE, "someString",
+          current.party.address))</code></para>
+
+          <para>Matches if the <literal>accounts</literal> array in the
+          current <literal>party</literal> object contains the account stored
+          in the <literal>myAccount</literal> property of the current
+          object:</para>
+
+          <para><code>evaluate(current.party.accounts contains
+          this.myAccount)</code></para>
+        </example>
+
+        <tip>
+          <para>If you like you can enter more than one constraint in a single
+          <literal>evaluate</literal> pointcut designator by separating them
+          with a comma. The <literal>evaluate</literal> designator will only
+          match, if all its conditions evaluated to
+          <literal>TRUE</literal>.</para>
+        </tip>
+
+        <note>
+          <para>Currently there is only the <literal>party</literal> object
+          available under the <literal>current.</literal> namespace. In the
+          future it should be possible to register arbitrary singletons to be
+          available at this place.</para>
+        </note>
       </section>
     </section>
 
