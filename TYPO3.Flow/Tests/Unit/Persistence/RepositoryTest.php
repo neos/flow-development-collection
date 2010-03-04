@@ -181,7 +181,7 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function findByUUIDReturnsResultOfGetObjectByIdentifierCall() {
+	public function findByUuidReturnsResultOfGetObjectByIdentifierCall() {
 		$fakeUUID = '123-456';
 		$object = new \stdClass();
 
@@ -192,14 +192,14 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 		$repository->injectPersistenceManager($mockPersistenceManager);
 		$repository->_set('objectType', 'stdClass');
 
-		$this->assertSame($object, $repository->findByUUID($fakeUUID));
+		$this->assertSame($object, $repository->findByUuid($fakeUUID));
 	}
 
 	/**
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function findByUUIDReturnsNullIfObjectOfMismatchingTypeWasFoundByGetObjectByIdentifierCall() {
+	public function findByUuidReturnsNullIfObjectOfMismatchingTypeWasFoundByGetObjectByIdentifierCall() {
 		$fakeUUID = '123-456';
 		$object = new \stdClass();
 
@@ -210,7 +210,7 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 		$repository->injectPersistenceManager($mockPersistenceManager);
 		$repository->_set('objectType', 'otherExpectedClass');
 
-		$this->assertNULL($repository->findByUUID($fakeUUID));
+		$this->assertNULL($repository->findByUuid($fakeUUID));
 	}
 
 	/**
@@ -422,6 +422,23 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 		$repository->expects($this->once())->method('createQuery')->will($this->returnValue($mockQuery));
 
 		$this->assertSame('baz', $repository->findOneByFoo('bar'));
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function magicCallMethodAcceptsCountBySomethingCallsAndExecutesAQueryWithThatCriteria() {
+		$mockQuery = $this->getMock('F3\FLOW3\Persistence\QueryInterface');
+		$mockQuery->expects($this->once())->method('equals')->with('foo', 'bar')->will($this->returnValue('matchCriteria'));
+		$mockQuery->expects($this->once())->method('matching')->with('matchCriteria')->will($this->returnValue($mockQuery));
+		$mockQuery->expects($this->once())->method('count')->will($this->returnValue(2));
+
+		$repository = $this->getMock('F3\FLOW3\Persistence\Repository', array('createQuery'));
+		$repository->expects($this->once())->method('createQuery')->will($this->returnValue($mockQuery));
+
+		$this->assertSame(2, $repository->countByFoo('bar'));
 	}
 
 	/**

@@ -32,7 +32,7 @@ namespace F3\FLOW3\Persistence;
 class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 
 	/**
-	 * Objects of this repository
+	 * Objects added to this repository during the current session
 	 *
 	 * @var \SplObjectStorage
 	 */
@@ -230,13 +230,14 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	 * Never use this method directly, always use update().
 	 *
 	 * Note:
-	 * The code may look funny, but the two calls to the $ersistenceManager
+	 * The code may look funny, but the two calls to the $persistenceManager
 	 * yield different results - getIdentifierByObject() in this case returns the
 	 * identifier stored inside the $modifiedObject, whereas getObjectByIdentifier()
 	 * returns the existing object from the object map in the session.
 	 *
 	 * @param object $modifiedObject The modified object
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function updateObject($modifiedObject) {
 		$uuid = $this->persistenceManager->getIdentifierByObject($modifiedObject);
@@ -293,13 +294,24 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
-	public function findByUUID($uuid) {
+	public function findByUuid($uuid) {
 		$object = $this->persistenceManager->getObjectByIdentifier($uuid);
-		if (is_a($object, $this->objectType)) {
+		if ($object instanceof $this->objectType) {
 			return $object;
 		} else {
 			return NULL;
 		}
+	}
+
+	/**
+	 * Counts all objects of this repository
+	 *
+	 * @return integer
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
+	 */
+	public function countAll() {
+		return $this->createQuery()->count();
 	}
 
 	/**
@@ -332,9 +344,10 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	/**
 	 * Magic call method for finder methods.
 	 *
-	 * Currently provides two methods
+	 * Currently provides three methods
 	 *  - findBy<PropertyName>($value, $caseSensitive = TRUE)
 	 *  - findOneBy<PropertyName>($value, $caseSensitive = TRUE)
+	 *  - countBy<PropertyName>($value, $caseSensitive = TRUE)
 	 *
 	 * @param string $methodName Name of the method
 	 * @param array $arguments The arguments
@@ -351,6 +364,14 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 				return $query->matching($query->equals($propertyName, $arguments[0], (boolean)$arguments[1]))->execute();
 			} else {
 				return $query->matching($query->equals($propertyName, $arguments[0]))->execute();
+			}
+		} elseif (substr($methodName, 0, 7) === 'countBy' && strlen($methodName) > 8) {
+			$propertyName = strtolower(substr($methodName, 7, 1)) . substr($methodName, 8);
+			$query = $this->createQuery();
+			if (isset($arguments[1])) {
+				return $query->matching($query->equals($propertyName, $arguments[0], (boolean)$arguments[1]))->count();
+			} else {
+				return $query->matching($query->equals($propertyName, $arguments[0]))->count();
 			}
 		} elseif (substr($methodName, 0, 9) === 'findOneBy' && strlen($methodName) > 10) {
 			$propertyName = strtolower(substr($methodName, 9, 1)) . substr($methodName, 10);

@@ -81,7 +81,23 @@ interface RepositoryInterface {
 	 * @return object The matching object if found, otherwise NULL
 	 * @api
 	 */
-	public function findByUUID($uuid);
+	public function findByUuid($uuid);
+
+	/**
+	 * Returns a query for objects of this repository
+	 *
+	 * @return \F3\FLOW3\Persistence\QueryInterface
+	 * @api
+	 */
+	public function createQuery();
+
+	/**
+	 * Counts all objects of this repository
+	 *
+	 * @return integer
+	 * @api
+	 */
+	public function countAll();
 
 	/**
 	 * Removes all objects of this repository as if remove() was called for
@@ -91,6 +107,26 @@ interface RepositoryInterface {
 	 * @api
 	 */
 	public function removeAll();
+
+
+	/**
+	 * Replaces an object by another after checking that existing and new
+	 * objects have the right types
+	 *
+	 * @param object $existingObject The existing object
+	 * @param object $newObject The new object
+	 * @api
+	 */
+	public function replace($existingObject, $newObject);
+
+	/**
+	 * Replaces an existing object with the same identifier by the given object
+	 * after checking the type of the object fits to the repositories type
+	 *
+	 * @param object $modifiedObject The modified object
+	 * @api
+	 */
+	public function update($modifiedObject);
 
 }
 ?>
