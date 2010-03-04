@@ -115,8 +115,10 @@ class Session {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function unregisterReconstitutedEntity($entity) {
-		$this->reconstitutedEntities->detach($entity);
-		unset($this->reconstitutedEntitiesData[$this->getIdentifierByObject($entity)]);
+		if ($this->reconstitutedEntities->contains($entity)) {
+			$this->reconstitutedEntities->detach($entity);
+			unset($this->reconstitutedEntitiesData[$this->getIdentifierByObject($entity)]);
+		}
 	}
 
 	/**
