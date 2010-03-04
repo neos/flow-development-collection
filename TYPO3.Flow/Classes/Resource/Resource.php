@@ -25,7 +25,7 @@ namespace F3\FLOW3\Resource;
 /**
  * Model describing a resource
  *
- * @version $Id: Publisher.php 3523 2009-11-30 14:53:36Z k-fish $
+ * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  * @valueobject

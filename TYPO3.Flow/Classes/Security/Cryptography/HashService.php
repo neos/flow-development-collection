@@ -25,7 +25,7 @@ namespace F3\FLOW3\Security\Cryptography;
 /**
  * A hash service which should be used to generate and validate hashes.
  *
- * @version $Id: OpenSSLRSAKey.php 2813 2009-07-16 14:02:34Z k-fish $
+ * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  */
 class HashService {

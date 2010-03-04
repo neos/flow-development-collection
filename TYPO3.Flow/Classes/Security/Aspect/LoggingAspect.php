@@ -25,7 +25,7 @@ namespace F3\FLOW3\Security\Aspect;
 /**
  * An aspect which centralizes the logging of security relevant actions.
  *
- * @version $Id: PolicyEnforcementAspect.php 2813 2009-07-16 14:02:34Z k-fish $
+ * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @aspect
  */

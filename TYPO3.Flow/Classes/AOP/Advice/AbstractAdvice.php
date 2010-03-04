@@ -25,7 +25,7 @@ namespace F3\FLOW3\AOP\Advice;
 /**
  * Base class for Advices.
  *
- * @version $Id: BeforeAdvice.php 3643 2010-01-15 14:38:07Z robert $
+ * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */

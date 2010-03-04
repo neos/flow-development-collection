@@ -25,7 +25,7 @@ namespace F3\FLOW3\MVC\Controller;
 /**
  * This object holds validation errors for one argument.
  *
- * @version $Id: PropertyError.php 2523 2009-06-02 10:35:40Z k-fish $
+ * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */

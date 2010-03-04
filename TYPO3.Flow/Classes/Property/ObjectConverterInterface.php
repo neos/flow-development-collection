@@ -28,7 +28,7 @@ namespace F3\FLOW3\Property;
  * All classes implementing this interface are automatically registered as object converters
  * for the Property Mapper
  *
- * @version $Id: Mapper.php 3531 2009-11-30 20:46:05Z k-fish $
+ * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */

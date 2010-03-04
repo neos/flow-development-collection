@@ -25,7 +25,7 @@ namespace F3\FLOW3\Resource;
 /**
  * An object converter for Resource objects
  *
- * @version $Id: Mapper.php 3531 2009-11-30 20:46:05Z k-fish $
+ * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class ResourceObjectConverter implements \F3\FLOW3\Property\ObjectConverterInterface {
