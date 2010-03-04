@@ -193,10 +193,10 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend implements \F3
 	public function remove($entryIdentifier) {
 		$pathAndFilename = $this->cacheDirectory . $entryIdentifier;
 		if (!file_exists($pathAndFilename)) return FALSE;
-		if (unlink ($pathAndFilename) === FALSE) return FALSE;
+		if (unlink($pathAndFilename) === FALSE) return FALSE;
 		foreach($this->findTagFilesByEntry($entryIdentifier) as $pathAndFilename) {
 			if (!file_exists($pathAndFilename)) return FALSE;
-			if (unlink ($pathAndFilename) === FALSE) return FALSE;
+			if (unlink($pathAndFilename) === FALSE) return FALSE;
 		}
 
 		$this->systemLogger->log(sprintf('Cache %s: removed entry "%s".', $this->cacheIdentifier, $entryIdentifier), LOG_DEBUG);
@@ -331,7 +331,7 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend implements \F3
 
 		$path = $this->cacheDirectory . 'Tags/';
 		$pattern = $path . '*/' . $this->cacheIdentifier . self::SEPARATOR . $entryIdentifier;
-		return glob($pattern);
+		return glob($pattern) ?: array();
 	}
 
 	/**
