@@ -1,0 +1,65 @@
+<?php
+
+// lazy loaded object
+array(
+	'identifier' => '<identifier>',
+	'classname' => '<classname>',
+	'properties' => \F3\FLOW3\Persistence\Aspect\LazyLoadingObjectInterface::LAZY_PROPERTIES
+	)
+)
+
+// single value
+array(
+	'identifier' => '<identifier>',
+	'classname' => '<classname>',
+	'properties' => array(
+		'<name>' => array(
+			'type' => '<type>',
+			'multivalue' => FALSE,
+			'value' => <value>
+		), ...
+	)
+)
+
+// multi value
+array(
+	'identifier' => '<identifier>',
+	'classname' => '<classname>',
+	'properties' => array(
+		'<name>' => array(
+			'type' => '<type>', // for multi values only array, SplObjectStorage
+			'multivalue' => TRUE,
+			'value' => array(	// an empty array for empty traversables! NULL for NULL!
+				array(
+					'type' => '<type>',
+					'index' => <index>,
+					'value' => <value>
+				), ...
+			)
+		)
+	)
+)
+
+// NULL value
+array(
+	'identifier' => '<identifier>',
+	'classname' => '<classname>',
+	'properties' => array(
+		'<name>' => array(
+			'type' => '<type>',
+			'multivalue' => <boolean>,
+			'value' => NULL
+		), ...
+	)
+)
+
+/*
+	<identifier> a uuid (for entities) or sha1 (for value objects)
+	<classname> the AOP proxy target classname, fully qualified
+	<type> the strings string, array, float, integer, boolean, DateTime, SplObjectStorage or a FQCN
+	<value> a literal - string, integer, boolean, float, for datetime the timestamp (based on UTC!) or - for objects - an array with (at least) the identifier
+		if <value> represents an object it can be an array following the format described here
+
+	<vtype> a meta type, one of the strings string, array, float, integer, boolean, datetime, object - used in SQL backend
+
+*/

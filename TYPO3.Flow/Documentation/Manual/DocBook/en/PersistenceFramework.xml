@@ -200,7 +200,7 @@ class BlogRepository extends \F3\FLOW3\Persistence\Repository {
         </footnote>.</para>
 
       <para>If you need to query for objects you just created, feel free to
-      inject the <classname>Persistence\Manager</classname> and use
+      inject the <classname>PersistenceManager</classname> and use
       <methodname>persistAll()</methodname> in your code.</para>
     </section>
 
@@ -228,8 +228,8 @@ class BlogRepository extends \F3\FLOW3\Persistence\Repository {
 
           <listitem>
             <para>Repositories must implement
-            <classname>\F3\FLOW3\Persistence\Repository</classname> (which is
-            the case when extending
+            <classname>\F3\FLOW3\Persistence\RepositoryInterface</classname>
+            (which is the case when extending
             <classname>\F3\FLOW3\Persistence\Repository</classname>)</para>
           </listitem>
         </itemizedlist></para>
@@ -346,12 +346,13 @@ class BlogRepository extends \F3\FLOW3\Persistence\Repository {
               <row>
                 <entry>@lazy</entry>
 
-                <entry>Variable</entry>
+                <entry>Class, Variable</entry>
 
                 <entry>When reconstituting the value of this property will be
                 loaded only when the property is used. Note: This is only
                 supported for properties of type
-                <classname>\SplObjectStorage</classname>.</entry>
+                <classname>\SplObjectStorage</classname> and objects marked
+                with @lazy in their source code.</entry>
               </row>
             </tbody>
           </tgroup>
@@ -384,7 +385,7 @@ class BlogRepository extends \F3\FLOW3\Persistence\Repository {
       persistence backend implementation. Have a look at the documentatoin of
       the respective package for more information. The following diagram shows
       (most of) the way an object takes from creation until it is persisted
-      when using the TYPO3 Content Repository:</para>
+      when using the FLOW3 default backend:</para>
 
       <para><figure>
           <title>Object persistence process</title>
@@ -398,7 +399,7 @@ class BlogRepository extends \F3\FLOW3\Persistence\Repository {
           </mediaobject>
         </figure>Keep in mind that the diagram omits some details like dirty
       checking on objects and how exactly objects and their properties are
-      stored in the Content Repository.</para>
+      stored.</para>
     </section>
 
     <section>
@@ -408,8 +409,8 @@ class BlogRepository extends \F3\FLOW3\Persistence\Repository {
       available that provides easy fetching of objects through the persistence
       framework. You ask for instances of a specific class that match certain
       filters and get back an array of those reconstituted objects. Here is a
-      diagram of the internal process when using the TYPO3 Content Repository
-      as persistence backend:<figure>
+      diagram of the internal process when using the FLOW3 default
+      backend:<figure>
           <title>Object querying and reconstitution process</title>
 
           <mediaobject>
@@ -421,47 +422,7 @@ class BlogRepository extends \F3\FLOW3\Persistence\Repository {
           </mediaobject>
         </figure>For the developer the complexity is hidden between the
       query's <methodname>execute()</methodname> method and the array of
-      objects being returned. The <classname>QOMFactory</classname>, "right"
-      <classname>Query</classname> and <classname>QueryResult</classname>
-      objects are part of the standard JSR-283 API, whereas
-      <classname>QueryFactory</classname>, "left" <classname>Query</classname>
-      and <classname>DataMapper</classname> are part of the FLOW3 persistence
-      backend implementation that comes with the TYPO3 Content
-      Repository.</para>
-    </section>
-
-    <section>
-      <title>On Lazy Loading of Properties</title>
-
-      <para>When a property is marked for lazy loading, it will be popluated
-      by proxy object upon reconstitution of it's parent. When there is the
-      first interaction with that proxy, it replaces itself with the actual
-      object it represents. This has some implications you should be aware
-      of:<itemizedlist>
-          <listitem>
-            <para>Until it has replaced itself, you cannot check that value
-            with <function>instanceof</function> or expect it to pass type
-            hinting (as it will be a <classname>LazyLoadingProxy</classname>
-            and not the class you probably expect).</para>
-          </listitem>
-
-          <listitem>
-            <para>Replacement happens in the object containing the property,
-            so when you hand the property value to some method (maybe even
-            after coning it) it will continue to have the proxy. It can be
-            used like the real thing, but it will be costly (plus the
-            limitations mentioned above continue to apply).</para>
-          </listitem>
-        </itemizedlist></para>
-
-      <para>To explicitly "activate" a lazy loaded property you can use code
-      like the following:<example>
-          <title>Explictly activating a LazyLoadingProxy</title>
-
-          <programlisting language="php">if ($this-&gt;lazyProperty instanceof \F3\FLOW3\Persistence\LazyLoadingProxy) {
-  $this-&gt;lazyProperty-&gt;_loadRealInstance();
-}</programlisting>
-        </example></para>
+      objects being returned.</para>
     </section>
   </section>
 </chapter>
