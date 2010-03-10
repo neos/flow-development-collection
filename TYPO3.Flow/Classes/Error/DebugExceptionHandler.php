@@ -112,7 +112,7 @@ class DebugExceptionHandler extends \F3\FLOW3\Error\AbstractExceptionHandler {
 				">
 				<div style="width: 100%; background-color: #515151; color: white; padding: 2px; margin: 0 0 6px 0;">Uncaught Exception in FLOW3</div>
 				<div style="width: 100%; padding: 2px; margin: 0 0 6px 0;">
-					<strong style="color: #BE0027;">' . $exceptionCodeNumber . $exception->getMessage() . '</strong> ' . $moreInformationLink . '<br />
+					<strong style="color: #BE0027;">' . $exceptionCodeNumber . htmlspecialchars($exception->getMessage()) . '</strong> ' . $moreInformationLink . '<br />
 					<br />
 					<span class="ExceptionProperty">' . get_class($exception) . '</span> thrown in file<br />
 					<span class="ExceptionProperty">' . $filePathAndName . '</span> in line
