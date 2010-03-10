@@ -40,7 +40,7 @@ interface StaticObjectContainerInterface extends \F3\FLOW3\Object\Container\Obje
 	/**
 	 * Imports object instances and shutdown objects from a Dynamic Container
 	 *
-	 * @param \F3\FLOW3\Object\Container\DynamicObjectContainer
+	 * @param \F3\FLOW3\Object\Container\DynamicObjectContainer $dynamicObjectContainer
 	 * @return void
 	 */
 	public function import(\F3\FLOW3\Object\Container\DynamicObjectContainer $dynamicObjectContainer);

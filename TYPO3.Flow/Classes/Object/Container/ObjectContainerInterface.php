@@ -52,6 +52,7 @@ interface ObjectContainerInterface {
 	 * @throws \F3\FLOW3\Object\Exception\WrongScopeException if the specified object is not configured as Prototype
 	 */
 	public function create($objectName);
+
 	/**
 	 * Returns a fresh or existing instance of the object specified by $objectName.
 	 *
