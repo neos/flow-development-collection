@@ -221,8 +221,10 @@ class ResourceManager {
 		if ($resource instanceof \F3\FLOW3\Resource\Resource) {
 			if (is_file($this->persistentResourcesStorageBaseUri . $resource->getHash())) {
 				unlink($this->persistentResourcesStorageBaseUri . $resource->getHash());
+				return TRUE;
 			}
 		}
+		return FALSE;
 	}
 
 	/**
