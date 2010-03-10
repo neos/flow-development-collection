@@ -241,18 +241,24 @@ class PropertyMapper {
 			}
 
 			if ($propertyValue === NULL && !in_array($propertyName, $optionalPropertyNames)) {
-				$this->mappingResults->addError($this->objectManager->get('F3\FLOW3\Error\Error', "Required property '$propertyName' does not exist in source." , 1236785359), $propertyName);
+				$this->mappingResults->addError($this->objectManager->create('F3\FLOW3\Error\Error', "Required property '$propertyName' does not exist in source." , 1236785359), $propertyName);
 			} else {
 				if (method_exists($target, \F3\FLOW3\Reflection\ObjectAccess::buildSetterMethodName($propertyName))
 						&& is_callable(array($target, \F3\FLOW3\Reflection\ObjectAccess::buildSetterMethodName($propertyName)))) {
 					$targetClassName = ($target instanceof \F3\FLOW3\AOP\ProxyInterface) ? $target->FLOW3_AOP_Proxy_getProxyTargetClassName() : get_class($target);
 					$methodParameters = $this->reflectionService->getMethodParameters($targetClassName, \F3\FLOW3\Reflection\ObjectAccess::buildSetterMethodName($propertyName));
 					$methodParameter = current($methodParameters);
-					$targetPropertyType = \F3\FLOW3\Utility\TypeHandling::parseType($methodParameter['type']);
+
+					try {
+						$targetPropertyType = \F3\FLOW3\Utility\TypeHandling::parseType($methodParameter['type']);
+					} catch (\InvalidArgumentException $exception) {
+						$this->mappingResults->addError($this->objectManager->create('F3\FLOW3\Error\Error', "The type hint or documentation of property '$propertyName' specified the unknown type '" . $methodParameter['type'] . "'." , 1268239762), $propertyName);
+						continue;
+					}
 				} elseif ($targetClassSchema !== NULL && $targetClassSchema->hasProperty($propertyName)) {
 					$targetPropertyType = $targetClassSchema->getProperty($propertyName);
 				} elseif ($targetClassSchema !== NULL) {
-					$this->mappingResults->addError($this->objectManager->get('F3\FLOW3\Error\Error', "Property '$propertyName' does not exist in target class schema." , 1251813614), $propertyName);
+					$this->mappingResults->addError($this->objectManager->create('F3\FLOW3\Error\Error', "Property '$propertyName' does not exist in target class schema." , 1251813614), $propertyName);
 					continue;
 				}
 
@@ -284,7 +290,7 @@ class PropertyMapper {
 				if (is_array($target)) {
 					$target[$propertyName] = $propertyValue;
 				} elseif (\F3\FLOW3\Reflection\ObjectAccess::setProperty($target, $propertyName, $propertyValue) === FALSE) {
-					$this->mappingResults->addError($this->objectManager->get('F3\FLOW3\Error\Error', "Property '$propertyName' could not be set." , 1236783102), $propertyName);
+					$this->mappingResults->addError($this->objectManager->create('F3\FLOW3\Error\Error', "Property '$propertyName' could not be set." , 1236783102), $propertyName);
 				}
 			}
 		}
@@ -332,7 +338,7 @@ class PropertyMapper {
 		if (is_string($propertyValue) && preg_match(self::PATTERN_MATCH_UUID, $propertyValue) === 1) {
 			$object = $this->persistenceManager->getObjectByIdentifier($propertyValue);
 			if ($object === FALSE) {
-				$this->mappingResults->addError($this->objectManager->get('F3\FLOW3\Error\Error', 'Querying the repository for the specified object with UUID ' . $propertyValue . ' was not successful.' , 1249379517), $propertyName);
+				$this->mappingResults->addError($this->objectManager->create('F3\FLOW3\Error\Error', 'Querying the repository for the specified object with UUID ' . $propertyValue . ' was not successful.' , 1249379517), $propertyName);
 			}
 		} elseif (is_array($propertyValue)) {
 			if (isset($propertyValue['__identity'])) {

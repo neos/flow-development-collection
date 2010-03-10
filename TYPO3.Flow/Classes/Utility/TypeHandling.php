@@ -39,7 +39,7 @@ class TypeHandling {
 	 * Adds (defines) a specific property and its type.
 	 *
 	 * @param string $type Type of the property (see PARSE_TYPE_PATTERN)
-	 * @return array
+	 * @return array An array with information about the type
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	static public function parseType($type) {
@@ -57,7 +57,7 @@ class TypeHandling {
 				'elementType' => $elementType
 			);
 		} else {
-			throw new \InvalidArgumentException('Invalid type encountered: ' . $type, 1264093630);
+			throw new \InvalidArgumentException('Invalid type encountered: ' . var_export($type, TRUE), 1264093630);
 		}
 	}
 
