@@ -36,20 +36,35 @@
       </listitem>
 
       <listitem>
-        <para>Apache<itemizedlist>
-            <listitem>
-              <para>Apache modules: mod_rewrite</para>
-            </listitem>
+        <para>A web server, one of:</para>
 
-            <listitem>
-              <para>Apache configuration: AllowOverride FileInfo</para>
-            </listitem>
-          </itemizedlist></para>
+        <itemizedlist>
+          <listitem>
+            <para>Apache<itemizedlist>
+                <listitem>
+                  <para>Apache modules: mod_rewrite</para>
+                </listitem>
+
+                <listitem>
+                  <para>Apache configuration: AllowOverride FileInfo</para>
+                </listitem>
+              </itemizedlist></para>
+          </listitem>
+
+          <listitem>
+            <para>IIS7 on Windows 7 with URL Rewrite has succesfully been
+            tested as well.</para>
+          </listitem>
+
+          <listitem>
+            <para>Cherokee under Mac OS 10.6 (Snow Leopard) is working
+            fine.</para>
+          </listitem>
+        </itemizedlist>
       </listitem>
     </itemizedlist>
 
-    <para>IIS7 on Windows 7 with URL Rewrite has succesfully been tested as
-    well. Other webservers could work, but have not been tested until
+    <para>Other webservers could work, but have not been tested until
     now.<warning>
         <para>XAMPP 1.7.2a on MacOS does <emphasis>not</emphasis> work, it
         complains about syntax errors in the source files, probably caused by
@@ -129,10 +144,10 @@
     </tip>
 
     <note>
-      <para>The persistence framework / content repository stores its data in
-      an already set up sqlite database by default. It can be changed to a
-      real database like for example MySQL. This requires some configuration
-      which will be covered here later.</para>
+      <para>The persistence framework stores its data in an already set up
+      sqlite database by default. It can be changed to a real database like
+      for example MySQL. This requires some configuration which will be
+      covered here later.</para>
     </note>
   </section>
 </chapter>

@@ -12,8 +12,8 @@
   <section xml:id="flow3.installingphp53.introduction">
     <title>Introduction</title>
 
-    <para>PHP 5.3 has only recently been released, so you won't find it
-    precompiled for most operating systems. Here we will describe they way to
+    <para>PHP 5.3 has relatively recently been released, so you won't find it
+    precompiled for some operating systems. Here we will describe they way to
     install it on three operating systems: Debian Linux (Lenny/Etch), MacOS
     and Windows (XP).</para>
   </section>
@@ -206,11 +206,11 @@ deb-src ftp://ftp.hosting.netlogix.de/php5.3/debian/ etch php</screen></para>
 
         <screenco>
           <areaspec>
-            <area coords="1" xml:id="mp.selfupdate"></area>
+            <area coords="1" xml:id="mp.selfupdate"/>
 
-            <area coords="2" xml:id="mp.install-php5"></area>
+            <area coords="2" xml:id="mp.install-php5"/>
 
-            <area coords="3" xml:id="mp.install-mbstring"></area>
+            <area coords="3" xml:id="mp.install-mbstring"/>
           </areaspec>
 
           <screen><command>sudo port -d selfupdate</command>
