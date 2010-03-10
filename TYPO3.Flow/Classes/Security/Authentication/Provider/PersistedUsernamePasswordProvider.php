@@ -34,7 +34,7 @@ namespace F3\FLOW3\Security\Authentication\Provider;
 class PersistedUsernamePasswordProvider implements \F3\FLOW3\Security\Authentication\AuthenticationProviderInterface {
 
 	/**
-	 * @var F3\Party\Domain\Repository\AccountRepository
+	 * @var F3\FLOW3\Security\AccountRepository
 	 */
 	protected $accountRepository;
 
@@ -46,11 +46,11 @@ class PersistedUsernamePasswordProvider implements \F3\FLOW3\Security\Authentica
 	/**
 	 * Injects the account repository
 	 *
-	 * @param F3\Party\Domain\Repository\AccountRepository $accountRepository The account repository
+	 * @param F3\FLOW3\Security\AccountRepository $accountRepository The account repository
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function injectAccountRepository(\F3\Party\Domain\Repository\AccountRepository $accountRepository) {
+	public function injectAccountRepository(\F3\FLOW3\Security\AccountRepository $accountRepository) {
 		$this->accountRepository = $accountRepository;
 	}
 

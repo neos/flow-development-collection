@@ -134,7 +134,7 @@ class UsernamePasswordTest extends \F3\Testing\BaseTestCase {
 
 		$roles = array('role1', 'role2');
 
-		$mockAccount = $this->getMock('F3\Party\Domain\Model\Account', array(), array(), '', FALSE);
+		$mockAccount = $this->getMock('F3\FLOW3\Security\Account', array(), array(), '', FALSE);
 		$mockAccount->expects($this->once())->method('getRoles')->will($this->returnValue($roles));
 
 		$token->setAccount($mockAccount);
@@ -150,7 +150,7 @@ class UsernamePasswordTest extends \F3\Testing\BaseTestCase {
 	public function getRolesReturnsAnEmptyArrayIfTheTokenIsNotAuthenticated() {
 		$token = new \F3\FLOW3\Security\Authentication\Token\UsernamePassword();
 
-		$mockAccount = $this->getMock('F3\Party\Domain\Model\Account', array(), array(), '', FALSE);
+		$mockAccount = $this->getMock('F3\FLOW3\Security\Account', array(), array(), '', FALSE);
 		$mockAccount->expects($this->never())->method('getRoles');
 
 		$token->setAccount($mockAccount);

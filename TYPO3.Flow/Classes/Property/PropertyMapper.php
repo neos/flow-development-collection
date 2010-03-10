@@ -220,7 +220,7 @@ class PropertyMapper {
 		if (is_string($target) && strpos($target, '\\') !== FALSE) {
 			return $this->transformToObject($source, $target, '--none--');
 		}
-		$this->mappingResults = $this->objectManager->get('F3\FLOW3\Property\MappingResults');
+		$this->mappingResults = $this->objectManager->create('F3\FLOW3\Property\MappingResults');
 
 		if (!is_object($target) && !is_array($target)) throw new \F3\FLOW3\Property\Exception\InvalidTargetException('The target must be a valid object, class name or array, ' . gettype($target) . ' given.', 1187807099);
 
@@ -366,7 +366,7 @@ class PropertyMapper {
 						return $conversionResult;
 					}
 				}
-				$newObject = $this->objectManager->get($targetType);
+				$newObject = $this->objectManager->create($targetType);
 				if ($this->map(array_keys($propertyValue), $propertyValue, $newObject)) {
 					return $newObject;
 				}

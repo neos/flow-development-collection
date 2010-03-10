@@ -46,10 +46,10 @@ class PersistedUsernamePasswordProviderTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function authenticatingAnUsernamePasswordTokenWorks() {
-		$mockAccount = $this->getMock('F3\Party\Domain\Model\Account', array(), array(), '', FALSE);
+		$mockAccount = $this->getMock('F3\FLOW3\Security\Account', array(), array(), '', FALSE);
 		$mockAccount->expects($this->once())->method('getCredentialsSource')->will($this->returnValue('8bf0abbb93000e2e47f0e0a80721e834,80f117a78cff75f3f73793fd02aa9086'));
 
-		$mockAccountRepository = $this->getMock('F3\Party\Domain\Repository\AccountRepository', array(), array(), '', FALSE);
+		$mockAccountRepository = $this->getMock('F3\FLOW3\Security\AccountRepository', array(), array(), '', FALSE);
 		$mockAccountRepository->expects($this->once())->method('findByAccountIdentifierAndAuthenticationProviderName')->with('admin', 'myProvider')->will($this->returnValue($mockAccount));
 
 		$mockToken = $this->getMock('F3\FLOW3\Security\Authentication\Token\UsernamePassword', array(), array(), '', FALSE);
@@ -69,10 +69,10 @@ class PersistedUsernamePasswordProviderTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function authenticationFailsWithWrongCredentialsInAnUsernamePasswordToken() {
-		$mockAccount = $this->getMock('F3\Party\Domain\Model\Account', array(), array(), '', FALSE);
+		$mockAccount = $this->getMock('F3\FLOW3\Security\Account', array(), array(), '', FALSE);
 		$mockAccount->expects($this->once())->method('getCredentialsSource')->will($this->returnValue('8bf0abbb93000e2e47f0e0a80721e834,80f117a78cff75f3f73793fd02aa9086'));
 
-		$mockAccountRepository = $this->getMock('F3\Party\Domain\Repository\AccountRepository', array(), array(), '', FALSE);
+		$mockAccountRepository = $this->getMock('F3\FLOW3\Security\AccountRepository', array(), array(), '', FALSE);
 		$mockAccountRepository->expects($this->once())->method('findByAccountIdentifierAndAuthenticationProviderName')->with('admin', 'myProvider')->will($this->returnValue($mockAccount));
 
 		$mockToken = $this->getMock('F3\FLOW3\Security\Authentication\Token\UsernamePassword', array(), array(), '', FALSE);

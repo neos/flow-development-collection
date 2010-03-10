@@ -310,7 +310,7 @@
         provider:<example>
             <title>Add a new username/password account</title>
 
-            <programlisting language="php">$account = $this-&gt;objectFactory-&gt;create('F3\Party\Domain\Model\Account');
+            <programlisting language="php">$account = $this-&gt;objectFactory-&gt;create('F3\FLOW3\Security\Account');
 
 $username = 'andi';
 $password = 'secret';
@@ -621,7 +621,7 @@ $this-&gt;accountRepository-&gt;add($account);</programlisting>
 </programlisting></para>
 
         <para>It will try to find an account in the
-        <literal>F3\Party\Domain\Repository\AccountRepository</literal> that
+        <literal>F3\FLOW3\Security\AccountRepository</literal> that
         has the username value as account identifier and fetch the credentials
         source, which has to be in the following format:<programlisting>MD5HashOfThePassword,Salt</programlisting><tip>
             <para>You should use a different, random salt for each

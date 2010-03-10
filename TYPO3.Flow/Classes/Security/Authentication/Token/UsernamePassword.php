@@ -60,7 +60,7 @@ class UsernamePassword implements \F3\FLOW3\Security\Authentication\TokenInterfa
 	protected $credentials = array('username' => '', 'password' => '');
 
 	/**
-	 * @var F3\Party\Domain\Model\Account
+	 * @var F3\FLOW3\Security\Account
 	 */
 	protected $account;
 
@@ -213,7 +213,7 @@ class UsernamePassword implements \F3\FLOW3\Security\Authentication\TokenInterfa
 	/**
 	 * Returns the account if one is authenticated, NULL otherwise.
 	 *
-	 * @return F3\Party\Domain\Model\Account An account object
+	 * @return F3\FLOW3\Security\Account An account object
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getAccount() {
@@ -223,11 +223,11 @@ class UsernamePassword implements \F3\FLOW3\Security\Authentication\TokenInterfa
 	/**
 	 * Set the (authenticated) account
 	 *
-	 * @param F3\Party\Domain\Model\Account $account An account object
+	 * @param F3\FLOW3\Security\Account $account An account object
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function setAccount(\F3\Party\Domain\Model\Account $account) {
+	public function setAccount(\F3\FLOW3\Security\Account $account) {
 		$this->account = $account;
 	}
 

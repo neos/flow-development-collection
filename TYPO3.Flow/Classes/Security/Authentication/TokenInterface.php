@@ -112,17 +112,17 @@ interface TokenInterface {
 	/**
 	 * Returns the account if one is authenticated, NULL otherwise.
 	 *
-	 * @return F3\Party\Domain\Model\Account An account object
+	 * @return F3\FLOW3\Security\Account An account object
 	 */
 	public function getAccount();
 
 	/**
 	 * Set the (authenticated) account
 	 *
-	 * @param F3\Party\Domain\Model\Account $account An account object
+	 * @param F3\FLOW3\Security\Account $account An account object
 	 * @return void
 	 */
-	public function setAccount(\F3\Party\Domain\Model\Account $account);
+	public function setAccount(\F3\FLOW3\Security\Account $account);
 
 	/**
 	 * Returns the credentials of this token.
