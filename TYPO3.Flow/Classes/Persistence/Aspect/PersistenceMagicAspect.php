@@ -75,8 +75,7 @@ class PersistenceMagicAspect {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function generateUUID(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
-		$proxy = $joinPoint->getProxy();
-		$proxy->FLOW3_Persistence_Entity_UUID = \F3\FLOW3\Utility\Algorithms::generateUUID();
+		$joinPoint->getProxy()->FLOW3_Persistence_Entity_UUID = \F3\FLOW3\Utility\Algorithms::generateUUID();
 	}
 
 	/**
@@ -91,7 +90,9 @@ class PersistenceMagicAspect {
 		$proxy = $joinPoint->getProxy();
 		$hashSource = '';
 		foreach (array_keys($this->reflectionService->getClassSchema($joinPoint->getClassName())->getProperties()) as $propertyName) {
-			if (!is_object($proxy->FLOW3_AOP_Proxy_getProperty($propertyName))) {
+			if (is_array($proxy->FLOW3_AOP_Proxy_getProperty($propertyName))) {
+				$hashSource .= serialize($proxy->FLOW3_AOP_Proxy_getProperty($propertyName));
+			} elseif (!is_object($proxy->FLOW3_AOP_Proxy_getProperty($propertyName))) {
 				$hashSource .= $proxy->FLOW3_AOP_Proxy_getProperty($propertyName);
 			} elseif (property_exists($proxy->FLOW3_AOP_Proxy_getProperty($propertyName), 'FLOW3_Persistence_Entity_UUID')) {
 				$hashSource .= $proxy->FLOW3_AOP_Proxy_getProperty($propertyName)->FLOW3_Persistence_Entity_UUID;
@@ -131,8 +132,7 @@ class PersistenceMagicAspect {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function cloneObject(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
-		$proxy = $joinPoint->getProxy();
-		$proxy->FLOW3_Persistence_clone = TRUE;
+		$joinPoint->getProxy()->FLOW3_Persistence_clone = TRUE;
 	}
 }
 ?>
