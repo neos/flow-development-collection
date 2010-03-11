@@ -138,7 +138,7 @@ class FileSystemPublishingTarget extends \F3\FLOW3\Resource\Publishing\AbstractR
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function publishPersistentResource(\F3\FLOW3\Resource\Resource $resource, $title = '') {
-		$rewrittenTitle = ($title === '') ? '' : '/' . $this->rewriteTitleForUri($title);
+		$rewrittenTitle = ($title === '' || $title === NULL) ? '' : '/' . $this->rewriteTitleForUri($title);
 
 		$publishedResourcePathAndFilename = $this->resourcesPublishingPath . 'Persistent/' . $resource->getHash() . '.' . $resource->getFileExtension();
 		$publishedResourceWebUri = $this->resourcesBaseUri . 'Persistent/' . $resource->getHash() . $rewrittenTitle . '.' . $resource->getFileExtension();

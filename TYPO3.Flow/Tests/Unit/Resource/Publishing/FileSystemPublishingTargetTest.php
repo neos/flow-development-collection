@@ -154,6 +154,25 @@ class FileSystemPublishingTargetTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function publishPersistentResourceLeavesOutEmptyTitle() {
+		$mockResource = $this->getMock('F3\FLOW3\Resource\Resource', array(), array(), '', FALSE);
+		$mockResource->expects($this->atLeastOnce())->method('getHash')->will($this->returnValue('ac9b6187f4c55b461d69e22a57925ff61ee89cb2'));
+		$mockResource->expects($this->atLeastOnce())->method('getFileExtension')->will($this->returnValue('jpg'));
+
+		$publishingTarget = $this->getAccessibleMock('F3\FLOW3\Resource\Publishing\FileSystemPublishingTarget', array('rewriteTitleForUri', 'getPersistentResourceSourcePathAndFilename', 'mirrorFile'));
+		$publishingTarget->expects($this->any())->method('getPersistentResourceSourcePathAndFilename')->will($this->returnValue('source.jpg'));
+	
+		$publishingTarget->_set('resourcesPublishingPath', 'vfs://Foo/Web/');
+		$publishingTarget->_set('resourcesBaseUri', 'http://Foo/_Resources/');
+
+		$this->assertSame('http://Foo/_Resources/Persistent/ac9b6187f4c55b461d69e22a57925ff61ee89cb2.jpg', $publishingTarget->publishPersistentResource($mockResource, ''));
+		$this->assertSame('http://Foo/_Resources/Persistent/ac9b6187f4c55b461d69e22a57925ff61ee89cb2.jpg', $publishingTarget->publishPersistentResource($mockResource, NULL));
+	}
+
+	/**
+	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function publishPersistentResourceMirrorsTheGivenSourceFileDoesntExist() {

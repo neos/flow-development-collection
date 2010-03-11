@@ -39,7 +39,7 @@ abstract class AbstractResourcePublishingTarget implements \F3\FLOW3\Resource\Pu
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function rewriteTitleForUri($title) {
-		return preg_replace(array('/ /', '/_/', '/[^a-z^A-Z^\-^0-9]/'), array('-', '-', ''), $title);
+		return preg_replace(array('/ /', '/_/', '/[^-a-z0-9]/i'), array('-', '-', ''), $title);
 	}
 
 	/**
