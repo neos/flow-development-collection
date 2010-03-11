@@ -1242,15 +1242,15 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function _getObjectDataFetchesIdentifierAndTypeForEntities() {
 		$mockStatement = $this->getMock('PDOStatement');
-		$mockStatement->expects($this->once())->method('execute')->with(array('fakeUuid'));
+		$mockStatement->expects($this->once())->method('execute')->with(array('e2408ea7-9742-48d6-9aab-df85d78120ae'));
+		$mockStatement->expects($this->once())->method('fetchAll')->will($this->returnValue(array('QUERY_RESULT')));
 		$mockPdo = $this->getMock('PdoInterface');
 		$mockPdo->expects($this->once())->method('prepare')->with('SELECT "identifier", "type" AS "classname" FROM "entities" WHERE "identifier"=?')->will($this->returnValue($mockStatement));
 
-		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('hasEntityRecord', 'processObjectRecords'));
+		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('processObjectRecords'));
 		$backend->expects($this->once())->method('processObjectRecords')->will($this->returnValue(array()));
-		$backend->expects($this->once())->method('hasEntityRecord')->with('fakeUuid')->will($this->returnValue(TRUE));
 		$backend->_set('databaseHandle', $mockPdo);
-		$backend->_call('_getObjectData', 'fakeUuid');
+		$backend->_call('_getObjectData', 'e2408ea7-9742-48d6-9aab-df85d78120ae');
 	}
 
 	/**
@@ -1260,12 +1260,12 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 	public function _getObjectDataFetchesIdentifierAndTypeForValueObjects() {
 		$mockStatement = $this->getMock('PDOStatement');
 		$mockStatement->expects($this->once())->method('execute')->with(array('fakeHash'));
+		$mockStatement->expects($this->once())->method('fetchAll')->will($this->returnValue(array('QUERY_RESULT')));
 		$mockPdo = $this->getMock('PdoInterface');
 		$mockPdo->expects($this->once())->method('prepare')->with('SELECT "identifier", "type" AS "classname" FROM "valueobjects" WHERE "identifier"=?')->will($this->returnValue($mockStatement));
 
-		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('hasEntityRecord', 'processObjectRecords'));
+		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('processObjectRecords'));
 		$backend->expects($this->once())->method('processObjectRecords')->will($this->returnValue(array()));
-		$backend->expects($this->once())->method('hasEntityRecord')->with('fakeHash')->will($this->returnValue(FALSE));
 		$backend->_set('databaseHandle', $mockPdo);
 		$backend->_call('_getObjectData', 'fakeHash');
 	}
@@ -1276,12 +1276,12 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function _getObjectDataCallsProcessObjectRecordsAndReturnsResult() {
 		$mockStatement = $this->getMock('PDOStatement');
+		$mockStatement->expects($this->once())->method('fetchAll')->will($this->returnValue(array('QUERY_RESULT')));
 		$mockPdo = $this->getMock('PdoInterface');
-		$mockPdo->expects($this->once())->method('prepare')->with('SELECT "identifier", "type" AS "classname" FROM "entities" WHERE "identifier"=?')->will($this->returnValue($mockStatement));
+		$mockPdo->expects($this->once())->method('prepare')->with('SELECT "identifier", "type" AS "classname" FROM "valueobjects" WHERE "identifier"=?')->will($this->returnValue($mockStatement));
 
-		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('hasEntityRecord', 'processObjectRecords'));
-		$backend->expects($this->once())->method('hasEntityRecord')->will($this->returnValue(TRUE));
-		$backend->expects($this->once())->method('processObjectRecords')->with($mockStatement)->will($this->returnValue(array('RESULT')));
+		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('processObjectRecords'));
+		$backend->expects($this->once())->method('processObjectRecords')->with(array('QUERY_RESULT'))->will($this->returnValue(array('RESULT')));
 		$backend->_set('databaseHandle', $mockPdo);
 		$this->assertEquals('RESULT', $backend->_call('_getObjectData', 'fakeHash'));
 	}
@@ -1293,6 +1293,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 	public function getObjectDataByQueryInitializesKnownRecordsArray() {
 		$mockQuery = $this->getMock('F3\FLOW3\Persistence\QueryInterface');
 		$mockStatement = $this->getMock('PDOStatement');
+		$mockStatement->expects($this->once())->method('fetchAll')->will($this->returnValue(array('QUERY_RESULT')));
 		$mockPdo = $this->getMock('PdoInterface');
 		$mockPdo->expects($this->once())->method('prepare')->will($this->returnValue($mockStatement));
 
@@ -1312,6 +1313,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$mockQuery = $this->getMock('F3\FLOW3\Persistence\QueryInterface');
 		$mockStatement = $this->getMock('PDOStatement');
 		$mockStatement->expects($this->once())->method('execute');
+		$mockStatement->expects($this->once())->method('fetchAll')->will($this->returnValue(array('QUERY_RESULT')));
 		$mockPdo = $this->getMock('PdoInterface');
 		$mockPdo->expects($this->once())->method('prepare')->with('SQLSTRING')->will($this->returnValue($mockStatement));
 
@@ -1329,12 +1331,13 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 	public function getObjectDataByQueryCallsProcessObjectRecordsWithQueryResult() {
 		$mockQuery = $this->getMock('F3\FLOW3\Persistence\QueryInterface');
 		$mockStatement = $this->getMock('PDOStatement');
-		$mockStatement->expects($this->once())->method('execute')->will($this->returnValue('QUERY_RESULT'));
+		$mockStatement->expects($this->once())->method('execute');
+		$mockStatement->expects($this->once())->method('fetchAll')->will($this->returnValue(array('QUERY_RESULT')));
 		$mockPdo = $this->getMock('PdoInterface');
 		$mockPdo->expects($this->once())->method('prepare')->will($this->returnValue($mockStatement));
 
 		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('buildQuery', 'processObjectRecords'));
-		$backend->expects($this->once())->method('processObjectRecords')->with($mockStatement)->will($this->returnValue(array('OBJECTS')));
+		$backend->expects($this->once())->method('processObjectRecords')->with(array('QUERY_RESULT'))->will($this->returnValue(array('OBJECTS')));
 		$backend->_set('databaseHandle', $mockPdo);
 		$this->assertEquals(array('OBJECTS'), $backend->_call('getObjectDataByQuery', $mockQuery));
 	}

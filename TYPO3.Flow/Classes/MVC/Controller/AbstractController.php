@@ -165,7 +165,7 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	}
 
 	/**
-	 * Injects the flash messages
+	 * Injects the flash message container
 	 *
 	 * @param \F3\FLOW3\MVC\Controller\FlashMessageContainer $flashMessageContainer the flash message container
 	 * @return void
@@ -288,7 +288,8 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	/**
 	 * Redirects the web request to another uri.
 	 *
-	 * NOTE: This method only supports web requests and will throw an exception if used with other request types.
+	 * NOTE: This method only supports web requests and will throw an exception
+	 * if used with other request types.
 	 *
 	 * @param mixed $uri Either a string representation of a URI or a \F3\FLOW3\Property\DataType\Uri object
 	 * @param integer $delay (optional) The delay in seconds. Default is no delay.

@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Persistence;
+namespace F3\FLOW3\Persistence\Aspect;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,33 +23,43 @@ namespace F3\FLOW3\Persistence;
  *                                                                        */
 
 /**
- * A persistence backend datamapper interface
+ * Adds the aspect of lazy loading to relevant objects
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
- * @api
+ * @aspect
  */
-interface DataMapperInterface {
+class LazyLoadingObjectAspect {
 
 	/**
-	 * Maps the (aggregate root) node data and registers the objects as
-	 * reconstituted with the session.
-	 *
-	 * @param array $objectsData
-	 * @return array<object>
-	 * @api
+	 * @pointcut classTaggedWith(entity) || classTaggedWith(valueobject)
 	 */
-	public function mapToObjects(array $objectsData);
+	public function isEntityOrValueObject() {}
 
 	/**
-	 * Maps a single record into the object it represents and registers it as
-	 * reconstituted with the session.
-	 *
-	 * @param array $objectData
-	 * @return object
-	 * @api
+	 * @pointcut F3\FLOW3\Persistence\Aspect\LazyLoadingObjectAspect->isEntityOrValueObject && classTaggedWith(lazy)
 	 */
-	public function mapToObject(array $objectData);
+	public function needsLazyLoadingObjectAspect() {}
+
+	/**
+	 * Before advice, making sure we initialize before use.
+	 *
+	 * This expects $proxy->FLOW3_Persistence_LazyLoadingObject_thawProperties
+	 * to be a Closure that populates the object. That variable is unset after
+	 * initializing the object!
+	 *
+	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
+	 * @return void
+	 * @before F3\FLOW3\Persistence\Aspect\LazyLoadingObjectAspect->needsLazyLoadingObjectAspect && !method(.*->__construct())
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function initialize(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+		$proxy = $joinPoint->getProxy();
+		if (property_exists($proxy, 'FLOW3_Persistence_LazyLoadingObject_thawProperties') && $proxy->FLOW3_Persistence_LazyLoadingObject_thawProperties instanceof \Closure) {
+			$proxy->FLOW3_Persistence_LazyLoadingObject_thawProperties->__invoke();
+			unset($proxy->FLOW3_Persistence_LazyLoadingObject_thawProperties);
+		}
+	}
 
 }
 ?>

@@ -56,6 +56,12 @@ class ClassSchema {
 	protected $modelType = self::MODELTYPE_ENTITY;
 
 	/**
+	 * Whether instances of the class can be lazy-loadable
+	 * @var boolean
+	 */
+	protected $lazyLoadable = FALSE;
+
+	/**
 	 * Whether a repository exists for the class this schema is referring to
 	 * @var boolean
 	 */
@@ -100,6 +106,27 @@ class ClassSchema {
 	 */
 	public function getClassName() {
 		return $this->className;
+	}
+
+	/**
+	 * Marks the class as being lazy-loadable.
+	 *
+	 * @param boolean $lazyLoadable
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function setLazyLoadableObject($lazyLoadable) {
+		$this->lazyLoadable = $lazyLoadable;
+	}
+
+	/**
+	 * Marks the class as being lazy-loadable.
+	 *
+	 * @return boolean
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function isLazyLoadableObject() {
+		return $this->lazyLoadable;
 	}
 
 	/**

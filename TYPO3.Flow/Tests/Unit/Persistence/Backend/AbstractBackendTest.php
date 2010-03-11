@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Persistence;
+namespace F3\FLOW3\Persistence\Backend;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3CR".                    *
@@ -86,7 +86,8 @@ class AbstractBackendTest extends \F3\Testing\BaseTestCase {
 
 		$mockSession = $this->getMock('F3\FLOW3\Persistence\Session');
 		$mockSession->expects($this->at(0))->method('hasObject')->with($object)->will($this->returnValue(TRUE));
-		$mockSession->expects($this->at(1))->method('unregisterObject')->with($object);
+		$mockSession->expects($this->at(1))->method('unregisterReconstitutedEntity')->with($object);
+		$mockSession->expects($this->at(2))->method('unregisterObject')->with($object);
 
 		$backend = $this->getAccessibleMock('F3\FLOW3\Persistence\Backend\AbstractBackend', array('removeEntity', 'getObjectCountByQuery', 'getObjectDataByQuery', 'getObjectDataByIdentifier'));
 		$backend->injectPersistenceSession($mockSession);

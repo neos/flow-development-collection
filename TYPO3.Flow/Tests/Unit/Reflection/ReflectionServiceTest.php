@@ -681,7 +681,7 @@ class ReflectionServiceTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function modelTypeEntityIsRecognizedByEntityAnnotation() {
 		$reflectionService = $this->getAccessibleMock('F3\FLOW3\Reflection\ReflectionService', array('isClassReflected', 'isClassTaggedWith'));
-		$reflectionService->expects($this->once())->method('isClassTaggedWith')->with('F3\FLOW3\Tests\Reflection\Fixture\Model\Entity', 'entity')->will($this->returnValue(TRUE));
+		$reflectionService->expects($this->at(0))->method('isClassTaggedWith')->with('F3\FLOW3\Tests\Reflection\Fixture\Model\Entity', 'entity')->will($this->returnValue(TRUE));
 		$reflectionService->_call('buildClassSchemata', array('F3\FLOW3\Tests\Reflection\Fixture\Model\Entity'));
 
 		$builtClassSchemata = $reflectionService->getClassSchemata();
@@ -768,7 +768,7 @@ class ReflectionServiceTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function aggregateRootIsDetectedForEntities() {
 		$reflectionService = $this->getAccessibleMock('F3\FLOW3\Reflection\ReflectionService', array('isClassReflected', 'isClassTaggedWith'));
-		$reflectionService->expects($this->once())->method('isClassTaggedWith')->will($this->returnValue(TRUE));
+		$reflectionService->expects($this->at(0))->method('isClassTaggedWith')->will($this->returnValue(TRUE));
 		$reflectionService->expects($this->once())->method('isClassReflected')->with('F3\FLOW3\Tests\Reflection\Fixture\Repository\EntityRepository')->will($this->returnValue(TRUE));
 		$reflectionService->_call('buildClassSchemata', array('F3\FLOW3\Tests\Reflection\Fixture\Model\Entity'));
 

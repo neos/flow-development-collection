@@ -40,7 +40,7 @@ class PersistenceManagerTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function initializeInitializesBackendWithBackendOptions() {
-		$mockBackend = $this->getMock('F3\FLOW3\Persistence\BackendInterface');
+		$mockBackend = $this->getMock('F3\FLOW3\Persistence\Backend\BackendInterface');
 		$mockBackend->expects($this->once())->method('initialize')->with(array('Foo' => 'Bar'));
 
 		$manager = new \F3\FLOW3\Persistence\PersistenceManager();
@@ -57,7 +57,7 @@ class PersistenceManagerTest extends \F3\Testing\BaseTestCase {
 	public function persistAllCanBeCalledIfNoRepositoryClassesAreFound() {
 		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService');
 		$mockReflectionService->expects($this->any())->method('getAllImplementationClassNamesForInterface')->will($this->returnValue(array()));
-		$mockBackend = $this->getMock('F3\FLOW3\Persistence\BackendInterface');
+		$mockBackend = $this->getMock('F3\FLOW3\Persistence\Backend\BackendInterface');
 		$session = new \F3\FLOW3\Persistence\Session();
 
 		$manager = new \F3\FLOW3\Persistence\PersistenceManager();
@@ -91,7 +91,7 @@ class PersistenceManagerTest extends \F3\Testing\BaseTestCase {
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
 		$mockObjectManager->expects($this->once())->method('get')->with('F3\FLOW3\Persistence\Repository')->will($this->returnValue($repository));
 		$session = new \F3\FLOW3\Persistence\Session();
-		$mockBackend = $this->getMock('F3\FLOW3\Persistence\BackendInterface');
+		$mockBackend = $this->getMock('F3\FLOW3\Persistence\Backend\BackendInterface');
 			// this is the really important assertion!
 		$objectStorage = new \SplObjectStorage();
 		$objectStorage->attach($entity2);
@@ -128,7 +128,7 @@ class PersistenceManagerTest extends \F3\Testing\BaseTestCase {
 		$session->registerObject($entity3, 'fakeUuid2');
 		$session->registerReconstitutedEntity($entity3, array('identifier' => 'fakeUuid2'));
 
-		$mockBackend = $this->getMock('F3\FLOW3\Persistence\BackendInterface');
+		$mockBackend = $this->getMock('F3\FLOW3\Persistence\Backend\BackendInterface');
 			// this is the really important assertion!
 		$deletedObjectStorage = new \SplObjectStorage();
 		$deletedObjectStorage->attach($entity1);
@@ -252,10 +252,10 @@ class PersistenceManagerTest extends \F3\Testing\BaseTestCase {
 		$mockSession = $this->getMock('F3\FLOW3\Persistence\Session');
 		$mockSession->expects($this->once())->method('hasIdentifier')->with($fakeUuid)->will($this->returnValue(FALSE));
 
-		$mockBackend = $this->getMock('F3\FLOW3\Persistence\BackendInterface');
+		$mockBackend = $this->getMock('F3\FLOW3\Persistence\Backend\BackendInterface');
 		$mockBackend->expects($this->once())->method('getObjectDataByIdentifier')->with($fakeUuid)->will($this->returnValue(array()));
 
-		$mockDataMapper = $this->getMock('F3\FLOW3\Persistence\DataMapperInterface');
+		$mockDataMapper = $this->getMock('F3\FLOW3\Persistence\DataMapper');
 		$mockDataMapper->expects($this->once())->method('mapToObject')->will($this->returnValue($object));
 
 		$manager = new \F3\FLOW3\Persistence\PersistenceManager();
@@ -276,7 +276,7 @@ class PersistenceManagerTest extends \F3\Testing\BaseTestCase {
 		$mockSession = $this->getMock('F3\FLOW3\Persistence\Session');
 		$mockSession->expects($this->once())->method('hasIdentifier')->with($fakeUuid)->will($this->returnValue(FALSE));
 
-		$mockBackend = $this->getMock('F3\FLOW3\Persistence\BackendInterface');
+		$mockBackend = $this->getMock('F3\FLOW3\Persistence\Backend\BackendInterface');
 		$mockBackend->expects($this->once())->method('getObjectDataByIdentifier')->with($fakeUuid)->will($this->returnValue(FALSE));
 
 		$manager = new \F3\FLOW3\Persistence\PersistenceManager();

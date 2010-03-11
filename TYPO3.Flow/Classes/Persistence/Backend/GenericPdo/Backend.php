@@ -160,8 +160,7 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function createObjectRecord($object, $parentIdentifier = NULL) {
-		$className = $object->FLOW3_AOP_Proxy_getProxyTargetClassName();
-		$classSchema = $this->classSchemata[$className];
+		$classSchema = $this->classSchemata[$object->FLOW3_AOP_Proxy_getProxyTargetClassName()];
 
 		if ($classSchema->getUuidPropertyName() !== NULL) {
 			$identifier = $object->FLOW3_AOP_Proxy_getProperty($classSchema->getUuidPropertyName());
@@ -175,14 +174,14 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 			$statementHandle = $this->databaseHandle->prepare('INSERT INTO "entities" ("identifier", "type") VALUES (?, ?)');
 			$statementHandle->execute(array(
 				$identifier,
-				$className
+				$classSchema->getClassName()
 			));
 		} else {
 			if (!$this->hasValueobjectRecord($identifier)) {
 				$statementHandle = $this->databaseHandle->prepare('INSERT INTO "valueobjects" ("identifier", "type") VALUES (?, ?)');
 				$statementHandle->execute(array(
 					$identifier,
-					$className
+					$classSchema->getClassName()
 				));
 			}
 		}
@@ -651,21 +650,22 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 	}
 
 	/**
-	 * Returns the data for the record with the given identifier., be it an entity or
-	 * value object. The data is recursively populated for the references found.
+	 * Returns the data for the record with the given identifier, be it an entity
+	 * or value object. The data is recursively populated for the references
+	 * found, unless a lazy loading object is encountered.
 	 *
 	 * @param string $identifier The UUID or Hash of the object
 	 * @return object
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function _getObjectData($identifier) {
-		if ($this->hasEntityRecord($identifier)) {
+		if (strlen($identifier) === 36) {
 			$statementHandle = $this->databaseHandle->prepare('SELECT "identifier", "type" AS "classname" FROM "entities" WHERE "identifier"=?');
 		} else {
 			$statementHandle = $this->databaseHandle->prepare('SELECT "identifier", "type" AS "classname" FROM "valueobjects" WHERE "identifier"=?');
 		}
 		$statementHandle->execute(array($identifier));
-		$objects = $this->processObjectRecords($statementHandle);
+		$objects = $this->processObjectRecords($statementHandle->fetchAll(\PDO::FETCH_ASSOC));
 		return current($objects);
 	}
 
@@ -685,7 +685,7 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 		$statementHandle = $this->databaseHandle->prepare($sql);
 		$statementHandle->execute($parameters);
 
-		$objectData = $this->processObjectRecords($statementHandle);
+		$objectData = $this->processObjectRecords($statementHandle->fetchAll(\PDO::FETCH_ASSOC));
 		return $objectData;
 	}
 
@@ -693,46 +693,64 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 	 * Returns raw data for an object in the form of an array. See
 	 * BackendInterface for details.
 	 *
-	 * @param \PDOStatement $statementHandle
+	 * @param array $objectRows
 	 * @return array
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function processObjectRecords(\PDOStatement $statementHandle) {
+	protected function processObjectRecords(array $objectRows) {
 		$objectData = array();
-		$propertyStatement = $this->databaseHandle->prepare('SELECT p."name", p."multivalue", d."index", d."type", d."string", d."integer", d."float", d."datetime", d."boolean", d."object" FROM "properties" AS p LEFT JOIN "properties_data" AS d ON p."parent"=d."parent" AND p."name"=d."name" WHERE p."parent"=?');
+		$propertyStatement = $this->databaseHandle->prepare('SELECT p."name", p."multivalue", p."type" AS "parenttype", d."index", d."type", d."string", d."integer", d."float", d."datetime", d."boolean", d."object" FROM "properties" AS p LEFT JOIN "properties_data" AS d ON p."parent"=d."parent" AND p."name"=d."name" WHERE p."parent"=?');
 
-		foreach ($statementHandle->fetchAll(\PDO::FETCH_ASSOC) as $objectRow) {
+		foreach ($objectRows as $objectRow) {
 			$this->knownRecords[$objectRow['identifier']] = TRUE;
-			$properties = array();
 			$propertyStatement->execute(array($objectRow['identifier']));
-
-			foreach ($propertyStatement->fetchAll(\PDO::FETCH_ASSOC) as $propertyRow) {
-					// we have a value on shelf
-				if (isset($propertyRow['type'])) {
-					if ($propertyRow['multivalue'] == 1) {
-						$properties[$propertyRow['name']]['type'] = $propertyRow['type'];
-						$properties[$propertyRow['name']]['multivalue'] = TRUE;
-						$properties[$propertyRow['name']]['value'][] = array('type' => $propertyRow['type'], 'index' => $propertyRow['index'], 'value' => $this->getValue($propertyRow));
-					} else {
-						$properties[$propertyRow['name']] = array(
-							'type' => $propertyRow['type'],
-							'multivalue' => FALSE,
-							'value' => $this->getValue($propertyRow)
-						);
-					}
-					// a NULL value
-				} else {
-					$properties[$propertyRow['name']] = array(
-						'type' => $propertyRow['type'],
-						'multivalue' => ($propertyRow['multivalue'] == 1), 
-						'value' => NULL
-					);
-				}
-			}
-			$objectData[] = array('identifier' => $objectRow['identifier'], 'classname' => $objectRow['classname'], 'properties' => $properties);
+			$objectData[] = array(
+				'identifier' => $objectRow['identifier'],
+				'classname' => $objectRow['classname'],
+				'properties' => $this->buildPropertiesArray($propertyStatement, $objectRow['classname'])
+			);
 		}
 
 		return $objectData;
+	}
+
+	/**
+	 * Iterates over the rows in the statement (must be executed already) and 
+	 * returns an array with the property data.
+	 * 
+	 * @param PDOStatement $propertyStatement
+	 * @param string $className The classname the properties we're dealing with are in
+	 * @return array
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function buildPropertiesArray(\PDOStatement $propertyStatement, $className) {
+		$properties = array();
+		foreach ($propertyStatement->fetchAll(\PDO::FETCH_ASSOC) as $propertyRow) {
+				// we have a value on shelf
+			if (isset($propertyRow['type'])) {
+				$propertyMetadata = $this->classSchemata[$className]->getProperty($propertyRow['name']);
+				if ($propertyRow['multivalue']) {
+					$properties[$propertyRow['name']]['type'] = $propertyRow['parenttype'];
+					$properties[$propertyRow['name']]['multivalue'] = TRUE;
+					$properties[$propertyRow['name']]['value'][] = array('type' => $propertyRow['type'], 'index' => $propertyRow['index'], 'value' => $this->getValue($propertyRow, $propertyMetadata));
+				} else {
+					$properties[$propertyRow['name']] = array(
+						'type' => $propertyRow['type'],
+						'multivalue' => FALSE,
+						'value' => $this->getValue($propertyRow, $propertyMetadata)
+					);
+				}
+				// a NULL value
+			} else {
+				$properties[$propertyRow['name']] = array(
+					'type' => ($propertyRow['multivalue'] == 1) ? $propertyRow['parenttype'] : $propertyRow['type'],
+					'multivalue' => ($propertyRow['multivalue'] == 1),
+					'value' => NULL
+				);
+			}
+		}
+
+		return $properties;
 	}
 
 	/**
@@ -740,17 +758,23 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 	 * type.
 	 *
 	 * @param array $data
+	 * @param array $propertyMetadata The metadat for property we're dealing with
 	 * @return mixed
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function getValue(array $data) {
+	protected function getValue(array $data, $propertyMetadata) {
 		$typename = $this->getTypeName($data['type']);
 		switch ($typename) {
 			case 'object':
 				if (isset($this->knownRecords[$data['object']])) {
 					return array('identifier' => $data['object']);
 				} else {
-					return $this->_getObjectData($data['object']);
+						// check or lazy loading
+					if ($propertyMetadata['lazy'] === TRUE) {
+						return array('identifier' => $data['object'], 'classname' => $propertyMetadata['type'], 'properties' => array());
+					} else {
+						return $this->_getObjectData($data['object']);
+					}
 				}
 				break;
 			default:

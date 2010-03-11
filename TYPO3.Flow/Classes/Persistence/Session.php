@@ -156,11 +156,15 @@ class Session {
 			return TRUE;
 		}
 
-		$identifier = $this->getIdentifierByObject($object);
-		$cleanData =& $this->reconstitutedEntitiesData[$identifier]['properties'][$propertyName];
-		$currentValue = $object->FLOW3_AOP_Proxy_getProperty($propertyName);
+		if (property_exists($object, 'FLOW3_Persistence_LazyLoadingObject_thawProperties')) {
+			return FALSE;
+		}
 
-		if ($currentValue === NULL && $cleanData['value'] === NULL) {
+		$currentValue = $object->FLOW3_AOP_Proxy_getProperty($propertyName);
+		$cleanData =& $this->reconstitutedEntitiesData[$this->getIdentifierByObject($object)]['properties'][$propertyName];
+
+		if ($currentValue instanceof \F3\FLOW3\Persistence\LazySplObjectStorage && !$currentValue->isInitialized()
+				|| ($currentValue === NULL && $cleanData['value'] === NULL)) {
 			return FALSE;
 		}
 
@@ -168,7 +172,7 @@ class Session {
 			if (count($cleanData['value']) > 0 && count($cleanData['value']) === count($currentValue)) {
 				if ($currentValue instanceof \SplObjectStorage) {
 					$cleanIdentifiers = array();
-					foreach ($cleanData['value'] as $cleanObjectData) {
+					foreach ($cleanData['value'] as &$cleanObjectData) {
 						$cleanIdentifiers[] = $cleanObjectData['value']['identifier'];
 					}
 					sort($cleanIdentifiers);
@@ -185,7 +189,7 @@ class Session {
 						return TRUE;
 					}
 				} else {
-					foreach ($cleanData['value'] as $cleanObjectData) {
+					foreach ($cleanData['value'] as &$cleanObjectData) {
 						if (!isset($currentValue[$cleanObjectData['index']])) {
 							return TRUE;
 						}
@@ -204,14 +208,14 @@ class Session {
 	}
 
 	/**
-	 * Checks the $value against the $cleanState.
+	 * Checks the $previousValue against the $currentValue.
 	 *
 	 * @param string $type
 	 * @param mixed $previousValue
-	 * @param mixed $currentValue
+	 * @param mixed &$currentValue
 	 * @return boolan
 	 */
-	protected function isPropertyDirty($type, $previousValue, $currentValue) {
+	protected function isPropertyDirty($type, $previousValue, &$currentValue) {
 		switch ($type) {
 			case 'integer':
 				if ($currentValue === (int) $previousValue) return FALSE;

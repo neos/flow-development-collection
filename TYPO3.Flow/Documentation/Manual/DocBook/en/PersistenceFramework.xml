@@ -287,7 +287,7 @@ class BlogRepository extends \F3\FLOW3\Persistence\Repository {
 
             <tbody>
               <row>
-                <entry>@entity</entry>
+                <entry><code>@entity</code></entry>
 
                 <entry>Class</entry>
 
@@ -295,7 +295,7 @@ class BlogRepository extends \F3\FLOW3\Persistence\Repository {
               </row>
 
               <row>
-                <entry>@valueobject</entry>
+                <entry><code>@valueobject</code></entry>
 
                 <entry>Class</entry>
 
@@ -305,7 +305,7 @@ class BlogRepository extends \F3\FLOW3\Persistence\Repository {
               </row>
 
               <row>
-                <entry>@var</entry>
+                <entry><code>@var</code></entry>
 
                 <entry>Variable</entry>
 
@@ -313,7 +313,7 @@ class BlogRepository extends \F3\FLOW3\Persistence\Repository {
               </row>
 
               <row>
-                <entry>@transient</entry>
+                <entry><code>@transient</code></entry>
 
                 <entry>Variable</entry>
 
@@ -323,7 +323,7 @@ class BlogRepository extends \F3\FLOW3\Persistence\Repository {
               </row>
 
               <row>
-                <entry>@uuid</entry>
+                <entry><code>@uuid</code></entry>
 
                 <entry>Variable</entry>
 
@@ -335,7 +335,7 @@ class BlogRepository extends \F3\FLOW3\Persistence\Repository {
               </row>
 
               <row>
-                <entry>@identity</entry>
+                <entry><code>@identity</code></entry>
 
                 <entry>Variable</entry>
 
@@ -344,19 +344,110 @@ class BlogRepository extends \F3\FLOW3\Persistence\Repository {
               </row>
 
               <row>
-                <entry>@lazy</entry>
+                <entry><code>@lazy</code></entry>
 
                 <entry>Class, Variable</entry>
 
                 <entry>When reconstituting the value of this property will be
                 loaded only when the property is used. Note: This is only
                 supported for properties of type
-                <classname>\SplObjectStorage</classname> and objects marked
-                with @lazy in their source code.</entry>
+                <classname>\SplObjectStorage</classname> and objects (marked
+                with <code>@lazy</code> in their source code, see
+                below).</entry>
               </row>
             </tbody>
           </tgroup>
         </table></para>
+    </section>
+
+    <section>
+      <title>Lazy Loading</title>
+
+      <para>Lazy Loading is a feature that can be equally helpful and
+      dangerous when it comes to optimizing your application. FLOW3 defaults
+      to eager loading, i.e. it loads all the data in an object as soon as you
+      fetch the object from the persistence layer. That of course can lead to
+      massive amounts of objects being reconstituted if you have a large
+      object tree. So there might be situations when lazy loading comes in
+      handy to defer property thawing in objects until the point when those
+      properties are really needed.</para>
+
+      <section>
+        <title>Enabling Lazy Loading</title>
+
+        <para>If a class should be able to be lazy loaded, you need to
+        annotate it with <code>@lazy</code> in the class level docblock. This
+        is done to avoid creating proxy classes for objects that should never
+        be lazy loaded anyway. As soon as that annotation is found, AOP is
+        used to weave lazy loading support into your code that intercepts all
+        method calls and initializes the object before calling the expected
+        method. Such a proxy class is a subclass of your class, as such it
+        work fine with type hinting and checks and can be used the same way as
+        the original class.</para>
+
+        <para>To actually mark a property for lazy loading, you need to add
+        the <code>@lazy</code> annotation to the property docblock in your
+        code. Then the persistence layer will skip loading the data for that
+        object and the object properties will be thawed when the object is
+        actually used.</para>
+
+        <table>
+          <title>How <code>@lazy</code> annotations interact</title>
+
+          <tgroup cols="3">
+            <colspec colwidth="1*"/>
+
+            <colspec colwidth="1*"/>
+
+            <colspec colwidth="6*"/>
+
+            <thead>
+              <row>
+                <entry>Class</entry>
+
+                <entry>Property</entry>
+
+                <entry>Effect</entry>
+              </row>
+            </thead>
+
+            <tbody>
+              <row>
+                <entry><code>@lazy</code></entry>
+
+                <entry><code>@lazy</code></entry>
+
+                <entry>The class' instances will be lazy loadable, and
+                properties of that type will be populated with a lazy loading
+                proxy.</entry>
+              </row>
+
+              <row>
+                <entry><code>@lazy</code></entry>
+
+                <entry><emphasis>none</emphasis></entry>
+
+                <entry>The class' instances will be lazy loadable, but that
+                possibility will not be used.</entry>
+              </row>
+
+              <row>
+                <entry><emphasis>none</emphasis></entry>
+
+                <entry><code>@lazy</code></entry>
+
+                <entry><classname>\SplObjectStorage</classname> will be
+                reconstituted as a lazy loading proxy, for other types nothing
+                happens.</entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </table>
+
+        <para>Properties of type <classname>\SplObjectStorage</classname> can
+        always be lazy-loaded by adding the <code>@lazy</code> annotation on
+        the property only.</para>
+      </section>
     </section>
   </section>
 

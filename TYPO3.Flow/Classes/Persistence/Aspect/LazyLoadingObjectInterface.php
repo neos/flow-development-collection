@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Persistence;
+namespace F3\FLOW3\Persistence\Aspect;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,75 +23,31 @@ namespace F3\FLOW3\Persistence;
  *                                                                        */
 
 /**
- * A persistence backend interface
+ * An interface used to introduce certain methods to support lazy loading objects
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
- * @api
  */
-interface BackendInterface {
+interface LazyLoadingObjectInterface {
 
 	/**
-	 * Initializes the backend
-	 *
-	 * @param array $options
-	 * @return void
-	 * @api
+	 * Signifies lazy loading of properties in an object
+	 * @type integer
 	 */
-	public function initialize(array $options);
+	const LAZY_PROPERTIES = 1;
 
 	/**
-	 * Sets the aggregate root objects
-	 *
-	 * @param \SplObjectStorage $objects
-	 * @return void
-	 * @api
+	 * Signifies lazy loading of properties in a SplObjectStorage
+	 * @type integer
 	 */
-	public function setAggregateRootObjects(\SplObjectStorage $objects);
+	const LAZY_OBJECTSTORAGE = 2;
 
 	/**
-	 * Sets the deleted entities
-	 *
-	 * @param \SplObjectStorage $entities
-	 * @return void
-	 * @api
-	 */
-	public function setDeletedEntities(\SplObjectStorage $entities);
-
-	/**
-	 * Commits the current persistence session
+	 * Introduces an initialization method.
 	 *
 	 * @return void
-	 * @api
 	 */
-	public function commit();
-
-	/**
-	 * Returns the number of items matching the query.
-	 *
-	 * @param \F3\FLOW3\Persistence\QueryInterface $query
-	 * @return integer
-	 * @api
-	 */
-	public function getObjectCountByQuery(\F3\FLOW3\Persistence\QueryInterface $query);
-
-	/**
-	 * Returns the object data matching the $query.
-	 *
-	 * @param \F3\FLOW3\Persistence\QueryInterface $query
-	 * @return array
-	 * @api
-	 */
-	public function getObjectDataByQuery(\F3\FLOW3\Persistence\QueryInterface $query);
-
-	/**
-	 * Returns the object data for the given identifier.
-	 *
-	 * @param string $identifier The UUID or Hash of the object
-	 * @return array
-	 * @api
-	 */
-	public function getObjectDataByIdentifier($identifier);
+	public function FLOW3_Persistence_LazyLoadingObject_initialize();
 
 }
 ?>

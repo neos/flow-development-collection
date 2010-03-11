@@ -39,12 +39,12 @@ class PersistenceManager implements \F3\FLOW3\Persistence\PersistenceManagerInte
 	protected $reflectionService;
 
 	/**
-	 * @var \F3\FLOW3\Persistence\DataMapperInterface
+	 * @var \F3\FLOW3\Persistence\DataMapper
 	 */
 	protected $dataMapper;
 
 	/**
-	 * @var \F3\FLOW3\Persistence\BackendInterface
+	 * @var \F3\FLOW3\Persistence\Backend\BackendInterface
 	 */
 	protected $backend;
 
@@ -77,21 +77,22 @@ class PersistenceManager implements \F3\FLOW3\Persistence\PersistenceManagerInte
 	/**
 	 * Injects the data mapper
 	 *
-	 * @param \F3\FLOW3\Persistence\DataMapperInterface $dataMapper
+	 * @param \F3\FLOW3\Persistence\DataMapper $dataMapper
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectDataMapper(\F3\FLOW3\Persistence\DataMapperInterface $dataMapper) {
+	public function injectDataMapper(\F3\FLOW3\Persistence\DataMapper $dataMapper) {
 		$this->dataMapper = $dataMapper;
+		$this->dataMapper->setPersistenceManager($this);
 	}
 
 	/**
 	 * Injects the backend to use
 	 *
-	 * @param \F3\FLOW3\Persistence\BackendInterface $backend the backend to use for persistence
+	 * @param \F3\FLOW3\Persistence\Backend\BackendInterface $backend the backend to use for persistence
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectBackend(\F3\FLOW3\Persistence\BackendInterface $backend) {
+	public function injectBackend(\F3\FLOW3\Persistence\Backend\BackendInterface $backend) {
 		$this->backend = $backend;
 	}
 
@@ -134,7 +135,7 @@ class PersistenceManager implements \F3\FLOW3\Persistence\PersistenceManagerInte
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initialize() {
-		if (!$this->backend instanceof \F3\FLOW3\Persistence\BackendInterface) throw new \F3\FLOW3\Persistence\Exception\MissingBackendException('A persistence backend must be set prior to initializing the persistence manager.', 1215508456);
+		if (!$this->backend instanceof \F3\FLOW3\Persistence\Backend\BackendInterface) throw new \F3\FLOW3\Persistence\Exception\MissingBackendException('A persistence backend must be set prior to initializing the persistence manager.', 1215508456);
 		$this->backend->initialize($this->settings['persistence']['backendOptions']);
 	}
 
@@ -219,14 +220,6 @@ class PersistenceManager implements \F3\FLOW3\Persistence\PersistenceManagerInte
 		$this->backend->setAggregateRootObjects($aggregateRootObjects);
 		$this->backend->setDeletedEntities($deletedEntities);
 		$this->backend->commit();
-
-			// this needs to unregister more than just those, as at least some of
-			// the subobjects are supposed to go away as well...
-			// OTOH those do no harm, changes to the unused ones should not happen,
-			// so all they do is eat some memory.
-		foreach($deletedEntities as $deletedEntity) {
-			$this->persistenceSession->unregisterReconstitutedEntity($deletedEntity);
-		}
 	}
 
 	/**
@@ -288,6 +281,18 @@ class PersistenceManager implements \F3\FLOW3\Persistence\PersistenceManagerInte
 				return NULL;
 			}
 		}
+	}
+
+	/**
+	 * Returns the object data for the (internal) identifier, if it is known to 
+	 * the backend. Otherwise FALSE is returned.
+	 *
+	 * @param string $identifier
+	 * @return object The object data for the identifier if it is known, or FALSE
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getObjectDataByIdentifier($identifier) {
+		return $this->backend->getObjectDataByIdentifier($identifier, FALSE);
 	}
 }
 ?>

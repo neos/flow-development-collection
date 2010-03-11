@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Persistence\Backend\GenericPdo;
+namespace F3\FLOW3\Persistence;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -28,7 +28,7 @@ namespace F3\FLOW3\Persistence\Backend\GenericPdo;
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class DataMapper implements \F3\FLOW3\Persistence\DataMapperInterface {
+class DataMapper {
 
 	/**
 	 * @var \F3\FLOW3\Object\ObjectManagerInterface
@@ -46,6 +46,11 @@ class DataMapper implements \F3\FLOW3\Persistence\DataMapperInterface {
 	protected $reflectionService;
 
 	/**
+	 * @var \F3\FLOW3\Persistence\PersistenceManager
+	 */
+	protected $persistenceManager;
+
+	/**
 	 * Injects the object manager
 	 *
 	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
@@ -59,12 +64,12 @@ class DataMapper implements \F3\FLOW3\Persistence\DataMapperInterface {
 	/**
 	 * Injects the persistence session
 	 *
-	 * @param \F3\FLOW3\Persistence\Session $persistenceSession The persistence session
+	 * @param \F3\FLOW3\Persistence\Session $persistenceManager The persistence session
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectPersistenceSession(\F3\FLOW3\Persistence\Session $persistenceSession) {
-		$this->persistenceSession = $persistenceSession;
+	public function injectPersistenceSession(\F3\FLOW3\Persistence\Session $persistenceManager) {
+		$this->persistenceSession = $persistenceManager;
 	}
 
 	/**
@@ -76,6 +81,17 @@ class DataMapper implements \F3\FLOW3\Persistence\DataMapperInterface {
 	 */
 	public function injectReflectionService(\F3\FLOW3\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
+	}
+
+	/**
+	 * Injects the persistence manager
+	 *
+	 * @param \F3\FLOW3\Persistence\PersistenceManager $persistenceManager The persistence manager
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function setPersistenceManager(\F3\FLOW3\Persistence\PersistenceManager $persistenceManager) {
+		$this->persistenceManager = $persistenceManager;
 	}
 
 	/**
@@ -116,8 +132,25 @@ class DataMapper implements \F3\FLOW3\Persistence\DataMapperInterface {
 			if ($classSchema->getModelType() === \F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY) {
 				$this->persistenceSession->registerReconstitutedEntity($object, $objectData);
 			}
-
-			$this->thawProperties($object, $objectData['identifier'], $objectData, $classSchema);
+			if ($objectData['properties'] === array()) {
+				if (!$classSchema->isLazyLoadableObject()) {
+					throw new \Exception('baz!', 1268309017);
+				}
+				$persistenceManager = $this->persistenceManager;
+				$persistenceSession = $this->persistenceSession;
+				$dataMapper = $this;
+				$identifier = $objectData['identifier'];
+				$modelType = $classSchema->getModelType();
+				$object->FLOW3_Persistence_LazyLoadingObject_thawProperties = function () use ($persistenceManager, $persistenceSession, $dataMapper, $identifier, $object, $modelType) {
+					$objectData = $persistenceManager->getObjectDataByIdentifier($identifier);
+					$dataMapper->thawProperties($object, $identifier, $objectData);
+					if ($modelType === \F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY) {
+						$persistenceSession->registerReconstitutedEntity($object, $objectData);
+					}
+				};
+			} else {
+				$this->thawProperties($object, $objectData['identifier'], $objectData);
+			}
 
 			return $object;
 		}
@@ -129,12 +162,13 @@ class DataMapper implements \F3\FLOW3\Persistence\DataMapperInterface {
 	 * @param \F3\FLOW3\AOP\ProxyInterface $object The object to set properties on
 	 * @param string $identifier The identifier of the object
 	 * @param array $objectData
-	 * @param \F3\FLOW3\Reflection\ClassSchema $classSchema
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function thawProperties(\F3\FLOW3\AOP\ProxyInterface $object, $identifier, array $objectData, \F3\FLOW3\Reflection\ClassSchema $classSchema) {
+	public function thawProperties(\F3\FLOW3\AOP\ProxyInterface $object, $identifier, array $objectData) {
+		$classSchema = $this->reflectionService->getClassSchema($objectData['classname']);
 		$propertyValues = $objectData['properties'];
+
 		foreach ($classSchema->getProperties() as $propertyName => $propertyData) {
 			$propertyValue = NULL;
 			if (isset($propertyValues[$propertyName])) {
@@ -156,7 +190,7 @@ class DataMapper implements \F3\FLOW3\Persistence\DataMapperInterface {
 							$propertyValue = $this->mapArray($propertyValues[$propertyName]['value']);
 						break;
 						case 'SplObjectStorage':
-							$propertyValue = $this->mapSplObjectStorage($propertyValues[$propertyName]['value']);
+							$propertyValue = $this->mapSplObjectStorage($propertyValues[$propertyName]['value'], $propertyData['lazy']);
 						break;
 						case 'DateTime':
 							$propertyValue = $this->mapDateTime($propertyValues[$propertyName]['value']);
@@ -256,21 +290,31 @@ class DataMapper implements \F3\FLOW3\Persistence\DataMapperInterface {
 	 * Maps an SplObjectStorage proxy record back to an SplObjectStorage
 	 *
 	 * @param array $arrayValues
+	 * @param boolean $createLazySplObjectStorage
 	 * @return \SplObjectStorage
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo restore information attached to objects?
 	 */
-	protected function mapSplObjectStorage(array $arrayValues = NULL) {
-		$objectStorage = new \SplObjectStorage();
-		if ($arrayValues === NULL) return $objectStorage;
-
-		foreach ($arrayValues as $arrayValue) {
-			if ($arrayValue['value'] !== NULL) {
-				$objectStorage->attach($this->mapToObject($arrayValue['value']));
+	protected function mapSplObjectStorage(array $arrayValues = NULL, $createLazySplObjectStorage = FALSE) {
+		if ($createLazySplObjectStorage) {
+			$objectIdentifiers = array();
+			foreach ($arrayValues as $arrayValue) {
+				if ($arrayValue['value'] !== NULL) {
+					$objectIdentifiers[] = $arrayValue['value']['identifier'];
+				}
 			}
-		}
+			return $this->objectManager->get('F3\FLOW3\Persistence\LazySplObjectStorage', $objectIdentifiers);
+		} else {
+			$objectStorage = new \SplObjectStorage();
+			if ($arrayValues === NULL) return $objectStorage;
 
-		return $objectStorage;
+			foreach ($arrayValues as $arrayValue) {
+				if ($arrayValue['value'] !== NULL) {
+					$objectStorage->attach($this->mapToObject($arrayValue['value']));
+				}
+			}
+			return $objectStorage;
+		}
 	}
 
 }

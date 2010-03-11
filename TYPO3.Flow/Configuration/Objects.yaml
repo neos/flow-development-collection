@@ -421,6 +421,11 @@ F3\FLOW3\Persistence\Backend\AbstractBackend:
     signalDispatcher:
       object: F3\FLOW3\SignalSlot\Dispatcher
 
+F3\FLOW3\Persistence\LazySplObjectStorage:
+  properties:
+    persistenceManager:
+      object: F3\FLOW3\Persistence\PersistenceManagerInterface
+
 #                                                                          #
 # Reflection                                                               #
 #                                                                          #

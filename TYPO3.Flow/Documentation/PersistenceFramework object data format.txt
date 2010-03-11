@@ -1,13 +1,5 @@
 <?php
 
-// lazy loaded object
-array(
-	'identifier' => '<identifier>',
-	'classname' => '<classname>',
-	'properties' => \F3\FLOW3\Persistence\Aspect\LazyLoadingObjectInterface::LAZY_PROPERTIES
-	)
-)
-
 // single value
 array(
 	'identifier' => '<identifier>',
@@ -27,7 +19,7 @@ array(
 	'classname' => '<classname>',
 	'properties' => array(
 		'<name>' => array(
-			'type' => '<type>', // for multi values only array, SplObjectStorage
+			'type' => '<type>', // for multi values only (array|SplObjectStorage)
 			'multivalue' => TRUE,
 			'value' => array(	// an empty array for empty traversables! NULL for NULL!
 				array(
@@ -62,4 +54,5 @@ array(
 
 	<vtype> a meta type, one of the strings string, array, float, integer, boolean, datetime, object - used in SQL backend
 
+	lazy loaded objects have only their identifier & classsname recorded, properties is an empty array
 */

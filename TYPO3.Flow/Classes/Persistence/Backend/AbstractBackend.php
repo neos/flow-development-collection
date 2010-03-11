@@ -30,7 +30,7 @@ namespace F3\FLOW3\Persistence\Backend;
  * @api
  * @scope prototype
  */
-abstract class AbstractBackend implements \F3\FLOW3\Persistence\BackendInterface {
+abstract class AbstractBackend implements \F3\FLOW3\Persistence\Backend\BackendInterface {
 
 	/**
 	 * An object that was reconstituted
@@ -251,6 +251,7 @@ abstract class AbstractBackend implements \F3\FLOW3\Persistence\BackendInterface
 		foreach ($this->deletedEntities as $entity) {
 			if ($this->persistenceSession->hasObject($entity)) {
 				$this->removeEntity($entity);
+				$this->persistenceSession->unregisterReconstitutedEntity($entity);
 				$this->persistenceSession->unregisterObject($entity);
 			}
 		}
@@ -283,7 +284,11 @@ abstract class AbstractBackend implements \F3\FLOW3\Persistence\BackendInterface
 	 */
 	protected function getType($value) {
 		if (is_object($value)) {
-			return get_class($value);
+			if ($value instanceof \F3\FLOW3\AOP\ProxyInterface) {
+				return $value->FLOW3_AOP_Proxy_getProxyTargetClassName();
+			} else {
+				return get_class($value);
+			}
 		} else {
 			return gettype($value) === 'double' ? 'float' : gettype($value);
 		}

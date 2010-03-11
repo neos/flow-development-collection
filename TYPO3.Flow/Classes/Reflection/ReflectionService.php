@@ -904,6 +904,7 @@ class ReflectionService {
 			$classSchema = new \F3\FLOW3\Reflection\ClassSchema($className);
 			if ($this->isClassTaggedWith($className, 'entity')) {
 				$classSchema->setModelType(\F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY);
+				$classSchema->setLazyLoadableObject($this->isClassTaggedWith($className, 'lazy'));
 
 				$possibleRepositoryClassName = str_replace('\\Model\\', '\\Repository\\', $className) . 'Repository';
 				if ($this->isClassReflected($possibleRepositoryClassName)) {

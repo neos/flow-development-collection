@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Persistence\Backend\GenericPdo;
+namespace F3\FLOW3\Persistence;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3CR".                    *
@@ -23,7 +23,7 @@ namespace F3\FLOW3\Persistence\Backend\GenericPdo;
  *                                                                        */
 
 /**
- * Testcase for \F3\FLOW3\Persistence\Backend\GenericPdo\DataMapper
+ * Testcase for \F3\FLOW3\Persistence\DataMapper
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
@@ -38,7 +38,7 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 		$objectData = array(array('identifier' => '1234'));
 		$object = new \stdClass();
 
-		$dataMapper = $this->getMock('F3\FLOW3\Persistence\Backend\GenericPdo\DataMapper', array('mapToObject'));
+		$dataMapper = $this->getMock('F3\FLOW3\Persistence\DataMapper', array('mapToObject'));
 		$dataMapper->expects($this->once())->method('mapToObject')->with($objectData[0])->will($this->returnValue($object));
 
 		$dataMapper->mapToObjects($objectData);
@@ -56,7 +56,7 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 		$mockSession->expects($this->once())->method('hasIdentifier')->with('1234')->will($this->returnValue(TRUE));
 		$mockSession->expects($this->once())->method('getObjectByIdentifier')->with('1234')->will($this->returnValue($object));
 
-		$dataMapper = $this->getAccessibleMock('F3\FLOW3\Persistence\Backend\GenericPdo\DataMapper', array('dummy'));
+		$dataMapper = $this->getAccessibleMock('F3\FLOW3\Persistence\DataMapper', array('dummy'));
 		$dataMapper->injectPersistenceSession($mockSession);
 		$dataMapper->_call('mapToObject', $objectData);
 	}
@@ -68,11 +68,11 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function mapToObjectReconstitutesExpectedObjectForNodeAndRegistersItWithIdentitymapToObjects() {
+	public function mapToObjectReconstitutesExpectedObjectAndRegistersItWithIdentitymapToObjects() {
 		$mockEntityClassName = uniqid('Entity');
 		$mockEntity = $this->getMock('F3\FLOW3\AOP\ProxyInterface', array('FLOW3_AOP_Proxy_construct', 'FLOW3_AOP_Proxy_invokeJoinPoint', 'FLOW3_AOP_Proxy_hasProperty', 'FLOW3_AOP_Proxy_getProperty', 'FLOW3_AOP_Proxy_setProperty', 'FLOW3_AOP_Proxy_getProxyTargetClassName'));
 
-		$objectData = array('identifier' => '1234', 'classname' => $mockEntityClassName);
+		$objectData = array('identifier' => '1234', 'classname' => $mockEntityClassName, 'properties' => array('foo'));
 
 		$mockClassSchema = $this->getMock('F3\FLOW3\Reflection\ClassSchema', array(), array(), '', FALSE);
 		$mockClassSchema->expects($this->any())->method('getModelType')->will($this->returnValue(\F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY));
@@ -85,8 +85,8 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 		$mockSession->expects($this->once())->method('registerReconstitutedEntity')->with($mockEntity, $objectData);
 		$mockSession->expects($this->once())->method('registerObject')->with($mockEntity, '1234');
 
-		$dataMapper = $this->getAccessibleMock('F3\FLOW3\Persistence\Backend\GenericPdo\DataMapper', array('thawProperties'));
-		$dataMapper->expects($this->once())->method('thawProperties')->with($mockEntity, $objectData['identifier'], $objectData, $mockClassSchema);
+		$dataMapper = $this->getAccessibleMock('F3\FLOW3\Persistence\DataMapper', array('thawProperties'));
+		$dataMapper->expects($this->once())->method('thawProperties')->with($mockEntity, $objectData['identifier'], $objectData);
 		$dataMapper->injectPersistenceSession($mockSession);
 		$dataMapper->injectReflectionService($mockReflectionService);
 		$dataMapper->injectObjectManager($mockObjectManager);
@@ -106,6 +106,7 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 
 		$objectData = array(
 			'identifier' => '1234',
+			'classname' => 'F3\Post',
 			'properties' => array(
 				'firstProperty' => array(
 					'type' => 'string',
@@ -136,8 +137,12 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 		$classSchema->addProperty('thirdProperty', 'float');
 		$classSchema->addProperty('fourthProperty', 'boolean');
 
-		$dataMapper = $this->getAccessibleMock('F3\FLOW3\Persistence\Backend\GenericPdo\DataMapper', array('dummy'));
-		$dataMapper->_call('thawProperties', $object, 1234, $objectData, $classSchema);
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService');
+		$mockReflectionService->expects($this->once())->method('getClassSchema')->will($this->returnValue($classSchema));
+
+		$dataMapper = $this->getAccessibleMock('F3\FLOW3\Persistence\DataMapper', array('dummy'));
+		$dataMapper->injectReflectionService($mockReflectionService);
+		$dataMapper->_call('thawProperties', $object, 1234, $objectData);
 	}
 
 	/**
@@ -150,6 +155,7 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 
 		$objectData = array(
 			'identifier' => 'c254d2e0-825a-11de-8a39-0800200c9a66',
+			'classname' => 'F3\Post',
 			'properties' => array(
 				'firstProperty' => array(
 					'type' => 'string',
@@ -162,8 +168,12 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 		$classSchema = new \F3\FLOW3\Reflection\ClassSchema('F3\Post');
 		$classSchema->addProperty('firstProperty', 'string');
 
-		$dataMapper = $this->getAccessibleMock('F3\FLOW3\Persistence\Backend\GenericPdo\DataMapper', array('dummy'));
-		$dataMapper->_call('thawProperties', $object, $objectData['identifier'], $objectData, $classSchema);
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService');
+		$mockReflectionService->expects($this->once())->method('getClassSchema')->will($this->returnValue($classSchema));
+
+		$dataMapper = $this->getAccessibleMock('F3\FLOW3\Persistence\DataMapper', array('dummy'));
+		$dataMapper->injectReflectionService($mockReflectionService);
+		$dataMapper->_call('thawProperties', $object, $objectData['identifier'], $objectData);
 	}
 
 	/**
@@ -179,13 +189,18 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 
 		$objectData = array(
 			'identifier' => 'c254d2e0-825a-11de-8a39-0800200c9a66',
+			'classname' => 'F3\Post',
 			'properties' => array()
 		);
 
 		$classSchema = new \F3\FLOW3\Reflection\ClassSchema('F3\Post');
 
-		$dataMapper = $this->getAccessibleMock('F3\FLOW3\Persistence\Backend\GenericPdo\DataMapper', array('dummy'));
-		$dataMapper->_call('thawProperties', $object, $objectData['identifier'], $objectData, $classSchema);
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService');
+		$mockReflectionService->expects($this->once())->method('getClassSchema')->will($this->returnValue($classSchema));
+
+		$dataMapper = $this->getAccessibleMock('F3\FLOW3\Persistence\DataMapper', array('dummy'));
+		$dataMapper->injectReflectionService($mockReflectionService);
+		$dataMapper->_call('thawProperties', $object, $objectData['identifier'], $objectData);
 	}
 
 	/**
@@ -201,14 +216,19 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 
 		$objectData = array(
 			'identifier' => 'c254d2e0-825a-11de-8a39-0800200c9a66',
+			'classname' => 'F3\Post',
 			'properties' => array()
 		);
 
 		$classSchema = $this->getMock('F3\FLOW3\Reflection\ClassSchema', array('getUuidPropertyName'), array('F3\Post'));
 		$classSchema->expects($this->once())->method('getUUIDPropertyName')->will($this->returnValue('myUuidProperty'));
 
-		$dataMapper = $this->getAccessibleMock('F3\FLOW3\Persistence\Backend\GenericPdo\DataMapper', array('dummy'));
-		$dataMapper->_call('thawProperties', $object, $objectData['identifier'], $objectData, $classSchema);
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService');
+		$mockReflectionService->expects($this->once())->method('getClassSchema')->will($this->returnValue($classSchema));
+
+		$dataMapper = $this->getAccessibleMock('F3\FLOW3\Persistence\DataMapper', array('dummy'));
+		$dataMapper->injectReflectionService($mockReflectionService);
+		$dataMapper->_call('thawProperties', $object, $objectData['identifier'], $objectData);
 	}
 
 	/**
@@ -220,6 +240,7 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 
 		$objectData = array(
 			'identifier' => '1234',
+			'classname' => 'F3\Post',
 			'properties' => array(
 				'firstProperty' => array(
 					'type' => 'array',
@@ -250,12 +271,16 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 		$classSchema->addProperty('thirdProperty', 'DateTime');
 		$classSchema->addProperty('fourthProperty', '\F3\Some\Domain\Model');
 
-		$dataMapper = $this->getAccessibleMock('F3\FLOW3\Persistence\Backend\GenericPdo\DataMapper', array('mapDateTime', 'mapArray', 'mapSplObjectStorage', 'mapToObject'));
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService');
+		$mockReflectionService->expects($this->once())->method('getClassSchema')->will($this->returnValue($classSchema));
+
+		$dataMapper = $this->getAccessibleMock('F3\FLOW3\Persistence\DataMapper', array('mapDateTime', 'mapArray', 'mapSplObjectStorage', 'mapToObject'));
+		$dataMapper->injectReflectionService($mockReflectionService);
 		$dataMapper->expects($this->at(0))->method('mapArray')->with($objectData['properties']['firstProperty']['value']);
 		$dataMapper->expects($this->at(1))->method('mapSplObjectStorage')->with($objectData['properties']['secondProperty']['value']);
 		$dataMapper->expects($this->at(2))->method('mapDateTime')->with($objectData['properties']['thirdProperty']['value']);
 		$dataMapper->expects($this->at(3))->method('mapToObject')->with($objectData['properties']['fourthProperty']['value']);
-		$dataMapper->_call('thawProperties', $object, $objectData['identifier'], $objectData, $classSchema);
+		$dataMapper->_call('thawProperties', $object, $objectData['identifier'], $objectData);
 	}
 
 	/**
@@ -271,7 +296,7 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 		$classSchema = new \F3\FLOW3\Reflection\ClassSchema('F3\Post');
 		$classSchema->addProperty('firstProperty', 'SplObjectStorage');
 
-		$dataMapper = $this->getAccessibleMock('F3\FLOW3\Persistence\Backend\GenericPdo\DataMapper', array('mapToObject'));
+		$dataMapper = $this->getAccessibleMock('F3\FLOW3\Persistence\DataMapper', array('mapToObject'));
 		$dataMapper->expects($this->at(0))->method('mapToObject')->with($objectData[0]['value'])->will($this->returnValue(new \stdClass()));
 		$dataMapper->expects($this->at(1))->method('mapToObject')->with($objectData[1]['value'])->will($this->returnValue(new \stdClass()));
 		$dataMapper->_call('mapSplObjectStorage', $objectData);
@@ -283,7 +308,7 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function mapDateTimeCreatesDateTimeFromTimestamp() {
 		$expected = new \DateTime();
-		$dataMapper = $this->getAccessibleMock('F3\FLOW3\Persistence\Backend\GenericPdo\DataMapper', array('dummy'));
+		$dataMapper = $this->getAccessibleMock('F3\FLOW3\Persistence\DataMapper', array('dummy'));
 		$this->assertEquals($dataMapper->_call('mapDateTime', $expected->getTimestamp()), $expected);
 	}
 
@@ -345,7 +370,7 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 			)
 		);
 
-		$dataMapper = $this->getAccessibleMock('F3\FLOW3\Persistence\Backend\GenericPdo\DataMapper', array('mapDateTime', 'mapToObject', 'mapSplObjectStorage'));
+		$dataMapper = $this->getAccessibleMock('F3\FLOW3\Persistence\DataMapper', array('mapDateTime', 'mapToObject', 'mapSplObjectStorage'));
 		$dataMapper->expects($this->once())->method('mapDateTime')->with($arrayValues['five']['value'])->will($this->returnValue($dateTime));
 		$dataMapper->expects($this->once())->method('mapToObject')->with($arrayValues['six']['value'])->will($this->returnValue($object));
 		$dataMapper->expects($this->once())->method('mapSplObjectStorage')->with($arrayValues['seven']['value'])->will($this->returnValue($splObjectStorage));
@@ -366,7 +391,7 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 				'value' => 'foo'
 			)
 		);
-		$dataMapper = $this->getAccessibleMock('F3\FLOW3\Persistence\Backend\GenericPdo\DataMapper', array('dummy'));
+		$dataMapper = $this->getAccessibleMock('F3\FLOW3\Persistence\DataMapper', array('dummy'));
 		$dataMapper->_call('mapArray', $arrayValues);
 	}
 }
