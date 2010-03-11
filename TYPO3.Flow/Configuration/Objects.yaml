@@ -364,11 +364,6 @@ F3\FLOW3\Object\ObjectSerializer:
     reflectionService:
       object: F3\FLOW3\Reflection\ReflectionService
 
-F3\FLOW3\Object\SessionRegistry:
-  properties:
-    objectSerializer:
-      object: F3\FLOW3\Object\ObjectSerializer
-
 F3\FLOW3\Object\Container\ObjectContainerBuilder:
   properties:
     reflectionService:

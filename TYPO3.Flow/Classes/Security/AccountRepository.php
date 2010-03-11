@@ -31,6 +31,16 @@ namespace F3\FLOW3\Security;
 class AccountRepository extends \F3\FLOW3\Persistence\Repository {
 
 	/**
+	 * Constructs the Account Repository
+	 * 
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function __construct() {
+		parent::__construct();
+		$this->objectType = 'F3\FLOW3\Security\Account';
+	}
+
+	/**
 	 * Returns the account for a specific authentication provider with the given identitifer
 	 *
 	 * @param string $accountIdentifier The account identifier

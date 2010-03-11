@@ -37,14 +37,14 @@ namespace F3\FLOW3\Object;
 class ObjectSerializer {
 
 	/**
-	 * Location where the objects are stored as property array
+	 * Objects stored as an array of properties
 	 * @var array
 	 */
 	protected $objectsAsArray = array();
 
 	/**
 	 * The object manager
-	 * @var F3\FLOW3\Object\ObjectManager
+	 * @var F3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
@@ -63,11 +63,11 @@ class ObjectSerializer {
 	/**
 	 * Injects the object manager
 	 *
-	 * @param F3\FLOW3\Object\ObjectManager $objectManager The object manager
+	 * @param F3\FLOW3\Object\ObjectManagerInterface $objectManager The object manager
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function injectObjectManager(\F3\FLOW3\Object\ObjectManager $objectManager) {
+	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
 	}
 

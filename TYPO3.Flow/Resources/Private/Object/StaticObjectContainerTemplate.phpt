@@ -59,7 +59,6 @@ class StaticObjectContainer extends \F3\FLOW3\Object\Container\AbstractObjectCon
 				}
 			}
 		}
-
 	}
 
 	/**
