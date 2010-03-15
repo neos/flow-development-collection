@@ -99,7 +99,7 @@ class ContextTest extends \F3\Testing\BaseTestCase {
 
 		$expectedMergedTokens = array($token1Clone, $token2Clone, $token3);
 
-		$this->assertEquals($securityContext->_get('activeTokens'), $expectedMergedTokens);
+		$this->assertEquals($securityContext->_get('tokens'), $expectedMergedTokens);
 	}
 
 	/**
@@ -133,19 +133,12 @@ class ContextTest extends \F3\Testing\BaseTestCase {
 	 * @category unit
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function initializeSetsAReferenceToTheSecurityContextInTheAuthenticationManager() {
-		$mockRequest = $this->getMock('F3\FLOW3\MVC\RequestInterface');
-		$mockAuthenticationManager = $this->getMock('F3\FLOW3\Security\Authentication\AuthenticationManagerInterface');
-
+	public function injectAuthenticationManagerSetsAReferenceToTheSecurityContextInTheAuthenticationManager() {
 		$securityContext = $this->getAccessibleMock('F3\FLOW3\Security\Context', array('dummy'));
-
-		$mockAuthenticationManager->expects($this->once())->method('getTokens')->will($this->returnValue(array()));
+		$mockAuthenticationManager = $this->getMock('F3\FLOW3\Security\Authentication\AuthenticationManagerInterface');
 		$mockAuthenticationManager->expects($this->once())->method('setSecurityContext')->with($securityContext);
 		
 		$securityContext->injectAuthenticationManager($mockAuthenticationManager);
-		$securityContext->_set('tokens', array());
-
-		$securityContext->initialize($mockRequest);
 	}
 
 	/**

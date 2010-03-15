@@ -23,8 +23,8 @@ namespace F3\FLOW3\Security;
  *                                                                        */
 
 /**
- * This is the default implementation of a security context, which holds current security information
- * like Roles oder details auf authenticated users.
+ * This is the default implementation of a security context, which holds current
+ * security information like Roles oder details auf authenticated users.
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
@@ -101,6 +101,7 @@ class Context {
 	 */
 	public function injectAuthenticationManager(\F3\FLOW3\Security\Authentication\AuthenticationManagerInterface $authenticationManager) {
 		$this->authenticationManager = $authenticationManager;
+		$this->authenticationManager->setSecurityContext($this);
 	}
 
 	/**
@@ -124,13 +125,11 @@ class Context {
 	 */
 	public function initialize(\F3\FLOW3\MVC\RequestInterface $request) {
 		$this->request = $request;
-		$this->authenticationManager->setSecurityContext($this);
 
-		$managerTokens = $this->filterInactiveTokens($this->authenticationManager->getTokens(), $request);
-		$mergedTokens = $this->mergeTokens($managerTokens, $this->tokens);
+		$mergedTokens = $this->mergeTokens($this->filterInactiveTokens($this->authenticationManager->getTokens(), $request), $this->tokens);
 
 		$this->updateTokens($mergedTokens);
-		$this->activeTokens = $mergedTokens;
+		$this->tokens = $mergedTokens;
 	}
 
 	/**
@@ -152,9 +151,7 @@ class Context {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getAuthenticationTokens() {
-		if ($this->separateTokensPerformed === FALSE) {
-			$this->separateActiveAndInactiveTokens();
-		}
+		$this->separateActiveAndInactiveTokens();
 		return $this->activeTokens;
 	}
 
@@ -168,10 +165,9 @@ class Context {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getAuthenticationTokensOfType($className) {
+		$this->separateActiveAndInactiveTokens();
+
 		$activeTokens = array();
-
-		if ($this->separateTokensPerformed === FALSE) $this->separateActiveAndInactiveTokens();
-
 		foreach ($this->activeTokens as $token) {
 			if (($token instanceof $className) === FALSE) continue;
 
@@ -251,31 +247,33 @@ class Context {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function separateActiveAndInactiveTokens() {
-		$this->separateTokensPerformed = TRUE;
+		if ($this->separateTokensPerformed === FALSE) {
+			$this->separateTokensPerformed = TRUE;
 
-		foreach ($this->tokens as $token) {
-			if ($token->hasRequestPatterns()) {
+			foreach ($this->tokens as $token) {
+				if ($token->hasRequestPatterns()) {
 
-				$requestPatterns = $token->getRequestPatterns();
-				$tokenIsActive = TRUE;
+					$requestPatterns = $token->getRequestPatterns();
+					$tokenIsActive = TRUE;
 
-				foreach ($requestPatterns as $requestPattern) {
-					if ($requestPattern->canMatch($this->request)) {
-						$tokenIsActive &= $requestPattern->matchRequest($this->request);
+					foreach ($requestPatterns as $requestPattern) {
+						if ($requestPattern->canMatch($this->request)) {
+							$tokenIsActive &= $requestPattern->matchRequest($this->request);
+						}
 					}
-				}
-				if ($tokenIsActive) {
-					$this->activeTokens[] = $token;
+					if ($tokenIsActive) {
+						$this->activeTokens[] = $token;
+					} else {
+						$this->inactiveTokens[] = $token;
+					}
 				} else {
-					$this->inactiveTokens[] = $token;
+					$this->activeTokens[] = $token;
 				}
-			} else {
-				$this->activeTokens[] = $token;
 			}
 		}
 	}
 
-		/**
+	/**
 	 * Merges the session and manager tokens. All manager tokens types will be in the result array
 	 * If a specific type is found in the session this token replaces the one (of the same type)
 	 * given by the manager.
@@ -296,9 +294,7 @@ class Context {
 			if (!is_array($sessionTokens)) continue;
 
 			foreach ($sessionTokens as $sessionToken) {
-				$managerTokenClass = get_class($managerToken);
-
-				if ($sessionToken instanceof $managerTokenClass) {
+				if ($sessionToken instanceof $managerToken) {
 					$resultTokens[] = $sessionToken;
 					$noCorrespondingSessionTokenFound = FALSE;
 				}
