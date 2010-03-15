@@ -555,9 +555,6 @@ final class Bootstrap {
 
 			$this->configurationManager->shutdown();
 			$this->objectManager->shutdown();
-
-			$this->objectManager->get('F3\FLOW3\Object\SessionRegistry')->writeDataToSession();
-			$this->objectManager->get('F3\FLOW3\Session\SessionInterface')->close();
 		} else {
 			header('HTTP/1.1 503 Service Temporarily Unavailable');
 			readfile('package://FLOW3/Private/Core/LockHoldingStackPage.html');

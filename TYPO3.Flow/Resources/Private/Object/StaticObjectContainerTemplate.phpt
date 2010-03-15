@@ -49,7 +49,8 @@ class StaticObjectContainer extends \F3\FLOW3\Object\Container\AbstractObjectCon
 		$this->objectSerializer = $this->get('F3\FLOW3\Object\ObjectSerializer');
 		$this->session = $this->get('F3\FLOW3\Session\SessionInterface');
 		$this->session->start();
-		if ($this->session->hasKey('F3_FLOW3_Object_SessionRegistry') === TRUE) {
+
+		if ($this->session->hasKey('F3_FLOW3_Object_ObjectContainer') === TRUE) {
 			$objectsAsArray = $this->session->getData('F3_FLOW3_Object_ObjectContainer');
 			if (is_array($objectsAsArray)) {
 				foreach ($this->objectSerializer->deserializeObjectsArray($objectsAsArray) as $objectName => $object) {
@@ -100,6 +101,7 @@ class StaticObjectContainer extends \F3\FLOW3\Object\Container\AbstractObjectCon
 			}
 		}
 		$this->session->putData('F3_FLOW3_Object_ObjectContainer', $objectsAsArray);
+		$this->session->close();
 	}
 
 
