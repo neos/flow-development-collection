@@ -51,7 +51,7 @@ class PointcutFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 
 	/**
 	 * A reference to the AOP Framework
-	 * @var \F3\FLOW3\AOP\Framewor
+	 * @var \F3\FLOW3\AOP\Framework
 	 */
 	protected $aopFramework;
 
@@ -74,7 +74,7 @@ class PointcutFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectAOPFramework(\F3\FLOW3\AOP\Framework $aopFramework) {
+	public function injectAopFramework(\F3\FLOW3\AOP\Framework $aopFramework) {
 		$this->aopFramework = $aopFramework;
 	}
 

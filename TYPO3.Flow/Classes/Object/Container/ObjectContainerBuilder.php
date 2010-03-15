@@ -359,7 +359,11 @@ class ObjectContainerBuilder {
 					}
 				break;
 				case \F3\FLOW3\Object\Configuration\ConfigurationProperty::PROPERTY_TYPES_STRAIGHTVALUE:
-					$preparedSetterArgument = $propertyValue;
+					if (is_string($propertyValue)) {
+						$preparedSetterArgument = '\'' . str_replace('\'', '\\\'', $propertyValue) . '\'';
+					} else {
+						$preparedSetterArgument = $propertyValue;
+					}
 				break;
 				case \F3\FLOW3\Object\Configuration\ConfigurationProperty::PROPERTY_TYPES_SETTING:
 					$preparedSetterArgument = "isset(\$this->settings['" . str_replace('.', "']['", $propertyValue) . "']) ? \$this->settings['" . str_replace('.', "']['", $propertyValue) . "'] : array()";
