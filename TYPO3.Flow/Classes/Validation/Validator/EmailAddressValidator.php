@@ -139,7 +139,7 @@ class EmailAddressValidator extends \F3\FLOW3\Validation\Validator\AbstractValid
 					(?:
 						(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+(?:[a-z]{2}|aero|asia|biz|cat|com|edu|coop|gov|info|int|invalid|jobs|localdomain|mil|mobi|museum|name|net|org|pro|tel|travel)|
 						localhost|
-						(?:(?:\d{1,2}|1\d{1,2}|2[0-5][0-5])\.){3}(?:(?:\d{1,2}|1\d{1,2}|2[0-5][0-5]))
+						(?:(?:\d{1,2}|1\d{1,2}|2[0-4][0-9]|25[0-5])\.){3}(?:(?:\d{1,2}|1\d{1,2}|2[0-4][0-9]|25[0-5]))
 					)
 				$/Dix', $value)) return TRUE;
 		$this->addError('The given subject was not a valid email address. Got: "' . $value . '"', 1221559976);

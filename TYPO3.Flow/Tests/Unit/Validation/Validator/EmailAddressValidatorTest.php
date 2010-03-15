@@ -44,6 +44,7 @@ class EmailAddressValidatorTest extends \F3\Testing\BaseTestCase {
 			array('info@guggenheim.museum'),
 			array('just@test.invalid'),
 			array('just+spam@test.de'),
+			array('just+spam@192.168.249.100'),
 			array('local@192.168.0.2')
 		);
 	}
