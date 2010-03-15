@@ -110,8 +110,12 @@ class ObjectManager implements \F3\FLOW3\Object\ObjectManagerInterface {
 
 		if ($settings['monitor']['detectClassChanges'] === FALSE && file_exists($this->staticObjectContainerPathAndFilename)) {
 			require_once($this->staticObjectContainerPathAndFilename);
-			$this->objectContainer = new $this->staticObjectContainerClassName;
-		} else {
+			if (class_exists($this->staticObjectContainerClassName, FALSE)) {
+				$this->objectContainer = new $this->staticObjectContainerClassName;
+			}
+		}
+
+		if ($this->objectContainer === NULL) {
 			$rawFLOW3ObjectConfigurations = $this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_OBJECTS, 'FLOW3');
 			$parsedObjectConfigurations = array();
 			foreach ($rawFLOW3ObjectConfigurations as $objectName => $rawFLOW3ObjectConfiguration) {
@@ -147,7 +151,7 @@ class ObjectManager implements \F3\FLOW3\Object\ObjectManagerInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initializeObjectContainer(array $activePackages) {
-		if (!file_exists($this->staticObjectContainerPathAndFilename)) {
+		if (!class_exists($this->staticObjectContainerClassName, FALSE)) {
 			$objectConfigurations = $this->buildPackageObjectConfigurations($activePackages);
 
 			$this->get('F3\FLOW3\AOP\Framework')->initialize($objectConfigurations);
@@ -338,10 +342,14 @@ class ObjectManager implements \F3\FLOW3\Object\ObjectManagerInterface {
 	 * next script run.
 	 * 
 	 * This method is called by a signal emitted when files change.
-	 * 
+	 *
+	 * @param string $signalName Name of the signal which triggered this method
+	 * @param string $monitorIdentifier Identifier of the file monitor
+	 * @param array $changedFiles Path and file name of the changed files
+	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function flushStaticObjectContainer($signalName, $monitorIdentifier, $changedFiles) {
+	public function flushStaticObjectContainer($signalName, $monitorIdentifier, array $changedFiles) {
 		if ($monitorIdentifier === 'FLOW3_ClassFiles' && file_exists($this->staticObjectContainerPathAndFilename)) {
 			unlink ($this->staticObjectContainerPathAndFilename);
 		}

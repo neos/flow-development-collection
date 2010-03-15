@@ -59,7 +59,7 @@ class ObjectManagerTest extends \F3\Testing\BaseTestCase {
 		$id = uniqid('staticObjectContainerInclusionProval');
 		$staticObjectContainerInclusionProvalCode = "
 			<?php
-				define('$id', TRUE);
+				class $id {}
 			?>
 		";
 		file_put_contents($temporaryDirectory . 'StaticObjectContainer.php', $staticObjectContainerInclusionProvalCode);
@@ -79,7 +79,7 @@ class ObjectManagerTest extends \F3\Testing\BaseTestCase {
 
 		$objectManager->initialize();
 
-		$this->assertTrue(defined($id));
+		$this->assertTrue(class_exists($id, FALSE));
 		$this->assertType($this->mockStaticObjectContainerClassName, $objectManager->_get('objectContainer'));
 	}
 
@@ -152,10 +152,13 @@ class ObjectManagerTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function initializeObjectContainerBuildsAndUsesAStaticObjectContainerIfNoneExists() {
 		mkdir('vfs://Base/Temporary');
-		$id = uniqid('staticObjectContainerInclusionProval');
+		$staticObjectContainerClassName = uniqid('staticObjectContainerInclusionProval');
 		$staticObjectContainerCode = "
 			<?php
-				define('$id', TRUE);
+				class $staticObjectContainerClassName {
+					public function import() {}
+					public function injectSettings() {}
+				}
 			?>
 		";
 
@@ -180,14 +183,14 @@ class ObjectManagerTest extends \F3\Testing\BaseTestCase {
 		$objectManager->expects($this->at(2))->method('get')->with('F3\FLOW3\Object\Container\ObjectContainerBuilder')->will($this->returnValue($mockObjectContainerBuilder));
 
 		$objectManager->injectConfigurationManager($mockConfigurationManager);
-		$objectManager->_set('staticObjectContainerClassName', $this->mockStaticObjectContainerClassName);
+		$objectManager->_set('staticObjectContainerClassName', $staticObjectContainerClassName);
 		$objectManager->_set('staticObjectContainerPathAndFilename', 'vfs://Base/Temporary/StaticObjectContainer.php');
 		$objectManager->_set('objectContainer', $mockDynamicObjectContainer);
 
 		$objectManager->initializeObjectContainer($mockActivePackages);
 
-		$this->assertType($this->mockStaticObjectContainerClassName, $objectManager->_get('objectContainer'));
-		$this->assertTrue(defined($id));
+		$this->assertType($staticObjectContainerClassName, $objectManager->_get('objectContainer'));
+		$this->assertTrue(class_exists($staticObjectContainerClassName, FALSE));
 	}
 
 	/**

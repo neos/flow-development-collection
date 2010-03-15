@@ -84,7 +84,8 @@ class ObjectContainerBuilder {
 
 		$tokens = array(
 			'OBJECTS_ARRAY' => $this->buildObjectsArray(),
-			'BUILD_METHODS' => $this->buildBuildMethods()
+			'BUILD_METHODS' => $this->buildBuildMethods(),
+			'FLOW3_REVISION' => \F3\FLOW3\Core\Bootstrap::REVISION
 		);
 
 		$objectContainerCode = file_get_contents(FLOW3_PATH_FLOW3 . 'Resources/Private/Object/StaticObjectContainerTemplate.phpt');

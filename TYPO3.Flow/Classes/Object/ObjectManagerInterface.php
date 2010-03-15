@@ -153,6 +153,19 @@ interface ObjectManagerInterface {
 	public function getScope($objectName);
 
 	/**
+	 * Discards the cached Static Object Container in order to rebuild it on the
+	 * next script run.
+	 *
+	 * This method is called by a signal emitted when files change.
+	 *
+	 * @param string $signalName Name of the signal which triggered this method
+	 * @param string $monitorIdentifier Identifier of the file monitor
+	 * @param array $changedFiles Path and file name of the changed files
+	 * @return void
+	 */
+	public function flushStaticObjectContainer($signalName, $monitorIdentifier, array $changedFiles);
+
+	/**
 	 * Shuts the object manager down and calls the shutdown methods of all objects
 	 * which are configured for it.
 	 *
