@@ -33,13 +33,15 @@ namespace F3\FLOW3\Validation\Validator;
  * @scope prototype
  */
 class DisjunctionValidator extends \F3\FLOW3\Validation\Validator\AbstractCompositeValidator {
+
 	/**
-	 * Checks if the given value is valid according to the validators of the conjunction.
+	 * Checks if the given value is valid according to the validators of the
+	 * disjunction.
 	 *
-	 * If at least one error occurred, the result is FALSE.
+	 * If all validators fail, the result is FALSE.
 	 *
 	 * @param mixed $value The value that should be validated
-	 * @return boolean TRUE if the value is valid, FALSE if an error occured
+	 * @return boolean TRUE if at least one validator valid, FALSE if all validators fail
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 * @api
