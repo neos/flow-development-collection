@@ -829,22 +829,24 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 			$sql['where'][] = '"_entity"."type"=? AND ';
 			$this->parseConstraint($query->getConstraint(), $sql, $parameters);
 		}
-		if ($query->getOrderings() !== NULL) {
-			$sql = $this->parseOrderings($query->getOrderings(), $sql);
-		}
+
+		$sql = $this->parseOrderings($query, $sql);
 	}
 
 	/**
-	 * Transforms an array with Orderings into SQL-like order parts
+	 * Transforms an orderings into SQL-like order parts
 	 *
-	 * @param array $orderings
+	 * @param \F3\FLOW3\Persistence\QueryInterface $query
 	 * @return array
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function parseOrderings(array $orderings, array $sql) {
-		foreach ($orderings as $propertyName => $order) {
+	protected function parseOrderings(\F3\FLOW3\Persistence\QueryInterface $query, array $sql) {
+		if ($query->getOrderings() === NULL) return;
+
+		$propertyData = $this->reflectionService->getClassSchema($query->getType())->getProperties();
+		foreach ($query->getOrderings() as $propertyName => $order) {
 			$sql['fields'][] = '"_orderingtable' . count($sql['orderings']) . '"."' . $propertyName . '"';
-			$sql['tables'][] = 'LEFT JOIN (SELECT "parent", COALESCE("string", CAST("integer" AS CHAR), CAST("float" AS CHAR), CAST("datetime" AS CHAR), "boolean", "object") AS "' . $propertyName . '" FROM "properties_data" WHERE "name" = ' . $this->databaseHandle->quote($propertyName) . ') AS "_orderingtable' . count($sql['orderings']) . '" ON "_orderingtable' . count($sql['orderings']) . '"."parent" = "d"."parent"';
+			$sql['tables'][] = 'LEFT JOIN (SELECT "parent", "' . $this->getTypeName($propertyData[$propertyName]['elementType'] ?: $propertyData[$propertyName]['type']) . '" AS "' . $propertyName . '" FROM "properties_data" WHERE "name" = ' . $this->databaseHandle->quote($propertyName) . ') AS "_orderingtable' . count($sql['orderings']) . '" ON "_orderingtable' . count($sql['orderings']) . '"."parent" = "d"."parent"';
 			$sql['orderings'][] = '"_orderingtable' . count($sql['orderings']) . '"."' . $propertyName . '" ' . $order;
 		}
 		return $sql;
