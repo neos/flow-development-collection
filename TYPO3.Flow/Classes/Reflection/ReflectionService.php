@@ -986,7 +986,8 @@ class ReflectionService {
 					$parameterInformation['type'] = ltrim($explodedParameters[0], '\\');
 				}
 			}
-		} elseif ($parameterClass !== NULL) {
+		}
+		if (!isset($parameterInformation['type']) && $parameterClass !== NULL) {
 			$parameterInformation['type'] = ltrim($parameterClass->getName(), '\\');
 		}
 		return $parameterInformation;
