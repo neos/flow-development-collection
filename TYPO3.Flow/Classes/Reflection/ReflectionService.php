@@ -916,8 +916,12 @@ class ReflectionService {
 			}
 
 			foreach ($this->getClassPropertyNames($className) as $propertyName) {
+				$declaredType = ltrim(implode(' ', $this->getPropertyTagValues($className, $propertyName, 'var')), '\\');
+				if ($this->isClassReflected($declaredType) && !($this->isClassTaggedWith($declaredType, 'entity') || $this->isClassTaggedWith($declaredType, 'valueobject'))) {
+					continue;
+				}
 				if (!$this->isPropertyTaggedWith($className, $propertyName, 'transient') && $this->isPropertyTaggedWith($className, $propertyName, 'var')) {
-					$classSchema->addProperty($propertyName, implode(' ', $this->getPropertyTagValues($className, $propertyName, 'var')), $this->isPropertyTaggedWith($className, $propertyName, 'lazy'));
+					$classSchema->addProperty($propertyName, $declaredType, $this->isPropertyTaggedWith($className, $propertyName, 'lazy'));
 				}
 				if ($this->isPropertyTaggedWith($className, $propertyName, 'uuid')) {
 					$classSchema->setUuidPropertyName($propertyName);
