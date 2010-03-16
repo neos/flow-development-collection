@@ -958,7 +958,8 @@ class ReflectionService {
 	/**
 	 * Converts the given parameter reflection into an information array
 	 *
-	 * @param ReflectionParameter $parameter The parameter to reflect
+	 * @param \ReflectionParameter $parameter The parameter to reflect
+	 * @param \ReflectionMethod $method The parameter's method
 	 * @return array Parameter information array
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
@@ -977,9 +978,7 @@ class ReflectionService {
 		if ($parameter->isDefaultValueAvailable()) {
 			$parameterInformation['defaultValue'] = $parameter->getDefaultValue();
 		}
-		if ($parameterClass !== NULL) {
-			$parameterInformation['type'] = ltrim($parameterClass->getName(), '\\');
-		} elseif ($method !== NULL) {
+		if ($method !== NULL) {
 			$methodTagsAndValues = $this->getMethodTagsValues($method->getDeclaringClass()->getName(), $method->getName());
 			if (isset($methodTagsAndValues['param']) && isset($methodTagsAndValues['param'][$parameter->getPosition()])) {
 				$explodedParameters = explode(' ', $methodTagsAndValues['param'][$parameter->getPosition()]);
@@ -987,6 +986,8 @@ class ReflectionService {
 					$parameterInformation['type'] = ltrim($explodedParameters[0], '\\');
 				}
 			}
+		} elseif ($parameterClass !== NULL) {
+			$parameterInformation['type'] = ltrim($parameterClass->getName(), '\\');
 		}
 		return $parameterInformation;
 	}
