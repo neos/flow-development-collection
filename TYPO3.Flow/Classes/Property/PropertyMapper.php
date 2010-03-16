@@ -366,11 +366,27 @@ class PropertyMapper {
 						return $conversionResult;
 					}
 				}
-				$newObject = $this->objectManager->create($targetType);
-				if ($this->map(array_keys($propertyValue), $propertyValue, $newObject)) {
+
+				$constructorSignature = $this->reflectionService->getMethodParameters($targetType, '__construct');
+				$constructorArguments = array($targetType);
+				foreach ($constructorSignature as $constructorArgumentName => $constructorArgumentInformation) {
+					if (array_key_exists($constructorArgumentName, $propertyValue)) {
+						$constructorArguments[] = $propertyValue[$constructorArgumentName];
+						unset($propertyValue[$constructorArgumentName]);
+					} elseif (!$constructorArgumentInformation['optional']) {
+						throw new \F3\FLOW3\Property\Exception\InvalidTargetException('Missing constructor argument "' . $constructorArgumentName . '" for value object of type "' .$targetType . '".' , 1268734872);
+					}
+				}
+
+				$newObject = call_user_func_array(array($this->objectManager, 'create'), $constructorArguments);
+				if (count($propertyValue)) {
+					if ($this->map(array_keys($propertyValue), $propertyValue, $newObject)) {
+						return $newObject;
+					}
+					throw new \F3\FLOW3\Property\Exception\InvalidTargetException('Values could not be mapped to new object of type ' .$targetType . ' for property "' . $propertyName . '". (Map errors: ' . implode (' - ', $this->mappingResults->getErrors()) . ')' , 1259770027);
+				} else {
 					return $newObject;
 				}
-				throw new \F3\FLOW3\Property\Exception\InvalidTargetException('Values could not be mapped to new object of type ' .$targetType . ' for property "' . $propertyName . '". (Map errors: ' . implode (' - ', $this->mappingResults->getErrors()) . ')' , 1259770027);
 			}
 		} else {
 			throw new \InvalidArgumentException('transformToObject() accepts only strings and arrays.', 1251814355);

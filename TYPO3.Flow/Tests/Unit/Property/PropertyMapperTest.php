@@ -583,9 +583,35 @@ class PropertyMapperTest extends \F3\Testing\BaseTestCase {
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
 		$mockObjectManager->expects($this->at(0))->method('create')->with('F3\Foo\Bar')->will($this->returnValue($theObject));
 
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService');
+		$mockReflectionService->expects($this->at(0))->method('getMethodParameters')->with('F3\Foo\Bar', '__construct')->will($this->returnValue(array()));
+
 		$mapper = $this->getAccessibleMock('F3\FLOW3\Property\PropertyMapper', array('map'));
+		$mapper->injectReflectionService($mockReflectionService);
 		$mapper->injectObjectManager($mockObjectManager);
 		$mapper->expects($this->once())->method('map')->with(array('property1', 'property2'), $theValue, $theObject)->will($this->returnValue(TRUE));
+		$mapper->_call('transformToObject', $theValue, 'F3\Foo\Bar', 'someProp');
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function transformToObjectUsesConstructorArgumentsIfDataTypeIsAClass() {
+		$theValue = array('property1' => 'value1', 'fooBar' => 'quux', 'property2' => 'value2');
+		$theObject = new \stdClass();
+
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
+		$mockObjectManager->expects($this->at(0))->method('create')->with('F3\Foo\Bar', 'quux')->will($this->returnValue($theObject));
+
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService');
+		$mockReflectionService->expects($this->at(0))->method('getMethodParameters')->with('F3\Foo\Bar', '__construct')->will($this->returnValue(array('fooBar' => array('optional' => FALSE))));
+
+		$mapper = $this->getAccessibleMock('F3\FLOW3\Property\PropertyMapper', array('map'));
+		$mapper->injectReflectionService($mockReflectionService);
+		$mapper->injectObjectManager($mockObjectManager);
+		$mapper->expects($this->once())->method('map')->with(array('property1', 'property2'), array('property1' => 'value1', 'property2' => 'value2'), $theObject)->will($this->returnValue(TRUE));
 		$mapper->_call('transformToObject', $theValue, 'F3\Foo\Bar', 'someProp');
 	}
 

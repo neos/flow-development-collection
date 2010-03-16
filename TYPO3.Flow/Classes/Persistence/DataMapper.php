@@ -134,7 +134,7 @@ class DataMapper {
 			}
 			if ($objectData['properties'] === array()) {
 				if (!$classSchema->isLazyLoadableObject()) {
-					throw new \Exception('baz!', 1268309017);
+					throw new \F3\FLOW3\Persistence\Exception('The object of type "' . $className . '" is not marked as lazy loadable.', 1268309017);
 				}
 				$persistenceManager = $this->persistenceManager;
 				$persistenceSession = $this->persistenceSession;
