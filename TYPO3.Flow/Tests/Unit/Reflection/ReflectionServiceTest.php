@@ -694,7 +694,7 @@ class ReflectionServiceTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function modelTypeValueObjectIsRecognizedByValueObjectAnnotation() {
-		$reflectionService = $this->getAccessibleMock('F3\FLOW3\Reflection\ReflectionService', array('isClassReflected', 'isClassTaggedWith'));
+		$reflectionService = $this->getAccessibleMock('F3\FLOW3\Reflection\ReflectionService', array('isClassReflected', 'isClassTaggedWith', 'checkValueObjectRequirements'));
 		$reflectionService->expects($this->at(0))->method('isClassTaggedWith')->with('F3\FLOW3\Tests\Reflection\Fixture\Model\ValueObject', 'entity')->will($this->returnValue(FALSE));
 		$reflectionService->expects($this->at(1))->method('isClassTaggedWith')->with('F3\FLOW3\Tests\Reflection\Fixture\Model\ValueObject', 'valueobject')->will($this->returnValue(TRUE));
 		$reflectionService->_call('buildClassSchemata', array('F3\FLOW3\Tests\Reflection\Fixture\Model\ValueObject'));
@@ -702,6 +702,53 @@ class ReflectionServiceTest extends \F3\Testing\BaseTestCase {
 		$builtClassSchemata = $reflectionService->getClassSchemata();
 		$builtClassSchema = array_pop($builtClassSchemata);
 		$this->assertEquals($builtClassSchema->getModelType(), \F3\FLOW3\Reflection\ClassSchema::MODELTYPE_VALUEOBJECT);
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function modelTypeValueObjectTriggersCheckValueObjectRequirementsCall() {
+		$reflectionService = $this->getAccessibleMock('F3\FLOW3\Reflection\ReflectionService', array('isClassReflected', 'isClassTaggedWith', 'checkValueObjectRequirements'));
+		$reflectionService->expects($this->any())->method('isClassTaggedWith')->will($this->onConsecutiveCalls(FALSE, TRUE));
+		$reflectionService->expects($this->once())->method('checkValueObjectRequirements')->with('F3\FLOW3\Tests\Reflection\Fixture\Model\ValueObject');
+		$reflectionService->_call('buildClassSchemata', array('F3\FLOW3\Tests\Reflection\Fixture\Model\ValueObject'));
+
+		$builtClassSchemata = $reflectionService->getClassSchemata();
+		$builtClassSchema = array_pop($builtClassSchemata);
+		$this->assertEquals($builtClassSchema->getModelType(), \F3\FLOW3\Reflection\ClassSchema::MODELTYPE_VALUEOBJECT);
+	}
+
+	/**
+	 * @test
+	 * @expectedException \F3\FLOW3\Reflection\Exception\InvalidValueObjectException
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function checkValueObjectRequirementsThrowsExceptionIfConstructorIsMissing() {
+		$reflectionService = $this->getAccessibleMock('F3\FLOW3\Reflection\ReflectionService', array('getClassMethodNames'));
+		$reflectionService->expects($this->once())->method('getClassMethodNames')->with('F3\FLOW3\Tests\Reflection\Fixture\Model\ValueObject')->will($this->returnValue(array('getFoo')));
+		$reflectionService->_call('checkValueObjectRequirements', 'F3\FLOW3\Tests\Reflection\Fixture\Model\ValueObject');
+	}
+
+	/**
+	 * @test
+	 * @expectedException \F3\FLOW3\Reflection\Exception\InvalidValueObjectException
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function checkValueObjectRequirementsThrowsExceptionIfSetterExists() {
+		$reflectionService = $this->getAccessibleMock('F3\FLOW3\Reflection\ReflectionService', array('getClassMethodNames'));
+		$reflectionService->expects($this->once())->method('getClassMethodNames')->with('F3\FLOW3\Tests\Reflection\Fixture\Model\ValueObject')->will($this->returnValue(array('__construct', 'getFoo', 'setBar')));
+		$reflectionService->_call('checkValueObjectRequirements', 'F3\FLOW3\Tests\Reflection\Fixture\Model\ValueObject');
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function checkValueObjectRequirementsRequiresConstructorAndNoSetters() {
+		$reflectionService = $this->getAccessibleMock('F3\FLOW3\Reflection\ReflectionService', array('getClassMethodNames'));
+		$reflectionService->expects($this->once())->method('getClassMethodNames')->with('F3\FLOW3\Tests\Reflection\Fixture\Model\ValueObject')->will($this->returnValue(array('__construct', 'getFoo')));
+		$reflectionService->_call('checkValueObjectRequirements', 'F3\FLOW3\Tests\Reflection\Fixture\Model\ValueObject');
 	}
 
 	/**

@@ -111,6 +111,7 @@ class ClassSchemaTest extends \F3\Testing\BaseTestCase {
 			array('int'),
 			array('float'),
 			array('boolean'),
+			array('bool'),
 			array('string'),
 			array('DateTime'),
 			array('array'),
@@ -198,13 +199,14 @@ class ClassSchemaTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function setModelTypeResetsUuidPropertyNameAndIdentityPropertiesForValueObjects() {
+	public function setModelTypeResetsUuidPropertyNameAndIdentityPropertiesAndAggregateRootForValueObjects() {
 		$classSchema = new \F3\FLOW3\Reflection\ClassSchema('SomeClass');
 		$classSchema->setModelType(\F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY);
 		$classSchema->addProperty('foo', 'string');
 		$classSchema->addProperty('bar', 'string');
 		$classSchema->setUuidPropertyName('foo');
 		$classSchema->markAsIdentityProperty('bar');
+		$classSchema->setAggregateRoot(TRUE);
 		$this->assertSame('foo', $classSchema->getUuidPropertyName());
 		$this->assertSame(array('bar' => 'string'), $classSchema->getIdentityProperties());
 
@@ -212,6 +214,7 @@ class ClassSchemaTest extends \F3\Testing\BaseTestCase {
 
 		$this->assertNull($classSchema->getUuidPropertyName());
 		$this->assertSame(array(), $classSchema->getIdentityProperties());
+		$this->assertFalse($classSchema->isAggregateRoot());
 	}
 
 }

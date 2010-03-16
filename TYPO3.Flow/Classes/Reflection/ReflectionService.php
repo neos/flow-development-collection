@@ -911,6 +911,7 @@ class ReflectionService {
 					$classSchema->setAggregateRoot(TRUE);
 				}
 			} elseif ($this->isClassTaggedWith($className, 'valueobject')) {
+				$this->checkValueObjectRequirements($className);
 				$classSchema->setModelType(\F3\FLOW3\Reflection\ClassSchema::MODELTYPE_VALUEOBJECT);
 			}
 
@@ -926,6 +927,27 @@ class ReflectionService {
 				}
 			}
 			$this->classSchemata[$className] = $classSchema;
+		}
+	}
+
+	/**
+	 * Checks if the given class meets the requirements for a value object, i.e.
+	 * does have a constructor and does not have any setter methods.
+	 *
+	 * @param string $className
+	 * @return void
+	 * @throws \F3\FLOW3\Reflection\Exception\InvalidValueObjectException
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function checkValueObjectRequirements($className) {
+		$methods = $this->getClassMethodNames($className);
+		if (array_search('__construct', $methods) === FALSE) {
+			throw new \F3\FLOW3\Reflection\Exception\InvalidValueObjectException('A value object must have a constructor, "' . $className . '" does not have one.', 1268740874);
+		}
+		foreach ($methods as $method) {
+			if (substr($method, 0, 3) === 'set') {
+				throw new \F3\FLOW3\Reflection\Exception\InvalidValueObjectException('A value object must not have setters, "' . $className . '" does.', 1268740878);
+			}
 		}
 	}
 

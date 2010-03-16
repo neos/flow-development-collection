@@ -175,13 +175,15 @@ class ClassSchema {
 	 * @param integer $modelType The model type, one of the MODELTYPE_* constants.
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setModelType($modelType) {
-		if ($modelType < self::MODELTYPE_ENTITY || $modelType > self::MODELTYPE_VALUEOBJECT) throw new \InvalidArgumentException('"' . $modelType . '" is an invalid model type.', 1212519195);
+		if ($modelType !== self::MODELTYPE_ENTITY && $modelType !== self::MODELTYPE_VALUEOBJECT) throw new \InvalidArgumentException('"' . $modelType . '" is an invalid model type.', 1212519195);
 		$this->modelType = $modelType;
 		if ($modelType === self::MODELTYPE_VALUEOBJECT) {
 			$this->uuidPropertyName = NULL;
 			$this->identityProperties = array();
+			$this->aggregateRoot = FALSE;
 		}
 	}
 
@@ -204,6 +206,7 @@ class ClassSchema {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setAggregateRoot($isRoot) {
+		if ($this->modelType === self::MODELTYPE_VALUEOBJECT && $isRoot === TRUE) throw new \RuntimeException('Value objects must not be aggregate roots (have a repository)', 1268739172);
 		$this->aggregateRoot = $isRoot;
 	}
 
@@ -270,7 +273,7 @@ class ClassSchema {
 			throw new \InvalidArgumentException('Property "' . $propertyName . '" must be added to the class schema before it can be marked as identity property.', 1233775407);
 		}
 		if ($this->properties[$propertyName]['lazy'] === TRUE) {
-			throw new \InvalidArgumentException('Property "' . $propertyName . '" must not be makred for lazy loading to be marked as identity property.', 1239896904);
+			throw new \InvalidArgumentException('Property "' . $propertyName . '" must not be marked for lazy loading to be marked as identity property.', 1239896904);
 		}
 
 		$this->identityProperties[$propertyName] = $this->properties[$propertyName]['type'];
