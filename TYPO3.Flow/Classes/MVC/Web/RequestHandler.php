@@ -38,7 +38,7 @@ class RequestHandler implements \F3\FLOW3\MVC\RequestHandlerInterface {
 	/**
 	 * @var \F3\FLOW3\Utility\Environment
 	 */
-	protected $utilityEnvironment;
+	protected $environment;
 
 	/**
 	 * @var \F3\FLOW3\MVC\Dispatcher
@@ -66,7 +66,7 @@ class RequestHandler implements \F3\FLOW3\MVC\RequestHandlerInterface {
 			\F3\FLOW3\MVC\Dispatcher $dispatcher,
 			\F3\FLOW3\MVC\Web\RequestBuilder $requestBuilder) {
 		$this->objectManager = $objectManager;
-		$this->utilityEnvironment = $utilityEnvironment;
+		$this->environment = $utilityEnvironment;
 		$this->dispatcher = $dispatcher;
 		$this->requestBuilder = $requestBuilder;
 	}
@@ -103,7 +103,7 @@ class RequestHandler implements \F3\FLOW3\MVC\RequestHandlerInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function canHandleRequest() {
-		return ($this->utilityEnvironment->getRequestMethod() !== NULL);
+		return ($this->environment->getRequestMethod() !== NULL);
 	}
 
 	/**

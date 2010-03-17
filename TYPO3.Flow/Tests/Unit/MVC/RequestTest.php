@@ -104,6 +104,64 @@ class RequestTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
+	 * @dataProvider caseSensitiveObjectNames
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setControllerObjectNameSplitsTheGivenObjectNameIntoItsParts($objectName, array $parts) {
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
+		$mockObjectManager->expects($this->at(0))->method('getCaseSensitiveObjectName')->will($this->returnValue($objectName));
+
+		$request = $this->getAccessibleMock('F3\FLOW3\MVC\Request', array('dummy'));
+		$request->injectObjectManager($mockObjectManager);
+
+		$request->setControllerObjectName($objectName);
+		$this->assertSame($parts['controllerPackageKey'], $request->_get('controllerPackageKey'));
+		$this->assertSame($parts['controllerSubpackageKey'], $request->_get('controllerSubpackageKey'));
+		$this->assertSame($parts['controllerName'], $request->_get('controllerName'));
+	}
+
+	/**
+	 * 
+	 */
+	public function caseSensitiveObjectNames() {
+		return array(
+			array(
+				'F3\Foo\Controller\BarController',
+				array(
+					'controllerPackageKey' => 'Foo',
+					'controllerSubpackageKey' => '',
+					'controllerName' => 'Bar',
+				)
+			),
+			array(
+				'F3\Foo\Bar\Controller\BazController',
+				array(
+					'controllerPackageKey' => 'Foo',
+					'controllerSubpackageKey' => 'Bar',
+					'controllerName' => 'Baz',
+				)
+			),
+			array(
+				'F3\Foo\Controller\Bar\BazController',
+				array(
+					'controllerPackageKey' => 'Foo',
+					'controllerSubpackageKey' => '',
+					'controllerName' => 'Bar\Baz',
+				)
+			),
+			array(
+				'F3\Foo\Controller\Bar\Baz\QuuxController',
+				array(
+					'controllerPackageKey' => 'Foo',
+					'controllerSubpackageKey' => '',
+					'controllerName' => 'Bar\Baz\Quux',
+				)
+			)
+		);
+	}
+
+	/**
+	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function aSingleArgumentCanBeSetWithSetArgumentAndRetrievedWithGetArgument() {

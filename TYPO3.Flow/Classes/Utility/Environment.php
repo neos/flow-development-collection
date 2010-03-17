@@ -296,6 +296,7 @@ class Environment {
 
 	/**
 	 * Returns the request method as found in the SERVER environment.
+	 * Examples: "GET", "POST", 'DELETE' ...
 	 *
 	 * @return string The request method
 	 * @author Robert Lemke <robert@typo3.org>

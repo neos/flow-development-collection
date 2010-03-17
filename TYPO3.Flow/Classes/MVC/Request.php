@@ -163,6 +163,40 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	}
 
 	/**
+	 * Explicitly sets the object name of the controller
+	 *
+	 * @param string $controllerObjectName The fully qualified controller object name
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
+	 */
+	public function setControllerObjectName($controllerObjectName) {
+		$controllerObjectName = $this->objectManager->getCaseSensitiveObjectName($controllerObjectName);
+
+		if ($controllerObjectName === FALSE) {
+			throw new \F3\FLOW3\Object\Exception\UnknownObjectException('The object "' . $controllerObjectName . '" is not registered.', 1268844071);
+		}
+
+		$matches = array();
+		preg_match('/
+			^F3
+			\\\\(?P<packageKey>[^\\\\]+)
+			\\\\
+			(
+				(?P<subPackageKey>[^\\\\]+)\\\\Controller
+			|
+				Controller
+			)
+			\\\\(?P<controllerName>[a-z\\\\]+)Controller
+			$/ix', $controllerObjectName, $matches
+		);
+		
+		$this->controllerPackageKey = $matches['packageKey'];
+		$this->controllerSubpackageKey = (isset($matches['subPackageKey'])) ? $matches['subPackageKey'] : '';
+		$this->controllerName = $matches['controllerName'];
+	}
+
+	/**
 	 * Sets the package key of the controller.
 	 *
 	 * @param string $packageKey The package key.
