@@ -34,7 +34,7 @@ class {modelName} {
 <f:for each="{fieldDefinitions}" as="fieldDefinition" key="fieldName">
 	/**
 	 * The <k:inflect.humanizeCamelCase lowercase="true">{fieldName}</k:inflect.humanizeCamelCase>
-	 * @var <k:rawValue>{fieldDefinition.type}</k:rawValue>
+	 * @var <f:raw>{fieldDefinition.type}</f:raw>
 	 */
 	protected ${fieldName};
 </f:for>
@@ -42,7 +42,7 @@ class {modelName} {
 	/**
 	 * Get the <k:inflect.humanizeCamelCase>{modelName}</k:inflect.humanizeCamelCase>'s <k:inflect.humanizeCamelCase lowercase="true">{fieldName}</k:inflect.humanizeCamelCase>
 	 *
-	 * @return <k:rawValue>{fieldDefinition.type}</k:rawValue> The <k:inflect.humanizeCamelCase>{modelName}</k:inflect.humanizeCamelCase>'s <k:inflect.humanizeCamelCase lowercase="true">{fieldName}</k:inflect.humanizeCamelCase>
+	 * @return <f:raw>{fieldDefinition.type}</f:raw> The <k:inflect.humanizeCamelCase>{modelName}</k:inflect.humanizeCamelCase>'s <k:inflect.humanizeCamelCase lowercase="true">{fieldName}</k:inflect.humanizeCamelCase>
 	 */
 	public function get<k:uppercaseFirst>{fieldName}</k:uppercaseFirst>() {
 		return $this->{fieldName};
@@ -51,10 +51,10 @@ class {modelName} {
 	/**
 	 * Sets this <k:inflect.humanizeCamelCase>{modelName}</k:inflect.humanizeCamelCase>'s <k:inflect.humanizeCamelCase lowercase="true">{fieldName}</k:inflect.humanizeCamelCase>
 	 *
-	 * @param <k:rawValue>{fieldDefinition.type}</k:rawValue> ${fieldName} The <k:inflect.humanizeCamelCase>{modelName}</k:inflect.humanizeCamelCase>'s <k:inflect.humanizeCamelCase lowercase="true">{fieldName}</k:inflect.humanizeCamelCase>
+	 * @param <f:raw>{fieldDefinition.type}</f:raw> ${fieldName} The <k:inflect.humanizeCamelCase>{modelName}</k:inflect.humanizeCamelCase>'s <k:inflect.humanizeCamelCase lowercase="true">{fieldName}</k:inflect.humanizeCamelCase>
 	 * @return void
 	 */
-	public function set<k:uppercaseFirst>{fieldName}</k:uppercaseFirst>(<f:if condition="{fieldDefinition.typeHint}"><k:rawValue>{fieldDefinition.typeHint}</k:rawValue> </f:if>${fieldName}) {
+	public function set<k:uppercaseFirst>{fieldName}</k:uppercaseFirst>(<f:if condition="{fieldDefinition.typeHint}"><f:raw>{fieldDefinition.typeHint}</f:raw> </f:if>${fieldName}) {
 		$this->{fieldName} = ${fieldName};
 	}
 </f:for>

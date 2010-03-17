@@ -58,6 +58,15 @@ class Inflector {
 		return $result;
 	}
 
+	/**
+	 * Splits a string at lowercase/uppcase transitions and insert the glue
+	 * character in between.
+	 *
+	 * @param string $camelCased
+	 * @param string $glue
+	 * @return string
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
 	protected function spacify($camelCased, $glue = ' ') {
 		return preg_replace('/([a-z0-9])([A-Z])/', '$1' . $glue . '$2', $camelCased);
 	}

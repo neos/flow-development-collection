@@ -31,10 +31,10 @@ namespace F3\Kickstart\Service;
 class GeneratorService {
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectFactoryInterface
+	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 * @inject
 	 */
-	protected $objectFactory;
+	protected $objectManager;
 
 	/**
 	 * @var \F3\FLOW3\Package\PackageManagerInterface
@@ -204,6 +204,8 @@ class GeneratorService {
 		foreach ($fieldDefinitions as &$fieldDefinition) {
 			if ($fieldDefinition['type'] == 'bool') {
 				$fieldDefinition['type'] = 'boolean';
+			} elseif ($fieldDefinition['type'] == 'int') {
+				$fieldDefinition['type'] = 'integer';
 			} else if (preg_match('/^[A-Z]/', $fieldDefinition['type'])) {
 				if (class_exists($fieldDefinition['type'])) {
 					$fieldDefinition['type'] = '\\' . $fieldDefinition['type'];
@@ -241,7 +243,7 @@ class GeneratorService {
 	 * @return string
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	protected function renderTemplate($templatePathAndFilename, $contextVariables) {
+	protected function renderTemplate($templatePathAndFilename, array $contextVariables) {
 		$templateSource = \F3\FLOW3\Utility\Files::getFileContents($templatePathAndFilename, FILE_TEXT);
 		if ($templateSource === FALSE) {
 			throw new \F3\Fluid\Core\RuntimeException('The template file "' . $templatePathAndFilename . '" could not be loaded.', 1225709595);
@@ -258,14 +260,11 @@ class GeneratorService {
 	 *
 	 * @param array $contextVariables
 	 */
-	protected function buildRenderingContext($contextVariables) {
-		$variableContainer = $this->objectFactory->create('F3\Fluid\Core\ViewHelper\TemplateVariableContainer', $contextVariables);
+	protected function buildRenderingContext(array $contextVariables) {
+		$renderingContext = $this->objectManager->create('F3\Fluid\Core\Rendering\RenderingContext');
 
-		$renderingContext = $this->objectFactory->create('F3\Fluid\Core\Rendering\RenderingContext');
-		$renderingContext->setTemplateVariableContainer($variableContainer);
-
-		$viewHelperVariableContainer = $this->objectFactory->create('F3\Fluid\Core\ViewHelper\ViewHelperVariableContainer');
-		$renderingContext->setViewHelperVariableContainer($viewHelperVariableContainer);
+		$renderingContext->setTemplateVariableContainer($this->objectManager->create('F3\Fluid\Core\ViewHelper\TemplateVariableContainer', $contextVariables));
+		$renderingContext->setViewHelperVariableContainer($this->objectManager->create('F3\Fluid\Core\ViewHelper\ViewHelperVariableContainer'));
 
 		return $renderingContext;
 	}
