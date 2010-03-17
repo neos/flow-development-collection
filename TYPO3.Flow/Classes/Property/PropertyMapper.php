@@ -368,17 +368,19 @@ class PropertyMapper {
 				}
 
 				$constructorSignature = $this->reflectionService->getMethodParameters($targetType, '__construct');
-				$constructorArguments = array($targetType);
+				$constructorArguments = array();
 				foreach ($constructorSignature as $constructorArgumentName => $constructorArgumentInformation) {
 					if (array_key_exists($constructorArgumentName, $propertyValue)) {
 						$constructorArguments[] = $propertyValue[$constructorArgumentName];
 						unset($propertyValue[$constructorArgumentName]);
-					} elseif (!$constructorArgumentInformation['optional']) {
+					} elseif ($constructorArgumentInformation['optional'] === TRUE) {
+						$constructorArguments[] = $constructorArgumentInformation['defaultValue'];
+					} else {
 						throw new \F3\FLOW3\Property\Exception\InvalidTargetException('Missing constructor argument "' . $constructorArgumentName . '" for value object of type "' .$targetType . '".' , 1268734872);
 					}
 				}
 
-				$newObject = call_user_func_array(array($this->objectManager, 'create'), $constructorArguments);
+				$newObject = call_user_func_array(array($this->objectManager, 'create'), array_merge(array($targetType), $constructorArguments));
 				if (count($propertyValue)) {
 					if ($this->map(array_keys($propertyValue), $propertyValue, $newObject)) {
 						return $newObject;

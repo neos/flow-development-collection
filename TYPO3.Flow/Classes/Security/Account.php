@@ -52,13 +52,12 @@ class Account {
 	protected $credentialsSource;
 
 	/**
-	 * @var F3\Party\Domain\Model\Party
+	 * @var \F3\Party\Domain\Model\Party
 	 */
 	protected $party;
 
 	/**
-	 * Array of F3\FLOW3\Security\Policy\Role objects
-	 * @var array
+	 * @var array<\F3\FLOW3\Security\Policy\Role>
 	 */
 	protected $roles = array();
 

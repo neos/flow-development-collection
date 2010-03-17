@@ -153,10 +153,10 @@ class ValidatorResolver {
 		$validatorConjunctions = array();
 
 		$methodParameters = $this->reflectionService->getMethodParameters($className, $methodName);
-		if (!count($methodParameters)) {
-				// early return in case no parameters were found.
+		if (count($methodParameters) === 0) {
 			return $validatorConjunctions;
 		}
+
 		foreach ($methodParameters as $parameterName => $methodParameter) {
 			$validatorConjunction = $this->createValidator('F3\FLOW3\Validation\Validator\ConjunctionValidator');
 
@@ -207,7 +207,7 @@ class ValidatorResolver {
 	 * Example: $dataType is F3\Foo\Domain\Model\Quux, then the Validator will be found if it has the
 	 * name F3\Foo\Domain\Validator\QuuxValidator
 	 *
-	 * @param string $dataType The data type to build the validation conjunction for. Needs to be the fully qualified object name.
+	 * @param string $dataType The data type to build the validation conjunction for. Needs to be the fully qualified class name.
 	 * @return F3\FLOW3\Validation\Validator\ConjunctionValidator The validator conjunction or NULL
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Sebastian Kurfürst <sbastian@typo3.org>
@@ -222,6 +222,15 @@ class ValidatorResolver {
 
 			foreach ($this->reflectionService->getClassPropertyNames($dataType) as $classPropertyName) {
 				$classPropertyTagsValues = $this->reflectionService->getPropertyTagsValues($dataType, $classPropertyName);
+
+				$subDataType = trim(implode('' , $classPropertyTagsValues['var']));
+				if (class_exists($subDataType)) {
+					$subObjectValidator = $this->buildBaseValidatorConjunction($subDataType);
+					if ($subObjectValidator !== NULL) {
+						$objectValidator->addPropertyValidator($classPropertyName, $subObjectValidator);
+					}
+				}
+
 				if (!isset($classPropertyTagsValues['validate'])) continue;
 
 				foreach ($classPropertyTagsValues['validate'] as $validateValue) {

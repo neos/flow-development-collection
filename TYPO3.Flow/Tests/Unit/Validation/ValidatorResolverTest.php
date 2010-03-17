@@ -63,7 +63,6 @@ class ValidatorResolverTest extends \F3\Testing\BaseTestCase {
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
 		$mockObjectManager->expects($this->at(0))->method('isRegistered')->with('Foo')->will($this->returnValue(FALSE));
 		$mockObjectManager->expects($this->at(1))->method('isRegistered')->with('F3\FLOW3\Validation\Validator\FooValidator')->will($this->returnValue(TRUE));
-
 		$validatorResolver = $this->getAccessibleMock('F3\FLOW3\Validation\ValidatorResolver', array('dummy'), array($mockObjectManager));
 		$this->assertSame('F3\FLOW3\Validation\Validator\FooValidator', $validatorResolver->_call('resolveValidatorObjectName', 'Foo'));
 	}

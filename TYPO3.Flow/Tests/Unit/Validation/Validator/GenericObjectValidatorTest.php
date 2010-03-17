@@ -34,9 +34,18 @@ class GenericObjectValidatorTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function isValidReturnsFalseIfTheValueIsNoObject() {
+	public function isValidReturnsFalseIfTheValueIsNoObjectAndNotNull() {
 		$validator = $this->getMock('F3\FLOW3\Validation\Validator\GenericObjectValidator', array('addError', 'addErrorsForProperty'));
 		$this->assertFalse($validator->isValid('foo'));
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function isValidReturnsTrueIfTheValueIsNull() {
+		$validator = $this->getMock('F3\FLOW3\Validation\Validator\GenericObjectValidator', array('addError', 'addErrorsForProperty'));
+		$this->asserttrue($validator->isValid(NULL));
 	}
 
 	/**

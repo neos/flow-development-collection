@@ -48,6 +48,10 @@ class GenericObjectValidator extends \F3\FLOW3\Validation\Validator\AbstractObje
 	 * @api
 	 */
 	public function isValid($value) {
+		if ($value === NULL) {
+			return TRUE;
+		}
+
 		if (!is_object($value)) {
 			$this->addError('Value is no object.', 1241099148);
 			return FALSE;

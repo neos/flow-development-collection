@@ -64,7 +64,7 @@ class StringLengthValidator extends \F3\FLOW3\Validation\Validator\AbstractValid
 			if (isset($this->options['minimum']) && isset($this->options['maximum'])) {
 				$this->addError('The length of the given string was not between ' . $this->options['minimum'] . ' and ' . $this->options['maximum'] . ' characters.', 1238108067);
 			} elseif (isset($this->options['minimum'])) {
-				$this->addError('The length of the given string less than ' . $this->options['minimum'] . ' characters.', 1238108068);
+				$this->addError('The length of the given string is less than ' . $this->options['minimum'] . ' characters.', 1238108068);
 			} else {
 				$this->addError('The length of the given string exceeded ' . $this->options['maximum'] . ' characters.', 1238108069);
 			}

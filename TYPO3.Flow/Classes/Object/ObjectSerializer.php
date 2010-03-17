@@ -116,7 +116,7 @@ class ObjectSerializer {
 			return $this->objectsAsArray;
 		}
 
-		$className = get_class($object);
+		$className = ($object instanceof \F3\FLOW3\AOP\ProxyInterface) ? $object->FLOW3_AOP_Proxy_getProxyTargetClassName() : get_class($object);
 
 		$propertyArray = array();
 		foreach ($this->reflectionService->getClassPropertyNames($className) as $propertyName) {
