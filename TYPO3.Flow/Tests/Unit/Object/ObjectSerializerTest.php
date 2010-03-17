@@ -669,10 +669,11 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 		$className = uniqid('AOPProxyClass');
 		$object = $this->getMock('F3\FLOW3\AOP\ProxyInterface', array(), array(), $className, FALSE);
 		$object->expects($this->once())->method('FLOW3_AOP_Proxy_getProperty')->with('someProperty')->will($this->returnValue('someValue'));
+		$object->expects($this->once())->method('FLOW3_AOP_Proxy_getProxyTargetClassName')->will($this->returnValue('ProxyTargetClassName'));
 
 		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService', array(), array(), '', FALSE);
-		$mockReflectionService->expects($this->any())->method('getClassPropertyNames')->with($className)->will($this->returnValue(array('someProperty')));
-		$mockReflectionService->expects($this->any())->method('isPropertyTaggedWith')->with($className, 'someProperty', 'transient')->will($this->returnValue(FALSE));
+		$mockReflectionService->expects($this->any())->method('getClassPropertyNames')->with('ProxyTargetClassName')->will($this->returnValue(array('someProperty')));
+		$mockReflectionService->expects($this->any())->method('isPropertyTaggedWith')->with('ProxyTargetClassName', 'someProperty', 'transient')->will($this->returnValue(FALSE));
 
 		$objectSerializerClassName = $this->buildAccessibleProxy('F3\FLOW3\Object\ObjectSerializer');
 		$objectSerializer = new $objectSerializerClassName($this->getMock('F3\FLOW3\Session\SessionInterface', array(), array(), '', FALSE));
