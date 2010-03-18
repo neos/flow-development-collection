@@ -49,9 +49,11 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 		$objectSerializer = new \F3\FLOW3\Object\ObjectSerializer($this->getMock('F3\FLOW3\Session\SessionInterface', array(), array(), '', FALSE));
 		$objectSerializer->injectReflectionService($mockReflectionService);
 
+		$someObject = new $className();
 		$expectedPropertyArray = array(
-			$className => array(
+			spl_object_hash($someObject) => array(
 				'className' => $className,
+				'topLevelItem' => TRUE,
 				'properties' => array(
 					'privateProperty' => array (
 						'type' => 'simple',
@@ -69,9 +71,7 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 			)
 		);
 
-		$someObject = new $className();
-
-		$this->assertEquals($expectedPropertyArray, $objectSerializer->serializeObjectAsPropertyArray($className, $someObject), 'The object was not serialized correctly as property array.');
+		$this->assertEquals($expectedPropertyArray, $objectSerializer->serializeObjectAsPropertyArray($someObject), 'The object was not serialized correctly as property array.');
 	}
 
 	/**
@@ -93,10 +93,10 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 		$objectSerializer->expects($this->once())->method('buildStorageArrayForArrayProperty')->with(array(1,2,3))->will($this->returnValue('storable array'));
 
 		$someObject = new $className();
-
 		$expectedPropertyArray = array(
-			$className => array(
+			spl_object_hash($someObject) => array(
 				'className' => $className,
+				'topLevelItem' => TRUE,
 				'properties' => array(
 					'arrayProperty' => array(
 						'type' => 'array',
@@ -106,7 +106,7 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 			)
 		);
 
-		$this->assertEquals($expectedPropertyArray, $objectSerializer->serializeObjectAsPropertyArray($className, $someObject), 'The array property was not serialized correctly.');
+		$this->assertEquals($expectedPropertyArray, $objectSerializer->serializeObjectAsPropertyArray($someObject), 'The array property was not serialized correctly.');
 	}
 
 	/**
@@ -132,10 +132,10 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 		$objectSerializer->expects($this->once())->method('buildStorageArrayForArrayProperty')->with(array(1,2,3))->will($this->returnValue('storable array'));
 
 		$someObject = new $className();
-
 		$expectedPropertyArray = array(
-			$className => array(
+			spl_object_hash($someObject) => array(
 				'className' => $className,
+				'topLevelItem' => TRUE,
 				'properties' => array(
 					'arrayObjectProperty' => array(
 						'type' => 'ArrayObject',
@@ -145,7 +145,7 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 			)
 		);
 
-		$this->assertEquals($expectedPropertyArray, $objectSerializer->serializeObjectAsPropertyArray($className, $someObject), 'The ArrayObject property was not serialized correctly.');
+		$this->assertEquals($expectedPropertyArray, $objectSerializer->serializeObjectAsPropertyArray($someObject), 'The ArrayObject property was not serialized correctly.');
 	}
 
 	/**
@@ -185,8 +185,9 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 		$objectHash = spl_object_hash($someObject->getObjectProperty());
 
 		$expectedPropertyArray = array(
-			$className1 => array(
+			spl_object_hash($someObject) => array(
 				'className' => $className1,
+				'topLevelItem' => TRUE,
 				'properties' => array(
 					'objectProperty' => array(
 						'type' => 'object',
@@ -196,11 +197,12 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 			),
 			$objectHash => array(
 				'className' => $className2,
+				'topLevelItem' => FALSE,
 				'properties' => array(),
 			)
 		);
 
-		$this->assertEquals($expectedPropertyArray, $objectSerializer->serializeObjectAsPropertyArray($className1, $someObject), 'The object property was not serialized correctly.');
+		$this->assertEquals($expectedPropertyArray, $objectSerializer->serializeObjectAsPropertyArray($someObject), 'The object property was not serialized correctly.');
 	}
 
 	/**
@@ -259,8 +261,9 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 		$objectHash1 = spl_object_hash($object->getProperty1());
 		$objectHash3 = spl_object_hash($object->getProperty3());
 		$expectedArray = array(
-			$className => array(
+			spl_object_hash($object) => array(
 				'className' => $className,
+				'topLevelItem' => TRUE,
 				'properties' => array(
 					'property1' => array(
 						'type' => 'object',
@@ -274,15 +277,17 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 			),
 			$objectHash1 => array(
 				'className' => $propertyClassName1,
+				'topLevelItem' => FALSE,
 				'properties' => array(),
 			),
 			$objectHash3 => array(
 				'className' => $propertyClassName3,
+				'topLevelItem' => FALSE,
 				'properties' => array(),
 			)
 		);
 
-		$this->assertEquals($expectedArray, $objectSerializer->serializeObjectAsPropertyArray($className, $object), 'The singleton has not been skipped.');
+		$this->assertEquals($expectedArray, $objectSerializer->serializeObjectAsPropertyArray($object), 'The singleton has not been skipped.');
 	}
 
 	/**
@@ -307,9 +312,11 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 		$objectSerializer = new $objectSerializerClassName($this->getMock('F3\FLOW3\Session\SessionInterface', array(), array(), '', FALSE));
 		$objectSerializer->injectReflectionService($mockReflectionService);
 
+		$someObject = new $className();
 		$expectedPropertyArray = array(
-			$className => array(
+			spl_object_hash($someObject) => array(
 				'className' => $className,
+				'topLevelItem' => TRUE,
 				'properties' => array(
 					'privateProperty' => array (
 						'type' => 'simple',
@@ -323,9 +330,7 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 			)
 		);
 
-		$someObject = new $className();
-
-		$this->assertEquals($expectedPropertyArray, $objectSerializer->serializeObjectAsPropertyArray($className, $someObject), 'The object was not stored correctly as property array.');
+		$this->assertEquals($expectedPropertyArray, $objectSerializer->serializeObjectAsPropertyArray($someObject), 'The object was not stored correctly as property array.');
 	}
 
 	/**
@@ -369,6 +374,7 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 
 		$expectedArray = array(
 			'className' => $sessionClassName,
+			'topLevelItem' => TRUE,
 			'properties' => array(
 				'entityProperty' => array(
 					'type' => 'persistenceObject',
@@ -383,8 +389,8 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 		$sessionObject = new $sessionClassName();
 		$sessionObject->entityProperty = $entityObject;
 
-		$objectsAsArray = $objectSerializer->serializeObjectAsPropertyArray('myObjectName', $sessionObject);
-		$this->assertEquals($expectedArray, $objectsAsArray['myObjectName']);
+		$objectsAsArray = $objectSerializer->serializeObjectAsPropertyArray($sessionObject);
+		$this->assertEquals($expectedArray, $objectsAsArray[spl_object_hash($sessionObject)]);
 	}
 
 	/**
@@ -429,6 +435,7 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 
 		$expectedArray = array(
 			'className' => $sessionClassName,
+			'topLevelItem' => TRUE,
 			'properties' => array(
 				'entityProperty' => array(
 					'type' => 'persistenceObject',
@@ -443,8 +450,8 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 		$sessionObject = new $sessionClassName();
 		$sessionObject->entityProperty = $entityObject;
 
-		$objectsAsArray = $objectSerializer->serializeObjectAsPropertyArray('myObjectName', $sessionObject);
-		$this->assertEquals($expectedArray, $objectsAsArray['myObjectName']);
+		$objectsAsArray = $objectSerializer->serializeObjectAsPropertyArray($sessionObject);
+		$this->assertEquals($expectedArray, $objectsAsArray[spl_object_hash($sessionObject)]);
 	}
 
 	/**
@@ -485,40 +492,38 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 		$object3 = $this->getMock($className, array(), array(), $className3, FALSE);
 
 		$objectsAsArray = array(
-			$className1 => array(
+			spl_object_hash($object1) => array(
 				'className' => $className1,
+				'topLevelItem' => TRUE,
 				'properties' => array(1),
 			),
-			$className2 => array(
+			spl_object_hash($object2) => array(
 				'className' => $className2,
+				'topLevelItem' => TRUE,
 				'properties' => array(2),
 			),
-			'someReferencedObject1' => array(),
-			$className3 => array(
+			'someReferencedObject1' => array('topLevelItem' => FALSE,),
+			spl_object_hash($object3) => array(
 				'className' => $className3,
+				'topLevelItem' => TRUE,
 				'properties' => array(3),
 			),
-			'someReferencedObject2' => array(),
-			'someReferencedObject3' => array(),
+			'someReferencedObject2' => array('topLevelItem' => FALSE,),
+			'someReferencedObject3' => array('topLevelItem' => FALSE,),
 		);
 
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManager', array(), array(), '', FALSE);
-		$mockObjectManager->expects($this->at(0))->method('isRegistered')->with($className1)->will($this->returnValue(TRUE));
-		$mockObjectManager->expects($this->at(1))->method('isRegistered')->with($className2)->will($this->returnValue(TRUE));
-		$mockObjectManager->expects($this->at(2))->method('isRegistered')->with('someReferencedObject1')->will($this->returnValue(FALSE));
-		$mockObjectManager->expects($this->at(3))->method('isRegistered')->with($className3)->will($this->returnValue(TRUE));
-		$mockObjectManager->expects($this->at(4))->method('isRegistered')->with('someReferencedObject2')->will($this->returnValue(FALSE));
-		$mockObjectManager->expects($this->at(5))->method('isRegistered')->with('someReferencedObject3')->will($this->returnValue(FALSE));
+		$mockObjectManager->expects($this->any())->method('isRegistered')->will($this->returnValue(TRUE));
 
 		$objectSerializer = $this->getAccessibleMock('F3\FLOW3\Object\ObjectSerializer', array('reconstituteObject', 'createEmptyObject'), array(), '', FALSE);
-		$objectSerializer->expects($this->at(0))->method('reconstituteObject')->with($objectsAsArray[$className1])->will($this->returnValue($object1));
-		$objectSerializer->expects($this->at(1))->method('reconstituteObject')->with($objectsAsArray[$className2])->will($this->returnValue($object2));
-		$objectSerializer->expects($this->at(2))->method('reconstituteObject')->with($objectsAsArray[$className3])->will($this->returnValue($object3));
+		$objectSerializer->expects($this->at(0))->method('reconstituteObject')->with($objectsAsArray[spl_object_hash($object1)])->will($this->returnValue($object1));
+		$objectSerializer->expects($this->at(1))->method('reconstituteObject')->with($objectsAsArray[spl_object_hash($object2)])->will($this->returnValue($object2));
+		$objectSerializer->expects($this->at(2))->method('reconstituteObject')->with($objectsAsArray[spl_object_hash($object3)])->will($this->returnValue($object3));
 
 		$objectSerializer->injectObjectManager($mockObjectManager);
 
 		$objects = $objectSerializer->deserializeObjectsArray($objectsAsArray);
-		$this->assertEquals(array($className1 => $object1, $className2 => $object2, $className3 => $object3), $objects, 'Reconstituted objects were not deserialized correctly.');
+		$this->assertEquals(array(spl_object_hash($object1) => $object1, spl_object_hash($object2) => $object2, spl_object_hash($object3) => $object3), $objects, 'Reconstituted objects were not deserialized correctly.');
 	}
 
 	/**
@@ -576,7 +581,7 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 		$objectName = spl_object_hash($mockObject);
 
 		$objectSerializer = $this->getAccessibleMock('F3\FLOW3\Object\ObjectSerializer', array('serializeObjectAsPropertyArray'), array(), '', FALSE);
-		$objectSerializer->expects($this->once())->method('serializeObjectAsPropertyArray')->with($objectName, $mockObject);
+		$objectSerializer->expects($this->once())->method('serializeObjectAsPropertyArray')->with($mockObject);
 
 		$arrayProperty = array(
 			'key1' => 1,
@@ -636,9 +641,12 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 
 		$objectHash1 = spl_object_hash($propertyClass1);
 		$objectHash2 = spl_object_hash($propertyClass2);
+
+		$object = new $className($propertyClass1, $propertyClass2);
 		$expectedArray = array(
-			$className => array(
+			spl_object_hash($object) => array(
 				'className' => $className,
+				'topLevelItem' => TRUE,
 				'properties' => array(
 					'SplObjectProperty' => array(
 						'type' => 'SplObjectStorage',
@@ -648,17 +656,17 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 			),
 			$objectHash1 => array(
 				'className' => $propertyClassName1,
+				'topLevelItem' => FALSE,
 				'properties' => array(),
 			),
 			$objectHash2 => array(
 				'className' => $propertyClassName2,
+				'topLevelItem' => FALSE,
 				'properties' => array(),
 			),
 		);
 
-		$object = new $className($propertyClass1, $propertyClass2);
-
-		$this->assertEquals($expectedArray, $objectSerializer->serializeObjectAsPropertyArray($className, $object));
+		$this->assertEquals($expectedArray, $objectSerializer->serializeObjectAsPropertyArray($object));
 	}
 
 	/**
@@ -679,7 +687,7 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 		$objectSerializer = new $objectSerializerClassName($this->getMock('F3\FLOW3\Session\SessionInterface', array(), array(), '', FALSE));
 		$objectSerializer->injectReflectionService($mockReflectionService);
 
-		$objectSerializer->serializeObjectAsPropertyArray($className, $object);
+		$objectSerializer->serializeObjectAsPropertyArray($object);
 	}
 
 	/**

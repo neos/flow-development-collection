@@ -106,13 +106,12 @@ class ObjectSerializer {
 	/**
 	 * Serializes an object as property array.
 	 *
-	 * @param string $objectName Name of the object the object is made for
 	 * @param object $object The object to store in the registry
 	 * @return array The property array
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function serializeObjectAsPropertyArray($objectName, $object) {
-		if (isset($this->objectsAsArray[$objectName])) {
+	public function serializeObjectAsPropertyArray($object, $isTopLevelItem = TRUE) {
+		if (isset($this->objectsAsArray[spl_object_hash($object)])) {
 			return $this->objectsAsArray;
 		}
 
@@ -142,7 +141,7 @@ class ObjectSerializer {
 				foreach ($propertyValue as $storedObject) {
 					$objectHash = spl_object_hash($storedObject);
 					$propertyArray[$propertyName]['value'][] = $objectHash;
-					$this->serializeObjectAsPropertyArray($objectHash, $storedObject);
+					$this->serializeObjectAsPropertyArray($storedObject, FALSE);
 				}
 			} elseif (is_object($propertyValue) && $propertyValue instanceof \ArrayObject) {
 				$propertyArray[$propertyName]['type'] = 'ArrayObject';
@@ -166,7 +165,7 @@ class ObjectSerializer {
 				$objectHash = spl_object_hash($propertyValue);
 				$propertyArray[$propertyName]['type'] = 'object';
 				$propertyArray[$propertyName]['value'] = $objectHash;
-				$this->serializeObjectAsPropertyArray($objectHash, $propertyValue);
+				$this->serializeObjectAsPropertyArray($propertyValue, FALSE);
 
 			} elseif (is_array($propertyValue)) {
 				$propertyArray[$propertyName]['type'] = 'array';
@@ -178,31 +177,13 @@ class ObjectSerializer {
 			}
 		}
 
-		$this->objectsAsArray[$objectName] = array(
+		$this->objectsAsArray[spl_object_hash($object)] = array(
 			'className' => $className,
+			'topLevelItem' => $isTopLevelItem,
 			'properties' => $propertyArray
 		);
 
 		return $this->objectsAsArray;
-	}
-
-	/**
-	 * Deserializes a given object tree and reinjects all dependencies.
-	 *
-	 * @param array $dataArray The serialized objects array
-	 * @return array The deserialized objects in an array
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function deserializeObjectsArray(array $dataArray) {
-		$this->objectsAsArray = $dataArray;
-		$objects = array();
-
-		foreach ($this->objectsAsArray as $objectName => $objectData) {
-			if (!$this->objectManager->isRegistered($objectName)) continue;
-			$objects[$objectName] = $this->reconstituteObject($objectData);
-		}
-
-		return $objects;
 	}
 
 	/**
@@ -224,12 +205,10 @@ class ObjectSerializer {
 				$storableArray[$key]['type'] = 'array';
 				$storableArray[$key]['value'] = $this->buildStorageArrayForArrayProperty($value);
 			} else if (is_object($value)) {
-				$objectName = spl_object_hash($value);
-
 				$storableArray[$key]['type'] = 'object';
-				$storableArray[$key]['value'] = $objectName;
+				$storableArray[$key]['value'] = spl_object_hash($value);
 
-				$this->serializeObjectAsPropertyArray($objectName, $value);
+				$this->serializeObjectAsPropertyArray($value, FALSE);
 			} else {
 				$storableArray[$key]['type'] = 'simple';
 				$storableArray[$key]['value'] = $value;
@@ -237,6 +216,25 @@ class ObjectSerializer {
 		}
 
 		return $storableArray;
+	}
+
+	/**
+	 * Deserializes a given object tree and reinjects all dependencies.
+	 *
+	 * @param array $dataArray The serialized objects array
+	 * @return array The deserialized objects in an array
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function deserializeObjectsArray(array $dataArray) {
+		$this->objectsAsArray = $dataArray;
+		$objects = array();
+
+		foreach ($this->objectsAsArray as $objectHash => $objectData) {
+			if (!$objectData['topLevelItem'] || !$this->objectManager->isRegistered($objectData['className'])) continue;
+			$objects[$objectHash] = $this->reconstituteObject($objectData);
+		}
+
+		return $objects;
 	}
 
 	/**

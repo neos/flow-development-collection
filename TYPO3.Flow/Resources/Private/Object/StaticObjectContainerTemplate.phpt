@@ -55,9 +55,10 @@ if (\F3\FLOW3\Core\Bootstrap::REVISION === '###FLOW3_REVISION###') {
 			if ($this->session->hasKey('F3_FLOW3_Object_ObjectContainer') === TRUE) {
 				$objectsAsArray = $this->session->getData('F3_FLOW3_Object_ObjectContainer');
 				if (is_array($objectsAsArray)) {
-					foreach ($this->objectSerializer->deserializeObjectsArray($objectsAsArray) as $objectName => $object) {
-						if (isset($this->objects[$objectName])) {
-							$this->objects[$objectName]['i'] = $object;
+					foreach ($this->objectSerializer->deserializeObjectsArray($objectsAsArray) as $object) {
+						$className = ($object instanceof \F3\FLOW3\AOP\ProxyInterface) ? $object->FLOW3_AOP_Proxy_getProxyTargetClassName() : get_class($object);
+						if (isset($this->objects[$className]) && $this->objects[$className]['s'] === \F3\FLOW3\Object\Container\ObjectContainerInterface::SCOPE_SESSION) {
+							$this->objects[$className]['i'] = $object;
 						}
 					}
 				}
@@ -97,9 +98,9 @@ if (\F3\FLOW3\Core\Bootstrap::REVISION === '###FLOW3_REVISION###') {
 			$this->objectSerializer->clearState();
 
 			$objectsAsArray = array();
-			foreach($this->objects as $objectName => $information) {
+			foreach($this->objects as $information) {
 				if ($information['s'] === self::SCOPE_SESSION && isset($information['i'])) {
-					$objectsAsArray = array_merge($objectsAsArray, $this->objectSerializer->serializeObjectAsPropertyArray($objectName, $information['i']));
+					$objectsAsArray = array_merge($objectsAsArray, $this->objectSerializer->serializeObjectAsPropertyArray($information['i']));
 				}
 			}
 			$this->session->putData('F3_FLOW3_Object_ObjectContainer', $objectsAsArray);

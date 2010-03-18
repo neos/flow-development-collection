@@ -53,9 +53,6 @@ interface RequestHandlerInterface {
 	 * request. An integer > 0 means "I want to handle this request" where
 	 * "100" is default. "0" means "I am a fallback solution".
 	 *
-	 * If the handler cannot handle the request, a LogicException should be
-	 * thrown.
-	 *
 	 * @return integer The priority of the request handler
 	 * @api
 	 */
