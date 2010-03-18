@@ -798,7 +798,7 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 		$sqlString .= ' WHERE ' . implode(' ', $sql['where']);
 
 		if (count($sql['orderings'])) {
-			$sqlString .= 'ORDER BY ' . implode(', ', $sql['orderings']);
+			$sqlString .= ' ORDER BY ' . implode(', ', $sql['orderings']);
 		}
 
 		if ($query->getLimit() !== NULL) {
@@ -821,8 +821,11 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 		$parameters[] = $query->getType();
 		$sql['fields'][] = '"_entity"."identifier" AS "identifier"';
 		$sql['fields'][] = '"_entity"."type" AS "classname"';
-		if ($query->getConstraint() === NULL) {
+		if ($query->getConstraint() === NULL && $query->getOrderings() === NULL) {
 			$sql['tables'][] = '"entities" AS "_entity"';
+			$sql['where'][] = '"_entity"."type"=?';
+		} elseif ($query->getConstraint() === NULL) {
+			$sql['tables'][] = '"entities" AS "_entity" INNER JOIN "properties_data" AS "d" ON "_entity"."identifier" = "d"."parent"';
 			$sql['where'][] = '"_entity"."type"=?';
 		} else {
 			$sql['tables'][] = '"entities" AS "_entity" INNER JOIN "properties_data" AS "d" ON "_entity"."identifier" = "d"."parent"';
