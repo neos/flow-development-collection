@@ -55,11 +55,6 @@ abstract class AbstractBackend implements \F3\FLOW3\Persistence\Backend\BackendI
 	protected $persistenceSession;
 
 	/**
-	 * @var \F3\FLOW3\SignalSlot\Dispatcher
-	 */
-	protected $signalDispatcher;
-
-	/**
 	 * @var \SplObjectStorage
 	 */
 	protected $aggregateRootObjects;
@@ -107,18 +102,6 @@ abstract class AbstractBackend implements \F3\FLOW3\Persistence\Backend\BackendI
 	}
 
 	/**
-	 * Injects the Singal Slot Dispatcher (because classes of the Persistence
-	 * subpackage are blacklisted by the AOP framework).
-	 *
-	 * @param \F3\FLOW3\SignalSlot\Dispatcher $signalDispatcher The Signal Slot Dispatcher
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function injectSignalDispatcher(\F3\FLOW3\SignalSlot\Dispatcher $signalDispatcher) {
-		$this->signalDispatcher = $signalDispatcher;
-	}
-
-	/**
 	 * Signalizes that the given object has been removed
 	 *
 	 * @param object $object The object that will be removed
@@ -127,9 +110,7 @@ abstract class AbstractBackend implements \F3\FLOW3\Persistence\Backend\BackendI
 	 * @signal
 	 * @api
 	 */
-	protected function emitRemovedObject($object) {
-		$this->signalDispatcher->dispatch(__CLASS__, __FUNCTION__, func_get_args());
-	}
+	protected function emitRemovedObject($object) {}
 
 	/**
 	 * Signalizes that the given object has been persisted
@@ -141,9 +122,7 @@ abstract class AbstractBackend implements \F3\FLOW3\Persistence\Backend\BackendI
 	 * @signal
 	 * @api
 	 */
-	protected function emitPersistedObject($object, $objectState) {
-		$this->signalDispatcher->dispatch(__CLASS__, __FUNCTION__, func_get_args());
-	}
+	protected function emitPersistedObject($object, $objectState) {}
 
 	/**
 	 * Initializes the backend

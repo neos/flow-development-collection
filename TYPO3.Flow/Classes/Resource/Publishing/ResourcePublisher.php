@@ -63,11 +63,23 @@ class ResourcePublisher {
 	 * Publishes a persistent resource
 	 *
 	 * @param \F3\FLOW3\Resource\Resource $resource The resource to publish
+	 * @param string $title An optional title which is used in the public URI pointing to the published resource
 	 * @return mixed Either the web URI of the published resource or FALSE if the resource source file doesn't exist
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function publishPersistentResource(\F3\FLOW3\Resource\Resource $resource, $title = '') {
 		return $this->resourcePublishingTarget->publishPersistentResource($resource, $title);
+	}
+
+	/**
+	 * Unpublishes a persistent resource
+	 *
+	 * @param \F3\FLOW3\Resource\Resource $resource The resource to unpublish
+	 * @return boolean TRUE if at least one file was removed, FALSE otherwise
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function unpublishPersistentResource(\F3\FLOW3\Resource\Resource $resource) {
+		return $this->resourcePublishingTarget->unpublishPersistentResource($resource);
 	}
 
 	/**

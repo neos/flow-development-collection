@@ -211,6 +211,28 @@ class FileSystemPublishingTargetTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function unpublishPersistentResourceMirrorsTheGivenResource() {
+		$this->marktestSkipped('It seems glob() does not work on vfsStream...');
+
+		$mockResource = $this->getMock('F3\FLOW3\Resource\Resource', array(), array(), '', FALSE);
+		$mockResource->expects($this->atLeastOnce())->method('getHash')->will($this->returnValue('ac9b6187f4c55b461d69e22a57925ff61ee89cb2'));
+
+		mkdir('vfs://Foo/Web');
+		mkdir('vfs://Foo/Web/Persistent');
+		file_put_contents('vfs://Foo/Web/Persistent/ac9b6187f4c55b461d69e22a57925ff61ee89cb2.jpg', 'some data');
+
+		$publishingTarget = $this->getAccessibleMock('F3\FLOW3\Resource\Publishing\FileSystemPublishingTarget', array('dummy'));
+		$publishingTarget->_set('resourcesPublishingPath', 'vfs://Foo/Web/');
+
+		$this->assertTrue(file_exists('vfs://Foo/Web/Persistent/ac9b6187f4c55b461d69e22a57925ff61ee89cb2.jpg'));
+		$this->assertTrue($publishingTarget->unpublishPersistentResource($mockResource));
+		$this->assertFalse(file_exists('vfs://Foo/Web/Persistent/ac9b6187f4c55b461d69e22a57925ff61ee89cb2.jpg'));
+	}
+
+	/**
+	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getStaticResourcesWebBaseUriReturnsJustThat() {

@@ -218,7 +218,9 @@ class ResourceManager {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function deleteResource($resource) {
+			// instanceof instead of type hinting so it can be used as slot
 		if ($resource instanceof \F3\FLOW3\Resource\Resource) {
+			$this->resourcePublisher->unpublishPersistentResource($resource);
 			if (is_file($this->persistentResourcesStorageBaseUri . $resource->getHash())) {
 				unlink($this->persistentResourcesStorageBaseUri . $resource->getHash());
 				return TRUE;

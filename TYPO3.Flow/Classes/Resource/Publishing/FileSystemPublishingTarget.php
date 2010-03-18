@@ -154,6 +154,22 @@ class FileSystemPublishingTarget extends \F3\FLOW3\Resource\Publishing\AbstractR
 	}
 
 	/**
+	 * Unpublishes a persistent resource in the web accessible resources directory.
+	 *
+	 * @param \F3\FLOW3\Resource\Resource $resource The resource to unpublish
+	 * @return boolean TRUE if at least one file was removed, FALSE otherwise
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function unpublishPersistentResource(\F3\FLOW3\Resource\Resource $resource) {
+		$result = FALSE;
+		foreach (glob($this->resourcesPublishingPath . 'Persistent/' . $resource->getHash() . '*') as $publishedResourcePathAndFilename) {
+			unlink($publishedResourcePathAndFilename);
+			$result = TRUE;
+		}
+		return $result;
+	}
+
+	/**
 	 * Returns the base URI pointing to the published static resources
 	 *
 	 * @return string The base URI pointing to web accessible static resources

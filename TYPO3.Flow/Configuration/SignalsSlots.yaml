@@ -16,5 +16,5 @@ F3\FLOW3\Core\Bootstrap:
     - [ F3\FLOW3\Core\LockManager, unlockSite ]
 
 F3\FLOW3\Persistence\Backend\GenericPdo\Backend:
-  removingObject:
+  removedObject:
     - [ F3\FLOW3\Resource\ResourceManager, deleteResource, y ]
