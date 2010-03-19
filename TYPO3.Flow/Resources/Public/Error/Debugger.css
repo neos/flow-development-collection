@@ -1,0 +1,168 @@
+/*                                                                        *
+ * This style sheet belongs to the FLOW3 framework.                       *
+ *                                                                        *
+ * It is free software; you can redistribute it and/or modify it under    *
+ * the terms of the GNU Lesser General Public License as published by the *
+ * Free Software Foundation, either version 3 of the License, or (at your *
+ * option) any later version.                                             *
+ *                                                                        *
+ * This script is distributed in the hope that it will be useful, but     *
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
+ * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser       *
+ * General Public License for more details.                               *
+ *                                                                        *
+ * You should have received a copy of the GNU Lesser General Public       *
+ * License along with the script.                                         *
+ * If not, see http://www.gnu.org/licenses/lgpl.html                      *
+ *                                                                        *
+ * The TYPO3 project - inspiring people to share!                         *
+ *                                                                        */
+
+.F3-FLOW3-Error-Debugger-VarDump {
+	display: block;
+	float: left;
+	width: 80%;
+	position: relative;
+	left: 150px;
+	z-index: 9100;
+	margin: 20px 0 0 0;
+}
+.F3-FLOW3-Error-Debugger-VarDump-Top {
+	height: 20px;
+	position: relative;
+}
+.F3-FLOW3-Error-Debugger-VarDump-TopLeft {
+	background-image: url("/_Resources/Static/Packages/FLOW3/Error/FloatingWindow/TopLeft.png");
+	position: relative;
+	float: left;
+	right: 0px;
+	top: -22px;
+	width: 30px;
+	height: 42px;
+}
+.F3-FLOW3-Error-Debugger-VarDump-TopRight {
+	background-image: url("/_Resources/Static/Packages/FLOW3/Error/FloatingWindow/TopRight.png");
+	position: absolute;
+	right: 0px;
+	top: -22px;
+	width: 40px;
+	height: 42px;
+}
+.F3-FLOW3-Error-Debugger-VarDump-TopCenter {
+	background-image: url("/_Resources/Static/Packages/FLOW3/Error/FloatingWindow/Top.png");
+
+	position: relative;
+	top: -22px;
+	height: 20px;
+	padding: 22px 0 0 20px;
+	margin: 0 40px 0 30px;
+	font-size: 12px;
+	font-family: Lucida Grande, sans-serif;
+}
+.F3-FLOW3-Error-Debugger-VarDump-Center {
+	background: #b9b9b9;
+	position: relative;
+	margin: 0 40px 0 30px;
+}
+
+.F3-FLOW3-Error-Debugger-VarDump-Dump {
+	background: #b9b9b9;
+	background-image: url("/_Resources/Static/Packages/FLOW3/Error/LinesBackground.png");
+	background-position: 0 20px;
+	position: relative;
+	padding: 20px 10px 20px 20px;
+}
+
+.F3-FLOW3-Error-Debugger-VarDump-Dump, .F3-FLOW3-Error-Debugger-VarDump-Dump pre, .F3-FLOW3-Error-Debugger-VarDump-Dump p, .F3-FLOW3-Error-Debugger-VarDump-Dump a, .F3-FLOW3-Error-Debugger-VarDump-Dump strong, .F3-FLOW3-Error-Debugger-VarDump-Dump .debug-string{
+	font-family: Monospaced, Lucida Console, monospace;
+	font-size: 11px;
+	line-height: 18px;
+}
+
+.F3-FLOW3-Error-Debugger-VarDump-Dump .debug-string {
+	color: black;
+}
+
+.F3-FLOW3-Error-Debugger-VarDump-Dump .debug-object {
+	color: #004fb0;
+	padding-right: 4px;
+}
+
+.F3-FLOW3-Error-Debugger-VarDump-Dump .debug-unregistered {
+	background-color: #dce1e8;
+}
+
+.F3-FLOW3-Error-Debugger-VarDump-Dump .debug-scope, .F3-FLOW3-Error-Debugger-VarDump-Dump .debug-ptype, .F3-FLOW3-Error-Debugger-VarDump-Dump .debug-proxy, .F3-FLOW3-Error-Debugger-VarDump-Dump .debug-filtered {
+	color: white;
+	font-size: 10px;
+	padding: 1px 4px 2px 4px;
+}
+
+.F3-FLOW3-Error-Debugger-VarDump-Dump .debug-scope {
+	background-color: #3e7fe1;
+}
+
+.F3-FLOW3-Error-Debugger-VarDump-Dump .debug-ptype {
+	background-color: #87cd3b;
+}
+
+.F3-FLOW3-Error-Debugger-VarDump-Dump .debug-proxy {
+	background-color: #b0000a;
+}
+
+.F3-FLOW3-Error-Debugger-VarDump-Dump .debug-filtered {
+	background-color: #8c8c8c;
+}
+
+.F3-FLOW3-Error-Debugger-VarDump-Dump .debug-seeabove {
+	text-decoration: none;
+	font-style: italic;
+	font-weight: normal;
+}
+
+.F3-FLOW3-Error-Debugger-VarDump-Dump .debug-property {
+	color: #555555;
+	padding: 1px 2px;
+}
+
+.F3-FLOW3-Error-Debugger-VarDump-Left {
+	position: absolute;
+	left: -30px;
+	width: 30px;
+	height: 100%;
+	background-image: url("/_Resources/Static/Packages/FLOW3/Error/FloatingWindow/Left.png");
+}
+.F3-FLOW3-Error-Debugger-VarDump-Right {
+	position: absolute;
+	right: -40px;
+	width: 40px;
+	height: 100%;
+	background-image: url("/_Resources/Static/Packages/FLOW3/Error/FloatingWindow/Right.png");
+}
+.F3-FLOW3-Error-Debugger-VarDump-Bottom {
+	position: relative;
+}
+.F3-FLOW3-Error-Debugger-VarDump-BottomLeft {
+	background-image: url("/_Resources/Static/Packages/FLOW3/Error/FloatingWindow/BottomLeft.png");
+	position: absolute;
+	left: 0px;
+	width: 30px;
+	height: 41px;
+}
+.F3-FLOW3-Error-Debugger-VarDump-BottomRight {
+	background-image: url("/_Resources/Static/Packages/FLOW3/Error/FloatingWindow/BottomRight.png");
+	position: absolute;
+	right: 0px;
+	top: 0px;
+	width: 40px;
+	height: 41px;
+}
+.F3-FLOW3-Error-Debugger-VarDump-BottomCenter {
+	background-image: url("/_Resources/Static/Packages/FLOW3/Error/FloatingWindow/Bottom.png");
+	background-repeat: repeat-x;
+	position: relative;
+	padding: 22px 0 0 20px;
+	margin: 0 40px 0 30px;
+	font-size: 14px;
+	height: 40px;
+}
