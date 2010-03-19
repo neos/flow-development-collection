@@ -251,6 +251,7 @@ class Bootstrap {
 		$errorHandler = new $this->settings['error']['errorHandler']['className'];
 		$errorHandler->setExceptionalErrors($this->settings['error']['errorHandler']['exceptionalErrors']);
 		$this->exceptionHandler = new $this->settings['error']['exceptionHandler']['className'];
+		$this->classLoader->loadClass('F3\FLOW3\Error\Debugger');
 	}
 
 	/**
@@ -267,6 +268,8 @@ class Bootstrap {
 		$this->objectManager->setContext($this->context);
 
 		$this->objectManager->initialize();
+
+		\F3\FLOW3\Error\Debugger::injectObjectManager($this->objectManager);
 	}
 
 	/**
