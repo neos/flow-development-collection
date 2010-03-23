@@ -147,7 +147,6 @@ class ObjectContainerBuilder {
 			}
 
 			$methodNameNumber = $this->createdMethodNumbers[$objectConfiguration->getObjectName()];
-			$methodArguments = (TRUE || count($arguments) > 0) ? '$a=array()' : '';
 			$createInstanceArgumentsAssignments = $this->buildCreateInstanceArgumentsAssignments($arguments);
 			$propertyInjectionCommands = $this->buildPropertyInjectionCommands($objectName, $className, $setterProperties);
 			$createInstanceCommand = $this->buildCreateInstanceCommand($className, $arguments, $customFactoryObjectName, $customFactoryMethodName);
@@ -157,7 +156,7 @@ class ObjectContainerBuilder {
 			$lifecycleShutdownRegistrationCommand = $this->buildLifecycleShutdownRegistrationCommand($objectConfiguration);
 
 			$buildMethodsCode .= '
-	protected function c' . $methodNameNumber . '(' . $methodArguments . ') {' .
+	protected function c' . $methodNameNumber . '($a=array()) {' .
 		$createInstanceArgumentsAssignments . 
 		$createInstanceCommand . '
 		$this->i' . $methodNameNumber .'($o); ' .
@@ -314,6 +313,9 @@ class ObjectContainerBuilder {
 						}
 					break;
 				}
+			} else {
+				$index = $argument->getIndex() - 1;
+				$assignments[] = 'if (!isset($a[' . $index . '])) $a[' . $index . '] = NULL';
 			}
 		}
 		return count($assignments) > 0 ? "\n\t\t" . implode(";\n\t\t", $assignments) . ";" : '';
