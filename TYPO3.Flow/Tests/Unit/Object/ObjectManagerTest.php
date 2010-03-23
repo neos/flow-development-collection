@@ -77,6 +77,7 @@ class ObjectManagerTest extends \F3\Testing\BaseTestCase {
 		$objectManager->injectConfigurationManager($mockConfigurationManager);
 		$objectManager->injectClassLoader($this->getMock('F3\FLOW3\Resource\ClassLoader', array(), array(), '', FALSE));
 
+		$_FILES = array(); // avoid error in Environment->initializeObject()
 		$objectManager->initialize();
 
 		$this->assertTrue(class_exists($id, FALSE));
@@ -111,6 +112,7 @@ class ObjectManagerTest extends \F3\Testing\BaseTestCase {
 		$objectManager->_set('staticObjectContainerClassName', $this->mockStaticObjectContainerClassName);
 		$objectManager->injectConfigurationManager($mockConfigurationManager);
 
+		$_FILES = array(); // avoid error in Environment->initializeObject()
 		$objectManager->initialize();
 
 		$this->assertType('F3\FLOW3\Object\Container\DynamicObjectContainer', $objectManager->_get('objectContainer'));
