@@ -151,10 +151,9 @@ class ConfigurationManager {
 					foreach ($this->packages as $package) {
 						if (!isset($this->configurations[self::CONFIGURATION_TYPE_SETTINGS][$package->getPackageKey()])) {
 							$this->loadConfiguration($configurationType, $this->packages);
-							break;
 						}
-						return $this->configurations[self::CONFIGURATION_TYPE_SETTINGS];
 					}
+					return $this->configurations[self::CONFIGURATION_TYPE_SETTINGS];
 				}
 			case self::CONFIGURATION_TYPE_PACKAGE :
 			case self::CONFIGURATION_TYPE_OBJECTS :

@@ -133,8 +133,10 @@ class ObjectContainerBuilder {
 			$customFactoryObjectName = $objectConfiguration->getFactoryObjectName();
 			$customFactoryMethodName = $objectConfiguration->getFactoryMethodName();
 
-			if (interface_exists($className) === TRUE) continue;
-			if (class_exists($className) === FALSE && $customFactoryObjectName === NULL) throw new \F3\FLOW3\Object\Exception\UnknownClassException('Class "' . $className . '" which was specified in the object configuration of object "' . $objectConfiguration->getObjectName() . '" does not exist.', 1264590458);
+			if ($customFactoryObjectName === NULL) {
+				if (interface_exists($className) === TRUE ) continue;
+				if (class_exists($className) === FALSE) throw new \F3\FLOW3\Object\Exception\UnknownClassException('Class "' . $className . '" which was specified in the object configuration of object "' . $objectConfiguration->getObjectName() . '" does not exist.', 1264590458);
+			}
 
 			$setterProperties = $objectConfiguration->getProperties();
 			$arguments = $objectConfiguration->getArguments();

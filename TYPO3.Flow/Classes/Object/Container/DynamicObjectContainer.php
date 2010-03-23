@@ -168,8 +168,10 @@ class DynamicObjectContainer extends \F3\FLOW3\Object\Container\AbstractObjectCo
 			$this->objectsBeingBuilt[$objectName] = TRUE;
 			$className = $objectConfiguration->getClassName();
 			$customFactoryObjectName = $objectConfiguration->getFactoryObjectName();
-			if (interface_exists($className) === TRUE) throw new \F3\FLOW3\Object\Exception\InvalidClassException('No default implementation for the object type "' . $objectName . '" found in the object configuration. Cannot instantiate interface ' . $className . '.', 1238761260);
-			if (class_exists($className) === FALSE && $customFactoryObjectName === NULL) throw new \F3\FLOW3\Object\Exception\UnknownClassException('Class "' . $className . '" which was specified in the object configuration of object "' . $objectName . '" does not exist.', 1229967561);
+			if ($customFactoryObjectName === NULL) {
+				if (interface_exists($className) === TRUE) throw new \F3\FLOW3\Object\Exception\InvalidClassException('No default implementation for the object type "' . $objectName . '" found in the object configuration. Cannot instantiate interface ' . $className . '.', 1238761260);
+				if (class_exists($className) === FALSE) throw new \F3\FLOW3\Object\Exception\UnknownClassException('Class "' . $className . '" which was specified in the object configuration of object "' . $objectName . '" does not exist.', 1229967561);
+			}
 
 			$arguments = $objectConfiguration->getArguments();
 

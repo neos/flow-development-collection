@@ -272,7 +272,6 @@ F3\FLOW3\Log\Backend\NullBackend:
 F3\FLOW3\Log\SystemLoggerInterface:
   autowiring: off
   factoryObjectName: F3\FLOW3\Log\LoggerFactory
-  className: F3\FLOW3\Log\Logger
   arguments:
     1:
       value: FLOW3_System
