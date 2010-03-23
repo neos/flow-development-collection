@@ -41,11 +41,11 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 		$mockUriBuilder = $this->getMock('F3\FLOW3\MVC\Web\Routing\UriBuilder');
 		$mockUriBuilder->expects($this->once())->method('setRequest')->with($mockRequest);
 
-		$mockControllerContext = $this->getMock('F3\FLOW3\MVC\Controller\Context', array(), array(), '', FALSE);
+		$mockControllerContext = $this->getMock('F3\FLOW3\MVC\Controller\ControllerContext', array(), array(), '', FALSE);
 
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
 		$mockObjectManager->expects($this->at(0))->method('create')->with('F3\FLOW3\MVC\Web\Routing\UriBuilder')->will($this->returnValue($mockUriBuilder));
-		$mockObjectManager->expects($this->at(1))->method('create')->with('F3\FLOW3\MVC\Controller\Context')->will($this->returnValue($mockControllerContext));
+		$mockObjectManager->expects($this->at(1))->method('create')->with('F3\FLOW3\MVC\Controller\ControllerContext')->will($this->returnValue($mockControllerContext));
 
 		$mockResponse = $this->getMock('F3\FLOW3\MVC\Web\Response', array(), array(), '', FALSE);
 
@@ -184,7 +184,7 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function resolveViewUsesFluidTemplateViewIfTemplateIsAvailable() {
 		$mockSession = $this->getMock('F3\FLOW3\Session\SessionInterface');
-		$mockControllerContext = $this->getMock('F3\FLOW3\MVC\Controller\Context', array(), array(), '', FALSE);
+		$mockControllerContext = $this->getMock('F3\FLOW3\MVC\Controller\ControllerContext', array(), array(), '', FALSE);
 
 		$mockFluidTemplateView = $this->getMock('F3\FLOW3\MVC\View\ViewInterface', array('setControllerContext', 'getViewHelper', 'assign', 'assignMultiple', 'render', 'hasTemplate'));
 		$mockFluidTemplateView->expects($this->once())->method('setControllerContext')->with($mockControllerContext);
@@ -208,7 +208,7 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function resolveViewPreparesTheViewSpecifiedInTheRequestObject() {
 		$mockSession = $this->getMock('F3\FLOW3\Session\SessionInterface');
-		$mockControllerContext = $this->getMock('F3\FLOW3\MVC\Controller\Context', array(), array(), '', FALSE);
+		$mockControllerContext = $this->getMock('F3\FLOW3\MVC\Controller\ControllerContext', array(), array(), '', FALSE);
 
 		$mockFluidTemplateView = $this->getMock('F3\FLOW3\MVC\View\ViewInterface', array('setControllerContext', 'getViewHelper', 'assign', 'assignMultiple', 'render', 'hasTemplate'));
 		$mockFluidTemplateView->expects($this->once())->method('setControllerContext')->with($mockControllerContext);
@@ -240,7 +240,7 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 		$mockRequest->expects($this->once())->method('getControllerActionName')->will($this->returnValue('MyAction'));
 
 		$mockSession = $this->getMock('F3\FLOW3\Session\SessionInterface');
-		$mockControllerContext = $this->getMock('F3\FLOW3\MVC\Controller\Context', array(), array(), '', FALSE);
+		$mockControllerContext = $this->getMock('F3\FLOW3\MVC\Controller\ControllerContext', array(), array(), '', FALSE);
 
 		$mockFluidTemplateView = $this->getMock('F3\FLOW3\MVC\View\ViewInterface', array('setControllerContext', 'getViewHelper', 'assign', 'assignMultiple', 'render', 'hasTemplate'));
 		$mockFluidTemplateView->expects($this->once())->method('setControllerContext')->with($mockControllerContext);

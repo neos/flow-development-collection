@@ -48,7 +48,7 @@ abstract class AbstractView implements \F3\FLOW3\MVC\View\ViewInterface {
 	protected $objectManager;
 
 	/**
-	 * @var \F3\FLOW3\MVC\Controller\Context
+	 * @var \F3\FLOW3\MVC\Controller\ControllerContext
 	 */
 	protected $controllerContext;
 
@@ -77,11 +77,11 @@ abstract class AbstractView implements \F3\FLOW3\MVC\View\ViewInterface {
 	/**
 	 * Sets the current controller context
 	 *
-	 * @param \F3\FLOW3\MVC\Controller\Context $controllerContext
+	 * @param \F3\FLOW3\MVC\Controller\ControllerContext $controllerContext
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setControllerContext(\F3\FLOW3\MVC\Controller\Context $controllerContext) {
+	public function setControllerContext(\F3\FLOW3\MVC\Controller\ControllerContext $controllerContext) {
 		$this->controllerContext = $controllerContext;
 	}
 

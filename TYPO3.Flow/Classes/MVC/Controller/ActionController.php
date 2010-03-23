@@ -129,7 +129,7 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 		}
 
 		$this->mapRequestArgumentsToControllerArguments();
-		$this->controllerContext = $this->objectManager->create('F3\FLOW3\MVC\Controller\Context', $this->request, $this->response, $this->arguments, $this->argumentsMappingResults, $this->uriBuilder, $this->flashMessageContainer);
+		$this->controllerContext = $this->objectManager->create('F3\FLOW3\MVC\Controller\ControllerContext', $this->request, $this->response, $this->arguments, $this->argumentsMappingResults, $this->uriBuilder, $this->flashMessageContainer);
 		$this->view = $this->resolveView();
 		if ($this->view !== NULL) {
 			$this->view->assign('settings', $this->settings);

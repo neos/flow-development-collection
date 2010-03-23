@@ -55,11 +55,11 @@ class AbstractControllerTest extends \F3\Testing\BaseTestCase {
 		$mockResponse = $this->getMock('F3\FLOW3\MVC\Web\Response');
 
 		$mockUriBuilder = $this->getMock('F3\FLOW3\MVC\Web\Routing\UriBuilder');
-		$mockControllerContext = $this->getMock('F3\FLOW3\MVC\Controller\Context', array(), array(), '', FALSE);
+		$mockControllerContext = $this->getMock('F3\FLOW3\MVC\Controller\ControllerContext', array(), array(), '', FALSE);
 
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
 		$mockObjectManager->expects($this->at(0))->method('create')->with('F3\FLOW3\MVC\Web\Routing\UriBuilder')->will($this->returnValue($mockUriBuilder));
-		$mockObjectManager->expects($this->at(1))->method('create')->with('F3\FLOW3\MVC\Controller\Context')->will($this->returnValue($mockControllerContext));
+		$mockObjectManager->expects($this->at(1))->method('create')->with('F3\FLOW3\MVC\Controller\ControllerContext')->will($this->returnValue($mockControllerContext));
 
 		$controller = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\AbstractController', array('initializeArguments', 'initializeControllerArgumentsBaseValidators', 'mapRequestArgumentsToControllerArguments', 'buildControllerContext'), array(), '', FALSE);
 		$controller->_set('objectManager', $mockObjectManager);

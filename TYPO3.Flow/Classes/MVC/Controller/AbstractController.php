@@ -105,7 +105,7 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 
 	/**
 	 * Contains the controller context
-	 * @var \F3\FLOW3\MVC\Controller\Context
+	 * @var \F3\FLOW3\MVC\Controller\ControllerContext
 	 */
 	protected $controllerContext;
 
@@ -216,14 +216,14 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 
 		$this->initializeControllerArgumentsBaseValidators();
 		$this->mapRequestArgumentsToControllerArguments();
-		$this->controllerContext = $this->objectManager->create('F3\FLOW3\MVC\Controller\Context', $this->request, $this->response, $this->arguments, $this->argumentsMappingResults, $this->uriBuilder, $this->flashMessageContainer);
+		$this->controllerContext = $this->objectManager->create('F3\FLOW3\MVC\Controller\ControllerContext', $this->request, $this->response, $this->arguments, $this->argumentsMappingResults, $this->uriBuilder, $this->flashMessageContainer);
 	}
 
 	/**
 	 * Returns this controller's context.
 	 * Note that the context is only available after processRequest() has been called.
 	 *
-	 * @return \F3\FLOW3\MVC\Controller\Context The current controller context
+	 * @return \F3\FLOW3\MVC\Controller\ControllerContext The current controller context
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */

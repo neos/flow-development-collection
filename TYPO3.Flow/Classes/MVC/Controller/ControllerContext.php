@@ -33,7 +33,7 @@ namespace F3\FLOW3\MVC\Controller;
  * @api
  * @scope prototype
  */
-class Context {
+class ControllerContext {
 
 	/**
 	 * @var \F3\FLOW3\MVC\RequestInterface
