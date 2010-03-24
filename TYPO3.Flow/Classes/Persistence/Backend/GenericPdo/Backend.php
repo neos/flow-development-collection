@@ -36,6 +36,11 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 	protected $objectManager;
 
 	/**
+	 * @var \F3\FLOW3\Validation\ValidatorResolver
+	 */
+	protected $validatorResolver;
+
+	/**
 	 * @var \PDO
 	 */
 	protected $databaseHandle;
@@ -59,6 +64,17 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 	 */
 	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
+	}
+
+	/**
+	 * Injects the ValidatorResolver
+	 *
+	 * @param \F3\FLOW3\Validation\ValidatorResolver $validatorResolver
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function injectValidatorResolver(\F3\FLOW3\Validation\ValidatorResolver $validatorResolver) {
+		$this->validatorResolver = $validatorResolver;
 	}
 
 	/**
@@ -211,6 +227,7 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 				return $identifier;
 			}
 		} else {
+			$this->validateObject($object);
 			$identifier = $this->createObjectRecord($object, $parentIdentifier);
 			$objectState = self::OBJECTSTATE_NEW;
 		}
@@ -223,6 +240,9 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 			'properties' => $this->collectProperties($classSchema->getProperties(), $object, $identifier)
 		);
 		if (count($objectData['properties'])) {
+			if ($objectState === self::OBJECTSTATE_RECONSTITUTED) {
+				$this->validateObject($object);
+			}
 			$this->setProperties($objectData, $objectState);
 		}
 		if ($classSchema->getModelType() === \F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY) {
@@ -231,6 +251,25 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 		$this->emitPersistedObject($object, $objectState);
 
 		return $identifier;
+	}
+
+	/**
+	 * Validates the given object and throws an exception if validation fails.
+	 *
+	 * @param object $object
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function validateObject($object) {
+		$classSchema = $this->classSchemata[$object->FLOW3_AOP_Proxy_getProxyTargetClassName()];
+		$validator = $this->validatorResolver->getBaseValidatorConjunction($classSchema->getClassName());
+		if ($validator !== NULL && !$validator->isValid($object)) {
+			$errorMessages = '';
+			foreach ($validator->getErrors() as $error) {
+				$errorMessages .= (string)$error . PHP_EOL;
+			}
+			throw new \F3\FLOW3\Persistence\Exception\ObjectValidationFailedException('An instance of "' . $object->FLOW3_AOP_Proxy_getProxyTargetClassName() . '" failed to pass validation with ' . count($validator->getErrors()) . ' error(s): ' . PHP_EOL . $errorMessages);
+		}
 	}
 
 	/**
