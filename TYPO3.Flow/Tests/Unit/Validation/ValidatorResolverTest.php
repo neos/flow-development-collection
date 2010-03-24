@@ -59,6 +59,18 @@ class ValidatorResolverTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
+	public function resolveValidatorObjectNameRemovesALeadingBackslashFromThePassedType() {
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
+		$mockObjectManager->expects($this->any())->method('isRegistered')->with('Foo\\Bar')->will($this->returnValue(TRUE));
+
+		$validatorResolver = $this->getAccessibleMock('F3\FLOW3\Validation\ValidatorResolver', array('dummy'), array($mockObjectManager));
+		$this->assertSame('Foo\\Bar', $validatorResolver->_call('resolveValidatorObjectName', '\\Foo\\Bar'));
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
 	public function resolveValidatorObjectNameCanResolveShortNamesOfBuiltInValidators() {
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
 		$mockObjectManager->expects($this->at(0))->method('isRegistered')->with('Foo')->will($this->returnValue(FALSE));
@@ -176,28 +188,6 @@ class ValidatorResolverTest extends \F3\Testing\BaseTestCase {
 			array('\FLOW8\Blog\Domain\Validator\BlogValidator', '\FLOW8\Blog\Domain\Model\Blog'),
 			array('﻿\Domain\Validator\Content\PageValidator', '﻿\Domain\Model\Content\Page')
 		);
-	}
-
-	/**
-	 * @test
-	 * @dataProvider modelAndValidatorClassNames
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function buildBaseValidatorConjunctionAddsCustomValidatorToTheReturnedConjunction($validatorClassName, $modelClassName) {
-		$mockValidator = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
-
-		$mockConjunctionValidator = $this->getMock('F3\FLOW3\Validation\Validator\ConjunctionValidator', array(), array(), '', FALSE);
-		$mockConjunctionValidator->expects($this->once())->method('addValidator')->with($mockValidator);
-
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
-		$mockObjectManager->expects($this->at(0))->method('get')->with('F3\FLOW3\Validation\Validator\ConjunctionValidator')->will($this->returnValue($mockConjunctionValidator));
-
-		$validatorResolver = $this->getAccessibleMock('F3\FLOW3\Validation\ValidatorResolver', array('resolveValidatorObjectName', 'createValidator'), array($mockObjectManager));
-		$validatorResolver->expects($this->once())->method('createValidator')->with($validatorClassName)->will($this->returnValue($mockValidator));
-
-		$result = $validatorResolver->_call('buildBaseValidatorConjunction', $modelClassName);
-		$this->assertSame($mockConjunctionValidator, $result);
 	}
 
 	/**
@@ -351,6 +341,46 @@ class ValidatorResolverTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
+	 * @dataProvider modelAndValidatorClassNames
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function buildBaseValidatorConjunctionAddsCustomValidatorToTheReturnedConjunction($validatorClassName, $modelClassName) {
+		$mockValidator = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
+
+		$mockConjunctionValidator = $this->getMock('F3\FLOW3\Validation\Validator\ConjunctionValidator', array(), array(), '', FALSE);
+		$mockConjunctionValidator->expects($this->once())->method('count')->will($this->returnValue(1));
+		$mockConjunctionValidator->expects($this->once())->method('addValidator')->with($mockValidator);
+
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
+		$mockObjectManager->expects($this->at(0))->method('get')->with('F3\FLOW3\Validation\Validator\ConjunctionValidator')->will($this->returnValue($mockConjunctionValidator));
+
+		$validatorResolver = $this->getAccessibleMock('F3\FLOW3\Validation\ValidatorResolver', array('resolveValidatorObjectName', 'createValidator'), array($mockObjectManager));
+		$validatorResolver->expects($this->once())->method('createValidator')->with($validatorClassName)->will($this->returnValue($mockValidator));
+
+		$result = $validatorResolver->_call('buildBaseValidatorConjunction', $modelClassName);
+		$this->assertSame($mockConjunctionValidator, $result);
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function buildBaseValidatorConjunctionReturnsNullIfNoValidatorBuilt() {
+		$mockConjunctionValidator = $this->getMock('F3\FLOW3\Validation\Validator\ConjunctionValidator', array(), array(), '', FALSE);
+		$mockConjunctionValidator->expects($this->once())->method('count')->will($this->returnValue(0));
+
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
+		$mockObjectManager->expects($this->at(0))->method('get')->with('F3\FLOW3\Validation\Validator\ConjunctionValidator')->will($this->returnValue($mockConjunctionValidator));
+
+		$validatorResolver = $this->getAccessibleMock('F3\FLOW3\Validation\ValidatorResolver', array('createValidator'), array($mockObjectManager));
+		$validatorResolver->expects($this->once())->method('createValidator')->with('NonExistingClassNameValidator')->will($this->returnValue(NULL));
+
+		$this->assertNull($validatorResolver->_call('buildBaseValidatorConjunction', 'NonExistingClassName'));
+	}
+
+	/**
+	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
@@ -383,6 +413,7 @@ class ValidatorResolverTest extends \F3\Testing\BaseTestCase {
 
 		$mockConjunctionValidator = $this->getMock('F3\FLOW3\Validation\Validator\ConjunctionValidator', array(), array(), '', FALSE);
 		$mockConjunctionValidator->expects($this->once())->method('addValidator')->with($mockObjectValidator);
+		$mockConjunctionValidator->expects($this->once())->method('count')->will($this->returnValue(1));
 
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
 		$mockObjectManager->expects($this->at(0))->method('get')->with('F3\FLOW3\Validation\Validator\ConjunctionValidator')->will($this->returnValue($mockConjunctionValidator));

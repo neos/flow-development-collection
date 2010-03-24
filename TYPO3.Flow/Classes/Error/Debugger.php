@@ -42,10 +42,25 @@ class Debugger {
 	static protected $renderedObjects;
 
 	/**
-	 * Hardcoded list of FLOW3 sub packages (first 12 characters) which should not be displayed during debugging
+	 * Hardcoded list of FLOW3 class names (regex) which should not be displayed during debugging
 	 * @var array
 	 */
-	static protected $blacklistedSubPackages = array('F3\FLOW3\Con', 'F3\FLOW3\Err', 'F3\FLOW3\MVC', 'F3\FLOW3\Obj', 'F3\FLOW3\Pac', 'F3\FLOW3\Per', 'F3\FLOW3\Pro', 'F3\FLOW3\Ref', 'F3\FLOW3\Res', 'F3\FLOW3\Sec', 'F3\FLOW3\Uti', 'F3\Fluid\Vie');
+	static protected $blacklistedClassNames = '/
+		(F3\\\\FLOW3\\\\AOP.*)
+		(F3\\\\FLOW3\\\\Cac.*) |
+		(F3\\\\FLOW3\\\\Con.*) |
+		(F3\\\\FLOW3\\\\Uti.*) |
+		(F3\\\\FLOW3\\\\MVC\\\\Web\\\\Routing.*) |
+		(F3\\\\FLOW3\\\\Log.*) |
+		(F3\\\\FLOW3\\\\Obj.*) |
+		(F3\\\\FLOW3\\\\Pac.*) |
+		(F3\\\\FLOW3\\\\Per.*) |
+		(F3\\\\FLOW3\\\\Pro.*) |
+		(F3\\\\FLOW3\\\\Ref.*) |
+		(F3\\\\FLOW3\\\\Res.*) |
+		(F3\\\\FLOW3\\\\Sec.*) |
+		(F3\\\\Fluid\\\\.*)
+		/xs';
 
 	/**
 	 * Injects the Object Manager
@@ -84,7 +99,7 @@ class Debugger {
 			$dump = sprintf('\'<span class="debug-string">%s</span>\' (%s)', htmlspecialchars((strlen($variable) > 2000) ? substr($variable, 0, 2000) . '…' : $variable), strlen($variable));
 		} elseif (is_numeric($variable)) {
 			$dump = sprintf('%s %s', gettype($variable), $variable);
-		} elseif (is_array($variable)) {
+		} elseif (is_array($variable) || $variable instanceof \ArrayAccess) {
 			$dump = \F3\FLOW3\Error\Debugger::renderArrayDump($variable, $level + 1);
 		} elseif (is_object($variable)) {
 			$dump = \F3\FLOW3\Error\Debugger::renderObjectDump($variable, $level + 1);
@@ -105,7 +120,8 @@ class Debugger {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	static protected function renderArrayDump($array, $level) {
-		$dump = 'array ' . (count($array) ? '(' . count($array) .')' . chr(10) : '(empty)');
+		$type = is_array($array) ? 'array' : get_class($array);
+		$dump = $type . (count($array) ? '(' . count($array) .')' . chr(10) : '(empty)');
 		foreach ($array as $key => $value) {
 			$dump .= str_repeat(' ', $level) . self::renderDump($key, 0) . ' => ';
 			$dump .= self::renderDump($value, $level + 1) . chr(10);
@@ -176,10 +192,10 @@ class Debugger {
 		if ($renderProperties === TRUE) {
 
 			if ($object instanceof \SplObjectStorage) {
-				$dump .= sprintf(' (%s) ', count($object) ? count($object) . chr(10) : 'empty');
+				$dump .= ' (' . (count($object) ?: 'empty') . ')' . chr(10);
 				foreach ($object as $value) {
 					$dump .= str_repeat(' ', $level);
-					if (in_array(substr(get_class($value), 0, 12), self::$blacklistedSubPackages)) {
+					if (preg_match(self::$blacklistedClassNames, get_class($value)) !== 0) {
 						$dump .= self::renderObjectDump($value, 0, FALSE) . '<span class="debug-filtered">filtered</span>' . chr(10);
 					} else {
 						$dump .= self::renderDump($value, $level + 1) . chr(10);
@@ -195,7 +211,7 @@ class Debugger {
 					if (is_array($value)) {
 						$dump .= self::renderDump($value, $level + 1) . chr(10);
 					} elseif (is_object($value)) {
-						if (in_array(substr(get_class($value), 0, 12), self::$blacklistedSubPackages)) {
+						if (preg_match(self::$blacklistedClassNames, get_class($value)) !== 0) {
 							$dump .= self::renderObjectDump($value, 0, FALSE) . '<span class="debug-filtered">filtered</span>' . chr(10);
 						} else {
 							$dump .= self::renderDump($value, $level + 1) . chr(10);

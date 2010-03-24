@@ -127,15 +127,15 @@ class ValidatorResolver {
 	 * If no validator could be resolved (which usually means that no validation is necessary),
 	 * NULL is returned.
 	 *
-	 * @param string $dataType The data type to search a validator for. Usually the fully qualified object name
+	 * @param string $targetClassName Fully qualified class name of the target class, ie. the class which should be validated
 	 * @return F3\FLOW3\Validation\Validator\ConjunctionValidator The validator conjunction or NULL
 	 * @author Robert Lemke <robert@typo3.org
 	 */
-	public function getBaseValidatorConjunction($dataType) {
-		if (!isset($this->baseValidatorConjunctions[$dataType])) {
-			$this->baseValidatorConjunctions[$dataType] = $this->buildBaseValidatorConjunction($dataType);
+	public function getBaseValidatorConjunction($targetClassName) {
+		if (!isset($this->baseValidatorConjunctions[$targetClassName])) {
+			$this->baseValidatorConjunctions[$targetClassName] = $this->buildBaseValidatorConjunction($targetClassName);
 		}
-		return $this->baseValidatorConjunctions[$dataType];
+		return $this->baseValidatorConjunctions[$targetClassName];
 	}
 
 	/**
@@ -207,25 +207,25 @@ class ValidatorResolver {
 	 * Example: $dataType is F3\Foo\Domain\Model\Quux, then the Validator will be found if it has the
 	 * name F3\Foo\Domain\Validator\QuuxValidator
 	 *
-	 * @param string $dataType The data type to build the validation conjunction for. Needs to be the fully qualified class name.
+	 * @param string $targetClassName The data type to build the validation conjunction for. Needs to be the fully qualified class name.
 	 * @return F3\FLOW3\Validation\Validator\ConjunctionValidator The validator conjunction or NULL
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Sebastian Kurfürst <sbastian@typo3.org>
 	 */
-	protected function buildBaseValidatorConjunction($dataType) {
-		$validatorConjunction = $this->objectManager->get('F3\FLOW3\Validation\Validator\ConjunctionValidator');
+	protected function buildBaseValidatorConjunction($targetClassName) {
+		$conjunctionValidator = $this->objectManager->get('F3\FLOW3\Validation\Validator\ConjunctionValidator');
 
 			// Model based validator
-		if (class_exists($dataType)) {
+		if (class_exists($targetClassName)) {
 			$validatorCount = 0;
 			$objectValidator = $this->createValidator('F3\FLOW3\Validation\Validator\GenericObjectValidator');
 
-			foreach ($this->reflectionService->getClassPropertyNames($dataType) as $classPropertyName) {
-				$classPropertyTagsValues = $this->reflectionService->getPropertyTagsValues($dataType, $classPropertyName);
+			foreach ($this->reflectionService->getClassPropertyNames($targetClassName) as $classPropertyName) {
+				$classPropertyTagsValues = $this->reflectionService->getPropertyTagsValues($targetClassName, $classPropertyName);
 
-				$subDataType = trim(implode('' , $classPropertyTagsValues['var']));
-				if (class_exists($subDataType)) {
-					$subObjectValidator = $this->buildBaseValidatorConjunction($subDataType);
+				$propertyTargetClassName = trim(implode('' , $classPropertyTagsValues['var']));
+				if (class_exists($propertyTargetClassName)) {
+					$subObjectValidator = $this->buildBaseValidatorConjunction($propertyTargetClassName);
 					if ($subObjectValidator !== NULL) {
 						$objectValidator->addPropertyValidator($classPropertyName, $subObjectValidator);
 					}
@@ -238,24 +238,24 @@ class ValidatorResolver {
 					foreach ($parsedAnnotation['validators'] as $validatorConfiguration) {
 						$newValidator = $this->createValidator($validatorConfiguration['validatorName'], $validatorConfiguration['validatorOptions']);
 						if ($newValidator === NULL) {
-							throw new \F3\FLOW3\Validation\Exception\NoSuchValidatorException('Invalid validate annotation in ' . $dataType . '::' . $classPropertyName . ': Could not resolve class name for  validator "' . $validatorConfiguration['validatorName'] . '".', 1241098027);
+							throw new \F3\FLOW3\Validation\Exception\NoSuchValidatorException('Invalid validate annotation in ' . $targetClassName . '::' . $classPropertyName . ': Could not resolve class name for  validator "' . $validatorConfiguration['validatorName'] . '".', 1241098027);
 						}
 						$objectValidator->addPropertyValidator($classPropertyName, $newValidator);
 						$validatorCount ++;
 					}
 				}
 			}
-			if ($validatorCount > 0) $validatorConjunction->addValidator($objectValidator);
+			if ($validatorCount > 0) $conjunctionValidator->addValidator($objectValidator);
 		}
 
 			// Custom validator for the class
-		$possibleValidatorClassName = str_replace('\\Model\\', '\\Validator\\', $dataType) . 'Validator';
+		$possibleValidatorClassName = str_replace('\\Model\\', '\\Validator\\', $targetClassName) . 'Validator';
 		$customValidator = $this->createValidator($possibleValidatorClassName);
 		if ($customValidator !== NULL) {
-			$validatorConjunction->addValidator($customValidator);
+			$conjunctionValidator->addValidator($customValidator);
 		}
 
-		return $validatorConjunction;
+		return count($conjunctionValidator) > 0 ? $conjunctionValidator : NULL;
 	}
 
 	/**
@@ -337,6 +337,10 @@ class ValidatorResolver {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function resolveValidatorObjectName($validatorType) {
+		if ($validatorType[0] === '\\') {
+			$validatorType = substr($validatorType, 1);
+		}
+
 		if ($this->objectManager->isRegistered($validatorType)) return $validatorType;
 
 		$possibleClassName = 'F3\FLOW3\Validation\Validator\\' . $this->getValidatorType($validatorType) . 'Validator';
