@@ -84,7 +84,7 @@ class TextValidatorTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function textValidatorCreatesTheCorrectErrorIfTheSubjectContainsHtmlEntities() {
 		$textValidator = $this->getMock('F3\FLOW3\Validation\Validator\TextValidator', array('addError'), array(), '', FALSE);
-		$textValidator->expects($this->once())->method('addError')->with('The given subject was not a valid text (contained XML tags). Got: "<span style="color: #BBBBBB;">a nice text</span>"', 1221565786);
+		$textValidator->expects($this->once())->method('addError');
 		$textValidator->isValid('<span style="color: #BBBBBB;">a nice text</span>');
 	}
 }

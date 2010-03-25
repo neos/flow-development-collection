@@ -411,7 +411,7 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sbastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @expectedException F3\FLOW3\MVC\Exception\InvalidArgumentTypeException
 	 */
 	public function initializeActionMethodArgumentsThrowsExceptionIfDataTypeWasNotSpecified() {
@@ -443,7 +443,7 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sbastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function initializeActionMethodValidatorsCorrectlyRegistersValidatorsBasedOnDataType() {
 		$mockController = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\ActionController', array('fooAction'), array(), '', FALSE);
@@ -478,7 +478,7 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sbastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function initializeActionMethodValidatorsRegistersModelBasedValidators() {
 		$mockController = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\ActionController', array('fooAction'), array(), '', FALSE);
@@ -518,7 +518,7 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sbastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function initializeActionMethodValidatorsDoesNotRegisterModelBasedValidatorsIfDontValidateAnnotationIsSet() {
 		$mockController = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\ActionController', array('fooAction'), array(), '', FALSE);

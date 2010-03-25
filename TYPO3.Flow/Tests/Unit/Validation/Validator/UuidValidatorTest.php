@@ -66,7 +66,7 @@ class UuidValidatorTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function UUIDValidatorCreatesTheCorrectErrorIfTheSubjectIsInvalid() {
 		$validator = $this->getMock('F3\FLOW3\Validation\Validator\UuidValidator', array('addError'), array(), '', FALSE);
-		$validator->expects($this->once())->method('addError')->with('The given subject was not a valid UUID. Got: "e104e469-9030-4b98-babf-3990f07"', 1221565853);
+		$validator->expects($this->once())->method('addError');
 		$validator->isValid('e104e469-9030-4b98-babf-3990f07');
 	}
 }

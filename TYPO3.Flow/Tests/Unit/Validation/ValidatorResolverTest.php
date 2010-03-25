@@ -126,7 +126,7 @@ class ValidatorResolverTest extends \F3\Testing\BaseTestCase {
 	}
 
 	/**
-	 * dataProvider for parseValidatorAnnotationCanParseAnnotations
+	 * data provider for parseValidatorAnnotationCanParseAnnotations
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
@@ -162,6 +162,8 @@ class ValidatorResolverTest extends \F3\Testing\BaseTestCase {
 			array('$var Baz(Foo="2"), Bar(Quux=123, Pax="a weird \"string\" with *freaky* \\stuff")', array('argumentName' => 'var', 'validators' => array(
 							array('validatorName' => 'Baz', 'validatorOptions' => array('Foo' => '2')),
 							array('validatorName' => 'Bar', 'validatorOptions' => array('Quux' => '123', 'Pax' => 'a weird "string" with *freaky* \\stuff'))))),
+			array('$parentObject.propertyName MyValidator', array('argumentName' => 'parentObject.propertyName', 'validators' => array(
+						array('validatorName' => 'MyValidator', 'validatorOptions' => array())))),
 		);
 	}
 
@@ -180,19 +182,8 @@ class ValidatorResolverTest extends \F3\Testing\BaseTestCase {
 	}
 
 	/**
-	 * dataProvider for buildBaseValidatorConjunctionAddsCustomValidatorToTheReturnedConjunction
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function modelAndValidatorClassNames() {
-		return array(
-			array('\FLOW8\Blog\Domain\Validator\BlogValidator', '\FLOW8\Blog\Domain\Model\Blog'),
-			array('﻿\Domain\Validator\Content\PageValidator', '﻿\Domain\Model\Content\Page')
-		);
-	}
-
-	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sbastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function buildMethodArgumentsValidatorConjunctionsReturnsEmptyArrayIfMethodHasNoArguments() {
 		$mockController = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\ActionController', array('fooAction'), array(), '', FALSE);
@@ -271,6 +262,71 @@ class ValidatorResolverTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function buildMethodArgumentsValidatorConjunctionsBuildsNestedValidationRulesSpecifiedInMethodAnnotations() {
+		$mockObject = $this->getMock('stdClass', array('fooMethod'), array(), '', FALSE);
+
+		$methodParameters = array(
+			'arg1' => array(
+				'type' => '\F3\Package\Model\Foo'
+			),
+			'arg2' => array(
+				'type' => '\F3\Package\Model\Bar'
+			)
+
+		);
+		$methodTagsValues = array(
+			'param' => array(
+				'\F3\Package\Model\Foo $arg1',
+				'\F3\Package\Model\Bar $arg2'
+			),
+			'validate' => array(
+				'$arg1.sub1a Validator1',
+				'$arg2.sub2a.sub2b Validator2'
+			)
+		);
+
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService', array(), array(), '', FALSE);
+		$mockReflectionService->expects($this->once())->method('getMethodParameters')->with(get_class($mockObject), 'fooAction')->will($this->returnValue($methodParameters));
+		$mockReflectionService->expects($this->once())->method('getMethodTagsValues')->with(get_class($mockObject), 'fooAction')->will($this->returnValue($methodTagsValues));
+
+		$mockPropertyValidator1 = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface', array(), array(), uniqid('v'), FALSE);
+		$mockPropertyValidator2 = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface', array(), array(), uniqid('v'), FALSE);
+		$mockFooValidator = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface', array(), array(), uniqid('v'), FALSE);
+		$mockBarValidator = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface', array(), array(), uniqid('v'), FALSE);
+
+		$mockObjectValidator1 = $this->getMock('F3\FLOW3\Validation\Validator\GenericObjectValidator', array(), array(), uniqid('v'), FALSE);
+		$mockObjectValidator2 = $this->getMock('F3\FLOW3\Validation\Validator\GenericObjectValidator', array(), array(), uniqid('v'), FALSE);
+		$mockObjectValidator2a = $this->getMock('F3\FLOW3\Validation\Validator\GenericObjectValidator', array(), array(), uniqid('v'), FALSE);
+
+		$conjunction1 = $this->getMock('F3\FLOW3\Validation\Validator\ConjunctionValidator', array(), array(), uniqid('v'), FALSE);
+		$conjunction1->expects($this->at(0))->method('addValidator')->with($mockFooValidator);
+		$conjunction1->expects($this->at(1))->method('addValidator')->with($mockObjectValidator1);
+
+		$conjunction2 = $this->getMock('F3\FLOW3\Validation\Validator\ConjunctionValidator', array(), array(), uniqid('v'), FALSE);
+		$conjunction2->expects($this->at(0))->method('addValidator')->with($mockBarValidator);
+		$conjunction2->expects($this->at(1))->method('addValidator')->with($mockObjectValidator2);
+
+		$validatorResolver = $this->getMock('F3\FLOW3\Validation\ValidatorResolver', array('createValidator'), array(), '', FALSE);
+		$validatorResolver->expects($this->at(0))->method('createValidator')->with('F3\FLOW3\Validation\Validator\ConjunctionValidator')->will($this->returnValue($conjunction1));
+		$validatorResolver->expects($this->at(1))->method('createValidator')->with('\F3\Package\Validator\FooValidator')->will($this->returnValue($mockFooValidator));
+		$validatorResolver->expects($this->at(2))->method('createValidator')->with('F3\FLOW3\Validation\Validator\ConjunctionValidator')->will($this->returnValue($conjunction2));
+		$validatorResolver->expects($this->at(3))->method('createValidator')->with('\F3\Package\Validator\BarValidator')->will($this->returnValue($mockBarValidator));
+		$validatorResolver->expects($this->at(4))->method('createValidator')->with('Validator1')->will($this->returnValue($mockPropertyValidator1));
+		$validatorResolver->expects($this->at(5))->method('createValidator')->with('F3\FLOW3\Validation\Validator\GenericObjectValidator')->will($this->returnValue($mockObjectValidator1));
+		$validatorResolver->expects($this->at(6))->method('createValidator')->with('Validator2')->will($this->returnValue($mockPropertyValidator2));
+		$validatorResolver->expects($this->at(7))->method('createValidator')->with('F3\FLOW3\Validation\Validator\GenericObjectValidator')->will($this->returnValue($mockObjectValidator2));
+		$validatorResolver->expects($this->at(8))->method('createValidator')->with('F3\FLOW3\Validation\Validator\GenericObjectValidator')->will($this->returnValue($mockObjectValidator2a));
+
+		$validatorResolver->injectReflectionService($mockReflectionService);
+
+		$result = $validatorResolver->buildMethodArgumentsValidatorConjunctions(get_class($mockObject), 'fooAction');
+#		$this->assertEquals(array('arg1' => $conjunction1, 'arg2' => $conjunction2), $result);
+	}
+
+	/**
+	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function buildMethodArgumentsValidatorConjunctionsReturnsEmptyConjunctionIfNoValidatorIsFoundForClassParameter() {
@@ -300,7 +356,7 @@ class ValidatorResolverTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sbastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @expectedException F3\FLOW3\Validation\Exception\InvalidValidationConfigurationException
 	 */
 	public function buildMethodArgumentsValidatorConjunctionsThrowsExceptionIfValidationAnnotationForNonExistingArgumentExists() {
@@ -360,6 +416,17 @@ class ValidatorResolverTest extends \F3\Testing\BaseTestCase {
 
 		$result = $validatorResolver->_call('buildBaseValidatorConjunction', $modelClassName);
 		$this->assertSame($mockConjunctionValidator, $result);
+	}
+
+	/**
+	 * data provider for buildBaseValidatorConjunctionAddsCustomValidatorToTheReturnedConjunction
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function modelAndValidatorClassNames() {
+		return array(
+			array('\FLOW8\Blog\Domain\Validator\BlogValidator', '\FLOW8\Blog\Domain\Model\Blog'),
+			array('﻿\Domain\Validator\Content\PageValidator', '﻿\Domain\Model\Content\Page')
+		);
 	}
 
 	/**

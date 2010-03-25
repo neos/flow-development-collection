@@ -63,7 +63,7 @@ class NotEmptyValidatorTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function notEmptyValidatorCreatesTheCorrectErrorForAnEmptySubject() {
 		$notEmptyValidator = $this->getMock('F3\FLOW3\Validation\Validator\NotEmptyValidator', array('addError'), array(), '', FALSE);
-		$notEmptyValidator->expects($this->once())->method('addError')->with('The given subject was empty.', 1221560718);
+		$notEmptyValidator->expects($this->once())->method('addError');
 		$notEmptyValidator->isValid('');
 	}
 
@@ -73,7 +73,7 @@ class NotEmptyValidatorTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function notEmptyValidatorCreatesTheCorrectErrorForANullValue() {
 		$notEmptyValidator = $this->getMock('F3\FLOW3\Validation\Validator\NotEmptyValidator', array('addError'), array(), '', FALSE);
-		$notEmptyValidator->expects($this->once())->method('addError')->with('The given subject was NULL.', 1221560910);
+		$notEmptyValidator->expects($this->once())->method('addError');
 		$notEmptyValidator->isValid(NULL);
 	}
 }

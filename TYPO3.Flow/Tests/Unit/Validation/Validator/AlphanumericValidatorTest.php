@@ -54,7 +54,7 @@ class AlphanumericValidatorTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function alphanumericValidatorCreatesTheCorrectErrorForAnInvalidSubject() {
 		$alphanumericValidator = $this->getMock('F3\FLOW3\Validation\Validator\AlphanumericValidator', array('addError'), array(), '', FALSE);
-		$alphanumericValidator->expects($this->once())->method('addError')->with('The given subject was not a valid alphanumeric string. Got: "adsf%&/$jklsfdö"', 1221551320);
+		$alphanumericValidator->expects($this->once())->method('addError');
 		$alphanumericValidator->isValid('adsf%&/$jklsfdö');
 	}
 }

@@ -85,7 +85,7 @@ class IntegerValidatorTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function integerValidatorCreatesTheCorrectErrorForAnInvalidSubject() {
 		$integerValidator = $this->getMock('F3\FLOW3\Validation\Validator\IntegerValidator', array('addError'), array(), '', FALSE);
-		$integerValidator->expects($this->once())->method('addError')->with('The given subject was not a valid integer. Got: "not a number"', 1221560494);
+		$integerValidator->expects($this->once())->method('addError');
 		$integerValidator->isValid('not a number');
 	}
 

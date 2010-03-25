@@ -95,7 +95,7 @@ class EmailAddressValidatorTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function emailValidatorCreatesTheCorrectErrorForAnInvalidEmailAddress() {
 		$emailAddressValidator = $this->getMock('F3\FLOW3\Validation\Validator\EmailAddressValidator', array('addError'), array(), '', FALSE);
-		$emailAddressValidator->expects($this->once())->method('addError')->with('The given subject was not a valid email address. Got: "notAValidMail@Address"', 1221559976);
+		$emailAddressValidator->expects($this->once())->method('addError');
 		$emailAddressValidator->isValid('notAValidMail@Address');
 	}
 

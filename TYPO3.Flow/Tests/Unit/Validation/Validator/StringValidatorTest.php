@@ -32,7 +32,7 @@ class StringValidatorTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sbastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function stringValidatorReturnsTrueIfStringIsGiven() {
 		$stringValidator = $this->getMock('F3\FLOW3\Validation\Validator\StringValidator', array('addError'), array(), '', FALSE);
@@ -41,7 +41,7 @@ class StringValidatorTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sbastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function stringValidatorReturnsFalseIfNumberIsGiven() {
 		$stringValidator = $this->getMock('F3\FLOW3\Validation\Validator\StringValidator', array('addError'), array(), '', FALSE);
@@ -49,7 +49,7 @@ class StringValidatorTest extends \F3\Testing\BaseTestCase {
 	}
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sbastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function stringValidatorReturnsFalseIfObjectWithToStringMethodStringIsGiven() {
 		$stringValidator = $this->getMock('F3\FLOW3\Validation\Validator\StringValidator', array('addError'), array(), '', FALSE);

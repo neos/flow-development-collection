@@ -88,7 +88,7 @@ class FloatValidatorTest extends \F3\Testing\BaseTestCase {
 	public function floatValidatorCreatesTheCorrectErrorForAnInvalidSubject() {
 		$floatValidator = new \F3\FLOW3\Validation\Validator\FloatValidator();
 		$floatValidator = $this->getMock('F3\FLOW3\Validation\Validator\FloatValidator', array('addError'), array(), '', FALSE);
-		$floatValidator->expects($this->once())->method('addError')->with('The given subject was not a valid float. Got: "123456"', 1221560288);
+		$floatValidator->expects($this->once())->method('addError');
 		$floatValidator->isValid(123456);
 	}
 

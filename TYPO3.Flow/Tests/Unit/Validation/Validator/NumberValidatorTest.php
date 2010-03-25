@@ -54,7 +54,7 @@ class NumberValidatorTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function numberValidatorCreatesTheCorrectErrorForAnInvalidSubject() {
 		$numberValidator = $this->getMock('F3\FLOW3\Validation\Validator\NumberValidator', array('addError'), array(), '', FALSE);
-		$numberValidator->expects($this->once())->method('addError')->with('The given subject was not a valid number. Got: "this is not a number"', 1221563685);
+		$numberValidator->expects($this->once())->method('addError');
 		$numberValidator->isValid('this is not a number');
 	}
 }
