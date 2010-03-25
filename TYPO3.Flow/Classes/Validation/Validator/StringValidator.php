@@ -39,11 +39,15 @@ class StringValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator {
 	 *
 	 * @param mixed $value The value that should be validated
 	 * @return boolean TRUE if the value is valid, FALSE if an error occured
-	 * @author Sebastian Kurfürst <sbastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @api
 	 */
 	public function isValid($value) {
-		return is_string($value);
+		$isValid = is_string($value);
+		if ($isValid === FALSE) {
+			$this->addError('A valid string is expected.', 1238108067);
+		}
+		return $isValid;
 	}
 }
 

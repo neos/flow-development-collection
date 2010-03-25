@@ -49,7 +49,7 @@ class UuidValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator {
 	public function isValid($value) {
 		$this->errors = array();
 		if (!is_string($value) || !preg_match(self::PATTERN_MATCH_UUID, $value)) {
-			$this->addError('The given subject was not a valid UUID. Got: "' . $value . '"', 1221565853);
+			$this->addError('The given subject was not a valid UUID.', 1221565853);
 			return FALSE;
 		}
 		return TRUE;

@@ -45,11 +45,11 @@ class NotEmptyValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator
 	public function isValid($value) {
 		$this->errors = array();
 		if ($value === NULL) {
-			$this->addError('The given subject was NULL.', 1221560910);
+			$this->addError('This property is required.', 1221560910);
 			return FALSE;
 		}
 		if ($value === '') {
-			$this->addError('The given subject was empty.', 1221560718);
+			$this->addError('This property is required.', 1221560718);
 			return FALSE;
 		}
 		return TRUE;

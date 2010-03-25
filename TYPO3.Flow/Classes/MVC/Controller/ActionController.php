@@ -87,18 +87,6 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	}
 
 	/**
-	 * Checks if the current request type is supported by the controller.
-	 *
-	 * @param \F3\FLOW3\MVC\RequestInterface $request The current request
-	 * @return boolean TRUE if this request type is supported, otherwise FALSE
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @api
-	 */
-	public function canProcessRequest(\F3\FLOW3\MVC\RequestInterface $request) {
-		return parent::canProcessRequest($request);
-	}
-
-	/**
 	 * Handles a request. The result output is returned by altering the given response.
 	 *
 	 * @param \F3\FLOW3\MVC\RequestInterface $request The request object
@@ -108,7 +96,9 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 * @api
 	 */
 	public function processRequest(\F3\FLOW3\MVC\RequestInterface $request, \F3\FLOW3\MVC\ResponseInterface $response) {
-		if (!$this->canProcessRequest($request)) throw new \F3\FLOW3\MVC\Exception\UnsupportedRequestTypeException(get_class($this) . ' does not support requests of type "' . get_class($request) . '". Supported types are: ' . implode(' ', $this->supportedRequestTypes) , 1187701131);
+		if ($this->canProcessRequest($request) === FALSE) {
+			throw new \F3\FLOW3\MVC\Exception\UnsupportedRequestTypeException(get_class($this) . ' does not support requests of type "' . get_class($request) . '". Supported types are: ' . implode(' ', $this->supportedRequestTypes) , 1187701131);
+		}
 
 		$this->request = $request;
 		$this->request->setDispatched(TRUE);
@@ -139,7 +129,29 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	}
 
 	/**
-	 * Implementation of the arguments initilization in the action controller:
+	 * Determines the action method and assures that the method exists.
+	 *
+	 * @return string The action method name
+	 * @throws \F3\FLOW3\MVC\Exception\NoSuchActionException if the action specified in the request object does not exist (and if there's no default action either).
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
+	 */
+	protected function resolveActionMethodName() {
+		$actionMethodName = $this->request->getControllerActionName() . 'Action';
+		foreach (get_class_methods($this) as $existingMethodName) {
+			if (strtolower($existingMethodName) === strtolower($actionMethodName)) {
+				$actionMethodName = $existingMethodName;
+				break;
+			}
+		}
+		if (!method_exists($this, $actionMethodName)) {
+			throw new \F3\FLOW3\MVC\Exception\NoSuchActionException('An action "' . $actionMethodName . '" does not exist in controller "' . get_class($this) . '".', 1186669086);
+		}
+		return $actionMethodName;
+	}
+
+	/**
+	 * Implementation of the arguments initialization in the action controller:
 	 * Automatically registers arguments of the current action
 	 *
 	 * Don't override this method - use initializeAction() instead.
@@ -159,9 +171,7 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 				$dataType = 'array';
 			}
 			if ($dataType === NULL) throw new \F3\FLOW3\MVC\Exception\InvalidArgumentTypeException('The argument type for parameter $' . $parameterName . ' of method ' . get_class($this) . '->' . $this->actionMethodName . '() could not be detected.' , 1253175643);
-
 			$defaultValue = (isset($parameterInfo['defaultValue']) ? $parameterInfo['defaultValue'] : NULL);
-
 			$this->arguments->addNewArgument($parameterName, $dataType, ($parameterInfo['optional'] === FALSE), $defaultValue);
 		}
 	}
@@ -177,7 +187,7 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 * - Custom model validator classes
 	 *
 	 * @return void
-	 * @author Sebastian Kurfürst <sbastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	protected function initializeActionMethodValidators() {
 		$parameterValidators = $this->validatorResolver->buildMethodArgumentsValidatorConjunctions(get_class($this), $this->actionMethodName);
@@ -202,23 +212,16 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	}
 
 	/**
-	 * Determines the action method and assures that the method exists.
+	 * Initializes the controller before invoking an action method.
 	 *
-	 * @return string The action method name
-	 * @throws \F3\FLOW3\MVC\Exception\NoSuchActionException if the action specified in the request object does not exist (and if there's no default action either).
+	 * Override this method to solve tasks which all actions have in
+	 * common.
+	 *
+	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
-	protected function resolveActionMethodName() {
-		$actionMethodName = $this->request->getControllerActionName() . 'Action';
-		foreach (get_class_methods($this) as $existingMethodName) {
-			if (strtolower($existingMethodName) === strtolower($actionMethodName)) {
-				$actionMethodName = $existingMethodName;
-				break;
-			}
-		}
-		if (!method_exists($this, $actionMethodName)) throw new \F3\FLOW3\MVC\Exception\NoSuchActionException('An action "' . $actionMethodName . '" does not exist in controller "' . get_class($this) . '".', 1186669086);
-		return $actionMethodName;
+	protected function initializeAction() {
 	}
 
 	/**
@@ -320,19 +323,6 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 * @api
 	 */
 	protected function initializeView(\F3\FLOW3\MVC\View\ViewInterface $view) {
-	}
-
-	/**
-	 * Initializes the controller before invoking an action method.
-	 *
-	 * Override this method to solve tasks which all actions have in
-	 * common.
-	 *
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @api
-	 */
-	protected function initializeAction() {
 	}
 
 	/**

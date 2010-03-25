@@ -59,7 +59,8 @@ class Debugger {
 		(F3\\\\FLOW3\\\\Ref.*) |
 		(F3\\\\FLOW3\\\\Res.*) |
 		(F3\\\\FLOW3\\\\Sec.*) |
-		(F3\\\\Fluid\\\\.*)
+		(F3\\\\Fluid\\\\.*) |
+		(PHPUnit_Framework_MockObject_InvocationMocker)
 		/xs';
 
 	/**

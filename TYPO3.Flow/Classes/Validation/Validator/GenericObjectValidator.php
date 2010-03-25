@@ -138,6 +138,23 @@ class GenericObjectValidator extends \F3\FLOW3\Validation\Validator\AbstractObje
 		}
 		$this->propertyValidators[$propertyName]->attach($validator);
 	}
+
+	/**
+	 * Returns all property validators - or only validators of the specified property
+	 * 
+	 * @param string $propertyName (optional) Name of the property to return validators for
+	 * @return array An array of validators
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
+	 */
+	public function getPropertyValidators($propertyName = NULL) {
+		if ($propertyName !== NULL) {
+			return (isset($this->propertyValidators[$propertyName])) ? $this->propertyValidators[$propertyName] : array();
+		} else {
+			return $this->propertyValidators;
+		}
+	}
+
 }
 
 ?>

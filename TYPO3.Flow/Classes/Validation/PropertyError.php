@@ -35,7 +35,7 @@ class PropertyError extends \F3\FLOW3\Validation\Error {
 	/**
 	 * @var string The default (english) error message.
 	 */
-	protected $message = 'Validation errors for property "%s"';
+	protected $message = '"%s": ';
 
 	/**
 	 * @var string The error code

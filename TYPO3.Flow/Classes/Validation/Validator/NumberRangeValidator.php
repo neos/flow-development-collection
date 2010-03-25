@@ -47,7 +47,7 @@ class NumberRangeValidator extends \F3\FLOW3\Validation\Validator\AbstractValida
 	public function isValid($value) {
 		$this->errors = array();
 		if (!is_numeric($value)) {
-			$this->addError('The given subject was not a valid number. Got: "' . $value . '"', 1221563685);
+			$this->addError('A valid number is expected.', 1221563685);
 			return FALSE;
 		}
 
@@ -60,7 +60,7 @@ class NumberRangeValidator extends \F3\FLOW3\Validation\Validator\AbstractValida
 		}
 		if ($value >= $minimum && $value <= $maximum) return TRUE;
 
-		$this->addError('The given subject was not in the valid range (' . $minimum . ' - ' . $maximum . '). Got: "' . $value . '"', 1221561046);
+		$this->addError('Please enter a valid number between ' . $minimum . ' and ' . $maximum . '.', 1221561046);
 		return FALSE;
 	}
 }

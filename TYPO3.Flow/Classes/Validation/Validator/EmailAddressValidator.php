@@ -142,7 +142,7 @@ class EmailAddressValidator extends \F3\FLOW3\Validation\Validator\AbstractValid
 						(?:(?:\d{1,2}|1\d{1,2}|2[0-4][0-9]|25[0-5])\.){3}(?:(?:\d{1,2}|1\d{1,2}|2[0-4][0-9]|25[0-5]))
 					)
 				$/Dix', $value)) return TRUE;
-		$this->addError('The given subject was not a valid email address. Got: "' . $value . '"', 1221559976);
+		$this->addError('Please specify a valid email address.', 1221559976);
 		return FALSE;
 	}
 }

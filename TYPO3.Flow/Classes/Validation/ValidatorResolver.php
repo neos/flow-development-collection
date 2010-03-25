@@ -116,7 +116,6 @@ class ValidatorResolver {
 		if (!($validator instanceof \F3\FLOW3\Validation\Validator\ValidatorInterface)) {
 			return NULL;
 		}
-
 		$validator->setOptions($validatorOptions);
 		return $validator;
 	}
@@ -147,7 +146,7 @@ class ValidatorResolver {
 	 * @param string $methodName
 	 * @return array An Array of ValidatorConjunctions for each method parameters.
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Sebastian Kurfürst <sbastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function buildMethodArgumentsValidatorConjunctions($className, $methodName) {
 		$validatorConjunctions = array();
@@ -181,10 +180,15 @@ class ValidatorResolver {
 				$parsedAnnotation = $this->parseValidatorAnnotation($validateValue);
 				foreach ($parsedAnnotation['validators'] as $validatorConfiguration) {
 					$newValidator = $this->createValidator($validatorConfiguration['validatorName'], $validatorConfiguration['validatorOptions']);
-					if ($newValidator === NULL) throw new \F3\FLOW3\Validation\Exception\NoSuchValidatorException('Invalid validate annotation in ' . $className . '->' . $methodName . '(): Could not resolve class name for  validator "' . $validatorConfiguration['validatorName'] . '".', 1239853109);
-
-					if  (isset($validatorConjunctions[$parsedAnnotation['argumentName']])) {
+					if ($newValidator === NULL) {
+						throw new \F3\FLOW3\Validation\Exception\NoSuchValidatorException('Invalid validate annotation in ' . $className . '->' . $methodName . '(): Could not resolve class name for  validator "' . $validatorConfiguration['validatorName'] . '".', 1239853109);
+					}
+					if (isset($validatorConjunctions[$parsedAnnotation['argumentName']])) {
 						$validatorConjunctions[$parsedAnnotation['argumentName']]->addValidator($newValidator);
+					} elseif (strpos($parsedAnnotation['argumentName'], '.') !== FALSE) {
+						$objectPath = explode('.', $parsedAnnotation['argumentName']);
+						$argumentName = array_shift($objectPath);
+						$validatorConjunctions[$argumentName]->addValidator($this->buildSubObjectValidator($objectPath, $newValidator));
 					} else {
 						throw new \F3\FLOW3\Validation\Exception\InvalidValidationConfigurationException('Invalid validate annotation in ' . $className . '->' . $methodName . '(): Validator specified for argument name "' . $parsedAnnotation['argumentName'] . '", but this argument does not exist.', 1253172726);
 					}
@@ -192,6 +196,30 @@ class ValidatorResolver {
 			}
 		}
 		return $validatorConjunctions;
+	}
+
+	/**
+	 * Builds a chain of nested object validators by specification of the given
+	 * object path.
+	 *
+	 * @param array $objectPath The object path
+	 * @param \F3\FLOW3\Validation\Validator\ValidatorInterface $propertyValidator The validator which should be added to the property specified by objectPath
+	 * @return \F3\FLOW3\Validation\Validator\GenericObjectValidator
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function buildSubObjectValidator(array $objectPath, \F3\FLOW3\Validation\Validator\ValidatorInterface $propertyValidator) {
+		$rootObjectValidator = $this->createValidator('F3\FLOW3\Validation\Validator\GenericObjectValidator');
+		$parentObjectValidator = $rootObjectValidator;
+
+		while (count($objectPath) > 1) {
+			$subObjectValidator = $this->createValidator('F3\FLOW3\Validation\Validator\GenericObjectValidator');
+			$subPropertyName = array_shift($objectPath);
+			$parentObjectValidator->addPropertyValidator($subPropertyName, $subObjectValidator);
+			$parentObjectValidator = $subObjectValidator;
+		}
+
+		$parentObjectValidator->addPropertyValidator(array_shift($objectPath), $propertyValidator);
+		return $rootObjectValidator;
 	}
 
 	/**
@@ -210,7 +238,7 @@ class ValidatorResolver {
 	 * @param string $targetClassName The data type to build the validation conjunction for. Needs to be the fully qualified class name.
 	 * @return F3\FLOW3\Validation\Validator\ConjunctionValidator The validator conjunction or NULL
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Sebastian Kurfürst <sbastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	protected function buildBaseValidatorConjunction($targetClassName) {
 		$conjunctionValidator = $this->objectManager->get('F3\FLOW3\Validation\Validator\ConjunctionValidator');
@@ -337,9 +365,7 @@ class ValidatorResolver {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function resolveValidatorObjectName($validatorType) {
-		if ($validatorType[0] === '\\') {
-			$validatorType = substr($validatorType, 1);
-		}
+		$validatorType = ltrim($validatorType, '\\');
 
 		if ($this->objectManager->isRegistered($validatorType)) return $validatorType;
 

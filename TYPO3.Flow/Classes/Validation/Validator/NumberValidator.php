@@ -45,7 +45,7 @@ class NumberValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator {
 	public function isValid($value) {
 		$this->errors = array();
 		if (is_numeric($value)) return TRUE;
-		$this->addError('The given subject was not a valid number. Got: "' . $value . '"', 1221563685);
+		$this->addError('A valid number is expected.', 1221563685);
 		return FALSE;
 	}
 }

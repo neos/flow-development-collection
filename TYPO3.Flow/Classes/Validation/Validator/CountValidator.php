@@ -54,7 +54,7 @@ class CountValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator {
 		$max = (isset($this->options['maximum'])) ? intval($this->options['maximum']) : PHP_INT_MAX;
 		if (count($value) >= $min && count($value) <= $max) return TRUE;
 
-		$this->addError('The count on the given subject was not in the valid range (' . $min . ' - ' . $max . '). Got: "' . count($value) . '"', 1253718831);
+		$this->addError('The count must be between ' . $min . ' and ' . $max . '.', 1253718831);
 		return FALSE;
 	}
 }

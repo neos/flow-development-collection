@@ -76,7 +76,7 @@ class ArgumentsValidator extends \F3\FLOW3\Validation\Validator\AbstractObjectVa
 	 *
 	 * If at least one error occurred, the result is FALSE.
 	 *
-	 * @param object $arguments The arguments object containing the property (argument) to validate
+	 * @param \F3\FLOW3\MVC\Controller\Arguments $arguments The arguments object containing the property (argument) to validate
 	 * @param string $argumentName Name of the property (ie. name of the argument) to validate
 	 * @return boolean TRUE if the argument is valid, FALSE if an error occured
 	 * @author Robert Lemke <robert@typo3.org>
