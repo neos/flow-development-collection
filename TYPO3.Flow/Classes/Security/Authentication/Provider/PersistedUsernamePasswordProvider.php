@@ -39,7 +39,6 @@ class PersistedUsernamePasswordProvider implements \F3\FLOW3\Security\Authentica
 	protected $accountRepository;
 
 	/**
-	 *
 	 * @var \F3\FLOW3\Security\Cryptography\HashService
 	 */
 	protected $hashService;

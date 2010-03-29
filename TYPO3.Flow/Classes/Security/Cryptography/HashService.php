@@ -102,7 +102,7 @@ class HashService {
 		if (strpos($hashedStringAndSalt, ',') === FALSE) {
 			throw new \InvalidArgumentException('The hashed string must contain a salt, separated with comma from the hashed.', 1269872776);
 		}
-		list($passwordHash, $salt) = explode(',', $account->getCredentialsSource());
+		list($passwordHash, $salt) = explode(',', $hashedStringAndSalt);
 		return (md5(md5($clearString) . $salt) === $passwordHash);
 	}
 }
