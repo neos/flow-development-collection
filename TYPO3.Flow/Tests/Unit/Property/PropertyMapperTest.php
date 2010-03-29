@@ -617,6 +617,46 @@ class PropertyMapperTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function transformToObjectCallsMapIfValuesExistBesidesIdentity() {
+		$theValue = array('__identity' => array('dummy'), 'property1' => 'value1', 'property2' => 'value2');
+		$theObject = new \stdClass();
+
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService');
+		$mockReflectionService->expects($this->at(0))->method('isClassTaggedWith')->with('F3\Foo\Bar', 'valueobject')->will($this->returnValue(FALSE));
+
+		$mapper = $this->getAccessibleMock('F3\FLOW3\Property\PropertyMapper', array('findObjectByIdentityProperties', 'buildObject', 'map'));
+		$mapper->injectReflectionService($mockReflectionService);
+		$mapper->expects($this->once())->method('findObjectByIdentityProperties')->with(array('dummy'))->will($this->returnValue($theObject));
+		$mapper->expects($this->never())->method('buildObject');
+		$mapper->expects($this->once())->method('map')->will($this->returnValue(TRUE));
+		$mapper->_call('transformToObject', $theValue, 'F3\Foo\Bar', 'someProp');
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function transformToObjectBuildsNewValueObjectInsteadOfCallingMapIfValuesExistBesidesIdentity() {
+		$theValue = array('__identity' => array('dummy'), 'property1' => 'value1', 'property2' => 'value2');
+		$theObject = new \stdClass();
+
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService');
+		$mockReflectionService->expects($this->at(0))->method('isClassTaggedWith')->with('F3\Foo\Bar', 'valueobject')->will($this->returnValue(TRUE));
+
+		$mapper = $this->getAccessibleMock('F3\FLOW3\Property\PropertyMapper', array('findObjectByIdentityProperties', 'buildObject', 'map'));
+		$mapper->injectReflectionService($mockReflectionService);
+		$mapper->expects($this->once())->method('findObjectByIdentityProperties')->with(array('dummy'))->will($this->returnValue($theObject));
+		$mapper->expects($this->once())->method('buildObject')->with(array('property1' => 'value1', 'property2' => 'value2'));
+		$mapper->expects($this->never())->method('map');
+		$mapper->_call('transformToObject', $theValue, 'F3\Foo\Bar', 'someProp');
+	}
+
+	/**
+	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function mapCallsTransformToObjectIfTargetIsAStringContainingAClassName() {

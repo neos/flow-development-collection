@@ -208,7 +208,7 @@ class PropertyMapper {
 	 *
 	 * @param array $propertyNames Names of the properties to map.
 	 * @param mixed $source Source containing the properties to map to the target object. Must either be an array, ArrayObject or any other object.
-	 * @param object $target The target object
+	 * @param mixed $target The target object or array. Alternatively this may be a fully qualified object name if the target should be created or reconstituted.
 	 * @param array $optionalPropertyNames Names of optional properties. If a property is specified here and it doesn't exist in the source, no error is issued.
 	 * @return boolean TRUE if the properties could be mapped, otherwise FALSE
 	 * @see mapAndValidate()
@@ -252,13 +252,13 @@ class PropertyMapper {
 					try {
 						$targetPropertyType = \F3\FLOW3\Utility\TypeHandling::parseType($methodParameter['type']);
 					} catch (\InvalidArgumentException $exception) {
-						$this->mappingResults->addError($this->objectManager->create('F3\FLOW3\Error\Error', "The type hint or documentation of property '$propertyName' specified the unknown type '" . $methodParameter['type'] . "'." , 1268239762), $propertyName);
+						$this->mappingResults->addError($this->objectManager->create('F3\FLOW3\Error\Error', 'The type hint or documentation of property "' . $propertyName . '" specified the unknown type "' . $methodParameter['type'] . '".' , 1268239762), $propertyName);
 						continue;
 					}
 				} elseif ($targetClassSchema !== NULL && $targetClassSchema->hasProperty($propertyName)) {
 					$targetPropertyType = $targetClassSchema->getProperty($propertyName);
 				} elseif ($targetClassSchema !== NULL) {
-					$this->mappingResults->addError($this->objectManager->create('F3\FLOW3\Error\Error', "Property '$propertyName' does not exist in target class schema." , 1251813614), $propertyName);
+					$this->mappingResults->addError($this->objectManager->create('F3\FLOW3\Error\Error', 'Property "' . $propertyName . '" does not exist in target class schema.' , 1251813614), $propertyName);
 					continue;
 				}
 
@@ -333,6 +333,8 @@ class PropertyMapper {
 	 * @param string $targetType The type to transform to
 	 * @param string $propertyName In case of an error we add this to the error message
 	 * @return object The object, when no transformation was possible this may return NULL as well
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function transformToObject($propertyValue, $targetType, $propertyName) {
 		if (is_string($propertyValue) && preg_match(self::PATTERN_MATCH_UUID, $propertyValue) === 1) {
@@ -351,9 +353,13 @@ class PropertyMapper {
 				if (count($propertyValue) === 0) {
 					$object = $existingObject;
 				} elseif ($existingObject !== NULL) {
-					$newObject = clone $existingObject;
-					if ($this->map(array_keys($propertyValue), $propertyValue, $newObject)) {
-						$object = $newObject;
+					if ($this->reflectionService->isClassTaggedWith($targetType, 'valueobject')) {
+						$object = $this->buildObject($propertyValue, $targetType);
+					} else {
+						$newObject = clone $existingObject;
+						if ($this->map(array_keys($propertyValue), $propertyValue, $newObject)) {
+							$object = $newObject;
+						}
 					}
 				}
 			} else {
@@ -367,20 +373,7 @@ class PropertyMapper {
 					}
 				}
 
-				$constructorSignature = $this->reflectionService->getMethodParameters($targetType, '__construct');
-				$constructorArguments = array();
-				foreach ($constructorSignature as $constructorArgumentName => $constructorArgumentInformation) {
-					if (array_key_exists($constructorArgumentName, $propertyValue)) {
-						$constructorArguments[] = $propertyValue[$constructorArgumentName];
-						unset($propertyValue[$constructorArgumentName]);
-					} elseif ($constructorArgumentInformation['optional'] === TRUE) {
-						$constructorArguments[] = $constructorArgumentInformation['defaultValue'];
-					} else {
-						throw new \F3\FLOW3\Property\Exception\InvalidTargetException('Missing constructor argument "' . $constructorArgumentName . '" for value object of type "' .$targetType . '".' , 1268734872);
-					}
-				}
-
-				$newObject = call_user_func_array(array($this->objectManager, 'create'), array_merge(array($targetType), $constructorArguments));
+				$newObject = $this->buildObject($propertyValue, $targetType);
 				if (count($propertyValue)) {
 					if ($this->map(array_keys($propertyValue), $propertyValue, $newObject)) {
 						return $newObject;
@@ -395,6 +388,34 @@ class PropertyMapper {
 		}
 
 		return $object;
+	}
+
+	/**
+	 * Builds a new instance of $objectType with the given $constructorArgumentValues. If
+	 * constructor argument values are missing from the given array the method
+	 * looks for a default value in the constructor signature.
+	 *
+	 * @param array $constructorArgumentValues
+	 * @param string $objectType
+	 * @return object The created instance
+	 * @throws \F3\FLOW3\Property\Exception\InvalidTargetException if a required constructor argument is missing
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function buildObject(array &$constructorArgumentValues, $objectType) {
+		$constructorSignature = $this->reflectionService->getMethodParameters($objectType, '__construct');
+		$constructorArguments = array();
+		foreach ($constructorSignature as $constructorArgumentName => $constructorArgumentInformation) {
+			if (array_key_exists($constructorArgumentName, $constructorArgumentValues)) {
+				$constructorArguments[] = $constructorArgumentValues[$constructorArgumentName];
+				unset($constructorArgumentValues[$constructorArgumentName]);
+			} elseif ($constructorArgumentInformation['optional'] === TRUE) {
+				$constructorArguments[] = $constructorArgumentInformation['defaultValue'];
+			} else {
+				throw new \F3\FLOW3\Property\Exception\InvalidTargetException('Missing constructor argument "' . $constructorArgumentName . '" for value object of type "' . $objectType . '".' , 1268734872);
+			}
+		}
+		return call_user_func_array(array($this->objectManager, 'create'), array_merge(array($objectType), $constructorArguments));
 	}
 
 	/**
