@@ -34,9 +34,15 @@ namespace F3\FLOW3\Security\Authentication\Provider;
 class PersistedUsernamePasswordProvider implements \F3\FLOW3\Security\Authentication\AuthenticationProviderInterface {
 
 	/**
-	 * @var F3\FLOW3\Security\AccountRepository
+	 * @var \F3\FLOW3\Security\AccountRepository
 	 */
 	protected $accountRepository;
+
+	/**
+	 *
+	 * @var \F3\FLOW3\Security\Cryptography\HashService
+	 */
+	protected $hashService;
 
 	/**
 	 * @var string
@@ -52,6 +58,17 @@ class PersistedUsernamePasswordProvider implements \F3\FLOW3\Security\Authentica
 	 */
 	public function injectAccountRepository(\F3\FLOW3\Security\AccountRepository $accountRepository) {
 		$this->accountRepository = $accountRepository;
+	}
+
+	/**
+	 * Injects the hash service
+	 *
+	 * @param \F3\FLOW3\Security\Cryptography\HashService $hashService
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectHashService(\F3\FLOW3\Security\Cryptography\HashService $hashService) {
+		$this->hashService = $hashService;
 	}
 
 	/**
@@ -106,9 +123,7 @@ class PersistedUsernamePasswordProvider implements \F3\FLOW3\Security\Authentica
 		}
 
 		if (is_object($account)) {
-			list($passwordHash, $salt) = explode(',', $account->getCredentialsSource());
-
-			if (md5(md5($credentials['password']) . $salt) === $passwordHash) {
+			if ($this->hashService->validateSaltedMd5($credentials['password'], $account->getCredentialsSource())) {
 				$authenticationToken->setAuthenticationStatus(\F3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL);
 				$authenticationToken->setAccount($account);
 			} else {

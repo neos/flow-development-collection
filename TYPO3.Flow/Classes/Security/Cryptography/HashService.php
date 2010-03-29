@@ -64,7 +64,7 @@ class HashService {
 	}
 
 	/**
-	 * Test if a string $string matches the HMAC given by $hash.
+	 * Tests if a string $string matches the HMAC given by $hash.
 	 *
 	 * @param string $string The string which should be validated
 	 * @param string $hmac The hash of the string
@@ -74,6 +74,36 @@ class HashService {
 	 */
 	public function validateHmac($string, $hmac) {
 		return ($this->generateHmac($string) === $hmac);
+	}
+
+	/**
+	 * Generates a salted md5 hash over the given string.
+	 *
+	 * @param string $clearString The unencrypted string which is the subject to be hashed
+	 * @return string Salted hash and the salt, separated by a comma ","
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
+	 */
+	public function generateSaltedMd5($clearString) {
+		$salt = substr(md5(uniqid(rand(), TRUE)), 0, rand(6, 10));
+		return (md5(md5($clearString) . $salt) . ',' . $salt);
+	}
+
+	/**
+	 * Tests if the given string would produce the same hash given the specified salt.
+	 * Use this method to validate hashes generated with generateSlatedMd5().
+	 *
+	 * @return boolean TRUE if the clear string matches, otherwise FALSE
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
+	 */
+	public function validateSaltedMd5($clearString, $hashedStringAndSalt) {
+		if (strpos($hashedStringAndSalt, ',') === FALSE) {
+			throw new \InvalidArgumentException('The hashed string must contain a salt, separated with comma from the hashed.', 1269872776);
+		}
+		list($passwordHash, $salt) = explode(',', $account->getCredentialsSource());
+		return (md5(md5($clearString) . $salt) === $passwordHash);
 	}
 }
 ?>

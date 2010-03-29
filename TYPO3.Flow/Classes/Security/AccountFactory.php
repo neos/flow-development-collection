@@ -36,6 +36,12 @@ class AccountFactory {
 	protected $objectManager;
 
 	/**
+	 *
+	 * @var \F3\FLOW3\Security\Cryptography\HashService
+	 */
+	protected $hashService;
+
+	/**
 	 * Injects the object manager 
 	 * 
 	 * @param F3\FLOW3\Object\ObjectManagerInterface $objectManager 
@@ -44,6 +50,17 @@ class AccountFactory {
 	 */
 	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
+	}
+
+	/**
+	 * Injects the hash service
+	 *
+	 * @param \F3\FLOW3\Security\Cryptography\HashService $hashService
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectHashService(\F3\FLOW3\Security\Cryptography\HashService $hashService) {
+		$this->hashService = $hashService;
 	}
 
 	/**
@@ -62,11 +79,9 @@ class AccountFactory {
 			$roles[] = $this->objectManager->create('F3\FLOW3\Security\Policy\Role', $roleIdentifier);
 		}
 
-		$salt = substr(md5(uniqid(rand(), TRUE)), 0, rand(6, 10));
-
 		$account = $this->objectManager->create('F3\FLOW3\Security\Account');
 		$account->setAccountIdentifier($identifier);
-		$account->setCredentialsSource(md5(md5($password) . $salt) . ',' . $salt);
+		$account->setCredentialsSource($this->hashService->generateSaltedMd5($password));
 		$account->setAuthenticationProviderName($authenticationProviderName);
 		$account->setRoles($roles);
 

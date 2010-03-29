@@ -35,13 +35,16 @@ class AccountFactoryTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function createAccountWithPasswordCreatesANewAccountWithTheGivenPasswordRolesAndProviderName() {
+		$mockHashService = $this->getMock('F3\FLOW3\Security\Cryptography\HashService');
+		$mockHashService->expects($this->once())->method('generateSaltedMd5')->with('password')->will($this->returnValue('hashed password'));
+
 		$mockRole1 = $this->getMock('F3\FLOW3\Security\Policy\Role', array(), array(), '', FALSE);
 		$mockRole2 = $this->getMock('F3\FLOW3\Security\Policy\Role', array(), array(), '', FALSE);
 
 		$expectedAccount = $this->getMock('F3\FLOW3\Security\Account');
 		$expectedAccount->expects($this->once())->method('setAccountIdentifier')->with('username');
 		$expectedAccount->expects($this->once())->method('setAccountIdentifier')->with('username');
-		$expectedAccount->expects($this->once())->method('setCredentialsSource');
+		$expectedAccount->expects($this->once())->method('setCredentialsSource')->with('hashed password');
 		$expectedAccount->expects($this->once())->method('setAuthenticationProviderName')->with('OtherProvider');
 		$expectedAccount->expects($this->once())->method('setRoles')->with(array($mockRole1, $mockRole2));
 
@@ -52,6 +55,7 @@ class AccountFactoryTest extends \F3\Testing\BaseTestCase {
 
 		$factory = new \F3\FLOW3\Security\AccountFactory;
 		$factory->injectObjectManager($mockObjectManager);
+		$factory->injectHashService($mockHashService);
 
 		$actualAccount = $factory->createAccountWithPassword('username', 'password', array('role1', 'role2'), 'OtherProvider');
 		$this->assertSame($expectedAccount, $actualAccount);

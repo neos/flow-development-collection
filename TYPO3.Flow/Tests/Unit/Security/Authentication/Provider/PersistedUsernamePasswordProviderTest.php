@@ -45,7 +45,10 @@ class PersistedUsernamePasswordProviderTest extends \F3\Testing\BaseTestCase {
 	 * @category unit
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function authenticatingAnUsernamePasswordTokenWorks() {
+	public function authenticatingAnUsernamePasswordTokenChecksIfTheGivenClearTextPasswordMatchesThePersistedHashedPassword() {
+		$mockHashService = $this->getMock('F3\FLOW3\Security\Cryptography\HashService');
+		$mockHashService->expects($this->once())->method('validateSaltedMd5')->with('password', '8bf0abbb93000e2e47f0e0a80721e834,80f117a78cff75f3f73793fd02aa9086')->will($this->returnValue(TRUE));
+
 		$mockAccount = $this->getMock('F3\FLOW3\Security\Account', array(), array(), '', FALSE);
 		$mockAccount->expects($this->once())->method('getCredentialsSource')->will($this->returnValue('8bf0abbb93000e2e47f0e0a80721e834,80f117a78cff75f3f73793fd02aa9086'));
 
@@ -59,6 +62,7 @@ class PersistedUsernamePasswordProviderTest extends \F3\Testing\BaseTestCase {
 
 		$usernamePasswordCRProvider = new \F3\FLOW3\Security\Authentication\Provider\PersistedUsernamePasswordProvider('myProvider', array());
 		$usernamePasswordCRProvider->injectAccountRepository($mockAccountRepository);
+		$usernamePasswordCRProvider->injectHashService($mockHashService);
 
 		$usernamePasswordCRProvider->authenticate($mockToken);
 	}
@@ -69,6 +73,9 @@ class PersistedUsernamePasswordProviderTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function authenticationFailsWithWrongCredentialsInAnUsernamePasswordToken() {
+		$mockHashService = $this->getMock('F3\FLOW3\Security\Cryptography\HashService');
+		$mockHashService->expects($this->once())->method('validateSaltedMd5')->with('wrong password', '8bf0abbb93000e2e47f0e0a80721e834,80f117a78cff75f3f73793fd02aa9086')->will($this->returnValue(FALSE));
+
 		$mockAccount = $this->getMock('F3\FLOW3\Security\Account', array(), array(), '', FALSE);
 		$mockAccount->expects($this->once())->method('getCredentialsSource')->will($this->returnValue('8bf0abbb93000e2e47f0e0a80721e834,80f117a78cff75f3f73793fd02aa9086'));
 
@@ -81,6 +88,7 @@ class PersistedUsernamePasswordProviderTest extends \F3\Testing\BaseTestCase {
 
 		$usernamePasswordCRProvider = new \F3\FLOW3\Security\Authentication\Provider\PersistedUsernamePasswordProvider('myProvider', array());
 		$usernamePasswordCRProvider->injectAccountRepository($mockAccountRepository);
+		$usernamePasswordCRProvider->injectHashService($mockHashService);
 
 		$usernamePasswordCRProvider->authenticate($mockToken);
 	}
