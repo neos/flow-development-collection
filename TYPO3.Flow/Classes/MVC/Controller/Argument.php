@@ -457,7 +457,7 @@ class Argument {
 		}
 
 		if (!($transformedValue instanceof $this->dataType)) {
-			throw new \F3\FLOW3\MVC\Exception\InvalidArgumentValueException('The value must be of type "' . $this->dataType . '", but was of type "' . (is_object($transformedValue) ? get_class($transformedValue) : gettype($transformedValue)) . '".', 1251730701);
+			throw new \F3\FLOW3\MVC\Exception\InvalidArgumentValueException('The value must be of type "' . $this->dataType . '", but was of type "' . (is_object($transformedValue) ? get_class($transformedValue) : gettype($transformedValue)) . '".', 1269616784);
 		}
 		return $transformedValue;
 	}
