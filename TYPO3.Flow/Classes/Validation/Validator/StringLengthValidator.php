@@ -53,7 +53,14 @@ class StringLengthValidator extends \F3\FLOW3\Validation\Validator\AbstractValid
 			throw new \F3\FLOW3\Validation\Exception\InvalidValidationOptionsException('The \'maximum\' is shorter than the \'minimum\' in the StringLengthValidator.', 1238107096);
 		}
 
-		if (is_object($value) && !method_exists($value, '__toString')) throw new \F3\FLOW3\Validation\Exception\InvalidSubjectException('The given object could not be converted to a string.', 1238110957);
+		if (is_object($value)) {
+			if (!method_exists($value, '__toString')) {
+				throw new \F3\FLOW3\Validation\Exception\InvalidSubjectException('The given object could not be converted to a string.', 1238110957);
+			}
+		} elseif (!is_string($value)) {
+			$this->addError('The given value was not a valid string.', 1269883975);
+			return FALSE;
+		}
 
 		$stringLength = strlen($value);
 		$isValid = TRUE;

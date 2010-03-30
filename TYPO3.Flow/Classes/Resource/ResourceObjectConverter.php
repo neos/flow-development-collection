@@ -41,6 +41,11 @@ class ResourceObjectConverter implements \F3\FLOW3\Property\ObjectConverterInter
 	protected $resourceManager;
 
 	/**
+	 * @var array
+	 */
+	protected $convertedResources = array();
+
+	/**
 	 * Injects the object factory
 	 *
 	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
@@ -90,10 +95,15 @@ class ResourceObjectConverter implements \F3\FLOW3\Property\ObjectConverterInter
 			if ($source['error'] === \UPLOAD_ERR_NO_FILE) return NULL;
 			if ($source['error'] !== \UPLOAD_ERR_OK) return $this->objectManager->create('F3\FLOW3\Error\Error', \F3\FLOW3\Utility\Files::getUploadErrorMessage($source['error']) , 1264440823);
 
+			if (isset($this->convertedResources[$source['tmp_name']])) {
+				return $this->convertedResources[$source['tmp_name']];
+			}
+
 			$resource = $this->resourceManager->importUploadedResource($source);
 			if ($resource === FALSE) {
 				return $this->objectManager->create('F3\FLOW3\Error\Error', 'The resource manager could not create a resource instance.' , 1264517906);
 			} else {
+				$this->convertedResources[$source['tmp_name']] = $resource;
 				return $resource;
 			}
 		} else {

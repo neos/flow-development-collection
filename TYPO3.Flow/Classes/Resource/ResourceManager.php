@@ -202,6 +202,9 @@ class ResourceManager {
 			return FALSE;
 		}
 
+		if (!file_exists($uploadInfo['tmp_name'])) {
+			return FALSE;
+		}
 		$hash = sha1_file($uploadInfo['tmp_name']);
 		$finalTargetPathAndFilename = $this->persistentResourcesStorageBaseUri . $hash;
 		if (move_uploaded_file($uploadInfo['tmp_name'], $finalTargetPathAndFilename) === FALSE) {
