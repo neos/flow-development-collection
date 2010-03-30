@@ -55,6 +55,11 @@ abstract class AbstractBackend implements \F3\FLOW3\Persistence\Backend\BackendI
 	protected $persistenceSession;
 
 	/**
+	 * @var \F3\FLOW3\Persistence\PersistenceManager
+	 */
+	protected $persistenceManager;
+
+	/**
 	 * @var \SplObjectStorage
 	 */
 	protected $aggregateRootObjects;
@@ -99,6 +104,17 @@ abstract class AbstractBackend implements \F3\FLOW3\Persistence\Backend\BackendI
 	 */
 	public function injectPersistenceSession(\F3\FLOW3\Persistence\Session $persistenceSession) {
 		$this->persistenceSession = $persistenceSession;
+	}
+
+	/**
+	 * Set a PersistenceManager instance.
+	 *
+	 * @param \F3\FLOW3\Persistence\PersistenceManager $persistenceManager 
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function setPersistenceManager($persistenceManager) {
+		$this->persistenceManager = $persistenceManager;
 	}
 
 	/**

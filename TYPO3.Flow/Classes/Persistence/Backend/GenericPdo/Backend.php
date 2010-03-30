@@ -177,14 +177,7 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 	 */
 	protected function createObjectRecord($object, $parentIdentifier = NULL) {
 		$classSchema = $this->classSchemata[$object->FLOW3_AOP_Proxy_getProxyTargetClassName()];
-
-		if ($classSchema->getUuidPropertyName() !== NULL) {
-			$identifier = $object->FLOW3_AOP_Proxy_getProperty($classSchema->getUuidPropertyName());
-		} elseif ($object instanceof \F3\FLOW3\AOP\ProxyInterface && $object->FLOW3_AOP_Proxy_hasProperty('FLOW3_Persistence_Entity_UUID')) {
-			$identifier = $object->FLOW3_AOP_Proxy_getProperty('FLOW3_Persistence_Entity_UUID');
-		} elseif ($object instanceof \F3\FLOW3\AOP\ProxyInterface && $object->FLOW3_AOP_Proxy_hasProperty('FLOW3_Persistence_ValueObject_Hash')) {
-			$identifier = $object->FLOW3_AOP_Proxy_getProperty('FLOW3_Persistence_ValueObject_Hash');
-		}
+		$identifier = $this->getIdentifierFromObject($object);
 
 		if ($classSchema->getModelType() === \F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY) {
 			$statementHandle = $this->databaseHandle->prepare('INSERT INTO "entities" ("identifier", "type") VALUES (?, ?)');
@@ -193,17 +186,35 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 				$classSchema->getClassName()
 			));
 		} else {
-			if (!$this->hasValueobjectRecord($identifier)) {
-				$statementHandle = $this->databaseHandle->prepare('INSERT INTO "valueobjects" ("identifier", "type") VALUES (?, ?)');
-				$statementHandle->execute(array(
-					$identifier,
-					$classSchema->getClassName()
-				));
-			}
+			$statementHandle = $this->databaseHandle->prepare('INSERT INTO "valueobjects" ("identifier", "type") VALUES (?, ?)');
+			$statementHandle->execute(array(
+				$identifier,
+				$classSchema->getClassName()
+			));
 		}
 
 		$this->persistenceSession->registerObject($object, $identifier);
 		return $identifier;
+	}
+
+	/**
+	 * Fetchs the identifier for the given object, either from the declared UUID
+	 * property, the injected UUID or injected hash.
+	 *
+	 * @param object $object
+	 * @return string
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function getIdentifierFromObject($object) {
+		$classSchema = $this->classSchemata[$object->FLOW3_AOP_Proxy_getProxyTargetClassName()];
+
+		if ($classSchema->getUuidPropertyName() !== NULL) {
+			return $object->FLOW3_AOP_Proxy_getProperty($classSchema->getUuidPropertyName());
+		} elseif (property_exists($object, 'FLOW3_Persistence_Entity_UUID')) {
+			return $object->FLOW3_Persistence_Entity_UUID;
+		} elseif (property_exists($object, 'FLOW3_Persistence_ValueObject_Hash')) {
+			return $object->FLOW3_Persistence_ValueObject_Hash;
+		}
 	}
 
 	/**
@@ -219,13 +230,19 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 			return $this->visitedDuringPersistence[$object];
 		}
 
+		if (!$this->persistenceSession->hasObject($object) && property_exists($object, 'FLOW3_Persistence_clone') && $object->FLOW3_Persistence_clone === TRUE) {
+			$this->persistenceManager->replaceObject($this->persistenceSession->getObjectByIdentifier($this->getIdentifierFromObject($object)), $object);
+		}
+
 		$classSchema = $this->classSchemata[$object->FLOW3_AOP_Proxy_getProxyTargetClassName()];
 		if ($this->persistenceSession->hasObject($object)) {
+			if ($classSchema->getModelType() === \F3\FLOW3\Reflection\ClassSchema::MODELTYPE_VALUEOBJECT) {
+				return $this->persistenceSession->getIdentifierByObject($object);
+			}
 			$identifier = $this->persistenceSession->getIdentifierByObject($object);
 			$objectState = self::OBJECTSTATE_RECONSTITUTED;
-			if ($classSchema->getModelType() === \F3\FLOW3\Reflection\ClassSchema::MODELTYPE_VALUEOBJECT) {
-				return $identifier;
-			}
+		} elseif ($classSchema->getModelType() === \F3\FLOW3\Reflection\ClassSchema::MODELTYPE_VALUEOBJECT && property_exists($object, 'FLOW3_Persistence_ValueObject_Hash') && $this->hasValueobjectRecord($object->FLOW3_Persistence_ValueObject_Hash)) {
+			return $object->FLOW3_Persistence_ValueObject_Hash;
 		} else {
 			$this->validateObject($object);
 			$identifier = $this->createObjectRecord($object, $parentIdentifier);

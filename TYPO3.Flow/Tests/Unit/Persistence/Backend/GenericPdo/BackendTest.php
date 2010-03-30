@@ -214,10 +214,13 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 
 		$mockSession = $this->getMock('F3\FLOW3\Persistence\Session', array('hasObject'));
 		$mockSession->expects($this->at(0))->method('hasObject')->with($this->attribute($this->equalTo('A'), 'FLOW3_Persistence_Entity_UUID'))->will($this->returnValue(FALSE));
+		$mockSession->expects($this->at(1))->method('hasObject')->with($this->attribute($this->equalTo('A'), 'FLOW3_Persistence_Entity_UUID'))->will($this->returnValue(FALSE));
 			// the following fails although the same object is present, nethr equalTo nor identicalTo work...
 		//$mockSession->expects($this->at(0))->method('hasObject')->/*with($this->identicalTo($objectA))->*/will($this->returnValue(FALSE));
-		$mockSession->expects($this->at(1))->method('hasObject')->with($this->attribute($this->equalTo('B'), 'FLOW3_Persistence_Entity_UUID'))->will($this->returnValue(FALSE));
-		$mockSession->expects($this->at(2))->method('hasObject')->with($this->attribute($this->equalTo('C'), 'FLOW3_Persistence_Entity_UUID'))->will($this->returnValue(FALSE));
+		$mockSession->expects($this->at(2))->method('hasObject')->with($this->attribute($this->equalTo('B'), 'FLOW3_Persistence_Entity_UUID'))->will($this->returnValue(FALSE));
+		$mockSession->expects($this->at(3))->method('hasObject')->with($this->attribute($this->equalTo('B'), 'FLOW3_Persistence_Entity_UUID'))->will($this->returnValue(FALSE));
+		$mockSession->expects($this->at(4))->method('hasObject')->with($this->attribute($this->equalTo('C'), 'FLOW3_Persistence_Entity_UUID'))->will($this->returnValue(FALSE));
+		$mockSession->expects($this->at(5))->method('hasObject')->with($this->attribute($this->equalTo('C'), 'FLOW3_Persistence_Entity_UUID'))->will($this->returnValue(FALSE));
 
 		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('createObjectRecord', 'setProperties', 'emitPersistedObject'));
 		$backend->expects($this->exactly(3))->method('createObjectRecord')->will($this->onConsecutiveCalls('A', 'B', 'C'));
@@ -310,7 +313,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$fullClassName = 'F3\\FLOW3\Persistence\\Tests\\' . $className;
 		$identifier = \F3\FLOW3\Utility\Algorithms::generateUUID();
 		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $className . ' implements \F3\FLOW3\AOP\ProxyInterface {
-			protected $FLOW3_Persistence_Entity_UUID = \'' . $identifier . '\';
+			public $FLOW3_Persistence_Entity_UUID = \'' . $identifier . '\';
 			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return \'' . $fullClassName . '\'; }
 			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
 			public function FLOW3_AOP_Proxy_construct() {}
@@ -343,7 +346,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$fullClassName = 'F3\\FLOW3\Persistence\\Tests\\' . $className;
 		$hash = sha1($fullClassName);
 		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $className . ' implements \F3\FLOW3\AOP\ProxyInterface {
-			protected $FLOW3_Persistence_ValueObject_Hash = \'' . $hash . '\';
+			public $FLOW3_Persistence_ValueObject_Hash = \'' . $hash . '\';
 			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return \'' . $fullClassName . '\'; }
 			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
 			public function FLOW3_AOP_Proxy_construct() {}
@@ -360,8 +363,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$mockStatement->expects($this->once())->method('execute')->with(array($hash, $fullClassName));
 		$mockPdo = $this->getMock('PdoInterface');
 		$mockPdo->expects($this->once())->method('prepare')->with('INSERT INTO "valueobjects" ("identifier", "type") VALUES (?, ?)')->will($this->returnValue($mockStatement));
-		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('hasValueObjectRecord'));
-		$backend->expects($this->once())->method('hasValueObjectRecord')->with($hash)->will($this->returnValue(FALSE));
+		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('dummy'));
 		$backend->injectPersistenceSession(new \F3\FLOW3\Persistence\Session());
 		$backend->_set('databaseHandle', $mockPdo);
 		$backend->_set('classSchemata', array($fullClassName => $classSchema));
@@ -581,14 +583,15 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 
 			// ... and here we go
 		$mockSession = $this->getMock('F3\FLOW3\Persistence\Session', array('hasObject'));
-		$mockSession->expects($this->exactly(3))->method('hasObject')->will($this->onConsecutiveCalls(FALSE, FALSE, FALSE));
+		$mockSession->expects($this->exactly(6))->method('hasObject')->will($this->returnValue(FALSE));
 
-		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('createObjectRecord', 'setProperties', 'emitPersistedObject'));
+		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('hasValueObjectRecord', 'createObjectRecord', 'setProperties', 'emitPersistedObject'));
 		$backend->expects($this->at(0))->method('createObjectRecord')->with($A)->will($this->returnValue('fakeUuidA'));
-		$backend->expects($this->at(1))->method('createObjectRecord')->with($V)->will($this->returnValue('fakeHash'));
-		$backend->expects($this->at(4))->method('setProperties')->with($expectedPropertiesForA);
-		$backend->expects($this->at(6))->method('createObjectRecord')->with($B)->will($this->returnValue('fakeUuidB'));
-		$backend->expects($this->at(7))->method('setProperties')->with($expectedPropertiesForB);
+		$backend->expects($this->at(1))->method('hasValueObjectRecord')->with('fakeHash')->will($this->returnValue(FALSE));
+		$backend->expects($this->at(2))->method('createObjectRecord')->with($V)->will($this->returnValue('fakeHash'));
+		$backend->expects($this->at(5))->method('setProperties')->with($expectedPropertiesForA);
+		$backend->expects($this->at(7))->method('createObjectRecord')->with($B)->will($this->returnValue('fakeUuidB'));
+		$backend->expects($this->at(8))->method('setProperties')->with($expectedPropertiesForB);
 
 		$backend->injectPersistenceSession($mockSession);
 		$backend->injectValidatorResolver($this->getMock('F3\FLOW3\Validation\ValidatorResolver', array(), array(), '', FALSE));
@@ -1331,7 +1334,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$classSchema->addProperty('foo', 'string');
 
 		$mockPersistenceSession = $this->getMock('F3\FLOW3\Persistence\Session');
-		$mockPersistenceSession->expects($this->exactly(2))->method('hasObject')->will($this->onConsecutiveCalls(FALSE, TRUE));
+		$mockPersistenceSession->expects($this->exactly(4))->method('hasObject')->will($this->onConsecutiveCalls(FALSE, FALSE, TRUE, TRUE));
 		$mockPersistenceSession->expects($this->exactly(2))->method('isDirty')->will($this->onConsecutiveCalls(TRUE, TRUE));
 
 		$mockValidatorResolver = $this->getMock('F3\FLOW3\Validation\ValidatorResolver', array(), array(), '', FALSE);
@@ -1368,7 +1371,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$mockValidator->expects($this->any())->method('getErrors')->will($this->returnValue(array()));
 
 		$mockPersistenceSession = $this->getMock('F3\FLOW3\Persistence\Session');
-		$mockPersistenceSession->expects($this->once())->method('hasObject')->will($this->returnValue(FALSE));
+		$mockPersistenceSession->expects($this->exactly(2))->method('hasObject')->will($this->returnValue(FALSE));
 
 		$mockValidatorResolver = $this->getMock('F3\FLOW3\Validation\ValidatorResolver', array(), array(), '', FALSE);
 		$mockValidatorResolver->expects($this->once())->method('getBaseValidatorConjunction')->with($fullClassName)->will($this->returnValue($mockValidator));
@@ -1402,7 +1405,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$mockValidator->expects($this->any())->method('getErrors')->will($this->returnValue(array()));
 
 		$mockPersistenceSession = $this->getMock('F3\FLOW3\Persistence\Session');
-		$mockPersistenceSession->expects($this->once())->method('hasObject')->will($this->returnValue(TRUE));
+		$mockPersistenceSession->expects($this->exactly(2))->method('hasObject')->will($this->returnValue(TRUE));
 		$mockPersistenceSession->expects($this->once())->method('isDirty')->will($this->returnValue(TRUE));
 
 		$mockValidatorResolver = $this->getMock('F3\FLOW3\Validation\ValidatorResolver', array(), array(), '', FALSE);

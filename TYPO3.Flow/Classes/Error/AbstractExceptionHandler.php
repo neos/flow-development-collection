@@ -74,7 +74,7 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface {
 			$backTrace = $exception->getTrace();
 			$className = isset($backTrace[0]['class']) ? $backTrace[0]['class'] : '?';
 			$methodName = isset($backTrace[0]['function']) ? $backTrace[0]['function'] : '?';
-			$line = isset($backTrace['line']) ? ' in line ' . $backTrace['line'] : '';
+			$line = isset($backTrace[0]['line']) ? ' in line ' . $backTrace[0]['line'] . ' of ' . $backTrace[0]['file'] : '';
 			$message = 'Uncaught exception' . $exceptionCodeNumber . '. ' . $exception->getMessage() . $line . '.';
 
 			$explodedClassName = explode('\\', $className);

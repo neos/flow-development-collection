@@ -32,6 +32,14 @@ namespace F3\FLOW3\Persistence\Backend;
 interface BackendInterface {
 
 	/**
+	 * Set a PersistenceManager instance.
+	 *
+	 * @param \F3\FLOW3\Persistence\PersistenceManager $persistenceManager
+	 * @return void
+	 */
+	public function setPersistenceManager($persistenceManager);
+
+	/**
 	 * Initializes the backend
 	 *
 	 * @param array $options

@@ -136,6 +136,7 @@ class PersistenceManager implements \F3\FLOW3\Persistence\PersistenceManagerInte
 	 */
 	public function initialize() {
 		if (!$this->backend instanceof \F3\FLOW3\Persistence\Backend\BackendInterface) throw new \F3\FLOW3\Persistence\Exception\MissingBackendException('A persistence backend must be set prior to initializing the persistence manager.', 1215508456);
+		$this->backend->setPersistenceManager($this);
 		$this->backend->initialize($this->settings['persistence']['backendOptions']);
 	}
 
@@ -166,7 +167,6 @@ class PersistenceManager implements \F3\FLOW3\Persistence\PersistenceManagerInte
 			// return the new one.
 		$this->persistenceSession->registerObject($newObject, $existingUuid);
 	}
-
 
 	/**
 	 * Returns the number of records matching the query.
