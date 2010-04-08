@@ -54,5 +54,5 @@ array(
 
 	<vtype> a meta type, one of the strings string, array, float, integer, boolean, datetime, object - used in SQL backend
 
-	lazy loaded objects have only their identifier & classsname recorded, properties is an empty array
+	lazy loaded objects have only their identifier & classname recorded, properties is an empty array
 */
