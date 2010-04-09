@@ -110,9 +110,9 @@ class ValidatorResolver {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function createValidator($validatorType, array $validatorOptions = array()) {
-		$validatorClassName = $this->resolveValidatorObjectName($validatorType);
-		if ($validatorClassName === FALSE) return NULL;
-		$validator = $this->objectManager->get($validatorClassName);
+		$validatorObjectName = $this->resolveValidatorObjectName($validatorType);
+		if ($validatorObjectName === FALSE) return NULL;
+		$validator = $this->objectManager->get($validatorObjectName);
 		if (!($validator instanceof \F3\FLOW3\Validation\Validator\ValidatorInterface)) {
 			return NULL;
 		}
@@ -367,10 +367,14 @@ class ValidatorResolver {
 	protected function resolveValidatorObjectName($validatorType) {
 		$validatorType = ltrim($validatorType, '\\');
 
-		if ($this->objectManager->isRegistered($validatorType)) return $validatorType;
+		if ($this->objectManager->isRegistered($validatorType)) {
+			return $validatorType;
+		}
 
 		$possibleClassName = 'F3\FLOW3\Validation\Validator\\' . $this->getValidatorType($validatorType) . 'Validator';
-		if ($this->objectManager->isRegistered($possibleClassName)) return $possibleClassName;
+		if ($this->objectManager->isRegistered($possibleClassName)) {
+			return $possibleClassName;
+		}
 
 		return FALSE;
 	}

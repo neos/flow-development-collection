@@ -183,7 +183,7 @@ abstract class AbstractObjectContainer implements \F3\FLOW3\Object\Container\Obj
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function isRegistered($objectName) {
-		if (isset($objectName)) {
+		if (isset($this->objects[$objectName])) {
 			return TRUE;
 		}
 		if ($objectName[0] === '\\') {
