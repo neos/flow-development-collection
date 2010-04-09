@@ -208,7 +208,8 @@ class PersistenceManager implements \F3\FLOW3\Persistence\PersistenceManagerInte
 			// fetch and inspect objects from all known repositories
 		$repositoryClassNames = $this->reflectionService->getAllImplementationClassNamesForInterface('F3\FLOW3\Persistence\RepositoryInterface');
 		foreach ($repositoryClassNames as $repositoryClassName) {
-			$repository = $this->objectManager->get($repositoryClassName);
+			$repositoryObjectName = $this->objectManager->getObjectNameByClassName($repositoryClassName);
+			$repository = $this->objectManager->get($repositoryObjectName);
 			$aggregateRootObjects->addAll($repository->getAddedObjects());
 			$deletedEntities->addAll($repository->getRemovedObjects());
 		}

@@ -93,7 +93,8 @@ abstract class AbstractObjectContainer implements \F3\FLOW3\Object\Container\Obj
 	 */
 	public function create($objectName) {
 		if (isset($this->objects[$objectName]) === FALSE) {
-			throw new \F3\FLOW3\Object\Exception\UnknownObjectException('Object "' . $objectName . '" is not registered.', 1264584588);
+			$hint = ($objectName[0] === '\\') ? ' Hint: You specified an object name with a leading backslash!' : '';
+			throw new \F3\FLOW3\Object\Exception\UnknownObjectException('Object "' . $objectName . '" is not registered.' . $hint, 1264584588);
 		}
 		if ($this->objects[$objectName]['s'] !== self::SCOPE_PROTOTYPE) {
 			throw new \F3\FLOW3\Object\Exception\WrongScopeException('Object "' . $objectName . '" is of not of scope prototype, but only prototype is supported by create()', 1264584592);
@@ -115,7 +116,8 @@ abstract class AbstractObjectContainer implements \F3\FLOW3\Object\Container\Obj
 	 */
 	public function get($objectName) {
 		if (isset($this->objects[$objectName]) === FALSE) {
-			throw new \F3\FLOW3\Object\Exception\UnknownObjectException('Object "' . $objectName . '" is not registered.', 1264589155);
+			$hint = ($objectName[0] === '\\') ? ' Hint: You specified an object name with a leading backslash!' : '';
+			throw new \F3\FLOW3\Object\Exception\UnknownObjectException('Object "' . $objectName . '" is not registered.' . $hint, 1264589155);
 		}
 		if (isset($this->objects[$objectName]['i'])) {
 			return $this->objects[$objectName]['i'];
@@ -148,7 +150,8 @@ abstract class AbstractObjectContainer implements \F3\FLOW3\Object\Container\Obj
 	 */
 	public function recreate($objectName) {
 		if (!isset($this->objects[$objectName])) {
-			throw new \F3\FLOW3\Object\Exception\UnknownObjectException('Cannot recreate unknown object "' . $objectName . '".', 1265297672);
+			$hint = ($objectName[0] === '\\') ? ' Hint: You specified an object name with a leading backslash!' : '';
+			throw new \F3\FLOW3\Object\Exception\UnknownObjectException('Cannot recreate unknown object "' . $objectName . '".' . $hint, 1265297672);
 		}
 		return call_user_func(array($this, 'r' . $this->objects[$objectName]['m']));
 	}
@@ -162,7 +165,8 @@ abstract class AbstractObjectContainer implements \F3\FLOW3\Object\Container\Obj
 	 */
 	public function setInstance($objectName, $instance) {
 		if (!isset($this->objects[$objectName])) {
-			throw new \F3\FLOW3\Object\Exception\UnknownObjectException('Cannot set instance of object "' . $objectName . '" because it is unknown to this Object Container.', 1265197803);
+			$hint = ($objectName[0] === '\\') ? ' Hint: You specified an object name with a leading backslash!' : '';
+			throw new \F3\FLOW3\Object\Exception\UnknownObjectException('Cannot set instance of object "' . $objectName . '" because it is unknown to this Object Container.' . $hint, 1265197803);
 		}
 		if ($this->objects[$objectName]['s'] === self::SCOPE_PROTOTYPE) {
 			throw new \F3\FLOW3\Object\Exception\WrongScopeException('Cannot set instance of object "' . $objectName . '", because it is of scope prototype.', 1265370539);
@@ -179,7 +183,13 @@ abstract class AbstractObjectContainer implements \F3\FLOW3\Object\Container\Obj
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function isRegistered($objectName) {
-		return isset($this->objects[$objectName]);
+		if (isset($objectName)) {
+			return TRUE;
+		}
+		if ($objectName[0] === '\\') {
+			throw new \InvalidArgumentException('Object names must not start with a backslash ("' . $objectName . '")', 1270827335);
+		}
+		return FALSE;
 	}
 
 	/**
@@ -203,6 +213,9 @@ abstract class AbstractObjectContainer implements \F3\FLOW3\Object\Container\Obj
 				return $objectName;
 			}
 		}
+		if ($caseInsensitiveObjectName[0] === '\\') {
+			throw new \InvalidArgumentException('Object names must not start with a backslash ("' . $caseInsensitiveObjectName . '")', 1270827377);
+		}
 		return FALSE;
 	}
 
@@ -222,6 +235,9 @@ abstract class AbstractObjectContainer implements \F3\FLOW3\Object\Container\Obj
 				return $objectName;
 			}
 		}
+		if ($className[0] === '\\') {
+			throw new \InvalidArgumentException('Class names must not start with a backslash ("' . $className . '")', 1270826088);
+		}
 		return FALSE;
 	}
 
@@ -234,7 +250,8 @@ abstract class AbstractObjectContainer implements \F3\FLOW3\Object\Container\Obj
 	 */
 	public function getScope($objectName) {
 		if (isset($this->objects[$objectName]) === FALSE) {
-			throw new \F3\FLOW3\Object\Exception\UnknownObjectException('Object "' . $objectName . '" is not registered.', 1265367590);
+			$hint = ($objectName[0] === '\\') ? ' Hint: You specified an object name with a leading backslash!' : '';
+			throw new \F3\FLOW3\Object\Exception\UnknownObjectException('Object "' . $objectName . '" is not registered.' . $hint, 1265367590);
 		}
 		return $this->objects[$objectName]['s'];
 	}

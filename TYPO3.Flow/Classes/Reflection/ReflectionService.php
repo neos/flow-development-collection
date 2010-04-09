@@ -801,6 +801,7 @@ class ReflectionService {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function reflectClass($className) {
+		$className = trim($className, '\\');
 		$this->log('Reflecting class "' . $className . '" (' . ($this->initialized ? '' : 'not ') . 'initialized)', LOG_DEBUG);
 
 		$class = new \F3\FLOW3\Reflection\ClassReflection($className);
