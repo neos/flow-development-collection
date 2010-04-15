@@ -50,24 +50,28 @@ class Uri implements \F3\FLOW3\Security\RequestPatternInterface {
 	}
 
 	/**
-	 * Returns the set pattern
+	 * Returns the set pattern.
 	 *
 	 * @return string The set pattern
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getPattern() {
-		return $this->uriPattern;
+		return str_replace('\/', '/', $this->uriPattern);
 	}
 
 	/**
 	 * Sets an URI pattern (preg_match() syntax)
 	 *
-	 * @param string $uripattern The preg_match() styled URL pattern
+	 * Note: the pattern is a full-on regular expression pattern. The only
+	 * thing that is touched by the code: forward slashes are escaped before
+	 * the pattern is used.
+	 *
+	 * @param string $uriPattern The preg_match() styled URL pattern
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function setPattern($uripattern) {
-		$this->uriPattern = $uripattern;
+	public function setPattern($uriPattern) {
+		$this->uriPattern = str_replace('/', '\/', $uriPattern);
 	}
 
 	/**
@@ -81,7 +85,7 @@ class Uri implements \F3\FLOW3\Security\RequestPatternInterface {
 	public function matchRequest(\F3\FLOW3\MVC\RequestInterface $request) {
 		if (!($request instanceof \F3\FLOW3\MVC\Web\Request)) throw new \F3\FLOW3\Security\Exception\RequestTypeNotSupportedException('The given request type is not supported.', 1216903641);
 
-		return (boolean)preg_match('/^' . str_replace('/', '\/', $this->uriPattern) . '$/', $request->getRequestUri()->getPath());
+		return (boolean)preg_match('/^' . $this->uriPattern . '$/', $request->getRequestUri()->getPath());
 	}
 }
 
