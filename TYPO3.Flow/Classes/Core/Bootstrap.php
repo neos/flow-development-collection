@@ -138,7 +138,7 @@ class Bootstrap {
 			unset($testPath);
 		}
 
-		if (FLOW3_SAPITYPE === 'cli') {
+		if (FLOW3_SAPITYPE === 'CLI') {
 			if (!defined('FLOW3_PATH_ROOT')) {
 				exit('FLOW3: No root path defined in environment variable FLOW3_ROOTPATH (Error #1248964376)' . PHP_EOL);
 			}
