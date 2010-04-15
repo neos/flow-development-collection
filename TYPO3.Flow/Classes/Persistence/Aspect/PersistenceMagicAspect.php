@@ -90,14 +90,15 @@ class PersistenceMagicAspect {
 		$proxy = $joinPoint->getProxy();
 		$hashSource = '';
 		foreach (array_keys($this->reflectionService->getClassSchema($joinPoint->getClassName())->getProperties()) as $propertyName) {
-			if (is_array($proxy->FLOW3_AOP_Proxy_getProperty($propertyName))) {
-				$hashSource .= serialize($proxy->FLOW3_AOP_Proxy_getProperty($propertyName));
-			} elseif (!is_object($proxy->FLOW3_AOP_Proxy_getProperty($propertyName))) {
-				$hashSource .= $proxy->FLOW3_AOP_Proxy_getProperty($propertyName);
-			} elseif (property_exists($proxy->FLOW3_AOP_Proxy_getProperty($propertyName), 'FLOW3_Persistence_Entity_UUID')) {
-				$hashSource .= $proxy->FLOW3_AOP_Proxy_getProperty($propertyName)->FLOW3_Persistence_Entity_UUID;
-			} elseif (property_exists($proxy->FLOW3_AOP_Proxy_getProperty($propertyName), 'FLOW3_Persistence_ValueObject_Hash')) {
-				$hashSource .= $proxy->FLOW3_AOP_Proxy_getProperty($propertyName)->FLOW3_Persistence_Entity_UUID;
+			$propertyValue = $proxy->FLOW3_AOP_Proxy_getProperty($propertyName);
+			if (is_array($propertyValue)) {
+				$hashSource .= serialize($propertyValue);
+			} elseif (!is_object($propertyValue)) {
+				$hashSource .= $propertyValue;
+			} elseif (property_exists($propertyValue, 'FLOW3_Persistence_Entity_UUID')) {
+				$hashSource .= $propertyValue->FLOW3_Persistence_Entity_UUID;
+			} elseif (property_exists($propertyValue, 'FLOW3_Persistence_ValueObject_Hash')) {
+				$hashSource .= $propertyValue->FLOW3_Persistence_ValueObject_Hash;
 			}
 		}
 		$proxy->FLOW3_Persistence_ValueObject_Hash = sha1($hashSource);

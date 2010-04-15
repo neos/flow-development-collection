@@ -56,7 +56,28 @@ class PersistenceMagicAspectTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 */
 	public function generateValueHashUsesIdentifierOrHashOfSubObjects() {
-		$this->markTestIncomplete();
+
+		$mockClassSchema = $this->getMock('F3\FLOW3\Reflection\ClassSchema', array(), array(), '', FALSE);
+		$mockClassSchema->expects($this->any())->method('getProperties')->will($this->returnValue(array('foo', 'bar')));
+		
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService');
+		$mockReflectionService->expects($this->any())->method('getClassSchema')->will($this->returnValue($mockClassSchema));
+
+		$subObject1 = new \stdClass();
+		$subObject1->FLOW3_Persistence_Entity_UUID = 'uuid';
+		$subObject2 = new \stdClass();
+		$subObject2->FLOW3_Persistence_ValueObject_Hash = 'hash';
+
+		$mockProxy = $this->getMock('F3\FLOW3\AOP\ProxyInterface');
+		$mockProxy->expects($this->exactly(2))->method('FLOW3_AOP_Proxy_getProperty')->will($this->onConsecutiveCalls($subObject1, $subObject2));
+
+		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface');
+		$mockJoinPoint->expects($this->once())->method('getProxy')->will($this->returnValue($mockProxy));
+
+		$aspect = new \F3\FLOW3\Persistence\Aspect\PersistenceMagicAspect();
+		$aspect->injectReflectionService($mockReflectionService);
+		$aspect->generateValueHash($mockJoinPoint);
+		$this->assertEquals('537d18be833d6c766bfb842a955a977914d3f98c', $mockProxy->FLOW3_Persistence_ValueObject_Hash);
 	}
 }
 

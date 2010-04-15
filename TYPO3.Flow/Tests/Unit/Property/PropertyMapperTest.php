@@ -668,21 +668,5 @@ class PropertyMapperTest extends \F3\Testing\BaseTestCase {
 		$mapper->map(array(), $source, $target);
 	}
 
-	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function transformToObjectCallsMapIfSourcePropertiesRemainAfterObjectWasFound() {
-		$this->markTestIncomplete('No test yet!');
-	}
-
-	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function findObjectByIdentityPropertiesDispatchesTheExpectedQuery() {
-		$this->markTestIncomplete('No test yet!');
-	}
-
 }
 ?>
