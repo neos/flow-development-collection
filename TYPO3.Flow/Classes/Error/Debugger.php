@@ -24,7 +24,7 @@ namespace F3\FLOW3\Error;
 
 /**
  * A debugging utility class
- * 
+ *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
@@ -245,23 +245,13 @@ function var_dump($variable) {
 		<link rel="stylesheet" type="text/css" href="/_Resources/Static/Packages/FLOW3/Error/Debugger.css" />
 		<div class="F3-FLOW3-Error-Debugger-VarDump">
 			<div class="F3-FLOW3-Error-Debugger-VarDump-Top">
-				<div class="F3-FLOW3-Error-Debugger-VarDump-TopLeft">&nbsp;</div>
-				<div class="F3-FLOW3-Error-Debugger-VarDump-TopCenter">FLOW3 Variable Dump</div>
-				<div class="F3-FLOW3-Error-Debugger-VarDump-TopRight">&nbsp;</div>
+				FLOW3 Variable Dump
 			</div>
 			<div class="F3-FLOW3-Error-Debugger-VarDump-Center">
-				<div class="F3-FLOW3-Error-Debugger-VarDump-Left">&nbsp;</div>
-				<div class="F3-FLOW3-Error-Debugger-VarDump-Right">&nbsp;</div>
-				<div class="F3-FLOW3-Error-Debugger-VarDump-Dump"><pre dir="ltr">' . \F3\FLOW3\Error\Debugger::renderDump($variable, 0) . '</pre></div>
-			</div>
-			<div class="F3-FLOW3-Error-Debugger-VarDump-Bottom">
-				<div class="F3-FLOW3-Error-Debugger-VarDump-BottomLeft">&nbsp;</div>
-				<div class="F3-FLOW3-Error-Debugger-VarDump-BottomCenter">&nbsp;</div>
-				<div class="F3-FLOW3-Error-Debugger-VarDump-BottomRight">&nbsp;</div>
+				<pre dir="ltr">' . \F3\FLOW3\Error\Debugger::renderDump($variable, 0) . '</pre>
 			</div>
 		</div>
 	';
 }
-
 
 ?>

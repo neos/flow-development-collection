@@ -21,148 +21,85 @@
 .F3-FLOW3-Error-Debugger-VarDump {
 	display: block;
 	float: left;
-	width: 80%;
+	background: #b9b9b9;
+	border: 10px solid #b9b9b9;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	border-radius: 10px;
+	-moz-box-shadow: 0px 0px 20px #333;
+	-webkit-box-shadow: 0px 0px 20px #333;
+	box-shadow: 0px 0px 20px #333;
 	position: relative;
 	left: 150px;
-	z-index: 9100;
+	z-index: 999;
 	margin: 20px 0 0 0;
+	width: 80%;
 }
+
 .F3-FLOW3-Error-Debugger-VarDump-Top {
-	height: 20px;
-	position: relative;
+	background: #eee;
+	font: normal bold 12px Lucida Grande, sans-serif;
+	padding: 5px;
 }
-.F3-FLOW3-Error-Debugger-VarDump-TopLeft {
-	background-image: url("/_Resources/Static/Packages/FLOW3/Error/FloatingWindow/TopLeft.png");
-	position: relative;
-	float: left;
-	right: 0px;
-	top: -22px;
-	width: 30px;
-	height: 42px;
-}
-.F3-FLOW3-Error-Debugger-VarDump-TopRight {
-	background-image: url("/_Resources/Static/Packages/FLOW3/Error/FloatingWindow/TopRight.png");
-	position: absolute;
-	right: 0px;
-	top: -22px;
-	width: 40px;
-	height: 42px;
-}
-.F3-FLOW3-Error-Debugger-VarDump-TopCenter {
-	background-image: url("/_Resources/Static/Packages/FLOW3/Error/FloatingWindow/Top.png");
 
-	position: relative;
-	top: -22px;
-	height: 20px;
-	padding: 22px 0 0 20px;
-	margin: 0 40px 0 30px;
-	font-size: 12px;
-	font-family: Lucida Grande, sans-serif;
-}
 .F3-FLOW3-Error-Debugger-VarDump-Center {
-	background: #b9b9b9;
-	position: relative;
-	margin: 0 40px 0 30px;
+	background: #b9b9b9 url("/_Resources/Static/Packages/FLOW3/Error/LinesBackground.png") 0 18px repeat;
+	font: normal normal 11px/18px Monospaced, Lucida Console, monospace;
+	padding: 18px 10px;
 }
 
-.F3-FLOW3-Error-Debugger-VarDump-Dump {
-	background: #b9b9b9;
-	background-image: url("/_Resources/Static/Packages/FLOW3/Error/LinesBackground.png");
-	background-position: 0 20px;
-	position: relative;
-	padding: 20px 10px 20px 20px;
+.F3-FLOW3-Error-Debugger-VarDump-Center pre {
+	margin: 0;
 }
 
-.F3-FLOW3-Error-Debugger-VarDump-Dump, .F3-FLOW3-Error-Debugger-VarDump-Dump pre, .F3-FLOW3-Error-Debugger-VarDump-Dump p, .F3-FLOW3-Error-Debugger-VarDump-Dump a, .F3-FLOW3-Error-Debugger-VarDump-Dump strong, .F3-FLOW3-Error-Debugger-VarDump-Dump .debug-string{
-	font-family: Monospaced, Lucida Console, monospace;
-	font-size: 11px;
-	line-height: 18px;
+.F3-FLOW3-Error-Debugger-VarDump-Center, .F3-FLOW3-Error-Debugger-VarDump-Center pre, .F3-FLOW3-Error-Debugger-VarDump-Center p, .F3-FLOW3-Error-Debugger-VarDump-Center a, .F3-FLOW3-Error-Debugger-VarDump-Center strong, .F3-FLOW3-Error-Debugger-VarDump-Center .debug-string{
+	font: normal normal 11px/18px Monospaced, Lucida Console, monospace;
 }
 
-.F3-FLOW3-Error-Debugger-VarDump-Dump .debug-string {
+.F3-FLOW3-Error-Debugger-VarDump-Center .debug-string {
 	color: black;
 }
 
-.F3-FLOW3-Error-Debugger-VarDump-Dump .debug-object {
+.F3-FLOW3-Error-Debugger-VarDump-Center .debug-object {
 	color: #004fb0;
-	padding-right: 4px;
+	padding: 0px 4px;
 }
 
-.F3-FLOW3-Error-Debugger-VarDump-Dump .debug-unregistered {
+.F3-FLOW3-Error-Debugger-VarDump-Center .debug-unregistered {
 	background-color: #dce1e8;
 }
 
-.F3-FLOW3-Error-Debugger-VarDump-Dump .debug-scope, .F3-FLOW3-Error-Debugger-VarDump-Dump .debug-ptype, .F3-FLOW3-Error-Debugger-VarDump-Dump .debug-proxy, .F3-FLOW3-Error-Debugger-VarDump-Dump .debug-filtered {
+.F3-FLOW3-Error-Debugger-VarDump-Center .debug-scope, .F3-FLOW3-Error-Debugger-VarDump-Center .debug-ptype, .F3-FLOW3-Error-Debugger-VarDump-Center .debug-proxy, .F3-FLOW3-Error-Debugger-VarDump-Center .debug-filtered {
 	color: white;
 	font-size: 10px;
-	padding: 1px 4px 2px 4px;
+	line-height: 16px;
+	padding: 1px 4px;
 }
 
-.F3-FLOW3-Error-Debugger-VarDump-Dump .debug-scope {
+.F3-FLOW3-Error-Debugger-VarDump-Center .debug-scope {
 	background-color: #3e7fe1;
 }
 
-.F3-FLOW3-Error-Debugger-VarDump-Dump .debug-ptype {
+.F3-FLOW3-Error-Debugger-VarDump-Center .debug-ptype {
 	background-color: #87cd3b;
 }
 
-.F3-FLOW3-Error-Debugger-VarDump-Dump .debug-proxy {
+.F3-FLOW3-Error-Debugger-VarDump-Center .debug-proxy {
 	background-color: #b0000a;
 }
 
-.F3-FLOW3-Error-Debugger-VarDump-Dump .debug-filtered {
+.F3-FLOW3-Error-Debugger-VarDump-Center .debug-filtered {
 	background-color: #8c8c8c;
 }
 
-.F3-FLOW3-Error-Debugger-VarDump-Dump .debug-seeabove {
+.F3-FLOW3-Error-Debugger-VarDump-Center .debug-seeabove {
 	text-decoration: none;
 	font-style: italic;
 	font-weight: normal;
 }
 
-.F3-FLOW3-Error-Debugger-VarDump-Dump .debug-property {
+.F3-FLOW3-Error-Debugger-VarDump-Center .debug-property {
 	color: #555555;
+	line-height: 16px;
 	padding: 1px 2px;
-}
-
-.F3-FLOW3-Error-Debugger-VarDump-Left {
-	position: absolute;
-	left: -30px;
-	width: 30px;
-	height: 100%;
-	background-image: url("/_Resources/Static/Packages/FLOW3/Error/FloatingWindow/Left.png");
-}
-.F3-FLOW3-Error-Debugger-VarDump-Right {
-	position: absolute;
-	right: -40px;
-	width: 40px;
-	height: 100%;
-	background-image: url("/_Resources/Static/Packages/FLOW3/Error/FloatingWindow/Right.png");
-}
-.F3-FLOW3-Error-Debugger-VarDump-Bottom {
-	position: relative;
-}
-.F3-FLOW3-Error-Debugger-VarDump-BottomLeft {
-	background-image: url("/_Resources/Static/Packages/FLOW3/Error/FloatingWindow/BottomLeft.png");
-	position: absolute;
-	left: 0px;
-	width: 30px;
-	height: 41px;
-}
-.F3-FLOW3-Error-Debugger-VarDump-BottomRight {
-	background-image: url("/_Resources/Static/Packages/FLOW3/Error/FloatingWindow/BottomRight.png");
-	position: absolute;
-	right: 0px;
-	top: 0px;
-	width: 40px;
-	height: 41px;
-}
-.F3-FLOW3-Error-Debugger-VarDump-BottomCenter {
-	background-image: url("/_Resources/Static/Packages/FLOW3/Error/FloatingWindow/Bottom.png");
-	background-repeat: repeat-x;
-	position: relative;
-	padding: 22px 0 0 20px;
-	margin: 0 40px 0 30px;
-	font-size: 14px;
-	height: 40px;
 }
