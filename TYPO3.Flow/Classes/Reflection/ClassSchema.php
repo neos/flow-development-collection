@@ -37,11 +37,6 @@ class ClassSchema {
 	const MODELTYPE_VALUEOBJECT = 2;
 
 	/**
-	 * Specifies the allowed property types.
-	 */
-	const ALLOWED_TYPES_PATTERN = '/^\\\\?(?P<type>integer|int|float|double|boolean|bool|string|DateTime|F3\\\\[a-zA-Z0-9\\\\]+|array|ArrayObject|SplObjectStorage)(?:<(?P<elementType>[a-zA-Z0-9\\\\]+)>)?/';
-
-	/**
 	 * Name of the class this schema is referring to
 	 *
 	 * @var string
