@@ -165,6 +165,16 @@ class ObjectAccessTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getPropertyPathCanAccessPropertiesOfAnArray() {
+		$array = array('parent' => array('key' => 'value'));
+		$expected = \F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($array, 'parent.key');
+		$this->assertEquals($expected, 'value', 'getPropertyPath does not work with Array property.');
+	}
+
+	/**
+	 * @test
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function getGettablePropertyNamesReturnsAllPropertiesWhichAreAvailable() {

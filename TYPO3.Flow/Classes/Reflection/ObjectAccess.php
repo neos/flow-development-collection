@@ -33,6 +33,9 @@ namespace F3\FLOW3\Reflection;
  * - if public property exists, return/set the value of it.
  * - else, throw exception
  *
+ * Some methods support arrays as well, most notably getProperty() and
+ * getPropertyPath().
+ *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
@@ -43,9 +46,10 @@ class ObjectAccess {
 	const ACCESS_PUBLIC = 2;
 
 	/**
-	 * Get a property of a given object.
+	 * Get a property of a given object or array.
+	 *
 	 * Tries to get the property the following ways:
-	 * - if the target is an array, and has this property, we call it.
+	 * - if the target is an array, and has this property, we return it.
 	 * - if public getter method exists, call it.
 	 * - if the target object is an instance of ArrayAccess, it gets the property
 	 *   on it if it exists.
@@ -85,26 +89,31 @@ class ObjectAccess {
 	}
 
 	/**
-	 * Gets a property path from a given object.
+	 * Gets a property path from a given object or array.
+	 * 
 	 * If propertyPath is "bla.blubb", then we first call getProperty($object, 'bla'),
-	 * and on the resulting object we call getProperty(..., 'blubb')
+	 * and on the resulting object we call getProperty(..., 'blubb').
 	 *
-	 * @param object $object
+	 * For arrays the keys are checked likewise.
+	 *
+	 * @param mixed $subject An object or array
 	 * @param string $propertyPath
 	 * @return mixed Value of the property
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	static public function getPropertyPath($object, $propertyPath) {
+	static public function getPropertyPath($subject, $propertyPath) {
 		$propertyPathSegments = explode('.', $propertyPath);
 		foreach ($propertyPathSegments as $pathSegment) {
-			if (is_object($object) && self::isPropertyGettable($object, $pathSegment)) {
-				$object = self::getProperty($object, $pathSegment);
+			if (is_object($subject) && self::isPropertyGettable($subject, $pathSegment)) {
+				$subject = self::getProperty($subject, $pathSegment);
+			} elseif (is_array($subject) && array_key_exists($pathSegment, $subject)) {
+				$subject = self::getProperty($subject, $pathSegment);
 			} else {
 				return NULL;
 			}
 		}
-		return $object;
+		return $subject;
 	}
 
 	/**
@@ -257,6 +266,5 @@ class ObjectAccess {
 		return 'set' . ucfirst($propertyName);
 	}
 }
-
 
 ?>
