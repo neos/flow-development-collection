@@ -170,8 +170,8 @@ class Bootstrap {
 		$this->ensureRequiredEnvironment();
 		$this->context = (strlen($context) === 0) ? 'Production' : $context;
 
-		if (!(is_dir(FLOW3_PATH_CONFIGURATION . $context) && is_readable(FLOW3_PATH_CONFIGURATION . $context))) {
-			exit('FLOW3: Unknown context "' . $context . '" provided, check your configuration!  (Error #1254216868)');
+		if ($context !== 'Production' && $context !== 'Development') {
+			exit('FLOW3: Unknown context "' . $context . '" provided, currently only "Production" and "Development" are supported. (Error #1254216868)');
 		}
 		$this->FLOW3Package = new \F3\FLOW3\Package\Package('FLOW3', FLOW3_PATH_FLOW3);
 	}

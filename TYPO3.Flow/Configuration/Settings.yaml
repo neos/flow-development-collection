@@ -169,7 +169,7 @@ FLOW3:
       hashService:
 
         # A key used for various tasks, must be unique for a setup!
-        encryptionKey:
+        encryptionKey: "A default key - see issue #7516"
 
       RSAWalletServicePHP:
 
