@@ -17,7 +17,7 @@ FLOW3:
     # much faster to load PHP files.
     #
     # NOTE: You must clear all caches right after switching this option OFF
-    compileConfigurationFiles: n
+    compileConfigurationFiles: y
 
   core:
 

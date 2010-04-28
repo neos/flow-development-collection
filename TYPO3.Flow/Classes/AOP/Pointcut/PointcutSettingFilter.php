@@ -25,6 +25,8 @@ namespace F3\FLOW3\AOP\Pointcut;
 /**
  * A settings filter which fires on configuration setting set to TRUE or equal to the given condition.
  *
+ * Example: setting(FooPackage.configuration.option = 'AOP is cool')
+ *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype

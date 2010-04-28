@@ -240,8 +240,9 @@ class ConfigurationManager {
 				if (count($packages) === 1 && isset($packages['FLOW3'])) {
 					$this->configurations[$configurationType] = array();
 					$settings = $this->configurationSource->load(FLOW3_PATH_FLOW3 . 'Configuration/' . self::CONFIGURATION_TYPE_SETTINGS);
-					$settings = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($settings, $this->configurationSource->load(FLOW3_PATH_CONFIGURATION . self::CONFIGURATION_TYPE_SETTINGS, TRUE));
-					$settings = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($settings, $this->configurationSource->load(FLOW3_PATH_CONFIGURATION . $this->context . '/' . self::CONFIGURATION_TYPE_SETTINGS, TRUE));
+					$settings = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($settings, $this->configurationSource->load(FLOW3_PATH_FLOW3 . 'Configuration/' . $this->context . '/' . self::CONFIGURATION_TYPE_SETTINGS));
+					$settings = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($settings, $this->configurationSource->load(FLOW3_PATH_CONFIGURATION . self::CONFIGURATION_TYPE_SETTINGS));
+					$settings = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($settings, $this->configurationSource->load(FLOW3_PATH_CONFIGURATION . $this->context . '/' . self::CONFIGURATION_TYPE_SETTINGS));
 
 					$this->configurations[self::CONFIGURATION_TYPE_SETTINGS] = $settings;
 					$this->configurations[self::CONFIGURATION_TYPE_SETTINGS]['FLOW3']['core']['context'] = $this->context;

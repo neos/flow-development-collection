@@ -286,14 +286,15 @@ class ConfigurationManagerTest extends \F3\Testing\BaseTestCase {
 		$mockPackage = $this->getMock('F3\FLOW3\Package\Package', array(), array(), '', FALSE);
 
 		$mockConfigurationSource = $this->getMock('F3\FLOW3\Configuration\Source\SourceInterface', array('load', 'save'));
-		$mockConfigurationSource->expects($this->exactly(6))->method('load')->will(
+		$mockConfigurationSource->expects($this->exactly(7))->method('load')->will(
 			$this->onConsecutiveCalls(
-				array('FLOW3' => array('foo' => 'bar')),
-				array('FLOW3' => array('baz' => 'quux')),
-				array('FLOW3' => array('foo' => 'flow')),
-				array('Foo' => array('aaa' => 'bbb')),
-				array('Foo' => array('ccc' => 'ddd')),
-				array('Foo' => array())
+				array('FLOW3' => array('foo' => 'bar', 'x' => 'y')),	// Packages/Framework/FLOW3/Configuration/Settings.yaml
+				array('FLOW3' => array('x1' => 'y1')),						// Packages/Framework/FLOW3/Configuration/FooContext/Settings.yaml
+				array('FLOW3' => array('baz' => 'quux')),					// Configuration/Settings.yaml
+				array('FLOW3' => array('foo' => 'flow')),					// Configuration/FooContext/Settings.yaml
+				array('Foo' => array('aaa' => 'bbb')),						// Packages/.../Foo/Configuration/Settings.yaml
+				array('Foo' => array('ccc' => 'ddd')),						// Configuration/Settings.yaml
+				array('Foo' => array())											// Configuration/FooContext/Settings.yaml
 			)
 		);
 
@@ -305,6 +306,8 @@ class ConfigurationManagerTest extends \F3\Testing\BaseTestCase {
 
 		$expectedSettings = array(
 			'foo' => 'flow',
+			'x' => 'y',
+			'x1' => 'y1',
 			'baz' => 'quux',
 			'core' => array(
 				'context' => 'FooContext'
@@ -314,7 +317,6 @@ class ConfigurationManagerTest extends \F3\Testing\BaseTestCase {
  		$configurationManager->setPackages(array('FLOW3' => $mockPackage));
 		$actualSettings = $configurationManager->getConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'FLOW3');
 		$this->assertSame($expectedSettings, $actualSettings);
-
 		$configurationManager->_set('configurations', array('Settings' => array()));
 
  		$configurationManager->setPackages(array('Foo' => $mockPackage, 'FLOW3' => $mockPackage));
@@ -347,7 +349,7 @@ class ConfigurationManagerTest extends \F3\Testing\BaseTestCase {
 
 		$configurationManager = $this->getAccessibleMock('F3\FLOW3\Configuration\ConfigurationManager', array('postProcessConfiguration'), array(), '', FALSE);
 		$configurationManager->_set('configurationSource', $mockConfigurationSource);
-		$configurationManager->_set('context', 'Testing');
+		$configurationManager->_set('context', 'SomeContext');
 
 		$configurationManager->expects($this->once())->method('postProcessConfiguration');
 
@@ -410,7 +412,7 @@ class ConfigurationManagerTest extends \F3\Testing\BaseTestCase {
 			case 'PackageB/Configuration/Settings' : return $settingsB;
 			case 'PackageC/Configuration/Settings' : return $settingsC;
 			case FLOW3_PATH_CONFIGURATION . 'Settings' : return array();
-			case FLOW3_PATH_CONFIGURATION . 'Testing/Settings' : return array();
+			case FLOW3_PATH_CONFIGURATION . 'SomeContext/Settings' : return array();
 			default:
 				throw new Exception('Unexpected filename: ' . $filenameAndPath);
 		}
