@@ -68,21 +68,8 @@ class Session {
 	/**
 	 * Registers data for a reconstituted object.
 	 *
-	 * $entityData must be like follows:
-	 * array(
-	 *  'identifier' => '<the-uuid-for-this-entity>',
-	 *  'classname' => '<The\Class\Name>',
-	 *  'properties' => array(
-	 *   '<name>' => array(
-	 *    'type' => '...',
-	 *    'multivalue' => boolean,
-	 *    'value => array(
-	 *      'index' => ...,
-	 *      'type' => '...'
-	 *      'value' => ...
-	 *   )
-	 *  )
-	 * )
+	 * $entityData format is described in
+	 * "Documentation/PersistenceFramework object data format.txt"
 	 *
 	 * @param object $entity
 	 * @param array $entityData
@@ -169,42 +156,47 @@ class Session {
 		}
 
 		if ($cleanData['multivalue']) {
-			if (count($cleanData['value']) > 0 && count($cleanData['value']) === count($currentValue)) {
-				if ($currentValue instanceof \SplObjectStorage) {
-					$cleanIdentifiers = array();
-					foreach ($cleanData['value'] as &$cleanObjectData) {
-						$cleanIdentifiers[] = $cleanObjectData['value']['identifier'];
-					}
-					sort($cleanIdentifiers);
-					$currentIdentifiers = array();
-					foreach ($currentValue as $currentObject) {
-						if (property_exists($currentObject, 'FLOW3_Persistence_Entity_UUID')) {
-							$currentIdentifiers[] = $currentObject->FLOW3_Persistence_Entity_UUID;
-						} elseif (property_exists($currentObject, 'FLOW3_Persistence_ValueObject_Hash')) {
-							$currentIdentifiers[] = $currentObject->FLOW3_Persistence_ValueObject_Hash;
-						}
-					}
-					sort($currentIdentifiers);
-					if ($cleanIdentifiers !== $currentIdentifiers) {
-						return TRUE;
-					}
-				} else {
-					foreach ($cleanData['value'] as &$cleanObjectData) {
-						if (!isset($currentValue[$cleanObjectData['index']])) {
-							return TRUE;
-						}
-						if ($this->isPropertyDirty($cleanObjectData['type'], $cleanObjectData['value'], $currentValue[$cleanObjectData['index']]) === TRUE) {
-							return TRUE;
-						}
-					}
-				}
-			} elseif (count($cleanData['value']) > 0 || count($currentValue) > 0) {
-				return TRUE;
-			}
-			return FALSE;
+			return $this->isMultivaluedPropertyDirty($cleanData, $currentValue);
 		} else {
 			return $this->isPropertyDirty($cleanData['type'], $cleanData['value'], $currentValue);
 		}
+	}
+
+	protected function isMultivaluedPropertyDirty(array $cleanData, $currentValue) {
+		if (count($cleanData['value']) > 0 && count($cleanData['value']) === count($currentValue)) {
+			if ($currentValue instanceof \SplObjectStorage) {
+				$cleanIdentifiers = array();
+				foreach ($cleanData['value'] as &$cleanObjectData) {
+					$cleanIdentifiers[] = $cleanObjectData['value']['identifier'];
+				}
+				sort($cleanIdentifiers);
+				$currentIdentifiers = array();
+				foreach ($currentValue as $currentObject) {
+					if (property_exists($currentObject, 'FLOW3_Persistence_Entity_UUID')) {
+						$currentIdentifiers[] = $currentObject->FLOW3_Persistence_Entity_UUID;
+					} elseif (property_exists($currentObject, 'FLOW3_Persistence_ValueObject_Hash')) {
+						$currentIdentifiers[] = $currentObject->FLOW3_Persistence_ValueObject_Hash;
+					}
+				}
+				sort($currentIdentifiers);
+				if ($cleanIdentifiers !== $currentIdentifiers) {
+					return TRUE;
+				}
+			} else {
+				foreach ($cleanData['value'] as &$cleanObjectData) {
+					if (!isset($currentValue[$cleanObjectData['index']])) {
+						return TRUE;
+					}
+					if (($cleanObjectData['type'] === 'array' && $this->isMultivaluedPropertyDirty($cleanObjectData, $currentValue[$cleanObjectData['index']]) === TRUE)
+						|| ($cleanObjectData['type'] !== 'array' && $this->isPropertyDirty($cleanObjectData['type'], $cleanObjectData['value'], $currentValue[$cleanObjectData['index']] === TRUE))) {
+						return TRUE;
+					}
+				}
+			}
+		} elseif (count($cleanData['value']) > 0 || count($currentValue) > 0) {
+			return TRUE;
+		}
+		return FALSE;
 	}
 
 	/**
@@ -215,7 +207,7 @@ class Session {
 	 * @param mixed &$currentValue
 	 * @return boolan
 	 */
-	protected function isPropertyDirty($type, $previousValue, &$currentValue) {
+	protected function isPropertyDirty($type, $previousValue, $currentValue) {
 		switch ($type) {
 			case 'integer':
 				if ($currentValue === (int) $previousValue) return FALSE;
@@ -238,6 +230,22 @@ class Session {
 			break;
 		}
 		return TRUE;
+	}
+
+	/**
+	 * Returns the previous (last persisted) state of the property.
+	 * If nothing is found, NULL is returned.
+	 *
+	 * @param object $object
+	 * @param string $propertyName
+	 * @return mixed
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getCleanStateOfProperty($object, $propertyName) {
+		if ($this->isReconstitutedEntity($object) === FALSE) {
+			return NULL;
+		}
+		return $this->reconstitutedEntitiesData[$this->getIdentifierByObject($object)]['properties'][$propertyName];
 	}
 
 	/**

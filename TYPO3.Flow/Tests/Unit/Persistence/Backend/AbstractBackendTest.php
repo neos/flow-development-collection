@@ -283,43 +283,6 @@ class AbstractBackendTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function getCleanStateReturnsCleanPropertyStateIfAvailable() {
-		$object = new \stdClass();
-		$object->FLOW3_Persistence_cleanProperties = array(
-			'testProperty' => 'cleanValue'
-		);
-
-		$backend = $this->getMockForAbstractClass($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\AbstractBackend'));
-		$this->assertSame('cleanValue', $backend->_call('getCleanState', $object, 'testProperty'));
-	}
-
-	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function getCleanStateReturnsNullIfNoCleanStateIsAvailable() {
-		$object = new \stdClass();
-
-		$backend = $this->getMockForAbstractClass($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\AbstractBackend'));
-		$this->assertNull($backend->_call('getCleanState', $object, 'testProperty'));
-	}
-
-	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function getCleanStateReturnsNullIfPropertyIsNotAvailableInCleanState() {
-		$object = new \stdClass();
-		$object->FLOW3_Persistence_cleanProperties = array();
-
-		$backend = $this->getMockForAbstractClass($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\AbstractBackend'));
-		$this->assertNull($backend->_call('getCleanState', $object, 'testProperty'));
-	}
-
-	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
 	public function getTypeNormalizesDoubleToFloat() {
 		$backend = $this->getMockForAbstractClass($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\AbstractBackend'));
 		$this->assertEquals('float', $backend->_call('getType', 1.234));

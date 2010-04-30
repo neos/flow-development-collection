@@ -392,12 +392,17 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 						'type' => 'string',
 						'index' => 'bar',
 						'value' => 'baz'
+					),
+					array(
+						'type' => 'integer',
+						'index' => 'quux',
+						'value' => NULL
 					)
 				)
 			)
 		);
 
-		$expected = array('foo' => array('bar' => 'baz'));
+		$expected = array('foo' => array('bar' => 'baz', 'quux' => NULL));
 
 		$dataMapper = $this->getAccessibleMock('F3\FLOW3\Persistence\DataMapper', array('dummy'));
 		$this->assertEquals($expected, $dataMapper->_call('mapArray', $arrayValues));

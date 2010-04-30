@@ -746,13 +746,29 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$classSchema->setModelType(\F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY);
 
 		$objectStorage = new \SplObjectStorage();
-		$objectStorage->attach($object);
-		$previousObjectStorage = clone $objectStorage;
-		$objectStorage->detach($object);
+		$previousObjectStorage = array(
+			'type' => 'SplObjectStorage',
+			'multivalue' => TRUE,
+			'value' => array(
+				array(
+					'type' => $fullClassName,
+					'index' => NULL,
+					'value' => array(
+						'identifier' => $identifier,
+						'classname' => $fullClassName,
+						'properties' => array()
+					)
+				)
+			)
+		);
+
+		$mockPersistenceSession = $this->getMock('F3\FLOW3\Persistence\Session');
+		$mockPersistenceSession->expects($this->any())->method('getObjectByIdentifier')->with($identifier)->will($this->returnValue($object));
 
 			// ... and here we go
 		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('removeEntity'));
 		$backend->expects($this->once())->method('removeEntity')->with($object);
+		$backend->injectPersistenceSession($mockPersistenceSession);
 		$backend->_set('classSchemata', array($fullClassName => $classSchema));
 		$backend->_call('processSplObjectStorage', $objectStorage, $identifier, $previousObjectStorage);
 	}
@@ -775,13 +791,29 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$classSchema->setModelType(\F3\FLOW3\Reflection\ClassSchema::MODELTYPE_VALUEOBJECT);
 
 		$objectStorage = new \SplObjectStorage();
-		$objectStorage->attach($object);
-		$previousObjectStorage = clone $objectStorage;
-		$objectStorage->detach($object);
+		$previousObjectStorage = array(
+			'type' => 'SplObjectStorage',
+			'multivalue' => TRUE,
+			'value' => array(
+				array(
+					'type' => $fullClassName,
+					'index' => NULL,
+					'value' => array(
+						'identifier' => $identifier,
+						'classname' => $fullClassName,
+						'properties' => array()
+					)
+				)
+			)
+		);
+
+		$mockPersistenceSession = $this->getMock('F3\FLOW3\Persistence\Session');
+		$mockPersistenceSession->expects($this->any())->method('getObjectByIdentifier')->with($identifier)->will($this->returnValue($object));
 
 			// ... and here we go
 		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('removeValueObject'));
 		$backend->expects($this->once())->method('removeValueObject')->with($object);
+		$backend->injectPersistenceSession($mockPersistenceSession);
 		$backend->_set('classSchemata', array($fullClassName => $classSchema));
 		$backend->_call('processSplObjectStorage', $objectStorage, $identifier, $previousObjectStorage);
 	}
@@ -804,11 +836,29 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$classSchema->setModelType(\F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY);
 
 		$array = array();
-		$previousArray = array($object);
+		$previousArray = array(
+			'type' => 'array',
+			'multivalue' => TRUE,
+			'value' => array(
+				array(
+					'type' => $fullClassName,
+					'index' => 0,
+					'value' => array(
+						'identifier' => $identifier,
+						'classname' => $fullClassName,
+						'properties' => array()
+					)
+				)
+			)
+		);
+
+		$mockPersistenceSession = $this->getMock('F3\FLOW3\Persistence\Session');
+		$mockPersistenceSession->expects($this->any())->method('getObjectByIdentifier')->with($identifier)->will($this->returnValue($object));
 
 			// ... and here we go
 		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('removeEntity'));
 		$backend->expects($this->once())->method('removeEntity')->with($object);
+		$backend->injectPersistenceSession($mockPersistenceSession);
 		$backend->_set('classSchemata', array($fullClassName => $classSchema));
 		$backend->_call('processArray', $array, $identifier, $previousArray);
 	}
@@ -831,11 +881,35 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$classSchema->setModelType(\F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY);
 
 		$array = array(array());
-		$previousArray = array(array($object));
+		$previousArray = array(
+			'type' => 'array',
+			'multivalue' => TRUE,
+			'value' => array(
+				array(
+					'type' => 'array',
+					'index' => 0,
+					'value' => array(
+						array(
+							'type' => $fullClassName,
+							'index' => 0,
+							'value' => array(
+								'identifier' => $identifier,
+								'classname' => $fullClassName,
+								'properties' => array()
+							)
+						)
+					)
+				)
+			)
+		);
+
+		$mockPersistenceSession = $this->getMock('F3\FLOW3\Persistence\Session');
+		$mockPersistenceSession->expects($this->any())->method('getObjectByIdentifier')->with($identifier)->will($this->returnValue($object));
 
 			// ... and here we go
 		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('removeEntity'));
 		$backend->expects($this->once())->method('removeEntity')->with($object);
+		$backend->injectPersistenceSession($mockPersistenceSession);
 		$backend->_set('classSchemata', array($fullClassName => $classSchema));
 		$backend->_call('processArray', $array, $identifier, $previousArray);
 	}
@@ -858,11 +932,29 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$classSchema->setModelType(\F3\FLOW3\Reflection\ClassSchema::MODELTYPE_VALUEOBJECT);
 
 		$array = array();
-		$previousArray = array($object);
+		$previousArray = array(
+			'type' => 'array',
+			'multivalue' => TRUE,
+			'value' => array(
+				array(
+					'type' => $fullClassName,
+					'index' => 0,
+					'value' => array(
+						'identifier' => $identifier,
+						'classname' => $fullClassName,
+						'properties' => array()
+					)
+				)
+			)
+		);
+
+		$mockPersistenceSession = $this->getMock('F3\FLOW3\Persistence\Session');
+		$mockPersistenceSession->expects($this->any())->method('getObjectByIdentifier')->with($identifier)->will($this->returnValue($object));
 
 			// ... and here we go
 		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('removeValueObject'));
 		$backend->expects($this->once())->method('removeValueObject')->with($object);
+		$backend->injectPersistenceSession($mockPersistenceSession);
 		$backend->_set('classSchemata', array($fullClassName => $classSchema));
 		$backend->_call('processArray', $array, $identifier, $previousArray);
 	}

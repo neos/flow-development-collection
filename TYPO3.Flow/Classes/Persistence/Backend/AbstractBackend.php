@@ -253,23 +253,6 @@ abstract class AbstractBackend implements \F3\FLOW3\Persistence\Backend\BackendI
 		$this->deletedEntities = new \SplObjectStorage();
 	}
 
- 	/**
-	 * Returns the previous (last persisted) state of the property, if available.
-	 * If nothing is found, NULL is returned.
-	 *
-	 * @param object $object
-	 * @param string $propertyName
-	 * @return mixed
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	protected function getCleanState($object, $propertyName) {
-		if (property_exists($object, 'FLOW3_Persistence_cleanProperties')) {
-			return (isset($object->FLOW3_Persistence_cleanProperties[$propertyName]) ? $object->FLOW3_Persistence_cleanProperties[$propertyName] : NULL);
-		} else {
-			return NULL;
-		}
-	}
-
 	/**
 	 * Returns the type of $value, i.e. the class name or primitive type.
 	 *

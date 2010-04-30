@@ -196,6 +196,19 @@ class SessionTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
+	public function isDirtyReturnsFalseForUnactivatedLazyObjects() {
+		$object = new \stdClass();
+		$object->FLOW3_Persistence_LazyLoadingObject_thawProperties = 'dummy';
+
+		$session = $this->getMock('F3\FLOW3\Persistence\Session', array('dummy'));
+		$session->registerReconstitutedEntity($object, array('identifier' => 'fakeUuid'));
+		$this->assertFalse($session->isDirty($object, 'foo'));
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
 	public function isDirtyReturnsTrueForTraversablesWhoseCountDiffers() {
 		$object = $this->getMock('F3\FLOW3\AOP\ProxyInterface');
 		$object->expects($this->any())->method('FLOW3_AOP_Proxy_getProperty')->will($this->returnValue(array('foo', 'bar', 'baz')));
@@ -207,6 +220,38 @@ class SessionTest extends \F3\Testing\BaseTestCase {
 					'type' => 'string',
 					'multivalue' => TRUE,
 					'value' => array(array(), array())
+				)
+			)
+		);
+		$session = $this->getMock('F3\FLOW3\Persistence\Session', array('getIdentifierByObject'));
+		$session->registerReconstitutedEntity($object, $cleanData);
+		$session->expects($this->once())->method('getIdentifierByObject')->will($this->returnValue('fakeUuid'));
+
+		$this->assertTrue($session->isDirty($object, 'foo'));
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function isDirtyReturnsTrueForNestedArrayWhoseCountDiffers() {
+		$object = $this->getMock('F3\FLOW3\AOP\ProxyInterface');
+		$object->expects($this->any())->method('FLOW3_AOP_Proxy_getProperty')->will($this->returnValue(array('foo', array('bar', 'baz'))));
+
+		$cleanData = array(
+			'identifier' => 'fakeUuid',
+			'properties' => array(
+				'foo' => array(
+					'type' => 'string',
+					'multivalue' => TRUE,
+					'value' => array(
+						array('type' => 'string', 'index' => 0, 'value' => 'foo'),
+						array(
+							'type' => 'array',
+							'index' => 1,
+							'value' => array('type' => 'string', 'index' => 0, 'value' => 'bar'),
+						)
+					)
 				)
 			)
 		);
@@ -309,6 +354,47 @@ class SessionTest extends \F3\Testing\BaseTestCase {
 							'type' => 'Some\Object',
 							'index' => 0,
 							'value' => array('identifier' => 'cleanHash')
+						)
+					)
+				)
+			)
+		);
+		$session = $this->getMock('F3\FLOW3\Persistence\Session', array('getIdentifierByObject', 'isPropertyDirty'));
+		$session->registerReconstitutedEntity($parent, $cleanData);
+		$session->expects($this->once())->method('getIdentifierByObject')->will($this->returnValue('fakeUuid'));
+		$session->expects($this->once())->method('isPropertyDirty')->will($this->returnValue(FALSE));
+
+		$this->assertFalse($session->isDirty($parent, 'array'));
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function isDirtyReturnsFalseForCleanNestedArrays() {
+		$object = new \stdClass();
+		$object->FLOW3_Persistence_ValueObject_Hash = 'cleanHash';
+		$array = array(array($object));
+		$parent = $this->getMock('F3\FLOW3\AOP\ProxyInterface');
+		$parent->expects($this->any())->method('FLOW3_AOP_Proxy_getProperty')->with('array')->will($this->returnValue($array));
+
+		$cleanData = array(
+			'identifier' => 'fakeUuid',
+			'properties' => array(
+				'array' => array(
+					'type' => 'array',
+					'multivalue' => TRUE,
+					'value' => array(
+						array(
+							'type' => 'array',
+							'index' => 0,
+							'value' => array(
+								array(
+									'type' => 'Some\Object',
+									'index' => 0,
+									'value' => array('identifier' => 'cleanHash')
+								),
+							)
 						)
 					)
 				)

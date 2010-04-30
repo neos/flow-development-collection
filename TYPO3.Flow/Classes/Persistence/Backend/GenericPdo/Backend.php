@@ -341,14 +341,14 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 						$propertyData[$propertyName] = array(
 							'type' => 'array',
 							'multivalue' => TRUE,
-							'value' => $this->processArray($propertyValue, $identifier, $this->getCleanState($object, $propertyName))
+							'value' => $this->processArray($propertyValue, $identifier, $this->persistenceSession->getCleanStateOfProperty($object, $propertyName))
 						);
 					break;
 					case 'SplObjectStorage':
 						$propertyData[$propertyName] = array(
 							'type' => 'SplObjectStorage',
 							'multivalue' => TRUE,
-							'value' => $this->processSplObjectStorage($propertyValue, $identifier, $this->getCleanState($object, $propertyName))
+							'value' => $this->processSplObjectStorage($propertyValue, $identifier, $this->persistenceSession->getCleanStateOfProperty($object, $propertyName))
 						);
 					break;
 				}
@@ -388,7 +388,7 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 	 */
 	protected function processArray(array $array = NULL, $parentIdentifier, array $previousArray = NULL) {
 		if ($previousArray !== NULL) {
-			$this->removeDeletedArrayEntries($array, $previousArray);
+			$this->removeDeletedArrayEntries($array, $previousArray['value']);
 		}
 
 		if ($array === NULL) {
@@ -438,16 +438,17 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function removeDeletedArrayEntries(array $array = NULL, array $previousArray) {
-		foreach ($previousArray as $key => $value) {
-			if (is_array($value)) {
-				$this->removeDeletedArrayEntries($array[$key], $value);
-			} elseif (is_object($value) && !($value instanceof \DateTime || $value instanceof \SplObjectStorage)) {
-				if ($array === NULL || !in_array($value, $array, TRUE)) {
-					if ($this->classSchemata[$value->FLOW3_AOP_Proxy_getProxyTargetClassName()]->getModelType() === \F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY
-							&& $this->classSchemata[$value->FLOW3_AOP_Proxy_getProxyTargetClassName()]->isAggregateRoot() === FALSE) {
-						$this->removeEntity($value);
-					} elseif ($this->classSchemata[$value->FLOW3_AOP_Proxy_getProxyTargetClassName()]->getModelType() === \F3\FLOW3\Reflection\ClassSchema::MODELTYPE_VALUEOBJECT) {
-						$this->removeValueObject($value);
+		foreach ($previousArray as $item) {
+			if ($item['type'] === 'array') {
+				$this->removeDeletedArrayEntries($array[$item['index']], $item['value']);
+			} elseif ($this->getTypeName($item['type']) === 'object' && !($item['type'] === 'DateTime' || $item['type'] === 'SplObjectStorage')) {
+				$object = $this->persistenceSession->getObjectByIdentifier($item['value']['identifier']);
+				if ($array === NULL || !in_array($object, $array, TRUE)) {
+					if ($this->classSchemata[$item['type']]->getModelType() === \F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY
+							&& $this->classSchemata[$item['type']]->isAggregateRoot() === FALSE) {
+						$this->removeEntity($this->persistenceSession->getObjectByIdentifier($item['value']['identifier']));
+					} elseif ($this->classSchemata[$item['type']]->getModelType() === \F3\FLOW3\Reflection\ClassSchema::MODELTYPE_VALUEOBJECT) {
+						$this->removeValueObject($this->persistenceSession->getObjectByIdentifier($item['value']['identifier']));
 					}
 				}
 			}
@@ -455,6 +456,7 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 	}
 
 	/**
+	 * "Serializes" a nested array for storage.
 	 *
 	 * @param string $parentIdentifier
 	 * @param array $nestedArray
@@ -479,31 +481,20 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 	 *
 	 * @param \SplObjectStorage $splObjectStorage The SplObjectStorage to persist
 	 * @param string $parentIdentifier
-	 * @param \SplObjectStorage $previousObjectStorage the previously persisted state of the SplObjectStorage
+	 * @param array $previousObjectStorage the previously persisted state of the SplObjectStorage
 	 * @return array An array with "flat" values representing the SplObjectStorage
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function processSplObjectStorage(\SplObjectStorage $splObjectStorage = NULL, $parentIdentifier, \SplObjectStorage $previousObjectStorage = NULL) {
-		$values = array();
-
-			// remove objects detached since reconstitution
+	protected function processSplObjectStorage(\SplObjectStorage $splObjectStorage = NULL, $parentIdentifier, array $previousObjectStorage = NULL) {
 		if ($previousObjectStorage !== NULL) {
-			foreach ($previousObjectStorage as $object) {
-				if ($splObjectStorage === NULL || !$splObjectStorage->contains($object)) {
-					if ($this->classSchemata[$object->FLOW3_AOP_Proxy_getProxyTargetClassName()]->getModelType() === \F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY
-							&& $this->classSchemata[$object->FLOW3_AOP_Proxy_getProxyTargetClassName()]->isAggregateRoot() === FALSE) {
-						$this->removeEntity($object);
-					} elseif ($this->classSchemata[$object->FLOW3_AOP_Proxy_getProxyTargetClassName()]->getModelType() === \F3\FLOW3\Reflection\ClassSchema::MODELTYPE_VALUEOBJECT) {
-						$this->removeValueObject($object);
-					}
-				}
-			}
+			$this->removeDeletedSplObjectStorageEntries($splObjectStorage, $previousObjectStorage['value']);
 		}
 
 		if ($splObjectStorage === NULL) {
 			return NULL;
 		}
 
+		$values = array();
 		foreach ($splObjectStorage as $object) {
 			if ($object instanceof \DateTime) {
 				$values[] = array(
@@ -524,31 +515,43 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 	}
 
 	/**
+	 * Remove objects removed from SplObjectStorage compared to
+	 * $previousSplObjectStorage.
+	 *
+	 * @param \SplObjectStorage $splObjectStorage
+	 * @param array $previousObjectStorage
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function removeDeletedSplObjectStorageEntries(\SplObjectStorage $splObjectStorage = NULL, array $previousObjectStorage) {
+			// remove objects detached since reconstitution
+		foreach ($previousObjectStorage as $item) {
+			$object = $this->persistenceSession->getObjectByIdentifier($item['value']['identifier']);
+			if ($splObjectStorage === NULL || !$splObjectStorage->contains($object)) {
+				if ($this->classSchemata[$object->FLOW3_AOP_Proxy_getProxyTargetClassName()]->getModelType() === \F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY
+						&& $this->classSchemata[$object->FLOW3_AOP_Proxy_getProxyTargetClassName()]->isAggregateRoot() === FALSE) {
+					$this->removeEntity($object);
+				} elseif ($this->classSchemata[$object->FLOW3_AOP_Proxy_getProxyTargetClassName()]->getModelType() === \F3\FLOW3\Reflection\ClassSchema::MODELTYPE_VALUEOBJECT) {
+					$this->removeValueObject($object);
+				}
+			}
+		}
+	}
+
+	/**
 	 * Persists the given properties to the database. $objectData is expected to
-	 * look like this:
-	 * array(
-	 *  'identifier' => '<the-uuid-for-this-entity>',
-	 *  'classname' => '<The\Class\Name>',
-	 *  'properties' => array(
-	 *   '<name>' => array(
-	 *    'type' => '...',
-	 *    'multivalue' => boolean,
-	 *    'value => array(
-	 *      'index' => ...,
-	 *      'type' => '...'
-	 *      'value' => ...
-	 *   )
-	 *  )
-	 * )
+	 * look like documented in:
+	 *  "Documentation/PersistenceFramework object data format.txt"
 	 *
 	 * @param array $objectData
+	 * @param integer $objectState one of self::OBJECTSTATE_*
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function setProperties(array $objectData, $objectState) {
 		$insertPropertyStatementHandle = $this->databaseHandle->prepare('INSERT INTO "properties" ("parent", "name", "multivalue", "type") VALUES (?, ?, ?, ?)');
 		foreach ($objectData['properties'] as $propertyName => $propertyData) {
-			
+
 				// optimize into one call to removeProperties
 			if ($objectState === self::OBJECTSTATE_RECONSTITUTED) {
 				$this->removeProperties(array($propertyName => array('parent' => $objectData['identifier'])));
