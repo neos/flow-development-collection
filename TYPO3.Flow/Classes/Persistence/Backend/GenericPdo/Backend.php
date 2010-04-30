@@ -383,23 +383,12 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 	 * @param array $array The array to persist
 	 * @param string $parentIdentifier
 	 * @param array $previousArray the previously persisted state of the array
+	 * @return array An array with "flat" values representing the array
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function processArray(array $array = NULL, $parentIdentifier, array $previousArray = NULL) {
-			// remove objects removed from array since reconstitution
 		if ($previousArray !== NULL) {
-			foreach ($previousArray as $value) {
-				if (is_object($value) && !($value instanceof \DateTime || $value instanceof \SplObjectStorage)) {
-					if ($array === NULL || !in_array($value, $array, TRUE)) {
-						if ($this->classSchemata[$value->FLOW3_AOP_Proxy_getProxyTargetClassName()]->getModelType() === \F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY
-								&& $this->classSchemata[$value->FLOW3_AOP_Proxy_getProxyTargetClassName()]->isAggregateRoot() === FALSE) {
-							$this->removeEntity($value);
-						} elseif ($this->classSchemata[$value->FLOW3_AOP_Proxy_getProxyTargetClassName()]->getModelType() === \F3\FLOW3\Reflection\ClassSchema::MODELTYPE_VALUEOBJECT) {
-							$this->removeValueObject($value);
-						}
-					}
-				}
-			}
+			$this->removeDeletedArrayEntries($array, $previousArray);
 		}
 
 		if ($array === NULL) {
@@ -415,7 +404,7 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 					'value' => $value->getTimestamp()
 				);
 			} elseif ($value instanceof \SplObjectStorage) {
-				throw new \RuntimeException('SplObjectStorage instances in arrays are not uspported - missing feature?!?', 1261048721);
+				throw new \RuntimeException('SplObjectStorage instances in arrays are not supported - missing feature?!?', 1261048721);
 			} elseif (is_object($value)) {
 				$values[] = array(
 					'type' => $this->getType($value),
@@ -423,7 +412,11 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 					'value' => array('identifier' => $this->persistObject($value, $parentIdentifier))
 				);
 			} elseif (is_array($value)) {
-				throw new \RuntimeException('Nested arrays cannot be persisted - missing feature?!?', 1260284934);
+				$values[] = array(
+					'type' => 'array',
+					'index' => $key,
+					'value' => $this->processNestedArray($parentIdentifier, $value)
+				);
 			} else {
 				$values[] = array(
 					'type' => $this->getType($value),
@@ -437,6 +430,48 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 	}
 
 	/**
+	 * Remove objects removed from array compared to $previousArray.
+	 *
+	 * @param array $array
+	 * @param array $previousArray
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function removeDeletedArrayEntries(array $array = NULL, array $previousArray) {
+		foreach ($previousArray as $key => $value) {
+			if (is_array($value)) {
+				$this->removeDeletedArrayEntries($array[$key], $value);
+			} elseif (is_object($value) && !($value instanceof \DateTime || $value instanceof \SplObjectStorage)) {
+				if ($array === NULL || !in_array($value, $array, TRUE)) {
+					if ($this->classSchemata[$value->FLOW3_AOP_Proxy_getProxyTargetClassName()]->getModelType() === \F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY
+							&& $this->classSchemata[$value->FLOW3_AOP_Proxy_getProxyTargetClassName()]->isAggregateRoot() === FALSE) {
+						$this->removeEntity($value);
+					} elseif ($this->classSchemata[$value->FLOW3_AOP_Proxy_getProxyTargetClassName()]->getModelType() === \F3\FLOW3\Reflection\ClassSchema::MODELTYPE_VALUEOBJECT) {
+						$this->removeValueObject($value);
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 *
+	 * @param string $parentIdentifier
+	 * @param array $nestedArray
+	 * @return string
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function processNestedArray($parentIdentifier, array $nestedArray) {
+		$identifier = uniqid('a', TRUE);
+		$data = array(
+			'multivalue' => TRUE,
+			'value' => $this->processArray($nestedArray, $parentIdentifier)
+		);
+		$this->storePropertyData($parentIdentifier, $identifier, $data);
+		return $identifier;
+	}
+
+	/**
 	 * Store an SplObjectStorage as a set of records.
 	 *
 	 * Note: Objects contained in the SplObjectStorage will have a matching
@@ -445,6 +480,7 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 	 * @param \SplObjectStorage $splObjectStorage The SplObjectStorage to persist
 	 * @param string $parentIdentifier
 	 * @param \SplObjectStorage $previousObjectStorage the previously persisted state of the SplObjectStorage
+	 * @return array An array with "flat" values representing the SplObjectStorage
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function processSplObjectStorage(\SplObjectStorage $splObjectStorage = NULL, $parentIdentifier, \SplObjectStorage $previousObjectStorage = NULL) {
@@ -525,31 +561,44 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 				$propertyData['type']
 			));
 
-			if ($propertyData['value'] === NULL) {
+			$this->storePropertyData($objectData['identifier'], $propertyName, $propertyData);
+		}
+	}
+
+	/**
+	 *
+	 * @param string $parentIdentifier
+	 * @param string $propertyName
+	 * @param array $propertyData 
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function storePropertyData($parentIdentifier, $propertyName, array $propertyData) {
+		if ($propertyData['value'] === NULL) {
 				// we don't store those in properties_data
-			} else {
-				if ($propertyData['multivalue']) {
-					foreach ($propertyData['value'] as $valueData) {
-						$statementHandle = $this->databaseHandle->prepare('INSERT INTO "properties_data" ("parent", "name", "index", "type", "' . $this->getTypeName($valueData['type']) . '") VALUES (?, ?, ?, ?, ?)');
-						$statementHandle->execute(array(
-							$objectData['identifier'],
-							$propertyName,
-							$valueData['index'],
-							$valueData['type'],
-							is_array($valueData['value']) ? $valueData['value']['identifier'] : $valueData['value']
-						));
-					}
-				} else {
-					$statementHandle = $this->databaseHandle->prepare('INSERT INTO "properties_data" ("parent", "name", "index", "type", "' . $this->getTypeName($propertyData['type']) . '") VALUES (?, ?, ?, ?, ?)');
-					$statementHandle->execute(array(
-						$objectData['identifier'],
-						$propertyName,
-						NULL,
-						$propertyData['type'],
-						is_array($propertyData['value']) ? $propertyData['value']['identifier'] : $propertyData['value']
-					));
-				}
+			return;
+		}
+
+		if ($propertyData['multivalue']) {
+			foreach ($propertyData['value'] as $valueData) {
+				$statementHandle = $this->databaseHandle->prepare('INSERT INTO "properties_data" ("parent", "name", "index", "type", "' . $this->getTypeName($valueData['type']) . '") VALUES (?, ?, ?, ?, ?)');
+				$statementHandle->execute(array(
+					$parentIdentifier,
+					$propertyName,
+					$valueData['index'],
+					$valueData['type'],
+					is_array($valueData['value']) ? $valueData['value']['identifier'] : $valueData['value']
+				));
 			}
+		} else {
+			$statementHandle = $this->databaseHandle->prepare('INSERT INTO "properties_data" ("parent", "name", "index", "type", "' . $this->getTypeName($propertyData['type']) . '") VALUES (?, ?, ?, ?, ?)');
+			$statementHandle->execute(array(
+				$parentIdentifier,
+				$propertyName,
+				NULL,
+				$propertyData['type'],
+				is_array($propertyData['value']) ? $propertyData['value']['identifier'] : $propertyData['value']
+			));
 		}
 	}
 
@@ -755,7 +804,7 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 	 */
 	protected function processObjectRecords(array $objectRows) {
 		$objectData = array();
-		$propertyStatement = $this->databaseHandle->prepare('SELECT p."name", p."multivalue", p."type" AS "parenttype", d."index", d."type", d."string", d."integer", d."float", d."datetime", d."boolean", d."object" FROM "properties" AS p LEFT JOIN "properties_data" AS d ON p."parent"=d."parent" AND p."name"=d."name" WHERE p."parent"=?');
+		$propertyStatement = $this->databaseHandle->prepare('SELECT p."name", p."multivalue", p."type" AS "parenttype", d."index", d."type", d."array", d."string", d."integer", d."float", d."datetime", d."boolean", d."object" FROM "properties" AS p LEFT JOIN "properties_data" AS d ON p."parent"=d."parent" AND p."name"=d."name" WHERE p."parent"=?');
 
 		foreach ($objectRows as $objectRow) {
 			$this->knownRecords[$objectRow['identifier']] = TRUE;
@@ -818,14 +867,14 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 	 * @return mixed
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function getValue(array $data, $propertyMetadata) {
+	protected function getValue(array $data, array $propertyMetadata) {
 		$typename = $this->getTypeName($data['type']);
 		switch ($typename) {
 			case 'object':
 				if (isset($this->knownRecords[$data['object']])) {
 					return array('identifier' => $data['object']);
 				} else {
-						// check or lazy loading
+						// check for lazy loading
 					if ($propertyMetadata['lazy'] === TRUE) {
 						return array('identifier' => $data['object'], 'classname' => $propertyMetadata['type'], 'properties' => array());
 					} else {
@@ -833,9 +882,30 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 					}
 				}
 				break;
+			case 'array':
+#				return array('type' => 'array', array('type' => 'array', 'index' => $data['index'], 'value' => $this->getArray($data['array'])));
+				return $this->getArray($data['array']);
+				break;
 			default:
 				return $data[$typename];
 		}
+	}
+
+	/**
+	 *
+	 * @param string $arrayIdentifier
+	 * @return array
+	 */
+	protected function getArray($arrayIdentifier) {
+		$nestedArray = array();
+		$statement = $this->databaseHandle->prepare('SELECT "index", "type", "array", "string", "integer", "float", "datetime", "boolean", "object" FROM "properties_data" WHERE "name"=?');
+		$statement->execute(array($arrayIdentifier));
+
+		foreach ($statement->fetchAll(\PDO::FETCH_ASSOC) as $row) {
+			$nestedArray[] = array('type' => $row['type'], 'index' => $row['index'], 'value' => $this->getValue($row, array('lazy' => FALSE)));
+		}
+
+		return $nestedArray;
 	}
 
 	/**

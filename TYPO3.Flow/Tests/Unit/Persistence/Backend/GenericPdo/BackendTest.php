@@ -3,7 +3,7 @@ declare(ENCODING = 'utf-8');
 namespace F3\FLOW3\Persistence\Backend\GenericPdo;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3CR".                    *
+ * This script belongs to the FLOW3 framework.                            *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License as published by the *
@@ -817,6 +817,33 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
+	public function entitiesRemovedFromNestedArrayAreRemovedFromRepository() {
+		$className = 'SomeClass' . uniqid();
+		$fullClassName = 'F3\\FLOW3\Persistence\\Tests\\' . $className;
+		$identifier = \F3\FLOW3\Utility\Algorithms::generateUUID();
+		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $className . ' {
+			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return \'' . $fullClassName . '\'; }
+			public function FLOW3_AOP_Proxy_getProperty($propertyName) {}
+		}');
+		$object = new $fullClassName();
+
+		$classSchema = new \F3\FLOW3\Reflection\ClassSchema($fullClassName);
+		$classSchema->setModelType(\F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY);
+
+		$array = array(array());
+		$previousArray = array(array($object));
+
+			// ... and here we go
+		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('removeEntity'));
+		$backend->expects($this->once())->method('removeEntity')->with($object);
+		$backend->_set('classSchemata', array($fullClassName => $classSchema));
+		$backend->_call('processArray', $array, $identifier, $previousArray);
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
 	public function valueObjectsRemovedFromArrayAreRemovedFromRepository() {
 		$className = 'SomeClass' . uniqid();
 		$fullClassName = 'F3\\FLOW3\Persistence\\Tests\\' . $className;
@@ -869,15 +896,35 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \RuntimeException
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function processArrayRejectsNestedArrays() {
-		$array = array(array('foo' => 'bar'));
+	public function processArrayHandlesNestedArrays() {
+		$array = array('foo' => array('bar' => 'baz'));
 
-		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('dummy'));
+		$storePropertyCallback = function() {
+			if (
+					func_get_arg(0) !== 'fakeUuid'
+					|| !preg_match('/a[a-f0-9]{14}\.[a-f0-9]{8}/', func_get_arg(1))
+					|| func_get_arg(2) !== array(
+							'multivalue' => TRUE,
+							'value' => array(array(
+								'type' => 'string',
+								'index' => 'bar',
+								'value' => 'baz'
+							))
+						)
+			) {
+				throw new \PHPUnit_Framework_ExpectationFailedException('Did not receive expected params to storePropertyData call.');
+			}
+		};
 
-		$backend->_call('processArray', $array, 'fakeUuid');
+		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('storePropertyData'));
+		$backend->expects($this->once())->method('storePropertyData')->will($this->returnCallback($storePropertyCallback));
+
+		$result = $backend->_call('processArray', $array, 'fakeUuid');
+		$this->assertEquals('array', $result[0]['type']);
+		$this->assertEquals('foo', $result[0]['index']);
+		$this->assertRegExp('/a[a-f0-9]{14}\.[a-f0-9]{8}/', $result[0]['value']);
 	}
 
 	/**

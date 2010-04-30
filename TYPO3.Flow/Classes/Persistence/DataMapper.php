@@ -202,10 +202,10 @@ class DataMapper {
 				} else {
 					switch ($propertyData['type']) {
 						case 'array':
-							$propertyValue = $this->mapArray($propertyValues[$propertyName]['value']);
+							$propertyValue = $this->mapArray(NULL);
 						break;
 						case 'SplObjectStorage':
-							$propertyValue = $this->mapSplObjectStorage($propertyValues[$propertyName]['value']);
+							$propertyValue = $this->mapSplObjectStorage(NULL);
 						break;
 					}
 				}
@@ -271,7 +271,7 @@ class DataMapper {
 						$array[$arrayValue['index']] = $this->mapDateTime($arrayValue['value']);
 					break;
 					case 'array':
-						throw new \RuntimeException('no nested arrays, please', 1260541003);
+						$array[$arrayValue['index']] = $this->mapArray($arrayValue['value']);
 					break;
 					case 'SplObjectStorage':
 						$array[$arrayValue['index']] = $this->mapSplObjectStorage($arrayValue['value']);

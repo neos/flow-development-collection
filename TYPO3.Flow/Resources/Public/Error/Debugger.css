@@ -50,6 +50,7 @@
 
 .F3-FLOW3-Error-Debugger-VarDump-Center pre {
 	margin: 0;
+	background-color: transparent;
 }
 
 .F3-FLOW3-Error-Debugger-VarDump-Center, .F3-FLOW3-Error-Debugger-VarDump-Center pre, .F3-FLOW3-Error-Debugger-VarDump-Center p, .F3-FLOW3-Error-Debugger-VarDump-Center a, .F3-FLOW3-Error-Debugger-VarDump-Center strong, .F3-FLOW3-Error-Debugger-VarDump-Center .debug-string{

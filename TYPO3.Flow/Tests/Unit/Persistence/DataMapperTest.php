@@ -380,19 +380,27 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \RuntimeException
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function mapArrayThrowsExceptionOnNestedArray() {
+	public function mapArrayMapsNestedArray() {
 		$arrayValues = array(
 			'one' => array(
 				'type' => 'array',
-				'index' => 0,
-				'value' => 'foo'
+				'index' => 'foo',
+				'value' => array(
+					array(
+						'type' => 'string',
+						'index' => 'bar',
+						'value' => 'baz'
+					)
+				)
 			)
 		);
+
+		$expected = array('foo' => array('bar' => 'baz'));
+
 		$dataMapper = $this->getAccessibleMock('F3\FLOW3\Persistence\DataMapper', array('dummy'));
-		$dataMapper->_call('mapArray', $arrayValues);
+		$this->assertEquals($expected, $dataMapper->_call('mapArray', $arrayValues));
 	}
 }
 
