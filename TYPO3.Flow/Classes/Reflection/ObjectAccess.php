@@ -96,6 +96,9 @@ class ObjectAccess {
 	 *
 	 * For arrays the keys are checked likewise.
 	 *
+	 * In case a property on the path is a Closure, the Closure is executed,
+	 * and the return value of the closure is used for further processing.
+	 *
 	 * @param mixed $subject An object or array
 	 * @param string $propertyPath
 	 * @return mixed Value of the property
@@ -107,10 +110,14 @@ class ObjectAccess {
 		foreach ($propertyPathSegments as $pathSegment) {
 			if (is_object($subject) && self::isPropertyGettable($subject, $pathSegment)) {
 				$subject = self::getProperty($subject, $pathSegment);
-			} elseif (is_array($subject) && array_key_exists($pathSegment, $subject)) {
+			} elseif ((is_array($subject) || $subject instanceof \ArrayAccess) && isset($subject[$pathSegment])) {
 				$subject = self::getProperty($subject, $pathSegment);
 			} else {
 				return NULL;
+			}
+
+			if ($subject instanceof \Closure) {
+				$subject = $subject();
 			}
 		}
 		return $subject;

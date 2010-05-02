@@ -177,6 +177,16 @@ class ObjectAccessTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
+	public function getPropertyPathCanAccessPropertiesOfAnObjectImplementingArrayAccess() {
+		$array = array('parent' => new \ArrayObject(array('key' => 'value')));
+		$expected = \F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($array, 'parent.key');
+		$this->assertEquals($expected, 'value', 'getPropertyPath does not work with Array Access property.');
+	}
+
+	/**
+	 * @test
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
 	public function getGettablePropertyNamesReturnsAllPropertiesWhichAreAvailable() {
 		$gettablePropertyNames = \F3\FLOW3\Reflection\ObjectAccess::getGettablePropertyNames($this->dummyObject);
 		$expectedPropertyNames = array('anotherProperty', 'booleanProperty', 'property', 'property2', 'publicProperty', 'publicProperty2');
@@ -260,5 +270,35 @@ class ObjectAccessTest extends \F3\Testing\BaseTestCase {
 		$this->assertNull(\F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($this->dummyObject, 'property2.property.not.existing'));
 	}
 
+	/**
+	 * @test
+	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @todo We might need to discuss if the behavior checked by this unit test is the wanted behavior, i.e. if the closure should be evaluated or returned.
+	 */
+	public function getPropertyPathCallsClosureOnLastElement() {
+		$this->dummyObject->setProperty(function() {
+			return "TEST";
+		});
+
+		$expected = 'TEST';
+		$actual = \F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($this->dummyObject, 'property');
+		$this->assertEquals($expected, $actual);
+	}
+
+	/**
+	 * @test
+	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 */
+	public function getPropertyPathCallsClosuresRecursively() {
+		$alternativeObject = new \F3\FLOW3\Tests\Reflection\Fixture\DummyClassWithGettersAndSetters();
+		$alternativeObject->setProperty2("TEST");
+		$this->dummyObject->setProperty(function() use ($alternativeObject) {
+			return $alternativeObject;
+		});
+
+		$expected = 'TEST';
+		$actual = \F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($this->dummyObject, 'property.property2');
+		$this->assertEquals($expected, $actual);
+	}
 }
 ?>
