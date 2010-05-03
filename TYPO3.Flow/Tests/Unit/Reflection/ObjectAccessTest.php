@@ -273,14 +273,28 @@ class ObjectAccessTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @test
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
-	 * @todo We might need to discuss if the behavior checked by this unit test is the wanted behavior, i.e. if the closure should be evaluated or returned.
 	 */
-	public function getPropertyPathCallsClosureOnLastElement() {
+	public function getPropertyPathCallsClosureOnLastElementIfClosureSupportIsEnabled() {
 		$this->dummyObject->setProperty(function() {
 			return "TEST";
 		});
 
 		$expected = 'TEST';
+		$actual = \F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($this->dummyObject, 'property', TRUE);
+		$this->assertEquals($expected, $actual);
+	}
+
+	/**
+	 * @test
+	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 */
+	public function getPropertyPathDoesNotCallClosureOnLastElementByDefault() {
+		$closure = function() {
+			return "TEST";
+		};
+		$this->dummyObject->setProperty($closure);
+
+		$expected = $closure;
 		$actual = \F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($this->dummyObject, 'property');
 		$this->assertEquals($expected, $actual);
 	}
@@ -289,7 +303,7 @@ class ObjectAccessTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */
-	public function getPropertyPathCallsClosuresRecursively() {
+	public function getPropertyPathCallsClosuresRecursivelyIfClosureSupportisEnabled() {
 		$alternativeObject = new \F3\FLOW3\Tests\Reflection\Fixture\DummyClassWithGettersAndSetters();
 		$alternativeObject->setProperty2("TEST");
 		$this->dummyObject->setProperty(function() use ($alternativeObject) {
@@ -297,7 +311,7 @@ class ObjectAccessTest extends \F3\Testing\BaseTestCase {
 		});
 
 		$expected = 'TEST';
-		$actual = \F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($this->dummyObject, 'property.property2');
+		$actual = \F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($this->dummyObject, 'property.property2', TRUE);
 		$this->assertEquals($expected, $actual);
 	}
 }

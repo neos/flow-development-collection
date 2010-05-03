@@ -96,16 +96,18 @@ class ObjectAccess {
 	 *
 	 * For arrays the keys are checked likewise.
 	 *
+	 * If $evaluateClosures is TRUE, then the following happens:
 	 * In case a property on the path is a Closure, the Closure is executed,
 	 * and the return value of the closure is used for further processing.
 	 *
 	 * @param mixed $subject An object or array
 	 * @param string $propertyPath
+	 * @param boolean $enableClosureSupport If set to TRUE, closures along the path will be evaluated and their return value will be used.
 	 * @return mixed Value of the property
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	static public function getPropertyPath($subject, $propertyPath) {
+	static public function getPropertyPath($subject, $propertyPath, $evaluateClosures = FALSE) {
 		$propertyPathSegments = explode('.', $propertyPath);
 		foreach ($propertyPathSegments as $pathSegment) {
 			if (is_object($subject) && self::isPropertyGettable($subject, $pathSegment)) {
@@ -116,7 +118,7 @@ class ObjectAccess {
 				return NULL;
 			}
 
-			if ($subject instanceof \Closure) {
+			if ($evaluateClosures && $subject instanceof \Closure) {
 				$subject = $subject();
 			}
 		}
