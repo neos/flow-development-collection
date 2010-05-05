@@ -38,9 +38,6 @@ class Package implements PackageInterface {
 	const DIRECTORY_DOCUMENTATION = 'Documentation/';
 	const DIRECTORY_METADATA = 'Meta/';
 	const DIRECTORY_RESOURCES = 'Resources/';
-	const DIRECTORY_TESTS_UNIT = 'Tests/Unit/';
-	const DIRECTORY_TESTS_INTEGRATION = 'Tests/Integration/';
-	const DIRECTORY_TESTS_SYSTEM = 'Tests/System/';
 
 	const FILENAME_PACKAGEINFO = 'Package.xml';
 
