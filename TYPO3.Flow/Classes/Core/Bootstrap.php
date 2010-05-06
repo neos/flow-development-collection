@@ -470,7 +470,9 @@ class Bootstrap {
 		$availableClassNames = array();
 		foreach ($this->packageManager->getActivePackages() as $package) {
 			foreach (array_keys($package->getClassFiles()) as $className) {
-				$availableClassNames[] = $className;
+				if (substr($className, -9, 9) !== 'Exception') {
+					$availableClassNames[] = $className;
+				}
 			}
 		}
 		$this->reflectionService->initialize($availableClassNames);

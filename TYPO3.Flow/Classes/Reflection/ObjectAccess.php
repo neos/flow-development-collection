@@ -60,16 +60,21 @@ class ObjectAccess {
 	 * @param string $propertyName name of the property to retrieve
 	 * @return object Value of the property.
 	 * @throws \InvalidArgumentException in case $subject was not an object or $propertyName was not a string
-	 * @throws \RuntimeException if the property was not accessible
+	 * @throws \F3\FLOW3\Reflection\Exception\PropertyNotAccessibleException if the property was not accessible
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	static public function getProperty($subject, $propertyName) {
-		if (!is_object($subject) && !is_array($subject)) throw new \InvalidArgumentException('$subject must be an object or array, ' . gettype($subject). ' given.', 1237301367);
-		if (!is_string($propertyName)) throw new \InvalidArgumentException('Given property name is not of type string.', 1231178303);
+		if (!is_object($subject) && !is_array($subject)) {
+			throw new \InvalidArgumentException('$subject must be an object or array, ' . gettype($subject). ' given.', 1237301367);
+		}
+		if (!is_string($propertyName) && (!is_array($subject) && !$subject instanceof \ArrayAccess)) {
+			var_dump($subject);
+			throw new \InvalidArgumentException('Given property name is not of type string.', 1231178303);
+		}
 
-		if (is_array($subject)) {
+		if (is_array($subject) || $subject instanceof \ArrayAccess) {
 			if (array_key_exists($propertyName, $subject)) {
 				return $subject[$propertyName];
 			}
@@ -85,7 +90,7 @@ class ObjectAccess {
 			}
 		}
 
-		throw new \RuntimeException('The property "' . $propertyName . '" on the subject was not accessible.', 1263391473);
+		throw new \F3\FLOW3\Reflection\Exception\PropertyNotAccessibleException('The property "' . $propertyName . '" on the subject was not accessible.', 1263391473);
 	}
 
 	/**
@@ -102,7 +107,7 @@ class ObjectAccess {
 	 *
 	 * @param mixed $subject An object or array
 	 * @param string $propertyPath
-	 * @param boolean $enableClosureSupport If set to TRUE, closures along the path will be evaluated and their return value will be used.
+	 * @param boolean $evaluateClosures If set to TRUE, closures along the path will be evaluated and their return value will be used.
 	 * @return mixed Value of the property
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
