@@ -70,7 +70,6 @@ class ObjectAccess {
 			throw new \InvalidArgumentException('$subject must be an object or array, ' . gettype($subject). ' given.', 1237301367);
 		}
 		if (!is_string($propertyName) && (!is_array($subject) && !$subject instanceof \ArrayAccess)) {
-			var_dump($subject);
 			throw new \InvalidArgumentException('Given property name is not of type string.', 1231178303);
 		}
 
