@@ -118,7 +118,7 @@ class ObjectAccess {
 			if (is_object($subject) && self::isPropertyGettable($subject, $pathSegment)) {
 				$subject = self::getProperty($subject, $pathSegment);
 			} elseif ((is_array($subject) || $subject instanceof \ArrayAccess) && isset($subject[$pathSegment])) {
-				$subject = self::getProperty($subject, $pathSegment);
+				$subject = $subject[$pathSegment];
 			} else {
 				return NULL;
 			}
