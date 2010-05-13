@@ -244,9 +244,6 @@ class PackageManager implements \F3\FLOW3\Package\PackageManagerInterface {
 				\F3\FLOW3\Package\Package::DIRECTORY_CONFIGURATION,
 				\F3\FLOW3\Package\Package::DIRECTORY_DOCUMENTATION,
 				\F3\FLOW3\Package\Package::DIRECTORY_RESOURCES,
-				\F3\FLOW3\Package\Package::DIRECTORY_TESTS_UNIT,
-				\F3\FLOW3\Package\Package::DIRECTORY_TESTS_INTEGRATION,
-				\F3\FLOW3\Package\Package::DIRECTORY_TESTS_SYSTEM,
 			) as $path) {
 			\F3\FLOW3\Utility\Files::createDirectoryRecursively($packagePath . $path);
 		}
