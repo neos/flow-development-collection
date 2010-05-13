@@ -87,11 +87,11 @@
     <procedure>
       <step>
         <para>Download the FLOW3 distribution from
-        <uri>http://flow3.typo3.org/download/</uri></para>
+        <link xl:href="http://flow3.typo3.org/download/">http://flow3.typo3.org/download/</link></para>
       </step>
 
       <step>
-        <para>Unzip / un-phar it to the document root of the webserver (often
+        <para>Unpack it to the document root of the webserver (often
         "htdocs")<note>
             <para>It is highly recommended to change the document root of the
             webserver to the <filename>Web</filename> subfolder of the FLOW3
@@ -103,12 +103,12 @@
         <para>The webserver needs write permissions for some subfolders. The
         FLOW3 distribution provides a helper script for Unix like operating
         systems, which sets the permissions. Change to the top level folder of
-        the FLOW3 distribution, there you will find the script
+        the FLOW3 distribution, from there you need to run the script
         <filename>setfilepermissions.sh</filename>. Execute this script
-        providing the webserver user and group as parameters. On Debian Linux
-        (Lenny) the commando would look like this:</para>
+        providing the CLI user, webserver user and webserver group as parameters.
+        On Debian Linux (Lenny) the commando would look like this:</para>
 
-        <para><command>./setfilepermissions.sh www-data
+        <para><command>./setfilepermissions.sh johndoe www-data
         www-data</command></para>
       </step>
     </procedure>
