@@ -55,7 +55,7 @@ class Locale {
 	 * @see http://rfc.net/bcp47.html
 	 * @see http://en.wikipedia.org/wiki/ISO_639
 	 */
-	protected $language = 'en';
+	protected $language = NULL;
 
 	/**
 	 * The script identifier - an ISO 15924 code according to BCP47
@@ -64,7 +64,7 @@ class Locale {
 	 * @see http://rfc.net/bcp47.html
 	 * @see http://unicode.org/iso15924/iso15924-codes.html
 	 */
-	protected $script = 'Latn';
+	protected $script = NULL;
 
 	/**
 	 * The region identifier - an ISO 3166-1-alpha-2 code or a UN M.49 three digit code
@@ -74,8 +74,7 @@ class Locale {
 	 * @see http://www.iso.org/iso/country_codes/iso_3166_code_lists.htm
 	 * @see http://en.wikipedia.org/wiki/UN_M.49
 	 */
-	protected $region = 'EN';
-
+	protected $region = NULL;
 
 	/**
 	 * The optional variant identifier - one of the registered registered variants according to BCP47
@@ -83,7 +82,7 @@ class Locale {
 	 * @var string
 	 * @see http://rfc.net/bcp47.html
 	 */
-	protected $variant = '';
+	protected $variant = NULL;
 
 	/**
 	 * Constructs this locale object
@@ -131,5 +130,30 @@ class Locale {
 		return $this->region;
 	}
 
+	/**
+ 	 * Returns the variant defined in this locale
+ 	 *
+ 	 * @return string The variant identifier
+ 	 * @author Karol Gusak <firstname@lastname.eu>
+ 	 */
+ 	public function getVariant() {
+ 		return $this->variant;
+ 	}
+
+ 	/**
+ 	 * Returns the string identifier of this locale
+ 	 *
+ 	 * @return string The locale identifier (tag)
+ 	 * @author Karol Gusak <firstname@lastname.eu>
+ 	 */
+ 	public function __toString() {
+ 		$tag = $this->language;
+
+ 		if($this->script !== NULL) $tag .= '_' . $this->script;
+ 		if($this->region !== NULL) $tag .= '_' . $this->region;
+ 		if($this->variant !== NULL) $tag .= '_' . $this->variant;
+
+ 		return $tag;
+ 	}
 }
 ?>
