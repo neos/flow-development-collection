@@ -32,6 +32,8 @@ namespace F3\FLOW3\MVC\View;
  */
 class NotFoundView extends \F3\FLOW3\MVC\View\AbstractView {
 
+	protected $variablesMarker = array('errorMessage' => 'ERROR_MESSAGE');
+
 	/**
 	 * Renders the not found view
 	 *
@@ -49,8 +51,11 @@ class NotFoundView extends \F3\FLOW3\MVC\View\AbstractView {
 			$template = str_replace('###BASEURI###', $this->controllerContext->getRequest()->getBaseUri(), $template);
 		}
 
-		$errorMessage = isset($this->variables['errorMessage']) ? $this->variables['errorMessage'] : '';
-		$template = str_replace('###ERROR_MESSAGE###', $errorMessage, $template);
+		foreach ($this->variablesMarker as $variableName => $marker) {
+			$variableValue = isset($this->variables[$variableName]) ? $this->variables[$variableName] : '';
+			$template = str_replace('###' . $marker . '###', $variableValue, $template);
+		}
+
 		return $template;
 	}
 
