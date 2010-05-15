@@ -38,6 +38,11 @@ class DetectorTest extends \F3\Testing\BaseTestCase {
 	protected $detector;
 
 	/**
+	 * @var string
+	 */
+	protected $settings;
+
+	/**
 	 * @return void
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
@@ -48,11 +53,11 @@ class DetectorTest extends \F3\Testing\BaseTestCase {
 			new \F3\FLOW3\Locale\Locale('en')
 		);
 		
-		$settings = array('locale' => array('defaultLocale' => new \F3\FLOW3\Locale\Locale('sv_SE')));
+		$this->settings = array('locale' => array('defaultLocale' => new \F3\FLOW3\Locale\Locale('sv_SE'), 'automaticSearchForAvailableLocales' => TRUE, 'availableLocales' => array()));
 
 		$this->detector = $this->getAccessibleMock('F3\FLOW3\Locale\Detector', array('getAvailableLocales'));
 		$this->detector->expects($this->any())->method('getAvailableLocales')->will($this->returnValue($availableLocales));
-		$this->detector->injectSettings($settings);
+		$this->detector->injectSettings($this->settings);
 
 		\vfsStreamWrapper::register();
 		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('Foo'));
@@ -126,7 +131,7 @@ class DetectorTest extends \F3\Testing\BaseTestCase {
 		return array(
 			array('FLOW3', 'en_GB', array(new \F3\FLOW3\Locale\Locale('en_GB'))),
 			/** @todo test below fails, I don't know why yet **/
-			//array('Fluid', 'ha_Arab_SD', array(new \F3\FLOW3\Locale\Locale('ha_Arab_SD'))),
+			array('Fluid', 'ha_Arab_SD', array(new \F3\FLOW3\Locale\Locale('ha_Arab_SD'))),
 		);
 	}
 
@@ -156,11 +161,41 @@ class DetectorTest extends \F3\Testing\BaseTestCase {
 		$this->detector->_set('filesystemProtocol', 'vfs://Foo/');
 		$this->detector->injectObjectManager($mockObjectManager);
 		$this->detector->injectPackageManager($mockPackageManager);
+		$this->detector->injectSettings($this->settings);
 
 		$availableLocales = $this->detector->getAvailableLocales();
 		$this->assertEquals($expectedResult, $availableLocales);
 
 		rmdir('vfs://Foo/' . $packageKey . '/Private/Locale/' . $localeFolder);
+	}
+
+	/**
+	 * @test
+	 * @author Karol Gusak <firstname@lastname.eu>
+	 */
+	public function getAvailableLocalesWorksWhenConfigurationUsed() {
+		$localeTagsFromConfiguration = array('en_GB', 'de_DE', 'sv_SE');
+		$expectedResult = array();
+		foreach ($localeTagsFromConfiguration as $localeTag) {
+			$expectedResult[] = new \F3\FLOW3\Locale\Locale($localeTag);
+		}
+
+		$returnLocaleCallback = function() {
+			$args = func_get_args();
+			return new \F3\FLOW3\Locale\Locale($args[1]);
+		};
+
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
+		$mockObjectManager->expects($this->exactly(count($localeTagsFromConfiguration)))->method('create')->will($this->returnCallback($returnLocaleCallback));
+
+		$settings = array('locale' => array('automaticSearchForAvailableLocales' => FALSE, 'availableLocales' => $localeTagsFromConfiguration));
+
+		$this->detector = new \F3\FLOW3\Locale\Detector();
+		$this->detector->injectObjectManager($mockObjectManager);
+		$this->detector->injectSettings($settings);
+
+		$availableLocales = $this->detector->getAvailableLocales();
+		$this->assertEquals($expectedResult, $availableLocales);
 	}
 }
 ?>

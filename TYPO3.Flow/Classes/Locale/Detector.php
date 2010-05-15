@@ -56,7 +56,7 @@ class Detector {
 	 * Array of Locale objects representing currently installed locales
 	 * @var array
 	 */
-	static protected $availableLocales = array();
+	protected $availableLocales = array();
 
 	/**
 	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
@@ -200,11 +200,15 @@ class Detector {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function getAvailableLocales() {
-		if (empty(self::$availableLocales) === FALSE) {
-			return self::$availableLocales;
+		if (empty($this->availableLocales) === TRUE) {
+			if ($this->settings['locale']['automaticSearchForAvailableLocales'] === TRUE) {
+				$this->availableLocales = $this->detectAvailableLocalesByScanningFilesystem();
+			} else {
+				$this->availableLocales = $this->detectAvailableLocalesFromConfiguration();
+			}
 		}
 
-		return $this->detectAvailableLocalesByScanningFilesystem();
+		return $this->availableLocales;
 	}
 
 	/**
@@ -223,6 +227,7 @@ class Detector {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	protected function detectAvailableLocalesByScanningFilesystem() {
+		$availableLocales = array();
 		foreach ($this->packageManager->getActivePackages() as $activePackage) {
 			foreach (array('Private', 'Public') as $resourceVisibility) {
 				$localeDirectoryPath = $this->filesystemProtocol . $activePackage->getPackageKey() . '/' . $resourceVisibility . '/Locale/';
@@ -235,7 +240,7 @@ class Detector {
 				while (($subdirectory = readdir($packageDirectory)) !== FALSE) {
 					if (is_dir($localeDirectoryPath . $subdirectory) === TRUE) {
 						try {
-							self::$availableLocales[] = $this->objectManager->create('F3\FLOW3\Locale\Locale', $subdirectory);
+							$availableLocales[] = $this->objectManager->create('F3\FLOW3\Locale\Locale', $subdirectory);
 								// Validation should be placed here
 						} catch (\F3\FLOW3\Locale\Exception\InvalidLocaleIdentifierException $e) {
 								// Just ignore current directory and proceed
@@ -243,12 +248,32 @@ class Detector {
 					}
 				}
 
-				self::$availableLocales = array_unique(self::$availableLocales);
+				$availableLocales = array_unique($availableLocales);
 				closedir($packageDirectory);
 			}
 		}
 
-		return self::$availableLocales;
+		return $availableLocales;
+	}
+
+	/**
+	 * Returns an array of Locale instances, using configuration settings, where
+	 * locale tags are given.
+	 *
+	 * @return array Array of \F3\FLOW3\Locale\Locale instances
+	 * @author Karol Gusak <firstname@lastname.eu>
+	 */
+	protected function detectAvailableLocalesFromConfiguration() {
+		$availableLocales = array();
+		foreach ($this->settings['locale']['availableLocales'] as $availableLocaleTag) {
+			try {
+				$availableLocales[] = $this->objectManager->create('F3\FLOW3\Locale\Locale', $availableLocaleTag);
+			} catch (\F3\FLOW3\Locale\Exception\InvalidLocaleIdentifierException $e) {
+				// Just ignore current directory and proceed
+			}
+		}
+
+		return $availableLocales;
 	}
 }
 ?>
