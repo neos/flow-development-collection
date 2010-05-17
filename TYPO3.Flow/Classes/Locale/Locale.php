@@ -96,8 +96,9 @@ class Locale {
 		if (preg_match(self::PATTERN_MATCH_LOCALEIDENTIFIER, $localeIdentifier, $matches) === 0) throw new \F3\FLOW3\Locale\Exception\InvalidLocaleIdentifierException('"' . $localeIdentifier . '" is not a valid locale identifier.', 1221137814);
 
 		$this->language = strtolower($matches['language']);
-		if (isset($matches['script'])) $this->script = ucfirst(strtolower($matches['script']));
+		if (empty($matches['script']) === FALSE) $this->script = ucfirst(strtolower($matches['script'])); /** @todo script is set to empty string for eg pl_PL **/
 		if (isset($matches['region'])) $this->region = strtoupper($matches['region']);
+		if (isset($matches['variant'])) $this->variant = strtoupper($matches['variant']);
 	}
 
 	/**

@@ -42,24 +42,28 @@ class Detector {
 
 	/**
 	 * The FLOW3 settings
+	 *
 	 * @var array
 	 */
 	protected $settings;
 
 	/**
 	 * The 'protocol' to use in filesystem operations. It is changed only in tests.
+	 *
 	 * @var string
 	 */
 	protected $filesystemProtocol = 'package://';
 
 	/**
-	 * Array of Locale objects representing currently installed locales
-	 * @var array
+	 * A tree of Locale objects representing currently installed locales, in a
+	 * hierarchical manner.
+	 *
+	 * @var \F3\FLOW3\Locale\LocaleTreeInterface
 	 */
-	protected $availableLocales = array();
+	protected $availableLocalesTree;
 
 	/**
-	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
+	 * @param \F3\FLOW3\Object\ObjectManagerInterface $packageManager
 	 * @return void
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
@@ -88,6 +92,31 @@ class Detector {
 	}
 
 	/**
+	 * @param \F3\FLOW3\Locale\LocaleTreeInterface $packageManager
+	 * @return void
+	 * @author Karol Gusak <firstname@lastname.eu>
+	 */
+	public function injectLocaleTree(\F3\FLOW3\Locale\LocaleTreeInterface $localeTree) {
+		$this->availableLocalesTree = $localeTree;
+	}
+
+	/**
+	 * Constructs the detector. Needs the objectManager to be injected before, as
+	 * it generates a tree of available locales on start.
+	 *
+	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
+	 * @return void
+	 * @author Karol Gusak <firstname@lastname.eu>
+	 */
+	public function initializeObject() {
+		if ($this->settings['locale']['automaticSearchForAvailableLocales'] === TRUE) {
+			$this->generateAvailableLocalesTreeByScanningFilesystem();
+		} else {
+			$this->generateAvailableLocalesTreeFromConfiguration();
+		}
+	}
+
+	/**
 	 * Returns best-matching Locale object based on the Accept-Language header
 	 * provided as parameter. System default locale will be returned if no
 	 * successful matches were done.
@@ -100,39 +129,28 @@ class Detector {
 		$acceptableLanguages = \F3\FLOW3\Locale\Utility::parseAcceptLanguageHeader($header);
 
 		if ($acceptableLanguages === FALSE) {
-			return $this->settings['locale']['defaultLocale'];
+			return $this->getDefaultLocale();
 		}
-
-		$possibleLocale = NULL;
 
 		foreach ($acceptableLanguages as $tag) {
 			if ($tag === '*') {
-				return $this->settings['locale']['defaultLocale'];
+				return $this->getDefaultLocale();
 			}
 
-				// Element 0 is a language code, element 1 is a region code
-			$tagElements = explode('-', $tag);
-			foreach ($this->getAvailableLocales() as $availableLocale) {
-				if ($availableLocale->getLanguage() === $tagElements[0]) {
-					if (!isset($tagElements[1])) {
-						return $availableLocale;
-					} elseif ($availableLocale->getRegion() === $tagElements[1]) {
-						return $availableLocale;
-					}
+			try {
+				$parsedLocale = $this->objectManager->create('F3\FLOW3\Locale\Locale', $tag);
+			} catch (\F3\FLOW3\Locale\Exception\InvalidLocaleIdentifierException $e) {
+				continue;
+			}
 
-					   // Set possible locale in case we won't find better matching
-					if ($possibleLocale === NULL) {
-						$possibleLocale = $availableLocale;
-					}
-				}
+			$foundLocale = $this->availableLocalesTree->findBestMatchingLocale($parsedLocale);
+
+			if ($foundLocale !== NULL) {
+				return $foundLocale;
 			}
 		}
 
-		if ($possibleLocale !== NULL) {
-			return $possibleLocale;
-		}
-
-		return $this->settings['locale']['defaultLocale'];
+		return $this->getDefaultLocale();
 	}
 
 	/**
@@ -140,79 +158,52 @@ class Detector {
 	 * provided as parameter. System default locale will be returned if no
 	 * successful matches were done.
 	 *
-	 * This method ranks installed locales in order to get the best match.
-	 *
 	 * @param string $tag The locale identifier as used in Locale class
 	 * @return \F3\FLOW3\Locale\Locale
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function detectLocaleFromLocaleTag($tag) {
-			// Parse the tag (this doesn't mean that exacly that locale exists in the system)
-		$parsedTagLocale = $this->objectManager->create('F3\FLOW3\Locale\Locale', $tag);
-		$rankOfBestMatch = 0;
-		$indexOfBestMatch = NULL;
-
-		foreach ($this->getAvailableLocales() as $index => $availableLocale) {
-			$rank = 0;
-			if ($parsedTagLocale->getLanguage() === $availableLocale->getLanguage()) {
-				$rank = 10;
-
-				if ($parsedTagLocale->getRegion() === $availableLocale->getRegion()) {
-						// Regions are the same, increase the rank
-					$rank += 3;
-				} elseif ($parsedTagLocale->getRegion() !== NULL && $availableLocale->getRegion() !== NULL) {
-						// Regions are totally different, decrease the rank
-					$rank -= 7;
-				}
-
-				if ($parsedTagLocale->getScript() === $availableLocale->getScript()) {
-					$rank += 5;
-				} elseif ($parsedTagLocale->getScript() !== NULL && $availableLocale->getScript() !== NULL) {
-					$rank -= 5;
-				}
-
-				if ($parsedTagLocale->getVariant() === $availableLocale->getVariant()) {
-					$rank += 7;
-				} elseif ($parsedTagLocale->getVariant() !== NULL && $availableLocale->getVariant() !== NULL) {
-					$rank -= 3;
-				}
-
-				if ($rank > $rankOfBestMatch) {
-					$rankOfBestMatch = $rank;
-					$indexOfBestMatch = $index;
-				}
-			}
+		try {
+				// Parse the tag (this doesn't mean that exacly that locale exists in the system)
+			$parsedLocale = $this->objectManager->create('F3\FLOW3\Locale\Locale', $tag);
+		} catch (\F3\FLOW3\Locale\Exception\InvalidLocaleIdentifierException $e) {
+			return $this->getDefaultLocale();
 		}
 
-		if ($indexOfBestMatch !== NULL) {
-			$availableLocales = $this->getAvailableLocales();
-			return $availableLocales[$indexOfBestMatch];
+		return $this->detectLocaleFromTemplateLocale($parsedLocale);
+	}
+
+	/**
+	 * Returns best-matching Locale object based on the template Locale object
+	 * provided as parameter. System default locale will be returned if no
+	 * successful matches were done.
+	 *
+	 * @param \F3\FLOW3\Locale\Locale $locale The template Locale object
+	 * @return \F3\FLOW3\Locale\Locale
+	 * @author Karol Gusak <firstname@lastname.eu>
+	 */
+	public function detectLocaleFromTemplateLocale($locale) {
+		$foundLocale = $this->availableLocalesTree->findBestMatchingLocale($locale);
+
+		if ($foundLocale !== NULL) {
+			return $foundLocale;
 		}
 
+		return $this->getDefaultLocale();
+	}
+
+	/**
+	 * Returns the default Locale object for this FLOW3 installation.
+	 *
+	 * @return \F3\FLOW3\Locale\Locale
+	 * @author Karol Gusak <firstname@lastname.eu>
+	 */
+	public function getDefaultLocale() {
 		return $this->settings['locale']['defaultLocale'];
 	}
 
 	/**
-	 * Returns an array of Locale objects describing locales available in
-	 * current FLOW3 installation.
-	 *
-	 * @return array Array of \F3\FLOW3\Locale\Locale
-	 * @author Karol Gusak <firstname@lastname.eu>
-	 */
-	public function getAvailableLocales() {
-		if (empty($this->availableLocales) === TRUE) {
-			if ($this->settings['locale']['automaticSearchForAvailableLocales'] === TRUE) {
-				$this->availableLocales = $this->detectAvailableLocalesByScanningFilesystem();
-			} else {
-				$this->availableLocales = $this->detectAvailableLocalesFromConfiguration();
-			}
-		}
-
-		return $this->availableLocales;
-	}
-
-	/**
-	 * Computes an array of Locale objects representing locales available in the
+	 * Computes an tree of Locale objects representing locales available in the
 	 * FLOW3 installation. This is done by scanning all Private/Locale and
 	 * Public/Locale folders of all active packages, and searching for directories
 	 * with names which seems to be locale identifiers ;-). Array is generated
@@ -221,13 +212,15 @@ class Detector {
 	 * Note: for now, CLDR directory in FLOW3 package will be interpreted as
 	 * a valid locale. Please see #7720 for more information.
 	 *
+	 * Note: before this method is invoked one must ensure that availableLocalesTree
+	 * is empty.
+	 *
 	 * @todo: some validation should be done here, ie whether the directory has any files
 	 *
-	 * @return array Array of \F3\FLOW3\Locale\Locale instances
+	 * @return void
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	protected function detectAvailableLocalesByScanningFilesystem() {
-		$availableLocales = array();
+	protected function generateAvailableLocalesTreeByScanningFilesystem() {
 		foreach ($this->packageManager->getActivePackages() as $activePackage) {
 			foreach (array('Private', 'Public') as $resourceVisibility) {
 				$localeDirectoryPath = $this->filesystemProtocol . $activePackage->getPackageKey() . '/' . $resourceVisibility . '/Locale/';
@@ -240,40 +233,39 @@ class Detector {
 				while (($subdirectory = readdir($packageDirectory)) !== FALSE) {
 					if (is_dir($localeDirectoryPath . $subdirectory) === TRUE) {
 						try {
-							$availableLocales[] = $this->objectManager->create('F3\FLOW3\Locale\Locale', $subdirectory);
+							$newLocale = $this->objectManager->create('F3\FLOW3\Locale\Locale', $subdirectory);
 								// Validation should be placed here
+							$this->availableLocalesTree->addLocale($newLocale);
 						} catch (\F3\FLOW3\Locale\Exception\InvalidLocaleIdentifierException $e) {
 								// Just ignore current directory and proceed
 						}
 					}
 				}
 
-				$availableLocales = array_unique($availableLocales);
 				closedir($packageDirectory);
 			}
 		}
-
-		return $availableLocales;
 	}
 
 	/**
 	 * Returns an array of Locale instances, using configuration settings, where
 	 * locale tags are given.
 	 *
-	 * @return array Array of \F3\FLOW3\Locale\Locale instances
+	 * Note: before this method is invoked one must ensure that availableLocalesTree
+	 * is empty.
+	 *
+	 * @return void
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	protected function detectAvailableLocalesFromConfiguration() {
-		$availableLocales = array();
+	protected function generateAvailableLocalesTreeFromConfiguration() {
 		foreach ($this->settings['locale']['availableLocales'] as $availableLocaleTag) {
 			try {
-				$availableLocales[] = $this->objectManager->create('F3\FLOW3\Locale\Locale', $availableLocaleTag);
+				$newLocale = $this->objectManager->create('F3\FLOW3\Locale\Locale', $availableLocaleTag);
+				$this->availableLocalesTree->addLocale($newLocale);
 			} catch (\F3\FLOW3\Locale\Exception\InvalidLocaleIdentifierException $e) {
-				// Just ignore current directory and proceed
+					// Just ignore current item and proceed
 			}
 		}
-
-		return $availableLocales;
 	}
 }
 ?>

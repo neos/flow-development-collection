@@ -38,26 +38,52 @@ class DetectorTest extends \F3\Testing\BaseTestCase {
 	protected $detector;
 
 	/**
+	 * @var \F3\FLOW3\Object\ObjectManagerInterface
+	 */
+	protected $mockObjectManager;
+
+	/**
+	 * @var \F3\FLOW3\Locale\LocaleTreeInterface
+	 */
+	protected $mockTree;
+
+	/**
 	 * @var string
 	 */
-	protected $settings;
+	protected $mockSettings;
 
 	/**
 	 * @return void
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function setUp() {
-		$availableLocales = array (
-			new \F3\FLOW3\Locale\Locale('sr_Cyrl_RS'),
-			new \F3\FLOW3\Locale\Locale('en_GB'),
-			new \F3\FLOW3\Locale\Locale('en')
-		);
-		
-		$this->settings = array('locale' => array('defaultLocale' => new \F3\FLOW3\Locale\Locale('sv_SE'), 'automaticSearchForAvailableLocales' => TRUE, 'availableLocales' => array()));
+		$mockLocalesFromConfiguration = array('sr_Cyrl_RS', 'en_GB', 'en', 'sr');
 
-		$this->detector = $this->getAccessibleMock('F3\FLOW3\Locale\Detector', array('getAvailableLocales'));
-		$this->detector->expects($this->any())->method('getAvailableLocales')->will($this->returnValue($availableLocales));
-		$this->detector->injectSettings($this->settings);
+		$returnLocaleNodeCallback = function() {
+			$args = func_get_args();
+			if (isset($args[1]) === FALSE) $args[1] = NULL;
+			return new \F3\FLOW3\Locale\LocaleNode($args[1]);
+		};
+
+		$mockObjectManagerForTree = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
+		$mockObjectManagerForTree->expects($this->any())->method('create')->with('F3\FLOW3\Locale\LocaleNode')->will($this->returnCallback($returnLocaleNodeCallback));
+		$this->mockTree = new \F3\FLOW3\Locale\LocaleTree($mockObjectManagerForTree);
+
+		$returnLocaleCallback = function() {
+			$args = func_get_args();
+			return new \F3\FLOW3\Locale\Locale($args[1]);
+		};
+
+		$this->mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
+		$this->mockObjectManager->expects($this->any())->method('create')->with('F3\FLOW3\Locale\Locale')->will($this->returnCallback($returnLocaleCallback));
+
+		$this->mockSettings = array('locale' => array('defaultLocale' => new \F3\FLOW3\Locale\Locale('sv_SE'), 'automaticSearchForAvailableLocales' => FALSE, 'availableLocales' => $mockLocalesFromConfiguration));
+
+		$this->detector = new \F3\FLOW3\Locale\Detector();
+		$this->detector->injectObjectManager($this->mockObjectManager);
+		$this->detector->injectSettings($this->mockSettings);
+		$this->detector->injectLocaleTree($this->mockTree);
+		$this->detector->initializeObject();
 
 		\vfsStreamWrapper::register();
 		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('Foo'));
@@ -73,7 +99,7 @@ class DetectorTest extends \F3\Testing\BaseTestCase {
 		return array(
 			array('pl, en-gb;q=0.8, en;q=0.7', array('language' => 'en', 'region' => 'GB', 'script' => NULL)),
 			array('de, *;q=0.8', array('language' => 'sv', 'region' => 'SE', 'script' => NULL)),
-			array('pl, de;q=0.5, sr-rs;q=0.1', array('language' => 'sr', 'region' => 'RS', 'script' => 'Cyrl')),
+			array('pl, de;q=0.5, sr-rs;q=0.1', array('language' => 'sr', 'region' => NULL, 'script' => NuLL)),
 		);
 	}
 
@@ -109,11 +135,6 @@ class DetectorTest extends \F3\Testing\BaseTestCase {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function detectLocaleFromLocaleTagChoosesProperLocale($tag, $expectedResult) {
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->once())->method('create')->with('F3\FLOW3\Locale\Locale', $tag)->will($this->returnValue(new \F3\FLOW3\Locale\Locale($tag)));
-
-		$this->detector->injectObjectManager($mockObjectManager);
-
 		$locale = $this->detector->detectLocaleFromLocaleTag($tag);
 		$this->assertEquals($expectedResult['language'], $locale->getLanguage());
 		$this->assertEquals($expectedResult['region'], $locale->getRegion());
@@ -129,9 +150,8 @@ class DetectorTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function localeFolderInPackage() {
 		return array(
-			array('FLOW3', 'en_GB', array(new \F3\FLOW3\Locale\Locale('en_GB'))),
-			/** @todo test below fails, I don't know why yet **/
-			array('Fluid', 'ha_Arab_SD', array(new \F3\FLOW3\Locale\Locale('ha_Arab_SD'))),
+			array('FLOW3', 'en_GB', new \F3\FLOW3\Locale\Locale('en_GB')),
+			array('Fluid', 'ha_Arab_SD', new \F3\FLOW3\Locale\Locale('ha_Arab_SD')),
 		);
 	}
 
@@ -140,62 +160,30 @@ class DetectorTest extends \F3\Testing\BaseTestCase {
 	 * @dataProvider localeFolderInPackage
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function getAvailableLocalesWorksForOneLocale($packageKey, $localeFolder, $expectedResult) {
+	public function readingLocalesFromFilesystemWorksForOneLocale($packageKey, $localeFolder, $expectedResult) {
+		mkdir('vfs://Foo/' . $packageKey . '/Private/Locale/' . $localeFolder, 0777, TRUE);
+
 		$mockPackage = $this->getMock('F3\FLOW3\Package\PackageInterface');
 		$mockPackage->expects($this->exactly(2))->method('getPackageKey')->will($this->returnValue($packageKey));
 
 		$mockPackageManager = $this->getMock('F3\FLOW3\Package\PackageManagerInterface');
 		$mockPackageManager->expects($this->once())->method('getActivePackages')->will($this->returnValue(array($mockPackage)));
 
-		$returnLocaleCallback = function() {
-			$args = func_get_args();
-			return new \F3\FLOW3\Locale\Locale($args[1]);
-		};
-
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->once())->method('create')->will($this->returnCallback($returnLocaleCallback));
-
-		mkdir('vfs://Foo/' . $packageKey . '/Private/Locale/' . $localeFolder, 0777, TRUE);
+		$settings = $this->mockSettings;
+		$settings['locale']['automaticSearchForAvailableLocales'] = TRUE;
 
 		$this->detector = $this->getAccessibleMock('F3\FLOW3\Locale\Detector', array('dummy'));
 		$this->detector->_set('filesystemProtocol', 'vfs://Foo/');
-		$this->detector->injectObjectManager($mockObjectManager);
 		$this->detector->injectPackageManager($mockPackageManager);
-		$this->detector->injectSettings($this->settings);
+		$this->detector->injectObjectManager($this->mockObjectManager);
+		$this->detector->injectSettings($settings);
+		$this->detector->injectLocaleTree($this->mockTree);
+		$this->detector->initializeObject();
 
-		$availableLocales = $this->detector->getAvailableLocales();
-		$this->assertEquals($expectedResult, $availableLocales);
+		$foundLocale = $this->detector->detectLocaleFromLocaleTag($localeFolder);
+		$this->assertEquals($expectedResult, $foundLocale);
 
 		rmdir('vfs://Foo/' . $packageKey . '/Private/Locale/' . $localeFolder);
-	}
-
-	/**
-	 * @test
-	 * @author Karol Gusak <firstname@lastname.eu>
-	 */
-	public function getAvailableLocalesWorksWhenConfigurationUsed() {
-		$localeTagsFromConfiguration = array('en_GB', 'de_DE', 'sv_SE');
-		$expectedResult = array();
-		foreach ($localeTagsFromConfiguration as $localeTag) {
-			$expectedResult[] = new \F3\FLOW3\Locale\Locale($localeTag);
-		}
-
-		$returnLocaleCallback = function() {
-			$args = func_get_args();
-			return new \F3\FLOW3\Locale\Locale($args[1]);
-		};
-
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->exactly(count($localeTagsFromConfiguration)))->method('create')->will($this->returnCallback($returnLocaleCallback));
-
-		$settings = array('locale' => array('automaticSearchForAvailableLocales' => FALSE, 'availableLocales' => $localeTagsFromConfiguration));
-
-		$this->detector = new \F3\FLOW3\Locale\Detector();
-		$this->detector->injectObjectManager($mockObjectManager);
-		$this->detector->injectSettings($settings);
-
-		$availableLocales = $this->detector->getAvailableLocales();
-		$this->assertEquals($expectedResult, $availableLocales);
 	}
 }
 ?>
