@@ -53,7 +53,7 @@ class Service {
 	/**
 	 * Injects the object factory
 	 *
-	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager A reference to the object factory
+	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager A reference to the object manager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */

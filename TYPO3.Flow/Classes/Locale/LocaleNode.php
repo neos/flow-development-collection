@@ -73,16 +73,16 @@ class LocaleNode {
 	 *
 	 * @var \F3\FLOW3\Locale\Locale
 	 */
-	protected $value = NULL;
+	protected $locale = NULL;
 
 	/**
 	 * Constructs the LocaleNode.
 	 *
-	 * @param \F3\FLOW3\Locale\Locale $value A Locale object to be contained in this node
+	 * @param \F3\FLOW3\Locale\Locale $locale A Locale object to be contained in this node
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function __construct(\F3\FLOW3\Locale\Locale $value = NULL) {
-		$this->value = $value;
+	public function __construct(\F3\FLOW3\Locale\Locale $locale = NULL) {
+		$this->locale = $locale;
 	}
 
 	/**
@@ -127,13 +127,13 @@ class LocaleNode {
 	 * Searches for a node within group of children of this node, which contains
 	 * a Locale objects which is equal to the one given as parameter.
 	 *
-	 * @param \F3\FLOW3\Locale\Locale $value The value of node's to be found
+	 * @param \F3\FLOW3\Locale\Locale $locale The value of node's to be found
 	 * @return mixed Existing \F3\FLOW3\Locale\LocaleNode instance on success, FALSE on failure
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function findChildByValue(\F3\FLOW3\Locale\Locale $value) {
+	public function findChildByLocale(\F3\FLOW3\Locale\Locale $locale) {
 		foreach ($this->getChildren() as $child) {
-			if ($child->hasEqualsValue($value) === TRUE) {
+			if ($child->containsLocale($locale) === TRUE) {
 				return $child;
 			}
 		}
@@ -241,7 +241,7 @@ class LocaleNode {
 	 * @return void
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function becomeChildOf(\F3\FLOW3\Locale\LocaleNode $node) {
+	public function insertAsParent(\F3\FLOW3\Locale\LocaleNode $node) {
 		if ($this->parent !== NULL && $this->parent->firstChild === $this) {
 			$this->parent->firstChild = $node;
 		}
@@ -263,15 +263,15 @@ class LocaleNode {
 	 * with provided Locale object. It works different from equals operator (==)
 	 * as each Locale part is compared strictly.
 	 *
-	 * @param \F3\FLOW3\Locale\Locale $value The Locale object to compare with
+	 * @param \F3\FLOW3\Locale\Locale $locale The Locale object to compare with
 	 * @return boolean
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function hasEqualsValue(\F3\FLOW3\Locale\Locale $value) {
-		if ($this->value->getLanguage() === $value->getLanguage()) {
-			if ($this->value->getScript() === $value->getScript()) {
-				if ($this->value->getRegion() === $value->getRegion()) {
-					if ($this->value->getVariant() === $value->getVariant()) {
+	public function containsLocale(\F3\FLOW3\Locale\Locale $locale) {
+		if ($this->locale->getLanguage() === $locale->getLanguage()) {
+			if ($this->locale->getScript() === $locale->getScript()) {
+				if ($this->locale->getRegion() === $locale->getRegion()) {
+					if ($this->locale->getVariant() === $locale->getVariant()) {
 						return TRUE;
 					}
 				}
@@ -288,8 +288,8 @@ class LocaleNode {
 	 * @return mixed Existing \F3\FLOW3\Locale\Locale instance or NULL
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function getValue() {
-		return $this->value;
+	public function getLocale() {
+		return $this->locale;
 	}
 
 	/**
@@ -322,4 +322,5 @@ class LocaleNode {
 		return $this->parent;
 	}
 }
+
 ?>

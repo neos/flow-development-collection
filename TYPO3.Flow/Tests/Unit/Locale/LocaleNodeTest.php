@@ -83,7 +83,7 @@ class LocaleNodeTest extends \F3\Testing\BaseTestCase {
 		$returnedNodes[2] = $returnedNodes[1]->getNextSibling();
 
 		foreach ($returnedNodes as $index => $returnedNode) {
-			$this->assertSame($this->locales[$index], $returnedNode->getValue());
+			$this->assertSame($this->locales[$index], $returnedNode->getLocale());
 		}
 	}
 
@@ -109,16 +109,16 @@ class LocaleNodeTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function findChildByValueWorksForManyChildren() {
+	public function findChildByLocaleWorksForManyChildren() {
 		foreach ($this->nodes as $node) {
 			$this->root->addChild($node);
 		}
 
-		$foundNode = $this->root->findChildByValue($this->locales[2]);
+		$foundNode = $this->root->findChildByLocale($this->locales[2]);
 		$this->assertNotEquals(FALSE, $foundNode);
-		$this->assertSame($this->locales[2], $foundNode->getValue());
+		$this->assertSame($this->locales[2], $foundNode->getLocale());
 
-		$nonExistingNode = $this->root->findChildByValue(new \F3\FLOW3\Locale\Locale('sv'));
+		$nonExistingNode = $this->root->findChildByLocale(new \F3\FLOW3\Locale\Locale('sv'));
 		$this->assertEquals(FALSE, $nonExistingNode);
 	}
 
@@ -142,15 +142,15 @@ class LocaleNodeTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function becomeChildOfWorks() {
+	public function insertAsParentWorks() {
 		foreach ($this->nodes as $node) {
 			$this->root->addChild($node);
 		}
 
 		$newNode = new \F3\FLOW3\Locale\LocaleNode(new \F3\FLOW3\Locale\Locale('pl'));
-		$oldNode = $this->root->findChildByValue($this->locales[1]);
+		$oldNode = $this->root->findChildByLocale($this->locales[1]);
 
-		$oldNode->becomeChildOf($newNode);
+		$oldNode->insertAsParent($newNode);
 
 		$this->assertSame($newNode, $oldNode->getParent());
 		$this->assertSame($newNode->getNextSibling(), $this->nodes[2]);

@@ -29,6 +29,7 @@ namespace F3\FLOW3\Locale;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class Utility {
+
 	/**
 	 * A pattern which matches HTTP Accept-Language Headers
 	 *
@@ -62,7 +63,7 @@ class Utility {
 		$matchingLanguages = array();
 
 		if (preg_match_all(self::PATTERN_MATCH_ACCEPTLANGUAGE, $header, $matches, PREG_PATTERN_ORDER) !== FALSE) {
-			foreach($matches[1] as $tag) {
+			foreach ($matches[1] as $tag) {
 				if ($tag === '*') {
 					$matchingLanguages[] = $tag;
 					continue;

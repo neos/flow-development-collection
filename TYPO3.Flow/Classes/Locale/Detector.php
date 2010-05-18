@@ -48,11 +48,11 @@ class Detector {
 	protected $settings;
 
 	/**
-	 * The 'protocol' to use in filesystem operations. It is changed only in tests.
+	 * The base path to use in filesystem operations. It is changed only in tests.
 	 *
 	 * @var string
 	 */
-	protected $filesystemProtocol = 'package://';
+	protected $localeBasePath = 'package://';
 
 	/**
 	 * A tree of Locale objects representing currently installed locales, in a
@@ -63,7 +63,7 @@ class Detector {
 	protected $availableLocalesTree;
 
 	/**
-	 * @param \F3\FLOW3\Object\ObjectManagerInterface $packageManager
+	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
 	 * @return void
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
@@ -104,7 +104,6 @@ class Detector {
 	 * Constructs the detector. Needs the objectManager to be injected before, as
 	 * it generates a tree of available locales on start.
 	 *
-	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
 	 * @return void
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
@@ -223,17 +222,17 @@ class Detector {
 	protected function generateAvailableLocalesTreeByScanningFilesystem() {
 		foreach ($this->packageManager->getActivePackages() as $activePackage) {
 			foreach (array('Private', 'Public') as $resourceVisibility) {
-				$localeDirectoryPath = $this->filesystemProtocol . $activePackage->getPackageKey() . '/' . $resourceVisibility . '/Locale/';
-				$packageDirectory = opendir($localeDirectoryPath);
+				$localeDirectoryPath = $this->localeBasePath . $activePackage->getPackageKey() . '/' . $resourceVisibility . '/Locale/';
 
-				if($packageDirectory === FALSE) {
+				if(!is_dir($localeDirectoryPath)) {
 					continue;
 				}
 
-				while (($subdirectory = readdir($packageDirectory)) !== FALSE) {
+				$packageDirectoryIteratot = new \DirectoryIterator($localeDirectoryPath);
+				foreach ($packageDirectoryIteratot as $subdirectory) {
 					if (is_dir($localeDirectoryPath . $subdirectory) === TRUE) {
 						try {
-							$newLocale = $this->objectManager->create('F3\FLOW3\Locale\Locale', $subdirectory);
+							$newLocale = $this->objectManager->create('F3\FLOW3\Locale\Locale', (string)$subdirectory);
 								// Validation should be placed here
 							$this->availableLocalesTree->addLocale($newLocale);
 						} catch (\F3\FLOW3\Locale\Exception\InvalidLocaleIdentifierException $e) {
@@ -241,8 +240,6 @@ class Detector {
 						}
 					}
 				}
-
-				closedir($packageDirectory);
 			}
 		}
 	}

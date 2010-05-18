@@ -61,20 +61,27 @@ class LocaleTest extends \F3\Testing\BaseTestCase {
 	public function theConstructorRecognizesTheMostImportantValidLocaleIdentifiers() {
 		$locale = new \F3\FLOW3\Locale\Locale('de');
 		$this->assertEquals('de', $locale->getLanguage());
+		$this->assertNull($locale->getScript());
+		$this->assertNull($locale->getRegion());
+		$this->assertNull($locale->getVariant());
 
 		$locale = new \F3\FLOW3\Locale\Locale('de_DE');
 		$this->assertEquals('de', $locale->getLanguage());
 		$this->assertEquals('DE', $locale->getRegion());
+		$this->assertNull($locale->getScript());
+		$this->assertNull($locale->getVariant());
 
 		$locale = new \F3\FLOW3\Locale\Locale('en_Latn_US');
 		$this->assertEquals('en', $locale->getLanguage());
 		$this->assertEquals('Latn', $locale->getScript());
 		$this->assertEquals('US', $locale->getRegion());
+		$this->assertNull($locale->getVariant());
 
 		$locale = new \F3\FLOW3\Locale\Locale('AR-arab_ae');
 		$this->assertEquals('ar', $locale->getLanguage());
 		$this->assertEquals('Arab', $locale->getScript());
 		$this->assertEquals('AE', $locale->getRegion());
+		$this->assertNull($locale->getVariant());
 	}
 }
 ?>

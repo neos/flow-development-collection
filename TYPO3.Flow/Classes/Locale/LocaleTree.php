@@ -98,18 +98,18 @@ class LocaleTree implements \F3\FLOW3\Locale\LocaleTreeInterface {
 	 */
 	public function addLocaleInSubtree(\F3\FLOW3\Locale\Locale $locale, \F3\FLOW3\Locale\LocaleNode $root) {
 		foreach ($root->getChildren() as $child) {
-			if ($child->hasEqualsValue($locale)) {
+			if ($child->containsLocale($locale)) {
 				return FALSE;
 			}
 
-			if (strpos($locale->__toString(), $child->getValue()->__toString()) === FALSE) {
-				if (strpos($child->getValue()->__toString(), $locale->__toString()) === FALSE) {
+			if (strpos((string)$locale, (string)$child->getLocale()) === FALSE) {
+				if (strpos((string)$child->getLocale(), (string)$locale) === FALSE) {
 					continue;
 				} else {
 						// The new locale should be a parent of $child locale, as it's more generic
 					$newNode = $this->objectManager->create('F3\FLOW3\Locale\LocaleNode', $locale);
-					$this->nodesArray[$locale->__toString()] = $newNode;
-					$child->becomeChildOf($newNode);
+					$this->nodesArray[(string)$locale] = $newNode;
+					$child->insertAsParent($newNode);
 					return TRUE;
 				}
 			} else {
@@ -120,7 +120,7 @@ class LocaleTree implements \F3\FLOW3\Locale\LocaleTreeInterface {
 
 			// No children of current $root node is any relative to the new Locale, add is as separate child
 		$newNode = $this->objectManager->create('F3\FLOW3\Locale\LocaleNode', $locale);
-		$this->nodesArray[$locale->__toString()] = $newNode;
+		$this->nodesArray[(string)$locale] = $newNode;
 		$root->addChild($newNode);
 		return TRUE;
 	}
@@ -143,14 +143,11 @@ class LocaleTree implements \F3\FLOW3\Locale\LocaleTreeInterface {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function getParentLocaleOf($locale) {
-		if (isset($this->nodesArray[$locale->__toString()]) === FALSE) {
+		if (isset($this->nodesArray[(string)$locale]) === FALSE) {
 			return NULL;
 		}
 
-		$node = $this->nodesArray[$locale->__toString()];
-		$localeOfParent = $node->getParent()->getValue();
-
-		return $localeOfParent;
+		return $this->nodesArray[(string)$locale]->getParent()->getLocale();
 	}
 
 	/**
@@ -179,12 +176,12 @@ class LocaleTree implements \F3\FLOW3\Locale\LocaleTreeInterface {
 	 */
 	public function findBestMatchingLocaleInSubtree(\F3\FLOW3\Locale\Locale $locale, \F3\FLOW3\Locale\LocaleNode $root) {
 		foreach ($root->getChildren() as $child) {
-			if ($child->hasEqualsValue($locale)) {
-				return $child->getValue();
+			if ($child->containsLocale($locale)) {
+				return $child->getLocale();
 			}
 
-			if (strpos($locale->__toString(), $child->getValue()->__toString()) === FALSE) {
-				if (strpos($child->getValue()->__toString(), $locale->__toString()) === FALSE) {
+			if (strpos((string)$locale, (string)$child->getLocale()) === FALSE) {
+				if (strpos((string)$child->getLocale(), (string)$locale) === FALSE) {
 					continue;
 				} else {
 						// We have only more specific locale
@@ -192,10 +189,10 @@ class LocaleTree implements \F3\FLOW3\Locale\LocaleTreeInterface {
 				}
 			} else {
 					// We have matching locale, let's check if any child of this locale matches better
-				if (($ret = $this->findBestMatchingLocaleInSubtree($locale, $child)) === NULL) {
-					return $child->getValue();
+				if (($betterMatch = $this->findBestMatchingLocaleInSubtree($locale, $child)) === NULL) {
+					return $child->getLocale();
 				} else {
-					return $ret;
+					return $betterMatch;
 				}
 			}
 		}

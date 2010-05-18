@@ -173,7 +173,7 @@ class DetectorTest extends \F3\Testing\BaseTestCase {
 		$settings['locale']['automaticSearchForAvailableLocales'] = TRUE;
 
 		$this->detector = $this->getAccessibleMock('F3\FLOW3\Locale\Detector', array('dummy'));
-		$this->detector->_set('filesystemProtocol', 'vfs://Foo/');
+		$this->detector->_set('localeBasePath', 'vfs://Foo/');
 		$this->detector->injectPackageManager($mockPackageManager);
 		$this->detector->injectObjectManager($this->mockObjectManager);
 		$this->detector->injectSettings($settings);
