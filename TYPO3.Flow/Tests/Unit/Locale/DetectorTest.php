@@ -57,7 +57,12 @@ class DetectorTest extends \F3\Testing\BaseTestCase {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function setUp() {
-		$mockLocalesFromConfiguration = array('sr_Cyrl_RS', 'en_GB', 'en', 'sr');
+		\vfsStreamWrapper::register();
+		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('Foo'));
+
+		foreach (array('en', 'sr_Cyrl_RS', 'en_GB', 'sr') as $localeIdentifier) {
+			mkdir('vfs://Foo/Bar/Private/Locale/' . $localeIdentifier, 0777, TRUE);
+		}
 
 		$returnLocaleNodeCallback = function() {
 			$args = func_get_args();
@@ -77,16 +82,20 @@ class DetectorTest extends \F3\Testing\BaseTestCase {
 		$this->mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
 		$this->mockObjectManager->expects($this->any())->method('create')->with('F3\FLOW3\Locale\Locale')->will($this->returnCallback($returnLocaleCallback));
 
-		$this->mockSettings = array('locale' => array('defaultLocale' => new \F3\FLOW3\Locale\Locale('sv_SE'), 'automaticSearchForAvailableLocales' => FALSE, 'availableLocales' => $mockLocalesFromConfiguration));
+		$mockPackage = $this->getMock('F3\FLOW3\Package\PackageInterface');
+		$mockPackage->expects($this->any())->method('getPackageKey')->will($this->returnValue('Bar'));
+		$mockPackageManager = $this->getMock('F3\FLOW3\Package\PackageManagerInterface');
+		$mockPackageManager->expects($this->any())->method('getActivePackages')->will($this->returnValue(array($mockPackage)));
 
-		$this->detector = new \F3\FLOW3\Locale\Detector();
+		$this->mockSettings = array('locale' => array('defaultLocale' => new \F3\FLOW3\Locale\Locale('sv_SE')));
+
+		$this->detector = $this->getAccessibleMock('F3\FLOW3\Locale\Detector', array('dummy'));
+		$this->detector->_set('localeBasePath', 'vfs://Foo/');
 		$this->detector->injectObjectManager($this->mockObjectManager);
+		$this->detector->injectPackageManager($mockPackageManager);
 		$this->detector->injectSettings($this->mockSettings);
 		$this->detector->injectLocaleTree($this->mockTree);
 		$this->detector->initializeObject();
-
-		\vfsStreamWrapper::register();
-		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('Foo'));
 	}
 
 	/**

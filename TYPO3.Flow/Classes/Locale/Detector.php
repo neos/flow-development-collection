@@ -108,11 +108,7 @@ class Detector {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function initializeObject() {
-		if ($this->settings['locale']['automaticSearchForAvailableLocales'] === TRUE) {
-			$this->generateAvailableLocalesTreeByScanningFilesystem();
-		} else {
-			$this->generateAvailableLocalesTreeFromConfiguration();
-		}
+		$this->generateAvailableLocalesTreeByScanningFilesystem();
 	}
 
 	/**
@@ -164,12 +160,10 @@ class Detector {
 	public function detectLocaleFromLocaleTag($tag) {
 		try {
 				// Parse the tag (this doesn't mean that exacly that locale exists in the system)
-			$parsedLocale = $this->objectManager->create('F3\FLOW3\Locale\Locale', $tag);
+			return $this->detectLocaleFromTemplateLocale($this->objectManager->create('F3\FLOW3\Locale\Locale', $tag));
 		} catch (\F3\FLOW3\Locale\Exception\InvalidLocaleIdentifierException $e) {
 			return $this->getDefaultLocale();
 		}
-
-		return $this->detectLocaleFromTemplateLocale($parsedLocale);
 	}
 
 	/**
@@ -228,11 +222,11 @@ class Detector {
 					continue;
 				}
 
-				$packageDirectoryIteratot = new \DirectoryIterator($localeDirectoryPath);
-				foreach ($packageDirectoryIteratot as $subdirectory) {
-					if (is_dir($localeDirectoryPath . $subdirectory) === TRUE) {
+				$packageDirectoryIterator = new \DirectoryIterator($localeDirectoryPath);
+				foreach ($packageDirectoryIterator as $subDirectory) {
+					if (is_dir($localeDirectoryPath . $subDirectory) === TRUE) {
 						try {
-							$newLocale = $this->objectManager->create('F3\FLOW3\Locale\Locale', (string)$subdirectory);
+							$newLocale = $this->objectManager->create('F3\FLOW3\Locale\Locale', (string)$subDirectory);
 								// Validation should be placed here
 							$this->availableLocalesTree->addLocale($newLocale);
 						} catch (\F3\FLOW3\Locale\Exception\InvalidLocaleIdentifierException $e) {
@@ -243,26 +237,6 @@ class Detector {
 			}
 		}
 	}
-
-	/**
-	 * Returns an array of Locale instances, using configuration settings, where
-	 * locale tags are given.
-	 *
-	 * Note: before this method is invoked one must ensure that availableLocalesTree
-	 * is empty.
-	 *
-	 * @return void
-	 * @author Karol Gusak <firstname@lastname.eu>
-	 */
-	protected function generateAvailableLocalesTreeFromConfiguration() {
-		foreach ($this->settings['locale']['availableLocales'] as $availableLocaleTag) {
-			try {
-				$newLocale = $this->objectManager->create('F3\FLOW3\Locale\Locale', $availableLocaleTag);
-				$this->availableLocalesTree->addLocale($newLocale);
-			} catch (\F3\FLOW3\Locale\Exception\InvalidLocaleIdentifierException $e) {
-					// Just ignore current item and proceed
-			}
-		}
-	}
 }
+
 ?>

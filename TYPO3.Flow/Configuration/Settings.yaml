@@ -75,18 +75,6 @@ FLOW3:
     # about the locale use the locale object stored in this setting.
     defaultLocale:
 
-    # When enabled, the filesystem will be scanned in order to find locales
-    # currently installed in FLOW3. When disabled, a list of locales needs to be
-    # set manually in availableLocales configuration option.
-    automaticSearchForAvailableLocales: y
-
-    # List of locales currently installed.
-    #
-    # Used only when option automaticSearchForAvailableLocales is disabled. List
-    # of valid and existing locale tags needs to be provided as it is not checked
-    # by the framework. Example: [en_GB, de_DE, sv_SE]
-    availableLocales: []
-
   monitor:
 
     # The File Monitoring detects changes in class and resource files and
