@@ -484,7 +484,7 @@ $myAddresbook-&gt;addAddress($newAddress);</programlisting>
 		$this-&gt;identifier = $identifier;
 	}
 
-	public function intializeObject() {
+	public function initializeObject() {
 		echo ('Initializing object ...');
 	}
 
