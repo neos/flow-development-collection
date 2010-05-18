@@ -187,7 +187,7 @@ class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 		$this->createRoutesFromConfiguration();
 
 		foreach ($this->routes as $route) {
-			if ($route->matches($routePath)) {
+			if ($route->matches($routePath) === TRUE) {
 				$matchResults = $route->getMatchResults();
 				$this->systemLogger->log('Router route(): Route "' . $route->getName() . '" matched the path "' . $routePath . '".', LOG_DEBUG);
 				return $matchResults;

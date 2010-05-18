@@ -68,8 +68,9 @@ class DynamicRoutePart extends \F3\FLOW3\MVC\Web\Routing\AbstractRoutePart imple
 			return FALSE;
 		}
 		$valueToMatch = $this->findValueToMatch($routePath);
-		if (!$this->matchValue($valueToMatch)) {
-			return FALSE;
+		$matchResult = $this->matchValue($valueToMatch);
+		if ($matchResult !== TRUE) {
+			return $matchResult;
 		}
 		$this->removeMatchingPortionFromRequestPath($routePath, $valueToMatch);
 

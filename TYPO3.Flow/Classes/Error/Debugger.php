@@ -100,7 +100,7 @@ class Debugger {
 			$dump = sprintf('\'<span class="debug-string">%s</span>\' (%s)', htmlspecialchars((strlen($variable) > 2000) ? substr($variable, 0, 2000) . '…' : $variable), strlen($variable));
 		} elseif (is_numeric($variable)) {
 			$dump = sprintf('%s %s', gettype($variable), $variable);
-		} elseif (is_array($variable) || $variable instanceof \ArrayAccess) {
+		} elseif (is_array($variable)) {
 			$dump = \F3\FLOW3\Error\Debugger::renderArrayDump($variable, $level + 1);
 		} elseif (is_object($variable)) {
 			$dump = \F3\FLOW3\Error\Debugger::renderObjectDump($variable, $level + 1);

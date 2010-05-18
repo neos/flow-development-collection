@@ -430,6 +430,11 @@ EOD;
 				$name = isset($routeConfiguration['name']) ? $routeConfiguration['name'] : $routeConfiguration;
 				$name .= ' :: ';
 				$name .= isset($subRouteConfiguration['name']) ? $subRouteConfiguration['name'] : 'Subroute';
+	
+				if (!isset($subRouteConfiguration['uriPattern'])) {
+					throw new \F3\FLOW3\Configuration\Exception\ParseErrorException('No uriPattern defined in route configuration "' . $name . '".', 1274197615);
+		     	}
+
 				$uriPattern = str_replace('<' . $subRouteKey . '>', $subRouteConfiguration['uriPattern'], $routeConfiguration['uriPattern']);
 				$defaults = isset($routeConfiguration['defaults']) ? $routeConfiguration['defaults'] : array();
 				if (isset($subRouteConfiguration['defaults'])) {

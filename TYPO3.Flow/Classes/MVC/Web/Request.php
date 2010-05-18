@@ -43,11 +43,6 @@ class Request extends \F3\FLOW3\MVC\Request {
 	protected $method = 'GET';
 
 	/**
-	 * @var \F3\FLOW3\Utility\Environment
-	 */
-	protected $environment;
-
-	/**
 	 * @var \F3\FLOW3\Property\DataType\Uri The request URI
 	 */
 	protected $requestUri;
@@ -67,7 +62,6 @@ class Request extends \F3\FLOW3\MVC\Request {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectEnvironment(\F3\FLOW3\Utility\Environment $environment) {
-		$this->environment = $environment;
 		$this->requestUri = $environment->getRequestUri();
 		$this->baseUri = $environment->getBaseUri();
 	}
