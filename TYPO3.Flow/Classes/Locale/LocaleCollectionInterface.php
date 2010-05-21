@@ -23,21 +23,18 @@ namespace F3\FLOW3\Locale;
  *                                                                        */
 
 /**
- * An interface implemented by LocaleTree class
+ * An interface for a collection of Locale objects available in current
+ * FLOW3 installation.
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @author Karol Gusak <firstname@lastname.eu>
  */
-interface LocaleTreeInterface {
+interface LocaleCollectionInterface {
 
 	/**
-	 * Adds locale to the tree, inserting it in position which retains sorting.
-	 * Locales are sorted in such way that each subtree of root node contains
-	 * locales wich are related to themselves, starting with the most generic
-	 * locale node on top of subtree (eg "az"). Children of this node are more
-	 * specific (eg "az_Cyryl" and "az_Latin"), which in turn can contain even
-	 * more specific locales (accordingly "az_Cyryl_AZ" and "az_Latin_AZ").
+	 * Adds locale to the collection, inserting it in position which retains
+	 * hierarchical relations.
 	 *
 	 * @param \F3\FLOW3\Locale\Locale $locale The Locale to be inserted
 	 * @return boolean
@@ -48,7 +45,7 @@ interface LocaleTreeInterface {
 	 * Returns a parent Locale object of the locale provided. The parent is
 	 * a locale which is more generic than the one given as parameter. For
 	 * example, the parent for locale en_GB will be locale en, of course if
-	 * it exists in the locale tree of available locales.
+	 * it exists in the collection of available locales.
 	 *
 	 * @param \F3\FLOW3\Locale\Locale $locale The Locale to search parent for
 	 * @return mixed Existing \F3\FLOW3\Locale\Locale instance or NULL on failure
@@ -60,7 +57,7 @@ interface LocaleTreeInterface {
 	 * is most similar to the "template" Locale object given as parameter.
 	 *
 	 * @param \F3\FLOW3\Locale\Locale $locale The "template" Locale to be matched
-	 * @return mixed Existing \F3\FLOW3\Locale\Locale instance on success, FALSE on failure
+	 * @return mixed Existing \F3\FLOW3\Locale\Locale instance on success, NULL on failure
 	 */
 	public function findBestMatchingLocale(\F3\FLOW3\Locale\Locale $locale);
 }

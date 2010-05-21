@@ -20,63 +20,56 @@ namespace F3\FLOW3\Locale;
  * If not, see http://www.gnu.org/licenses/lgpl.html                      *
  *                                                                        *
  * The TYPO3 project - inspiring people to share!                         *
- */
+ *                                                                        */
 
 /**
- * Testcase for the Locale Utility
+ * The Locale Interface
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class UtilityTest extends \F3\Testing\BaseTestCase {
+interface LocaleInterface {
 
-	/**
-	 * Data provider with valid Accept-Language headers and expected results.
-	 *
-	 * @return array
-	 * @author Karol Gusak <firstname@lastname.eu>
-	 */
-	public function localeHeaders() {
-		return array(
-			array('pl, en-gb;q=0.8, en;q=0.7', array('pl', 'en-gb', 'en')),
-			array('de, *;q=0.8', array('de', '*')),
-			array('sv, wont-accept;q=0.8, en;q=0.5', array('sv', 'en')),
-		);
-	}
-
-	/**
-	 * @test
-	 * @dataProvider localeHeaders
-	 * @author Karol Gusak <firstname@lastname.eu>
-	 */
-	public function parseAcceptLanguageHeaderParsesProperly($header, array $expectedResult) {
-		$languages = Utility::parseAcceptLanguageHeader($header);
-		$this->assertEquals($expectedResult, $languages);
-	}
 	
+
 	/**
-	 * Data provider with filenames with locale tags and expected results.
+	 * Returns the language defined in this locale
 	 *
-	 * @return array
-	 * @author Karol Gusak <firstname@lastname.eu>
+	 * @return string The language identifier
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function filenamesWithLocale() {
-		return array(
-			array('/foo/bar/foobar.en_GB.ext', 'en_GB'),
-			array('/foo/bar/foobar.ext', FALSE),
-			array('/foo/bar/foobar', FALSE),
-		);
-	}
+	public function getLanguage();
 
 	/**
-	 * @test
-	 * @dataProvider filenamesWithLocale
-	 * @author Karol Gusak <firstname@lastname.eu>
+	 * Returns the script defined in this locale
+	 *
+	 * @return string The script identifier
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function extractLocaleTagFromFilenameWorks($filename, $expectedResult) {
-		$returnedResult = Utility::extractLocaleTagFromFilename($filename);
-		$this->assertEquals($expectedResult, $returnedResult);
-	}
-}
+	public function getScript();
 
+	/**
+	 * Returns the region defined in this locale
+	 *
+	 * @return string The region identifier
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getRegion();
+
+	/**
+ 	 * Returns the variant defined in this locale
+ 	 *
+ 	 * @return string The variant identifier
+ 	 * @author Karol Gusak <firstname@lastname.eu>
+ 	 */
+ 	public function getVariant();
+
+ 	/**
+ 	 * Returns the string identifier of this locale
+ 	 *
+ 	 * @return string The locale identifier (tag)
+ 	 * @author Karol Gusak <firstname@lastname.eu>
+ 	 */
+ 	public function __toString();
+}
 ?>

@@ -23,13 +23,12 @@ namespace F3\FLOW3\Locale;
  */
 
 /**
- * Testcase for the LocaleTree class
+ * Testcase for the LocaleCollection class
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
- * @todo write more tests
  */
-class LocaleTreeTest extends \F3\Testing\BaseTestCase {
+class LocaleCollectionTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @var array An array of \F3\FLOW3\Locale\Locale instances
@@ -37,9 +36,9 @@ class LocaleTreeTest extends \F3\Testing\BaseTestCase {
 	protected $locales;
 
 	/**
-	 * @var \F3\FLOW3\Locale\LocaleTree
+	 * @var \F3\FLOW3\Locale\LocaleCollectionInterface
 	 */
-	protected $tree;
+	protected $localeCollection;
 
 	/**
 	 * @return void
@@ -52,17 +51,8 @@ class LocaleTreeTest extends \F3\Testing\BaseTestCase {
 			new \F3\FLOW3\Locale\Locale('de'),
 			new \F3\FLOW3\Locale\Locale('pl'),
 		);
-
-		$returnLocaleNodeCallback = function() {
-			$args = func_get_args();
-			if (isset($args[1]) === FALSE) $args[1] = NULL;
-			return new \F3\FLOW3\Locale\LocaleNode($args[1]);
-		};
-
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->any())->method('create')->will($this->returnCallback($returnLocaleNodeCallback));
-
-		$this->tree = new \F3\FLOW3\Locale\LocaleTree($mockObjectManager);
+		
+		$this->localeCollection = new \F3\FLOW3\Locale\LocaleCollection();
 	}
 
 	/**
@@ -71,11 +61,10 @@ class LocaleTreeTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function addLocaleWorks() {
 		foreach ($this->locales as $locale) {
-			$this->tree->addLocale($locale);
+			$this->localeCollection->addLocale($locale);
 		}
 
-		/** @todo I don't know why asserSame doesn't work here yet **/
-		$this->assertEquals($this->locales[3], $this->tree->getParentLocaleOf($this->locales[1]));
+		$this->assertEquals($this->locales[3], $this->localeCollection->getParentLocaleOf($this->locales[1]));
 	}
 
 	/**
@@ -84,12 +73,13 @@ class LocaleTreeTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function findBestMatchingLocaleWorks() {
 		foreach ($this->locales as $locale) {
-			$this->tree->addLocale($locale);
+			$this->localeCollection->addLocale($locale);
 		}
 
-		$this->assertEquals($this->locales[1], $this->tree->findBestMatchingLocale($this->locales[1]));
-		$this->assertEquals($this->locales[1], $this->tree->findBestMatchingLocale(new \F3\FLOW3\Locale\Locale('pl_PL_DVORAK')));
-		$this->assertEquals(NULL, $this->tree->findBestMatchingLocale(new \F3\FLOW3\Locale\Locale('sv')));
+		$this->assertEquals($this->locales[1], $this->localeCollection->findBestMatchingLocale($this->locales[1]));
+		$this->assertEquals($this->locales[1], $this->localeCollection->findBestMatchingLocale(new \F3\FLOW3\Locale\Locale('pl_PL_DVORAK')));
+		$this->assertEquals(NULL, $this->localeCollection->findBestMatchingLocale(new \F3\FLOW3\Locale\Locale('sv')));
 	}
 }
+
 ?>

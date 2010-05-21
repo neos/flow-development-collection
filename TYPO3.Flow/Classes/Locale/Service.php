@@ -31,22 +31,29 @@ namespace F3\FLOW3\Locale;
 class Service {
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
-	 */
-	protected $objectManager;
-
-	/**
 	 * @var array
 	 */
 	protected $settings;
 
 	/**
-	 * Constructs this service
-	 *
-	 * @param array $settings The FLOW3 settings
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 */
-	public function __construct(array $settings) {
+	protected $objectManager;
+
+	/**
+	 * A collection of Locale objects representing currently installed locales,
+	 * in a hierarchical manner.
+	 *
+	 * @var \F3\FLOW3\Locale\LocaleCollectionInterface
+	 */
+	protected $localeCollection;
+
+	/**
+	 * @param array $settings
+	 * @return void
+	 * @author Karol Gusak <firstname@lastname.eu>
+	 */
+	public function injectSettings(array $settings) {
 		$this->settings = $settings;
 	}
 
@@ -62,16 +69,85 @@ class Service {
 	}
 
 	/**
+	 * @param \F3\FLOW3\Locale\LocaleCollectionInterface $localeCollection
+	 * @return void
+	 * @author Karol Gusak <firstname@lastname.eu>
+	 */
+	public function injectLocaleCollection(\F3\FLOW3\Locale\LocaleCollectionInterface $localeCollection) {
+		$this->localeCollection = $localeCollection;
+	}
+
+	/**
 	 * Initializes this locale service
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @todo catch exception if locale identifier is invalid?
 	 */
 	public function initialize() {
 		$locale = $this->objectManager->create('F3\FLOW3\Locale\Locale', $this->settings['locale']['defaultLocaleIdentifier']);
 		$this->settings['locale']['defaultLocale'] = $locale;
 	}
 
+	/**
+	 * Returns the default Locale object for this FLOW3 installation.
+	 *
+	 * @return \F3\FLOW3\Locale\Locale
+	 * @author Karol Gusak <firstname@lastname.eu>
+	 */
+	public function getDefaultLocale() {
+		return $this->settings['locale']['defaultLocale'];
+	}
+
+	/**
+	 * Returns the path to the existing localized version of file given.
+	 * Searching is done for the default locale if no $locale parameter is
+	 * provided. If parameter $strict is provided, searching is done only for
+	 * provided / default locale (without searching of files localized for
+	 * more generic locales.
+	 * 
+	 * If no localized version of file is found, $filepath is returned without
+	 * any change.
+	 * 
+	 * Note: This method assumes that provided file exists.
+	 *
+	 * @param string $filename Path to the file
+	 * @param \F3\FLOW3\Locale\Locale $locale Desired locale of localized file
+	 * @param bool $strict Whether match only provided locale (or search for best-matching locale)
+	 * @return string Path to the localized file, or $filepath
+	 * @author Karol Gusak <firstname@lastname.eu>
+	 */
+	public function getLocalizedFilename($filename, \F3\FLOW3\Locale\Locale $locale = NULL, $strict = FALSE) {
+		if ($locale === NULL) {
+			$locale = $this->getDefaultLocale();
+		}		
+
+		if (strrpos($filename, '.') !== FALSE) {
+			$nameWithoutExtension = substr($filename, 0, strrpos($filename, '.'));
+			$extension = substr($filename, strrpos($filename, '.'));
+		} else {
+			$nameWithoutExtension = $filename;
+			$extension = '';
+		}
+
+		$locale = $this->localeCollection->findBestMatchingLocale($locale);
+
+		if ($locale === NULL) {
+			return $filename;
+		}
+
+		do {
+			$possibleLocalizedFilename = $nameWithoutExtension . '.' . (string)$locale . $extension;
+
+			if (file_exists($possibleLocalizedFilename)) {
+				return $possibleLocalizedFilename;
+			}
+
+			$locale = $this->localeCollection->getParentLocaleOf($locale);
+		} while($locale !== NULL);
+
+		return $filename;
+	}
 }
 
 ?>
