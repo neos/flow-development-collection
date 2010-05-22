@@ -68,12 +68,16 @@ class DetectorTest extends \F3\Testing\BaseTestCase {
 		$mockLocalizationService = $this->getMock('F3\FLOW3\Locale\Service');
 		$mockLocalizationService->expects($this->any())->method('getDefaultLocale')->will($this->returnValue(new \F3\FLOW3\Locale\Locale('sv_SE')));
 
+		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
+		$mockCache->expects($this->once())->method('has')->with('availableLocales')->will($this->returnValue(FALSE));
+
 		$this->detector = $this->getAccessibleMock('F3\FLOW3\Locale\Detector', array('dummy'));
 		$this->detector->_set('localeBasePath', 'vfs://Foo/');
 		$this->detector->injectObjectManager($mockObjectManager);
 		$this->detector->injectPackageManager($mockPackageManager);
 		$this->detector->injectLocaleCollection($mockLocaleCollection);
 		$this->detector->injectLocalizationService($mockLocalizationService);
+		$this->detector->injectCache($mockCache);
 		$this->detector->initializeObject();
 	}
 

@@ -253,6 +253,20 @@ F3\FLOW3\Core\LockManager:
       object: F3\FLOW3\Log\SystemLoggerInterface
 
 #                                                                          #
+# Locale                                                                   #
+#                                                                          #
+
+F3\FLOW3\Locale\Detector:
+  properties:
+    cache:
+      object:
+        factoryObjectName: F3\FLOW3\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: FLOW3_Locale_Detector
+
+#                                                                          #
 # Log                                                                      #
 #                                                                          #
 

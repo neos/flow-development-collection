@@ -61,6 +61,11 @@ class Detector {
 	protected $localeBasePath = 'package://';
 
 	/**
+	 * @var \F3\FLOW3\Cache\Frontend\VariableFrontend
+	 */
+	protected $cache;
+
+	/**
 	 * Injects the FLOW3 settings
 	 *
 	 * @param array $settings The settings
@@ -108,13 +113,29 @@ class Detector {
 	}
 
 	/**
+	 * Injects the FLOW3_Locale_AvailableLocales cache
+	 *
+	 * @param \F3\FLOW3\Cache\Frontend\VariableFrontend $cache
+	 * @return void
+	 * @author Karol Gusak <firstname@lastname.eu>
+	 */
+	public function injectCache(\F3\FLOW3\Cache\Frontend\VariableFrontend $cache) {
+		$this->cache = $cache;
+	}
+
+	/**
 	 * Constructs the detector. Needs the objectManager to be injected before, as
 	 * it generates a collection of available locales on start.
 	 *
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function initializeObject() {
-		$this->generateAvailableLocalesTreeByScanningFilesystem();
+		if ($this->cache->has('availableLocales')) {
+			$this->localeCollection = $this->cache->get('availableLocales');
+		} else {
+			$this->generateAvailableLocalesTreeByScanningFilesystem();
+			$this->cache->set('availableLocales', $this->localeCollection);
+		}
 	}
 
 	/**
@@ -203,9 +224,7 @@ class Detector {
 	 * Just one localized resource file causes the corresponding locale to be
 	 * regarded as available (installed, supported).
 	 *
-	 * Note: this method is invoked only once per request
-	 *
-	 * @todo: cache result of this method between requests
+	 * Note: result of this method invocation is cached
 	 *
 	 * @return void
 	 * @author Karol Gusak <firstname@lastname.eu>
@@ -224,7 +243,7 @@ class Detector {
 							$locale = $this->objectManager->create('F3\FLOW3\Locale\Locale', $localeTag);
 							$this->localeCollection->addLocale($locale);
 						} catch (\F3\FLOW3\Locale\Exception\InvalidLocaleIdentifierException $e) {
-								// Just ignore current directory and proceed
+								// Just ignore current file and proceed
 						}
 					}
 				}
