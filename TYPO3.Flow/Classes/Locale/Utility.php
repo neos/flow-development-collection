@@ -94,7 +94,7 @@ class Utility {
 	 *
 	 * Note: it's not guaranteed that this method will return valid locale tag.
 	 *
-	 * @param string $header
+	 * @param string $filename
 	 * @return mixed The string with extracted locale of FALSE on failure
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */

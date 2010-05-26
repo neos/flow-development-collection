@@ -30,8 +30,6 @@ namespace F3\FLOW3\Locale;
  */
 interface LocaleInterface {
 
-	
-
 	/**
 	 * Returns the language defined in this locale
 	 *
@@ -71,5 +69,6 @@ interface LocaleInterface {
  	 * @author Karol Gusak <firstname@lastname.eu>
  	 */
  	public function __toString();
+
 }
 ?>

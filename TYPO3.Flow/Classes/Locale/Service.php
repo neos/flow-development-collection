@@ -85,8 +85,7 @@ class Service {
 	 * @todo catch exception if locale identifier is invalid?
 	 */
 	public function initialize() {
-		$locale = $this->objectManager->create('F3\FLOW3\Locale\Locale', $this->settings['locale']['defaultLocaleIdentifier']);
-		$this->settings['locale']['defaultLocale'] = $locale;
+		$this->settings['locale']['defaultLocale'] = $this->objectManager->create('F3\FLOW3\Locale\Locale', $this->settings['locale']['defaultLocaleIdentifier']);
 	}
 
 	/**
@@ -123,10 +122,10 @@ class Service {
 		}		
 
 		if (strrpos($filename, '.') !== FALSE) {
-			$nameWithoutExtension = substr($filename, 0, strrpos($filename, '.'));
+			$filenameWithoutExtension = substr($filename, 0, strrpos($filename, '.'));
 			$extension = substr($filename, strrpos($filename, '.'));
 		} else {
-			$nameWithoutExtension = $filename;
+			$filenameWithoutExtension = $filename;
 			$extension = '';
 		}
 
@@ -136,15 +135,15 @@ class Service {
 			return $filename;
 		}
 
-		do {
-			$possibleLocalizedFilename = $nameWithoutExtension . '.' . (string)$locale . $extension;
+		while($locale !== NULL) {
+			$possibleLocalizedFilename = $filenameWithoutExtension . '.' . (string)$locale . $extension;
 
 			if (file_exists($possibleLocalizedFilename)) {
 				return $possibleLocalizedFilename;
 			}
 
 			$locale = $this->localeCollection->getParentLocaleOf($locale);
-		} while($locale !== NULL);
+		}
 
 		return $filename;
 	}

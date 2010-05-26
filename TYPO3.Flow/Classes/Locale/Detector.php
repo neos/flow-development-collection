@@ -66,17 +66,6 @@ class Detector {
 	protected $cache;
 
 	/**
-	 * Injects the FLOW3 settings
-	 *
-	 * @param array $settings The settings
-	 * @return void
-	 * @author Karol Gusak <firstname@lastname.eu>
-	 */
-	public function injectSettings(array $settings) {
-		$this->settings = $settings;
-	}
-
-	/**
 	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
 	 * @return void
 	 * @author Karol Gusak <firstname@lastname.eu>

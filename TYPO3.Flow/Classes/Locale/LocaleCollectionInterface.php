@@ -60,5 +60,6 @@ interface LocaleCollectionInterface {
 	 * @return mixed Existing \F3\FLOW3\Locale\Locale instance on success, NULL on failure
 	 */
 	public function findBestMatchingLocale(\F3\FLOW3\Locale\Locale $locale);
+
 }
 ?>
