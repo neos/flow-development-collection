@@ -33,7 +33,7 @@ namespace F3\FLOW3\MVC\Controller;
 interface NotFoundControllerInterface extends ControllerInterface {
 
 	/**
-	 * Sets an exception with technical informations about the reason why
+	 * Sets an exception with technical information about the reason why
 	 * no controller could be resolved.
 	 * 
 	 * @param \F3\FLOW3\MVC\Controller\Exception $exception
