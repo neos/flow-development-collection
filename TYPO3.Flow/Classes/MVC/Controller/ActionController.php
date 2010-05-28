@@ -129,21 +129,13 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	}
 
 	/**
-	 * Determines the action method and assures that the method exists.
-	 *
-	 * @return string The action method name
-	 * @throws \F3\FLOW3\MVC\Exception\NoSuchActionException if the action specified in the request object does not exist (and if there's no default action either).
+	 * Resolves and checks the current action method name
+	 * 
+	 * @return string Method name of the current action
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @api
 	 */
 	protected function resolveActionMethodName() {
 		$actionMethodName = $this->request->getControllerActionName() . 'Action';
-		foreach (get_class_methods($this) as $existingMethodName) {
-			if (strtolower($existingMethodName) === strtolower($actionMethodName)) {
-				$actionMethodName = $existingMethodName;
-				break;
-			}
-		}
 		if (!method_exists($this, $actionMethodName)) {
 			throw new \F3\FLOW3\MVC\Exception\NoSuchActionException('An action "' . $actionMethodName . '" does not exist in controller "' . get_class($this) . '".', 1186669086);
 		}

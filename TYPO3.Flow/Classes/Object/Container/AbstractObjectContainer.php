@@ -242,6 +242,20 @@ abstract class AbstractObjectContainer implements \F3\FLOW3\Object\Container\Obj
 	}
 
 	/**
+	 * Returns the implementation class name for the specified object
+	 *
+	 * @param string $objectName The object name
+	 * @return string The class name corresponding to the given object name or FALSE if no such object is registered
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getClassNameByObjectName($objectName) {
+		if (isset($this->objects[$objectName])) {
+			return (isset($this->objects[$objectName]['c'])) ? $this->objects[$objectName]['c'] : $objectName;
+		}
+		return FALSE;
+	}
+
+	/**
 	 * Returns the scope of the specified object.
 	 *
 	 * @param string $objectName The object name

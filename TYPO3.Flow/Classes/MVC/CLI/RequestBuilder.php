@@ -90,9 +90,15 @@ class RequestBuilder {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function setControllerOptions(\F3\FLOW3\MVC\CLI\Request $request, array $command) {
-		if ($command['package'] !== NULL) $request->setControllerPackageKey($command['package']);
-		if ($command['controller'] !== NULL) $request->setControllerName($command['controller']);
-		if ($command['action'] !== NULL) $request->setControllerActionName($command['action']);
+		if ($command['package'] !== NULL) {
+			$request->setControllerPackageKey($command['package']);
+		}
+		if ($command['controller'] !== NULL) {
+			$request->setControllerName($command['controller']);
+		}
+		if ($command['action'] !== NULL) {
+			$request->setControllerActionName($command['action']);
+		}
 
 		if (count($command['subpackages']) > 0) {
 			$subPackages = implode('\\', $command['subpackages']);

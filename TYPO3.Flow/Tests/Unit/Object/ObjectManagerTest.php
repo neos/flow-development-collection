@@ -367,6 +367,20 @@ class ObjectManagerTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
+	public function getClassNameByObjectNameForwardsTheCallToTheCurrentObjectContainer() {
+		$mockObjectContainer = $this->getMock('F3\FLOW3\Object\Container\StaticObjectContainerInterface');
+		$mockObjectContainer->expects($this->once())->method('getClassNameByObjectName')->with('SomeObjectName')->will($this->returnValue('SomeClassName'));
+
+		$objectManager = $this->getAccessibleMock('F3\FLOW3\Object\ObjectManager', array('dummy'));
+		$objectManager->_set('objectContainer', $mockObjectContainer);
+
+		$this->assertSame('SomeClassName', $objectManager->getClassNameByObjectName('SomeObjectName'));
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
 	public function getScopeForwardsTheCallToTheCurrentObjectContainer() {
 		$mockObjectContainer = $this->getMock('F3\FLOW3\Object\Container\StaticObjectContainerInterface');
 		$mockObjectContainer->expects($this->once())->method('getScope')->with('SomeObjectName')->will($this->returnValue('Prototype'));

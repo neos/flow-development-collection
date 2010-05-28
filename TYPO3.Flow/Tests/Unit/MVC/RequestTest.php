@@ -261,7 +261,6 @@ class RequestTest extends \F3\Testing\BaseTestCase {
 		$request->setControllerPackageKey('Some_Invalid_Key');
 	}
 
-
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>

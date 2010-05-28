@@ -144,6 +144,15 @@ interface ObjectManagerInterface {
 	public function getObjectNameByClassName($className);
 
 	/**
+	 * Returns the implementation class name for the specified object
+	 *
+	 * @param string $objectName The object name
+	 * @return string The class name corresponding to the given object name or FALSE if no such object is registered
+	 * @api
+	 */
+	public function getClassNameByObjectName($objectName);
+
+	/**
 	 * Returns the scope of the specified object.
 	 *
 	 * @param string $objectName The object name

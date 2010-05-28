@@ -273,6 +273,7 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	public function getControllerName() {
 		$controllerObjectName = $this->getControllerObjectName();
 		if ($controllerObjectName !== '')  {
+
 				// Extract the controller name from the controller object name to assure that
 				// the case is correct.
 				// Note: Controller name can also contain sub structure like "Foo\Bar\Baz"
@@ -285,7 +286,7 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	/**
 	 * Sets the name of the action contained in this request.
 	 *
-	 * Note that the action name must start with a lower case letter.
+	 * Note that the action name must start with a lower case letter and is case sensitive.
 	 *
 	 * @param string $actionName Name of the action to execute by the controller
 	 * @return void
@@ -294,7 +295,9 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	 */
 	public function setControllerActionName($actionName) {
 		if (!is_string($actionName)) throw new \F3\FLOW3\MVC\Exception\InvalidActionNameException('The action name must be a valid string, ' . gettype($actionName) . ' given (' . $actionName . ').', 1187176358);
-		if ($actionName[0] !== strtolower($actionName[0])) throw new \F3\FLOW3\MVC\Exception\InvalidActionNameException('The action name must start with a lower case letter, "' . $actionName . '" does not match this criteria.', 1218473352);
+		if ($actionName[0] !== strtolower($actionName[0])) {
+			throw new \F3\FLOW3\MVC\Exception\InvalidActionNameException('The action name must start with a lower case letter, "' . $actionName . '" does not match this criteria.', 1218473352);
+		}
 		$this->controllerActionName = $actionName;
 	}
 
@@ -306,6 +309,17 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	 * @api
 	 */
 	public function getControllerActionName() {
+		$controllerObjectName = $this->getControllerObjectName();
+		if ($controllerObjectName !== '' && ($this->controllerActionName === strtolower($this->controllerActionName)))  {
+			$controllerClassName = $this->objectManager->getClassNameByObjectName($controllerObjectName);
+			$actionMethodName = $this->controllerActionName . 'Action';
+			foreach (get_class_methods($controllerClassName) as $existingMethodName) {
+				if (strtolower($existingMethodName) === strtolower($actionMethodName)) {
+					$this->controllerActionName = substr($existingMethodName, 0, -6);
+					break;
+				}
+			}
+     	}
 		return $this->controllerActionName;
 	}
 

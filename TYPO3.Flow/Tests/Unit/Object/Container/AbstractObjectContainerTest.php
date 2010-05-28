@@ -306,6 +306,24 @@ class AbstractObjectContainerTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getClassNameByObjectNameReturnsConfiguredImplementationClassName() {
+		$objects = array(
+			'Foo' => array('c' => 'FooImplementation'),
+			'Bar' => array(),
+		);
+
+		$container = $this->getAccessibleMock('F3\FLOW3\Object\Container\AbstractObjectContainer', array('dummy'));
+		$container->_set('objects', $objects);
+
+		$this->assertSame('FooImplementation', $container->getClassNameByObjectName('Foo'));
+		$this->assertSame('Bar', $container->getClassNameByObjectName('Bar'));
+		$this->assertFalse($container->getClassNameByObjectName('Baz'));
+	}
+
+	/**
+	 * @test
 	 * @expectedException \F3\FLOW3\Object\Exception\UnknownObjectException
 	 * @author Robert Lemke <robert@typo3.org>
 	 */

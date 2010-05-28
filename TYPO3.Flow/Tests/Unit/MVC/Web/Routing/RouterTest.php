@@ -142,7 +142,7 @@ class RouterTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function actionNameCanBeSetByRoute() {
 		$router = $this->getAccessibleMock('F3\FLOW3\MVC\Web\Routing\Router', array('findMatchResults', 'setArgumentsFromRawRequestData'), array(), '', FALSE);
-		$router->expects($this->once())->method('findMatchResults')->with('foo')->will($this->returnValue(array('@action' => 'MyAction')));
+		$router->expects($this->once())->method('findMatchResults')->with('foo')->will($this->returnValue(array('@action' => 'myAction')));
 		
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
 		$mockRequest->expects($this->once())->method('getRoutePath')->will($this->returnValue('foo'));

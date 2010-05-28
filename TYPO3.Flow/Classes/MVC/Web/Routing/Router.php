@@ -163,7 +163,7 @@ class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 					$this->request->setControllerName($argumentValue);
 				break;
 				case '@action' :
-					$this->request->setControllerActionName(lcfirst($argumentValue));
+					$this->request->setControllerActionName($argumentValue);
 				break;
 				case '@format' :
 					$this->request->setFormat(strtolower($argumentValue));

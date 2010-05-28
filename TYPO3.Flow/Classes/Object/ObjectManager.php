@@ -327,6 +327,19 @@ class ObjectManager implements \F3\FLOW3\Object\ObjectManagerInterface {
 	}
 
 	/**
+	 * Returns the implementation class name for the specified object
+	 *
+	 * @param string $objectName The object name
+	 * @return string The class name corresponding to the given object name or FALSE if no such object is registered
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
+	 */
+	public function getClassNameByObjectName($objectName) {
+		return $this->objectContainer->getClassNameByObjectName($objectName);
+
+	}
+
+	/**
 	 * Returns the scope of the specified object.
 	 * 
 	 * @param string $objectName The object name
