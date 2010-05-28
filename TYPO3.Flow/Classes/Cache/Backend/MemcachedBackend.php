@@ -433,7 +433,7 @@ class MemcachedBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 
 				// Update identifier-to-tag index
 			$existingTags = $this->findTagsByIdentifier($entryIdentifier);
-			if (array_search($entryIdentifier, $existingTags) === false) {
+			if (array_search($tag, $existingTags) === FALSE) {
 				$this->memcache->set($this->identifierPrefix . 'ident_' . $entryIdentifier, array_merge($existingTags, $tags));
 			}
 
