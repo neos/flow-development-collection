@@ -266,9 +266,38 @@ class RequestTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function theActionNameCanBeSetAndRetrieved() {
-		$request = new \F3\FLOW3\MVC\Request();
+		$request = $this->getMock('F3\FLOW3\MVC\Request', array('getControllerObjectName'), array(), '', FALSE);
+		$request->expects($this->once())->method('getControllerObjectName')->will($this->returnValue(''));
+
 		$request->setControllerActionName('theAction');
 		$this->assertEquals('theAction', $request->getControllerActionName());
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function theActionNamesCaseIsFixedIfItIsallLowerCaseAndTheControllerObjectNameIsKnown() {
+		$mockControllerClassName = uniqid('Mock');
+		eval('
+			class ' . $mockControllerClassName . ' extends \F3\FLOW3\MVC\Controller\ActionController {
+				public function someGreatAction() {}
+			}
+     	');
+
+		$mockController = $this->getMock($mockControllerClassName, array('someGreatAction'), array(), '', FALSE);
+
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
+		$mockObjectManager->expects($this->once())->method('getClassNameByObjectName')
+			->with('F3\MyControllerObjectName')
+			->will($this->returnValue(get_class($mockController)));
+
+		$request = $this->getMock('F3\FLOW3\MVC\Request', array('getControllerObjectName'), array(), '', FALSE);
+		$request->expects($this->once())->method('getControllerObjectName')->will($this->returnValue('F3\MyControllerObjectName'));
+		$request->injectObjectManager($mockObjectManager);
+
+		$request->setControllerActionName('somegreat');
+		$this->assertEquals('someGreat', $request->getControllerActionName());
 	}
 
 	/**
