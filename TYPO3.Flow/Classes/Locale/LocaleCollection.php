@@ -102,7 +102,7 @@ class LocaleCollection implements \F3\FLOW3\Locale\LocaleCollectionInterface {
 	 * @return mixed Existing \F3\FLOW3\Locale\Locale instance or NULL on failure
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function getParentLocaleOf($locale) {
+	public function getParentLocaleOf(\F3\FLOW3\Locale\Locale $locale) {
 		$localeTag = (string)$locale;
 
 		if (!isset($this->localeCollection[$localeTag])) {

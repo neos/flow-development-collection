@@ -256,7 +256,7 @@ F3\FLOW3\Core\LockManager:
 # Locale                                                                   #
 #                                                                          #
 
-F3\FLOW3\Locale\Detector:
+F3\FLOW3\Locale\Service:
   properties:
     cache:
       object:
@@ -264,7 +264,16 @@ F3\FLOW3\Locale\Detector:
         factoryMethodName: getCache
         arguments:
           1:
-            value: FLOW3_Locale_Detector
+            value: FLOW3_Locale_Service
+F3\FLOW3\Locale\CLDR\CLDRModel:
+  properties:
+    cache:
+      object:
+        factoryObjectName: F3\FLOW3\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: FLOW3_Locale_CDLR_CLDRModel
 
 #                                                                          #
 # Log                                                                      #

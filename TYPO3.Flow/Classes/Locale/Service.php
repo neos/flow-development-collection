@@ -41,12 +41,29 @@ class Service {
 	protected $objectManager;
 
 	/**
+	 * @var \F3\FLOW3\Package\PackageManagerInterface
+	 */
+	protected $packageManager;
+
+	/**
 	 * A collection of Locale objects representing currently installed locales,
 	 * in a hierarchical manner.
 	 *
 	 * @var \F3\FLOW3\Locale\LocaleCollectionInterface
 	 */
 	protected $localeCollection;
+
+	/**
+	 * @var \F3\FLOW3\Cache\Frontend\VariableFrontend
+	 */
+	protected $cache;
+
+	/**
+	 * The base path to use in filesystem operations. It is changed only in tests.
+	 *
+	 * @var string
+	 */
+	protected $localeBasePath = 'package://';
 
 	/**
 	 * @param array $settings
@@ -69,6 +86,15 @@ class Service {
 	}
 
 	/**
+	 * @param \F3\FLOW3\Package\PackageManagerInterface $packageManager
+	 * @return void
+	 * @author Karol Gusak <firstname@lastname.eu>
+	 */
+	public function injectPackageManager(\F3\FLOW3\Package\PackageManagerInterface $packageManager) {
+		$this->packageManager = $packageManager;
+	}
+
+	/**
 	 * @param \F3\FLOW3\Locale\LocaleCollectionInterface $localeCollection
 	 * @return void
 	 * @author Karol Gusak <firstname@lastname.eu>
@@ -78,14 +104,33 @@ class Service {
 	}
 
 	/**
+	 * Injects the FLOW3_Locale_Service cache
+	 *
+	 * @param \F3\FLOW3\Cache\Frontend\VariableFrontend $cache
+	 * @return void
+	 * @author Karol Gusak <firstname@lastname.eu>
+	 */
+	public function injectCache(\F3\FLOW3\Cache\Frontend\VariableFrontend $cache) {
+		$this->cache = $cache;
+	}
+
+	/**
 	 * Initializes this locale service
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @todo catch exception if locale identifier is invalid?
 	 */
 	public function initialize() {
 		$this->settings['locale']['defaultLocale'] = $this->objectManager->create('F3\FLOW3\Locale\Locale', $this->settings['locale']['defaultLocaleIdentifier']);
+
+		if ($this->cache->has('availableLocales')) {
+			$this->localeCollection = $this->cache->get('availableLocales');
+		} else {
+			$this->generateAvailableLocalesCollectionByScanningFilesystem();
+			$this->cache->set('availableLocales', $this->localeCollection);
+		}
 	}
 
 	/**
@@ -146,6 +191,72 @@ class Service {
 		}
 
 		return $filename;
+	}
+
+	/**
+	 * Returns a parent Locale object of the locale provided.
+	 *
+	 * This is a delegate method for convenience.
+	 *
+	 * @param \F3\FLOW3\Locale\Locale $locale The Locale to search parent for
+	 * @return mixed Existing \F3\FLOW3\Locale\Locale instance or NULL on failure
+	 * @author Karol Gusak <firstname@lastname.eu>
+	 */
+	public function getParentLocaleOf(\F3\FLOW3\Locale\Locale $locale) {
+		return $this->localeCollection->getParentLocaleOf($locale);
+	}
+
+	/**
+	 * Returns Locale object which represents one of locales installed and which
+	 * is most similar to the "template" Locale object given as parameter.
+	 *
+	 * This is a delegate method for convenience.
+	 *
+	 * @param \F3\FLOW3\Locale\Locale $locale The "template" Locale to be matched
+	 * @return mixed Existing \F3\FLOW3\Locale\Locale instance on success, NULL on failure
+	 * @author Karol Gusak <firstname@lastname.eu>
+	 */
+	public function findBestMatchingLocale(\F3\FLOW3\Locale\Locale $locale) {
+		return $this->localeCollection->findBestMatchingLocale($locale);
+	}
+
+	/**
+	 * Finds all Locale objects representing locales available in the
+	 * FLOW3 installation. This is done by scanning all Private and Public
+	 * resource files of all active packages, in order to find localized files.
+	 *
+	 * Localized files have a locale tag added before their extension (or at the
+	 * end of filename, if no extension exists). For example, a localized file
+	 * for foobar.png, can be foobar.en.png, fobar.en_GB.png, etc.
+	 *
+	 * Just one localized resource file causes the corresponding locale to be
+	 * regarded as available (installed, supported).
+	 *
+	 * Note: result of this method invocation is cached
+	 *
+	 * @return void
+	 * @author Karol Gusak <firstname@lastname.eu>
+	 */
+	protected function generateAvailableLocalesCollectionByScanningFilesystem() {
+		foreach ($this->packageManager->getActivePackages() as $activePackage) {
+			$directoryIterator = new \RecursiveDirectoryIterator($this->localeBasePath . $activePackage->getPackageKey() . '/');
+			$recursiveIteratorIterator = new \RecursiveIteratorIterator($directoryIterator, \RecursiveIteratorIterator::SELF_FIRST);
+
+			foreach ($recursiveIteratorIterator as $fileOrDirectory) {
+				if ($fileOrDirectory->isFile()) {
+					$localeTag = \F3\FLOW3\Locale\Utility::extractLocaleTagFromFilename($fileOrDirectory->getPathName());
+
+					if ($localeTag !== FALSE) {
+						try {
+							$locale = $this->objectManager->create('F3\FLOW3\Locale\Locale', $localeTag);
+							$this->localeCollection->addLocale($locale);
+						} catch (\F3\FLOW3\Locale\Exception\InvalidLocaleIdentifierException $e) {
+								// Just ignore current file and proceed
+						}
+					}
+				}
+			}
+		}
 	}
 }
 

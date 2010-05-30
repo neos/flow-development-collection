@@ -42,14 +42,6 @@ class DetectorTest extends \F3\Testing\BaseTestCase {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function setUp() {
-		\vfsStreamWrapper::register();
-		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('Foo'));
-
-		mkdir('vfs://Foo/Bar/Private/', 0777, TRUE);
-		foreach (array('en', 'sr_Cyrl_RS', 'en_GB', 'sr') as $localeIdentifier) {
-			file_put_contents('vfs://Foo/Bar/Private/foobar.' . $localeIdentifier . '.baz', 'FooBar');
-		}
-
 		$returnLocaleCallback = function() {
 			$args = func_get_args();
 			return new \F3\FLOW3\Locale\Locale($args[1]);
@@ -58,27 +50,32 @@ class DetectorTest extends \F3\Testing\BaseTestCase {
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
 		$mockObjectManager->expects($this->any())->method('create')->with('F3\FLOW3\Locale\Locale')->will($this->returnCallback($returnLocaleCallback));
 
-		$mockPackage = $this->getMock('F3\FLOW3\Package\PackageInterface');
-		$mockPackage->expects($this->any())->method('getPackageKey')->will($this->returnValue('Bar'));
-		$mockPackageManager = $this->getMock('F3\FLOW3\Package\PackageManagerInterface');
-		$mockPackageManager->expects($this->any())->method('getActivePackages')->will($this->returnValue(array($mockPackage)));
+		$findBestMatchingLocaleCallback = function() {
+			$args = func_get_args();
+			$localeTag = (string)$args[0];
 
-		$mockLocaleCollection = new \F3\FLOW3\Locale\LocaleCollection();
+			if (in_array($localeTag, array('en_US_POSIX', 'en_Shaw'))) {
+				return new \F3\FLOW3\Locale\Locale('en');
+			} else if ($localeTag === 'en_GB') {
+				return new \F3\FLOW3\Locale\Locale('en_GB');
+			} else if ($localeTag === 'sr_RS') {
+				return new \F3\FLOW3\Locale\Locale('sr');
+			} else {
+				return NULL;
+			}
+		};
+
+		$mockLocaleCollection = $this->getMock('F3\FLOW3\Locale\LocaleCollectionInterface');
+		$mockLocaleCollection->expects($this->any())->method('findBestMatchingLocale')->will($this->returnCallback($findBestMatchingLocaleCallback));
 
 		$mockLocalizationService = $this->getMock('F3\FLOW3\Locale\Service');
 		$mockLocalizationService->expects($this->any())->method('getDefaultLocale')->will($this->returnValue(new \F3\FLOW3\Locale\Locale('sv_SE')));
 
-		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
-		$mockCache->expects($this->once())->method('has')->with('availableLocales')->will($this->returnValue(FALSE));
-
 		$this->detector = $this->getAccessibleMock('F3\FLOW3\Locale\Detector', array('dummy'));
 		$this->detector->_set('localeBasePath', 'vfs://Foo/');
 		$this->detector->injectObjectManager($mockObjectManager);
-		$this->detector->injectPackageManager($mockPackageManager);
 		$this->detector->injectLocaleCollection($mockLocaleCollection);
 		$this->detector->injectLocalizationService($mockLocalizationService);
-		$this->detector->injectCache($mockCache);
-		$this->detector->initializeObject();
 	}
 
 	/**

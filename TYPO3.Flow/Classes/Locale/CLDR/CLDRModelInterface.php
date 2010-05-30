@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Locale;
+namespace F3\FLOW3\Locale\CLDR;
 
 /* *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,44 +23,22 @@ namespace F3\FLOW3\Locale;
  *                                                                        */
 
 /**
- * An interface for a collection of Locale objects available in current
- * FLOW3 installation.
+ * An interface for a model representing data from a CLDR file(s).
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @author Karol Gusak <firstname@lastname.eu>
+ * @scope prototype
  */
-interface LocaleCollectionInterface {
+interface CLDRModelInterface {
 
 	/**
-	 * Adds locale to the collection, inserting it in position which retains
-	 * hierarchical relations.
+	 * Returns multi-dimensional array representing desired node and it's children.
 	 *
-	 * @param \F3\FLOW3\Locale\Locale $locale The Locale to be inserted
-	 * @return boolean
+	 * @param string $path A path to the node to get
+	 * @return mixed Array of matching data, or FALSE on failure
 	 */
-	public function addLocale(\F3\FLOW3\Locale\Locale $locale);
-
-	/**
-	 * Returns a parent Locale object of the locale provided. The parent is
-	 * a locale which is more generic than the one given as parameter. For
-	 * example, the parent for locale en_GB will be locale en, of course if
-	 * it exists in the collection of available locales.
-	 *
-	 * @param \F3\FLOW3\Locale\Locale $locale The Locale to search parent for
-	 * @return mixed Existing \F3\FLOW3\Locale\Locale instance or NULL on failure
-	 */
-	public function getParentLocaleOf(\F3\FLOW3\Locale\Locale $locale);
-
-	/**
-	 * Returns Locale object which represents one of locales installed and which
-	 * is most similar to the "template" Locale object given as parameter.
-	 *
-	 * @param \F3\FLOW3\Locale\Locale $locale The "template" Locale to be matched
-	 * @return mixed Existing \F3\FLOW3\Locale\Locale instance on success, NULL on failure
-	 */
-	public function findBestMatchingLocale(\F3\FLOW3\Locale\Locale $locale);
-
+	public function get($path);
 }
 
 ?>

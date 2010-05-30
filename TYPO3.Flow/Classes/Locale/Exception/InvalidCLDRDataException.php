@@ -23,13 +23,14 @@ namespace F3\FLOW3\Locale\Exception;
  *                                                                        */
 
 /**
- * An "Invalid State" exception
+ * An "Invalid CLDR Data" exception
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */
-class InvalidStateException extends \F3\FLOW3\Locale\Exception {
+class InvalidCLDRDataException extends \F3\FLOW3\Locale\Exception {
 
 }
+
 ?>

@@ -1,8 +1,8 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Locale;
+namespace F3\FLOW3\Locale\CLDR;
 
-/* *
+/*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
@@ -23,44 +23,48 @@ namespace F3\FLOW3\Locale;
  *                                                                        */
 
 /**
- * An interface for a collection of Locale objects available in current
- * FLOW3 installation.
+ * Testcase for the CLDRModel
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
- * @author Karol Gusak <firstname@lastname.eu>
  */
-interface LocaleCollectionInterface {
+class CLDRModelTest extends \F3\Testing\BaseTestCase {
 
 	/**
-	 * Adds locale to the collection, inserting it in position which retains
-	 * hierarchical relations.
-	 *
-	 * @param \F3\FLOW3\Locale\Locale $locale The Locale to be inserted
-	 * @return boolean
+	 * @var \F3\FLOW3\Locale\CLDR\CLDRModel
 	 */
-	public function addLocale(\F3\FLOW3\Locale\Locale $locale);
+	protected $model;
 
 	/**
-	 * Returns a parent Locale object of the locale provided. The parent is
-	 * a locale which is more generic than the one given as parameter. For
-	 * example, the parent for locale en_GB will be locale en, of course if
-	 * it exists in the collection of available locales.
-	 *
-	 * @param \F3\FLOW3\Locale\Locale $locale The Locale to search parent for
-	 * @return mixed Existing \F3\FLOW3\Locale\Locale instance or NULL on failure
+	 * @return void
+	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function getParentLocaleOf(\F3\FLOW3\Locale\Locale $locale);
+	public function setUp() {
+		$mockFilenamePath = __DIR__ . '/../Fixtures/MockCLDRData.xml';
+
+		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
+		$mockCache->expects($this->once())->method('has')->with($mockFilenamePath)->will($this->returnValue(FALSE));
+		$mockCache->expects($this->once())->method('set')->with($mockFilenamePath);
+
+		$this->model = new \F3\FLOW3\Locale\CLDR\CLDRModel();
+		$this->model->injectCache($mockCache);
+		$this->model->initializeObject($mockFilenamePath);
+	}
 
 	/**
-	 * Returns Locale object which represents one of locales installed and which
-	 * is most similar to the "template" Locale object given as parameter.
-	 *
-	 * @param \F3\FLOW3\Locale\Locale $locale The "template" Locale to be matched
-	 * @return mixed Existing \F3\FLOW3\Locale\Locale instance on success, NULL on failure
+	 * @test
+	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function findBestMatchingLocale(\F3\FLOW3\Locale\Locale $locale);
+	public function getWorks() {
+		$result = $this->model->get('//ldml/dates/calendars/calendar[@type="gregorian"]/dateFormats');
+		$this->assertEquals(2, count($result[0]['content']));
+		$this->assertEquals('dateFormatLength', $result[0]['content'][0]['name']);
 
+		$result = $this->model->get('//ldml/dates/calendars/calendar[@type="gregorian"]/dateFormats/dateFormatLength[@type="full"]/dateFormat/pattern');
+		$this->assertEquals('EEEE, d MMMM y', $result[0]['content']);
+
+		$this->model->shutdownObject();
+	}
 }
 
 ?>

@@ -36,11 +36,6 @@ class Detector {
 	protected $objectManager;
 
 	/**
-	 * @var \F3\FLOW3\Package\PackageManagerInterface
-	 */
-	protected $packageManager;
-
-	/**
 	 * @var \F3\FLOW3\Locale\Service
 	 */
 	protected $localizationService;
@@ -54,33 +49,12 @@ class Detector {
 	protected $localeCollection;
 
 	/**
-	 * The base path to use in filesystem operations. It is changed only in tests.
-	 *
-	 * @var string
-	 */
-	protected $localeBasePath = 'package://';
-
-	/**
-	 * @var \F3\FLOW3\Cache\Frontend\VariableFrontend
-	 */
-	protected $cache;
-
-	/**
 	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
 	 * @return void
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
-	}
-
-	/**
-	 * @param \F3\FLOW3\Package\PackageManagerInterface $packageManager
-	 * @return void
-	 * @author Karol Gusak <firstname@lastname.eu>
-	 */
-	public function injectPackageManager(\F3\FLOW3\Package\PackageManagerInterface $packageManager) {
-		$this->packageManager = $packageManager;
 	}
 
 	/**
@@ -99,32 +73,6 @@ class Detector {
 	 */
 	public function injectLocaleCollection(\F3\FLOW3\Locale\LocaleCollectionInterface $localeCollection) {
 		$this->localeCollection = $localeCollection;
-	}
-
-	/**
-	 * Injects the FLOW3_Locale_AvailableLocales cache
-	 *
-	 * @param \F3\FLOW3\Cache\Frontend\VariableFrontend $cache
-	 * @return void
-	 * @author Karol Gusak <firstname@lastname.eu>
-	 */
-	public function injectCache(\F3\FLOW3\Cache\Frontend\VariableFrontend $cache) {
-		$this->cache = $cache;
-	}
-
-	/**
-	 * Constructs the detector. Needs the objectManager to be injected before, as
-	 * it generates a collection of available locales on start.
-	 *
-	 * @author Karol Gusak <firstname@lastname.eu>
-	 */
-	public function initializeObject() {
-		if ($this->cache->has('availableLocales')) {
-			$this->localeCollection = $this->cache->get('availableLocales');
-		} else {
-			$this->generateAvailableLocalesTreeByScanningFilesystem();
-			$this->cache->set('availableLocales', $this->localeCollection);
-		}
 	}
 
 	/**
@@ -199,45 +147,6 @@ class Detector {
 		}
 
 		return $this->localizationService->getDefaultLocale();
-	}
-
-	/**
-	 * Finds all Locale objects representing locales available in the
-	 * FLOW3 installation. This is done by scanning all Private and Public
-	 * resource files of all active packages, in order to find localized files.
-	 *
-	 * Localized files have a locale tag added before their extension (or at the
-	 * end of filename, if no extension exists). For example, a localized file
-	 * for foobar.png, can be foobar.en.png, fobar.en_GB.png, etc.
-	 *
-	 * Just one localized resource file causes the corresponding locale to be
-	 * regarded as available (installed, supported).
-	 *
-	 * Note: result of this method invocation is cached
-	 *
-	 * @return void
-	 * @author Karol Gusak <firstname@lastname.eu>
-	 */
-	protected function generateAvailableLocalesTreeByScanningFilesystem() {
-		foreach ($this->packageManager->getActivePackages() as $activePackage) {
-			$directoryIterator = new \RecursiveDirectoryIterator($this->localeBasePath . $activePackage->getPackageKey() . '/');
-			$recursiveIteratorIterator = new \RecursiveIteratorIterator($directoryIterator, \RecursiveIteratorIterator::SELF_FIRST);
-
-			foreach ($recursiveIteratorIterator as $fileOrDirectory) {
-				if ($fileOrDirectory->isFile()) {
-					$localeTag = \F3\FLOW3\Locale\Utility::extractLocaleTagFromFilename($fileOrDirectory->getPathName());
-
-					if ($localeTag !== FALSE) {
-						try {
-							$locale = $this->objectManager->create('F3\FLOW3\Locale\Locale', $localeTag);
-							$this->localeCollection->addLocale($locale);
-						} catch (\F3\FLOW3\Locale\Exception\InvalidLocaleIdentifierException $e) {
-								// Just ignore current file and proceed
-						}
-					}
-				}
-			}
-		}
 	}
 }
 
