@@ -36,6 +36,14 @@ namespace F3\FLOW3\Locale\CLDR;
 class CLDRRepository {
 
 	/**
+	 * An absolute path to the directory where CLDR resides. It is changed only
+	 * in tests.
+	 *
+	 * @var string
+	 */
+	protected $cldrBasePath = 'package://FLOW3/Private/Locale/CLDR/Sources/';
+
+	/**
 	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
@@ -84,12 +92,12 @@ class CLDRRepository {
 	 * requested before. Returns FALSE when $filename doesn't point to existing
 	 * file.
 	 *
-	 * @param string $filename Absolute path to existing CLDR file
+	 * @param string $filename Relative path to existing CLDR file
 	 * @return mixed A F3\FLOW3\Locale\CLDR\CLDRModel instance or FALSE on failure
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function getModel($filename) {
-		$filename = \F3\FLOW3\Utility\Files::getUnixStylePath($filename);
+		$filename = \F3\FLOW3\Utility\Files::concatenatePaths(array($this->cldrBasePath, $filename . '.xml'));
 
 		if (isset($this->models[$filename])) {
 			return $this->models[$filename];
@@ -115,12 +123,12 @@ class CLDRRepository {
 	 *
 	 * Returns FALSE when $directoryPath doesn't point to existing directory.
 	 *
-	 * @param string $directoryPath Absolute path to existing CLDR directory which contains one file per locale (see 'main' directory in CLDR for example)
+	 * @param string $directoryPath Relative path to existing CLDR directory which contains one file per locale (see 'main' directory in CLDR for example)
 	 * @return mixed A F3\FLOW3\Locale\CLDR\HierarchicalCLDRModel instance or FALSE on failure
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function getHierarchicalModel($directoryPath, \F3\FLOW3\Locale\Locale $locale = NULL) {
-		$directoryPath = \F3\FLOW3\Utility\Files::getUnixStylePath($directoryPath);
+		$directoryPath = \F3\FLOW3\Utility\Files::concatenatePaths(array($this->cldrBasePath, $directoryPath));
 
 		if ($locale === NULL) {
 			$locale = $this->localizationService->getDefaultLocale();

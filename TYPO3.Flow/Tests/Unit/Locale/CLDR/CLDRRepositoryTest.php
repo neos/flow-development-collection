@@ -45,7 +45,8 @@ class CLDRRepositoryTest extends \F3\Testing\BaseTestCase {
 		\vfsStreamWrapper::register();
 		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('Foo'));
 
-		$this->repository = new \F3\FLOW3\Locale\CLDR\CLDRRepository();
+		$this->repository = $this->getAccessibleMock('F3\FLOW3\Locale\CLDR\CLDRRepository', array('dummy'));
+		$this->repository->_set('cldrBasePath', 'vfs://Foo/');
 	}
 
 	/**
@@ -59,14 +60,14 @@ class CLDRRepositoryTest extends \F3\Testing\BaseTestCase {
 		$mockObjectManager->expects($this->once())->method('create')->with('F3\FLOW3\Locale\CLDR\CLDRModel')->will($this->returnValue('ModelWouldBeHere'));
 		$this->repository->injectObjectManager($mockObjectManager);
 
-		$result = $this->repository->getModel('vfs://Foo/Bar.xml');
+		$result = $this->repository->getModel('Bar');
 		$this->assertEquals('ModelWouldBeHere', $result);
 
 			// Second access should not invoke objectManager request
-		$result = $this->repository->getModel('vfs://Foo/Bar.xml');
+		$result = $this->repository->getModel('Bar');
 		$this->assertEquals('ModelWouldBeHere', $result);
 
-		$result = $this->repository->getModel('vfs:///Foo/NoSuchFile.xml');
+		$result = $this->repository->getModel('NoSuchFile');
 		$this->assertEquals(FALSE, $result);
 	}
 
@@ -75,11 +76,12 @@ class CLDRRepositoryTest extends \F3\Testing\BaseTestCase {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function getHierarchicalModelWorks() {
-		file_put_contents('vfs://Foo/en.xml', '');
+		mkdir('vfs://Foo/Folder');
+		file_put_contents('vfs://Foo/Folder/en.xml', '');
 
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->at(0))->method('create')->with('F3\FLOW3\Locale\CLDR\CLDRModel', 'vfs://Foo/en.xml')->will($this->returnValue('en.xml Model'));
-		$mockObjectManager->expects($this->at(1))->method('create')->with('F3\FLOW3\Locale\CLDR\CLDRModel', 'vfs://Foo/root.xml')->will($this->returnValue('root.xml Model'));
+		$mockObjectManager->expects($this->at(0))->method('create')->with('F3\FLOW3\Locale\CLDR\CLDRModel', 'vfs://Foo/Folder/en.xml')->will($this->returnValue('en.xml Model'));
+		$mockObjectManager->expects($this->at(1))->method('create')->with('F3\FLOW3\Locale\CLDR\CLDRModel', 'vfs://Foo/Folder/root.xml')->will($this->returnValue('root.xml Model'));
 		$mockObjectManager->expects($this->at(2))->method('create')->with('F3\FLOW3\Locale\CLDR\HierarchicalCLDRModel', array('en.xml Model', 'root.xml Model'))->will($this->returnValue('HierarchicalModelWouldBeHere'));
 
 		$mockLocalizationService = $this->getMock('F3\FLOW3\Locale\Service');
@@ -88,14 +90,14 @@ class CLDRRepositoryTest extends \F3\Testing\BaseTestCase {
 		$this->repository->injectObjectManager($mockObjectManager);
 		$this->repository->injectLocalizationService($mockLocalizationService);
 
-		$result = $this->repository->getHierarchicalModel('vfs://Foo', new \F3\FLOW3\Locale\Locale('en'));
+		$result = $this->repository->getHierarchicalModel('Folder', new \F3\FLOW3\Locale\Locale('en'));
 		$this->assertEquals('HierarchicalModelWouldBeHere', $result);
 
 			// Second access should not invoke objectManager requests
-		$result = $this->repository->getHierarchicalModel('vfs://Foo', new \F3\FLOW3\Locale\Locale('en'));
+		$result = $this->repository->getHierarchicalModel('Folder', new \F3\FLOW3\Locale\Locale('en'));
 		$this->assertEquals('HierarchicalModelWouldBeHere', $result);
 
-		$result = $this->repository->getHierarchicalModel('vfs://Foo/NoSuchDirectory', new \F3\FLOW3\Locale\Locale('en'));
+		$result = $this->repository->getHierarchicalModel('NoSuchDirectory', new \F3\FLOW3\Locale\Locale('en'));
 		$this->assertEquals(FALSE, $result);
 	}
 }
