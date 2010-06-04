@@ -71,7 +71,7 @@ class GeneratorService {
 	public function generateController($packageKey, $subpackage, $controllerName) {
 		$controllerClassName = ucfirst($controllerName) . 'Controller';
 
-		$templatePathAndFilename = 'package://Kickstart/Private/Generator/Controller/ControllerTemplate.php.tmpl';
+		$templatePathAndFilename = 'resource://Kickstart/Private/Generator/Controller/ControllerTemplate.php.tmpl';
 
 		$contextVariables = array();
 		$contextVariables['packageKey'] = $packageKey;
@@ -107,7 +107,7 @@ class GeneratorService {
 	public function generateView($packageKey, $subpackage, $controllerName, $viewName) {
 		$viewName = lcfirst($viewName);
 
-		$templatePathAndFilename = 'package://Kickstart/Private/Generator/View/viewTemplate.html.tmpl';
+		$templatePathAndFilename = 'resource://Kickstart/Private/Generator/View/viewTemplate.html.tmpl';
 
 		$contextVariables = array();
 		$contextVariables['packageKey'] = $packageKey;
@@ -120,7 +120,7 @@ class GeneratorService {
 
 		$subpackagePath = $subpackage != '' ? $subpackage . '/' : '';
 		$viewFilename = $viewName . '.html';
-		$viewPath = 'package://' . $packageKey . '/Private/Templates/' . $subpackagePath . $controllerName . '/';
+		$viewPath = 'resource://' . $packageKey . '/Private/Templates/' . $subpackagePath . $controllerName . '/';
 		$targetPathAndFilename = $viewPath . $viewFilename;
 
 		$this->generateFile($targetPathAndFilename, $fileContent);
@@ -142,7 +142,7 @@ class GeneratorService {
 		$namespace = 'F3\\' . $packageKey .  '\\Domain\\Model';
 		$fieldDefinitions = $this->normalizeFieldDefinitions($fieldDefinitions, $namespace);
 
-		$templatePathAndFilename = 'package://Kickstart/Private/Generator/Model/EntityTemplate.php.tmpl';
+		$templatePathAndFilename = 'resource://Kickstart/Private/Generator/Model/EntityTemplate.php.tmpl';
 
 		$contextVariables = array();
 		$contextVariables['packageKey'] = $packageKey;
@@ -174,7 +174,7 @@ class GeneratorService {
 		$repositoryClassName = $modelName . 'Repository';
 		$namespace = 'F3\\' . $packageKey .  '\\Domain\\Repository';
 
-		$templatePathAndFilename = 'package://Kickstart/Private/Generator/Repository/RepositoryTemplate.php.tmpl';
+		$templatePathAndFilename = 'resource://Kickstart/Private/Generator/Repository/RepositoryTemplate.php.tmpl';
 
 		$contextVariables = array();
 		$contextVariables['packageKey'] = $packageKey;
