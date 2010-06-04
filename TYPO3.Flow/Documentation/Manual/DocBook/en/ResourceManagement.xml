@@ -77,8 +77,8 @@
     <classname>Resource</classname> object which can be attached to any other
     object. A resource exists as long as the <classname>Resource</classname>
     object is connected to another entity or value object which is persisted.
-    If a resource is not attached to any other persisted object, it will be
-    cleaned up at the end of the script run.</para>
+    If a resource is not attached to any other persisted object, its data will
+    be permanently removed at the end of the script run.</para>
   </section>
 
   <section>
@@ -247,6 +247,14 @@
       <para>Note that the <parameter>package</parameter> parameter is optional
       and defaults to the package containing the currently active
       controller.</para>
+
+      <warning>
+        <para>Although it might be tempting shortcut, never refer to the
+        resource files directly through a URL like
+        <uri>_Resources/Static/Packages/MyPackage/Images/Icons/FooIcon.png</uri>
+        because you can't really rely on this path. Always use the resource
+        view helper instead.</para>
+      </warning>
     </section>
 
     <section>
@@ -324,7 +332,7 @@
     <example>
       <title>Using the Package Resource Stream Wrapper</title>
 
-      <programlisting language="php">$template = file_get_contents('package://MyPackage/Private/Templates/SomeTemplate.html');</programlisting>
+      <programlisting language="php">$template = file_get_contents('resource://MyPackage/Private/Templates/SomeTemplate.html');</programlisting>
     </example>
 
     <para>You are encouraged to use this stream wrapper wherever you need to

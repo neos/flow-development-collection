@@ -56,7 +56,7 @@ class ResourceManagerTest extends \F3\Testing\BaseTestCase {
 	public function initializeRegistersFoundStreamWrappers() {
 		$wrapperClassName = uniqid('MockWrapper');
 		$wrapperSchemeName = $wrapperClassName . 'scheme';
-		eval('class ' . $wrapperClassName . ' extends \F3\FLOW3\Resource\Streams\PackageResourceStreamWrapper { static public function getScheme() { return \'' . $wrapperSchemeName . '\'; } }');
+		eval('class ' . $wrapperClassName . ' extends \F3\FLOW3\Resource\Streams\ResourceStreamWrapper { static public function getScheme() { return \'' . $wrapperSchemeName . '\'; } }');
 		$mockStreamWrapperAdapter = new $wrapperClassName();
 
 		$streamWrapperAdapterReflection = new \ReflectionClass('F3\FLOW3\Resource\Streams\StreamWrapperAdapter');

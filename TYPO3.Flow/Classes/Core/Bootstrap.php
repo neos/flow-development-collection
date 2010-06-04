@@ -562,7 +562,7 @@ class Bootstrap {
 			$this->objectManager->shutdown();
 		} else {
 			header('HTTP/1.1 503 Service Temporarily Unavailable');
-			readfile('package://FLOW3/Private/Core/LockHoldingStackPage.html');
+			readfile('resource://FLOW3/Private/Core/LockHoldingStackPage.html');
 			$this->systemLogger->log('Site is locked, exiting.', LOG_NOTICE);
 		}
 	}

@@ -29,7 +29,11 @@ namespace F3\FLOW3\Resource\Streams;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
-class PackageResourceStreamWrapper implements \F3\FLOW3\Resource\Streams\StreamWrapperInterface {
+class ResourceStreamWrapper implements \F3\FLOW3\Resource\Streams\StreamWrapperInterface {
+
+	/**
+	 */
+	const SCHEME = 'resource';
 
 	/**
 	 * @var resource
@@ -85,7 +89,7 @@ class PackageResourceStreamWrapper implements \F3\FLOW3\Resource\Streams\StreamW
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	static public function getScheme() {
-		return 'package';
+		return self::SCHEME;
 	}
 
 	/**
@@ -96,8 +100,8 @@ class PackageResourceStreamWrapper implements \F3\FLOW3\Resource\Streams\StreamW
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function checkScheme($path) {
-		if (substr($path, 0, 7) !== self::getScheme()) {
-			throw new \RuntimeException('The ' . __CLASS__ . ' only supports the \'' . self::getScheme() . '\' scheme.', 1256052544);
+		if (substr($path, 0, strlen(self::SCHEME)) !== self::SCHEME) {
+			throw new \InvalidArgumentException('The ' . __CLASS__ . ' only supports the \'' . self::SCHEME . '\' scheme.', 1256052544);
 		}
 	}
 

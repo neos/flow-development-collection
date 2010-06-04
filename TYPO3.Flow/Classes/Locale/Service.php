@@ -63,7 +63,7 @@ class Service {
 	 *
 	 * @var string
 	 */
-	protected $localeBasePath = 'package://';
+	protected $localeBasePath = 'resource://';
 
 	/**
 	 * @param array $settings
