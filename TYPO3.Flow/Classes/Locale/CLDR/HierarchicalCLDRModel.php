@@ -53,6 +53,20 @@ class HierarchicalCLDRModel implements \F3\FLOW3\Locale\CLDR\CLDRModelInterface 
 	protected $models;
 
 	/**
+	 * Index of next model to be searched when getNext() will be invoked.
+	 *
+	 * @var int
+	 */
+	protected $nextModelIndex;
+
+	/**
+	 * Xpath query to use during the getNext() calls.
+	 *
+	 * @var string
+	 */
+	protected $searchQuery;
+
+	/**
 	 * Constructs the model.
 	 *
 	 * An array of CLDRModel instances is required. They have to be sorted
@@ -84,6 +98,45 @@ class HierarchicalCLDRModel implements \F3\FLOW3\Locale\CLDR\CLDRModelInterface 
 		}
 
 		return FALSE;
+	}
+
+	/**
+	 * Sets the query to use during iterative searching done by getNextResult()
+	 * calls.
+	 *
+	 * @param string $query An Xpath query
+	 * @author Karol Gusak <firstname@lastname.eu>
+	 */
+	public function setQueryPath($query) {
+		$this->searchQuery = $query;
+		$this->nextModelIndex = count($this->models) - 1;
+	}
+
+	/**
+	 * Returns an array with query results for path set by setQueryPath() method,
+	 * from the next model in chain, starting with root model.
+	 *
+	 * It's an alternative for get() method, when there is a need to get merged
+	 * result of the same query from all models.
+	 *
+	 * Note: Both get() and getNextResult() methods are workarounds for real
+	 * hierarchy support, which would generate and return array of merged
+	 * elements from all XML files in chain, taking into account whole tree
+	 * branch, which isn't simple. This would probably be very costly, right?
+	 *
+	 * @return mixed Array of matching data, FALSE if no match for current model. NULL if iteration ended
+	 * @author Karol Gusak <firstname@lastname.eu>
+	 */
+	public function getNextResult() {
+		if (empty($this->searchQuery)) {
+			return NULL;
+		}
+
+		if ($this->nextModelIndex === -1) {
+			return NULL;
+		}
+
+		return $this->models[$this->nextModelIndex--]->get($this->searchQuery);
 	}
 }
 

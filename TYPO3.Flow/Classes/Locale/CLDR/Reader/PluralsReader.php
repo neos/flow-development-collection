@@ -23,9 +23,9 @@ namespace F3\FLOW3\Locale\CLDR\Reader;
  *                                                                        */
 
 /**
- * A reader for plural forms from CLDR.
+ * A reader for data placed in "plurals" tag in CLDR.
  *
- * There is a few similar words used in plurals.xml file of CLDR used by this
+ * There are a few similar words used in plurals.xml file of CLDR used by this
  * class. Following naming convention is used in the code (a name of
  * corresponding tag from xml file is provided in brackets, if any):
  * - ruleset: a set of plural rules for a locale [pluralRules]
@@ -35,6 +35,7 @@ namespace F3\FLOW3\Locale\CLDR\Reader;
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @see http://www.unicode.org/reports/tr35/#Language_Plural_Rules
  */
 class PluralsReader {
 

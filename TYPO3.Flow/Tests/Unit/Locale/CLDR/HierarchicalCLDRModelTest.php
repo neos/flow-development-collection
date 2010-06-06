@@ -31,15 +31,10 @@ namespace F3\FLOW3\Locale\CLDR;
 class HierarchicalCLDRModelTest extends \F3\Testing\BaseTestCase {
 
 	/**
-	 * @var \F3\FLOW3\Locale\CLDR\HierarchicalCLDRModel
-	 */
-	protected $model;
-
-	/**
-	 * @return void
+	 * @test
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function setUp() {
+	public function getWorks() {
 		$mockCLDRModelChild = $this->getMock('F3\FLOW3\Locale\CLDR\CLDRModel');
 		$mockCLDRModelChild->expects($this->at(0))->method('get')->with('foo')->will($this->returnValue('child_has_foo'));
 		$mockCLDRModelChild->expects($this->at(1))->method('get')->with('bar')->will($this->returnValue(FALSE));
@@ -49,24 +44,43 @@ class HierarchicalCLDRModelTest extends \F3\Testing\BaseTestCase {
 		$mockCLDRModelParent->expects($this->at(0))->method('get')->with('bar')->will($this->returnValue('parent_has_bar'));
 		$mockCLDRModelParent->expects($this->at(1))->method('get')->with('baz')->will($this->returnValue(FALSE));
 
+		$model = new \F3\FLOW3\Locale\CLDR\HierarchicalCLDRModel();
+		$model->initializeObject(array($mockCLDRModelChild, $mockCLDRModelParent));
 
-		$this->model = new \F3\FLOW3\Locale\CLDR\HierarchicalCLDRModel();
-		$this->model->initializeObject(array($mockCLDRModelChild, $mockCLDRModelParent));
+		$result = $model->get('foo');
+		$this->assertEquals('child_has_foo', $result);
+
+		$result = $model->get('bar');
+		$this->assertEquals('parent_has_bar', $result);
+
+		$result = $model->get('baz');
+		$this->assertEquals(FALSE, $result);
 	}
 
 	/**
 	 * @test
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function getWorks() {
-		$result = $this->model->get('foo');
-		$this->assertEquals('child_has_foo', $result);
+	public function getNextResultWorks() {
+		$mockCLDRModelChild = $this->getMock('F3\FLOW3\Locale\CLDR\CLDRModel');
+		$mockCLDRModelChild->expects($this->at(0))->method('get')->with('foo')->will($this->returnValue('result_from_child'));
 
-		$result = $this->model->get('bar');
-		$this->assertEquals('parent_has_bar', $result);
+		$mockCLDRModelParent = $this->getMock('F3\FLOW3\Locale\CLDR\CLDRModel');
+		$mockCLDRModelParent->expects($this->at(0))->method('get')->with('foo')->will($this->returnValue('result_from_parent'));
 
-		$result = $this->model->get('baz');
-		$this->assertEquals(FALSE, $result);
+		$model = new \F3\FLOW3\Locale\CLDR\HierarchicalCLDRModel();
+		$model->initializeObject(array($mockCLDRModelChild, $mockCLDRModelParent));
+
+		$model->setQueryPath('foo');
+
+		$result = $model->getNextResult();
+		$this->assertEquals('result_from_parent', $result);
+
+		$result = $model->getNextResult();
+		$this->assertEquals('result_from_child', $result);
+
+		$result = $model->getNextResult();
+		$this->assertEquals(NULL, $result);
 	}
 }
 
