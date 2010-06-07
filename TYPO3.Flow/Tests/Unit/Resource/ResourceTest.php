@@ -83,6 +83,17 @@ class ResourceTest extends \F3\Testing\BaseTestCase {
 		$resource = new \F3\FLOW3\Resource\Resource($hash, 'someunknownextension');
 		$this->assertSame('application/octet-stream', $resource->getMimeType());
 	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function toStringReturnsTheResourceHashObject() {
+		$hash = '69e73da3ce0ad08c717b7b9f1c759182d6650944';
+
+		$resource = new \F3\FLOW3\Resource\Resource($hash, 'jpg');
+		$this->assertSame($hash, (string)$resource);
+	}
 }
 
 ?>

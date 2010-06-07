@@ -218,6 +218,13 @@
     <methodname>setTitle</methodname> and
     <methodname>setOriginalResource</methodname> respectively the above code
     will work just as expected.</para>
+
+    <tip>
+      <para>There are more API functions in FLOW3's
+      <classname>ResourceManager</classname> which allow for retrieving
+      additional information about the circumstances of resource uploads.
+      Please refer to the API documentation for further details.</para>
+    </tip>
   </section>
 
   <section>
@@ -330,12 +337,29 @@
     into a variable:</para>
 
     <example>
-      <title>Using the Package Resource Stream Wrapper</title>
+      <title>Accessing static resources</title>
 
       <programlisting language="php">$template = file_get_contents('resource://MyPackage/Private/Templates/SomeTemplate.html');</programlisting>
     </example>
 
+    <para>Likewise you might get into a situation where you need to
+    programmatically access persistent resources. The resource stream wrapper
+    also supports these, all you need to do is passing the resource hash as
+    the URI host:</para>
+
+    <example>
+      <title>Accessing persisted resources</title>
+
+      <programlisting language="php">$imageFile = file_get_contents('resource://' . $resource);</programlisting>
+    </example>
+
+    <para>Note that you need to have a <classname>Resource</classname> object
+    in order to access its file and that the above example only works because
+    <classname>Resource</classname> provides a
+    <methodname>__toString()</methodname> method which returns the resource's
+    hash.</para>
+
     <para>You are encouraged to use this stream wrapper wherever you need to
-    access a static package resource in your PHP code.</para>
+    access a static or persisted resource in your PHP code.</para>
   </section>
 </chapter>

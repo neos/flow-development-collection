@@ -67,6 +67,11 @@ class ResourceManager {
 	protected $persistentResourcesStorageBaseUri;
 
 	/**
+	 * @var \SplObjectStorage
+	 */
+	protected $importedResources;
+
+	/**
 	 * Injects the cache manager
 	 *
 	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
@@ -154,7 +159,9 @@ class ResourceManager {
 			// For now this URI is hardcoded, but might be manageable in the future
 			// if additional persistent resources storages are supported.
 		$this->persistentResourcesStorageBaseUri = FLOW3_PATH_DATA . 'Persistent/Resources/';
-	}
+
+		$this->importedResources = new \SplObjectStorage();
+  	}
 
 	/**
 	 * Imports a resource (file) from the given location as a persistent resource.
@@ -183,7 +190,30 @@ class ResourceManager {
 			unlink($temporaryTargetPathAndFilename);
 			return FALSE;
 		}
-		return $this->objectManager->create('F3\FLOW3\Resource\Resource', $hash, $pathInfo['extension']);
+		$resource =  $this->objectManager->create('F3\FLOW3\Resource\Resource', $hash, $pathInfo['extension']);
+		$this->importedResources[$resource] = array(
+			'originalFilename' => $pathInfo['basename']
+		);
+		return $resource;
+	}
+
+	/**
+	 * Returns an object storage with all resource objects which have been imported
+	 * by the Resource Manager during this script call. Each resource comes with
+	 * an array of additional information about its import.
+	 * 
+	 * Example for a returned object storage:
+	 * 
+	 * $resource1 => array('originalFilename' => 'Foo.txt'),
+	 * $resource2 => array('originalFilename' => 'Bar.txt'),
+	 * ...
+	 * 
+	 * @return \SplObjectStorage
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
+	 */
+	public function getImportedResources() {
+		return clone $this->importedResources;
 	}
 
 	/**
@@ -210,7 +240,11 @@ class ResourceManager {
 		if (move_uploaded_file($uploadInfo['tmp_name'], $finalTargetPathAndFilename) === FALSE) {
 			return FALSE;
 		}
-		return $this->objectManager->create('F3\FLOW3\Resource\Resource', $hash, $pathInfo['extension']);
+		$resource =  $this->objectManager->create('F3\FLOW3\Resource\Resource', $hash, $pathInfo['extension']);
+		$this->importedResources[$resource] = array(
+			'originalFilename' => $pathInfo['basename']
+		);
+		return $resource;
 	}
 
 	/**

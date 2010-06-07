@@ -56,13 +56,12 @@ class ResourceStreamWrapper implements \F3\FLOW3\Resource\Streams\StreamWrapperI
 	protected $packageManager;
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
+	 *
+	 * @var \F3\FLOW3\Resource\ResourceManager
 	 */
-	protected $objectManager;
+	protected $resourceManager;
 
 	/**
-	 * Injects a package manager.
-	 *
 	 * @param \F3\FLOW3\Package\PackageManagerInterface $packageManager
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
@@ -72,14 +71,12 @@ class ResourceStreamWrapper implements \F3\FLOW3\Resource\Streams\StreamWrapperI
 	}
 
 	/**
-	 * Injects an object factory.
-	 *
-	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
+	 * @param \F3\FLOW3\Resource\ResourceManager $resourceManager
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
-		$this->objectManager = $objectManager;
+	public function injectResourceManager(\F3\FLOW3\Resource\ResourceManager $resourceManager) {
+		$this->resourceManager = $resourceManager;
 	}
 
 	/**
@@ -90,19 +87,6 @@ class ResourceStreamWrapper implements \F3\FLOW3\Resource\Streams\StreamWrapperI
 	 */
 	static public function getScheme() {
 		return self::SCHEME;
-	}
-
-	/**
-	 * Checks the given $path for use of the scheme this wrapper is intended for.
-	 *
-	 * @param string $path
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	protected function checkScheme($path) {
-		if (substr($path, 0, strlen(self::SCHEME)) !== self::SCHEME) {
-			throw new \InvalidArgumentException('The ' . __CLASS__ . ' only supports the \'' . self::SCHEME . '\' scheme.', 1256052544);
-		}
 	}
 
 	/**
@@ -131,12 +115,8 @@ class ResourceStreamWrapper implements \F3\FLOW3\Resource\Streams\StreamWrapperI
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function openDirectory($path, $options) {
-		$this->checkScheme($path);
-
-		$uri = $this->objectManager->create('F3\FLOW3\Property\DataType\Uri', $path);
-		$package = $this->packageManager->getPackage($uri->getHost());
-		$path = \F3\FLOW3\Utility\Files::concatenatePaths(array($package->getResourcesPath(), $uri->getPath()));
-		$handle = opendir($path);
+		$resourcePath = $this->evaluateResourcePath($path);
+     	$handle = opendir($resourcePath);
 		if ($handle !== FALSE) {
 			$this->handle = $handle;
 			return TRUE;
@@ -184,12 +164,8 @@ class ResourceStreamWrapper implements \F3\FLOW3\Resource\Streams\StreamWrapperI
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function makeDirectory($path, $mode, $options) {
-		$this->checkScheme($path);
-
-		$uri = $this->objectManager->create('F3\FLOW3\Property\DataType\Uri', $path);
-		$package = $this->packageManager->getPackage($uri->getHost());
-		$path = \F3\FLOW3\Utility\Files::concatenatePaths(array($package->getResourcesPath(), $uri->getPath()));
-		mkdir($path, $mode, $options & STREAM_MKDIR_RECURSIVE);
+		$path = $this->evaluateResourcePath($path);
+     	mkdir($path, $mode, $options & STREAM_MKDIR_RECURSIVE);
 	}
 
 	/**
@@ -206,9 +182,7 @@ class ResourceStreamWrapper implements \F3\FLOW3\Resource\Streams\StreamWrapperI
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function removeDirectory($path, $options) {
-		$this->checkScheme($path);
-
-		throw new \BadMethodCallException('The package stream wrapper does not support rmdir.', 1256827649);
+		throw new \BadMethodCallException(__CLASS__ . ' does not support rmdir.', 1256827649);
 	}
 
 	/**
@@ -337,13 +311,13 @@ class ResourceStreamWrapper implements \F3\FLOW3\Resource\Streams\StreamWrapperI
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function open($path, $mode, $options, &$openedPathAndFilename) {
-		$this->checkScheme($path);
-
-		$uri = $this->objectManager->create('F3\FLOW3\Property\DataType\Uri', $path);
-		$package = $this->packageManager->getPackage($uri->getHost());
-		$pathAndFilename = \F3\FLOW3\Utility\Files::concatenatePaths(array($package->getResourcesPath(), $uri->getPath()));
-		$this->handle = fopen($pathAndFilename, $mode);
-		return (boolean) $this->handle;
+		$resourcePathAndFilename = $this->evaluateResourcePath($path);
+     	$this->handle = fopen($resourcePathAndFilename, $mode);
+		if ($this->handle) {
+			$openedPathAndFilename = $resourcePathAndFilename;
+			return TRUE;
+		}
+		return FALSE;
 	}
 
 	/**
@@ -459,8 +433,6 @@ class ResourceStreamWrapper implements \F3\FLOW3\Resource\Streams\StreamWrapperI
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function unlink($path) {
-		$this->checkScheme($path);
-
 		throw new \BadMethodCallException('The package stream wrapper does not support unlink.', 1256052118);
 	}
 
@@ -499,18 +471,42 @@ class ResourceStreamWrapper implements \F3\FLOW3\Resource\Streams\StreamWrapperI
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function pathStat($path, $flags) {
-		$this->checkScheme($path);
-
-		$uri = $this->objectManager->create('F3\FLOW3\Property\DataType\Uri', $path);
-		$package = $this->packageManager->getPackage($uri->getHost());
-		$path = \F3\FLOW3\Utility\Files::concatenatePaths(array($package->getResourcesPath(), $uri->getPath()));
-		if (file_exists($path)) {
-			return stat($path);
-		} else {
-			return FALSE;
-		}
+		$resourcePath = $this->evaluateResourcePath($path);
+		return ($resourcePath !== FALSE) ? stat($resourcePath) : FALSE;
 	}
 
+	/**
+	 *
+	 * @param <type> $requestedPath
+	 * @return <type>
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function evaluateResourcePath($requestedPath) {
+		if (substr($requestedPath, 0, strlen(self::SCHEME)) !== self::SCHEME) {
+			throw new \InvalidArgumentException('The ' . __CLASS__ . ' only supports the \'' . self::SCHEME . '\' scheme.', 1256052544);
+		}
+
+		$uriParts = parse_url($requestedPath);
+		if (!is_array($uriParts) || !isset($uriParts['host'])) {
+			return FALSE;
+		}
+
+		if (strlen($uriParts['host']) === 40) {
+			$resourcePath = $this->resourceManager->getPersistentResourcesStorageBaseUri() . $uriParts['host'];
+			if (file_exists($resourcePath)) {
+				return $resourcePath;
+			}
+		}
+
+		$package = $this->packageManager->getPackage($uriParts['host']);
+		$resourcePath = \F3\FLOW3\Utility\Files::concatenatePaths(array($package->getResourcesPath(), $uriParts['path']));
+
+		if (file_exists($resourcePath)) {
+			return $resourcePath;
+		}
+
+		return FALSE;
+	}
 }
 
 ?>

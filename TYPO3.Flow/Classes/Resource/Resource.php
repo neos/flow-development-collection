@@ -87,6 +87,16 @@ class Resource {
 	public function getMimeType() {
 		return \F3\FLOW3\Utility\FileTypes::getMimeTypeFromFilename('x.' . $this->fileExtension);
 	}
+
+	/**
+	 * Returns a string representation of this resource object.
+	 *
+	 * @return string The hash of this resource
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function __toString() {
+		return $this->hash;
+	}
 }
 
 ?>
