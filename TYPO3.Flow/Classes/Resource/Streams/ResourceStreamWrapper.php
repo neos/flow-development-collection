@@ -476,9 +476,11 @@ class ResourceStreamWrapper implements \F3\FLOW3\Resource\Streams\StreamWrapperI
 	}
 
 	/**
+	 * Evaluates the absolute path and filename of the resource file specified
+	 * by the given path .
 	 *
-	 * @param <type> $requestedPath
-	 * @return <type>
+	 * @param string $requestedPath
+	 * @return mixed The full path and filename or FALSE if the file doesn't exist
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function evaluateResourcePath($requestedPath) {

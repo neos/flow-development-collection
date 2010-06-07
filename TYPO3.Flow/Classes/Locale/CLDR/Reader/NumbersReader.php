@@ -417,8 +417,13 @@ class NumbersReader {
 			'rounding' => 0,
 		);
 
-		@list($positiveFormat, $negativeFormat) = explode(';', $format);
-		$format = $positiveFormat;
+		if (strpos($format, ';') !== FALSE) {
+			list($positiveFormat, $negativeFormat) = explode(';', $format);
+			$format = $positiveFormat;
+		} else {
+			$positiveFormat = $format;
+			$negativeFormat = NULL;
+		}
 
 		if (preg_match(self::PATTERN_MATCH_SUBFORMAT, $positiveFormat, $matches)) {
 			$parsedFormat['positivePrefix'] = $matches[1];
