@@ -486,7 +486,7 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function processSplObjectStorage(\SplObjectStorage $splObjectStorage = NULL, $parentIdentifier, array $previousObjectStorage = NULL) {
-		if ($previousObjectStorage !== NULL) {
+		if ($previousObjectStorage !== NULL && $previousObjectStorage['value'] !== NULL) {
 			$this->removeDeletedSplObjectStorageEntries($splObjectStorage, $previousObjectStorage['value']);
 		}
 
