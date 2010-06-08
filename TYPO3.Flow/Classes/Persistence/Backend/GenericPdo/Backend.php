@@ -950,7 +950,7 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 		$parameters[] = $query->getType();
 		$sql['fields'][] = '"_entity"."identifier" AS "identifier"';
 		$sql['fields'][] = '"_entity"."type" AS "classname"';
-		if ($query->getConstraint() === NULL && $query->getOrderings() === NULL) {
+		if ($query->getConstraint() === NULL && $query->getOrderings() === array()) {
 			$sql['tables'][] = '"entities" AS "_entity"';
 			$sql['where'][] = '"_entity"."type"=?';
 		} elseif ($query->getConstraint() === NULL) {
@@ -973,7 +973,7 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function parseOrderings(\F3\FLOW3\Persistence\QueryInterface $query, array $sql) {
-		if ($query->getOrderings() === NULL) return;
+		if ($query->getOrderings() === array()) return $sql;
 
 		$propertyData = $this->reflectionService->getClassSchema($query->getType())->getProperties();
 		foreach ($query->getOrderings() as $propertyName => $order) {

@@ -94,7 +94,7 @@ abstract class AbstractObjectContainer implements \F3\FLOW3\Object\Container\Obj
 	public function create($objectName) {
 		if (isset($this->objects[$objectName]) === FALSE) {
 			$hint = ($objectName[0] === '\\') ? ' Hint: You specified an object name with a leading backslash!' : '';
-			throw new \F3\FLOW3\Object\Exception\UnknownObjectException('Object "' . $objectName . '" is not registered.' . $hint, 1264584588);
+			throw new \F3\FLOW3\Object\Exception\UnknownObjectException('Object "' . $objectName . '" is not registered (or an interface without default implementation).' . $hint, 1264584588);
 		}
 		if ($this->objects[$objectName]['s'] !== self::SCOPE_PROTOTYPE) {
 			throw new \F3\FLOW3\Object\Exception\WrongScopeException('Object "' . $objectName . '" is of not of scope prototype, but only prototype is supported by create()', 1264584592);
