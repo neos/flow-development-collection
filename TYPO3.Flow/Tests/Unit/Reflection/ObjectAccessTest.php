@@ -23,6 +23,7 @@ namespace F3\FLOW3\Reflection;
  *                                                                        */
 
 require_once('Fixture/DummyClassWithGettersAndSetters.php');
+require_once('Fixture/ArrayAccessClass.php');
 
 /**
  * Testcase for Object Access
@@ -151,6 +152,16 @@ class ObjectAccessTest extends \F3\Testing\BaseTestCase {
 		$arrayObject = new \ArrayObject(array('key' => 'value'));
 		$expected = \F3\FLOW3\Reflection\ObjectAccess::getProperty($arrayObject, 'key');
 		$this->assertEquals($expected, 'value', 'getProperty does not work with ArrayObject property.');
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getPropertyCanAccessPropertiesOfAnObjectImplementingArrayAccess() {
+		$arrayAccessInstance = new \F3\FLOW3\Tests\Reflection\Fixture\ArrayAccessClass(array('key' => 'value'));
+		$expected = \F3\FLOW3\Reflection\ObjectAccess::getProperty($arrayAccessInstance, 'key');
+		$this->assertEquals($expected, 'value', 'getPropertyPath does not work with Array Access property.');
 	}
 
 	/**

@@ -73,7 +73,7 @@ class ObjectAccess {
 			throw new \InvalidArgumentException('Given property name is not of type string.', 1231178303);
 		}
 
-		if (is_array($subject) || $subject instanceof \ArrayAccess) {
+		if (is_array($subject)) {
 			if (array_key_exists($propertyName, $subject)) {
 				return $subject[$propertyName];
 			}
