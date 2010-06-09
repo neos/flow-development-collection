@@ -96,7 +96,7 @@ class ObjectAccessTest extends \F3\Testing\BaseTestCase {
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function getPropertyThrowsExceptionIfThePropertyNameIsNotAString() {
-		$property = \F3\FLOW3\Reflection\ObjectAccess::getProperty($this->dummyObject, new \ArrayObject());
+		\F3\FLOW3\Reflection\ObjectAccess::getProperty($this->dummyObject, new \ArrayObject());
 	}
 
 	/**
@@ -105,7 +105,7 @@ class ObjectAccessTest extends \F3\Testing\BaseTestCase {
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function setPropertyThrowsExceptionIfThePropertyNameIsNotAString() {
-		$property = \F3\FLOW3\Reflection\ObjectAccess::setProperty($this->dummyObject, new \ArrayObject(), 42);
+		\F3\FLOW3\Reflection\ObjectAccess::setProperty($this->dummyObject, new \ArrayObject(), 42);
 	}
 
 	/**
@@ -197,8 +197,10 @@ class ObjectAccessTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @test
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getGettablePropertyNamesReturnsAllPropertiesWhichAreAvailable() {
+		$this->dummyObject->shouldNotBePickedUp = TRUE;
 		$gettablePropertyNames = \F3\FLOW3\Reflection\ObjectAccess::getGettablePropertyNames($this->dummyObject);
 		$expectedPropertyNames = array('anotherProperty', 'booleanProperty', 'property', 'property2', 'publicProperty', 'publicProperty2');
 		$this->assertEquals($gettablePropertyNames, $expectedPropertyNames, 'getGettablePropertyNames returns not all gettable properties.');
@@ -216,9 +218,25 @@ class ObjectAccessTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function getSettablePropertyNamesReturnsPropertyNamesOfStdClass() {
+		$stdClassObject = new \stdClass();
+		$stdClassObject->property = 'string1';
+		$stdClassObject->property2 = NULL;
+
+		$settablePropertyNames = \F3\FLOW3\Reflection\ObjectAccess::getSettablePropertyNames($stdClassObject);
+		$expectedPropertyNames = array('property', 'property2');
+		$this->assertEquals($expectedPropertyNames, $settablePropertyNames, 'getSettablePropertyNames returns not all settable properties.');
+	}
+
+	/**
+	 * @test
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getGettablePropertiesReturnsTheCorrectValuesForAllProperties() {
+		$this->dummyObject->shouldNotBePickedUp = TRUE;
 		$allProperties = \F3\FLOW3\Reflection\ObjectAccess::getGettableProperties($this->dummyObject);
 		$expectedProperties = array(
 			'anotherProperty' => 42,
@@ -228,6 +246,23 @@ class ObjectAccessTest extends \F3\Testing\BaseTestCase {
 			'publicProperty' => NULL,
 			'publicProperty2' => 42);
 		$this->assertEquals($allProperties, $expectedProperties, 'expectedProperties did not return the right values for the properties.');
+	}
+
+	/**
+	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function getGettablePropertiesReturnsPropertiesOfStdClass() {
+		$stdClassObject = new \stdClass();
+		$stdClassObject->property = 'string1';
+		$stdClassObject->property2 = NULL;
+		$stdClassObject->publicProperty2 = 42;
+		$allProperties = \F3\FLOW3\Reflection\ObjectAccess::getGettableProperties($stdClassObject);
+		$expectedProperties = array(
+			'property' => 'string1',
+			'property2' => NULL,
+			'publicProperty2' => 42);
+		$this->assertEquals($expectedProperties, $allProperties, 'expectedProperties did not return the right values for the properties.');
 	}
 
 	/**
@@ -244,6 +279,19 @@ class ObjectAccessTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function isPropertySettableWorksOnStdClass() {
+		$stdClassObject = new \stdClass();
+		$stdClassObject->property = 'foo';
+
+		$this->assertTrue(\F3\FLOW3\Reflection\ObjectAccess::isPropertySettable($stdClassObject, 'property'));
+
+		$this->assertFalse(\F3\FLOW3\Reflection\ObjectAccess::isPropertySettable($stdClassObject, 'undefinedProperty'));
+	}
+
+	/**
+	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function isPropertyGettableTellsIfAPropertyCanBeRetrieved() {
@@ -253,6 +301,19 @@ class ObjectAccessTest extends \F3\Testing\BaseTestCase {
 
 		$this->assertFalse(\F3\FLOW3\Reflection\ObjectAccess::isPropertyGettable($this->dummyObject, 'privateProperty'));
 		$this->assertFalse(\F3\FLOW3\Reflection\ObjectAccess::isPropertyGettable($this->dummyObject, 'writeOnlyMagicProperty'));
+	}
+
+	/**
+	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function isPropertyGettableWorksOnStdClass() {
+		$stdClassObject = new \stdClass();
+		$stdClassObject->property = 'foo';
+
+		$this->assertTrue(\F3\FLOW3\Reflection\ObjectAccess::isPropertyGettable($stdClassObject, 'property'));
+
+		$this->assertFalse(\F3\FLOW3\Reflection\ObjectAccess::isPropertyGettable($stdClassObject, 'undefinedProperty'));
 	}
 
 	/**

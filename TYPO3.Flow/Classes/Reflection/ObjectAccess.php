@@ -176,7 +176,11 @@ class ObjectAccess {
 	 */
 	static public function getGettablePropertyNames($object) {
 		if (!is_object($object)) throw new \InvalidArgumentException('$object must be an object, ' . gettype($object). ' given.', 1237301369);
-		$declaredPropertyNames = array_keys(get_class_vars(get_class($object)));
+		if ($object instanceof \stdClass) {
+			$declaredPropertyNames = array_keys(get_object_vars($object));
+		} else {
+			$declaredPropertyNames = array_keys(get_class_vars(get_class($object)));
+		}
 
 		foreach (get_class_methods($object) as $methodName) {
 			if (is_callable(array($object, $methodName))) {
@@ -207,7 +211,7 @@ class ObjectAccess {
 	 */
 	static public function getSettablePropertyNames($object) {
 		if (!is_object($object)) throw new \InvalidArgumentException('$object must be an object, ' . gettype($object). ' given.', 1264022994);
-		$declaredPropertyNames = array_keys(get_class_vars(get_class($object)));
+		$declaredPropertyNames = array_keys(get_object_vars($object));
 
 		foreach (get_class_methods($object) as $methodName) {
 			if (substr($methodName, 0, 3) === 'set' && is_callable(array($object, $methodName))) {
@@ -230,7 +234,7 @@ class ObjectAccess {
 	 */
 	static public function isPropertySettable($object, $propertyName) {
 		if (!is_object($object)) throw new \InvalidArgumentException('$object must be an object, ' . gettype($object). ' given.', 1259828920);
-		if (array_search($propertyName, array_keys(get_class_vars(get_class($object)))) !== FALSE) return TRUE;
+		if (array_search($propertyName, array_keys(get_object_vars($object))) !== FALSE) return TRUE;
 		return is_callable(array($object, self::buildSetterMethodName($propertyName)));
 	}
 
@@ -244,7 +248,7 @@ class ObjectAccess {
 	 */
 	static public function isPropertyGettable($object, $propertyName) {
 		if (!is_object($object)) throw new \InvalidArgumentException('$object must be an object, ' . gettype($object). ' given.', 1259828921);
-		if (array_search($propertyName, array_keys(get_class_vars(get_class($object)))) !== FALSE) return TRUE;
+		if (array_search($propertyName, array_keys(get_object_vars($object))) !== FALSE) return TRUE;
 		if (is_callable(array($object, 'get' . ucfirst($propertyName)))) return TRUE;
 		return is_callable(array($object, 'is' . ucfirst($propertyName)));
 	}
