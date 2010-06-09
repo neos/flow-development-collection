@@ -42,6 +42,7 @@ class ObjectAccessTest extends \F3\Testing\BaseTestCase {
 		$this->dummyObject = new \F3\FLOW3\Tests\Reflection\Fixture\DummyClassWithGettersAndSetters();
 		$this->dummyObject->setProperty('string1');
 		$this->dummyObject->setAnotherProperty(42);
+		$this->dummyObject->shouldNotBePickedUp = TRUE;
 	}
 
 	/**
@@ -197,10 +198,8 @@ class ObjectAccessTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @test
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getGettablePropertyNamesReturnsAllPropertiesWhichAreAvailable() {
-		$this->dummyObject->shouldNotBePickedUp = TRUE;
 		$gettablePropertyNames = \F3\FLOW3\Reflection\ObjectAccess::getGettablePropertyNames($this->dummyObject);
 		$expectedPropertyNames = array('anotherProperty', 'booleanProperty', 'property', 'property2', 'publicProperty', 'publicProperty2');
 		$this->assertEquals($gettablePropertyNames, $expectedPropertyNames, 'getGettablePropertyNames returns not all gettable properties.');
@@ -233,10 +232,8 @@ class ObjectAccessTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @test
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getGettablePropertiesReturnsTheCorrectValuesForAllProperties() {
-		$this->dummyObject->shouldNotBePickedUp = TRUE;
 		$allProperties = \F3\FLOW3\Reflection\ObjectAccess::getGettableProperties($this->dummyObject);
 		$expectedProperties = array(
 			'anotherProperty' => 42,
@@ -275,6 +272,7 @@ class ObjectAccessTest extends \F3\Testing\BaseTestCase {
 		$this->assertTrue(\F3\FLOW3\Reflection\ObjectAccess::isPropertySettable($this->dummyObject, 'property'));
 
 		$this->assertFalse(\F3\FLOW3\Reflection\ObjectAccess::isPropertySettable($this->dummyObject, 'privateProperty'));
+		$this->assertFalse(\F3\FLOW3\Reflection\ObjectAccess::isPropertySettable($this->dummyObject, 'shouldNotBePickedUp'));
 	}
 
 	/**
@@ -301,6 +299,7 @@ class ObjectAccessTest extends \F3\Testing\BaseTestCase {
 
 		$this->assertFalse(\F3\FLOW3\Reflection\ObjectAccess::isPropertyGettable($this->dummyObject, 'privateProperty'));
 		$this->assertFalse(\F3\FLOW3\Reflection\ObjectAccess::isPropertyGettable($this->dummyObject, 'writeOnlyMagicProperty'));
+		$this->assertFalse(\F3\FLOW3\Reflection\ObjectAccess::isPropertyGettable($this->dummyObject, 'shouldNotBePickedUp'));
 	}
 
 	/**
