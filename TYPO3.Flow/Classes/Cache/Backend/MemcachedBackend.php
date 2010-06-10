@@ -235,14 +235,14 @@ class MemcachedBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 
 		try {
 			if(strlen($data) > self::MAX_BUCKET_SIZE) {
-				$data = str_split($data, 1024 * 1000);
+				$data = str_split($data, self::MAX_BUCKET_SIZE - 1024);
 				$success = TRUE;
 				$chunkNumber = 1;
 				foreach ($data as $chunk) {
-					$success &= $this->memcache->set($this->identifierPrefix . $entryIdentifier . '_chunk_' . $chunkNumber, $chunk, $this->flags, $expiration);
+					$success = $success && $this->memcache->set($this->identifierPrefix . $entryIdentifier . '_chunk_' . $chunkNumber, $chunk, $this->flags, $expiration);
 					$chunkNumber++;
 				}
-				$success &= $this->memcache->set($this->identifierPrefix . $entryIdentifier, 'FLOW3*chunked:' . $chunkNumber, $this->flags, $expiration);
+				$success = $success && $this->memcache->set($this->identifierPrefix . $entryIdentifier, 'FLOW3*chunked:' . $chunkNumber, $this->flags, $expiration);
 			} else {
 				$success = $this->memcache->set($this->identifierPrefix . $entryIdentifier, $data, $this->flags, $expiration);
 			}
@@ -250,6 +250,8 @@ class MemcachedBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 				$this->removeIdentifierFromAllTags($entryIdentifier);
 				$this->addTagsToTagIndex($tags);
 				$this->addIdentifierToTags($entryIdentifier, $tags);
+			} else {
+				throw new \F3\FLOW3\Cache\Exception('Could not set value on memcache server.', 1275830266);
 			}
 		} catch (\Exception $exception) {
 			throw new \F3\FLOW3\Cache\Exception('Could not set value. ' . $exception->getMessage(), 1207208100);
