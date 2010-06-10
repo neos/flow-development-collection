@@ -66,11 +66,11 @@ class AbstractBackendTest extends \F3\Testing\BaseTestCase {
 		$objects->attach(new \stdClass());
 
 		$mockPersistenceSession = $this->getMock('F3\FLOW3\Persistence\Session');
-		$mockPersistenceSession->expects($this->once())->method('getReconstitutedEntities')->will($this->returnValue(new \SplObjectStorage));
+		$mockPersistenceSession->expects($this->once())->method('getReconstitutedEntities')->will($this->returnValue(clone $objects));
 		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\AbstractBackend'), array('persistObject', 'getObjectCountByQuery', 'getObjectDataByQuery', 'getObjectDataByIdentifier'));
 
 		$backend->injectPersistenceSession($mockPersistenceSession);
-		$backend->expects($this->exactly(2))->method('persistObject');
+		$backend->expects($this->exactly(4))->method('persistObject');
 		$backend->setAggregateRootObjects($objects);
 		$backend->_call('persistObjects');
 	}
@@ -295,6 +295,53 @@ class AbstractBackendTest extends \F3\Testing\BaseTestCase {
 	public function getTypeReturnsClassNameForObjects() {
 		$backend = $this->getMockForAbstractClass($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\AbstractBackend'));
 		$this->assertEquals('stdClass', $backend->_call('getType', new \stdClass()));
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function arrayContainsObjectReturnsTrueForSameObject() {
+		$object = new \stdClass();
+
+		$backend = $this->getMockForAbstractClass($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\AbstractBackend'));
+		$this->assertTrue($backend->_call('arrayContainsObject', array($object), $object));
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function arrayContainsObjectReturnsFalseForDifferentObject() {
+		$backend = $this->getMockForAbstractClass($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\AbstractBackend'));
+		$this->assertFalse($backend->_call('arrayContainsObject', array(new \stdClass()), new \stdClass()));
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function arrayContainsObjectReturnsFalseForClone() {
+		$object = new \stdClass();
+
+		$backend = $this->getMockForAbstractClass($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\AbstractBackend'));
+		$this->assertFalse($backend->_call('arrayContainsObject', array($object), clone $object));
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function arrayContainsObjectReturnsTrueForSameEntity() {
+		$object = new \stdClass();
+		$object->FLOW3_Persistence_Entity_UUID = 'fakeUuid';
+		$object->property = 'foo';
+
+		$clone = clone $object;
+		$clone->property = 'bar';
+
+		$backend = $this->getMockForAbstractClass($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\AbstractBackend'));
+		$this->assertTrue($backend->_call('arrayContainsObject', array($object), $clone));
 	}
 
 }

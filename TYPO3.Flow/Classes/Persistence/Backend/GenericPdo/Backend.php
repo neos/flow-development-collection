@@ -443,7 +443,7 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 				$this->removeDeletedArrayEntries($array[$item['index']], $item['value']);
 			} elseif ($this->getTypeName($item['type']) === 'object' && !($item['type'] === 'DateTime' || $item['type'] === 'SplObjectStorage')) {
 				$object = $this->persistenceSession->getObjectByIdentifier($item['value']['identifier']);
-				if ($array === NULL || !in_array($object, $array, TRUE)) {
+				if ($array === NULL || !$this->arrayContainsObject($array, $object)) {
 					if ($this->classSchemata[$item['type']]->getModelType() === \F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY
 							&& $this->classSchemata[$item['type']]->isAggregateRoot() === FALSE) {
 						$this->removeEntity($this->persistenceSession->getObjectByIdentifier($item['value']['identifier']));

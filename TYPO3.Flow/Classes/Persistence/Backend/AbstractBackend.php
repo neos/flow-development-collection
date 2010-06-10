@@ -296,6 +296,33 @@ abstract class AbstractBackend implements \F3\FLOW3\Persistence\Backend\BackendI
 		}
 	}
 
+	/**
+	 * Checks whether the given object is contained in the array. This checks
+	 * for object identity in terms of the persistence layer, i.e. the UUID,
+	 * when comparing entities.
+	 *
+	 * @param array $array
+	 * @param object $object
+	 * @return boolean
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function arrayContainsObject(array $array, $object) {
+		if (in_array($object, $array, TRUE) === TRUE) {
+			return TRUE;
+		}
+
+		foreach ($array as $value) {
+			if ($value instanceof $object
+					&& property_exists($value, 'FLOW3_Persistence_Entity_UUID')
+					&& property_exists($object, 'FLOW3_Persistence_Entity_UUID')
+					&& $value->FLOW3_Persistence_Entity_UUID === $object->FLOW3_Persistence_Entity_UUID) {
+				return TRUE;
+			}
+		}
+
+		return FALSE;
+	}
+
 }
 
 ?>

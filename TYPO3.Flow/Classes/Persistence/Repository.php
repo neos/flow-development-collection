@@ -245,7 +245,7 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 			$existingObject = $this->persistenceManager->getObjectByIdentifier($uuid);
 			$this->replaceObject($existingObject, $modifiedObject);
 		} else {
-			throw new \F3\FLOW3\Persistence\Exception\UnknownObjectException('The "modified object" is does not have an existing counterpart in this repository.', 1249479819);
+			throw new \F3\FLOW3\Persistence\Exception\UnknownObjectException('The "modified object" does not have an existing counterpart in this repository.', 1249479819);
 		}
 	}
 
