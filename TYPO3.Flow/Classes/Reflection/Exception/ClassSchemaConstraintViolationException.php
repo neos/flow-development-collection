@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Property\Exception;
+namespace F3\FLOW3\Reflection\Exception;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,13 +23,13 @@ namespace F3\FLOW3\Property\Exception;
  *                                                                        */
 
 /**
- * A "TargetNotFound" Exception
+ * An "ClassSchema Constraint Violation" exception
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */
-class TargetNotFoundException extends \F3\FLOW3\Property\Exception {
-
+class ClassSchemaConstraintViolationException extends \F3\FLOW3\Reflection\Exception {
 }
+
 ?>

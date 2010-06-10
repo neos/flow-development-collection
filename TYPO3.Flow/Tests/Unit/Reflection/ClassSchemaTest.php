@@ -174,7 +174,7 @@ class ClassSchemaTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \RuntimeException
+	 * @expectedException \F3\FLOW3\Reflection\Exception\ClassSchemaConstraintViolationException
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setUuidPropertyNameThrowsExceptionForValueObjects() {
@@ -185,7 +185,7 @@ class ClassSchemaTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \RuntimeException
+	 * @expectedException \F3\FLOW3\Reflection\Exception\ClassSchemaConstraintViolationException
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function markAsIdentityPropertyThrowsExceptionForValueObjects() {

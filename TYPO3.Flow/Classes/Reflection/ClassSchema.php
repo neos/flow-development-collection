@@ -201,7 +201,7 @@ class ClassSchema {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setAggregateRoot($isRoot) {
-		if ($this->modelType === self::MODELTYPE_VALUEOBJECT && $isRoot === TRUE) throw new \RuntimeException('Value objects must not be aggregate roots (have a repository)', 1268739172);
+		if ($this->modelType === self::MODELTYPE_VALUEOBJECT && $isRoot === TRUE) throw new \F3\FLOW3\Reflection\Exception\ClassSchemaConstraintViolationException('Value objects must not be aggregate roots (have a repository)', 1268739172);
 		$this->aggregateRoot = $isRoot;
 	}
 
@@ -235,7 +235,7 @@ class ClassSchema {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setUuidPropertyName($propertyName) {
-		if ($this->modelType === self::MODELTYPE_VALUEOBJECT) throw new \RuntimeException('Value objects must not have a @uuid property', 1264102076);
+		if ($this->modelType === self::MODELTYPE_VALUEOBJECT) throw new \F3\FLOW3\Reflection\Exception\ClassSchemaConstraintViolationException('Value objects must not have a @uuid property', 1264102076);
 		if (!array_key_exists($propertyName, $this->properties)) {
 			throw new \InvalidArgumentException('Property "' . $propertyName . '" must be added to the class schema before it can be marked as UUID property.', 1233863842);
 		}
@@ -263,7 +263,7 @@ class ClassSchema {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function markAsIdentityProperty($propertyName) {
-		if ($this->modelType === self::MODELTYPE_VALUEOBJECT) throw new \RuntimeException('Value objects must not have @identity properties', 1264102084);
+		if ($this->modelType === self::MODELTYPE_VALUEOBJECT) throw new \F3\FLOW3\Reflection\Exception\ClassSchemaConstraintViolationException('Value objects must not have @identity properties', 1264102084);
 		if (!array_key_exists($propertyName, $this->properties)) {
 			throw new \InvalidArgumentException('Property "' . $propertyName . '" must be added to the class schema before it can be marked as identity property.', 1233775407);
 		}

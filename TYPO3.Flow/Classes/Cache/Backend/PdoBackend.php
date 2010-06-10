@@ -361,7 +361,7 @@ class PdoBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * Creates the tables needed for the cache backend.
 	 * 
 	 * @return void
-	 * @throws \RuntimeException if something goes wrong
+	 * @throws \F3\FLOW3\Persistence\Exception if something goes wrong
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function createCacheTables() {
@@ -369,7 +369,7 @@ class PdoBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 			$pdoHelper = $this->objectManager->create('F3\FLOW3\Utility\PdoHelper', $this->dataSourceName, $this->username, $this->password);
 			$pdoHelper->importSql(FLOW3_PATH_FLOW3 . 'Resources/Private/Cache/SQL/DDL.sql');
 		} catch (\PDOException $e) {
-			throw new \RuntimeException('Could not create cache tables with DSN "' . $this->dataSourceName . '". PDO error: ' . $e->getMessage(), 1259576985);
+			throw new \F3\FLOW3\Persistence\Exception('Could not create cache tables with DSN "' . $this->dataSourceName . '". PDO error: ' . $e->getMessage(), 1259576985);
 		}
 	}
 }

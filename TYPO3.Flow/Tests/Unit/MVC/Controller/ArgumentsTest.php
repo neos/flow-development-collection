@@ -152,7 +152,7 @@ class ArgumentsTest extends \F3\Testing\BaseTestCase {
 				));
 
 		$arguments = new \F3\FLOW3\MVC\Controller\Arguments($mockObjectManager);
-		$argument = $arguments->addNewArgument('first')->setShortName('a');
+		$arguments->addNewArgument('first')->setShortName('a');
 		$arguments->addNewArgument('second')->setShortName('b');
 		$arguments->addNewArgument('third')->setShortName('c');
 
@@ -192,7 +192,7 @@ class ArgumentsTest extends \F3\Testing\BaseTestCase {
 
 		$arguments = new \F3\FLOW3\MVC\Controller\Arguments($mockObjectManager);
 
-		$addedArgument = $arguments->addNewArgument('dummyName');
+		$arguments->addNewArgument('dummyName');
 	}
 
 	/**

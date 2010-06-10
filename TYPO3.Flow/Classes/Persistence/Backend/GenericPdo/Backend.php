@@ -115,7 +115,7 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 	 * Creates the tables needed for the backend.
 	 *
 	 * @return void
-	 * @throws \RuntimeException if something goes wrong
+	 * @throws \F3\FLOW3\Persistence\Exception if something goes wrong
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function createTables() {
@@ -123,7 +123,7 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 			$pdoHelper = $this->objectManager->create('F3\FLOW3\Utility\PdoHelper', $this->dataSourceName, $this->username, $this->password);
 			$pdoHelper->importSql(FLOW3_PATH_FLOW3 . 'Resources/Private/Persistence/SQL/DDL.sql');
 		} catch (\PDOException $e) {
-			throw new \RuntimeException('Could not create persistence tables with DSN "' . $this->dataSourceName . '". PDO error: ' . $e->getMessage(), 1259701414);
+			throw new \F3\FLOW3\Persistence\Exception('Could not create persistence tables with DSN "' . $this->dataSourceName . '". PDO error: ' . $e->getMessage(), 1259701414);
 		}
 	}
 
@@ -404,7 +404,7 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 					'value' => $value->getTimestamp()
 				);
 			} elseif ($value instanceof \SplObjectStorage) {
-				throw new \RuntimeException('SplObjectStorage instances in arrays are not supported - missing feature?!?', 1261048721);
+				throw new \F3\FLOW3\Persistence\Exception('SplObjectStorage instances in arrays are not supported - missing feature?!?', 1261048721);
 			} elseif (is_object($value)) {
 				$values[] = array(
 					'type' => $this->getType($value),

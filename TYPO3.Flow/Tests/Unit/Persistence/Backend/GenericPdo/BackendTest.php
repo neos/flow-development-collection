@@ -1021,7 +1021,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \RuntimeException
+	 * @expectedException \F3\FLOW3\Persistence\Exception
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function processArrayRejectsNestedSplObjectStorageInsideArray() {

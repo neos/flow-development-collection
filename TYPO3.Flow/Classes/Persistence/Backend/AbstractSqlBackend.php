@@ -114,7 +114,7 @@ abstract class AbstractSqlBackend extends \F3\FLOW3\Persistence\Backend\Abstract
 				$operator = 'LIKE';
 				break;
 			default:
-				throw new \RuntimeException('Unsupported operator encountered.', 1263384870);
+				throw new \InvalidArgumentException('Unsupported operator encountered.', 1263384870);
 		}
 
 		return $operator;

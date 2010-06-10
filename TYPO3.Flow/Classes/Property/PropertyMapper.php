@@ -424,7 +424,7 @@ class PropertyMapper {
 	 * @param array $identityProperties Property names and values to search for
 	 * @param string $type The object type to look for
 	 * @return mixed Either the object matching the identity or FALSE if no object was found
-	 * @throws \RuntimeException if more than one object was found
+	 * @throws \F3\FLOW3\Property\Exception\DuplicateObjectException if more than one object was found
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
@@ -458,7 +458,7 @@ class PropertyMapper {
 		} elseif (count($objects) === 0) {
 			return FALSE;
 		} else {
-			throw new \RuntimeException('More than one object was returned for the given identity, this is a constraint violation.', 1259612399);
+			throw new \F3\FLOW3\Property\Exception\DuplicateObjectException('More than one object was returned for the given identity, this is a constraint violation.', 1259612399);
 		}
 	}
 
