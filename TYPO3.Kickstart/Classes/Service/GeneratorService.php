@@ -246,7 +246,7 @@ class GeneratorService {
 	protected function renderTemplate($templatePathAndFilename, array $contextVariables) {
 		$templateSource = \F3\FLOW3\Utility\Files::getFileContents($templatePathAndFilename, FILE_TEXT);
 		if ($templateSource === FALSE) {
-			throw new \F3\Fluid\Core\RuntimeException('The template file "' . $templatePathAndFilename . '" could not be loaded.', 1225709595);
+			throw new \F3\Fluid\Core\Exception('The template file "' . $templatePathAndFilename . '" could not be loaded.', 1225709595);
 		}
 		$parsedTemplate = $this->templateParser->parse($templateSource);
 
