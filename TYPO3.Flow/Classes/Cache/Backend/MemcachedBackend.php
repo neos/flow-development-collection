@@ -209,9 +209,6 @@ class MemcachedBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	/**
 	 * Saves data in the cache.
 	 *
-	 * Note on lifetime: the number of seconds may not exceed 2592000 (30 days),
-	 * otherwise it is interpreted as a UNIX timestamp (seconds since epoch).
-	 *
 	 * @param string $entryIdentifier An identifier for this specific cache entry
 	 * @param string $data The data to be stored
 	 * @param array $tags Tags to associate with this cache entry
@@ -232,6 +229,11 @@ class MemcachedBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 
 		$tags[] = '%MEMCACHEBE%' . $this->cacheIdentifier;
 		$expiration = $lifetime !== NULL ? $lifetime : $this->defaultLifetime;
+			// Memcached consideres values over 2592000 sec (30 days) as UNIX timestamp
+			// thus $expiration should be converted from lifetime to UNIX timestamp
+		if ($expiration > 2592000) {
+			$expiration += time();
+		}
 
 		try {
 			if(strlen($data) > self::MAX_BUCKET_SIZE) {
