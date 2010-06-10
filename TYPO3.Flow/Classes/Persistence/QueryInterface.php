@@ -158,24 +158,26 @@ interface QueryInterface {
 	public function matching($constraint);
 
 	/**
-	 * Performs a logical conjunction of the two given constraints.
+	 * Performs a logical conjunction of the two given constraints. The method
+	 * takes one or more contraints and concatenates them with a boolean AND.
+	 * It also accepts a single array of constraints to be concatenated.
 	 *
-	 * @param object $constraint1 First constraint
-	 * @param object $constraint2 Second constraint
+	 * @param mixed $constraint1 The first of multiple constraints or an array of constraints.
 	 * @return object
 	 * @api
 	 */
-	public function logicalAnd($constraint1, $constraint2);
+	public function logicalAnd($constraint1);
 
 	/**
-	 * Performs a logical disjunction of the two given constraints
+	 * Performs a logical disjunction of the two given constraints. The method
+	 * takes one or more contraints and concatenates them with a boolean OR.
+	 * It also accepts a single array of constraints to be concatenated.
 	 *
-	 * @param object $constraint1 First constraint
-	 * @param object $constraint2 Second constraint
+	 * @param mixed $constraint1 The first of multiple constraints or an array of constraints.
 	 * @return object
 	 * @api
 	 */
-	public function logicalOr($constraint1, $constraint2);
+	public function logicalOr($constraint1);
 
 	/**
 	 * Performs a logical negation of the given constraint

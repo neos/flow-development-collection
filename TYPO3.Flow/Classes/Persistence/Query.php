@@ -287,35 +287,61 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	}
 
 	/**
-	 * Performs a logical conjunction of the two given constraints.
+	 * Performs a logical conjunction of the two given constraints. The method
+	 * takes one or more contraints and concatenates them with a boolean AND.
+	 * It also accepts a single array of constraints to be concatenated.
 	 *
-	 * @param object $constraint1 First constraint
-	 * @param object $constraint2 Second constraint
+	 * @param mixed $constraint1 The first of multiple constraints or an array of constraints.
 	 * @return \F3\FLOW3\Persistence\QOM\And
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
-	public function logicalAnd($constraint1, $constraint2) {
-		return $this->qomFactory->_and(
-			$constraint1,
-			$constraint2
-		);
+	public function logicalAnd($constraint1) {
+		if (is_array($constraint1)) {
+			$resultingConstraint = array_shift($constraint1);
+			$constraints = $constraint1;
+		} else {
+			$constraints = func_get_args();
+			$resultingConstraint = array_shift($constraints);
+		}
+
+		if ($resultingConstraint === NULL) {
+			throw new \F3\FLOW3\Persistence\Exception\InvalidNumberOfConstraintsException('There must be at least one constraint or a non-empty array of constraints given.', 1268056288);
+		}
+
+		foreach ($constraints as $constraint) {
+			$resultingConstraint = $this->qomFactory->_and($resultingConstraint, $constraint);
+		}
+		return $resultingConstraint;
 	}
 
 	/**
-	 * Performs a logical disjunction of the two given constraints
+	 * Performs a logical disjunction of the two given constraints. The method
+	 * takes one or more contraints and concatenates them with a boolean OR.
+	 * It also accepts a single array of constraints to be concatenated.
 	 *
-	 * @param object $constraint1 First constraint
-	 * @param object $constraint2 Second constraint
+	 * @param object $constraint1 The first of multiple constraints or an array of constraints.
 	 * @return \F3\FLOW3\Persistence\QOM\Or
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
-	public function logicalOr($constraint1, $constraint2) {
-		return $this->qomFactory->_or(
-			$constraint1,
-			$constraint2
-		);
+	public function logicalOr($constraint1) {
+		if (is_array($constraint1)) {
+			$resultingConstraint = array_shift($constraint1);
+			$constraints = $constraint1;
+		} else {
+			$constraints = func_get_args();
+			$resultingConstraint = array_shift($constraints);
+		}
+
+		if ($resultingConstraint === NULL) {
+			throw new \F3\FLOW3\Persistence\Exception\InvalidNumberOfConstraintsException('There must be at least one constraint or a non-empty array of constraints given.', 1268056289);
+		}
+
+		foreach ($constraints as $constraint) {
+			$resultingConstraint = $this->qomFactory->_or($resultingConstraint, $constraint);
+		}
+		return $resultingConstraint;
 	}
 
 	/**
