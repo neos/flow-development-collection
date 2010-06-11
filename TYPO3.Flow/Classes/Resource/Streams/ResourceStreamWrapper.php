@@ -116,7 +116,7 @@ class ResourceStreamWrapper implements \F3\FLOW3\Resource\Streams\StreamWrapperI
 	 */
 	public function openDirectory($path, $options) {
 		$resourcePath = $this->evaluateResourcePath($path);
-     	$handle = opendir($resourcePath);
+     	$handle = ($resourcePath !== FALSE) ? opendir($resourcePath) : FALSE;
 		if ($handle !== FALSE) {
 			$this->handle = $handle;
 			return TRUE;
@@ -164,7 +164,7 @@ class ResourceStreamWrapper implements \F3\FLOW3\Resource\Streams\StreamWrapperI
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function makeDirectory($path, $mode, $options) {
-		$path = $this->evaluateResourcePath($path);
+		$path = $this->evaluateResourcePath($path, FALSE);
      	mkdir($path, $mode, $options & STREAM_MKDIR_RECURSIVE);
 	}
 
@@ -202,7 +202,7 @@ class ResourceStreamWrapper implements \F3\FLOW3\Resource\Streams\StreamWrapperI
 	}
 
 	/**
-	 * Retrieve the underlaying resource.
+	 * Retrieve the underlying resource.
 	 *
 	 * This method is called in response to stream_select().
 	 *
@@ -311,9 +311,17 @@ class ResourceStreamWrapper implements \F3\FLOW3\Resource\Streams\StreamWrapperI
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function open($path, $mode, $options, &$openedPathAndFilename) {
-		$resourcePathAndFilename = $this->evaluateResourcePath($path);
-     	$this->handle = fopen($resourcePathAndFilename, $mode);
-		if ($this->handle) {
+			// w, a or x should try to create the file
+			// x should fail if file exists - fopen handles that below!
+		if (strpos($mode, 'w') !== FALSE || strpos($mode, 'a') !== FALSE || strpos($mode, 'x') !== FALSE) {
+			$resourcePathAndFilename = $this->evaluateResourcePath($path, FALSE);
+		} else {
+			$resourcePathAndFilename = $this->evaluateResourcePath($path);
+		}
+
+		$handle = ($resourcePathAndFilename !== FALSE) ? fopen($resourcePathAndFilename, $mode) : FALSE;
+		if ($handle !== FALSE) {
+			$this->handle = $handle;
 			$openedPathAndFilename = $resourcePathAndFilename;
 			return TRUE;
 		}
@@ -477,13 +485,15 @@ class ResourceStreamWrapper implements \F3\FLOW3\Resource\Streams\StreamWrapperI
 
 	/**
 	 * Evaluates the absolute path and filename of the resource file specified
-	 * by the given path .
+	 * by the given path.
 	 *
 	 * @param string $requestedPath
+	 * @param boolean $checkForExistence Whether a (non-hash) path should be checked for existence before being returned
 	 * @return mixed The full path and filename or FALSE if the file doesn't exist
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function evaluateResourcePath($requestedPath) {
+	protected function evaluateResourcePath($requestedPath, $checkForExistence = TRUE) {
 		if (substr($requestedPath, 0, strlen(self::SCHEME)) !== self::SCHEME) {
 			throw new \InvalidArgumentException('The ' . __CLASS__ . ' only supports the \'' . self::SCHEME . '\' scheme.', 1256052544);
 		}
@@ -503,7 +513,7 @@ class ResourceStreamWrapper implements \F3\FLOW3\Resource\Streams\StreamWrapperI
 		$package = $this->packageManager->getPackage($uriParts['host']);
 		$resourcePath = \F3\FLOW3\Utility\Files::concatenatePaths(array($package->getResourcesPath(), $uriParts['path']));
 
-		if (file_exists($resourcePath)) {
+		if ($checkForExistence === FALSE || file_exists($resourcePath)) {
 			return $resourcePath;
 		}
 
