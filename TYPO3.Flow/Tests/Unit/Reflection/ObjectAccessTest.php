@@ -138,11 +138,17 @@ class ObjectAccessTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @test
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setPropertyCanDirectlySetValuesInAnArrayObject() {
+	public function setPropertyCanDirectlySetValuesInAnArrayObjectOrArray() {
 		$arrayObject = new \ArrayObject();
+		$array = array();
+
 		\F3\FLOW3\Reflection\ObjectAccess::setProperty($arrayObject, 'publicProperty', 4242);
-		$this->assertEquals($arrayObject['publicProperty'], 4242, 'setProperty does not work with ArrayObject property.');
+		\F3\FLOW3\Reflection\ObjectAccess::setProperty($array, 'key', 'value');
+
+		$this->assertEquals(4242, $arrayObject['publicProperty']);
+		$this->assertEquals('value', $array['key']);
 	}
 
 	/**

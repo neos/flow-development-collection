@@ -138,7 +138,7 @@ class ObjectAccess {
 	 *   on it without checking if it existed.
 	 * - else, return FALSE
 	 *
-	 * @param object $object The target object
+	 * @param mixed $subject The target object or array
 	 * @param string $propertyName Name of the property to set
 	 * @param object $propertyValue Value of the property
 	 * @return boolean TRUE if the property could be set, FALSE otherwise
@@ -146,16 +146,21 @@ class ObjectAccess {
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	static public function setProperty($object, $propertyName, $propertyValue) {
-		if (!is_object($object)) throw new \InvalidArgumentException('$object must be an object, ' . gettype($object). ' given.', 1237301368);
+	static public function setProperty(&$subject, $propertyName, $propertyValue) {
+		if (is_array($subject)) {
+			$subject[$propertyName] = $propertyValue;
+			return TRUE;
+		}
+
+		if (!is_object($subject)) throw new \InvalidArgumentException('subject must be an object or array, ' . gettype($subject). ' given.', 1237301368);
 		if (!is_string($propertyName)) throw new \InvalidArgumentException('Given property name is not of type string.', 1231178878);
 
-		if (is_callable(array($object, $setterMethodName = self::buildSetterMethodName($propertyName)))) {
-			call_user_func(array($object, $setterMethodName), $propertyValue);
-		} elseif ($object instanceof \ArrayAccess) {
-			$object[$propertyName] = $propertyValue;
-		} elseif (array_key_exists($propertyName, get_object_vars($object))) {
-			$object->$propertyName = $propertyValue;
+		if (is_callable(array($subject, $setterMethodName = self::buildSetterMethodName($propertyName)))) {
+			call_user_func(array($subject, $setterMethodName), $propertyValue);
+		} elseif ($subject instanceof \ArrayAccess) {
+			$subject[$propertyName] = $propertyValue;
+		} elseif (array_key_exists($propertyName, get_object_vars($subject))) {
+			$subject->$propertyName = $propertyValue;
 		} else {
 			return FALSE;
 		}
