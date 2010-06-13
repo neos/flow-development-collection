@@ -35,7 +35,7 @@ class NumbersReaderTest extends \F3\Testing\BaseTestCase {
 	 *
 	 * @var array
 	 */
-	protected $symbols = array(
+	protected $mockLocalizedSymbols = array(
 		'decimal' => ',',
 		'group' => ' ',
 		'percentSign' => '%',
@@ -137,7 +137,7 @@ class NumbersReaderTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function parsedFormatsAreUsedCorrectly($number, $expectedResult, $parsedFormat) {
 		$reader = $this->getAccessibleMock('F3\FLOW3\Locale\CLDR\Reader\NumbersReader', array('dummy'));
-		$result = $reader->_call('doFormattingWithParsedFormat', $number, $parsedFormat, $this->symbols);
+		$result = $reader->_call('doFormattingWithParsedFormat', $number, $parsedFormat, $this->mockLocalizedSymbols);
 		$this->assertEquals($expectedResult, $result);
 	}
 
@@ -147,7 +147,7 @@ class NumbersReaderTest extends \F3\Testing\BaseTestCase {
 	 * @return array
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function dataForFormatNumberMethod() {
+	public function dataForFormatNumberWithCustomPatternMethod() {
 		return array(
 			array(1234.567, '00000.0000', '01234,5670'),
 			array(0.10004, '0.0###', '0,1'),
@@ -157,29 +157,12 @@ class NumbersReaderTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @dataProvider dataForFormatNumberMethod
+	 * @dataProvider dataForFormatNumberWithCustomPatternMethod
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function formatNumberWorks($number, $format, $expectedResult) {
-		$mockSymbolsXMLData = array(
-			array(
-				'name' => 'symbols',
-				'content' => array(
-					array('name' => 'decimal', 'content' => ','),
-					array('name' => 'group', 'content' => ' '),
-					array('name' => 'percentSign', 'content' => '%'),
-					array('name' => 'minusSign', 'content' => '-'),
-					array('name' => 'perMille', 'content' => '‰'),
-					array('name' => 'infinity', 'content' => '∞'),
-					array('name' => 'nan', 'content' => 'NaN'),
-				)
-			)
-		);
-
+	public function formatNumberWithCustomPatternWorks($number, $format, $expectedResult) {
 		$mockModel = $this->getMock('F3\FLOW3\Locale\CLDR\HierarchicalCLDRModel');
-		$mockModel->expects($this->at(0))->method('setQueryPath')->with('//ldml/numbers/symbols');
-		$mockModel->expects($this->at(1))->method('getNextResult')->will($this->returnValue($mockSymbolsXMLData));
-		$mockModel->expects($this->at(2))->method('getNextResult')->will($this->returnValue(NULL));
+		$mockModel->expects($this->once())->method('getRawArray')->with('numbers/symbols')->will($this->returnValue($this->mockLocalizedSymbols));
 
 		$mockRepository = $this->getMock('F3\FLOW3\Locale\CLDR\CLDRRepository');
 		$mockRepository->expects($this->once())->method('getHierarchicalModel')->with('main', $this->dummyLocale)->will($this->returnValue($mockModel));
@@ -189,18 +172,18 @@ class NumbersReaderTest extends \F3\Testing\BaseTestCase {
 		$mockCache->expects($this->at(1))->method('get')->with('parsedFormats')->will($this->returnValue(array()));
 		$mockCache->expects($this->at(2))->method('has')->with('parsedFormatsIndices')->will($this->returnValue(TRUE));
 		$mockCache->expects($this->at(3))->method('get')->with('parsedFormatsIndices')->will($this->returnValue(array()));
-		$mockCache->expects($this->at(4))->method('has')->with('localeSymbols')->will($this->returnValue(TRUE));
-		$mockCache->expects($this->at(5))->method('get')->with('localeSymbols')->will($this->returnValue(array()));
+		$mockCache->expects($this->at(4))->method('has')->with('localizedSymbols')->will($this->returnValue(TRUE));
+		$mockCache->expects($this->at(5))->method('get')->with('localizedSymbols')->will($this->returnValue(array()));
 		$mockCache->expects($this->at(6))->method('set')->with('parsedFormats');
 		$mockCache->expects($this->at(7))->method('set')->with('parsedFormatsIndices');
-		$mockCache->expects($this->at(8))->method('set')->with('localeSymbols');
+		$mockCache->expects($this->at(8))->method('set')->with('localizedSymbols');
 
 		$reader = $this->getAccessibleMock('F3\FLOW3\Locale\CLDR\Reader\NumbersReader', array('dummy'));
 		$reader->injectCLDRRepository($mockRepository);
 		$reader->injectCache($mockCache);
 		$reader->initializeObject();
 
-		$result = $reader->formatNumber($number, $format, $this->dummyLocale);
+		$result = $reader->formatNumberWithCustomPattern($number, $format, $this->dummyLocale);
 		$this->assertEquals($expectedResult, $result);
 
 		$reader->shutdownObject();
@@ -230,16 +213,8 @@ class NumbersReaderTest extends \F3\Testing\BaseTestCase {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function specificFormattingMethodsWork($unformattedNumber, $formatString, $expectedResult, $formattingType, $currencySign = NULL) {
-		$mockPatternXMLData = array(
-			array(
-				'name' => 'pattern',
-				'attributes' => NULL,
-				'content' => $formatString,
-			),
-		);
-
 		$mockModel = $this->getMock('F3\FLOW3\Locale\CLDR\HierarchicalCLDRModel');
-		$mockModel->expects($this->once())->method('get')->with('//ldml/numbers/' . $formattingType . 'Formats/' . $formattingType . 'FormatLength/' . $formattingType . 'Format/pattern')->will($this->returnValue($mockPatternXMLData));
+		$mockModel->expects($this->once())->method('getOneElement')->with('numbers/' . $formattingType . 'Formats/' . $formattingType . 'FormatLength/' . $formattingType . 'Format/pattern')->will($this->returnValue($formatString));
 
 		$mockRepository = $this->getMock('F3\FLOW3\Locale\CLDR\CLDRRepository');
 		$mockRepository->expects($this->once())->method('getHierarchicalModel')->with('main', $this->dummyLocale)->will($this->returnValue($mockModel));
@@ -247,13 +222,13 @@ class NumbersReaderTest extends \F3\Testing\BaseTestCase {
 		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
 		$mockCache->expects($this->at(0))->method('has')->with('parsedFormats')->will($this->returnValue(FALSE));
 		$mockCache->expects($this->at(1))->method('has')->with('parsedFormatsIndices')->will($this->returnValue(FALSE));
-		$mockCache->expects($this->at(2))->method('has')->with('localeSymbols')->will($this->returnValue(FALSE));
+		$mockCache->expects($this->at(2))->method('has')->with('localizedSymbols')->will($this->returnValue(FALSE));
 		$mockCache->expects($this->at(3))->method('set')->with('parsedFormats');
 		$mockCache->expects($this->at(4))->method('set')->with('parsedFormatsIndices');
-		$mockCache->expects($this->at(5))->method('set')->with('localeSymbols');
+		$mockCache->expects($this->at(5))->method('set')->with('localizedSymbols');
 
-		$reader = $this->getAccessibleMock('F3\FLOW3\Locale\CLDR\Reader\NumbersReader', array('getSymbolsForLocale'));
-		$reader->expects($this->once())->method('getSymbolsForLocale')->will($this->returnValue($this->symbols));
+		$reader = $this->getAccessibleMock('F3\FLOW3\Locale\CLDR\Reader\NumbersReader', array('getLocalizedSymbolsForLocale'));
+		$reader->expects($this->once())->method('getLocalizedSymbolsForLocale')->will($this->returnValue($this->mockLocalizedSymbols));
 		$reader->injectCLDRRepository($mockRepository);
 		$reader->injectCache($mockCache);
 		$reader->initializeObject();

@@ -41,26 +41,16 @@ class PluralsReaderTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function setUp() {
 		$mockPluralRulesData = array(
-			array(
-				'name' => 'pluralRules',
-				'attributes' => array('locales' => 'ro mo'),
-				'content' => array(
-					array(
-						'name' => 'pluralRule',
-						'attributes' => array('count' => 'one'),
-						'content' => 'n is 1',
-					),
-					array(
-						'name' => 'pluralRule',
-						'attributes' => array('count' => 'few'),
-						'content' => 'n is 0 OR n is not 1 AND n mod 100 in 1..19',
-					),
+			'locales="ro mo"' => array(
+				'pluralRule' => array(
+					'count="one"' => 'n is 1',
+					'count="few"' => 'n is 0 OR n is not 1 AND n mod 100 in 1..19',
 				)
 			)
 		);
 
-		$mockModel = $this->getMock('F3\FLOW3\Locale\CLDR\CLDRModel');
-		$mockModel->expects($this->once())->method('get')->with('//supplementalData/plurals/pluralRules')->will($this->returnValue($mockPluralRulesData));
+		$mockModel = $this->getAccessibleMock('F3\FLOW3\Locale\CLDR\CLDRModel', array('getRawArray'));
+		$mockModel->expects($this->once())->method('getRawArray')->with('plurals/pluralRules')->will($this->returnValue($mockPluralRulesData));
 
 		$mockRepository = $this->getMock('F3\FLOW3\Locale\CLDR\CLDRRepository');
 		$mockRepository->expects($this->once())->method('getModel')->with('supplemental/plurals')->will($this->returnValue($mockModel));

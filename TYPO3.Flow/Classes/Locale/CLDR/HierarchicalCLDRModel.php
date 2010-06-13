@@ -26,18 +26,13 @@ namespace F3\FLOW3\Locale\CLDR;
  * A model representing data from many CLDR files having hierarchical relation
  * between themselves.
  *
- * As for now, implementation is very simple. When a path provided is not
- * available in the most specific locale, same path is searched in parent
- * locale, and so on up to the root locale.
+ * As for now, implementation is very simple. Results from each CLDRModel
+ * controlled by this class are merged ad hoc and returned.
  *
- * The correctness of this soulution depends on path queries provided to get()
- * method. If they are as specific as possible (eg pointing a leaf node), then
- * there is no problem. But when path points whole branch of the XML tree, some
- * elements from parents locales should be merged according to inheritance,
- * but won't be as this sould probably invoke XSL transformations.
- *
- * Current usage cases of CLDR data by Locale subsystem are simple enough
- * so this implementation is sufficient.
+ * The 'alias' tags from CLDR are not handled correctly yet. They are supported
+ * by CLDRModel, but specification says that hierarchy should be taken into
+ * account during alias resolution, however nodes are searched only within one
+ * file (represented by CLDRModel) for now.
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
@@ -51,20 +46,6 @@ class HierarchicalCLDRModel implements \F3\FLOW3\Locale\CLDR\CLDRModelInterface 
 	 * @var Array of \F3\FLOW3\Locale\CLDR\CLDRModelInterface
 	 */
 	protected $models;
-
-	/**
-	 * Index of next model to be searched when getNext() will be invoked.
-	 *
-	 * @var int
-	 */
-	protected $nextModelIndex;
-
-	/**
-	 * Xpath query to use during the getNext() calls.
-	 *
-	 * @var string
-	 */
-	protected $searchQuery;
 
 	/**
 	 * Constructs the model.
@@ -88,55 +69,56 @@ class HierarchicalCLDRModel implements \F3\FLOW3\Locale\CLDR\CLDRModelInterface 
 	 * @return mixed Array of matching data, or FALSE on failure
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function get($path) {
+	public function getRawArray($path) {
+		$data = array();
 		foreach ($this->models as $model) {
-			$parsedNodes = $model->get($path);
+			$parsedNodes = $model->getRawArray($path);
 
 			if ($parsedNodes !== FALSE) {
-				return $parsedNodes;
+				$data = array_merge($data, $parsedNodes);
 			}
 		}
 
-		return FALSE;
+		if (!empty($data)) {
+			return $data;
+		} else {
+			return FALSE;
+		}
 	}
 
 	/**
-	 * Sets the query to use during iterative searching done by getNextResult()
-	 * calls.
+	 * Returns string element from a path given.
 	 *
-	 * @param string $query An Xpath query
+	 * @param string $path A path to the element to get
+	 * @return mixed String with desired element, or FALSE on failure
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function setQueryPath($query) {
-		$this->searchQuery = $query;
-		$this->nextModelIndex = count($this->models) - 1;
+	public function getOneElement($path) {
+		$data = $this->getRawArray($path);
+
+		if ($data === FALSE) {
+			return FALSE;
+		} else if (is_array($data)) {
+			if (isset($data[''])) {
+				return $data[''];
+			} else {
+				return FALSE;
+			}
+		} else {
+			return $data;
+		}
 	}
 
 	/**
-	 * Returns an array with query results for path set by setQueryPath() method,
-	 * from the next model in chain, starting with root model.
+	 * Parses the attributes string and returns a value of desired attribute.
 	 *
-	 * It's an alternative for get() method, when there is a need to get merged
-	 * result of the same query from all models.
-	 *
-	 * Note: Both get() and getNextResult() methods are workarounds for real
-	 * hierarchy support, which would generate and return array of merged
-	 * elements from all XML files in chain, taking into account whole tree
-	 * branch, which isn't simple. This would probably be very costly, right?
-	 *
-	 * @return mixed Array of matching data, FALSE if no match for current model. NULL if iteration ended
+	 * @param string $attribute An attribute to parse
+	 * @param int $attributeNumber Index of attribute to get value for, starting from 1
+	 * @return mixed Value of desired attribute, or FALSE if there is no such attribute
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function getNextResult() {
-		if (empty($this->searchQuery)) {
-			return NULL;
-		}
-
-		if ($this->nextModelIndex === -1) {
-			return NULL;
-		}
-
-		return $this->models[$this->nextModelIndex--]->get($this->searchQuery);
+	public function getValueOfAttribute($attribute, $attributeNumber) {
+		return $this->models[0]->getValueOfAttribute($attribute, $attributeNumber);
 	}
 }
 

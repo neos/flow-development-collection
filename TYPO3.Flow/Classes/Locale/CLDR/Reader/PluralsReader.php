@@ -211,23 +211,30 @@ class PluralsReader {
 	 */
 	protected function generateRulesets() {
 		$model = $this->CLDRRepository->getModel('supplemental/plurals');
-		$xmlPluralRulesSet = $model->get('//supplementalData/plurals/pluralRules');
+		$pluralRulesSet = $model->getRawArray('plurals/pluralRules');
 
-		foreach ($xmlPluralRulesSet as $index => $xmlPluralRules) {
-			foreach (explode(' ', $xmlPluralRules['attributes']['locales']) as $localeLanguage) {
+		$index = 0;
+		foreach ($pluralRulesSet as $localeLanguages => $pluralRules) {
+			$localeLanguages = $model->getValueOfAttribute($localeLanguages, 1);
+
+			foreach (explode(' ', $localeLanguages) as $localeLanguage) {
 				$this->rulesetsIndices[$localeLanguage] = $index;
 			}
 
-			if (!is_array($xmlPluralRules['content'])) {
+			if (!is_array($pluralRules)) {
 				$this->rulesets[$index] = NULL;
+				continue;
 			}
 
 			$ruleset = array();
-			foreach ($xmlPluralRules['content'] as $xmlPluralRule) {
-				$ruleset[$xmlPluralRule['attributes']['count']] = $this->parseRule($xmlPluralRule['content']);
+			foreach ($pluralRules['pluralRule'] as $pluralRuleCount => $pluralRule) {
+				$pluralRuleCount = $model->getValueOfAttribute($pluralRuleCount, 1);
+				$ruleset[$pluralRuleCount] = $this->parseRule($pluralRule);
 			}
 
 			$this->rulesets[$index] = $ruleset;
+
+			++$index;
 		}
 	}
 
@@ -252,6 +259,7 @@ class PluralsReader {
 	 *
 	 * @param string $rule
 	 * @return array Parsed rule
+	 * @throws \F3\FLOW3\Locale\Exception\InvalidArgumentException When plural rule does not match regexp pattern
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	protected function parseRule($rule) {

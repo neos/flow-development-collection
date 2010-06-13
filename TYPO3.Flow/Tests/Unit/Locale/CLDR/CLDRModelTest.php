@@ -44,7 +44,6 @@ class CLDRModelTest extends \F3\Testing\BaseTestCase {
 
 		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
 		$mockCache->expects($this->once())->method('has')->with($mockFilenamePath)->will($this->returnValue(FALSE));
-		$mockCache->expects($this->once())->method('set')->with($mockFilenamePath);
 
 		$this->model = new \F3\FLOW3\Locale\CLDR\CLDRModel();
 		$this->model->injectCache($mockCache);
@@ -55,15 +54,35 @@ class CLDRModelTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function getWorks() {
-		$result = $this->model->get('//ldml/dates/calendars/calendar[@type="gregorian"]/dateFormats');
-		$this->assertEquals(2, count($result[0]['content']));
-		$this->assertEquals('dateFormatLength', $result[0]['content'][0]['name']);
+	public function getRawArrayWorks() {
+		$result = $this->model->getRawArray('dates/calendars/calendar/type="gregorian"/dateFormats/dateFormatLength');
+		$this->assertEquals(4, count($result));
+		$this->assertEquals(TRUE, isset($result['type="full"']));
+	}
 
-		$result = $this->model->get('//ldml/dates/calendars/calendar[@type="gregorian"]/dateFormats/dateFormatLength[@type="full"]/dateFormat/pattern');
-		$this->assertEquals('EEEE, d MMMM y', $result[0]['content']);
+	/**
+	 * @test
+	 * @author Karol Gusak <firstname@lastname.eu>
+	 */
+	public function getOneElementWorks() {
+		$result = $this->model->getOneElement('dates/calendars/calendar/type="gregorian"/dateFormats/dateFormatLength/type="full"/dateFormat/pattern');
+		$this->assertEquals('EEEE, d MMMM y', $result);
 
-		$this->model->shutdownObject();
+		$result = $this->model->getOneElement('dates/calendars/calendar/type="gregorian"/dateFormats/dateFormatLength/type="full"/dateFormat');
+		$this->assertEquals(FALSE, $result);
+	}
+
+	/**
+	 * @test
+	 * @author Karol Gusak <firstname@lastname.eu>
+	 */
+	public function aliasesAreResolvedCorrectly() {
+		$result = $this->model->getRawArray('dates/calendars/calendar/type="gregorian"/dateFormats/dateFormatLength/type="short"/dateFormat/pattern');
+		$this->assertEquals('dd-MM-yyyy', $result['']);
+		$this->assertEquals('d MMM y', $result['alt="proposed-x1001" draft="unconfirmed"']);
+
+		$result = $this->model->getOneElement('dates/calendars/calendar/type="buddhist"/dateFormats/dateFormatLength/type="full"/dateFormat/pattern');
+		$this->assertEquals('EEEE, d MMMM y', $result);
 	}
 }
 

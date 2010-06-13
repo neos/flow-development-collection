@@ -38,7 +38,24 @@ interface CLDRModelInterface {
 	 * @param string $path A path to the node to get
 	 * @return mixed Array of matching data, or FALSE on failure
 	 */
-	public function get($path);
+	public function getRawArray($path);
+
+	/**
+	 * Returns string element from a path given.
+	 *
+	 * @param string $path A path to the element to get
+	 * @return mixed String with desired element, or FALSE on failure
+	 */
+	public function getOneElement($path);
+
+	/**
+	 * Parses the attributes string and returns a value of desired attribute.
+	 *
+	 * @param string $attribute An attribute to parse
+	 * @param int $attributeNumber Index of attribute to get value for, starting from 1
+	 * @return mixed Value of desired attribute, or FALSE if there is no such attribute
+	 */
+	public function getValueOfAttribute($attribute, $attributeNumber);
 }
 
 ?>

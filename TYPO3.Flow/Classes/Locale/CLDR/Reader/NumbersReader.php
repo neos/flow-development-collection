@@ -145,14 +145,14 @@ class NumbersReader {
 	protected $parsedFormatsIndices;
 
 	/**
-	 * Assocciative array of symbols used in particular locales.
+	 * Associative array of symbols used in particular locales.
 	 *
 	 * Locale tags are keys for this array. Values are arrays of symbols, as
 	 * defined in /ldml/numbers/symbols path in CLDR files.
 	 *
 	 * @var array
 	 */
-	protected $localeSymbols;
+	protected $localizedSymbols;
 
 	/**
 	 * @param \F3\FLOW3\Locale\CLDR\CLDRRepository $repository
@@ -189,8 +189,8 @@ class NumbersReader {
 			$this->parsedFormatsIndices = $this->cache->get('parsedFormatsIndices');
 		}
 
-		if ($this->cache->has('localeSymbols')) {
-			$this->localeSymbols = $this->cache->get('localeSymbols');
+		if ($this->cache->has('localizedSymbols')) {
+			$this->localizedSymbols = $this->cache->get('localizedSymbols');
 		}
 	}
 
@@ -203,7 +203,7 @@ class NumbersReader {
 	public function shutdownObject() {
 		$this->cache->set('parsedFormats', $this->parsedFormats);
 		$this->cache->set('parsedFormatsIndices', $this->parsedFormatsIndices);
-		$this->cache->set('localeSymbols', $this->localeSymbols);
+		$this->cache->set('localizedSymbols', $this->localizedSymbols);
 	}
 
 	/**
@@ -221,14 +221,14 @@ class NumbersReader {
 	 * @return string Formatted number. Will return string-casted version of $number if pattern is not valid / supported
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function formatNumber($number, $format, \F3\FLOW3\Locale\Locale $locale) {
+	public function formatNumberWithCustomPattern($number, $format, \F3\FLOW3\Locale\Locale $locale) {
 		if (isset($this->parsedFormats[$format])) {
 			$parsedFormat = $this->parsedFormats[$format];
 		} else {
 			$this->parsedFormats[$format] = $this->parseFormat($format);
 		}
 
-		return $this->doFormattingWithParsedFormat($number, $this->parsedFormats[$format], $this->getSymbolsForLocale($locale));
+		return $this->doFormattingWithParsedFormat($number, $this->parsedFormats[$format], $this->getLocalizedSymbolsForLocale($locale));
 	}
 
 	/**
@@ -245,7 +245,7 @@ class NumbersReader {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function formatDecimalNumber($number, \F3\FLOW3\Locale\Locale $locale, $length = 'default') {
-		return $this->doFormattingWithParsedFormat($number, $this->getParsedFormat($locale, 'decimal', $length), $this->getSymbolsForLocale($locale));
+		return $this->doFormattingWithParsedFormat($number, $this->getParsedFormat($locale, 'decimal', $length), $this->getLocalizedSymbolsForLocale($locale));
 	}
 
 	/**
@@ -262,7 +262,7 @@ class NumbersReader {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function formatPercentNumber($number, \F3\FLOW3\Locale\Locale $locale, $length = 'default') {
-		return $this->doFormattingWithParsedFormat($number, $this->getParsedFormat($locale, 'percent', $length), $this->getSymbolsForLocale($locale));
+		return $this->doFormattingWithParsedFormat($number, $this->getParsedFormat($locale, 'percent', $length), $this->getLocalizedSymbolsForLocale($locale));
 	}
 
 	/**
@@ -282,7 +282,7 @@ class NumbersReader {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function formatCurrencyNumber($number, \F3\FLOW3\Locale\Locale $locale, $currency, $length = 'default') {
-		return $this->doFormattingWithParsedFormat($number, $this->getParsedFormat($locale, 'currency', $length), $this->getSymbolsForLocale($locale), $currency);
+		return $this->doFormattingWithParsedFormat($number, $this->getParsedFormat($locale, 'currency', $length), $this->getLocalizedSymbolsForLocale($locale), $currency);
 	}
 
 	/**
@@ -486,7 +486,7 @@ class NumbersReader {
 	 * Returns parsed number format basing on locale and desired format length
 	 * if provided.
 	 *
-	 * When second parameter ($length) is not provided, default format for a
+	 * When third parameter ($length) equals 'default', default format for a
 	 * locale will be used.
 	 *
 	 * @param \F3\FLOW3\Locale\Locale $locale
@@ -496,24 +496,18 @@ class NumbersReader {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	protected function getParsedFormat(\F3\FLOW3\Locale\Locale $locale, $type, $length) {
-		if (isset($this->parsedFormatsIndices[(string)$locale][$length])) {
-			return $this->parsedFormats[$this->parsedFormatsIndices[(string)$locale][$length]];
+		if (isset($this->parsedFormatsIndices[(string)$locale][$type][$length])) {
+			return $this->parsedFormats[$this->parsedFormatsIndices[(string)$locale][$type][$length]];
 		}
 
 		if ($length === 'default') {
-			$formatPath = '//ldml/numbers/' . $type . 'Formats/' . $type . 'FormatLength/' . $type . 'Format/pattern';
+			$formatPath = 'numbers/' . $type . 'Formats/' . $type . 'FormatLength/' . $type . 'Format/pattern';
 		} else {
-			$formatPath = '//ldml/numbers/' . $type . 'Formats/' . $type . 'FormatLength[@type="' . $length . '"]/' . $type . 'Format/pattern';
+			$formatPath = 'numbers/' . $type . 'Formats/' . $type . 'FormatLength/type="' . $length . '/' . $type . 'Format/pattern';
 		}
 
 		$model = $this->CLDRRepository->getHierarchicalModel('main', $locale);
-		$xmlDecimalFormat = $model->get($formatPath);
-
-		if ($xmlDecimalFormat === FALSE) {
-			return FALSE;
-		}
-
-		$format = $xmlDecimalFormat[0]['content'];
+		$format = $model->getOneElement($formatPath);
 
 		if (empty($format)) {
 			return FALSE;
@@ -521,7 +515,7 @@ class NumbersReader {
 
 		$parsedFormat = $this->parseFormat($format);
 
-		$this->parsedFormatsIndices[(string)$locale][$length] = $format;
+		$this->parsedFormatsIndices[(string)$locale][$type][$length] = $format;
 		return $this->parsedFormats[$format] = $parsedFormat;
 	}
 
@@ -538,26 +532,13 @@ class NumbersReader {
 	 * @return array Symbols array
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function getSymbolsForLocale(\F3\FLOW3\Locale\Locale $locale) {
-		if (isset($this->localeSymbols[(string)$locale])) {
-			return $this->localeSymbols[(string)$locale];
+	public function getLocalizedSymbolsForLocale(\F3\FLOW3\Locale\Locale $locale) {
+		if (isset($this->localizedSymbols[(string)$locale])) {
+			return $this->localizedSymbols[(string)$locale];
 		}
-
-		$symbols = array();
 
 		$model = $this->CLDRRepository->getHierarchicalModel('main', $locale);
-		$model->setQueryPath('//ldml/numbers/symbols');
-		while (($overridedSymbols = $model->getNextResult()) !== NULL) {
-			if ($overridedSymbols === FALSE) {
-				continue;
-			}
-
-			foreach ($overridedSymbols[0]['content'] as $symbol) {
-				$symbols[$symbol['name']] = $symbol['content'];
-			}
-		}
-
-		return $this->localeSymbols[(string)$locale] = $symbols;
+		return $this->localizedSymbols[(string)$locale] = $model->getRawArray('numbers/symbols');
 	}
 }
 
