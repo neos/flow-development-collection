@@ -24,7 +24,7 @@ namespace F3\FLOW3\Locale\CLDR;
 
 /**
  * The CLDRRepository class
- * 
+ *
  * CLDRRepository manages CLDRModel and HierarchicalCLDRModel instances
  * across the framework, so there is only one instance of CLDRModel for
  * every unique CLDR data file, and one instace of HierarchicalCLDRModel
@@ -63,7 +63,7 @@ class CLDRRepository {
 	 * Hierarchical models describe a group of models. There can be many models
 	 * for same directoryPaths, as there can be many locale chains.
 	 *
-	 * @var Array of \F3\FLOW3\Locale\CLDR\CLDRModelInterface
+	 * @var array<\F3\FLOW3\Locale\CLDR\CLDRModelInterface>
 	 */
 	protected $models;
 
@@ -142,7 +142,8 @@ class CLDRRepository {
 			return FALSE;
 		}
 
-		$modelsInHierarchy[0] = $this->objectManager->create('F3\FLOW3\Locale\CLDR\CLDRModel', \F3\FLOW3\Utility\Files::concatenatePaths(array($directoryPath, (string)$locale . '.xml')));
+		$modelsInHierarchy = array();
+		$modelsInHierarchy[] = $this->objectManager->create('F3\FLOW3\Locale\CLDR\CLDRModel', \F3\FLOW3\Utility\Files::concatenatePaths(array($directoryPath, (string)$locale . '.xml')));
 		while (($parentLocale = $this->localizationService->getParentLocaleOf($locale)) !== NULL) {
 			$modelsInHierarchy[] = $this->objectManager->create('F3\FLOW3\Locale\CLDR\CLDRModel', \F3\FLOW3\Utility\Files::concatenatePaths(array($directoryPath, (string)$parentLocale . '.xml')));
 		}

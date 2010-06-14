@@ -149,10 +149,10 @@ class Service {
 	 * provided. If parameter $strict is provided, searching is done only for
 	 * provided / default locale (without searching of files localized for
 	 * more generic locales.
-	 * 
+	 *
 	 * If no localized version of file is found, $filepath is returned without
 	 * any change.
-	 * 
+	 *
 	 * Note: This method assumes that provided file exists.
 	 *
 	 * @param string $filename Path to the file
@@ -164,7 +164,7 @@ class Service {
 	public function getLocalizedFilename($filename, \F3\FLOW3\Locale\Locale $locale = NULL, $strict = FALSE) {
 		if ($locale === NULL) {
 			$locale = $this->getDefaultLocale();
-		}		
+		}
 
 		if (strrpos($filename, '.') !== FALSE) {
 			$filenameWithoutExtension = substr($filename, 0, strrpos($filename, '.'));

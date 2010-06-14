@@ -196,7 +196,7 @@ class NumbersReader {
 
 	/**
 	 * Shutdowns the object, saving parsed format strings to the cache.
-	 * 
+	 *
 	 * @return void
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
@@ -234,7 +234,7 @@ class NumbersReader {
 	/**
 	 * Formats number with format string for decimal numbers defined in CLDR for
 	 * particular locale.
-	 * 
+	 *
 	 * Note: currently length is not used in decimalFormats from CLDR.
 	 * But it's defined in the specification, so we support it here.
 	 *
@@ -350,11 +350,11 @@ class NumbersReader {
 			$primaryGroupOfIntegerPart = substr($integerPart, - $parsedFormat['primaryGroupingSize']);
 			$restOfIntegerPart = substr($integerPart, 0, - $parsedFormat['primaryGroupingSize']);
 
-			// Pad the numbers with spaces from the left, so the length of the string is a multiply of secondaryGroupingSize (and str_split() can split on equal parts)
+				// Pad the numbers with spaces from the left, so the length of the string is a multiply of secondaryGroupingSize (and str_split() can split on equal parts)
 			$padLengthToGetEvenSize = (int)((strlen($restOfIntegerPart) + $parsedFormat['secondaryGroupingSize'] - 1) / $parsedFormat['secondaryGroupingSize']) * $parsedFormat['secondaryGroupingSize'];
 			$restOfIntegerPart = str_pad($restOfIntegerPart, $padLengthToGetEvenSize, ' ', STR_PAD_LEFT);
-			
-			// Insert localized group separators between every secondary groups and primary group (using str_split() and implode())
+
+				// Insert localized group separators between every secondary groups and primary group (using str_split() and implode())
 			$secondaryGroupsOfIntegerPart = str_split($restOfIntegerPart, $parsedFormat['secondaryGroupingSize']);
 			$integerPart = ltrim(implode($symbols['group'], $secondaryGroupsOfIntegerPart)) . $symbols['group'] . $primaryGroupOfIntegerPart;
 		}
@@ -371,7 +371,7 @@ class NumbersReader {
 
 		$number = str_replace(array('%', '‰', '-'), array($symbols['percentSign'], $symbols['perMille'], $symbols['minusSign']), $number);
 		if ($currency !== NULL) {
-			/** @todo: When currency is set, min / max DecimalDigits and rounding is overrided with CLDR data **/
+				// @todo: When currency is set, min / max DecimalDigits and rounding is overrided with CLDR data
 			$number = str_replace('¤', $currency, $number);
 		}
 
@@ -405,12 +405,12 @@ class NumbersReader {
 			'negativeSuffix' => '',
 
 			'multiplier' => 1,
-			
+
 			'minDecimalDigits' => 0,
 			'maxDecimalDigits' => 0,
 
 			'minIntegerDigits' => 1,
-			
+
 			'primaryGroupingSize' => 0,
 			'secondaryGroupingSize' => 0,
 
@@ -440,7 +440,7 @@ class NumbersReader {
 
 		if (strpos($format, '%') !== FALSE) {
 			$parsedFormat['multiplier'] = 100;
-		} else if(strpos($format, '‰') !== FALSE) {
+		} elseif(strpos($format, '‰') !== FALSE) {
 			$parsedFormat['multiplier'] = 1000;
 		}
 
@@ -453,13 +453,13 @@ class NumbersReader {
 			if (($positionOfLastZero = strrpos($format, '0')) > $positionOfDecimalSeparator) {
 				$parsedFormat['minDecimalDigits'] = $positionOfLastZero - $positionOfDecimalSeparator;
 			}
-			
+
 			if (($positionOfLastHash = strrpos($format, '#')) >= $positionOfLastZero) {
 				$parsedFormat['maxDecimalDigits'] = $positionOfLastHash - $positionOfDecimalSeparator;
 			} else {
 				$parsedFormat['maxDecimalDigits'] = $parsedFormat['minDecimalDigits'];
 			}
-			
+
 			$format = substr($format, 0, $positionOfDecimalSeparator);
 		}
 

@@ -43,7 +43,7 @@ class HierarchicalCLDRModel implements \F3\FLOW3\Locale\CLDR\CLDRModelInterface 
 	/**
 	 * A collection of models in hierarchy.
 	 *
-	 * @var Array of \F3\FLOW3\Locale\CLDR\CLDRModelInterface
+	 * @var array<\F3\FLOW3\Locale\CLDR\CLDRModelInterface>
 	 */
 	protected $models;
 
@@ -54,7 +54,7 @@ class HierarchicalCLDRModel implements \F3\FLOW3\Locale\CLDR\CLDRModelInterface 
 	 * with hierarchy in mind - the higher index in array, the more general
 	 * file is (i.e. root should be on last index).
 	 *
-	 * @param array $models An array of \F3\FLOW3\CLDR\CLDRModel instances
+	 * @param array<\F3\FLOW3\CLDR\CLDRModel> $models An array of \F3\FLOW3\CLDR\CLDRModel instances
 	 * @return void
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */

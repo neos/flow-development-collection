@@ -204,7 +204,7 @@ class CLDRModel implements \F3\FLOW3\Locale\CLDR\CLDRModelInterface {
 
 		if ($data === FALSE) {
 			return FALSE;
-		} else if (is_array($data)) {
+		} elseif (is_array($data)) {
 			if (isset($data[''])) {
 				return $data[''];
 			} else {
@@ -237,7 +237,7 @@ class CLDRModel implements \F3\FLOW3\Locale\CLDR\CLDRModelInterface {
 
 		if (count($attributes) < $attributeNumber) {
 			return FALSE;
-		} else if (count($attributes) === $attributeNumber) {
+		} elseif (count($attributes) === $attributeNumber) {
 			return substr($attributes[$attributeNumber - 1], strpos($attributes[$attributeNumber - 1], '"') + 1, -1);
 		} else {
 			return substr($attributes[$attributeNumber - 1], strpos($attributes[$attributeNumber - 1], '"') + 1);

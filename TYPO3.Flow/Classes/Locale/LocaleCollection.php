@@ -43,7 +43,7 @@ class LocaleCollection implements \F3\FLOW3\Locale\LocaleCollectionInterface {
 	 * This array contains all locales added to this collection. The values
 	 * are Locale objects, and the keys are these locale's tags.
 	 *
-	 * @var array of array of \F3\FLOW3\Locale\Locale instances
+	 * @var array<\F3\FLOW3\Locale\Locale>
 	 */
 	protected $localeCollection = array();
 
@@ -53,7 +53,7 @@ class LocaleCollection implements \F3\FLOW3\Locale\LocaleCollectionInterface {
 	 * which is a parent Locale object. If it's not set, there is no parent for
 	 * given locale, or no parent was searched before.
 	 *
-	 * @var array of array of \F3\FLOW3\Locale\Locale instances
+	 * @var array<\F3\FLOW3\Locale\Locale>
 	 */
 	protected $localeParentCollection = array();
 
@@ -81,7 +81,7 @@ class LocaleCollection implements \F3\FLOW3\Locale\LocaleCollectionInterface {
 			// We need to invalidate the parent's array as it could be inaccurate
 		$this->localeParentCollection = array();
 
-		$this->localeCollection[(string)$locale] = $locale;	
+		$this->localeCollection[(string)$locale] = $locale;
 		return TRUE;
 	}
 
@@ -108,7 +108,7 @@ class LocaleCollection implements \F3\FLOW3\Locale\LocaleCollectionInterface {
 		if (!isset($this->localeCollection[$localeTag])) {
 			return NULL;
 		}
-		
+
 		if (isset($this->localeParentCollection[$localeTag])) {
 			return $this->localeParentCollection[$localeTag];
 		}
