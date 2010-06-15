@@ -36,7 +36,6 @@ FLOW3_Locale_Service: []
 FLOW3_Locale_CDLR_CLDRModel: []
 FLOW3_Locale_CDLR_Reader_NumbersReader: []
 FLOW3_Locale_CDLR_Reader_PluralsReader: []
-FLOW3_Locale_CDLR_Reader_DatesReader: []
 FLOW3_Monitor: []
 FLOW3_MVC_Web_Routing_FindMatchResults:
   backend: F3\FLOW3\Cache\Backend\TransientMemoryBackend
