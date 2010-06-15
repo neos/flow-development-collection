@@ -34,6 +34,7 @@ FLOW3_Core:
   frontend: F3\FLOW3\Cache\Frontend\StringFrontend
 FLOW3_Locale_Service: []
 FLOW3_Locale_CDLR_CLDRModel: []
+FLOW3_Locale_CDLR_Reader_DatesReader: []
 FLOW3_Locale_CDLR_Reader_NumbersReader: []
 FLOW3_Locale_CDLR_Reader_PluralsReader: []
 FLOW3_Monitor: []

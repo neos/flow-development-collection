@@ -274,6 +274,15 @@ F3\FLOW3\Locale\CLDR\CLDRModel:
         arguments:
           1:
             value: FLOW3_Locale_CDLR_CLDRModel
+F3\FLOW3\Locale\CLDR\Reader\DatesReader:
+  properties:
+    cache:
+      object:
+        factoryObjectName: F3\FLOW3\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: FLOW3_Locale_CDLR_Reader_DatesReader
 F3\FLOW3\Locale\CLDR\Reader\NumbersReader:
   properties:
     cache:
