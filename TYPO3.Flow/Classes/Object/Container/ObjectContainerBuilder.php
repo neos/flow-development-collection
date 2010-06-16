@@ -152,7 +152,8 @@ class ObjectContainerBuilder {
 			$createInstanceCommand = $this->buildCreateInstanceCommand($className, $arguments, $customFactoryObjectName, $customFactoryMethodName);
 			$recreateInstanceCommand = $this->buildRecreateInstanceCommand($className);
 
-			$lifecycleInitializationCommand = $this->buildLifecycleInitializationCommand($objectConfiguration);
+			$lifecycleInitializationCommand = $this->buildLifecycleInitializationCommand($objectConfiguration, \F3\FLOW3\Object\Container\ObjectContainerInterface::INITIALIZATIONCAUSE_CREATED);
+			$lifecycleReinitializationCommand = $this->buildLifecycleInitializationCommand($objectConfiguration, \F3\FLOW3\Object\Container\ObjectContainerInterface::INITIALIZATIONCAUSE_RECREATED);
 			$lifecycleShutdownRegistrationCommand = $this->buildLifecycleShutdownRegistrationCommand($objectConfiguration);
 
 			$buildMethodsCode .= '
@@ -167,6 +168,7 @@ class ObjectContainerBuilder {
 	protected function r' . $methodNameNumber .'() {' .
 		$recreateInstanceCommand . '
 		$this->i' . $methodNameNumber .'($o); ' .
+		$lifecycleReinitializationCommand . 
 		$lifecycleShutdownRegistrationCommand . '
 		return $o;
 	}
@@ -451,14 +453,15 @@ class ObjectContainerBuilder {
 	/**
 	 *
 	 * @param \F3\FLOW3\Object\Configuration\Configuration $objectConfiguration
+	 * @param integer a \F3\FLOW3\Object\Container\ObjectContainerInterface::INITIALIZATIONCAUSE_* constant which is the cause of the initialization command being called.
 	 * @return string
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function buildLifecycleInitializationCommand(\F3\FLOW3\Object\Configuration\Configuration $objectConfiguration) {
+	protected function buildLifecycleInitializationCommand(\F3\FLOW3\Object\Configuration\Configuration $objectConfiguration, $cause) {
 		$command = '';
 		$lifecycleInitializationMethodName = $objectConfiguration->getLifecycleInitializationMethodName();
 		if (method_exists($objectConfiguration->getClassName(), $lifecycleInitializationMethodName)) {
-			$command = "\n\t\t\$o->$lifecycleInitializationMethodName();";
+			$command = "\n\t\t\$o->$lifecycleInitializationMethodName($cause);";
 		}
 		return $command;
 	}

@@ -374,7 +374,7 @@ class DynamicObjectContainer extends \F3\FLOW3\Object\Container\AbstractObjectCo
 	protected function callLifecycleInitializationMethod($object, \F3\FLOW3\Object\Configuration\Configuration $objectConfiguration) {
 		$lifecycleInitializationMethodName = $objectConfiguration->getLifecycleInitializationMethodName();
 		if (method_exists($object, $lifecycleInitializationMethodName)) {
-			$object->$lifecycleInitializationMethodName();
+			$object->$lifecycleInitializationMethodName(\F3\FLOW3\Object\Container\ObjectContainerInterface::INITIALIZATIONCAUSE_CREATED);
 		}
 	}
 

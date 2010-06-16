@@ -22,6 +22,7 @@ namespace F3\FLOW3\Object\Container;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+require_once(__DIR__ . '/../Fixture/ClassWithInitializeObjectMethod.php');
 /**
  * Testcase for the dynamic object container
  *
@@ -32,9 +33,14 @@ class ObjectContainerBuilderTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	public function foo() {
+	public function buildLifecycleInitializationCommandContainsTheCorrectParameters() {
+		$mockObjectContainer = $this->getAccessibleMock('F3\FLOW3\Object\Container\ObjectContainerBuilder', array('dummy'));
+		$objectConfiguration = new \F3\FLOW3\Object\Configuration\Configuration('F3\FLOW3\Tests\Object\Fixture\ClassWithInitializeObjectMethod', 'F3\FLOW3\Tests\Object\Fixture\ClassWithInitializeObjectMethod');
 
+		$generatedPhpCode = $mockObjectContainer->_call('buildLifecycleInitializationCommand', $objectConfiguration, \F3\FLOW3\Object\Container\ObjectContainerInterface::INITIALIZATIONCAUSE_CREATED);
+		$this->assertContains('$o->initializeObject(' . \F3\FLOW3\Object\Container\ObjectContainerInterface::INITIALIZATIONCAUSE_CREATED . ')', $generatedPhpCode);
 	}
 
 }

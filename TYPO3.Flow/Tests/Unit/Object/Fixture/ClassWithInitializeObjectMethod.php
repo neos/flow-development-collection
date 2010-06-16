@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Object\Container;
+namespace F3\FLOW3\Tests\Object\Fixture;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -22,27 +22,21 @@ namespace F3\FLOW3\Object\Container;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-require_once(__DIR__ . '/../Fixture/ClassWithInitializeObjectMethod.php');
 /**
- * Testcase for the dynamic object container
- *
- * @version $Id$
+ * @version $Id: ClassWithInjectSettingsMethod.php 2813 2009-07-16 14:02:34Z k-fish $
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class DynamicObjectContainerTest extends \F3\Testing\BaseTestCase {
+class ClassWithInitializeObjectMethod {
+
+	public $reason;
 
 	/**
-	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * Call the object lifecycle method
+	 *
+	 * @param mixed $reason why initializeObject is called.
 	 */
-	public function initializeObjectGetsInformedThatTheObjectIsNew() {
-		$mockObjectContainer = $this->getAccessibleMock('F3\FLOW3\Object\Container\DynamicObjectContainer', array('dummy'));
-		
-		$object = new \F3\FLOW3\Tests\Object\Fixture\ClassWithInitializeObjectMethod();
-		$objectConfiguration = new \F3\FLOW3\Object\Configuration\Configuration('F3\FLOW3\Tests\Object\Fixture\ClassWithInitializeObjectMethod');
-		
-		$mockObjectContainer->_call('callLifecycleInitializationMethod', $object, $objectConfiguration);
-		$this->assertEquals(\F3\FLOW3\Object\Container\ObjectContainerInterface::INITIALIZATIONCAUSE_CREATED, $object->reason);
+	public function initializeObject($reason) {
+		$this->reason = $reason;
 	}
 
 }

@@ -115,9 +115,9 @@
         <title>Supported scopes</title>
 
         <tgroup cols="2">
-          <colspec colwidth="1*"/>
+          <colspec colwidth="1*" />
 
-          <colspec colwidth="3*"/>
+          <colspec colwidth="3*" />
 
           <thead>
             <row>
@@ -381,11 +381,11 @@ $myAddressBook = $objectManager-&gt;getObject('F3\Address\AddressBook');
 // Create two new addresses and add them to the address book:
 $newAddress = $objectFactory-&gt;create('F3\Address\Address', 'Tryggevældevej', ↩
     '2720', 'København', 'DK');
-$myAddresbook-&gt;addAddress($newAddress);
+$myAddressbook-&gt;addAddress($newAddress);
 
 $newAddress = $objectFactory-&gt;create('F3\Address\Address', 'An den Brodbänken', ↩
    '21335', 'Lüneburg', 'DE');
-$myAddresbook-&gt;addAddress($newAddress);</programlisting>
+$myAddressbook-&gt;addAddress($newAddress);</programlisting>
       </example>
     </section>
 
@@ -1544,11 +1544,34 @@ class Foo {
       <methodname>initializeObject</methodname> and
       <methodname>shutdownObject</methodname>. If these methods exist, the
       initialization method will be called after the object has been
-      instantiated and all dependencies are injected and the shutdown method
-      is called before the Object Manager quits its service. The name of both
-      methods is configurable per object for situations you don't have control
-      over the name of your initialization method (maybe, because you are
-      integrating legacy code):</para>
+      instantiated or recreated and all dependencies are injected and the
+      shutdown method is called before the Object Manager quits its
+      service.</para>
+
+      <para>As the initialization method is being called after creating an
+      object <emphasis>and</emphasis> after recreating/reconstituting an
+      object, there are cases where different code should be executed. That is
+      why the initialization method gets a parameter, which is one of the
+      <constant>\F3\FLOW3\Object\Container\ObjectContainerInterface::INITIALIZATIONCAUSE_*</constant>
+      constants:</para>
+
+      <itemizedlist>
+        <listitem>
+          <para><constant>\F3\FLOW3\Object\Container\ObjectContainerInterface::INITIALIZATIONCAUSE_CREATED</constant>
+          if the object is newly created (i.e. the constructor has been
+          called)</para>
+        </listitem>
+
+        <listitem>
+          <para><constant>\F3\FLOW3\Object\Container\ObjectContainerInterface::INITIALIZATIONCAUSE_RECREATED</constant>
+          if the object has been recreated/reconstituted (i.e. the constructor
+          has not been called)</para>
+        </listitem>
+      </itemizedlist>
+
+      <para>The name of both methods is configurable per object for situations
+      you don't have control over the name of your initialization method
+      (maybe, because you are integrating legacy code):</para>
 
       <example>
         <title>Objects.yaml configuration of the initialization and shutdown

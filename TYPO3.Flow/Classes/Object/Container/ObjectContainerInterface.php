@@ -35,6 +35,18 @@ interface ObjectContainerInterface {
 	const SCOPE_SESSION = 3;
 
 	/**
+	 * This constant is passed as parameter to the lifecycle initialization method (typically initializeObject) in case the object
+	 * is freshly created, i.e. the constructor has been called.
+	 */
+	const INITIALIZATIONCAUSE_CREATED = 1;
+
+	/**
+	 * This constant is passed as parameter to the lifecycle initialization method (typically initializeObject) in case the object
+	 * is recreated/reconstituted, i.e. the constructor has not been called.
+	 */
+	const INITIALIZATIONCAUSE_RECREATED = 2;
+
+	/**
 	 * Injects the global settings array, indexed by package key.
 	 *
 	 * @param array $settings The global settings
