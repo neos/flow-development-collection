@@ -52,6 +52,15 @@ interface PackageManagerInterface {
 	public function isPackageAvailable($packageKey);
 
 	/**
+	 * Returns TRUE if a package is activated or FALSE if it's not.
+	 *
+	 * @param string $packageKey The key of the package to check
+	 * @return boolean TRUE if package is active, otherwise FALSE
+	 * @api
+	 */
+	public function isPackageActive($packageKey);
+
+	/**
 	 * Returns a \F3\FLOW3\Package\PackageInterface object for the specified package.
 	 * A package is available, if the package directory contains valid meta information.
 	 *
