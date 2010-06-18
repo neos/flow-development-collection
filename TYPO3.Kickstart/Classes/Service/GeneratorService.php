@@ -89,7 +89,7 @@ class GeneratorService {
 
 		$this->generateFile($targetPathAndFilename, $fileContent);
 
-		$this->generateView($packageKey, $subpackage, $controllerName, 'index');
+		$this->generateView($packageKey, $subpackage, $controllerName, 'Index');
 
 		return $this->generatedFiles;
 	}
@@ -105,9 +105,9 @@ class GeneratorService {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function generateView($packageKey, $subpackage, $controllerName, $viewName) {
-		$viewName = lcfirst($viewName);
+		$viewName = ucfirst($viewName);
 
-		$templatePathAndFilename = 'resource://Kickstart/Private/Generator/View/viewTemplate.html.tmpl';
+		$templatePathAndFilename = 'resource://Kickstart/Private/Generator/View/ViewTemplate.html.tmpl';
 
 		$contextVariables = array();
 		$contextVariables['packageKey'] = $packageKey;
