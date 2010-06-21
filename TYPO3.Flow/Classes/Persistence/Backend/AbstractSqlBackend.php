@@ -113,6 +113,10 @@ abstract class AbstractSqlBackend extends \F3\FLOW3\Persistence\Backend\Abstract
 			case \F3\FLOW3\Persistence\QueryInterface::OPERATOR_LIKE:
 				$operator = 'LIKE';
 				break;
+			case \F3\FLOW3\Persistence\QueryInterface::OPERATOR_IS_EMPTY:
+			case \F3\FLOW3\Persistence\QueryInterface::OPERATOR_IS_NULL:
+				$operator = 'IS NULL';
+				break;
 			default:
 				throw new \InvalidArgumentException('Unsupported operator encountered.', 1263384870);
 		}

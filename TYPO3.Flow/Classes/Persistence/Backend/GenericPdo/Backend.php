@@ -320,16 +320,6 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 				}
 			} elseif ($this->persistenceSession->isDirty($object, $propertyName)) {
 				switch ($propertyType) {
-					case 'integer':
-					case 'float':
-					case 'string':
-					case 'boolean':
-						$propertyData[$propertyName] = array(
-							'type' => $propertyType,
-							'multivalue' => FALSE,
-							'value' => $propertyValue
-						);
-					break;
 					case 'DateTime':
 						$propertyData[$propertyName] = array(
 							'type' => 'DateTime',
@@ -349,6 +339,13 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 							'type' => 'SplObjectStorage',
 							'multivalue' => TRUE,
 							'value' => $this->processSplObjectStorage($propertyValue, $identifier, $this->persistenceSession->getCleanStateOfProperty($object, $propertyName))
+						);
+					break;
+					default:
+						$propertyData[$propertyName] = array(
+							'type' => $propertyType,
+							'multivalue' => FALSE,
+							'value' => $propertyValue
 						);
 					break;
 				}
@@ -577,12 +574,7 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function storePropertyData($parentIdentifier, $propertyName, array $propertyData) {
-		if ($propertyData['value'] === NULL) {
-				// we don't store those in properties_data
-			return;
-		}
-
-		if ($propertyData['multivalue']) {
+		if ($propertyData['multivalue'] && $propertyData['value'] !== NULL) {
 			foreach ($propertyData['value'] as $valueData) {
 				$statementHandle = $this->databaseHandle->prepare('INSERT INTO "properties_data" ("parent", "name", "index", "type", "' . $this->getTypeName($valueData['type']) . '") VALUES (?, ?, ?, ?, ?)');
 				$statementHandle->execute(array(
@@ -593,6 +585,12 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 					is_array($valueData['value']) ? $valueData['value']['identifier'] : $valueData['value']
 				));
 			}
+		} elseif ($propertyData['multivalue']) {
+			$statementHandle = $this->databaseHandle->prepare('INSERT INTO "properties_data" ("parent", "name", "type") VALUES (?, ?, \'NULL\')');
+			$statementHandle->execute(array(
+				$parentIdentifier,
+				$propertyName
+			));
 		} else {
 			$statementHandle = $this->databaseHandle->prepare('INSERT INTO "properties_data" ("parent", "name", "index", "type", "' . $this->getTypeName($propertyData['type']) . '") VALUES (?, ?, ?, ?, ?)');
 			$statementHandle->execute(array(
@@ -834,10 +832,20 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 	protected function buildPropertiesArray(\PDOStatement $propertyStatement, $className) {
 		$properties = array();
 		foreach ($propertyStatement->fetchAll(\PDO::FETCH_ASSOC) as $propertyRow) {
-				// we have a value on shelf
+				// the property does no longer exist in the class
+			if (!$this->classSchemata[$className]->hasProperty($propertyRow['name'])) continue;
+
+				// we have a value (including NULL) on shelf
 			if (isset($propertyRow['type'])) {
 				$propertyMetadata = $this->classSchemata[$className]->getProperty($propertyRow['name']);
-				if ($propertyRow['multivalue']) {
+					// a NULL value for a multi-value property
+				if ($propertyRow['multivalue'] && $propertyRow['type'] === 'NULL') {
+					$properties[$propertyRow['name']] = array(
+						'type' => $propertyRow['type'],
+						'multivalue' => TRUE,
+						'value' => NULL
+					);
+				} elseif ($propertyRow['multivalue']) {
 					$properties[$propertyRow['name']]['type'] = $propertyRow['parenttype'];
 					$properties[$propertyRow['name']]['multivalue'] = TRUE;
 					$properties[$propertyRow['name']]['value'][] = array('type' => $propertyRow['type'], 'index' => $propertyRow['index'], 'value' => $this->getValue($propertyRow, $propertyMetadata));
@@ -848,11 +856,11 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 						'value' => $this->getValue($propertyRow, $propertyMetadata)
 					);
 				}
-				// a NULL value
+				// no entry in properties_data, empty collection
 			} else {
 				$properties[$propertyRow['name']] = array(
-					'type' => ($propertyRow['multivalue'] == 1) ? $propertyRow['parenttype'] : $propertyRow['type'],
-					'multivalue' => ($propertyRow['multivalue'] == 1),
+					'type' => $propertyRow['parenttype'],
+					'multivalue' => TRUE,
 					'value' => NULL
 				);
 			}
@@ -872,6 +880,9 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 	 */
 	protected function getValue(array $data, array $propertyMetadata) {
 		$typename = $this->getTypeName($data['type']);
+		if ($data[$typename] === NULL) {
+			return NULL;
+		}
 		switch ($typename) {
 			case 'object':
 				if (isset($this->knownRecords[$data['object']])) {
@@ -879,14 +890,13 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 				} else {
 						// check for lazy loading
 					if ($propertyMetadata['lazy'] === TRUE) {
-						return array('identifier' => $data['object'], 'classname' => $propertyMetadata['type'], 'properties' => array());
+						return array('identifier' => $data['object'], 'classname' => $data['type'], 'properties' => array());
 					} else {
 						return $this->_getObjectData($data['object']);
 					}
 				}
 				break;
 			case 'array':
-#				return array('type' => 'array', array('type' => 'array', 'index' => $data['index'], 'value' => $this->getArray($data['array'])));
 				return $this->getArray($data['array']);
 				break;
 			default:
@@ -1025,14 +1035,21 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function parseComparison(\F3\FLOW3\Persistence\QOM\Comparison $comparison, array &$sql, array &$parameters) {
-		if ($comparison->getOperator() === \F3\FLOW3\Persistence\QueryInterface::OPERATOR_IN) {
-			$this->parseDynamicOperand($comparison->getOperand1(), $comparison->getOperator(), $sql, $parameters, NULL, $comparison->getOperand2());
-			foreach ($comparison->getOperand2() as $value) {
-				$parameters[] = $this->getPlainValue($value);
-			}
-		} else {
-			$this->parseDynamicOperand($comparison->getOperand1(), $comparison->getOperator(), $sql, $parameters);
-			$parameters[] = $this->getPlainValue($comparison->getOperand2());
+		switch ($comparison->getOperator()) {
+			case \F3\FLOW3\Persistence\QueryInterface::OPERATOR_IN:
+				$this->parseDynamicOperand($comparison->getOperand1(), $comparison->getOperator(), $sql, $parameters, NULL, $comparison->getOperand2());
+				foreach ($comparison->getOperand2() as $value) {
+					$parameters[] = $this->getPlainValue($value);
+				}
+			break;
+			case \F3\FLOW3\Persistence\QueryInterface::OPERATOR_IS_EMPTY:
+			case \F3\FLOW3\Persistence\QueryInterface::OPERATOR_IS_NULL:
+				$this->parseDynamicOperand($comparison->getOperand1(), $comparison->getOperator(), $sql, $parameters);
+			break;
+			default:
+				$this->parseDynamicOperand($comparison->getOperand1(), $comparison->getOperator(), $sql, $parameters);
+				$parameters[] = $this->getPlainValue($comparison->getOperand2());
+			break;
 		}
 	}
 
@@ -1083,6 +1100,12 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 					}
 					$where .= implode(',', array_fill(0, count($operand2), '?')) . ')) ';
 				break;
+				case \F3\FLOW3\Persistence\QueryInterface::OPERATOR_IS_EMPTY:
+				case \F3\FLOW3\Persistence\QueryInterface::OPERATOR_IS_NULL:
+					$operator = $this->resolveOperator($operator);
+					$coalesce = 'COALESCE("' . $selectorName . 'properties' . count($parameters) . '"."string", CAST("' . $selectorName . 'properties' . count($parameters) . '"."integer" AS CHAR), CAST("' . $selectorName . 'properties' . count($parameters) . '"."float" AS CHAR), CAST("' . $selectorName . 'properties' . count($parameters) . '"."datetime" AS CHAR), "' . $selectorName . 'properties' . count($parameters) . '"."boolean", "' . $selectorName . 'properties' . count($parameters) . '"."object")';
+					$where = '("' . $selectorName . 'properties' . count($parameters) . '"."name" = ? AND ' . $coalesce . ' ' . $operator . ')';
+					break;
 				case \F3\FLOW3\Persistence\QueryInterface::OPERATOR_CONTAINS:
 						// in our data structure we can do this using equality...
 					$operator = \F3\FLOW3\Persistence\QueryInterface::OPERATOR_EQUAL_TO;

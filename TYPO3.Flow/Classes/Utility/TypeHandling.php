@@ -33,10 +33,16 @@ class TypeHandling {
 	/**
 	 * A property type parse pattern.
 	 */
-	const PARSE_TYPE_PATTERN = '/^\\\\?(?P<type>integer|int|float|double|boolean|bool|string|DateTime|F3\\\\[a-zA-Z0-9\\\\]+|array|ArrayObject|SplObjectStorage)(?:<(?P<elementType>[a-zA-Z0-9\\\\]+)>)?/';
+	const PARSE_TYPE_PATTERN = '/^\\\\?(?P<type>integer|int|float|double|boolean|bool|string|DateTime|F3\\\\[a-zA-Z0-9\\\\]+|array|ArrayObject|SplObjectStorage)(?:<\\\\?(?P<elementType>[a-zA-Z0-9\\\\]+)>)?/';
 
 	/**
-	 * Adds (defines) a specific property and its type.
+	 * A type pattern to detect literal types.
+	 */
+	const LITERAL_TYPE_PATTERN = '/^(?:integer|int|float|double|boolean|bool|string)$/';
+
+	/**
+	 * Returns an array with type information, including element type for
+	 * collection types (array, SplObjectStorage, ...)
 	 *
 	 * @param string $type Type of the property (see PARSE_TYPE_PATTERN)
 	 * @return array An array with information about the type
@@ -64,7 +70,7 @@ class TypeHandling {
 	/**
 	 * Normalize data types so they match the PHP type names:
 	 *  int -> integer
-	 *  float -> double
+	 *  double -> float
 	 *  bool -> boolean
 	 *
 	 * @param string $type Data type to unify
@@ -86,5 +92,15 @@ class TypeHandling {
 		return $type;
 	}
 
+	/**
+	 * Returns TRUE if the $type is a literal.
+	 *
+	 * @param string $type
+	 * @return boolean
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	static public function isLiteral($type) {
+		return preg_match(self::LITERAL_TYPE_PATTERN, $type) === 1;
+	}
 }
 ?>

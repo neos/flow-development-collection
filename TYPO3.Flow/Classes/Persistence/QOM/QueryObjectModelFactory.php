@@ -96,7 +96,7 @@ class QueryObjectModelFactory {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
-	public function comparison(\F3\FLOW3\Persistence\QOM\DynamicOperand $operand1, $operator, $operand2) {
+	public function comparison(\F3\FLOW3\Persistence\QOM\DynamicOperand $operand1, $operator, $operand2 = NULL) {
 		return $this->objectManager->create('F3\FLOW3\Persistence\QOM\Comparison', $operand1, $operator, $operand2);
 	}
 

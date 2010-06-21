@@ -39,6 +39,11 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	protected $type;
 
 	/**
+	 * @var \F3\FLOW3\Reflection\ClassSchema
+	 */
+	protected $classSchema;
+
+	/**
 	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
@@ -88,10 +93,12 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 * Constructs a query object working on the given type
 	 *
 	 * @param string $type
+	 * @param \F3\FLOW3\Reflection\ReflectionService $reflectionService
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct($type) {
+	public function __construct($type, \F3\FLOW3\Reflection\ReflectionService $reflectionService) {
 		$this->type = $type;
+		$this->classSchema = $reflectionService->getClassSchema($type);
 	}
 
 	/**
@@ -357,17 +364,27 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	}
 
 	/**
-	 * Returns an equals criterion used for matching objects against a query
+	 * Returns an equals criterion used for matching objects against a query.
+	 *
+	 * It matches if the $operand equals the value of the property named
+	 * $propertyName. If $operand is NULL a strict check for NULL is done. For
+	 * strings the comparison can be done with or without case-sensitivity.
 	 *
 	 * @param string $propertyName The name of the property to compare against
 	 * @param mixed $operand The value to compare with
-	 * @param boolean $caseSensitive Whether the equality test should be done case-sensitive
-	 * @return \F3\FLOW3\Persistence\QOM\Comparison
+	 * @param boolean $caseSensitive Whether the equality test should be done case-sensitive for strings
+	 * @return object
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @todo Decide what to do about equality on multi-valued properties
 	 * @api
 	 */
 	public function equals($propertyName, $operand, $caseSensitive = TRUE) {
-		if (is_object($operand) || $caseSensitive) {
+		if ($operand === NULL) {
+			$comparison = $this->qomFactory->comparison(
+				$this->qomFactory->propertyValue($propertyName, '_entity'),
+				\F3\FLOW3\Persistence\QueryInterface::OPERATOR_IS_NULL
+			);
+		} elseif (is_object($operand) || $caseSensitive) {
 			$comparison = $this->qomFactory->comparison(
 				$this->qomFactory->propertyValue($propertyName, '_entity'),
 				\F3\FLOW3\Persistence\QueryInterface::OPERATOR_EQUAL_TO,
@@ -387,37 +404,81 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	}
 
 	/**
-	 * Returns a like criterion used for matching objects against a query
+	 * Returns a like criterion used for matching objects against a query.
+	 * Matches if the property named $propertyName is like the $operand, using
+	 * standard SQL wildcards.
 	 *
 	 * @param string $propertyName The name of the property to compare against
-	 * @param mixed $operand The value to compare with
-	 * @return \F3\FLOW3\Persistence\QOM\Comparison
+	 * @param string $operand The value to compare with
+	 * @param boolean $caseSensitive Whether the matching should be done case-sensitive
+	 * @return object
+	 * @throws \F3\FLOW3\Persistence\Exception\InvalidQueryException if used on a non-string property
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
-	public function like($propertyName, $operand) {
-		return $this->qomFactory->comparison(
-			$this->qomFactory->propertyValue($propertyName, '_entity'),
-			\F3\FLOW3\Persistence\QueryInterface::OPERATOR_LIKE,
-			$operand
-		);
+	public function like($propertyName, $operand, $caseSensitive = TRUE) {
+		if (!is_string($operand)) {
+			throw new \F3\FLOW3\Persistence\Exception\InvalidQueryException('Operand must be a string, was ' . gettype($operand), 1276781107);
+		}
+		if ($caseSensitive) {
+			$comparison = $this->qomFactory->comparison(
+				$this->qomFactory->propertyValue($propertyName, '_entity'),
+				\F3\FLOW3\Persistence\QueryInterface::OPERATOR_LIKE,
+				$operand
+			);
+		} else {
+			$comparison = $this->qomFactory->comparison(
+				$this->qomFactory->lowerCase(
+					$this->qomFactory->propertyValue($propertyName, '_entity')
+				),
+				\F3\FLOW3\Persistence\QueryInterface::OPERATOR_LIKE,
+				strtolower($operand)
+			);
+		}
+
+		return $comparison;
 	}
 
 	/**
 	 * Returns a "contains" criterion used for matching objects against a query.
 	 * It matches if the multivalued property contains the given operand.
 	 *
-	 * @param string $propertyName The name of the (multivalued) property to compare against
+	 * If NULL is given as $operand, there will never be a match!
+	 *
+	 * @param string $propertyName The name of the multivalued property to compare against
 	 * @param mixed $operand The value to compare with
 	 * @return \F3\FLOW3\Persistence\QOM\Comparison
+	 * @throws \F3\FLOW3\Persistence\Exception\InvalidQueryException if used on a single-valued property
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function contains($propertyName, $operand){
+		if (!$this->classSchema->isMultiValuedProperty($propertyName)) {
+			throw new \F3\FLOW3\Persistence\Exception\InvalidQueryException('Property "' . $propertyName . '" must be multi-valued', 1276781026);
+		}
 		return $this->qomFactory->comparison(
 			$this->qomFactory->propertyValue($propertyName, '_entity'),
 			\F3\FLOW3\Persistence\QueryInterface::OPERATOR_CONTAINS,
 			$operand
+		);
+	}
+
+	/**
+	 * Returns an "isEmpty" criterion used for matching objects against a query.
+	 * It matches if the multivalued property contains no values.
+	 *
+	 * @param string $propertyName The name of the multivalued property to check
+	 * @return boolean
+	 * @throws \F3\FLOW3\Persistence\Exception\InvalidQueryException if used on a single-valued property
+	 * @api
+	 */
+	public function isEmpty($propertyName) {
+		if (!$this->classSchema->isMultiValuedProperty($propertyName)) {
+			throw new \F3\FLOW3\Persistence\Exception\InvalidQueryException('Property "' . $propertyName . '" must be multi-valued', 1276853547);
+		}
+		return $this->qomFactory->comparison(
+			$this->qomFactory->propertyValue($propertyName, '_entity'),
+			\F3\FLOW3\Persistence\QueryInterface::OPERATOR_IS_EMPTY
 		);
 	}
 
@@ -428,12 +489,16 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 * @param string $propertyName The name of the property to compare against
 	 * @param mixed $operand The value to compare with, multivalued
 	 * @return \F3\FLOW3\Persistence\QOM\Comparison
+	 * @throws \F3\FLOW3\Persistence\Exception\InvalidQueryException if used on a multi-valued property or with single-valued operand
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function in($propertyName, $operand) {
 		if (!is_array($operand) && (!$operand instanceof \ArrayAccess) && (!$operand instanceof \Traversable)) {
-			throw new \F3\FLOW3\Persistence\Exception\UnexpectedTypeException('The "in" operator must be given a mutlivalued operand (array, ArrayAccess, Traversable).', 1264678095);
+			throw new \F3\FLOW3\Persistence\Exception\InvalidQueryException('The "in" constraint must be given a multi-valued operand (array, ArrayAccess, Traversable).', 1264678095);
+		}
+		if ($this->classSchema->isMultiValuedProperty($propertyName)) {
+			throw new \F3\FLOW3\Persistence\Exception\InvalidQueryException('Property "' . $propertyName . '" must not be multi-valued.', 1276777034);
 		}
 
 		return $this->qomFactory->comparison(
@@ -449,10 +514,18 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 * @param string $propertyName The name of the property to compare against
 	 * @param mixed $operand The value to compare with
 	 * @return \F3\FLOW3\Persistence\QOM\Comparison
+	 * @throws \F3\FLOW3\Persistence\Exception\InvalidQueryException if used on a multi-valued property or with a non-literal/non-DateTime operand
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function lessThan($propertyName, $operand) {
+		if ($this->classSchema->isMultiValuedProperty($propertyName)) {
+			throw new \F3\FLOW3\Persistence\Exception\InvalidQueryException('Property "' . $propertyName . '" must not be multi-valued', 1276784963);
+		}
+		if (!($operand instanceof \DateTime) && !\F3\FLOW3\Utility\TypeHandling::isLiteral(gettype($operand))) {
+			throw new \F3\FLOW3\Persistence\Exception\InvalidQueryException('Operand must be a literal or DateTime, was ' . gettype($operand), 1276784964);
+		}
+
 		return $this->qomFactory->comparison(
 			$this->qomFactory->propertyValue($propertyName, '_entity'),
 			\F3\FLOW3\Persistence\QueryInterface::OPERATOR_LESS_THAN,
@@ -466,10 +539,18 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 * @param string $propertyName The name of the property to compare against
 	 * @param mixed $operand The value to compare with
 	 * @return \F3\FLOW3\Persistence\QOM\Comparison
+	 * @throws \F3\FLOW3\Persistence\Exception\InvalidQueryException if used on a multi-valued property or with a non-literal/non-DateTime operand
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function lessThanOrEqual($propertyName, $operand) {
+		if ($this->classSchema->isMultiValuedProperty($propertyName)) {
+			throw new \F3\FLOW3\Persistence\Exception\InvalidQueryException('Property "' . $propertyName . '" must not be multi-valued', 1276784943);
+		}
+		if (!($operand instanceof \DateTime) && !\F3\FLOW3\Utility\TypeHandling::isLiteral(gettype($operand))) {
+			throw new \F3\FLOW3\Persistence\Exception\InvalidQueryException('Operand must be a literal or DateTime, was ' . gettype($operand), 1276784944);
+		}
+
 		return $this->qomFactory->comparison(
 			$this->qomFactory->propertyValue($propertyName, '_entity'),
 			\F3\FLOW3\Persistence\QueryInterface::OPERATOR_LESS_THAN_OR_EQUAL_TO,
@@ -483,10 +564,18 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 * @param string $propertyName The name of the property to compare against
 	 * @param mixed $operand The value to compare with
 	 * @return \F3\FLOW3\Persistence\QOM\Comparison
+	 * @throws \F3\FLOW3\Persistence\Exception\InvalidQueryException if used on a multi-valued property or with a non-literal/non-DateTime operand
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function greaterThan($propertyName, $operand) {
+		if ($this->classSchema->isMultiValuedProperty($propertyName)) {
+			throw new \F3\FLOW3\Persistence\Exception\InvalidQueryException('Property "' . $propertyName . '" must not be multi-valued', 1276774885);
+		}
+		if (!($operand instanceof \DateTime) && !\F3\FLOW3\Utility\TypeHandling::isLiteral(gettype($operand))) {
+			throw new \F3\FLOW3\Persistence\Exception\InvalidQueryException('Operand must be a literal or DateTime, was ' . gettype($operand), 1276774886);
+		}
+
 		return $this->qomFactory->comparison(
 			$this->qomFactory->propertyValue($propertyName, '_entity'),
 			\F3\FLOW3\Persistence\QueryInterface::OPERATOR_GREATER_THAN,
@@ -500,10 +589,18 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 * @param string $propertyName The name of the property to compare against
 	 * @param mixed $operand The value to compare with
 	 * @return \F3\FLOW3\Persistence\QOM\Comparison
+	 * @throws \F3\FLOW3\Persistence\Exception\InvalidQueryException if used on a multi-valued property or with a non-literal/non-DateTime operand
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function greaterThanOrEqual($propertyName, $operand) {
+		if ($this->classSchema->isMultiValuedProperty($propertyName)) {
+			throw new \F3\FLOW3\Persistence\Exception\InvalidQueryException('Property "' . $propertyName . '" must not be multi-valued', 1276774883);
+		}
+		if (!($operand instanceof \DateTime) && !\F3\FLOW3\Utility\TypeHandling::isLiteral(gettype($operand))) {
+			throw new \F3\FLOW3\Persistence\Exception\InvalidQueryException('Operand must be a literal or DateTime, was ' . gettype($operand), 1276774884);
+		}
+
 		return $this->qomFactory->comparison(
 			$this->qomFactory->propertyValue($propertyName, '_entity'),
 			\F3\FLOW3\Persistence\QueryInterface::OPERATOR_GREATER_THAN_OR_EQUAL_TO,

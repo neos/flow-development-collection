@@ -147,6 +147,7 @@ class ClassSchema {
 	 * Returns the given property defined in this schema. Check with
 	 * hasProperty($propertyName) before!
 	 *
+	 * @param string $propertyName
 	 * @return array
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
@@ -162,6 +163,18 @@ class ClassSchema {
 	 */
 	public function getProperties() {
 		return $this->properties;
+	}
+
+	/**
+	 * Checks if the given property defined in this schema is multi-valued (i.e.
+	 * array or SplObjectStorage).
+	 *
+	 * @param string $propertyName
+	 * @return boolean
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function isMultiValuedProperty($propertyName) {
+		return ($this->properties[$propertyName]['type'] === 'array' || $this->properties[$propertyName]['type'] === 'SplObjectStorage');
 	}
 
 	/**

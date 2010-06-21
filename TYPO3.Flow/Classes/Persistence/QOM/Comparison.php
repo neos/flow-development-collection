@@ -95,7 +95,7 @@ class Comparison extends \F3\FLOW3\Persistence\QOM\Constraint {
 	 * @param mixed $operand2
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(\F3\FLOW3\Persistence\QOM\DynamicOperand $operand1, $operator, $operand2) {
+	public function __construct(\F3\FLOW3\Persistence\QOM\DynamicOperand $operand1, $operator, $operand2 = NULL) {
 		$this->operand1 = $operand1;
 		$this->operator = $operator;
 		$this->operand2 = $operand2;

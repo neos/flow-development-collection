@@ -81,7 +81,7 @@ interface QueryInterface {
 	const OPERATOR_LIKE = 7;
 
 	/**
-	 * The 'contains' comparison operator.
+	 * The 'contains' comparison operator for collections.
 	 * @api
 	*/
 	const OPERATOR_CONTAINS = 8;
@@ -91,6 +91,18 @@ interface QueryInterface {
 	 * @api
 	*/
 	const OPERATOR_IN = 9;
+
+	/**
+	 * The 'is NULL' comparison operator.
+	 * @api
+	*/
+	const OPERATOR_IS_NULL = 10;
+
+	/**
+	 * The 'is empty' comparison operator for collections.
+	 * @api
+	*/
+	const OPERATOR_IS_EMPTY = 11;
 
 	/**
 	 * Constants representing the direction when ordering result sets.
@@ -189,36 +201,59 @@ interface QueryInterface {
 	public function logicalNot($constraint);
 
 	/**
-	 * Returns an equals criterion used for matching objects against a query
+	 * Returns an equals criterion used for matching objects against a query.
+	 *
+	 * It matches if the $operand equals the value of the property named
+	 * $propertyName. If $operand is NULL a strict check for NULL is done. For
+	 * strings the comparison can be done with or without case-sensitivity.
 	 *
 	 * @param string $propertyName The name of the property to compare against
 	 * @param mixed $operand The value to compare with
-	 * @param boolean $caseSensitive Whether the equality test should be done case-sensitive
+	 * @param boolean $caseSensitive Whether the equality test should be done case-sensitive for strings
 	 * @return object
+	 * @todo Decide what to do about equality on multi-valued properties
 	 * @api
 	 */
 	public function equals($propertyName, $operand, $caseSensitive = TRUE);
 
 	/**
-	 * Returns a like criterion used for matching objects against a query
+	 * Returns a like criterion used for matching objects against a query.
+	 * Matches if the property named $propertyName is like the $operand, using
+	 * standard SQL wildcards.
 	 *
 	 * @param string $propertyName The name of the property to compare against
-	 * @param mixed $operand The value to compare with
+	 * @param string $operand The value to compare with
+	 * @param boolean $caseSensitive Whether the matching should be done case-sensitive
 	 * @return object
+	 * @throws \F3\FLOW3\Persistence\Exception\InvalidQueryException if used on a non-string property
 	 * @api
 	 */
-	public function like($propertyName, $operand);
+	public function like($propertyName, $operand, $caseSensitive = TRUE);
 
 	/**
 	 * Returns a "contains" criterion used for matching objects against a query.
 	 * It matches if the multivalued property contains the given operand.
 	 *
-	 * @param string $propertyName The name of the (multivalued) property to compare against
+	 * If NULL is given as $operand, there will never be a match!
+	 *
+	 * @param string $propertyName The name of the multivalued property to compare against
 	 * @param mixed $operand The value to compare with
 	 * @return object
+	 * @throws \F3\FLOW3\Persistence\Exception\InvalidQueryException if used on a single-valued property
 	 * @api
 	 */
 	public function contains($propertyName, $operand);
+
+	/**
+	 * Returns an "isEmpty" criterion used for matching objects against a query.
+	 * It matches if the multivalued property contains no values.
+	 *
+	 * @param string $propertyName The name of the multivalued property to compare against
+	 * @return boolean
+	 * @throws \F3\FLOW3\Persistence\Exception\InvalidQueryException if used on a single-valued property
+	 * @api
+	 */
+	public function isEmpty($propertyName);
 
 	/**
 	 * Returns an "in" criterion used for matching objects against a query. It
@@ -227,6 +262,7 @@ interface QueryInterface {
 	 * @param string $propertyName The name of the property to compare against
 	 * @param mixed $operand The value to compare with, multivalued
 	 * @return object
+	 * @throws \F3\FLOW3\Persistence\Exception\InvalidQueryException if used on a multi-valued property
 	 * @api
 	 */
 	public function in($propertyName, $operand);
@@ -237,6 +273,7 @@ interface QueryInterface {
 	 * @param string $propertyName The name of the property to compare against
 	 * @param mixed $operand The value to compare with
 	 * @return object
+	 * @throws \F3\FLOW3\Persistence\Exception\InvalidQueryException if used on a multi-valued property or with a non-literal/non-DateTime operand
 	 * @api
 	 */
 	public function lessThan($propertyName, $operand);
@@ -247,6 +284,7 @@ interface QueryInterface {
 	 * @param string $propertyName The name of the property to compare against
 	 * @param mixed $operand The value to compare with
 	 * @return object
+	 * @throws \F3\FLOW3\Persistence\Exception\InvalidQueryException if used on a multi-valued property or with a non-literal/non-DateTime operand
 	 * @api
 	 */
 	public function lessThanOrEqual($propertyName, $operand);
@@ -257,6 +295,7 @@ interface QueryInterface {
 	 * @param string $propertyName The name of the property to compare against
 	 * @param mixed $operand The value to compare with
 	 * @return object
+	 * @throws \F3\FLOW3\Persistence\Exception\InvalidQueryException if used on a multi-valued property or with a non-literal/non-DateTime operand
 	 * @api
 	 */
 	public function greaterThan($propertyName, $operand);
@@ -267,6 +306,7 @@ interface QueryInterface {
 	 * @param string $propertyName The name of the property to compare against
 	 * @param mixed $operand The value to compare with
 	 * @return object
+	 * @throws \F3\FLOW3\Persistence\Exception\InvalidQueryException if used on a multi-valued property or with a non-literal/non-DateTime operand
 	 * @api
 	 */
 	public function greaterThanOrEqual($propertyName, $operand);

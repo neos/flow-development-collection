@@ -173,7 +173,7 @@ class DataMapper {
 			$propertyValue = NULL;
 			if (isset($propertyValues[$propertyName])) {
 				if ($propertyValues[$propertyName]['value'] !== NULL) {
-					switch ($propertyData['type']) {
+					switch ($propertyValues[$propertyName]['type']) {
 						case 'integer':
 							$propertyValue = (int) $propertyValues[$propertyName]['value'];
 						break;
@@ -200,7 +200,10 @@ class DataMapper {
 						break;
 					}
 				} else {
-					switch ($propertyData['type']) {
+					switch ($propertyValues[$propertyName]['type']) {
+						case 'NULL':
+							continue;
+						break;
 						case 'array':
 							$propertyValue = $this->mapArray(NULL);
 						break;
@@ -210,9 +213,7 @@ class DataMapper {
 					}
 				}
 
-				if ($propertyValue !== NULL) {
-					$object->FLOW3_AOP_Proxy_setProperty($propertyName, $propertyValue);
-				}
+				$object->FLOW3_AOP_Proxy_setProperty($propertyName, $propertyValue);
 			}
 		}
 
@@ -289,16 +290,18 @@ class DataMapper {
 	/**
 	 * Maps an SplObjectStorage proxy record back to an SplObjectStorage
 	 *
-	 * @param array $arrayValues
+	 * @param array $objectStorageValues
 	 * @param boolean $createLazySplObjectStorage
 	 * @return \SplObjectStorage
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo restore information attached to objects?
 	 */
-	protected function mapSplObjectStorage(array $arrayValues = NULL, $createLazySplObjectStorage = FALSE) {
+	protected function mapSplObjectStorage(array $objectStorageValues = NULL, $createLazySplObjectStorage = FALSE) {
+		if ($objectStorageValues === NULL) return new \SplObjectStorage();
+
 		if ($createLazySplObjectStorage) {
 			$objectIdentifiers = array();
-			foreach ($arrayValues as $arrayValue) {
+			foreach ($objectStorageValues as $arrayValue) {
 				if ($arrayValue['value'] !== NULL) {
 					$objectIdentifiers[] = $arrayValue['value']['identifier'];
 				}
@@ -306,9 +309,8 @@ class DataMapper {
 			return $this->objectManager->get('F3\FLOW3\Persistence\LazySplObjectStorage', $objectIdentifiers);
 		} else {
 			$objectStorage = new \SplObjectStorage();
-			if ($arrayValues === NULL) return $objectStorage;
 
-			foreach ($arrayValues as $arrayValue) {
+			foreach ($objectStorageValues as $arrayValue) {
 				if ($arrayValue['value'] !== NULL) {
 					$objectStorage->attach($this->mapToObject($arrayValue['value']));
 				}
