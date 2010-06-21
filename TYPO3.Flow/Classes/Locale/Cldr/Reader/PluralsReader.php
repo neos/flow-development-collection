@@ -48,9 +48,9 @@ class PluralsReader {
 	const PATTERN_MATCH_SUBRULE = '/(n|nmod)([0-9]+)?(is|isnot|in|notin|within|notwithin)([0-9]+)(?:\.\.([0-9]+))?(and|or)?/';
 
 	/**
-	 * @var \F3\FLOW3\Locale\CLDR\CLDRRepository
+	 * @var \F3\FLOW3\Locale\Cldr\CldrRepository
 	 */
-	protected $CLDRRepository;
+	protected $cldrRepository;
 
 	/**
 	 * @var \F3\FLOW3\Cache\Frontend\VariableFrontend
@@ -94,16 +94,16 @@ class PluralsReader {
 	protected $rulesetsIndices;
 
 	/**
-	 * @param \F3\FLOW3\Locale\CLDR\CLDRRepository $repository
+	 * @param \F3\FLOW3\Locale\Cldr\CldrRepository $repository
 	 * @return void
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function injectCLDRRepository(\F3\FLOW3\Locale\CLDR\CLDRRepository $repository) {
-		$this->CLDRRepository = $repository;
+	public function injectCldrRepository(\F3\FLOW3\Locale\Cldr\CldrRepository $repository) {
+		$this->cldrRepository = $repository;
 	}
 
 	/**
-	 * Injects the FLOW3_Locale_CDLR_Reader_PluralsReader cache
+	 * Injects the FLOW3_Locale_Cldr_Reader_PluralsReader cache
 	 *
 	 * @param \F3\FLOW3\Cache\Frontend\VariableFrontend $cache
 	 * @return void
@@ -210,7 +210,7 @@ class PluralsReader {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	protected function generateRulesets() {
-		$model = $this->CLDRRepository->getModel('supplemental/plurals');
+		$model = $this->cldrRepository->getModel('supplemental/plurals');
 		$pluralRulesSet = $model->getRawArray('plurals/pluralRules');
 
 		$index = 0;

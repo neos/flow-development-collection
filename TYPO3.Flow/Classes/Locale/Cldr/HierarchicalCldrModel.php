@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Locale\CLDR;
+namespace F3\FLOW3\Locale\Cldr;
 
 /* *
  * This script belongs to the FLOW3 framework.                            *
@@ -38,12 +38,12 @@ namespace F3\FLOW3\Locale\CLDR;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
-class HierarchicalCLDRModel implements \F3\FLOW3\Locale\CLDR\CLDRModelInterface {
+class HierarchicalCldrModel implements \F3\FLOW3\Locale\Cldr\CldrModelInterface {
 
 	/**
 	 * A collection of models in hierarchy.
 	 *
-	 * @var array<\F3\FLOW3\Locale\CLDR\CLDRModelInterface>
+	 * @var array<\F3\FLOW3\Locale\Cldr\CldrModelInterface>
 	 */
 	protected $models;
 
@@ -54,7 +54,7 @@ class HierarchicalCLDRModel implements \F3\FLOW3\Locale\CLDR\CLDRModelInterface 
 	 * with hierarchy in mind - the higher index in array, the more general
 	 * file is (i.e. root should be on last index).
 	 *
-	 * @param array<\F3\FLOW3\CLDR\CLDRModel> $models An array of \F3\FLOW3\CLDR\CLDRModel instances
+	 * @param array<\F3\FLOW3\Cldr\CldrModel> $models An array of \F3\FLOW3\Cldr\CldrModel instances
 	 * @return void
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */

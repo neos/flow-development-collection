@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Locale\CLDR;
+namespace F3\FLOW3\Locale\Cldr;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,12 +23,12 @@ namespace F3\FLOW3\Locale\CLDR;
  *                                                                        */
 
 /**
- * Testcase for the HierarchicalCLDRModel
+ * Testcase for the HierarchicalCldrModel
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class HierarchicalCLDRModelTest extends \F3\Testing\BaseTestCase {
+class HierarchicalCldrModelTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
@@ -51,18 +51,18 @@ class HierarchicalCLDRModelTest extends \F3\Testing\BaseTestCase {
 			),
 		);
 
-		$mockCLDRModelParent = $this->getMock('F3\FLOW3\Locale\CLDR\CLDRModel');
-		$mockCLDRModelParent->expects($this->at(0))->method('getRawArray')->with('foo')->will($this->returnValue($mockDataOfParent));
-		$mockCLDRModelParent->expects($this->at(1))->method('getRawArray')->with('bar')->will($this->returnValue($mockDataOfParent));
-		$mockCLDRModelParent->expects($this->at(2))->method('getRawArray')->with('baz')->will($this->returnValue(FALSE));
+		$mockCldrModelParent = $this->getMock('F3\FLOW3\Locale\Cldr\CldrModel');
+		$mockCldrModelParent->expects($this->at(0))->method('getRawArray')->with('foo')->will($this->returnValue($mockDataOfParent));
+		$mockCldrModelParent->expects($this->at(1))->method('getRawArray')->with('bar')->will($this->returnValue($mockDataOfParent));
+		$mockCldrModelParent->expects($this->at(2))->method('getRawArray')->with('baz')->will($this->returnValue(FALSE));
 
-		$mockCLDRModelChild = $this->getMock('F3\FLOW3\Locale\CLDR\CLDRModel');
-		$mockCLDRModelChild->expects($this->at(0))->method('getRawArray')->with('foo')->will($this->returnValue($mockDataOfChild));
-		$mockCLDRModelChild->expects($this->at(1))->method('getRawArray')->with('bar')->will($this->returnValue(FALSE));
-		$mockCLDRModelChild->expects($this->at(2))->method('getRawArray')->with('baz')->will($this->returnValue(FALSE));
+		$mockCldrModelChild = $this->getMock('F3\FLOW3\Locale\Cldr\CldrModel');
+		$mockCldrModelChild->expects($this->at(0))->method('getRawArray')->with('foo')->will($this->returnValue($mockDataOfChild));
+		$mockCldrModelChild->expects($this->at(1))->method('getRawArray')->with('bar')->will($this->returnValue(FALSE));
+		$mockCldrModelChild->expects($this->at(2))->method('getRawArray')->with('baz')->will($this->returnValue(FALSE));
 
-		$model = new \F3\FLOW3\Locale\CLDR\HierarchicalCLDRModel();
-		$model->initializeObject(array($mockCLDRModelParent, $mockCLDRModelChild));
+		$model = new \F3\FLOW3\Locale\Cldr\HierarchicalCldrModel();
+		$model->initializeObject(array($mockCldrModelParent, $mockCldrModelChild));
 
 		$result = $model->getRawArray('foo');
 		$this->assertEquals('value4', $result['key1']);
@@ -92,18 +92,18 @@ class HierarchicalCLDRModelTest extends \F3\Testing\BaseTestCase {
 			'key2' => 'value4',
 		);
 
-		$mockCLDRModelParent = $this->getMock('F3\FLOW3\Locale\CLDR\CLDRModel');
-		$mockCLDRModelParent->expects($this->at(0))->method('getRawArray')->with('foo')->will($this->returnValue($mockDataOfParent));
-		$mockCLDRModelParent->expects($this->at(1))->method('getRawArray')->with('bar')->will($this->returnValue($mockDataOfParent));
-		$mockCLDRModelParent->expects($this->at(2))->method('getRawArray')->with('baz')->will($this->returnValue(FALSE));
+		$mockCldrModelParent = $this->getMock('F3\FLOW3\Locale\Cldr\CldrModel');
+		$mockCldrModelParent->expects($this->at(0))->method('getRawArray')->with('foo')->will($this->returnValue($mockDataOfParent));
+		$mockCldrModelParent->expects($this->at(1))->method('getRawArray')->with('bar')->will($this->returnValue($mockDataOfParent));
+		$mockCldrModelParent->expects($this->at(2))->method('getRawArray')->with('baz')->will($this->returnValue(FALSE));
 
-		$mockCLDRModelChild = $this->getMock('F3\FLOW3\Locale\CLDR\CLDRModel');
-		$mockCLDRModelChild->expects($this->at(0))->method('getRawArray')->with('foo')->will($this->returnValue($mockDataOfChild));
-		$mockCLDRModelChild->expects($this->at(1))->method('getRawArray')->with('bar')->will($this->returnValue(FALSE));
-		$mockCLDRModelChild->expects($this->at(2))->method('getRawArray')->with('baz')->will($this->returnValue(FALSE));
+		$mockCldrModelChild = $this->getMock('F3\FLOW3\Locale\Cldr\CldrModel');
+		$mockCldrModelChild->expects($this->at(0))->method('getRawArray')->with('foo')->will($this->returnValue($mockDataOfChild));
+		$mockCldrModelChild->expects($this->at(1))->method('getRawArray')->with('bar')->will($this->returnValue(FALSE));
+		$mockCldrModelChild->expects($this->at(2))->method('getRawArray')->with('baz')->will($this->returnValue(FALSE));
 
-		$model = new \F3\FLOW3\Locale\CLDR\HierarchicalCLDRModel();
-		$model->initializeObject(array($mockCLDRModelParent, $mockCLDRModelChild));
+		$model = new \F3\FLOW3\Locale\Cldr\HierarchicalCldrModel();
+		$model->initializeObject(array($mockCldrModelParent, $mockCldrModelChild));
 
 		$result = $model->getOneElement('foo');
 		$this->assertEquals('value3', $result);

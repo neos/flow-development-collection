@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Locale\CLDR;
+namespace F3\FLOW3\Locale\Cldr;
 
 /* *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,17 +23,17 @@ namespace F3\FLOW3\Locale\CLDR;
  *                                                                        */
 
 /**
- * The CLDRRepository class
+ * The CldrRepository class
  *
- * CLDRRepository manages CLDRModel and HierarchicalCLDRModel instances
- * across the framework, so there is only one instance of CLDRModel for
- * every unique CLDR data file, and one instace of HierarchicalCLDRModel
+ * CLDRRepository manages CldrModel and HierarchicalCldrModel instances
+ * across the framework, so there is only one instance of CldrModel for
+ * every unique CLDR data file, and one instace of HierarchicalCldrModel
  * for every unique locale chain.
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class CLDRRepository {
+class CldrRepository {
 
 	/**
 	 * An absolute path to the directory where CLDR resides. It is changed only
@@ -63,7 +63,7 @@ class CLDRRepository {
 	 * Hierarchical models describe a group of models. There can be many models
 	 * for same directoryPaths, as there can be many locale chains.
 	 *
-	 * @var array<\F3\FLOW3\Locale\CLDR\CLDRModelInterface>
+	 * @var array<\F3\FLOW3\Locale\Cldr\CldrModelInterface>
 	 */
 	protected $models;
 
@@ -86,14 +86,14 @@ class CLDRRepository {
 	}
 
 	/**
-	 * Returns a CLDRModel instance representing desired CLDR file.
+	 * Returns a CldrModel instance representing desired CLDR file.
 	 *
 	 * Will return existing instance if a model for given $filename was already
 	 * requested before. Returns FALSE when $filename doesn't point to existing
 	 * file.
 	 *
 	 * @param string $filename Relative path to existing CLDR file
-	 * @return mixed A F3\FLOW3\Locale\CLDR\CLDRModel instance or FALSE on failure
+	 * @return mixed A F3\FLOW3\Locale\Cldr\CldrModel instance or FALSE on failure
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function getModel($filename) {
@@ -107,12 +107,12 @@ class CLDRRepository {
 			return FALSE;
 		}
 
-		$this->models[$filename] = $this->objectManager->create('F3\FLOW3\Locale\CLDR\CLDRModel', $filename);
+		$this->models[$filename] = $this->objectManager->create('F3\FLOW3\Locale\Cldr\CldrModel', $filename);
 		return $this->models[$filename];
 	}
 
 	/**
-	 * Returns a HierarchicalCLDRModel instance representing desired CLDR files.
+	 * Returns a HierarchicalCldrModel instance representing desired CLDR files.
 	 *
 	 * This method finds a group of CLDR files within $directoryPath dir,
 	 * taking into account provided (or default) Locale. Returned model
@@ -124,7 +124,7 @@ class CLDRRepository {
 	 * Returns FALSE when $directoryPath doesn't point to existing directory.
 	 *
 	 * @param string $directoryPath Relative path to existing CLDR directory which contains one file per locale (see 'main' directory in CLDR for example)
-	 * @return mixed A F3\FLOW3\Locale\CLDR\HierarchicalCLDRModel instance or FALSE on failure
+	 * @return mixed A F3\FLOW3\Locale\Cldr\HierarchicalCldrModel instance or FALSE on failure
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function getHierarchicalModel($directoryPath, \F3\FLOW3\Locale\Locale $locale = NULL) {
@@ -143,13 +143,13 @@ class CLDRRepository {
 		}
 
 		$modelsInHierarchy = array();
-		$modelsInHierarchy[] = $this->objectManager->create('F3\FLOW3\Locale\CLDR\CLDRModel', \F3\FLOW3\Utility\Files::concatenatePaths(array($directoryPath, (string)$locale . '.xml')));
+		$modelsInHierarchy[] = $this->objectManager->create('F3\FLOW3\Locale\Cldr\CldrModel', \F3\FLOW3\Utility\Files::concatenatePaths(array($directoryPath, (string)$locale . '.xml')));
 		while (($parentLocale = $this->localizationService->getParentLocaleOf($locale)) !== NULL) {
-			$modelsInHierarchy[] = $this->objectManager->create('F3\FLOW3\Locale\CLDR\CLDRModel', \F3\FLOW3\Utility\Files::concatenatePaths(array($directoryPath, (string)$parentLocale . '.xml')));
+			$modelsInHierarchy[] = $this->objectManager->create('F3\FLOW3\Locale\Cldr\CldrModel', \F3\FLOW3\Utility\Files::concatenatePaths(array($directoryPath, (string)$parentLocale . '.xml')));
 		}
-		$modelsInHierarchy[] = $this->objectManager->create('F3\FLOW3\Locale\CLDR\CLDRModel', \F3\FLOW3\Utility\Files::concatenatePaths(array($directoryPath, 'root.xml')));
+		$modelsInHierarchy[] = $this->objectManager->create('F3\FLOW3\Locale\Cldr\CldrModel', \F3\FLOW3\Utility\Files::concatenatePaths(array($directoryPath, 'root.xml')));
 
-		$this->models[$directoryPath][(string)$locale] = $this->objectManager->create('F3\FLOW3\Locale\CLDR\HierarchicalCLDRModel', $modelsInHierarchy);
+		$this->models[$directoryPath][(string)$locale] = $this->objectManager->create('F3\FLOW3\Locale\Cldr\HierarchicalCldrModel', $modelsInHierarchy);
 		return $this->models[$directoryPath][(string)$locale];
 	}
 }

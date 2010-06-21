@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Locale\CLDR;
+namespace F3\FLOW3\Locale\Cldr;
 
 /* *
  * This script belongs to the FLOW3 framework.                            *
@@ -29,7 +29,7 @@ namespace F3\FLOW3\Locale\CLDR;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
-class CLDRModel implements \F3\FLOW3\Locale\CLDR\CLDRModelInterface {
+class CldrModel implements \F3\FLOW3\Locale\Cldr\CldrModelInterface {
 
 	/**
 	 * @var \F3\FLOW3\Cache\Frontend\VariableFrontend
@@ -48,7 +48,7 @@ class CLDRModel implements \F3\FLOW3\Locale\CLDR\CLDRModelInterface {
 	 *
 	 * @var \SimpleXMLElement
 	 */
-	protected $rootXMLNode = NULL;
+	protected $rootXmlNode = NULL;
 
 	/**
 	 * Stores any data from cache or data that was read during this request.
@@ -110,7 +110,7 @@ class CLDRModel implements \F3\FLOW3\Locale\CLDR\CLDRModelInterface {
 	protected $data;
 
 	/**
-	 * Injects the FLOW3_Locale_CDLR_CLDRModel cache
+	 * Injects the FLOW3_Locale_Cldr_CldrModel cache
 	 *
 	 * @param \F3\FLOW3\Cache\Frontend\VariableFrontend $cache
 	 * @return void
@@ -136,7 +136,7 @@ class CLDRModel implements \F3\FLOW3\Locale\CLDR\CLDRModelInterface {
 		if ($this->cache->has($filename)) {
 			$this->data = $this->cache->get($filename);
 		} else {
-			$this->data = $this->parseXMLFile();
+			$this->data = $this->parseXmlFile();
 			$this->data = $this->resolveAliases($this->data, '');
 		}
 	}
@@ -249,16 +249,16 @@ class CLDRModel implements \F3\FLOW3\Locale\CLDR\CLDRModelInterface {
 	 *
 	 * @return array Parsed XML file
 	 * @author Karol Gusak <firstname@lastname.eu>
-	 * @throws \F3\FLOW3\Locale\Exception\InvalidCLDRDataException When SimpleXML couldn't load XML file
+	 * @throws \F3\FLOW3\Locale\Exception\InvalidCldrDataException When SimpleXML couldn't load XML file
 	 */
-	protected function parseXMLFile() {
-		$this->rootXMLNode = simplexml_load_file($this->sourceFilename);
+	protected function parseXmlFile() {
+		$this->rootXmlNode = simplexml_load_file($this->sourceFilename);
 
-		if ($this->rootXMLNode === FALSE) {
-			throw new \F3\FLOW3\Locale\Exception\InvalidCLDRDataException('The path provided does not point to existing or accessible file. Please check if CLDR data is available.', 1275143455);
+		if ($this->rootXmlNode === FALSE) {
+			throw new \F3\FLOW3\Locale\Exception\InvalidCldrDataException('The path provided does not point to existing or accessible file. Please check if CLDR data is available.', 1275143455);
 		}
 
-		return $this->parseNode($this->rootXMLNode);
+		return $this->parseNode($this->rootXmlNode);
 	}
 
 	/**
@@ -322,7 +322,7 @@ class CLDRModel implements \F3\FLOW3\Locale\CLDR\CLDRModelInterface {
 	 * @param string $currentPath Path to currently analyzed part of data
 	 * @return array Modified (or unchanged) $data
 	 * @author Karol Gusak <firstname@lastname.eu>
-	 * @throws \F3\FLOW3\Locale\Exception\InvalidCLDRDataException When found alias tag which has unexpected structure
+	 * @throws \F3\FLOW3\Locale\Exception\InvalidCldrDataException When found alias tag which has unexpected structure
 	 */
 	protected function resolveAliases($data, $currentPath) {
 		if (!is_array($data)) {
@@ -333,7 +333,7 @@ class CLDRModel implements \F3\FLOW3\Locale\CLDR\CLDRModelInterface {
 			if ($nodeName === 'alias') {
 				if(!is_array($nodeChildren)) {
 						// Tag is alias but it has not children, something is very wrong
-					throw new \F3\FLOW3\Locale\Exception\InvalidCLDRDataException('Encountered problem with alias tag. Please check if CLDR data is not corrupted.', 1276421398);
+					throw new \F3\FLOW3\Locale\Exception\InvalidCldrDataException('Encountered problem with alias tag. Please check if CLDR data is not corrupted.', 1276421398);
 				}
 
 				$aliasAttributes = array_keys($nodeChildren);

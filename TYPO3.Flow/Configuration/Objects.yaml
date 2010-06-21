@@ -265,7 +265,7 @@ F3\FLOW3\Locale\Service:
         arguments:
           1:
             value: FLOW3_Locale_Service
-F3\FLOW3\Locale\CLDR\CLDRModel:
+F3\FLOW3\Locale\Cldr\CldrModel:
   properties:
     cache:
       object:
@@ -273,8 +273,8 @@ F3\FLOW3\Locale\CLDR\CLDRModel:
         factoryMethodName: getCache
         arguments:
           1:
-            value: FLOW3_Locale_CDLR_CLDRModel
-F3\FLOW3\Locale\CLDR\Reader\DatesReader:
+            value: FLOW3_Locale_Cldr_CldrModel
+F3\FLOW3\Locale\Cldr\Reader\DatesReader:
   properties:
     cache:
       object:
@@ -282,8 +282,8 @@ F3\FLOW3\Locale\CLDR\Reader\DatesReader:
         factoryMethodName: getCache
         arguments:
           1:
-            value: FLOW3_Locale_CDLR_Reader_DatesReader
-F3\FLOW3\Locale\CLDR\Reader\NumbersReader:
+            value: FLOW3_Locale_Cldr_Reader_DatesReader
+F3\FLOW3\Locale\Cldr\Reader\NumbersReader:
   properties:
     cache:
       object:
@@ -291,8 +291,8 @@ F3\FLOW3\Locale\CLDR\Reader\NumbersReader:
         factoryMethodName: getCache
         arguments:
           1:
-            value: FLOW3_Locale_CDLR_Reader_NumbersReader
-F3\FLOW3\Locale\CLDR\Reader\PluralsReader:
+            value: FLOW3_Locale_Cldr_Reader_NumbersReader
+F3\FLOW3\Locale\Cldr\Reader\PluralsReader:
   properties:
     cache:
       object:
@@ -300,7 +300,7 @@ F3\FLOW3\Locale\CLDR\Reader\PluralsReader:
         factoryMethodName: getCache
         arguments:
           1:
-            value: FLOW3_Locale_CDLR_Reader_PluralsReader
+            value: FLOW3_Locale_Cldr_Reader_PluralsReader
 
 #                                                                          #
 # Log                                                                      #

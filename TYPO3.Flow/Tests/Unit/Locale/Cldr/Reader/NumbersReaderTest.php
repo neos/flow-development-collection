@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Locale\CLDR\Reader;
+namespace F3\FLOW3\Locale\Cldr\Reader;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -106,7 +106,7 @@ class NumbersReaderTest extends \F3\Testing\BaseTestCase {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function formatStringsAreParsedCorrectly($format, $expectedResult) {
-		$reader = $this->getAccessibleMock('F3\FLOW3\Locale\CLDR\Reader\NumbersReader', array('dummy'));
+		$reader = $this->getAccessibleMock('F3\FLOW3\Locale\Cldr\Reader\NumbersReader', array('dummy'));
 
 		$result = $reader->_call('parseFormat', $format);
 		$this->assertEquals($expectedResult, $result);
@@ -136,7 +136,7 @@ class NumbersReaderTest extends \F3\Testing\BaseTestCase {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function parsedFormatsAreUsedCorrectly($number, $expectedResult, $parsedFormat) {
-		$reader = $this->getAccessibleMock('F3\FLOW3\Locale\CLDR\Reader\NumbersReader', array('dummy'));
+		$reader = $this->getAccessibleMock('F3\FLOW3\Locale\Cldr\Reader\NumbersReader', array('dummy'));
 		$result = $reader->_call('doFormattingWithParsedFormat', $number, $parsedFormat, $this->mockLocalizedSymbols);
 		$this->assertEquals($expectedResult, $result);
 	}
@@ -161,10 +161,10 @@ class NumbersReaderTest extends \F3\Testing\BaseTestCase {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function formatNumberWithCustomPatternWorks($number, $format, $expectedResult) {
-		$mockModel = $this->getMock('F3\FLOW3\Locale\CLDR\HierarchicalCLDRModel');
+		$mockModel = $this->getMock('F3\FLOW3\Locale\Cldr\HierarchicalCldrModel');
 		$mockModel->expects($this->once())->method('getRawArray')->with('numbers/symbols')->will($this->returnValue($this->mockLocalizedSymbols));
 
-		$mockRepository = $this->getMock('F3\FLOW3\Locale\CLDR\CLDRRepository');
+		$mockRepository = $this->getMock('F3\FLOW3\Locale\Cldr\CldrRepository');
 		$mockRepository->expects($this->once())->method('getHierarchicalModel')->with('main', $this->dummyLocale)->will($this->returnValue($mockModel));
 
 		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
@@ -178,8 +178,8 @@ class NumbersReaderTest extends \F3\Testing\BaseTestCase {
 		$mockCache->expects($this->at(7))->method('set')->with('parsedFormatsIndices');
 		$mockCache->expects($this->at(8))->method('set')->with('localizedSymbols');
 
-		$reader = $this->getAccessibleMock('F3\FLOW3\Locale\CLDR\Reader\NumbersReader', array('dummy'));
-		$reader->injectCLDRRepository($mockRepository);
+		$reader = $this->getAccessibleMock('F3\FLOW3\Locale\Cldr\Reader\NumbersReader', array('dummy'));
+		$reader->injectCldrRepository($mockRepository);
 		$reader->injectCache($mockCache);
 		$reader->initializeObject();
 
@@ -213,10 +213,10 @@ class NumbersReaderTest extends \F3\Testing\BaseTestCase {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function specificFormattingMethodsWork($unformattedNumber, $formatString, $expectedResult, $formattingType, $currencySign = NULL) {
-		$mockModel = $this->getMock('F3\FLOW3\Locale\CLDR\HierarchicalCLDRModel');
+		$mockModel = $this->getMock('F3\FLOW3\Locale\Cldr\HierarchicalCldrModel');
 		$mockModel->expects($this->once())->method('getOneElement')->with('numbers/' . $formattingType . 'Formats/' . $formattingType . 'FormatLength/' . $formattingType . 'Format/pattern')->will($this->returnValue($formatString));
 
-		$mockRepository = $this->getMock('F3\FLOW3\Locale\CLDR\CLDRRepository');
+		$mockRepository = $this->getMock('F3\FLOW3\Locale\Cldr\CldrRepository');
 		$mockRepository->expects($this->once())->method('getHierarchicalModel')->with('main', $this->dummyLocale)->will($this->returnValue($mockModel));
 
 		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
@@ -227,9 +227,9 @@ class NumbersReaderTest extends \F3\Testing\BaseTestCase {
 		$mockCache->expects($this->at(4))->method('set')->with('parsedFormatsIndices');
 		$mockCache->expects($this->at(5))->method('set')->with('localizedSymbols');
 
-		$reader = $this->getAccessibleMock('F3\FLOW3\Locale\CLDR\Reader\NumbersReader', array('getLocalizedSymbolsForLocale'));
+		$reader = $this->getAccessibleMock('F3\FLOW3\Locale\Cldr\Reader\NumbersReader', array('getLocalizedSymbolsForLocale'));
 		$reader->expects($this->once())->method('getLocalizedSymbolsForLocale')->will($this->returnValue($this->mockLocalizedSymbols));
-		$reader->injectCLDRRepository($mockRepository);
+		$reader->injectCldrRepository($mockRepository);
 		$reader->injectCache($mockCache);
 		$reader->initializeObject();
 
@@ -266,7 +266,7 @@ class NumbersReaderTest extends \F3\Testing\BaseTestCase {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function unsupportedFormatsAreNotParsed($format) {
-		$reader = $this->getAccessibleMock('F3\FLOW3\Locale\CLDR\Reader\NumbersReader', array('dummy'));
+		$reader = $this->getAccessibleMock('F3\FLOW3\Locale\Cldr\Reader\NumbersReader', array('dummy'));
 
 		$result = $reader->_call('parseFormat', $format);
 		$this->assertEquals(FALSE, $result);

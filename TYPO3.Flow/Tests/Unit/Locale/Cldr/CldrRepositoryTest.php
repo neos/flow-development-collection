@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Locale\CLDR;
+namespace F3\FLOW3\Locale\Cldr;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -25,15 +25,15 @@ namespace F3\FLOW3\Locale\CLDR;
 require_once('vfs/vfsStream.php');
 
 /**
- * Testcase for the CLDRRepository
+ * Testcase for the CldrRepository
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class CLDRRepositoryTest extends \F3\Testing\BaseTestCase {
+class CldrRepositoryTest extends \F3\Testing\BaseTestCase {
 
 	/**
-	 * @var \F3\FLOW3\Locale\CLDR\CLDRRepository
+	 * @var \F3\FLOW3\Locale\Cldr\CldrRepository
 	 */
 	protected $repository;
 
@@ -45,7 +45,7 @@ class CLDRRepositoryTest extends \F3\Testing\BaseTestCase {
 		\vfsStreamWrapper::register();
 		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('Foo'));
 
-		$this->repository = $this->getAccessibleMock('F3\FLOW3\Locale\CLDR\CLDRRepository', array('dummy'));
+		$this->repository = $this->getAccessibleMock('F3\FLOW3\Locale\Cldr\CldrRepository', array('dummy'));
 		$this->repository->_set('cldrBasePath', 'vfs://Foo/');
 	}
 
@@ -57,7 +57,7 @@ class CLDRRepositoryTest extends \F3\Testing\BaseTestCase {
 		file_put_contents('vfs://Foo/Bar.xml', '');
 
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->once())->method('create')->with('F3\FLOW3\Locale\CLDR\CLDRModel')->will($this->returnValue('ModelWouldBeHere'));
+		$mockObjectManager->expects($this->once())->method('create')->with('F3\FLOW3\Locale\Cldr\CldrModel')->will($this->returnValue('ModelWouldBeHere'));
 		$this->repository->injectObjectManager($mockObjectManager);
 
 		$result = $this->repository->getModel('Bar');
@@ -80,9 +80,9 @@ class CLDRRepositoryTest extends \F3\Testing\BaseTestCase {
 		file_put_contents('vfs://Foo/Folder/en.xml', '');
 
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->at(0))->method('create')->with('F3\FLOW3\Locale\CLDR\CLDRModel', 'vfs://Foo/Folder/en.xml')->will($this->returnValue('en.xml Model'));
-		$mockObjectManager->expects($this->at(1))->method('create')->with('F3\FLOW3\Locale\CLDR\CLDRModel', 'vfs://Foo/Folder/root.xml')->will($this->returnValue('root.xml Model'));
-		$mockObjectManager->expects($this->at(2))->method('create')->with('F3\FLOW3\Locale\CLDR\HierarchicalCLDRModel', array('en.xml Model', 'root.xml Model'))->will($this->returnValue('HierarchicalModelWouldBeHere'));
+		$mockObjectManager->expects($this->at(0))->method('create')->with('F3\FLOW3\Locale\Cldr\CldrModel', 'vfs://Foo/Folder/en.xml')->will($this->returnValue('en.xml Model'));
+		$mockObjectManager->expects($this->at(1))->method('create')->with('F3\FLOW3\Locale\Cldr\CldrModel', 'vfs://Foo/Folder/root.xml')->will($this->returnValue('root.xml Model'));
+		$mockObjectManager->expects($this->at(2))->method('create')->with('F3\FLOW3\Locale\Cldr\HierarchicalCldrModel', array('en.xml Model', 'root.xml Model'))->will($this->returnValue('HierarchicalModelWouldBeHere'));
 
 		$mockLocalizationService = $this->getMock('F3\FLOW3\Locale\Service');
 		$mockLocalizationService->expects($this->once())->method('getParentLocaleOf')->will($this->returnValue(NULL));

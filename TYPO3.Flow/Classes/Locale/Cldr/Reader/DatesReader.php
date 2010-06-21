@@ -85,9 +85,9 @@ class DatesReader {
 	);
 
 	/**
-	 * @var \F3\FLOW3\Locale\CLDR\CLDRRepository
+	 * @var \F3\FLOW3\Locale\Cldr\CldrRepository
 	 */
-	protected $CLDRRepository;
+	protected $cldrRepository;
 
 	/**
 	 * @var \F3\FLOW3\Cache\Frontend\VariableFrontend
@@ -148,16 +148,16 @@ class DatesReader {
 	protected $localizedLiterals;
 
 	/**
-	 * @param \F3\FLOW3\Locale\CLDR\CLDRRepository $repository
+	 * @param \F3\FLOW3\Locale\Cldr\CldrRepository $repository
 	 * @return void
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function injectCLDRRepository(\F3\FLOW3\Locale\CLDR\CLDRRepository $repository) {
-		$this->CLDRRepository = $repository;
+	public function injectCldrRepository(\F3\FLOW3\Locale\Cldr\CldrRepository $repository) {
+		$this->cldrRepository = $repository;
 	}
 
 	/**
-	 * Injects the FLOW3_Locale_CDLR_Reader_DatesReader cache
+	 * Injects the FLOW3_Locale_Cldr_Reader_DatesReader cache
 	 *
 	 * @param \F3\FLOW3\Cache\Frontend\VariableFrontend $cache
 	 * @return void
@@ -269,7 +269,7 @@ class DatesReader {
 		$formattedDate = $this->formatDate($dateTime, $locale, $length);
 		$formattedTime = $this->formatTime($dateTime, $locale, $length);
 
-		$model = $this->CLDRRepository->getHierarchicalModel('main', $locale);
+		$model = $this->cldrRepository->getHierarchicalModel('main', $locale);
 
 		if ($length === 'default') {
 			$defaultChoice = $model->getRawArray('dates/calendars/calendar/type="gregorian"/dateTimeFormats/default');
@@ -518,7 +518,7 @@ class DatesReader {
 			return $this->parsedFormats[$this->parsedFormatsIndices[(string)$locale][$type][$length]];
 		}
 
-		$model = $this->CLDRRepository->getHierarchicalModel('main', $locale);
+		$model = $this->cldrRepository->getHierarchicalModel('main', $locale);
 
 		if ($length === 'default') {
 			$defaultChoice = $model->getRawArray('dates/calendars/calendar/type="gregorian"/' . $type . 'Formats/default');
@@ -552,7 +552,7 @@ class DatesReader {
 			return $this->localizedLiterals[(string)$locale];
 		}
 
-		$model = $this->CLDRRepository->getHierarchicalModel('main', $locale);
+		$model = $this->cldrRepository->getHierarchicalModel('main', $locale);
 
 		$localizedLiterals['months'] = $this->parseLocalizedLiterals($model, 'month');
 		$localizedLiterals['days'] = $this->parseLocalizedLiterals($model, 'day');
@@ -569,12 +569,12 @@ class DatesReader {
 	 * Many children of "dates" node have common structure, so one method can
 	 * be used to parse them all.
 	 *
-	 * @param \F3\FLOW3\Locale\CLDR\CLDRModelInterface $model CLDRModel to read data from
+	 * @param \F3\FLOW3\Locale\Cldr\CldrModelInterface $model CldrModel to read data from
 	 * @param string $literalType One of: month, day, quarter, dayPeriod
 	 * @return array An array with localized literals for given type
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	protected function parseLocalizedLiterals(\F3\FLOW3\Locale\CLDR\CLDRModelInterface $model, $literalType) {
+	protected function parseLocalizedLiterals(\F3\FLOW3\Locale\Cldr\CldrModelInterface $model, $literalType) {
 		$data = array(); $test = $model->getRawArray('dates/calendars/calendar/type="gregorian"/' . $literalType . 's/' . $literalType . 'Context');
 
 		foreach ($test as $contextType => $literalsWidths) {
@@ -597,11 +597,11 @@ class DatesReader {
 	/**
 	 * Parses "eras" child of "dates" node and returns it's array representation.
 	 *
-	 * @param \F3\FLOW3\Locale\CLDR\CLDRModelInterface $model CLDRModel to read data from
+	 * @param \F3\FLOW3\Locale\Cldr\CldrModelInterface $model CldrModel to read data from
 	 * @return array An array with localized literals for "eras" node
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	protected function parseLocalizedEras(\F3\FLOW3\Locale\CLDR\CLDRModelInterface $model) {
+	protected function parseLocalizedEras(\F3\FLOW3\Locale\Cldr\CldrModelInterface $model) {
 		$data = array();
 		foreach ($model->getRawArray('dates/calendars/calendar/type="gregorian"/eras') as $widthType => $eras) {
 			foreach ($eras['era'] as $eraName => $eraValue) {

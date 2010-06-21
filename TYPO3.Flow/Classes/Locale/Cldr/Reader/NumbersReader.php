@@ -59,9 +59,9 @@ class NumbersReader {
 	const PATTERN_MATCH_ROUNDING = '/([0-9]+(?:\.[0-9]+)?)/';
 
 	/**
-	 * @var \F3\FLOW3\Locale\CLDR\CLDRRepository
+	 * @var \F3\FLOW3\Locale\Cldr\CldrRepository
 	 */
-	protected $CLDRRepository;
+	protected $cldrRepository;
 
 	/**
 	 * @var \F3\FLOW3\Cache\Frontend\VariableFrontend
@@ -155,12 +155,12 @@ class NumbersReader {
 	protected $localizedSymbols;
 
 	/**
-	 * @param \F3\FLOW3\Locale\CLDR\CLDRRepository $repository
+	 * @param \F3\FLOW3\Locale\Cldr\CldrRepository $repository
 	 * @return void
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function injectCLDRRepository(\F3\FLOW3\Locale\CLDR\CLDRRepository $repository) {
-		$this->CLDRRepository = $repository;
+	public function injectCldrRepository(\F3\FLOW3\Locale\Cldr\CldrRepository $repository) {
+		$this->cldrRepository = $repository;
 	}
 
 	/**
@@ -506,7 +506,7 @@ class NumbersReader {
 			$formatPath = 'numbers/' . $type . 'Formats/' . $type . 'FormatLength/type="' . $length . '/' . $type . 'Format/pattern';
 		}
 
-		$model = $this->CLDRRepository->getHierarchicalModel('main', $locale);
+		$model = $this->cldrRepository->getHierarchicalModel('main', $locale);
 		$format = $model->getOneElement($formatPath);
 
 		if (empty($format)) {
@@ -537,7 +537,7 @@ class NumbersReader {
 			return $this->localizedSymbols[(string)$locale];
 		}
 
-		$model = $this->CLDRRepository->getHierarchicalModel('main', $locale);
+		$model = $this->cldrRepository->getHierarchicalModel('main', $locale);
 		return $this->localizedSymbols[(string)$locale] = $model->getRawArray('numbers/symbols');
 	}
 }

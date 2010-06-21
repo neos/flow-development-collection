@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Locale\CLDR;
+namespace F3\FLOW3\Locale\Cldr;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,15 +23,15 @@ namespace F3\FLOW3\Locale\CLDR;
  *                                                                        */
 
 /**
- * Testcase for the CLDRModel
+ * Testcase for the CldrModel
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class CLDRModelTest extends \F3\Testing\BaseTestCase {
+class CldrModelTest extends \F3\Testing\BaseTestCase {
 
 	/**
-	 * @var \F3\FLOW3\Locale\CLDR\CLDRModel
+	 * @var \F3\FLOW3\Locale\Cldr\CldrModel
 	 */
 	protected $model;
 
@@ -45,7 +45,7 @@ class CLDRModelTest extends \F3\Testing\BaseTestCase {
 		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
 		$mockCache->expects($this->once())->method('has')->with($mockFilenamePath)->will($this->returnValue(FALSE));
 
-		$this->model = new \F3\FLOW3\Locale\CLDR\CLDRModel();
+		$this->model = new \F3\FLOW3\Locale\Cldr\CldrModel();
 		$this->model->injectCache($mockCache);
 		$this->model->initializeObject($mockFilenamePath);
 	}
