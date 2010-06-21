@@ -169,7 +169,7 @@ class ClassSchemaTest extends \F3\Testing\BaseTestCase {
 
 		$properties = $classSchema->getProperties();
 		$this->assertEquals('array', $properties['a']['type']);
-		$this->assertEquals('\F3\FLOW3\Foo', $properties['a']['elementType']);
+		$this->assertEquals('F3\FLOW3\Foo', $properties['a']['elementType']);
 	}
 
 	/**

@@ -263,7 +263,7 @@ class PropertyMapper {
 				}
 
 				if (isset($targetPropertyType)) {
-					if (in_array($targetPropertyType['type'], array('array', 'ArrayObject', 'SplObjectStorage')) && strpos($targetPropertyType['elementType'], '\\') !== FALSE) {
+					if (in_array($targetPropertyType['type'], array('array', 'ArrayObject', 'SplObjectStorage')) && ($targetPropertyType['elementType'] !== NULL && !\F3\FLOW3\Utility\TypeHandling::isLiteral($targetPropertyType['elementType']))) {
 						$objects = array();
 						foreach ($propertyValue as $value) {
 							$objects[] = $this->transformToObject($value, $targetPropertyType['elementType'], $propertyName);

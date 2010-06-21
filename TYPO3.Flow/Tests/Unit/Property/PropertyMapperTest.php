@@ -427,7 +427,7 @@ class PropertyMapperTest extends \F3\Testing\BaseTestCase {
 		$existingObject = new \stdClass();
 		$this->mockReflectionService->expects($this->once())->method('getClassSchema')->will($this->returnValue($classSchema));
 		$mapper = $this->getMock('F3\FLOW3\Property\PropertyMapper', array('transformToObject'));
-		$mapper->expects($this->once())->method('transformToObject')->with($source['property1'][0], '\stdClass', 'property1')->will($this->returnValue($existingObject));
+		$mapper->expects($this->once())->method('transformToObject')->with($source['property1'][0], 'stdClass', 'property1')->will($this->returnValue($existingObject));
 		$mapper->injectReflectionService($this->mockReflectionService);
 		$mapper->injectObjectManager($this->mockObjectManager);
 
@@ -454,7 +454,7 @@ class PropertyMapperTest extends \F3\Testing\BaseTestCase {
 		$this->mockReflectionService->expects($this->once())->method('getClassSchema')->will($this->returnValue($classSchema));
 		$mapper = new \F3\FLOW3\Property\PropertyMapper();
 		$mapper = $this->getMock('F3\FLOW3\Property\PropertyMapper', array('transformToObject'));
-		$mapper->expects($this->once())->method('transformToObject')->with($source['property1'][0], '\stdClass', 'property1')->will($this->returnValue($existingObject));
+		$mapper->expects($this->once())->method('transformToObject')->with($source['property1'][0], 'stdClass', 'property1')->will($this->returnValue($existingObject));
 		$mapper->injectReflectionService($this->mockReflectionService);
 		$mapper->injectObjectManager($this->mockObjectManager);
 
@@ -481,7 +481,7 @@ class PropertyMapperTest extends \F3\Testing\BaseTestCase {
 		$existingObject = new \stdClass();
 		$this->mockReflectionService->expects($this->once())->method('getClassSchema')->will($this->returnValue($classSchema));
 		$mapper = $this->getMock('F3\FLOW3\Property\PropertyMapper', array('transformToObject'));
-		$mapper->expects($this->once())->method('transformToObject')->with($source['property1'][0], '\stdClass', 'property1')->will($this->returnValue($existingObject));
+		$mapper->expects($this->once())->method('transformToObject')->with($source['property1'][0], 'stdClass', 'property1')->will($this->returnValue($existingObject));
 		$mapper->injectReflectionService($this->mockReflectionService);
 		$mapper->injectObjectManager($this->mockObjectManager);
 
