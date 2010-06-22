@@ -277,7 +277,7 @@ class DatesReader {
 			$length = $model->getValueOfAttribute($defaultChoice[0], 1);
 		}
 
-		$format = $model->getOneElement('dates/calendars/calendar/type="gregorian"/dateTimeFormats/dateTimeFormatLength/type="' . $length . '"/dateTimeFormat/pattern');
+		$format = $model->getElement('dates/calendars/calendar/type="gregorian"/dateTimeFormats/dateTimeFormatLength/type="' . $length . '"/dateTimeFormat/pattern');
 
 		return str_replace(array('{0}', '{1}'), array($formattedTime, $formattedDate), $format);
 	}
@@ -526,7 +526,7 @@ class DatesReader {
 			$length = $model->getAttributeValue($defaultChoice[0]);
 		}
 
-		$format = $model->getOneElement('dates/calendars/calendar/type="gregorian"/' . $type . 'Formats/' . $type . 'FormatLength/type="' . $length . '"/' . $type . 'Format/pattern');
+		$format = $model->getElement('dates/calendars/calendar/type="gregorian"/' . $type . 'Formats/' . $type . 'FormatLength/type="' . $length . '"/' . $type . 'Format/pattern');
 
 		if (empty($format)) {
 			return FALSE;

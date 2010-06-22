@@ -81,14 +81,14 @@ class HierarchicalCldrModelTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function getOneElementWorks() {
+	public function getElementWorks() {
 		$mockDataOfParent = array(
-			'' => 'value1',
+			\F3\FLOW3\Locale\Cldr\CldrModel::NODE_WITHOUT_ATTRIBUTES => 'value1',
 			'key2' => 'value2',
 		);
 
 		$mockDataOfChild = array(
-			'' => 'value3',
+			\F3\FLOW3\Locale\Cldr\CldrModel::NODE_WITHOUT_ATTRIBUTES => 'value3',
 			'key2' => 'value4',
 		);
 
@@ -105,13 +105,13 @@ class HierarchicalCldrModelTest extends \F3\Testing\BaseTestCase {
 		$model = new \F3\FLOW3\Locale\Cldr\HierarchicalCldrModel();
 		$model->initializeObject(array($mockCldrModelParent, $mockCldrModelChild));
 
-		$result = $model->getOneElement('foo');
+		$result = $model->getElement('foo');
 		$this->assertEquals('value3', $result);
 
-		$result = $model->getOneElement('bar');
+		$result = $model->getElement('bar');
 		$this->assertEquals('value1', $result);
 
-		$result = $model->getOneElement('baz');
+		$result = $model->getElement('baz');
 		$this->assertEquals(FALSE, $result);
 	}
 }

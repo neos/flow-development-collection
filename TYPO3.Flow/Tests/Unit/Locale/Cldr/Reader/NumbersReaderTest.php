@@ -214,7 +214,7 @@ class NumbersReaderTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function specificFormattingMethodsWork($unformattedNumber, $formatString, $expectedResult, $formattingType, $currencySign = NULL) {
 		$mockModel = $this->getMock('F3\FLOW3\Locale\Cldr\HierarchicalCldrModel');
-		$mockModel->expects($this->once())->method('getOneElement')->with('numbers/' . $formattingType . 'Formats/' . $formattingType . 'FormatLength/' . $formattingType . 'Format/pattern')->will($this->returnValue($formatString));
+		$mockModel->expects($this->once())->method('getElement')->with('numbers/' . $formattingType . 'Formats/' . $formattingType . 'FormatLength/' . $formattingType . 'Format/pattern')->will($this->returnValue($formatString));
 
 		$mockRepository = $this->getMock('F3\FLOW3\Locale\Cldr\CldrRepository');
 		$mockRepository->expects($this->once())->method('getHierarchicalModel')->with('main', $this->dummyLocale)->will($this->returnValue($mockModel));

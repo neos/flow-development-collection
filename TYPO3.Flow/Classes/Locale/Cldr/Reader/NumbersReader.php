@@ -507,7 +507,7 @@ class NumbersReader {
 		}
 
 		$model = $this->cldrRepository->getHierarchicalModel('main', $locale);
-		$format = $model->getOneElement($formatPath);
+		$format = $model->getElement($formatPath);
 
 		if (empty($format)) {
 			return FALSE;

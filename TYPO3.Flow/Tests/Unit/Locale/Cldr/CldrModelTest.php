@@ -64,11 +64,11 @@ class CldrModelTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function getOneElementWorks() {
-		$result = $this->model->getOneElement('dates/calendars/calendar/type="gregorian"/dateFormats/dateFormatLength/type="full"/dateFormat/pattern');
+	public function getElementWorks() {
+		$result = $this->model->getElement('dates/calendars/calendar/type="gregorian"/dateFormats/dateFormatLength/type="full"/dateFormat/pattern');
 		$this->assertEquals('EEEE, d MMMM y', $result);
 
-		$result = $this->model->getOneElement('dates/calendars/calendar/type="gregorian"/dateFormats/dateFormatLength/type="full"/dateFormat');
+		$result = $this->model->getElement('dates/calendars/calendar/type="gregorian"/dateFormats/dateFormatLength/type="full"/dateFormat');
 		$this->assertEquals(FALSE, $result);
 	}
 
@@ -78,10 +78,10 @@ class CldrModelTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function aliasesAreResolvedCorrectly() {
 		$result = $this->model->getRawArray('dates/calendars/calendar/type="gregorian"/dateFormats/dateFormatLength/type="short"/dateFormat/pattern');
-		$this->assertEquals('dd-MM-yyyy', $result['']);
+		$this->assertEquals('dd-MM-yyyy', $result[\F3\FLOW3\Locale\Cldr\CldrModel::NODE_WITHOUT_ATTRIBUTES]);
 		$this->assertEquals('d MMM y', $result['alt="proposed-x1001" draft="unconfirmed"']);
 
-		$result = $this->model->getOneElement('dates/calendars/calendar/type="buddhist"/dateFormats/dateFormatLength/type="full"/dateFormat/pattern');
+		$result = $this->model->getElement('dates/calendars/calendar/type="buddhist"/dateFormats/dateFormatLength/type="full"/dateFormat/pattern');
 		$this->assertEquals('EEEE, d MMMM y', $result);
 	}
 }

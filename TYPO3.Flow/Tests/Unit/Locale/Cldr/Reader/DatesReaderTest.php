@@ -233,9 +233,9 @@ class DatesReaderTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function formatDateTimeWorks($dateFormat, $timeFormat, $dateTimeFormat, $expectedResult) {
 		$mockModel = $this->getMock('F3\FLOW3\Locale\Cldr\HierarchicalCldrModel');
-		$mockModel->expects($this->at(0))->method('getOneElement')->with('dates/calendars/calendar/type="gregorian"/dateFormats/dateFormatLength/type="full"/dateFormat/pattern')->will($this->returnValue($dateFormat));
-		$mockModel->expects($this->at(1))->method('getOneElement')->with('dates/calendars/calendar/type="gregorian"/timeFormats/timeFormatLength/type="full"/timeFormat/pattern')->will($this->returnValue($timeFormat));
-		$mockModel->expects($this->at(2))->method('getOneElement')->with('dates/calendars/calendar/type="gregorian"/dateTimeFormats/dateTimeFormatLength/type="full"/dateTimeFormat/pattern')->will($this->returnValue($dateTimeFormat));
+		$mockModel->expects($this->at(0))->method('getElement')->with('dates/calendars/calendar/type="gregorian"/dateFormats/dateFormatLength/type="full"/dateFormat/pattern')->will($this->returnValue($dateFormat));
+		$mockModel->expects($this->at(1))->method('getElement')->with('dates/calendars/calendar/type="gregorian"/timeFormats/timeFormatLength/type="full"/timeFormat/pattern')->will($this->returnValue($timeFormat));
+		$mockModel->expects($this->at(2))->method('getElement')->with('dates/calendars/calendar/type="gregorian"/dateTimeFormats/dateTimeFormatLength/type="full"/dateTimeFormat/pattern')->will($this->returnValue($dateTimeFormat));
 
 		$mockRepository = $this->getMock('F3\FLOW3\Locale\Cldr\CldrRepository');
 		$mockRepository->expects($this->exactly(3))->method('getHierarchicalModel')->with('main', $this->dummyLocale)->will($this->returnValue($mockModel));
@@ -272,7 +272,7 @@ class DatesReaderTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function specificFormattingMethodsWork($formatString, $expectedResult, $formattingType) {
 		$mockModel = $this->getMock('F3\FLOW3\Locale\Cldr\HierarchicalCldrModel');
-		$mockModel->expects($this->once())->method('getOneElement')->with('dates/calendars/calendar/type="gregorian"/' . $formattingType . 'Formats/' . $formattingType . 'FormatLength/type="full"/' . $formattingType . 'Format/pattern')->will($this->returnValue($formatString));
+		$mockModel->expects($this->once())->method('getElement')->with('dates/calendars/calendar/type="gregorian"/' . $formattingType . 'Formats/' . $formattingType . 'FormatLength/type="full"/' . $formattingType . 'Format/pattern')->will($this->returnValue($formatString));
 
 		$mockRepository = $this->getMock('F3\FLOW3\Locale\Cldr\CldrRepository');
 		$mockRepository->expects($this->once())->method('getHierarchicalModel')->with('main', $this->dummyLocale)->will($this->returnValue($mockModel));

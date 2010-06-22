@@ -46,7 +46,7 @@ interface CldrModelInterface {
 	 * @param string $path A path to the element to get
 	 * @return mixed String with desired element, or FALSE on failure
 	 */
-	public function getOneElement($path);
+	public function getElement($path);
 
 	/**
 	 * Parses the attributes string and returns a value of desired attribute.

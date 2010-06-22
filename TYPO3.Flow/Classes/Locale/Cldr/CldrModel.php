@@ -32,6 +32,17 @@ namespace F3\FLOW3\Locale\Cldr;
 class CldrModel implements \F3\FLOW3\Locale\Cldr\CldrModelInterface {
 
 	/**
+	 * A key for nodes without attributes
+	 *
+	 * Constant used as a key in parsed CLDR data array ($data) for nodes which
+	 * don't have any attributes. Please see the documentation for $data property
+	 * of this class for details.
+	 *
+	 * Note: cache will need to be flushed when this value is ever altered.
+	 */
+	const NODE_WITHOUT_ATTRIBUTES = '#noattributes';
+
+	/**
 	 * @var \F3\FLOW3\Cache\Frontend\VariableFrontend
 	 */
 	protected $cache;
@@ -85,12 +96,18 @@ class CldrModel implements \F3\FLOW3\Locale\Cldr\CldrModelInterface {
 	 *   )
 	 * )
 	 *
-	 * Please note that there can be an empty-string index anywhere on the end
-	 * of the tree (e.g., it points to the leaf). It is a case when a node has
-	 * many elements, from which one hasn't any attributes, and others have
-	 * attributes. The former element can be accesed using getOneElement()
-	 * method of this class. Please take a look at this example:
+	 * Please note that there can be predefined index used anywhere on the end
+	 * of the tree (i.e., pointing to the leaf). It is a case when a node has
+	 * more than one element, from which one hasn't any attributes, and others
+	 * do have attributes. The former element can be accesed using getElement()
+	 * method of this class. For example, such data:
 	 *
+	 * <dateFormat>
+	 *   <pattern>d MMM, yyyy G</pattern>
+	 *   <pattern alt="proposed-x1001" draft="unconfirmed">MMM d, yyyy G</pattern>
+	 * </dateFormat>
+	 *
+	 * will be converted to:
 	 * 'dateFormat' => array(
 	 *   'pattern' => array(
 	 *     '' => 'dd-MM-yyyy',
@@ -99,8 +116,13 @@ class CldrModel implements \F3\FLOW3\Locale\Cldr\CldrModelInterface {
 	 * )
 	 *
 	 * When node has only one element, and this element hasn't any attributes,
-	 * no empty-string index is used (i.e. the element is placed directly as a
-	 * value of parent).
+	 * the predefined index won't be used (i.e. the element is placed directly
+	 * as a value of parent). If you remove second "pattern" child from the
+	 * example XML above, it will be parsed to such array:
+	 *
+	 * 'dateFormat' => array(
+	 *   'pattern' => 'dd-MM-yyyy',
+	 * )
 	 *
 	 * Whole XML file is parsed at once, but this variable is cached, so most
 	 * of the time there is no need to do it.
@@ -199,14 +221,14 @@ class CldrModel implements \F3\FLOW3\Locale\Cldr\CldrModelInterface {
 	 * @return mixed String with desired element, or FALSE on failure
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function getOneElement($path) {
+	public function getElement($path) {
 		$data = $this->getRawArray($path);
 
 		if ($data === FALSE) {
 			return FALSE;
 		} elseif (is_array($data)) {
-			if (isset($data[''])) {
-				return $data[''];
+			if (isset($data[self::NODE_WITHOUT_ATTRIBUTES])) {
+				return $data[self::NODE_WITHOUT_ATTRIBUTES];
 			} else {
 				return FALSE;
 			}
@@ -269,7 +291,7 @@ class CldrModel implements \F3\FLOW3\Locale\Cldr\CldrModelInterface {
 	 * about the internal representation of XML data.
 	 *
 	 * @param \SimpleXMLElement $node A node to start parsing from
-	 * @return array Parsed XML node
+	 * @return mixed An array representing parsed XML node or string value if leaf
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	protected function parseNode(\SimpleXMLElement $node) {
@@ -301,7 +323,7 @@ class CldrModel implements \F3\FLOW3\Locale\Cldr\CldrModelInterface {
 				if (is_array($parsedNode[$child->getName()])) {
 					$parsedNode[$nameOfChild] = array_merge($parsedNode[$nameOfChild], $parsedChild);
 				} else {
-					$parsedNode[$nameOfChild] = array_merge(array('' => $parsedNode[$nameOfChild]), $parsedChild);
+					$parsedNode[$nameOfChild] = array_merge(array(self::NODE_WITHOUT_ATTRIBUTES => $parsedNode[$nameOfChild]), $parsedChild);
 				}
 			} else {
 				$parsedNode[$nameOfChild] = $parsedChild;
@@ -318,9 +340,9 @@ class CldrModel implements \F3\FLOW3\Locale\Cldr\CldrModelInterface {
 	 * from. This tag has 'source' attribute pointing (by relative XPath query)
 	 * to the source node - it should be copied with all it's children.
 	 *
-	 * @param string $data Part of internal array to resolve aliases for
+	 * @param mixed $data Part of internal array to resolve aliases for (string if leaf, array otherwise)
 	 * @param string $currentPath Path to currently analyzed part of data
-	 * @return array Modified (or unchanged) $data
+	 * @return mixed Modified (or unchanged) $data
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @throws \F3\FLOW3\Locale\Exception\InvalidCldrDataException When found alias tag which has unexpected structure
 	 */

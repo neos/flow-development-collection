@@ -93,14 +93,14 @@ class HierarchicalCldrModel implements \F3\FLOW3\Locale\Cldr\CldrModelInterface 
 	 * @return mixed String with desired element, or FALSE on failure
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function getOneElement($path) {
+	public function getElement($path) {
 		$data = $this->getRawArray($path);
 
 		if ($data === FALSE) {
 			return FALSE;
 		} else if (is_array($data)) {
-			if (isset($data[''])) {
-				return $data[''];
+			if (isset($data[\F3\FLOW3\Locale\Cldr\CldrModel::NODE_WITHOUT_ATTRIBUTES])) {
+				return $data[\F3\FLOW3\Locale\Cldr\CldrModel::NODE_WITHOUT_ATTRIBUTES];
 			} else {
 				return FALSE;
 			}
