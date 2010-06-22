@@ -19,9 +19,9 @@ array(
 	'classname' => '<classname>',
 	'properties' => array(
 		'<name>' => array(
-			'type' => '<type>', // for multi values only (array|SplObjectStorage)
+			'type' => '<type>', // for multi values only (array|SplObjectStorage) or 'NULL' for NULL
 			'multivalue' => TRUE,
-			'value' => array(	// an empty array for empty traversables! NULL for NULL!
+			'value' => array(	// NULL for NULL/empty!
 				array(
 					'type' => '<type>',
 					'index' => <index>,
@@ -29,19 +29,6 @@ array(
 				), ...
 			)
 		)
-	)
-)
-
-// NULL value
-array(
-	'identifier' => '<identifier>',
-	'classname' => '<classname>',
-	'properties' => array(
-		'<name>' => array(
-			'type' => '<type>',
-			'multivalue' => <boolean>,
-			'value' => NULL
-		), ...
 	)
 )
 
