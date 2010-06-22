@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE supplementalData SYSTEM "../../common/dtd/ldmlSupplemental.dtd">
+<supplementalData>
+  <version number="$Revision: 4747 $"/>
+	<generation date="$Date: 2010-02-25 15:22:30 -0600 (Thu, 25 Feb 2010) $"/>
+	<transforms>
+		<transform source="Malayalam" target="Bengali" direction="forward">
+			<tRule>::[ം-ഃഅ-ഌഎ-ഐഒ-നപ-ഹാ-ൃെ-ൈൊ-്ൗൠ-ൡ൦-൯];</tRule>
+			<tRule>::NFD;</tRule>
+			<tRule>::Malayalam-InterIndic;</tRule>
+			<tRule>::InterIndic-Bengali;</tRule>
+			<tRule>::NFC;</tRule>
+		</transform>
+	</transforms>
+</supplementalData>
+

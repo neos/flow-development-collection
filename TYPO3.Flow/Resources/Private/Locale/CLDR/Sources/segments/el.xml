@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE ldml SYSTEM "../../common/dtd/ldml.dtd">
+<ldml>
+	<identity>
+		<version number="$Revision: 4127 $"/>
+		<generation date="$Date: 2009-05-05 18:45:39 -0500 (Tue, 05 May 2009) $"/>
+		<language type="el"/>
+	</identity>
+	<segmentations>
+		<segmentation type="SentenceBreak">
+			<variables>
+				<variable id="$STerm">[[$STerm] [\u003B \u037E]]</variable>
+			</variables>
+		</segmentation>
+	</segmentations>
+</ldml>
+
+
