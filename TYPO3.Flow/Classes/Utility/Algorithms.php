@@ -45,5 +45,32 @@ class Algorithms {
 			mt_rand( 0, 0x3fff ) | 0x8000,
 			mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ) );
 	}
+
+	/**
+	 * Returns a string of random bytes.
+	 *
+	 * @param integer $count Number of bytes to generate
+	 * @return string
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	static public function generateRandomBytes($count) {
+		$bytes = '';
+
+		if (file_exists('/dev/urandom')) {
+			$bytes = file_get_contents('/dev/urandom', NULL, NULL, NULL, $count);
+		}
+
+			// urandom did not deliver (enough) data
+		if (strlen($bytes) < $count) {
+			$randomState = microtime() . getmypid();
+			while (strlen($bytes) < $count) {
+				$randomState = md5(microtime() . mt_rand() . $randomState);
+				$bytes .= md5(mt_rand() . $randomState, TRUE);
+			}
+			$bytes = substr($bytes, -$count, $count);
+		}
+		return $bytes;
+	}
+
 }
 ?>

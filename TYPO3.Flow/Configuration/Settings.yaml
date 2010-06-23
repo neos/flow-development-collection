@@ -172,11 +172,6 @@ FLOW3:
 
     cryptography:
 
-      hashService:
-
-        # A key used for various tasks, must be unique for a setup!
-        encryptionKey: "A default key - see issue #7516"
-
       RSAWalletServicePHP:
 
         # Defines the openSSL configuration used for key handling.

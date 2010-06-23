@@ -41,11 +41,15 @@ class HashService {
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@dambekalns.de>
 	 */
-	public function injectSettings(array $settings) {
-		if (empty($settings['security']['cryptography']['hashService']['encryptionKey'])) {
-			throw new \F3\FLOW3\Security\Exception\MissingConfigurationException('You must configure an encryption key for the HashService', 1258991855);
+	public function __construct() {
+		if (!file_exists(FLOW3_PATH_DATA . 'Persistent/EncryptionKey')) {
+			file_put_contents(FLOW3_PATH_DATA . 'Persistent/EncryptionKey', bin2hex(\F3\FLOW3\Utility\Algorithms::generateRandomBytes(96)));
 		}
-		$this->encryptionKey = $settings['security']['cryptography']['hashService']['encryptionKey'];
+		$this->encryptionKey = file_get_contents(FLOW3_PATH_DATA . 'Persistent/EncryptionKey');
+		
+		if (empty($this->encryptionKey)) {
+			throw new \F3\FLOW3\Security\Exception\MissingConfigurationException('No encryption key for the HashService was found and none could be created at "' . FLOW3_PATH_DATA . 'Persistent/EncryptionKey"', 1258991855);
+		}
 	}
 
 	/**
