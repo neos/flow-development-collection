@@ -90,6 +90,12 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	public $acls = array();
 
 	/**
+	 * The constraints for entity resources
+	 * @var array
+	 */
+	protected $entityResourcesConstraints = array();
+
+	/**
 	 * Injects the object manager
 	 *
 	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
@@ -155,6 +161,14 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 
 		if ($this->cache->has('acls')) {
 			$this->acls = $this->cache->get('acls');
+		} else {
+			$this->parseEntityAcls();
+		}
+
+		if ($this->cache->has('entityResourcesConstraints')) {
+			$this->entityResourcesConstraints = $this->cache->get('entityResourcesConstraints');
+		} else {
+			$this->entityResourcesConstraints = $this->policyExpressionParser->parseEntityResources($this->policy['resources']['entities']);
 		}
 	}
 
@@ -177,12 +191,11 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 
 		if (count($this->filters) === 0) {
 			$methodResources = (isset($this->policy['resources']['methods']) ? $this->policy['resources']['methods'] : array());
-			$this->policyExpressionParser->setResourcesTree($methodResources);
 
 			foreach ($this->policy['acls'] as $role => $acl) {
-				foreach ($acl as $resource => $privilege) {
+				foreach ($acl['methods'] as $resource => $privilege) {
 					$resourceTrace = array();
-					$this->filters[$role][$resource] = $this->policyExpressionParser->parse($resource, $resourceTrace);
+					$this->filters[$role][$resource] = $this->policyExpressionParser->parseMethodResources($resource, $methodResources, $resourceTrace);
 
 					foreach ($resourceTrace as $currentResource) {
 						$policyForResource = array();
@@ -206,9 +219,9 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 
 					$policyForJoinPoint = array();
 
-					if ($this->policy['acls'][$role][$resource] === 'GRANT') $policyForJoinPoint['privilege'] = self::PRIVILEGE_GRANT;
-					else if ($this->policy['acls'][$role][$resource] === 'DENY') $policyForJoinPoint['privilege'] = self::PRIVILEGE_DENY;
-					else throw new \F3\FLOW3\Security\Exception\InvalidPrivilegeException('Invalid privilege defined in security policy. An ACL entry may have only one of the privileges GRANT or DENY, but we got:' . $this->policy['acls'][$role][$resource] . ' for role : ' . $role . ' and resource: ' . $resource, 1267308533);
+					if ($this->policy['acls'][$role]['methods'][$resource] === 'GRANT') $policyForJoinPoint['privilege'] = self::PRIVILEGE_GRANT;
+					else if ($this->policy['acls'][$role]['methods'][$resource] === 'DENY') $policyForJoinPoint['privilege'] = self::PRIVILEGE_DENY;
+					else throw new \F3\FLOW3\Security\Exception\InvalidPrivilegeException('Invalid privilege defined in security policy. An ACL entry may have only one of the privileges GRANT or DENY, but we got:' . $this->policy['acls'][$role]['methods'][$resource] . ' for role : ' . $role . ' and resource: ' . $resource, 1267308533);
 
 					if ($filter->hasRuntimeEvaluationsDefinition() === TRUE)  $policyForJoinPoint['runtimeEvaluationsClosureCode'] = $filter->getRuntimeEvaluationsClosureCode();
 					else $policyForJoinPoint['runtimeEvaluationsClosureCode'] = FALSE;
@@ -250,7 +263,7 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	 * @throws \F3\FLOW3\Security\Exception\NoEntryInPolicyException
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function getRoles(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function getRolesForJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$methodIdentifier = $joinPoint->getClassName() . '->' . $joinPoint->getMethodName();
 		if (!isset($this->acls[$methodIdentifier])) throw new \F3\FLOW3\Security\Exception\NoEntryInPolicyException('The given joinpoint was not found in the policy cache. Most likely you have to recreate the AOP proxy classes.', 1222084767);
 
@@ -320,6 +333,81 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	}
 
 	/**
+	 * Checks if the given entity type has a policy entry for at least one of the given roles
+	 *
+	 * @param string $entityType The entity type (object name) to be checked
+     * @param array $roles The roles to be checked
+	 * @return boolean TRUE if the given entity type has a policy entry
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function hasPolicyEntryForEntityType($entityType, array $roles) {
+		$entityType = str_replace('\\', '_', $entityType);
+
+		if (isset($this->entityResourcesConstraints[$entityType])) {
+			foreach ($this->entityResourcesConstraints[$entityType] as $resource => $constraint) {
+				foreach ($roles as $roleIdentifier) {
+					if (isset($this->acls[$resource][(string)$roleIdentifier])) return TRUE;
+				}
+			}
+		}
+
+        return FALSE;
+	}
+
+	/**
+	 * Returns an array of resource constraints, which are configured for the given entity type
+	 * and for at least one of the given roles.
+	 * Note: If two roles have conflicting privileges for the same resource the GRANT priviliege
+	 * has precedence.
+	 *
+	 * @param string $entityType The entity type (object name)
+	 * @param array $roles An array of roles the resources have to be configured for
+	 * @return array An array resource constraints
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getResourcesConstraintsForEntityTypeAndRoles($entityType, array $roles) {
+		$deniedResources = array();
+		$grantedResources = array();
+
+		$entityType = str_replace('\\', '_', $entityType);
+
+		foreach ($this->entityResourcesConstraints[$entityType] as $resource => $constraint) {
+			foreach ($roles as $roleIdentifier) {
+				if (!isset($this->acls[$resource][(string)$roleIdentifier]['privilege'])) continue;
+
+				if ($this->acls[$resource][(string)$roleIdentifier]['privilege'] === self::PRIVILEGE_DENY) {
+					$deniedResources[$resource] = $constraint;
+				} else {
+					$grantedResources[] = $resource;
+				}
+			}
+		}
+
+		foreach ($grantedResources as $grantedResource) {
+			if (isset($deniedResources[$grantedResource])) unset($deniedResources[$grantedResource]);
+		}
+
+		return $deniedResources;
+	}
+
+	/**
+	 * Parses the policy and stores the configured entity acls in the internal acls array
+	 *
+	 * @return void
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	protected function parseEntityAcls() {
+		foreach ($this->policy['acls'] as $role => $aclEntries) {
+			foreach ($aclEntries['entities'] as $resource => $privilege) {
+				if (!isset($this->acls[$resource])) $this->acls[$resource] = array();
+				$this->acls[$resource][$role] = array(
+					'privilege' => ($privilege === 'GRANT' ? self::PRIVILEGE_GRANT : self::PRIVILEGE_DENY)
+				);
+			}
+		}
+	}
+
+	/**
 	 * Save the found matches to the cache.
 	 *
 	 * @return void
@@ -328,6 +416,7 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	public function shutdownObject() {
 		$tags = array('F3_FLOW3_AOP');
 		$this->cache->set('acls', $this->acls, $tags);
+		$this->cache->set('entityResourcesConstraints', $this->entityResourcesConstraints);
 	}
 }
 

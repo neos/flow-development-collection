@@ -21,7 +21,9 @@
 #     F3_FooPackage_BasicValidator: "method(F3\FooPackage\BasicClassValidator->.*())"
 #     F3_FooPackage_CombinedResource: "theOneAndOnlyResource || theOtherLonelyResource"
 #
-resources: []
+resources:
+  entities: []
+  methods: []
 
 # The security policy roles configuration. Here is an example configuration array:
 #

@@ -11,6 +11,12 @@
 
 FLOW3:
 
+  aop:
+
+    # Registers global objects to be evaluated for dynamic pointcut expressions
+    globalObjects:
+      party: "$party = $objectManager->get('F3\\FLOW3\\Security\\Context')->getParty();"
+
   configuration:
 
     # Enables the configuration file cache which compiles YAML files into

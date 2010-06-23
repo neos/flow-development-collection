@@ -261,7 +261,7 @@ class PointcutExpressionParserTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getArgumentConstraintsFromMethodArgumentsPatternWorks() {
-                $methodArgumentsPattern = 'arg1 == "blub,ber",   arg2 != FALSE  ,arg3 in   (TRUE, some.object.access, "fa,sel", \'blub\'), arg4 contains FALSE,arg2==TRUE';
+                $methodArgumentsPattern = 'arg1 == "blub,ber",   arg2 != FALSE  ,arg3 in   (TRUE, some.object.access, "fa,sel", \'blub\'), arg4 contains FALSE,arg2==TRUE,arg5 matches (1,2,3), arg6 matches current.party.accounts';
 
                 $expectedConditions = array(
                                                 'arg1' => array(
@@ -286,7 +286,17 @@ class PointcutExpressionParserTest extends \F3\Testing\BaseTestCase {
                                                 'arg4' => array(
                                                     'operator' => array('contains'),
                                                     'value' => array('FALSE')
-                                                )
+                                                ),
+												'arg5' => array(
+													'operator' => array('matches'),
+													'value' => array(
+														array(1,2,3)
+													)
+												),
+												'arg6' => array(
+													'operator' => array('matches'),
+													'value' => array('current.party.accounts')
+												)
                                             );
 
 		$parser = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\AOP\Pointcut\PointcutExpressionParser'), array('dummy'), array(), '', FALSE);
@@ -422,10 +432,20 @@ class PointcutExpressionParserTest extends \F3\Testing\BaseTestCase {
 				'operator' => 'in',
 				'leftValue' => 'this.some.object',
 				'rightValue' => array('TRUE', 'some.object.access')
+			),
+			array(
+				'operator' => 'matches',
+				'leftValue' => 'this.some.object',
+				'rightValue' => array(1,2,3)
+			),
+			array(
+				'operator' => 'matches',
+				'leftValue' => 'this.some.arrayProperty',
+				'rightValue' => 'current.party.accounts'
 			)
 		);
 
-		$evaluateString = '"blub" == 5, current.party.name <= \'foo\', this.attendee.name != current.party.person.name, this.some.object in (TRUE, some.object.access)';
+		$evaluateString = '"blub" == 5, current.party.name <= \'foo\', this.attendee.name != current.party.person.name, this.some.object in (TRUE, some.object.access), this.some.object matches (1, 2, 3), this.some.arrayProperty matches current.party.accounts';
 
 		$parser = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\AOP\Pointcut\PointcutExpressionParser'), array('dummy'), array(), '', FALSE);
 		$result = $parser->_call('getRuntimeEvaluationConditionsFromEvaluateString', $evaluateString);

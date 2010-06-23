@@ -67,6 +67,10 @@ class ObjectManager implements \F3\FLOW3\Object\ObjectManagerInterface {
 	 */
 	protected $objectContainerClassesCache;
 
+	/**
+	 * @var boolean
+	 */
+	protected $sessionInitialized = FALSE;
 
 	/**
 	 * Injects the class loader
@@ -181,6 +185,17 @@ class ObjectManager implements \F3\FLOW3\Object\ObjectManagerInterface {
 	 */
 	public function initializeSession() {
 		$this->objectContainer->initializeSession();
+		$this->sessionInitialized = TRUE;
+	}
+
+	/**
+	 * Returns TRUE if the session has been initialized
+	 *
+	 * @return boolean TRUE if the session has been initialized
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function isSessionInitialized() {
+		return $this->sessionInitialized;
 	}
 
 	/**

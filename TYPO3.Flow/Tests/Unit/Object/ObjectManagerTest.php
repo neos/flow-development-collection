@@ -253,6 +253,23 @@ class ObjectManagerTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
+	public function initalizeSessionSetsTheSessionInitializedFlagCorrectly() {
+		$mockObjectContainer = $this->getMock('F3\FLOW3\Object\Container\StaticObjectContainerInterface', array(), array(), '', FALSE);
+		$mockObjectContainer->expects($this->once())->method('initializeSession');
+
+		$objectManager = $this->getAccessibleMock('F3\FLOW3\Object\ObjectManager', array('dummy'));
+		$objectManager->_set('staticObjectContainerClassName', get_class($mockObjectContainer));
+		$objectManager->_set('objectContainer', $mockObjectContainer);
+
+		$objectManager->initializeSession();
+
+		$this->assertTrue($objectManager->isSessionInitialized());
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
 	public function theDefaultContextIsDevelopment() {
 		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService');
 		$objectManager = new \F3\FLOW3\Object\ObjectManager($mockReflectionService);

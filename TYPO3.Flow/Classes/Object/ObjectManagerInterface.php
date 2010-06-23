@@ -175,6 +175,20 @@ interface ObjectManagerInterface {
 	public function flushStaticObjectContainer($signalName, $monitorIdentifier, array $changedFiles);
 
 	/**
+	 * Initializes the session scope of the object container
+	 *
+	 * @return void
+	 */
+	public function initializeSession();
+
+	/**
+	 * Returns TRUE if the session has been initialized
+	 *
+	 * @return boolean TRUE if the session has been initialized
+	 */
+	public function isSessionInitialized();
+
+	/**
 	 * Shuts the object manager down and calls the shutdown methods of all objects
 	 * which are configured for it.
 	 *

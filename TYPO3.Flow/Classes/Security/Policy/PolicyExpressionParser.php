@@ -33,30 +33,21 @@ class PolicyExpressionParser extends \F3\FLOW3\AOP\Pointcut\PointcutExpressionPa
 	/**
 	 * @var array The resources array from the configuration.
 	 */
-	protected $resourcesTree = array();
+	protected $methodResourcesTree = array();
 
 	/**
-	 * Sets the resource array that should be parsed
-	 *
-	 * @param array $resourcesTree The resources array from the configuration.
-	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function setResourcesTree(array $resourcesTree) {
-		$this->resourcesTree = $resourcesTree;
-	}
-
-	/**
-	 * Extension of the parse function: Adds a circular reference detection to the parse function.
+	 * Performs a circular reference detection and calls the (parent) parse function afterwards
 	 *
 	 * @param string $pointcutExpression The pointcut expression to parse
+	 * @param array $methodResourcesTree The method resources tree
 	 * @param array $trace A trace of all visited pointcut expression, used for circular reference detection
 	 * @return \F3\FLOW3\AOP\Pointcut\PointcutFilterComposite A composite of class-filters, method-filters and pointcuts
 	 * @throws \F3\FLOW3\Security\Exception\CircularResourceDefinitionDetectedException
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function parse($pointcutExpression, array &$trace = array()) {
+	public function parseMethodResources($pointcutExpression, array $methodResourcesTree, array &$trace = array()) {
 		if (!is_string($pointcutExpression) || strlen($pointcutExpression) === 0) throw new \F3\FLOW3\AOP\Exception\InvalidPointcutExpressionException('Pointcut expression must be a valid string, ' . gettype($pointcutExpression) . ' given.', 1168874738);
+		if (count($methodResourcesTree) > 0) $this->methodResourcesTree = $methodResourcesTree;
 
 		$pointcutFilterComposite = $this->objectManager->create('F3\FLOW3\AOP\Pointcut\PointcutFilterComposite');
 		$pointcutExpressionParts = preg_split(parent::PATTERN_SPLITBYOPERATOR, $pointcutExpression, -1, PREG_SPLIT_DELIM_CAPTURE);
@@ -77,11 +68,31 @@ class PolicyExpressionParser extends \F3\FLOW3\AOP\Pointcut\PointcutExpressionPa
 			}
 		}
 
-		return parent::parse($pointcutExpression);
+		return $this->parse($pointcutExpression);
 	}
 
 	/**
-	 * Walks recursively through the resources tree.
+	 * Parses the security constraints configured for persistence entities
+	 *
+	 * @param array $entityResourcesTree The tree of all available entity resources
+	 * @return array The constraints definition array for all entity resources
+	 * @throws \F3\FLOW3\Security\Exception\CircularResourceDefinitionDetectedException
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function parseEntityResources(array $entityResourcesTree) {
+		$entityResourcesConstraints = array();
+
+		foreach ($entityResourcesTree as $entityType => $entityResources) {
+			foreach ($entityResources as $resourceName => $constraintDefinition) {
+				$entityResourcesConstraints[$entityType][$resourceName] = $this->parseSingleEntityResource($resourceName, $entityResources);
+			}
+		}
+
+		return $entityResourcesConstraints;
+	}
+
+	/**
+	 * Walks recursively through the method resources tree.
 	 *
 	 * @param string $operator The operator
 	 * @param string $pointcutExpression The pointcut expression (value of the designator)
@@ -91,9 +102,39 @@ class PolicyExpressionParser extends \F3\FLOW3\AOP\Pointcut\PointcutExpressionPa
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function parseDesignatorPointcut($operator, $pointcutExpression, \F3\FLOW3\AOP\Pointcut\PointcutFilterComposite $pointcutFilterComposite, array &$trace = array()) {
-		if (!isset($this->resourcesTree[$pointcutExpression])) throw new \F3\FLOW3\AOP\Exception\InvalidPointcutExpressionException('The given resource was not defined: ' . $pointcutExpression . '".', 1222014591);
+		if (!isset($this->methodResourcesTree[$pointcutExpression])) throw new \F3\FLOW3\AOP\Exception\InvalidPointcutExpressionException('The given resource was not defined: ' . $pointcutExpression . '".', 1222014591);
 
-		$pointcutFilterComposite->addFilter($operator, $this->parse($this->resourcesTree[$pointcutExpression], $trace));
+		$pointcutFilterComposite->addFilter($operator, $this->parseMethodResources($this->methodResourcesTree[$pointcutExpression], array(), $trace));
+	}
+
+	/**
+	 * Parses the security constraints configured for a single entity resource. If needed
+	 * it walks recursively through the entity resources tree array.
+	 *
+	 * @param array $entityResourcesTree The tree of all available resources for one entity
+	 * @param string $resourceName The name of the resource to be parsed
+	 * @return array The constraints definition array
+	 * @throws \F3\FLOW3\Security\Exception\CircularResourceDefinitionDetectedException
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	protected function parseSingleEntityResource($resourceName, array $entityResourcesTree) {
+		$expressionParts = preg_split(parent::PATTERN_SPLITBYOPERATOR, $entityResourcesTree[$resourceName], -1, PREG_SPLIT_DELIM_CAPTURE);
+
+		$constraints = array();
+		for ($i = 0; $i < count($expressionParts); $i += 2) {
+			$operator = ($i > 1 ? $expressionParts[$i - 1] : '&&');
+
+			if (!isset($constraints[$operator])) $constraints[$operator] = array();
+
+			if (preg_match('/\s(==|!=|<=|>=|<|>|in|contains|matches)\s/', $expressionParts[$i]) > 0) {
+				$constraints[$operator] = array_merge($constraints[$operator], $this->getRuntimeEvaluationConditionsFromEvaluateString($expressionParts[$i]));
+			} else {
+				if (!isset($entityResourcesTree[$expressionParts[$i]])) throw new \F3\FLOW3\Security\Exception\NoEntryInPolicyException('Entity resource "' . $expressionParts[$i] . '" not found in policy.', 1267722067);
+				$constraints[$operator]['subConstraints'] = $this->parseSingleEntityResource($expressionParts[$i], $entityResourcesTree);
+			}
+		}
+
+		return $constraints;
 	}
 }
 ?>

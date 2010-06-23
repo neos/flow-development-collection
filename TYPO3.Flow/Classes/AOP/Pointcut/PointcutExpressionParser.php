@@ -43,7 +43,7 @@ class PointcutExpressionParser {
 																|\'(?:\\\\\'|[^\'])*\'
 																|[a-zA-Z0-9\-_.]+
 															)
-															\s*(==|!=|<=|>=|<|>|in|contains)\s*
+															\s*(==|!=|<=|>=|<|>|in|contains|matches)\s*
 															(   "(?:\\\"|[^"])*"
 																|\(.*?\)
 																|\'(?:\\\\\'|[^\'])*\'
@@ -53,7 +53,7 @@ class PointcutExpressionParser {
 														 \s*,{0,1}?
 													 )+
 												   /x';
-	const PATTERN_MATCHRUNTIMEEVALUATIONSOPERATORINLIST = '/(?:
+	const PATTERN_MATCHRUNTIMEEVALUATIONSVALUELIST = '/(?:
 																	\s*(
 																		"(?:\\\"|[^"])*"
 																		|\'(?:\\\\\'|[^\'])*\'
@@ -347,13 +347,15 @@ class PointcutExpressionParser {
 			preg_match_all(self::PATTERN_MATCHRUNTIMEEVALUATIONSDEFINITION, $methodArgumentsPattern, $matches);
 
             for ($i = 0; $i < count($matches[0]); $i++) {
-                if ($matches[2][$i] === 'in') {
-                    $inList = array();
+                if ($matches[2][$i] === 'in' || $matches[2][$i] === 'matches') {
+                    $list = array();
+					$listEntries = array();
 
-                    trim($matches[3][$i], '()');
-                    preg_match_all(self::PATTERN_MATCHRUNTIMEEVALUATIONSOPERATORINLIST, $matches[3][$i], $inList);
+					if (preg_match('/^\s*\(.*\)\s*$/', $matches[3][$i], $list) > 0) {
+						preg_match_all(self::PATTERN_MATCHRUNTIMEEVALUATIONSVALUELIST, $list[0], $listEntries);
 
-                    $matches[3][$i] = $inList[1];
+						$matches[3][$i] = $listEntries[1];
+					}
                 }
 
 				$argumentConstraints[$matches[1][$i]]['operator'][] = $matches[2][$i];
@@ -376,13 +378,15 @@ class PointcutExpressionParser {
 			preg_match_all(self::PATTERN_MATCHRUNTIMEEVALUATIONSDEFINITION, $evaluateString, $matches);
 
             for ($i = 0; $i < count($matches[0]); $i++) {
-                if ($matches[2][$i] === 'in') {
-                    $inList = array();
+                if ($matches[2][$i] === 'in' || $matches[2][$i] === 'matches') {
+					$list = array();
+					$listEntries = array();
 
-                    trim($matches[3][$i], '()');
-                    preg_match_all(self::PATTERN_MATCHRUNTIMEEVALUATIONSOPERATORINLIST, $matches[3][$i], $inList);
+					if (preg_match('/^\s*\(.*\)\s*$/', $matches[3][$i], $list) > 0) {
+						preg_match_all(self::PATTERN_MATCHRUNTIMEEVALUATIONSVALUELIST, $list[0], $listEntries);
 
-                    $matches[3][$i] = $inList[1];
+						$matches[3][$i] = $listEntries[1];
+					}
                 }
 
 				$runtimeEvaluationConditions[] = array(

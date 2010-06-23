@@ -51,6 +51,22 @@ class PointcutFilterComposite implements \F3\FLOW3\AOP\Pointcut\PointcutFilterIn
 	protected $globalRuntimeEvaluationsDefinition = array();
 
 	/**
+	 * An array of global objects, to be access for dynamich runtime evaluations
+	 * @var array
+	 */
+	protected $globalObjects = array();
+
+	/**
+	 * Inject global settings, used to retrieve registered global objects
+	 *
+	 * @return void
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function injectSettings(array $settings) {
+		$this->globalObjects = $settings['aop']['globalObjects'];
+	}
+
+	/**
 	 * Checks if the specified class and method match the registered class-
 	 * and method filter patterns.
 	 *
@@ -60,6 +76,7 @@ class PointcutFilterComposite implements \F3\FLOW3\AOP\Pointcut\PointcutFilterIn
 	 * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
 	 * @return boolean TRUE if class and method match the pattern, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier) {
 		$this->runtimeEvaluationsDefinition = array();
@@ -266,7 +283,9 @@ class PointcutFilterComposite implements \F3\FLOW3\AOP\Pointcut\PointcutFilterIn
 				$rightValue = $this->buildArgumentEvaluationAccessCode($argumentConstraint['value'][$i], $globalObjects);
 
 				if ($argumentConstraint['operator'][$i] === 'in') {
-					$argumentConstraintsConditionsCode .= ($isFirst === TRUE ? '(' : ' && ') . 'in_array(' . $leftValue . ', array(' . $rightValue . '))';
+					$argumentConstraintsConditionsCode .= ($isFirst === TRUE ? '(' : ' && ') . 'in_array(' . $leftValue . ', ' . $rightValue . ')';
+				} else if ($argumentConstraint['operator'][$i] === 'matches') {
+					$argumentConstraintsConditionsCode .= ($isFirst === TRUE ? '(' : ' && ') . '(!empty(array_intersect(' . $leftValue . ', ' . $rightValue . ')))';
 				} else {
 					$argumentConstraintsConditionsCode .= ($isFirst === TRUE ? '(' : ' && ') . $leftValue . ' ' . $argumentConstraint['operator'][$i] . ' ' . $rightValue;
 				}
@@ -295,7 +314,9 @@ class PointcutFilterComposite implements \F3\FLOW3\AOP\Pointcut\PointcutFilterIn
 			$rightValue = $this->buildArgumentEvaluationAccessCode($constraint['rightValue'], $globalObjects);
 
 			if ($constraint['operator'] === 'in') {
-				$evaluateConditionsCode .= ($isFirst === TRUE ? '(' : ' && ') . 'in_array(' . $leftValue . ', array(' . $rightValue . '))';
+				$evaluateConditionsCode .= ($isFirst === TRUE ? '(' : ' && ') . 'in_array(' . $leftValue . ', ' . $rightValue . ')';
+			} else if ($constraint['operator'] === 'matches') {
+				$evaluateConditionsCode .= ($isFirst === TRUE ? '(' : ' && ') . '(!empty(array_intersect(' . $leftValue . ', ' . $rightValue . ')))';
 			} else {
 				$evaluateConditionsCode .= ($isFirst === TRUE ? '(' : ' && ') . $leftValue . ' ' . $constraint['operator'] . ' ' . $rightValue;
 			}
@@ -322,7 +343,7 @@ class PointcutFilterComposite implements \F3\FLOW3\AOP\Pointcut\PointcutFilterIn
 			foreach ($argumentAccess as $singleValue) {
 				$valuesAccessCodes[] = $this->buildArgumentEvaluationAccessCode($singleValue);
 			}
-			$argumentAccessCode = implode(', ', $valuesAccessCodes);
+			$argumentAccessCode = 'array(' . implode(', ', $valuesAccessCodes) . ')';
 
 		} else {
 			$objectAccess = explode('.', $argumentAccess, 2);
@@ -330,7 +351,7 @@ class PointcutFilterComposite implements \F3\FLOW3\AOP\Pointcut\PointcutFilterIn
 				$objectAccess = explode('.', $objectAccess[1], 2);
 				$argumentAccessCode = 'F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($' . $objectAccess[0] . ', \'' . $objectAccess[1] . '\')';
 
-				if ($objectAccess[0] === 'party') $globalObjects['party'] = '$party = $objectManager->get(\'F3\\FLOW3\\Security\\Context\')->getParty();';
+				if (array_key_exists($objectAccess[0], $this->globalObjects)) $globalObjects[$objectAccess[0]] = $this->globalObjects[$objectAccess[0]];
 
 			} else if (count($objectAccess) === 2 && $objectAccess[0] === 'this') {
 				$argumentAccessCode = 'F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($currentObject, \'' . $objectAccess[1] . '\')';

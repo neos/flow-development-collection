@@ -183,6 +183,14 @@ class PointcutFilterCompositeTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getRuntimeEvaluationsClosureCodeReturnsTheCorrectStringForBasicRuntimeEvaluationsDefintion() {
+		$settings = array(
+			'aop' => array(
+				'globalObjects' => array(
+					'party' => '$party = $objectManager->get(\'F3\\FLOW3\\Security\\Context\')->getParty();'
+				)
+			)
+		);
+
 		$runtimeEvaluationsDefintion = array (
 										'&&' => array (
 											'&&' => array (
@@ -219,6 +227,7 @@ class PointcutFilterCompositeTest extends \F3\Testing\BaseTestCase {
 								"\t\t\t\t\t\t}";
 
 		$pointcutFilterComposite = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\AOP\Pointcut\PointcutFilterComposite'), array('dummy'), array(), '', FALSE);
+		$pointcutFilterComposite->injectSettings($settings);
 		$pointcutFilterComposite->_set('runtimeEvaluationsDefinition', $runtimeEvaluationsDefintion);
 
 		$result = $pointcutFilterComposite->getRuntimeEvaluationsClosureCode();
@@ -232,6 +241,14 @@ class PointcutFilterCompositeTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getRuntimeEvaluationsClosureCodeHandlesDefinitionsConcatenatedByNegatedOperatorsCorrectly() {
+		$settings = array(
+			'aop' => array(
+				'globalObjects' => array(
+					'party' => '$party = $objectManager->get(\'F3\\FLOW3\\Security\\Context\')->getParty();'
+				)
+			)
+		);
+
 		$runtimeEvaluationsDefintion = array (
 										'&&' => array (
 											'&&' => array (
@@ -268,6 +285,7 @@ class PointcutFilterCompositeTest extends \F3\Testing\BaseTestCase {
 								"\t\t\t\t\t\t}";
 
 		$pointcutFilterComposite = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\AOP\Pointcut\PointcutFilterComposite'), array('dummy'), array(), '', FALSE);
+		$pointcutFilterComposite->injectSettings($settings);
 		$pointcutFilterComposite->_set('runtimeEvaluationsDefinition', $runtimeEvaluationsDefintion);
 
 		$result = $pointcutFilterComposite->getRuntimeEvaluationsClosureCode();
@@ -383,6 +401,33 @@ class PointcutFilterCompositeTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
+	public function buildMethodArgumentsEvaluationConditionCodeBuildsTheCorrectCodeForAConditionWithMatchesOperator() {
+		$condition = array (
+								'identifier' => array (
+									'operator' => array (
+										0 => 'matches',
+										1 => 'matches'
+									),
+									'value' => array (
+										0 => array ('\'usage1\'', '\'usage2\'', '"usage3"'),
+										1 => 'this.accounts'
+									)
+								)
+							);
+
+		$pointcutFilterComposite = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\AOP\Pointcut\PointcutFilterComposite'), array('dummy'), array(), '', FALSE);
+
+		$result = $pointcutFilterComposite->_call('buildMethodArgumentsEvaluationConditionCode', $condition);
+
+		$expectedResult = '((!empty(array_intersect($joinPoint->getMethodArgument(\'identifier\'), array(\'usage1\', \'usage2\', "usage3")))) && (!empty(array_intersect($joinPoint->getMethodArgument(\'identifier\'), F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($currentObject, \'accounts\')))))';
+
+		$this->assertEquals($expectedResult, $result, 'The wrong Code has been built.');
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
 	public function buildGlobalRuntimeEvaluationsConditionCodeBuildsTheCorrectCodeForConditionsWithObjectAccess() {
 		$condition = array (
 							0 => array (
@@ -424,6 +469,33 @@ class PointcutFilterCompositeTest extends \F3\Testing\BaseTestCase {
 		$result = $pointcutFilterComposite->_call('buildGlobalRuntimeEvaluationsConditionCode', $condition);
 
 		$expectedResult = '(in_array(F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($currentObject, \'some.thing\'), array("foo", F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($party, \'name\'), 5)))';
+
+		$this->assertEquals($expectedResult, $result, 'The wrong Code has been built.');
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function buildGlobalRuntimeEvaluationsConditionCodeBuildsTheCorrectCodeForAConditionWithMatchesOperator() {
+		$condition = array (
+								0 => array (
+									'operator' => 'matches',
+									'leftValue' => 'this.some.thing',
+									'rightValue' => array('"foo"', 'current.party.name', 5),
+								),
+								1 => array (
+									'operator' => 'matches',
+									'leftValue' => 'this.some.thing',
+									'rightValue' => 'current.party.accounts',
+								)
+							);
+
+		$pointcutFilterComposite = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\AOP\Pointcut\PointcutFilterComposite'), array('dummy'), array(), '', FALSE);
+
+		$result = $pointcutFilterComposite->_call('buildGlobalRuntimeEvaluationsConditionCode', $condition);
+
+		$expectedResult = '((!empty(array_intersect(F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($currentObject, \'some.thing\'), array("foo", F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($party, \'name\'), 5)))) && (!empty(array_intersect(F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($currentObject, \'some.thing\'), F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($party, \'accounts\')))))';
 
 		$this->assertEquals($expectedResult, $result, 'The wrong Code has been built.');
 	}

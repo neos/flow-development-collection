@@ -36,23 +36,36 @@ class PolicyServiceTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function thePolicyIsLoadedCorrectlyFromTheConfigurationManager() {
+		$mockPolicyExpressionParser = $this->getMock('F3\FLOW3\Security\Policy\PolicyExpressionParser', array(), array(), '', FALSE);
+
 		$policy = array(
 			'roles' => array('THE_ROLE' => array()),
 			'resources' => array(
 				'methods' => array('theResource' => 'method(Foo->bar())'),
+				'entities' => array()
 			),
-			'acls' => array('THE_ROLE' => array('theResource' => 'ACCESS_GRANT'))
+			'acls' => array(
+				'theRole' => array(
+					'methods' => array(
+						'theMethodResource' => 'GRANT'
+					),
+					'entities' => array(
+						'theEntityResource' => 'GRANT'
+					)
+				)
+			)
 		);
 
 		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\ConfigurationManager', array(), array(), '', FALSE);
 		$mockConfigurationManager->expects($this->once())->method('getConfiguration')->with(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_POLICY)->will($this->returnValue($policy));
 
 		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
-		$mockCache->expects($this->once())->method('has')->will($this->returnValue(FALSE));
+		$mockCache->expects($this->any())->method('has')->will($this->returnValue(FALSE));
 
 		$policyService = new \F3\FLOW3\Security\Policy\PolicyService();
 		$policyService->injectCache($mockCache);
 		$policyService->injectConfigurationManager($mockConfigurationManager);
+		$policyService->injectPolicyExpressionParser($mockPolicyExpressionParser);
 
 		$policyService->initializeObject();
 	}
@@ -73,16 +86,16 @@ class PolicyServiceTest extends \F3\Testing\BaseTestCase {
 			'roles' => array('TheRole' => array()),
 			'resources' => array(
 				'methods' => array('theResource' => 'method(Foo->bar())'),
+				'entities' => array()
 			),
-			'acls' => array('TheRole' => array('theResource' => 'GRANT'))
+			'acls' => array('TheRole' => array('methods' => array('theResource' => 'GRANT')))
 		);
 
 		$mockFilter = $this->getMock('F3\FLOW3\AOP\Pointcut\PointcutFilterComposite', array(), array(), '', FALSE);
 		$mockFilter->expects($this->once())->method('matches')->with('Foo', 'bar', 'Baz')->will($this->returnValue(TRUE));
 
 		$mockPolicyExpressionParser = $this->getMock('F3\FLOW3\Security\Policy\PolicyExpressionParser', array(), array(), '', FALSE);
-		$mockPolicyExpressionParser->expects($this->once())->method('setResourcesTree')->with($policy['resources']['methods']);
-		$mockPolicyExpressionParser->expects($this->once())->method('parse')->with('theResource')->will($this->returnValue($mockFilter));
+		$mockPolicyExpressionParser->expects($this->once())->method('parseMethodResources')->with('theResource', $policy['resources']['methods'])->will($this->returnValue($mockFilter));
 
 		$accessibleProxyClassName = $this->buildAccessibleProxy('F3\FLOW3\Security\Policy\PolicyService');
 		$policyService = new $accessibleProxyClassName();
@@ -107,9 +120,11 @@ class PolicyServiceTest extends \F3\Testing\BaseTestCase {
 
 		$policy = array(
 			'acls' => array('TheRole' => array(
-				'FirstResource' => 'GRANT',
-				'SecondResource' => 'DENY',
-				'ThirdResource' => 'DENY'
+                'methods' => array(
+                    'FirstResource' => 'GRANT',
+                    'SecondResource' => 'DENY',
+                    'ThirdResource' => 'DENY'
+                )
 			))
 		);
 
@@ -196,16 +211,16 @@ class PolicyServiceTest extends \F3\Testing\BaseTestCase {
 			'roles' => array('theRole' => array()),
 			'resources' => array(
 				'methods' => array('theResource' => 'method(Foo->bar())'),
+				'entities' => array()
 			),
-			'acls' => array('theRole' => array('theResource' => 'GRANT'))
+			'acls' => array('theRole' => array('methods' => array('theResource' => 'GRANT')))
 		);
 
 		$mockFilter = $this->getMock('F3\FLOW3\AOP\Pointcut\PointcutFilterComposite', array(), array(), '', FALSE);
 		$mockFilter->expects($this->once())->method('matches')->with('Foo', 'bar', 'Baz')->will($this->returnValue(TRUE));
 
 		$mockPolicyExpressionParser = $this->getMock('F3\FLOW3\Security\Policy\PolicyExpressionParser', array(), array(), '', FALSE);
-		$mockPolicyExpressionParser->expects($this->once())->method('setResourcesTree')->with($policy['resources']['methods']);
-		$mockPolicyExpressionParser->expects($this->once())->method('parse')->with('theResource')->will($this->returnValue($mockFilter));
+		$mockPolicyExpressionParser->expects($this->once())->method('parseMethodResources')->with('theResource', $policy['resources']['methods'])->will($this->returnValue($mockFilter));
 
 		$accessibleProxyClassName = $this->buildAccessibleProxy('F3\FLOW3\Security\Policy\PolicyService');
 		$policyService = new $accessibleProxyClassName();
@@ -389,6 +404,278 @@ class PolicyServiceTest extends \F3\Testing\BaseTestCase {
 
 		$this->assertEquals(PolicyService::PRIVILEGE_DENY, $policyService->getPrivilegeForResource($mockRole, 'someResourceNotConnectedToAPolicyEntry'));
 
+	}
+
+	/**
+	 * @test
+	 * @category unit
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function initializeObjectLoadsTheEntityConstraintsFromTheCache() {
+		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\ConfigurationManager', array(), array(), '', FALSE);
+
+		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
+		$mockCache->expects($this->at(0))->method('has')->with('acls')->will($this->returnValue(TRUE));
+		$mockCache->expects($this->at(1))->method('get')->with('acls')->will($this->returnValue(array('cachedAcls')));
+		$mockCache->expects($this->at(2))->method('has')->with('entityResourcesConstraints')->will($this->returnValue(TRUE));
+		$mockCache->expects($this->at(3))->method('get')->with('entityResourcesConstraints')->will($this->returnValue(array('cachedConstraints')));
+
+		$policyService = $this->getAccessibleMock('F3\FLOW3\Security\Policy\PolicyService', array('dummy'), array(), '', FALSE);
+		$policyService->injectCache($mockCache);
+		$policyService->injectConfigurationManager($mockConfigurationManager);
+
+		$policyService->initializeObject();
+
+		$this->assertEquals($policyService->_get('entityResourcesConstraints'), array('cachedConstraints'));
+	}
+
+	/**
+	 * @test
+	 * @category unit
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function initializeObjectCallsThePolicyExpressionPraserAndBuildsTheEntityConstraintsIfTheCacheIsEmpty() {
+		$policy = array(
+			'resources' => array(
+				'methods' => array(),
+				'entities' => array('firstEntity', 'secondEntity')
+			)
+		);
+
+		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\ConfigurationManager', array(), array(), '', FALSE);
+		$mockConfigurationManager->expects($this->once())->method('getConfiguration')->with(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_POLICY)->will($this->returnValue($policy));
+
+		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
+		$mockCache->expects($this->at(0))->method('has')->with('acls')->will($this->returnValue(TRUE));
+		$mockCache->expects($this->at(1))->method('get')->with('acls')->will($this->returnValue(array('cachedAcls')));
+		$mockCache->expects($this->at(2))->method('has')->with('entityResourcesConstraints')->will($this->returnValue(FALSE));
+
+		$mockPolicyExpressionParser = $this->getMock('F3\FLOW3\Security\Policy\PolicyExpressionParser', array(), array(), '', FALSE);
+		$mockPolicyExpressionParser->expects($this->once())->method('parseEntityResources')->with(array('firstEntity', 'secondEntity'))->will($this->returnValue(array('newParsedConstraints')));
+
+		$policyService = $this->getAccessibleMock('F3\FLOW3\Security\Policy\PolicyService', array('dummy'), array(), '', FALSE);
+		$policyService->injectCache($mockCache);
+		$policyService->injectConfigurationManager($mockConfigurationManager);
+		$policyService->injectPolicyExpressionParser($mockPolicyExpressionParser);
+
+		$policyService->initializeObject();
+
+		$this->assertEquals($policyService->_get('entityResourcesConstraints'), array('newParsedConstraints'));
+	}
+
+	/**
+	 * @test
+	 * @category unit
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function initializeObjectCallsParseEntityAclsIfTheAclCacheIsEmpty() {
+		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\ConfigurationManager', array(), array(), '', FALSE);
+		$mockConfigurationManager->expects($this->once())->method('getConfiguration')->with(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_POLICY)->will($this->returnValue(array()));
+
+		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
+		$mockCache->expects($this->at(0))->method('has')->with('acls')->will($this->returnValue(FALSE));
+		$mockCache->expects($this->at(1))->method('has')->with('entityResourcesConstraints')->will($this->returnValue(TRUE));
+		$mockCache->expects($this->at(2))->method('get')->with('entityResourcesConstraints')->will($this->returnValue(array('cachedConstraints')));
+
+		$policyService = $this->getAccessibleMock('F3\FLOW3\Security\Policy\PolicyService', array('parseEntityAcls'), array(), '', FALSE);
+		$policyService->expects($this->once())->method('parseEntityAcls');
+
+		$policyService->injectCache($mockCache);
+		$policyService->injectConfigurationManager($mockConfigurationManager);
+
+		$policyService->initializeObject();
+	}
+
+	/**
+	 * @test
+	 * @category unit
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function parseEntityAclsParsesTheEntityAclsCorrectly() {
+		$policy = array(
+			'acls' => array(
+				'theRole' => array(
+					'entities' => array(
+						'theEntityResource' => 'GRANT',
+						'theOtherEntityResource' => 'DENY'
+					)
+				),
+				'theOtherRole' => array(
+					'entities' => array(
+						'theEntityResource' => 'DENY',
+						'theOtherEntityResource' => 'GRANT'
+					)
+				)
+			)
+		);
+
+		$policyService = $this->getAccessibleMock('F3\FLOW3\Security\Policy\PolicyService', array('dummy'), array(), '', FALSE);
+		$policyService->_set('policy', $policy);
+
+		$policyService->_call('parseEntityAcls');
+
+		$expectedAcls = array(
+			'theEntityResource' => array(
+				'theRole' => array('privilege' => PolicyService::PRIVILEGE_GRANT),
+				'theOtherRole' => array('privilege' => PolicyService::PRIVILEGE_DENY)
+			),
+			'theOtherEntityResource' => array(
+				'theRole' => array('privilege' => PolicyService::PRIVILEGE_DENY),
+				'theOtherRole' => array('privilege' => PolicyService::PRIVILEGE_GRANT)
+			)
+		);
+
+		$this->assertEquals($expectedAcls, $policyService->_get('acls'));
+	}
+
+	/**
+	 * @test
+	 * @category unit
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function shutdownObjectStoresTheEntityConstraintsAndACLsCorrectlyInTheCache() {
+		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
+		$mockCache->expects($this->at(0))->method('set')->with('acls', array('aclsArray'), array('F3_FLOW3_AOP'));
+		$mockCache->expects($this->at(1))->method('set')->with('entityResourcesConstraints', array('entityResourcesConstraintsArray'));
+
+		$policyService = $this->getAccessibleMock('F3\FLOW3\Security\Policy\PolicyService', array('buildEntityConstraints'), array(), '', FALSE);
+		$policyService->injectCache($mockCache);
+		$policyService->_set('acls', array('aclsArray'));
+		$policyService->_set('entityResourcesConstraints', array('entityResourcesConstraintsArray'));
+
+		$policyService->shutdownObject();
+	}
+
+	/**
+	 * @test
+	 * @category unit
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getResourcesConstraintsForEntityTypeAndRolesBasicallyWorks() {
+		$entityResourcesConstraints = array(
+			'F3_MyEntity' => array(
+				'resource1' => 'constraint1',
+				'resource2' => 'constraint2',
+				'resource3' => 'constraint3'
+			)
+		);
+
+		$acls = array(
+			'resource1' => array(
+				'Administrator' => array(
+					'privilege' => PolicyService::PRIVILEGE_DENY
+				),
+			),
+			'resource2' => array(
+				'SomeOtherRole' => array(
+                    'privilege' => PolicyService::PRIVILEGE_DENY
+				),
+			),
+			'resource3' => array(
+				'Customer' => array(
+                    'privilege' => PolicyService::PRIVILEGE_DENY
+				),
+			)
+		);
+
+		$policyService = $this->getAccessibleMock('F3\FLOW3\Security\Policy\PolicyService', array('buildEntityConstraints'), array(), '', FALSE);
+		$policyService->_set('entityResourcesConstraints', $entityResourcesConstraints);
+		$policyService->_set('acls', $acls);
+
+		$result = $policyService->getResourcesConstraintsForEntityTypeAndRoles('F3\MyEntity', array('Customer', 'Administrator'));
+
+		$this->assertEquals($result, array('resource1' => 'constraint1', 'resource3' => 'constraint3'));
+	}
+
+	/**
+	 * @test
+	 * @category unit
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getResourcesConstraintsForEntityTypeAndRolesDoesNotReturnConstraintsForResourcesThatGotADenyAndAGrantPrivilege() {
+		$entityResourcesConstraints = array(
+			'F3_MyEntity' => array(
+				'resource1' => 'constraint1',
+				'resource2' => 'constraint2',
+				'resource3' => 'constraint3'
+			)
+		);
+
+		$acls = array(
+			'resource1' => array(
+				'Administrator' => array(
+					'privilege' => PolicyService::PRIVILEGE_GRANT
+				),
+				'Customer' => array(
+					'privilege' => PolicyService::PRIVILEGE_DENY
+				)
+			),
+			'resource2' => array(
+				'SomeOtherRole' => array(
+					'privilege' => PolicyService::PRIVILEGE_DENY
+				),
+			),
+			'resource3' => array(
+				'Customer' => array(
+					'privilege' => PolicyService::PRIVILEGE_DENY
+				),
+			)
+		);
+
+		$policyService = $this->getAccessibleMock('F3\FLOW3\Security\Policy\PolicyService', array('buildEntityConstraints'), array(), '', FALSE);
+		$policyService->_set('entityResourcesConstraints', $entityResourcesConstraints);
+		$policyService->_set('acls', $acls);
+
+		$result = $policyService->getResourcesConstraintsForEntityTypeAndRoles('F3\MyEntity', array('Customer', 'Administrator'));
+
+		$this->assertEquals($result, array('resource3' => 'constraint3'));
+	}
+
+	/**
+	 * @test
+	 * @category unit
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function hasPolicyEntryForEntityTypeWorks() {
+		$entityResourcesConstraints = array(
+			'F3_MyEntity' => array(
+				'resource1' => 'constraint1',
+				'resource2' => 'constraint2',
+				'resource3' => 'constraint3'
+			)
+		);
+
+		$acls = array(
+			'resource1' => array(
+				'Administrator' => array(
+					'privilege' => PolicyService::PRIVILEGE_GRANT
+				),
+				'Customer' => array(
+					'privilege' => PolicyService::PRIVILEGE_DENY
+				)
+			),
+			'resource2' => array(
+				'SomeOtherRole' => array(
+					'privilege' => PolicyService::PRIVILEGE_DENY
+				),
+			),
+			'resource3' => array(
+				'Customer' => array(
+					'privilege' => PolicyService::PRIVILEGE_DENY
+				),
+			)
+		);
+
+		$policyService = $this->getAccessibleMock('F3\FLOW3\Security\Policy\PolicyService', array('buildEntityConstraints'), array(), '', FALSE);
+		$policyService->_set('entityResourcesConstraints', $entityResourcesConstraints);
+		$policyService->_set('acls', $acls);
+
+		$this->assertTrue($policyService->hasPolicyEntryForEntityType('F3\MyEntity', array('Manager', 'Administrator', 'Anonymous')));
+		$this->assertTrue($policyService->hasPolicyEntryForEntityType('F3\MyEntity', array('Manager', 'Customer')));
+		$this->assertFalse($policyService->hasPolicyEntryForEntityType('F3\MyOtherEntity', array('Manager', 'Administrator', 'Anonymous')));
+		$this->assertFalse($policyService->hasPolicyEntryForEntityType('F3\MyOtherEntity', array('Manager', 'Customer')));
+		$this->assertFalse($policyService->hasPolicyEntryForEntityType('F3\MyEntity', array('Manager', 'Anonymous')));
+		$this->assertFalse($policyService->hasPolicyEntryForEntityType('F3\MyEntity', array('Manager', 'King')));
 	}
 }
 ?>
