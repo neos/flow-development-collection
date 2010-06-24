@@ -111,8 +111,8 @@ class PolicyExpressionParser extends \F3\FLOW3\AOP\Pointcut\PointcutExpressionPa
 	 * Parses the security constraints configured for a single entity resource. If needed
 	 * it walks recursively through the entity resources tree array.
 	 *
-	 * @param array $entityResourcesTree The tree of all available resources for one entity
 	 * @param string $resourceName The name of the resource to be parsed
+	 * @param array $entityResourcesTree The tree of all available resources for one entity
 	 * @return array The constraints definition array
 	 * @throws \F3\FLOW3\Security\Exception\CircularResourceDefinitionDetectedException
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>

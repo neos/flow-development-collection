@@ -287,36 +287,36 @@ class PersistenceQueryRewritingAspect {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function checkConstraintDefinitionsOnResultArray(array $constraintDefinitions, array $queryResult) {
-		$resultConstraint = TRUE;
+		$overallResult = TRUE;
 		
 		foreach ($constraintDefinitions as $resource => $resourceConstraints) {
 			foreach ($resourceConstraints as $operator => $policyConstraints) {
 				foreach ($policyConstraints as $key => $singlePolicyConstraint) {
 					if ($key === 'subConstraints') {
-						$currentConstraint = $this->checkConstraintDefinitionsOnResultArray(array($singlePolicyConstraint), $queryResult);
+						$currentResult = $this->checkConstraintDefinitionsOnResultArray(array($singlePolicyConstraint), $queryResult);
 					} else {
-						$currentConstraint = $this->checkSingleConstraintDefinitionOnResultArray($singlePolicyConstraint, $queryResult);
+						$currentResult = $this->checkSingleConstraintDefinitionOnResultArray($singlePolicyConstraint, $queryResult);
 					}
 
 					switch ($operator) {
 						case '&&':
-							$resultConstraint = $currentConstraint && $resultConstraint;
+							$overallResult = $currentResult && $overallResult;
 							break;
 						case '&&!':
-							$resultConstraint = (!$currentConstraint) && $resultConstraint;
+							$overallResult = (!$currentResult) && $overallResult;
 							break;
 						case '||':
-							$resultConstraint = $currentConstraint || $resultConstraint;
+							$overallResult = $currentResult || $overallResult;
 							break;
 						case '||!':
-							$resultConstraint = (!$currentConstraint) && $resultConstraint;
+							$overallResult = (!$currentResult) && $overallResult;
 							break;
 					}
 				}
 			}
 		}
 
-		return $resultConstraint;
+		return $overallResult;
 	}
 
 	/**

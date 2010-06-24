@@ -114,7 +114,7 @@ class PackageManager implements \F3\FLOW3\Package\PackageManagerInterface {
 		}
 
 		foreach ($this->packages as $packageKey => $package) {
-			if ($packageKey === 'FLOW3' || (isset($packageStatesConfiguration[$packageKey]['state']) && $packageStatesConfiguration[$packageKey]['state'] == 'active')) {
+			if ($packageKey === 'FLOW3' || (isset($packageStatesConfiguration[$packageKey]['state']) && $packageStatesConfiguration[$packageKey]['state'] === 'active')) {
 				$this->activePackages[$packageKey] = $package;
 			}
 		}
@@ -277,6 +277,7 @@ class PackageManager implements \F3\FLOW3\Package\PackageManagerInterface {
 	 * Deactivates a package if it is in the list of active packages
 	 *
 	 * @param string $packageKey The package to deactivate
+	 * @return void
 	 * @throws \F3\FLOW3\Package\Exception\InvalidPackageStateException If the specified package is not active
 	 * @author Thomas Hempel <thomas@typo3.org>
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
@@ -298,6 +299,7 @@ class PackageManager implements \F3\FLOW3\Package\PackageManagerInterface {
 	 * Activates a package
 	 *
 	 * @param string $packageKey The package to activate
+	 * @return void
 	 * @throws \F3\FLOW3\Package\Exception\InvalidPackageStateException If the specified package is already active
 	 * @author Thomas Hempel <thomas@typo3.org>
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
@@ -309,7 +311,7 @@ class PackageManager implements \F3\FLOW3\Package\PackageManagerInterface {
 			$this->activePackages[$packageKey] = $package;
 			$packageStatesConfiguration = $this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_PACKAGESTATES);
 			$packageStatesConfiguration[$packageKey]['state'] = 'active';
-			$packageStatesConfiguration = $this->configurationManager->setConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_PACKAGESTATES, $packageStatesConfiguration);
+			$this->configurationManager->setConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_PACKAGESTATES, $packageStatesConfiguration);
 			$this->configurationManager->saveConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_PACKAGESTATES);
 		} else {
 			throw new \F3\FLOW3\Package\Exception\InvalidPackageStateException('Package "' . $packageKey . '" is already active.', 1244620776);
@@ -320,13 +322,14 @@ class PackageManager implements \F3\FLOW3\Package\PackageManagerInterface {
 	 * Removes a package from registry and deletes it from filesystem
 	 *
 	 * @param string $packageKey package to remove
+	 * @return void
 	 * @throws \F3\FLOW3\Package\Exception\UnknownPackageException if the specified package is not known
 	 * @author Thomas Hempel <thomas@typo3.org>
 	 * @api
 	 */
 	public function deletePackage($packageKey) {
-		if ($packageKey === 'FLOW3') throw new \F3\FLOW3\Package\Exception\ProtectedPackageKeyException('The package "' . $packageKey . '" is protected and can not be removed.', 1220722120);
-		if (!$this->isPackageAvailable($packageKey)) throw new \F3\FLOW3\Package\Exception\UnknownPackageException('Package "' . $packageKey . '" is not available and can not be removed though.', 1166543253);
+		if ($packageKey === 'FLOW3') throw new \F3\FLOW3\Package\Exception\ProtectedPackageKeyException('The package "' . $packageKey . '" is protected and cannot be removed.', 1220722120);
+		if (!$this->isPackageAvailable($packageKey)) throw new \F3\FLOW3\Package\Exception\UnknownPackageException('Package "' . $packageKey . '" is not available and cannot be removed.', 1166543253);
 		if ($this->isPackageActive($packageKey)) {
 			$this->deactivatePackage($packageKey);
 		}

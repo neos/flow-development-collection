@@ -453,7 +453,7 @@ class ObjectContainerBuilder {
 	/**
 	 *
 	 * @param \F3\FLOW3\Object\Configuration\Configuration $objectConfiguration
-	 * @param integer a \F3\FLOW3\Object\Container\ObjectContainerInterface::INITIALIZATIONCAUSE_* constant which is the cause of the initialization command being called.
+	 * @param integer $cause a \F3\FLOW3\Object\Container\ObjectContainerInterface::INITIALIZATIONCAUSE_* constant which is the cause of the initialization command being called.
 	 * @return string
 	 * @author Robert Lemke <robert@typo3.org>
 	 */

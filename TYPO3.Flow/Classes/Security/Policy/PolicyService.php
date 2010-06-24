@@ -416,6 +416,8 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	 */
 	protected function parseEntityAcls() {
 		foreach ($this->policy['acls'] as $role => $aclEntries) {
+			if (!array_key_exists('entities', $aclEntries)) continue;
+
 			foreach ($aclEntries['entities'] as $resource => $privilege) {
 				if (!isset($this->acls[$resource])) $this->acls[$resource] = array();
 				$this->acls[$resource][$role] = array(
