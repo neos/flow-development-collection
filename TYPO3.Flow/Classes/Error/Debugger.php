@@ -234,17 +234,22 @@ namespace F3;
  * A var_dump function optimized for FLOW3's object structures
  *
  * @param mixed $variable The variable to display a dump of
+ * @param string $title optional custom title for the debug output
  * @return void
  * @author Robert Lemke <robert@typo3.org>
+ * @author Bastian Waidelich <bastian@typo3.org>
  * @api
  */
-function var_dump($variable) {
+function var_dump($variable, $title = NULL) {
+	if ($title === NULL) {
+		$title = 'FLOW3 Variable Dump';
+	}
 	\F3\FLOW3\Error\Debugger::clearState();
 	echo '
 		<link rel="stylesheet" type="text/css" href="/_Resources/Static/Packages/FLOW3/Error/Debugger.css" />
 		<div class="F3-FLOW3-Error-Debugger-VarDump">
 			<div class="F3-FLOW3-Error-Debugger-VarDump-Top">
-				FLOW3 Variable Dump
+				' . htmlspecialchars($title) . '
 			</div>
 			<div class="F3-FLOW3-Error-Debugger-VarDump-Center">
 				<pre dir="ltr">' . \F3\FLOW3\Error\Debugger::renderDump($variable, 0) . '</pre>
