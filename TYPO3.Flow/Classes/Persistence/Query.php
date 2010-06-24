@@ -59,12 +59,12 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	protected $persistenceManager;
 
 	/**
-	 * @var \F3\FLOW3\Persistence\QOM\QueryObjectModelFactory
+	 * @var \F3\FLOW3\Persistence\Qom\QueryObjectModelFactory
 	 */
 	protected $qomFactory;
 
 	/**
-	 * @var \F3\FLOW3\Persistence\QOM\Constraint
+	 * @var \F3\FLOW3\Persistence\Qom\Constraint
 	 */
 	protected $constraint;
 
@@ -137,11 +137,11 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	/**
 	 * Injects the FLOW3 QOM factory
 	 *
-	 * @param \F3\FLOW3\Persistence\QOM\QueryObjectModelFactory $qomFactory
+	 * @param \F3\FLOW3\Persistence\Qom\QueryObjectModelFactory $qomFactory
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectQomFactory(\F3\FLOW3\Persistence\QOM\QueryObjectModelFactory $qomFactory) {
+	public function injectQomFactory(\F3\FLOW3\Persistence\Qom\QueryObjectModelFactory $qomFactory) {
 		$this->qomFactory = $qomFactory;
 	}
 
@@ -273,7 +273,7 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 * The constraint used to limit the result set. Returns $this to allow
 	 * for chaining (fluid interface)
 	 *
-	 * @param \F3\FLOW3\Persistence\QOM\Constraint $constraint
+	 * @param \F3\FLOW3\Persistence\Qom\Constraint $constraint
 	 * @return \F3\FLOW3\Persistence\QueryInterface
 	 * @api
 	 */
@@ -285,7 +285,7 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	/**
 	 * Gets the constraint for this query.
 	 *
-	 * @return \F3\FLOW3\Persistence\QOM\Constraint the constraint, or null if none
+	 * @return \F3\FLOW3\Persistence\Qom\Constraint the constraint, or null if none
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	*/
@@ -299,7 +299,7 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 * It also accepts a single array of constraints to be concatenated.
 	 *
 	 * @param mixed $constraint1 The first of multiple constraints or an array of constraints.
-	 * @return \F3\FLOW3\Persistence\QOM\And
+	 * @return \F3\FLOW3\Persistence\Qom\And
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
@@ -328,7 +328,7 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 * It also accepts a single array of constraints to be concatenated.
 	 *
 	 * @param object $constraint1 The first of multiple constraints or an array of constraints.
-	 * @return \F3\FLOW3\Persistence\QOM\Or
+	 * @return \F3\FLOW3\Persistence\Qom\Or
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
@@ -355,7 +355,7 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 * Performs a logical negation of the given constraint
 	 *
 	 * @param object $constraint Constraint to negate
-	 * @return \F3\FLOW3\Persistence\QOM\Not
+	 * @return \F3\FLOW3\Persistence\Qom\Not
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
@@ -447,7 +447,7 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 *
 	 * @param string $propertyName The name of the multivalued property to compare against
 	 * @param mixed $operand The value to compare with
-	 * @return \F3\FLOW3\Persistence\QOM\Comparison
+	 * @return \F3\FLOW3\Persistence\Qom\Comparison
 	 * @throws \F3\FLOW3\Persistence\Exception\InvalidQueryException if used on a single-valued property
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
@@ -488,7 +488,7 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 *
 	 * @param string $propertyName The name of the property to compare against
 	 * @param mixed $operand The value to compare with, multivalued
-	 * @return \F3\FLOW3\Persistence\QOM\Comparison
+	 * @return \F3\FLOW3\Persistence\Qom\Comparison
 	 * @throws \F3\FLOW3\Persistence\Exception\InvalidQueryException if used on a multi-valued property or with single-valued operand
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
@@ -513,7 +513,7 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 *
 	 * @param string $propertyName The name of the property to compare against
 	 * @param mixed $operand The value to compare with
-	 * @return \F3\FLOW3\Persistence\QOM\Comparison
+	 * @return \F3\FLOW3\Persistence\Qom\Comparison
 	 * @throws \F3\FLOW3\Persistence\Exception\InvalidQueryException if used on a multi-valued property or with a non-literal/non-DateTime operand
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
@@ -538,7 +538,7 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 *
 	 * @param string $propertyName The name of the property to compare against
 	 * @param mixed $operand The value to compare with
-	 * @return \F3\FLOW3\Persistence\QOM\Comparison
+	 * @return \F3\FLOW3\Persistence\Qom\Comparison
 	 * @throws \F3\FLOW3\Persistence\Exception\InvalidQueryException if used on a multi-valued property or with a non-literal/non-DateTime operand
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
@@ -563,7 +563,7 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 *
 	 * @param string $propertyName The name of the property to compare against
 	 * @param mixed $operand The value to compare with
-	 * @return \F3\FLOW3\Persistence\QOM\Comparison
+	 * @return \F3\FLOW3\Persistence\Qom\Comparison
 	 * @throws \F3\FLOW3\Persistence\Exception\InvalidQueryException if used on a multi-valued property or with a non-literal/non-DateTime operand
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
@@ -588,7 +588,7 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 *
 	 * @param string $propertyName The name of the property to compare against
 	 * @param mixed $operand The value to compare with
-	 * @return \F3\FLOW3\Persistence\QOM\Comparison
+	 * @return \F3\FLOW3\Persistence\Qom\Comparison
 	 * @throws \F3\FLOW3\Persistence\Exception\InvalidQueryException if used on a multi-valued property or with a non-literal/non-DateTime operand
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api

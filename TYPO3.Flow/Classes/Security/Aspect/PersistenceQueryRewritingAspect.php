@@ -127,7 +127,7 @@ class PersistenceQueryRewritingAspect {
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function rewriteQOMQuery(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function rewriteQomQuery(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		if ($this->objectManager->isSessionInitialized() === FALSE) return;
 		if ($this->securityContext === NULL) $this->securityContext = $this->objectManager->get('F3\FLOW3\Security\Context');
 
@@ -137,7 +137,7 @@ class PersistenceQueryRewritingAspect {
 
 		if ($this->policyService->hasPolicyEntryForEntityType($entityType, $authenticatedRoles)) {
 			$policyConstraintsDefinition = $this->policyService->getResourcesConstraintsForEntityTypeAndRoles($entityType, $authenticatedRoles);
-			$additionalCalculatedConstraints = $this->getQOMConstraintForConstraintDefinitions($policyConstraintsDefinition, $query);
+			$additionalCalculatedConstraints = $this->getQomConstraintForConstraintDefinitions($policyConstraintsDefinition, $query);
 
 			$newConstraints = $query->logicalAnd($query->getConstraint(), $query->logicalNot($additionalCalculatedConstraints));
 			$query->matching($newConstraints);
@@ -173,18 +173,18 @@ class PersistenceQueryRewritingAspect {
 	 *
 	 * @param array $constraintDefinitions The constraint expressions
 	 * @param \F3\FLOW3\Persistence\Query $query The query object to build the constraint with
-	 * @return \F3\FLOW3\Persistence\QOM\Constraint The build constraint object
+	 * @return \F3\FLOW3\Persistence\Qom\Constraint The build constraint object
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	protected function getQOMConstraintForConstraintDefinitions(array $constraintDefinitions, \F3\FLOW3\Persistence\Query $query) {
+	protected function getQomConstraintForConstraintDefinitions(array $constraintDefinitions, \F3\FLOW3\Persistence\Query $query) {
 		$compositeConstraint = NULL;
 		foreach ($constraintDefinitions as $resource => $resourceConstraints) {
 			foreach ($resourceConstraints as $operator => $policyConstraints) {
 				foreach ($policyConstraints as $key => $singlePolicyConstraint) {
 					if ($key === 'subConstraints') {
-						$currentConstraint = $this->getQOMConstraintForConstraintDefinitions(array($singlePolicyConstraint), $query);
+						$currentConstraint = $this->getQomConstraintForConstraintDefinitions(array($singlePolicyConstraint), $query);
 					} else {
-						$currentConstraint = $this->getQOMConstraintForSingleConstraintDefinition($singlePolicyConstraint, $query);
+						$currentConstraint = $this->getQomConstraintForSingleConstraintDefinition($singlePolicyConstraint, $query);
 					}
 
 					if ($compositeConstraint === NULL) {
@@ -218,11 +218,11 @@ class PersistenceQueryRewritingAspect {
 	 *
 	 * @param array $constraintDefinition The constraint expression
 	 * @param \F3\FLOW3\Persistence\Query $query The query object to build the constraint with
-	 * @return \F3\FLOW3\Persistence\QOM\Constraint The build constraint object
+	 * @return \F3\FLOW3\Persistence\Qom\Constraint The build constraint object
 	 * @throws \F3\FLOW3\Security\Exception\InvalidQueryRewritingConstraintException
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	protected function getQOMConstraintForSingleConstraintDefinition(array $constraintDefinition, \F3\FLOW3\Persistence\Query $query) {
+	protected function getQomConstraintForSingleConstraintDefinition(array $constraintDefinition, \F3\FLOW3\Persistence\Query $query) {
 		if (!is_array($constraintDefinition['leftValue']) && strpos($constraintDefinition['leftValue'], 'this.') === 0) {
 			$propertyName = substr($constraintDefinition['leftValue'], 5);
 			$operand = $this->getValueForOperand($constraintDefinition['rightValue']);

@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Persistence\QOM;
+namespace F3\FLOW3\Persistence\Qom;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -29,7 +29,7 @@ namespace F3\FLOW3\Persistence\QOM;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
-class DynamicOperand extends \F3\FLOW3\Persistence\QOM\Operand {
+class DynamicOperand extends \F3\FLOW3\Persistence\Qom\Operand {
 
 }
 

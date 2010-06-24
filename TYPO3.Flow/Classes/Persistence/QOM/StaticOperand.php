@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Persistence\QOM;
+namespace F3\FLOW3\Persistence\Qom;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -31,7 +31,7 @@ namespace F3\FLOW3\Persistence\QOM;
  * @api
  * @scope prototype
  */
-class StaticOperand extends \F3\FLOW3\Persistence\QOM\Operand {
+class StaticOperand extends \F3\FLOW3\Persistence\Qom\Operand {
 
 }
 

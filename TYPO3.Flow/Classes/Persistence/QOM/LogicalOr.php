@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Persistence\QOM;
+namespace F3\FLOW3\Persistence\Qom;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -35,25 +35,25 @@ namespace F3\FLOW3\Persistence\QOM;
  * @api
  * @scope prototype
  */
-class LogicalOr extends \F3\FLOW3\Persistence\QOM\Constraint {
+class LogicalOr extends \F3\FLOW3\Persistence\Qom\Constraint {
 
 	/**
-	 * @var \F3\FLOW3\Persistence\QOM\Constraint
+	 * @var \F3\FLOW3\Persistence\Qom\Constraint
 	 */
 	protected $constraint1;
 
 	/**
-	 * @var \F3\FLOW3\Persistence\QOM\Constraint
+	 * @var \F3\FLOW3\Persistence\Qom\Constraint
 	 */
 	protected $constraint2;
 
 	/**
 	 *
-	 * @param \F3\FLOW3\Persistence\QOM\Constraint $constraint1
-	 * @param \F3\FLOW3\Persistence\QOM\Constraint $constraint2
+	 * @param \F3\FLOW3\Persistence\Qom\Constraint $constraint1
+	 * @param \F3\FLOW3\Persistence\Qom\Constraint $constraint2
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(\F3\FLOW3\Persistence\QOM\Constraint $constraint1, \F3\FLOW3\Persistence\QOM\Constraint $constraint2) {
+	public function __construct(\F3\FLOW3\Persistence\Qom\Constraint $constraint1, \F3\FLOW3\Persistence\Qom\Constraint $constraint2) {
 		$this->constraint1 = $constraint1;
 		$this->constraint2 = $constraint2;
 	}
@@ -61,7 +61,7 @@ class LogicalOr extends \F3\FLOW3\Persistence\QOM\Constraint {
 	/**
 	 * Gets the first constraint.
 	 *
-	 * @return \F3\FLOW3\Persistence\QOM\Constraint the constraint; non-null
+	 * @return \F3\FLOW3\Persistence\Qom\Constraint the constraint; non-null
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
@@ -72,7 +72,7 @@ class LogicalOr extends \F3\FLOW3\Persistence\QOM\Constraint {
 	/**
 	 * Gets the second constraint.
 	 *
-	 * @return \F3\FLOW3\Persistence\QOM\Constraint the constraint; non-null
+	 * @return \F3\FLOW3\Persistence\Qom\Constraint the constraint; non-null
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */

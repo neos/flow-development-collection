@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Persistence\QOM;
+namespace F3\FLOW3\Persistence\Qom;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -70,10 +70,10 @@ namespace F3\FLOW3\Persistence\QOM;
  * @api
  * @scope prototype
  */
-class Comparison extends \F3\FLOW3\Persistence\QOM\Constraint {
+class Comparison extends \F3\FLOW3\Persistence\Qom\Constraint {
 
 	/**
-	 * @var \F3\FLOW3\Persistence\QOM\DynamicOperand
+	 * @var \F3\FLOW3\Persistence\Qom\DynamicOperand
 	 */
 	protected $operand1;
 
@@ -90,12 +90,12 @@ class Comparison extends \F3\FLOW3\Persistence\QOM\Constraint {
 	/**
 	 * Constructs this Comparison instance
 	 *
-	 * @param \F3\FLOW3\Persistence\QOM\DynamicOperand $operand1
+	 * @param \F3\FLOW3\Persistence\Qom\DynamicOperand $operand1
 	 * @param integer $operator one of \F3\FLOW3\Persistence\QueryInterface.OPERATOR_*
 	 * @param mixed $operand2
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(\F3\FLOW3\Persistence\QOM\DynamicOperand $operand1, $operator, $operand2 = NULL) {
+	public function __construct(\F3\FLOW3\Persistence\Qom\DynamicOperand $operand1, $operator, $operand2 = NULL) {
 		$this->operand1 = $operand1;
 		$this->operator = $operator;
 		$this->operand2 = $operand2;
@@ -105,7 +105,7 @@ class Comparison extends \F3\FLOW3\Persistence\QOM\Constraint {
 	 *
 	 * Gets the first operand.
 	 *
-	 * @return \F3\FLOW3\Persistence\QOM\DynamicOperand the operand; non-null
+	 * @return \F3\FLOW3\Persistence\Qom\DynamicOperand the operand; non-null
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */

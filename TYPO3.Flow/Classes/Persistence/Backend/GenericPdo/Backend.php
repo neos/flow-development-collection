@@ -997,30 +997,30 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 	/**
 	 * Transforms a constraint into SQL and parameter arrays
 	 *
-	 * @param \F3\FLOW3\Persistence\QOM\Constraint $constraint
+	 * @param \F3\FLOW3\Persistence\Qom\Constraint $constraint
 	 * @param array &$sql
 	 * @param array &$parameters
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function parseConstraint(\F3\FLOW3\Persistence\QOM\Constraint $constraint, array &$sql, array &$parameters) {
-		if ($constraint instanceof \F3\FLOW3\Persistence\QOM\LogicalAnd) {
+	protected function parseConstraint(\F3\FLOW3\Persistence\Qom\Constraint $constraint, array &$sql, array &$parameters) {
+		if ($constraint instanceof \F3\FLOW3\Persistence\Qom\LogicalAnd) {
 			$sql['where'][] = '(';
 			$this->parseConstraint($constraint->getConstraint1(), $sql, $parameters);
 			$sql['where'][] = ' AND ';
 			$this->parseConstraint($constraint->getConstraint2(), $sql, $parameters);
 			$sql['where'][] = ') ';
-		} elseif ($constraint instanceof \F3\FLOW3\Persistence\QOM\LogicalOr) {
+		} elseif ($constraint instanceof \F3\FLOW3\Persistence\Qom\LogicalOr) {
 			$sql['where'][] = '(';
 			$this->parseConstraint($constraint->getConstraint1(), $sql, $parameters);
 			$sql['where'][] = ' OR ';
 			$this->parseConstraint($constraint->getConstraint2(), $sql, $parameters);
 			$sql['where'][] = ') ';
-		} elseif ($constraint instanceof \F3\FLOW3\Persistence\QOM\LogicalNot) {
+		} elseif ($constraint instanceof \F3\FLOW3\Persistence\Qom\LogicalNot) {
 			$sql['where'][] = '(NOT ';
 			$this->parseConstraint($constraint->getConstraint(), $sql, $parameters);
 			$sql['where'][] = ') ';
-		} elseif ($constraint instanceof \F3\FLOW3\Persistence\QOM\Comparison) {
+		} elseif ($constraint instanceof \F3\FLOW3\Persistence\Qom\Comparison) {
 			$this->parseComparison($constraint, $sql, $parameters);
 		}
 	}
@@ -1028,13 +1028,13 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 	/**
 	 * Parse a Comparison into SQL and parameter arrays.
 	 *
-	 * @param \F3\FLOW3\Persistence\QOM\Comparison $comparison The comparison to parse
+	 * @param \F3\FLOW3\Persistence\Qom\Comparison $comparison The comparison to parse
 	 * @param array &$sql SQL query parts to add to
 	 * @param array &$parameters Parameters to bind to the SQL
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function parseComparison(\F3\FLOW3\Persistence\QOM\Comparison $comparison, array &$sql, array &$parameters) {
+	protected function parseComparison(\F3\FLOW3\Persistence\Qom\Comparison $comparison, array &$sql, array &$parameters) {
 		switch ($comparison->getOperator()) {
 			case \F3\FLOW3\Persistence\QueryInterface::OPERATOR_IN:
 				$this->parseDynamicOperand($comparison->getOperand1(), $comparison->getOperator(), $sql, $parameters, NULL, $comparison->getOperand2());
@@ -1073,7 +1073,7 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 	/**
 	 * Parse a DynamicOperand into SQL and parameter arrays.
 	 *
-	 * @param \F3\FLOW3\Persistence\QOM\DynamicOperand $operand
+	 * @param \F3\FLOW3\Persistence\Qom\DynamicOperand $operand
 	 * @param string $operator One of the JCR_OPERATOR_* constants
 	 * @param array &$sql
 	 * @param array &$parameters
@@ -1081,12 +1081,12 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function parseDynamicOperand(\F3\FLOW3\Persistence\QOM\DynamicOperand $operand, $operator, array &$sql, array &$parameters, $valueFunction = NULL, $operand2 = NULL) {
-		if ($operand instanceof \F3\FLOW3\Persistence\QOM\LowerCase) {
+	protected function parseDynamicOperand(\F3\FLOW3\Persistence\Qom\DynamicOperand $operand, $operator, array &$sql, array &$parameters, $valueFunction = NULL, $operand2 = NULL) {
+		if ($operand instanceof \F3\FLOW3\Persistence\Qom\LowerCase) {
 			$this->parseDynamicOperand($operand->getOperand(), $operator, $sql, $parameters, 'LOWER');
-		} elseif ($operand instanceof \F3\FLOW3\Persistence\QOM\UpperCase) {
+		} elseif ($operand instanceof \F3\FLOW3\Persistence\Qom\UpperCase) {
 			$this->parseDynamicOperand($operand->getOperand(), $operator, $sql, $parameters, 'UPPER');
-		} elseif ($operand instanceof \F3\FLOW3\Persistence\QOM\PropertyValue) {
+		} elseif ($operand instanceof \F3\FLOW3\Persistence\Qom\PropertyValue) {
 			$selectorName = $operand->getSelectorName();
 			$where = '';
 			switch ($operator) {

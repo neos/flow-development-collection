@@ -34,7 +34,7 @@ class PersistenceQueryRewritingAspectTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function rewriteQOMQueryAddsTheConstraintsGivenByThePolicyServiceCorrectlyToTheQueryObject() {
+	public function rewriteQomQueryAddsTheConstraintsGivenByThePolicyServiceCorrectlyToTheQueryObject() {
 		$entityType = 'MyClass';
 
 		$mockQuery = $this->getMock('F3\FLOW3\Persistence\Query', array(), array(), '', FALSE);
@@ -59,19 +59,19 @@ class PersistenceQueryRewritingAspectTest extends \F3\Testing\BaseTestCase {
 		$mockPolicyService->expects($this->once())->method('getResourcesConstraintsForEntityTypeAndRoles')->with($entityType, $roles)->will($this->returnValue(array('parsedConstraints')));
 		$mockPolicyService->expects($this->once())->method('hasPolicyEntryForEntityType')->with($entityType)->will($this->returnValue(TRUE));
 
-		$rewritingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('getQOMConstraintForConstraintDefinitions'), array(), '', FALSE);
-		$rewritingAspect->expects($this->once())->method('getQOMConstraintForConstraintDefinitions')->with(array('parsedConstraints'), $mockQuery)->will($this->returnValue('newConstraints'));
+		$rewritingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('getQomConstraintForConstraintDefinitions'), array(), '', FALSE);
+		$rewritingAspect->expects($this->once())->method('getQomConstraintForConstraintDefinitions')->with(array('parsedConstraints'), $mockQuery)->will($this->returnValue('newConstraints'));
 		$rewritingAspect->injectPolicyService($mockPolicyService);
 		$rewritingAspect->injectObjectManager($mockObjectManager);
 
-		$rewritingAspect->rewriteQOMQuery($mockJoinPoint);
+		$rewritingAspect->rewriteQomQuery($mockJoinPoint);
 	}
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function rewriteQOMQueryFetchesTheSecurityContextOnTheFirstCallToBeSureTheSessionHasAlreadyBeenInitializedWhenTheContextIsBuilt() {
+	public function rewriteQomQueryFetchesTheSecurityContextOnTheFirstCallToBeSureTheSessionHasAlreadyBeenInitializedWhenTheContextIsBuilt() {
 		$mockQuery = $this->getMock('F3\FLOW3\Persistence\Query', array(), array(), '', FALSE);
 
 		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
@@ -91,14 +91,14 @@ class PersistenceQueryRewritingAspectTest extends \F3\Testing\BaseTestCase {
 		$rewritingAspect->injectPolicyService($mockPolicyService);
 		$rewritingAspect->injectObjectManager($mockObjectManager);
 
-		$rewritingAspect->rewriteQOMQuery($mockJoinPoint);
+		$rewritingAspect->rewriteQomQuery($mockJoinPoint);
 	}
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function anQOMQueryIsNotRewrittenIfThereIsNoPolicyEntryForItsEntityType() {
+	public function anQomQueryIsNotRewrittenIfThereIsNoPolicyEntryForItsEntityType() {
 		$entityType = 'MyClass';
 
 		$mockSecurityContext = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
@@ -119,14 +119,14 @@ class PersistenceQueryRewritingAspectTest extends \F3\Testing\BaseTestCase {
 		$rewritingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('dummy'), array(), '', FALSE);
         $rewritingAspect->injectObjectManager($mockObjectManager);
 		$rewritingAspect->injectPolicyService($mockPolicyService);
-		$rewritingAspect->rewriteQOMQuery($mockJoinPoint);
+		$rewritingAspect->rewriteQomQuery($mockJoinPoint);
 	}
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function getQOMConstraintForConstraintDefinitionsWorks() {
+	public function getQomConstraintForConstraintDefinitionsWorks() {
 		$parsedConstraints = array(
 			'resource' => array(
 				'&&' => array(
@@ -161,15 +161,15 @@ class PersistenceQueryRewritingAspectTest extends \F3\Testing\BaseTestCase {
 		$mockQuery->expects($this->at(5))->method('logicalNot')->with('sixthConstraintResult')->will($this->returnValue('notSixth'));
 		$mockQuery->expects($this->at(6))->method('logicalOr')->with('firstAndThirdAndFourthOrSecondAndNotFifth', 'notSixth')->will($this->returnValue('firstAndThirdAndFourthOrSecondAndNotFifthOrNotSixth'));
 
-		$rewritingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('getQOMConstraintForSingleConstraintDefinition'), array(), '', FALSE);
-		$rewritingAspect->expects($this->at(0))->method('getQOMConstraintForSingleConstraintDefinition')->with(array('firstConstraint'), $mockQuery)->will($this->returnValue('firstConstraintResult'));
-		$rewritingAspect->expects($this->at(1))->method('getQOMConstraintForSingleConstraintDefinition')->with(array('thirdConstraint'), $mockQuery)->will($this->returnValue('thirdConstraintResult'));
-		$rewritingAspect->expects($this->at(2))->method('getQOMConstraintForSingleConstraintDefinition')->with(array('fourthConstraint'), $mockQuery)->will($this->returnValue('fourthConstraintResult'));
-		$rewritingAspect->expects($this->at(3))->method('getQOMConstraintForSingleConstraintDefinition')->with(array('secondConstraint'), $mockQuery)->will($this->returnValue('secondConstraintResult'));
-		$rewritingAspect->expects($this->at(4))->method('getQOMConstraintForSingleConstraintDefinition')->with(array('fifthConstraint'), $mockQuery)->will($this->returnValue('fifthConstraintResult'));
-		$rewritingAspect->expects($this->at(5))->method('getQOMConstraintForSingleConstraintDefinition')->with(array('sixthConstraint'), $mockQuery)->will($this->returnValue('sixthConstraintResult'));
+		$rewritingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('getQomConstraintForSingleConstraintDefinition'), array(), '', FALSE);
+		$rewritingAspect->expects($this->at(0))->method('getQomConstraintForSingleConstraintDefinition')->with(array('firstConstraint'), $mockQuery)->will($this->returnValue('firstConstraintResult'));
+		$rewritingAspect->expects($this->at(1))->method('getQomConstraintForSingleConstraintDefinition')->with(array('thirdConstraint'), $mockQuery)->will($this->returnValue('thirdConstraintResult'));
+		$rewritingAspect->expects($this->at(2))->method('getQomConstraintForSingleConstraintDefinition')->with(array('fourthConstraint'), $mockQuery)->will($this->returnValue('fourthConstraintResult'));
+		$rewritingAspect->expects($this->at(3))->method('getQomConstraintForSingleConstraintDefinition')->with(array('secondConstraint'), $mockQuery)->will($this->returnValue('secondConstraintResult'));
+		$rewritingAspect->expects($this->at(4))->method('getQomConstraintForSingleConstraintDefinition')->with(array('fifthConstraint'), $mockQuery)->will($this->returnValue('fifthConstraintResult'));
+		$rewritingAspect->expects($this->at(5))->method('getQomConstraintForSingleConstraintDefinition')->with(array('sixthConstraint'), $mockQuery)->will($this->returnValue('sixthConstraintResult'));
 
-		$result = $rewritingAspect->_call('getQOMConstraintForConstraintDefinitions', $parsedConstraints, $mockQuery);
+		$result = $rewritingAspect->_call('getQomConstraintForConstraintDefinitions', $parsedConstraints, $mockQuery);
 
 		$this->assertEquals($result, 'firstAndThirdAndFourthOrSecondAndNotFifthOrNotSixth', 'The query constraints have not been created correctly.');
 	}
@@ -179,7 +179,7 @@ class PersistenceQueryRewritingAspectTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @expectedException \F3\FLOW3\Security\Exception\InvalidQueryRewritingConstraintException
 	 */
-	public function getQOMConstraintForSingleConstraintDefinitionThrowsAnExceptionIfAConstraintHasNoReferenceToTheCurrentObjectIndicatedByTheThisKeyword() {
+	public function getQomConstraintForSingleConstraintDefinitionThrowsAnExceptionIfAConstraintHasNoReferenceToTheCurrentObjectIndicatedByTheThisKeyword() {
 		$mockQuery = $this->getMock('F3\FLOW3\Persistence\Query', array(), array(), '', FALSE);
 
 		$constraint = array(
@@ -189,16 +189,16 @@ class PersistenceQueryRewritingAspectTest extends \F3\Testing\BaseTestCase {
 		);
 
 		$rewritingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('dummy'), array(), '', FALSE);
-		$rewritingAspect->_call('getQOMConstraintForSingleConstraintDefinition', $constraint, $mockQuery);
+		$rewritingAspect->_call('getQomConstraintForSingleConstraintDefinition', $constraint, $mockQuery);
 	}
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function getQOMConstraintFoSingleConstraintDefinitionBuildsTheCorrectConstraintObjectForAnEqualityOperatorComparingASimpleValue() {
+	public function getQomConstraintFoSingleConstraintDefinitionBuildsTheCorrectConstraintObjectForAnEqualityOperatorComparingASimpleValue() {
 		$mockQuery = $this->getMock('F3\FLOW3\Persistence\Query', array(), array(), '', FALSE);
-		$mockQuery->expects($this->once())->method('equals')->with('party', 'Andi')->will($this->returnValue('resultQOMConstraint'));
+		$mockQuery->expects($this->once())->method('equals')->with('party', 'Andi')->will($this->returnValue('resultQomConstraint'));
 
 		$constraint = array(
 			'operator' => '==',
@@ -207,18 +207,18 @@ class PersistenceQueryRewritingAspectTest extends \F3\Testing\BaseTestCase {
 		);
 
 		$rewritingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('getValueForGlobalObject'), array(), '', FALSE);
-		$resultConstraint = $rewritingAspect->_call('getQOMConstraintForSingleConstraintDefinition', $constraint, $mockQuery);
+		$resultConstraint = $rewritingAspect->_call('getQomConstraintForSingleConstraintDefinition', $constraint, $mockQuery);
 
-		$this->assertEquals('resultQOMConstraint', $resultConstraint);
+		$this->assertEquals('resultQomConstraint', $resultConstraint);
 	}
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function getQOMConstraintForSingleConstraintDefinitionBuildsTheCorrectConstraintObjectForAnEqualityOperatorAccessingAGlobalObject() {
+	public function getQomConstraintForSingleConstraintDefinitionBuildsTheCorrectConstraintObjectForAnEqualityOperatorAccessingAGlobalObject() {
 		$mockQuery = $this->getMock('F3\FLOW3\Persistence\Query', array(), array(), '', FALSE);
-		$mockQuery->expects($this->once())->method('equals')->with('party', 'globalParty')->will($this->returnValue('resultQOMConstraint'));
+		$mockQuery->expects($this->once())->method('equals')->with('party', 'globalParty')->will($this->returnValue('resultQomConstraint'));
 
 		$constraint = array(
 			'operator' => '==',
@@ -228,18 +228,18 @@ class PersistenceQueryRewritingAspectTest extends \F3\Testing\BaseTestCase {
 
 		$rewritingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('getValueForOperand'), array(), '', FALSE);
 		$rewritingAspect->expects($this->once())->method('getValueForOperand')->with('current.party')->will($this->returnValue('globalParty'));
-		$resultConstraint = $rewritingAspect->_call('getQOMConstraintForSingleConstraintDefinition', $constraint, $mockQuery);
+		$resultConstraint = $rewritingAspect->_call('getQomConstraintForSingleConstraintDefinition', $constraint, $mockQuery);
 
-		$this->assertEquals('resultQOMConstraint', $resultConstraint);
+		$this->assertEquals('resultQomConstraint', $resultConstraint);
 	}
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function getQOMConstraintForSingleConstraintDefinitionBuildsTheCorrectConstraintObjectForTheInOperator() {
+	public function getQomConstraintForSingleConstraintDefinitionBuildsTheCorrectConstraintObjectForTheInOperator() {
 		$mockQuery = $this->getMock('F3\FLOW3\Persistence\Query', array(), array(), '', FALSE);
-		$mockQuery->expects($this->once())->method('in')->with('party', 'globalParty')->will($this->returnValue('resultQOMConstraint'));
+		$mockQuery->expects($this->once())->method('in')->with('party', 'globalParty')->will($this->returnValue('resultQomConstraint'));
 
 		$constraint = array(
 			'operator' => 'in',
@@ -249,18 +249,18 @@ class PersistenceQueryRewritingAspectTest extends \F3\Testing\BaseTestCase {
 
 		$rewritingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('getValueForOperand'), array(), '', FALSE);
 		$rewritingAspect->expects($this->once())->method('getValueForOperand')->with('current.party')->will($this->returnValue('globalParty'));
-		$resultConstraint = $rewritingAspect->_call('getQOMConstraintForSingleConstraintDefinition', $constraint, $mockQuery);
+		$resultConstraint = $rewritingAspect->_call('getQomConstraintForSingleConstraintDefinition', $constraint, $mockQuery);
 
-		$this->assertEquals('resultQOMConstraint', $resultConstraint);
+		$this->assertEquals('resultQomConstraint', $resultConstraint);
 	}
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function getQOMConstraintForSingleConstraintDefinitionBuildsTheCorrectConstraintObjectForTheContainsOperator() {
+	public function getQomConstraintForSingleConstraintDefinitionBuildsTheCorrectConstraintObjectForTheContainsOperator() {
 		$mockQuery = $this->getMock('F3\FLOW3\Persistence\Query', array(), array(), '', FALSE);
-		$mockQuery->expects($this->once())->method('contains')->with('party', 'globalParty')->will($this->returnValue('resultQOMConstraint'));
+		$mockQuery->expects($this->once())->method('contains')->with('party', 'globalParty')->will($this->returnValue('resultQomConstraint'));
 
 		$constraint = array(
 			'operator' => 'contains',
@@ -270,16 +270,16 @@ class PersistenceQueryRewritingAspectTest extends \F3\Testing\BaseTestCase {
 
 		$rewritingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('getValueForOperand'), array(), '', FALSE);
 		$rewritingAspect->expects($this->once())->method('getValueForOperand')->with('current.party')->will($this->returnValue('globalParty'));
-		$resultConstraint = $rewritingAspect->_call('getQOMConstraintForSingleConstraintDefinition', $constraint, $mockQuery);
+		$resultConstraint = $rewritingAspect->_call('getQomConstraintForSingleConstraintDefinition', $constraint, $mockQuery);
 
-		$this->assertEquals('resultQOMConstraint', $resultConstraint);
+		$this->assertEquals('resultQomConstraint', $resultConstraint);
 	}
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function getQOMConstraintForSingleConstraintDefinitionBuildsTheCorrectConstraintObjectForTheMatchesOperator() {
+	public function getQomConstraintForSingleConstraintDefinitionBuildsTheCorrectConstraintObjectForTheMatchesOperator() {
 		$mockQuery = $this->getMock('F3\FLOW3\Persistence\Query', array(), array(), '', FALSE);
 		$mockQuery->expects($this->at(0))->method('contains')->with('accounts', 1)->will($this->returnValue('constraint1'));
 		$mockQuery->expects($this->at(1))->method('contains')->with('accounts', 'two')->will($this->returnValue('constraint2'));
@@ -295,7 +295,7 @@ class PersistenceQueryRewritingAspectTest extends \F3\Testing\BaseTestCase {
 
 		$rewritingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('getValueForOperand'), array(), '', FALSE);
 		$rewritingAspect->expects($this->once())->method('getValueForOperand')->with(array(1, '"two"', 3))->will($this->returnValue(array(1, 'two', 3)));
-		$resultConstraint = $rewritingAspect->_call('getQOMConstraintForSingleConstraintDefinition', $constraint, $mockQuery);
+		$resultConstraint = $rewritingAspect->_call('getQomConstraintForSingleConstraintDefinition', $constraint, $mockQuery);
 
 		$this->assertEquals('compositeConstraint2', $resultConstraint);
 	}

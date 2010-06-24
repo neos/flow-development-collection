@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Persistence\QOM;
+namespace F3\FLOW3\Persistence\Qom;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -32,26 +32,26 @@ namespace F3\FLOW3\Persistence\QOM;
  * @api
  * @scope prototype
  */
-class LogicalNot extends \F3\FLOW3\Persistence\QOM\Constraint {
+class LogicalNot extends \F3\FLOW3\Persistence\Qom\Constraint {
 
 	/**
-	 * @var \F3\FLOW3\Persistence\QOM\Constraint
+	 * @var \F3\FLOW3\Persistence\Qom\Constraint
 	 */
 	protected $constraint;
 
 	/**
 	 *
-	 * @param \F3\FLOW3\Persistence\QOM\Constraint $constraint
+	 * @param \F3\FLOW3\Persistence\Qom\Constraint $constraint
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(\F3\FLOW3\Persistence\QOM\Constraint $constraint) {
+	public function __construct(\F3\FLOW3\Persistence\Qom\Constraint $constraint) {
 		$this->constraint = $constraint;
 	}
 
 	/**
 	 * Gets the constraint negated by this Not constraint.
 	 *
-	 * @return \F3\FLOW3\Persistence\QOM\Constraint the constraint; non-null
+	 * @return \F3\FLOW3\Persistence\Qom\Constraint the constraint; non-null
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
