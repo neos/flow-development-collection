@@ -672,6 +672,15 @@ public function <co xml:id="co.pointcutdeclaration.2" />deleteMethods() {}</prog
 
           <para><code>evaluate(current.party.accounts contains
           this.myAccount)</code></para>
+
+          <para>Matches if at least one of the entries in the first array
+          exists in the second one:</para>
+
+          <para><code>evaluate(current.party.accounts matches
+          ('Administrator', 'Customer', 'User'))</code></para>
+
+          <para><code>evaluate(current.party.accounts matches
+          this.accounts)</code></para>
         </example>
 
         <tip>
