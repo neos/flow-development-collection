@@ -73,11 +73,6 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	protected $resources = array();
 
 	/**
-	 * @var array
-	 */
-	protected $roles = array();
-
-	/**
 	 * Array of pointcut filters used to match against the configured policy.
 	 * @var array
 	 */
@@ -193,6 +188,8 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 			$methodResources = (isset($this->policy['resources']['methods']) ? $this->policy['resources']['methods'] : array());
 
 			foreach ($this->policy['acls'] as $role => $acl) {
+				if (!isset($acl['methods']) || !is_array($acl['methods'])) throw new \F3\FLOW3\Security\Exception\MissingConfigurationException('The configuration for method resources could not be found in the policy. Make sure to use the correct syntax in the Policy.yaml files.', 1277383564);
+
 				foreach ($acl['methods'] as $resource => $privilege) {
 					$resourceTrace = array();
 					$this->filters[$role][$resource] = $this->policyExpressionParser->parseMethodResources($resource, $methodResources, $resourceTrace);
@@ -253,6 +250,27 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	 */
 	public function getRuntimeEvaluationsDefinition() {
 		return array();
+	}
+
+	/**
+	 * Returns all parent roles for the given role, taht are configured in the policy.
+	 *
+	 * @param \F3\FLOW3\Security\Policy\Role $role The role to get the parents for
+	 * @return array<F3\Security\Policy\Role> Array of parent roles
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getAllParentRoles(\F3\FLOW3\Security\Policy\Role $role) {
+		$result = array();
+
+		foreach ($this->policy['roles'][(string)$role] as $currentIdentifier) {
+			$currentParent = new \F3\FLOW3\Security\Policy\Role($currentIdentifier);
+			if (!in_array($currentParent, $result)) $result[] = $currentParent;
+			foreach ($this->getAllParentRoles($currentParent) as $currentGrandParent) {
+				if (!in_array($currentGrandParent, $result)) $result[] = $currentGrandParent;
+			}
+		}
+
+		return $result;
 	}
 
 	/**

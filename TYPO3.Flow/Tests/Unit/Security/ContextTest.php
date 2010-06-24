@@ -353,7 +353,7 @@ class ContextTest extends \F3\Testing\BaseTestCase {
 	 * @category unit
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function getRolesReturnsTheCorrectAuthorities() {
+	public function getRolesReturnsTheCorrectRoles() {
 		$matchingRequestPatternClassName = uniqid('matchingRequestPattern');
 		$notMatchingRequestPatternClassName = uniqid('notMatchingRequestPattern');
 		$abstainingRequestPatternClassName = uniqid('abstainingRequestPattern');
@@ -433,13 +433,69 @@ class ContextTest extends \F3\Testing\BaseTestCase {
 		$token6->expects($this->any())->method('isAuthenticated')->will($this->returnValue(TRUE));
 		$token6->expects($this->any())->method('getRoles')->will($this->returnValue(array($role6)));
 
+		$mockPolicyService = $this->getMock('F3\FLOW3\Security\Policy\PolicyService', array(), array(), '', FALSE);
+		$mockPolicyService->expects($this->any())->method('getAllParentRoles')->will($this->returnValue(array()));
+
 		$securityContextProxy = $this->buildAccessibleProxy('F3\FLOW3\Security\Context');
 		$securityContext = new $securityContextProxy();
 		$securityContext->injectSettings($settings);
+		$securityContext->injectPolicyService($mockPolicyService);
 		$securityContext->_set('tokens', array($token1, $token2, $token3, $token4, $token5, $token6));
 		$securityContext->_set('request', $request);
 
-		$this->assertEquals(array($role1, $role11, $role2, $role6), $securityContext->getRoles());
+		$expectedResult = array($role1, $role11, $role2, $role6);
+
+		$this->assertEquals($expectedResult, $securityContext->getRoles());
+	}
+
+	/**
+	 * @test
+	 * @category unit
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getRolesTakesInheritanceOfRolesIntoAccount() {
+		$role1 = new \F3\FLOW3\Security\Policy\Role('role1');
+		$role2 = new \F3\FLOW3\Security\Policy\Role('role2');
+		$role3 = new \F3\FLOW3\Security\Policy\Role('role3');
+		$role4 = new \F3\FLOW3\Security\Policy\Role('role4');
+		$role5 = new \F3\FLOW3\Security\Policy\Role('role5');
+		$role6 = new \F3\FLOW3\Security\Policy\Role('role6');
+		$role7 = new \F3\FLOW3\Security\Policy\Role('role7');
+		$role8 = new \F3\FLOW3\Security\Policy\Role('role8');
+		$role9 = new \F3\FLOW3\Security\Policy\Role('role9');
+
+		$token1 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), '', FALSE);
+		$token1->expects($this->any())->method('isAuthenticated')->will($this->returnValue(TRUE));
+		$token1->expects($this->once())->method('getRoles')->will($this->returnValue(array($role1, $role2, $role3)));
+		
+		$token2 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), '', FALSE);
+		$token2->expects($this->any())->method('isAuthenticated')->will($this->returnValue(TRUE));
+		$token2->expects($this->once())->method('getRoles')->will($this->returnValue(array($role2, $role4, $role5)));
+
+		$policyServiceCallback = function() use (&$role1, &$role2, &$role5, &$role6, &$role7, &$role8, &$role9) {
+			$args = func_get_args();
+
+			if ((string)$args[0] === 'role1') return array($role6);
+			if ((string)$args[0] === 'role2') return array($role6, $role7);
+			if ((string)$args[0] === 'role5') return array($role8, $role9);
+
+			return array();
+		};
+
+		$mockPolicyService = $this->getMock('F3\FLOW3\Security\Policy\PolicyService', array(), array(), '', FALSE);
+		$mockPolicyService->expects($this->any())->method('getAllParentRoles')->will($this->returnCallback($policyServiceCallback));
+
+		$securityContext = $this->getAccessibleMock('F3\FLOW3\Security\Context', array('getAuthenticationTokens'), array(), '', FALSE);
+		$securityContext->expects($this->once())->method('getAuthenticationTokens')->will($this->returnValue(array($token1, $token2)));
+		$securityContext->injectPolicyService($mockPolicyService);
+
+		$expectedResult = array($role1, $role2, $role3, $role4, $role5, $role6, $role7, $role8, $role9);
+		$result = $securityContext->getRoles();
+
+		sort($expectedResult);
+		sort($result);
+
+		$this->assertEquals($expectedResult, $result);
 	}
 
 	/**

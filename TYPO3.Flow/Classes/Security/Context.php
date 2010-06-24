@@ -82,6 +82,11 @@ class Context {
 	protected $authenticationManager = NULL;
 
 	/**
+	 * @var \F3\FLOW3\Security\Policy\PolicyService
+	 */
+	protected $policyService;
+
+	/**
 	 * Inject the object manager
 	 *
 	 * @param F3\FLOW3\Object\ObjectManagerInterface $objectManager The object manager
@@ -102,6 +107,17 @@ class Context {
 	public function injectAuthenticationManager(\F3\FLOW3\Security\Authentication\AuthenticationManagerInterface $authenticationManager) {
 		$this->authenticationManager = $authenticationManager;
 		$this->authenticationManager->setSecurityContext($this);
+	}
+
+	/**
+	 * Injects the security context
+	 *
+	 * @param \F3\FLOW3\Security\Policy\PolicyService $policyService The policy service
+	 * @return void
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function injectPolicyService(\F3\FLOW3\Security\Policy\PolicyService $policyService) {
+		$this->policyService = $policyService;
 	}
 
 	/**
@@ -186,7 +202,15 @@ class Context {
 	public function getRoles() {
 		$roles = array();
 		foreach ($this->getAuthenticationTokens() as $token) {
-			if ($token->isAuthenticated()) $roles = array_merge($roles, $token->getRoles());
+			if ($token->isAuthenticated()) {
+				$tokenRoles = $token->getRoles();
+				foreach ($tokenRoles as $currentRole) {
+					if (!in_array($currentRole, $roles)) $roles[] = $currentRole;
+					foreach ($this->policyService->getAllParentRoles($currentRole) as $currentParentRole) {
+						if (!in_array($currentParentRole, $roles)) $roles[] = $currentParentRole;
+					}
+				}
+			}
 		}
 
 		return $roles;

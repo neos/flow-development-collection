@@ -677,5 +677,43 @@ class PolicyServiceTest extends \F3\Testing\BaseTestCase {
 		$this->assertFalse($policyService->hasPolicyEntryForEntityType('F3\MyEntity', array('Manager', 'Anonymous')));
 		$this->assertFalse($policyService->hasPolicyEntryForEntityType('F3\MyEntity', array('Manager', 'King')));
 	}
+
+	/**
+	 * @test
+	 * @category unit
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getAllParentRolesUnnestsRoleInheritanceCorrectly() {
+		$policy = array(
+			'roles' => array(
+				'Manager' => array(),
+				'Administrator' => array('Chief', 'Manager'),
+				'Customer' => array(),
+				'User' => array('Customer'),
+				'Employee' => array('Administrator', 'User'),
+				'Chief' => array()
+			),
+			'resources' => array(),
+			'acls' => array()
+		);
+
+		$policyService = $this->getAccessibleMock('F3\FLOW3\Security\Policy\PolicyService', array('dummy'), array(), '', FALSE);
+		$policyService->_set('policy', $policy);
+
+		$expectedResult = array(
+			'Manager' => new \F3\FLOW3\Security\Policy\Role('Manager'),
+			'Administrator' => new \F3\FLOW3\Security\Policy\Role('Administrator'),
+			'Customer' => new \F3\FLOW3\Security\Policy\Role('Customer'),
+			'User' => new \F3\FLOW3\Security\Policy\Role('User'),
+			'Chief' => new \F3\FLOW3\Security\Policy\Role('Chief'),
+		);
+
+		$result = $policyService->getAllParentRoles(new \F3\FLOW3\Security\Policy\Role('Employee'));
+
+		sort($expectedResult);
+		sort($result);
+
+		$this->assertEquals($result, $expectedResult);
+	}
 }
 ?>
