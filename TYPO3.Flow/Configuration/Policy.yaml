@@ -21,6 +21,10 @@
 #     F3_FooPackage_BasicValidator: "method(F3\FooPackage\BasicClassValidator->.*())"
 #     F3_FooPackage_CombinedResource: "theOneAndOnlyResource || theOtherLonelyResource"
 #
+#   entities:
+#     F3_FooPackage_Model_MyModelClass:
+#       F3_FooPackage_MyModelClassResource: this.property == TRUE
+#
 resources:
   entities: []
   methods: []
@@ -40,10 +44,17 @@ roles: []
 #
 # acls:
 #   Administrator:
-#     deleteMethods:           GRANT
-#     MyPackageUpdateMethods:  DENY
+#     methods:
+#       deleteMethods:           GRANT
+#       MyPackageUpdateMethods:  DENY
+#     entities:
+#       F3_FooPackage_MyModelClassResource: GRANT
 #
 #   Customer:
-#     deleteMethods:          DENY
-#     MyPackageUpdateMethods: DENY
+#     methods:
+#       deleteMethods:          DENY
+#       MyPackageUpdateMethods: DENY
+#     entities:
+#       F3_FooPackage_MyModelClassResource: DENY
+#
 acls: []
