@@ -783,13 +783,12 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getObjectDataByQuery(\F3\FLOW3\Persistence\QueryInterface $query) {
-		$parameters = array();
 		$this->knownRecords = array();
 
-		$sql = $this->buildQuery($query, $parameters);
+		$parsedQuery = $this->buildQuery($query);
 
-		$statementHandle = $this->databaseHandle->prepare($sql);
-		$statementHandle->execute($parameters);
+		$statementHandle = $this->databaseHandle->prepare($parsedQuery['sql']);
+		$statementHandle->execute($parsedQuery['parameters']);
 
 		$objectData = $this->processObjectRecords($statementHandle->fetchAll(\PDO::FETCH_ASSOC));
 		return $objectData;
@@ -929,69 +928,68 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 	 * @return string
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function buildQuery(\F3\FLOW3\Persistence\QueryInterface $query, array &$parameters) {
-		$sql = array('fields' => array(), 'tables' => array(), 'where' => array(), 'orderings' => array());
-		$this->parseQuery($query, $sql, $parameters);
+	protected function buildQuery(\F3\FLOW3\Persistence\QueryInterface $query) {
+		$sql = array(
+			'fields' => array('"_entity"."identifier" AS "identifier"', '"_entity"."type" AS "classname"'),
+			'tables' => array(),
+			'where' => '',
+			'orderings' => ''
+		);
+		$parameters = array('fields' => array(), 'values' => array());
 
-		$sqlString = 'SELECT DISTINCT ' . implode(', ', $sql['fields']) . ' FROM ' . implode(' ', $sql['tables']);
-		$sqlString .= ' WHERE ' . implode(' ', $sql['where']);
+		if ($query->getConstraint() === NULL && $query->getOrderings() === array()) {
+			$sql['tables'][] = '"entities" AS "_entity"';
+			$sql['where'] = '"_entity"."type"=?';
+			$parameters['values'][] = $query->getType();
+		} elseif ($query->getConstraint() === NULL) {
+			$sql['tables'][] = '"entities" AS "_entity" INNER JOIN "properties_data" AS "d" ON "_entity"."identifier" = "d"."parent"';
+			$sql['where'] = '"_entity"."type"=?';
+			$parameters['values'][] = $query->getType();
+		} else {
+			$sql['tables'][] = '"entities" AS "_entity" INNER JOIN "properties_data" AS "d" ON "_entity"."identifier" = "d"."parent"';
+			$sql['where'] = array('fields' => array(), 'values' => array());
+			$this->parseConstraint($query->getConstraint(), $sql, $parameters);
+			$sql['where'] = implode(' AND ', $sql['where']['fields']) . ' AND ' . implode(' ', $sql['where']['values']) . ' AND "_entity"."type"=?';
+			$parameters['values'][] = $query->getType();
+		}
 
-		if (count($sql['orderings'])) {
-			$sqlString .= ' ORDER BY ' . implode(', ', $sql['orderings']);
+		$this->parseOrderings($query, $sql);
+
+		$sqlString = 'SELECT DISTINCT ' . implode(', ', $sql['fields']) . ' FROM ' . implode(' ', $sql['tables']) . ' WHERE ' . $sql['where'];
+
+		if ($sql['orderings'] !== '') {
+			$sqlString .= ' ORDER BY ' . $sql['orderings'];
 		}
 
 		if ($query->getLimit() !== NULL) {
 			$sqlString .= ' LIMIT ' . $query->getLimit() . ' OFFSET '. $query->getOffset();
 		}
 
-		return $sqlString;
-	}
-
-	/**
-	 * Parses a Query into an array of SQL parts and an array of parameters.
-	 *
-	 * @param \F3\FLOW3\Persistence\QueryInterface $query
-	 * @param array &$sql
-	 * @param array &$parameters
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	protected function parseQuery(\F3\FLOW3\Persistence\QueryInterface $query, array &$sql, array &$parameters) {
-		$parameters[] = $query->getType();
-		$sql['fields'][] = '"_entity"."identifier" AS "identifier"';
-		$sql['fields'][] = '"_entity"."type" AS "classname"';
-		if ($query->getConstraint() === NULL && $query->getOrderings() === array()) {
-			$sql['tables'][] = '"entities" AS "_entity"';
-			$sql['where'][] = '"_entity"."type"=?';
-		} elseif ($query->getConstraint() === NULL) {
-			$sql['tables'][] = '"entities" AS "_entity" INNER JOIN "properties_data" AS "d" ON "_entity"."identifier" = "d"."parent"';
-			$sql['where'][] = '"_entity"."type"=?';
-		} else {
-			$sql['tables'][] = '"entities" AS "_entity" INNER JOIN "properties_data" AS "d" ON "_entity"."identifier" = "d"."parent"';
-			$sql['where'][] = '"_entity"."type"=? AND ';
-			$this->parseConstraint($query->getConstraint(), $sql, $parameters);
-		}
-
-		$sql = $this->parseOrderings($query, $sql);
+		return array(
+			'sql' => $sqlString,
+			'parameters' => array_merge($parameters['fields'], $parameters['values'])
+		);
 	}
 
 	/**
 	 * Transforms an orderings into SQL-like order parts
 	 *
 	 * @param \F3\FLOW3\Persistence\QueryInterface $query
-	 * @return array
+	 * @param array &$sql
+	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function parseOrderings(\F3\FLOW3\Persistence\QueryInterface $query, array $sql) {
-		if ($query->getOrderings() === array()) return $sql;
+	protected function parseOrderings(\F3\FLOW3\Persistence\QueryInterface $query, array &$sql) {
+		if ($query->getOrderings() === array()) return;
 
+		$orderings = array();
 		$propertyData = $this->reflectionService->getClassSchema($query->getType())->getProperties();
 		foreach ($query->getOrderings() as $propertyName => $order) {
 			$sql['fields'][] = '"_orderingtable' . count($sql['orderings']) . '"."' . $propertyName . '"';
 			$sql['tables'][] = 'LEFT JOIN (SELECT "parent", "' . $this->getTypeName($propertyData[$propertyName]['elementType'] ?: $propertyData[$propertyName]['type']) . '" AS "' . $propertyName . '" FROM "properties_data" WHERE "name" = ' . $this->databaseHandle->quote($propertyName) . ') AS "_orderingtable' . count($sql['orderings']) . '" ON "_orderingtable' . count($sql['orderings']) . '"."parent" = "d"."parent"';
-			$sql['orderings'][] = '"_orderingtable' . count($sql['orderings']) . '"."' . $propertyName . '" ' . $order;
+			$orderings[] = '"_orderingtable' . count($sql['orderings']) . '"."' . $propertyName . '" ' . $order;
 		}
-		return $sql;
+		$sql['orderings'] = implode(', ', $orderings);
 	}
 
 	/**
@@ -1005,21 +1003,21 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 	 */
 	protected function parseConstraint(\F3\FLOW3\Persistence\Qom\Constraint $constraint, array &$sql, array &$parameters) {
 		if ($constraint instanceof \F3\FLOW3\Persistence\Qom\LogicalAnd) {
-			$sql['where'][] = '(';
+			$sql['where']['values'][] = '(';
 			$this->parseConstraint($constraint->getConstraint1(), $sql, $parameters);
-			$sql['where'][] = ' AND ';
+			$sql['where']['values'][] = ' AND ';
 			$this->parseConstraint($constraint->getConstraint2(), $sql, $parameters);
-			$sql['where'][] = ') ';
+			$sql['where']['values'][] = ') ';
 		} elseif ($constraint instanceof \F3\FLOW3\Persistence\Qom\LogicalOr) {
-			$sql['where'][] = '(';
+			$sql['where']['values'][] = '(';
 			$this->parseConstraint($constraint->getConstraint1(), $sql, $parameters);
-			$sql['where'][] = ' OR ';
+			$sql['where']['values'][] = ' OR ';
 			$this->parseConstraint($constraint->getConstraint2(), $sql, $parameters);
-			$sql['where'][] = ') ';
+			$sql['where']['values'][] = ') ';
 		} elseif ($constraint instanceof \F3\FLOW3\Persistence\Qom\LogicalNot) {
-			$sql['where'][] = '(NOT ';
+			$sql['where']['values'][] = '(NOT ';
 			$this->parseConstraint($constraint->getConstraint(), $sql, $parameters);
-			$sql['where'][] = ') ';
+			$sql['where']['values'][] = ') ';
 		} elseif ($constraint instanceof \F3\FLOW3\Persistence\Qom\Comparison) {
 			$this->parseComparison($constraint, $sql, $parameters);
 		}
@@ -1039,7 +1037,7 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 			case \F3\FLOW3\Persistence\QueryInterface::OPERATOR_IN:
 				$this->parseDynamicOperand($comparison->getOperand1(), $comparison->getOperator(), $sql, $parameters, NULL, $comparison->getOperand2());
 				foreach ($comparison->getOperand2() as $value) {
-					$parameters[] = $this->getPlainValue($value);
+					$parameters['values'][] = $this->getPlainValue($value);
 				}
 			break;
 			case \F3\FLOW3\Persistence\QueryInterface::OPERATOR_IS_EMPTY:
@@ -1048,7 +1046,7 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 			break;
 			default:
 				$this->parseDynamicOperand($comparison->getOperand1(), $comparison->getOperator(), $sql, $parameters);
-				$parameters[] = $this->getPlainValue($comparison->getOperand2());
+				$parameters['values'][] = $this->getPlainValue($comparison->getOperand2());
 			break;
 		}
 	}
@@ -1088,43 +1086,35 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 			$this->parseDynamicOperand($operand->getOperand(), $operator, $sql, $parameters, 'UPPER');
 		} elseif ($operand instanceof \F3\FLOW3\Persistence\Qom\PropertyValue) {
 			$selectorName = $operand->getSelectorName();
-			$where = '';
+			$coalesce = 'COALESCE("' . $selectorName . 'properties' . count($parameters['fields']) . '"."string", CAST("' . $selectorName . 'properties' . count($parameters['fields']) . '"."integer" AS CHAR), CAST("' . $selectorName . 'properties' . count($parameters['fields']) . '"."float" AS CHAR), CAST("' . $selectorName . 'properties' . count($parameters['fields']) . '"."datetime" AS CHAR), "' . $selectorName . 'properties' . count($parameters['fields']) . '"."boolean", "' . $selectorName . 'properties' . count($parameters['fields']) . '"."object")';
 			switch ($operator) {
 				case \F3\FLOW3\Persistence\QueryInterface::OPERATOR_IN:
-					$coalesce = 'COALESCE("' . $selectorName . 'properties' . count($parameters) . '"."string", CAST("' . $selectorName . 'properties' . count($parameters) . '"."integer" AS CHAR), CAST("' . $selectorName . 'properties' . count($parameters) . '"."float" AS CHAR), CAST("' . $selectorName . 'properties' . count($parameters) . '"."datetime" AS CHAR), "' . $selectorName . 'properties' . count($parameters) . '"."boolean", "' . $selectorName . 'properties' . count($parameters) . '"."object")';
-					$where = '("' . $selectorName . 'properties' . count($parameters) . '"."name" = ? AND ';
 					if ($valueFunction === NULL) {
-						$where .= $coalesce . ' IN (';
+						$valueWhere = $coalesce . ' IN (';
 					} else {
-						$where .= '' . $valueFunction . '(' . $coalesce . ') IN (';
+						$valueWhere = $valueFunction . '(' . $coalesce . ') IN (';
 					}
-					$where .= implode(',', array_fill(0, count($operand2), '?')) . ')) ';
+					$valueWhere .= implode(', ', array_fill(0, count($operand2), '?')) . ') ';
 				break;
 				case \F3\FLOW3\Persistence\QueryInterface::OPERATOR_IS_EMPTY:
 				case \F3\FLOW3\Persistence\QueryInterface::OPERATOR_IS_NULL:
-					$operator = $this->resolveOperator($operator);
-					$coalesce = 'COALESCE("' . $selectorName . 'properties' . count($parameters) . '"."string", CAST("' . $selectorName . 'properties' . count($parameters) . '"."integer" AS CHAR), CAST("' . $selectorName . 'properties' . count($parameters) . '"."float" AS CHAR), CAST("' . $selectorName . 'properties' . count($parameters) . '"."datetime" AS CHAR), "' . $selectorName . 'properties' . count($parameters) . '"."boolean", "' . $selectorName . 'properties' . count($parameters) . '"."object")';
-					$where = '("' . $selectorName . 'properties' . count($parameters) . '"."name" = ? AND ' . $coalesce . ' ' . $operator . ')';
-					break;
+					$valueWhere = $coalesce . ' ' . $this->resolveOperator($operator);
+				break;
 				case \F3\FLOW3\Persistence\QueryInterface::OPERATOR_CONTAINS:
 						// in our data structure we can do this using equality...
 					$operator = \F3\FLOW3\Persistence\QueryInterface::OPERATOR_EQUAL_TO;
 				default:
-					$operator = $this->resolveOperator($operator);
-					$coalesce = 'COALESCE("' . $selectorName . 'properties' . count($parameters) . '"."string", CAST("' . $selectorName . 'properties' . count($parameters) . '"."integer" AS CHAR), CAST("' . $selectorName . 'properties' . count($parameters) . '"."float" AS CHAR), CAST("' . $selectorName . 'properties' . count($parameters) . '"."datetime" AS CHAR), "' . $selectorName . 'properties' . count($parameters) . '"."boolean", "' . $selectorName . 'properties' . count($parameters) . '"."object")';
-					$where = '("' . $selectorName . 'properties' . count($parameters) . '"."name" = ? AND ';
 					if ($valueFunction === NULL) {
-						$where .= $coalesce . ' ' . $operator . ' ?';
+						$valueWhere = $coalesce . ' ' . $this->resolveOperator($operator) . ' ?';
 					} else {
-						$where .= '' . $valueFunction . '(' . $coalesce . ') ' . $operator . ' ?';
+						$valueWhere = $valueFunction . '(' . $coalesce . ') ' . $this->resolveOperator($operator) . ' ?';
 					}
-					$where .= ') ';
-				break;
 			}
 
-			$sql['where'][] = $where;
-			$sql['tables'][] = 'INNER JOIN "properties_data" AS "' . $selectorName . 'properties' . count($parameters) . '" ON "' . $selectorName . '"."identifier" = "' . $selectorName . 'properties' . count($parameters) . '"."parent"';
-			$parameters[] = $operand->getPropertyName();
+			$sql['where']['fields'][] = '"' . $selectorName . 'properties' . count($parameters['fields']) . '"."name" = ?';
+			$sql['where']['values'][] = $valueWhere;
+			$sql['tables'][] = 'INNER JOIN "properties_data" AS "' . $selectorName . 'properties' . count($parameters['fields']) . '" ON "' . $selectorName . '"."identifier" = "' . $selectorName . 'properties' . count($parameters['fields']) . '"."parent"';
+			$parameters['fields'][] = $operand->getPropertyName();
 		}
 	}
 

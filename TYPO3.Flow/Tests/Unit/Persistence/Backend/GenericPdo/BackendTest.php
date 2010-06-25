@@ -1425,14 +1425,14 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 	public function getObjectDataByQueryDelegatesQueryBuildingAndUsesResultForDatabaseQuery() {
 		$mockQuery = $this->getMock('F3\FLOW3\Persistence\QueryInterface');
 		$mockStatement = $this->getMock('PDOStatement');
-		$mockStatement->expects($this->once())->method('execute');
+		$mockStatement->expects($this->once())->method('execute')->with(array('PARAMETERS'));
 		$mockStatement->expects($this->once())->method('fetchAll')->will($this->returnValue(array('QUERY_RESULT')));
 		$mockPdo = $this->getMock('PdoInterface');
 		$mockPdo->expects($this->once())->method('prepare')->with('SQLSTRING')->will($this->returnValue($mockStatement));
 
 		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('buildQuery', 'processObjectRecords'));
 		$backend->expects($this->once())->method('processObjectRecords')->will($this->returnValue(array()));
-		$backend->expects($this->once())->method('buildQuery')->with($mockQuery, array())->will($this->returnValue('SQLSTRING'));
+		$backend->expects($this->once())->method('buildQuery')->with($mockQuery)->will($this->returnValue(array('sql' =>  'SQLSTRING', 'parameters' => array('PARAMETERS'))));
 		$backend->_set('databaseHandle', $mockPdo);
 		$backend->_call('getObjectDataByQuery', $mockQuery);
 	}
