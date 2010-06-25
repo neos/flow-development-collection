@@ -45,6 +45,7 @@ class LazySplObjectStorage extends \SplObjectStorage {
 
 	/**
 	 * @param \F3\FLOW3\Persistence\PersistenceManager $persistenceManager
+	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function injectPersistenceManager($persistenceManager) {
@@ -52,7 +53,7 @@ class LazySplObjectStorage extends \SplObjectStorage {
 	}
 
 	/**
-	 * @param array $objectIdentifiers 
+	 * @param array $objectIdentifiers
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function __construct(array $objectIdentifiers) {
@@ -60,25 +61,34 @@ class LazySplObjectStorage extends \SplObjectStorage {
 	}
 
 	/**
+	 * Loads the objects this LazySplObjectStorage is supposed to hold.
+	 *
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function initialize() {
 		if (is_array($this->objectIdentifiers)) {
 			foreach ($this->objectIdentifiers as $identifier) {
-				parent::attach($this->persistenceManager->getObjectByIdentifier($identifier));
+				$object = $this->persistenceManager->getObjectByIdentifier($identifier);
+					// when security query rewriting holds back an object here, we skip it...
+				if ($object !== NULL) {
+					parent::attach($object);
+				}
 			}
 			$this->objectIdentifiers = NULL;
 		}
 	}
 
 	/**
+	 * Returns TRUE if the LazySplObjectStorage has been initialized.
+	 *
 	 * @return boolean
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function isInitialized() {
 		return !is_array($this->objectIdentifiers);
 	}
+
 
 	// Standard SplObjectStorage methods below
 

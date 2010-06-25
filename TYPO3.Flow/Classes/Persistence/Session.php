@@ -156,13 +156,21 @@ class Session {
 		}
 
 		if ($cleanData['multivalue']) {
-			return $this->isMultivaluedPropertyDirty($cleanData, $currentValue);
+			return $this->isMultiValuedPropertyDirty($cleanData, $currentValue);
 		} else {
-			return $this->isPropertyDirty($cleanData['type'], $cleanData['value'], $currentValue);
+			return $this->isSingleValuedPropertyDirty($cleanData['type'], $cleanData['value'], $currentValue);
 		}
 	}
 
-	protected function isMultivaluedPropertyDirty(array $cleanData, $currentValue) {
+	/**
+	 * Checks the $currentValue against the $cleanData.
+	 *
+	 * @param array $cleanData
+	 * @param \Traversable $currentValue
+	 * @return boolean
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function isMultiValuedPropertyDirty(array $cleanData, $currentValue) {
 		if (count($cleanData['value']) > 0 && count($cleanData['value']) === count($currentValue)) {
 			if ($currentValue instanceof \SplObjectStorage) {
 				$cleanIdentifiers = array();
@@ -187,8 +195,8 @@ class Session {
 					if (!isset($currentValue[$cleanObjectData['index']])) {
 						return TRUE;
 					}
-					if (($cleanObjectData['type'] === 'array' && $this->isMultivaluedPropertyDirty($cleanObjectData, $currentValue[$cleanObjectData['index']]) === TRUE)
-						|| ($cleanObjectData['type'] !== 'array' && $this->isPropertyDirty($cleanObjectData['type'], $cleanObjectData['value'], $currentValue[$cleanObjectData['index']] === TRUE))) {
+					if (($cleanObjectData['type'] === 'array' && $this->isMultiValuedPropertyDirty($cleanObjectData, $currentValue[$cleanObjectData['index']]) === TRUE)
+						|| ($cleanObjectData['type'] !== 'array' && $this->isSingleValuedPropertyDirty($cleanObjectData['type'], $cleanObjectData['value'], $currentValue[$cleanObjectData['index']] === TRUE))) {
 						return TRUE;
 					}
 				}
@@ -207,7 +215,7 @@ class Session {
 	 * @param mixed &$currentValue
 	 * @return boolan
 	 */
-	protected function isPropertyDirty($type, $previousValue, $currentValue) {
+	protected function isSingleValuedPropertyDirty($type, $previousValue, $currentValue) {
 		switch ($type) {
 			case 'integer':
 				if ($currentValue === (int) $previousValue) return FALSE;

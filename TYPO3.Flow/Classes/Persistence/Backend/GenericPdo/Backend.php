@@ -439,6 +439,11 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 			if ($item['type'] === 'array') {
 				$this->removeDeletedArrayEntries($array[$item['index']], $item['value']);
 			} elseif ($this->getTypeName($item['type']) === 'object' && !($item['type'] === 'DateTime' || $item['type'] === 'SplObjectStorage')) {
+				if (!$this->persistenceSession->hasIdentifier($item['value']['identifier'])) {
+						// ingore this identifier, assume it was blocked by security query rewriting
+					continue;
+				}
+
 				$object = $this->persistenceSession->getObjectByIdentifier($item['value']['identifier']);
 				if ($array === NULL || !$this->arrayContainsObject($array, $object)) {
 					if ($this->classSchemata[$item['type']]->getModelType() === \F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY
@@ -523,6 +528,11 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 	protected function removeDeletedSplObjectStorageEntries(\SplObjectStorage $splObjectStorage = NULL, array $previousObjectStorage) {
 			// remove objects detached since reconstitution
 		foreach ($previousObjectStorage as $item) {
+			if ($splObjectStorage instanceof \F3\FLOW3\Persistence\LazySplObjectStorage && !$this->persistenceSession->hasIdentifier($item['value']['identifier'])) {
+					// ingore this identifier, assume it was blocked by security query rewriting upon activation
+				continue;
+			}
+
 			$object = $this->persistenceSession->getObjectByIdentifier($item['value']['identifier']);
 			if ($splObjectStorage === NULL || !$splObjectStorage->contains($object)) {
 				if ($this->classSchemata[$object->FLOW3_AOP_Proxy_getProxyTargetClassName()]->getModelType() === \F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY
