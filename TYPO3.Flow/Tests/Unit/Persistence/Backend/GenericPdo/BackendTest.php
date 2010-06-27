@@ -853,6 +853,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		);
 
 		$mockPersistenceSession = $this->getMock('F3\FLOW3\Persistence\Session');
+		$mockPersistenceSession->expects($this->any())->method('hasIdentifier')->with($identifier)->will($this->returnValue(TRUE));
 		$mockPersistenceSession->expects($this->any())->method('getObjectByIdentifier')->with($identifier)->will($this->returnValue($object));
 
 			// ... and here we go
@@ -904,6 +905,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		);
 
 		$mockPersistenceSession = $this->getMock('F3\FLOW3\Persistence\Session');
+		$mockPersistenceSession->expects($this->any())->method('hasIdentifier')->with($identifier)->will($this->returnValue(TRUE));
 		$mockPersistenceSession->expects($this->any())->method('getObjectByIdentifier')->with($identifier)->will($this->returnValue($object));
 
 			// ... and here we go
@@ -949,6 +951,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		);
 
 		$mockPersistenceSession = $this->getMock('F3\FLOW3\Persistence\Session');
+		$mockPersistenceSession->expects($this->any())->method('hasIdentifier')->with($identifier)->will($this->returnValue(TRUE));
 		$mockPersistenceSession->expects($this->any())->method('getObjectByIdentifier')->with($identifier)->will($this->returnValue($object));
 
 			// ... and here we go

@@ -184,10 +184,10 @@ class SessionTest extends \F3\Testing\BaseTestCase {
 				)
 			)
 		);
-		$session = $this->getMock('F3\FLOW3\Persistence\Session', array('getIdentifierByObject', 'isPropertyDirty'));
+		$session = $this->getMock('F3\FLOW3\Persistence\Session', array('getIdentifierByObject', 'isSingleValuedPropertyDirty'));
 		$session->registerReconstitutedEntity($object, $cleanData);
 		$session->expects($this->once())->method('getIdentifierByObject')->will($this->returnValue('fakeUuid'));
-		$session->expects($this->once())->method('isPropertyDirty')->with('string', 'bar', 'different')->will($this->returnValue(TRUE));
+		$session->expects($this->once())->method('isSingleValuedPropertyDirty')->with('string', 'bar', 'different')->will($this->returnValue(TRUE));
 
 		$this->assertTrue($session->isDirty($object, 'foo'));
 	}
@@ -323,10 +323,10 @@ class SessionTest extends \F3\Testing\BaseTestCase {
 				)
 			)
 		);
-		$session = $this->getMock('F3\FLOW3\Persistence\Session', array('getIdentifierByObject', 'isPropertyDirty'));
+		$session = $this->getMock('F3\FLOW3\Persistence\Session', array('getIdentifierByObject', 'isSingleValuedPropertyDirty'));
 		$session->registerReconstitutedEntity($parent, $cleanData);
 		$session->expects($this->once())->method('getIdentifierByObject')->will($this->returnValue('fakeUuid'));
-		$session->expects($this->once())->method('isPropertyDirty')->will($this->returnValue(TRUE));
+		$session->expects($this->once())->method('isSingleValuedPropertyDirty')->will($this->returnValue(TRUE));
 
 		$this->assertTrue($session->isDirty($parent, 'array'));
 	}
@@ -359,10 +359,10 @@ class SessionTest extends \F3\Testing\BaseTestCase {
 				)
 			)
 		);
-		$session = $this->getMock('F3\FLOW3\Persistence\Session', array('getIdentifierByObject', 'isPropertyDirty'));
+		$session = $this->getMock('F3\FLOW3\Persistence\Session', array('getIdentifierByObject', 'isSingleValuedPropertyDirty'));
 		$session->registerReconstitutedEntity($parent, $cleanData);
 		$session->expects($this->once())->method('getIdentifierByObject')->will($this->returnValue('fakeUuid'));
-		$session->expects($this->once())->method('isPropertyDirty')->will($this->returnValue(FALSE));
+		$session->expects($this->once())->method('isSingleValuedPropertyDirty')->will($this->returnValue(FALSE));
 
 		$this->assertFalse($session->isDirty($parent, 'array'));
 	}
@@ -400,10 +400,10 @@ class SessionTest extends \F3\Testing\BaseTestCase {
 				)
 			)
 		);
-		$session = $this->getMock('F3\FLOW3\Persistence\Session', array('getIdentifierByObject', 'isPropertyDirty'));
+		$session = $this->getMock('F3\FLOW3\Persistence\Session', array('getIdentifierByObject', 'isSingleValuedPropertyDirty'));
 		$session->registerReconstitutedEntity($parent, $cleanData);
 		$session->expects($this->once())->method('getIdentifierByObject')->will($this->returnValue('fakeUuid'));
-		$session->expects($this->once())->method('isPropertyDirty')->will($this->returnValue(FALSE));
+		$session->expects($this->once())->method('isSingleValuedPropertyDirty')->will($this->returnValue(FALSE));
 
 		$this->assertFalse($session->isDirty($parent, 'array'));
 	}
@@ -445,7 +445,7 @@ class SessionTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * Returns tuples of the form <type, current, clean, expected> for
-	 * isPropertyDirty()
+	 * isSingleValuedPropertyDirty()
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function propertyData() {
@@ -478,9 +478,9 @@ class SessionTest extends \F3\Testing\BaseTestCase {
 	 * @dataProvider propertyData
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function isPropertyDirtyWorksAsExpected($type, $current, $clean, $expected) {
+	public function isSingleValuedPropertyDirtyWorksAsExpected($type, $current, $clean, $expected) {
 		$session = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Session'), array('dummy'));
-		$this->assertEquals($session->_call('isPropertyDirty', $type, $clean, $current), $expected);
+		$this->assertEquals($session->_call('isSingleValuedPropertyDirty', $type, $clean, $current), $expected);
 	}
 }
 ?>
