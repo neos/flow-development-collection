@@ -263,8 +263,8 @@ class GeneratorService {
 	protected function buildRenderingContext(array $contextVariables) {
 		$renderingContext = $this->objectManager->create('F3\Fluid\Core\Rendering\RenderingContext');
 
-		$renderingContext->setTemplateVariableContainer($this->objectManager->create('F3\Fluid\Core\ViewHelper\TemplateVariableContainer', $contextVariables));
-		$renderingContext->setViewHelperVariableContainer($this->objectManager->create('F3\Fluid\Core\ViewHelper\ViewHelperVariableContainer'));
+		$renderingContext->injectTemplateVariableContainer($this->objectManager->create('F3\Fluid\Core\ViewHelper\TemplateVariableContainer', $contextVariables));
+		$renderingContext->injectViewHelperVariableContainer($this->objectManager->create('F3\Fluid\Core\ViewHelper\ViewHelperVariableContainer'));
 
 		return $renderingContext;
 	}
