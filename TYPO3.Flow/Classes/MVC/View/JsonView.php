@@ -28,14 +28,32 @@ namespace F3\FLOW3\MVC\View;
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
+ * @api
  */
 
-class JsonView extends \F3\FLOW3\MVC\View\AbstractView {
+class JsonView implements \F3\FLOW3\MVC\View\ViewInterface {
+
+	/**
+	 * @var \F3\FLOW3\MVC\Controller\ControllerContext
+	 */
+	protected $controllerContext;
 
 	/**
 	 * @var mixed The value to render (object / array / string)
 	 */
 	protected $valueToRender = NULL;
+
+	/**
+	 * Sets the current controller context
+	 *
+	 * @param \F3\FLOW3\MVC\Controller\ControllerContext $controllerContext
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
+	 */
+	public function setControllerContext(\F3\FLOW3\MVC\Controller\ControllerContext $controllerContext) {
+		$this->controllerContext = $controllerContext;
+	}
 
 	/**
 	 * Assign a value to the JSON output, The JSON view only accepts
@@ -44,10 +62,28 @@ class JsonView extends \F3\FLOW3\MVC\View\AbstractView {
 	 * @param string $key The key of a view variable to set, should be "value" for a JSON view
 	 * @param mixed $value The value of a view variable
 	 * @return void
+	 * @api
 	 */
 	public function assign($key, $value) {
 		if ($key === 'value') {
 			$this->valueToRender = $value;
+		}
+	}
+
+	/**
+	 * Assigns multiple values to the JSON output.
+	 * However, only the key "value" is accepted.
+	 *
+	 * @param array $values Keys and values - only a value with key "value" is considered
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
+	 */
+	public function assignMultiple(array $values) {
+		foreach ($values as $key => $value) {
+			if ($key === 'value') {
+				$this->valueToRender = $value;
+			}
 		}
 	}
 

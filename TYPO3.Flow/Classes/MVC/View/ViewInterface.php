@@ -36,6 +36,7 @@ interface ViewInterface {
 	 *
 	 * @param \F3\FLOW3\MVC\Controller\ControllerContext $controllerContext Context of the controller associated with this view
 	 * @return void
+	 * @api
 	 */
 	public function setControllerContext(\F3\FLOW3\MVC\Controller\ControllerContext $controllerContext);
 
@@ -66,6 +67,7 @@ interface ViewInterface {
 	 * @api
 	 */
 	public function render();
+
 }
 
 ?>

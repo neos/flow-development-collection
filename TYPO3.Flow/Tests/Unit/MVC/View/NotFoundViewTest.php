@@ -33,21 +33,6 @@ require_once('vfs/vfsStream.php');
 class NotFoundViewTest extends \F3\Testing\BaseTestCase {
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
-	 */
-	protected $objectManager;
-
-	/**
-	 * @var \F3\FLOW3\Package\PackageManagerInterface
-	 */
-	protected $packageManager;
-
-	/**
-	 * @var \F3\FLOW3\Resource\ResourceManager
-	 */
-	protected $recourceManager;
-
-	/**
 	 * @var \F3\FLOW3\MVC\Controller\ControllerContext
 	 */
 	protected $controllerContext;
@@ -61,11 +46,7 @@ class NotFoundViewTest extends \F3\Testing\BaseTestCase {
 		\vfsStreamWrapper::register();
 		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('testDirectory'));
 
-		$this->objectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$this->packageManager = $this->getMock('F3\FLOW3\Package\PackageManagerInterface');
-		$this->resourceManager = $this->getMock('F3\FLOW3\Resource\ResourceManager', array(), array(), '', FALSE);
-
-		$this->view = $this->getMock('F3\FLOW3\MVC\View\NotFoundView', array('getTemplatePathAndFilename'), array($this->objectManager, $this->packageManager, $this->resourceManager));
+		$this->view = $this->getMock('F3\FLOW3\MVC\View\NotFoundView', array('getTemplatePathAndFilename'));
 
 		$this->controllerContext = $this->getMock('F3\FLOW3\MVC\Controller\ControllerContext', array('getRequest'), array(), '', FALSE);
 		$this->view->setControllerContext($this->controllerContext);

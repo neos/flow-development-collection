@@ -33,7 +33,41 @@ namespace F3\FLOW3\MVC\View;
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-final class EmptyView extends \F3\FLOW3\MVC\View\AbstractView {
+final class EmptyView implements \F3\FLOW3\MVC\View\ViewInterface {
+
+	/**
+	 * Dummy method to satisfy the ViewInterface
+	 *
+	 * @param \F3\FLOW3\MVC\Controller\ControllerContext $controllerContext
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
+	 */
+	public function setControllerContext(\F3\FLOW3\MVC\Controller\ControllerContext $controllerContext) {
+	}
+
+	/**
+	 * Dummy method to satisfy the ViewInterface
+	 *
+	 * @param string $key
+	 * @param mixed $value
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
+	 */
+	public function assign($key, $value) {
+	}
+
+	/**
+	 * Dummy method to satisfy the ViewInterface
+	 *
+	 * @param array $values
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
+	 */
+	public function assignMultiple(array $values) {
+	}
 
 	/**
 	 * Renders the empty view

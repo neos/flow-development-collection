@@ -171,7 +171,7 @@ class PropertyMapper {
 	 *
 	 * @param array $propertyNames Names of the properties to map.
 	 * @param mixed $source Source containing the properties to map to the target object. Must either be an array, ArrayObject or any other object.
-	 * @param object $target The target object
+	 * @param mixed $target The target object or array. Alternatively this may be a fully qualified object name if the target should be created or reconstituted.
 	 * @param array $optionalPropertyNames Names of optional properties. If a property is specified here and it doesn't exist in the source, no error is issued.
 	 * @param \F3\FLOW3\Validation\Validator\ObjectValidatorInterface $targetObjectValidator A validator used for validating the target object
 	 * @return boolean TRUE if the mapped properties are valid, otherwise FALSE
