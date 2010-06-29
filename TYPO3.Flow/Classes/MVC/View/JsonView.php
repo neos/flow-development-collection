@@ -30,7 +30,6 @@ namespace F3\FLOW3\MVC\View;
  * @scope prototype
  * @api
  */
-
 class JsonView implements \F3\FLOW3\MVC\View\ViewInterface {
 
 	/**
