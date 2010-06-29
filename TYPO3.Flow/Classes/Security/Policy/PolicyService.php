@@ -343,6 +343,10 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 		}
 
 		$roleIdentifier = (string)$role;
+		if (!array_key_exists($roleIdentifier, $this->acls[$resource])) {
+			return NULL;
+		}
+
 		if ($this->acls[$resource][$roleIdentifier]['runtimeEvaluationsClosureCode'] !== FALSE) {
 			return self::PRIVILEGE_DENY;
 		}

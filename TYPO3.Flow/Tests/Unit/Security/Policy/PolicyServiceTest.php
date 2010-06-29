@@ -391,7 +391,31 @@ class PolicyServiceTest extends \F3\Testing\BaseTestCase {
 	 * @category unit
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function getPrivilegeForResourceReturnsNullIfAskedForAResourceThatIsNotConnectedToAPolicyEntry() {
+	public function getPrivilegeForResourceReturnsNullIfTheGivenRoleHasNoPriviligesDefinedForTheGivenResource() {
+		$mockRole = $this->getMock('F3\FLOW3\Security\Policy\Role', array(), array(), '', FALSE);
+		$mockRole->expects($this->once())->method('__toString')->will($this->returnValue('role2'));
+
+		$aclsCache = array(
+						'someResource' => array(
+								'role1' => array(
+									'runtimeEvaluationsClosureCode' => 'function () { return TRUE; };',
+									'privilege' => PolicyService::PRIVILEGE_GRANT
+								)
+							)
+						);
+
+		$policyService = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Security\Policy\PolicyService'), array('dummy'), array(), '', FALSE);
+		$policyService->_set('acls', $aclsCache);
+
+		$this->assertNull($policyService->getPrivilegeForResource($mockRole, 'someResource'));
+	}
+
+	/**
+	 * @test
+	 * @category unit
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getPrivilegeForResourceReturnsADenyPrivilegeIfAskedForAResourceThatIsNotConnectedToAPolicyEntry() {
 		$mockRole = $this->getMock('F3\FLOW3\Security\Policy\Role', array(), array(), '', FALSE);
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
 
@@ -403,7 +427,6 @@ class PolicyServiceTest extends \F3\Testing\BaseTestCase {
 		$policyService->_set('resources', array('someResourceNotConnectedToAPolicyEntry' => 'someDefinition'));
 
 		$this->assertEquals(PolicyService::PRIVILEGE_DENY, $policyService->getPrivilegeForResource($mockRole, 'someResourceNotConnectedToAPolicyEntry'));
-
 	}
 
 	/**
