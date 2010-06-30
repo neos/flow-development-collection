@@ -356,7 +356,11 @@ class ObjectContainerBuilder {
 							$propertyValue = \F3\FLOW3\Utility\Arrays::getValueByPath($settings, $settingPath);
 						}
 						if (!isset($this->objectConfigurations[$propertyValue])) {
-							throw new \F3\FLOW3\Object\Exception\UnknownObjectException('The object "' . $propertyValue . '" which was specified as a property in the object configuration of object "' . $objectName . '" does not exist.', 1265213849);
+							if ($propertyValue[0] === '\\') {
+								throw new \F3\FLOW3\Object\Exception\UnknownObjectException('The object name "' . $propertyValue . '" which was specified as a property in the object configuration of object "' . $objectName . '" starts with a leading backslash.', 1277827579);
+							} else {
+								throw new \F3\FLOW3\Object\Exception\UnknownObjectException('The object "' . $propertyValue . '" which was specified as a property in the object configuration of object "' . $objectName . '" does not exist.', 1265213849);
+							}
 						}
 						if ($this->objectConfigurations[$propertyValue]->getScope() === \F3\FLOW3\Object\Configuration\Configuration::SCOPE_PROTOTYPE) {
 							$preparedSetterArgument = '$this->getPrototype(\'' . $propertyValue . '\', array(' . $this->buildMethodParametersCode($this->objectConfigurations[$propertyValue]->getArguments()) . '))';
