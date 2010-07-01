@@ -32,6 +32,18 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
+	 * @expectedException \F3\FLOW3\Persistence\Exception\InvalidObjectDataException
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function mapToObjectThrowsExceptionOnEmptyInput() {
+		$objectData = array();
+
+		$dataMapper = $this->getAccessibleMock('F3\FLOW3\Persistence\DataMapper', array('dummy'));
+		$dataMapper->_call('mapToObject', $objectData);
+	}
+
+	/**
+	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function mapToObjectsMapsArrayToObjectByCallingmapToObject() {

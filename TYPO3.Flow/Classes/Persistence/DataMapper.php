@@ -120,6 +120,10 @@ class DataMapper {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function mapToObject(array $objectData) {
+		if ($objectData === array()) {
+			throw new \F3\FLOW3\Persistence\Exception\InvalidObjectDataException('The array with object data was empty, probably object not found or access denied.', 1277974338);
+		}
+
 		if ($this->persistenceSession->hasIdentifier($objectData['identifier'])) {
 			return $this->persistenceSession->getObjectByIdentifier($objectData['identifier']);
 		} else {
