@@ -312,7 +312,7 @@ class Route {
 				$optionalPartCount = 0;
 				$skipOptionalParts = FALSE;
 			}
-			if (!$routePart->match($routePath)) {
+			if ($routePart->match($routePath) !== TRUE) {
 				if ($routePart->isOptional() && $optionalPartCount === 1) {
 					if ($routePart->getDefaultValue() === NULL) {
 						return FALSE;
