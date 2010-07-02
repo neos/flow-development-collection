@@ -271,13 +271,13 @@ class CldrModel implements \F3\FLOW3\Locale\Cldr\CldrModelInterface {
 	 *
 	 * @return array Parsed XML file
 	 * @author Karol Gusak <firstname@lastname.eu>
-	 * @throws \F3\FLOW3\Locale\Exception\InvalidCldrDataException When SimpleXML couldn't load XML file
+	 * @throws \F3\FLOW3\Locale\Cldr\Exception\InvalidCldrDataException When SimpleXML couldn't load XML file
 	 */
 	protected function parseXmlFile() {
 		$this->rootXmlNode = simplexml_load_file($this->sourceFilename);
 
 		if ($this->rootXmlNode === FALSE) {
-			throw new \F3\FLOW3\Locale\Exception\InvalidCldrDataException('The path provided does not point to existing or accessible file. Please check if CLDR data is available.', 1275143455);
+			throw new \F3\FLOW3\Locale\Cldr\Exception\InvalidCldrDataException('The path provided does not point to existing or accessible file. Please check if CLDR data is available.', 1275143455);
 		}
 
 		return $this->parseNode($this->rootXmlNode);
@@ -344,7 +344,7 @@ class CldrModel implements \F3\FLOW3\Locale\Cldr\CldrModelInterface {
 	 * @param string $currentPath Path to currently analyzed part of data
 	 * @return mixed Modified (or unchanged) $data
 	 * @author Karol Gusak <firstname@lastname.eu>
-	 * @throws \F3\FLOW3\Locale\Exception\InvalidCldrDataException When found alias tag which has unexpected structure
+	 * @throws \F3\FLOW3\Locale\Cldr\Exception\InvalidCldrDataException When found alias tag which has unexpected structure
 	 */
 	protected function resolveAliases($data, $currentPath) {
 		if (!is_array($data)) {
@@ -355,7 +355,7 @@ class CldrModel implements \F3\FLOW3\Locale\Cldr\CldrModelInterface {
 			if ($nodeName === 'alias') {
 				if(!is_array($nodeChildren)) {
 						// Tag is alias but it has not children, something is very wrong
-					throw new \F3\FLOW3\Locale\Exception\InvalidCldrDataException('Encountered problem with alias tag. Please check if CLDR data is not corrupted.', 1276421398);
+					throw new \F3\FLOW3\Locale\Cldr\Exception\InvalidCldrDataException('Encountered problem with alias tag. Please check if CLDR data is not corrupted.', 1276421398);
 				}
 
 				$aliasAttributes = array_keys($nodeChildren);

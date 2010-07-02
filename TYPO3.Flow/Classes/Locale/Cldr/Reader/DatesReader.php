@@ -294,7 +294,7 @@ class DatesReader {
 	 * @return string Formatted date / time
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	protected function doFormattingWithParsedFormat(\DateTime $dateTime, $parsedFormat, array $localizedLiterals) {
+	protected function doFormattingWithParsedFormat(\DateTime $dateTime, array $parsedFormat, array $localizedLiterals) {
 		$formattedDateTime = '';
 
 		foreach ($parsedFormat as $subformat) {
@@ -441,7 +441,7 @@ class DatesReader {
 	 *
 	 * @param string $format
 	 * @return string Parsed format
-	 * @throws \F3\FLOW3\Locale\Exception\InvalidArgumentException When subformat is longer than maximal value defined in $maxLengthOfSubformats property
+	 * @throws \F3\FLOW3\Locale\Cldr\Reader\Exception\InvalidDateTimeFormatException When subformat is longer than maximal value defined in $maxLengthOfSubformats property
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	protected function parseFormat($format) {
@@ -484,7 +484,7 @@ class DatesReader {
 				if (isset(self::$maxLengthOfSubformats[$subformatSymbol])) {
 					if (self::$maxLengthOfSubformats[$subformatSymbol] === 0 || strlen($subformat) <= self::$maxLengthOfSubformats[$subformatSymbol]) {
 						$parsedFormat[] = $subformat;
-					} else throw new \F3\FLOW3\Locale\Exception\InvalidArgumentException('Date / time pattern is too long: ' . $subformat . ', specification allows up to ' . self::$maxLengthOfSubformats[$subformatSymbol] . ' chars.', 1276114248);
+					} else throw new \F3\FLOW3\Locale\Cldr\Reader\Exception\InvalidDateTimeFormatException('Date / time pattern is too long: ' . $subformat . ', specification allows up to ' . self::$maxLengthOfSubformats[$subformatSymbol] . ' chars.', 1276114248);
 				} else {
 					$parsedFormat[] = array($subformat);
 				}

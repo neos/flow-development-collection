@@ -84,7 +84,8 @@ class FormatResolver {
 	 * @param array $values An array of values to replace placeholders with
 	 * @param \F3\FLOW3\Locale\Locale $locale Locale to use (NULL for default one)
 	 * @return string The $text with placeholders resolved
-	 * @throws \F3\FLOW3\Locale\Exception\InvalidArgumentException When placeholders are incorrectly formatted or when accessing nonexistent value
+	 * @throws \F3\FLOW3\Locale\Exception\InvalidFormatPlaceholderException When encountered incorrectly formatted placeholder
+	 * @throws \F3\FLOW3\Locale\Exception\IndexOutOfBoundsException When trying to format nonexistent value
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function resolvePlaceholders($text, array $values, \F3\FLOW3\Locale\Locale $locale = NULL) {
@@ -97,7 +98,7 @@ class FormatResolver {
 
 			if ($endOfPlaceholder === FALSE || ($startOfPlaceholder + 1) >= $endOfPlaceholder) {
 					// There is no closing bracket, it is placed before the opening bracket, or there is nothing between brackets
-				throw new \F3\FLOW3\Locale\Exception\InvalidArgumentException('Text provided contains incorrectly formatted placeholders. Please make sure you conform the placeholder\'s syntax.', 1278057790);
+				throw new \F3\FLOW3\Locale\Exception\InvalidFormatPlaceholderException('Text provided contains incorrectly formatted placeholders. Please make sure you conform the placeholder\'s syntax.', 1278057790);
 			}
 
 			$contentBetweenBrackets = substr($text, $startOfPlaceholder + 1, $endOfPlaceholder - $startOfPlaceholder - 1);
@@ -105,7 +106,7 @@ class FormatResolver {
 
 			$valueIndex = (int)$placeholderElements[0];
 			if ($valueIndex < 0 || $valueIndex >= count($values)) {
-				throw new \F3\FLOW3\Locale\Exception\InvalidArgumentException('Placeholder has incorrect index or not enough values provided. Please make sure you try to access existing values.', 1278057791);
+				throw new \F3\FLOW3\Locale\Exception\IndexOutOfBoundsException('Placeholder has incorrect index or not enough values provided. Please make sure you try to access existing values.', 1278057791);
 			}
 
 			if (isset($placeholderElements[1])) {
@@ -130,7 +131,7 @@ class FormatResolver {
 	 *
 	 * @param string $text String message with placeholder(s)
 	 * @return \F3\FLOW3\Locale\Formatter\FormatterInterface The concrete formatter class
-	 * @throws \F3\FLOW3\Locale\Exception\InvalidArgumentException When formatter for name given does not exist
+	 * @throws \F3\FLOW3\Locale\Exception\UnknownFormatterException When formatter for a name given does not exist
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	protected function getFormatter($formatterName) {
@@ -143,7 +144,7 @@ class FormatResolver {
 		try {
 			$formatter = $this->objectManager->get('F3\\FLOW3\\Locale\\Formatter\\' . $formatterName . 'Formatter');
 		} catch (\F3\FLOW3\Object\Exception\UnknownObjectException $exception) {
-			throw new \F3\FLOW3\Locale\Exception\InvalidArgumentException('Could not find formatter for "' . $formatterName . '".', 1278057791);
+			throw new \F3\FLOW3\Locale\Exception\UnknownFormatterException('Could not find formatter for "' . $formatterName . '".', 1278057791);
 		}
 
 		return $this->formatters[$formatterName] = $formatter;

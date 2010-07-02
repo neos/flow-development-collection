@@ -35,11 +35,6 @@ namespace F3\FLOW3\Locale;
 class LocaleCollection implements \F3\FLOW3\Locale\LocaleCollectionInterface {
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
-	 */
-	protected $objectManager;
-
-	/**
 	 * This array contains all locales added to this collection. The values
 	 * are Locale objects, and the keys are these locale's tags.
 	 *
@@ -56,15 +51,6 @@ class LocaleCollection implements \F3\FLOW3\Locale\LocaleCollectionInterface {
 	 * @var array<\F3\FLOW3\Locale\Locale>
 	 */
 	protected $localeParentCollection = array();
-
-	/**
-	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
-	 * @return void
-	 * @author Karol Gusak <firstname@lastname.eu>
-	 */
-	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
-		$this->objectManager = $objectManager;
-	}
 
 	/**
 	 * Adds a locale to the collection.

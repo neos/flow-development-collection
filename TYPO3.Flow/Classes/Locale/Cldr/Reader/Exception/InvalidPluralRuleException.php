@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Locale\Exception;
+namespace F3\FLOW3\Locale\Cldr\Reader\Exception;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,13 +23,13 @@ namespace F3\FLOW3\Locale\Exception;
  *                                                                        */
 
 /**
- * An "Invalid CLDR Data" exception
+ * An "Invalid Plural Rule" exception
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */
-class InvalidCldrDataException extends \F3\FLOW3\Locale\Exception {
+class InvalidPluralRuleException extends \F3\FLOW3\Locale\InvalidArgumentException {
 
 }
 

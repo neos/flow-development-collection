@@ -139,7 +139,7 @@ class Detector {
 	 * @return \F3\FLOW3\Locale\Locale
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function detectLocaleFromTemplateLocale($locale) {
+	public function detectLocaleFromTemplateLocale(\F3\FLOW3\Locale\Locale $locale) {
 		$foundLocale = $this->localeCollection->findBestMatchingLocale($locale);
 
 		if ($foundLocale !== NULL) {

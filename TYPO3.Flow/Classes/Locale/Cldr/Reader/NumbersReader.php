@@ -302,7 +302,7 @@ class NumbersReader {
 	 * @return string Formatted number. Will return string-casted version of $number if pattern is FALSE
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	protected function doFormattingWithParsedFormat($number, $parsedFormat, $symbols, $currency = NULL) {
+	protected function doFormattingWithParsedFormat($number, array $parsedFormat, array $symbols, $currency = NULL) {
 		if ($parsedFormat === FALSE) {
 			return (string)$number;
 		}

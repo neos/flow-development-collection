@@ -259,7 +259,7 @@ class PluralsReader {
 	 *
 	 * @param string $rule
 	 * @return array Parsed rule
-	 * @throws \F3\FLOW3\Locale\Exception\InvalidArgumentException When plural rule does not match regexp pattern
+	 * @throws \F3\FLOW3\Locale\Cldr\Reader\Exception\InvalidPluralRuleException When plural rule does not match regexp pattern
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	protected function parseRule($rule) {
@@ -291,7 +291,7 @@ class PluralsReader {
 				$parsedRule[] = $subrule;
 			}
 		} else {
-			throw new \F3\FLOW3\Locale\Exception\InvalidArgumentException('A plural rule string is invalid. CLDR files might be corrupted.', 1275493982);
+			throw new \F3\FLOW3\Locale\Cldr\Reader\Exception\InvalidPluralRuleException('A plural rule string is invalid. CLDR files might be corrupted.', 1275493982);
 		}
 
 		return $parsedRule;
