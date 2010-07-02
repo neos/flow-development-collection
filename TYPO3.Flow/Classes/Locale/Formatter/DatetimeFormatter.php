@@ -2,7 +2,7 @@
 declare(ENCODING = 'utf-8');
 namespace F3\FLOW3\Locale\Formatter;
 
-/*                                                                        *
+/* *
  * This script belongs to the FLOW3 framework.                            *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
@@ -23,53 +23,49 @@ namespace F3\FLOW3\Locale\Formatter;
  *                                                                        */
 
 /**
- * Testcase for the DateTimeFormatter
+ * Formatter for date and time.
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @api
  */
-class DateTimeFormatterTest extends \F3\Testing\BaseTestCase {
+class DatetimeFormatter implements \F3\FLOW3\Locale\Formatter\FormatterInterface {
 
 	/**
-	 * @var \F3\FLOW3\Locale\Locale
+	 * @var \F3\FLOW3\Locale\Cldr\Reader\DatesReader
 	 */
-	protected $dummyLocale;
+	protected $datesReader;
 
 	/**
-	 * @var \DateTime
-	 */
-	protected $dummyDateTime;
-
-	/**
+	 * @param \F3\FLOW3\Locale\Cldr\Reader\DatesReader $datesReader
 	 * @return void
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function setUp() {
-		$this->dummyLocale = new \F3\FLOW3\Locale\Locale('en_GB');
-		$this->dummyDateTime = new \DateTime('now');
+	public function injectDatesReader(\F3\FLOW3\Locale\Cldr\Reader\DatesReader $datesReader) {
+		$this->datesReader = $datesReader;
 	}
 
 	/**
-	 * @test
-	 * @author Karol Gusak <firstname@lastname.eu>
+	 * Formats provided value using optional style properties
+	 *
+	 * @param mixed $value Formatter-specific variable to format (can be integer, \DateTime, etc)
+	 * @param \F3\FLOW3\Locale\Locale $locale Locale to use
+	 * @param string $styleProperties Integer-indexed array of formatter-specific style properties (can be empty)
+	 * @return string String representation of $value provided, or (string)$value
+	 * @api
 	 */
-	public function formatWorks() {
-		$mockReader = $this->getMock('F3\FLOW3\Locale\Cldr\Reader\DatesReader');
-		$mockReader->expects($this->at(0))->method('formatDateTime')->with($this->dummyDateTime, $this->dummyLocale, 'default')->will($this->returnValue('bar1'));
-		$mockReader->expects($this->at(1))->method('formatDate')->with($this->dummyDateTime, $this->dummyLocale, 'default')->will($this->returnValue('bar2'));
-		$mockReader->expects($this->at(2))->method('formatTime')->with($this->dummyDateTime, $this->dummyLocale, 'full')->will($this->returnValue('bar3'));
+	public function format($value, \F3\FLOW3\Locale\Locale $locale, array $styleProperties = array()) {
+		$style = (isset($styleProperties[0])) ? $styleProperties[0] : 'datetime';
+		$length = (isset($styleProperties[1])) ? $styleProperties[1] : 'default';
 
-		$formatter = new \F3\FLOW3\Locale\Formatter\DateTimeFormatter();
-		$formatter->injectDatesReader($mockReader);
-
-		$result = $formatter->format($this->dummyDateTime, $this->dummyLocale);
-		$this->assertEquals('bar1', $result);
-
-		$result = $formatter->format($this->dummyDateTime, $this->dummyLocale, array('date'));
-		$this->assertEquals('bar2', $result);
-
-		$result = $formatter->format($this->dummyDateTime, $this->dummyLocale, array('time', 'full'));
-		$this->assertEquals('bar3', $result);
+		switch ($style) {
+			case 'date':
+				return $this->datesReader->formatDate($value, $locale, $length);
+			case 'time':
+				return $this->datesReader->formatTime($value, $locale, $length);
+			default:
+				return $this->datesReader->formatDateTime($value, $locale, $length);
+		}
 	}
 }
 
