@@ -27,6 +27,7 @@ namespace F3\FLOW3\Locale;
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @api
  */
 class Detector {
 
@@ -83,6 +84,7 @@ class Detector {
 	 * @param string $header The Accept-Language HTTP header
 	 * @return \F3\FLOW3\Locale\Locale
 	 * @author Karol Gusak <firstname@lastname.eu>
+	 * @api
 	 */
 	public function detectLocaleFromHttpHeader($header) {
 		$acceptableLanguages = \F3\FLOW3\Locale\Utility::parseAcceptLanguageHeader($header);
@@ -120,6 +122,7 @@ class Detector {
 	 * @param string $tag The locale identifier as used in Locale class
 	 * @return \F3\FLOW3\Locale\Locale
 	 * @author Karol Gusak <firstname@lastname.eu>
+	 * @api
 	 */
 	public function detectLocaleFromLocaleTag($tag) {
 		try {
@@ -138,6 +141,7 @@ class Detector {
 	 * @param \F3\FLOW3\Locale\Locale $locale The template Locale object
 	 * @return \F3\FLOW3\Locale\Locale
 	 * @author Karol Gusak <firstname@lastname.eu>
+	 * @api
 	 */
 	public function detectLocaleFromTemplateLocale(\F3\FLOW3\Locale\Locale $locale) {
 		$foundLocale = $this->localeCollection->findBestMatchingLocale($locale);

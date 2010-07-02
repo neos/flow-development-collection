@@ -28,6 +28,7 @@ namespace F3\FLOW3\Locale\Cldr;
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @author Karol Gusak <firstname@lastname.eu>
+ * @api
  * @scope prototype
  */
 interface CldrModelInterface {
@@ -37,6 +38,7 @@ interface CldrModelInterface {
 	 *
 	 * @param string $path A path to the node to get
 	 * @return mixed Array of matching data, or FALSE on failure
+	 * @api
 	 */
 	public function getRawArray($path);
 
@@ -45,6 +47,7 @@ interface CldrModelInterface {
 	 *
 	 * @param string $path A path to the element to get
 	 * @return mixed String with desired element, or FALSE on failure
+	 * @api
 	 */
 	public function getElement($path);
 
@@ -54,6 +57,7 @@ interface CldrModelInterface {
 	 * @param string $attribute An attribute to parse
 	 * @param int $attributeNumber Index of attribute to get value for, starting from 1
 	 * @return mixed Value of desired attribute, or FALSE if there is no such attribute
+	 * @api
 	 */
 	public function getValueOfAttribute($attribute, $attributeNumber);
 }

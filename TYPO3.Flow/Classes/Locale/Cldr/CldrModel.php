@@ -27,6 +27,7 @@ namespace F3\FLOW3\Locale\Cldr;
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @api
  * @scope prototype
  */
 class CldrModel implements \F3\FLOW3\Locale\Cldr\CldrModelInterface {
@@ -188,6 +189,7 @@ class CldrModel implements \F3\FLOW3\Locale\Cldr\CldrModelInterface {
 	 * @param string $path A path to the node to get
 	 * @return mixed Array of matching data, or FALSE on failure
 	 * @author Karol Gusak <firstname@lastname.eu>
+	 * @api
 	 */
 	public function getRawArray($path) {
 		$arrayKeys = explode('/', trim($path, '/'));
@@ -220,6 +222,7 @@ class CldrModel implements \F3\FLOW3\Locale\Cldr\CldrModelInterface {
 	 * @param string $path A path to the element to get
 	 * @return mixed String with desired element, or FALSE on failure
 	 * @author Karol Gusak <firstname@lastname.eu>
+	 * @api
 	 */
 	public function getElement($path) {
 		$data = $this->getRawArray($path);
@@ -253,6 +256,7 @@ class CldrModel implements \F3\FLOW3\Locale\Cldr\CldrModelInterface {
 	 * @param int $attributeNumber Index of attribute to get value for, starting from 1
 	 * @return mixed Value of desired attribute, or FALSE if there is no such attribute
 	 * @author Karol Gusak <firstname@lastname.eu>
+	 * @api
 	 */
 	public function getValueOfAttribute($attribute, $attributeNumber) {
 		$attributes = explode('" ', $attribute);

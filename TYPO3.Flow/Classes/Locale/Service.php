@@ -27,6 +27,7 @@ namespace F3\FLOW3\Locale;
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @api
  */
 class Service {
 
@@ -138,6 +139,7 @@ class Service {
 	 *
 	 * @return \F3\FLOW3\Locale\Locale
 	 * @author Karol Gusak <firstname@lastname.eu>
+	 * @api
 	 */
 	public function getDefaultLocale() {
 		return $this->settings['locale']['defaultLocale'];
@@ -160,6 +162,7 @@ class Service {
 	 * @param bool $strict Whether match only provided locale (or search for best-matching locale)
 	 * @return string Path to the localized file, or $filepath
 	 * @author Karol Gusak <firstname@lastname.eu>
+	 * @api
 	 */
 	public function getLocalizedFilename($filename, \F3\FLOW3\Locale\Locale $locale = NULL, $strict = FALSE) {
 		if ($locale === NULL) {
@@ -201,6 +204,7 @@ class Service {
 	 * @param \F3\FLOW3\Locale\Locale $locale The Locale to search parent for
 	 * @return mixed Existing \F3\FLOW3\Locale\Locale instance or NULL on failure
 	 * @author Karol Gusak <firstname@lastname.eu>
+	 * @api
 	 */
 	public function getParentLocaleOf(\F3\FLOW3\Locale\Locale $locale) {
 		return $this->localeCollection->getParentLocaleOf($locale);
@@ -215,6 +219,7 @@ class Service {
 	 * @param \F3\FLOW3\Locale\Locale $locale The "template" Locale to be matched
 	 * @return mixed Existing \F3\FLOW3\Locale\Locale instance on success, NULL on failure
 	 * @author Karol Gusak <firstname@lastname.eu>
+	 * @api
 	 */
 	public function findBestMatchingLocale(\F3\FLOW3\Locale\Locale $locale) {
 		return $this->localeCollection->findBestMatchingLocale($locale);

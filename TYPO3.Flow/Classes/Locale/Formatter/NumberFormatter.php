@@ -27,6 +27,7 @@ namespace F3\FLOW3\Locale\Formatter;
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @api
  */
 class NumberFormatter {
 
@@ -51,6 +52,7 @@ class NumberFormatter {
 	 * @param \F3\FLOW3\Locale\Locale $locale Locale to use
 	 * @param string $styleProperties Integer-indexed array of formatter-specific style properties (can be empty)
 	 * @return string String representation of $value provided, or (string)$value
+	 * @api
 	 */
 	public function format($value, \F3\FLOW3\Locale\Locale $locale, array $styleProperties = array()) {
 		$style = (isset($styleProperties[0])) ? $styleProperties[0] : 'decimal';

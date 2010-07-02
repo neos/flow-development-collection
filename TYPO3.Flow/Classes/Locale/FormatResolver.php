@@ -27,6 +27,7 @@ namespace F3\FLOW3\Locale;
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @api
  */
 class FormatResolver {
 
@@ -87,6 +88,7 @@ class FormatResolver {
 	 * @throws \F3\FLOW3\Locale\Exception\InvalidFormatPlaceholderException When encountered incorrectly formatted placeholder
 	 * @throws \F3\FLOW3\Locale\Exception\IndexOutOfBoundsException When trying to format nonexistent value
 	 * @author Karol Gusak <firstname@lastname.eu>
+	 * @api
 	 */
 	public function resolvePlaceholders($text, array $values, \F3\FLOW3\Locale\Locale $locale = NULL) {
 		if ($locale === NULL) {

@@ -32,6 +32,7 @@ namespace F3\FLOW3\Locale\Cldr;
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @api
  */
 class CldrRepository {
 
@@ -95,6 +96,7 @@ class CldrRepository {
 	 * @param string $filename Relative path to existing CLDR file
 	 * @return mixed A F3\FLOW3\Locale\Cldr\CldrModel instance or FALSE on failure
 	 * @author Karol Gusak <firstname@lastname.eu>
+	 * @api
 	 */
 	public function getModel($filename) {
 		$filename = \F3\FLOW3\Utility\Files::concatenatePaths(array($this->cldrBasePath, $filename . '.xml'));
@@ -126,6 +128,7 @@ class CldrRepository {
 	 * @param string $directoryPath Relative path to existing CLDR directory which contains one file per locale (see 'main' directory in CLDR for example)
 	 * @return mixed A F3\FLOW3\Locale\Cldr\HierarchicalCldrModel instance or FALSE on failure
 	 * @author Karol Gusak <firstname@lastname.eu>
+	 * @api
 	 */
 	public function getHierarchicalModel($directoryPath, \F3\FLOW3\Locale\Locale $locale = NULL) {
 		$directoryPath = \F3\FLOW3\Utility\Files::concatenatePaths(array($this->cldrBasePath, $directoryPath));

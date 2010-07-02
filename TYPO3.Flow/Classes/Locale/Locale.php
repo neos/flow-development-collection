@@ -36,6 +36,7 @@ namespace F3\FLOW3\Locale;
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @see http://www.unicode.org/reports/tr35/
+ * @api
  * @scope prototype
  */
 class Locale {
@@ -106,6 +107,7 @@ class Locale {
 	 *
 	 * @return string The language identifier
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getLanguage() {
 		return $this->language;
@@ -116,6 +118,7 @@ class Locale {
 	 *
 	 * @return string The script identifier
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getScript() {
 		return $this->script;
@@ -126,6 +129,7 @@ class Locale {
 	 *
 	 * @return string The region identifier
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getRegion() {
 		return $this->region;
@@ -136,6 +140,7 @@ class Locale {
  	 *
  	 * @return string The variant identifier
  	 * @author Karol Gusak <firstname@lastname.eu>
+	 * @api
  	 */
  	public function getVariant() {
  		return $this->variant;
