@@ -211,5 +211,30 @@ class Arrays {
 		return ksort($array, $sortFlags);
 	}
 
+
+	static public function recursiveDiff(array $newArray, array $oldArray) {
+		$difference = array();
+
+		foreach ($newArray as $newKey => $newValue) {
+			if (array_key_exists($newKey, $oldArray)) {
+				if (is_array($newValue)) {
+					$recursiveDifference = self::recursiveArrayDiff($newValue, $oldArray[$newKey]);
+					if (count($recursiveDifference)) {
+						$difference[$newKey] = $recursiveDifference;
+					}
+				} else {
+					if ($newValue !== $oldArray[$newKey]) {
+						$difference[$newKey] = $newValue;
+					}
+				}
+			} elseif (is_array($newValue) && count($newValue)) {
+				$difference[$newKey] = $newValue;
+			} else {
+				$difference[$newKey] = $newValue;
+			}
+		}
+
+	    return $difference;
+	}
 }
 ?>
