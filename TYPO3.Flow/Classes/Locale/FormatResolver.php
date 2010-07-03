@@ -95,7 +95,7 @@ class FormatResolver {
 			$locale = $this->localizationService->getDefaultLocale();
 		}
 
-		while(($startOfPlaceholder = strpos($text, '{')) !== FALSE) {
+		while (($startOfPlaceholder = strpos($text, '{')) !== FALSE) {
 			$endOfPlaceholder = strpos($text, '}');
 
 			if ($endOfPlaceholder === FALSE || ($startOfPlaceholder + 1) >= $endOfPlaceholder) {

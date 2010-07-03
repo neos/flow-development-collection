@@ -29,7 +29,7 @@ namespace F3\FLOW3\Locale\Cldr\Reader\Exception;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */
-class InvalidDateTimeFormatException extends \F3\FLOW3\Locale\InvalidArgumentException {
+class InvalidDateTimeFormatException extends \F3\FLOW3\Locale\Exception\InvalidArgumentException {
 
 }
 
