@@ -69,10 +69,10 @@ class LazySplObjectStorage extends \SplObjectStorage {
 	protected function initialize() {
 		if (is_array($this->objectIdentifiers)) {
 			foreach ($this->objectIdentifiers as $identifier) {
-				$object = $this->persistenceManager->getObjectByIdentifier($identifier);
+				try {
+					parent::attach($this->persistenceManager->getObjectByIdentifier($identifier));
+				} catch (\F3\FLOW3\Persistence\Exception\InvalidObjectDataException $e) {
 					// when security query rewriting holds back an object here, we skip it...
-				if ($object !== NULL) {
-					parent::attach($object);
 				}
 			}
 			$this->objectIdentifiers = NULL;
