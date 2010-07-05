@@ -436,14 +436,19 @@ class ContextTest extends \F3\Testing\BaseTestCase {
 		$mockPolicyService = $this->getMock('F3\FLOW3\Security\Policy\PolicyService', array(), array(), '', FALSE);
 		$mockPolicyService->expects($this->any())->method('getAllParentRoles')->will($this->returnValue(array()));
 
+		$everybodyRole = new \F3\FLOW3\Security\Policy\Role('Everybody');
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
+		$mockObjectManager->expects($this->once())->method('get')->with('F3\FLOW3\Security\Policy\Role', 'Everybody')->will($this->returnValue($everybodyRole));
+
 		$securityContextProxy = $this->buildAccessibleProxy('F3\FLOW3\Security\Context');
 		$securityContext = new $securityContextProxy();
 		$securityContext->injectSettings($settings);
 		$securityContext->injectPolicyService($mockPolicyService);
+		$securityContext->injectObjectManager($mockObjectManager);
 		$securityContext->_set('tokens', array($token1, $token2, $token3, $token4, $token5, $token6));
 		$securityContext->_set('request', $request);
 
-		$expectedResult = array($role1, $role11, $role2, $role6);
+		$expectedResult = array($everybodyRole, $role1, $role11, $role2, $role6);
 
 		$this->assertEquals($expectedResult, $securityContext->getRoles());
 	}
@@ -463,6 +468,7 @@ class ContextTest extends \F3\Testing\BaseTestCase {
 		$role7 = new \F3\FLOW3\Security\Policy\Role('role7');
 		$role8 = new \F3\FLOW3\Security\Policy\Role('role8');
 		$role9 = new \F3\FLOW3\Security\Policy\Role('role9');
+		$everybodyRole = new \F3\FLOW3\Security\Policy\Role('Everybody');
 
 		$token1 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), '', FALSE);
 		$token1->expects($this->any())->method('isAuthenticated')->will($this->returnValue(TRUE));
@@ -485,17 +491,92 @@ class ContextTest extends \F3\Testing\BaseTestCase {
 		$mockPolicyService = $this->getMock('F3\FLOW3\Security\Policy\PolicyService', array(), array(), '', FALSE);
 		$mockPolicyService->expects($this->any())->method('getAllParentRoles')->will($this->returnCallback($policyServiceCallback));
 
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
+		$mockObjectManager->expects($this->once())->method('get')->with('F3\FLOW3\Security\Policy\Role', 'Everybody')->will($this->returnValue($everybodyRole));
+
 		$securityContext = $this->getAccessibleMock('F3\FLOW3\Security\Context', array('getAuthenticationTokens'), array(), '', FALSE);
 		$securityContext->expects($this->once())->method('getAuthenticationTokens')->will($this->returnValue(array($token1, $token2)));
 		$securityContext->injectPolicyService($mockPolicyService);
+		$securityContext->injectObjectManager($mockObjectManager);
 
-		$expectedResult = array($role1, $role2, $role3, $role4, $role5, $role6, $role7, $role8, $role9);
+		$expectedResult = array($everybodyRole, $role1, $role2, $role3, $role4, $role5, $role6, $role7, $role8, $role9);
 		$result = $securityContext->getRoles();
 
 		sort($expectedResult);
 		sort($result);
 
 		$this->assertEquals($expectedResult, $result);
+	}
+
+	/**
+	 * @test
+	 * @category unit
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getRolesReturnsTheEverybodyRoleEvenIfNoTokenIsAuthenticated() {
+		$token1 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), '', FALSE);
+		$token1->expects($this->any())->method('isAuthenticated')->will($this->returnValue(FALSE));
+
+		$token2 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), '', FALSE);
+		$token2->expects($this->any())->method('isAuthenticated')->will($this->returnValue(FALSE));
+
+		$everybodyRole = new \F3\FLOW3\Security\Policy\Role('Everybody');
+
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
+		$mockObjectManager->expects($this->once())->method('get')->with('F3\FLOW3\Security\Policy\Role', 'Everybody')->will($this->returnValue($everybodyRole));
+
+		$securityContext = $this->getAccessibleMock('F3\FLOW3\Security\Context', array('getAuthenticationTokens'), array(), '', FALSE);
+		$securityContext->expects($this->once())->method('getAuthenticationTokens')->will($this->returnValue(array($token1, $token2)));
+
+		$securityContext->injectObjectManager($mockObjectManager);
+
+		$result = $securityContext->getRoles();
+
+		$this->assertType('F3\FLOW3\Security\Policy\Role', $result[0]);
+		$this->assertEquals('Everybody', (string)($result[0]));
+	}
+
+	/**
+	 * @test
+	 * @category unit
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getRolesAddsTheEverybodyRoleToTheRolesFromTheAuthenticatedTokens() {
+		$role1 = new \F3\FLOW3\Security\Policy\Role('Role1');
+		$role2 = new \F3\FLOW3\Security\Policy\Role('Role2');
+		$role3 = new \F3\FLOW3\Security\Policy\Role('Role3');
+
+		$token1 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), '', FALSE);
+		$token1->expects($this->any())->method('isAuthenticated')->will($this->returnValue(TRUE));
+		$token1->expects($this->once())->method('getRoles')->will($this->returnValue(array($role1)));
+
+		$token2 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), '', FALSE);
+		$token2->expects($this->any())->method('isAuthenticated')->will($this->returnValue(TRUE));
+		$token2->expects($this->once())->method('getRoles')->will($this->returnValue(array($role2, $role3)));
+
+		$everybodyRole = new \F3\FLOW3\Security\Policy\Role('Everybody');
+
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
+		$mockObjectManager->expects($this->once())->method('get')->with('F3\FLOW3\Security\Policy\Role', 'Everybody')->will($this->returnValue($everybodyRole));
+
+		$mockPolicyService = $this->getMock('F3\FLOW3\Security\Policy\PolicyService', array(), array(), '', FALSE);
+		$mockPolicyService->expects($this->any())->method('getAllParentRoles')->will($this->returnValue(array()));
+
+		$securityContext = $this->getAccessibleMock('F3\FLOW3\Security\Context', array('getAuthenticationTokens'), array(), '', FALSE);
+		$securityContext->expects($this->once())->method('getAuthenticationTokens')->will($this->returnValue(array($token1, $token2)));
+
+		$securityContext->injectObjectManager($mockObjectManager);
+		$securityContext->injectPolicyService($mockPolicyService);
+
+		$result = $securityContext->getRoles();
+
+		$everybodyRoleFound = FALSE;
+		foreach ($result as $resultRole) {
+			$this->assertType('F3\FLOW3\Security\Policy\Role', $resultRole);
+			if ('Everybody' === (string)($resultRole)) $everybodyRoleFound = TRUE;
+		}
+
+		$this->assertTrue($everybodyRoleFound, 'The Everybody role could not be found as expected.');
 	}
 
 	/**
@@ -516,6 +597,42 @@ class ContextTest extends \F3\Testing\BaseTestCase {
 
 		$this->assertTrue($securityContext->hasRole('LicenseToKill'));
 		$this->assertFalse($securityContext->hasRole('Customer'));
+	}
+
+	/**
+	 * @test
+	 * @category unit
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function hasRoleReturnsTrueForTheEverybodyRoleIfNoOtherRoleIsAuthenticated() {
+		$token1 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), uniqid('token1'));
+		$token1->expects($this->any())->method('isAuthenticated')->will($this->returnValue(FALSE));
+		$token2 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), uniqid('token2'));
+		$token2->expects($this->any())->method('isAuthenticated')->will($this->returnValue(FALSE));
+
+		$securityContext = $this->getMock('F3\FLOW3\Security\Context', array('getAuthenticationTokens'), array(), '', FALSE);
+		$securityContext->expects($this->any())->method('getAuthenticationTokens')->will($this->returnValue(array($token1, $token2)));
+
+		$this->assertTrue($securityContext->hasRole('Everybody'));
+	}
+
+	/**
+	 * @test
+	 * @category unit
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function hasRoleReturnsFalseForTheEverybodyRoleIfAtLeastOneOtherRoleIsAuthenticated() {
+		$token1 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), uniqid('token1'));
+		$token1->expects($this->any())->method('getRoles')->will($this->returnValue(array('Administrator', 'LicenseToKill')));
+		$token1->expects($this->any())->method('isAuthenticated')->will($this->returnValue(TRUE));
+		$token2 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), uniqid('token2'));
+		$token2->expects($this->any())->method('getRoles')->will($this->returnValue(array('Customer')));
+		$token2->expects($this->any())->method('isAuthenticated')->will($this->returnValue(FALSE));
+
+		$securityContext = $this->getMock('F3\FLOW3\Security\Context', array('getAuthenticationTokens'), array(), '', FALSE);
+		$securityContext->expects($this->any())->method('getAuthenticationTokens')->will($this->returnValue(array($token1, $token2)));
+
+		$this->assertFalse($securityContext->hasRole('Everybody'));
 	}
 
 	/**

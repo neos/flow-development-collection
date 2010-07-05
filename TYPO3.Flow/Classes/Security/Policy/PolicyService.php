@@ -154,6 +154,8 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	public function initializeObject() {
 		$this->policy = $this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_POLICY);
 
+		$this->policy['roles']['Everybody'] = array();
+
 		if ($this->cache->has('acls')) {
 			$this->acls = $this->cache->get('acls');
 		} else {
@@ -163,7 +165,7 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 		if ($this->cache->has('entityResourcesConstraints')) {
 			$this->entityResourcesConstraints = $this->cache->get('entityResourcesConstraints');
 		} else {
-			$this->entityResourcesConstraints = $this->policyExpressionParser->parseEntityResources($this->policy['resources']['entities']);
+			if (array_key_exists('resources', $this->policy) && array_key_exists('entities', $this->policy['resources'])) $this->entityResourcesConstraints = $this->policyExpressionParser->parseEntityResources($this->policy['resources']['entities']);
 		}
 	}
 
@@ -253,7 +255,7 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	}
 
 	/**
-	 * Returns all parent roles for the given role, taht are configured in the policy.
+	 * Returns all parent roles for the given role, that are configured in the policy.
 	 *
 	 * @param \F3\FLOW3\Security\Policy\Role $role The role to get the parents for
 	 * @return array<F3\Security\Policy\Role> Array of parent roles

@@ -73,6 +73,43 @@ class PolicyServiceTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @test
 	 * @category unit
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function initializeObjectSetsTheEverybodyRoleInThePolicy() {
+		$mockPolicyExpressionParser = $this->getMock('F3\FLOW3\Security\Policy\PolicyExpressionParser', array(), array(), '', FALSE);
+
+		$policy = array(
+			'roles' => array(),
+			'resources' => array(),
+			'acls' => array()
+		);
+
+		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\ConfigurationManager', array(), array(), '', FALSE);
+		$mockConfigurationManager->expects($this->once())->method('getConfiguration')->with(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_POLICY)->will($this->returnValue($policy));
+
+		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
+		$mockCache->expects($this->any())->method('has')->will($this->returnValue(FALSE));
+
+		$policyService = $this->getAccessibleMock('F3\FLOW3\Security\Policy\PolicyService', array('parseEntityAcls'), array(), '', FALSE);
+		$policyService->expects($this->once())->method('parseEntityAcls')->will($this->returnValue(array()));
+		$policyService->injectCache($mockCache);
+		$policyService->injectConfigurationManager($mockConfigurationManager);
+		$policyService->injectPolicyExpressionParser($mockPolicyExpressionParser);
+
+		$policyService->initializeObject();
+
+		$expectedPolicy = array(
+			'roles' => array('Everybody' => array()),
+			'resources' => array(),
+			'acls' => array()
+		);
+
+		$this->assertEquals($expectedPolicy, $policyService->_get('policy'));
+	}
+
+	/**
+	 * @test
+	 * @category unit
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function matchesAsksThePolicyExpressionParserToBuildPointcutFiltersForMethodResourcesAndChecksIfTheyMatchTheGivenClassAndMethod() {

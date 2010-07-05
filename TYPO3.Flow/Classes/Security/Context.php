@@ -194,13 +194,14 @@ class Context {
 	}
 
 	/**
-	 * Returns the roles of all active and authenticated tokens
+	 * Returns the roles of all active and authenticated tokens.
+	 * If no authenticated roles could be found the "Everbody" role is returned
 	 *
 	 * @return array Array of F3\FLOW3\Security\Policy\Role objects
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getRoles() {
-		$roles = array();
+		$roles = array($this->objectManager->get('F3\FLOW3\Security\Policy\Role', 'Everybody'));
 		foreach ($this->getAuthenticationTokens() as $token) {
 			if ($token->isAuthenticated()) {
 				$tokenRoles = $token->getRoles();
@@ -225,9 +226,17 @@ class Context {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function hasRole($role) {
+		$authenticatedRolesExist = FALSE;
 		foreach ($this->getAuthenticationTokens() as $token) {
-			if ($token->isAuthenticated() && in_array($role, $token->getRoles())) return TRUE;
+			$tokenRoles = $token->getRoles();
+			if ($token->isAuthenticated() && in_array($role, $tokenRoles)) {
+				return TRUE;
+			} else {
+				if (count($tokenRoles) > 0) $authenticatedRolesExist = TRUE;
+			}
 		}
+
+		if (!$authenticatedRolesExist && ((string)$role === 'Everybody')) return TRUE;
 
 		return FALSE;
 	}
