@@ -2,10 +2,10 @@
 return array(
 	'identity' => array(
 		'version' => array(
-			'number="$Revision$"' => '',
+			'number="foo"' => '',
 		),
 		'generation' => array(
-			'date="$Date: 2010-04-23 13:36:26 -0500 (Fri, 23 Apr 2010) $"' => '',
+			'date="foo"' => '',
 		),
 		'language' => array(
 			'type="pl"' => '',
