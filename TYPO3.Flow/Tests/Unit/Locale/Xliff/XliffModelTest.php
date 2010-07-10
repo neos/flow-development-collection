@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Locale\Cldr;
+namespace F3\FLOW3\Locale\Xliff;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,15 +23,15 @@ namespace F3\FLOW3\Locale\Cldr;
  *                                                                        */
 
 /**
- * Testcase for the CldrModel
+ * Testcase for the XliffModel
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class CldrModelTest extends \F3\Testing\BaseTestCase {
+class XliffModelTest extends \F3\Testing\BaseTestCase {
 
 	/**
-	 * @var \F3\FLOW3\Locale\Cldr\CldrModel
+	 * @var \F3\FLOW3\Locale\Xliff\XliffModel
 	 */
 	protected $model;
 
@@ -41,18 +41,17 @@ class CldrModelTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function setUp() {
 		$mockFilename = 'foo';
-		$mockFilenamePath = 'resource://FLOW3/Private/Locale/CLDR/Sources/foo.xml';
-		$mockParsedData = require(__DIR__ . '/../Fixtures/MockParsedCldrData.php');
+		$mockParsedData = require(__DIR__ . '/../Fixtures/MockParsedXliffData.php');
 
 		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
-		$mockCache->expects($this->any())->method('has')->with($mockFilenamePath)->will($this->returnValue(FALSE));
+		$mockCache->expects($this->any())->method('has')->with($mockFilename)->will($this->returnValue(FALSE));
 
-		$mockCldrParser = $this->getMock('F3\FLOW3\Locale\Cldr\CldrParser');
-		$mockCldrParser->expects($this->once())->method('getParsedData')->with($mockFilenamePath)->will($this->returnValue($mockParsedData));
+		$mockXliffParser = $this->getMock('F3\FLOW3\Locale\Xliff\XliffParser');
+		$mockXliffParser->expects($this->once())->method('getParsedData')->with($mockFilename)->will($this->returnValue($mockParsedData));
 
-		$this->model = new \F3\FLOW3\Locale\Cldr\CldrModel();
+		$this->model = new \F3\FLOW3\Locale\Xliff\XliffModel();
 		$this->model->injectCache($mockCache);
-		$this->model->injectParser($mockCldrParser);
+		$this->model->injectParser($mockXliffParser);
 		$this->model->initializeObject($mockFilename);
 	}
 
@@ -60,35 +59,27 @@ class CldrModelTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function getRawArrayWorks() {
-		$result = $this->model->getRawArray('dates/calendars/calendar/type="gregorian"/dateFormats/dateFormatLength');
-		$this->assertEquals(4, count($result));
-		$this->assertEquals(TRUE, isset($result['type="full"']));
+	public function getTargetBySourceWorks() {
+		$result = $this->model->getTargetBySource('Source string');
+		$this->assertEquals('Translated string', $result);
+
+		$result = $this->model->getTargetBySource('Source singular', 0);
+		$this->assertEquals('Translated singular', $result);
+
+		$result = $this->model->getTargetBySource('Source singular', 2);
+		$this->assertEquals('Translated plural 2', $result);
 	}
 
 	/**
 	 * @test
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function getElementWorks() {
-		$result = $this->model->getElement('dates/calendars/calendar/type="gregorian"/dateFormats/dateFormatLength/type="full"/dateFormat/pattern');
-		$this->assertEquals('EEEE, d MMMM y', $result);
+	public function ggetTargetByTransUnitIdWorks() {
+		$result = $this->model->getTargetByTransUnitId('key1');
+		$this->assertEquals('Translated string', $result);
 
-		$result = $this->model->getElement('dates/calendars/calendar/type="gregorian"/dateFormats/dateFormatLength/type="full"/dateFormat');
-		$this->assertEquals(FALSE, $result);
-	}
-
-	/**
-	 * @test
-	 * @author Karol Gusak <firstname@lastname.eu>
-	 */
-	public function aliasesAreResolvedCorrectly() {
-		$result = $this->model->getRawArray('dates/calendars/calendar/type="gregorian"/dateFormats/dateFormatLength/type="short"/dateFormat/pattern');
-		$this->assertEquals('dd-MM-yyyy', $result[\F3\FLOW3\Locale\Cldr\CldrParser::NODE_WITHOUT_ATTRIBUTES]);
-		$this->assertEquals('d MMM y', $result['alt="proposed-x1001" draft="unconfirmed"']);
-
-		$result = $this->model->getElement('dates/calendars/calendar/type="buddhist"/dateFormats/dateFormatLength/type="full"/dateFormat/pattern');
-		$this->assertEquals('EEEE, d MMMM y', $result);
+		$result = $this->model->getTargetByTransUnitId('key2', 1);
+		$this->assertEquals('Translated plural 1', $result);
 	}
 }
 

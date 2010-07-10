@@ -169,7 +169,7 @@ class DatesReaderTest extends \F3\Testing\BaseTestCase {
 	public function formatDateTimeWithCustomPatternWorks($format, $expectedResult) {
 		$getRawArrayCallback = function() {
 			$args = func_get_args();
-			$mockDatesCldrData = require(__DIR__ . '/../../Fixtures/MockDatesParsedCLDRData.php');
+			$mockDatesCldrData = require(__DIR__ . '/../../Fixtures/MockDatesParsedCldrData.php');
 
 			$lastPartOfPath = substr($args[0], strrpos($args[0], '/') + 1);
 			if ($lastPartOfPath === 'eras') {
@@ -179,27 +179,11 @@ class DatesReaderTest extends \F3\Testing\BaseTestCase {
 			}
 		};
 
-		$getValueOfAttributeCallback = function() {
-			$args = func_get_args();
-			$attribute = $args[0];
-			$attributeNumber = $args[1];
-
-			$attributes = explode('" ', $attribute);
-			if (count($attributes) < $attributeNumber) {
-				return FALSE;
-			} else if (count($attributes) === $attributeNumber) {
-				return substr($attributes[$attributeNumber - 1], strpos($attributes[$attributeNumber - 1], '"') + 1, -1);
-			} else {
-				return substr($attributes[$attributeNumber - 1], strpos($attributes[$attributeNumber - 1], '"') + 1);
-			}
-		};
-
-		$mockModel = $this->getMock('F3\FLOW3\Locale\Cldr\HierarchicalCldrModel');
+		$mockModel = $this->getMock('F3\FLOW3\Locale\Cldr\CldrModelCollection');
 		$mockModel->expects($this->exactly(5))->method('getRawArray')->will($this->returnCallback($getRawArrayCallback));
-		$mockModel->expects($this->any())->method('getValueOfAttribute')->will($this->returnCallback($getValueOfAttributeCallback));
 		
 		$mockRepository = $this->getMock('F3\FLOW3\Locale\Cldr\CldrRepository');
-		$mockRepository->expects($this->once())->method('getHierarchicalModel')->with('main', $this->dummyLocale)->will($this->returnValue($mockModel));
+		$mockRepository->expects($this->once())->method('getModelCollection')->with('main', $this->dummyLocale)->will($this->returnValue($mockModel));
 
 		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
 		$this->createCacheExpectations($mockCache, TRUE);
@@ -232,13 +216,13 @@ class DatesReaderTest extends \F3\Testing\BaseTestCase {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function formatDateTimeWorks($dateFormat, $timeFormat, $dateTimeFormat, $expectedResult) {
-		$mockModel = $this->getMock('F3\FLOW3\Locale\Cldr\HierarchicalCldrModel');
+		$mockModel = $this->getMock('F3\FLOW3\Locale\Cldr\CldrModelCollection');
 		$mockModel->expects($this->at(0))->method('getElement')->with('dates/calendars/calendar/type="gregorian"/dateFormats/dateFormatLength/type="full"/dateFormat/pattern')->will($this->returnValue($dateFormat));
 		$mockModel->expects($this->at(1))->method('getElement')->with('dates/calendars/calendar/type="gregorian"/timeFormats/timeFormatLength/type="full"/timeFormat/pattern')->will($this->returnValue($timeFormat));
 		$mockModel->expects($this->at(2))->method('getElement')->with('dates/calendars/calendar/type="gregorian"/dateTimeFormats/dateTimeFormatLength/type="full"/dateTimeFormat/pattern')->will($this->returnValue($dateTimeFormat));
 
 		$mockRepository = $this->getMock('F3\FLOW3\Locale\Cldr\CldrRepository');
-		$mockRepository->expects($this->exactly(3))->method('getHierarchicalModel')->with('main', $this->dummyLocale)->will($this->returnValue($mockModel));
+		$mockRepository->expects($this->exactly(3))->method('getModelCollection')->with('main', $this->dummyLocale)->will($this->returnValue($mockModel));
 
 		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
 		$this->createCacheExpectations($mockCache);
@@ -271,11 +255,11 @@ class DatesReaderTest extends \F3\Testing\BaseTestCase {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function specificFormattingMethodsWork($formatString, $expectedResult, $formattingType) {
-		$mockModel = $this->getMock('F3\FLOW3\Locale\Cldr\HierarchicalCldrModel');
+		$mockModel = $this->getMock('F3\FLOW3\Locale\Cldr\CldrModelCollection');
 		$mockModel->expects($this->once())->method('getElement')->with('dates/calendars/calendar/type="gregorian"/' . $formattingType . 'Formats/' . $formattingType . 'FormatLength/type="full"/' . $formattingType . 'Format/pattern')->will($this->returnValue($formatString));
 
 		$mockRepository = $this->getMock('F3\FLOW3\Locale\Cldr\CldrRepository');
-		$mockRepository->expects($this->once())->method('getHierarchicalModel')->with('main', $this->dummyLocale)->will($this->returnValue($mockModel));
+		$mockRepository->expects($this->once())->method('getModelCollection')->with('main', $this->dummyLocale)->will($this->returnValue($mockModel));
 
 		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
 		$this->createCacheExpectations($mockCache);

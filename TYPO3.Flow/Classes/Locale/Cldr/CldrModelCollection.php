@@ -23,7 +23,7 @@ namespace F3\FLOW3\Locale\Cldr;
  *                                                                        */
 
 /**
- * A model representing data from many CLDR files having hierarchical relation
+ * A class providing data from many CLDR files having hierarchical relation
  * between themselves.
  *
  * As for now, implementation is very simple. Results from each CLDRModel
@@ -39,12 +39,12 @@ namespace F3\FLOW3\Locale\Cldr;
  * @api
  * @scope prototype
  */
-class HierarchicalCldrModel implements \F3\FLOW3\Locale\Cldr\CldrModelInterface {
+class CldrModelCollection {
 
 	/**
 	 * A collection of models in hierarchy.
 	 *
-	 * @var array<\F3\FLOW3\Locale\Cldr\CldrModelInterface>
+	 * @var array<\F3\FLOW3\Locale\Cldr\CldrModel>
 	 */
 	protected $models;
 
@@ -55,7 +55,7 @@ class HierarchicalCldrModel implements \F3\FLOW3\Locale\Cldr\CldrModelInterface 
 	 * with hierarchy in mind - the higher index in array, the more general
 	 * file is (i.e. root should be on last index).
 	 *
-	 * @param array<\F3\FLOW3\Cldr\CldrModel> $models An array of \F3\FLOW3\Cldr\CldrModel instances
+	 * @param array<\F3\FLOW3\Locale\Cldr\CldrModel> $models An array of \F3\FLOW3\Locale\Cldr\CldrModel instances
 	 * @return void
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
@@ -102,27 +102,14 @@ class HierarchicalCldrModel implements \F3\FLOW3\Locale\Cldr\CldrModelInterface 
 		if ($data === FALSE) {
 			return FALSE;
 		} else if (is_array($data)) {
-			if (isset($data[\F3\FLOW3\Locale\Cldr\CldrModel::NODE_WITHOUT_ATTRIBUTES])) {
-				return $data[\F3\FLOW3\Locale\Cldr\CldrModel::NODE_WITHOUT_ATTRIBUTES];
+			if (isset($data[\F3\FLOW3\Locale\Cldr\CldrParser::NODE_WITHOUT_ATTRIBUTES])) {
+				return $data[\F3\FLOW3\Locale\Cldr\CldrParser::NODE_WITHOUT_ATTRIBUTES];
 			} else {
 				return FALSE;
 			}
 		} else {
 			return $data;
 		}
-	}
-
-	/**
-	 * Parses the attributes string and returns a value of desired attribute.
-	 *
-	 * @param string $attribute An attribute to parse
-	 * @param int $attributeNumber Index of attribute to get value for, starting from 1
-	 * @return mixed Value of desired attribute, or FALSE if there is no such attribute
-	 * @author Karol Gusak <firstname@lastname.eu>
-	 * @api
-	 */
-	public function getValueOfAttribute($attribute, $attributeNumber) {
-		return $this->models[0]->getValueOfAttribute($attribute, $attributeNumber);
 	}
 }
 

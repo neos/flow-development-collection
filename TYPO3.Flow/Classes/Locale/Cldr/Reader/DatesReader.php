@@ -269,15 +269,7 @@ class DatesReader {
 		$formattedDate = $this->formatDate($dateTime, $locale, $length);
 		$formattedTime = $this->formatTime($dateTime, $locale, $length);
 
-		$model = $this->cldrRepository->getHierarchicalModel('main', $locale);
-
-		if ($length === 'default') {
-			$defaultChoice = $model->getRawArray('dates/calendars/calendar/type="gregorian"/dateTimeFormats/default');
-			$defaultChoice = array_keys($defaultChoice);
-			$length = $model->getValueOfAttribute($defaultChoice[0], 1);
-		}
-
-		$format = $model->getElement('dates/calendars/calendar/type="gregorian"/dateTimeFormats/dateTimeFormatLength/type="' . $length . '"/dateTimeFormat/pattern');
+		$format = $this->getParsedFormat($locale, 'dateTime', $length);var_dump($format);
 
 		return str_replace(array('{0}', '{1}'), array($formattedTime, $formattedDate), $format);
 	}
@@ -436,13 +428,11 @@ class DatesReader {
 	 * Not all features from CLDR specification are implemented. Please see the
 	 * documentation for this class for details what is missing.
 	 *
-	 * @see documentation for $parsedFormats property for details about internal
-	 * structure of parsed format.
-	 *
 	 * @param string $format
 	 * @return string Parsed format
 	 * @throws \F3\FLOW3\Locale\Cldr\Reader\Exception\InvalidDateTimeFormatException When subformat is longer than maximal value defined in $maxLengthOfSubformats property
 	 * @author Karol Gusak <firstname@lastname.eu>
+	 * @see \F3\FLOW3\Locale\Cldr\Reader\DatesReader::$parsedFormats
 	 */
 	protected function parseFormat($format) {
 		$parsedFormat = array();
@@ -518,12 +508,12 @@ class DatesReader {
 			return $this->parsedFormats[$this->parsedFormatsIndices[(string)$locale][$type][$length]];
 		}
 
-		$model = $this->cldrRepository->getHierarchicalModel('main', $locale);
+		$model = $this->cldrRepository->getModelCollection('main', $locale);
 
 		if ($length === 'default') {
 			$defaultChoice = $model->getRawArray('dates/calendars/calendar/type="gregorian"/' . $type . 'Formats/default');
 			$defaultChoice = array_keys($defaultChoice);
-			$length = $model->getAttributeValue($defaultChoice[0]);
+			$length = \F3\FLOW3\Locale\Cldr\CldrParser::getValueOfAttributeByName($defaultChoice[0], 'choice');
 		}
 
 		$format = $model->getElement('dates/calendars/calendar/type="gregorian"/' . $type . 'Formats/' . $type . 'FormatLength/type="' . $length . '"/' . $type . 'Format/pattern');
@@ -532,7 +522,12 @@ class DatesReader {
 			return FALSE;
 		}
 
-		$parsedFormat = $this->parseFormat($format);
+		if ($type === 'dateTime') {
+				// DateTime is a simple format like this: '{0} {1}' which denotes where to insert date and time, it needs not to be parsed
+			$parsedFormat = $format;
+		} else {
+			$parsedFormat = $this->parseFormat($format);
+		}
 
 		$this->parsedFormatsIndices[(string)$locale][$type][$length] = $format;
 		return $this->parsedFormats[$format] = $parsedFormat;
@@ -552,7 +547,7 @@ class DatesReader {
 			return $this->localizedLiterals[(string)$locale];
 		}
 
-		$model = $this->cldrRepository->getHierarchicalModel('main', $locale);
+		$model = $this->cldrRepository->getModelCollection('main', $locale);
 
 		$localizedLiterals['months'] = $this->parseLocalizedLiterals($model, 'month');
 		$localizedLiterals['days'] = $this->parseLocalizedLiterals($model, 'day');
@@ -569,22 +564,23 @@ class DatesReader {
 	 * Many children of "dates" node have common structure, so one method can
 	 * be used to parse them all.
 	 *
-	 * @param \F3\FLOW3\Locale\Cldr\CldrModelInterface $model CldrModel to read data from
+	 * @param \F3\FLOW3\Locale\Cldr\CldrModelCollection $model CldrModelCollection to read data from
 	 * @param string $literalType One of: month, day, quarter, dayPeriod
 	 * @return array An array with localized literals for given type
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	protected function parseLocalizedLiterals(\F3\FLOW3\Locale\Cldr\CldrModelInterface $model, $literalType) {
-		$data = array(); $test = $model->getRawArray('dates/calendars/calendar/type="gregorian"/' . $literalType . 's/' . $literalType . 'Context');
+	protected function parseLocalizedLiterals(\F3\FLOW3\Locale\Cldr\CldrModelCollection $model, $literalType) {
+		$data = array();
+		$context = $model->getRawArray('dates/calendars/calendar/type="gregorian"/' . $literalType . 's/' . $literalType . 'Context');
 
-		foreach ($test as $contextType => $literalsWidths) {
-			$contextType = $model->getValueOfAttribute($contextType, 1);
+		foreach ($context as $contextType => $literalsWidths) {
+			$contextType = \F3\FLOW3\Locale\Cldr\CldrParser::getValueOfAttributeByName($contextType, 'type');
 
 			foreach ($literalsWidths[$literalType . 'Width'] as $widthType => $literals) {
-				$widthType = $model->getValueOfAttribute($widthType, 1);
+				$widthType = \F3\FLOW3\Locale\Cldr\CldrParser::getValueOfAttributeByName($widthType, 'type');
 
 				foreach ($literals[$literalType] as $literalName => $literalValue) {
-					$literalName = $model->getValueOfAttribute($literalName, 1);
+					$literalName = \F3\FLOW3\Locale\Cldr\CldrParser::getValueOfAttributeByName($literalName, 'type');
 
 					$data[$contextType][$widthType][$literalName] = $literalValue;
 				}
@@ -597,15 +593,15 @@ class DatesReader {
 	/**
 	 * Parses "eras" child of "dates" node and returns it's array representation.
 	 *
-	 * @param \F3\FLOW3\Locale\Cldr\CldrModelInterface $model CldrModel to read data from
+	 * @param \F3\FLOW3\Locale\Cldr\CldrModelCollection $model CldrModel to read data from
 	 * @return array An array with localized literals for "eras" node
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	protected function parseLocalizedEras(\F3\FLOW3\Locale\Cldr\CldrModelInterface $model) {
+	protected function parseLocalizedEras(\F3\FLOW3\Locale\Cldr\CldrModelCollection $model) {
 		$data = array();
 		foreach ($model->getRawArray('dates/calendars/calendar/type="gregorian"/eras') as $widthType => $eras) {
 			foreach ($eras['era'] as $eraName => $eraValue) {
-				$eraName = $model->getValueOfAttribute($eraName, 1);
+				$eraName = \F3\FLOW3\Locale\Cldr\CldrParser::getValueOfAttributeByName($eraName, 'type');
 
 				$data[$widthType][$eraName] = $eraValue;
 			}

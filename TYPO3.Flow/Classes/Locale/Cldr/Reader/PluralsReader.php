@@ -198,16 +198,30 @@ class PluralsReader {
 	}
 
 	/**
+	 * Returns array of plural forms available for particular locale.
+	 *
+	 * @param \F3\FLOW3\Locale\Locale $locale Locale to return plural forms for
+	 * @return array Plural forms' names (one, zero, two, few, many, other) available for language set in this model
+	 * @author Karol Gusak <firstname@lastname.eu>
+	 */
+	public function getPluralForms(\F3\FLOW3\Locale\Locale $locale) {
+		if (!isset($this->rulesetsIndices[$locale->getLanguage()])) {
+			return array('other');
+		}
+
+		return array_merge(array_keys($this->rulesets[$this->rulesetsIndices[$locale->getLanguage()]]), array('other'));
+	}
+
+	/**
 	 * Generates an internal representation of plural rules which can be found
 	 * in plurals.xml CLDR file.
 	 *
 	 * The properties $rulesets and $rulesetsIndices should be empty before
 	 * running this method.
 	 *
-	 * @see documentation for $rulesets property of this class for details
-	 *
 	 * @return void
 	 * @author Karol Gusak <firstname@lastname.eu>
+	 * @see \F3\FLOW3\Locale\Cldr\Reader\PluralsReader::$rulesets
 	 */
 	protected function generateRulesets() {
 		$model = $this->cldrRepository->getModel('supplemental/plurals');
@@ -215,7 +229,7 @@ class PluralsReader {
 
 		$index = 0;
 		foreach ($pluralRulesSet as $localeLanguages => $pluralRules) {
-			$localeLanguages = $model->getValueOfAttribute($localeLanguages, 1);
+			$localeLanguages = \F3\FLOW3\Locale\Cldr\CldrParser::getValueOfAttributeByName($localeLanguages, 'locales');
 
 			foreach (explode(' ', $localeLanguages) as $localeLanguage) {
 				$this->rulesetsIndices[$localeLanguage] = $index;
@@ -228,7 +242,7 @@ class PluralsReader {
 
 			$ruleset = array();
 			foreach ($pluralRules['pluralRule'] as $pluralRuleCount => $pluralRule) {
-				$pluralRuleCount = $model->getValueOfAttribute($pluralRuleCount, 1);
+				$pluralRuleCount = \F3\FLOW3\Locale\Cldr\CldrParser::getValueOfAttributeByName($pluralRuleCount, 'count');
 				$ruleset[$pluralRuleCount] = $this->parseRule($pluralRule);
 			}
 

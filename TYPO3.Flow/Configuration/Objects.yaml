@@ -265,15 +265,6 @@ F3\FLOW3\Locale\Service:
         arguments:
           1:
             value: FLOW3_Locale_Service
-F3\FLOW3\Locale\Cldr\CldrModel:
-  properties:
-    cache:
-      object:
-        factoryObjectName: F3\FLOW3\Cache\CacheManager
-        factoryMethodName: getCache
-        arguments:
-          1:
-            value: FLOW3_Locale_Cldr_CldrModel
 F3\FLOW3\Locale\Cldr\Reader\DatesReader:
   properties:
     cache:
@@ -301,6 +292,24 @@ F3\FLOW3\Locale\Cldr\Reader\PluralsReader:
         arguments:
           1:
             value: FLOW3_Locale_Cldr_Reader_PluralsReader
+F3\FLOW3\Locale\Xml\AbstractXmlModel:
+  properties:
+    cache:
+      object:
+        factoryObjectName: F3\FLOW3\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: FLOW3_Locale_Xml_AbstractXmlModel
+F3\FLOW3\Locale\Xml\AbstractXmlParser:
+  properties:
+    cache:
+      object:
+        factoryObjectName: F3\FLOW3\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: FLOW3_Locale_Xml_AbstractXmlParser
 
 #                                                                          #
 # Log                                                                      #

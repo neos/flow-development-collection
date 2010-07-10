@@ -23,12 +23,12 @@ namespace F3\FLOW3\Locale\Cldr;
  *                                                                        */
 
 /**
- * Testcase for the HierarchicalCldrModel
+ * Testcase for the CldrModelCollection
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class HierarchicalCldrModelTest extends \F3\Testing\BaseTestCase {
+class CldrModelCollectionTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
@@ -61,7 +61,7 @@ class HierarchicalCldrModelTest extends \F3\Testing\BaseTestCase {
 		$mockCldrModelChild->expects($this->at(1))->method('getRawArray')->with('bar')->will($this->returnValue(FALSE));
 		$mockCldrModelChild->expects($this->at(2))->method('getRawArray')->with('baz')->will($this->returnValue(FALSE));
 
-		$model = new \F3\FLOW3\Locale\Cldr\HierarchicalCldrModel();
+		$model = new \F3\FLOW3\Locale\Cldr\CldrModelCollection();
 		$model->initializeObject(array($mockCldrModelParent, $mockCldrModelChild));
 
 		$result = $model->getRawArray('foo');
@@ -83,12 +83,12 @@ class HierarchicalCldrModelTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function getElementWorks() {
 		$mockDataOfParent = array(
-			\F3\FLOW3\Locale\Cldr\CldrModel::NODE_WITHOUT_ATTRIBUTES => 'value1',
+			\F3\FLOW3\Locale\Cldr\CldrParser::NODE_WITHOUT_ATTRIBUTES => 'value1',
 			'key2' => 'value2',
 		);
 
 		$mockDataOfChild = array(
-			\F3\FLOW3\Locale\Cldr\CldrModel::NODE_WITHOUT_ATTRIBUTES => 'value3',
+			\F3\FLOW3\Locale\Cldr\CldrParser::NODE_WITHOUT_ATTRIBUTES => 'value3',
 			'key2' => 'value4',
 		);
 
@@ -102,7 +102,7 @@ class HierarchicalCldrModelTest extends \F3\Testing\BaseTestCase {
 		$mockCldrModelChild->expects($this->at(1))->method('getRawArray')->with('bar')->will($this->returnValue(FALSE));
 		$mockCldrModelChild->expects($this->at(2))->method('getRawArray')->with('baz')->will($this->returnValue(FALSE));
 
-		$model = new \F3\FLOW3\Locale\Cldr\HierarchicalCldrModel();
+		$model = new \F3\FLOW3\Locale\Cldr\CldrModelCollection();
 		$model->initializeObject(array($mockCldrModelParent, $mockCldrModelChild));
 
 		$result = $model->getElement('foo');

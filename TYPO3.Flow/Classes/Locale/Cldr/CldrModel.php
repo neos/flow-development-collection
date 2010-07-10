@@ -25,153 +25,49 @@ namespace F3\FLOW3\Locale\Cldr;
 /**
  * A model representing data from one CLDR file.
  *
+ * This class adds CLDR-specific functionality to more generic abstract XML Model.
+ *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
- * @api
  * @scope prototype
  */
-class CldrModel implements \F3\FLOW3\Locale\Cldr\CldrModelInterface {
+class CldrModel extends \F3\FLOW3\Locale\Xml\AbstractXmlModel {
 
 	/**
-	 * A key for nodes without attributes
-	 *
-	 * Constant used as a key in parsed CLDR data array ($data) for nodes which
-	 * don't have any attributes. Please see the documentation for $data property
-	 * of this class for details.
-	 *
-	 * Note: cache will need to be flushed when this value is ever altered.
-	 */
-	const NODE_WITHOUT_ATTRIBUTES = '#noattributes';
-
-	/**
-	 * @var \F3\FLOW3\Cache\Frontend\VariableFrontend
-	 */
-	protected $cache;
-
-	/**
-	 * Absolute path to the file which is represented by this class instance.
+	 * An absolute path to the directory where CLDR resides. It is changed only
+	 * in tests.
 	 *
 	 * @var string
 	 */
-	protected $sourceFilename;
+	protected $cldrBasePath = 'resource://FLOW3/Private/Locale/CLDR/Sources/';
 
 	/**
-	 * Reference to the SimpleXMLElement object representing root node of XML file.
-	 *
-	 * @var \SimpleXMLElement
-	 */
-	protected $rootXmlNode = NULL;
-
-	/**
-	 * Stores any data from cache or data that was read during this request.
-	 *
-	 * This variable is an array where keys are nodes from XML file. If node
-	 * has any attributes, they will be placed without change as an element of
-	 * an array. Example:
-	 *
-	 * such XML data:
-	 * <dates>
-	 *   <calendars>
-	 *     <calendar type="gregorian">
-	 *       <months />
-	 *     </calendar>
-	 *     <calendar type="buddhist">
-	 *       <months />
-	 *     </calendar>
-	 *   </calendars>
-	 * </dates>
-	 *
-	 * will be converted to such array:
-	 * array(
-	 *   'dates' => array(
-	 *     'calendars' => array(
-	 *       'calendar' => array(
-	 *         'type="gregorian"' => array(
-	 *           'months' => ''
-	 *         ),
-	 *         'type="buddhist"' => array(
-	 *           'months' => ''
-	 *         ),
-	 *       )
-	 *     )
-	 *   )
-	 * )
-	 *
-	 * Please note that there can be predefined index used anywhere on the end
-	 * of the tree (i.e., pointing to the leaf). It is a case when a node has
-	 * more than one element, from which one hasn't any attributes, and others
-	 * do have attributes. The former element can be accesed using getElement()
-	 * method of this class. For example, such data:
-	 *
-	 * <dateFormat>
-	 *   <pattern>d MMM, yyyy G</pattern>
-	 *   <pattern alt="proposed-x1001" draft="unconfirmed">MMM d, yyyy G</pattern>
-	 * </dateFormat>
-	 *
-	 * will be converted to:
-	 * 'dateFormat' => array(
-	 *   'pattern' => array(
-	 *     '' => 'dd-MM-yyyy',
-	 *     'alt="proposed-x1001" draft="unconfirmed"' => 'd MMM y',
-	 *   )
-	 * )
-	 *
-	 * When node has only one element, and this element hasn't any attributes,
-	 * the predefined index won't be used (i.e. the element is placed directly
-	 * as a value of parent). If you remove second "pattern" child from the
-	 * example XML above, it will be parsed to such array:
-	 *
-	 * 'dateFormat' => array(
-	 *   'pattern' => 'dd-MM-yyyy',
-	 * )
-	 *
-	 * Whole XML file is parsed at once, but this variable is cached, so most
-	 * of the time there is no need to do it.
-	 *
-	 * @var array
-	 */
-	protected $data;
-
-	/**
-	 * Injects the FLOW3_Locale_Cldr_CldrModel cache
-	 *
-	 * @param \F3\FLOW3\Cache\Frontend\VariableFrontend $cache
+	 * @param \F3\FLOW3\Locale\Cldr\CldrParser $parser
 	 * @return void
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function injectCache(\F3\FLOW3\Cache\Frontend\VariableFrontend $cache) {
-		$this->cache = $cache;
+	public function injectParser(\F3\FLOW3\Locale\Cldr\CldrParser $parser) {
+		$this->xmlParser = $parser;
 	}
 
 	/**
-	 * Constructs the model.
+	 * Initializes object and loads the CLDR file
 	 *
-	 * An absolute path to the XML file is required. Also loads the cache if
-	 * available.
-	 *
-	 * @param string $filename Absolute path to the file
+	 * @param string $sourcePath Absolute path to CLDR file
 	 * @return void
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function initializeObject($filename) {
-		$this->sourceFilename = $filename;
-
-		if ($this->cache->has($filename)) {
-			$this->data = $this->cache->get($filename);
-		} else {
-			$this->data = $this->parseXmlFile();
-			$this->data = $this->resolveAliases($this->data, '');
+	public function initializeObject($sourcePath) {
+		if (!file_exists($sourcePath)) {
+			$sourcePath = \F3\FLOW3\Utility\Files::concatenatePaths(array($this->cldrBasePath, $sourcePath . '.xml'));
 		}
-	}
 
-	/**
-	 * Shutdowns the model. Parsed data is saved to the cache.
-	 *
-	 * @return void
-	 * @author Karol Gusak <firstname@lastname.eu>
-	 */
-	public function shutdownObject() {
-		$this->cache->set($this->sourceFilename, $this->data);
+		parent::initializeObject($sourcePath);
+
+		if (!$this->xmlCache->has($this->xmlSourcePath)) {
+				// Data was not loaded from cache (by parent), but was just parsed, so there wasn't alias resolving done before
+			$this->xmlParsedData = $this->resolveAliases($this->xmlParsedData, '');
+		}
 	}
 
 	/**
@@ -183,17 +79,16 @@ class CldrModel implements \F3\FLOW3\Locale\Cldr\CldrModelInterface {
 	 * plurals/pluralRules
 	 * dates/calendars/calendar/type="gregorian"/
 	 *
-	 * Please see the documentation for $data property of this class for details
-	 * about array structure.
+	 * Please see the documentation for \F3\FLOW3\Locale\Cldr\CldrParser for
+	 * details about parsed data structure.
 	 *
 	 * @param string $path A path to the node to get
 	 * @return mixed Array of matching data, or FALSE on failure
 	 * @author Karol Gusak <firstname@lastname.eu>
-	 * @api
 	 */
 	public function getRawArray($path) {
 		$arrayKeys = explode('/', trim($path, '/'));
-		$data = $this->data;
+		$data = $this->xmlParsedData;
 
 		foreach ($arrayKeys as $key) {
 			if (isset($data[$key])) {
@@ -212,17 +107,11 @@ class CldrModel implements \F3\FLOW3\Locale\Cldr\CldrModelInterface {
 	 * Path must point to leaf, or to node which has only one element (which is
 	 * leaf), or to node which has element without attributes (which is leaf).
 	 *
-	 * In CLDR, when there is a node with element without attributes, and with
-	 * elements with attributes, it means that the latter elements are
-	 * alternatives for the former one, so it is safe to return the first one
-	 * and ignore the rest.
-	 *
 	 * Syntax for paths is same as for getRawArray.
 	 *
 	 * @param string $path A path to the element to get
 	 * @return mixed String with desired element, or FALSE on failure
 	 * @author Karol Gusak <firstname@lastname.eu>
-	 * @api
 	 */
 	public function getElement($path) {
 		$data = $this->getRawArray($path);
@@ -230,111 +119,14 @@ class CldrModel implements \F3\FLOW3\Locale\Cldr\CldrModelInterface {
 		if ($data === FALSE) {
 			return FALSE;
 		} elseif (is_array($data)) {
-			if (isset($data[self::NODE_WITHOUT_ATTRIBUTES])) {
-				return $data[self::NODE_WITHOUT_ATTRIBUTES];
+			if (isset($data[\F3\FLOW3\Locale\Cldr\CldrParser::NODE_WITHOUT_ATTRIBUTES])) {
+				return $data[\F3\FLOW3\Locale\Cldr\CldrParser::NODE_WITHOUT_ATTRIBUTES];
 			} else {
 				return FALSE;
 			}
 		} else {
 			return $data;
 		}
-	}
-
-	/**
-	 * Parses the attributes string and returns a value of desired attribute.
-	 *
-	 * Attributes are stored together with nodes in an array. If node has
-	 * attributes, they are all stored as one string, in the same manner they
-	 * exist in XML file (e.g. 'alt="proposed-x1001" draft="unconfirmed"').
-	 *
-	 * This convenient method extracts a value of desired attribute (in example
-	 * above, 'proposed-x1001' would be first) and returns it.
-	 *
-	 * Note: there isn't any validation for input variable.
-	 *
-	 * @param string $attribute An attribute to parse
-	 * @param int $attributeNumber Index of attribute to get value for, starting from 1
-	 * @return mixed Value of desired attribute, or FALSE if there is no such attribute
-	 * @author Karol Gusak <firstname@lastname.eu>
-	 * @api
-	 */
-	public function getValueOfAttribute($attribute, $attributeNumber) {
-		$attributes = explode('" ', $attribute);
-
-		if (count($attributes) < $attributeNumber) {
-			return FALSE;
-		} elseif (count($attributes) === $attributeNumber) {
-			return substr($attributes[$attributeNumber - 1], strpos($attributes[$attributeNumber - 1], '"') + 1, -1);
-		} else {
-			return substr($attributes[$attributeNumber - 1], strpos($attributes[$attributeNumber - 1], '"') + 1);
-		}
-	}
-
-	/**
-	 * Reads and parses XML file and returns internal representation of data.
-	 *
-	 * @return array Parsed XML file
-	 * @author Karol Gusak <firstname@lastname.eu>
-	 * @throws \F3\FLOW3\Locale\Cldr\Exception\InvalidCldrDataException When SimpleXML couldn't load XML file
-	 */
-	protected function parseXmlFile() {
-		$this->rootXmlNode = simplexml_load_file($this->sourceFilename);
-
-		if ($this->rootXmlNode === FALSE) {
-			throw new \F3\FLOW3\Locale\Cldr\Exception\InvalidCldrDataException('The path provided does not point to existing or accessible file. Please check if CLDR data is available.', 1275143455);
-		}
-
-		return $this->parseNode($this->rootXmlNode);
-	}
-
-	/**
-	 * Returns array representation of XML data, starting from a node pointed by
-	 * $node variable.
-	 *
-	 * Please see the documentation for $data property of this class for details
-	 * about the internal representation of XML data.
-	 *
-	 * @param \SimpleXMLElement $node A node to start parsing from
-	 * @return mixed An array representing parsed XML node or string value if leaf
-	 * @author Karol Gusak <firstname@lastname.eu>
-	 */
-	protected function parseNode(\SimpleXMLElement $node) {
-		$parsedNode = array();
-
-		if ($node->count() === 0) {
-			return (string)$node;
-		}
-
-		foreach ($node->children() as $child) {
-			$nameOfChild = $child->getName();
-
-			if (!isset($parsedNode[$nameOfChild])) {
-				$parsedNode[$nameOfChild] = array();
-			}
-
-			$parsedChild = $this->parseNode($child);
-
-			if (count($child->attributes()) > 0) {
-				$parsedAttributes = '';
-				foreach ($child->attributes() as $attributeName => $attributeValue) {
-					$parsedAttributes .= $attributeName . '="' . $attributeValue . '" ';
-				}
-				$parsedAttributes = rtrim($parsedAttributes);
-				$parsedChild = array($parsedAttributes => $parsedChild);
-			}
-
-			if (is_array($parsedChild)) {
-				if (is_array($parsedNode[$child->getName()])) {
-					$parsedNode[$nameOfChild] = array_merge($parsedNode[$nameOfChild], $parsedChild);
-				} else {
-					$parsedNode[$nameOfChild] = array_merge(array(self::NODE_WITHOUT_ATTRIBUTES => $parsedNode[$nameOfChild]), $parsedChild);
-				}
-			} else {
-				$parsedNode[$nameOfChild] = $parsedChild;
-			}
-		}
-
-		return $parsedNode;
 	}
 
 	/**
@@ -358,19 +150,19 @@ class CldrModel implements \F3\FLOW3\Locale\Cldr\CldrModelInterface {
 		foreach ($data as $nodeName => $nodeChildren) {
 			if ($nodeName === 'alias') {
 				if(!is_array($nodeChildren)) {
-						// Tag is alias but it has not children, something is very wrong
+						// This is an alias tag but it has not any children, something is very wrong
 					throw new \F3\FLOW3\Locale\Cldr\Exception\InvalidCldrDataException('Encountered problem with alias tag. Please check if CLDR data is not corrupted.', 1276421398);
 				}
 
 				$aliasAttributes = array_keys($nodeChildren);
 				$aliasAttributes = $aliasAttributes[0];
-				if ($this->getValueOfAttribute($aliasAttributes, 1) !== 'locale') {
+				if (\F3\FLOW3\Locale\Cldr\CldrParser::getValueOfAttributeByName($aliasAttributes, 'source') !== 'locale') {
 						// Value of source attribute can be other than 'locale', but we do not support it, ignore it silently
 					break;
 				}
 
 					// Convert XPath to simple path used by this class (note that it can generate errors when CLDR will start to use more sophisticated XPath queries in alias tags)
-				$sourcePath = $this->getValueOfAttribute($aliasAttributes, 2);
+				$sourcePath = \F3\FLOW3\Locale\Cldr\CldrParser::getValueOfAttributeByName($aliasAttributes, 'path');
 				$sourcePath = str_replace(array('\'', '[@', ']'), array('"', '/', ''), $sourcePath);
 				$sourcePath = str_replace('../', '', $sourcePath, $countOfJumpsToParentNode);
 

@@ -75,14 +75,14 @@ class CldrRepositoryTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function getHierarchicalModelWorks() {
+	public function getModelCollectionWorks() {
 		mkdir('vfs://Foo/Folder');
 		file_put_contents('vfs://Foo/Folder/en.xml', '');
 
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
 		$mockObjectManager->expects($this->at(0))->method('create')->with('F3\FLOW3\Locale\Cldr\CldrModel', 'vfs://Foo/Folder/en.xml')->will($this->returnValue('en.xml Model'));
 		$mockObjectManager->expects($this->at(1))->method('create')->with('F3\FLOW3\Locale\Cldr\CldrModel', 'vfs://Foo/Folder/root.xml')->will($this->returnValue('root.xml Model'));
-		$mockObjectManager->expects($this->at(2))->method('create')->with('F3\FLOW3\Locale\Cldr\HierarchicalCldrModel', array('en.xml Model', 'root.xml Model'))->will($this->returnValue('HierarchicalModelWouldBeHere'));
+		$mockObjectManager->expects($this->at(2))->method('create')->with('F3\FLOW3\Locale\Cldr\CldrModelCollection', array('en.xml Model', 'root.xml Model'))->will($this->returnValue('ModelCollectionWouldBeHere'));
 
 		$mockLocalizationService = $this->getMock('F3\FLOW3\Locale\Service');
 		$mockLocalizationService->expects($this->once())->method('getParentLocaleOf')->will($this->returnValue(NULL));
@@ -90,14 +90,14 @@ class CldrRepositoryTest extends \F3\Testing\BaseTestCase {
 		$this->repository->injectObjectManager($mockObjectManager);
 		$this->repository->injectLocalizationService($mockLocalizationService);
 
-		$result = $this->repository->getHierarchicalModel('Folder', new \F3\FLOW3\Locale\Locale('en'));
-		$this->assertEquals('HierarchicalModelWouldBeHere', $result);
+		$result = $this->repository->getModelCollection('Folder', new \F3\FLOW3\Locale\Locale('en'));
+		$this->assertEquals('ModelCollectionWouldBeHere', $result);
 
 			// Second access should not invoke objectManager requests
-		$result = $this->repository->getHierarchicalModel('Folder', new \F3\FLOW3\Locale\Locale('en'));
-		$this->assertEquals('HierarchicalModelWouldBeHere', $result);
+		$result = $this->repository->getModelCollection('Folder', new \F3\FLOW3\Locale\Locale('en'));
+		$this->assertEquals('ModelCollectionWouldBeHere', $result);
 
-		$result = $this->repository->getHierarchicalModel('NoSuchDirectory', new \F3\FLOW3\Locale\Locale('en'));
+		$result = $this->repository->getModelCollection('NoSuchDirectory', new \F3\FLOW3\Locale\Locale('en'));
 		$this->assertEquals(FALSE, $result);
 	}
 }

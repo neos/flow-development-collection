@@ -23,7 +23,7 @@ namespace F3\FLOW3\Locale\Cldr\Reader\Exception;
  *                                                                        */
 
 /**
- * An "Invalid Plural Rule" exception
+ * The "Invalid Plural Rule" exception
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later

@@ -30,6 +30,7 @@ namespace F3\FLOW3\Locale;
  * @api
  */
 class Exception extends \F3\FLOW3\Exception {
+
 }
 
 ?>

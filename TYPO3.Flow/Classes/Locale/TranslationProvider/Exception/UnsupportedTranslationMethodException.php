@@ -1,8 +1,8 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Locale\Cldr;
+namespace F3\FLOW3\Locale\TranslationProvider\Exception;
 
-/* *
+/*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
@@ -23,43 +23,14 @@ namespace F3\FLOW3\Locale\Cldr;
  *                                                                        */
 
 /**
- * An interface for a model representing data from a CLDR file(s).
+ * An "Unsupported Translation Method" exception
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
- * @author Karol Gusak <firstname@lastname.eu>
  * @api
- * @scope prototype
  */
-interface CldrModelInterface {
+class UnsupportedTranslationMethodException extends \F3\FLOW3\Locale\Exception {
 
-	/**
-	 * Returns multi-dimensional array representing desired node and it's children.
-	 *
-	 * @param string $path A path to the node to get
-	 * @return mixed Array of matching data, or FALSE on failure
-	 * @api
-	 */
-	public function getRawArray($path);
-
-	/**
-	 * Returns string element from a path given.
-	 *
-	 * @param string $path A path to the element to get
-	 * @return mixed String with desired element, or FALSE on failure
-	 * @api
-	 */
-	public function getElement($path);
-
-	/**
-	 * Parses the attributes string and returns a value of desired attribute.
-	 *
-	 * @param string $attribute An attribute to parse
-	 * @param int $attributeNumber Index of attribute to get value for, starting from 1
-	 * @return mixed Value of desired attribute, or FALSE if there is no such attribute
-	 * @api
-	 */
-	public function getValueOfAttribute($attribute, $attributeNumber);
 }
 
 ?>

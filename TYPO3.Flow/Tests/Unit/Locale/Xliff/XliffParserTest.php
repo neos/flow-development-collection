@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Locale\Cldr\Reader\Exception;
+namespace F3\FLOW3\Locale\Xliff;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,14 +23,30 @@ namespace F3\FLOW3\Locale\Cldr\Reader\Exception;
  *                                                                        */
 
 /**
- * The "Invalid DateTime Format" exception
+ * Testcase for the XliffParser
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
- * @api
  */
-class InvalidDateTimeFormatException extends \F3\FLOW3\Locale\Exception\InvalidArgumentException {
+class XliffParserTest extends \F3\Testing\BaseTestCase {
 
+	/**
+	 * @test
+	 * @author Karol Gusak <firstname@lastname.eu>
+	 */
+	public function parsesCorrectly() {
+		$mockFilenamePath = __DIR__ . '/../Fixtures/MockXliffData.xlf';
+		$mockParsedData = require(__DIR__ . '/../Fixtures/MockParsedXliffData.php');
+
+		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
+		$mockCache->expects($this->once())->method('has')->with($mockFilenamePath)->will($this->returnValue(FALSE));
+
+		$parser = new \F3\FLOW3\Locale\Xliff\XliffParser();
+		$parser->injectCache($mockCache);
+		
+		$result = $parser->getParsedData($mockFilenamePath);
+		$this->assertEquals($mockParsedData, $result);
+	}
 }
 
 ?>

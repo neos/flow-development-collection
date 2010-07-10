@@ -23,7 +23,7 @@ namespace F3\FLOW3\Locale\Exception;
  *                                                                        */
 
 /**
- * An "Index Out Of Bounds" exception
+ * The "Index Out Of Bounds" exception
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later

@@ -384,12 +384,10 @@ class NumbersReader {
 	 * Not all features from CLDR specification are implemented. Please see the
 	 * documentation for this class for details what is missing.
 	 *
-	 * @see documentation for $parsedFormats property for details about internal
-	 * structure of parsed format.
-	 *
 	 * @param string $format
 	 * @return mixed Parsed format (or FALSE when unsupported format string detected)
 	 * @author Karol Gusak <firstname@lastname.eu>
+	 * @see \F3\FLOW3\Locale\Cldr\Reader\DatesReader::$parsedFormats
 	 */
 	protected function parseFormat($format) {
 		foreach (array('E', '@', '*', '\'') as $unsupportedFeature) {
@@ -506,7 +504,7 @@ class NumbersReader {
 			$formatPath = 'numbers/' . $type . 'Formats/' . $type . 'FormatLength/type="' . $length . '/' . $type . 'Format/pattern';
 		}
 
-		$model = $this->cldrRepository->getHierarchicalModel('main', $locale);
+		$model = $this->cldrRepository->getModelCollection('main', $locale);
 		$format = $model->getElement($formatPath);
 
 		if (empty($format)) {
@@ -537,7 +535,7 @@ class NumbersReader {
 			return $this->localizedSymbols[(string)$locale];
 		}
 
-		$model = $this->cldrRepository->getHierarchicalModel('main', $locale);
+		$model = $this->cldrRepository->getModelCollection('main', $locale);
 		return $this->localizedSymbols[(string)$locale] = $model->getRawArray('numbers/symbols');
 	}
 }

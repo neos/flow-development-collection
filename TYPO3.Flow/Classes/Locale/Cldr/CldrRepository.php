@@ -25,14 +25,13 @@ namespace F3\FLOW3\Locale\Cldr;
 /**
  * The CldrRepository class
  *
- * CLDRRepository manages CldrModel and HierarchicalCldrModel instances
+ * CLDRRepository manages CldrModel and CldrModelCollection instances
  * across the framework, so there is only one instance of CldrModel for
- * every unique CLDR data file, and one instace of HierarchicalCldrModel
+ * every unique CLDR data file, and one instace of CldrModelCollection
  * for every unique locale chain.
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
- * @api
  */
 class CldrRepository {
 
@@ -55,18 +54,28 @@ class CldrRepository {
 	protected $localizationService;
 
 	/**
-	 * A collection of models requested at least once in current request.
+	 * An array of models requested at least once in current request.
 	 *
 	 * This is an associative array with pairs as follow:
 	 * ['filename'] => $model,
-	 * ['directoryPath']['localeTag'] => $hierarchicalModel,
 	 *
-	 * Hierarchical models describe a group of models. There can be many models
-	 * for same directoryPaths, as there can be many locale chains.
-	 *
-	 * @var array<\F3\FLOW3\Locale\Cldr\CldrModelInterface>
+	 * @var array<\F3\FLOW3\Locale\Cldr\CldrModel>
 	 */
 	protected $models;
+
+	/**
+	 * An array of CldrModelCollection objects requested at least once in current
+	 * request.
+	 *
+	 * Structure is as follow:
+	 * ['directoryPath']['localeTag'] => $odelCollection,
+	 *
+	 * CldrModelCollection describes a group of models. There can be many models
+	 * for same directoryPaths, as there can be many locale chains.
+	 *
+	 * @var array<\F3\FLOW3\Locale\Cldr\CldrModelCollection>
+	 */
+	protected $modelCollections;
 
 	/**
 	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
@@ -96,7 +105,6 @@ class CldrRepository {
 	 * @param string $filename Relative path to existing CLDR file
 	 * @return mixed A F3\FLOW3\Locale\Cldr\CldrModel instance or FALSE on failure
 	 * @author Karol Gusak <firstname@lastname.eu>
-	 * @api
 	 */
 	public function getModel($filename) {
 		$filename = \F3\FLOW3\Utility\Files::concatenatePaths(array($this->cldrBasePath, $filename . '.xml'));
@@ -114,7 +122,7 @@ class CldrRepository {
 	}
 
 	/**
-	 * Returns a HierarchicalCldrModel instance representing desired CLDR files.
+	 * Returns a CldrModelCollection instance representing desired CLDR files.
 	 *
 	 * This method finds a group of CLDR files within $directoryPath dir,
 	 * taking into account provided (or default) Locale. Returned model
@@ -126,19 +134,18 @@ class CldrRepository {
 	 * Returns FALSE when $directoryPath doesn't point to existing directory.
 	 *
 	 * @param string $directoryPath Relative path to existing CLDR directory which contains one file per locale (see 'main' directory in CLDR for example)
-	 * @return mixed A F3\FLOW3\Locale\Cldr\HierarchicalCldrModel instance or FALSE on failure
+	 * @return mixed A F3\FLOW3\Locale\Cldr\CldrModelCollection instance or FALSE on failure
 	 * @author Karol Gusak <firstname@lastname.eu>
-	 * @api
 	 */
-	public function getHierarchicalModel($directoryPath, \F3\FLOW3\Locale\Locale $locale = NULL) {
+	public function getModelCollection($directoryPath, \F3\FLOW3\Locale\Locale $locale = NULL) {
 		$directoryPath = \F3\FLOW3\Utility\Files::concatenatePaths(array($this->cldrBasePath, $directoryPath));
 
 		if ($locale === NULL) {
 			$locale = $this->localizationService->getDefaultLocale();
 		}
 
-		if (isset($this->models[$directoryPath][(string)$locale])) {
-			return $this->models[$directoryPath][(string)$locale];
+		if (isset($this->modelCollections[$directoryPath][(string)$locale])) {
+			return $this->modelCollections[$directoryPath][(string)$locale];
 		}
 
 		if (!is_dir($directoryPath)) {
@@ -152,8 +159,8 @@ class CldrRepository {
 		}
 		$modelsInHierarchy[] = $this->objectManager->create('F3\FLOW3\Locale\Cldr\CldrModel', \F3\FLOW3\Utility\Files::concatenatePaths(array($directoryPath, 'root.xml')));
 
-		$this->models[$directoryPath][(string)$locale] = $this->objectManager->create('F3\FLOW3\Locale\Cldr\HierarchicalCldrModel', $modelsInHierarchy);
-		return $this->models[$directoryPath][(string)$locale];
+		$this->modelCollections[$directoryPath][(string)$locale] = $this->objectManager->create('F3\FLOW3\Locale\Cldr\CldrModelCollection', $modelsInHierarchy);
+		return $this->modelCollections[$directoryPath][(string)$locale];
 	}
 }
 

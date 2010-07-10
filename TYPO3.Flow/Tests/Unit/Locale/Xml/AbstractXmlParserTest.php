@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Locale\Cldr\Reader\Exception;
+namespace F3\FLOW3\Locale\Xml;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,14 +23,45 @@ namespace F3\FLOW3\Locale\Cldr\Reader\Exception;
  *                                                                        */
 
 /**
- * The "Invalid DateTime Format" exception
+ * Testcase for the AbstractXmlParser class
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
- * @api
  */
-class InvalidDateTimeFormatException extends \F3\FLOW3\Locale\Exception\InvalidArgumentException {
+class AbstractXmlParserTest extends \F3\Testing\BaseTestCase {
 
+	/**
+	 * @test
+	 * @author Karol Gusak <firstname@lastname.eu>
+	 */
+	public function parserInvokesDoParsingFromRootMethod() {
+		$mockFilenamePath = __DIR__ . '/../Fixtures/MockCldrData.xml';
+
+		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
+		$mockCache->expects($this->once())->method('has')->with($mockFilenamePath)->will($this->returnValue(FALSE));
+
+		$parser = $this->getAccessibleMock('F3\FLOW3\Locale\Xml\AbstractXmlParser', array('doParsingFromRoot'));
+		$parser->expects($this->once())->method('doParsingFromRoot');
+
+		$parser->injectCache($mockCache);
+		$parser->getParsedData($mockFilenamePath);
+	}
+
+	/**
+	 * @test
+	 * @expectedException \F3\FLOW3\Locale\Xml\Exception\InvalidXmlFileException
+	 * @author Karol Gusak <firstname@lastname.eu>
+	 */
+	public function throwsExceptionWhenBadFilenameGiven() {
+		$mockFilenamePath = 'foo';
+
+		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
+		$mockCache->expects($this->once())->method('has')->with($mockFilenamePath)->will($this->returnValue(FALSE));
+
+		$parser = $this->getAccessibleMock('F3\FLOW3\Locale\Xml\AbstractXmlParser', array('doParsingFromRoot'));
+
+		$parser->injectCache($mockCache);
+		$parser->getParsedData($mockFilenamePath);
+	}
 }
-
 ?>
