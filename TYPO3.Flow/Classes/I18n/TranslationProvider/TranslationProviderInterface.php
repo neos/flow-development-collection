@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Locale\TranslationProvider;
+namespace F3\FLOW3\I18n\TranslationProvider;
 
 /* *
  * This script belongs to the FLOW3 framework.                            *
@@ -41,11 +41,11 @@ interface TranslationProviderInterface {
 	 *
 	 * @param string $filename A path to the filename with translations
 	 * @param string $originalLabel Label used as a key in order to find translation
-	 * @param \F3\FLOW3\Locale\Locale $locale Locale to use
+	 * @param \F3\FLOW3\I18n\Locale $locale Locale to use
 	 * @param string $pluralForm One of: zero, one, two, few, many, other
 	 * @return mixed Translated label or FALSE on failure
 	 */
-	public function getTranslationByOriginalLabel($filename, $originalLabel, \F3\FLOW3\Locale\Locale $locale, $pluralForm = 'other');
+	public function getTranslationByOriginalLabel($filename, $originalLabel, \F3\FLOW3\I18n\Locale $locale, $pluralForm = 'other');
 
 	/**
 	 * Returns label for a key ($id) from a file defined by $filename.
@@ -54,11 +54,11 @@ interface TranslationProviderInterface {
 	 *
 	 * @param string $filename A path to the filename with translations
 	 * @param string $id Key used to find translated label
-	 * @param \F3\FLOW3\Locale\Locale $locale Locale to use
+	 * @param \F3\FLOW3\I18n\Locale $locale Locale to use
 	 * @param string $pluralForm One of: zero, one, two, few, many, other
 	 * @return mixed Translated label or FALSE on failureeu>
 	 */
-	public function getTranslationById($filename, $id, \F3\FLOW3\Locale\Locale $locale, $pluralForm = 'other');
+	public function getTranslationById($filename, $id, \F3\FLOW3\I18n\Locale $locale, $pluralForm = 'other');
 }
 
 ?>

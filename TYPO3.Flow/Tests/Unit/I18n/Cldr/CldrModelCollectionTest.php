@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Locale\Cldr;
+namespace F3\FLOW3\I18n\Cldr;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -51,17 +51,17 @@ class CldrModelCollectionTest extends \F3\Testing\BaseTestCase {
 			),
 		);
 
-		$mockCldrModelParent = $this->getMock('F3\FLOW3\Locale\Cldr\CldrModel');
+		$mockCldrModelParent = $this->getMock('F3\FLOW3\I18n\Cldr\CldrModel');
 		$mockCldrModelParent->expects($this->at(0))->method('getRawArray')->with('foo')->will($this->returnValue($mockDataOfParent));
 		$mockCldrModelParent->expects($this->at(1))->method('getRawArray')->with('bar')->will($this->returnValue($mockDataOfParent));
 		$mockCldrModelParent->expects($this->at(2))->method('getRawArray')->with('baz')->will($this->returnValue(FALSE));
 
-		$mockCldrModelChild = $this->getMock('F3\FLOW3\Locale\Cldr\CldrModel');
+		$mockCldrModelChild = $this->getMock('F3\FLOW3\I18n\Cldr\CldrModel');
 		$mockCldrModelChild->expects($this->at(0))->method('getRawArray')->with('foo')->will($this->returnValue($mockDataOfChild));
 		$mockCldrModelChild->expects($this->at(1))->method('getRawArray')->with('bar')->will($this->returnValue(FALSE));
 		$mockCldrModelChild->expects($this->at(2))->method('getRawArray')->with('baz')->will($this->returnValue(FALSE));
 
-		$model = new \F3\FLOW3\Locale\Cldr\CldrModelCollection();
+		$model = new \F3\FLOW3\I18n\Cldr\CldrModelCollection();
 		$model->initializeObject(array($mockCldrModelParent, $mockCldrModelChild));
 
 		$result = $model->getRawArray('foo');
@@ -83,26 +83,26 @@ class CldrModelCollectionTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function getElementWorks() {
 		$mockDataOfParent = array(
-			\F3\FLOW3\Locale\Cldr\CldrParser::NODE_WITHOUT_ATTRIBUTES => 'value1',
+			\F3\FLOW3\I18n\Cldr\CldrParser::NODE_WITHOUT_ATTRIBUTES => 'value1',
 			'key2' => 'value2',
 		);
 
 		$mockDataOfChild = array(
-			\F3\FLOW3\Locale\Cldr\CldrParser::NODE_WITHOUT_ATTRIBUTES => 'value3',
+			\F3\FLOW3\I18n\Cldr\CldrParser::NODE_WITHOUT_ATTRIBUTES => 'value3',
 			'key2' => 'value4',
 		);
 
-		$mockCldrModelParent = $this->getMock('F3\FLOW3\Locale\Cldr\CldrModel');
+		$mockCldrModelParent = $this->getMock('F3\FLOW3\I18n\Cldr\CldrModel');
 		$mockCldrModelParent->expects($this->at(0))->method('getRawArray')->with('foo')->will($this->returnValue($mockDataOfParent));
 		$mockCldrModelParent->expects($this->at(1))->method('getRawArray')->with('bar')->will($this->returnValue($mockDataOfParent));
 		$mockCldrModelParent->expects($this->at(2))->method('getRawArray')->with('baz')->will($this->returnValue(FALSE));
 
-		$mockCldrModelChild = $this->getMock('F3\FLOW3\Locale\Cldr\CldrModel');
+		$mockCldrModelChild = $this->getMock('F3\FLOW3\I18n\Cldr\CldrModel');
 		$mockCldrModelChild->expects($this->at(0))->method('getRawArray')->with('foo')->will($this->returnValue($mockDataOfChild));
 		$mockCldrModelChild->expects($this->at(1))->method('getRawArray')->with('bar')->will($this->returnValue(FALSE));
 		$mockCldrModelChild->expects($this->at(2))->method('getRawArray')->with('baz')->will($this->returnValue(FALSE));
 
-		$model = new \F3\FLOW3\Locale\Cldr\CldrModelCollection();
+		$model = new \F3\FLOW3\I18n\Cldr\CldrModelCollection();
 		$model->initializeObject(array($mockCldrModelParent, $mockCldrModelChild));
 
 		$result = $model->getElement('foo');

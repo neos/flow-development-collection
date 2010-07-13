@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Locale;
+namespace F3\FLOW3\I18n;
 
 /* *
  * This script belongs to the FLOW3 framework.                            *
@@ -32,58 +32,58 @@ namespace F3\FLOW3\Locale;
 class Translator {
 
 	/**
-	 * @var \F3\FLOW3\Locale\Service
+	 * @var \F3\FLOW3\I18n\Service
 	 */
 	protected $localizationService;
 
 	/**
-	 * @var \F3\FLOW3\Locale\TranslationProvider\TranslationProviderInterface
+	 * @var \F3\FLOW3\I18n\TranslationProvider\TranslationProviderInterface
 	 */
 	protected $translationProvider;
 
 	/**
-	 * @var \F3\FLOW3\Locale\FormatResolver
+	 * @var \F3\FLOW3\I18n\FormatResolver
 	 */
 	protected $formatResolver;
 
 	/**
-	 * @var \F3\FLOW3\Locale\Cldr\Reader\PluralsReader
+	 * @var \F3\FLOW3\I18n\Cldr\Reader\PluralsReader
 	 */
 	protected $pluralsReader;
 
 	/**
-	 * @param \F3\FLOW3\Locale\Service $localizationService
+	 * @param \F3\FLOW3\I18n\Service $localizationService
 	 * @return void
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function injectLocalizationService(\F3\FLOW3\Locale\Service $localizationService) {
+	public function injectLocalizationService(\F3\FLOW3\I18n\Service $localizationService) {
 		$this->localizationService = $localizationService;
 	}
 
 	/**
-	 * @param \F3\FLOW3\Locale\TranslationProvider\TranslationProviderInterface $translationProvider
+	 * @param \F3\FLOW3\I18n\TranslationProvider\TranslationProviderInterface $translationProvider
 	 * @return void
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function injectTranslationProvider(\F3\FLOW3\Locale\TranslationProvider\TranslationProviderInterface $translationProvider) {
+	public function injectTranslationProvider(\F3\FLOW3\I18n\TranslationProvider\TranslationProviderInterface $translationProvider) {
 		$this->translationProvider = $translationProvider;
 	}
 
 	/**
-	 * @param \F3\FLOW3\Locale\FormatResolver $formatResolver
+	 * @param \F3\FLOW3\I18n\FormatResolver $formatResolver
 	 * @return void
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function injectFormatResolver(\F3\FLOW3\Locale\FormatResolver $formatResolver) {
+	public function injectFormatResolver(\F3\FLOW3\I18n\FormatResolver $formatResolver) {
 		$this->formatResolver = $formatResolver;
 	}
 
 	/**
-	 * @param \F3\FLOW3\Locale\Cldr\Reader\PluralsReader $pluralsReader
+	 * @param \F3\FLOW3\I18n\Cldr\Reader\PluralsReader $pluralsReader
 	 * @return void
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function injectPluralsReader(\F3\FLOW3\Locale\Cldr\Reader\PluralsReader $pluralsReader) {
+	public function injectPluralsReader(\F3\FLOW3\I18n\Cldr\Reader\PluralsReader $pluralsReader) {
 		$this->pluralsReader = $pluralsReader;
 	}
 
@@ -107,12 +107,12 @@ class Translator {
 	 * @param string $source Name of file with translations
 	 * @param array $values An array of values to replace placeholders with
 	 * @param mixed $quantity A number to find plural form for (float or int), NULL to not use plural forms
-	 * @param \F3\FLOW3\Locale\Locale $locale Locale to use (NULL for default one)
+	 * @param \F3\FLOW3\I18n\Locale $locale Locale to use (NULL for default one)
 	 * @return string Translated $originalLabel or $originalLabel itself on failure
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @api
 	 */
-	public function translateByOriginalLabel($originalLabel, $source, array $values = array(), $quantity = NULL, \F3\FLOW3\Locale\Locale $locale = NULL) {
+	public function translateByOriginalLabel($originalLabel, $source, array $values = array(), $quantity = NULL, \F3\FLOW3\I18n\Locale $locale = NULL) {
 		if ($locale === NULL) {
 			$locale = $this->localizationService->getDefaultLocale();
 		}
@@ -147,13 +147,13 @@ class Translator {
 	 * @param string $source Name of file with translations
 	 * @param array $values An array of values to replace placeholders with
 	 * @param mixed $quantity A number to find plural form for (float or int), NULL to not use plural forms
-	 * @param \F3\FLOW3\Locale\Locale $locale Locale to use (NULL for default one)
+	 * @param \F3\FLOW3\I18n\Locale $locale Locale to use (NULL for default one)
 	 * @return string Translated message or $id on failure
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @api
-	 * @see \F3\FLOW3\Locale\Translator::translateByOriginalLabel()
+	 * @see \F3\FLOW3\I18n\Translator::translateByOriginalLabel()
 	 */
-	public function translateById($id, $source, array $values = array(), $quantity = NULL, \F3\FLOW3\Locale\Locale $locale = NULL) {
+	public function translateById($id, $source, array $values = array(), $quantity = NULL, \F3\FLOW3\I18n\Locale $locale = NULL) {
 		if ($locale === NULL) {
 			$locale = $this->localizationService->getDefaultLocale();
 		}

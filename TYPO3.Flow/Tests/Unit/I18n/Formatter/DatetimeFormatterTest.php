@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Locale\Formatter;
+namespace F3\FLOW3\I18n\Formatter;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -31,7 +31,7 @@ namespace F3\FLOW3\Locale\Formatter;
 class DatetimeFormatterTest extends \F3\Testing\BaseTestCase {
 
 	/**
-	 * @var \F3\FLOW3\Locale\Locale
+	 * @var \F3\FLOW3\I18n\Locale
 	 */
 	protected $dummyLocale;
 
@@ -45,7 +45,7 @@ class DatetimeFormatterTest extends \F3\Testing\BaseTestCase {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function setUp() {
-		$this->dummyLocale = new \F3\FLOW3\Locale\Locale('en_GB');
+		$this->dummyLocale = new \F3\FLOW3\I18n\Locale('en_GB');
 		$this->dummyDateTime = new \DateTime('now');
 	}
 
@@ -54,12 +54,12 @@ class DatetimeFormatterTest extends \F3\Testing\BaseTestCase {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function formatWorks() {
-		$mockReader = $this->getMock('F3\FLOW3\Locale\Cldr\Reader\DatesReader');
+		$mockReader = $this->getMock('F3\FLOW3\I18n\Cldr\Reader\DatesReader');
 		$mockReader->expects($this->at(0))->method('formatDateTime')->with($this->dummyDateTime, $this->dummyLocale, 'default')->will($this->returnValue('bar1'));
 		$mockReader->expects($this->at(1))->method('formatDate')->with($this->dummyDateTime, $this->dummyLocale, 'default')->will($this->returnValue('bar2'));
 		$mockReader->expects($this->at(2))->method('formatTime')->with($this->dummyDateTime, $this->dummyLocale, 'full')->will($this->returnValue('bar3'));
 
-		$formatter = new \F3\FLOW3\Locale\Formatter\DatetimeFormatter();
+		$formatter = new \F3\FLOW3\I18n\Formatter\DatetimeFormatter();
 		$formatter->injectDatesReader($mockReader);
 
 		$result = $formatter->format($this->dummyDateTime, $this->dummyLocale);

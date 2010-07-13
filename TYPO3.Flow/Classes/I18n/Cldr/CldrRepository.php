@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Locale\Cldr;
+namespace F3\FLOW3\I18n\Cldr;
 
 /* *
  * This script belongs to the FLOW3 framework.                            *
@@ -49,7 +49,7 @@ class CldrRepository {
 	protected $objectManager;
 
 	/**
-	 * @var \F3\FLOW3\Locale\Service
+	 * @var \F3\FLOW3\I18n\Service
 	 */
 	protected $localizationService;
 
@@ -59,7 +59,7 @@ class CldrRepository {
 	 * This is an associative array with pairs as follow:
 	 * ['filename'] => $model,
 	 *
-	 * @var array<\F3\FLOW3\Locale\Cldr\CldrModel>
+	 * @var array<\F3\FLOW3\I18n\Cldr\CldrModel>
 	 */
 	protected $models;
 
@@ -73,7 +73,7 @@ class CldrRepository {
 	 * CldrModelCollection describes a group of models. There can be many models
 	 * for same directoryPaths, as there can be many locale chains.
 	 *
-	 * @var array<\F3\FLOW3\Locale\Cldr\CldrModelCollection>
+	 * @var array<\F3\FLOW3\I18n\Cldr\CldrModelCollection>
 	 */
 	protected $modelCollections;
 
@@ -87,11 +87,11 @@ class CldrRepository {
 	}
 
 	/**
-	 * @param \F3\FLOW3\Locale\Service $localizationService
+	 * @param \F3\FLOW3\I18n\Service $localizationService
 	 * @return void
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function injectLocalizationService(\F3\FLOW3\Locale\Service $localizationService) {
+	public function injectLocalizationService(\F3\FLOW3\I18n\Service $localizationService) {
 		$this->localizationService = $localizationService;
 	}
 
@@ -103,7 +103,7 @@ class CldrRepository {
 	 * file.
 	 *
 	 * @param string $filename Relative path to existing CLDR file
-	 * @return mixed A F3\FLOW3\Locale\Cldr\CldrModel instance or FALSE on failure
+	 * @return mixed A F3\FLOW3\I18n\Cldr\CldrModel instance or FALSE on failure
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function getModel($filename) {
@@ -117,7 +117,7 @@ class CldrRepository {
 			return FALSE;
 		}
 
-		$this->models[$filename] = $this->objectManager->create('F3\FLOW3\Locale\Cldr\CldrModel', $filename);
+		$this->models[$filename] = $this->objectManager->create('F3\FLOW3\I18n\Cldr\CldrModel', $filename);
 		return $this->models[$filename];
 	}
 
@@ -134,10 +134,10 @@ class CldrRepository {
 	 * Returns FALSE when $directoryPath doesn't point to existing directory.
 	 *
 	 * @param string $directoryPath Relative path to existing CLDR directory which contains one file per locale (see 'main' directory in CLDR for example)
-	 * @return mixed A F3\FLOW3\Locale\Cldr\CldrModelCollection instance or FALSE on failure
+	 * @return mixed A F3\FLOW3\I18n\Cldr\CldrModelCollection instance or FALSE on failure
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function getModelCollection($directoryPath, \F3\FLOW3\Locale\Locale $locale = NULL) {
+	public function getModelCollection($directoryPath, \F3\FLOW3\I18n\Locale $locale = NULL) {
 		$directoryPath = \F3\FLOW3\Utility\Files::concatenatePaths(array($this->cldrBasePath, $directoryPath));
 
 		if ($locale === NULL) {
@@ -153,13 +153,13 @@ class CldrRepository {
 		}
 
 		$modelsInHierarchy = array();
-		$modelsInHierarchy[] = $this->objectManager->create('F3\FLOW3\Locale\Cldr\CldrModel', \F3\FLOW3\Utility\Files::concatenatePaths(array($directoryPath, (string)$locale . '.xml')));
+		$modelsInHierarchy[] = $this->objectManager->create('F3\FLOW3\I18n\Cldr\CldrModel', \F3\FLOW3\Utility\Files::concatenatePaths(array($directoryPath, (string)$locale . '.xml')));
 		while (($parentLocale = $this->localizationService->getParentLocaleOf($locale)) !== NULL) {
-			$modelsInHierarchy[] = $this->objectManager->create('F3\FLOW3\Locale\Cldr\CldrModel', \F3\FLOW3\Utility\Files::concatenatePaths(array($directoryPath, (string)$parentLocale . '.xml')));
+			$modelsInHierarchy[] = $this->objectManager->create('F3\FLOW3\I18n\Cldr\CldrModel', \F3\FLOW3\Utility\Files::concatenatePaths(array($directoryPath, (string)$parentLocale . '.xml')));
 		}
-		$modelsInHierarchy[] = $this->objectManager->create('F3\FLOW3\Locale\Cldr\CldrModel', \F3\FLOW3\Utility\Files::concatenatePaths(array($directoryPath, 'root.xml')));
+		$modelsInHierarchy[] = $this->objectManager->create('F3\FLOW3\I18n\Cldr\CldrModel', \F3\FLOW3\Utility\Files::concatenatePaths(array($directoryPath, 'root.xml')));
 
-		$this->modelCollections[$directoryPath][(string)$locale] = $this->objectManager->create('F3\FLOW3\Locale\Cldr\CldrModelCollection', $modelsInHierarchy);
+		$this->modelCollections[$directoryPath][(string)$locale] = $this->objectManager->create('F3\FLOW3\I18n\Cldr\CldrModelCollection', $modelsInHierarchy);
 		return $this->modelCollections[$directoryPath][(string)$locale];
 	}
 }

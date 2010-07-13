@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Locale\Cldr\Reader;
+namespace F3\FLOW3\I18n\Cldr\Reader;
 
 /* *
  * This script belongs to the FLOW3 framework.                            *
@@ -59,7 +59,7 @@ class NumbersReader {
 	const PATTERN_MATCH_ROUNDING = '/([0-9]+(?:\.[0-9]+)?)/';
 
 	/**
-	 * @var \F3\FLOW3\Locale\Cldr\CldrRepository
+	 * @var \F3\FLOW3\I18n\Cldr\CldrRepository
 	 */
 	protected $cldrRepository;
 
@@ -155,11 +155,11 @@ class NumbersReader {
 	protected $localizedSymbols;
 
 	/**
-	 * @param \F3\FLOW3\Locale\Cldr\CldrRepository $repository
+	 * @param \F3\FLOW3\I18n\Cldr\CldrRepository $repository
 	 * @return void
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function injectCldrRepository(\F3\FLOW3\Locale\Cldr\CldrRepository $repository) {
+	public function injectCldrRepository(\F3\FLOW3\I18n\Cldr\CldrRepository $repository) {
 		$this->cldrRepository = $repository;
 	}
 
@@ -217,11 +217,11 @@ class NumbersReader {
 	 *
 	 * @param mixed $number Float or int, can be negative, can be NaN or infinite
 	 * @param string $format Format string
-	 * @param \F3\FLOW3\Locale\Locale $locale A locale used for finding symbols array
+	 * @param \F3\FLOW3\I18n\Locale $locale A locale used for finding symbols array
 	 * @return string Formatted number. Will return string-casted version of $number if pattern is not valid / supported
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function formatNumberWithCustomPattern($number, $format, \F3\FLOW3\Locale\Locale $locale) {
+	public function formatNumberWithCustomPattern($number, $format, \F3\FLOW3\I18n\Locale $locale) {
 		if (isset($this->parsedFormats[$format])) {
 			$parsedFormat = $this->parsedFormats[$format];
 		} else {
@@ -239,12 +239,12 @@ class NumbersReader {
 	 * But it's defined in the specification, so we support it here.
 	 *
 	 * @param mixed $number Float or int, can be negative, can be NaN or infinite
-	 * @param \F3\FLOW3\Locale\Locale $locale
+	 * @param \F3\FLOW3\I18n\Locale $locale
 	 * @param string $length One of: full, long, medium, short, or 'default' in order to not use $length parameter
 	 * @return string Formatted number. Will return string-casted version of $number if there is no pattern for given $locale / $length
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function formatDecimalNumber($number, \F3\FLOW3\Locale\Locale $locale, $length = 'default') {
+	public function formatDecimalNumber($number, \F3\FLOW3\I18n\Locale $locale, $length = 'default') {
 		return $this->doFormattingWithParsedFormat($number, $this->getParsedFormat($locale, 'decimal', $length), $this->getLocalizedSymbolsForLocale($locale));
 	}
 
@@ -256,12 +256,12 @@ class NumbersReader {
 	 * But it's defined in the specification, so we support it here.
 	 *
 	 * @param mixed $number Float or int, can be negative, can be NaN or infinite
-	 * @param \F3\FLOW3\Locale\Locale $locale
+	 * @param \F3\FLOW3\I18n\Locale $locale
 	 * @param string $length One of: full, long, medium, short, or 'default' in order to not use $length parameter
 	 * @return string Formatted number. Will return string-casted version of $number if there is no pattern for given $locale / $length
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function formatPercentNumber($number, \F3\FLOW3\Locale\Locale $locale, $length = 'default') {
+	public function formatPercentNumber($number, \F3\FLOW3\I18n\Locale $locale, $length = 'default') {
 		return $this->doFormattingWithParsedFormat($number, $this->getParsedFormat($locale, 'percent', $length), $this->getLocalizedSymbolsForLocale($locale));
 	}
 
@@ -275,13 +275,13 @@ class NumbersReader {
 	 * But it's defined in the specification, so we support it here.
 	 *
 	 * @param mixed $number Float or int, can be negative, can be NaN or infinite
-	 * @param \F3\FLOW3\Locale\Locale $locale
+	 * @param \F3\FLOW3\I18n\Locale $locale
 	 * @param string $currency Currency symbol (or name)
 	 * @param string $length One of: full, long, medium, short, or 'default' in order to not use $length parameter
 	 * @return string Formatted number. Will return string-casted version of $number if there is no pattern for given $locale / $length
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function formatCurrencyNumber($number, \F3\FLOW3\Locale\Locale $locale, $currency, $length = 'default') {
+	public function formatCurrencyNumber($number, \F3\FLOW3\I18n\Locale $locale, $currency, $length = 'default') {
 		return $this->doFormattingWithParsedFormat($number, $this->getParsedFormat($locale, 'currency', $length), $this->getLocalizedSymbolsForLocale($locale), $currency);
 	}
 
@@ -387,7 +387,7 @@ class NumbersReader {
 	 * @param string $format
 	 * @return mixed Parsed format (or FALSE when unsupported format string detected)
 	 * @author Karol Gusak <firstname@lastname.eu>
-	 * @see \F3\FLOW3\Locale\Cldr\Reader\DatesReader::$parsedFormats
+	 * @see \F3\FLOW3\I18n\Cldr\Reader\DatesReader::$parsedFormats
 	 */
 	protected function parseFormat($format) {
 		foreach (array('E', '@', '*', '\'') as $unsupportedFeature) {
@@ -487,13 +487,13 @@ class NumbersReader {
 	 * When third parameter ($length) equals 'default', default format for a
 	 * locale will be used.
 	 *
-	 * @param \F3\FLOW3\Locale\Locale $locale
+	 * @param \F3\FLOW3\I18n\Locale $locale
 	 * @param string $type A type of format (decimal, percent, currency)
 	 * @param string $length A length of format (full, long, medium, short) or 'default' to use default one
 	 * @return mixed An array representing parsed format or FALSE on failure
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	protected function getParsedFormat(\F3\FLOW3\Locale\Locale $locale, $type, $length) {
+	protected function getParsedFormat(\F3\FLOW3\I18n\Locale $locale, $type, $length) {
 		if (isset($this->parsedFormatsIndices[(string)$locale][$type][$length])) {
 			return $this->parsedFormats[$this->parsedFormatsIndices[(string)$locale][$type][$length]];
 		}
@@ -526,11 +526,11 @@ class NumbersReader {
 	 *
 	 * Symbols arrays for every requested locale are cached.
 	 *
-	 * @param \F3\FLOW3\Locale\Locale $locale
+	 * @param \F3\FLOW3\I18n\Locale $locale
 	 * @return array Symbols array
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function getLocalizedSymbolsForLocale(\F3\FLOW3\Locale\Locale $locale) {
+	public function getLocalizedSymbolsForLocale(\F3\FLOW3\I18n\Locale $locale) {
 		if (isset($this->localizedSymbols[(string)$locale])) {
 			return $this->localizedSymbols[(string)$locale];
 		}

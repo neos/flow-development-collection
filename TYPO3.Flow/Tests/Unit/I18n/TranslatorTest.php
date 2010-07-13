@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Locale;
+namespace F3\FLOW3\I18n;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -31,12 +31,12 @@ namespace F3\FLOW3\Locale;
 class TranslatorTest extends \F3\Testing\BaseTestCase {
 
 	/**
-	 * @var \F3\FLOW3\Locale\Locale
+	 * @var \F3\FLOW3\I18n\Locale
 	 */
 	protected $dummyLocale;
 
 	/**
-	 * @var \F3\FLOW3\Locale\Translator
+	 * @var \F3\FLOW3\I18n\Translator
 	 */
 	protected $translator;
 
@@ -45,15 +45,15 @@ class TranslatorTest extends \F3\Testing\BaseTestCase {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function setUp() {
-		$this->dummyLocale = new \F3\FLOW3\Locale\Locale('en_GB');
+		$this->dummyLocale = new \F3\FLOW3\I18n\Locale('en_GB');
 
-		$mockLocalizationService = $this->getMock('F3\FLOW3\Locale\Service');
+		$mockLocalizationService = $this->getMock('F3\FLOW3\I18n\Service');
 		$mockLocalizationService->expects($this->once())->method('getDefaultLocale')->will($this->returnValue($this->dummyLocale));
 
-		$mockPluralsReader = $this->getMock('F3\FLOW3\Locale\Cldr\Reader\PluralsReader');
+		$mockPluralsReader = $this->getMock('F3\FLOW3\I18n\Cldr\Reader\PluralsReader');
 		$mockPluralsReader->expects($this->once())->method('getPluralForm', 1, $this->dummyLocale)->will($this->returnValue('one'));
 
-		$this->translator = new \F3\FLOW3\Locale\Translator();
+		$this->translator = new \F3\FLOW3\I18n\Translator();
 		$this->translator->injectLocalizationService($mockLocalizationService);
 		$this->translator->injectPluralsReader($mockPluralsReader);
 	}
@@ -63,10 +63,10 @@ class TranslatorTest extends \F3\Testing\BaseTestCase {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function translateByOriginalLabelWorks() {
-		$mockTranslationProvicer = $this->getAccessibleMock('F3\FLOW3\Locale\TranslationProvider\XliffTranslationProvider');
+		$mockTranslationProvicer = $this->getAccessibleMock('F3\FLOW3\I18n\TranslationProvider\XliffTranslationProvider');
 		$mockTranslationProvicer->expects($this->once())->method('getTranslationByOriginalLabel', 'source', 'Untranslated label', $this->dummyLocale, 'one')->will($this->returnValue('Translated label'));
 
-		$mockFormatResolver = $this->getMock('F3\FLOW3\Locale\FormatResolver');
+		$mockFormatResolver = $this->getMock('F3\FLOW3\I18n\FormatResolver');
 		$mockFormatResolver->expects($this->once())->method('resolvePlaceholders', 'Translated label', array('value1', 'value2'), $this->dummyLocale)->will($this->returnValue('Formatted and translated label'));
 
 		$this->translator->injectTranslationProvider($mockTranslationProvicer);
@@ -82,7 +82,7 @@ class TranslatorTest extends \F3\Testing\BaseTestCase {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function translateByIdReturnsIdWhenNoTranslationAvailable() {
-		$mockTranslationProvicer = $this->getAccessibleMock('F3\FLOW3\Locale\TranslationProvider\XliffTranslationProvider');
+		$mockTranslationProvicer = $this->getAccessibleMock('F3\FLOW3\I18n\TranslationProvider\XliffTranslationProvider');
 		$mockTranslationProvicer->expects($this->once())->method('getTranslationById', 'source', 'id', $this->dummyLocale, 'one')->will($this->returnValue(FALSE));
 
 		$this->translator->injectTranslationProvider($mockTranslationProvicer);

@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Locale\Cldr\Reader;
+namespace F3\FLOW3\I18n\Cldr\Reader;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -31,7 +31,7 @@ namespace F3\FLOW3\Locale\Cldr\Reader;
 class PluralsReaderTest extends \F3\Testing\BaseTestCase {
 
 	/**
-	 * @var \F3\FLOW3\Locale\Cldr\Reader\PluralsReader
+	 * @var \F3\FLOW3\I18n\Cldr\Reader\PluralsReader
 	 */
 	protected $reader;
 
@@ -49,10 +49,10 @@ class PluralsReaderTest extends \F3\Testing\BaseTestCase {
 			)
 		);
 
-		$mockModel = $this->getAccessibleMock('F3\FLOW3\Locale\Cldr\CldrModel', array('getRawArray'));
+		$mockModel = $this->getAccessibleMock('F3\FLOW3\I18n\Cldr\CldrModel', array('getRawArray'));
 		$mockModel->expects($this->once())->method('getRawArray')->with('plurals/pluralRules')->will($this->returnValue($mockPluralRulesData));
 
-		$mockRepository = $this->getMock('F3\FLOW3\Locale\Cldr\CldrRepository');
+		$mockRepository = $this->getMock('F3\FLOW3\I18n\Cldr\CldrRepository');
 		$mockRepository->expects($this->once())->method('getModel')->with('supplemental/plurals')->will($this->returnValue($mockModel));
 
 		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
@@ -60,7 +60,7 @@ class PluralsReaderTest extends \F3\Testing\BaseTestCase {
 		$mockCache->expects($this->at(1))->method('set')->with('rulesets');
 		$mockCache->expects($this->at(2))->method('set')->with('rulesetsIndices');
 
-		$this->reader = new \F3\FLOW3\Locale\Cldr\Reader\PluralsReader();
+		$this->reader = new \F3\FLOW3\I18n\Cldr\Reader\PluralsReader();
 		$this->reader->injectCldrRepository($mockRepository);
 		$this->reader->injectCache($mockCache);
 		$this->reader->initializeObject();
@@ -71,7 +71,7 @@ class PluralsReaderTest extends \F3\Testing\BaseTestCase {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function getPluralFormWorks() {
-		$locale = new \F3\FLOW3\Locale\Locale('mo');
+		$locale = new \F3\FLOW3\I18n\Locale('mo');
 
 		$result = $this->reader->getPluralForm(1, $locale);
 		$this->assertEquals('one', $result);

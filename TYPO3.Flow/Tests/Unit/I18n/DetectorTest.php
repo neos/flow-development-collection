@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Locale;
+namespace F3\FLOW3\I18n;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -33,7 +33,7 @@ require_once('vfs/vfsStream.php');
 class DetectorTest extends \F3\Testing\BaseTestCase {
 
 	/**
-	 * @var \F3\FLOW3\Locale\Detector
+	 * @var \F3\FLOW3\I18n\Detector
 	 */
 	protected $detector;
 
@@ -44,34 +44,34 @@ class DetectorTest extends \F3\Testing\BaseTestCase {
 	public function setUp() {
 		$returnLocaleCallback = function() {
 			$args = func_get_args();
-			return new \F3\FLOW3\Locale\Locale($args[1]);
+			return new \F3\FLOW3\I18n\Locale($args[1]);
 		};
 
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->any())->method('create')->with('F3\FLOW3\Locale\Locale')->will($this->returnCallback($returnLocaleCallback));
+		$mockObjectManager->expects($this->any())->method('create')->with('F3\FLOW3\I18n\Locale')->will($this->returnCallback($returnLocaleCallback));
 
 		$findBestMatchingLocaleCallback = function() {
 			$args = func_get_args();
 			$localeTag = (string)$args[0];
 
 			if (in_array($localeTag, array('en_US_POSIX', 'en_Shaw'))) {
-				return new \F3\FLOW3\Locale\Locale('en');
+				return new \F3\FLOW3\I18n\Locale('en');
 			} else if ($localeTag === 'en_GB') {
-				return new \F3\FLOW3\Locale\Locale('en_GB');
+				return new \F3\FLOW3\I18n\Locale('en_GB');
 			} else if ($localeTag === 'sr_RS') {
-				return new \F3\FLOW3\Locale\Locale('sr');
+				return new \F3\FLOW3\I18n\Locale('sr');
 			} else {
 				return NULL;
 			}
 		};
 
-		$mockLocaleCollection = $this->getMock('F3\FLOW3\Locale\LocaleCollectionInterface');
+		$mockLocaleCollection = $this->getMock('F3\FLOW3\I18n\LocaleCollectionInterface');
 		$mockLocaleCollection->expects($this->any())->method('findBestMatchingLocale')->will($this->returnCallback($findBestMatchingLocaleCallback));
 
-		$mockLocalizationService = $this->getMock('F3\FLOW3\Locale\Service');
-		$mockLocalizationService->expects($this->any())->method('getDefaultLocale')->will($this->returnValue(new \F3\FLOW3\Locale\Locale('sv_SE')));
+		$mockLocalizationService = $this->getMock('F3\FLOW3\I18n\Service');
+		$mockLocalizationService->expects($this->any())->method('getDefaultLocale')->will($this->returnValue(new \F3\FLOW3\I18n\Locale('sv_SE')));
 
-		$this->detector = $this->getAccessibleMock('F3\FLOW3\Locale\Detector', array('dummy'));
+		$this->detector = $this->getAccessibleMock('F3\FLOW3\I18n\Detector', array('dummy'));
 		$this->detector->_set('localeBasePath', 'vfs://Foo/');
 		$this->detector->injectObjectManager($mockObjectManager);
 		$this->detector->injectLocaleCollection($mockLocaleCollection);
@@ -86,9 +86,9 @@ class DetectorTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function localeHeaders() {
 		return array(
-			array('pl, en-gb;q=0.8, en;q=0.7', new \F3\FLOW3\Locale\Locale('en_GB')),
-			array('de, *;q=0.8', new \F3\FLOW3\Locale\Locale('sv_SE')),
-			array('pl, de;q=0.5, sr-rs;q=0.1', new \F3\FLOW3\Locale\Locale('sr')),
+			array('pl, en-gb;q=0.8, en;q=0.7', new \F3\FLOW3\I18n\Locale('en_GB')),
+			array('de, *;q=0.8', new \F3\FLOW3\I18n\Locale('sv_SE')),
+			array('pl, de;q=0.5, sr-rs;q=0.1', new \F3\FLOW3\I18n\Locale('sr')),
 		);
 	}
 
@@ -110,9 +110,9 @@ class DetectorTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function localeTags() {
 		return array(
-			array('en_GB', new \F3\FLOW3\Locale\Locale('en_GB')),
-			array('en_US_POSIX', new \F3\FLOW3\Locale\Locale('en')),
-			array('en_Shaw', new \F3\FLOW3\Locale\Locale('en')),
+			array('en_GB', new \F3\FLOW3\I18n\Locale('en_GB')),
+			array('en_US_POSIX', new \F3\FLOW3\I18n\Locale('en')),
+			array('en_Shaw', new \F3\FLOW3\I18n\Locale('en')),
 		);
 	}
 

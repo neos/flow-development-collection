@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Locale\Xml\Exception;
+namespace F3\FLOW3\I18n\Xml\Exception;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -29,7 +29,7 @@ namespace F3\FLOW3\Locale\Xml\Exception;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */
-class InvalidXmlFileException extends \F3\FLOW3\Locale\Exception\InvalidArgumentException {
+class InvalidXmlFileException extends \F3\FLOW3\I18n\Exception\InvalidArgumentException {
 
 }
 

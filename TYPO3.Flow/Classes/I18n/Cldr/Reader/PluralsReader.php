@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Locale\Cldr\Reader;
+namespace F3\FLOW3\I18n\Cldr\Reader;
 
 /* *
  * This script belongs to the FLOW3 framework.                            *
@@ -48,7 +48,7 @@ class PluralsReader {
 	const PATTERN_MATCH_SUBRULE = '/(n|nmod)([0-9]+)?(is|isnot|in|notin|within|notwithin)([0-9]+)(?:\.\.([0-9]+))?(and|or)?/';
 
 	/**
-	 * @var \F3\FLOW3\Locale\Cldr\CldrRepository
+	 * @var \F3\FLOW3\I18n\Cldr\CldrRepository
 	 */
 	protected $cldrRepository;
 
@@ -94,11 +94,11 @@ class PluralsReader {
 	protected $rulesetsIndices;
 
 	/**
-	 * @param \F3\FLOW3\Locale\Cldr\CldrRepository $repository
+	 * @param \F3\FLOW3\I18n\Cldr\CldrRepository $repository
 	 * @return void
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function injectCldrRepository(\F3\FLOW3\Locale\Cldr\CldrRepository $repository) {
+	public function injectCldrRepository(\F3\FLOW3\I18n\Cldr\CldrRepository $repository) {
 		$this->cldrRepository = $repository;
 	}
 
@@ -138,11 +138,11 @@ class PluralsReader {
 	 * of the rules, or there is no rules for given locale.
 	 *
 	 * @param mixed $quantity A number to find plural form for (float or int)
-	 * @param \F3\FLOW3\Locale\Locale $locale
+	 * @param \F3\FLOW3\I18n\Locale $locale
 	 * @return string One of: zero, one, two, few, many, other
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function getPluralForm($quantity, \F3\FLOW3\Locale\Locale $locale) {
+	public function getPluralForm($quantity, \F3\FLOW3\I18n\Locale $locale) {
 		if (!isset($this->rulesetsIndices[$locale->getLanguage()])) {
 			return 'other';
 		}
@@ -200,11 +200,11 @@ class PluralsReader {
 	/**
 	 * Returns array of plural forms available for particular locale.
 	 *
-	 * @param \F3\FLOW3\Locale\Locale $locale Locale to return plural forms for
+	 * @param \F3\FLOW3\I18n\Locale $locale Locale to return plural forms for
 	 * @return array Plural forms' names (one, zero, two, few, many, other) available for language set in this model
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function getPluralForms(\F3\FLOW3\Locale\Locale $locale) {
+	public function getPluralForms(\F3\FLOW3\I18n\Locale $locale) {
 		if (!isset($this->rulesetsIndices[$locale->getLanguage()])) {
 			return array('other');
 		}
@@ -221,7 +221,7 @@ class PluralsReader {
 	 *
 	 * @return void
 	 * @author Karol Gusak <firstname@lastname.eu>
-	 * @see \F3\FLOW3\Locale\Cldr\Reader\PluralsReader::$rulesets
+	 * @see \F3\FLOW3\I18n\Cldr\Reader\PluralsReader::$rulesets
 	 */
 	protected function generateRulesets() {
 		$model = $this->cldrRepository->getModel('supplemental/plurals');
@@ -229,7 +229,7 @@ class PluralsReader {
 
 		$index = 0;
 		foreach ($pluralRulesSet as $localeLanguages => $pluralRules) {
-			$localeLanguages = \F3\FLOW3\Locale\Cldr\CldrParser::getValueOfAttributeByName($localeLanguages, 'locales');
+			$localeLanguages = \F3\FLOW3\I18n\Cldr\CldrParser::getValueOfAttributeByName($localeLanguages, 'locales');
 
 			foreach (explode(' ', $localeLanguages) as $localeLanguage) {
 				$this->rulesetsIndices[$localeLanguage] = $index;
@@ -242,7 +242,7 @@ class PluralsReader {
 
 			$ruleset = array();
 			foreach ($pluralRules['pluralRule'] as $pluralRuleCount => $pluralRule) {
-				$pluralRuleCount = \F3\FLOW3\Locale\Cldr\CldrParser::getValueOfAttributeByName($pluralRuleCount, 'count');
+				$pluralRuleCount = \F3\FLOW3\I18n\Cldr\CldrParser::getValueOfAttributeByName($pluralRuleCount, 'count');
 				$ruleset[$pluralRuleCount] = $this->parseRule($pluralRule);
 			}
 
@@ -273,7 +273,7 @@ class PluralsReader {
 	 *
 	 * @param string $rule
 	 * @return array Parsed rule
-	 * @throws \F3\FLOW3\Locale\Cldr\Reader\Exception\InvalidPluralRuleException When plural rule does not match regexp pattern
+	 * @throws \F3\FLOW3\I18n\Cldr\Reader\Exception\InvalidPluralRuleException When plural rule does not match regexp pattern
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	protected function parseRule($rule) {
@@ -305,7 +305,7 @@ class PluralsReader {
 				$parsedRule[] = $subrule;
 			}
 		} else {
-			throw new \F3\FLOW3\Locale\Cldr\Reader\Exception\InvalidPluralRuleException('A plural rule string is invalid. CLDR files might be corrupted.', 1275493982);
+			throw new \F3\FLOW3\I18n\Cldr\Reader\Exception\InvalidPluralRuleException('A plural rule string is invalid. CLDR files might be corrupted.', 1275493982);
 		}
 
 		return $parsedRule;

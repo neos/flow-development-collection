@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Locale\Cldr;
+namespace F3\FLOW3\I18n\Cldr;
 
 /* *
  * This script belongs to the FLOW3 framework.                            *
@@ -87,7 +87,7 @@ namespace F3\FLOW3\Locale\Cldr;
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class CldrParser extends \F3\FLOW3\Locale\Xml\AbstractXmlParser {
+class CldrParser extends \F3\FLOW3\I18n\Xml\AbstractXmlParser {
 
 	/**
 	 * A key for nodes without attributes

@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Locale\Xliff;
+namespace F3\FLOW3\I18n\Xliff;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -31,7 +31,7 @@ namespace F3\FLOW3\Locale\Xliff;
 class XliffModelTest extends \F3\Testing\BaseTestCase {
 
 	/**
-	 * @var \F3\FLOW3\Locale\Xliff\XliffModel
+	 * @var \F3\FLOW3\I18n\Xliff\XliffModel
 	 */
 	protected $model;
 
@@ -46,10 +46,10 @@ class XliffModelTest extends \F3\Testing\BaseTestCase {
 		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
 		$mockCache->expects($this->any())->method('has')->with($mockFilename)->will($this->returnValue(FALSE));
 
-		$mockXliffParser = $this->getMock('F3\FLOW3\Locale\Xliff\XliffParser');
+		$mockXliffParser = $this->getMock('F3\FLOW3\I18n\Xliff\XliffParser');
 		$mockXliffParser->expects($this->once())->method('getParsedData')->with($mockFilename)->will($this->returnValue($mockParsedData));
 
-		$this->model = new \F3\FLOW3\Locale\Xliff\XliffModel();
+		$this->model = new \F3\FLOW3\I18n\Xliff\XliffModel();
 		$this->model->injectCache($mockCache);
 		$this->model->injectParser($mockXliffParser);
 		$this->model->initializeObject($mockFilename);

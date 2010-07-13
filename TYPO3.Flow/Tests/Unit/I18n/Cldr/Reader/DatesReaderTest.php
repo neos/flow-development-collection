@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Locale\Cldr\Reader;
+namespace F3\FLOW3\I18n\Cldr\Reader;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -33,7 +33,7 @@ class DatesReaderTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * Dummy locale used in methods where locale is needed.
 	 *
-	 * @var \F3\FLOW3\Locale\Locale
+	 * @var \F3\FLOW3\I18n\Locale
 	 */
 	protected $dummyLocale;
 
@@ -59,7 +59,7 @@ class DatesReaderTest extends \F3\Testing\BaseTestCase {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function setUp() {
-		$this->dummyLocale = new \F3\FLOW3\Locale\Locale('en');
+		$this->dummyLocale = new \F3\FLOW3\I18n\Locale('en');
 		$this->mockLocalizedLiterals = require(__DIR__ . '/../../Fixtures/MockLocalizedLiteralsArray.php');
 		$this->sampleDateTime = new \DateTime("@1276192176");
 		$this->sampleDateTime->setTimezone(new \DateTimeZone('Europe/London'));
@@ -111,7 +111,7 @@ class DatesReaderTest extends \F3\Testing\BaseTestCase {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function formatStringsAreParsedCorrectly($format, $expectedResult) {
-		$reader = $this->getAccessibleMock('F3\FLOW3\Locale\Cldr\Reader\DatesReader', array('dummy'));
+		$reader = $this->getAccessibleMock('F3\FLOW3\I18n\Cldr\Reader\DatesReader', array('dummy'));
 
 		$result = $reader->_call('parseFormat', $format);
 		$this->assertEquals($expectedResult, $result);
@@ -143,7 +143,7 @@ class DatesReaderTest extends \F3\Testing\BaseTestCase {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function parsedFormatsAreUsedCorrectly($parsedFormat, $expectedResult) {
-		$reader = $this->getAccessibleMock('F3\FLOW3\Locale\Cldr\Reader\DatesReader', array('dummy'));
+		$reader = $this->getAccessibleMock('F3\FLOW3\I18n\Cldr\Reader\DatesReader', array('dummy'));
 
 		$result = $reader->_call('doFormattingWithParsedFormat', $this->sampleDateTime, $parsedFormat, $this->mockLocalizedLiterals);
 		$this->assertEquals($expectedResult, $result);
@@ -179,16 +179,16 @@ class DatesReaderTest extends \F3\Testing\BaseTestCase {
 			}
 		};
 
-		$mockModel = $this->getMock('F3\FLOW3\Locale\Cldr\CldrModelCollection');
+		$mockModel = $this->getMock('F3\FLOW3\I18n\Cldr\CldrModelCollection');
 		$mockModel->expects($this->exactly(5))->method('getRawArray')->will($this->returnCallback($getRawArrayCallback));
 		
-		$mockRepository = $this->getMock('F3\FLOW3\Locale\Cldr\CldrRepository');
+		$mockRepository = $this->getMock('F3\FLOW3\I18n\Cldr\CldrRepository');
 		$mockRepository->expects($this->once())->method('getModelCollection')->with('main', $this->dummyLocale)->will($this->returnValue($mockModel));
 
 		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
 		$this->createCacheExpectations($mockCache, TRUE);
 
-		$reader = $this->getAccessibleMock('F3\FLOW3\Locale\Cldr\Reader\DatesReader', array('dummy'));
+		$reader = $this->getAccessibleMock('F3\FLOW3\I18n\Cldr\Reader\DatesReader', array('dummy'));
 		$reader->injectCldrRepository($mockRepository);
 		$reader->injectCache($mockCache);
 		$reader->initializeObject();
@@ -216,18 +216,18 @@ class DatesReaderTest extends \F3\Testing\BaseTestCase {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function formatDateTimeWorks($dateFormat, $timeFormat, $dateTimeFormat, $expectedResult) {
-		$mockModel = $this->getMock('F3\FLOW3\Locale\Cldr\CldrModelCollection');
+		$mockModel = $this->getMock('F3\FLOW3\I18n\Cldr\CldrModelCollection');
 		$mockModel->expects($this->at(0))->method('getElement')->with('dates/calendars/calendar/type="gregorian"/dateFormats/dateFormatLength/type="full"/dateFormat/pattern')->will($this->returnValue($dateFormat));
 		$mockModel->expects($this->at(1))->method('getElement')->with('dates/calendars/calendar/type="gregorian"/timeFormats/timeFormatLength/type="full"/timeFormat/pattern')->will($this->returnValue($timeFormat));
 		$mockModel->expects($this->at(2))->method('getElement')->with('dates/calendars/calendar/type="gregorian"/dateTimeFormats/dateTimeFormatLength/type="full"/dateTimeFormat/pattern')->will($this->returnValue($dateTimeFormat));
 
-		$mockRepository = $this->getMock('F3\FLOW3\Locale\Cldr\CldrRepository');
+		$mockRepository = $this->getMock('F3\FLOW3\I18n\Cldr\CldrRepository');
 		$mockRepository->expects($this->exactly(3))->method('getModelCollection')->with('main', $this->dummyLocale)->will($this->returnValue($mockModel));
 
 		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
 		$this->createCacheExpectations($mockCache);
 
-		$reader = $this->getAccessibleMock('F3\FLOW3\Locale\Cldr\Reader\DatesReader', array('dummy'));
+		$reader = $this->getAccessibleMock('F3\FLOW3\I18n\Cldr\Reader\DatesReader', array('dummy'));
 		$reader->injectCldrRepository($mockRepository);
 		$reader->injectCache($mockCache);
 		$reader->initializeObject();
@@ -255,10 +255,10 @@ class DatesReaderTest extends \F3\Testing\BaseTestCase {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function specificFormattingMethodsWork($formatString, $expectedResult, $formattingType) {
-		$mockModel = $this->getMock('F3\FLOW3\Locale\Cldr\CldrModelCollection');
+		$mockModel = $this->getMock('F3\FLOW3\I18n\Cldr\CldrModelCollection');
 		$mockModel->expects($this->once())->method('getElement')->with('dates/calendars/calendar/type="gregorian"/' . $formattingType . 'Formats/' . $formattingType . 'FormatLength/type="full"/' . $formattingType . 'Format/pattern')->will($this->returnValue($formatString));
 
-		$mockRepository = $this->getMock('F3\FLOW3\Locale\Cldr\CldrRepository');
+		$mockRepository = $this->getMock('F3\FLOW3\I18n\Cldr\CldrRepository');
 		$mockRepository->expects($this->once())->method('getModelCollection')->with('main', $this->dummyLocale)->will($this->returnValue($mockModel));
 
 		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
@@ -267,7 +267,7 @@ class DatesReaderTest extends \F3\Testing\BaseTestCase {
 		$mockCache->expects($this->at(7))->method('set')->with('parsedFormatsIndices');
 		$mockCache->expects($this->at(8))->method('set')->with('localizedLiterals');
 
-		$reader = $this->getAccessibleMock('F3\FLOW3\Locale\Cldr\Reader\DatesReader', array('dummy'));
+		$reader = $this->getAccessibleMock('F3\FLOW3\I18n\Cldr\Reader\DatesReader', array('dummy'));
 		$reader->injectCldrRepository($mockRepository);
 		$reader->injectCache($mockCache);
 		$reader->initializeObject();

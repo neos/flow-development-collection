@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Locale\Cldr;
+namespace F3\FLOW3\I18n\Cldr;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -31,7 +31,7 @@ namespace F3\FLOW3\Locale\Cldr;
 class CldrModelTest extends \F3\Testing\BaseTestCase {
 
 	/**
-	 * @var \F3\FLOW3\Locale\Cldr\CldrModel
+	 * @var \F3\FLOW3\I18n\Cldr\CldrModel
 	 */
 	protected $model;
 
@@ -47,10 +47,10 @@ class CldrModelTest extends \F3\Testing\BaseTestCase {
 		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
 		$mockCache->expects($this->any())->method('has')->with($mockFilenamePath)->will($this->returnValue(FALSE));
 
-		$mockCldrParser = $this->getMock('F3\FLOW3\Locale\Cldr\CldrParser');
+		$mockCldrParser = $this->getMock('F3\FLOW3\I18n\Cldr\CldrParser');
 		$mockCldrParser->expects($this->once())->method('getParsedData')->with($mockFilenamePath)->will($this->returnValue($mockParsedData));
 
-		$this->model = new \F3\FLOW3\Locale\Cldr\CldrModel();
+		$this->model = new \F3\FLOW3\I18n\Cldr\CldrModel();
 		$this->model->injectCache($mockCache);
 		$this->model->injectParser($mockCldrParser);
 		$this->model->initializeObject($mockFilename);
@@ -84,7 +84,7 @@ class CldrModelTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function aliasesAreResolvedCorrectly() {
 		$result = $this->model->getRawArray('dates/calendars/calendar/type="gregorian"/dateFormats/dateFormatLength/type="short"/dateFormat/pattern');
-		$this->assertEquals('dd-MM-yyyy', $result[\F3\FLOW3\Locale\Cldr\CldrParser::NODE_WITHOUT_ATTRIBUTES]);
+		$this->assertEquals('dd-MM-yyyy', $result[\F3\FLOW3\I18n\Cldr\CldrParser::NODE_WITHOUT_ATTRIBUTES]);
 		$this->assertEquals('d MMM y', $result['alt="proposed-x1001" draft="unconfirmed"']);
 
 		$result = $this->model->getElement('dates/calendars/calendar/type="buddhist"/dateFormats/dateFormatLength/type="full"/dateFormat/pattern');

@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Locale\Xliff\Exception;
+namespace F3\FLOW3\I18n\Xliff\Exception;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -29,7 +29,7 @@ namespace F3\FLOW3\Locale\Xliff\Exception;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */
-class InvalidXliffDataException extends \F3\FLOW3\Locale\Xml\Exception\InvalidXmlFileException {
+class InvalidXliffDataException extends \F3\FLOW3\I18n\Xml\Exception\InvalidXmlFileException {
 
 }
 

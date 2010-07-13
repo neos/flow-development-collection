@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Locale\Cldr\Reader;
+namespace F3\FLOW3\I18n\Cldr\Reader;
 
 /* *
  * This script belongs to the FLOW3 framework.                            *
@@ -85,7 +85,7 @@ class DatesReader {
 	);
 
 	/**
-	 * @var \F3\FLOW3\Locale\Cldr\CldrRepository
+	 * @var \F3\FLOW3\I18n\Cldr\CldrRepository
 	 */
 	protected $cldrRepository;
 
@@ -148,11 +148,11 @@ class DatesReader {
 	protected $localizedLiterals;
 
 	/**
-	 * @param \F3\FLOW3\Locale\Cldr\CldrRepository $repository
+	 * @param \F3\FLOW3\I18n\Cldr\CldrRepository $repository
 	 * @return void
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function injectCldrRepository(\F3\FLOW3\Locale\Cldr\CldrRepository $repository) {
+	public function injectCldrRepository(\F3\FLOW3\I18n\Cldr\CldrRepository $repository) {
 		$this->cldrRepository = $repository;
 	}
 
@@ -210,11 +210,11 @@ class DatesReader {
 	 *
 	 * @param \DateTime $dateTime PHP object representing particular point in time
 	 * @param string $format Format string
-	 * @param \F3\FLOW3\Locale\Locale $locale A locale used for finding literals array
+	 * @param \F3\FLOW3\I18n\Locale $locale A locale used for finding literals array
 	 * @return string Formatted date / time. Unimplemented subformats in format string will be silently ignored
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function formatDateTimeWithCustomPattern(\DateTime $dateTime, $format, \F3\FLOW3\Locale\Locale $locale) {
+	public function formatDateTimeWithCustomPattern(\DateTime $dateTime, $format, \F3\FLOW3\I18n\Locale $locale) {
 		if (isset($this->parsedFormats[$format])) {
 			$parsedFormat = $this->parsedFormats[$format];
 		} else {
@@ -229,12 +229,12 @@ class DatesReader {
 	 * locale.
 	 *
 	 * @param \DateTime $dateTime PHP object representing particular point in time
-	 * @param \F3\FLOW3\Locale\Locale $locale
+	 * @param \F3\FLOW3\I18n\Locale $locale
 	 * @param string $length One of: full, long, medium, short, or 'default' in order to use default length from CLDR
 	 * @return string Formatted date
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function formatDate(\DateTime $date, \F3\FLOW3\Locale\Locale $locale, $length = 'default') {
+	public function formatDate(\DateTime $date, \F3\FLOW3\I18n\Locale $locale, $length = 'default') {
 		return $this->doFormattingWithParsedFormat($date, $this->getParsedFormat($locale, 'date', $length), $this->getLocalizedLiteralsForLocale($locale));
 	}
 
@@ -243,12 +243,12 @@ class DatesReader {
 	 * locale.
 	 *
 	 * @param \DateTime $dateTime PHP object representing particular point in time
-	 * @param \F3\FLOW3\Locale\Locale $locale
+	 * @param \F3\FLOW3\I18n\Locale $locale
 	 * @param string $length One of: full, long, medium, short, or 'default' in order to use default length from CLDR
 	 * @return string Formatted time
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function formatTime(\DateTime $time, \F3\FLOW3\Locale\Locale $locale, $length = 'default') {
+	public function formatTime(\DateTime $time, \F3\FLOW3\I18n\Locale $locale, $length = 'default') {
 		return $this->doFormattingWithParsedFormat($time, $this->getParsedFormat($locale, 'time', $length), $this->getLocalizedLiteralsForLocale($locale));
 	}
 
@@ -260,12 +260,12 @@ class DatesReader {
 	 * from CLDR is used to place date and time in correct order.
 	 *
 	 * @param \DateTime $dateTime PHP object representing particular point in time
-	 * @param \F3\FLOW3\Locale\Locale $locale
+	 * @param \F3\FLOW3\I18n\Locale $locale
 	 * @param string $length One of: full, long, medium, short, or 'default' in order to use default length from CLDR
 	 * @return string Formatted date and time
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function formatDateTime(\DateTime $dateTime, \F3\FLOW3\Locale\Locale $locale, $length = 'default') {
+	public function formatDateTime(\DateTime $dateTime, \F3\FLOW3\I18n\Locale $locale, $length = 'default') {
 		$formattedDate = $this->formatDate($dateTime, $locale, $length);
 		$formattedTime = $this->formatTime($dateTime, $locale, $length);
 
@@ -316,7 +316,7 @@ class DatesReader {
 	 * @param \DateTime $dateTime PHP object representing particular point in time
 	 * @param string $subformat One element of format string (e.g., 'yyyy', 'mm', etc)
 	 * @return string Formatted part of date / time
-	 * @throws \F3\FLOW3\Locale\Exception\InvalidArgumentException When $subformat use symbol that is not recognized
+	 * @throws \F3\FLOW3\I18n\Exception\InvalidArgumentException When $subformat use symbol that is not recognized
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	protected function doFormattingForSubpattern(\DateTime $dateTime, $subformat, array $localizedLiterals) {
@@ -418,7 +418,7 @@ class DatesReader {
 					// Silently ignore unsupported formats
 				return '';
 			default:
-				throw new \F3\FLOW3\Locale\Exception\InvalidArgumentException('Unexpected format symbol, "' . $subformat[0] . '" detected for date / time formatting.', 1276106678);
+				throw new \F3\FLOW3\I18n\Exception\InvalidArgumentException('Unexpected format symbol, "' . $subformat[0] . '" detected for date / time formatting.', 1276106678);
 		}
 	}
 
@@ -430,9 +430,9 @@ class DatesReader {
 	 *
 	 * @param string $format
 	 * @return string Parsed format
-	 * @throws \F3\FLOW3\Locale\Cldr\Reader\Exception\InvalidDateTimeFormatException When subformat is longer than maximal value defined in $maxLengthOfSubformats property
+	 * @throws \F3\FLOW3\I18n\Cldr\Reader\Exception\InvalidDateTimeFormatException When subformat is longer than maximal value defined in $maxLengthOfSubformats property
 	 * @author Karol Gusak <firstname@lastname.eu>
-	 * @see \F3\FLOW3\Locale\Cldr\Reader\DatesReader::$parsedFormats
+	 * @see \F3\FLOW3\I18n\Cldr\Reader\DatesReader::$parsedFormats
 	 */
 	protected function parseFormat($format) {
 		$parsedFormat = array();
@@ -474,7 +474,7 @@ class DatesReader {
 				if (isset(self::$maxLengthOfSubformats[$subformatSymbol])) {
 					if (self::$maxLengthOfSubformats[$subformatSymbol] === 0 || strlen($subformat) <= self::$maxLengthOfSubformats[$subformatSymbol]) {
 						$parsedFormat[] = $subformat;
-					} else throw new \F3\FLOW3\Locale\Cldr\Reader\Exception\InvalidDateTimeFormatException('Date / time pattern is too long: ' . $subformat . ', specification allows up to ' . self::$maxLengthOfSubformats[$subformatSymbol] . ' chars.', 1276114248);
+					} else throw new \F3\FLOW3\I18n\Cldr\Reader\Exception\InvalidDateTimeFormatException('Date / time pattern is too long: ' . $subformat . ', specification allows up to ' . self::$maxLengthOfSubformats[$subformatSymbol] . ' chars.', 1276114248);
 				} else {
 					$parsedFormat[] = array($subformat);
 				}
@@ -497,13 +497,13 @@ class DatesReader {
 	 * When third parameter ($length) equals 'default', default format for a
 	 * locale will be used.
 	 *
-	 * @param \F3\FLOW3\Locale\Locale $locale
+	 * @param \F3\FLOW3\I18n\Locale $locale
 	 * @param string $type A type of format (date, time)
 	 * @param string $length A length of format (full, long, medium, short) or 'default' to use default one from CLDR
 	 * @return mixed An array representing parsed format or FALSE on failure
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	protected function getParsedFormat(\F3\FLOW3\Locale\Locale $locale, $type, $length) {
+	protected function getParsedFormat(\F3\FLOW3\I18n\Locale $locale, $type, $length) {
 		if (isset($this->parsedFormatsIndices[(string)$locale][$type][$length])) {
 			return $this->parsedFormats[$this->parsedFormatsIndices[(string)$locale][$type][$length]];
 		}
@@ -513,7 +513,7 @@ class DatesReader {
 		if ($length === 'default') {
 			$defaultChoice = $model->getRawArray('dates/calendars/calendar/type="gregorian"/' . $type . 'Formats/default');
 			$defaultChoice = array_keys($defaultChoice);
-			$length = \F3\FLOW3\Locale\Cldr\CldrParser::getValueOfAttributeByName($defaultChoice[0], 'choice');
+			$length = \F3\FLOW3\I18n\Cldr\CldrParser::getValueOfAttributeByName($defaultChoice[0], 'choice');
 		}
 
 		$format = $model->getElement('dates/calendars/calendar/type="gregorian"/' . $type . 'Formats/' . $type . 'FormatLength/type="' . $length . '"/' . $type . 'Format/pattern');
@@ -538,11 +538,11 @@ class DatesReader {
 	 *
 	 * If array was not generated earlier, it will be generated and cached.
 	 *
-	 * @param \F3\FLOW3\Locale\Locale $locale
+	 * @param \F3\FLOW3\I18n\Locale $locale
 	 * @return array An array with localized literals
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	protected function getLocalizedLiteralsForLocale(\F3\FLOW3\Locale\Locale $locale) {
+	protected function getLocalizedLiteralsForLocale(\F3\FLOW3\I18n\Locale $locale) {
 		if (isset($this->localizedLiterals[(string)$locale])) {
 			return $this->localizedLiterals[(string)$locale];
 		}
@@ -564,23 +564,23 @@ class DatesReader {
 	 * Many children of "dates" node have common structure, so one method can
 	 * be used to parse them all.
 	 *
-	 * @param \F3\FLOW3\Locale\Cldr\CldrModelCollection $model CldrModelCollection to read data from
+	 * @param \F3\FLOW3\I18n\Cldr\CldrModelCollection $model CldrModelCollection to read data from
 	 * @param string $literalType One of: month, day, quarter, dayPeriod
 	 * @return array An array with localized literals for given type
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	protected function parseLocalizedLiterals(\F3\FLOW3\Locale\Cldr\CldrModelCollection $model, $literalType) {
+	protected function parseLocalizedLiterals(\F3\FLOW3\I18n\Cldr\CldrModelCollection $model, $literalType) {
 		$data = array();
 		$context = $model->getRawArray('dates/calendars/calendar/type="gregorian"/' . $literalType . 's/' . $literalType . 'Context');
 
 		foreach ($context as $contextType => $literalsWidths) {
-			$contextType = \F3\FLOW3\Locale\Cldr\CldrParser::getValueOfAttributeByName($contextType, 'type');
+			$contextType = \F3\FLOW3\I18n\Cldr\CldrParser::getValueOfAttributeByName($contextType, 'type');
 
 			foreach ($literalsWidths[$literalType . 'Width'] as $widthType => $literals) {
-				$widthType = \F3\FLOW3\Locale\Cldr\CldrParser::getValueOfAttributeByName($widthType, 'type');
+				$widthType = \F3\FLOW3\I18n\Cldr\CldrParser::getValueOfAttributeByName($widthType, 'type');
 
 				foreach ($literals[$literalType] as $literalName => $literalValue) {
-					$literalName = \F3\FLOW3\Locale\Cldr\CldrParser::getValueOfAttributeByName($literalName, 'type');
+					$literalName = \F3\FLOW3\I18n\Cldr\CldrParser::getValueOfAttributeByName($literalName, 'type');
 
 					$data[$contextType][$widthType][$literalName] = $literalValue;
 				}
@@ -593,15 +593,15 @@ class DatesReader {
 	/**
 	 * Parses "eras" child of "dates" node and returns it's array representation.
 	 *
-	 * @param \F3\FLOW3\Locale\Cldr\CldrModelCollection $model CldrModel to read data from
+	 * @param \F3\FLOW3\I18n\Cldr\CldrModelCollection $model CldrModel to read data from
 	 * @return array An array with localized literals for "eras" node
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	protected function parseLocalizedEras(\F3\FLOW3\Locale\Cldr\CldrModelCollection $model) {
+	protected function parseLocalizedEras(\F3\FLOW3\I18n\Cldr\CldrModelCollection $model) {
 		$data = array();
 		foreach ($model->getRawArray('dates/calendars/calendar/type="gregorian"/eras') as $widthType => $eras) {
 			foreach ($eras['era'] as $eraName => $eraValue) {
-				$eraName = \F3\FLOW3\Locale\Cldr\CldrParser::getValueOfAttributeByName($eraName, 'type');
+				$eraName = \F3\FLOW3\I18n\Cldr\CldrParser::getValueOfAttributeByName($eraName, 'type');
 
 				$data[$widthType][$eraName] = $eraValue;
 			}

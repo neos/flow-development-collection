@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Locale;
+namespace F3\FLOW3\I18n;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -31,7 +31,7 @@ namespace F3\FLOW3\Locale;
 class FormatResolverTest extends \F3\Testing\BaseTestCase {
 
 	/**
-	 * @var \F3\FLOW3\Locale\Locale
+	 * @var \F3\FLOW3\I18n\Locale
 	 */
 	protected $dummyLocale;
 
@@ -40,7 +40,7 @@ class FormatResolverTest extends \F3\Testing\BaseTestCase {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function setUp() {
-		$this->dummyLocale = new \F3\FLOW3\Locale\Locale('en_GB');
+		$this->dummyLocale = new \F3\FLOW3\I18n\Locale('en_GB');
 	}
 
 	/**
@@ -48,11 +48,11 @@ class FormatResolverTest extends \F3\Testing\BaseTestCase {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function resolvePlaceholdersWorks() {
-		$mockNumberFormatter = $this->getMock('F3\FLOW3\Locale\Formatter\NumberFormatter');
+		$mockNumberFormatter = $this->getMock('F3\FLOW3\I18n\Formatter\NumberFormatter');
 		$mockNumberFormatter->expects($this->at(0))->method('format')->with(1, $this->dummyLocale)->will($this->returnValue('1.0'));
 		$mockNumberFormatter->expects($this->at(1))->method('format')->with(2, $this->dummyLocale, array('percent'))->will($this->returnValue('200%'));
 
-		$formatResolver = $this->getAccessibleMock('F3\FLOW3\Locale\FormatResolver', array('getFormatter'));
+		$formatResolver = $this->getAccessibleMock('F3\FLOW3\I18n\FormatResolver', array('getFormatter'));
 		$formatResolver->expects($this->exactly(2))->method('getFormatter')->with('number')->will($this->returnValue($mockNumberFormatter));
 
 		$result = $formatResolver->resolvePlaceholders('Foo {0,number}, bar {1,number,percent}', array(1, 2), $this->dummyLocale);

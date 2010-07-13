@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Locale\Xml;
+namespace F3\FLOW3\I18n\Xml;
 
 /* *
  * This script belongs to the FLOW3 framework.                            *
@@ -82,13 +82,13 @@ abstract class AbstractXmlParser {
 	 * @param string $sourceFilename An absolute path to XML file
 	 * @return array Parsed XML file
 	 * @author Karol Gusak <firstname@lastname.eu>
-	 * @throws \F3\FLOW3\Locale\Xml\Exception\InvalidXmlFileException When SimpleXML couldn't load XML file
+	 * @throws \F3\FLOW3\I18n\Xml\Exception\InvalidXmlFileException When SimpleXML couldn't load XML file
 	 */
 	protected function parseXmlFile($sourceFilename) {
 		$rootXmlNode = @simplexml_load_file($sourceFilename);
 
 		if ($rootXmlNode === FALSE) {
-			throw new \F3\FLOW3\Locale\Xml\Exception\InvalidXmlFileException('The path provided does not point to existing and accessible well-formed XML file.', 1278155987);
+			throw new \F3\FLOW3\I18n\Xml\Exception\InvalidXmlFileException('The path provided does not point to existing and accessible well-formed XML file.', 1278155987);
 		}
 
 		return $this->doParsingFromRoot($rootXmlNode);

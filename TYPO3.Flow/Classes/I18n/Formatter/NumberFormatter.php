@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Locale\Formatter;
+namespace F3\FLOW3\I18n\Formatter;
 
 /* *
  * This script belongs to the FLOW3 framework.                            *
@@ -32,16 +32,16 @@ namespace F3\FLOW3\Locale\Formatter;
 class NumberFormatter {
 
 	/**
-	 * @var \F3\FLOW3\Locale\Cldr\Reader\NumbersReader
+	 * @var \F3\FLOW3\I18n\Cldr\Reader\NumbersReader
 	 */
 	protected $numbersReader;
 
 	/**
-	 * @param \F3\FLOW3\Locale\Cldr\Reader\NumbersReader $numbersReader
+	 * @param \F3\FLOW3\I18n\Cldr\Reader\NumbersReader $numbersReader
 	 * @return void
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function injectNumbersReader(\F3\FLOW3\Locale\Cldr\Reader\NumbersReader $numbersReader) {
+	public function injectNumbersReader(\F3\FLOW3\I18n\Cldr\Reader\NumbersReader $numbersReader) {
 		$this->numbersReader = $numbersReader;
 	}
 
@@ -49,12 +49,12 @@ class NumberFormatter {
 	 * Formats provided value using optional style properties
 	 *
 	 * @param mixed $value Formatter-specific variable to format (can be integer, \DateTime, etc)
-	 * @param \F3\FLOW3\Locale\Locale $locale Locale to use
+	 * @param \F3\FLOW3\I18n\Locale $locale Locale to use
 	 * @param string $styleProperties Integer-indexed array of formatter-specific style properties (can be empty)
 	 * @return string String representation of $value provided, or (string)$value
 	 * @api
 	 */
-	public function format($value, \F3\FLOW3\Locale\Locale $locale, array $styleProperties = array()) {
+	public function format($value, \F3\FLOW3\I18n\Locale $locale, array $styleProperties = array()) {
 		$style = (isset($styleProperties[0])) ? $styleProperties[0] : 'decimal';
 		$length = 'default';
 

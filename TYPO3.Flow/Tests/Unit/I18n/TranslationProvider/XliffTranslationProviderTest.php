@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Locale\TranslationProvider;
+namespace F3\FLOW3\I18n\TranslationProvider;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -31,7 +31,7 @@ namespace F3\FLOW3\Locale\TranslationProvider;
 class XliffTranslationProviderTest extends \F3\Testing\BaseTestCase {
 
 	/**
-	 * @var \F3\FLOW3\Locale\TranslationProvider\XliffTranslationProvider
+	 * @var \F3\FLOW3\I18n\TranslationProvider\XliffTranslationProvider
 	 */
 	protected $translationProvider;
 
@@ -41,7 +41,7 @@ class XliffTranslationProviderTest extends \F3\Testing\BaseTestCase {
 	protected $dummyFilename;
 
 	/**
-	 * @var \F3\FLOW3\Locale\Locale
+	 * @var \F3\FLOW3\I18n\Locale
 	 */
 	protected $dummyLocale;
 
@@ -51,12 +51,12 @@ class XliffTranslationProviderTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function setUp() {
 		$this->dummyFilename = 'foo';
-		$this->dummyLocale = new \F3\FLOW3\Locale\Locale('en_GB');
+		$this->dummyLocale = new \F3\FLOW3\I18n\Locale('en_GB');
 
-		$mockPluralsReader = $this->getMock('F3\FLOW3\Locale\Cldr\Reader\PluralsReader');
+		$mockPluralsReader = $this->getMock('F3\FLOW3\I18n\Cldr\Reader\PluralsReader');
 		$mockPluralsReader->expects($this->once())->method('getPluralForms')->with($this->dummyLocale)->will($this->returnValue(array('one', 'other')));
 
-		$this->translationProvider = $this->getAccessibleMock('F3\FLOW3\Locale\TranslationProvider\XliffTranslationProvider', array('getModel'));
+		$this->translationProvider = $this->getAccessibleMock('F3\FLOW3\I18n\TranslationProvider\XliffTranslationProvider', array('getModel'));
 		$this->translationProvider->injectPluralsReader($mockPluralsReader);
 	}
 
@@ -65,7 +65,7 @@ class XliffTranslationProviderTest extends \F3\Testing\BaseTestCase {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function getTranslationByOriginalLabelWorks() {
-		$mockModel = $this->getMock('F3\FLOW3\Locale\Xliff\XliffModel');
+		$mockModel = $this->getMock('F3\FLOW3\I18n\Xliff\XliffModel');
 		$mockModel->expects($this->once())->method('getTargetBySource')->with('bar', 0)->will($this->returnValue('baz'));
 		$this->translationProvider->expects($this->once())->method('getModel')->with($this->dummyFilename, $this->dummyLocale)->will($this->returnValue($mockModel));
 
@@ -78,7 +78,7 @@ class XliffTranslationProviderTest extends \F3\Testing\BaseTestCase {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function getTranslationByIdWorks() {
-		$mockModel = $this->getMock('F3\FLOW3\Locale\Xliff\XliffModel');
+		$mockModel = $this->getMock('F3\FLOW3\I18n\Xliff\XliffModel');
 		$mockModel->expects($this->once())->method('getTargetByTransUnitId')->with('bar', 1)->will($this->returnValue('baz'));
 		$this->translationProvider->expects($this->once())->method('getModel')->with($this->dummyFilename, $this->dummyLocale)->will($this->returnValue($mockModel));
 

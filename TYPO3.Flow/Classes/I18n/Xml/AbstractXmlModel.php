@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Locale\Xml;
+namespace F3\FLOW3\I18n\Xml;
 
 /* *
  * This script belongs to the FLOW3 framework.                            *
@@ -49,7 +49,7 @@ abstract class AbstractXmlModel {
 	 * Concrete XML parser which is set by more specific model extending this
 	 * class.
 	 *
-	 * @var \F3\FLOW3\Locale\Xml\AbstractXmlParser
+	 * @var \F3\FLOW3\I18n\Xml\AbstractXmlParser
 	 */
 	protected $xmlParser;
 

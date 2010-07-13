@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Locale\Cldr;
+namespace F3\FLOW3\I18n\Cldr;
 
 /* *
  * This script belongs to the FLOW3 framework.                            *
@@ -31,7 +31,7 @@ namespace F3\FLOW3\Locale\Cldr;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
-class CldrModel extends \F3\FLOW3\Locale\Xml\AbstractXmlModel {
+class CldrModel extends \F3\FLOW3\I18n\Xml\AbstractXmlModel {
 
 	/**
 	 * An absolute path to the directory where CLDR resides. It is changed only
@@ -42,11 +42,11 @@ class CldrModel extends \F3\FLOW3\Locale\Xml\AbstractXmlModel {
 	protected $cldrBasePath = 'resource://FLOW3/Private/Locale/CLDR/Sources/';
 
 	/**
-	 * @param \F3\FLOW3\Locale\Cldr\CldrParser $parser
+	 * @param \F3\FLOW3\I18n\Cldr\CldrParser $parser
 	 * @return void
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function injectParser(\F3\FLOW3\Locale\Cldr\CldrParser $parser) {
+	public function injectParser(\F3\FLOW3\I18n\Cldr\CldrParser $parser) {
 		$this->xmlParser = $parser;
 	}
 
@@ -79,7 +79,7 @@ class CldrModel extends \F3\FLOW3\Locale\Xml\AbstractXmlModel {
 	 * plurals/pluralRules
 	 * dates/calendars/calendar/type="gregorian"/
 	 *
-	 * Please see the documentation for \F3\FLOW3\Locale\Cldr\CldrParser for
+	 * Please see the documentation for \F3\FLOW3\I18n\Cldr\CldrParser for
 	 * details about parsed data structure.
 	 *
 	 * @param string $path A path to the node to get
@@ -119,8 +119,8 @@ class CldrModel extends \F3\FLOW3\Locale\Xml\AbstractXmlModel {
 		if ($data === FALSE) {
 			return FALSE;
 		} elseif (is_array($data)) {
-			if (isset($data[\F3\FLOW3\Locale\Cldr\CldrParser::NODE_WITHOUT_ATTRIBUTES])) {
-				return $data[\F3\FLOW3\Locale\Cldr\CldrParser::NODE_WITHOUT_ATTRIBUTES];
+			if (isset($data[\F3\FLOW3\I18n\Cldr\CldrParser::NODE_WITHOUT_ATTRIBUTES])) {
+				return $data[\F3\FLOW3\I18n\Cldr\CldrParser::NODE_WITHOUT_ATTRIBUTES];
 			} else {
 				return FALSE;
 			}
@@ -140,7 +140,7 @@ class CldrModel extends \F3\FLOW3\Locale\Xml\AbstractXmlModel {
 	 * @param string $currentPath Path to currently analyzed part of data
 	 * @return mixed Modified (or unchanged) $data
 	 * @author Karol Gusak <firstname@lastname.eu>
-	 * @throws \F3\FLOW3\Locale\Cldr\Exception\InvalidCldrDataException When found alias tag which has unexpected structure
+	 * @throws \F3\FLOW3\I18n\Cldr\Exception\InvalidCldrDataException When found alias tag which has unexpected structure
 	 */
 	protected function resolveAliases($data, $currentPath) {
 		if (!is_array($data)) {
@@ -151,18 +151,18 @@ class CldrModel extends \F3\FLOW3\Locale\Xml\AbstractXmlModel {
 			if ($nodeName === 'alias') {
 				if(!is_array($nodeChildren)) {
 						// This is an alias tag but it has not any children, something is very wrong
-					throw new \F3\FLOW3\Locale\Cldr\Exception\InvalidCldrDataException('Encountered problem with alias tag. Please check if CLDR data is not corrupted.', 1276421398);
+					throw new \F3\FLOW3\I18n\Cldr\Exception\InvalidCldrDataException('Encountered problem with alias tag. Please check if CLDR data is not corrupted.', 1276421398);
 				}
 
 				$aliasAttributes = array_keys($nodeChildren);
 				$aliasAttributes = $aliasAttributes[0];
-				if (\F3\FLOW3\Locale\Cldr\CldrParser::getValueOfAttributeByName($aliasAttributes, 'source') !== 'locale') {
+				if (\F3\FLOW3\I18n\Cldr\CldrParser::getValueOfAttributeByName($aliasAttributes, 'source') !== 'locale') {
 						// Value of source attribute can be other than 'locale', but we do not support it, ignore it silently
 					break;
 				}
 
 					// Convert XPath to simple path used by this class (note that it can generate errors when CLDR will start to use more sophisticated XPath queries in alias tags)
-				$sourcePath = \F3\FLOW3\Locale\Cldr\CldrParser::getValueOfAttributeByName($aliasAttributes, 'path');
+				$sourcePath = \F3\FLOW3\I18n\Cldr\CldrParser::getValueOfAttributeByName($aliasAttributes, 'path');
 				$sourcePath = str_replace(array('\'', '[@', ']'), array('"', '/', ''), $sourcePath);
 				$sourcePath = str_replace('../', '', $sourcePath, $countOfJumpsToParentNode);
 

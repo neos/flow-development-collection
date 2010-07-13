@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Locale\Xml;
+namespace F3\FLOW3\I18n\Xml;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -40,10 +40,10 @@ class AbstractXmlModelTest extends \F3\Testing\BaseTestCase {
 		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
 		$mockCache->expects($this->once())->method('has')->with($mockFilenamePath)->will($this->returnValue(FALSE));
 
-		$mockParser = $this->getAccessibleMock('F3\FLOW3\Locale\Xml\AbstractXmlParser', array('getParsedData', 'doParsingFromRoot'));
+		$mockParser = $this->getAccessibleMock('F3\FLOW3\I18n\Xml\AbstractXmlParser', array('getParsedData', 'doParsingFromRoot'));
 		$mockParser->expects($this->once())->method('getParsedData')->with($mockFilenamePath);
 
-		$model = $this->getAccessibleMock('F3\FLOW3\Locale\Xml\AbstractXmlModel', array('dummy'));
+		$model = $this->getAccessibleMock('F3\FLOW3\I18n\Xml\AbstractXmlModel', array('dummy'));
 		$model->injectCache($mockCache);
 		$model->_set('xmlParser', $mockParser);
 		$model->initializeObject($mockFilenamePath);

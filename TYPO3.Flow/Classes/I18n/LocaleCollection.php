@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Locale;
+namespace F3\FLOW3\I18n;
 
 /* *
  * This script belongs to the FLOW3 framework.                            *
@@ -32,13 +32,13 @@ namespace F3\FLOW3\Locale;
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class LocaleCollection implements \F3\FLOW3\Locale\LocaleCollectionInterface {
+class LocaleCollection implements \F3\FLOW3\I18n\LocaleCollectionInterface {
 
 	/**
 	 * This array contains all locales added to this collection. The values
 	 * are Locale objects, and the keys are these locale's tags.
 	 *
-	 * @var array<\F3\FLOW3\Locale\Locale>
+	 * @var array<\F3\FLOW3\I18n\Locale>
 	 */
 	protected $localeCollection = array();
 
@@ -48,18 +48,18 @@ class LocaleCollection implements \F3\FLOW3\Locale\LocaleCollectionInterface {
 	 * which is a parent Locale object. If it's not set, there is no parent for
 	 * given locale, or no parent was searched before.
 	 *
-	 * @var array<\F3\FLOW3\Locale\Locale>
+	 * @var array<\F3\FLOW3\I18n\Locale>
 	 */
 	protected $localeParentCollection = array();
 
 	/**
 	 * Adds a locale to the collection.
 	 *
-	 * @param \F3\FLOW3\Locale\Locale $locale The Locale to be inserted
+	 * @param \F3\FLOW3\I18n\Locale $locale The Locale to be inserted
 	 * @return boolean
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function addLocale(\F3\FLOW3\Locale\Locale $locale) {
+	public function addLocale(\F3\FLOW3\I18n\Locale $locale) {
 		if (isset($this->localeCollection[(string)$locale])) {
 			return FALSE;
 		}
@@ -84,11 +84,11 @@ class LocaleCollection implements \F3\FLOW3\Locale\LocaleCollectionInterface {
 	 * Note: to find a best-matching locale to one which doesn't exist in the
 	 * system, please use findBestMatchingLocale() method from this class.
 	 *
-	 * @param \F3\FLOW3\Locale\Locale $locale The Locale to search parent for
-	 * @return mixed Existing \F3\FLOW3\Locale\Locale instance or NULL on failure
+	 * @param \F3\FLOW3\I18n\Locale $locale The Locale to search parent for
+	 * @return mixed Existing \F3\FLOW3\I18n\Locale instance or NULL on failure
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function getParentLocaleOf(\F3\FLOW3\Locale\Locale $locale) {
+	public function getParentLocaleOf(\F3\FLOW3\I18n\Locale $locale) {
 		$localeTag = (string)$locale;
 
 		if (!isset($this->localeCollection[$localeTag])) {
@@ -117,11 +117,11 @@ class LocaleCollection implements \F3\FLOW3\Locale\LocaleCollectionInterface {
 	 * Returns Locale object which represents one of locales installed and which
 	 * is most similar to the "template" Locale object given as parameter.
 	 *
-	 * @param \F3\FLOW3\Locale\Locale $locale The "template" Locale to be matched
-	 * @return mixed Existing \F3\FLOW3\Locale\Locale instance on success, NULL on failure
+	 * @param \F3\FLOW3\I18n\Locale $locale The "template" Locale to be matched
+	 * @return mixed Existing \F3\FLOW3\I18n\Locale instance on success, NULL on failure
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function findBestMatchingLocale(\F3\FLOW3\Locale\Locale $locale) {
+	public function findBestMatchingLocale(\F3\FLOW3\I18n\Locale $locale) {
 		$localeTag = (string)$locale;
 
 		if (isset($this->localeCollection[$localeTag])) {

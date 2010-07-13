@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Locale;
+namespace F3\FLOW3\I18n;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -31,12 +31,12 @@ namespace F3\FLOW3\Locale;
 class LocaleCollectionTest extends \F3\Testing\BaseTestCase {
 
 	/**
-	 * @var array An array of \F3\FLOW3\Locale\Locale instances
+	 * @var array An array of \F3\FLOW3\I18n\Locale instances
 	 */
 	protected $locales;
 
 	/**
-	 * @var \F3\FLOW3\Locale\LocaleCollectionInterface
+	 * @var \F3\FLOW3\I18n\LocaleCollectionInterface
 	 */
 	protected $localeCollection;
 
@@ -46,13 +46,13 @@ class LocaleCollectionTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function setUp() {
 		$this->locales = array(
-			new \F3\FLOW3\Locale\Locale('en'),
-			new \F3\FLOW3\Locale\Locale('pl_PL'),
-			new \F3\FLOW3\Locale\Locale('de'),
-			new \F3\FLOW3\Locale\Locale('pl'),
+			new \F3\FLOW3\I18n\Locale('en'),
+			new \F3\FLOW3\I18n\Locale('pl_PL'),
+			new \F3\FLOW3\I18n\Locale('de'),
+			new \F3\FLOW3\I18n\Locale('pl'),
 		);
 		
-		$this->localeCollection = new \F3\FLOW3\Locale\LocaleCollection();
+		$this->localeCollection = new \F3\FLOW3\I18n\LocaleCollection();
 	}
 
 	/**
@@ -77,8 +77,8 @@ class LocaleCollectionTest extends \F3\Testing\BaseTestCase {
 		}
 
 		$this->assertEquals($this->locales[1], $this->localeCollection->findBestMatchingLocale($this->locales[1]));
-		$this->assertEquals($this->locales[1], $this->localeCollection->findBestMatchingLocale(new \F3\FLOW3\Locale\Locale('pl_PL_DVORAK')));
-		$this->assertEquals(NULL, $this->localeCollection->findBestMatchingLocale(new \F3\FLOW3\Locale\Locale('sv')));
+		$this->assertEquals($this->locales[1], $this->localeCollection->findBestMatchingLocale(new \F3\FLOW3\I18n\Locale('pl_PL_DVORAK')));
+		$this->assertEquals(NULL, $this->localeCollection->findBestMatchingLocale(new \F3\FLOW3\I18n\Locale('sv')));
 	}
 }
 

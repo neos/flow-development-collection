@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Locale\Xliff;
+namespace F3\FLOW3\I18n\Xliff;
 
 /* *
  * This script belongs to the FLOW3 framework.                            *
@@ -40,14 +40,14 @@ namespace F3\FLOW3\Locale\Xliff;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
-class XliffModel extends \F3\FLOW3\Locale\Xml\AbstractXmlModel {
+class XliffModel extends \F3\FLOW3\I18n\Xml\AbstractXmlModel {
 
 	/**
-	 * @param \F3\FLOW3\Locale\Xliff\XliffParser $parser
+	 * @param \F3\FLOW3\I18n\Xliff\XliffParser $parser
 	 * @return void
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function injectParser(\F3\FLOW3\Locale\Xliff\XliffParser $parser) {
+	public function injectParser(\F3\FLOW3\I18n\Xliff\XliffParser $parser) {
 		$this->xmlParser = $parser;
 	}
 

@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Locale\Cldr;
+namespace F3\FLOW3\I18n\Cldr;
 
 /* *
  * This script belongs to the FLOW3 framework.                            *
@@ -44,7 +44,7 @@ class CldrModelCollection {
 	/**
 	 * A collection of models in hierarchy.
 	 *
-	 * @var array<\F3\FLOW3\Locale\Cldr\CldrModel>
+	 * @var array<\F3\FLOW3\I18n\Cldr\CldrModel>
 	 */
 	protected $models;
 
@@ -55,7 +55,7 @@ class CldrModelCollection {
 	 * with hierarchy in mind - the higher index in array, the more general
 	 * file is (i.e. root should be on last index).
 	 *
-	 * @param array<\F3\FLOW3\Locale\Cldr\CldrModel> $models An array of \F3\FLOW3\Locale\Cldr\CldrModel instances
+	 * @param array<\F3\FLOW3\I18n\Cldr\CldrModel> $models An array of \F3\FLOW3\I18n\Cldr\CldrModel instances
 	 * @return void
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
@@ -102,8 +102,8 @@ class CldrModelCollection {
 		if ($data === FALSE) {
 			return FALSE;
 		} else if (is_array($data)) {
-			if (isset($data[\F3\FLOW3\Locale\Cldr\CldrParser::NODE_WITHOUT_ATTRIBUTES])) {
-				return $data[\F3\FLOW3\Locale\Cldr\CldrParser::NODE_WITHOUT_ATTRIBUTES];
+			if (isset($data[\F3\FLOW3\I18n\Cldr\CldrParser::NODE_WITHOUT_ATTRIBUTES])) {
+				return $data[\F3\FLOW3\I18n\Cldr\CldrParser::NODE_WITHOUT_ATTRIBUTES];
 			} else {
 				return FALSE;
 			}

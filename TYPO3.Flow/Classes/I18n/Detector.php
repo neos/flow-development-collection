@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Locale;
+namespace F3\FLOW3\I18n;
 
 /* *
  * This script belongs to the FLOW3 framework.                            *
@@ -37,7 +37,7 @@ class Detector {
 	protected $objectManager;
 
 	/**
-	 * @var \F3\FLOW3\Locale\Service
+	 * @var \F3\FLOW3\I18n\Service
 	 */
 	protected $localizationService;
 
@@ -45,7 +45,7 @@ class Detector {
 	 * A collection of Locale objects representing currently installed locales,
 	 * in a hierarchical manner.
 	 *
-	 * @var \F3\FLOW3\Locale\LocaleCollectionInterface
+	 * @var \F3\FLOW3\I18n\LocaleCollectionInterface
 	 */
 	protected $localeCollection;
 
@@ -59,20 +59,20 @@ class Detector {
 	}
 
 	/**
-	 * @param \F3\FLOW3\Locale\Service $localizationService
+	 * @param \F3\FLOW3\I18n\Service $localizationService
 	 * @return void
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function injectLocalizationService(\F3\FLOW3\Locale\Service $localizationService) {
+	public function injectLocalizationService(\F3\FLOW3\I18n\Service $localizationService) {
 		$this->localizationService = $localizationService;
 	}
 
 	/**
-	 * @param \F3\FLOW3\Locale\LocaleCollectionInterface $localeCollection
+	 * @param \F3\FLOW3\I18n\LocaleCollectionInterface $localeCollection
 	 * @return void
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function injectLocaleCollection(\F3\FLOW3\Locale\LocaleCollectionInterface $localeCollection) {
+	public function injectLocaleCollection(\F3\FLOW3\I18n\LocaleCollectionInterface $localeCollection) {
 		$this->localeCollection = $localeCollection;
 	}
 
@@ -82,12 +82,12 @@ class Detector {
 	 * successful matches were done.
 	 *
 	 * @param string $header The Accept-Language HTTP header
-	 * @return \F3\FLOW3\Locale\Locale
+	 * @return \F3\FLOW3\I18n\Locale
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @api
 	 */
 	public function detectLocaleFromHttpHeader($header) {
-		$acceptableLanguages = \F3\FLOW3\Locale\Utility::parseAcceptLanguageHeader($header);
+		$acceptableLanguages = \F3\FLOW3\I18n\Utility::parseAcceptLanguageHeader($header);
 
 		if ($acceptableLanguages === FALSE) {
 			return $this->localizationService->getDefaultLocale();
@@ -99,8 +99,8 @@ class Detector {
 			}
 
 			try {
-				$parsedLocale = $this->objectManager->create('F3\FLOW3\Locale\Locale', $tag);
-			} catch (\F3\FLOW3\Locale\Exception\InvalidLocaleIdentifierException $e) {
+				$parsedLocale = $this->objectManager->create('F3\FLOW3\I18n\Locale', $tag);
+			} catch (\F3\FLOW3\I18n\Exception\InvalidLocaleIdentifierException $e) {
 				continue;
 			}
 
@@ -120,15 +120,15 @@ class Detector {
 	 * successful matches were done.
 	 *
 	 * @param string $tag The locale identifier as used in Locale class
-	 * @return \F3\FLOW3\Locale\Locale
+	 * @return \F3\FLOW3\I18n\Locale
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @api
 	 */
 	public function detectLocaleFromLocaleTag($tag) {
 		try {
 				// Parse the tag (this doesn't mean that exacly that locale exists in the system)
-			return $this->detectLocaleFromTemplateLocale($this->objectManager->create('F3\FLOW3\Locale\Locale', $tag));
-		} catch (\F3\FLOW3\Locale\Exception\InvalidLocaleIdentifierException $e) {
+			return $this->detectLocaleFromTemplateLocale($this->objectManager->create('F3\FLOW3\I18n\Locale', $tag));
+		} catch (\F3\FLOW3\I18n\Exception\InvalidLocaleIdentifierException $e) {
 			return $this->localizationService->getDefaultLocale();
 		}
 	}
@@ -138,12 +138,12 @@ class Detector {
 	 * provided as parameter. System default locale will be returned if no
 	 * successful matches were done.
 	 *
-	 * @param \F3\FLOW3\Locale\Locale $locale The template Locale object
-	 * @return \F3\FLOW3\Locale\Locale
+	 * @param \F3\FLOW3\I18n\Locale $locale The template Locale object
+	 * @return \F3\FLOW3\I18n\Locale
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @api
 	 */
-	public function detectLocaleFromTemplateLocale(\F3\FLOW3\Locale\Locale $locale) {
+	public function detectLocaleFromTemplateLocale(\F3\FLOW3\I18n\Locale $locale) {
 		$foundLocale = $this->localeCollection->findBestMatchingLocale($locale);
 
 		if ($foundLocale !== NULL) {

@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Locale\Formatter;
+namespace F3\FLOW3\I18n\Formatter;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -31,7 +31,7 @@ namespace F3\FLOW3\Locale\Formatter;
 class NumberFormatterTest extends \F3\Testing\BaseTestCase {
 
 	/**
-	 * @var \F3\FLOW3\Locale\Locale
+	 * @var \F3\FLOW3\I18n\Locale
 	 */
 	protected $dummyLocale;
 
@@ -45,7 +45,7 @@ class NumberFormatterTest extends \F3\Testing\BaseTestCase {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function setUp() {
-		$this->dummyLocale = new \F3\FLOW3\Locale\Locale('en_GB');
+		$this->dummyLocale = new \F3\FLOW3\I18n\Locale('en_GB');
 		$this->dummyNumber = 123.456;
 	}
 
@@ -54,11 +54,11 @@ class NumberFormatterTest extends \F3\Testing\BaseTestCase {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function formatWorks() {
-		$mockReader = $this->getMock('F3\FLOW3\Locale\Cldr\Reader\NumbersReader');
+		$mockReader = $this->getMock('F3\FLOW3\I18n\Cldr\Reader\NumbersReader');
 		$mockReader->expects($this->at(0))->method('formatDecimalNumber')->with($this->dummyNumber, $this->dummyLocale, 'default')->will($this->returnValue('bar1'));
 		$mockReader->expects($this->at(1))->method('formatPercentNumber')->with($this->dummyNumber, $this->dummyLocale, 'default')->will($this->returnValue('bar2'));
 
-		$formatter = new \F3\FLOW3\Locale\Formatter\NumberFormatter();
+		$formatter = new \F3\FLOW3\I18n\Formatter\NumberFormatter();
 		$formatter->injectNumbersReader($mockReader);
 
 		$result = $formatter->format($this->dummyNumber, $this->dummyLocale);

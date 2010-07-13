@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Locale;
+namespace F3\FLOW3\I18n;
 
 /* *
  * This script belongs to the FLOW3 framework.                            *
@@ -36,10 +36,10 @@ interface LocaleCollectionInterface {
 	 * Adds locale to the collection, inserting it in position which retains
 	 * hierarchical relations.
 	 *
-	 * @param \F3\FLOW3\Locale\Locale $locale The Locale to be inserted
+	 * @param \F3\FLOW3\I18n\Locale $locale The Locale to be inserted
 	 * @return boolean
 	 */
-	public function addLocale(\F3\FLOW3\Locale\Locale $locale);
+	public function addLocale(\F3\FLOW3\I18n\Locale $locale);
 
 	/**
 	 * Returns a parent Locale object of the locale provided. The parent is
@@ -47,19 +47,19 @@ interface LocaleCollectionInterface {
 	 * example, the parent for locale en_GB will be locale en, of course if
 	 * it exists in the collection of available locales.
 	 *
-	 * @param \F3\FLOW3\Locale\Locale $locale The Locale to search parent for
-	 * @return mixed Existing \F3\FLOW3\Locale\Locale instance or NULL on failure
+	 * @param \F3\FLOW3\I18n\Locale $locale The Locale to search parent for
+	 * @return mixed Existing \F3\FLOW3\I18n\Locale instance or NULL on failure
 	 */
-	public function getParentLocaleOf(\F3\FLOW3\Locale\Locale $locale);
+	public function getParentLocaleOf(\F3\FLOW3\I18n\Locale $locale);
 
 	/**
 	 * Returns Locale object which represents one of locales installed and which
 	 * is most similar to the "template" Locale object given as parameter.
 	 *
-	 * @param \F3\FLOW3\Locale\Locale $locale The "template" Locale to be matched
-	 * @return mixed Existing \F3\FLOW3\Locale\Locale instance on success, NULL on failure
+	 * @param \F3\FLOW3\I18n\Locale $locale The "template" Locale to be matched
+	 * @return mixed Existing \F3\FLOW3\I18n\Locale instance on success, NULL on failure
 	 */
-	public function findBestMatchingLocale(\F3\FLOW3\Locale\Locale $locale);
+	public function findBestMatchingLocale(\F3\FLOW3\I18n\Locale $locale);
 
 }
 

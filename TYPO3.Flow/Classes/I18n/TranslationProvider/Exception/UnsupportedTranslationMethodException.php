@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Locale\TranslationProvider\Exception;
+namespace F3\FLOW3\I18n\TranslationProvider\Exception;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -29,7 +29,7 @@ namespace F3\FLOW3\Locale\TranslationProvider\Exception;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */
-class UnsupportedTranslationMethodException extends \F3\FLOW3\Locale\Exception {
+class UnsupportedTranslationMethodException extends \F3\FLOW3\I18n\Exception {
 
 }
 
