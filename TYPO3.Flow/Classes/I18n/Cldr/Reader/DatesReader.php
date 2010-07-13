@@ -269,7 +269,7 @@ class DatesReader {
 		$formattedDate = $this->formatDate($dateTime, $locale, $length);
 		$formattedTime = $this->formatTime($dateTime, $locale, $length);
 
-		$format = $this->getParsedFormat($locale, 'dateTime', $length);var_dump($format);
+		$format = $this->getParsedFormat($locale, 'dateTime', $length);
 
 		return str_replace(array('{0}', '{1}'), array($formattedTime, $formattedDate), $format);
 	}
