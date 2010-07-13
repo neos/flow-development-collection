@@ -43,7 +43,7 @@ abstract class AbstractXmlParser {
 	protected $parsedFiles;
 
 	/**
-	 * Injects the FLOW3_Locale_Xml_AbstractXmlParser cache
+	 * Injects the FLOW3_I18n_Xml_AbstractXmlParser cache
 	 *
 	 * @param \F3\FLOW3\Cache\Frontend\VariableFrontend $cache
 	 * @return void

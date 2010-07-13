@@ -164,7 +164,7 @@ class NumbersReader {
 	}
 
 	/**
-	 * Injects the FLOW3_Locale_CDLR_Reader_NumbersReader cache
+	 * Injects the FLOW3_I18n_CDLR_Reader_NumbersReader cache
 	 *
 	 * @param \F3\FLOW3\Cache\Frontend\VariableFrontend $cache
 	 * @return void

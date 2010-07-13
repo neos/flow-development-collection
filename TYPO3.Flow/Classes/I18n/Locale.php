@@ -89,7 +89,7 @@ class Locale {
 	 * Constructs this locale object
 	 *
 	 * @param string $localeIdentifier A valid locale identifier according to UTS#35
-	 * @throws F3_FLOW3_Locale_Exception_InvalidLocaleIdentifier if the locale identifier is not valid
+	 * @throws F3_FLOW3_I18n_Exception_InvalidLocaleIdentifier if the locale identifier is not valid
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct($localeIdentifier) {

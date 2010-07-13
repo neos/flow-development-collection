@@ -32,12 +32,12 @@ FLOW3_Cache_ResourceFiles: []
 FLOW3_Configuration: []
 FLOW3_Core:
   frontend: F3\FLOW3\Cache\Frontend\StringFrontend
-FLOW3_Locale_Cldr_Reader_DatesReader: []
-FLOW3_Locale_Cldr_Reader_NumbersReader: []
-FLOW3_Locale_Cldr_Reader_PluralsReader: []
-FLOW3_Locale_Service: []
-FLOW3_Locale_Xml_AbstractXmlModel: []
-FLOW3_Locale_Xml_AbstractXmlParser: []
+FLOW3_I18n_Cldr_Reader_DatesReader: []
+FLOW3_I18n_Cldr_Reader_NumbersReader: []
+FLOW3_I18n_Cldr_Reader_PluralsReader: []
+FLOW3_I18n_Service: []
+FLOW3_I18n_Xml_AbstractXmlModel: []
+FLOW3_I18n_Xml_AbstractXmlParser: []
 FLOW3_Monitor: []
 FLOW3_MVC_Web_Routing_FindMatchResults:
   backend: F3\FLOW3\Cache\Backend\TransientMemoryBackend

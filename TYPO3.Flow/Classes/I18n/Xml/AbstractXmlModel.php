@@ -68,7 +68,7 @@ abstract class AbstractXmlModel {
 	protected $xmlParsedData;
 
 	/**
-	 * Injects the FLOW3_Locale_Xml_AbstractXmlModel cache
+	 * Injects the FLOW3_I18n_Xml_AbstractXmlModel cache
 	 *
 	 * @param \F3\FLOW3\Cache\Frontend\VariableFrontend $cache
 	 * @return void

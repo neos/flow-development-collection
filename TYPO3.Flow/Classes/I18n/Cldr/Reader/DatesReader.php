@@ -157,7 +157,7 @@ class DatesReader {
 	}
 
 	/**
-	 * Injects the FLOW3_Locale_Cldr_Reader_DatesReader cache
+	 * Injects the FLOW3_I18n_Cldr_Reader_DatesReader cache
 	 *
 	 * @param \F3\FLOW3\Cache\Frontend\VariableFrontend $cache
 	 * @return void
