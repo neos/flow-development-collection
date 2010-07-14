@@ -85,9 +85,11 @@ abstract class AbstractXmlParser {
 	 * @throws \F3\FLOW3\I18n\Xml\Exception\InvalidXmlFileException When SimpleXML couldn't load XML file
 	 */
 	protected function parseXmlFile($sourceFilename) {
-		$rootXmlNode = @simplexml_load_file($sourceFilename);
+		if (file_exists($sourceFilename)) {
+			$rootXmlNode = simplexml_load_file($sourceFilename, 'SimpleXmlElement', \LIBXML_NOWARNING);
+		}
 
-		if ($rootXmlNode === FALSE) {
+		if (!isset($rootXmlNode) || $rootXmlNode === FALSE) {
 			throw new \F3\FLOW3\I18n\Xml\Exception\InvalidXmlFileException('The path provided does not point to existing and accessible well-formed XML file.', 1278155987);
 		}
 
