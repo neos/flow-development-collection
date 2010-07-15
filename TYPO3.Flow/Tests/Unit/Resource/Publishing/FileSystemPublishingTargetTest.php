@@ -304,7 +304,7 @@ class FileSystemPublishingTargetTest extends \F3\Testing\BaseTestCase {
 
 		$publishingTarget->_call('mirrorFile', $sourcePathAndFilename, $targetPathAndFilename, TRUE);
 		$this->assertFileEquals($sourcePathAndFilename, $targetPathAndFilename);
-		$this->assertTrue(is_link($targetPathAndFilename));
+		$this->assertTrue(\F3\FLOW3\Utility\Files::is_link($targetPathAndFilename));
 		
 		unlink($sourcePathAndFilename);
 		unlink($targetPathAndFilename);

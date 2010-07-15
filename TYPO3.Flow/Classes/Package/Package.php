@@ -84,7 +84,7 @@ class Package implements PackageInterface {
 	 */
 	public function __construct($packageKey, $packagePath) {
 		if (preg_match(self::PATTERN_MATCH_PACKAGEKEY, $packageKey) !== 1) throw new \F3\FLOW3\Package\Exception\InvalidPackageKeyException('"' . $packageKey . '" is not a valid package key.', 1217959510);
-		if (!(is_dir($packagePath) || (is_link($packagePath) && is_dir(readlink(rtrim($packagePath, '/')))))) throw new \F3\FLOW3\Package\Exception\InvalidPackagePathException('Package path does not exist or is no directory.', 1166631889);
+		if (!(is_dir($packagePath) || (\F3\FLOW3\Utility\Files::is_link($packagePath) && is_dir(readlink(rtrim($packagePath, '/')))))) throw new \F3\FLOW3\Package\Exception\InvalidPackagePathException('Package path does not exist or is no directory.', 1166631889);
 		if (substr($packagePath, -1, 1) != '/') throw new \F3\FLOW3\Package\Exception\InvalidPackagePathException('Package path has no trailing forward slash.', 1166633720);
 
 		$this->packageKey = $packageKey;

@@ -240,5 +240,26 @@ class Files {
 				return 'Unknown upload error';
 		}
 	}
+
+	/**
+	 * A version of is_link() that works on Windows too
+	 * @see http://www.php.net/is_link
+	 *
+	 * @param string $pathAndFilename Path and name of the file or directory
+	 * @return boolean TRUE if the path exists and is a symbolic link, FALSE otherwise
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	static public function is_link($pathAndFilename) {
+			// if not on Windows, call PHPs own is_link() function
+		if (DIRECTORY_SEPARATOR === '/') {
+			return \is_link($pathAndFilename);
+		}
+		if (!file_exists($pathAndFilename)) {
+			return FALSE;
+		}
+		$normalizedPathAndFilename = strtolower(self::getUnixStylePath($pathAndFilename));
+		$normalizedTargetPathAndFilename = strtolower(self::getUnixStylePath(readlink($pathAndFilename)));
+		return $normalizedPathAndFilename !== $normalizedTargetPathAndFilename;
+	}
 }
 ?>

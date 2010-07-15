@@ -159,5 +159,37 @@ class FilesTest extends \F3\Testing\BaseTestCase {
 		$this->assertEquals($expected, \F3\FLOW3\Utility\Files::getUnixStylePath($path));
 	}
 
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function is_linkReturnsFalseForNonExistingFiles() {
+		$this->assertFalse(\F3\FLOW3\Utility\Files::is_link('NonExistingPath'));
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function is_linkReturnsFalseForExistingFileThatIsNoSymlink() {
+		$targetPathAndFilename = sys_get_temp_dir() . 'FLOW3FilesTestFile';
+		file_put_contents($targetPathAndFilename, 'some data');
+		$this->assertFalse(\F3\FLOW3\Utility\Files::is_link($targetPathAndFilename));
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function is_linkReturnsTrueForExistingSymlink() {
+		$targetPathAndFilename = sys_get_temp_dir() . 'FLOW3FilesTestFile';
+		file_put_contents($targetPathAndFilename, 'some data');
+		$linkPathAndFilename = sys_get_temp_dir() . 'FLOW3FilesTestLink';
+		if (file_exists($linkPathAndFilename)) {
+			unlink($linkPathAndFilename);
+		}
+		symlink($targetPathAndFilename, $linkPathAndFilename);
+		$this->assertTrue(\F3\FLOW3\Utility\Files::is_link($linkPathAndFilename));
+	}
 }
 ?>

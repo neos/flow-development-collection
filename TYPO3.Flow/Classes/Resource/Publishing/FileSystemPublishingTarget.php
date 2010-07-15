@@ -237,7 +237,7 @@ class FileSystemPublishingTarget extends \F3\FLOW3\Resource\Publishing\AbstractR
 				break;
 			case 'link' :
 				if (file_exists($targetPathAndFilename)) {
-					if (is_link($targetPathAndFilename) && (readlink($targetPathAndFilename) === $sourcePathAndFilename)) {
+					if (\F3\FLOW3\Utility\Files::is_link($targetPathAndFilename) && (readlink($targetPathAndFilename) === $sourcePathAndFilename)) {
 						break;
 					}
 					unlink($targetPathAndFilename);
