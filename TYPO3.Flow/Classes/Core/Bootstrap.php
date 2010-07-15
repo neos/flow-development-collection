@@ -497,7 +497,7 @@ class Bootstrap {
 	 * @see intialize()
 	 */
 	public function initializeLocale() {
-#		$this->objectManager->get('F3\FLOW3\Locale\Service')->initialize();
+#		$this->objectManager->get('F3\FLOW3\I18n\Service')->initialize();
 	}
 
 	/**
