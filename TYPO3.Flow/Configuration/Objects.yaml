@@ -253,7 +253,7 @@ F3\FLOW3\Core\LockManager:
       object: F3\FLOW3\Log\SystemLoggerInterface
 
 #                                                                          #
-# Locale                                                                   #
+# I18n                                                                   #
 #                                                                          #
 
 F3\FLOW3\I18n\Service:

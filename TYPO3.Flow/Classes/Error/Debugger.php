@@ -154,7 +154,7 @@ class Debugger {
 						$scope = 'singleton';
 						break;
 					case \F3\FLOW3\Object\Configuration\Configuration::SCOPE_SESSION :
-						$scope = 'sesession';
+						$scope = 'session';
 						break;
 				}
 				if (self::$renderedObjects->contains($object)) {
@@ -186,7 +186,7 @@ class Debugger {
 		}
 
 		if ($object instanceof \F3\FLOW3\AOP\ProxyInterface) {
-			$dump .= '<span class="debug-proxy">proxy</span>';
+			$dump .= '<span class="debug-proxy" title="' . get_class($object) . '">proxy</span>';
 		}
 
 		if ($renderProperties === TRUE) {
