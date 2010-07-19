@@ -245,6 +245,8 @@ class Files {
 	 * A version of is_link() that works on Windows too
 	 * @see http://www.php.net/is_link
 	 *
+	 * If http://bugs.php.net/bug.php?id=51766 gets fixed we can drop this.
+	 *
 	 * @param string $pathAndFilename Path and name of the file or directory
 	 * @return boolean TRUE if the path exists and is a symbolic link, FALSE otherwise
 	 * @author Bastian Waidelich <bastian@typo3.org>
