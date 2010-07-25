@@ -107,6 +107,22 @@ class Utility {
 
 		return $filenameParts[count($filenameParts) - 2];
 	}
+
+	/**
+	 * Checks if $haystack string begins with $needle string.
+	 *
+	 * @param string $haystack
+	 * @param string $needle
+	 * @return bool TRUE if $haystack begins with $needle
+	 * @author Karol Gusak <firstname@lastname.eu>
+	 */
+	static public function stringBeginsWith($haystack, $needle) {
+		if (strncmp($haystack, $needle, strlen($needle)) === 0) {
+			return TRUE;
+		}
+
+		return FALSE;
+	}
 }
 
 ?>

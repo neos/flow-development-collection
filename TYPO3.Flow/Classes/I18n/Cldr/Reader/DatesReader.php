@@ -275,6 +275,74 @@ class DatesReader {
 	}
 
 	/**
+	 * Returns parsed date or time format basing on locale and desired format
+	 * length.
+	 *
+	 * When third parameter ($length) equals 'default', default format for a
+	 * locale will be used.
+	 *
+	 * @param \F3\FLOW3\I18n\Locale $locale
+	 * @param string $type A type of format (date, time)
+	 * @param string $length A length of format (full, long, medium, short) or 'default' to use default one from CLDR
+	 * @return mixed An array representing parsed format or FALSE on failure
+	 * @author Karol Gusak <firstname@lastname.eu>
+	 */
+	public function getParsedFormat(\F3\FLOW3\I18n\Locale $locale, $type, $length) {
+		if (isset($this->parsedFormatsIndices[(string)$locale][$type][$length])) {
+			return $this->parsedFormats[$this->parsedFormatsIndices[(string)$locale][$type][$length]];
+		}
+
+		$model = $this->cldrRepository->getModelCollection('main', $locale);
+
+		if ($length === 'default') {
+			$defaultChoice = $model->getRawArray('dates/calendars/calendar/type="gregorian"/' . $type . 'Formats/default');
+			$defaultChoice = array_keys($defaultChoice);
+			$length = \F3\FLOW3\I18n\Cldr\CldrParser::getValueOfAttributeByName($defaultChoice[0], 'choice');
+		}
+
+		$format = $model->getElement('dates/calendars/calendar/type="gregorian"/' . $type . 'Formats/' . $type . 'FormatLength/type="' . $length . '"/' . $type . 'Format/pattern');
+
+		if (empty($format)) {
+			return FALSE;
+		}
+
+		if ($type === 'dateTime') {
+				// DateTime is a simple format like this: '{0} {1}' which denotes where to insert date and time, it needs not to be parsed
+			$parsedFormat = $format;
+		} else {
+			$parsedFormat = $this->parseFormat($format);
+		}
+
+		$this->parsedFormatsIndices[(string)$locale][$type][$length] = $format;
+		return $this->parsedFormats[$format] = $parsedFormat;
+	}
+
+	/**
+	 * Returns literals array for locale provided.
+	 *
+	 * If array was not generated earlier, it will be generated and cached.
+	 *
+	 * @param \F3\FLOW3\I18n\Locale $locale
+	 * @return array An array with localized literals
+	 * @author Karol Gusak <firstname@lastname.eu>
+	 */
+	public function getLocalizedLiteralsForLocale(\F3\FLOW3\I18n\Locale $locale) {
+		if (isset($this->localizedLiterals[(string)$locale])) {
+			return $this->localizedLiterals[(string)$locale];
+		}
+
+		$model = $this->cldrRepository->getModelCollection('main', $locale);
+
+		$localizedLiterals['months'] = $this->parseLocalizedLiterals($model, 'month');
+		$localizedLiterals['days'] = $this->parseLocalizedLiterals($model, 'day');
+		$localizedLiterals['quarters'] = $this->parseLocalizedLiterals($model, 'quarter');
+		$localizedLiterals['dayPeriods'] = $this->parseLocalizedLiterals($model, 'dayPeriod');
+		$localizedLiterals['eras'] = $this->parseLocalizedEras($model);
+
+		return $this->localizedLiterals[(string)$locale] = $localizedLiterals;
+	}
+
+	/**
 	 * Formats provided dateTime object.
 	 *
 	 * Format rules defined in $parsedFormat array are used. Localizable literals
@@ -488,74 +556,6 @@ class DatesReader {
 		}
 
 		return $parsedFormat;
-	}
-
-	/**
-	 * Returns parsed date or time format basing on locale and desired format
-	 * length.
-	 *
-	 * When third parameter ($length) equals 'default', default format for a
-	 * locale will be used.
-	 *
-	 * @param \F3\FLOW3\I18n\Locale $locale
-	 * @param string $type A type of format (date, time)
-	 * @param string $length A length of format (full, long, medium, short) or 'default' to use default one from CLDR
-	 * @return mixed An array representing parsed format or FALSE on failure
-	 * @author Karol Gusak <firstname@lastname.eu>
-	 */
-	protected function getParsedFormat(\F3\FLOW3\I18n\Locale $locale, $type, $length) {
-		if (isset($this->parsedFormatsIndices[(string)$locale][$type][$length])) {
-			return $this->parsedFormats[$this->parsedFormatsIndices[(string)$locale][$type][$length]];
-		}
-
-		$model = $this->cldrRepository->getModelCollection('main', $locale);
-
-		if ($length === 'default') {
-			$defaultChoice = $model->getRawArray('dates/calendars/calendar/type="gregorian"/' . $type . 'Formats/default');
-			$defaultChoice = array_keys($defaultChoice);
-			$length = \F3\FLOW3\I18n\Cldr\CldrParser::getValueOfAttributeByName($defaultChoice[0], 'choice');
-		}
-
-		$format = $model->getElement('dates/calendars/calendar/type="gregorian"/' . $type . 'Formats/' . $type . 'FormatLength/type="' . $length . '"/' . $type . 'Format/pattern');
-
-		if (empty($format)) {
-			return FALSE;
-		}
-
-		if ($type === 'dateTime') {
-				// DateTime is a simple format like this: '{0} {1}' which denotes where to insert date and time, it needs not to be parsed
-			$parsedFormat = $format;
-		} else {
-			$parsedFormat = $this->parseFormat($format);
-		}
-
-		$this->parsedFormatsIndices[(string)$locale][$type][$length] = $format;
-		return $this->parsedFormats[$format] = $parsedFormat;
-	}
-
-	/**
-	 * Returns literals array for locale provided.
-	 *
-	 * If array was not generated earlier, it will be generated and cached.
-	 *
-	 * @param \F3\FLOW3\I18n\Locale $locale
-	 * @return array An array with localized literals
-	 * @author Karol Gusak <firstname@lastname.eu>
-	 */
-	protected function getLocalizedLiteralsForLocale(\F3\FLOW3\I18n\Locale $locale) {
-		if (isset($this->localizedLiterals[(string)$locale])) {
-			return $this->localizedLiterals[(string)$locale];
-		}
-
-		$model = $this->cldrRepository->getModelCollection('main', $locale);
-
-		$localizedLiterals['months'] = $this->parseLocalizedLiterals($model, 'month');
-		$localizedLiterals['days'] = $this->parseLocalizedLiterals($model, 'day');
-		$localizedLiterals['quarters'] = $this->parseLocalizedLiterals($model, 'quarter');
-		$localizedLiterals['dayPeriods'] = $this->parseLocalizedLiterals($model, 'dayPeriod');
-		$localizedLiterals['eras'] = $this->parseLocalizedEras($model);
-
-		return $this->localizedLiterals[(string)$locale] = $localizedLiterals;
 	}
 
 	/**

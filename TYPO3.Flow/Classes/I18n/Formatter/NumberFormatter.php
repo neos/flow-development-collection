@@ -29,7 +29,7 @@ namespace F3\FLOW3\I18n\Formatter;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */
-class NumberFormatter {
+class NumberFormatter implements \F3\FLOW3\I18n\Formatter\FormatterInterface {
 
 	/**
 	 * @var \F3\FLOW3\I18n\Cldr\Reader\NumbersReader
@@ -52,6 +52,7 @@ class NumberFormatter {
 	 * @param \F3\FLOW3\I18n\Locale $locale Locale to use
 	 * @param string $styleProperties Integer-indexed array of formatter-specific style properties (can be empty)
 	 * @return string String representation of $value provided, or (string)$value
+	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @api
 	 */
 	public function format($value, \F3\FLOW3\I18n\Locale $locale, array $styleProperties = array()) {

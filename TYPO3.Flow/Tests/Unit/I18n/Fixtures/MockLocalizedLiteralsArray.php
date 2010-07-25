@@ -40,7 +40,10 @@ return array(
 		'format' => array(
 			'narrow' => array('pm' => 'p.m.'),
 			'abbreviated' => array('pm' => 'p.m.'),
-			'wide' => array('pm' => 'p.m.'),
+			'wide' => array(
+				'am' => 'a.m.',
+				'pm' => 'p.m.',
+			),
 		),
 		'stand-alone' => array(
 			'narrow' => array('pm' => 'p.m.'),

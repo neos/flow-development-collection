@@ -77,6 +77,30 @@ class UtilityTest extends \F3\Testing\BaseTestCase {
 		$returnedResult = Utility::extractLocaleTagFromFilename($filename);
 		$this->assertEquals($expectedResult, $returnedResult);
 	}
+
+	/**
+	 * Data provider for stringBeginsWith() method.
+	 *
+	 * @return array
+	 * @author Karol Gusak <firstname@lastname.eu>
+	 */
+	public function testStrings() {
+		return array(
+			array('teststring', 'test', TRUE),
+			array('foo', 'bar', FALSE),
+			array('baz', '', TRUE),
+		);
+	}
+
+	/**
+	 * @test
+	 * @dataProvider testStrings
+	 * @author Karol Gusak <firstname@lastname.eu>
+	 */
+	public function stringBeginsWithWorks($haystack, $needle, $expectedResult) {
+		$returnedResult = Utility::stringBeginsWith($haystack, $needle);
+		$this->assertEquals($expectedResult, $returnedResult);
+	}
 }
 
 ?>

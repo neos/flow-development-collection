@@ -286,6 +286,65 @@ class NumbersReader {
 	}
 
 	/**
+	 * Returns parsed number format basing on locale and desired format length
+	 * if provided.
+	 *
+	 * When third parameter ($length) equals 'default', default format for a
+	 * locale will be used.
+	 *
+	 * @param \F3\FLOW3\I18n\Locale $locale
+	 * @param string $type A type of format (decimal, percent, currency)
+	 * @param string $length A length of format (full, long, medium, short) or 'default' to use default one
+	 * @return mixed An array representing parsed format or FALSE on failure
+	 * @author Karol Gusak <firstname@lastname.eu>
+	 */
+	public function getParsedFormat(\F3\FLOW3\I18n\Locale $locale, $type, $length = 'default') {
+		if (isset($this->parsedFormatsIndices[(string)$locale][$type][$length])) {
+			return $this->parsedFormats[$this->parsedFormatsIndices[(string)$locale][$type][$length]];
+		}
+
+		if ($length === 'default') {
+			$formatPath = 'numbers/' . $type . 'Formats/' . $type . 'FormatLength/' . $type . 'Format/pattern';
+		} else {
+			$formatPath = 'numbers/' . $type . 'Formats/' . $type . 'FormatLength/type="' . $length . '/' . $type . 'Format/pattern';
+		}
+
+		$model = $this->cldrRepository->getModelCollection('main', $locale);
+		$format = $model->getElement($formatPath);
+
+		if (empty($format)) {
+			return FALSE;
+		}
+
+		$parsedFormat = $this->parseFormat($format);
+
+		$this->parsedFormatsIndices[(string)$locale][$type][$length] = $format;
+		return $this->parsedFormats[$format] = $parsedFormat;
+	}
+
+	/**
+	 * Returns symbols array for provided locale.
+	 *
+	 * Symbols are elements defined in tag symbols from CLDR. They define
+	 * localized versions of various number-related elements, like decimal
+	 * separator, group separator or minus sign.
+	 *
+	 * Symbols arrays for every requested locale are cached.
+	 *
+	 * @param \F3\FLOW3\I18n\Locale $locale
+	 * @return array Symbols array
+	 * @author Karol Gusak <firstname@lastname.eu>
+	 */
+	public function getLocalizedSymbolsForLocale(\F3\FLOW3\I18n\Locale $locale) {
+		if (isset($this->localizedSymbols[(string)$locale])) {
+			return $this->localizedSymbols[(string)$locale];
+		}
+
+		$model = $this->cldrRepository->getModelCollection('main', $locale);
+		return $this->localizedSymbols[(string)$locale] = $model->getRawArray('numbers/symbols');
+	}
+
+	/**
 	 * Formats provided float or integer.
 	 *
 	 * Format rules defined in $parsedFormat array are used. Localizable symbols
@@ -478,65 +537,6 @@ class NumbersReader {
 		}
 
 		return $parsedFormat;
-	}
-
-	/**
-	 * Returns parsed number format basing on locale and desired format length
-	 * if provided.
-	 *
-	 * When third parameter ($length) equals 'default', default format for a
-	 * locale will be used.
-	 *
-	 * @param \F3\FLOW3\I18n\Locale $locale
-	 * @param string $type A type of format (decimal, percent, currency)
-	 * @param string $length A length of format (full, long, medium, short) or 'default' to use default one
-	 * @return mixed An array representing parsed format or FALSE on failure
-	 * @author Karol Gusak <firstname@lastname.eu>
-	 */
-	protected function getParsedFormat(\F3\FLOW3\I18n\Locale $locale, $type, $length) {
-		if (isset($this->parsedFormatsIndices[(string)$locale][$type][$length])) {
-			return $this->parsedFormats[$this->parsedFormatsIndices[(string)$locale][$type][$length]];
-		}
-
-		if ($length === 'default') {
-			$formatPath = 'numbers/' . $type . 'Formats/' . $type . 'FormatLength/' . $type . 'Format/pattern';
-		} else {
-			$formatPath = 'numbers/' . $type . 'Formats/' . $type . 'FormatLength/type="' . $length . '/' . $type . 'Format/pattern';
-		}
-
-		$model = $this->cldrRepository->getModelCollection('main', $locale);
-		$format = $model->getElement($formatPath);
-
-		if (empty($format)) {
-			return FALSE;
-		}
-
-		$parsedFormat = $this->parseFormat($format);
-
-		$this->parsedFormatsIndices[(string)$locale][$type][$length] = $format;
-		return $this->parsedFormats[$format] = $parsedFormat;
-	}
-
-	/**
-	 * Returns symbols array for provided locale.
-	 *
-	 * Symbols are elements defined in tag symbols from CLDR. They define
-	 * localized versions of various number-related elements, like decimal
-	 * separator, group separator or minus sign.
-	 *
-	 * Symbols arrays for every requested locale are cached.
-	 *
-	 * @param \F3\FLOW3\I18n\Locale $locale
-	 * @return array Symbols array
-	 * @author Karol Gusak <firstname@lastname.eu>
-	 */
-	public function getLocalizedSymbolsForLocale(\F3\FLOW3\I18n\Locale $locale) {
-		if (isset($this->localizedSymbols[(string)$locale])) {
-			return $this->localizedSymbols[(string)$locale];
-		}
-
-		$model = $this->cldrRepository->getModelCollection('main', $locale);
-		return $this->localizedSymbols[(string)$locale] = $model->getRawArray('numbers/symbols');
 	}
 }
 
