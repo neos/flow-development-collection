@@ -240,12 +240,12 @@ class NumbersReader {
 	 *
 	 * @param mixed $number Float or int, can be negative, can be NaN or infinite
 	 * @param \F3\FLOW3\I18n\Locale $locale
-	 * @param string $length One of: full, long, medium, short, or 'default' in order to not use $length parameter
-	 * @return string Formatted number. Will return string-casted version of $number if there is no pattern for given $locale / $length
+	 * @param string $formatLength One of: full, long, medium, short, or 'default' in order to not use $formatLength parameter
+	 * @return string Formatted number. Will return string-casted version of $number if there is no pattern for given $locale / $formatLength
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function formatDecimalNumber($number, \F3\FLOW3\I18n\Locale $locale, $length = 'default') {
-		return $this->doFormattingWithParsedFormat($number, $this->getParsedFormat($locale, 'decimal', $length), $this->getLocalizedSymbolsForLocale($locale));
+	public function formatDecimalNumber($number, \F3\FLOW3\I18n\Locale $locale, $formatLength = 'default') {
+		return $this->doFormattingWithParsedFormat($number, $this->getParsedFormat($locale, 'decimal', $formatLength), $this->getLocalizedSymbolsForLocale($locale));
 	}
 
 	/**
@@ -257,12 +257,12 @@ class NumbersReader {
 	 *
 	 * @param mixed $number Float or int, can be negative, can be NaN or infinite
 	 * @param \F3\FLOW3\I18n\Locale $locale
-	 * @param string $length One of: full, long, medium, short, or 'default' in order to not use $length parameter
-	 * @return string Formatted number. Will return string-casted version of $number if there is no pattern for given $locale / $length
+	 * @param string $formatLength One of: full, long, medium, short, or 'default' in order to not use $formatLength parameter
+	 * @return string Formatted number. Will return string-casted version of $number if there is no pattern for given $locale / $formatLength
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function formatPercentNumber($number, \F3\FLOW3\I18n\Locale $locale, $length = 'default') {
-		return $this->doFormattingWithParsedFormat($number, $this->getParsedFormat($locale, 'percent', $length), $this->getLocalizedSymbolsForLocale($locale));
+	public function formatPercentNumber($number, \F3\FLOW3\I18n\Locale $locale, $formatLength = 'default') {
+		return $this->doFormattingWithParsedFormat($number, $this->getParsedFormat($locale, 'percent', $formatLength), $this->getLocalizedSymbolsForLocale($locale));
 	}
 
 	/**
@@ -277,48 +277,49 @@ class NumbersReader {
 	 * @param mixed $number Float or int, can be negative, can be NaN or infinite
 	 * @param \F3\FLOW3\I18n\Locale $locale
 	 * @param string $currency Currency symbol (or name)
-	 * @param string $length One of: full, long, medium, short, or 'default' in order to not use $length parameter
-	 * @return string Formatted number. Will return string-casted version of $number if there is no pattern for given $locale / $length
+	 * @param string $formatLength One of: full, long, medium, short, or 'default' in order to not use $formatLength parameter
+	 * @return string Formatted number. Will return string-casted version of $number if there is no pattern for given $locale / $formatLength
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function formatCurrencyNumber($number, \F3\FLOW3\I18n\Locale $locale, $currency, $length = 'default') {
-		return $this->doFormattingWithParsedFormat($number, $this->getParsedFormat($locale, 'currency', $length), $this->getLocalizedSymbolsForLocale($locale), $currency);
+	public function formatCurrencyNumber($number, \F3\FLOW3\I18n\Locale $locale, $currency, $formatLength = 'default') {
+		return $this->doFormattingWithParsedFormat($number, $this->getParsedFormat($locale, 'currency', $formatLength), $this->getLocalizedSymbolsForLocale($locale), $currency);
 	}
 
 	/**
 	 * Returns parsed number format basing on locale and desired format length
 	 * if provided.
 	 *
-	 * When third parameter ($length) equals 'default', default format for a
+	 * When third parameter ($formatLength) equals 'default', default format for a
 	 * locale will be used.
 	 *
 	 * @param \F3\FLOW3\I18n\Locale $locale
-	 * @param string $type A type of format (decimal, percent, currency)
-	 * @param string $length A length of format (full, long, medium, short) or 'default' to use default one
-	 * @return mixed An array representing parsed format or FALSE on failure
+	 * @param string $formatType A type of format (decimal, percent, currency)
+	 * @param string $formatLength A length of format (full, long, medium, short) or 'default' to use default one
+	 * @return array An array representing parsed format
+	 * @throws \F3\FLOW3\I18n\Cldr\Reader\Exception\UnableToFindFormatException When there is no proper format string in CLDR
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function getParsedFormat(\F3\FLOW3\I18n\Locale $locale, $type, $length = 'default') {
-		if (isset($this->parsedFormatsIndices[(string)$locale][$type][$length])) {
-			return $this->parsedFormats[$this->parsedFormatsIndices[(string)$locale][$type][$length]];
+	public function getParsedFormat(\F3\FLOW3\I18n\Locale $locale, $formatType, $formatLength = 'default') {
+		if (isset($this->parsedFormatsIndices[(string)$locale][$formatType][$formatLength])) {
+			return $this->parsedFormats[$this->parsedFormatsIndices[(string)$locale][$formatType][$formatLength]];
 		}
 
-		if ($length === 'default') {
-			$formatPath = 'numbers/' . $type . 'Formats/' . $type . 'FormatLength/' . $type . 'Format/pattern';
+		if ($formatLength === 'default') {
+			$formatPath = 'numbers/' . $formatType . 'Formats/' . $formatType . 'FormatLength/' . $formatType . 'Format/pattern';
 		} else {
-			$formatPath = 'numbers/' . $type . 'Formats/' . $type . 'FormatLength/type="' . $length . '/' . $type . 'Format/pattern';
+			$formatPath = 'numbers/' . $formatType . 'Formats/' . $formatType . 'FormatLength/type="' . $formatLength . '/' . $formatType . 'Format/pattern';
 		}
 
 		$model = $this->cldrRepository->getModelCollection('main', $locale);
 		$format = $model->getElement($formatPath);
 
 		if (empty($format)) {
-			return FALSE;
+			throw new \F3\FLOW3\I18n\Cldr\Reader\Exception\UnableToFindFormatException('Number format was not found. Please check whether CLDR repository is valid.', 1280218995);
 		}
 
 		$parsedFormat = $this->parseFormat($format);
 
-		$this->parsedFormatsIndices[(string)$locale][$type][$length] = $format;
+		$this->parsedFormatsIndices[(string)$locale][$formatType][$formatLength] = $format;
 		return $this->parsedFormats[$format] = $parsedFormat;
 	}
 
@@ -444,14 +445,15 @@ class NumbersReader {
 	 * documentation for this class for details what is missing.
 	 *
 	 * @param string $format
-	 * @return mixed Parsed format (or FALSE when unsupported format string detected)
+	 * @return array Parsed format
+	 * @throws \F3\FLOW3\I18n\Cldr\Reader\Exception\UnsupportedFormatException When unsupported format characters encountered
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @see \F3\FLOW3\I18n\Cldr\Reader\DatesReader::$parsedFormats
 	 */
 	protected function parseFormat($format) {
 		foreach (array('E', '@', '*', '\'') as $unsupportedFeature) {
 			if (strpos($format, $unsupportedFeature) !== FALSE) {
-				return FALSE;
+				throw new \F3\FLOW3\I18n\Cldr\Reader\Exception\UnsupportedFormatException('Encountered unsupported format characters in format string.', 1280219449);
 			}
 		}
 

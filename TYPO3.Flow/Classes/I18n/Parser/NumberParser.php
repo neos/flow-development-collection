@@ -55,17 +55,17 @@ class NumberParser {
 	 *
 	 * @param string $numberToParse Number to be parsed
 	 * @param \F3\FLOW3\I18n\Locale $locale Locale to use
-	 * @param string $type Type of format: decimal, percent, currency
+	 * @param string $formatType Type of format: decimal, percent, currency
 	 * @param string $mode Work mode, one of: strict, lenient
 	 * @return mixed Parsed float number or FALSE on failure
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @api
 	 */
-	public function parse($numberToParse, \F3\FLOW3\I18n\Locale $locale, $type = 'decimal', $mode = 'strict') {
+	public function parse($numberToParse, \F3\FLOW3\I18n\Locale $locale, $formatType = 'decimal', $mode = 'strict') {
 		if ($mode === 'strict') {
-			return $this->doParsingInStrictMode($numberToParse, $locale, $type);
+			return $this->doParsingInStrictMode($numberToParse, $locale, $formatType);
 		} elseif ($mode === 'lenient') {
-			return $this->doParsingInLenientMode($numberToParse, $locale, $type);
+			return $this->doParsingInLenientMode($numberToParse, $locale, $formatType);
 		} else {
 			throw new \F3\FLOW3\I18n\Parser\Exception\UnsupportedParserModeException('Parsing mode "' . $mode . '" is not supported by NumberParser.', 1279723128);
 		}
@@ -76,12 +76,12 @@ class NumberParser {
 	 *
 	 * @param string $numberToParse Number to be parsed
 	 * @param \F3\FLOW3\I18n\Locale $locale Locale to use
-	 * @param string $type Type of format: decimal, percent, currency
+	 * @param string $formatType Type of format: decimal, percent, currency
 	 * @return mixed Parsed float number or FALSE on failure
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	protected function doParsingInStrictMode($numberToParse, \F3\FLOW3\I18n\Locale $locale, $type) {
-		$parsedFormat = $this->numbersReader->getParsedFormat($locale, $type);
+	protected function doParsingInStrictMode($numberToParse, \F3\FLOW3\I18n\Locale $locale, $formatType) {
+		$parsedFormat = $this->numbersReader->getParsedFormat($locale, $formatType);
 		$localizedSymbols = $this->numbersReader->getLocalizedSymbolsForLocale($locale);
 
 		$numberIsNegative = FALSE;
@@ -139,12 +139,12 @@ class NumberParser {
 	 *
 	 * @param string $numberToParse Number to be parsed
 	 * @param \F3\FLOW3\I18n\Locale $locale Locale to use
-	 * @param string $type Type of format: decimal, percent, currency
+	 * @param string $formatType Type of format: decimal, percent, currency
 	 * @return mixed Parsed float number or FALSE on failure
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @todo Implement lenient parsing
 	 */
-	protected function doParsingInLenientMode($numberToParse, \F3\FLOW3\I18n\Locale $locale, $type) {
+	protected function doParsingInLenientMode($numberToParse, \F3\FLOW3\I18n\Locale $locale, $formatType) {
 		return FALSE;
 	}
 }

@@ -263,13 +263,13 @@ class NumbersReaderTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @test
 	 * @dataProvider unsupportedFormats
+	 * @expectedException \F3\FLOW3\I18n\Cldr\Reader\Exception\UnsupportedFormatException
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function unsupportedFormatsAreNotParsed($format) {
+	public function throwsExceptionWhenUnsupportedFormatsEncountered($format) {
 		$reader = $this->getAccessibleMock('F3\FLOW3\I18n\Cldr\Reader\NumbersReader', array('dummy'));
 
 		$result = $reader->_call('parseFormat', $format);
-		$this->assertEquals(FALSE, $result);
 	}
 }
 

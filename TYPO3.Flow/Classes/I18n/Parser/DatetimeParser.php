@@ -66,18 +66,18 @@ class DatetimeParser {
 	 *
 	 * @param string $datetimeToParse Date and/or time to be parsed
 	 * @param \F3\FLOW3\I18n\Locale $locale Locale to use
-	 * @param string $type A type of format (date, time, datetime)
-	 * @param string $length A length of format (default, full, long, medium, short)
+	 * @param string $formatType A type of format (date, time, datetime)
+	 * @param string $formatLength A length of format (default, full, long, medium, short)
 	 * @param string $mode Work mode, one of: strict, lenient
 	 * @return mixed \DateTime object or FALSE on failure
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @api
 	 */
-	public function parse($datetimeToParse, \F3\FLOW3\I18n\Locale $locale, $type = 'date', $length = 'default', $mode = 'strict') {
+	public function parse($datetimeToParse, \F3\FLOW3\I18n\Locale $locale, $formatType = 'date', $formatLength = 'default', $mode = 'strict') {
 		if ($mode === 'strict') {
-			return $this->doParsingInStrictMode($datetimeToParse, $locale, $type, $length);
+			return $this->doParsingInStrictMode($datetimeToParse, $locale, $formatType, $formatLength);
 		} elseif ($mode === 'lenient') {
-			return $this->doParsingInLenientMode($datetimeToParse, $locale, $type, $length);
+			return $this->doParsingInLenientMode($datetimeToParse, $locale, $formatType, $formatLength);
 		} else {
 			throw new \F3\FLOW3\I18n\Parser\Exception\UnsupportedParserModeException('Parsing mode "' . $mode . '" is not supported by DatetimeParser.', 1279724707);
 		}
@@ -88,13 +88,13 @@ class DatetimeParser {
 	 *
 	 * @param string $datetimeToParse Date/time to be parsed
 	 * @param \F3\FLOW3\I18n\Locale $locale Locale to use
-	 * @param string $type Type of format: decimal, percent, currency
-	 * @param string $length A length of format (default, full, long, medium, short)
+	 * @param string $formatType Type of format: decimal, percent, currency
+	 * @param string $formatLength A length of format (default, full, long, medium, short)
 	 * @return mixed \DateTime object or FALSE on failure
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	protected function doParsingInStrictMode($datetimeToParse, \F3\FLOW3\I18n\Locale $locale, $type, $length) {
-		$parsedFormat = $this->datesReader->getParsedFormat($locale, $type, $length);
+	protected function doParsingInStrictMode($datetimeToParse, \F3\FLOW3\I18n\Locale $locale, $formatType, $formatLength) {
+		$parsedFormat = $this->datesReader->getParsedFormat($locale, $formatType, $formatLength);
 		$localizedLiterals = $this->datesReader->getLocalizedLiteralsForLocale($locale);
 
 		$datetimeAttributes = array(
@@ -120,22 +120,22 @@ class DatetimeParser {
 					} else throw new \F3\FLOW3\I18n\Parser\Exception\InvalidParseStringException('Expected literal was not found.', 1279966164);
 				}
 
-				$lengthOfSubformat = strlen($subformat);
+				$formatLengthOfSubformat = strlen($subformat);
 				$numberOfCharactersToRemove = 0;
 
 				switch ($subformat[0]) {
 					case 'h':
 					case 'K':
-						$hour = $this->extractAndCheckNumber($datetimeToParse, ($lengthOfSubformat === 2), 1, 12);
-						$numberOfCharactersToRemove = ($lengthOfSubformat === 1 && $hour < 10) ? 1 : 2;
+						$hour = $this->extractAndCheckNumber($datetimeToParse, ($formatLengthOfSubformat === 2), 1, 12);
+						$numberOfCharactersToRemove = ($formatLengthOfSubformat === 1 && $hour < 10) ? 1 : 2;
 						if ($subformat[0] === 'h' && $hour === 12) $hour = 0;
 						$datetimeAttributes['hour'] = $hour;
 						$using12HourClock = TRUE;
 						break;
 					case 'k':
 					case 'H':
-						$hour = $this->extractAndCheckNumber($datetimeToParse, ($lengthOfSubformat === 2), 1, 24);
-						$numberOfCharactersToRemove = ($lengthOfSubformat === 1 && $hour < 10) ? 1 : 2;
+						$hour = $this->extractAndCheckNumber($datetimeToParse, ($formatLengthOfSubformat === 2), 1, 24);
+						$numberOfCharactersToRemove = ($formatLengthOfSubformat === 1 && $hour < 10) ? 1 : 2;
 						if ($subformat[0] === 'k' && $hour === 24) $hour = 0;
 						$datetimeAttributes['hour'] = $hour;
 						break;
@@ -149,31 +149,31 @@ class DatetimeParser {
 						} else throw new \F3\FLOW3\I18n\Parser\Exception\InvalidParseStringException('Expected localized AM or PM literal was not found.', 1279964396);
 						break;
 					case 'm':
-						$minute = $this->extractAndCheckNumber($datetimeToParse, ($lengthOfSubformat === 2), 0, 59);
-						$numberOfCharactersToRemove = ($lengthOfSubformat === 1 && $minute < 10) ? 1 : 2;
+						$minute = $this->extractAndCheckNumber($datetimeToParse, ($formatLengthOfSubformat === 2), 0, 59);
+						$numberOfCharactersToRemove = ($formatLengthOfSubformat === 1 && $minute < 10) ? 1 : 2;
 						$datetimeAttributes['minute'] = $minute;
 						break;
 					case 's':
-						$second = $this->extractAndCheckNumber($datetimeToParse, ($lengthOfSubformat === 2), 0, 59);
-						$numberOfCharactersToRemove = ($lengthOfSubformat === 1 && $second < 10) ? 1 : 2;
+						$second = $this->extractAndCheckNumber($datetimeToParse, ($formatLengthOfSubformat === 2), 0, 59);
+						$numberOfCharactersToRemove = ($formatLengthOfSubformat === 1 && $second < 10) ? 1 : 2;
 						$datetimeAttributes['second'] = $second;
 						break;
 					case 'd':
-						$dayOfTheMonth = $this->extractAndCheckNumber($datetimeToParse, ($lengthOfSubformat === 2), 1, 31);
-						$numberOfCharactersToRemove = ($lengthOfSubformat === 1 && $dayOfTheMonth < 10) ? 1 : 2;
+						$dayOfTheMonth = $this->extractAndCheckNumber($datetimeToParse, ($formatLengthOfSubformat === 2), 1, 31);
+						$numberOfCharactersToRemove = ($formatLengthOfSubformat === 1 && $dayOfTheMonth < 10) ? 1 : 2;
 						$datetimeAttributes['day'] = $dayOfTheMonth;
 						break;
 					case 'M':
 					case 'L':
-						$typeOfLiteral = ($subformat[0] === 'L') ? 'stand-alone' : 'format';
-						if ($lengthOfSubformat <= 2) {
-							$month = $this->extractAndCheckNumber($datetimeToParse, ($lengthOfSubformat === 2), 1, 12);
-							$numberOfCharactersToRemove = ($lengthOfSubformat === 1 && $month < 10) ? 1 : 2;
-						} else if ($lengthOfSubformat <= 4) {
-							$lenghtOfLiteral = ($lengthOfSubformat === 3) ? 'abbreviated' : 'wide';
+						$formatTypeOfLiteral = ($subformat[0] === 'L') ? 'stand-alone' : 'format';
+						if ($formatLengthOfSubformat <= 2) {
+							$month = $this->extractAndCheckNumber($datetimeToParse, ($formatLengthOfSubformat === 2), 1, 12);
+							$numberOfCharactersToRemove = ($formatLengthOfSubformat === 1 && $month < 10) ? 1 : 2;
+						} else if ($formatLengthOfSubformat <= 4) {
+							$lenghtOfLiteral = ($formatLengthOfSubformat === 3) ? 'abbreviated' : 'wide';
 
 							$month = 0;
-							foreach ($localizedLiterals['months'][$typeOfLiteral][$lenghtOfLiteral] as $monthId => $monthName) {
+							foreach ($localizedLiterals['months'][$formatTypeOfLiteral][$lenghtOfLiteral] as $monthId => $monthName) {
 								if (\F3\FLOW3\I18n\Utility::stringBeginsWith($datetimeToParse, $monthName)) {
 									$month = $monthId;
 									break;
@@ -185,13 +185,13 @@ class DatetimeParser {
 						$datetimeAttributes['month'] = $month;
 						break;
 					case 'y':
-						if ($lengthOfSubformat === 2) {
+						if ($formatLengthOfSubformat === 2) {
 							$year = substr($datetimeToParse, 0, 2);
 							$numberOfCharactersToRemove = 2;
 						} else {
-							$year = substr($datetimeToParse, 0, $lengthOfSubformat);
+							$year = substr($datetimeToParse, 0, $formatLengthOfSubformat);
 
-							for ($i = $lengthOfSubformat; $i < strlen($datetimeToParse); ++$i) {
+							for ($i = $formatLengthOfSubformat; $i < strlen($datetimeToParse); ++$i) {
 								if (is_numeric($datetimeToParse[$i])) {
 									$year .= $datetimeToParse[$i];
 								} else {
@@ -211,7 +211,7 @@ class DatetimeParser {
 						break;
 					case 'v':
 					case 'z':
-						if ($lengthOfSubformat <= 3) {
+						if ($formatLengthOfSubformat <= 3) {
 							$pattern = self::PATTERN_MATCH_TIMEZONE_ABBREVIATION;
 						} else {
 							$pattern = self::PATTERN_MATCH_TIMEZONE_TZ;
@@ -270,13 +270,13 @@ class DatetimeParser {
 	 *
 	 * @param string $datetimeToParse Date/time to be parsed
 	 * @param \F3\FLOW3\I18n\Locale $locale Locale to use
-	 * @param string $type Type of format: decimal, percent, currency
-	 * @param string $length A length of format (default, full, long, medium, short)
+	 * @param string $formatType Type of format: decimal, percent, currency
+	 * @param string $formatLength A length of format (default, full, long, medium, short)
 	 * @return mixed \DateTime object or FALSE on failure
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @todo Implement lenient parsing
 	 */
-	protected function doParsingInLenientMode($stringValue, \F3\FLOW3\I18n\Locale $locale, $type, $length) {
+	protected function doParsingInLenientMode($stringValue, \F3\FLOW3\I18n\Locale $locale, $formatType, $formatLength) {
 		return FALSE;
 	}
 

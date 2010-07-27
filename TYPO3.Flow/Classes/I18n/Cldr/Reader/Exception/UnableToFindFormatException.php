@@ -1,8 +1,8 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\I18n\Formatter;
+namespace F3\FLOW3\I18n\Cldr\Reader\Exception;
 
-/* *
+/*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
@@ -23,51 +23,14 @@ namespace F3\FLOW3\I18n\Formatter;
  *                                                                        */
 
 /**
- * Formatter for date and time.
+ * The "Unable To Find Format" exception
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */
-class DatetimeFormatter implements \F3\FLOW3\I18n\Formatter\FormatterInterface {
+class UnableToFindFormatException extends \F3\FLOW3\I18n\Exception {
 
-	/**
-	 * @var \F3\FLOW3\I18n\Cldr\Reader\DatesReader
-	 */
-	protected $datesReader;
-
-	/**
-	 * @param \F3\FLOW3\I18n\Cldr\Reader\DatesReader $datesReader
-	 * @return void
-	 * @author Karol Gusak <firstname@lastname.eu>
-	 */
-	public function injectDatesReader(\F3\FLOW3\I18n\Cldr\Reader\DatesReader $datesReader) {
-		$this->datesReader = $datesReader;
-	}
-
-	/**
-	 * Formats provided value using optional style properties
-	 *
-	 * @param mixed $value Formatter-specific variable to format (can be integer, \DateTime, etc)
-	 * @param \F3\FLOW3\I18n\Locale $locale Locale to use
-	 * @param string $styleProperties Integer-indexed array of formatter-specific style properties (can be empty)
-	 * @return string String representation of $value provided, or (string)$value
-	 * @author Karol Gusak <firstname@lastname.eu>
-	 * @api
-	 */
-	public function format($value, \F3\FLOW3\I18n\Locale $locale, array $styleProperties = array()) {
-		$style = (isset($styleProperties[0])) ? $styleProperties[0] : 'datetime';
-		$formatLength = (isset($styleProperties[1])) ? $styleProperties[1] : 'default';
-
-		switch ($style) {
-			case 'date':
-				return $this->datesReader->formatDate($value, $locale, $formatLength);
-			case 'time':
-				return $this->datesReader->formatTime($value, $locale, $formatLength);
-			default:
-				return $this->datesReader->formatDateTime($value, $locale, $formatLength);
-		}
-	}
 }
 
 ?>

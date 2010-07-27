@@ -100,9 +100,9 @@ class DatetimeParserTest extends \F3\Testing\BaseTestCase {
 	 * @dataProvider parseStrings
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function strictParsingWorks($datetimeToParse, $expectedResult, $type, $parsedFormat) {
+	public function strictParsingWorks($datetimeToParse, $expectedResult, $formatType, $parsedFormat) {
 		$mockReader = $this->getMock('F3\FLOW3\I18n\Cldr\Reader\DatesReader');
-		$mockReader->expects($this->at(0))->method('getParsedFormat')->with($this->dummyLocale, $type)->will($this->returnValue($parsedFormat));
+		$mockReader->expects($this->at(0))->method('getParsedFormat')->with($this->dummyLocale, $formatType)->will($this->returnValue($parsedFormat));
 		$mockReader->expects($this->at(1))->method('getLocalizedLiteralsForLocale')->with($this->dummyLocale)->will($this->returnValue($this->mockLocalizedLiterals));
 
 		$expectedDateTime = new \DateTime();
@@ -113,7 +113,7 @@ class DatetimeParserTest extends \F3\Testing\BaseTestCase {
 		$parser = new \F3\FLOW3\I18n\Parser\DatetimeParser();
 		$parser->injectDatesReader($mockReader);
 
-		$result = $parser->parse($datetimeToParse, $this->dummyLocale, $type, 'default', 'strict');
+		$result = $parser->parse($datetimeToParse, $this->dummyLocale, $formatType, 'default', 'strict');
 		$this->assertEquals($expectedDateTime, $result);
 	}
 }

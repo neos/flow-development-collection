@@ -57,13 +57,13 @@ class NumberFormatter implements \F3\FLOW3\I18n\Formatter\FormatterInterface {
 	 */
 	public function format($value, \F3\FLOW3\I18n\Locale $locale, array $styleProperties = array()) {
 		$style = (isset($styleProperties[0])) ? $styleProperties[0] : 'decimal';
-		$length = 'default';
+		$formatLength = 'default';
 
 		switch ($style) {
 			case 'percent':
-				return $this->numbersReader->formatPercentNumber($value, $locale, $length);
+				return $this->numbersReader->formatPercentNumber($value, $locale, $formatLength);
 			default:
-				return $this->numbersReader->formatDecimalNumber($value, $locale, $length);
+				return $this->numbersReader->formatDecimalNumber($value, $locale, $formatLength);
 		}
 	}
 }
