@@ -30,46 +30,242 @@ namespace F3\FLOW3\I18n\Formatter;
  */
 class DatetimeFormatterTest extends \F3\Testing\BaseTestCase {
 
+//	/**
+//	 * @var \F3\FLOW3\I18n\Locale
+//	 */
+//	protected $dummyLocale;
+//
+//	/**
+//	 * @var \DateTime
+//	 */
+//	protected $dummyDateTime;
+//
+//	/**
+//	 * @return void
+//	 * @author Karol Gusak <firstname@lastname.eu>
+//	 */
+//	public function setUp() {
+//		$this->dummyLocale = new \F3\FLOW3\I18n\Locale('en_GB');
+//		$this->dummyDateTime = new \DateTime('now');
+//	}
+//
+//	/**
+//	 * @test
+//	 * @author Karol Gusak <firstname@lastname.eu>
+//	 */
+//	public function formatWorks() {
+//		$mockReader = $this->getMock('F3\FLOW3\I18n\Cldr\Reader\DatesReader');
+//		$mockReader->expects($this->at(0))->method('formatDateTime')->with($this->dummyDateTime, $this->dummyLocale, 'default')->will($this->returnValue('bar1'));
+//		$mockReader->expects($this->at(1))->method('formatDate')->with($this->dummyDateTime, $this->dummyLocale, 'default')->will($this->returnValue('bar2'));
+//		$mockReader->expects($this->at(2))->method('formatTime')->with($this->dummyDateTime, $this->dummyLocale, 'full')->will($this->returnValue('bar3'));
+//
+//		$formatter = new \F3\FLOW3\I18n\Formatter\DatetimeFormatter();
+//		$formatter->injectDatesReader($mockReader);
+//
+//		$result = $formatter->format($this->dummyDateTime, $this->dummyLocale);
+//		$this->assertEquals('bar1', $result);
+//
+//		$result = $formatter->format($this->dummyDateTime, $this->dummyLocale, array('date'));
+//		$this->assertEquals('bar2', $result);
+//
+//		$result = $formatter->format($this->dummyDateTime, $this->dummyLocale, array('time', 'full'));
+//		$this->assertEquals('bar3', $result);
+//	}
+
 	/**
+	 * Dummy locale used in methods where locale is needed.
+	 *
 	 * @var \F3\FLOW3\I18n\Locale
 	 */
 	protected $dummyLocale;
 
 	/**
+	 * @var array
+	 */
+	protected $mockLocalizedLiterals;
+
+	/**
+	 * DateTime object used in tests
+	 *
+	 * Timestamp for: 2010-06-10T17:49:36+00:00
+	 *
+	 * Please note that timezone for this object is changed, so it actually
+	 * represents date one hour later.
+	 *
 	 * @var \DateTime
 	 */
-	protected $dummyDateTime;
+	protected $sampleDateTime;
 
 	/**
 	 * @return void
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function setUp() {
-		$this->dummyLocale = new \F3\FLOW3\I18n\Locale('en_GB');
-		$this->dummyDateTime = new \DateTime('now');
+		$this->dummyLocale = new \F3\FLOW3\I18n\Locale('en');
+		$this->mockLocalizedLiterals = require(__DIR__ . '/../Fixtures/MockLocalizedLiteralsArray.php');
+		$this->sampleDateTime = new \DateTime("@1276192176");
+		$this->sampleDateTime->setTimezone(new \DateTimeZone('Europe/London'));
+	}
+
+	/**
+	 * Setting cache expectations is partially same for many tests, so it's been
+	 * extracted to this method.
+	 *
+	 * @return array
+	 * @author Karol Gusak <firstname@lastname.eu>
+	 */
+	public function createCacheExpectations($mockCache, $useEmptyMockLiterals = FALSE) {
+		$mockCache->expects($this->at(0))->method('has')->with('parsedFormats')->will($this->returnValue(TRUE));
+		$mockCache->expects($this->at(1))->method('get')->with('parsedFormats')->will($this->returnValue(array()));
+		$mockCache->expects($this->at(2))->method('has')->with('parsedFormatsIndices')->will($this->returnValue(TRUE));
+		$mockCache->expects($this->at(3))->method('get')->with('parsedFormatsIndices')->will($this->returnValue(array()));
+		$mockCache->expects($this->at(4))->method('has')->with('localizedLiterals')->will($this->returnValue(TRUE));
+
+		if ($useEmptyMockLiterals) {
+			$mockCache->expects($this->at(5))->method('get')->with('localizedLiterals')->will($this->returnValue(array()));
+		} else {
+			$mockCache->expects($this->at(5))->method('get')->with('localizedLiterals')->will($this->returnValue(array((string)$this->dummyLocale => $this->mockLocalizedLiterals)));
+		}
+
+	}
+
+	/**
+	 * Data provider with example parsed formats, and expected results.
+	 *
+	 * @return array
+	 * @author Karol Gusak <firstname@lastname.eu>
+	 */
+	public function parsedFormatsAndFormattedDatetimes() {
+		return array(
+			array(array('yyyy', array('.'), 'MM', array('.'), 'dd', array(' '), 'G'), '2010.06.10 AD'),
+			array(array('HH', array(':'), 'mm', array(':'), 'ss', array(' '), 'zzz'), '18:49:36 BST'),
+			array(array('EEE', array(','), array(' '), 'MMM', array(' '), 'd', array(','), array(' '), array('\''), 'yy'), 'Thu, Jun 10, \'10'),
+			array(array('hh', array(' '), array('o'), array('\''), array('clock'), array(' '), 'a', array(','), array(' '), 'zzzz'), '06 o\'clock p.m., Europe/London'),
+			array(array('QQ', 'yy', 'LLLL', 'D', 'F', 'EEEE'), '0210January1612Thursday'),
+			array(array('QQQ', 'MMMMM', 'EEEEE', 'w', 'k'), 'Q26T2318'),
+			array(array('GGGGG', 'K', 'S', 'W', 'qqqq', 'GGGG', 'V'), 'A6032nd quarterAnno Domini'),
+		);
 	}
 
 	/**
 	 * @test
+	 * @dataProvider parsedFormatsAndFormattedDatetimes
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function formatWorks() {
-		$mockReader = $this->getMock('F3\FLOW3\I18n\Cldr\Reader\DatesReader');
-		$mockReader->expects($this->at(0))->method('formatDateTime')->with($this->dummyDateTime, $this->dummyLocale, 'default')->will($this->returnValue('bar1'));
-		$mockReader->expects($this->at(1))->method('formatDate')->with($this->dummyDateTime, $this->dummyLocale, 'default')->will($this->returnValue('bar2'));
-		$mockReader->expects($this->at(2))->method('formatTime')->with($this->dummyDateTime, $this->dummyLocale, 'full')->will($this->returnValue('bar3'));
+	public function parsedFormatsAreUsedCorrectly($parsedFormat, $expectedResult) {
+		$formatter = $this->getAccessibleMock('F3\FLOW3\I18n\Formatter\DatetimeFormatter', array('dummy'));
+
+		$result = $formatter->_call('doFormattingWithParsedFormat', $this->sampleDateTime, $parsedFormat, $this->mockLocalizedLiterals);
+		$this->assertEquals($expectedResult, $result);
+	}
+
+	/**
+	 * Data provider with custom formats, theirs parsed versions, and expected
+	 * results.
+	 *
+	 * @return array
+	 * @author Karol Gusak <firstname@lastname.eu>
+	 */
+	public function customFormatsAndFormattedDatetimes() {
+		return array(
+			array('yyyy.MM.dd G', array('yyyy', array('.'), 'MM', array('.'), 'dd', array(' '), 'G'), '2010.06.10 AD'),
+		);
+	}
+
+	/**
+	 * @test
+	 * @dataProvider customFormatsAndFormattedDatetimes
+	 * @author Karol Gusak <firstname@lastname.eu>
+	 */
+	public function formattingUsingCustomPatternWorks($format, $parsedFormat, $expectedResult) {
+		$mockDatesReader = $this->getMock('F3\FLOW3\I18n\Cldr\Reader\DatesReader');
+		$mockDatesReader->expects($this->once())->method('parseCustomFormat')->with($format)->will($this->returnValue($parsedFormat));
+		$mockDatesReader->expects($this->once())->method('getLocalizedLiteralsForLocale')->with($this->dummyLocale)->will($this->returnValue($this->mockLocalizedLiterals));
 
 		$formatter = new \F3\FLOW3\I18n\Formatter\DatetimeFormatter();
-		$formatter->injectDatesReader($mockReader);
+		$formatter->injectDatesReader($mockDatesReader);
 
-		$result = $formatter->format($this->dummyDateTime, $this->dummyLocale);
-		$this->assertEquals('bar1', $result);
+		$result = $formatter->formatDateTimeWithCustomPattern($this->sampleDateTime, $format, $this->dummyLocale);
+		$this->assertEquals($expectedResult, $result);
+	}
 
-		$result = $formatter->format($this->dummyDateTime, $this->dummyLocale, array('date'));
-		$this->assertEquals('bar2', $result);
+	/**
+	 * Data provider with parsed date formats, time formats, dateTime formats,
+	 * and expected results.
+	 *
+	 * @return array
+	 * @author Karol Gusak <firstname@lastname.eu>
+	 */
+	public function sampleDataForDateAndTimeFormatting() {
+		return array(
+			array(
+				array('EEEE', array(', '), 'y', array(' '), 'MMMM', array(' '), 'dd'),
+				array('HH', array(':'), 'mm', array(':'), 'ss', array(' '), 'zzzz'),
+				'{1} {0}',
+				'Thursday, 2010 January 10 18:49:36 Europe/London',
+			),
+		);
+	}
 
-		$result = $formatter->format($this->dummyDateTime, $this->dummyLocale, array('time', 'full'));
-		$this->assertEquals('bar3', $result);
+	/**
+	 * @test
+	 * @dataProvider sampleDataForDateAndTimeFormatting
+	 * @author Karol Gusak <firstname@lastname.eu>
+	 */
+	public function formatDateTimeWorks($parsedDateFormat, $parsedTimeFormat, $dateTimeFormat, $expectedResult) {
+		$formatLength = 'full';
+		$mockDatesReader = $this->getMock('F3\FLOW3\I18n\Cldr\Reader\DatesReader');
+		$mockDatesReader->expects($this->at(0))->method('parseFormatFromCldr')->with($this->dummyLocale, 'date', $formatLength)->will($this->returnValue($parsedDateFormat));
+		$mockDatesReader->expects($this->at(1))->method('getLocalizedLiteralsForLocale')->with($this->dummyLocale)->will($this->returnValue($this->mockLocalizedLiterals));
+		$mockDatesReader->expects($this->at(2))->method('parseFormatFromCldr')->with($this->dummyLocale, 'time', $formatLength)->will($this->returnValue($parsedTimeFormat));
+		$mockDatesReader->expects($this->at(3))->method('getLocalizedLiteralsForLocale')->with($this->dummyLocale)->will($this->returnValue($this->mockLocalizedLiterals));
+		$mockDatesReader->expects($this->at(4))->method('parseFormatFromCldr')->with($this->dummyLocale, 'dateTime', $formatLength)->will($this->returnValue($dateTimeFormat));
+
+		$formatter = new \F3\FLOW3\I18n\Formatter\DatetimeFormatter();
+		$formatter->injectDatesReader($mockDatesReader);
+
+		$result = $formatter->formatDateTime($this->sampleDateTime, $this->dummyLocale, $formatLength);
+		$this->assertEquals($expectedResult, $result);
+	}
+
+	/**
+	 * Data provider with parsed formats, expected results, and format types.
+	 *
+	 * @return array
+	 * @author Karol Gusak <firstname@lastname.eu>
+	 */
+	public function sampleDataForSpecificFormattingMethods() {
+		return array(
+			array(
+				array('EEEE', array(', '), 'y', array(' '), 'MMMM', array(' '), 'dd'),
+				'Thursday, 2010 January 10',
+				'date'
+			),
+			array(
+				array('HH', array(':'), 'mm', array(':'), 'ss', array(' '), 'zzzz'),
+				'18:49:36 Europe/London',
+				'time'
+			),
+		);
+	}
+
+	/**
+	 * @test
+	 * @dataProvider sampleDataForSpecificFormattingMethods
+	 * @author Karol Gusak <firstname@lastname.eu>
+	 */
+	public function specificFormattingMethodsWork($parsedFormat, $expectedResult, $formatType) {
+		$formatLength = 'full';
+		$mockDatesReader = $this->getMock('F3\FLOW3\I18n\Cldr\Reader\DatesReader');
+		$mockDatesReader->expects($this->once())->method('parseFormatFromCldr')->with($this->dummyLocale, $formatType, $formatLength)->will($this->returnValue($parsedFormat));
+		$mockDatesReader->expects($this->once())->method('getLocalizedLiteralsForLocale')->with($this->dummyLocale)->will($this->returnValue($this->mockLocalizedLiterals));
+
+		$formatter = new \F3\FLOW3\I18n\Formatter\DatetimeFormatter();
+		$formatter->injectDatesReader($mockDatesReader);
+
+		$name = 'format' . ucfirst($formatType);
+		$result = $formatter->$name($this->sampleDateTime, $this->dummyLocale, $formatLength);
+		$this->assertEquals($expectedResult, $result);
 	}
 }
 

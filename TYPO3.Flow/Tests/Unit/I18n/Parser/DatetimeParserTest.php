@@ -102,7 +102,7 @@ class DatetimeParserTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function strictParsingWorks($datetimeToParse, $expectedResult, $formatType, $parsedFormat) {
 		$mockReader = $this->getMock('F3\FLOW3\I18n\Cldr\Reader\DatesReader');
-		$mockReader->expects($this->at(0))->method('getParsedFormat')->with($this->dummyLocale, $formatType)->will($this->returnValue($parsedFormat));
+		$mockReader->expects($this->at(0))->method('parseFormatFromCldr')->with($this->dummyLocale, $formatType)->will($this->returnValue($parsedFormat));
 		$mockReader->expects($this->at(1))->method('getLocalizedLiteralsForLocale')->with($this->dummyLocale)->will($this->returnValue($this->mockLocalizedLiterals));
 
 		$expectedDateTime = new \DateTime();

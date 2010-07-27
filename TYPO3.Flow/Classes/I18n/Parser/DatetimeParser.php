@@ -94,7 +94,7 @@ class DatetimeParser {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	protected function doParsingInStrictMode($datetimeToParse, \F3\FLOW3\I18n\Locale $locale, $formatType, $formatLength) {
-		$parsedFormat = $this->datesReader->getParsedFormat($locale, $formatType, $formatLength);
+		$parsedFormat = $this->datesReader->parseFormatFromCldr($locale, $formatType, $formatLength);
 		$localizedLiterals = $this->datesReader->getLocalizedLiteralsForLocale($locale);
 
 		$datetimeAttributes = array(

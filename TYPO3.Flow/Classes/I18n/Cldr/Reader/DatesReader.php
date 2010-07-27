@@ -38,6 +38,16 @@ namespace F3\FLOW3\I18n\Cldr\Reader;
 class DatesReader {
 
 	/**
+	 * @var \F3\FLOW3\I18n\Cldr\CldrRepository
+	 */
+	protected $cldrRepository;
+
+	/**
+	 * @var \F3\FLOW3\Cache\Frontend\VariableFrontend
+	 */
+	protected $cache;
+
+	/**
 	 * Static array of date / time formatters supported by this class, and
 	 * maximal lengths particular formats can get.
 	 *
@@ -83,16 +93,6 @@ class DatesReader {
 		'v' => 4,
 		'V' => 4,
 	);
-
-	/**
-	 * @var \F3\FLOW3\I18n\Cldr\CldrRepository
-	 */
-	protected $cldrRepository;
-
-	/**
-	 * @var \F3\FLOW3\Cache\Frontend\VariableFrontend
-	 */
-	protected $cache;
 
 	/**
 	 * An array of parsed formats, indexed by format strings.
@@ -174,15 +174,9 @@ class DatesReader {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function initializeObject() {
-		if ($this->cache->has('parsedFormats')) {
+		if ($this->cache->has('parsedFormats') && $this->cache->has('parsedFormatsIndices') && $this->cache->has('localizedLiterals')) {
 			$this->parsedFormats = $this->cache->get('parsedFormats');
-		}
-
-		if ($this->cache->has('parsedFormatsIndices')) {
 			$this->parsedFormatsIndices = $this->cache->get('parsedFormatsIndices');
-		}
-
-		if ($this->cache->has('localizedLiterals')) {
 			$this->localizedLiterals = $this->cache->get('localizedLiterals');
 		}
 	}
@@ -200,81 +194,6 @@ class DatesReader {
 	}
 
 	/**
-	 * Returns dateTime formatted by custom format, string provided in parameter.
-	 *
-	 * Format must obey syntax defined in CLDR specification, excluding
-	 * unimplemented features (see documentation for this class).
-	 *
-	 * Format is remembered in this classes cache and won't be parsed again for
-	 * some time.
-	 *
-	 * @param \DateTime $dateTime PHP object representing particular point in time
-	 * @param string $format Format string
-	 * @param \F3\FLOW3\I18n\Locale $locale A locale used for finding literals array
-	 * @return string Formatted date / time. Unimplemented subformats in format string will be silently ignored
-	 * @author Karol Gusak <firstname@lastname.eu>
-	 */
-	public function formatDateTimeWithCustomPattern(\DateTime $dateTime, $format, \F3\FLOW3\I18n\Locale $locale) {
-		if (isset($this->parsedFormats[$format])) {
-			$parsedFormat = $this->parsedFormats[$format];
-		} else {
-			$this->parsedFormats[$format] = $this->parseFormat($format);
-		}
-
-		return $this->doFormattingWithParsedFormat($dateTime, $this->parsedFormats[$format], $this->getLocalizedLiteralsForLocale($locale));
-	}
-
-	/**
-	 * Formats date with format string for date defined in CLDR for particular
-	 * locale.
-	 *
-	 * @param \DateTime $dateTime PHP object representing particular point in time
-	 * @param \F3\FLOW3\I18n\Locale $locale
-	 * @param string $formatLength One of: full, long, medium, short, or 'default' in order to use default length from CLDR
-	 * @return string Formatted date
-	 * @author Karol Gusak <firstname@lastname.eu>
-	 */
-	public function formatDate(\DateTime $date, \F3\FLOW3\I18n\Locale $locale, $formatLength = 'default') {
-		return $this->doFormattingWithParsedFormat($date, $this->getParsedFormat($locale, 'date', $formatLength), $this->getLocalizedLiteralsForLocale($locale));
-	}
-
-	/**
-	 * Formats time with format string for time defined in CLDR for particular
-	 * locale.
-	 *
-	 * @param \DateTime $dateTime PHP object representing particular point in time
-	 * @param \F3\FLOW3\I18n\Locale $locale
-	 * @param string $formatLength One of: full, long, medium, short, or 'default' in order to use default length from CLDR
-	 * @return string Formatted time
-	 * @author Karol Gusak <firstname@lastname.eu>
-	 */
-	public function formatTime(\DateTime $time, \F3\FLOW3\I18n\Locale $locale, $formatLength = 'default') {
-		return $this->doFormattingWithParsedFormat($time, $this->getParsedFormat($locale, 'time', $formatLength), $this->getLocalizedLiteralsForLocale($locale));
-	}
-
-	/**
-	 * Formats dateTime with format string for date and time defined in CLDR for
-	 * particular locale.
-	 *
-	 * First date and time are formatted separately, and then dateTime format
-	 * from CLDR is used to place date and time in correct order.
-	 *
-	 * @param \DateTime $dateTime PHP object representing particular point in time
-	 * @param \F3\FLOW3\I18n\Locale $locale
-	 * @param string $formatLength One of: full, long, medium, short, or 'default' in order to use default length from CLDR
-	 * @return string Formatted date and time
-	 * @author Karol Gusak <firstname@lastname.eu>
-	 */
-	public function formatDateTime(\DateTime $dateTime, \F3\FLOW3\I18n\Locale $locale, $formatLength = 'default') {
-		$formattedDate = $this->formatDate($dateTime, $locale, $formatLength);
-		$formattedTime = $this->formatTime($dateTime, $locale, $formatLength);
-
-		$format = $this->getParsedFormat($locale, 'dateTime', $formatLength);
-
-		return str_replace(array('{0}', '{1}'), array($formattedTime, $formattedDate), $format);
-	}
-
-	/**
 	 * Returns parsed date or time format basing on locale and desired format
 	 * length.
 	 *
@@ -288,7 +207,7 @@ class DatesReader {
 	 * @throws \F3\FLOW3\I18n\Cldr\Reader\Exception\UnableToFindFormatException When there is no proper format string in CLDR
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function getParsedFormat(\F3\FLOW3\I18n\Locale $locale, $formatType, $formatLength) {
+	public function parseFormatFromCldr(\F3\FLOW3\I18n\Locale $locale, $formatType, $formatLength) {
 		if (isset($this->parsedFormatsIndices[(string)$locale][$formatType][$formatLength])) {
 			return $this->parsedFormats[$this->parsedFormatsIndices[(string)$locale][$formatType][$formatLength]];
 		}
@@ -298,24 +217,42 @@ class DatesReader {
 		if ($formatLength === 'default') {
 			$defaultChoice = $model->getRawArray('dates/calendars/calendar/type="gregorian"/' . $formatType . 'Formats/default');
 			$defaultChoice = array_keys($defaultChoice);
-			$formatLength = \F3\FLOW3\I18n\Cldr\CldrParser::getValueOfAttributeByName($defaultChoice[0], 'choice');
+			$realFormatLength = \F3\FLOW3\I18n\Cldr\CldrParser::getValueOfAttributeByName($defaultChoice[0], 'choice');
+		} else {
+			$realFormatLength = $formatLength;
 		}
 
-		$format = $model->getElement('dates/calendars/calendar/type="gregorian"/' . $formatType . 'Formats/' . $formatType . 'FormatLength/type="' . $formatLength . '"/' . $formatType . 'Format/pattern');
+		$format = $model->getElement('dates/calendars/calendar/type="gregorian"/' . $formatType . 'Formats/' . $formatType . 'FormatLength/type="' . $realFormatLength . '"/' . $formatType . 'Format/pattern');
 
 		if (empty($format)) {
-			throw new \F3\FLOW3\I18n\Cldr\Reader\Exception\UnableToFindFormatException('Datetime format was not found. Please check whether CLDR repository is valid.', 1280218994);
+			throw new \F3\FLOW3\I18n\Cldr\Reader\Exception\UnableToFindFormatException('Date / time format was not found. Please check whether CLDR repository is valid.', 1280218994);
 		}
 
 		if ($formatType === 'dateTime') {
 				// DateTime is a simple format like this: '{0} {1}' which denotes where to insert date and time, it needs not to be parsed
 			$parsedFormat = $format;
 		} else {
-			$parsedFormat = $this->parseFormat($format);
+			$parsedFormat = $this->doParsing($format);
 		}
 
 		$this->parsedFormatsIndices[(string)$locale][$formatType][$formatLength] = $format;
 		return $this->parsedFormats[$format] = $parsedFormat;
+	}
+
+	/**
+	 * Returns parsed date or time format string provided as parameter.
+	 *
+	 *
+	 * @param string $format Format string to parse
+	 * @return array An array representing parsed format
+	 * @author Karol Gusak <firstname@lastname.eu>
+	 */
+	public function parseCustomFormat($format) {
+		if (isset($this->parsedFormats[$format])) {
+			return $this->parsedFormats[$format];
+		}
+
+		return $this->parsedFormats[$format] = $this->doParsing($format);
 	}
 
 	/**
@@ -344,154 +281,6 @@ class DatesReader {
 	}
 
 	/**
-	 * Formats provided dateTime object.
-	 *
-	 * Format rules defined in $parsedFormat array are used. Localizable literals
-	 * are replaced with elelements from $localizedLiterals array.
-	 *
-	 * @param \DateTime $dateTime PHP object representing particular point in time
-	 * @param array $parsedFormat An array describing format (as in $parsedFormats property)
-	 * @param array $localizedLiterals An array with literals to use (as in $localizedLiterals property)
-	 * @return string Formatted date / time
-	 * @author Karol Gusak <firstname@lastname.eu>
-	 */
-	protected function doFormattingWithParsedFormat(\DateTime $dateTime, array $parsedFormat, array $localizedLiterals) {
-		$formattedDateTime = '';
-
-		foreach ($parsedFormat as $subformat) {
-			if (is_array($subformat)) {
-					// This is just a simple string we use literally
-				$formattedDateTime .= $subformat[0];
-			} else {
-				$formattedDateTime .= $this->doFormattingForSubpattern($dateTime, $subformat, $localizedLiterals);
-			}
-		}
-
-		return $formattedDateTime;
-	}
-
-	/**
-	 * Formats date or time element according to the subpattern provided.
-	 * 
-	 * Returns a string with formatted one "part" of DateTime object (seconds,
-	 * day, month etc).
-	 *
-	 * Not all pattern symbols defined in CLDR are supported; some of the rules
-	 * are simplified. Please see the documentation for this class for details.
-	 *
-	 * Cases in the code are ordered in such way that probably mostly used are
-	 * on the top (but they are also grouped by similarity).
-	 *
-	 * @param \DateTime $dateTime PHP object representing particular point in time
-	 * @param string $subformat One element of format string (e.g., 'yyyy', 'mm', etc)
-	 * @return string Formatted part of date / time
-	 * @throws \F3\FLOW3\I18n\Exception\InvalidArgumentException When $subformat use symbol that is not recognized
-	 * @author Karol Gusak <firstname@lastname.eu>
-	 */
-	protected function doFormattingForSubpattern(\DateTime $dateTime, $subformat, array $localizedLiterals) {
-		$formatLengthOfSubformat = strlen($subformat);
-
-		switch ($subformat[0]) {
-			case 'h':
-				return $this->padString($dateTime->format('g'), $formatLengthOfSubformat);
-			case 'H':
-				return $this->padString($dateTime->format('G'), $formatLengthOfSubformat);
-			case 'K':
-				$hour = (int)($dateTime->format('g'));
-				if ($hour === 12) $hour = 0;
-				return $this->padString($hour, $formatLengthOfSubformat);
-			case 'k':
-				$hour = (int)($dateTime->format('G'));
-				if ($hour === 0) $hour = 24;
-				return $this->padString($hour, $formatLengthOfSubformat);
-			case 'a':
-				return $localizedLiterals['dayPeriods']['format']['wide'][$dateTime->format('a')];
-			case 'm':
-				return $this->padString((int)($dateTime->format('i')), $formatLengthOfSubformat);
-			case 's':
-				return $this->padString((int)($dateTime->format('s')), $formatLengthOfSubformat);
-			case 'S':
-				return (string)round($dateTime->format('u'), $formatLengthOfSubformat);
-			case 'd':
-				return $this->padString($dateTime->format('j'), $formatLengthOfSubformat);
-			case 'D':
-				return $this->padString((int)($dateTime->format('z') + 1), $formatLengthOfSubformat);
-			case 'F':
-				return (int)(($dateTime->format('j') + 6) / 7);
-			case 'M':
-			case 'L':
-				$month = (int)$dateTime->format('n');
-				$formatType = ($subformat[0] === 'L') ? 'stand-alone' : 'format';
-				if ($formatLengthOfSubformat <= 2) {
-					return $this->padString($month, $formatLengthOfSubformat);
-				} else if ($formatLengthOfSubformat === 3) {
-					return $localizedLiterals['months'][$formatType]['abbreviated'][$month];
-				} else if ($formatLengthOfSubformat === 4) {
-					return $localizedLiterals['months'][$formatType]['wide'][$month];
-				} else {
-					return $localizedLiterals['months'][$formatType]['narrow'][$month];
-				}
-			case 'y':
-				$year = (int)$dateTime->format('Y');
-				if ($formatLengthOfSubformat === 2) $year %= 100;
-				return $this->padString($year, $formatLengthOfSubformat);
-			case 'E':
-				$day = strtolower($dateTime->format('D'));
-				if ($formatLengthOfSubformat <= 3) {
-					return $localizedLiterals['days']['format']['abbreviated'][$day];
-				} else if ($formatLengthOfSubformat === 4) {
-					return $localizedLiterals['days']['format']['wide'][$day];
-				} else {
-					return $localizedLiterals['days']['format']['narrow'][$day];
-				}
-			case 'w':
-				return $this->padString($dateTime->format('W'), $formatLengthOfSubformat);
-			case 'W':
-				return (string)((((int)$dateTime->format('W') - 1) % 4) + 1);
-			case 'Q':
-			case 'q':
-				$quarter = (int)($dateTime->format('n') / 3.1) + 1;
-				$formatType = ($subformat[0] === 'q') ? 'stand-alone' : 'format';
-				if ($formatLengthOfSubformat <= 2) {
-					return $this->padString($quarter, $formatLengthOfSubformat);
-				} else if ($formatLengthOfSubformat === 3) {
-					return $localizedLiterals['quarters'][$formatType]['abbreviated'][$quarter];
-				} else {
-					return $localizedLiterals['quarters'][$formatType]['wide'][$quarter];
-				}
-			case 'G':
-				$era = (int)($dateTime->format('Y') > 0);
-				if ($formatLengthOfSubformat <= 3) {
-					return $localizedLiterals['eras']['eraAbbr'][$era];
-				} else if ($formatLengthOfSubformat === 4) {
-					return $localizedLiterals['eras']['eraNames'][$era];
-				} else {
-					return $localizedLiterals['eras']['eraNarrow'][$era];
-				}
-			case 'v':
-			case 'z':
-				if ($formatLengthOfSubformat <= 3) {
-					return $dateTime->format('T');
-				} else {
-					return $dateTime->format('e');
-				}
-			case 'Y':
-			case 'u':
-			case 'l':
-			case 'g':
-			case 'e':
-			case 'c':
-			case 'A':
-			case 'Z':
-			case 'V':
-					// Silently ignore unsupported formats
-				return '';
-			default:
-				throw new \F3\FLOW3\I18n\Exception\InvalidArgumentException('Unexpected format symbol, "' . $subformat[0] . '" detected for date / time formatting.', 1276106678);
-		}
-	}
-
-	/**
 	 * Parses a date / time format (with syntax defined in CLDR).
 	 *
 	 * Not all features from CLDR specification are implemented. Please see the
@@ -503,7 +292,7 @@ class DatesReader {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @see \F3\FLOW3\I18n\Cldr\Reader\DatesReader::$parsedFormats
 	 */
-	protected function parseFormat($format) {
+	protected function doParsing($format) {
 		$parsedFormat = array();
 		$formatLengthOfFormat = strlen($format);
 		$duringCompletionOfLiteral = FALSE;
@@ -609,18 +398,6 @@ class DatesReader {
 		}
 
 		return $data;
-	}
-
-	/**
-	 * Pads given string to the specified length with zeros.
-	 *
-	 * @param string $string
-	 * @param int $formatLength
-	 * @return string Padded string (can be unchanged if $formatLength is lower than length of string)
-	 * @author Karol Gusak <firstname@lastname.eu>
-	 */
-	protected function padString($string, $formatLength) {
-		return str_pad($string, $formatLength, '0', \STR_PAD_LEFT);
 	}
 }
 
