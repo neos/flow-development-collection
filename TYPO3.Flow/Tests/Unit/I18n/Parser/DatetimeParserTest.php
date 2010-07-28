@@ -113,7 +113,7 @@ class DatetimeParserTest extends \F3\Testing\BaseTestCase {
 		$parser = new \F3\FLOW3\I18n\Parser\DatetimeParser();
 		$parser->injectDatesReader($mockReader);
 
-		$result = $parser->parse($datetimeToParse, $this->dummyLocale, $formatType, 'default', 'strict');
+		$result = $parser->parseDatetime($datetimeToParse, $this->dummyLocale, $formatType, 'default', 'strict');
 		$this->assertEquals($expectedDateTime, $result);
 	}
 }

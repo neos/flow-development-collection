@@ -73,14 +73,33 @@ class DatetimeParser {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @api
 	 */
-	public function parse($datetimeToParse, \F3\FLOW3\I18n\Locale $locale, $formatType = 'date', $formatLength = 'default', $mode = 'strict') {
+	public function parseDatetime($datetimeToParse, \F3\FLOW3\I18n\Locale $locale, $formatType = 'date', $formatLength = 'default', $mode = 'strict') {
 		if ($mode === 'strict') {
-			return $this->doParsingInStrictMode($datetimeToParse, $locale, $formatType, $formatLength);
+			$datetimeElements = $this->doParsingInStrictMode($datetimeToParse, $locale, $formatType, $formatLength);
 		} elseif ($mode === 'lenient') {
-			return $this->doParsingInLenientMode($datetimeToParse, $locale, $formatType, $formatLength);
+			$datetimeElements = $this->doParsingInLenientMode($datetimeToParse, $locale, $formatType, $formatLength);
 		} else {
 			throw new \F3\FLOW3\I18n\Parser\Exception\UnsupportedParserModeException('Parsing mode "' . $mode . '" is not supported by DatetimeParser.', 1279724707);
 		}
+
+		if ($datetimeElements === FALSE) {
+			return FALSE;
+		}
+
+			// Set default values for elements that were not parsed (@todo: the year 1970 is maybe not the best default value)
+		if ($datetimeElements['year'] === NULL) $datetimeElements['year'] = 1970;
+		if ($datetimeElements['month'] === NULL) $datetimeElements['month'] = 1;
+		if ($datetimeElements['day'] === NULL) $datetimeElements['day'] = 1;
+		if ($datetimeElements['hour'] === NULL) $datetimeElements['hour'] = 0;
+		if ($datetimeElements['minute'] === NULL) $datetimeElements['minute'] = 0;
+		if ($datetimeElements['second'] === NULL) $datetimeElements['second'] = 0;
+		if ($datetimeElements['timezone'] === NULL) $datetimeElements['timezone'] = 'Europe/London';
+
+		$datetime = new \DateTime();
+		$datetime->setTimezone(new \DateTimeZone($datetimeElements['timezone']));
+		$datetime->setTime($datetimeElements['hour'], $datetimeElements['minute'], $datetimeElements['second']);
+		$datetime->setDate($datetimeElements['year'], $datetimeElements['month'], $datetimeElements['day']);
+		return $datetime;
 	}
 
 	/**
@@ -90,21 +109,21 @@ class DatetimeParser {
 	 * @param \F3\FLOW3\I18n\Locale $locale Locale to use
 	 * @param string $formatType Type of format: decimal, percent, currency
 	 * @param string $formatLength A length of format (default, full, long, medium, short)
-	 * @return mixed \DateTime object or FALSE on failure
+	 * @return mixed array An array with parsed elements or FALSE on failure
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	protected function doParsingInStrictMode($datetimeToParse, \F3\FLOW3\I18n\Locale $locale, $formatType, $formatLength) {
 		$parsedFormat = $this->datesReader->parseFormatFromCldr($locale, $formatType, $formatLength);
 		$localizedLiterals = $this->datesReader->getLocalizedLiteralsForLocale($locale);
 
-		$datetimeAttributes = array(
-			'year' => 1970,
-			'month' => 1,
-			'day' => 1,
-			'hour' => 0,
-			'minute' => 0,
-			'second' => 0,
-			'timezone' => 'Europe/London',
+		$datetimeElements = array(
+			'year' => NULL,
+			'month' => NULL,
+			'day' => NULL,
+			'hour' => NULL,
+			'minute' => NULL,
+			'second' => NULL,
+			'timezone' => NULL,
 		);
 
 		$using12HourClock = FALSE;
@@ -129,7 +148,7 @@ class DatetimeParser {
 						$hour = $this->extractAndCheckNumber($datetimeToParse, ($formatLengthOfSubformat === 2), 1, 12);
 						$numberOfCharactersToRemove = ($formatLengthOfSubformat === 1 && $hour < 10) ? 1 : 2;
 						if ($subformat[0] === 'h' && $hour === 12) $hour = 0;
-						$datetimeAttributes['hour'] = $hour;
+						$datetimeElements['hour'] = $hour;
 						$using12HourClock = TRUE;
 						break;
 					case 'k':
@@ -137,7 +156,7 @@ class DatetimeParser {
 						$hour = $this->extractAndCheckNumber($datetimeToParse, ($formatLengthOfSubformat === 2), 1, 24);
 						$numberOfCharactersToRemove = ($formatLengthOfSubformat === 1 && $hour < 10) ? 1 : 2;
 						if ($subformat[0] === 'k' && $hour === 24) $hour = 0;
-						$datetimeAttributes['hour'] = $hour;
+						$datetimeElements['hour'] = $hour;
 						break;
 					case 'a':
 						$dayPeriods = $localizedLiterals['dayPeriods']['format']['wide'];
@@ -151,17 +170,17 @@ class DatetimeParser {
 					case 'm':
 						$minute = $this->extractAndCheckNumber($datetimeToParse, ($formatLengthOfSubformat === 2), 0, 59);
 						$numberOfCharactersToRemove = ($formatLengthOfSubformat === 1 && $minute < 10) ? 1 : 2;
-						$datetimeAttributes['minute'] = $minute;
+						$datetimeElements['minute'] = $minute;
 						break;
 					case 's':
 						$second = $this->extractAndCheckNumber($datetimeToParse, ($formatLengthOfSubformat === 2), 0, 59);
 						$numberOfCharactersToRemove = ($formatLengthOfSubformat === 1 && $second < 10) ? 1 : 2;
-						$datetimeAttributes['second'] = $second;
+						$datetimeElements['second'] = $second;
 						break;
 					case 'd':
 						$dayOfTheMonth = $this->extractAndCheckNumber($datetimeToParse, ($formatLengthOfSubformat === 2), 1, 31);
 						$numberOfCharactersToRemove = ($formatLengthOfSubformat === 1 && $dayOfTheMonth < 10) ? 1 : 2;
-						$datetimeAttributes['day'] = $dayOfTheMonth;
+						$datetimeElements['day'] = $dayOfTheMonth;
 						break;
 					case 'M':
 					case 'L':
@@ -182,7 +201,7 @@ class DatetimeParser {
 						} else throw new \F3\FLOW3\I18n\Parser\Exception\InvalidParseStringException('Cannot parse formats with narrow month pattern as it is not unique.', 1279965245);
 
 						if ($month === 0) return FALSE;
-						$datetimeAttributes['month'] = $month;
+						$datetimeElements['month'] = $month;
 						break;
 					case 'y':
 						if ($formatLengthOfSubformat === 2) {
@@ -207,7 +226,7 @@ class DatetimeParser {
 						}
 
 						$year = (int)$year;
-						$datetimeAttributes['year'] = $year;
+						$datetimeElements['year'] = $year;
 						break;
 					case 'v':
 					case 'z':
@@ -219,7 +238,7 @@ class DatetimeParser {
 
 						if (preg_match($pattern, $datetimeToParse, $matches) === 0) return FALSE;
 
-						$datetimeAttributes['timezone'] = $matches[0];
+						$datetimeElements['timezone'] = $matches[0];
 						break;
 					case 'D':
 					case 'F':
@@ -246,7 +265,7 @@ class DatetimeParser {
 				}
 
 				if ($using12HourClock && $timeIsPm) {
-					$datetimeAttributes['hour'] += 12;
+					$datetimeElements['hour'] += 12;
 					$timeIsPm = FALSE;
 				}
 
@@ -258,11 +277,7 @@ class DatetimeParser {
 			return FALSE;
 		}
 
-		$datetime = new \DateTime();
-		$datetime->setTimezone(new \DateTimeZone($datetimeAttributes['timezone']));
-		$datetime->setTime($datetimeAttributes['hour'], $datetimeAttributes['minute'], $datetimeAttributes['second']);
-		$datetime->setDate($datetimeAttributes['year'], $datetimeAttributes['month'], $datetimeAttributes['day']);
-		return $datetime;
+		return $datetimeElements;
 	}
 
 	/**
@@ -272,7 +287,7 @@ class DatetimeParser {
 	 * @param \F3\FLOW3\I18n\Locale $locale Locale to use
 	 * @param string $formatType Type of format: decimal, percent, currency
 	 * @param string $formatLength A length of format (default, full, long, medium, short)
-	 * @return mixed \DateTime object or FALSE on failure
+	 * @return mixed array An array with parsed elements or FALSE on failure
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @todo Implement lenient parsing
 	 */

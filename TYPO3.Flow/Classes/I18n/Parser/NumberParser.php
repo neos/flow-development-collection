@@ -61,7 +61,7 @@ class NumberParser {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @api
 	 */
-	public function parse($numberToParse, \F3\FLOW3\I18n\Locale $locale, $formatType = 'decimal', $mode = 'strict') {
+	public function parseNumber($numberToParse, \F3\FLOW3\I18n\Locale $locale, $formatType = 'decimal', $mode = 'strict') {
 		if ($mode === 'strict') {
 			return $this->doParsingInStrictMode($numberToParse, $locale, $formatType);
 		} elseif ($mode === 'lenient') {

@@ -90,7 +90,7 @@ class NumberParserTest extends \F3\Testing\BaseTestCase {
 	 * @return array
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function parseStrings() {
+	public function sampleStringsAndParseFormats() {
 		return array(
 			array('+1 000,50foo', 1000.5, 'decimal', array_merge($this->templateFormat, array('positivePrefix' => '+', 'positiveSuffix' => 'foo'))),
 			array('-98%', -0.98, 'percent', array_merge($this->templateFormat, array('positiveSuffix' => '%', 'negativeSuffix' => '%', 'multiplier' => 100))),
@@ -99,7 +99,7 @@ class NumberParserTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @dataProvider parseStrings
+	 * @dataProvider sampleStringsAndParseFormats
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function strictParsingWorks($numberToParse, $expectedResult, $formatType, $parsedFormat) {
@@ -110,7 +110,7 @@ class NumberParserTest extends \F3\Testing\BaseTestCase {
 		$parser = new \F3\FLOW3\I18n\Parser\NumberParser();
 		$parser->injectNumbersReader($mockReader);
 
-		$result = $parser->parse($numberToParse, $this->dummyLocale, $formatType, 'strict');
+		$result = $parser->parseNumber($numberToParse, $this->dummyLocale, $formatType, 'strict');
 		$this->assertEquals($expectedResult, $result);
 	}
 }
