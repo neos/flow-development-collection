@@ -30,48 +30,6 @@ namespace F3\FLOW3\I18n\Formatter;
  */
 class DatetimeFormatterTest extends \F3\Testing\BaseTestCase {
 
-//	/**
-//	 * @var \F3\FLOW3\I18n\Locale
-//	 */
-//	protected $dummyLocale;
-//
-//	/**
-//	 * @var \DateTime
-//	 */
-//	protected $dummyDateTime;
-//
-//	/**
-//	 * @return void
-//	 * @author Karol Gusak <firstname@lastname.eu>
-//	 */
-//	public function setUp() {
-//		$this->dummyLocale = new \F3\FLOW3\I18n\Locale('en_GB');
-//		$this->dummyDateTime = new \DateTime('now');
-//	}
-//
-//	/**
-//	 * @test
-//	 * @author Karol Gusak <firstname@lastname.eu>
-//	 */
-//	public function formatWorks() {
-//		$mockReader = $this->getMock('F3\FLOW3\I18n\Cldr\Reader\DatesReader');
-//		$mockReader->expects($this->at(0))->method('formatDateTime')->with($this->dummyDateTime, $this->dummyLocale, 'default')->will($this->returnValue('bar1'));
-//		$mockReader->expects($this->at(1))->method('formatDate')->with($this->dummyDateTime, $this->dummyLocale, 'default')->will($this->returnValue('bar2'));
-//		$mockReader->expects($this->at(2))->method('formatTime')->with($this->dummyDateTime, $this->dummyLocale, 'full')->will($this->returnValue('bar3'));
-//
-//		$formatter = new \F3\FLOW3\I18n\Formatter\DatetimeFormatter();
-//		$formatter->injectDatesReader($mockReader);
-//
-//		$result = $formatter->format($this->dummyDateTime, $this->dummyLocale);
-//		$this->assertEquals('bar1', $result);
-//
-//		$result = $formatter->format($this->dummyDateTime, $this->dummyLocale, array('date'));
-//		$this->assertEquals('bar2', $result);
-//
-//		$result = $formatter->format($this->dummyDateTime, $this->dummyLocale, array('time', 'full'));
-//		$this->assertEquals('bar3', $result);
-//	}
-
 	/**
 	 * Dummy locale used in methods where locale is needed.
 	 *
@@ -105,6 +63,26 @@ class DatetimeFormatterTest extends \F3\Testing\BaseTestCase {
 		$this->mockLocalizedLiterals = require(__DIR__ . '/../Fixtures/MockLocalizedLiteralsArray.php');
 		$this->sampleDateTime = new \DateTime("@1276192176");
 		$this->sampleDateTime->setTimezone(new \DateTimeZone('Europe/London'));
+	}
+
+	/**
+	 * @test
+	 * @author Karol Gusak <firstname@lastname.eu>
+	 */
+	public function formatWorks() {
+		$formatter = $this->getAccessibleMock('F3\FLOW3\I18n\Formatter\DatetimeFormatter', array('formatDate', 'formatTime', 'formatDateTime'));
+		$formatter->expects($this->at(0))->method('formatDateTime')->with($this->sampleDateTime, $this->dummyLocale, 'default')->will($this->returnValue('bar1'));
+		$formatter->expects($this->at(1))->method('formatDate')->with($this->sampleDateTime, $this->dummyLocale, 'default')->will($this->returnValue('bar2'));
+		$formatter->expects($this->at(2))->method('formatTime')->with($this->sampleDateTime, $this->dummyLocale, 'full')->will($this->returnValue('bar3'));
+
+		$result = $formatter->format($this->sampleDateTime, $this->dummyLocale);
+		$this->assertEquals('bar1', $result);
+
+		$result = $formatter->format($this->sampleDateTime, $this->dummyLocale, array('date'));
+		$this->assertEquals('bar2', $result);
+
+		$result = $formatter->format($this->sampleDateTime, $this->dummyLocale, array('time', 'full'));
+		$this->assertEquals('bar3', $result);
 	}
 
 	/**
