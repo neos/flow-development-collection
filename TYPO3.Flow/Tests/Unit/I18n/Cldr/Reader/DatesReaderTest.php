@@ -43,9 +43,6 @@ class DatesReaderTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function setUp() {
 		$this->dummyLocale = new \F3\FLOW3\I18n\Locale('en');
-		//$this->mockLocalizedLiterals = require(__DIR__ . '/../../Fixtures/MockLocalizedLiteralsArray.php');
-		//$this->sampleDateTime = new \DateTime("@1276192176");
-		//$this->sampleDateTime->setTimezone(new \DateTimeZone('Europe/London'));
 	}
 
 	/**

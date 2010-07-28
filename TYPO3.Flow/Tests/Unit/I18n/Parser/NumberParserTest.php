@@ -104,7 +104,7 @@ class NumberParserTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function strictParsingWorks($numberToParse, $expectedResult, $formatType, $parsedFormat) {
 		$mockReader = $this->getMock('F3\FLOW3\I18n\Cldr\Reader\NumbersReader');
-		$mockReader->expects($this->at(0))->method('getParsedFormat')->with($this->dummyLocale, $formatType)->will($this->returnValue($parsedFormat));
+		$mockReader->expects($this->at(0))->method('parseFormatFromCldr')->with($this->dummyLocale, $formatType)->will($this->returnValue($parsedFormat));
 		$mockReader->expects($this->at(1))->method('getLocalizedSymbolsForLocale')->with($this->dummyLocale)->will($this->returnValue($this->mockLocalizedSymbols));
 
 		$parser = new \F3\FLOW3\I18n\Parser\NumberParser();

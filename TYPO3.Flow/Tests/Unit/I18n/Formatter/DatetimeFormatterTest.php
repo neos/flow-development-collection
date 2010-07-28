@@ -86,28 +86,6 @@ class DatetimeFormatterTest extends \F3\Testing\BaseTestCase {
 	}
 
 	/**
-	 * Setting cache expectations is partially same for many tests, so it's been
-	 * extracted to this method.
-	 *
-	 * @return array
-	 * @author Karol Gusak <firstname@lastname.eu>
-	 */
-	public function createCacheExpectations($mockCache, $useEmptyMockLiterals = FALSE) {
-		$mockCache->expects($this->at(0))->method('has')->with('parsedFormats')->will($this->returnValue(TRUE));
-		$mockCache->expects($this->at(1))->method('get')->with('parsedFormats')->will($this->returnValue(array()));
-		$mockCache->expects($this->at(2))->method('has')->with('parsedFormatsIndices')->will($this->returnValue(TRUE));
-		$mockCache->expects($this->at(3))->method('get')->with('parsedFormatsIndices')->will($this->returnValue(array()));
-		$mockCache->expects($this->at(4))->method('has')->with('localizedLiterals')->will($this->returnValue(TRUE));
-
-		if ($useEmptyMockLiterals) {
-			$mockCache->expects($this->at(5))->method('get')->with('localizedLiterals')->will($this->returnValue(array()));
-		} else {
-			$mockCache->expects($this->at(5))->method('get')->with('localizedLiterals')->will($this->returnValue(array((string)$this->dummyLocale => $this->mockLocalizedLiterals)));
-		}
-
-	}
-
-	/**
 	 * Data provider with example parsed formats, and expected results.
 	 *
 	 * @return array

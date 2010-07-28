@@ -81,7 +81,7 @@ class NumberParser {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	protected function doParsingInStrictMode($numberToParse, \F3\FLOW3\I18n\Locale $locale, $formatType) {
-		$parsedFormat = $this->numbersReader->getParsedFormat($locale, $formatType);
+		$parsedFormat = $this->numbersReader->parseFormatFromCldr($locale, $formatType);
 		$localizedSymbols = $this->numbersReader->getLocalizedSymbolsForLocale($locale);
 
 		$numberIsNegative = FALSE;

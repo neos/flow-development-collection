@@ -242,7 +242,6 @@ class DatesReader {
 	/**
 	 * Returns parsed date or time format string provided as parameter.
 	 *
-	 *
 	 * @param string $format Format string to parse
 	 * @return array An array representing parsed format
 	 * @author Karol Gusak <firstname@lastname.eu>
