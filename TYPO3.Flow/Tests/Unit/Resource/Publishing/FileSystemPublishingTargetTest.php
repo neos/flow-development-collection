@@ -263,8 +263,8 @@ class FileSystemPublishingTargetTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function mirrorFileCopiesTheGivenFileIfTheSettingSaysSo() {
-		$sourcePathAndFilename = sys_get_temp_dir() . 'FLOW3FileSystemPublishingTargetTestSource';
-		$targetPathAndFilename = sys_get_temp_dir() . 'FLOW3FileSystemPublishingTargetTestTarget';
+		$sourcePathAndFilename = \F3\FLOW3\Utility\Files::concatenatePaths(array(sys_get_temp_dir(), 'FLOW3FileSystemPublishingTargetTestSource'));
+		$targetPathAndFilename = \F3\FLOW3\Utility\Files::concatenatePaths(array(sys_get_temp_dir(), 'FLOW3FileSystemPublishingTargetTestTarget'));
 		
 		file_put_contents($sourcePathAndFilename, 'some data');
 		touch($sourcePathAndFilename, time() - 5);
@@ -291,9 +291,9 @@ class FileSystemPublishingTargetTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function mirrorFileSymLinksTheGivenFileIfTheSettingSaysSo() {
-		$sourcePathAndFilename = sys_get_temp_dir() . 'FLOW3FileSystemPublishingTargetTestSource';
-		$targetPathAndFilename = sys_get_temp_dir() . 'FLOW3FileSystemPublishingTargetTestTarget';
-
+		$sourcePathAndFilename = \F3\FLOW3\Utility\Files::concatenatePaths(array(sys_get_temp_dir(), 'FLOW3FileSystemPublishingTargetTestSource'));
+		$targetPathAndFilename = \F3\FLOW3\Utility\Files::concatenatePaths(array(sys_get_temp_dir(), 'FLOW3FileSystemPublishingTargetTestTarget'));
+		
 		file_put_contents($sourcePathAndFilename, 'some data');
 		touch($sourcePathAndFilename, time() - 5);
 

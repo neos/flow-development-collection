@@ -235,7 +235,7 @@ class PdoBackendTest extends \F3\Testing\BaseTestCase {
 	 */
 	protected function setUpBackend() {
 		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment');
-		$this->fixtureFolder = sys_get_temp_dir() . 'FLOW3PdoBackendTest/';
+		$this->fixtureFolder = \F3\FLOW3\Utility\Files::concatenatePaths(array(sys_get_temp_dir(), 'FLOW3PdoBackendTest/'));
 		\F3\FLOW3\Utility\Files::createDirectoryRecursively($this->fixtureFolder);
 		$this->fixtureDB = uniqid('Cache') . '.db';
 
