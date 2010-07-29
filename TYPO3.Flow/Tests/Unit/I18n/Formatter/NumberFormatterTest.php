@@ -125,8 +125,8 @@ class NumberFormatterTest extends \F3\Testing\BaseTestCase {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function parsedFormatsAreUsedCorrectly($number, $expectedResult, $parsedFormat) {
-		$reader = $this->getAccessibleMock('F3\FLOW3\I18n\Formatter\NumberFormatter', array('dummy'));
-		$result = $reader->_call('doFormattingWithParsedFormat', $number, $parsedFormat, $this->mockLocalizedSymbols);
+		$formatter = $this->getAccessibleMock('F3\FLOW3\I18n\Formatter\NumberFormatter', array('dummy'));
+		$result = $formatter->_call('doFormattingWithParsedFormat', $number, $parsedFormat, $this->mockLocalizedSymbols);
 		$this->assertEquals($expectedResult, $result);
 	}
 

@@ -123,6 +123,22 @@ class Utility {
 
 		return FALSE;
 	}
+
+	/**
+	 * Checks if $haystack string ends with $needle string.
+	 *
+	 * @param string $haystack
+	 * @param string $needle
+	 * @return bool TRUE if $haystack ends with $needle
+	 * @author Karol Gusak <firstname@lastname.eu>
+	 */
+	static public function stringEndsWith($haystack, $needle) {
+		if (substr($haystack, - strlen($needle)) === $needle) {
+			return TRUE;
+		}
+
+		return FALSE;
+	}
 }
 
 ?>

@@ -84,7 +84,7 @@ class UtilityTest extends \F3\Testing\BaseTestCase {
 	 * @return array
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function testStrings() {
+	public function testStringsWithBeginning() {
 		return array(
 			array('teststring', 'test', TRUE),
 			array('foo', 'bar', FALSE),
@@ -94,11 +94,35 @@ class UtilityTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @dataProvider testStrings
+	 * @dataProvider testStringsWithBeginning
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function stringBeginsWithWorks($haystack, $needle, $expectedResult) {
+	public function stringIsFoundAtBeginningOfAnotherString($haystack, $needle, $expectedResult) {
 		$returnedResult = Utility::stringBeginsWith($haystack, $needle);
+		$this->assertEquals($expectedResult, $returnedResult);
+	}
+
+	/**
+	 * Data provider for stringEndsWith() method.
+	 *
+	 * @return array
+	 * @author Karol Gusak <firstname@lastname.eu>
+	 */
+	public function testStringsWithEnding() {
+		return array(
+			array('teststring', 'test', FALSE),
+			array('foo', 'bar', FALSE),
+			array('foobaz', 'baz', TRUE),
+		);
+	}
+
+	/**
+	 * @test
+	 * @dataProvider testStringsWithEnding
+	 * @author Karol Gusak <firstname@lastname.eu>
+	 */
+	public function stringIsFoundAtEndingOfAnotherString($haystack, $needle, $expectedResult) {
+		$returnedResult = Utility::stringEndsWith($haystack, $needle);
 		$this->assertEquals($expectedResult, $returnedResult);
 	}
 }

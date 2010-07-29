@@ -84,34 +84,123 @@ class NumberParserTest extends \F3\Testing\BaseTestCase {
 	}
 
 	/**
-	 * Data provider with valid numbers in strings, expected results and dummy
-	 * parsedFormat arrays to use.
+	 * Sample data for all test methods, with format type, string number to parse,
+	 * expected parsed number, string format, and parsed format.
+	 *
+	 * Note that this data provider has everything needed by any test method, so
+	 * not every element is used by every method.
 	 *
 	 * @return array
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function sampleStringsAndParseFormats() {
+	public function sampleNumbersEasyToParse() {
 		return array(
-			array('+1 000,50foo', 1000.5, 'decimal', array_merge($this->templateFormat, array('positivePrefix' => '+', 'positiveSuffix' => 'foo'))),
-			array('-98%', -0.98, 'percent', array_merge($this->templateFormat, array('positiveSuffix' => '%', 'negativeSuffix' => '%', 'multiplier' => 100))),
+			array('decimal', '01234,5670', 1234.567, '0000.0000#', array_merge($this->templateFormat, array('minDecimalDigits' => 4, 'maxDecimalDigits' => 5, 'minIntegerDigits' => 5))),
+			array('decimal', '0,1', 0.1, '0.0###', array_merge($this->templateFormat, array('minDecimalDigits' => 1, 'maxDecimalDigits' => 4))),
+			array('decimal', '1 000,25', 1000.25, '#,##0.05', array_merge($this->templateFormat, array('maxDecimalDigits' => 2, 'primaryGroupingSize' => 3, 'secondaryGroupingSize' => 3, 'rounding' => 0.05))),
+			array('decimal', '9 999,9', 9999.9, '#,##0.0', array_merge($this->templateFormat, array('maxDecimalDigits' => 3, 'primaryGroupingSize' => 3, 'secondaryGroupingSize' => 3))),
+			array('decimal', '(1 100,0)', -1100.0, '#,##0.0;(#)', array_merge($this->templateFormat, array('minDecimalDigits' => 1, 'maxDecimalDigits' => 1, 'primaryGroupingSize' => 3, 'secondaryGroupingSize' => 3, 'negativePrefix' => '(', 'negativeSuffix' => ')'))),
+			array('decimal', '-1,0', -1.0, '0.0;-#', array_merge($this->templateFormat, array('minDecimalDigits' => 1, 'maxDecimalDigits' => 1, 'negativePrefix' => '-'))),
+			array('decimal', 'd1,0b', 1.0, 'd0.0b', array_merge($this->templateFormat, array('minDecimalDigits' => 1, 'maxDecimalDigits' => 1, 'positivePrefix' => 'd', 'positiveSuffix' => 'b'))),
+			array('percent', '85%', 0.85, '#0%', array_merge($this->templateFormat, array('multiplier' => 100, 'positiveSuffix' => '%', 'negativeSuffix' => '%'))),
+		);
+	}
+
+	/**
+	 * Sample data with structure like in sampleNumbersEasyToParse(), but with
+	 * number harder to parse - only lenient parsing mode should be able to
+	 * parse them.
+	 *
+	 * @return array
+	 * @author Karol Gusak <firstname@lastname.eu>
+	 */
+	public function sampleNumbersHardToParse() {
+		return array(
+			array('decimal', 'foo01234,56780bar', 1234.5678, '0000.0000#', array_merge($this->templateFormat, array('minDecimalDigits' => 4, 'maxDecimalDigits' => 5, 'minIntegerDigits' => 5))),
+			array('decimal', 'foo+2 10 00,33baz', 21000.33, '#,##0.05', array_merge($this->templateFormat, array('maxDecimalDigits' => 2, 'primaryGroupingSize' => 3, 'secondaryGroupingSize' => 3, 'rounding' => 0.05))),
+			array('decimal', '1foo10-', -110, '0.0;#-', array_merge($this->templateFormat, array('minDecimalDigits' => 1, 'maxDecimalDigits' => 1, 'negativePrefix' => '', 'negativeSuffix' => '-'))),
+			array('percent', '%5,3%%', 0.053, '#00.00%', array_merge($this->templateFormat, array('multiplier' => 100, 'positiveSuffix' => '%', 'negativeSuffix' => '%', 'minIntegerDigits' => 2, 'minDecimalDigits' => 2))),
 		);
 	}
 
 	/**
 	 * @test
-	 * @dataProvider sampleStringsAndParseFormats
+	 * @dataProvider sampleNumbersEasyToParse
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function strictParsingWorks($numberToParse, $expectedResult, $formatType, $parsedFormat) {
-		$mockReader = $this->getMock('F3\FLOW3\I18n\Cldr\Reader\NumbersReader');
-		$mockReader->expects($this->at(0))->method('parseFormatFromCldr')->with($this->dummyLocale, $formatType)->will($this->returnValue($parsedFormat));
-		$mockReader->expects($this->at(1))->method('getLocalizedSymbolsForLocale')->with($this->dummyLocale)->will($this->returnValue($this->mockLocalizedSymbols));
+	public function strictParsingWorksCorrectlyForEasyNumbers($formatType, $numberToParse, $expectedParsedNumber, $stringFormat, $parsedFormat) {
+		$parser = $this->getAccessibleMock('F3\FLOW3\I18n\Parser\NumberParser', array('dummy'));
+		$result = $parser->_call('doParsingInStrictMode', $numberToParse, $parsedFormat, $this->mockLocalizedSymbols);
+		$this->assertEquals($expectedParsedNumber, $result);
+	}
+
+	/**
+	 * @test
+	 * @dataProvider sampleNumbersHardToParse
+	 * @author Karol Gusak <firstname@lastname.eu>
+	 */
+	public function strictParsingReturnsFalseForHardNumbers($formatType, $numberToParse, $expectedParsedNumber, $stringFormat, $parsedFormat) {
+		$parser = $this->getAccessibleMock('F3\FLOW3\I18n\Parser\NumberParser', array('dummy'));
+		$result = $parser->_call('doParsingInStrictMode', $numberToParse, $parsedFormat, $this->mockLocalizedSymbols);
+		$this->assertEquals(FALSE, $result);
+	}
+
+	/**
+	 * @test
+	 * @dataProvider sampleNumbersEasyToParse
+	 * @author Karol Gusak <firstname@lastname.eu>
+	 */
+	public function lenientParsingWorksCorrectlyForEasyNumbers($formatType, $numberToParse, $expectedParsedNumber, $stringFormat, $parsedFormat) {
+		$parser = $this->getAccessibleMock('F3\FLOW3\I18n\Parser\NumberParser', array('dummy'));
+		$result = $parser->_call('doParsingInLenientMode', $numberToParse, $parsedFormat, $this->mockLocalizedSymbols);
+		$this->assertEquals($expectedParsedNumber, $result);
+	}
+
+	/**
+	 * @test
+	 * @dataProvider sampleNumbersHardToParse
+	 * @author Karol Gusak <firstname@lastname.eu>
+	 */
+	public function lenientParsingWorksCorrectlyForHardNumbers($formatType, $numberToParse, $expectedParsedNumber, $stringFormat, $parsedFormat) {
+		$parser = $this->getAccessibleMock('F3\FLOW3\I18n\Parser\NumberParser', array('dummy'));
+		$result = $parser->_call('doParsingInLenientMode', $numberToParse, $parsedFormat, $this->mockLocalizedSymbols);
+		$this->assertEquals($expectedParsedNumber, $result);
+	}
+
+	/**
+	 * @test
+	 * @dataProvider sampleNumbersEasyToParse
+	 * @author Karol Gusak <firstname@lastname.eu>
+	 */
+	public function formattingUsingCustomPatternWorks($formatType, $numberToParse, $expectedParsedNumber, $stringFormat, $parsedFormat) {
+		$mockNumbersReader = $this->getMock('F3\FLOW3\I18n\Cldr\Reader\NumbersReader');
+		$mockNumbersReader->expects($this->once())->method('parseCustomFormat')->with($stringFormat)->will($this->returnValue($parsedFormat));
+		$mockNumbersReader->expects($this->once())->method('getLocalizedSymbolsForLocale')->with($this->dummyLocale)->will($this->returnValue($this->mockLocalizedSymbols));
 
 		$parser = new \F3\FLOW3\I18n\Parser\NumberParser();
-		$parser->injectNumbersReader($mockReader);
+		$parser->injectNumbersReader($mockNumbersReader);
 
-		$result = $parser->parseNumber($numberToParse, $this->dummyLocale, $formatType, 'strict');
-		$this->assertEquals($expectedResult, $result);
+		$result = $parser->parseNumberWithCustomPattern($numberToParse, $stringFormat, $this->dummyLocale, TRUE);
+		$this->assertEquals($expectedParsedNumber, $result);
+	}
+
+	/**
+	 * @test
+	 * @dataProvider sampleNumbersEasyToParse
+	 * @author Karol Gusak <firstname@lastname.eu>
+	 */
+	public function specificFormattingMethodsWork($formatType, $numberToParse, $expectedParsedNumber, $stringFormat, $parsedFormat) {
+		$mockNumbersReader = $this->getMock('F3\FLOW3\I18n\Cldr\Reader\NumbersReader');
+		$mockNumbersReader->expects($this->once())->method('parseFormatFromCldr')->with($this->dummyLocale, $formatType, 'default')->will($this->returnValue($parsedFormat));
+		$mockNumbersReader->expects($this->once())->method('getLocalizedSymbolsForLocale')->with($this->dummyLocale)->will($this->returnValue($this->mockLocalizedSymbols));
+
+		$formatter = new \F3\FLOW3\I18n\Parser\NumberParser();
+		$formatter->injectNumbersReader($mockNumbersReader);
+
+		$methodName = 'parse' . ucfirst($formatType) . 'Number';
+		$result = $formatter->$methodName($numberToParse, $this->dummyLocale);
+
+		$this->assertEquals($expectedParsedNumber, $result);
 	}
 }
 
