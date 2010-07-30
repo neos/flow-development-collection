@@ -79,8 +79,8 @@ class DatesReaderTest extends \F3\Testing\BaseTestCase {
 		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
 		$this->createCacheExpectations($mockCache);
 
-		$reader = $this->getAccessibleMock('F3\FLOW3\I18n\Cldr\Reader\DatesReader', array('doParsing'));
-		$reader->expects($this->once())->method('doParsing')->with('mockFormatString')->will($this->returnValue('mockParsedFormat'));
+		$reader = $this->getAccessibleMock('F3\FLOW3\I18n\Cldr\Reader\DatesReader', array('parseFormat'));
+		$reader->expects($this->once())->method('parseFormat')->with('mockFormatString')->will($this->returnValue('mockParsedFormat'));
 		$reader->injectCldrRepository($mockRepository);
 		$reader->injectCache($mockCache);
 		$reader->initializeObject();
@@ -158,7 +158,7 @@ class DatesReaderTest extends \F3\Testing\BaseTestCase {
 	public function formatStringsAreParsedCorrectly($format, $expectedResult) {
 		$reader = $this->getAccessibleMock('F3\FLOW3\I18n\Cldr\Reader\DatesReader', array('dummy'));
 
-		$result = $reader->_call('doParsing', $format);
+		$result = $reader->_call('parseFormat', $format);
 		$this->assertEquals($expectedResult, $result);
 	}
 }

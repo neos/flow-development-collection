@@ -232,7 +232,7 @@ class DatesReader {
 				// DateTime is a simple format like this: '{0} {1}' which denotes where to insert date and time, it needs not to be parsed
 			$parsedFormat = $format;
 		} else {
-			$parsedFormat = $this->doParsing($format);
+			$parsedFormat = $this->parseFormat($format);
 		}
 
 		$this->parsedFormatsIndices[(string)$locale][$formatType][$formatLength] = $format;
@@ -251,7 +251,7 @@ class DatesReader {
 			return $this->parsedFormats[$format];
 		}
 
-		return $this->parsedFormats[$format] = $this->doParsing($format);
+		return $this->parsedFormats[$format] = $this->parseFormat($format);
 	}
 
 	/**
@@ -291,7 +291,7 @@ class DatesReader {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @see \F3\FLOW3\I18n\Cldr\Reader\DatesReader::$parsedFormats
 	 */
-	protected function doParsing($format) {
+	protected function parseFormat($format) {
 		$parsedFormat = array();
 		$formatLengthOfFormat = strlen($format);
 		$duringCompletionOfLiteral = FALSE;

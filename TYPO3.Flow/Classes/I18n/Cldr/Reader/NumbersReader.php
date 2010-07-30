@@ -232,7 +232,7 @@ class NumbersReader {
 			throw new \F3\FLOW3\I18n\Cldr\Reader\Exception\UnableToFindFormatException('Number format was not found. Please check whether CLDR repository is valid.', 1280218995);
 		}
 
-		$parsedFormat = $this->doParsing($format);
+		$parsedFormat = $this->parseFormat($format);
 
 		$this->parsedFormatsIndices[(string)$locale][$formatType][$formatLength] = $format;
 		return $this->parsedFormats[$format] = $parsedFormat;
@@ -250,7 +250,7 @@ class NumbersReader {
 			return $this->parsedFormats[$format];
 		}
 
-		return $this->parsedFormats[$format] = $this->doParsing($format);
+		return $this->parsedFormats[$format] = $this->parseFormat($format);
 	}
 
 	/**
@@ -287,7 +287,7 @@ class NumbersReader {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @see \F3\FLOW3\I18n\Cldr\Reader\NumbersReader::$parsedFormats
 	 */
-	protected function doParsing($format) {
+	protected function parseFormat($format) {
 		foreach (array('E', '@', '*', '\'') as $unsupportedFeature) {
 			if (strpos($format, $unsupportedFeature) !== FALSE) {
 				throw new \F3\FLOW3\I18n\Cldr\Reader\Exception\UnsupportedFormatException('Encountered unsupported format characters in format string.', 1280219449);

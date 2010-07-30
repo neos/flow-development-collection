@@ -92,8 +92,8 @@ class NumbersReaderTest extends \F3\Testing\BaseTestCase {
 		$mockCache->expects($this->at(7))->method('set')->with('parsedFormatsIndices');
 		$mockCache->expects($this->at(8))->method('set')->with('localizedSymbols');
 
-		$reader = $this->getAccessibleMock('F3\FLOW3\I18n\Cldr\Reader\NumbersReader', array('doParsing'));
-		$reader->expects($this->once())->method('doParsing')->with('mockFormatString')->will($this->returnValue('mockParsedFormat'));
+		$reader = $this->getAccessibleMock('F3\FLOW3\I18n\Cldr\Reader\NumbersReader', array('parseFormat'));
+		$reader->expects($this->once())->method('parseFormat')->with('mockFormatString')->will($this->returnValue('mockParsedFormat'));
 		$reader->injectCldrRepository($mockRepository);
 		$reader->injectCache($mockCache);
 		$reader->initializeObject();
@@ -127,7 +127,7 @@ class NumbersReaderTest extends \F3\Testing\BaseTestCase {
 	public function formatStringsAreParsedCorrectly($format, $expectedResult) {
 		$reader = $this->getAccessibleMock('F3\FLOW3\I18n\Cldr\Reader\NumbersReader', array('dummy'));
 
-		$result = $reader->_call('doParsing', $format);
+		$result = $reader->_call('parseFormat', $format);
 		$this->assertEquals($expectedResult, $result);
 	}
 
@@ -156,7 +156,7 @@ class NumbersReaderTest extends \F3\Testing\BaseTestCase {
 	public function throwsExceptionWhenUnsupportedFormatsEncountered($format) {
 		$reader = $this->getAccessibleMock('F3\FLOW3\I18n\Cldr\Reader\NumbersReader', array('dummy'));
 
-		$result = $reader->_call('doParsing', $format);
+		$result = $reader->_call('parseFormat', $format);
 	}
 }
 
