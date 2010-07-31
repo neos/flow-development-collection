@@ -66,21 +66,13 @@
         </listitem>
 
         <listitem>
-          <para>Every file must contain a header stating encoding, namespace,
-          copyright and licensing information</para>
+          <para>Every file must contain a header stating encoding, namespace
+          and licensing information</para>
 
           <para><orderedlist>
               <listitem>
                 <para>Declare your namespace. The namespace must start with
                 "F3"!</para>
-              </listitem>
-
-              <listitem>
-                <para>Because it is likely that more than one person will work
-                on a class in the long run, we recommend adding a copyright
-                statement like <quote>Copyright belongs to the respective
-                authors</quote> and add yourself to the list of authors for
-                the methods you implemented or changed (significantly).</para>
               </listitem>
 
               <listitem>
@@ -120,9 +112,10 @@ namespace F3\Your\Stuff\Here;
         </listitem>
 
         <listitem>
-          <para>Code lines are of arbitrary length, no limitations to 80
-          characters or something similar (wake up, graphical displays have
-          been available for decades now...)</para>
+          <para>Code lines are of arbitrary length, no strict limitations to
+          80 characters or something similar (wake up, graphical displays have
+          been available for decades now...). But feel free to break lines for
+          better readability if you think it makes sense!</para>
         </listitem>
 
         <listitem>
@@ -192,6 +185,11 @@ public function getContextName() {
       funny japanese, tibetian or don't-know-what characters, the consensus is
       that english is much better to read for the most of us.</para>
 
+      <para>When using abbreviations or acronyms remember to make them
+      camel-cased as needed, no all-uppercase stuff. Admittedly there are a
+      few places where we violate that rule willingly (FLOW3, TYPO3 – will not
+      change) and historically (e.g. AOP – might change).</para>
+
       <section>
         <title>Package names</title>
 
@@ -249,11 +247,11 @@ public function getContextName() {
           <title>Incorrect naming of namespaces and classes</title>
 
           <tgroup cols="3">
-            <colspec colwidth="3*" />
+            <colspec colwidth="3*"/>
 
-            <colspec colwidth="2*" />
+            <colspec colwidth="2*"/>
 
-            <colspec colwidth="5*" />
+            <colspec colwidth="5*"/>
 
             <thead>
               <row>
@@ -313,11 +311,11 @@ public function getContextName() {
           <title>Correct naming of namespaces and classes</title>
 
           <tgroup cols="3">
-            <colspec colwidth="3*" />
+            <colspec colwidth="3*"/>
 
-            <colspec colwidth="2*" />
+            <colspec colwidth="2*"/>
 
-            <colspec colwidth="5*" />
+            <colspec colwidth="5*"/>
 
             <thead>
               <row>
@@ -377,11 +375,11 @@ public function getContextName() {
           <title>Edge cases in naming of namespaces and classes</title>
 
           <tgroup cols="3">
-            <colspec colwidth="3*" />
+            <colspec colwidth="3*"/>
 
-            <colspec colwidth="2*" />
+            <colspec colwidth="2*"/>
 
-            <colspec colwidth="5*" />
+            <colspec colwidth="5*"/>
 
             <thead>
               <row>
@@ -406,7 +404,7 @@ public function getContextName() {
               <row>
                 <entry>\F3\FLOW3\MVC\Controller\ControllerInterface</entry>
 
-                <entry></entry>
+                <entry/>
 
                 <entry>Better</entry>
               </row>
@@ -423,7 +421,7 @@ public function getContextName() {
               <row>
                 <entry>\F3\FLOW3\Cache\Backend\AbstractBackend</entry>
 
-                <entry></entry>
+                <entry/>
 
                 <entry>Better</entry>
               </row>
@@ -613,7 +611,7 @@ public function getContextName() {
         <varname>$i</varname>, <varname>$j</varname> and <varname>$k</varname>
         for numeric indexes in <function>for</function> loops if it's clear
         what they mean on the first sight. But even then you should want to
-        avoid them...</para>
+        avoid them... Source</para>
       </section>
 
       <section>
@@ -738,6 +736,15 @@ public function getContextName() {
       <title>PHP code formatting</title>
 
       <section>
+        <title>Inline comments</title>
+
+        <para>Inline comments must be indented one level more than surrounding
+        source code. For documentation comments see <link
+        linkend="flow3.codingguidelines.sourcecodedocumentation">Source Code
+        Documentation</link>.</para>
+      </section>
+
+      <section>
         <title>Strings</title>
 
         <para>In general, we use single quotes to enclose literal
@@ -776,7 +783,7 @@ public function getContextName() {
       <section>
         <title>Arrays</title>
 
-        <para></para>
+        <para/>
       </section>
 
       <section>
@@ -796,7 +803,7 @@ class MyObject {
       <section>
         <title>Functions and methods</title>
 
-        <para></para>
+        <para/>
       </section>
 
       <section>
@@ -838,6 +845,42 @@ if (weHaveALotOfCriteria() === TRUE
 } else {
    ...
 }</programlisting>
+          </example></para>
+      </section>
+
+      <section>
+        <title>switch statements</title>
+
+        <para><itemizedlist>
+            <listitem>
+              <para>There needs to be one space between the
+              <function>if</function> keyword and the opening brace "(" of the
+              test expression</para>
+            </listitem>
+
+            <listitem>
+              <para>After the closing brace ")" of the test expression follows
+              one space before the curly brace "{"</para>
+            </listitem>
+
+            <listitem>
+              <para><function>break</function> is indented to the same level
+              as <function>case</function> keywords</para>
+            </listitem>
+          </itemizedlist><example>
+            <title>if statements</title>
+
+            <programlisting language="php">switch ($something) {
+   case FOO:
+      $this-&gt;handleFoo();
+   break;
+   case BAR:
+      $this-&gt;handleBar();
+   break;
+   default:
+      $this-&gt;handleDefault();
+}
+</programlisting>
           </example></para>
       </section>
     </section>
@@ -1646,7 +1689,7 @@ if ($foo !== $bar))        // GOOD</programlisting></para>
 
               <mediaobject>
                 <imageobject>
-                  <imagedata fileref="AppendixCodingGuidelines_TrueFalse.jpg"></imagedata>
+                  <imagedata fileref="AppendixCodingGuidelines_TrueFalse.jpg"/>
                 </imageobject>
               </mediaobject>
             </figure></para>

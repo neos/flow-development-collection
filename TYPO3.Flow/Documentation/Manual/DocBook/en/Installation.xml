@@ -87,7 +87,7 @@
     <procedure>
       <step>
         <para>Download the FLOW3 distribution from
-        <link xl:href="http://flow3.typo3.org/download/">http://flow3.typo3.org/download/</link></para>
+        <link ns6:href="http://flow3.typo3.org/download/">http://flow3.typo3.org/download/</link></para>
       </step>
 
       <step>
