@@ -2,7 +2,7 @@
 declare(ENCODING = 'utf-8');
 namespace F3\FLOW3\I18n\Formatter;
 
-/* *
+/*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
@@ -24,6 +24,11 @@ namespace F3\FLOW3\I18n\Formatter;
 
 /**
  * Formatter for date and time.
+ *
+ * This is not full implementation of features from CLDR. These are missing:
+ * - support for other calendars than Gregorian
+ * - rules for displaying timezone names are simplified
+ * - some less frequently used format characters are not supported
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
@@ -131,12 +136,7 @@ class DatetimeFormatter implements \F3\FLOW3\I18n\Formatter\FormatterInterface {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function formatDateTime(\DateTime $dateTime, \F3\FLOW3\I18n\Locale $locale, $formatLength = 'default') {
-		$formattedDate = $this->formatDate($dateTime, $locale, $formatLength);
-		$formattedTime = $this->formatTime($dateTime, $locale, $formatLength);
-
-		$format = $this->datesReader->parseFormatFromCldr($locale, 'dateTime', $formatLength);
-
-		return str_replace(array('{0}', '{1}'), array($formattedTime, $formattedDate), $format);
+		return $this->doFormattingWithParsedFormat($dateTime, $this->datesReader->parseFormatFromCldr($locale, 'dateTime', $formatLength), $this->datesReader->getLocalizedLiteralsForLocale($locale));
 	}
 
 	/**

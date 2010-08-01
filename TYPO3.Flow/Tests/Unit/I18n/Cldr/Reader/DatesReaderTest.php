@@ -95,6 +95,32 @@ class DatesReaderTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
+	public function dateTimeFormatIsParsedCorrectly() {
+		$mockModel = $this->getMock('F3\FLOW3\I18n\Cldr\CldrModelCollection');
+		$mockModel->expects($this->at(0))->method('getElement', 'dates/calendars/calendar/type="gregorian"/dateTimeFormats/dateTimeFormatLength/type="full"/dateTimeFormat/pattern')->will($this->returnValue('foo {0} {1} bar'));
+		$mockModel->expects($this->at(1))->method('getElement', 'dates/calendars/calendar/type="gregorian"/dateFormats/dateFormatLength/type="full"/dateFormat/pattern')->will($this->returnValue('dMy'));
+		$mockModel->expects($this->at(2))->method('getElement', 'dates/calendars/calendar/type="gregorian"/timeFormats/timeFormatLength/type="full"/timeFormat/pattern')->will($this->returnValue('hms'));
+
+		$mockRepository = $this->getMock('F3\FLOW3\I18n\Cldr\CldrRepository');
+		$mockRepository->expects($this->exactly(3))->method('getModelCollection')->with('main', $this->dummyLocale)->will($this->returnValue($mockModel));
+
+		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
+		$this->createCacheExpectations($mockCache);
+
+		$reader = new \F3\FLOW3\I18n\Cldr\Reader\DatesReader();
+		$reader->injectCldrRepository($mockRepository);
+		$reader->injectCache($mockCache);
+		$reader->initializeObject();
+
+		$result = $reader->parseFormatFromCldr($this->dummyLocale, 'dateTime', 'full');
+		$this->assertEquals(array(array('foo '), 'h', 'm', 's', array(' '), 'd', 'M', 'y', array(' bar')), $result);
+		$reader->shutdownObject();
+	}
+
+	/**
+	 * @test
+	 * @author Karol Gusak <firstname@lastname.eu>
+	 */
 	public function localizedLiteralsAreCorrectlyReadFromCldr() {
 		$getRawArrayCallback = function() {
 			$args = func_get_args();

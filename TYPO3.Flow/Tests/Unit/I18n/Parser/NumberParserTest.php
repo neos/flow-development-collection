@@ -172,7 +172,7 @@ class NumberParserTest extends \F3\Testing\BaseTestCase {
 	 * @dataProvider sampleNumbersEasyToParse
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function formattingUsingCustomPatternWorks($formatType, $numberToParse, $expectedParsedNumber, $stringFormat, $parsedFormat) {
+	public function parsingUsingCustomPatternWorks($formatType, $numberToParse, $expectedParsedNumber, $stringFormat, $parsedFormat) {
 		$mockNumbersReader = $this->getMock('F3\FLOW3\I18n\Cldr\Reader\NumbersReader');
 		$mockNumbersReader->expects($this->once())->method('parseCustomFormat')->with($stringFormat)->will($this->returnValue($parsedFormat));
 		$mockNumbersReader->expects($this->once())->method('getLocalizedSymbolsForLocale')->with($this->dummyLocale)->will($this->returnValue($this->mockLocalizedSymbols));

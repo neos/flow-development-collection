@@ -146,45 +146,6 @@ class DatetimeFormatterTest extends \F3\Testing\BaseTestCase {
 	}
 
 	/**
-	 * Data provider with parsed date formats, time formats, dateTime formats,
-	 * and expected results.
-	 *
-	 * @return array
-	 * @author Karol Gusak <firstname@lastname.eu>
-	 */
-	public function sampleDataForDateAndTimeFormatting() {
-		return array(
-			array(
-				array('EEEE', array(', '), 'y', array(' '), 'MMMM', array(' '), 'dd'),
-				array('HH', array(':'), 'mm', array(':'), 'ss', array(' '), 'zzzz'),
-				'{1} {0}',
-				'Thursday, 2010 January 10 18:49:36 Europe/London',
-			),
-		);
-	}
-
-	/**
-	 * @test
-	 * @dataProvider sampleDataForDateAndTimeFormatting
-	 * @author Karol Gusak <firstname@lastname.eu>
-	 */
-	public function formatDateTimeWorks($parsedDateFormat, $parsedTimeFormat, $dateTimeFormat, $expectedResult) {
-		$formatLength = 'full';
-		$mockDatesReader = $this->getMock('F3\FLOW3\I18n\Cldr\Reader\DatesReader');
-		$mockDatesReader->expects($this->at(0))->method('parseFormatFromCldr')->with($this->dummyLocale, 'date', $formatLength)->will($this->returnValue($parsedDateFormat));
-		$mockDatesReader->expects($this->at(1))->method('getLocalizedLiteralsForLocale')->with($this->dummyLocale)->will($this->returnValue($this->mockLocalizedLiterals));
-		$mockDatesReader->expects($this->at(2))->method('parseFormatFromCldr')->with($this->dummyLocale, 'time', $formatLength)->will($this->returnValue($parsedTimeFormat));
-		$mockDatesReader->expects($this->at(3))->method('getLocalizedLiteralsForLocale')->with($this->dummyLocale)->will($this->returnValue($this->mockLocalizedLiterals));
-		$mockDatesReader->expects($this->at(4))->method('parseFormatFromCldr')->with($this->dummyLocale, 'dateTime', $formatLength)->will($this->returnValue($dateTimeFormat));
-
-		$formatter = new \F3\FLOW3\I18n\Formatter\DatetimeFormatter();
-		$formatter->injectDatesReader($mockDatesReader);
-
-		$result = $formatter->formatDateTime($this->sampleDateTime, $this->dummyLocale, $formatLength);
-		$this->assertEquals($expectedResult, $result);
-	}
-
-	/**
 	 * Data provider with parsed formats, expected results, and format types.
 	 *
 	 * @return array
@@ -202,6 +163,11 @@ class DatetimeFormatterTest extends \F3\Testing\BaseTestCase {
 				'18:49:36 Europe/London',
 				'time'
 			),
+			array(
+				array('EEEE', array(', '), 'y', array(' '), 'MMMM', array(' '), 'dd', array(' '), 'HH', array(':'), 'mm', array(':'), 'ss', array(' '), 'zzzz'),
+				'Thursday, 2010 January 10 18:49:36 Europe/London',
+				'dateTime',
+			)
 		);
 	}
 

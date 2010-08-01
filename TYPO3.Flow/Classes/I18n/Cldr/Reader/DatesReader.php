@@ -2,7 +2,7 @@
 declare(ENCODING = 'utf-8');
 namespace F3\FLOW3\I18n\Cldr\Reader;
 
-/* *
+/*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
@@ -27,7 +27,6 @@ namespace F3\FLOW3\I18n\Cldr\Reader;
  *
  * This is not full implementation of features from CLDR. These are missing:
  * - support for other calendars than Gregorian
- * - rules for displaying timezone names are simplified
  * - some data from "dates" tag is not used (fields, timeZoneNames)
  *
  * @version $Id$
@@ -229,8 +228,8 @@ class DatesReader {
 		}
 
 		if ($formatType === 'dateTime') {
-				// DateTime is a simple format like this: '{0} {1}' which denotes where to insert date and time, it needs not to be parsed
-			$parsedFormat = $format;
+				// DateTime is a simple format like this: '{0} {1}' which denotes where to insert date and time
+			$parsedFormat = $this->prepareDateAndTimeFormat($format, $locale, $formatLength);
 		} else {
 			$parsedFormat = $this->parseFormat($format);
 		}
@@ -397,6 +396,63 @@ class DatesReader {
 		}
 
 		return $data;
+	}
+
+	/**
+	 * Creates one parsed datetime format from date and time formats merged
+	 * together.
+	 * 
+	 * The dateTime format from CLDR looks like "{0} {1}" and denotes where to
+	 * place time and date, and what literals should be placed before, between
+	 * and / or after them.
+	 *
+	 * @param string $format DateTime format
+	 * @param \F3\FLOW3\I18n\Locale $locale Locale to use
+	 * @param string $formatLength A length of format (full, long, medium, short) or 'default' to use default one from CLDR
+	 * @return array Merged formats of date and time
+	 * @author Karol Gusak <firstname@lastname.eu>
+	 */
+	protected function prepareDateAndTimeFormat($format, \F3\FLOW3\I18n\Locale $locale, $formatLength) {
+		$parsedFormatForDate = $this->parseFormatFromCldr($locale, 'date', $formatLength);
+		$parsedFormatForTime = $this->parseFormatFromCldr($locale, 'time', $formatLength);
+
+		$positionOfTimePlaceholder = strpos($format, '{0}');
+		$positionOfDatePlaceholder = strpos($format, '{1}');
+
+		if ($positionOfTimePlaceholder < $positionOfDatePlaceholder) {
+			$positionOfFirstPlaceholder = $positionOfTimePlaceholder;
+			$positionOfSecondPlaceholder = $positionOfDatePlaceholder;
+			$firstParsedFormat = $parsedFormatForTime;
+			$secondParsedFormat = $parsedFormatForDate;
+		} else {
+			$positionOfFirstPlaceholder = $positionOfDatePlaceholder;
+			$positionOfSecondPlaceholder = $positionOfTimePlaceholder;
+			$firstParsedFormat = $parsedFormatForDate;
+			$secondParsedFormat = $parsedFormatForTime;
+		}
+
+		$parsedFormat = array();
+
+		if ($positionOfFirstPlaceholder !== 0) {
+				// Add everything before placeholder as literal
+			$parsedFormat[] = array(substr($format, 0, $positionOfFirstPlaceholder));
+		}
+
+		$parsedFormat = array_merge($parsedFormat, $firstParsedFormat);
+
+		if ($positionOfSecondPlaceholder - $positionOfFirstPlaceholder > 3) {
+				// There is something between the placeholders
+			$parsedFormat[] = array(substr($format, $positionOfFirstPlaceholder + 3, $positionOfSecondPlaceholder - ($positionOfFirstPlaceholder + 3)));
+		}
+
+		$parsedFormat = array_merge($parsedFormat, $secondParsedFormat);
+
+		if ($positionOfSecondPlaceholder !== strlen($format) - 1) {
+				// Add everything before placeholder as literal
+			$parsedFormat[] = array(substr($format, $positionOfSecondPlaceholder + 3));
+		}
+
+		return $parsedFormat;
 	}
 }
 
