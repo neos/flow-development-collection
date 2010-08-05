@@ -17,8 +17,8 @@ fi
 
 if [ "$#" != "3" ]; then
 	echo
-	echo Usage: $0 \<commandlineuser\> \<webuser\> \<webgroup\>
-	echo Run as superuser, if needed
+	echo "Usage: $0 <commandlineuser> <webuser> <webgroup>"
+	echo "Run as superuser, if needed (probably)"
 	echo
 	exit 1
 fi
@@ -29,6 +29,7 @@ WEBSERVER_GROUP="$3"
 
 echo
 echo "Checking permissions from here upwards ..."
+echo " (if a password prompt appears it's from sudo)"
 
 unset PARENT_PATH
 PARENT_PATH_PARTS=$(pwd | awk 'BEGIN{FS="/"}{for (i=1; i < NF; i++) print $i}')
@@ -43,16 +44,18 @@ for PARENT_PATH_PART in $PARENT_PATH_PARTS ; do
 done
 
 echo
+echo "Making sure Data and Web/_Resources exist ..."
+mkdir -p Data
+mkdir -p Web/_Resources
+
+echo
 echo "Setting file permissions, this might take a minute ..."
 
+chown -R $COMMANDLINE_USER:$WEBSERVER_GROUP .
 find . -type d -exec chmod 2770 {} \;
 find . -type f -exec chmod 660 {} \;
 
-chown -R $COMMANDLINE_USER:$WEBSERVER_GROUP ./*
-
 chmod 770 flow3 
-chmod 770 $0
 
-chown -R $WEBSERVER_USER:$WEBSERVER_GROUP Web
-chmod 770 Web
-chmod 770 Web/index.php
+chown -R $WEBSERVER_USER:$WEBSERVER_GROUP Web/_Resources
+chmod 770 Web/_Resources

@@ -192,6 +192,9 @@ class Bootstrap {
 		$this->initializeClassLoader();
 		$this->initializeConfiguration();
 		$this->initializeErrorHandling();
+
+		$this->initializeDirectories();
+
 		$this->initializeObjectManager();
 		$this->initializeSystemLogger();
 
@@ -209,6 +212,17 @@ class Bootstrap {
 		$this->initializeSession();
 		$this->initializeResources();
 		$this->initializeLocale();
+	}
+
+	/**
+	 * Check and if needed create basic directories needed by FLOW3.
+	 *
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function initializeDirectories() {
+		if (!is_dir(FLOW3_PATH_DATA)) mkdir(FLOW3_PATH_DATA);
+		if (!is_dir(FLOW3_PATH_DATA . 'Persistent')) mkdir(FLOW3_PATH_DATA . 'Persistent');
 	}
 
 	/**
