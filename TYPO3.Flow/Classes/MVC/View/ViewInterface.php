@@ -42,11 +42,11 @@ interface ViewInterface {
 
 	/**
 	 * Add a variable to the view data collection.
-	 * Can be chained, so $this->view->assign(..., ...)->assign(..., ...); is possible,
+	 * Can be chained, so $this->view->assign(..., ...)->assign(..., ...); is possible
 	 *
 	 * @param string $key Key of variable
 	 * @param object $value Value of object
-	 * @return \F3\FLOW3\MVC\View\ViewInterface an instance of $this, to enable chaining.
+	 * @return \F3\FLOW3\MVC\View\ViewInterface an instance of $this, to enable chaining
 	 * @api
 	 */
 	public function assign($key, $value);
@@ -54,8 +54,8 @@ interface ViewInterface {
 	/**
 	 * Add multiple variables to the view data collection
 	 *
-	 * @param array $values array in the format array(key1 => value1, key2 => value2).
-	 * @return void
+	 * @param array $values array in the format array(key1 => value1, key2 => value2)
+	 * @return \F3\FLOW3\MVC\View\ViewInterface an instance of $this, to enable chaining
 	 * @api
 	 */
 	public function assignMultiple(array $values);

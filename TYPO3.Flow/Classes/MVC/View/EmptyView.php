@@ -51,22 +51,24 @@ final class EmptyView implements \F3\FLOW3\MVC\View\ViewInterface {
 	 *
 	 * @param string $key
 	 * @param mixed $value
-	 * @return void
+	 * @return \F3\FLOW3\MVC\View\EmptyView instance of $this to allow chaining
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function assign($key, $value) {
+		return $this;
 	}
 
 	/**
 	 * Dummy method to satisfy the ViewInterface
 	 *
 	 * @param array $values
-	 * @return void
+	 * @return \F3\FLOW3\MVC\View\EmptyView instance of $this to allow chaining
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function assignMultiple(array $values) {
+		return $this;
 	}
 
 	/**

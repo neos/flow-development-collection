@@ -30,17 +30,12 @@ namespace F3\FLOW3\MVC\View;
  * @scope prototype
  * @api
  */
-class JsonView implements \F3\FLOW3\MVC\View\ViewInterface {
+class JsonView extends \F3\FLOW3\MVC\View\AbstractView {
 
 	/**
 	 * @var \F3\FLOW3\MVC\Controller\ControllerContext
 	 */
 	protected $controllerContext;
-
-	/**
-	 * @var mixed The value to render (object / array / string)
-	 */
-	protected $valueToRender = NULL;
 
 	/**
 	 * Sets the current controller context
@@ -52,38 +47,6 @@ class JsonView implements \F3\FLOW3\MVC\View\ViewInterface {
 	 */
 	public function setControllerContext(\F3\FLOW3\MVC\Controller\ControllerContext $controllerContext) {
 		$this->controllerContext = $controllerContext;
-	}
-
-	/**
-	 * Assign a value to the JSON output, The JSON view only accepts
-	 * a key with name "value".
-	 *
-	 * @param string $key The key of a view variable to set, should be "value" for a JSON view
-	 * @param mixed $value The value of a view variable
-	 * @return void
-	 * @api
-	 */
-	public function assign($key, $value) {
-		if ($key === 'value') {
-			$this->valueToRender = $value;
-		}
-	}
-
-	/**
-	 * Assigns multiple values to the JSON output.
-	 * However, only the key "value" is accepted.
-	 *
-	 * @param array $values Keys and values - only a value with key "value" is considered
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @api
-	 */
-	public function assignMultiple(array $values) {
-		foreach ($values as $key => $value) {
-			if ($key === 'value') {
-				$this->valueToRender = $value;
-			}
-		}
 	}
 
 	/**
@@ -112,7 +75,12 @@ class JsonView implements \F3\FLOW3\MVC\View\ViewInterface {
 	 */
 	protected function renderArray() {
 		$configuration = $this->loadConfigurationFromYamlFile();
-		return $this->transformValue($this->valueToRender, $configuration);
+		// TODO: implement support for multiple variables
+		if (count($this->variables) > 1) {
+			throw new \RuntimeException('JsonView does not yet support rendering of multiple values.', 1280750028);
+		}
+		$valueToRender = current($this->variables);
+		return $this->transformValue($valueToRender, $configuration);
 	}
 
 	/**

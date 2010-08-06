@@ -30,7 +30,7 @@ namespace F3\FLOW3\MVC\View;
  * @api
  * @scope prototype
  */
-class NotFoundView implements \F3\FLOW3\MVC\View\ViewInterface {
+class NotFoundView extends \F3\FLOW3\MVC\View\AbstractView {
 
 	/**
 	 * @var \F3\FLOW3\MVC\Controller\ControllerContext
@@ -43,11 +43,6 @@ class NotFoundView implements \F3\FLOW3\MVC\View\ViewInterface {
 	protected $variablesMarker = array('errorMessage' => 'ERROR_MESSAGE');
 
 	/**
-	 * @var array
-	 */
-	protected $variables = array();
-
-	/**
 	 * Sets the current controller context
 	 *
 	 * @param \F3\FLOW3\MVC\Controller\ControllerContext $controllerContext
@@ -57,33 +52,6 @@ class NotFoundView implements \F3\FLOW3\MVC\View\ViewInterface {
 	 */
 	public function setControllerContext(\F3\FLOW3\MVC\Controller\ControllerContext $controllerContext) {
 		$this->controllerContext = $controllerContext;
-	}
-
-	/**
-	 * Assigns a variable
-	 *
-	 * @param string $key
-	 * @param mixed $value
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @api
-	 */
-	public function assign($key, $value) {
-		$this->variables[$key] = $value;
-	}
-
-	/**
-	 * Assigns multiple variables
-	 *
-	 * @param array $values
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @api
-	 */
-	public function assignMultiple(array $values) {
-		foreach ($values as $key => $value) {
-			$this->variables[$key] = $value;
-		}
 	}
 
 	/**

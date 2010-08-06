@@ -29,7 +29,38 @@ namespace F3\FLOW3\MVC\View;
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class JsonViewTest extends \F3\Testing\BaseTestCase {
-	
+
+	/**
+	 * @var \F3\FLOW3\MVC\View\JsonView
+	 */
+	protected $view;
+
+	/**
+	 * @var \F3\FLOW3\MVC\Controller\ControllerContext
+	 */
+	protected $controllerContext;
+
+	/**
+	 * @var \F3\FLOW3\MVC\Web\Response
+	 */
+	protected $response;
+
+	/**
+	 * Sets up this test case
+	 * @return void
+	 */
+	public function setUp() {
+		$this->view = $this->getMock('F3\FLOW3\MVC\View\JsonView', array('loadConfigurationFromYamlFile'));
+		$this->controllerContext = $this->getMock('F3\FLOW3\MVC\Controller\ControllerContext', array(), array(), '', FALSE);
+		$this->response = $this->getMock('F3\FLOW3\MVC\Web\Response', array());
+		$this->controllerContext->expects($this->any())->method('getResponse')->will($this->returnValue($this->response));
+		$this->view->setControllerContext($this->controllerContext);
+	}
+
+	/**
+	 * data provider for testTransformValue()
+	 * @return array
+	 */
 	public function jsonViewTestData() {
 		$output = array();
 		
@@ -94,6 +125,69 @@ class JsonViewTest extends \F3\Testing\BaseTestCase {
 		$actual = $jsonView->_call('transformValue', $object, $configuration);
 
 		$this->assertEquals($expected, $actual, $description);
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function renderSetsContentTypeHeader() {
+		$this->response->expects($this->once())->method('setHeader')->with('Content-Type', 'application/json');
+
+		$this->view->render();
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function renderReturnsJsonRepresentationOfAssignedObject() {
+		$object = new \stdClass();
+		$object->foo = 'Foo';
+		$this->view->assign('object', $object);
+
+		$expectedResult = '{"foo":"Foo"}';
+		$actualResult = $this->view->render();
+		$this->assertEquals($expectedResult, $actualResult);
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function renderReturnsJsonRepresentationOfAssignedArray() {
+		$array = array('foo' => 'Foo', 'bar' => 'Bar');
+		$this->view->assign('array', $array);
+
+		$expectedResult = '{"foo":"Foo","bar":"Bar"}';
+		$actualResult = $this->view->render();
+		$this->assertEquals($expectedResult, $actualResult);
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function renderReturnsJsonRepresentationOfAssignedSimpleValue() {
+		$value = 'Foo';
+		$this->view->assign('value', $value);
+
+		$expectedResult = '"Foo"';
+		$actualResult = $this->view->render();
+		$this->assertEquals($expectedResult, $actualResult);
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @expectedException \RuntimeException
+	 */
+	public function renderThrowsExceptionIfMoreThanOneVariableWasAssigned() {
+		$this->view
+			->assign('value', 'Value')
+			->assign('someOtherVariable', 'Foo');
+
+		$this->view->render();
 	}
 
 }
