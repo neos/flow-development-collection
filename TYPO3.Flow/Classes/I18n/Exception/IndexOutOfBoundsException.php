@@ -25,6 +25,9 @@ namespace F3\FLOW3\I18n\Exception;
 /**
  * The "Index Out Of Bounds" exception
  *
+ * Generic exception thrown when tried to access unexisting element (ie. with
+ * too high index value).
+ *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api

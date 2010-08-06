@@ -2,7 +2,7 @@
 declare(ENCODING = 'utf-8');
 namespace F3\FLOW3\I18n\Xml;
 
-/* *
+/*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
@@ -58,35 +58,35 @@ abstract class AbstractXmlParser {
 	 *
 	 * Parses XML if it wasn't done before. Caches parsed data.
 	 *
-	 * @param string $sourceFilename An absolute path to XML file
+	 * @param string $sourcePath An absolute path to XML file
 	 * @return array Parsed XML file
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function getParsedData($sourceFilename) {
-		if (isset($this->parsedFiles[$sourceFilename])) {
-			return $this->parsedFiles[$sourceFilename];
+	public function getParsedData($sourcePath) {
+		if (isset($this->parsedFiles[$sourcePath])) {
+			return $this->parsedFiles[$sourcePath];
 		}
 
-		if ($this->cache->has($sourceFilename)) {
-			$parsedData = $this->cache->get($sourceFilename);
+		if ($this->cache->has($sourcePath)) {
+			$parsedData = $this->cache->get($sourcePath);
 		} else {
-			$parsedData = $this->parseXmlFile($sourceFilename);
+			$parsedData = $this->parseXmlFile($sourcePath);
 		}
 
-		return $this->parsedFiles[$sourceFilename] = $parsedData;
+		return $this->parsedFiles[$sourcePath] = $parsedData;
 	}
 
 	/**
 	 * Reads and parses XML file and returns internal representation of data.
 	 *
-	 * @param string $sourceFilename An absolute path to XML file
+	 * @param string $sourcePath An absolute path to XML file
 	 * @return array Parsed XML file
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @throws \F3\FLOW3\I18n\Xml\Exception\InvalidXmlFileException When SimpleXML couldn't load XML file
+	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	protected function parseXmlFile($sourceFilename) {
-		if (file_exists($sourceFilename)) {
-			$rootXmlNode = simplexml_load_file($sourceFilename, 'SimpleXmlElement', \LIBXML_NOWARNING);
+	protected function parseXmlFile($sourcePath) {
+		if (file_exists($sourcePath)) {
+			$rootXmlNode = simplexml_load_file($sourcePath, 'SimpleXmlElement', \LIBXML_NOWARNING);
 		}
 
 		if (!isset($rootXmlNode) || $rootXmlNode === FALSE) {

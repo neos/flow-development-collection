@@ -2,7 +2,7 @@
 declare(ENCODING = 'utf-8');
 namespace F3\FLOW3\I18n\Xliff;
 
-/* *
+/*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
@@ -52,7 +52,7 @@ class XliffParser extends \F3\FLOW3\I18n\Xml\AbstractXmlParser {
 
 		foreach ($bodyOfFileTag->children() as $translationElement) {
 			if ($translationElement->getName() === 'trans-unit' && !isset($translationElement['restype'])) {
-					// If restype would be set, it could be metadata from Gettext => XLIFF conversion (whis is not needed)
+					// If restype would be set, it could be metadata from Gettext to XLIFF conversion (and we don't need this data)
 
 				$parsedData[(string)$translationElement['id']][0] = array(
 					'source' => (string)$translationElement->source,

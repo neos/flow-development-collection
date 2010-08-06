@@ -2,7 +2,7 @@
 declare(ENCODING = 'utf-8');
 namespace F3\FLOW3\I18n\Xliff;
 
-/* *
+/*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
@@ -38,6 +38,7 @@ namespace F3\FLOW3\I18n\Xliff;
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @see http://docs.oasis-open.org/xliff/v1.2/xliff-profile-po/xliff-profile-po-1.2-cd02.html#s.detailed_mapping.tu
  * @scope prototype
  */
 class XliffModel extends \F3\FLOW3\I18n\Xml\AbstractXmlModel {
@@ -83,17 +84,17 @@ class XliffModel extends \F3\FLOW3\I18n\Xml\AbstractXmlModel {
 	 * Id is compared with "id" attribute of "trans-unit" tag (see XLIFF
 	 * specification for details).
 	 *
-	 * @param string $id The "id" attribute of "trans-unit" tag in XLIFF
+	 * @param string $transUnitId The "id" attribute of "trans-unit" tag in XLIFF
 	 * @param string $pluralFormIndex Index of plural form to use (starts with 0)
 	 * @return mixed Translated label or FALSE on failure
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function getTargetByTransUnitId($id, $pluralFormIndex = 0) {
-		if (!isset($this->xmlParsedData[$id])) {
+	public function getTargetByTransUnitId($transUnitId, $pluralFormIndex = 0) {
+		if (!isset($this->xmlParsedData[$transUnitId])) {
 			return FALSE;
 		}
 
-		$translationUnit = $this->xmlParsedData[$id];
+		$translationUnit = $this->xmlParsedData[$transUnitId];
 		if (count($translationUnit) <= $pluralFormIndex) {
 			return FALSE;
 		}

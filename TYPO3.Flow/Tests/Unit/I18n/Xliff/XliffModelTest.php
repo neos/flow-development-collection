@@ -59,7 +59,7 @@ class XliffModelTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function getTargetBySourceWorks() {
+	public function targetIsReturnedCorretlyWhenSourceProvided() {
 		$result = $this->model->getTargetBySource('Source string');
 		$this->assertEquals('Translated string', $result);
 
@@ -68,18 +68,24 @@ class XliffModelTest extends \F3\Testing\BaseTestCase {
 
 		$result = $this->model->getTargetBySource('Source singular', 2);
 		$this->assertEquals('Translated plural 2', $result);
+
+		$result = $this->model->getTargetBySource('Not existing label');
+		$this->assertFalse($result);
 	}
 
 	/**
 	 * @test
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function ggetTargetByTransUnitIdWorks() {
+	public function targetIsReturnedCorrectlyWhenIdProvided() {
 		$result = $this->model->getTargetByTransUnitId('key1');
 		$this->assertEquals('Translated string', $result);
 
 		$result = $this->model->getTargetByTransUnitId('key2', 1);
 		$this->assertEquals('Translated plural 1', $result);
+
+		$result = $this->model->getTargetByTransUnitId('not.existing');
+		$this->assertFalse($result);
 	}
 }
 

@@ -2,7 +2,7 @@
 declare(ENCODING = 'utf-8');
 namespace F3\FLOW3\I18n\TranslationProvider;
 
-/* *
+/*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
@@ -35,30 +35,30 @@ namespace F3\FLOW3\I18n\TranslationProvider;
 interface TranslationProviderInterface {
 
 	/**
-	 * Returns translated label of $originalLabel from a file defined by $filename.
+	 * Returns translated label of $originalLabel from a file defined by $sourceName.
 	 *
 	 * Chooses particular form of label if available and defined in $pluralForm.
 	 *
-	 * @param string $filename A path to the filename with translations
+	 * @param string $sourceName A relative path to the filename with translations (labels' catalog)
 	 * @param string $originalLabel Label used as a key in order to find translation
 	 * @param \F3\FLOW3\I18n\Locale $locale Locale to use
 	 * @param string $pluralForm One of: zero, one, two, few, many, other
 	 * @return mixed Translated label or FALSE on failure
 	 */
-	public function getTranslationByOriginalLabel($filename, $originalLabel, \F3\FLOW3\I18n\Locale $locale, $pluralForm = 'other');
+	public function getTranslationByOriginalLabel($sourceName, $originalLabel, \F3\FLOW3\I18n\Locale $locale, $pluralForm = 'other');
 
 	/**
-	 * Returns label for a key ($id) from a file defined by $filename.
+	 * Returns label for a key ($labelId) from a file defined by $sourceName.
 	 *
 	 * Chooses particular form of label if available and defined in $pluralForm.
 	 *
-	 * @param string $filename A path to the filename with translations
-	 * @param string $id Key used to find translated label
+	 * @param string $sourceName A relative path to the filename with translations (labels' catalog)
+	 * @param string $labelId Key used to find translated label
 	 * @param \F3\FLOW3\I18n\Locale $locale Locale to use
 	 * @param string $pluralForm One of: zero, one, two, few, many, other
-	 * @return mixed Translated label or FALSE on failureeu>
+	 * @return mixed Translated label or FALSE on failure
 	 */
-	public function getTranslationById($filename, $id, \F3\FLOW3\I18n\Locale $locale, $pluralForm = 'other');
+	public function getTranslationById($sourceName, $labelId, \F3\FLOW3\I18n\Locale $locale, $pluralForm = 'other');
 }
 
 ?>

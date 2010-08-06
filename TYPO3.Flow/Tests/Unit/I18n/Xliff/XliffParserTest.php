@@ -34,7 +34,7 @@ class XliffParserTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function parsesCorrectly() {
+	public function parsesXliffFileCorrectly() {
 		$mockFilenamePath = __DIR__ . '/../Fixtures/MockXliffData.xlf';
 		$mockParsedData = require(__DIR__ . '/../Fixtures/MockParsedXliffData.php');
 
@@ -43,7 +43,7 @@ class XliffParserTest extends \F3\Testing\BaseTestCase {
 
 		$parser = new \F3\FLOW3\I18n\Xliff\XliffParser();
 		$parser->injectCache($mockCache);
-		
+
 		$result = $parser->getParsedData($mockFilenamePath);
 		$this->assertEquals($mockParsedData, $result);
 	}

@@ -34,17 +34,17 @@ class AbstractXmlParserTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function parserInvokesDoParsingFromRootMethod() {
-		$mockFilenamePath = __DIR__ . '/../Fixtures/MockCldrData.xml';
+	public function invokesDoParsingFromRootMethodForActualParsing() {
+		$sampleXmlFilePath = __DIR__ . '/../Fixtures/MockCldrData.xml';
 
 		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
-		$mockCache->expects($this->once())->method('has')->with($mockFilenamePath)->will($this->returnValue(FALSE));
+		$mockCache->expects($this->once())->method('has')->with($sampleXmlFilePath)->will($this->returnValue(FALSE));
 
 		$parser = $this->getAccessibleMock('F3\FLOW3\I18n\Xml\AbstractXmlParser', array('doParsingFromRoot'));
 		$parser->expects($this->once())->method('doParsingFromRoot');
 
 		$parser->injectCache($mockCache);
-		$parser->getParsedData($mockFilenamePath);
+		$parser->getParsedData($sampleXmlFilePath);
 	}
 
 	/**
@@ -64,4 +64,5 @@ class AbstractXmlParserTest extends \F3\Testing\BaseTestCase {
 		$parser->getParsedData($mockFilenamePath);
 	}
 }
+
 ?>

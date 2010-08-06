@@ -2,7 +2,7 @@
 declare(ENCODING = 'utf-8');
 namespace F3\FLOW3\I18n\TranslationProvider;
 
-/* *
+/*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
@@ -92,53 +92,50 @@ class XliffTranslationProvider implements \F3\FLOW3\I18n\TranslationProvider\Tra
 	}
 
 	/**
-	 * Returns translated label of $originalLabel from a file defined by $filename.
+	 * Returns translated label of $originalLabel from a file defined by $sourceName.
 	 *
 	 * Chooses particular form of label if available and defined in $pluralForm.
 	 *
-	 * @param string $filename A path to the filename with translations
+	 * @param string $sourceName A relative path to the filename with translations (labels' catalog)
 	 * @param string $originalLabel Label used as a key in order to find translation
 	 * @param \F3\FLOW3\I18n\Locale $locale Locale to use
 	 * @param string $pluralForm One of: zero, one, two, few, many, other
 	 * @return mixed Translated label or FALSE on failure
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function getTranslationByOriginalLabel($filename, $originalLabel, \F3\FLOW3\I18n\Locale $locale, $pluralForm = 'other') {
-		$pluralForms = $this->pluralsReader->getPluralForms($locale);
+	public function getTranslationByOriginalLabel($sourceName, $originalLabel, \F3\FLOW3\I18n\Locale $locale, $pluralForm = 'other') {
+		$pluralFormsForProvidedLocale = $this->pluralsReader->getPluralForms($locale);
 
-		if (!in_array($pluralForm, $pluralForms)) {
-				// Would an exception be better here?
-			return FALSE;
+		if (!in_array($pluralForm, $pluralFormsForProvidedLocale)) {
+			throw new \F3\FLOW3\I18n\TranslationProvider\Exception\InvalidPluralFormException('There is no plural form "' . $pluralForm . '" in "' . (string)$locale . '" locale.', 1281033386);
 		}
 
-		$model = $this->getModel($filename, $locale);
+		$model = $this->getModel($sourceName, $locale);
 			// We need to convert plural form's string to index, as they are accessed using integers in XLIFF files
-		$translation = $model->getTargetBySource($originalLabel, (int)array_search($pluralForm, $pluralForms));
+		$translation = $model->getTargetBySource($originalLabel, (int)array_search($pluralForm, $pluralFormsForProvidedLocale));
 
 		return $translation;
 	}
 
 	/**
-	 * Returns label for a key ($id) from a file defined by $filename.
+	 * Returns label for a key ($labelId) from a file defined by $sourceName.
 	 *
 	 * Chooses particular form of label if available and defined in $pluralForm.
 	 *
-	 * @param string $filename A path to the filename with translations
-	 * @param string $id Key used to find translated label
+	 * @param string $sourceName A relative path to the filename with translations (labels' catalog)
+	 * @param string $labelId Key used to find translated label
 	 * @param \F3\FLOW3\I18n\Locale $locale Locale to use
 	 * @param string $pluralForm One of: zero, one, two, few, many, other
 	 * @return mixed Translated label or FALSE on failure
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function getTranslationById($filename, $id, \F3\FLOW3\I18n\Locale $locale, $pluralForm = 'other') {
-		$pluralForms = $this->pluralsReader->getPluralForms($locale);
+	public function getTranslationById($sourceName, $labelId, \F3\FLOW3\I18n\Locale $locale, $pluralForm = 'other') {
+		$pluralFormsForProvidedLocale = $this->pluralsReader->getPluralForms($locale);
 
-		if (!in_array($pluralForm, $pluralForms)) {
-			return FALSE;
+		if (!in_array($pluralForm, $pluralFormsForProvidedLocale)) {
+			throw new \F3\FLOW3\I18n\TranslationProvider\Exception\InvalidPluralFormException('There is no plural form "' . $pluralForm . '" in "' . (string)$locale . '" locale.', 1281033387);
 		}
 
-		$model = $this->getModel($filename, $locale);
-		$translation = $model->getTargetByTransUnitId($id, (int)array_search($pluralForm, $pluralForms));
+		$model = $this->getModel($sourceName, $locale);
+		$translation = $model->getTargetByTransUnitId($labelId, (int)array_search($pluralForm, $pluralFormsForProvidedLocale));
 
 		return $translation;
 	}
@@ -146,23 +143,23 @@ class XliffTranslationProvider implements \F3\FLOW3\I18n\TranslationProvider\Tra
 	/**
 	 * Returns a XliffModel instance representing desired CLDR file.
 	 *
-	 * Will return existing instance if a model for given $filename was already
-	 * requested before. Returns FALSE when $filename doesn't point to existing
+	 * Will return existing instance if a model for given $sourceName was already
+	 * requested before. Returns FALSE when $sourceName doesn't point to existing
 	 * file.
 	 *
-	 * @param string $filename Relative path to existing CLDR file
-	 * @return F3\FLOW3\I18n\Xliff\XliffModel New or existing instance
+	 * @param string $sourceName Relative path to existing CLDR file
+	 * @return \F3\FLOW3\I18n\Xliff\XliffModel New or existing instance
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	protected function getModel($filename, \F3\FLOW3\I18n\Locale $locale) {
-		$filename = \F3\FLOW3\Utility\Files::concatenatePaths(array($this->xliffBasePath, $filename . '.xlf'));
-		$filename = $this->localizationService->getLocalizedFilename($filename, $locale);
+	protected function getModel($sourceName, \F3\FLOW3\I18n\Locale $locale) {
+		$sourceName = \F3\FLOW3\Utility\Files::concatenatePaths(array($this->xliffBasePath, $sourceName . '.xlf'));
+		$sourceName = $this->localizationService->getLocalizedFilename($sourceName, $locale);
 
-		if (isset($this->models[$filename])) {
-			return $this->models[$filename];
+		if (isset($this->models[$sourceName])) {
+			return $this->models[$sourceName];
 		}
 
-		return $this->models[$filename] = $this->objectManager->create('F3\FLOW3\I18n\Xliff\XliffModel', $filename);
+		return $this->models[$sourceName] = $this->objectManager->create('F3\FLOW3\I18n\Xliff\XliffModel', $sourceName);
 	}
 }
 

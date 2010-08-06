@@ -71,8 +71,8 @@ class FormatResolverTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @expectedException \F3\FLOW3\I18n\Exception\InvalidFormatPlaceholderException
+	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function throwsExceptionWhenInvalidPlaceholderEncountered() {
 		$formatResolver = new \F3\FLOW3\I18n\FormatResolver();
@@ -81,8 +81,8 @@ class FormatResolverTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @expectedException \F3\FLOW3\I18n\Exception\IndexOutOfBoundsException
+	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function throwsExceptionWhenInsufficientNumberOfArgumentsProvided() {
 		$formatResolver = new \F3\FLOW3\I18n\FormatResolver();
@@ -91,8 +91,8 @@ class FormatResolverTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @expectedException \F3\FLOW3\I18n\Exception\UnknownFormatterException
+	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function throwsExceptionWhenFormatterDoesNotExist() {
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
