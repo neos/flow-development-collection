@@ -33,30 +33,75 @@ class FormatResolverTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @var \F3\FLOW3\I18n\Locale
 	 */
-	protected $dummyLocale;
+	protected $sampleLocale;
 
 	/**
 	 * @return void
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function setUp() {
-		$this->dummyLocale = new \F3\FLOW3\I18n\Locale('en_GB');
+		$this->sampleLocale = new \F3\FLOW3\I18n\Locale('en_GB');
 	}
 
 	/**
 	 * @test
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function resolvePlaceholdersWorks() {
+	public function placeholdersAreResolvedCorrectly() {
 		$mockNumberFormatter = $this->getMock('F3\FLOW3\I18n\Formatter\NumberFormatter');
-		$mockNumberFormatter->expects($this->at(0))->method('format')->with(1, $this->dummyLocale)->will($this->returnValue('1.0'));
-		$mockNumberFormatter->expects($this->at(1))->method('format')->with(2, $this->dummyLocale, array('percent'))->will($this->returnValue('200%'));
+		$mockNumberFormatter->expects($this->at(0))->method('format')->with(1, $this->sampleLocale)->will($this->returnValue('1.0'));
+		$mockNumberFormatter->expects($this->at(1))->method('format')->with(2, $this->sampleLocale, array('percent'))->will($this->returnValue('200%'));
 
 		$formatResolver = $this->getAccessibleMock('F3\FLOW3\I18n\FormatResolver', array('getFormatter'));
 		$formatResolver->expects($this->exactly(2))->method('getFormatter')->with('number')->will($this->returnValue($mockNumberFormatter));
 
-		$result = $formatResolver->resolvePlaceholders('Foo {0,number}, bar {1,number,percent}', array(1, 2), $this->dummyLocale);
+		$result = $formatResolver->resolvePlaceholders('Foo {0,number}, bar {1,number,percent}', array(1, 2), $this->sampleLocale);
 		$this->assertEquals('Foo 1.0, bar 200%', $result);
+	}
+
+	/**
+	 * @test
+	 * @author Karol Gusak <firstname@lastname.eu>
+	 */
+	public function returnsStringCastedArgumentWhenFormatterNameIsNotSet() {
+		$formatResolver = new \F3\FLOW3\I18n\FormatResolver();
+		$result = $formatResolver->resolvePlaceholders('{0}', array(123), $this->sampleLocale);
+		$this->assertEquals('123', $result);
+	}
+
+	/**
+	 * @test
+	 * @author Karol Gusak <firstname@lastname.eu>
+	 * @expectedException \F3\FLOW3\I18n\Exception\InvalidFormatPlaceholderException
+	 */
+	public function throwsExceptionWhenInvalidPlaceholderEncountered() {
+		$formatResolver = new \F3\FLOW3\I18n\FormatResolver();
+		$formatResolver->resolvePlaceholders('{0,damaged {1}', array(), $this->sampleLocale);
+	}
+
+	/**
+	 * @test
+	 * @author Karol Gusak <firstname@lastname.eu>
+	 * @expectedException \F3\FLOW3\I18n\Exception\IndexOutOfBoundsException
+	 */
+	public function throwsExceptionWhenInsufficientNumberOfArgumentsProvided() {
+		$formatResolver = new \F3\FLOW3\I18n\FormatResolver();
+		$formatResolver->resolvePlaceholders('{0}', array(), $this->sampleLocale);
+	}
+
+	/**
+	 * @test
+	 * @author Karol Gusak <firstname@lastname.eu>
+	 * @expectedException \F3\FLOW3\I18n\Exception\UnknownFormatterException
+	 */
+	public function throwsExceptionWhenFormatterDoesNotExist() {
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
+		$mockObjectManager->expects($this->once())->method('get', 'F3\FLOW3\I18n\Formatter\FooFormatter')->will($this->throwException(new \F3\FLOW3\I18n\Exception\UnknownFormatterException()));
+
+		$formatResolver = new \F3\FLOW3\I18n\FormatResolver();
+		$formatResolver->injectObjectManager($mockObjectManager);
+
+		$formatResolver->resolvePlaceholders('{0,foo}', array(123), $this->sampleLocale);
 	}
 }
 

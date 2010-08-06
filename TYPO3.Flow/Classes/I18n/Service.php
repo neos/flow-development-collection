@@ -50,7 +50,7 @@ class Service {
 	 * A collection of Locale objects representing currently installed locales,
 	 * in a hierarchical manner.
 	 *
-	 * @var \F3\FLOW3\I18n\LocaleCollectionInterface
+	 * @var \F3\FLOW3\I18n\LocaleCollection
 	 */
 	protected $localeCollection;
 
@@ -96,11 +96,11 @@ class Service {
 	}
 
 	/**
-	 * @param \F3\FLOW3\I18n\LocaleCollectionInterface $localeCollection
+	 * @param \F3\FLOW3\I18n\LocaleCollection $localeCollection
 	 * @return void
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function injectLocaleCollection(\F3\FLOW3\I18n\LocaleCollectionInterface $localeCollection) {
+	public function injectLocaleCollection(\F3\FLOW3\I18n\LocaleCollection $localeCollection) {
 		$this->localeCollection = $localeCollection;
 	}
 
@@ -121,10 +121,13 @@ class Service {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karol Gusak <firstname@lastname.eu>
-	 * @todo catch exception if locale identifier is invalid?
 	 */
 	public function initialize() {
-		$this->settings['locale']['defaultLocale'] = $this->objectManager->create('F3\FLOW3\I18n\Locale', $this->settings['locale']['defaultLocaleIdentifier']);
+		try {
+			$this->settings['locale']['defaultLocale'] = $this->objectManager->create('F3\FLOW3\I18n\Locale', $this->settings['locale']['defaultLocaleIdentifier']);
+		} catch (\F3\FLOW3\I18n\Exception\InvalidLocaleIdentifierException $exception) {
+			throw new \F3\FLOW3\I18n\Exception\InvalidLocaleIdentifierException('Default locale identifier set in the configuration is invalid.', 1280935191);
+		}
 
 		if ($this->cache->has('availableLocales')) {
 			$this->localeCollection = $this->cache->get('availableLocales');
@@ -137,7 +140,7 @@ class Service {
 	/**
 	 * Returns the default Locale object for this FLOW3 installation.
 	 *
-	 * @return \F3\FLOW3\I18n\Locale
+	 * @return \F3\FLOW3\I18n\Locale The default Locale instance
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @api
 	 */
@@ -147,10 +150,11 @@ class Service {
 
 	/**
 	 * Returns the path to the existing localized version of file given.
+	 *
 	 * Searching is done for the default locale if no $locale parameter is
 	 * provided. If parameter $strict is provided, searching is done only for
 	 * provided / default locale (without searching of files localized for
-	 * more generic locales.
+	 * more generic locales).
 	 *
 	 * If no localized version of file is found, $filepath is returned without
 	 * any change.
@@ -159,8 +163,8 @@ class Service {
 	 *
 	 * @param string $filename Path to the file
 	 * @param \F3\FLOW3\I18n\Locale $locale Desired locale of localized file
-	 * @param bool $strict Whether match only provided locale (or search for best-matching locale)
-	 * @return string Path to the localized file, or $filepath
+	 * @param bool $strict Whether to match only provided locale (TRUE) or search for best-matching locale (FALSE)
+	 * @return string Path to the localized file, or $filename when no localized file was found
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @api
 	 */
@@ -177,13 +181,19 @@ class Service {
 			$extension = '';
 		}
 
-		$locale = $this->localeCollection->findBestMatchingLocale($locale);
+		if ($strict === TRUE) {
+			$possibleLocalizedFilename = $filenameWithoutExtension . '.' . (string)$locale . $extension;
 
-		if ($locale === NULL) {
-			return $filename;
+			if (file_exists($possibleLocalizedFilename)) {
+				return $possibleLocalizedFilename;
+			} else {
+				return $filename;
+			}
 		}
 
-		while($locale !== NULL) {
+		$locale = $this->localeCollection->findBestMatchingLocale($locale);
+
+		while ($locale !== NULL) {
 			$possibleLocalizedFilename = $filenameWithoutExtension . '.' . (string)$locale . $extension;
 
 			if (file_exists($possibleLocalizedFilename)) {
@@ -199,8 +209,6 @@ class Service {
 	/**
 	 * Returns a parent Locale object of the locale provided.
 	 *
-	 * This is a delegate method for convenience.
-	 *
 	 * @param \F3\FLOW3\I18n\Locale $locale The Locale to search parent for
 	 * @return mixed Existing \F3\FLOW3\I18n\Locale instance or NULL on failure
 	 * @author Karol Gusak <firstname@lastname.eu>
@@ -211,10 +219,9 @@ class Service {
 	}
 
 	/**
-	 * Returns Locale object which represents one of locales installed and which
-	 * is most similar to the "template" Locale object given as parameter.
-	 *
-	 * This is a delegate method for convenience.
+	 * Returns Locale object which is the most similar to the "template" Locale
+	 * object given as parameter, from the collection of locales available in
+	 * the current FLOW3 installation.
 	 *
 	 * @param \F3\FLOW3\I18n\Locale $locale The "template" Locale to be matched
 	 * @return mixed Existing \F3\FLOW3\I18n\Locale instance on success, NULL on failure
@@ -230,9 +237,9 @@ class Service {
 	 * FLOW3 installation. This is done by scanning all Private and Public
 	 * resource files of all active packages, in order to find localized files.
 	 *
-	 * Localized files have a locale tag added before their extension (or at the
-	 * end of filename, if no extension exists). For example, a localized file
-	 * for foobar.png, can be foobar.en.png, fobar.en_GB.png, etc.
+	 * Localized files have a locale identifier added before their extension
+	 * (or at the end of filename, if no extension exists). For example, a
+	 * localized file for foobar.png, can be foobar.en.png, fobar.en_GB.png, etc.
 	 *
 	 * Just one localized resource file causes the corresponding locale to be
 	 * regarded as available (installed, supported).
@@ -249,13 +256,13 @@ class Service {
 
 			foreach ($recursiveIteratorIterator as $fileOrDirectory) {
 				if ($fileOrDirectory->isFile()) {
-					$localeTag = \F3\FLOW3\I18n\Utility::extractLocaleTagFromFilename($fileOrDirectory->getPathName());
+					$localeIdentifier = \F3\FLOW3\I18n\Utility::extractLocaleTagFromFilename($fileOrDirectory->getPathName());
 
-					if ($localeTag !== FALSE) {
+					if ($localeIdentifier !== FALSE) {
 						try {
-							$locale = $this->objectManager->create('F3\FLOW3\I18n\Locale', $localeTag);
+							$locale = $this->objectManager->create('F3\FLOW3\I18n\Locale', $localeIdentifier);
 							$this->localeCollection->addLocale($locale);
-						} catch (\F3\FLOW3\I18n\Exception\InvalidLocaleIdentifierException $e) {
+						} catch (\F3\FLOW3\I18n\Exception\InvalidLocaleIdentifierException $exception) {
 								// Just ignore current file and proceed
 						}
 					}

@@ -2,7 +2,7 @@
 declare(ENCODING = 'utf-8');
 namespace F3\FLOW3\I18n;
 
-/* *
+/*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
@@ -32,10 +32,8 @@ class Utility {
 
 	/**
 	 * A pattern which matches HTTP Accept-Language Headers
-	 *
-	 * @todo Zero-quality (means "any except this language") is not handled
 	 */
-	const PATTERN_MATCH_ACCEPTLANGUAGE = '/([a-z]{1,8}(-[a-z]{1,8})?|\*)(;q=(1|0\.[0-9]+))?/';
+	const PATTERN_MATCH_ACCEPTLANGUAGE = '/([a-z]{1,8}(-[a-z]{1,8})?|\*)(;q=(1|0(\.[0-9]+)?))?/';
 
 	/**
 	 * Parses Accept-Language header and returns array of locale tags (like:
@@ -44,7 +42,7 @@ class Utility {
 	 * This method only returns tags that conforms ISO 639 for language codes
 	 * and ISO 3166 for region codes. HTTP spec (RFC 2616) defines both of these
 	 * parts as 1*8ALPHA, but this method ignores tags with longer (or shorter)
-	 * codes.
+	 * codes than defined in ISO mentioned above.
 	 *
 	 * There can be an asterisk "*" in the returned array, which means that
 	 * any language is acceptable.
@@ -53,27 +51,32 @@ class Utility {
 	 * order by quality in the $header string. I'm not sure if it's always true
 	 * with the web browsers.
 	 *
-	 * @param string $header
+	 * @param string $acceptLanguageHeader
 	 * @return mixed The array of locale identifiers or FALSE
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	static public function parseAcceptLanguageHeader($header) {
-			// Remove spaces as it simplifies regex pattern
-		$header = str_replace(' ', '', $header);
+	static public function parseAcceptLanguageHeader($acceptLanguageHeader) {
+		$acceptLanguageHeader = str_replace(' ', '', $acceptLanguageHeader);
 		$matchingLanguages = array();
 
-		if (preg_match_all(self::PATTERN_MATCH_ACCEPTLANGUAGE, $header, $matches, PREG_PATTERN_ORDER) !== FALSE) {
-			foreach ($matches[1] as $tag) {
-				if ($tag === '*') {
-					$matchingLanguages[] = $tag;
+		if (preg_match_all(self::PATTERN_MATCH_ACCEPTLANGUAGE, $acceptLanguageHeader, $matches, \PREG_PATTERN_ORDER) !== FALSE) {
+			foreach ($matches[1] as $localeIdentifier) {
+				if ($localeIdentifier === '*') {
+					$matchingLanguages[] = $localeIdentifier;
 					continue;
 				}
 
-				$tagElements = explode('-', $tag);
-				if (strlen($tagElements[0]) >= 2 && strlen($tagElements[0]) <= 3) {
-					if (count($tagElements) === 1 || strlen($tagElements[1]) >= 2 && strlen($tagElements[1]) <= 3) {
+				if (strpos($localeIdentifier, '-') !== FALSE) {
+					list($language, $region) = explode('-', $localeIdentifier);
+				} else {
+					$language = $localeIdentifier;
+					$region = NULL;
+				}
+
+				if (strlen($language) >= 2 && strlen($language) <= 3) {
+					if ($region === NULL || strlen($region) >= 2 && strlen($region) <= 3) {
 							// Note: there are 3 chars in the region code only if they are all digits, but we don't check it above
-						$matchingLanguages[] = $tag;
+						$matchingLanguages[] = $localeIdentifier;
 					}
 				}
 			}
@@ -87,15 +90,16 @@ class Utility {
 	}
 
 	/**
-	 * Extracts a locale tag (identifier) from the filename given. Locale tag
-	 * should be placed just before the extension of the file. For example,
-	 * filename /foo/bar.png can be localized as /foo/bar.en_GB.png, and this
-	 * method extracts en_GB from the name.
+	 * Extracts a locale tag (identifier) from the filename given.
+	 * 
+	 * Locale tag should be placed just before the extension of the file. For
+	 * example, filename /foo/bar.png can be localized as /foo/bar.en_GB.png,
+	 * and this method extracts en_GB from the name.
 	 *
-	 * Note: it's not guaranteed that this method will return valid locale tag.
+	 * Note: this method does not validate extracted identifier.
 	 *
-	 * @param string $filename
-	 * @return mixed The string with extracted locale of FALSE on failure
+	 * @param string $filename File name / path to extract locale identifier from
+	 * @return mixed The string with extracted locale identifier of FALSE on failure
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	static public function extractLocaleTagFromFilename($filename) {
@@ -117,7 +121,7 @@ class Utility {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	static public function stringBeginsWith($haystack, $needle) {
-		if (strncmp($haystack, $needle, strlen($needle)) === 0) {
+		if (!empty($needle) && strncmp($haystack, $needle, strlen($needle)) === 0) {
 			return TRUE;
 		}
 

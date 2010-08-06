@@ -2,7 +2,7 @@
 declare(ENCODING = 'utf-8');
 namespace F3\FLOW3\I18n;
 
-/* *
+/*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
@@ -32,21 +32,23 @@ namespace F3\FLOW3\I18n;
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class LocaleCollection implements \F3\FLOW3\I18n\LocaleCollectionInterface {
+class LocaleCollection {
 
 	/**
-	 * This array contains all locales added to this collection. The values
-	 * are Locale objects, and the keys are these locale's tags.
+	 * This array contains all locales added to this collection.
+	 *
+	 * The values are Locale objects, and the keys are these locale's tags.
 	 *
 	 * @var array<\F3\FLOW3\I18n\Locale>
 	 */
 	protected $localeCollection = array();
 
 	/**
-	 * This array contains a parent Locale objects for given locale. "Searching"
-	 * is done by the keys, which are locale tags. The key points to the value
-	 * which is a parent Locale object. If it's not set, there is no parent for
-	 * given locale, or no parent was searched before.
+	 * This array contains a parent Locale objects for given locale.
+	 * 
+	 * "Searching" is done by the keys, which are locale tags. The key points to
+	 * the value which is a parent Locale object. If it's not set, there is no
+	 * parent for given locale, or no parent was searched before.
 	 *
 	 * @var array<\F3\FLOW3\I18n\Locale>
 	 */
@@ -56,7 +58,7 @@ class LocaleCollection implements \F3\FLOW3\I18n\LocaleCollectionInterface {
 	 * Adds a locale to the collection.
 	 *
 	 * @param \F3\FLOW3\I18n\Locale $locale The Locale to be inserted
-	 * @return boolean
+	 * @return boolean FALSE when same locale was already inserted before
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function addLocale(\F3\FLOW3\I18n\Locale $locale) {
@@ -72,43 +74,43 @@ class LocaleCollection implements \F3\FLOW3\I18n\LocaleCollectionInterface {
 	}
 
 	/**
-	 * Returns a parent Locale object of the locale provided. The parent is
-	 * a locale which is more generic than the one given as parameter. For
-	 * example, the parent for locale en_GB will be locale en, of course if
-	 * it exists in the locale tree of available locales.
+	 * Returns a parent Locale object of the locale provided.
+	 * 
+	 * The parent is a locale which is more generic than the one given as
+	 * parameter. For example, the parent for locale en_GB will be locale en, of
+	 * course if it exists in the locale tree of available locales.
 	 *
 	 * This method returns NULL when no parent locale is available, or when
 	 * Locale object provided is not in three (ie it's not in a group of
 	 * available locales).
 	 *
 	 * Note: to find a best-matching locale to one which doesn't exist in the
-	 * system, please use findBestMatchingLocale() method from this class.
+	 * system, please use findBestMatchingLocale() method of this class.
 	 *
 	 * @param \F3\FLOW3\I18n\Locale $locale The Locale to search parent for
 	 * @return mixed Existing \F3\FLOW3\I18n\Locale instance or NULL on failure
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function getParentLocaleOf(\F3\FLOW3\I18n\Locale $locale) {
-		$localeTag = (string)$locale;
+		$localeIdentifier = (string)$locale;
 
-		if (!isset($this->localeCollection[$localeTag])) {
+		if (!isset($this->localeCollection[$localeIdentifier])) {
 			return NULL;
 		}
 
-		if (isset($this->localeParentCollection[$localeTag])) {
-			return $this->localeParentCollection[$localeTag];
+		if (isset($this->localeParentCollection[$localeIdentifier])) {
+			return $this->localeParentCollection[$localeIdentifier];
 		}
 
-		$parentLocaleTag = $localeTag;
+		$parentLocaleIdentifier = $localeIdentifier;
 		do {
 				// Remove the last (most specific) part of the locale tag
-			$parentLocaleTag = substr($parentLocaleTag, 0, (int)strrpos($parentLocaleTag, '_'));
+			$parentLocaleIdentifier = substr($parentLocaleIdentifier, 0, (int)strrpos($parentLocaleIdentifier, '_'));
 
-			if (isset($this->localeCollection[$parentLocaleTag])) {
-				$this->localeParentCollection[$localeTag] = $this->localeCollection[$parentLocaleTag];
-				return $this->localeCollection[$parentLocaleTag];
+			if (isset($this->localeCollection[$parentLocaleIdentifier])) {
+				return $this->localeParentCollection[$localeIdentifier] = $this->localeCollection[$parentLocaleIdentifier];
 			}
-		} while (strrpos($parentLocaleTag, '_') !== FALSE);
+		} while (strrpos($parentLocaleIdentifier, '_') !== FALSE);
 
 		return NULL;
 	}
@@ -117,26 +119,26 @@ class LocaleCollection implements \F3\FLOW3\I18n\LocaleCollectionInterface {
 	 * Returns Locale object which represents one of locales installed and which
 	 * is most similar to the "template" Locale object given as parameter.
 	 *
-	 * @param \F3\FLOW3\I18n\Locale $locale The "template" Locale to be matched
+	 * @param \F3\FLOW3\I18n\Locale $locale The "template" locale to be matched
 	 * @return mixed Existing \F3\FLOW3\I18n\Locale instance on success, NULL on failure
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function findBestMatchingLocale(\F3\FLOW3\I18n\Locale $locale) {
-		$localeTag = (string)$locale;
+		$localeIdentifier = (string)$locale;
 
-		if (isset($this->localeCollection[$localeTag])) {
-			return $this->localeCollection[$localeTag];
+		if (isset($this->localeCollection[$localeIdentifier])) {
+			return $this->localeCollection[$localeIdentifier];
 		}
 
-		$parentLocaleTag = $localeTag;
+		$parentLocaleIdentifier = $localeIdentifier;
 		do {
 				// Remove the last (most specific) part of the locale tag
-			$parentLocaleTag = substr($parentLocaleTag, 0, (int)strrpos($parentLocaleTag, '_'));
+			$parentLocaleIdentifier = substr($parentLocaleIdentifier, 0, (int)strrpos($parentLocaleIdentifier, '_'));
 
-			if (isset($this->localeCollection[$parentLocaleTag])) {
-				return $this->localeCollection[$parentLocaleTag];
+			if (isset($this->localeCollection[$parentLocaleIdentifier])) {
+				return $this->localeCollection[$parentLocaleIdentifier];
 			}
-		} while (strrpos($parentLocaleTag, '_') !== FALSE);
+		} while (strrpos($parentLocaleIdentifier, '_') !== FALSE);
 
 		return NULL;
 	}

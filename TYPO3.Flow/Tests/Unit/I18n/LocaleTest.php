@@ -83,5 +83,21 @@ class LocaleTest extends \F3\Testing\BaseTestCase {
 		$this->assertEquals('AE', $locale->getRegion());
 		$this->assertNull($locale->getVariant());
 	}
+
+	/**
+	 * @test
+	 * @author Karol Gusak <firstname@lastname.eu>
+	 */
+	public function producesCorrectLocaleIdentifierWhenStringCasted() {
+		$locale = new \F3\FLOW3\I18n\Locale('de_DE');
+		$this->assertEquals('de_DE', (string)$locale);
+
+		$locale = new \F3\FLOW3\I18n\Locale('en_Latn_US');
+		$this->assertEquals('en_Latn_US', (string)$locale);
+
+		$locale = new \F3\FLOW3\I18n\Locale('AR-arab_ae');
+		$this->assertEquals('ar_Arab_AE', (string)$locale);
+	}
 }
+
 ?>

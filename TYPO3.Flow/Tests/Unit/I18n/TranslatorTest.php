@@ -33,7 +33,7 @@ class TranslatorTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @var \F3\FLOW3\I18n\Locale
 	 */
-	protected $dummyLocale;
+	protected $sampleLocale;
 
 	/**
 	 * @var \F3\FLOW3\I18n\Translator
@@ -45,13 +45,13 @@ class TranslatorTest extends \F3\Testing\BaseTestCase {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function setUp() {
-		$this->dummyLocale = new \F3\FLOW3\I18n\Locale('en_GB');
+		$this->sampleLocale = new \F3\FLOW3\I18n\Locale('en_GB');
 
 		$mockLocalizationService = $this->getMock('F3\FLOW3\I18n\Service');
-		$mockLocalizationService->expects($this->once())->method('getDefaultLocale')->will($this->returnValue($this->dummyLocale));
+		$mockLocalizationService->expects($this->once())->method('getDefaultLocale')->will($this->returnValue($this->sampleLocale));
 
 		$mockPluralsReader = $this->getMock('F3\FLOW3\I18n\Cldr\Reader\PluralsReader');
-		$mockPluralsReader->expects($this->once())->method('getPluralForm', 1, $this->dummyLocale)->will($this->returnValue('one'));
+		$mockPluralsReader->expects($this->once())->method('getPluralForm', 1, $this->sampleLocale)->will($this->returnValue('one'));
 
 		$this->translator = new \F3\FLOW3\I18n\Translator();
 		$this->translator->injectLocalizationService($mockLocalizationService);
@@ -62,16 +62,15 @@ class TranslatorTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function translateByOriginalLabelWorks() {
+	public function translatingIsDoneCorrectly() {
 		$mockTranslationProvicer = $this->getAccessibleMock('F3\FLOW3\I18n\TranslationProvider\XliffTranslationProvider');
-		$mockTranslationProvicer->expects($this->once())->method('getTranslationByOriginalLabel', 'source', 'Untranslated label', $this->dummyLocale, 'one')->will($this->returnValue('Translated label'));
+		$mockTranslationProvicer->expects($this->once())->method('getTranslationByOriginalLabel', 'source', 'Untranslated label', $this->sampleLocale, 'one')->will($this->returnValue('Translated label'));
 
 		$mockFormatResolver = $this->getMock('F3\FLOW3\I18n\FormatResolver');
-		$mockFormatResolver->expects($this->once())->method('resolvePlaceholders', 'Translated label', array('value1', 'value2'), $this->dummyLocale)->will($this->returnValue('Formatted and translated label'));
+		$mockFormatResolver->expects($this->once())->method('resolvePlaceholders', 'Translated label', array('value1', 'value2'), $this->sampleLocale)->will($this->returnValue('Formatted and translated label'));
 
 		$this->translator->injectTranslationProvider($mockTranslationProvicer);
 		$this->translator->injectFormatResolver($mockFormatResolver);
-		
 
 		$result = $this->translator->translateByOriginalLabel('Untranslated label', 'source', array('value1', 'value2'), 1);
 		$this->assertEquals('Formatted and translated label', $result);
@@ -81,13 +80,17 @@ class TranslatorTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function translateByIdReturnsIdWhenNoTranslationAvailable() {
+	public function returnsOriginalLabelOrIdWhenTranslationNotAvailable() {
 		$mockTranslationProvicer = $this->getAccessibleMock('F3\FLOW3\I18n\TranslationProvider\XliffTranslationProvider');
-		$mockTranslationProvicer->expects($this->once())->method('getTranslationById', 'source', 'id', $this->dummyLocale, 'one')->will($this->returnValue(FALSE));
+		$mockTranslationProvicer->expects($this->once())->method('getTranslationByOriginalLabel', 'source', 'id', $this->sampleLocale, 'one')->will($this->returnValue(FALSE));
+		$mockTranslationProvicer->expects($this->once())->method('getTranslationById', 'source', 'id', $this->sampleLocale, 'one')->will($this->returnValue(FALSE));
 
 		$this->translator->injectTranslationProvider($mockTranslationProvicer);
 
-		$result = $this->translator->translateById('id', 'source', array(), 1);
+		$result = $this->translator->translateByOriginalLabel('original label', 'source', array(), 1);
+		$this->assertEquals('original label', $result);
+
+		$result = $this->translator->translateById('id', 'source', array(), NULL, $this->sampleLocale);
 		$this->assertEquals('id', $result);
 	}
 }

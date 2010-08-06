@@ -33,11 +33,17 @@ namespace F3\FLOW3\I18n;
  * Using this class asserts the validity of the used locale and provides you
  * with some useful methods for getting more information about it.
  *
+ * Please note that this class represents locale identifier with valid syntax,
+ * but it does not assures that represented locale is available (installed) in
+ * current FLOW3 installation. In order to check that, various methods of
+ * \F3\FLOW3\I18n\Service class can be used.
+ *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
- * @see http://www.unicode.org/reports/tr35/
  * @api
  * @scope prototype
+ * @see http://www.unicode.org/reports/tr35/
+ * @see \F3\FLOW3\I18n\Service
  */
 class Locale {
 
@@ -89,8 +95,10 @@ class Locale {
 	 * Constructs this locale object
 	 *
 	 * @param string $localeIdentifier A valid locale identifier according to UTS#35
-	 * @throws F3_FLOW3_I18n_Exception_InvalidLocaleIdentifier if the locale identifier is not valid
+	 * @throws \InvalidArgumentException When argument is not a string
+	 * @throws \F3\FLOW3\I18n\Exception\InvalidLocaleIdentifier If the locale identifier is not valid
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function __construct($localeIdentifier) {
 		if (!is_string($localeIdentifier)) throw new \InvalidArgumentException('A locale identifier must be of type string, ' . gettype($localeIdentifier) . ' given.', 1221216120);
@@ -151,15 +159,17 @@ class Locale {
  	 *
  	 * @return string The locale identifier (tag)
  	 * @author Karol Gusak <firstname@lastname.eu>
+	 * @api
  	 */
  	public function __toString() {
- 		$tag = $this->language;
+ 		$localeIdentifier = $this->language;
 
- 		if($this->script !== NULL) $tag .= '_' . $this->script;
- 		if($this->region !== NULL) $tag .= '_' . $this->region;
- 		if($this->variant !== NULL) $tag .= '_' . $this->variant;
+ 		if($this->script !== NULL) $localeIdentifier .= '_' . $this->script;
+ 		if($this->region !== NULL) $localeIdentifier .= '_' . $this->region;
+ 		if($this->variant !== NULL) $localeIdentifier .= '_' . $this->variant;
 
- 		return $tag;
+ 		return $localeIdentifier;
  	}
 }
+
 ?>

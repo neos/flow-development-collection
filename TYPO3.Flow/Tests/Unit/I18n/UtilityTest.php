@@ -36,7 +36,7 @@ class UtilityTest extends \F3\Testing\BaseTestCase {
 	 * @return array
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function localeHeaders() {
+	public function sampleHttpAcceptLanguageHeaders() {
 		return array(
 			array('pl, en-gb;q=0.8, en;q=0.7', array('pl', 'en-gb', 'en')),
 			array('de, *;q=0.8', array('de', '*')),
@@ -46,14 +46,14 @@ class UtilityTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @dataProvider localeHeaders
+	 * @dataProvider sampleHttpAcceptLanguageHeaders
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function parseAcceptLanguageHeaderParsesProperly($header, array $expectedResult) {
-		$languages = Utility::parseAcceptLanguageHeader($header);
+	public function httpAcceptLanguageHeadersAreParsedCorrectly($acceptLanguageHeader, array $expectedResult) {
+		$languages = Utility::parseAcceptLanguageHeader($acceptLanguageHeader);
 		$this->assertEquals($expectedResult, $languages);
 	}
-	
+
 	/**
 	 * Data provider with filenames with locale tags and expected results.
 	 *
@@ -73,57 +73,49 @@ class UtilityTest extends \F3\Testing\BaseTestCase {
 	 * @dataProvider filenamesWithLocale
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function extractLocaleTagFromFilenameWorks($filename, $expectedResult) {
-		$returnedResult = Utility::extractLocaleTagFromFilename($filename);
-		$this->assertEquals($expectedResult, $returnedResult);
+	public function localeIdentifiersAreCorrectlyExtractedFromFilename($filename, $expectedResult) {
+		$result = Utility::extractLocaleTagFromFilename($filename);
+		$this->assertEquals($expectedResult, $result);
 	}
 
 	/**
-	 * Data provider for stringBeginsWith() method.
+	 * Data provider with haystack strings and needle strings, used to test
+	 * comparison methods. The third argument denotes whether needle is same
+	 * as beginning of the haystack, or it's ending, or both or none.
 	 *
 	 * @return array
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function testStringsWithBeginning() {
+	public function sampleHaystackStringsAndNeedleStrings() {
 		return array(
-			array('teststring', 'test', TRUE),
-			array('foo', 'bar', FALSE),
-			array('baz', '', TRUE),
+			array('teststring', 'test', 'beginning'),
+			array('foo', 'bar', 'none'),
+			array('baz', '', 'none'),
+			array('foo', 'foo', 'both'),
+			array('foobaz', 'baz', 'ending'),
 		);
 	}
 
 	/**
 	 * @test
-	 * @dataProvider testStringsWithBeginning
+	 * @dataProvider sampleHaystackStringsAndNeedleStrings
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function stringIsFoundAtBeginningOfAnotherString($haystack, $needle, $expectedResult) {
-		$returnedResult = Utility::stringBeginsWith($haystack, $needle);
-		$this->assertEquals($expectedResult, $returnedResult);
-	}
-
-	/**
-	 * Data provider for stringEndsWith() method.
-	 *
-	 * @return array
-	 * @author Karol Gusak <firstname@lastname.eu>
-	 */
-	public function testStringsWithEnding() {
-		return array(
-			array('teststring', 'test', FALSE),
-			array('foo', 'bar', FALSE),
-			array('foobaz', 'baz', TRUE),
-		);
+	public function stringIsFoundAtBeginningOfAnotherString($haystack, $needle, $comparison) {
+		$expectedResult = ($comparison === 'beginning' || $comparison === 'both') ? TRUE : FALSE;
+		$result = Utility::stringBeginsWith($haystack, $needle);
+		$this->assertEquals($expectedResult, $result);
 	}
 
 	/**
 	 * @test
-	 * @dataProvider testStringsWithEnding
+	 * @dataProvider sampleHaystackStringsAndNeedleStrings
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function stringIsFoundAtEndingOfAnotherString($haystack, $needle, $expectedResult) {
-		$returnedResult = Utility::stringEndsWith($haystack, $needle);
-		$this->assertEquals($expectedResult, $returnedResult);
+	public function stringIsFoundAtEndingOfAnotherString($haystack, $needle, $comparison) {
+		$expectedResult = ($comparison === 'ending' || $comparison === 'both') ? TRUE : FALSE;
+		$result = Utility::stringEndsWith($haystack, $needle);
+		$this->assertEquals($expectedResult, $result);
 	}
 }
 

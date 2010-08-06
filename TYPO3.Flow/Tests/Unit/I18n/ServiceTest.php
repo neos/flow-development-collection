@@ -45,9 +45,8 @@ class ServiceTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function getLocalizedFilenameWorks() {
+	public function returnsCorrectlyLocalizedFilename() {
 		mkdir('vfs://Foo/Bar/Public/images/', 0777, TRUE);
-			// Using touch() doesn't work here - why?
 		file_put_contents('vfs://Foo/Bar/Public/images/foobar.en.png', 'FooBar');
 
 		$desiredLocale = new \F3\FLOW3\I18n\Locale('en_GB');
@@ -57,12 +56,12 @@ class ServiceTest extends \F3\Testing\BaseTestCase {
 		$filename = 'vfs://Foo/Bar/Public/images/foobar.png';
 		$expectedFilename = 'vfs://Foo/Bar/Public/images/foobar.en.png';
 
-		$mockLocaleCollection = $this->getMock('F3\FLOW3\I18n\LocaleCollectionInterface');
+		$mockLocaleCollection = $this->getMock('F3\FLOW3\I18n\LocaleCollection');
 		$mockLocaleCollection->expects($this->once())->method('findBestMatchingLocale')->with($desiredLocale)->will($this->returnValue($desiredLocale));
 		$mockLocaleCollection->expects($this->once())->method('getParentLocaleOf')->with($desiredLocale)->will($this->returnValue($parentLocale));
 
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->once())->method('create')->with('F3\FLOW3\I18n\Locale')->will($this->returnValue($defaultLocale));
+		$mockObjectManager->expects($this->once())->method('create')->with('F3\FLOW3\I18n\Locale', 'sv_SE')->will($this->returnValue($defaultLocale));
 
 		$mockSettings = array('locale' => array('defaultLocaleIdentifier' => 'sv_SE'));
 
@@ -77,15 +76,35 @@ class ServiceTest extends \F3\Testing\BaseTestCase {
 		$service->injectCache($mockCache);
 		$service->initialize();
 
-		$returnedFilename = $service->getLocalizedFilename($filename, $desiredLocale);
-		$this->assertEquals($expectedFilename, $returnedFilename);
+		$result = $service->getLocalizedFilename($filename, $desiredLocale);
+		$this->assertEquals($expectedFilename, $result);
 	}
 
 	/**
 	 * @test
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function serviceCorrectlyGeneratesAvailableLocales() {
+	public function returnsCorrectFilenameInStrictMode() {
+		mkdir('vfs://Foo/Bar/Public/images/', 0777, TRUE);
+		file_put_contents('vfs://Foo/Bar/Public/images/foobar.en_GB.png', 'FooBar');
+
+		$filename = 'vfs://Foo/Bar/Public/images/foobar.png';
+		$expectedFilename = 'vfs://Foo/Bar/Public/images/foobar.en_GB.png';
+
+		$service = new \F3\FLOW3\I18n\Service();
+
+		$result = $service->getLocalizedFilename($filename, new \F3\FLOW3\I18n\Locale('en_GB'), TRUE);
+		$this->assertEquals($expectedFilename, $result);
+
+		$result = $service->getLocalizedFilename($filename, new \F3\FLOW3\I18n\Locale('pl'), TRUE);
+		$this->assertEquals($filename, $result);
+	}
+
+	/**
+	 * @test
+	 * @author Karol Gusak <firstname@lastname.eu>
+	 */
+	public function correctlyGeneratesAvailableLocales() {
 		mkdir('vfs://Foo/Bar/Private/', 0777, TRUE);
 		foreach (array('en', 'sr_Cyrl_RS', 'en_GB', 'sr') as $localeIdentifier) {
 			file_put_contents('vfs://Foo/Bar/Private/foobar.' . $localeIdentifier . '.baz', 'FooBar');
@@ -101,10 +120,11 @@ class ServiceTest extends \F3\Testing\BaseTestCase {
 
 		$mockPackage = $this->getMock('F3\FLOW3\Package\PackageInterface');
 		$mockPackage->expects($this->any())->method('getPackageKey')->will($this->returnValue('Bar'));
+
 		$mockPackageManager = $this->getMock('F3\FLOW3\Package\PackageManagerInterface');
 		$mockPackageManager->expects($this->any())->method('getActivePackages')->will($this->returnValue(array($mockPackage)));
 
-		$mockLocaleCollection = $this->getMock('F3\FLOW3\I18n\LocaleCollectionInterface');
+		$mockLocaleCollection = $this->getMock('F3\FLOW3\I18n\LocaleCollection');
 		$mockLocaleCollection->expects($this->exactly(4))->method('addLocale');
 
 		$mockSettings = array('locale' => array('defaultLocaleIdentifier' => 'sv_SE'));

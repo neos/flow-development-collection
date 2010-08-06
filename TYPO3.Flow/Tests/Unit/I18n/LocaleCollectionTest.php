@@ -31,12 +31,12 @@ namespace F3\FLOW3\I18n;
 class LocaleCollectionTest extends \F3\Testing\BaseTestCase {
 
 	/**
-	 * @var array An array of \F3\FLOW3\I18n\Locale instances
+	 * @var array<\F3\FLOW3\I18n\Locale>
 	 */
 	protected $locales;
 
 	/**
-	 * @var \F3\FLOW3\I18n\LocaleCollectionInterface
+	 * @var \F3\FLOW3\I18n\LocaleCollection
 	 */
 	protected $localeCollection;
 
@@ -59,7 +59,7 @@ class LocaleCollectionTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function addLocaleWorks() {
+	public function localesAreAddedToTheCollectionCorrectlyWithHierarchyRelation() {
 		foreach ($this->locales as $locale) {
 			$this->localeCollection->addLocale($locale);
 		}
@@ -71,14 +71,38 @@ class LocaleCollectionTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function findBestMatchingLocaleWorks() {
+	public function existingLocaleIsNotAddedToTheCollection() {
+		$localeShouldBeAdded = $this->localeCollection->addLocale($this->locales[0]);
+		$localeShouldNotBeAdded = $this->localeCollection->addLocale(new \F3\FLOW3\I18n\Locale('en'));
+		$this->assertTrue($localeShouldBeAdded);
+		$this->assertFalse($localeShouldNotBeAdded);
+	}
+
+	/**
+	 * @test
+	 * @author Karol Gusak <firstname@lastname.eu>
+	 */
+	public function bestMatchingLocalesAreFoundCorrectly() {
 		foreach ($this->locales as $locale) {
 			$this->localeCollection->addLocale($locale);
 		}
 
 		$this->assertEquals($this->locales[1], $this->localeCollection->findBestMatchingLocale($this->locales[1]));
 		$this->assertEquals($this->locales[1], $this->localeCollection->findBestMatchingLocale(new \F3\FLOW3\I18n\Locale('pl_PL_DVORAK')));
-		$this->assertEquals(NULL, $this->localeCollection->findBestMatchingLocale(new \F3\FLOW3\I18n\Locale('sv')));
+		$this->assertNull($this->localeCollection->findBestMatchingLocale(new \F3\FLOW3\I18n\Locale('sv')));
+	}
+
+	/**
+	 * @test
+	 * @author Karol Gusak <firstname@lastname.eu>
+	 */
+	public function returnsNullWhenNoParentLocaleCouldBeFound() {
+		foreach ($this->locales as $locale) {
+			$this->localeCollection->addLocale($locale);
+		}
+
+		$this->assertNull($this->localeCollection->getParentLocaleOf(new \F3\FLOW3\I18n\Locale('sv')));
+		$this->assertNull($this->localeCollection->getParentLocaleOf($this->locales[0]));
 	}
 }
 

@@ -2,7 +2,7 @@
 declare(ENCODING = 'utf-8');
 namespace F3\FLOW3\I18n;
 
-/* *
+/*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
@@ -25,9 +25,28 @@ namespace F3\FLOW3\I18n;
 /**
  * A class for translating messages
  *
+ * Messagess (labels) can be translated in two modes:
+ * - by original label: untranslated label is used as a key
+ * - by ID: string identifier is used as a key (eg. user.noaccess)
+ *
+ * Correct plural form of translated message is returned when $quantity
+ * parameter is provided to a method. Otherwise, or on failure just translated
+ * version is returned (eg. when string is translated only to one form).
+ *
+ * When all fails, untranslated (original) string or ID is returned (depends on
+ * translation method).
+ *
+ * Placeholders' resolving is done when needed (see FormatResolver class).
+ *
+ * Actual translating is done by injected TranslationProvider instance, so
+ * storage format depends on concrete implementation.
+ *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
+ * @see \F3\FLOW3\I18n\FormatResolver
+ * @see \F3\FLOW3\I18n\TranslationProvider\TranslationProviderInterface
+ * @see \F3\FLOW3\I18n\Cldr\Reader\PluralsReader
  */
 class Translator {
 
@@ -90,13 +109,13 @@ class Translator {
 	/**
 	 * Translates message given as $originalLabel.
 	 *
-	 * Searches for translation in filename defined sa $source. It is a relative
-	 * name (interpretation depends on concrete translation provider injected
-	 * to this class).
+	 * Searches for translation in filename defined as $sourceName. It is a
+	 * relative name (interpretation depends on concrete translation provider
+	 * injected to this class).
 	 *
-	 * If any parameters are provided in $values array, they will be inserted to
-	 * the translated string (in place of corresponding placeholders, with format
-	 * defined by these placeholders).
+	 * If any arguments are provided in $arguments array, they will be inserted
+	 * to the translated string (in place of corresponding placeholders, with
+	 * format defined by these placeholders).
 	 *
 	 * If $quantity is provided, correct plural form for provided $locale will
 	 * be chosen and used to choose correct translation variant.
@@ -104,15 +123,15 @@ class Translator {
 	 * If no $locale is provided, default system locale will be used.
 	 * 
 	 * @param string $originalLabel Untranslated message
-	 * @param string $source Name of file with translations
-	 * @param array $values An array of values to replace placeholders with
+	 * @param string $sourceName Name of file with translations
+	 * @param array $arguments An array of values to replace placeholders with
 	 * @param mixed $quantity A number to find plural form for (float or int), NULL to not use plural forms
 	 * @param \F3\FLOW3\I18n\Locale $locale Locale to use (NULL for default one)
 	 * @return string Translated $originalLabel or $originalLabel itself on failure
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @api
 	 */
-	public function translateByOriginalLabel($originalLabel, $source, array $values = array(), $quantity = NULL, \F3\FLOW3\I18n\Locale $locale = NULL) {
+	public function translateByOriginalLabel($originalLabel, $sourceName, array $arguments = array(), $quantity = NULL, \F3\FLOW3\I18n\Locale $locale = NULL) {
 		if ($locale === NULL) {
 			$locale = $this->localizationService->getDefaultLocale();
 		}
@@ -123,37 +142,37 @@ class Translator {
 			$pluralForm = $this->pluralsReader->getPluralForm($quantity, $locale);
 		}
 
-		$translatedMessage = $this->translationProvider->getTranslationByOriginalLabel($source, $originalLabel, $locale, $pluralForm);
+		$translatedMessage = $this->translationProvider->getTranslationByOriginalLabel($sourceName, $originalLabel, $locale, $pluralForm);
 
 		if ($translatedMessage === FALSE) {
 				// Return original message if no translation available
 			$translatedMessage = $originalLabel;
 		}
 
-		if (!empty($values)) {
-			$translatedMessage = $this->formatResolver->resolvePlaceholders($translatedMessage, $values, $locale);
+		if (!empty($arguments)) {
+			$translatedMessage = $this->formatResolver->resolvePlaceholders($translatedMessage, $arguments, $locale);
 		}
 
 		return $translatedMessage;
 	}
 
 	/**
-	 * Returns translated string found under the key $id in $source file.
+	 * Returns translated string found under the key $labelId in $sourceName file.
 	 *
 	 * This method works same as translateByOriginalLabel(), except it uses
 	 * ID, and not source message, as a key.
 	 *
-	 * @param string $id Key to use for finding translation
-	 * @param string $source Name of file with translations
-	 * @param array $values An array of values to replace placeholders with
+	 * @param string $labelId Key to use for finding translation
+	 * @param string $sourceName Name of file with translations
+	 * @param array $arguments An array of values to replace placeholders with
 	 * @param mixed $quantity A number to find plural form for (float or int), NULL to not use plural forms
 	 * @param \F3\FLOW3\I18n\Locale $locale Locale to use (NULL for default one)
-	 * @return string Translated message or $id on failure
+	 * @return string Translated message or $labelId on failure
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @api
 	 * @see \F3\FLOW3\I18n\Translator::translateByOriginalLabel()
 	 */
-	public function translateById($id, $source, array $values = array(), $quantity = NULL, \F3\FLOW3\I18n\Locale $locale = NULL) {
+	public function translateById($labelId, $sourceName, array $arguments = array(), $quantity = NULL, \F3\FLOW3\I18n\Locale $locale = NULL) {
 		if ($locale === NULL) {
 			$locale = $this->localizationService->getDefaultLocale();
 		}
@@ -164,13 +183,13 @@ class Translator {
 			$pluralForm = $this->pluralsReader->getPluralForm($quantity, $locale);
 		}
 
-		$translatedMessage = $this->translationProvider->getTranslationById($source, $id, $locale, $pluralForm);
+		$translatedMessage = $this->translationProvider->getTranslationById($sourceName, $labelId, $locale, $pluralForm);
 
 		if ($translatedMessage === FALSE) {
 				// Return the ID if no translation available
-			$translatedMessage = $id;
-		} else if (!empty($values)) {
-			$translatedMessage = $this->formatResolver->resolvePlaceholders($translatedMessage, $values, $locale);
+			$translatedMessage = $labelId;
+		} else if (!empty($arguments)) {
+			$translatedMessage = $this->formatResolver->resolvePlaceholders($translatedMessage, $arguments, $locale);
 		}
 
 		return $translatedMessage;

@@ -52,20 +52,20 @@ class DetectorTest extends \F3\Testing\BaseTestCase {
 
 		$findBestMatchingLocaleCallback = function() {
 			$args = func_get_args();
-			$localeTag = (string)$args[0];
+			$localeIdentifier = (string)$args[0];
 
-			if (in_array($localeTag, array('en_US_POSIX', 'en_Shaw'))) {
+			if (in_array($localeIdentifier, array('en_US_POSIX', 'en_Shaw'))) {
 				return new \F3\FLOW3\I18n\Locale('en');
-			} else if ($localeTag === 'en_GB') {
+			} else if ($localeIdentifier === 'en_GB') {
 				return new \F3\FLOW3\I18n\Locale('en_GB');
-			} else if ($localeTag === 'sr_RS') {
+			} else if ($localeIdentifier === 'sr_RS') {
 				return new \F3\FLOW3\I18n\Locale('sr');
 			} else {
 				return NULL;
 			}
 		};
 
-		$mockLocaleCollection = $this->getMock('F3\FLOW3\I18n\LocaleCollectionInterface');
+		$mockLocaleCollection = $this->getMock('F3\FLOW3\I18n\LocaleCollection');
 		$mockLocaleCollection->expects($this->any())->method('findBestMatchingLocale')->will($this->returnCallback($findBestMatchingLocaleCallback));
 
 		$mockLocalizationService = $this->getMock('F3\FLOW3\I18n\Service');
@@ -84,7 +84,7 @@ class DetectorTest extends \F3\Testing\BaseTestCase {
 	 * @return array
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function localeHeaders() {
+	public function sampleHttpAcceptLanguageHeaders() {
 		return array(
 			array('pl, en-gb;q=0.8, en;q=0.7', new \F3\FLOW3\I18n\Locale('en_GB')),
 			array('de, *;q=0.8', new \F3\FLOW3\I18n\Locale('sv_SE')),
@@ -94,11 +94,11 @@ class DetectorTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @dataProvider localeHeaders
+	 * @dataProvider sampleHttpAcceptLanguageHeaders
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function detectLocaleFromHttpHeaderChoosesProperLocale($header, $expectedResult) {
-		$locale = $this->detector->detectLocaleFromHttpHeader($header);
+	public function detectingBestMatchingLocaleFromHttpAcceptLanguageHeaderWorksCorrectly($acceptLanguageHeader, $expectedResult) {
+		$locale = $this->detector->detectLocaleFromHttpHeader($acceptLanguageHeader);
 		$this->assertEquals($expectedResult, $locale);
 	}
 
@@ -108,7 +108,7 @@ class DetectorTest extends \F3\Testing\BaseTestCase {
 	 * @return array
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function localeTags() {
+	public function sampleLocaleIdentifiers() {
 		return array(
 			array('en_GB', new \F3\FLOW3\I18n\Locale('en_GB')),
 			array('en_US_POSIX', new \F3\FLOW3\I18n\Locale('en')),
@@ -118,11 +118,11 @@ class DetectorTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @dataProvider localeTags
+	 * @dataProvider sampleLocaleIdentifiers
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function detectLocaleFromLocaleTagChoosesProperLocale($tag, $expectedResult) {
-		$locale = $this->detector->detectLocaleFromLocaleTag($tag);
+	public function detectingBestMatchingLocaleFromLocaleIdentifierWorksCorrectly($localeIdentifier, $expectedResult) {
+		$locale = $this->detector->detectLocaleFromLocaleTag($localeIdentifier);
 		$this->assertEquals($expectedResult, $locale);
 	}
 }
