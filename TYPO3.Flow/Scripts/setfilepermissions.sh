@@ -55,7 +55,8 @@ chown -R $COMMANDLINE_USER:$WEBSERVER_GROUP .
 find . -type d -exec chmod 2770 {} \;
 find . -type f -exec chmod 660 {} \;
 
-chmod 770 flow3 
+chmod 770 flow3
+chmod 700 $0
 
 chown -R $WEBSERVER_USER:$WEBSERVER_GROUP Web/_Resources
 chmod 770 Web/_Resources
