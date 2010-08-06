@@ -53,7 +53,7 @@ echo "Setting file permissions, this might take a minute ..."
 
 chown -R $COMMANDLINE_USER:$WEBSERVER_GROUP .
 find . -type d -exec chmod 2770 {} \;
-find . -type f -exec chmod 660 {} \;
+find . -type f \! -name commit-msg -exec chmod 660 {} \;
 
 chmod 770 flow3
 chmod 700 $0
