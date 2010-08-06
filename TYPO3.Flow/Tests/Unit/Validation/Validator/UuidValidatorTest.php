@@ -25,10 +25,21 @@ namespace F3\FLOW3\Validation\Validator;
 /**
  * Testcase for the UUID validator
  *
- * @version $Id: UuidValidatorTest.php -1   $
+ * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class UuidValidatorTest extends \F3\Testing\BaseTestCase {
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function internalErrorsArrayIsResetOnIsValidCall() {
+		$validator = $this->getAccessibleMock('F3\FLOW3\Validation\Validator\UuidValidator', array('dummy'), array(), '', FALSE);
+		$validator->_set('errors', array('existingError'));
+		$validator->isValid('e104e469-9030-4b98-babf-3990f07dd3f1');
+		$this->assertSame(array(), $validator->getErrors());
+	}
 
 	/**
 	 * @test

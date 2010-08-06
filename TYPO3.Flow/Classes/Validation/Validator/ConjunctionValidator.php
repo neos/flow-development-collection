@@ -44,6 +44,7 @@ class ConjunctionValidator extends \F3\FLOW3\Validation\Validator\AbstractCompos
 	 * @api
 	 */
 	public function isValid($value) {
+		$this->errors = array();
 		$result = TRUE;
 		foreach ($this->validators as $validator) {
 			if ($validator->isValid($value) === FALSE) {

@@ -31,6 +31,17 @@ namespace F3\FLOW3\Validation\Validator;
 class CountValidatorTest extends \F3\Testing\BaseTestCase {
 
 	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function internalErrorsArrayIsResetOnIsValidCall() {
+		$validator = $this->getAccessibleMock('F3\FLOW3\Validation\Validator\CountValidator', array('dummy'), array(), '', FALSE);
+		$validator->_set('errors', array('existingError'));
+		$validator->isValid(array());
+		$this->assertSame(array(), $validator->getErrors());
+	}
+
+	/**
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function countables() {

@@ -31,6 +31,17 @@ namespace F3\FLOW3\Validation\Validator;
 class EmailAddressValidatorTest extends \F3\Testing\BaseTestCase {
 
 	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function internalErrorsArrayIsResetOnIsValidCall() {
+		$validator = $this->getAccessibleMock('F3\FLOW3\Validation\Validator\EmailAddressValidator', array('dummy'), array(), '', FALSE);
+		$validator->_set('errors', array('existingError'));
+		$validator->isValid('foo@bar.de');
+		$this->assertSame(array(), $validator->getErrors());
+	}
+
+	/**
 	 * Data provider with valid email addresses
 	 *
 	 * @return array

@@ -32,6 +32,17 @@ class AlphanumericValidatorTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function internalErrorsArrayIsResetOnIsValidCall() {
+		$validator = $this->getAccessibleMock('F3\FLOW3\Validation\Validator\AlphanumericValidator', array('dummy'), array(), '', FALSE);
+		$validator->_set('errors', array('existingError'));
+		$validator->isValid('foo');
+		$this->assertSame(array(), $validator->getErrors());
+	}
+
+	/**
+	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function alphanumericValidatorReturnsTrueForAnAlphanumericString() {

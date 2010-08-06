@@ -48,6 +48,7 @@ class DisjunctionValidator extends \F3\FLOW3\Validation\Validator\AbstractCompos
 	 */
 	public function isValid($value) {
 		$result = FALSE;
+		$this->errors = array();
 		foreach ($this->validators as $validator) {
 			if ($validator->isValid($value) === FALSE) {
 				$this->errors = array_merge($this->errors, $validator->getErrors());

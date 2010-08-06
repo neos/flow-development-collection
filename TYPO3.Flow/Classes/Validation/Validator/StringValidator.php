@@ -43,6 +43,7 @@ class StringValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator {
 	 * @api
 	 */
 	public function isValid($value) {
+		$this->errors = array();
 		$isValid = is_string($value);
 		if ($isValid === FALSE) {
 			$this->addError('A valid string is expected.', 1238108067);

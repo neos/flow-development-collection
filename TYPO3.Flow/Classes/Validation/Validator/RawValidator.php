@@ -55,9 +55,9 @@ class RawValidator implements \F3\FLOW3\Validation\Validator\ValidatorInterface 
 	}
 
 	/**
-	 * Returns an array of errors which occurred during the last isValid() call.
+	 * Always returns an empty array.
 	 *
-	 * @return array An array of \F3\FLOW3\Validation\Error objects or an empty array if no errors occurred.
+	 * @return array An empty array.
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */

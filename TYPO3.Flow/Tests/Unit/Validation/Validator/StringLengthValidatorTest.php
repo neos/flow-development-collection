@@ -32,9 +32,20 @@ class StringLengthValidatorTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function internalErrorsArrayIsResetOnIsValidCall() {
+		$validator = $this->getAccessibleMock('F3\FLOW3\Validation\Validator\StringLengthValidator', array('dummy'), array(), '', FALSE);
+		$validator->_set('errors', array('existingError'));
+		$validator->isValid('foo');
+		$this->assertSame(array(), $validator->getErrors());
+	}
+
+	/**
+	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function stgringLengthValidatorReturnsTrueForAStringShorterThanMaxLengthAndLongerThanMinLength() {
+	public function stringLengthValidatorReturnsTrueForAStringShorterThanMaxLengthAndLongerThanMinLength() {
 		$stringLengthValidator = $this->getMock('F3\FLOW3\Validation\Validator\StringLengthValidator', array('addError'), array(), '', FALSE);
 		$stringLengthValidator->setOptions(array('minimum' => 0, 'maximum' => 50));
 		$this->assertTrue($stringLengthValidator->isValid('this is a very simple string'));
