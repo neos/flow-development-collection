@@ -60,13 +60,12 @@ class DatetimeParser {
 	}
 
 	/**
-	 * Returns dateTime formatted by custom format, string provided in parameter.
+	 * Returns dateTime parsed by custom format (string provided in parameter).
 	 *
 	 * Format must obey syntax defined in CLDR specification, excluding
 	 * unimplemented features (see documentation for DatesReader class).
 	 *
-	 * Format is remembered in this classes cache and won't be parsed again for
-	 * some time.
+	 * Format is remembered in cache and won't be parsed again for some time.
 	 *
 	 * @param \DateTime $datetimeToParse PHP object representing particular point in time
 	 * @param string $format Format string
@@ -74,6 +73,7 @@ class DatetimeParser {
 	 * @param bool $strictMode Work mode (strict when TRUE, lenient when FALSE)
 	 * @return mixed Array of parsed date / time elements, FALSE on failure
 	 * @author Karol Gusak <firstname@lastname.eu>
+	 * @api
 	 * @see \F3\FLOW3\I18n\Cldr\Reader\DatesReader
 	 */
 	public function parseDatetimeWithCustomPattern($datetimeToParse, $format, \F3\FLOW3\I18n\Locale $locale, $strictMode = TRUE) {
@@ -89,6 +89,7 @@ class DatetimeParser {
 	 * @param string $formatLength One of: full, long, medium, short, or 'default' in order to use default length from CLDR
 	 * @param bool $strictMode Work mode (strict when TRUE, lenient when FALSE)
 	 * @return mixed Array of parsed date elements, FALSE on failure
+	 * @api
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function parseDate($dateToParse, \F3\FLOW3\I18n\Locale $locale, $formatLength = 'default', $strictMode = TRUE) {
@@ -104,6 +105,7 @@ class DatetimeParser {
 	 * @param string $formatLength One of: full, long, medium, short, or 'default' in order to use default length from CLDR
 	 * @param bool $strictMode Work mode (strict when TRUE, lenient when FALSE)
 	 * @return mixed Array of parsed time elements, FALSE on failure
+	 * @api
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function parseTime($timeToParse, \F3\FLOW3\I18n\Locale $locale, $formatLength = 'default', $strictMode = TRUE) {
@@ -140,7 +142,7 @@ class DatetimeParser {
 	}
 
 	/**
-	 * Parses date/time in strict mode.
+	 * Parses date and / or time in strict mode.
 	 *
 	 * @param string $datetimeToParse Date/time to be parsed
 	 * @param array $parsedFormat Format parsed by DatesReader
@@ -310,7 +312,7 @@ class DatetimeParser {
 				}
 			}
 		} catch (\F3\FLOW3\I18n\Parser\Exception\InvalidParseStringException $exception) {
-				// Method extractAndCheckNumber() throws exception when constraints in $datetimeToPare are not fullfiled
+				// Method extractAndCheckNumber() throws exception when constraints in $datetimeToParse are not fullfiled
 			return FALSE;
 		}
 
@@ -318,7 +320,7 @@ class DatetimeParser {
 	}
 
 	/**
-	 * Parses date/time in lenient mode.
+	 * Parses date and / or time in lenient mode.
 	 *
 	 * Algorithm assumptions:
 	 * - ignore all literals
@@ -517,7 +519,7 @@ class DatetimeParser {
 							// Silently ignore unsupported formats or formats that there is no need to parse
 						break;
 					default:
-						throw new \F3\FLOW3\I18n\Exception\InvalidArgumentException('Unexpected format symbol, "' . $subformat[0] . '" detected for date / time parsing.', 1279965528);
+						throw new \F3\FLOW3\I18n\Exception\InvalidArgumentException('Unexpected format symbol, "' . $subformat[0] . '" detected for date / time parsing.', 1279965529);
 				}
 
 				if ($using12HourClock && $timeIsPm) {

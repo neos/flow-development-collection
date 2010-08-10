@@ -132,7 +132,7 @@ class NumberParser {
 	 * @return mixed Parsed float number or FALSE on failure
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	protected function doParsingInStrictMode($numberToParse, $parsedFormat, $localizedSymbols) {
+	protected function doParsingInStrictMode($numberToParse, array $parsedFormat, array $localizedSymbols) {
 		$numberIsNegative = FALSE;
 
 		if (!empty($parsedFormat['negativePrefix']) && !empty($parsedFormat['negativeSuffix'])) {
@@ -249,7 +249,7 @@ class NumberParser {
 	 * @return mixed Parsed float number or FALSE on failure
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	protected function doParsingInLenientMode($numberToParse, $parsedFormat, $localizedSymbols) {
+	protected function doParsingInLenientMode($numberToParse, array $parsedFormat, array $localizedSymbols) {
 		$numberIsNegative = FALSE;
 		$positionOfFirstDigit = NULL;
 		$positionOfLastDigit = NULL;

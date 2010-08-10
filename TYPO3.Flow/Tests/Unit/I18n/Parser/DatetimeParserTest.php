@@ -33,12 +33,12 @@ class DatetimeParserTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @var \F3\FLOW3\I18n\Locale
 	 */
-	protected $dummyLocale;
+	protected $sampleLocale;
 
 	/**
 	 * @var array
 	 */
-	protected $mockLocalizedLiterals;
+	protected $sampleLocalizedLiterals;
 
 	/**
 	 * Template datetime attributes - expected results are merged with this
@@ -61,8 +61,8 @@ class DatetimeParserTest extends \F3\Testing\BaseTestCase {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function setUp() {
-		$this->dummyLocale = new \F3\FLOW3\I18n\Locale('en_GB');
-		$this->mockLocalizedLiterals = require(__DIR__ . '/../Fixtures/MockLocalizedLiteralsArray.php');
+		$this->sampleLocale = new \F3\FLOW3\I18n\Locale('en_GB');
+		$this->sampleLocalizedLiterals = require(__DIR__ . '/../Fixtures/MockLocalizedLiteralsArray.php');
 	}
 
 	/**
@@ -104,9 +104,9 @@ class DatetimeParserTest extends \F3\Testing\BaseTestCase {
 	 * @dataProvider sampleDatetimesEasyToParse
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function strictParsingWorksCorrectlyForEasyDatetimes($formatType, $datetimeToParse, $stringFormat, $expectedParsedDatetime, $parsedFormat) {
+	public function strictParsingWorksCorrectlyForEasyDatetimes($formatType, $datetimeToParse, $stringFormat, $expectedParsedDatetime, array $parsedFormat) {
 		$parser = $this->getAccessibleMock('F3\FLOW3\I18n\Parser\DatetimeParser', array('dummy'));
-		$result = $parser->_call('doParsingInStrictMode', $datetimeToParse, $parsedFormat, $this->mockLocalizedLiterals);
+		$result = $parser->_call('doParsingInStrictMode', $datetimeToParse, $parsedFormat, $this->sampleLocalizedLiterals);
 		$this->assertEquals($expectedParsedDatetime, $result);
 	}
 
@@ -115,9 +115,9 @@ class DatetimeParserTest extends \F3\Testing\BaseTestCase {
 	 * @dataProvider sampleDatetimesHardToParse
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function strictParsingReturnsFalseForHardDatetimes($formatType, $datetimeToParse, $stringFormat, $expectedParsedDatetime, $parsedFormat) {
+	public function strictParsingReturnsFalseForHardDatetimes($formatType, $datetimeToParse, $stringFormat, $expectedParsedDatetime, array $parsedFormat) {
 		$parser = $this->getAccessibleMock('F3\FLOW3\I18n\Parser\DatetimeParser', array('dummy'));
-		$result = $parser->_call('doParsingInStrictMode', $datetimeToParse, $parsedFormat, $this->mockLocalizedLiterals);
+		$result = $parser->_call('doParsingInStrictMode', $datetimeToParse, $parsedFormat, $this->sampleLocalizedLiterals);
 		$this->assertEquals(FALSE, $result);
 	}
 
@@ -126,9 +126,9 @@ class DatetimeParserTest extends \F3\Testing\BaseTestCase {
 	 * @dataProvider sampleDatetimesEasyToParse
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function lenientParsingWorksCorrectlyForEasyDatetimes($formatType, $datetimeToParse, $stringFormat, $expectedParsedDatetime, $parsedFormat) {
+	public function lenientParsingWorksCorrectlyForEasyDatetimes($formatType, $datetimeToParse, $stringFormat, $expectedParsedDatetime, array $parsedFormat) {
 		$parser = $this->getAccessibleMock('F3\FLOW3\I18n\Parser\DatetimeParser', array('dummy'));
-		$result = $parser->_call('doParsingInLenientMode', $datetimeToParse, $parsedFormat, $this->mockLocalizedLiterals);
+		$result = $parser->_call('doParsingInLenientMode', $datetimeToParse, $parsedFormat, $this->sampleLocalizedLiterals);
 		$this->assertEquals($expectedParsedDatetime, $result);
 	}
 
@@ -137,9 +137,9 @@ class DatetimeParserTest extends \F3\Testing\BaseTestCase {
 	 * @dataProvider sampleDatetimesHardToParse
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function lenientParsingWorksCorrectlyForHardDatetimes($formatType, $datetimeToParse, $stringFormat, $expectedParsedDatetime, $parsedFormat) {
+	public function lenientParsingWorksCorrectlyForHardDatetimes($formatType, $datetimeToParse, $stringFormat, $expectedParsedDatetime, array $parsedFormat) {
 		$parser = $this->getAccessibleMock('F3\FLOW3\I18n\Parser\DatetimeParser', array('dummy'));
-		$result = $parser->_call('doParsingInLenientMode', $datetimeToParse, $parsedFormat, $this->mockLocalizedLiterals);
+		$result = $parser->_call('doParsingInLenientMode', $datetimeToParse, $parsedFormat, $this->sampleLocalizedLiterals);
 		$this->assertEquals($expectedParsedDatetime, $result);
 	}
 }

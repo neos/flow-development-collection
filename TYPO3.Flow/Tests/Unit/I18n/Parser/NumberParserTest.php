@@ -33,14 +33,14 @@ class NumberParserTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @var \F3\FLOW3\I18n\Locale
 	 */
-	protected $dummyLocale;
+	protected $sampleLocale;
 
 	/**
 	 * Localized symbols array used during formatting.
 	 *
 	 * @var array
 	 */
-	protected $mockLocalizedSymbols = array(
+	protected $sampleLocalizedSymbols = array(
 		'decimal' => ',',
 		'group' => ' ',
 		'percentSign' => '%',
@@ -80,7 +80,7 @@ class NumberParserTest extends \F3\Testing\BaseTestCase {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function setUp() {
-		$this->dummyLocale = new \F3\FLOW3\I18n\Locale('en_GB');
+		$this->sampleLocale = new \F3\FLOW3\I18n\Locale('en_GB');
 	}
 
 	/**
@@ -128,9 +128,9 @@ class NumberParserTest extends \F3\Testing\BaseTestCase {
 	 * @dataProvider sampleNumbersEasyToParse
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function strictParsingWorksCorrectlyForEasyNumbers($formatType, $numberToParse, $expectedParsedNumber, $stringFormat, $parsedFormat) {
+	public function strictParsingWorksCorrectlyForEasyNumbers($formatType, $numberToParse, $expectedParsedNumber, $stringFormat, array $parsedFormat) {
 		$parser = $this->getAccessibleMock('F3\FLOW3\I18n\Parser\NumberParser', array('dummy'));
-		$result = $parser->_call('doParsingInStrictMode', $numberToParse, $parsedFormat, $this->mockLocalizedSymbols);
+		$result = $parser->_call('doParsingInStrictMode', $numberToParse, $parsedFormat, $this->sampleLocalizedSymbols);
 		$this->assertEquals($expectedParsedNumber, $result);
 	}
 
@@ -139,9 +139,9 @@ class NumberParserTest extends \F3\Testing\BaseTestCase {
 	 * @dataProvider sampleNumbersHardToParse
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function strictParsingReturnsFalseForHardNumbers($formatType, $numberToParse, $expectedParsedNumber, $stringFormat, $parsedFormat) {
+	public function strictParsingReturnsFalseForHardNumbers($formatType, $numberToParse, $expectedParsedNumber, $stringFormat, array $parsedFormat) {
 		$parser = $this->getAccessibleMock('F3\FLOW3\I18n\Parser\NumberParser', array('dummy'));
-		$result = $parser->_call('doParsingInStrictMode', $numberToParse, $parsedFormat, $this->mockLocalizedSymbols);
+		$result = $parser->_call('doParsingInStrictMode', $numberToParse, $parsedFormat, $this->sampleLocalizedSymbols);
 		$this->assertEquals(FALSE, $result);
 	}
 
@@ -150,9 +150,9 @@ class NumberParserTest extends \F3\Testing\BaseTestCase {
 	 * @dataProvider sampleNumbersEasyToParse
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function lenientParsingWorksCorrectlyForEasyNumbers($formatType, $numberToParse, $expectedParsedNumber, $stringFormat, $parsedFormat) {
+	public function lenientParsingWorksCorrectlyForEasyNumbers($formatType, $numberToParse, $expectedParsedNumber, $stringFormat, array $parsedFormat) {
 		$parser = $this->getAccessibleMock('F3\FLOW3\I18n\Parser\NumberParser', array('dummy'));
-		$result = $parser->_call('doParsingInLenientMode', $numberToParse, $parsedFormat, $this->mockLocalizedSymbols);
+		$result = $parser->_call('doParsingInLenientMode', $numberToParse, $parsedFormat, $this->sampleLocalizedSymbols);
 		$this->assertEquals($expectedParsedNumber, $result);
 	}
 
@@ -161,9 +161,9 @@ class NumberParserTest extends \F3\Testing\BaseTestCase {
 	 * @dataProvider sampleNumbersHardToParse
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function lenientParsingWorksCorrectlyForHardNumbers($formatType, $numberToParse, $expectedParsedNumber, $stringFormat, $parsedFormat) {
+	public function lenientParsingWorksCorrectlyForHardNumbers($formatType, $numberToParse, $expectedParsedNumber, $stringFormat, array $parsedFormat) {
 		$parser = $this->getAccessibleMock('F3\FLOW3\I18n\Parser\NumberParser', array('dummy'));
-		$result = $parser->_call('doParsingInLenientMode', $numberToParse, $parsedFormat, $this->mockLocalizedSymbols);
+		$result = $parser->_call('doParsingInLenientMode', $numberToParse, $parsedFormat, $this->sampleLocalizedSymbols);
 		$this->assertEquals($expectedParsedNumber, $result);
 	}
 
@@ -172,15 +172,15 @@ class NumberParserTest extends \F3\Testing\BaseTestCase {
 	 * @dataProvider sampleNumbersEasyToParse
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function parsingUsingCustomPatternWorks($formatType, $numberToParse, $expectedParsedNumber, $stringFormat, $parsedFormat) {
+	public function parsingUsingCustomPatternWorks($formatType, $numberToParse, $expectedParsedNumber, $stringFormat, array $parsedFormat) {
 		$mockNumbersReader = $this->getMock('F3\FLOW3\I18n\Cldr\Reader\NumbersReader');
 		$mockNumbersReader->expects($this->once())->method('parseCustomFormat')->with($stringFormat)->will($this->returnValue($parsedFormat));
-		$mockNumbersReader->expects($this->once())->method('getLocalizedSymbolsForLocale')->with($this->dummyLocale)->will($this->returnValue($this->mockLocalizedSymbols));
+		$mockNumbersReader->expects($this->once())->method('getLocalizedSymbolsForLocale')->with($this->sampleLocale)->will($this->returnValue($this->sampleLocalizedSymbols));
 
 		$parser = new \F3\FLOW3\I18n\Parser\NumberParser();
 		$parser->injectNumbersReader($mockNumbersReader);
 
-		$result = $parser->parseNumberWithCustomPattern($numberToParse, $stringFormat, $this->dummyLocale, TRUE);
+		$result = $parser->parseNumberWithCustomPattern($numberToParse, $stringFormat, $this->sampleLocale, TRUE);
 		$this->assertEquals($expectedParsedNumber, $result);
 	}
 
@@ -189,16 +189,16 @@ class NumberParserTest extends \F3\Testing\BaseTestCase {
 	 * @dataProvider sampleNumbersEasyToParse
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function specificFormattingMethodsWork($formatType, $numberToParse, $expectedParsedNumber, $stringFormat, $parsedFormat) {
+	public function specificFormattingMethodsWork($formatType, $numberToParse, $expectedParsedNumber, $stringFormat, array $parsedFormat) {
 		$mockNumbersReader = $this->getMock('F3\FLOW3\I18n\Cldr\Reader\NumbersReader');
-		$mockNumbersReader->expects($this->once())->method('parseFormatFromCldr')->with($this->dummyLocale, $formatType, 'default')->will($this->returnValue($parsedFormat));
-		$mockNumbersReader->expects($this->once())->method('getLocalizedSymbolsForLocale')->with($this->dummyLocale)->will($this->returnValue($this->mockLocalizedSymbols));
+		$mockNumbersReader->expects($this->once())->method('parseFormatFromCldr')->with($this->sampleLocale, $formatType, 'default')->will($this->returnValue($parsedFormat));
+		$mockNumbersReader->expects($this->once())->method('getLocalizedSymbolsForLocale')->with($this->sampleLocale)->will($this->returnValue($this->sampleLocalizedSymbols));
 
 		$formatter = new \F3\FLOW3\I18n\Parser\NumberParser();
 		$formatter->injectNumbersReader($mockNumbersReader);
 
 		$methodName = 'parse' . ucfirst($formatType) . 'Number';
-		$result = $formatter->$methodName($numberToParse, $this->dummyLocale);
+		$result = $formatter->$methodName($numberToParse, $this->sampleLocale);
 
 		$this->assertEquals($expectedParsedNumber, $result);
 	}

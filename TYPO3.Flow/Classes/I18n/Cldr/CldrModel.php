@@ -2,7 +2,7 @@
 declare(ENCODING = 'utf-8');
 namespace F3\FLOW3\I18n\Cldr;
 
-/* *
+/*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
@@ -79,18 +79,19 @@ class CldrModel extends \F3\FLOW3\I18n\Xml\AbstractXmlModel {
 	 * plurals/pluralRules
 	 * dates/calendars/calendar/type="gregorian"/
 	 *
-	 * Please see the documentation for \F3\FLOW3\I18n\Cldr\CldrParser for
-	 * details about parsed data structure.
+	 * Please see the documentation for CldrParser for details about parsed data
+	 * structure.
 	 *
 	 * @param string $path A path to the node to get
 	 * @return mixed Array of matching data, or FALSE on failure
 	 * @author Karol Gusak <firstname@lastname.eu>
+	 * @see \F3\FLOW3\I18n\Cldr\CldrParser
 	 */
 	public function getRawArray($path) {
-		$arrayKeys = explode('/', trim($path, '/'));
+		$pathElements = explode('/', trim($path, '/'));
 		$data = $this->xmlParsedData;
 
-		foreach ($arrayKeys as $key) {
+		foreach ($pathElements as $key) {
 			if (isset($data[$key])) {
 				$data = $data[$key];
 			} else {
@@ -139,8 +140,8 @@ class CldrModel extends \F3\FLOW3\I18n\Xml\AbstractXmlModel {
 	 * @param mixed $data Part of internal array to resolve aliases for (string if leaf, array otherwise)
 	 * @param string $currentPath Path to currently analyzed part of data
 	 * @return mixed Modified (or unchanged) $data
-	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @throws \F3\FLOW3\I18n\Cldr\Exception\InvalidCldrDataException When found alias tag which has unexpected structure
+	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	protected function resolveAliases($data, $currentPath) {
 		if (!is_array($data)) {
@@ -170,7 +171,7 @@ class CldrModel extends \F3\FLOW3\I18n\Xml\AbstractXmlModel {
 				for ($i = 0; $i < $countOfJumpsToParentNode; ++$i) {
 					$indexOfLastNodeInPath = count($currentPathNodeNames) - 1;
 					if (strpos($currentPathNodeNames[$indexOfLastNodeInPath], '"') !== FALSE) {
-							// Attributes are not counted in path traverse
+							// Attributes are not counted in path traversing, see description of parsed data array format (in CldrParser)
 						--$i;
 					}
 					unset($currentPathNodeNames[$indexOfLastNodeInPath]);

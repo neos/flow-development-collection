@@ -35,14 +35,14 @@ class DatesReaderTest extends \F3\Testing\BaseTestCase {
 	 *
 	 * @var \F3\FLOW3\I18n\Locale
 	 */
-	protected $dummyLocale;
+	protected $sampleLocale;
 
 	/**
 	 * @return void
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function setUp() {
-		$this->dummyLocale = new \F3\FLOW3\I18n\Locale('en');
+		$this->sampleLocale = new \F3\FLOW3\I18n\Locale('en');
 	}
 
 	/**
@@ -74,7 +74,7 @@ class DatesReaderTest extends \F3\Testing\BaseTestCase {
 		$mockModel->expects($this->once())->method('getElement')->with('dates/calendars/calendar/type="gregorian"/dateFormats/dateFormatLength/type="medium"/dateFormat/pattern')->will($this->returnValue('mockFormatString'));
 
 		$mockRepository = $this->getMock('F3\FLOW3\I18n\Cldr\CldrRepository');
-		$mockRepository->expects($this->once())->method('getModelCollection')->with('main', $this->dummyLocale)->will($this->returnValue($mockModel));
+		$mockRepository->expects($this->once())->method('getModelCollection')->with('main', $this->sampleLocale)->will($this->returnValue($mockModel));
 
 		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
 		$this->createCacheExpectations($mockCache);
@@ -85,7 +85,7 @@ class DatesReaderTest extends \F3\Testing\BaseTestCase {
 		$reader->injectCache($mockCache);
 		$reader->initializeObject();
 
-		$result = $reader->parseFormatFromCldr($this->dummyLocale, 'date', 'default');
+		$result = $reader->parseFormatFromCldr($this->sampleLocale, 'date', 'default');
 		$this->assertEquals('mockParsedFormat', $result);
 
 		$reader->shutdownObject();
@@ -102,7 +102,7 @@ class DatesReaderTest extends \F3\Testing\BaseTestCase {
 		$mockModel->expects($this->at(2))->method('getElement', 'dates/calendars/calendar/type="gregorian"/timeFormats/timeFormatLength/type="full"/timeFormat/pattern')->will($this->returnValue('hms'));
 
 		$mockRepository = $this->getMock('F3\FLOW3\I18n\Cldr\CldrRepository');
-		$mockRepository->expects($this->exactly(3))->method('getModelCollection')->with('main', $this->dummyLocale)->will($this->returnValue($mockModel));
+		$mockRepository->expects($this->exactly(3))->method('getModelCollection')->with('main', $this->sampleLocale)->will($this->returnValue($mockModel));
 
 		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
 		$this->createCacheExpectations($mockCache);
@@ -112,7 +112,7 @@ class DatesReaderTest extends \F3\Testing\BaseTestCase {
 		$reader->injectCache($mockCache);
 		$reader->initializeObject();
 
-		$result = $reader->parseFormatFromCldr($this->dummyLocale, 'dateTime', 'full');
+		$result = $reader->parseFormatFromCldr($this->sampleLocale, 'dateTime', 'full');
 		$this->assertEquals(array(array('foo '), 'h', 'm', 's', array(' '), 'd', 'M', 'y', array(' bar')), $result);
 		$reader->shutdownObject();
 	}
@@ -138,7 +138,7 @@ class DatesReaderTest extends \F3\Testing\BaseTestCase {
 		$mockModel->expects($this->exactly(5))->method('getRawArray')->will($this->returnCallback($getRawArrayCallback));
 
 		$mockRepository = $this->getMock('F3\FLOW3\I18n\Cldr\CldrRepository');
-		$mockRepository->expects($this->once())->method('getModelCollection')->with('main', $this->dummyLocale)->will($this->returnValue($mockModel));
+		$mockRepository->expects($this->once())->method('getModelCollection')->with('main', $this->sampleLocale)->will($this->returnValue($mockModel));
 
 		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
 		$this->createCacheExpectations($mockCache);
@@ -148,7 +148,7 @@ class DatesReaderTest extends \F3\Testing\BaseTestCase {
 		$reader->injectCache($mockCache);
 		$reader->initializeObject();
 
-		$result = $reader->getLocalizedLiteralsForLocale($this->dummyLocale);
+		$result = $reader->getLocalizedLiteralsForLocale($this->sampleLocale);
 		$this->assertEquals('January', $result['months']['format']['wide'][1]);
 		$this->assertEquals('Sat', $result['days']['format']['abbreviated']['sat']);
 		$this->assertEquals('1', $result['quarters']['format']['narrow'][1]);

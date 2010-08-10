@@ -34,8 +34,8 @@ class CldrModelCollectionTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function getRawArrayWorks() {
-		$mockDataOfParent = array(
+	public function returnsRawArrayFromMergedDataCorrectly() {
+		$sampleDataOfParent = array(
 			'key1' => 'value1',
 			'key2' => array(
 				'subkey1' => 'value2',
@@ -43,7 +43,7 @@ class CldrModelCollectionTest extends \F3\Testing\BaseTestCase {
 			),
 		);
 
-		$mockDataOfChild = array(
+		$sampleDataOfChild = array(
 			'key1' => 'value4',
 			'key2' => array(
 				'subkey1' => 'value5',
@@ -52,12 +52,12 @@ class CldrModelCollectionTest extends \F3\Testing\BaseTestCase {
 		);
 
 		$mockCldrModelParent = $this->getMock('F3\FLOW3\I18n\Cldr\CldrModel');
-		$mockCldrModelParent->expects($this->at(0))->method('getRawArray')->with('foo')->will($this->returnValue($mockDataOfParent));
-		$mockCldrModelParent->expects($this->at(1))->method('getRawArray')->with('bar')->will($this->returnValue($mockDataOfParent));
+		$mockCldrModelParent->expects($this->at(0))->method('getRawArray')->with('foo')->will($this->returnValue($sampleDataOfParent));
+		$mockCldrModelParent->expects($this->at(1))->method('getRawArray')->with('bar')->will($this->returnValue($sampleDataOfParent));
 		$mockCldrModelParent->expects($this->at(2))->method('getRawArray')->with('baz')->will($this->returnValue(FALSE));
 
 		$mockCldrModelChild = $this->getMock('F3\FLOW3\I18n\Cldr\CldrModel');
-		$mockCldrModelChild->expects($this->at(0))->method('getRawArray')->with('foo')->will($this->returnValue($mockDataOfChild));
+		$mockCldrModelChild->expects($this->at(0))->method('getRawArray')->with('foo')->will($this->returnValue($sampleDataOfChild));
 		$mockCldrModelChild->expects($this->at(1))->method('getRawArray')->with('bar')->will($this->returnValue(FALSE));
 		$mockCldrModelChild->expects($this->at(2))->method('getRawArray')->with('baz')->will($this->returnValue(FALSE));
 
@@ -81,24 +81,24 @@ class CldrModelCollectionTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function getElementWorks() {
-		$mockDataOfParent = array(
+	public function returnsElementFromMergedDataCorrectly() {
+		$sampleDataOfParent = array(
 			\F3\FLOW3\I18n\Cldr\CldrParser::NODE_WITHOUT_ATTRIBUTES => 'value1',
 			'key2' => 'value2',
 		);
 
-		$mockDataOfChild = array(
+		$sampleDataOfChild = array(
 			\F3\FLOW3\I18n\Cldr\CldrParser::NODE_WITHOUT_ATTRIBUTES => 'value3',
 			'key2' => 'value4',
 		);
 
 		$mockCldrModelParent = $this->getMock('F3\FLOW3\I18n\Cldr\CldrModel');
-		$mockCldrModelParent->expects($this->at(0))->method('getRawArray')->with('foo')->will($this->returnValue($mockDataOfParent));
-		$mockCldrModelParent->expects($this->at(1))->method('getRawArray')->with('bar')->will($this->returnValue($mockDataOfParent));
+		$mockCldrModelParent->expects($this->at(0))->method('getRawArray')->with('foo')->will($this->returnValue($sampleDataOfParent));
+		$mockCldrModelParent->expects($this->at(1))->method('getRawArray')->with('bar')->will($this->returnValue($sampleDataOfParent));
 		$mockCldrModelParent->expects($this->at(2))->method('getRawArray')->with('baz')->will($this->returnValue(FALSE));
 
 		$mockCldrModelChild = $this->getMock('F3\FLOW3\I18n\Cldr\CldrModel');
-		$mockCldrModelChild->expects($this->at(0))->method('getRawArray')->with('foo')->will($this->returnValue($mockDataOfChild));
+		$mockCldrModelChild->expects($this->at(0))->method('getRawArray')->with('foo')->will($this->returnValue($sampleDataOfChild));
 		$mockCldrModelChild->expects($this->at(1))->method('getRawArray')->with('bar')->will($this->returnValue(FALSE));
 		$mockCldrModelChild->expects($this->at(2))->method('getRawArray')->with('baz')->will($this->returnValue(FALSE));
 

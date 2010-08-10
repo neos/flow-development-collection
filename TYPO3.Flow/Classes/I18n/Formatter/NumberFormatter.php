@@ -2,7 +2,7 @@
 declare(ENCODING = 'utf-8');
 namespace F3\FLOW3\I18n\Formatter;
 
-/* *
+/*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
@@ -56,10 +56,10 @@ class NumberFormatter implements \F3\FLOW3\I18n\Formatter\FormatterInterface {
 	 * @api
 	 */
 	public function format($value, \F3\FLOW3\I18n\Locale $locale, array $styleProperties = array()) {
-		$style = (isset($styleProperties[0])) ? $styleProperties[0] : 'decimal';
+		$formatStyle = (isset($styleProperties[0])) ? $styleProperties[0] : 'decimal';
 		$formatLength = 'default';
 
-		switch ($style) {
+		switch ($formatStyle) {
 			case 'percent':
 				return $this->formatPercentNumber($value, $locale, $formatLength);
 			default:
@@ -81,6 +81,7 @@ class NumberFormatter implements \F3\FLOW3\I18n\Formatter\FormatterInterface {
 	 * @param \F3\FLOW3\I18n\Locale $locale A locale used for finding symbols array
 	 * @return string Formatted number. Will return string-casted version of $number if pattern is not valid / supported
 	 * @author Karol Gusak <firstname@lastname.eu>
+	 * @api
 	 */
 	public function formatNumberWithCustomPattern($number, $format, \F3\FLOW3\I18n\Locale $locale) {
 		return $this->doFormattingWithParsedFormat($number, $this->numbersReader->parseCustomFormat($format), $this->numbersReader->getLocalizedSymbolsForLocale($locale));
@@ -98,6 +99,7 @@ class NumberFormatter implements \F3\FLOW3\I18n\Formatter\FormatterInterface {
 	 * @param string $formatLength One of: full, long, medium, short, or 'default' in order to not use $formatLength parameter
 	 * @return string Formatted number. Will return string-casted version of $number if there is no pattern for given $locale / $formatLength
 	 * @author Karol Gusak <firstname@lastname.eu>
+	 * @api
 	 */
 	public function formatDecimalNumber($number, \F3\FLOW3\I18n\Locale $locale, $formatLength = 'default') {
 		return $this->doFormattingWithParsedFormat($number, $this->numbersReader->parseFormatFromCldr($locale, 'decimal', $formatLength), $this->numbersReader->getLocalizedSymbolsForLocale($locale));
@@ -115,6 +117,7 @@ class NumberFormatter implements \F3\FLOW3\I18n\Formatter\FormatterInterface {
 	 * @param string $formatLength One of: full, long, medium, short, or 'default' in order to not use $formatLength parameter
 	 * @return string Formatted number. Will return string-casted version of $number if there is no pattern for given $locale / $formatLength
 	 * @author Karol Gusak <firstname@lastname.eu>
+	 * @api
 	 */
 	public function formatPercentNumber($number, \F3\FLOW3\I18n\Locale $locale, $formatLength = 'default') {
 		return $this->doFormattingWithParsedFormat($number, $this->numbersReader->parseFormatFromCldr($locale, 'percent', $formatLength), $this->numbersReader->getLocalizedSymbolsForLocale($locale));
@@ -135,6 +138,7 @@ class NumberFormatter implements \F3\FLOW3\I18n\Formatter\FormatterInterface {
 	 * @param string $formatLength One of: full, long, medium, short, or 'default' in order to not use $formatLength parameter
 	 * @return string Formatted number. Will return string-casted version of $number if there is no pattern for given $locale / $formatLength
 	 * @author Karol Gusak <firstname@lastname.eu>
+	 * @api
 	 */
 	public function formatCurrencyNumber($number, \F3\FLOW3\I18n\Locale $locale, $currency, $formatLength = 'default') {
 		return $this->doFormattingWithParsedFormat($number, $this->numbersReader->parseFormatFromCldr($locale, 'currency', $formatLength), $this->numbersReader->getLocalizedSymbolsForLocale($locale), $currency);

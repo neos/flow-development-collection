@@ -53,7 +53,7 @@ class CldrRepositoryTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function getModelWorks() {
+	public function modelIsReturnedCorrectly() {
 		file_put_contents('vfs://Foo/Bar.xml', '');
 
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
@@ -75,7 +75,7 @@ class CldrRepositoryTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function getModelCollectionWorks() {
+	public function modelCollectionIsReturnedCorrectly() {
 		mkdir('vfs://Foo/Folder');
 		file_put_contents('vfs://Foo/Folder/en.xml', '');
 

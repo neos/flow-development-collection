@@ -40,27 +40,27 @@ class CldrModelTest extends \F3\Testing\BaseTestCase {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function setUp() {
-		$mockFilename = 'foo';
-		$mockFilenamePath = 'resource://FLOW3/Private/Locale/CLDR/Sources/foo.xml';
-		$mockParsedData = require(__DIR__ . '/../Fixtures/MockParsedCldrData.php');
+		$sampleFilename = 'foo';
+		$sampleFilenamePath = 'resource://FLOW3/Private/Locale/CLDR/Sources/foo.xml';
+		$sampleParsedData = require(__DIR__ . '/../Fixtures/MockParsedCldrData.php');
 
 		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
-		$mockCache->expects($this->any())->method('has')->with($mockFilenamePath)->will($this->returnValue(FALSE));
+		$mockCache->expects($this->any())->method('has')->with($sampleFilenamePath)->will($this->returnValue(FALSE));
 
 		$mockCldrParser = $this->getMock('F3\FLOW3\I18n\Cldr\CldrParser');
-		$mockCldrParser->expects($this->once())->method('getParsedData')->with($mockFilenamePath)->will($this->returnValue($mockParsedData));
+		$mockCldrParser->expects($this->once())->method('getParsedData')->with($sampleFilenamePath)->will($this->returnValue($sampleParsedData));
 
 		$this->model = new \F3\FLOW3\I18n\Cldr\CldrModel();
 		$this->model->injectCache($mockCache);
 		$this->model->injectParser($mockCldrParser);
-		$this->model->initializeObject($mockFilename);
+		$this->model->initializeObject($sampleFilename);
 	}
 
 	/**
 	 * @test
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function getRawArrayWorks() {
+	public function returnsRawArrayCorrectly() {
 		$result = $this->model->getRawArray('dates/calendars/calendar/type="gregorian"/dateFormats/dateFormatLength');
 		$this->assertEquals(4, count($result));
 		$this->assertEquals(TRUE, isset($result['type="full"']));
@@ -70,7 +70,7 @@ class CldrModelTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function getElementWorks() {
+	public function returnsElementCorrectly() {
 		$result = $this->model->getElement('dates/calendars/calendar/type="gregorian"/dateFormats/dateFormatLength/type="full"/dateFormat/pattern');
 		$this->assertEquals('EEEE, d MMMM y', $result);
 

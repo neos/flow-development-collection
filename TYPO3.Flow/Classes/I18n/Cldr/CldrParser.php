@@ -2,7 +2,7 @@
 declare(ENCODING = 'utf-8');
 namespace F3\FLOW3\I18n\Cldr;
 
-/* *
+/*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
@@ -70,7 +70,7 @@ namespace F3\FLOW3\I18n\Cldr;
  * will be converted to:
  * 'dateFormat' => array(
  *   'pattern' => array(
- *     '' => 'dd-MM-yyyy',
+ *     NODE_WITHOUT_ATTRIBUTES => 'dd-MM-yyyy',
  *     'alt="proposed-x1001" draft="unconfirmed"' => 'd MMM y',
  *   )
  * )
@@ -100,36 +100,7 @@ class CldrParser extends \F3\FLOW3\I18n\Xml\AbstractXmlParser {
 	const NODE_WITHOUT_ATTRIBUTES = '#noattributes';
 
 	/**
-	 * Parses the attributes string and returns a value of desired attribute.
-	 *
-	 * Attributes are stored together with nodes in an array. If node has
-	 * attributes, they are all stored as one string, in the same manner they
-	 * exist in XML file (e.g. 'alt="proposed-x1001" draft="unconfirmed"').
-	 *
-	 * This convenient method extracts a value of desired attribute (in example
-	 * above, 'proposed-x1001' would be first) and returns it.
-	 *
-	 * Note: there isn't any validation for input variable.
-	 *
-	 * @param string $attributeString An attribute to parse
-	 * @param int $attributeNumber Index of attribute to get value for, starting from 1
-	 * @return mixed Value of desired attribute, or FALSE if there is no such attribute
-	 * @author Karol Gusak <firstname@lastname.eu>
-	 */
-	static public function getValueOfAttribute($attributeString, $attributeNumber) {
-		$attributes = explode('" ', $attributeString);
-
-		if (count($attributes) < $attributeNumber) {
-			return FALSE;
-		} elseif (count($attributes) === $attributeNumber) {
-			return substr($attributes[$attributeNumber - 1], strpos($attributes[$attributeNumber - 1], '"') + 1, -1);
-		} else {
-			return substr($attributes[$attributeNumber - 1], strpos($attributes[$attributeNumber - 1], '"') + 1);
-		}
-	}
-
-	/**
-	 * Parses the attributes string and returns a value of attribute with
+	 * Parses the attributes' string and returns a value of attribute with
 	 * desired name.
 	 *
 	 * Attributes are stored together with nodes in an array. If node has
@@ -175,8 +146,8 @@ class CldrParser extends \F3\FLOW3\I18n\Xml\AbstractXmlParser {
 	 * Returns array representation of XML data, starting from a node pointed by
 	 * $node variable.
 	 *
-	 * Please see the documentation for $data property of this class for details
-	 * about the internal representation of XML data.
+	 * Please see the documentation of this class for details about the internal
+	 * representation of XML data.
 	 *
 	 * @param \SimpleXMLElement $node A node to start parsing from
 	 * @return mixed An array representing parsed XML node or string value if leaf

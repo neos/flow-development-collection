@@ -33,14 +33,14 @@ class NumberFormatterTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @var \F3\FLOW3\I18n\Locale
 	 */
-	protected $dummyLocale;
+	protected $sampleLocale;
 
 	/**
 	 * Localized symbols array used during formatting.
 	 *
 	 * @var array
 	 */
-	protected $mockLocalizedSymbols = array(
+	protected $sampleLocalizedSymbols = array(
 		'decimal' => ',',
 		'group' => ' ',
 		'percentSign' => '%',
@@ -80,24 +80,24 @@ class NumberFormatterTest extends \F3\Testing\BaseTestCase {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function setUp() {
-		$this->dummyLocale = new \F3\FLOW3\I18n\Locale('en');
+		$this->sampleLocale = new \F3\FLOW3\I18n\Locale('en');
 	}
 
 	/**
 	 * @test
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function formatWorks() {
-		$dummyNumber = 123.456;
+	public function formatMethodsAreChoosenCorrectly() {
+		$sampleNumber = 123.456;
 
 		$formatter = $this->getAccessibleMock('F3\FLOW3\I18n\Formatter\NumberFormatter', array('formatDecimalNumber', 'formatPercentNumber'));
-		$formatter->expects($this->at(0))->method('formatDecimalNumber')->with($dummyNumber, $this->dummyLocale, 'default')->will($this->returnValue('bar1'));
-		$formatter->expects($this->at(1))->method('formatPercentNumber')->with($dummyNumber, $this->dummyLocale, 'default')->will($this->returnValue('bar2'));
+		$formatter->expects($this->at(0))->method('formatDecimalNumber')->with($sampleNumber, $this->sampleLocale, 'default')->will($this->returnValue('bar1'));
+		$formatter->expects($this->at(1))->method('formatPercentNumber')->with($sampleNumber, $this->sampleLocale, 'default')->will($this->returnValue('bar2'));
 
-		$result = $formatter->format($dummyNumber, $this->dummyLocale);
+		$result = $formatter->format($sampleNumber, $this->sampleLocale);
 		$this->assertEquals('bar1', $result);
 
-		$result = $formatter->format($dummyNumber, $this->dummyLocale, array('percent'));
+		$result = $formatter->format($sampleNumber, $this->sampleLocale, array('percent'));
 		$this->assertEquals('bar2', $result);
 	}
 
@@ -124,9 +124,9 @@ class NumberFormatterTest extends \F3\Testing\BaseTestCase {
 	 * @dataProvider sampleNumbersAndParsedFormats
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function parsedFormatsAreUsedCorrectly($number, $expectedResult, $parsedFormat) {
+	public function parsedFormatsAreUsedCorrectly($number, $expectedResult, array $parsedFormat) {
 		$formatter = $this->getAccessibleMock('F3\FLOW3\I18n\Formatter\NumberFormatter', array('dummy'));
-		$result = $formatter->_call('doFormattingWithParsedFormat', $number, $parsedFormat, $this->mockLocalizedSymbols);
+		$result = $formatter->_call('doFormattingWithParsedFormat', $number, $parsedFormat, $this->sampleLocalizedSymbols);
 		$this->assertEquals($expectedResult, $result);
 	}
 
@@ -161,15 +161,15 @@ class NumberFormatterTest extends \F3\Testing\BaseTestCase {
 	 * @dataProvider customFormatsAndFormatterNumbers
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function formattingUsingCustomPatternWorks($number, $format, $parsedFormat, $expectedResult) {
+	public function formattingUsingCustomPatternWorks($number, $format, array $parsedFormat, $expectedResult) {
 		$mockNumbersReader = $this->getMock('F3\FLOW3\I18n\Cldr\Reader\NumbersReader');
 		$mockNumbersReader->expects($this->once())->method('parseCustomFormat')->with($format)->will($this->returnValue($parsedFormat));
-		$mockNumbersReader->expects($this->once())->method('getLocalizedSymbolsForLocale')->with($this->dummyLocale)->will($this->returnValue($this->mockLocalizedSymbols));
+		$mockNumbersReader->expects($this->once())->method('getLocalizedSymbolsForLocale')->with($this->sampleLocale)->will($this->returnValue($this->sampleLocalizedSymbols));
 
 		$formatter = new \F3\FLOW3\I18n\Formatter\NumberFormatter();
 		$formatter->injectNumbersReader($mockNumbersReader);
 
-		$result = $formatter->formatNumberWithCustomPattern($number, $format, $this->dummyLocale);
+		$result = $formatter->formatNumberWithCustomPattern($number, $format, $this->sampleLocale);
 		$this->assertEquals($expectedResult, $result);
 	}
 
@@ -219,19 +219,19 @@ class NumberFormatterTest extends \F3\Testing\BaseTestCase {
 	 * @dataProvider sampleDataForSpecificFormattingMethods
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function specificFormattingMethodsWork($number, $parsedFormat, $expectedResult, $formatType, $currencySign = NULL) {
+	public function specificFormattingMethodsWork($number, array $parsedFormat, $expectedResult, $formatType, $currencySign = NULL) {
 		$mockNumbersReader = $this->getMock('F3\FLOW3\I18n\Cldr\Reader\NumbersReader');
-		$mockNumbersReader->expects($this->once())->method('parseFormatFromCldr')->with($this->dummyLocale, $formatType, 'default')->will($this->returnValue($parsedFormat));
-		$mockNumbersReader->expects($this->once())->method('getLocalizedSymbolsForLocale')->with($this->dummyLocale)->will($this->returnValue($this->mockLocalizedSymbols));
+		$mockNumbersReader->expects($this->once())->method('parseFormatFromCldr')->with($this->sampleLocale, $formatType, 'default')->will($this->returnValue($parsedFormat));
+		$mockNumbersReader->expects($this->once())->method('getLocalizedSymbolsForLocale')->with($this->sampleLocale)->will($this->returnValue($this->sampleLocalizedSymbols));
 
 		$formatter = new \F3\FLOW3\I18n\Formatter\NumberFormatter();
 		$formatter->injectNumbersReader($mockNumbersReader);
 
 		if ($formatType === 'currency') {
-			$result = $formatter->formatCurrencyNumber($number, $this->dummyLocale, $currencySign);
+			$result = $formatter->formatCurrencyNumber($number, $this->sampleLocale, $currencySign);
 		} else {
 			$methodName = 'format' . ucfirst($formatType) . 'Number';
-			$result = $formatter->$methodName($number, $this->dummyLocale);
+			$result = $formatter->$methodName($number, $this->sampleLocale);
 		}
 		$this->assertEquals($expectedResult, $result);
 	}

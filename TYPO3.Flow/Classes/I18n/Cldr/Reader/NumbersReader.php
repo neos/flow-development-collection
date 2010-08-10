@@ -2,7 +2,7 @@
 declare(ENCODING = 'utf-8');
 namespace F3\FLOW3\I18n\Cldr\Reader;
 
-/* *
+/*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
@@ -115,10 +115,6 @@ class NumbersReader {
 	 * localized during formatting (eg minus sign, percent etc), or other chars
 	 * which will be used as-is.
 	 *
-	 * There can be FALSE assigned to any format string. This means that given
-	 * string was parsed unsuccessfully (no more parsing attempts will be done
-	 * for this format string until cache clears).
-	 *
 	 * @var array
 	 */
 	protected $parsedFormats;
@@ -126,7 +122,8 @@ class NumbersReader {
 	/**
 	 * An array which stores references to formats used by particular locales.
 	 *
-	 * As for one locale there can be defined many formats (at most 3 format
+	 * As for one locale there can be definegoo
+	 * d many formats (at most 3 format
 	 * types supported by this class - decimal, percent, currency - multiplied by
 	 * at most 5 format lengths - full, long, medium, short, and implicit length
 	 * referred in this class as 'default'), references are organized in arrays.
@@ -147,8 +144,8 @@ class NumbersReader {
 	/**
 	 * Associative array of symbols used in particular locales.
 	 *
-	 * Locale tags are keys for this array. Values are arrays of symbols, as
-	 * defined in /ldml/numbers/symbols path in CLDR files.
+	 * Locale identifiers are keys for this array. Values are arrays of symbols,
+	 * as defined in /ldml/numbers/symbols path in CLDR files.
 	 *
 	 * @var array
 	 */
@@ -283,14 +280,14 @@ class NumbersReader {
 	 *
 	 * @param string $format
 	 * @return array Parsed format
-	 * @throws \F3\FLOW3\I18n\Cldr\Reader\Exception\UnsupportedFormatException When unsupported format characters encountered
+	 * @throws \F3\FLOW3\I18n\Cldr\Reader\Exception\UnsupportedNumberFormatException When unsupported format characters encountered
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @see \F3\FLOW3\I18n\Cldr\Reader\NumbersReader::$parsedFormats
 	 */
 	protected function parseFormat($format) {
 		foreach (array('E', '@', '*', '\'') as $unsupportedFeature) {
 			if (strpos($format, $unsupportedFeature) !== FALSE) {
-				throw new \F3\FLOW3\I18n\Cldr\Reader\Exception\UnsupportedFormatException('Encountered unsupported format characters in format string.', 1280219449);
+				throw new \F3\FLOW3\I18n\Cldr\Reader\Exception\UnsupportedNumberFormatException('Encountered unsupported format characters in format string.', 1280219449);
 			}
 		}
 

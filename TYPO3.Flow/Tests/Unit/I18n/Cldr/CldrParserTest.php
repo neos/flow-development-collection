@@ -34,42 +34,30 @@ class CldrParserTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function parsesCorrectly() {
-		$mockFilenamePath = __DIR__ . '/../Fixtures/MockCldrData.xml';
-		$mockParsedData = require(__DIR__ . '/../Fixtures/MockParsedCldrData.php');
+	public function parsesCldrDataCorrectly() {
+		$sampleFilenamePath = __DIR__ . '/../Fixtures/MockCldrData.xml';
+		$sampleParsedData = require(__DIR__ . '/../Fixtures/MockParsedCldrData.php');
 
 		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
-		$mockCache->expects($this->once())->method('has')->with($mockFilenamePath)->will($this->returnValue(FALSE));
+		$mockCache->expects($this->once())->method('has')->with($sampleFilenamePath)->will($this->returnValue(FALSE));
 
 		$parser = new \F3\FLOW3\I18n\Cldr\CldrParser();
 		$parser->injectCache($mockCache);
-		
-		$result = $parser->getParsedData($mockFilenamePath);
-		$this->assertEquals($mockParsedData, $result);
+
+		$result = $parser->getParsedData($sampleFilenamePath);
+		$this->assertEquals($sampleParsedData, $result);
 	}
 
 	/**
 	 * @test
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function getValueOfAttributeWorks() {
-		$mockAttributesString = 'foo="bar" foo2="bar2"';
+	public function returnsValueByAttributeNameCorrectly() {
+		$sampleAttributesString = 'source="locale" path="../eraAbbr"';
 
-		$this->assertEquals('bar', \F3\FLOW3\I18n\Cldr\CldrParser::getValueOfAttribute($mockAttributesString, 1));
-		$this->assertEquals('bar2', \F3\FLOW3\I18n\Cldr\CldrParser::getValueOfAttribute($mockAttributesString, 2));
-		$this->assertEquals(FALSE, \F3\FLOW3\I18n\Cldr\CldrParser::getValueOfAttribute($mockAttributesString, 4));
-	}
-
-	/**
-	 * @test
-	 * @author Karol Gusak <firstname@lastname.eu>
-	 */
-	public function getValueOfAttributeByNameWorks() {
-		$mockAttributesString = 'source="locale" path="../eraAbbr"';
-
-		$this->assertEquals('locale', \F3\FLOW3\I18n\Cldr\CldrParser::getValueOfAttributeByName($mockAttributesString, 'source'));
-		$this->assertEquals('../eraAbbr', \F3\FLOW3\I18n\Cldr\CldrParser::getValueOfAttributeByName($mockAttributesString, 'path'));
-		$this->assertEquals(FALSE, \F3\FLOW3\I18n\Cldr\CldrParser::getValueOfAttributeByName($mockAttributesString, 'notavailable'));
+		$this->assertEquals('locale', \F3\FLOW3\I18n\Cldr\CldrParser::getValueOfAttributeByName($sampleAttributesString, 'source'));
+		$this->assertEquals('../eraAbbr', \F3\FLOW3\I18n\Cldr\CldrParser::getValueOfAttributeByName($sampleAttributesString, 'path'));
+		$this->assertEquals(FALSE, \F3\FLOW3\I18n\Cldr\CldrParser::getValueOfAttributeByName($sampleAttributesString, 'notavailable'));
 	}
 }
 

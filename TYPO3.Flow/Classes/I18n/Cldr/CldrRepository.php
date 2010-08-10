@@ -2,7 +2,7 @@
 declare(ENCODING = 'utf-8');
 namespace F3\FLOW3\I18n\Cldr;
 
-/* *
+/*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
@@ -25,7 +25,7 @@ namespace F3\FLOW3\I18n\Cldr;
 /**
  * The CldrRepository class
  *
- * CLDRRepository manages CldrModel and CldrModelCollection instances
+ * CldrRepository manages CldrModel and CldrModelCollection instances
  * across the framework, so there is only one instance of CldrModel for
  * every unique CLDR data file, and one instace of CldrModelCollection
  * for every unique locale chain.
@@ -68,7 +68,7 @@ class CldrRepository {
 	 * request.
 	 *
 	 * Structure is as follow:
-	 * ['directoryPath']['localeTag'] => $odelCollection,
+	 * ['directoryPath']['localeTag'] => $modelCollection,
 	 *
 	 * CldrModelCollection describes a group of models. There can be many models
 	 * for same directoryPaths, as there can be many locale chains.
@@ -103,7 +103,7 @@ class CldrRepository {
 	 * file.
 	 *
 	 * @param string $filename Relative path to existing CLDR file
-	 * @return mixed A F3\FLOW3\I18n\Cldr\CldrModel instance or FALSE on failure
+	 * @return mixed A \F3\FLOW3\I18n\Cldr\CldrModel instance or FALSE on failure
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function getModel($filename) {
@@ -134,7 +134,7 @@ class CldrRepository {
 	 * Returns FALSE when $directoryPath doesn't point to existing directory.
 	 *
 	 * @param string $directoryPath Relative path to existing CLDR directory which contains one file per locale (see 'main' directory in CLDR for example)
-	 * @return mixed A F3\FLOW3\I18n\Cldr\CldrModelCollection instance or FALSE on failure
+	 * @return mixed A \F3\FLOW3\I18n\Cldr\CldrModelCollection instance or FALSE on failure
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function getModelCollection($directoryPath, \F3\FLOW3\I18n\Locale $locale = NULL) {

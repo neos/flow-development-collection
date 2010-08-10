@@ -35,12 +35,12 @@ class DatetimeFormatterTest extends \F3\Testing\BaseTestCase {
 	 *
 	 * @var \F3\FLOW3\I18n\Locale
 	 */
-	protected $dummyLocale;
+	protected $sampleLocale;
 
 	/**
 	 * @var array
 	 */
-	protected $mockLocalizedLiterals;
+	protected $sampleLocalizedLiterals;
 
 	/**
 	 * DateTime object used in tests
@@ -59,8 +59,8 @@ class DatetimeFormatterTest extends \F3\Testing\BaseTestCase {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function setUp() {
-		$this->dummyLocale = new \F3\FLOW3\I18n\Locale('en');
-		$this->mockLocalizedLiterals = require(__DIR__ . '/../Fixtures/MockLocalizedLiteralsArray.php');
+		$this->sampleLocale = new \F3\FLOW3\I18n\Locale('en');
+		$this->sampleLocalizedLiterals = require(__DIR__ . '/../Fixtures/MockLocalizedLiteralsArray.php');
 		$this->sampleDateTime = new \DateTime("@1276192176");
 		$this->sampleDateTime->setTimezone(new \DateTimeZone('Europe/London'));
 	}
@@ -69,19 +69,19 @@ class DatetimeFormatterTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function formatWorks() {
+	public function formatMethodsAreChoosenCorrectly() {
 		$formatter = $this->getAccessibleMock('F3\FLOW3\I18n\Formatter\DatetimeFormatter', array('formatDate', 'formatTime', 'formatDateTime'));
-		$formatter->expects($this->at(0))->method('formatDateTime')->with($this->sampleDateTime, $this->dummyLocale, 'default')->will($this->returnValue('bar1'));
-		$formatter->expects($this->at(1))->method('formatDate')->with($this->sampleDateTime, $this->dummyLocale, 'default')->will($this->returnValue('bar2'));
-		$formatter->expects($this->at(2))->method('formatTime')->with($this->sampleDateTime, $this->dummyLocale, 'full')->will($this->returnValue('bar3'));
+		$formatter->expects($this->at(0))->method('formatDateTime')->with($this->sampleDateTime, $this->sampleLocale, 'default')->will($this->returnValue('bar1'));
+		$formatter->expects($this->at(1))->method('formatDate')->with($this->sampleDateTime, $this->sampleLocale, 'default')->will($this->returnValue('bar2'));
+		$formatter->expects($this->at(2))->method('formatTime')->with($this->sampleDateTime, $this->sampleLocale, 'full')->will($this->returnValue('bar3'));
 
-		$result = $formatter->format($this->sampleDateTime, $this->dummyLocale);
+		$result = $formatter->format($this->sampleDateTime, $this->sampleLocale);
 		$this->assertEquals('bar1', $result);
 
-		$result = $formatter->format($this->sampleDateTime, $this->dummyLocale, array('date'));
+		$result = $formatter->format($this->sampleDateTime, $this->sampleLocale, array('date'));
 		$this->assertEquals('bar2', $result);
 
-		$result = $formatter->format($this->sampleDateTime, $this->dummyLocale, array('time', 'full'));
+		$result = $formatter->format($this->sampleDateTime, $this->sampleLocale, array('time', 'full'));
 		$this->assertEquals('bar3', $result);
 	}
 
@@ -108,10 +108,10 @@ class DatetimeFormatterTest extends \F3\Testing\BaseTestCase {
 	 * @dataProvider parsedFormatsAndFormattedDatetimes
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function parsedFormatsAreUsedCorrectly($parsedFormat, $expectedResult) {
+	public function parsedFormatsAreUsedCorrectly(array $parsedFormat, $expectedResult) {
 		$formatter = $this->getAccessibleMock('F3\FLOW3\I18n\Formatter\DatetimeFormatter', array('dummy'));
 
-		$result = $formatter->_call('doFormattingWithParsedFormat', $this->sampleDateTime, $parsedFormat, $this->mockLocalizedLiterals);
+		$result = $formatter->_call('doFormattingWithParsedFormat', $this->sampleDateTime, $parsedFormat, $this->sampleLocalizedLiterals);
 		$this->assertEquals($expectedResult, $result);
 	}
 
@@ -133,15 +133,15 @@ class DatetimeFormatterTest extends \F3\Testing\BaseTestCase {
 	 * @dataProvider customFormatsAndFormattedDatetimes
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function formattingUsingCustomPatternWorks($format, $parsedFormat, $expectedResult) {
+	public function formattingUsingCustomPatternWorks($format, array $parsedFormat, $expectedResult) {
 		$mockDatesReader = $this->getMock('F3\FLOW3\I18n\Cldr\Reader\DatesReader');
 		$mockDatesReader->expects($this->once())->method('parseCustomFormat')->with($format)->will($this->returnValue($parsedFormat));
-		$mockDatesReader->expects($this->once())->method('getLocalizedLiteralsForLocale')->with($this->dummyLocale)->will($this->returnValue($this->mockLocalizedLiterals));
+		$mockDatesReader->expects($this->once())->method('getLocalizedLiteralsForLocale')->with($this->sampleLocale)->will($this->returnValue($this->sampleLocalizedLiterals));
 
 		$formatter = new \F3\FLOW3\I18n\Formatter\DatetimeFormatter();
 		$formatter->injectDatesReader($mockDatesReader);
 
-		$result = $formatter->formatDateTimeWithCustomPattern($this->sampleDateTime, $format, $this->dummyLocale);
+		$result = $formatter->formatDateTimeWithCustomPattern($this->sampleDateTime, $format, $this->sampleLocale);
 		$this->assertEquals($expectedResult, $result);
 	}
 
@@ -176,17 +176,17 @@ class DatetimeFormatterTest extends \F3\Testing\BaseTestCase {
 	 * @dataProvider sampleDataForSpecificFormattingMethods
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function specificFormattingMethodsWork($parsedFormat, $expectedResult, $formatType) {
+	public function specificFormattingMethodsWork(array $parsedFormat, $expectedResult, $formatType) {
 		$formatLength = 'full';
 		$mockDatesReader = $this->getMock('F3\FLOW3\I18n\Cldr\Reader\DatesReader');
-		$mockDatesReader->expects($this->once())->method('parseFormatFromCldr')->with($this->dummyLocale, $formatType, $formatLength)->will($this->returnValue($parsedFormat));
-		$mockDatesReader->expects($this->once())->method('getLocalizedLiteralsForLocale')->with($this->dummyLocale)->will($this->returnValue($this->mockLocalizedLiterals));
+		$mockDatesReader->expects($this->once())->method('parseFormatFromCldr')->with($this->sampleLocale, $formatType, $formatLength)->will($this->returnValue($parsedFormat));
+		$mockDatesReader->expects($this->once())->method('getLocalizedLiteralsForLocale')->with($this->sampleLocale)->will($this->returnValue($this->sampleLocalizedLiterals));
 
 		$formatter = new \F3\FLOW3\I18n\Formatter\DatetimeFormatter();
 		$formatter->injectDatesReader($mockDatesReader);
 
-		$name = 'format' . ucfirst($formatType);
-		$result = $formatter->$name($this->sampleDateTime, $this->dummyLocale, $formatLength);
+		$methodName = 'format' . ucfirst($formatType);
+		$result = $formatter->$methodName($this->sampleDateTime, $this->sampleLocale, $formatLength);
 		$this->assertEquals($expectedResult, $result);
 	}
 }

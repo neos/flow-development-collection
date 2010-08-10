@@ -324,7 +324,7 @@ class DatesReader {
 				for ($j = $i + 1; $j < $formatLengthOfFormat; ++$j) {
 					if($format[$j] !== $subformatSymbol) break;
 				}
-				
+
 				$subformat = str_repeat($subformatSymbol, $j - $i);
 
 				if (isset(self::$maxLengthOfSubformats[$subformatSymbol])) {
@@ -334,7 +334,7 @@ class DatesReader {
 				} else {
 					$parsedFormat[] = array($subformat);
 				}
-				
+
 				$i = $j - 1;
 			}
 		}

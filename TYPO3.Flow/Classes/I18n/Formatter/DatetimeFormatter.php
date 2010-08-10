@@ -61,10 +61,10 @@ class DatetimeFormatter implements \F3\FLOW3\I18n\Formatter\FormatterInterface {
 	 * @api
 	 */
 	public function format($value, \F3\FLOW3\I18n\Locale $locale, array $styleProperties = array()) {
-		$style = (isset($styleProperties[0])) ? $styleProperties[0] : 'datetime';
+		$formatStyle = (isset($styleProperties[0])) ? $styleProperties[0] : 'datetime';
 		$formatLength = (isset($styleProperties[1])) ? $styleProperties[1] : 'default';
 
-		switch ($style) {
+		switch ($formatStyle) {
 			case 'date':
 				return $this->formatDate($value, $locale, $formatLength);
 			case 'time':
@@ -88,6 +88,7 @@ class DatetimeFormatter implements \F3\FLOW3\I18n\Formatter\FormatterInterface {
 	 * @param \F3\FLOW3\I18n\Locale $locale A locale used for finding literals array
 	 * @return string Formatted date / time. Unimplemented subformats in format string will be silently ignored
 	 * @author Karol Gusak <firstname@lastname.eu>
+	 * @api
 	 * @see \F3\FLOW3\I18n\Cldr\Reader\DatesReader
 	 */
 	public function formatDateTimeWithCustomPattern(\DateTime $dateTime, $format, \F3\FLOW3\I18n\Locale $locale) {
@@ -103,6 +104,7 @@ class DatetimeFormatter implements \F3\FLOW3\I18n\Formatter\FormatterInterface {
 	 * @param string $formatLength One of: full, long, medium, short, or 'default' in order to use default length from CLDR
 	 * @return string Formatted date
 	 * @author Karol Gusak <firstname@lastname.eu>
+	 * @api
 	 */
 	public function formatDate(\DateTime $date, \F3\FLOW3\I18n\Locale $locale, $formatLength = 'default') {
 		return $this->doFormattingWithParsedFormat($date, $this->datesReader->parseFormatFromCldr($locale, 'date', $formatLength), $this->datesReader->getLocalizedLiteralsForLocale($locale));
@@ -117,6 +119,7 @@ class DatetimeFormatter implements \F3\FLOW3\I18n\Formatter\FormatterInterface {
 	 * @param string $formatLength One of: full, long, medium, short, or 'default' in order to use default length from CLDR
 	 * @return string Formatted time
 	 * @author Karol Gusak <firstname@lastname.eu>
+	 * @api
 	 */
 	public function formatTime(\DateTime $time, \F3\FLOW3\I18n\Locale $locale, $formatLength = 'default') {
 		return $this->doFormattingWithParsedFormat($time, $this->datesReader->parseFormatFromCldr($locale, 'time', $formatLength), $this->datesReader->getLocalizedLiteralsForLocale($locale));
@@ -134,6 +137,7 @@ class DatetimeFormatter implements \F3\FLOW3\I18n\Formatter\FormatterInterface {
 	 * @param string $formatLength One of: full, long, medium, short, or 'default' in order to use default length from CLDR
 	 * @return string Formatted date and time
 	 * @author Karol Gusak <firstname@lastname.eu>
+	 * @api
 	 */
 	public function formatDateTime(\DateTime $dateTime, \F3\FLOW3\I18n\Locale $locale, $formatLength = 'default') {
 		return $this->doFormattingWithParsedFormat($dateTime, $this->datesReader->parseFormatFromCldr($locale, 'dateTime', $formatLength), $this->datesReader->getLocalizedLiteralsForLocale($locale));
