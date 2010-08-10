@@ -74,19 +74,19 @@ class PluralsReaderTest extends \F3\Testing\BaseTestCase {
 		$locale = new \F3\FLOW3\I18n\Locale('mo');
 
 		$result = $this->reader->getPluralForm(1, $locale);
-		$this->assertEquals('one', $result);
+		$this->assertEquals(\F3\FLOW3\I18n\Cldr\Reader\PluralsReader::RULE_ONE, $result);
 
 		$result = $this->reader->getPluralForm(2, $locale);
-		$this->assertEquals('few', $result);
+		$this->assertEquals(\F3\FLOW3\I18n\Cldr\Reader\PluralsReader::RULE_FEW, $result);
 
 		$result = $this->reader->getPluralForm(100, $locale);
-		$this->assertEquals('other', $result);
+		$this->assertEquals(\F3\FLOW3\I18n\Cldr\Reader\PluralsReader::RULE_OTHER, $result);
 
 		$result = $this->reader->getPluralForm(101, $locale);
-		$this->assertEquals('few', $result);
+		$this->assertEquals(\F3\FLOW3\I18n\Cldr\Reader\PluralsReader::RULE_FEW, $result);
 
 		$result = $this->reader->getPluralForm(101.1, $locale);
-		$this->assertEquals('other', $result);
+		$this->assertEquals(\F3\FLOW3\I18n\Cldr\Reader\PluralsReader::RULE_OTHER, $result);
 	}
 }
 

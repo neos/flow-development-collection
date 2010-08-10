@@ -99,10 +99,10 @@ class XliffTranslationProvider implements \F3\FLOW3\I18n\TranslationProvider\Tra
 	 * @param string $sourceName A relative path to the filename with translations (labels' catalog)
 	 * @param string $originalLabel Label used as a key in order to find translation
 	 * @param \F3\FLOW3\I18n\Locale $locale Locale to use
-	 * @param string $pluralForm One of: zero, one, two, few, many, other
+	 * @param string $pluralForm One of RULE constants of PluralsReader
 	 * @return mixed Translated label or FALSE on failure
 	 */
-	public function getTranslationByOriginalLabel($sourceName, $originalLabel, \F3\FLOW3\I18n\Locale $locale, $pluralForm = 'other') {
+	public function getTranslationByOriginalLabel($sourceName, $originalLabel, \F3\FLOW3\I18n\Locale $locale, $pluralForm = \F3\FLOW3\I18n\Cldr\Reader\PluralsReader::RULE_OTHER) {
 		$pluralFormsForProvidedLocale = $this->pluralsReader->getPluralForms($locale);
 
 		if (!in_array($pluralForm, $pluralFormsForProvidedLocale)) {
@@ -124,10 +124,10 @@ class XliffTranslationProvider implements \F3\FLOW3\I18n\TranslationProvider\Tra
 	 * @param string $sourceName A relative path to the filename with translations (labels' catalog)
 	 * @param string $labelId Key used to find translated label
 	 * @param \F3\FLOW3\I18n\Locale $locale Locale to use
-	 * @param string $pluralForm One of: zero, one, two, few, many, other
+	 * @param string $pluralForm One of RULE constants of PluralsReader
 	 * @return mixed Translated label or FALSE on failure
 	 */
-	public function getTranslationById($sourceName, $labelId, \F3\FLOW3\I18n\Locale $locale, $pluralForm = 'other') {
+	public function getTranslationById($sourceName, $labelId, \F3\FLOW3\I18n\Locale $locale, $pluralForm = \F3\FLOW3\I18n\Cldr\Reader\PluralsReader::RULE_OTHER) {
 		$pluralFormsForProvidedLocale = $this->pluralsReader->getPluralForms($locale);
 
 		if (!in_array($pluralForm, $pluralFormsForProvidedLocale)) {

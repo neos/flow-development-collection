@@ -54,7 +54,7 @@ class XliffTranslationProviderTest extends \F3\Testing\BaseTestCase {
 		$this->sampleLocale = new \F3\FLOW3\I18n\Locale('en_GB');
 
 		$this->mockPluralsReader = $this->getMock('F3\FLOW3\I18n\Cldr\Reader\PluralsReader');
-		$this->mockPluralsReader->expects($this->once())->method('getPluralForms')->with($this->sampleLocale)->will($this->returnValue(array('one', 'other')));
+		$this->mockPluralsReader->expects($this->once())->method('getPluralForms')->with($this->sampleLocale)->will($this->returnValue(array(\F3\FLOW3\I18n\Cldr\Reader\PluralsReader::RULE_ONE, \F3\FLOW3\I18n\Cldr\Reader\PluralsReader::RULE_OTHER)));
 	}
 
 	/**
@@ -69,7 +69,7 @@ class XliffTranslationProviderTest extends \F3\Testing\BaseTestCase {
 		$translationProvider->injectPluralsReader($this->mockPluralsReader);
 		$translationProvider->expects($this->once())->method('getModel')->with($this->sampleSourceName, $this->sampleLocale)->will($this->returnValue($mockModel));
 
-		$result = $translationProvider->getTranslationByOriginalLabel($this->sampleSourceName, 'bar', $this->sampleLocale, 'one');
+		$result = $translationProvider->getTranslationByOriginalLabel($this->sampleSourceName, 'bar', $this->sampleLocale, \F3\FLOW3\I18n\Cldr\Reader\PluralsReader::RULE_ONE);
 		$this->assertEquals('baz', $result);
 	}
 
@@ -107,7 +107,7 @@ class XliffTranslationProviderTest extends \F3\Testing\BaseTestCase {
 		$translationProvider = new \F3\FLOW3\I18n\TranslationProvider\XliffTranslationProvider();
 		$translationProvider->injectPluralsReader($this->mockPluralsReader);
 
-		$translationProvider->getTranslationByOriginalLabel($this->sampleSourceName, 'bar', $this->sampleLocale, 'few');
+		$translationProvider->getTranslationByOriginalLabel($this->sampleSourceName, 'bar', $this->sampleLocale, \F3\FLOW3\I18n\Cldr\Reader\PluralsReader::RULE_FEW);
 	}
 }
 

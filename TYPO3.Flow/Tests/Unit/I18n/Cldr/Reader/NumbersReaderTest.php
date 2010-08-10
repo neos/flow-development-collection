@@ -98,7 +98,7 @@ class NumbersReaderTest extends \F3\Testing\BaseTestCase {
 		$reader->injectCache($mockCache);
 		$reader->initializeObject();
 
-		$result = $reader->parseFormatFromCldr($this->sampleLocale, 'decimal');
+		$result = $reader->parseFormatFromCldr($this->sampleLocale, \F3\FLOW3\I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_DECIMAL);
 		$this->assertEquals('mockParsedFormat', $result);
 
 		$reader->shutdownObject();

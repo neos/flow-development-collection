@@ -37,6 +37,22 @@ namespace F3\FLOW3\I18n\Cldr\Reader;
 class DatesReader {
 
 	/**
+	 * Constants for available format types.
+	 */
+	const FORMAT_TYPE_DATE = 'date';
+	const FORMAT_TYPE_TIME = 'time';
+	const FORMAT_TYPE_DATETIME = 'dateTime';
+
+	/**
+	 * Constants for available format lengths.
+	 */
+	const FORMAT_LENGTH_DEFAULT = 'default';
+	const FORMAT_LENGTH_FULL = 'full';
+	const FORMAT_LENGTH_LONG = 'long';
+	const FORMAT_LENGTH_MEDIUM = 'medium';
+	const FORMAT_LENGTH_SHORT = 'short';
+
+	/**
 	 * @var \F3\FLOW3\I18n\Cldr\CldrRepository
 	 */
 	protected $cldrRepository;
@@ -200,13 +216,16 @@ class DatesReader {
 	 * locale will be used.
 	 *
 	 * @param \F3\FLOW3\I18n\Locale $locale
-	 * @param string $formatType A type of format (date, time)
-	 * @param string $formatLength A length of format (full, long, medium, short) or 'default' to use default one from CLDR
+	 * @param string $formatType A type of format (one of constant values)
+	 * @param string $formatLength A length of format (one of constant values)
 	 * @return array An array representing parsed format
 	 * @throws \F3\FLOW3\I18n\Cldr\Reader\Exception\UnableToFindFormatException When there is no proper format string in CLDR
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function parseFormatFromCldr(\F3\FLOW3\I18n\Locale $locale, $formatType, $formatLength) {
+		self::validateFormatType($formatType);
+		self::validateFormatLength($formatLength);
+
 		if (isset($this->parsedFormatsIndices[(string)$locale][$formatType][$formatLength])) {
 			return $this->parsedFormats[$this->parsedFormatsIndices[(string)$locale][$formatType][$formatLength]];
 		}
@@ -276,6 +295,36 @@ class DatesReader {
 		$localizedLiterals['eras'] = $this->parseLocalizedEras($model);
 
 		return $this->localizedLiterals[(string)$locale] = $localizedLiterals;
+	}
+
+	/**
+	 * Validates provided format type and throws exception if value is not
+	 * allowed.
+	 *
+	 * @param string $formatType
+	 * @return void
+	 * @throws \F3\FLOW3\I18n\Cldr\Reader\Exception\InvalidFormatTypeException When value is unallowed
+	 * @author Karol Gusak <firstname@lastname.eu>
+	 */
+	static public function validateFormatType($formatType) {
+		if (!in_array($formatType, array(self::FORMAT_TYPE_DATE, self::FORMAT_TYPE_TIME, self::FORMAT_TYPE_DATETIME))) {
+			throw new \F3\FLOW3\I18n\Cldr\Reader\Exception\InvalidFormatTypeException('Provided formatType, "' . $formatType . '", is not one of allowed values.', 1281442590);
+		}
+	}
+
+	/**
+	 * Validates provided format length and throws exception if value is not
+	 * allowed.
+	 *
+	 * @param string $formatLength
+	 * @return void
+	 * @throws \F3\FLOW3\I18n\Cldr\Reader\Exception\InvalidFormatLengthException When value is unallowed
+	 * @author Karol Gusak <firstname@lastname.eu>
+	 */
+	static public function validateFormatLength($formatLength) {
+		if (!in_array($formatLength, array(self::FORMAT_LENGTH_DEFAULT, self::FORMAT_LENGTH_FULL, self::FORMAT_LENGTH_LONG, self::FORMAT_LENGTH_MEDIUM, self::FORMAT_LENGTH_SHORT))) {
+			throw new \F3\FLOW3\I18n\Cldr\Reader\Exception\InvalidFormatLengthException('Provided formatLength, "' . $formatLength . '", is not one of allowed values.', 1281442591);
+		}
 	}
 
 	/**

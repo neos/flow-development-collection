@@ -71,17 +71,17 @@ class DatetimeFormatterTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function formatMethodsAreChoosenCorrectly() {
 		$formatter = $this->getAccessibleMock('F3\FLOW3\I18n\Formatter\DatetimeFormatter', array('formatDate', 'formatTime', 'formatDateTime'));
-		$formatter->expects($this->at(0))->method('formatDateTime')->with($this->sampleDateTime, $this->sampleLocale, 'default')->will($this->returnValue('bar1'));
-		$formatter->expects($this->at(1))->method('formatDate')->with($this->sampleDateTime, $this->sampleLocale, 'default')->will($this->returnValue('bar2'));
-		$formatter->expects($this->at(2))->method('formatTime')->with($this->sampleDateTime, $this->sampleLocale, 'full')->will($this->returnValue('bar3'));
+		$formatter->expects($this->at(0))->method('formatDateTime')->with($this->sampleDateTime, $this->sampleLocale, \F3\FLOW3\I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_DEFAULT)->will($this->returnValue('bar1'));
+		$formatter->expects($this->at(1))->method('formatDate')->with($this->sampleDateTime, $this->sampleLocale, \F3\FLOW3\I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_DEFAULT)->will($this->returnValue('bar2'));
+		$formatter->expects($this->at(2))->method('formatTime')->with($this->sampleDateTime, $this->sampleLocale, \F3\FLOW3\I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_FULL)->will($this->returnValue('bar3'));
 
 		$result = $formatter->format($this->sampleDateTime, $this->sampleLocale);
 		$this->assertEquals('bar1', $result);
 
-		$result = $formatter->format($this->sampleDateTime, $this->sampleLocale, array('date'));
+		$result = $formatter->format($this->sampleDateTime, $this->sampleLocale, array(\F3\FLOW3\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_DATE));
 		$this->assertEquals('bar2', $result);
 
-		$result = $formatter->format($this->sampleDateTime, $this->sampleLocale, array('time', 'full'));
+		$result = $formatter->format($this->sampleDateTime, $this->sampleLocale, array(\F3\FLOW3\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_TIME, \F3\FLOW3\I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_FULL));
 		$this->assertEquals('bar3', $result);
 	}
 
@@ -156,17 +156,17 @@ class DatetimeFormatterTest extends \F3\Testing\BaseTestCase {
 			array(
 				array('EEEE', array(', '), 'y', array(' '), 'MMMM', array(' '), 'dd'),
 				'Thursday, 2010 January 10',
-				'date'
+				\F3\FLOW3\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_DATE
 			),
 			array(
 				array('HH', array(':'), 'mm', array(':'), 'ss', array(' '), 'zzzz'),
 				'18:49:36 Europe/London',
-				'time'
+				\F3\FLOW3\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_TIME
 			),
 			array(
 				array('EEEE', array(', '), 'y', array(' '), 'MMMM', array(' '), 'dd', array(' '), 'HH', array(':'), 'mm', array(':'), 'ss', array(' '), 'zzzz'),
 				'Thursday, 2010 January 10 18:49:36 Europe/London',
-				'dateTime',
+				\F3\FLOW3\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_DATETIME
 			)
 		);
 	}
@@ -177,7 +177,7 @@ class DatetimeFormatterTest extends \F3\Testing\BaseTestCase {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function specificFormattingMethodsWork(array $parsedFormat, $expectedResult, $formatType) {
-		$formatLength = 'full';
+		$formatLength = \F3\FLOW3\I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_FULL;
 		$mockDatesReader = $this->getMock('F3\FLOW3\I18n\Cldr\Reader\DatesReader');
 		$mockDatesReader->expects($this->once())->method('parseFormatFromCldr')->with($this->sampleLocale, $formatType, $formatLength)->will($this->returnValue($parsedFormat));
 		$mockDatesReader->expects($this->once())->method('getLocalizedLiteralsForLocale')->with($this->sampleLocale)->will($this->returnValue($this->sampleLocalizedLiterals));

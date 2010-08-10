@@ -85,7 +85,7 @@ class DatesReaderTest extends \F3\Testing\BaseTestCase {
 		$reader->injectCache($mockCache);
 		$reader->initializeObject();
 
-		$result = $reader->parseFormatFromCldr($this->sampleLocale, 'date', 'default');
+		$result = $reader->parseFormatFromCldr($this->sampleLocale, \F3\FLOW3\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_DATE, \F3\FLOW3\I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_DEFAULT);
 		$this->assertEquals('mockParsedFormat', $result);
 
 		$reader->shutdownObject();
@@ -112,7 +112,7 @@ class DatesReaderTest extends \F3\Testing\BaseTestCase {
 		$reader->injectCache($mockCache);
 		$reader->initializeObject();
 
-		$result = $reader->parseFormatFromCldr($this->sampleLocale, 'dateTime', 'full');
+		$result = $reader->parseFormatFromCldr($this->sampleLocale, \F3\FLOW3\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_DATETIME, \F3\FLOW3\I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_FULL);
 		$this->assertEquals(array(array('foo '), 'h', 'm', 's', array(' '), 'd', 'M', 'y', array(' bar')), $result);
 		$reader->shutdownObject();
 	}

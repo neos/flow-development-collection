@@ -48,6 +48,16 @@ class PluralsReader {
 	const PATTERN_MATCH_SUBRULE = '/(n|nmod)([0-9]+)?(is|isnot|in|notin|within|notwithin)([0-9]+)(?:\.\.([0-9]+))?(and|or)?/';
 
 	/**
+	 * Constants for every plural rule form defined in CLDR.
+	 */
+	const RULE_ZERO = 'zero';
+	const RULE_ONE = 'one';
+	const RULE_TWO = 'two';
+	const RULE_FEW = 'few';
+	const RULE_MANY = 'many';
+	const RULE_OTHER = 'other';
+
+	/**
 	 * @var \F3\FLOW3\I18n\Cldr\CldrRepository
 	 */
 	protected $cldrRepository;
@@ -139,18 +149,18 @@ class PluralsReader {
 	 *
 	 * @param mixed $quantity A number to find plural form for (float or int)
 	 * @param \F3\FLOW3\I18n\Locale $locale
-	 * @return string One of: zero, one, two, few, many, other
+	 * @return string One of plural form constants
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function getPluralForm($quantity, \F3\FLOW3\I18n\Locale $locale) {
 		if (!isset($this->rulesetsIndices[$locale->getLanguage()])) {
-			return 'other';
+			return self::RULE_OTHER;
 		}
 
 		$ruleset = $this->rulesets[$this->rulesetsIndices[$locale->getLanguage()]];
 
 		if ($ruleset === NULL) {
-			return 'other';
+			return self::RULE_OTHER;
 		}
 
 		foreach ($ruleset as $form => $rule) {
@@ -194,7 +204,7 @@ class PluralsReader {
 			}
 		}
 
-		return 'other';
+		return self::RULE_OTHER;
 	}
 
 	/**
@@ -206,10 +216,10 @@ class PluralsReader {
 	 */
 	public function getPluralForms(\F3\FLOW3\I18n\Locale $locale) {
 		if (!isset($this->rulesetsIndices[$locale->getLanguage()])) {
-			return array('other');
+			return array(self::RULE_OTHER);
 		}
 
-		return array_merge(array_keys($this->rulesets[$this->rulesetsIndices[$locale->getLanguage()]]), array('other'));
+		return array_merge(array_keys($this->rulesets[$this->rulesetsIndices[$locale->getLanguage()]]), array(self::RULE_OTHER));
 	}
 
 	/**
@@ -241,9 +251,9 @@ class PluralsReader {
 			}
 
 			$ruleset = array();
-			foreach ($pluralRules['pluralRule'] as $pluralRuleCount => $pluralRule) {
-				$pluralRuleCount = \F3\FLOW3\I18n\Cldr\CldrParser::getValueOfAttributeByName($pluralRuleCount, 'count');
-				$ruleset[$pluralRuleCount] = $this->parseRule($pluralRule);
+			foreach ($pluralRules['pluralRule'] as $pluralForm => $pluralRule) {
+				$pluralForm = \F3\FLOW3\I18n\Cldr\CldrParser::getValueOfAttributeByName($pluralForm, 'count');
+				$ruleset[$pluralForm] = $this->parseRule($pluralRule);
 			}
 
 			$this->rulesets[$index] = $ruleset;

@@ -92,8 +92,9 @@ class DatetimeParser {
 	 * @api
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function parseDate($dateToParse, \F3\FLOW3\I18n\Locale $locale, $formatLength = 'default', $strictMode = TRUE) {
-		return $this->doParsingWithParsedFormat($dateToParse, $this->datesReader->parseFormatFromCldr($locale, 'date', $formatLength), $this->datesReader->getLocalizedLiteralsForLocale($locale), $strictMode);
+	public function parseDate($dateToParse, \F3\FLOW3\I18n\Locale $locale, $formatLength = \F3\FLOW3\I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_DEFAULT, $strictMode = TRUE) {
+		\F3\FLOW3\I18n\Cldr\Reader\DatesReader::validateFormatLength($formatLength);
+		return $this->doParsingWithParsedFormat($dateToParse, $this->datesReader->parseFormatFromCldr($locale, \F3\FLOW3\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_DATE, $formatLength), $this->datesReader->getLocalizedLiteralsForLocale($locale), $strictMode);
 	}
 
 	/**
@@ -108,8 +109,9 @@ class DatetimeParser {
 	 * @api
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function parseTime($timeToParse, \F3\FLOW3\I18n\Locale $locale, $formatLength = 'default', $strictMode = TRUE) {
-		return $this->doParsingWithParsedFormat($timeToParse, $this->datesReader->parseFormatFromCldr($locale, 'time', $formatLength), $this->datesReader->getLocalizedLiteralsForLocale($locale), $strictMode);
+	public function parseTime($timeToParse, \F3\FLOW3\I18n\Locale $locale, $formatLength = \F3\FLOW3\I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_DEFAULT, $strictMode = TRUE) {
+		\F3\FLOW3\I18n\Cldr\Reader\DatesReader::validateFormatLength($formatLength);
+		return $this->doParsingWithParsedFormat($timeToParse, $this->datesReader->parseFormatFromCldr($locale, \F3\FLOW3\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_TIME, $formatLength), $this->datesReader->getLocalizedLiteralsForLocale($locale), $strictMode);
 	}
 
 	/**
@@ -123,8 +125,9 @@ class DatetimeParser {
 	 * @return mixed Array of parsed date and time elements, FALSE on failure
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function parseDateAndTime($dateAndTimeToParse, \F3\FLOW3\I18n\Locale $locale, $formatLength = 'default', $strictMode = TRUE) {
-		return $this->doParsingWithParsedFormat($dateAndTimeToParse, $this->datesReader->parseFormatFromCldr($locale, 'dateTime', $formatLength), $this->datesReader->getLocalizedLiteralsForLocale($locale), $strictMode);
+	public function parseDateAndTime($dateAndTimeToParse, \F3\FLOW3\I18n\Locale $locale, $formatLength = \F3\FLOW3\I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_DEFAULT, $strictMode = TRUE) {
+		\F3\FLOW3\I18n\Cldr\Reader\DatesReader::validateFormatLength($formatLength);
+		return $this->doParsingWithParsedFormat($dateAndTimeToParse, $this->datesReader->parseFormatFromCldr($locale, \F3\FLOW3\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_DATETIME, $formatLength), $this->datesReader->getLocalizedLiteralsForLocale($locale), $strictMode);
 	}
 
 	/**

@@ -91,8 +91,8 @@ class NumberFormatterTest extends \F3\Testing\BaseTestCase {
 		$sampleNumber = 123.456;
 
 		$formatter = $this->getAccessibleMock('F3\FLOW3\I18n\Formatter\NumberFormatter', array('formatDecimalNumber', 'formatPercentNumber'));
-		$formatter->expects($this->at(0))->method('formatDecimalNumber')->with($sampleNumber, $this->sampleLocale, 'default')->will($this->returnValue('bar1'));
-		$formatter->expects($this->at(1))->method('formatPercentNumber')->with($sampleNumber, $this->sampleLocale, 'default')->will($this->returnValue('bar2'));
+		$formatter->expects($this->at(0))->method('formatDecimalNumber')->with($sampleNumber, $this->sampleLocale, \F3\FLOW3\I18n\Cldr\Reader\NumbersReader::FORMAT_LENGTH_DEFAULT)->will($this->returnValue('bar1'));
+		$formatter->expects($this->at(1))->method('formatPercentNumber')->with($sampleNumber, $this->sampleLocale, \F3\FLOW3\I18n\Cldr\Reader\NumbersReader::FORMAT_LENGTH_DEFAULT)->will($this->returnValue('bar2'));
 
 		$result = $formatter->format($sampleNumber, $this->sampleLocale);
 		$this->assertEquals('bar1', $result);
@@ -185,31 +185,31 @@ class NumberFormatterTest extends \F3\Testing\BaseTestCase {
 			array(
 				9999.9,
 				array_merge($this->templateFormat, array('maxDecimalDigits' => 3, 'primaryGroupingSize' => 3, 'secondaryGroupingSize' => 3)),
-				'9 999,9', 'decimal'
+				'9 999,9', \F3\FLOW3\I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_DECIMAL
 			),
 			array(
 				0.85,
 				array_merge($this->templateFormat, array('multiplier' => 100, 'positiveSuffix' => '%', 'negativeSuffix' => '%')),
-				'85%', 'percent'),
+				'85%', \F3\FLOW3\I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_PERCENT),
 			array(
 				5.5,
 				array_merge($this->templateFormat, array('minDecimalDigits' => 2, 'maxDecimalDigits' => 2, 'primaryGroupingSize' => 3, 'secondaryGroupingSize' => 3, 'positiveSuffix' => ' ¤', 'negativeSuffix' => ' ¤')),
-				'5,50 zł', 'currency', 'zł'
+				'5,50 zł', \F3\FLOW3\I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_CURRENCY, 'zł'
 			),
 			array(
 				acos(8),
 				array_merge($this->templateFormat, array('minDecimalDigits' => 2, 'maxDecimalDigits' => 2, 'primaryGroupingSize' => 3, 'secondaryGroupingSize' => 3)),
-				'NaN', 'decimal'
+				'NaN', \F3\FLOW3\I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_DECIMAL
 			),
 			array(
 				log(0),
 				array_merge($this->templateFormat, array('minDecimalDigits' => 2, 'maxDecimalDigits' => 2, 'primaryGroupingSize' => 3, 'secondaryGroupingSize' => 3)),
-				'-∞', 'percent'
+				'-∞', \F3\FLOW3\I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_PERCENT
 			),
 			array(
 				-log(0),
 				array_merge($this->templateFormat, array('minDecimalDigits' => 2, 'maxDecimalDigits' => 2, 'primaryGroupingSize' => 3, 'secondaryGroupingSize' => 3)),
-				'∞', 'currency'
+				'∞', \F3\FLOW3\I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_CURRENCY
 			),
 		);
 	}

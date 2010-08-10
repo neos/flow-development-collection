@@ -59,6 +59,22 @@ class NumbersReader {
 	const PATTERN_MATCH_ROUNDING = '/([0-9]+(?:\.[0-9]+)?)/';
 
 	/**
+	 * Constants for available format types.
+	 */
+	const FORMAT_TYPE_DECIMAL = 'decimal';
+	const FORMAT_TYPE_PERCENT = 'percent';
+	const FORMAT_TYPE_CURRENCY = 'currency';
+
+	/**
+	 * Constants for available format lengths.
+	 */
+	const FORMAT_LENGTH_DEFAULT = 'default';
+	const FORMAT_LENGTH_FULL = 'full';
+	const FORMAT_LENGTH_LONG = 'long';
+	const FORMAT_LENGTH_MEDIUM = 'medium';
+	const FORMAT_LENGTH_SHORT = 'short';
+
+	/**
 	 * @var \F3\FLOW3\I18n\Cldr\CldrRepository
 	 */
 	protected $cldrRepository;
@@ -122,8 +138,7 @@ class NumbersReader {
 	/**
 	 * An array which stores references to formats used by particular locales.
 	 *
-	 * As for one locale there can be definegoo
-	 * d many formats (at most 3 format
+	 * As for one locale there can be defined many formats (at most 3 format
 	 * types supported by this class - decimal, percent, currency - multiplied by
 	 * at most 5 format lengths - full, long, medium, short, and implicit length
 	 * referred in this class as 'default'), references are organized in arrays.
@@ -205,13 +220,16 @@ class NumbersReader {
 	 * locale will be used.
 	 *
 	 * @param \F3\FLOW3\I18n\Locale $locale
-	 * @param string $formatType A type of format (decimal, percent, currency)
-	 * @param string $formatLength A length of format (full, long, medium, short) or 'default' to use default one
+	 * @param int $formatType A type of format (one of constant values)
+	 * @param int $formatLength A length of format (one of constant values)
 	 * @return array An array representing parsed format
 	 * @throws \F3\FLOW3\I18n\Cldr\Reader\Exception\UnableToFindFormatException When there is no proper format string in CLDR
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function parseFormatFromCldr(\F3\FLOW3\I18n\Locale $locale, $formatType, $formatLength = 'default') {
+	public function parseFormatFromCldr(\F3\FLOW3\I18n\Locale $locale, $formatType, $formatLength = self::FORMAT_LENGTH_DEFAULT) {
+		self::validateFormatType($formatType);
+		self::validateFormatLength($formatLength);
+
 		if (isset($this->parsedFormatsIndices[(string)$locale][$formatType][$formatLength])) {
 			return $this->parsedFormats[$this->parsedFormatsIndices[(string)$locale][$formatType][$formatLength]];
 		}
@@ -219,7 +237,7 @@ class NumbersReader {
 		if ($formatLength === 'default') {
 			$formatPath = 'numbers/' . $formatType . 'Formats/' . $formatType . 'FormatLength/' . $formatType . 'Format/pattern';
 		} else {
-			$formatPath = 'numbers/' . $formatType . 'Formats/' . $formatType . 'FormatLength/type="' . $formatLength . '/' . $formatType . 'Format/pattern';
+			$formatPath = 'numbers/' . $formatType . 'Formats/' . $formatType . 'FormatLength/type="' . $formatLength . '"/' . $formatType . 'Format/pattern';
 		}
 
 		$model = $this->cldrRepository->getModelCollection('main', $locale);
@@ -270,6 +288,36 @@ class NumbersReader {
 
 		$model = $this->cldrRepository->getModelCollection('main', $locale);
 		return $this->localizedSymbols[(string)$locale] = $model->getRawArray('numbers/symbols');
+	}
+
+	/**
+	 * Validates provided format type and throws exception if value is not
+	 * allowed.
+	 *
+	 * @param string $formatType
+	 * @return void
+	 * @throws \F3\FLOW3\I18n\Cldr\Reader\Exception\InvalidFormatTypeException When value is unallowed
+	 * @author Karol Gusak <firstname@lastname.eu>
+	 */
+	static public function validateFormatType($formatType) {
+		if (!in_array($formatType, array(self::FORMAT_TYPE_DECIMAL, self::FORMAT_TYPE_PERCENT, self::FORMAT_TYPE_CURRENCY))) {
+			throw new \F3\FLOW3\I18n\Cldr\Reader\Exception\InvalidFormatTypeException('Provided formatType, "' . $formatType . '", is not one of allowed values.', 1281439179);
+		}
+	}
+
+	/**
+	 * Validates provided format length and throws exception if value is not
+	 * allowed.
+	 *
+	 * @param string $formatLength
+	 * @return void
+	 * @throws \F3\FLOW3\I18n\Cldr\Reader\Exception\InvalidFormatLengthException When value is unallowed
+	 * @author Karol Gusak <firstname@lastname.eu>
+	 */
+	static public function validateFormatLength($formatLength) {
+		if (!in_array($formatLength, array(self::FORMAT_LENGTH_DEFAULT, self::FORMAT_LENGTH_FULL, self::FORMAT_LENGTH_LONG, self::FORMAT_LENGTH_MEDIUM, self::FORMAT_LENGTH_SHORT))) {
+			throw new \F3\FLOW3\I18n\Cldr\Reader\Exception\InvalidFormatLengthException('Provided formatLength, "' . $formatLength . '", is not one of allowed values.', 1281439180);
+		}
 	}
 
 	/**

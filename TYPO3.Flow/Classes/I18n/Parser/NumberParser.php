@@ -81,14 +81,15 @@ class NumberParser {
 	 *
 	 * @param string $numberToParse Number to be parsed
 	 * @param \F3\FLOW3\I18n\Locale $locale Locale to use
-	 * @param string $formatLength One of: full, long, medium, short, or 'default' in order to not use $formatLength parameter
+	 * @param string $formatLength One of NumbersReader FORMAT_LENGTH constants
 	 * @param bool $strictMode Work mode (strict when TRUE, lenient when FALSE)
 	 * @return mixed Parsed float number or FALSE on failure
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @api
 	 */
-	public function parseDecimalNumber($numberToParse, \F3\FLOW3\I18n\Locale $locale, $formatLength = 'default', $strictMode = TRUE) {
-		return $this->doParsingWithParsedFormat($numberToParse, $this->numbersReader->parseFormatFromCldr($locale, 'decimal', $formatLength), $this->numbersReader->getLocalizedSymbolsForLocale($locale), $strictMode);
+	public function parseDecimalNumber($numberToParse, \F3\FLOW3\I18n\Locale $locale, $formatLength = \F3\FLOW3\I18n\Cldr\Reader\NumbersReader::FORMAT_LENGTH_DEFAULT, $strictMode = TRUE) {
+		\F3\FLOW3\I18n\Cldr\Reader\NumbersReader::validateFormatLength($formatLength);
+		return $this->doParsingWithParsedFormat($numberToParse, $this->numbersReader->parseFormatFromCldr($locale, \F3\FLOW3\I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_DECIMAL, $formatLength), $this->numbersReader->getLocalizedSymbolsForLocale($locale), $strictMode);
 	}
 
 	/**
@@ -96,14 +97,15 @@ class NumberParser {
 	 *
 	 * @param string $numberToParse Number to be parsed
 	 * @param \F3\FLOW3\I18n\Locale $locale Locale to use
-	 * @param string $formatLength One of: full, long, medium, short, or 'default' in order to not use $formatLength parameter
+	 * @param string $formatLength One of NumbersReader FORMAT_LENGTH constants
 	 * @param bool $strictMode Work mode (strict when TRUE, lenient when FALSE)
 	 * @return mixed Parsed float number or FALSE on failure
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @api
 	 */
-	public function parsePercentNumber($numberToParse, \F3\FLOW3\I18n\Locale $locale, $formatLength = 'default', $strictMode = TRUE) {
-		return $this->doParsingWithParsedFormat($numberToParse, $this->numbersReader->parseFormatFromCldr($locale, 'percent', $formatLength), $this->numbersReader->getLocalizedSymbolsForLocale($locale), $strictMode);
+	public function parsePercentNumber($numberToParse, \F3\FLOW3\I18n\Locale $locale, $formatLength = \F3\FLOW3\I18n\Cldr\Reader\NumbersReader::FORMAT_LENGTH_DEFAULT, $strictMode = TRUE) {
+		\F3\FLOW3\I18n\Cldr\Reader\NumbersReader::validateFormatLength($formatLength);
+		return $this->doParsingWithParsedFormat($numberToParse, $this->numbersReader->parseFormatFromCldr($locale, \F3\FLOW3\I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_PERCENT, $formatLength), $this->numbersReader->getLocalizedSymbolsForLocale($locale), $strictMode);
 	}
 
 	/**

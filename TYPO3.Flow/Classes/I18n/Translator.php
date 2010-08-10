@@ -137,7 +137,7 @@ class Translator {
 		}
 
 		if ($quantity === NULL) {
-			$pluralForm = 'other';
+			$pluralForm = \F3\FLOW3\I18n\Cldr\Reader\PluralsReader::RULE_OTHER;
 		} else {
 			$pluralForm = $this->pluralsReader->getPluralForm($quantity, $locale);
 		}
@@ -178,7 +178,7 @@ class Translator {
 		}
 
 		if ($quantity === NULL) {
-			$pluralForm = 'other';
+			$pluralForm = \F3\FLOW3\I18n\Cldr\Reader\PluralsReader::RULE_OTHER;
 		} else {
 			$pluralForm = $this->pluralsReader->getPluralForm($quantity, $locale);
 		}

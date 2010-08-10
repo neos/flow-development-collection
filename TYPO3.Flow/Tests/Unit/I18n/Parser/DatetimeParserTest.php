@@ -77,9 +77,9 @@ class DatetimeParserTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function sampleDatetimesEasyToParse() {
 		return array(
-			array('date', '1988.11.19 AD', 'yyyy.MM.dd G', array_merge($this->datetimeAttributesTemplate, array('year' => 1988, 'month' => 11, 'day' => 19)), array('yyyy', array('.'), 'MM', array('.'), 'dd', array(' '), 'G')),
-			array('time', '10:00:59', 'HH:mm:ss', array_merge($this->datetimeAttributesTemplate, array('hour' => 10, 'minute' => 0, 'second' => 59)), array('HH', array(':'), 'mm', array(':'), 'ss')),
-			array('time', '3 p.m. Europe/Berlin', 'h a zzzz', array_merge($this->datetimeAttributesTemplate, array('hour' => 15, 'timezone' => 'Europe/Berlin')), array('h', array(' '), 'a', array(' '),'zzzz')),
+			array(\F3\FLOW3\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_DATE, '1988.11.19 AD', 'yyyy.MM.dd G', array_merge($this->datetimeAttributesTemplate, array('year' => 1988, 'month' => 11, 'day' => 19)), array('yyyy', array('.'), 'MM', array('.'), 'dd', array(' '), 'G')),
+			array(\F3\FLOW3\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_TIME, '10:00:59', 'HH:mm:ss', array_merge($this->datetimeAttributesTemplate, array('hour' => 10, 'minute' => 0, 'second' => 59)), array('HH', array(':'), 'mm', array(':'), 'ss')),
+			array(\F3\FLOW3\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_TIME, '3 p.m. Europe/Berlin', 'h a zzzz', array_merge($this->datetimeAttributesTemplate, array('hour' => 15, 'timezone' => 'Europe/Berlin')), array('h', array(' '), 'a', array(' '),'zzzz')),
 		);
 	}
 
@@ -93,9 +93,9 @@ class DatetimeParserTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function sampleDatetimesHardToParse() {
 		return array(
-			array('date', 'foo 2010/07 /30th', 'y.M.d', array_merge($this->datetimeAttributesTemplate, array('year' => 2010, 'month' => 7, 'day' => 30)), array('y', array('.'), 'M', array('.'), 'd')),
-			array('date', 'Jun foo 99 Europe/Berlin', 'MMMyyz', array_merge($this->datetimeAttributesTemplate, array('year' => 99, 'month' => 6, 'timezone' => 'Europe/Berlin')), array('MMM', 'yy', 'z')),
-			array('time', '24:11 CEST', 'K:m zzzz', array_merge($this->datetimeAttributesTemplate, array('hour' => 0, 'minute' => 11, 'timezone' => 'CEST')), array('K', array(':'), 'm', array(' '), 'zzzz')),
+			array(\F3\FLOW3\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_DATE, 'foo 2010/07 /30th', 'y.M.d', array_merge($this->datetimeAttributesTemplate, array('year' => 2010, 'month' => 7, 'day' => 30)), array('y', array('.'), 'M', array('.'), 'd')),
+			array(\F3\FLOW3\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_DATE, 'Jun foo 99 Europe/Berlin', 'MMMyyz', array_merge($this->datetimeAttributesTemplate, array('year' => 99, 'month' => 6, 'timezone' => 'Europe/Berlin')), array('MMM', 'yy', 'z')),
+			array(\F3\FLOW3\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_TIME, '24:11 CEST', 'K:m zzzz', array_merge($this->datetimeAttributesTemplate, array('hour' => 0, 'minute' => 11, 'timezone' => 'CEST')), array('K', array(':'), 'm', array(' '), 'zzzz')),
 		);
 	}
 
