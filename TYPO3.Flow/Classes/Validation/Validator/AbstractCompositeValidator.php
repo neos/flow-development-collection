@@ -38,7 +38,7 @@ abstract class AbstractCompositeValidator implements \F3\FLOW3\Validation\Valida
 	protected $options = array();
 
 	/**
-	 * @var \SPLObjectStorage
+	 * @var \SplObjectStorage
 	 */
 	protected $validators;
 
@@ -54,7 +54,7 @@ abstract class AbstractCompositeValidator implements \F3\FLOW3\Validation\Valida
 	 * @api
 	 */
 	public function __construct() {
-		$this->validators = new \SPLObjectStorage();
+		$this->validators = new \SplObjectStorage();
 	}
 
 	/**

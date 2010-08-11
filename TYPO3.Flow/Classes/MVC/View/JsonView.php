@@ -76,12 +76,11 @@ class JsonView extends \F3\FLOW3\MVC\View\AbstractView {
 	 * @return string The JSON encoded variables
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @api
 	 */
 	public function render() {
 		$this->controllerContext->getResponse()->setHeader('Content-Type', 'application/json');
-
 		$propertiesToRender = $this->renderArray();
-
 		return json_encode($propertiesToRender);
 	}
 
@@ -89,7 +88,8 @@ class JsonView extends \F3\FLOW3\MVC\View\AbstractView {
 	 * Loads the configuration and transforms the value to a serializable
 	 * array.
 	 *
-	 * @return array
+	 * @return array An array containing the values, ready to be JSON encoded
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 * @api
 	 */
 	protected function renderArray() {
@@ -108,16 +108,16 @@ class JsonView extends \F3\FLOW3\MVC\View\AbstractView {
 
 	/**
 	 * Transforms a value depending on type recursively using the
-	 * supplied confiuguration.
+	 * supplied configuration.
 	 *
-	 * @param mixed $value
-	 * @param array $configuration
-	 * @return array
+	 * @param mixed $value The value to transform
+	 * @param mixed $configuration Configuration for transforming the value or NULL
+	 * @return array The transformed value
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	protected function transformValue($value, $configuration) {
 		if (is_object($value)) {
-			return $this->traverseObjectStructure($value, $configuration);
+			return $this->transformObject($value, $configuration);
 		} elseif (is_array($value)) {
 			$array = array();
 			foreach ($value as $key => $element) {
@@ -130,12 +130,15 @@ class JsonView extends \F3\FLOW3\MVC\View\AbstractView {
 	}
 
 	/**
+	 * Traverses the given object structure in order to transform it into an
+	 * array structure.
 	 *
-	 * @param object $object
-	 * @param array $configuration
-	 * @return array
+	 * @param object $object Object to traverse
+	 * @param mixed $configuration Configuration for transforming the given object or NULL
+	 * @return array Object structure as an aray
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	protected function traverseObjectStructure($object, $configuration) {
+	protected function transformObject($object, $configuration) {
 		$properties = \F3\FLOW3\Reflection\ObjectAccess::getGettableProperties($object);
 		$propertiesToRender = array();
 		foreach ($properties as $propertyName => $propertyValue) {
@@ -145,22 +148,25 @@ class JsonView extends \F3\FLOW3\MVC\View\AbstractView {
 			if (!is_array($propertyValue) && !is_object($propertyValue)) {
 				$propertiesToRender[$propertyName] = $propertyValue;
 			} elseif (isset($configuration['include']) && array_key_exists($propertyName, $configuration['include'])) {
-				$propertiesToRender[$propertyName] = $this->traverseObjectStructure($propertyValue, $configuration['include'][$propertyName]);
+				$propertiesToRender[$propertyName] = $this->transformObject($propertyValue, $configuration['include'][$propertyName]);
 			}
 		}
 		return $propertiesToRender;
 	}
 
 	/**
+	 * Loads and returns the configuration of this view, defined in a YAML file
+	 * residing in the standard template path for the current controller and action.
+	 * The file extension must be ".json.yaml"
 	 *
-	 * @return array
+	 * @return array The configuration, if any
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	protected function loadConfigurationFromYamlFile() {
 		$request = $this->controllerContext->getRequest();
 		$configurationFilePath = 'resource://' . $request->getControllerPackageKey() . '/Private/Templates/' . str_replace('\\', '/', $request->getControllerName()) . '/' . ucfirst($request->getControllerActionName()) . '.json.yaml';
 		if (file_exists($configurationFilePath)) {
-			$yaml = \F3\FLOW3\Configuration\Source\YamlParser::loadFile($configurationFilePath);
-			return $yaml;
+			return \F3\FLOW3\Configuration\Source\YamlParser::loadFile($configurationFilePath);
 		}
 		return array();
 	}

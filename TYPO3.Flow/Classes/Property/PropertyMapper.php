@@ -285,6 +285,8 @@ class PropertyMapper {
 							continue;
 						}
 					}
+				} elseif (is_array($propertyValue) && isset($propertyValue['__identity']) && is_string($propertyValue['__identity']) && preg_match(self::PATTERN_MATCH_UUID, $propertyValue['__identity']) === 1) {
+					$propertyValue = $this->transformToObject($propertyValue, NULL, $propertyName);
 				}
 
 				if (is_array($target)) {
@@ -347,6 +349,9 @@ class PropertyMapper {
 				$existingObject = (is_array($propertyValue['__identity'])) ? $this->findObjectByIdentityProperties($propertyValue['__identity'], $targetType) : $this->persistenceManager->getObjectByIdentifier($propertyValue['__identity']);
 				if ($existingObject === FALSE) {
 					throw new \F3\FLOW3\Property\Exception\TargetNotFoundException('Querying the repository for the specified object was not successful.', 1237305720);
+				}
+				if ($targetType === NULL) {
+					$targetType = get_class($existingObject);
 				}
 
 				unset($propertyValue['__identity']);

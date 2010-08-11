@@ -35,9 +35,9 @@ class RawValidatorTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function internalErrorsArrayIsResetOnIsValidCall() {
-		$validator = $this->getAccessibleMock('F3\FLOW3\Validation\Validator\RawValidator', array('dummy'), array(), '', FALSE);
+		$validator = $this->getAccessibleMock('F3\FLOW3\Validation\Validator\RawValidator', array('dummy'));
 		$validator->_set('errors', array('existingError'));
-		$validator->isValid();
+		$validator->isValid('foo');
 		$this->assertSame(array(), $validator->getErrors());
 	}
 

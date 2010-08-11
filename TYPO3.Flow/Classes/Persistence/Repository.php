@@ -69,7 +69,9 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	public function __construct() {
 		$this->addedObjects = new \SplObjectStorage();
 		$this->removedObjects = new \SplObjectStorage();
-		$this->objectType = str_replace(array('\\Repository\\', 'Repository'), array('\\Model\\', ''), $this->FLOW3_AOP_Proxy_getProxyTargetClassName());
+		if ($this->objectType === NULL) {
+			$this->objectType = str_replace(array('\\Repository\\', 'Repository'), array('\\Model\\', ''), $this->FLOW3_AOP_Proxy_getProxyTargetClassName());
+		}
 	}
 
 	/**
@@ -191,6 +193,7 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	 * persisted as well.
 	 *
 	 * @param object $newObject The new object to loop over
+	 * @return void
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	protected function updateRecursively($newObject) {
