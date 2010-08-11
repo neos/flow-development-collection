@@ -32,6 +32,34 @@ namespace F3\FLOW3\Validation\Validator;
 class NumberValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator {
 
 	/**
+	 * @var \F3\FLOW3\I18n\Service
+	 */
+	protected $localizationService;
+
+	/**
+	 * @var \F3\FLOW3\I18n\Parser\NumberParser
+	 */
+	protected $numberParser;
+
+	/**
+	 * @param \F3\FLOW3\I18n\Service $localizationService
+	 * @return void
+	 * @author Karol Gusak <firstname@lastname.eu>
+	 */
+	public function injectLocalizationService(\F3\FLOW3\I18n\Service $localizationService) {
+		$this->localizationService = $localizationService;
+	}
+
+	/**
+	 * @param \F3\FLOW3\I18n\Parser\NumberParser $numberParser
+	 * @return void
+	 * @author Karol Gusak <firstname@lastname.eu>
+	 */
+	public function injectNumberParser(\F3\FLOW3\I18n\Parser\NumberParser $numberParser) {
+		$this->numberParser = $numberParser;
+	}
+
+	/**
 	 * Checks if the given value is a valid number.
 	 *
 	 * If at least one error occurred, the result is FALSE.
@@ -40,12 +68,54 @@ class NumberValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator {
 	 * @return boolean TRUE if the value is valid, FALSE if an error occured
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @api
+	 * @todo Currency support should be added when it will be supported by NumberParser
 	 */
 	public function isValid($value) {
 		$this->errors = array();
-		if (is_numeric($value)) return TRUE;
-		$this->addError('A valid number is expected.', 1221563685);
+
+		if (!isset($this->options['locale'])) {
+			$locale = $this->localizationService->getDefaultLocale();
+		} elseif (is_string($this->options['locale'])) {
+			$locale = $this->objectManager->create('F3\FLOW3\I18n\Locale', $this->options['locale']);
+		} elseif ($this->options['locale'] instanceof \F3\FLOW3\I18n\Locale) {
+			$locale = $this->options['locale'];
+		} else {
+			$this->addError('The "locale" option can be only set to string identifier, or Locale object.', 1281286579);
+			return FALSE;
+		}
+
+		if (!isset($this->options['strictMode']) || $this->options['strictMode'] === TRUE) {
+			$strictMode = TRUE;
+		} else {
+			$strictMode = FALSE;
+		}
+
+		if (isset($this->options['formatLength'])) {
+			$formatLength = $this->options['formatLength'];
+			\F3\FLOW3\I18n\Cldr\Reader\NumbersReader::validateFormatLength($formatLength);
+		} else {
+			$formatLength = \F3\FLOW3\I18n\Cldr\Reader\NumbersReader::FORMAT_LENGTH_DEFAULT;
+		}
+
+		if (isset($this->options['formatType'])) {
+			$formatType = $this->options['formatType'];
+			\F3\FLOW3\I18n\Cldr\Reader\NumbersReader::validateFormatType($formatType);
+		} else {
+			$formatType = \F3\FLOW3\I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_DECIMAL;
+		}
+
+		if ($formatType === \F3\FLOW3\I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_PERCENT) {
+			if ($this->numberParser->parsePercentNumber($value, $locale, $formatLength, $strictMode) === FALSE) {
+				$this->addError('A valid percent number is expected.', 1281452093);
+			} else return TRUE;
+		} else {
+			if ($this->numberParser->parseDecimalNumber($value, $locale, $formatLength, $strictMode) === FALSE) {
+				$this->addError('A valid decimal number is expected.', 1281452094);
+			} else return TRUE;
+		}
+
 		return FALSE;
 	}
 }

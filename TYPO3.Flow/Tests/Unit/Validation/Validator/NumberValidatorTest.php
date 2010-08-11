@@ -31,42 +31,76 @@ namespace F3\FLOW3\Validation\Validator;
 class NumberValidatorTest extends \F3\Testing\BaseTestCase {
 
 	/**
+	 * @var \F3\FLOW3\I18n\Locale
+	 */
+	protected $sampleLocale;
+
+	/**
+	 * @return void
+	 * @author Karol Gusak <firstname@lastname.eu>
+	 */
+	public function setUp() {
+		$this->sampleLocale = new \F3\FLOW3\I18n\Locale('en_GB');
+	}
+
+	/**
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function internalErrorsArrayIsResetOnIsValidCall() {
+		$sampleNumber = 1;
+		$mockNumberParser = $this->getMock('F3\FLOW3\I18n\Parser\NumberParser');
+		$mockNumberParser->expects($this->once())->method('parseDecimalNumber', $sampleNumber)->will($this->returnValue(TRUE));
+
 		$validator = $this->getAccessibleMock('F3\FLOW3\Validation\Validator\NumberValidator', array('dummy'), array(), '', FALSE);
 		$validator->_set('errors', array('existingError'));
-		$validator->isValid(1);
+
+		$validator->injectNumberParser($mockNumberParser);
+		$validator->setOptions(array('locale' => $this->sampleLocale));
+
+		$validator->isValid($sampleNumber);
 		$this->assertSame(array(), $validator->getErrors());
 	}
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function numberValidatorReturnsTrueForASimpleInteger() {
-		$numberValidator = new \F3\FLOW3\Validation\Validator\NumberValidator();
-		$this->assertTrue($numberValidator->isValid(1029437));
-	}
-
-	/**
-	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function numberValidatorReturnsFalseForAString() {
-		$numberValidator = $this->getMock('F3\FLOW3\Validation\Validator\NumberValidator', array('addError'), array(), '', FALSE);
-		$this->assertFalse($numberValidator->isValid('not a number'));
-	}
-
-	/**
-	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function numberValidatorCreatesTheCorrectErrorForAnInvalidSubject() {
-		$numberValidator = $this->getMock('F3\FLOW3\Validation\Validator\NumberValidator', array('addError'), array(), '', FALSE);
-		$numberValidator->expects($this->once())->method('addError');
-		$numberValidator->isValid('this is not a number');
+		$sampleInvalidNumber = 'this is not a number';
+		$mockNumberParser = $this->getMock('F3\FLOW3\I18n\Parser\NumberParser');
+		$mockNumberParser->expects($this->once())->method('parseDecimalNumber', $sampleInvalidNumber)->will($this->returnValue(FALSE));
+
+		$validator = $this->getAccessibleMock('F3\FLOW3\Validation\Validator\NumberValidator', array('addError'));
+		$validator->expects($this->once())->method('addError');
+
+		$validator->injectNumberParser($mockNumberParser);
+		$validator->setOptions(array('locale' => $this->sampleLocale));
+
+		$validator->isValid($sampleInvalidNumber);
+	}
+
+	/**
+	 * @test
+	 * @author Karol Gusak <firstname@lastname.eu>
+	 */
+	public function returnsFalseForIncorrectValues() {
+		$sampleInvalidNumber = 'this is not a number';
+		$mockNumberParser = $this->getMock('F3\FLOW3\I18n\Parser\NumberParser');
+		$mockNumberParser->expects($this->once())->method('parsePercentNumber', $sampleInvalidNumber)->will($this->returnValue(FALSE));
+
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
+		$mockObjectManager->expects($this->at(0))->method('create', 'F3\FLOW3\I18n\Locale', 'en_GB')->will($this->returnValue($this->sampleLocale));
+		$mockObjectManager->expects($this->at(1))->method('create', 'F3\FLOW3\Validation\Error');
+
+		$validator = new \F3\FLOW3\Validation\Validator\NumberValidator();
+		$validator->injectNumberParser($mockNumberParser);
+		$validator->injectObjectManager($mockObjectManager);
+		$validator->setOptions(array('locale' => 'en_GB', 'formatLength' => \F3\FLOW3\I18n\Cldr\Reader\NumbersReader::FORMAT_LENGTH_DEFAULT, 'formatType' => \F3\FLOW3\I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_PERCENT));
+
+		$this->assertFalse($validator->isValid($sampleInvalidNumber));
 	}
 }
 
