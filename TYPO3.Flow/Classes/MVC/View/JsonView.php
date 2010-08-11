@@ -38,6 +38,12 @@ class JsonView extends \F3\FLOW3\MVC\View\AbstractView {
 	protected $controllerContext;
 
 	/**
+	 * Only variables with a key contained in this array will be rendered
+	 * @var array
+	 */
+	protected $variablesToRender = array('value');
+
+	/**
 	 * Sets the current controller context
 	 *
 	 * @param \F3\FLOW3\MVC\Controller\ControllerContext $controllerContext
@@ -47,6 +53,19 @@ class JsonView extends \F3\FLOW3\MVC\View\AbstractView {
 	 */
 	public function setControllerContext(\F3\FLOW3\MVC\Controller\ControllerContext $controllerContext) {
 		$this->controllerContext = $controllerContext;
+	}
+
+	/**
+	 * Specifies which variables this JsonView should render
+	 * By default only variables with a name 'value' will be rendered
+	 *
+	 * @param array $variablesToRender
+	 * @return void
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @api
+	 */
+	public function setVariablesToRender(array $variablesToRender) {
+		$this->variablesToRender = $variablesToRender;
 	}
 
 	/**
@@ -74,12 +93,16 @@ class JsonView extends \F3\FLOW3\MVC\View\AbstractView {
 	 * @api
 	 */
 	protected function renderArray() {
-		$configuration = $this->loadConfigurationFromYamlFile();
-		// TODO: implement support for multiple variables
-		if (count($this->variables) > 1) {
-			throw new \RuntimeException('JsonView does not yet support rendering of multiple values.', 1280750028);
+		if (count($this->variablesToRender) === 1) {
+			$variableName = current($this->variablesToRender);
+			$valueToRender = isset($this->variables[$variableName]) ? $this->variables[$variableName] : NULL;
+		} else {
+			$valueToRender = array();
+			foreach($this->variablesToRender as $variableName) {
+				$valueToRender[$variableName] = isset($this->variables[$variableName]) ? $this->variables[$variableName] : NULL;
+			}
 		}
-		$valueToRender = current($this->variables);
+		$configuration = $this->loadConfigurationFromYamlFile();
 		return $this->transformValue($valueToRender, $configuration);
 	}
 

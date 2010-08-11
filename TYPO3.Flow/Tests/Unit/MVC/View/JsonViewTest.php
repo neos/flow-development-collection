@@ -144,7 +144,7 @@ class JsonViewTest extends \F3\Testing\BaseTestCase {
 	public function renderReturnsJsonRepresentationOfAssignedObject() {
 		$object = new \stdClass();
 		$object->foo = 'Foo';
-		$this->view->assign('object', $object);
+		$this->view->assign('value', $object);
 
 		$expectedResult = '{"foo":"Foo"}';
 		$actualResult = $this->view->render();
@@ -157,7 +157,7 @@ class JsonViewTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function renderReturnsJsonRepresentationOfAssignedArray() {
 		$array = array('foo' => 'Foo', 'bar' => 'Bar');
-		$this->view->assign('array', $array);
+		$this->view->assign('value', $array);
 
 		$expectedResult = '{"foo":"Foo","bar":"Bar"}';
 		$actualResult = $this->view->render();
@@ -180,14 +180,78 @@ class JsonViewTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
-	 * @expectedException \RuntimeException
 	 */
-	public function renderThrowsExceptionIfMoreThanOneVariableWasAssigned() {
+	public function renderReturnsNullIfNameOfAssignedVariableIsNotEqualToValue() {
+		$value = 'Foo';
+		$this->view->assign('foo', $value);
+
+		$expectedResult = 'null';
+		$actualResult = $this->view->render();
+		$this->assertEquals($expectedResult, $actualResult);
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function renderOnlyRendersVariableWithTheNameValue() {
 		$this->view
 			->assign('value', 'Value')
 			->assign('someOtherVariable', 'Foo');
 
-		$this->view->render();
+		$expectedResult = '"Value"';
+		$actualResult = $this->view->render();
+		$this->assertEquals($expectedResult, $actualResult);
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function setVariablesToRenderOverridesValueToRender() {
+		$value = 'Foo';
+		$this->view->assign('foo', $value);
+		$this->view->setVariablesToRender(array('foo'));
+
+		$expectedResult = '"Foo"';
+		$actualResult = $this->view->render();
+		$this->assertEquals($expectedResult, $actualResult);
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function renderRendersMultipleValuesIfTheyAreSpecifiedAsVariablesToRender() {
+		$this->view
+			->assign('value', 'Value1')
+			->assign('secondValue', 'Value2')
+			->assign('someOtherVariable', 'Value3');
+		$this->view->setVariablesToRender(array('value', 'secondValue'));
+
+		$expectedResult = '{"value":"Value1","secondValue":"Value2"}';
+		$actualResult = $this->view->render();
+		$this->assertEquals($expectedResult, $actualResult);
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function renderCanRenderMultipleComplexObjects() {
+		$array = array('foo' => array('bar' => 'Baz'));
+		$object = new \stdClass();
+		$object->foo = 'Foo';
+
+		$this->view
+			->assign('array', $array)
+			->assign('object', $object)
+			->assign('someOtherVariable', 'Value3');
+		$this->view->setVariablesToRender(array('array', 'object'));
+
+		$expectedResult = '{"array":{"foo":{"bar":"Baz"}},"object":{"foo":"Foo"}}';
+		$actualResult = $this->view->render();
+		$this->assertEquals($expectedResult, $actualResult);
 	}
 
 }
