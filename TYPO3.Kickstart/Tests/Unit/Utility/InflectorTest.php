@@ -25,7 +25,6 @@ namespace F3\Kickstart\Utility;
 /**
  * Testcase for the Inflector
  *
- * @version $Id: $
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class InflectorTest extends \F3\Testing\BaseTestCase {

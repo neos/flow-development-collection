@@ -25,7 +25,6 @@ namespace F3\Kickstart\Controller;
 /**
  * Controller for the Kickstart generator
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class KickstartController extends \F3\FLOW3\MVC\Controller\ActionController {
