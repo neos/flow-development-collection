@@ -25,7 +25,6 @@ namespace F3\FLOW3\Security;
 /**
  * An account model
  *
- * @version $Id:$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  * @entity

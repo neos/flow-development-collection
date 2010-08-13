@@ -25,7 +25,6 @@ namespace F3\FLOW3\MVC\View;
 /**
  * A JSON view
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
  * @api

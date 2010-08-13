@@ -28,7 +28,6 @@ namespace F3\FLOW3\I18n\Parser;
  * This parser does not support full syntax of number formats as defined in
  * CLDR. It uses parsed formats from NumbersReader class.
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @see \F3\FLOW3\I18n\Cldr\Reader\NumbersReader
  * @api

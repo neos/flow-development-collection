@@ -25,7 +25,6 @@ namespace F3\FLOW3\Security;
 /**
  * A factory for conveniently creating new accounts
  *
- * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class AccountFactory {

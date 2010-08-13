@@ -25,7 +25,6 @@ namespace F3\FLOW3\Security\RequestPattern;
 /**
  * Testcase for the controller object name request pattern
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class ControllerObjectNameTest extends \F3\Testing\BaseTestCase {

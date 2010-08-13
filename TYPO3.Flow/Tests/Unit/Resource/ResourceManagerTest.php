@@ -27,7 +27,6 @@ require_once('vfs/vfsStream.php');
 /**
  * Testcase for the resource manager
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class ResourceManagerTest extends \F3\Testing\BaseTestCase {

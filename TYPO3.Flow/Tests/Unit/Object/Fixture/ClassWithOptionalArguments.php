@@ -26,7 +26,6 @@ namespace F3\FLOW3\Tests\Object\Fixture;
  * Fixture class for various unit tests (mainly the package- and object
  * manager)
  *
- * @version $Id$
  * @author Robert Lemke <robert@typo3.org>
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype

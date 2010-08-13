@@ -25,7 +25,6 @@ namespace F3\FLOW3\MVC\View;
 /**
  * Testcase for the JSON view
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class JsonViewTest extends \F3\Testing\BaseTestCase {

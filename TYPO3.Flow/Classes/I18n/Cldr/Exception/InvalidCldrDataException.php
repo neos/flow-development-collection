@@ -27,7 +27,6 @@ namespace F3\FLOW3\I18n\Cldr\Exception;
  *
  * Thrown when file in CLDR repository is corrupted, or cannot be accessed.
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */

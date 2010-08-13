@@ -26,7 +26,6 @@ namespace F3\FLOW3\AOP;
  * In FLOW3 the join point object contains context information when a point cut
  * matches and the registered advices are executed.
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  * @api

@@ -26,7 +26,6 @@ namespace F3\FLOW3\Persistence;
  * The Query classs used to run queries like
  * $query->matching($query->equals('foo', 'bar'))->setLimit(10)->execute();
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  * @scope prototype

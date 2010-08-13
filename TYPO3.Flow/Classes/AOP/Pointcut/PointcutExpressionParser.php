@@ -27,7 +27,6 @@ namespace F3\FLOW3\AOP\Pointcut;
  * where advices can be inserted later on. The input of the parse() function is a string
  * from a pointcut- or advice annotation and returns a pointcut filter composite.
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @see \F3\FLOW3\AOP\Pointcut, \F3\FLOW3\AOP\Pointcut\PointcutFilterComposite
  */

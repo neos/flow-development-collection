@@ -26,7 +26,6 @@ namespace F3\FLOW3\Security\Authorization;
  * The default after invocation manager that uses AfterInvocationProcessorInterface to process the return objects.
  * It resolves automatically any available AfterInvcocationProcessorInterface for the given return object and calls them.
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class AfterInvocationProcessorManager implements \F3\FLOW3\Security\Authorization\AfterInvocationManagerInterface {

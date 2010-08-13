@@ -25,7 +25,6 @@ namespace F3\FLOW3\Security\Authentication\Token;
 /**
  * An authentication token used for simple username and password authentication.
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */

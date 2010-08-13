@@ -28,7 +28,6 @@ namespace F3\FLOW3\AOP\Pointcut;
  * join points is defined by a poincut expression which is matched against class
  * and method signatures.
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */

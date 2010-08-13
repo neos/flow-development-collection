@@ -25,7 +25,6 @@ namespace F3\FLOW3\Persistence\Qom;
 /**
  * An operand to a binary operation specified by a Comparison.
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */

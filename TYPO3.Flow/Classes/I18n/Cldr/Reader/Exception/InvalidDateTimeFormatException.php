@@ -28,7 +28,6 @@ namespace F3\FLOW3\I18n\Cldr\Reader\Exception;
  * Thrown when date and / or time pattern does not conform constraints defined
  * in CLDR specification.
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */

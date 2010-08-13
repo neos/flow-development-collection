@@ -27,7 +27,6 @@ namespace F3\FLOW3\Object;
  * objects. Specifically the "new" operator is replaced by a call to the
  * get() method of the object manager.
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  *
  * @todo NOTE: This class does not work at the moment!

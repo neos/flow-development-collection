@@ -25,7 +25,6 @@ namespace F3\FLOW3\MVC\Controller;
 /**
  * Testcase for the Controller Arguments Validator
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class ArgumentsValidatorTest extends \F3\Testing\BaseTestCase {

@@ -28,7 +28,6 @@ namespace F3\FLOW3\Session;
  * This session behaves like any other session except that it only stores the
  * data during one request.
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class TransientSession implements \F3\FLOW3\Session\SessionInterface {

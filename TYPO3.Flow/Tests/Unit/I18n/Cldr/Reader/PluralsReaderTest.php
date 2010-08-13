@@ -25,7 +25,6 @@ namespace F3\FLOW3\I18n\Cldr\Reader;
 /**
  * Testcase for the PluralsReader
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class PluralsReaderTest extends \F3\Testing\BaseTestCase {

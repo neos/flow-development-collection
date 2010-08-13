@@ -25,7 +25,6 @@ namespace F3\FLOW3\Security\Cryptography;
 /**
  * Implementation of the RSAWalletServiceInterface using PHP's OpenSSL extension
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  */
 final class RsaWalletServicePhp implements \F3\FLOW3\Security\Cryptography\RsaWalletServiceInterface {

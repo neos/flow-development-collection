@@ -25,7 +25,6 @@ namespace F3\FLOW3\Security\Policy;
 /**
  * Testcase for the policy expression parser
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class PolicyExpressionParserTest extends \F3\Testing\BaseTestCase {

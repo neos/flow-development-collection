@@ -25,7 +25,6 @@ namespace F3\FLOW3\Persistence\Qom;
 /**
  * An operand whose value can only be determined in evaluating the query.
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */

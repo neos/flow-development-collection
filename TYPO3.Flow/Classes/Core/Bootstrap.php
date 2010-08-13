@@ -30,7 +30,6 @@ require_once(__DIR__ . '/../Package/Package.php');
 /**
  * General purpose central core hyper FLOW3 bootstrap class
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */

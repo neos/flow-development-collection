@@ -25,7 +25,6 @@ namespace F3\FLOW3\AOP\Advice;
 /**
  * Testcase for the Abstract Method Interceptor Builder
  *
- * @version $Id:\F3\FLOW3\AOP\FrameworkTest.php 201 2007-03-30 11:18:30Z robert $
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class AroundAdviceTest extends \F3\Testing\BaseTestCase {

@@ -27,7 +27,6 @@ namespace F3\FLOW3\Tests\Object\Fixture;
  *
  * Must not implement the *BasicClassInterface! (See comment there)
  *
- * @version $Id$
  * @author Robert Lemke <robert@typo3.org>
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */

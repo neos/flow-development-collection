@@ -29,7 +29,6 @@ namespace F3\FLOW3\I18n\Cldr\Reader;
  * - support for other calendars than Gregorian
  * - some data from "dates" tag is not used (fields, timeZoneNames)
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @see http://www.unicode.org/reports/tr35/#Date_Elements
  * @see http://www.unicode.org/reports/tr35/#Date_Format_Patterns

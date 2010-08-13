@@ -30,7 +30,6 @@ namespace F3\FLOW3\I18n\Cldr;
  * every unique CLDR data file, and one instace of CldrModelCollection
  * for every unique locale chain.
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class CldrRepository {

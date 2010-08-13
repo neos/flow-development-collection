@@ -29,7 +29,6 @@ namespace F3\FLOW3\I18n;
  * This class maintans a hierarchical relation between locales. For
  * example, a locale "en_GB" will be a child of a locale "en".
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class LocaleCollection {

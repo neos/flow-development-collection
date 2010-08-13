@@ -24,13 +24,11 @@ namespace F3\FLOW3\MVC\View;
 
 /**
  *
- * @version $Id$
  */
 
 /**
  * An empty view - a special case.
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 final class EmptyView implements \F3\FLOW3\MVC\View\ViewInterface {

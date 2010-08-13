@@ -26,7 +26,6 @@ namespace F3\FLOW3\AOP;
  * An advisor is the combination of a single advice and the pointcut where the
  * advice will become active.
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */

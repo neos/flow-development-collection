@@ -25,7 +25,6 @@ namespace F3\FLOW3\MVC\CLI;
 /**
  * Testcase for the MVC CLI Request Builder
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class RequestBuilderTest extends \F3\Testing\BaseTestCase {

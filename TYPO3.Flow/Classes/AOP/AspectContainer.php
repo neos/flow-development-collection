@@ -37,7 +37,6 @@ namespace F3\FLOW3\AOP;
  * An introduction declaration contains an interface name and a pointcut expression
  * and is used to introduce a new interface to the target class.
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */

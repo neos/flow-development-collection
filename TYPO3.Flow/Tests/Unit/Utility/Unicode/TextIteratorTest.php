@@ -27,7 +27,6 @@ require_once 'PHPUnit/Framework.php';
 /**
  * Testcase for the TextIterator port
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class TextIteratorTest extends \F3\Testing\BaseTestCase {

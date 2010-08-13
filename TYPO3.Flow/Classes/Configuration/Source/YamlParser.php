@@ -31,7 +31,6 @@ require(FLOW3_PATH_FLOW3 . 'Resources/Private/Configuration/Yaml/Dumper.php');
 /**
  * Façade for a Yaml Parser and Dumper
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */

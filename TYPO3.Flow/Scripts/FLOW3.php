@@ -24,7 +24,6 @@ declare(ENCODING = 'utf-8');
 /**
  * Bootstrap for the FLOW3 Framework
  *
- * @version $Id$
  * @author Robert Lemke <robert@typo3.org>
  * @author Karsten Dambekalns <karsten@typo3.org>
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later

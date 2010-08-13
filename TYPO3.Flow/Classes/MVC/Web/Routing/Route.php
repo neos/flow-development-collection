@@ -25,7 +25,6 @@ namespace F3\FLOW3\MVC\Web\Routing;
 /**
  * Implementation of a standard route
  *
- * @version $Id$
  * @copyright Copyright belongs to the respective authors
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype

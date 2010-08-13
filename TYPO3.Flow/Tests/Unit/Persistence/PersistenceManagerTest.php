@@ -30,7 +30,6 @@ require_once('Fixture/Model/CleanEntity.php');
 /**
  * Testcase for the Persistence Manager
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class PersistenceManagerTest extends \F3\Testing\BaseTestCase {

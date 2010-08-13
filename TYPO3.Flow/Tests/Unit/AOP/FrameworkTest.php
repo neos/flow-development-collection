@@ -28,7 +28,6 @@ require_once ('Fixture/InterfaceForIntroduction.php');
 /**
  * Testcase for the AOP Framework class
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class FrameworkTest extends \F3\Testing\BaseTestCase {

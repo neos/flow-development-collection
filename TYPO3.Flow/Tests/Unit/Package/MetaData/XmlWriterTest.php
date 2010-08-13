@@ -27,7 +27,6 @@ require_once('vfs/vfsStream.php');
 /**
  * Testcase for the XML MetaData writer
  *
- * @version $Id:F3\FLOW3\Package\Test.php 201 2007-03-30 11:18:30Z robert $
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class XmlWriterTest extends \F3\Testing\BaseTestCase {

@@ -25,7 +25,6 @@ namespace F3\FLOW3\Security\Aspect;
 /**
  * Testcase for the persistence query rewriting aspect
  *
- * @version $Id: PolicyEnforcementAspectTest.php 2813 2009-07-16 14:02:34Z k-fish $
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class PersistenceQueryRewritingAspectTest extends \F3\Testing\BaseTestCase {

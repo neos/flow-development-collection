@@ -25,7 +25,6 @@ namespace F3\FLOW3\AOP\Builder;
 /**
  * A method interceptor build for constructors with advice.
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class AdvicedConstructorInterceptorBuilder extends \F3\FLOW3\AOP\Builder\AbstractMethodInterceptorBuilder {

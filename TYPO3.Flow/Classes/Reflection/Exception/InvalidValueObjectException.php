@@ -25,7 +25,6 @@ namespace F3\FLOW3\Reflection\Exception;
 /**
  * An "Invalid Value Object" exception
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */

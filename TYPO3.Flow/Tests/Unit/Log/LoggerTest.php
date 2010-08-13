@@ -25,7 +25,6 @@ namespace F3\FLOW3\Log;
 /**
  * Testcase for the generic Logger
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class LoggerTest extends \F3\Testing\BaseTestCase {

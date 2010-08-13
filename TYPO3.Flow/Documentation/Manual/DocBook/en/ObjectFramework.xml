@@ -1077,7 +1077,6 @@ class Foo {
 #                                                                        #
 
 # @package MyPackage
-# @version $Id: Objects.yaml 123 2009-01-01 12:00:00Z robert $
 
 F3\MyPackage\Foo:
   arguments:

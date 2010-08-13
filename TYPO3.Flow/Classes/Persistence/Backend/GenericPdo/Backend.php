@@ -25,7 +25,6 @@ namespace F3\FLOW3\Persistence\Backend\GenericPdo;
 /**
  * The default FLOW3 persistence backend
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {

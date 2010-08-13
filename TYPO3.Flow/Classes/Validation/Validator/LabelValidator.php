@@ -29,7 +29,6 @@ namespace F3\FLOW3\Validation\Validator;
  * the space character. What you don't want in labels though are tabs, new
  * line characters or HTML tags. This validator is for such uses.
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */

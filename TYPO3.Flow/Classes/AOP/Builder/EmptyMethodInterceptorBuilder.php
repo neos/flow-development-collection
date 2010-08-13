@@ -26,7 +26,6 @@ namespace F3\FLOW3\AOP\Builder;
  * A AOP method interceptor code builder which generates an empty method as used for
  * introductions without advices delivering the implementation of the introduced method.
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class EmptyMethodInterceptorBuilder extends \F3\FLOW3\AOP\Builder\AbstractMethodInterceptorBuilder {

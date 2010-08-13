@@ -29,7 +29,6 @@ namespace F3\FLOW3\I18n\Exception;
  * \F3\FLOW3\Formatter\FormatterInterface and have requested name suffixed with
  * "Formatter" at the same time.
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */

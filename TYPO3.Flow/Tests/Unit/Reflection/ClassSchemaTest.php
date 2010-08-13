@@ -28,7 +28,6 @@ namespace F3\FLOW3\Reflection;
  * Note that many parts of the class schema functionality are already tested by the class
  * schema builder testcase.
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class ClassSchemaTest extends \F3\Testing\BaseTestCase {

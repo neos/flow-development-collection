@@ -27,7 +27,6 @@ namespace F3\FLOW3\Cache;
  * a certain cache backend. After creation of the new cache, the cache object
  * is registered at the cache manager.
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */

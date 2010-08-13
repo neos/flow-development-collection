@@ -25,7 +25,6 @@ namespace F3\FLOW3\Security\Authentication\EntryPoint;
 /**
  * Testcase for web redirect authentication entry point
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  */
 class WebRedirectTest extends \F3\Testing\BaseTestCase {

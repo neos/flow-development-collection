@@ -34,7 +34,6 @@ namespace F3\FLOW3\I18n\Cldr;
  * account during alias resolution, however nodes are searched only within one
  * file (represented by CldrModel) for now.
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  * @scope prototype

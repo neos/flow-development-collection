@@ -25,7 +25,6 @@ namespace F3\FLOW3\Security\Cryptography;
 /**
  * An RSA key
  *
- * @version $Id: OpenSslRsaKey.php -1   $
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  * @scope prototype
  */

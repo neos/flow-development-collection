@@ -28,7 +28,6 @@ require_once (FLOW3_PATH_FLOW3 . 'Tests/Unit/Fixtures/SecondDummyClass.php');
 /**
  * Testcase for the Pointcut Class Filter
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class PointcutClassNameFilterTest extends \F3\Testing\BaseTestCase {

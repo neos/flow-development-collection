@@ -26,7 +26,6 @@ namespace F3\FLOW3\Object\Container;
  * Abstract Object Container, supporting Dependency Injection.
  * Provides functions for the dynamic and the static object container.
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 abstract class AbstractObjectContainer implements \F3\FLOW3\Object\Container\ObjectContainerInterface {

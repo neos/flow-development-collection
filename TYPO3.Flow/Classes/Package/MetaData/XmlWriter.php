@@ -25,7 +25,6 @@ namespace F3\FLOW3\Package\MetaData;
 /**
  * A package meta XML writer implementation based on the Package.xml format
  *
- * @version $Id:F3\FLOW3\Package\.php 203 2007-03-30 13:17:37Z robert $
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class XmlWriter implements \F3\FLOW3\Package\MetaData\WriterInterface {

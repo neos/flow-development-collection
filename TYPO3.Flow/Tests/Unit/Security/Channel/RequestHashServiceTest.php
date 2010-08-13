@@ -25,7 +25,6 @@ namespace F3\FLOW3\Security\Channel;
 /**
  * Testcase for the Request Hash Service
  *
- * @version $Id: RSAWalletServicePHPTest.php 2813 2009-07-16 14:02:34Z k-fish $
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  */
 class RequestHashServiceTest extends \F3\Testing\BaseTestCase {

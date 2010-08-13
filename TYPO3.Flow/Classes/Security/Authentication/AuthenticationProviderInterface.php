@@ -27,7 +27,6 @@ namespace F3\FLOW3\Security\Authentication;
  * Has to add a \F3\FLOW3\Security\Authentication\TokenInterface to the securit context, which contains
  * a \F3\FLOW3\Security\Authentication\UserDetailsInterface.
  *
- * @version $Id$
  * @author Andreas Förthner <andreas.foerthner@netlogix.de>
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */

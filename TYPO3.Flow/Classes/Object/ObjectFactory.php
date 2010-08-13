@@ -26,7 +26,6 @@ namespace F3\FLOW3\Object;
  * The Object ObjectFactory is mainly used for creating non-singleton objects (ie. with the
  * scope prototype).
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  * @deprecated since 1.0.0 alpha 8

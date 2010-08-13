@@ -25,7 +25,6 @@ namespace F3\FLOW3\MVC\Controller;
 /**
  * Testcase for the Flash Messages Container
  *
- * @version $Id: ActionControllerTest.php 3131 2009-09-07 14:05:04Z k-fish $
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class FlashMessageContainerTest extends \F3\Testing\BaseTestCase {

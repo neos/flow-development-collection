@@ -30,7 +30,6 @@ namespace F3\FLOW3\I18n\TranslationProvider\Exception;
  * of the interface methods is not supported (eg. when storage method makes it
  * impossible).
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */

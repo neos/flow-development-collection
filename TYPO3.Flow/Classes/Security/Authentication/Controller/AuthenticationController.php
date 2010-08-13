@@ -25,7 +25,6 @@ namespace F3\FLOW3\Security\Authentication\Controller;
 /**
  * An action controller for generic authentication in FLOW3
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  */
 class AuthenticationController extends \F3\FLOW3\MVC\Controller\ActionController {

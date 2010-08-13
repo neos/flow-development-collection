@@ -25,7 +25,6 @@ namespace F3\FLOW3\AOP\Pointcut;
 /**
  * Testcase for the Pointcut Class Type Filter
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class PointcutClassTypeFilterTest extends \F3\Testing\BaseTestCase {

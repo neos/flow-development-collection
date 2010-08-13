@@ -26,7 +26,6 @@ namespace F3\FLOW3\Utility;
  * A subclass of "Evironment" which allows for modifying the underlying environment
  * information. This object should only be used as a mock object for unit testing.
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class MockEnvironment extends \F3\FLOW3\Utility\Environment {

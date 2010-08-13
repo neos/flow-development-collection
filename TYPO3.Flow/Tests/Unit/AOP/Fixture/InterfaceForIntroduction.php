@@ -25,7 +25,6 @@ namespace F3\FLOW3\Tests\AOP\Fixture;
 /**
  * An interface which can be used for testing of the introduction feature
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 interface InterfaceForIntroduction {

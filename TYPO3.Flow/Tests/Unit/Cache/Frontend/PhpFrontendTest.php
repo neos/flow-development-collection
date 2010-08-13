@@ -25,7 +25,6 @@ namespace F3\FLOW3\Cache\Frontend;
 /**
  * Testcase for the PHP source code cache frontend
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class PhpFrontendTest extends \F3\Testing\BaseTestCase {

@@ -25,7 +25,6 @@ namespace F3\FLOW3\Package;
 /**
  * The default TYPO3 Package MetaData implementation
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class MetaData implements \F3\FLOW3\Package\MetaDataInterface {

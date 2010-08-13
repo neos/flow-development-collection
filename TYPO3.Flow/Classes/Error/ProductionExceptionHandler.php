@@ -25,7 +25,6 @@ namespace F3\FLOW3\Error;
 /**
  * A quite exception handler which catches but ignores any exception.
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class ProductionExceptionHandler extends \F3\FLOW3\Error\AbstractExceptionHandler {

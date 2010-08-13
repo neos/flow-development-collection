@@ -25,7 +25,6 @@ namespace F3\FLOW3\Security\Exception;
 /**
  * A "InvalidQueryRewritingConstraintException" Exception
  *
- * @version $Id: NoEntryInPolicyException.php 3643 2010-01-15 14:38:07Z robert $
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */

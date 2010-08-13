@@ -28,7 +28,6 @@ require_once('Fixture/DummyInterface2.php');
 /**
  * Testcase for ClassReflection
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */

@@ -28,7 +28,6 @@ namespace F3\FLOW3\I18n\Parser\Exception;
  * It is thrown when concrete parser encounters a character sequence which
  * cannot be parsed. This exception is only used internally.
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */

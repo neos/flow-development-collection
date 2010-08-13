@@ -25,7 +25,6 @@ namespace F3\FLOW3\Utility\Unicode;
 /**
  * Exception thrown if a feature is not supported by the PHP6 backport code.
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */

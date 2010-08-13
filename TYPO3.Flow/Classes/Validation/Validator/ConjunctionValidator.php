@@ -26,7 +26,6 @@ namespace F3\FLOW3\Validation\Validator;
  * Validator to chain many validators in a conjunction (logical and). So every
  * validator has to be valid, to make the whole conjunction valid.
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  * @scope prototype

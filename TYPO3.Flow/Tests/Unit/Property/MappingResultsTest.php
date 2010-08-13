@@ -25,7 +25,6 @@ namespace F3\FLOW3\Property;
 /**
  * Testcase for Mapping Results
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class MappingResultsTest extends \F3\Testing\BaseTestCase {

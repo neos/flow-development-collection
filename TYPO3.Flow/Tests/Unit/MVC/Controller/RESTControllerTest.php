@@ -26,7 +26,6 @@ require_once(__DIR__ . '/../Fixture/Controller/MockRESTController.php');
 /**
  * Testcase for the MVC REST Controller
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class RESTControllerTest extends \F3\Testing\BaseTestCase {

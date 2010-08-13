@@ -25,7 +25,6 @@ namespace F3\FLOW3\Security\Aspect;
 /**
  * Testcase for the request dispatching aspect
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class RequestDispatchingAspectTest extends \F3\Testing\BaseTestCase {

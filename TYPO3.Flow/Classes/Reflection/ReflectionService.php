@@ -25,7 +25,6 @@ namespace F3\FLOW3\Reflection;
 /**
  * A service for aquiring reflection based information in a performant way.
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */

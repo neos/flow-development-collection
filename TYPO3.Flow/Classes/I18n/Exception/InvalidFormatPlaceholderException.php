@@ -29,7 +29,6 @@ namespace F3\FLOW3\I18n\Exception;
  * invalid (ie. is not closed before next placeholder begins, or the end of the
  * string, etc).
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */

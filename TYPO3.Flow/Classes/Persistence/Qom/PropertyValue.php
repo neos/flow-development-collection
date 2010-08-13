@@ -33,7 +33,6 @@ namespace F3\FLOW3\Persistence\Qom;
  * selector is not the name of a selector in the query, or
  * property is not a syntactically valid property name.
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  * @scope prototype

@@ -26,7 +26,6 @@ namespace F3\FLOW3\Persistence\Qom;
  * An operand whose value can be determined from static analysis of the query,
  * prior to its evaluation.
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  * @scope prototype

@@ -26,7 +26,6 @@ namespace F3\FLOW3\Utility;
  * This class can be used as a replacement for superglobals such as $_SERVER etc.
  * to give the caller a hint to use a different way for accessing the information.
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  *
  * @scope prototype

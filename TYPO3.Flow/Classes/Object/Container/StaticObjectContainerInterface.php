@@ -25,7 +25,6 @@ namespace F3\FLOW3\Object\Container;
 /**
  * Additional interface for a static object container
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 interface StaticObjectContainerInterface extends \F3\FLOW3\Object\Container\ObjectContainerInterface {

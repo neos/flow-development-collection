@@ -26,7 +26,6 @@ namespace F3\FLOW3\MVC;
  * Dispatches requests to the controller which was specified by the request and
  * returns the response the controller generated.
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class Dispatcher {

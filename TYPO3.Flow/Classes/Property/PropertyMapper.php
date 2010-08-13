@@ -42,7 +42,6 @@ namespace F3\FLOW3\Property;
  *
  * Now the target object equals the source object.
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */

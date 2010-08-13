@@ -27,7 +27,6 @@ require_once ('Backend/MockBackend.php');
 /**
  * Testcase for the Cache Factory
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class CacheFactoryTest extends \F3\Testing\BaseTestCase {

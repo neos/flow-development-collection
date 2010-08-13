@@ -1119,7 +1119,6 @@ if (weHaveALotOfCriteria() === TRUE
  *
  * Paragraphs are seperated by a empty line.
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public ↩
       License, version 3 or later
  */
@@ -1138,7 +1137,6 @@ class SomeClass {
  *
  * Paragraphs are seperated by a empty line.
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public ↩
       License, version 3 or later
  * @author Your Name &lt;your@email.here&gt;
@@ -1158,7 +1156,6 @@ interface SomeInterface {
  *
  * Paragraphs are seperated by a empty line.
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public ↩
       License, version 3 or later
  */
@@ -1166,34 +1163,6 @@ class SomeException extends \Exception {
  ...
 }</programlisting>
         </example>
-
-        <important>
-          <title>$Id$, Subversion and keyword expansion</title>
-
-          <para>The $Id$ in the version tag will be expanded with information
-          about the file version by Subversion. This so-called keyword
-          expansion needs to be explicitly enabled, though! We recommend to
-          put this into your <filename>~.subversion/config</filename>
-          file:</para>
-
-          <example>
-            <title>Suggested configuration for Subversion in
-            <filename>~/.subversion/config</filename></title>
-
-            <para><literallayout>[miscellany]
-global-ignores = #*# *.rej *.orig *.bak *~ .*
-log-encoding = utf-8
-enable-auto-props = yes
-[auto-props]
-*.php = svn:keywords=Id Revision
-*.yaml = svn:keywords=Id Revision</literallayout></para>
-          </example>
-
-          <para>This does a little more than just enable the keyword
-          expansion, it also sets the character encoding for the log messages
-          and makes Subversion ignore some standard backup and metadata
-          filenames.</para>
-        </important>
 
         <para>Additional tags or annotations, such as @see or @aspect, can be
         added as needed.</para>
@@ -1310,10 +1279,6 @@ public function fooBar() {
           <title>Interface Documentation</title>
 
           <listitem>
-            <para>@version</para>
-          </listitem>
-
-          <listitem>
             <para>@license</para>
           </listitem>
 
@@ -1334,10 +1299,6 @@ public function fooBar() {
           </listitem>
         </itemizedlist><itemizedlist>
           <title>Class Documentation</title>
-
-          <listitem>
-            <para>@version</para>
-          </listitem>
 
           <listitem>
             <para>@license</para>

@@ -25,7 +25,6 @@ namespace F3\FLOW3\Security\Authentication\Provider;
 /**
  * Testcase for username/password authentication provider. The account are stored in the CR.
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class PersistedUsernamePasswordProviderTest extends \F3\Testing\BaseTestCase {

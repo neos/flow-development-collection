@@ -25,7 +25,6 @@ namespace F3\FLOW3\Validation\Validator;
 /**
  * An abstract Object Validator
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 abstract class AbstractObjectValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator implements \F3\FLOW3\Validation\Validator\ObjectValidatorInterface {

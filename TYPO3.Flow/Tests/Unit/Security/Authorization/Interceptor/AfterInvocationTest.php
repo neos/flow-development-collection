@@ -25,7 +25,6 @@ namespace F3\FLOW3\Security\Authorization\Interceptor;
 /**
  * Testcase for the policy enforcement interceptor
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class AfterInvocationTest extends \F3\Testing\BaseTestCase {

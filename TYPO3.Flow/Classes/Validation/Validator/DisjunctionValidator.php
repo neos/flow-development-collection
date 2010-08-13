@@ -27,7 +27,6 @@ namespace F3\FLOW3\Validation\Validator;
  * validator has to be valid, to make the whole disjunction valid. Errors are
  * only returned if all validators failed.
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  * @scope prototype

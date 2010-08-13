@@ -23,7 +23,6 @@ namespace F3\FLOW3\Reflection;
  *                                                                        */
 
 /**
- * @version $Id$
  */
 /**
  * Provides methods to call appropriate getter/setter on an object given the
@@ -36,7 +35,6 @@ namespace F3\FLOW3\Reflection;
  * Some methods support arrays as well, most notably getProperty() and
  * getPropertyPath().
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class ObjectAccess {

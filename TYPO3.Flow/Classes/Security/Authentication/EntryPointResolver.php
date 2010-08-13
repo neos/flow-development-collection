@@ -26,7 +26,6 @@ namespace F3\FLOW3\Security\Authentication;
  * The authentication entry point resolver. It resolves the class name of an
  * authentication entry point based on names.
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class EntryPointResolver {

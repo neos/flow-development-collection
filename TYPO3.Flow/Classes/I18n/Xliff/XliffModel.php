@@ -36,7 +36,6 @@ namespace F3\FLOW3\I18n\Xliff;
  * them to .po (e.g. using xliff2po from Translation Toolkit), edit with Poedit,
  * and convert back to .xlf without any information loss (using po2xliff).
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @see http://docs.oasis-open.org/xliff/v1.2/xliff-profile-po/xliff-profile-po-1.2-cd02.html#s.detailed_mapping.tu
  * @scope prototype

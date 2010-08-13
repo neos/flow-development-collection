@@ -26,7 +26,6 @@ namespace F3\FLOW3\Persistence\Exception;
  * An ObjectValidationFailedException thrown when a validation error is
  * encountered during persistence.
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */

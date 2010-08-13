@@ -26,7 +26,6 @@ namespace F3\FLOW3\Security\Authentication;
  * The default authentication manager, which relies on Authentication Providers
  * to authenticate the tokens stored in the security context.
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class AuthenticationProviderManager implements \F3\FLOW3\Security\Authentication\AuthenticationManagerInterface {

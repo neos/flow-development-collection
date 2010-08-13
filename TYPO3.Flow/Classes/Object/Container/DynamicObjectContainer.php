@@ -31,7 +31,6 @@ namespace F3\FLOW3\Object\Container;
  * tailored to work with objects of the FLOW3 package and won't work with
  * objects of any other package.
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class DynamicObjectContainer extends \F3\FLOW3\Object\Container\AbstractObjectContainer {

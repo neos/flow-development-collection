@@ -25,7 +25,6 @@ namespace F3\FLOW3\Security\Authorization\Voter;
 /**
  * Testcase for the Policy voter
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class PolicyTest extends \F3\Testing\BaseTestCase {

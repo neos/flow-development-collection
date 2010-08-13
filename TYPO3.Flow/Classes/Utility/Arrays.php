@@ -25,7 +25,6 @@ namespace F3\FLOW3\Utility;
 /**
  * The array functions from the good old t3lib_div plus new code.
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @todo (robert) I'm not sure yet if we should use this library statically or as a singleton. The latter might be problematic if we use it from the Core classes.
  */

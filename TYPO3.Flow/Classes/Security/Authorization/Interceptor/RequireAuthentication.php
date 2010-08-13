@@ -30,7 +30,6 @@ namespace F3\FLOW3\Security\Authorization\Interceptor;
  * If context->authenticateAllTokens() returns TRUE all tokens have be authenticated, otherwise there has to be at least one
  * authenticated token to have a valid authentication.
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class RequireAuthentication implements \F3\FLOW3\Security\Authorization\InterceptorInterface {

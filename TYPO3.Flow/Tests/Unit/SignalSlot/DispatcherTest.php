@@ -26,7 +26,6 @@ namespace F3\FLOW3\SignalSlot;
 /**
  * Testcase for the Signal Dispatcher Class
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class DispatcherTest extends \F3\Testing\BaseTestCase {

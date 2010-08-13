@@ -26,7 +26,6 @@ namespace F3\FLOW3\Cache\Backend;
  * A contract for a cache backend which is capable of storing, retrieving and
  * including PHP source code.
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  * @author Robert Lemke <robert@typo3.org>

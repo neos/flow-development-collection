@@ -25,7 +25,6 @@ namespace F3\FLOW3\Security\Authorization\Voter;
 /**
  * An access decision voter, that always grants access for specific objects.
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class AccessGrant implements \F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface {
