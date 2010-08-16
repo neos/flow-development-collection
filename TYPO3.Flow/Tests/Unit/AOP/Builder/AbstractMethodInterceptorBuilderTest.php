@@ -32,6 +32,7 @@ class AbstractMethodInterceptorBuilderTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function buildMethodParametersCodeRendersParametersCodeWithCorrectTypeHintsAndDefaultValues() {
 		$className = uniqid('TestClass');
@@ -40,14 +41,14 @@ class AbstractMethodInterceptorBuilderTest extends \F3\Testing\BaseTestCase {
 			 * @param string $arg1 Arg1
 			 */
 			class ' . $className . ' {
-				public function foo($arg1, array $arg2, \ArrayObject $arg3, $arg4= "foo", $arg5 = TRUE) {}
+				public function foo($arg1, array $arg2, \ArrayObject $arg3, $arg4= "foo", $arg5 = TRUE, array $arg6 = array(TRUE, \'foo\' => \'bar\', NULL, 3 => 1, 2.3)) {}
 			}
 		');
 
 		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'saveToCache'), array(), '', FALSE, TRUE);
 		$mockReflectionService->initialize(array($className));
 
-		$expectedCode = '$arg1, array $arg2, \ArrayObject $arg3, $arg4 = \'foo\', $arg5 = TRUE';
+		$expectedCode = '$arg1, array $arg2, \ArrayObject $arg3, $arg4 = \'foo\', $arg5 = TRUE, array $arg6 = array(0 => TRUE, \'foo\' => \'bar\', 1 => NULL, 3 => 1, 4 => 2.3)';
 		$parametersDocumentation = '';
 
 		$builder = $this->getMock('F3\FLOW3\AOP\Builder\AbstractMethodInterceptorBuilder', array('build'), array(), '', FALSE);

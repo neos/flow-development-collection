@@ -66,6 +66,7 @@ abstract class AbstractMethodInterceptorBuilder {
 	 * @param boolean $addTypeAndDefaultValue Adds the type and default value for each parameters (if any)
 	 * @return string A comma speparated list of parameters
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function buildMethodParametersCode($className, $methodName, $addTypeAndDefaultValue) {
 		$methodParametersCode = '';
@@ -95,6 +96,8 @@ abstract class AbstractMethodInterceptorBuilder {
 							$defaultValue = ' = ' . $rawDefaultValue;
 						} elseif (is_string($rawDefaultValue)) {
 							$defaultValue = " = '" . $rawDefaultValue . "'";
+						} elseif (is_array($rawDefaultValue)) {
+							$defaultValue = " = " . $this->buildArraySetupCode($rawDefaultValue);
 						}
 					}
 					$byReferenceSign = ($methodParameterInfo['byReference'] ? '&' : '');
@@ -109,7 +112,31 @@ abstract class AbstractMethodInterceptorBuilder {
 	}
 
 	/**
+	 * Builds a string containing PHP code to build the array given as input.
 	 *
+	 * @param array $array
+	 * @return string e.g. 'array()' or 'array(1 => 'bar')
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function buildArraySetupCode(array $array) {
+		$code = 'array(';
+		foreach ($array as $key => $value) {
+			$code .= (is_string($key)) ? "'" . $key  . "'" : $key;
+			$code .= ' => ';
+			if ($value === NULL) {
+				$code .= 'NULL';
+			} elseif (is_bool($value)) {
+				$code .= ($value ? 'TRUE' : 'FALSE');
+			} elseif (is_numeric($value)) {
+				$code .= $value;
+			} elseif (is_string($value)) {
+				$code .= "'" . $value . "'";
+			}
+			$code .= ', ';
+		}
+		return rtrim($code, ', ') . ')';
+	}
+
 	/**
 	 * Builds the method docblock for the specified method keeping the vital
 	 * annotations to be used in a method interceptor in the proxy class.
