@@ -146,6 +146,7 @@ class ValidatorResolver {
 	 * @return array An Array of ValidatorConjunctions for each method parameters.
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function buildMethodArgumentsValidatorConjunctions($className, $methodName) {
 		$validatorConjunctions = array();
@@ -158,6 +159,9 @@ class ValidatorResolver {
 		foreach ($methodParameters as $parameterName => $methodParameter) {
 			$validatorConjunction = $this->createValidator('F3\FLOW3\Validation\Validator\ConjunctionValidator');
 
+			if (!array_key_exists('type' , $methodParameter)) {
+				throw new \F3\FLOW3\Validation\Exception\InvalidTypeHintException('Missing type information, probably no @param annotation for parameter "$' . $parameterName . '" in ' . $className . '->' . $methodName . '()', 1281962564);
+			}
 			if (strpos($methodParameter['type'], '\\') === FALSE) {
 				$typeValidator = $this->createValidator($methodParameter['type']);
 			} elseif (strpos($methodParameter['type'], '\\Model\\') !== FALSE) {

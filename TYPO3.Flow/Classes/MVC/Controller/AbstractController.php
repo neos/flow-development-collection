@@ -253,7 +253,7 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	}
 
 	/**
-	 * Forwards the request to another action and / or controller.
+	 * Redirects the request to another action and / or controller.
 	 *
 	 * NOTE: This method only supports web requests and will throw an exception
 	 * if used with other request types.
