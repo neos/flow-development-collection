@@ -146,7 +146,6 @@ class ApcBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 		$success = apc_store($this->identifierPrefix . $entryIdentifier, $data, $expiration);
 		if ($success === TRUE) {
 			$this->removeIdentifierFromAllTags($entryIdentifier);
-			$this->addTagsToTagIndex($tags);
 			$this->addIdentifierToTags($entryIdentifier, $tags);
 		} else {
 			throw new \F3\FLOW3\Cache\Exception('Could not set value.', 1232986877);
@@ -261,54 +260,6 @@ class ApcBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	}
 
 	/**
-	 * Returns an array with all known tags
-	 *
-	 * @return array
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	protected function getTagIndex() {
-		$success = FALSE;
-		$tagIndex = apc_fetch($this->identifierPrefix . 'tagIndex', $success);
-		return ($success ? (array)$tagIndex : array());
-	}
-
-	/**
-	 * Saves the tags known to the backend
-	 *
-	 * @param array $tags
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	protected function setTagIndex(array $tags) {
-		apc_store($this->identifierPrefix . 'tagIndex', array_unique($tags));
-	}
-
-	/**
-	 * Adds the given tags to the tag index
-	 *
-	 * @param array $tags
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	protected function addTagsToTagIndex(array $tags) {
-		if (count($tags)) {
-			$this->setTagIndex(array_merge($tags, $this->getTagIndex()));
-		}
-	}
-
-	/**
-	 * Removes the given tags from the tag index
-	 *
-	 * @param array $tags
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	protected function removeTagsFromTagIndex(array $tags) {
-		if (count($tags)) {
-			$this->setTagIndex(array_diff($this->getTagIndex(), $tags));
-		}
-	}
-
-	/**
 	 * Associates the identifier with the given tags
 	 *
 	 * @param string $entryIdentifier
@@ -358,7 +309,6 @@ class ApcBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 				if (count($identifiers)) {
 					apc_store($this->identifierPrefix . 'tag_' . $tag, $identifiers);
 				} else {
-					$this->removeTagsFromTagIndex(array($tag));
 					apc_delete($this->identifierPrefix . 'tag_' . $tag);
 				}
 			}

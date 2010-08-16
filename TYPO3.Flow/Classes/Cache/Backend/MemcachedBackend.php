@@ -249,7 +249,6 @@ class MemcachedBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 			}
 			if ($success === TRUE) {
 				$this->removeIdentifierFromAllTags($entryIdentifier);
-				$this->addTagsToTagIndex($tags);
 				$this->addIdentifierToTags($entryIdentifier, $tags);
 			} else {
 				throw new \F3\FLOW3\Cache\Exception('Could not set value on memcache server.', 1275830266);
@@ -371,53 +370,6 @@ class MemcachedBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	}
 
 	/**
-	 * Returns an array with all known tags
-	 *
-	 * @return array
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	protected function getTagIndex() {
-		$tagIndex = $this->memcache->get($this->identifierPrefix . 'tagIndex');
-		return ($tagIndex === FALSE ? array() : (array)$tagIndex);
-	}
-
-	/**
-	 * Saves the tags known to the backend
-	 *
-	 * @param array $tags
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	protected function setTagIndex(array $tags) {
-		$this->memcache->set($this->identifierPrefix . 'tagIndex', array_unique($tags), 0, 0);
-	}
-
-	/**
-	 * Adds the given tags to the tag index
-	 *
-	 * @param array $tags
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	protected function addTagsToTagIndex(array $tags) {
-		if (count($tags)) {
-			$this->setTagIndex(array_merge($tags, $this->getTagIndex()));
-		}
-	}
-
-	/**
-	 * Removes the given tags from the tag index
-	 *
-	 * @param array $tags
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	protected function removeTagsFromTagIndex(array $tags) {
-		if (count($tags)) {
-			$this->setTagIndex(array_diff($this->getTagIndex(), $tags));
-		}
-	}
-
-	/**
 	 * Associates the identifier with the given tags
 	 *
 	 * @param string $entryIdentifier
@@ -467,7 +419,6 @@ class MemcachedBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 				if (count($identifiers)) {
 					$this->memcache->set($this->identifierPrefix . 'tag_' . $tag, $identifiers);
 				} else {
-					$this->removeTagsFromTagIndex(array($tag));
 					$this->memcache->delete($this->identifierPrefix . 'tag_' . $tag);
 				}
 			}
