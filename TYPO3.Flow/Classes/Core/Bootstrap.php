@@ -36,11 +36,6 @@ require_once(__DIR__ . '/../Package/Package.php');
 class Bootstrap {
 
 	/**
-	 * FLOW3's Subversion revision
-	 */
-	const REVISION = '$Revision$';
-
-	/**
 	 * Required PHP version
 	 */
 	const MINIMUM_PHP_VERSION = '5.3.0RC2-dev';
@@ -375,15 +370,6 @@ class Bootstrap {
 
 		$cacheFactory = $this->objectManager->get('F3\FLOW3\Cache\CacheFactory');
 		$cacheFactory->setCacheManager($this->cacheManager);
-
-		$coreCache= $this->cacheManager->getCache('FLOW3_Core');
-		$cachedRevision = ($coreCache->has('revision')) ? $coreCache->get('revision') : NULL;
-		$currentRevision = $this->packageManager->getPackage('FLOW3')->getPackageMetaData()->getVersion() . ' (r' . substr(self::REVISION, 11, -2) . ')';
-		if ($cachedRevision !== $currentRevision) {
-			$this->systemLogger->log('The caches are based on FLOW3 ' . $cachedRevision . ' not matching ' . $currentRevision . ', therefore flushing all caches.', LOG_NOTICE);
-			$this->cacheManager->flushCaches();
-			$coreCache->set('revision', $currentRevision);
-		}
 	}
 
 	/**

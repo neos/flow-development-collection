@@ -375,10 +375,9 @@ class ConfigurationManager {
 			\F3\FLOW3\Utility\Files::createDirectoryRecursively($configurationCachePath );
 		}
 		$cachePathAndFilename = $configurationCachePath  . $this->context . 'Configurations.php';
-		$currentRevision = \F3\FLOW3\Core\Bootstrap::REVISION;
 		$includeCachedConfigurationsCode = <<< "EOD"
 <?php
-	if (file_exists('$cachePathAndFilename') && \F3\FLOW3\Core\Bootstrap::REVISION === '$currentRevision') {
+	if (file_exists('$cachePathAndFilename')) {
 		return require '$cachePathAndFilename';
 	} else {
 		unlink(__FILE__);
