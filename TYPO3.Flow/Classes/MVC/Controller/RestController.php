@@ -27,7 +27,7 @@ namespace F3\FLOW3\MVC\Controller;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class RESTController extends \F3\FLOW3\MVC\Controller\ActionController {
+class RestController extends \F3\FLOW3\MVC\Controller\ActionController {
 
 	/**
 	 * The current request
@@ -42,6 +42,16 @@ class RESTController extends \F3\FLOW3\MVC\Controller\ActionController {
 	protected $response;
 
 	/**
+	 * Name of the action method argument which acts as the resource for the
+	 * RESTful controller. If an argument with the specified name is passed
+	 * to the controller, the show, update and delete actions can be triggered
+	 * automatically.
+	 *
+	 * @var string
+	 */
+	protected $resourceArgumentName = 'resource';
+
+	/**
 	 * Determines the action method and assures that the method exists.
 	 *
 	 * @return string The action method name
@@ -53,17 +63,21 @@ class RESTController extends \F3\FLOW3\MVC\Controller\ActionController {
 			$actionName = 'index';
 			switch ($this->request->getMethod()) {
 				case 'GET' :
-					$actionName = ($this->request->hasArgument('id')) ? 'show' : 'list';
+					$actionName = ($this->request->hasArgument($this->resourceArgumentName)) ? 'show' : 'list';
 				break;
 				case 'POST' :
 					$actionName = 'create';
 				break;
 				case 'PUT' :
-					if (!$this->request->hasArgument('id')) $this->throwStatus(400, NULL, 'Missing identifier');
+					if (!$this->request->hasArgument($this->resourceArgumentName)) {
+						$this->throwStatus(400, NULL, 'No resource specified');
+					}
 					$actionName = 'update';
 				break;
 				case 'DELETE' :
-					if (!$this->request->hasArgument('id')) $this->throwStatus(400, NULL, 'Missing identifier');
+					if (!$this->request->hasArgument($this->resourceArgumentName)) {
+						$this->throwStatus(400, NULL, 'No resource specified');
+					}
 					$actionName = 'delete';
 				break;
 			}
