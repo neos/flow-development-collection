@@ -1,0 +1,593 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter version="5.0" xml:id="flow3.i18nframework"
+         xmlns="http://docbook.org/ns/docbook"
+         xmlns:xlink="http://www.w3.org/1999/xlink"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
+         xmlns:svg="http://www.w3.org/2000/svg"
+         xmlns:m="http://www.w3.org/1998/Math/MathML"
+         xmlns:html="http://www.w3.org/1999/xhtml"
+         xmlns:db="http://docbook.org/ns/docbook">
+  <title>Internationalization &amp; Localization Framework</title>
+
+  <para>Internationalization is the process of designing software so that it
+  can be easily (i.e. without any source code modifications) adapted to
+  various languages and regions. Localization is the process of adapting
+  internationalized software for a specific language or region (e.g. by
+  translating text, formating date or time).</para>
+
+  <para>We describe here functionality and usage of FLOW3 <code>I18n</code>
+  package.</para>
+
+  <section xml:id="flow3.i18nframework.basics">
+    <title>Basics</title>
+
+    <section xml:id="flow3.i18nframework.localeClass">
+      <title>Locale class</title>
+
+      <para>Instances of <classname>\F3\FLOW3\I18n\Locale</classname> class
+      are fundamental for whole i18n and L10n functionality. They are used to
+      specify what language should be used for translation, how date and time
+      should be formatted, and so on. They can be treated as simple wrappers
+      for locale identifiers (like <literal>de</literal> or
+      <literal>pl_PL</literal>). Many methods from <code>I18n</code> package
+      accept Locale objects as a optional parameter - if not provided, the
+      default <classname>Locale</classname> instance for particular FLOW3
+      installation will be used.</para>
+
+      <para>You can create <classname>Locale</classname> object for any valid
+      locale identifier (specified by RFC 4646), even if it is not explicitly
+      meant to be supported by current FLOW3 installation (i.e. there are no
+      localized resources for this locale). This can be useful, because FLOW3
+      uses <literal>CLDR</literal> (<link
+      linkend="flow3.i18nframework.cldr">Common Locale Data
+      Repository</link>), so each FLOW3 installation knows how to localize
+      numbers, date, time and so on to almost any language and region on the
+      world.</para>
+
+      <para>Additionally FLOW3 creates a special collection of
+      <classname>Locale</classname> objects. They are automatically generated
+      by scanning the filesystem for any localized resources. You can use
+      <classname><link
+      linkend="flow3.i18nframework.service">Service</link></classname> API to
+      obtain these verified <classname>Locale</classname> objects.</para>
+
+      <para>These locales are organized in hierarchy. For example,
+      <literal>en</literal> is a parent of <literal>en_US</literal> which is a
+      parent of <literal>en_US_POSIX</literal>. Thanks to the hierarchical
+      relation resources can be automatically shared between related
+      resources. For example, when you request <filename>foobar</filename>
+      file for <literal>en_US</literal> locale, but it does not exist, and
+      same file for <literal>en</literal> locale does exist, it will be
+      used.</para>
+    </section>
+
+    <section xml:id="flow3.i18nframework.service">
+      <title>Service</title>
+
+      <para><classname>Service</classname> is a singleton instance of
+      <classname>\F3\FLOW3\I18n\Service</classname> class automatically
+      created during the initialization of FLOW3 Framework. It generates a
+      list of available locales (mentioned earlier), and provides simple API
+      for accessing these. You can call
+      <methodname>findBestMatchingLocale()</methodname> method in order to
+      obtain one of available locales which most similar to the one provided
+      as parameter. It can return identical locale of course, but now you are
+      ensured that it is supported by current FLOW3 installation.</para>
+
+      <para><classname>Service</classname> also stores a special
+      <classname>Locale</classname> object - the default locale. It's
+      instantiated during the initialization and represents locale identifier
+      defined in the configuration. You can access this object by
+      <methodname>getDefaultLocale()</methodname> method.</para>
+
+      <para><classname>Service</classname> also has a helper method for
+      accessing localized <link
+      linkend="flow3.i18nframework.resources">resources</link>:
+      <methodname>getLocalizedFilename()</methodname>. You need to provide a
+      filename (path) of base (not localized) file,
+      <classname>Locale</classname> object, and it will return a filename
+      (path) to best matching localized version of the file.</para>
+    </section>
+
+    <section xml:id="flow3.i18nframework.detectingUsersLocale">
+      <title>Detecting user's locale</title>
+
+      <para>The <classname>Detector</classname> class can be used for matching
+      one of available locales with locales accepted by the user. For example,
+      you can provide the <literal>AcceptLanguage</literal> HTTP header to
+      <methodname>detectLocaleFromHttpHeader()</methodname> method, which will
+      analyze the header and return best matching
+      <classname>Locale</classname> object. Also convenient methods exist
+      which accept locale identifier or template <classname>Locale</classname>
+      object as a parameter (this is what <classname><link
+      linkend="flow3.i18nframework.service">Service</link></classname> use
+      actually).</para>
+    </section>
+
+    <section xml:lang="flow3.i18nframework.resources">
+      <title>Resources</title>
+
+      <para>Resources can be localized easily in FLOW3. The only thing you
+      need to do is to put a locale identifier just before the extension. For
+      example, <filename>foobar.png</filename> can be localized as
+      <filename>foobar.en.png</filename>,
+      <filename>foobar.de_DE.png</filename>, and so on. This works with any
+      resource type. Just use the <classname>Service</classname> to obtain
+      localized resource name, and the FLOW3 Resource Framework to work with
+      the resource itself.</para>
+    </section>
+
+    <section xml:lang="flow3.i18nframework.cldr">
+      <title>Common Locale Data Repository</title>
+
+      <para>FLOW3 comes bundled with CLDR (<literal>Common Locale Data
+      Repository</literal>). It's an Unicode project with aim to provide
+      systematic representation of data used for localization process (like
+      formatting numbers or date and time). It supports big number of
+      languages and regions of the world.</para>
+
+      <para>The <code>I18n</code> package reads this data and provides
+      convenient API on top of it, so you don't need to know much about the
+      inners of CLDR.</para>
+
+      <note>
+        <para>As for now FLOW3 covers only subset of CLDR data. For example,
+        only Gregorian calendar is supported for date and time formatting or
+        parsing. You can get a grasp of what is available by reading sections
+        below.</para>
+      </note>
+    </section>
+  </section>
+
+  <section xml:id="flow3.i18nframework.translatingText">
+    <title>Translating text</title>
+
+    <section xml:lang="flow3.i18nframework.translatorClass">
+      <title>Translator class</title>
+
+      <para>The <classname>\F3\FLOW3\I18n\Translator</classname> class is the
+      central place for whole translation-related functionality.</para>
+
+      <para>First of all, one of two translation modes can be used:
+      translating by original label, or by ID:</para>
+
+      <variablelist>
+        <varlistentry>
+          <term><methodname>translateByOriginalLabel()</methodname></term>
+
+          <listitem>
+            <para>In this mode you need to provide original (untranslated,
+            source) message, and it's used as a key for searching the
+            translated message. It makes view templates more readable.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><methodname>translateById()</methodname></term>
+
+          <listitem>
+            <para>In this mode you provide systematic ID (like
+            <literal>user.notRegistered</literal>) and it's used as a
+            key.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+
+      <para>Both methods accept following arguments (they are
+      optional):</para>
+
+      <para><itemizedlist>
+          <listitem>
+            <para><varname>sourceName</varname> - relative name of source
+            catalog to read translation from. This value is interpreted by
+            <classname>Translation Provider</classname></para>
+          </listitem>
+        </itemizedlist></para>
+
+      <para><itemizedlist>
+          <listitem>
+            <para><varname>arguments</varname> - array of values which will
+            replace corresponding placeholders</para>
+          </listitem>
+
+          <listitem>
+            <para><varname>quantity</varname> - integer or decimal number used
+            for defining plural form</para>
+          </listitem>
+
+          <listitem>
+            <para><varname>locale</varname> - specifies target language of
+            translation</para>
+          </listitem>
+        </itemizedlist><classname>Translator</classname> uses the <link
+      linkend="flow3.i18nframework.translationProviders"><classname>Translation
+      Provider</classname></link> for doing actual translation. Not every
+      <classname>Translation Provider</classname> has to support both
+      translation modes. So it solely depends on the <classname>Translation
+      Provider</classname> configured for your installation which modes you
+      can use.</para>
+
+      <para><classname>Translator</classname> also supports <link
+      linkend="flow3.i18nframework.pluralForms">plural forms</link>, and <link
+      linkend="flow3.i18nframework.placeholders">placeholders</link>.
+      Following sections describe in detail these features.</para>
+    </section>
+
+    <section xml:id="flow3.i18nframework.translationProviders">
+      <title>Translation Providers</title>
+
+      <para>The <classname>Translation Provider</classname> is a class
+      implementing
+      <interfacename>\F3\FLOW3\I18n\TranslationProvider\TranslationProviderInterface</interfacename>.
+      It is used by the <classname>Translator</classname> class for accessing
+      actual data from translation files (catalogs).</para>
+
+      <para><classname>Translation Provider</classname>'s task is to read
+      (understand) concrete format of catalogs. Currently FLOW3 has following
+      <classname>Translation Providers</classname> by default:</para>
+
+      <variablelist>
+        <varlistentry>
+          <term><classname>\F3\FLOW3\I18n\TranslationProvider\XliffTranslationProvider</classname></term>
+
+          <listitem>
+            <para>Stores translations in <literal>XLIFF</literal> format.
+            Supports plural forms, and both translation modes.
+            <literal>XLIFF</literal> can be edited by dedicated editors, like
+            <literal>Virtaal</literal>. It also can be easily converted to
+            <literal>PO</literal> file format, edited by well known
+            <literal>PO</literal> editors (like <literal>Poedit</literal>,
+            which supports plural forms), and converted back to
+            <literal>XLIFF</literal> format.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+
+      <para>You can create and use your own <classname>Translation
+      Provider</classname> which reads file format you need, like
+      <literal>PO</literal>, <literal>YAML</literal> or even
+      <literal>PHP</literal> arrays. Just implement the interface mentioned
+      earlier and use FLOW3 <filename>Objects.yaml</filename> configuration
+      file to set your <classname>Translation Provider</classname> to be
+      injected into the <classname>Translator</classname>.</para>
+    </section>
+
+    <section xml:id="flow3.i18nframework.pluralForms">
+      <title>Plural forms</title>
+
+      <para><classname>Translator</classname> supports plural forms. English
+      has only two plural forms: <literal>singular</literal> and
+      <literal>plurals</literal>. <literal>CLDR</literal> defines six plural
+      forms: <literal>zero</literal>, <literal>one</literal>,
+      <literal>two</literal>, <literal>few</literal>, <literal>many</literal>,
+      <literal>other</literal>. English uses <literal>one</literal> and
+      <literal>other</literal>, but different languages use more forms (like
+      <literal>one</literal>, <literal>few</literal>, and
+      <literal>other</literal> for Polish) or less forms (like
+      <literal>other</literal> for Japanese).</para>
+
+      <para>Sets of rules exist for every language defining which plural form
+      should be used for particular quantity of noun. If no rules match, the
+      implicit <literal>other</literal> rule is assumed. This is the only form
+      existing in every language.</para>
+
+      <para>If the catalogs with translated messages defines different
+      translations for particular plural forms, correct form can be obtained
+      by the <classname>Translator</classname> class. You just need to provide
+      <varname>quantity</varname> parameter - an integer or decimal number
+      which specifies the quantity of noun in a sentence being
+      translated.</para>
+    </section>
+
+    <section xml:id="flow3.i18nframework.placeholders">
+      <title>Placeholders</title>
+
+      <para>Translated messages (labels) can contain placeholders - special
+      markers denoting place where to insert particular value, and manner how
+      to format it.</para>
+
+      <para>Syntax of placeholders is very simple:</para>
+
+      <para><code>{id[,name[,attribute1[,attribute2...]]]}</code></para>
+
+      <para>where:</para>
+
+      <para><itemizedlist>
+          <listitem>
+            <para><code>id</code> is an index of argument to insert in place
+            of placeholder.</para>
+          </listitem>
+
+          <listitem>
+            <para><code>formatter</code> (optional) is a name of
+            <classname>Formatter</classname> to use for formatting the
+            argument (if no name is given, provided argument will be just
+            string-casted)</para>
+          </listitem>
+
+          <listitem>
+            <para><code>attributes</code> (optional) are strings directly
+            passed to the <classname>Formatter</classname>. What they do
+            depends on concrete <classname>Formatter</classname> which is
+            being used, but generally they are used to specify formatting more
+            precisely.</para>
+          </listitem>
+        </itemizedlist></para>
+
+      <example>
+        <title>Placeholders' syntax examples</title>
+
+        <programlisting>{0}
+
+{0,number,decimal}
+
+{1,datetime,time,full}</programlisting>
+
+        <para>The first example would output first argument (indexing starts
+        with 0), simply string-casted. The second example would use
+        <classname>NumberFormatter</classname> (which would receive one
+        attribute: <literal>decimal</literal>) to format first argument.
+        Finally, the third example would output the second argument formatted
+        by <classname>DatetimeFormatter</classname>, which would receive two
+        attributes: <literal>time</literal> and <literal>full</literal> (they
+        stand for format <literal>type</literal> and
+        <literal>length</literal>, accordingly).</para>
+      </example>
+    </section>
+
+    <section xml:id="flow3.i18nframework.formatters">
+      <title>Formatters</title>
+
+      <para><classname>Formatter</classname> is a class implementing
+      <interfacename>\F3\FLOW3\I18n\Formatter\FormatterInterface</interfacename>.
+      Formatter can be used to format a value of particular type, i.e. to
+      convert it to string in locale-aware manner.</para>
+
+      <para>For example, number 1234.567 would be formatted for French locale
+      as 1 234,567. Although it is possible to define more elements than just
+      position and symbols of separators.</para>
+
+      <para>Together with <link
+      linkend="flow3.i18nframework.placeholders">placeholders</link>,
+      formatters provide robust and easy way to place formatted values in
+      strings. But formatters can be used directly (i.e. not in placeholder,
+      but in your class by injection), providing you more control over the
+      results of formatting.</para>
+
+      <para>Following formatters are available in FLOW3 by default:</para>
+
+      <variablelist>
+        <varlistentry>
+          <term><classname>\F3\FLOW3\I18n\Formatter\NumberFormatter</classname></term>
+
+          <listitem>
+            <para>Formats integers or floats in order to display them as
+            strings in localized manner. Uses patterns obtained from <link
+            linkend="flow3.i18nframework.cldr">CLDR</link> for specified
+            locale (pattern defines such elements like minimal and maximal
+            size of decimal part, symbol for decimal and group separator,
+            etc.). You can indirectly define a pattern by providing format
+            type (first additional attribute in placeholder) as
+            <literal>decimal</literal> or <literal>percent</literal>. You can
+            also manually set the pattern if you use this class directly (i.e.
+            not in placeholder, but in your class by injection).</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><classname>\F3\FLOW3\I18n\Formatter\DatetimeFormatter</classname></term>
+
+          <listitem>
+            <para>Formats date and / or time part of PHP
+            <classname>\DateTime</classname> object. Supports most of very
+            extensive pattern syntax from CLDR. Has three format types:
+            <literal>date</literal>, <literal>time</literal>, and
+            <literal>datetime</literal>. You can also manually set the pattern
+            if you use this class directly.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+
+      <para>Following parameters are generally accepted by Formatters'
+      methods:</para>
+
+      <itemizedlist>
+        <listitem>
+          <para><varname>locale</varname> - formatting result depends on the
+          localization, which is defined by provided
+          <classname>Locale</classname> object</para>
+        </listitem>
+
+        <listitem>
+          <para><varname>formatLength</varname> (optional) - CLDR provides
+          different formats for <literal>full</literal>,
+          <literal>long</literal>, <literal>medium</literal>,
+          <literal>short</literal>, and <literal>default</literal>
+          length</para>
+        </listitem>
+      </itemizedlist>
+
+      <para>Every formatter provides few methods, one for each format type.
+      For example, <classname>NumberFormatter</classname> has methods
+      <methodname>formatDecimalNumber()</methodname> - for formatting decimals
+      and integers - and <methodname>formatPercentNumber()</methodname> - for
+      percentage (parsed value is automatically multiplied by 100).</para>
+
+      <para>You can create your own <classname>Formatter</classname> class
+      which will be automatically available for use in placeholders. Just make
+      sure your class implements
+      <interfacename>\F3\FLOW3\I18n\Formatter\FormatterInterface</interfacename>,
+      is placed in <package>\F3\FLOW3\I18n\Formatter\</package> namespace and
+      is named with the <literal>*Formatter</literal> suffix.</para>
+    </section>
+
+    <section xml:id="flow3.i18nframework.fluidViewhelper">
+      <title>Fluid Viewhelper</title>
+
+      <para>There is a <classname>Translate</classname> Viewhelper for Fluid.
+      It covers all <classname>Translator</classname>'s features, i.e. it
+      supports translation modes, plural forms, and placeholders.</para>
+
+      <para>In its simplest case, <classname>Translate</classname> Viewhelper
+      can be used like this:</para>
+
+      <example>
+        <title>Simplest usage of <classname>Translate</classname>
+        Viewhelper</title>
+
+        <para><programlisting>&lt;f:translate&gt;Untranslated label&lt;/f:translate&gt;</programlisting></para>
+
+        <para>It will output translation of "<literal>Untranslated
+        label</literal>".</para>
+      </example>
+
+      <para>The <classname>Translate</classname> Viewhelper also accepts all
+      optional parameters the <classname>Translator</classname> does.</para>
+
+      <example>
+        <title>Additional attributes for <classname>Translate</classname>
+        Viewhelper</title>
+
+        <para><programlisting>&lt;f:translate source="someLabelsCatalog" locale="de_DE" arguments="{0: 'foo', 1: '99.9'}&gt;Untranslated {0} and {1,number}&lt;/f:translate&gt;</programlisting></para>
+
+        <para>It will translate the label, using
+        <literal>someLabelsCatalog</literal> for German language, and then it
+        will insert string casted value "<literal>foo</literal>" in place of
+        <literal>{0}</literal> and localized number <literal>99.9</literal> in
+        place of <literal>{1,number}</literal>.</para>
+      </example>
+
+      <para>Translation by ID can also be done:</para>
+
+      <example>
+        <title>Translating by ID</title>
+
+        <para><programlisting>&lt;f:translate key="user.unregistered"&gt;Unregistered User&lt;/f:translate&gt;</programlisting>It
+        will output the translation assigned to
+        "<literal>user.unergistered</literal>" key.</para>
+      </example>
+
+      <note>
+        <para>When the translation for particular message or ID is not found,
+        value placed between <code>&lt;f:translate&gt;</code> and
+        <code>&lt;/f:translate&gt;</code> tags will be displayed.</para>
+      </note>
+    </section>
+  </section>
+
+  <section xml:id="flow3.i18nframework.validatingAndParsingInput">
+    <title>Validating and parsing input</title>
+
+    <section xml:id="flow3.i18nframework.validators">
+      <title>Validators</title>
+
+      <para>Validator is a class implementing
+      <interfacename>\F3\FLOW3\Validation\Validator\ValidatorInterface</interfacename>
+      and is used by the FLOW3 Validation Framework for assuring correctness
+      of user's input. FLOW3 provides few validators that utilize i18n
+      functionality:</para>
+
+      <variablelist>
+        <varlistentry>
+          <term><classname>\F3\FLOW3\Validation\Validator\NumberValidator</classname></term>
+
+          <listitem>
+            <para>Validates decimal and integer numbers provided as strings
+            (e.g. from user's input). Accepts following options:
+            <literal>locale</literal>, <literal>strictMode</literal>,
+            <literal>formatType</literal>,
+            <literal>formatLength</literal>.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><classname>\F3\FLOW3\Validation\Validator\DateTimeValidator</classname></term>
+
+          <listitem>
+            <para>Validates date, time, or both date and time provided as
+            strings. Accepts following options: <literal>locale</literal>,
+            <literal>strictMode</literal>, <literal>formatType</literal>,
+            <literal>formatLength</literal>.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+
+      <note>
+        <para>Validators are working on top of <link
+        linkend="flow3.i18nframework.parsers">parsers</link> API. Please refer
+        to parsers' documentation for details about functionality and accepted
+        options.</para>
+      </note>
+    </section>
+
+    <section>
+      <title>Parsers</title>
+
+      <para>Parsers' task is to read user's input of particular type (e.g.
+      number, date, time), with respect to the localization she / he uses, and
+      return it in a form that can be further processed. There are following
+      parsers available in FLOW3:</para>
+
+      <variablelist>
+        <varlistentry>
+          <term><classname>\F3\FLOW3\I18n\Parser\NumberParser</classname></term>
+
+          <listitem>
+            <para>Accepts string with integer or decimal number and converts
+            it to float. </para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><classname>\F3\FLOW3\I18n\Parser\DatetimeParser</classname></term>
+
+          <listitem>
+            <para>Accepts string with date, time or both date and time and
+            returns array with date / time elements (like day, hour, timezone,
+            etc.) which were successfully recognized.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+
+      <para>Following parameters are generally accepted by parsers'
+      methods:</para>
+
+      <itemizedlist>
+        <listitem>
+          <para><literal>locale</literal> - formatting result depends on the
+          localization, which is defined by provided
+          <classname>Locale</classname> object</para>
+        </listitem>
+
+        <listitem>
+          <para><literal>formatLength</literal> - CLDR provides different
+          formats for <literal>full</literal>, <literal>long</literal>,
+          <literal>medium</literal>, <literal>short</literal>, and
+          <literal>default</literal> length</para>
+        </listitem>
+
+        <listitem>
+          <para><literal>strictMode</literal> - whether to work in
+          <literal>strict</literal> or <literal>lenient</literal> mode</para>
+        </listitem>
+      </itemizedlist>
+
+      <para>Parsers are very complement to <link
+      linkend="flow3.i18nframework.formatters">formatters</link>. Every parser
+      provides few methods, one for each format type. Additionally each parser
+      has a method which accepts custom format (pattern). You can provide your
+      own pattern and it will be used for matching input. The syntax of
+      patterns depends on particular parser and is same for corresponding
+      formatter (e.g. <classname>NumberParser</classname> and
+      <classname>NumberFormatter</classname> support same pattern
+      syntax).</para>
+
+      <para>Parser can work in two modes: <literal>strict</literal> and
+      <literal>lenient</literal>. In <literal>strict</literal> mode, parsed
+      value has to conform the pattern exactly (even literals are important).
+      In <literal>lenient</literal> mode, pattern is only a "base". Everything
+      that can be ignored is ignored. Some simplifications in the pattern are
+      done. Parser tries to do it's best to read the value.</para>
+    </section>
+  </section>
+</chapter>
