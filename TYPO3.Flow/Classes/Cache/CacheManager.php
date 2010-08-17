@@ -31,11 +31,6 @@ namespace F3\FLOW3\Cache;
 class CacheManager {
 
 	/**
-	 * @const Cache Entry depends on the PHP code of the packages
-	 */
-	const TAG_PACKAGES_CODE = '%PACKAGES_CODE%';
-
-	/**
 	 * @var \F3\FLOW3\Cache\CacheFactory
 	 */
 	protected $cacheFactory;
