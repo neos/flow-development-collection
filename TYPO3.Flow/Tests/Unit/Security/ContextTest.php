@@ -662,5 +662,32 @@ class ContextTest extends \F3\Testing\BaseTestCase {
 
 		$this->assertEquals($mockParty, $mockContext->getParty());
 	}
+
+	/**
+	 * @test
+	 * @category unit
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getAccountReturnsTheAccountAttachedToTheFirstAuthenticatedToken() {
+		$mockAccount = $this->getMock('F3\FLOW3\Security\Account');
+
+		$token1 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), uniqid('token1'));
+		$token1->expects($this->any())->method('isAuthenticated')->will($this->returnValue(FALSE));
+		$token1->expects($this->never())->method('getAccount');
+
+		$token2 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), uniqid('token2'));
+		$token2->expects($this->any())->method('isAuthenticated')->will($this->returnValue(TRUE));
+		$token2->expects($this->once())->method('getAccount')->will($this->returnValue($mockAccount));
+
+		$token3 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), uniqid('token3'));
+		$token3->expects($this->any())->method('isAuthenticated')->will($this->returnValue(TRUE));
+		$token3->expects($this->never())->method('getAccount');
+
+		$mockContext = $this->getAccessibleMock('F3\FLOW3\Security\Context', array('getAuthenticationTokens'), array(), '', FALSE);
+		$mockContext->expects($this->once())->method('getAuthenticationTokens')->will($this->returnValue(array($token1, $token2, $token3)));
+
+		$this->assertEquals($mockAccount, $mockContext->getAccount());
+	}
+
 }
 ?>

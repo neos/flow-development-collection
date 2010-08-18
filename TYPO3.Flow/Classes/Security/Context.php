@@ -242,7 +242,7 @@ class Context {
 
 	/**
 	 * Returns the party of the first authenticated authentication token.
-	 * Note: There might be a different party authenticated in one of the latter tokens,
+	 * Note: There might be a different party authenticated in one of the later tokens,
 	 * if you need it you'll have to fetch it directly from the token.
 	 * (@see getAuthenticationTokens())
 	 *
@@ -257,6 +257,22 @@ class Context {
 		return NULL;
 	}
 
+	/**
+	 * Returns the account of the first authenticated authentication token.
+	 * Note: There might be a more currently authenticated accounts in the
+	 * remaining tokens. If you need them you'll have to fetch them directly
+	 * from the tokens.
+	 * (@see getAuthenticationTokens())
+	 *
+	 * @return \F3\FLOW3\Security\Account The authenticated account
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getAccount() {
+		foreach ($this->getAuthenticationTokens() as $token) {
+			if ($token->isAuthenticated() === TRUE) return $token->getAccount();
+		}
+		return NULL;
+	}
 	/**
 	 * Clears the security context.
 	 *
