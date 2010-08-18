@@ -951,11 +951,11 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 			$sql['where'] = '"_entity"."type"=?';
 			$parameters['values'][] = $query->getType();
 		} elseif ($query->getConstraint() === NULL) {
-			$sql['tables'][] = '"entities" AS "_entity" INNER JOIN "properties_data" AS "d" ON "_entity"."identifier" = "d"."parent"';
-			$sql['where'] = '"_entity"."type"=?';
+			$sql['tables'][] = '"entities" AS "_entity", "properties_data" AS "d"';
+			$sql['where'] = '"_entity"."identifier" = "d"."parent" AND "_entity"."type"=?';
 			$parameters['values'][] = $query->getType();
 		} else {
-			$sql['tables'][] = '"entities" AS "_entity" INNER JOIN "properties_data" AS "d" ON "_entity"."identifier" = "d"."parent"';
+			$sql['tables'][] = '"entities" AS "_entity" LEFT JOIN "properties_data" AS "d" ON "_entity"."parent" = "d"."parent"';
 			$sql['where'] = array('fields' => array(), 'values' => array());
 			$this->parseConstraint($query->getConstraint(), $sql, $parameters);
 			$sql['where'] = implode(' AND ', $sql['where']['fields']) . ' AND ' . implode(' ', $sql['where']['values']) . ' AND "_entity"."type"=?';
@@ -1095,7 +1095,7 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 			$this->parseDynamicOperand($operand->getOperand(), $operator, $sql, $parameters, 'UPPER');
 		} elseif ($operand instanceof \F3\FLOW3\Persistence\Qom\PropertyValue) {
 			$selectorName = $operand->getSelectorName();
-			$coalesce = 'COALESCE("' . $selectorName . 'properties' . count($parameters['fields']) . '"."string", CAST("' . $selectorName . 'properties' . count($parameters['fields']) . '"."integer" AS CHAR), CAST("' . $selectorName . 'properties' . count($parameters['fields']) . '"."float" AS CHAR), CAST("' . $selectorName . 'properties' . count($parameters['fields']) . '"."datetime" AS CHAR), "' . $selectorName . 'properties' . count($parameters['fields']) . '"."boolean", "' . $selectorName . 'properties' . count($parameters['fields']) . '"."object")';
+			$coalesce = 'COALESCE("' . $selectorName . 'pd' . count($parameters['fields']) . '"."string", CAST("' . $selectorName . 'pd' . count($parameters['fields']) . '"."integer" AS CHAR), CAST("' . $selectorName . 'pd' . count($parameters['fields']) . '"."float" AS CHAR), CAST("' . $selectorName . 'pd' . count($parameters['fields']) . '"."datetime" AS CHAR), "' . $selectorName . 'pd' . count($parameters['fields']) . '"."boolean", "' . $selectorName . 'pd' . count($parameters['fields']) . '"."object")';
 			switch ($operator) {
 				case \F3\FLOW3\Persistence\QueryInterface::OPERATOR_IN:
 					if ($valueFunction === NULL) {
@@ -1106,6 +1106,8 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 					$valueWhere .= implode(', ', array_fill(0, count($operand2), '?')) . ') ';
 				break;
 				case \F3\FLOW3\Persistence\QueryInterface::OPERATOR_IS_EMPTY:
+					$valueWhere = '"' . $selectorName . 'pd' . count($parameters['fields']) . '"."name" IS NULL';
+				break;
 				case \F3\FLOW3\Persistence\QueryInterface::OPERATOR_IS_NULL:
 					$valueWhere = $coalesce . ' ' . $this->resolveOperator($operator);
 				break;
@@ -1120,9 +1122,9 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 					}
 			}
 
-			$sql['where']['fields'][] = '"' . $selectorName . 'properties' . count($parameters['fields']) . '"."name" = ?';
+			$sql['where']['fields'][] = '"' . $selectorName . 'p' . count($parameters['fields']) . '"."name" = ?';
 			$sql['where']['values'][] = $valueWhere;
-			$sql['tables'][] = 'INNER JOIN "properties_data" AS "' . $selectorName . 'properties' . count($parameters['fields']) . '" ON "' . $selectorName . '"."identifier" = "' . $selectorName . 'properties' . count($parameters['fields']) . '"."parent"';
+			$sql['tables'][] = 'LEFT JOIN "properties" AS "' . $selectorName . 'p' . count($parameters['fields']) . '" ON "' . $selectorName . '"."identifier" = "' . $selectorName . 'p' . count($parameters['fields']) . '"."parent" LEFT JOIN "properties_data" AS "' . $selectorName . 'pd' . count($parameters['fields']) . '" ON "' . $selectorName . 'p' . count($parameters['fields']) . '"."parent" = "' . $selectorName . 'pd' . count($parameters['fields']) . '"."parent" AND "' . $selectorName . 'p' . count($parameters['fields']) . '"."name" = "' . $selectorName . 'pd' . count($parameters['fields']) . '"."name"'; #USING ("parent", "name")';
 			$parameters['fields'][] = $operand->getPropertyName();
 		}
 	}
