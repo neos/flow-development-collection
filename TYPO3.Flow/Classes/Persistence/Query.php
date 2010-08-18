@@ -464,7 +464,7 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 
 	/**
 	 * Returns an "isEmpty" criterion used for matching objects against a query.
-	 * It matches if the multivalued property contains no values.
+	 * It matches if the multivalued property contains no values or is NULL.
 	 *
 	 * @param string $propertyName The name of the multivalued property to check
 	 * @return boolean

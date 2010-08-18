@@ -578,7 +578,7 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 	 *
 	 * @param string $parentIdentifier
 	 * @param string $propertyName
-	 * @param array $propertyData 
+	 * @param array $propertyData
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
@@ -829,9 +829,9 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 	}
 
 	/**
-	 * Iterates over the rows in the statement (must be executed already) and 
+	 * Iterates over the rows in the statement (must be executed already) and
 	 * returns an array with the property data.
-	 * 
+	 *
 	 * @param PDOStatement $propertyStatement
 	 * @param string $className The classname the properties we're dealing with are in
 	 * @return array
@@ -1106,10 +1106,10 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 					$valueWhere .= implode(', ', array_fill(0, count($operand2), '?')) . ') ';
 				break;
 				case \F3\FLOW3\Persistence\QueryInterface::OPERATOR_IS_EMPTY:
-					$valueWhere = '"' . $selectorName . 'pd' . count($parameters['fields']) . '"."name" IS NULL';
+					$valueWhere = '("' . $selectorName . 'pd' . count($parameters['fields']) . '"."type" = \'NULL\' OR "' . $selectorName . 'pd' . count($parameters['fields']) . '"."type" IS NULL)';
 				break;
 				case \F3\FLOW3\Persistence\QueryInterface::OPERATOR_IS_NULL:
-					$valueWhere = $coalesce . ' ' . $this->resolveOperator($operator);
+					$valueWhere = '("' . $selectorName . 'pd' . count($parameters['fields']) . '"."type" = \'NULL\' AND "' . $selectorName . 'pd' . count($parameters['fields']) . '"."type" IS NOT NULL)';
 				break;
 				case \F3\FLOW3\Persistence\QueryInterface::OPERATOR_CONTAINS:
 						// in our data structure we can do this using equality...
@@ -1124,7 +1124,7 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 
 			$sql['where']['fields'][] = '"' . $selectorName . 'p' . count($parameters['fields']) . '"."name" = ?';
 			$sql['where']['values'][] = $valueWhere;
-			$sql['tables'][] = 'LEFT JOIN "properties" AS "' . $selectorName . 'p' . count($parameters['fields']) . '" ON "' . $selectorName . '"."identifier" = "' . $selectorName . 'p' . count($parameters['fields']) . '"."parent" LEFT JOIN "properties_data" AS "' . $selectorName . 'pd' . count($parameters['fields']) . '" ON "' . $selectorName . 'p' . count($parameters['fields']) . '"."parent" = "' . $selectorName . 'pd' . count($parameters['fields']) . '"."parent" AND "' . $selectorName . 'p' . count($parameters['fields']) . '"."name" = "' . $selectorName . 'pd' . count($parameters['fields']) . '"."name"'; #USING ("parent", "name")';
+			$sql['tables'][] = 'LEFT JOIN "properties" AS "' . $selectorName . 'p' . count($parameters['fields']) . '" ON "' . $selectorName . '"."identifier" = "' . $selectorName . 'p' . count($parameters['fields']) . '"."parent" LEFT JOIN "properties_data" AS "' . $selectorName . 'pd' . count($parameters['fields']) . '" ON "' . $selectorName . 'p' . count($parameters['fields']) . '"."parent" = "' . $selectorName . 'pd' . count($parameters['fields']) . '"."parent" AND "' . $selectorName . 'p' . count($parameters['fields']) . '"."name" = "' . $selectorName . 'pd' . count($parameters['fields']) . '"."name"';
 			$parameters['fields'][] = $operand->getPropertyName();
 		}
 	}

@@ -245,7 +245,7 @@ interface QueryInterface {
 
 	/**
 	 * Returns an "isEmpty" criterion used for matching objects against a query.
-	 * It matches if the multivalued property contains no values.
+	 * It matches if the multivalued property contains no values or is NULL.
 	 *
 	 * @param string $propertyName The name of the multivalued property to compare against
 	 * @return boolean
