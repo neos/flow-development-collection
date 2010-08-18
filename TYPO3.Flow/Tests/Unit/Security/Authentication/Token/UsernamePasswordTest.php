@@ -37,10 +37,9 @@ class UsernamePasswordTest extends \F3\Testing\BaseTestCase {
 	public function credentialsAreSetCorrectlyFromPostArguments() {
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
 
-		$postArguments = array(
-			'F3\FLOW3\Security\Authentication\Token\UsernamePassword::username' => 'FLOW3',
-			'F3\FLOW3\Security\Authentication\Token\UsernamePassword::password' => 'verysecurepassword'
-		);
+		$postArguments = array();
+		$postArguments['F3']['FLOW3']['Security']['Authentication']['Token']['UsernamePassword']['username'] = 'FLOW3';
+		$postArguments['F3']['FLOW3']['Security']['Authentication']['Token']['UsernamePassword']['password'] = 'verysecurepassword';
 
 		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
 		$mockEnvironment->expects($this->once())->method('getRawPostArguments')->will($this->returnValue($postArguments));
@@ -94,10 +93,9 @@ class UsernamePasswordTest extends \F3\Testing\BaseTestCase {
 	public function updateCredentialsSetsTheCorrectAuthenticationStatusIfNewCredentialsArrived() {
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
 
-		$postArguments = array(
-			'F3\FLOW3\Security\Authentication\Token\UsernamePassword::username' => 'FLOW3',
-			'F3\FLOW3\Security\Authentication\Token\UsernamePassword::password' => 'verysecurepassword'
-		);
+		$postArguments = array();
+		$postArguments['F3']['FLOW3']['Security']['Authentication']['Token']['UsernamePassword']['username'] = 'FLOW3';
+		$postArguments['F3']['FLOW3']['Security']['Authentication']['Token']['UsernamePassword']['password'] = 'verysecurepassword';
 
 		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
 		$mockEnvironment->expects($this->once())->method('getRawPostArguments')->will($this->returnValue($postArguments));
