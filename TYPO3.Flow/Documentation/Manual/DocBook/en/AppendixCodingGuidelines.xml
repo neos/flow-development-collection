@@ -1612,6 +1612,12 @@ public function fooBar() {
         </listitem>
 
         <listitem>
+          <para>Never use the shut-up operator <literal>@</literal> to
+          suppress error messages. It makes debugging harder, is dirty style
+          and slow as hell</para>
+        </listitem>
+
+        <listitem>
           <para>Add an encoding declaration as the first line of your PHP
           code, followed by the namespace declaration. For TYPO3 the encoding
           must be <acronym>UTF-8</acronym></para>
