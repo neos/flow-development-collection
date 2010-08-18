@@ -438,7 +438,7 @@ class Argument {
 			$transformedValue = $this->propertyMapper->map(array_keys($value), $value, $this->dataType);
 		}
 
-		if (!($transformedValue instanceof $this->dataType)) {
+		if (!($transformedValue instanceof $this->dataType) && !($transformedValue === NULL && !$this->isRequired())) {
 			throw new \F3\FLOW3\MVC\Exception\InvalidArgumentValueException('The value of argument "' . $this->name . '" must be of type "' . $this->dataType . '", but was of type "' . (is_object($transformedValue) ? get_class($transformedValue) : gettype($transformedValue)) . '".', 1269616784);
 		}
 		return $transformedValue;
