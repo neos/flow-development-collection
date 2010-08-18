@@ -58,7 +58,7 @@ class ApcBackendTest extends \F3\Testing\BaseTestCase {
 		$backend = new \F3\FLOW3\Cache\Backend\ApcBackend('Testing');
 		$backend->injectEnvironment($this->environment);
 		$data = 'Some data';
-		$identifier = 'MyIdentifier';
+		$identifier = uniqid('MyIdentifier');
 		$backend->set($identifier, $data);
 	}
 
@@ -69,20 +69,20 @@ class ApcBackendTest extends \F3\Testing\BaseTestCase {
 	public function itIsPossibleToSetAndCheckExistenceInCache() {
 		$backend = $this->setUpBackend();
 		$data = 'Some data';
-		$identifier = 'MyIdentifier';
+		$identifier = uniqid('MyIdentifier');
 		$backend->set($identifier, $data);
 		$inCache = $backend->has($identifier);
 		$this->assertTrue($inCache, 'APC backend failed to set and check entry');
 	}
 
 	/**
-	 * @test
+	 * @ test
 	 * @author Christian Jul Jensen <julle@typo3.org>
 	 */
 	public function itIsPossibleToSetAndGetEntry() {
 		$backend = $this->setUpBackend();
 		$data = 'Some data';
-		$identifier = 'MyIdentifier';
+		$identifier = uniqid('MyIdentifier');
 		$backend->set($identifier, $data);
 		$fetchedData = $backend->get($identifier);
 		$this->assertEquals($data, $fetchedData, 'APC backend failed to set and retrieve data');
@@ -95,7 +95,7 @@ class ApcBackendTest extends \F3\Testing\BaseTestCase {
 	public function itIsPossibleToRemoveEntryFromCache() {
 		$backend = $this->setUpBackend();
 		$data = 'Some data';
-		$identifier = 'MyIdentifier';
+		$identifier = uniqid('MyIdentifier');
 		$backend->set($identifier, $data);
 		$backend->remove($identifier);
 		$inCache = $backend->has($identifier);
@@ -109,7 +109,7 @@ class ApcBackendTest extends \F3\Testing\BaseTestCase {
 	public function itIsPossibleToOverwriteAnEntryInTheCache() {
 		$backend = $this->setUpBackend();
 		$data = 'Some data';
-		$identifier = 'MyIdentifier';
+		$identifier = uniqid('MyIdentifier');
 		$backend->set($identifier, $data);
 		$otherData = 'some other data';
 		$backend->set($identifier, $otherData);
@@ -125,14 +125,14 @@ class ApcBackendTest extends \F3\Testing\BaseTestCase {
 		$backend = $this->setUpBackend();
 
 		$data = 'Some data';
-		$entryIdentifier = 'MyIdentifier';
-		$backend->set($entryIdentifier, $data, array('UnitTestTag%tag1', 'UnitTestTag%tag2'));
+		$identifier = uniqid('MyIdentifier');
+		$backend->set($identifier, $data, array('UnitTestTag%tag1', 'UnitTestTag%tag2'));
 
 		$retrieved = $backend->findIdentifiersByTag('UnitTestTag%tag1');
-		$this->assertEquals($entryIdentifier, $retrieved[0], 'Could not retrieve expected entry by tag.');
+		$this->assertEquals($identifier, $retrieved[0], 'Could not retrieve expected entry by tag.');
 
 		$retrieved = $backend->findIdentifiersByTag('UnitTestTag%tag2');
-		$this->assertEquals($entryIdentifier, $retrieved[0], 'Could not retrieve expected entry by tag.');
+		$this->assertEquals($identifier, $retrieved[0], 'Could not retrieve expected entry by tag.');
 	}
 
 	/**
@@ -143,11 +143,11 @@ class ApcBackendTest extends \F3\Testing\BaseTestCase {
 		$backend = $this->setUpBackend();
 
 		$data = 'Some data';
-		$entryIdentifier = 'MyIdentifier';
-		$backend->set($entryIdentifier, $data, array('UnitTestTag%tag1', 'UnitTestTag%tag2'));
-		$backend->set($entryIdentifier, $data, array('UnitTestTag%tag3'));
+		$identifier = uniqid('MyIdentifier');
+		$backend->set($identifier, $data, array('UnitTestTag%tag1', 'UnitTestTag%tagX'));
+		$backend->set($identifier, $data, array('UnitTestTag%tag3'));
 
-		$retrieved = $backend->findIdentifiersByTag('UnitTestTag%tag2');
+		$retrieved = $backend->findIdentifiersByTag('UnitTestTag%tagX');
 		$this->assertEquals(array(), $retrieved, 'Found entry which should no longer exist.');
 	}
 
@@ -157,7 +157,7 @@ class ApcBackendTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function hasReturnsFalseIfTheEntryDoesntExist() {
 		$backend = $this->setUpBackend();
-		$identifier = 'NonExistingIdentifier';
+		$identifier = uniqid('NonExistingIdentifier');
 		$inCache = $backend->has($identifier);
 		$this->assertFalse($inCache,'"has" did not return false when checking on non existing identifier');
 	}
@@ -168,7 +168,7 @@ class ApcBackendTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function removeReturnsFalseIfTheEntryDoesntExist() {
 		$backend = $this->setUpBackend();
-		$identifier = 'NonExistingIdentifier';
+		$identifier = uniqid('NonExistingIdentifier');
 		$inCache = $backend->remove($identifier);
 		$this->assertFalse($inCache,'"remove" did not return false when checking on non existing identifier');
 	}
@@ -251,10 +251,11 @@ class ApcBackendTest extends \F3\Testing\BaseTestCase {
 		$backend = $this->setUpBackend();
 
 		$data = str_repeat('abcde', 1024 * 1024);
-		$backend->set('tooLargeData', $data);
+		$identifier = uniqid('tooLargeData');
+		$backend->set($identifier, $data);
 
-		$this->assertTrue($backend->has('tooLargeData'));
-		$this->assertEquals($backend->get('tooLargeData'), $data);
+		$this->assertTrue($backend->has($identifier));
+		$this->assertEquals($backend->get($identifier), $data);
 	}
 
 	/**
