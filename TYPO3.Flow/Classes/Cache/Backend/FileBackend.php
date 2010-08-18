@@ -127,6 +127,7 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend implements \F3
 	public function set($entryIdentifier, $data, array $tags = array(), $lifetime = NULL) {
 		if (!$this->cache instanceof \F3\FLOW3\Cache\Frontend\FrontendInterface) throw new \F3\FLOW3\Cache\Exception('No cache frontend has been set yet via setCache().', 1204111375);
 		if (!is_string($data)) throw new \F3\FLOW3\Cache\Exception\InvalidDataException('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1204481674);
+		if ($entryIdentifier !== basename($entryIdentifier)) throw new \InvalidArgumentException('The specified entry identifier must not contain a path segment.', 1282073032);
 
 		$this->remove($entryIdentifier);
 
@@ -160,6 +161,8 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend implements \F3
 	 * @api
 	 */
 	public function get($entryIdentifier) {
+		if ($entryIdentifier !== basename($entryIdentifier)) throw new \InvalidArgumentException('The specified entry identifier must not contain a path segment.', 1282073033);
+
 		$pathAndFilename = $this->cacheDirectory . $entryIdentifier;
 		if ($this->isCacheFileExpired($pathAndFilename)) {
 			return FALSE;
@@ -177,6 +180,8 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend implements \F3
 	 * @api
 	 */
 	public function has($entryIdentifier) {
+		if ($entryIdentifier !== basename($entryIdentifier)) throw new \InvalidArgumentException('The specified entry identifier must not contain a path segment.', 1282073034);
+
 		return !$this->isCacheFileExpired($this->cacheDirectory . $entryIdentifier);
 	}
 
@@ -190,6 +195,8 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend implements \F3
 	 * @api
 	 */
 	public function remove($entryIdentifier) {
+		if ($entryIdentifier !== basename($entryIdentifier)) throw new \InvalidArgumentException('The specified entry identifier must not contain a path segment.', 1282073035);
+
 		$pathAndFilename = $this->cacheDirectory . $entryIdentifier;
 		if (!file_exists($pathAndFilename)) return FALSE;
 		if (unlink($pathAndFilename) === FALSE) return FALSE;
@@ -341,6 +348,8 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend implements \F3
 	 * @api
 	 */
 	public function requireOnce($entryIdentifier) {
+		if ($entryIdentifier !== basename($entryIdentifier)) throw new \InvalidArgumentException('The specified entry identifier must not contain a path segment.', 1282073036);
+
 		$pathAndFilename = $this->cacheDirectory . $entryIdentifier;
 		return ($this->isCacheFileExpired($pathAndFilename)) ? FALSE : require_once($pathAndFilename);
 	}

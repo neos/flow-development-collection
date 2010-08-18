@@ -171,7 +171,7 @@ class FileBackendTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setAlsowSavesSpecifiedTags() {
+	public function setAlsoSavesSpecifiedTags() {
 		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\AbstractFrontend', array(), array(), '', FALSE);
 		$mockCache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
 
@@ -343,6 +343,131 @@ class FileBackendTest extends \F3\Testing\BaseTestCase {
 
 		$backend->remove($entryIdentifier);
 		$this->assertFileNotExists($pathAndFilename);
+	}
+
+	/**
+	 * @author Christian Kuhn <lolli@schwarzbu.ch>
+	 */
+	public function invalidEntryIdentifiers() {
+		return array(
+			'trailing slash' => array('/myIdentifer'),
+			'trailing dot and slash' => array('./myIdentifer'),
+			'trailing two dots and slash' => array('../myIdentifier'),
+			'trailing with multiple dots and slashes' => array('.././../myIdentifier'),
+			'slash in middle part' => array('my/Identifier'),
+			'dot and slash in middle part' => array('my./Identifier'),
+			'two dots and slash in middle part' => array('my../Identifier'),
+			'multiple dots and slashes in middle part' => array('my.././../Identifier'),
+			'pending slash' => array('myIdentifier/'),
+			'pending dot and slash' => array('myIdentifier./'),
+			'pending dots and slash' => array('myIdentifier../'),
+			'pending multiple dots and slashes' => array('myIdentifier.././../'),
+		);
+	}
+
+	/**
+	 * @test
+	 * @dataProvider invalidEntryIdentifiers
+	 * @expectedException InvalidArgumentException
+	 * @author Christian Kuhn <lolli@schwarzbu.ch>
+	 */
+	public function setThrowsExceptionForInvalidIdentifier($identifier) {
+		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\AbstractFrontend', array(), array(), '', FALSE);
+		$mockCache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
+
+		$mockLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
+
+		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
+		$mockEnvironment->expects($this->any())->method('getMaximumPathLength')->will($this->returnValue(255));
+		$mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue('vfs://Foo/'));
+
+		$backend = $this->getMock('F3\FLOW3\Cache\Backend\FileBackend', array('dummy'), array(), '', FALSE);
+		$backend->injectSystemLogger($mockLogger);
+		$backend->injectEnvironment($mockEnvironment);
+		$backend->setCache($mockCache);
+
+		$backend->set($identifier, 'cache data', array());
+	}
+
+	/**
+	 * @test
+	 * @dataProvider invalidEntryIdentifiers
+	 * @expectedException InvalidArgumentException
+	 * @author Christian Kuhn <lolli@schwarzbu.ch>
+	 */
+	public function getThrowsExceptionForInvalidIdentifier($identifier) {
+		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\AbstractFrontend', array(), array(), '', FALSE);
+		$mockCache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
+
+		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
+		$mockEnvironment->expects($this->any())->method('getMaximumPathLength')->will($this->returnValue(255));
+		$mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue('vfs://Foo/'));
+
+		$backend = $this->getMock('F3\FLOW3\Cache\Backend\FileBackend', array('isCacheFileExpired'), array(), '', FALSE);
+		$backend->injectEnvironment($mockEnvironment);
+		$backend->setCache($mockCache);
+
+		$backend->get($identifier);
+	}
+
+	/**
+	 * @test
+	 * @dataProvider invalidEntryIdentifiers
+	 * @expectedException InvalidArgumentException
+	 * @author Christian Kuhn <lolli@schwarzbu.ch>
+	 */
+	public function hasThrowsExceptionForInvalidIdentifier($identifier) {
+		$backend = $this->getMock('F3\FLOW3\Cache\Backend\FileBackend', array('dummy'), array(), '', FALSE);
+
+		$backend->has($identifier);
+	}
+
+	/**
+	 * @test
+	 * @dataProvider invalidEntryIdentifiers
+	 * @expectedException InvalidArgumentException
+	 * @author Christian Kuhn <lolli@schwarzbu.ch>
+	 */
+	public function removeThrowsExceptionForInvalidIdentifier($identifier) {
+		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\AbstractFrontend', array(), array(), '', FALSE);
+		$mockCache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
+
+		$mockLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
+
+		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
+		$mockEnvironment->expects($this->any())->method('getMaximumPathLength')->will($this->returnValue(255));
+		$mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue('vfs://Foo/'));
+
+		$backend = $this->getMock('F3\FLOW3\Cache\Backend\FileBackend', array('dummy'), array(), '', FALSE);
+		$backend->injectSystemLogger($mockLogger);
+		$backend->injectEnvironment($mockEnvironment);
+		$backend->setCache($mockCache);
+
+		$backend->remove($identifier);
+	}
+
+	/**
+	 * @test
+	 * @dataProvider invalidEntryIdentifiers
+	 * @expectedException InvalidArgumentException
+	 * @author Christian Kuhn <lolli@schwarzbu.ch>
+	 */
+	public function requireOnceThrowsExceptionForInvalidIdentifier($identifier) {
+		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\AbstractFrontend', array(), array(), '', FALSE);
+		$mockCache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
+
+		$mockLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
+
+		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
+		$mockEnvironment->expects($this->any())->method('getMaximumPathLength')->will($this->returnValue(255));
+		$mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue('vfs://Foo/'));
+
+		$backend = $this->getMock('F3\FLOW3\Cache\Backend\FileBackend', array('dummy'), array(), '', FALSE);
+		$backend->injectSystemLogger($mockLogger);
+		$backend->injectEnvironment($mockEnvironment);
+		$backend->setCache($mockCache);
+
+		$backend->requireOnce($identifier);
 	}
 
 	/**
