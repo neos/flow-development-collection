@@ -33,11 +33,26 @@ namespace F3\FLOW3\Object;
  */
 class ObjectSerializer {
 
+	const TYPE = 't';
+	const VALUE = 'v';
+	const CLASSNAME = 'c';
+	const PROPERTIES = 'p';
+
 	/**
 	 * Objects stored as an array of properties
 	 * @var array
 	 */
 	protected $objectsAsArray = array();
+
+	/**
+	 * @var array
+	 */
+	protected $reconstitutedObjects = array();
+
+	/**
+	 * @var \SplObjectStorage
+	 */
+	protected $objectReferences;
 
 	/**
 	 * The object manager
@@ -97,52 +112,60 @@ class ObjectSerializer {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function clearState() {
-		unset($this->objectsAsArray);
+		$this->objectsAsArray = array();
+		$this->reconstitutedObjects = array();
 	}
 
 	/**
 	 * Serializes an object as property array.
 	 *
 	 * @param object $object The object to store in the registry
+    * @param boolean $isTopLevelItem Internal flag for managing the recursion
 	 * @return array The property array
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function serializeObjectAsPropertyArray($object, $isTopLevelItem = TRUE) {
-		if (isset($this->objectsAsArray[spl_object_hash($object)])) {
-			return $this->objectsAsArray;
+		if ($isTopLevelItem) {
+			$this->objectReferences = new \SplObjectStorage();
 		}
+		$this->objectReferences->attach($object);
 
 		$className = ($object instanceof \F3\FLOW3\AOP\ProxyInterface) ? $object->FLOW3_AOP_Proxy_getProxyTargetClassName() : get_class($object);
 
 		$propertyArray = array();
 		foreach ($this->reflectionService->getClassPropertyNames($className) as $propertyName) {
 
-			if ($this->reflectionService->isPropertyTaggedWith($className, $propertyName, 'transient')) continue;
+			if ($this->reflectionService->isPropertyTaggedWith($className, $propertyName, 'transient')) {
+				continue;
+			}
 
 			if ($object instanceof \F3\FLOW3\AOP\ProxyInterface) {
 				$propertyValue = $object->FLOW3_AOP_Proxy_getProperty($propertyName);
 			} else {
 				$propertyReflection = new \F3\FLOW3\Reflection\PropertyReflection($className, $propertyName);
 				$propertyValue = $propertyReflection->getValue($object);
+				}
+
+			if (is_object($propertyValue) && isset($this->objectReferences[$propertyValue])) {
+				$propertyArray[$propertyName][self::TYPE] = 'object';
+				$propertyArray[$propertyName][self::VALUE] = \spl_object_hash($propertyValue);
+				continue;
 			}
 
-			$propertyClassName = '';
-			if (is_object($propertyValue)) {
-				$propertyClassName = get_class($propertyValue);
-			}
+			$propertyClassName = (is_object($propertyValue)) ? get_class($propertyValue) : '';
 
 			if ($propertyClassName === 'SplObjectStorage') {
-				$propertyArray[$propertyName]['type'] = 'SplObjectStorage';
-				$propertyArray[$propertyName]['value'] = array();
+				$propertyArray[$propertyName][self::TYPE] = 'SplObjectStorage';
+				$propertyArray[$propertyName][self::VALUE] = array();
 
 				foreach ($propertyValue as $storedObject) {
-					$objectHash = spl_object_hash($storedObject);
-					$propertyArray[$propertyName]['value'][] = $objectHash;
+					$propertyArray[$propertyName][self::VALUE][] = spl_object_hash($storedObject);
 					$this->serializeObjectAsPropertyArray($storedObject, FALSE);
 				}
 			} elseif (is_object($propertyValue) && $propertyValue instanceof \ArrayObject) {
-				$propertyArray[$propertyName]['type'] = 'ArrayObject';
-				$propertyArray[$propertyName]['value'] = $this->buildStorageArrayForArrayProperty($propertyValue->getArrayCopy());
+				$propertyArray[$propertyName][self::TYPE] = 'ArrayObject';
+				$propertyArray[$propertyName][self::VALUE] = $this->buildStorageArrayForArrayProperty($propertyValue->getArrayCopy());
 
 			} elseif (is_object($propertyValue)
 						&& $propertyValue instanceof \F3\FLOW3\AOP\ProxyInterface
@@ -151,36 +174,37 @@ class ObjectSerializer {
 						&& ($this->reflectionService->isClassTaggedWith($propertyClassName, 'entity')
 						|| $this->reflectionService->isClassTaggedWith($propertyClassName, 'valueobject'))) {
 
-				$propertyArray[$propertyName]['type'] = 'persistenceObject';
-				$propertyArray[$propertyName]['value']['className'] = $propertyValue->FLOW3_AOP_Proxy_getProxyTargetClassName();
-				$propertyArray[$propertyName]['value']['UUID'] = $this->persistenceManager->getIdentifierByObject($propertyValue);
+				$propertyArray[$propertyName][self::TYPE] = 'persistenceObject';
+				$propertyArray[$propertyName][self::VALUE] = $propertyValue->FLOW3_AOP_Proxy_getProxyTargetClassName() . ':' . $this->persistenceManager->getIdentifierByObject($propertyValue);
 
 			} elseif (is_object($propertyValue)) {
 				$propertyObjectName = $this->objectManager->getObjectNameByClassName($propertyClassName);
-				if ($this->objectManager->getScope($propertyObjectName) === \F3\FLOW3\Object\Configuration\Configuration::SCOPE_SINGLETON) continue;
+				if ($this->objectManager->getScope($propertyObjectName) === \F3\FLOW3\Object\Configuration\Configuration::SCOPE_SINGLETON) {
+					continue;
+				}
 
-				$objectHash = spl_object_hash($propertyValue);
-				$propertyArray[$propertyName]['type'] = 'object';
-				$propertyArray[$propertyName]['value'] = $objectHash;
+				$propertyArray[$propertyName][self::TYPE] = 'object';
+				$propertyArray[$propertyName][self::VALUE] = spl_object_hash($propertyValue);
 				$this->serializeObjectAsPropertyArray($propertyValue, FALSE);
 
 			} elseif (is_array($propertyValue)) {
-				$propertyArray[$propertyName]['type'] = 'array';
-				$propertyArray[$propertyName]['value'] = $this->buildStorageArrayForArrayProperty($propertyValue);
+				$propertyArray[$propertyName][self::TYPE] = 'array';
+				$propertyArray[$propertyName][self::VALUE] = $this->buildStorageArrayForArrayProperty($propertyValue);
 
 			} else {
-				$propertyArray[$propertyName]['type'] = 'simple';
-				$propertyArray[$propertyName]['value'] = $propertyValue;
+				$propertyArray[$propertyName][self::TYPE] = 'simple';
+				$propertyArray[$propertyName][self::VALUE] = $propertyValue;
 			}
 		}
 
 		$this->objectsAsArray[spl_object_hash($object)] = array(
-			'className' => $className,
-			'topLevelItem' => $isTopLevelItem,
-			'properties' => $propertyArray
+			self::CLASSNAME => $className,
+			self::PROPERTIES => $propertyArray
 		);
 
-		return $this->objectsAsArray;
+		if ($isTopLevelItem) {
+			return $this->objectsAsArray;
+		}
 	}
 
 	/**
@@ -199,16 +223,16 @@ class ObjectSerializer {
 			$storableArray[$key] = array();
 
 			if (is_array($value)) {
-				$storableArray[$key]['type'] = 'array';
-				$storableArray[$key]['value'] = $this->buildStorageArrayForArrayProperty($value);
+				$storableArray[$key][self::TYPE] = 'array';
+				$storableArray[$key][self::VALUE] = $this->buildStorageArrayForArrayProperty($value);
 			} else if (is_object($value)) {
-				$storableArray[$key]['type'] = 'object';
-				$storableArray[$key]['value'] = spl_object_hash($value);
+				$storableArray[$key][self::TYPE] = 'object';
+				$storableArray[$key][self::VALUE] = spl_object_hash($value);
 
 				$this->serializeObjectAsPropertyArray($value, FALSE);
 			} else {
-				$storableArray[$key]['type'] = 'simple';
-				$storableArray[$key]['value'] = $value;
+				$storableArray[$key][self::TYPE] = 'simple';
+				$storableArray[$key][self::VALUE] = $value;
 			}
 		}
 
@@ -227,8 +251,10 @@ class ObjectSerializer {
 		$objects = array();
 
 		foreach ($this->objectsAsArray as $objectHash => $objectData) {
-			if (!$objectData['topLevelItem'] || !$this->objectManager->isRegistered($objectData['className'])) continue;
-			$objects[$objectHash] = $this->reconstituteObject($objectData);
+			if (!isset($objectData[self::CLASSNAME]) || !$this->objectManager->isRegistered($objectData[self::CLASSNAME])) {
+				continue;
+			}
+			$objects[$objectHash] = $this->reconstituteObject($objectHash, $objectData);
 		}
 
 		return $objects;
@@ -237,32 +263,39 @@ class ObjectSerializer {
 	/**
 	 * Reconstitutes an object from a serialized object without calling the constructor.
 	 *
+	 * @param string $objectHash Identifier of the serialized object
 	 * @param array $objectData The object data array
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	protected function reconstituteObject(array $objectData) {
-		$object = $this->objectManager->recreate($objectData['className']);
+	protected function reconstituteObject($objectHash, array $objectData) {
+		if (isset($this->reconstitutedObjects[$objectHash])) {
+			return $this->reconstitutedObjects[$objectHash];
+		}
 
-		foreach ($objectData['properties'] as $propertyName => $propertyData) {
-			switch($propertyData['type']) {
+		$object = $this->objectManager->recreate($objectData[self::CLASSNAME]);
+		$this->reconstitutedObjects[$objectHash] = $object;
+
+		foreach ($objectData[self::PROPERTIES] as $propertyName => $propertyData) {
+			switch($propertyData[self::TYPE]) {
 				case 'simple':
-					$propertyValue = $propertyData['value'];
+					$propertyValue = $propertyData[self::VALUE];
 					break;
 				case 'array':
-					$propertyValue = $this->reconstituteArray($propertyData['value']);
+					$propertyValue = $this->reconstituteArray($propertyData[self::VALUE]);
 					break;
 				case 'ArrayObject':
-					$propertyValue = new \ArrayObject($this->reconstituteArray($propertyData['value']));
+					$propertyValue = new \ArrayObject($this->reconstituteArray($propertyData[self::VALUE]));
 					break;
 				case 'object':
-					$propertyValue = $this->reconstituteObject($this->objectsAsArray[$propertyData['value']]);
+					$propertyValue = $this->reconstituteObject($propertyData[self::VALUE], $this->objectsAsArray[$propertyData[self::VALUE]]);
 					break;
 				case 'SplObjectStorage':
-					$propertyValue = $this->reconstituteSplObjectStorage($propertyData['value']);
+					$propertyValue = $this->reconstituteSplObjectStorage($propertyData[self::VALUE]);
 					break;
 				case 'persistenceObject':
-					$propertyValue = $this->reconstitutePersistenceObject($propertyData['value']['className'], $propertyData['value']['UUID']);
+					list($propertyClassName, $propertyUuid) = explode(':', $propertyData[self::VALUE]);
+					$propertyValue = $this->reconstitutePersistenceObject($propertyClassName, $propertyUuid);
 					break;
 			}
 
@@ -291,21 +324,21 @@ class ObjectSerializer {
 		foreach ($dataArray as $key => $entryData) {
 			$value = NULL;
 
-			switch($entryData['type']) {
+			switch($entryData[self::TYPE]) {
 				case 'simple':
-					$value = $entryData['value'];
+					$value = $entryData[self::VALUE];
 					break;
 				case 'array':
-					$value = $this->reconstituteArray($entryData['value']);
+					$value = $this->reconstituteArray($entryData[self::VALUE]);
 					break;
 				case 'object':
-					$value = $this->reconstituteObject($this->objectsAsArray[$entryData['value']]);
+					$value = $this->reconstituteObject($entryData[self::VALUE], $this->objectsAsArray[$entryData[self::VALUE]]);
 					break;
 				case 'SplObjectStorage':
-					$value = $this->reconstituteSplObjectStorage($this->objectsAsArray[$entryData['value']]['className'], $this->objectsAsArray[$entryData['value']]);
+					$value = $this->reconstituteSplObjectStorage($this->objectsAsArray[$entryData[self::VALUE]][self::CLASSNAME], $this->objectsAsArray[$entryData[self::VALUE]]);
 					break;
 				case 'persistenceObject':
-					$value = $this->reconstitutePersistenceObject($entryData['value']['className'], $entryData['value']['UUID']);
+					$value = $this->reconstitutePersistenceObject($entryData[self::VALUE][self::CLASSNAME], $entryData[self::VALUE]['UUID']);
 					break;
 			}
 
@@ -325,8 +358,8 @@ class ObjectSerializer {
 	protected function reconstituteSplObjectStorage($dataArray) {
 		$result = new \SplObjectStorage();
 
-		foreach ($dataArray as $objectName) {
-			$result->attach($this->reconstituteObject($this->objectsAsArray[$objectName]));
+		foreach ($dataArray as $objectHash) {
+			$result->attach($this->reconstituteObject($objectHash, $this->objectsAsArray[$objectHash]));
 		}
 
 		return $result;

@@ -23,7 +23,7 @@ namespace F3\FLOW3\Object;
  *                                                                        */
 
 /**
- * Testcase for the object serializer
+ * @testcase for the object serializer
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
@@ -49,21 +49,20 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 
 		$someObject = new $className();
 		$expectedPropertyArray = array(
-			spl_object_hash($someObject) => array(
-				'className' => $className,
-				'topLevelItem' => TRUE,
-				'properties' => array(
+		  \spl_object_hash($someObject) => array(
+			ObjectSerializer::CLASSNAME => $className,
+				ObjectSerializer::PROPERTIES => array(
 					'privateProperty' => array (
-						'type' => 'simple',
-						'value' => 'privateProperty',
+						ObjectSerializer::TYPE => 'simple',
+						ObjectSerializer::VALUE => 'privateProperty',
 					),
 					'protectedProperty' => array(
-						'type' => 'simple',
-						'value' => 'protectedProperty',
+						ObjectSerializer::TYPE => 'simple',
+						ObjectSerializer::VALUE => 'protectedProperty',
 					),
 					'publicProperty' => array(
-						'type' => 'simple',
-						'value' => 'publicProperty',
+						ObjectSerializer::TYPE => 'simple',
+						ObjectSerializer::VALUE => 'publicProperty',
 					)
 				)
 			)
@@ -92,13 +91,12 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 
 		$someObject = new $className();
 		$expectedPropertyArray = array(
-			spl_object_hash($someObject) => array(
-				'className' => $className,
-				'topLevelItem' => TRUE,
-				'properties' => array(
+			\spl_object_hash($someObject) => array(
+				ObjectSerializer::CLASSNAME => $className,
+				ObjectSerializer::PROPERTIES => array(
 					'arrayProperty' => array(
-						'type' => 'array',
-						'value' => 'storable array',
+						ObjectSerializer::TYPE => 'array',
+						ObjectSerializer::VALUE => 'storable array',
 					)
 				)
 			)
@@ -131,13 +129,12 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 
 		$someObject = new $className();
 		$expectedPropertyArray = array(
-			spl_object_hash($someObject) => array(
-				'className' => $className,
-				'topLevelItem' => TRUE,
-				'properties' => array(
+			\spl_object_hash($someObject) => array(
+				ObjectSerializer::CLASSNAME => $className,
+				ObjectSerializer::PROPERTIES => array(
 					'arrayObjectProperty' => array(
-						'type' => 'ArrayObject',
-						'value' => 'storable array',
+						ObjectSerializer::TYPE => 'ArrayObject',
+						ObjectSerializer::VALUE => 'storable array',
 					)
 				)
 			)
@@ -180,23 +177,20 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 		$objectSerializer->injectObjectManager($mockObjectManager);
 
 		$someObject = new $className1();
-		$objectHash = spl_object_hash($someObject->getObjectProperty());
 
 		$expectedPropertyArray = array(
-			spl_object_hash($someObject) => array(
-				'className' => $className1,
-				'topLevelItem' => TRUE,
-				'properties' => array(
+			\spl_object_hash($someObject) => array(
+				ObjectSerializer::CLASSNAME => $className1,
+				ObjectSerializer::PROPERTIES => array(
 					'objectProperty' => array(
-						'type' => 'object',
-						'value' => $objectHash,
+						ObjectSerializer::TYPE => 'object',
+						ObjectSerializer::VALUE => spl_object_hash($someObject->getObjectProperty()),
 					)
 				)
 			),
-			$objectHash => array(
-				'className' => $className2,
-				'topLevelItem' => FALSE,
-				'properties' => array(),
+			spl_object_hash($someObject->getObjectProperty()) => array(
+				ObjectSerializer::CLASSNAME => $className2,
+				ObjectSerializer::PROPERTIES => array(),
 			)
 		);
 
@@ -260,28 +254,25 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 		$objectHash3 = spl_object_hash($object->getProperty3());
 		$expectedArray = array(
 			spl_object_hash($object) => array(
-				'className' => $className,
-				'topLevelItem' => TRUE,
-				'properties' => array(
+				ObjectSerializer::CLASSNAME => $className,
+				ObjectSerializer::PROPERTIES => array(
 					'property1' => array(
-						'type' => 'object',
-						'value' => $objectHash1,
+						ObjectSerializer::TYPE => 'object',
+						ObjectSerializer::VALUE => $objectHash1,
 					),
 					'property3' => array(
-						'type' => 'object',
-						'value' => $objectHash3,
+						ObjectSerializer::TYPE => 'object',
+						ObjectSerializer::VALUE => $objectHash3,
 					)
 				)
 			),
 			$objectHash1 => array(
-				'className' => $propertyClassName1,
-				'topLevelItem' => FALSE,
-				'properties' => array(),
+				ObjectSerializer::CLASSNAME => $propertyClassName1,
+				ObjectSerializer::PROPERTIES => array(),
 			),
 			$objectHash3 => array(
-				'className' => $propertyClassName3,
-				'topLevelItem' => FALSE,
-				'properties' => array(),
+				ObjectSerializer::CLASSNAME => $propertyClassName3,
+				ObjectSerializer::PROPERTIES => array(),
 			)
 		);
 
@@ -313,22 +304,93 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 		$someObject = new $className();
 		$expectedPropertyArray = array(
 			spl_object_hash($someObject) => array(
-				'className' => $className,
-				'topLevelItem' => TRUE,
-				'properties' => array(
+				ObjectSerializer::CLASSNAME => $className,
+				ObjectSerializer::PROPERTIES => array(
 					'privateProperty' => array (
-						'type' => 'simple',
-						'value' => 'privateProperty',
+						ObjectSerializer::TYPE => 'simple',
+						ObjectSerializer::VALUE => 'privateProperty',
 					),
 					'publicProperty' => array(
-						'type' => 'simple',
-						'value' => 'publicProperty',
+						ObjectSerializer::TYPE => 'simple',
+						ObjectSerializer::VALUE => 'publicProperty',
 					)
 				)
 			)
 		);
 
 		$this->assertEquals($expectedPropertyArray, $objectSerializer->serializeObjectAsPropertyArray($someObject), 'The object was not stored correctly as property array.');
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function serializeObjectSerializesObjectInstancesOnlyOnceToPreventRecursion() {
+		$className = uniqid('DummyClassForRecursion');
+		eval('class ' . $className . ' {
+			public $name;
+			public $parent;
+			public $child;
+		}');
+
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManager', array(), array(), '', FALSE);
+		$mockObjectManager->expects($this->any())->method('getObjectNameByClassName')->with($className)->will($this->returnValue(ObjectSerializer::CLASSNAME));
+
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService', array(), array(), '', FALSE);
+		$mockReflectionService->expects($this->any())->method('getClassPropertyNames')->with($className)->will($this->returnValue(array('name', 'parent', 'child')));
+		$mockReflectionService->expects($this->any())->method('isPropertyTaggedWith')->will($this->returnValue(FALSE));
+
+		$objectSerializer = $this->getAccessibleMock('F3\FLOW3\Object\ObjectSerializer', array('dummy'));
+		$objectSerializer->injectObjectManager($mockObjectManager);
+		$objectSerializer->injectReflectionService($mockReflectionService);
+
+		$objectA = new $className();
+		$objectA->name = 'A';
+		$objectB = new $className();
+		$objectB->name = 'B';
+
+		$objectA->child = $objectB;
+		$objectB->parent = $objectA;
+
+		$expectedPropertyArray = array(
+			spl_object_hash($objectB) => array(
+				ObjectSerializer::CLASSNAME => $className,
+				ObjectSerializer::PROPERTIES => array(
+					'name' => array (
+						ObjectSerializer::TYPE => 'simple',
+						ObjectSerializer::VALUE => 'B',
+					),
+					'parent' => array (
+						ObjectSerializer::TYPE => 'object',
+						ObjectSerializer::VALUE => \spl_object_hash($objectA),
+					),
+					'child' => array(
+						ObjectSerializer::TYPE => 'simple',
+						ObjectSerializer::VALUE => NULL,
+					)
+				)
+			),
+			spl_object_hash($objectA) => array(
+				ObjectSerializer::CLASSNAME => $className,
+				ObjectSerializer::PROPERTIES => array(
+					'name' => array (
+						ObjectSerializer::TYPE => 'simple',
+						ObjectSerializer::VALUE => 'A',
+					),
+					'parent' => array(
+						ObjectSerializer::TYPE => 'simple',
+						ObjectSerializer::VALUE => NULL,
+					),
+					'child' => array (
+						ObjectSerializer::TYPE => 'object',
+						ObjectSerializer::VALUE => \spl_object_hash($objectB),
+					)
+				)
+			)
+		);
+
+		$actualPropertyArray = $objectSerializer->serializeObjectAsPropertyArray($objectA);
+		$this->assertEquals($expectedPropertyArray, $actualPropertyArray);
 	}
 
 	/**
@@ -371,15 +433,11 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 		$objectSerializer->injectPersistenceManager($mockPersistenceManager);
 
 		$expectedArray = array(
-			'className' => $sessionClassName,
-			'topLevelItem' => TRUE,
-			'properties' => array(
+			ObjectSerializer::CLASSNAME => $sessionClassName,
+			ObjectSerializer::PROPERTIES => array(
 				'entityProperty' => array(
-					'type' => 'persistenceObject',
-					'value' => array(
-						'className' => $entityClassName,
-						'UUID' => 'someUUID',
-					)
+					ObjectSerializer::TYPE => 'persistenceObject',
+					ObjectSerializer::VALUE => $entityClassName . ':' . 'someUUID',
 				)
 			)
 		);
@@ -432,15 +490,11 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 		$objectSerializer->injectPersistenceManager($mockPersistenceManager);
 
 		$expectedArray = array(
-			'className' => $sessionClassName,
-			'topLevelItem' => TRUE,
-			'properties' => array(
+			ObjectSerializer::CLASSNAME => $sessionClassName,
+			ObjectSerializer::PROPERTIES => array(
 				'entityProperty' => array(
-					'type' => 'persistenceObject',
-					'value' => array(
-						'className' => $entityClassName,
-						'UUID' => 'someUUID',
-					)
+					ObjectSerializer::TYPE => 'persistenceObject',
+					ObjectSerializer::VALUE => $entityClassName . ':someUUID'
 				)
 			)
 		);
@@ -491,37 +545,42 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 
 		$objectsAsArray = array(
 			spl_object_hash($object1) => array(
-				'className' => $className1,
-				'topLevelItem' => TRUE,
-				'properties' => array(1),
+				ObjectSerializer::CLASSNAME => $className1,
+				ObjectSerializer::PROPERTIES => array(1),
 			),
 			spl_object_hash($object2) => array(
-				'className' => $className2,
-				'topLevelItem' => TRUE,
-				'properties' => array(2),
+				ObjectSerializer::CLASSNAME => $className2,
+				ObjectSerializer::PROPERTIES => array(2),
 			),
-			'someReferencedObject1' => array('topLevelItem' => FALSE,),
+			'someReferencedObject1' => array(),
 			spl_object_hash($object3) => array(
-				'className' => $className3,
-				'topLevelItem' => TRUE,
-				'properties' => array(3),
+				ObjectSerializer::CLASSNAME => $className3,
+				ObjectSerializer::PROPERTIES => array(3),
 			),
-			'someReferencedObject2' => array('topLevelItem' => FALSE,),
-			'someReferencedObject3' => array('topLevelItem' => FALSE,),
+			'someReferencedObject2' => array(),
+			'someReferencedObject3' => array(),
 		);
 
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManager', array(), array(), '', FALSE);
 		$mockObjectManager->expects($this->any())->method('isRegistered')->will($this->returnValue(TRUE));
 
 		$objectSerializer = $this->getAccessibleMock('F3\FLOW3\Object\ObjectSerializer', array('reconstituteObject', 'createEmptyObject'), array(), '', FALSE);
-		$objectSerializer->expects($this->at(0))->method('reconstituteObject')->with($objectsAsArray[spl_object_hash($object1)])->will($this->returnValue($object1));
-		$objectSerializer->expects($this->at(1))->method('reconstituteObject')->with($objectsAsArray[spl_object_hash($object2)])->will($this->returnValue($object2));
-		$objectSerializer->expects($this->at(2))->method('reconstituteObject')->with($objectsAsArray[spl_object_hash($object3)])->will($this->returnValue($object3));
+		$objectSerializer->expects($this->at(0))->method('reconstituteObject')->with(spl_object_hash($object1), $objectsAsArray[spl_object_hash($object1)])->will($this->returnValue($object1));
+		$objectSerializer->expects($this->at(1))->method('reconstituteObject')->with(spl_object_hash($object2), $objectsAsArray[spl_object_hash($object2)])->will($this->returnValue($object2));
+		$objectSerializer->expects($this->at(2))->method('reconstituteObject')->with(spl_object_hash($object3), $objectsAsArray[spl_object_hash($object3)])->will($this->returnValue($object3));
 
 		$objectSerializer->injectObjectManager($mockObjectManager);
 
 		$objects = $objectSerializer->deserializeObjectsArray($objectsAsArray);
-		$this->assertEquals(array(spl_object_hash($object1) => $object1, spl_object_hash($object2) => $object2, spl_object_hash($object3) => $object3), $objects, 'Reconstituted objects were not deserialized correctly.');
+
+		$this->assertEquals(
+			array(
+				spl_object_hash($object1) => $object1,
+				spl_object_hash($object2) => $object2,
+				spl_object_hash($object3) => $object3
+			),
+			$objects
+		);
 	}
 
 	/**
@@ -534,23 +593,23 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 
 		$expectedArray = array(
 			'key1' => array(
-				'type' => 'simple',
-				'value' => 1,
+				ObjectSerializer::TYPE => 'simple',
+				ObjectSerializer::VALUE => 1,
 			),
 			'key2' => array(
-				'type' => 'simple',
-				'value' => 2,
+				ObjectSerializer::TYPE => 'simple',
+				ObjectSerializer::VALUE => 2,
 			),
 			'key3' => array(
-				'type' => 'array',
-				'value' => array(
+				ObjectSerializer::TYPE => 'array',
+				ObjectSerializer::VALUE => array(
 					'key4' => array(
-						'type' => 'simple',
-						'value' => 4,
+						ObjectSerializer::TYPE => 'simple',
+						ObjectSerializer::VALUE => 4,
 					),
 					'key5' => array(
-						'type' => 'simple',
-						'value' => 5,
+						ObjectSerializer::TYPE => 'simple',
+						ObjectSerializer::VALUE => 5,
 					)
 				)
 			)
@@ -588,12 +647,12 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 
 		$expectedArray = array(
 			'key1' => array(
-				'type' => 'simple',
-				'value' => 1,
+				ObjectSerializer::TYPE => 'simple',
+				ObjectSerializer::VALUE => 1,
 			),
 			'key2' => array(
-				'type' => 'object',
-				'value' => $objectName,
+				ObjectSerializer::TYPE => 'object',
+				ObjectSerializer::VALUE => $objectName,
 			)
 		);
 
@@ -643,24 +702,21 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 		$object = new $className($propertyClass1, $propertyClass2);
 		$expectedArray = array(
 			spl_object_hash($object) => array(
-				'className' => $className,
-				'topLevelItem' => TRUE,
-				'properties' => array(
+				ObjectSerializer::CLASSNAME => $className,
+				ObjectSerializer::PROPERTIES => array(
 					'SplObjectProperty' => array(
-						'type' => 'SplObjectStorage',
-						'value' => array($objectHash1, $objectHash2)
+						ObjectSerializer::TYPE => 'SplObjectStorage',
+						ObjectSerializer::VALUE => array($objectHash1, $objectHash2)
 					)
 				)
 			),
 			$objectHash1 => array(
-				'className' => $propertyClassName1,
-				'topLevelItem' => FALSE,
-				'properties' => array(),
+				ObjectSerializer::CLASSNAME => $propertyClassName1,
+				ObjectSerializer::PROPERTIES => array(),
 			),
 			$objectHash2 => array(
-				'className' => $propertyClassName2,
-				'topLevelItem' => FALSE,
-				'properties' => array(),
+				ObjectSerializer::CLASSNAME => $propertyClassName2,
+				ObjectSerializer::PROPERTIES => array(),
 			),
 		);
 
@@ -716,34 +772,31 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 		}');
 
 		$objectData = array(
-			'className' => $className,
-			'properties' => array(
+			ObjectSerializer::CLASSNAME => $className,
+			ObjectSerializer::PROPERTIES => array(
 				'simpleProperty' => array (
-					'type' => 'simple',
-					'value' => 'simplePropertyValue',
+					ObjectSerializer::TYPE => 'simple',
+					ObjectSerializer::VALUE => 'simplePropertyValue',
 				),
 				'arrayProperty' => array (
-					'type' => 'array',
-					'value' => 'arrayPropertyValue',
+					ObjectSerializer::TYPE => 'array',
+					ObjectSerializer::VALUE => 'arrayPropertyValue',
 				),
 				'arrayObjectProperty' => array (
-					'type' => 'ArrayObject',
-					'value' => 'arrayObjectPropertyValue',
+					ObjectSerializer::TYPE => 'ArrayObject',
+					ObjectSerializer::VALUE => 'arrayObjectPropertyValue',
 				),
 				'objectProperty' => array (
-					'type' => 'object',
-					'value' => 'emptyClass'
+					ObjectSerializer::TYPE => 'object',
+					ObjectSerializer::VALUE => 'emptyClass'
 				),
 				'splObjectStorageProperty' => array (
-					'type' => 'SplObjectStorage',
-					'value' => 'splObjectStoragePropertyValue',
+					ObjectSerializer::TYPE => 'SplObjectStorage',
+					ObjectSerializer::VALUE => 'splObjectStoragePropertyValue',
 				),
 				'persistenceObjectProperty' => array (
-					'type' => 'persistenceObject',
-					'value' => array(
-						'className' => 'persistenceObjectClassName',
-						'UUID' => 'persistenceObjectUUID',
-					)
+					ObjectSerializer::TYPE => 'persistenceObject',
+					ObjectSerializer::VALUE => 'persistenceObjectClassName:persistenceObjectUUID',
 				)
 			)
 		);
@@ -761,13 +814,13 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 
 		$objectsAsArray = array(
 			'emptyClass' => array(
-				'className' => 'emptyClass',
-				'properties' => array(),
+				ObjectSerializer::CLASSNAME => 'emptyClass',
+				ObjectSerializer::PROPERTIES => array(),
 			)
 		);
 		$objectSerializer->_set('objectsAsArray', $objectsAsArray);
 
-		$object = $objectSerializer->_call('reconstituteObject', $objectData);
+		$object = $objectSerializer->_call('reconstituteObject', 'dummyobjecthash', $objectData);
 
 		$this->assertEquals('simplePropertyValue', $object->getSimpleProperty(), 'Simple property was not set as expected.');
 		$this->assertEquals('arrayPropertyValue', $object->getArrayProperty(), 'Array property was not set as expected.');
@@ -786,23 +839,23 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 
 		$dataArray = array(
 			'key1' => array(
-				'type' => 'simple',
-				'value' => 1,
+				ObjectSerializer::TYPE => 'simple',
+				ObjectSerializer::VALUE => 1,
 			),
 			'key2' => array(
-				'type' => 'simple',
-				'value' => 2,
+				ObjectSerializer::TYPE => 'simple',
+				ObjectSerializer::VALUE => 2,
 			),
 			'key3' => array(
-				'type' => 'array',
-				'value' => array(
+				ObjectSerializer::TYPE => 'array',
+				ObjectSerializer::VALUE => array(
 					'key4' => array(
-						'type' => 'simple',
-						'value' => 4,
+						ObjectSerializer::TYPE => 'simple',
+						ObjectSerializer::VALUE => 4,
 					),
 					'key5' => array(
-						'type' => 'simple',
-						'value' => 5,
+						ObjectSerializer::TYPE => 'simple',
+						ObjectSerializer::VALUE => 5,
 					)
 				)
 			)
@@ -827,24 +880,24 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 	public function reconstituteArrayWorksWithObjectsInTheArray() {
 		$objectsAsArray = array(
 			'some object' => array(
-				'className' => 'some object',
-				'properties' => 'properties',
+				ObjectSerializer::CLASSNAME => 'some object',
+				ObjectSerializer::PROPERTIES => ObjectSerializer::PROPERTIES,
 			)
 		);
 
 		$objectSerializer = $this->getAccessibleMock('F3\FLOW3\Object\ObjectSerializer', array('reconstituteObject'), array(), '', FALSE);
-		$objectSerializer->expects($this->once())->method('reconstituteObject')->with(array('className' => 'some object','properties' => 'properties',))->will($this->returnValue('reconstituted object'));
+		$objectSerializer->expects($this->once())->method('reconstituteObject')->with('some object', array(ObjectSerializer::CLASSNAME => 'some object',ObjectSerializer::PROPERTIES => ObjectSerializer::PROPERTIES,))->will($this->returnValue('reconstituted object'));
 		$objectSerializer->_set('objectsAsArray', $objectsAsArray);
 
 
 		$dataArray = array(
 			'key1' => array(
-				'type' => 'simple',
-				'value' => 1,
+				ObjectSerializer::TYPE => 'simple',
+				ObjectSerializer::VALUE => 1,
 			),
 			'key2' => array(
-				'type' => 'object',
-				'value' => 'some object'
+				ObjectSerializer::TYPE => 'object',
+				ObjectSerializer::VALUE => 'some object'
 			)
 		);
 
@@ -863,24 +916,24 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 	public function reconstituteArrayWorksWithSplObjectStorageInTheArray() {
 		$objectsAsArray = array(
 			'some object' => array(
-				'className' => 'some object',
-				'properties' => 'properties',
+				ObjectSerializer::CLASSNAME => 'some object',
+				ObjectSerializer::PROPERTIES => ObjectSerializer::PROPERTIES,
 			)
 		);
 
 		$objectSerializer = $this->getAccessibleMock('F3\FLOW3\Object\ObjectSerializer', array('reconstituteSplObjectStorage'), array(), '', FALSE);
-		$objectSerializer->expects($this->once())->method('reconstituteSplObjectStorage')->with('some object', array('className' => 'some object','properties' => 'properties',))->will($this->returnValue('reconstituted object'));
+		$objectSerializer->expects($this->once())->method('reconstituteSplObjectStorage')->with('some object', array(ObjectSerializer::CLASSNAME => 'some object',ObjectSerializer::PROPERTIES => ObjectSerializer::PROPERTIES,))->will($this->returnValue('reconstituted object'));
 		$objectSerializer->_set('objectsAsArray', $objectsAsArray);
 
 
 		$dataArray = array(
 			'key1' => array(
-				'type' => 'simple',
-				'value' => 1,
+				ObjectSerializer::TYPE => 'simple',
+				ObjectSerializer::VALUE => 1,
 			),
 			'key2' => array(
-				'type' => 'SplObjectStorage',
-				'value' => 'some object'
+				ObjectSerializer::TYPE => 'SplObjectStorage',
+				ObjectSerializer::VALUE => 'some object'
 			)
 		);
 
@@ -899,8 +952,8 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 	public function reconstituteArrayWorksWithPersistenceObjectsInTheArray() {
 		$objectsAsArray = array(
 			'some object' => array(
-				'className' => 'some object',
-				'properties' => 'properties',
+				ObjectSerializer::CLASSNAME => 'some object',
+				ObjectSerializer::PROPERTIES => ObjectSerializer::PROPERTIES,
 			)
 		);
 
@@ -910,13 +963,13 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 
 		$dataArray = array(
 			'key1' => array(
-				'type' => 'simple',
-				'value' => 1,
+				ObjectSerializer::TYPE => 'simple',
+				ObjectSerializer::VALUE => 1,
 			),
 			'key2' => array(
-				'type' => 'persistenceObject',
-				'value' => array(
-					'className' => 'persistenceObjectClassName',
+				ObjectSerializer::TYPE => 'persistenceObject',
+				ObjectSerializer::VALUE => array(
+					ObjectSerializer::CLASSNAME => 'persistenceObjectClassName',
 					'UUID' => 'someUUID',
 				)
 			)
@@ -944,8 +997,8 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 		);
 
 		$objectSerializer = $this->getAccessibleMock('F3\FLOW3\Object\ObjectSerializer', array('reconstituteObject'), array(), '', FALSE);
-		$objectSerializer->expects($this->at(0))->method('reconstituteObject')->with(array('object1 data'))->will($this->returnValue($mockObject1));
-		$objectSerializer->expects($this->at(1))->method('reconstituteObject')->with(array('object2 data'))->will($this->returnValue($mockObject2));
+		$objectSerializer->expects($this->at(0))->method('reconstituteObject')->with('some object', array('object1 data'))->will($this->returnValue($mockObject1));
+		$objectSerializer->expects($this->at(1))->method('reconstituteObject')->with('some other object', array('object2 data'))->will($this->returnValue($mockObject2));
 		$objectSerializer->_set('objectsAsArray', $objectsAsArray);
 
 
