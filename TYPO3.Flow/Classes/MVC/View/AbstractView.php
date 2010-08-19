@@ -68,6 +68,21 @@ abstract class AbstractView implements \F3\FLOW3\MVC\View\ViewInterface {
 		}
 		return $this;
 	}
+
+	/**
+	 * Tells if the view implementation can render the view for the given context.
+	 *
+	 * By default we assume that the view implementation can handle all kinds of
+	 * contexts. Override this method if that is not the case.
+	 *
+	 * @param \F3\FLOW3\MVC\Controller\ControllerContext $controllerContext
+	 * @return boolean TRUE if the view has something useful to display, otherwise FALSE
+	 * @api
+	 */
+	public function canRender(\F3\FLOW3\MVC\Controller\ControllerContext $controllerContext) {
+		return TRUE;
+	}
+
 }
 
 ?>

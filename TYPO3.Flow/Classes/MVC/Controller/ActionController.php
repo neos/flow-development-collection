@@ -36,39 +36,52 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	protected $reflectionService;
 
 	/**
-	 * By default a Fluid\TemplateView is provided, if a template is available,
-	 * then a view with the same name as the current action will be looked up.
-	 * If none is available the $defaultViewObjectName will be used and finally
-	 * an NotFoundView will be created.
+	 * The current view, as resolved by resolveView()
+	 *
 	 * @var \F3\FLOW3\MVC\View\ViewInterface
 	 * @api
 	 */
 	protected $view = NULL;
 
 	/**
-	 * Pattern after which the view object name is built if no Fluid template
-	 * is found.
+	 * Pattern after which the view object name is built if no format-specific
+	 * view could be resolved.
+	 *
 	 * @var string
 	 * @api
 	 */
 	protected $viewObjectNamePattern = 'F3\@package\View\@controller\@action@format';
 
 	/**
-	 * The default view object to use if neither a Fluid template nor an action
-	 * specific view object could be found.
+	 * A list of formats and object names of the views which should render them.
+	 *
+	 * Example:
+	 *
+	 * array('html' => 'F3\MyApp\MyHtmlView', 'json' => 'F3...
+	 *
+	 * @var array
+	 */
+	protected $viewFormatToObjectNameMap = array();
+
+	/**
+	 * The default view object to use if none of the resolved views can render
+	 * a response for the current request.
+	 *
 	 * @var string
 	 * @api
 	 */
-	protected $defaultViewObjectName = NULL;
+	protected $defaultViewObjectName = 'F3\Fluid\View\TemplateView';
 
 	/**
 	 * Name of the action method
+	 *
 	 * @var string
 	 */
 	protected $actionMethodName = 'indexAction';
 
 	/**
 	 * Name of the special error action method which is called in case of errors
+	 *
 	 * @var string
 	 * @api
 	 */
@@ -258,18 +271,24 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 * @api
 	 */
 	protected function resolveView() {
-		$view = $this->objectManager->create('F3\Fluid\View\TemplateView');
-		$view->setControllerContext($this->controllerContext);
-		if ($view->hasTemplate() === FALSE) {
-			$viewObjectName = $this->resolveViewObjectName();
-			if ($viewObjectName !== FALSE) {
-				$view = $this->objectManager->create($viewObjectName);
-			} else {
-				$view = $this->objectManager->create('F3\FLOW3\MVC\View\NotFoundView');
-				$view->assign('errorMessage', 'No template was found. View could not be resolved for action "' . $this->request->getControllerActionName() . '"');
+		$viewObjectName = $this->resolveViewObjectName();
+		if ($viewObjectName !== FALSE) {
+			$view = $this->objectManager->create($viewObjectName);
+			if ($view->canRender($this->controllerContext) === FALSE) {
+				unset($view);
 			}
-			$view->setControllerContext($this->controllerContext);
 		}
+		if (!isset($view) && $this->defaultViewObjectName != '') {
+			$view = $this->objectManager->create($this->defaultViewObjectName);
+			if ($view->canRender($this->controllerContext) === FALSE) {
+				unset($view);
+			}
+		}
+		if (!isset($view)) {
+			$view = $this->objectManager->create('F3\FLOW3\MVC\View\NotFoundView');
+			$view->assign('errorMessage', 'No template was found. View could not be resolved for action "' . $this->request->getControllerActionName() . '"');
+		}
+		$view->setControllerContext($this->controllerContext);
 		return $view;
 	}
 
@@ -285,6 +304,8 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 		$possibleViewName = $this->viewObjectNamePattern;
 		$packageKey = $this->request->getControllerPackageKey();
 		$subpackageKey = $this->request->getControllerSubpackageKey();
+		$format = $this->request->getFormat();
+
 		if ($subpackageKey !== NULL && $subpackageKey !== '') {
 			$packageKey.= '\\' . $subpackageKey;
 		}
@@ -292,12 +313,12 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 		$possibleViewName = str_replace('@controller', $this->request->getControllerName(), $possibleViewName);
 		$possibleViewName = str_replace('@action', $this->request->getControllerActionName(), $possibleViewName);
 
-		$viewObjectName = $this->objectManager->getCaseSensitiveObjectName(strtolower(str_replace('@format', $this->request->getFormat(), $possibleViewName)));
+		$viewObjectName = $this->objectManager->getCaseSensitiveObjectName(strtolower(str_replace('@format', $format, $possibleViewName)));
 		if ($viewObjectName === FALSE) {
 			$viewObjectName = $this->objectManager->getCaseSensitiveObjectName(strtolower(str_replace('@format', '', $possibleViewName)));
 		}
-		if ($viewObjectName === FALSE && $this->defaultViewObjectName !== NULL) {
-			$viewObjectName = $this->defaultViewObjectName;
+		if ($viewObjectName === FALSE && isset($this->viewFormatToObjectNameMap[$format])) {
+			$viewObjectName = $this->viewFormatToObjectNameMap[$format];
 		}
 		return $viewObjectName;
 	}

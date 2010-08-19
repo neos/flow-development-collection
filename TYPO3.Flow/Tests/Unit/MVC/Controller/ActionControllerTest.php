@@ -179,25 +179,27 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function resolveViewUsesFluidTemplateViewIfTemplateIsAvailable() {
+	public function resolveViewUsesResolvedViewIfItCanRenderTheCurrentAction() {
 		$mockSession = $this->getMock('F3\FLOW3\Session\SessionInterface');
 		$mockControllerContext = $this->getMock('F3\FLOW3\MVC\Controller\ControllerContext', array(), array(), '', FALSE);
 
-		$mockFluidTemplateView = $this->getMock('F3\FLOW3\MVC\View\ViewInterface', array('setControllerContext', 'getViewHelper', 'assign', 'assignMultiple', 'render', 'hasTemplate'));
-		$mockFluidTemplateView->expects($this->once())->method('setControllerContext')->with($mockControllerContext);
-		$mockFluidTemplateView->expects($this->once())->method('hasTemplate')->will($this->returnValue(TRUE));
+		$mockView = $this->getMock('F3\FLOW3\MVC\View\ViewInterface');
+		$mockView->expects($this->once())->method('canRender')->with($mockControllerContext)->will($this->returnValue(TRUE));
+		$mockView->expects($this->once())->method('setControllerContext')->with($mockControllerContext);
 
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
-		$mockObjectManager->expects($this->at(0))->method('create')->with('F3\Fluid\View\TemplateView')->will($this->returnValue($mockFluidTemplateView));
+		$mockObjectManager->expects($this->at(0))->method('create')->with('F3\Foo\Bar\HTMLView')->will($this->returnValue($mockView));
 
-		$mockController = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\ActionController', array('dummy'), array(), '', FALSE);
+		$mockController = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\ActionController', array('resolveViewObjectName'), array(), '', FALSE);
+		$mockController->expects($this->once())->method('resolveViewObjectName')->will($this->returnValue('F3\Foo\Bar\HTMLView'));
+
 		$mockController->_set('session', $mockSession);
 		$mockController->_set('controllerContext', $mockControllerContext);
 		$mockController->_set('objectManager', $mockObjectManager);
 
-		$this->assertSame($mockFluidTemplateView, $mockController->_call('resolveView'));
+		$this->assertSame($mockView, $mockController->_call('resolveView'));
 	}
 
 	/**
@@ -209,16 +211,11 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 		$mockSession = $this->getMock('F3\FLOW3\Session\SessionInterface');
 		$mockControllerContext = $this->getMock('F3\FLOW3\MVC\Controller\ControllerContext', array(), array(), '', FALSE);
 
-		$mockFluidTemplateView = $this->getMock('F3\FLOW3\MVC\View\ViewInterface', array('setControllerContext', 'getViewHelper', 'assign', 'assignMultiple', 'render', 'hasTemplate'));
-		$mockFluidTemplateView->expects($this->once())->method('setControllerContext')->with($mockControllerContext);
-		$mockFluidTemplateView->expects($this->once())->method('hasTemplate')->will($this->returnValue(FALSE));
-
 		$mockView = $this->getMock('F3\FLOW3\MVC\View\ViewInterface');
-		$mockView->expects($this->once())->method('setControllerContext')->with($mockControllerContext);
+		$mockView->expects($this->once())->method('canRender')->with($mockControllerContext)->will($this->returnValue(TRUE));
 
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
-		$mockObjectManager->expects($this->at(0))->method('create')->with('F3\Fluid\View\TemplateView')->will($this->returnValue($mockFluidTemplateView));
-		$mockObjectManager->expects($this->at(1))->method('create')->with('ResolvedViewObjectName')->will($this->returnValue($mockView));
+		$mockObjectManager->expects($this->once())->method('create')->with('ResolvedViewObjectName')->will($this->returnValue($mockView));
 
 		$mockController = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\ActionController', array('resolveViewObjectName'), array(), '', FALSE);
 		$mockController->expects($this->once())->method('resolveViewObjectName')->will($this->returnValue('ResolvedViewObjectName'));
@@ -233,25 +230,25 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function resolveViewReturnsTheNonFoundViewIfNoTemplateWasFoundAndViewCouldNotBeResolved() {
+	public function resolveViewReturnsTheNonFoundViewIfNoOtherViewCouldNotBeResolved() {
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\RequestInterface', array(), array(), '', FALSE);
 		$mockRequest->expects($this->once())->method('getControllerActionName')->will($this->returnValue('MyAction'));
 
 		$mockSession = $this->getMock('F3\FLOW3\Session\SessionInterface');
 		$mockControllerContext = $this->getMock('F3\FLOW3\MVC\Controller\ControllerContext', array(), array(), '', FALSE);
 
-		$mockFluidTemplateView = $this->getMock('F3\FLOW3\MVC\View\ViewInterface', array('setControllerContext', 'getViewHelper', 'assign', 'assignMultiple', 'render', 'hasTemplate'));
-		$mockFluidTemplateView->expects($this->once())->method('setControllerContext')->with($mockControllerContext);
-		$mockFluidTemplateView->expects($this->once())->method('hasTemplate')->will($this->returnValue(FALSE));
+		$mockOtherView = $this->getMock('F3\FLOW3\MVC\View\ViewInterface');
+		$mockOtherView->expects($this->once())->method('canRender')->will($this->returnValue(FALSE));
 
-		$mockView = $this->getMock('F3\FLOW3\MVC\View\ViewInterface');
-		$mockView->expects($this->once())->method('setControllerContext')->with($mockControllerContext);
-		$mockView->expects($this->at(0))->method('assign')->with('errorMessage', 'No template was found. View could not be resolved for action "MyAction"');
+		$mockNotFoundView = $this->getMock('F3\FLOW3\MVC\View\ViewInterface');
+		$mockNotFoundView->expects($this->once())->method('setControllerContext')->with($mockControllerContext);
+		$mockNotFoundView->expects($this->at(0))->method('assign')->with('errorMessage', 'No template was found. View could not be resolved for action "MyAction"');
 
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
-		$mockObjectManager->expects($this->at(0))->method('create')->with('F3\Fluid\View\TemplateView')->will($this->returnValue($mockFluidTemplateView));
-		$mockObjectManager->expects($this->at(1))->method('create')->with('F3\FLOW3\MVC\View\NotFoundView')->will($this->returnValue($mockView));
+		$mockObjectManager->expects($this->at(0))->method('create')->with('F3\Fluid\View\TemplateView')->will($this->returnValue($mockOtherView));
+		$mockObjectManager->expects($this->at(1))->method('create')->with('F3\FLOW3\MVC\View\NotFoundView')->will($this->returnValue($mockNotFoundView));
 
 		$mockController = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\ActionController', array('resolveViewObjectName'), array(), '', FALSE);
 		$mockController->expects($this->once())->method('resolveViewObjectName')->will($this->returnValue(FALSE));
@@ -261,7 +258,7 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 		$mockController->_set('session', $mockSession);
 		$mockController->_set('objectManager', $mockObjectManager);
 
-		$this->assertSame($mockView, $mockController->_call('resolveView'));
+		$this->assertSame($mockNotFoundView, $mockController->_call('resolveView'));
 	}
 
 	/**
@@ -289,10 +286,11 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function resolveViewObjectNameReturnsDefaultViewObjectNameIfNoCustomViewCanBeFound() {
+	public function resolveViewObjectNameReturnsExplicitlyConfiguredFormatView() {
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\RequestInterface', array(), array(), '', FALSE);
+		$mockRequest->expects($this->once())->method('getFormat')->will($this->returnValue('json'));
 
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
 		$mockObjectManager->expects($this->exactly(2))->method('getCaseSensitiveObjectName')->will($this->returnValue(FALSE));
@@ -300,9 +298,9 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 		$mockController = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\ActionController', array('dummy'), array(), '', FALSE);
 		$mockController->_set('request', $mockRequest);
 		$mockController->_set('objectManager', $mockObjectManager);
-		$mockController->_set('defaultViewObjectName', 'MyDefaultViewObjectName');
+		$mockController->_set('viewFormatToObjectNameMap', array('json' => 'JsonViewObjectName'));
 
-		$this->assertEquals('MyDefaultViewObjectName', $mockController->_call('resolveViewObjectName'));
+		$this->assertEquals('JsonViewObjectName', $mockController->_call('resolveViewObjectName'));
 	}
 
 	/**

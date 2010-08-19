@@ -60,6 +60,15 @@ interface ViewInterface {
 	public function assignMultiple(array $values);
 
 	/**
+	 * Tells if the view implementation can render the view for the given context.
+	 * 
+	 * @param \F3\FLOW3\MVC\Controller\ControllerContext $controllerContext
+	 * @return boolean TRUE if the view has something useful to display, otherwise FALSE
+	 * @api
+	 */
+	public function canRender(\F3\FLOW3\MVC\Controller\ControllerContext $controllerContext);
+
+	/**
 	 * Renders the view
 	 *
 	 * @return string The rendered view

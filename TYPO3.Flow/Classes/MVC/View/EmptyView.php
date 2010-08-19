@@ -70,6 +70,17 @@ final class EmptyView implements \F3\FLOW3\MVC\View\ViewInterface {
 	}
 
 	/**
+	 * This view can be used in any case.
+	 *
+	 * @param \F3\FLOW3\MVC\Controller\ControllerContext $controllerContext
+	 * @return boolean TRUE
+	 * @api
+	 */
+	public function canRender(\F3\FLOW3\MVC\Controller\ControllerContext $controllerContext) {
+		return TRUE;
+	}
+
+	/**
 	 * Renders the empty view
 	 *
 	 * @return string An empty string
