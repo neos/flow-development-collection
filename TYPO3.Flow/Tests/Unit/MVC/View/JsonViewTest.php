@@ -254,3 +254,4 @@ class JsonViewTest extends \F3\Testing\BaseTestCase {
 	}
 
 }
+?>
