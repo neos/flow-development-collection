@@ -62,7 +62,7 @@ class Debugger {
 		/xs';
 
 	/**
-	 * Is set to TRUE once the CSS file is included in the current page to prevent double inclusions.
+	 * Is set to TRUE once the CSS file is included in the current page to prevent double inclusions of the CSS file.
 	 * @var boolean
 	 */
 	static public $stylesheetEchoed = FALSE;
@@ -240,12 +240,14 @@ namespace F3;
  *
  * @param mixed $variable The variable to display a dump of
  * @param string $title optional custom title for the debug output
- * @return void
+ * @param boolean $return if TRUE, the dump is returned for displaying it embedded in custom HTML. If FALSE (default), the variable dump is directly displayed.
+ * @return void/string if $return is TRUE, the variable dump is returned. By default, the dump is directly displayed, and nothing is returned.
  * @author Robert Lemke <robert@typo3.org>
  * @author Bastian Waidelich <bastian@typo3.org>
+ * @author Sebastian Kurfürst <sebastian@typo3.org>
  * @api
  */
-function var_dump($variable, $title = NULL) {
+function var_dump($variable, $title = NULL, $return = FALSE) {
 	if ($title === NULL) {
 		$title = 'FLOW3 Variable Dump';
 	}
@@ -256,8 +258,8 @@ function var_dump($variable, $title = NULL) {
 		\F3\FLOW3\Error\Debugger::$stylesheetEchoed = TRUE;
 	}
 
-	echo '
-		<div class="F3-FLOW3-Error-Debugger-VarDump">
+	$output .= '
+		<div class="F3-FLOW3-Error-Debugger-VarDump' . ($return ? 'F3-FLOW3-Error-Debugger-VarDump-Inline' : 'F3-FLOW3-Error-Debugger-VarDump-Floating') . '">
 			<div class="F3-FLOW3-Error-Debugger-VarDump-Top">
 				' . htmlspecialchars($title) . '
 			</div>
@@ -266,6 +268,12 @@ function var_dump($variable, $title = NULL) {
 			</div>
 		</div>
 	';
+
+	if ($return === TRUE) {
+		return $output;
+	} else {
+		echo $output;
+	}
 }
 
 ?>
