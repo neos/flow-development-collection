@@ -215,7 +215,7 @@ class PackageManager implements \F3\FLOW3\Package\PackageManagerInterface {
 	 *
 	 * @param string $packageKey The package key of the new package
 	 * @param \F3\FLOW3\Package\MetaData $packageMetaData If specified, this package meta object is used for writing the Package.xml file
-	 * @param string $packagesPath If specified, the package will be created in this path, otherwise getLocalPackagesPath() is used
+	 * @param string $packagesPath If specified, the package will be created in this path, otherwise the default "Application" directory is used
 	 * @return \F3\FLOW3\Package\Package The newly created package
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 * @api
@@ -229,7 +229,11 @@ class PackageManager implements \F3\FLOW3\Package\PackageManagerInterface {
 		}
 
 		if ($packagesPath === '') {
-			$packagesPath = $this->getLocalPackagesPath();
+			$packagesPath = realpath(FLOW3_PATH_PACKAGES . 'Application/');
+			if ($packagesPath === FALSE) {
+				$packagesPath = realpath(FLOW3_PATH_PACKAGES) . '/Application/';
+			}
+			$packagesPath = \F3\FLOW3\Utility\Files::getUnixStylePath($packagesPath);
 		}
 		if ($packagesPath === '') throw new \F3\FLOW3\Package\Exception\InvalidPackagePathException('The path "Packages/Application" does not exist.', 1243932738);
 
@@ -256,20 +260,6 @@ class PackageManager implements \F3\FLOW3\Package\PackageManagerInterface {
 			$this->packageKeys[strtolower($upperCamelCasedPackageKey)] = $upperCamelCasedPackageKey;
 		}
 		return $package;
-	}
-
-	/**
-	 * Get the path of the local packages. Will be used to calculate the path
-	 * of a new package in createPackage(...). Returns an empty string if no
-	 * local folder exists.
-	 *
-	 * @return string The path of the local packages
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 * @api
-	 */
-	public function getLocalPackagesPath() {
-		$path = realpath(FLOW3_PATH_PACKAGES . 'Application/');
-		return ($path !== FALSE) ? \F3\FLOW3\Utility\Files::getUnixStylePath($path) . '/' : '';
 	}
 
 	/**
