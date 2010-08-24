@@ -62,6 +62,12 @@ class Debugger {
 		/xs';
 
 	/**
+	 * Is set to TRUE once the CSS file is included in the current page to prevent double inclusions.
+	 * @var boolean
+	 */
+	static public $stylesheetsIncluded = FALSE;
+
+	/**
 	 * Injects the Object Manager
 	 *
 	 * @param ObjectManagerInterface $objectManager
@@ -244,8 +250,11 @@ function var_dump($variable, $title = NULL) {
 		$title = 'FLOW3 Variable Dump';
 	}
 	\F3\FLOW3\Error\Debugger::clearState();
+	if (\F3\FLOW3\Error\Debugger::$stylesheetsIncluded === FALSE) {
+		echo '<link rel="stylesheet" type="text/css" href="/_Resources/Static/Packages/FLOW3/Error/Debugger.css" />';
+		\F3\FLOW3\Error\Debugger::$stylesheetsIncluded = TRUE;
+	}
 	echo '
-		<link rel="stylesheet" type="text/css" href="/_Resources/Static/Packages/FLOW3/Error/Debugger.css" />
 		<div class="F3-FLOW3-Error-Debugger-VarDump">
 			<div class="F3-FLOW3-Error-Debugger-VarDump-Top">
 				' . htmlspecialchars($title) . '
