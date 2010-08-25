@@ -142,7 +142,7 @@ class FileBackend extends \F3\FLOW3\Log\Backend\AbstractBackend {
 		}
 
 		if (file_exists($this->logFileUrl)) {
-			$this->fileHandle = fopen($this->logFileUrl, 'at');
+			$this->fileHandle = fopen($this->logFileUrl, 'ab');
 		} else {
 			$logPath = dirname($this->logFileUrl);
 			if (!is_dir($logPath)) {
@@ -150,14 +150,14 @@ class FileBackend extends \F3\FLOW3\Log\Backend\AbstractBackend {
 				\F3\FLOW3\Utility\Files::createDirectoryRecursively($logPath);
 			}
 
-			$this->fileHandle = fopen($this->logFileUrl, 'at');
+			$this->fileHandle = fopen($this->logFileUrl, 'ab');
 			if ($this->fileHandle === FALSE) throw new \F3\FLOW3\Log\Exception\CouldNotOpenResourceException('Could not open log file "' . $this->logFileUrl . '" for write access.', 1243588980);
 
 			$streamMeta = stream_get_meta_data($this->fileHandle);
 			if ($streamMeta['wrapper_type'] === 'plainfile') {
 				fclose($this->fileHandle);
 				chmod($this->logFileUrl, 0666);
-				$this->fileHandle = fopen($this->logFileUrl, 'at');
+				$this->fileHandle = fopen($this->logFileUrl, 'ab');
 			}
 		}
 		if ($this->fileHandle === FALSE) throw new \F3\FLOW3\Log\Exception\CouldNotOpenResourceException('Could not open log file "' . $this->logFileUrl . '" for write access.', 1229448440);
