@@ -147,7 +147,7 @@ class Argument {
 		if (!is_string($name)) throw new \InvalidArgumentException('$name must be of type string, ' . gettype($name) . ' given.', 1187951688);
 		if (strlen($name) === 0) throw new \InvalidArgumentException('$name must be a non-empty string, ' . strlen($name) . ' characters given.', 1232551853);
 		$this->name = $name;
-		$this->dataType = $dataType;
+		$this->dataType = \F3\FLOW3\Utility\TypeHandling::normalizeType($dataType);
 	}
 
 	/**
@@ -413,10 +413,31 @@ class Argument {
 		if ($value === NULL) {
 			return NULL;
 		}
+
+		$transformedValue = NULL;
+
+		switch ($this->dataType) {
+			case 'integer' :
+				return $value === '' ? NULL : (integer)$value;
+			case 'double' :
+			case 'float' :
+				return $value === '' ? NULL : (float)$value;
+			case 'boolean' :
+				if (strtolower($value) === 'true') {
+					return TRUE;
+				}
+				if (strtolower($value) === 'false') {
+					return FALSE;
+				}
+				if ($value < 0) {
+					return FALSE;
+				}
+				return $value === '' ? NULL : (boolean)$value;
+		}
+
 		if (!class_exists($this->dataType)) {
 			return $value;
 		}
-		$transformedValue = NULL;
 		if ($this->dataTypeClassSchema !== NULL) {
 				// The target object is an Entity or ValueObject.
 			if (is_string($value) && preg_match(self::PATTERN_MATCH_UUID, $value) === 1) {

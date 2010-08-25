@@ -90,6 +90,56 @@ class ArgumentTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
+	 * @dataProvider argumentRawValuesAndPhpValues
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setValueConvertsSimpleTypesIntoTheirCorrespondingPHPType($rawValue, $dataType, $phpValue) {
+		$argument = new \F3\FLOW3\MVC\Controller\Argument('argumentName', $dataType);
+		$argument->setValue($rawValue);
+		$this->assertSame($phpValue, $argument->getValue());
+	}
+
+	/**
+	 * Data provider for - see above.
+	 *
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function argumentRawValuesAndPhpValues() {
+		return array(
+			 array('dummy', 'Text', 'dummy'),
+			 array('dummy', 'string', 'dummy'),
+			 array('', 'string', ''),
+
+			 array('1', 'integer', 1),
+			 array('-1', 'integer', -1),
+			 array('0', 'integer', 0),
+			 array('', 'integer', NULL),
+
+			 array('0', 'float', (float)0),
+			 array('1.0', 'float', 1.0),
+			 array('1.1', 'float', 1.1),
+			 array('-2.1', 'float', -2.1),
+			 array('', 'float', NULL),
+
+			 array('0', 'double', (float)0),
+			 array('1.0', 'double', 1.0),
+			 array('1.1', 'double', 1.1),
+			 array('-2.1', 'double', -2.1),
+			 array('', 'double', NULL),
+
+			 array('1', 'boolean', TRUE),
+			 array('0', 'boolean', FALSE),
+			 array('-1', 'boolean', FALSE),
+			 array('true', 'boolean', TRUE),
+			 array('false', 'boolean', FALSE),
+			 array('TRUE', 'boolean', TRUE),
+			 array('FALSE', 'boolean', FALSE),
+			 array('', 'boolean', NULL),
+		 );
+	}
+
+	/**
+	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setValueTriesToConvertAnUuidStringIntoTheRealObjectIfDataTypeClassSchemaIsAvailable() {
