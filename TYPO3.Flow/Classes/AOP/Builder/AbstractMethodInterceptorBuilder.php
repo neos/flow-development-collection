@@ -299,6 +299,7 @@ abstract class AbstractMethodInterceptorBuilder {
 
 		if (isset ($groupedAdvices['F3\FLOW3\AOP\Advice\AfterThrowingAdvice']) || isset ($groupedAdvices['F3\FLOW3\AOP\Advice\AfterAdvice'])) {
 			$advicesCode .= '
+			throw $exception;
 		}
 ';
 		}

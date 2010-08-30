@@ -224,6 +224,48 @@ class AbstractMethodInterceptorBuilderTest extends \F3\Testing\BaseTestCase {
 				$advice->invoke($joinPoint);
 			}
 
+			throw $exception;
+		}' . chr(10);
+
+		$builder = $this->getAccessibleMock('F3\FLOW3\AOP\Builder\AbstractMethodInterceptorBuilder', array('build'), array(), '', FALSE);
+		$actualCode = $builder->_call('buildAdvicesCode', $groupedAdvices, 'foo', 'TargetClass');
+		$this->assertSame($expectedCode, $actualCode);
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function buildAdvicesCodeRendersMethodInterceptionCodeForAfterAdvice() {
+		$groupedAdvices = array(
+			'F3\FLOW3\AOP\Advice\AfterAdvice' => array()
+		);
+		$expectedCode = '
+		$result = NULL;
+		$afterAdviceInvoked = FALSE;
+		try {
+
+			$joinPoint = new \F3\FLOW3\AOP\JoinPoint($this, \'TargetClass\', \'foo\', $methodArguments);
+			$result = $this->FLOW3_AOP_Proxy_invokeJoinPoint($joinPoint);
+
+			$advices = $this->FLOW3_AOP_Proxy_targetMethodsAndGroupedAdvices[\'foo\'][\'F3\FLOW3\AOP\Advice\AfterAdvice\'];
+			$joinPoint = new \F3\FLOW3\AOP\JoinPoint($this, \'TargetClass\', \'foo\', $methodArguments, NULL, $result);
+			$afterAdviceInvoked = TRUE;
+			foreach ($advices as $advice) {
+				$advice->invoke($joinPoint);
+			}
+
+		} catch (\Exception $exception) {
+
+			if (!$afterAdviceInvoked) {
+				$advices = $this->FLOW3_AOP_Proxy_targetMethodsAndGroupedAdvices[\'foo\'][\'F3\FLOW3\AOP\Advice\AfterAdvice\'];
+				$joinPoint = new \F3\FLOW3\AOP\JoinPoint($this, \'TargetClass\', \'foo\', $methodArguments, NULL, NULL, $exception);
+				foreach ($advices as $advice) {
+					$advice->invoke($joinPoint);
+				}
+			}
+
+			throw $exception;
 		}' . chr(10);
 
 		$builder = $this->getAccessibleMock('F3\FLOW3\AOP\Builder\AbstractMethodInterceptorBuilder', array('build'), array(), '', FALSE);
@@ -274,6 +316,7 @@ class AbstractMethodInterceptorBuilderTest extends \F3\Testing\BaseTestCase {
 				}
 			}
 
+			throw $exception;
 		}' . chr(10);
 
 		$builder = $this->getAccessibleMock('F3\FLOW3\AOP\Builder\AbstractMethodInterceptorBuilder', array('build'), array(), '', FALSE);
