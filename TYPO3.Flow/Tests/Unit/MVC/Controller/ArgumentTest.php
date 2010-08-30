@@ -90,10 +90,30 @@ class ArgumentTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function setValueUsesNullAsIs() {
+		$argument = $this->getMock('F3\FLOW3\MVC\Controller\Argument', array('transformValue'), array('dummy', 'ArrayObject'));
+		$argument->expects($this->never())->method('transformValue');
+		$argument->setValue(NULL);
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function setValueUsesMatchingInstanceAsIs() {
+		$argument = $this->getMock('F3\FLOW3\MVC\Controller\Argument', array('transformValue'), array('dummy', '\ArrayObject'));
+		$argument->expects($this->never())->method('transformValue');
+		$argument->setValue(new \ArrayObject());
+	}
+
+	/**
+	 * @test
 	 * @dataProvider argumentRawValuesAndPhpValues
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setValueConvertsSimpleTypesIntoTheirCorrespondingPHPType($rawValue, $dataType, $phpValue) {
+	public function setValueConvertsSimpleTypesIntoTheirCorrespondingPhpType($rawValue, $dataType, $phpValue) {
 		$argument = new \F3\FLOW3\MVC\Controller\Argument('argumentName', $dataType);
 		$argument->setValue($rawValue);
 		$this->assertSame($phpValue, $argument->getValue());
