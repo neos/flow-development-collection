@@ -147,12 +147,21 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	/**
 	 * Executes the query and returns the result
 	 *
-	 * @return array The query result
+	 * @param integer $fetchMode one of the FETCH_* constants
+	 * @return mixed The query result. Depending on the $fetchMode this is an array or an object
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @api
 	 */
-	public function execute() {
-		return $this->dataMapper->mapToObjects($this->persistenceManager->getObjectDataByQuery($this));
+	public function execute($fetchMode = \F3\FLOW3\Persistence\QueryInterface::FETCH_PROXY) {
+		if ($fetchMode === \F3\FLOW3\Persistence\QueryInterface::FETCH_PROXY) {
+			return $this->objectManager->create('F3\FLOW3\Persistence\QueryResultProxy', $this);
+		}
+		$objectArray = $this->dataMapper->mapToObjects($this->persistenceManager->getObjectDataByQuery($this));
+		if ($fetchMode === \F3\FLOW3\Persistence\QueryInterface::FETCH_OBJECT) {
+			return current($objectArray);
+		}
+		return $objectArray;
 	}
 
 	/**

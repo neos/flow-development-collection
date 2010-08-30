@@ -56,9 +56,9 @@ class AccountRepository extends \F3\FLOW3\Persistence\Repository {
 				$query->equals('accountIdentifier', $accountIdentifier),
 				$query->equals('authenticationProviderName', $authenticationProviderName)
 			)
-		)->execute();
+		)->execute(\F3\FLOW3\Persistence\QueryInterface::FETCH_OBJECT);
 
-		return isset($result[0]) ? $result[0] : FALSE;
+		return $result;
 	}
 }
 

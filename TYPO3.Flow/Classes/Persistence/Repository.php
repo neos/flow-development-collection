@@ -279,10 +279,12 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	/**
 	 * Returns all objects of this repository
 	 *
-	 * @return array An array of objects, empty if no objects found
+	 * @return \F3\FLOW3\Persistence\QueryResultProxy A proxy of the result
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @api
+	 * @see \F3\FLOW3\Persistence\Query::execute()
 	 */
 	public function findAll() {
 		return $this->createQuery()->execute();
@@ -383,8 +385,7 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 			} else {
 				$query->matching($query->equals($propertyName, $arguments[0]));
 			}
-			$result = $query->execute();
-			return current($result);
+			return $query->execute(\F3\FLOW3\Persistence\QueryInterface::FETCH_OBJECT);
 		}
 		trigger_error('Call to undefined method ' . get_class($this) . '::' . $methodName, E_USER_ERROR);
 	}

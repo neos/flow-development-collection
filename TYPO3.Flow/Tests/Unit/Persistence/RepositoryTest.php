@@ -163,12 +163,13 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function findAllCreatesQueryAndReturnsResultOfExecuteCall() {
-		$expectedResult = array('one', 'two');
+		$expectedResult = $this->getMock('F3\FLOW3\Persistence\QueryResultProxy', array(), array(), '', FALSE);
 
 		$mockQuery = $this->getMock('F3\FLOW3\Persistence\QueryInterface');
-		$mockQuery->expects($this->once())->method('execute')->will($this->returnValue($expectedResult));
+		$mockQuery->expects($this->once())->method('execute')->with()->will($this->returnValue($expectedResult));
 
 		$repository = $this->getMock('F3\FLOW3\Persistence\Repository', array('createQuery'));
 		$repository->expects($this->once())->method('createQuery')->will($this->returnValue($mockQuery));
@@ -393,34 +394,38 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function magicCallMethodAcceptsFindBySomethingCallsAndExecutesAQueryWithThatCriteria() {
+		$mockQueryResultProxy = $this->getMock('F3\FLOW3\Persistence\QueryResultProxy', array(), array(), '', FALSE);
 		$mockQuery = $this->getMock('F3\FLOW3\Persistence\QueryInterface');
 		$mockQuery->expects($this->once())->method('equals')->with('foo', 'bar')->will($this->returnValue('matchCriteria'));
 		$mockQuery->expects($this->once())->method('matching')->with('matchCriteria')->will($this->returnValue($mockQuery));
-		$mockQuery->expects($this->once())->method('execute')->will($this->returnValue(array('baz', 'quux')));
+		$mockQuery->expects($this->once())->method('execute')->with()->will($this->returnValue($mockQueryResultProxy));
 
 		$repository = $this->getMock('F3\FLOW3\Persistence\Repository', array('createQuery'));
 		$repository->expects($this->once())->method('createQuery')->will($this->returnValue($mockQuery));
 
-		$this->assertSame(array('baz', 'quux'), $repository->findByFoo('bar'));
+		$this->assertSame($mockQueryResultProxy, $repository->findByFoo('bar'));
 	}
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function magicCallMethodAcceptsFindOneBySomethingCallsAndExecutesAQueryWithThatCriteria() {
+		$mockQueryResultProxy = $this->getMock('F3\FLOW3\Persistence\QueryResultProxy', array(), array(), '', FALSE);
 		$mockQuery = $this->getMock('F3\FLOW3\Persistence\QueryInterface');
 		$mockQuery->expects($this->once())->method('setLimit')->with(1)->will($this->returnValue($mockQuery));
 		$mockQuery->expects($this->once())->method('equals')->with('foo', 'bar')->will($this->returnValue('matchCriteria'));
 		$mockQuery->expects($this->once())->method('matching')->with('matchCriteria')->will($this->returnValue($mockQuery));
-		$mockQuery->expects($this->once())->method('execute')->will($this->returnValue(array('baz', 'quux')));
+		$mockQuery->expects($this->once())->method('execute')->with(\F3\FLOW3\Persistence\QueryInterface::FETCH_OBJECT)->will($this->returnValue($mockQueryResultProxy));
 
 		$repository = $this->getMock('F3\FLOW3\Persistence\Repository', array('createQuery'));
 		$repository->expects($this->once())->method('createQuery')->will($this->returnValue($mockQuery));
 
-		$this->assertSame('baz', $repository->findOneByFoo('bar'));
+		$this->assertSame($mockQueryResultProxy, $repository->findOneByFoo('bar'));
 	}
 
 	/**

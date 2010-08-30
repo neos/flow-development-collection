@@ -458,7 +458,7 @@ class PropertyMapper {
 			}
 		}
 
-		$objects = $query->matching($constraint)->execute();
+		$objects = $query->matching($constraint)->execute(\F3\FLOW3\Persistence\QueryInterface::FETCH_ARRAY);
 		if (count($objects) === 1) {
 			return current($objects);
 		} elseif (count($objects) === 0) {
