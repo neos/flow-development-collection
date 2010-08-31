@@ -37,6 +37,12 @@ abstract class AbstractBackend implements \F3\FLOW3\Log\Backend\BackendInterface
 	protected $severityThreshold = LOG_INFO;
 
 	/**
+	 * Flag telling if the IP address of the current client (if available) should be logged.
+	 * @var boolean
+	 */
+	protected $logIpAddress = FALSE;
+
+	/**
 	 * Constructs this log backend
 	 *
 	 * @param mixed $options Configuration options - depends on the actual backend
@@ -65,5 +71,17 @@ abstract class AbstractBackend implements \F3\FLOW3\Log\Backend\BackendInterface
 	public function setSeverityThreshold($severityThreshold) {
 		$this->severityThreshold = $severityThreshold;
 	}
+
+	/**
+	 * Enables or disables logging of IP addresses.
+	 *
+	 * @param boolean $logIpAddress Set to TRUE to enable logging of IP address, or FALSE to disable
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setLogIpAddress($logIpAddress) {
+		$this->logIpAddress = $logIpAddress;
+	}
+
 }
 ?>

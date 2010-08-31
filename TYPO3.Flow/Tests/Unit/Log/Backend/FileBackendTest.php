@@ -88,6 +88,21 @@ class FileBackendTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function appendRendersALogEntryWithRemoteIpAddressAndAppendsItToTheLogfile() {
+		$logFileUrl = \vfsStream::url('testDirectory') . '/test.log';
+		$backend = new \F3\FLOW3\Log\Backend\FileBackend(array('logFileUrl' => $logFileUrl));
+		$backend->setLogIpAddress(TRUE);
+		$backend->open();
+
+		$backend->append('foo');
+
+		$this->assertSame(67 + strlen(PHP_EOL), \vfsStreamWrapper::getRoot()->getChild('test.log')->size());
+	}
+
+	/**
+	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function appendIgnoresMessagesAboveTheSeverityThreshold() {

@@ -214,8 +214,9 @@ class FileBackend extends \F3\FLOW3\Log\Backend\AbstractBackend {
 			return;
 		}
 
+		$ipAddress = ($this->logIpAddress === TRUE) ? str_pad((isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : ''), 15) : '';
 		$severityLabel = (isset($this->severityLabels[$severity])) ? $this->severityLabels[$severity] : 'UNKNOWN  ';
-		$output = strftime ('%y-%m-%d %H:%M:%S', time()) . ' ' . $severityLabel . ' ' . str_pad($packageKey, 20) . ' ' . $message . PHP_EOL;
+		$output = strftime('%y-%m-%d %H:%M:%S', time()) . ' ' . $ipAddress . $severityLabel . ' ' . str_pad($packageKey, 20) . ' ' . $message . PHP_EOL;
 		if (!empty($additionalData)) {
 			$output .= $this->getFormattedVarDump($additionalData) . PHP_EOL;
 		}
