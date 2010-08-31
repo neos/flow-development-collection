@@ -390,7 +390,11 @@ class Argument {
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function setValue($value) {
-		$this->value = $this->transformValue($value);
+		if ($value === NULL || $value instanceof $this->dataType) {
+			$this->value = $value;
+		} else {
+			$this->value = $this->transformValue($value);
+		}
 
 		return $this;
 	}
@@ -410,10 +414,6 @@ class Argument {
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	protected function transformValue($value) {
-		if ($value === NULL) {
-			return NULL;
-		}
-
 		$transformedValue = NULL;
 
 		switch ($this->dataType) {
