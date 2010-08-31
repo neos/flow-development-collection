@@ -64,21 +64,14 @@ class Context {
 	protected $request;
 
 	/**
-	 * TRUE if separateActiveAndInactiveTokens has been called
-	 * @var boolean
-	 * @transient
-	 */
-	protected $separateTokensPerformed = FALSE;
-
-	/**
 	 * @var F3\FLOW3\Object\ObjectManagerInterface
 	 */
-	protected $objectManager = NULL;
+	protected $objectManager;
 
 	/**
 	 * @var F3\FLOW3\Security\Authentication\AuthenticationManagerInterface
 	 */
-	protected $authenticationManager = NULL;
+	protected $authenticationManager;
 
 	/**
 	 * @var \F3\FLOW3\Security\Policy\PolicyService
@@ -145,6 +138,7 @@ class Context {
 
 		$this->updateTokens($mergedTokens);
 		$this->tokens = $mergedTokens;
+		$this->separateActiveAndInactiveTokens();
 	}
 
 	/**
@@ -166,7 +160,6 @@ class Context {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getAuthenticationTokens() {
-		$this->separateActiveAndInactiveTokens();
 		return $this->activeTokens;
 	}
 
@@ -180,8 +173,6 @@ class Context {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getAuthenticationTokensOfType($className) {
-		$this->separateActiveAndInactiveTokens();
-
 		$activeTokens = array();
 		foreach ($this->activeTokens as $token) {
 			if (($token instanceof $className) === FALSE) continue;
@@ -284,7 +275,6 @@ class Context {
 		$this->activeTokens = NULL;
 		$this->inactiveTokens = NULL;
 		$this->request = NULL;
-		$this->separateTokensPerformed = FALSE;
 		$this->authenticateAllTokens = FALSE;
 	}
 
@@ -295,28 +285,24 @@ class Context {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function separateActiveAndInactiveTokens() {
-		if ($this->separateTokensPerformed === FALSE) {
-			$this->separateTokensPerformed = TRUE;
+		foreach ($this->tokens as $token) {
+			if ($token->hasRequestPatterns()) {
 
-			foreach ($this->tokens as $token) {
-				if ($token->hasRequestPatterns()) {
+				$requestPatterns = $token->getRequestPatterns();
+				$tokenIsActive = TRUE;
 
-					$requestPatterns = $token->getRequestPatterns();
-					$tokenIsActive = TRUE;
-
-					foreach ($requestPatterns as $requestPattern) {
-						if ($requestPattern->canMatch($this->request)) {
-							$tokenIsActive &= $requestPattern->matchRequest($this->request);
-						}
+				foreach ($requestPatterns as $requestPattern) {
+					if ($requestPattern->canMatch($this->request)) {
+						$tokenIsActive &= $requestPattern->matchRequest($this->request);
 					}
-					if ($tokenIsActive) {
-						$this->activeTokens[] = $token;
-					} else {
-						$this->inactiveTokens[] = $token;
-					}
-				} else {
-					$this->activeTokens[] = $token;
 				}
+				if ($tokenIsActive) {
+					$this->activeTokens[] = $token;
+				} else {
+					$this->inactiveTokens[] = $token;
+				}
+			} else {
+				$this->activeTokens[] = $token;
 			}
 		}
 	}

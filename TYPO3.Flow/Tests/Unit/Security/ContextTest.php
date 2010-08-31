@@ -40,12 +40,30 @@ class ContextTest extends \F3\Testing\BaseTestCase {
 
 		$mockAuthenticationManager->expects($this->any())->method('getTokens')->will($this->returnValue(array()));
 
-		$securityContext = $this->getAccessibleMock('F3\FLOW3\Security\Context', array('dummy'));
+		$securityContext = $this->getAccessibleMock('F3\FLOW3\Security\Context', array('separateActiveAndInactiveTokens'));
 		$securityContext->injectAuthenticationManager($mockAuthenticationManager);
 
 		$securityContext->initialize($mockRequest);
 
 		$this->assertSame($mockRequest, $securityContext->_get('request'));
+	}
+
+	/**
+	 * @test
+	 * @category unit
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function initializeSeparatesActiveAndInactiveTokens() {
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\RequestInterface');
+		$mockAuthenticationManager = $this->getMock('F3\FLOW3\Security\Authentication\AuthenticationManagerInterface');
+
+		$mockAuthenticationManager->expects($this->any())->method('getTokens')->will($this->returnValue(array()));
+
+		$securityContext = $this->getAccessibleMock('F3\FLOW3\Security\Context', array('separateActiveAndInactiveTokens'));
+		$securityContext->expects($this->once())->method('separateActiveAndInactiveTokens');
+		$securityContext->injectAuthenticationManager($mockAuthenticationManager);
+
+		$securityContext->initialize($mockRequest);
 	}
 
 	/**
@@ -261,6 +279,7 @@ class ContextTest extends \F3\Testing\BaseTestCase {
 		$securityContext->injectSettings($settings);
 		$securityContext->_set('tokens', array($token1, $token2, $token3, $token4, $token5, $token6));
 		$securityContext->_set('request', $request);
+		$securityContext->_call('separateActiveAndInactiveTokens');
 
 		$this->assertEquals(array($token1, $token2, $token4, $token6), $securityContext->getAuthenticationTokens());
 	}
@@ -342,6 +361,7 @@ class ContextTest extends \F3\Testing\BaseTestCase {
 		$securityContext->injectSettings($settings);
 		$securityContext->_set('tokens', array($token1, $token2, $token3, $token4, $token5, $token6));
 		$securityContext->_set('request', $request);
+		$securityContext->_call('separateActiveAndInactiveTokens');
 
 		$this->assertEquals(array($token1), $securityContext->getAuthenticationTokensOfType($authenticationToken1ClassName));
 		$this->assertEquals(array(), $securityContext->getAuthenticationTokensOfType($authenticationToken3ClassName));
@@ -446,6 +466,7 @@ class ContextTest extends \F3\Testing\BaseTestCase {
 		$securityContext->injectObjectManager($mockObjectManager);
 		$securityContext->_set('tokens', array($token1, $token2, $token3, $token4, $token5, $token6));
 		$securityContext->_set('request', $request);
+		$securityContext->_call('separateActiveAndInactiveTokens');
 
 		$expectedResult = array($everybodyRole, $role1, $role11, $role2, $role6);
 
