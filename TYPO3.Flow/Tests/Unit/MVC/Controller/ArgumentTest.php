@@ -176,7 +176,6 @@ class ArgumentTest extends \F3\Testing\BaseTestCase {
 		$argument->setValue('e104e469-9030-4b98-babf-3990f07dd3f1');
 
 		$this->assertSame($object, $argument->_get('value'));
-		$this->assertSame(\F3\FLOW3\MVC\Controller\Argument::ORIGIN_PERSISTENCE, $argument->getOrigin());
 	}
 
 	/**
@@ -197,7 +196,6 @@ class ArgumentTest extends \F3\Testing\BaseTestCase {
 		$argument->setValue(array('foo' => 'bar'));
 
 		$this->assertSame($object, $argument->_get('value'));
-		$this->assertSame(\F3\FLOW3\MVC\Controller\Argument::ORIGIN_PERSISTENCE_AND_MODIFIED, $argument->getOrigin());
 	}
 
 	/**
@@ -235,7 +233,6 @@ class ArgumentTest extends \F3\Testing\BaseTestCase {
 
 		$argument->setValue(array('title' => 'Hello'));
 		$this->assertSame($object, $argument->_get('value'));
-		$this->assertSame(\F3\FLOW3\MVC\Controller\Argument::ORIGIN_NEWLY_CREATED, $argument->getOrigin());
 	}
 
 	/**
