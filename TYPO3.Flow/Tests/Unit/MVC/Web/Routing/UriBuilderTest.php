@@ -73,6 +73,7 @@ class UriBuilderTest extends \F3\Testing\BaseTestCase {
 			->setFormat('TestFormat')
 			->setCreateAbsoluteUri(TRUE)
 			->setAddQueryString(TRUE)
+			->setArgumentPrefix('argPrefix')
 			->setArgumentsToBeExcludedFromQueryString(array('test' => 'addQueryStringExcludeArguments'));
 
 		$this->assertEquals(array('test' => 'arguments'), $this->uriBuilder->getArguments());
@@ -80,6 +81,7 @@ class UriBuilderTest extends \F3\Testing\BaseTestCase {
 		$this->assertEquals('testformat', $this->uriBuilder->getFormat());
 		$this->assertEquals(TRUE, $this->uriBuilder->getCreateAbsoluteUri());
 		$this->assertEquals(TRUE, $this->uriBuilder->getAddQueryString());
+		$this->assertEquals('argPrefix', $this->uriBuilder->getArgumentPrefix());
 		$this->assertEquals(array('test' => 'addQueryStringExcludeArguments'), $this->uriBuilder->getArgumentsToBeExcludedFromQueryString());
 	}
 
@@ -156,6 +158,20 @@ class UriBuilderTest extends \F3\Testing\BaseTestCase {
 
 		$this->uriBuilder->setFormat('SomeFormat');
 		$this->uriBuilder->uriFor(NULL, array(), 'SomeController', 'SomePackage');
+		$this->assertEquals($expectedArguments, $this->uriBuilder->getArguments());
+	}
+
+	/**
+	 * @test
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function uriForPrefixesControllerArgumentsIfSpecified() {
+		$expectedArguments = array(
+			'somePrefix' => array('arg1' => 'val1', '@action' => 'someaction', '@controller' => 'somecontroller', '@package' => 'somepackage')
+		);
+
+		$this->uriBuilder->setArgumentPrefix('somePrefix');
+		$this->uriBuilder->uriFor('SomeAction', array('arg1' => 'val1'), 'SomeController', 'SomePackage');
 		$this->assertEquals($expectedArguments, $this->uriBuilder->getArguments());
 	}
 
@@ -254,6 +270,7 @@ class UriBuilderTest extends \F3\Testing\BaseTestCase {
 			->setFormat('someFormat')
 			->setCreateAbsoluteUri(TRUE)
 			->setAddQueryString(TRUE)
+			->setArgumentPrefix('someArgumentPrefix')
 			->setArgumentsToBeExcludedFromQueryString(array('test' => 'addQueryStringExcludeArguments'));
 
 		$this->uriBuilder->reset();
@@ -263,6 +280,7 @@ class UriBuilderTest extends \F3\Testing\BaseTestCase {
 		$this->assertEquals('', $this->uriBuilder->getFormat());
 		$this->assertEquals(FALSE, $this->uriBuilder->getCreateAbsoluteUri());
 		$this->assertEquals(FALSE, $this->uriBuilder->getAddQueryString());
+		$this->assertEquals('someArgumentPrefix', $this->uriBuilder->getArgumentPrefix());
 		$this->assertEquals(array(), $this->uriBuilder->getArgumentsToBeExcludedFromQueryString());
 	}
 
