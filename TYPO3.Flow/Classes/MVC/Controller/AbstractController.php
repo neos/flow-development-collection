@@ -210,12 +210,22 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 		$this->request->setDispatched(TRUE);
 		$this->response = $response;
 
-		$this->uriBuilder = $this->objectManager->create('F3\FLOW3\MVC\Web\Routing\UriBuilder');
-		$this->uriBuilder->setRequest($request);
+		$this->initializeUriBuilder();
 
 		$this->initializeControllerArgumentsBaseValidators();
 		$this->mapRequestArgumentsToControllerArguments();
 		$this->controllerContext = $this->objectManager->create('F3\FLOW3\MVC\Controller\ControllerContext', $this->request, $this->response, $this->arguments, $this->argumentsMappingResults, $this->uriBuilder, $this->flashMessageContainer);
+	}
+
+	/**
+	 * Initialize the URI builder in $this->uriBuilder
+	 *
+	 * @return void
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	protected function initializeUriBuilder() {
+		$this->uriBuilder = $this->objectManager->create('F3\FLOW3\MVC\Web\Routing\UriBuilder');
+		$this->uriBuilder->setRequest($this->request);
 	}
 
 	/**
