@@ -82,38 +82,26 @@ class RequestDispatchingAspect {
 	 * @return mixed Result of the advice chain
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function blockIllegalRequests(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function blockIllegalRequestsAndForwardToAuthenticationEntryPoints(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$request = $joinPoint->getMethodArgument('request');
 		$this->firewall->blockIllegalRequests($request);
-		return $joinPoint->getAdviceChain()->proceed($joinPoint);
-	}
 
-	/**
-	 * Catches AuthenticationRequired Exceptions and tries to call an authentication entry point,
-	 * if available.
-	 *
-	 * @afterthrowing method(F3\FLOW3\MVC\Dispatcher->dispatch()) && setting(FLOW3.security.enable)
-	 * @param F3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
-	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function forwardAuthenticationRequiredExceptionsToAnAuthenticationEntryPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
-		$exception = $joinPoint->getException();
-		$request = $joinPoint->getMethodArgument('request');
-		$response = $joinPoint->getMethodArgument('response');
+		try {
+			return $joinPoint->getAdviceChain()->proceed($joinPoint);
+		} catch (\F3\FLOW3\Security\Exception\AuthenticationRequiredException $exception) {
+			$response = $joinPoint->getMethodArgument('response');
 
-		if (!$exception instanceof \F3\FLOW3\Security\Exception\AuthenticationRequiredException) throw $exception;
+			$entryPointFound = FALSE;
+			foreach ($this->securityContext->getAuthenticationTokens() as $token) {
+				$entryPoint = $token->getAuthenticationEntryPoint();
 
-		$entryPointFound = FALSE;
-		foreach ($this->securityContext->getAuthenticationTokens() as $token) {
-			$entryPoint = $token->getAuthenticationEntryPoint();
-
-			if ($entryPoint !== NULL && $entryPoint->canForward($request)) {
-				$entryPointFound = TRUE;
-				$entryPoint->startAuthentication($request, $response);
+				if ($entryPoint !== NULL && $entryPoint->canForward($request)) {
+					$entryPointFound = TRUE;
+					$entryPoint->startAuthentication($request, $response);
+				}
 			}
+			if ($entryPointFound === FALSE) throw $exception;
 		}
-		if ($entryPointFound === FALSE) throw $exception;
 	}
 }
 ?>
