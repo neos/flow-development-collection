@@ -44,7 +44,9 @@ class ApcBackendTest extends \F3\Testing\BaseTestCase {
 		if (!extension_loaded('apc') || ini_get('apc.enabled') == 0) {
 			$this->markTestSkipped('APC extension was not available');
 		}
-
+		if (ini_get('apc.slam_defense') == 1) {
+			$this->markTestSkipped('This testcase can only be executed with apc.slam_defense = Off');
+		}
 		$this->environment = new \F3\FLOW3\Utility\Environment();
 	}
 
