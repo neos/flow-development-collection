@@ -81,6 +81,13 @@ class ReflectionService {
 	protected $interfaceImplementations = array();
 
 	/**
+	 * Names of classes and an array of interfaces implemented by them
+	 *
+	 * @var array
+	 */
+	protected $interfacesImplementedByClass = array();
+
+	/**
 	 * Names of classes which are abstract
 	 *
 	 * @var array
@@ -366,15 +373,15 @@ class ReflectionService {
 	 * @param string $className Name of the class
 	 * @return array An array of interface names
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function getInterfaceNamesImplementedByClass($className) {
-		if (!isset($this->reflectedClassNames[$className])) $this->reflectClass($className);
-		$interfaceNamesFound = array();
-		foreach ($this->interfaceImplementations as $interfaceName => $classNames) {
-			if (array_search($className, $classNames) !== FALSE) $interfaceNamesFound[] = $interfaceName;
+		if (!isset($this->interfacesImplementedByClass[$className])) {
+			$class = new \ReflectionClass($className);
+			$this->interfacesImplementedByClass[$className] = $class->getInterfaceNames();
 		}
-		return $interfaceNamesFound;
+		return $this->interfacesImplementedByClass[$className];
 	}
 
 	/**
