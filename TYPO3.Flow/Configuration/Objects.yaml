@@ -339,6 +339,18 @@ F3\FLOW3\Log\SystemLoggerInterface:
       setting: FLOW3.log.systemLogger.backend
     4:
       setting: FLOW3.log.systemLogger.backendOptions
+F3\FLOW3\Log\SecurityLoggerInterface:
+  autowiring: off
+  factoryObjectName: F3\FLOW3\Log\LoggerFactory
+  arguments:
+    1:
+      value: FLOW3_Security
+    2:
+      value: F3\FLOW3\Log\Logger
+    3:
+      setting: FLOW3.log.securityLogger.backend
+    4:
+      setting: FLOW3.log.securityLogger.backendOptions
 
 #                                                                          #
 # Monitor                                                                  #

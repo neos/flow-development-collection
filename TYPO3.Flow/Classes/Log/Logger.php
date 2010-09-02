@@ -29,7 +29,7 @@ namespace F3\FLOW3\Log;
  * @api
  * @scope prototype
  */
-class Logger implements \F3\FLOW3\Log\SystemLoggerInterface {
+class Logger implements \F3\FLOW3\Log\SystemLoggerInterface, \F3\FLOW3\Log\SecurityLoggerInterface {
 
 	/**
 	 * @var \SplObjectStorage

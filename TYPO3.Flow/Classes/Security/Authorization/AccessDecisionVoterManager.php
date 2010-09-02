@@ -117,10 +117,15 @@ class AccessDecisionVoterManager implements \F3\FLOW3\Security\Authorization\Acc
 			}
 		}
 
-		if ($denyVotes === 0 && $grantVotes > 0) return;
-		if ($denyVotes === 0 && $grantVotes === 0 && $abstainVotes > 0 && $this->allowAccessIfAllAbstain === TRUE) return;
+		if ($denyVotes === 0 && $grantVotes > 0) {
+			return;
+		}
+		if ($denyVotes === 0 && $grantVotes === 0 && $abstainVotes > 0 && $this->allowAccessIfAllAbstain === TRUE) {
+			return;
+		}
 
-		throw new \F3\FLOW3\Security\Exception\AccessDeniedException('Access denied.', 1222268609);
+		$votes = sprintf('(%d denied, %d granted, %d abstained)', $denyVotes, $grantVotes, $abstainVotes);
+		throw new \F3\FLOW3\Security\Exception\AccessDeniedException('Access denied ' . $votes, 1222268609);
 	}
 
 	/**
@@ -152,10 +157,15 @@ class AccessDecisionVoterManager implements \F3\FLOW3\Security\Authorization\Acc
 			}
 		}
 
-		if ($denyVotes === 0 && $grantVotes > 0) return;
-		if ($denyVotes === 0 && $grantVotes === 0 && $abstainVotes > 0 && $this->allowAccessIfAllAbstain === TRUE) return;
+		if ($denyVotes === 0 && $grantVotes > 0) {
+			return;
+		}
+		if ($denyVotes === 0 && $grantVotes === 0 && $abstainVotes > 0 && $this->allowAccessIfAllAbstain === TRUE) {
+			return;
+		}
 
-		throw new \F3\FLOW3\Security\Exception\AccessDeniedException('Access denied.', 1222268609);
+		$votes = sprintf('(%d denied, %d granted, %d abstained)', $denyVotes, $grantVotes, $abstainVotes);
+		throw new \F3\FLOW3\Security\Exception\AccessDeniedException('Access denied ' . $votes, 1283175927);
 	}
 
 	/**

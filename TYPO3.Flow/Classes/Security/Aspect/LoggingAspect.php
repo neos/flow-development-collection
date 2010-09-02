@@ -31,18 +31,21 @@ namespace F3\FLOW3\Security\Aspect;
 class LoggingAspect {
 
 	/**
-	 * @var \F3\FLOW3\Log\SystemLoggerInterface
+	 * @var \F3\FLOW3\Log\SecurityLoggerInterface
 	 */
-	protected $systemLogger;
+	protected $securityLogger;
 
 	/**
-	 * Constructor.
-	 *
-	 * @param \F3\FLOW3\Log\SystemLoggerInterface $systemLogger
+	 * @var boolean
+	 */
+	protected $alreadyLoggedAuthenticateCall = FALSE;
+
+	/**
+	 * @param \F3\FLOW3\Log\SecurityLoggerInterface $securityLogger
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(\F3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
-		$this->systemLogger = $systemLogger;
+	public function injectSecurityLogger(\F3\FLOW3\Log\SecurityLoggerInterface $securityLogger) {
+		$this->securityLogger = $securityLogger;
 	}
 
 	/**
@@ -56,10 +59,11 @@ class LoggingAspect {
 	public function logManagerAuthenticate(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		if ($joinPoint->hasException()) {
 			$exception = $joinPoint->getException();
-			$this->systemLogger->log('Authentication failed: "' . $exception->getMessage() . '" #' . $exception->getCode(), LOG_WARNING);
+			$this->securityLogger->log('Authentication failed: "' . $exception->getMessage() . '" #' . $exception->getCode(), LOG_NOTICE);
 			throw $exception;
-		} else {
-			$this->systemLogger->log('Authentication successful.', LOG_INFO);
+		} elseif ($this->alreadyLoggedAuthenticateCall === FALSE) {
+			$this->securityLogger->log('Successfully re-authenticated tokens for account "' . $joinPoint->getProxy()->getSecurityContext()->getAccount()->getAccountIdentifier() . '"', LOG_INFO);
+			$this->alreadyLoggedAuthenticateCall = TRUE;
 		}
 	}
 
@@ -79,7 +83,7 @@ class LoggingAspect {
 				$accountIdentifiers[] = $account->getAccountIdentifier();
 			}
 		}
-		$this->systemLogger->log('Logged out ' . count($accountIdentifiers) . ' account(s). (' . implode(', ', $accountIdentifiers) . ')', LOG_INFO);
+		$this->securityLogger->log('Logged out ' . count($accountIdentifiers) . ' account(s). (' . implode(', ', $accountIdentifiers) . ')', LOG_INFO);
 	}
 
 	/**
@@ -96,15 +100,36 @@ class LoggingAspect {
 
 		switch ($token->getAuthenticationStatus()) {
 			case \F3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL :
-				$this->systemLogger->log('Successfully authenticated user "' . $credentials['username'] . '".', LOG_INFO, array(), 'FLOW3', 'F3\FLOW3\Security\Authentication\Provider\PersistedUsernamePasswordProvider', 'authenticate');
+				$this->securityLogger->log('Successfully authenticated user "' . $credentials['username'] . '".', LOG_NOTICE, array(), 'FLOW3', 'F3\FLOW3\Security\Authentication\Provider\PersistedUsernamePasswordProvider', 'authenticate');
+				$this->alreadyLoggedAuthenticateCall = TRUE;
 			break;
 			case \F3\FLOW3\Security\Authentication\TokenInterface::WRONG_CREDENTIALS :
-				$this->systemLogger->log('Wrong password given for user "' . $credentials['username'] . '".', LOG_WARNING, array(), 'FLOW3', 'F3\FLOW3\Security\Authentication\Provider\PersistedUsernamePasswordProvider', 'authenticate');
+				$this->securityLogger->log('Wrong password given for user "' . $credentials['username'] . '".', LOG_WARNING, array(), 'FLOW3', 'F3\FLOW3\Security\Authentication\Provider\PersistedUsernamePasswordProvider', 'authenticate');
 			break;
 			case \F3\FLOW3\Security\Authentication\TokenInterface::NO_CREDENTIALS_GIVEN :
-				$this->systemLogger->log('No credentials given or no account found with username "' . $credentials['username'] . '".', LOG_WARNING, array(), 'FLOW3', 'F3\FLOW3\Security\Authentication\Provider\PersistedUsernamePasswordProvider', 'authenticate');
+				$this->securityLogger->log('No credentials given or no account found with username "' . $credentials['username'] . '".', LOG_WARNING, array(), 'FLOW3', 'F3\FLOW3\Security\Authentication\Provider\PersistedUsernamePasswordProvider', 'authenticate');
 			break;
 		}
+	}
+
+	/**
+	 * Logs calls and results of decideOnJoinPoint()
+	 *
+	 * @afterthrowing method(F3\FLOW3\Security\Authorization\AccessDecisionVoterManager->decideOnJoinPoint())
+	 *
+	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function logJoinPointAccessDecisions(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+		$exception = $joinPoint->getException();
+
+		$subjectJoinPoint = $joinPoint->getMethodArgument('joinPoint');
+		$message = $exception->getMessage() . ' to method ' . $subjectJoinPoint->getClassName() . '::' . $subjectJoinPoint->getMethodName() . '().';
+
+		$this->securityLogger->log($message, \LOG_INFO);
+
+		throw $exception;
 	}
 }
 

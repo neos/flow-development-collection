@@ -27,4 +27,6 @@ FLOW3:
 
   log:
     systemLogger:
-      backendOptions: { logFileURL: %FLOW3_PATH_DATA%Logs/%FLOW3_SAPITYPE%/FLOW3_Development.log, createParentDirectories: y, severityThreshold: %LOG_DEBUG% }
+      backendOptions: { logFileURL: %FLOW3_PATH_DATA%Logs/%FLOW3_SAPITYPE%/System_Development.log, createParentDirectories: y, severityThreshold: %LOG_DEBUG% }
+    securityLogger:
+      backendOptions: { logFileURL: %FLOW3_PATH_DATA%Logs/%FLOW3_SAPITYPE%/Security_Development.log, createParentDirectories: y, severityThreshold: %LOG_DEBUG% }

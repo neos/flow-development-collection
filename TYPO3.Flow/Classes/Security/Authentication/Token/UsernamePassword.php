@@ -59,9 +59,14 @@ class UsernamePassword implements \F3\FLOW3\Security\Authentication\TokenInterfa
 	protected $credentials = array('username' => '', 'password' => '');
 
 	/**
-	 * @var F3\FLOW3\Security\Account
+	 * @var \F3\FLOW3\Security\Account
 	 */
 	protected $account;
+
+	/**
+	 * @var \F3\FLOW3\Security\AccountRepository
+	 */
+	protected $accountRepository;
 
 	/**
 	 * @var array The set request patterns
@@ -75,8 +80,6 @@ class UsernamePassword implements \F3\FLOW3\Security\Authentication\TokenInterfa
 	protected $entryPoint = NULL;
 
 	/**
-	 * Injects the object factory
-	 *
 	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager The object factory
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
@@ -86,14 +89,21 @@ class UsernamePassword implements \F3\FLOW3\Security\Authentication\TokenInterfa
 	}
 
 	/**
-	 * Injects the environment
-	 *
 	 * @param \F3\FLOW3\Utility\Environment $environment The current environment object
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectEnvironment(\F3\FLOW3\Utility\Environment $environment) {
 		$this->environment = $environment;
+	}
+
+	/**
+	 * @param \F3\FLOW3\Security\AccountRepository $accountRepository
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectAccountRepository(\F3\FLOW3\Security\AccountRepository $accountRepository) {
+		$this->accountRepository = $accountRepository;
 	}
 
 	/**
@@ -238,9 +248,8 @@ class UsernamePassword implements \F3\FLOW3\Security\Authentication\TokenInterfa
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getRoles() {
-		if ($this->account !== NULL && $this->isAuthenticated()) return $this->account->getRoles();
-
-		return array();
+		$account = $this->getAccount();
+		return ($account !== NULL && $this->isAuthenticated()) ? $account->getRoles() : array();
 	}
 
 	/**
@@ -252,8 +261,9 @@ class UsernamePassword implements \F3\FLOW3\Security\Authentication\TokenInterfa
 	 * @throws F3\FLOW3\Security\Exception\InvalidAuthenticationStatusException
 	 */
 	public function setAuthenticationStatus($authenticationStatus) {
-		if (!in_array($authenticationStatus, array(self::NO_CREDENTIALS_GIVEN, self::WRONG_CREDENTIALS, self::AUTHENTICATION_SUCCESSFUL, self::AUTHENTICATION_NEEDED))) throw new \F3\FLOW3\Security\Exception\InvalidAuthenticationStatusException('Invalid authentication status.', 1237224453);
-
+		if (!in_array($authenticationStatus, array(self::NO_CREDENTIALS_GIVEN, self::WRONG_CREDENTIALS, self::AUTHENTICATION_SUCCESSFUL, self::AUTHENTICATION_NEEDED))) {
+			throw new \F3\FLOW3\Security\Exception\InvalidAuthenticationStatusException('Invalid authentication status.', 1237224453);
+		}
 		$this->authenticationStatus = $authenticationStatus;
 	}
 
@@ -261,6 +271,7 @@ class UsernamePassword implements \F3\FLOW3\Security\Authentication\TokenInterfa
 	 * Returns the current authentication status
 	 *
 	 * @return integer One of NO_CREDENTIALS_GIVEN, WRONG_CREDENTIALS, AUTHENTICATION_SUCCESSFUL, AUTHENTICATION_NEEDED
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getAuthenticationStatus() {
 		return $this->authenticationStatus;

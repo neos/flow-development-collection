@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Security\Authentication;
+namespace F3\FLOW3\Log;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,45 +23,12 @@ namespace F3\FLOW3\Security\Authentication;
  *                                                                        */
 
 /**
- * Contract for an authentication entry point
+ * Marker interface for the security logger.
  *
- * @author Andreas Förthner <andreas.foerthner@netlogix.de>
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @author Robert Lemke <robert@typo3.org>
  */
-interface EntryPointInterface {
-
-	/**
-	 * Returns TRUE if the given request can be authenticated by the authentication provider
-	 * represented by this entry point
-	 *
-	 * @param \F3\FLOW3\MVC\RequestInterface $request The current request
-	 * @return boolean TRUE if authentication is possible
-	 */
-	public function canForward(\F3\FLOW3\MVC\RequestInterface $request);
-
-	/**
-	 * Sets the options array
-	 *
-	 * @param array $options An array of configuration options
-	 * @return void
-	 */
-	public function setOptions(array $options);
-
-	/**
-	 * Returns the options array
-	 *
-	 * @return array An array of configuration options
-	 */
-	public function getOptions();
-
-	/**
-	 * Starts the authentication. (e.g. redirect to login page or send 401 HTTP header)
-	 *
-	 * @param \F3\FLOW3\MVC\RequestInterface $request The current request
-	 * @param \F3\FLOW3\MVC\ResponseInterface $response The current response
-	 * @return void
-	 */
-	public function startAuthentication(\F3\FLOW3\MVC\RequestInterface $request, \F3\FLOW3\MVC\ResponseInterface $response);
+interface SecurityLoggerInterface extends \F3\FLOW3\Log\LoggerInterface {
 }
 
 ?>

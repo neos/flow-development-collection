@@ -60,6 +60,16 @@ class WebRedirect implements \F3\FLOW3\Security\Authentication\EntryPointInterfa
 	}
 
 	/**
+	 * Returns the options array
+	 *
+	 * @return array The configuration options of this entry point
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getOptions() {
+		return $this->options;
+	}
+
+	/**
 	 * Starts the authentication: Redirect to login page
 	 *
 	 * @param \F3\FLOW3\MVC\RequestInterface $request The current request

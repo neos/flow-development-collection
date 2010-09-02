@@ -60,13 +60,20 @@ class Policy implements \F3\FLOW3\Security\Authorization\AccessDecisionVoterInte
 			$privileges = $this->policyService->getPrivilegesForJoinPoint($role, $joinPoint);
 
 			foreach ($privileges as $privilege) {
-				if ($privilege === \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT) $accessGrants++;
-				else $accessDenies++;
+				if ($privilege === \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT) {
+					$accessGrants++;
+				} else {
+					$accessDenies++;
+				}
 			}
 		}
 
-		if ($accessDenies > 0) return self::VOTE_DENY;
-		if ($accessGrants > 0) return self::VOTE_GRANT;
+		if ($accessDenies > 0) {
+			return self::VOTE_DENY;
+		}
+		if ($accessGrants > 0) {
+			return self::VOTE_GRANT;
+		}
 
 		return self::VOTE_ABSTAIN;
 	}

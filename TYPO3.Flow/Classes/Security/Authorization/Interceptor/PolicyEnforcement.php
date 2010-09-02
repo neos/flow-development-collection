@@ -83,9 +83,7 @@ class PolicyEnforcement implements \F3\FLOW3\Security\Authorization\InterceptorI
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function invoke() {
-
 		$this->authenticationManager->authenticate();
-
 		$this->accessDecisionManager->decideOnJoinPoint($this->joinPoint);
 	}
 }

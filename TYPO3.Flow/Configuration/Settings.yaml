@@ -50,15 +50,25 @@ FLOW3:
 
   log:
 
-    # Settings for FLOW3's default system logger
+    # Settings for FLOW3's default loggers
     systemLogger:
       backend: F3\FLOW3\Log\Backend\FileBackend
       backendOptions:
-         logFileURL: %FLOW3_PATH_DATA%Logs/%FLOW3_SAPITYPE%/FLOW3_Production.log
+         logFileURL: %FLOW3_PATH_DATA%Logs/%FLOW3_SAPITYPE%/System.log
          createParentDirectories: y
          severityThreshold: %LOG_INFO%
          maximumLogFileSize: 10485760
          logFilesToKeep: 1
+
+    securityLogger:
+      backend: F3\FLOW3\Log\Backend\FileBackend
+      backendOptions:
+         logFileURL: %FLOW3_PATH_DATA%Logs/%FLOW3_SAPITYPE%/Security.log
+         createParentDirectories: y
+         severityThreshold: %LOG_INFO%
+         maximumLogFileSize: 10485760
+         logFilesToKeep: 1
+         logIpAddress: y
 
   locale:
 

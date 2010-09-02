@@ -31,6 +31,19 @@ namespace F3\FLOW3\Security\Authentication;
 class AuthenticationProviderManager implements \F3\FLOW3\Security\Authentication\AuthenticationManagerInterface {
 
 	/**
+	 * @var \F3\FLOW3\Log\SecurityLoggerInterface
+	 */
+	protected $securityLogger;
+
+	/**
+	 * @param \F3\FLOW3\Log\SecurityLoggerInterface $securityLogger
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectSecurityLogger(\F3\FLOW3\Log\SecurityLoggerInterface $securityLogger) {
+		$this->securityLogger = $securityLogger;
+	}
+
+	/**
 	 * The object manager
 	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 */
@@ -169,8 +182,12 @@ class AuthenticationProviderManager implements \F3\FLOW3\Security\Authentication
 				}
 			}
 
-			if ($token->isAuthenticated() && !$this->securityContext->authenticateAllTokens()) return;
-			if (!$token->isAuthenticated() && $this->securityContext->authenticateAllTokens()) throw new \F3\FLOW3\Security\Exception\AuthenticationRequiredException('Could not authenticate all tokens, but authenticateAllTokens was set to TRUE.', 1222203912);
+			if ($token->isAuthenticated() && !$this->securityContext->authenticateAllTokens()) {
+				return;
+			}
+			if (!$token->isAuthenticated() && $this->securityContext->authenticateAllTokens()) {
+				throw new \F3\FLOW3\Security\Exception\AuthenticationRequiredException('Could not authenticate all tokens, but authenticateAllTokens was set to TRUE.', 1222203912);
+			}
 			$allTokensAreAuthenticated &= $token->isAuthenticated();
 		}
 		if (!$allTokensAreAuthenticated) {
