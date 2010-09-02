@@ -993,9 +993,9 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 
 		$orderings = array();
 		$propertyData = $this->reflectionService->getClassSchema($query->getType())->getProperties();
+		$sql['tables'][] = 'LEFT JOIN "properties" ON "_entity"."identifier" = "properties"."parent"';
 		foreach ($query->getOrderings() as $propertyName => $order) {
-			$sql['fields'][] = '"_orderingtable' . count($orderings) . '"."' . $propertyName . '"';
-			$sql['tables'][] = 'LEFT JOIN (SELECT "parent", "' . $this->getTypeName($propertyData[$propertyName]['elementType'] ?: $propertyData[$propertyName]['type']) . '" AS "' . $propertyName . '" FROM "properties_data" WHERE "name" = ' . $this->databaseHandle->quote($propertyName) . ') AS "_orderingtable' . count($orderings) . '" ON "_orderingtable' . count($orderings) . '"."parent" = "d"."parent"';
+			$sql['tables'][] = 'LEFT JOIN (SELECT "parent", "' . $this->getTypeName($propertyData[$propertyName]['elementType'] ?: $propertyData[$propertyName]['type']) . '" AS "' . $propertyName . '" FROM "properties_data" WHERE "name" = ' . $this->databaseHandle->quote($propertyName) . ') AS "_orderingtable' . count($orderings) . '" ON "_orderingtable' . count($orderings) . '"."parent" = "properties"."parent"';
 			$orderings[] = '"_orderingtable' . count($orderings) . '"."' . $propertyName . '" ' . $order;
 		}
 		$sql['orderings'] = implode(', ', $orderings);
