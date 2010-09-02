@@ -62,6 +62,7 @@ class RestController extends \F3\FLOW3\MVC\Controller\ActionController {
 		if ($this->request->getControllerActionName() === 'index') {
 			$actionName = 'index';
 			switch ($this->request->getMethod()) {
+				case 'HEAD':
 				case 'GET' :
 					$actionName = ($this->request->hasArgument($this->resourceArgumentName)) ? 'show' : 'list';
 				break;
