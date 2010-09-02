@@ -83,6 +83,11 @@ class UriBuilder {
 	protected $format = '';
 
 	/**
+	 * @var string
+	 */
+	protected $argumentPrefix = NULL;
+
+	/**
 	 * Injects the Router
 	 *
 	 * @param \F3\FLOW3\MVC\Web\Routing\RouterInterface $router
@@ -262,6 +267,26 @@ class UriBuilder {
 	}
 
 	/**
+	 * Specifies the prefix to be used for all arguments.
+	 *
+	 * @param string $argumentPrefix
+	 * @return \F3\FLOW3\MVC\Web\Routing\UriBuilder the current UriBuilder to allow method chaining
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function setArgumentPrefix($argumentPrefix) {
+		$this->argumentPrefix = (string)$argumentPrefix;
+		return $this;
+	}
+
+	/**
+	 * @return string
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function getArgumentPrefix() {
+		return $this->argumentPrefix;
+	}
+
+	/**
 	 * Returns the arguments being used for the last URI being built.
 	 * This is only set after build() / uriFor() has been called.
 	 *
@@ -325,6 +350,11 @@ class UriBuilder {
 		if ($this->format !== '') {
 			$controllerArguments['@format'] = $this->format;
 		}
+
+		if ($this->argumentPrefix !== NULL) {
+			$controllerArguments = array($this->argumentPrefix => $controllerArguments);
+		}
+
 		$this->arguments = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($this->arguments, $controllerArguments);
 
 		return $this->build();
