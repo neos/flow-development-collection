@@ -305,7 +305,13 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 				throw new \F3\FLOW3\Persistence\Exception('ArrayObject properties are not supported - missing feature?!?', 1283524355);
 			}
 
-			$this->checkType($propertyType, $propertyValue);
+			if (is_object($propertyValue)) {
+				if (!($propertyValue instanceof $propertyType)) {
+					throw new \F3\FLOW3\Persistence\Exception\UnexpectedTypeException('Expected property of type ' . $propertyType . ', but got ' . get_class($propertyValue) . ' for ' . $object->FLOW3_AOP_Proxy_getProxyTargetClassName() . '::' . $propertyName, 1244465558);
+				}
+			} elseif ($propertyValue !== NULL && $propertyType !== $this->getType($propertyValue)) {
+				throw new \F3\FLOW3\Persistence\Exception\UnexpectedTypeException('Expected property of type ' . $propertyType . ', but got ' . gettype($propertyValue) . ' for ' . $object->FLOW3_AOP_Proxy_getProxyTargetClassName() . '::' . $propertyName, 1244465559);
+			}
 
 				// handle all objects now, because even clean ones need to be traversed
 				// as dirty checking is not recursive

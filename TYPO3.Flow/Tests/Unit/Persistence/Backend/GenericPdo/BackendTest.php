@@ -467,39 +467,6 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function persistObjectCallsCheckPropertyType() {
-		$className = 'SomeClass' . uniqid();
-		$fullClassName = 'F3\\FLOW3\Persistence\\Tests\\' . $className;
-		$identifier = \F3\FLOW3\Utility\Algorithms::generateUUID();
-		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $className . ' {
-			public $simpleString = \'simpleValue\';
-			protected $dirty = TRUE;
-			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return \'' . $fullClassName . '\'; }
-			public function FLOW3_AOP_Proxy_getProperty($propertyName) { return $this->$propertyName; }
-		}');
-		$object = new $fullClassName();
-
-		$classSchema = new \F3\FLOW3\Reflection\ClassSchema($fullClassName);
-		$classSchema->setModelType(\F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY);
-		$classSchema->addProperty('simpleString', 'string');
-		$persistenceSession = new \F3\FLOW3\Persistence\Session();
-		$persistenceSession->registerObject($object, $identifier);
-
-		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('checkType', 'setProperties', 'emitPersistedObject'));
-		$backend->injectPersistenceSession($persistenceSession);
-		$backend->injectValidatorResolver($this->getMock('F3\FLOW3\Validation\ValidatorResolver', array(), array(), '', FALSE));
-		$backend->_set('visitedDuringPersistence', new \SplObjectStorage());
-		$backend->_set('classSchemata', array($fullClassName => $classSchema));
-
-			// ... and here we go
-		$backend->expects($this->once())->method('checkType')->with('string', 'simpleValue');
-		$backend->_call('persistObject', $object);
-	}
-
-	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
 	public function valueObjectsAreStoredOnceAndReusedAsNeeded() {
 			// set up objects
 		$A = new \F3\TYPO3CR\Tests\Fixtures\AnEntity('A');

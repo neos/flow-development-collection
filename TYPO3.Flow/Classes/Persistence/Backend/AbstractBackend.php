@@ -272,30 +272,6 @@ abstract class AbstractBackend implements \F3\FLOW3\Persistence\Backend\BackendI
 	}
 
 	/**
-	 * Checks a value given against the expected type. If not matching, an
-	 * UnexpectedType exception is thrown. NULL is always considered valid.
-	 *
-	 * @param string $expectedType The expected type
-	 * @param mixed $value The value to check
-	 * @return void
-	 * @throws \F3\FLOW3\Persistence\Exception\UnexpectedTypeException
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	protected function checkType($expectedType, $value) {
-		if ($value === NULL) {
-			return;
-		}
-
-		if (is_object($value)) {
-			if (!($value instanceof $expectedType)) {
-				throw new \F3\FLOW3\Persistence\Exception\UnexpectedTypeException('Expected property of type ' . $expectedType . ', but got ' . get_class($value), 1244465558);
-			}
-		} elseif ($expectedType !== $this->getType($value)) {
-			throw new \F3\FLOW3\Persistence\Exception\UnexpectedTypeException('Expected property of type ' . $expectedType . ', but got ' . gettype($value), 1244465559);
-		}
-	}
-
-	/**
 	 * Checks whether the given object is contained in the array. This checks
 	 * for object identity in terms of the persistence layer, i.e. the UUID,
 	 * when comparing entities.
