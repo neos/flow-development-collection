@@ -306,7 +306,12 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 			}
 
 			if (is_object($propertyValue)) {
-				if (!($propertyValue instanceof $propertyType)) {
+				if ($propertyType === 'object') {
+					if (!($propertyValue instanceof \F3\FLOW3\AOP\ProxyInterface)) {
+						throw new \F3\FLOW3\Persistence\Exception\IllegalObjectTypeException('Property of generic type object holds "' . get_class($propertyValue) . '", which is not persistable (no @entity or @valueobject), in ' . $object->FLOW3_AOP_Proxy_getProxyTargetClassName() . '::' . $propertyName, 1283531761);
+					}
+					$propertyType = $propertyValue->FLOW3_AOP_Proxy_getProxyTargetClassName();
+				} elseif(!($propertyValue instanceof $propertyType)) {
 					throw new \F3\FLOW3\Persistence\Exception\UnexpectedTypeException('Expected property of type ' . $propertyType . ', but got ' . get_class($propertyValue) . ' for ' . $object->FLOW3_AOP_Proxy_getProxyTargetClassName() . '::' . $propertyName, 1244465558);
 				}
 			} elseif ($propertyValue !== NULL && $propertyType !== $this->getType($propertyValue)) {

@@ -32,7 +32,7 @@ class TypeHandling {
 	/**
 	 * A property type parse pattern.
 	 */
-	const PARSE_TYPE_PATTERN = '/^\\\\?(?P<type>integer|int|float|double|boolean|bool|string|DateTime|F3\\\\[a-zA-Z0-9\\\\]+|array|ArrayObject|SplObjectStorage)(?:<\\\\?(?P<elementType>[a-zA-Z0-9\\\\]+)>)?/';
+	const PARSE_TYPE_PATTERN = '/^\\\\?(?P<type>integer|int|float|double|boolean|bool|string|DateTime|F3\\\\[a-zA-Z0-9\\\\]+|object|array|ArrayObject|SplObjectStorage)(?:<\\\\?(?P<elementType>[a-zA-Z0-9\\\\]+)>)?/';
 
 	/**
 	 * A type pattern to detect literal types.
