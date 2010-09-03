@@ -301,6 +301,10 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 			$propertyValue = $object->FLOW3_AOP_Proxy_getProperty($propertyName);
 			$propertyType = $propertyMetaData['type'];
 
+			if ($propertyType === 'ArrayObject') {
+				throw new \F3\FLOW3\Persistence\Exception('ArrayObject properties are not supported - missing feature?!?', 1283524355);
+			}
+
 			$this->checkType($propertyType, $propertyValue);
 
 				// handle all objects now, because even clean ones need to be traversed
@@ -401,6 +405,8 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 				);
 			} elseif ($value instanceof \SplObjectStorage) {
 				throw new \F3\FLOW3\Persistence\Exception('SplObjectStorage instances in arrays are not supported - missing feature?!?', 1261048721);
+			} elseif ($value instanceof \ArrayObject) {
+				throw new \F3\FLOW3\Persistence\Exception('ArrayObject instances in arrays are not supported - missing feature?!?', 1283524345);
 			} elseif (is_object($value)) {
 				$values[] = array(
 					'type' => $this->getType($value),
@@ -503,6 +509,10 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 					'index' => NULL,
 					'value' => $object->getTimestamp()
 				);
+			} elseif ($object instanceof \SplObjectStorage) {
+				throw new \F3\FLOW3\Persistence\Exception('SplObjectStorage instances in SplObjectStorage are not supported - missing feature?!?', 1283524360);
+			} elseif ($object instanceof \ArrayObject) {
+				throw new \F3\FLOW3\Persistence\Exception('ArrayObject instances in SplObjectStorage are not supported - missing feature?!?', 1283524350);
 			} else {
 				$values[] = array(
 					'type' => $this->getType($object),
