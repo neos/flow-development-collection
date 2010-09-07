@@ -310,7 +310,7 @@
         provider:<example>
             <title>Add a new username/password account</title>
 
-            <programlisting language="php">$account = $this-&gt;objectFactory-&gt;create('F3\FLOW3\Security\Account');
+            <programlisting language="php">$account = $this-&gt;objectManager-&gt;create('F3\FLOW3\Security\Account');
 
 $username = 'andi';
 $password = 'secret';
@@ -319,7 +319,7 @@ $salt = 'someRandomSalt';
 $credentials = md5(md5($password) . $salt) . ',' . $salt;
 
 $roles = array(
-  $this-&gt;objectFactory-&gt;create('F3\FLOW3\Security\Policy\Role', 'Administrator'),
+  $this-&gt;objectManager-&gt;create('F3\FLOW3\Security\Policy\Role', 'Administrator'),
 );
 
 $account-&gt;setAccountIdentifier($username);
@@ -339,8 +339,8 @@ $this-&gt;accountRepository-&gt;add($account);</programlisting>
         explained in the according section below.</para>
 
         <note>
-          <para>This example expects the object factory and the account
-          repository to be in <literal>$this-&gt;objectFactory</literal> and
+          <para>This example expects the object manager and the account
+          repository to be in <literal>$this-&gt;objectManager</literal> and
           <literal>$this-&gt;accountRepository</literal> respectively. If you
           use this snippet in an action controller, the object factory will be
           there already and the account repository can be injected very easily

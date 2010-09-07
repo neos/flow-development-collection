@@ -434,7 +434,7 @@ public function getContextName() {
           global namespace inside namespaced code by using a leading
           backslash. When referencing a class name inside a string (e.g. given
           to the <methodname>create</methodname>-Method of the
-          <classname>ObjectFactory</classname>, in pointcut expressions or in
+          <classname>ObjectManager</classname>, in pointcut expressions or in
           YAML files), never use a leading backslash. This follows the native
           PHP notion of names in strings always being seen as fully
           qualified.</para>

@@ -110,7 +110,7 @@
    public function importImageAction($imagePathAndFilename) {
       $newResource = $this-&gt;resourceManager-&gt;importResource($imagePathAndFilename);
       
-      $newImage = $this-&gt;objectFactory-&gt;create('F3\MyPackage\Domain\Model\Image');
+      $newImage = $this-&gt;objectManager-&gt;create('F3\MyPackage\Domain\Model\Image');
       $newImage-&gt;setOriginalResource($newResource);
 
       $this-&gt;imageRepository-&gt;add($newImage);
