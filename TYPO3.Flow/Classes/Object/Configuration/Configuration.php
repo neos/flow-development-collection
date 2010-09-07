@@ -161,7 +161,9 @@ class Configuration {
 	 * @return void
 	 */
 	public function setFactoryObjectName($className) {
-		if (!class_exists($className, TRUE)) throw new \F3\FLOW3\Object\Exception\InvalidClassException('"' . $className . '" is not a valid class name or a class of that name does not exist.', 1229697796);
+		if (!class_exists($className, TRUE)) {
+			throw new \F3\FLOW3\Object\Exception\InvalidClassException('"' . $className . '" is not a valid class name or a class of that name does not exist.', 1229697796);
+		}
 		$this->factoryObjectName= $className;
 	}
 
@@ -183,7 +185,9 @@ class Configuration {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setFactoryMethodName($methodName) {
-		if (!is_string($methodName) || $methodName === '') throw new \InvalidArgumentException('No valid factory method name specified.', 1229700126);
+		if (!is_string($methodName) || $methodName === '') {
+			throw new \InvalidArgumentException('No valid factory method name specified.', 1229700126);
+		}
 		$this->factoryMethodName = $methodName;
 	}
 
@@ -205,7 +209,6 @@ class Configuration {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setScope($scope) {
-		if ($scope < 1 || $scope > 3) throw new \InvalidArgumentException('Invalid scope', 1264605660);
 		$this->scope = $scope;
 	}
 
@@ -227,12 +230,11 @@ class Configuration {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setAutowiring($autowiring) {
-		if ($autowiring < 0 || $autowiring > 1)  throw new \InvalidArgumentException('Invalid auto wiring mode', 1167824101);
 		$this->autowiring = $autowiring;
 	}
 
 	/**
-	 * Returns the injection arguments / properties autowiring for this object
+	 * Returns the autowiring mode for the configured object
 	 *
 	 * @return integer Value of one of the AUTOWIRING_MODE_* constants
 	 * @author Robert Lemke <robert@typo3.org>
@@ -249,7 +251,6 @@ class Configuration {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setLifecycleInitializationMethodName($lifecycleInitializationMethodName) {
-		if (!is_string($lifecycleInitializationMethodName))  throw new \InvalidArgumentException('Invalid lifecycle initialization method name.', 1172047877);
 		$this->lifecycleInitializationMethodName = $lifecycleInitializationMethodName;
 	}
 
@@ -354,7 +355,9 @@ class Configuration {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getArguments() {
-		if (count($this->arguments) < 1 ) return array();
+		if (count($this->arguments) < 1 ) {
+			return array();
+		}
 
 		asort($this->arguments);
 		$lastArgument = end($this->arguments);

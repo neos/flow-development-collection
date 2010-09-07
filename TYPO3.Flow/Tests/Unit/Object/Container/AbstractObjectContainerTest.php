@@ -397,6 +397,15 @@ class AbstractObjectContainerTest extends \F3\Testing\BaseTestCase {
 		$this->assertSame($expectedObject, $actualObject);
 	}
 
+	/**
+	 * @test
+	 * @expectedException \F3\FLOW3\Object\Exception\UnresolvedDependenciesException
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function throwMissingArgumentExceptionThrowsAnUnresolvedDependencyException() {
+		$container = $this->getAccessibleMock('F3\FLOW3\Object\Container\AbstractObjectContainer', array('c1234'));
+		$container->_call('throwMissingArgumentException', 1);
+	}
 
 }
 ?>

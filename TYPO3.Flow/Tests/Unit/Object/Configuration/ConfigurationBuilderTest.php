@@ -44,7 +44,7 @@ class ConfigurationBuilderTest extends \F3\Testing\BaseTestCase {
 		$configurationArray['factoryMethodName'] = 'manufacture';
 		$configurationArray['lifecycleInitializationMethodName'] = 'initializationMethod';
 		$configurationArray['lifecycleShutdownMethodName'] = 'shutdownMethod';
-		$configurationArray['autowiring'] = FALSE;
+		$configurationArray['autowiring'] = 'off';
 
 		$objectConfiguration = new \F3\FLOW3\Object\Configuration\Configuration('TestObject', __CLASS__);
 		$objectConfiguration->setScope(\F3\FLOW3\Object\Configuration\Configuration::SCOPE_PROTOTYPE);
@@ -53,7 +53,7 @@ class ConfigurationBuilderTest extends \F3\Testing\BaseTestCase {
 		$objectConfiguration->setFactoryMethodName('manufacture');
 		$objectConfiguration->setLifecycleInitializationMethodName('initializationMethod');
 		$objectConfiguration->setLifecycleShutdownMethodName('shutdownMethod');
-		$objectConfiguration->setAutowiring(FALSE);
+		$objectConfiguration->setAutowiring(\F3\FLOW3\Object\Configuration\Configuration::AUTOWIRING_MODE_OFF);
 
 		$builtObjectConfiguration = \F3\FLOW3\Object\Configuration\ConfigurationBuilder::buildFromConfigurationArray('TestObject', $configurationArray, __CLASS__);
 		$this->assertEquals($objectConfiguration, $builtObjectConfiguration, 'The manually created and the built object configuration don\'t match.');

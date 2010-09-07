@@ -55,11 +55,16 @@ class ConfigurationProperty {
 	protected $objectConfiguration = NULL;
 
 	/**
+	 * @var integer
+	 */
+	protected $autowiring = \F3\FLOW3\Object\Configuration\Configuration::AUTOWIRING_MODE_ON;
+
+	/**
 	 * Constructor - sets the name, type and value of the property
 	 *
-	 * @param  string $name Name of the property
-	 * @param  mixed $value Value of the property
-	 * @param  integer $type Type of the property - one of the PROPERTY_TYPE_* constants
+	 * @param string $name Name of the property
+	 * @param mixed $value Value of the property
+	 * @param integer $type Type of the property - one of the PROPERTY_TYPE_* constants
 	 * @param \F3\FLOW3\Object\Configuration\Configuration $objectConfiguration If $type is OBJECT, a custom object configuration may be specified
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -78,9 +83,6 @@ class ConfigurationProperty {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function set($name, $value, $type = self::PROPERTY_TYPES_STRAIGHTVALUE, $objectConfiguration = NULL) {
-		if (!is_string($name)) throw new \InvalidArgumentException('$name must be of type string', 1168003690);
-		if (!is_integer($type) || $type < 0 || $type > 2) throw new \InvalidArgumentException('$type is not valid', 1168003691);
-		if ($objectConfiguration !== NULL && $type !== self::PROPERTY_TYPES_OBJECT) throw new InvalidArgumentException('A custom object configuration has been specified for property "' . $name . '" but the proeprty type is not object.', 1230549771);
 		$this->name = $name;
 		$this->value = $value;
 		$this->type = $type;
@@ -126,6 +128,28 @@ class ConfigurationProperty {
 	public function getObjectConfiguration() {
 		return $this->objectConfiguration;
 	}
+
+	/**
+	 * Sets autowiring for this property
+	 *
+	 * @param integer $autowiring One of the \F3\FLOW3\Object\Configuration\Configuration::AUTOWIRING_MODE_* constants
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setAutowiring($autowiring) {
+		$this->autowiring = $autowiring;
+	}
+
+	/**
+	 * Returns the autowiring mode for this property
+	 *
+	 * @return integer Value of one of the \F3\FLOW3\Object\Configuration\Configuration::AUTOWIRING_MODE_* constants
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getAutowiring() {
+		return $this->autowiring;
+	}
+
 }
 
 ?>

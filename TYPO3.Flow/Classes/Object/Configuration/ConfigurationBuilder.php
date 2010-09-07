@@ -92,7 +92,7 @@ class ConfigurationBuilder {
 				break;
 				case 'autowiring':
 					$methodName = 'set' . ucfirst($optionName);
-					$objectConfiguration->$methodName($optionValue === TRUE);
+					$objectConfiguration->$methodName(self::parseAutowiring($optionValue));
 				break;
 				default:
 					throw new \F3\FLOW3\Object\Exception\InvalidObjectConfigurationException('Invalid configuration option "' . $optionName . '" (source: ' . $objectConfiguration->getConfigurationSourceHint() . ')', 1167574981);
@@ -123,6 +123,27 @@ class ConfigurationBuilder {
 	}
 
 	/**
+	 * Parses the value of the option "autowiring"
+	 *
+	 * @param  string $value Value of the option
+	 * @return boolean The autowiring option translated into a boolean
+	 * @throws \F3\FLOW3\Object\Exception\InvalidObjectConfigurationException if an invalid option has been specified
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	static protected function parseAutowiring($value) {
+		switch ($value) {
+			case 'on':
+			case \F3\FLOW3\Object\Configuration\Configuration::AUTOWIRING_MODE_ON:
+				return \F3\FLOW3\Object\Configuration\Configuration::AUTOWIRING_MODE_ON;
+			case 'off':
+			case \F3\FLOW3\Object\Configuration\Configuration::AUTOWIRING_MODE_OFF:
+				return \F3\FLOW3\Object\Configuration\Configuration::AUTOWIRING_MODE_OFF;
+			default:
+				throw new \F3\FLOW3\Object\Exception\InvalidObjectConfigurationException('Invalid autowiring declaration', 1283866757);
+		}
+	}
+
+	/**
 	 * Parses the configuration for properties of type OBJECT
 	 *
 	 * @param string $propertyName Name of the property
@@ -140,9 +161,9 @@ class ConfigurationBuilder {
 				$objectName = NULL;
 			}
 			$objectConfiguration = self::buildFromConfigurationArray($objectName, $objectNameOrConfiguration, $configurationSourceHint . ' / property "' . $propertyName .'"');
-			$property = new \F3\FLOW3\Object\Configuration\ConfigurationProperty($propertyName,  $objectConfiguration, \F3\FLOW3\Object\Configuration\ConfigurationProperty::PROPERTY_TYPES_OBJECT);
+			$property = new \F3\FLOW3\Object\Configuration\ConfigurationProperty($propertyName, $objectConfiguration, \F3\FLOW3\Object\Configuration\ConfigurationProperty::PROPERTY_TYPES_OBJECT);
 		} else {
-			$property = new \F3\FLOW3\Object\Configuration\ConfigurationProperty($propertyName,  $objectNameOrConfiguration, \F3\FLOW3\Object\Configuration\ConfigurationProperty::PROPERTY_TYPES_OBJECT);
+			$property = new \F3\FLOW3\Object\Configuration\ConfigurationProperty($propertyName, $objectNameOrConfiguration, \F3\FLOW3\Object\Configuration\ConfigurationProperty::PROPERTY_TYPES_OBJECT);
 		}
 		return $property;
 	}

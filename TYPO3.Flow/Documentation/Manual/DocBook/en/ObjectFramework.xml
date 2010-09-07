@@ -1098,8 +1098,9 @@ F3\MyPackage\Foo:
         objects is not really flexible, as it is hard coded. That's why only
         those options can be set through annotations which are part of the
         class design and won't change afterwards. Currently
-        <literal>scope</literal> and <literal>inject</literal> are the only
-        supported annotations.</para>
+        <literal>scope</literal>, <literal>inject</literal> and
+        <literal>autowiring</literal> are the only supported
+        annotations.</para>
 
         <para>It's up to you defining the scope in the class directly or doing
         it in a <filename>Objects</filename> configuration file – both have
@@ -1116,6 +1117,33 @@ F3\MyPackage\Foo:
  * @scope prototype
  */
 class SomeClass {
+
+}</programlisting>
+        </example>
+
+        <example>
+          <title>Sample autowiring annotation for a class</title>
+
+          <programlisting language="php">/**
+ * This turns off autowiring for the whole class:
+ *
+ * @autowiring off
+ */
+class SomeClass {
+
+}</programlisting>
+        </example>
+
+        <example>
+          <title>Sample autowiring annotation for a method</title>
+
+          <programlisting language="php">/**
+ * This turns off autowiring for a single method:
+ *
+ * @param \F3\Foo\Bar $bar
+ * @autowiring off
+ */
+public function injectMySpecialDependency(\F3\Foo\Bar $bar) {
 
 }</programlisting>
         </example>
@@ -1474,6 +1502,13 @@ class Foo {
           <programlisting language="yaml">F3\MyPackage\MyObject:
   autowiring: off;</programlisting>
         </example>
+
+        <para>Autowiring can also be switched on or off through the
+        <literal>@autowiring</literal> annotation - either in the DocComment
+        block of a whole class or of a single method. For the latter the
+        annotation only has an effect when used in comment blocks of a
+        constructor or of a method whose name starts with
+        <literal>inject</literal>.</para>
       </section>
     </section>
 

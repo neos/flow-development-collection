@@ -139,9 +139,9 @@ class ObjectContainerBuilder {
 			$setterProperties = $objectConfiguration->getProperties();
 			$arguments = $objectConfiguration->getArguments();
 
-			if ($objectConfiguration->getAutowiring() === \F3\FLOW3\Object\Configuration\Configuration::AUTOWIRING_MODE_ON && $className !== NULL) {
-				$arguments = $this->autowireArguments($arguments, $className);
-				$setterProperties = $this->autowireProperties($setterProperties, $className);
+			if ($className !== NULL) {
+				$arguments = $this->autowireArguments($arguments, $className, $objectConfiguration);
+				$setterProperties = $this->autowireProperties($setterProperties, $className, $objectConfiguration);
 			}
 
 			$methodNameNumber = $this->createdMethodNumbers[$objectConfiguration->getObjectName()];
@@ -183,10 +183,11 @@ class ObjectContainerBuilder {
 	 *
 	 * @param array $arguments Array of \F3\FLOW3\Object\Configuration\ConfigurationArgument for the current object
 	 * @param string $className Class name of the object object which contains the methods supposed to be analyzed
+	 * @param \F3\FLOW3\Object\Configuration\Configuration $objectConfiguration Configuration of the whole current object
 	 * @return array The modified array of \F3\FLOW3\Object\Configuration\ConfigurationArgument
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function autowireArguments(array $arguments, $className) {
+	protected function autowireArguments(array $arguments, $className, \F3\FLOW3\Object\Configuration\Configuration $objectConfiguration) {
 		$constructorName = $this->reflectionService->getClassConstructorName($className);
 		if ($constructorName !== NULL) {
 			foreach ($this->reflectionService->getMethodParameters($className, $constructorName) as $parameterName => $parameterInformation) {
@@ -205,6 +206,15 @@ class ObjectContainerBuilder {
 				} else {
 					$this->debugMessages[] = 'Did not try to autowire parameter $' . $parameterName . ' in ' . $className . '::' . $constructorName. '() because it was already set.';
 				}
+
+				if (isset($arguments[$index])) {
+					$methodTagsAndValues = $this->reflectionService->getMethodTagsValues($className, $constructorName);
+					if ($objectConfiguration->getAutowiring() === \F3\FLOW3\Object\Configuration\Configuration::AUTOWIRING_MODE_OFF ||
+							  isset($methodTagsAndValues['autowiring']) && $methodTagsAndValues['autowiring'] === array('off')) {
+						$this->debugMessages[] = 'Autowiring for constructor of class ' . $className . ' was disabled by an @autowiring off annotation.';
+						$arguments[$index]->setAutowiring(\F3\FLOW3\Object\Configuration\Configuration::AUTOWIRING_MODE_OFF);
+					}
+				}
 			}
 		} else {
 			$this->debugMessages[] = 'Autowiring for class ' . $className . ' disabled because no constructor was found.';
@@ -217,11 +227,12 @@ class ObjectContainerBuilder {
 	 *
 	 * @param array $setterProperties Array of \F3\FLOW3\Object\Configuration\ConfigurationProperty for the current object
 	 * @param string $className Name of the class which contains the methods supposed to be analyzed
+	 * @param \F3\FLOW3\Object\Configuration\Configuration $objectConfiguration Configuration of the whole current object
 	 * @return array The modified array of \F3\FLOW3\Object\Configuration\ConfigurationProperty
 	 * @throws \F3\FLOW3\Object\Exception\CannotBuildObjectException if a required property could not be autowired.
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function autowireProperties(array $setterProperties, $className) {
+	protected function autowireProperties(array $setterProperties, $className, \F3\FLOW3\Object\Configuration\Configuration $objectConfiguration) {
 		foreach (get_class_methods($className) as $methodName) {
 			if (substr($methodName, 0, 6) === 'inject') {
 				$propertyName = strtolower(substr($methodName, 6, 1)) . substr($methodName, 7);
@@ -247,6 +258,13 @@ class ObjectContainerBuilder {
 					}
 					$setterProperties[$propertyName] = new \F3\FLOW3\Object\Configuration\ConfigurationProperty($propertyName, $methodParameter['class'], \F3\FLOW3\Object\Configuration\ConfigurationProperty::PROPERTY_TYPES_OBJECT);
 				}
+
+				$methodTagsAndValues = $this->reflectionService->getMethodTagsValues($className, $methodName);
+				if ($objectConfiguration->getAutowiring() === \F3\FLOW3\Object\Configuration\Configuration::AUTOWIRING_MODE_OFF ||
+						  isset($methodTagsAndValues['autowiring']) && $methodTagsAndValues['autowiring'] === array('off')) {
+					$this->debugMessages[] = 'Autowiring for method ' . $className . '::' . $methodName . ' was disabled by an @autowiring off annotation.';
+					$setterProperties[$propertyName]->setAutowiring(\F3\FLOW3\Object\Configuration\Configuration::AUTOWIRING_MODE_OFF);
+				}
 			}
 		}
 
@@ -270,7 +288,10 @@ class ObjectContainerBuilder {
 
 		foreach ($arguments as $argument) {
 			$argumentValue = $argument->getValue();
-			if ($argumentValue !== NULL) {
+			if ($argument->getAutowiring() === \F3\FLOW3\Object\Configuration\Configuration::AUTOWIRING_MODE_OFF) {
+				$index = $argument->getIndex() - 1;
+				$assignments[] = 'if (!isset($a[' . $index . '])) $this->throwMissingArgumentException(' . $index. ');';
+			} elseif ($argumentValue !== NULL) {
 				$index = $argument->getIndex() - 1;
 				$assignmentPrologue = 'if (!isset($a[' . $index . '])) $a[' . $index . '] = ';
 
@@ -333,6 +354,10 @@ class ObjectContainerBuilder {
 		$commands = array();
 
 		foreach ($properties as $propertyName => $property) {
+			if ($property->getAutowiring() === \F3\FLOW3\Object\Configuration\Configuration::AUTOWIRING_MODE_OFF) {
+				continue;
+			}
+
 			$propertyValue = $property->getValue();
 			switch ($property->getType()) {
 				case \F3\FLOW3\Object\Configuration\ConfigurationProperty::PROPERTY_TYPES_OBJECT:

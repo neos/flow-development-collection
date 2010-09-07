@@ -52,12 +52,16 @@ class ConfigurationArgument {
 	protected $type;
 
 	/**
+	 * @var integer
+	 */
+	protected $autowiring = \F3\FLOW3\Object\Configuration\Configuration::AUTOWIRING_MODE_ON;
+
+	/**
 	 * Constructor - sets the index, value and type of the argument
 	 *
 	 * @param string $index Index of the argument
 	 * @param mixed $value Value of the argument
 	 * @param integer $type Type of the argument - one of the argument_TYPE_* constants
-	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct($index, $value, $type = self::ARGUMENT_TYPES_STRAIGHTVALUE) {
@@ -74,8 +78,6 @@ class ConfigurationArgument {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function set($index, $value, $type = self::ARGUMENT_TYPES_STRAIGHTVALUE) {
-		if (!is_integer($index)) throw new \InvalidArgumentException('$index must be of type integer', 1168003692);
-		if (!is_integer($type) || $type < 0 || $type > 2) throw new \InvalidArgumentException('$type is not valid', 1168003693);
 		$this->index = $index;
 		$this->value = $value;
 		$this->type = $type;
@@ -110,5 +112,27 @@ class ConfigurationArgument {
 	public function getType() {
 		return $this->type;
 	}
+
+	/**
+	 * Sets autowiring for this argument
+	 *
+	 * @param integer $autowiring One of the \F3\FLOW3\Object\Configuration\Configuration::AUTOWIRING_MODE_* constants
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setAutowiring($autowiring) {
+		$this->autowiring = $autowiring;
+	}
+
+	/**
+	 * Returns the autowiring mode for this argument
+	 *
+	 * @return integer Value of one of the \F3\FLOW3\Object\Configuration\Configuration::AUTOWIRING_MODE_* constants
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getAutowiring() {
+		return $this->autowiring;
+	}
+
 }
 ?>

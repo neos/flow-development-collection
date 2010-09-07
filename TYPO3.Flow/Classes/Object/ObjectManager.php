@@ -461,6 +461,9 @@ class ObjectManager implements \F3\FLOW3\Object\ObjectManagerInterface {
 			if ($reflectionService->isClassTaggedWith($className, 'scope')) {
 				$rawObjectConfiguration['scope'] = implode('', $reflectionService->getClassTagValues($className, 'scope'));
 			}
+			if ($reflectionService->isClassTaggedWith($className, 'autowiring')) {
+				$rawObjectConfiguration['autowiring'] = implode('', $reflectionService->getClassTagValues($className, 'autowiring'));
+			}
 			$objectConfigurations[$objectName] = \F3\FLOW3\Object\Configuration\ConfigurationBuilder::buildFromConfigurationArray($objectName, $rawObjectConfiguration, 'automatically registered class');
 		}
 

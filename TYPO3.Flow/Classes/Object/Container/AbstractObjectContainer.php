@@ -295,5 +295,46 @@ abstract class AbstractObjectContainer implements \F3\FLOW3\Object\Container\Obj
 		return $this->objects[$objectName]['i'];
 	}
 
+	/**
+	 * Throws an UnresolvedDependenciesException from within a create method.
+	 *
+	 * @param integer $index Index of the missing argument
+	 * @return void
+	 * @throws \F3\FLOW3\Object\Exception\UnresolvedDependenciesException
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function throwMissingArgumentException($index) {
+		$foundClassName = '[unknown]';
+		$errorSource = '[unknown]';
+		$argumentName = '#' . $index;
+
+		$trace = \debug_backtrace();
+		$methodIndex = substr($trace[1]['function'], 1);
+		foreach ($this->objects as $objectName => $objectInformation) {
+			if ($objectInformation['m'] === $methodIndex) {
+				$foundClassName = isset($objectInformation['c']) ? $objectInformation['c'] : $objectName;
+			}
+		}
+
+		if (class_exists($foundClassName)) {
+			$class = new \ReflectionClass($foundClassName);
+			$constructor = $class->getConstructor();
+			$parameters = $constructor->getParameters();
+			if (isset($parameters[$index])) {
+				$argumentName = '$' . $parameters[$index]->getName();
+			}
+		}
+
+		foreach ($trace as $step) {
+			if (isset($step['file']) && strpos($step['file'], 'FLOW3/Classes/Object/') === FALSE &&
+					  strpos($step['file'], 'StaticObjectContainer') === FALSE) {
+				$pathPosition = strpos($step['file'], 'Packages/');
+				$filePathAndName = ($pathPosition !== FALSE) ? substr($step['file'], $pathPosition) : $step['file'];
+				$errorSource = sprintf('%s line %s', $filePathAndName, $step['line']);
+				break;
+			}
+		}
+		throw new \F3\FLOW3\Object\Exception\UnresolvedDependenciesException('Tried to create instance of class ' . $foundClassName . ' without passing constructor argument ' . $argumentName . ' in  ' . $errorSource . '.', 1283859777);
+	}
 }
 ?>

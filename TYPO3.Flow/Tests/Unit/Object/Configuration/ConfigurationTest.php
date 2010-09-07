@@ -44,26 +44,13 @@ class ConfigurationTest extends \F3\Testing\BaseTestCase {
 	}
 
 	/**
-	 * Checks if setScope accepts only valid values
-	 *
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setScopeOnlyAcceptsValidValues() {
-		try {
-			$this->objectConfiguration->setScope(\F3\FLOW3\Object\Configuration\Configuration::SCOPE_SINGLETON);
-			$this->objectConfiguration->setScope(\F3\FLOW3\Object\Configuration\Configuration::SCOPE_PROTOTYPE);
-			$this->objectConfiguration->setScope(\F3\FLOW3\Object\Configuration\Configuration::SCOPE_SESSION);
-		} catch (\Exception $exception) {
-			$this->fail('setScope throwed an exception although the values were valid.');
-		}
-
-		try {
-			$this->objectConfiguration->setScope(-1);
-		} catch (\Exception $exception) {
-			return;
-		}
-		$this->fail('setScope throwed no exception although the value was invalid.');
+	public function setScopeAcceptsValidValues() {
+		$this->objectConfiguration->setScope(\F3\FLOW3\Object\Configuration\Configuration::SCOPE_SINGLETON);
+		$this->objectConfiguration->setScope(\F3\FLOW3\Object\Configuration\Configuration::SCOPE_PROTOTYPE);
+		$this->objectConfiguration->setScope(\F3\FLOW3\Object\Configuration\Configuration::SCOPE_SESSION);
 	}
 
 	/**
