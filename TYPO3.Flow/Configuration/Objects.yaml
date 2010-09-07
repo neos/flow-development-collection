@@ -416,12 +416,6 @@ F3\FLOW3\MVC\Dispatcher:
 F3\FLOW3\Object\ObjectManagerInterface:
   className: F3\FLOW3\Object\ObjectManager
 
-F3\FLOW3\Object\ObjectFactoryInterface:
-  className: F3\FLOW3\Object\ObjectFactory
-  properties:
-    objectManager:
-      object: F3\FLOW3\Object\ObjectManagerInterface
-
 F3\FLOW3\Object\ObjectSerializer:
   properties:
     objectManager:

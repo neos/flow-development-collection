@@ -215,13 +215,13 @@ class SomeClass {
       instantiate a class or retrieve an existing instance of a class, you'll
       have to call an API function instead of using the
       <function>new</function> operator. To create a fresh instance of an
-      object just call the Object Factory's <methodname>create</methodname>
+      object just call the Object Manager's <methodname>create</methodname>
       method:</para>
 
-      <para><programlisting language="php">$myFreshObject = $objectFactory-&gt;create('F3\MyPackage\MyClassName');</programlisting></para>
+      <para><programlisting language="php">$myFreshObject = $objectManager-&gt;create('F3\MyPackage\MyClassName');</programlisting></para>
 
       <para>The Object Factory
-      (<classname>\F3\FLOW3\Object\ObjectFactoryInterface</classname>) itself
+      (<classname>\F3\FLOW3\Object\ObjectManagerInterface</classname>) itself
       is a Singleton and can be acquired like any other object of that scope
       (see next section).</para>
 
@@ -230,7 +230,7 @@ class SomeClass {
       simply passed as additional arguments to the
       <methodname>create</methodname> method:</para>
 
-      <para><programlisting language="php">$myFreshObject = $objectFactory-&gt;create('F3\MyPackage\MyClassName', ↩
+      <para><programlisting language="php">$myFreshObject = $objectManager-&gt;create('F3\MyPackage\MyClassName', ↩
    'first argument', $secondArgument, 42, $fourthArgument);</programlisting></para>
     </section>
 
@@ -243,7 +243,7 @@ class SomeClass {
       injection:</para>
 
       <example>
-        <title>Retrieving the Object Factory through dependency
+        <title>Retrieving the Object Manager through dependency
         injection</title>
 
         <programlisting language="php">namespace F3\MyPackage;
@@ -254,26 +254,26 @@ class SomeClass {
 class SampleClass {
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectFactoryInterface
+	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 */
-	protected $objectFactory;
+	protected $objectManager;
 
 	/**
 	 * Constructor.
 	 * The Object Factory will automatically be passed (injected) by the object 
 	 * framework on instantiating this class.
 	 *
-	 * @param \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory The object factory
+	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager The object manager
 	 */
-	public function __construct(\F3\FLOW3\Object\ObjectFactoryInterface $objectFactory) {
-		$this-&gt;objectFactory = $objectFactory;
+	public function __construct(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
+		$this-&gt;objectManager = $objectManager;
 	}
 }</programlisting>
       </example>
 
       <para>Once the <classname>SampleClass</classname> is being instantiated,
       the object framework will automagically pass a reference to the Object
-      Factory (which is an object of scope <emphasis>singleton</emphasis>) as
+      Manager (which is an object of scope <emphasis>singleton</emphasis>) as
       an argument to the constructor. This kind of dependency injection is
       called <firstterm>Constructor Injection</firstterm> and will be
       explained - together with other kinds of injection - in one of the later
@@ -295,7 +295,7 @@ class SampleClass {
 
       <programlisting language="php">$myObjectInstance = $objectManager-&gt;getObject('F3\MyPackage\MyClassName');</programlisting>
 
-      <para>Like with the <classname>ObjectFactory</classname>'s
+      <para>Like with the <classname>ObjectManager</classname>'s
       <methodname>create</methodname> method, it is possible to pass arguments
       to the constructor of the object class just by adding them to the
       <function>getObject()</function> call. However passing arguments to a
@@ -379,11 +379,11 @@ class Address {
 $myAddressBook = $objectManager-&gt;getObject('F3\Address\AddressBook');
 
 // Create two new addresses and add them to the address book:
-$newAddress = $objectFactory-&gt;create('F3\Address\Address', 'Tryggevældevej', ↩
+$newAddress = $objectManager-&gt;create('F3\Address\Address', 'Tryggevældevej', ↩
     '2720', 'København', 'DK');
 $myAddressbook-&gt;addAddress($newAddress);
 
-$newAddress = $objectFactory-&gt;create('F3\Address\Address', 'An den Brodbänken', ↩
+$newAddress = $objectManager-&gt;create('F3\Address\Address', 'An den Brodbänken', ↩
    '21335', 'Lüneburg', 'DE');
 $myAddressbook-&gt;addAddress($newAddress);</programlisting>
       </example>
@@ -548,7 +548,7 @@ Destructing object ...</screen>
       class implementing that interface. Object types can be created and
       retrieved like regular objects:</para>
 
-      <programlisting language="php">$objectTypeInstance = $objectFactory-&gt;create('F3\MyPackage\MyInterface');</programlisting>
+      <programlisting language="php">$objectTypeInstance = $objectManager-&gt;create('F3\MyPackage\MyInterface');</programlisting>
 
       <para>If exactly one class implements the
       <interfacename>F3\SomePackage\SomeInterfaceName</interfacename>
@@ -1525,11 +1525,11 @@ class Foo {
       <example>
         <title>PHP code using the custom factory</title>
 
-        <programlisting language="php">$myCache = $objectFactory-&gt;create('MyCache');</programlisting>
+        <programlisting language="php">$myCache = $objectManager-&gt;create('MyCache');</programlisting>
       </example>
 
-      <para><varname>$objectFactory</varname> is a reference to the
-      <classname>F3\FLOW3\Object\ObjectFactory</classname>. The argument with
+      <para><varname>$objectManager</varname> is a reference to the
+      <classname>F3\FLOW3\Object\ObjectManager</classname>. The argument with
       the value <literal>MyCache</literal> is passed to the Cache Factory as
       the first parameter. The required second and third argument and the
       optional fourth parameter are automatically built from the values

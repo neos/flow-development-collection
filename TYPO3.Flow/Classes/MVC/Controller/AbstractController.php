@@ -37,12 +37,6 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	protected $objectManager;
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectFactoryInterface
-	 * @deprecated since 1.0.0 alpha 8
-	 */
-	protected $objectFactory;
-
-	/**
 	 * @var \F3\FLOW3\MVC\Web\Routing\UriBuilder
 	 */
 	protected $uriBuilder;
@@ -126,8 +120,6 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	public function __construct(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->arguments = $objectManager->create('F3\FLOW3\MVC\Controller\Arguments');
 		$this->objectManager = $objectManager;
-			// For backwards compatibility:
-		$this->objectFactory = $objectManager;
 	}
 
 	/**
