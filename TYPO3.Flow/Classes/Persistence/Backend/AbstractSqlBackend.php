@@ -34,17 +34,17 @@ abstract class AbstractSqlBackend extends \F3\FLOW3\Persistence\Backend\Abstract
 	/**
 	 * @var string
 	 */
-	protected $dataSourceName;
+	protected $dataSourceName = '';
 
 	/**
 	 * @var string
 	 */
-	protected $username;
+	protected $username = '';
 
 	/**
 	 * @var string
 	 */
-	protected $password;
+	protected $password = '';
 
 	/**
 	 * Sets the DSN to use
@@ -55,6 +55,9 @@ abstract class AbstractSqlBackend extends \F3\FLOW3\Persistence\Backend\Abstract
 	 * @api
 	 */
 	public function setDataSourceName($DSN) {
+		if (!is_string($DSN)) {
+			throw new \InvalidArgumentException('The data source name for the persistence backend must be a string, ' . gettype($DSN) . ' given.', 1284115218);
+		}
 		$this->dataSourceName = $DSN;
 	}
 
@@ -67,6 +70,9 @@ abstract class AbstractSqlBackend extends \F3\FLOW3\Persistence\Backend\Abstract
 	 * @api
 	 */
 	public function setUsername($username) {
+		if (!is_string($username)) {
+			throw new \InvalidArgumentException('The username for the persistence backend must be a string, ' . gettype($username) . ' given.', 1284115216);
+		}
 		$this->username = $username;
 	}
 
@@ -79,6 +85,9 @@ abstract class AbstractSqlBackend extends \F3\FLOW3\Persistence\Backend\Abstract
 	 * @api
 	 */
 	public function setPassword($password) {
+		if (!is_string($password)) {
+			throw new \InvalidArgumentException('The password for the persistence backend must be a string, ' . gettype($password) . ' given.', 1284115217);
+		}
 		$this->password = $password;
 	}
 
