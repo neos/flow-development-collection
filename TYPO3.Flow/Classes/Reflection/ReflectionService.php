@@ -923,18 +923,23 @@ class ReflectionService {
 			}
 
 			foreach ($this->getClassPropertyNames($className) as $propertyName) {
-				$declaredType = ltrim(implode(' ', $this->getPropertyTagValues($className, $propertyName, 'var')), '\\');
-				if ($this->isClassReflected($declaredType) && !($this->isClassTaggedWith($declaredType, 'entity') || $this->isClassTaggedWith($declaredType, 'valueobject'))) {
-					continue;
-				}
-				if (!$this->isPropertyTaggedWith($className, $propertyName, 'transient') && $this->isPropertyTaggedWith($className, $propertyName, 'var')) {
+				if ($this->isPropertyTaggedWith($className, $propertyName, 'var') && !$this->isPropertyTaggedWith($className, $propertyName, 'transient')) {
+					$declaredType = trim(implode(' ', $this->getPropertyTagValues($className, $propertyName, 'var')), ' \\');
+					if (preg_match('/\s/', $declaredType) === 1) {
+						throw new \F3\FLOW3\Reflection\Exception\InvalidPropertyTypeException('The @var annotation for "' . $className . '::$' . $propertyName . '" seems to be invalid.', 1284132314);
+					}
+
+					if (class_exists($declaredType) && !($this->isClassTaggedWith($declaredType, 'entity') || $this->isClassTaggedWith($declaredType, 'valueobject'))) {
+						continue;
+					}
+
 					$classSchema->addProperty($propertyName, $declaredType, $this->isPropertyTaggedWith($className, $propertyName, 'lazy'));
-				}
-				if ($this->isPropertyTaggedWith($className, $propertyName, 'uuid')) {
-					$classSchema->setUuidPropertyName($propertyName);
-				}
-				if ($this->isPropertyTaggedWith($className, $propertyName, 'identity')) {
-					$classSchema->markAsIdentityProperty($propertyName);
+					if ($this->isPropertyTaggedWith($className, $propertyName, 'uuid')) {
+						$classSchema->setUuidPropertyName($propertyName);
+					}
+					if ($this->isPropertyTaggedWith($className, $propertyName, 'identity')) {
+						$classSchema->markAsIdentityProperty($propertyName);
+					}
 				}
 			}
 			$this->classSchemata[$className] = $classSchema;
