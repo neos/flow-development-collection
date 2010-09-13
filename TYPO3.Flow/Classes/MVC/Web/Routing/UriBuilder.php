@@ -311,6 +311,7 @@ class UriBuilder {
 		$this->createAbsoluteUri = FALSE;
 		$this->addQueryString = FALSE;
 		$this->argumentsToBeExcludedFromQueryString = array();
+		$this->argumentPrefix = NULL;
 
 		return $this;
 	}

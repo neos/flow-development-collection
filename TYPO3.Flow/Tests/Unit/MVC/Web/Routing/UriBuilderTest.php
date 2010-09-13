@@ -280,7 +280,7 @@ class UriBuilderTest extends \F3\Testing\BaseTestCase {
 		$this->assertEquals('', $this->uriBuilder->getFormat());
 		$this->assertEquals(FALSE, $this->uriBuilder->getCreateAbsoluteUri());
 		$this->assertEquals(FALSE, $this->uriBuilder->getAddQueryString());
-		$this->assertEquals('someArgumentPrefix', $this->uriBuilder->getArgumentPrefix());
+		$this->assertEquals(NULL, $this->uriBuilder->getArgumentPrefix());
 		$this->assertEquals(array(), $this->uriBuilder->getArgumentsToBeExcludedFromQueryString());
 	}
 
