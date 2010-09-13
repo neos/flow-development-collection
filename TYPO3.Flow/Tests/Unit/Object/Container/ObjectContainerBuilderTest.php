@@ -23,6 +23,7 @@ namespace F3\FLOW3\Object\Container;
  *                                                                        */
 
 require_once(__DIR__ . '/../Fixture/ClassWithInitializeObjectMethod.php');
+
 /**
  * Testcase for the dynamic object container
  *
