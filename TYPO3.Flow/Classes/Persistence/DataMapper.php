@@ -247,7 +247,6 @@ class DataMapper {
 	 * @param array $arrayValues
 	 * @return array
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @todo remove the check on the node/property names and use name pattern
 	 */
 	protected function mapArray(array $arrayValues = NULL) {
 		if ($arrayValues === NULL) return array();

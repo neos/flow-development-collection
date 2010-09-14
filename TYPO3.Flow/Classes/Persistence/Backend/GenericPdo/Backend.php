@@ -606,14 +606,23 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 	protected function storePropertyData($parentIdentifier, $propertyName, array $propertyData) {
 		if ($propertyData['multivalue'] && $propertyData['value'] !== NULL) {
 			foreach ($propertyData['value'] as $valueData) {
-				$statementHandle = $this->databaseHandle->prepare('INSERT INTO "properties_data" ("parent", "name", "index", "type", "' . $this->getTypeName($valueData['type']) . '") VALUES (?, ?, ?, ?, ?)');
-				$statementHandle->execute(array(
-					$parentIdentifier,
-					$propertyName,
-					$valueData['index'],
-					$valueData['type'],
-					is_array($valueData['value']) ? $valueData['value']['identifier'] : $valueData['value']
-				));
+				if ($valueData['value'] === NULL) {
+					$statementHandle = $this->databaseHandle->prepare('INSERT INTO "properties_data" ("parent", "name", "index", "type") VALUES (?, ?, ?, \'NULL\')');
+					$statementHandle->execute(array(
+						$parentIdentifier,
+						$propertyName,
+						$valueData['index']
+					));
+				} else {
+					$statementHandle = $this->databaseHandle->prepare('INSERT INTO "properties_data" ("parent", "name", "index", "type", "' . $this->getTypeName($valueData['type']) . '") VALUES (?, ?, ?, ?, ?)');
+					$statementHandle->execute(array(
+						$parentIdentifier,
+						$propertyName,
+						$valueData['index'],
+						$valueData['type'],
+						is_array($valueData['value']) ? $valueData['value']['identifier'] : $valueData['value']
+					));
+				}
 			}
 		} elseif ($propertyData['multivalue']) {
 			$statementHandle = $this->databaseHandle->prepare('INSERT INTO "properties_data" ("parent", "name", "type") VALUES (?, ?, \'NULL\')');
@@ -868,7 +877,7 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 			if (isset($propertyRow['type'])) {
 				$propertyMetadata = $this->classSchemata[$className]->getProperty($propertyRow['name']);
 					// a NULL value for a multi-value property
-				if ($propertyRow['multivalue'] && $propertyRow['type'] === 'NULL') {
+				if ($propertyRow['multivalue'] && $propertyRow['type'] === 'NULL' && !isset($propertyRow['index'])) {
 					$properties[$propertyRow['name']] = array(
 						'type' => $propertyRow['type'],
 						'multivalue' => TRUE,
@@ -903,13 +912,13 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 	 * type.
 	 *
 	 * @param array $data
-	 * @param array $propertyMetadata The metadat for property we're dealing with
+	 * @param array $propertyMetadata The metadata for property we're dealing with
 	 * @return mixed
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function getValue(array $data, array $propertyMetadata) {
 		$typename = $this->getTypeName($data['type']);
-		if ($data[$typename] === NULL) {
+		if (!isset($data[$typename])) {
 			return NULL;
 		}
 		switch ($typename) {
