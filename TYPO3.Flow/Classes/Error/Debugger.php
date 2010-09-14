@@ -186,6 +186,9 @@ class Debugger {
 			} elseif (property_exists($object, 'FLOW3_Persistence_ValueObject_Hash')) {
 				$identifier = $object->FLOW3_Persistence_ValueObject_Hash;
 				$persistenceType = 'value object';
+			} else {
+				$identifier = 'unknown';
+				$persistenceType = 'strange object';
 			}
 			$dump .= '<span class="debug-ptype" title="' . $identifier . '">' . $persistenceType . '</span>';
 		}
