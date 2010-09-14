@@ -266,6 +266,98 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @see http://forge.typo3.org/issues/9684
+	 */
+	public function thawPropertiesFollowsOrderOfGivenObjectData() {
+		$object = $this->getMock('F3\FLOW3\AOP\ProxyInterface');
+		$object->expects($this->at(0))->method('FLOW3_AOP_Proxy_setProperty')->with('secondProperty', 'secondValue');
+		$object->expects($this->at(1))->method('FLOW3_AOP_Proxy_setProperty')->with('firstProperty', 'firstValue');
+		$object->expects($this->at(2))->method('FLOW3_AOP_Proxy_setProperty')->with('thirdProperty', 'thirdValue');
+
+		$objectData = array(
+			'identifier' => '1234',
+			'classname' => 'F3\Post',
+			'properties' => array(
+				'secondProperty' => array(
+					'type' => 'string',
+					'multivalue' => FALSE,
+					'value' => 'secondValue'
+				),
+				'firstProperty' => array(
+					'type' => 'string',
+					'multivalue' => FALSE,
+					'value' => 'firstValue'
+				),
+				'thirdProperty' => array(
+					'type' => 'string',
+					'multivalue' => FALSE,
+					'value' => 'thirdValue'
+				)
+			)
+		);
+
+		$classSchema = new \F3\FLOW3\Reflection\ClassSchema('F3\Post');
+		$classSchema->addProperty('firstProperty', 'string');
+		$classSchema->addProperty('secondProperty', 'string');
+		$classSchema->addProperty('thirdProperty', 'string');
+
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService');
+		$mockReflectionService->expects($this->once())->method('getClassSchema')->will($this->returnValue($classSchema));
+
+		$dataMapper = $this->getAccessibleMock('F3\FLOW3\Persistence\DataMapper', array('dummy'));
+		$dataMapper->injectReflectionService($mockReflectionService);
+		$dataMapper->_call('thawProperties', $object, 1234, $objectData);
+	}
+
+	/**
+	 * If a property has been removed from a class old data still in the persistence
+	 * must be skipped when reconstituting.
+	 *
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function thawPropertiesSkipsPropertiesNoLongerInClassSchema() {
+		$object = $this->getMock('F3\FLOW3\AOP\ProxyInterface');
+		$object->expects($this->at(0))->method('FLOW3_AOP_Proxy_setProperty')->with('firstProperty', 'firstValue');
+		$object->expects($this->at(1))->method('FLOW3_AOP_Proxy_setProperty')->with('thirdProperty', 'thirdValue');
+
+		$objectData = array(
+			'identifier' => '1234',
+			'classname' => 'F3\Post',
+			'properties' => array(
+				'firstProperty' => array(
+					'type' => 'string',
+					'multivalue' => FALSE,
+					'value' => 'firstValue'
+				),
+				'secondProperty' => array(
+					'type' => 'string',
+					'multivalue' => FALSE,
+					'value' => 'secondValue'
+				),
+				'thirdProperty' => array(
+					'type' => 'string',
+					'multivalue' => FALSE,
+					'value' => 'thirdValue'
+				)
+			)
+		);
+
+		$classSchema = new \F3\FLOW3\Reflection\ClassSchema('F3\Post');
+		$classSchema->addProperty('firstProperty', 'string');
+		$classSchema->addProperty('thirdProperty', 'string');
+
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService');
+		$mockReflectionService->expects($this->once())->method('getClassSchema')->will($this->returnValue($classSchema));
+
+		$dataMapper = $this->getAccessibleMock('F3\FLOW3\Persistence\DataMapper', array('dummy'));
+		$dataMapper->injectReflectionService($mockReflectionService);
+		$dataMapper->_call('thawProperties', $object, 1234, $objectData);
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function mapSplObjectStorageCreatesSplObjectStorage() {
 		$objectData = array(
