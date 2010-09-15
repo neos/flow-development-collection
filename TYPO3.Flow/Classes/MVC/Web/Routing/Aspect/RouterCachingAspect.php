@@ -79,7 +79,7 @@ class RouterCachingAspect {
 		}
 
 		$matchResults = $joinPoint->getAdviceChain()->proceed($joinPoint);
-		if ($matchResults !== NULL) {
+		if ($matchResults !== NULL && $this->containsObject($matchResults) === FALSE) {
 			$this->findMatchResultsCache->set($cacheIdentifier, $matchResults);
 		}
 		return $matchResults;
@@ -109,6 +109,28 @@ class RouterCachingAspect {
 			$this->resolveCache->set($cacheIdentifier, $matchingUri);
 		}
 		return $matchingUri;
+	}
+
+	/**
+	 * Checks if the given subject contains an object
+	 *
+	 * @param mixed $subject
+	 * @return boolean If it contains an object or not
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function containsObject($subject) {
+		if (is_object($subject)) {
+			return TRUE;
+		}
+		if (!is_array($subject)) {
+			return FALSE;
+		}
+		foreach ($subject as $key => $value) {
+			if ($this->containsObject($value)) {
+				return TRUE;
+			}
+		}
+		return FALSE;
 	}
 
 	/**
