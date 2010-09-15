@@ -171,39 +171,40 @@ class DataMapper {
 	public function thawProperties(\F3\FLOW3\AOP\ProxyInterface $object, $identifier, array $objectData) {
 		$classSchema = $this->reflectionService->getClassSchema($objectData['classname']);
 
-		foreach ($objectData['properties'] as $propertyName => $propertyValue) {
+		foreach ($objectData['properties'] as $propertyName => $propertyData) {
 			if (!$classSchema->hasProperty($propertyName)) continue;
+			$propertyValue = NULL;
 
-			if ($propertyValue['value'] !== NULL) {
-				switch ($propertyValue['type']) {
+			if ($propertyData['value'] !== NULL) {
+				switch ($propertyData['type']) {
 					case 'integer':
-						$propertyValue = (int) $propertyValue['value'];
+						$propertyValue = (int) $propertyData['value'];
 					break;
 					case 'float':
-						$propertyValue = (float) $propertyValue['value'];
+						$propertyValue = (float) $propertyData['value'];
 					break;
 					case 'boolean':
-						$propertyValue = (boolean) $propertyValue['value'];
+						$propertyValue = (boolean) $propertyData['value'];
 					break;
 					case 'string':
-						$propertyValue = (string) $propertyValue['value'];
+						$propertyValue = (string) $propertyData['value'];
 					break;
 					case 'array':
-						$propertyValue = $this->mapArray($propertyValue['value']);
+						$propertyValue = $this->mapArray($propertyData['value']);
 					break;
 					case 'SplObjectStorage':
 						$propertyMetaData = $classSchema->getProperty($propertyName);
-						$propertyValue = $this->mapSplObjectStorage($propertyValue['value'], $propertyMetaData['lazy']);
+						$propertyValue = $this->mapSplObjectStorage($propertyData['value'], $propertyMetaData['lazy']);
 					break;
 					case 'DateTime':
-						$propertyValue = $this->mapDateTime($propertyValue['value']);
+						$propertyValue = $this->mapDateTime($propertyData['value']);
 					break;
 					default:
-						$propertyValue = $this->mapToObject($propertyValue['value']);
+						$propertyValue = $this->mapToObject($propertyData['value']);
 					break;
 				}
 			} else {
-				switch ($propertyValue['type']) {
+				switch ($propertyData['type']) {
 					case 'NULL':
 						continue;
 					break;
