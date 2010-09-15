@@ -170,54 +170,53 @@ class DataMapper {
 	 */
 	public function thawProperties(\F3\FLOW3\AOP\ProxyInterface $object, $identifier, array $objectData) {
 		$classSchema = $this->reflectionService->getClassSchema($objectData['classname']);
-		$propertyValues = $objectData['properties'];
 
-		foreach ($classSchema->getProperties() as $propertyName => $propertyData) {
-			$propertyValue = NULL;
-			if (isset($propertyValues[$propertyName])) {
-				if ($propertyValues[$propertyName]['value'] !== NULL) {
-					switch ($propertyValues[$propertyName]['type']) {
-						case 'integer':
-							$propertyValue = (int) $propertyValues[$propertyName]['value'];
-						break;
-						case 'float':
-							$propertyValue = (float) $propertyValues[$propertyName]['value'];
-						break;
-						case 'boolean':
-							$propertyValue = (boolean) $propertyValues[$propertyName]['value'];
-						break;
-						case 'string':
-							$propertyValue = (string) $propertyValues[$propertyName]['value'];
-						break;
-						case 'array':
-							$propertyValue = $this->mapArray($propertyValues[$propertyName]['value']);
-						break;
-						case 'SplObjectStorage':
-							$propertyValue = $this->mapSplObjectStorage($propertyValues[$propertyName]['value'], $propertyData['lazy']);
-						break;
-						case 'DateTime':
-							$propertyValue = $this->mapDateTime($propertyValues[$propertyName]['value']);
-						break;
-						default:
-							$propertyValue = $this->mapToObject($propertyValues[$propertyName]['value']);
-						break;
-					}
-				} else {
-					switch ($propertyValues[$propertyName]['type']) {
-						case 'NULL':
-							continue;
-						break;
-						case 'array':
-							$propertyValue = $this->mapArray(NULL);
-						break;
-						case 'SplObjectStorage':
-							$propertyValue = $this->mapSplObjectStorage(NULL);
-						break;
-					}
+		foreach ($objectData['properties'] as $propertyName => $propertyValue) {
+			if (!$classSchema->hasProperty($propertyName)) continue;
+
+			if ($propertyValue['value'] !== NULL) {
+				switch ($propertyValue['type']) {
+					case 'integer':
+						$propertyValue = (int) $propertyValue['value'];
+					break;
+					case 'float':
+						$propertyValue = (float) $propertyValue['value'];
+					break;
+					case 'boolean':
+						$propertyValue = (boolean) $propertyValue['value'];
+					break;
+					case 'string':
+						$propertyValue = (string) $propertyValue['value'];
+					break;
+					case 'array':
+						$propertyValue = $this->mapArray($propertyValue['value']);
+					break;
+					case 'SplObjectStorage':
+						$propertyMetaData = $classSchema->getProperty($propertyName);
+						$propertyValue = $this->mapSplObjectStorage($propertyValue['value'], $propertyMetaData['lazy']);
+					break;
+					case 'DateTime':
+						$propertyValue = $this->mapDateTime($propertyValue['value']);
+					break;
+					default:
+						$propertyValue = $this->mapToObject($propertyValue['value']);
+					break;
 				}
-
-				$object->FLOW3_AOP_Proxy_setProperty($propertyName, $propertyValue);
+			} else {
+				switch ($propertyValue['type']) {
+					case 'NULL':
+						continue;
+					break;
+					case 'array':
+						$propertyValue = $this->mapArray(NULL);
+					break;
+					case 'SplObjectStorage':
+						$propertyValue = $this->mapSplObjectStorage(NULL);
+					break;
+				}
 			}
+
+			$object->FLOW3_AOP_Proxy_setProperty($propertyName, $propertyValue);
 		}
 
 		if ($classSchema->getModelType() === \F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY) {
