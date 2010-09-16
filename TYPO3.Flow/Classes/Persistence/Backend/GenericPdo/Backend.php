@@ -1025,6 +1025,9 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 		$propertyData = $this->reflectionService->getClassSchema($query->getType())->getProperties();
 		$sql['tables'][] = 'LEFT JOIN "properties" ON "_entity"."identifier" = "properties"."parent"';
 		foreach ($query->getOrderings() as $propertyName => $order) {
+			if (!isset($propertyData[$propertyName])) {
+				throw new \F3\FLOW3\Persistence\Exception\InvalidQueryException('Unknown property "' . $propertyName . '" in query orderings.', 1284661371);
+			}
 			$sql['tables'][] = 'LEFT JOIN (SELECT "parent", "' . $this->getTypeName($propertyData[$propertyName]['elementType'] ?: $propertyData[$propertyName]['type']) . '" AS "' . $propertyName . '" FROM "properties_data" WHERE "name" = ' . $this->databaseHandle->quote($propertyName) . ') AS "_orderingtable' . count($orderings) . '" ON "_orderingtable' . count($orderings) . '"."parent" = "properties"."parent"';
 			$orderings[] = '"_orderingtable' . count($orderings) . '"."' . $propertyName . '" ' . $order;
 		}
