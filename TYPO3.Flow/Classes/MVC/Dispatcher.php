@@ -105,11 +105,14 @@ class Dispatcher {
 	 * @param \F3\FLOW3\MVC\RequestInterface $request The request to dispatch
 	 * @return \F3\FLOW3\MVC\Controller\ControllerInterface
 	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function resolveController(\F3\FLOW3\MVC\RequestInterface $request) {
 		$exception = NULL;
 		$packageKey = $request->getControllerPackageKey();
-		if (!$this->packageManager->isPackageAvailable($packageKey)) {
+		if ($packageKey === NULL) {
+			$exception = new \F3\FLOW3\MVC\Controller\Exception\InvalidPackageException($request, 'the request object contained no information about a controller, possibly because no route matched');
+		} elseif (!$this->packageManager->isPackageAvailable($packageKey)) {
 			$exception = new \F3\FLOW3\MVC\Controller\Exception\InvalidPackageException($request, 'package "' . $packageKey . '" does not exist');
 		} elseif (!$this->packageManager->isPackageActive($packageKey)) {
 			$exception = new \F3\FLOW3\MVC\Controller\Exception\InactivePackageException($request, 'package "' . $packageKey . '" is not active');
