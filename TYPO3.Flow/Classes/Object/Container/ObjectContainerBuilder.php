@@ -44,7 +44,7 @@ class ObjectContainerBuilder {
 	protected $createdMethodNumbers = array();
 
 	/**
-	 * @var array
+	 * @var array<\F3\FLOW3\Object\Configuration\Configuration>
 	 */
 	protected $objectConfigurations;
 
@@ -74,7 +74,7 @@ class ObjectContainerBuilder {
 	 * Generates PHP code of a static object container reflecting the given object
 	 * configurations.
 	 *
-	 * @param array $objectConfigurations
+	 * @param array<\F3\FLOW3\Object\Configuration\Configuration> $objectConfigurations
 	 * @return string The static object container class
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -145,7 +145,7 @@ class ObjectContainerBuilder {
 			}
 
 			$methodNameNumber = $this->createdMethodNumbers[$objectConfiguration->getObjectName()];
-			$createInstanceArgumentsAssignments = $this->buildCreateInstanceArgumentsAssignments($arguments);
+			$createInstanceArgumentsAssignments = $this->buildCreateInstanceArgumentsAssignments($arguments, $objectConfiguration);
 			$propertyInjectionCommands = $this->buildPropertyInjectionCommands($objectName, $className, $setterProperties);
 			$createInstanceCommand = $this->buildCreateInstanceCommand($className, $arguments, $customFactoryObjectName, $customFactoryMethodName);
 			$recreateInstanceCommand = $this->buildRecreateInstanceCommand($className);
@@ -156,7 +156,7 @@ class ObjectContainerBuilder {
 
 			$buildMethodsCode .= '
 	protected function c' . $methodNameNumber . '($a=array()) {' .
-		$createInstanceArgumentsAssignments . 
+		$createInstanceArgumentsAssignments .
 		$createInstanceCommand . '
 		$this->i' . $methodNameNumber .'($o); ' .
 		$lifecycleInitializationCommand .
@@ -166,7 +166,7 @@ class ObjectContainerBuilder {
 	protected function r' . $methodNameNumber .'() {' .
 		$recreateInstanceCommand . '
 		$this->i' . $methodNameNumber .'($o); ' .
-		$lifecycleReinitializationCommand . 
+		$lifecycleReinitializationCommand .
 		$lifecycleShutdownRegistrationCommand . '
 		return $o;
 	}
@@ -203,17 +203,16 @@ class ObjectContainerBuilder {
 					} else {
 						$this->debugMessages[] = 'Tried everything to autowire parameter $' . $parameterName . ' in ' . $className . '::' . $constructorName . '() but I saw no way.';
 					}
+
+					$methodTagsAndValues = $this->reflectionService->getMethodTagsValues($className, $constructorName);
+					if (isset ($arguments[$index]) && ($objectConfiguration->getAutowiring() === \F3\FLOW3\Object\Configuration\Configuration::AUTOWIRING_MODE_OFF
+							|| isset($methodTagsAndValues['autowiring']) && $methodTagsAndValues['autowiring'] === array('off'))) {
+						$this->debugMessages[] = 'Autowiring for constructor of class ' . $className . ' was explicitly disabled.';
+						$arguments[$index]->setAutowiring(\F3\FLOW3\Object\Configuration\Configuration::AUTOWIRING_MODE_OFF);
+						$arguments[$index]->set($index, NULL);
+					}
 				} else {
 					$this->debugMessages[] = 'Did not try to autowire parameter $' . $parameterName . ' in ' . $className . '::' . $constructorName. '() because it was already set.';
-				}
-
-				if (isset($arguments[$index])) {
-					$methodTagsAndValues = $this->reflectionService->getMethodTagsValues($className, $constructorName);
-					if ($objectConfiguration->getAutowiring() === \F3\FLOW3\Object\Configuration\Configuration::AUTOWIRING_MODE_OFF ||
-							  isset($methodTagsAndValues['autowiring']) && $methodTagsAndValues['autowiring'] === array('off')) {
-						$this->debugMessages[] = 'Autowiring for constructor of class ' . $className . ' was disabled by an @autowiring off annotation.';
-						$arguments[$index]->setAutowiring(\F3\FLOW3\Object\Configuration\Configuration::AUTOWIRING_MODE_OFF);
-					}
 				}
 			}
 		} else {
@@ -264,6 +263,7 @@ class ObjectContainerBuilder {
 						  isset($methodTagsAndValues['autowiring']) && $methodTagsAndValues['autowiring'] === array('off')) {
 					$this->debugMessages[] = 'Autowiring for method ' . $className . '::' . $methodName . ' was disabled by an @autowiring off annotation.';
 					$setterProperties[$propertyName]->setAutowiring(\F3\FLOW3\Object\Configuration\Configuration::AUTOWIRING_MODE_OFF);
+					$setterProperties[$propertyName]->set($propertyName, NULL);
 				}
 			}
 		}
@@ -278,20 +278,20 @@ class ObjectContainerBuilder {
 	}
 
 	/**
+	 * Builds the code necessary to instantiate an object. Autowired, manually set and ommitted arguments for the
+	 * constructor method are taken into account while building that code.
 	 *
-	 * @param array $arguments
-	 * @return string
+	 * @param array $arguments Array of configuration arguments as build by the autowireArguments() method
+	 * @param \F3\FLOW3\Object\Configuration\Configuration $objectConfiguration (needed to produce helpful exception message)
+	 * @return string The built code
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function buildCreateInstanceArgumentsAssignments(array $arguments) {
+	protected function buildCreateInstanceArgumentsAssignments(array $arguments, \F3\FLOW3\Object\Configuration\Configuration $objectConfiguration = NULL) {
 		$assignments = array();
 
 		foreach ($arguments as $argument) {
 			$argumentValue = $argument->getValue();
-			if ($argument->getAutowiring() === \F3\FLOW3\Object\Configuration\Configuration::AUTOWIRING_MODE_OFF) {
-				$index = $argument->getIndex() - 1;
-				$assignments[] = 'if (!isset($a[' . $index . '])) $this->throwMissingArgumentException(' . $index. ');';
-			} elseif ($argumentValue !== NULL) {
+			if ($argumentValue !== NULL) {
 				$index = $argument->getIndex() - 1;
 				$assignmentPrologue = 'if (!isset($a[' . $index . '])) $a[' . $index . '] = ';
 
@@ -311,7 +311,7 @@ class ObjectContainerBuilder {
 								$argumentValue = \F3\FLOW3\Utility\Arrays::getValueByPath($settings, $settingPath);
 							}
 							if (!isset($this->objectConfigurations[$argumentValue])) {
-								throw new \F3\FLOW3\Object\Exception\UnknownObjectException('The object "' . $argumentValue . '" which was specified as an argument in the object configuration of object "X" does not exist.', 1264669967);
+								throw new \F3\FLOW3\Object\Exception\UnknownObjectException('The object "' . $argumentValue . '" which was specified as an argument in the object configuration of object "' . $objectConfiguration->getObjectName() . '" does not exist.', 1264669967);
 							}
 							if ($this->objectConfigurations[$argumentValue]->getScope() === \F3\FLOW3\Object\Configuration\Configuration::SCOPE_PROTOTYPE) {
 								$assignments[] = $assignmentPrologue . '$this->getPrototype(\'' . $argumentValue . '\')';
@@ -334,7 +334,11 @@ class ObjectContainerBuilder {
 						}
 					break;
 				}
+			} elseif ($argument->getAutowiring() === \F3\FLOW3\Object\Configuration\Configuration::AUTOWIRING_MODE_OFF) {
+				$index = $argument->getIndex() - 1;
+				$assignments[] = 'if (!isset($a[' . $index . '])) $this->throwMissingArgumentException(' . $index. ');';
 			} else {
+
 				$index = $argument->getIndex() - 1;
 				$assignments[] = 'if (!isset($a[' . $index . '])) $a[' . $index . '] = NULL';
 			}
@@ -343,11 +347,14 @@ class ObjectContainerBuilder {
 	}
 
 	/**
+	 * Builds the code necessary to inject setter based dependencies. Autowired, manually set and
+	 * ommitted properties are taken into account while building that code.
 	 *
-	 * @param string $objectName
-	 * @param string $className
-	 * @param array $properties
-	 * @return string
+	 * @param string $objectName Name of the object for which to inject dependencies
+	 * @param string $className Actual class name of that object
+	 * @param array $properties An array of configuration properties as built by the autowireProperties() method
+	 * @param \F3\FLOW3\Object\Configuration\Configuration $objectConfiguration (needed to produce helpful exception message)
+	 * @return string The built code
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function buildPropertyInjectionCommands($objectName, $className, array $properties) {
