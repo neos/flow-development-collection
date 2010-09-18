@@ -287,7 +287,7 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	 * @see \F3\FLOW3\Persistence\Query::execute()
 	 */
 	public function findAll() {
-		return $this->createQuery()->execute();
+		return $this->createQuery()->execute(\F3\FLOW3\Persistence\QueryInterface::FETCH_PROXY);
 	}
 
 	/**
@@ -365,9 +365,9 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 			$propertyName = strtolower(substr($methodName, 6, 1)) . substr($methodName, 7);
 			$query = $this->createQuery();
 			if (isset($arguments[1])) {
-				return $query->matching($query->equals($propertyName, $arguments[0], (boolean)$arguments[1]))->execute();
+				return $query->matching($query->equals($propertyName, $arguments[0], (boolean)$arguments[1]))->execute(\F3\FLOW3\Persistence\QueryInterface::FETCH_PROXY);
 			} else {
-				return $query->matching($query->equals($propertyName, $arguments[0]))->execute();
+				return $query->matching($query->equals($propertyName, $arguments[0]))->execute(\F3\FLOW3\Persistence\QueryInterface::FETCH_PROXY);
 			}
 		} elseif (substr($methodName, 0, 7) === 'countBy' && strlen($methodName) > 8) {
 			$propertyName = strtolower(substr($methodName, 7, 1)) . substr($methodName, 8);
