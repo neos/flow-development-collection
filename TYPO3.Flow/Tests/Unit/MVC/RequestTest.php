@@ -141,6 +141,14 @@ class RequestTest extends \F3\Testing\BaseTestCase {
 				)
 			),
 			array(
+				'F3\Foo\Bar\Bla\Controller\Baz\QuuxController',
+				array(
+					'controllerPackageKey' => 'Foo',
+					'controllerSubpackageKey' => 'Bar\Bla',
+					'controllerName' => 'Baz\Quux',
+				)
+			),
+			array(
 				'F3\Foo\Controller\Bar\BazController',
 				array(
 					'controllerPackageKey' => 'Foo',
