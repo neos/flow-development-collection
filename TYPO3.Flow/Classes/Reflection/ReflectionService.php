@@ -929,7 +929,9 @@ class ReflectionService {
 						throw new \F3\FLOW3\Reflection\Exception\InvalidPropertyTypeException('The @var annotation for "' . $className . '::$' . $propertyName . '" seems to be invalid.', 1284132314);
 					}
 
-					if (class_exists($declaredType) && !($this->isClassTaggedWith($declaredType, 'entity') || $this->isClassTaggedWith($declaredType, 'valueobject'))) {
+					if (!($declaredType === 'DateTime' || $declaredType === 'SplObjectStorage')
+							&& (class_exists($declaredType) || interface_exists($declaredType))
+							&& !($this->isClassTaggedWith($declaredType, 'entity') || $this->isClassTaggedWith($declaredType, 'valueobject'))) {
 						continue;
 					}
 
