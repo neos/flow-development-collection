@@ -279,15 +279,15 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	/**
 	 * Returns all objects of this repository
 	 *
-	 * @return \F3\FLOW3\Persistence\QueryResultProxy A proxy of the result
+	 * @return \F3\FLOW3\Persistence\QueryResultInterface The query result
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @api
-	 * @see \F3\FLOW3\Persistence\Query::execute()
+	 * @see \F3\FLOW3\Persistence\QueryInterface::execute()
 	 */
 	public function findAll() {
-		return $this->createQuery()->execute(\F3\FLOW3\Persistence\QueryInterface::FETCH_PROXY);
+		return $this->createQuery()->execute();
 	}
 
 	/**
@@ -315,7 +315,7 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	 * @api
 	 */
 	public function countAll() {
-		return $this->createQuery()->count();
+		return $this->createQuery()->execute()->count();
 	}
 
 	/**
@@ -365,27 +365,27 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 			$propertyName = strtolower(substr($methodName, 6, 1)) . substr($methodName, 7);
 			$query = $this->createQuery();
 			if (isset($arguments[1])) {
-				return $query->matching($query->equals($propertyName, $arguments[0], (boolean)$arguments[1]))->execute(\F3\FLOW3\Persistence\QueryInterface::FETCH_PROXY);
+				return $query->matching($query->equals($propertyName, $arguments[0], (boolean)$arguments[1]))->execute();
 			} else {
-				return $query->matching($query->equals($propertyName, $arguments[0]))->execute(\F3\FLOW3\Persistence\QueryInterface::FETCH_PROXY);
+				return $query->matching($query->equals($propertyName, $arguments[0]))->execute();
 			}
 		} elseif (substr($methodName, 0, 7) === 'countBy' && strlen($methodName) > 8) {
 			$propertyName = strtolower(substr($methodName, 7, 1)) . substr($methodName, 8);
 			$query = $this->createQuery();
 			if (isset($arguments[1])) {
-				return $query->matching($query->equals($propertyName, $arguments[0], (boolean)$arguments[1]))->count();
+				return $query->matching($query->equals($propertyName, $arguments[0], (boolean)$arguments[1]))->execute()->count();
 			} else {
-				return $query->matching($query->equals($propertyName, $arguments[0]))->count();
+				return $query->matching($query->equals($propertyName, $arguments[0]))->execute()->count();
 			}
 		} elseif (substr($methodName, 0, 9) === 'findOneBy' && strlen($methodName) > 10) {
 			$propertyName = strtolower(substr($methodName, 9, 1)) . substr($methodName, 10);
-			$query = $this->createQuery()->setLimit(1);
+			$query = $this->createQuery();
 			if (isset($arguments[1])) {
 				$query->matching($query->equals($propertyName, $arguments[0], (boolean)$arguments[1]));
 			} else {
 				$query->matching($query->equals($propertyName, $arguments[0]));
 			}
-			return $query->execute(\F3\FLOW3\Persistence\QueryInterface::FETCH_OBJECT);
+			return $query->execute()->getFirst();
 		}
 		trigger_error('Call to undefined method ' . get_class($this) . '::' . $methodName, E_USER_ERROR);
 	}

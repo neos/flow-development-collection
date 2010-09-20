@@ -7,7 +7,7 @@ namespace F3\FLOW3\Persistence;
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License as published by the *
- * Free Software Foundation, either version 3 of the License, or(at your *
+ * Free Software Foundation, either version 3 of the License, or (at your *
  * option) any later version.                                             *
  *                                                                        *
  * This script is distributed in the hope that it will be useful, but     *
@@ -23,13 +23,23 @@ namespace F3\FLOW3\Persistence;
  *                                                                        */
 
 /**
- * A lazy result list that is returned by Query::execute() if fetch mode is FETCH_PROXY
+ * A lazy result list that is returned by Query::execute()
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  * @api
  */
-class QueryResultProxy implements \Countable, \Iterator, \ArrayAccess {
+class QueryResult implements \F3\FLOW3\Persistence\QueryResultInterface {
+
+	/**
+	 * @var \F3\FLOW3\Persistence\DataMapper
+	 */
+	protected $dataMapper;
+
+	/**
+	 * @var \F3\FLOW3\Persistence\PersistenceManagerInterface
+	 */
+	protected $persistenceManager;
 
 	/**
 	 * @var \F3\FLOW3\Persistence\QueryInterface
@@ -53,6 +63,41 @@ class QueryResultProxy implements \Countable, \Iterator, \ArrayAccess {
 	}
 
 	/**
+	 * Injects the DataMapper to map records to objects
+	 *
+	 * @param \F3\FLOW3\Persistence\DataMapper $dataMapper
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function injectDataMapper(\F3\FLOW3\Persistence\DataMapper $dataMapper) {
+		$this->dataMapper = $dataMapper;
+	}
+
+	/**
+	 * Injects the persistence manager
+	 *
+	 * @param \F3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function injectPersistenceManager(\F3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager) {
+		$this->persistenceManager = $persistenceManager;
+	}
+
+	/**
+	 * Loads the objects this QueryResult is supposed to hold
+	 *
+	 * @return void
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function initialize() {
+		if (!is_array($this->queryResult)) {
+			$this->queryResult = $this->dataMapper->mapToObjects($this->persistenceManager->getObjectDataByQuery($this->query));
+		}
+	}
+
+	/**
 	 * Returns a clone of the query object
 	 *
 	 * @return \F3\FLOW3\Persistence\QueryInterface
@@ -64,26 +109,50 @@ class QueryResultProxy implements \Countable, \Iterator, \ArrayAccess {
 	}
 
 	/**
-	 * Loads the objects this QueryResultProxy is supposed to hold.
+	 * Returns the first object in the result set
 	 *
-	 * @return void
-	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @return object
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
-	protected function initialize() {
-		if ($this->isInitialized() !== TRUE) {
-			$this->queryResult = $this->query->execute(\F3\FLOW3\Persistence\QueryInterface::FETCH_ARRAY);
+	public function getFirst() {
+		if (is_array($this->queryResult)) {
+			$queryResult = $this->queryResult;
+			reset($queryResult);
+			return current($queryResult);
+		} else {
+			$query = clone $this->query;
+			$query->setLimit(1);
+			$queryResult = $this->dataMapper->mapToObjects($this->persistenceManager->getObjectDataByQuery($query));
+			return current($queryResult);
 		}
 	}
 
 	/**
-	 * Returns TRUE if the QueryResultProxy has been initialized
-	 * and $this->queryResult contains the actual Query result
+	 * Returns the number of objects in the result
 	 *
-	 * @return boolean
-	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @return integer The number of matching objects
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
-	public function isInitialized() {
-		return is_array($this->queryResult);
+	public function count() {
+		if (is_array($this->queryResult)) {
+			return count($this->queryResult);
+		} else {
+			return $this->persistenceManager->getObjectCountByQuery($this->query);
+		}
+	}
+
+	/**
+	 * Returns an array with the objects in the result set
+	 *
+	 * @return array
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
+	 */
+	public function toArray() {
+		$this->initialize();
+		return iterator_to_array($this);
 	}
 
 	/**
@@ -136,15 +205,6 @@ class QueryResultProxy implements \Countable, \Iterator, \ArrayAccess {
 	public function offsetUnset($offset) {
 		$this->initialize();
 		unset($this->queryResult[$offset]);
-	}
-
-	/**
-	 * @return integer
-	 * @see \Countable::count()
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	public function count() {
-		return $this->query->count();
 	}
 
 	/**

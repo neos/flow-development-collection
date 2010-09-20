@@ -48,16 +48,6 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	protected $objectManager;
 
 	/**
-	 * @var \F3\FLOW3\Persistence\DataMapper
-	 */
-	protected $dataMapper;
-
-	/**
-	 * @var \F3\FLOW3\Persistence\PersistenceManagerInterface
-	 */
-	protected $persistenceManager;
-
-	/**
 	 * @var \F3\FLOW3\Persistence\Qom\QueryObjectModelFactory
 	 */
 	protected $qomFactory;
@@ -112,28 +102,6 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	}
 
 	/**
-	 * Injects the DataMapper to map records to objects
-	 *
-	 * @param \F3\FLOW3\Persistence\DataMapper $dataMapper
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function injectDataMapper(\F3\FLOW3\Persistence\DataMapper $dataMapper) {
-		$this->dataMapper = $dataMapper;
-	}
-
-	/**
-	 * Injects the persistence manager
-	 *
-	 * @param \F3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function injectPersistenceManager(\F3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager) {
-		$this->persistenceManager = $persistenceManager;
-	}
-
-	/**
 	 * Injects the FLOW3 QOM factory
 	 *
 	 * @param \F3\FLOW3\Persistence\Qom\QueryObjectModelFactory $qomFactory
@@ -147,32 +115,12 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	/**
 	 * Executes the query and returns the result
 	 *
-	 * @param integer $fetchMode one of the FETCH_* constants
-	 * @return mixed The query result. Depending on the $fetchMode this is an array or an object
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 * @api
-	 */
-	public function execute($fetchMode = \F3\FLOW3\Persistence\QueryInterface::FETCH_PROXY) {
-		if ($fetchMode === \F3\FLOW3\Persistence\QueryInterface::FETCH_PROXY) {
-			return $this->objectManager->create('F3\FLOW3\Persistence\QueryResultProxy', $this);
-		}
-		$objectArray = $this->dataMapper->mapToObjects($this->persistenceManager->getObjectDataByQuery($this));
-		if ($fetchMode === \F3\FLOW3\Persistence\QueryInterface::FETCH_OBJECT) {
-			return current($objectArray);
-		}
-		return $objectArray;
-	}
-
-	/**
-	 * Executes the number of matching objects for the query
-	 *
-	 * @return integer The number of matching objects
+	 * @return \F3\FLOW3\Persistence\QueryResultInterface The query result
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
-	public function count() {
-		return $this->persistenceManager->getObjectCountByQuery($this);
+	public function execute() {
+		return $this->objectManager->create('F3\FLOW3\Persistence\QueryResultInterface', $this);
 	}
 
 	/**

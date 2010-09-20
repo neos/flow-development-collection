@@ -40,29 +40,14 @@ class QueryTest extends \F3\Testing\BaseTestCase {
 	protected $reflectionService;
 
 	/**
-	 * @var \F3\FLOW3\Persistence\PersistenceManagerInterface
-	 */
-	protected $persistenceManager;
-
-	/**
 	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
-	 * @var \F3\FLOW3\Persistence\DataMapper
-	 */
-	protected $dataMapper;
-
-	/**
 	 * @var \F3\FLOW3\Reflection\ClassSchema
 	 */
 	protected $classSchema;
-
-	/**
-	 * @var array
-	 */
-	protected $objectsData = array(array('identifier' => '2937d0a5-d8bd-4474-a3c8-96a1c8815f59', 'classname' => 'Some\Class\Name', 'properties' => array('foo' => array('type' => 'string', 'multivalue' => FALSE, 'value' => 'Foo')), array('identifier' => 'bd5106b8-a957-492b-b69d-d02620ace711', 'classname' => 'Some\Class\Name', 'properties' => array('foo' => array('type' => 'string', 'multivalue' => FALSE, 'value' => 'Bar')))));
 
 	/**
 	 * @var array
@@ -79,13 +64,9 @@ class QueryTest extends \F3\Testing\BaseTestCase {
 		$this->classSchema = $this->getMock('F3\FLOW3\Reflection\ClassSchema', array(), array(), '', FALSE);
 		$this->reflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService');
 		$this->reflectionService->expects($this->any())->method('getClassSchema')->with('someType')->will($this->returnValue($this->classSchema));
-		$this->persistenceManager = $this->getMock('F3\FLOW3\Persistence\PersistenceManagerInterface');
 		$this->objectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$this->dataMapper = $this->getMock('F3\FLOW3\Persistence\DataMapper');
 		$this->query = new \F3\FLOW3\Persistence\Query('someType', $this->reflectionService);
-		$this->query->injectPersistenceManager($this->persistenceManager);
 		$this->query->injectObjectManager($this->objectManager);
-		$this->query->injectDataMapper($this->dataMapper);
 	}
 
 
@@ -93,70 +74,11 @@ class QueryTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function executeReturnsProxyByDefault() {
-		$this->persistenceManager->expects($this->never())->method('getObjectDataByQuery');
-		$this->dataMapper->expects($this->never())->method('mapToObjects');
-		$resultProxy = $this->getMock('F3\FLOW3\Persistence\QueryResultProxy', array(), array(), '', FALSE);
+	public function executeReturnsQueryResultInstance() {
+		$resultProxy = $this->getMock('F3\FLOW3\Persistence\QueryResult', array(), array(), '', FALSE);
 		$this->objectManager->expects($this->once())->method('create')->will($this->returnValue($resultProxy));
 		$result = $this->query->execute();
-		$this->assertType('F3\FLOW3\Persistence\QueryResultProxy', $result);
-	}
-
-	/**
-	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	public function executePassesQueryObjectToProxyConstructorIfFetchModeIsProxy() {
-		$resultProxy = $this->getMock('F3\FLOW3\Persistence\QueryResultProxy', array(), array(), '', FALSE);
-		$this->objectManager->expects($this->once())->method('create')->with('F3\FLOW3\Persistence\QueryResultProxy', $this->query)->will($this->returnValue($resultProxy));
-		$this->query->execute(\F3\FLOW3\Persistence\QueryInterface::FETCH_PROXY);
-	}
-
-	/**
-	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	public function executeReturnsArrayIfFetchModeIsArray() {
-		$this->persistenceManager->expects($this->once())->method('getObjectDataByQuery')->with($this->query)->will($this->returnValue($this->objectsData));
-		$this->dataMapper->expects($this->once())->method('mapToObjects')->with($this->objectsData)->will($this->returnValue($this->objects));
-		$actualResult = $this->query->execute(\F3\FLOW3\Persistence\QueryInterface::FETCH_ARRAY);
-		$expectedResult = $this->objects;
-		$this->assertEquals($expectedResult, $actualResult);
-	}
-
-	/**
-	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	public function executeReturnsEmptyArrayIfNoObjectWasFetched() {
-		$this->persistenceManager->expects($this->once())->method('getObjectDataByQuery')->with($this->query)->will($this->returnValue(array()));
-		$this->dataMapper->expects($this->once())->method('mapToObjects')->with(array())->will($this->returnValue(array()));
-		$actualResult = $this->query->execute(\F3\FLOW3\Persistence\QueryInterface::FETCH_ARRAY);
-		$expectedResult = array();
-		$this->assertEquals($expectedResult, $actualResult);
-	}
-
-	/**
-	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	public function executeReturnsFirstResultIfFetchModeIsObject() {
-		$this->persistenceManager->expects($this->once())->method('getObjectDataByQuery')->with($this->query)->will($this->returnValue($this->objectsData));
-		$this->dataMapper->expects($this->once())->method('mapToObjects')->with($this->objectsData)->will($this->returnValue($this->objects));
-		$actualResult = $this->query->execute(\F3\FLOW3\Persistence\QueryInterface::FETCH_OBJECT);
-		$expectedResult = $this->objects[0];
-		$this->assertEquals($expectedResult, $actualResult);
-	}
-
-	/**
-	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	public function executeReturnsFalseIfFetchModeIsObjectAndObjectArrayIsEmpty() {
-		$this->persistenceManager->expects($this->once())->method('getObjectDataByQuery')->with($this->query)->will($this->returnValue(array()));
-		$this->dataMapper->expects($this->once())->method('mapToObjects')->with(array())->will($this->returnValue(array()));
-		$actualResult = $this->query->execute(\F3\FLOW3\Persistence\QueryInterface::FETCH_OBJECT);
-		$this->assertFalse($actualResult);
+		$this->assertType('F3\FLOW3\Persistence\QueryResult', $result);
 	}
 
 }

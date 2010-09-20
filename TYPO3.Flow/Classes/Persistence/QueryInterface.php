@@ -110,32 +110,12 @@ interface QueryInterface {
 	const ORDER_DESCENDING = 'DESC';
 
 	/**
-	 * Constants representing the fetch mode:
-	 * FETCH_ARRAY: execute() returns an array of objects
-	 * FETCH_OBJECT: execute() will only return the first object or NULL if no matching object could be found
-	 * FETCH_PROXY: execute() returns a result proxy
-	 * @api
-	 */
-	const FETCH_ARRAY = 1;
-	const FETCH_OBJECT = 2;
-	const FETCH_PROXY = 3;
-
-	/**
 	 * Executes the query against the backend and returns the result
 	 *
-	 * @param integer $fetchMode one of the FETCH_* constants
-	 * @return mixed The query result. Depending on the $fetchMode this is an array or an object
+	 * @return \F3\FLOW3\Persistence\QueryResultInterface The query result
 	 * @api
 	 */
-	public function execute($fetchMode);
-
-	/**
-	 * Executes the number of matching objects for the query
-	 *
-	 * @return integer The number of matching objects
-	 * @api
-	 */
-	public function count();
+	public function execute();
 
 	/**
 	 * Sets the property names to order the result by. Expected like this:
