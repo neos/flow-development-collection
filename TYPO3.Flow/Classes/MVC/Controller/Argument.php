@@ -426,7 +426,12 @@ class Argument {
 		}
 
 		if (!($transformedValue instanceof $this->dataType) && !($transformedValue === NULL && !$this->isRequired())) {
-			throw new \F3\FLOW3\MVC\Exception\InvalidArgumentValueException('The value of argument "' . $this->name . '" must be of type "' . $this->dataType . '", but was of type "' . (is_object($transformedValue) ? get_class($transformedValue) : gettype($transformedValue)) . '".', 1269616784);
+			$mappingResults = $this->propertyMapper->getMappingResults();
+			$mappingErrorMessages = $mappingResults->hasErrors() ? ' Mapping errors: ' : '';
+			foreach ($mappingResults->getErrors() as $error) {
+				$mappingErrorMessages .= '#' . $error->getCode() . ': ' . $error->getMessage() . ' ';
+			}
+			throw new \F3\FLOW3\MVC\Exception\InvalidArgumentValueException('The value of argument "' . $this->name . '" must be of type "' . $this->dataType . '", but was of type "' . (is_object($transformedValue) ? get_class($transformedValue) : gettype($transformedValue)) . '".' . $mappingErrorMessages, 1269616784);
 		}
 		return $transformedValue;
 	}
