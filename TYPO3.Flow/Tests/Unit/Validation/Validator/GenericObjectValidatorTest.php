@@ -168,6 +168,130 @@ class GenericObjectValidatorTest extends \F3\Testing\BaseTestCase {
 		$validator->isPropertyValid($mockObject, 'foo');
 	}
 
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function isValidCanHandleRecursiveTargetsWithoutEndlessLooping() {
+		$classNameA = uniqid('A');
+		eval('class ' . $classNameA . '{ public $b; }');
+		$classNameB = uniqid('B');
+		eval('class ' . $classNameB . '{ public $a; }');
+		$A = new $classNameA();
+		$B = new $classNameB();
+		$A->b = $B;
+		$B->a = $A;
+
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
+		$aValidator = new \F3\FLOW3\Validation\Validator\GenericObjectValidator($mockObjectManager);
+		$bValidator = new \F3\FLOW3\Validation\Validator\GenericObjectValidator($mockObjectManager);
+		$aValidator->addPropertyValidator('b', $bValidator);
+		$bValidator->addPropertyValidator('a', $aValidator);
+
+		$this->assertTrue($aValidator->isValid($A));
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function isValidDetectsFailuresInRecursiveTargetsI() {
+		$classNameA = uniqid('A');
+		eval('class ' . $classNameA . '{ public $b; }');
+		$classNameB = uniqid('B');
+		eval('class ' . $classNameB . '{ public $a; public $uuid = 0xF; }');
+		$A = new $classNameA();
+		$B = new $classNameB();
+		$A->b = $B;
+		$B->a = $A;
+
+		$mockUuidPropertyError = $this->getMock('F3\FLOW3\Validation\PropertyError', array('dummy'), array('uuid'));
+		$mockBPropertyError = $this->getMock('F3\FLOW3\Validation\PropertyError', array('dummy'), array('b'));
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
+		$mockObjectManager->expects($this->at(0))->method('create')->with('F3\FLOW3\Validation\Error');
+		$mockObjectManager->expects($this->at(1))->method('create')->with('F3\FLOW3\Validation\PropertyError', 'uuid')->will($this->returnValue($mockUuidPropertyError));
+		$mockObjectManager->expects($this->at(2))->method('create')->with('F3\FLOW3\Validation\PropertyError', 'b')->will($this->returnValue($mockBPropertyError));
+		$aValidator = new \F3\FLOW3\Validation\Validator\GenericObjectValidator();
+		$aValidator->injectObjectManager($mockObjectManager);
+		$bValidator = new \F3\FLOW3\Validation\Validator\GenericObjectValidator();
+		$bValidator->injectObjectManager($mockObjectManager);
+		$uuidValidator = new \F3\FLOW3\Validation\Validator\UuidValidator();
+		$uuidValidator->injectObjectManager($mockObjectManager);
+		$aValidator->addPropertyValidator('b', $bValidator);
+		$bValidator->addPropertyValidator('a', $aValidator);
+		$bValidator->addPropertyValidator('uuid', $uuidValidator);
+
+		$this->assertFalse($aValidator->isValid($A));
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function isValidDetectsFailuresInRecursiveTargetsII() {
+		$classNameA = uniqid('A');
+		eval('class ' . $classNameA . '{ public $b; public $uuid = 0xF; }');
+		$classNameB = uniqid('B');
+		eval('class ' . $classNameB . '{ public $a; public $uuid = 0xF; }');
+		$A = new $classNameA();
+		$B = new $classNameB();
+		$A->b = $B;
+		$B->a = $A;
+
+		$mockUuidPropertyError = $this->getMock('F3\FLOW3\Validation\PropertyError', array('dummy'), array('uuid'));
+		$mockAPropertyError = $this->getMock('F3\FLOW3\Validation\PropertyError', array('dummy'), array('a'));
+		$mockBPropertyError = $this->getMock('F3\FLOW3\Validation\PropertyError', array('dummy'), array('b'));
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
+		$mockObjectManager->expects($this->at(0))->method('create')->with('F3\FLOW3\Validation\Error');
+		$mockObjectManager->expects($this->at(1))->method('create')->with('F3\FLOW3\Validation\PropertyError', 'uuid')->will($this->returnValue($mockUuidPropertyError));
+		$mockObjectManager->expects($this->at(2))->method('create')->with('F3\FLOW3\Validation\PropertyError', 'b')->will($this->returnValue($mockBPropertyError));
+		$mockObjectManager->expects($this->at(3))->method('create')->with('F3\FLOW3\Validation\Error');
+		$mockObjectManager->expects($this->at(4))->method('create')->with('F3\FLOW3\Validation\PropertyError', 'uuid')->will($this->returnValue($mockUuidPropertyError));
+		$aValidator = new \F3\FLOW3\Validation\Validator\GenericObjectValidator();
+		$aValidator->injectObjectManager($mockObjectManager);
+		$bValidator = new \F3\FLOW3\Validation\Validator\GenericObjectValidator();
+		$bValidator->injectObjectManager($mockObjectManager);
+		$uuidValidator = new \F3\FLOW3\Validation\Validator\UuidValidator();
+		$uuidValidator->injectObjectManager($mockObjectManager);
+		$aValidator->addPropertyValidator('b', $bValidator);
+		$aValidator->addPropertyValidator('uuid', $uuidValidator);
+		$bValidator->addPropertyValidator('a', $aValidator);
+		$bValidator->addPropertyValidator('uuid', $uuidValidator);
+
+		$this->assertFalse($aValidator->isValid($A));
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function isValidDetectsFailuresInRecursiveTargetsIII() {
+		$classNameA = uniqid('A');
+		eval('class ' . $classNameA . '{ public $b; public $uuid = 0xF; }');
+		$classNameB = uniqid('B');
+		eval('class ' . $classNameB . '{ public $a; }');
+		$A = new $classNameA();
+		$B = new $classNameB();
+		$A->b = $B;
+		$B->a = $A;
+
+		$mockUuidPropertyError = $this->getMock('F3\FLOW3\Validation\PropertyError', array('dummy'), array('uuid'));
+		$mockAPropertyError = $this->getMock('F3\FLOW3\Validation\PropertyError', array('dummy'), array('a'));
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
+		$mockObjectManager->expects($this->at(0))->method('create')->with('F3\FLOW3\Validation\Error');
+		$mockObjectManager->expects($this->at(1))->method('create')->with('F3\FLOW3\Validation\PropertyError', 'uuid')->will($this->returnValue($mockUuidPropertyError));
+		$aValidator = new \F3\FLOW3\Validation\Validator\GenericObjectValidator();
+		$aValidator->injectObjectManager($mockObjectManager);
+		$bValidator = new \F3\FLOW3\Validation\Validator\GenericObjectValidator();
+		$bValidator->injectObjectManager($mockObjectManager);
+		$uuidValidator = new \F3\FLOW3\Validation\Validator\UuidValidator();
+		$uuidValidator->injectObjectManager($mockObjectManager);
+		$aValidator->addPropertyValidator('b', $bValidator);
+		$aValidator->addPropertyValidator('uuid', $uuidValidator);
+		$bValidator->addPropertyValidator('a', $aValidator);
+
+		$this->assertFalse($aValidator->isValid($A));
+	}
 }
 
 ?>

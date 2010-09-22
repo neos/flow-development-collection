@@ -37,17 +37,26 @@ class GenericObjectValidator extends \F3\FLOW3\Validation\Validator\AbstractObje
 	protected $propertyValidators = array();
 
 	/**
+	 * @var SplObjectStorage
+	 */
+	static protected $instancesCurrentlyUnderValidation;
+
+	/**
 	 * Checks if the given value is valid according to the property validators
 	 *
 	 * If at least one error occurred, the result is FALSE.
 	 *
 	 * @param mixed $value The value that should be validated
+	 * @param boolean $resetInstancesCurrentlyUnderValidation Reserved for internal use!
 	 * @return boolean TRUE if the value is valid, FALSE if an error occured
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
-	public function isValid($value) {
+	public function isValid($value, $resetInstancesCurrentlyUnderValidation = TRUE) {
 		$this->errors = array();
+		if ($resetInstancesCurrentlyUnderValidation === TRUE) {
+			self::$instancesCurrentlyUnderValidation = new \SplObjectStorage();
+		}
 		if ($value === NULL) {
 			return TRUE;
 		}
@@ -56,7 +65,9 @@ class GenericObjectValidator extends \F3\FLOW3\Validation\Validator\AbstractObje
 			$this->addError('Value is no object.', 1241099148);
 			return FALSE;
 		}
-
+		if (!self::$instancesCurrentlyUnderValidation->contains($value)) {
+			self::$instancesCurrentlyUnderValidation->attach($value);
+		}
 		$result = TRUE;
 		foreach (array_keys($this->propertyValidators) as $propertyName) {
 			if ($this->isPropertyValid($value, $propertyName) === FALSE) {
@@ -102,9 +113,11 @@ class GenericObjectValidator extends \F3\FLOW3\Validation\Validator\AbstractObje
 				$propertyReflection->setAccessible(TRUE);
 				$propertyValue = $propertyReflection->getValue($object);
 			}
-			if ($validator->isValid($propertyValue) === FALSE) {
-				$this->addErrorsForProperty($validator->getErrors(), $propertyName);
-				$result = FALSE;
+			if (!is_object($propertyValue) || !self::$instancesCurrentlyUnderValidation->contains($propertyValue)) {
+				if ($validator->isValid($propertyValue, FALSE) === FALSE) {
+					$this->addErrorsForProperty($validator->getErrors(), $propertyName);
+					$result = FALSE;
+				}
 			}
 		}
 		return $result;
@@ -141,7 +154,7 @@ class GenericObjectValidator extends \F3\FLOW3\Validation\Validator\AbstractObje
 
 	/**
 	 * Returns all property validators - or only validators of the specified property
-	 * 
+	 *
 	 * @param string $propertyName (optional) Name of the property to return validators for
 	 * @return array An array of validators
 	 * @author Robert Lemke <robert@typo3.org>

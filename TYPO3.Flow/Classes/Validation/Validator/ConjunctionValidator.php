@@ -38,15 +38,17 @@ class ConjunctionValidator extends \F3\FLOW3\Validation\Validator\AbstractCompos
 	 * If at least one error occurred, the result is FALSE.
 	 *
 	 * @param mixed $value The value that should be validated
+	 * @param boolean $resetInstancesCurrentlyUnderValidation Reserved for internal use!
 	 * @return boolean TRUE if the value is valid, FALSE if an error occured
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
-	public function isValid($value) {
+	public function isValid($value, $resetInstancesCurrentlyUnderValidation = TRUE) {
 		$this->errors = array();
 		$result = TRUE;
 		foreach ($this->validators as $validator) {
-			if ($validator->isValid($value) === FALSE) {
+			$validatorResult = $validator instanceof \F3\FLOW3\Validation\Validator\GenericObjectValidator ? $validator->isValid($value, $resetInstancesCurrentlyUnderValidation) : $validator->isValid($value);
+			if ($validatorResult === FALSE) {
 				$this->errors = array_merge($this->errors, $validator->getErrors());
 				$result = FALSE;
 			}
