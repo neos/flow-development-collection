@@ -290,9 +290,9 @@ class ReflectionService {
 	}
 
 	/**
-	 * Returns an array with annotations that are ignored while reflecting class 
+	 * Returns an array with annotations that are ignored while reflecting class
 	 * and method annotations.
-	 * 
+	 *
 	 * @return array
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
@@ -310,6 +310,7 @@ class ReflectionService {
 	 * @api
 	 */
 	public function isClassReflected($className) {
+		$className = trim($className, '\\');
 		return isset($this->reflectedClassNames[$className]);
 	}
 
@@ -337,6 +338,7 @@ class ReflectionService {
 	 * @api
 	 */
 	public function getDefaultImplementationClassNameForInterface($interfaceName) {
+		$interfaceName = trim($interfaceName, '\\');
 		if ($this->initialized !== TRUE) throw new \F3\FLOW3\Reflection\Exception('Reflection has not yet been initialized.', 1238667823);
 		if (interface_exists($interfaceName) === FALSE) throw new \InvalidArgumentException('"' . $interfaceName . '" does not exist or is not the name of an interface.', 1238769559);
 
@@ -362,6 +364,7 @@ class ReflectionService {
 	 * @api
 	 */
 	public function getAllImplementationClassNamesForInterface($interfaceName) {
+		$interfaceName = trim($interfaceName, '\\');
 		if ($this->initialized !== TRUE) throw new \F3\FLOW3\Reflection\Exception('Reflection has not yet been initialized.', 1238667824);
 		if (interface_exists($interfaceName) === FALSE) throw new \InvalidArgumentException('"' . $interfaceName . '" does not exist or is not the name of an interface.', 1238769560);
 		return (isset($this->interfaceImplementations[$interfaceName])) ? $this->interfaceImplementations[$interfaceName] : array();
@@ -377,6 +380,7 @@ class ReflectionService {
 	 * @api
 	 */
 	public function getInterfaceNamesImplementedByClass($className) {
+		$className = trim($className, '\\');
 		if (!isset($this->interfacesImplementedByClass[$className])) {
 			$class = new \ReflectionClass($className);
 			$this->interfacesImplementedByClass[$className] = $class->getInterfaceNames();
@@ -396,6 +400,7 @@ class ReflectionService {
 	 * @api
 	 */
 	public function getAllSubClassNamesForClass($className) {
+		$className = trim($className, '\\');
 		if ($this->initialized !== TRUE) throw new \F3\FLOW3\Reflection\Exception('Reflection has not yet been initialized.', 1257168041);
 		if (class_exists($className) === FALSE) throw new \InvalidArgumentException('"' . $className . '" does not exist or is not the name of a class.', 1257168042);
 		return (isset($this->subClasses[$className])) ? array_keys($this->subClasses[$className]) : array();
@@ -425,6 +430,7 @@ class ReflectionService {
 	 * @api
 	 */
 	public function getClassTagsValues($className) {
+		$className = trim($className, '\\');
 		if (!isset($this->reflectedClassNames[$className])) $this->reflectClass($className);
 		return (isset($this->classTagsValues[$className])) ? $this->classTagsValues[$className] : array();
 	}
@@ -454,6 +460,7 @@ class ReflectionService {
 	 * @api
 	 */
 	public function isClassTaggedWith($className, $tag) {
+		$className = trim($className, '\\');
 		if (!isset($this->reflectedClassNames[$className])) $this->reflectClass($className);
 		if (!isset($this->classTagsValues[$className])) return FALSE;
 		return isset($this->classTagsValues[$className][$tag]);
@@ -469,6 +476,7 @@ class ReflectionService {
 	 * @api
 	 */
 	public function isClassImplementationOf($className, $interfaceName) {
+		$className = trim($className, '\\');
 		if (!isset($this->reflectedClassNames[$className])) $this->reflectClass($className);
 		if (!isset($this->interfaceImplementations[$interfaceName])) return FALSE;
 		return (array_search($className, $this->interfaceImplementations[$interfaceName]) !== FALSE);
@@ -483,6 +491,7 @@ class ReflectionService {
 	 * @api
 	 */
 	public function isClassAbstract($className) {
+		$className = trim($className, '\\');
 		if (!isset($this->reflectedClassNames[$className])) $this->reflectClass($className);
 		return isset($this->abstractClasses[$className]);
 	}
@@ -496,6 +505,7 @@ class ReflectionService {
 	 * @api
 	 */
 	public function isClassFinal($className) {
+		$className = trim($className, '\\');
 		if (!isset($this->reflectedClassNames[$className])) $this->reflectClass($className);
 		return isset($this->finalClasses[$className]);
 	}
@@ -510,6 +520,7 @@ class ReflectionService {
 	 * @api
 	 */
 	public function isMethodFinal($className, $methodName) {
+		$className = trim($className, '\\');
 		if (!isset($this->reflectedClassNames[$className])) $this->reflectClass($className);
 		return isset($this->finalMethods[$className . '::' . $methodName]);
 	}
@@ -524,6 +535,7 @@ class ReflectionService {
 	 * @api
 	 */
 	public function isMethodStatic($className, $methodName) {
+		$className = trim($className, '\\');
 		if (!isset($this->reflectedClassNames[$className])) $this->reflectClass($className);
 		return isset($this->staticMethods[$className . '::' . $methodName]);
 	}
@@ -538,6 +550,7 @@ class ReflectionService {
 	 * @api
 	 */
 	public function isMethodPublic($className, $methodName) {
+		$className = trim($className, '\\');
 		if (!isset($this->reflectedClassNames[$className])) $this->reflectClass($className);
 		return (isset($this->methodVisibilities[$className][$methodName]) && $this->methodVisibilities[$className][$methodName] === ' ');
 	}
@@ -552,6 +565,7 @@ class ReflectionService {
 	 * @api
 	 */
 	public function isMethodProtected($className, $methodName) {
+		$className = trim($className, '\\');
 		if (!isset($this->reflectedClassNames[$className])) $this->reflectClass($className);
 		return (isset($this->methodVisibilities[$className][$methodName]) && $this->methodVisibilities[$className][$methodName] === '*');
 	}
@@ -566,6 +580,7 @@ class ReflectionService {
 	 * @api
 	 */
 	public function isMethodPrivate($className, $methodName) {
+		$className = trim($className, '\\');
 		if (!isset($this->reflectedClassNames[$className])) $this->reflectClass($className);
 		return (isset($this->methodVisibilities[$className][$methodName]) && $this->methodVisibilities[$className][$methodName] === '-');
 	}
@@ -581,6 +596,7 @@ class ReflectionService {
 	 * @api
 	 */
 	public function isMethodTaggedWith($className, $methodName, $tag) {
+		$className = trim($className, '\\');
 		if (!isset($this->reflectedClassNames[$className])) $this->reflectClass($className);
 		if (!isset($this->methodTagsValues[$className])) return FALSE;
 		if (!isset($this->methodTagsValues[$className][$methodName])) return FALSE;
@@ -596,6 +612,7 @@ class ReflectionService {
 	 * @api
 	 */
 	public function getClassMethodNames($className) {
+		$className = trim($className, '\\');
 		if (!isset($this->reflectedClassNames[$className])) $this->reflectClass($className);
 		if (!isset($this->methodVisibilities[$className])) return array();
 		return array_keys($this->methodVisibilities[$className]);
@@ -610,6 +627,7 @@ class ReflectionService {
 	 * @api
 	 */
 	public function getClassConstructorName($className) {
+		$className = trim($className, '\\');
 		if ($this->initialized === TRUE) {
 			if (!isset($this->reflectedClassNames[$className])) $this->reflectClass($className);
 			return (isset($this->classConstructorMethodNames[$className])) ? $this->classConstructorMethodNames[$className] : NULL;
@@ -629,6 +647,7 @@ class ReflectionService {
 	 * @api
 	 */
 	public function getClassPropertyNames($className) {
+		$className = trim($className, '\\');
 		if (!isset($this->reflectedClassNames[$className])) $this->reflectClass($className);
 		return (isset($this->classPropertyNames[$className])) ? $this->classPropertyNames[$className] : array();
 	}
@@ -643,6 +662,7 @@ class ReflectionService {
 	 * @api
 	 */
 	public function getMethodTagsValues($className, $methodName) {
+		$className = trim($className, '\\');
 		if ($this->initialized === TRUE && !isset($this->reflectedClassNames[$className])) $this->reflectClass($className);
 		if (!isset($this->methodTagsValues[$className])) return array();
 		return (isset($this->methodTagsValues[$className][$methodName])) ? $this->methodTagsValues[$className][$methodName] : array();
@@ -659,7 +679,7 @@ class ReflectionService {
 	 * @api
 	 */
 	public function getMethodParameters($className, $methodName) {
-		$parametersInformation = array();
+		$className = trim($className, '\\');
 		if (!isset($this->reflectedClassNames[$className])) $this->reflectClass($className);
 		if ($this->initialized && isset($this->reflectedClassNames[$className])) {
 			if (!isset($this->methodParameters[$className])) return array();
@@ -685,6 +705,7 @@ class ReflectionService {
 	 * @api
 	 */
 	public function getPropertyNamesByTag($className, $tag) {
+		$className = trim($className, '\\');
 		if (!isset($this->reflectedClassNames[$className])) $this->reflectClass($className);
 		if (!isset($this->propertyTagsValues[$className])) return array();
 		$propertyNames = array();
@@ -704,6 +725,7 @@ class ReflectionService {
 	 * @api
 	 */
 	public function getPropertyTagsValues($className, $propertyName) {
+		$className = trim($className, '\\');
 		if (!isset($this->reflectedClassNames[$className])) $this->reflectClass($className);
 		if (!isset($this->propertyTagsValues[$className])) return array();
 		return (isset($this->propertyTagsValues[$className][$propertyName])) ? $this->propertyTagsValues[$className][$propertyName] : array();
@@ -720,6 +742,7 @@ class ReflectionService {
 	 * @api
 	 */
 	public function getPropertyTagValues($className, $propertyName, $tag) {
+		$className = trim($className, '\\');
 		if (!isset($this->reflectedClassNames[$className])) $this->reflectClass($className);
 		if (!isset($this->propertyTagsValues[$className])) return array();
 		if (!isset($this->propertyTagsValues[$className][$propertyName])) return array();
@@ -737,6 +760,7 @@ class ReflectionService {
 	 * @api
 	 */
 	public function isPropertyTaggedWith($className, $propertyName, $tag) {
+		$className = trim($className, '\\');
 		if (!isset($this->reflectedClassNames[$className])) $this->reflectClass($className);
 		if (!isset($this->propertyTagsValues[$className])) return FALSE;
 		if (!isset($this->propertyTagsValues[$className][$propertyName])) return FALSE;
@@ -766,6 +790,7 @@ class ReflectionService {
 		} else {
 			$className = $classNameOrObject;
 		}
+		$className = trim($className, '\\');
 		return isset($this->classSchemata[$className]) ? $this->classSchemata[$className] : NULL;
 	}
 
@@ -779,12 +804,12 @@ class ReflectionService {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function reflectEmergedClasses(array $classNamesToReflect) {
-		$classNamesToBuildSchemaFor = array();
 		$classNamesToReflect = array_unique($classNamesToReflect);
 		$reflectedClassNames = array_keys($this->reflectedClassNames);
 		sort($classNamesToReflect);
 		sort($reflectedClassNames);
 		if ($this->reflectedClassNames !== $classNamesToReflect) {
+			$classNamesToBuildSchemaFor = array();
 			foreach (array_diff($classNamesToReflect, $reflectedClassNames) as $className) {
 				$this->reflectClass($className);
 				if ($this->isClassTaggedWith($className, 'entity') || $this->isClassTaggedWith($className, 'valueobject')) {
