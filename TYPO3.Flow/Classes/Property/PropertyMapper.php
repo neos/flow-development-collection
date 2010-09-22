@@ -340,6 +340,15 @@ class PropertyMapper {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function transformToObject($propertyValue, $targetType, $propertyName) {
+		if (isset($this->objectConverters[$targetType])) {
+			$conversionResult = $this->objectConverters[$targetType]->convertFrom($propertyValue);
+			if ($conversionResult instanceof \F3\FLOW3\Error\Error) {
+				$this->mappingResults->addError($conversionResult, $propertyName);
+				return NULL;
+			} elseif (is_object($conversionResult) || $conversionResult === NULL) {
+				return $conversionResult;
+			}
+		}
 		if (is_string($propertyValue) && preg_match(self::PATTERN_MATCH_UUID, $propertyValue) === 1) {
 			$object = $this->persistenceManager->getObjectByIdentifier($propertyValue);
 			if ($object === FALSE) {
@@ -369,16 +378,6 @@ class PropertyMapper {
 					}
 				}
 			} else {
-				if (isset($this->objectConverters[$targetType])) {
-					$conversionResult = $this->objectConverters[$targetType]->convertFrom($propertyValue);
-					if ($conversionResult instanceof \F3\FLOW3\Error\Error) {
-						$this->mappingResults->addError($conversionResult, $propertyName);
-						return NULL;
-					} elseif (is_object($conversionResult) || $conversionResult === NULL) {
-						return $conversionResult;
-					}
-				}
-
 				$newObject = $this->buildObject($propertyValue, $targetType);
 				if (count($propertyValue)) {
 					if ($this->map(array_keys($propertyValue), $propertyValue, $newObject)) {
