@@ -182,14 +182,14 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 			\\\\(?P<packageKey>[^\\\\]+)
 			\\\\
 			(
-				(?P<subPackageKey>[^\\\\]+)\\\\Controller
-			|
 				Controller
+			|
+				(?P<subPackageKey>.+)\\\\Controller
 			)
 			\\\\(?P<controllerName>[a-z\\\\]+)Controller
 			$/ix', $controllerObjectName, $matches
 		);
-		
+
 		$this->controllerPackageKey = $matches['packageKey'];
 		$this->controllerSubpackageKey = (isset($matches['subPackageKey'])) ? $matches['subPackageKey'] : '';
 		$this->controllerName = $matches['controllerName'];
