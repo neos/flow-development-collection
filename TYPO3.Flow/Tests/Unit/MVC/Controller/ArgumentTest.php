@@ -208,8 +208,14 @@ class ArgumentTest extends \F3\Testing\BaseTestCase {
 		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\PersistenceManagerInterface');
 		$mockPersistenceManager->expects($this->once())->method('getObjectByIdentifier')->will($this->returnValue(new \stdClass()));
 
+		$mockMappingResults = $this->getMock('F3\FLOW3\Property\MappingResults', array('hasErrors'), array(), '', FALSE);
+		$mockMappingResults->expects($this->any())->method('hasErrors')->will($this->returnValue(FALSE));
+		$mockPropertyMapper = $this->getMock('F3\FLOW3\Property\PropertyMapper', array('getMappingResults'), array(), '', FALSE);
+		$mockPropertyMapper->expects($this->any())->method('getMappingResults')->will($this->returnValue($mockMappingResults));
+
 		$argument = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\Argument', array('findObjectByIdentityUUID'), array(), '', FALSE);
 		$argument->injectPersistenceManager($mockPersistenceManager);
+		$argument->injectPropertyMapper($mockPropertyMapper);
 		$argument->_set('dataTypeClassSchema', $mockClassSchema);
 		$argument->_set('dataType', 'ArrayObject');
 		$argument->setValue('e104e469-9030-4b98-babf-3990f07dd3f1');
