@@ -37,10 +37,54 @@ class JsonView extends \F3\FLOW3\MVC\View\AbstractView {
 	protected $controllerContext;
 
 	/**
-	 * Only variables with a key contained in this array will be rendered
+	 * Only variables whose name is contained in this array will be rendered
+	 *
 	 * @var array
 	 */
 	protected $variablesToRender = array('value');
+
+	/**
+	 * The rendering configuration for this JSON view which
+	 * determines which properties of each variable to render.
+	 *
+	 * The configuration array must have the following structure:
+	 *
+	 * Example 1:
+	 *
+	 * array(
+	 *		'variable1' => array(
+	 *			'only' => array('property1', 'property2', ...)
+	 *		),
+	 *		'variable2' => array(
+	 *	 		'exclude' => array('property3', 'property4, ...)
+	 *		),
+	 *		'variable3' => array(
+	 *			'exclude' => array('secretTitle'),
+	 *			'descend' => array(
+	 *				'customer' => array(
+	 *					'only' => array('firstName', 'lastName')
+	 *				)
+	 *			)
+	 *		)
+	 * )
+	 *
+	 * Of variable1 only property1 and property2 will be included.
+	 * Of variable2 all properties except property3 and property4
+	 * are used.
+	 * Of variable3 all properties except secretTitle are included.
+	 *
+	 * If a property value is an array or object, it is not included
+	 * by default. If, however, such a property is listed in a "descend"
+	 * section, the renderer will descend into this sub structure and
+	 * include all its properties (of the next level).
+	 *
+	 * The configuration of each property in "descend" has the same syntax
+	 * like at the top level. Therefore - theoretically - infinitely nested
+	 * structures can be configured.
+	 *
+	 * @var array
+	 */
+	protected $configuration = array();
 
 	/**
 	 * Sets the current controller context
@@ -56,7 +100,7 @@ class JsonView extends \F3\FLOW3\MVC\View\AbstractView {
 
 	/**
 	 * Specifies which variables this JsonView should render
-	 * By default only variables with a name 'value' will be rendered
+	 * By default only the variable 'value' will be rendered
 	 *
 	 * @param array $variablesToRender
 	 * @return void
@@ -65,6 +109,15 @@ class JsonView extends \F3\FLOW3\MVC\View\AbstractView {
 	 */
 	public function setVariablesToRender(array $variablesToRender) {
 		$this->variablesToRender = $variablesToRender;
+	}
+
+	/**
+	 * @param array $configuration The rendering configuration for this JSON view
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setConfiguration(array $configuration) {
+		$this->configuration = $configuration;
 	}
 
 	/**
@@ -95,13 +148,14 @@ class JsonView extends \F3\FLOW3\MVC\View\AbstractView {
 		if (count($this->variablesToRender) === 1) {
 			$variableName = current($this->variablesToRender);
 			$valueToRender = isset($this->variables[$variableName]) ? $this->variables[$variableName] : NULL;
+			$configuration = isset($this->configuration[$variableName]) ? $this->configuration[$variableName] : array();
 		} else {
 			$valueToRender = array();
 			foreach($this->variablesToRender as $variableName) {
 				$valueToRender[$variableName] = isset($this->variables[$variableName]) ? $this->variables[$variableName] : NULL;
 			}
+			$configuration = $this->configuration;
 		}
-		$configuration = $this->loadConfigurationFromYamlFile();
 		return $this->transformValue($valueToRender, $configuration);
 	}
 
@@ -120,7 +174,9 @@ class JsonView extends \F3\FLOW3\MVC\View\AbstractView {
 		} elseif (is_array($value)) {
 			$array = array();
 			foreach ($value as $key => $element) {
-				$array[$key] = $this->transformValue($element, $configuration);
+				if (isset($configuration['only']) && is_array($configuration['only']) && !in_array($key, $configuration['only'])) continue;
+				if (isset($configuration['exclude']) && is_array($configuration['exclude']) && in_array($key, $configuration['exclude'])) continue;
+				$array[$key] = $this->transformValue($element, isset($configuration[$key]) ? $configuration[$key] : array());
 			}
 			return $array;
 		} else {
@@ -138,36 +194,22 @@ class JsonView extends \F3\FLOW3\MVC\View\AbstractView {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	protected function transformObject($object, $configuration) {
-		$properties = \F3\FLOW3\Reflection\ObjectAccess::getGettableProperties($object);
+		$propertyNames = \F3\FLOW3\Reflection\ObjectAccess::getGettablePropertyNames($object);
+
 		$propertiesToRender = array();
-		foreach ($properties as $propertyName => $propertyValue) {
+		foreach ($propertyNames as $propertyName) {
 			if (isset($configuration['only']) && is_array($configuration['only']) && !in_array($propertyName, $configuration['only'])) continue;
 			if (isset($configuration['exclude']) && is_array($configuration['exclude']) && in_array($propertyName, $configuration['exclude'])) continue;
-			
+
+			$propertyValue = \F3\FLOW3\Reflection\ObjectAccess::getProperty($object, $propertyName);
+
 			if (!is_array($propertyValue) && !is_object($propertyValue)) {
 				$propertiesToRender[$propertyName] = $propertyValue;
-			} elseif (isset($configuration['include']) && array_key_exists($propertyName, $configuration['include'])) {
-				$propertiesToRender[$propertyName] = $this->transformObject($propertyValue, $configuration['include'][$propertyName]);
+			} elseif (isset($configuration['descend']) && array_key_exists($propertyName, $configuration['descend'])) {
+				$propertiesToRender[$propertyName] = $this->transformValue($propertyValue, $configuration['descend'][$propertyName]);
 			}
 		}
 		return $propertiesToRender;
-	}
-
-	/**
-	 * Loads and returns the configuration of this view, defined in a YAML file
-	 * residing in the standard template path for the current controller and action.
-	 * The file extension must be ".json.yaml"
-	 *
-	 * @return array The configuration, if any
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 */
-	protected function loadConfigurationFromYamlFile() {
-		$request = $this->controllerContext->getRequest();
-		$configurationFilePath = 'resource://' . $request->getControllerPackageKey() . '/Private/Templates/' . str_replace('\\', '/', $request->getControllerName()) . '/' . ucfirst($request->getControllerActionName()) . '.json.yaml';
-		if (file_exists($configurationFilePath)) {
-			return \F3\FLOW3\Configuration\Source\YamlParser::loadFile($configurationFilePath);
-		}
-		return array();
 	}
 }
 
