@@ -521,6 +521,7 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 		);
 
 		$quuxBaseValidatorConjunction = $this->getMock('F3\FLOW3\Validation\Validator\ConjunctionValidator', array(), array(), '', FALSE);
+		$quuxBaseValidatorConjunction->expects($this->once())->method('count')->will($this->returnValue(1));
 
 		$methodArgumentsValidatorConjunctions = array();
 		$methodArgumentsValidatorConjunctions['arg1'] = $this->getMock('F3\FLOW3\Validation\Validator\ConjunctionValidator', array(), array(), '', FALSE);
