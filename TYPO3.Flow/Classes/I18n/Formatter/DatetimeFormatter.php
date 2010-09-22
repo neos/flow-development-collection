@@ -54,7 +54,7 @@ class DatetimeFormatter implements \F3\FLOW3\I18n\Formatter\FormatterInterface {
 	 *
 	 * @param mixed $value Formatter-specific variable to format (can be integer, \DateTime, etc)
 	 * @param \F3\FLOW3\I18n\Locale $locale Locale to use
-	 * @param string $styleProperties Integer-indexed array of formatter-specific style properties (can be empty)
+	 * @param array $styleProperties Integer-indexed array of formatter-specific style properties (can be empty)
 	 * @return string String representation of $value provided, or (string)$value
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @api
@@ -109,7 +109,7 @@ class DatetimeFormatter implements \F3\FLOW3\I18n\Formatter\FormatterInterface {
 	 * Formats date with format string for date defined in CLDR for particular
 	 * locale.
 	 *
-	 * @param \DateTime $dateTime PHP object representing particular point in time
+	 * @param \DateTime $date PHP object representing particular point in time
 	 * @param \F3\FLOW3\I18n\Locale $locale
 	 * @param string $formatLength One of DatesReader FORMAT_LENGTH constants
 	 * @return string Formatted date
@@ -125,7 +125,7 @@ class DatetimeFormatter implements \F3\FLOW3\I18n\Formatter\FormatterInterface {
 	 * Formats time with format string for time defined in CLDR for particular
 	 * locale.
 	 *
-	 * @param \DateTime $dateTime PHP object representing particular point in time
+	 * @param \DateTime $time PHP object representing particular point in time
 	 * @param \F3\FLOW3\I18n\Locale $locale
 	 * @param string $formatLength One of DatesReader FORMAT_LENGTH constants
 	 * @return string Formatted time
