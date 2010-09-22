@@ -229,13 +229,14 @@ class FileBackend extends \F3\FLOW3\Log\Backend\AbstractBackend {
 	 * Carries out all actions necessary to cleanly close the logging backend, such as
 	 * closing the log file or disconnecting from a database.
 	 *
+	 * Note: for this backend we do nothing here and rely on PHP to close the filehandle
+	 * when the request ends. This is to allow full logging until request end.
+	 *
 	 * @return void
 	 * @api
+	 * @todo revise upon resolution of http://forge.typo3.org/issues/9861
 	 */
-	public function close() {
-		fclose($this->fileHandle);
-		$this->fileHandle = FALSE;
-	}
+	public function close() {}
 
 	/**
 	 * Returns a suitable form of a variable (be it a string, array, object ...) for logfile output
