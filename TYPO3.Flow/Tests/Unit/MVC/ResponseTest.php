@@ -23,76 +23,21 @@ namespace F3\FLOW3\MVC;
  *                                                                        */
 
 /**
- * A generic and very basic response implementation
+ * Testcase for the MVC Generic Response
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
- * @api
- * @scope prototype
  */
-class Response implements \F3\FLOW3\MVC\ResponseInterface {
-
+class ResponseTest extends \F3\Testing\BaseTestCase {
 	/**
-	 * @var string The response content
-	 */
-	protected $content = NULL;
-
-	/**
-	 * Overrides and sets the content of the response
-	 *
-	 * @param string $content The response content
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @api
-	 */
-	public function setContent($content) {
-		$this->content = $content;
-	}
-
-	/**
-	 * Appends content to the already existing content.
-	 *
-	 * @param string $content More response content
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @api
-	 */
-	public function appendContent($content) {
-		$this->content .= $content;
-	}
-
-	/**
-	 * Returns the response content without sending it.
-	 *
-	 * @return string The response content
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @api
-	 */
-	public function getContent() {
-		return $this->content;
-	}
-
-	/**
-	 * Sends the response
-	 *
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @api
-	 */
-	public function send() {
-		if ($this->content !== NULL) {
-			echo $this->getContent();
-		}
-	}
-
-	/**
-	 * Returns the content of the response.
-	 *
-	 * @return string
+	 * @test
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 * @api
 	 */
-	public function __toString() {
-		return $this->getContent();
+	public function toStringReturnsContentOfResponse() {
+		$response = new \F3\FLOW3\MVC\Response();
+		$response->setContent('SomeContent');
+
+		$expected = 'SomeContent';
+		$actual = $response->__toString();
+		$this->assertEquals($expected, $actual);
 	}
 }
-?>
