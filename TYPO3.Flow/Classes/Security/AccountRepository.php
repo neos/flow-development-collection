@@ -31,7 +31,7 @@ class AccountRepository extends \F3\FLOW3\Persistence\Repository {
 
 	/**
 	 * Constructs the Account Repository
-	 * 
+	 *
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct() {
@@ -56,7 +56,7 @@ class AccountRepository extends \F3\FLOW3\Persistence\Repository {
 				$query->equals('accountIdentifier', $accountIdentifier),
 				$query->equals('authenticationProviderName', $authenticationProviderName)
 			)
-		)->execute(\F3\FLOW3\Persistence\QueryInterface::FETCH_OBJECT);
+		)->execute()->getFirst();
 
 		return $result;
 	}
