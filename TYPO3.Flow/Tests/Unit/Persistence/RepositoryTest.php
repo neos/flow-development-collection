@@ -163,6 +163,25 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function createQuerySetsDefaultOrderingIfDefined() {
+		$orderings = array('foo' => \F3\FLOW3\Persistence\QueryInterface::ORDER_ASCENDING);
+		$mockQuery = $this->getMock('F3\FLOW3\Persistence\QueryInterface');
+		$mockQuery->expects($this->once())->method('setOrderings')->with($orderings);
+		$mockQueryFactory = $this->getMock('F3\FLOW3\Persistence\QueryFactoryInterface');
+		$mockQueryFactory->expects($this->exactly(2))->method('create')->will($this->returnValue($mockQuery));
+
+		$repository = $this->getAccessibleMock('F3\FLOW3\Persistence\Repository', array('dummy'));
+		$repository->injectQueryFactory($mockQueryFactory);
+		$repository->setDefaultOrderings($orderings);
+		$repository->createQuery();
+
+		$repository->setDefaultOrderings(array());
+		$repository->createQuery();
+	}
+
+	/**
+	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function findAllCreatesQueryAndReturnsResultOfExecuteCall() {

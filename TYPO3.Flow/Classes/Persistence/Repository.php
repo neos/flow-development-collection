@@ -60,6 +60,11 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	protected $objectType;
 
 	/**
+	 * @var array
+	 */
+	protected $defaultOrderings = array();
+
+	/**
 	 * Constructs a new Repository
 	 *
 	 * @author Karsten Dambekalns <karsten@typo3.org>
@@ -334,6 +339,22 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	}
 
 	/**
+	 * Sets the property names to order results by. Expected like this:
+	 * array(
+	 *  'foo' => \F3\FLOW3\Persistence\QueryInterface::ORDER_ASCENDING,
+	 *  'bar' => \F3\FLOW3\Persistence\QueryInterface::ORDER_DESCENDING
+	 * )
+	 *
+	 * @param array $defaultOrderings The property names to order by by default
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
+	 */
+	public function setDefaultOrderings(array $defaultOrderings) {
+		$this->defaultOrderings = $defaultOrderings;
+	}
+
+	/**
 	 * Returns a query for objects of this repository
 	 *
 	 * @return \F3\FLOW3\Persistence\QueryInterface
@@ -342,7 +363,11 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	 * @api
 	 */
 	public function createQuery() {
-		return $this->queryFactory->create($this->objectType);
+		$query = $this->queryFactory->create($this->objectType);
+		if ($this->defaultOrderings !== array()) {
+			$query->setOrderings($this->defaultOrderings);
+		}
+		return $query;
 	}
 
 	/**
