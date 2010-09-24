@@ -141,7 +141,7 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 
 	/**
 	 * Resolves and checks the current action method name
-	 * 
+	 *
 	 * @return string Method name of the current action
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -206,7 +206,7 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 
 			if (array_search('$' . $argument->getName(), $dontValidateAnnotations) === FALSE) {
 				$baseValidatorConjunction = $this->validatorResolver->getBaseValidatorConjunction($argument->getDataType());
-				if ($baseValidatorConjunction !== NULL) {
+				if (count($baseValidatorConjunction) > 0) {
 					$validator->addValidator($baseValidatorConjunction);
 				}
 			}

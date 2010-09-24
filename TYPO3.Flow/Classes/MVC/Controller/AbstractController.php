@@ -343,7 +343,7 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	protected function initializeControllerArgumentsBaseValidators() {
 		foreach ($this->arguments as $argument) {
 			$validator = $this->validatorResolver->getBaseValidatorConjunction($argument->getDataType());
-			if ($validator !== NULL) $argument->setValidator($validator);
+			if (count($validator) > 0) $argument->setValidator($validator);
 		}
 	}
 

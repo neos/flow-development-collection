@@ -279,7 +279,7 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 	protected function validateObject($object) {
 		$classSchema = $this->classSchemata[$object->FLOW3_AOP_Proxy_getProxyTargetClassName()];
 		$validator = $this->validatorResolver->getBaseValidatorConjunction($classSchema->getClassName());
-		if ($validator !== NULL && !$validator->isValid($object)) {
+		if (!$validator->isValid($object)) {
 			$errorMessages = '';
 			foreach ($validator->getErrors() as $error) {
 				$errorMessages .= (string)$error . PHP_EOL;

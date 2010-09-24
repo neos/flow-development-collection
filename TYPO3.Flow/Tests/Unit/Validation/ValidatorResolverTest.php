@@ -110,12 +110,14 @@ class ValidatorResolverTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function getBaseValidatorCachesTheResultOfTheBuildBaseValidatorConjunctionCalls() {
+	public function buildBaseValidatorCachesTheResultOfTheBuildBaseValidatorConjunctionCalls() {
 		$mockConjunctionValidator = $this->getMock('F3\FLOW3\Validation\Validator\ConjunctionValidator', array(), array(), '', FALSE);
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
+		$mockObjectManager->expects($this->once())->method('get')->with('F3\FLOW3\Validation\Validator\ConjunctionValidator')->will($this->returnValue($mockConjunctionValidator));
 
-		$validatorResolver = $this->getMock('F3\FLOW3\Validation\ValidatorResolver', array('buildBaseValidatorConjunction'), array(), '', FALSE);
-		$validatorResolver->expects($this->once())->method('buildBaseValidatorConjunction')->with('F3\Virtual\Foo')->will($this->returnValue($mockConjunctionValidator));
+		$validatorResolver = $this->getMock('F3\FLOW3\Validation\ValidatorResolver', array('dummy'), array($mockObjectManager));
 
 		$result = $validatorResolver->getBaseValidatorConjunction('F3\Virtual\Foo');
 		$this->assertSame($mockConjunctionValidator, $result, '#1');
@@ -234,7 +236,7 @@ class ValidatorResolverTest extends \F3\Testing\BaseTestCase {
 		$mockFooValidator = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface', array(), array(), '', FALSE);
 		$mockBarValidator = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface', array(), array(), '', FALSE);
 		$mockQuuxValidator = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface', array(), array(), '', FALSE);
-		
+
 		$conjunction1 = $this->getMock('F3\FLOW3\Validation\Validator\ConjunctionValidator', array(), array(), '', FALSE);
 		$conjunction1->expects($this->at(0))->method('addValidator')->with($mockStringValidator);
 		$conjunction1->expects($this->at(1))->method('addValidator')->with($mockFooValidator);
@@ -396,36 +398,32 @@ class ValidatorResolverTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @dataProvider modelAndValidatorClassNames
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function buildBaseValidatorConjunctionAddsCustomValidatorToTheReturnedConjunction($validatorClassName, $modelClassName) {
+	public function buildBaseValidatorConjunctionAddsCustomValidatorToTheReturnedConjunction() {
+		$modelClassName = uniqid('Page');
+		$validatorClassName = 'Domain\Validator\Content\\' . $modelClassName . 'Validator';
+		eval('namespace Domain\Model\Content; class ' . $modelClassName . '{}');
 		$mockValidator = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
+		$modelClassName = 'Domain\Model\Content\\' . $modelClassName;
 
 		$mockConjunctionValidator = $this->getMock('F3\FLOW3\Validation\Validator\ConjunctionValidator', array(), array(), '', FALSE);
-		$mockConjunctionValidator->expects($this->once())->method('count')->will($this->returnValue(1));
 		$mockConjunctionValidator->expects($this->once())->method('addValidator')->with($mockValidator);
 
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
 		$mockObjectManager->expects($this->at(0))->method('get')->with('F3\FLOW3\Validation\Validator\ConjunctionValidator')->will($this->returnValue($mockConjunctionValidator));
 
+		$mockReflectionService = $this->getMock('\F3\FLOW3\Reflection\ReflectionService');
+		$mockReflectionService->expects($this->any())->method('getClassPropertyNames')->will($this->returnValue(array()));
 		$validatorResolver = $this->getAccessibleMock('F3\FLOW3\Validation\ValidatorResolver', array('resolveValidatorObjectName', 'createValidator'), array($mockObjectManager));
-		$validatorResolver->expects($this->once())->method('createValidator')->with($validatorClassName)->will($this->returnValue($mockValidator));
+		$validatorResolver->injectReflectionService($mockReflectionService);
+		$validatorResolver->expects($this->at(0))->method('createValidator')->with('F3\FLOW3\Validation\Validator\GenericObjectValidator')->will($this->returnValue($this->getMock('F3\FLOW3\Validation\Validator\GenericObjectValidator', array(), array(), '', FALSE)));
+		$validatorResolver->expects($this->at(1))->method('createValidator')->with($validatorClassName)->will($this->returnValue($mockValidator));
 
-		$result = $validatorResolver->_call('buildBaseValidatorConjunction', $modelClassName);
-		$this->assertSame($mockConjunctionValidator, $result);
-	}
-
-	/**
-	 * data provider for buildBaseValidatorConjunctionAddsCustomValidatorToTheReturnedConjunction
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function modelAndValidatorClassNames() {
-		return array(
-			array('\FLOW8\Blog\Domain\Validator\BlogValidator', '\FLOW8\Blog\Domain\Model\Blog'),
-			array('﻿\Domain\Validator\Content\PageValidator', '﻿\Domain\Model\Content\Page')
-		);
+		$validatorResolver->_call('buildBaseValidatorConjunction', $modelClassName);
+		$builtValidators = $validatorResolver->_get('baseValidatorConjunctions');
+		$this->assertSame($mockConjunctionValidator, $builtValidators[$modelClassName]);
 	}
 
 	/**
@@ -433,14 +431,8 @@ class ValidatorResolverTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function buildBaseValidatorConjunctionReturnsNullIfNoValidatorBuilt() {
-		$mockConjunctionValidator = $this->getMock('F3\FLOW3\Validation\Validator\ConjunctionValidator', array(), array(), '', FALSE);
-		$mockConjunctionValidator->expects($this->once())->method('count')->will($this->returnValue(0));
-
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
-		$mockObjectManager->expects($this->at(0))->method('get')->with('F3\FLOW3\Validation\Validator\ConjunctionValidator')->will($this->returnValue($mockConjunctionValidator));
-
-		$validatorResolver = $this->getAccessibleMock('F3\FLOW3\Validation\ValidatorResolver', array('createValidator'), array($mockObjectManager));
-		$validatorResolver->expects($this->once())->method('createValidator')->with('NonExistingClassNameValidator')->will($this->returnValue(NULL));
+		$validatorResolver = $this->getAccessibleMock('F3\FLOW3\Validation\ValidatorResolver', array('dummy'), array($mockObjectManager));
 
 		$this->assertNull($validatorResolver->_call('buildBaseValidatorConjunction', 'NonExistingClassName'));
 	}
@@ -476,10 +468,10 @@ class ValidatorResolverTest extends \F3\Testing\BaseTestCase {
 		$mockReflectionService->expects($this->at(2))->method('getPropertyTagsValues')->with($className, 'bar')->will($this->returnValue($propertyTagsValues['bar']));
 
 		$mockObjectValidator = $this->getMock('F3\FLOW3\Validation\Validator\GenericObjectValidator', array(), array(), '', FALSE);
+		$mockObjectValidator->expects($this->once())->method('getPropertyValidators')->will($this->returnValue(array('dummy')));
 
 		$mockConjunctionValidator = $this->getMock('F3\FLOW3\Validation\Validator\ConjunctionValidator', array(), array(), '', FALSE);
 		$mockConjunctionValidator->expects($this->once())->method('addValidator')->with($mockObjectValidator);
-		$mockConjunctionValidator->expects($this->once())->method('count')->will($this->returnValue(1));
 
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
 		$mockObjectManager->expects($this->at(0))->method('get')->with('F3\FLOW3\Validation\Validator\ConjunctionValidator')->will($this->returnValue($mockConjunctionValidator));
@@ -495,7 +487,8 @@ class ValidatorResolverTest extends \F3\Testing\BaseTestCase {
 		$validatorResolver->expects($this->at(5))->method('createValidator')->with($className . 'Validator')->will($this->returnValue(NULL));
 
 		$result = $validatorResolver->_call('buildBaseValidatorConjunction', $className);
-		$this->assertSame($mockConjunctionValidator, $result);
+		$builtValidators = $validatorResolver->_get('baseValidatorConjunctions');
+		$this->assertSame($mockConjunctionValidator, $builtValidators[$className]);
 	}
 
 	/**
@@ -515,17 +508,17 @@ class ValidatorResolverTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function getValidatorTypeCorrectlyRenamesPhpDataTypes() {
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockValidator = $this->getAccessibleMock('F3\FLOW3\Validation\ValidatorResolver', array('dummy'), array($mockObjectManager), '', FALSE);
-		$this->assertEquals('Integer', $mockValidator->_call('getValidatorType', 'integer'));
-		$this->assertEquals('Integer', $mockValidator->_call('getValidatorType', 'int'));
-		$this->assertEquals('String', $mockValidator->_call('getValidatorType', 'string'));
-		$this->assertEquals('Array', $mockValidator->_call('getValidatorType', 'array'));
-		$this->assertEquals('Float', $mockValidator->_call('getValidatorType', 'float'));
-		$this->assertEquals('Float', $mockValidator->_call('getValidatorType', 'double'));
-		$this->assertEquals('Boolean', $mockValidator->_call('getValidatorType', 'boolean'));
-		$this->assertEquals('Boolean', $mockValidator->_call('getValidatorType', 'bool'));
-		$this->assertEquals('Number', $mockValidator->_call('getValidatorType', 'number'));
-		$this->assertEquals('Number', $mockValidator->_call('getValidatorType', 'numeric'));
+		$mockValidatorResolver = $this->getAccessibleMock('F3\FLOW3\Validation\ValidatorResolver', array('dummy'), array($mockObjectManager), '', FALSE);
+		$this->assertEquals('Integer', $mockValidatorResolver->_call('getValidatorType', 'integer'));
+		$this->assertEquals('Integer', $mockValidatorResolver->_call('getValidatorType', 'int'));
+		$this->assertEquals('String', $mockValidatorResolver->_call('getValidatorType', 'string'));
+		$this->assertEquals('Array', $mockValidatorResolver->_call('getValidatorType', 'array'));
+		$this->assertEquals('Float', $mockValidatorResolver->_call('getValidatorType', 'float'));
+		$this->assertEquals('Float', $mockValidatorResolver->_call('getValidatorType', 'double'));
+		$this->assertEquals('Boolean', $mockValidatorResolver->_call('getValidatorType', 'boolean'));
+		$this->assertEquals('Boolean', $mockValidatorResolver->_call('getValidatorType', 'bool'));
+		$this->assertEquals('Number', $mockValidatorResolver->_call('getValidatorType', 'number'));
+		$this->assertEquals('Number', $mockValidatorResolver->_call('getValidatorType', 'numeric'));
 	}
 
 	/**
