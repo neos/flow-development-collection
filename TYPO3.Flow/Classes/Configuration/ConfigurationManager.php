@@ -457,7 +457,7 @@ EOD;
 				$name = isset($routeConfiguration['name']) ? $routeConfiguration['name'] : $routeConfiguration;
 				$name .= ' :: ';
 				$name .= isset($subRouteConfiguration['name']) ? $subRouteConfiguration['name'] : 'Subroute';
-	
+
 				if (!isset($subRouteConfiguration['uriPattern'])) {
 					throw new \F3\FLOW3\Configuration\Exception\ParseErrorException('No uriPattern defined in route configuration "' . $name . '".', 1274197615);
 		     	}
@@ -471,11 +471,16 @@ EOD;
 				if (isset($subRouteConfiguration['routeParts'])) {
 					$routeParts = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($routeParts, $subRouteConfiguration['routeParts']);
 				}
+				$toLowerCase = isset($routeConfiguration['toLowerCase']) ? (boolean)$routeConfiguration['toLowerCase'] : NULL;
+				if (isset($subRouteConfiguration['toLowerCase'])) {
+					$toLowerCase = (boolean)$subRouteConfiguration['toLowerCase'];
+				}
 				$mergedSubRoutesConfiguration[] = array(
 					'name' => $name,
 					'uriPattern' => $uriPattern,
 					'defaults' => $defaults,
-					'routeParts' => $routeParts
+					'routeParts' => $routeParts,
+					'toLowerCase' => $toLowerCase
 				);
 			}
 		}

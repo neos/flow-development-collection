@@ -532,11 +532,103 @@ EOD;
 		);
 		$subRoutesConfiguration= array();
 
-		$managerClassName = $this->buildAccessibleProxy('F3\FLOW3\Configuration\ConfigurationManager');
-		$manager = new $managerClassName('Testing', array());
-		$manager->_callRef('mergeRoutesWithSubRoutes', $routesConfiguration, $subRoutesConfiguration);
+		$configurationManager = $this->getAccessibleMock('F3\FLOW3\Configuration\ConfigurationManager', array('dummy'), array('Testing'));
+		$configurationManager->_callRef('mergeRoutesWithSubRoutes', $routesConfiguration, $subRoutesConfiguration);
 
 		$this->assertEquals(0, count($routesConfiguration));
 	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function buildSubrouteConfigurationsCorrectlyMergesRoutes() {
+		$routesConfiguration= array(
+			array(
+				'name' => 'Welcome',
+				'uriPattern' => '<WelcomeSubroutes>',
+				'defaults' => array(
+					'@package' => 'Welcome'
+				),
+				'subRoutes' => array(
+					'WelcomeSubroutes' => array(
+						'package' => 'Welcome'
+					)
+				),
+				'routeParts' => array(
+					'foo' => array(
+						'bar' => 'baz',
+						'baz' => 'Xyz'
+					)
+				),
+				'toLowerCase' => TRUE
+			)
+		);
+		$subRoutesConfiguration= array(
+			array(
+				'name' => 'Standard route',
+				'uriPattern' => 'flow3/welcome',
+				'defaults' => array(
+					'@controller' => 'Standard',
+					'@action' => 'index'
+				)
+			),
+			array(
+				'name' => 'Redirect',
+				'uriPattern' => '',
+				'defaults' => array(
+					'@controller' => 'Standard',
+					'@action' => 'redirect'
+				),
+				'routeParts' => array(
+					'foo' => array(
+						'bar' => 'overridden',
+						'new' => 'ZZZ'
+					)
+				),
+				'toLowerCase' => FALSE
+			)
+		);
+		$expectedResult = array(
+			array(
+				'name' => 'Welcome :: Standard route',
+				'uriPattern' => 'flow3/welcome',
+				'defaults' => array(
+					'@package' => 'Welcome',
+					'@controller' => 'Standard',
+					'@action' => 'index'
+				),
+				'routeParts' => array(
+					'foo' => array(
+						'bar' => 'baz',
+						'baz' => 'Xyz'
+					)
+				),
+				'toLowerCase' => TRUE
+			),
+			array(
+				'name' => 'Welcome :: Redirect',
+				'uriPattern' => '',
+				'defaults' => array(
+					'@package' => 'Welcome',
+					'@controller' => 'Standard',
+					'@action' => 'redirect'
+				),
+				'routeParts' => array(
+					'foo' => array(
+						'bar' => 'overridden',
+						'baz' => 'Xyz',
+						'new' => 'ZZZ'
+					)
+				),
+				'toLowerCase' => FALSE
+			)
+		);
+		$configurationManager = $this->getAccessibleMock('F3\FLOW3\Configuration\ConfigurationManager', array('dummy'), array('Testing'));
+		$actualResult = $configurationManager->_call('buildSubrouteConfigurations', $routesConfiguration, $subRoutesConfiguration, 'WelcomeSubroutes');
+
+		$this->assertEquals($expectedResult, $actualResult);
+	}
+
 }
 ?>
