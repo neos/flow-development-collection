@@ -135,9 +135,13 @@ class FileSystemPublishingTargetTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function publishPersistentResourceMirrorsTheGivenResource() {
+		$mockResourcePointer = $this->getMock('F3\FLOW3\Resource\ResourcePointer', array(), array(), '', FALSE);
+		$mockResourcePointer->expects($this->atLeastOnce())->method('getHash')->will($this->returnValue('ac9b6187f4c55b461d69e22a57925ff61ee89cb2'));
+
 		$mockResource = $this->getMock('F3\FLOW3\Resource\Resource', array(), array(), '', FALSE);
-		$mockResource->expects($this->atLeastOnce())->method('getHash')->will($this->returnValue('ac9b6187f4c55b461d69e22a57925ff61ee89cb2'));
+		$mockResource->expects($this->atLeastOnce())->method('getResourcePointer')->will($this->returnValue($mockResourcePointer));
 		$mockResource->expects($this->atLeastOnce())->method('getFileExtension')->will($this->returnValue('jpg'));
+		$mockResource->expects($this->atLeastOnce())->method('getFilename')->will($this->returnValue('source.jpg'));
 
 		$publishingTarget = $this->getAccessibleMock('F3\FLOW3\Resource\Publishing\FileSystemPublishingTarget', array('rewriteTitleForUri', 'getPersistentResourceSourcePathAndFilename', 'mirrorFile'));
 		$publishingTarget->expects($this->once())->method('getPersistentResourceSourcePathAndFilename')->with($mockResource)->will($this->returnValue('source.jpg'));
@@ -146,17 +150,22 @@ class FileSystemPublishingTargetTest extends \F3\Testing\BaseTestCase {
 		$publishingTarget->_set('resourcesPublishingPath', 'vfs://Foo/Web/');
 		$publishingTarget->_set('resourcesBaseUri', 'http://Foo/_Resources/');
 
-		$this->assertSame('http://Foo/_Resources/Persistent/ac9b6187f4c55b461d69e22a57925ff61ee89cb2.jpg', $publishingTarget->publishPersistentResource($mockResource));
+		$this->assertSame('http://Foo/_Resources/Persistent/ac9b6187f4c55b461d69e22a57925ff61ee89cb2/source.jpg', $publishingTarget->publishPersistentResource($mockResource));
 	}
 
 	/**
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function publishPersistentResourceLeavesOutEmptyTitle() {
+	public function publishPersistentResourceLeavesOutEmptyFileName() {
+		$mockResourcePointer = $this->getMock('F3\FLOW3\Resource\ResourcePointer', array(), array(), '', FALSE);
+		$mockResourcePointer->expects($this->atLeastOnce())->method('getHash')->will($this->returnValue('ac9b6187f4c55b461d69e22a57925ff61ee89cb2'));
+
 		$mockResource = $this->getMock('F3\FLOW3\Resource\Resource', array(), array(), '', FALSE);
-		$mockResource->expects($this->atLeastOnce())->method('getHash')->will($this->returnValue('ac9b6187f4c55b461d69e22a57925ff61ee89cb2'));
-		$mockResource->expects($this->atLeastOnce())->method('getFileExtension')->will($this->returnValue('jpg'));
+		$mockResource->expects($this->atLeastOnce())->method('getResourcePointer')->will($this->returnValue($mockResourcePointer));
+		$mockResource->expects($this->atLeastOnce())->method('getFileExtension')->will($this->returnValue(''));
+		$mockResource->expects($this->at(0))->method('getFilename')->will($this->returnValue(''));
+		$mockResource->expects($this->at(1))->method('getFilename')->will($this->returnValue(NULL));
 
 		$publishingTarget = $this->getAccessibleMock('F3\FLOW3\Resource\Publishing\FileSystemPublishingTarget', array('rewriteTitleForUri', 'getPersistentResourceSourcePathAndFilename', 'mirrorFile'));
 		$publishingTarget->expects($this->any())->method('getPersistentResourceSourcePathAndFilename')->will($this->returnValue('source.jpg'));
@@ -164,8 +173,8 @@ class FileSystemPublishingTargetTest extends \F3\Testing\BaseTestCase {
 		$publishingTarget->_set('resourcesPublishingPath', 'vfs://Foo/Web/');
 		$publishingTarget->_set('resourcesBaseUri', 'http://Foo/_Resources/');
 
-		$this->assertSame('http://Foo/_Resources/Persistent/ac9b6187f4c55b461d69e22a57925ff61ee89cb2.jpg', $publishingTarget->publishPersistentResource($mockResource, ''));
-		$this->assertSame('http://Foo/_Resources/Persistent/ac9b6187f4c55b461d69e22a57925ff61ee89cb2.jpg', $publishingTarget->publishPersistentResource($mockResource, NULL));
+		$this->assertSame('http://Foo/_Resources/Persistent/ac9b6187f4c55b461d69e22a57925ff61ee89cb2', $publishingTarget->publishPersistentResource($mockResource));
+		$this->assertSame('http://Foo/_Resources/Persistent/ac9b6187f4c55b461d69e22a57925ff61ee89cb2', $publishingTarget->publishPersistentResource($mockResource));
 	}
 
 	/**
@@ -173,8 +182,11 @@ class FileSystemPublishingTargetTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function publishPersistentResourceMirrorsTheGivenSourceFileDoesntExist() {
+		$mockResourcePointer = $this->getMock('F3\FLOW3\Resource\ResourcePointer', array(), array(), '', FALSE);
+		$mockResourcePointer->expects($this->atLeastOnce())->method('getHash')->will($this->returnValue('ac9b6187f4c55b461d69e22a57925ff61ee89cb2'));
+
 		$mockResource = $this->getMock('F3\FLOW3\Resource\Resource', array(), array(), '', FALSE);
-		$mockResource->expects($this->atLeastOnce())->method('getHash')->will($this->returnValue('ac9b6187f4c55b461d69e22a57925ff61ee89cb2'));
+		$mockResource->expects($this->atLeastOnce())->method('getResourcePointer')->will($this->returnValue($mockResourcePointer));
 		$mockResource->expects($this->atLeastOnce())->method('getFileExtension')->will($this->returnValue('jpg'));
 
 		$publishingTarget = $this->getAccessibleMock('F3\FLOW3\Resource\Publishing\FileSystemPublishingTarget', array('rewriteTitleForUri', 'getPersistentResourceSourcePathAndFilename'));
@@ -194,8 +206,11 @@ class FileSystemPublishingTargetTest extends \F3\Testing\BaseTestCase {
 		mkdir('vfs://Foo/Web/Persistent');
 		file_put_contents('vfs://Foo/Web/Persistent/ac9b6187f4c55b461d69e22a57925ff61ee89cb2.jpg', 'some data');
 
+		$mockResourcePointer = $this->getMock('F3\FLOW3\Resource\ResourcePointer', array(), array(), '', FALSE);
+		$mockResourcePointer->expects($this->atLeastOnce())->method('getHash')->will($this->returnValue('ac9b6187f4c55b461d69e22a57925ff61ee89cb2'));
+
 		$mockResource = $this->getMock('F3\FLOW3\Resource\Resource', array(), array(), '', FALSE);
-		$mockResource->expects($this->atLeastOnce())->method('getHash')->will($this->returnValue('ac9b6187f4c55b461d69e22a57925ff61ee89cb2'));
+		$mockResource->expects($this->atLeastOnce())->method('getResourcePointer')->will($this->returnValue($mockResourcePointer));
 		$mockResource->expects($this->atLeastOnce())->method('getFileExtension')->will($this->returnValue('jpg'));
 
 		$publishingTarget = $this->getAccessibleMock('F3\FLOW3\Resource\Publishing\FileSystemPublishingTarget', array('rewriteTitleForUri', 'getPersistentResourceSourcePathAndFilename'));
@@ -213,8 +228,11 @@ class FileSystemPublishingTargetTest extends \F3\Testing\BaseTestCase {
 	public function unpublishPersistentResourceMirrorsTheGivenResource() {
 		$this->marktestSkipped('It seems glob() does not work on vfsStream...');
 
+		$mockResourcePointer = $this->getMock('F3\FLOW3\Resource\ResourcePointer', array(), array(), '', FALSE);
+		$mockResourcePointer->expects($this->atLeastOnce())->method('getHash')->will($this->returnValue('ac9b6187f4c55b461d69e22a57925ff61ee89cb2'));
+
 		$mockResource = $this->getMock('F3\FLOW3\Resource\Resource', array(), array(), '', FALSE);
-		$mockResource->expects($this->atLeastOnce())->method('getHash')->will($this->returnValue('ac9b6187f4c55b461d69e22a57925ff61ee89cb2'));
+		$mockResource->expects($this->atLeastOnce())->method('getResourcePointer')->will($this->returnValue($mockResourcePointer));
 
 		mkdir('vfs://Foo/Web');
 		mkdir('vfs://Foo/Web/Persistent');
@@ -245,12 +263,11 @@ class FileSystemPublishingTargetTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function getPersistentResourceWebUriJustCallsPublishPersistentResource() {
 		$mockResource = $this->getMock('F3\FLOW3\Resource\Resource', array(), array(), '', FALSE);
-		$title = 'Some Title';
 
 		$publishingTarget = $this->getAccessibleMock('F3\FLOW3\Resource\Publishing\FileSystemPublishingTarget', array('publishPersistentResource'));
-		$publishingTarget->expects($this->once())->method('publishPersistentResource')->with($mockResource, $title)->will($this->returnValue('http://result'));
+		$publishingTarget->expects($this->once())->method('publishPersistentResource')->with($mockResource)->will($this->returnValue('http://result'));
 
-		$this->assertSame('http://result', $publishingTarget->getPersistentResourceWebUri($mockResource, $title));
+		$this->assertSame('http://result', $publishingTarget->getPersistentResourceWebUri($mockResource));
 	}
 
 	/**

@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Resource\Publishing;
+namespace F3\FLOW3\Security\Authorization\Resource;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,34 +23,38 @@ namespace F3\FLOW3\Resource\Publishing;
  *                                                                        */
 
 /**
- * Resource publishing targets provide methods to publish resources to a certain
- * channel, such as the local file system or a content delivery network.
+ * An access restriction publisher that publishes .htaccess files to configure apache2 restrictions
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-abstract class AbstractResourcePublishingTarget implements \F3\FLOW3\Resource\Publishing\ResourcePublishingTargetInterface {
+class Apache2AccessRestrictionPublisher implements \F3\FLOW3\Security\Authorization\Resource\AccessRestrictionPublisherInterface {
 
 	/**
-	 * Rewrites the given resource file name to a human readable but still URI compatible string.
-	 *
-	 * @param string $filename The raw resource file name
-	 * @return string The rewritten title
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @var \F3\FLOW3\Utility\Environment
 	 */
-	protected function rewriteFileNameForUri($filename) {
-		return preg_replace(array('/ /', '/_/', '/[^-a-z0-9.]/i'), array('-', '-', ''), $filename);
+	protected $environment;
+
+	/**
+	 * Injects the environment
+	 *
+	 * @param \F3\FLOW3\Utility\Environment $environment The environment
+	 * @return void
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function injectEnvironment(\F3\FLOW3\Utility\Environment $environment) {
+		$this->environment = $environment;
 	}
 
 	/**
-	 * Returns the private path to the source of the given resource.
+	 * Publishes an Apache2 .htaccess file which allows access to the given directory only for the current session remote ip
 	 *
-	 * @param \F3\FLOW3\Resource\Resource $resource
-	 * @return mixed The full path and filename to the source of the given resource or FALSE if the resource file doesn't exist
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @param string $path The path to publish the restrictions for
+	 * @return void
 	 */
-	protected function getPersistentResourceSourcePathAndFilename(\F3\FLOW3\Resource\Resource $resource) {
-		$pathAndFilename = FLOW3_PATH_DATA . 'Persistent/Resources/' . $resource->getResourcePointer()->getHash();
-		return (file_exists($pathAndFilename)) ? $pathAndFilename : FALSE;
+	public function publishAccessRestrictionsForPath($path) {
+		$content = 'Allow from ' . $this->environment->getRemoteAddress();
+
+		file_put_contents($path . '.htaccess', $content);
 	}
 }
 

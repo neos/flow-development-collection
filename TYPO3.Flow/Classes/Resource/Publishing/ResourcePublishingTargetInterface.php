@@ -52,10 +52,9 @@ interface ResourcePublishingTargetInterface {
 	 * Publishes a persistent resource.
 	 *
 	 * @param \F3\FLOW3\Resource\Resource $resource The resource to publish
-	 * @param string $title An optional title which is used in the public URI pointing to the published resource
 	 * @return mixed Either the web URI of the published resource or FALSE if the resource source file doesn't exist or the resource could not be published for other reasons
 	 */
-	public function publishPersistentResource(\F3\FLOW3\Resource\Resource $resource, $title = '');
+	public function publishPersistentResource(\F3\FLOW3\Resource\Resource $resource);
 
 	/**
 	 * Unpublishes a persistent resource.
@@ -69,10 +68,9 @@ interface ResourcePublishingTargetInterface {
 	 * Returns the URI pointing to the published persistent resource
 	 *
 	 * @param \F3\FLOW3\Resource\Resource $resource The resource to publish
-	 * @param string $title An optional title which is used in the public URI pointing to the published resource
 	 * @return mixed Either the web URI of the published resource or FALSE if the resource source file doesn't exist or the resource could not be published for other reasons
 	 */
-	public function getPersistentResourceWebUri(\F3\FLOW3\Resource\Resource $resource, $title = '');
+	public function getPersistentResourceWebUri(\F3\FLOW3\Resource\Resource $resource);
 }
 
 ?>

@@ -62,12 +62,11 @@ class ResourcePublisher {
 	 * Publishes a persistent resource
 	 *
 	 * @param \F3\FLOW3\Resource\Resource $resource The resource to publish
-	 * @param string $title An optional title which is used in the public URI pointing to the published resource
 	 * @return mixed Either the web URI of the published resource or FALSE if the resource source file doesn't exist
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function publishPersistentResource(\F3\FLOW3\Resource\Resource $resource, $title = '') {
-		return $this->resourcePublishingTarget->publishPersistentResource($resource, $title);
+	public function publishPersistentResource(\F3\FLOW3\Resource\Resource $resource) {
+		return $this->resourcePublishingTarget->publishPersistentResource($resource);
 	}
 
 	/**
@@ -95,12 +94,11 @@ class ResourcePublisher {
 	 * Returns the URI pointing to the published persistent resource
 	 *
 	 * @param \F3\FLOW3\Resource\Resource $resource The resource to publish
-	 * @param string $title An optional title which is used in the public URI pointing to the published resource
 	 * @return mixed Either the web URI of the published resource or FALSE if the resource source file doesn't exist or the resource could not be published for other reasons
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getPersistentResourceWebUri($resource, $title = '') {
-		return $this->resourcePublishingTarget->getPersistentResourceWebUri($resource, $title);
+	public function getPersistentResourceWebUri($resource) {
+		return $this->resourcePublishingTarget->getPersistentResourceWebUri($resource);
 	}
 }
 

@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Resource\Publishing;
+namespace F3\FLOW3\Tests\Unit\Resource;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,34 +23,40 @@ namespace F3\FLOW3\Resource\Publishing;
  *                                                                        */
 
 /**
- * Resource publishing targets provide methods to publish resources to a certain
- * channel, such as the local file system or a content delivery network.
+ * Testcase for the Resource class
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-abstract class AbstractResourcePublishingTarget implements \F3\FLOW3\Resource\Publishing\ResourcePublishingTargetInterface {
+class ResourcePointerTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
-	 * Rewrites the given resource file name to a human readable but still URI compatible string.
-	 *
-	 * @param string $filename The raw resource file name
-	 * @return string The rewritten title
+	 * @test
+	 * @expectedException \InvalidArgumentException
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function rewriteFileNameForUri($filename) {
-		return preg_replace(array('/ /', '/_/', '/[^-a-z0-9.]/i'), array('-', '-', ''), $filename);
+	public function constructThrowsExceptionOnFormallyInvalidHash() {
+		$resourcePointer = new \F3\FLOW3\Resource\ResourcePointer('69e73da3ce0ad08c717b7b9f1c759182d64');
 	}
 
 	/**
-	 * Returns the private path to the source of the given resource.
-	 *
-	 * @param \F3\FLOW3\Resource\Resource $resource
-	 * @return mixed The full path and filename to the source of the given resource or FALSE if the resource file doesn't exist
+	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function getPersistentResourceSourcePathAndFilename(\F3\FLOW3\Resource\Resource $resource) {
-		$pathAndFilename = FLOW3_PATH_DATA . 'Persistent/Resources/' . $resource->getResourcePointer()->getHash();
-		return (file_exists($pathAndFilename)) ? $pathAndFilename : FALSE;
+	public function getHashReturnsTheResourceHash() {
+		$hash = '69e73da3ce0ad08c717b7b9f1c759182d6650944';
+		$resourcePointer = new \F3\FLOW3\Resource\ResourcePointer($hash);
+		$this->assertSame($hash, $resourcePointer->getHash());
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function toStringReturnsTheResourceHashObject() {
+		$hash = '69e73da3ce0ad08c717b7b9f1c759182d6650944';
+
+		$resourcePointer = new \F3\FLOW3\Resource\ResourcePointer($hash);
+		$this->assertSame($hash, (string)$resourcePointer);
 	}
 }
 

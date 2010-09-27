@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Resource\Publishing;
+namespace F3\FLOW3\Resource;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,34 +23,49 @@ namespace F3\FLOW3\Resource\Publishing;
  *                                                                        */
 
 /**
- * Resource publishing targets provide methods to publish resources to a certain
- * channel, such as the local file system or a content delivery network.
+ * Model describing a resource pointer
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @scope prototype
+ * @valueobject
  */
-abstract class AbstractResourcePublishingTarget implements \F3\FLOW3\Resource\Publishing\ResourcePublishingTargetInterface {
+class ResourcePointer {
 
 	/**
-	 * Rewrites the given resource file name to a human readable but still URI compatible string.
+	 * @var string
+	 */
+	protected $hash;
+
+	/**
+	 * Constructs this resource pointer
 	 *
-	 * @param string $filename The raw resource file name
-	 * @return string The rewritten title
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function rewriteFileNameForUri($filename) {
-		return preg_replace(array('/ /', '/_/', '/[^-a-z0-9.]/i'), array('-', '-', ''), $filename);
+	public function __construct($hash) {
+		if (!is_string($hash) || strlen($hash) !== 40) {
+			throw new \InvalidArgumentException('A valid sha1 hash must be passed to this constructor.', 1259748358);
+		}
+		$this->hash = $hash;
 	}
 
 	/**
-	 * Returns the private path to the source of the given resource.
+	 * Returns the hash of this resource
 	 *
-	 * @param \F3\FLOW3\Resource\Resource $resource
-	 * @return mixed The full path and filename to the source of the given resource or FALSE if the resource file doesn't exist
+	 * @return string A 40 character hexadecimal sha1 hash over the content of this resource
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function getPersistentResourceSourcePathAndFilename(\F3\FLOW3\Resource\Resource $resource) {
-		$pathAndFilename = FLOW3_PATH_DATA . 'Persistent/Resources/' . $resource->getResourcePointer()->getHash();
-		return (file_exists($pathAndFilename)) ? $pathAndFilename : FALSE;
+	public function getHash() {
+		return $this->hash;
+	}
+
+	/**
+	 * Returns a string representation of this resource object.
+	 *
+	 * @return string The hash of this resource
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function __toString() {
+		return $this->hash;
 	}
 }
 

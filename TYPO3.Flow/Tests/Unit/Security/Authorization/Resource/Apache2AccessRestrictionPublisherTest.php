@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Resource\Publishing;
+namespace F3\FLOW3\Security\Authorization\Resource;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,35 +23,37 @@ namespace F3\FLOW3\Resource\Publishing;
  *                                                                        */
 
 /**
- * Resource publishing targets provide methods to publish resources to a certain
- * channel, such as the local file system or a content delivery network.
+ * Testcase for the Apache2 access restriction publisher
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-abstract class AbstractResourcePublishingTarget implements \F3\FLOW3\Resource\Publishing\ResourcePublishingTargetInterface {
+
+class Apache2AccessRestrictionPublisherTest extends \F3\Testing\BaseTestCase {
 
 	/**
-	 * Rewrites the given resource file name to a human readable but still URI compatible string.
-	 *
-	 * @param string $filename The raw resource file name
-	 * @return string The rewritten title
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	protected function rewriteFileNameForUri($filename) {
-		return preg_replace(array('/ /', '/_/', '/[^-a-z0-9.]/i'), array('-', '-', ''), $filename);
+	public function setUp() {
+		\vfsStreamWrapper::register();
+		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('Foo'));
 	}
 
 	/**
-	 * Returns the private path to the source of the given resource.
-	 *
-	 * @param \F3\FLOW3\Resource\Resource $resource
-	 * @return mixed The full path and filename to the source of the given resource or FALSE if the resource file doesn't exist
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	protected function getPersistentResourceSourcePathAndFilename(\F3\FLOW3\Resource\Resource $resource) {
-		$pathAndFilename = FLOW3_PATH_DATA . 'Persistent/Resources/' . $resource->getResourcePointer()->getHash();
-		return (file_exists($pathAndFilename)) ? $pathAndFilename : FALSE;
+	public function publishAccessRestrictionsForPathPublishesAHtaccessFileInTheGivenDirectory() {
+		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
+		$mockEnvironment->expects($this->once())->method('getRemoteAddress')->will($this->returnValue('192.168.1.234'));
+
+
+		$publisher = new Apache2AccessRestrictionPublisher();
+		$publisher->injectEnvironment($mockEnvironment);
+		$publisher->publishAccessRestrictionsForPath('vfs://Foo/');
+
+		$expectedFileContents = 'Allow from 192.168.1.234';
+
+		$this->assertFileExists('vfs://Foo/.htaccess');
+		$this->assertEquals($expectedFileContents, file_get_contents('vfs://Foo/.htaccess'));
 	}
 }
-
-?>

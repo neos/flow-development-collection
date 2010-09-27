@@ -158,6 +158,7 @@ class ResourceManager {
 			// For now this URI is hardcoded, but might be manageable in the future
 			// if additional persistent resources storages are supported.
 		$this->persistentResourcesStorageBaseUri = FLOW3_PATH_DATA . 'Persistent/Resources/';
+		\F3\FLOW3\Utility\Files::createDirectoryRecursively($this->persistentResourcesStorageBaseUri);
 
 		$this->importedResources = new \SplObjectStorage();
   	}
@@ -189,7 +190,9 @@ class ResourceManager {
 			unlink($temporaryTargetPathAndFilename);
 			return FALSE;
 		}
-		$resource =  $this->objectManager->create('F3\FLOW3\Resource\Resource', $hash, $pathInfo['extension']);
+		$resource = $this->objectManager->create('F3\FLOW3\Resource\Resource');
+		$resource->setFilename($pathInfo['basename']);
+		$resource->setResourcePointer($this->objectManager->create('F3\FLOW3\Resource\ResourcePointer', $hash));
 		$this->importedResources[$resource] = array(
 			'originalFilename' => $pathInfo['basename']
 		);
@@ -200,13 +203,13 @@ class ResourceManager {
 	 * Returns an object storage with all resource objects which have been imported
 	 * by the Resource Manager during this script call. Each resource comes with
 	 * an array of additional information about its import.
-	 * 
+	 *
 	 * Example for a returned object storage:
-	 * 
+	 *
 	 * $resource1 => array('originalFilename' => 'Foo.txt'),
 	 * $resource2 => array('originalFilename' => 'Bar.txt'),
 	 * ...
-	 * 
+	 *
 	 * @return \SplObjectStorage
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
@@ -239,7 +242,9 @@ class ResourceManager {
 		if (move_uploaded_file($uploadInfo['tmp_name'], $finalTargetPathAndFilename) === FALSE) {
 			return FALSE;
 		}
-		$resource =  $this->objectManager->create('F3\FLOW3\Resource\Resource', $hash, $pathInfo['extension']);
+		$resource = $this->objectManager->create('F3\FLOW3\Resource\Resource');
+		$resource->setFilename($pathInfo['basename']);
+		$resource->setResourcePointer($this->objectManager->create('F3\FLOW3\Resource\ResourcePointer', $hash));
 		$this->importedResources[$resource] = array(
 			'originalFilename' => $pathInfo['basename']
 		);
@@ -257,8 +262,8 @@ class ResourceManager {
 			// instanceof instead of type hinting so it can be used as slot
 		if ($resource instanceof \F3\FLOW3\Resource\Resource) {
 			$this->resourcePublisher->unpublishPersistentResource($resource);
-			if (is_file($this->persistentResourcesStorageBaseUri . $resource->getHash())) {
-				unlink($this->persistentResourcesStorageBaseUri . $resource->getHash());
+			if (is_file($this->persistentResourcesStorageBaseUri . $resource->getResourcePointer()->getHash())) {
+				unlink($this->persistentResourcesStorageBaseUri . $resource->getResourcePointer()->getHash());
 				return TRUE;
 			}
 		}

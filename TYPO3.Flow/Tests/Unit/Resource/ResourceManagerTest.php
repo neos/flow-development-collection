@@ -27,7 +27,7 @@ namespace F3\FLOW3\Tests\Unit\Resource;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class ResourceManagerTest extends \F3\Testing\BaseTestCase {
+class ResourceManagerTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @author Robert Lemke <robert@typo3.org>
@@ -157,10 +157,15 @@ class ResourceManagerTest extends \F3\Testing\BaseTestCase {
 		mkdir('vfs://Foo/Persistent');
 		mkdir('vfs://Foo/Persistent/Resources');
 
+		$mockResourcePointer = $this->getMock('F3\FLOW3\Resource\ResourcePointer', array(), array(), '', FALSE);
+
 		$mockResource = $this->getMock('F3\FLOW3\Resource\Resource', array(), array(), '', FALSE);
+		$mockResource->expects($this->once())->method('setFilename')->with('SomeResource.txt');
+		$mockResource->expects($this->once())->method('setResourcePointer')->with($mockResourcePointer);
 
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->once())->method('create')->with('F3\FLOW3\Resource\Resource', $hash, 'txt')->will($this->returnValue($mockResource));
+		$mockObjectManager->expects($this->at(0))->method('create')->with('F3\FLOW3\Resource\Resource')->will($this->returnValue($mockResource));
+		$mockObjectManager->expects($this->at(1))->method('create')->with('F3\FLOW3\Resource\ResourcePointer', $hash)->will($this->returnValue($mockResourcePointer));
 		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment');
 		$mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue('vfs://Foo/Temporary/'));
 
@@ -187,10 +192,15 @@ class ResourceManagerTest extends \F3\Testing\BaseTestCase {
 		mkdir('vfs://Foo/Persistent');
 		mkdir('vfs://Foo/Persistent/Resources');
 
+		$mockResourcePointer = $this->getMock('F3\FLOW3\Resource\ResourcePointer', array(), array(), '', FALSE);
+
 		$mockResource = $this->getMock('F3\FLOW3\Resource\Resource', array(), array(), '', FALSE);
+		$mockResource->expects($this->once())->method('setFilename')->with('SomeResource.txt');
+		$mockResource->expects($this->once())->method('setResourcePointer')->with($mockResourcePointer);
 
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->once())->method('create')->with('F3\FLOW3\Resource\Resource', $hash, 'txt')->will($this->returnValue($mockResource));
+		$mockObjectManager->expects($this->at(0))->method('create')->with('F3\FLOW3\Resource\Resource')->will($this->returnValue($mockResource));
+		$mockObjectManager->expects($this->at(1))->method('create')->with('F3\FLOW3\Resource\ResourcePointer', $hash)->will($this->returnValue($mockResourcePointer));
 		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment');
 		$mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue('vfs://Foo/Temporary/'));
 

@@ -23,7 +23,7 @@ namespace F3\FLOW3\Resource;
  *                                                                        */
 
 /**
- * An object converter for Resource objects
+ * An object converter for ResourcePointer objects
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
@@ -78,7 +78,7 @@ class ResourceObjectConverter implements \F3\FLOW3\Property\ObjectConverterInter
 	}
 
 	/**
-	 * Converts the given string or array to a Resource object.
+	 * Converts the given string or array to a ResourcePointer object.
 	 *
 	 * If the input format is an array, this method assumes the resource to be a
 	 * fresh file upload and imports the temporary upload file through the
@@ -100,13 +100,13 @@ class ResourceObjectConverter implements \F3\FLOW3\Property\ObjectConverterInter
 
 			$resource = $this->resourceManager->importUploadedResource($source);
 			if ($resource === FALSE) {
-				return $this->objectManager->create('F3\FLOW3\Error\Error', 'The resource manager could not create a resource instance.' , 1264517906);
+				return $this->objectManager->create('F3\FLOW3\Error\Error', 'The resource manager could not create a ResourcePointer instance.' , 1264517906);
 			} else {
 				$this->convertedResources[$source['tmp_name']] = $resource;
 				return $resource;
 			}
 		} else {
-			return $this->objectManager->create('F3\FLOW3\Error\Error', 'The source for conversion to a resource object was not an array.' , 1264440811);
+			return $this->objectManager->create('F3\FLOW3\Error\Error', 'The source for conversion to a ResourcePointer object was not an array.' , 1264440811);
 		}
 	}
 }

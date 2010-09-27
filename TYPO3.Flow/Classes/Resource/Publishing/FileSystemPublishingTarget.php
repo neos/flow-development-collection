@@ -63,8 +63,8 @@ class FileSystemPublishingTarget extends \F3\FLOW3\Resource\Publishing\AbstractR
 
 	/**
 	 * Injects the settings of this package
-	 * 
-	 * @param array $settings 
+	 *
+	 * @param array $settings
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -74,7 +74,7 @@ class FileSystemPublishingTarget extends \F3\FLOW3\Resource\Publishing\AbstractR
 
 	/**
 	 * Initializes this publishing target
-	 * 
+	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -124,7 +124,7 @@ class FileSystemPublishingTarget extends \F3\FLOW3\Resource\Publishing\AbstractR
 				$this->mirrorFile($sourcePathAndFilename, $targetPathAndFilename, TRUE);
 			}
 		}
-		
+
 		return TRUE;
 	}
 
@@ -132,15 +132,12 @@ class FileSystemPublishingTarget extends \F3\FLOW3\Resource\Publishing\AbstractR
 	 * Publishes a persistent resource to the web accessible resources directory.
 	 *
 	 * @param \F3\FLOW3\Resource\Resource $resource The resource to publish
-	 * @param string $title An optional title which is used in the public URI pointing to the published resource
 	 * @return mixed Either the web URI of the published resource or FALSE if the resource source file doesn't exist or the resource could not be published for other reasons
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function publishPersistentResource(\F3\FLOW3\Resource\Resource $resource, $title = '') {
-		$rewrittenTitle = ($title === '' || $title === NULL) ? '' : '/' . $this->rewriteTitleForUri($title);
-
-		$publishedResourcePathAndFilename = $this->resourcesPublishingPath . 'Persistent/' . $resource->getHash() . '.' . $resource->getFileExtension();
-		$publishedResourceWebUri = $this->resourcesBaseUri . 'Persistent/' . $resource->getHash() . $rewrittenTitle . '.' . $resource->getFileExtension();
+	public function publishPersistentResource(\F3\FLOW3\Resource\Resource $resource) {
+		$publishedResourcePathAndFilename = $this->buildPersistentResourcePublishPathAndFilename($resource, TRUE);
+		$publishedResourceWebUri = $this->buildPersistentResourceWebUri($resource);
 
 		if (!file_exists($publishedResourcePathAndFilename)) {
 			$unpublishedResourcePathAndFilename = $this->getPersistentResourceSourcePathAndFilename($resource);
@@ -161,11 +158,29 @@ class FileSystemPublishingTarget extends \F3\FLOW3\Resource\Publishing\AbstractR
 	 */
 	public function unpublishPersistentResource(\F3\FLOW3\Resource\Resource $resource) {
 		$result = FALSE;
-		foreach (glob($this->resourcesPublishingPath . 'Persistent/' . $resource->getHash() . '*') as $publishedResourcePathAndFilename) {
+		foreach (glob($this->buildPersistentResourcePublishPathAndFilename($resource, FALSE) . '*') as $publishedResourcePathAndFilename) {
 			unlink($publishedResourcePathAndFilename);
 			$result = TRUE;
 		}
 		return $result;
+	}
+
+	/**
+	 * Returns the base URI where persistent resources are published an accessbile from the outside
+	 * @return \F3\FLOW3\Property\DataType\Uri The base URI
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getResourcesBaseUri() {
+		return $this->resourcesBaseUri;
+	}
+
+	/**
+	 * Returns the publishing path where resources are published in the local filesystem
+	 * @return string The resources publishing path
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getResourcesPublishingPath() {
+		return $this->resourcesPublishingPath;
 	}
 
 	/**
@@ -182,12 +197,12 @@ class FileSystemPublishingTarget extends \F3\FLOW3\Resource\Publishing\AbstractR
 	 * Returns the web URI pointing to the published persistent resource
 	 *
 	 * @param \F3\FLOW3\Resource\Resource $resource The resource to publish
-	 * @param string $title An optional title which is used in the public URI pointing to the published resource
 	 * @return mixed Either the web URI of the published resource or FALSE if the resource source file doesn't exist or the resource could not be published for other reasons
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function getPersistentResourceWebUri(\F3\FLOW3\Resource\Resource $resource, $title = '') {
-		return $this->publishPersistentResource($resource, $title);
+	public function getPersistentResourceWebUri(\F3\FLOW3\Resource\Resource $resource) {
+		return $this->publishPersistentResource($resource);
 	}
 
 	/**
@@ -250,8 +265,35 @@ class FileSystemPublishingTarget extends \F3\FLOW3\Resource\Publishing\AbstractR
 		}
 
 		if (!file_exists($targetPathAndFilename)) {
-			throw new \F3\FLOW3\Resource\Exception('The resource "' . str_replace($sourcePath, '', $sourcePathAndFilename) . '" could not be mirrored.', 1207255453);
+			throw new \F3\FLOW3\Resource\Exception('The resource "' . $sourcePathAndFilename . '" could not be mirrored.', 1207255453);
 		}
+	}
+
+	/**
+	 * Returns the web URI to be used to publish the specified persistent resource
+	 *
+	 * @param \F3\FLOW3\Resource\Resource $resource The resource to build the URI for
+	 * @return string The web URI
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	protected function buildPersistentResourceWebUri(\F3\FLOW3\Resource\Resource $resource) {
+		$filename = $resource->getFilename();
+		$rewrittenFilename = ($filename === '' || $filename === NULL) ? '' : '/' . $this->rewriteFileNameForUri($filename);
+		return $this->resourcesBaseUri . 'Persistent/' . $resource->getResourcePointer()->getHash() . $rewrittenFilename;
+	}
+
+	/**
+	 * Returns the publish path and filename to be used to publish the specified persistent resource
+	 *
+	 * @param \F3\FLOW3\Resource\Resource $resource The resource to build the publish path and filename for
+	 * @param boolean $returnFilename FALSE if only the directory without the filename should be returned
+	 * @return string The publish path and filename
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	protected function buildPersistentResourcePublishPathAndFilename(\F3\FLOW3\Resource\Resource $resource, $returnFilename) {
+		$publishPath = $this->resourcesPublishingPath . 'Persistent/';
+		if ($returnFilename === TRUE) return $publishPath . $resource->getResourcePointer()->getHash() . '.' . $resource->getFileExtension();
+		return $publishPath;
 	}
 }
 

@@ -75,7 +75,7 @@ class PersistenceQueryRewritingAspect {
 	}
 
 	/**
-	 * Injects the security context
+	 * Injects the policy service
 	 *
 	 * @param \F3\FLOW3\Security\Policy\PolicyService $policyService The policy service
 	 * @return void

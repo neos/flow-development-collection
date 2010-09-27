@@ -27,51 +27,60 @@ namespace F3\FLOW3\Resource;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
- * @valueobject
+ * @entity
  */
 class Resource {
 
 	/**
-	 * @var string
+	 * @var F3\FLOW3\Resource\ResourcePointer
 	 */
-	protected $hash;
+	protected $resourcePointer;
+
+	/**
+	 * @var F3\FLOW3\Resource\Publishing\PublishingConfigurationInterface
+	 */
+	protected $publishingConfiguration;
 
 	/**
 	 * @var string
+	 * @validate StringLength(maximum = 100)
+	 */
+	protected $filename;
+
+	/**
+	 * @var string
+	 * @validate StringLength(maximum = 100)
 	 */
 	protected $fileExtension;
 
 	/**
-	 * Constructs this resource
+	 * Sets the filename
 	 *
+	 * @param string $filename
+	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct($hash, $fileExtension) {
-		if (!is_string($hash) || strlen($hash) !== 40) {
-			throw new \InvalidArgumentException('A valid sha1 hash must be passed to this constructor.', 1259748358);
-		}
-		if (!is_string($fileExtension) || substr(strtolower($fileExtension), -3, 3) === 'php') {
-			throw new \InvalidArgumentException('A valid file extension must be passed to this constructor.', 1259748359);
-		}
-		$this->hash = $hash;
-		$this->fileExtension = strtolower($fileExtension);
+	public function setFileName($filename) {
+		$this->filename = $filename;
+		$pathInfo = pathinfo($filename);
+		$this->fileExtension = strtolower($pathInfo['extension']);
 	}
 
 	/**
-	 * Returns the hash of this resource
+	 * Gets the filename
 	 *
-	 * @return string A 40 character hexadecimal sha1 hash over the content of this resource
+	 * @return string The filename
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getHash() {
-		return $this->hash;
+	public function getFileName() {
+		return $this->filename;
 	}
 
 	/**
 	 * Returns the file extension used for this resource
 	 *
-	 * @return string The file extension used for this resource
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @return string The file extension used for this file
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getFileExtension() {
 		return $this->fileExtension;
@@ -79,23 +88,54 @@ class Resource {
 
 	/**
 	 * Returns the mime type for this resource
-	 * 
+	 *
 	 * @return string The mime type
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getMimeType() {
-		return \F3\FLOW3\Utility\FileTypes::getMimeTypeFromFilename('x.' . $this->fileExtension);
+		return \F3\FLOW3\Utility\FileTypes::getMimeTypeFromFilename('x.' . $this->getFileExtension());
 	}
 
 	/**
-	 * Returns a string representation of this resource object.
+	 * Sets the resource pointer
 	 *
-	 * @return string The hash of this resource
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @param \F3\FLOW3\Resource\ResourcePointer $resourcePointer
+	 * @return void
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function __toString() {
-		return $this->hash;
+	public function setResourcePointer(\F3\FLOW3\Resource\ResourcePointer $resourcePointer) {
+		$this->resourcePointer = $resourcePointer;
 	}
-}
 
-?>
+	/**
+	 * Returns the resource pointer
+	 *
+	 * @return \F3\FLOW3\Resource\ResourcePointer $resourcePointer
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getResourcePointer() {
+		return $this->resourcePointer;
+	}
+
+	/**
+	 * Sets the publishing configuration for this resource
+	 *
+	 * @param \F3\FLOW3\Resource\Publishing\PublishingConfigurationInterface $publishingConfiguration The publishing configuration
+	 * @return void
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function setPublishingConfiguration(\F3\FLOW3\Resource\Publishing\PublishingConfigurationInterface $publishingConfiguration = NULL) {
+		$this->publishingConfiguration = $publishingConfiguration;
+	}
+
+	/**
+	 * Returns the publishing configuration for this resource
+	 *
+	 * @return \F3\FLOW3\Resource\Publishing\PublishingConfigurationInterface The publishing configuration
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getPublishingConfiguration() {
+		return $this->publishingConfiguration;
+	}
+
+}
