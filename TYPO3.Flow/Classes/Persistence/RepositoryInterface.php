@@ -107,6 +107,18 @@ interface RepositoryInterface {
 	 */
 	public function removeAll();
 
+	/**
+	 * Sets the property names to order results by. Expected like this:
+	 * array(
+	 *  'foo' => \F3\FLOW3\Persistence\QueryInterface::ORDER_ASCENDING,
+	 *  'bar' => \F3\FLOW3\Persistence\QueryInterface::ORDER_DESCENDING
+	 * )
+	 *
+	 * @param array $defaultOrderings The property names to order by by default
+	 * @return void
+	 * @api
+	 */
+	public function setDefaultOrderings(array $defaultOrderings);
 
 	/**
 	 * Replaces an object by another after checking that existing and new
