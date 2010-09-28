@@ -66,7 +66,7 @@ class Files {
 				$path = trim($path, '/');
 			}
 			if (strlen($path) > 0) {
-				$resultingPath.= $path . '/';
+				$resultingPath .= $path . '/';
 			}
 		}
 		return rtrim($resultingPath, '/');
