@@ -428,6 +428,38 @@ class ValidatorResolverTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function buildBaseValidatorConjunctionAddsValidatorsOnlyForPropertiesHoldingPrototypes() {
+		$entityClassName = uniqid('Entity');
+		eval('class ' . $entityClassName . '{}');
+		$otherClassName = uniqid('Other');
+		eval('class ' . $otherClassName . '{}');
+		$modelClassName = uniqid('Model');
+		eval('class ' . $modelClassName . '{}');
+
+		$mockConjunctionValidator = $this->getMock('F3\FLOW3\Validation\Validator\ConjunctionValidator', array(), array(), '', FALSE);
+
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
+		$mockObjectManager->expects($this->at(0))->method('get')->with('F3\FLOW3\Validation\Validator\ConjunctionValidator')->will($this->returnValue($mockConjunctionValidator));
+		$mockObjectManager->expects($this->at(1))->method('getScope')->with($entityClassName)->will($this->returnValue('prototype'));
+		$mockObjectManager->expects($this->at(2))->method('getScope')->with($otherClassName)->will($this->returnValue(NULL));
+
+		$mockReflectionService = $this->getMock('\F3\FLOW3\Reflection\ReflectionService');
+		$mockReflectionService->expects($this->any())->method('getClassPropertyNames')->will($this->returnValue(array('entityProperty', 'otherProperty')));
+		$mockReflectionService->expects($this->at(1))->method('getPropertyTagsValues')->with($modelClassName, 'entityProperty')->will($this->returnValue(array('var' => array($entityClassName))));
+		$mockReflectionService->expects($this->at(2))->method('getPropertyTagsValues')->with($modelClassName, 'otherProperty')->will($this->returnValue(array('var' => array($otherClassName))));
+
+		$validatorResolver = $this->getAccessibleMock('F3\FLOW3\Validation\ValidatorResolver', array('resolveValidatorObjectName', 'createValidator', 'getBaseValidatorConjunction'), array($mockObjectManager));
+		$validatorResolver->injectReflectionService($mockReflectionService);
+		$validatorResolver->expects($this->at(0))->method('createValidator')->with('F3\FLOW3\Validation\Validator\GenericObjectValidator')->will($this->returnValue($this->getMock('F3\FLOW3\Validation\Validator\GenericObjectValidator', array(), array(), '', FALSE)));
+		$validatorResolver->expects($this->once())->method('getBaseValidatorConjunction')->will($this->returnValue($this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface')));
+
+		$validatorResolver->_call('buildBaseValidatorConjunction', $modelClassName);
+	}
+
+	/**
+	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function buildBaseValidatorConjunctionReturnsNullIfNoValidatorBuilt() {

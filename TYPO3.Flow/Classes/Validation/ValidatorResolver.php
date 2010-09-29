@@ -257,8 +257,8 @@ class ValidatorResolver {
 			foreach ($this->reflectionService->getClassPropertyNames($targetClassName) as $classPropertyName) {
 				$classPropertyTagsValues = $this->reflectionService->getPropertyTagsValues($targetClassName, $classPropertyName);
 
-				$propertyTargetClassName = trim(implode('' , $classPropertyTagsValues['var']));
-				if (class_exists($propertyTargetClassName)) {
+				$propertyTargetClassName = trim(implode('' , $classPropertyTagsValues['var']), ' \\');
+				if (class_exists($propertyTargetClassName) && $this->objectManager->getScope($propertyTargetClassName) === 'prototype') {
 					$objectValidator->addPropertyValidator($classPropertyName, $this->getBaseValidatorConjunction($propertyTargetClassName));
 				}
 
