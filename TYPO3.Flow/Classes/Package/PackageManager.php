@@ -229,15 +229,11 @@ class PackageManager implements \F3\FLOW3\Package\PackageManagerInterface {
 		}
 
 		if ($packagesPath === '') {
-			$packagesPath = realpath(FLOW3_PATH_PACKAGES . 'Application/');
-			if ($packagesPath === FALSE) {
-				$packagesPath = realpath(FLOW3_PATH_PACKAGES) . '/Application/';
-			}
-			$packagesPath = \F3\FLOW3\Utility\Files::getUnixStylePath($packagesPath);
+			$packagesPath = \F3\FLOW3\Utility\Files::getUnixStylePath(\F3\FLOW3\Utility\Files::concatenatePaths(array(FLOW3_PATH_PACKAGES, 'Application')));
 		}
-		if ($packagesPath === '') throw new \F3\FLOW3\Package\Exception\InvalidPackagePathException('The path "Packages/Application" does not exist.', 1243932738);
+		if (!is_dir($packagesPath)) throw new \F3\FLOW3\Package\Exception\InvalidPackagePathException('The path "Packages/Application" does not exist.', 1243932738);
 
-		$packagePath = $packagesPath . $packageKey . '/';
+		$packagePath = \F3\FLOW3\Utility\Files::concatenatePaths(array($packagesPath, $packageKey)) . '/';
 		\F3\FLOW3\Utility\Files::createDirectoryRecursively($packagePath);
 
 		foreach (
@@ -248,7 +244,7 @@ class PackageManager implements \F3\FLOW3\Package\PackageManagerInterface {
 				\F3\FLOW3\Package\Package::DIRECTORY_DOCUMENTATION,
 				\F3\FLOW3\Package\Package::DIRECTORY_RESOURCES,
 			) as $path) {
-			\F3\FLOW3\Utility\Files::createDirectoryRecursively($packagePath . $path);
+			\F3\FLOW3\Utility\Files::createDirectoryRecursively(\F3\FLOW3\Utility\Files::concatenatePaths(array($packagePath, $path)));
 		}
 
 		$package = $this->objectManager->create('F3\FLOW3\Package\Package', $packageKey, $packagePath);
