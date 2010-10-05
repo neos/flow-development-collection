@@ -35,11 +35,6 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 	protected $objectManager;
 
 	/**
-	 * @var \F3\FLOW3\Validation\ValidatorResolver
-	 */
-	protected $validatorResolver;
-
-	/**
 	 * @var \PDO
 	 */
 	protected $databaseHandle;
@@ -63,17 +58,6 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 	 */
 	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
-	}
-
-	/**
-	 * Injects the ValidatorResolver
-	 *
-	 * @param \F3\FLOW3\Validation\ValidatorResolver $validatorResolver
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function injectValidatorResolver(\F3\FLOW3\Validation\ValidatorResolver $validatorResolver) {
-		$this->validatorResolver = $validatorResolver;
 	}
 
 	/**
@@ -197,26 +181,6 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 	}
 
 	/**
-	 * Fetchs the identifier for the given object, either from the declared UUID
-	 * property, the injected UUID or injected hash.
-	 *
-	 * @param object $object
-	 * @return string
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	protected function getIdentifierFromObject($object) {
-		$classSchema = $this->classSchemata[$object->FLOW3_AOP_Proxy_getProxyTargetClassName()];
-
-		if ($classSchema->getUuidPropertyName() !== NULL) {
-			return $object->FLOW3_AOP_Proxy_getProperty($classSchema->getUuidPropertyName());
-		} elseif (property_exists($object, 'FLOW3_Persistence_Entity_UUID')) {
-			return $object->FLOW3_Persistence_Entity_UUID;
-		} elseif (property_exists($object, 'FLOW3_Persistence_ValueObject_Hash')) {
-			return $object->FLOW3_Persistence_ValueObject_Hash;
-		}
-	}
-
-	/**
 	 * Stores or updates an object in the underlying storage.
 	 *
 	 * @param object $object The object to persist
@@ -267,25 +231,6 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 		$this->emitPersistedObject($object, $objectState);
 
 		return $identifier;
-	}
-
-	/**
-	 * Validates the given object and throws an exception if validation fails.
-	 *
-	 * @param object $object
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	protected function validateObject($object) {
-		$classSchema = $this->classSchemata[$object->FLOW3_AOP_Proxy_getProxyTargetClassName()];
-		$validator = $this->validatorResolver->getBaseValidatorConjunction($classSchema->getClassName());
-		if (!$validator->isValid($object)) {
-			$errorMessages = '';
-			foreach ($validator->getErrors() as $error) {
-				$errorMessages .= (string)$error . PHP_EOL;
-			}
-			throw new \F3\FLOW3\Persistence\Exception\ObjectValidationFailedException('An instance of "' . $object->FLOW3_AOP_Proxy_getProxyTargetClassName() . '" failed to pass validation with ' . count($validator->getErrors()) . ' error(s): ' . PHP_EOL . $errorMessages);
-		}
 	}
 
 	/**
