@@ -45,30 +45,16 @@ class QueryTest extends \F3\Testing\BaseTestCase {
 	protected $objectManager;
 
 	/**
-	 * @var \F3\FLOW3\Reflection\ClassSchema
-	 */
-	protected $classSchema;
-
-	/**
-	 * @var array
-	 */
-	protected $objects;
-
-	/**
 	 * Sets up this test case
 	 *
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setUp() {
-		$this->objects = array(new \stdClass(), new \stdClass());
-		$this->classSchema = $this->getMock('F3\FLOW3\Reflection\ClassSchema', array(), array(), '', FALSE);
 		$this->reflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService');
-		$this->reflectionService->expects($this->any())->method('getClassSchema')->with('someType')->will($this->returnValue($this->classSchema));
 		$this->objectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
 		$this->query = new \F3\FLOW3\Persistence\Query('someType', $this->reflectionService);
 		$this->query->injectObjectManager($this->objectManager);
 	}
-
 
 	/**
 	 * @test
@@ -76,11 +62,46 @@ class QueryTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function executeReturnsQueryResultInstance() {
 		$resultProxy = $this->getMock('F3\FLOW3\Persistence\QueryResult', array(), array(), '', FALSE);
-		$this->objectManager->expects($this->once())->method('create')->will($this->returnValue($resultProxy));
+		$this->objectManager->expects($this->once())->method('create')->with('F3\FLOW3\Persistence\QueryResultInterface', $this->query)->will($this->returnValue($resultProxy));
 		$result = $this->query->execute();
 		$this->assertType('F3\FLOW3\Persistence\QueryResult', $result);
 	}
 
+	/**
+	 * @test
+	 * @expectedException \InvalidArgumentException
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function setLimitAcceptsOnlyIntegers() {
+		$this->query->setLimit(1.5);
+	}
+
+	/**
+	 * @test
+	 * @expectedException \InvalidArgumentException
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function setLimitRejectsIntegersLessThanOne() {
+		$this->query->setLimit(0);
+	}
+
+	/**
+	 * @test
+	 * @expectedException \InvalidArgumentException
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function setOffsetAcceptsOnlyIntegers() {
+		$this->query->setOffset(1.5);
+	}
+
+	/**
+	 * @test
+	 * @expectedException \InvalidArgumentException
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function setOffsetRejectsIntegersLessThanZero() {
+		$this->query->setOffset(-1);
+	}
 }
 
 ?>
