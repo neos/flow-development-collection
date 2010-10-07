@@ -220,6 +220,10 @@ class DataMapper {
 			$object->FLOW3_AOP_Proxy_setProperty($propertyName, $propertyValue);
 		}
 
+		if (isset($objectData['metadata'])) {
+			$object->FLOW3_AOP_Proxy_setProperty('FLOW3_Persistence_Metadata', $objectData['metadata']);
+		}
+
 		if ($classSchema->getModelType() === \F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY) {
 			$uuidPropertyName = $classSchema->getUuidPropertyName();
 			$object->FLOW3_AOP_Proxy_setProperty(($uuidPropertyName !== NULL ? $uuidPropertyName : 'FLOW3_Persistence_Entity_UUID'), $identifier);

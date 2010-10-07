@@ -356,6 +356,34 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 	}
 
 	/**
+	 * After thawing the properties, metadata in the object data will be set
+	 * as a special proxy property.
+	 *
+	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function thawPropertiesAssignsMetadataToTheProxyIfItExists() {
+		$object = $this->getMock('F3\FLOW3\AOP\ProxyInterface');
+		$object->expects($this->at(0))->method('FLOW3_AOP_Proxy_setProperty')->with('FLOW3_Persistence_Metadata', array('My_Metadata' => 'Test'));
+
+		$objectData = array(
+			'identifier' => 'c254d2e0-825a-11de-8a39-0800200c9a66',
+			'classname' => 'F3\Post',
+			'properties' => array(),
+			'metadata' => array('My_Metadata' => 'Test')
+		);
+
+		$classSchema = new \F3\FLOW3\Reflection\ClassSchema('F3\Post');
+
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService');
+		$mockReflectionService->expects($this->once())->method('getClassSchema')->will($this->returnValue($classSchema));
+
+		$dataMapper = $this->getAccessibleMock('F3\FLOW3\Persistence\DataMapper', array('dummy'));
+		$dataMapper->injectReflectionService($mockReflectionService);
+		$dataMapper->_call('thawProperties', $object, $objectData['identifier'], $objectData);
+	}
+
+	/**
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */

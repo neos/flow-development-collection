@@ -10,7 +10,8 @@ array(
 			'multivalue' => FALSE,
 			'value' => <value>
 		), ...
-	)
+	),
+	'metadata' => array( ... )
 )
 
 // multi value
@@ -29,7 +30,8 @@ array(
 				), ...
 			)
 		)
-	)
+	),
+	'metadata' => array( ... )
 )
 
 /*
@@ -40,6 +42,8 @@ array(
 		if <value> represents an object it can be an array following the format described here
 
 	<vtype> a meta type, one of the strings string, array, float, integer, boolean, datetime, object - used in SQL backend
+
+	metadata is optional and can be used to store backend specific metadata
 
 	lazy loaded objects have only their identifier & classname recorded, properties is an empty array
 */
