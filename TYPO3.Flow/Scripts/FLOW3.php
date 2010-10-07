@@ -34,7 +34,7 @@ require(__DIR__ . '/../Classes/Core/Bootstrap.php');
 
 	// Need to take this detour because PHP < 5.3.0 would die with a parse error, not displaying our message above
 $className = '\F3\FLOW3\Core\Bootstrap';
-$className::defineConstants();
+eval('\F3\FLOW3\Core\Bootstrap::defineConstants();');
 
 $context = getenv('FLOW3_CONTEXT');
 if ($context == '') {
