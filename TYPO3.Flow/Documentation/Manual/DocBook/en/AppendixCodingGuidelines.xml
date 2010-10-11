@@ -611,7 +611,7 @@ public function getContextName() {
         <varname>$i</varname>, <varname>$j</varname> and <varname>$k</varname>
         for numeric indexes in <function>for</function> loops if it's clear
         what they mean on the first sight. But even then you should want to
-        avoid them... Source</para>
+        avoid them...</para>
       </section>
 
       <section>
@@ -712,20 +712,20 @@ public function getContextName() {
                 </listitem>
 
                 <listitem>
-                  <para><filename>FLOW3/Package/Manager.php</filename></para>
+                  <para><filename>FLOW3/Package/PackageManager.php</filename></para>
 
                   <para>Contains the class
                   <classname>\F3\FLOW3\Package\PackageManager</classname>
                   which is part of the package
-                  <package>\F3\FLOW3</package></para>
+                  <package>\F3\FLOW3\Package</package></para>
                 </listitem>
 
                 <listitem>
-                  <para><filename>Package/ManagerTest.php</filename></para>
+                  <para><filename>Package/PackageManagerTest.php</filename></para>
 
                   <para>Contains the class
-                  <classname>\F3\FLOW3\Package\ManagerTest</classname> which
-                  is a test case for PHPUnit.</para>
+                  <classname>\F3\FLOW3\Package\PackageManagerTest</classname>
+                  which is a test case for PHPUnit.</para>
                 </listitem>
               </itemizedlist></para>
           </example></para>
