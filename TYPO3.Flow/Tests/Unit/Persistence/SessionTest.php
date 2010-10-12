@@ -34,7 +34,7 @@ class SessionTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function objectRegisteredWithRegisterReconstitutedEntityCanBeRetrievedWithGetReconstitutedEntities() {
-		$someObject = new \ArrayObject();
+		$someObject = new \ArrayObject(array());
 		$session = new \F3\FLOW3\Persistence\Session();
 		$session->registerReconstitutedEntity($someObject, array('identifier' => 'fakeUuid'));
 
@@ -47,7 +47,7 @@ class SessionTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function unregisterReconstitutedEntityRemovesObjectFromSession() {
-		$someObject = new \ArrayObject();
+		$someObject = new \ArrayObject(array());
 		$session = new \F3\FLOW3\Persistence\Session();
 		$session->registerObject($someObject, 'fakeUuid');
 		$session->registerReconstitutedEntity($someObject, array('identifier' => 'fakeUuid'));
@@ -361,7 +361,7 @@ class SessionTest extends \F3\Testing\BaseTestCase {
 		$session = $this->getMock('F3\FLOW3\Persistence\Session', array('getIdentifierByObject', 'isSingleValuedPropertyDirty'));
 		$session->registerReconstitutedEntity($parent, $cleanData);
 		$session->expects($this->once())->method('getIdentifierByObject')->will($this->returnValue('fakeUuid'));
-		$session->expects($this->once())->method('isSingleValuedPropertyDirty')->will($this->returnValue(FALSE));
+		$session->expects($this->once())->method('isSingleValuedPropertyDirty')->with('Some\Object', array('identifier' => 'cleanHash'), $object)->will($this->returnValue(FALSE));
 
 		$this->assertFalse($session->isDirty($parent, 'array'));
 	}
