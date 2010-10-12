@@ -97,5 +97,34 @@ class ArraysTest extends \F3\Testing\BaseTestCase {
 		$this->assertNULL(\F3\FLOW3\Utility\Arrays::getValueByPath($array, array('Foo', 'Bar', 'Baz', 'Bux')));
 	}
 
+	/**
+	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function convertObjectToArrayConvertsNestedObjectsToArray() {
+		$object = new \stdClass();
+		$object->a = 'v';
+		$object->b = new \stdClass();
+		$object->b->c = 'w';
+		$object->d = array('i' => 'foo', 'j' => 12, 'k' => TRUE, 'l' => new \stdClass());
+
+		$array = \F3\FLOW3\Utility\Arrays::convertObjectToArray($object);
+		$expected = array(
+			'a' => 'v',
+			'b' => array(
+				'c' => 'w'
+			),
+			'd' => array(
+				'i' => 'foo',
+				'j' => 12,
+				'k' => TRUE,
+				'l' => array()
+			)
+		);
+
+		$this->assertEquals($expected, $array);
+	}
+
 }
 ?>

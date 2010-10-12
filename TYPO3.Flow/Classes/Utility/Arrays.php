@@ -235,5 +235,28 @@ class Arrays {
 
 	    return $difference;
 	}
+
+	/**
+	 * Recursively convert an object hierarchy into an associative array.
+	 *
+	 * @param mixed $subject An object or array of objects
+	 * @return array The subject represented as an array
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	static public function convertObjectToArray($subject) {
+		if (!is_object($subject) && !is_array($subject)) {
+			throw new \InvalidArgumentException('convertObjectToArray expects either array or object as input, ' . gettype($subject) . ' given.', 1287059709);
+		}
+		if (is_object($subject)) {
+			$subject = (array)$subject;
+		}
+		foreach ($subject as $key => $value) {
+			if (is_array($value) || is_object($value)) {
+				$subject[$key] = self::convertObjectToArray($value);
+			}
+		}
+		return $subject;
+	}
 }
 ?>
