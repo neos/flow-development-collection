@@ -182,6 +182,7 @@ class ConfigurationManagerTest extends \F3\Testing\BaseTestCase {
 			\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_PACKAGE,
 			\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_ROUTES,
 			\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_POLICY,
+			\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS,
 			\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SIGNALSSLOTS
 		);
 
@@ -224,6 +225,7 @@ class ConfigurationManagerTest extends \F3\Testing\BaseTestCase {
 			\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_PACKAGE,
 			\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_ROUTES,
 			\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_POLICY,
+			\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS,
 			\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SIGNALSSLOTS
 		);
 

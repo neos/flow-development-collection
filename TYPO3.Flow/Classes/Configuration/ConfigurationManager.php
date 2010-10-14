@@ -173,20 +173,14 @@ class ConfigurationManager {
 	 *
 	 * @param string $configurationType The kind of configuration to fetch - must be one of the CONFIGURATION_TYPE_* constants
 	 * @param array $configuration The new configuration
-	 * @param string $packageKey The package key the configuration relates to, needed for CONFIGURATION_TYPE_SETTINGS
 	 * @return void
 	 * @throws \F3\FLOW3\Configuration\Exception\InvalidConfigurationTypeException on invalid configuration types
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Karsten Dambekalns <karsten@dambekalns.de>
 	 */
-	public function setConfiguration($configurationType, array $configuration, $packageKey = NULL) {
+	public function setConfiguration($configurationType, array $configuration) {
 		switch ($configurationType) {
 			case self::CONFIGURATION_TYPE_PACKAGESTATES :
 				$this->configurations[$configurationType] = $configuration;
-				$this->cacheNeedsUpdate = TRUE;
-			break;
-			case self::CONFIGURATION_TYPE_SETTINGS :
-				$this->configurations[$configurationType][$packageKey] = $configuration;
 				$this->cacheNeedsUpdate = TRUE;
 			break;
 			default :
@@ -201,38 +195,15 @@ class ConfigurationManager {
 	 * @param string $configurationType The kind of configuration to save - must be one of the supported CONFIGURATION_TYPE_* constants
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Karsten Dambekalns <karsten@dambekalns.de>
 	 */
 	public function saveConfiguration($configurationType) {
 		switch ($configurationType) {
 			case self::CONFIGURATION_TYPE_PACKAGESTATES :
 				$this->configurationSource->save(FLOW3_PATH_CONFIGURATION . $configurationType, $this->configurations[$configurationType]);
 			break;
-			case self::CONFIGURATION_TYPE_SETTINGS :
-				$this->configurationSource->save(FLOW3_PATH_CONFIGURATION . $configurationType,
-						$this->pickChangedSettings($this->configurations[$configurationType])
-					);
-			break;
 			default :
 				throw new \F3\FLOW3\Configuration\Exception\InvalidConfigurationTypeException('Configuration type "' . $configurationType . '" does not support saving.', 1251127425);
 		}
-	}
-
-	/**
-	 *
-	 * @param array $settings
-	 * @return array
-	 * @author Karsten Dambekalns <karsten@dambekalns.de>
-	 */
-	protected function pickChangedSettings(array $settings) {
-		$changedSettings = array();
-		$cleanSettings = $this->configurationSource->load(FLOW3_PATH_FLOW3 . 'Configuration/' . self::CONFIGURATION_TYPE_SETTINGS);
-		$cleanSettings = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($cleanSettings, $this->configurationSource->load(FLOW3_PATH_FLOW3 . 'Configuration/' . $this->context . '/' . self::CONFIGURATION_TYPE_SETTINGS));
-		foreach ($this->packages as $package) {
-			$cleanSettings = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($cleanSettings, $this->configurationSource->load($package->getConfigurationPath() . self::CONFIGURATION_TYPE_SETTINGS));
-		}
-
-		return \F3\FLOW3\Utility\Arrays::recursiveDiff($settings, $cleanSettings);
 	}
 
 	/**
