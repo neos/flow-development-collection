@@ -22,8 +22,6 @@ namespace F3\FLOW3\Utility\Unicode;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-require_once 'PHPUnit/Framework.php';
-
 /**
  * Testcase for the TextIterator port
  *
