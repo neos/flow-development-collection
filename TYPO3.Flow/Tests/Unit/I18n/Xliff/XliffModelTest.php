@@ -43,15 +43,15 @@ class XliffModelTest extends \F3\Testing\BaseTestCase {
 		$mockParsedData = require(__DIR__ . '/../Fixtures/MockParsedXliffData.php');
 
 		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
-		$mockCache->expects($this->any())->method('has')->with($mockFilename)->will($this->returnValue(FALSE));
+		$mockCache->expects($this->any())->method('has')->with(md5($mockFilename))->will($this->returnValue(FALSE));
 
 		$mockXliffParser = $this->getMock('F3\FLOW3\I18n\Xliff\XliffParser');
 		$mockXliffParser->expects($this->once())->method('getParsedData')->with($mockFilename)->will($this->returnValue($mockParsedData));
 
-		$this->model = new \F3\FLOW3\I18n\Xliff\XliffModel();
+		$this->model = new \F3\FLOW3\I18n\Xliff\XliffModel($mockFilename);
 		$this->model->injectCache($mockCache);
 		$this->model->injectParser($mockXliffParser);
-		$this->model->initializeObject($mockFilename);
+		$this->model->initializeObject();
 	}
 
 	/**

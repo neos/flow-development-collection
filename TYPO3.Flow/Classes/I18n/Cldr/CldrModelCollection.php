@@ -55,10 +55,9 @@ class CldrModelCollection {
 	 * file is (i.e. root should be on last index).
 	 *
 	 * @param array<\F3\FLOW3\I18n\Cldr\CldrModel> $models An array of CldrModel instances
-	 * @return void
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function initializeObject(array $models) {
+	public function __construct(array $models) {
 		$this->models = $models;
 	}
 
@@ -73,9 +72,10 @@ class CldrModelCollection {
 		$data = array();
 		foreach ($this->models as $model) {
 			$parsedNodes = $model->getRawArray($path);
-
-			if ($parsedNodes !== FALSE) {
+			if ($parsedNodes !== FALSE && is_array($parsedNodes)) {
 				$data = array_merge($data, $parsedNodes);
+			} elseif ($parsedNodes !== FALSE) {
+					$data = $parsedNodes;
 			}
 		}
 
@@ -96,9 +96,7 @@ class CldrModelCollection {
 	public function getElement($path) {
 		$data = $this->getRawArray($path);
 
-		if ($data === FALSE) {
-			return FALSE;
-		} else if (is_array($data)) {
+		if (is_array($data)) {
 			if (isset($data[\F3\FLOW3\I18n\Cldr\CldrParser::NODE_WITHOUT_ATTRIBUTES])) {
 				return $data[\F3\FLOW3\I18n\Cldr\CldrParser::NODE_WITHOUT_ATTRIBUTES];
 			} else {

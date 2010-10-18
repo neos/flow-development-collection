@@ -36,13 +36,8 @@ class AbstractXmlParserTest extends \F3\Testing\BaseTestCase {
 	public function invokesDoParsingFromRootMethodForActualParsing() {
 		$sampleXmlFilePath = __DIR__ . '/../Fixtures/MockCldrData.xml';
 
-		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
-		$mockCache->expects($this->once())->method('has')->with($sampleXmlFilePath)->will($this->returnValue(FALSE));
-
 		$parser = $this->getAccessibleMock('F3\FLOW3\I18n\Xml\AbstractXmlParser', array('doParsingFromRoot'));
 		$parser->expects($this->once())->method('doParsingFromRoot');
-
-		$parser->injectCache($mockCache);
 		$parser->getParsedData($sampleXmlFilePath);
 	}
 
@@ -54,12 +49,7 @@ class AbstractXmlParserTest extends \F3\Testing\BaseTestCase {
 	public function throwsExceptionWhenBadFilenameGiven() {
 		$mockFilenamePath = 'foo';
 
-		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
-		$mockCache->expects($this->once())->method('has')->with($mockFilenamePath)->will($this->returnValue(FALSE));
-
 		$parser = $this->getAccessibleMock('F3\FLOW3\I18n\Xml\AbstractXmlParser', array('doParsingFromRoot'));
-
-		$parser->injectCache($mockCache);
 		$parser->getParsedData($mockFilenamePath);
 	}
 }

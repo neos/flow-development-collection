@@ -233,7 +233,7 @@ class NumbersReader {
 			return $this->parsedFormats[$this->parsedFormatsIndices[(string)$locale][$formatType][$formatLength]];
 		}
 
-		if ($formatLength === 'default') {
+		if ($formatLength === self::FORMAT_LENGTH_DEFAULT) {
 			$formatPath = 'numbers/' . $formatType . 'Formats/' . $formatType . 'FormatLength/' . $formatType . 'Format/pattern';
 		} else {
 			$formatPath = 'numbers/' . $formatType . 'Formats/' . $formatType . 'FormatLength/type="' . $formatLength . '"/' . $formatType . 'Format/pattern';

@@ -68,7 +68,7 @@ class DatesReaderTest extends \F3\Testing\BaseTestCase {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function formatIsCorrectlyReadFromCldr() {
-		$mockModel = $this->getMock('F3\FLOW3\I18n\Cldr\CldrModelCollection');
+		$mockModel = $this->getMock('F3\FLOW3\I18n\Cldr\CldrModelCollection', array(), array(array()));
 		$mockModel->expects($this->once())->method('getRawArray')->with('dates/calendars/calendar/type="gregorian"/dateFormats/default')->will($this->returnValue(array('choice="medium"' => '')));
 		$mockModel->expects($this->once())->method('getElement')->with('dates/calendars/calendar/type="gregorian"/dateFormats/dateFormatLength/type="medium"/dateFormat/pattern')->will($this->returnValue('mockFormatString'));
 
@@ -95,7 +95,7 @@ class DatesReaderTest extends \F3\Testing\BaseTestCase {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function dateTimeFormatIsParsedCorrectly() {
-		$mockModel = $this->getMock('F3\FLOW3\I18n\Cldr\CldrModelCollection');
+		$mockModel = $this->getMock('F3\FLOW3\I18n\Cldr\CldrModelCollection', array(), array(array()));
 		$mockModel->expects($this->at(0))->method('getElement', 'dates/calendars/calendar/type="gregorian"/dateTimeFormats/dateTimeFormatLength/type="full"/dateTimeFormat/pattern')->will($this->returnValue('foo {0} {1} bar'));
 		$mockModel->expects($this->at(1))->method('getElement', 'dates/calendars/calendar/type="gregorian"/dateFormats/dateFormatLength/type="full"/dateFormat/pattern')->will($this->returnValue('dMy'));
 		$mockModel->expects($this->at(2))->method('getElement', 'dates/calendars/calendar/type="gregorian"/timeFormats/timeFormatLength/type="full"/timeFormat/pattern')->will($this->returnValue('hms'));
@@ -133,7 +133,7 @@ class DatesReaderTest extends \F3\Testing\BaseTestCase {
 			}
 		};
 
-		$mockModel = $this->getMock('F3\FLOW3\I18n\Cldr\CldrModelCollection');
+		$mockModel = $this->getMock('F3\FLOW3\I18n\Cldr\CldrModelCollection', array(), array(array()));
 		$mockModel->expects($this->exactly(5))->method('getRawArray')->will($this->returnCallback($getRawArrayCallback));
 
 		$mockRepository = $this->getMock('F3\FLOW3\I18n\Cldr\CldrRepository');

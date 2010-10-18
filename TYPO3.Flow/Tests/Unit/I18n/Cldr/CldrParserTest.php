@@ -37,11 +37,7 @@ class CldrParserTest extends \F3\Testing\BaseTestCase {
 		$sampleFilenamePath = __DIR__ . '/../Fixtures/MockCldrData.xml';
 		$sampleParsedData = require(__DIR__ . '/../Fixtures/MockParsedCldrData.php');
 
-		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
-		$mockCache->expects($this->once())->method('has')->with($sampleFilenamePath)->will($this->returnValue(FALSE));
-
 		$parser = new \F3\FLOW3\I18n\Cldr\CldrParser();
-		$parser->injectCache($mockCache);
 
 		$result = $parser->getParsedData($sampleFilenamePath);
 		$this->assertEquals($sampleParsedData, $result);

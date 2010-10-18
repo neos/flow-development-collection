@@ -205,7 +205,7 @@ class Bootstrap {
 		$this->initializePersistence();
 		$this->initializeSession();
 		$this->initializeResources();
-		$this->initializeLocale();
+		$this->initializeI18n();
 	}
 
 	/**
@@ -495,8 +495,8 @@ class Bootstrap {
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @see intialize()
 	 */
-	public function initializeLocale() {
-#		$this->objectManager->get('F3\FLOW3\I18n\Service')->initialize();
+	public function initializeI18n() {
+		$this->objectManager->get('F3\FLOW3\I18n\Service')->initialize();
 	}
 
 	/**

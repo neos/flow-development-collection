@@ -169,7 +169,7 @@ class NumberParser {
 					return FALSE;
 				}
 			}
-		} 
+		}
 
 		$positionOfDecimalSeparator = strpos($numberToParse, $localizedSymbols['decimal']);
 		if ($positionOfDecimalSeparator === FALSE) {
@@ -216,7 +216,7 @@ class NumberParser {
 
 		$parsedNumber /= $parsedFormat['multiplier'];
 
-		if ($parsedFormat['rounding'] !== 0 && ($parsedNumber - (int)($parsedNumber / $parsedFormat['rounding']) * $parsedFormat['rounding']) !== 0.0) {
+		if ($parsedFormat['rounding'] !== 0.0 && ($parsedNumber - (int)($parsedNumber / $parsedFormat['rounding']) * $parsedFormat['rounding']) !== 0.0) {
 			return FALSE;
 		}
 

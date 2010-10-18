@@ -38,16 +38,16 @@ class AbstractXmlModelTest extends \F3\Testing\BaseTestCase {
 		$mockParsedData = 'bar';
 
 		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
-		$mockCache->expects($this->once())->method('has')->with($mockFilenamePath)->will($this->returnValue(FALSE));
-		$mockCache->expects($this->once())->method('set')->with($mockFilenamePath, $mockParsedData);
+		$mockCache->expects($this->once())->method('has')->with(md5($mockFilenamePath))->will($this->returnValue(FALSE));
+		$mockCache->expects($this->once())->method('set')->with(md5($mockFilenamePath), $mockParsedData);
 
 		$mockParser = $this->getAccessibleMock('F3\FLOW3\I18n\Xml\AbstractXmlParser', array('getParsedData', 'doParsingFromRoot'));
 		$mockParser->expects($this->once())->method('getParsedData')->with($mockFilenamePath)->will($this->returnValue($mockParsedData));
 
-		$model = $this->getAccessibleMock('F3\FLOW3\I18n\Xml\AbstractXmlModel', array('dummy'));
+		$model = $this->getAccessibleMock('F3\FLOW3\I18n\Xml\AbstractXmlModel', array('dummy'), array($mockFilenamePath));
 		$model->injectCache($mockCache);
 		$model->_set('xmlParser', $mockParser);
-		$model->initializeObject($mockFilenamePath);
+		$model->initializeObject();
 		$model->shutdownObject();
 	}
 }
