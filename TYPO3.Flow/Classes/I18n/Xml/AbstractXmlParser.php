@@ -30,27 +30,11 @@ namespace F3\FLOW3\I18n\Xml;
 abstract class AbstractXmlParser {
 
 	/**
-	 * @var \F3\FLOW3\Cache\Frontend\VariableFrontend
-	 */
-	protected $cache;
-
-	/**
 	 * Associative array of "filename => parsed data" pairs.
 	 *
 	 * @var array
 	 */
 	protected $parsedFiles;
-
-	/**
-	 * Injects the FLOW3_I18n_Xml_AbstractXmlParser cache
-	 *
-	 * @param \F3\FLOW3\Cache\Frontend\VariableFrontend $cache
-	 * @return void
-	 * @author Karol Gusak <firstname@lastname.eu>
-	 */
-	public function injectCache(\F3\FLOW3\Cache\Frontend\VariableFrontend $cache) {
-		$this->cache = $cache;
-	}
 
 	/**
 	 * Returns parsed representation of XML file.
@@ -62,17 +46,10 @@ abstract class AbstractXmlParser {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function getParsedData($sourcePath) {
-		if (isset($this->parsedFiles[$sourcePath])) {
-			return $this->parsedFiles[$sourcePath];
+		if (!isset($this->parsedFiles[$sourcePath])) {
+			$this->parsedFiles[$sourcePath] = $this->parseXmlFile($sourcePath);
 		}
-
-		if ($this->cache->has($sourcePath)) {
-			$parsedData = $this->cache->get($sourcePath);
-		} else {
-			$parsedData = $this->parseXmlFile($sourcePath);
-		}
-
-		return $this->parsedFiles[$sourcePath] = $parsedData;
+		return $this->parsedFiles[$sourcePath];
 	}
 
 	/**

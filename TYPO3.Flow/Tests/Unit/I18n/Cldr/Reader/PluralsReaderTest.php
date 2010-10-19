@@ -48,7 +48,7 @@ class PluralsReaderTest extends \F3\Testing\BaseTestCase {
 			)
 		);
 
-		$mockModel = $this->getAccessibleMock('F3\FLOW3\I18n\Cldr\CldrModel', array('getRawArray'));
+		$mockModel = $this->getAccessibleMock('F3\FLOW3\I18n\Cldr\CldrModel', array('getRawArray'), array('fake/path'));
 		$mockModel->expects($this->once())->method('getRawArray')->with('plurals/pluralRules')->will($this->returnValue($samplePluralRulesData));
 
 		$mockRepository = $this->getMock('F3\FLOW3\I18n\Cldr\CldrRepository');

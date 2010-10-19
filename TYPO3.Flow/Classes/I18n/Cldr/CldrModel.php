@@ -52,18 +52,17 @@ class CldrModel extends \F3\FLOW3\I18n\Xml\AbstractXmlModel {
 	/**
 	 * Initializes object and loads the CLDR file
 	 *
-	 * @param string $sourcePath Absolute path to CLDR file
 	 * @return void
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function initializeObject($sourcePath) {
-		if (!file_exists($sourcePath)) {
-			$sourcePath = \F3\FLOW3\Utility\Files::concatenatePaths(array($this->cldrBasePath, $sourcePath . '.xml'));
+	public function initializeObject() {
+		if (!file_exists($this->xmlSourcePath)) {
+			$this->xmlSourcePath = \F3\FLOW3\Utility\Files::concatenatePaths(array($this->cldrBasePath, $this->xmlSourcePath . '.xml'));
 		}
 
-		parent::initializeObject($sourcePath);
+		parent::initializeObject();
 
-		if (!$this->xmlCache->has($this->xmlSourcePath)) {
+		if (!$this->cache->has(md5($this->xmlSourcePath))) {
 				// Data was not loaded from cache (by parent), but was just parsed, so there wasn't alias resolving done before
 			$this->xmlParsedData = $this->resolveAliases($this->xmlParsedData, '');
 		}
@@ -116,9 +115,7 @@ class CldrModel extends \F3\FLOW3\I18n\Xml\AbstractXmlModel {
 	public function getElement($path) {
 		$data = $this->getRawArray($path);
 
-		if ($data === FALSE) {
-			return FALSE;
-		} elseif (is_array($data)) {
+		if (is_array($data)) {
 			if (isset($data[\F3\FLOW3\I18n\Cldr\CldrParser::NODE_WITHOUT_ATTRIBUTES])) {
 				return $data[\F3\FLOW3\I18n\Cldr\CldrParser::NODE_WITHOUT_ATTRIBUTES];
 			} else {

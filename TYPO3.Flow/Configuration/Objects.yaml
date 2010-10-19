@@ -162,7 +162,7 @@ F3\FLOW3\AOP\Pointcut\PointcutSettingFilter:
 
 F3\FLOW3\Cache\CacheManager:
   autowiring: off
-  properties: 
+  properties:
     cacheFactory:
       object: F3\FLOW3\Cache\CacheFactory
     systemLogger:
@@ -263,7 +263,25 @@ F3\FLOW3\I18n\Service:
         factoryMethodName: getCache
         arguments:
           1:
-            value: FLOW3_I18n_Service
+            value: FLOW3_I18n_AvailableLocalesCache
+F3\FLOW3\I18n\Cldr\CldrModel:
+  properties:
+    cache:
+      object:
+        factoryObjectName: F3\FLOW3\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: FLOW3_I18n_XmlModelCache
+F3\FLOW3\I18n\Xliff\XliffModel:
+  properties:
+    cache:
+      object:
+        factoryObjectName: F3\FLOW3\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: FLOW3_I18n_XmlModelCache
 F3\FLOW3\I18n\Cldr\Reader\DatesReader:
   properties:
     cache:
@@ -272,7 +290,7 @@ F3\FLOW3\I18n\Cldr\Reader\DatesReader:
         factoryMethodName: getCache
         arguments:
           1:
-            value: FLOW3_I18n_Cldr_Reader_DatesReader
+            value: FLOW3_I18n_Cldr_Reader_DatesReaderCache
 F3\FLOW3\I18n\Cldr\Reader\NumbersReader:
   properties:
     cache:
@@ -281,7 +299,7 @@ F3\FLOW3\I18n\Cldr\Reader\NumbersReader:
         factoryMethodName: getCache
         arguments:
           1:
-            value: FLOW3_I18n_Cldr_Reader_NumbersReader
+            value: FLOW3_I18n_Cldr_Reader_NumbersReaderCache
 F3\FLOW3\I18n\Cldr\Reader\PluralsReader:
   properties:
     cache:
@@ -290,25 +308,7 @@ F3\FLOW3\I18n\Cldr\Reader\PluralsReader:
         factoryMethodName: getCache
         arguments:
           1:
-            value: FLOW3_I18n_Cldr_Reader_PluralsReader
-F3\FLOW3\I18n\Xml\AbstractXmlModel:
-  properties:
-    cache:
-      object:
-        factoryObjectName: F3\FLOW3\Cache\CacheManager
-        factoryMethodName: getCache
-        arguments:
-          1:
-            value: FLOW3_I18n_Xml_AbstractXmlModel
-F3\FLOW3\I18n\Xml\AbstractXmlParser:
-  properties:
-    cache:
-      object:
-        factoryObjectName: F3\FLOW3\Cache\CacheManager
-        factoryMethodName: getCache
-        arguments:
-          1:
-            value: FLOW3_I18n_Xml_AbstractXmlParser
+            value: FLOW3_I18n_Cldr_Reader_PluralsReaderCache
 
 #                                                                          #
 # Log                                                                      #

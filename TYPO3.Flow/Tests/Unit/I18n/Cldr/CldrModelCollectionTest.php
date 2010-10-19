@@ -50,18 +50,17 @@ class CldrModelCollectionTest extends \F3\Testing\BaseTestCase {
 			),
 		);
 
-		$mockCldrModelParent = $this->getMock('F3\FLOW3\I18n\Cldr\CldrModel');
+		$mockCldrModelParent = $this->getMock('F3\FLOW3\I18n\Cldr\CldrModel', array(), array('fake/path'));
 		$mockCldrModelParent->expects($this->at(0))->method('getRawArray')->with('foo')->will($this->returnValue($sampleDataOfParent));
 		$mockCldrModelParent->expects($this->at(1))->method('getRawArray')->with('bar')->will($this->returnValue($sampleDataOfParent));
 		$mockCldrModelParent->expects($this->at(2))->method('getRawArray')->with('baz')->will($this->returnValue(FALSE));
 
-		$mockCldrModelChild = $this->getMock('F3\FLOW3\I18n\Cldr\CldrModel');
+		$mockCldrModelChild = $this->getMock('F3\FLOW3\I18n\Cldr\CldrModel', array(), array('fake/path'));
 		$mockCldrModelChild->expects($this->at(0))->method('getRawArray')->with('foo')->will($this->returnValue($sampleDataOfChild));
 		$mockCldrModelChild->expects($this->at(1))->method('getRawArray')->with('bar')->will($this->returnValue(FALSE));
 		$mockCldrModelChild->expects($this->at(2))->method('getRawArray')->with('baz')->will($this->returnValue(FALSE));
 
-		$model = new \F3\FLOW3\I18n\Cldr\CldrModelCollection();
-		$model->initializeObject(array($mockCldrModelParent, $mockCldrModelChild));
+		$model = new \F3\FLOW3\I18n\Cldr\CldrModelCollection(array($mockCldrModelParent, $mockCldrModelChild));
 
 		$result = $model->getRawArray('foo');
 		$this->assertEquals('value4', $result['key1']);
@@ -91,18 +90,17 @@ class CldrModelCollectionTest extends \F3\Testing\BaseTestCase {
 			'key2' => 'value4',
 		);
 
-		$mockCldrModelParent = $this->getMock('F3\FLOW3\I18n\Cldr\CldrModel');
+		$mockCldrModelParent = $this->getMock('F3\FLOW3\I18n\Cldr\CldrModel', array(), array('fake/path'));
 		$mockCldrModelParent->expects($this->at(0))->method('getRawArray')->with('foo')->will($this->returnValue($sampleDataOfParent));
 		$mockCldrModelParent->expects($this->at(1))->method('getRawArray')->with('bar')->will($this->returnValue($sampleDataOfParent));
 		$mockCldrModelParent->expects($this->at(2))->method('getRawArray')->with('baz')->will($this->returnValue(FALSE));
 
-		$mockCldrModelChild = $this->getMock('F3\FLOW3\I18n\Cldr\CldrModel');
+		$mockCldrModelChild = $this->getMock('F3\FLOW3\I18n\Cldr\CldrModel', array(), array('fake/path'));
 		$mockCldrModelChild->expects($this->at(0))->method('getRawArray')->with('foo')->will($this->returnValue($sampleDataOfChild));
 		$mockCldrModelChild->expects($this->at(1))->method('getRawArray')->with('bar')->will($this->returnValue(FALSE));
 		$mockCldrModelChild->expects($this->at(2))->method('getRawArray')->with('baz')->will($this->returnValue(FALSE));
 
-		$model = new \F3\FLOW3\I18n\Cldr\CldrModelCollection();
-		$model->initializeObject(array($mockCldrModelParent, $mockCldrModelChild));
+		$model = new \F3\FLOW3\I18n\Cldr\CldrModelCollection(array($mockCldrModelParent, $mockCldrModelChild));
 
 		$result = $model->getElement('foo');
 		$this->assertEquals('value3', $result);

@@ -250,6 +250,9 @@ class Service {
 	 */
 	protected function generateAvailableLocalesCollectionByScanningFilesystem() {
 		foreach ($this->packageManager->getActivePackages() as $activePackage) {
+
+			if (!is_dir($this->localeBasePath . $activePackage->getPackageKey() . '/')) continue;
+
 			$directoryIterator = new \RecursiveDirectoryIterator($this->localeBasePath . $activePackage->getPackageKey() . '/');
 			$recursiveIteratorIterator = new \RecursiveIteratorIterator($directoryIterator, \RecursiveIteratorIterator::SELF_FIRST);
 

@@ -71,7 +71,7 @@ class NumberParserTest extends \F3\Testing\BaseTestCase {
 		'primaryGroupingSize' => 0,
 		'secondaryGroupingSize' => 0,
 
-		'rounding' => 0,
+		'rounding' => 0.0,
 	);
 
 	/**

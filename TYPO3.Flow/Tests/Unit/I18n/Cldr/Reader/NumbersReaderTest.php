@@ -74,7 +74,7 @@ class NumbersReaderTest extends \F3\Testing\BaseTestCase {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function formatIsCorrectlyReadFromCldr() {
-		$mockModel = $this->getMock('F3\FLOW3\I18n\Cldr\CldrModelCollection');
+		$mockModel = $this->getMock('F3\FLOW3\I18n\Cldr\CldrModelCollection', array(), array(array()));
 		$mockModel->expects($this->once())->method('getElement')->with('numbers/decimalFormats/decimalFormatLength/decimalFormat/pattern')->will($this->returnValue('mockFormatString'));
 
 		$mockRepository = $this->getMock('F3\FLOW3\I18n\Cldr\CldrRepository');

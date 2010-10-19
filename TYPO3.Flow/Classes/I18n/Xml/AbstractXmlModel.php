@@ -42,7 +42,7 @@ abstract class AbstractXmlModel {
 	/**
 	 * @var \F3\FLOW3\Cache\Frontend\VariableFrontend
 	 */
-	protected $xmlCache;
+	protected $cache;
 
 	/**
 	 * Concrete XML parser which is set by more specific model extending this
@@ -67,6 +67,14 @@ abstract class AbstractXmlModel {
 	protected $xmlParsedData;
 
 	/**
+	 * @param string $sourcePath
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function __construct($sourcePath) {
+		$this->xmlSourcePath = $sourcePath;
+	}
+
+	/**
 	 * Injects the FLOW3_I18n_Xml_AbstractXmlModel cache
 	 *
 	 * @param \F3\FLOW3\Cache\Frontend\VariableFrontend $cache
@@ -74,24 +82,19 @@ abstract class AbstractXmlModel {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function injectCache(\F3\FLOW3\Cache\Frontend\VariableFrontend $cache) {
-		$this->xmlCache = $cache;
+		$this->cache = $cache;
 	}
 
 	/**
-	 * Sets the path to XML file and loads data.
-	 *
 	 * When it's called, XML file is parsed (using parser set in $xmlParser)
 	 * or cache is loaded, if available.
 	 *
-	 * @param string $sourcePath Absolute path to the XML file
 	 * @return void
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function initializeObject($sourcePath) {
-		$this->xmlSourcePath = $sourcePath;
-
-		if ($this->xmlCache->has($this->xmlSourcePath)) {
-			$this->xmlParsedData = $this->xmlCache->get($this->xmlSourcePath);
+	public function initializeObject() {
+		if ($this->cache->has(md5($this->xmlSourcePath))) {
+			$this->xmlParsedData = $this->cache->get(md5($this->xmlSourcePath));
 		} else {
 			$this->xmlParsedData = $this->xmlParser->getParsedData($this->xmlSourcePath);
 		}
@@ -105,7 +108,7 @@ abstract class AbstractXmlModel {
 	 */
 	public function shutdownObject() {
 		if ($this->xmlSourcePath !== NULL) {
-			$this->xmlCache->set($this->xmlSourcePath, $this->xmlParsedData);
+			$this->cache->set(md5($this->xmlSourcePath), $this->xmlParsedData);
 		}
 	}
 }

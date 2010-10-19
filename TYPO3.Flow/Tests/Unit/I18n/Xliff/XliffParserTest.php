@@ -37,12 +37,7 @@ class XliffParserTest extends \F3\Testing\BaseTestCase {
 		$mockFilenamePath = __DIR__ . '/../Fixtures/MockXliffData.xlf';
 		$mockParsedData = require(__DIR__ . '/../Fixtures/MockParsedXliffData.php');
 
-		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
-		$mockCache->expects($this->once())->method('has')->with($mockFilenamePath)->will($this->returnValue(FALSE));
-
 		$parser = new \F3\FLOW3\I18n\Xliff\XliffParser();
-		$parser->injectCache($mockCache);
-
 		$result = $parser->getParsedData($mockFilenamePath);
 		$this->assertEquals($mockParsedData, $result);
 	}

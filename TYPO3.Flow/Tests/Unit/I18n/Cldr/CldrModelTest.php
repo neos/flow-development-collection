@@ -44,15 +44,15 @@ class CldrModelTest extends \F3\Testing\BaseTestCase {
 		$sampleParsedData = require(__DIR__ . '/../Fixtures/MockParsedCldrData.php');
 
 		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
-		$mockCache->expects($this->any())->method('has')->with($sampleFilenamePath)->will($this->returnValue(FALSE));
+		$mockCache->expects($this->any())->method('has')->with(md5($sampleFilenamePath))->will($this->returnValue(FALSE));
 
 		$mockCldrParser = $this->getMock('F3\FLOW3\I18n\Cldr\CldrParser');
 		$mockCldrParser->expects($this->once())->method('getParsedData')->with($sampleFilenamePath)->will($this->returnValue($sampleParsedData));
 
-		$this->model = new \F3\FLOW3\I18n\Cldr\CldrModel();
+		$this->model = new \F3\FLOW3\I18n\Cldr\CldrModel($sampleFilename);
 		$this->model->injectCache($mockCache);
 		$this->model->injectParser($mockCldrParser);
-		$this->model->initializeObject($sampleFilename);
+		$this->model->initializeObject();
 	}
 
 	/**

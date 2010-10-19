@@ -61,7 +61,7 @@ class XliffTranslationProviderTest extends \F3\Testing\BaseTestCase {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function returnsTranslatedLabelWhenOriginalLabelProvided() {
-		$mockModel = $this->getMock('F3\FLOW3\I18n\Xliff\XliffModel');
+		$mockModel = $this->getMock('F3\FLOW3\I18n\Xliff\XliffModel', array(), array('foo'));
 		$mockModel->expects($this->once())->method('getTargetBySource')->with('bar', 0)->will($this->returnValue('baz'));
 
 		$translationProvider = $this->getAccessibleMock('F3\FLOW3\I18n\TranslationProvider\XliffTranslationProvider', array('getModel'));
@@ -82,7 +82,7 @@ class XliffTranslationProviderTest extends \F3\Testing\BaseTestCase {
 		$mockLocalizationService = $this->getMock('F3\FLOW3\I18n\Service');
 		$mockLocalizationService->expects($this->once())->method('getLocalizedFilename', $concatenatedFilename, $this->sampleLocale)->will($this->returnValue('localized filename'));
 
-		$mockModel = $this->getMock('F3\FLOW3\I18n\Xliff\XliffModel');
+		$mockModel = $this->getMock('F3\FLOW3\I18n\Xliff\XliffModel', array(), array('foo'));
 		$mockModel->expects($this->once())->method('getTargetByTransUnitId')->with('bar', 1)->will($this->returnValue('baz'));
 
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
