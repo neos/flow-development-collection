@@ -72,8 +72,13 @@ class ObjectManager implements \F3\FLOW3\Object\ObjectManagerInterface {
 	protected $sessionInitialized = FALSE;
 
 	/**
+	 * @var array
+	 */
+	protected $predefinedAvailableClassNames = array('DateTime');
+
+	/**
 	 * Injects the class loader
-	 * 
+	 *
 	 * @param \F3\FLOW3\Resource\ClassLoader $classLoader
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
@@ -355,7 +360,7 @@ class ObjectManager implements \F3\FLOW3\Object\ObjectManagerInterface {
 
 	/**
 	 * Returns the scope of the specified object.
-	 * 
+	 *
 	 * @param string $objectName The object name
 	 * @return integer One of the Configuration::SCOPE_ constants
 	 * @author Robert Lemke <robert@typo3.org>
@@ -367,7 +372,7 @@ class ObjectManager implements \F3\FLOW3\Object\ObjectManagerInterface {
 	/**
 	 * Discards the cached Static Object Container in order to rebuild it on the
 	 * next script run.
-	 * 
+	 *
 	 * This method is called by a signal emitted when files change.
 	 *
 	 * @param string $signalName Name of the signal which triggered this method
@@ -437,7 +442,7 @@ class ObjectManager implements \F3\FLOW3\Object\ObjectManagerInterface {
 		$reflectionService = $this->get('F3\FLOW3\Reflection\ReflectionService');
 
 		$objectConfigurations = array();
-		$availableClassNames = array();
+		$availableClassNames = $this->predefinedAvailableClassNames;
 
 		foreach ($packages as $packageKey => $package) {
 			foreach (array_keys($package->getClassFiles()) as $className) {

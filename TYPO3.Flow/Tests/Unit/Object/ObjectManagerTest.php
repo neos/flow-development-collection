@@ -488,10 +488,11 @@ class ObjectManagerTest extends \F3\Testing\BaseTestCase {
 		eval('class ' . $className3 . ' {}');
 		eval('class ' . $className4 . ' {}');
 
-		$mockReflectionService->expects($this->at(1))->method('isClassTaggedWith')->with($className1, 'autowiring')->will($this->returnValue(TRUE));
-		$mockReflectionService->expects($this->at(2))->method('getClassTagValues')->with($className1, 'autowiring')->will($this->returnValue(array('off')));
-		$mockReflectionService->expects($this->at(7))->method('isClassTaggedWith')->with($className4, 'scope')->will($this->returnValue(TRUE));
-		$mockReflectionService->expects($this->at(8))->method('getClassTagValues')->with($className4, 'scope')->will($this->returnValue(array('session')));
+		$mockReflectionService->expects($this->at(1))->method('isClassTaggedWith')->with('DateTime', 'autowiring')->will($this->returnValue(FALSE));
+		$mockReflectionService->expects($this->at(3))->method('isClassTaggedWith')->with($className1, 'autowiring')->will($this->returnValue(TRUE));
+		$mockReflectionService->expects($this->at(4))->method('getClassTagValues')->with($className1, 'autowiring')->will($this->returnValue(array('off')));
+		$mockReflectionService->expects($this->at(9))->method('isClassTaggedWith')->with($className4, 'scope')->will($this->returnValue(TRUE));
+		$mockReflectionService->expects($this->at(10))->method('getClassTagValues')->with($className4, 'scope')->will($this->returnValue(array('session')));
 
 		$objectConfigurations = array(
 			'Foo' => array($className1 => array('scope' => 'prototype')),
@@ -519,7 +520,7 @@ class ObjectManagerTest extends \F3\Testing\BaseTestCase {
 
 		$actualObjectConfigurations = $objectManager->_call('buildPackageObjectConfigurations', $packages);
 
-		$this->assertSame(array($className1, $className2, $className3, $className4), array_keys($actualObjectConfigurations));
+		$this->assertSame(array('DateTime', $className1, $className2, $className3, $className4), array_keys($actualObjectConfigurations));
 		$this->assertSame($className1, $actualObjectConfigurations[$className1]->getClassName());
 		$this->assertSame(\F3\FLOW3\Object\Configuration\Configuration::AUTOWIRING_MODE_OFF, $actualObjectConfigurations[$className1]->getAutowiring());
 		$this->assertSame(\F3\FLOW3\Object\Configuration\Configuration::SCOPE_PROTOTYPE, $actualObjectConfigurations[$className1]->getScope());
@@ -543,9 +544,9 @@ class ObjectManagerTest extends \F3\Testing\BaseTestCase {
 		);
 
 		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService', array(), array(), '', FALSE);
-		$mockReflectionService->expects($this->at(0))->method('isClassTaggedWith')->with($className1, 'scope')->will($this->returnValue(FALSE));
-		$mockReflectionService->expects($this->at(2))->method('getDefaultImplementationClassNameForInterface')->with($className2)->will($this->returnValue($className1));
-		$mockReflectionService->expects($this->at(5))->method('getDefaultImplementationClassNameForInterface')->with($className3)->will($this->returnValue(FALSE));
+		$mockReflectionService->expects($this->at(2))->method('isClassTaggedWith')->with($className1, 'scope')->will($this->returnValue(FALSE));
+		$mockReflectionService->expects($this->at(4))->method('getDefaultImplementationClassNameForInterface')->with($className2)->will($this->returnValue($className1));
+		$mockReflectionService->expects($this->at(7))->method('getDefaultImplementationClassNameForInterface')->with($className3)->will($this->returnValue(FALSE));
 
 		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\ConfigurationManager', array(), array(), '', FALSE);
 		$mockConfigurationManager->expects($this->at(0))->method('getConfiguration')->with(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_OBJECTS, 'Foo')
@@ -562,7 +563,7 @@ class ObjectManagerTest extends \F3\Testing\BaseTestCase {
 
 		$actualObjectConfigurations = $objectManager->_call('buildPackageObjectConfigurations', $packages);
 
-#		$this->assertSame(array($className1, $className2), array_keys($actualObjectConfigurations));
+		$this->assertSame(array('DateTime', $className1, $className2), array_keys($actualObjectConfigurations));
 	}
 
 	/**
