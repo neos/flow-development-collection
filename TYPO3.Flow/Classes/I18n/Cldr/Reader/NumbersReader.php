@@ -103,7 +103,7 @@ class NumbersReader {
 	 *     'primaryGroupingSize' => 0,
 	 *     'secondaryGroupingSize' => 0,
 	 *
-	 *     'rounding' => 0,
+	 *     'rounding' => 0.0,
 	 * );
 	 *
 	 * Legend:
@@ -354,7 +354,7 @@ class NumbersReader {
 			'primaryGroupingSize' => 0,
 			'secondaryGroupingSize' => 0,
 
-			'rounding' => 0,
+			'rounding' => 0.0,
 		);
 
 		if (strpos($format, ';') !== FALSE) {
