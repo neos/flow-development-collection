@@ -56,22 +56,6 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function hasEntityRecordEmitsExpectedSql() {
-		$mockStatement = $this->getMock('PDOStatement');
-		$mockStatement->expects($this->once())->method('execute')->with(array('fakeUuid'));
-		$mockStatement->expects($this->once())->method('fetchColumn');
-		$mockPdo = $this->getMock('PdoInterface');
-		$mockPdo->expects($this->once())->method('prepare')->with('SELECT COUNT("identifier") FROM "entities" WHERE "identifier"=?')->will($this->returnValue($mockStatement));
-		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('dummy'));
-		$backend->injectPersistenceSession(new \F3\FLOW3\Persistence\Session());
-		$backend->_set('databaseHandle', $mockPdo);
-		$backend->_call('hasEntityRecord', 'fakeUuid');
-	}
-
-	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
 	public function hasValueobjectRecordEmitsExpectedSql() {
 		$mockStatement = $this->getMock('PDOStatement');
 		$mockStatement->expects($this->once())->method('execute')->with(array('fakeHash'));

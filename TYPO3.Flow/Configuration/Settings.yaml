@@ -109,8 +109,8 @@ FLOW3:
     # Options for the default PDO backend
     backendOptions:
       dataSourceName: 'sqlite:%FLOW3_PATH_DATA%Persistent/Objects.db'
-      username: ''
-      password: ''
+      username: null
+      password: null
 
   resource:
     publishing:

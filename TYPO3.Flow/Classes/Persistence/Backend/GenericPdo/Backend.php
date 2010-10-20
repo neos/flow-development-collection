@@ -131,19 +131,6 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 	 * @return boolean
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function hasEntityRecord($identifier) {
-		$statementHandle = $this->databaseHandle->prepare('SELECT COUNT("identifier") FROM "entities" WHERE "identifier"=?');
-		$statementHandle->execute(array($identifier));
-		return ($statementHandle->fetchColumn() > 0);
-	}
-
-	/**
-	 * Checks if an object with the given UUID or hash is persisted.
-	 *
-	 * @param string $identifier
-	 * @return boolean
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
 	protected function hasValueobjectRecord($identifier) {
 		$statementHandle = $this->databaseHandle->prepare('SELECT COUNT("identifier") FROM "valueobjects" WHERE "identifier"=?');
 		$statementHandle->execute(array($identifier));

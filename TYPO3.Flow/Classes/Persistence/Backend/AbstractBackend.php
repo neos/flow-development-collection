@@ -23,7 +23,7 @@ namespace F3\FLOW3\Persistence\Backend;
  *                                                                        */
 
 /**
- * An abstract storage backend for SQL RDBMS
+ * An abstract storage backend for the FLOW3 persistence
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
@@ -62,6 +62,11 @@ abstract class AbstractBackend implements \F3\FLOW3\Persistence\Backend\BackendI
 	 * @var \F3\FLOW3\Validation\ValidatorResolver
 	 */
 	protected $validatorResolver;
+
+	/**
+	 * @var \SplObjectStorage
+	 */
+	protected $visitedDuringPersistence;
 
 	/**
 	 * @var \SplObjectStorage
@@ -113,7 +118,7 @@ abstract class AbstractBackend implements \F3\FLOW3\Persistence\Backend\BackendI
 	/**
 	 * Set a PersistenceManager instance.
 	 *
-	 * @param \F3\FLOW3\Persistence\PersistenceManager $persistenceManager 
+	 * @param \F3\FLOW3\Persistence\PersistenceManager $persistenceManager
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
@@ -163,14 +168,12 @@ abstract class AbstractBackend implements \F3\FLOW3\Persistence\Backend\BackendI
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function initialize(array $options) {
-		if (is_array($options) || $options instanceof ArrayAccess) {
-			foreach ($options as $key => $value) {
-				$methodName = 'set' . ucfirst($key);
-				if (method_exists($this, $methodName)) {
-					$this->$methodName($value);
-				} else {
-					throw new \InvalidArgumentException('Invalid backend option "' . $key . '" for backend of type "' . get_class($this) . '"', 1259701878);
-				}
+		foreach ($options as $key => $value) {
+			$methodName = 'set' . ucfirst($key);
+			if (method_exists($this, $methodName)) {
+				$this->$methodName($value);
+			} else {
+				throw new \InvalidArgumentException('Invalid backend option "' . $key . '" for backend of type "' . get_class($this) . '"', 1259701878);
 			}
 		}
 		$this->classSchemata = $this->reflectionService->getClassSchemata();
@@ -287,6 +290,14 @@ abstract class AbstractBackend implements \F3\FLOW3\Persistence\Backend\BackendI
 		}
 		$this->deletedEntities = new \SplObjectStorage();
 	}
+
+	/**
+	 * Remove an entity
+	 *
+	 * @param object $object
+	 * @return void
+	 */
+	abstract protected function removeEntity($object);
 
 	/**
 	 * Validates the given object and throws an exception if validation fails.
