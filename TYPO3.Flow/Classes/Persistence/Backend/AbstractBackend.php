@@ -64,6 +64,11 @@ abstract class AbstractBackend implements \F3\FLOW3\Persistence\Backend\BackendI
 	protected $validatorResolver;
 
 	/**
+	 * @var \F3\FLOW3\Log\SystemLoggerInterface
+	 */
+	protected $systemLogger;
+
+	/**
 	 * @var \SplObjectStorage
 	 */
 	protected $visitedDuringPersistence;
@@ -138,6 +143,17 @@ abstract class AbstractBackend implements \F3\FLOW3\Persistence\Backend\BackendI
 	}
 
 	/**
+	 * Injects the system logger
+	 *
+	 * @param \F3\FLOW3\Log\SystemLoggerInterface $systemLogger
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function injectSystemLogger(\F3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
+		$this->systemLogger = $systemLogger;
+	}
+
+	/**
 	 * Signalizes that the given object has been removed
 	 *
 	 * @param object $object The object that will be removed
@@ -168,12 +184,14 @@ abstract class AbstractBackend implements \F3\FLOW3\Persistence\Backend\BackendI
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function initialize(array $options) {
-		foreach ($options as $key => $value) {
-			$methodName = 'set' . ucfirst($key);
+		foreach ($options as $optionName => $optionValue) {
+			$methodName = 'set' . ucfirst($optionName);
 			if (method_exists($this, $methodName)) {
-				$this->$methodName($value);
+				$this->$methodName($optionValue);
+			} elseif ($optionValue ===  NULL) {
+				$this->systemLogger->log('Invalid backend option "' . $optionName . '" for backend of type "' . get_class($this) . '" ignored (NULL value).', LOG_DEBUG);
 			} else {
-				throw new \InvalidArgumentException('Invalid backend option "' . $key . '" for backend of type "' . get_class($this) . '"', 1259701878);
+				throw new \InvalidArgumentException('Invalid backend option "' . $optionName . '" for backend of type "' . get_class($this) . '"', 1259701878);
 			}
 		}
 		$this->classSchemata = $this->reflectionService->getClassSchemata();

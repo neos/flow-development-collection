@@ -279,6 +279,23 @@ class AbstractBackendTest extends \F3\Testing\BaseTestCase {
 		$this->assertTrue($backend->_call('arrayContainsObject', array($object), $clone));
 	}
 
+	/**
+	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function initializeIgnoresAndLogsNullValuesForInvalidOptions() {
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService');
+		$mockReflectionService->expects($this->any())->method('getClassSchemata');
+
+		$mockSystemLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
+		$mockSystemLogger->expects($this->atLeastOnce())->method('log');
+
+		$backend = $this->getMockForAbstractClass('F3\FLOW3\Persistence\Backend\AbstractBackend');
+		$backend->injectReflectionService($mockReflectionService);
+		$backend->injectSystemLogger($mockSystemLogger);
+		$backend->initialize(array('optionNotValid' => NULL));
+	}
+
 }
 
 ?>
