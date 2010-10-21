@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter version="5.0" xmlns="http://docbook.org/ns/docbook"
+         xmlns:xl="http://www.w3.org/1999/xlink"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
+         xmlns:xhtml="http://www.w3.org/1999/xhtml"
+         xmlns:svg="http://www.w3.org/2000/svg"
+         xmlns:ns="http://docbook.org/ns/docbook"
+         xmlns:mathml="http://www.w3.org/1998/Math/MathML">
+  <title>JavaScript Coding Guidelines</title>
+
+  <para>Here, you will find an explanation of the JavaScript Coding Guidelines
+  we use. Generally, we strive to follow the FLOW3 Coding Guidelines as
+  closely as possible, with exceptions which make sense in the JavaScript
+  context.</para>
+
+  <section>
+    <title>Naming Conventions</title>
+
+    <itemizedlist>
+      <listitem>
+        <para>one class per file, with the same naming convention as
+        FLOW3</para>
+      </listitem>
+
+      <listitem>
+        <para>Files should be encoded in UTF-8.</para>
+      </listitem>
+
+      <listitem>
+        <para>Classes and namespaces are written in
+        <code>UpperCamelCase</code>, while properties and methods are written
+        in <code>lowerCamelCase</code>.</para>
+      </listitem>
+
+      <listitem>
+        <para>The xtype of a class is always the fully qualified class
+        name.</para>
+      </listitem>
+
+      <listitem>
+        <para>Never create a class which has classes inside itself. Example:
+        if the class <classname>F3.TYPO3.Foo.Bar</classname> exists, it is
+        prohibited to create a class
+        <classname>F3.TYPO3.Foo</classname>.</para>
+
+        <para>You can easily check this: If a directory with the same name as
+        the JavaScript file exists, this is prohibited.</para>
+      </listitem>
+
+      <listitem>
+        <para>Every class, method and class property should have a doc
+        comment</para>
+      </listitem>
+
+      <listitem>
+        <para>We use <emphasis>a single TAB</emphasis> for indentation.</para>
+      </listitem>
+
+      <listitem>
+        <para>Use inline comments sparingly, they are often a hint that a new
+        method must be introduced.</para>
+      </listitem>
+
+      <listitem>
+        <para>Private methods should start with an underscore (<code>_</code>)
+        and have a <code>@private</code> annotation.</para>
+      </listitem>
+    </itemizedlist>
+  </section>
+
+  <section>
+    <title>Class Definitions</title>
+
+    <para>Classes can be singleton or prototype. You will find examples for
+    both below.</para>
+
+    <example>
+      <title>Example of a prototype class definition</title>
+
+      <programlisting>Ext.ns("F3.TYPO3.Content");<co
+          xml:id="prototypeClassDefinition.1" />
+
+/**
+ * @class F3.TYPO3.Content.FrontendEditor<co
+          xml:id="prototypeClassDefinition.2" />
+ *
+ * The main frontend editor.<co xml:id="prototypeClassDefinition.3" />
+ *
+ * @namespace F3.TYPO3.Content<co xml:id="prototypeClassDefinition.4" />
+ * @extends Ext.Container
+ */
+F3.TYPO3.Content.FrontendEditor = Ext.extend(Ext.Container, {<co
+          xml:id="prototypeClassDefinition.5" />
+	// here comes the class contents
+});
+Ext.reg('F3.TYPO3.Content.FrontendEditor', F3.TYPO3.Content.FrontendEditor);<co
+          xml:id="prototypeClassDefinition.6" /></programlisting>
+
+      <calloutlist>
+        <callout arearefs="prototypeClassDefinition.1">
+          <para>At the very beginning of the file is the namespace declaration
+          of the class, followed by a newline.</para>
+        </callout>
+
+        <callout arearefs="prototypeClassDefinition.2">
+          <para>Then follows the class documentation block, which
+          <emphasis>must</emphasis> start with the <code>@class</code>
+          declaration in the first line.</para>
+        </callout>
+
+        <callout arearefs="prototypeClassDefinition.3">
+          <para>Now comes a description of the class, possibly with
+          examples.</para>
+        </callout>
+
+        <callout arearefs="prototypeClassDefinition.4">
+          <para>Afterwards <emphasis>must</emphasis> follow the namespace of
+          the class and the information about object extension.</para>
+        </callout>
+
+        <callout arearefs="prototypeClassDefinition.5">
+          <para>Now comes the actual class definition, using
+          <code>Ext.extend</code>.</para>
+        </callout>
+
+        <callout arearefs="prototypeClassDefinition.6">
+          <para>As the last line of the class, it follows the xType
+          registration. We always use the fully qualified class name as
+          xtype</para>
+        </callout>
+      </calloutlist>
+    </example>
+
+    <para>Now comes a singleton class definition. You will see that it is very
+    similar to a prototype class definition, we will only highlight the
+    differences.</para>
+
+    <example>
+      <title>Example of a singleton class definition</title>
+
+      <programlisting>Ext.ns("F3.TYPO3.Core");
+
+/**
+ * @class F3.TYPO3.Core.Application
+ *
+ * The main entry point which controls the lifecycle of the application.
+ *
+ * @namespace F3.TYPO3.Core
+ * @extends Ext.util.Observable
+ * @singleton<co xml:id="singletonClassDefinition.1" />
+ */
+F3.TYPO3.Core.Application = Ext.apply(new Ext.util.Observable, {<co
+          xml:id="singletonClassDefinition.2" />
+	// here comes the class contents
+});<co xml:id="singletonClassDefinition.3" /></programlisting>
+
+      <calloutlist>
+        <callout arearefs="singletonClassDefinition.1">
+          <para>You should add a <code>@singleton</code> annotation to the
+          class doc comment after the <code>@namespace</code> and
+          <code>@extends</code> annotation</para>
+        </callout>
+
+        <callout arearefs="singletonClassDefinition.2">
+          <para>In singleton classes, you use <code>Ext.apply</code>. Note
+          that you need to use <code>new</code> to instanciate the base
+          class.</para>
+        </callout>
+
+        <callout arearefs="singletonClassDefinition.3">
+          <para>There is <emphasis>no xType</emphasis> registration in
+          singletons, as they are available globally anyhow.</para>
+        </callout>
+      </calloutlist>
+    </example>
+
+    <para>TODO: WHERE TO INCLUDE License Text and the like</para>
+  </section>
+
+  <section>
+    <title>Method Doc Comments</title>
+
+    <para>Methods should be documented the following way:</para>
+
+    <example>
+      <title>Example of a method comment</title>
+
+      <programlisting>/**
+ * This is a method declaration
+ *
+ * @param {String} param1 Parameter name
+ * @param {String} param2 (Optional) Optional parameter
+ * @return {Boolean} Return value
+ */
+aPublicMethod: function(param1, param2) {
+	return true;
+},<co xml:id="exampleMethodComment.1" />
+
+/**
+ * this is a private function of this class,
+ * the private anotation marks them an prevent that they
+ * are listed in the api doc
+ *
+ * @return {void}
+ * @private
+ */
+_sampleMethod: function() {
+}</programlisting>
+
+      <calloutlist>
+        <callout arearefs="exampleMethodComment.1">
+          <para>There should be a blank line between methods.</para>
+        </callout>
+      </calloutlist>
+    </example>
+  </section>
+
+  <section>
+    <title>Property Doc Comments</title>
+
+    <para></para>
+  </section>
+
+  <section>
+    <title>Code Style</title>
+
+    <itemizedlist>
+      <listitem>
+        <para>use ' instead of " for string quoting</para>
+      </listitem>
+
+      <listitem>
+        <para>Multiline strings (using <code>\</code>) are forbidden.</para>
+      </listitem>
+
+      <listitem>
+        <para>JavaScript Constants (true, false, null) should be written
+        lowercase, and not uppercase.</para>
+      </listitem>
+
+      <listitem>
+        <para>All other constants should be written
+        <code>UPPERCASE_WITH_UNDERSCORE</code>.</para>
+      </listitem>
+
+      <listitem>
+        <para>Use a single <code>var</code> statement at the top of a method
+        to declare all variables.</para>
+      </listitem>
+    </itemizedlist>
+
+    <para>TODO: How to format arrays, strings</para>
+
+    <para></para>
+  </section>
+</chapter>

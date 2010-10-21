@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<book version="5.0" xml:id="flow3" xmlns="http://docbook.org/ns/docbook"
+<book version="5.0" xmlns="http://docbook.org/ns/docbook"
       xmlns:xl="http://www.w3.org/1999/xlink"
       xmlns:xi="http://www.w3.org/2001/XInclude"
       xmlns:xhtml="http://www.w3.org/1999/xhtml"
       xmlns:svg="http://www.w3.org/2000/svg"
       xmlns:ns="http://docbook.org/ns/docbook"
       xmlns:mathml="http://www.w3.org/1998/Math/MathML">
-  <title>FLOW3 Framework</title>
+  <title>FLOW3 Coding Guidelines</title>
 
   <!-- Meta information -->
 
   <info>
     <abstract>
       <para>FLOW3 is a modern application framework for enterprise-grade PHP
-      applications. This reference describes FLOW3's main features.</para>
+      applications. This reference describes the coding guidelines in FLOW3 and FLOW3 based applications.</para>
     </abstract>
 
-    <author>
+	<author>
       <personname>
         <firstname>Robert</firstname>
 
@@ -36,6 +36,16 @@
       <email>karsten@typo3.org</email>
     </author>
 
+    <author>
+      <personname>
+        <firstname>Sebastian</firstname>
+
+        <surname>Kurfürst</surname>
+      </personname>
+
+      <email>sebastian@typo3.org</email>
+    </author>
+
     <copyright>
       <year>2007</year>
 
@@ -48,40 +58,15 @@
       <holder>Robert Lemke</holder>
 
       <holder>Karsten Dambekalns</holder>
+
+      <holder>Sebastian Kurfürst</holder>
     </copyright>
+
   </info>
 
   <!-- Chapters -->
 
-  <xi:include href="Introduction.xml" />
-
-  <xi:include href="Installation.xml" />
-
-  <xi:include href="FLOW3Bootstrap.xml" />
-
-  <xi:include href="PackageManager.xml" />
-
-  <xi:include href="ObjectFramework.xml" />
-
-  <xi:include href="ConfigurationFramework.xml" />
-
-  <xi:include href="ResourceManagement.xml" />
-
-  <xi:include href="MVCFramework.xml" />
-
-  <xi:include href="CacheFramework.xml" />
-
-  <xi:include href="ErrorException.xml" />
-
-  <xi:include href="AOPFramework.xml" />
-
-  <xi:include href="PersistenceFramework.xml" />
-
-  <xi:include href="SecurityFramework.xml" />
-
-  <!-- Appendixes -->
-
-  <xi:include href="AppendixInstallPHP53.xml" />
-
-  <xi:include href="AppendixIDEsForPHP53.xml" />
+  <xi:include href="PHP.xml"/>
+  <xi:include href="JavaScript.xml"/>
+  <xi:include href="CSS.xml"/>
 </book>

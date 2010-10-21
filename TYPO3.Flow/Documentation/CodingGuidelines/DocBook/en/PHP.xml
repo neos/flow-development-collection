@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<appendix version="5.0" xml:id="flow3.codingguidelines"
+<chapter version="5.0" xml:id="flow3.codingguidelines"
           xmlns="http://docbook.org/ns/docbook"
           xmlns:xl="http://www.w3.org/1999/xlink"
           xmlns:xi="http://www.w3.org/2001/XInclude"
@@ -7,7 +7,7 @@
           xmlns:svg="http://www.w3.org/2000/svg"
           xmlns:ns="http://docbook.org/ns/docbook"
           xmlns:mathml="http://www.w3.org/1998/Math/MathML">
-  <title>Coding Guidelines &amp; Best Practices</title>
+  <title>PHP Coding Guidelines &amp; Best Practices</title>
 
   <para>Coding Standards are an important factor for achieving a high code
   quality. A common visual style, naming conventions and other technical
@@ -1674,7 +1674,7 @@ if ($foo !== $bar))        // GOOD</programlisting></para>
 
               <mediaobject>
                 <imageobject>
-                  <imagedata fileref="AppendixCodingGuidelines_TrueFalse.jpg"/>
+                  <imagedata fileref="PHP_TrueFalse.jpg"/>
                 </imageobject>
               </mediaobject>
             </figure></para>
@@ -1767,4 +1767,4 @@ if (is_object($p) &amp;&amp; strlen($p-&gt;lastN) &gt; 0 &amp;&amp; $p-&gt;hidde
       </section>
     </section>
   </section>
-</appendix>
+</chapter>
