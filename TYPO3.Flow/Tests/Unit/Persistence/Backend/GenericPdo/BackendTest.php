@@ -114,9 +114,13 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 	public function persistObjectCreatesRecordOnlyForNewObject() {
 		$className = 'SomeClass' . uniqid();
 		$fullClassName = 'F3\FLOW3\Persistence\Tests\\' . $className;
-		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $className . ' {
+		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $className . ' implements \F3\FLOW3\AOP\ProxyInterface {
+			public function FLOW3_AOP_Proxy_construct() {}
+			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
+			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return get_class($this); }
+			public function FLOW3_AOP_Proxy_hasProperty($propertyName) {}
 			public function FLOW3_AOP_Proxy_getProperty($name) {}
-			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return \'' . $fullClassName . '\';}
+			public function FLOW3_AOP_Proxy_setProperty($propertyName, $propertyValue) {}
 		}');
 		$newObject = new $fullClassName();
 		$oldObject = new $fullClassName();
@@ -131,8 +135,8 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$backend->injectValidatorResolver($this->getMock('F3\FLOW3\Validation\ValidatorResolver', array(), array(), '', FALSE));
 		$backend->_set('classSchemata', array($fullClassName => new \F3\FLOW3\Reflection\ClassSchema($fullClassName)));
 		$backend->_set('visitedDuringPersistence', new \SplObjectStorage());
-		$backend->_call('persistObject', $newObject);
-		$backend->_call('persistObject', $oldObject);
+		$backend->_call('persistObject', $newObject, NULL);
+		$backend->_call('persistObject', $oldObject, NULL);
 	}
 
 	/**
@@ -145,10 +149,10 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$className1 = 'SomeClass' . uniqid();
 		$fullClassName1 = $namespace . '\\' . $className1;
 		eval('namespace ' . $namespace . '; class ' . $className1 . ' implements \F3\FLOW3\AOP\ProxyInterface {
-			protected $FLOW3_Persistence_Entity_UUID = \'A\';
-			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return get_class($this); }
-			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
+			public $FLOW3_Persistence_Entity_UUID = \'A\';
 			public function FLOW3_AOP_Proxy_construct() {}
+			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
+			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return get_class($this); }
 			public function FLOW3_AOP_Proxy_hasProperty($propertyName) { return TRUE; }
 			public function FLOW3_AOP_Proxy_getProperty($propertyName) { return $this->$propertyName; }
 			public function FLOW3_AOP_Proxy_setProperty($propertyName, $value) {}
@@ -156,10 +160,10 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$className2 = 'SomeClass' . uniqid();
 		$fullClassName2 = $namespace . '\\' . $className2;
 		eval('namespace ' . $namespace . '; class ' . $className2 . ' implements \F3\FLOW3\AOP\ProxyInterface {
-			protected $FLOW3_Persistence_Entity_UUID = \'B\';
-			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return get_class($this); }
-			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
+			public $FLOW3_Persistence_Entity_UUID = \'B\';
 			public function FLOW3_AOP_Proxy_construct() {}
+			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
+			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return get_class($this); }
 			public function FLOW3_AOP_Proxy_hasProperty($propertyName) { return TRUE; }
 			public function FLOW3_AOP_Proxy_getProperty($propertyName) { return $this->$propertyName; }
 			public function FLOW3_AOP_Proxy_setProperty($propertyName, $value) {}
@@ -167,10 +171,10 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$className3 = 'SomeClass' . uniqid();
 		$fullClassName3 = $namespace . '\\' . $className3;
 		eval('namespace ' . $namespace . '; class ' . $className3 . ' implements \F3\FLOW3\AOP\ProxyInterface {
-			protected $FLOW3_Persistence_Entity_UUID = \'C\';
-			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return get_class($this); }
-			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
+			public $FLOW3_Persistence_Entity_UUID = \'C\';
 			public function FLOW3_AOP_Proxy_construct() {}
+			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
+			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return get_class($this); }
 			public function FLOW3_AOP_Proxy_hasProperty($propertyName) { return TRUE; }
 			public function FLOW3_AOP_Proxy_getProperty($propertyName) { return $this->$propertyName; }
 			public function FLOW3_AOP_Proxy_setProperty($propertyName, $value) {}
@@ -198,16 +202,19 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$mockSession = $this->getMock('F3\FLOW3\Persistence\Session', array('hasObject'));
 		$mockSession->expects($this->at(0))->method('hasObject')->with($this->attribute($this->equalTo('A'), 'FLOW3_Persistence_Entity_UUID'))->will($this->returnValue(FALSE));
 		$mockSession->expects($this->at(1))->method('hasObject')->with($this->attribute($this->equalTo('A'), 'FLOW3_Persistence_Entity_UUID'))->will($this->returnValue(FALSE));
-			// the following fails although the same object is present, nethr equalTo nor identicalTo work...
+		$mockSession->expects($this->at(2))->method('hasObject')->with($this->attribute($this->equalTo('A'), 'FLOW3_Persistence_Entity_UUID'))->will($this->returnValue(FALSE));
+			// the following fails although the same object is present, neither equalTo nor identicalTo work...
 		//$mockSession->expects($this->at(0))->method('hasObject')->/*with($this->identicalTo($objectA))->*/will($this->returnValue(FALSE));
-		$mockSession->expects($this->at(2))->method('hasObject')->with($this->attribute($this->equalTo('B'), 'FLOW3_Persistence_Entity_UUID'))->will($this->returnValue(FALSE));
 		$mockSession->expects($this->at(3))->method('hasObject')->with($this->attribute($this->equalTo('B'), 'FLOW3_Persistence_Entity_UUID'))->will($this->returnValue(FALSE));
-		$mockSession->expects($this->at(4))->method('hasObject')->with($this->attribute($this->equalTo('C'), 'FLOW3_Persistence_Entity_UUID'))->will($this->returnValue(FALSE));
-		$mockSession->expects($this->at(5))->method('hasObject')->with($this->attribute($this->equalTo('C'), 'FLOW3_Persistence_Entity_UUID'))->will($this->returnValue(FALSE));
+		$mockSession->expects($this->at(4))->method('hasObject')->with($this->attribute($this->equalTo('B'), 'FLOW3_Persistence_Entity_UUID'))->will($this->returnValue(FALSE));
+		$mockSession->expects($this->at(5))->method('hasObject')->with($this->attribute($this->equalTo('B'), 'FLOW3_Persistence_Entity_UUID'))->will($this->returnValue(FALSE));
+		$mockSession->expects($this->at(6))->method('hasObject')->with($this->attribute($this->equalTo('C'), 'FLOW3_Persistence_Entity_UUID'))->will($this->returnValue(FALSE));
+		$mockSession->expects($this->at(7))->method('hasObject')->with($this->attribute($this->equalTo('C'), 'FLOW3_Persistence_Entity_UUID'))->will($this->returnValue(FALSE));
+		$mockSession->expects($this->at(8))->method('hasObject')->with($this->attribute($this->equalTo('C'), 'FLOW3_Persistence_Entity_UUID'))->will($this->returnValue(FALSE));
 
 		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('createObjectRecord', 'setProperties', 'emitPersistedObject', 'validateObject'));
 		$backend->expects($this->exactly(3))->method('createObjectRecord')->will($this->onConsecutiveCalls('A', 'B', 'C'));
-		$excpectedPropertiesOfA = array(
+		$expectedPropertiesOfA = array(
 			'identifier' => 'A',
 			'classname' => $fullClassName1,
 			'properties' => array(
@@ -220,7 +227,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 				)
 			)
 		);
-		$excpectedPropertiesOfB = array(
+		$expectedPropertiesOfB = array(
 			'identifier' => 'B',
 			'classname' => $fullClassName2,
 			'properties' => array(
@@ -233,7 +240,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 				)
 			)
 		);
-		$excpectedPropertiesOfC = array(
+		$expectedPropertiesOfC = array(
 			'identifier' => 'C',
 			'classname' => $fullClassName3,
 			'properties' => array(
@@ -246,9 +253,9 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 				)
 			)
 		);
-		$backend->expects($this->at(6))->method('setProperties')->with($excpectedPropertiesOfC);
-		$backend->expects($this->at(8))->method('setProperties')->with($excpectedPropertiesOfB);
-		$backend->expects($this->at(10))->method('setProperties')->with($excpectedPropertiesOfA);
+		$backend->expects($this->at(6))->method('setProperties')->with($expectedPropertiesOfC);
+		$backend->expects($this->at(8))->method('setProperties')->with($expectedPropertiesOfB);
+		$backend->expects($this->at(10))->method('setProperties')->with($expectedPropertiesOfA);
 		$backend->injectPersistenceSession($mockSession);
 		$backend->injectValidatorResolver($this->getMock('F3\FLOW3\Validation\ValidatorResolver', array(), array(), '', FALSE));
 		$backend->setAggregateRootObjects($aggregateRootObjects);
@@ -265,9 +272,13 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$className = 'SomeClass' . uniqid();
 		$fullClassName = 'F3\\FLOW3\Persistence\\Tests\\' . $className;
 		$identifier = \F3\FLOW3\Utility\Algorithms::generateUUID();
-		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $className . ' {
-			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return \'' . $fullClassName . '\'; }
+		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $className . ' implements \F3\FLOW3\AOP\ProxyInterface {
+			public function FLOW3_AOP_Proxy_construct() {}
+			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
+			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return get_class($this); }
+			public function FLOW3_AOP_Proxy_hasProperty($propertyName) {}
 			public function FLOW3_AOP_Proxy_getProperty($name) { if ($name === \'idProp\') return \'' . $identifier . '\'; }
+			public function FLOW3_AOP_Proxy_setProperty($propertyName, $propertyValue) {}
 		}');
 		$newObject = new $fullClassName();
 
@@ -276,15 +287,15 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$classSchema->setUUIDPropertyName('idProp');
 
 		$mockStatement = $this->getMock('PDOStatement');
-		$mockStatement->expects($this->once())->method('execute')->with(array($identifier, $fullClassName));
+		$mockStatement->expects($this->once())->method('execute')->with(array($identifier, $fullClassName, ''));
 		$mockPdo = $this->getMock('PdoInterface');
-		$mockPdo->expects($this->once())->method('prepare')->with('INSERT INTO "entities" ("identifier", "type") VALUES (?, ?)')->will($this->returnValue($mockStatement));
+		$mockPdo->expects($this->once())->method('prepare')->with('INSERT INTO "entities" ("identifier", "type", "parent") VALUES (?, ?, ?)')->will($this->returnValue($mockStatement));
 		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('dummy'));
 		$backend->injectPersistenceSession(new \F3\FLOW3\Persistence\Session());
 		$backend->_set('databaseHandle', $mockPdo);
 		$backend->_set('classSchemata', array($fullClassName => $classSchema));
 		$backend->_set('visitedDuringPersistence', new \SplObjectStorage());
-		$backend->_call('createObjectRecord', $newObject);
+		$backend->_call('createObjectRecord', $newObject, NULL);
 	}
 
 	/**
@@ -297,9 +308,9 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$identifier = \F3\FLOW3\Utility\Algorithms::generateUUID();
 		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $className . ' implements \F3\FLOW3\AOP\ProxyInterface {
 			public $FLOW3_Persistence_Entity_UUID = \'' . $identifier . '\';
-			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return \'' . $fullClassName . '\'; }
-			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
 			public function FLOW3_AOP_Proxy_construct() {}
+			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
+			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return get_class($this); }
 			public function FLOW3_AOP_Proxy_hasProperty($propertyName) { return TRUE; }
 			public function FLOW3_AOP_Proxy_getProperty($propertyName) { return $this->$propertyName; }
 			public function FLOW3_AOP_Proxy_setProperty($propertyName, $value) {}
@@ -309,15 +320,15 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$classSchema = new \F3\FLOW3\Reflection\ClassSchema($fullClassName);
 
 		$mockStatement = $this->getMock('PDOStatement');
-		$mockStatement->expects($this->once())->method('execute')->with(array($identifier, $fullClassName));
+		$mockStatement->expects($this->once())->method('execute')->with(array($identifier, $fullClassName, 'parentUuid'));
 		$mockPdo = $this->getMock('PdoInterface');
-		$mockPdo->expects($this->once())->method('prepare')->with('INSERT INTO "entities" ("identifier", "type") VALUES (?, ?)')->will($this->returnValue($mockStatement));
+		$mockPdo->expects($this->once())->method('prepare')->with('INSERT INTO "entities" ("identifier", "type", "parent") VALUES (?, ?, ?)')->will($this->returnValue($mockStatement));
 		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('dummy'));
 		$backend->injectPersistenceSession(new \F3\FLOW3\Persistence\Session());
 		$backend->_set('databaseHandle', $mockPdo);
 		$backend->_set('classSchemata', array($fullClassName => $classSchema));
 		$backend->_set('visitedDuringPersistence', new \SplObjectStorage());
-		$backend->_call('createObjectRecord', $newObject);
+		$backend->_call('createObjectRecord', $newObject, 'parentUuid');
 	}
 
 	/**
@@ -330,9 +341,9 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$hash = sha1($fullClassName);
 		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $className . ' implements \F3\FLOW3\AOP\ProxyInterface {
 			public $FLOW3_Persistence_ValueObject_Hash = \'' . $hash . '\';
-			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return \'' . $fullClassName . '\'; }
-			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
 			public function FLOW3_AOP_Proxy_construct() {}
+			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
+			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return get_class($this); }
 			public function FLOW3_AOP_Proxy_hasProperty($propertyName) { if ($propertyName === \'FLOW3_Persistence_ValueObject_Hash\') { return TRUE; } else { return FALSE; } }
 			public function FLOW3_AOP_Proxy_getProperty($propertyName) { return $this->$propertyName; }
 			public function FLOW3_AOP_Proxy_setProperty($propertyName, $value) {}
@@ -351,7 +362,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$backend->_set('databaseHandle', $mockPdo);
 		$backend->_set('classSchemata', array($fullClassName => $classSchema));
 		$backend->_set('visitedDuringPersistence', new \SplObjectStorage());
-		$backend->_call('createObjectRecord', $newObject);
+		$backend->_call('createObjectRecord', $newObject, NULL);
 	}
 
 	/**
@@ -362,12 +373,17 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$className = 'SomeClass' . uniqid();
 		$fullClassName = 'F3\\FLOW3\Persistence\\Tests\\' . $className;
 		$identifier = \F3\FLOW3\Utility\Algorithms::generateUUID();
-		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $className . ' implements \F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface{
+		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $className . ' implements \F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface, \F3\FLOW3\AOP\ProxyInterface{
 			public $simpleString = \'simpleValue\';
 			public function FLOW3_Persistence_isClone() {}
 			public function __clone() {}
-			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return \'' . $fullClassName . '\'; }
 			public function FLOW3_AOP_Proxy_getProperty($propertyName) { return $this->$propertyName; }
+
+			public function FLOW3_AOP_Proxy_construct() {}
+			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
+			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return get_class($this); }
+			public function FLOW3_AOP_Proxy_hasProperty($propertyName) { return property_exists($this, $propertyName); }
+			public function FLOW3_AOP_Proxy_setProperty($propertyName, $propertyValue) {}
 		}');
 		$dirtyObject = new $fullClassName();
 
@@ -397,7 +413,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$backend->_set('visitedDuringPersistence', new \SplObjectStorage());
 		$backend->_set('classSchemata', array($fullClassName => $classSchema));
 
-		$backend->_call('persistObject', $dirtyObject);
+		$backend->_call('persistObject', $dirtyObject, $identifier);
 	}
 
 	/**
@@ -407,12 +423,17 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 	public function persistObjectProcessesObjectsWithDateTimeMember() {
 		$className = 'SomeClass' . uniqid();
 		$fullClassName = 'F3\\FLOW3\Persistence\\Tests\\' . $className;
-		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $className . ' implements \F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface {
+		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $className . ' implements \F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface, \F3\FLOW3\AOP\ProxyInterface {
 			public $date;
 			public function FLOW3_Persistence_isClone() {}
 			public function __clone() {}
-			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return \'' . $fullClassName . '\';}
 			public function FLOW3_AOP_Proxy_getProperty($propertyName) { return $this->$propertyName; }
+
+			public function FLOW3_AOP_Proxy_construct() {}
+			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
+			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return get_class($this); }
+			public function FLOW3_AOP_Proxy_hasProperty($propertyName) { return property_exists($this, $propertyName); }
+			public function FLOW3_AOP_Proxy_setProperty($propertyName, $propertyValue) {}
 		}');
 		$newObject = new $fullClassName();
 		$date = new \DateTime();
@@ -444,7 +465,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$backend->injectValidatorResolver($this->getMock('F3\FLOW3\Validation\ValidatorResolver', array(), array(), '', FALSE));
 		$backend->_set('visitedDuringPersistence', new \SplObjectStorage());
 		$backend->_set('classSchemata', array($fullClassName => $classSchema));
-		$backend->_call('persistObject', $newObject);
+		$backend->_call('persistObject', $newObject, NULL);
 	}
 
 	/**
@@ -533,7 +554,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 
 			// ... and here we go
 		$mockSession = $this->getMock('F3\FLOW3\Persistence\Session', array('hasObject'));
-		$mockSession->expects($this->exactly(6))->method('hasObject')->will($this->returnValue(FALSE));
+		$mockSession->expects($this->exactly(9))->method('hasObject')->will($this->returnValue(FALSE));
 
 		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('hasValueObjectRecord', 'createObjectRecord', 'setProperties', 'emitPersistedObject', 'validateObject'));
 		$backend->expects($this->at(1))->method('createObjectRecord')->with($A)->will($this->returnValue('fakeUuidA'));
@@ -547,8 +568,8 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$backend->injectValidatorResolver($this->getMock('F3\FLOW3\Validation\ValidatorResolver', array(), array(), '', FALSE));
 		$backend->_set('classSchemata', array('F3\TYPO3CR\Tests\Fixtures\AnEntity' => $entityClassSchema, 'F3\TYPO3CR\Tests\Fixtures\AValue' => $valueClassSchema));
 		$backend->_set('visitedDuringPersistence', new \SplObjectStorage());
-		$backend->_call('persistObject', $A);
-		$backend->_call('persistObject', $B);
+		$backend->_call('persistObject', $A, 'fakeUuidA');
+		$backend->_call('persistObject', $B, 'fakeUuidB');
 	}
 
 	/**
@@ -621,7 +642,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 
 		$backend->_set('visitedDuringPersistence', new \SplObjectStorage());
 		$backend->_set('classSchemata', array('F3\TYPO3CR\Tests\Fixtures\AnEntity' => $classSchema));
-		$backend->_call('persistObject', $A);
+		$backend->_call('persistObject', $A, 'fakeUuidA');
 	}
 
 	/**
@@ -675,7 +696,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 
 		$backend->_set('visitedDuringPersistence', new \SplObjectStorage());
 		$backend->_set('classSchemata', array('F3\TYPO3CR\Tests\Fixtures\AnEntity' => $classSchema));
-		$backend->_call('persistObject', $A);
+		$backend->_call('persistObject', $A, 'fakeUuidA');
 	}
 
 	/**
@@ -1160,7 +1181,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$mockStatement->expects($this->once())->method('execute')->with(array('fakeUuid1'));
 		$mockStatement->expects($this->once())->method('fetchAll')->will($this->onConsecutiveCalls(array(array('type' => 'FooBar', 'identifier' => 'heretostay'), array('type' => 'Quux', 'identifier' => 'goaway'))));
 		$mockPdo = $this->getMock('PdoInterface');
-		$mockPdo->expects($this->once())->method('prepare')->with('SELECT "identifier", "type" FROM "entities" WHERE "identifier" IN (SELECT DISTINCT "object" FROM "properties_data" WHERE "parent"=?)')->will($this->returnValue($mockStatement));
+		$mockPdo->expects($this->once())->method('prepare')->with('SELECT "identifier", "type" FROM "entities" WHERE "parent" = ?')->will($this->returnValue($mockStatement));
 
 		$object1 = new \stdClass();
 		$object2 = new \stdClass();
@@ -1415,9 +1436,13 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 	public function persistObjectAsksForValidatorsForNewAndDirtyObjects() {
 		$className = 'SomeClass' . uniqid();
 		$fullClassName = 'F3\FLOW3\Persistence\Tests\\' . $className;
-		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $className . ' {
+		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $className . ' implements \F3\FLOW3\AOP\ProxyInterface {
+			public function FLOW3_AOP_Proxy_construct() {}
+			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
+			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return get_class($this);}
+			public function FLOW3_AOP_Proxy_hasProperty($propertyName) {}
 			public function FLOW3_AOP_Proxy_getProperty($name) {}
-			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return \'' . $fullClassName . '\';}
+			public function FLOW3_AOP_Proxy_setProperty($propertyName, $propertyValue) {}
 		}');
 		$newObject = new $fullClassName();
 		$oldObject = new $fullClassName();
@@ -1426,7 +1451,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$classSchema->addProperty('foo', 'string');
 
 		$mockPersistenceSession = $this->getMock('F3\FLOW3\Persistence\Session');
-		$mockPersistenceSession->expects($this->exactly(4))->method('hasObject')->will($this->onConsecutiveCalls(FALSE, FALSE, TRUE, TRUE));
+		$mockPersistenceSession->expects($this->exactly(6))->method('hasObject')->will($this->onConsecutiveCalls(FALSE, FALSE, TRUE, TRUE));
 		$mockPersistenceSession->expects($this->exactly(2))->method('isDirty')->will($this->onConsecutiveCalls(TRUE, TRUE));
 
 		$mockValidatorConjunction = $this->getMock('F3\FLOW3\Validation\Validator\ConjunctionValidator', array(), array(), '', FALSE);
@@ -1439,8 +1464,8 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$backend->injectValidatorResolver($mockValidatorResolver);
 		$backend->_set('classSchemata', array($fullClassName => $classSchema));
 		$backend->_set('visitedDuringPersistence', new \SplObjectStorage());
-		$backend->_call('persistObject', $newObject);
-		$backend->_call('persistObject', $oldObject);
+		$backend->_call('persistObject', $newObject, NULL);
+		$backend->_call('persistObject', $oldObject, NULL);
 	}
 
 	/**
@@ -1451,9 +1476,13 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 	public function persistObjectThrowsExceptionOnValidationFailureForNewObjects() {
 		$className = 'SomeClass' . uniqid();
 		$fullClassName = 'F3\FLOW3\Persistence\Tests\\' . $className;
-		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $className . ' {
+		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $className . ' implements \F3\FLOW3\AOP\ProxyInterface {
+			public function FLOW3_AOP_Proxy_construct() {}
+			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
+			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return get_class($this);}
+			public function FLOW3_AOP_Proxy_hasProperty($propertyName) {}
 			public function FLOW3_AOP_Proxy_getProperty($name) {}
-			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return \'' . $fullClassName . '\';}
+			public function FLOW3_AOP_Proxy_setProperty($propertyName, $propertyValue) {}
 		}');
 		$newObject = new $fullClassName();
 
@@ -1465,7 +1494,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$mockValidator->expects($this->any())->method('getErrors')->will($this->returnValue(array()));
 
 		$mockPersistenceSession = $this->getMock('F3\FLOW3\Persistence\Session');
-		$mockPersistenceSession->expects($this->exactly(2))->method('hasObject')->will($this->returnValue(FALSE));
+		$mockPersistenceSession->expects($this->exactly(3))->method('hasObject')->will($this->returnValue(FALSE));
 
 		$mockValidatorResolver = $this->getMock('F3\FLOW3\Validation\ValidatorResolver', array(), array(), '', FALSE);
 		$mockValidatorResolver->expects($this->once())->method('getBaseValidatorConjunction')->with($fullClassName)->will($this->returnValue($mockValidator));
@@ -1475,8 +1504,9 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$backend->injectValidatorResolver($mockValidatorResolver);
 		$backend->_set('classSchemata', array($fullClassName => $classSchema));
 		$backend->_set('visitedDuringPersistence', new \SplObjectStorage());
-		$backend->_call('persistObject', $newObject);
+		$backend->_call('persistObject', $newObject, NULL);
 	}
+
 	/**
 	 * @test
 	 * @expectedException \F3\FLOW3\Persistence\Exception\ObjectValidationFailedException
@@ -1485,9 +1515,13 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 	public function persistObjectThrowsExceptionOnValidationFailureForOldObjects() {
 		$className = 'SomeClass' . uniqid();
 		$fullClassName = 'F3\FLOW3\Persistence\Tests\\' . $className;
-		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $className . ' {
+		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $className . ' implements \F3\FLOW3\AOP\ProxyInterface {
+			public function FLOW3_AOP_Proxy_construct() {}
+			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
+			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return get_class($this);}
+			public function FLOW3_AOP_Proxy_hasProperty($propertyName) {}
 			public function FLOW3_AOP_Proxy_getProperty($name) {}
-			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return \'' . $fullClassName . '\';}
+			public function FLOW3_AOP_Proxy_setProperty($propertyName, $propertyValue) {}
 		}');
 		$oldObject = new $fullClassName();
 
@@ -1499,7 +1533,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$mockValidator->expects($this->any())->method('getErrors')->will($this->returnValue(array()));
 
 		$mockPersistenceSession = $this->getMock('F3\FLOW3\Persistence\Session');
-		$mockPersistenceSession->expects($this->exactly(2))->method('hasObject')->will($this->returnValue(TRUE));
+		$mockPersistenceSession->expects($this->exactly(3))->method('hasObject')->will($this->returnValue(TRUE));
 		$mockPersistenceSession->expects($this->once())->method('isDirty')->will($this->returnValue(TRUE));
 
 		$mockValidatorResolver = $this->getMock('F3\FLOW3\Validation\ValidatorResolver', array(), array(), '', FALSE);
@@ -1510,7 +1544,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$backend->injectValidatorResolver($mockValidatorResolver);
 		$backend->_set('classSchemata', array($fullClassName => $classSchema));
 		$backend->_set('visitedDuringPersistence', new \SplObjectStorage());
-		$backend->_call('persistObject', $oldObject);
+		$backend->_call('persistObject', $oldObject, NULL);
 	}
 
 }
