@@ -56,12 +56,21 @@ class ClassLoader {
 		} else {
 			$classNameParts = explode('\\', $className);
 			if (is_array($classNameParts) && $classNameParts[0] === 'F3' && isset($this->packages[$classNameParts[1]])) {
-				$classFilePathAndName = $this->packages[$classNameParts[1]]->getClassesPath();
-				$classFilePathAndName .= implode(array_slice($classNameParts, 2, -1), '/') . '/';
-				$classFilePathAndName .= end($classNameParts) . '.php';
+				if ($classNameParts[2] === 'Tests' && $classNameParts[3] === 'Functional') {
+					$classFilePathAndName = $this->packages[$classNameParts[1]]->getFunctionalTestsPath();
+					$classFilePathAndName .= implode(array_slice($classNameParts, 4, -1), '/') . '/';
+					$classFilePathAndName .= end($classNameParts) . '.php';
+				} else {
+					$classFilePathAndName = $this->packages[$classNameParts[1]]->getClassesPath();
+					$classFilePathAndName .= implode(array_slice($classNameParts, 2, -1), '/') . '/';
+					$classFilePathAndName .= end($classNameParts) . '.php';
+				}
 			}
 		}
-		if (isset($classFilePathAndName) && file_exists($classFilePathAndName)) require($classFilePathAndName);
+		if (isset($classFilePathAndName) && file_exists($classFilePathAndName)) {
+			require($classFilePathAndName);
+		} else {
+		}
 	}
 
 	/**

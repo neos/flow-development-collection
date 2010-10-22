@@ -31,10 +31,14 @@ namespace F3\FLOW3\Object;
 class ObjectManager implements \F3\FLOW3\Object\ObjectManagerInterface {
 
 	/**
-	 * Name of the current context
 	 * @var string
 	 */
 	protected $context = 'Development';
+
+	/**
+	 * @var array
+	 */
+	protected $settings = array();
 
 	/**
 	 * @var \F3\FLOW3\Resource\ClassLoader
@@ -107,16 +111,16 @@ class ObjectManager implements \F3\FLOW3\Object\ObjectManagerInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initialize() {
-		$settings = $this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'FLOW3');
+		$this->settings = $this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'FLOW3');
 
 		$environment = new \F3\FLOW3\Utility\Environment();
 		$environment->setContext($this->context);
-		$environment->setTemporaryDirectoryBase($settings['utility']['environment']['temporaryDirectoryBase']);
+		$environment->setTemporaryDirectoryBase($this->settings['utility']['environment']['temporaryDirectoryBase']);
 		$environment->initializeObject();
 
 		$this->staticObjectContainerPathAndFilename = $environment->getPathToTemporaryDirectory() . 'StaticObjectContainer.php';
 
-		if ($settings['monitor']['detectClassChanges'] === FALSE && file_exists($this->staticObjectContainerPathAndFilename)) {
+		if ($this->settings['monitor']['detectClassChanges'] === FALSE && file_exists($this->staticObjectContainerPathAndFilename)) {
 			require_once($this->staticObjectContainerPathAndFilename);
 			if (class_exists($this->staticObjectContainerClassName, FALSE)) {
 				$this->objectContainer = new $this->staticObjectContainerClassName;
@@ -447,6 +451,14 @@ class ObjectManager implements \F3\FLOW3\Object\ObjectManagerInterface {
 		foreach ($packages as $packageKey => $package) {
 			foreach (array_keys($package->getClassFiles()) as $className) {
 				if (substr($className, -9, 9) !== 'Exception' && substr($className, 0, 8) !== 'Abstract') {
+					$availableClassNames[] = $className;
+				}
+			}
+		}
+
+		if ($this->settings['object']['registerFunctionalTestClasses'] === TRUE) {
+			foreach ($packages as $packageKey => $package) {
+				foreach (array_keys($package->getFunctionalTestsClassFiles()) as $className) {
 					$availableClassNames[] = $className;
 				}
 			}

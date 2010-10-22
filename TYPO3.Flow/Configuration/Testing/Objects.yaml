@@ -1,0 +1,12 @@
+#                                                                        #
+# Object Configuration for the FLOW3 Framework                           #
+#                                                                        #
+# This file contains additions to the base configuration for the FLOW3   #
+# Framework when it runs in Testing context.                             #
+#                                                                        #
+# Don't modify this file - instead put your own additions into the       #
+# global Configuration directory and its sub directories.                #
+#                                                                        #
+
+F3\FLOW3\Session\SessionInterface:
+  className: F3\FLOW3\Session\TransientSession

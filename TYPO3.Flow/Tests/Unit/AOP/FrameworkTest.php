@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\AOP;
+namespace F3\FLOW3\Tests\Unit\AOP;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -22,8 +22,8 @@ namespace F3\FLOW3\AOP;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-require_once ('Fixture/AspectClassWithAllAdviceTypes.php');
-require_once ('Fixture/InterfaceForIntroduction.php');
+require_once ('Fixtures/AspectClassWithAllAdviceTypes.php');
+require_once ('Fixtures/InterfaceForIntroduction.php');
 
 /**
  * Testcase for the AOP Framework class

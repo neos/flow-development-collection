@@ -22,7 +22,7 @@ namespace F3\FLOW3\AOP\Pointcut;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-require_once (FLOW3_PATH_FLOW3 . 'Tests/Unit/AOP/Fixture/ClassTaggedWithSomething.php');
+require_once (FLOW3_PATH_FLOW3 . 'Tests/Unit/AOP/Fixtures/ClassTaggedWithSomething.php');
 
 /**
  * Testcase for the Pointcut Class-Tagged-With Filter

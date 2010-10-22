@@ -164,8 +164,8 @@ class Bootstrap {
 		$this->ensureRequiredEnvironment();
 		$this->context = (strlen($context) === 0) ? 'Production' : $context;
 
-		if ($this->context !== 'Production' && $this->context !== 'Development') {
-			exit('FLOW3: Unknown context "' . $this->context . '" provided, currently only "Production" and "Development" are supported. (Error #1254216868)');
+		if ($this->context !== 'Production' && $this->context !== 'Development' && $this->context !== 'Testing') {
+			exit('FLOW3: Unknown context "' . $this->context . '" provided, currently only "Production", "Development" and "Testing" are supported. (Error #1254216868)');
 		}
 		$this->FLOW3Package = new \F3\FLOW3\Package\Package('FLOW3', FLOW3_PATH_FLOW3);
 	}
@@ -230,7 +230,7 @@ class Bootstrap {
 		require_once(FLOW3_PATH_FLOW3 . 'Classes/Resource/ClassLoader.php');
 		$this->classLoader = new \F3\FLOW3\Resource\ClassLoader();
 		$this->classLoader->setPackages(array('FLOW3' => $this->FLOW3Package));
-		spl_autoload_register(array($this->classLoader, 'loadClass'));
+		spl_autoload_register(array($this->classLoader, 'loadClass'), TRUE, TRUE);
 	}
 
 	/**
@@ -473,6 +473,13 @@ class Bootstrap {
 					$availableClassNames[] = $className;
 				}
 			}
+			if ($this->settings['object']['registerFunctionalTestClasses'] === TRUE) {
+				foreach (array_keys($package->getFunctionalTestsClassFiles()) as $className) {
+					if (substr($className, -9, 9) !== 'Exception') {
+						$availableClassNames[] = $className;
+					}
+				}
+			}
 		}
 		$this->reflectionService->initialize($availableClassNames);
 	}
@@ -536,6 +543,16 @@ class Bootstrap {
 		if (FLOW3_SAPITYPE === 'Web') {
 			$resourceManager->publishPublicPackageResources($this->packageManager->getActivePackages());
 		}
+	}
+
+	/**
+	 * Returns the object manager instance
+	 *
+	 * @return \F3\FLOW3\Object\ObjectManagerInterface
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getObjectManager() {
+		return $this->objectManager;
 	}
 
 	/**

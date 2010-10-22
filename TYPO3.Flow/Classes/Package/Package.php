@@ -36,6 +36,7 @@ class Package implements PackageInterface {
 	const DIRECTORY_CONFIGURATION = 'Configuration/';
 	const DIRECTORY_DOCUMENTATION = 'Documentation/';
 	const DIRECTORY_METADATA = 'Meta/';
+	const DIRECTORY_TESTS_FUNCTIONAL = 'Tests/Functional/';
 	const DIRECTORY_RESOURCES = 'Resources/';
 
 	const FILENAME_PACKAGEINFO = 'Package.xml';
@@ -133,9 +134,19 @@ class Package implements PackageInterface {
 	 */
 	public function getClassFiles() {
 		if (!is_array($this->classFiles)) {
-			$this->classFiles = $this->buildArrayOfClassFiles();
+			$this->classFiles = $this->buildArrayOfClassFiles($this->packagePath . self::DIRECTORY_CLASSES);
 		}
 		return $this->classFiles;
+	}
+
+	/**
+	 * Returns the array of filenames of class files provided by functional tests contained in this package
+	 *
+	 * @return array An array of class names (key) and their filename, including the relative path to the package's directory
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getFunctionalTestsClassFiles() {
+		return $this->buildArrayOfClassFiles($this->packagePath . self::DIRECTORY_TESTS_FUNCTIONAL, 'Tests\\Functional\\');
 	}
 
 	/**
@@ -169,6 +180,17 @@ class Package implements PackageInterface {
 	 */
 	public function getClassesPath() {
 		return $this->packagePath . self::DIRECTORY_CLASSES;
+	}
+
+	/**
+	 * Returns the full path to this package's functional tests directory
+	 *
+	 * @return string Path to this package's functional tests directory
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
+	 */
+	public function getFunctionalTestsPath() {
+		return $this->packagePath . self::DIRECTORY_TESTS_FUNCTIONAL;
 	}
 
 	/**
@@ -246,13 +268,16 @@ class Package implements PackageInterface {
 	 * *.php files in the package's Classes directory and its sub-
 	 * directories.
 	 *
+	 * @param string $classesPath Base path acting as the parent directory for potential class files
+	 * @param string $extraNamespaceSegment A PHP class namespace segment which should be inserted like so: \F3\PackageKey\{namespacePrefix\}PathSegment\PathSegment\Filename
+	 * @param string $subDirectory Used internally
+	 * @param integer $recursionLevel Used internally
 	 * @return array
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @throws \F3\FLOW3\Package\Exception if recursion into directories was too deep or another error occurred
 	 */
-	protected function buildArrayOfClassFiles($subDirectory='', $recursionLevel=0) {
+	protected function buildArrayOfClassFiles($classesPath, $extraNamespaceSegment = '', $subDirectory = '', $recursionLevel = 0) {
 		$classFiles = array();
-		$classesPath = $this->packagePath . self::DIRECTORY_CLASSES;
 		$currentPath = $classesPath . $subDirectory;
 
 		if (!is_dir($currentPath)) return array();
@@ -264,10 +289,10 @@ class Package implements PackageInterface {
 				$filename = $classesDirectoryIterator->getFilename();
 				if ($filename[0] != '.') {
 					if (is_dir($currentPath . $filename)) {
-						$classFiles = array_merge($classFiles, $this->buildArrayOfClassFiles($subDirectory . $filename . '/', ($recursionLevel+1)));
+						$classFiles = array_merge($classFiles, $this->buildArrayOfClassFiles($classesPath, $extraNamespaceSegment, $subDirectory . $filename . '/', ($recursionLevel+1)));
 					} else {
 						if (substr($filename, -4, 4) === '.php') {
-							$className = (str_replace('/', '\\', ('F3/' . $this->packageKey . '/' . substr($currentPath, strlen($classesPath)) . substr($filename, 0, -4))));
+							$className = (str_replace('/', '\\', ('F3/' . $this->packageKey . '/' . $extraNamespaceSegment . substr($currentPath, strlen($classesPath)) . substr($filename, 0, -4))));
 							$classFiles[$className] = $subDirectory . $filename;
 						}
 					}

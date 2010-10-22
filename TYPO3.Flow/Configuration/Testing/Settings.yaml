@@ -1,0 +1,28 @@
+#                                                                        #
+# Configuration for the FLOW3 Framework                                  #
+#                                                                        #
+# This file contains additions to the base configuration for the FLOW3   #
+# Framework when it runs in Testing context.                             #
+#                                                                        #
+# Don't modify this file - instead put your own additions into the       #
+# global Configuration directory and its sub directories.                #
+#                                                                        #
+
+FLOW3:
+  configuration:
+    compileConfigurationFiles: n
+
+  error:
+    exceptionHandler:
+      className: 'F3\FLOW3\Error\DebugExceptionHandler'
+    errorHandler:
+      exceptionalErrors: [%E_USER_ERROR%, %E_RECOVERABLE_ERROR%, %E_WARNING%, %E_NOTICE%, %E_USER_WARNING%, %E_USER_NOTICE%, %E_STRICT%]
+
+  log:
+    systemLogger:
+      backendOptions: { logFileURL: %FLOW3_PATH_DATA%Logs/%FLOW3_SAPITYPE%/System_Testing.log, createParentDirectories: y, severityThreshold: %LOG_DEBUG% }
+    securityLogger:
+      backendOptions: { logFileURL: %FLOW3_PATH_DATA%Logs/%FLOW3_SAPITYPE%/Security_Testing.log, createParentDirectories: y, severityThreshold: %LOG_DEBUG% }
+
+  object:
+    registerFunctionalTestClasses: y

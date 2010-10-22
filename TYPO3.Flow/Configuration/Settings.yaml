@@ -104,6 +104,14 @@ FLOW3:
     # matching the request.
     notFoundController: F3\FLOW3\MVC\Controller\NotFoundController
 
+  object:
+
+    # If enabled, the Object Manager will - additionally to the class files found
+    # in the "Classes" directory - also register class files found in the directory
+    # "Tests/Functional/". Enabling this feature obviously only makes sense in a
+    # testing context.
+    registerFunctionalTestClasses: n
+
   persistence:
 
     # Options for the default PDO backend

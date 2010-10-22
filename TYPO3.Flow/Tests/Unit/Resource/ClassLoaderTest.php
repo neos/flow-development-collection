@@ -43,6 +43,7 @@ class ClassLoaderTest extends \F3\Testing\BaseTestCase {
 
 		$mockPackage = $this->getMock('F3\FLOW3\Package\Package', array(), array(), '', FALSE);
 		$mockPackage->expects($this->any())->method('getClassesPath')->will($this->returnValue(\vfsStream::url('Virtual/Classes/')));
+		$mockPackage->expects($this->any())->method('getFunctionalTestsPath')->will($this->returnValue(\vfsStream::url('Virtual/Tests/Functional/')));
 		$mockPackages = array(
 			'Virtual' => $mockPackage
 		);
@@ -66,6 +67,24 @@ class ClassLoaderTest extends \F3\Testing\BaseTestCase {
 			->at($root->getChild('Virtual/Classes/SubDirectory'));
 
 		$this->classLoader->loadClass('F3\Virtual\SubDirectory\ClassInSubDirectory');
+		$this->assertTrue($vfsClassFile->eof());
+	}
+
+	/**
+	 * Checks if the class loader loads classes from the functional tests directory
+	 *
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function classesFromFunctionalTestsDirectoriesAreLoaded() {
+		$root = \vfsStream::newDirectory('Packages/Virtual/Tests/Functional/SubDirectory');
+		\vfsStreamWrapper::setRoot($root);
+
+		$vfsClassFile = \vfsStream::newFile('ClassInSubDirectory.php')
+			->withContent('<?php ?>')
+			->at($root->getChild('Virtual/Tests/Functional/SubDirectory'));
+
+		$this->classLoader->loadClass('F3\Virtual\Tests\Functional\SubDirectory\ClassInSubDirectory');
 		$this->assertTrue($vfsClassFile->eof());
 	}
 

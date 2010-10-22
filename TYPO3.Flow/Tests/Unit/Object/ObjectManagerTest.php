@@ -516,6 +516,7 @@ class ObjectManagerTest extends \F3\Testing\BaseTestCase {
 
 		$objectManager = $this->getAccessibleMock('F3\FLOW3\Object\ObjectManager', array('get'), array(), '', FALSE);
 		$objectManager->expects($this->once())->method('get')->with('F3\FLOW3\Reflection\ReflectionService')->will($this->returnValue($mockReflectionService));
+		$objectManager->_set('settings', array('object' => array('registerFunctionalTestClasses' => FALSE)));
 		$objectManager->injectConfigurationManager($mockConfigurationManager);
 
 		$actualObjectConfigurations = $objectManager->_call('buildPackageObjectConfigurations', $packages);
@@ -559,6 +560,7 @@ class ObjectManagerTest extends \F3\Testing\BaseTestCase {
 
 		$objectManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\ObjectManager'), array('get'), array(), '', FALSE);
 		$objectManager->expects($this->once())->method('get')->with('F3\FLOW3\Reflection\ReflectionService')->will($this->returnValue($mockReflectionService));
+		$objectManager->_set('settings', array('object' => array('registerFunctionalTestClasses' => FALSE)));
 		$objectManager->injectConfigurationManager($mockConfigurationManager);
 
 		$actualObjectConfigurations = $objectManager->_call('buildPackageObjectConfigurations', $packages);
@@ -592,6 +594,7 @@ class ObjectManagerTest extends \F3\Testing\BaseTestCase {
 
 		$objectManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\ObjectManager'), array('get'), array(), '', FALSE);
 		$objectManager->expects($this->once())->method('get')->with('F3\FLOW3\Reflection\ReflectionService')->will($this->returnValue($mockReflectionService));
+		$objectManager->_set('settings', array('object' => array('registerFunctionalTestClasses' => FALSE)));
 		$objectManager->injectConfigurationManager($mockConfigurationManager);
 
 		$objectManager->_call('buildPackageObjectConfigurations', $packages);
