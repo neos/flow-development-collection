@@ -70,10 +70,11 @@ abstract class AbstractSqlBackend extends \F3\FLOW3\Persistence\Backend\Abstract
 	 * @api
 	 */
 	public function setUsername($username) {
-		if (!is_string($username)) {
+		if (is_string($username)) {
+			$this->username = $username;
+		} elseif ($username !== NULL) {
 			throw new \InvalidArgumentException('The username for the persistence backend must be a string, ' . gettype($username) . ' given.', 1284115216);
 		}
-		$this->username = $username;
 	}
 
 	/**
@@ -85,10 +86,11 @@ abstract class AbstractSqlBackend extends \F3\FLOW3\Persistence\Backend\Abstract
 	 * @api
 	 */
 	public function setPassword($password) {
-		if (!is_string($password)) {
+		if (is_string($password)) {
+			$this->password = $password;
+		} elseif ($password !== NULL) {
 			throw new \InvalidArgumentException('The password for the persistence backend must be a string, ' . gettype($password) . ' given.', 1284115217);
 		}
-		$this->password = $password;
 	}
 
 	/**
