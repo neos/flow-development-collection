@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\Kickstart\Utility;
+namespace F3\Kickstart\Tests\Unit\Utility;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "Kickstart".                  *
