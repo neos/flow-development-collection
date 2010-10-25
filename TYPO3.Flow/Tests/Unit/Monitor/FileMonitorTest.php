@@ -15,8 +15,6 @@ namespace F3\FLOW3\Monitor;
  * Public License for more details.                                       *
  *                                                                        */
 
-require_once('vfs/vfsStream.php');
-
 /**
  * Testcase for the File Monitor class
  *

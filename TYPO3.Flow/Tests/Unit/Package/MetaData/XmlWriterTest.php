@@ -22,8 +22,6 @@ namespace F3\FLOW3\Package\MetaData;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-require_once('vfs/vfsStream.php');
-
 /**
  * Testcase for the XML MetaData writer
  *

@@ -22,8 +22,6 @@ namespace F3\FLOW3\Resource\Publishing;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-require_once('vfs/vfsStream.php');
-
 /**
  * Testcase for the File System Publishing Target
  *
@@ -162,7 +160,7 @@ class FileSystemPublishingTargetTest extends \F3\Testing\BaseTestCase {
 
 		$publishingTarget = $this->getAccessibleMock('F3\FLOW3\Resource\Publishing\FileSystemPublishingTarget', array('rewriteTitleForUri', 'getPersistentResourceSourcePathAndFilename', 'mirrorFile'));
 		$publishingTarget->expects($this->any())->method('getPersistentResourceSourcePathAndFilename')->will($this->returnValue('source.jpg'));
-	
+
 		$publishingTarget->_set('resourcesPublishingPath', 'vfs://Foo/Web/');
 		$publishingTarget->_set('resourcesBaseUri', 'http://Foo/_Resources/');
 
@@ -264,7 +262,7 @@ class FileSystemPublishingTargetTest extends \F3\Testing\BaseTestCase {
 	public function mirrorFileCopiesTheGivenFileIfTheSettingSaysSo() {
 		$sourcePathAndFilename = \F3\FLOW3\Utility\Files::concatenatePaths(array(sys_get_temp_dir(), 'FLOW3FileSystemPublishingTargetTestSource'));
 		$targetPathAndFilename = \F3\FLOW3\Utility\Files::concatenatePaths(array(sys_get_temp_dir(), 'FLOW3FileSystemPublishingTargetTestTarget'));
-		
+
 		file_put_contents($sourcePathAndFilename, 'some data');
 		touch($sourcePathAndFilename, time() - 5);
 
@@ -292,7 +290,7 @@ class FileSystemPublishingTargetTest extends \F3\Testing\BaseTestCase {
 	public function mirrorFileSymLinksTheGivenFileIfTheSettingSaysSo() {
 		$sourcePathAndFilename = \F3\FLOW3\Utility\Files::concatenatePaths(array(sys_get_temp_dir(), 'FLOW3FileSystemPublishingTargetTestSource'));
 		$targetPathAndFilename = \F3\FLOW3\Utility\Files::concatenatePaths(array(sys_get_temp_dir(), 'FLOW3FileSystemPublishingTargetTestTarget'));
-		
+
 		file_put_contents($sourcePathAndFilename, 'some data');
 		touch($sourcePathAndFilename, time() - 5);
 
@@ -304,7 +302,7 @@ class FileSystemPublishingTargetTest extends \F3\Testing\BaseTestCase {
 		$publishingTarget->_call('mirrorFile', $sourcePathAndFilename, $targetPathAndFilename, TRUE);
 		$this->assertFileEquals($sourcePathAndFilename, $targetPathAndFilename);
 		$this->assertTrue(\F3\FLOW3\Utility\Files::is_link($targetPathAndFilename));
-		
+
 		unlink($sourcePathAndFilename);
 		unlink($targetPathAndFilename);
 	}

@@ -22,8 +22,6 @@ namespace F3\FLOW3\I18n;
  * The TYPO3 project - inspiring people to share!                         *
  */
 
-require_once('vfs/vfsStream.php');
-
 /**
  * Testcase for the Locale Service class.
  *
