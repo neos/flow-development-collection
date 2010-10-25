@@ -9,6 +9,10 @@
 
 # @package FLOW3
 
+DateTime:
+  className: DateTime
+  scope: prototype
+
 #                                                                          #
 # AOP                                                                      #
 #                                                                          #
