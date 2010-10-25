@@ -49,7 +49,7 @@ class UtilityTest extends \F3\Testing\BaseTestCase {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function httpAcceptLanguageHeadersAreParsedCorrectly($acceptLanguageHeader, array $expectedResult) {
-		$languages = Utility::parseAcceptLanguageHeader($acceptLanguageHeader);
+		$languages = \F3\FLOW3\I18n\Utility::parseAcceptLanguageHeader($acceptLanguageHeader);
 		$this->assertEquals($expectedResult, $languages);
 	}
 
@@ -73,7 +73,7 @@ class UtilityTest extends \F3\Testing\BaseTestCase {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function localeIdentifiersAreCorrectlyExtractedFromFilename($filename, $expectedResult) {
-		$result = Utility::extractLocaleTagFromFilename($filename);
+		$result = \F3\FLOW3\I18n\Utility::extractLocaleTagFromFilename($filename);
 		$this->assertEquals($expectedResult, $result);
 	}
 
@@ -102,7 +102,7 @@ class UtilityTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function stringIsFoundAtBeginningOfAnotherString($haystack, $needle, $comparison) {
 		$expectedResult = ($comparison === 'beginning' || $comparison === 'both') ? TRUE : FALSE;
-		$result = Utility::stringBeginsWith($haystack, $needle);
+		$result = \F3\FLOW3\I18n\Utility::stringBeginsWith($haystack, $needle);
 		$this->assertEquals($expectedResult, $result);
 	}
 
@@ -113,7 +113,7 @@ class UtilityTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function stringIsFoundAtEndingOfAnotherString($haystack, $needle, $comparison) {
 		$expectedResult = ($comparison === 'ending' || $comparison === 'both') ? TRUE : FALSE;
-		$result = Utility::stringEndsWith($haystack, $needle);
+		$result = \F3\FLOW3\I18n\Utility::stringEndsWith($haystack, $needle);
 		$this->assertEquals($expectedResult, $result);
 	}
 }

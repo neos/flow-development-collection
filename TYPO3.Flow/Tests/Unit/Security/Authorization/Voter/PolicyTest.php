@@ -48,8 +48,8 @@ class PolicyTest extends \F3\Testing\BaseTestCase {
 		$mockPolicyService = $this->getMock('F3\FLOW3\Security\Policy\PolicyService');
 		$mockPolicyService->expects($this->any())->method('getPrivilegesForJoinPoint')->will($this->returnValue(array()));
 
-		$Policy = new Policy($mockPolicyService);
-		$this->assertEquals($Policy->voteForJoinPoint($mockSecurityContext, $mockJoinPoint), Policy::VOTE_ABSTAIN, 'The wrong vote was returned!');
+		$Policy = new \F3\FLOW3\Security\Authorization\Voter\Policy($mockPolicyService);
+		$this->assertEquals($Policy->voteForJoinPoint($mockSecurityContext, $mockJoinPoint), \F3\FLOW3\Security\Authorization\Voter\Policy::VOTE_ABSTAIN, 'The wrong vote was returned!');
 	}
 
 	/**
@@ -64,8 +64,8 @@ class PolicyTest extends \F3\Testing\BaseTestCase {
 		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
 		$mockPolicyService = $this->getMock('F3\FLOW3\Security\Policy\PolicyService', array(), array(), '', FALSE);
 
-		$Policy = new Policy($mockPolicyService);
-		$this->assertEquals($Policy->voteForJoinPoint($mockSecurityContext, $mockJoinPoint), Policy::VOTE_ABSTAIN, 'The wrong vote was returned!');
+		$Policy = new \F3\FLOW3\Security\Authorization\Voter\Policy($mockPolicyService);
+		$this->assertEquals($Policy->voteForJoinPoint($mockSecurityContext, $mockJoinPoint), \F3\FLOW3\Security\Authorization\Voter\Policy::VOTE_ABSTAIN, 'The wrong vote was returned!');
 	}
 
 	/**
@@ -99,8 +99,8 @@ class PolicyTest extends \F3\Testing\BaseTestCase {
 		$mockPolicyService = $this->getMock('F3\FLOW3\Security\Policy\PolicyService');
 		$mockPolicyService->expects($this->any())->method('getPrivilegesForJoinPoint')->will($this->returnCallback($getPrivilegesCallback));
 
-		$Policy = new Policy($mockPolicyService);
-		$this->assertEquals($Policy->voteForJoinPoint($mockSecurityContext, $mockJoinPoint), Policy::VOTE_DENY , 'The wrong vote was returned!');
+		$Policy = new \F3\FLOW3\Security\Authorization\Voter\Policy($mockPolicyService);
+		$this->assertEquals($Policy->voteForJoinPoint($mockSecurityContext, $mockJoinPoint), \F3\FLOW3\Security\Authorization\Voter\Policy::VOTE_DENY , 'The wrong vote was returned!');
 	}
 
 	/**
@@ -134,8 +134,8 @@ class PolicyTest extends \F3\Testing\BaseTestCase {
 		$mockPolicyService = $this->getMock('F3\FLOW3\Security\Policy\PolicyService');
 		$mockPolicyService->expects($this->any())->method('getPrivilegesForJoinPoint')->will($this->returnCallback($getPrivilegesCallback));
 
-		$Policy = new Policy($mockPolicyService);
-		$this->assertEquals($Policy->voteForJoinPoint($mockSecurityContext, $mockJoinPoint), Policy::VOTE_GRANT , 'The wrong vote was returned!');
+		$Policy = new \F3\FLOW3\Security\Authorization\Voter\Policy($mockPolicyService);
+		$this->assertEquals($Policy->voteForJoinPoint($mockSecurityContext, $mockJoinPoint), \F3\FLOW3\Security\Authorization\Voter\Policy::VOTE_GRANT , 'The wrong vote was returned!');
 	}
 
 	/**
@@ -149,8 +149,8 @@ class PolicyTest extends \F3\Testing\BaseTestCase {
 
 		$mockPolicyService = $this->getMock('F3\FLOW3\Security\Policy\PolicyService', array(), array(), '', FALSE);
 
-		$voter = new Policy($mockPolicyService);
-		$this->assertEquals($voter->voteForResource($mockSecurityContext, 'myResource'), Policy::VOTE_ABSTAIN, 'The wrong vote was returned!');
+		$voter = new \F3\FLOW3\Security\Authorization\Voter\Policy($mockPolicyService);
+		$this->assertEquals($voter->voteForResource($mockSecurityContext, 'myResource'), \F3\FLOW3\Security\Authorization\Voter\Policy::VOTE_ABSTAIN, 'The wrong vote was returned!');
 	}
 
 	/**
@@ -183,8 +183,8 @@ class PolicyTest extends \F3\Testing\BaseTestCase {
 		$mockPolicyService = $this->getMock('F3\FLOW3\Security\Policy\PolicyService');
 		$mockPolicyService->expects($this->any())->method('getPrivilegeForResource')->will($this->returnCallback($getPrivilegeCallback));
 
-		$Policy = new Policy($mockPolicyService);
-		$this->assertEquals($Policy->voteForResource($mockSecurityContext, 'myResource'), Policy::VOTE_DENY , 'The wrong vote was returned!');
+		$Policy = new \F3\FLOW3\Security\Authorization\Voter\Policy($mockPolicyService);
+		$this->assertEquals($Policy->voteForResource($mockSecurityContext, 'myResource'), \F3\FLOW3\Security\Authorization\Voter\Policy::VOTE_DENY , 'The wrong vote was returned!');
 	}
 
 	/**
@@ -217,8 +217,8 @@ class PolicyTest extends \F3\Testing\BaseTestCase {
 		$mockPolicyService = $this->getMock('F3\FLOW3\Security\Policy\PolicyService');
 		$mockPolicyService->expects($this->any())->method('getPrivilegeForResource')->will($this->returnCallback($getPrivilegesCallback));
 
-		$Policy = new Policy($mockPolicyService);
-		$this->assertEquals($Policy->voteForResource($mockSecurityContext, 'myResource'), Policy::VOTE_GRANT , 'The wrong vote was returned!');
+		$Policy = new \F3\FLOW3\Security\Authorization\Voter\Policy($mockPolicyService);
+		$this->assertEquals($Policy->voteForResource($mockSecurityContext, 'myResource'), \F3\FLOW3\Security\Authorization\Voter\Policy::VOTE_GRANT , 'The wrong vote was returned!');
 	}
 }
 

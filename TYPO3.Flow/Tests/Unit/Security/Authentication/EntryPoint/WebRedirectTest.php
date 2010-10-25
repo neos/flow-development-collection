@@ -35,7 +35,7 @@ class WebRedirectTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function canForwardReturnsTrueForWebRequests() {
-		$entryPoint = new WebRedirect();
+		$entryPoint = new \F3\FLOW3\Security\Authentication\EntryPoint\WebRedirect();
 
 		$this->assertTrue($entryPoint->canForward($this->getMock('F3\FLOW3\MVC\Web\Request')));
 	}
@@ -46,7 +46,7 @@ class WebRedirectTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function canForwardReturnsFalseForNonWebRequests() {
-		$entryPoint = new WebRedirect();
+		$entryPoint = new \F3\FLOW3\Security\Authentication\EntryPoint\WebRedirect();
 
 		$this->assertFalse($entryPoint->canForward($this->getMock('F3\FLOW3\MVC\CLI\Request')));
 		$this->assertFalse($entryPoint->canForward($this->getMock('F3\FLOW3\MVC\RequestInterface')));
@@ -59,7 +59,7 @@ class WebRedirectTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function startAuthenticationThrowsAnExceptionIfTheConfigurationOptionsAreMissing() {
-		$entryPoint = new WebRedirect();
+		$entryPoint = new \F3\FLOW3\Security\Authentication\EntryPoint\WebRedirect();
 		$entryPoint->setOptions(array('something' => 'irrelevant'));
 
 		$entryPoint->startAuthentication($this->getMock('F3\FLOW3\MVC\Web\Request'), $this->getMock('F3\FLOW3\MVC\Web\Response'));
@@ -72,7 +72,7 @@ class WebRedirectTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function startAuthenticationThrowsAnExceptionIfItsCalledWithAnUnsupportedRequestType() {
-		$entryPoint = new WebRedirect();
+		$entryPoint = new \F3\FLOW3\Security\Authentication\EntryPoint\WebRedirect();
 
 		$entryPoint->startAuthentication($this->getMock('F3\FLOW3\MVC\CLI\Request'), $this->getMock('F3\FLOW3\MVC\CLI\Response'));
 	}
@@ -89,7 +89,7 @@ class WebRedirectTest extends \F3\Testing\BaseTestCase {
 		$response->expects($this->once())->method('setStatus')->with(303);
 		$response->expects($this->once())->method('setHeader')->with('Location', 'some/page');
 
-		$entryPoint = new WebRedirect();
+		$entryPoint = new \F3\FLOW3\Security\Authentication\EntryPoint\WebRedirect();
 		$entryPoint->setOptions(array('uri' => 'some/page'));
 
 		$entryPoint->startAuthentication($request, $response);

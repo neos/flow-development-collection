@@ -65,7 +65,7 @@ class PointcutFilterCompositeTest extends \F3\Testing\BaseTestCase {
 		$mockPointcutFilter5->expects($this->any())->method('matches')->will($this->returnValue(TRUE));
 		$mockPointcutFilter5->expects($this->any())->method('hasRuntimeEvaluationsDefinition')->will($this->returnValue(TRUE));
 
-		$pointcutFilterComposite = new PointcutFilterComposite();
+		$pointcutFilterComposite = new \F3\FLOW3\AOP\Pointcut\PointcutFilterComposite();
 		$pointcutFilterComposite->addFilter('&&', $mockPointcutFilter1);
 		$pointcutFilterComposite->addFilter('&&!', $mockPointcutFilter2);
 		$pointcutFilterComposite->addFilter('||', $mockPointcutFilter3);
@@ -110,7 +110,7 @@ class PointcutFilterCompositeTest extends \F3\Testing\BaseTestCase {
 		$mockPointcutFilter4->expects($this->any())->method('getRuntimeEvaluationsDefinition')->will($this->returnValue(array('eval')));
 		$mockPointcutFilter4->expects($this->once())->method('matches')->will($this->returnValue(TRUE));
 
-		$pointcutFilterComposite = new PointcutFilterComposite();
+		$pointcutFilterComposite = new \F3\FLOW3\AOP\Pointcut\PointcutFilterComposite();
 		$pointcutFilterComposite->addFilter('&&', $mockPointcutFilter1);
 		$pointcutFilterComposite->addFilter('&&!', $mockPointcutFilter2);
 		$pointcutFilterComposite->addFilter('||', $mockPointcutFilter3);
@@ -176,7 +176,7 @@ class PointcutFilterCompositeTest extends \F3\Testing\BaseTestCase {
 
 		$this->assertEquals($expectedResult, $pointcutFilterComposite->getRuntimeEvaluationsDefinition(), 'The runtime evaluations definition has not been added correctly to the pointcut filter composite.');
 	}
-	
+
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>

@@ -58,7 +58,7 @@ class PackageTest extends \F3\Testing\BaseTestCase {
 		$mockMetaData = $this->getMock('F3\FLOW3\Package\MetaDataInterface');
 		$mockMetaDataReader = $this->getMock('F3\FLOW3\Package\MetaData\ReaderInterface');
 
-		$package = new Package('FLOW3', FLOW3_PATH_FLOW3);
+		$package = new \F3\FLOW3\Package\Package('FLOW3', FLOW3_PATH_FLOW3);
 		$package->injectMetaDataReader($mockMetaDataReader);
 
 		$mockMetaDataReader->expects($this->once())
