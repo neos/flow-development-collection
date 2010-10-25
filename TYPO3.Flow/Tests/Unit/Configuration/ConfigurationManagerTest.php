@@ -285,15 +285,16 @@ class ConfigurationManagerTest extends \F3\Testing\BaseTestCase {
 		$mockPackage = $this->getMock('F3\FLOW3\Package\Package', array(), array(), '', FALSE);
 
 		$mockConfigurationSource = $this->getMock('F3\FLOW3\Configuration\Source\SourceInterface', array('load', 'save'));
-		$mockConfigurationSource->expects($this->exactly(7))->method('load')->will(
+		$mockConfigurationSource->expects($this->exactly(8))->method('load')->will(
 			$this->onConsecutiveCalls(
 				array('FLOW3' => array('foo' => 'bar', 'x' => 'y')),	// Packages/Framework/FLOW3/Configuration/Settings.yaml
-				array('FLOW3' => array('x1' => 'y1')),						// Packages/Framework/FLOW3/Configuration/FooContext/Settings.yaml
-				array('FLOW3' => array('baz' => 'quux')),					// Configuration/Settings.yaml
-				array('FLOW3' => array('foo' => 'flow')),					// Configuration/FooContext/Settings.yaml
-				array('Foo' => array('aaa' => 'bbb')),						// Packages/.../Foo/Configuration/Settings.yaml
-				array('Foo' => array('ccc' => 'ddd')),						// Configuration/Settings.yaml
-				array('Foo' => array())											// Configuration/FooContext/Settings.yaml
+				array('FLOW3' => array('x1' => 'y1')),					// Packages/Framework/FLOW3/Configuration/FooContext/Settings.yaml
+				array('FLOW3' => array('baz' => 'quux')),				// Configuration/Settings.yaml
+				array('FLOW3' => array('foo' => 'flow')),				// Configuration/FooContext/Settings.yaml
+				array('Foo' => array('aaa' => 'bbb')),					// Packages/.../Foo/Configuration/Settings.yaml
+				array('Foo' => array()),								// Packages/.../Foo/Configuration/FooContext/Settings.yaml
+				array('Foo' => array('ccc' => 'ddd')),					// Configuration/Settings.yaml
+				array('Foo' => array())									// Configuration/FooContext/Settings.yaml
 			)
 		);
 
@@ -329,7 +330,7 @@ class ConfigurationManagerTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function loadConfigurationLoadsSettingsForGivenPackagesExceptFLOW3() {
 		$mockConfigurationSource = $this->getMock('F3\FLOW3\Configuration\Source\SourceInterface', array('load', 'save'));
-		$mockConfigurationSource->expects($this->exactly(5))->method('load')->will($this->returnCallback(array($this, 'packageSettingsCallback')));
+		$mockConfigurationSource->expects($this->exactly(8))->method('load')->will($this->returnCallback(array($this, 'packageSettingsCallback')));
 
 		$mockPackageA = $this->getMock('F3\FLOW3\Package\Package', array(), array(), '', FALSE);
 		$mockPackageA->expects($this->any())->method('getConfigurationPath')->will($this->returnValue('PackageA/Configuration/'));
@@ -373,6 +374,42 @@ class ConfigurationManagerTest extends \F3\Testing\BaseTestCase {
 	}
 
 	/**
+	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function loadConfigurationOverridesSettingsByContext() {
+		$mockConfigurationSource = $this->getMock('F3\FLOW3\Configuration\Source\SourceInterface', array('load', 'save'));
+		$mockConfigurationSource->expects($this->any())->method('load')->will($this->returnCallback(array($this, 'packageSettingsCallback')));
+
+		$mockPackageA = $this->getMock('F3\FLOW3\Package\Package', array(), array(), '', FALSE);
+		$mockPackageA->expects($this->any())->method('getConfigurationPath')->will($this->returnValue('PackageA/Configuration/'));
+		$mockPackageFLOW3 = $this->getMock('F3\FLOW3\Package\Package', array(), array(), '', FALSE);
+
+		$mockPackages = array(
+			'PackageA' => $mockPackageA,
+			'FLOW3' => $mockPackageFLOW3
+		);
+
+		$configurationManager = $this->getAccessibleMock('F3\FLOW3\Configuration\ConfigurationManager', array('postProcessConfiguration'), array(), '', FALSE);
+		$configurationManager->_set('configurationSource', $mockConfigurationSource);
+		$configurationManager->_set('context', 'Testing');
+
+		$configurationManager->expects($this->once())->method('postProcessConfiguration');
+
+		$configurationManager->_call('loadConfiguration', \F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, $mockPackages);
+
+		$actualConfigurations = $configurationManager->_get('configurations');
+		$expectedSettings = array(
+			'PackageA' => array(
+				'foo' => 'D',
+				'bar' => 'A'
+			)
+		);
+
+		$this->assertSame($expectedSettings, $actualConfigurations[\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS]);
+	}
+
+	/**
 	 * Callback for the above test.
 	 *
 	 * @author Robert Lemke <robert@typo3.org>
@@ -406,12 +443,90 @@ class ConfigurationManagerTest extends \F3\Testing\BaseTestCase {
 			)
 		);
 
+		$settingsATesting = array(
+			'PackageA' => array(
+				'foo' => 'D'
+			)
+		);
+
 		switch ($filenameAndPath) {
 			case 'PackageA/Configuration/Settings' : return $settingsA;
+			case 'PackageA/Configuration/SomeContext/Settings' : return array();
+			case 'PackageA/Configuration/Testing/Settings' : return $settingsATesting;
 			case 'PackageB/Configuration/Settings' : return $settingsB;
+			case 'PackageB/Configuration/SomeContext/Settings' : return array();
+			case 'PackageB/Configuration/Testing/Settings' : return array();
 			case 'PackageC/Configuration/Settings' : return $settingsC;
+			case 'PackageC/Configuration/SomeContext/Settings' : return array();
+			case 'PackageC/Configuration/Testing/Settings' : return array();
 			case FLOW3_PATH_CONFIGURATION . 'Settings' : return array();
 			case FLOW3_PATH_CONFIGURATION . 'SomeContext/Settings' : return array();
+			case FLOW3_PATH_CONFIGURATION . 'Testing/Settings' : return array();
+			default:
+				throw new Exception('Unexpected filename: ' . $filenameAndPath);
+		}
+	}
+
+	/**
+	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function loadConfigurationForObjectsOverridesConfigurationByContext() {
+		$mockConfigurationSource = $this->getMock('F3\FLOW3\Configuration\Source\SourceInterface', array('load', 'save'));
+		$mockConfigurationSource->expects($this->any())->method('load')->will($this->returnCallback(array($this, 'packageObjectsCallback')));
+
+		$mockPackageFLOW3 = $this->getMock('F3\FLOW3\Package\Package', array(), array(), '', FALSE);
+		$mockPackageFLOW3->expects($this->any())->method('getConfigurationPath')->will($this->returnValue('FLOW3/Configuration/'));
+
+		$mockPackages = array(
+			'FLOW3' => $mockPackageFLOW3
+		);
+
+		$configurationManager = $this->getAccessibleMock('F3\FLOW3\Configuration\ConfigurationManager', array('postProcessConfiguration'), array(), '', FALSE);
+		$configurationManager->_set('configurationSource', $mockConfigurationSource);
+		$configurationManager->_set('context', 'Testing');
+
+		$configurationManager->expects($this->once())->method('postProcessConfiguration');
+
+		$configurationManager->_call('loadConfiguration', \F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_OBJECTS, $mockPackages);
+
+		$actualConfigurations = $configurationManager->_get('configurations');
+		$expectedSettings = array(
+			'FLOW3' => array(
+				'F3\FLOW3\SomeClass' => array(
+					'className' => 'Bar'
+				)
+			)
+		);
+
+		$this->assertSame($expectedSettings, $actualConfigurations[\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_OBJECTS]);
+	}
+
+	/**
+	 * Callback for the above test.
+	 *
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function packageObjectsCallback() {
+		$filenameAndPath = func_get_arg(0);
+
+		$packageObjects = array(
+			'F3\FLOW3\SomeClass' => array(
+				'className' => 'Foo'
+			)
+		);
+
+		$contextObjects = array(
+			'F3\FLOW3\SomeClass' => array(
+				'className' => 'Bar'
+			)
+		);
+
+		switch ($filenameAndPath) {
+			case 'FLOW3/Configuration/Objects' : return $packageObjects;
+			case 'FLOW3/Configuration/Testing/Objects' : return $contextObjects;
+			case FLOW3_PATH_CONFIGURATION . 'Objects' : return array();
+			case FLOW3_PATH_CONFIGURATION . 'Testing/Objects' : return array();
 			default:
 				throw new Exception('Unexpected filename: ' . $filenameAndPath);
 		}
@@ -444,7 +559,6 @@ EOD;
 		$configurationManager->_set('includeCachedConfigurationsPathAndFilename', $includeCachedConfigurationsPathAndFilename);
 		$configurationManager->_call('loadConfigurationCache');
 		$this->assertSame(array('bar' => 'touched'), $configurationManager->_get('configurations'));
-
 	}
 
 	/**
