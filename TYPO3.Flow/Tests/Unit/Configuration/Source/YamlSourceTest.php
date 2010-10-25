@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Configuration\Source;
+namespace F3\FLOW3\Tests\Unit\Configuration\Source;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *

@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Security\Aspect;
+namespace F3\FLOW3\Tests\Unit\Security\Aspect;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *

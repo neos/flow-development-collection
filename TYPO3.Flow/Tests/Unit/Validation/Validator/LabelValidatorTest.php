@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Validation\Validator;
+namespace F3\FLOW3\Tests\Unit\Validation\Validator;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *

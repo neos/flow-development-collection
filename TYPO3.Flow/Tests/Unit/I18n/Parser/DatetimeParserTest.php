@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\I18n\Parser;
+namespace F3\FLOW3\Tests\Unit\I18n\Parser;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *

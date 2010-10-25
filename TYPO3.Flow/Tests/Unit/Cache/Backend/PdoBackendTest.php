@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Cache\Backend;
+namespace F3\FLOW3\Tests\Unit\Cache\Backend;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *

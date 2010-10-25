@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Core;
+namespace F3\FLOW3\Tests\Unit\Core;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
