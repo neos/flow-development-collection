@@ -22,8 +22,6 @@ namespace F3\FLOW3\Package;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-require_once('vfs/vfsStream.php');
-
 /**
  * Testcase for the package documentation class
  *
@@ -47,11 +45,11 @@ class DocumentationTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function constructSetsPackageNameAndPathToDocumentation() {
 		$documentationPath = \vfsStream::url('testDirectory') . '/';
-		
+
 		$mockPackage = $this->getMock('F3\FLOW3\Package\PackageInterface');
-		
+
 		$documentation = new \F3\FLOW3\Package\Documentation($mockPackage, 'Manual', $documentationPath);
-		
+
 		$this->assertSame($mockPackage, $documentation->getPackage());
 		$this->assertEquals('Manual', $documentation->getDocumentationName());
 		$this->assertEquals($documentationPath, $documentation->getDocumentationPath());
@@ -63,23 +61,23 @@ class DocumentationTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function getDocumentationFormatsScansDocumentationDirectoryAndReturnsDocumentationFormatObjectsIndexedByFormatName() {
 		$documentationPath = \vfsStream::url('testDirectory') . '/';
-		
+
 		$mockPackage = $this->getMock('F3\FLOW3\Package\PackageInterface');
-		
+
 		\F3\FLOW3\Utility\Files::createDirectoryRecursively($documentationPath . 'DocBook/en');
-		
+
 		$mockDocumentationFormat = $this->getMock('F3\FLOW3\Package\Documentation\Format', array('dummy'), array(), '', FALSE);
-		
+
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
 		$mockObjectManager->expects($this->once())
 			->method('create')
 			->with('F3\FLOW3\Package\Documentation\Format', 'DocBook', $documentationPath . 'DocBook/')
 			->will($this->returnValue($mockDocumentationFormat));
-		
+
 		$documentation = new \F3\FLOW3\Package\Documentation($mockPackage, 'Manual', $documentationPath);
 		$documentation->injectObjectManager($mockObjectManager);
-		$documentationFormats = $documentation->getDocumentationFormats();	
-		
+		$documentationFormats = $documentation->getDocumentationFormats();
+
 		$this->assertEquals(array('DocBook' => $mockDocumentationFormat), $documentationFormats);
 	}
 }

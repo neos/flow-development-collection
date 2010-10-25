@@ -22,8 +22,6 @@ namespace F3\FLOW3\Package\Documentation;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-require_once('vfs/vfsStream.php');
-
 /**
  * Testcase for the documentation format class
  *
@@ -47,9 +45,9 @@ class FormatTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function constructSetsNameAndPathToFormat() {
 		$documentationPath = \vfsStream::url('testDirectory') . '/';
-		
+
 		$format = new \F3\FLOW3\Package\Documentation\Format('DocBook', $documentationPath);
-		
+
 		$this->assertEquals('DocBook', $format->getFormatName());
 		$this->assertEquals($documentationPath, $format->getFormatPath());
 	}
@@ -60,12 +58,12 @@ class FormatTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function getLanguagesScansFormatDirectoryAndReturnsLanguagesAsStrings() {
 		$formatPath = \vfsStream::url('testDirectory') . '/';
-		
+
 		\F3\FLOW3\Utility\Files::createDirectoryRecursively($formatPath . 'en');
-		
+
 		$format = new \F3\FLOW3\Package\Documentation\Format('DocBook', $formatPath);
-		$availableLanguages = $format->getAvailableLanguages();	
-		
+		$availableLanguages = $format->getAvailableLanguages();
+
 		$this->assertEquals(array('en'), $availableLanguages);
 	}
 }

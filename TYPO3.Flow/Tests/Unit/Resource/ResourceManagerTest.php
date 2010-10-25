@@ -22,8 +22,6 @@ namespace F3\FLOW3\Resource;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-require_once('vfs/vfsStream.php');
-
 /**
  * Testcase for the resource manager
  *
@@ -149,7 +147,7 @@ class ResourceManagerTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
-	 * 
+	 *
 	 */
 	public function importResourceImportsTheGivenFileAndReturnsAResourceObject() {
 		file_put_contents('vfs://Foo/SomeResource.txt', '12345');

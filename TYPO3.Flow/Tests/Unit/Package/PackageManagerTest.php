@@ -22,8 +22,6 @@ namespace F3\FLOW3\Package;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-require_once('vfs/vfsStream.php');
-
 /**
  * Testcase for the default package manager
  *
@@ -91,7 +89,7 @@ class PackageManagerTest extends \F3\Testing\BaseTestCase {
 		$this->markTestSkipped('Rewrite tests for Package Manager!');
 
 		$mockPackage = $this->getMock('F3\FLOW3\Package\PackageInterface');
-		
+
 		$packageKey = 'YetAnotherTestPackage';
 		$packagesPath = \vfsStream::url('testDirectory') . '/';
 
