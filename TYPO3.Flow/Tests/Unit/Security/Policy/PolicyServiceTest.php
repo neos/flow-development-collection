@@ -199,15 +199,15 @@ class PolicyServiceTest extends \F3\Testing\BaseTestCase {
 			'Foo->bar' => array(
 				'TheRole' => array(
 					'FirstResource' => array(
-						'privilege' => PolicyService::PRIVILEGE_GRANT,
+						'privilege' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT,
 						'runtimeEvaluationsClosureCode' => 'closureCode1'
 					),
 					'SecondResource' => array(
-						'privilege' => PolicyService::PRIVILEGE_DENY,
+						'privilege' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY,
 						'runtimeEvaluationsClosureCode' => FALSE
 					),
 					'ThirdResource' => array(
-						'privilege' => PolicyService::PRIVILEGE_DENY,
+						'privilege' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY,
 						'runtimeEvaluationsClosureCode' => 'closureCode3'
 					)
 				)
@@ -270,7 +270,7 @@ class PolicyServiceTest extends \F3\Testing\BaseTestCase {
 			'Foo->bar' => array(
 				'theRole' => array(
 					'theResource' => array (
-						'privilege' => PolicyService::PRIVILEGE_GRANT,
+						'privilege' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT,
                         'runtimeEvaluationsClosureCode' => FALSE
                     )
 				)
@@ -310,7 +310,7 @@ class PolicyServiceTest extends \F3\Testing\BaseTestCase {
 		$mockRole = $this->getMock('F3\FLOW3\Security\Policy\Role', array(), array(), '', FALSE);
 		$mockRole->expects($this->once())->method('__toString')->will($this->returnValue('role1'));
 
-		$privilegesArray = array('FirstResource' => PolicyService::PRIVILEGE_GRANT, 'SecondResource' => PolicyService::PRIVILEGE_DENY, 'ThirdResource' => PolicyService::PRIVILEGE_GRANT);
+		$privilegesArray = array('FirstResource' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT, 'SecondResource' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY, 'ThirdResource' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT);
 
 		$aclsCache = array(
 						'className->methodName' =>
@@ -318,15 +318,15 @@ class PolicyServiceTest extends \F3\Testing\BaseTestCase {
 								'role1' => array(
 									'FirstResource' => array(
 										'runtimeEvaluationsClosureCode' => FALSE,
-										'privilege' => PolicyService::PRIVILEGE_GRANT
+										'privilege' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT
 									),
 									'SecondResource' => array(
 										'runtimeEvaluationsClosureCode' => FALSE,
-										'privilege' => PolicyService::PRIVILEGE_DENY
+										'privilege' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY
 									),
 									'ThirdResource' => array(
 										'runtimeEvaluationsClosureCode' => FALSE,
-										'privilege' => PolicyService::PRIVILEGE_GRANT
+										'privilege' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT
 									)
 								)
 							)
@@ -351,18 +351,18 @@ class PolicyServiceTest extends \F3\Testing\BaseTestCase {
 		$mockRole = $this->getMock('F3\FLOW3\Security\Policy\Role', array(), array(), '', FALSE);
 		$mockRole->expects($this->once())->method('__toString')->will($this->returnValue('role1'));
 
-		$privilegesArray = array('SecondResource' => PolicyService::PRIVILEGE_GRANT);
+		$privilegesArray = array('SecondResource' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT);
 
 		$aclsCache = array(
 						'className->methodName' => array(
 								'role1' => array(
 									'FirstResource' => array(
 										'runtimeEvaluationsClosureCode' => 'function () { return FALSE; };',
-										'privilege' => PolicyService::PRIVILEGE_DENY
+										'privilege' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY
 									),
 									'SecondResource' => array(
 										'runtimeEvaluationsClosureCode' => 'function () { return TRUE; };',
-										'privilege' => PolicyService::PRIVILEGE_GRANT
+										'privilege' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT
 									)
 								)
 							)
@@ -387,7 +387,7 @@ class PolicyServiceTest extends \F3\Testing\BaseTestCase {
 						'someResource' => array(
 								'role1' => array(
 									'runtimeEvaluationsClosureCode' => FALSE,
-									'privilege' => PolicyService::PRIVILEGE_GRANT
+									'privilege' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT
 								)
 							)
 						);
@@ -395,7 +395,7 @@ class PolicyServiceTest extends \F3\Testing\BaseTestCase {
 		$policyService = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Security\Policy\PolicyService'), array('dummy'), array(), '', FALSE);
 		$policyService->_set('acls', $aclsCache);
 
-		$this->assertEquals(PolicyService::PRIVILEGE_GRANT, $policyService->getPrivilegeForResource($mockRole, 'someResource'));
+		$this->assertEquals(\F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT, $policyService->getPrivilegeForResource($mockRole, 'someResource'));
 	}
 
 	/**
@@ -411,7 +411,7 @@ class PolicyServiceTest extends \F3\Testing\BaseTestCase {
 						'someResource' => array(
 								'role1' => array(
 									'runtimeEvaluationsClosureCode' => 'function () { return TRUE; };',
-									'privilege' => PolicyService::PRIVILEGE_GRANT
+									'privilege' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT
 								)
 							)
 						);
@@ -419,7 +419,7 @@ class PolicyServiceTest extends \F3\Testing\BaseTestCase {
 		$policyService = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Security\Policy\PolicyService'), array('dummy'), array(), '', FALSE);
 		$policyService->_set('acls', $aclsCache);
 
-		$this->assertEquals(PolicyService::PRIVILEGE_DENY, $policyService->getPrivilegeForResource($mockRole, 'someResource'));
+		$this->assertEquals(\F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY, $policyService->getPrivilegeForResource($mockRole, 'someResource'));
 	}
 
 	/**
@@ -435,7 +435,7 @@ class PolicyServiceTest extends \F3\Testing\BaseTestCase {
 						'someResource' => array(
 								'role1' => array(
 									'runtimeEvaluationsClosureCode' => 'function () { return TRUE; };',
-									'privilege' => PolicyService::PRIVILEGE_GRANT
+									'privilege' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT
 								)
 							)
 						);
@@ -462,7 +462,7 @@ class PolicyServiceTest extends \F3\Testing\BaseTestCase {
 		$policyService->_set('acls', array());
 		$policyService->_set('resources', array('someResourceNotConnectedToAPolicyEntry' => 'someDefinition'));
 
-		$this->assertEquals(PolicyService::PRIVILEGE_DENY, $policyService->getPrivilegeForResource($mockRole, 'someResourceNotConnectedToAPolicyEntry'));
+		$this->assertEquals(\F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY, $policyService->getPrivilegeForResource($mockRole, 'someResourceNotConnectedToAPolicyEntry'));
 	}
 
 	/**
@@ -575,12 +575,12 @@ class PolicyServiceTest extends \F3\Testing\BaseTestCase {
 
 		$expectedAcls = array(
 			'theEntityResource' => array(
-				'theRole' => array('privilege' => PolicyService::PRIVILEGE_GRANT),
-				'theOtherRole' => array('privilege' => PolicyService::PRIVILEGE_DENY)
+				'theRole' => array('privilege' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT),
+				'theOtherRole' => array('privilege' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY)
 			),
 			'theOtherEntityResource' => array(
-				'theRole' => array('privilege' => PolicyService::PRIVILEGE_DENY),
-				'theOtherRole' => array('privilege' => PolicyService::PRIVILEGE_GRANT)
+				'theRole' => array('privilege' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY),
+				'theOtherRole' => array('privilege' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT)
 			)
 		);
 
@@ -622,17 +622,17 @@ class PolicyServiceTest extends \F3\Testing\BaseTestCase {
 		$acls = array(
 			'resource1' => array(
 				'Administrator' => array(
-					'privilege' => PolicyService::PRIVILEGE_DENY
+					'privilege' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY
 				),
 			),
 			'resource2' => array(
 				'SomeOtherRole' => array(
-                    'privilege' => PolicyService::PRIVILEGE_DENY
+                    'privilege' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY
 				),
 			),
 			'resource3' => array(
 				'Customer' => array(
-                    'privilege' => PolicyService::PRIVILEGE_DENY
+                    'privilege' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY
 				),
 			)
 		);
@@ -663,20 +663,20 @@ class PolicyServiceTest extends \F3\Testing\BaseTestCase {
 		$acls = array(
 			'resource1' => array(
 				'Administrator' => array(
-					'privilege' => PolicyService::PRIVILEGE_GRANT
+					'privilege' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT
 				),
 				'Customer' => array(
-					'privilege' => PolicyService::PRIVILEGE_DENY
+					'privilege' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY
 				)
 			),
 			'resource2' => array(
 				'SomeOtherRole' => array(
-					'privilege' => PolicyService::PRIVILEGE_DENY
+					'privilege' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY
 				),
 			),
 			'resource3' => array(
 				'Customer' => array(
-					'privilege' => PolicyService::PRIVILEGE_DENY
+					'privilege' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY
 				),
 			)
 		);
@@ -707,20 +707,20 @@ class PolicyServiceTest extends \F3\Testing\BaseTestCase {
 		$acls = array(
 			'resource1' => array(
 				'Administrator' => array(
-					'privilege' => PolicyService::PRIVILEGE_GRANT
+					'privilege' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT
 				),
 				'Customer' => array(
-					'privilege' => PolicyService::PRIVILEGE_DENY
+					'privilege' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY
 				)
 			),
 			'resource2' => array(
 				'SomeOtherRole' => array(
-					'privilege' => PolicyService::PRIVILEGE_DENY
+					'privilege' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY
 				),
 			),
 			'resource3' => array(
 				'Customer' => array(
-					'privilege' => PolicyService::PRIVILEGE_DENY
+					'privilege' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY
 				),
 			)
 		);
