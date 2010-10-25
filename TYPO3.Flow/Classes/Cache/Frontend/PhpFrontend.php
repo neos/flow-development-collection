@@ -59,7 +59,7 @@ class PhpFrontend extends \F3\FLOW3\Cache\Frontend\StringFrontend {
 		foreach ($tags as $tag) {
 			if (!$this->isValidTag($tag)) throw new \InvalidArgumentException('"' . $tag . '" is not a valid tag for a cache entry.', 1264023825);
 		}
-		$sourceCode = '<?php' . chr(10) . $sourceCode . chr(10) . '__halt_compiler();';
+		$sourceCode = '<?php' . chr(10) . $sourceCode . chr(10) . '#';
 		$this->backend->set($entryIdentifier, $sourceCode, $tags, $lifetime);
 	}
 

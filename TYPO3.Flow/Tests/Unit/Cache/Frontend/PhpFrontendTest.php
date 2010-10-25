@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Cache\Frontend;
+namespace F3\FLOW3\Tests\Unit\Cache\Frontend;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -46,7 +46,7 @@ class PhpFrontendTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function setPassesPhpSourceCodeTagsAndLifetimeToBackend() {
 		$originalSourceCode = 'return "hello world!";';
-		$modifiedSourceCode = '<?php' . chr(10) . $originalSourceCode . chr(10) . '__halt_compiler();';
+		$modifiedSourceCode = '<?php' . chr(10) . $originalSourceCode . chr(10) . '#';
 
 		$mockBackend = $this->getMock('F3\FLOW3\Cache\Backend\PhpCapableBackendInterface', array(), array(), '', FALSE);
 		$mockBackend->expects($this->once())->method('set')->with('Foo-Bar', $modifiedSourceCode, array('tags'), 1234);
