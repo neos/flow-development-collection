@@ -13,6 +13,12 @@
   closely as possible, with exceptions which make sense in the JavaScript
   context.</para>
 
+  <para>This guideline explains mostly how we want JavaScript code to be
+  formatted; and it does <emphasis>not</emphasis> deal with the TYPO3 Phoenix
+  User Interface structure. If you want to know more about the TYPO3 Phoenix
+  User Interface architecture, have a look into the "Phoenix User Interface
+  Development" book.</para>
+
   <section>
     <title>Naming Conventions</title>
 
@@ -20,10 +26,32 @@
       <listitem>
         <para>one class per file, with the same naming convention as
         FLOW3.</para>
+
+        <para>This means all classes are built like this:
+        <code>F3.<replaceable>PackageKey</replaceable>.<replaceable>SubNamespace</replaceable>.<replaceable>ClassName</replaceable></code>,
+        and this class is implemented in a JavaScript file located at
+        <filename><replaceable>...
+        Package</replaceable>/.../JavaScript/<replaceable>SubNamespace</replaceable>/<replaceable>ClassName</replaceable>.js</filename>.</para>
+
+        <para>Right now, the base directory for JavaScript in FLOW3 packages
+        <filename>Resources/Public/JavaScript</filename>, but this might still
+        change.</para>
+
+        <note>
+          <para>In TYPO3 v4, the prefix is <code>TYPO3</code>. This means an
+          extension should use <code>TYPO3.ExtensionKey</code> as base
+          namespace, while the TYPO3 Core should use
+          <code>TYPO3.Backend</code> as namespace.</para>
+        </note>
       </listitem>
 
       <listitem>
-        <para>Files should be encoded in UTF-8.</para>
+        <para>We suggest that the base directory for JavaScript files is
+        <filename>JavaScript</filename>.</para>
+      </listitem>
+
+      <listitem>
+        <para>Files have to be encoded in UTF-8.</para>
       </listitem>
 
       <listitem>
@@ -42,10 +70,23 @@
         <para>Never create a class which has classes inside itself. Example:
         if the class <classname>F3.TYPO3.Foo</classname> exists, it is
         prohibited to create a class
-        <classname>F3.TYPO3.Foo.Bar</classname>.</para>
+        <classname>F3.TYPO3.Foo.Bar</classname>.You can easily check this: If
+        a directory with the same name as the JavaScript file exists, this is
+        prohibited.</para>
 
-        <para>You can easily check this: If a directory with the same name as
-        the JavaScript file exists, this is prohibited.</para>
+        <para>Here follows an example:</para>
+
+        <programlisting>F3.TYPO3.Foo.Bar // implemented in .../Foo/Bar.js
+F3.TYPO3.Foo.Bar = ...
+
+F3.TYPO3.Foo // implemented in ...Foo.js
+F3.TYPO3.Foo = ..... <emphasis>overriding the "Bar" class</emphasis></programlisting>
+
+        <para>So, if the class <classname>F3.TYPO3.Foo.Bar</classname> is
+        included <emphasis>before</emphasis>
+        <classname>F3.TYPO3.Foo</classname>, then the second class definition
+        completely overrides the <classname>Bar</classname> object. In order
+        to prevent such issues, this constellation is forbidden.</para>
       </listitem>
 
       <listitem>
@@ -61,10 +102,25 @@
   </section>
 
   <section>
+    <title>Doc Comments</title>
+
+    <para>TODO</para>
+
+    <para>- what are possible doc comments</para>
+
+    <para>-&gt; we use http://code.google.com/p/ext-doc/ for rendering, that's
+    why parameters have to define a {String} @author annotation </para>
+
+    <para>-&gt; not yet decided if we use it no @api annotation!</para>
+  </section>
+
+  <section>
     <title>Class Definitions</title>
 
-    <para>Classes can be singleton or prototype. You will find examples for
-    both below.</para>
+    <para>Classes can be singleton or prototype. TODO: Add definition of
+    singleton and prototype.</para>
+
+    <para> You will find examples for both below.</para>
 
     <section>
       <title>Prototype Class Definitions</title>
@@ -74,6 +130,8 @@
 
         <programlisting>Ext.ns("F3.TYPO3.Content");<co
             xml:id="prototypeClassDefinition.1" />
+
+// TODO: insert License
 
 /**
  * @class F3.TYPO3.Content.FrontendEditor<co
@@ -137,9 +195,6 @@ Ext.reg('F3.TYPO3.Content.FrontendEditor', F3.TYPO3.Content.FrontendEditor);<co
  * @cfg {Number} configTwo
  */
 configTwo: 10,</programlisting>
-
-      <para>TODO: Should we explain how to use initComponent, and add a
-      section about lifecycle methods?</para>
     </section>
 
     <section>
@@ -187,8 +242,6 @@ F3.TYPO3.Core.Application = Ext.apply(new Ext.util.Observable, {<co
           </callout>
         </calloutlist>
       </example>
-
-      <para>TODO: WHERE TO INCLUDE License Text and the like</para>
     </section>
   </section>
 
@@ -200,28 +253,33 @@ F3.TYPO3.Core.Application = Ext.apply(new Ext.util.Observable, {<co
     <example>
       <title>Example of a method comment</title>
 
-      <programlisting>/**
- * This is a method declaration
- *
- * @param {String} param1 Parameter name
- * @param {String} param2 (Optional) Optional parameter
- * @return {Boolean} Return value
- */
-aPublicMethod: function(param1, param2) {
-	return true;
-},<co xml:id="exampleMethodComment.1" />
+      <programlisting>...
+F3.TYPO3.Core.Application = Ext.apply(new Ext.util.Observable, { // this is just an example class definition
+	... propery definitions ...
+	/**
+	 * This is a method declaration
+	 *
+	 * @param {String} param1 Parameter name
+	 * @param {String} param2 (Optional) Optional parameter
+	 * @return {Boolean} Return value
+	 */
+	aPublicMethod: function(param1, param2) {
+		return true;
+	},<co xml:id="exampleMethodComment.1" />
 
-/**
- * this is a private function of this class,
- * the private anotation marks them an prevent that they
- * are listed in the api doc. As they are private, they
- * have to start with an underscore as well.
- *
- * @return {void}
- * @private
- */
-_sampleMethod: function() {
-}</programlisting>
+	/**
+	 * this is a private function of this class,
+	 * the private anotation marks them an prevent that they
+	 * are listed in the api doc. As they are private, they
+	 * have to start with an underscore as well.
+	 *
+	 * @return {void}
+	 * @private
+	 */
+	_sampleMethod: function() {
+	}
+}
+...</programlisting>
 
       <calloutlist>
         <callout arearefs="exampleMethodComment.1">
@@ -229,6 +287,12 @@ _sampleMethod: function() {
         </callout>
       </calloutlist>
     </example>
+
+    <para>Contrary to what is defined in the FLOW3 PHP Coding Guidelines,
+    methods which are public <emphasis>automatically belong to the public
+    API</emphasis>, without an <code>@api</code> annotation. Contrary, methods
+    which do <emphasis>not belong to the public API</emphasis> need to begin
+    with an underscore and have the <code>@private</code> annotation.</para>
   </section>
 
   <section>
@@ -239,22 +303,26 @@ _sampleMethod: function() {
     start with an underscore and have the <code>@private</code> annotation at
     the last line of its doc comment.</para>
 
-    <programlisting>/**
- * Explanation of the property
- * which is followed by a newline
- *
- * @type {String}
- */
-propertyOne: 'Hello',
+    <programlisting>...
+F3.TYPO3.Core.Application = Ext.apply(new Ext.util.Observable, { // this is just an example class definition
+	/**
+	 * Explanation of the property
+	 * which is followed by a newline
+	 *
+	 * @type {String}
+	 */
+	propertyOne: 'Hello',
 
-/**
- * Now follows a private property
- * which starts with an underscore.
- *
- * @type {Number}
- * @private
- */
-_thePrivateProperty: null,</programlisting>
+	/**
+	 * Now follows a private property
+	 * which starts with an underscore.
+	 *
+	 * @type {Number}
+	 * @private
+	 */
+	_thePrivateProperty: null,
+	...
+}</programlisting>
   </section>
 
   <section>
@@ -262,11 +330,21 @@ _thePrivateProperty: null,</programlisting>
 
     <itemizedlist>
       <listitem>
-        <para>use ' instead of " for string quoting</para>
+        <para>use single quotes(') instead of double quotes(") for string
+        quoting</para>
       </listitem>
 
       <listitem>
-        <para>Multiline strings (using <code>\</code>) are forbidden.</para>
+        <para>Multiline strings (using <code>\</code>) are forbidden. Instead,
+        multiline strings should be written like this:</para>
+
+        <programlisting>'Some String' +
+' which spans' +
+' multiple lines'</programlisting>
+      </listitem>
+
+      <listitem>
+        <para>There is no limitation on line length.</para>
       </listitem>
 
       <listitem>
@@ -275,13 +353,23 @@ _thePrivateProperty: null,</programlisting>
       </listitem>
 
       <listitem>
-        <para>All other constants should be written
-        <code>UPPERCASE_WITH_UNDERSCORE</code>.</para>
+        <para>Custom JavaScript Constants should be avoided.</para>
       </listitem>
 
       <listitem>
         <para>Use a single <code>var</code> statement at the top of a method
-        to declare all variables.</para>
+        to declare all variables. Example:</para>
+
+        <programlisting>function() {
+	var myVariable1, myVariable2, someText;
+	// now, use myVariable1, ....
+}
+TODO: Discuss the following (inline assignment):
+function() {
+	var myVariable1 = Ext.getComponent(...),
+	    variable2, variable3;
+}
+-&gt; i feel it makes the code more unreadable, so I would suggest to use variant 1.</programlisting>
       </listitem>
 
       <listitem>
@@ -291,12 +379,80 @@ _thePrivateProperty: null,</programlisting>
       <listitem>
         <para>Use inline comments sparingly, they are often a hint that a new
         method must be introduced.</para>
+
+        <para>Inline Comments must be indented <emphasis>one level
+        deeper</emphasis> than the current nesting level. Example:</para>
+
+        <programlisting>function() {
+	var foo;
+		// Explain what we are doing here.
+	foo = '123';
+}</programlisting>
+      </listitem>
+
+      <listitem>
+        <para>White Spaces around control structures like <code>if</code>,
+        <code>else</code>, ... should be inserted like in the FLOW3
+        CGLs:</para>
+
+        <programlisting>if (myExpression) {
+	// if part
+} else {
+	// Else Part
+}</programlisting>
+      </listitem>
+
+      <listitem>
+        <para>Arrays and Objects should <emphasis>never</emphasis> have a
+        trailing comma after their last element,</para>
+      </listitem>
+
+      <listitem>
+        <para>Arrays and objects should be formatted in the following
+        way:</para>
+
+        <programlisting>[
+	{
+		foo: 'bar'    
+	}, {
+		x: y
+	}
+]</programlisting>
+      </listitem>
+
+      <listitem>
+        <para>Method calls should be formatted the following way:</para>
+
+        <programlisting>// for simple parameters:
+new Ext.blah(options, scope, foo);
+object.myMethod(foo, bar, baz);
+
+// when the method takes a <emphasis>single</emphasis> parameter of type <emphasis>object</emphasis> as argument, and this object is specified directly in place:
+new Ext.Panel({
+	a: 'b',
+	c: 'd'
+});
+
+// when the method takes more parameters, and one is a configuration object which is specified in place:
+new Ext.blah(
+	{
+		foo: 'bar'
+	},
+	scope,
+	options
+);</programlisting>
       </listitem>
     </itemizedlist>
 
-    <para>TODO: How to format arrays, strings</para>
+    <para>-&gt; Validation through JSLint (We need a config file / step by
+    step HowTo) -- Fabien has a small tutorial on that. TODO Fabien: attach
+    the tutorial to forge issue </para>
 
-    <para></para>
+    <para>-&gt; RockstarApps?</para>
+
+    <para>-&gt; Spket JavaScript Codeformatter</para>
+
+    <para>-&gt; TODO: are there JS Code Formatters / Indenters?</para>
 
     <section>
       <title>Event Handling</title>
@@ -319,7 +475,7 @@ _thePrivateProperty: null,</programlisting>
         <title>Bad Event Handler Code</title>
 
         <programlisting>F3.TYPO3.Application.on(
-  'F3.TYPO3.Content.customEvent',
+  'theEventName',
   function() {
     alert('Text');
   }, 
@@ -328,8 +484,10 @@ _thePrivateProperty: null,</programlisting>
       </example>
 
       <para>All events need to be explicitely documented inside the class
-      where they are fired onto with an <code>@event</code> annotation. Here
-      follows an example:</para>
+      where they are fired onto with an <code>@event</code> annotation. TODO:
+      explain it more, and add context</para>
+
+      <para>Here follows an example:</para>
 
       <programlisting>/**
  * @event eventOne Event declaration
@@ -349,5 +507,26 @@ _thePrivateProperty: null,</programlisting>
       handler is not set to <code>this</code>, i.e. does not point to its
       class, as the user expects this.</para>
     </section>
+  </section>
+
+  <section>
+    <title>ExtJS specific things</title>
+
+    <para>TODO</para>
+
+    <para>-&gt; how to extend Data Stores (for example)</para>
+
+    <para>-&gt; how to extend Ext components</para>
+
+    <para>-&gt; datastore extended?</para>
+
+    <para>-&gt; can be extended by using constructer() not initComponets()
+    like it is for panels and so on </para>
+  </section>
+
+  <section>
+    <title>Unit Testing</title>
+
+    <para>TODO: http://developer.yahoo.com/yui/3/test/</para>
   </section>
 </chapter>
