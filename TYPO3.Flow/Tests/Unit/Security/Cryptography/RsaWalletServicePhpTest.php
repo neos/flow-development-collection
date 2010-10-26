@@ -65,7 +65,7 @@ class RsaWalletServicePhpTest extends \F3\Testing\BaseTestCase {
 			$mockCache->expects($this->any())->method('get')->will($this->returnCallback($getCallBack));
 			$mockCache->expects($this->any())->method('has')->will($this->returnCallback($hasCallBack));
 
-			$this->rsaWalletService = new RsaWalletServicePhp();
+			$this->rsaWalletService = new \F3\FLOW3\Security\Cryptography\RsaWalletServicePhp();
 			$this->rsaWalletService->injectObjectManager($mockObjectManager);
 			$this->rsaWalletService->injectKeystoreCache($mockCache);
 
