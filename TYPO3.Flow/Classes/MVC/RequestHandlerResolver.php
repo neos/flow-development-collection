@@ -74,12 +74,16 @@ class RequestHandlerResolver {
 
 		$suitableRequestHandlers = array();
 		foreach ($availableRequestHandlerClassNames as $requestHandlerClassName) {
-			if (!$this->objectManager->isRegistered($requestHandlerClassName)) continue;
+			if (!$this->objectManager->isRegistered($requestHandlerClassName)) {
+				continue;
+			}
 
 			$requestHandler = $this->objectManager->get($requestHandlerClassName);
-			if ($requestHandler->canHandleRequest()) {
+			if ($requestHandler->canHandleRequest() > 0) {
 				$priority = $requestHandler->getPriority();
-				if (isset($suitableRequestHandlers[$priority])) throw new \F3\FLOW3\MVC\Exception('More than one request handler with the same priority can handle the request, but only one handler may be active at a time!', 1176475350);
+				if (isset($suitableRequestHandlers[$priority])) {
+					throw new \F3\FLOW3\MVC\Exception('More than one request handler with the same priority can handle the request, but only one handler may be active at a time!', 1176475350);
+				}
 				$suitableRequestHandlers[$priority] = $requestHandler;
 			}
 		}
