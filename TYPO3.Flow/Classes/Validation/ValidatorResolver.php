@@ -111,7 +111,7 @@ class ValidatorResolver {
 	public function createValidator($validatorType, array $validatorOptions = array()) {
 		$validatorObjectName = $this->resolveValidatorObjectName($validatorType);
 		if ($validatorObjectName === FALSE) return NULL;
-		$validator = $this->objectManager->get($validatorObjectName);
+		$validator = $this->objectManager->create($validatorObjectName);
 		if (!($validator instanceof \F3\FLOW3\Validation\Validator\ValidatorInterface)) {
 			return NULL;
 		}
@@ -258,7 +258,7 @@ class ValidatorResolver {
 				$classPropertyTagsValues = $this->reflectionService->getPropertyTagsValues($targetClassName, $classPropertyName);
 
 				$propertyTargetClassName = trim(implode('' , $classPropertyTagsValues['var']), ' \\');
-				if (class_exists($propertyTargetClassName) && $this->objectManager->getScope($propertyTargetClassName) === 'prototype') {
+				if (class_exists($propertyTargetClassName) && $this->objectManager->getScope($propertyTargetClassName) === \F3\FLOW3\Object\Configuration\Configuration::SCOPE_PROTOTYPE) {
 					$objectValidator->addPropertyValidator($classPropertyName, $this->getBaseValidatorConjunction($propertyTargetClassName));
 				}
 

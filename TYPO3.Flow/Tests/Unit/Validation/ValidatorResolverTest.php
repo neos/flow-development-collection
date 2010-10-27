@@ -88,7 +88,7 @@ class ValidatorResolverTest extends \F3\Testing\BaseTestCase {
 		$mockValidator->expects($this->once())->method('setOptions')->with(array('foo' => 'bar'));
 
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->any())->method('get')->with($className)->will($this->returnValue($mockValidator));
+		$mockObjectManager->expects($this->any())->method('create')->with($className)->will($this->returnValue($mockValidator));
 
 		$validatorResolver = $this->getMock('F3\FLOW3\Validation\ValidatorResolver',array('resolveValidatorObjectName'), array($mockObjectManager));
 		$validatorResolver->expects($this->once())->method('resolveValidatorObjectName')->with($className)->will($this->returnValue($className));
@@ -442,7 +442,7 @@ class ValidatorResolverTest extends \F3\Testing\BaseTestCase {
 
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
 		$mockObjectManager->expects($this->at(0))->method('get')->with('F3\FLOW3\Validation\Validator\ConjunctionValidator')->will($this->returnValue($mockConjunctionValidator));
-		$mockObjectManager->expects($this->at(1))->method('getScope')->with($entityClassName)->will($this->returnValue('prototype'));
+		$mockObjectManager->expects($this->at(1))->method('getScope')->with($entityClassName)->will($this->returnValue(\F3\FLOW3\Object\Configuration\Configuration::SCOPE_PROTOTYPE));
 		$mockObjectManager->expects($this->at(2))->method('getScope')->with($otherClassName)->will($this->returnValue(NULL));
 
 		$mockReflectionService = $this->getMock('\F3\FLOW3\Reflection\ReflectionService');
