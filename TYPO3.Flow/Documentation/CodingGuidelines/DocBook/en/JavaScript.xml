@@ -104,23 +104,46 @@ F3.TYPO3.Foo = ..... <emphasis>overriding the "Bar" class</emphasis></programlis
   <section>
     <title>Doc Comments</title>
 
-    <para>TODO</para>
+    <para>Generally, doc comments follow the following form:</para>
 
-    <para>- what are possible doc comments</para>
+    <programlisting>/**
+ *
+ */</programlisting>
 
-    <para>-&gt; we use http://code.google.com/p/ext-doc/ for rendering, that's
-    why parameters have to define a {String} @author annotation </para>
+    <para>See the sections below on which doc comments are available for the
+    different elements (classes, methods, ...).</para>
 
-    <para>-&gt; not yet decided if we use it no @api annotation!</para>
+    <para>We are using http://code.google.com/p/ext-doc/ for rendering an API
+    documentation from the code, that's why types inside <code>@param</code>,
+    <code>@type</code> and <code>@cfg</code> have to be written in curly
+    brackets like this:</para>
+
+    <programlisting>@param {String} theFirstParameter A Description of the first parameter
+@param {My.Class.Name} theSecondParameter A description of the second parameter</programlisting>
+
+    <para>Generally, we do not use <code>@api</code> annotations, as private
+    methods and attributes are marked with <code>@private</code> and prefixed
+    with an underscore. So, <emphasis>everything which is not marked as
+    private belongs to the public API!</emphasis></para>
+
+    <para>We are not sure yet if we should use <code>@author</code>
+    annotations at all. (TODO Decide!)</para>
+
+    <para>TODO: find out how to make cross-references, or how to nicely format
+    multiline-text inside doc comments (@link?).</para>
   </section>
 
   <section>
     <title>Class Definitions</title>
 
-    <para>Classes can be singleton or prototype. TODO: Add definition of
-    singleton and prototype.</para>
+    <para>Classes can be declared singleton or prototype. A class is
+    <emphasis>singleton</emphasis>, if only one instance of this class will
+    exist at any given time. An class is of type
+    <emphasis>prototype</emphasis>, if more than one object can be created
+    from the class at run-time. Most classes will be of type
+    <emphasis>prototype</emphasis>.</para>
 
-    <para> You will find examples for both below.</para>
+    <para>You will find examples for both below.</para>
 
     <section>
       <title>Prototype Class Definitions</title>
@@ -131,7 +154,25 @@ F3.TYPO3.Foo = ..... <emphasis>overriding the "Bar" class</emphasis></programlis
         <programlisting>Ext.ns("F3.TYPO3.Content");<co
             xml:id="prototypeClassDefinition.1" />
 
-// TODO: insert License
+/*                                                                        *
+ * This script belongs to the FLOW3 package "TYPO3".                      *
+ *                                                                        *
+ * It is free software; you can redistribute it and/or modify it under    *
+ * the terms of the GNU General Public License as published by the Free   *
+ * Software Foundation, either version 3 of the License, or (at your      *
+ * option) any later version.                                             *
+ *                                                                        *
+ * This script is distributed in the hope that it will be useful, but     *
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
+ * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General      *
+ * Public License for more details.                                       *
+ *                                                                        *
+ * You should have received a copy of the GNU General Public License      *
+ * along with the script.                                                 *
+ * If not, see http://www.gnu.org/licenses/gpl.html                       *
+ *                                                                        *
+ * The TYPO3 project - inspiring people to share!                         *
+ *                                                                        */
 
 /**
  * @class F3.TYPO3.Content.FrontendEditor<co
@@ -186,15 +227,18 @@ Ext.reg('F3.TYPO3.Content.FrontendEditor', F3.TYPO3.Content.FrontendEditor);<co
 
       <para>Usually, the constructor of the class receives a hash of
       parameters. The possible configuration options need to be documented
-      inside the class with the following annotation:</para>
+      inside the class with the <code>@cfg</code> annotation:</para>
 
-      <programlisting>/**
- * An explanation of the configuration option followed
- * by a blank line.
- * 
- * @cfg {Number} configTwo
- */
-configTwo: 10,</programlisting>
+      <programlisting>F3.TYPO3.Content.FrontendEditor = Ext.extend(Ext.Container, {
+	/**
+	 * An explanation of the configuration option followed
+	 * by a blank line.
+	 * 
+	 * @cfg {Number} configTwo
+	 */
+	configTwo: 10
+	...
+}</programlisting>
     </section>
 
     <section>
@@ -208,6 +252,26 @@ configTwo: 10,</programlisting>
         <title>Example of a singleton class definition</title>
 
         <programlisting>Ext.ns("F3.TYPO3.Core");
+
+/*                                                                        *
+ * This script belongs to the FLOW3 package "TYPO3".                      *
+ *                                                                        *
+ * It is free software; you can redistribute it and/or modify it under    *
+ * the terms of the GNU General Public License as published by the Free   *
+ * Software Foundation, either version 3 of the License, or (at your      *
+ * option) any later version.                                             *
+ *                                                                        *
+ * This script is distributed in the hope that it will be useful, but     *
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
+ * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General      *
+ * Public License for more details.                                       *
+ *                                                                        *
+ * You should have received a copy of the GNU General Public License      *
+ * along with the script.                                                 *
+ * If not, see http://www.gnu.org/licenses/gpl.html                       *
+ *                                                                        *
+ * The TYPO3 project - inspiring people to share!                         *
+ *                                                                        */
 
 /**
  * @class F3.TYPO3.Core.Application
@@ -243,6 +307,88 @@ F3.TYPO3.Core.Application = Ext.apply(new Ext.util.Observable, {<co
         </calloutlist>
       </example>
     </section>
+
+    <section>
+      <title>Class Doc Comments</title>
+
+      <para>Class Doc Comments should always be in the following order:</para>
+
+      <itemizedlist>
+        <listitem>
+          <para><code>@class <replaceable>Name.Of.Class</replaceable></code>
+          (required)</para>
+        </listitem>
+
+        <listitem>
+          <para>Then follows a description of the class, which can span
+          multiple lines. Before and after this description should be a a
+          blank line.</para>
+        </listitem>
+
+        <listitem>
+          <para><code>@namespace
+          <replaceable>Name.Of.Namespace</replaceable></code>
+          (required)</para>
+        </listitem>
+
+        <listitem>
+          <para><code>@extends
+          <replaceable>Name.Of.BaseClass</replaceable></code>
+          (required)</para>
+        </listitem>
+
+        <listitem>
+          <para><code>@singleton</code> (required if the class is a
+          singleton)</para>
+        </listitem>
+      </itemizedlist>
+
+      <para>If the class has a non-empty constructor, the following doc
+      comments need to be added as well, after a blank line:</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>⁄<code>@constructor</code></para>
+        </listitem>
+
+        <listitem>
+          <para><code>@param {<replaceable>type</replaceable>}
+          <replaceable>nameOfParameter</replaceable> <replaceable>description
+          of parameter</replaceable></code> for every parameter of the
+          constructor</para>
+        </listitem>
+      </itemizedlist>
+
+      <example>
+        <title>Example of a class doc comment without constructor</title>
+
+        <programlisting>/**
+ * @class F3.TYPO3.Foo.Bar
+ *
+ * Some Description of the class,
+ * which can possibly span multiple lines
+ *
+ * @namespace F3.TYPO3.Foo
+ * @extends F3.TYPO3.Core.SomeOtherClass
+ */</programlisting>
+      </example>
+
+      <example>
+        <title>Example of a class doc comment with constructor</title>
+
+        <programlisting>/**
+ * @class F3.TYPO3.Foo.ClassWithConstructor
+ *
+ * This class has a constructor!
+ *
+ * @namespace F3.TYPO3.Foo
+ * @extends F3.TYPO3.Core.SomeOtherClass
+ *
+ * @constructor
+ * @param {String} id The ID which to use
+ */</programlisting>
+      </example>
+    </section>
   </section>
 
   <section>
@@ -257,7 +403,8 @@ F3.TYPO3.Core.Application = Ext.apply(new Ext.util.Observable, {<co
 F3.TYPO3.Core.Application = Ext.apply(new Ext.util.Observable, { // this is just an example class definition
 	... propery definitions ...
 	/**
-	 * This is a method declaration
+	 * This is a method declaration; and the
+	 * explanatory text is followed by a newline.
 	 *
 	 * @param {String} param1 Parameter name
 	 * @param {String} param2 (Optional) Optional parameter
@@ -268,7 +415,7 @@ F3.TYPO3.Core.Application = Ext.apply(new Ext.util.Observable, { // this is just
 	},<co xml:id="exampleMethodComment.1" />
 
 	/**
-	 * this is a private function of this class,
+	 * this is a private method of this class,
 	 * the private anotation marks them an prevent that they
 	 * are listed in the api doc. As they are private, they
 	 * have to start with an underscore as well.
@@ -444,15 +591,92 @@ new Ext.blah(
       </listitem>
     </itemizedlist>
 
-    <para>-&gt; Validation through JSLint (We need a config file / step by
-    step HowTo) -- Fabien has a small tutorial on that. TODO Fabien: attach
-    the tutorial to forge issue </para>
+    <para>-&gt; TODO: are there JS Code Formatters / Indenters, maybe the
+    Spket JS Code Formatter?</para>
 
-    <para>-&gt; RockstarApps?</para>
+    <section>
+      <title>Using JSLint to validate your JavaScript</title>
 
-    <para>-&gt; Spket JavaScript Codeformatter</para>
+      <para>JSLint is a JavaScript program that looks for problems in
+      JavaScript programs. It is a code quality tool. When C was a young
+      programming language, there were several common programming errors that
+      were not caught by the primitive compilers, so an accessory program
+      called <code>lint</code> was developed that would scan a source file,
+      looking for problems. <code>jslint</code> is the same for
+      JavaScript.</para>
 
-    <para>-&gt; TODO: are there JS Code Formatters / Indenters?</para>
+      <para>JavaScript code ca be validated on-line at http://www.jslint.com/.
+      When validating the JavaScript code, "The Good Parts" family options
+      should be set. For that purpose, there is a button "The Good Parts" to
+      be clicked.</para>
+
+      <para>Instead of using it online, you can also use JSLint locally, which
+      is now described. For the sake of convenience, the small tutorial bellow
+      demonstrates how to use JSlint with the help of CLI wrapper to enable
+      recursive validation among directories which streamlines the validation
+      process.</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>Download Rhino from http://www.mozilla.org/rhino/download.html
+          and put it for instance into /Users/john/WebTools/Rhino.</para>
+        </listitem>
+
+        <listitem>
+          <para>Download JSLint.js (@see attachment "jslint.js", line
+          5667-5669 contains the configuration we would like to have, still to
+          decide) (TODO)</para>
+        </listitem>
+
+        <listitem>
+          <para>Download jslint.php (@see attachment "jslint.php" TODO), for
+          example into /Users/fudriot/WebTools/JSLint</para>
+        </listitem>
+
+        <listitem>
+          <para>Open and edit path in jslint.php -&gt; check variable
+          $rhinoPath and $jslintPath</para>
+        </listitem>
+
+        <listitem>
+          <para>Add an alias to make it more convenient in the
+          terminal:<programlisting>alias jslint '/Users/fudriot/WebTools/JSLint/jslint.php </programlisting></para>
+        </listitem>
+      </itemizedlist>
+
+      <para>Now, you can use JSLint locally:</para>
+
+      <programlisting>// scan one file or multi-files
+jslint file.js
+jslint file-1.js file-2.js
+
+//scan one directory or multi-directory
+jslint directory
+jslint directory-1 directory-2
+
+//scan current directory
+jslint .</programlisting>
+
+      <para>It is also possible to adjust the validation rules JSLint uses. At
+      the end of file "jslint.js", it is possible to customize the rules to be
+      checked by JSlint by changing options' value. By default, the options
+      are taken over the book "JavaScript: The Good Parts" which is written by
+      the same author of JSlint.</para>
+
+      <para>Below are the options we use for TYPO3 v5:</para>
+
+      <programlisting>bitwise: true, eqeqeq: true, immed: true,newcap: true, nomen: false, onevar: true, plusplus: false, regexp: true, rhino: true, undef: false, white: false, strict: true
+</programlisting>
+
+      <para>In case some files needs to be evaluated with special rules, it is
+      possible to add a comment on the top of file which can override the
+      default ones:</para>
+
+      <programlisting>/*jslint white: true, evil: true, laxbreak: true, onevar: true, undef: true, nomen: true, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true */ </programlisting>
+
+      <para>More information about the meaning and the reasons of the rules
+      can be found at http://www.jslint.com/lint.html </para>
+    </section>
 
     <section>
       <title>Event Handling</title>
@@ -484,24 +708,26 @@ new Ext.blah(
       </example>
 
       <para>All events need to be explicitely documented inside the class
-      where they are fired onto with an <code>@event</code> annotation. TODO:
-      explain it more, and add context</para>
+      where they are fired onto with an <code>@event</code> annotation.</para>
 
       <para>Here follows an example:</para>
 
-      <programlisting>/**
- * @event eventOne Event declaration
- */
+      <programlisting>F3.TYPO3.Core.Application = Ext.apply(new Ext.util.Observable, { // this is just an example class definition
+	/**
+	 * @event eventOne Event declaration
+	 */
 
-/**
- * @event eventTwo Event with parameters
- * @param {String} param1 Parameter name
- * @param {Object} param2 Parameter name
- * &lt;ul&gt;
- * &lt;li&gt;&lt;b&gt;property1:&lt;/b&gt; description of property1&lt;/li&gt;
- * &lt;li&gt;&lt;b&gt;property2:&lt;/b&gt; description of property2&lt;/li&gt;
- * &lt;/ul&gt;
- */</programlisting>
+	/**
+	 * @event eventTwo Event with parameters
+	 * @param {String} param1 Parameter name
+	 * @param {Object} param2 Parameter name
+	 * &lt;ul&gt;
+	 * &lt;li&gt;&lt;b&gt;property1:&lt;/b&gt; description of property1&lt;/li&gt;
+	 * &lt;li&gt;&lt;b&gt;property2:&lt;/b&gt; description of property2&lt;/li&gt;
+	 * &lt;/ul&gt;
+	 */
+	...
+}</programlisting>
 
       <para>Additionally, make sure to document if the scope of the event
       handler is not set to <code>this</code>, i.e. does not point to its
@@ -514,6 +740,8 @@ new Ext.blah(
 
     <para>TODO</para>
 
+    <para>-&gt; explain initializeObject</para>
+
     <para>-&gt; how to extend Data Stores (for example)</para>
 
     <para>-&gt; how to extend Ext components</para>
@@ -521,7 +749,7 @@ new Ext.blah(
     <para>-&gt; datastore extended?</para>
 
     <para>-&gt; can be extended by using constructer() not initComponets()
-    like it is for panels and so on </para>
+    like it is for panels and so on</para>
   </section>
 
   <section>
