@@ -524,13 +524,27 @@ F3.TYPO3.Core.Application = Ext.apply(new Ext.util.Observable, { // this is just
         <programlisting>function() {
 	var myVariable1, myVariable2, someText;
 	// now, use myVariable1, ....
-}
-TODO: Discuss the following (inline assignment):
+}</programlisting>
+
+        <para>Please do <emphasis>not assign</emphasis> values to the
+        variables in the initialization, except empty default values:</para>
+
+        <programlisting>// DO:
 function() {
-	var myVariable1 = Ext.getComponent(...),
-	    variable2, variable3;
+	var myVariable1, myVariable2;
+	...
 }
--&gt; i feel it makes the code more unreadable, so I would suggest to use variant 1.</programlisting>
+// DO:
+function() {
+	var myVariable1 = {}, myVariable2 = [], myVariable3;
+	...
+}
+// DON'T
+function() {
+	var variable1 = 'Hello',
+			variable2 = variable1 + ' World';
+	...
+}</programlisting>
       </listitem>
 
       <listitem>
