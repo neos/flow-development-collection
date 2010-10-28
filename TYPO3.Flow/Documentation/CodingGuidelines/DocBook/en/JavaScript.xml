@@ -129,8 +129,22 @@ F3.TYPO3.Foo = ..... <emphasis>overriding the "Bar" class</emphasis></programlis
     <para>We are not sure yet if we should use <code>@author</code>
     annotations at all. (TODO Decide!)</para>
 
-    <para>TODO: find out how to make cross-references, or how to nicely format
-    multiline-text inside doc comments (@link?).</para>
+    <para>To make a reference to another method of a class, use the
+    <code>{@link #methodOne This is a example link to method one}</code>
+    syntax.</para>
+
+    <para>If you want to do multiline doc comments, you need to format them
+    with <code>&lt;br&gt;</code>, <code>&lt;pre&gt;</code>. Example:</para>
+
+    <programlisting>/**
+ * &lt;br/&gt;
+ * Description of the class. Make it as long as needed,
+ * feel free to explain how to use it.
+ * This is a sample class &lt;br/&gt;
+ * The file encoding should be utf-8 &lt;br/&gt;
+ * UTF-8 Check: öäüß &lt;br/&gt;
+ * {@link #methodOne This is a example link to method one}
+ */</programlisting>
   </section>
 
   <section>
@@ -675,7 +689,7 @@ jslint .</programlisting>
       <programlisting>/*jslint white: true, evil: true, laxbreak: true, onevar: true, undef: true, nomen: true, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true */ </programlisting>
 
       <para>More information about the meaning and the reasons of the rules
-      can be found at http://www.jslint.com/lint.html </para>
+      can be found at http://www.jslint.com/lint.html</para>
     </section>
 
     <section>
@@ -742,14 +756,33 @@ jslint .</programlisting>
 
     <para>-&gt; explain initializeObject</para>
 
-    <para>-&gt; how to extend Data Stores (for example)</para>
-
     <para>-&gt; how to extend Ext components</para>
-
-    <para>-&gt; datastore extended?</para>
 
     <para>-&gt; can be extended by using constructer() not initComponets()
     like it is for panels and so on</para>
+
+    <section>
+      <title>How to extend data stores</title>
+
+      <programlisting>F3.TYPO3.Content.DummyStore = Ext.extend(Ext.data.Store, {
+
+	constructor: function(cfg) {
+		cfg = cfg || {};
+		var config = Ext.apply(
+			{
+				autoLoad: true
+			},
+			cfg
+		);
+
+		F3.TYPO3.Content.DummyStore.superclass.constructor.call(
+			this,
+			config
+		);
+	}
+});
+Ext.reg('F3.TYPO3.Content.DummyStore', F3.TYPO3.Content.DummyStore);</programlisting>
+    </section>
   </section>
 
   <section>
