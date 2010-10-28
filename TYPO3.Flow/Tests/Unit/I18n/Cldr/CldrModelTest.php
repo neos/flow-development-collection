@@ -89,6 +89,17 @@ class CldrModelTest extends \F3\Testing\BaseTestCase {
 		$result = $this->model->getElement('dates/calendars/calendar/type="buddhist"/dateFormats/dateFormatLength/type="full"/dateFormat/pattern');
 		$this->assertEquals('EEEE, d MMMM y', $result);
 	}
+
+	/**
+	 * When the path points to a leaf, getRawArray() should return FALSE.
+	 *
+	 * @test
+	 * @author Karol Gusak <karol@gusak.eu>
+	 */
+	public function getRawArrayAlwaysReturnsArrayOrFalse() {
+		$result = $this->model->getRawArray('dates/calendars/calendar/type="gregorian"/dateFormats/dateFormatLength/type="full"/dateFormat/pattern');
+		$this->assertEquals(FALSE, $result);
+	}
 }
 
 ?>

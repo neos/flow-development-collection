@@ -69,7 +69,8 @@ class CldrModel extends \F3\FLOW3\I18n\Xml\AbstractXmlModel {
 	}
 
 	/**
-	 * Returns multi-dimensional array representing desired node and it's children.
+	 * Returns multi-dimensional array representing desired node and it's children,
+	 * or a string value if the path points to a leaf.
 	 *
 	 * Syntax for paths is very simple. It's a group of array indices joined
 	 * with a slash. Examples:
@@ -81,11 +82,11 @@ class CldrModel extends \F3\FLOW3\I18n\Xml\AbstractXmlModel {
 	 * structure.
 	 *
 	 * @param string $path A path to the node to get
-	 * @return mixed Array of matching data, or FALSE on failure
-	 * @author Karol Gusak <firstname@lastname.eu>
+	 * @return mixed Array or string of matching data, or FALSE on failure
+	 * @author Karol Gusak <karol@gusak.eu>
 	 * @see \F3\FLOW3\I18n\Cldr\CldrParser
 	 */
-	public function getRawArray($path) {
+	public function getRawData($path) {
 		$pathElements = explode('/', trim($path, '/'));
 		$data = $this->xmlParsedData;
 
@@ -101,7 +102,29 @@ class CldrModel extends \F3\FLOW3\I18n\Xml\AbstractXmlModel {
 	}
 
 	/**
-	 * Returns string element from a path given.
+	 * Returns multi-dimensional array representing desired node and it's children.
+	 *
+	 * This method will return FALSE if the path points to a leaf (i.e. a string,
+	 * not an array).
+	 *
+	 * @param string $path A path to the node to get
+	 * @return mixed Array of matching data, or FALSE on failure
+	 * @author Karol Gusak <karol@gusak.eu>
+	 * @see \F3\FLOW3\I18n\Cldr\CldrParser
+	 * @see \F3\FLOW3\I18n\Cldr\CldrModel::getRawData()
+	 */
+	public function getRawArray($path) {
+		$data = $this->getRawData($path);
+
+		if (!is_array($data)) {
+			return FALSE;
+		}
+
+		return $data;
+	}
+
+	/**
+	 * Returns string value from a path given.
 	 *
 	 * Path must point to leaf, or to node which has only one element (which is
 	 * leaf), or to node which has element without attributes (which is leaf).
@@ -113,7 +136,7 @@ class CldrModel extends \F3\FLOW3\I18n\Xml\AbstractXmlModel {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function getElement($path) {
-		$data = $this->getRawArray($path);
+		$data = $this->getRawData($path);
 
 		if (is_array($data)) {
 			if (isset($data[\F3\FLOW3\I18n\Cldr\CldrParser::NODE_WITHOUT_ATTRIBUTES])) {

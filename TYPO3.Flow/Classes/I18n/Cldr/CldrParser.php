@@ -113,7 +113,7 @@ class CldrParser extends \F3\FLOW3\I18n\Xml\AbstractXmlParser {
 	 * Note: there isn't any validation for input variable.
 	 *
 	 * @param string $attributeString An attribute to parse
-	 * @param int $desiredAtrributeName Name of the attribute to find
+	 * @param string $desiredAtrributeName Name of the attribute to find
 	 * @return mixed Value of desired attribute, or FALSE if there is no such attribute
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
@@ -178,7 +178,7 @@ class CldrParser extends \F3\FLOW3\I18n\Xml\AbstractXmlParser {
 			}
 
 			if (is_array($parsedChild)) {
-				if (is_array($parsedNode[$child->getName()])) {
+				if (is_array($parsedNode[$nameOfChild])) {
 					$parsedNode[$nameOfChild] = array_merge($parsedNode[$nameOfChild], $parsedChild);
 				} else {
 					$parsedNode[$nameOfChild] = array_merge(array(self::NODE_WITHOUT_ATTRIBUTES => $parsedNode[$nameOfChild]), $parsedChild);
