@@ -134,10 +134,10 @@ F3.TYPO3.Foo = ..... <emphasis>overriding the "Bar" class</emphasis></programlis
     syntax.</para>
 
     <para>If you want to do multiline doc comments, you need to format them
-    with <code>&lt;br&gt;</code>, <code>&lt;pre&gt;</code>. Example:</para>
+    with <code>&lt;br&gt;</code>, <code>&lt;pre&gt;</code> and other HTML
+    tags. Example:</para>
 
     <programlisting>/**
- * &lt;br/&gt;
  * Description of the class. Make it as long as needed,
  * feel free to explain how to use it.
  * This is a sample class &lt;br/&gt;
@@ -454,6 +454,19 @@ F3.TYPO3.Core.Application = Ext.apply(new Ext.util.Observable, { // this is just
     API</emphasis>, without an <code>@api</code> annotation. Contrary, methods
     which do <emphasis>not belong to the public API</emphasis> need to begin
     with an underscore and have the <code>@private</code> annotation.</para>
+
+    <itemizedlist>
+      <listitem>
+        <para>All methods need to have JSDoc annotations.</para>
+      </listitem>
+
+      <listitem>
+        <para>Every method needs to have a <code>@return</code> annotation. In
+        case the method does not return anything, a <code>@return
+        {void}</code> is needed, otherwise the concrete return value should be
+        described.</para>
+      </listitem>
+    </itemizedlist>
   </section>
 
   <section>
