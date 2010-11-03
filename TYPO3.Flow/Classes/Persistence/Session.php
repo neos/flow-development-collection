@@ -323,5 +323,18 @@ class Session {
 		$this->objectMap->detach($object);
 	}
 
+	/**
+	 * Destroy the state of the persistence session and reset
+	 * all internal data.
+	 *
+	 * @return void
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function destroy() {
+		$this->identifierMap = array();
+		$this->objectMap = new \SplObjectStorage();
+		$this->reconstitutedEntities = new \SplObjectStorage();
+		$this->reconstitutedEntitiesData = array();
+	}
 }
 ?>
