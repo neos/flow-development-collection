@@ -815,6 +815,22 @@ Ext.reg('F3.TYPO3.Content.DummyStore', F3.TYPO3.Content.DummyStore);</programlis
   <section>
     <title>Unit Testing</title>
 
+    <para>It's highly recommended to write unit tests for javascript classes.
+    Unit tests should be located in the following location:
+    <filename>Package/Tests/JavaScript/...</filename></para>
+
+    <para>The structure below this folder should reflect the structure below
+    <filename>Package/Resources/Public/JavaScript/...</filename> if
+    possible.</para>
+
+    <para>The namespace for the Unit test classes is
+    <classname>F3.Package.Tests</classname>.</para>
+
+    <para>TODO: Add some more information about Unit Testing for JS</para>
+
+    <para>TODO: Add note about the testrunner when it's added to the
+    package</para>
+
     <para>TODO: http://developer.yahoo.com/yui/3/test/</para>
   </section>
 </chapter>
