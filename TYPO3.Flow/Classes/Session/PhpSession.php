@@ -115,7 +115,7 @@ class PhpSession implements \F3\FLOW3\Session\SessionInterface {
 	 * @throws \F3\FLOW3\Session\Exception\SessionNotStartedException
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getID() {
+	public function getId() {
 		if ($this->started !== TRUE) throw new \F3\FLOW3\Session\Exception\SessionNotStartedException('The session has not been started yet.', 1218043307);
 		return $this->sessionId;
 	}

@@ -43,7 +43,7 @@ interface SessionInterface {
 	 * @return string The current session ID
 	 * @throws \F3\FLOW3\Session\Exception\SessionNotStartedException
 	 */
-	public function getID();
+	public function getId();
 
 	/**
 	 * Returns the contents (array) associated with the given key.

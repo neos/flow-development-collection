@@ -45,7 +45,7 @@ class TransientSessionTest extends \F3\Testing\BaseTestCase {
 	public function aSessionIdIsGeneratedOnStartingTheSession() {
 		$session = new \F3\FLOW3\Session\TransientSession();
 		$session->start();
-		$this->assertTrue(strlen($session->getID()) == 13);
+		$this->assertTrue(strlen($session->getId()) == 13);
 	}
 
 	/**
@@ -55,7 +55,7 @@ class TransientSessionTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function tryingToGetTheSessionIdWithoutStartingTheSessionThrowsAnException() {
 		$session = new \F3\FLOW3\Session\TransientSession();
-		$session->getID();
+		$session->getId();
 	}
 
 	/**
