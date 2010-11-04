@@ -49,7 +49,7 @@ class AbstractBackendTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function commitDelegatesToPersistObjectsAndProcessDeletedObjects() {
-		$backend = $this->getMock('F3\FLOW3\Persistence\Backend\AbstractBackend', array('persistObjects', 'processDeletedObjects', 'getObjectCountByQuery', 'getObjectDataByQuery', 'getObjectDataByIdentifier', 'removeEntity'));
+		$backend = $this->getMock('F3\FLOW3\Persistence\Backend\AbstractBackend', array('persistObjects', 'processDeletedObjects', 'getObjectCountByQuery', 'getObjectDataByQuery', 'getObjectDataByIdentifier', 'removeEntity', 'removeValueObject', 'storeObject'));
 		$backend->expects($this->once())->method('persistObjects');
 		$backend->expects($this->once())->method('processDeletedObjects');
 		$backend->commit();
@@ -66,7 +66,7 @@ class AbstractBackendTest extends \F3\Testing\BaseTestCase {
 
 		$mockPersistenceSession = $this->getMock('F3\FLOW3\Persistence\Session');
 		$mockPersistenceSession->expects($this->once())->method('getReconstitutedEntities')->will($this->returnValue(clone $objects));
-		$backend = $this->getAccessibleMock('F3\FLOW3\Persistence\Backend\AbstractBackend', array('persistObject', 'getObjectCountByQuery', 'getObjectDataByQuery', 'getObjectDataByIdentifier', 'removeEntity'));
+		$backend = $this->getAccessibleMock('F3\FLOW3\Persistence\Backend\AbstractBackend', array('persistObject', 'getObjectCountByQuery', 'getObjectDataByQuery', 'getObjectDataByIdentifier', 'removeEntity', 'removeValueObject', 'storeObject'));
 
 		$backend->injectPersistenceSession($mockPersistenceSession);
 		$backend->expects($this->exactly(4))->method('persistObject');
@@ -88,7 +88,7 @@ class AbstractBackendTest extends \F3\Testing\BaseTestCase {
 		$mockSession->expects($this->at(1))->method('unregisterReconstitutedEntity')->with($object);
 		$mockSession->expects($this->at(2))->method('unregisterObject')->with($object);
 
-		$backend = $this->getAccessibleMock('F3\FLOW3\Persistence\Backend\AbstractBackend', array('getObjectCountByQuery', 'getObjectDataByQuery', 'getObjectDataByIdentifier', 'removeEntity'));
+		$backend = $this->getAccessibleMock('F3\FLOW3\Persistence\Backend\AbstractBackend', array('getObjectCountByQuery', 'getObjectDataByQuery', 'getObjectDataByIdentifier', 'removeEntity', 'removeValueObject', 'storeObject'));
 		$backend->injectPersistenceSession($mockSession);
 		$backend->expects($this->once())->method('removeEntity')->with($object);
 		$backend->setDeletedEntities($objects);
@@ -108,7 +108,7 @@ class AbstractBackendTest extends \F3\Testing\BaseTestCase {
 		$mockSession->expects($this->at(0))->method('hasObject')->with($object)->will($this->returnValue(FALSE));
 		$mockSession->expects($this->never())->method('unregisterObject');
 
-		$backend = $this->getAccessibleMock('F3\FLOW3\Persistence\Backend\AbstractBackend', array('getObjectCountByQuery', 'getObjectDataByQuery', 'getObjectDataByIdentifier', 'removeEntity'));
+		$backend = $this->getAccessibleMock('F3\FLOW3\Persistence\Backend\AbstractBackend', array('getObjectCountByQuery', 'getObjectDataByQuery', 'getObjectDataByIdentifier', 'removeEntity', 'removeValueObject', 'storeObject'));
 		$backend->injectPersistenceSession($mockSession);
 		$backend->expects($this->never())->method('removeEntity');
 		$backend->setDeletedEntities($objects);
@@ -122,7 +122,7 @@ class AbstractBackendTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getIdentifierByObjectReturnsUUIDForKnownObject() {
-		$knownObject = new \stdClass();
+		$knownObject = $this->getMock('F3\FLOW3\AOP\ProxyInterface');
 		$fakeUUID = '123-456';
 
 		$mockPersistenceSession = $this->getMock('F3\FLOW3\Persistence\Session');
@@ -143,15 +143,14 @@ class AbstractBackendTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function getIdentifierByObjectReturnsUuidForObjectBeingAOPProxy() {
 		$knownObject = $this->getMock('F3\FLOW3\AOP\ProxyInterface');
-		$knownObject->expects($this->once())->method('FLOW3_AOP_Proxy_hasProperty')->with('FLOW3_Persistence_Entity_UUID')->will($this->returnValue(TRUE));
-		$knownObject->expects($this->once())->method('FLOW3_AOP_Proxy_getProperty')->with('FLOW3_Persistence_Entity_UUID')->will($this->returnValue('fakeUUID'));
+		$knownObject->FLOW3_Persistence_Entity_UUID = 'fakeUuid';
 		$mockPersistenceSession = $this->getMock('F3\FLOW3\Persistence\Session');
 		$mockPersistenceSession->expects($this->once())->method('hasObject')->with($knownObject)->will($this->returnValue(FALSE));
 
 		$backend = $this->getAccessibleMockForAbstractClass('F3\FLOW3\Persistence\Backend\AbstractBackend');
 		$backend->injectPersistenceSession($mockPersistenceSession);
 
-		$this->assertEquals('fakeUUID', $backend->_call('getIdentifierByObject', $knownObject));
+		$this->assertEquals('fakeUuid', $backend->_call('getIdentifierByObject', $knownObject));
 	}
 
 	/**
@@ -163,9 +162,7 @@ class AbstractBackendTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function getIdentifierByObjectReturnsHashForObjectBeingAOPProxy() {
 		$knownObject = $this->getMock('F3\FLOW3\AOP\ProxyInterface');
-		$knownObject->expects($this->at(0))->method('FLOW3_AOP_Proxy_hasProperty')->with('FLOW3_Persistence_Entity_UUID')->will($this->returnValue(FALSE));
-		$knownObject->expects($this->at(1))->method('FLOW3_AOP_Proxy_hasProperty')->with('FLOW3_Persistence_ValueObject_Hash')->will($this->returnValue(TRUE));
-		$knownObject->expects($this->once())->method('FLOW3_AOP_Proxy_getProperty')->with('FLOW3_Persistence_ValueObject_Hash')->will($this->returnValue('fakeHash'));
+		$knownObject->FLOW3_Persistence_ValueObject_Hash = 'fakeHash';
 		$mockPersistenceSession = $this->getMock('F3\FLOW3\Persistence\Session');
 		$mockPersistenceSession->expects($this->once())->method('hasObject')->with($knownObject)->will($this->returnValue(FALSE));
 
@@ -183,7 +180,7 @@ class AbstractBackendTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getIdentifierByObjectReturnsNullForUnknownObjectBeingPOPO() {
-		$unknownObject = new \stdClass();
+		$unknownObject = $this->getMock('F3\FLOW3\AOP\ProxyInterface');
 		$mockPersistenceSession = $this->getMock('F3\FLOW3\Persistence\Session');
 		$mockPersistenceSession->expects($this->once())->method('hasObject')->with($unknownObject)->will($this->returnValue(FALSE));
 
@@ -202,9 +199,6 @@ class AbstractBackendTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function getIdentifierByObjectReturnsNullForUnknownObjectBeingAOPProxy() {
 		$unknownObject = $this->getMock('F3\FLOW3\AOP\ProxyInterface');
-		$unknownObject->expects($this->at(0))->method('FLOW3_AOP_Proxy_hasProperty')->with('FLOW3_Persistence_Entity_UUID')->will($this->returnValue(FALSE));
-		$unknownObject->expects($this->at(1))->method('FLOW3_AOP_Proxy_hasProperty')->with('FLOW3_Persistence_ValueObject_Hash')->will($this->returnValue(FALSE));
-		$unknownObject->expects($this->never())->method('FLOW3_AOP_Proxy_getProperty');
 		$mockPersistenceSession = $this->getMock('F3\FLOW3\Persistence\Session');
 		$mockPersistenceSession->expects($this->once())->method('hasObject')->with($unknownObject)->will($this->returnValue(FALSE));
 
