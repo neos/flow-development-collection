@@ -148,6 +148,38 @@ class PersistenceManagerTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function persistAllResetsRepositories() {
+		$entity1 = new \F3\FLOW3\Tests\Persistence\Fixture\Model\CleanEntity();
+		$entity3 = new \F3\FLOW3\Tests\Persistence\Fixture\Model\CleanEntity();
+
+		$repository = $this->getAccessibleMock('F3\FLOW3\Persistence\Repository', array('dummy'));
+		$repository->_set('objectType', get_class($entity1));
+		$repository->add($entity1);
+		$repository->remove($entity3);
+
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService');
+		$mockReflectionService->expects($this->any())->method('getAllImplementationClassNamesForInterface')->with('F3\FLOW3\Persistence\RepositoryInterface')->will($this->returnValue(array('F3\FLOW3\Persistence\RepositoryClassName')));
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
+		$mockObjectManager->expects($this->any())->method('getObjectNameByClassName')->with('F3\FLOW3\Persistence\RepositoryClassName')->will($this->returnValue('F3\FLOW3\Persistence\RepositoryObjectName'));
+		$mockObjectManager->expects($this->any())->method('get')->with('F3\FLOW3\Persistence\RepositoryObjectName')->will($this->returnValue($repository));
+
+		$mockBackend = $this->getMock('F3\FLOW3\Persistence\Backend\BackendInterface');
+
+		$manager = new \F3\FLOW3\Persistence\PersistenceManager();
+		$manager->injectBackend($mockBackend);
+		$manager->injectReflectionService($mockReflectionService);
+		$manager->injectObjectManager($mockObjectManager);
+
+		$manager->persistAll();
+
+		$this->assertEquals(0, count($repository->getAddedObjects()));
+		$this->assertEquals(0, count($repository->getRemovedObjects()));
+	}
+
+	/**
+	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
