@@ -205,10 +205,8 @@ class PersistenceManager implements \F3\FLOW3\Persistence\PersistenceManagerInte
 		$deletedEntities = new \SplObjectStorage();
 
 			// fetch and inspect objects from all known repositories
-		$repositoryClassNames = $this->reflectionService->getAllImplementationClassNamesForInterface('F3\FLOW3\Persistence\RepositoryInterface');
-		foreach ($repositoryClassNames as $repositoryClassName) {
-			$repositoryObjectName = $this->objectManager->getObjectNameByClassName($repositoryClassName);
-			$repository = $this->objectManager->get($repositoryObjectName);
+		$repositories = $this->getAllKnownRepositories();
+		foreach ($repositories as $repository) {
 			$aggregateRootObjects->addAll($repository->getAddedObjects());
 			$deletedEntities->addAll($repository->getRemovedObjects());
 		}
@@ -220,6 +218,38 @@ class PersistenceManager implements \F3\FLOW3\Persistence\PersistenceManagerInte
 		$this->backend->setAggregateRootObjects($aggregateRootObjects);
 		$this->backend->setDeletedEntities($deletedEntities);
 		$this->backend->commit();
+
+		$this->resetRepositories($repositories);
+	}
+
+	/**
+	 * Get all known repositories that implement F3\FLOW3\Persistence\RepositoryInterface
+	 *
+	 * @return array The repository objects
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	protected function getAllKnownRepositories() {
+		$repositories = array();
+		$repositoryClassNames = $this->reflectionService->getAllImplementationClassNamesForInterface('F3\FLOW3\Persistence\RepositoryInterface');
+		foreach ($repositoryClassNames as $repositoryClassName) {
+			$repositoryObjectName = $this->objectManager->getObjectNameByClassName($repositoryClassName);
+			$repository = $this->objectManager->get($repositoryObjectName);
+			$repositories[] = $repository;
+		}
+		return $repositories;
+	}
+
+	/**
+	 * Reset all known repositories
+	 *
+	 * @param array $repositories Known repositories
+	 * @return void
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	protected function resetRepositories(array $repositories) {
+		foreach ($repositories as $repository) {
+			$repository->reset();
+		}
 	}
 
 	/**

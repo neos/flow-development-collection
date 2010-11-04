@@ -257,6 +257,17 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	}
 
 	/**
+	 * Reset the repository and clear all added and removed objects.
+	 *
+	 * @return void
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function reset() {
+		$this->addedObjects = new \SplObjectStorage();
+		$this->removedObjects = new \SplObjectStorage();
+	}
+
+	/**
 	 * Returns all addedObjects that have been added to this repository with add().
 	 *
 	 * This is a service method for the persistence manager to get all addedObjects
