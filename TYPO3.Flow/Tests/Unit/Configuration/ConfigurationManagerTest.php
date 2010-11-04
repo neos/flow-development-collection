@@ -541,7 +541,7 @@ class ConfigurationManagerTest extends \F3\Testing\BaseTestCase {
 		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('FLOW3'));
 
 		$configurationsCode = <<< "EOD"
-			<?php
+<?php
 				return array('bar' => 'touched');
 			?>
 EOD;

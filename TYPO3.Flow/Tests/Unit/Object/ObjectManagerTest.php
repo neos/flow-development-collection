@@ -56,11 +56,7 @@ class ObjectManagerTest extends \F3\Testing\BaseTestCase {
 		\F3\FLOW3\Utility\Files::createDirectoryRecursively($temporaryDirectory);
 
 		$id = uniqid('staticObjectContainerInclusionProval');
-		$staticObjectContainerInclusionProvalCode = "
-			<?php
-				class $id {}
-			?>
-		";
+		$staticObjectContainerInclusionProvalCode = "<?php class $id {} ?>";
 		file_put_contents($temporaryDirectory . 'StaticObjectContainer.php', $staticObjectContainerInclusionProvalCode);
 
 		$settings = array();
@@ -154,14 +150,12 @@ class ObjectManagerTest extends \F3\Testing\BaseTestCase {
 	public function initializeObjectContainerBuildsAndUsesAStaticObjectContainerIfNoneExists() {
 		mkdir('vfs://Base/Temporary');
 		$staticObjectContainerClassName = uniqid('staticObjectContainerInclusionProval');
-		$staticObjectContainerCode = "
-			<?php
+		$staticObjectContainerCode = "<?php
 				class $staticObjectContainerClassName {
 					public function import() {}
 					public function injectSettings() {}
 				}
-			?>
-		";
+			?>";
 
 		$mockActivePackages = array('FLOW3' => 'PackageObject', 'Foo' => 'PackageObject');
 		$mockSettings = array('Foo' => 'Bar');
@@ -201,11 +195,9 @@ class ObjectManagerTest extends \F3\Testing\BaseTestCase {
 	public function initializeObjectContainerSwitchesFromDynamicToStaticContainerIfOneAlreadyExists() {
 		mkdir('vfs://Base/Temporary');
 		$id = uniqid('staticObjectContainerInclusionProval');
-		$staticObjectContainerCode = "
-			<?php
+		$staticObjectContainerCode = "<?php
 				define('$id', TRUE);
-			?>
-		";
+			?>";
 		file_put_contents('vfs://Base/Temporary/StaticObjectContainer.php', $staticObjectContainerCode);
 
 		$mockActivePackages = array('FLOW3' => 'PackageObject', 'Foo' => 'PackageObject');
