@@ -336,6 +336,29 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
+	public function resolveActionMethodNameDoesNotThrowAnExceptionIfTheActionDefinedInTheRequestCanBeHandledByAMagicCallMethod() {
+		$controllerClassName = uniqid('TestController');
+		eval("
+			class $controllerClassName extends \F3\FLOW3\MVC\Controller\ActionController {
+					public function __call(\$methodName, array \$arguments) {
+					}
+			}
+		");
+
+
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\RequestInterface', array(), array(), '', FALSE);
+		$mockRequest->expects($this->once())->method('getControllerActionName')->will($this->returnValue('fooBar'));
+
+		$mockController = $this->getAccessibleMock($controllerClassName, array('dummy'), array(), '', FALSE);
+		$mockController->_set('request', $mockRequest);
+
+		$mockController->_call('resolveActionMethodName');
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
 	public function initializeActionMethodArgumentsRegistersArgumentsFoundInTheSignatureOfTheCurrentActionMethod() {
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\RequestInterface', array(), array(), '', FALSE);
 
