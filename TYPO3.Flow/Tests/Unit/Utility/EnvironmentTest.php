@@ -194,6 +194,33 @@ class EnvironmentTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
+	 * @dataProvider httpAcceptStringsAndCorrespondingFormats
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getAcceptedFormatsReturnsListOfAcceptedFormatsAccordingToHTTPHeader($httpAcceptString, $expectedFormats) {
+		$environment = $this->getAccessibleMock('F3\FLOW3\Utility\Environment', array('getHTTPAccept'));
+		$environment->expects($this->once())->method('getHTTPAccept')->will($this->returnValue($httpAcceptString));
+
+		$this->assertEquals($expectedFormats, $environment->getAcceptedFormats());
+	}
+
+	/**
+	 * Data provider for accepted format detection
+	 *
+	 * @return array
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function httpAcceptStringsAndCorrespondingFormats() {
+		return array(
+			array('text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8', array('html', 'xml')),
+			array('application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5', array('xml', 'html', 'png', 'txt')),
+			array('text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8,application/json', array('html', 'json', 'xml')),
+			array('image/jpeg, application/x-ms-application, image/gif, application/xaml+xml, image/pjpeg, application/x-ms-xbap, application/x-shockwave-flash, application/msword, */*', array('gif', 'jpg')),
+		);
+	}
+
+	/**
+	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getUploadedFilesJustReturnsThePreviouslyUntangledFILESVariable() {

@@ -339,6 +339,24 @@ class FileTypes {
 	);
 
 	/**
+	 * A map of mime types to file extensions
+	 *
+	 * @var array
+	 */
+	private static $mimeTypeToExtension = array(
+		'text/plain' => 'txt',
+		'text/html' => 'html',
+		'text/json' => 'json',
+		'application/xhtml+xml' => 'html',
+		'application/json' => 'json',
+		'application/xml' => 'xml',
+		'image/gif' => 'gif',
+		'image/jpeg' => 'jpg',
+		'image/png' => 'png',
+		'image/tiff' => 'tiff',
+	);
+
+	/**
 	 * A map of filename extensions to media type
 	 * Inspired by Dublin Core
 	 *
@@ -418,6 +436,17 @@ class FileTypes {
 		} else {
 			return isset(self::$extensionToMimeType[$pathinfo['extension']]) ? self::$extensionToMimeType[$pathinfo['extension']] : 'application/octet-stream';
 		}
+	}
+
+	/**
+	 * Returns a filename extension (aka "format") based on the given mime type.
+	 *
+	 * @param string $mimeType Mime type
+	 * @return string filename extension
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	static public function getFilenameExtensionFromMimeType($mimeType) {
+		return isset(self::$mimeTypeToExtension[$mimeType]) ? self::$mimeTypeToExtension[$mimeType] : '';
 	}
 
 	/**

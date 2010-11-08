@@ -80,7 +80,7 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	/**
 	 * @var string The requested representation format
 	 */
-	protected $format = 'txt';
+	protected $format;
 
 	/**
 	 * @var boolean If this request has been changed and needs to be dispatched again

@@ -36,6 +36,20 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	protected $reflectionService;
 
 	/**
+	 * @var \F3\FLOW3\Utility\Environment
+	 */
+	protected $environment;
+
+	/**
+	 * An array of formats (such as "html", "txt", "json" ...) which are supported
+	 * by this controller. If none is specified, this controller will default to
+	 * "html" for web requests and "txt" for command line requests.
+	 *
+	 * @var array
+	 */
+	protected $supportedFormats = array();
+
+	/**
 	 * The current view, as resolved by resolveView()
 	 *
 	 * @var \F3\FLOW3\MVC\View\ViewInterface
@@ -99,6 +113,17 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	}
 
 	/**
+	 * Injects the current environment
+	 *
+	 * @param \F3\FLOW3\Utility\Environment $environment
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectEnvironment(\F3\FLOW3\Utility\Environment $environment) {
+		$this->environment = $environment;
+	}
+
+	/**
 	 * Handles a request. The result output is returned by altering the given response.
 	 *
 	 * @param \F3\FLOW3\MVC\RequestInterface $request The request object
@@ -131,6 +156,11 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 
 		$this->mapRequestArgumentsToControllerArguments();
 		$this->controllerContext = $this->objectManager->create('F3\FLOW3\MVC\Controller\ControllerContext', $this->request, $this->response, $this->arguments, $this->argumentsMappingResults, $this->uriBuilder, $this->flashMessageContainer);
+
+		if ($this->request->getFormat() === NULL) {
+			$this->request->setFormat($this->detectFormat());
+		}
+
 		$this->view = $this->resolveView();
 		if ($this->view !== NULL) {
 			$this->view->assign('settings', $this->settings);
@@ -256,6 +286,38 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 		} elseif (is_object($actionResult) && method_exists($actionResult, '__toString')) {
 			$this->response->appendContent((string)$actionResult);
 		}
+	}
+
+	/**
+	 * Sets the format for this request if none has been explicitly defined
+	 * elswhere.
+	 *
+	 * @return string The detected format
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function detectFormat() {
+		if ($this->request instanceof \F3\FLOW3\MVC\Web\Request) {
+			switch ($this->request->getMethod()) {
+				case 'GET' :
+				case 'HEAD' :
+
+						// If the client supports any format besides HTML which is also supported
+						// by this controller, use that instead of HTML:
+					foreach ($this->environment->getAcceptedFormats() as $acceptedFormat) {
+						if ($acceptedFormat !== 'html' && array_search($acceptedFormat, $this->supportedFormats) !== FALSE) {
+							return $acceptedFormat;
+						}
+					}
+					return 'html';
+				break;
+
+				case 'PUT' :
+				case 'DELETE' :
+					// @TODO Parse "Content-Type" header
+					return 'html';
+			}
+		}
+		return 'txt';
 	}
 
 	/**

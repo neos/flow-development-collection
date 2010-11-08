@@ -32,11 +32,6 @@ namespace F3\FLOW3\MVC\Web;
 class Request extends \F3\FLOW3\MVC\Request {
 
 	/**
-	 * @var string The requested representation format
-	 */
-	protected $format = 'html';
-
-	/**
 	 * @var string Contains the request method
 	 */
 	protected $method = 'GET';

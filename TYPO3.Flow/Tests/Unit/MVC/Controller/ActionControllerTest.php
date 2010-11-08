@@ -36,6 +36,8 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 	public function processRequestSticksToSpecifiedSequence() {
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
 		$mockRequest->expects($this->once())->method('setDispatched')->with(TRUE);
+		$mockRequest->expects($this->once())->method('getFormat')->will($this->returnValue(NULL));
+		$mockRequest->expects($this->once())->method('setFormat')->with('detectedformat');
 
 		$mockUriBuilder = $this->getMock('F3\FLOW3\MVC\Web\Routing\UriBuilder');
 		$mockUriBuilder->expects($this->once())->method('setRequest')->with($mockRequest);
@@ -51,7 +53,9 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 		$mockView = $this->getMock('F3\FLOW3\MVC\View\ViewInterface');
 
 		$mockController = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\ActionController', array(
-			'initializeFooAction', 'initializeAction', 'resolveActionMethodName', 'initializeActionMethodArguments', 'initializeActionMethodValidators', 'mapRequestArgumentsToControllerArguments', 'buildControllerContext', 'resolveView', 'initializeView', 'callActionMethod'),
+			'initializeFooAction', 'initializeAction', 'resolveActionMethodName', 'initializeActionMethodArguments',
+			'initializeActionMethodValidators', 'mapRequestArgumentsToControllerArguments', 'buildControllerContext',
+			'detectFormat', 'resolveView', 'initializeView', 'callActionMethod'),
 			array(), '', FALSE);
 		$mockController->_set('objectManager', $mockObjectManager);
 		$mockController->expects($this->at(0))->method('resolveActionMethodName')->will($this->returnValue('fooAction'));
@@ -60,9 +64,10 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 		$mockController->expects($this->at(3))->method('initializeAction');
 		$mockController->expects($this->at(4))->method('initializeFooAction');
 		$mockController->expects($this->at(5))->method('mapRequestArgumentsToControllerArguments');
-		$mockController->expects($this->at(6))->method('resolveView')->will($this->returnValue($mockView));
-		$mockController->expects($this->at(7))->method('initializeView');
-		$mockController->expects($this->at(8))->method('callActionMethod');
+		$mockController->expects($this->at(6))->method('detectFormat')->will($this->returnValue('detectedformat'));
+		$mockController->expects($this->at(7))->method('resolveView')->will($this->returnValue($mockView));
+		$mockController->expects($this->at(8))->method('initializeView');
+		$mockController->expects($this->at(9))->method('callActionMethod');
 
 		$mockController->processRequest($mockRequest, $mockResponse);
 		$this->assertSame($mockRequest, $mockController->_get('request'));
@@ -175,6 +180,59 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 		$mockController->_set('actionMethodName', 'fooAction');
 		$mockController->_set('argumentsMappingResults', $mockArgumentMappingResults);
 		$mockController->_call('callActionMethod');
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function detectFormatUsesTextFormatForNonWebRequests() {
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\CLI\Request', array(), array(), '', FALSE);
+
+		$mockController = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\ActionController', array('dummy'), array(), '', FALSE);
+		$mockController->_set('request', $mockRequest);
+
+		$detectedFormat = $mockController->_call('detectFormat');
+		$this->assertSame('txt', $detectedFormat);
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function detectFormatUsesHtmlFormatAsDefaultForWebRequests() {
+		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array('getAcceptedFormats'), array(), '', FALSE);
+		$mockEnvironment->expects($this->once())->method('getAcceptedFormats')->will($this->returnValue(array('xml', 'json')));
+
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
+		$mockRequest->expects($this->once())->method('getMethod')->will($this->returnValue('GET'));
+
+		$mockController = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\ActionController', array('dummy'), array(), '', FALSE);
+		$mockController->injectEnvironment($mockEnvironment);
+		$mockController->_set('request', $mockRequest);
+
+		$detectedFormat = $mockController->_call('detectFormat');
+		$this->assertSame('html', $detectedFormat);
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function detectFormatPrefersOtherFormatsThanHtmlIfControllerSupportsIt() {
+		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array('getAcceptedFormats'), array(), '', FALSE);
+		$mockEnvironment->expects($this->once())->method('getAcceptedFormats')->will($this->returnValue(array('html', 'json', 'xml')));
+
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
+		$mockRequest->expects($this->once())->method('getMethod')->will($this->returnValue('GET'));
+
+		$mockController = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\ActionController', array('dummy'), array(), '', FALSE);
+		$mockController->injectEnvironment($mockEnvironment);
+		$mockController->_set('request', $mockRequest);
+		$mockController->_set('supportedFormats', array('html', 'xml', 'json'));
+
+		$detectedFormat = $mockController->_call('detectFormat');
+		$this->assertSame('json', $detectedFormat);
 	}
 
 	/**

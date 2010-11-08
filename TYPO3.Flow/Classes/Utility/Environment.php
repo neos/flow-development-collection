@@ -169,6 +169,54 @@ class Environment {
 	}
 
 	/**
+	 * Returns the HTTP Accept string
+	 *
+	 * @return string The HTTP Accept string as found in _SERVER[HTTP_ACCEPT]
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
+	 */
+	public function getHTTPAccept() {
+		return isset($this->SERVER['HTTP_ACCEPT']) ? $this->SERVER['HTTP_ACCEPT'] : NULL;
+	}
+
+	/**
+	 * Returns a sorted list (most important first) of accepted formats (ie. file extensions) as
+	 * defined in the browser's Accept header.
+	 *
+	 * Note that most browser do not properly use the Accept header and content negotiation based
+	 * on this information mostly makes sense when we can expect the client to explicitly ask for
+	 * a certain content type, for example in an AJAX call.
+	 *
+	 * @return array A sorted array with filename extensions
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
+	 *
+	 */
+	public function getAcceptedFormats() {
+		$acceptHeader = $this->getHTTPAccept();
+		$parseAcceptType = function($acceptType) {
+			$typeAndQuality = preg_split('/;\s*q=/', $acceptType);
+			return array($typeAndQuality[0], (isset($typeAndQuality[1]) ? (float)$typeAndQuality[1] : (float)1));
+		};
+
+		$acceptedTypes = array_map($parseAcceptType, preg_split('/,\s*/', $acceptHeader));
+		$flattenedAcceptedTypes = array();
+		foreach ($acceptedTypes as $typeAndQuality) {
+			$flattenedAcceptedTypes[$typeAndQuality[0]] = $typeAndQuality[1];
+		}
+		arsort($flattenedAcceptedTypes);
+
+		$acceptedFormats = array();
+		foreach ($flattenedAcceptedTypes as $mimeType => $quality) {
+			$format = \F3\FLOW3\Utility\FileTypes::getFilenameExtensionFromMimeType($mimeType);
+			if ($format !== '') {
+				$acceptedFormats[$format] = TRUE;
+			}
+		}
+		return array_keys($acceptedFormats);
+	}
+
+	/**
 	 * Returns the HTTP accept language
 	 *
 	 * @return string The HTTP accept language as found in _SERVER[HTTP_ACCEPT_LANGUAGE]
