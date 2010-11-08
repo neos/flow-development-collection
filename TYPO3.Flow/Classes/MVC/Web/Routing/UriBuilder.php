@@ -338,13 +338,13 @@ class UriBuilder {
 		} else {
 			$controllerArguments['@controller'] = strtolower($this->request->getControllerName());
 		}
+		if ($packageKey === NULL && $subPackageKey === NULL) {
+			$subPackageKey = $this->request->getControllerSubpackageKey();
+		}
 		if ($packageKey === NULL) {
 			$packageKey = $this->request->getControllerPackageKey();
 		}
 		$controllerArguments['@package'] = strtolower($packageKey);
-		if (strlen($subPackageKey) === 0) {
-			$subPackageKey = $this->request->getControllerSubpackageKey();
-		}
 		if (strlen($subPackageKey) > 0) {
 			$controllerArguments['@subpackage'] = strtolower($subPackageKey);
 		}

@@ -140,10 +140,22 @@ class UriBuilderTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function uriForSetsSubpackageKeyFromRequestIfSubpackageKeyIsNotSet() {
+	public function uriForSetsSubpackageKeyFromRequestIfPackageKeyAndSubpackageKeyAreNotSet() {
+		$this->request->expects($this->once())->method('getControllerPackageKey')->will($this->returnValue('SomePackage'));
 		$this->request->expects($this->once())->method('getControllerSubpackageKey')->will($this->returnValue('SomeSubpackageKeyFromRequest'));
 
 		$expectedArguments = array('@controller' => 'somecontroller', '@package' => 'somepackage', '@subpackage' => 'somesubpackagekeyfromrequest');
+
+		$this->uriBuilder->uriFor(NULL, array(), 'SomeController');
+		$this->assertEquals($expectedArguments, $this->uriBuilder->getArguments());
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function uriForDoesNotUseSubpackageKeyFromRequestIfOnlyThePackageIsSet() {
+		$expectedArguments = array('@controller' => 'somecontroller', '@package' => 'somepackage');
 
 		$this->uriBuilder->uriFor(NULL, array(), 'SomeController', 'SomePackage');
 		$this->assertEquals($expectedArguments, $this->uriBuilder->getArguments());
