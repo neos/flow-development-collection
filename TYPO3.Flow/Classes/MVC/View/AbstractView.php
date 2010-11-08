@@ -39,6 +39,11 @@ abstract class AbstractView implements \F3\FLOW3\MVC\View\ViewInterface {
 	protected $variables = array();
 
 	/**
+	 * @var \F3\FLOW3\MVC\Controller\ControllerContext
+	 */
+	protected $controllerContext;
+
+	/**
 	 * Add a variable to $this->variables.
 	 * Can be chained, so $this->view->assign(..., ...)->assign(..., ...); is possible
 	 *
@@ -67,6 +72,18 @@ abstract class AbstractView implements \F3\FLOW3\MVC\View\ViewInterface {
 			$this->assign($key, $value);
 		}
 		return $this;
+	}
+
+	/**
+	 * Sets the current controller context
+	 *
+	 * @param \F3\FLOW3\MVC\Controller\ControllerContext $controllerContext
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
+	 */
+	public function setControllerContext(\F3\FLOW3\MVC\Controller\ControllerContext $controllerContext) {
+		$this->controllerContext = $controllerContext;
 	}
 
 	/**

@@ -87,18 +87,6 @@ class JsonView extends \F3\FLOW3\MVC\View\AbstractView {
 	protected $configuration = array();
 
 	/**
-	 * Sets the current controller context
-	 *
-	 * @param \F3\FLOW3\MVC\Controller\ControllerContext $controllerContext
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @api
-	 */
-	public function setControllerContext(\F3\FLOW3\MVC\Controller\ControllerContext $controllerContext) {
-		$this->controllerContext = $controllerContext;
-	}
-
-	/**
 	 * Specifies which variables this JsonView should render
 	 * By default only the variable 'value' will be rendered
 	 *
