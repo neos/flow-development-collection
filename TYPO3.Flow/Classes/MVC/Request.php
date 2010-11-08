@@ -184,14 +184,14 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 			(
 				Controller
 			|
-				(?P<subPackageKey>.+)\\\\Controller
+				(?P<subpackageKey>.+)\\\\Controller
 			)
 			\\\\(?P<controllerName>[a-z\\\\]+)Controller
 			$/ix', $controllerObjectName, $matches
 		);
 
 		$this->controllerPackageKey = $matches['packageKey'];
-		$this->controllerSubpackageKey = (isset($matches['subPackageKey'])) ? $matches['subPackageKey'] : '';
+		$this->controllerSubpackageKey = (isset($matches['subpackageKey'])) ? $matches['subpackageKey'] : NULL;
 		$this->controllerName = $matches['controllerName'];
 	}
 
@@ -236,6 +236,7 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 
 	/**
 	 * Returns the subpackage key of the specified controller.
+	 * If there is no subpackage key set, the method returns NULL.
 	 *
 	 * @return string The subpackage key
 	 * @author Bastian Waidelich <bastian@typo3.org>

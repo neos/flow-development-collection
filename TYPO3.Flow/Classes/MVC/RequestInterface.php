@@ -91,6 +91,7 @@ interface RequestInterface {
 
 	/**
 	 * Returns the subpackage key of the specified controller.
+	 * If there is no subpackage key set, the method returns NULL.
 	 *
 	 * @return string The subpackage key
 	 * @api
