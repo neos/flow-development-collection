@@ -42,18 +42,6 @@ class NotFoundView extends \F3\FLOW3\MVC\View\AbstractView {
 	protected $variablesMarker = array('errorMessage' => 'ERROR_MESSAGE');
 
 	/**
-	 * Sets the current controller context
-	 *
-	 * @param \F3\FLOW3\MVC\Controller\ControllerContext $controllerContext
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @api
-	 */
-	public function setControllerContext(\F3\FLOW3\MVC\Controller\ControllerContext $controllerContext) {
-		$this->controllerContext = $controllerContext;
-	}
-
-	/**
 	 * Renders the not found view
 	 *
 	 * @return string The rendered view
