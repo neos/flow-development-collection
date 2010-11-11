@@ -295,6 +295,7 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	 */
 	public function setControllerActionName($actionName) {
 		if (!is_string($actionName)) throw new \F3\FLOW3\MVC\Exception\InvalidActionNameException('The action name must be a valid string, ' . gettype($actionName) . ' given (' . $actionName . ').', 1187176358);
+		if ($actionName === '') throw new \F3\FLOW3\MVC\Exception\InvalidActionNameException('The action name must not be an empty string.', 1289472991);
 		if ($actionName[0] !== strtolower($actionName[0])) {
 			throw new \F3\FLOW3\MVC\Exception\InvalidActionNameException('The action name must start with a lower case letter, "' . $actionName . '" does not match this criteria.', 1218473352);
 		}
