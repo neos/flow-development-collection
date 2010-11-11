@@ -86,5 +86,32 @@ class RestController extends \F3\FLOW3\MVC\Controller\ActionController {
 		}
 		return parent::resolveActionMethodName();
 	}
+
+	/**
+	 * Redirects the web request to another uri.
+	 *
+	 * NOTE: This method only supports web requests and will throw an exception
+	 * if used with other request types.
+	 *
+	 * @param mixed $uri Either a string representation of a URI or a \F3\FLOW3\Property\DataType\Uri object
+	 * @param integer $delay (optional) The delay in seconds. Default is no delay.
+	 * @param integer $statusCode (optional) The HTTP status code for the redirect. Default is "303 See Other"
+	 * @throws \F3\FLOW3\MVC\Exception\UnsupportedRequestTypeException If the request is not a web request
+	 * @throws \F3\FLOW3\MVC\Exception\StopActionException
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
+	 */
+	protected function redirectToUri($uri, $delay = 0, $statusCode = 303) {
+			// the parent method throws the exception, but we need to act afterwards
+			// thus the code in catch - it's the expected state
+		try {
+			parent::redirectToUri($uri, $delay, $statusCode);
+		} catch (\F3\FLOW3\MVC\Exception\StopActionException $exception) {
+			if ($this->request->getFormat() === 'json') {
+				$this->response->setContent('');
+			}
+			throw $exception;
+		}
+	}
 }
 ?>
