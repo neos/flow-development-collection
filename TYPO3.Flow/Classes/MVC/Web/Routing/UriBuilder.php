@@ -80,7 +80,7 @@ class UriBuilder {
 	/**
 	 * @var string
 	 */
-	protected $format = '';
+	protected $format = NULL;
 
 	/**
 	 * @var string
@@ -307,7 +307,7 @@ class UriBuilder {
 	public function reset() {
 		$this->arguments = array();
 		$this->section = '';
-		$this->format = '';
+		$this->format = NULL;
 		$this->createAbsoluteUri = FALSE;
 		$this->addQueryString = FALSE;
 		$this->argumentsToBeExcludedFromQueryString = array();
@@ -348,7 +348,7 @@ class UriBuilder {
 		if (strlen($subPackageKey) > 0) {
 			$controllerArguments['@subpackage'] = strtolower($subPackageKey);
 		}
-		if ($this->format !== '') {
+		if ($this->format !== NULL && $this->format !== '') {
 			$controllerArguments['@format'] = $this->format;
 		}
 

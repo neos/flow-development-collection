@@ -386,6 +386,9 @@ class Route {
 				}
 				unset($routeValues[$key]);
 			}
+			if (isset($routeValues['@format']) && $routeValues['@format'] === '') {
+				unset($routeValues['@format']);
+			}
 		}
 
 			// add query string
