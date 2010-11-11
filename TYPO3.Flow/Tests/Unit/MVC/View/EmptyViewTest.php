@@ -45,6 +45,8 @@ class EmptyViewTest extends \F3\Testing\BaseTestCase {
 	public function callingNonExistingMethodsWontThrowAnException() {
 		$view = new \F3\FLOW3\MVC\View\EmptyView();
 		$view->nonExistingMethod();
+			// dummy assertion to satisfy strict mode in PHPUnit
+		$this->assertTrue(TRUE);
 	}
 
 	/**
