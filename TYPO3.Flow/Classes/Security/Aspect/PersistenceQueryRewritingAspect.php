@@ -138,9 +138,10 @@ class PersistenceQueryRewritingAspect {
 			$policyConstraintsDefinition = $this->policyService->getResourcesConstraintsForEntityTypeAndRoles($entityType, $authenticatedRoles);
 			$additionalCalculatedConstraints = $this->getQomConstraintForConstraintDefinitions($policyConstraintsDefinition, $query);
 
-			if ($additionalCalculatedConstraints !== NULL) {
-				$newConstraints = $query->logicalAnd($query->getConstraint(), $query->logicalNot($additionalCalculatedConstraints));
-				$query->matching($newConstraints);
+			if ($query->getConstraint() !== NULL && $additionalCalculatedConstraints !== NULL) {
+				$query->matching($query->logicalAnd($query->getConstraint(), $query->logicalNot($additionalCalculatedConstraints)));
+			} elseif ($additionalCalculatedConstraints !== NULL) {
+				$query->matching($query->logicalNot($additionalCalculatedConstraints));
 			}
 		}
 	}
@@ -289,7 +290,7 @@ class PersistenceQueryRewritingAspect {
 	 */
 	protected function checkConstraintDefinitionsOnResultArray(array $constraintDefinitions, array $queryResult) {
 		$overallResult = TRUE;
-		
+
 		foreach ($constraintDefinitions as $resource => $resourceConstraints) {
 			foreach ($resourceConstraints as $operator => $policyConstraints) {
 				foreach ($policyConstraints as $key => $singlePolicyConstraint) {

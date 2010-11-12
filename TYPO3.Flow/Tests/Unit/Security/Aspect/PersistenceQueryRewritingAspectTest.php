@@ -37,11 +37,49 @@ class PersistenceQueryRewritingAspectTest extends \F3\Testing\BaseTestCase {
 		$entityType = 'MyClass';
 
 		$mockQuery = $this->getMock('F3\FLOW3\Persistence\Query', array(), array(), '', FALSE);
-		$mockQuery->expects($this->once())->method('getConstraint')->will($this->returnValue('existingConstraint'));
+		$mockQuery->expects($this->atLeastOnce())->method('getConstraint')->will($this->returnValue('existingConstraint'));
 		$mockQuery->expects($this->once())->method('getType')->will($this->returnValue($entityType));
 		$mockQuery->expects($this->once())->method('logicalNot')->with('newConstraints')->will($this->returnValue('newConstraintsNegated'));
 		$mockQuery->expects($this->once())->method('logicalAnd')->with('existingConstraint', 'newConstraintsNegated')->will($this->returnValue('mergedResultConstraints'));
 		$mockQuery->expects($this->once())->method('matching')->with('mergedResultConstraints');
+
+		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
+		$mockJoinPoint->expects($this->once())->method('getMethodArgument')->with('query')->will($this->returnValue($mockQuery));
+
+		$roles = array('role1', 'role2');
+
+		$mockSecurityContext = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
+		$mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue($roles));
+
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
+		$mockObjectManager->expects($this->once())->method('get')->with('F3\FLOW3\Security\Context')->will($this->returnValue($mockSecurityContext));
+
+		$mockPolicyService = $this->getMock('F3\FLOW3\Security\Policy\PolicyService', array(), array(), '', FALSE);
+		$mockPolicyService->expects($this->once())->method('getResourcesConstraintsForEntityTypeAndRoles')->with($entityType, $roles)->will($this->returnValue(array('parsedConstraints')));
+		$mockPolicyService->expects($this->once())->method('hasPolicyEntryForEntityType')->with($entityType)->will($this->returnValue(TRUE));
+
+		$rewritingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('getQomConstraintForConstraintDefinitions'), array(), '', FALSE);
+		$rewritingAspect->expects($this->once())->method('getQomConstraintForConstraintDefinitions')->with(array('parsedConstraints'), $mockQuery)->will($this->returnValue('newConstraints'));
+		$rewritingAspect->injectPolicyService($mockPolicyService);
+		$rewritingAspect->injectObjectManager($mockObjectManager);
+
+		$rewritingAspect->rewriteQomQuery($mockJoinPoint);
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function rewriteQomQueryUsesTheConstraintsGivenByThePolicyServiceInTheQueryObject() {
+		$entityType = 'MyClass';
+
+		$mockQuery = $this->getMock('F3\FLOW3\Persistence\Query', array(), array(), '', FALSE);
+		$mockQuery->expects($this->atLeastOnce())->method('getConstraint')->will($this->returnValue(NULL));
+		$mockQuery->expects($this->once())->method('getType')->will($this->returnValue($entityType));
+		$mockQuery->expects($this->once())->method('logicalNot')->with('newConstraints')->will($this->returnValue('newConstraintsNegated'));
+		$mockQuery->expects($this->never())->method('logicalAnd');
+		$mockQuery->expects($this->once())->method('matching')->with('newConstraintsNegated');
 
 		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
 		$mockJoinPoint->expects($this->once())->method('getMethodArgument')->with('query')->will($this->returnValue($mockQuery));

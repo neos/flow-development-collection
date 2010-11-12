@@ -73,7 +73,7 @@ class UriTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function requestMatchingBasicallyWorks() {
 		$request = $this->getMock('F3\FLOW3\MVC\Web\Request');
-		$uri = $this->getMock('F3\FLOW3\Property\DataType\URI', array(), array(), '', FALSE);
+		$uri = $this->getMock('F3\FLOW3\Property\DataType\Uri', array(), array(), '', FALSE);
 
 		$request->expects($this->once())->method('getRequestUri')->will($this->returnValue($uri));
 		$uri->expects($this->once())->method('getPath')->will($this->returnValue('/some/nice/path/to/index.php'));
