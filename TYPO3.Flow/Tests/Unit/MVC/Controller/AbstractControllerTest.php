@@ -151,6 +151,42 @@ class AbstractControllerTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function redirectUsesRequestFormatAsDefault() {
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request');
+		$mockRequest->expects($this->atLeastOnce())->method('getFormat')->will($this->returnValue('json'));
+
+		$mockUriBuilder = $this->getMock('F3\FLOW3\MVC\Web\Routing\UriBuilder');
+		$mockUriBuilder->expects($this->once())->method('reset')->will($this->returnValue($mockUriBuilder));
+		$mockUriBuilder->expects($this->once())->method('setFormat')->with('json')->will($this->returnValue($mockUriBuilder));
+
+		$controller = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\AbstractController', array('redirectToUri'), array(), '', FALSE);
+		$controller->_set('uriBuilder', $mockUriBuilder);
+		$controller->_set('request', $mockRequest);
+		$controller->_call('redirect', 'show');
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function redirectUsesGivenFormat() {
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request');
+		$mockRequest->expects($this->never())->method('getFormat');
+
+		$mockUriBuilder = $this->getMock('F3\FLOW3\MVC\Web\Routing\UriBuilder');
+		$mockUriBuilder->expects($this->once())->method('reset')->will($this->returnValue($mockUriBuilder));
+		$mockUriBuilder->expects($this->once())->method('setFormat')->with('pdf')->will($this->returnValue($mockUriBuilder));
+
+		$controller = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\AbstractController', array('redirectToUri'), array(), '', FALSE);
+		$controller->_set('uriBuilder', $mockUriBuilder);
+		$controller->_set('request', $mockRequest);
+		$controller->_call('redirect', 'show', NULL, NULL, NULL, 0, 303, 'pdf');
+	}
+
+	/**
+	 * @test
 	 * @expectedException \F3\FLOW3\MVC\Exception\StopActionException
 	 * @author Robert Lemke <robert@typo3.org>
 	 */

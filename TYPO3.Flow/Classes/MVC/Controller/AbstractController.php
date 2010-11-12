@@ -266,13 +266,13 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	 * @param array $arguments Array of arguments for the target action
 	 * @param integer $delay (optional) The delay in seconds. Default is no delay.
 	 * @param integer $statusCode (optional) The HTTP status code for the redirect. Default is "303 See Other"
-	 * @param \F3\FLOW3\MVC\Controller\Arguments $arguments Arguments to pass to the target action
+	 * @param string $format The format to use for the redirect URI
 	 * @return void
 	 * @throws \F3\FLOW3\MVC\Exception\StopActionException
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
-	protected function redirect($actionName, $controllerName = NULL, $packageKey = NULL, array $arguments = NULL, $delay = 0, $statusCode = 303) {
+	protected function redirect($actionName, $controllerName = NULL, $packageKey = NULL, array $arguments = NULL, $delay = 0, $statusCode = 303, $format = NULL) {
 		if (!$this->request instanceof \F3\FLOW3\MVC\Web\Request) throw new \F3\FLOW3\MVC\Exception\UnsupportedRequestTypeException('redirect() only supports web requests.', 1238101344);
 
 		if ($packageKey !== NULL && strpos($packageKey, '\\') !== FALSE) {
@@ -280,9 +280,13 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 		} else {
 			$subpackageKey = NULL;
 		}
-		$uri = $this->uriBuilder
-			->reset()
-			->uriFor($actionName, $arguments, $controllerName, $packageKey, $subpackageKey);
+		$this->uriBuilder->reset();
+		if ($format === NULL) {
+			$this->uriBuilder->setFormat($this->request->getFormat());
+		} else {
+			$this->uriBuilder->setFormat($format);
+		}
+		$uri = $this->uriBuilder->uriFor($actionName, $arguments, $controllerName, $packageKey, $subpackageKey);
 		$this->redirectToUri($uri, $delay, $statusCode);
 	}
 
