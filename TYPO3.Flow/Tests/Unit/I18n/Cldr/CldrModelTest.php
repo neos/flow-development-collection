@@ -36,20 +36,23 @@ class CldrModelTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @return void
-	 * @author Karol Gusak <firstname@lastname.eu>
+	 * @author Karol Gusak <karol@gusak.eu>
 	 */
 	public function setUp() {
-		$sampleFilename = 'foo';
-		$sampleFilenamePath = 'resource://FLOW3/Private/Locale/CLDR/Sources/foo.xml';
-		$sampleParsedData = require(__DIR__ . '/../Fixtures/MockParsedCldrData.php');
+		$samplePaths = array('foo', 'bar', 'baz');
+		$sampleParsedFile1 = require(__DIR__ . '/../Fixtures/MockParsedCldrFile1.php');
+		$sampleParsedFile2 = require(__DIR__ . '/../Fixtures/MockParsedCldrFile2.php');
+		$sampleParsedFile3 = require(__DIR__ . '/../Fixtures/MockParsedCldrFile3.php');
 
 		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
-		$mockCache->expects($this->any())->method('has')->with(md5($sampleFilenamePath))->will($this->returnValue(FALSE));
+		$mockCache->expects($this->once())->method('has')->with(md5('foo;bar;baz'))->will($this->returnValue(FALSE));
 
 		$mockCldrParser = $this->getMock('F3\FLOW3\I18n\Cldr\CldrParser');
-		$mockCldrParser->expects($this->once())->method('getParsedData')->with($sampleFilenamePath)->will($this->returnValue($sampleParsedData));
+		$mockCldrParser->expects($this->at(0))->method('getParsedData')->with('foo')->will($this->returnValue($sampleParsedFile1));
+		$mockCldrParser->expects($this->at(1))->method('getParsedData')->with('bar')->will($this->returnValue($sampleParsedFile2));
+		$mockCldrParser->expects($this->at(2))->method('getParsedData')->with('baz')->will($this->returnValue($sampleParsedFile3));
 
-		$this->model = new \F3\FLOW3\I18n\Cldr\CldrModel($sampleFilename);
+		$this->model = new \F3\FLOW3\I18n\Cldr\CldrModel($samplePaths);
 		$this->model->injectCache($mockCache);
 		$this->model->injectParser($mockCldrParser);
 		$this->model->initializeObject();
@@ -57,37 +60,34 @@ class CldrModelTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @author Karol Gusak <firstname@lastname.eu>
+	 * @author Karol Gusak <karol@gusak.eu>
+	 */
+	public function mergesMultipleFilesAndResolvesAliasesCorrectly() {
+		$sampleParsedFilesMerged = require(__DIR__ . '/../Fixtures/MockParsedCldrFilesMerged.php');
+
+		$this->assertEquals($sampleParsedFilesMerged, $this->model->getRawData('/'));
+	}
+
+	/**
+	 * @test
+	 * @author Karol Gusak <karol@gusak.eu>
 	 */
 	public function returnsRawArrayCorrectly() {
-		$result = $this->model->getRawArray('dates/calendars/calendar/type="gregorian"/dateFormats/dateFormatLength');
-		$this->assertEquals(4, count($result));
-		$this->assertEquals(TRUE, isset($result['type="full"']));
+		$result = $this->model->getRawArray('dates/calendars/calendar[@type="gregorian"]/months/monthContext[@type="format"]/monthWidth[@type="abbreviated"]');
+		$this->assertEquals(2, count($result));
+		$this->assertEquals('jan', $result['month[@type="1"]']);
 	}
 
 	/**
 	 * @test
-	 * @author Karol Gusak <firstname@lastname.eu>
+	 * @author Karol Gusak <karol@gusak.eu>
 	 */
 	public function returnsElementCorrectly() {
-		$result = $this->model->getElement('dates/calendars/calendar/type="gregorian"/dateFormats/dateFormatLength/type="full"/dateFormat/pattern');
-		$this->assertEquals('EEEE, d MMMM y', $result);
+		$result = $this->model->getElement('localeDisplayNames/localeDisplayPattern/localePattern');
+		$this->assertEquals('{0} ({1})', $result);
 
-		$result = $this->model->getElement('dates/calendars/calendar/type="gregorian"/dateFormats/dateFormatLength/type="full"/dateFormat');
+		$result = $this->model->getElement('localeDisplayNames/variants');
 		$this->assertEquals(FALSE, $result);
-	}
-
-	/**
-	 * @test
-	 * @author Karol Gusak <firstname@lastname.eu>
-	 */
-	public function aliasesAreResolvedCorrectly() {
-		$result = $this->model->getRawArray('dates/calendars/calendar/type="gregorian"/dateFormats/dateFormatLength/type="short"/dateFormat/pattern');
-		$this->assertEquals('dd-MM-yyyy', $result[\F3\FLOW3\I18n\Cldr\CldrParser::NODE_WITHOUT_ATTRIBUTES]);
-		$this->assertEquals('d MMM y', $result['alt="proposed-x1001" draft="unconfirmed"']);
-
-		$result = $this->model->getElement('dates/calendars/calendar/type="buddhist"/dateFormats/dateFormatLength/type="full"/dateFormat/pattern');
-		$this->assertEquals('EEEE, d MMMM y', $result);
 	}
 
 	/**
@@ -97,8 +97,32 @@ class CldrModelTest extends \F3\Testing\BaseTestCase {
 	 * @author Karol Gusak <karol@gusak.eu>
 	 */
 	public function getRawArrayAlwaysReturnsArrayOrFalse() {
-		$result = $this->model->getRawArray('dates/calendars/calendar/type="gregorian"/dateFormats/dateFormatLength/type="full"/dateFormat/pattern');
+		$result = $this->model->getRawArray('localeDisplayNames/localeDisplayPattern/localePattern');
 		$this->assertEquals(FALSE, $result);
+	}
+
+	/**
+	 * @test
+	 * @author Karol Gusak <karol@gusak.eu>
+	 */
+	public function returnsNodeNameCorrectly() {
+		$sampleNodeString1 = 'calendar';
+		$sampleNodeString2 = 'calendar[@type="gregorian"]';
+
+		$this->assertEquals('calendar', $this->model->getNodeName($sampleNodeString1));
+		$this->assertEquals('calendar', $this->model->getNodeName($sampleNodeString2));
+	}
+
+	/**
+	 * @test
+	 * @author Karol Gusak <karol@gusak.eu>
+	 */
+	public function returnsAttributeValueCorrectly() {
+		$sampleNodeString = 'dateFormatLength[@type="medium"][@alt="proposed"]';
+
+		$this->assertEquals('medium', $this->model->getAttributeValue($sampleNodeString, 'type'));
+		$this->assertEquals('proposed', $this->model->getAttributeValue($sampleNodeString, 'alt'));
+		$this->assertEquals(FALSE, $this->model->getAttributeValue($sampleNodeString, 'dateFormatLength'));
 	}
 }
 

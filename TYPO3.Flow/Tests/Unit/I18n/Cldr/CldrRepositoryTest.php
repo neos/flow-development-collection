@@ -35,8 +35,13 @@ class CldrRepositoryTest extends \F3\Testing\BaseTestCase {
 	protected $repository;
 
 	/**
+	 * @var \F3\FLOW3\I18n\Locale
+	 */
+	protected $dummyLocale;
+
+	/**
 	 * @return void
-	 * @author Karol Gusak <firstname@lastname.eu>
+	 * @author Karol Gusak <karol@gusak.eu>
 	 */
 	public function setUp() {
 		\vfsStreamWrapper::register();
@@ -44,13 +49,15 @@ class CldrRepositoryTest extends \F3\Testing\BaseTestCase {
 
 		$this->repository = $this->getAccessibleMock('F3\FLOW3\I18n\Cldr\CldrRepository', array('dummy'));
 		$this->repository->_set('cldrBasePath', 'vfs://Foo/');
+
+		$this->dummyLocale = new \F3\FLOW3\I18n\Locale('en');
 	}
 
 	/**
 	 * @test
-	 * @author Karol Gusak <firstname@lastname.eu>
+	 * @author Karol Gusak <karol@gusak.eu>
 	 */
-	public function modelIsReturnedCorrectly() {
+	public function modelIsReturnedCorrectlyForSingleFile() {
 		file_put_contents('vfs://Foo/Bar.xml', '');
 
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
@@ -70,16 +77,14 @@ class CldrRepositoryTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @author Karol Gusak <firstname@lastname.eu>
+	 * @author Karol Gusak <karol@gusak.eu>
 	 */
-	public function modelCollectionIsReturnedCorrectly() {
-		mkdir('vfs://Foo/Folder');
-		file_put_contents('vfs://Foo/Folder/en.xml', '');
+	public function modelIsReturnedCorrectlyForGroupOfFiles() {
+		mkdir('vfs://Foo/Directory');
+		file_put_contents('vfs://Foo/Directory/en.xml', '');
 
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->at(0))->method('create')->with('F3\FLOW3\I18n\Cldr\CldrModel', 'vfs://Foo/Folder/en.xml')->will($this->returnValue('en.xml Model'));
-		$mockObjectManager->expects($this->at(1))->method('create')->with('F3\FLOW3\I18n\Cldr\CldrModel', 'vfs://Foo/Folder/root.xml')->will($this->returnValue('root.xml Model'));
-		$mockObjectManager->expects($this->at(2))->method('create')->with('F3\FLOW3\I18n\Cldr\CldrModelCollection', array('en.xml Model', 'root.xml Model'))->will($this->returnValue('ModelCollectionWouldBeHere'));
+		$mockObjectManager->expects($this->once())->method('create')->with('F3\FLOW3\I18n\Cldr\CldrModel', array('vfs://Foo/Directory/root.xml', 'vfs://Foo/Directory/en.xml'))->will($this->returnValue('ModelWouldBeHere'));
 
 		$mockLocalizationService = $this->getMock('F3\FLOW3\I18n\Service');
 		$mockLocalizationService->expects($this->once())->method('getParentLocaleOf')->will($this->returnValue(NULL));
@@ -87,14 +92,14 @@ class CldrRepositoryTest extends \F3\Testing\BaseTestCase {
 		$this->repository->injectObjectManager($mockObjectManager);
 		$this->repository->injectLocalizationService($mockLocalizationService);
 
-		$result = $this->repository->getModelCollection('Folder', new \F3\FLOW3\I18n\Locale('en'));
-		$this->assertEquals('ModelCollectionWouldBeHere', $result);
+		$result = $this->repository->getModelForLocale($this->dummyLocale, 'Directory');
+		$this->assertEquals('ModelWouldBeHere', $result);
 
 			// Second access should not invoke objectManager requests
-		$result = $this->repository->getModelCollection('Folder', new \F3\FLOW3\I18n\Locale('en'));
-		$this->assertEquals('ModelCollectionWouldBeHere', $result);
+		$result = $this->repository->getModelForLocale($this->dummyLocale, 'Directory');
+		$this->assertEquals('ModelWouldBeHere', $result);
 
-		$result = $this->repository->getModelCollection('NoSuchDirectory', new \F3\FLOW3\I18n\Locale('en'));
+		$result = $this->repository->getModelForLocale($this->dummyLocale, 'NoSuchDirectory');
 		$this->assertEquals(FALSE, $result);
 	}
 }

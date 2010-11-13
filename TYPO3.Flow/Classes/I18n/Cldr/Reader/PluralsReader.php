@@ -234,11 +234,11 @@ class PluralsReader {
 	 */
 	protected function generateRulesets() {
 		$model = $this->cldrRepository->getModel('supplemental/plurals');
-		$pluralRulesSet = $model->getRawArray('plurals/pluralRules');
+		$pluralRulesSet = $model->getRawArray('plurals');
 
 		$index = 0;
-		foreach ($pluralRulesSet as $localeLanguages => $pluralRules) {
-			$localeLanguages = \F3\FLOW3\I18n\Cldr\CldrParser::getValueOfAttributeByName($localeLanguages, 'locales');
+		foreach ($pluralRulesSet as $pluralRulesNodeString => $pluralRules) {
+			$localeLanguages = $model->getAttributeValue($pluralRulesNodeString, 'locales');
 
 			foreach (explode(' ', $localeLanguages) as $localeLanguage) {
 				$this->rulesetsIndices[$localeLanguage] = $index;
@@ -250,8 +250,8 @@ class PluralsReader {
 			}
 
 			$ruleset = array();
-			foreach ($pluralRules['pluralRule'] as $pluralForm => $pluralRule) {
-				$pluralForm = \F3\FLOW3\I18n\Cldr\CldrParser::getValueOfAttributeByName($pluralForm, 'count');
+			foreach ($pluralRules as $pluralRuleNodeString => $pluralRule) {
+				$pluralForm = $model->getAttributeValue($pluralRuleNodeString, 'count');
 				$ruleset[$pluralForm] = $this->parseRule($pluralRule);
 			}
 

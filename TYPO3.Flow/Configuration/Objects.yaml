@@ -276,7 +276,7 @@ F3\FLOW3\I18n\Cldr\CldrModel:
         factoryMethodName: getCache
         arguments:
           1:
-            value: FLOW3_I18n_XmlModelCache
+            value: FLOW3_I18n_Cldr_CldrModelCache
 F3\FLOW3\I18n\Xliff\XliffModel:
   properties:
     cache:

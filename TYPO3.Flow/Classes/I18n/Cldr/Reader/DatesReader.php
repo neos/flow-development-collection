@@ -229,17 +229,17 @@ class DatesReader {
 			return $this->parsedFormats[$this->parsedFormatsIndices[(string)$locale][$formatType][$formatLength]];
 		}
 
-		$model = $this->cldrRepository->getModelCollection('main', $locale);
+		$model = $this->cldrRepository->getModelForLocale($locale);
 
 		if ($formatLength === 'default') {
-			$defaultChoice = $model->getRawArray('dates/calendars/calendar/type="gregorian"/' . $formatType . 'Formats/default');
+			$defaultChoice = $model->findNodesWithinPath('dates/calendars/calendar[@type="gregorian"]/' . $formatType . 'Formats', 'default');
 			$defaultChoice = array_keys($defaultChoice);
-			$realFormatLength = \F3\FLOW3\I18n\Cldr\CldrParser::getValueOfAttributeByName($defaultChoice[0], 'choice');
+			$realFormatLength = $model->getAttributeValue($defaultChoice[0], 'choice');
 		} else {
 			$realFormatLength = $formatLength;
 		}
 
-		$format = $model->getElement('dates/calendars/calendar/type="gregorian"/' . $formatType . 'Formats/' . $formatType . 'FormatLength/type="' . $realFormatLength . '"/' . $formatType . 'Format/pattern');
+		$format = $model->getElement('dates/calendars/calendar[@type="gregorian"]/' . $formatType . 'Formats/' . $formatType . 'FormatLength[@type="' . $realFormatLength . '"]/' . $formatType . 'Format/pattern');
 
 		if (empty($format)) {
 			throw new \F3\FLOW3\I18n\Cldr\Reader\Exception\UnableToFindFormatException('Date / time format was not found. Please check whether CLDR repository is valid.', 1280218994);
@@ -285,7 +285,7 @@ class DatesReader {
 			return $this->localizedLiterals[(string)$locale];
 		}
 
-		$model = $this->cldrRepository->getModelCollection('main', $locale);
+		$model = $this->cldrRepository->getModelForLocale($locale);
 
 		$localizedLiterals['months'] = $this->parseLocalizedLiterals($model, 'month');
 		$localizedLiterals['days'] = $this->parseLocalizedLiterals($model, 'day');
@@ -400,23 +400,23 @@ class DatesReader {
 	 * Many children of "dates" node have common structure, so one method can
 	 * be used to parse them all.
 	 *
-	 * @param \F3\FLOW3\I18n\Cldr\CldrModelCollection $model CldrModelCollection to read data from
+	 * @param \F3\FLOW3\I18n\Cldr\CldrModel $model CldrModel to read data from
 	 * @param string $literalType One of: month, day, quarter, dayPeriod
 	 * @return array An array with localized literals for given type
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	protected function parseLocalizedLiterals(\F3\FLOW3\I18n\Cldr\CldrModelCollection $model, $literalType) {
+	protected function parseLocalizedLiterals(\F3\FLOW3\I18n\Cldr\CldrModel $model, $literalType) {
 		$data = array();
-		$context = $model->getRawArray('dates/calendars/calendar/type="gregorian"/' . $literalType . 's/' . $literalType . 'Context');
+		$context = $model->getRawArray('dates/calendars/calendar[@type="gregorian"]/' . $literalType . 's');
 
-		foreach ($context as $contextType => $literalsWidths) {
-			$contextType = \F3\FLOW3\I18n\Cldr\CldrParser::getValueOfAttributeByName($contextType, 'type');
+		foreach ($context as $contextNodeString => $literalsWidths) {
+			$contextType = $model->getAttributeValue($contextNodeString, 'type');
 
-			foreach ($literalsWidths[$literalType . 'Width'] as $widthType => $literals) {
-				$widthType = \F3\FLOW3\I18n\Cldr\CldrParser::getValueOfAttributeByName($widthType, 'type');
+			foreach ($literalsWidths as $widthNodeString => $literals) {
+				$widthType = $model->getAttributeValue($widthNodeString, 'type');
 
-				foreach ($literals[$literalType] as $literalName => $literalValue) {
-					$literalName = \F3\FLOW3\I18n\Cldr\CldrParser::getValueOfAttributeByName($literalName, 'type');
+				foreach ($literals as $literalNodeString => $literalValue) {
+					$literalName = $model->getAttributeValue($literalNodeString, 'type');
 
 					$data[$contextType][$widthType][$literalName] = $literalValue;
 				}
@@ -429,15 +429,15 @@ class DatesReader {
 	/**
 	 * Parses "eras" child of "dates" node and returns it's array representation.
 	 *
-	 * @param \F3\FLOW3\I18n\Cldr\CldrModelCollection $model CldrModel to read data from
+	 * @param \F3\FLOW3\I18n\Cldr\CldrModel $model CldrModel to read data from
 	 * @return array An array with localized literals for "eras" node
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	protected function parseLocalizedEras(\F3\FLOW3\I18n\Cldr\CldrModelCollection $model) {
+	protected function parseLocalizedEras(\F3\FLOW3\I18n\Cldr\CldrModel $model) {
 		$data = array();
-		foreach ($model->getRawArray('dates/calendars/calendar/type="gregorian"/eras') as $widthType => $eras) {
-			foreach ($eras['era'] as $eraName => $eraValue) {
-				$eraName = \F3\FLOW3\I18n\Cldr\CldrParser::getValueOfAttributeByName($eraName, 'type');
+		foreach ($model->getRawArray('dates/calendars/calendar[@type="gregorian"]/eras') as $widthType => $eras) {
+			foreach ($eras as $eraNodeString => $eraValue) {
+				$eraName = $model->getAttributeValue($eraNodeString, 'type');
 
 				$data[$widthType][$eraName] = $eraValue;
 			}

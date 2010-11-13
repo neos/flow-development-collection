@@ -42,18 +42,6 @@ class CldrParserTest extends \F3\Testing\BaseTestCase {
 		$result = $parser->getParsedData($sampleFilenamePath);
 		$this->assertEquals($sampleParsedData, $result);
 	}
-
-	/**
-	 * @test
-	 * @author Karol Gusak <firstname@lastname.eu>
-	 */
-	public function returnsValueByAttributeNameCorrectly() {
-		$sampleAttributesString = 'source="locale" path="../eraAbbr"';
-
-		$this->assertEquals('locale', \F3\FLOW3\I18n\Cldr\CldrParser::getValueOfAttributeByName($sampleAttributesString, 'source'));
-		$this->assertEquals('../eraAbbr', \F3\FLOW3\I18n\Cldr\CldrParser::getValueOfAttributeByName($sampleAttributesString, 'path'));
-		$this->assertEquals(FALSE, \F3\FLOW3\I18n\Cldr\CldrParser::getValueOfAttributeByName($sampleAttributesString, 'notavailable'));
-	}
 }
 
 ?>

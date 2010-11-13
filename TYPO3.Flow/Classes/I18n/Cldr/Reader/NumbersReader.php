@@ -236,10 +236,10 @@ class NumbersReader {
 		if ($formatLength === self::FORMAT_LENGTH_DEFAULT) {
 			$formatPath = 'numbers/' . $formatType . 'Formats/' . $formatType . 'FormatLength/' . $formatType . 'Format/pattern';
 		} else {
-			$formatPath = 'numbers/' . $formatType . 'Formats/' . $formatType . 'FormatLength/type="' . $formatLength . '"/' . $formatType . 'Format/pattern';
+			$formatPath = 'numbers/' . $formatType . 'Formats/' . $formatType . 'FormatLength[@type="' . $formatLength . '"]/' . $formatType . 'Format/pattern';
 		}
 
-		$model = $this->cldrRepository->getModelCollection('main', $locale);
+		$model = $this->cldrRepository->getModelForLocale($locale);
 		$format = $model->getElement($formatPath);
 
 		if (empty($format)) {
