@@ -162,9 +162,13 @@ class JsonView extends \F3\FLOW3\MVC\View\AbstractView {
 		} elseif (is_array($value)) {
 			$array = array();
 			foreach ($value as $key => $element) {
-				if (isset($configuration['only']) && is_array($configuration['only']) && !in_array($key, $configuration['only'])) continue;
-				if (isset($configuration['exclude']) && is_array($configuration['exclude']) && in_array($key, $configuration['exclude'])) continue;
-				$array[$key] = $this->transformValue($element, isset($configuration[$key]) ? $configuration[$key] : array());
+				if (isset($configuration['_descendAll']) && is_array($configuration['_descendAll'])) {
+					$array[] = $this->transformValue($element, $configuration['_descendAll']);
+				} else {
+					if (isset($configuration['_only']) && is_array($configuration['_only']) && !in_array($key, $configuration['_only'])) continue;
+					if (isset($configuration['_exclude']) && is_array($configuration['_exclude']) && in_array($key, $configuration['_exclude'])) continue;
+					$array[$key] = $this->transformValue($element, isset($configuration[$key]) ? $configuration[$key] : array());
+				}
 			}
 			return $array;
 		} else {
@@ -186,15 +190,15 @@ class JsonView extends \F3\FLOW3\MVC\View\AbstractView {
 
 		$propertiesToRender = array();
 		foreach ($propertyNames as $propertyName) {
-			if (isset($configuration['only']) && is_array($configuration['only']) && !in_array($propertyName, $configuration['only'])) continue;
-			if (isset($configuration['exclude']) && is_array($configuration['exclude']) && in_array($propertyName, $configuration['exclude'])) continue;
+			if (isset($configuration['_only']) && is_array($configuration['_only']) && !in_array($propertyName, $configuration['_only'])) continue;
+			if (isset($configuration['_exclude']) && is_array($configuration['_exclude']) && in_array($propertyName, $configuration['_exclude'])) continue;
 
 			$propertyValue = \F3\FLOW3\Reflection\ObjectAccess::getProperty($object, $propertyName);
 
 			if (!is_array($propertyValue) && !is_object($propertyValue)) {
 				$propertiesToRender[$propertyName] = $propertyValue;
-			} elseif (isset($configuration['descend']) && array_key_exists($propertyName, $configuration['descend'])) {
-				$propertiesToRender[$propertyName] = $this->transformValue($propertyValue, $configuration['descend'][$propertyName]);
+			} elseif (isset($configuration['_descend']) && array_key_exists($propertyName, $configuration['_descend'])) {
+				$propertiesToRender[$propertyName] = $this->transformValue($propertyValue, $configuration['_descend'][$propertyName]);
 			}
 		}
 		return $propertiesToRender;

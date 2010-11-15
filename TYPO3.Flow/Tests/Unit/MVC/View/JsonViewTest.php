@@ -70,11 +70,11 @@ class JsonViewTest extends \F3\Testing\BaseTestCase {
 		$expected = array('value1' => 'foo', 'value2' => 1);
 		$output[] = array($object, $configuration, $expected, 'all direct child properties should be serialized');
 		
-		$configuration = array('only' => array('value1'));
+		$configuration = array('_only' => array('value1'));
 		$expected = array('value1' => 'foo');
 		$output[] = array($object, $configuration, $expected, 'if "only" properties are specified, only these should be serialized');
 		
-		$configuration = array('exclude' => array('value1'));
+		$configuration = array('_exclude' => array('value1'));
 		$expected = array('value2' => 1);
 		$output[] = array($object, $configuration, $expected, 'if "exclude" properties are specified, they should not be serialized');
 		
@@ -120,10 +120,10 @@ class JsonViewTest extends \F3\Testing\BaseTestCase {
 
 		$object = $nestedObject;
 		$configuration = array(
-			'only' => array('name', 'path', 'properties'),
-			'descend' => array(
+			'_only' => array('name', 'path', 'properties'),
+			'_descend' => array(
 				 'properties' => array(
-					  'exclude' => array('prohibited')
+					  '_exclude' => array('prohibited')
 				 )
 			)
 		);
@@ -278,5 +278,25 @@ class JsonViewTest extends \F3\Testing\BaseTestCase {
 		$this->assertEquals($expectedResult, $actualResult);
 	}
 
+	/**
+	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function renderCanRenderPlainArray() {
+		$array = array(array('name' => 'Foo', 'secret' => TRUE), array('name' => 'Bar', 'secret' => TRUE));
+
+		$this->view->assign('value', $array);
+		$this->view->setConfiguration(array(
+			'value' => array(
+				'_descendAll' => array(
+					'_only' => array('name')
+				)
+			)
+		));
+
+		$expectedResult = '[{"name":"Foo"},{"name":"Bar"}]';
+		$actualResult = $this->view->render();
+		$this->assertEquals($expectedResult, $actualResult);
+	}
 }
 ?>
