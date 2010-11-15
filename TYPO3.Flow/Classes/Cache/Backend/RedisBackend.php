@@ -68,7 +68,7 @@ namespace F3\FLOW3\Cache\Backend;
  * @api
  * @scope prototype
  */
-class PhpredisRedisBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
+class RedisBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 
 	/**
 	 * Faked unlimited lifetime = 31536000 (1 Year).

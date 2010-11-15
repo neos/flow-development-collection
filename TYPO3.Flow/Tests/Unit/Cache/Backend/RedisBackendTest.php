@@ -37,12 +37,12 @@ namespace F3\FLOW3\Tests\Unit\Cache\Backend;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class PhpredisRedisBackendTest extends \F3\Testing\BaseTestCase {
+class RedisBackendTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * If set, the tearDown() method will flush the cache used by this unit test.
 	 *
-	 * @var \F3\FLOW3\Cache\Backend\PhpredisRedisBackend
+	 * @var \F3\FLOW3\Cache\Backend\RedisBackend
 	 */
 	protected $backend = NULL;
 
@@ -86,7 +86,7 @@ class PhpredisRedisBackendTest extends \F3\Testing\BaseTestCase {
 		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\FrontendInterface', array(), array(), '', FALSE);
 		$mockCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('TestCache'));
 
-		$this->backend = new \F3\FLOW3\Cache\Backend\PhpredisRedisBackend('Testing', $backendOptions);
+		$this->backend = new \F3\FLOW3\Cache\Backend\RedisBackend('Testing', $backendOptions);
 		$this->backend->injectSystemLogger($mockSystemLogger);
 		$this->backend->setCache($mockCache);
 		$this->backend->initializeObject();
@@ -108,7 +108,7 @@ class PhpredisRedisBackendTest extends \F3\Testing\BaseTestCase {
 	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 */
 	public function tearDown() {
-		if ($this->backend instanceof \F3\FLOW3\Cache\Backend\PhpredisRedisBackend) {
+		if ($this->backend instanceof \F3\FLOW3\Cache\Backend\RedisBackend) {
 			$this->backend->flush();
 		}
 	}
