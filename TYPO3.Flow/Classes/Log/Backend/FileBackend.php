@@ -214,14 +214,22 @@ class FileBackend extends \F3\FLOW3\Log\Backend\AbstractBackend {
 			return;
 		}
 
+		if (function_exists('posix_getpid')) {
+			$processId = ' ' . str_pad(posix_getpid(), 10);
+		} else {
+			$processId = ' ';
+		}
 		$ipAddress = ($this->logIpAddress === TRUE) ? str_pad((isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : ''), 15) : '';
 		$severityLabel = (isset($this->severityLabels[$severity])) ? $this->severityLabels[$severity] : 'UNKNOWN  ';
-		$output = strftime('%y-%m-%d %H:%M:%S', time()) . ' ' . $ipAddress . $severityLabel . ' ' . str_pad($packageKey, 20) . ' ' . $message . PHP_EOL;
+		$output = strftime('%y-%m-%d %H:%M:%S', time()) . $processId . ' ' . $ipAddress . $severityLabel . ' ' . str_pad($packageKey, 20) . ' ' . $message;
+		if ($className !== NULL || $methodName !== NULL) {
+			$output .= ' [logged in ' . $className . '::' . $methodName . '()]';
+		}
 		if (!empty($additionalData)) {
-			$output .= $this->getFormattedVarDump($additionalData) . PHP_EOL;
+			$output .= PHP_EOL . $this->getFormattedVarDump($additionalData);
 		}
 		if ($this->fileHandle !== FALSE) {
-			fputs($this->fileHandle, $output);
+			fputs($this->fileHandle, $output . PHP_EOL);
 		}
 	}
 
@@ -247,7 +255,7 @@ class FileBackend extends \F3\FLOW3\Log\Backend\AbstractBackend {
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	protected function getFormattedVarDump($var, $spaces=4) {
+	protected function getFormattedVarDump($var, $spaces = 4) {
 		if ($spaces > 100) {
 			return NULL;
 		}
@@ -271,7 +279,7 @@ class FileBackend extends \F3\FLOW3\Log\Backend\AbstractBackend {
 					foreach (get_object_vars ($var) as $objVarName => $objVarValue) {
 						if (is_array($objVarValue) || is_object($objVarValue)) {
 							$output .= str_repeat(' ', $spaces) . $objVarName . ' => ' . PHP_EOL;
-							$output .= $this->getFormattedVarDump($objVarValue, $spaces+3);
+							$output .= $this->getFormattedVarDump($objVarValue, $spaces + 3);
 						} else {
 							$output .= str_repeat(' ', $spaces) . $objVarName . ' => ' . $objVarValue . PHP_EOL;
 						}
