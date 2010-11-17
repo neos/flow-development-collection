@@ -30,11 +30,6 @@ namespace F3\FLOW3\Error;
 interface ExceptionHandlerInterface {
 
 	/**
-	 * Constructs this exception handler - registers itself as the default exception handler.
-	 */
-	public function __construct();
-
-	/**
 	 * Handles the given exception
 	 *
 	 * @param \Exception $exception The exception object

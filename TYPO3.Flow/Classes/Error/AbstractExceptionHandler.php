@@ -69,17 +69,7 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface {
 	 */
 	public function handleException(\Exception $exception) {
 		if (is_object($this->systemLogger)) {
-			$exceptionCodeNumber = ($exception->getCode() > 0) ? ' #' . $exception->getCode() : '';
-			$backTrace = $exception->getTrace();
-			$className = isset($backTrace[0]['class']) ? $backTrace[0]['class'] : '?';
-			$methodName = isset($backTrace[0]['function']) ? $backTrace[0]['function'] : '?';
-			$line = isset($backTrace[0]['line']) ? ' in line ' . $backTrace[0]['line'] . ' of ' . $backTrace[0]['file'] : '';
-			$message = 'Uncaught exception' . $exceptionCodeNumber . '. ' . $exception->getMessage() . $line . '.';
-
-			$explodedClassName = explode('\\', $className);
-			$packageKey = (isset($explodedClassName[1])) ? $explodedClassName[1] : NULL;
-
-			$this->systemLogger->log($message, LOG_CRIT, array(), $packageKey, $className, $methodName);
+			$this->systemLogger->logException($exception);
 		}
 
 		if (is_object($this->lockManager)) {

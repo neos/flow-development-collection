@@ -50,7 +50,7 @@ class ProductionExceptionHandler extends \F3\FLOW3\Error\AbstractExceptionHandle
 
 		switch (PHP_SAPI) {
 			case 'cli' :
-				$this->echoExceptionCLI($exception);
+				$this->echoExceptionCli($exception);
 				break;
 			default :
 				$this->echoExceptionWeb($exception);
@@ -167,7 +167,7 @@ class ProductionExceptionHandler extends \F3\FLOW3\Error\AbstractExceptionHandle
 	 * @param \Exception $exception The exception
 	 * @return void
 	 */
-	public function echoExceptionCLI(\Exception $exception) {
+	public function echoExceptionCli(\Exception $exception) {
 		exit(1);
 	}
 }
