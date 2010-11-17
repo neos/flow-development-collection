@@ -87,6 +87,9 @@ class ConfigurationManager {
 	 */
 	public function __construct($context) {
 		$this->context = $context;
+		if (!is_dir(FLOW3_PATH_CONFIGURATION . $context)) {
+			\F3\FLOW3\Utility\Files::createDirectoryRecursively(FLOW3_PATH_CONFIGURATION . $context);
+		}
 		$this->includeCachedConfigurationsPathAndFilename = FLOW3_PATH_CONFIGURATION . $context . '/IncludeCachedConfigurations.php';
 		$this->loadConfigurationCache();
 	}
@@ -345,8 +348,8 @@ class ConfigurationManager {
 	 */
 	protected function saveConfigurationCache() {
 		$configurationCachePath = $this->environment->getPathToTemporaryDirectory() . 'Configuration/';
-		if (!file_exists($configurationCachePath )) {
-			\F3\FLOW3\Utility\Files::createDirectoryRecursively($configurationCachePath );
+		if (!file_exists($configurationCachePath)) {
+			\F3\FLOW3\Utility\Files::createDirectoryRecursively($configurationCachePath);
 		}
 		$cachePathAndFilename = $configurationCachePath  . $this->context . 'Configurations.php';
 		$includeCachedConfigurationsCode = <<< "EOD"
