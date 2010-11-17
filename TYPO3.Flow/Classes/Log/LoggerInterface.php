@@ -75,5 +75,14 @@ interface LoggerInterface {
 	 */
 	public function log($message, $severity = LOG_INFO, $additionalData = NULL, $packageKey = NULL, $className = NULL, $methodName = NULL);
 
+	/**
+	 * Writes information about the given exception into the log.
+	 *
+	 * @param \Exception $exception The exception to log
+	 * @return void
+	 * @api
+	 */
+	public function logException(\Exception $exception);
+
 }
 ?>
