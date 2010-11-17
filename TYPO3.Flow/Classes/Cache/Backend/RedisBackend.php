@@ -209,7 +209,7 @@ class RedisBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	/**
 	 * Setter for server hostname
 	 *
-	 * @param string Hostname
+	 * @param string $hostname Hostname
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 * @author Christian Kuhn <lolli@schwarzbu.ch>
@@ -221,7 +221,7 @@ class RedisBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	/**
 	 * Setter for server port
 	 *
-	 * @param integer Port
+	 * @param integer $port Port
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 * @author Christian Kuhn <lolli@schwarzbu.ch>
@@ -234,7 +234,7 @@ class RedisBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	/**
 	 * Setter for database number
 	 *
-	 * @param integer Database
+	 * @param integer $database Database
 	 * @return void
 	 * @throws \InvalidArgumentException if database number is not valid
 	 * @author Christian Kuhn <lolli@schwarzbu.ch>
@@ -254,7 +254,7 @@ class RedisBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	/**
 	 * Setter for authentication password
 	 *
-	 * @param string Password
+	 * @param string $password Password
 	 * @return void
 	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 * @api
@@ -266,7 +266,7 @@ class RedisBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	/**
 	 * Enable data compression
 	 *
-	 * @param boolean TRUE to enable compression
+	 * @param boolean $compression TRUE to enable compression
 	 * @return void
 	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 * @api
@@ -284,7 +284,7 @@ class RedisBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * If compression is enabled and this is not set,
 	 * gzcompress default level will be used
 	 *
-	 * @param integer -1 to 9: Compression level
+	 * @param integer $compressionLevel -1 to 9: Compression level
 	 */
 	public function setCompressionLevel($compressionLevel) {
 		if (!is_integer($compressionLevel)) {
@@ -304,10 +304,10 @@ class RedisBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * Scales O(1) with number of cache entries
 	 * Scales O(n) with number of tags
 	 *
-	 * @param string Identifier for this specific cache entry
-	 * @param string Data to be stored
-	 * @param array Tags to associate with this cache entry
-	 * @param integer Lifetime of this cache entry in seconds. If NULL is specified, default lifetime is used. "0" means unlimited lifetime.
+	 * @param string $entryIdentifier Identifier for this specific cache entry
+	 * @param string $data Data to be stored
+	 * @param array $tags Tags to associate with this cache entry
+	 * @param integer $lifetime Lifetime of this cache entry in seconds. If NULL is specified, default lifetime is used. "0" means unlimited lifetime.
 	 * @return void
 	 * @throws \InvalidArgumentException if identifier is not valid
 	 * @throws \F3\FLOW3\Cache\Exception\InvalidDataException if data is not a string
@@ -374,7 +374,7 @@ class RedisBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 *
 	 * Scales O(1) with number of cache entries
 	 *
-	 * @param string An identifier which describes the cache entry to load
+	 * @param string $entryIdentifier An identifier which describes the cache entry to load
 	 * @return mixed The cache entry's content as a string or FALSE if the cache entry could not be loaded
 	 * @throws \InvalidArgumentException if identifier is not a string
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
@@ -403,7 +403,7 @@ class RedisBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 *
 	 * Scales O(1) with number of cache entries
 	 *
-	 * @param string Identifier specifying the cache entry
+	 * @param string $entryIdentifier Identifier specifying the cache entry
 	 * @return boolean TRUE if such an entry exists, FALSE if not
 	 * @throws \InvalidArgumentException if identifier is not a string
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
@@ -423,7 +423,7 @@ class RedisBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * Scales O(1) with number of cache entries
 	 * Scales O(n) with number of tags
 	 *
-	 * @param string Specifies the cache entry to remove
+	 * @param string $entryIdentifier Specifies the cache entry to remove
 	 * @return boolean TRUE if (at least) an entry could be removed or FALSE if no entry was found
 	 * @throws \InvalidArgumentException if identifier is not a string
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
@@ -462,7 +462,7 @@ class RedisBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * Scales O(1) with number of cache entries
 	 * Scales O(n) with number of tag entries
 	 *
-	 * @param string The tag to search for
+	 * @param string $tag The tag to search for
 	 * @return array An array of entries with all matching entries. An empty array if no entries matched
 	 * @throws \InvalidArgumentException if tag is not a string
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
@@ -504,7 +504,7 @@ class RedisBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * Scales O(1) with number of cache entries
 	 * Scales O(n^2) with number of tag entries
 	 *
-	 * @param string Tag the entries must have
+	 * @param string $tag Tag the entries must have
 	 * @return void
 	 * @throws \InvalidArgumentException if identifier is not a string
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
@@ -564,8 +564,8 @@ class RedisBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * Scales O(1) with number of cache entries
 	 * Scales O(n^2) with number of tags
 	 *
-	 * @param array List of identifiers to remove
-	 * @param array List of tags to be handled
+	 * @param array $identifiers List of identifiers to remove
+	 * @param array $tags List of tags to be handled
 	 * @return void
 	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
