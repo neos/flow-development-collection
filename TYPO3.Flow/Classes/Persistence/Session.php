@@ -252,7 +252,11 @@ class Session {
 		if ($this->isReconstitutedEntity($object) === FALSE) {
 			return NULL;
 		}
-		return $this->reconstitutedEntitiesData[$this->getIdentifierByObject($object)]['properties'][$propertyName];
+		$identifier = $this->getIdentifierByObject($object);
+		if (!isset($this->reconstitutedEntitiesData[$identifier]['properties'][$propertyName])) {
+			return NULL;
+		}
+		return $this->reconstitutedEntitiesData[$identifier]['properties'][$propertyName];
 	}
 
 	/**
