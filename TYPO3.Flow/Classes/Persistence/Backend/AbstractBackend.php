@@ -230,6 +230,7 @@ abstract class AbstractBackend implements \F3\FLOW3\Persistence\Backend\BackendI
 	 * @param \F3\FLOW3\AOP\ProxyInterface $object
 	 * @return string The identifier for the object
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	protected function getIdentifierByObject(\F3\FLOW3\AOP\ProxyInterface $object) {
 		if ($this->persistenceSession->hasObject($object)) {
@@ -296,6 +297,7 @@ abstract class AbstractBackend implements \F3\FLOW3\Persistence\Backend\BackendI
 	 * @param object $object The object to persist
 	 * @param string $parentIdentifier
 	 * @return string
+	 * @api
 	 */
 	protected function persistObject($object, $parentIdentifier) {
 		if (isset($this->visitedDuringPersistence[$object])) {
@@ -370,6 +372,7 @@ abstract class AbstractBackend implements \F3\FLOW3\Persistence\Backend\BackendI
 	 * @param object $object
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	protected function validateObject($object) {
 		$classSchema = $this->classSchemata[$object->FLOW3_AOP_Proxy_getProxyTargetClassName()];
@@ -450,14 +453,16 @@ abstract class AbstractBackend implements \F3\FLOW3\Persistence\Backend\BackendI
 	}
 
 	/**
+	 * Convert a value to the internal object data format
 	 *
-	 * @param string $identifier
-	 * @param object $object
-	 * @param string $propertyName
-	 * @param array $propertyMetaData
-	 * @param array $propertyData
+	 * @param string $identifier The object's identifier
+	 * @param object $object The object with the property to flatten
+	 * @param string $propertyName The name of the property
+	 * @param array $propertyMetaData The property metadata
+	 * @param array $propertyData Reference to the property data array
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	protected function flattenValue($identifier, \F3\FLOW3\AOP\ProxyInterface $object, $propertyName, array $propertyMetaData, array &$propertyData) {
 		$propertyValue = $object->FLOW3_AOP_Proxy_getProperty($propertyName);
@@ -515,12 +520,15 @@ abstract class AbstractBackend implements \F3\FLOW3\Persistence\Backend\BackendI
 	}
 
 	/**
+	 * Check the property value for allowed types and throw exceptions for
+	 * unsupported types.
 	 *
-	 * @param object $object
-	 * @param string $propertyName
-	 * @param array $propertyMetaData
+	 * @param object $object The object with the property to check
+	 * @param string $propertyName The name of the property to check
+	 * @param array $propertyMetaData Property metadata
 	 * @return void
 	 * @throws \F3\FLOW3\Persistence\Exception
+	 * @api
 	 */
 	protected function checkPropertyValue($object, $propertyName, array $propertyMetaData) {
 		$propertyValue = $object->FLOW3_AOP_Proxy_getProperty($propertyName);
