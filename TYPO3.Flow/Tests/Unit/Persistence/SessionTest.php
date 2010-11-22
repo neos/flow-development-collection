@@ -481,5 +481,70 @@ class SessionTest extends \F3\Testing\BaseTestCase {
 		$session = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Session'), array('dummy'));
 		$this->assertEquals($session->_call('isSingleValuedPropertyDirty', $type, $clean, $current), $expected);
 	}
+
+	/**
+	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function getCleanStateOfPropertyReturnsNullIfPropertyWasNotInObjectData() {
+		$entity = new \stdClass();
+
+		$reconstitutedEntitiesData = array(
+			'abc' => array(
+				'properties' => array(
+					'foo' => array('type' => 'string')
+				)
+			)
+		);
+
+		$session = $this->getAccessibleMock('F3\FLOW3\Persistence\Session', array('isReconstitutedEntity', 'getIdentifierByObject'));
+		$session->_set('reconstitutedEntitiesData', $reconstitutedEntitiesData);
+
+		$session->expects($this->any())->method('isReconstitutedEntity')->with($entity)->will($this->returnValue(TRUE));
+		$session->expects($this->any())->method('getIdentifierByObject')->with($entity)->will($this->returnValue('abc'));
+
+		$state = $session->getCleanStateOfProperty($entity, 'bar');
+		$this->assertNull($state);
+	}
+
+	/**
+	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function getCleanStateOfPropertyReturnsNullIfObjectWasNotReconstituted() {
+		$entity = new \stdClass();
+
+		$session = $this->getAccessibleMock('F3\FLOW3\Persistence\Session', array('isReconstitutedEntity'));
+
+		$session->expects($this->any())->method('isReconstitutedEntity')->with($entity)->will($this->returnValue(FALSE));
+
+		$state = $session->getCleanStateOfProperty($entity, 'bar');
+		$this->assertNull($state);
+	}
+
+	/**
+	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function getCleanStateOfPropertyReturnsPropertyData() {
+		$entity = new \stdClass();
+
+		$reconstitutedEntitiesData = array(
+			'abc' => array(
+				'properties' => array(
+					'foo' => array('type' => 'string')
+				)
+			)
+		);
+
+		$session = $this->getAccessibleMock('F3\FLOW3\Persistence\Session', array('isReconstitutedEntity', 'getIdentifierByObject'));
+		$session->_set('reconstitutedEntitiesData', $reconstitutedEntitiesData);
+
+		$session->expects($this->any())->method('isReconstitutedEntity')->with($entity)->will($this->returnValue(TRUE));
+		$session->expects($this->any())->method('getIdentifierByObject')->with($entity)->will($this->returnValue('abc'));
+
+		$state = $session->getCleanStateOfProperty($entity, 'foo');
+		$this->assertEquals(array('type' => 'string'), $state);
+	}
 }
 ?>
