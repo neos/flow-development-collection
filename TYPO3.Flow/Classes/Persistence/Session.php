@@ -136,6 +136,7 @@ class Session {
 	 * @param string $propertyName
 	 * @return boolean
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function isDirty($object, $propertyName) {
 		if ($this->isReconstitutedEntity($object) === FALSE) {
@@ -265,6 +266,7 @@ class Session {
 	 * @param object $object
 	 * @return boolean
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function hasObject($object) {
 		return $this->objectMap->contains($object);
@@ -287,6 +289,7 @@ class Session {
 	 * @param string $identifier
 	 * @return object
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getObjectByIdentifier($identifier) {
 		return $this->identifierMap[$identifier];
@@ -298,6 +301,7 @@ class Session {
 	 * @param object $object
 	 * @return string
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getIdentifierByObject($object) {
 		return $this->objectMap[$object];
@@ -309,6 +313,7 @@ class Session {
 	 * @param object $object
 	 * @param string $identifier
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function registerObject($object, $identifier) {
 		$this->objectMap[$object] = $identifier;
