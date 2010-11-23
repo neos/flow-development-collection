@@ -231,7 +231,6 @@ class PackageManager implements \F3\FLOW3\Package\PackageManagerInterface {
 		if ($packagesPath === '') {
 			$packagesPath = \F3\FLOW3\Utility\Files::getUnixStylePath(\F3\FLOW3\Utility\Files::concatenatePaths(array(FLOW3_PATH_PACKAGES, 'Application')));
 		}
-		if (!is_dir($packagesPath)) throw new \F3\FLOW3\Package\Exception\InvalidPackagePathException('The path "Packages/Application" does not exist.', 1243932738);
 
 		$packagePath = \F3\FLOW3\Utility\Files::concatenatePaths(array($packagesPath, $packageKey)) . '/';
 		\F3\FLOW3\Utility\Files::createDirectoryRecursively($packagePath);
