@@ -99,10 +99,10 @@ class PointcutMethodNameFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterI
 		$methodNameMatches = ($matchResult === 1);
 		switch ($this->methodVisibility) {
 			case 'public' :
-				$visibilityMatches = $this->reflectionService->isMethodPublic($methodDeclaringClassName, $methodName);
+				$visibilityMatches = $methodDeclaringClassName !== NULL && $this->reflectionService->isMethodPublic($methodDeclaringClassName, $methodName);
 			break;
 			case 'protected' :
-				$visibilityMatches = $this->reflectionService->isMethodProtected($methodDeclaringClassName, $methodName);
+				$visibilityMatches = $methodDeclaringClassName !== NULL && $this->reflectionService->isMethodProtected($methodDeclaringClassName, $methodName);
 			break;
 			default:
 				$visibilityMatches = TRUE;
