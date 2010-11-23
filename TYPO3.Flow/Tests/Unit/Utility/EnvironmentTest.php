@@ -455,5 +455,24 @@ class EnvironmentTest extends \F3\Testing\BaseTestCase {
 
 		$this->assertSame($untangledFiles, $result);
 	}
+
+	/**
+	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function getRequestHeadersConvertsHTTPServerVariables() {
+		$environment = $this->getAccessibleMock('F3\FLOW3\Utility\Environment', array('dummy'), array(), '', FALSE);
+		$serverGlobal = array(
+			'HTTP_ACCEPT_ENCODING' => 'gzip,deflate',
+			'HTTP_CUSTOM_HEADER' => 'abcdefg'
+		);
+		$environment->_set('SERVER', $serverGlobal);
+
+		$headers = $environment->getRequestHeaders();
+		$this->assertEquals(array(
+			'Accept-Encoding' => 'gzip,deflate',
+			'Custom-Header' => 'abcdefg'
+		), $headers);
+	}
 }
 ?>

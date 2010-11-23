@@ -180,6 +180,30 @@ class Environment {
 	}
 
 	/**
+	 * Returns all HTTP headers set for this request by converting them from
+	 * HTTP_* environment variables. E.g. "HTTP_ACCEPT" will be available under
+	 * "Accept" and "HTTP_CUSTOM_HEADER" as "Custom-Header".
+	 *
+	 * Note that this doesn't give you the raw headers in any case. For example
+	 * "HTTP_SOAPACTION" will be available as "Soapaction" and not under the
+	 * original mixed-case name "SOAPAction".
+	 *
+	 * @return array
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @api
+	 */
+	public function getRequestHeaders() {
+		$headers = array();
+		foreach($this->SERVER as $key => $value) {
+			if (strpos($key, 'HTTP_') === 0) {
+				$key = str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($key, 5)))));
+				$headers[$key] = $value;
+			}
+		}
+		return $headers;
+	}
+
+	/**
 	 * Returns a sorted list (most important first) of accepted formats (ie. file extensions) as
 	 * defined in the browser's Accept header.
 	 *
