@@ -53,17 +53,22 @@ class JsonView extends \F3\FLOW3\MVC\View\AbstractView {
 	 *
 	 * array(
 	 *		'variable1' => array(
-	 *			'only' => array('property1', 'property2', ...)
+	 *			'_only' => array('property1', 'property2', ...)
 	 *		),
 	 *		'variable2' => array(
-	 *	 		'exclude' => array('property3', 'property4, ...)
+	 *	 		'_exclude' => array('property3', 'property4, ...)
 	 *		),
 	 *		'variable3' => array(
-	 *			'exclude' => array('secretTitle'),
-	 *			'descend' => array(
+	 *			'_exclude' => array('secretTitle'),
+	 *			'_descend' => array(
 	 *				'customer' => array(
-	 *					'only' => array('firstName', 'lastName')
+	 *					'_only' => array('firstName', 'lastName')
 	 *				)
+	 *			)
+	 *		),
+	 *		'somearrayvalue' => array(
+	 *			'_descendAll' => array(
+	 *				'_only' => array('property1')
 	 *			)
 	 *		)
 	 * )
@@ -74,13 +79,17 @@ class JsonView extends \F3\FLOW3\MVC\View\AbstractView {
 	 * Of variable3 all properties except secretTitle are included.
 	 *
 	 * If a property value is an array or object, it is not included
-	 * by default. If, however, such a property is listed in a "descend"
+	 * by default. If, however, such a property is listed in a "_descend"
 	 * section, the renderer will descend into this sub structure and
 	 * include all its properties (of the next level).
 	 *
-	 * The configuration of each property in "descend" has the same syntax
+	 * The configuration of each property in "_descend" has the same syntax
 	 * like at the top level. Therefore - theoretically - infinitely nested
 	 * structures can be configured.
+	 *
+	 * To export indexed arrays the "_descendAll" section can be used to
+	 * include all array keys for the output. The configuration inside a
+	 * "_descendAll" will be applied to each array element.
 	 *
 	 * @var array
 	 */
