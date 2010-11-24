@@ -30,7 +30,7 @@ namespace F3\FLOW3\Tests\Functional\AOP\Fixtures;
 class Aspect01 {
 
 	/**
-	 * @around method(F3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01->sayHello())
+	 * @around method(public F3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01->sayHello())
 	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint
 	 * @return string
 	 */

@@ -98,12 +98,14 @@ class PointcutMethodNameFilterTest extends \F3\Testing\BaseTestCase {
 		$this->assertTrue($methodNameFilter->matches(__CLASS__, 'somePublicMethod', $className, 1));
 		$this->assertFalse($methodNameFilter->matches(__CLASS__, 'someProtectedMethod', $className, 1));
 		$this->assertFalse($methodNameFilter->matches(__CLASS__, 'somePrivateMethod', $className, 1));
+		$this->assertFalse($methodNameFilter->matches(__CLASS__, 'somePublicMethod', NULL, 1));
 
 		$methodNameFilter = new \F3\FLOW3\AOP\Pointcut\PointcutMethodNameFilter('some.*', 'protected');
 		$methodNameFilter->injectReflectionService($mockReflectionService);
 		$this->assertFalse($methodNameFilter->matches(__CLASS__, 'somePublicMethod', $className, 1));
 		$this->assertTrue($methodNameFilter->matches(__CLASS__, 'someProtectedMethod', $className, 1));
 		$this->assertFalse($methodNameFilter->matches(__CLASS__, 'somePrivateMethod', $className, 1));
+		$this->assertFalse($methodNameFilter->matches(__CLASS__, 'someProtectedMethod', NULL, 1));
 	}
 
 	/**
