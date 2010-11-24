@@ -90,14 +90,51 @@ class Logger implements \F3\FLOW3\Log\SystemLoggerInterface, \F3\FLOW3\Log\Secur
 	public function log($message, $severity = LOG_INFO, $additionalData = NULL, $packageKey = NULL, $className = NULL, $methodName = NULL) {
 		if ($packageKey === NULL) {
 			$backtrace = debug_backtrace(FALSE);
-			$className = isset($backtrace[1]['class']) ? $backtrace[1]['class'] : '';
-			$methodName = isset($backtrace[1]['function']) ? $backtrace[1]['function'] : '';
+			$className = isset($backtrace[1]['class']) ? $backtrace[1]['class'] : NULL;
+			$methodName = isset($backtrace[1]['function']) ? $backtrace[1]['function'] : NULL;
 			$explodedClassName = explode('\\', $className);
 			$packageKey = isset($explodedClassName[1]) ? $explodedClassName[1] : '';
 		}
 		foreach ($this->backends as $backend) {
 			$backend->append($message, $severity, $additionalData, $packageKey, $className, $methodName);
 		}
+	}
+
+	/**
+	 * Writes information about the given exception into the log.
+	 *
+	 * @param \Exception $exception The exception to log
+	 * @param array $additionalData Additional data to log
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
+	 */
+	public function logException(\Exception $exception, array $additionalData = array()) {
+		$backTrace = $exception->getTrace();
+		$className = isset($backTrace[0]['class']) ? $backTrace[0]['class'] : '?';
+		$methodName = isset($backTrace[0]['function']) ? $backTrace[0]['function'] : '?';
+		$message = $this->getExceptionLogMessage($exception);
+
+		if ($exception->getPrevious() !== NULL) {
+			$additionalData['previousException'] = $this->getExceptionLogMessage($exception->getPrevious());
+		}
+
+		$explodedClassName = explode('\\', $className);
+		$packageKey = (isset($explodedClassName[1])) ? $explodedClassName[1] : NULL;
+
+		$this->log($message, LOG_CRIT, $additionalData, $packageKey, $className, $methodName);
+	}
+
+	/**
+	 * @param \Exception $exception
+	 * @return string
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function getExceptionLogMessage(\Exception $exception) {
+		$exceptionCodeNumber = ($exception->getCode() > 0) ? ' #' . $exception->getCode() : '';
+		$backTrace = $exception->getTrace();
+		$line = isset($backTrace[0]['line']) ? ' in line ' . $backTrace[0]['line'] . ' of ' . $backTrace[0]['file'] : '';
+		return 'Uncaught exception' . $exceptionCodeNumber . $line . ': ' . $exception->getMessage() ;
 	}
 
 	/**
