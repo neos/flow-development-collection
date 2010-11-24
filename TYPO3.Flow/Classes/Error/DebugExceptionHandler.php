@@ -52,7 +52,7 @@ class DebugExceptionHandler extends \F3\FLOW3\Error\AbstractExceptionHandler {
 
 		switch (PHP_SAPI) {
 			case 'cli' :
-				$this->echoExceptionCLI($exception);
+				$this->echoExceptionCli($exception);
 				break;
 			default :
 				$this->echoExceptionWeb($exception);
@@ -132,7 +132,7 @@ class DebugExceptionHandler extends \F3\FLOW3\Error\AbstractExceptionHandler {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function echoExceptionCLI(\Exception $exception) {
+	protected function echoExceptionCli(\Exception $exception) {
 		$pathPosition = strpos($exception->getFile(), 'Packages/');
 		$filePathAndName = ($pathPosition !== FALSE) ? substr($exception->getFile(), $pathPosition) : $exception->getFile();
 
@@ -141,6 +141,8 @@ class DebugExceptionHandler extends \F3\FLOW3\Error\AbstractExceptionHandler {
 		echo PHP_EOL . 'Uncaught Exception in FLOW3 ' . $exceptionCodeNumber . $exception->getMessage() . PHP_EOL;
 		echo 'thrown in file ' . $filePathAndName . PHP_EOL;
 		echo 'in line ' . $exception->getLine() . PHP_EOL . PHP_EOL;
+
+		exit(1);
 	}
 
 	/**
