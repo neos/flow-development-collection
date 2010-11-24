@@ -81,7 +81,7 @@ class FileBackendTest extends \F3\Testing\BaseTestCase {
 
 		$backend->append('foo');
 
-		$this->assertSame(52 + strlen(PHP_EOL), \vfsStreamWrapper::getRoot()->getChild('test.log')->size());
+		$this->assertSame(63 + strlen(PHP_EOL), \vfsStreamWrapper::getRoot()->getChild('test.log')->size());
 	}
 
 	/**
@@ -96,7 +96,7 @@ class FileBackendTest extends \F3\Testing\BaseTestCase {
 
 		$backend->append('foo');
 
-		$this->assertSame(67 + strlen(PHP_EOL), \vfsStreamWrapper::getRoot()->getChild('test.log')->size());
+		$this->assertSame(78 + strlen(PHP_EOL), \vfsStreamWrapper::getRoot()->getChild('test.log')->size());
 	}
 
 	/**
