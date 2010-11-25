@@ -149,12 +149,12 @@ class RedisBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * Construct this backend
 	 *
 	 * @param string $context FLOW3's application context
-	 * @param array Configuration options
+	 * @param array $options Configuration options
 	 * @throws \F3\FLOW3\Cache\Exception if php redis module is not loaded
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 */
-	public function __construct($context, $options = array()) {
+	public function __construct($context, array $options = array()) {
 		if (!extension_loaded('redis')) {
 			throw new \F3\FLOW3\Cache\Exception('The PHP extension "redis" must be installed and loaded in order to use the phpredis redis backend.', 1279462933);
 		}

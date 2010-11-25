@@ -456,7 +456,7 @@ abstract class AbstractBackend implements \F3\FLOW3\Persistence\Backend\BackendI
 	 * Convert a value to the internal object data format
 	 *
 	 * @param string $identifier The object's identifier
-	 * @param object $object The object with the property to flatten
+	 * @param \F3\FLOW3\AOP\ProxyInterface $object The object with the property to flatten
 	 * @param string $propertyName The name of the property
 	 * @param array $propertyMetaData The property metadata
 	 * @param array $propertyData Reference to the property data array

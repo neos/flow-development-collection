@@ -75,11 +75,11 @@ class ApcBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * Constructs this backend
 	 *
 	 * @param string $context FLOW3's application context
-	 * @param mixed $options Configuration options - unused here
+	 * @param array $options Configuration options - unused here
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct($context, $options = array()) {
+	public function __construct($context, array $options = array()) {
 		if (!extension_loaded('apc')) throw new \F3\FLOW3\Cache\Exception('The PHP extension "apc" must be installed and loaded in order to use the APC backend.', 1232985414);
 		parent::__construct($context, $options);
 	}

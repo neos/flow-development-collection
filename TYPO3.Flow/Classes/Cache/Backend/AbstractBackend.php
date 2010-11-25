@@ -65,11 +65,11 @@ abstract class AbstractBackend implements \F3\FLOW3\Cache\Backend\BackendInterfa
 	 * Constructs this backend
 	 *
 	 * @param string $context FLOW3's application context
-	 * @param mixed $options Configuration options - depends on the actual backend
+	 * @param array $options Configuration options - depends on the actual backend
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
-	public function __construct($context, $options = array()) {
+	public function __construct($context, array $options = array()) {
 		$this->context = $context;
 		if (is_array($options) || $options instanceof ArrayAccess) {
 			foreach ($options as $optionKey => $optionValue) {
