@@ -328,7 +328,7 @@ class Context {
 			if (!is_array($sessionTokens)) continue;
 
 			foreach ($sessionTokens as $sessionToken) {
-				if ($sessionToken instanceof $managerToken) {
+				if (get_class($sessionToken) === get_class($managerToken)) {
 					$resultTokens[] = $sessionToken;
 					$noCorrespondingSessionTokenFound = FALSE;
 				}
