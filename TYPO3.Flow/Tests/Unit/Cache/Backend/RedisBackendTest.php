@@ -64,7 +64,7 @@ class RedisBackendTest extends \F3\Testing\BaseTestCase {
 		}
 
 		try {
-			if (!fsockopen('127.0.0.1', 6379)) {
+			if (!@fsockopen('127.0.0.1', 6379)) {
 				$this->markTestSkipped('redis server not reachable');
 			}
 		} catch (\Exception $e) {
