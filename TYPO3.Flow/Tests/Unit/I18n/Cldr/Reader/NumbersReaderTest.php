@@ -63,7 +63,7 @@ class NumbersReaderTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @return void
-	 * @author Karol Gusak <firstname@lastname.eu>
+	 * @author Karol Gusak <karol@gusak.eu>
 	 */
 	public function setUp() {
 		$this->sampleLocale = new \F3\FLOW3\I18n\Locale('en');
@@ -71,14 +71,14 @@ class NumbersReaderTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @author Karol Gusak <firstname@lastname.eu>
+	 * @author Karol Gusak <karol@gusak.eu>
 	 */
 	public function formatIsCorrectlyReadFromCldr() {
-		$mockModel = $this->getMock('F3\FLOW3\I18n\Cldr\CldrModelCollection', array(), array(array()));
+		$mockModel = $this->getMock('F3\FLOW3\I18n\Cldr\CldrModel', array(), array(array()));
 		$mockModel->expects($this->once())->method('getElement')->with('numbers/decimalFormats/decimalFormatLength/decimalFormat/pattern')->will($this->returnValue('mockFormatString'));
 
 		$mockRepository = $this->getMock('F3\FLOW3\I18n\Cldr\CldrRepository');
-		$mockRepository->expects($this->once())->method('getModelCollection')->with('main', $this->sampleLocale)->will($this->returnValue($mockModel));
+		$mockRepository->expects($this->once())->method('getModelForLocale')->with($this->sampleLocale)->will($this->returnValue($mockModel));
 
 		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
 		$mockCache->expects($this->at(0))->method('has')->with('parsedFormats')->will($this->returnValue(TRUE));
@@ -107,7 +107,7 @@ class NumbersReaderTest extends \F3\Testing\BaseTestCase {
 	 * Data provider with valid format strings and expected results.
 	 *
 	 * @return array
-	 * @author Karol Gusak <firstname@lastname.eu>
+	 * @author Karol Gusak <karol@gusak.eu>
 	 */
 	public function formatStringsAndParsedFormats() {
 		return array(
@@ -121,7 +121,7 @@ class NumbersReaderTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @test
 	 * @dataProvider formatStringsAndParsedFormats
-	 * @author Karol Gusak <firstname@lastname.eu>
+	 * @author Karol Gusak <karol@gusak.eu>
 	 */
 	public function formatStringsAreParsedCorrectly($format, array $expectedResult) {
 		$reader = $this->getAccessibleMock('F3\FLOW3\I18n\Cldr\Reader\NumbersReader', array('dummy'));
@@ -135,7 +135,7 @@ class NumbersReaderTest extends \F3\Testing\BaseTestCase {
 	 * NumbersReader.
 	 *
 	 * @return array
-	 * @author Karol Gusak <firstname@lastname.eu>
+	 * @author Karol Gusak <karol@gusak.eu>
 	 */
 	public function unsupportedFormats() {
 		return array(
@@ -150,7 +150,7 @@ class NumbersReaderTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @dataProvider unsupportedFormats
 	 * @expectedException \F3\FLOW3\I18n\Cldr\Reader\Exception\UnsupportedNumberFormatException
-	 * @author Karol Gusak <firstname@lastname.eu>
+	 * @author Karol Gusak <karol@gusak.eu>
 	 */
 	public function throwsExceptionWhenUnsupportedFormatsEncountered($format) {
 		$reader = $this->getAccessibleMock('F3\FLOW3\I18n\Cldr\Reader\NumbersReader', array('dummy'));

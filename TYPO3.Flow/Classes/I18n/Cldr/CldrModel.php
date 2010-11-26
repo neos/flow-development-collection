@@ -23,14 +23,16 @@ namespace F3\FLOW3\I18n\Cldr;
  *                                                                        */
 
 /**
- * A model representing data from one CLDR file.
+ * A model representing data from one or few CLDR files.
  *
- * This class adds CLDR-specific functionality to more generic abstract XML Model.
+ * When more than one file path is provided to the constructor, data from
+ * all files will be parsed and merged according to the inheritance rules defined
+ * in CLDR specification. Aliases are also resolved correctly.
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
-class CldrModel extends \F3\FLOW3\I18n\Xml\AbstractXmlModel {
+class CldrModel {
 
 	/**
 	 * An absolute path to the directory where CLDR resides. It is changed only
@@ -41,31 +43,93 @@ class CldrModel extends \F3\FLOW3\I18n\Xml\AbstractXmlModel {
 	protected $cldrBasePath = 'resource://FLOW3/Private/Locale/CLDR/Sources/';
 
 	/**
-	 * @param \F3\FLOW3\I18n\Cldr\CldrParser $parser
-	 * @return void
-	 * @author Karol Gusak <firstname@lastname.eu>
+	 * @var \F3\FLOW3\Cache\Frontend\VariableFrontend
 	 */
-	public function injectParser(\F3\FLOW3\I18n\Cldr\CldrParser $parser) {
-		$this->xmlParser = $parser;
+	protected $cache;
+
+	/**
+	 * Key used to store / retrieve cached data
+	 *
+	 * @var string
+	 */
+	protected $cacheKey;
+
+	/**
+	 * @var \F3\FLOW3\I18n\Cldr\CldrParser
+	 */
+	protected $cldrParser;
+
+	/**
+	 * Absolute path or path to the files represented by this class' instance.
+	 *
+	 * @var array<string>
+	 */
+	protected $sourcePaths;
+
+	/**
+	 * @var array
+	 */
+	protected $parsedData;
+
+	/**
+	 * Contructs the model
+	 *
+	 * Accepts array of absolute paths to CLDR files. This array can have one
+	 * element (if model represents one CLDR file) or many elements (if group
+	 * of CLDR files is going to be represented by this model).
+	 *
+	 * @param array<string> $sourcePaths
+	 * @author Karol Gusak <karol@gusak.eu>
+	 */
+	public function __construct(array $sourcePaths) {
+		$this->sourcePaths = $sourcePaths;
+
+		$this->cacheKey = md5(implode(';', $sourcePaths));
 	}
 
 	/**
-	 * Initializes object and loads the CLDR file
+	 * Injects the FLOW3_I18n_Cldr_CldrModelCache cache
+	 *
+	 * @param \F3\FLOW3\Cache\Frontend\VariableFrontend $cache
+	 * @return void
+	 * @author Karol Gusak <karol@gusak.eu>
+	 */
+	public function injectCache(\F3\FLOW3\Cache\Frontend\VariableFrontend $cache) {
+		$this->cache = $cache;
+	}
+
+	/**
+	 * @param \F3\FLOW3\I18n\Cldr\CldrParser $parser
+	 * @return void
+	 * @author Karol Gusak <karol@gusak.eu>
+	 */
+	public function injectParser(\F3\FLOW3\I18n\Cldr\CldrParser $parser) {
+		$this->cldrParser = $parser;
+	}
+
+	/**
+	 * When it's called, CLDR file is parsed or cache is loaded, if available.
 	 *
 	 * @return void
-	 * @author Karol Gusak <firstname@lastname.eu>
+	 * @author Karol Gusak <karol@gusak.eu>
 	 */
 	public function initializeObject() {
-		if (!file_exists($this->xmlSourcePath)) {
-			$this->xmlSourcePath = \F3\FLOW3\Utility\Files::concatenatePaths(array($this->cldrBasePath, $this->xmlSourcePath . '.xml'));
+		if ($this->cache->has($this->cacheKey)) {
+			$this->parsedData = $this->cache->get($this->cacheKey);
+		} else {
+			$this->parsedData = $this->parseFiles($this->sourcePaths);
+			$this->parsedData = $this->resolveAliases($this->parsedData, '');
 		}
+	}
 
-		parent::initializeObject();
-
-		if (!$this->cache->has(md5($this->xmlSourcePath))) {
-				// Data was not loaded from cache (by parent), but was just parsed, so there wasn't alias resolving done before
-			$this->xmlParsedData = $this->resolveAliases($this->xmlParsedData, '');
-		}
+	/**
+	 * Shutdowns the model. Parsed data is saved to the cache if needed.
+	 *
+	 * @return void
+	 * @author Karol Gusak <karol@gusak.eu>
+	 */
+	public function shutdownObject() {
+		$this->cache->set($this->cacheKey, $this->parsedData);
 	}
 
 	/**
@@ -73,10 +137,11 @@ class CldrModel extends \F3\FLOW3\I18n\Xml\AbstractXmlModel {
 	 * or a string value if the path points to a leaf.
 	 *
 	 * Syntax for paths is very simple. It's a group of array indices joined
-	 * with a slash. Examples:
+	 * with a slash. It tries to emulate XPath query syntax to some extent.
+	 * Examples:
 	 *
 	 * plurals/pluralRules
-	 * dates/calendars/calendar/type="gregorian"/
+	 * dates/calendars/calendar[@type="gregorian"]
 	 *
 	 * Please see the documentation for CldrParser for details about parsed data
 	 * structure.
@@ -87,8 +152,12 @@ class CldrModel extends \F3\FLOW3\I18n\Xml\AbstractXmlModel {
 	 * @see \F3\FLOW3\I18n\Cldr\CldrParser
 	 */
 	public function getRawData($path) {
+		if ($path === '/') {
+			return $this->parsedData;
+		}
+
 		$pathElements = explode('/', trim($path, '/'));
-		$data = $this->xmlParsedData;
+		$data = $this->parsedData;
 
 		foreach ($pathElements as $key) {
 			if (isset($data[$key])) {
@@ -126,27 +195,151 @@ class CldrModel extends \F3\FLOW3\I18n\Xml\AbstractXmlModel {
 	/**
 	 * Returns string value from a path given.
 	 *
-	 * Path must point to leaf, or to node which has only one element (which is
-	 * leaf), or to node which has element without attributes (which is leaf).
-	 *
-	 * Syntax for paths is same as for getRawArray.
+	 * Path must point to leaf. Syntax for paths is same as for getRawData.
 	 *
 	 * @param string $path A path to the element to get
 	 * @return mixed String with desired element, or FALSE on failure
-	 * @author Karol Gusak <firstname@lastname.eu>
+	 * @author Karol Gusak <karol@gusak.eu>
 	 */
 	public function getElement($path) {
 		$data = $this->getRawData($path);
 
 		if (is_array($data)) {
-			if (isset($data[\F3\FLOW3\I18n\Cldr\CldrParser::NODE_WITHOUT_ATTRIBUTES])) {
-				return $data[\F3\FLOW3\I18n\Cldr\CldrParser::NODE_WITHOUT_ATTRIBUTES];
-			} else {
-				return FALSE;
-			}
+			return FALSE;
 		} else {
 			return $data;
 		}
+	}
+
+	/**
+	 * Returns all nodes with given name found within given path
+	 *
+	 * @param string $path A path to search in
+	 * @param string $nodeName A name of the nodes to return
+	 * @return mixed String with desired element, or FALSE on failure
+	 * @author Karol Gusak <karol@gusak.eu>
+	 */
+	public function findNodesWithinPath($path, $nodeName) {
+		$data = $this->getRawArray($path);
+
+		if ($data === FALSE) {
+			return FALSE;
+		}
+
+		$filteredData = array();
+		foreach ($data as $nodeString => $children) {
+			if ($this->getNodeName($nodeString) === $nodeName) {
+				$filteredData[$nodeString] = $children;
+			}
+		}
+
+		return $filteredData;
+	}
+
+	/**
+	 * Returns node name extracted from node string
+	 *
+	 * The internal representation of CLDR uses array keys like:
+	 * 'calendar[@type="gregorian"]'
+	 * This method helps to extract the node name from such keys.
+	 *
+	 * @param string $nodeString String with node name and optional attribute(s)
+	 * @return string Name of the node
+	 * @author Karol Gusak <karol@gusak.eu>
+	 */
+	static public function getNodeName($nodeString) {
+		$positionOfFirstAttribute = strpos($nodeString, '[@');
+
+		if ($positionOfFirstAttribute === FALSE) {
+			return $nodeString;
+		}
+
+		return substr($nodeString, 0, $positionOfFirstAttribute);
+	}
+
+	/**
+	 * Parses the node string and returns a value of attribute for name provided.
+	 *
+	 * An internal representation of CLDR data used by this class is a simple
+	 * multi dimensional array where keys are nodes' names. If node has attributes,
+	 * they are all stored as one string (e.g. 'calendar[@type="gregorian"]' or
+	 * 'calendar[@type="gregorian"][@alt="proposed-x1001"').
+	 *
+	 * This convenient method extracts a value of desired attribute by its name
+	 * (in example above, in order to get the value 'gregorian', 'type' should
+	 * be passed as the second parameter to this method).
+	 *
+	 * Note: this method does not validate the input!
+	 *
+	 * @param string $nodeString A node key to parse
+	 * @param string $attributeName Name of the attribute to find
+	 * @return mixed Value of desired attribute, or FALSE if there is no such attribute
+	 * @author Karol Gusak <karol@gusak.eu>
+	 */
+	static public function getAttributeValue($nodeString, $attributeName) {
+		$attributeName = '[@' . $attributeName . '="';
+		$positionOfAttributeName = strpos($nodeString, $attributeName);
+
+		if ($positionOfAttributeName === FALSE) {
+			return FALSE;
+		}
+
+		$positionOfAttributeValue = $positionOfAttributeName + strlen($attributeName);
+		return substr($nodeString, $positionOfAttributeValue, strpos($nodeString, '"]', $positionOfAttributeValue) - $positionOfAttributeValue);
+	}
+
+	/**
+	 * Parses given CLDR files using CldrParser and merges parsed data.
+	 *
+	 * Merging is done with inheritance in mind, as defined in CLDR specification.
+	 *
+	 * @param array<string> $sourcePaths Absolute paths to CLDR files (can be one file)
+	 * @return array Parsed and merged data
+	 * @author Karol Gusak <karol@gusak.eu>
+	 */
+	protected function parseFiles(array $sourcePaths) {
+		$parsedFiles = array();
+
+		foreach ($sourcePaths as $sourcePath) {
+			$parsedFiles[] = $this->cldrParser->getParsedData($sourcePath);
+		}
+
+			// Merge all data starting with most generic file so we get proper inheritance
+		$parsedData = $parsedFiles[0];
+
+		for ($i = 1; $i < count($parsedFiles); ++$i) {
+			$parsedData = $this->mergeTwoParsedFiles($parsedData, $parsedFiles[$i]);
+		}
+
+		return $parsedData;
+	}
+
+	/**
+	 * Merges two sets of data from two separate CLDR files into one array.
+	 *
+	 * Merging is done with inheritance in mind, as defined in CLDR specification.
+	 *
+	 * @param mixed $firstParsedData Part of data from first file (either array or string)
+	 * @param mixed $secondParsedData Part of data from second file (either array or string)
+	 * @return array Data merged from two files
+	 * @author Karol Gusak <karol@gusak.eu>
+	 */
+	protected function mergeTwoParsedFiles($firstParsedData, $secondParsedData) {
+		$mergedData = $firstParsedData;
+
+		if (is_array($secondParsedData)) {
+			foreach ($secondParsedData as $nodeString => $children) {
+				if (isset($firstParsedData[$nodeString])) {
+					$mergedData[$nodeString] = $this->mergeTwoParsedFiles($firstParsedData[$nodeString], $children);
+				} else {
+					$mergedData[$nodeString] = $children;
+				}
+			}
+		} else {
+			$mergedData = $secondParsedData;
+		}
+
+		return $mergedData;
 	}
 
 	/**
@@ -167,40 +360,29 @@ class CldrModel extends \F3\FLOW3\I18n\Xml\AbstractXmlModel {
 			return $data;
 		}
 
-		foreach ($data as $nodeName => $nodeChildren) {
-			if ($nodeName === 'alias') {
-				if(!is_array($nodeChildren)) {
-						// This is an alias tag but it has not any children, something is very wrong
-					throw new \F3\FLOW3\I18n\Cldr\Exception\InvalidCldrDataException('Encountered problem with alias tag. Please check if CLDR data is not corrupted.', 1276421398);
-				}
-
-				$aliasAttributes = array_keys($nodeChildren);
-				$aliasAttributes = $aliasAttributes[0];
-				if (\F3\FLOW3\I18n\Cldr\CldrParser::getValueOfAttributeByName($aliasAttributes, 'source') !== 'locale') {
-						// Value of source attribute can be other than 'locale', but we do not support it, ignore it silently
+		foreach ($data as $nodeString => $nodeChildren) {
+			if (self::getNodeName($nodeString) === 'alias') {
+				if (self::getAttributeValue($nodeString, 'source') !== 'locale') {
+						// Value of source attribute can be 'locale' or particular locale identifier, but we do not support the second mode, ignore it silently
 					break;
 				}
 
-					// Convert XPath to simple path used by this class (note that it can generate errors when CLDR will start to use more sophisticated XPath queries in alias tags)
-				$sourcePath = \F3\FLOW3\I18n\Cldr\CldrParser::getValueOfAttributeByName($aliasAttributes, 'path');
-				$sourcePath = str_replace(array('\'', '[@', ']'), array('"', '/', ''), $sourcePath);
-				$sourcePath = str_replace('../', '', $sourcePath, $countOfJumpsToParentNode);
+				$sourcePath = self::getAttributeValue($nodeString, 'path');
 
+					// Change relative path to absolute one
+				$sourcePath = str_replace('../', '', $sourcePath, $countOfJumpsToParentNode);
+				$sourcePath = str_replace('\'', '"', $sourcePath);
 				$currentPathNodeNames = explode('/', $currentPath);
 				for ($i = 0; $i < $countOfJumpsToParentNode; ++$i) {
-					$indexOfLastNodeInPath = count($currentPathNodeNames) - 1;
-					if (strpos($currentPathNodeNames[$indexOfLastNodeInPath], '"') !== FALSE) {
-							// Attributes are not counted in path traversing, see description of parsed data array format (in CldrParser)
-						--$i;
-					}
-					unset($currentPathNodeNames[$indexOfLastNodeInPath]);
+					unset($currentPathNodeNames[count($currentPathNodeNames) - 1]);
 				}
-
 				$sourcePath = implode('/', $currentPathNodeNames) . '/'. $sourcePath;
-				$data = $this->getRawArray($sourcePath);
+
+				unset($data[$nodeString]);
+				$data = array_merge($this->getRawData($sourcePath), $data);
 				break;
 			} else {
-				$data[$nodeName] = $this->resolveAliases($data[$nodeName], ($currentPath === '') ? $nodeName : ($currentPath . '/' . $nodeName));
+				$data[$nodeString] = $this->resolveAliases($data[$nodeString], ($currentPath === '') ? $nodeString : ($currentPath . '/' . $nodeString));
 			}
 		}
 

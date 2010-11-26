@@ -34,6 +34,7 @@ FLOW3_Core:
   frontend: F3\FLOW3\Cache\Frontend\StringFrontend
 FLOW3_I18n_AvailableLocalesCache: []
 FLOW3_I18n_XmlModelCache: []
+FLOW3_I18n_Cldr_CldrModelCache: []
 FLOW3_I18n_Cldr_Reader_DatesReaderCache: []
 FLOW3_I18n_Cldr_Reader_NumbersReaderCache: []
 FLOW3_I18n_Cldr_Reader_PluralsReaderCache: []

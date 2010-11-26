@@ -36,20 +36,18 @@ class PluralsReaderTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @return void
-	 * @author Karol Gusak <firstname@lastname.eu>
+	 * @author Karol Gusak <karol@gusak.eu>
 	 */
 	public function setUp() {
 		$samplePluralRulesData = array(
-			'locales="ro mo"' => array(
-				'pluralRule' => array(
-					'count="one"' => 'n is 1',
-					'count="few"' => 'n is 0 OR n is not 1 AND n mod 100 in 1..19',
-				)
-			)
+			'pluralRules[@locales="ro mo"]' => array(
+				'pluralRule[@count="one"]' => 'n is 1',
+				'pluralRule[@count="few"]' => 'n is 0 OR n is not 1 AND n mod 100 in 1..19',
+			),
 		);
 
-		$mockModel = $this->getAccessibleMock('F3\FLOW3\I18n\Cldr\CldrModel', array('getRawArray'), array('fake/path'));
-		$mockModel->expects($this->once())->method('getRawArray')->with('plurals/pluralRules')->will($this->returnValue($samplePluralRulesData));
+		$mockModel = $this->getAccessibleMock('F3\FLOW3\I18n\Cldr\CldrModel', array('getRawArray'), array(array('fake/path')));
+		$mockModel->expects($this->once())->method('getRawArray')->with('plurals')->will($this->returnValue($samplePluralRulesData));
 
 		$mockRepository = $this->getMock('F3\FLOW3\I18n\Cldr\CldrRepository');
 		$mockRepository->expects($this->once())->method('getModel')->with('supplemental/plurals')->will($this->returnValue($mockModel));
@@ -67,7 +65,7 @@ class PluralsReaderTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @author Karol Gusak <firstname@lastname.eu>
+	 * @author Karol Gusak <karol@gusak.eu>
 	 */
 	public function returnsCorrectPluralForm() {
 		$locale = new \F3\FLOW3\I18n\Locale('mo');
