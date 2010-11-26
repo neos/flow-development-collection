@@ -38,7 +38,7 @@ class AbstractExceptionHandlerTest extends \F3\Testing\BaseTestCase {
 		$exception = new \Exception('The Message', 12345);
 
 		$mockSystemLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
-		$mockSystemLogger->expects($this->once())->method('log')->with('Uncaught exception #12345. The Message.', LOG_CRIT);
+		$mockSystemLogger->expects($this->once())->method('logException')->with($exception);
 
 		$exceptionHandler = $this->getMockForAbstractClass('F3\FLOW3\Error\AbstractExceptionHandler', array(), '', FALSE);
 		$exceptionHandler->injectSystemLogger($mockSystemLogger);
