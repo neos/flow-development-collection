@@ -404,7 +404,7 @@ class Context {
 	 */
 	protected function updateTokens(array $tokens) {
 		foreach ($tokens as $token) {
-			$token->updateCredentials();
+			$token->updateCredentials($this->request);
 		}
 	}
 

@@ -43,12 +43,13 @@ class UsernamePasswordTest extends \F3\Testing\BaseTestCase {
 
 		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
 		$mockEnvironment->expects($this->once())->method('getRawPostArguments')->will($this->returnValue($postArguments));
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\Request');
 
 		$token = new \F3\FLOW3\Security\Authentication\Token\UsernamePassword();
 		$token->injectObjectManager($mockObjectManager);
 		$token->injectEnvironment($mockEnvironment);
 
-		$token->updateCredentials();
+		$token->updateCredentials($mockRequest);
 
 		$expectedCredentials = array ('username' => 'FLOW3', 'password' => 'verysecurepassword');
 		$this->assertEquals($expectedCredentials, $token->getCredentials(), 'The credentials have not been extracted correctly from the POST arguments');
@@ -99,12 +100,13 @@ class UsernamePasswordTest extends \F3\Testing\BaseTestCase {
 
 		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
 		$mockEnvironment->expects($this->once())->method('getRawPostArguments')->will($this->returnValue($postArguments));
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\Request');
 
 		$token = new \F3\FLOW3\Security\Authentication\Token\UsernamePassword();
 		$token->injectObjectManager($mockObjectManager);
 		$token->injectEnvironment($mockEnvironment);
 
-		$token->updateCredentials();
+		$token->updateCredentials($mockRequest);
 
 		$this->assertSame(\F3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_NEEDED, $token->getAuthenticationStatus());
 	}

@@ -194,10 +194,11 @@ class UsernamePassword implements \F3\FLOW3\Security\Authentication\TokenInterfa
 	 * Updates the username and password credentials from the POST vars, if the POST parameters
 	 * are available. Sets the authentication status to REAUTHENTICATION_NEEDED, if credentials have been sent.
 	 *
+	 * @param \F3\FLOW3\MVC\RequestInterface $request The current request instance
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function updateCredentials() {
+	public function updateCredentials(\F3\FLOW3\MVC\RequestInterface $request) {
 		$postArguments = $this->environment->getRawPostArguments();
 		$username = \F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($postArguments, 'F3.FLOW3.Security.Authentication.Token.UsernamePassword.username');
 		$password = \F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($postArguments, 'F3.FLOW3.Security.Authentication.Token.UsernamePassword.password');
@@ -275,6 +276,16 @@ class UsernamePassword implements \F3\FLOW3\Security\Authentication\TokenInterfa
 	 */
 	public function getAuthenticationStatus() {
 		return $this->authenticationStatus;
+	}
+
+	/**
+	 * Returns a string representation of the token for logging purposes.
+	 *
+	 * @return string The username credential
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function  __toString() {
+		return 'Username: "' . $this->credentials['username'] . '"';
 	}
 }
 
