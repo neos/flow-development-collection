@@ -55,6 +55,16 @@ class Session {
 	protected $identifierMap = array();
 
 	/**
+	 * @var \F3\FLOW3\Reflection\ReflectionService
+	 */
+	protected $reflectionService;
+
+	/**
+	 * @var array
+	 */
+	protected $classSchemata = array();
+
+	/**
 	 * Constructs a new Session
 	 *
 	 * @author Karsten Dambekalns <karsten@typo3.org>
@@ -62,6 +72,18 @@ class Session {
 	public function __construct() {
 		$this->reconstitutedEntities = new \SplObjectStorage();
 		$this->objectMap = new \SplObjectStorage();
+	}
+
+	/**
+	 * Injects a Reflection Service instance
+	 *
+	 * @param \F3\FLOW3\Reflection\ReflectionService $reflectionService
+	 * @return void
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function injectReflectionService(\F3\FLOW3\Reflection\ReflectionService $reflectionService) {
+		$this->reflectionService = $reflectionService;
+		$this->classSchemata = $this->reflectionService->getClassSchemata();
 	}
 
 	/**
@@ -180,10 +202,9 @@ class Session {
 				sort($cleanIdentifiers);
 				$currentIdentifiers = array();
 				foreach ($currentValue as $currentObject) {
-					if (property_exists($currentObject, 'FLOW3_Persistence_Entity_UUID')) {
-						$currentIdentifiers[] = $currentObject->FLOW3_Persistence_Entity_UUID;
-					} elseif (property_exists($currentObject, 'FLOW3_Persistence_ValueObject_Hash')) {
-						$currentIdentifiers[] = $currentObject->FLOW3_Persistence_ValueObject_Hash;
+					$currentIdentifier = $this->getIdentifierByObject($currentObject);
+					if ($currentIdentifier !== NULL) {
+						$currentIdentifiers[] = $currentIdentifier;
 					}
 				}
 				sort($currentIdentifiers);
@@ -233,8 +254,7 @@ class Session {
 				if ($currentValue instanceof \DateTime && $currentValue->getTimestamp() === (int) $previousValue) return FALSE;
 			break;
 			default:
-				if (is_object($currentValue) && property_exists($currentValue, 'FLOW3_Persistence_Entity_UUID') && $currentValue->FLOW3_Persistence_Entity_UUID === $previousValue['identifier']) return FALSE;
-				if (is_object($currentValue) && property_exists($currentValue, 'FLOW3_Persistence_ValueObject_Hash') && $currentValue->FLOW3_Persistence_ValueObject_Hash === $previousValue['identifier']) return FALSE;
+				if (is_object($currentValue) && $this->getIdentifierByObject($currentValue) === $previousValue['identifier']) return FALSE;
 			break;
 		}
 		return TRUE;
@@ -296,7 +316,10 @@ class Session {
 	}
 
 	/**
-	 * Returns the identifier for the given object
+	 * Returns the identifier for the given object either from
+	 * the session, if the object was registered, or from the object
+	 * itself using a special uuid property or the internal
+	 * properties set by AOP.
 	 *
 	 * @param object $object
 	 * @return string
@@ -304,7 +327,21 @@ class Session {
 	 * @api
 	 */
 	public function getIdentifierByObject($object) {
-		return $this->objectMap[$object];
+		if ($this->hasObject($object)) {
+			return $this->objectMap[$object];
+		}
+
+		if ($object instanceof \F3\FLOW3\AOP\ProxyInterface
+				&& isset($this->classSchemata[$object->FLOW3_AOP_Proxy_getProxyTargetClassName()])
+				&& $this->classSchemata[$object->FLOW3_AOP_Proxy_getProxyTargetClassName()]->getUuidPropertyName() !== NULL) {
+			return $object->FLOW3_AOP_Proxy_getProperty($this->classSchemata[$object->FLOW3_AOP_Proxy_getProxyTargetClassName()]->getUuidPropertyName());
+		} elseif (property_exists($object, 'FLOW3_Persistence_Entity_UUID')) {
+			return $object->FLOW3_Persistence_Entity_UUID;
+		} elseif (property_exists($object, 'FLOW3_Persistence_ValueObject_Hash')) {
+			return $object->FLOW3_Persistence_ValueObject_Hash;
+		}
+
+		return NULL;
 	}
 
 	/**

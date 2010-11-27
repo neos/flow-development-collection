@@ -290,8 +290,10 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$mockStatement->expects($this->once())->method('execute')->with(array($identifier, $fullClassName, ''));
 		$mockPdo = $this->getMock('PdoInterface');
 		$mockPdo->expects($this->once())->method('prepare')->with('INSERT INTO "entities" ("identifier", "type", "parent") VALUES (?, ?, ?)')->will($this->returnValue($mockStatement));
+		$mockSession = $this->getMock('F3\FLOW3\Persistence\Session', array('getIdentifierByObject'));
+		$mockSession->expects($this->any())->method('getIdentifierByObject')->with($newObject)->will($this->returnValue($identifier));
 		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('dummy'));
-		$backend->injectPersistenceSession(new \F3\FLOW3\Persistence\Session());
+		$backend->injectPersistenceSession($mockSession);
 		$backend->_set('databaseHandle', $mockPdo);
 		$backend->_set('classSchemata', array($fullClassName => $classSchema));
 		$backend->_set('visitedDuringPersistence', new \SplObjectStorage());
@@ -1451,7 +1453,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$classSchema->addProperty('foo', 'string');
 
 		$mockPersistenceSession = $this->getMock('F3\FLOW3\Persistence\Session');
-		$mockPersistenceSession->expects($this->exactly(6))->method('hasObject')->will($this->onConsecutiveCalls(FALSE, FALSE, TRUE, TRUE));
+		$mockPersistenceSession->expects($this->exactly(4))->method('hasObject')->will($this->onConsecutiveCalls(FALSE, FALSE, TRUE, TRUE));
 		$mockPersistenceSession->expects($this->exactly(2))->method('isDirty')->will($this->onConsecutiveCalls(TRUE, TRUE));
 
 		$mockValidatorConjunction = $this->getMock('F3\FLOW3\Validation\Validator\ConjunctionValidator', array(), array(), '', FALSE);
@@ -1494,7 +1496,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$mockValidator->expects($this->any())->method('getErrors')->will($this->returnValue(array()));
 
 		$mockPersistenceSession = $this->getMock('F3\FLOW3\Persistence\Session');
-		$mockPersistenceSession->expects($this->exactly(3))->method('hasObject')->will($this->returnValue(FALSE));
+		$mockPersistenceSession->expects($this->exactly(2))->method('hasObject')->will($this->returnValue(FALSE));
 
 		$mockValidatorResolver = $this->getMock('F3\FLOW3\Validation\ValidatorResolver', array(), array(), '', FALSE);
 		$mockValidatorResolver->expects($this->once())->method('getBaseValidatorConjunction')->with($fullClassName)->will($this->returnValue($mockValidator));
@@ -1533,7 +1535,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$mockValidator->expects($this->any())->method('getErrors')->will($this->returnValue(array()));
 
 		$mockPersistenceSession = $this->getMock('F3\FLOW3\Persistence\Session');
-		$mockPersistenceSession->expects($this->exactly(3))->method('hasObject')->will($this->returnValue(TRUE));
+		$mockPersistenceSession->expects($this->exactly(2))->method('hasObject')->will($this->returnValue(TRUE));
 		$mockPersistenceSession->expects($this->once())->method('isDirty')->will($this->returnValue(TRUE));
 
 		$mockValidatorResolver = $this->getMock('F3\FLOW3\Validation\ValidatorResolver', array(), array(), '', FALSE);

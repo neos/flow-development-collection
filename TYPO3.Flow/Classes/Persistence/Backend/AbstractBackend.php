@@ -230,25 +230,10 @@ abstract class AbstractBackend implements \F3\FLOW3\Persistence\Backend\BackendI
 	 * @param \F3\FLOW3\AOP\ProxyInterface $object
 	 * @return string The identifier for the object
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @api
+	 * @deprecated since 1.0.0 alpha 14
 	 */
 	protected function getIdentifierByObject(\F3\FLOW3\AOP\ProxyInterface $object) {
-		if ($this->persistenceSession->hasObject($object)) {
-			return $this->persistenceSession->getIdentifierByObject($object);
-		}
-
-		if (isset($this->classSchemata[$object->FLOW3_AOP_Proxy_getProxyTargetClassName()])
-				&& $this->classSchemata[$object->FLOW3_AOP_Proxy_getProxyTargetClassName()]->getUuidPropertyName() !== NULL) {
-			return $object->FLOW3_AOP_Proxy_getProperty($this->classSchemata[$object->FLOW3_AOP_Proxy_getProxyTargetClassName()]->getUuidPropertyName());
-		} elseif (property_exists($object, 'FLOW3_Persistence_Entity_UUID')) {
-				// entities created get an UUID set through AOP
-			return $object->FLOW3_Persistence_Entity_UUID;
-		} elseif (property_exists($object, 'FLOW3_Persistence_ValueObject_Hash')) {
-				// valueobjects created get a hash set through AOP
-			return $object->FLOW3_Persistence_ValueObject_Hash;
-		}
-
-		return NULL;
+		return $this->persistenceSession->getIdentifierByObject($object);
 	}
 
 	/**
@@ -305,10 +290,10 @@ abstract class AbstractBackend implements \F3\FLOW3\Persistence\Backend\BackendI
 		}
 
 		if (!$this->persistenceSession->hasObject($object) && property_exists($object, 'FLOW3_Persistence_clone') && $object->FLOW3_Persistence_clone === TRUE) {
-			$this->persistenceManager->replaceObject($this->persistenceSession->getObjectByIdentifier($this->getIdentifierByObject($object)), $object);
+			$this->persistenceManager->replaceObject($this->persistenceSession->getObjectByIdentifier($this->persistenceSession->getIdentifierByObject($object)), $object);
 		}
 
-		$identifier = $this->getIdentifierByObject($object);
+		$identifier = $this->persistenceSession->getIdentifierByObject($object);
 		$this->visitedDuringPersistence[$object] = $identifier;
 
 		$objectData = array();

@@ -289,7 +289,7 @@ class SessionTest extends \F3\Testing\BaseTestCase {
 		);
 		$session = $this->getMock('F3\FLOW3\Persistence\Session', array('getIdentifierByObject'));
 		$session->registerReconstitutedEntity($parent, $cleanData);
-		$session->expects($this->once())->method('getIdentifierByObject')->will($this->returnValue('fakeUuid'));
+		$session->expects($this->atLeastOnce())->method('getIdentifierByObject')->will($this->returnValue('fakeUuid'));
 
 		$this->assertTrue($session->isDirty($parent, 'splObjectStorage'));
 	}
@@ -545,6 +545,106 @@ class SessionTest extends \F3\Testing\BaseTestCase {
 
 		$state = $session->getCleanStateOfProperty($entity, 'foo');
 		$this->assertEquals(array('type' => 'string'), $state);
+	}
+
+	/**
+	 * Does it return the UUID for an object know to the identity map?
+	 *
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function getIdentifierByObjectReturnsUUIDForKnownObject() {
+		$knownObject = $this->getMock('F3\FLOW3\AOP\ProxyInterface');
+		$fakeUUID = '123-456';
+
+		$session = new \F3\FLOW3\Persistence\Session();
+		$session->registerObject($knownObject, $fakeUUID);
+
+		$this->assertEquals($fakeUUID, $session->getIdentifierByObject($knownObject));
+	}
+
+	/**
+	 * Does it return the UUID for an AOP proxy not being in the identity map
+	 * but having FLOW3_Persistence_Entity_UUID?
+	 *
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function getIdentifierByObjectReturnsUuidForObjectBeingAOPProxy() {
+		$knownObject = $this->getMock('F3\FLOW3\AOP\ProxyInterface');
+		$knownObject->FLOW3_Persistence_Entity_UUID = 'fakeUuid';
+
+		$session = new \F3\FLOW3\Persistence\Session();
+
+		$this->assertEquals('fakeUuid', $session->getIdentifierByObject($knownObject));
+	}
+
+	/**
+	 * Does it return the value object hash for an AOP proxy not being in the
+	 * identity map but having FLOW3_Persistence_ValueObject_Hash?
+	 *
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getIdentifierByObjectReturnsHashForObjectBeingAOPProxy() {
+		$knownObject = $this->getMock('F3\FLOW3\AOP\ProxyInterface');
+		$knownObject->FLOW3_Persistence_ValueObject_Hash = 'fakeHash';
+
+		$session = new \F3\FLOW3\Persistence\Session();
+
+		$this->assertEquals('fakeHash', $session->getIdentifierByObject($knownObject));
+	}
+
+	/**
+	 * Does it work for objects not being an AOP proxy, i.e. not having the
+	 * method FLOW3_AOP_Proxy_getProperty() and not known to the identity map?
+	 *
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function getIdentifierByObjectReturnsNullForUnknownObjectBeingPOPO() {
+		$unknownObject = $this->getMock('F3\FLOW3\AOP\ProxyInterface');
+
+		$session = new \F3\FLOW3\Persistence\Session();
+
+		$this->assertNull($session->getIdentifierByObject($unknownObject));
+	}
+
+	/**
+	 * Does it return NULL for an AOP proxy not being in the identity map and
+	 * not having FLOW3_Persistence_Entity_UUID?
+	 *
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function getIdentifierByObjectReturnsNullForUnknownObjectBeingAOPProxy() {
+		$unknownObject = $this->getMock('F3\FLOW3\AOP\ProxyInterface');
+
+		$session = new \F3\FLOW3\Persistence\Session();
+
+		$this->assertNull($session->getIdentifierByObject($unknownObject));
+	}
+
+	/**
+	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function getIdentifierByObjectReturnsUuidPropertyForUnknownObjectWithUuidProperty() {
+		$unknownObject = $this->getMock('F3\FLOW3\AOP\ProxyInterface');
+		$unknownObject->expects($this->any())->method('FLOW3_AOP_Proxy_getProxyTargetClassName')->will($this->returnValue('SomeClass'));
+		$unknownObject->expects($this->atLeastOnce())->method('FLOW3_AOP_Proxy_getProperty')->with('myUuidProperty')->will($this->returnValue('fakeUUID'));
+
+		$mockClassSchema = $this->getMock('F3\FLOW3\Reflection\ClassSchema', array(), array(), '', FALSE);
+		$mockClassSchema->expects($this->any())->method('getUuidPropertyName')->will($this->returnValue('myUuidProperty'));
+
+		$session = $this->getAccessibleMock('F3\FLOW3\Persistence\Session', array('dummy'));
+		$session->_set('classSchemata', array('SomeClass' => $mockClassSchema));
+
+		$this->assertEquals('fakeUUID', $session->getIdentifierByObject($unknownObject));
 	}
 }
 ?>
