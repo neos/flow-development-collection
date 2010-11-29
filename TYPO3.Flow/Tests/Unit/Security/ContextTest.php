@@ -235,7 +235,7 @@ class ContextTest extends \F3\Testing\BaseTestCase {
 		$authenticationToken6ClassName = uniqid('authenticationToken6');
 
 		$settings = array();
-		$settings['security']['authentication']['authenticateAllTokens'] = FALSE;
+		$settings['security']['authentication']['authenticationStrategy'] = 'allTokens';
 		$request = $this->getMock('F3\FLOW3\MVC\RequestInterface');
 
 		$matchingRequestPattern = $this->getMock('F3\FLOW3\Security\RequestPatternInterface', array(), array(), $matchingRequestPatternClassName);
@@ -285,18 +285,35 @@ class ContextTest extends \F3\Testing\BaseTestCase {
 	}
 
 	/**
+	 * Data provider for authentication strategy settings
+	 *
+	 * @return array
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function authenticationStrategies() {
+		$data = array();
+		$settings = array();
+		$settings['security']['authentication']['authenticationStrategy'] = 'allTokens';
+		$data[] = array($settings, \F3\FLOW3\Security\Context::AUTHENTICATE_ALL_TOKENS);
+		$settings['security']['authentication']['authenticationStrategy'] = 'oneToken';
+		$data[] = array($settings, \F3\FLOW3\Security\Context::AUTHENTICATE_ONE_TOKEN);
+		$settings['security']['authentication']['authenticationStrategy'] = 'atLeastOneToken';
+		$data[] = array($settings, \F3\FLOW3\Security\Context::AUTHENTICATE_AT_LEAST_ONE_TOKEN);
+		return $data;
+	}
+
+	/**
+	 * @dataProvider authenticationStrategies()
 	 * @test
 	 * @category unit
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function authenticateAllTokensIsSetCorrectlyFromConfiguration() {
-		$settings = array();
-		$settings['security']['authentication']['authenticateAllTokens'] = TRUE;
-
+	public function authenticationStrategyIsSetCorrectlyFromConfiguration($settings, $expectedAuthenticationStrategy) {
 		$securityContext = new \F3\FLOW3\Security\Context();
 		$securityContext->injectSettings($settings);
 
-		$this->assertTrue($securityContext->authenticateAllTokens());
+		$this->assertEquals($expectedAuthenticationStrategy, $securityContext->getAuthenticationStrategy());
 	}
 
 	/**
@@ -316,7 +333,7 @@ class ContextTest extends \F3\Testing\BaseTestCase {
 		$authenticationToken6ClassName = uniqid('authenticationToken6');
 
 		$settings = array();
-		$settings['security']['authentication']['authenticateAllTokens'] = FALSE;
+		$settings['security']['authentication']['authenticationStrategy'] = 'oneToken';
 
 		$request = $this->getMock('F3\FLOW3\MVC\RequestInterface');
 
@@ -392,7 +409,7 @@ class ContextTest extends \F3\Testing\BaseTestCase {
 		$role6ClassName = uniqid('role6');
 
 		$settings = array();
-		$settings['security']['authentication']['authenticateAllTokens'] = FALSE;
+		$settings['security']['authentication']['authenticateTokens'] = 'one';
 
 		$request = $this->getMock('F3\FLOW3\MVC\RequestInterface');
 

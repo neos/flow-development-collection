@@ -238,7 +238,7 @@ class AuthenticationProviderManagerTest extends \F3\Testing\BaseTestCase {
 		$mockProvider1->expects($this->once())->method('authenticate')->with($mockToken1);
 		$mockProvider2->expects($this->once())->method('authenticate')->with($mockToken2);
 
-		$securityContext->expects($this->atLeastOnce())->method('authenticateAllTokens')->will($this->returnValue(TRUE));
+		$securityContext->expects($this->atLeastOnce())->method('getAuthenticationStrategy')->will($this->returnValue(\F3\FLOW3\Security\Context::AUTHENTICATE_ALL_TOKENS));
 		$securityContext->expects($this->atLeastOnce())->method('getAuthenticationTokens')->will($this->returnValue(array($mockToken1, $mockToken2)));
 
 		$mockProviderManager = $this->getAccessibleMock('F3\FLOW3\Security\Authentication\AuthenticationProviderManager', array('dummy'), array(), '', FALSE);
@@ -271,7 +271,7 @@ class AuthenticationProviderManagerTest extends \F3\Testing\BaseTestCase {
 		$mockProvider->expects($this->any())->method('canAuthenticate')->will($this->returnValue(TRUE));
 		$mockProvider->expects($this->once())->method('authenticate')->with($mockToken3);
 
-		$securityContext->expects($this->atLeastOnce())->method('authenticateAllTokens')->will($this->returnValue(FALSE));
+		$securityContext->expects($this->atLeastOnce())->method('getAuthenticationStrategy')->will($this->returnValue(\F3\FLOW3\Security\Context::AUTHENTICATE_ONE_TOKEN));
 		$securityContext->expects($this->atLeastOnce())->method('getAuthenticationTokens')->will($this->returnValue(array($mockToken1, $mockToken2, $mockToken3)));
 
 		$mockProviderManager = $this->getAccessibleMock('F3\FLOW3\Security\Authentication\AuthenticationProviderManager', array('dummy'), array(), '', FALSE);
@@ -321,7 +321,7 @@ class AuthenticationProviderManagerTest extends \F3\Testing\BaseTestCase {
 		$token2->expects($this->atLeastOnce())->method('isAuthenticated')->will($this->returnValue(FALSE));
 
 		$securityContext->expects($this->atLeastOnce())->method('getAuthenticationTokens')->will($this->returnValue(array($token1, $token2)));
-		$securityContext->expects($this->atLeastOnce())->method('authenticateAllTokens')->will($this->returnValue(TRUE));
+		$securityContext->expects($this->atLeastOnce())->method('getAuthenticationStrategy')->will($this->returnValue(\F3\FLOW3\Security\Context::AUTHENTICATE_ALL_TOKENS));
 
 		$mockProviderManager = $this->getAccessibleMock('F3\FLOW3\Security\Authentication\AuthenticationProviderManager', array('dummy'), array(), '', FALSE);
 		$mockProviderManager->_set('providers', array());

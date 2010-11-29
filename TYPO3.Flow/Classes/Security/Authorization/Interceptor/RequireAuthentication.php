@@ -26,10 +26,6 @@ namespace F3\FLOW3\Security\Authorization\Interceptor;
  * This security interceptor invokes the authentication of the authentication tokens in the security context.
  * It is usally used by the firewall to define secured request that need proper authentication.
  *
- * Checks the authentication tokens in the security context (in the given order) if isAuthenticated() returns TRUE.
- * If context->authenticateAllTokens() returns TRUE all tokens have be authenticated, otherwise there has to be at least one
- * authenticated token to have a valid authentication.
- *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class RequireAuthentication implements \F3\FLOW3\Security\Authorization\InterceptorInterface {

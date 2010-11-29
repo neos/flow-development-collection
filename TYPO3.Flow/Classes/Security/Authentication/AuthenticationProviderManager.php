@@ -154,19 +154,17 @@ class AuthenticationProviderManager implements \F3\FLOW3\Security\Authentication
 	/**
 	 * Tries to authenticate the tokens in the security context (in the given order)
 	 * with the available authentication providers, if needed.
-	 * If securityContext->authenticateAllTokens() returns TRUE all tokens have to be authenticated,
-	 * otherwise there has to be at least one authenticated token to have a valid authentication.
-	 *
-	 * Note: This method sets the 'authenticationPerformed' flag in the security context. You have to
-	 * set it back to FALSE if you need reauthentication (usually the tokens should do it as soon as they
-	 * received new credentials).
+	 * If the authentication strategy is set to "allTokens", all tokens have to be authenticated.
+	 * If the strategy is set to "oneToken", only one token needs to be authenticated, but the
+	 * authentication will stop after the first authenticated token. The strategy
+	 * "atLeastOne" will try to authenticate at least one and as many tokens as possible.
 	 *
 	 * @return void
 	 * @throws \F3\FLOW3\Security\Exception\AuthenticationRequiredException
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function authenticate() {
-		$allTokensAreAuthenticated = TRUE;
+		$anyTokenAuthenticated = FALSE;
 		if ($this->securityContext === NULL) throw new \F3\FLOW3\Security\Exception('Cannot authenticate because no security context has been set.', 1232978667);
 
 		$tokens = $this->securityContext->getAuthenticationTokens();
@@ -181,16 +179,19 @@ class AuthenticationProviderManager implements \F3\FLOW3\Security\Authentication
 					break;
 				}
 			}
-
-			if ($token->isAuthenticated() && !$this->securityContext->authenticateAllTokens()) {
-				return;
+			if ($token->isAuthenticated()) {
+				$anyTokenAuthenticated = TRUE;
+				if ($this->securityContext->getAuthenticationStrategy() === \F3\FLOW3\Security\Context::AUTHENTICATE_ONE_TOKEN) {
+					return;
+				}
+			} else {
+				 if ($this->securityContext->getAuthenticationStrategy() === \F3\FLOW3\Security\Context::AUTHENTICATE_ALL_TOKENS) {
+					throw new \F3\FLOW3\Security\Exception\AuthenticationRequiredException('Could not authenticate all tokens, but authenticationStrategy was set to "all".', 1222203912);
+				}
 			}
-			if (!$token->isAuthenticated() && $this->securityContext->authenticateAllTokens()) {
-				throw new \F3\FLOW3\Security\Exception\AuthenticationRequiredException('Could not authenticate all tokens, but authenticateAllTokens was set to TRUE.', 1222203912);
-			}
-			$allTokensAreAuthenticated &= $token->isAuthenticated();
 		}
-		if (!$allTokensAreAuthenticated) {
+
+		if (!$anyTokenAuthenticated) {
 			throw new \F3\FLOW3\Security\Exception\AuthenticationRequiredException('Could not authenticate any token. Might be missing or wrong credentials or no authentication provider matched.', 1222204027);
 		}
 	}

@@ -178,7 +178,7 @@ FLOW3:
 
       # If set to TRUE, authentication will only succeed, if all active tokens (authentication mechanisms)
       # can be authenticated.
-      authenticateAllTokens: FALSE
+      authenticationStrategy: oneToken
 
     authorization:
       # An array of access decision voters that should vote when access decisions are made

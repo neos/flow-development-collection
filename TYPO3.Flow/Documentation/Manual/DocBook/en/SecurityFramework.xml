@@ -138,7 +138,7 @@
           <imageobject>
             <imagedata contentdepth="100%"
                        fileref="SecurityFramework_BasicAuthenticationProcess.png"
-                       scalefit="1" width="100%"></imagedata>
+                       scalefit="1" width="100%"/>
           </imageobject>
         </mediaobject>
       </figure>
@@ -406,15 +406,24 @@ $this-&gt;accountRepository-&gt;add($account);</programlisting>
       </section>
 
       <section>
-        <title>More-factor authentication strategy</title>
+        <title>Multi-factor authentication strategy</title>
 
         <para>There is another configuration option to realize a
-        more-factor-authentication. This option simply forces the
-        authentication manager to always authenticate all configured providers
-        and to make sure that every single provider returned a positive
-        authentication status to its token. This option is by disabled by
-        default and can be enabled with the following
-        configuration:<programlisting language="yaml">security: authentication: authenticateAllTokens: yes</programlisting></para>
+        multi-factor-authentication. It defaults to
+        "<literal>oneToken</literal>". A configurable authentication strategy
+        of "<literal>allTokens</literal>" forces the authentication manager to
+        always authenticate all configured providers and to make sure that
+        every single provider returned a positive authentication status to one
+        of its tokens. The authentication strategy
+        "<literal>atLeastOneToken</literal>" will try to authenticate as many
+        tokens as possible but at least one. This is helpful to realize
+        policies with additional security only for some resources (e.g. SSL
+        client certificates for an admin backend).</para>
+
+        <para><programlisting language="yaml">configuration:
+  security:
+    authentication:
+      authenticationStrategy: allTokens</programlisting></para>
       </section>
 
       <section>
@@ -482,11 +491,11 @@ $this-&gt;accountRepository-&gt;add($account);</programlisting>
           <title>Available request patterns</title>
 
           <tgroup cols="3">
-            <colspec colwidth="1*" />
+            <colspec colwidth="1*"/>
 
-            <colspec colwidth="2*" />
+            <colspec colwidth="2*"/>
 
-            <colspec colwidth="2*" />
+            <colspec colwidth="2*"/>
 
             <thead>
               <row>
@@ -564,11 +573,11 @@ $this-&gt;accountRepository-&gt;add($account);</programlisting>
         <title>Available authentication entry points</title>
 
         <tgroup cols="3">
-          <colspec colwidth="1*" />
+          <colspec colwidth="1*"/>
 
-          <colspec colwidth="2*" />
+          <colspec colwidth="2*"/>
 
-          <colspec colwidth="3*" />
+          <colspec colwidth="3*"/>
 
           <thead>
             <row>
@@ -621,9 +630,9 @@ $this-&gt;accountRepository-&gt;add($account);</programlisting>
 </programlisting></para>
 
         <para>It will try to find an account in the
-        <literal>F3\FLOW3\Security\AccountRepository</literal> that
-        has the username value as account identifier and fetch the credentials
-        source, which has to be in the following format:<programlisting>MD5HashOfThePassword,Salt</programlisting><tip>
+        <literal>F3\FLOW3\Security\AccountRepository</literal> that has the
+        username value as account identifier and fetch the credentials source,
+        which has to be in the following format:<programlisting>MD5HashOfThePassword,Salt</programlisting><tip>
             <para>You should use a different, random salt for each
             account.</para>
           </tip></para>
@@ -804,7 +813,7 @@ $credentials['password'] = $postArguments['F3\FLOW3\Security\Authentication\Toke
           <imageobject>
             <imagedata contentdepth="100%"
                        fileref="SecurityFramework_BasicAuthorizationProcess.png"
-                       scalefit="1" width="100%"></imagedata>
+                       scalefit="1" width="100%"/>
           </imageobject>
         </mediaobject>
       </figure>
@@ -895,7 +904,7 @@ $credentials['password'] = $postArguments['F3\FLOW3\Security\Authentication\Toke
           <imageobject>
             <imagedata contentdepth="100%"
                        fileref="SecurityFramework_FilterFirewall.png"
-                       scalefit="1" width="100%"></imagedata>
+                       scalefit="1" width="100%"/>
           </imageobject>
         </mediaobject>
       </figure>
@@ -923,9 +932,9 @@ $credentials['password'] = $postArguments['F3\FLOW3\Security\Authentication\Toke
         <title>FLOW3's built-in security interceptors</title>
 
         <tgroup cols="2">
-          <colspec colwidth="1*" />
+          <colspec colwidth="1*"/>
 
-          <colspec colwidth="3*" />
+          <colspec colwidth="3*"/>
 
           <thead>
             <row>
@@ -1186,12 +1195,12 @@ $credentials['password'] = $postArguments['F3\FLOW3\Security\Authentication\Toke
   <section xml:id="ChannelSecurity">
     <title>Channel security</title>
 
-    <para></para>
+    <para/>
   </section>
 
   <section>
     <title>Cryptography</title>
 
-    <para></para>
+    <para/>
   </section>
 </chapter>

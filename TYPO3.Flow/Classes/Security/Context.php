@@ -32,6 +32,25 @@ namespace F3\FLOW3\Security;
 class Context {
 
 	/**
+	 * Stop authentication of tokens after first successful
+	 * authentication of a token.
+	 */
+	const AUTHENTICATE_ONE_TOKEN = 1;
+
+	/**
+	 * Authenticate all active tokens and throw an exception if
+	 * an active token could not be authenticated.
+	 */
+	const AUTHENTICATE_ALL_TOKENS = 2;
+
+	/**
+	 * Authenticate as many tokens as possible but do not fail if
+	 * a token could not be authenticated and at least one token
+	 * could be authenticated.
+	 */
+	const AUTHENTICATE_AT_LEAST_ONE_TOKEN = 3;
+
+	/**
 	 * Array of configured tokens (might have request patterns)
 	 * @var array
 	 */
@@ -52,10 +71,10 @@ class Context {
 	protected $inactiveTokens = array();
 
 	/**
-	 * TRUE, if all tokens have to be authenticated, FALSE if one is sufficient.
-	 * @var boolean
+	 * One of the AUTHENTICATE_* constants to set the authentication strategy.
+	 * @var int
 	 */
-	protected $authenticateAllTokens = FALSE;
+	protected $authenticationStrategy = self::AUTHENTICATE_ONE_TOKEN;
 
 	/**
 	 * @var \F3\FLOW3\MVC\RequestInterface
@@ -120,7 +139,22 @@ class Context {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function injectSettings(array $settings) {
-		$this->authenticateAllTokens = $settings['security']['authentication']['authenticateAllTokens'];
+		if (isset($settings['security']['authentication']['authenticationStrategy'])) {
+			$authenticationStrategyName = $settings['security']['authentication']['authenticationStrategy'];
+			switch($authenticationStrategyName) {
+				case 'allTokens':
+					$this->authenticationStrategy = self::AUTHENTICATE_ALL_TOKENS;
+					break;
+				case 'oneToken':
+					$this->authenticationStrategy = self::AUTHENTICATE_ONE_TOKEN;
+					break;
+				case 'atLeastOneToken':
+					$this->authenticationStrategy = self::AUTHENTICATE_AT_LEAST_ONE_TOKEN;
+					break;
+				default:
+					throw new \F3\FLOW3\Exception('Invalid setting "' . $authenticationStrategyName . '" for security.authentication.authenticationStrategy', 1291043022);
+			}
+		}
 	}
 
 	/**
@@ -139,16 +173,6 @@ class Context {
 		$this->updateTokens($mergedTokens);
 		$this->tokens = $mergedTokens;
 		$this->separateActiveAndInactiveTokens();
-	}
-
-	/**
-	 * Returns TRUE, if all active tokens have to be authenticated.
-	 *
-	 * @return boolean TRUE, if all active tokens have to be authenticated.
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function authenticateAllTokens() {
-		return $this->authenticateAllTokens;
 	}
 
 	/**
@@ -275,7 +299,7 @@ class Context {
 		$this->activeTokens = NULL;
 		$this->inactiveTokens = NULL;
 		$this->request = NULL;
-		$this->authenticateAllTokens = FALSE;
+		$this->authenticationStrategy = self::AUTHENTICATE_ONE_TOKEN;
 	}
 
 	/**
@@ -392,6 +416,16 @@ class Context {
 	 */
 	public function shutdownObject() {
 		$this->tokens = array_merge($this->inactiveTokens, $this->activeTokens);
+	}
+
+	/**
+	 * Get the token authentication strategy
+	 *
+	 * @return int One of the AUTHENTICATE_* constants
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function getAuthenticationStrategy() {
+		return $this->authenticationStrategy;
 	}
 }
 
