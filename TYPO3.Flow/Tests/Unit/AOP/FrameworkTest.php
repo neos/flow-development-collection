@@ -95,8 +95,10 @@ class FrameworkTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function buildAspectContainerDetectsAllSupportedKindsOfAdviceAndPointcutsAndIntroductions() {
-		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'saveToCache'), array(), '', FALSE, TRUE);
-		$mockReflectionService->initialize(array('F3\FLOW3\Tests\AOP\Fixture\AspectClassWithAllAdviceTypes'));
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService', array('detectAvailableClassNames', 'loadFromCache', 'saveToCache'), array(), '', FALSE, TRUE);
+		$mockReflectionService->expects($this->once())->method('loadFromCache')->will($this->returnValue(FALSE));
+		$mockReflectionService->expects($this->once())->method('detectAvailableClassNames')->will($this->returnValue(array('F3\FLOW3\Tests\AOP\Fixture\AspectClassWithAllAdviceTypes')));
+		$mockReflectionService->initialize(array());
 
 		$mockPointcutExpressionParser = $this->getMock('F3\FLOW3\AOP\Pointcut\PointcutExpressionParser', array('parse'), array(), '', FALSE);
 		$mockPointcutExpressionParser->expects($this->any())->method('parse')->will($this->returnCallBack(array($this, 'pointcutFilterCompositeCallBack')));
