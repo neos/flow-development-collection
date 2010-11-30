@@ -70,6 +70,22 @@ class ConfigurationTest extends \F3\Testing\BaseTestCase {
 	}
 
 	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function passingAnEmptyArrayToSetPropertiesRemovesAllExistingproperties() {
+		$someProperties = array (
+			'prop1' => new \F3\FLOW3\Object\Configuration\ConfigurationProperty('prop1', 'simple string'),
+			'prop2' => new \F3\FLOW3\Object\Configuration\ConfigurationProperty('prop2', 'another string')
+		);
+		$this->objectConfiguration->setProperties($someProperties);
+		$this->assertEquals($someProperties, $this->objectConfiguration->getProperties(), 'The set properties could not be retrieved again.');
+
+		$this->objectConfiguration->setProperties(array());
+		$this->assertEquals(array(), $this->objectConfiguration->getProperties(), 'The properties have not been cleared.');
+	}
+
+	/**
 	 * Checks if setArguments accepts only valid values
 	 *
 	 * @test
