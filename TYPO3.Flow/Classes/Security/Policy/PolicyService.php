@@ -164,7 +164,9 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 		if ($this->cache->has('entityResourcesConstraints')) {
 			$this->entityResourcesConstraints = $this->cache->get('entityResourcesConstraints');
 		} else {
-			if (array_key_exists('resources', $this->policy) && array_key_exists('entities', $this->policy['resources'])) $this->entityResourcesConstraints = $this->policyExpressionParser->parseEntityResources($this->policy['resources']['entities']);
+			if (array_key_exists('resources', $this->policy) && array_key_exists('entities', $this->policy['resources'])) {
+				$this->entityResourcesConstraints = $this->policyExpressionParser->parseEntityResources($this->policy['resources']['entities']);
+			}
 		}
 	}
 
@@ -311,15 +313,16 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 		if (!isset($this->acls[$methodIdentifier][$roleIdentifier])) return array();
 
 		$privileges = array();
+		$objectManager = $this->objectManager;
 		foreach ($this->acls[$methodIdentifier][$roleIdentifier] as $resource => $privilegeConfiguration) {
 			if ($privilegeConfiguration['runtimeEvaluationsClosureCode'] !== FALSE) {
-				$objectManager = $this->objectManager;
 				eval('$runtimeEvaluator = ' . $privilegeConfiguration['runtimeEvaluationsClosureCode'] . ';');
 				if ($runtimeEvaluator->__invoke($joinPoint) === FALSE) continue;
 			}
 
 			$privileges[$resource] = $privilegeConfiguration['privilege'];
 		}
+		unset($objectManager);
 
 		return $privileges;
 	}
