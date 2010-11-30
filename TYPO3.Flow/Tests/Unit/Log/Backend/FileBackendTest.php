@@ -81,7 +81,8 @@ class FileBackendTest extends \F3\Testing\BaseTestCase {
 
 		$backend->append('foo');
 
-		$this->assertSame(63 + strlen(PHP_EOL), \vfsStreamWrapper::getRoot()->getChild('test.log')->size());
+		$pidOffset = function_exists('posix_getpid') ? 10 : 0;
+		$this->assertSame(53 + $pidOffset + strlen(PHP_EOL), \vfsStreamWrapper::getRoot()->getChild('test.log')->size());
 	}
 
 	/**
@@ -96,7 +97,8 @@ class FileBackendTest extends \F3\Testing\BaseTestCase {
 
 		$backend->append('foo');
 
-		$this->assertSame(78 + strlen(PHP_EOL), \vfsStreamWrapper::getRoot()->getChild('test.log')->size());
+		$pidOffset = function_exists('posix_getpid') ? 10 : 0;
+		$this->assertSame(68 + $pidOffset + strlen(PHP_EOL), \vfsStreamWrapper::getRoot()->getChild('test.log')->size());
 	}
 
 	/**
@@ -119,7 +121,7 @@ class FileBackendTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function logFileIsRotatedIfMaximumSizeIsExceeded() {
-		$this->markTestSkipped('vfsStream does not support touch() and rename()...');
+		$this->markTestSkipped('vfsStream does not support touch() and rename(), see http://bugs.php.net/38025...');
 
 		$logFileUrl = \vfsStream::url('testDirectory') . '/test.log';
 		file_put_contents($logFileUrl, 'twentybytesofcontent');
