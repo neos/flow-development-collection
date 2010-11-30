@@ -104,9 +104,10 @@ interface TokenInterface {
 	 * make sure that the authentication manager will (re-)authenticate the tokens with the current credentials.
 	 * Note: You should not persist the credentials!
 	 *
+	 * @param \F3\FLOW3\MVC\RequestInterface $request The current request instance
 	 * @return boolean TRUE if this token needs to be (re-)authenticated
 	 */
-	public function updateCredentials();
+	public function updateCredentials(\F3\FLOW3\MVC\RequestInterface $request);
 
 	/**
 	 * Returns the account if one is authenticated, NULL otherwise.
@@ -124,9 +125,10 @@ interface TokenInterface {
 	public function setAccount(\F3\FLOW3\Security\Account $account);
 
 	/**
-	 * Returns the credentials of this token.
+	 * Returns the credentials of this token. The type depends on the provider
+	 * of the token.
 	 *
-	 * @return object $credentials The needed credentials to authenticate this token
+	 * @return mixed $credentials The needed credentials to authenticate this token
 	 */
 	public function getCredentials();
 
@@ -151,6 +153,14 @@ interface TokenInterface {
 	 * @return integer One of NO_CREDENTIALS_GIVEN, WRONG_CREDENTIALS, AUTHENTICATION_SUCCESSFUL, REAUTHENTICATION_NEEDED
 	 */
 	public function getAuthenticationStatus();
+
+	/**
+	 * Returns a string representation of the token for logging purposes.
+	 *
+	 * @return string A string representation of the token
+	 */
+	public function  __toString();
+
 }
 
 ?>
