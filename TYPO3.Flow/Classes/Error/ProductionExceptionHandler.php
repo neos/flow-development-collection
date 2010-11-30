@@ -39,31 +39,12 @@ class ProductionExceptionHandler extends \F3\FLOW3\Error\AbstractExceptionHandle
 	}
 
 	/**
-	 * Displays the given exception
-	 *
-	 * @param \Exception $exception The exception object
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function handleException(\Exception $exception) {
-		parent::handleException($exception);
-
-		switch (PHP_SAPI) {
-			case 'cli' :
-				$this->echoExceptionCli($exception);
-				break;
-			default :
-				$this->echoExceptionWeb($exception);
-		}
-	}
-
-	/**
 	 * Echoes an exception for the web.
 	 *
 	 * @param \Exception $exception The exception
 	 * @return void
 	 */
-	public function echoExceptionWeb(\Exception $exception) {
+	protected function echoExceptionWeb(\Exception $exception) {
 		if (!headers_sent()) {
 			header("HTTP/1.1 500 Internal Server Error");
 		}
@@ -167,7 +148,7 @@ class ProductionExceptionHandler extends \F3\FLOW3\Error\AbstractExceptionHandle
 	 * @param \Exception $exception The exception
 	 * @return void
 	 */
-	public function echoExceptionCli(\Exception $exception) {
+	protected function echoExceptionCli(\Exception $exception) {
 		exit(1);
 	}
 }

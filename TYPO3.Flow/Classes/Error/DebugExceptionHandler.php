@@ -41,25 +41,6 @@ class DebugExceptionHandler extends \F3\FLOW3\Error\AbstractExceptionHandler {
 	}
 
 	/**
-	 * Displays the given exception
-	 *
-	 * @param \Exception $exception The exception object
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function handleException(\Exception $exception) {
-		parent::handleException($exception);
-
-		switch (PHP_SAPI) {
-			case 'cli' :
-				$this->echoExceptionCli($exception);
-				break;
-			default :
-				$this->echoExceptionWeb($exception);
-		}
-	}
-
-	/**
 	 * Formats and echoes the exception as XHTML.
 	 *
 	 * @param  \Exception $exception The exception object

@@ -75,7 +75,30 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface {
 		if (is_object($this->lockManager)) {
 			$this->lockManager->unlockSite();
 		}
+
+		switch (PHP_SAPI) {
+			case 'cli' :
+				$this->echoExceptionCli($exception);
+				break;
+			default :
+				$this->echoExceptionWeb($exception);
+		}
 	}
 
+	/**
+	 * Echoes an exception for the command line.
+	 *
+	 * @param \Exception $exception The exception
+	 * @return void
+	 */
+	abstract protected function echoExceptionCli(\Exception $exception);
+
+	/**
+	 * Echoes an exception for the web.
+	 *
+	 * @param \Exception $exception The exception
+	 * @return void
+	 */
+	abstract protected function echoExceptionWeb(\Exception $exception);
 }
 ?>
