@@ -79,7 +79,7 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 
 	/**
 	 * A multidimensional array used containing the roles and privileges for each intercepted method
-	 * @var array 
+	 * @var array
 	 */
 	public $acls = array();
 
@@ -339,7 +339,7 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 			if (isset($this->resources[$resource])) {
 				return self::PRIVILEGE_DENY;
 			} else {
-				throw new \F3\FLOW3\Security\Exception\NoEntryInPolicyException('The given resource was not found in the policy cache. Most likely you have to recreate the AOP proxy classes.', 1248348214);
+				throw new \F3\FLOW3\Security\Exception\NoEntryInPolicyException('The given resource ("' . $resource . '") was not found in the policy cache. Most likely you have to recreate the AOP proxy classes.', 1248348214);
 			}
 		}
 
