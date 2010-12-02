@@ -30,6 +30,16 @@ namespace F3\FLOW3\Package;
  */
 interface MetaDataInterface {
 
+	const CONSTRAINT_TYPE_DEPENDS = 'depends';
+	const CONSTRAINT_TYPE_CONFLICTS = 'conflicts';
+	const CONSTRAINT_TYPE_SUGGESTS = 'suggests';
+
+	const PARTY_TYPE_PERSON = 'person';
+	const PARTY_TYPE_COMPANY = 'company';
+
+	const CONSTRAINT_SCOPE_PACKAGE = 'package';
+	const CONSTRAINT_SCOPE_SYSTEM = 'system';
+
 	/**
 	 * @return string The package key
 	 */
@@ -61,7 +71,7 @@ interface MetaDataInterface {
 	public function getParties();
 
 	/**
-	 * @param string $constraintType Type of the constraints to get: depends, conflicts, suggests
+	 * @param string $constraintType Type of the constraints to get: CONSTRAINT_TYPE_*
 	 * @return Array of F3\FLOW3\Package\MetaData\Constraint Package constraints
 	 */
 	public function getConstraintsByType($constraintType);

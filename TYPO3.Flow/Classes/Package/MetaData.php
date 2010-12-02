@@ -29,16 +29,6 @@ namespace F3\FLOW3\Package;
  */
 class MetaData implements \F3\FLOW3\Package\MetaDataInterface {
 
-	const CONSTRAINT_TYPE_DEPENDS = 'depends';
-	const CONSTRAINT_TYPE_CONFLICTS = 'conflicts';
-	const CONSTRAINT_TYPE_SUGGESTS = 'suggests';
-
-	const PARTY_TYPE_PERSON = 'person';
-	const PARTY_TYPE_COMPANY = 'company';
-
-	const CONSTRAINT_SCOPE_PACKAGE = 'package';
-	const CONSTRAINT_SCOPE_SYSTEM = 'system';
-
 	/**
 	 * @var array
 	 */
@@ -215,7 +205,7 @@ class MetaData implements \F3\FLOW3\Package\MetaDataInterface {
 	/**
 	 * Get the constraints by type
 	 *
-	 * @param string $constraintType Type of the constraints to get: depends, conflicts, suggests
+	 * @param string $constraintType Type of the constraints to get: CONSTRAINT_TYPE_*
 	 * @return array Package constraints
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */

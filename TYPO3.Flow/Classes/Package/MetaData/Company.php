@@ -36,7 +36,7 @@ class Company extends \F3\FLOW3\Package\MetaData\AbstractParty {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function getPartyType() {
-		return \F3\FLOW3\Package\MetaData::PARTY_TYPE_COMPANY;
+		return \F3\FLOW3\Package\MetaDataInterface::PARTY_TYPE_COMPANY;
 	}
 }
 ?>
