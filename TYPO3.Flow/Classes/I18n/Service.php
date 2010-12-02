@@ -253,7 +253,7 @@ class Service {
 
 			if (!is_dir($this->localeBasePath . $activePackage->getPackageKey() . '/')) continue;
 
-			$directoryIterator = new \RecursiveDirectoryIterator($this->localeBasePath . $activePackage->getPackageKey() . '/');
+			$directoryIterator = new \RecursiveDirectoryIterator($this->localeBasePath . $activePackage->getPackageKey() . '/', \RecursiveDirectoryIterator::UNIX_PATHS);
 			$recursiveIteratorIterator = new \RecursiveIteratorIterator($directoryIterator, \RecursiveIteratorIterator::SELF_FIRST);
 
 			foreach ($recursiveIteratorIterator as $fileOrDirectory) {
