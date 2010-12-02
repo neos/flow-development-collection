@@ -234,12 +234,6 @@ class PdoBackendTest extends \F3\Testing\BaseTestCase {
 	 */
 	protected function setUpBackend() {
 		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment');
-		$this->fixtureFolder = \F3\FLOW3\Utility\Files::concatenatePaths(array(sys_get_temp_dir(), 'FLOW3PdoBackendTest/'));
-		\F3\FLOW3\Utility\Files::createDirectoryRecursively($this->fixtureFolder);
-		$this->fixtureDB = uniqid('Cache') . '.db';
-
-		$pdoHelper = new \F3\FLOW3\Utility\PdoHelper('sqlite:' . $this->fixtureFolder . $this->fixtureDB, '', '');
-		$pdoHelper->importSql(FLOW3_PATH_FLOW3 . 'Resources/Private/Cache/SQL/DDL.sql');
 
 		$mockSystemLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
 		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\FrontendInterface', array(), array(), '', FALSE);
@@ -249,22 +243,11 @@ class PdoBackendTest extends \F3\Testing\BaseTestCase {
 		$backend->injectEnvironment($mockEnvironment);
 		$backend->injectSystemLogger($mockSystemLogger);
 		$backend->setCache($mockCache);
-		$backend->setDataSourceName('sqlite:' . $this->fixtureFolder . $this->fixtureDB);
+		$backend->setDataSourceName('sqlite://:memory:');
 		$backend->initializeObject();
+		$this->backend = $backend;
 
 		return $backend;
-	}
-
-	/**
-	 * Clean up after the tests
-	 *
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function tearDown() {
-		if ($this->fixtureDB) {
-			\F3\FLOW3\Utility\Files::removeDirectoryRecursively($this->fixtureFolder);
-		}
 	}
 
 }
