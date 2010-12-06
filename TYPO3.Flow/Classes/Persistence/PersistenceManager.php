@@ -314,7 +314,7 @@ class PersistenceManager implements \F3\FLOW3\Persistence\PersistenceManagerInte
 	}
 
 	/**
-	 * Returns the object data for the (internal) identifier, if it is known to 
+	 * Returns the object data for the (internal) identifier, if it is known to
 	 * the backend. Otherwise FALSE is returned.
 	 *
 	 * @param string $identifier
