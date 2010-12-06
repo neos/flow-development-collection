@@ -55,8 +55,13 @@ class AdvicedConstructorInterceptorBuilder extends \F3\FLOW3\AOP\Builder\Abstrac
 		} else {
 			$methodArguments = $this->FLOW3_AOP_Proxy_originalConstructorArguments;
 			$this->FLOW3_AOP_Proxy_methodIsInAdviceMode[\'__construct\'] = TRUE;
+			try {
 			' . $this->buildAdvicesCode($interceptedMethods['__construct']['groupedAdvices'], '__construct', $targetClassName) . '
-			unset ($this->FLOW3_AOP_Proxy_methodIsInAdviceMode[\'__construct\']);
+			} catch(\Exception $e) {
+				unset($this->FLOW3_AOP_Proxy_methodIsInAdviceMode[\'__construct\']);
+				throw $e;
+			}
+			unset($this->FLOW3_AOP_Proxy_methodIsInAdviceMode[\'__construct\']);
 		}
 ';
 		$methodDocumentation = $this->buildMethodDocumentation($declaringClassName, '__construct');

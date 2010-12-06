@@ -39,6 +39,15 @@ class Aspect01 {
 	}
 
 	/**
+	 * @around method(public F3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01->sayHelloAndThrow())
+	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint
+	 * @return string
+	 */
+	public function throwWorldAdvice(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+		return $joinPoint->getAdviceChain()->proceed($joinPoint) . ' World';
+	}
+
+	/**
 	 * @around method(public F3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01->greet(name === 'FLOW3'))
 	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint
 	 * @return string

@@ -40,6 +40,17 @@ class TargetClass01 {
 	}
 
 	/**
+	 * @param boolean $throwException
+	 * @return string
+	 */
+	public function sayHelloAndThrow($throwException) {
+		if ($throwException) {
+			throw new \Exception();
+		}
+		return 'Hello';
+	}
+
+	/**
 	 * @param string $name
 	 * @return string
 	 */

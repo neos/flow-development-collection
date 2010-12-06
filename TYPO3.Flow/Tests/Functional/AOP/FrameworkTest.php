@@ -41,6 +41,18 @@ class FrameworkTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 	 * @test
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
+	public function adviceRecoversFromException() {
+		$targetClass = $this->objectManager->get('F3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01');
+		try {
+			$targetClass->sayHelloAndThrow(TRUE);
+		} catch(\Exception $e) {}
+		$this->assertSame('Hello World', $targetClass->sayHelloAndThrow(FALSE));
+	}
+
+	/**
+	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
 	public function resultOfGreetMethodIsModifiedBySpecialNameAdvice() {
 		$targetClass = $this->objectManager->get('F3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01');
 		$this->assertSame('Hello, me', $targetClass->greet('FLOW3'));

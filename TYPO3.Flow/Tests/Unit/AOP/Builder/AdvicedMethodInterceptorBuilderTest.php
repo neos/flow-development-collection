@@ -72,8 +72,13 @@ class AdvicedMethodInterceptorBuilderTest extends \F3\Testing\BaseTestCase {
 				\'arg5\' => $arg5,
 			);
 			$this->FLOW3_AOP_Proxy_methodIsInAdviceMode[\'foo\'] = TRUE;
+			try {
 			ADVICESCODE
-			unset ($this->FLOW3_AOP_Proxy_methodIsInAdviceMode[\'foo\']);
+			} catch(\Exception $e) {
+				unset($this->FLOW3_AOP_Proxy_methodIsInAdviceMode[\'foo\']);
+				throw $e;
+			}
+			unset($this->FLOW3_AOP_Proxy_methodIsInAdviceMode[\'foo\']);
 		}
 		return $result;
 
@@ -132,8 +137,13 @@ class AdvicedMethodInterceptorBuilderTest extends \F3\Testing\BaseTestCase {
 				\'arg2\' => $arg2,
 			);
 			$this->FLOW3_AOP_Proxy_methodIsInAdviceMode[\'__wakeup\'] = TRUE;
+			try {
 			ADVICESCODE
-			unset ($this->FLOW3_AOP_Proxy_methodIsInAdviceMode[\'__wakeup\']);
+			} catch(\Exception $e) {
+				unset($this->FLOW3_AOP_Proxy_methodIsInAdviceMode[\'__wakeup\']);
+				throw $e;
+			}
+			unset($this->FLOW3_AOP_Proxy_methodIsInAdviceMode[\'__wakeup\']);
 		}
 		return $result;
 

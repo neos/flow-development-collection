@@ -73,8 +73,13 @@ class AdvicedConstructorInterceptorBuilderTest extends \F3\Testing\BaseTestCase 
 		} else {
 			$methodArguments = $this->FLOW3_AOP_Proxy_originalConstructorArguments;
 			$this->FLOW3_AOP_Proxy_methodIsInAdviceMode[\'__construct\'] = TRUE;
+			try {
 			ADVICESCODE
-			unset ($this->FLOW3_AOP_Proxy_methodIsInAdviceMode[\'__construct\']);
+			} catch(\Exception $e) {
+				unset($this->FLOW3_AOP_Proxy_methodIsInAdviceMode[\'__construct\']);
+				throw $e;
+			}
+			unset($this->FLOW3_AOP_Proxy_methodIsInAdviceMode[\'__construct\']);
 		}
 
 		return $result;

@@ -80,8 +80,13 @@ class AdvicedMethodInterceptorBuilder extends \F3\FLOW3\AOP\Builder\AbstractMeth
 			$methodInterceptorCode .= '
 			$methodArguments = array(' . $this->buildMethodArgumentsArrayCode($declaringClassName, $methodName) . ');
 			$this->FLOW3_AOP_Proxy_methodIsInAdviceMode[\'' . $methodName . '\'] = TRUE;
+			try {
 			' . $advicesCode . '
-			unset ($this->FLOW3_AOP_Proxy_methodIsInAdviceMode[\'' . $methodName . '\']);
+			} catch(\Exception $e) {
+				unset($this->FLOW3_AOP_Proxy_methodIsInAdviceMode[\'' . $methodName . '\']);
+				throw $e;
+			}
+			unset($this->FLOW3_AOP_Proxy_methodIsInAdviceMode[\'' . $methodName . '\']);
 		}
 		return $result;
 ';
