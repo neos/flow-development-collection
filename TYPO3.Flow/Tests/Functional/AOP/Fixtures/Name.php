@@ -23,57 +23,25 @@ namespace F3\FLOW3\Tests\Functional\AOP\Fixtures;
  *                                                                        */
 
 /**
- * A target class for testing the AOP framework
+ * A simple value object class for testing the AOP framework
  */
-class TargetClass01 {
+class Name {
+
+	protected $name;
 
 	/**
-	 * @var \F3\FLOW3\Tests\Functional\AOP\Fixtures\Name
-	 */
-	protected $currentName;
-
-	/**
-	 * @return string
-	 */
-	public function sayHello() {
-		return 'Hello';
-	}
-
-	/**
+	 *
 	 * @param string $name
-	 * @return string
 	 */
-	public function greet($name) {
-		return 'Hello, ' . $name;
+	function __construct($name) {
+		$this->name = $name;
 	}
 
 	/**
-	 * @param \SplObjectStorage $names
 	 * @return string
 	 */
-	public function greetMany(\SplObjectStorage $names) {
-		$greet = '';
-		foreach ($names as $name) {
-			$greet .= $name;
-		}
-		return 'Hello, ' . $greet;
-	}
-
-	/**
-	 *
-	 * @return string
-	 */
-	public function getCurrentName() {
-		return $this->currentName;
-	}
-
-	/**
-	 *
-	 * @param \F3\FLOW3\Tests\Functional\AOP\Fixtures\Name $name
-	 * @return void
-	 */
-	public function setCurrentName(\F3\FLOW3\Tests\Functional\AOP\Fixtures\Name $name = NULL) {
-		$this->currentName = $name;
+	public function __toString() {
+		return $this->name;
 	}
 }
 ?>

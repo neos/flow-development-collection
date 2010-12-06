@@ -14,7 +14,7 @@ FLOW3:
 
     # Registers global objects to be evaluated for dynamic pointcut expressions
     globalObjects:
-      party: "$party = $objectManager->get('F3\\FLOW3\\Security\\Context')->getParty();"
+      securityContext: F3\FLOW3\Security\Context
 
   configuration:
 

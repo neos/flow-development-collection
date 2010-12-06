@@ -50,22 +50,6 @@ class PointcutFilterComposite implements \F3\FLOW3\AOP\Pointcut\PointcutFilterIn
 	protected $globalRuntimeEvaluationsDefinition = array();
 
 	/**
-	 * An array of global objects, to be access for dynamich runtime evaluations
-	 * @var array
-	 */
-	protected $globalObjects = array();
-
-	/**
-	 * Inject global settings, used to retrieve registered global objects
-	 *
-	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function injectSettings(array $settings) {
-		$this->globalObjects = $settings['aop']['globalObjects'];
-	}
-
-	/**
 	 * Checks if the specified class and method match the registered class-
 	 * and method filter patterns.
 	 *
@@ -174,15 +158,19 @@ class PointcutFilterComposite implements \F3\FLOW3\AOP\Pointcut\PointcutFilterIn
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getRuntimeEvaluationsClosureCode() {
-		$globalObjects = array();
-		$conditionCode = $this->buildRuntimeEvaluationsConditionCode('', $this->getRuntimeEvaluationsDefinition(), $globalObjects);
+		$useGlobalObjects = FALSE;
+		$conditionCode = $this->buildRuntimeEvaluationsConditionCode('', $this->getRuntimeEvaluationsDefinition(), $useGlobalObjects);
 
 		if ($conditionCode !== '') {
-			return "\n\t\t\t\t\t\tfunction(\\F3\\FLOW3\\AOP\\JoinPointInterface \$joinPoint) use (\$objectManager) {\n" .
-					"\t\t\t\t\t\t\t\$currentObject = \$joinPoint->getProxy();\n" .
-					"\t\t\t\t\t\t\t" . implode("\n\t\t\t\t\t\t\t", $globalObjects) .
-					"\n\t\t\t\t\t\t\treturn " . $conditionCode . ';' .
+			$code = "\n\t\t\t\t\t\tfunction(\\F3\\FLOW3\\AOP\\JoinPointInterface \$joinPoint) use (\$objectManager) {\n" .
+					"\t\t\t\t\t\t\t\$currentObject = \$joinPoint->getProxy();\n";
+			if ($useGlobalObjects) {
+				$code .= "\t\t\t\t\t\t\t\$globalObjectNames = \$objectManager->get('F3\\FLOW3\\Configuration\\ConfigurationManager')->getConfiguration(\\F3\\FLOW3\\Configuration\\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, NULL, array('FLOW3', 'aop', 'globalObjects'));\n";
+				$code .= "\t\t\t\t\t\t\t\$globalObjects = array_map(function(\$objectName) use (\$objectManager) { return \$objectManager->get(\$objectName); }, \$globalObjectNames);\n";
+			}
+			$code .= "\t\t\t\t\t\t\treturn " . $conditionCode . ';' .
 					"\n\t\t\t\t\t\t}";
+			return $code;
 		} else {
 			return 'NULL';
 		}
@@ -193,22 +181,22 @@ class PointcutFilterComposite implements \F3\FLOW3\AOP\Pointcut\PointcutFilterIn
 	 *
 	 * @param string $operator The operator for the given condition
 	 * @param array $conditions Condition array
-	 * @param array $globalObjects An array of code that instantiates all global objects needed in the condition code
+	 * @param boolean &$useGlobalObjects Set to TRUE if global objects are used by the condition
 	 * @return string The condition code
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	protected function buildRuntimeEvaluationsConditionCode($operator, array $conditions, array &$globalObjects = array()) {
+	protected function buildRuntimeEvaluationsConditionCode($operator, array $conditions, &$useGlobalObjects = FALSE) {
 		$conditionsCode = array();
 
 		if (count($conditions) === 0) return '';
 
 		if (isset($conditions['evaluateConditions']) && is_array($conditions['evaluateConditions'])) {
-			$conditionsCode[] = $this->buildGlobalRuntimeEvaluationsConditionCode($conditions['evaluateConditions'], $globalObjects);
+			$conditionsCode[] = $this->buildGlobalRuntimeEvaluationsConditionCode($conditions['evaluateConditions'], $useGlobalObjects);
 			unset($conditions['evaluateConditions']);
 		}
 
 		if (isset($conditions['methodArgumentConstraints']) && is_array($conditions['methodArgumentConstraints'])) {
-			$conditionsCode[] = $this->buildMethodArgumentsEvaluationConditionCode($conditions['methodArgumentConstraints'], $globalObjects);
+			$conditionsCode[] = $this->buildMethodArgumentsEvaluationConditionCode($conditions['methodArgumentConstraints'], $useGlobalObjects);
 			unset($conditions['methodArgumentConstraints']);
 		}
 
@@ -225,7 +213,7 @@ class PointcutFilterComposite implements \F3\FLOW3\AOP\Pointcut\PointcutFilterIn
 					$negateCurrentSubCondition = TRUE;
 				}
 
-				$currentSubConditionsCode = $this->buildRuntimeEvaluationsConditionCode($subOperator, $subCondition, $globalObjects);
+				$currentSubConditionsCode = $this->buildRuntimeEvaluationsConditionCode($subOperator, $subCondition, $useGlobalObjects);
 				if ($negateCurrentSubCondition === TRUE) $currentSubConditionsCode = '(!' . $currentSubConditionsCode . ')';
 
 				$subConditionsCode .= ($isFirst === TRUE ? '(' : ' ' . $subOperator . ' ') . $currentSubConditionsCode;
@@ -237,7 +225,7 @@ class PointcutFilterComposite implements \F3\FLOW3\AOP\Pointcut\PointcutFilterIn
 
 		} else if (count($conditions) === 1) {
 			$subOperator = key($conditions);
-			$conditionsCode[] = $this->buildRuntimeEvaluationsConditionCode($subOperator, current($conditions), $globalObjects);
+			$conditionsCode[] = $this->buildRuntimeEvaluationsConditionCode($subOperator, current($conditions), $useGlobalObjects);
 		}
 
 		$negateCondition = FALSE;
@@ -261,11 +249,11 @@ class PointcutFilterComposite implements \F3\FLOW3\AOP\Pointcut\PointcutFilterIn
 	 * Returns the PHP code of the conditions used argument runtime evaluations
 	 *
 	 * @param array $conditions Condition array
-	 * @param array $globalObjects An array of code that instantiates all global objects needed in the condition code
+	 * @param boolean &$useGlobalObjects Set to TRUE if global objects are used by the condition
 	 * @return string The arguments condition code
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	protected function buildMethodArgumentsEvaluationConditionCode(array $conditions, array &$globalObjects = array()) {
+	protected function buildMethodArgumentsEvaluationConditionCode(array $conditions, &$useGlobalObjects = FALSE) {
 		$argumentConstraintsConditionsCode = '';
 
 		$isFirst = TRUE;
@@ -273,16 +261,18 @@ class PointcutFilterComposite implements \F3\FLOW3\AOP\Pointcut\PointcutFilterIn
 
 			$objectAccess = explode('.', $argumentName, 2);
 			if (count($objectAccess) === 2) {
-				$leftValue = 'F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($joinPoint->getMethodArgument(\'' . $objectAccess[0] . '\'), \'' . $objectAccess[1] . '\')';
+				$leftValue = '\F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($joinPoint->getMethodArgument(\'' . $objectAccess[0] . '\'), \'' . $objectAccess[1] . '\')';
 			} else {
 				$leftValue = '$joinPoint->getMethodArgument(\'' . $argumentName . '\')';
 			}
 
 			for ($i = 0; $i < count($argumentConstraint['operator']); $i++) {
-				$rightValue = $this->buildArgumentEvaluationAccessCode($argumentConstraint['value'][$i], $globalObjects);
+				$rightValue = $this->buildArgumentEvaluationAccessCode($argumentConstraint['value'][$i], $useGlobalObjects);
 
 				if ($argumentConstraint['operator'][$i] === 'in') {
-					$argumentConstraintsConditionsCode .= ($isFirst === TRUE ? '(' : ' && ') . 'in_array(' . $leftValue . ', ' . $rightValue . ')';
+					$argumentConstraintsConditionsCode .= ($isFirst === TRUE ? '(' : ' && ') . '(' . $rightValue . ' instanceof \SplObjectStorage ? ' . $leftValue . ' !== NULL && ' . $rightValue . '->contains(' . $leftValue  . ') : in_array(' . $leftValue . ', ' . $rightValue . '))';
+				} else if ($argumentConstraint['operator'][$i] === 'contains') {
+					$argumentConstraintsConditionsCode .= ($isFirst === TRUE ? '(' : ' && ') . '(' . $leftValue . ' instanceof \SplObjectStorage ? ' . $rightValue . ' !== NULL && ' . $leftValue . '->contains(' . $rightValue  . ') : in_array(' . $rightValue . ', ' . $leftValue . '))';
 				} else if ($argumentConstraint['operator'][$i] === 'matches') {
 					$argumentConstraintsConditionsCode .= ($isFirst === TRUE ? '(' : ' && ') . '(!empty(array_intersect(' . $leftValue . ', ' . $rightValue . ')))';
 				} else {
@@ -300,20 +290,22 @@ class PointcutFilterComposite implements \F3\FLOW3\AOP\Pointcut\PointcutFilterIn
 	 * Returns the PHP code of the conditions used for global runtime evaluations
 	 *
 	 * @param array $conditions Condition array
-	 * @param array $globalObjects An array of code that instantiates all global objects needed in the condition code
+	 * @param boolean &$useGlobalObjects Set to TRUE if global objects are used by the condition
 	 * @return string The condition code
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	protected function buildGlobalRuntimeEvaluationsConditionCode(array $conditions, array &$globalObjects = array()) {
+	protected function buildGlobalRuntimeEvaluationsConditionCode(array $conditions, &$useGlobalObjects = FALSE) {
 		$evaluateConditionsCode = '';
 
 		$isFirst = TRUE;
 		foreach ($conditions as $constraint) {
-			$leftValue = $this->buildArgumentEvaluationAccessCode($constraint['leftValue'], $globalObjects);
-			$rightValue = $this->buildArgumentEvaluationAccessCode($constraint['rightValue'], $globalObjects);
+			$leftValue = $this->buildArgumentEvaluationAccessCode($constraint['leftValue'], $useGlobalObjects);
+			$rightValue = $this->buildArgumentEvaluationAccessCode($constraint['rightValue'], $useGlobalObjects);
 
 			if ($constraint['operator'] === 'in') {
-				$evaluateConditionsCode .= ($isFirst === TRUE ? '(' : ' && ') . 'in_array(' . $leftValue . ', ' . $rightValue . ')';
+				$evaluateConditionsCode .= ($isFirst === TRUE ? '(' : ' && ') . '(' . $rightValue . ' instanceof \SplObjectStorage ? ' . $leftValue . ' !== NULL && ' . $rightValue . '->contains(' . $leftValue  . ') : in_array(' . $leftValue . ', ' . $rightValue . '))';
+			} else if ($constraint['operator'] === 'contains') {
+				$evaluateConditionsCode .= ($isFirst === TRUE ? '(' : ' && ') . '(' . $leftValue . ' instanceof \SplObjectStorage ? ' . $rightValue . ' !== NULL && ' . $leftValue . '->contains(' . $rightValue  . ') : in_array(' . $rightValue . ', ' . $leftValue . '))';
 			} else if ($constraint['operator'] === 'matches') {
 				$evaluateConditionsCode .= ($isFirst === TRUE ? '(' : ' && ') . '(!empty(array_intersect(' . $leftValue . ', ' . $rightValue . ')))';
 			} else {
@@ -330,11 +322,11 @@ class PointcutFilterComposite implements \F3\FLOW3\AOP\Pointcut\PointcutFilterIn
 	 * Returns the PHP code used to access one argument of a runtime evaluation
 	 *
 	 * @param mixed $argumentAccess The unparsed argument access, might be string or array
-	 * @param array $globalObjects An array of code that instantiates all global objects needed in the condition code
+	 * @param boolean &$useGlobalObjects Set to TRUE if global objects are used by the condition
 	 * @return string The condition code
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	protected function buildArgumentEvaluationAccessCode($argumentAccess, array &$globalObjects = array()) {
+	protected function buildArgumentEvaluationAccessCode($argumentAccess, &$useGlobalObjects = FALSE) {
 		$argumentAccessCode = '';
 
 		if (is_array($argumentAccess)) {
@@ -348,12 +340,15 @@ class PointcutFilterComposite implements \F3\FLOW3\AOP\Pointcut\PointcutFilterIn
 			$objectAccess = explode('.', $argumentAccess, 2);
 			if (count($objectAccess) === 2 && $objectAccess[0] === 'current') {
 				$objectAccess = explode('.', $objectAccess[1], 2);
-				$argumentAccessCode = 'F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($' . $objectAccess[0] . ', \'' . $objectAccess[1] . '\')';
+				if (count($objectAccess) === 1) {
+					$argumentAccessCode = '$globalObjects[\'' . $objectAccess[0] . '\']';
+				} else {
+					$argumentAccessCode = '\F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($globalObjects[\'' . $objectAccess[0] . '\'], \'' . $objectAccess[1] . '\')';
+				}
 
-				if (array_key_exists($objectAccess[0], $this->globalObjects)) $globalObjects[$objectAccess[0]] = $this->globalObjects[$objectAccess[0]];
-
+				$useGlobalObjects = TRUE;
 			} else if (count($objectAccess) === 2 && $objectAccess[0] === 'this') {
-				$argumentAccessCode = 'F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($currentObject, \'' . $objectAccess[1] . '\')';
+				$argumentAccessCode = '\F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($currentObject, \'' . $objectAccess[1] . '\')';
 			} else {
 				$argumentAccessCode = $argumentAccess;
 			}

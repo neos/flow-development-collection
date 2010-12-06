@@ -182,14 +182,6 @@ class PointcutFilterCompositeTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getRuntimeEvaluationsClosureCodeReturnsTheCorrectStringForBasicRuntimeEvaluationsDefintion() {
-		$settings = array(
-			'aop' => array(
-				'globalObjects' => array(
-					'party' => '$party = $objectManager->get(\'F3\\FLOW3\\Security\\Context\')->getParty();'
-				)
-			)
-		);
-
 		$runtimeEvaluationsDefintion = array (
 										'&&' => array (
 											'&&' => array (
@@ -221,12 +213,12 @@ class PointcutFilterCompositeTest extends \F3\Testing\BaseTestCase {
 
 		$expectedResult = "\n\t\t\t\t\t\tfunction(\\F3\\FLOW3\\AOP\\JoinPointInterface \$joinPoint) use (\$objectManager) {\n" .
 								"\t\t\t\t\t\t\t\$currentObject = \$joinPoint->getProxy();\n" .
-								"\t\t\t\t\t\t\t\$party = \$objectManager->get('F3\\FLOW3\\Security\\Context')->getParty();\n" .
-								"\t\t\t\t\t\t\treturn (((F3\FLOW3\Reflection\ObjectAccess::getPropertyPath(\$currentObject, 'some.thing') != F3\FLOW3\Reflection\ObjectAccess::getPropertyPath(\$party, 'name')) && (\$joinPoint->getMethodArgument('identifier') > 3 && \$joinPoint->getMethodArgument('identifier') <= 5)) || (\$joinPoint->getMethodArgument('identifier') == 42));\n" .
+								"\t\t\t\t\t\t\t\$globalObjectNames = \$objectManager->get('F3\FLOW3\Configuration\ConfigurationManager')->getConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, NULL, array('FLOW3', 'aop', 'globalObjects'));\n" .
+								"\t\t\t\t\t\t\t\$globalObjects = array_map(function(\$objectName) use (\$objectManager) { return \$objectManager->get(\$objectName); }, \$globalObjectNames);\n" .
+								"\t\t\t\t\t\t\treturn (((\F3\FLOW3\Reflection\ObjectAccess::getPropertyPath(\$currentObject, 'some.thing') != \F3\FLOW3\Reflection\ObjectAccess::getPropertyPath(\$globalObjects['party'], 'name')) && (\$joinPoint->getMethodArgument('identifier') > 3 && \$joinPoint->getMethodArgument('identifier') <= 5)) || (\$joinPoint->getMethodArgument('identifier') == 42));\n" .
 								"\t\t\t\t\t\t}";
 
 		$pointcutFilterComposite = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\AOP\Pointcut\PointcutFilterComposite'), array('dummy'), array(), '', FALSE);
-		$pointcutFilterComposite->injectSettings($settings);
 		$pointcutFilterComposite->_set('runtimeEvaluationsDefinition', $runtimeEvaluationsDefintion);
 
 		$result = $pointcutFilterComposite->getRuntimeEvaluationsClosureCode();
@@ -240,14 +232,6 @@ class PointcutFilterCompositeTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getRuntimeEvaluationsClosureCodeHandlesDefinitionsConcatenatedByNegatedOperatorsCorrectly() {
-		$settings = array(
-			'aop' => array(
-				'globalObjects' => array(
-					'party' => '$party = $objectManager->get(\'F3\\FLOW3\\Security\\Context\')->getParty();'
-				)
-			)
-		);
-
 		$runtimeEvaluationsDefintion = array (
 										'&&' => array (
 											'&&' => array (
@@ -279,12 +263,12 @@ class PointcutFilterCompositeTest extends \F3\Testing\BaseTestCase {
 
 		$expectedResult = "\n\t\t\t\t\t\tfunction(\\F3\\FLOW3\\AOP\\JoinPointInterface \$joinPoint) use (\$objectManager) {\n" .
 								"\t\t\t\t\t\t\t\$currentObject = \$joinPoint->getProxy();\n" .
-								"\t\t\t\t\t\t\t\$party = \$objectManager->get('F3\\FLOW3\\Security\\Context')->getParty();\n" .
-								"\t\t\t\t\t\t\treturn (((F3\FLOW3\Reflection\ObjectAccess::getPropertyPath(\$currentObject, 'some.thing') != F3\FLOW3\Reflection\ObjectAccess::getPropertyPath(\$party, 'name')) && (!(\$joinPoint->getMethodArgument('identifier') > 3 && \$joinPoint->getMethodArgument('identifier') <= 5))) || (!(\$joinPoint->getMethodArgument('identifier') == 42)));\n" .
+								"\t\t\t\t\t\t\t\$globalObjectNames = \$objectManager->get('F3\FLOW3\Configuration\ConfigurationManager')->getConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, NULL, array('FLOW3', 'aop', 'globalObjects'));\n" .
+								"\t\t\t\t\t\t\t\$globalObjects = array_map(function(\$objectName) use (\$objectManager) { return \$objectManager->get(\$objectName); }, \$globalObjectNames);\n" .
+								"\t\t\t\t\t\t\treturn (((\F3\FLOW3\Reflection\ObjectAccess::getPropertyPath(\$currentObject, 'some.thing') != \F3\FLOW3\Reflection\ObjectAccess::getPropertyPath(\$globalObjects['party'], 'name')) && (!(\$joinPoint->getMethodArgument('identifier') > 3 && \$joinPoint->getMethodArgument('identifier') <= 5))) || (!(\$joinPoint->getMethodArgument('identifier') == 42)));\n" .
 								"\t\t\t\t\t\t}";
 
 		$pointcutFilterComposite = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\AOP\Pointcut\PointcutFilterComposite'), array('dummy'), array(), '', FALSE);
-		$pointcutFilterComposite->injectSettings($settings);
 		$pointcutFilterComposite->_set('runtimeEvaluationsDefinition', $runtimeEvaluationsDefintion);
 
 		$result = $pointcutFilterComposite->getRuntimeEvaluationsClosureCode();
@@ -366,7 +350,7 @@ class PointcutFilterCompositeTest extends \F3\Testing\BaseTestCase {
 
 		$result = $pointcutFilterComposite->_call('buildMethodArgumentsEvaluationConditionCode', $condition);
 
-		$expectedResult = '($joinPoint->getMethodArgument(\'identifier\') == F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($currentObject, \'bar.baz\') && $joinPoint->getMethodArgument(\'identifier\') != F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($party, \'bar.baz\') && F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($joinPoint->getMethodArgument(\'some\'), \'object.property\') != F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($currentObject, \'object.with.another.property\'))';
+		$expectedResult = '($joinPoint->getMethodArgument(\'identifier\') == \F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($currentObject, \'bar.baz\') && $joinPoint->getMethodArgument(\'identifier\') != \F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($globalObjects[\'party\'], \'bar.baz\') && \F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($joinPoint->getMethodArgument(\'some\'), \'object.property\') != \F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($currentObject, \'object.with.another.property\'))';
 
 		$this->assertEquals($expectedResult, $result, 'The wrong Code has been built.');
 	}
@@ -391,7 +375,7 @@ class PointcutFilterCompositeTest extends \F3\Testing\BaseTestCase {
 
 		$result = $pointcutFilterComposite->_call('buildMethodArgumentsEvaluationConditionCode', $condition);
 
-		$expectedResult = '(in_array($joinPoint->getMethodArgument(\'identifier\'), array(\'usage1\', \'usage2\', "usage3")))';
+		$expectedResult = '((array(\'usage1\', \'usage2\', "usage3") instanceof \SplObjectStorage ? $joinPoint->getMethodArgument(\'identifier\') !== NULL && array(\'usage1\', \'usage2\', "usage3")->contains($joinPoint->getMethodArgument(\'identifier\')) : in_array($joinPoint->getMethodArgument(\'identifier\'), array(\'usage1\', \'usage2\', "usage3"))))';
 
 		$this->assertEquals($expectedResult, $result, 'The wrong Code has been built.');
 	}
@@ -418,7 +402,7 @@ class PointcutFilterCompositeTest extends \F3\Testing\BaseTestCase {
 
 		$result = $pointcutFilterComposite->_call('buildMethodArgumentsEvaluationConditionCode', $condition);
 
-		$expectedResult = '((!empty(array_intersect($joinPoint->getMethodArgument(\'identifier\'), array(\'usage1\', \'usage2\', "usage3")))) && (!empty(array_intersect($joinPoint->getMethodArgument(\'identifier\'), F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($currentObject, \'accounts\')))))';
+		$expectedResult = '((!empty(array_intersect($joinPoint->getMethodArgument(\'identifier\'), array(\'usage1\', \'usage2\', "usage3")))) && (!empty(array_intersect($joinPoint->getMethodArgument(\'identifier\'), \F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($currentObject, \'accounts\')))))';
 
 		$this->assertEquals($expectedResult, $result, 'The wrong Code has been built.');
 	}
@@ -445,7 +429,7 @@ class PointcutFilterCompositeTest extends \F3\Testing\BaseTestCase {
 
 		$result = $pointcutFilterComposite->_call('buildGlobalRuntimeEvaluationsConditionCode', $condition);
 
-		$expectedResult = '(F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($currentObject, \'some.thing\') != F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($party, \'name\') && F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($party, \'account.accountIdentifier\') == "admin")';
+		$expectedResult = '(\F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($currentObject, \'some.thing\') != \F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($globalObjects[\'party\'], \'name\') && \F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($globalObjects[\'party\'], \'account.accountIdentifier\') == "admin")';
 
 		$this->assertEquals($expectedResult, $result, 'The wrong Code has been built.');
 	}
@@ -467,7 +451,7 @@ class PointcutFilterCompositeTest extends \F3\Testing\BaseTestCase {
 
 		$result = $pointcutFilterComposite->_call('buildGlobalRuntimeEvaluationsConditionCode', $condition);
 
-		$expectedResult = '(in_array(F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($currentObject, \'some.thing\'), array("foo", F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($party, \'name\'), 5)))';
+		$expectedResult = '((array("foo", \F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($globalObjects[\'party\'], \'name\'), 5) instanceof \SplObjectStorage ? \F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($currentObject, \'some.thing\') !== NULL && array("foo", \F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($globalObjects[\'party\'], \'name\'), 5)->contains(\F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($currentObject, \'some.thing\')) : in_array(\F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($currentObject, \'some.thing\'), array("foo", \F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($globalObjects[\'party\'], \'name\'), 5))))';
 
 		$this->assertEquals($expectedResult, $result, 'The wrong Code has been built.');
 	}
@@ -494,7 +478,7 @@ class PointcutFilterCompositeTest extends \F3\Testing\BaseTestCase {
 
 		$result = $pointcutFilterComposite->_call('buildGlobalRuntimeEvaluationsConditionCode', $condition);
 
-		$expectedResult = '((!empty(array_intersect(F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($currentObject, \'some.thing\'), array("foo", F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($party, \'name\'), 5)))) && (!empty(array_intersect(F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($currentObject, \'some.thing\'), F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($party, \'accounts\')))))';
+		$expectedResult = '((!empty(array_intersect(\F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($currentObject, \'some.thing\'), array("foo", \F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($globalObjects[\'party\'], \'name\'), 5)))) && (!empty(array_intersect(\F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($currentObject, \'some.thing\'), \F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($globalObjects[\'party\'], \'accounts\')))))';
 
 		$this->assertEquals($expectedResult, $result, 'The wrong Code has been built.');
 	}

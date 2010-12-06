@@ -42,7 +42,7 @@ class PointcutExpressionParser {
 																|\'(?:\\\\\'|[^\'])*\'
 																|[a-zA-Z0-9\-_.]+
 															)
-															\s*(==|!=|<=|>=|<|>|in|contains|matches)\s*
+															\s*(===?|!==?|<=|>=|<|>|in|contains|matches)\s*
 															(   "(?:\\\"|[^"])*"
 																|\(.*?\)
 																|\'(?:\\\\\'|[^\'])*\'

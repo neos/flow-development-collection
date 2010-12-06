@@ -37,5 +37,32 @@ class FrameworkTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 		$this->assertSame('Hello World', $targetClass->sayHello());
 	}
 
+	/**
+	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function resultOfGreetMethodIsModifiedBySpecialNameAdvice() {
+		$targetClass = $this->objectManager->get('F3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01');
+		$this->assertSame('Hello, me', $targetClass->greet('FLOW3'));
+		$this->assertSame('Hello, Christopher', $targetClass->greet('Christopher'));
+	}
+
+	/**
+	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function containWithSplObjectStorageInRuntimeEvaluation() {
+		$targetClass = $this->objectManager->get('F3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01');
+		$name = new \F3\FLOW3\Tests\Functional\AOP\Fixtures\Name('FLOW3');
+		$otherName = new \F3\FLOW3\Tests\Functional\AOP\Fixtures\Name('TYPO3');
+		$splObjectStorage = new \SplObjectStorage();
+		$splObjectStorage->attach($name);
+		$targetClass->setCurrentName($name);
+		$this->assertEquals('Hello, special guest', $targetClass->greetMany($splObjectStorage));
+		$targetClass->setCurrentName(NULL);
+		$this->assertEquals('Hello, FLOW3', $targetClass->greetMany($splObjectStorage));
+		$targetClass->setCurrentName($otherName);
+		$this->assertEquals('Hello, FLOW3', $targetClass->greetMany($splObjectStorage));
+	}
 }
 ?>

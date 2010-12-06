@@ -38,5 +38,22 @@ class Aspect01 {
 		return $joinPoint->getAdviceChain()->proceed($joinPoint) . ' World';
 	}
 
+	/**
+	 * @around method(public F3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01->greet(name === 'FLOW3'))
+	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint
+	 * @return string
+	 */
+	public function specialNameAdvice(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+		return 'Hello, me';
+	}
+
+	/**
+	 * @around method(public F3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01->greetMany(names contains this.currentName))
+	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint
+	 * @return string
+	 */
+	public function manyNamesAdvice(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+		return 'Hello, special guest';
+	}
 }
 ?>
