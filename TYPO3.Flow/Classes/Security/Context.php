@@ -277,7 +277,23 @@ class Context {
 		foreach ($this->getAuthenticationTokens() as $token) {
 			if ($token->isAuthenticated() === TRUE) return $token->getAccount()->getParty();
 		}
+		return NULL;
+	}
 
+	/**
+	 * Returns the first authenticated party of the given type.
+	 *
+	 * @param string $className Class name of the party to find
+	 * @return \F3\Party\Domain\Model\Party The authenticated party
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function getPartyByType($className) {
+		foreach ($this->getAuthenticationTokens() as $token) {
+			if ($token->isAuthenticated() === TRUE && $token->getAccount()->getParty() instanceof $className) {
+				return $token->getAccount()->getParty();
+			}
+		}
 		return NULL;
 	}
 
@@ -297,6 +313,24 @@ class Context {
 		}
 		return NULL;
 	}
+
+	/**
+	 * Returns an authenticated account for the given provider or NULL if no
+	 * account was authenticated or no token was registered for the given
+	 * authentication provider name.
+	 *
+	 * @param string $authenticationProviderName Authentication provider name of the account to find
+	 * @return \F3\FLOW3\Security\Account The authenticated account
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function getAccountByAuthenticationProviderName($authenticationProviderName) {
+		if (isset($this->activeTokens[$authenticationProviderName]) && $this->activeTokens[$authenticationProviderName]->isAuthenticated() === TRUE) {
+			return $this->activeTokens[$authenticationProviderName]->getAccount();
+		}
+		return NULL;
+	}
+
 	/**
 	 * Clears the security context.
 	 *

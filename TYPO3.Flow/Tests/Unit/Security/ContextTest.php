@@ -760,5 +760,73 @@ class ContextTest extends \F3\Testing\BaseTestCase {
 		$this->assertEquals($mockAccount, $mockContext->getAccount());
 	}
 
+	/**
+	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function getPartyByTypeReturnsTheFirstAuthenticatedPartyWithGivenType() {
+		$matchingMockParty = $this->getMock('F3\Party\Domain\Model\Party', array(), array(), 'MatchingParty');
+		$notMatchingMockParty = $this->getMock('F3\Party\Domain\Model\Party', array(), array(), 'NotMatchingParty');
+
+		$mockAccount1 = $this->getMock('F3\FLOW3\Security\Account');
+		$mockAccount1->expects($this->any())->method('getParty')->will($this->returnValue($notMatchingMockParty));
+		$mockAccount2 = $this->getMock('F3\FLOW3\Security\Account');
+		$mockAccount2->expects($this->any())->method('getParty')->will($this->returnValue($matchingMockParty));
+
+		$token1 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), uniqid('token1'));
+		$token1->expects($this->any())->method('isAuthenticated')->will($this->returnValue(FALSE));
+		$token1->expects($this->never())->method('getAccount');
+
+		$token2 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), uniqid('token2'));
+		$token2->expects($this->any())->method('isAuthenticated')->will($this->returnValue(TRUE));
+		$token2->expects($this->any())->method('getAccount')->will($this->returnValue($mockAccount1));
+
+		$token3 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), uniqid('token3'));
+		$token3->expects($this->any())->method('isAuthenticated')->will($this->returnValue(TRUE));
+		$token3->expects($this->any())->method('getAccount')->will($this->returnValue($mockAccount2));
+
+		$mockContext = $this->getAccessibleMock('F3\FLOW3\Security\Context', array('getAuthenticationTokens'), array(), '', FALSE);
+		$mockContext->expects($this->once())->method('getAuthenticationTokens')->will($this->returnValue(array($token1, $token2, $token3)));
+
+		$this->assertSame($matchingMockParty, $mockContext->getPartyByType('MatchingParty'));
+	}
+
+	/**
+	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function getAccountByAuthenticationProviderNameReturnsTheAuthenticatedAccountWithGivenProviderName() {
+		$mockAccount1 = $this->getMock('F3\FLOW3\Security\Account');
+		$mockAccount2 = $this->getMock('F3\FLOW3\Security\Account');
+
+		$token1 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), uniqid('token1'));
+		$token1->expects($this->any())->method('isAuthenticated')->will($this->returnValue(FALSE));
+		$token1->expects($this->never())->method('getAccount');
+
+		$token2 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), uniqid('token2'));
+		$token2->expects($this->any())->method('isAuthenticated')->will($this->returnValue(TRUE));
+		$token2->expects($this->any())->method('getAccount')->will($this->returnValue($mockAccount1));
+
+		$token3 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), uniqid('token3'));
+		$token3->expects($this->any())->method('isAuthenticated')->will($this->returnValue(TRUE));
+		$token3->expects($this->any())->method('getAccount')->will($this->returnValue($mockAccount2));
+
+		$mockContext = $this->getAccessibleMock('F3\FLOW3\Security\Context', array('getAuthenticationTokens'), array(), '', FALSE);
+		$mockContext->_set('activeTokens', array('SomeOhterProvider' => $token1, 'SecondProvider' => $token2, 'MatchingProvider' => $token3));
+
+		$this->assertSame($mockAccount2, $mockContext->getAccountByAuthenticationProviderName('MatchingProvider'));
+	}
+
+	/**
+	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function getAccountByAuthenticationProviderNameReturnsNullIfNoAccountFound() {
+		$mockContext = $this->getAccessibleMock('F3\FLOW3\Security\Context', array('getAuthenticationTokens'), array(), '', FALSE);
+		$mockContext->_set('activeTokens', array());
+
+		$this->assertSame(NULL, $mockContext->getAccountByAuthenticationProviderName('UnknownProvider'));
+	}
+
 }
 ?>
