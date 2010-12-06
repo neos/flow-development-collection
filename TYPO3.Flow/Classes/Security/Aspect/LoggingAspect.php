@@ -62,7 +62,11 @@ class LoggingAspect {
 			$this->securityLogger->log('Authentication failed: "' . $exception->getMessage() . '" #' . $exception->getCode(), LOG_NOTICE);
 			throw $exception;
 		} elseif ($this->alreadyLoggedAuthenticateCall === FALSE) {
-			$this->securityLogger->log('Successfully re-authenticated tokens for account "' . $joinPoint->getProxy()->getSecurityContext()->getAccount()->getAccountIdentifier() . '"', LOG_INFO);
+			if ($joinPoint->getProxy()->getSecurityContext()->getAccount() !== NULL) {
+				$this->securityLogger->log('Successfully re-authenticated tokens for account "' . $joinPoint->getProxy()->getSecurityContext()->getAccount()->getAccountIdentifier() . '"', LOG_INFO);
+			} else {
+				$this->securityLogger->log('No account authenticated', LOG_INFO);
+			}
 			$this->alreadyLoggedAuthenticateCall = TRUE;
 		}
 	}

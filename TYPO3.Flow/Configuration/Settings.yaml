@@ -176,9 +176,25 @@ FLOW3:
             webRedirect:
               uri: flow3/authentication
 
-      # If set to TRUE, authentication will only succeed, if all active tokens (authentication mechanisms)
-      # can be authenticated.
-      authenticationStrategy: oneToken
+      # One of the available authentication strategies:
+      #
+      #   "anyToken" (default):
+      #     Authenticate as many tokens as possible but do not require
+      #     an authenticated token (e.g. for guests with role Everybody).
+      #
+      #   "allTokens":
+      #     Authenticate all active tokens and throw an exception if
+      #     an active token could not be authenticated.
+      #
+      #   "oneToken":
+      #     Stop authentication of tokens after first successful
+      #     authentication of a token. Requires an authenticated token.
+      #
+      #   "atLeastOneToken":
+      #     Authenticate as many tokens as possible but do not fail if
+      #     a token could not be authenticated as long as at least one
+      #     token could be authenticated.
+      authenticationStrategy: anyToken
 
     authorization:
       # An array of access decision voters that should vote when access decisions are made

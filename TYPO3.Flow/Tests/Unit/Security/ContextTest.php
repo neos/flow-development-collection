@@ -299,6 +299,8 @@ class ContextTest extends \F3\Testing\BaseTestCase {
 		$data[] = array($settings, \F3\FLOW3\Security\Context::AUTHENTICATE_ONE_TOKEN);
 		$settings['security']['authentication']['authenticationStrategy'] = 'atLeastOneToken';
 		$data[] = array($settings, \F3\FLOW3\Security\Context::AUTHENTICATE_AT_LEAST_ONE_TOKEN);
+		$settings['security']['authentication']['authenticationStrategy'] = 'anyToken';
+		$data[] = array($settings, \F3\FLOW3\Security\Context::AUTHENTICATE_ANY_TOKEN);
 		return $data;
 	}
 

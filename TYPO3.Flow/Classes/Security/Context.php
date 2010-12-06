@@ -32,23 +32,29 @@ namespace F3\FLOW3\Security;
 class Context {
 
 	/**
+	 * Authenticate as many tokens as possible but do not require
+	 * an authenticated token (e.g. for guest users with role Everybody).
+	 */
+	const AUTHENTICATE_ANY_TOKEN = 1;
+
+	/**
 	 * Stop authentication of tokens after first successful
 	 * authentication of a token.
 	 */
-	const AUTHENTICATE_ONE_TOKEN = 1;
+	const AUTHENTICATE_ONE_TOKEN = 2;
 
 	/**
 	 * Authenticate all active tokens and throw an exception if
 	 * an active token could not be authenticated.
 	 */
-	const AUTHENTICATE_ALL_TOKENS = 2;
+	const AUTHENTICATE_ALL_TOKENS = 3;
 
 	/**
 	 * Authenticate as many tokens as possible but do not fail if
 	 * a token could not be authenticated and at least one token
 	 * could be authenticated.
 	 */
-	const AUTHENTICATE_AT_LEAST_ONE_TOKEN = 3;
+	const AUTHENTICATE_AT_LEAST_ONE_TOKEN = 4;
 
 	/**
 	 * Array of configured tokens (might have request patterns)
@@ -74,7 +80,7 @@ class Context {
 	 * One of the AUTHENTICATE_* constants to set the authentication strategy.
 	 * @var int
 	 */
-	protected $authenticationStrategy = self::AUTHENTICATE_ONE_TOKEN;
+	protected $authenticationStrategy = self::AUTHENTICATE_ANY_TOKEN;
 
 	/**
 	 * @var \F3\FLOW3\MVC\RequestInterface
@@ -150,6 +156,9 @@ class Context {
 					break;
 				case 'atLeastOneToken':
 					$this->authenticationStrategy = self::AUTHENTICATE_AT_LEAST_ONE_TOKEN;
+					break;
+				case 'anyToken':
+					$this->authenticationStrategy = self::AUTHENTICATE_ANY_TOKEN;
 					break;
 				default:
 					throw new \F3\FLOW3\Exception('Invalid setting "' . $authenticationStrategyName . '" for security.authentication.authenticationStrategy', 1291043022);

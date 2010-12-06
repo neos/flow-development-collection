@@ -191,7 +191,8 @@ class AuthenticationProviderManager implements \F3\FLOW3\Security\Authentication
 			}
 		}
 
-		if (!$anyTokenAuthenticated) {
+		if (!$anyTokenAuthenticated && $this->securityContext->getAuthenticationStrategy() !== \F3\FLOW3\Security\Context::AUTHENTICATE_ANY_TOKEN) {
+			var_dump($this->securityContext->getAuthenticationStrategy());
 			throw new \F3\FLOW3\Security\Exception\AuthenticationRequiredException('Could not authenticate any token. Might be missing or wrong credentials or no authentication provider matched.', 1222204027);
 		}
 	}
