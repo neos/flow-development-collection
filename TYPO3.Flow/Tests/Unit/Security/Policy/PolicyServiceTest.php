@@ -592,17 +592,19 @@ class PolicyServiceTest extends \F3\Testing\BaseTestCase {
 	 * @category unit
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function shutdownObjectStoresTheEntityConstraintsAndACLsCorrectlyInTheCache() {
+	public function savePolicyCacheStoresTheEntityConstraintsAndACLsCorrectlyInTheCache() {
 		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
-		$mockCache->expects($this->at(0))->method('set')->with('acls', array('aclsArray'), array('F3_FLOW3_AOP'));
-		$mockCache->expects($this->at(1))->method('set')->with('entityResourcesConstraints', array('entityResourcesConstraintsArray'));
+		$mockCache->expects($this->at(0))->method('has')->with('acls')->will($this->returnValue(FALSE));
+		$mockCache->expects($this->at(1))->method('set')->with('acls', array('aclsArray'), array('F3_FLOW3_AOP'));
+		$mockCache->expects($this->at(2))->method('has')->with('entityResourcesConstraints')->will($this->returnValue(FALSE));
+		$mockCache->expects($this->at(3))->method('set')->with('entityResourcesConstraints', array('entityResourcesConstraintsArray'));
 
 		$policyService = $this->getAccessibleMock('F3\FLOW3\Security\Policy\PolicyService', array('buildEntityConstraints'), array(), '', FALSE);
 		$policyService->injectCache($mockCache);
 		$policyService->_set('acls', array('aclsArray'));
 		$policyService->_set('entityResourcesConstraints', array('entityResourcesConstraintsArray'));
 
-		$policyService->shutdownObject();
+		$policyService->savePolicyCache();
 	}
 
 	/**

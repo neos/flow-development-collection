@@ -440,11 +440,16 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function shutdownObject() {
+	public function savePolicyCache() {
 		$tags = array('F3_FLOW3_AOP');
-		$this->cache->set('acls', $this->acls, $tags);
-		$this->cache->set('entityResourcesConstraints', $this->entityResourcesConstraints);
+		if (!$this->cache->has('acls')) {
+			$this->cache->set('acls', $this->acls, $tags);
+		}
+		if (!$this->cache->has('entityResourcesConstraints')) {
+			$this->cache->set('entityResourcesConstraints', $this->entityResourcesConstraints);
+		}
 	}
 }
 

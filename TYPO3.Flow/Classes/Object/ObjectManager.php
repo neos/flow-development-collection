@@ -183,6 +183,20 @@ class ObjectManager implements \F3\FLOW3\Object\ObjectManagerInterface {
 
 
 		$this->objectContainer->injectSettings($this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS));
+
+		$this->emitInitializedObjectContainer();
+	}
+
+	/**
+	 * Signalizes that the object container is initialized
+	 *
+	 * @return void
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @signal
+	 * @api
+	 */
+	protected function emitInitializedObjectContainer() {
+		$this->get('F3\FLOW3\SignalSlot\Dispatcher')->dispatch(__CLASS__, __FUNCTION__, array());
 	}
 
 	/**

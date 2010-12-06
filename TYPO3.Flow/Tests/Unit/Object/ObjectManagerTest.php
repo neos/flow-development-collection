@@ -133,8 +133,12 @@ class ObjectManagerTest extends \F3\Testing\BaseTestCase {
 		$mockAopFramework->expects($this->once())->method('loadProxyClasses');
 		$mockAopFramework->expects($this->never())->method('initialize');
 
+		$mockSignalSlotDispatcher = $this->getMock('F3\FLOW3\SignalSlot\Dispatcher', array(), array(), '', FALSE);
+
 		$objectManager = $this->getAccessibleMock('F3\FLOW3\Object\ObjectManager', array('get'));
-		$objectManager->expects($this->once())->method('get')->with('F3\FLOW3\AOP\Framework')->will($this->returnValue($mockAopFramework));
+		$objectManager->expects($this->at(0))->method('get')->with('F3\FLOW3\AOP\Framework')->will($this->returnValue($mockAopFramework));
+		$objectManager->expects($this->at(1))->method('get')->with('F3\FLOW3\SignalSlot\Dispatcher')->will($this->returnValue($mockSignalSlotDispatcher));
+
 		$objectManager->injectConfigurationManager($mockConfigurationManager);
 		$objectManager->_set('staticObjectContainerClassName', get_class($mockObjectContainer));
 		$objectManager->_set('staticObjectContainerPathAndFilename', 'vfs://Base/Temporary/StaticObjectContainer.php');
@@ -172,10 +176,13 @@ class ObjectManagerTest extends \F3\Testing\BaseTestCase {
 		$mockAopFramework = $this->getMock('F3\FLOW3\AOP\Framework', array(), array(), '', FALSE);
 		$mockAopFramework->expects($this->once())->method('initialize')->with($mockObjectConfigurations);
 
+		$mockSignalSlotDispatcher = $this->getMock('F3\FLOW3\SignalSlot\Dispatcher', array(), array(), '', FALSE);
+
 		$objectManager = $this->getAccessibleMock('F3\FLOW3\Object\ObjectManager', array('get', 'buildPackageObjectConfigurations'));
 		$objectManager->expects($this->at(0))->method('buildPackageObjectConfigurations')->with($mockActivePackages)->will($this->returnValue($mockObjectConfigurations));
 		$objectManager->expects($this->at(1))->method('get')->with('F3\FLOW3\AOP\Framework')->will($this->returnValue($mockAopFramework));
 		$objectManager->expects($this->at(2))->method('get')->with('F3\FLOW3\Object\Container\ObjectContainerBuilder')->will($this->returnValue($mockObjectContainerBuilder));
+		$objectManager->expects($this->at(3))->method('get')->with('F3\FLOW3\SignalSlot\Dispatcher')->will($this->returnValue($mockSignalSlotDispatcher));
 
 		$objectManager->injectConfigurationManager($mockConfigurationManager);
 		$objectManager->_set('staticObjectContainerClassName', $staticObjectContainerClassName);
@@ -211,8 +218,11 @@ class ObjectManagerTest extends \F3\Testing\BaseTestCase {
 		$mockAopFramework = $this->getMock('F3\FLOW3\AOP\Framework', array(), array(), '', FALSE);
 		$mockAopFramework->expects($this->once())->method('loadProxyClasses');
 
+		$mockSignalSlotDispatcher = $this->getMock('F3\FLOW3\SignalSlot\Dispatcher', array(), array(), '', FALSE);
+
 		$objectManager = $this->getAccessibleMock('F3\FLOW3\Object\ObjectManager', array('get', 'buildPackageObjectConfigurations'));
-		$objectManager->expects($this->once())->method('get')->with('F3\FLOW3\AOP\Framework')->will($this->returnValue($mockAopFramework));
+		$objectManager->expects($this->at(0))->method('get')->with('F3\FLOW3\AOP\Framework')->will($this->returnValue($mockAopFramework));
+		$objectManager->expects($this->at(1))->method('get')->with('F3\FLOW3\SignalSlot\Dispatcher')->will($this->returnValue($mockSignalSlotDispatcher));
 
 		$objectManager->injectConfigurationManager($mockConfigurationManager);
 		$objectManager->_set('staticObjectContainerClassName', $this->mockStaticObjectContainerClassName);
