@@ -96,6 +96,12 @@ class JsonView extends \F3\FLOW3\MVC\View\AbstractView {
 	protected $configuration = array();
 
 	/**
+	 * @var \F3\FLOW3\Persistence\PersistenceManagerInterface
+	 * @inject
+	 */
+	protected $persistenceManager;
+
+	/**
 	 * Specifies which variables this JsonView should render
 	 * By default only the variable 'value' will be rendered
 	 *
@@ -166,9 +172,7 @@ class JsonView extends \F3\FLOW3\MVC\View\AbstractView {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	protected function transformValue($value, $configuration) {
-		if (is_object($value)) {
-			return $this->transformObject($value, $configuration);
-		} elseif (is_array($value)) {
+		if (is_array($value) || $value instanceof \ArrayAccess) {
 			$array = array();
 			foreach ($value as $key => $element) {
 				if (isset($configuration['_descendAll']) && is_array($configuration['_descendAll'])) {
@@ -180,6 +184,8 @@ class JsonView extends \F3\FLOW3\MVC\View\AbstractView {
 				}
 			}
 			return $array;
+		} elseif (is_object($value)) {
+			return $this->transformObject($value, $configuration);
 		} else {
 			return $value;
 		}
@@ -209,6 +215,9 @@ class JsonView extends \F3\FLOW3\MVC\View\AbstractView {
 			} elseif (isset($configuration['_descend']) && array_key_exists($propertyName, $configuration['_descend'])) {
 				$propertiesToRender[$propertyName] = $this->transformValue($propertyValue, $configuration['_descend'][$propertyName]);
 			}
+		}
+		if (isset($configuration['_exposeObjectIdentifier']) && $configuration['_exposeObjectIdentifier'] === TRUE) {
+			$propertiesToRender['__identity'] = $this->persistenceManager->getIdentifierByObject($object);
 		}
 		return $propertiesToRender;
 	}
