@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Tests\Functional\AOP;
+namespace F3\Testing;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -12,8 +12,8 @@ namespace F3\FLOW3\Tests\Functional\AOP;
  *                                                                        *
  * This script is distributed in the hope that it will be useful, but     *
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
- * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser       *
- * General Public License for more details.                               *
+ * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General      *
+ * Public License for more details.                                       *
  *                                                                        *
  * You should have received a copy of the GNU Lesser General Public       *
  * License along with the script.                                         *
@@ -23,19 +23,15 @@ namespace F3\FLOW3\Tests\Functional\AOP;
  *                                                                        */
 
 /**
- * Testcase for the AOP Framework class
+ * This class exists for backward compatibility with the test case priory
+ * provided by the Testing package.
+ *
+ * Don't start using this class, use F3\Test\UnitTestCase instead.
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @deprecated since 1.0.0 alpha 14
  */
-class FrameworkTest extends \F3\FLOW3\Tests\FunctionalTestCase {
-
-	/**
-	 * @test
-	 */
-	public function resultOfSayHelloMethodIsModifiedByWorldAdvice() {
-		$targetClass = $this->objectManager->get('F3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01');
-		$this->assertSame('Hello World', $targetClass->sayHello());
-	}
-
+abstract class BaseTestCase extends \F3\FLOW3\Tests\BaseTestCase {
 }
+
 ?>
