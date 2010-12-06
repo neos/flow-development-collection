@@ -25,19 +25,16 @@ namespace F3\FLOW3\Tests\Unit\Persistence\Backend\GenericPdo;
 require_once(__DIR__ . '/../../Fixture/AnEntity.php');
 require_once(__DIR__ . '/../../Fixture/AValue.php');
 
+if (!interface_exists('PdoInterface', FALSE)) {
+	require(__DIR__ . '/../../Fixture/PdoInterface.php');
+}
+
 /**
  * Testcase for \F3\FLOW3\Persistence\Backend\GenericPdo\Backend
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class BackendTest extends \F3\Testing\BaseTestCase {
-
-	/**
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function setUp() {
-		$this->loadPdoInterface();
-	}
 
 	/**
 	 * @test
@@ -60,7 +57,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$mockStatement = $this->getMock('PDOStatement');
 		$mockStatement->expects($this->once())->method('execute')->with(array('fakeHash'));
 		$mockStatement->expects($this->once())->method('fetchColumn');
-		$mockPdo = $this->getMock('PdoInterface');
+		$mockPdo = $this->getMock('F3\FLOW3\Tests\Unit\Persistence\Fixture\PdoInterface');
 		$mockPdo->expects($this->once())->method('prepare')->with('SELECT COUNT("identifier") FROM "valueobjects" WHERE "identifier"=?')->will($this->returnValue($mockStatement));
 		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('dummy'));
 		$backend->injectPersistenceSession(new \F3\FLOW3\Persistence\Session());
@@ -77,7 +74,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$mockDeletePropertyStatement->expects($this->once())->method('execute')->with(array('identifier', 'propertyname'));
 		$mockDeleteDataStatement = $this->getMock('PDOStatement');
 		$mockDeleteDataStatement->expects($this->once())->method('execute')->with(array('identifier', 'propertyname'));
-		$mockPdo = $this->getMock('PdoInterface');
+		$mockPdo = $this->getMock('F3\FLOW3\Tests\Unit\Persistence\Fixture\PdoInterface');
 		$mockPdo->expects($this->at(0))->method('prepare')->with('DELETE FROM "properties" WHERE "parent"=? AND "name"=?')->will($this->returnValue($mockDeletePropertyStatement));
 		$mockPdo->expects($this->at(1))->method('prepare')->with('DELETE FROM "properties_data" WHERE "parent"=? AND "name"=?')->will($this->returnValue($mockDeleteDataStatement));
 		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('dummy'));
@@ -98,7 +95,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$mockDeletePropertyStatement->expects($this->once())->method('execute')->with(array('identifier'));
 		$mockDeleteDataStatement = $this->getMock('PDOStatement');
 		$mockDeleteDataStatement->expects($this->once())->method('execute')->with(array('identifier'));
-		$mockPdo = $this->getMock('PdoInterface');
+		$mockPdo = $this->getMock('F3\FLOW3\Tests\Unit\Persistence\Fixture\PdoInterface');
 		$mockPdo->expects($this->at(0))->method('prepare')->with('DELETE FROM "properties_data" WHERE "parent"=?')->will($this->returnValue($mockDeleteDataStatement));
 		$mockPdo->expects($this->at(1))->method('prepare')->with('DELETE FROM "properties" WHERE "parent"=?')->will($this->returnValue($mockDeletePropertyStatement));
 		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('dummy'));
@@ -288,7 +285,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 
 		$mockStatement = $this->getMock('PDOStatement');
 		$mockStatement->expects($this->once())->method('execute')->with(array($identifier, $fullClassName, ''));
-		$mockPdo = $this->getMock('PdoInterface');
+		$mockPdo = $this->getMock('F3\FLOW3\Tests\Unit\Persistence\Fixture\PdoInterface');
 		$mockPdo->expects($this->once())->method('prepare')->with('INSERT INTO "entities" ("identifier", "type", "parent") VALUES (?, ?, ?)')->will($this->returnValue($mockStatement));
 		$mockSession = $this->getMock('F3\FLOW3\Persistence\Session', array('getIdentifierByObject'));
 		$mockSession->expects($this->any())->method('getIdentifierByObject')->with($newObject)->will($this->returnValue($identifier));
@@ -323,7 +320,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 
 		$mockStatement = $this->getMock('PDOStatement');
 		$mockStatement->expects($this->once())->method('execute')->with(array($identifier, $fullClassName, 'parentUuid'));
-		$mockPdo = $this->getMock('PdoInterface');
+		$mockPdo = $this->getMock('F3\FLOW3\Tests\Unit\Persistence\Fixture\PdoInterface');
 		$mockPdo->expects($this->once())->method('prepare')->with('INSERT INTO "entities" ("identifier", "type", "parent") VALUES (?, ?, ?)')->will($this->returnValue($mockStatement));
 		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('dummy'));
 		$backend->injectPersistenceSession(new \F3\FLOW3\Persistence\Session());
@@ -357,7 +354,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 
 		$mockStatement = $this->getMock('PDOStatement');
 		$mockStatement->expects($this->once())->method('execute')->with(array($hash, $fullClassName));
-		$mockPdo = $this->getMock('PdoInterface');
+		$mockPdo = $this->getMock('F3\FLOW3\Tests\Unit\Persistence\Fixture\PdoInterface');
 		$mockPdo->expects($this->once())->method('prepare')->with('INSERT INTO "valueobjects" ("identifier", "type") VALUES (?, ?)')->will($this->returnValue($mockStatement));
 		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('dummy'));
 		$backend->injectPersistenceSession(new \F3\FLOW3\Persistence\Session());
@@ -1152,7 +1149,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$mockInsertDataStatement->expects($this->at(2))->method('execute')->with(array('identifier', 'multiValue', NULL, 'DateTime', '2'));
 		$mockInsertDataStatement->expects($this->at(3))->method('execute')->with(array('identifier', 'keyedMultiValue', 'one', '\FooBar', '1234'));
 		$mockInsertDataStatement->expects($this->at(4))->method('execute')->with(array('identifier', 'keyedMultiValue', 'two', '\FooBar', '5678'));
-		$mockPdo = $this->getMock('PdoInterface');
+		$mockPdo = $this->getMock('F3\FLOW3\Tests\Unit\Persistence\Fixture\PdoInterface');
 		$mockPdo->expects($this->at(0))->method('prepare')->with('INSERT INTO "properties" ("parent", "name", "multivalue", "type") VALUES (?, ?, ?, ?)')->will($this->returnValue($mockInsertPropertyStatement));
 		$mockPdo->expects($this->at(1))->method('prepare')->with('INSERT INTO "properties_data" ("parent", "name", "index", "type", "string") VALUES (?, ?, ?, ?, ?)')->will($this->returnValue($mockInsertDataStatement));
 		$mockPdo->expects($this->at(2))->method('prepare')->with('INSERT INTO "properties_data" ("parent", "name", "index", "type", "datetime") VALUES (?, ?, ?, ?, ?)')->will($this->returnValue($mockInsertDataStatement));
@@ -1182,7 +1179,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$mockStatement = $this->getMock('PDOStatement');
 		$mockStatement->expects($this->once())->method('execute')->with(array('fakeUuid1'));
 		$mockStatement->expects($this->once())->method('fetchAll')->will($this->onConsecutiveCalls(array(array('type' => 'FooBar', 'identifier' => 'heretostay'), array('type' => 'Quux', 'identifier' => 'goaway'))));
-		$mockPdo = $this->getMock('PdoInterface');
+		$mockPdo = $this->getMock('F3\FLOW3\Tests\Unit\Persistence\Fixture\PdoInterface');
 		$mockPdo->expects($this->once())->method('prepare')->with('SELECT "identifier", "type" FROM "entities" WHERE "parent" = ?')->will($this->returnValue($mockStatement));
 
 		$object1 = new \stdClass();
@@ -1211,7 +1208,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$mockStatement = $this->getMock('PDOStatement');
 		$mockStatement->expects($this->once())->method('execute')->with(array('fakeUuid'));
 		$mockStatement->expects($this->exactly(3))->method('fetchColumn')->will($this->onConsecutiveCalls('fakeHash1', 'fakeHash2', FALSE));
-		$mockPdo = $this->getMock('PdoInterface');
+		$mockPdo = $this->getMock('F3\FLOW3\Tests\Unit\Persistence\Fixture\PdoInterface');
 		$mockPdo->expects($this->once())->method('prepare')->with('SELECT "identifier" FROM "valueobjects" WHERE "identifier" IN (SELECT DISTINCT "object" FROM "properties_data" WHERE "parent"=?)')->will($this->returnValue($mockStatement));
 
 		$parent = new \stdClass();
@@ -1239,7 +1236,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 	public function removeEntityEmitsExpectedSqlAndRemovedObjectSignal() {
 		$mockStatement = $this->getMock('PDOStatement');
 		$mockStatement->expects($this->once())->method('execute')->with(array('fakeUuid'));
-		$mockPdo = $this->getMock('PdoInterface');
+		$mockPdo = $this->getMock('F3\FLOW3\Tests\Unit\Persistence\Fixture\PdoInterface');
 		$mockPdo->expects($this->once())->method('prepare')->with('DELETE FROM "entities" WHERE "identifier"=?')->will($this->returnValue($mockStatement));
 
 		$object = new \stdClass();
@@ -1264,7 +1261,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 	public function removeValueObjectEmitsExpectedSqlAndRemovedObjectSignal($subject = 'fakeHash') {
 		$mockStatement = $this->getMock('PDOStatement');
 		$mockStatement->expects($this->once())->method('execute')->with(array('fakeHash'));
-		$mockPdo = $this->getMock('PdoInterface');
+		$mockPdo = $this->getMock('F3\FLOW3\Tests\Unit\Persistence\Fixture\PdoInterface');
 		$mockPdo->expects($this->once())->method('prepare')->with('DELETE FROM "valueobjects" WHERE "identifier"=?')->will($this->returnValue($mockStatement));
 
 		$subject = new \stdClass();
@@ -1288,7 +1285,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 	public function getValueObjectUsageCountEmitsExpectedSql($subject = 'fakeHash') {
 		$mockStatement = $this->getMock('PDOStatement');
 		$mockStatement->expects($this->once())->method('execute')->with(array('fakeHash'));
-		$mockPdo = $this->getMock('PdoInterface');
+		$mockPdo = $this->getMock('F3\FLOW3\Tests\Unit\Persistence\Fixture\PdoInterface');
 		$mockPdo->expects($this->once())->method('prepare')->with('SELECT COUNT(DISTINCT "parent") FROM "properties_data" WHERE "object"=?')->will($this->returnValue($mockStatement));
 
 		$subject = new \stdClass();
@@ -1333,7 +1330,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$mockStatement = $this->getMock('PDOStatement');
 		$mockStatement->expects($this->once())->method('execute')->with(array('e2408ea7-9742-48d6-9aab-df85d78120ae'));
 		$mockStatement->expects($this->once())->method('fetchAll')->will($this->returnValue(array('QUERY_RESULT')));
-		$mockPdo = $this->getMock('PdoInterface');
+		$mockPdo = $this->getMock('F3\FLOW3\Tests\Unit\Persistence\Fixture\PdoInterface');
 		$mockPdo->expects($this->once())->method('prepare')->with('SELECT "identifier", "type" AS "classname" FROM "entities" WHERE "identifier"=?')->will($this->returnValue($mockStatement));
 
 		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('processObjectRecords'));
@@ -1350,7 +1347,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$mockStatement = $this->getMock('PDOStatement');
 		$mockStatement->expects($this->once())->method('execute')->with(array('fakeHash'));
 		$mockStatement->expects($this->once())->method('fetchAll')->will($this->returnValue(array('QUERY_RESULT')));
-		$mockPdo = $this->getMock('PdoInterface');
+		$mockPdo = $this->getMock('F3\FLOW3\Tests\Unit\Persistence\Fixture\PdoInterface');
 		$mockPdo->expects($this->once())->method('prepare')->with('SELECT "identifier", "type" AS "classname" FROM "valueobjects" WHERE "identifier"=?')->will($this->returnValue($mockStatement));
 
 		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('processObjectRecords'));
@@ -1366,7 +1363,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 	public function _getObjectDataCallsProcessObjectRecordsAndReturnsResult() {
 		$mockStatement = $this->getMock('PDOStatement');
 		$mockStatement->expects($this->once())->method('fetchAll')->will($this->returnValue(array('QUERY_RESULT')));
-		$mockPdo = $this->getMock('PdoInterface');
+		$mockPdo = $this->getMock('F3\FLOW3\Tests\Unit\Persistence\Fixture\PdoInterface');
 		$mockPdo->expects($this->once())->method('prepare')->with('SELECT "identifier", "type" AS "classname" FROM "valueobjects" WHERE "identifier"=?')->will($this->returnValue($mockStatement));
 
 		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('processObjectRecords'));
@@ -1383,7 +1380,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$mockQuery = $this->getMock('F3\FLOW3\Persistence\QueryInterface');
 		$mockStatement = $this->getMock('PDOStatement');
 		$mockStatement->expects($this->once())->method('fetchAll')->will($this->returnValue(array('QUERY_RESULT')));
-		$mockPdo = $this->getMock('PdoInterface');
+		$mockPdo = $this->getMock('F3\FLOW3\Tests\Unit\Persistence\Fixture\PdoInterface');
 		$mockPdo->expects($this->once())->method('prepare')->will($this->returnValue($mockStatement));
 
 		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('buildQuery', 'processObjectRecords'));
@@ -1403,7 +1400,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$mockStatement = $this->getMock('PDOStatement');
 		$mockStatement->expects($this->once())->method('execute')->with(array('PARAMETERS'));
 		$mockStatement->expects($this->once())->method('fetchAll')->will($this->returnValue(array('QUERY_RESULT')));
-		$mockPdo = $this->getMock('PdoInterface');
+		$mockPdo = $this->getMock('F3\FLOW3\Tests\Unit\Persistence\Fixture\PdoInterface');
 		$mockPdo->expects($this->once())->method('prepare')->with('SQLSTRING')->will($this->returnValue($mockStatement));
 
 		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('buildQuery', 'processObjectRecords'));
@@ -1422,7 +1419,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$mockStatement = $this->getMock('PDOStatement');
 		$mockStatement->expects($this->once())->method('execute');
 		$mockStatement->expects($this->once())->method('fetchAll')->will($this->returnValue(array('QUERY_RESULT')));
-		$mockPdo = $this->getMock('PdoInterface');
+		$mockPdo = $this->getMock('F3\FLOW3\Tests\Unit\Persistence\Fixture\PdoInterface');
 		$mockPdo->expects($this->once())->method('prepare')->will($this->returnValue($mockStatement));
 
 		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend'), array('buildQuery', 'processObjectRecords'));

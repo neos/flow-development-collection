@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Tests\Functional\AOP;
+namespace F3\FLOW3\Tests\Unit\Persistence\Fixture;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -12,8 +12,8 @@ namespace F3\FLOW3\Tests\Functional\AOP;
  *                                                                        *
  * This script is distributed in the hope that it will be useful, but     *
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
- * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser       *
- * General Public License for more details.                               *
+ * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General      *
+ * Public License for more details.                                       *
  *                                                                        *
  * You should have received a copy of the GNU Lesser General Public       *
  * License along with the script.                                         *
@@ -23,19 +23,26 @@ namespace F3\FLOW3\Tests\Functional\AOP;
  *                                                                        */
 
 /**
- * Testcase for the AOP Framework class
+ * PdoInterface so we can mock PDO using PHPUnit 3.4 - without the interface a
+ * mock cannot be created because "You cannot serialize or unserialize PDO
+ * instances"...
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class FrameworkTest extends \F3\FLOW3\Tests\FunctionalTestCase {
-
-	/**
-	 * @test
-	 */
-	public function resultOfSayHelloMethodIsModifiedByWorldAdvice() {
-		$targetClass = $this->objectManager->get('F3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01');
-		$this->assertSame('Hello World', $targetClass->sayHello());
-	}
-
+interface PdoInterface {
+	public function __construct($dsn, $username = NULL, $password = NULL, $driver_options = NULL);
+	public function beginTransaction();
+	public function commit();
+	public function errorCode();
+	public function errorInfo();
+	public function exec($statement);
+	public function getAttribute($attribute);
+	public function getAvailableDrivers();
+	public function lastInsertId($name = NULL);
+	public function prepare($statement, $driver_options = array());
+	public function query($statement);
+	public function quote($string, $parameter_type = \PDO::PARAM_STR);
+	public function rollBack();
+	public function setAttribute($attribute, $value);
 }
 ?>
