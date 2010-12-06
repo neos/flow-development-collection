@@ -35,7 +35,7 @@ class PackageConstraint extends \F3\FLOW3\Package\MetaData\AbstractConstraint {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function getConstraintScope() {
-		return \F3\FLOW3\Package\MetaData::CONSTRAINT_SCOPE_PACKAGE;
+		return \F3\FLOW3\Package\MetaDataInterface::CONSTRAINT_SCOPE_PACKAGE;
 	}
 }
 ?>

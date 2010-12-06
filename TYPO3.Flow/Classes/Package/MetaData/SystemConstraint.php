@@ -66,7 +66,7 @@ class SystemConstraint extends \F3\FLOW3\Package\MetaData\AbstractConstraint {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function getConstraintScope() {
-		return \F3\FLOW3\Package\MetaData::CONSTRAINT_SCOPE_SYSTEM;
+		return \F3\FLOW3\Package\MetaDataInterface::CONSTRAINT_SCOPE_SYSTEM;
 	}
 }
 ?>
