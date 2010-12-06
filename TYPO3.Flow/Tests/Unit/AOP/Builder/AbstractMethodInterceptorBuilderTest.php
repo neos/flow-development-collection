@@ -87,7 +87,7 @@ class AbstractMethodInterceptorBuilderTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function buildMethodDocumentationRendersKeepsVitalAnnotations() {
+	public function buildMethodDocumentationKeepsVitalAnnotations() {
 		$className = uniqid('TestClass');
 		eval('
 			class ' . $className . ' {
@@ -105,8 +105,10 @@ class AbstractMethodInterceptorBuilderTest extends \F3\Testing\BaseTestCase {
 			}
 		');
 
-		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'saveToCache'), array(), '', FALSE, TRUE);
-		$mockReflectionService->initialize(array($className));
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService', array('detectAvailableClassNames', 'loadFromCache', 'saveToCache'), array(), '', FALSE, TRUE);
+		$mockReflectionService->expects($this->once())->method('detectAvailableClassNames')->will($this->returnValue(array($className)));
+		$mockReflectionService->expects($this->once())->method('loadFromCache')->will($this->returnValue(FALSE));
+		$mockReflectionService->initialize();
 
 		$expectedMethodDocumentation = '
 	 * @param string $arg1 Argument1

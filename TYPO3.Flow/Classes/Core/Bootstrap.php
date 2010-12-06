@@ -465,23 +465,9 @@ class Bootstrap {
 		$this->reflectionService->setStatusCache($this->cacheManager->getCache('FLOW3_ReflectionStatus'));
 		$this->reflectionService->setDataCache($this->cacheManager->getCache('FLOW3_ReflectionData'));
 		$this->reflectionService->injectSystemLogger($this->systemLogger);
+		$this->reflectionService->injectPackageManager($this->packageManager);
 
-		$availableClassNames = array();
-		foreach ($this->packageManager->getActivePackages() as $package) {
-			foreach (array_keys($package->getClassFiles()) as $className) {
-				if (substr($className, -9, 9) !== 'Exception') {
-					$availableClassNames[] = $className;
-				}
-			}
-			if ($this->settings['object']['registerFunctionalTestClasses'] === TRUE) {
-				foreach (array_keys($package->getFunctionalTestsClassFiles()) as $className) {
-					if (substr($className, -9, 9) !== 'Exception') {
-						$availableClassNames[] = $className;
-					}
-				}
-			}
-		}
-		$this->reflectionService->initialize($availableClassNames);
+		$this->reflectionService->initialize();
 	}
 
 	/**

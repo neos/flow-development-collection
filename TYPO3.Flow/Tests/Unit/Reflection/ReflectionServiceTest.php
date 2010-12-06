@@ -44,7 +44,7 @@ require_once('Fixture/Model/Entity.php');
 require_once('Fixture/Model/ValueObject.php');
 
 /**
- * Testcase for the Reflection Service
+ * testcase for the Reflection Service
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
@@ -57,7 +57,7 @@ class ReflectionServiceTest extends \F3\Testing\BaseTestCase {
 	public function theInitializedFlagIsSetToTrueAfterCallingInitialize() {
 		$reflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'forgetChangedClasses', 'reflectEmergedClasses'), array(), '', FALSE);
 		$this->assertFalse($reflectionService->isInitialized());
-		$reflectionService->initialize(array(__CLASS__));
+		$reflectionService->initialize();
 		$this->assertTrue($reflectionService->isInitialized());
 	}
 
@@ -65,22 +65,26 @@ class ReflectionServiceTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function initializeLoadsDataFromTheCacheAndReflectsNewClasses() {
+	public function initializeReflectsClassesIfNoneWereFoundInTheCache() {
 		$reflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'forgetChangedClasses', 'reflectEmergedClasses'), array(), '', FALSE);
-		$reflectionService->expects($this->once())->method('loadFromCache');
-		$reflectionService->expects($this->never())->method('forgetChangedClasses');
-		$reflectionService->expects($this->once())->method('reflectEmergedClasses')->with(array(__CLASS__));
-		$reflectionService->initialize(array(__CLASS__));
+		$reflectionService->expects($this->once())->method('loadFromCache')->will($this->returnValue(FALSE));
+		$reflectionService->expects($this->once())->method('forgetChangedClasses');
+		$reflectionService->expects($this->once())->method('reflectEmergedClasses');
+
+		$reflectionService->injectSettings(array('monitor' => array('detectClassChanges' => FALSE)));
+		$reflectionService->initialize();
 	}
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function initializeForgetsChangedClassesIfSettingsSaySo() {
+	public function initializeReflectsClassesAndForgetsOldOnesIfDetectionIsEnabled() {
 		$reflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'forgetChangedClasses', 'reflectEmergedClasses'), array(), '', FALSE);
-		$reflectionService->injectSettings(array('monitor' => array('detectClassChanges' => TRUE)));
+		$reflectionService->expects($this->once())->method('loadFromCache')->will($this->returnValue(array(__CLASS__)));
 		$reflectionService->expects($this->once())->method('forgetChangedClasses');
+
+		$reflectionService->injectSettings(array('monitor' => array('detectClassChanges' => TRUE)));
 		$reflectionService->initialize(array(__CLASS__));
 	}
 
@@ -101,17 +105,28 @@ class ReflectionServiceTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function isClassReflectedTellsIfTheReflectionServiceKnowsTheSpecfiedClass() {
-		$availableClassNames = array(
-			'F3\FLOW3\Tests\Reflection\Fixture\DummyClass',
+		$reflectedClassNames = array(
+			'F3\FLOW3\Tests\Reflection\Fixture\DummyClass' => time(),
 		);
-		$reflectionService = new \F3\FLOW3\Reflection\ReflectionService();
-		$reflectionService->setStatusCache($this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array(), array(), '', FALSE));
-		$reflectionService->setDataCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
-		$reflectionService->injectSystemLogger($this->getMock('F3\FLOW3\Log\SystemLoggerInterface'));
-		$reflectionService->initialize($availableClassNames);
+		$reflectionService = $this->getAccessibleMock('F3\FLOW3\Reflection\ReflectionService', array('dummy'));
+		$reflectionService->_set('reflectedClassNames', $reflectedClassNames);
 
 		$this->assertTrue($reflectionService->isClassReflected('F3\FLOW3\Tests\Reflection\Fixture\DummyClass'));
 		$this->assertFalse($reflectionService->isClassReflected('F3\Virtual\UnknownClass'));
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getAllClassNamesReturnsNamesOfAllReflectedClasses() {
+		$reflectedClassNames = array(
+			'F3\FLOW3\Tests\Reflection\Fixture\DummyClass' => time(),
+		);
+		$reflectionService = $this->getAccessibleMock('F3\FLOW3\Reflection\ReflectionService', array('dummy'));
+		$reflectionService->_set('reflectedClassNames', $reflectedClassNames);
+
+		$this->assertSame(array_keys($reflectedClassNames), $reflectionService->getAllClassNames());
 	}
 
 	/**
@@ -124,11 +139,15 @@ class ReflectionServiceTest extends \F3\Testing\BaseTestCase {
 			'F3\FLOW3\Tests\Reflection\Fixture\DummyInterface2',
 			'F3\FLOW3\Tests\Reflection\Fixture\ImplementationOfDummyInterface1'
 		);
-		$reflectionService = new \F3\FLOW3\Reflection\ReflectionService();
+		$reflectionService = $this->getAccessibleMock('F3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'detectAvailableClassNames'));
+		$reflectionService->expects($this->once())->method('loadFromCache')->will($this->returnValue(FALSE));
+		$reflectionService->expects($this->once())->method('detectAvailableClassNames')->will($this->returnValue($classNames));
+
 		$reflectionService->setStatusCache($this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array(), array(), '', FALSE));
 		$reflectionService->setDataCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
 		$reflectionService->injectSystemLogger($this->getMock('F3\FLOW3\Log\SystemLoggerInterface'));
-		$reflectionService->initialize($classNames);
+		$reflectionService->initialize();
+
 		$className = $reflectionService->getDefaultImplementationClassNameForInterface('F3\FLOW3\Tests\Reflection\Fixture\DummyInterface1');
 
 		$this->assertEquals('F3\FLOW3\Tests\Reflection\Fixture\ImplementationOfDummyInterface1', $className);
@@ -144,11 +163,14 @@ class ReflectionServiceTest extends \F3\Testing\BaseTestCase {
 			'F3\FLOW3\Tests\Reflection\Fixture\DummyInterface2',
 			'F3\FLOW3\Tests\Reflection\Fixture\ImplementationOfDummyInterface1'
 		);
-		$reflectionService = new \F3\FLOW3\Reflection\ReflectionService();
+		$reflectionService = $this->getAccessibleMock('F3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'detectAvailableClassNames'));
+		$reflectionService->expects($this->once())->method('loadFromCache')->will($this->returnValue(FALSE));
+		$reflectionService->expects($this->once())->method('detectAvailableClassNames')->will($this->returnValue($classNames));
+
 		$reflectionService->setStatusCache($this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array(), array(), '', FALSE));
 		$reflectionService->setDataCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
 		$reflectionService->injectSystemLogger($this->getMock('F3\FLOW3\Log\SystemLoggerInterface'));
-		$reflectionService->initialize($classNames);
+		$reflectionService->initialize();
 		$className = $reflectionService->getDefaultImplementationClassNameForInterface('F3\FLOW3\Tests\Reflection\Fixture\DummyInterface2');
 
 		$this->assertFalse($className);
@@ -170,7 +192,10 @@ class ReflectionServiceTest extends \F3\Testing\BaseTestCase {
 			'F3\FLOW3\Tests\Reflection\Fixture\ImplementationOfDummyInterface1',
 			'F3\FLOW3\Tests\Reflection\Fixture\ProxyOfImplementationOfDummyInterface1',
 		);
-		$reflectionService = new \F3\FLOW3\Reflection\ReflectionService();
+		$reflectionService = $this->getAccessibleMock('F3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'detectAvailableClassNames'));
+		$reflectionService->expects($this->once())->method('loadFromCache')->will($this->returnValue(FALSE));
+		$reflectionService->expects($this->once())->method('detectAvailableClassNames')->will($this->returnValue($classNames));
+
 		$reflectionService->setStatusCache($this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array(), array(), '', FALSE));
 		$reflectionService->setDataCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
 		$reflectionService->injectSystemLogger($this->getMock('F3\FLOW3\Log\SystemLoggerInterface'));
@@ -183,11 +208,15 @@ class ReflectionServiceTest extends \F3\Testing\BaseTestCase {
 			'F3\FLOW3\Tests\Reflection\Fixture\ProxyOfImplementationOfDummyInterface1',
 			'F3\FLOW3\Tests\Reflection\Fixture\ImplementationOfDummyInterface1',
 		);
-		$reflectionService = new \F3\FLOW3\Reflection\ReflectionService();
+
+		$reflectionService = $this->getAccessibleMock('F3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'detectAvailableClassNames'));
+		$reflectionService->expects($this->once())->method('loadFromCache')->will($this->returnValue(FALSE));
+		$reflectionService->expects($this->once())->method('detectAvailableClassNames')->will($this->returnValue($classNames));
+
 		$reflectionService->setStatusCache($this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array(), array(), '', FALSE));
 		$reflectionService->setDataCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
 		$reflectionService->injectSystemLogger($this->getMock('F3\FLOW3\Log\SystemLoggerInterface'));
-		$reflectionService->initialize($classNames);
+		$reflectionService->initialize();
 		$className = $reflectionService->getDefaultImplementationClassNameForInterface('F3\FLOW3\Tests\Reflection\Fixture\DummyInterface1');
 
 		$this->assertEquals('F3\FLOW3\Tests\Reflection\Fixture\ProxyOfImplementationOfDummyInterface1', $className, 'Proxy registered first.');
@@ -210,11 +239,14 @@ class ReflectionServiceTest extends \F3\Testing\BaseTestCase {
 			'F3\FLOW3\Tests\Reflection\Fixture\Implementation2OfDummyInterface3'
 		);
 
-		$reflectionService = new \F3\FLOW3\Reflection\ReflectionService();
+		$reflectionService = $this->getAccessibleMock('F3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'detectAvailableClassNames'));
+		$reflectionService->expects($this->once())->method('loadFromCache')->will($this->returnValue(FALSE));
+		$reflectionService->expects($this->once())->method('detectAvailableClassNames')->will($this->returnValue($availableClassNames));
+
 		$reflectionService->setStatusCache($this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array(), array(), '', FALSE));
 		$reflectionService->setDataCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
 		$reflectionService->injectSystemLogger($this->getMock('F3\FLOW3\Log\SystemLoggerInterface'));
-		$reflectionService->initialize($availableClassNames);
+		$reflectionService->initialize();
 		$detectedClassNames = $reflectionService->getAllImplementationClassNamesForInterface('F3\FLOW3\Tests\Reflection\Fixture\DummyInterface3');
 
 		$this->assertEquals($expectedClassNames, $detectedClassNames);
@@ -232,11 +264,14 @@ class ReflectionServiceTest extends \F3\Testing\BaseTestCase {
 			'F3\FLOW3\Tests\Reflection\Fixture\Implementation1OfDummyInterface3',
 			'F3\FLOW3\Tests\Reflection\Fixture\Implementation2OfDummyInterface3'
 		);
-		$reflectionService = new \F3\FLOW3\Reflection\ReflectionService();
+		$reflectionService = $this->getAccessibleMock('F3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'detectAvailableClassNames'));
+		$reflectionService->expects($this->once())->method('loadFromCache')->will($this->returnValue(FALSE));
+		$reflectionService->expects($this->once())->method('detectAvailableClassNames')->will($this->returnValue($availableClassNames));
+
 		$reflectionService->setStatusCache($this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array(), array(), '', FALSE));
 		$reflectionService->setDataCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
 		$reflectionService->injectSystemLogger($this->getMock('F3\FLOW3\Log\SystemLoggerInterface'));
-		$reflectionService->initialize($availableClassNames);
+		$reflectionService->initialize();
 
 		$detectedClassNames = $reflectionService->getAllImplementationClassNamesForInterface('F3\FLOW3\Tests\Reflection\Fixture\DummyInterface2');
 		$this->assertEquals(array(), $detectedClassNames);
@@ -251,11 +286,14 @@ class ReflectionServiceTest extends \F3\Testing\BaseTestCase {
 			'F3\FLOW3\Tests\Reflection\Fixture\DummyClass',
 			'F3\FLOW3\Tests\Reflection\Fixture\ParentClass1'
 		);
-		$reflectionService = new \F3\FLOW3\Reflection\ReflectionService();
+		$reflectionService = $this->getAccessibleMock('F3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'detectAvailableClassNames'));
+		$reflectionService->expects($this->once())->method('loadFromCache')->will($this->returnValue(FALSE));
+		$reflectionService->expects($this->once())->method('detectAvailableClassNames')->will($this->returnValue($availableClassNames));
+
 		$reflectionService->setStatusCache($this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array(), array(), '', FALSE));
 		$reflectionService->setDataCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
 		$reflectionService->injectSystemLogger($this->getMock('F3\FLOW3\Log\SystemLoggerInterface'));
-		$reflectionService->initialize($availableClassNames);
+		$reflectionService->initialize();
 
 		$detectedClassNames = $reflectionService->getAllSubClassNamesForClass('F3\FLOW3\Tests\Reflection\Fixture\DummyClass');
 		$this->assertEquals(array(), $detectedClassNames);
@@ -278,11 +316,14 @@ class ReflectionServiceTest extends \F3\Testing\BaseTestCase {
 			'F3\FLOW3\Tests\Reflection\Fixture\SubClassOfSubClassOfParentClass1',
 		);
 
-		$reflectionService = new \F3\FLOW3\Reflection\ReflectionService();
+		$reflectionService = $this->getAccessibleMock('F3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'detectAvailableClassNames'));
+		$reflectionService->expects($this->once())->method('loadFromCache')->will($this->returnValue(FALSE));
+		$reflectionService->expects($this->once())->method('detectAvailableClassNames')->will($this->returnValue($availableClassNames));
+
 		$reflectionService->setStatusCache($this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array(), array(), '', FALSE));
 		$reflectionService->setDataCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
 		$reflectionService->injectSystemLogger($this->getMock('F3\FLOW3\Log\SystemLoggerInterface'));
-		$reflectionService->initialize($availableClassNames);
+		$reflectionService->initialize();
 
 		$detectedClassNames = $reflectionService->getAllSubClassNamesForClass('F3\FLOW3\Tests\Reflection\Fixture\ParentClass1');
 		$this->assertEquals($expectedClassNames, $detectedClassNames);
@@ -297,11 +338,14 @@ class ReflectionServiceTest extends \F3\Testing\BaseTestCase {
 			'F3\FLOW3\Tests\Reflection\Fixture\TaggedClass1',
 			'F3\FLOW3\Tests\Reflection\Fixture\TaggedClass2',
 		);
-		$reflectionService = new \F3\FLOW3\Reflection\ReflectionService();
+		$reflectionService = $this->getAccessibleMock('F3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'detectAvailableClassNames'));
+		$reflectionService->expects($this->once())->method('loadFromCache')->will($this->returnValue(FALSE));
+		$reflectionService->expects($this->once())->method('detectAvailableClassNames')->will($this->returnValue($availableClassNames));
+
 		$reflectionService->setStatusCache($this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array(), array(), '', FALSE));
 		$reflectionService->setDataCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
 		$reflectionService->injectSystemLogger($this->getMock('F3\FLOW3\Log\SystemLoggerInterface'));
-		$reflectionService->initialize($availableClassNames);
+		$reflectionService->initialize();
 
 		$detectedClassNames = $reflectionService->getClassNamesByTag('sometag1');
 		$this->assertEquals(array('F3\FLOW3\Tests\Reflection\Fixture\TaggedClass1'), $detectedClassNames);
@@ -318,11 +362,14 @@ class ReflectionServiceTest extends \F3\Testing\BaseTestCase {
 		$availableClassNames = array(
 			'F3\FLOW3\Tests\Reflection\Fixture\TaggedClass3',
 		);
-		$reflectionService = new \F3\FLOW3\Reflection\ReflectionService();
+		$reflectionService = $this->getAccessibleMock('F3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'detectAvailableClassNames'));
+		$reflectionService->expects($this->once())->method('loadFromCache')->will($this->returnValue(FALSE));
+		$reflectionService->expects($this->once())->method('detectAvailableClassNames')->will($this->returnValue($availableClassNames));
+
 		$reflectionService->setStatusCache($this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array(), array(), '', FALSE));
 		$reflectionService->setDataCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
 		$reflectionService->injectSystemLogger($this->getMock('F3\FLOW3\Log\SystemLoggerInterface'));
-		$reflectionService->initialize($availableClassNames);
+		$reflectionService->initialize();
 
 		$expectedTags = array('firsttag' => array(), 'secondtag' => array('1', '2'), 'thirdtag' => array('one, two', 'three, four'));
 		$detectedTags = $reflectionService->getClassTagsValues('F3\FLOW3\Tests\Reflection\Fixture\TaggedClass3');
@@ -338,11 +385,14 @@ class ReflectionServiceTest extends \F3\Testing\BaseTestCase {
 		$availableClassNames = array(
 			'F3\FLOW3\Tests\Reflection\Fixture\TaggedClass3',
 		);
-		$reflectionService = new \F3\FLOW3\Reflection\ReflectionService();
+		$reflectionService = $this->getAccessibleMock('F3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'detectAvailableClassNames'));
+		$reflectionService->expects($this->once())->method('loadFromCache')->will($this->returnValue(FALSE));
+		$reflectionService->expects($this->once())->method('detectAvailableClassNames')->will($this->returnValue($availableClassNames));
+
 		$reflectionService->setStatusCache($this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array(), array(), '', FALSE));
 		$reflectionService->setDataCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
 		$reflectionService->injectSystemLogger($this->getMock('F3\FLOW3\Log\SystemLoggerInterface'));
-		$reflectionService->initialize($availableClassNames);
+		$reflectionService->initialize();
 
 		$expectedValues = array('one, two', 'three, four');
 		$detectedValues = $reflectionService->getClassTagValues('F3\FLOW3\Tests\Reflection\Fixture\TaggedClass3', 'thirdtag');
@@ -359,11 +409,14 @@ class ReflectionServiceTest extends \F3\Testing\BaseTestCase {
 			'F3\FLOW3\Tests\Reflection\Fixture\TaggedClass1',
 			'F3\FLOW3\Tests\Reflection\Fixture\TaggedClass2',
 		);
-		$reflectionService = new \F3\FLOW3\Reflection\ReflectionService();
+		$reflectionService = $this->getAccessibleMock('F3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'detectAvailableClassNames'));
+		$reflectionService->expects($this->once())->method('loadFromCache')->will($this->returnValue(FALSE));
+		$reflectionService->expects($this->once())->method('detectAvailableClassNames')->will($this->returnValue($availableClassNames));
+
 		$reflectionService->setStatusCache($this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array(), array(), '', FALSE));
 		$reflectionService->setDataCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
 		$reflectionService->injectSystemLogger($this->getMock('F3\FLOW3\Log\SystemLoggerInterface'));
-		$reflectionService->initialize($availableClassNames);
+		$reflectionService->initialize();
 
 		$this->assertTrue($reflectionService->isClassTaggedWith('F3\FLOW3\Tests\Reflection\Fixture\TaggedClass1', 'sometag1'));
 		$this->assertFalse($reflectionService->isClassTaggedWith('F3\FLOW3\Tests\Reflection\Fixture\TaggedClass1', 'sometag2'));
@@ -379,11 +432,14 @@ class ReflectionServiceTest extends \F3\Testing\BaseTestCase {
 			'F3\FLOW3\Tests\Reflection\Fixture\DummyClass',
 			'F3\FLOW3\Tests\Reflection\Fixture\DummyAbstractClass',
 		);
-		$reflectionService = new \F3\FLOW3\Reflection\ReflectionService();
+		$reflectionService = $this->getAccessibleMock('F3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'detectAvailableClassNames'));
+		$reflectionService->expects($this->once())->method('loadFromCache')->will($this->returnValue(FALSE));
+		$reflectionService->expects($this->once())->method('detectAvailableClassNames')->will($this->returnValue($availableClassNames));
+
 		$reflectionService->setStatusCache($this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array(), array(), '', FALSE));
 		$reflectionService->setDataCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
 		$reflectionService->injectSystemLogger($this->getMock('F3\FLOW3\Log\SystemLoggerInterface'));
-		$reflectionService->initialize($availableClassNames);
+		$reflectionService->initialize();
 
 		$this->assertTrue($reflectionService->isClassAbstract('F3\FLOW3\Tests\Reflection\Fixture\DummyAbstractClass'));
 		$this->assertFalse($reflectionService->isClassAbstract('F3\FLOW3\Tests\Reflection\Fixture\DummyClass'));
@@ -398,11 +454,14 @@ class ReflectionServiceTest extends \F3\Testing\BaseTestCase {
 			'F3\FLOW3\Tests\Reflection\Fixture\DummyClass',
 			'F3\FLOW3\Tests\Reflection\Fixture\DummyFinalClass',
 		);
-		$reflectionService = new \F3\FLOW3\Reflection\ReflectionService();
+		$reflectionService = $this->getAccessibleMock('F3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'detectAvailableClassNames'));
+		$reflectionService->expects($this->once())->method('loadFromCache')->will($this->returnValue(FALSE));
+		$reflectionService->expects($this->once())->method('detectAvailableClassNames')->will($this->returnValue($availableClassNames));
+
 		$reflectionService->setStatusCache($this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array(), array(), '', FALSE));
 		$reflectionService->setDataCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
 		$reflectionService->injectSystemLogger($this->getMock('F3\FLOW3\Log\SystemLoggerInterface'));
-		$reflectionService->initialize($availableClassNames);
+		$reflectionService->initialize();
 
 		$this->assertTrue($reflectionService->isClassFinal('F3\FLOW3\Tests\Reflection\Fixture\DummyFinalClass'));
 		$this->assertFalse($reflectionService->isClassFinal('F3\FLOW3\Tests\Reflection\Fixture\DummyClass'));
@@ -417,11 +476,14 @@ class ReflectionServiceTest extends \F3\Testing\BaseTestCase {
 			'F3\FLOW3\Tests\Reflection\Fixture\DummyClass',
 			'F3\FLOW3\Tests\Reflection\Fixture\DummyClassWithMethods',
 		);
-		$reflectionService = new \F3\FLOW3\Reflection\ReflectionService();
+		$reflectionService = $this->getAccessibleMock('F3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'detectAvailableClassNames'));
+		$reflectionService->expects($this->once())->method('loadFromCache')->will($this->returnValue(FALSE));
+		$reflectionService->expects($this->once())->method('detectAvailableClassNames')->will($this->returnValue($availableClassNames));
+
 		$reflectionService->setStatusCache($this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array(), array(), '', FALSE));
 		$reflectionService->setDataCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
 		$reflectionService->injectSystemLogger($this->getMock('F3\FLOW3\Log\SystemLoggerInterface'));
-		$reflectionService->initialize($availableClassNames);
+		$reflectionService->initialize();
 
 		$expectedMethodNames = array('firstMethod', 'secondMethod');
 		$detectedMethodNames = $reflectionService->getClassMethodNames('F3\FLOW3\Tests\Reflection\Fixture\DummyClassWithMethods');
@@ -437,11 +499,14 @@ class ReflectionServiceTest extends \F3\Testing\BaseTestCase {
 			'F3\FLOW3\Tests\Reflection\Fixture\DummyClass',
 			'F3\FLOW3\Tests\Reflection\Fixture\DummyClassWithProperties',
 		);
-		$reflectionService = new \F3\FLOW3\Reflection\ReflectionService();
+		$reflectionService = $this->getAccessibleMock('F3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'detectAvailableClassNames'));
+		$reflectionService->expects($this->once())->method('loadFromCache')->will($this->returnValue(FALSE));
+		$reflectionService->expects($this->once())->method('detectAvailableClassNames')->will($this->returnValue($availableClassNames));
+
 		$reflectionService->setStatusCache($this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array(), array(), '', FALSE));
 		$reflectionService->setDataCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
 		$reflectionService->injectSystemLogger($this->getMock('F3\FLOW3\Log\SystemLoggerInterface'));
-		$reflectionService->initialize($availableClassNames);
+		$reflectionService->initialize();
 
 		$expectedPropertyNames = array('firstProperty', 'secondProperty');
 		$detectedPropertyNames = $reflectionService->getClassPropertyNames('F3\FLOW3\Tests\Reflection\Fixture\DummyClassWithProperties');
@@ -456,11 +521,14 @@ class ReflectionServiceTest extends \F3\Testing\BaseTestCase {
 		$availableClassNames = array(
 			'F3\FLOW3\Tests\Reflection\Fixture\DummyClassWithMethods',
 		);
-		$reflectionService = new \F3\FLOW3\Reflection\ReflectionService();
+		$reflectionService = $this->getAccessibleMock('F3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'detectAvailableClassNames'));
+		$reflectionService->expects($this->once())->method('loadFromCache')->will($this->returnValue(FALSE));
+		$reflectionService->expects($this->once())->method('detectAvailableClassNames')->will($this->returnValue($availableClassNames));
+
 		$reflectionService->setStatusCache($this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array(), array(), '', FALSE));
 		$reflectionService->setDataCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
 		$reflectionService->injectSystemLogger($this->getMock('F3\FLOW3\Log\SystemLoggerInterface'));
-		$reflectionService->initialize($availableClassNames);
+		$reflectionService->initialize();
 
 		$expectedTags = array('firsttag' => array(), 'return' => array('void'), 'secondtag' => array('a', 'b'), 'param' => array('string $arg1 Argument 1 documentation'));
 		$detectedTags = $reflectionService->getMethodTagsValues('F3\FLOW3\Tests\Reflection\Fixture\DummyClassWithMethods', 'firstMethod');
@@ -476,11 +544,14 @@ class ReflectionServiceTest extends \F3\Testing\BaseTestCase {
 		$availableClassNames = array(
 			'F3\FLOW3\Tests\Reflection\Fixture\DummyClassWithMethods',
 		);
-		$reflectionService = new \F3\FLOW3\Reflection\ReflectionService();
+		$reflectionService = $this->getAccessibleMock('F3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'detectAvailableClassNames'));
+		$reflectionService->expects($this->once())->method('loadFromCache')->will($this->returnValue(FALSE));
+		$reflectionService->expects($this->once())->method('detectAvailableClassNames')->will($this->returnValue($availableClassNames));
+
 		$reflectionService->setStatusCache($this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array(), array(), '', FALSE));
 		$reflectionService->setDataCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
 		$reflectionService->injectSystemLogger($this->getMock('F3\FLOW3\Log\SystemLoggerInterface'));
-		$reflectionService->initialize($availableClassNames);
+		$reflectionService->initialize();
 
 		$expectedParameters = array(
 			'arg1' => array('position' => 0, 'byReference' => FALSE, 'array' => FALSE, 'optional' => FALSE, 'class' => NULL, 'allowsNull' => TRUE, 'type' => 'string'),
@@ -502,11 +573,14 @@ class ReflectionServiceTest extends \F3\Testing\BaseTestCase {
 			'F3\FLOW3\Tests\Reflection\Fixture\DummyClass',
 			'F3\FLOW3\Tests\Reflection\Fixture\DummyClassWithProperties',
 		);
-		$reflectionService = new \F3\FLOW3\Reflection\ReflectionService();
+		$reflectionService = $this->getAccessibleMock('F3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'detectAvailableClassNames'));
+		$reflectionService->expects($this->once())->method('loadFromCache')->will($this->returnValue(FALSE));
+		$reflectionService->expects($this->once())->method('detectAvailableClassNames')->will($this->returnValue($availableClassNames));
+
 		$reflectionService->setStatusCache($this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array(), array(), '', FALSE));
 		$reflectionService->setDataCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
 		$reflectionService->injectSystemLogger($this->getMock('F3\FLOW3\Log\SystemLoggerInterface'));
-		$reflectionService->initialize($availableClassNames);
+		$reflectionService->initialize();
 
 		$expectedPropertyNames = array('firstProperty');
 		$detectedPropertyNames = $reflectionService->getPropertyNamesByTag('F3\FLOW3\Tests\Reflection\Fixture\DummyClassWithProperties', 'firsttag');
@@ -522,11 +596,14 @@ class ReflectionServiceTest extends \F3\Testing\BaseTestCase {
 			'F3\FLOW3\Tests\Reflection\Fixture\DummyClass',
 			'F3\FLOW3\Tests\Reflection\Fixture\DummyClassWithProperties',
 		);
-		$reflectionService = new \F3\FLOW3\Reflection\ReflectionService();
+		$reflectionService = $this->getAccessibleMock('F3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'detectAvailableClassNames'));
+		$reflectionService->expects($this->once())->method('loadFromCache')->will($this->returnValue(FALSE));
+		$reflectionService->expects($this->once())->method('detectAvailableClassNames')->will($this->returnValue($availableClassNames));
+
 		$reflectionService->setStatusCache($this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array(), array(), '', FALSE));
 		$reflectionService->setDataCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
 		$reflectionService->injectSystemLogger($this->getMock('F3\FLOW3\Log\SystemLoggerInterface'));
-		$reflectionService->initialize($availableClassNames);
+		$reflectionService->initialize();
 
 		$expectedPropertyNames = array();
 		$detectedPropertyNames = $reflectionService->getPropertyNamesByTag('F3\FLOW3\Tests\Reflection\Fixture\DummyClass', 'firsttag');
@@ -544,11 +621,14 @@ class ReflectionServiceTest extends \F3\Testing\BaseTestCase {
 		$availableClassNames = array(
 			'F3\FLOW3\Tests\Reflection\Fixture\DummyClassWithProperties',
 		);
-		$reflectionService = new \F3\FLOW3\Reflection\ReflectionService();
+		$reflectionService = $this->getAccessibleMock('F3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'detectAvailableClassNames'));
+		$reflectionService->expects($this->once())->method('loadFromCache')->will($this->returnValue(FALSE));
+		$reflectionService->expects($this->once())->method('detectAvailableClassNames')->will($this->returnValue($availableClassNames));
+
 		$reflectionService->setStatusCache($this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array(), array(), '', FALSE));
 		$reflectionService->setDataCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
 		$reflectionService->injectSystemLogger($this->getMock('F3\FLOW3\Log\SystemLoggerInterface'));
-		$reflectionService->initialize($availableClassNames);
+		$reflectionService->initialize();
 
 		$expectedTags = array('firsttag' => array(), 'secondtag' => array('x', 'y'), 'var' => array('mixed'));
 		$detectedTags = $reflectionService->getPropertyTagsValues('F3\FLOW3\Tests\Reflection\Fixture\DummyClassWithProperties', 'firstProperty');
@@ -564,11 +644,14 @@ class ReflectionServiceTest extends \F3\Testing\BaseTestCase {
 		$availableClassNames = array(
 			'F3\FLOW3\Tests\Reflection\Fixture\DummyClassWithProperties',
 		);
-		$reflectionService = new \F3\FLOW3\Reflection\ReflectionService();
+		$reflectionService = $this->getAccessibleMock('F3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'detectAvailableClassNames'));
+		$reflectionService->expects($this->once())->method('loadFromCache')->will($this->returnValue(FALSE));
+		$reflectionService->expects($this->once())->method('detectAvailableClassNames')->will($this->returnValue($availableClassNames));
+
 		$reflectionService->setStatusCache($this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array(), array(), '', FALSE));
 		$reflectionService->setDataCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
 		$reflectionService->injectSystemLogger($this->getMock('F3\FLOW3\Log\SystemLoggerInterface'));
-		$reflectionService->initialize($availableClassNames);
+		$reflectionService->initialize();
 
 		$expectedValues = array('x', 'y');
 		$detectedValues = $reflectionService->getPropertyTagValues('F3\FLOW3\Tests\Reflection\Fixture\DummyClassWithProperties', 'firstProperty', 'secondtag');
@@ -584,11 +667,14 @@ class ReflectionServiceTest extends \F3\Testing\BaseTestCase {
 		$availableClassNames = array(
 			'F3\FLOW3\Tests\Reflection\Fixture\DummyClassWithProperties',
 		);
-		$reflectionService = new \F3\FLOW3\Reflection\ReflectionService();
+		$reflectionService = $this->getAccessibleMock('F3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'detectAvailableClassNames'));
+		$reflectionService->expects($this->once())->method('loadFromCache')->will($this->returnValue(FALSE));
+		$reflectionService->expects($this->once())->method('detectAvailableClassNames')->will($this->returnValue($availableClassNames));
+
 		$reflectionService->setStatusCache($this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array(), array(), '', FALSE));
 		$reflectionService->setDataCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
 		$reflectionService->injectSystemLogger($this->getMock('F3\FLOW3\Log\SystemLoggerInterface'));
-		$reflectionService->initialize($availableClassNames);
+		$reflectionService->initialize();
 
 		$this->assertTrue($reflectionService->isPropertyTaggedWith('F3\FLOW3\Tests\Reflection\Fixture\DummyClassWithProperties', 'firstProperty', 'firsttag'));
 		$this->assertFalse($reflectionService->isPropertyTaggedWith('F3\FLOW3\Tests\Reflection\Fixture\DummyClassWithProperties', 'firstProperty', 'nothing'));
@@ -603,11 +689,14 @@ class ReflectionServiceTest extends \F3\Testing\BaseTestCase {
 		$availableClassNames = array(
 			'F3\FLOW3\Tests\Reflection\Fixture\ImplementationOfDummyInterface1'
 		);
-		$reflectionService = new \F3\FLOW3\Reflection\ReflectionService();
+		$reflectionService = $this->getAccessibleMock('F3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'detectAvailableClassNames'));
+		$reflectionService->expects($this->once())->method('loadFromCache')->will($this->returnValue(FALSE));
+		$reflectionService->expects($this->once())->method('detectAvailableClassNames')->will($this->returnValue($availableClassNames));
+
 		$reflectionService->setStatusCache($this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array(), array(), '', FALSE));
 		$reflectionService->setDataCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
 		$reflectionService->injectSystemLogger($this->getMock('F3\FLOW3\Log\SystemLoggerInterface'));
-		$reflectionService->initialize($availableClassNames);
+		$reflectionService->initialize();
 
 		$this->assertTrue($reflectionService->isClassImplementationOf('F3\FLOW3\Tests\Reflection\Fixture\ImplementationOfDummyInterface1', 'F3\FLOW3\Tests\Reflection\Fixture\DummyInterface1'));
 		$this->assertFalse($reflectionService->isClassImplementationOf('F3\FLOW3\Tests\Reflection\Fixture\ImplementationOfDummyInterface1', 'F3\FLOW3\Tests\Reflection\Fixture\DummyInterface2'));
@@ -617,12 +706,13 @@ class ReflectionServiceTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function reflectClassStoresATimeStampWithEachReflectedClass() {
+	public function reflectClassStoresATimeStampWithEachReflectedClassIfClassChangeDetectionIsEnabled() {
 		$className = uniqid('TestClass');
 		eval('class ' . $className . ' {}');
 
 		$startTime = time();
 		$reflectionService = $this->getAccessibleMock('F3\FLOW3\Reflection\ReflectionService', array('log', 'convertParameterReflectionToArray'), array(), '', FALSE);
+		$reflectionService->injectSettings(array('monitor' => array('detectClassChanges' => TRUE)));
 		$reflectionService->_call('reflectClass', $className);
 		$endTime = time();
 
@@ -830,11 +920,12 @@ class ReflectionServiceTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function entitiesMustBePrototype() {
-		$reflectionService = $this->getAccessibleMock('F3\FLOW3\Reflection\ReflectionService', array('reflectClass', 'isClassTaggedWith', 'getClassTagValues', 'buildClassSchemata'));
+		$reflectionService = $this->getAccessibleMock('F3\FLOW3\Reflection\ReflectionService', array('detectAvailableClassNames', 'reflectClass', 'isClassTaggedWith', 'getClassTagValues', 'buildClassSchemata'));
+		$reflectionService->expects($this->once())->method('detectAvailableClassNames')->will($this->returnValue(array('Quux')));
 		$reflectionService->expects($this->any())->method('isClassTaggedWith')->will($this->returnValue(TRUE));
 		$reflectionService->expects($this->any())->method('getClassTagValues')->will($this->returnValue(array()));
 
-		$reflectionService->_call('reflectEmergedClasses',array('Quux'));
+		$reflectionService->_call('reflectEmergedClasses');
 	}
 
 	/**
@@ -843,12 +934,81 @@ class ReflectionServiceTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function valueObjectsMustBePrototype() {
-		$reflectionService = $this->getAccessibleMock('F3\FLOW3\Reflection\ReflectionService', array('reflectClass', 'isClassTaggedWith', 'getClassTagValues', 'buildClassSchemata'));
+		$reflectionService = $this->getAccessibleMock('F3\FLOW3\Reflection\ReflectionService', array('detectAvailableClassNames', 'reflectClass', 'isClassTaggedWith', 'getClassTagValues', 'buildClassSchemata'));
+		$reflectionService->expects($this->once())->method('detectAvailableClassNames')->will($this->returnValue(array('Quux')));
 		$reflectionService->expects($this->any())->method('isClassTaggedWith')->will($this->onConsecutiveCalls(FALSE, TRUE));
 		$reflectionService->expects($this->any())->method('getClassTagValues')->will($this->returnValue(array()));
 
 		$reflectionService->_call('reflectEmergedClasses',array('Quux'));
 	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function detectAvailableClassNamesCollectsClassNamesFromActivePackages() {
+		$packages = array(
+			 'Foo' => $this->getMock('F3\FLOW3\Package\Package', array(), array(), '', FALSE),
+			 'Bar' => $this->getMock('F3\FLOW3\Package\Package', array(), array(), '', FALSE)
+		);
+
+		$fooClassFiles = array(
+			 'FooClass' => '/tmp/foo/FooClass',
+			 'FooException' => '/tmp/foo/FooException'
+		);
+
+		$barClassFiles = array(
+			 'Bar1Class' => '/tmp/bar/Bar1Class',
+			 'Bar2Class' => '/tmp/bar/Bar1Class'
+		);
+
+		$packages['Foo']->expects($this->once())->method('getClassFiles')->will($this->returnValue($fooClassFiles));
+		$packages['Bar']->expects($this->once())->method('getClassFiles')->will($this->returnValue($barClassFiles));
+
+		$mockPackageManager = $this->getMock('F3\FLOW3\Package\PackageManagerInterface');
+		$mockPackageManager->expects($this->once())->method('getActivePackages')->will($this->returnValue($packages));
+
+		$reflectionService = $this->getAccessibleMock('F3\FLOW3\Reflection\ReflectionService', array('dummy'));
+		$reflectionService->injectSettings(array('object' => array('registerFunctionalTestClasses' => FALSE)));
+		$reflectionService->injectPackageManager($mockPackageManager);
+
+		$expectedClassNames = array('FooClass', 'Bar1Class', 'Bar2Class');
+		$this->assertEquals($expectedClassNames, $reflectionService->_call('detectAvailableClassNames'));
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function detectAvailableClassNamesAlsoRegistersFunctionalTestClassesIfObjectManagerIsConfiguredToDoSo() {
+		$packages = array(
+			 'Foo' => $this->getMock('F3\FLOW3\Package\Package', array(), array(), '', FALSE),
+		);
+
+		$fooClassFiles = array(
+			 'FooClass' => '/tmp/foo/FooClass',
+			 'FooException' => '/tmp/foo/FooException'
+		);
+
+		$fooTestsClassFiles = array(
+			 'FooTestClass' => '/tmp/foo/tests/FooTestClass',
+			 'FooTestException' => '/tmp/foo/tests/FooTestException',
+		);
+
+		$packages['Foo']->expects($this->once())->method('getClassFiles')->will($this->returnValue($fooClassFiles));
+		$packages['Foo']->expects($this->once())->method('getFunctionalTestsClassFiles')->will($this->returnValue($fooTestsClassFiles));
+
+		$mockPackageManager = $this->getMock('F3\FLOW3\Package\PackageManagerInterface');
+		$mockPackageManager->expects($this->once())->method('getActivePackages')->will($this->returnValue($packages));
+
+		$reflectionService = $this->getAccessibleMock('F3\FLOW3\Reflection\ReflectionService', array('dummy'));
+		$reflectionService->injectSettings(array('object' => array('registerFunctionalTestClasses' => TRUE)));
+		$reflectionService->injectPackageManager($mockPackageManager);
+
+		$expectedClassNames = array('FooClass', 'FooTestClass');
+		$this->assertEquals($expectedClassNames, $reflectionService->_call('detectAvailableClassNames'));
+	}
+
 }
 
 ?>
