@@ -132,11 +132,13 @@ class ConfigurationManager {
 	 *
 	 * @param string $configurationType The kind of configuration to fetch - must be one of the CONFIGURATION_TYPE_* constants
 	 * @param string $packageKey Key of the package to return the configuration for
+	 * @param array $configurationPath The path of the configuration to extract (e.g. 'FLOW3', 'aop')
 	 * @return array The configuration
 	 * @throws \F3\FLOW3\Configuration\Exception\InvalidConfigurationTypeException on invalid configuration types
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getConfiguration($configurationType, $packageKey = NULL) {
+	public function getConfiguration($configurationType, $packageKey = NULL, array $configurationPath = NULL) {
+		$configuration = array();
 		switch ($configurationType) {
 			case self::CONFIGURATION_TYPE_ROUTES :
 			case self::CONFIGURATION_TYPE_SIGNALSSLOTS :
@@ -146,7 +148,10 @@ class ConfigurationManager {
 				if (!isset($this->configurations[$configurationType])) {
 					$this->loadConfiguration($configurationType, $this->packages);
 				}
-				return isset($this->configurations[$configurationType]) ? $this->configurations[$configurationType] : array();;
+				if (isset($this->configurations[$configurationType])) {
+					$configuration = &$this->configurations[$configurationType];
+				}
+				break;
 
 			case self::CONFIGURATION_TYPE_SETTINGS :
 				if ($packageKey === NULL) {
@@ -155,18 +160,28 @@ class ConfigurationManager {
 							$this->loadConfiguration($configurationType, $this->packages);
 						}
 					}
-					return $this->configurations[self::CONFIGURATION_TYPE_SETTINGS];
+					$configuration = &$this->configurations[self::CONFIGURATION_TYPE_SETTINGS];
+					break;
 				}
+
 			case self::CONFIGURATION_TYPE_PACKAGE :
 			case self::CONFIGURATION_TYPE_OBJECTS :
 				if ($packageKey === NULL) throw new \InvalidArgumentException('No package specified.', 1233336279);
 				if (!isset($this->configurations[$configurationType][$packageKey])) {
 					$this->loadConfiguration($configurationType, $this->packages);
 				}
-				return isset($this->configurations[$configurationType][$packageKey]) ? $this->configurations[$configurationType][$packageKey] : array();
+				if (isset($this->configurations[$configurationType][$packageKey])) {
+					$configuration = &$this->configurations[$configurationType][$packageKey];
+				}
+				break;
 
 			default :
 				throw new \F3\FLOW3\Configuration\Exception\InvalidConfigurationTypeException('Invalid configuration type "' . $configurationType . '"', 1206031879);
+		}
+		if ($configurationPath === NULL) {
+			return $configuration;
+		} else {
+			return \F3\FLOW3\Utility\Arrays::getValueByPath($configuration, $configurationPath);
 		}
 	}
 
