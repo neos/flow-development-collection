@@ -351,14 +351,12 @@ class PdoBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 			if ($this->pdoDriver === 'mysql') {
 				$this->databaseHandle->exec('SET SESSION sql_mode=\'ANSI\';');
 			}
-		} catch (\PDOException $e) {
-#			$this->createCacheTables();
-		}
+		} catch (\PDOException $e) {}
 	}
 
 	/**
 	 * Creates the tables needed for the cache backend.
-	 * 
+	 *
 	 * @return void
 	 * @throws \F3\FLOW3\Persistence\Exception if something goes wrong
 	 * @author Karsten Dambekalns <karsten@typo3.org>
