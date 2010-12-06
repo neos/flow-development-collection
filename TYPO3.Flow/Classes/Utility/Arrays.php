@@ -149,13 +149,13 @@ class Arrays {
 	/**
 	 * Returns the value of a nested array by following the specifed path.
 	 *
-	 * @param array $array The array to traverse
+	 * @param array &$array The array to traverse as a reference
 	 * @param array $path The path to follow, ie. a simple array of keys
 	 * @return mixed The value found, NULL if the path didn't exist
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	static public function getValueByPath(array $array, array $path) {
+	static public function getValueByPath(array &$array, array $path) {
 		$key = array_shift($path);
 		if (isset($array[$key])) {
 			if (count($path) > 0) {
