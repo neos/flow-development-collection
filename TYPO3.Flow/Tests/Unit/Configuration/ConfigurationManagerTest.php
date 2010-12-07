@@ -746,5 +746,19 @@ EOD;
 		$this->assertEquals($expectedResult, $actualResult);
 	}
 
+	/**
+	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function getSettingsWithConfigurationPathReturnsPartialSettings() {
+		$configurations[\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS]['FLOW3']['configuration'] = array('foo' => 'bar');
+
+		$configurationManager = $this->getAccessibleMock('F3\FLOW3\Configuration\ConfigurationManager', array('saveConfigurationCache'), array(), '', FALSE);
+		$configurationManager->_set('configurations', $configurations);
+
+		$result = $configurationManager->getConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, NULL, array('FLOW3', 'configuration'));
+		$this->assertEquals(array('foo' => 'bar'), $result);
+	}
+
 }
 ?>
