@@ -83,10 +83,11 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 		$this->pdoDriver = $splitdsn[0];
 
 		if ($this->pdoDriver === 'sqlite' && !file_exists($splitdsn[1])) {
+			$this->databaseHandle = new \PDO($this->dataSourceName, $this->username, $this->password);
 			$this->createTables();
+		} else {
+			$this->databaseHandle = new \PDO($this->dataSourceName, $this->username, $this->password);
 		}
-
-		$this->databaseHandle = new \PDO($this->dataSourceName, $this->username, $this->password);
 		$this->databaseHandle->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 
 		if ($this->pdoDriver === 'mysql') {
@@ -103,8 +104,7 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 	 */
 	protected function createTables() {
 		try {
-			$pdoHelper = $this->objectManager->create('F3\FLOW3\Utility\PdoHelper', $this->dataSourceName, $this->username, $this->password);
-			$pdoHelper->importSql(FLOW3_PATH_FLOW3 . 'Resources/Private/Persistence/SQL/DDL.sql');
+			\F3\FLOW3\Utility\PdoHelper::importSql($this->databaseHandle, $this->pdoDriver, FLOW3_PATH_FLOW3 . 'Resources/Private/Persistence/SQL/DDL.sql');
 		} catch (\PDOException $e) {
 			throw new \F3\FLOW3\Persistence\Exception('Could not create persistence tables with DSN "' . $this->dataSourceName . '". PDO error: ' . $e->getMessage(), 1259701414);
 		}

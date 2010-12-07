@@ -342,10 +342,11 @@ class PdoBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 			$this->pdoDriver = $splitdsn[0];
 
 			if ($this->pdoDriver === 'sqlite' && !file_exists($splitdsn[1])) {
+				$this->databaseHandle = new \PDO($this->dataSourceName, $this->username, $this->password);
 				$this->createCacheTables();
+			} else {
+				$this->databaseHandle = new \PDO($this->dataSourceName, $this->username, $this->password);
 			}
-
-			$this->databaseHandle = new \PDO($this->dataSourceName, $this->username, $this->password);
 			$this->databaseHandle->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 
 			if ($this->pdoDriver === 'mysql') {
@@ -363,8 +364,7 @@ class PdoBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 */
 	protected function createCacheTables() {
 		try {
-			$pdoHelper = $this->objectManager->create('F3\FLOW3\Utility\PdoHelper', $this->dataSourceName, $this->username, $this->password);
-			$pdoHelper->importSql(FLOW3_PATH_FLOW3 . 'Resources/Private/Cache/SQL/DDL.sql');
+			\F3\FLOW3\Utility\PdoHelper::importSql($this->databaseHandle, $this->pdoDriver, FLOW3_PATH_FLOW3 . 'Resources/Private/Cache/SQL/DDL.sql');
 		} catch (\PDOException $e) {
 			throw new \F3\FLOW3\Persistence\Exception('Could not create cache tables with DSN "' . $this->dataSourceName . '". PDO error: ' . $e->getMessage(), 1259576985);
 		}
