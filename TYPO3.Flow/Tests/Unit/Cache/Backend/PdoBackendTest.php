@@ -243,7 +243,7 @@ class PdoBackendTest extends \F3\Testing\BaseTestCase {
 		$backend->injectEnvironment($mockEnvironment);
 		$backend->injectSystemLogger($mockSystemLogger);
 		$backend->setCache($mockCache);
-		$backend->setDataSourceName('sqlite://:memory:');
+		$backend->setDataSourceName('sqlite::memory:');
 		$backend->initializeObject();
 		$this->backend = $backend;
 
