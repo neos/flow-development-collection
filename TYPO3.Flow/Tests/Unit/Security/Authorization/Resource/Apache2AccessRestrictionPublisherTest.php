@@ -51,7 +51,7 @@ class Apache2AccessRestrictionPublisherTest extends \F3\Testing\BaseTestCase {
 		$publisher->injectEnvironment($mockEnvironment);
 		$publisher->publishAccessRestrictionsForPath('vfs://Foo/');
 
-		$expectedFileContents = 'Allow from 192.168.1.234';
+		$expectedFileContents = 'Deny from all' . chr(10) . 'Allow from 192.168.1.234';
 
 		$this->assertFileExists('vfs://Foo/.htaccess');
 		$this->assertEquals($expectedFileContents, file_get_contents('vfs://Foo/.htaccess'));
