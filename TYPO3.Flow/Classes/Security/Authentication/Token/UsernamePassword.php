@@ -31,11 +31,6 @@ namespace F3\FLOW3\Security\Authentication\Token;
 class UsernamePassword implements \F3\FLOW3\Security\Authentication\TokenInterface {
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
-	 */
-	protected $objectManager;
-
-	/**
 	 * @var \F3\FLOW3\Utility\Environment
 	 */
 	protected $environment;
@@ -78,15 +73,6 @@ class UsernamePassword implements \F3\FLOW3\Security\Authentication\TokenInterfa
 	 * @var \F3\FLOW3\Security\Authentication\EntryPointInterface
 	 */
 	protected $entryPoint = NULL;
-
-	/**
-	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager The object factory
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
-		$this->objectManager = $objectManager;
-	}
 
 	/**
 	 * @param \F3\FLOW3\Utility\Environment $environment The current environment object
@@ -238,7 +224,7 @@ class UsernamePassword implements \F3\FLOW3\Security\Authentication\TokenInterfa
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function setAccount(\F3\FLOW3\Security\Account $account) {
+	public function setAccount(\F3\FLOW3\Security\Account $account = NULL) {
 		$this->account = $account;
 	}
 
