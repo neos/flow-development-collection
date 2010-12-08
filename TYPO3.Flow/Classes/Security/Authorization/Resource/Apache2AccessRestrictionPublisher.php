@@ -52,7 +52,7 @@ class Apache2AccessRestrictionPublisher implements \F3\FLOW3\Security\Authorizat
 	 * @return void
 	 */
 	public function publishAccessRestrictionsForPath($path) {
-		$content = 'Allow from ' . $this->environment->getRemoteAddress();
+		$content = "Deny from all\nAllow from " . $this->environment->getRemoteAddress();
 
 		file_put_contents($path . '.htaccess', $content);
 	}
