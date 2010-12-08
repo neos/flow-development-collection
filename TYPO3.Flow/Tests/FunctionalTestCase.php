@@ -44,6 +44,21 @@ abstract class FunctionalTestCase extends \F3\FLOW3\Tests\BaseTestCase {
 	protected static $flow3;
 
 	/**
+	 * @var boolean
+	 */
+	protected $testableSecurityEnabled = FALSE;
+
+	/**
+	 * @var \F3\FLOW3\Security\Authorization\AccessDecisionManagerInterface
+	 */
+	protected $accessDecisionManager;
+
+	/**
+	 * @var \F3\FLOW3\Tests\Functional\Security\Authentication\Provider\TestingProvider
+	 */
+	protected $testingProvider;
+
+	/**
 	 * Initialize FLOW3
 	 */
 	public static function setUpBeforeClass() {
@@ -77,5 +92,101 @@ abstract class FunctionalTestCase extends \F3\FLOW3\Tests\BaseTestCase {
 		$this->objectManager = self::$flow3->getObjectManager();
 		parent::runBare();
 	}
+
+	/**
+	 * Enables security tests for this testcase
+	 *
+	 * @return void
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	protected function enableTestableSecurity() {
+		$this->testableSecurityEnabled = TRUE;
+	}
+
+	/**
+	 * Sets up test requirements depending on the enabled tests
+	 *
+	 * @return void
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function setUp() {
+		if ($this->testableSecurityEnabled) {
+			$this->setupSecurity();
+		}
+	}
+
+	/**
+	 * Sets up security test requirements
+	 *
+	 * @return void
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	protected function setupSecurity() {
+		$this->accessDecisionManager = $this->objectManager->get('F3\FLOW3\Security\Authorization\AccessDecisionManagerInterface');
+		$this->accessDecisionManager->setOverrideDecision(NULL);
+
+		$this->testingProvider = $this->objectManager->get('F3\FLOW3\Security\Authentication\Provider\TestingProvider');
+		$this->testingProvider->setName('DefaultProvider');
+
+		$this->securityContext = $this->objectManager->get('F3\FLOW3\Security\Context');
+		$request = $this->getMock('F3\FLOW3\MVC\Web\Request');
+		$this->securityContext->initialize($request);
+	}
+
+	/**
+	 * Authenticate the given role names for the current test
+	 *
+	 * @param array $roleNames
+	 * @return void
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	protected function authenticateRoles($roleNames) {
+		$account = $this->objectManager->create('F3\FLOW3\Security\Account');
+		$roles = array();
+		foreach ($roleNames as $roleName) {
+			$roles[] = $this->objectManager->create('F3\FLOW3\Security\Policy\Role', $roleName);
+		}
+		$account->setRoles($roles);
+
+		$this->testingProvider->setAuthenticationStatus(\F3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL);
+		$this->testingProvider->setAccount($account);
+
+		$request = $this->getMock('F3\FLOW3\MVC\Web\Request');
+		$this->securityContext->initialize($request);
+	}
+
+	/**
+	 * Disables authorization for the current test
+	 *
+	 * @return void
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	protected function disableAuthorization() {
+		$this->accessDecisionManager->setOverrideDecision(TRUE);
+	}
+
+	/**
+	 * Tears down test requirements depending on the enabled tests
+	 *
+	 * @return void
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function tearDown() {
+		if ($this->testableSecurityEnabled) {
+			$this->tearDownSecurity();
+		}
+	}
+
+	/**
+	 * Resets security test requirements
+	 *
+	 * @return void
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	protected function tearDownSecurity() {
+		$this->accessDecisionManager->reset();
+		$this->testingProvider->reset();
+	}
+
 }
 ?>
