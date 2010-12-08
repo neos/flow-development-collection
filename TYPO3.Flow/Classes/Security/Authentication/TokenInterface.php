@@ -122,7 +122,7 @@ interface TokenInterface {
 	 * @param F3\FLOW3\Security\Account $account An account object
 	 * @return void
 	 */
-	public function setAccount(\F3\FLOW3\Security\Account $account);
+	public function setAccount(\F3\FLOW3\Security\Account $account = NULL);
 
 	/**
 	 * Returns the credentials of this token. The type depends on the provider
