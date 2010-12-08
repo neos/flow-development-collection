@@ -49,6 +49,21 @@ abstract class FunctionalTestCase extends \F3\FLOW3\Tests\BaseTestCase {
 	protected $testableSecurityEnabled = FALSE;
 
 	/**
+	 * @var boolean
+	 */
+	protected $testablePersistenceEnabled = FALSE;
+
+	/**
+	 * @var \F3\FLOW3\Persistence\PersistenceManager
+	 */
+	protected $persistenceManager;
+
+	/**
+	 * @var \F3\FLOW3\Persistence\Session
+	 */
+	protected $persistenceSession;
+
+	/**
 	 * @var \F3\FLOW3\Security\Authorization\AccessDecisionManagerInterface
 	 */
 	protected $accessDecisionManager;
@@ -104,6 +119,16 @@ abstract class FunctionalTestCase extends \F3\FLOW3\Tests\BaseTestCase {
 	}
 
 	/**
+	 * Enables persistence tests for this testcase
+	 *
+	 * @return void
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	protected function enableTestablePersistence() {
+		$this->testablePersistenceEnabled = TRUE;
+	}
+
+	/**
 	 * Sets up test requirements depending on the enabled tests
 	 *
 	 * @return void
@@ -112,6 +137,9 @@ abstract class FunctionalTestCase extends \F3\FLOW3\Tests\BaseTestCase {
 	public function setUp() {
 		if ($this->testableSecurityEnabled) {
 			$this->setupSecurity();
+		}
+		if ($this->testablePersistenceEnabled) {
+			$this->setupPersistence();
 		}
 	}
 
@@ -131,6 +159,17 @@ abstract class FunctionalTestCase extends \F3\FLOW3\Tests\BaseTestCase {
 		$this->securityContext = $this->objectManager->get('F3\FLOW3\Security\Context');
 		$request = $this->getMock('F3\FLOW3\MVC\Web\Request');
 		$this->securityContext->initialize($request);
+	}
+
+	/**
+	 * Sets up persistence test requirements
+	 *
+	 * @return void
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	protected function setupPersistence() {
+		$this->persistenceManager = $this->objectManager->get('F3\FLOW3\Persistence\PersistenceManagerInterface');
+		$this->persistenceSession = $this->objectManager->get('F3\FLOW3\Persistence\Session');
 	}
 
 	/**
@@ -175,6 +214,9 @@ abstract class FunctionalTestCase extends \F3\FLOW3\Tests\BaseTestCase {
 		if ($this->testableSecurityEnabled) {
 			$this->tearDownSecurity();
 		}
+		if ($this->testablePersistenceEnabled) {
+			$this->tearDownPersistence();
+		}
 	}
 
 	/**
@@ -186,6 +228,17 @@ abstract class FunctionalTestCase extends \F3\FLOW3\Tests\BaseTestCase {
 	protected function tearDownSecurity() {
 		$this->accessDecisionManager->reset();
 		$this->testingProvider->reset();
+	}
+
+	/**
+	 * Resets persistence test requirements
+	 *
+	 * @return void
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	protected function tearDownPersistence() {
+		$this->persistenceManager->persistAll();
+		$this->persistenceSession->destroy();
 	}
 
 }

@@ -27,6 +27,12 @@ FLOW3:
   object:
     registerFunctionalTestClasses: y
 
+  persistence:
+    backendOptions:
+      dataSourceName: 'sqlite::memory:'
+      username: null
+      password: null
+
   security:
     authentication:
       authenticationStrategy: anyToken
