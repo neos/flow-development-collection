@@ -110,14 +110,12 @@ class JsonViewTest extends \F3\Testing\BaseTestCase {
 		$expected = array(array('value1' => 'foo'));
 		$output[] = array($object, $configuration, $expected, 'array of objects should be serialized');
 
-
 		$properties = array('foo' => 'bar', 'prohibited' => 'xxx');
 		$nestedObject = $this->getMock(uniqid('Test'), array('getName', 'getPath', 'getProperties', 'getOther'));
 		$nestedObject->expects($this->any())->method('getName')->will($this->returnValue('name'));
 		$nestedObject->expects($this->any())->method('getPath')->will($this->returnValue('path'));
 		$nestedObject->expects($this->any())->method('getProperties')->will($this->returnValue($properties));
 		$nestedObject->expects($this->never())->method('getOther');
-
 		$object = $nestedObject;
 		$configuration = array(
 			'_only' => array('name', 'path', 'properties'),
@@ -127,13 +125,20 @@ class JsonViewTest extends \F3\Testing\BaseTestCase {
 				 )
 			)
 		);
-
 		$expected = array(
 			'name' => 'name',
 			'path' => 'path',
 			'properties' => array('foo' => 'bar')
 		);
 		$output[] = array($object, $configuration, $expected, 'descending into arrays should be possible');
+
+		$nestedObject = new \stdClass();
+		$nestedObject->value1 = 'foo';
+		$value = new \SplObjectStorage();
+		$value->attach($nestedObject);
+		$configuration = array();
+		$expected = array(array('value1' => 'foo'));
+		$output[] = array($value, $configuration, $expected, 'SplObjectStorage with objects should be serialized');
 
 		return $output;
 	}
