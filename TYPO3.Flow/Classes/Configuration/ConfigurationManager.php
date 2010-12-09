@@ -71,7 +71,7 @@ class ConfigurationManager {
 
 	/**
 	 * Active packages to load the configuration for
-	 * @var array <F3\FLOW3\Package\PackageInterface>
+	 * @var array<F3\FLOW3\Package\PackageInterface>
 	 */
 	protected $packages = array();
 
@@ -254,77 +254,70 @@ class ConfigurationManager {
 
 		switch ($configurationType) {
 			case self::CONFIGURATION_TYPE_SETTINGS :
-				if (count($packages) === 1 && isset($packages['FLOW3'])) {
-					$this->configurations[$configurationType] = array();
-					$settings = $this->configurationSource->load(FLOW3_PATH_FLOW3 . 'Configuration/' . self::CONFIGURATION_TYPE_SETTINGS);
-					$settings = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($settings, $this->configurationSource->load(FLOW3_PATH_FLOW3 . 'Configuration/' . $this->context . '/' . self::CONFIGURATION_TYPE_SETTINGS));
-					$settings = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($settings, $this->configurationSource->load(FLOW3_PATH_CONFIGURATION . self::CONFIGURATION_TYPE_SETTINGS));
-					$settings = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($settings, $this->configurationSource->load(FLOW3_PATH_CONFIGURATION . $this->context . '/' . self::CONFIGURATION_TYPE_SETTINGS));
+				if (isset($packages['FLOW3'])) {
+					$flow3Package = $packages['FLOW3'];
+					unset($packages['FLOW3']);
+					array_unshift($packages, $flow3Package);
+				}
+				$settings = array();
 
-					$this->configurations[self::CONFIGURATION_TYPE_SETTINGS] = $settings;
+				foreach ($packages as $package) {
+					if (!isset($settings[$package->getPackageKey()])) {
+						$settings[$package->getPackageKey()] = array();
+					}
+					$settings = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($settings, $this->configurationSource->load($package->getConfigurationPath() . self::CONFIGURATION_TYPE_SETTINGS));
+				}
+				foreach ($packages as $package) {
+					$settings = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($settings, $this->configurationSource->load($package->getConfigurationPath() . $this->context . '/' . self::CONFIGURATION_TYPE_SETTINGS));
+				}
+				$settings = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($settings, $this->configurationSource->load(FLOW3_PATH_CONFIGURATION . self::CONFIGURATION_TYPE_SETTINGS));
+				$settings = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($settings, $this->configurationSource->load(FLOW3_PATH_CONFIGURATION . $this->context . '/' . self::CONFIGURATION_TYPE_SETTINGS));
+
+				$this->configurations[self::CONFIGURATION_TYPE_SETTINGS] = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($this->configurations[self::CONFIGURATION_TYPE_SETTINGS], $settings);
+
+				if (!isset($this->configurations[self::CONFIGURATION_TYPE_SETTINGS]['FLOW3']['core']['context'])) {
 					$this->configurations[self::CONFIGURATION_TYPE_SETTINGS]['FLOW3']['core']['context'] = $this->context;
-				} elseif (count($packages) > 1) {
-					$settings = array();
-					if (isset($packages['FLOW3'])) {
-						unset ($packages['FLOW3']);
-					}
-					foreach ($packages as $packageKey => $package) {
-						if (!isset($settings[$packageKey])) {
-							$settings[$packageKey] = array();
-						}
-						$settings = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($settings, $this->configurationSource->load($package->getConfigurationPath() . self::CONFIGURATION_TYPE_SETTINGS));
-						$settings = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($settings, $this->configurationSource->load($package->getConfigurationPath() . $this->context . '/' . self::CONFIGURATION_TYPE_SETTINGS));
-					}
-					$settings = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($settings, $this->configurationSource->load(FLOW3_PATH_CONFIGURATION . self::CONFIGURATION_TYPE_SETTINGS, TRUE));
-					$settings = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($settings, $this->configurationSource->load(FLOW3_PATH_CONFIGURATION . $this->context . '/' . self::CONFIGURATION_TYPE_SETTINGS, TRUE));
-
-					$this->configurations[self::CONFIGURATION_TYPE_SETTINGS] = (!isset($this->configurations[self::CONFIGURATION_TYPE_SETTINGS])) ? $settings : \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($this->configurations[self::CONFIGURATION_TYPE_SETTINGS], $settings);
 				}
 			break;
 			case self::CONFIGURATION_TYPE_OBJECTS :
 			case self::CONFIGURATION_TYPE_PACKAGE :
 				$this->configurations[$configurationType] = array();
- 				foreach ($packages as $packageKey => $package) {
- 					$configuration = array();
- 					$configuration = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($configuration, $this->configurationSource->load($package->getConfigurationPath() . $configurationType));
-					$contextConfiguration = $this->configurationSource->load($package->getConfigurationPath() . $this->context . '/' . $configurationType);
-
-					$configuration = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($configuration, $contextConfiguration);
- 					$globalConfiguration = $this->configurationSource->load(FLOW3_PATH_CONFIGURATION . $configurationType);
-
- 					$configuration = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($configuration, $globalConfiguration);
-					$globalContextConfiguration = $this->configurationSource->load(FLOW3_PATH_CONFIGURATION . $this->context . '/' . $configurationType);
-
-					$configuration = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($configuration, $globalContextConfiguration);
- 					$this->configurations[$configurationType][$packageKey] = $configuration;
- 				}
- 			break;
+				foreach ($packages as $packageKey => $package) {
+					$configuration = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($this->configurationSource->load($package->getConfigurationPath() . $configurationType), $this->configurationSource->load($package->getConfigurationPath() . $this->context . '/' . $configurationType));
+					$configuration = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($configuration, $this->configurationSource->load(FLOW3_PATH_CONFIGURATION . $configurationType));
+					$this->configurations[$configurationType][$packageKey] = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($configuration, $this->configurationSource->load(FLOW3_PATH_CONFIGURATION . $this->context . '/' . $configurationType));
+				}
+			break;
 			case self::CONFIGURATION_TYPE_CACHES :
 			case self::CONFIGURATION_TYPE_POLICY :
 			case self::CONFIGURATION_TYPE_SIGNALSSLOTS :
 				$this->configurations[$configurationType] = array();
-				foreach ($packages as $packageKey => $package) {
+				foreach ($packages as $package) {
 					$this->configurations[$configurationType] = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $this->configurationSource->load($package->getConfigurationPath() . $configurationType));
+				}
+				foreach ($packages as $package) {
+					$this->configurations[$configurationType] = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $this->configurationSource->load($package->getConfigurationPath() . $this->context . '/' . $configurationType));
 				}
 			break;
 			case self::CONFIGURATION_TYPE_ROUTES :
 				$this->configurations[$configurationType] = array();
 				$subRoutesConfiguration = array();
 				foreach ($packages as $packageKey => $package) {
-					$subRoutesConfiguration[$packageKey] = array();
-					$subRoutesConfiguration[$packageKey] = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($subRoutesConfiguration[$packageKey], $this->configurationSource->load($package->getConfigurationPath() . $configurationType));
+					$subRoutesConfiguration[$packageKey] = $this->configurationSource->load($package->getConfigurationPath() . $configurationType);
+				}
+				foreach ($packages as $packageKey => $package) {
+					$subRoutesConfiguration[$packageKey] = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($subRoutesConfiguration[$packageKey], $this->configurationSource->load($package->getConfigurationPath() . $this->context . '/' . $configurationType));
 				}
 			break;
 			case self::CONFIGURATION_TYPE_PACKAGESTATES :
-				$this->configurations[$configurationType] = array();
 				$configuration = $this->configurationSource->load(FLOW3_PATH_CONFIGURATION . self::CONFIGURATION_TYPE_PACKAGESTATES);
-				$configuration = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($configuration, $this->configurationSource->load(FLOW3_PATH_CONFIGURATION . $this->context . '/' . self::CONFIGURATION_TYPE_PACKAGESTATES));
-				$this->configurations[$configurationType] = $configuration;
+				$this->configurations[$configurationType] = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($configuration, $this->configurationSource->load(FLOW3_PATH_CONFIGURATION . $this->context . '/' . self::CONFIGURATION_TYPE_PACKAGESTATES));
 			break;
 			default:
 				throw new \F3\FLOW3\Configuration\Exception\InvalidConfigurationTypeException('Configuration type "' . $configurationType . '" cannot be loaded with loadConfiguration().', 1251450613);
 		}
 
+			// merge in global configuration
 		switch ($configurationType) {
 			case self::CONFIGURATION_TYPE_CACHES :
 			case self::CONFIGURATION_TYPE_POLICY :
@@ -369,12 +362,12 @@ class ConfigurationManager {
 		$cachePathAndFilename = $configurationCachePath  . $this->context . 'Configurations.php';
 		$includeCachedConfigurationsCode = <<< "EOD"
 <?php
-	if (file_exists('$cachePathAndFilename')) {
-		return require '$cachePathAndFilename';
-	} else {
-		unlink(__FILE__);
-		return array();
-	}
+if (file_exists('$cachePathAndFilename')) {
+	return require '$cachePathAndFilename';
+} else {
+	unlink(__FILE__);
+	return array();
+}
 ?>
 EOD;
 		file_put_contents($cachePathAndFilename, '<?php return ' . var_export($this->configurations, TRUE) . '?>');
