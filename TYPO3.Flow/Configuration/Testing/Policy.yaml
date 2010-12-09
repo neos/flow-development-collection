@@ -1,0 +1,31 @@
+#                                                                        #
+# Security policy for the FLOW3 Framework                                #
+#                                                                        #
+# This file contains the default security policy configuration for the   #
+# FLOW3 Framework. Don't modify this file but add configuration options  #
+# to the Policy.yaml file in the in global Configuration/ directory      #
+# instead.                                                               #
+
+# @package FLOW3
+
+resources:
+  methods:
+    F3_FLOW3_Tests_Functional_Security_RestrictedController_customerAction: "method(F3\FLOW3\Tests\Functional\Security\Fixtures\RestrictedController->customerAction())"
+    F3_FLOW3_Tests_Functional_Security_RestrictedController_adminAction: "method(F3\FLOW3\Tests\Functional\Security\Fixtures\RestrictedController->adminAction())"
+
+roles:
+  Customer: []
+  Administrator: []
+
+acls:
+
+  Customer:
+    methods:
+      F3_FLOW3_Tests_Functional_Security_RestrictedController_customerAction: GRANT
+      F3_FLOW3_Tests_Functional_Security_RestrictedController_adminAction:    DENY
+
+  Administrator:
+    methods:
+      F3_FLOW3_Tests_Functional_Security_RestrictedController_customerAction: GRANT
+      F3_FLOW3_Tests_Functional_Security_RestrictedController_adminAction:    GRANT
+

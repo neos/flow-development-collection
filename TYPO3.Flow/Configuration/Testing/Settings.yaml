@@ -29,6 +29,8 @@ FLOW3:
 
   security:
     authentication:
+      authenticationStrategy: anyToken
+
       providers:
         DefaultProvider:
           providerClass: F3\FLOW3\Security\Authentication\Provider\TestingProvider
