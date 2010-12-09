@@ -31,6 +31,7 @@ namespace F3\FLOW3\Security\Policy;
 class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 
 	const
+		PRIVILEGE_ABSTAIN = 0,
 		PRIVILEGE_GRANT = 1,
 		PRIVILEGE_DENY = 2;
 
@@ -153,7 +154,7 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	public function initializeObject() {
 		$this->policy = $this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_POLICY);
 
-		$this->policy['roles']['Everybody'] = array();
+		$this->setAclsForEverybodyRole();
 
 		if ($this->cache->has('acls')) {
 			$this->acls = $this->cache->get('acls');
@@ -201,7 +202,8 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 						$policyForResource = array();
 						if ($privilege === 'GRANT') $policyForResource['privilege'] = self::PRIVILEGE_GRANT;
 						else if ($privilege === 'DENY') $policyForResource['privilege'] = self::PRIVILEGE_DENY;
-						else throw new \F3\FLOW3\Security\Exception\InvalidPrivilegeException('Invalid privilege defined in security policy. An ACL entry may have only one of the privileges GRANT or DENY, but we got:' . $privilege . ' for role : ' . $role . ' and resource: ' . $resource, 1267311437);
+						else if ($privilege === 'ABSTAIN') $policyForResource['privilege'] = self::PRIVILEGE_ABSTAIN;
+						else throw new \F3\FLOW3\Security\Exception\InvalidPrivilegeException('Invalid privilege defined in security policy. An ACL entry may have only one of the privileges ABSTAIN, GRANT or DENY, but we got:' . $privilege . ' for role : ' . $role . ' and resource: ' . $resource, 1267311437);
 
 						if ($this->filters[$role][$resource]->hasRuntimeEvaluationsDefinition() === TRUE)  $policyForResource['runtimeEvaluationsClosureCode'] = $this->filters[$role][$resource]->getRuntimeEvaluationsClosureCode();
 						else $policyForResource['runtimeEvaluationsClosureCode'] = FALSE;
@@ -221,7 +223,8 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 
 					if ($this->policy['acls'][$role]['methods'][$resource] === 'GRANT') $policyForJoinPoint['privilege'] = self::PRIVILEGE_GRANT;
 					else if ($this->policy['acls'][$role]['methods'][$resource] === 'DENY') $policyForJoinPoint['privilege'] = self::PRIVILEGE_DENY;
-					else throw new \F3\FLOW3\Security\Exception\InvalidPrivilegeException('Invalid privilege defined in security policy. An ACL entry may have only one of the privileges GRANT or DENY, but we got:' . $this->policy['acls'][$role]['methods'][$resource] . ' for role : ' . $role . ' and resource: ' . $resource, 1267308533);
+					else if ($this->policy['acls'][$role]['methods'][$resource] === 'ABSTAIN') $policyForJoinPoint['privilege'] = self::PRIVILEGE_ABSTAIN;
+					else throw new \F3\FLOW3\Security\Exception\InvalidPrivilegeException('Invalid privilege defined in security policy. An ACL entry may have only one of the privileges ABSTAIN, GRANT or DENY, but we got:' . $this->policy['acls'][$role]['methods'][$resource] . ' for role : ' . $role . ' and resource: ' . $resource, 1267308533);
 
 					if ($filter->hasRuntimeEvaluationsDefinition() === TRUE)  $policyForJoinPoint['runtimeEvaluationsClosureCode'] = $filter->getRuntimeEvaluationsClosureCode();
 					else $policyForJoinPoint['runtimeEvaluationsClosureCode'] = FALSE;
@@ -431,6 +434,29 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 				$this->acls[$resource][$role] = array(
 					'privilege' => ($privilege === 'GRANT' ? self::PRIVILEGE_GRANT : self::PRIVILEGE_DENY)
 				);
+			}
+		}
+	}
+
+	/**
+	 * Sets the default ACLs for the Everybody role
+	 *
+	 * @return void
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	protected function setAclsForEverybodyRole() {
+		$this->policy['roles']['Everybody'] = array();
+
+		if (!isset($this->policy['acls']['Everybody'])) $this->policy['acls']['Everybody'] = array();
+		if (!isset($this->policy['acls']['Everybody']['methods'])) $this->policy['acls']['Everybody']['methods'] = array();
+		if (!isset($this->policy['acls']['Everybody']['entities'])) $this->policy['acls']['Everybody']['entities'] = array();
+
+		foreach (array_keys($this->policy['resources']['methods']) as $resource) {
+			if (!isset($this->policy['acls']['Everybody']['methods'][$resource])) $this->policy['acls']['Everybody']['methods'][$resource] = 'ABSTAIN';
+		}
+		foreach ($this->policy['resources']['entities'] as $entityType => $resourceDefinition) {
+			foreach (array_keys($resourceDefinition) as $resource) {
+				if (!isset($this->policy['acls']['Everybody']['entities'][$resource])) $this->policy['acls']['Everybody']['entities'][$resource] = 'ABSTAIN';
 			}
 		}
 	}

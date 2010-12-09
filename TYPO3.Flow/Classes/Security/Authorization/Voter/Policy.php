@@ -62,7 +62,7 @@ class Policy implements \F3\FLOW3\Security\Authorization\AccessDecisionVoterInte
 			foreach ($privileges as $privilege) {
 				if ($privilege === \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT) {
 					$accessGrants++;
-				} else {
+				} elseif ($privilege === \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY) {
 					$accessDenies++;
 				}
 			}
@@ -92,12 +92,19 @@ class Policy implements \F3\FLOW3\Security\Authorization\AccessDecisionVoterInte
 			$privilege = $this->policyService->getPrivilegeForResource($role, $resource);
 			if ($privilege === NULL) continue;
 
-			if ($privilege === \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT) $accessGrants++;
-			else $accessDenies++;
+			if ($privilege === \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT) {
+				$accessGrants++;
+			} elseif ($privilege === \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY) {
+				$accessDenies++;
+			}
 		}
 
-		if ($accessDenies > 0) return self::VOTE_DENY;
-		if ($accessGrants > 0) return self::VOTE_GRANT;
+		if ($accessDenies > 0) {
+			return self::VOTE_DENY;
+		}
+		if ($accessGrants > 0) {
+			return self::VOTE_GRANT;
+		}
 
 		return self::VOTE_ABSTAIN;
 	}

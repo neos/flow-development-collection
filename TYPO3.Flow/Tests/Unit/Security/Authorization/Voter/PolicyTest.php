@@ -174,9 +174,9 @@ class PolicyTest extends \F3\Testing\BaseTestCase {
 		$getPrivilegeCallback = function() use (&$role1ClassName) {
 			$args = func_get_args();
 			if ($args[0] instanceof $role1ClassName) {
-				return array(\F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY);
+				return \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY;
 			} else {
-				return array();
+				return NULL;
 			}
 		};
 
