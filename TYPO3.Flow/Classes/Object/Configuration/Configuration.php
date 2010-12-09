@@ -285,15 +285,20 @@ class Configuration {
 	}
 
 	/**
-	 * Setter function for injection properties
+	 * Setter function for injection properties. If an empty array is passed to this
+	 * method, all (possibly) defined properties are removed from the configuration.
 	 *
 	 * @param array $properties Array of \F3\FLOW3\Object\Configuration\ConfigurationProperty
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setProperties(array $properties) {
-		foreach ($properties as $value) {
-			$this->setProperty($value);
+		if ($properties === array()) {
+			$this->properties = array();
+		} else {
+			foreach ($properties as $value) {
+				$this->setProperty($value);
+			}
 		}
 	}
 
