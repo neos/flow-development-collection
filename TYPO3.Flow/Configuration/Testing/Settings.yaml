@@ -26,3 +26,9 @@ FLOW3:
 
   object:
     registerFunctionalTestClasses: y
+
+  security:
+    authentication:
+      providers:
+        DefaultProvider:
+          providerClass: F3\FLOW3\Security\Authentication\Provider\TestingProvider
