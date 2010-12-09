@@ -528,6 +528,9 @@ F3\FLOW3\Resource\ResourceManager:
 # Security                                                                 #
 #                                                                          #
 
+F3\FLOW3\Security\Authorization\AccessDecisionManagerInterface:
+  className: F3\FLOW3\Security\Authorization\AccessDecisionVoterManager
+
 F3\FLOW3\Security\Authentication\AuthenticationProviderManager:
   arguments:
     1:
