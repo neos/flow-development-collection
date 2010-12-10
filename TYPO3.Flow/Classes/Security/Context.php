@@ -330,12 +330,12 @@ class Context {
 					}
 				}
 				if ($tokenIsActive) {
-					$this->activeTokens[] = $token;
+					$this->activeTokens[$token->getAuthenticationProviderName()] = $token;
 				} else {
-					$this->inactiveTokens[] = $token;
+					$this->inactiveTokens[$token->getAuthenticationProviderName()] = $token;
 				}
 			} else {
-				$this->activeTokens[] = $token;
+				$this->activeTokens[$token->getAuthenticationProviderName()] = $token;
 			}
 		}
 	}
@@ -362,12 +362,12 @@ class Context {
 
 			foreach ($sessionTokens as $sessionToken) {
 				if (get_class($sessionToken) === get_class($managerToken)) {
-					$resultTokens[] = $sessionToken;
+					$resultTokens[$sessionToken->getAuthenticationProviderName()] = $sessionToken;
 					$noCorrespondingSessionTokenFound = FALSE;
 				}
 			}
 
-			if ($noCorrespondingSessionTokenFound) $resultTokens[] = $managerToken;
+			if ($noCorrespondingSessionTokenFound) $resultTokens[$managerToken->getAuthenticationProviderName()] = $managerToken;
 		}
 
 		return $resultTokens;
@@ -394,10 +394,10 @@ class Context {
 						$tokenIsActive &= $requestPattern->matchRequest($request);
 					}
 				}
-				if ($tokenIsActive) $activeTokens[] = $token;
+				if ($tokenIsActive) $activeTokens[$token->getAuthenticationProviderName()] = $token;
 
 			} else {
-				$activeTokens[] = $token;
+				$activeTokens[$token->getAuthenticationProviderName()] = $token;
 			}
 		}
 

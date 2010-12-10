@@ -94,14 +94,18 @@ class ContextTest extends \F3\Testing\BaseTestCase {
 		$token3ClassName = uniqid('token3');
 
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\RequestInterface');
-		$mockContext = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
 		$mockAuthenticationManager = $this->getMock('F3\FLOW3\Security\Authentication\AuthenticationManagerInterface');
 
 		$token1 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), $token1ClassName);
+		$token1->expects($this->any())->method('getAuthenticationProviderName')->will($this->returnValue('token1Provider'));
 		$token1Clone = new $token1ClassName();
+		$token1Clone->expects($this->any())->method('getAuthenticationProviderName')->will($this->returnValue('token1CloneProvider'));
 		$token2 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), $token2ClassName);
+		$token2->expects($this->any())->method('getAuthenticationProviderName')->will($this->returnValue('token2Provider'));
 		$token2Clone = new $token2ClassName();
+		$token2Clone->expects($this->any())->method('getAuthenticationProviderName')->will($this->returnValue('token2CloneProvider'));
 		$token3 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), $token3ClassName);
+		$token3->expects($this->any())->method('getAuthenticationProviderName')->will($this->returnValue('token3Provider'));
 
 		$tokensFromTheManager = array($token1, $token2, $token3);
 		$tokensFromTheSession = array($token1Clone, $token2Clone);
@@ -116,7 +120,7 @@ class ContextTest extends \F3\Testing\BaseTestCase {
 
 		$expectedMergedTokens = array($token1Clone, $token2Clone, $token3);
 
-		$this->assertEquals($securityContext->_get('tokens'), $expectedMergedTokens);
+		$this->assertEquals(array_values($securityContext->_get('tokens')), $expectedMergedTokens);
 	}
 
 	/**
@@ -126,12 +130,14 @@ class ContextTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function initializeCallsUpdateCredentialsOnAllTokens() {
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\RequestInterface');
-		$mockContext = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
 		$mockAuthenticationManager = $this->getMock('F3\FLOW3\Security\Authentication\AuthenticationManagerInterface');
 
-		$mockToken1 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface');
-		$mockToken2 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface');
-		$mockToken3 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface');
+		$mockToken1 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), uniqid('token1'));
+		$mockToken1->expects($this->any())->method('getAuthenticationProviderName')->will($this->returnValue('token1Provider'));
+		$mockToken2 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), uniqid('token2'));
+		$mockToken2->expects($this->any())->method('getAuthenticationProviderName')->will($this->returnValue('token2Provider'));
+		$mockToken3 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), uniqid('token3'));
+		$mockToken3->expects($this->any())->method('getAuthenticationProviderName')->will($this->returnValue('token3Provider'));
 
 		$mockToken1->expects($this->once())->method('updateCredentials');
 		$mockToken2->expects($this->once())->method('updateCredentials');
@@ -191,31 +197,37 @@ class ContextTest extends \F3\Testing\BaseTestCase {
 		$token1 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), $authenticationToken1ClassName);
 		$token1->expects($this->once())->method('hasRequestPatterns')->will($this->returnValue(TRUE));
 		$token1->expects($this->once())->method('getRequestPatterns')->will($this->returnValue(array($matchingRequestPattern)));
+		$token1->expects($this->any())->method('getAuthenticationProviderName')->will($this->returnValue('token1Provider'));
 
 		$token2 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), $authenticationToken2ClassName);
 		$token2->expects($this->once())->method('hasRequestPatterns')->will($this->returnValue(FALSE));
 		$token2->expects($this->never())->method('getRequestPatterns');
+		$token2->expects($this->any())->method('getAuthenticationProviderName')->will($this->returnValue('token2Provider'));
 
 		$token3 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), $authenticationToken3ClassName);
 		$token3->expects($this->once())->method('hasRequestPatterns')->will($this->returnValue(TRUE));
 		$token3->expects($this->once())->method('getRequestPatterns')->will($this->returnValue(array($notMatchingRequestPattern)));
+		$token3->expects($this->any())->method('getAuthenticationProviderName')->will($this->returnValue('token3Provider'));
 
 		$token4 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), $authenticationToken4ClassName);
 		$token4->expects($this->once())->method('hasRequestPatterns')->will($this->returnValue(TRUE));
 		$token4->expects($this->once())->method('getRequestPatterns')->will($this->returnValue(array($abstainingRequestPattern)));
+		$token4->expects($this->any())->method('getAuthenticationProviderName')->will($this->returnValue('token4Provider'));
 
 		$token5 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), $authenticationToken5ClassName);
 		$token5->expects($this->once())->method('hasRequestPatterns')->will($this->returnValue(TRUE));
 		$token5->expects($this->once())->method('getRequestPatterns')->will($this->returnValue(array($abstainingRequestPattern, $notMatchingRequestPattern, $matchingRequestPattern)));
+		$token5->expects($this->any())->method('getAuthenticationProviderName')->will($this->returnValue('token5Provider'));
 
 		$token6 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), $authenticationToken6ClassName);
 		$token6->expects($this->once())->method('hasRequestPatterns')->will($this->returnValue(TRUE));
 		$token6->expects($this->once())->method('getRequestPatterns')->will($this->returnValue(array($abstainingRequestPattern, $matchingRequestPattern, $matchingRequestPattern)));
+		$token6->expects($this->any())->method('getAuthenticationProviderName')->will($this->returnValue('token6Provider'));
 
 		$securityContext = $this->getAccessibleMock('F3\FLOW3\Security\Context', array('dummy'), array(), '', FALSE);
 		$resultTokens = $securityContext->_call('filterInactiveTokens', array($token1, $token2, $token3, $token4, $token5, $token6), $request);
 
-		$this->assertEquals(array($token1, $token2, $token4, $token6), $resultTokens);
+		$this->assertEquals(array($token1, $token2, $token4, $token6), array_values($resultTokens));
 	}
 
 	/**
@@ -253,26 +265,32 @@ class ContextTest extends \F3\Testing\BaseTestCase {
 		$token1 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), $authenticationToken1ClassName);
 		$token1->expects($this->once())->method('hasRequestPatterns')->will($this->returnValue(TRUE));
 		$token1->expects($this->once())->method('getRequestPatterns')->will($this->returnValue(array($matchingRequestPattern)));
+		$token1->expects($this->any())->method('getAuthenticationProviderName')->will($this->returnValue('token1Provider'));
 
 		$token2 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), $authenticationToken2ClassName);
 		$token2->expects($this->once())->method('hasRequestPatterns')->will($this->returnValue(FALSE));
 		$token2->expects($this->never())->method('getRequestPatterns');
+		$token2->expects($this->any())->method('getAuthenticationProviderName')->will($this->returnValue('token2Provider'));
 
 		$token3 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), $authenticationToken3ClassName);
 		$token3->expects($this->once())->method('hasRequestPatterns')->will($this->returnValue(TRUE));
 		$token3->expects($this->once())->method('getRequestPatterns')->will($this->returnValue(array($notMatchingRequestPattern)));
+		$token3->expects($this->any())->method('getAuthenticationProviderName')->will($this->returnValue('token3Provider'));
 
 		$token4 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), $authenticationToken4ClassName);
 		$token4->expects($this->once())->method('hasRequestPatterns')->will($this->returnValue(TRUE));
 		$token4->expects($this->once())->method('getRequestPatterns')->will($this->returnValue(array($abstainingRequestPattern)));
+		$token4->expects($this->any())->method('getAuthenticationProviderName')->will($this->returnValue('token4Provider'));
 
 		$token5 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), $authenticationToken5ClassName);
 		$token5->expects($this->once())->method('hasRequestPatterns')->will($this->returnValue(TRUE));
 		$token5->expects($this->once())->method('getRequestPatterns')->will($this->returnValue(array($abstainingRequestPattern, $notMatchingRequestPattern, $matchingRequestPattern)));
+		$token5->expects($this->any())->method('getAuthenticationProviderName')->will($this->returnValue('token5Provider'));
 
 		$token6 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), $authenticationToken6ClassName);
 		$token6->expects($this->once())->method('hasRequestPatterns')->will($this->returnValue(TRUE));
 		$token6->expects($this->once())->method('getRequestPatterns')->will($this->returnValue(array($abstainingRequestPattern, $matchingRequestPattern, $matchingRequestPattern)));
+		$token6->expects($this->any())->method('getAuthenticationProviderName')->will($this->returnValue('token6Provider'));
 
 		$securityContextProxy = $this->buildAccessibleProxy('F3\FLOW3\Security\Context');
 		$securityContext = new $securityContextProxy();
@@ -281,7 +299,7 @@ class ContextTest extends \F3\Testing\BaseTestCase {
 		$securityContext->_set('request', $request);
 		$securityContext->_call('separateActiveAndInactiveTokens');
 
-		$this->assertEquals(array($token1, $token2, $token4, $token6), $securityContext->getAuthenticationTokens());
+		$this->assertEquals(array($token1, $token2, $token4, $token6), array_values($securityContext->getAuthenticationTokens()));
 	}
 
 	/**
@@ -354,26 +372,32 @@ class ContextTest extends \F3\Testing\BaseTestCase {
 		$token1 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), $authenticationToken1ClassName);
 		$token1->expects($this->any())->method('hasRequestPatterns')->will($this->returnValue(TRUE));
 		$token1->expects($this->any())->method('getRequestPatterns')->will($this->returnValue(array($matchingRequestPattern)));
+		$token1->expects($this->any())->method('getAuthenticationProviderName')->will($this->returnValue('token1Provider'));
 
 		$token2 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), $authenticationToken2ClassName);
 		$token2->expects($this->any())->method('hasRequestPatterns')->will($this->returnValue(FALSE));
 		$token2->expects($this->never())->method('getRequestPatterns');
+		$token2->expects($this->any())->method('getAuthenticationProviderName')->will($this->returnValue('token2Provider'));
 
 		$token3 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), $authenticationToken3ClassName);
 		$token3->expects($this->any())->method('hasRequestPatterns')->will($this->returnValue(TRUE));
 		$token3->expects($this->any())->method('getRequestPatterns')->will($this->returnValue(array($notMatchingRequestPattern)));
+		$token3->expects($this->any())->method('getAuthenticationProviderName')->will($this->returnValue('token3Provider'));
 
 		$token4 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), $authenticationToken4ClassName);
 		$token4->expects($this->any())->method('hasRequestPatterns')->will($this->returnValue(TRUE));
 		$token4->expects($this->any())->method('getRequestPatterns')->will($this->returnValue(array($abstainingRequestPattern)));
+		$token4->expects($this->any())->method('getAuthenticationProviderName')->will($this->returnValue('token4Provider'));
 
 		$token5 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), $authenticationToken5ClassName);
 		$token5->expects($this->any())->method('hasRequestPatterns')->will($this->returnValue(TRUE));
 		$token5->expects($this->any())->method('getRequestPatterns')->will($this->returnValue(array($abstainingRequestPattern, $notMatchingRequestPattern, $matchingRequestPattern)));
+		$token5->expects($this->any())->method('getAuthenticationProviderName')->will($this->returnValue('token5Provider'));
 
 		$token6 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), $authenticationToken6ClassName);
 		$token6->expects($this->any())->method('hasRequestPatterns')->will($this->returnValue(TRUE));
 		$token6->expects($this->any())->method('getRequestPatterns')->will($this->returnValue(array($abstainingRequestPattern, $matchingRequestPattern, $matchingRequestPattern)));
+		$token6->expects($this->any())->method('getAuthenticationProviderName')->will($this->returnValue('token6Provider'));
 
 		$securityContextProxy = $this->buildAccessibleProxy('F3\FLOW3\Security\Context');
 		$securityContext = new $securityContextProxy();
@@ -434,6 +458,8 @@ class ContextTest extends \F3\Testing\BaseTestCase {
 		$token1->expects($this->any())->method('getRequestPatterns')->will($this->returnValue(array($matchingRequestPattern)));
 		$token1->expects($this->any())->method('isAuthenticated')->will($this->returnValue(TRUE));
 		$token1->expects($this->any())->method('getRoles')->will($this->returnValue(array($role1, $role11)));
+		$token1->expects($this->any())->method('getAuthenticationProviderName')->will($this->returnValue('token1Provider'));
+
 
 		$role2 = $this->getMock('F3\FLOW3\Security\Policy\Role', array(), array(), $role2ClassName, FALSE);
 		$token2 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), $authenticationToken2ClassName);
@@ -441,6 +467,7 @@ class ContextTest extends \F3\Testing\BaseTestCase {
 		$token2->expects($this->never())->method('getRequestPatterns');
 		$token2->expects($this->any())->method('isAuthenticated')->will($this->returnValue(TRUE));
 		$token2->expects($this->any())->method('getRoles')->will($this->returnValue(array($role2)));
+		$token2->expects($this->any())->method('getAuthenticationProviderName')->will($this->returnValue('token2Provider'));
 
 		$role3 = $this->getMock('F3\FLOW3\Security\Policy\Role', array(), array(), $role3ClassName, FALSE);
 		$role33 = $this->getMock('F3\FLOW3\Security\Policy\Role', array(), array(), $role33ClassName, FALSE);
@@ -449,6 +476,7 @@ class ContextTest extends \F3\Testing\BaseTestCase {
 		$token3->expects($this->any())->method('getRequestPatterns')->will($this->returnValue(array($notMatchingRequestPattern)));
 		$token3->expects($this->any())->method('isAuthenticated')->will($this->returnValue(TRUE));
 		$token3->expects($this->any())->method('getRoles')->will($this->returnValue(array($role3, $role33)));
+		$token3->expects($this->any())->method('getAuthenticationProviderName')->will($this->returnValue('token3Provider'));
 
 		$role4 = $this->getMock('F3\FLOW3\Security\Policy\Role', array(), array(), $role4ClassName, FALSE);
 		$role44 = $this->getMock('F3\FLOW3\Security\Policy\Role', array(), array(), $role44ClassName, FALSE);
@@ -457,12 +485,14 @@ class ContextTest extends \F3\Testing\BaseTestCase {
 		$token4->expects($this->any())->method('getRequestPatterns')->will($this->returnValue(array($abstainingRequestPattern)));
 		$token4->expects($this->any())->method('isAuthenticated')->will($this->returnValue(FALSE));
 		$token4->expects($this->any())->method('getRoles')->will($this->returnValue(array($role4, $role44)));
+		$token4->expects($this->any())->method('getAuthenticationProviderName')->will($this->returnValue('token4Provider'));
 
 		$token5 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), $authenticationToken5ClassName);
 		$token5->expects($this->any())->method('hasRequestPatterns')->will($this->returnValue(TRUE));
 		$token5->expects($this->any())->method('getRequestPatterns')->will($this->returnValue(array($abstainingRequestPattern, $notMatchingRequestPattern, $matchingRequestPattern)));
 		$token5->expects($this->any())->method('isAuthenticated')->will($this->returnValue(TRUE));
 		$token5->expects($this->any())->method('getRoles')->will($this->returnValue(array()));
+		$token5->expects($this->any())->method('getAuthenticationProviderName')->will($this->returnValue('token5Provider'));
 
 		$role6 = $this->getMock('F3\FLOW3\Security\Policy\Role', array(), array(), $role6ClassName, FALSE);
 		$token6 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), $authenticationToken6ClassName);
@@ -470,6 +500,7 @@ class ContextTest extends \F3\Testing\BaseTestCase {
 		$token6->expects($this->any())->method('getRequestPatterns')->will($this->returnValue(array($abstainingRequestPattern, $matchingRequestPattern, $matchingRequestPattern)));
 		$token6->expects($this->any())->method('isAuthenticated')->will($this->returnValue(TRUE));
 		$token6->expects($this->any())->method('getRoles')->will($this->returnValue(array($role6)));
+		$token6->expects($this->any())->method('getAuthenticationProviderName')->will($this->returnValue('token6Provider'));
 
 		$mockPolicyService = $this->getMock('F3\FLOW3\Security\Policy\PolicyService', array(), array(), '', FALSE);
 		$mockPolicyService->expects($this->any())->method('getAllParentRoles')->will($this->returnValue(array()));
