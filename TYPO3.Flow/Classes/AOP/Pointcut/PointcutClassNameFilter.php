@@ -48,7 +48,7 @@ class PointcutClassNameFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterIn
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct($classFilterExpression) {
-		$this->classFilterExpression = str_replace('\\', '\\\\', $classFilterExpression);
+		$this->classFilterExpression = '/^' . str_replace('\\', '\\\\', $classFilterExpression) . '$/';
 	}
 
 	/**
@@ -76,7 +76,13 @@ class PointcutClassNameFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterIn
 	public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier) {
 		if ($this->reflectionService->isClassFinal($className) || $this->reflectionService->isMethodFinal($className, '__construct')) return FALSE;
 
-		$matchResult =  @preg_match('/^' . $this->classFilterExpression . '$/', $className);
+		try {
+			$matchResult = preg_match($this->classFilterExpression, $className);
+		}
+		catch (\Exception $exception) {
+			throw new \F3\FLOW3\AOP\Exception('Error in regular expression "' . $this->classFilterExpression . '" in pointcut class filter', 1292324509, $exception);
+		}
+
 		if ($matchResult === FALSE) {
 			throw new \F3\FLOW3\AOP\Exception('Error in regular expression "' . $this->classFilterExpression . '" in pointcut class filter', 1168876955);
 		}

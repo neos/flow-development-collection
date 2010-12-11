@@ -82,6 +82,9 @@ class PointcutMethodNameFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterI
 	 * Checks if the specified method matches against the method name
 	 * expression.
 	 *
+	 * Returns TRUE if method name, visibility and arguments constraints match and the target
+	 * method is not final.
+	 *
 	 * @param string $className Ignored in this pointcut filter
 	 * @param string $methodName Name of the method to match agains
 	 * @param string $methodDeclaringClassName Name of the class the method was originally declared in
@@ -95,29 +98,36 @@ class PointcutMethodNameFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterI
 
 		if ($matchResult === FALSE) {
 			throw new \F3\FLOW3\AOP\Exception('Error in regular expression', 1168876915);
+		} elseif ($matchResult !== 1) {
+			return FALSE;
 		}
-		$methodNameMatches = ($matchResult === 1);
+
 		switch ($this->methodVisibility) {
 			case 'public' :
-				$visibilityMatches = $methodDeclaringClassName !== NULL && $this->reflectionService->isMethodPublic($methodDeclaringClassName, $methodName);
-			break;
+				if (!($methodDeclaringClassName !== NULL && $this->reflectionService->isMethodPublic($methodDeclaringClassName, $methodName))) {
+					return FALSE;
+				}
+				break;
 			case 'protected' :
-				$visibilityMatches = $methodDeclaringClassName !== NULL && $this->reflectionService->isMethodProtected($methodDeclaringClassName, $methodName);
-			break;
-			default:
-				$visibilityMatches = TRUE;
+				if (!($methodDeclaringClassName !== NULL && $this->reflectionService->isMethodProtected($methodDeclaringClassName, $methodName))) {
+					return FALSE;
+				}
+				break;
 		}
-		$isNotFinal = ($methodDeclaringClassName === NULL) || (!$this->reflectionService->isMethodFinal($methodDeclaringClassName, $methodName));
 
-		$argumentsConstraintsMatch = TRUE;
+		if ($methodDeclaringClassName !== NULL && $this->reflectionService->isMethodFinal($methodDeclaringClassName, $methodName)) {
+			return FALSE;
+		}
+
 		$methodArguments = ($methodDeclaringClassName === NULL ? array() : $this->reflectionService->getMethodParameters($methodDeclaringClassName, $methodName));
-		foreach ($this->methodArgumentConstraints as $argumentName => $constraintDefinition) {
+		foreach (array_keys($this->methodArgumentConstraints) as $argumentName) {
 			$objectAccess = explode('.', $argumentName, 2);
 			$argumentName = $objectAccess[0];
-			$argumentsConstraintsMatch = $argumentsConstraintsMatch && array_key_exists($argumentName, $methodArguments);
+			if (!array_key_exists($argumentName, $methodArguments)) {
+				return FALSE;
+			}
 		}
-
-		return $methodNameMatches && $visibilityMatches && $isNotFinal && $argumentsConstraintsMatch;
+		return TRUE;
 	}
 
 	/**

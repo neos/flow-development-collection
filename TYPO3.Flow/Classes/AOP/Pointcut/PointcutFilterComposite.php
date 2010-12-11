@@ -38,6 +38,11 @@ class PointcutFilterComposite implements \F3\FLOW3\AOP\Pointcut\PointcutFilterIn
 	 */
 	protected $filters = array();
 
+	/**
+	 * @var boolean
+	 */
+	protected $earlyReturn = TRUE;
+
 		/**
 	 * @var array An array of runtime evaluations
 	 */
@@ -64,7 +69,7 @@ class PointcutFilterComposite implements \F3\FLOW3\AOP\Pointcut\PointcutFilterIn
 	public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier) {
 		$this->runtimeEvaluationsDefinition = array();
 		$matches = TRUE;
-		foreach ($this->filters as $operatorAndFilter) {
+		foreach ($this->filters as &$operatorAndFilter) {
 			list($operator, $filter) = $operatorAndFilter;
 
 			$currentFilterMatches = $filter->matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier);
@@ -76,6 +81,9 @@ class PointcutFilterComposite implements \F3\FLOW3\AOP\Pointcut\PointcutFilterIn
 						if (!isset($this->runtimeEvaluationsDefinition[$operator])) $this->runtimeEvaluationsDefinition[$operator] = array();
 						$this->runtimeEvaluationsDefinition[$operator] = array_merge_recursive($this->runtimeEvaluationsDefinition[$operator], $currentRuntimeEvaluationsDefintion);
 					}
+					if ($this->earlyReturn && !$currentFilterMatches) {
+						return FALSE;
+					}
 					$matches = $matches && $currentFilterMatches;
 				break;
 				case '&&!' :
@@ -83,6 +91,9 @@ class PointcutFilterComposite implements \F3\FLOW3\AOP\Pointcut\PointcutFilterIn
 						if (!isset($this->runtimeEvaluationsDefinition[$operator])) $this->runtimeEvaluationsDefinition[$operator] = array();
 						$this->runtimeEvaluationsDefinition[$operator] = array_merge_recursive($this->runtimeEvaluationsDefinition[$operator], $currentRuntimeEvaluationsDefintion);
 						$currentFilterMatches = FALSE;
+					}
+					if ($this->earlyReturn && $currentFilterMatches) {
+						return FALSE;
 					}
 					$matches = $matches && (!$currentFilterMatches);
 				break;
@@ -117,6 +128,9 @@ class PointcutFilterComposite implements \F3\FLOW3\AOP\Pointcut\PointcutFilterIn
 	 */
 	public function addFilter($operator, \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface $filter) {
 		$this->filters[] = array($operator, $filter);
+		if ($operator !== '&&' && $operator !== '&&!') {
+			$this->earlyReturn = FALSE;
+		}
 	}
 
 	/**

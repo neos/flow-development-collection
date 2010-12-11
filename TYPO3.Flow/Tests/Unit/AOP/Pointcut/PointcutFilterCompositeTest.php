@@ -121,6 +121,66 @@ class PointcutFilterCompositeTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
+	 * @author Karsten Dambekalns <karsten@dambekalns.de>
+	 */
+	public function matchesReturnsTrueForNegatedSubfilter() {
+		$mockPointcutFilter1 = $this->getMock('F3\FLOW3\AOP\Pointcut\PointcutFilterInterface', array(), array(), '', FALSE);
+		$mockPointcutFilter1->expects($this->any())->method('getRuntimeEvaluationsDefinition')->will($this->returnValue(array('eval')));
+		$mockPointcutFilter1->expects($this->once())->method('matches')->will($this->returnValue(TRUE));
+
+		$mockPointcutFilter2 = $this->getMock('F3\FLOW3\AOP\Pointcut\PointcutFilterInterface', array(), array(), '', FALSE);
+		$mockPointcutFilter2->expects($this->any())->method('getRuntimeEvaluationsDefinition')->will($this->returnValue(array('eval')));
+		$mockPointcutFilter2->expects($this->once())->method('matches')->will($this->returnValue(FALSE));
+
+		$pointcutFilterComposite = new \F3\FLOW3\AOP\Pointcut\PointcutFilterComposite();
+		$pointcutFilterComposite->addFilter('&&', $mockPointcutFilter1);
+		$pointcutFilterComposite->addFilter('&&!', $mockPointcutFilter2);
+
+		$this->assertTrue($pointcutFilterComposite->matches('someClass', 'someMethod', 'someDeclaringClass', 1));
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@dambekalns.de>
+	 */
+	public function matchesReturnsFalseEarlyForAndedSubfilters() {
+		$mockPointcutFilter1 = $this->getMock('F3\FLOW3\AOP\Pointcut\PointcutFilterInterface', array(), array(), '', FALSE);
+		$mockPointcutFilter1->expects($this->any())->method('getRuntimeEvaluationsDefinition')->will($this->returnValue(array('eval')));
+		$mockPointcutFilter1->expects($this->once())->method('matches')->will($this->returnValue(FALSE));
+
+		$mockPointcutFilter2 = $this->getMock('F3\FLOW3\AOP\Pointcut\PointcutFilterInterface', array(), array(), '', FALSE);
+		$mockPointcutFilter2->expects($this->any())->method('getRuntimeEvaluationsDefinition')->will($this->returnValue(array('eval')));
+		$mockPointcutFilter2->expects($this->never())->method('matches')->will($this->returnValue(FALSE));
+
+		$pointcutFilterComposite = new \F3\FLOW3\AOP\Pointcut\PointcutFilterComposite();
+		$pointcutFilterComposite->addFilter('&&', $mockPointcutFilter1);
+		$pointcutFilterComposite->addFilter('&&!', $mockPointcutFilter2);
+
+		$this->assertFalse($pointcutFilterComposite->matches('someClass', 'someMethod', 'someDeclaringClass', 1));
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@dambekalns.de>
+	 */
+	public function matchesReturnsFalseEarlyForAndedNegatedSubfilters() {
+		$mockPointcutFilter1 = $this->getMock('F3\FLOW3\AOP\Pointcut\PointcutFilterInterface', array(), array(), '', FALSE);
+		$mockPointcutFilter1->expects($this->any())->method('getRuntimeEvaluationsDefinition')->will($this->returnValue(array('eval')));
+		$mockPointcutFilter1->expects($this->once())->method('matches')->will($this->returnValue(TRUE));
+
+		$mockPointcutFilter2 = $this->getMock('F3\FLOW3\AOP\Pointcut\PointcutFilterInterface', array(), array(), '', FALSE);
+		$mockPointcutFilter2->expects($this->any())->method('getRuntimeEvaluationsDefinition')->will($this->returnValue(array('eval')));
+		$mockPointcutFilter2->expects($this->never())->method('matches')->will($this->returnValue(TRUE));
+
+		$pointcutFilterComposite = new \F3\FLOW3\AOP\Pointcut\PointcutFilterComposite();
+		$pointcutFilterComposite->addFilter('&&!', $mockPointcutFilter1);
+		$pointcutFilterComposite->addFilter('&&', $mockPointcutFilter2);
+
+		$this->assertFalse($pointcutFilterComposite->matches('someClass', 'someMethod', 'someDeclaringClass', 1));
+	}
+
+	/**
+	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function globalRuntimeEvaluationsDefinitionAreAddedCorrectlyToThePointcutFilterComposite() {
