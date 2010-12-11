@@ -115,13 +115,28 @@ class FileSystemPublishingTarget extends \F3\FLOW3\Resource\Publishing\AbstractR
 			return FALSE;
 		}
 
-		$targetPath = \F3\FLOW3\Utility\Files::concatenatePaths(array($this->resourcesPublishingPath . 'Static/', $relativeTargetPath));
+		$targetPath = \F3\FLOW3\Utility\Files::concatenatePaths(array($this->resourcesPublishingPath, 'Static', $relativeTargetPath));
 
-		foreach (\F3\FLOW3\Utility\Files::readDirectoryRecursively($sourcePath) as $sourcePathAndFilename) {
-			if (substr(strtolower($sourcePathAndFilename), -4, 4) === '.php') continue;
-			$targetPathAndFilename = \F3\FLOW3\Utility\Files::concatenatePaths(array($targetPath, str_replace($sourcePath, '', $sourcePathAndFilename)));
-			if (!file_exists($targetPathAndFilename) || filemtime($sourcePathAndFilename) > filemtime($targetPathAndFilename)) {
-				$this->mirrorFile($sourcePathAndFilename, $targetPathAndFilename, TRUE);
+		if ($this->settings['resource']['publishing']['fileSystem']['mirrorMode'] == 'link') {
+			if (file_exists($targetPath)) {
+				if (\F3\FLOW3\Utility\Files::is_link($targetPath) && (readlink($targetPath) === $sourcePath)) {
+					return TRUE;
+				} elseif (is_file($targetPath)) {
+					unlink($targetPath);
+				} else {
+					\F3\FLOW3\Utility\Files::removeDirectoryRecursively($targetPath);
+				}
+			} else {
+				\F3\FLOW3\Utility\Files::createDirectoryRecursively(dirname($targetPath));
+			}
+			symlink($sourcePath, $targetPath);
+		} else {
+			foreach (\F3\FLOW3\Utility\Files::readDirectoryRecursively($sourcePath) as $sourcePathAndFilename) {
+				if (substr(strtolower($sourcePathAndFilename), -4, 4) === '.php') continue;
+				$targetPathAndFilename = \F3\FLOW3\Utility\Files::concatenatePaths(array($targetPath, str_replace($sourcePath, '', $sourcePathAndFilename)));
+				if (!file_exists($targetPathAndFilename) || filemtime($sourcePathAndFilename) > filemtime($targetPathAndFilename)) {
+					$this->mirrorFile($sourcePathAndFilename, $targetPathAndFilename, TRUE);
+				}
 			}
 		}
 

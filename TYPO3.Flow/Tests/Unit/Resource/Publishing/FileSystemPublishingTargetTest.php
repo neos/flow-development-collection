@@ -98,6 +98,32 @@ class FileSystemPublishingTargetTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function publishStaticResourcesLinksTheSpecifiedDirectoryIfMirrorModeIsLink() {
+		$sourcePath = \F3\FLOW3\Utility\Files::concatenatePaths(array(sys_get_temp_dir(), 'FLOW3FileSystemPublishingTargetTestSource'));
+		$targetPath = \F3\FLOW3\Utility\Files::concatenatePaths(array(sys_get_temp_dir(), 'FLOW3FileSystemPublishingTargetTestTarget', '_Resources'));
+
+		mkdir($sourcePath);
+		\F3\FLOW3\Utility\Files::createDirectoryRecursively($targetPath);
+
+		$settings = array('resource' => array('publishing' => array('fileSystem' => array('mirrorMode' => 'link'))));
+
+		$publishingTarget = $this->getAccessibleMock('F3\FLOW3\Resource\Publishing\FileSystemPublishingTarget', array('mirrorFile'));
+		$publishingTarget->_set('settings', $settings);
+		$publishingTarget->_set('resourcesPublishingPath', $targetPath);
+
+		$publishingTarget->expects($this->never())->method('mirrorFile');
+
+		$this->assertTrue($publishingTarget->publishStaticResources($sourcePath, 'Bar'));
+		$this->assertTrue(\F3\FLOW3\Utility\Files::is_link(\F3\FLOW3\Utility\Files::concatenatePaths(array($targetPath, 'Static/Bar'))));
+
+		\F3\FLOW3\Utility\Files::removeDirectoryRecursively($sourcePath);
+		\F3\FLOW3\Utility\Files::removeDirectoryRecursively(\F3\FLOW3\Utility\Files::concatenatePaths(array(sys_get_temp_dir(), 'FLOW3FileSystemPublishingTargetTestTarget')));
+	}
+
+	/**
+	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function publishStaticResourcesDoesNotMirrorAFileIfItAlreadyExistsAndTheModificationTimeIsEqualOrNewer() {
