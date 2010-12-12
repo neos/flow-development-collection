@@ -49,6 +49,11 @@ abstract class FunctionalTestCase extends \F3\FLOW3\Tests\BaseTestCase {
 	protected $testableSecurityEnabled = FALSE;
 
 	/**
+	 * @var \F3\FLOW3\Security\Context
+	 */
+	protected $securityContext;
+
+	/**
 	 * @var boolean
 	 */
 	protected $testablePersistenceEnabled = FALSE;
