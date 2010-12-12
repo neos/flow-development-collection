@@ -70,6 +70,22 @@ class PolicyTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function voteForJoinPointAbstainsIfNoPolicyEntryCouldBeFound() {
+		$mockSecurityContext = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
+		$mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue(array(new \F3\FLOW3\Security\Policy\Role('role1'))));
+
+		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
+		$mockPolicyService = $this->getMock('F3\FLOW3\Security\Policy\PolicyService', array(), array(), '', FALSE);
+		$mockPolicyService->expects($this->once())->method('getPrivilegesForJoinPoint')->will($this->throwException(new \F3\FLOW3\Security\Exception\NoEntryInPolicyException()));
+
+		$voter = new \F3\FLOW3\Security\Authorization\Voter\Policy($mockPolicyService);
+		$this->assertEquals($voter->voteForJoinPoint($mockSecurityContext, $mockJoinPoint), \F3\FLOW3\Security\Authorization\Voter\Policy::VOTE_ABSTAIN, 'The wrong vote was returned!');
+	}
+
+	/**
+	 * @test
 	 * @category unit
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
@@ -148,6 +164,21 @@ class PolicyTest extends \F3\Testing\BaseTestCase {
 		$mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue(array()));
 
 		$mockPolicyService = $this->getMock('F3\FLOW3\Security\Policy\PolicyService', array(), array(), '', FALSE);
+
+		$voter = new \F3\FLOW3\Security\Authorization\Voter\Policy($mockPolicyService);
+		$this->assertEquals($voter->voteForResource($mockSecurityContext, 'myResource'), \F3\FLOW3\Security\Authorization\Voter\Policy::VOTE_ABSTAIN, 'The wrong vote was returned!');
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function voteForResourceAbstainsIfNoPolicyEntryCouldBeFound() {
+		$mockSecurityContext = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
+		$mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue(array(new \F3\FLOW3\Security\Policy\Role('role1'))));
+
+		$mockPolicyService = $this->getMock('F3\FLOW3\Security\Policy\PolicyService', array(), array(), '', FALSE);
+		$mockPolicyService->expects($this->once())->method('getPrivilegeForResource')->will($this->throwException(new \F3\FLOW3\Security\Exception\NoEntryInPolicyException()));
 
 		$voter = new \F3\FLOW3\Security\Authorization\Voter\Policy($mockPolicyService);
 		$this->assertEquals($voter->voteForResource($mockSecurityContext, 'myResource'), \F3\FLOW3\Security\Authorization\Voter\Policy::VOTE_ABSTAIN, 'The wrong vote was returned!');
