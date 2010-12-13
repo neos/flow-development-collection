@@ -57,7 +57,11 @@ class Policy implements \F3\FLOW3\Security\Authorization\AccessDecisionVoterInte
 		$accessGrants = 0;
 		$accessDenies = 0;
 		foreach ($securityContext->getRoles() as $role) {
-			$privileges = $this->policyService->getPrivilegesForJoinPoint($role, $joinPoint);
+			try {
+				$privileges = $this->policyService->getPrivilegesForJoinPoint($role, $joinPoint);
+			} catch (\F3\FLOW3\Security\Exception\NoEntryInPolicyException $e) {
+				return self::VOTE_ABSTAIN;
+			}
 
 			foreach ($privileges as $privilege) {
 				if ($privilege === \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT) {
@@ -89,7 +93,12 @@ class Policy implements \F3\FLOW3\Security\Authorization\AccessDecisionVoterInte
 		$accessGrants = 0;
 		$accessDenies = 0;
 		foreach ($securityContext->getRoles() as $role) {
-			$privilege = $this->policyService->getPrivilegeForResource($role, $resource);
+			try {
+				$privilege = $this->policyService->getPrivilegeForResource($role, $resource);
+			} catch (\F3\FLOW3\Security\Exception\NoEntryInPolicyException $e) {
+				return self::VOTE_ABSTAIN;
+			}
+
 			if ($privilege === NULL) continue;
 
 			if ($privilege === \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT) {

@@ -307,6 +307,7 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The joinpoint for which the privileges should be returned
 	 * @return array Array of privileges
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @throws \F3\FLOW3\Security\Exception\NoEntryInPolicyException
 	 */
 	public function getPrivilegesForJoinPoint(\F3\FLOW3\Security\Policy\Role $role, \F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$methodIdentifier = $joinPoint->getClassName() . '->' . $joinPoint->getMethodName();
@@ -339,6 +340,7 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	 * @param string $resource The resource for which the privileges should be returned
 	 * @return integer One of: PRIVILEGE_GRANT, PRIVILEGE_DENY
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @throws \F3\FLOW3\Security\Exception\NoEntryInPolicyException
 	 */
 	public function getPrivilegeForResource(\F3\FLOW3\Security\Policy\Role $role, $resource) {
 		if (!isset($this->acls[$resource])) {
