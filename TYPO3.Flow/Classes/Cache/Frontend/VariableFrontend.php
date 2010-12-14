@@ -32,6 +32,23 @@ namespace F3\FLOW3\Cache\Frontend;
 class VariableFrontend extends \F3\FLOW3\Cache\Frontend\AbstractFrontend {
 
 	/**
+	 * If the extension "igbinary" is installed, use it for increased performance
+	 *
+	 * @var boolean
+	 */
+	protected $useIgBinary = FALSE;
+
+	/**
+	 * Initializes this cache frontend
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function initializeObject() {
+		$this->useIgBinary = extension_loaded('igbinary');
+	}
+
+	/**
 	 * Saves the value of a PHP variable in the cache. Note that the variable
 	 * will be serialized if necessary.
 	 *
@@ -49,8 +66,11 @@ class VariableFrontend extends \F3\FLOW3\Cache\Frontend\AbstractFrontend {
 		foreach ($tags as $tag) {
 			if (!$this->isValidTag($tag)) throw new \InvalidArgumentException('"' . $tag . '" is not a valid tag for a cache entry.', 1233058269);
 		}
-
-		$this->backend->set($entryIdentifier, serialize($variable), $tags, $lifetime);
+		if ($this->useIgBinary === TRUE) {
+			$this->backend->set($entryIdentifier, igbinary_serialize($variable), $tags, $lifetime);
+		} else {
+			$this->backend->set($entryIdentifier, serialize($variable), $tags, $lifetime);
+		}
 	}
 
 	/**
@@ -65,7 +85,7 @@ class VariableFrontend extends \F3\FLOW3\Cache\Frontend\AbstractFrontend {
 	public function get($entryIdentifier) {
 		if (!$this->isValidEntryIdentifier($entryIdentifier)) throw new \InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1233058294);
 
-		return unserialize($this->backend->get($entryIdentifier));
+		return ($this->useIgBinary === TRUE) ? igbinary_unserialize($this->backend->get($entryIdentifier)) : unserialize($this->backend->get($entryIdentifier));
 	}
 
 	/**
@@ -82,7 +102,7 @@ class VariableFrontend extends \F3\FLOW3\Cache\Frontend\AbstractFrontend {
 		$entries = array();
 		$identifiers = $this->backend->findIdentifiersByTag($tag);
 		foreach ($identifiers as $identifier) {
-			$entries[] = unserialize($this->backend->get($identifier));
+			$entries[] = ($this->useIgBinary === TRUE) ? igbinary_unserialize($this->backend->get($identifier)) : unserialize($this->backend->get($identifier));
 		}
 		return $entries;
 	}
