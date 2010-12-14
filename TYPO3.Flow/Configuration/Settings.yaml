@@ -132,7 +132,7 @@ FLOW3:
       fileSystem:
 
         # Strategy for mirroring files: Either "copy" or "link"
-        mirrorMode: copy
+        mirrorMode: link
 
   security:
 
