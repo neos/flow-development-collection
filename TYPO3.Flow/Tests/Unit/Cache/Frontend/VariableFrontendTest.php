@@ -84,6 +84,24 @@ class VariableFrontendTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
+	public function setUsesIgBinarySerializeIfAvailable() {
+		if (!extension_loaded('igbinary')) {
+			$this->markTestSkipped('Cannot test igbinary support, because igbinary is not installed.');
+		}
+
+		$theString = 'Just some value';
+		$backend = $this->getMock('F3\FLOW3\Cache\Backend\AbstractBackend', array('get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
+		$backend->expects($this->once())->method('set')->with($this->equalTo('VariableCacheTest'), $this->equalTo(igbinary_serialize($theString)));
+
+		$cache = new \F3\FLOW3\Cache\Frontend\VariableFrontend('VariableFrontend', $backend);
+		$cache->initializeObject();
+		$cache->set('VariableCacheTest', $theString);
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
 	public function getFetchesStringValueFromBackend() {
 		$backend = $this->getMock('F3\FLOW3\Cache\Backend\AbstractBackend', array('get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
 		$backend->expects($this->once())->method('get')->will($this->returnValue(serialize('Just some value')));
@@ -115,6 +133,25 @@ class VariableFrontendTest extends \F3\Testing\BaseTestCase {
 
 		$cache = new \F3\FLOW3\Cache\Frontend\VariableFrontend('VariableFrontend', $backend);
 		$this->assertFalse($cache->get('VariableCacheTest'), 'The returned value was not the FALSE.');
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getUsesIgBinaryIfAvailable() {
+		if (!extension_loaded('igbinary')) {
+			$this->markTestSkipped('Cannot test igbinary support, because igbinary is not installed.');
+		}
+
+		$theArray = array('Just some value', 'and another one.');
+		$backend = $this->getMock('F3\FLOW3\Cache\Backend\AbstractBackend', array('get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
+		$backend->expects($this->once())->method('get')->will($this->returnValue(igbinary_serialize($theArray)));
+
+		$cache = new \F3\FLOW3\Cache\Frontend\VariableFrontend('VariableFrontend', $backend);
+		$cache->initializeObject();
+
+		$this->assertEquals($theArray, $cache->get('VariableCacheTest'), 'The returned value was not the expected unserialized array.');
 	}
 
 	/**
@@ -170,6 +207,29 @@ class VariableFrontendTest extends \F3\Testing\BaseTestCase {
 		$backend->expects($this->exactly(2))->method('get')->will($this->onConsecutiveCalls(serialize('one value'), serialize('two value')));
 
 		$cache = new \F3\FLOW3\Cache\Frontend\VariableFrontend('VariableFrontend', $backend);
+		$this->assertEquals($entries, $cache->getByTag($tag), 'Did not receive the expected entries');
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getByTagUsesIgBinaryIfAvailable() {
+		if (!extension_loaded('igbinary')) {
+			$this->markTestSkipped('Cannot test igbinary support, because igbinary is not installed.');
+		}
+
+		$tag = 'sometag';
+		$identifiers = array('one', 'two');
+		$entries = array('one value', 'two value');
+		$backend = $this->getMock('F3\FLOW3\Cache\Backend\AbstractBackend', array('get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
+
+		$backend->expects($this->once())->method('findIdentifiersByTag')->with($this->equalTo($tag))->will($this->returnValue($identifiers));
+		$backend->expects($this->exactly(2))->method('get')->will($this->onConsecutiveCalls(igbinary_serialize('one value'), igbinary_serialize('two value')));
+
+		$cache = new \F3\FLOW3\Cache\Frontend\VariableFrontend('VariableFrontend', $backend);
+		$cache->initializeObject();
+
 		$this->assertEquals($entries, $cache->getByTag($tag), 'Did not receive the expected entries');
 	}
 }

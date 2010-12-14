@@ -31,6 +31,13 @@ namespace F3\FLOW3\Persistence\Aspect;
 class PersistenceMagicAspect {
 
 	/**
+	 * If the extension "igbinary" is installed, use it for increased performance
+	 *
+	 * @var boolean
+	 */
+	protected $useIgBinary;
+
+	/**
 	 * The reflection service
 	 *
 	 * @var \F3\FLOW3\Reflection\ReflectionService
@@ -66,6 +73,16 @@ class PersistenceMagicAspect {
 	}
 
 	/**
+	 * Initializes this aspect
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function initializeObject() {
+		$this->useIgBinary = extension_loaded('igbinary');
+	}
+
+	/**
 	 * After returning advice, making sure we have an UUID for each and every entity.
 	 *
 	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
@@ -91,7 +108,7 @@ class PersistenceMagicAspect {
 		foreach (array_keys($this->reflectionService->getClassSchema($joinPoint->getClassName())->getProperties()) as $propertyName) {
 			$propertyValue = $proxy->FLOW3_AOP_Proxy_getProperty($propertyName);
 			if (is_array($propertyValue)) {
-				$hashSource .= serialize($propertyValue);
+				$hashSource .= ($this->useIgBinary === TRUE) ? igbinary_serialize($propertyValue) : serialize($propertyValue);
 			} elseif (!is_object($propertyValue)) {
 				$hashSource .= $propertyValue;
 			} elseif (property_exists($propertyValue, 'FLOW3_Persistence_Entity_UUID')) {
