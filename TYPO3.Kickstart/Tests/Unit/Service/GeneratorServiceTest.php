@@ -27,7 +27,7 @@ namespace F3\Kickstart\Tests\Unit\Service;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class GeneratorServiceTest extends \F3\Testing\BaseTestCase {
+class GeneratorServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
