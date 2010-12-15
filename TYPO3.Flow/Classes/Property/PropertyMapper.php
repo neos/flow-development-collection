@@ -357,7 +357,7 @@ class PropertyMapper {
 		} elseif (is_array($propertyValue)) {
 			if (isset($propertyValue['__identity'])) {
 				$existingObject = (is_array($propertyValue['__identity'])) ? $this->findObjectByIdentityProperties($propertyValue['__identity'], $targetType) : $this->persistenceManager->getObjectByIdentifier($propertyValue['__identity']);
-				if ($existingObject === FALSE) {
+				if ($existingObject === NULL) {
 					throw new \F3\FLOW3\Property\Exception\TargetNotFoundException('Querying the repository for the specified object was not successful.', 1237305720);
 				}
 				if ($targetType === NULL) {
@@ -428,10 +428,11 @@ class PropertyMapper {
 	 *
 	 * @param array $identityProperties Property names and values to search for
 	 * @param string $type The object type to look for
-	 * @return mixed Either the object matching the identity or FALSE if no object was found
+	 * @return object Either the object matching the identity or NULL if no object was found
 	 * @throws \F3\FLOW3\Property\Exception\DuplicateObjectException if more than one object was found
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function findObjectByIdentityProperties(array $identityProperties, $type) {
 		$query = $this->queryFactory->create($type);
@@ -458,10 +459,11 @@ class PropertyMapper {
 		}
 
 		$objects = $query->matching($constraint)->execute();
-		if (count($objects) === 1) {
+		$numberOfResults = $objects->count();
+		if ($numberOfResults === 1) {
 			return $objects->getFirst();
-		} elseif (count($objects) === 0) {
-			return FALSE;
+		} elseif ($numberOfResults === 0) {
+			return NULL;
 		} else {
 			throw new \F3\FLOW3\Property\Exception\DuplicateObjectException('More than one object was returned for the given identity, this is a constraint violation.', 1259612399);
 		}

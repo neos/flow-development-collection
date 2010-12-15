@@ -97,6 +97,8 @@ class DataMapper {
 	 * Maps the (aggregate root) node data and registers the objects as
 	 * reconstituted with the session.
 	 *
+	 * Note: QueryResult relies on the fact that the first object of $objects has the numeric index "0"
+	 *
 	 * @param array $objectsData
 	 * @return array
 	 * @author Karsten Dambekalns <karsten@typo3.org>

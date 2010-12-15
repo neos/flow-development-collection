@@ -109,23 +109,22 @@ class QueryResult implements \F3\FLOW3\Persistence\QueryResultInterface {
 	}
 
 	/**
-	 * Returns the first object in the result set
+	 * Returns the first object in the result set, if any.
 	 *
-	 * @return object
+	 * @return mixed The first object of the result set or NULL if the result set was empty
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @api
 	 */
 	public function getFirst() {
 		if (is_array($this->queryResult)) {
-			$queryResult = $this->queryResult;
-			reset($queryResult);
-			return current($queryResult);
+			$queryResult = &$this->queryResult;
 		} else {
 			$query = clone $this->query;
 			$query->setLimit(1);
 			$queryResult = $this->dataMapper->mapToObjects($this->persistenceManager->getObjectDataByQuery($query));
-			return current($queryResult);
 		}
+		return (isset($queryResult[0])) ? $queryResult[0] : NULL;
 	}
 
 	/**

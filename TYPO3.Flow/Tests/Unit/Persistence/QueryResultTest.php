@@ -165,6 +165,77 @@ class QueryResultTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$this->persistenceManager->expects($this->once())->method('getObjectDataByQuery')->with($this->query)->will($this->returnValue(array('FAKERESULT')));
 		$queryResult->_call('initialize');
 	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function getFirstReturnsFirstResultIfQueryIsInitialized() {
+		$initializedQueryResult = array(
+			new \stdClass(),
+			new \stdClass()
+		);
+		$queryResult = $this->getAccessibleMock('F3\FLOW3\Persistence\QueryResult', array('dummy'), array($this->query));
+		$queryResult->_set('queryResult', $initializedQueryResult);
+
+		$expectedResult = $initializedQueryResult[0];
+		$actualResult = $queryResult->getFirst();
+		$this->assertSame($expectedResult, $actualResult);
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function getFirstReturnsNullIfResultSetIsEmptyAndQueryIsInitialized() {
+		$initializedQueryResult = array();
+		$queryResult = $this->getAccessibleMock('F3\FLOW3\Persistence\QueryResult', array('dummy'), array($this->query));
+		$queryResult->_set('queryResult', $initializedQueryResult);
+
+		$this->assertNull($queryResult->getFirst());
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function getFirstMapsAndReturnsFirstResultIfQueryIsNotInitialized() {
+		$initializedQueryResult = array(
+			new \stdClass(),
+			new \stdClass()
+		);
+		$queryResult = $this->getAccessibleMock('F3\FLOW3\Persistence\QueryResult', array('dummy'), array($this->query));
+		$this->query->expects($this->once())->method('setLimit')->with(1);
+
+		$queryResult->injectPersistenceManager($this->persistenceManager);
+
+		$mockDataMapper = $this->getMock('F3\FLOW3\Persistence\DataMapper');
+		$mockDataMapper->expects($this->once())->method('mapToObjects')->with(array('one', 'two'))->will($this->returnValue($initializedQueryResult));
+		$queryResult->injectDataMapper($mockDataMapper);
+
+		$expectedResult = $initializedQueryResult[0];
+		$actualResult = $queryResult->getFirst();
+		$this->assertSame($expectedResult, $actualResult);
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function getFirstReturnsNullIfResultSetIsEmptyAndQueryIsNotInitialized() {
+		$initializedQueryResult = array();
+		$queryResult = $this->getAccessibleMock('F3\FLOW3\Persistence\QueryResult', array('dummy'), array($this->query));
+		$this->query->expects($this->once())->method('setLimit')->with(1);
+
+		$queryResult->injectPersistenceManager($this->persistenceManager);
+
+		$mockDataMapper = $this->getMock('F3\FLOW3\Persistence\DataMapper');
+		$mockDataMapper->expects($this->once())->method('mapToObjects')->with(array('one', 'two'))->will($this->returnValue($initializedQueryResult));
+		$queryResult->injectDataMapper($mockDataMapper);
+
+		$this->assertNull($queryResult->getFirst());
+	}
+
 }
 
 ?>

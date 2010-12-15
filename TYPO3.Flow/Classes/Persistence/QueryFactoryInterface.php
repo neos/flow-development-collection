@@ -34,7 +34,7 @@ interface QueryFactoryInterface {
 	 * Creates a query object working on the given class name
 	 *
 	 * @param string $className
-	 * @return \F3\FLOW\Persistence\QueryInterface
+	 * @return \F3\FLOW3\Persistence\QueryInterface
 	 * @api
 	 */
 	public function create($className);
