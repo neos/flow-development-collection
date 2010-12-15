@@ -110,7 +110,7 @@ class UriBuilder {
 	}
 
 	/**
-	 * Sets the current request
+	 * Sets the current request and resets the UriBuilder
 	 *
 	 * @param \F3\FLOW3\MVC\RequestInterface $request
 	 * @return void
@@ -119,6 +119,7 @@ class UriBuilder {
 	 */
 	public function setRequest(\F3\FLOW3\MVC\RequestInterface $request) {
 		$this->request = $request;
+		$this->reset();
 	}
 
 	/**
@@ -142,7 +143,11 @@ class UriBuilder {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setArguments(array $arguments) {
-		$this->arguments = $arguments;
+		if ($this->argumentPrefix !== NULL && strlen($this->argumentPrefix) > 0) {
+			$this->arguments[$this->argumentPrefix] = $arguments;
+		} else {
+			$this->arguments = $arguments;
+		}
 		return $this;
 	}
 
@@ -312,6 +317,16 @@ class UriBuilder {
 		$this->addQueryString = FALSE;
 		$this->argumentsToBeExcludedFromQueryString = array();
 		$this->argumentPrefix = NULL;
+
+		if ($this->request instanceof \F3\FLOW3\MVC\Web\SubRequest) {
+			$this->setArgumentPrefix($this->request->getArgumentNamespace());
+			$parentRequest = $this->request->getParentRequest();
+			$this->arguments = $parentRequest->getArguments();
+			$this->arguments['@package'] = $parentRequest->getControllerPackageKey();
+			$this->arguments['@subpackage'] = $parentRequest->getControllerSubpackageKey();
+			$this->arguments['@controller'] = $parentRequest->getControllerName();
+			$this->arguments['@action'] = $parentRequest->getControllerActionName();
+		}
 
 		return $this;
 	}

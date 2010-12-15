@@ -169,6 +169,12 @@ class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 				break;
 			}
 		}
+		if ($this->request->getControllerName() === NULL) {
+			$this->request->setControllerName('Standard');
+		}
+		if ($this->request->getControllerActionName() === NULL) {
+			$this->request->setControllerActionName('index');
+		}
 	}
 
 	/**

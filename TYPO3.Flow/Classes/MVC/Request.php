@@ -65,12 +65,12 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	/**
 	 * @var string Object name of the controller which is supposed to handle this request.
 	 */
-	protected $controllerName = 'Standard';
+	protected $controllerName = NULL;
 
 	/**
 	 * @var string Name of the action the controller is supposed to take.
 	 */
-	protected $controllerActionName = 'index';
+	protected $controllerActionName = NULL;
 
 	/**
 	 * @var array The arguments for this request

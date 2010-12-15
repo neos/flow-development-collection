@@ -52,6 +52,43 @@ class DispatcherTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function dispatchIgnoresStopExceptionsByDefault() {
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\RequestInterface');
+		$mockRequest->expects($this->at(0))->method('isDispatched')->will($this->returnValue(FALSE));
+		$mockRequest->expects($this->at(1))->method('isDispatched')->will($this->returnValue(TRUE));
+
+		$mockResponse = $this->getMock('F3\FLOW3\MVC\ResponseInterface');
+		$mockController = $this->getMock('F3\FLOW3\MVC\Controller\ControllerInterface', array('processRequest', 'canProcessRequest'));
+		$mockController->expects($this->atLeastOnce())->method('processRequest')->will($this->throwException(new \F3\FLOW3\MVC\Exception\StopActionException()));
+
+		$dispatcher = $this->getMock('F3\FLOW3\MVC\Dispatcher', array('resolveController'), array(), '', FALSE);
+		$dispatcher->expects($this->any())->method('resolveController')->will($this->returnValue($mockController));
+		$dispatcher->dispatch($mockRequest, $mockResponse);
+	}
+
+	/**
+	 * @test
+	 * @expectedException F3\FLOW3\MVC\Exception\StopActionException
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function dispatchRethrowsStopExceptionsForSubRequests() {
+		$mockSubRequest = $this->getMock('F3\FLOW3\MVC\Web\SubRequest', array(), array(), '', FALSE);
+		$mockSubRequest->expects($this->at(0))->method('isDispatched')->will($this->returnValue(FALSE));
+		$mockSubRequest->expects($this->at(1))->method('isDispatched')->will($this->returnValue(TRUE));
+
+		$mockResponse = $this->getMock('F3\FLOW3\MVC\ResponseInterface');
+		$mockController = $this->getMock('F3\FLOW3\MVC\Controller\ControllerInterface', array('processRequest', 'canProcessRequest'));
+		$mockController->expects($this->atLeastOnce())->method('processRequest')->will($this->throwException(new \F3\FLOW3\MVC\Exception\StopActionException()));
+
+		$dispatcher = $this->getMock('F3\FLOW3\MVC\Dispatcher', array('resolveController'), array(), '', FALSE);
+		$dispatcher->expects($this->any())->method('resolveController')->will($this->returnValue($mockController));
+		$dispatcher->dispatch($mockSubRequest, $mockResponse);
+	}
+
+	/**
+	 * @test
 	 * @expectedException F3\FLOW3\MVC\Exception\InfiniteLoopException
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Bastian Waidelich <bastian@typo3.org>

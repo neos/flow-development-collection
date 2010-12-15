@@ -296,5 +296,89 @@ class UriBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$this->assertEquals(array(), $this->uriBuilder->getArgumentsToBeExcludedFromQueryString());
 	}
 
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function resetSetsArgumentPrefixFromSubRequest() {
+		$mockSubRequest = $this->getMock('F3\FLOW3\MVC\Web\SubRequest', array(), array(), '', FALSE);
+		$mockSubRequest->expects($this->once())->method('getArgumentNamespace')->will($this->returnValue('somePrefix'));
+		$mockSubRequest->expects($this->once())->method('getParentRequest')->will($this->returnValue($this->request));
+		$this->uriBuilder->setRequest($mockSubRequest);
+		$this->assertEquals('somePrefix', $this->uriBuilder->getArgumentPrefix());
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function resetSetsArgumentsAndControllerKeysFromParentRequest() {
+		$mockSubRequest = $this->getMock('F3\FLOW3\MVC\Web\SubRequest', array(), array(), '', FALSE);
+		$mockSubRequest->expects($this->once())->method('getArgumentNamespace')->will($this->returnValue('somePrefix'));
+		$mockSubRequest->expects($this->once())->method('getParentRequest')->will($this->returnValue($this->request));
+		$this->request->expects($this->once())->method('getArguments')->will($this->returnValue(array('foo' => 'bar')));
+		$this->request->expects($this->once())->method('getControllerPackageKey')->will($this->returnValue('SomePackageKey'));
+		$this->request->expects($this->once())->method('getControllerSubpackageKey')->will($this->returnValue('SomeSubpackageKey'));
+		$this->request->expects($this->once())->method('getControllerName')->will($this->returnValue('SomeControllerName'));
+		$this->request->expects($this->once())->method('getControllerActionName')->will($this->returnValue('SomeActionName'));
+		$this->uriBuilder->setRequest($mockSubRequest);
+		$this->uriBuilder->setArguments(array('prefixedArgument' => 'prefixedArgumentValue'));
+		$expectedResult = array(
+			'foo' => 'bar',
+			'@package' => 'SomePackageKey',
+			'@subpackage' => 'SomeSubpackageKey',
+			'@controller' => 'SomeControllerName',
+			'@action' => 'SomeActionName',
+			'somePrefix' => array(
+				'prefixedArgument' => 'prefixedArgumentValue'
+			)
+		);
+		$this->assertEquals($expectedResult, $this->uriBuilder->getArguments());
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function setRequestResetsUriBuilder() {
+		$uriBuilder = $this->getAccessibleMock('F3\FLOW3\MVC\Web\Routing\UriBuilder', array('reset'));
+		$uriBuilder->expects($this->once())->method('reset');
+		$uriBuilder->setRequest($this->request);
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function setArgumentsSetsNonPrefixedArgumentsByDefault() {
+		$arguments = array(
+			'argument1' => 'argument1Value',
+			'argument2' => array(
+				'argument2a' => 'argument2aValue'
+			)
+		);
+		$this->uriBuilder->setArguments($arguments);
+		$expectedResult = $arguments;
+		$this->assertEquals($expectedResult, $this->uriBuilder->getArguments());
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function setArgumentsSetsPrefixedArgumentsIfArgumentPrefixIsSet() {
+		$arguments = array(
+			'argument1' => 'argument1Value',
+			'argument2' => array(
+				'argument2a' => 'argument2aValue'
+			)
+		);
+
+		$this->uriBuilder->setArgumentPrefix('somePrefix');
+		$this->uriBuilder->setArguments($arguments);
+		$expectedResult = array('somePrefix' => $arguments);
+		$this->assertEquals($expectedResult, $this->uriBuilder->getArguments());
+	}
+
 }
 ?>

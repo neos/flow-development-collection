@@ -299,6 +299,7 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 		if ($this->request instanceof \F3\FLOW3\MVC\Web\Request) {
 			switch ($this->request->getMethod()) {
 				case 'GET' :
+				case 'POST' :
 				case 'HEAD' :
 
 						// If the client supports any format besides HTML which is also supported

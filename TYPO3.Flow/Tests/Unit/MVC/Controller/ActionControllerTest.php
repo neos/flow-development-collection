@@ -217,6 +217,25 @@ class ActionControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function detectFormatUsesHtmlFormatAsDefaultForPostWebRequests() {
+		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array('getAcceptedFormats'), array(), '', FALSE);
+		$mockEnvironment->expects($this->once())->method('getAcceptedFormats')->will($this->returnValue(array('xml', 'json')));
+
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
+		$mockRequest->expects($this->once())->method('getMethod')->will($this->returnValue('POST'));
+
+		$mockController = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\ActionController', array('dummy'), array(), '', FALSE);
+		$mockController->injectEnvironment($mockEnvironment);
+		$mockController->_set('request', $mockRequest);
+
+		$detectedFormat = $mockController->_call('detectFormat');
+		$this->assertSame('html', $detectedFormat);
+	}
+
+	/**
+	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function detectFormatPrefersOtherFormatsThanHtmlIfControllerSupportsIt() {

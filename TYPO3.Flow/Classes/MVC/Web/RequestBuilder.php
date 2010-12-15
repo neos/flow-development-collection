@@ -124,33 +124,15 @@ class RequestBuilder {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function setArgumentsFromRawRequestData(\F3\FLOW3\MVC\Web\Request $request) {
-		foreach ($request->getRequestUri()->getArguments() as $argumentName => $argumentValue) {
-			$request->setArgument($argumentName, $argumentValue);
+		$arguments = $request->getRequestUri()->getArguments();
+		if ($request->getMethod() === 'POST') {
+			$postArguments = $this->environment->getRawPostArguments();
+			$arguments = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($arguments, $postArguments);
+
+			$uploadArguments = $this->environment->getUploadedFiles();
+			$arguments = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($arguments, $uploadArguments);
 		}
-		switch ($request->getMethod()) {
-			case 'POST' :
-				foreach ($this->environment->getRawPostArguments() as $argumentName => $argumentValue) {
-					$request->setArgument($argumentName, $argumentValue);
-				}
-				foreach ($this->environment->getUploadedFiles() as $argumentName => $argumentValue) {
-					if ($request->hasArgument($argumentName)) {
-						$existingArgumentValue = $request->getArgument($argumentName);
-						if (is_array($existingArgumentValue)) {
-							$request->setArgument($argumentName, \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($existingArgumentValue, $argumentValue));
-						}
-					} else {
-						$request->setArgument($argumentName, $argumentValue);
-					}
-				}
-				break;
-#			case 'PUT' :
-#				$putArguments = array();
-#				parse_str(file_get_contents("php://input"), $putArguments);
-#				foreach ($putArguments as $argumentName => $argumentValue) {
-#					$request->setArgument($argumentName, $argumentValue);
-#				}
-#			break;
-		}
+		$request->setArguments($arguments);
 	}
 }
 ?>

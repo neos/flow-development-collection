@@ -120,7 +120,7 @@ class RequestTest extends \F3\FLOW3\Tests\UnitTestCase {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public function caseSensitiveObjectNames() {
 		return array(
@@ -327,6 +327,30 @@ class RequestTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		$request->setDispatched(TRUE);
 		$this->assertTrue($request->isDispatched());
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function controllerNameDefaultsToNull() {
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
+		$mockObjectManager->expects($this->once())->method('getCaseSensitiveObjectName')->will($this->returnValue(''));
+		$request = new \F3\FLOW3\MVC\Request();
+		$request->injectObjectManager($mockObjectManager);
+		$this->assertNull($request->getControllerName());
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function controllerActionNameDefaultsToNull() {
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
+		$mockObjectManager->expects($this->once())->method('getCaseSensitiveObjectName')->will($this->returnValue(''));
+		$request = new \F3\FLOW3\MVC\Request();
+		$request->injectObjectManager($mockObjectManager);
+		$this->assertNull($request->getControllerActionName());
 	}
 }
 

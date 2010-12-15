@@ -89,11 +89,16 @@ class Dispatcher {
 	public function dispatch(\F3\FLOW3\MVC\RequestInterface $request, \F3\FLOW3\MVC\ResponseInterface $response) {
 		$dispatchLoopCount = 0;
 		while (!$request->isDispatched()) {
-			if ($dispatchLoopCount++ > 99) throw new \F3\FLOW3\MVC\Exception\InfiniteLoopException('Could not ultimately dispatch the request after '  . $dispatchLoopCount . ' iterations.', 1217839467);
+			if ($dispatchLoopCount++ > 99) {
+				throw new \F3\FLOW3\MVC\Exception\InfiniteLoopException('Could not ultimately dispatch the request after '  . $dispatchLoopCount . ' iterations.', 1217839467);
+			}
 			$controller = $this->resolveController($request);
 			try {
 				$controller->processRequest($request, $response);
-			} catch (\F3\FLOW3\MVC\Exception\StopActionException $ignoredException) {
+			} catch (\F3\FLOW3\MVC\Exception\StopActionException $stopActionException) {
+				if ($request instanceof \F3\FLOW3\MVC\Web\SubRequest && $request->isDispatched()) {
+					throw $stopActionException;
+				}
 			}
 		}
 	}
