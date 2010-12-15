@@ -30,7 +30,7 @@ require_once('Fixture/ArrayAccessClass.php');
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class ObjectAccessTest extends \F3\Testing\BaseTestCase {
+class ObjectAccessTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	protected $dummyObject;
 

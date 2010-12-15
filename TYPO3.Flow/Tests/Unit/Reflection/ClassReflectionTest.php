@@ -31,7 +31,7 @@ require_once('Fixture/DummyInterface2.php');
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
-class ClassReflectionTest extends \F3\Testing\BaseTestCase implements \F3\FLOW3\Tests\Reflection\Fixture\DummyInterface1, \F3\FLOW3\Tests\Reflection\Fixture\DummyInterface2 {
+class ClassReflectionTest extends \F3\FLOW3\Tests\UnitTestCase implements \F3\FLOW3\Tests\Reflection\Fixture\DummyInterface1, \F3\FLOW3\Tests\Reflection\Fixture\DummyInterface2 {
 
 	/**
 	 * @var mixed

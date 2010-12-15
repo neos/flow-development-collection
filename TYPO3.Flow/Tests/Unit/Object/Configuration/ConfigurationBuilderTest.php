@@ -27,7 +27,7 @@ namespace F3\FLOW3\Tests\Unit\Object\Configuration;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class ConfigurationBuilderTest extends \F3\Testing\BaseTestCase {
+class ConfigurationBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test

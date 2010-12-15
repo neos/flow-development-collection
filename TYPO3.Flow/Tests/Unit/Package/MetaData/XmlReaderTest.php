@@ -27,7 +27,7 @@ namespace F3\FLOW3\Tests\Unit\Package\MetaData;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class XmlReaderTest extends \F3\Testing\BaseTestCase {
+class XmlReaderTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * Test the actual reading of a Package.xml file. This test

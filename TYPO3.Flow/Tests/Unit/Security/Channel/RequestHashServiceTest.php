@@ -27,7 +27,7 @@ namespace F3\FLOW3\Tests\Unit\Security\Channel;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  */
-class RequestHashServiceTest extends \F3\Testing\BaseTestCase {
+class RequestHashServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	public function dataProviderForGenerateRequestHash() {
 		return array(

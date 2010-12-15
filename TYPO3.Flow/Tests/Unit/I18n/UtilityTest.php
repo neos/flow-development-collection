@@ -27,7 +27,7 @@ namespace F3\FLOW3\Tests\Unit\I18n;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class UtilityTest extends \F3\Testing\BaseTestCase {
+class UtilityTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * Data provider with valid Accept-Language headers and expected results.

@@ -27,7 +27,7 @@ namespace F3\FLOW3\Tests\Unit\Property\DataType;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class UriTest extends \F3\Testing\BaseTestCase {
+class UriTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * Checks if a complete URI with all parts is transformed into an object correctly.

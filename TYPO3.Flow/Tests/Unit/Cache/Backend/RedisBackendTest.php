@@ -37,7 +37,7 @@ namespace F3\FLOW3\Tests\Unit\Cache\Backend;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class RedisBackendTest extends \F3\Testing\BaseTestCase {
+class RedisBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * If set, the tearDown() method will flush the cache used by this unit test.

@@ -27,7 +27,7 @@ namespace F3\FLOW3\Tests\Unit\Cache\Backend;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class PdoBackendTest extends \F3\Testing\BaseTestCase {
+class PdoBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @var \F3\FLOW3\Utility\Environment

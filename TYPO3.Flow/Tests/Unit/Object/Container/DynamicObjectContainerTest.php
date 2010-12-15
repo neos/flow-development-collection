@@ -28,7 +28,7 @@ require_once(__DIR__ . '/../Fixture/ClassWithInitializeObjectMethod.php');
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class DynamicObjectContainerTest extends \F3\Testing\BaseTestCase {
+class DynamicObjectContainerTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test

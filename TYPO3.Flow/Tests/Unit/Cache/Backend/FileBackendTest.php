@@ -27,7 +27,7 @@ namespace F3\FLOW3\Tests\Unit\Cache\Backend;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class FileBackendTest extends \F3\Testing\BaseTestCase {
+class FileBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @var \F3\FLOW3\Cache\Backend\FileBackendBackend If set, the tearDown() method will clean up the cache subdirectory used by this unit test.

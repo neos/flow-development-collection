@@ -29,7 +29,7 @@ require_once (__DIR__ . '/../Fixtures/ClassWithSetters.php');
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class PropertyMapperTest extends \F3\Testing\BaseTestCase {
+class PropertyMapperTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	protected $mockObjectManager;
 	protected $mockReflectionService;

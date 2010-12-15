@@ -27,7 +27,7 @@ namespace F3\FLOW3\Tests\Unit\Configuration\Source;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class YamlSourceTest extends \F3\Testing\BaseTestCase {
+class YamlSourceTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * Sets up this test case

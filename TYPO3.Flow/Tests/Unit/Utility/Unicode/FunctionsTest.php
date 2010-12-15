@@ -27,7 +27,7 @@ namespace F3\FLOW3\Tests\Unit\Utility\Unicode;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class FunctionsTest extends \F3\Testing\BaseTestCase {
+class FunctionsTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * Checks if strtotitle() at least works with latin characters.

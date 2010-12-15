@@ -27,7 +27,7 @@ namespace F3\FLOW3\Tests\Unit\MVC\Web\Routing\Aspect;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class RouterCachingAspectTest extends \F3\Testing\BaseTestCase {
+class RouterCachingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @dataProvider subjectsWithAndWithoutObjects()

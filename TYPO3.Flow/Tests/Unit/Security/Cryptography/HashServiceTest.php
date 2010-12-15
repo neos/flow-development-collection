@@ -27,7 +27,7 @@ namespace F3\FLOW3\Tests\Unit\Security\Cryptography;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  */
-class HashServiceTest extends \F3\Testing\BaseTestCase {
+class HashServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	protected $hashService;
 

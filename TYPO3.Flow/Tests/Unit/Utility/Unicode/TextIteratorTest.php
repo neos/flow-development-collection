@@ -27,7 +27,7 @@ namespace F3\FLOW3\Tests\Unit\Utility\Unicode;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class TextIteratorTest extends \F3\Testing\BaseTestCase {
+class TextIteratorTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * Checks if a new instance with the default iterator type can be created

@@ -30,7 +30,7 @@ require_once (FLOW3_PATH_FLOW3 . 'Tests/Unit/Fixtures/SecondDummyClass.php');
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class PointcutClassNameFilterTest extends \F3\Testing\BaseTestCase {
+class PointcutClassNameFilterTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * Checks if the class filter fires on a concrete and simple class expression

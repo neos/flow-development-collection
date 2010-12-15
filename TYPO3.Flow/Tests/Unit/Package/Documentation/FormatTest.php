@@ -27,7 +27,7 @@ namespace F3\FLOW3\Tests\Unit\Package\Documentation;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class FormatTest extends \F3\Testing\BaseTestCase {
+class FormatTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * Sets up this test case

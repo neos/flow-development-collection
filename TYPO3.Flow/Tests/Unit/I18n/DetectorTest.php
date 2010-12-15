@@ -27,7 +27,7 @@ namespace F3\FLOW3\Tests\Unit\I18n;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class DetectorTest extends \F3\Testing\BaseTestCase {
+class DetectorTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @var \F3\FLOW3\I18n\Detector

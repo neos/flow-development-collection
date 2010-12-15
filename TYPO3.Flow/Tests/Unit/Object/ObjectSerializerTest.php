@@ -27,7 +27,7 @@ namespace F3\FLOW3\Tests\Unit\Object;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
+class ObjectSerializerTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test

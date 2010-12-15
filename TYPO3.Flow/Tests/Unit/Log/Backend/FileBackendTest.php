@@ -27,7 +27,7 @@ namespace F3\FLOW3\Tests\Unit\Log\Backend;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class FileBackendTest extends \F3\Testing\BaseTestCase {
+class FileBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @author Robert Lemke <robert@typo3.org>

@@ -27,7 +27,7 @@ namespace F3\FLOW3\Tests\Unit\MVC\Web\Routing;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class DynamicRoutePartTest extends \F3\Testing\BaseTestCase {
+class DynamicRoutePartTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/*                                                                        *
 	 * URI matching                                                           *

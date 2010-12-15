@@ -20,7 +20,7 @@ namespace F3\FLOW3\Tests\Unit\Monitor;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class FileMonitorTest extends \F3\Testing\BaseTestCase {
+class FileMonitorTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @var string

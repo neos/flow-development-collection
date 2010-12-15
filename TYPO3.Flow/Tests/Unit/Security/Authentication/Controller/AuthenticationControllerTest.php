@@ -29,7 +29,7 @@ namespace F3\FLOW3\Tests\Unit\Security\Authentication\Controller;
  */
 use F3\FLOW3\Security\Authentication;
 
-class AuthenticationControllerTest extends \F3\Testing\BaseTestCase {
+class AuthenticationControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test

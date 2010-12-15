@@ -27,7 +27,7 @@ namespace F3\FLOW3\Tests\Unit\Security\Authorization\Interceptor;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class RequireAuthenticationTest extends \F3\Testing\BaseTestCase {
+class RequireAuthenticationTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
