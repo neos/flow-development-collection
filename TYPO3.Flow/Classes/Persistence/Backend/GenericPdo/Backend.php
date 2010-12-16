@@ -263,11 +263,12 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 		if ($propertyData['multivalue'] && $propertyData['value'] !== NULL) {
 			foreach ($propertyData['value'] as $valueData) {
 				if ($valueData['value'] === NULL) {
-					$statementHandle = $this->databaseHandle->prepare('INSERT INTO "properties_data" ("parent", "name", "index", "type") VALUES (?, ?, ?, \'NULL\')');
+					$statementHandle = $this->databaseHandle->prepare('INSERT INTO "properties_data" ("parent", "name", "index", "type") VALUES (?, ?, ?, ?)');
 					$statementHandle->execute(array(
 						$parentIdentifier,
 						$propertyName,
-						$valueData['index']
+						$valueData['index'],
+						'NULL'
 					));
 				} else {
 					$statementHandle = $this->databaseHandle->prepare('INSERT INTO "properties_data" ("parent", "name", "index", "type", "' . $this->getTypeName($valueData['type']) . '") VALUES (?, ?, ?, ?, ?)');
@@ -287,14 +288,24 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 				$propertyName
 			));
 		} else {
-			$statementHandle = $this->databaseHandle->prepare('INSERT INTO "properties_data" ("parent", "name", "index", "type", "' . $this->getTypeName($propertyData['type']) . '") VALUES (?, ?, ?, ?, ?)');
-			$statementHandle->execute(array(
-				$parentIdentifier,
-				$propertyName,
-				NULL,
-				$propertyData['type'],
-				is_array($propertyData['value']) ? $propertyData['value']['identifier'] : $propertyData['value']
-			));
+			if ($propertyData['value'] === NULL) {
+				$statementHandle = $this->databaseHandle->prepare('INSERT INTO "properties_data" ("parent", "name", "index", "type") VALUES (?, ?, ?, ?)');
+				$statementHandle->execute(array(
+					$parentIdentifier,
+					$propertyName,
+					NULL,
+					'NULL',
+				));
+			} else {
+				$statementHandle = $this->databaseHandle->prepare('INSERT INTO "properties_data" ("parent", "name", "index", "type", "' . $this->getTypeName($propertyData['type']) . '") VALUES (?, ?, ?, ?, ?)');
+				$statementHandle->execute(array(
+					$parentIdentifier,
+					$propertyName,
+					NULL,
+					$propertyData['type'],
+					is_array($propertyData['value']) ? $propertyData['value']['identifier'] : $propertyData['value']
+				));
+			}
 		}
 	}
 
