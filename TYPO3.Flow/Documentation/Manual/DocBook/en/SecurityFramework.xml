@@ -291,7 +291,7 @@
       account for them<footnote>
           <para>The <literal>AccountRepository</literal> provides a convenient
           find method called
-          <literal>findByAccountIdentifierAndAuthenticationProviderName()</literal>
+          <literal>findActiveByAccountIdentifierAndAuthenticationProviderName()</literal>
           for this task.</para>
         </footnote> and to decide about the authentication status of this
       account.<note>
@@ -747,7 +747,7 @@ $credentials['password'] = $postArguments['F3\FLOW3\Security\Authentication\Toke
               repository, which you should inject into your provider by
               dependency injection. The repository provides a convenient find
               method for this task:
-              <literal>findByAccountIdentifierAndAuthenticationProviderName()</literal>.</para>
+              <literal>findActiveByAccountIdentifierAndAuthenticationProviderName()</literal>.</para>
             </listitem>
 
             <listitem>
@@ -1079,7 +1079,7 @@ $credentials['password'] = $postArguments['F3\FLOW3\Security\Authentication\Toke
         <para><programlisting language="yaml">acls:
   Administrator:
     F3_FooPackage_modify: GRANT
-    
+
   Customer:
     F3_FooPackage_modify: DENY
 

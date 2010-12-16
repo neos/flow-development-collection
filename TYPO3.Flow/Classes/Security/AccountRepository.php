@@ -30,6 +30,11 @@ namespace F3\FLOW3\Security;
 class AccountRepository extends \F3\FLOW3\Persistence\Repository {
 
 	/**
+	 * @var array
+	 */
+	protected $defaultOrderings = array('creationDate' => \F3\FLOW3\Persistence\QueryInterface::ORDER_DESCENDING);
+
+	/**
 	 * Constructs the Account Repository
 	 *
 	 * @author Robert Lemke <robert@typo3.org>
@@ -48,17 +53,35 @@ class AccountRepository extends \F3\FLOW3\Persistence\Repository {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function findByAccountIdentifierAndAuthenticationProviderName($accountIdentifier, $authenticationProviderName) {
-		$result = array();
-
 		$query = $this->createQuery();
-		$result = $query->matching(
+		return $query->matching(
 			$query->logicalAnd(
 				$query->equals('accountIdentifier', $accountIdentifier),
 				$query->equals('authenticationProviderName', $authenticationProviderName)
 			)
 		)->execute()->getFirst();
+	}
 
-		return $result;
+	/**
+	 * Returns the account for a specific authentication provider with the given identitifer if it's not expired
+	 *
+	 * @param string $accountIdentifier The account identifier
+	 * @param string $authenticationProviderName The authentication provider name
+	 * @return F3\FLOW3\Security\Account
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function findActiveByAccountIdentifierAndAuthenticationProviderName($accountIdentifier, $authenticationProviderName) {
+		$query = $this->createQuery();
+		return $query->matching(
+			$query->logicalAnd(
+				$query->equals('accountIdentifier', $accountIdentifier),
+				$query->equals('authenticationProviderName', $authenticationProviderName),
+				$query->logicalOr(
+					$query->equals('expirationDate', NULL),
+					$query->greaterThan('expirationDate', new \DateTime())
+				)
+			)
+		)->execute()->getFirst();
 	}
 }
 

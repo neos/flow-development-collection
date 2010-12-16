@@ -52,7 +52,7 @@ class PersistedUsernamePasswordProviderTest extends \F3\FLOW3\Tests\UnitTestCase
 		$mockAccount->expects($this->once())->method('getCredentialsSource')->will($this->returnValue('8bf0abbb93000e2e47f0e0a80721e834,80f117a78cff75f3f73793fd02aa9086'));
 
 		$mockAccountRepository = $this->getMock('F3\FLOW3\Security\AccountRepository', array(), array(), '', FALSE);
-		$mockAccountRepository->expects($this->once())->method('findByAccountIdentifierAndAuthenticationProviderName')->with('admin', 'myProvider')->will($this->returnValue($mockAccount));
+		$mockAccountRepository->expects($this->once())->method('findActiveByAccountIdentifierAndAuthenticationProviderName')->with('admin', 'myProvider')->will($this->returnValue($mockAccount));
 
 		$mockToken = $this->getMock('F3\FLOW3\Security\Authentication\Token\UsernamePassword', array(), array(), '', FALSE);
 		$mockToken->expects($this->once())->method('getCredentials')->will($this->returnValue(array('username' => 'admin', 'password' => 'password')));
@@ -79,7 +79,7 @@ class PersistedUsernamePasswordProviderTest extends \F3\FLOW3\Tests\UnitTestCase
 		$mockAccount->expects($this->once())->method('getCredentialsSource')->will($this->returnValue('8bf0abbb93000e2e47f0e0a80721e834,80f117a78cff75f3f73793fd02aa9086'));
 
 		$mockAccountRepository = $this->getMock('F3\FLOW3\Security\AccountRepository', array(), array(), '', FALSE);
-		$mockAccountRepository->expects($this->once())->method('findByAccountIdentifierAndAuthenticationProviderName')->with('admin', 'myProvider')->will($this->returnValue($mockAccount));
+		$mockAccountRepository->expects($this->once())->method('findActiveByAccountIdentifierAndAuthenticationProviderName')->with('admin', 'myProvider')->will($this->returnValue($mockAccount));
 
 		$mockToken = $this->getMock('F3\FLOW3\Security\Authentication\Token\UsernamePassword', array(), array(), '', FALSE);
 		$mockToken->expects($this->once())->method('getCredentials')->will($this->returnValue(array('username' => 'admin', 'password' => 'wrong password')));

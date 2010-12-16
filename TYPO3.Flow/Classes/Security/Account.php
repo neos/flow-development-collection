@@ -56,9 +56,26 @@ class Account {
 	protected $party;
 
 	/**
+	 * @var \DateTime
+	 */
+	protected $creationDate;
+
+	/**
+	 * @var \DateTime
+	 */
+	protected $expirationDate;
+
+	/**
 	 * @var array<\F3\FLOW3\Security\Policy\Role>
 	 */
 	protected $roles = array();
+
+	/**
+	 *
+	 */
+	public function __construct() {
+		$this->creationDate = new \DateTime();
+	}
 
 	/**
 	 * Returns the account identifier
@@ -164,5 +181,31 @@ class Account {
 	public function setRoles(array $roles) {
 		$this->roles = $roles;
 	}
+
+	/**
+	 * @return \DateTime
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function getCreationDate() {
+		return $this->creationDate;
+	}
+
+	/**
+	 * @return \DateTime
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function getExpirationDate() {
+		return $this->expirationDate;
+	}
+
+	/**
+	 * @param \DateTime $creationDate
+	 * @return void
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function setExpirationDate(\DateTime $expirationDate) {
+		$this->expirationDate = $expirationDate;
+	}
+
 }
 ?>

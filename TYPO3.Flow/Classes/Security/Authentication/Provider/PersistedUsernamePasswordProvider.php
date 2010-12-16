@@ -119,7 +119,7 @@ class PersistedUsernamePasswordProvider implements \F3\FLOW3\Security\Authentica
 		$credentials = $authenticationToken->getCredentials();
 
 		if (is_array($credentials) && isset($credentials['username'])) {
-			$account = $this->accountRepository->findByAccountIdentifierAndAuthenticationProviderName($credentials['username'], $this->name);
+			$account = $this->accountRepository->findActiveByAccountIdentifierAndAuthenticationProviderName($credentials['username'], $this->name);
 		}
 
 		if (is_object($account)) {
