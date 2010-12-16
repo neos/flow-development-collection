@@ -115,16 +115,17 @@ class FileSystemPublishingTarget extends \F3\FLOW3\Resource\Publishing\AbstractR
 			return FALSE;
 		}
 
-		$targetPath = \F3\FLOW3\Utility\Files::concatenatePaths(array($this->resourcesPublishingPath, 'Static', $relativeTargetPath));
+		$sourcePath = rtrim(\F3\FLOW3\Utility\Files::getUnixStylePath($sourcePath), '/');
+		$targetPath = rtrim(\F3\FLOW3\Utility\Files::concatenatePaths(array($this->resourcesPublishingPath, 'Static', $relativeTargetPath)), '/');
 
 		if ($this->settings['resource']['publishing']['fileSystem']['mirrorMode'] == 'link') {
 			if (file_exists($targetPath)) {
-				if (\F3\FLOW3\Utility\Files::is_link($targetPath) && (readlink($targetPath) === $sourcePath)) {
+				if (\F3\FLOW3\Utility\Files::is_link($targetPath) && (rtrim(\F3\FLOW3\Utility\Files::getUnixStylePath(readlink($targetPath)), '/') === $sourcePath)) {
 					return TRUE;
-				} elseif (is_file($targetPath)) {
-					unlink($targetPath);
-				} else {
+				} elseif (is_dir($targetPath)) {
 					\F3\FLOW3\Utility\Files::removeDirectoryRecursively($targetPath);
+				} else {
+					unlink($targetPath);
 				}
 			} else {
 				\F3\FLOW3\Utility\Files::createDirectoryRecursively(dirname($targetPath));
