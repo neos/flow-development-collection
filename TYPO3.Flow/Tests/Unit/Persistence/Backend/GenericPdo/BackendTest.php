@@ -1136,6 +1136,22 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 							'value' => '5678'
 						)
 					)
+				),
+				'singleNullValue' => array(
+					'type' => 'string',
+					'multivalue' => FALSE,
+					'value' => NULL,
+				),
+				'multiValueContainingNull' => array(
+					'type' => 'array',
+					'multivalue' => TRUE,
+					'value' => array(
+						array(
+							'type' => 'object',
+							'index' => NULL,
+							'value' => NULL
+						)
+					)
 				)
 			)
 		);
@@ -1143,12 +1159,16 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		$mockInsertPropertyStatement = $this->getMock('PDOStatement');
 		$mockInsertPropertyStatement->expects($this->at(0))->method('execute')->with(array('identifier', 'singleValue', 0, 'string'));
+
 		$mockInsertDataStatement = $this->getMock('PDOStatement');
 		$mockInsertDataStatement->expects($this->at(0))->method('execute')->with(array('identifier', 'singleValue', NULL, 'string', 'propertyValue'));
 		$mockInsertDataStatement->expects($this->at(1))->method('execute')->with(array('identifier', 'multiValue', NULL, 'DateTime', '1'));
 		$mockInsertDataStatement->expects($this->at(2))->method('execute')->with(array('identifier', 'multiValue', NULL, 'DateTime', '2'));
 		$mockInsertDataStatement->expects($this->at(3))->method('execute')->with(array('identifier', 'keyedMultiValue', 'one', '\FooBar', '1234'));
 		$mockInsertDataStatement->expects($this->at(4))->method('execute')->with(array('identifier', 'keyedMultiValue', 'two', '\FooBar', '5678'));
+		$mockInsertDataStatement->expects($this->at(5))->method('execute')->with(array('identifier', 'singleNullValue', NULL, 'NULL'));
+		$mockInsertDataStatement->expects($this->at(6))->method('execute')->with(array('identifier', 'multiValueContainingNull', NULL, 'NULL'));
+
 		$mockPdo = $this->getMock('F3\FLOW3\Tests\Unit\Persistence\Fixture\PdoInterface');
 		$mockPdo->expects($this->at(0))->method('prepare')->with('INSERT INTO "properties" ("parent", "name", "multivalue", "type") VALUES (?, ?, ?, ?)')->will($this->returnValue($mockInsertPropertyStatement));
 		$mockPdo->expects($this->at(1))->method('prepare')->with('INSERT INTO "properties_data" ("parent", "name", "index", "type", "string") VALUES (?, ?, ?, ?, ?)')->will($this->returnValue($mockInsertDataStatement));
@@ -1156,6 +1176,8 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockPdo->expects($this->at(3))->method('prepare')->with('INSERT INTO "properties_data" ("parent", "name", "index", "type", "datetime") VALUES (?, ?, ?, ?, ?)')->will($this->returnValue($mockInsertDataStatement));
 		$mockPdo->expects($this->at(4))->method('prepare')->with('INSERT INTO "properties_data" ("parent", "name", "index", "type", "object") VALUES (?, ?, ?, ?, ?)')->will($this->returnValue($mockInsertDataStatement));
 		$mockPdo->expects($this->at(5))->method('prepare')->with('INSERT INTO "properties_data" ("parent", "name", "index", "type", "object") VALUES (?, ?, ?, ?, ?)')->will($this->returnValue($mockInsertDataStatement));
+		$mockPdo->expects($this->at(6))->method('prepare')->with('INSERT INTO "properties_data" ("parent", "name", "index", "type") VALUES (?, ?, ?, ?)')->will($this->returnValue($mockInsertDataStatement));
+		$mockPdo->expects($this->at(7))->method('prepare')->with('INSERT INTO "properties_data" ("parent", "name", "index", "type") VALUES (?, ?, ?, ?)')->will($this->returnValue($mockInsertDataStatement));
 
 		$backendProxyClassName = $this->buildAccessibleProxy('F3\FLOW3\Persistence\Backend\GenericPdo\Backend');
 		$backend = new $backendProxyClassName();
