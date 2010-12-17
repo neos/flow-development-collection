@@ -118,8 +118,8 @@ class FileSystemPublishingTargetTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$this->assertTrue($publishingTarget->publishStaticResources($sourcePath, 'Bar'));
 		$this->assertTrue(\F3\FLOW3\Utility\Files::is_link(\F3\FLOW3\Utility\Files::concatenatePaths(array($targetPath, 'Static/Bar'))));
 
-		\F3\FLOW3\Utility\Files::removeDirectoryRecursively($sourcePath);
 		\F3\FLOW3\Utility\Files::removeDirectoryRecursively(\F3\FLOW3\Utility\Files::concatenatePaths(array(sys_get_temp_dir(), 'FLOW3FileSystemPublishingTargetTestTarget')));
+		\F3\FLOW3\Utility\Files::removeDirectoryRecursively($sourcePath);
 	}
 
 	/**
