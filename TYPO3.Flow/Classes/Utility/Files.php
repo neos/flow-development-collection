@@ -116,7 +116,7 @@ class Files {
 		$directoryIterator = new \RecursiveDirectoryIterator($path);
 		foreach(new \RecursiveIteratorIterator($directoryIterator) as $fileInfo) {
 			if (substr($fileInfo->getFilename(), 0, 1) !== '.' && @unlink($fileInfo->getPathname()) === FALSE) {
-				throw new \F3\FLOW3\Utility\Exception('Cannot unlink file "' . $filename . '".', 1169047619);
+				throw new \F3\FLOW3\Utility\Exception('Cannot unlink file "' . $fileInfo->getPathname() . '".', 1169047619);
 			}
 		}
 		foreach ($directoryIterator as $fileInfo) {
