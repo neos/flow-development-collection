@@ -428,6 +428,7 @@ class PrivateResourcesPublishingAspectTest extends \F3\FLOW3\Tests\UnitTestCase 
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function rewritePersistentResourcePublishPathAndFilenameForPrivateResourcesCalculatesTheCorrectPathForAPrivateResourceThatIsPublishedInCopyModeAndNoFilenameIsRequested() {
+		$publishPath = \F3\FLOW3\Utility\Files::concatenatePaths(array(sys_get_temp_dir(), 'FLOW3PrivateResourcesPublishingAspectTestPublishDirectory')) . '/';
 		$settings = array('resource' => array('publishing' => array('fileSystem' => array('mirrorMode' => 'copy'))));
 
 		$allowedRoles = array (
@@ -448,7 +449,7 @@ class PrivateResourcesPublishingAspectTest extends \F3\FLOW3\Tests\UnitTestCase 
 		$mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue($actualRoles));
 
 		$mockPublishingTargetProxy = $this->getMock('F3\FLOW3\Resource\Publishing\FileSystemPublishingTarget', array(), array(), '', FALSE);
-		$mockPublishingTargetProxy->expects($this->once())->method('getResourcesPublishingPath')->will($this->returnValue('TheBasePath/'));
+		$mockPublishingTargetProxy->expects($this->once())->method('getResourcesPublishingPath')->will($this->returnValue($publishPath . 'TheBasePath/'));
 
 		$mockResourcePointer = $this->getMock('F3\FLOW3\Resource\ResourcePointer', array(), array(), '', FALSE);
 
@@ -472,7 +473,7 @@ class PrivateResourcesPublishingAspectTest extends \F3\FLOW3\Tests\UnitTestCase 
 		$publishingAspect->injectSettings($settings);
 		$publishingAspect->injectAccessRestrictionPublisher($mockAccessRestrictionPublisher);
 
-		$expectedResult = 'TheBasePath/Persistent/TheCurrentSessionId/';
+		$expectedResult = $publishPath . 'TheBasePath/Persistent/TheCurrentSessionId/';
 
 		$result = $publishingAspect->_call('rewritePersistentResourcePublishPathAndFilenameForPrivateResources', $mockJoinPoint);
 
@@ -484,6 +485,8 @@ class PrivateResourcesPublishingAspectTest extends \F3\FLOW3\Tests\UnitTestCase 
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function rewritePersistentResourcePublishPathAndFilenameForPrivateResourcesCalculatesTheCorrectPathForAPrivateResourceThatIsPublishedInCopyModeAndTheFilenameIsRequested() {
+		$publishPath = \F3\FLOW3\Utility\Files::concatenatePaths(array(sys_get_temp_dir(), 'FLOW3PrivateResourcesPublishingAspectTestPublishDirectory')) . '/';
+
 		$settings = array('resource' => array('publishing' => array('fileSystem' => array('mirrorMode' => 'copy'))));
 
 		$allowedRoles = array (
@@ -504,7 +507,7 @@ class PrivateResourcesPublishingAspectTest extends \F3\FLOW3\Tests\UnitTestCase 
 		$mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue($actualRoles));
 
 		$mockPublishingTargetProxy = $this->getMock('F3\FLOW3\Resource\Publishing\FileSystemPublishingTarget', array(), array(), '', FALSE);
-		$mockPublishingTargetProxy->expects($this->once())->method('getResourcesPublishingPath')->will($this->returnValue('TheBasePath/'));
+		$mockPublishingTargetProxy->expects($this->once())->method('getResourcesPublishingPath')->will($this->returnValue($publishPath . 'TheBasePath/'));
 
 		$mockResourcePointer = $this->getMock('F3\FLOW3\Resource\ResourcePointer', array(), array(), '', FALSE);
 		$mockResourcePointer->expects($this->once())->method('getHash')->will($this->returnValue('ResourceHash'));
@@ -530,7 +533,7 @@ class PrivateResourcesPublishingAspectTest extends \F3\FLOW3\Tests\UnitTestCase 
 		$publishingAspect->injectSettings($settings);
 		$publishingAspect->injectAccessRestrictionPublisher($mockAccessRestrictionPublisher);
 
-		$expectedResult = 'TheBasePath/Persistent/TheCurrentSessionId/ResourceHash.ResourceFileExtension';
+		$expectedResult = $publishPath . 'TheBasePath/Persistent/TheCurrentSessionId/ResourceHash.ResourceFileExtension';
 
 		$result = $publishingAspect->_call('rewritePersistentResourcePublishPathAndFilenameForPrivateResources', $mockJoinPoint);
 
