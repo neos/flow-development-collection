@@ -174,6 +174,7 @@ abstract class FunctionalTestCase extends \F3\FLOW3\Tests\BaseTestCase {
 	 */
 	protected function setupPersistence() {
 		$this->persistenceManager = $this->objectManager->get('F3\FLOW3\Persistence\PersistenceManagerInterface');
+		$this->persistenceManager->initialize();
 		$this->persistenceSession = $this->objectManager->get('F3\FLOW3\Persistence\Session');
 	}
 
