@@ -199,7 +199,7 @@ class Account {
 	}
 
 	/**
-	 * @param \DateTime $creationDate
+	 * @param \DateTime $expirationDate
 	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
