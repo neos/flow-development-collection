@@ -280,14 +280,18 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 		} else {
 			$subpackageKey = NULL;
 		}
-		$this->uriBuilder->reset();
-		if ($format === NULL) {
-			$this->uriBuilder->setFormat($this->request->getFormat());
-		} else {
-			$this->uriBuilder->setFormat($format);
+
+		$topLevelRequest = $this->request;
+		while ($topLevelRequest instanceof \F3\FLOW3\MVC\Web\SubRequest) {
+			$topLevelRequest = $topLevelRequest->getParentRequest();
 		}
+
+		$this->uriBuilder->setRequest($topLevelRequest);
+		$this->uriBuilder->setFormat(($format === NULL) ? $topLevelRequest->getFormat() : $format);
+
 		$uri = $this->uriBuilder->uriFor($actionName, $arguments, $controllerName, $packageKey, $subpackageKey);
-		$this->redirectToUri($uri, $delay, $statusCode);
+
+		$this->redirectToUri($this->request->getBaseUri() . $uri, $delay, $statusCode);
 	}
 
 	/**
@@ -307,7 +311,7 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	protected function redirectToUri($uri, $delay = 0, $statusCode = 303) {
 		if (!$this->request instanceof \F3\FLOW3\MVC\Web\Request) throw new \F3\FLOW3\MVC\Exception\UnsupportedRequestTypeException('redirect() only supports web requests.', 1220539734);
 
-		$uri = $this->request->getBaseUri() . (string)$uri;
+		$uri = (string)$uri;
 		$escapedUri = htmlentities($uri, ENT_QUOTES, 'utf-8');
 		$this->response->setContent('<html><head><meta http-equiv="refresh" content="' . intval($delay) . ';url=' . $escapedUri . '"/></head></html>');
 		$this->response->setStatus($statusCode);
