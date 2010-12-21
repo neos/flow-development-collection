@@ -55,7 +55,7 @@ class ObjectManagerTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$temporaryDirectory = $temporaryDirectoryBase . $pathHash . '/';
 		\F3\FLOW3\Utility\Files::createDirectoryRecursively($temporaryDirectory);
 
-		$id = uniqid('staticObjectContainerInclusionProval');
+		$id = 'staticObjectContainerInclusionProval' . md5(uniqid(mt_rand(), TRUE));
 		$staticObjectContainerInclusionProvalCode = "<?php class $id {} ?>";
 		file_put_contents($temporaryDirectory . 'StaticObjectContainer.php', $staticObjectContainerInclusionProvalCode);
 
@@ -153,7 +153,7 @@ class ObjectManagerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function initializeObjectContainerBuildsAndUsesAStaticObjectContainerIfNoneExists() {
 		mkdir('vfs://Base/Temporary');
-		$staticObjectContainerClassName = uniqid('staticObjectContainerInclusionProval');
+		$staticObjectContainerClassName = 'staticObjectContainerInclusionProval' . md5(uniqid(mt_rand(), TRUE));
 		$staticObjectContainerCode = "<?php
 				class $staticObjectContainerClassName {
 					public function import() {}
@@ -201,7 +201,7 @@ class ObjectManagerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function initializeObjectContainerSwitchesFromDynamicToStaticContainerIfOneAlreadyExists() {
 		mkdir('vfs://Base/Temporary');
-		$id = uniqid('staticObjectContainerInclusionProval');
+		$id = 'staticObjectContainerInclusionProval' . md5(uniqid(mt_rand(), TRUE));
 		$staticObjectContainerCode = "<?php
 				define('$id', TRUE);
 			?>";
@@ -481,10 +481,10 @@ class ObjectManagerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function buildPackageObjectConfigurationsBuildsObjectConfigurationsOfClassesAndInterfacesFromTheGivenPackages() {
 		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService', array(), array(), '', FALSE);
 
-		$className1 = 'FooClass' . uniqid();
-		$className2 = 'FooClass' . uniqid();
-		$className3 = 'BarClass' . uniqid();
-		$className4 = 'BarClass' . uniqid();
+		$className1 = 'FooClass' . md5(uniqid(mt_rand(), TRUE));
+		$className2 = 'FooClass' . md5(uniqid(mt_rand(), TRUE));
+		$className3 = 'BarClass' . md5(uniqid(mt_rand(), TRUE));
+		$className4 = 'BarClass' . md5(uniqid(mt_rand(), TRUE));
 		eval('class ' . $className1 . ' {}');
 		eval('class ' . $className2 . ' {}');
 		eval('class ' . $className3 . ' {}');
@@ -535,9 +535,9 @@ class ObjectManagerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function buildPackageObjectConfigurationsAlsoRegistersInterfacesAsObjectTypes() {
-		$className1 = 'FooClass' . uniqid();
-		$className2 = 'Foo' . uniqid() . 'Interface';
-		$className3 = 'Foo' . uniqid() . 'Interface';
+		$className1 = 'FooClass' . md5(uniqid(mt_rand(), TRUE));
+		$className2 = 'Foo' . md5(uniqid(mt_rand(), TRUE)) . 'Interface';
+		$className3 = 'Foo' . md5(uniqid(mt_rand(), TRUE)) . 'Interface';
 		eval('class ' . $className1 . ' {}');
 		eval('interface ' . $className2 . ' {}');
 		eval('interface ' . $className3 . ' {}');
@@ -579,7 +579,7 @@ class ObjectManagerTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService', array(), array(), '', FALSE);
 		$mockReflectionService->expects($this->any())->method('isAbstract')->will($this->returnValue(FALSE));
 
-		$className1 = 'FooClass' . uniqid();
+		$className1 = 'FooClass' . md5(uniqid(mt_rand(), TRUE));
 		eval('class ' . $className1 . ' {}');
 
 		$objectConfigurations = array(
