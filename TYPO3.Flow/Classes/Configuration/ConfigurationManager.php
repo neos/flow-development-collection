@@ -273,7 +273,11 @@ class ConfigurationManager {
 				$settings = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($settings, $this->configurationSource->load(FLOW3_PATH_CONFIGURATION . self::CONFIGURATION_TYPE_SETTINGS));
 				$settings = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($settings, $this->configurationSource->load(FLOW3_PATH_CONFIGURATION . $this->context . '/' . self::CONFIGURATION_TYPE_SETTINGS));
 
-				$this->configurations[self::CONFIGURATION_TYPE_SETTINGS] = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($this->configurations[self::CONFIGURATION_TYPE_SETTINGS], $settings);
+				if (isset($this->configurations[self::CONFIGURATION_TYPE_SETTINGS])) {
+					$this->configurations[self::CONFIGURATION_TYPE_SETTINGS] = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($this->configurations[self::CONFIGURATION_TYPE_SETTINGS], $settings);
+				} else {
+					$this->configurations[self::CONFIGURATION_TYPE_SETTINGS] = $settings;
+				}
 
 				if (!isset($this->configurations[self::CONFIGURATION_TYPE_SETTINGS]['FLOW3']['core']['context'])) {
 					$this->configurations[self::CONFIGURATION_TYPE_SETTINGS]['FLOW3']['core']['context'] = $this->context;
