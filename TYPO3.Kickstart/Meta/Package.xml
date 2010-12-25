@@ -3,5 +3,5 @@
 	<key>Kickstart</key>
 	<title>FLOW3 Kickstarter</title>
 	<description>A simple generator for controller and views.</description>
-	<version>1.0.0-alpha14</version>
+	<version>1.0.0-beta1</version>
 </package>
