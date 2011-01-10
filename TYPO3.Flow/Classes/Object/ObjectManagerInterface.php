@@ -195,31 +195,6 @@ interface ObjectManagerInterface {
 	 */
 	public function shutdown();
 
-	/**
-	 * Returns a fresh or existing instance of the object specified by $objectName.
-	 *
-	 * Important:
-	 *
-	 * If possible, instances of Prototype objects should always be created with the
-	 * Object Factory's create() method and Singleton objects should rather be
-	 * injected by some type of Dependency Injection.
-	 *
-	 * @param string $objectName The name of the object to return an instance of
-	 * @return object The object instance
-	 * @deprecated since 1.0.0 alpha 8
-	 */
-	public function getObject($objectName);
-
-	/**
-	 * Returns TRUE if an object with the given name has already
-	 * been registered.
-	 *
-	 * @param  string $objectName Name of the object
-	 * @return boolean TRUE if the object has been registered, otherwise FALSE
-	 * @deprecated since 1.0.0 alpha 8
-	 */
-	public function isObjectRegistered($objectName);
-
 }
 
 ?>

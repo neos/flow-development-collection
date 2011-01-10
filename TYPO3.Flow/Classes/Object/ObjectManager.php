@@ -417,37 +417,6 @@ class ObjectManager implements \F3\FLOW3\Object\ObjectManagerInterface {
 	}
 
 	/**
-	 * Returns a fresh or existing instance of the object specified by $objectName.
-	 *
-	 * Important:
-	 *
-	 * If possible, instances of Prototype objects should always be created with the
-	 * Object Factory's create() method and Singleton objects should rather be
-	 * injected by some type of Dependency Injection.
-	 *
-	 * @param string $objectName The name of the object to return an instance of
-	 * @return object The object instance
-	 * @deprecated since 1.0.0 alpha 8
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getObject($objectName) {
-		return call_user_func_array(array($this->objectContainer, 'get'), func_get_args());
-	}
-
-	/**
-	 * Returns TRUE if an object with the given name has already
-	 * been registered.
-	 *
-	 * @param  string $objectName Name of the object
-	 * @return boolean TRUE if the object has been registered, otherwise FALSE
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @deprecated since 1.0.0 alpha 8
-	 */
-	public function isObjectRegistered($objectName) {
-		return $this->isRegistered($objectName);
-	}
-
-	/**
 	 * Traverses through all active packages and builds a base object configuration
 	 * for all of their classes. Finally merges additional objects configurations
 	 * into the overall configuration and returns the result.

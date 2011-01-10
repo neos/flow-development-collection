@@ -442,41 +442,6 @@ class ObjectManagerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @deprecated since 1.0.0 alpha 8
-	 */
-	public function isObjectRegisteredForwardsTheCallToTheCurrentObjectContainer() {
-		$mockObjectContainer = $this->getMock('F3\FLOW3\Object\Container\StaticObjectContainerInterface');
-		$mockObjectContainer->expects($this->once())->method('isRegistered')->with('someObjectName')->will($this->returnValue(TRUE));
-
-		$objectManager = $this->getAccessibleMock('F3\FLOW3\Object\ObjectManager', array('dummy'));
-		$objectManager->_set('staticObjectContainerClassName', $this->mockStaticObjectContainerClassName);
-		$objectManager->_set('objectContainer', $mockObjectContainer);
-
-		$this->assertTrue($objectManager->isObjectRegistered('someObjectName'));
-	}
-
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @deprecated since 1.0.0 alpha 8
-	 */
-	public function getObjectForwardsTheCallToTheCurrentObjectContainer() {
-		$expectedObject = new \stdClass();
-
-		$mockObjectContainer = $this->getMock('F3\FLOW3\Object\Container\StaticObjectContainerInterface');
-		$mockObjectContainer->expects($this->once())->method('get')->with('someObjectName', 'someArgument')->will($this->returnValue($expectedObject));
-
-		$objectManager = $this->getAccessibleMock('F3\FLOW3\Object\ObjectManager', array('dummy'));
-		$objectManager->_set('staticObjectContainerClassName', $this->mockStaticObjectContainerClassName);
-		$objectManager->_set('objectContainer', $mockObjectContainer);
-
-		$actualObject = $objectManager->getObject('someObjectName', 'someArgument');
-		$this->assertSame($expectedObject, $actualObject);
-	}
-
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function buildPackageObjectConfigurationsBuildsObjectConfigurationsOfClassesAndInterfacesFromTheGivenPackages() {
 		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService', array(), array(), '', FALSE);
