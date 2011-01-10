@@ -93,7 +93,7 @@ class NotFoundController extends \F3\FLOW3\MVC\Controller\AbstractController imp
 			default :
 				$response->setContent(
 					"\n404 Not Found\n\n" .
-					"No controller could be resolved which would match your request.\n"
+					$this->exception->getMessage() . "\n"
 				);
 		}
 	}
