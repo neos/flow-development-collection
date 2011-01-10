@@ -1194,21 +1194,5 @@ public function editAction(\F3\Foo\Model\Customer $customer) {
           </listitem>
         </varlistentry>
       </variablelist></para>
-
-    <example>
-      <title>Some FLOW3 CLI commands</title>
-
-      <para>Calling the TYPO3CR setup:</para>
-
-      <screen><code>php index.php typo3cr admin setup setup --dsn=sqlite:/tmp/typo3cr.db --indexlocation=/tmp/lucene/</code></screen>
-
-      <para>Running FLOW3 unit tests:</para>
-
-      <screen><code>php index.php testing cli run --package-key=FLOW3 --output-directory=./</code></screen>
-
-      <para>Rendering the FLOW3 documentation to HTML:</para>
-
-      <screen><code>php index.php doctools manual render -f html -o flow3-manual/ FLOW3</code></screen>
-    </example>
   </section>
 </chapter>
