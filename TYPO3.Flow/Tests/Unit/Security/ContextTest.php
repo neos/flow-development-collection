@@ -160,7 +160,7 @@ class ContextTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$securityContext = $this->getAccessibleMock('F3\FLOW3\Security\Context', array('dummy'));
 		$mockAuthenticationManager = $this->getMock('F3\FLOW3\Security\Authentication\AuthenticationManagerInterface');
 		$mockAuthenticationManager->expects($this->once())->method('setSecurityContext')->with($securityContext);
-		
+
 		$securityContext->injectAuthenticationManager($mockAuthenticationManager);
 	}
 
@@ -543,7 +543,7 @@ class ContextTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$token1 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), '', FALSE);
 		$token1->expects($this->any())->method('isAuthenticated')->will($this->returnValue(TRUE));
 		$token1->expects($this->once())->method('getRoles')->will($this->returnValue(array($role1, $role2, $role3)));
-		
+
 		$token2 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), '', FALSE);
 		$token2->expects($this->any())->method('isAuthenticated')->will($this->returnValue(TRUE));
 		$token2->expects($this->once())->method('getRoles')->will($this->returnValue(array($role2, $role4, $role5)));
@@ -711,7 +711,7 @@ class ContextTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getPartyAsksTheCorrectAuthenticationTokenAndReturnsItsParty() {
-		$mockParty = $this->getMock('F3\Party\Domain\Model\Party');
+		$mockParty = $this->getMockForAbstractClass('F3\Party\Domain\Model\AbstractParty');
 
 		$mockAccount = $this->getMock('F3\FLOW3\Security\Account');
 		$mockAccount->expects($this->once())->method('getParty')->will($this->returnValue($mockParty));
@@ -765,8 +765,8 @@ class ContextTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function getPartyByTypeReturnsTheFirstAuthenticatedPartyWithGivenType() {
-		$matchingMockParty = $this->getMock('F3\Party\Domain\Model\Party', array(), array(), 'MatchingParty');
-		$notMatchingMockParty = $this->getMock('F3\Party\Domain\Model\Party', array(), array(), 'NotMatchingParty');
+		$matchingMockParty = $this->getMockForAbstractClass('F3\Party\Domain\Model\AbstractParty', array(), 'MatchingParty');
+		$notMatchingMockParty = $this->getMockForAbstractClass('F3\Party\Domain\Model\AbstractParty', array(), 'NotMatchingParty');
 
 		$mockAccount1 = $this->getMock('F3\FLOW3\Security\Account');
 		$mockAccount1->expects($this->any())->method('getParty')->will($this->returnValue($notMatchingMockParty));
