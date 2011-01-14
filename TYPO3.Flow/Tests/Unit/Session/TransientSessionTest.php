@@ -35,7 +35,7 @@ class TransientSessionTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function theTransientSessionImplementsTheSessionInterface() {
 		$session = new \F3\FLOW3\Session\TransientSession();
-		$this->assertType('F3\FLOW3\Session\SessionInterface', $session);
+		$this->assertInstanceOf('F3\FLOW3\Session\SessionInterface', $session);
 	}
 
 	/**

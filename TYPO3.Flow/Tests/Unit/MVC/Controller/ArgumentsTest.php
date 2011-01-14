@@ -171,7 +171,7 @@ class ArgumentsTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		$arguments = new \F3\FLOW3\MVC\Controller\Arguments($mockObjectManager);
 		$addedArgument = $arguments->addNewArgument('dummyName');
-		$this->assertType('F3\FLOW3\MVC\Controller\Argument', $addedArgument, 'addNewArgument() either did not add a new argument or did not return it.');
+		$this->assertInstanceOf('F3\FLOW3\MVC\Controller\Argument', $addedArgument, 'addNewArgument() either did not add a new argument or did not return it.');
 
 		$retrievedArgument = $arguments['dummyName'];
 		$this->assertSame($addedArgument, $retrievedArgument, 'The added and the retrieved argument are not the same.');

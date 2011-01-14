@@ -35,7 +35,7 @@ class ParameterReflectionTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function getDeclaringClassReturnsFLOW3sClassReflection($dummy = NULL) {
 		$parameter = new \F3\FLOW3\Reflection\ParameterReflection(array(__CLASS__, 'fixtureMethod'), 'arg2');
-		$this->assertType('F3\FLOW3\Reflection\ClassReflection', $parameter->getDeclaringClass());
+		$this->assertInstanceOf('F3\FLOW3\Reflection\ClassReflection', $parameter->getDeclaringClass());
 	}
 
 	/**
@@ -44,7 +44,7 @@ class ParameterReflectionTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function getClassReturnsFLOW3sClassReflection($dummy = NULL) {
 		$parameter = new \F3\FLOW3\Reflection\ParameterReflection(array(__CLASS__, 'fixtureMethod'), 'arg1');
-		$this->assertType('F3\FLOW3\Reflection\ClassReflection', $parameter->getClass());
+		$this->assertInstanceOf('F3\FLOW3\Reflection\ClassReflection', $parameter->getClass());
 	}
 
 	/**

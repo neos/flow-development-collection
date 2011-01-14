@@ -111,28 +111,28 @@ class FrameworkTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$framework->injectPointcutExpressionParser($mockPointcutExpressionParser);
 
 		$container = $framework->_call('buildAspectContainer', 'F3\FLOW3\Tests\AOP\Fixture\AspectClassWithAllAdviceTypes');
-		$this->assertType('F3\FLOW3\AOP\AspectContainer', $container);
+		$this->assertInstanceOf('F3\FLOW3\AOP\AspectContainer', $container);
 		$this->assertSame('F3\FLOW3\Tests\AOP\Fixture\AspectClassWithAllAdviceTypes', $container->getClassName());
 		$advisors = $container->getAdvisors();
-		$this->assertType('F3\FLOW3\AOP\Advice\AroundAdvice', $advisors[0]->getAdvice());
+		$this->assertInstanceOf('F3\FLOW3\AOP\Advice\AroundAdvice', $advisors[0]->getAdvice());
 		$this->assertSame('fooAround', $advisors[0]->getPointcut()->getPointcutExpression());
-		$this->assertType('F3\FLOW3\AOP\Advice\BeforeAdvice', $advisors[1]->getAdvice());
+		$this->assertInstanceOf('F3\FLOW3\AOP\Advice\BeforeAdvice', $advisors[1]->getAdvice());
 		$this->assertSame('fooBefore', $advisors[1]->getPointcut()->getPointcutExpression());
-		$this->assertType('F3\FLOW3\AOP\Advice\AfterReturningAdvice', $advisors[2]->getAdvice());
+		$this->assertInstanceOf('F3\FLOW3\AOP\Advice\AfterReturningAdvice', $advisors[2]->getAdvice());
 		$this->assertSame('fooAfterReturning', $advisors[2]->getPointcut()->getPointcutExpression());
-		$this->assertType('F3\FLOW3\AOP\Advice\AfterThrowingAdvice', $advisors[3]->getAdvice());
+		$this->assertInstanceOf('F3\FLOW3\AOP\Advice\AfterThrowingAdvice', $advisors[3]->getAdvice());
 		$this->assertSame('fooAfterThrowing', $advisors[3]->getPointcut()->getPointcutExpression());
-		$this->assertType('F3\FLOW3\AOP\Advice\AfterAdvice', $advisors[4]->getAdvice());
+		$this->assertInstanceOf('F3\FLOW3\AOP\Advice\AfterAdvice', $advisors[4]->getAdvice());
 		$this->assertSame('fooAfter', $advisors[4]->getPointcut()->getPointcutExpression());
 
 		$pointcuts = $container->getPointcuts();
 		$this->assertTrue(count($pointcuts) === 1);
-		$this->assertType('F3\FLOW3\AOP\Pointcut\Pointcut', $pointcuts[0]);
+		$this->assertInstanceOf('F3\FLOW3\AOP\Pointcut\Pointcut', $pointcuts[0]);
 		$this->assertSame('fooPointcut', $pointcuts[0]->getPointcutExpression());
 
 		$introductions = $container->getIntroductions();
 		$this->assertTrue(count($introductions) === 1);
-		$this->assertType('F3\FLOW3\AOP\Introduction', $introductions[0]);
+		$this->assertInstanceOf('F3\FLOW3\AOP\Introduction', $introductions[0]);
 		$this->assertSame('F3\FLOW3\Tests\AOP\Fixture\AspectClassWithAllAdviceTypes', $introductions[0]->getDeclaringAspectClassName());
 		$this->assertSame('F3\FLOW3\Tests\AOP\Fixture\InterfaceForIntroduction', $introductions[0]->getInterfaceName());
 		$this->assertSame('ThePointcutExpression', $introductions[0]->getPointcut()->getPointcutExpression());

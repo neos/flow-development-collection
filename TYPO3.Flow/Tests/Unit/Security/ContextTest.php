@@ -602,7 +602,7 @@ class ContextTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		$result = $securityContext->getRoles();
 
-		$this->assertType('F3\FLOW3\Security\Policy\Role', $result[0]);
+		$this->assertInstanceOf('F3\FLOW3\Security\Policy\Role', $result[0]);
 		$this->assertEquals('Everybody', (string)($result[0]));
 	}
 
@@ -642,7 +642,7 @@ class ContextTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		$everybodyRoleFound = FALSE;
 		foreach ($result as $resultRole) {
-			$this->assertType('F3\FLOW3\Security\Policy\Role', $resultRole);
+			$this->assertInstanceOf('F3\FLOW3\Security\Policy\Role', $resultRole);
 			if ('Everybody' === (string)($resultRole)) $everybodyRoleFound = TRUE;
 		}
 

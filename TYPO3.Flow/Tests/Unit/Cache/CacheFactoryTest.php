@@ -49,7 +49,7 @@ class CacheFactoryTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$factory->setCacheManager($mockCacheManager);
 
 		$cache = $factory->create('F3_FLOW3_Cache_FactoryTest_Cache', 'F3\FLOW3\Cache\Frontend\VariableFrontend', 'F3\FLOW3\Cache\Backend\NullBackend');
-		$this->assertType('F3\FLOW3\Cache\Frontend\VariableFrontend', $cache);
+		$this->assertInstanceOf('F3\FLOW3\Cache\Frontend\VariableFrontend', $cache);
 	}
 
 	/**

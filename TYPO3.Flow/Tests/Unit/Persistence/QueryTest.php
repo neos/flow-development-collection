@@ -64,7 +64,7 @@ class QueryTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$resultProxy = $this->getMock('F3\FLOW3\Persistence\QueryResult', array(), array(), '', FALSE);
 		$this->objectManager->expects($this->once())->method('create')->with('F3\FLOW3\Persistence\QueryResultInterface', $this->query)->will($this->returnValue($resultProxy));
 		$result = $this->query->execute();
-		$this->assertType('F3\FLOW3\Persistence\QueryResult', $result);
+		$this->assertInstanceOf('F3\FLOW3\Persistence\QueryResult', $result);
 	}
 
 	/**

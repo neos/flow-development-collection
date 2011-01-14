@@ -41,7 +41,7 @@ class MethodReflectionTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function getDeclaringClassReturnsFLOW3sClassReflection() {
 		$method = new \F3\FLOW3\Reflection\MethodReflection(__CLASS__, __FUNCTION__);
-		$this->assertType('F3\FLOW3\Reflection\ClassReflection', $method->getDeclaringClass());
+		$this->assertInstanceOf('F3\FLOW3\Reflection\ClassReflection', $method->getDeclaringClass());
 	}
 
 	/**
@@ -51,7 +51,7 @@ class MethodReflectionTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function getParametersReturnsFLOW3sParameterReflection($dummyArg1 = NULL, $dummyArg2 = NULL) {
 		$method = new \F3\FLOW3\Reflection\MethodReflection(__CLASS__, __FUNCTION__);
 		foreach ($method->getParameters() as $parameter) {
-			$this->assertType('F3\FLOW3\Reflection\ParameterReflection', $parameter);
+			$this->assertInstanceOf('F3\FLOW3\Reflection\ParameterReflection', $parameter);
 			$this->assertEquals(__CLASS__, $parameter->getDeclaringClass()->getName());
 		}
 	}

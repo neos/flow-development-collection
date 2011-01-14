@@ -430,8 +430,8 @@ class PropertyMapperTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mapper->injectReflectionService($this->mockReflectionService);
 		$mapper->injectObjectManager($this->mockObjectManager);
 
-		$successful = $mapper->map(array('property1'), $source, $target);
-		$this->assertType('SplObjectStorage', $target->property1);
+		$mapper->map(array('property1'), $source, $target);
+		$this->assertInstanceOf('SplObjectStorage', $target->property1);
 	}
 
 	/**
@@ -451,14 +451,13 @@ class PropertyMapperTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		$existingObject = new \stdClass();
 		$this->mockReflectionService->expects($this->once())->method('getClassSchema')->will($this->returnValue($classSchema));
-		$mapper = new \F3\FLOW3\Property\PropertyMapper();
 		$mapper = $this->getMock('F3\FLOW3\Property\PropertyMapper', array('transformToObject'));
 		$mapper->expects($this->once())->method('transformToObject')->with($source['property1'][0], 'stdClass', 'property1')->will($this->returnValue($existingObject));
 		$mapper->injectReflectionService($this->mockReflectionService);
 		$mapper->injectObjectManager($this->mockObjectManager);
 
-		$successful = $mapper->map(array('property1'), $source, $target);
-		$this->assertType('ArrayObject', $target->property1);
+		$mapper->map(array('property1'), $source, $target);
+		$this->assertInstanceOf('ArrayObject', $target->property1);
 		$this->assertSame($existingObject, $target->property1[0]);
 	}
 

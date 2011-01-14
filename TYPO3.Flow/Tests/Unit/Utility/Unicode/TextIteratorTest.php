@@ -37,7 +37,7 @@ class TextIteratorTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function canCreateIteratorOfDefaultType() {
 		$iterator = new \F3\FLOW3\Utility\Unicode\TextIterator('Some string');
-		$this->assertType('F3\FLOW3\Utility\Unicode\TextIterator', $iterator);
+		$this->assertInstanceOf('F3\FLOW3\Utility\Unicode\TextIterator', $iterator);
 	}
 
 	/**
@@ -48,7 +48,7 @@ class TextIteratorTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function instantiatingCharacterIteratorWorks() {
 		$characterIterator = new \F3\FLOW3\Utility\Unicode\TextIterator('Some string', \F3\FLOW3\Utility\Unicode\TextIterator::CHARACTER );
-		$this->assertType('F3\FLOW3\Utility\Unicode\TextIterator', $characterIterator);
+		$this->assertInstanceOf('F3\FLOW3\Utility\Unicode\TextIterator', $characterIterator);
 	}
 
 	/**
@@ -59,7 +59,7 @@ class TextIteratorTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function instantiatingWordIteratorWorks() {
 		$wordIterator = new \F3\FLOW3\Utility\Unicode\TextIterator('Some string', \F3\FLOW3\Utility\Unicode\TextIterator::WORD);
-		$this->assertType('F3\FLOW3\Utility\Unicode\TextIterator', $wordIterator);
+		$this->assertInstanceOf('F3\FLOW3\Utility\Unicode\TextIterator', $wordIterator);
 	}
 
 
@@ -71,7 +71,7 @@ class TextIteratorTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function instantiatingSentenceIteratorWorks() {
 		$sentenceIterator = new \F3\FLOW3\Utility\Unicode\TextIterator('Some string', \F3\FLOW3\Utility\Unicode\TextIterator::SENTENCE );
-		$this->assertType('F3\FLOW3\Utility\Unicode\TextIterator', $sentenceIterator);
+		$this->assertInstanceOf('F3\FLOW3\Utility\Unicode\TextIterator', $sentenceIterator);
 	}
 
 	/**
@@ -82,7 +82,7 @@ class TextIteratorTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function instantiatingLineIteratorWorks() {
 		$lineIterator = new \F3\FLOW3\Utility\Unicode\TextIterator('Some string', \F3\FLOW3\Utility\Unicode\TextIterator::LINE);
-		$this->assertType('F3\FLOW3\Utility\Unicode\TextIterator', $lineIterator);
+		$this->assertInstanceOf('F3\FLOW3\Utility\Unicode\TextIterator', $lineIterator);
 	}
 
 

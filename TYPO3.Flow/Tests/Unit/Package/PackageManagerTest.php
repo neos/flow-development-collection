@@ -64,7 +64,7 @@ class PackageManagerTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$this->markTestSkipped('Rewrite tests for Package Manager!');
 
 		$package = $this->packageManager->getPackage('FLOW3');
-		$this->assertType('F3\FLOW3\Package\PackageInterface', $package, 'The result of getPackage() was no valid package object.');
+		$this->assertInstanceOf('F3\FLOW3\Package\PackageInterface', $package, 'The result of getPackage() was no valid package object.');
 		$this->packageManager->getPackage('PrettyUnlikelyThatThisPackageExists');
 	}
 

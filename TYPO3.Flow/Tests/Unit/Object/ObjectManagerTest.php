@@ -76,7 +76,7 @@ class ObjectManagerTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$objectManager->initialize();
 
 		$this->assertTrue(class_exists($id, FALSE));
-		$this->assertType($this->mockStaticObjectContainerClassName, $objectManager->_get('objectContainer'));
+		$this->assertInstanceOf($this->mockStaticObjectContainerClassName, $objectManager->_get('objectContainer'));
 	}
 
 	/**
@@ -110,7 +110,7 @@ class ObjectManagerTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$_FILES = array(); // avoid error in Environment->initializeObject()
 		$objectManager->initialize();
 
-		$this->assertType('F3\FLOW3\Object\Container\DynamicObjectContainer', $objectManager->_get('objectContainer'));
+		$this->assertInstanceOf('F3\FLOW3\Object\Container\DynamicObjectContainer', $objectManager->_get('objectContainer'));
 	}
 
 	/**
@@ -191,7 +191,7 @@ class ObjectManagerTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		$objectManager->initializeObjectContainer($mockActivePackages);
 
-		$this->assertType($staticObjectContainerClassName, $objectManager->_get('objectContainer'));
+		$this->assertInstanceOf($staticObjectContainerClassName, $objectManager->_get('objectContainer'));
 		$this->assertTrue(class_exists($staticObjectContainerClassName, FALSE));
 	}
 
@@ -231,7 +231,7 @@ class ObjectManagerTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		$objectManager->initializeObjectContainer($mockActivePackages);
 
-		$this->assertType($this->mockStaticObjectContainerClassName, $objectManager->_get('objectContainer'));
+		$this->assertInstanceOf($this->mockStaticObjectContainerClassName, $objectManager->_get('objectContainer'));
 		$this->assertTrue(defined($id));
 	}
 

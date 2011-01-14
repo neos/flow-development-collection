@@ -59,7 +59,7 @@ class RequestTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function getArgumentsReturnsProperlyInitializedArgumentsArrayForNewRequest() {
 		$request = new \F3\FLOW3\MVC\Web\Request();
-		$this->assertType('array', $request->getArguments(), 'getArguments() does not return an array for a virgin request object.');
+		$this->assertInternalType('array', $request->getArguments(), 'getArguments() does not return an array for a virgin request object.');
 	}
 
 	/**
@@ -129,6 +129,6 @@ class RequestTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$this->assertEquals($errors, $request->getErrors());
 	}
 
-	
+
 }
 ?>

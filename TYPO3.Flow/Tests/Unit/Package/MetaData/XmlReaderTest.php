@@ -61,7 +61,7 @@ class XmlReaderTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$parties = $packageMetaData->getParties();
 		$this->assertTrue(is_array($parties));
 		$person1 = $parties[0];
-		$this->assertType('F3\FLOW3\Package\MetaData\Person', $person1);
+		$this->assertInstanceOf('F3\FLOW3\Package\MetaData\Person', $person1);
 		$this->assertEquals('LeadDeveloper', $person1->getRole());
 		$this->assertEquals('Robert Lemke', $person1->getName());
 		$this->assertEquals('robert@typo3.org', $person1->getEmail());
@@ -69,12 +69,12 @@ class XmlReaderTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$constraints = $packageMetaData->getConstraintsByType('depends');
 		$this->assertTrue(is_array($constraints));
 
-		$this->assertType('F3\FLOW3\Package\MetaData\PackageConstraint', $constraints[0]);
+		$this->assertInstanceOf('F3\FLOW3\Package\MetaData\PackageConstraint', $constraints[0]);
 		$this->assertEquals('depends', $constraints[0]->getConstraintType());
 		$this->assertEquals('FLOW3', $constraints[0]->getValue());
 		$this->assertEquals('1.0.0', $constraints[0]->getMinVersion());
 		$this->assertEquals('1.9.9', $constraints[0]->getMaxVersion());
-		$this->assertType('F3\FLOW3\Package\MetaData\SystemConstraint', $constraints[1]);
+		$this->assertInstanceOf('F3\FLOW3\Package\MetaData\SystemConstraint', $constraints[1]);
 		$this->assertNull($constraints[1]->getValue());
 		$this->assertEquals('PHP', $constraints[1]->getType());
 		$this->assertEquals('5.3.0', $constraints[1]->getMinVersion());
