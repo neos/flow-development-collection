@@ -47,13 +47,12 @@ class RequestDispatchingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockAdviceChain = $this->getMock('F3\FLOW3\AOP\Advice\AdviceChain', array(), array(), '', FALSE);
 		$mockFirewall = $this->getMock('F3\FLOW3\Security\Authorization\FirewallInterface');
 		$mockSecurityContext = $this->getMock('F3\FLOW3\Security\Context');
-		$mockRequestHashService = $this->getMock('F3\FLOW3\Security\Channel\RequestHashService');
 
 		$mockJoinPoint->expects($this->once())->method('getAdviceChain')->will($this->returnValue($mockAdviceChain));
 		$mockJoinPoint->expects($this->any())->method('getMethodArgument')->will($this->returnCallback($getMethodArgumentCallback));
 		$mockSecurityContext->expects($this->once())->method('initialize')->with($request);
 
-		$dispatchingAspect = new \F3\FLOW3\Security\Aspect\RequestDispatchingAspect($mockSecurityContext, $mockFirewall, $mockRequestHashService, $mockSecurityLogger);
+		$dispatchingAspect = new \F3\FLOW3\Security\Aspect\RequestDispatchingAspect($mockSecurityContext, $mockFirewall, $mockSecurityLogger);
 		$dispatchingAspect->initializeSecurity($mockJoinPoint);
 	}
 
@@ -64,7 +63,6 @@ class RequestDispatchingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function blockIllegalRequestsAndForwardToAuthenticationEntryPointsCallsTheFirewallWithTheGivenRequest() {
 		$request = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
 		$response = $this->getMock('F3\FLOW3\MVC\Web\Response', array(), array(), '', FALSE);
-		$exception = new \F3\FLOW3\Security\Exception\AuthenticationRequiredException();
 
 		$getMethodArgumentCallback = function() use (&$request, &$response) {
 			$args = func_get_args();
@@ -78,13 +76,12 @@ class RequestDispatchingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockAdviceChain = $this->getMock('F3\FLOW3\AOP\Advice\AdviceChain', array(), array(), '', FALSE);
 		$mockFirewall = $this->getMock('F3\FLOW3\Security\Authorization\FirewallInterface');
 		$mockSecurityContext = $this->getMock('F3\FLOW3\Security\Context');
-		$mockRequestHashService = $this->getMock('F3\FLOW3\Security\Channel\RequestHashService');
 
 		$mockJoinPoint->expects($this->once())->method('getAdviceChain')->will($this->returnValue($mockAdviceChain));
 		$mockJoinPoint->expects($this->any())->method('getMethodArgument')->will($this->returnCallback($getMethodArgumentCallback));
 		$mockFirewall->expects($this->any())->method('blockIllegalRequests')->with($request);
 
-		$dispatchingAspect = new \F3\FLOW3\Security\Aspect\RequestDispatchingAspect($mockSecurityContext, $mockFirewall, $mockRequestHashService, $mockSecurityLogger);
+		$dispatchingAspect = new \F3\FLOW3\Security\Aspect\RequestDispatchingAspect($mockSecurityContext, $mockFirewall, $mockSecurityLogger);
 		$dispatchingAspect->blockIllegalRequestsAndForwardToAuthenticationEntryPoints($mockJoinPoint);
 	}
 
@@ -105,15 +102,12 @@ class RequestDispatchingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 		};
 
 		$getExceptionCallback = function() use (&$exception) {
-			$args = func_get_args();
-
 			return $exception;
 		};
 
 		$mockSecurityLogger = $this->getMock('F3\FLOW3\Log\SecurityLoggerInterface', array(), array(), '', FALSE);
 		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
 		$mockFirewall = $this->getMock('F3\FLOW3\Security\Authorization\FirewallInterface');
-		$mockRequestHashService = $this->getMock('F3\FLOW3\Security\Channel\RequestHashService');
 		$mockContext = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
 		$mockToken = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), '', FALSE);
 		$mockEntryPoint = $this->getMock('F3\FLOW3\Security\Authentication\EntryPointInterface', array(), array(), '', FALSE);
@@ -131,7 +125,7 @@ class RequestDispatchingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockEntryPoint->expects($this->once())->method('canForward')->will($this->returnValue(TRUE));
 		$mockEntryPoint->expects($this->once())->method('startAuthentication')->with($this->equalTo($request), $this->equalTo($response));
 
-		$dispatchingAspect = new \F3\FLOW3\Security\Aspect\RequestDispatchingAspect($mockContext, $mockFirewall, $mockRequestHashService, $mockSecurityLogger);
+		$dispatchingAspect = new \F3\FLOW3\Security\Aspect\RequestDispatchingAspect($mockContext, $mockFirewall, $mockSecurityLogger);
 		$dispatchingAspect->blockIllegalRequestsAndForwardToAuthenticationEntryPoints($mockJoinPoint);
 	}
 
@@ -153,15 +147,12 @@ class RequestDispatchingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 		};
 
 		$getExceptionCallback = function() use (&$exception) {
-			$args = func_get_args();
-
 			return $exception;
 		};
 
 		$mockSecurityLogger = $this->getMock('F3\FLOW3\Log\SecurityLoggerInterface', array(), array(), '', FALSE);
 		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
 		$mockFirewall = $this->getMock('F3\FLOW3\Security\Authorization\FirewallInterface');
-		$mockRequestHashService = $this->getMock('F3\FLOW3\Security\Channel\RequestHashService');
 		$mockContext = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
 		$mockToken = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), '', FALSE);
 
@@ -176,7 +167,7 @@ class RequestDispatchingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockContext->expects($this->atLeastOnce())->method('getAuthenticationTokens')->will($this->returnValue(array($mockToken)));
 		$mockToken->expects($this->once())->method('getAuthenticationEntryPoint')->will($this->returnValue(NULL));
 
-		$dispatchingAspect = new \F3\FLOW3\Security\Aspect\RequestDispatchingAspect($mockContext, $mockFirewall, $mockRequestHashService, $mockSecurityLogger);
+		$dispatchingAspect = new \F3\FLOW3\Security\Aspect\RequestDispatchingAspect($mockContext, $mockFirewall, $mockSecurityLogger);
 		$dispatchingAspect->blockIllegalRequestsAndForwardToAuthenticationEntryPoints($mockJoinPoint);
 	}
 }
