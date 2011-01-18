@@ -309,6 +309,18 @@ class ObjectAccessTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function isPropertyGettableWorksOnArrayAccessObjects() {
+		$arrayObject = new \ArrayObject();
+		$arrayObject['key'] = 'v';
+
+		$this->assertTrue(\F3\FLOW3\Reflection\ObjectAccess::isPropertyGettable($arrayObject, 'key'));
+		$this->assertFalse(\F3\FLOW3\Reflection\ObjectAccess::isPropertyGettable($arrayObject, 'undefinedKey'));
+	}
+
+	/**
+	 * @test
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function isPropertyGettableWorksOnStdClass() {

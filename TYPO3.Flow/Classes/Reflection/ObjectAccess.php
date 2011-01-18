@@ -92,7 +92,7 @@ class ObjectAccess {
 
 	/**
 	 * Gets a property path from a given object or array.
-	 * 
+	 *
 	 * If propertyPath is "bla.blubb", then we first call getProperty($object, 'bla'),
 	 * and on the resulting object we call getProperty(..., 'blubb').
 	 *
@@ -262,6 +262,8 @@ class ObjectAccess {
 		if ($object instanceof \stdClass && array_search($propertyName, array_keys(get_object_vars($object))) !== FALSE) {
 			return TRUE;
 		} elseif (array_search($propertyName, array_keys(get_class_vars(get_class($object)))) !== FALSE) {
+			return TRUE;
+		} elseif ($object instanceof \ArrayAccess && isset($object[$propertyName]) === TRUE) {
 			return TRUE;
 		}
 		if (is_callable(array($object, 'get' . ucfirst($propertyName)))) return TRUE;
