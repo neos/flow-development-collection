@@ -113,5 +113,25 @@ class RequestDispatchingAspect {
 			}
 		}
 	}
+
+	/**
+	 * Advices the dispatch method so that access denied exceptions are transformed into the correct
+	 * response status.
+	 *
+	 * @around method(F3\FLOW3\MVC\Dispatcher->dispatch()) && setting(FLOW3.security.enable)
+	 * @param F3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
+	 * @return mixed Result of the advice chain
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function setAccessDeniedResponseHeader(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+		$response = $joinPoint->getMethodArgument('response');
+
+		try {
+			return $joinPoint->getAdviceChain()->proceed($joinPoint);
+		} catch (\F3\FLOW3\Security\Exception\AccessDeniedException $exception) {
+			if ($response instanceof \F3\FLOW3\MVC\Web\Response) $response->setStatus(403);
+			$response->setContent('Access denied!');
+		}
+	}
  }
 ?>
