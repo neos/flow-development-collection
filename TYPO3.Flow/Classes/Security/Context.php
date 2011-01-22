@@ -176,12 +176,19 @@ class Context {
 	 */
 	public function initialize(\F3\FLOW3\MVC\RequestInterface $request) {
 		$this->request = $request;
-
-		$mergedTokens = $this->mergeTokens($this->filterInactiveTokens($this->authenticationManager->getTokens(), $request), $this->tokens);
-
-		$this->updateTokens($mergedTokens);
-		$this->tokens = $mergedTokens;
+		$this->tokens = $this->mergeTokens($this->authenticationManager->getTokens(), $this->tokens);
 		$this->separateActiveAndInactiveTokens();
+		$this->updateTokens($this->activeTokens);
+	}
+
+	/**
+	 * Get the token authentication strategy
+	 *
+	 * @return int One of the AUTHENTICATE_* constants
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function getAuthenticationStrategy() {
+		return $this->authenticationStrategy;
 	}
 
 	/**
@@ -395,7 +402,7 @@ class Context {
 			if (!is_array($sessionTokens)) continue;
 
 			foreach ($sessionTokens as $sessionToken) {
-				if (get_class($sessionToken) === get_class($managerToken)) {
+				if ($sessionToken->getAuthenticationProviderName() === $managerToken->getAuthenticationProviderName()) {
 					$resultTokens[$sessionToken->getAuthenticationProviderName()] = $sessionToken;
 					$noCorrespondingSessionTokenFound = FALSE;
 				}
@@ -405,37 +412,6 @@ class Context {
 		}
 
 		return $resultTokens;
-	}
-
-	/**
-	 * Filters all tokens that don't match for the given request.
-	 *
-	 * @param array $tokens The token array to be filtered
-	 * @param F3\FLOW3\MVC\RequestInterface $request The request object
-	 * @return array The filtered token array
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	protected function filterInactiveTokens(array $tokens, \F3\FLOW3\MVC\RequestInterface $request) {
-		$activeTokens = array();
-
-		foreach ($tokens as $token) {
-			if ($token->hasRequestPatterns()) {
-				$requestPatterns = $token->getRequestPatterns();
-				$tokenIsActive = TRUE;
-
-				foreach ($requestPatterns as $requestPattern) {
-					if ($requestPattern->canMatch($request)) {
-						$tokenIsActive &= $requestPattern->matchRequest($request);
-					}
-				}
-				if ($tokenIsActive) $activeTokens[$token->getAuthenticationProviderName()] = $token;
-
-			} else {
-				$activeTokens[$token->getAuthenticationProviderName()] = $token;
-			}
-		}
-
-		return $activeTokens;
 	}
 
 	/**
@@ -459,16 +435,6 @@ class Context {
 	 */
 	public function shutdownObject() {
 		$this->tokens = array_merge($this->inactiveTokens, $this->activeTokens);
-	}
-
-	/**
-	 * Get the token authentication strategy
-	 *
-	 * @return int One of the AUTHENTICATE_* constants
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 */
-	public function getAuthenticationStrategy() {
-		return $this->authenticationStrategy;
 	}
 }
 
