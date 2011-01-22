@@ -34,16 +34,6 @@ class PersistedUsernamePasswordProviderTest extends \F3\FLOW3\Tests\UnitTestCase
 	 * @category unit
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function getTokenClassNamesReturnsTheCorrectClassNames() {
-		$usernamePasswordProvider = new \F3\FLOW3\Security\Authentication\Provider\PersistedUsernamePasswordProvider('myProvider', array());
-		$this->assertEquals(array('F3\FLOW3\Security\Authentication\Token\UsernamePassword'), $usernamePasswordProvider->getTokenClassNames());
-	}
-
-	/**
-	 * @test
-	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
 	public function authenticatingAnUsernamePasswordTokenChecksIfTheGivenClearTextPasswordMatchesThePersistedHashedPassword() {
 		$mockHashService = $this->getMock('F3\FLOW3\Security\Cryptography\HashService');
 		$mockHashService->expects($this->once())->method('validateSaltedMd5')->with('password', '8bf0abbb93000e2e47f0e0a80721e834,80f117a78cff75f3f73793fd02aa9086')->will($this->returnValue(TRUE));

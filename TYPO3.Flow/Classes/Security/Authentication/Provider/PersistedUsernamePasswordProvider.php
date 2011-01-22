@@ -100,7 +100,7 @@ class PersistedUsernamePasswordProvider implements \F3\FLOW3\Security\Authentica
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getTokenClassNames() {
-		return array('F3\FLOW3\Security\Authentication\Token\UsernamePassword');
+		return array('F3\FLOW3\Security\Authentication\Token\UsernamePassword', 'F3\FLOW3\Security\Authentication\Token\UsernamePasswordHttpBasic');
 	}
 
 	/**
