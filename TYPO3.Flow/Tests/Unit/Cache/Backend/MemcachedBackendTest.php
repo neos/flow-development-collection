@@ -248,14 +248,12 @@ class MemcachedBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function flushRemovesOnlyOwnEntries() {
-		$mockSystemLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
 		$backendOptions = array('servers' => array('localhost:11211'));
 
 		$thisCache = $this->getMock('F3\FLOW3\Cache\Frontend\AbstractFrontend', array(), array(), '', FALSE);
 		$thisCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('thisCache'));
 		$thisBackend = new \F3\FLOW3\Cache\Backend\MemcachedBackend('Testing', $backendOptions);
 		$thisBackend->injectEnvironment($this->environment);
-		$thisBackend->injectSystemLogger($mockSystemLogger);
 		$thisBackend->setCache($thisCache);
 		$thisBackend->initializeObject();
 
@@ -263,7 +261,6 @@ class MemcachedBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$thatCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('thatCache'));
 		$thatBackend = new \F3\FLOW3\Cache\Backend\MemcachedBackend('Testing', $backendOptions);
 		$thatBackend->injectEnvironment($this->environment);
-		$thatBackend->injectSystemLogger($mockSystemLogger);
 		$thatBackend->setCache($thatCache);
 		$thatBackend->initializeObject();
 
@@ -301,14 +298,12 @@ class MemcachedBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function setUpBackend(array $backendOptions = array()) {
-		$mockSystemLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
 		$cache = $this->getMock('F3\FLOW3\Cache\Frontend\FrontendInterface', array(), array(), '', FALSE);
 		if ($backendOptions == array()) {
 			$backendOptions = array('servers' => array('localhost:11211'));
 		}
 		$backend = new \F3\FLOW3\Cache\Backend\MemcachedBackend('Testing', $backendOptions);
 		$backend->injectEnvironment($this->environment);
-		$backend->injectSystemLogger($mockSystemLogger);
 		$backend->setCache($cache);
 		$backend->initializeObject();
 		return $backend;

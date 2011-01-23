@@ -219,20 +219,16 @@ class ApcBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function flushRemovesOnlyOwnEntries() {
-		$mockSystemLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
-
 		$thisCache = $this->getMock('F3\FLOW3\Cache\Frontend\FrontendInterface', array(), array(), '', FALSE);
 		$thisCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('thisCache'));
 		$thisBackend = new \F3\FLOW3\Cache\Backend\ApcBackend('Testing');
 		$thisBackend->injectEnvironment($this->environment);
-		$thisBackend->injectSystemLogger($mockSystemLogger);
 		$thisBackend->setCache($thisCache);
 
 		$thatCache = $this->getMock('F3\FLOW3\Cache\Frontend\FrontendInterface', array(), array(), '', FALSE);
 		$thatCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('thatCache'));
 		$thatBackend = new \F3\FLOW3\Cache\Backend\ApcBackend('Testing');
 		$thatBackend->injectEnvironment($this->environment);
-		$thatBackend->injectSystemLogger($mockSystemLogger);
 		$thatBackend->setCache($thatCache);
 
 		$thisBackend->set('thisEntry', 'Hello');
@@ -267,11 +263,9 @@ class ApcBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function setUpBackend() {
-		$mockSystemLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
 		$cache = $this->getMock('F3\FLOW3\Cache\Frontend\FrontendInterface', array(), array(), '', FALSE);
 		$backend = new \F3\FLOW3\Cache\Backend\ApcBackend('Testing');
 		$backend->injectEnvironment($this->environment);
-		$backend->injectSystemLogger($mockSystemLogger);
 		$backend->setCache($cache);
 		return $backend;
 	}

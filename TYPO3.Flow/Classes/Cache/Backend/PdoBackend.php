@@ -32,21 +32,6 @@ namespace F3\FLOW3\Cache\Backend;
 class PdoBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
-	 */
-	protected $objectManager;
-
-	/**
-	 * @var \F3\FLOW3\Utility\Environment
-	 */
-	protected $environment;
-
-	/**
-	 * @var \F3\FLOW3\Log\SystemLoggerInterface
-	 */
-	protected $systemLogger;
-
-	/**
 	 * @var string
 	 */
 	protected $dataSourceName;
@@ -76,39 +61,6 @@ class PdoBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @var string
 	 */
 	protected $pdoDriver;
-
-	/**
-	 * Injects the Object Manager
-	 *
-	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
-		$this->objectManager = $objectManager;
-	}
-
-	/**
-	 * Injects the environment utility
-	 *
-	 * @param \F3\FLOW3\Utility\Environment $environment
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function injectEnvironment(\F3\FLOW3\Utility\Environment $environment) {
-		$this->environment = $environment;
-	}
-
-	/**
-	 * Injects the system logger
-	 *
-	 * @param \F3\FLOW3\Log\SystemLoggerInterface $systemLogger
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function injectSystemLogger(\F3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
-		$this->systemLogger = $systemLogger;
-	}
 
 	/**
 	 * Sets the DSN to use
@@ -187,7 +139,6 @@ class PdoBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	public function set($entryIdentifier, $data, array $tags = array(), $lifetime = NULL) {
 		if (!$this->cache instanceof \F3\FLOW3\Cache\Frontend\FrontendInterface) throw new \F3\FLOW3\Cache\Exception('No cache frontend has been set yet via setCache().', 1259515600);
 		if (!is_string($data)) throw new \F3\FLOW3\Cache\Exception\InvalidDataException('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1259515601);
-		$this->systemLogger->log(sprintf('Cache %s: setting entry "%s".', $this->cacheIdentifier, $entryIdentifier), LOG_DEBUG);
 
 		if ($this->has($entryIdentifier)) {
 			$this->remove($entryIdentifier);
@@ -245,8 +196,6 @@ class PdoBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @api
 	 */
 	public function remove($entryIdentifier) {
-		$this->systemLogger->log(sprintf('Cache %s: removing entry "%s".', $this->cacheIdentifier, $entryIdentifier), LOG_DEBUG);
-
 		$statementHandle = $this->databaseHandle->prepare('DELETE FROM "tags" WHERE "identifier"=? AND "scope"=? AND "cache"=?');
 		$statementHandle->execute(array($entryIdentifier, $this->scope, $this->cacheIdentifier));
 
@@ -282,7 +231,6 @@ class PdoBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	public function flushByTag($tag) {
 		$statementHandle = $this->databaseHandle->prepare('DELETE FROM "cache" WHERE "scope"=? AND "cache"=? AND "identifier" IN (SELECT "identifier" FROM "tags" WHERE "scope"=? AND "cache"=? AND "tag"=?)');
 		$statementHandle->execute(array($this->scope, $this->cacheIdentifier,$this->scope, $this->cacheIdentifier, $tag));
-		$this->systemLogger->log(sprintf('Cache %s: removing %s entries matching tag "%s"', $this->cacheIdentifier, $statementHandle->rowCount(), $tag), LOG_INFO);
 
 		$statementHandle = $this->databaseHandle->prepare('DELETE FROM "tags" WHERE "scope"=? AND "cache"=? AND "tag"=?');
 		$statementHandle->execute(array($this->scope, $this->cacheIdentifier, $tag));
@@ -316,8 +264,6 @@ class PdoBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 
 		$statementHandle = $this->databaseHandle->prepare('DELETE FROM "cache" WHERE "scope"=? AND "cache"=? AND "lifetime" > 0 AND "created" + "lifetime" < ' . time());
 		$statementHandle->execute(array($this->scope, $this->cacheIdentifier));
-
-		$this->systemLogger->log(sprintf('Cache %s: removed %s entries during garbage collection', $this->cacheIdentifier, $statementHandle->rowCount()), LOG_INFO);
 	}
 
 	/**

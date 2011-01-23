@@ -32,6 +32,14 @@ namespace F3\FLOW3\Cache\Backend;
 interface BackendInterface {
 
 	/**
+	 * Injects the Environment object
+	 *
+	 * @param \F3\FLOW3\Utility\Environment $environment
+	 * @return void
+	 */
+	public function injectEnvironment(\F3\FLOW3\Utility\Environment $environment);
+
+	/**
 	 * Sets a reference to the cache frontend which uses this backend
 	 *
 	 * @param \F3\FLOW3\Cache\Frontend\FrontendInterface $cache The frontend for this backend

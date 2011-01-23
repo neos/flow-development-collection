@@ -235,13 +235,11 @@ class PdoBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	protected function setUpBackend() {
 		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment');
 
-		$mockSystemLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
 		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\FrontendInterface', array(), array(), '', FALSE);
 		$mockCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('TestCache'));
 
 		$backend = new \F3\FLOW3\Cache\Backend\PdoBackend('Testing');
 		$backend->injectEnvironment($mockEnvironment);
-		$backend->injectSystemLogger($mockSystemLogger);
 		$backend->setCache($mockCache);
 		$backend->setDataSourceName('sqlite::memory:');
 		$backend->initializeObject();

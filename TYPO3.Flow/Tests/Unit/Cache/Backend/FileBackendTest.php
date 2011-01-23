@@ -111,8 +111,6 @@ class FileBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\AbstractFrontend', array(), array(), '', FALSE);
 		$mockCache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
 
-		$mockLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
-
 		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
 		$mockEnvironment->expects($this->any())->method('getMaximumPathLength')->will($this->returnValue(255));
 		$mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue('vfs://Foo/'));
@@ -122,7 +120,6 @@ class FileBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$pathAndFilename = 'vfs://Foo/Cache/UnitTestCache/' . '/' . $entryIdentifier;
 
 		$backend = $this->getMock('F3\FLOW3\Cache\Backend\FileBackend', array('dummy'), array(), '', FALSE);
-		$backend->injectSystemLogger($mockLogger);
 		$backend->injectEnvironment($mockEnvironment);
 		$backend->setCache($mockCache);
 
@@ -141,8 +138,6 @@ class FileBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\AbstractFrontend', array(), array(), '', FALSE);
 		$mockCache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
 
-		$mockLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
-
 		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
 		$mockEnvironment->expects($this->any())->method('getMaximumPathLength')->will($this->returnValue(255));
 		$mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue('vfs://Foo/'));
@@ -152,7 +147,6 @@ class FileBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$entryIdentifier = 'BackendFileRemoveBeforeSetTest';
 
 		$backend = $this->getMock('F3\FLOW3\Cache\Backend\FileBackend', array('dummy'), array(), '', FALSE);
-		$backend->injectSystemLogger($mockLogger);
 		$backend->injectEnvironment($mockEnvironment);
 		$backend->setCache($mockCache);
 
@@ -173,8 +167,6 @@ class FileBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\AbstractFrontend', array(), array(), '', FALSE);
 		$mockCache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
 
-		$mockLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
-
 		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
 		$mockEnvironment->expects($this->any())->method('getMaximumPathLength')->will($this->returnValue(255));
 		$mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue('vfs://Foo/'));
@@ -183,7 +175,6 @@ class FileBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$entryIdentifier = 'BackendFileRemoveBeforeSetTest';
 
 		$backend = $this->getMock('F3\FLOW3\Cache\Backend\FileBackend', array('dummy'), array(), '', FALSE);
-		$backend->injectSystemLogger($mockLogger);
 		$backend->injectEnvironment($mockEnvironment);
 		$backend->setCache($mockCache);
 
@@ -205,8 +196,6 @@ class FileBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\AbstractFrontend', array(), array(), '', FALSE);
 		$mockCache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue($cacheIdentifier));
 
-		$mockLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
-
 		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
 		$mockEnvironment->expects($this->any())->method('getMaximumPathLength')->will($this->returnValue(5));
 		$mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue('vfs://Foo/'));
@@ -214,7 +203,6 @@ class FileBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$entryIdentifier = 'BackendFileTest';
 
 		$backend = $this->getMock('F3\FLOW3\Cache\Backend\FileBackend', array('setTag'), array(), '', FALSE);
-		$backend->injectSystemLogger($mockLogger);
 		$backend->injectEnvironment($mockEnvironment);
 		$backend->setCache($mockCache);
 
@@ -229,14 +217,11 @@ class FileBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\AbstractFrontend', array(), array(), '', FALSE);
 		$mockCache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
 
-		$mockLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
-
 		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
 		$mockEnvironment->expects($this->any())->method('getMaximumPathLength')->will($this->returnValue(255));
 		$mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue('vfs://Foo/'));
 
 		$backend = $this->getMock('F3\FLOW3\Cache\Backend\FileBackend', array('setTag'), array(), '', FALSE);
-		$backend->injectSystemLogger($mockLogger);
 		$backend->injectEnvironment($mockEnvironment);
 		$backend->setCache($mockCache);
 
@@ -284,11 +269,8 @@ class FileBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\AbstractFrontend', array(), array(), '', FALSE);
 		$mockCache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
 
-		$mockLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
-
 		$backend = $this->getMock('F3\FLOW3\Cache\Backend\FileBackend', array('dummy'), array(), '', FALSE);
 		$backend->injectEnvironment($mockEnvironment);
-		$backend->injectSystemLogger($mockLogger);
 		$backend->setCache($mockCache);
 
 		$entryIdentifier = 'BackendFileTest';
@@ -321,8 +303,6 @@ class FileBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\AbstractFrontend', array(), array(), '', FALSE);
 		$mockCache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
 
-		$mockLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
-
 		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
 		$mockEnvironment->expects($this->any())->method('getMaximumPathLength')->will($this->returnValue(255));
 		$mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue('vfs://Foo/'));
@@ -332,7 +312,6 @@ class FileBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$pathAndFilename = 'vfs://Foo/Cache/UnitTestCache/' . '/' . $entryIdentifier;
 
 		$backend = $this->getMock('F3\FLOW3\Cache\Backend\FileBackend', array('dummy'), array(), '', FALSE);
-		$backend->injectSystemLogger($mockLogger);
 		$backend->injectEnvironment($mockEnvironment);
 		$backend->setCache($mockCache);
 
@@ -373,14 +352,11 @@ class FileBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\AbstractFrontend', array(), array(), '', FALSE);
 		$mockCache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
 
-		$mockLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
-
 		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
 		$mockEnvironment->expects($this->any())->method('getMaximumPathLength')->will($this->returnValue(255));
 		$mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue('vfs://Foo/'));
 
 		$backend = $this->getMock('F3\FLOW3\Cache\Backend\FileBackend', array('dummy'), array(), '', FALSE);
-		$backend->injectSystemLogger($mockLogger);
 		$backend->injectEnvironment($mockEnvironment);
 		$backend->setCache($mockCache);
 
@@ -430,14 +406,11 @@ class FileBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\AbstractFrontend', array(), array(), '', FALSE);
 		$mockCache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
 
-		$mockLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
-
 		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
 		$mockEnvironment->expects($this->any())->method('getMaximumPathLength')->will($this->returnValue(255));
 		$mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue('vfs://Foo/'));
 
 		$backend = $this->getMock('F3\FLOW3\Cache\Backend\FileBackend', array('dummy'), array(), '', FALSE);
-		$backend->injectSystemLogger($mockLogger);
 		$backend->injectEnvironment($mockEnvironment);
 		$backend->setCache($mockCache);
 
@@ -454,14 +427,11 @@ class FileBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\AbstractFrontend', array(), array(), '', FALSE);
 		$mockCache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
 
-		$mockLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
-
 		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
 		$mockEnvironment->expects($this->any())->method('getMaximumPathLength')->will($this->returnValue(255));
 		$mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue('vfs://Foo/'));
 
 		$backend = $this->getMock('F3\FLOW3\Cache\Backend\FileBackend', array('dummy'), array(), '', FALSE);
-		$backend->injectSystemLogger($mockLogger);
 		$backend->injectEnvironment($mockEnvironment);
 		$backend->setCache($mockCache);
 
@@ -476,14 +446,11 @@ class FileBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\AbstractFrontend', array(), array(), '', FALSE);
 		$mockCache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
 
-		$mockLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
-
 		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
 		$mockEnvironment->expects($this->any())->method('getMaximumPathLength')->will($this->returnValue(255));
 		$mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue('vfs://Foo/'));
 
 		$backend = $this->getMock('F3\FLOW3\Cache\Backend\FileBackend', array('dummy'), array(), '', FALSE);
-		$backend->injectSystemLogger($mockLogger);
 		$backend->injectEnvironment($mockEnvironment);
 		$backend->setCache($mockCache);
 
@@ -508,14 +475,11 @@ class FileBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\AbstractFrontend', array(), array(), '', FALSE);
 		$mockCache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
 
-		$mockLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
-
 		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
 		$mockEnvironment->expects($this->any())->method('getMaximumPathLength')->will($this->returnValue(255));
 		$mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue('vfs://Foo/'));
 
 		$backend = $this->getMock('F3\FLOW3\Cache\Backend\FileBackend', array('dummy'), array(), '', FALSE);
-		$backend->injectSystemLogger($mockLogger);
 		$backend->injectEnvironment($mockEnvironment);
 		$backend->setCache($mockCache);
 
@@ -536,14 +500,11 @@ class FileBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\AbstractFrontend', array(), array(), '', FALSE);
 		$mockCache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
 
-		$mockLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
-
 		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
 		$mockEnvironment->expects($this->any())->method('getMaximumPathLength')->will($this->returnValue(255));
 		$mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue('vfs://Foo/'));
 
 		$backend = $this->getMock('F3\FLOW3\Cache\Backend\FileBackend', array('dummy'), array(), '', FALSE);
-		$backend->injectSystemLogger($mockLogger);
 		$backend->injectEnvironment($mockEnvironment);
 		$backend->setCache($mockCache);
 
@@ -565,10 +526,7 @@ class FileBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function flushByTagRemovesCacheEntriesWithSpecifiedTag() {
-		$mockLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
-
 		$backend = $this->getMock('F3\FLOW3\Cache\Backend\FileBackend', array('findIdentifiersByTag', 'remove'), array(), '', FALSE);
-		$backend->injectSystemLogger($mockLogger);
 
 		$backend->expects($this->once())->method('findIdentifiersByTag')->with('UnitTestTag%special')->will($this->returnValue(array('foo', 'bar', 'baz')));
 		$backend->expects($this->at(1))->method('remove')->with('foo');

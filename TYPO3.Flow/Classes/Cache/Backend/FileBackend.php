@@ -46,36 +46,11 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend implements \F3
 	protected $cacheDirectory = '';
 
 	/**
-	 * @var \F3\FLOW3\Utility\Environment
-	 */
-	protected $environment;
-
-	/**
-	 * @var \F3\FLOW3\Log\SystemLoggerInterface
-	 */
-	protected $systemLogger;
-
-	/**
-	 * Injects the environment utility
+	 * A file extension to use for each cache entry.
 	 *
-	 * @param \F3\FLOW3\Utility\Environment $environment
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @var string
 	 */
-	public function injectEnvironment(\F3\FLOW3\Utility\Environment $environment) {
-		$this->environment = $environment;
-	}
-
-	/**
-	 * Injects the system logger
-	 *
-	 * @param \F3\FLOW3\Log\SystemLoggerInterface $systemLogger
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function injectSystemLogger(\F3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
-		$this->systemLogger = $systemLogger;
-	}
+	protected $cacheEntryFileExtension = '';
 
 	/**
 	 * Sets a reference to the cache frontend which uses this backend and
@@ -100,6 +75,7 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend implements \F3
 		if (!is_writable($cacheDirectory)) throw new \F3\FLOW3\Cache\Exception('The cache directory "' . $cacheDirectory . '" is not writable.', 1203965200);
 
 		$this->cacheDirectory = $cacheDirectory;
+		$this->cacheEntryFileExtension = ($cache instanceof \F3\FLOW3\Cache\Frontend\PhpFrontend) ? '.php' : '';
 	}
 
 	/**
@@ -129,6 +105,7 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend implements \F3
 		if (!$this->cache instanceof \F3\FLOW3\Cache\Frontend\FrontendInterface) throw new \F3\FLOW3\Cache\Exception('No cache frontend has been set yet via setCache().', 1204111375);
 		if (!is_string($data)) throw new \F3\FLOW3\Cache\Exception\InvalidDataException('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1204481674);
 		if ($entryIdentifier !== basename($entryIdentifier)) throw new \InvalidArgumentException('The specified entry identifier must not contain a path segment.', 1282073032);
+		if ($entryIdentifier === '') throw new \InvalidArgumentException('The specified entry identifier must not be empty.', 1298114280);
 
 		$this->remove($entryIdentifier);
 
@@ -143,13 +120,11 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend implements \F3
 
 		if ($result === FALSE) throw new \F3\FLOW3\Cache\Exception('The temporary cache file "' . $temporaryCacheEntryPathAndFilename . '" could not be written.', 1204026251);
 		$i = 0;
-		$cacheEntryPathAndFilename = $this->cacheDirectory . $entryIdentifier;
+		$cacheEntryPathAndFilename = $this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension;
 		while (!rename($temporaryCacheEntryPathAndFilename, $cacheEntryPathAndFilename) && $i < 5) {
 			$i++;
 		}
 		if ($result === FALSE) throw new \F3\FLOW3\Cache\Exception('The cache file "' . $cacheEntryPathAndFilename . '" could not be written.', 1222361632);
-
-		$this->systemLogger->log(sprintf('Cache %s: set entry "%s".', $this->cacheIdentifier, $entryIdentifier), LOG_DEBUG);
 	}
 
 	/**
@@ -164,7 +139,7 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend implements \F3
 	public function get($entryIdentifier) {
 		if ($entryIdentifier !== basename($entryIdentifier)) throw new \InvalidArgumentException('The specified entry identifier must not contain a path segment.', 1282073033);
 
-		$pathAndFilename = $this->cacheDirectory . $entryIdentifier;
+		$pathAndFilename = $this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension;
 		if ($this->isCacheFileExpired($pathAndFilename)) {
 			return FALSE;
 		}
@@ -197,16 +172,15 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend implements \F3
 	 */
 	public function remove($entryIdentifier) {
 		if ($entryIdentifier !== basename($entryIdentifier)) throw new \InvalidArgumentException('The specified entry identifier must not contain a path segment.', 1282073035);
+		if ($entryIdentifier === '') throw new \InvalidArgumentException('The specified entry identifier must not be empty.', 1298114279);
 
-		$pathAndFilename = $this->cacheDirectory . $entryIdentifier;
+		$pathAndFilename = $this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension;
 		if (!file_exists($pathAndFilename)) return FALSE;
 		if (unlink($pathAndFilename) === FALSE) return FALSE;
 		foreach($this->findTagFilesByEntry($entryIdentifier) as $pathAndFilename) {
 			if (!file_exists($pathAndFilename)) return FALSE;
 			if (unlink($pathAndFilename) === FALSE) return FALSE;
 		}
-
-		$this->systemLogger->log(sprintf('Cache %s: removed entry "%s".', $this->cacheIdentifier, $entryIdentifier), LOG_DEBUG);
 		return TRUE;
 	}
 
@@ -222,6 +196,7 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend implements \F3
 	public function findIdentifiersByTag($searchedTag) {
 		$entryIdentifiers = array();
 		$now = time();
+		$cacheEntryFileExtensionLength = strlen($this->cacheEntryFileExtension);
 		for($directoryIterator = new \DirectoryIterator($this->cacheDirectory); $directoryIterator->valid(); $directoryIterator->next()) {
 			if ($directoryIterator->isDot()) continue;
 
@@ -232,7 +207,11 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend implements \F3
 			$expiryTime = (integer)substr($metaData, 0, self::EXPIRYTIME_LENGTH);
 			if ($expiryTime !== 0 && $expiryTime < $now) continue;
 			if (in_array($searchedTag, explode(' ', substr($metaData, self::EXPIRYTIME_LENGTH, -self::DATASIZE_DIGITS)))) {
-				$entryIdentifiers[] = $directoryIterator->getFilename();
+				if ($cacheEntryFileExtensionLength > 0) {
+					$entryIdentifiers[] = substr ($directoryIterator->getFilename(), 0, - $cacheEntryFileExtensionLength);
+				} else {
+					$entryIdentifiers[] = $directoryIterator->getFilename();
+				}
 			}
 		}
 		return $entryIdentifiers;
@@ -247,7 +226,6 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend implements \F3
 	 */
 	public function flush() {
 		\F3\FLOW3\Utility\Files::emptyDirectoryRecursively($this->cacheDirectory);
-		$this->systemLogger->log(sprintf('Cache %s: flushed all entries.', $this->cacheIdentifier), LOG_INFO);
 	}
 
 	/**
@@ -265,7 +243,6 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend implements \F3
 		foreach ($identifiers as $entryIdentifier) {
 			$this->remove($entryIdentifier);
 		}
-		$this->systemLogger->log(sprintf('Cache %s: removed %s entries matching tag "%s"', $this->cacheIdentifier, count($identifiers), $tag), LOG_INFO);
 	}
 
 	/**
@@ -302,7 +279,6 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend implements \F3
 				$this->remove(basename($cacheFilename));
 			}
 		}
-		$this->systemLogger->log(sprintf('Cache %s: removed %s files during garbage collection', $this->cacheIdentifier, count($filesFound)), LOG_INFO);
 	}
 
 	/**
@@ -351,7 +327,7 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend implements \F3
 	public function requireOnce($entryIdentifier) {
 		if ($entryIdentifier !== basename($entryIdentifier)) throw new \InvalidArgumentException('The specified entry identifier must not contain a path segment.', 1282073036);
 
-		$pathAndFilename = $this->cacheDirectory . $entryIdentifier;
+		$pathAndFilename = $this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension;
 		return ($this->isCacheFileExpired($pathAndFilename)) ? FALSE : require_once($pathAndFilename);
 	}
 }

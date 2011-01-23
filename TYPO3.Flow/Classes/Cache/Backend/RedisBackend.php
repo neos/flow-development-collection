@@ -141,11 +141,6 @@ class RedisBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	protected $compressionLevel = -1;
 
 	/**
-	 * @var \F3\FLOW3\Log\SystemLoggerInterface
-	 */
-	protected $systemLogger;
-
-	/**
 	 * Construct this backend
 	 *
 	 * @param string $context FLOW3's application context
@@ -175,7 +170,7 @@ class RedisBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 		try {
 			$this->connected = $this->redis->connect($this->hostname, $this->port);
 		} catch (Exception $e) {
-			$this->systemLogger->log('Unable to connect to redis server.', LOG_WARNING);
+			throw new \F3\FLOW3\Cache\Exception('Could not connect to redis server.', 1294734537, $e);
 		}
 
 		if ($this->connected) {
@@ -193,17 +188,6 @@ class RedisBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 				}
 			}
 		}
-	}
-
-	/**
-	 * Injects the system logger
-	 *
-	 * @param \F3\FLOW3\Log\SystemLoggerInterface $systemLogger
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function injectSystemLogger(\F3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
-		$this->systemLogger = $systemLogger;
 	}
 
 	/**
@@ -333,8 +317,6 @@ class RedisBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 			throw new \InvalidArgumentException('The specified lifetime "' . $lifetime . '" must be greater or equal than zero.', 1279487573);
 		}
 
-		$this->systemLogger->log(sprintf('Cache %s: setting entry "%s".', $this->cacheIdentifier, $entryIdentifier), LOG_DEBUG);
-
 		if ($this->connected) {
 			$expiration = $lifetimeIsNull ? $this->defaultLifetime : $lifetime;
 			$expiration = $expiration === 0 ? self::FAKED_UNLIMITED_LIFETIME : $expiration;
@@ -435,8 +417,6 @@ class RedisBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 			throw new \InvalidArgumentException('The specified identifier is of type "' . gettype($entryIdentifier) . '" but a string is expected.', 1279470255);
 		}
 
-		$this->systemLogger->log(sprintf('Cache %s: removing entry "%s".', $this->cacheIdentifier, $entryIdentifier), LOG_DEBUG);
-
 		$elementsDeleted = FALSE;
 		if ($this->connected) {
 			if ($this->redis->exists(self::IDENTIFIER_DATA_PREFIX . $entryIdentifier)) {
@@ -515,8 +495,6 @@ class RedisBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 		if (!is_string($tag)) {
 			throw new \InvalidArgumentException('The specified tag is of type "' . gettype($tag) . '" but a string is expected.', 1279578078);
 		}
-
-		$this->systemLogger->log(sprintf('Cache %s: removing entries matching tag "%s"', $this->cacheIdentifier, $tag), LOG_DEBUG);
 
 		if ($this->connected) {
 			$identifiers = $this->redis->sMembers(self::TAG_IDENTIFIERS_PREFIX . $tag);

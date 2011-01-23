@@ -45,11 +45,6 @@ abstract class AbstractBackend implements \F3\FLOW3\Cache\Backend\BackendInterfa
 	protected $cacheIdentifier;
 
 	/**
-	 * @var \F3\FLOW3\SignalSlot\Dispatcher
-	 */
-	protected $signalDispatcher;
-
-	/**
 	 * The current application context
 	 * @var string
 	 */
@@ -60,6 +55,11 @@ abstract class AbstractBackend implements \F3\FLOW3\Cache\Backend\BackendInterfa
 	 * @var integer
 	 */
 	protected $defaultLifetime = 3600;
+
+	/**
+	 * @var \F3\FLOW3\Utility\Environment
+	 */
+	protected $environment;
 
 	/**
 	 * Constructs this backend
@@ -84,18 +84,14 @@ abstract class AbstractBackend implements \F3\FLOW3\Cache\Backend\BackendInterfa
 	}
 
 	/**
-	 * Injects the Signal Dispatcher.
+	 * Injects the Environment object
 	 *
-	 * This is necessary because the classes of the Cache subpackage cannot be proxied
-	 * by the AOP framework because AOP itself requires caching and therefore is not
-	 * available at the time caching is initialized.
-	 *
-	 * @param \F3\FLOW3\SignalSlot\Dispatcher $signalDispatcher
+	 * @param \F3\FLOW3\Utility\Environment $environment
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectSignalDispatcher(\F3\FLOW3\SignalSlot\Dispatcher $signalDispatcher) {
-		$this->signalDispatcher = $signalDispatcher;
+	public function injectEnvironment(\F3\FLOW3\Utility\Environment $environment) {
+		$this->environment = $environment;
 	}
 
 	/**
