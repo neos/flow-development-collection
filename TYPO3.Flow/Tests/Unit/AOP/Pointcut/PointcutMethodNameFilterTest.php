@@ -125,6 +125,11 @@ class PointcutMethodNameFilterTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'saveToCache'), array(), '', FALSE, TRUE);
 		$mockReflectionService->initialize(array($className));
 
+		$mockSystemLogger = $this->getMock('F3\FLOW3\Log\Logger');
+		$mockSystemLogger->expects($this->once())->method('log')->with($this->equalTo(
+			'The argument "arg2" declared in pointcut does not exist in method ' . $className . '->somePublicMethod'
+		));
+
 		$argumentConstraints = array(
 			'arg1' => array(
 				'operator' => '==',
@@ -138,8 +143,10 @@ class PointcutMethodNameFilterTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		$methodNameFilter = new \F3\FLOW3\AOP\Pointcut\PointcutMethodNameFilter('some.*', null, $argumentConstraints);
 		$methodNameFilter->injectReflectionService($mockReflectionService);
+		$methodNameFilter->injectSystemLogger($mockSystemLogger);
 
-		$this->assertFalse($methodNameFilter->matches(__CLASS__, 'somePublicMethod', $className, 1));
+		$methodNameFilter->matches(__CLASS__, 'somePublicMethod', $className, 1);
+
 		$this->assertTrue($methodNameFilter->matches(__CLASS__, 'someOtherPublicMethod', $className, 1));
 		$this->assertTrue($methodNameFilter->matches(__CLASS__, 'someThirdMethod', $className, 1));
 	}
