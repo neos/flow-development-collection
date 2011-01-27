@@ -140,7 +140,7 @@ class PointcutFilterComposite implements \F3\FLOW3\AOP\Pointcut\PointcutFilterIn
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function hasRuntimeEvaluationsDefinition() {
-		return (count($this->runtimeEvaluationsDefinition) > 0);
+		return count($this->globalRuntimeEvaluationsDefinition) > 0 || count($this->runtimeEvaluationsDefinition) > 0;
 	}
 
 	/**

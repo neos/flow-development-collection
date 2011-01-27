@@ -542,5 +542,23 @@ class PointcutFilterCompositeTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		$this->assertEquals($expectedResult, $result, 'The wrong Code has been built.');
 	}
+
+	/**
+	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function hasRuntimeEvaluationsDefinitionConsidersGlobalAndFilterRuntimeEvaluationsDefinitions() {
+		$pointcutFilterComposite = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\AOP\Pointcut\PointcutFilterComposite'), array('dummy'), array(), '', FALSE);
+		$this->assertFalse($pointcutFilterComposite->hasRuntimeEvaluationsDefinition());
+
+		$pointcutFilterComposite->_set('globalRuntimeEvaluationsDefinition', array('foo', 'bar'));
+		$pointcutFilterComposite->_set('runtimeEvaluationsDefinition', array());
+		$this->assertTrue($pointcutFilterComposite->hasRuntimeEvaluationsDefinition());
+
+		$pointcutFilterComposite->_set('globalRuntimeEvaluationsDefinition', array());
+		$pointcutFilterComposite->_set('runtimeEvaluationsDefinition', array('bar'));
+		$this->assertTrue($pointcutFilterComposite->hasRuntimeEvaluationsDefinition());
+
+	}
 }
 ?>
