@@ -117,7 +117,7 @@ class PolicyExpressionParserTest extends \F3\FLOW3\Tests\UnitTestCase {
 				'resource2' => 'someConstraint2',
 				'resource3' => 'someConstraint3',
 			),
-			'F3\Party\Domain\Model\Party' => array(
+			'F3\Party\Domain\Model\AbstractParty' => array(
 				'anotherResource1' => 'someOtherConstraint1',
 				'anotherResource2' => 'someOtherConstraint2',
 				'anotherResource3' => 'someOtherConstraint3',
@@ -129,9 +129,9 @@ class PolicyExpressionParserTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$parser->expects($this->at(0))->method('parseSingleEntityResource')->with('resource1', $resourcesTree['F3\Party\Domain\Model\Account'])->will($this->returnValue('parsedConstraint1'));
 		$parser->expects($this->at(1))->method('parseSingleEntityResource')->with('resource2', $resourcesTree['F3\Party\Domain\Model\Account'])->will($this->returnValue('parsedConstraint2'));
 		$parser->expects($this->at(2))->method('parseSingleEntityResource')->with('resource3', $resourcesTree['F3\Party\Domain\Model\Account'])->will($this->returnValue('parsedConstraint3'));
-		$parser->expects($this->at(3))->method('parseSingleEntityResource')->with('anotherResource1', $resourcesTree['F3\Party\Domain\Model\Party'])->will($this->returnValue('parsedConstraint4'));
-		$parser->expects($this->at(4))->method('parseSingleEntityResource')->with('anotherResource2', $resourcesTree['F3\Party\Domain\Model\Party'])->will($this->returnValue('parsedConstraint5'));
-		$parser->expects($this->at(5))->method('parseSingleEntityResource')->with('anotherResource3', $resourcesTree['F3\Party\Domain\Model\Party'])->will($this->returnValue('parsedConstraint6'));
+		$parser->expects($this->at(3))->method('parseSingleEntityResource')->with('anotherResource1', $resourcesTree['F3\Party\Domain\Model\AbstractParty'])->will($this->returnValue('parsedConstraint4'));
+		$parser->expects($this->at(4))->method('parseSingleEntityResource')->with('anotherResource2', $resourcesTree['F3\Party\Domain\Model\AbstractParty'])->will($this->returnValue('parsedConstraint5'));
+		$parser->expects($this->at(5))->method('parseSingleEntityResource')->with('anotherResource3', $resourcesTree['F3\Party\Domain\Model\AbstractParty'])->will($this->returnValue('parsedConstraint6'));
 
 		$result = $parser->parseEntityResources($resourcesTree);
 
@@ -141,7 +141,7 @@ class PolicyExpressionParserTest extends \F3\FLOW3\Tests\UnitTestCase {
 				'resource2' => 'parsedConstraint2',
 				'resource3' => 'parsedConstraint3',
 			),
-			'F3\Party\Domain\Model\Party' => array(
+			'F3\Party\Domain\Model\AbstractParty' => array(
 				'anotherResource1' => 'parsedConstraint4',
 				'anotherResource2' => 'parsedConstraint5',
 				'anotherResource3' => 'parsedConstraint6',
