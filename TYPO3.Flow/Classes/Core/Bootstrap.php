@@ -648,6 +648,13 @@ class Bootstrap {
 					set_include_path($includePath . PATH_SEPARATOR . get_include_path());
 				}
 			}
+
+			if (isset($packageConfiguration['classLoader']['autoLoader'])) {
+				$autoLoaderPathAndFilename = \F3\FLOW3\Utility\Files::concatenatePaths(array($package->getPackagePath(), $packageConfiguration['classLoader']['autoLoader']));
+				if (file_exists($autoLoaderPathAndFilename)) {
+					require($autoLoaderPathAndFilename);
+				}
+			}
 		}
 	}
 }
