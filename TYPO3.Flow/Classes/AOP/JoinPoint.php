@@ -53,7 +53,7 @@ class JoinPoint implements \F3\FLOW3\AOP\JoinPointInterface {
 	protected $methodArguments;
 
 	/**
-	 * @var \F3\FLOW3\AOP\Advice\AdviceChainInterface The advice chain for this join point
+	 * @var \F3\FLOW3\AOP\Advice\AdviceChain The advice chain for this join point
 	 */
 	protected $adviceChain;
 
@@ -74,7 +74,7 @@ class JoinPoint implements \F3\FLOW3\AOP\JoinPointInterface {
 	 * @param string $className Class name of the target class this join point refers to
 	 * @param string $methodName Method name of the target method which is about to or has been invoked
 	 * @param array $methodArguments Array of method arguments which have been passed to the target method
-	 * @param \F3\FLOW3\AOP\Advice\AdviceChainInterface $adviceChain The advice chain for this join point
+	 * @param \F3\FLOW3\AOP\Advice\AdviceChain $adviceChain The advice chain for this join point
 	 * @param mixed $result The result of the method invocations (only used for After Returning advices)
 	 * @param Exception $exception The exception thrown (only used for After Throwing advices)
 	 * @return void
@@ -165,7 +165,7 @@ class JoinPoint implements \F3\FLOW3\AOP\JoinPointInterface {
 	/**
 	 * Returns the advice chain related to this join point
 	 *
-	 * @return \F3\FLOW3\AOP\Advice\AdviceChainInterface The advice chain
+	 * @return \F3\FLOW3\AOP\Advice\AdviceChain The advice chain
 	 * @api
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
