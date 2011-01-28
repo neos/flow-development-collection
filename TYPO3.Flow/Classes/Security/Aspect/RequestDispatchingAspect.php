@@ -46,24 +46,17 @@ class RequestDispatchingAspect {
 	protected $firewall;
 
 	/**
-	 * @var F3\FLOW3\Security\Channel\RequestHashService The request hash service
-	 */
-	protected $requestHashService;
-
-	/**
 	 * Constructor
 	 *
 	 * @param F3\FLOW3\Security\Context $securityContext
 	 * @param F3\FLOW3\Security\Authorization\FirewallInterface $firewall
-	 * @param F3\FLOW3\Security\Channel\RequestHashService $requestHashService
 	 * @param F3\FLOW3\Log\SecurityLoggerInterface $securityLogger
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(\F3\FLOW3\Security\Context $securityContext, \F3\FLOW3\Security\Authorization\FirewallInterface $firewall, 
-			\F3\FLOW3\Security\Channel\RequestHashService $requestHashService, \F3\FLOW3\Log\SecurityLoggerInterface $securityLogger) {
+	public function __construct(\F3\FLOW3\Security\Context $securityContext, \F3\FLOW3\Security\Authorization\FirewallInterface $firewall,
+			\F3\FLOW3\Log\SecurityLoggerInterface $securityLogger) {
 		$this->securityContext = $securityContext;
 		$this->firewall = $firewall;
-		$this->requestHashService = $requestHashService;
 		$this->securityLogger = $securityLogger;
 	}
 
