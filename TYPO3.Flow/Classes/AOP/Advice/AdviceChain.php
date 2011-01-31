@@ -64,7 +64,7 @@ class AdviceChain {
 	 * @return mixed Result of the advice or the original method of the target class
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function &proceed(\F3\FLOW3\AOP\JoinPointInterface &$joinPoint) {
+	public function proceed(\F3\FLOW3\AOP\JoinPointInterface &$joinPoint) {
 		$this->adviceIndex++;
 		if ($this->adviceIndex < count($this->advices)) {
 			$result = $this->advices[$this->adviceIndex]->invoke($joinPoint);
