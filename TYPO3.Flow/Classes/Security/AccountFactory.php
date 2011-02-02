@@ -25,7 +25,7 @@ namespace F3\FLOW3\Security;
 /**
  * A factory for conveniently creating new accounts
  *
- * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class AccountFactory {
 
@@ -41,9 +41,9 @@ class AccountFactory {
 	protected $hashService;
 
 	/**
-	 * Injects the object manager 
-	 * 
-	 * @param F3\FLOW3\Object\ObjectManagerInterface $objectManager 
+	 * Injects the object manager
+	 *
+	 * @param F3\FLOW3\Object\ObjectManagerInterface $objectManager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
