@@ -104,8 +104,8 @@
           <title>Example for a simple login form</title>
 
           <programlisting language="xml">&lt;form action="flow3/authenticate" method="post" name="loginform"&gt;
-  &lt;input type="text" id="username" name="F3\FLOW3\Security\Authentication\Token\UsernamePassword::username" value="" tabindex="1" /&gt;
-  &lt;input type="password" id="password" name="F3\FLOW3\Security\Authentication\Token\UsernamePassword::password" value="" tabindex="2" /&gt;
+  &lt;input type="text" id="username" name="F3[FLOW3][Security][Authentication][Token][UsernamePassword][username]" value="" tabindex="1" /&gt;
+  &lt;input type="password" id="password" name="F3[FLOW3][Security][Authentication][Token][UsernamePassword][password]" value="" tabindex="2" /&gt;
   &lt;input type="submit" value="Login" tabindex="3" /&gt;
 &lt;/form&gt;</programlisting>
         </example></para>
