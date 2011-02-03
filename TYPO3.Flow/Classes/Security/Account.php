@@ -51,7 +51,7 @@ class Account {
 	protected $credentialsSource;
 
 	/**
-	 * @var \F3\Party\Domain\Model\PartyInterface
+	 * @var \F3\Party\Domain\Model\AbstractParty
 	 */
 	protected $party;
 
@@ -143,7 +143,7 @@ class Account {
 	/**
 	 * Returns the party object this account corresponds to
 	 *
-	 * @return F3\Party\Domain\Model\PartyInterface The party object
+	 * @return F3\Party\Domain\Model\AbstractParty The party object
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getParty() {
@@ -153,11 +153,11 @@ class Account {
 	/**
 	 * Sets the corresponding party for this account
 	 *
-	 * @param F3\Party\Domain\Model\PartyInterface $party The party object
+	 * @param F3\Party\Domain\Model\AbstractParty $party The party object
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function setParty(\F3\Party\Domain\Model\PartyInterface $party) {
+	public function setParty(\F3\Party\Domain\Model\AbstractParty $party) {
 		$this->party = $party;
 	}
 
