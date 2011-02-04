@@ -87,11 +87,6 @@ class PropertyMapper {
 	protected $persistenceManager;
 
 	/**
-	 * @var \F3\FLOW3\Persistence\QueryFactoryInterface
-	 */
-	protected $queryFactory;
-
-	/**
 	 * Injects the object factory
 	 *
 	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
@@ -133,17 +128,6 @@ class PropertyMapper {
 	 */
 	public function injectPersistenceManager(\F3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager) {
 		$this->persistenceManager = $persistenceManager;
-	}
-
-	/**
-	 * Injects a QueryFactory instance
-	 *
-	 * @param \F3\FLOW3\Persistence\QueryFactoryInterface $queryFactory
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function injectQueryFactory(\F3\FLOW3\Persistence\QueryFactoryInterface $queryFactory) {
-		$this->queryFactory = $queryFactory;
 	}
 
 	/**
@@ -440,8 +424,11 @@ class PropertyMapper {
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @todo fix query creation / use
 	 */
 	protected function findObjectByIdentityProperties(array $identityProperties, $type) {
+		throw new \RuntimeException('sorry, i do not know how to create a query, currently');
+
 		$query = $this->queryFactory->create($type);
 		$classSchema = $this->reflectionService->getClassSchema($type);
 

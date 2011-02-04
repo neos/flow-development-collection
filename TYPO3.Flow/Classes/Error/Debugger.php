@@ -203,22 +203,20 @@ class Debugger {
 			$dump .= ($scope !== '') ? '<span class="debug-scope">' . $scope .'</span>' : '';
 		}
 
-		if ($object instanceof \F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface) {
-			if (property_exists($object, 'FLOW3_Persistence_Entity_UUID')) {
-				$identifier = $object->FLOW3_Persistence_Entity_UUID;
-				$persistenceType = 'entity';
-			} elseif (property_exists($object, 'FLOW3_Persistence_ValueObject_Hash')) {
-				$identifier = $object->FLOW3_Persistence_ValueObject_Hash;
-				$persistenceType = 'value object';
-			} else {
-				$identifier = 'unknown';
-				$persistenceType = 'strange object';
-			}
-			if ($plaintext) {
-				$dump .= ' ' . self::ansiEscapeWrap($persistenceType, '42;37', $ansiColors);
-			} else {
-				$dump .= '<span class="debug-ptype" title="' . $identifier . '">' . $persistenceType . '</span>';
-			}
+		if (property_exists($object, 'FLOW3_Persistence_Entity_UUID')) {
+			$identifier = $object->FLOW3_Persistence_Entity_UUID;
+			$persistenceType = 'entity';
+		} elseif (property_exists($object, 'FLOW3_Persistence_ValueObject_Hash')) {
+			$identifier = $object->FLOW3_Persistence_ValueObject_Hash;
+			$persistenceType = 'value object';
+		} else {
+			$identifier = 'unknown';
+			$persistenceType = 'strange object';
+		}
+		if ($plaintext) {
+			$dump .= ' ' . self::ansiEscapeWrap($persistenceType, '42;37', $ansiColors);
+		} else {
+			$dump .= '<span class="debug-ptype" title="' . $identifier . '">' . $persistenceType . '</span>';
 		}
 
 		if ($object instanceof \F3\FLOW3\Object\Proxy\ProxyInterface) {

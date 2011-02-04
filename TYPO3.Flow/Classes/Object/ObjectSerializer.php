@@ -164,7 +164,6 @@ class ObjectSerializer {
 				$propertyArray[$propertyName][self::VALUE] = $this->buildStorageArrayForArrayProperty($propertyValue->getArrayCopy());
 
 			} elseif (is_object($propertyValue)
-						&& $propertyValue instanceof \F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface
 						&& $this->persistenceManager->isNewObject($propertyValue) === FALSE
 						&& ($this->reflectionService->isClassTaggedWith($propertyClassName, 'entity')
 						|| $this->reflectionService->isClassTaggedWith($propertyClassName, 'valueobject'))) {

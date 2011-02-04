@@ -731,17 +731,13 @@ class PersistenceQueryRewritingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function checkSingleConstraintDefinitionOnResultArrayComparesTheIdentifierWhenComparingPersitedObjects() {
 		$entityClassName = uniqid('entityClass');
-		eval('class ' . $entityClassName . ' implements \F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface, \F3\FLOW3\Object\Proxy\ProxyInterface {
+		eval('class ' . $entityClassName . ' implements \F3\FLOW3\Object\Proxy\ProxyInterface {
 			public function FLOW3_AOP_Proxy_construct() {}
 			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
 			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return get_class($this); }
 			public function FLOW3_AOP_Proxy_hasProperty($propertyName) {}
 			public function FLOW3_AOP_Proxy_getProperty($propertyName) {}
 			public function FLOW3_AOP_Proxy_setProperty($propertyName, $propertyValue) {}
-			public function FLOW3_Persistence_isNew() {}
-			public function FLOW3_Persistence_isClone() {}
-			public function FLOW3_Persistence_isDirty($propertyName) {}
-			public function FLOW3_Persistence_memorizeCleanState($propertyName = NULL) {}
 			public function __clone() {}
 		}');
 		$mockEntity = $this->getMock($entityClassName, array(), array(), '', FALSE);
