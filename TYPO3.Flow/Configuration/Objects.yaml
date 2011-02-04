@@ -177,6 +177,17 @@ F3\FLOW3\Object\CompileTimeObjectManager:
   autowiring: off
 
 #                                                                          #
+# Persistence                                                              #
+#                                                                          #
+
+Doctrine\Common\Persistence\ObjectManager:
+  scope: singleton
+  factoryObjectName: F3\FLOW3\Persistence\Doctrine\EntityManagerFactory
+
+F3\FLOW3\Persistence\PersistenceManagerInterface:
+  className: F3\FLOW3\Persistence\Doctrine\PersistenceManager
+
+#                                                                          #
 # Resource                                                                 #
 #                                                                          #
 

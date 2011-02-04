@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Persistence;
+namespace F3\FLOW3\Persistence\Doctrine;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,29 +23,61 @@ namespace F3\FLOW3\Persistence;
  *                                                                        */
 
 /**
- * The FLOW3 Persistence Manager interface
+ * FLOW3's Doctrine PersistenceManager
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */
-interface PersistenceManagerInterface {
+class PersistenceManager extends \F3\FLOW3\Persistence\AbstractPersistenceManager {
 
 	/**
-	 * Injects the FLOW3 settings, called by FLOW3.
-	 *
-	 * @param array $settings
-	 * @return void
-	 * @api
+	 * @var \Doctrine\Common\Persistence\ObjectManager
 	 */
-	public function injectSettings(array $settings);
+	protected $entityManager;
 
 	/**
-	 * Initializes the persistence manager, called by FLOW3.
+	 * @param \Doctrine\Common\Persistence\ObjectManager $entityManager
+	 * @return void
+	 */
+	public function injectEntityManager(\Doctrine\Common\Persistence\ObjectManager $entityManager) {
+		$this->entityManager = $entityManager;
+	}
+
+	/**
+	 * Initializes the persistence manager
 	 *
 	 * @return void
-	 * @api
+	 * @todo do the expensive tasks only if needed
 	 */
-	public function initialize();
+	public function initialize() {
+		$this->validateMapping();
+		$this->createSchema();
+	}
+
+	/**
+	 * Makes sure the target database is up-to-date with the schema derived
+	 * from the entities and their metadata.
+	 *
+	 * @return void
+	 */
+	protected function createSchema() {
+		$schemaTool = new \Doctrine\ORM\Tools\SchemaTool($this->entityManager);
+		$schemaTool->updateSchema($this->entityManager->getMetadataFactory()->getAllMetadata());
+	}
+
+	/**
+	 * Validate the ORM mapping and log found errors.
+	 *
+	 * @return void
+	 */
+	protected function validateMapping() {
+		$validator = new \Doctrine\ORM\Tools\SchemaValidator($this->entityManager);
+		$errors = $validator->validateMapping();
+
+		if (count($errors) > 0) {
+			$this->systemLogger->log('Doctrine 2 schema validation failed.', LOG_CRIT, $errors);
+		}
+	}
 
 	/**
 	 * Commits new objects and changes to objects in the current persistence
@@ -54,7 +86,9 @@ interface PersistenceManagerInterface {
 	 * @return void
 	 * @api
 	 */
-	public function persistAll();
+	public function persistAll() {
+		$this->entityManager->flush();
+	}
 
 	/**
 	 * Checks if the given object has ever been persisted.
@@ -63,7 +97,9 @@ interface PersistenceManagerInterface {
 	 * @return boolean TRUE if the object is new, FALSE if the object exists in the repository
 	 * @api
 	 */
-	public function isNewObject($object);
+	public function isNewObject($object) {
+		return ($this->entityManager->getUnitOfWork()->getEntityState($object, \Doctrine\ORM\UnitOfWork::STATE_NEW) === \Doctrine\ORM\UnitOfWork::STATE_NEW);
+	}
 
 	/**
 	 * Returns the (internal) identifier for the object, if it is known to the
@@ -77,7 +113,13 @@ interface PersistenceManagerInterface {
 	 * @return mixed The identifier for the object if it is known, or NULL
 	 * @api
 	 */
-	public function getIdentifierByObject($object);
+	public function getIdentifierByObject($object) {
+		if ($this->entityManager->contains($object)) {
+			return current($this->entityManager->getUnitOfWork()->getEntityIdentifier($object));
+		} else {
+			return NULL;
+		}
+	}
 
 	/**
 	 * Returns the object with the (internal) identifier, if it is known to the
@@ -86,18 +128,25 @@ interface PersistenceManagerInterface {
 	 * @param mixed $identifier
 	 * @param string $objectType
 	 * @return object The object for the identifier if it is known, or NULL
+	 * @throws \RuntimeException
 	 * @api
 	 */
-	public function getObjectByIdentifier($identifier, $objectType = NULL);
+	public function getObjectByIdentifier($identifier, $objectType = NULL) {
+		if ($objectType === NULL) {
+			throw new \RuntimeException('Using only the identifier is not supported by Doctrine 2. Give classname as well or use repository to query identifier.', 1296646103);
+		}
+		return $this->entityManager->find($objectType, $identifier);
+	}
 
 	/**
 	 * Return a query object for the given type.
 	 *
 	 * @param string $type
-	 * @return \F3\FLOW3\Persistence\QueryInterface
-	 * @api
+	 * @return \F3\FLOW3\Persistence\Doctrine\Query
 	 */
-	public function createQueryForType($type);
+	public function createQueryForType($type) {
+		return new \F3\FLOW3\Persistence\Doctrine\Query($type, $this->entityManager);
+	}
 
 	/**
 	 * Adds an object to the persistence.
@@ -106,7 +155,9 @@ interface PersistenceManagerInterface {
 	 * @return void
 	 * @api
 	 */
-	public function add($object);
+	public function add($object) {
+		$this->entityManager->persist($object);
+	}
 
 	/**
 	 * Removes an object to the persistence.
@@ -115,7 +166,9 @@ interface PersistenceManagerInterface {
 	 * @return void
 	 * @api
 	 */
-	public function remove($object);
+	public function remove($object) {
+		$this->entityManager->remove($object);
+	}
 
 	/**
 	 * Merge an object into the persistence.
@@ -124,8 +177,13 @@ interface PersistenceManagerInterface {
 	 * @return void
 	 * @api
 	 */
-	public function merge($modifiedObject);
-
+	public function merge($modifiedObject) {
+		try {
+			$this->entityManager->merge($modifiedObject);
+		} catch (\Exception $exception) {
+			throw new \F3\FLOW3\Persistence\Exception('Could not merge objects of type "' . get_class($modifiedObject) . '"', 1297778180, $exception);
+		}
+	}
 }
 
 ?>

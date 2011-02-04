@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Persistence;
+namespace F3\FLOW3\Persistence\Doctrine;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,99 +23,58 @@ namespace F3\FLOW3\Persistence;
  *                                                                        */
 
 /**
- * A persistence query interface.
- *
- * The main point when implementing this is to make sure that methods with a
- * return type of "object" return something that can be fed to matching() and
- * all constraint-generating methods (like logicalAnd(), equals(), like(), ...).
- *
- * This allows for code like
- * $query->matching($query->equals('foo', 'bar'))->setLimit(10)->execute();
+ * A Query class for Doctrine 2
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
+ * @scope prototype
  */
-interface QueryInterface {
+class Query implements \F3\FLOW3\Persistence\QueryInterface {
 
 	/**
-	 * The '=' comparison operator.
-	 * @api
-	*/
-	const OPERATOR_EQUAL_TO = 1;
-
-	/**
-	 * The '!=' comparison operator.
-	 * @api
-	*/
-	const OPERATOR_NOT_EQUAL_TO = 2;
-
-	/**
-	 * The '<' comparison operator.
-	 * @api
-	*/
-	const OPERATOR_LESS_THAN = 3;
-
-	/**
-	 * The '<=' comparison operator.
-	 * @api
-	*/
-	const OPERATOR_LESS_THAN_OR_EQUAL_TO = 4;
-
-	/**
-	 * The '>' comparison operator.
-	 * @api
-	*/
-	const OPERATOR_GREATER_THAN = 5;
-
-	/**
-	 * The '>=' comparison operator.
-	 * @api
-	*/
-	const OPERATOR_GREATER_THAN_OR_EQUAL_TO = 6;
-
-	/**
-	 * The 'like' comparison operator.
-	 * @api
-	*/
-	const OPERATOR_LIKE = 7;
-
-	/**
-	 * The 'contains' comparison operator for collections.
-	 * @api
-	*/
-	const OPERATOR_CONTAINS = 8;
-
-	/**
-	 * The 'in' comparison operator.
-	 * @api
-	*/
-	const OPERATOR_IN = 9;
-
-	/**
-	 * The 'is NULL' comparison operator.
-	 * @api
-	*/
-	const OPERATOR_IS_NULL = 10;
-
-	/**
-	 * The 'is empty' comparison operator for collections.
-	 * @api
-	*/
-	const OPERATOR_IS_EMPTY = 11;
-
-	/**
-	 * Constants representing the direction when ordering result sets.
+	 * @var string
 	 */
-	const ORDER_ASCENDING = 'ASC';
-	const ORDER_DESCENDING = 'DESC';
+	protected $entityClassName;
+
+	/**
+	 * @var \Doctrine\ORM\QueryBuilder
+	 */
+	protected $queryBuilder;
+
+	/**
+	 * @var mixed
+	 */
+	protected $constraint;
+
+	/**
+	 * @var array
+	 */
+	protected $orderings;
+
+	/**
+	 * @var integer
+	 */
+	private $parameterIndex = 1;
+
+	/**
+	 * @param string $entityClassName
+	 * @param \Doctrine\ORM\EntityManager $entityManager
+	 */
+	public function __construct($entityClassName, \Doctrine\ORM\EntityManager $entityManager) {
+		$this->entityClassName = $entityClassName;
+		$this->queryBuilder = $entityManager->createQueryBuilder()->select('e')->from($this->entityClassName, 'e');
+	}
 
 	/**
 	 * Returns the type this query cares for.
 	 *
 	 * @return string
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
-	public function getType();
+	public function getType() {
+		return $this->entityClassName;
+	}
 
 	/**
 	 * Executes the query and returns the result.
@@ -123,15 +82,22 @@ interface QueryInterface {
 	 * @return \F3\FLOW3\Persistence\QueryResultInterface The query result
 	 * @api
 	 */
-	public function execute();
+	public function execute() {
+		return new \F3\FLOW3\Persistence\Doctrine\QueryResult($this->queryBuilder->getQuery()->getResult(), $this);
+	}
 
 	/**
-	 * Returns the query result count.
+	 * Returns the query result count
 	 *
 	 * @return integer The query result count
 	 * @api
 	 */
-	public function count();
+	public function count() {
+		$dqlQuery = clone $this->queryBuilder->getQuery();
+		$dqlQuery->setHint(\Doctrine\ORM\Query::HINT_CUSTOM_TREE_WALKERS, array('F3\FLOW3\Persistence\Doctrine\CountWalker'));
+
+		return $dqlQuery->getSingleScalarResult();
+	}
 
 	/**
 	 * Sets the property names to order the result by. Expected like this:
@@ -144,73 +110,102 @@ interface QueryInterface {
 	 * @return \F3\FLOW3\Persistence\QueryInterface
 	 * @api
 	 */
-	public function setOrderings(array $orderings);
+	public function setOrderings(array $orderings) {
+		$this->queryBuilder->resetDQLPart('orderBy');
+		$this->orderings = $orderings;
+		foreach ($this->orderings AS $propertyName => $order) {
+			$this->queryBuilder->addOrderBy($this->queryBuilder->getRootAlias() . '.' . $propertyName, $order);
+		}
+		return $this;
+	}
 
 	/**
-	 * Gets the property names to order the result by, like this:
+	 * Returns the property names to order the result by, like this:
 	 * array(
 	 *  'foo' => \F3\FLOW3\Persistence\QueryInterface::ORDER_ASCENDING,
 	 *  'bar' => \F3\FLOW3\Persistence\QueryInterface::ORDER_DESCENDING
 	 * )
 	 *
 	 * @return array
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
-	public function getOrderings();
+	public function getOrderings() {
+		return $this->orderings;
+	}
 
 	/**
 	 * Sets the maximum size of the result set to limit. Returns $this to allow
-	 * for chaining (fluid interface).
+	 * for chaining (fluid interface)
 	 *
 	 * @param integer $limit
 	 * @return \F3\FLOW3\Persistence\QueryInterface
 	 * @api
 	 */
-	public function setLimit($limit);
+	public function setLimit($limit) {
+		$this->queryBuilder->setMaxResults($limit);
+		return $this;
+	}
 
 	/**
 	 * Returns the maximum size of the result set to limit.
 	 *
-	 * @param integer
+	 * @return integer
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
-	public function getLimit();
+	public function getLimit() {
+		$this->queryBuilder->getMaxResults();
+	}
 
 	/**
 	 * Sets the start offset of the result set to offset. Returns $this to
-	 * allow for chaining (fluid interface).
+	 * allow for chaining (fluid interface)
 	 *
 	 * @param integer $offset
 	 * @return \F3\FLOW3\Persistence\QueryInterface
 	 * @api
 	 */
-	public function setOffset($offset);
+	public function setOffset($offset) {
+		$this->queryBuilder->setFirstResult($offset);
+		return $this;
+	}
 
 	/**
 	 * Returns the start offset of the result set.
 	 *
 	 * @return integer
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
-	public function getOffset();
+	public function getOffset() {
+		$this->queryBuilder->getFirstResult();
+	}
 
 	/**
 	 * The constraint used to limit the result set. Returns $this to allow
-	 * for chaining (fluid interface).
+	 * for chaining (fluid interface)
 	 *
 	 * @param object $constraint Some constraint, depending on the backend
 	 * @return \F3\FLOW3\Persistence\QueryInterface
 	 * @api
 	 */
-	public function matching($constraint);
+	public function matching($constraint) {
+		$this->constraint = $constraint;
+		$this->queryBuilder->where($constraint);
+		return $this;
+	}
 
 	/**
 	 * Gets the constraint for this query.
 	 *
-	 * @return mixed the constraint, or null if none
+	 * @return \F3\FLOW3\Persistence\Generic\Qom\Constraint the constraint, or null if none
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	*/
-	public function getConstraint();
+	public function getConstraint() {
+		return $this->constraint;
+	}
 
 	/**
 	 * Performs a logical conjunction of the two given constraints. The method
@@ -221,7 +216,9 @@ interface QueryInterface {
 	 * @return object
 	 * @api
 	 */
-	public function logicalAnd($constraint1);
+	public function logicalAnd($constraint1) {
+		return call_user_func_array(array($this->queryBuilder->expr(), 'andX'), func_get_args());
+	}
 
 	/**
 	 * Performs a logical disjunction of the two given constraints. The method
@@ -232,7 +229,9 @@ interface QueryInterface {
 	 * @return object
 	 * @api
 	 */
-	public function logicalOr($constraint1);
+	public function logicalOr($constraint1) {
+		return call_user_func_array(array($this->queryBuilder->expr(), 'orX'), func_get_args());
+	}
 
 	/**
 	 * Performs a logical negation of the given constraint
@@ -241,7 +240,9 @@ interface QueryInterface {
 	 * @return object
 	 * @api
 	 */
-	public function logicalNot($constraint);
+	public function logicalNot($constraint) {
+		return $this->queryBuilder->expr()->not($constraint);
+	}
 
 	/**
 	 * Returns an equals criterion used for matching objects against a query.
@@ -254,10 +255,17 @@ interface QueryInterface {
 	 * @param mixed $operand The value to compare with
 	 * @param boolean $caseSensitive Whether the equality test should be done case-sensitive for strings
 	 * @return object
-	 * @todo Decide what to do about equality on multi-valued properties
+	 * @todo remove null handling as soon as supported natively by Doctrine
+	 * @fixme implement case-sensitivity switch
 	 * @api
 	 */
-	public function equals($propertyName, $operand, $caseSensitive = TRUE);
+	public function equals($propertyName, $operand, $caseSensitive = TRUE) {
+		if ($operand === NULL) {
+			return $this->queryBuilder->getRootAlias() . '.' . $propertyName . ' IS NULL';
+		} else {
+			return $this->queryBuilder->expr()->eq($this->queryBuilder->getRootAlias() . '.' . $propertyName, $this->getParamNeedle($operand));
+		}
+	}
 
 	/**
 	 * Returns a like criterion used for matching objects against a query.
@@ -269,9 +277,12 @@ interface QueryInterface {
 	 * @param boolean $caseSensitive Whether the matching should be done case-sensitive
 	 * @return object
 	 * @throws \F3\FLOW3\Persistence\Exception\InvalidQueryException if used on a non-string property
+	 * @todo implement case-sensitivity switch
 	 * @api
 	 */
-	public function like($propertyName, $operand, $caseSensitive = TRUE);
+	public function like($propertyName, $operand, $caseSensitive = TRUE) {
+		return $this->queryBuilder->expr()->like($this->queryBuilder->getRootAlias() . '.' . $propertyName, $this->getParamNeedle($operand));
+	}
 
 	/**
 	 * Returns a "contains" criterion used for matching objects against a query.
@@ -285,7 +296,9 @@ interface QueryInterface {
 	 * @throws \F3\FLOW3\Persistence\Exception\InvalidQueryException if used on a single-valued property
 	 * @api
 	 */
-	public function contains($propertyName, $operand);
+	public function contains($propertyName, $operand) {
+		return '(' . $this->getParamNeedle($operand) . ' MEMBER OF ' . $this->queryBuilder->getRootAlias() . '.' . $propertyName . ')';
+	}
 
 	/**
 	 * Returns an "isEmpty" criterion used for matching objects against a query.
@@ -296,7 +309,9 @@ interface QueryInterface {
 	 * @throws \F3\FLOW3\Persistence\Exception\InvalidQueryException if used on a single-valued property
 	 * @api
 	 */
-	public function isEmpty($propertyName);
+	public function isEmpty($propertyName) {
+		return '(' . $this->queryBuilder->getRootAlias() . '.' . $propertyName . ' IS EMPTY)';
+	}
 
 	/**
 	 * Returns an "in" criterion used for matching objects against a query. It
@@ -308,7 +323,11 @@ interface QueryInterface {
 	 * @throws \F3\FLOW3\Persistence\Exception\InvalidQueryException if used on a multi-valued property
 	 * @api
 	 */
-	public function in($propertyName, $operand);
+	public function in($propertyName, $operand) {
+		// Take care: In cannot be needled at the moment! DQL escapes it, but only as literals, making caching a bit harder.
+		// This is a todo for Doctrine 2.1
+		return $this->queryBuilder->expr()->in($this->queryBuilder->getRootAlias() . '.' . $propertyName, $operand);
+	}
 
 	/**
 	 * Returns a less than criterion used for matching objects against a query
@@ -319,7 +338,9 @@ interface QueryInterface {
 	 * @throws \F3\FLOW3\Persistence\Exception\InvalidQueryException if used on a multi-valued property or with a non-literal/non-DateTime operand
 	 * @api
 	 */
-	public function lessThan($propertyName, $operand);
+	public function lessThan($propertyName, $operand) {
+		return $this->queryBuilder->expr()->lt($this->queryBuilder->getRootAlias() . '.' . $propertyName, $this->getParamNeedle($operand));
+	}
 
 	/**
 	 * Returns a less or equal than criterion used for matching objects against a query
@@ -330,7 +351,9 @@ interface QueryInterface {
 	 * @throws \F3\FLOW3\Persistence\Exception\InvalidQueryException if used on a multi-valued property or with a non-literal/non-DateTime operand
 	 * @api
 	 */
-	public function lessThanOrEqual($propertyName, $operand);
+	public function lessThanOrEqual($propertyName, $operand) {
+		return $this->queryBuilder->expr()->lte($this->queryBuilder->getRootAlias() . '.' . $propertyName, $this->getParamNeedle($operand));
+	}
 
 	/**
 	 * Returns a greater than criterion used for matching objects against a query
@@ -341,7 +364,9 @@ interface QueryInterface {
 	 * @throws \F3\FLOW3\Persistence\Exception\InvalidQueryException if used on a multi-valued property or with a non-literal/non-DateTime operand
 	 * @api
 	 */
-	public function greaterThan($propertyName, $operand);
+	public function greaterThan($propertyName, $operand) {
+		return $this->queryBuilder->expr()->gt($this->queryBuilder->getRootAlias() . '.' . $propertyName, $this->getParamNeedle($operand));
+	}
 
 	/**
 	 * Returns a greater than or equal criterion used for matching objects against a query
@@ -352,7 +377,19 @@ interface QueryInterface {
 	 * @throws \F3\FLOW3\Persistence\Exception\InvalidQueryException if used on a multi-valued property or with a non-literal/non-DateTime operand
 	 * @api
 	 */
-	public function greaterThanOrEqual($propertyName, $operand);
+	public function greaterThanOrEqual($propertyName, $operand) {
+		return $this->queryBuilder->expr()->gte($this->queryBuilder->getRootAlias() . '.' . $propertyName, $this->getParamNeedle($operand));
+	}
 
+	/**
+	 * Get a needle for parameter binding.
+	 *
+	 * @param mixed $operand
+	 * @return string
+	 */
+	protected function getParamNeedle($operand) {
+		$index = $this->parameterIndex++;
+		$this->queryBuilder->setParameter($index, $operand);
+		return '?' . $index;
+	}
 }
-?>

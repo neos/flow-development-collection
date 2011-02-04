@@ -113,8 +113,10 @@ FLOW3:
 
     # Options for the default PDO backend
     backendOptions:
-      dataSourceName: 'sqlite:%FLOW3_PATH_DATA%Persistent/Objects.db'
-      username: null
+      driver: 'pdo_sqlite'
+      path: '%FLOW3_PATH_DATA%Persistent/Objects.db'
+      dbname: null
+      user: null
       password: null
 
   reflection:
