@@ -928,6 +928,8 @@ class ReflectionService {
 							$this->log('  Wrong name in @param for "' . $method->getName() . '::$' . $parameter->getName() . '": "' . $parameterAnnotation[1] . '"', LOG_DEBUG);
 						}
 					}
+				} else {
+					$this->log('  Missing @param for "' . $method->getName() . '::$' . $parameter->getName(), LOG_DEBUG);
 				}
 			}
 		}
