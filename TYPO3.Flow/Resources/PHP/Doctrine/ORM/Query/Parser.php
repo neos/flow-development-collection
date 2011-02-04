@@ -622,7 +622,7 @@ class Parser
             // Check if queryComponent points to an AbstractSchemaName or a ResultVariable
             if ( ! isset($qComp['resultVariable'])) {
                 $this->semanticalError(
-                    "'$identVariable' does not point to a ResultVariable.", $deferredItem['token']
+                    "'$resultVariable' does not point to a ResultVariable.", $deferredItem['token']
                 );
             }
 

@@ -664,10 +664,10 @@ class BasicEntityPersister
         foreach ($this->_class->associationMappings as $field => $assoc) {
             $value = $this->_class->reflFields[$field]->getValue($entity);
             if ($assoc['type'] & ClassMetadata::TO_ONE) {
-                if ($value instanceof Proxy && ! $value->__isInitialized__) {
+                if ($value instanceof \Doctrine\ORM\Proxy\Proxy && ! $value->__isInitialized__) {
                     continue; // skip uninitialized proxies
                 }
-                
+
                 if ($assoc['isOwningSide']) {
                     $joinColumnValues = array();
                     foreach ($assoc['targetToSourceKeyColumns'] as $targetColumn => $srcColumn) {
@@ -1198,6 +1198,8 @@ class BasicEntityPersister
             $lockSql = $this->_platform->getReadLockSql();
         } else if ($lockMode == LockMode::PESSIMISTIC_WRITE) {
             $lockSql = $this->_platform->getWriteLockSql();
+        } else {
+            $lockSql = '';
         }
 
         $sql = 'SELECT 1 '

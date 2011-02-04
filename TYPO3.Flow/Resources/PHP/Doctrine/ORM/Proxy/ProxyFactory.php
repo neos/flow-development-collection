@@ -172,6 +172,7 @@ class ProxyFactory
             }
 
             if ($method->isPublic() && ! $method->isFinal() && ! $method->isStatic()) {
+                $methods .= PHP_EOL . $method->getDocComment();
                 $methods .= PHP_EOL . '    public function ';
                 if ($method->returnsReference()) {
                     $methods .= '&';
@@ -277,6 +278,9 @@ class <proxyClassName> extends \<className> implements \Doctrine\ORM\Proxy\Proxy
                 throw new \Doctrine\ORM\EntityNotFoundException();
             }
             unset($this->_entityPersister, $this->_identifier);
+            if (is_callable(array($this, \'__wakeup\'))) {
+                $this->__wakeup();
+            }
         }
     }
 
@@ -300,6 +304,9 @@ class <proxyClassName> extends \<className> implements \Doctrine\ORM\Proxy\Proxy
                 $reflProperty->setValue($this, $reflProperty->getValue($original));
             }
             unset($this->_entityPersister, $this->_identifier);
+            if (is_callable(array($this, \'__wakeup\'))) {
+                $this->__wakeup();
+            }
         }
         <cloneImpl>
     }

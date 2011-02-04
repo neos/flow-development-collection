@@ -194,6 +194,8 @@ abstract class AbstractQuery
     {
         if ($type !== null) {
             $this->_paramTypes[$key] = $type;
+        } elseif ($value instanceof \DateTime) {
+            $this->_paramTypes[$key] = \Doctrine\DBAL\Types\Type::DATETIME;
         }
         $this->_params[$key] = $value;
         return $this;

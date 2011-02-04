@@ -960,8 +960,7 @@ class SqlWalker implements TreeWalker
         else if (
             $expr instanceof AST\SimpleArithmeticExpression ||
             $expr instanceof AST\ArithmeticTerm ||
-            $expr instanceof AST\ArithmeticFactor ||
-            $expr instanceof AST\ArithmeticPrimary
+            $expr instanceof AST\ArithmeticFactor
         ) {
             if ( ! $selectExpression->fieldIdentificationVariable) {
                 $resultAlias = $this->_scalarResultCounter++;
@@ -1207,8 +1206,7 @@ class SqlWalker implements TreeWalker
         } else if (
             $expr instanceof AST\SimpleArithmeticExpression ||
             $expr instanceof AST\ArithmeticTerm ||
-            $expr instanceof AST\ArithmeticFactor ||
-            $expr instanceof AST\ArithmeticPrimary
+            $expr instanceof AST\ArithmeticFactor
         ) {
             if ( ! $simpleSelectExpression->fieldIdentificationVariable) {
                 $alias = $this->_scalarResultCounter++;
