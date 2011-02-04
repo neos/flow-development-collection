@@ -31,6 +31,7 @@ require(__DIR__ . '/../../Resources/Private/PHP/Sho_Inflect.php');
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class Inflector {
+
 	/**
 	 * @param string $word The word to pluralize
 	 * @return string The pluralized word
@@ -45,6 +46,7 @@ class Inflector {
 	 * "blogAuthor" to a humanized version like "Blog author" for better readability.
 	 *
 	 * @param string $camelCased The camel cased value
+	 * @param boolean $lowercase Return lowercase value
 	 * @return The humanized value
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
