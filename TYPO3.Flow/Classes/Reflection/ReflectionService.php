@@ -970,7 +970,7 @@ class ReflectionService {
 
 				$possibleRepositoryClassName = str_replace('\\Model\\', '\\Repository\\', $className) . 'Repository';
 				if ($this->isClassReflected($possibleRepositoryClassName)) {
-					$classSchema->setAggregateRoot(TRUE);
+					$classSchema->setRepositoryClassName($possibleRepositoryClassName);
 				}
 			} elseif ($this->isClassTaggedWith($className, 'valueobject')) {
 				$this->checkValueObjectRequirements($className);

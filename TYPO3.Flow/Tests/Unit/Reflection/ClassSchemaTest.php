@@ -205,7 +205,7 @@ class ClassSchemaTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$classSchema->addProperty('bar', 'string');
 		$classSchema->setUuidPropertyName('foo');
 		$classSchema->markAsIdentityProperty('bar');
-		$classSchema->setAggregateRoot(TRUE);
+		$classSchema->setRepositoryClassName('Some\Repository');
 		$this->assertSame('foo', $classSchema->getUuidPropertyName());
 		$this->assertSame(array('bar' => 'string'), $classSchema->getIdentityProperties());
 
