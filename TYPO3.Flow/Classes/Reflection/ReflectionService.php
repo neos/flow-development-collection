@@ -940,6 +940,7 @@ class ReflectionService {
 	 * Finds all parent classes of the given class
 	 *
 	 * @param \ReflectionClass $class The class to reflect
+	 * @param array $parentClasses Array of parent classes
 	 * @return array<\ReflectionClass>
 	 * @author Robert Lemke <robert@typo3.org>
 	 */

@@ -36,8 +36,6 @@ class HashService {
 	protected $encryptionKey;
 
 	/**
-	 * @param array $settings
-	 * @return void
 	 * @author Karsten Dambekalns <karsten@dambekalns.de>
 	 */
 	public function __construct() {
@@ -45,7 +43,7 @@ class HashService {
 			file_put_contents(FLOW3_PATH_DATA . 'Persistent/EncryptionKey', bin2hex(\F3\FLOW3\Utility\Algorithms::generateRandomBytes(96)));
 		}
 		$this->encryptionKey = file_get_contents(FLOW3_PATH_DATA . 'Persistent/EncryptionKey');
-		
+
 		if (empty($this->encryptionKey)) {
 			throw new \F3\FLOW3\Security\Exception\MissingConfigurationException('No encryption key for the HashService was found and none could be created at "' . FLOW3_PATH_DATA . 'Persistent/EncryptionKey"', 1258991855);
 		}
@@ -97,6 +95,8 @@ class HashService {
 	 * Tests if the given string would produce the same hash given the specified salt.
 	 * Use this method to validate hashes generated with generateSlatedMd5().
 	 *
+	 * @param string $clearString
+	 * @param string $hashedStringAndSalt
 	 * @return boolean TRUE if the clear string matches, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api

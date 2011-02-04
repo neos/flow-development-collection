@@ -569,11 +569,12 @@ class Environment {
 	}
 
 	/**
-	 *  Returns and array of all possibles "field paths" for the given array.
+	 * Returns and array of all possibles "field paths" for the given array.
 	 *
-	 *  @param array $structure The array to walk through
-	 *  @return array An array of paths (as strings) in the format "key1/key2/key3" ...
-	 *  @author Robert Lemke <robert@typo3.org>
+	 * @param array $structure The array to walk through
+	 * @param string $firstLevelFieldName
+	 * @return array An array of paths (as strings) in the format "key1/key2/key3" ...
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function calculateFieldPaths(array $structure, $firstLevelFieldName = NULL) {
 		$fieldPaths = array();

@@ -57,10 +57,11 @@ class PointcutMethodNameFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterI
 	 *
 	 * @param string $methodNameFilterExpression A regular expression which filters method names
 	 * @param string $methodVisibility The method visibility modifier (public, protected or private). Specifiy NULL if you don't care.
+	 * @param array $methodArgumentConstraints array of method constraints
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct($methodNameFilterExpression, $methodVisibility = NULL, $methodArgumentConstraints = array()) {
+	public function __construct($methodNameFilterExpression, $methodVisibility = NULL, array $methodArgumentConstraints = array()) {
 		$this->methodNameFilterExpression = $methodNameFilterExpression;
 		if (preg_match(self::PATTERN_MATCHVISIBILITYMODIFIER, $methodVisibility) !== 1) throw new \F3\FLOW3\AOP\Exception\InvalidPointcutExpressionException('Invalid method visibility modifier.', 1172494794);
 		$this->methodVisibility = $methodVisibility;

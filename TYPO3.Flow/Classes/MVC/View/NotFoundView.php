@@ -84,6 +84,8 @@ class NotFoundView extends \F3\FLOW3\MVC\View\AbstractView {
 	 * directed to another type of view. This magic method should prevent PHP from issuing
 	 * a fatal error.
 	 *
+	 * @param string $methodName Name of the method
+	 * @param array $arguments Arguments passed to the method
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */

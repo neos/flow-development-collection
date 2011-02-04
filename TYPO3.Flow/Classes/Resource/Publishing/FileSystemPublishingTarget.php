@@ -251,11 +251,12 @@ class FileSystemPublishingTarget extends \F3\FLOW3\Resource\Publishing\AbstractR
 	 *
 	 * @param string $sourcePathAndFilename
 	 * @param string $targetPathAndFilename
+	 * @param boolean $createDirectoriesIfNecessary
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function mirrorFile($sourcePathAndFilename, $targetPathAndFilename, $createDirectoriesIfNecessary) {
+	protected function mirrorFile($sourcePathAndFilename, $targetPathAndFilename, $createDirectoriesIfNecessary = FALSE) {
 		if ($createDirectoriesIfNecessary === TRUE) {
 			\F3\FLOW3\Utility\Files::createDirectoryRecursively(dirname($targetPathAndFilename));
 		}

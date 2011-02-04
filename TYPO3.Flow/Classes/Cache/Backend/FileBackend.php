@@ -81,6 +81,7 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend implements \F3
 	 * Sets a reference to the cache frontend which uses this backend and
 	 * initializes the default cache directory
 	 *
+	 * @param \F3\FLOW3\Cache\Frontend\FrontendInterface $cache The cache frontend
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */

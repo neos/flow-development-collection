@@ -130,6 +130,7 @@ class DebugExceptionHandler extends \F3\FLOW3\Error\AbstractExceptionHandler {
 	 * Renders some backtrace
 	 *
 	 * @param array $trace The trace
+	 * @param boolean $includeCode Include code snippet
 	 * @return string Backtrace information
 	 * @author Robert Lemke <robert@typo3.org>
 	 */

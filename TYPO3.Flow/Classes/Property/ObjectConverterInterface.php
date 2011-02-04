@@ -37,7 +37,7 @@ interface ObjectConverterInterface {
 	 * Returns a list of fully qualified class names of those classes which are supported
 	 * by this property editor.
 	 *
-	 * @return array<string>
+	 * @return array<string> Array of strings
 	 * @api
 	 */
 	public function getSupportedTypes();
@@ -45,6 +45,7 @@ interface ObjectConverterInterface {
 	/**
 	 * Converts the given string, array or number to an object supported by the converter.
 	 *
+	 * @param mixed $source Source object to be converted
 	 * @return mixed An object if it could be converted, FALSE if the converter does not want to convert or \F3\FLOW3\Error\Error if the source could not be converted for other reasons
 	 * @api
 	 */

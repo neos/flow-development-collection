@@ -289,6 +289,7 @@ class ValidatorResolver {
 	/**
 	 * Parses the validator options given in @validate annotations.
 	 *
+	 * @param string $validateValue
 	 * @return array
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>

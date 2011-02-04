@@ -96,6 +96,7 @@ class PolicyExpressionParser extends \F3\FLOW3\AOP\Pointcut\PointcutExpressionPa
 	 * @param string $operator The operator
 	 * @param string $pointcutExpression The pointcut expression (value of the designator)
 	 * @param \F3\FLOW3\AOP\Pointcut\PointcutFilterComposite $pointcutFilterComposite An instance of the pointcut filter composite. The result (ie. the pointcut filter) will be added to this composite object.
+	 * @param array &$trace
 	 * @return void
 	 * @throws \F3\FLOW3\AOP\Exception\InvalidPointcutExpressionException
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>

@@ -23,10 +23,6 @@ namespace F3\FLOW3\MVC\View;
  *                                                                        */
 
 /**
- *
- */
-
-/**
  * An empty view - a special case.
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
@@ -98,6 +94,8 @@ final class EmptyView implements \F3\FLOW3\MVC\View\ViewInterface {
 	 * directed to another type of view. This magic method should prevent PHP from issuing
 	 * a fatal error.
 	 *
+	 * @param string $methodName Name of the method
+	 * @param array $arguments Arguments passed to the method
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */

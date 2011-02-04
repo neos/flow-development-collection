@@ -147,6 +147,7 @@ class XliffTranslationProvider implements \F3\FLOW3\I18n\TranslationProvider\Tra
 	 * file.
 	 *
 	 * @param string $sourceName Relative path to existing CLDR file
+	 * @param \F3\FLOW3\I18n\Locale $locale Locale object
 	 * @return \F3\FLOW3\I18n\Xliff\XliffModel New or existing instance
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
