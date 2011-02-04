@@ -307,6 +307,46 @@ class PropertyMapperTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function mapToSetterWithoutTypeAddsError() {
+		$mappingResults = $this->getMock('F3\FLOW3\Property\MappingResults', array('addError'));
+		$mockError = $this->getMock('F3\FLOW3\Error\Error', array(), array(), '', FALSE);
+		$this->mockObjectManager->expects($this->any())->method('create')->will($this->returnCallback(
+			function($objectName) use ($mappingResults, $mockError) {
+				switch ($objectName) {
+					case 'F3\FLOW3\Property\MappingResults':
+						return $mappingResults;
+					case 'F3\FLOW3\Error\Error':
+						return $mockError;
+				}
+			}
+		));
+		$this->mockReflectionService->expects($this->any())->method('getMethodParameters')->will($this->returnValue(array('property' => array())));
+		$fixtureClassName = uniqid('ClassWithUntypedSetter');
+		eval('
+			namespace F3\FLOW3\Fixtures;
+			class ' . $fixtureClassName . ' {
+				public function setProperty($value) {
+
+				}
+			}
+		');
+		$fixtureClassName = '\F3\FLOW3\Fixtures\\' . $fixtureClassName;
+
+		$source = array('property' => 'Hello World');
+		$target = new $fixtureClassName();
+
+		$mapper = new \F3\FLOW3\Property\PropertyMapper();
+		$mapper->injectObjectManager($this->mockObjectManager);
+		$mapper->injectReflectionService($this->mockReflectionService);
+
+		$mappingResults->expects($this->once())->method('addError')->with($mockError, 'property');
+		$result = $mapper->map(array('property'), $source, $target);
+	}
+
+	/**
+	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function ifAPropertyNameWasSpecifiedAndIsNotOptionalButDoesntExistInTheSourceTheMappingFails() {

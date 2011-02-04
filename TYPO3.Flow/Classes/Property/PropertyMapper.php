@@ -248,6 +248,10 @@ class PropertyMapper {
 					$methodParameters = $this->reflectionService->getMethodParameters($targetClassName, \F3\FLOW3\Reflection\ObjectAccess::buildSetterMethodName($propertyName));
 					$methodParameter = current($methodParameters);
 
+					if (!isset($methodParameter['type'])) {
+						$this->mappingResults->addError($this->objectManager->create('F3\FLOW3\Error\Error', 'No type hint or documentation for property "' . $propertyName . '" found".' , 1296767655), $propertyName);
+						continue;
+					}
 					try {
 						$targetPropertyType = \F3\FLOW3\Utility\TypeHandling::parseType($methodParameter['type']);
 					} catch (\InvalidArgumentException $exception) {
@@ -374,6 +378,8 @@ class PropertyMapper {
 						$newObject = clone $existingObject;
 						if ($this->map(array_keys($propertyValue), $propertyValue, $newObject)) {
 							$object = $newObject;
+						} else {
+							throw new \RuntimeException('Could not transform to object', 1296763314);
 						}
 					}
 				}
