@@ -44,7 +44,7 @@ class PersistenceQueryRewritingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockQuery->expects($this->once())->method('matching')->with('mergedResultConstraints');
 
 		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
-		$mockJoinPoint->expects($this->once())->method('getMethodArgument')->with('query')->will($this->returnValue($mockQuery));
+		$mockJoinPoint->expects($this->once())->method('getProxy')->will($this->returnValue($mockQuery));
 
 		$roles = array('role1', 'role2');
 
@@ -81,8 +81,8 @@ class PersistenceQueryRewritingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockQuery->expects($this->never())->method('logicalAnd');
 		$mockQuery->expects($this->once())->method('matching')->with('newConstraintsNegated');
 
-		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
-		$mockJoinPoint->expects($this->once())->method('getMethodArgument')->with('query')->will($this->returnValue($mockQuery));
+		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface');
+		$mockJoinPoint->expects($this->once())->method('getProxy')->will($this->returnValue($mockQuery));
 
 		$roles = array('role1', 'role2');
 
@@ -115,8 +115,8 @@ class PersistenceQueryRewritingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockQuery->expects($this->once())->method('getType')->will($this->returnValue($entityType));
 		$mockQuery->expects($this->never())->method('matching');
 
-		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
-		$mockJoinPoint->expects($this->once())->method('getMethodArgument')->with('query')->will($this->returnValue($mockQuery));
+		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface');
+		$mockJoinPoint->expects($this->once())->method('getProxy')->will($this->returnValue($mockQuery));
 
 		$roles = array('role1', 'role2');
 
@@ -145,8 +145,8 @@ class PersistenceQueryRewritingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function rewriteQomQueryFetchesTheSecurityContextOnTheFirstCallToBeSureTheSessionHasAlreadyBeenInitializedWhenTheContextIsBuilt() {
 		$mockQuery = $this->getMock('F3\FLOW3\Persistence\Query', array(), array(), '', FALSE);
 
-		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
-		$mockJoinPoint->expects($this->once())->method('getMethodArgument')->with('query')->will($this->returnValue($mockQuery));
+		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface');
+		$mockJoinPoint->expects($this->once())->method('getProxy')->will($this->returnValue($mockQuery));
 
 		$mockSecurityContext = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
 		$mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue(array()));
@@ -185,7 +185,7 @@ class PersistenceQueryRewritingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockQuery->expects($this->once())->method('getType')->will($this->returnValue($entityType));
 
 		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
-		$mockJoinPoint->expects($this->once())->method('getMethodArgument')->with('query')->will($this->returnValue($mockQuery));
+		$mockJoinPoint->expects($this->once())->method('getProxy')->will($this->returnValue($mockQuery));
 
 		$rewritingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('dummy'), array(), '', FALSE);
         $rewritingAspect->injectObjectManager($mockObjectManager);
@@ -451,11 +451,15 @@ class PersistenceQueryRewritingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 			'properties' => array()
 		);
 
+		$mockQuery = $this->getMock('F3\FLOW3\Persistence\QueryInterface');
+		$mockQuery->expects($this->any())->method('getType')->will($this->returnValue('MyClass'));
+
 		$mockAdviceChain = $this->getMock('F3\FLOW3\AOP\Advice\AdviceChain', array(), array(), '', FALSE);
 		$mockAdviceChain->expects($this->any())->method('proceed')->will($this->returnValue($queryResult));
 
 		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
 		$mockJoinPoint->expects($this->any())->method('getAdviceChain')->will($this->returnValue($mockAdviceChain));
+		$mockJoinPoint->expects($this->any())->method('getProxy')->will($this->returnValue($mockQuery));
 
 		$roles = array('role1', 'role2');
 
@@ -490,11 +494,15 @@ class PersistenceQueryRewritingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 			'properties' => array()
 		);
 
+		$mockQuery = $this->getMock('F3\FLOW3\Persistence\QueryInterface');
+		$mockQuery->expects($this->any())->method('getType')->will($this->returnValue('MyClass'));
+
 		$mockAdviceChain = $this->getMock('F3\FLOW3\AOP\Advice\AdviceChain', array(), array(), '', FALSE);
 		$mockAdviceChain->expects($this->any())->method('proceed')->will($this->returnValue($queryResult));
 
 		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
 		$mockJoinPoint->expects($this->any())->method('getAdviceChain')->will($this->returnValue($mockAdviceChain));
+		$mockJoinPoint->expects($this->any())->method('getProxy')->will($this->returnValue($mockQuery));
 
 		$mockSecurityContext = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
 		$mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue(array()));

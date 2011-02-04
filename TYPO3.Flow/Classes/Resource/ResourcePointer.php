@@ -33,6 +33,7 @@ class ResourcePointer {
 
 	/**
 	 * @var string
+	 * @Id
 	 */
 	protected $hash;
 

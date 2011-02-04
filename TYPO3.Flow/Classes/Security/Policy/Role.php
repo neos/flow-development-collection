@@ -33,7 +33,10 @@ class Role {
 
 	/**
 	 * The string identifier of this role
+	 *
 	 * @var string
+	 * @identity
+	 * @Id
 	 */
 	protected $identifier;
 

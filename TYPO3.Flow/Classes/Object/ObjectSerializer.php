@@ -364,7 +364,7 @@ class ObjectSerializer {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function reconstitutePersistenceObject($className, $uuid) {
-		return $this->persistenceManager->getObjectByIdentifier($uuid);
+		return $this->persistenceManager->getObjectByIdentifier($uuid, $className);
 	}
 }
 

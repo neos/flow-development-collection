@@ -32,6 +32,16 @@ namespace F3\FLOW3\Security\Authorization\Resource;
 class SecurityPublishingConfiguration implements \F3\FLOW3\Resource\Publishing\PublishingConfigurationInterface {
 
 	/**
+	 * This ID does not "exist" in the domain model, it's only for the ORM.
+	 *
+	 * @var integer
+	 *
+	 * @Id
+	 * @GeneratedValue
+	 */
+	protected $id;
+
+	/**
 	 * @var array
 	 */
 	protected $allowedRoles = array();
@@ -39,7 +49,7 @@ class SecurityPublishingConfiguration implements \F3\FLOW3\Resource\Publishing\P
 	/**
 	 * Sets the roles that are allowed to see the corresponding resource
 	 *
-	 * @param array $allowedRoles An array of roles
+	 * @param array<\F3\FLOW3\Security\Policy\Role> $allowedRoles An array of roles
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */

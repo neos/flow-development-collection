@@ -885,6 +885,8 @@ class ReflectionService {
 				$classSchema->setModelType(\F3\FLOW3\Reflection\ClassSchema::MODELTYPE_VALUEOBJECT);
 			}
 
+				// those are added as property even if not tagged with entity/valueobject
+			$propertyTypeWhiteList = array('DateTime', 'SplObjectStorage', 'Doctrine\Common\Collections\ArrayCollection');
 			foreach ($this->getClassPropertyNames($className) as $propertyName) {
 				if ($this->isPropertyTaggedWith($className, $propertyName, 'var') && !$this->isPropertyTaggedWith($className, $propertyName, 'transient')) {
 					$declaredType = trim(implode(' ', $this->getPropertyTagValues($className, $propertyName, 'var')), ' \\');
@@ -892,9 +894,10 @@ class ReflectionService {
 						throw new \F3\FLOW3\Reflection\Exception\InvalidPropertyTypeException('The @var annotation for "' . $className . '::$' . $propertyName . '" seems to be invalid.', 1284132314);
 					}
 
-					if (!($declaredType === 'DateTime' || $declaredType === 'SplObjectStorage')
-							&& (class_exists($declaredType) || interface_exists($declaredType))
-							&& !($this->isClassTaggedWith($declaredType, 'entity') || $this->isClassTaggedWith($declaredType, 'valueobject'))) {
+					$parsedType = \F3\FLOW3\Utility\TypeHandling::parseType($declaredType);
+					if (!in_array($parsedType['type'], $propertyTypeWhiteList)
+							&& (class_exists($parsedType['type']) || interface_exists($parsedType['type']))
+							&& !($this->isClassTaggedWith($parsedType['type'], 'entity') || $this->isClassTaggedWith($parsedType['type'], 'valueobject'))) {
 						continue;
 					}
 

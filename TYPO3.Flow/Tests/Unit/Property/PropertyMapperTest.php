@@ -724,19 +724,17 @@ class PropertyMapperTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function findObjectByIdentityPropertiesReturnsFirstMatchingObject() {
 		$mapper = $this->getAccessibleMock('F3\FLOW3\Property\PropertyMapper', array('dummy'));
 
-		$mockConstraint = $this->getMock('F3\FLOW3\Persistence\Qom\Comparison', array(), array(), '', FALSE);
-
 		$mockObject = new \stdClass();
 		$mockQuery = $this->getMock('F3\FLOW3\Persistence\QueryInterface');
 		$mockQueryResult = $this->getMock('F3\FLOW3\Persistence\QueryResultInterface');
 		$mockQueryResult->expects($this->once())->method('count')->will($this->returnValue(1));
 		$mockQueryResult->expects($this->once())->method('getFirst')->will($this->returnValue($mockObject));
-		$mockQuery->expects($this->once())->method('equals')->with('key1', 'value1')->will($this->returnValue($mockConstraint));
-		$mockQuery->expects($this->once())->method('matching')->with($mockConstraint)->will($this->returnValue($mockQuery));
+		$mockQuery->expects($this->once())->method('equals')->with('key1', 'value1');
+		$mockQuery->expects($this->once())->method('matching')->will($this->returnValue($mockQuery));
 		$mockQuery->expects($this->once())->method('execute')->will($this->returnValue($mockQueryResult));
-		$mockQueryFactory = $this->getMock('F3\FLOW3\Persistence\QueryFactoryInterface');
-		$mockQueryFactory->expects($this->once())->method('create')->with('SomeType')->will($this->returnValue($mockQuery));
-		$mapper->injectQueryFactory($mockQueryFactory);
+		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\PersistenceManagerInterface');
+		$mockPersistenceManager->expects($this->once())->method('createQueryForType')->with('SomeType')->will($this->returnValue($mockQuery));
+		$mapper->injectPersistenceManager($mockPersistenceManager);
 
 		$mockClassSchema = $this->getMock('F3\FLOW3\Reflection\ClassSchema', array(), array('Dummy'));
 		$mockClassSchema->expects($this->once())->method('getIdentityProperties')->will($this->returnValue(array('key1' => 'someType')));
@@ -754,17 +752,16 @@ class PropertyMapperTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function findObjectByIdentityPropertiesReturnsNullIfNoObjectWasFound() {
 		$mapper = $this->getAccessibleMock('F3\FLOW3\Property\PropertyMapper', array('dummy'));
 
-		$mockConstraint = $this->getMock('F3\FLOW3\Persistence\Qom\Comparison', array(), array(), '', FALSE);
 		$mockQueryResult = $this->getMock('F3\FLOW3\Persistence\QueryResultInterface');
 		$mockQueryResult->expects($this->once())->method('count')->will($this->returnValue(0));
 		$mockQueryResult->expects($this->never())->method('getFirst');
 		$mockQuery = $this->getMock('F3\FLOW3\Persistence\QueryInterface');
-		$mockQuery->expects($this->once())->method('equals')->with('key1', 'value1')->will($this->returnValue($mockConstraint));
-		$mockQuery->expects($this->once())->method('matching')->with($mockConstraint)->will($this->returnValue($mockQuery));
+		$mockQuery->expects($this->once())->method('equals')->with('key1', 'value1');
+		$mockQuery->expects($this->once())->method('matching')->will($this->returnValue($mockQuery));
 		$mockQuery->expects($this->once())->method('execute')->will($this->returnValue($mockQueryResult));
-		$mockQueryFactory = $this->getMock('F3\FLOW3\Persistence\QueryFactoryInterface');
-		$mockQueryFactory->expects($this->once())->method('create')->with('SomeType')->will($this->returnValue($mockQuery));
-		$mapper->injectQueryFactory($mockQueryFactory);
+		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\PersistenceManagerInterface');
+		$mockPersistenceManager->expects($this->once())->method('createQueryForType')->with('SomeType')->will($this->returnValue($mockQuery));
+		$mapper->injectPersistenceManager($mockPersistenceManager);
 
 		$mockClassSchema = $this->getMock('F3\FLOW3\Reflection\ClassSchema', array(), array('Dummy'));
 		$mockClassSchema->expects($this->once())->method('getIdentityProperties')->will($this->returnValue(array('key1' => 'someType')));
@@ -783,16 +780,15 @@ class PropertyMapperTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function findObjectByIdentityPropertiesThrowsExceptionIfMoreThanOneObjectWasFound() {
 		$mapper = $this->getAccessibleMock('F3\FLOW3\Property\PropertyMapper', array('dummy'));
 
-		$mockConstraint = $this->getMock('F3\FLOW3\Persistence\Qom\Comparison', array(), array(), '', FALSE);
 		$mockQueryResult = $this->getMock('F3\FLOW3\Persistence\QueryResultInterface');
 		$mockQueryResult->expects($this->once())->method('count')->will($this->returnValue(2));
 		$mockQuery = $this->getMock('F3\FLOW3\Persistence\QueryInterface');
-		$mockQuery->expects($this->once())->method('equals')->with('key1', 'value1')->will($this->returnValue($mockConstraint));
-		$mockQuery->expects($this->once())->method('matching')->with($mockConstraint)->will($this->returnValue($mockQuery));
+		$mockQuery->expects($this->once())->method('equals')->with('key1', 'value1');
+		$mockQuery->expects($this->once())->method('matching')->will($this->returnValue($mockQuery));
 		$mockQuery->expects($this->once())->method('execute')->will($this->returnValue($mockQueryResult));
-		$mockQueryFactory = $this->getMock('F3\FLOW3\Persistence\QueryFactoryInterface');
-		$mockQueryFactory->expects($this->once())->method('create')->with('SomeType')->will($this->returnValue($mockQuery));
-		$mapper->injectQueryFactory($mockQueryFactory);
+		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\PersistenceManagerInterface');
+		$mockPersistenceManager->expects($this->once())->method('createQueryForType')->with('SomeType')->will($this->returnValue($mockQuery));
+		$mapper->injectPersistenceManager($mockPersistenceManager);
 
 		$mockClassSchema = $this->getMock('F3\FLOW3\Reflection\ClassSchema', array(), array('Dummy'));
 		$mockClassSchema->expects($this->once())->method('getIdentityProperties')->will($this->returnValue(array('key1' => 'someType')));

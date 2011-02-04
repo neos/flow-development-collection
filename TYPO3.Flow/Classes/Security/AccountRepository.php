@@ -74,7 +74,7 @@ class AccountRepository extends \F3\FLOW3\Persistence\Repository {
 				$query->equals('authenticationProviderName', $authenticationProviderName),
 				$query->logicalOr(
 					$query->equals('expirationDate', NULL),
-					$query->greaterThan('expirationDate', new \DateTime())
+					$query->greaterThan('expirationDate', new \DateTime('today'))
 				)
 			)
 		)->execute()->getFirst();
