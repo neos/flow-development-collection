@@ -23,7 +23,7 @@ namespace F3\FLOW3\Security\Policy;
  *                                                                        */
 
 /**
- * A role (role) for the PolicyService. These roles can be structured in a tree.
+ * A role for the PolicyService. These roles can be structured in a tree.
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
@@ -45,6 +45,9 @@ class Role {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function __construct($identifier) {
+		if (!is_string($identifier)) {
+			throw new \RuntimeException('Role identifier must be a string, "' . gettype($identifier) .'" given.', 1296509556);
+		}
 		$this->identifier = $identifier;
 	}
 
