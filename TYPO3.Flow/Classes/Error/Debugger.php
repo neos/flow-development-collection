@@ -262,7 +262,7 @@ function var_dump($variable, $title = NULL, $return = FALSE) {
 	}
 
 	$output = '
-		<div class="F3-FLOW3-Error-Debugger-VarDump' . ($return ? 'F3-FLOW3-Error-Debugger-VarDump-Inline' : 'F3-FLOW3-Error-Debugger-VarDump-Floating') . '">
+		<div class="F3-FLOW3-Error-Debugger-VarDump ' . ($return ? 'F3-FLOW3-Error-Debugger-VarDump-Inline' : 'F3-FLOW3-Error-Debugger-VarDump-Floating') . '">
 			<div class="F3-FLOW3-Error-Debugger-VarDump-Top">
 				' . htmlspecialchars($title) . '
 			</div>
