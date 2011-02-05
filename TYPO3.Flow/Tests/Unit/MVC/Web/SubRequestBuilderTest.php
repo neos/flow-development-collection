@@ -71,7 +71,6 @@ class SubRequestBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$this->mockSubRequest = $this->getMock('F3\FLOW3\MVC\Web\SubRequest', array(), array(), '', FALSE);
 		$this->mockSubRequest->expects($this->any())->method('getRequestUri')->will($this->returnValue($this->mockUri));
 		$this->mockSubRequest->expects($this->any())->method('getParentRequest')->will($this->returnValue($this->mockRequest));
-		$this->mockObjectManager->expects($this->any())->method('create')->with('F3\FLOW3\MVC\Web\SubRequest', $this->mockRequest)->will($this->returnValue($this->mockSubRequest));
 		$this->subRequestBuilder = new \F3\FLOW3\MVC\Web\SubRequestBuilder();
 		$this->subRequestBuilder->injectObjectManager($this->mockObjectManager);
 		$this->subRequestBuilder->injectEnvironment($this->mockEnvironment);
@@ -92,6 +91,7 @@ class SubRequestBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function buildSetsMethodOfEnvironment() {
+		$this->mockObjectManager->expects($this->once())->method('create')->with('F3\FLOW3\MVC\Web\SubRequest', $this->mockRequest)->will($this->returnValue($this->mockSubRequest));
 		$this->mockSubRequest->expects($this->any())->method('getArguments')->will($this->returnValue(array()));
 		$this->mockEnvironment->expects($this->once())->method('getRequestMethod')->will($this->returnValue('SomeRequestMethod'));
 		$this->mockSubRequest->expects($this->once())->method('setMethod')->with('SomeRequestMethod');
@@ -103,6 +103,7 @@ class SubRequestBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function buildSetsArgumentNamespaceToAnEmptyStringByDefault() {
+		$this->mockObjectManager->expects($this->once())->method('create')->with('F3\FLOW3\MVC\Web\SubRequest', $this->mockRequest)->will($this->returnValue($this->mockSubRequest));
 		$this->mockSubRequest->expects($this->any())->method('getArguments')->will($this->returnValue(array()));
 		$this->mockSubRequest->expects($this->once())->method('setArgumentNamespace')->with('');
 		$this->subRequestBuilder->build($this->mockRequest);
@@ -113,6 +114,7 @@ class SubRequestBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function buildSetsSpecifiedArgumentNamespace() {
+		$this->mockObjectManager->expects($this->once())->method('create')->with('F3\FLOW3\MVC\Web\SubRequest', $this->mockRequest)->will($this->returnValue($this->mockSubRequest));
 		$this->mockSubRequest->expects($this->any())->method('getArguments')->will($this->returnValue(array()));
 		$this->mockSubRequest->expects($this->once())->method('setArgumentNamespace')->with('SomeArgumentNamespace');
 		$this->subRequestBuilder->build($this->mockRequest, 'SomeArgumentNamespace');
@@ -123,6 +125,7 @@ class SubRequestBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function buildDoesNotSetAnyArgumentsThatAreNotPrefix() {
+		$this->mockObjectManager->expects($this->once())->method('create')->with('F3\FLOW3\MVC\Web\SubRequest', $this->mockRequest)->will($this->returnValue($this->mockSubRequest));
 		$this->mockSubRequest->expects($this->any())->method('getArguments')->will($this->returnValue(array()));
 		$this->mockSubRequest->expects($this->once())->method('getArgumentNamespace')->will($this->returnValue('argumentNamespace'));
 		$this->mockRequest->expects($this->once())->method('hasArgument')->with('argumentNamespace')->will($this->returnValue(FALSE));
@@ -137,6 +140,7 @@ class SubRequestBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function buildIgnoresNamespacedArgumentsOfTypeString() {
+		$this->mockObjectManager->expects($this->once())->method('create')->with('F3\FLOW3\MVC\Web\SubRequest', $this->mockRequest)->will($this->returnValue($this->mockSubRequest));
 		$arguments = array(
 			'nonPrefixedArgument' => 'should be ignored',
 			'argumentNamespace' => 'should be an array'
@@ -155,6 +159,7 @@ class SubRequestBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function buildSetsNamespacedArgumentsFromParentRequest() {
+		$this->mockObjectManager->expects($this->once())->method('create')->with('F3\FLOW3\MVC\Web\SubRequest', $this->mockRequest)->will($this->returnValue($this->mockSubRequest));
 		$arguments = array(
 			'nonPrefixedArgument' => 'should be ignored',
 			'argumentNamespace' => array(
@@ -179,6 +184,7 @@ class SubRequestBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function buildSetsControllerKeysAndFormat() {
+		$this->mockObjectManager->expects($this->once())->method('create')->with('F3\FLOW3\MVC\Web\SubRequest', $this->mockRequest)->will($this->returnValue($this->mockSubRequest));
 		$prefixedArguments = array(
 			'prefixedArgument1' => 'argumentValue1',
 			'@package' => 'SomePackageKey',
@@ -197,5 +203,14 @@ class SubRequestBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$this->subRequestBuilder->build($this->mockRequest, 'argumentNamespace');
 	}
 
+	/**
+	 * @test
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function buildCreatesSpecifiedObject() {
+		$this->mockObjectManager->expects($this->once())->method('create')->with('F3\My\Custom\Subrequest', $this->mockRequest)->will($this->returnValue($this->mockSubRequest));
+		$this->mockSubRequest->expects($this->any())->method('getArguments')->will($this->returnValue(array()));
+		$this->subRequestBuilder->build($this->mockRequest, 'SomeArgumentNamespace', 'F3\My\Custom\Subrequest');
+	}
 }
 ?>

@@ -62,15 +62,17 @@ class SubRequestBuilder {
 	}
 
 	/**
-	 * Builds a sub request object
+	 * Builds a sub request object. If you define the SubRequestClassName,
+	 * the class specified MUST be a subclass of F3\FLOW3\MVC\Web\SubRequest
 	 *
 	 * @param \F3\FLOW3\MVC\Web\Request $parentRequest
 	 * @param string $argumentNamespace namespace that will be prefixed to URIs of this sub request
+	 * @param string $subRequestClassName the class name which should be instanciated. Must be a subclass of
 	 * @return \F3\FLOW3\MVC\Web\SubRequest The sub request as an object
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function build(\F3\FLOW3\MVC\Web\Request $parentRequest, $argumentNamespace = '') {
-		$subRequest = $this->objectManager->create('F3\FLOW3\MVC\Web\SubRequest', $parentRequest);
+	public function build(\F3\FLOW3\MVC\Web\Request $parentRequest, $argumentNamespace = '', $subRequestClassName = 'F3\FLOW3\MVC\Web\SubRequest') {
+		$subRequest = $this->objectManager->create($subRequestClassName, $parentRequest);
 		$subRequest->setMethod($this->environment->getRequestMethod());
 		$subRequest->setArgumentNamespace($argumentNamespace);
 
