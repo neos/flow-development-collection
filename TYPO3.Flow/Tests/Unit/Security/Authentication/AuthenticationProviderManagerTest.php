@@ -43,7 +43,7 @@ class AuthenticationProviderManagerTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockProvider1 = $this->getMock('F3\FLOW3\Security\Authentication\AuthenticationProviderInterface', array(), array(), '', FALSE);
 		$mockProvider1->expects($this->any())->method('getTokenClassNames')->will($this->returnValue(array('token1')));
 		$mockProvider2 = $this->getMock('F3\FLOW3\Security\Authentication\AuthenticationProviderInterface', array(), array(), '', FALSE);
-		$mockProvider2->expects($this->any())->method('getTokenClassNames')->will($this->returnValue(array('token2')));
+		$mockProvider2->expects($this->any())->method('getTokenClassNames')->will($this->returnValue(array('token1', 'token2')));
 
 		$resolveProviderClassCallback = function() {
 			$args = func_get_args();
@@ -73,6 +73,7 @@ class AuthenticationProviderManagerTest extends \F3\FLOW3\Tests\UnitTestCase {
 			),
 			'AnotherProvider' => array(
 				'providerClass' => 'F3\TestAuthenticationProvider',
+				'tokenClass' => 'token2',
 				'options' => array('provider2options')
 			),
 		);
