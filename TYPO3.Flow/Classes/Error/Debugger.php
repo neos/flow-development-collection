@@ -93,23 +93,31 @@ class Debugger {
 	 *
 	 * @param mixed $variable
 	 * @param integer $level
+	 * @param boolean $plaintext
+	 * @param boolean $ansiColors
 	 * @return string
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	static public function renderDump($variable, $level) {
+	static public function renderDump($variable, $level, $plaintext = FALSE, $ansiColors = FALSE) {
 		if ($level > 50) {
 			return 'RECURSION ... ' . chr(10);
 		}
 		if (is_string($variable)) {
-			$dump = sprintf('\'<span class="debug-string">%s</span>\' (%s)', htmlspecialchars((strlen($variable) > 2000) ? substr($variable, 0, 2000) . '…' : $variable), strlen($variable));
+			$croppedValue = (strlen($variable) > 2000) ? substr($variable, 0, 2000) . '…' : $variable;
+			if ($plaintext) {
+				$dump = 'string ' . self::ansiEscapeWrap('"' . $croppedValue . '"', '33', $ansiColors) . ' (' . strlen($variable) . ')';
+			} else {
+				$dump = sprintf('\'<span class="debug-string">%s</span>\' (%s)', htmlspecialchars($croppedValue), strlen($variable));
+			}
 		} elseif (is_numeric($variable)) {
-			$dump = sprintf('%s %s', gettype($variable), $variable);
+			$dump = sprintf('%s %s', gettype($variable), self::ansiEscapeWrap($variable, '35', $ansiColors));
 		} elseif (is_array($variable)) {
-			$dump = \F3\FLOW3\Error\Debugger::renderArrayDump($variable, $level + 1);
+			$dump = \F3\FLOW3\Error\Debugger::renderArrayDump($variable, $level + 1, $plaintext, $ansiColors);
 		} elseif (is_object($variable)) {
-			$dump = \F3\FLOW3\Error\Debugger::renderObjectDump($variable, $level + 1);
+			$dump = \F3\FLOW3\Error\Debugger::renderObjectDump($variable, $level + 1, TRUE, $plaintext, $ansiColors);
 		} elseif (is_bool($variable)) {
-			$dump = $variable ? 'TRUE' : 'FALSE';
+			$dump = $variable ? self::ansiEscapeWrap('TRUE', '32', $ansiColors) : self::ansiEscapeWrap('FALSE', '31', $ansiColors);
 		} elseif (is_null($variable) || is_resource($variable)) {
 			$dump = gettype($variable);
 		}
@@ -121,15 +129,18 @@ class Debugger {
 	 *
 	 * @param array $array
 	 * @param integer $level
+	 * @param boolean $plaintext
+	 * @param boolean $ansiColors
 	 * @return string
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	static protected function renderArrayDump($array, $level) {
+	static protected function renderArrayDump($array, $level, $plaintext = FALSE, $ansiColors = FALSE) {
 		$type = is_array($array) ? 'array' : get_class($array);
-		$dump = $type . (count($array) ? '(' . count($array) .')' . chr(10) : '(empty)');
+		$dump = $type . (count($array) ? '(' . count($array) .')' : '(empty)');
 		foreach ($array as $key => $value) {
-			$dump .= str_repeat(' ', $level) . self::renderDump($key, 0) . ' => ';
-			$dump .= self::renderDump($value, $level + 1) . chr(10);
+			$dump .= chr(10) . str_repeat(' ', $level) . self::renderDump($key, 0, $plaintext, $ansiColors) . ' => ';
+			$dump .= self::renderDump($value, $level + 1, $plaintext, $ansiColors);
 		}
 		return $dump;
 	}
@@ -140,10 +151,13 @@ class Debugger {
 	 * @param object $object
 	 * @param integer $level
 	 * @param boolean $renderProperties
+	 * @param boolean $plaintext
+	 * @param boolean $ansiColors
 	 * @return string
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	static protected function renderObjectDump($object, $level, $renderProperties = TRUE) {
+	static protected function renderObjectDump($object, $level, $renderProperties = TRUE, $plaintext = FALSE, $ansiColors = FALSE) {
 		$dump = '';
 		$scope = '';
 		$additionalAttributes = '';
@@ -165,7 +179,9 @@ class Debugger {
 				if (self::$renderedObjects->contains($object)) {
 					$renderProperties = FALSE;
 				} elseif ($renderProperties === TRUE) {
-					$scope .= '<a id="' . spl_object_hash($object) . '"></a>';
+					if (!$plaintext) {
+						$scope .= '<a id="' . spl_object_hash($object) . '"></a>';
+					}
 					self::$renderedObjects->attach($object);
 				}
 			} else {
@@ -175,9 +191,17 @@ class Debugger {
 
 		$className = ($object instanceof \F3\FLOW3\AOP\ProxyInterface) ? $object->FLOW3_AOP_Proxy_getProxyTargetClassName() : get_class($object);
 
-		$dump .= '<span class="debug-object' . $additionalAttributes . '" title="' . spl_object_hash($object) . '">' . $className . '</span>';
+		if ($plaintext) {
+			$dump .= $className;
+		} else {
+			$dump .= '<span class="debug-object' . $additionalAttributes . '" title="' . spl_object_hash($object) . '">' . $className . '</span>';
+		}
 
-		$dump .= ($scope !== '') ? '<span class="debug-scope">' . $scope .'</span>' : '';
+		if ($plaintext) {
+			$dump .= ($scope !== '') ? ' ' . self::ansiEscapeWrap($scope, '44;37', $ansiColors) : '';
+		} else {
+			$dump .= ($scope !== '') ? '<span class="debug-scope">' . $scope .'</span>' : '';
+		}
 
 		if ($object instanceof \F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface) {
 			if (property_exists($object, 'FLOW3_Persistence_Entity_UUID')) {
@@ -190,49 +214,82 @@ class Debugger {
 				$identifier = 'unknown';
 				$persistenceType = 'strange object';
 			}
-			$dump .= '<span class="debug-ptype" title="' . $identifier . '">' . $persistenceType . '</span>';
+			if ($plaintext) {
+				$dump .= ' ' . self::ansiEscapeWrap($persistenceType, '42;37', $ansiColors);
+			} else {
+				$dump .= '<span class="debug-ptype" title="' . $identifier . '">' . $persistenceType . '</span>';
+			}
 		}
 
 		if ($object instanceof \F3\FLOW3\AOP\ProxyInterface) {
-			$dump .= '<span class="debug-proxy" title="' . get_class($object) . '">proxy</span>';
+			if ($plaintext) {
+				$dump .= ' ' . self::ansiEscapeWrap('proxy', '41;37', $ansiColors);
+			} else {
+				$dump .= '<span class="debug-proxy" title="' . get_class($object) . '">proxy</span>';
+			}
 		}
 
 		if ($renderProperties === TRUE) {
-
 			if ($object instanceof \SplObjectStorage) {
-				$dump .= ' (' . (count($object) ?: 'empty') . ')' . chr(10);
+				$dump .= ' (' . (count($object) ?: 'empty') . ')';
 				foreach ($object as $value) {
+					$dump .= chr(10);
 					$dump .= str_repeat(' ', $level);
 					if (preg_match(self::$blacklistedClassNames, get_class($value)) !== 0) {
-						$dump .= self::renderObjectDump($value, 0, FALSE) . '<span class="debug-filtered">filtered</span>' . chr(10);
+						$dump .= self::renderObjectDump($value, 0, FALSE, $plaintext, $ansiColors);
+						if ($plaintext) {
+							$dump .= ' ' . self::ansiEscapeWrap('filtered', '47;30', $ansiColors);
+						} else {
+							$dump .= '<span class="debug-filtered">filtered</span>';
+						}
 					} else {
-						$dump .= self::renderDump($value, $level + 1) . chr(10);
+						$dump .= self::renderDump($value, $level + 1, $plaintext, $ansiColors);
 					}
 				}
 			} else {
 				$classReflection = new \ReflectionClass($className);
-				$dump .= chr(10);
-				foreach ($classReflection->getProperties() as $property) {
-					$dump .= str_repeat(' ', $level) . '<span class="debug-property">' . $property->getName() . '</span> => ';
+				$properties = $classReflection->getProperties();
+				foreach ($properties as $property) {
+					$dump .= chr(10);
+					$dump .= str_repeat(' ', $level) . ($plaintext ? '' : '<span class="debug-property">') . self::ansiEscapeWrap($property->getName(), '36', $ansiColors) . ($plaintext ? '' : '</span>') . ' => ';
 					$property->setAccessible(TRUE);
 					$value = $property->getValue($object);
 					if (is_array($value)) {
-						$dump .= self::renderDump($value, $level + 1) . chr(10);
+						$dump .= self::renderDump($value, $level + 1, $plaintext, $ansiColors);
 					} elseif (is_object($value)) {
 						if (preg_match(self::$blacklistedClassNames, get_class($value)) !== 0) {
-							$dump .= self::renderObjectDump($value, 0, FALSE) . '<span class="debug-filtered">filtered</span>' . chr(10);
+							$dump .= self::renderObjectDump($value, 0, FALSE, $plaintext, $ansiColors) . ($plaintext ? ' ' . self::ansiEscapeWrap('filtered', '47;30', $ansiColors) : '<span class="debug-filtered">filtered</span>');
 						} else {
-							$dump .= self::renderDump($value, $level + 1) . chr(10);
+							$dump .= self::renderDump($value, $level + 1, $plaintext, $ansiColors);
 						}
 					} else {
-						$dump .= self::renderDump($value, $level) . chr(10);
+						$dump .= self::renderDump($value, $level, $plaintext, $ansiColors);
 					}
 				}
 			}
 		} elseif (self::$renderedObjects->contains($object)) {
-			$dump = '<a href="#' . spl_object_hash($object) . '" class="debug-seeabove" title="see above">' . $dump . '</a>';
+			if (!$plaintext) {
+				$dump = '<a href="#' . spl_object_hash($object) . '" class="debug-seeabove" title="see above">' . $dump . '</a>';
+			}
 		}
 		return $dump;
+	}
+
+	/**
+	 * Wrap a string with the ANSI escape sequence for colorful output
+	 *
+	 * @param string $string The string to wrap
+	 * @param string $ansiColors The ansi color sequence (e.g. "1;37")
+	 * @param boolean $enable If FALSE, the raw string will be returned
+	 * @return string The wrapped or raw string
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	static protected function ansiEscapeWrap($string, $ansiColors, $enable = TRUE) {
+		if ($enable) {
+			return "\x1B[" . $ansiColors . 'm' . $string . "\x1B[0m";
+		} else {
+			return $string;
+		}
 	}
 }
 
@@ -244,33 +301,48 @@ namespace F3;
  * @param mixed $variable The variable to display a dump of
  * @param string $title optional custom title for the debug output
  * @param boolean $return if TRUE, the dump is returned for displaying it embedded in custom HTML. If FALSE (default), the variable dump is directly displayed.
+ * @param boolean $plaintext If TRUE, the dump is in plain text, if FALSE the debug output is in HTML format. If not specified, the mode is guessed from FLOW3_SAPITYPE
  * @return void/string if $return is TRUE, the variable dump is returned. By default, the dump is directly displayed, and nothing is returned.
  * @author Robert Lemke <robert@typo3.org>
  * @author Bastian Waidelich <bastian@typo3.org>
  * @author Sebastian Kurfürst <sebastian@typo3.org>
  * @api
  */
-function var_dump($variable, $title = NULL, $return = FALSE) {
+function var_dump($variable, $title = NULL, $return = FALSE, $plaintext = NULL) {
+	if ($plaintext === NULL) {
+		$plaintext = (FLOW3_SAPITYPE === 'CLI');
+		$ansiColors = $plaintext;
+	} else {
+		$ansiColors = FALSE;
+	}
+
 	if ($title === NULL) {
 		$title = 'FLOW3 Variable Dump';
 	}
+	if ($ansiColors) {
+		$title = "\x1B[1m" . $title . "\x1B[0m";
+	}
 	\F3\FLOW3\Error\Debugger::clearState();
 
-	if (\F3\FLOW3\Error\Debugger::$stylesheetEchoed === FALSE) {
+	if (!$plaintext && \F3\FLOW3\Error\Debugger::$stylesheetEchoed === FALSE) {
 		echo '<link rel="stylesheet" type="text/css" href="/_Resources/Static/Packages/FLOW3/Error/Debugger.css" />';
 		\F3\FLOW3\Error\Debugger::$stylesheetEchoed = TRUE;
 	}
 
-	$output = '
-		<div class="F3-FLOW3-Error-Debugger-VarDump ' . ($return ? 'F3-FLOW3-Error-Debugger-VarDump-Inline' : 'F3-FLOW3-Error-Debugger-VarDump-Floating') . '">
-			<div class="F3-FLOW3-Error-Debugger-VarDump-Top">
-				' . htmlspecialchars($title) . '
+	if ($plaintext) {
+		$output = $title . chr(10) . \F3\FLOW3\Error\Debugger::renderDump($variable, 0, TRUE, $ansiColors) . chr(10) . chr(10);
+	} else {
+		$output = '
+			<div class="F3-FLOW3-Error-Debugger-VarDump ' . ($return ? 'F3-FLOW3-Error-Debugger-VarDump-Inline' : 'F3-FLOW3-Error-Debugger-VarDump-Floating') . '">
+				<div class="F3-FLOW3-Error-Debugger-VarDump-Top">
+					' . htmlspecialchars($title) . '
+				</div>
+				<div class="F3-FLOW3-Error-Debugger-VarDump-Center">
+					<pre dir="ltr">' . \F3\FLOW3\Error\Debugger::renderDump($variable, 0, FALSE, FALSE) . '</pre>
+				</div>
 			</div>
-			<div class="F3-FLOW3-Error-Debugger-VarDump-Center">
-				<pre dir="ltr">' . \F3\FLOW3\Error\Debugger::renderDump($variable, 0) . '</pre>
-			</div>
-		</div>
-	';
+		';
+	}
 
 	if ($return === TRUE) {
 		return $output;
