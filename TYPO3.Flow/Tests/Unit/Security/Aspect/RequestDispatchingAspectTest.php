@@ -135,7 +135,7 @@ class RequestDispatchingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @expectedException \F3\FLOW3\Security\Exception\AuthenticationRequiredException
 	 */
 	public function forwardAuthenticationRequiredExceptionsToAnAuthenticationEntryPointThrowsTheOriginalExceptionIfNoEntryPointIsAvailable() {
-		$request = $request = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
+		$request = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
 		$response = $this->getMock('F3\FLOW3\MVC\Web\Response', array(), array(), '', FALSE);
 		$exception = new \F3\FLOW3\Security\Exception\AuthenticationRequiredException('AuthenticationRequired Exception! Bad...', 1237212410);
 
@@ -169,6 +169,64 @@ class RequestDispatchingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		$dispatchingAspect = new \F3\FLOW3\Security\Aspect\RequestDispatchingAspect($mockContext, $mockFirewall, $mockSecurityLogger);
 		$dispatchingAspect->blockIllegalRequestsAndForwardToAuthenticationEntryPoints($mockJoinPoint);
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function setAccessDeniedResponseHeaderSetsTheResponseContentToAccessDeniedIfAnAccessDeniedExceptionHasBeenThrown() {
+		$response = $this->getMock('F3\FLOW3\MVC\Response', array(), array(), '', FALSE);
+		$response->expects($this->once())->method('setContent')->with('Access denied!');
+		$response->expects($this->never())->method('setStatus');
+
+		$exception = new \F3\FLOW3\Security\Exception\AccessDeniedException('AccessDenied Exception! Bad...', 1237212411);
+
+		$getMethodArgumentCallback = function() use (&$response, &$exception) {
+			$args = func_get_args();
+
+			if ($args[0] === 'exception') return $exception;
+			elseif ($args[0] === 'response') return $response;
+		};
+
+		$mockAdviceChain = $this->getMock('F3\FLOW3\AOP\Advice\AdviceChain', array(), array(), '', FALSE);
+		$mockAdviceChain->expects($this->once())->method('proceed')->will($this->throwException($exception));
+
+		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
+		$mockJoinPoint->expects($this->any())->method('getAdviceChain')->will($this->returnValue($mockAdviceChain));
+		$mockJoinPoint->expects($this->once())->method('getMethodArgument')->with('response')->will($this->returnCallback($getMethodArgumentCallback));
+
+		$dispatchingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\RequestDispatchingAspect', array('dummy'), array(), '', FALSE);
+		$dispatchingAspect->setAccessDeniedResponseHeader($mockJoinPoint);
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function setAccessDeniedResponseHeaderSetsTheResponseStatusTo403IfAnAccessDeniedExceptionHasBeenThrownWhileExecutingAWebRequest() {
+		$response = $this->getMock('F3\FLOW3\MVC\Web\Response', array(), array(), '', FALSE);
+		$response->expects($this->once())->method('setContent')->with('Access denied!');
+		$response->expects($this->once())->method('setStatus')->with(403);
+
+		$exception = new \F3\FLOW3\Security\Exception\AccessDeniedException('AccessDenied Exception! Bad...', 1237212411);
+
+		$getMethodArgumentCallback = function() use (&$response, &$exception) {
+			$args = func_get_args();
+
+			if ($args[0] === 'exception') return $exception;
+			elseif ($args[0] === 'response') return $response;
+		};
+
+		$mockAdviceChain = $this->getMock('F3\FLOW3\AOP\Advice\AdviceChain', array(), array(), '', FALSE);
+		$mockAdviceChain->expects($this->once())->method('proceed')->will($this->throwException($exception));
+
+		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
+		$mockJoinPoint->expects($this->any())->method('getAdviceChain')->will($this->returnValue($mockAdviceChain));
+		$mockJoinPoint->expects($this->once())->method('getMethodArgument')->with('response')->will($this->returnCallback($getMethodArgumentCallback));
+
+		$dispatchingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\RequestDispatchingAspect', array('dummy'), array(), '', FALSE);
+		$dispatchingAspect->setAccessDeniedResponseHeader($mockJoinPoint);
 	}
 }
 ?>

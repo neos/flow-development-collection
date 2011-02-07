@@ -474,5 +474,50 @@ class EnvironmentTest extends \F3\FLOW3\Tests\UnitTestCase {
 			'Custom-Header' => 'abcdefg'
 		), $headers);
 	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getRequestHeadersRespectsAuthorizationVariables() {
+		$environment = $this->getAccessibleMock('F3\FLOW3\Utility\Environment', array('dummy'), array(), '', FALSE);
+		$serverGlobal = array(
+			'HTTP_ACCEPT_ENCODING' => 'gzip,deflate',
+			'HTTP_CUSTOM_HEADER' => 'abcdefg',
+			'PHP_AUTH_USER' => 'admin',
+			'PHP_AUTH_PW' => 'password'
+		);
+		$environment->_set('SERVER', $serverGlobal);
+
+		$headers = $environment->getRequestHeaders();
+		$this->assertEquals(array(
+			'Accept-Encoding' => 'gzip,deflate',
+			'Custom-Header' => 'abcdefg',
+			'User' => 'admin',
+			'Pw' => 'password'
+		), $headers);
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getRequestHeadersRespectsAuthorizationVariablesRedirectedWhenRunningPhpAsCgi() {
+		$environment = $this->getAccessibleMock('F3\FLOW3\Utility\Environment', array('dummy'), array(), '', FALSE);
+		$serverGlobal = array(
+			'HTTP_ACCEPT_ENCODING' => 'gzip,deflate',
+			'HTTP_CUSTOM_HEADER' => 'abcdefg',
+			'REDIRECT_REMOTE_AUTHORIZATION' => base64_encode('admin:password')
+		);
+		$environment->_set('SERVER', $serverGlobal);
+
+		$headers = $environment->getRequestHeaders();
+		$this->assertEquals(array(
+			'Accept-Encoding' => 'gzip,deflate',
+			'Custom-Header' => 'abcdefg',
+			'User' => 'admin',
+			'Pw' => 'password'
+		), $headers);
+	}
 }
 ?>

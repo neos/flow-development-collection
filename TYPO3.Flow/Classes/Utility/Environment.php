@@ -190,6 +190,7 @@ class Environment {
 	 *
 	 * @return array
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @api
 	 */
 	public function getRequestHeaders() {
@@ -198,6 +199,12 @@ class Environment {
 			if (strpos($key, 'HTTP_') === 0) {
 				$key = str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($key, 5)))));
 				$headers[$key] = $value;
+			} elseif (strpos($key, 'PHP_AUTH_') === 0) {
+				$key = str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($key, 9)))));
+				$headers[$key] = $value;
+			} elseif ($key == 'REDIRECT_REMOTE_AUTHORIZATION') {
+				$authorizationData = base64_decode($value);
+				list($headers['User'], $headers['Pw']) = explode(':', $authorizationData);
 			}
 		}
 		return $headers;
