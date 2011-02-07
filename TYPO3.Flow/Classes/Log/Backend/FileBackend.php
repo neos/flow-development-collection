@@ -268,7 +268,7 @@ class FileBackend extends \F3\FLOW3\Log\Backend\AbstractBackend {
 					if (is_object($v)) {
 						$output .= str_repeat(' ', $spaces) . $k . ' => object: ' . get_class($v) . PHP_EOL;
 					} else {
-						$output .= str_repeat(' ',$spaces) . $k . ' => ' . $v . PHP_EOL;
+						$output .= str_repeat(' ',$spaces) . $k . ' => ' . ($v === NULL ? '␀' : $v) . PHP_EOL;
 					}
 				}
 			}
@@ -281,13 +281,13 @@ class FileBackend extends \F3\FLOW3\Log\Backend\AbstractBackend {
 							$output .= str_repeat(' ', $spaces) . $objVarName . ' => ' . PHP_EOL;
 							$output .= $this->getFormattedVarDump($objVarValue, $spaces + 3);
 						} else {
-							$output .= str_repeat(' ', $spaces) . $objVarName . ' => ' . $objVarValue . PHP_EOL;
+							$output .= str_repeat(' ', $spaces) . $objVarName . ' => ' . ($objVarValue === NULL ? '␀' : $objVarValue) . PHP_EOL;
 						}
 					}
 				}
 				$output .= PHP_EOL;
 			} else {
-				$output .= str_repeat(' ', $spaces) . '=> ' . $var . PHP_EOL;
+				$output .= str_repeat(' ', $spaces) . '=> ' . ($var === NULL ? '␀' : $var) . PHP_EOL;
 			}
 		}
 		return $output;
