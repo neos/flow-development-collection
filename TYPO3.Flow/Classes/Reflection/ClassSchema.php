@@ -56,10 +56,9 @@ class ClassSchema {
 	protected $lazyLoadable = FALSE;
 
 	/**
-	 * Whether a repository exists for the class this schema is referring to
-	 * @var boolean
+	 * @var string
 	 */
-	protected $aggregateRoot = FALSE;
+	protected $repositoryClassName;
 
 	/**
 	 * The name of the property holding the uuid of an entity, if any.
@@ -190,7 +189,7 @@ class ClassSchema {
 		if ($modelType === self::MODELTYPE_VALUEOBJECT) {
 			$this->uuidPropertyName = NULL;
 			$this->identityProperties = array();
-			$this->aggregateRoot = FALSE;
+			$this->repositoryClassName = NULL;
 		}
 	}
 
@@ -205,27 +204,34 @@ class ClassSchema {
 	}
 
 	/**
-	 * Marks the class if it is root of an aggregate and therefore accessible
-	 * through a repository - or not.
+	 * Set the class name of the repository managing an entity.
 	 *
-	 * @param boolean $isRoot TRUE if it is the root of an aggregate
+	 * @param string $repositoryClassName
 	 * @return void
+	 * @throws \F3\FLOW3\Reflection\Exception\ClassSchemaConstraintViolationException
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function setAggregateRoot($isRoot) {
-		if ($this->modelType === self::MODELTYPE_VALUEOBJECT && $isRoot === TRUE) throw new \F3\FLOW3\Reflection\Exception\ClassSchemaConstraintViolationException('Value objects must not be aggregate roots (have a repository)', 1268739172);
-		$this->aggregateRoot = $isRoot;
+	public function setRepositoryClassName($repositoryClassName) {
+		if ($this->modelType === self::MODELTYPE_VALUEOBJECT && $repositoryClassName !== NULL) throw new \F3\FLOW3\Reflection\Exception\ClassSchemaConstraintViolationException('Value objects must not be aggregate roots (have a repository)', 1268739172);
+		$this->repositoryClassName = $repositoryClassName;
 	}
 
 	/**
-	 * Whether the class is an aggregate root and therefore accessible through
-	 * a repository.
+	 * @return string
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getRepositoryClassName() {
+		return $this->repositoryClassName;
+	}
+
+	/**
+	 * Whether the class is accessible through a repository and therefore an aggregate root.
 	 *
-	 * @return boolean TRUE if it is managed
+	 * @return boolean TRUE
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function isAggregateRoot() {
-		return $this->aggregateRoot;
+		return $this->repositoryClassName !== NULL;
 	}
 
 	/**

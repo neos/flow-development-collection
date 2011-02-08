@@ -188,7 +188,7 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$classSchema1 = new \F3\FLOW3\Reflection\ClassSchema($fullClassName1);
 		$classSchema1->setModelType(\F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY);
 		$classSchema1->addProperty('sub', $fullClassName2);
-		$classSchema1->setAggregateRoot(TRUE);
+		$classSchema1->setRepositoryClassName('Some\Repository');
 		$classSchema2 = new \F3\FLOW3\Reflection\ClassSchema($fullClassName2);
 		$classSchema2->setModelType(\F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY);
 		$classSchema2->addProperty('sub', $fullClassName3);
@@ -1066,10 +1066,10 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		$otherClassSchema = new \F3\FLOW3\Reflection\ClassSchema($otherClassName);
 		$otherClassSchema->setModelType(\F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY);
-		$otherClassSchema->setAggregateRoot(TRUE);
+		$otherClassSchema->setRepositoryClassName('Some\Repository');
 		$someClassSchema = new \F3\FLOW3\Reflection\ClassSchema($someClassName);
 		$someClassSchema->setModelType(\F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY);
-		$someClassSchema->setAggregateRoot(TRUE);
+		$someClassSchema->setRepositoryClassName('Some\Repository');
 		$someClassSchema->addProperty('property', $fullOtherClassName);
 
 		$aggregateRootObjects = new \SplObjectStorage();
@@ -1194,7 +1194,7 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function removeEntitiesByParentEmitsExpectedSql() {
 		$fooBarClassSchema = new \F3\FLOW3\Reflection\ClassSchema('FooBar');
 		$fooBarClassSchema->setModelType(\F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY);
-		$fooBarClassSchema->setAggregateRoot(TRUE);
+		$fooBarClassSchema->setRepositoryClassName('Some\Repository');
 		$quuxClassSchema = new \F3\FLOW3\Reflection\ClassSchema('Quux');
 		$quuxClassSchema->setModelType(\F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY);
 
