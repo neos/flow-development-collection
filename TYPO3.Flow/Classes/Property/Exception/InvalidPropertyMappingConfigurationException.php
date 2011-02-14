@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Validation\Filter;
+namespace F3\FLOW3\Property\Exception;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,19 +23,13 @@ namespace F3\FLOW3\Validation\Filter;
  *                                                                        */
 
 /**
- * Contract for a filter
+ * An "Invalid Property Mapping Configuration" Exception
  *
- * @author Andreas Förthner <andreas.foerthner@netlogix.de>
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @api
  */
-interface FilterInterface {
+class InvalidPropertyMappingConfigurationException extends \F3\FLOW3\Property\Exception {
 
-	/**
-	 * Returns the filtered subject.
-	 *
-	 * @param object $subject The subject that should be filtered
-	 */
-	public function filter($subject);
 }
 
 ?>

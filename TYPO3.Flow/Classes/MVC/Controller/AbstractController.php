@@ -53,12 +53,6 @@ abstract class AbstractController implements ControllerInterface {
 	protected $settings;
 
 	/**
-	 * @var \F3\FLOW3\Property\PropertyMapper
-	 * @api
-	 */
-	protected $propertyMapper;
-
-	/**
 	 * @var \F3\FLOW3\Validation\ValidatorResolver
 	 */
 	protected $validatorResolver;
@@ -83,13 +77,6 @@ abstract class AbstractController implements ControllerInterface {
 	 * @api
 	 */
 	protected $arguments;
-
-	/**
-	 * The results of the mapping of request arguments to controller arguments
-	 * @var \F3\FLOW3\Property\MappingResults
-	 * @api
-	 */
-	protected $argumentsMappingResults;
 
 	/**
 	 * An array of supported request types. By default only web requests are supported.
@@ -142,17 +129,6 @@ abstract class AbstractController implements ControllerInterface {
 	 */
 	public function injectSettings(array $settings) {
 		$this->settings = $settings;
-	}
-
-	/**
-	 * Injects the property mapper
-	 *
-	 * @param \F3\FLOW3\Property\PropertyMapper $propertyMapper The property mapper
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function injectPropertyMapper(\F3\FLOW3\Property\PropertyMapper $propertyMapper) {
-		$this->propertyMapper = $propertyMapper;
 	}
 
 	/**
@@ -217,7 +193,7 @@ abstract class AbstractController implements ControllerInterface {
 
 		$this->initializeControllerArgumentsBaseValidators();
 		$this->mapRequestArgumentsToControllerArguments();
-		$this->controllerContext = new ControllerContext($this->request, $this->response, $this->arguments, $this->argumentsMappingResults, $this->uriBuilder, $this->flashMessageContainer);
+		$this->controllerContext = new ControllerContext($this->request, $this->response, $this->arguments, $this->uriBuilder, $this->flashMessageContainer);
 	}
 
 	/**
@@ -370,19 +346,18 @@ abstract class AbstractController implements ControllerInterface {
 	 * Maps arguments delivered by the request object to the local controller arguments.
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	protected function mapRequestArgumentsToControllerArguments() {
-		$optionalArgumentNames = array();
-		$allArgumentNames = $this->arguments->getArgumentNames();
-		foreach ($allArgumentNames as $argumentName) {
-			if ($this->arguments[$argumentName]->isRequired() === FALSE) $optionalArgumentNames[] = $argumentName;
+		foreach ($this->arguments as $argument) {
+			$argumentName = $argument->getName();
+
+			if ($this->request->hasArgument($argumentName)) {
+				$argument->setValue($this->request->getArgument($argumentName));
+			} elseif ($argument->isRequired()) {
+				throw new \F3\FLOW3\MVC\Exception\RequiredArgumentMissingException('Required argument "' . $argumentName  . '" is not set.', 1298012500);
+			}
 		}
-
-		$validator = $this->objectManager->get('F3\FLOW3\MVC\Controller\ArgumentsValidator');
-		$this->propertyMapper->mapAndValidate($allArgumentNames, $this->request->getArguments(), $this->arguments, $optionalArgumentNames, $validator);
-
-		$this->argumentsMappingResults = $this->propertyMapper->getMappingResults();
 	}
 }
 

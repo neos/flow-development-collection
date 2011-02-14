@@ -26,19 +26,44 @@ namespace F3\FLOW3\Tests\Unit\MVC\Controller;
  * Testcase for the MVC Controller Argument
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @covers \F3\FLOW3\MVC\Controller\Argument
  */
 class ArgumentTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
+	 * @var \F3\FLOW3\MVC\Controller\Argument
 	 */
-	protected $mockObjectManager;
+	protected $simpleValueArgument;
 
 	/**
-	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @var \F3\FLOW3\MVC\Controller\Argument
+	 */
+	protected $objectArgument;
+
+	protected $mockPropertyMapper;
+	protected $mockConfigurationBuilder;
+	protected $mockConfiguration;
+
+	/**
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function setUp() {
-		$this->mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
+		$this->simpleValueArgument = new \F3\FLOW3\MVC\Controller\Argument('someName', 'string');
+		$this->objectArgument = new \F3\FLOW3\MVC\Controller\Argument('someName', 'DateTime');
+
+		$this->mockPropertyMapper = $this->getMock('F3\FLOW3\Property\PropertyMapper');
+		$this->simpleValueArgument->injectPropertyMapper($this->mockPropertyMapper);
+		$this->objectArgument->injectPropertyMapper($this->mockPropertyMapper);
+
+		$this->mockConfigurationBuilder = $this->getMock('F3\FLOW3\Property\PropertyMappingConfigurationBuilder');
+		$this->mockConfiguration = $this->getMock('F3\FLOW3\Property\PropertyMappingConfigurationInterface');
+		$this->mockConfigurationBuilder->expects($this->any())->method('build')->with('F3\FLOW3\MVC\Controller\MvcPropertyMappingConfiguration')->will($this->returnValue($this->mockConfiguration));
+
+		$this->simpleValueArgument->injectPropertyMappingConfigurationBuilder($this->mockConfigurationBuilder);
+		$this->objectArgument->injectPropertyMappingConfigurationBuilder($this->mockConfigurationBuilder);
+
+		$this->simpleValueArgument->initializeObject();
+		$this->objectArgument->initializeObject();
 	}
 
 	/**
@@ -64,8 +89,8 @@ class ArgumentTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function passingDataTypeToConstructorReallySetsTheDataType() {
-		$argument = new \F3\FLOW3\MVC\Controller\Argument('dummy', 'Number');
-		$this->assertEquals('Number', $argument->getDataType(), 'The specified data type has not been set correctly.');
+		$this->assertEquals('string', $this->simpleValueArgument->getDataType(), 'The specified data type has not been set correctly.');
+		$this->assertEquals('someName', $this->simpleValueArgument->getName(), 'The specified name has not been set correctly.');
 	}
 
 	/**
@@ -73,9 +98,84 @@ class ArgumentTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setShortNameProvidesFluentInterface() {
-		$argument = new \F3\FLOW3\MVC\Controller\Argument('dummy', 'Text');
-		$returnedArgument = $argument->setShortName('x');
-		$this->assertSame($argument, $returnedArgument, 'The returned argument is not the original argument.');
+		$returnedArgument = $this->simpleValueArgument->setShortName('x');
+		$this->assertSame($this->simpleValueArgument, $returnedArgument, 'The returned argument is not the original argument.');
+	}
+
+	public function invalidShortNames() {
+		return array(
+			array(''),
+			array('as'),
+			array(5)
+		);
+	}
+	/**
+	 * @test
+	 * @dataProvider invalidShortNames
+	 * @expectedException \InvalidArgumentException
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function shortNameShouldThrowExceptionIfInvalid($invalidShortName) {
+		$this->simpleValueArgument->setShortName($invalidShortName);
+	}
+
+	/**
+	 * @test
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function shortNameCanBeRetrievedAgain() {
+		$this->simpleValueArgument->setShortName('x');
+		$this->assertEquals('x', $this->simpleValueArgument->getShortName());
+	}
+
+	/**
+	 * @test
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function setRequiredShouldProvideFluentInterfaceAndReallySetRequiredState() {
+		$returnedArgument = $this->simpleValueArgument->setRequired(TRUE);
+		$this->assertSame($this->simpleValueArgument, $returnedArgument, 'The returned argument is not the original argument.');
+		$this->assertTrue($this->simpleValueArgument->isRequired());
+	}
+
+	/**
+	 * @test
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function setShortHelpMessageShouldProvideFluentInterfaceAndReallySetShortHelpMessage() {
+		$returnedArgument = $this->simpleValueArgument->setShortHelpMessage('Some Help Message');
+		$this->assertSame($this->simpleValueArgument, $returnedArgument, 'The returned argument is not the original argument.');
+		$this->assertSame('Some Help Message', $this->simpleValueArgument->getShortHelpMessage());
+	}
+
+	/**
+	 * @test
+	 * @expectedException \InvalidArgumentException
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function setShortHelpMessageShouldThrowExceptionIfMessageIsNoString() {
+		$this->simpleValueArgument->setShortHelpMessage(NULL);
+	}
+
+	/**
+	 * @test
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function setDefaultValueShouldProvideFluentInterfaceAndReallySetDefaultValue() {
+		$returnedArgument = $this->simpleValueArgument->setDefaultValue('default');
+		$this->assertSame($this->simpleValueArgument, $returnedArgument, 'The returned argument is not the original argument.');
+		$this->assertSame('default', $this->simpleValueArgument->getDefaultValue());
+	}
+
+	/**
+	 * @test
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function setValidatorShouldProvideFluentInterfaceAndReallySetValidator() {
+		$mockValidator = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
+		$returnedArgument = $this->simpleValueArgument->setValidator($mockValidator);
+		$this->assertSame($this->simpleValueArgument, $returnedArgument, 'The returned argument is not the original argument.');
+		$this->assertSame($mockValidator, $this->simpleValueArgument->getValidator());
 	}
 
 	/**
@@ -83,19 +183,19 @@ class ArgumentTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setValueProvidesFluentInterface() {
-		$argument = new \F3\FLOW3\MVC\Controller\Argument('dummy', 'Text');
-		$returnedArgument = $argument->setValue('x');
-		$this->assertSame($argument, $returnedArgument, 'The returned argument is not the original argument.');
+		$returnedArgument = $this->simpleValueArgument->setValue(NULL);
+		$this->assertSame($this->simpleValueArgument, $returnedArgument, 'The returned argument is not the original argument.');
 	}
+
 
 	/**
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setValueUsesNullAsIs() {
-		$argument = $this->getMock('F3\FLOW3\MVC\Controller\Argument', array('transformValue'), array('dummy', 'ArrayObject'));
-		$argument->expects($this->never())->method('transformValue');
-		$argument->setValue(NULL);
+		$this->simpleValueArgument = new \F3\FLOW3\MVC\Controller\Argument('dummy', 'string');
+		$this->simpleValueArgument->setValue(NULL);
+		$this->assertNull($this->simpleValueArgument->getValue());
 	}
 
 	/**
@@ -103,189 +203,70 @@ class ArgumentTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setValueUsesMatchingInstanceAsIs() {
-		$argument = $this->getMock('F3\FLOW3\MVC\Controller\Argument', array('transformValue'), array('dummy', '\ArrayObject'));
-		$argument->expects($this->never())->method('transformValue');
-		$argument->setValue(new \ArrayObject());
+		$this->mockPropertyMapper->expects($this->never())->method('convert');
+		$this->objectArgument->setValue(new \DateTime());
 	}
 
-	/**
-	 * @test
-	 * @dataProvider argumentRawValuesAndPhpValues
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function setValueConvertsSimpleTypesIntoTheirCorrespondingPhpType($rawValue, $dataType, $phpValue) {
-		$argument = new \F3\FLOW3\MVC\Controller\Argument('argumentName', $dataType);
-		$argument->setValue($rawValue);
-		$this->assertSame($phpValue, $argument->getValue());
-	}
-
-	/**
-	 * Data provider for - see above.
-	 *
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function argumentRawValuesAndPhpValues() {
-		return array(
-			 array('dummy', 'Text', 'dummy'),
-			 array('dummy', 'string', 'dummy'),
-			 array('', 'string', ''),
-
-			 array('1', 'integer', 1),
-			 array('-1', 'integer', -1),
-			 array('0', 'integer', 0),
-			 array('', 'integer', NULL),
-
-			 array('0', 'float', (float)0),
-			 array('1.0', 'float', 1.0),
-			 array('1.1', 'float', 1.1),
-			 array('-2.1', 'float', -2.1),
-			 array('', 'float', NULL),
-
-			 array('0', 'double', (float)0),
-			 array('1.0', 'double', 1.0),
-			 array('1.1', 'double', 1.1),
-			 array('-2.1', 'double', -2.1),
-			 array('', 'double', NULL),
-
-			 array('1', 'boolean', TRUE),
-			 array('0', 'boolean', FALSE),
-			 array('-1', 'boolean', FALSE),
-			 array('true', 'boolean', TRUE),
-			 array('false', 'boolean', FALSE),
-			 array('TRUE', 'boolean', TRUE),
-			 array('FALSE', 'boolean', FALSE),
-			 array('', 'boolean', NULL),
-		 );
-	}
-
-	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function setValueTriesToConvertAnUuidStringIntoTheRealObjectIfDataTypeClassSchemaIsAvailable() {
-		$object = new \stdClass();
-
-		$mockClassSchema = $this->getMock('F3\FLOW3\Reflection\ClassSchema', array(), array() ,'', FALSE);
-		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\PersistenceManagerInterface');
-		$mockPersistenceManager->expects($this->once())->method('getObjectByIdentifier')->with('e104e469-9030-4b98-babf-3990f07dd3f1')->will($this->returnValue($object));
-
-		$argument = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\Argument', array('findObjectByIdentityUUID'), array(), '', FALSE);
-		$argument->injectPersistenceManager($mockPersistenceManager);
-		$argument->_set('dataTypeClassSchema', $mockClassSchema);
-		$argument->_set('dataType', 'stdClass');
-		$argument->setValue('e104e469-9030-4b98-babf-3990f07dd3f1');
-
-		$this->assertSame($object, $argument->_get('value'));
-	}
-
-	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function setValueHandsArraysOverToThePropertyMapperIfDataTypeClassSchemaIsAvailable() {
-		$object = new \stdClass();
-
-		$mockClassSchema = $this->getMock('F3\FLOW3\Reflection\ClassSchema', array(), array() ,'', FALSE);
-		$mockPropertyMapper = $this->getMock('F3\FLOW3\Property\PropertyMapper');
-		$mockPropertyMapper->expects($this->once())->method('map')->with(array('foo'), array('foo' => 'bar'), 'stdClass')->will($this->returnValue($object));
-
-		$argument = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\Argument', array('dummy'), array(), '', FALSE);
-		$argument->injectPropertyMapper($mockPropertyMapper);
-		$argument->_set('dataTypeClassSchema', $mockClassSchema);
-		$argument->_set('dataType', 'stdClass');
-		$argument->setValue(array('foo' => 'bar'));
-
-		$this->assertSame($object, $argument->_get('value'));
-	}
-
-	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @expectedException \F3\FLOW3\MVC\Exception\InvalidArgumentValueException
-	 */
-	public function setValueThrowsExceptionIfValueIsNotInstanceOfDataType() {
-		$mockClassSchema = $this->getMock('F3\FLOW3\Reflection\ClassSchema', array(), array() ,'', FALSE);
-		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\PersistenceManagerInterface');
-		$mockPersistenceManager->expects($this->once())->method('getObjectByIdentifier')->will($this->returnValue(new \stdClass()));
-
-		$mockMappingResults = $this->getMock('F3\FLOW3\Property\MappingResults', array('hasErrors'), array(), '', FALSE);
-		$mockMappingResults->expects($this->any())->method('hasErrors')->will($this->returnValue(FALSE));
-		$mockPropertyMapper = $this->getMock('F3\FLOW3\Property\PropertyMapper', array('getMappingResults'), array(), '', FALSE);
-		$mockPropertyMapper->expects($this->any())->method('getMappingResults')->will($this->returnValue($mockMappingResults));
-
-		$argument = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\Argument', array('findObjectByIdentityUUID'), array(), '', FALSE);
-		$argument->injectPersistenceManager($mockPersistenceManager);
-		$argument->injectPropertyMapper($mockPropertyMapper);
-		$argument->_set('dataTypeClassSchema', $mockClassSchema);
-		$argument->_set('dataType', 'ArrayObject');
-		$argument->setValue('e104e469-9030-4b98-babf-3990f07dd3f1');
+	protected function setupPropertyMapperAndSetValue() {
+		$this->mockPropertyMapper->expects($this->once())->method('convert')->with('someRawValue', 'string', $this->mockConfiguration)->will($this->returnValue('convertedValue'));
+		return $this->simpleValueArgument->setValue('someRawValue');
 	}
 
 	/**
 	 * @test
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	public function setValueTriesToMapObjectIfDataTypeClassSchemaIsNotSet() {
-		$object = new \stdClass();
-		$object->title = 'Hello';
-
-		$mockPropertyMapper = $this->getMock('F3\FLOW3\Property\PropertyMapper');
-		$mockPropertyMapper->expects($this->once())->method('map')->with(array('title'), array('title' => 'Hello'), 'stdClass')->will($this->returnValue($object));
-
-		$argument = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\Argument', array('findObjectByIdentityUUID'), array(), '', FALSE);
-		$argument->_set('dataType', 'stdClass');
-		$argument->injectPropertyMapper($mockPropertyMapper);
-
-
-		$argument->setValue(array('title' => 'Hello'));
-		$this->assertSame($object, $argument->_get('value'));
+	public function setValueShouldCallPropertyMapperCorrectlyAndStoreResultInValue() {
+		$this->setupPropertyMapperAndSetValue();
+		$this->assertSame('convertedValue', $this->simpleValueArgument->getValue());
+		$this->assertTrue($this->simpleValueArgument->isValid());
 	}
 
 	/**
 	 * @test
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 * @expectedException \F3\FLOW3\MVC\Exception\InvalidArgumentValueException
 	 */
-	public function setValueThrowsExceptionIfComplexObjectShouldBeGeneratedFromStringAndDataTypeClassSchemaIsNotSet() {
-		$argument = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\Argument', array('findObjectByIdentityUUID'), array(), '', FALSE);
-		$argument->_set('dataType', 'stdClass');
-
-		$argument->setValue(42);
+	public function setValueShouldBeFluentInterface() {
+		$this->assertSame($this->simpleValueArgument, $this->setupPropertyMapperAndSetValue());
 	}
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	public function setShortHelpMessageProvidesFluentInterface() {
-		$argument = new \F3\FLOW3\MVC\Controller\Argument('dummy', 'Text');
-		$returnedArgument = $argument->setShortHelpMessage('x');
-		$this->assertSame($argument, $returnedArgument, 'The returned argument is not the original argument.');
+	public function setValueShouldSetValidationErrorsIfValidatorIsSetAndValidationFailed() {
+		$errors = array(
+			new \F3\FLOW3\Error\Error('some error', 1234)
+		);
+		$mockValidator = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
+		$mockValidator->expects($this->once())->method('isValid')->with('convertedValue')->will($this->returnValue(FALSE));
+		$mockValidator->expects($this->once())->method('getErrors')->will($this->returnValue($errors));
+
+		$this->simpleValueArgument->setValidator($mockValidator);
+		$this->setupPropertyMapperAndSetValue();
+		$this->assertFalse($this->simpleValueArgument->isValid());
+		$this->assertEquals($errors, $this->simpleValueArgument->getValidationErrors());
 	}
+
+	/**
+	 * @test
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function defaultPropertyMappingConfigurationShouldBeFetchable() {
+		$this->assertSame($this->mockConfiguration, $this->simpleValueArgument->getPropertyMappingConfiguration());
+	}
+
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function toStringReturnsTheStringVersionOfTheArgumentsValue() {
-		$argument = new \F3\FLOW3\MVC\Controller\Argument('dummy', 'Text');
-		$argument->setValue(123);
+		$this->mockPropertyMapper->expects($this->any())->method('convert')->will($this->returnValue(123));
+		$this->simpleValueArgument->setValue('123');
 
-		$this->assertSame((string)$argument, '123', 'The returned argument is not a string.');
-		$this->assertNotSame((string)$argument, 123, 'The returned argument is identical to the set value.');
+		$this->assertSame((string)$this->simpleValueArgument, '123', 'The returned argument is not a string.');
+		$this->assertNotSame((string)$this->simpleValueArgument, 123, 'The returned argument is identical to the set value.');
 	}
-
-	/**
-	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 */
-	public function setDefaultValueReallySetsDefaultValue() {
-		$argument = new \F3\FLOW3\MVC\Controller\Argument('dummy', 'Text');
-		$argument->injectObjectManager($this->mockObjectManager);
-		$argument->setDefaultValue(42);
-
-		$this->assertEquals(42, $argument->getValue(), 'The default value was not stored in the Argument.');
-	}
-
 }
 ?>

@@ -106,5 +106,16 @@ class TypeHandling {
 	static public function isLiteral($type) {
 		return preg_match(self::LITERAL_TYPE_PATTERN, $type) === 1;
 	}
+
+	/**
+	 * Returns TRUE if the $type is a simple type.
+	 *
+	 * @param string $type
+	 * @return boolean
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	static public function isSimpleType($type) {
+		return in_array($type, array('array', 'string', 'float', 'integer', 'boolean'), TRUE);
+	}
 }
 ?>

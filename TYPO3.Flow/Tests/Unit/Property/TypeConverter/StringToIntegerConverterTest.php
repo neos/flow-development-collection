@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Tests\Unit\Property;
+namespace F3\FLOW3\Tests\Unit\Property\TypeConverter;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,23 +23,54 @@ namespace F3\FLOW3\Tests\Unit\Property;
  *                                                                        */
 
 /**
- * Testcase for Mapping Results
+ * Testcase for the String to Integer converter
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @covers \F3\FLOW3\Property\TypeConverter\StringToIntegerConverter<extended>
  */
-class MappingResultsTest extends \F3\FLOW3\Tests\UnitTestCase {
+class StringToIntegerConverterTest extends \F3\FLOW3\Tests\UnitTestCase {
+
+	/**
+	 * @var \F3\FLOW3\Property\TypeConverterInterface
+	 */
+	protected $converter;
+
+	public function setUp() {
+		$this->converter = new \F3\FLOW3\Property\TypeConverter\StringToIntegerConverter();
+	}
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	public function addErrorSetsErrorForProperty() {
-		$mockError = $this->getMock('F3\FLOW3\Validation\PropertyError', array('dummy'), array('foo'));
-		
-		$mappingResults = $this->getAccessibleMock('F3\FLOW3\Property\MappingResults', array('dummy'), array(), '', FALSE);
-		$mappingResults->addError($mockError, 'foo');
-		
-		$this->assertEquals($mockError, $mappingResults->getErrorForProperty('foo'));
+	public function checkMetadata() {
+		$this->assertEquals(array('string'), $this->converter->getSupportedSourceTypes(), 'Source types do not match');
+		$this->assertEquals('integer', $this->converter->getSupportedTargetType(), 'Target type does not match');
+		$this->assertEquals(1, $this->converter->getPriority(), 'Priority does not match');
+	}
+
+	/**
+	 * @test
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function convertFromShouldCastTheStringToInteger() {
+		$this->assertSame(15, $this->converter->convertFrom('15', 'integer'));
+	}
+
+	/**
+	 * @test
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function canConvertShouldReturnTrue() {
+		$this->assertTrue($this->converter->canConvert('15', 'integer'));
+	}
+
+	/**
+	 * @test
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function getPropertiesShouldReturnEmptyArray() {
+		$this->assertEquals(array(), $this->converter->getProperties('myString'));
 	}
 }
 ?>

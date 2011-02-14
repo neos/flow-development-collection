@@ -23,12 +23,16 @@ namespace F3\FLOW3\Resource;
  *                                                                        */
 
 /**
- * An object converter for ResourcePointer objects
+ * An type converter for ResourcePointer objects
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope singleton
  */
-class ResourceObjectConverter implements \F3\FLOW3\Property\ObjectConverterInterface {
+class ResourceTypeConverter extends \F3\FLOW3\Property\TypeConverter\AbstractTypeConverter {
+
+	protected $sourceTypes = array('array');
+	protected $targetType = 'F3\FLOW3\Resource\Resource';
+	protected $priority = 1;
 
 	/**
 	 * @var F3\FLOW3\Object\ObjectManagerInterface
@@ -46,7 +50,7 @@ class ResourceObjectConverter implements \F3\FLOW3\Property\ObjectConverterInter
 	protected $convertedResources = array();
 
 	/**
-	 * Injects the object factory
+	 * Injects the object manager
 	 *
 	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
 	 * @return void
@@ -68,17 +72,6 @@ class ResourceObjectConverter implements \F3\FLOW3\Property\ObjectConverterInter
 	}
 
 	/**
-	 * Returns a list of fully qualified class names of those classes which are supported
-	 * by this property editor.
-	 *
-	 * @return array<string>
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getSupportedTypes() {
-		return array('F3\FLOW3\Resource\Resource');
-	}
-
-	/**
 	 * Converts the given string or array to a ResourcePointer object.
 	 *
 	 * If the input format is an array, this method assumes the resource to be a
@@ -90,24 +83,24 @@ class ResourceObjectConverter implements \F3\FLOW3\Property\ObjectConverterInter
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function convertFrom($source) {
-		if (is_array($source)) {
-			if ($source['error'] === \UPLOAD_ERR_NO_FILE) return NULL;
-			if ($source['error'] !== \UPLOAD_ERR_OK) return $this->objectManager->create('F3\FLOW3\Error\Error', \F3\FLOW3\Utility\Files::getUploadErrorMessage($source['error']) , 1264440823);
+	public function convertFrom($source, $targetType, array $subProperties = array(), \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
 
-			if (isset($this->convertedResources[$source['tmp_name']])) {
-				return $this->convertedResources[$source['tmp_name']];
-			}
+		if ($source['error'] === \UPLOAD_ERR_NO_FILE) return NULL;
 
-			$resource = $this->resourceManager->importUploadedResource($source);
-			if ($resource === FALSE) {
-				return $this->objectManager->create('F3\FLOW3\Error\Error', 'The resource manager could not create a ResourcePointer instance.' , 1264517906);
-			} else {
-				$this->convertedResources[$source['tmp_name']] = $resource;
-				return $resource;
-			}
+		// TODO: what about the error handling? Right now, we do not support returning an ERROR instance as it has been done below.
+		if ($source['error'] !== \UPLOAD_ERR_OK) return $this->objectManager->create('F3\FLOW3\Error\Error', \F3\FLOW3\Utility\Files::getUploadErrorMessage($source['error']) , 1264440823);
+
+		if (isset($this->convertedResources[$source['tmp_name']])) {
+			return $this->convertedResources[$source['tmp_name']];
+		}
+
+		$resource = $this->resourceManager->importUploadedResource($source);
+		if ($resource === FALSE) {
+			// TODO: what about the error handling? Exception?
+			return $this->objectManager->create('F3\FLOW3\Error\Error', 'The resource manager could not create a ResourcePointer instance.' , 1264517906);
 		} else {
-			return $this->objectManager->create('F3\FLOW3\Error\Error', 'The source for conversion to a ResourcePointer object was not an array.' , 1264440811);
+			$this->convertedResources[$source['tmp_name']] = $resource;
+			return $resource;
 		}
 	}
 }

@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Property;
+namespace F3\FLOW3\Property\TypeConverter;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,34 +23,20 @@ namespace F3\FLOW3\Property;
  *                                                                        */
 
 /**
- * Interface for an Object Converter
- *
- * All classes implementing this interface are automatically registered as object converters
- * for the Property Mapper
+ * Converter which transforms a string to a float, by simply casting it.
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
+ * @scope singleton
  */
-interface ObjectConverterInterface {
+class StringToFloatConverter extends \F3\FLOW3\Property\TypeConverter\AbstractTypeConverter {
 
-	/**
-	 * Returns a list of fully qualified class names of those classes which are supported
-	 * by this property editor.
-	 *
-	 * @return array<string> Array of strings
-	 * @api
-	 */
-	public function getSupportedTypes();
+	protected $sourceTypes = array('string');
+	protected $targetType = 'float';
+	protected $priority = 1;
 
-	/**
-	 * Converts the given string, array or number to an object supported by the converter.
-	 *
-	 * @param mixed $source Source object to be converted
-	 * @return mixed An object if it could be converted, FALSE if the converter does not want to convert or \F3\FLOW3\Error\Error if the source could not be converted for other reasons
-	 * @api
-	 */
-	public function convertFrom($source);
-
+	public function convertFrom($source, $targetType, array $subProperties = array(), \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
+		return (float)$source;
+	}
 }
-
 ?>

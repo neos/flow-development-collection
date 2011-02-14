@@ -26,6 +26,7 @@ namespace F3\FLOW3\Tests\Unit\MVC\Controller;
  * Testcase for the MVC Abstract Controller
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @covers \F3\FLOW3\MVC\Controller\AbstractController
  */
 class AbstractControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 
@@ -261,46 +262,56 @@ class AbstractControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	public function mapRequestArgumentsToControllerArgumentsPreparesInformationAndValidatorsAndMapsAndValidates() {
+	public function mapRequestArgumentsToControllerArgumentsShouldPutRequestDataToArgumentObject() {
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
 
-		$mockValidator = $this->getMock('F3\FLOW3\MVC\Controller\ArgumentsValidator', array(), array(), '', FALSE);
+		$argumentFoo = $this->getMock('F3\FLOW3\MVC\Controller\Argument', array('setValue'), array('foo', 'string'));
+		$argumentFoo->setRequired(FALSE);
+		$argumentBar = $this->getMock('F3\FLOW3\MVC\Controller\Argument', array('setValue'), array('bar', 'string'));
+		$argumentBar->setRequired(FALSE);
 
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->once())->method('get')->with('F3\FLOW3\MVC\Controller\ArgumentsValidator')->will($this->returnValue($mockValidator));
+		$argumentBar->expects($this->once())->method('setValue')->with('theBarArgumentValue');
 
-		$mockArgumentFoo = $this->getMock('F3\FLOW3\MVC\Controller\Argument', array(), array('foo', 'fooType'));
-		$mockArgumentFoo->expects($this->any())->method('getName')->will($this->returnValue('foo'));
-		$mockArgumentBar = $this->getMock('F3\FLOW3\MVC\Controller\Argument', array(), array('bar', 'barType'));
-		$mockArgumentBar->expects($this->any())->method('getName')->will($this->returnValue('bar'));
-
-		$mockArguments = new \F3\FLOW3\MVC\Controller\Arguments();
-		$mockArguments->addArgument($mockArgumentFoo);
-		$mockArguments->addArgument($mockArgumentBar);
+		$arguments = new \F3\FLOW3\MVC\Controller\Arguments($mockObjectManager);
+		$arguments->addArgument($argumentFoo);
+		$arguments->addArgument($argumentBar);
 
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request');
-		$mockRequest->expects($this->once())->method('getArguments')->will($this->returnValue(array('requestFoo', 'requestBar')));
-
-		$mockMappingResults = $this->getMock('F3\FLOW3\Property\MappingResults');
-
-		$mockPropertyMapper = $this->getMock('F3\FLOW3\Property\PropertyMapper', array(), array(), '', FALSE);
-		$mockPropertyMapper->expects($this->once())->method('mapAndValidate')->
-			with(array('foo', 'bar'), array('requestFoo', 'requestBar'), $mockArguments, array(), $mockValidator)->
-			will($this->returnValue(TRUE));
-		$mockPropertyMapper->expects($this->once())->method('getMappingResults')->will($this->returnValue($mockMappingResults));
+		$mockRequest->expects($this->at(0))->method('hasArgument')->with('foo')->will($this->returnValue(FALSE));
+		$mockRequest->expects($this->at(1))->method('hasArgument')->with('bar')->will($this->returnValue(TRUE));
+		$mockRequest->expects($this->at(2))->method('getArgument')->with('bar')->will($this->returnValue('theBarArgumentValue'));
 
 		$controller = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\AbstractController', array('dummy'), array(), '', FALSE);
-		$controller->injectObjectManager($mockObjectManager);
 
-		$controller->_set('arguments', $mockArguments);
+		$controller->_set('arguments', $arguments);
 		$controller->_set('request', $mockRequest);
-		$controller->_set('propertyMapper', $mockPropertyMapper);
 
 		$controller->_call('mapRequestArgumentsToControllerArguments');
+	}
 
-		$this->assertSame($mockMappingResults, $controller->_get('argumentsMappingResults'));
+	/**
+	 * @test
+	 * @expectedException F3\FLOW3\MVC\Exception\RequiredArgumentMissingException
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function mapRequestArgumentsToControllerArgumentsShouldThrowExceptionIfRequiredArgumentWasNotSet() {
+		$argumentFoo = $this->getMock('F3\FLOW3\MVC\Controller\Argument', array('setValue'), array('foo', 'string'));
+		$argumentFoo->setRequired(TRUE);
+
+		$arguments = new \F3\FLOW3\MVC\Controller\Arguments();
+		$arguments->addArgument($argumentFoo);
+
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request');
+		$mockRequest->expects($this->at(0))->method('hasArgument')->with('foo')->will($this->returnValue(FALSE));
+
+		$controller = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\AbstractController', array('dummy'), array(), '', FALSE);
+
+		$controller->_set('arguments', $arguments);
+		$controller->_set('request', $mockRequest);
+
+		$controller->_call('mapRequestArgumentsToControllerArguments');
 	}
 }
 ?>

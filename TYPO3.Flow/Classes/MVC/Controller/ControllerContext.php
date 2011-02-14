@@ -50,11 +50,6 @@ class ControllerContext {
 	protected $arguments;
 
 	/**
-	 * @var \F3\FLOW3\Property\MappingResults
-	 */
-	protected $argumentsMappingResults;
-
-	/**
 	 * @var \F3\FLOW3\MVC\Web\Routing\UriBuilder
 	 */
 	protected $uriBuilder;
@@ -70,16 +65,14 @@ class ControllerContext {
 	 * @param \F3\FLOW3\MVC\RequestInterface $request
 	 * @param \F3\FLOW3\MVC\ResponseInterface $response
 	 * @param \F3\FLOW3\MVC\Controller\Arguments $arguments
-	 * @param \F3\FLOW3\Property\MappingResults $argumentsMappingResults
 	 * @param \F3\FLOW3\MVC\Web\Routing\UriBuilder $uriBuilder
 	 * @param \F3\FLOW3\MVC\Controller\FlashMessageContainer $flashMessageContainer The flash messages
 	 */
 	public function __construct(\F3\FLOW3\MVC\RequestInterface $request, \F3\FLOW3\MVC\ResponseInterface $response, \F3\FLOW3\MVC\Controller\Arguments $arguments,
-			\F3\FLOW3\Property\MappingResults $argumentsMappingResults, \F3\FLOW3\MVC\Web\Routing\UriBuilder $uriBuilder, \F3\FLOW3\MVC\Controller\FlashMessageContainer $flashMessageContainer) {
+			\F3\FLOW3\MVC\Web\Routing\UriBuilder $uriBuilder, \F3\FLOW3\MVC\Controller\FlashMessageContainer $flashMessageContainer) {
 		$this->request = $request;
 		$this->response = $response;
 		$this->arguments = $arguments;
-		$this->argumentsMappingResults = $argumentsMappingResults;
 		$this->uriBuilder = $uriBuilder;
 		$this->flashMessageContainer = $flashMessageContainer;
 	}
@@ -115,17 +108,6 @@ class ControllerContext {
 	 */
 	public function getArguments() {
 		return $this->arguments;
-	}
-
-	/**
-	 * Get the arguments mapping results of the controller
-	 *
-	 * @return \F3\FLOW3\Property\MappingResults
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 * @api
-	 */
-	public function getArgumentsMappingResults() {
-		return $this->argumentsMappingResults;
 	}
 
 	/**

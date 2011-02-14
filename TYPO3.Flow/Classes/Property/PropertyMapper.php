@@ -23,24 +23,8 @@ namespace F3\FLOW3\Property;
  *                                                                        */
 
 /**
- * The Property Mapper maps properties from a source onto a given target object, often a
- * (domain-) model. Which properties are required and how they should be filtered can
- * be customized.
- *
- * During the mapping process, the property values are validated and the result of this
- * validation can be queried.
- *
- * The following code would map the property of the source array to the target:
- *
- * $target = new ArrayObject();
- * $source = new ArrayObject(
- *    array(
- *       'someProperty' => 'SomeValue'
- *    )
- * );
- * $mapper->mapAndValidate(array('someProperty'), $source, $target);
- *
- * Now the target object equals the source object.
+ * The Property Mapper transforms simple types (arrays, strings, integers, floats, booleans) to objects or other simple types.
+ * It is used most prominently to map incoming HTTP arguments to objects.
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope singleton
@@ -49,32 +33,9 @@ namespace F3\FLOW3\Property;
 class PropertyMapper {
 
 	/**
-	 * A preg pattern to match against UUIDs
-	 * @var string
-	 */
-	const PATTERN_MATCH_UUID = '/([a-f0-9]){8}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){12}/';
-
-	/**
-	 * Results of the last mapping operation
-	 * @var \F3\FLOW3\Property\MappingResults
-	 */
-	protected $mappingResults;
-
-	/**
-	 * A list of property editor instances, indexed by the object type they are designed for
-	 * @var array
-	 */
-	protected $objectConverters = array();
-
-	/**
 	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
-
-	/**
-	 * @var \F3\FLOW3\Validation\ValidatorResolver
-	 */
-	protected $validatorResolver;
 
 	/**
 	 * @var \F3\FLOW3\Reflection\ReflectionService
@@ -82,387 +43,266 @@ class PropertyMapper {
 	protected $reflectionService;
 
 	/**
-	 * @var \F3\FLOW3\Persistence\PersistenceManagerInterface
+	 * @var \F3\FLOW3\Property\PropertyMappingConfigurationBuilder
 	 */
-	protected $persistenceManager;
+	protected $configurationBuilder;
 
 	/**
-	 * Injects the object factory
+	 * A multi-dimensional array which stores the Type Converters available in the system.
+	 * It has the following structure:
+	 * 1. Dimension: Source Type
+	 * 2. Dimension: Target Type
+	 * 3. Dimension: Priority
+	 * Value: Type Converter instance
 	 *
+	 * @var array
+	 */
+	protected $typeConverters = array();
+
+	/**
+	 * A list of property mapping errors which have occured on last mapping.
+	 * @var array<\F3\FLOW3\Error\Error>
+	 */
+	protected $errors;
+
+	/**
 	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
 	}
 
 	/**
-	 * Injects the validator resolver
-	 *
-	 * @param \F3\FLOW3\Validation\ValidatorResolver $validatorResolver
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function injectValidatorResolver(\F3\FLOW3\Validation\ValidatorResolver $validatorResolver) {
-		$this->validatorResolver = $validatorResolver;
-	}
-
-	/**
-	 * Injects the Reflection Service
-	 *
 	 * @param \F3\FLOW3\Reflection\ReflectionService $reflectionService
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function injectReflectionService(\F3\FLOW3\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
 	}
 
 	/**
-	 * Injects the persistence manager
-	 *
-	 * @param \F3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager
+	 * @param \F3\FLOW3\Property\PropertyMappingConfigurationBuilder $propertyMappingConfigurationBuilder
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectPersistenceManager(\F3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager) {
-		$this->persistenceManager = $persistenceManager;
+	public function injectPropertyMappingConfigurationBuilder(\F3\FLOW3\Property\PropertyMappingConfigurationBuilder $propertyMappingConfigurationBuilder) {
+		$this->configurationBuilder = $propertyMappingConfigurationBuilder;
 	}
 
 	/**
-	 * Initializes this Property Mapper
+	 * Lifecycle method, called after all dependencies have been injected.
+	 * Here, the typeConverter array gets initialized.
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function initializeObject() {
-		foreach($this->reflectionService->getAllImplementationClassNamesForInterface('F3\FLOW3\Property\ObjectConverterInterface') as $objectConverterClassName) {
-			$objectConverter = $this->objectManager->get($objectConverterClassName);
-			foreach ($objectConverter->getSupportedTypes() as $supportedType) {
-				$this->objectConverters[$supportedType] = $objectConverter;
+		foreach($this->reflectionService->getAllImplementationClassNamesForInterface('F3\FLOW3\Property\TypeConverterInterface') as $typeConverterClassName) {
+			$typeConverter = $this->objectManager->get($typeConverterClassName);
+			foreach ($typeConverter->getSupportedSourceTypes() as $supportedSourceType) {
+				if (isset($this->typeConverters[$supportedSourceType][$typeConverter->getSupportedTargetType()][$typeConverter->getPriority()])) {
+					throw new \F3\FLOW3\Property\Exception\DuplicateTypeConverterException('There exist at least two converters which handle the conversion from "' . $supportedSourceType . '" to "' . $typeConverter->getSupportedTargetType() . '" with priority "' . $typeConverter->getPriority() . '": ' . get_class($this->typeConverters[$supportedSourceType][$typeConverter->getSupportedTargetType()][$typeConverter->getPriority()]) . ' and ' . get_class($typeConverter), 1297951378);
+				}
+				$this->typeConverters[$supportedSourceType][$typeConverter->getSupportedTargetType()][$typeConverter->getPriority()] = $typeConverter;
 			}
 		}
 	}
 
 	/**
-	 * Maps the given properties to the target object and validates the properties according to the defined
-	 * validators. If the result object is not valid, the operation will be undone (the target object remains
-	 * unchanged) and this method returns FALSE.
+	 * Map $source to $targetType, and return the result
 	 *
-	 * If in doubt, always prefer this method over the map() method because skipping validation can easily become
-	 * a security issue.
-	 *
-	 * @param array $propertyNames Names of the properties to map.
-	 * @param mixed $source Source containing the properties to map to the target object. Must either be an array, ArrayObject or any other object.
-	 * @param mixed $target The target object or array. Alternatively this may be a fully qualified object name if the target should be created or reconstituted.
-	 * @param array $optionalPropertyNames Names of optional properties. If a property is specified here and it doesn't exist in the source, no error is issued.
-	 * @param \F3\FLOW3\Validation\Validator\ObjectValidatorInterface $targetObjectValidator A validator used for validating the target object
-	 * @return boolean TRUE if the mapped properties are valid, otherwise FALSE
-	 * @see getMappingResults()
-	 * @see map()
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @param mixed $source the source data to map. MUST be a simple type, NO object allowed!
+	 * @param string $targetType The type of the target; can be either a class name or a simple type.
+	 * @param \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration Configuration for the property mapping. If NULL, the PropertyMappingConfigurationBuilder will create a default configuration.
+	 * @return mixed an instance of $targetType
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @api
 	 */
-	public function mapAndValidate(array $propertyNames, $source, $target, array $optionalPropertyNames = array(), \F3\FLOW3\Validation\Validator\ObjectValidatorInterface $targetObjectValidator) {
-		$backupProperties = array();
-
-		$this->map($propertyNames, $source, $backupProperties, $optionalPropertyNames);
-		if ($this->mappingResults->hasErrors()) return FALSE;
-
-		$this->map($propertyNames, $source, $target, $optionalPropertyNames);
-		if ($this->mappingResults->hasErrors()) return FALSE;
-
-		if ($targetObjectValidator->isValid($target) !== TRUE) {
-			$this->addErrorsFromObjectValidator($targetObjectValidator->getErrors());
-			$backupMappingResult = $this->mappingResults;
-			$this->map($propertyNames, $backupProperties, $source, $optionalPropertyNames);
-			$this->mappingResults = $backupMappingResult;
+	public function convert($source, $targetType, \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
+		if ($configuration === NULL) {
+			$configuration = $this->configurationBuilder->build();
 		}
-		return (!$this->mappingResults->hasErrors());
+
+		$currentPropertyPath = array();
+		$this->errors = array();
+		try {
+			return $this->doMapping($source, $targetType, $configuration, $currentPropertyPath);
+		} catch (\Exception $e) {
+			throw new \F3\FLOW3\Property\Exception('Exception while property mapping at property path "' . implode('.', $currentPropertyPath) . '":' . $e->getMessage(), 1297759968, $e);
+		}
 	}
 
 	/**
-	 * Maps the given properties to the target object WITHOUT VALIDATING THE RESULT.
-	 * If the properties could be set, this method returns TRUE, otherwise FALSE.
-	 * Returning TRUE does not mean that the target object is valid and secure!
+	 * Get the errors of the last Property Mapping
 	 *
-	 * Only use this method if you're sure that you don't need validation!
-	 *
-	 * @param array $propertyNames Names of the properties to map.
-	 * @param mixed $source Source containing the properties to map to the target object. Must either be an array, ArrayObject or any other object.
-	 * @param mixed $target The target object or array. Alternatively this may be a fully qualified object name if the target should be created or reconstituted.
-	 * @param array $optionalPropertyNames Names of optional properties. If a property is specified here and it doesn't exist in the source, no error is issued.
-	 * @return boolean TRUE if the properties could be mapped, otherwise FALSE
-	 * @see mapAndValidate()
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @return array<\F3\FLOW3\Error\Error>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @api
 	 */
-	public function map(array $propertyNames, $source, &$target, $optionalPropertyNames = array()) {
-		if (!is_object($source) && !is_array($source)) throw new \F3\FLOW3\Property\Exception\InvalidSourceException('The source object must be a valid object or array, ' . gettype($target) . ' given.', 1187807099);
-		if (is_string($target) && strpos($target, '\\') !== FALSE) {
-			return $this->transformToObject($source, $target, '--none--');
-		}
-		$this->mappingResults = $this->objectManager->create('F3\FLOW3\Property\MappingResults');
-
-		if (!is_object($target) && !is_array($target)) throw new \F3\FLOW3\Property\Exception\InvalidTargetException('The target must be a valid object, class name or array, ' . gettype($target) . ' given.', 1187807099);
-
-		if (is_object($target)) {
-				// fixme - make sure class schema can be fetched for doctrine proxies
-			$targetClassSchema = $this->reflectionService->getClassSchema($target);
-		} else {
-			$targetClassSchema = NULL;
-		}
-
-		foreach ($propertyNames as $propertyName) {
-			$propertyValue = NULL;
-			if (is_array($source) || $source instanceof \ArrayAccess) {
-				if (isset($source[$propertyName])) {
-					$propertyValue = $source[$propertyName];
-				}
-			} elseif (\F3\FLOW3\Reflection\ObjectAccess::isPropertyGettable($source, $propertyName)) {
-				$propertyValue = \F3\FLOW3\Reflection\ObjectAccess::getProperty($source, $propertyName);
-			}
-
-			if ($propertyValue === NULL && !in_array($propertyName, $optionalPropertyNames)) {
-				$this->mappingResults->addError($this->objectManager->create('F3\FLOW3\Error\Error', "Required property '$propertyName' does not exist in source." , 1236785359), $propertyName);
-			} else {
-				if (method_exists($target, \F3\FLOW3\Reflection\ObjectAccess::buildSetterMethodName($propertyName))
-						&& is_callable(array($target, \F3\FLOW3\Reflection\ObjectAccess::buildSetterMethodName($propertyName)))) {
-					$targetClassName = get_class($target);
-					$methodParameters = $this->reflectionService->getMethodParameters($targetClassName, \F3\FLOW3\Reflection\ObjectAccess::buildSetterMethodName($propertyName));
-					$methodParameter = current($methodParameters);
-
-					if (!isset($methodParameter['type'])) {
-						$this->mappingResults->addError($this->objectManager->create('F3\FLOW3\Error\Error', 'No type hint or documentation for property "' . $propertyName . '" found".' , 1296767655), $propertyName);
-						continue;
-					}
-					try {
-						$targetPropertyType = \F3\FLOW3\Utility\TypeHandling::parseType($methodParameter['type']);
-					} catch (\InvalidArgumentException $exception) {
-						$this->mappingResults->addError($this->objectManager->create('F3\FLOW3\Error\Error', 'The type hint or documentation of property "' . $propertyName . '" specified the unknown type "' . $methodParameter['type'] . '".' , 1268239762), $propertyName);
-						continue;
-					}
-				} elseif ($targetClassSchema !== NULL && $targetClassSchema->hasProperty($propertyName)) {
-					$targetPropertyType = $targetClassSchema->getProperty($propertyName);
-				} elseif ($targetClassSchema !== NULL) {
-					$this->mappingResults->addError($this->objectManager->create('F3\FLOW3\Error\Error', 'Property "' . $propertyName . '" does not exist in target class schema.' , 1251813614), $propertyName);
-					continue;
-				}
-
-				if (isset($targetPropertyType)) {
-					if (in_array($targetPropertyType['type'], array('array', 'ArrayObject', 'SplObjectStorage', 'Doctrine\Common\Collections\ArrayCollection')) && ($targetPropertyType['elementType'] !== NULL && !\F3\FLOW3\Utility\TypeHandling::isLiteral($targetPropertyType['elementType']))) {
-						$objects = array();
-						if (is_array($propertyValue) || $propertyValue instanceof \Traversable) {
-							foreach ($propertyValue as $value) {
-								$objects[] = $this->transformToObject($value, $targetPropertyType['elementType'], $propertyName);
-							}
-						}
-
-						if ($targetPropertyType['type'] === 'ArrayObject') {
-							$propertyValue = new \ArrayObject($objects);
-						} elseif ($targetPropertyType['type'] === 'Doctrine\Common\Collections\ArrayCollection') {
-								$propertyValue = new \Doctrine\Common\Collections\ArrayCollection($objects);
-						} elseif ($targetPropertyType['type'] === 'SplObjectStorage') {
-							$propertyValue = new \SplObjectStorage();
-							foreach ($objects as $object) {
-								$propertyValue->attach($object);
-							}
-						} else {
-							$propertyValue = $objects;
-						}
-					} elseif (strpos($targetPropertyType['type'], '\\') !== FALSE) {
-						$propertyValue = $this->transformToObject($propertyValue, $targetPropertyType['type'], $propertyName);
-						if ($propertyValue === NULL) {
-							continue;
-						}
-					}
-				} elseif (is_array($propertyValue) && isset($propertyValue['__identity']) && is_string($propertyValue['__identity']) && preg_match(self::PATTERN_MATCH_UUID, $propertyValue['__identity']) === 1) {
-					$propertyValue = $this->transformToObject($propertyValue, NULL, $propertyName);
-				}
-
-				if (is_array($target)) {
-					$target[$propertyName] = $propertyValue;
-				} elseif (\F3\FLOW3\Reflection\ObjectAccess::setProperty($target, $propertyName, $propertyValue) === FALSE) {
-					$this->mappingResults->addError($this->objectManager->create('F3\FLOW3\Error\Error', "Property '$propertyName' could not be set." , 1236783102), $propertyName);
-				}
-			}
-		}
-
-		return !$this->mappingResults->hasErrors();
+	public function getErrors() {
+		return $this->errors;
 	}
 
 	/**
-	 * Returns the results of the last mapping operation.
+	 * Internal function which actually does the property mapping.
 	 *
-	 * @return \F3\FLOW3\Propert\MappingResults The mapping results (or NULL if no mapping has been carried out yet)
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @api
+	 * @param mixed $source the source data to map. MUST be a simple type, NO object allowed!
+	 * @param string $targetType The type of the target; can be either a class name or a simple type.
+	 * @param \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration Configuration for the property mapping.
+	 * @param array $currentPropertyPath The property path currently being mapped; used for knowing the context in case an exception is thrown.
+	 * @return mixed an instance of $targetType
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	public function getMappingResults() {
-		return $this->mappingResults;
+	protected function doMapping($source, $targetType, \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration, &$currentPropertyPath) {
+		$typeConverter = $this->findTypeConverter($source, $targetType, $configuration);
+
+		if (!is_object($typeConverter) || !($typeConverter instanceof \F3\FLOW3\Property\TypeConverterInterface)) {
+			throw new \F3\FLOW3\Property\Exception\TypeConverterException('Type converter for "' . $source . '" -> "' . $targetType . '" not found.');
+		}
+
+		$subProperties = array();
+		foreach ($typeConverter->getProperties($source) as $sourcePropertyName => $sourcePropertyValue) {
+			$targetPropertyName = $configuration->getTargetPropertyName($sourcePropertyName);
+			if (!$configuration->shouldMap($targetPropertyName)) continue;
+
+			$targetPropertyType = $typeConverter->getTypeOfProperty($targetType, $targetPropertyName);
+
+			$subConfiguration = $configuration->getConfigurationFor($targetPropertyName);
+
+			$currentPropertyPath[] = $targetPropertyName;
+			$targetPropertyValue = $this->doMapping($sourcePropertyValue, $targetPropertyType, $subConfiguration, $currentPropertyPath);
+			array_pop($currentPropertyPath);
+			if ($targetPropertyValue !== NULL) {
+				$subProperties[$targetPropertyName] = $targetPropertyValue;
+			}
+		}
+		$result = $typeConverter->convertFrom($source, $targetType, $subProperties, $configuration);
+
+		if ($result instanceof \F3\FLOW3\Error\Error) {
+			$this->errors[implode('.', $currentPropertyPath)] = $result;
+			$result = NULL;
+		}
+
+		return $result;
 	}
 
 	/**
-	 * Add errors to the mapping result from an object validator (property errors).
+	 * Determine the type converter to be used. If no converter has been found, an exception is raised.
 	 *
-	 * @param array $errors Array of \F3\FLOW3\Validation\PropertyError
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 * @return void
+	 * @param mixed $source
+	 * @param string $targetType
+	 * @param \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
+	 * @return \F3\FLOW3\Property\TypeConverterInterface Type Converter which should be used to convert between $source and $targetType.
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	protected function addErrorsFromObjectValidator(array $errors) {
-		foreach ($errors as $error) {
-			if ($error instanceof \F3\FLOW3\Validation\PropertyError) {
-				$propertyName = $error->getPropertyName();
-				$this->mappingResults->addError($error, $propertyName);
-			}
-		}
-	}
+	protected function findTypeConverter($source, $targetType, \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration) {
+		if ($configuration->getTypeConverter() !== NULL) return $configuration->getTypeConverter();
 
-	/**
-	 * Transforms strings with UUIDs or arrays with UUIDs/identity properties
-	 * into the requested type, if possible.
-	 *
-	 * @param mixed $propertyValue The value to transform, string or array
-	 * @param string $targetType The type to transform to
-	 * @param string $propertyName In case of an error we add this to the error message
-	 * @return object The object, when no transformation was possible this may return NULL as well
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	protected function transformToObject($propertyValue, $targetType, $propertyName) {
-		if (isset($this->objectConverters[$targetType])) {
-			$conversionResult = $this->objectConverters[$targetType]->convertFrom($propertyValue);
-			if ($conversionResult instanceof \F3\FLOW3\Error\Error) {
-				$this->mappingResults->addError($conversionResult, $propertyName);
-				return NULL;
-			} elseif (is_object($conversionResult) || $conversionResult === NULL) {
-				return $conversionResult;
-			}
-		}
-		if (is_string($propertyValue)) {
-			$object = $this->persistenceManager->getObjectByIdentifier($propertyValue, $targetType);
-			if ($object === FALSE) {
-				$this->mappingResults->addError($this->objectManager->create('F3\FLOW3\Error\Error', 'Querying the repository for the specified object of type "' . $targetType . '" with identifier "' . $propertyValue . '" was not successful.' , 1249379517), $propertyName);
-			}
-		} elseif (is_array($propertyValue)) {
-			if (isset($propertyValue['__identity'])) {
-				$existingObject = (is_array($propertyValue['__identity'])) ? $this->findObjectByIdentityProperties($propertyValue['__identity'], $targetType) : $this->persistenceManager->getObjectByIdentifier($propertyValue['__identity'], $targetType);
-				if ($existingObject === NULL) {
-					throw new \F3\FLOW3\Property\Exception\TargetNotFoundException('Querying the repository for the specified object of type "' . $targetType . '"was not successful.', 1237305720);
-				}
-				if ($targetType === NULL) {
-					$targetType = get_class($existingObject);
-				}
+		$sourceType = $this->determineSourceType($source);
 
-				unset($propertyValue['__identity']);
-				if (count($propertyValue) === 0) {
-					$object = $existingObject;
-				} elseif ($existingObject !== NULL) {
-					if ($this->reflectionService->isClassTaggedWith($targetType, 'valueobject')) {
-						$object = $this->buildObject($propertyValue, $targetType);
-					} else {
-						$newObject = clone $existingObject;
-						if ($this->map(array_keys($propertyValue), $propertyValue, $newObject)) {
-							$object = $newObject;
-						} else {
-							throw new \RuntimeException('Could not transform to object', 1296763314);
-						}
-					}
-				}
-			} else {
-				$newObject = $this->buildObject($propertyValue, $targetType);
-				if (count($propertyValue)) {
-					if ($this->map(array_keys($propertyValue), $propertyValue, $newObject)) {
-						return $newObject;
-					}
-					throw new \F3\FLOW3\Property\Exception\InvalidTargetException('Values could not be mapped to new object of type ' .$targetType . ' for property "' . $propertyName . '". (Map errors: ' . implode (' - ', $this->mappingResults->getErrors()) . ')' , 1259770027);
-				} else {
-					return $newObject;
-				}
+		if (!is_string($targetType)) {
+			throw new \F3\FLOW3\Property\Exception\InvalidTargetException('The target type was no string, but of type "' . gettype($targetType) . '"', 1297941727);
+		}
+		$converter = NULL;
+
+		if (\F3\FLOW3\Utility\TypeHandling::isSimpleType($targetType)) {
+			if (isset($this->typeConverters[$sourceType][$targetType])) {
+				$converter = $this->findEligibleConverterWithHighestPriority($this->typeConverters[$sourceType][$targetType], $source, $targetType);
 			}
 		} else {
-			throw new \InvalidArgumentException('transformToObject() accepts only strings and arrays.', 1251814355);
+			$converter = $this->findFirstEligibleTypeConverterInObjectHierarchy($source, $sourceType, $targetType);
 		}
 
-		return $object;
-	}
-
-	/**
-	 * Builds a new instance of $objectType with the given $constructorArgumentValues. If
-	 * constructor argument values are missing from the given array the method
-	 * looks for a default value in the constructor signature.
-	 *
-	 * @param array $constructorArgumentValues
-	 * @param string $objectType
-	 * @return object The created instance
-	 * @throws \F3\FLOW3\Property\Exception\InvalidTargetException if a required constructor argument is missing
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	protected function buildObject(array &$constructorArgumentValues, $objectType) {
-		$constructorSignature = $this->reflectionService->getMethodParameters($objectType, '__construct');
-		$constructorArguments = array();
-		foreach ($constructorSignature as $constructorArgumentName => $constructorArgumentInformation) {
-			if (array_key_exists($constructorArgumentName, $constructorArgumentValues)) {
-				$constructorArguments[] = $constructorArgumentValues[$constructorArgumentName];
-				unset($constructorArgumentValues[$constructorArgumentName]);
-			} elseif ($constructorArgumentInformation['optional'] === TRUE) {
-				$constructorArguments[] = $constructorArgumentInformation['defaultValue'];
-			} else {
-				throw new \F3\FLOW3\Property\Exception\InvalidTargetException('Missing constructor argument "' . $constructorArgumentName . '" for value object of type "' . $objectType . '".' , 1268734872);
-			}
+		if ($converter === NULL) {
+			throw new \F3\FLOW3\Property\Exception\TypeConverterException('No converter found which can be used to convert from "' . $sourceType . '" to "' . $targetType . '".');
 		}
-		return call_user_func_array(array($this->objectManager, 'create'), array_merge(array($objectType), $constructorArguments));
+
+		return $converter;
 	}
 
-	/**
-	 * Finds an object from the repository by searching for its identity properties.
-	 *
-	 * @param array $identityProperties Property names and values to search for
-	 * @param string $type The object type to look for
-	 * @return object Either the object matching the identity or NULL if no object was found
-	 * @throws \F3\FLOW3\Property\Exception\DuplicateObjectException if more than one object was found
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	protected function findObjectByIdentityProperties(array $identityProperties, $type) {
-		$query = $this->persistenceManager->createQueryForType($type);
-		$classSchema = $this->reflectionService->getClassSchema($type);
+	protected function findFirstEligibleTypeConverterInObjectHierarchy($source, $sourceType, $targetClass) {
+		if (!class_exists($targetClass)) {
+			throw new \F3\FLOW3\Property\Exception\InvalidTargetException('The target class "' . $targetClass . '" does not exist.', 1297948764);
+		}
 
-		$equals = array();
-		foreach ($classSchema->getIdentityProperties() as $propertyName => $propertyType) {
-			if (isset($identityProperties[$propertyName])) {
-				if ($propertyType === 'string') {
-					$equals[] = $query->equals($propertyName, $identityProperties[$propertyName], FALSE);
-				} else {
-					$equals[] = $query->equals($propertyName, $identityProperties[$propertyName]);
-				}
+		$convertersForSource = $this->typeConverters[$sourceType];
+		if (isset($convertersForSource[$targetClass])) {
+			$converter = $this->findEligibleConverterWithHighestPriority($convertersForSource[$targetClass], $source, $targetClass);
+			if ($converter !== NULL) {
+				return $converter;
 			}
 		}
 
-		if (count($equals) === 1) {
-			$constraint = current($equals);
+		foreach (class_parents($targetClass) as $parentClass) {
+			if (!isset($convertersForSource[$parentClass])) continue;
+
+			$converter = $this->findEligibleConverterWithHighestPriority($convertersForSource[$parentClass], $source, $targetClass);
+			if ($converter !== NULL) {
+				return $converter;
+			}
+		}
+
+		$converters = $this->getConvertersForInterfaces($convertersForSource, class_implements($targetClass));
+		$converter = $this->findEligibleConverterWithHighestPriority($converters, $source, $targetClass);
+
+		if ($converter !== NULL) {
+			return $converter;
+		}
+		if (isset($convertersForSource['object'])) {
+			return $this->findEligibleConverterWithHighestPriority($convertersForSource['object'], $source, $targetClass);
 		} else {
-			$constraint = $query->logicalAnd(current($equals), next($equals));
-			while (($equal = next($equals)) !== FALSE) {
-				$constraint = $query->logicalAnd($constraint, $equal);
-			}
-		}
-
-		$objects = $query->matching($constraint)->execute();
-		$numberOfResults = $objects->count();
-		if ($numberOfResults === 1) {
-			return $objects->getFirst();
-		} elseif ($numberOfResults === 0) {
 			return NULL;
-		} else {
-			throw new \F3\FLOW3\Property\Exception\DuplicateObjectException('More than one object was returned for the given identity, this is a constraint violation.', 1259612399);
 		}
 	}
 
-}
+	protected function findEligibleConverterWithHighestPriority($converters, $source, $targetType) {
+		if (!is_array($converters)) return NULL;
+		krsort($converters);
+		reset($converters);
+		foreach ($converters as $converter) {
+			if ($converter->canConvert($source, $targetType)) {
+				return $converter;
+			}
+		}
+		return NULL;
+	}
 
+	protected function getConvertersForInterfaces($convertersForSource, $interfaceNames) {
+		$convertersForInterface = array();
+		foreach ($interfaceNames as $implementedInterface) {
+			if (isset($convertersForSource[$implementedInterface])) {
+				foreach ($convertersForSource[$implementedInterface] as $priority => $converter) {
+					if (isset($convertersForInterface[$priority])) {
+						throw new \F3\FLOW3\Property\Exception\DuplicateTypeConverterException('There exist at least two converters which handle the conversion to an interface with priority "' . $priority . '". ' . get_class($convertersForInterface[$priority]) . ' and ' . get_class($converter), 1297951338);
+					}
+					$convertersForInterface[$priority] = $converter;
+				}
+			}
+		}
+		return $convertersForInterface;
+	}
+
+	/**
+	 * Determine the type of the source data, or throw an exception if source was an unsupported format.
+	 *
+	 * @param mixed $source
+	 * @return string the type of $source
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	protected function determineSourceType($source) {
+		if (is_string($source)) {
+			return 'string';
+		} elseif (is_array($source)) {
+			return 'array';
+		} elseif (is_float($source)) {
+			return 'float';
+		} elseif (is_integer($source)) {
+			return 'integer';
+		} elseif (is_bool($source)) {
+			return 'boolean';
+		} else {
+			throw new \F3\FLOW3\Property\Exception\InvalidSourceException('The source is not of type string, array, float, integer or boolean, but of type "' . gettype($source) . '"', 1297773150);
+		}
+	}
+}
 ?>

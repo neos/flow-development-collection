@@ -28,774 +28,289 @@ require_once (__DIR__ . '/../Fixtures/ClassWithSetters.php');
  * Testcase for the Property Mapper
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @covers \F3\FLOW3\Property\PropertyMapper
  */
 class PropertyMapperTest extends \F3\FLOW3\Tests\UnitTestCase {
 
-	protected $mockObjectManager;
-	protected $mockReflectionService;
-	protected $mappingResults;
+	protected $mockConfigurationBuilder;
+
+	protected $mockConfiguration;
 
 	/**
 	 * Sets up this test case
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function setUp() {
-		$this->mappingResults = new \F3\FLOW3\Property\MappingResults();
-		$this->mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService');
-		$this->mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
+		$this->mockConfigurationBuilder = $this->getMock('F3\FLOW3\Property\PropertyMappingConfigurationBuilder');
+		$this->mockConfiguration = $this->getMock('F3\FLOW3\Property\PropertyMappingConfigurationInterface');
+	}
+
+	public function validSourceTypes() {
+		return array(
+			array('someString', 'string'),
+			array(42, 'integer'),
+			array(3.5, 'float'),
+			array(TRUE, 'boolean'),
+			array(array(), 'array')
+		);
 	}
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @dataProvider validSourceTypes
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	public function initializeObjectRegistersAvailableObjectConverters() {
-		$editor1 = $this->getMock('F3\FLOW3\Property\ObjectConverterInterface');
-		$editor1->expects($this->once())->method('getSupportedTypes')->will($this->returnValue(array('F3\Foo\Bar')));
-
-		$editor2 = $this->getMock('F3\FLOW3\Property\ObjectConverterInterface');
-		$editor2->expects($this->once())->method('getSupportedTypes')->will($this->returnValue(array('F3\Baz\Quux', 'F3\Baz\Bong')));
-
-		$expectedObjectConverters = array(
-			'F3\Foo\Bar' => $editor1,
-			'F3\Baz\Quux' => $editor2,
-			'F3\Baz\Bong' => $editor2
-		);
-
-		$this->mockReflectionService->expects($this->once())->method('getAllImplementationClassNamesForInterface')
-			->with('F3\FLOW3\Property\ObjectConverterInterface')
-			->will($this->returnValue(array('F3\Editor1', 'F3\Editor2')));
-
-		$this->mockObjectManager->expects($this->at(0))->method('get')->with('F3\Editor1')->will($this->returnValue($editor1));
-		$this->mockObjectManager->expects($this->at(1))->method('get')->with('F3\Editor2')->will($this->returnValue($editor2));
-
-		$mapper = $this->getAccessibleMock('F3\FLOW3\Property\PropertyMapper', array('dummy'));
-		$mapper->injectObjectManager($this->mockObjectManager);
-		$mapper->injectReflectionService($this->mockReflectionService);
-		$mapper->initializeObject();
-
-		$this->assertSame($expectedObjectConverters, $mapper->_get('objectConverters'));
+	public function sourceTypeCanBeCorrectlyDetermined($source, $sourceType) {
+		$propertyMapper = $this->getAccessibleMock('F3\FLOW3\Property\PropertyMapper', array('dummy'));
+		$this->assertEquals($sourceType, $propertyMapper->_call('determineSourceType', $source));
 	}
 
-	/**
-	 * Checks if one ArrayObject can be bound to another by using the default settings
-	 *
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function mapCanCopyPropertiesOfOneArrayObjectToAnother() {
-		$this->mockObjectManager->expects($this->once())->method('create')->with('F3\FLOW3\Property\MappingResults')->will($this->returnValue($this->mappingResults));
 
-		$target = new \ArrayObject();
-		$source = new \ArrayObject(
-			array(
-				'key1' => 'value1',
-				'key2' => 'Píca vailë yulda nár pé, cua téra engë centa oi.',
-				'key3' => new \ArrayObject(
-					array(
-						'key3-1' => 'トワク びつける アキテクチャ エム, クリック'
-					)
-				),
-				'key4' => array(
-					'key4-1' => '@$ N0+ ||0t p@r+1cUL4r 7|24n5|473d'
-				)
-			)
+	public function invalidSourceTypes() {
+		return array(
+			array(NULL),
+			array(new \stdClass()),
+			array(new \ArrayObject())
 		);
-
-		$mapper = new \F3\FLOW3\Property\PropertyMapper();
-		$mapper->injectObjectManager($this->mockObjectManager);
-		$mapper->injectReflectionService($this->mockReflectionService);
-		$successful = $mapper->map(array('key1', 'key2', 'key3', 'key4'), $source, $target);
-		$this->assertEquals($source, $target);
-		$this->assertTrue($successful);
+	}
+	/**
+	 * @test
+	 * @dataProvider invalidSourceTypes
+	 * @expectedException \F3\FLOW3\Property\Exception\InvalidSourceException
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function sourceWhichIsNoSimpleTypeThrowsException($source) {
+		$propertyMapper = $this->getAccessibleMock('F3\FLOW3\Property\PropertyMapper', array('dummy'));
+		$propertyMapper->_call('determineSourceType', $source);
 	}
 
-	/**
-	 * Checks if one array can be bound to another by using the default settings
-	 *
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function mapCanCopyPropertiesOfOneArrayToAnother() {
-		$this->mockObjectManager->expects($this->once())->method('create')->with('F3\FLOW3\Property\MappingResults')->will($this->returnValue($this->mappingResults));
+	protected function getMockTypeConverter($name = '', $canConvert = TRUE, $properties = array(), $typeOfSubObject = '') {
+		$mockTypeConverter = $this->getMock('F3\FLOW3\Property\TypeConverterInterface');
+		$mockTypeConverter->_name = $name;
+		$mockTypeConverter->expects($this->any())->method('canConvert')->will($this->returnValue($canConvert));
+		$mockTypeConverter->expects($this->any())->method('convertFrom')->will($this->returnValue($name));
+		$mockTypeConverter->expects($this->any())->method('getProperties')->will($this->returnValue($properties));
 
-		$target = array();
-		$source = array(
-			'key1' => 'value1',
-			'key2' => 'Píca vailë yulda nár pé, cua téra engë centa oi.',
-			'key3' => array(
-				'key3-1' => 'トワク びつける アキテクチャ エム, クリック'
-			),
-			'key4' => array(
-				'key4-1' => '@$ N0+ ||0t p@r+1cUL4r 7|24n5|473d'
-			)
-		);
-
-		$mapper = new \F3\FLOW3\Property\PropertyMapper();
-		$mapper->injectObjectManager($this->mockObjectManager);
-		$successful = $mapper->map(array('key1', 'key2', 'key3', 'key4'), $source, $target);
-		$this->assertEquals($source, $target);
-		$this->assertTrue($successful);
-	}
-
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function mapAcceptsAnArrayAsSource() {
-		$this->mockObjectManager->expects($this->once())->method('create')->with('F3\FLOW3\Property\MappingResults')->will($this->returnValue($this->mappingResults));
-
-		$target = new \ArrayObject();
-		$source = array(
-			'key1' => 'value1',
-			'key2' => 'value2'
-		);
-
-		$mapper = new \F3\FLOW3\Property\PropertyMapper();
-		$mapper->injectReflectionService($this->mockReflectionService);
-		$mapper->injectObjectManager($this->mockObjectManager);
-		$successful = $mapper->map(array('key1', 'key2'), $source, $target);
-		$this->assertEquals(new \ArrayObject($source), $target);
-		$this->assertTrue($successful);
-	}
-
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @expectedException \F3\FLOW3\Property\Exception\InvalidTargetException
-	 */
-	public function mapExpectsTheTargetToBeAStringContainingClassNameOrAnObjectOrAnArray() {
-		$this->mockObjectManager->expects($this->once())->method('create')->with('F3\FLOW3\Property\MappingResults')->will($this->returnValue($this->mappingResults));
-
-		$target = '';
-		$source = new \ArrayObject(array('key1' => 'value1'));
-
-		$mapper = new \F3\FLOW3\Property\PropertyMapper();
-		$mapper->injectObjectManager($this->mockObjectManager);
-		$mapper->injectReflectionService($this->mockReflectionService);
-		$mapper->map(array('key1'), $source, $target);
-	}
-
-	/**
-	 * Checks if mapping to a non-array target object via setter methods works
-	 *
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function mapCanCopyPropertiesFromAnArrayObjectToAnObjectWithSetters() {
-		$this->mockObjectManager->expects($this->at(0))->method('create')->with('F3\FLOW3\Property\MappingResults')->will($this->returnValue($this->mappingResults));
-		$this->mockObjectManager->expects($this->at(1))->method('create')->with('F3\FLOW3\Error\Error')->will($this->returnValue(new \F3\FLOW3\Error\Error('Error1', 1)));
-
-		$target = new \F3\FLOW3\Fixtures\ClassWithSetters();
-		$source = new \ArrayObject (
-			array(
-				'property1' => 'value1',
-				'property2' => 'Píca vailë yulda nár pé, cua téra engë centa oi.',
-				'property4' => new \ArrayObject(
-					array(
-						'key3-1' => 'トワク びつける アキテクチャ エム, クリック'
-					)
-				),
-				'property3' => array(
-					'key4-1' => '@$ N0+ ||0t p@r+1cUL4r 7|24n5|473d'
-				)
-			)
-		);
-
-		$mapper = new \F3\FLOW3\Property\PropertyMapper();
-		$this->mockReflectionService->expects($this->once())->method('getMethodParameters')->will($this->returnValue(array('property3' => array('type' => 'array'))));
-		$mapper->injectReflectionService($this->mockReflectionService);
-		$mapper->injectObjectManager($this->mockObjectManager);
-		$result = $mapper->map(array('property1', 'property2', 'property3', 'property4'), $source, $target);
-
-		$this->assertEquals($source['property1'], $target->property1, 'Property 1 has not the expected value.');
-		$this->assertEquals(NULL, $target->getProperty2(), 'Property 2 is set although it should not, as there is no public setter and no public variable.');
-		$this->assertEquals($source['property3'], $target->property3, 'Property 3 has not the expected value.');
-		$this->assertEquals($source['property4'], $target->property4, 'Property 4 has not the expected value.');
-
-		$this->assertFalse($result);
-
-		$errors = $this->mappingResults->getErrors();
-		$this->assertSame('Error1', $errors['property2']->getMessage());
-	}
-
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function onlySpecifiedPropertiesAreMapped() {
-		$this->mockObjectManager->expects($this->once())->method('create')->with('F3\FLOW3\Property\MappingResults')->will($this->returnValue($this->mappingResults));
-
-		$source = new \ArrayObject(
-			array(
-				'key1' => 'value1',
-				'key2' => 'Píca vailë yulda nár pé, cua téra engë centa oi.',
-				'key3' => 'value3',
-				'key4' => array(
-					'key4-1' => '@$ N0+ ||0t p@r+1cUL4r 7|24n5|473d'
-				)
-			)
-		);
-
-		$target = new \ArrayObject();
-
-		$expectedTarget = new \ArrayObject(
-			array(
-				'key1' => $source['key1'],
-				'key3' => $source['key3']
-			)
-		);
-
-		$mapper = new \F3\FLOW3\Property\PropertyMapper();
-		$mapper->injectReflectionService($this->mockReflectionService);
-		$mapper->injectObjectManager($this->mockObjectManager);
-		$mapper->map(array('key1', 'key3'), $source, $target);
-		$this->assertEquals($expectedTarget, $target, 'The target object has not the expected content after allowing key1 and key3.');
-	}
-
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function noPropertyIsMappedIfNoPropertiesWereSpecified() {
-		$this->mockObjectManager->expects($this->once())->method('create')->with('F3\FLOW3\Property\MappingResults')->will($this->returnValue($this->mappingResults));
-
-		$source = new \ArrayObject(
-			array(
-				'key1' => 'value1',
-				'key2' => 'Píca vailë yulda nár pé, cua téra engë centa oi.',
-				'key3' => 'value3',
-				'key4' => array(
-					'key4-1' => '@$ N0+ ||0t p@r+1cUL4r 7|24n5|473d'
-				)
-			)
-		);
-
-		$target = new \ArrayObject();
-
-		$expectedTarget = new \ArrayObject;
-
-		$mapper = new \F3\FLOW3\Property\PropertyMapper();
-		$mapper->injectReflectionService($this->mockReflectionService);
-		$mapper->injectObjectManager($this->mockObjectManager);
-		$mapper->map(array(), $source, $target);
-		$this->assertEquals($expectedTarget, $target);
+		$mockTypeConverter->expects($this->any())->method('getTypeOfProperty')->will($this->returnValue($typeOfSubObject));
+		return $mockTypeConverter;
 	}
 
 	/**
 	 * @test
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function anObjectCanBeMappedToAnotherObject() {
-		$this->mockObjectManager->expects($this->once())->method('create')->with('F3\FLOW3\Property\MappingResults')->will($this->returnValue($this->mappingResults));
+	public function findTypeConverterShouldReturnTypeConverterFromConfigurationIfItIsSet() {
+		$mockTypeConverter = $this->getMockTypeConverter();
+		$this->mockConfiguration->expects($this->any())->method('getTypeConverter')->will($this->returnValue($mockTypeConverter));
 
-		$source = new \F3\FLOW3\Fixtures\ClassWithSetters();
-		$source->property1 = 'Hallo';
-		$source->property3 = 'It is already late in the evening and I am curious which special characters my mac keyboard can do. «∑€®†Ω¨⁄øπ•±å‚∂ƒ©ªº∆@œæ¥≈ç√∫~µ∞…––çµ∫≤∞. Amazing :-) ';
+		$propertyMapper = $this->getAccessibleMock('F3\FLOW3\Property\PropertyMapper', array('dummy'));
+		$this->assertSame($mockTypeConverter, $propertyMapper->_call('findTypeConverter', 'someSource', 'someTargetType', $this->mockConfiguration));
+	}
 
-		$target = new \F3\FLOW3\Fixtures\ClassWithSetters();
-		$mapper = new \F3\FLOW3\Property\PropertyMapper();
-		$mapper->injectObjectManager($this->mockObjectManager);
-		$this->mockReflectionService->expects($this->once())->method('getMethodParameters')->will($this->returnValue(array('property3' => array('type' => 'string'))));
-		$mapper->injectReflectionService($this->mockReflectionService);
-		$mapper->map(array('property1', 'property3'), $source, $target);
-		$this->assertEquals($source, $target);
+	// Simple type conversion
+	public function dataProviderForFindTypeConverter() {
+		return array(
+			array('someStringSource', 'string', array(
+				'string' => array(
+					'string' => array(
+						10 => $this->getMockTypeConverter('string2string,prio10'),
+						1 => $this->getMockTypeConverter('string2string,prio1')
+					)
+				)), 'string2string,prio10'
+			),
+			array(array('some' => 'array'), 'string', array(
+				'array' => array(
+					'string' => array(
+						10 => $this->getMockTypeConverter('array2string,prio10'),
+						1 => $this->getMockTypeConverter('array2string,prio1')
+					)
+				)), 'array2string,prio10'
+			)
+		);
 	}
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @dataProvider dataProviderForFindTypeConverter
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	public function mapToSetterWithoutTypeAddsError() {
-		$mappingResults = $this->getMock('F3\FLOW3\Property\MappingResults', array('addError'));
-		$mockError = $this->getMock('F3\FLOW3\Error\Error', array(), array(), '', FALSE);
-		$this->mockObjectManager->expects($this->any())->method('create')->will($this->returnCallback(
-			function($objectName) use ($mappingResults, $mockError) {
-				switch ($objectName) {
-					case 'F3\FLOW3\Property\MappingResults':
-						return $mappingResults;
-					case 'F3\FLOW3\Error\Error':
-						return $mockError;
-				}
-			}
-		));
-		$this->mockReflectionService->expects($this->any())->method('getMethodParameters')->will($this->returnValue(array('property' => array())));
-		$fixtureClassName = uniqid('ClassWithUntypedSetter');
-		eval('
-			namespace F3\FLOW3\Fixtures;
-			class ' . $fixtureClassName . ' {
-				public function setProperty($value) {
-
-				}
-			}
-		');
-		$fixtureClassName = '\F3\FLOW3\Fixtures\\' . $fixtureClassName;
-
-		$source = array('property' => 'Hello World');
-		$target = new $fixtureClassName();
-
-		$mapper = new \F3\FLOW3\Property\PropertyMapper();
-		$mapper->injectObjectManager($this->mockObjectManager);
-		$mapper->injectReflectionService($this->mockReflectionService);
-
-		$mappingResults->expects($this->once())->method('addError')->with($mockError, 'property');
-		$result = $mapper->map(array('property'), $source, $target);
+	public function findTypeConverterShouldReturnHighestPriorityTypeConverterForSimpleType($source, $targetType, $typeConverters, $expectedTypeConverter) {
+		$propertyMapper = $this->getAccessibleMock('F3\FLOW3\Property\PropertyMapper', array('dummy'));
+		$propertyMapper->_set('typeConverters', $typeConverters);
+		$actualTypeConverter = $propertyMapper->_call('findTypeConverter', $source, $targetType, $this->mockConfiguration);
+		$this->assertSame($expectedTypeConverter, $actualTypeConverter->_name);
 	}
 
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function ifAPropertyNameWasSpecifiedAndIsNotOptionalButDoesntExistInTheSourceTheMappingFails() {
-		$this->mockObjectManager->expects($this->at(0))->method('create')->with('F3\FLOW3\Property\MappingResults')->will($this->returnValue($this->mappingResults));
-		$this->mockObjectManager->expects($this->at(1))->method('create')->with('F3\FLOW3\Error\Error')->will($this->returnValue(new \F3\FLOW3\Error\Error('Error1', 1)));
+	public function dataProviderForObjectTypeConverters() {
+		$data = array();
 
-		$target = new \ArrayObject();
-		$source = new \ArrayObject(
-			array(
-				'key1' => 'value1',
-				'key2' => 'value2'
+
+		$className1 = uniqid('F3_FLOW3_Testclass1_', FALSE);
+		$className2 = uniqid('F3_FLOW3_Testclass2_', FALSE);
+		$className3 = uniqid('F3_FLOW3_Testclass3_', FALSE);
+
+		$interfaceName1 = uniqid('F3_FLOW3_TestInterface1_', FALSE);
+		$interfaceName2 = uniqid('F3_FLOW3_TestInterface2_', FALSE);
+		$interfaceName3 = uniqid('F3_FLOW3_TestInterface3_', FALSE);
+
+		eval("
+			interface $interfaceName2 {}
+			interface $interfaceName1 {}
+
+			interface $interfaceName3 extends $interfaceName2 {}
+
+			class $className1 implements $interfaceName1 {}
+			class $className2 extends $className1 {}
+			class $className3 extends $className2 implements $interfaceName3 {}
+		");
+
+		// The most specific converter should win
+		$data[] = array(
+			'target' => $className3,
+			'expectedConverter' => 'Class3Converter',
+			'typeConverters' => array(
+				$className2 => array(0 => $this->getMockTypeConverter('Class2Converter')),
+				$className3 => array(0 => $this->getMockTypeConverter('Class3Converter')),
+
+				$interfaceName1 => array(0 => $this->getMockTypeConverter('Interface1Converter')),
+				$interfaceName2 => array(0 => $this->getMockTypeConverter('Interface2Converter')),
+				$interfaceName3 => array(0 => $this->getMockTypeConverter('Interface3Converter')),
 			)
 		);
 
-		$mapper = new \F3\FLOW3\Property\PropertyMapper();
-		$mapper->injectReflectionService($this->mockReflectionService);
-		$mapper->injectObjectManager($this->mockObjectManager);
-		$successful = $mapper->map(array('key1', 'key2', 'key3', 'key4'), $source, $target, array('key4'));
-		$this->assertFalse($successful);
-		$errors = $this->mappingResults->getErrors();
-		$this->assertSame('Error1', $errors['key3']->getMessage());
-	}
+		// In case the most specific converter does not want to handle this conversion, the second one is taken.
+		$data[] = array(
+			'target' => $className3,
+			'expectedConverter' => 'Class2Converter',
+			'typeConverters' => array(
+				$className2 => array(0 => $this->getMockTypeConverter('Class2Converter')),
+				$className3 => array(0 => $this->getMockTypeConverter('Class3Converter', FALSE)),
 
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function mapAndValidateMapsTheGivenProperties() {
-		$propertyNames = array('foo', 'bar');
-		$source = array('foo' => 'fooValue', 'bar' => 'barValue');
-		$target = array();
-		$optionalPropertyNames = array();
-
-		$mockValidator = $this->getMock('F3\FLOW3\Validation\Validator\ObjectValidatorInterface');
-		$mockValidator->expects($this->once())->method('isValid')->will($this->returnValue(TRUE));
-
-		$mockMappingResults = $this->getMock('F3\FLOW3\Property\MappingResults', array(), array(), '', FALSE);
-		$mockMappingResults->expects($this->any())->method('hasErrors')->will($this->returnValue(FALSE));
-
-		$mapper = $this->getAccessibleMock('F3\FLOW3\Property\PropertyMapper', array('map'), array(), '', FALSE);
-		$mapper->_set('mappingResults', $mockMappingResults);
-		$mapper->injectObjectManager($this->mockObjectManager);
-
-		$mapper->expects($this->at(0))->method('map')->with($propertyNames, $source, array(), $optionalPropertyNames);
-		$mapper->expects($this->at(1))->method('map')->with($propertyNames, $source, $target, $optionalPropertyNames);
-
-		$result = $mapper->mapAndValidate($propertyNames, $source, $target, $optionalPropertyNames, $mockValidator);
-
-		$this->assertTrue($result);
-	}
-
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 */
-	public function mapAndValidateUsesTheSpecifiedValidatorsToValidateTheMappedProperties() {
-		$propertyNames = array('foo', 'bar');
-		$source = array('foo' => 'fooValue', 'bar' => 'barValue');
-		$target = array();
-		$optionalPropertyNames = array();
-
-		$mockValidator = $this->getMock('F3\FLOW3\Validation\Validator\ObjectValidatorInterface');
-		$mockValidator->expects($this->any())->method('isValid')->will($this->returnValue(FALSE));
-		$mockValidator->expects($this->any())->method('getErrors')->will($this->returnValue(array('Some error message')));
-
-		$mockMappingResults = $this->getMock('F3\FLOW3\Property\MappingResults', array(), array(), '', FALSE);
-		$mockMappingResults->expects($this->at(0))->method('hasErrors')->will($this->returnValue(FALSE));
-		$mockMappingResults->expects($this->at(1))->method('hasErrors')->will($this->returnValue(FALSE));
-		$mockMappingResults->expects($this->at(2))->method('hasErrors')->will($this->returnValue(TRUE));
-
-		$mapper = $this->getAccessibleMock('F3\FLOW3\Property\PropertyMapper', array('map', 'addErrorsFromObjectValidator'), array(), '', FALSE);
-		$mapper->expects($this->once())->method('addErrorsFromObjectValidator')->with(array('Some error message'));
-
-		$mapper->_set('mappingResults', $mockMappingResults);
-		$mapper->injectObjectManager($this->mockObjectManager);
-
-		$mapper->expects($this->at(0))->method('map')->with($propertyNames, $source, array(), $optionalPropertyNames);
-		$mapper->expects($this->at(1))->method('map')->with($propertyNames, $source, $target, $optionalPropertyNames);
-
-		$result = $mapper->mapAndValidate($propertyNames, $source, $target, $optionalPropertyNames, $mockValidator);
-		$this->assertFalse($result);
-	}
-
-	/**
-	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 */
-	public function addErrorsFromObjectValidatorAddsErrorsForIndividualPropertiesFromPropertyErrors() {
-		$mockError = $this->getMock('F3\FLOW3\Validation\PropertyError', array('dummy'), array('foo'));
-
-		$errors = array('foo' => $mockError);
-
-		$mockMappingResults = $this->getMock('F3\FLOW3\Property\MappingResults', array(), array(), '', FALSE);
-		$mockMappingResults->expects($this->once())->method('addError')->with($mockError, 'foo');
-
-		$mapper = $this->getAccessibleMock('F3\FLOW3\Property\PropertyMapper', array('dummy'), array(), '', FALSE);
-		$mapper->_set('mappingResults', $mockMappingResults);
-		$mapper->_call('addErrorsFromObjectValidator', $errors);
-	}
-
-	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function mapConvertsArraysWithUUIDsInSourceToObjectsIfTargetPropertyIsSplObjectStorageAndTyped() {
-		$this->mockObjectManager->expects($this->once())->method('create')->with('F3\FLOW3\Property\MappingResults')->will($this->returnValue($this->mappingResults));
-
-		$UUID = '740dea52-1bfd-436f-bef6-d7b39ac2f12f';
-		$target = new \F3\FLOW3\Fixtures\ClassWithSetters();
-		$source = array(
-			'property1' => array($UUID)
+				$interfaceName1 => array(0 => $this->getMockTypeConverter('Interface1Converter')),
+				$interfaceName2 => array(0 => $this->getMockTypeConverter('Interface2Converter')),
+				$interfaceName3 => array(0 => $this->getMockTypeConverter('Interface3Converter')),
+			)
 		);
-		$classSchema = new \F3\FLOW3\Reflection\ClassSchema('F3\FLOW3\Fixture\Validation\ClassWithSetters');
-		$classSchema->addProperty('property1', 'SplObjectStorage<\stdClass>');
 
-		$existingObject = new \stdClass();
-		$this->mockReflectionService->expects($this->once())->method('getClassSchema')->will($this->returnValue($classSchema));
-		$mapper = $this->getMock('F3\FLOW3\Property\PropertyMapper', array('transformToObject'));
-		$mapper->expects($this->once())->method('transformToObject')->with($source['property1'][0], 'stdClass', 'property1')->will($this->returnValue($existingObject));
-		$mapper->injectReflectionService($this->mockReflectionService);
-		$mapper->injectObjectManager($this->mockObjectManager);
-
-		$mapper->map(array('property1'), $source, $target);
-		$this->assertInstanceOf('SplObjectStorage', $target->property1);
-	}
-
-	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function mapConvertsArraysWithUUIDsInSourceToObjectsIfTargetPropertyIsArrayObjectAndTyped() {
-		$this->mockObjectManager->expects($this->once())->method('create')->with('F3\FLOW3\Property\MappingResults')->will($this->returnValue($this->mappingResults));
-
-		$UUID = '740dea52-1bfd-436f-bef6-d7b39ac2f12f';
-		$target = new \F3\FLOW3\Fixtures\ClassWithSetters();
-		$source = array(
-			'property1' => array($UUID)
+		// In case there is no most-specific-converter, we climb ub the type hierarchy
+		$data[] = array(
+			'target' => $className3,
+			'expectedConverter' => 'Class2Converter-HighPriority',
+			'typeConverters' => array(
+				$className2 => array(0 => $this->getMockTypeConverter('Class2Converter'), 10 => $this->getMockTypeConverter('Class2Converter-HighPriority'))
+			)
 		);
-		$classSchema = new \F3\FLOW3\Reflection\ClassSchema('F3\FLOW3\Fixture\Validation\ClassWithSetters');
-		$classSchema->addProperty('property1', 'ArrayObject<\stdClass>');
 
-		$existingObject = new \stdClass();
-		$this->mockReflectionService->expects($this->once())->method('getClassSchema')->will($this->returnValue($classSchema));
-		$mapper = $this->getMock('F3\FLOW3\Property\PropertyMapper', array('transformToObject'));
-		$mapper->expects($this->once())->method('transformToObject')->with($source['property1'][0], 'stdClass', 'property1')->will($this->returnValue($existingObject));
-		$mapper->injectReflectionService($this->mockReflectionService);
-		$mapper->injectObjectManager($this->mockObjectManager);
+		// If no parent class converter wants to handle it, we ask for all interface converters.
+		$data[] = array(
+			'target' => $className3,
+			'expectedConverter' => 'Interface1Converter',
+			'typeConverters' => array(
+				$className2 => array(0 => $this->getMockTypeConverter('Class2Converter', FALSE), 10 => $this->getMockTypeConverter('Class2Converter-HighPriority', FALSE)),
 
-		$mapper->map(array('property1'), $source, $target);
-		$this->assertInstanceOf('ArrayObject', $target->property1);
-		$this->assertSame($existingObject, $target->property1[0]);
-	}
-
-	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function mapConvertsArraysWithUUIDsInSourceToObjectsIfTargetPropertyIsArrayAndTyped() {
-		$this->mockObjectManager->expects($this->once())->method('create')->with('F3\FLOW3\Property\MappingResults')->will($this->returnValue($this->mappingResults));
-
-		$UUID = '740dea52-1bfd-436f-bef6-d7b39ac2f12f';
-		$target = new \F3\FLOW3\Fixtures\ClassWithSetters();
-		$source = array(
-			'property1' => array($UUID)
+				$interfaceName1 => array(4 => $this->getMockTypeConverter('Interface1Converter')),
+				$interfaceName2 => array(1 => $this->getMockTypeConverter('Interface2Converter')),
+				$interfaceName3 => array(2 => $this->getMockTypeConverter('Interface3Converter')),
+			)
 		);
-		$classSchema = new \F3\FLOW3\Reflection\ClassSchema('F3\FLOW3\Fixture\Validation\ClassWithSetters');
-		$classSchema->addProperty('property1', 'array<\stdClass>');
 
-		$existingObject = new \stdClass();
-		$this->mockReflectionService->expects($this->once())->method('getClassSchema')->will($this->returnValue($classSchema));
-		$mapper = $this->getMock('F3\FLOW3\Property\PropertyMapper', array('transformToObject'));
-		$mapper->expects($this->once())->method('transformToObject')->with($source['property1'][0], 'stdClass', 'property1')->will($this->returnValue($existingObject));
-		$mapper->injectReflectionService($this->mockReflectionService);
-		$mapper->injectObjectManager($this->mockObjectManager);
+		// If two interface converters have the same priority, an exception is thrown.
+		$data[] = array(
+			'target' => $className3,
+			'expectedConverter' => 'Interface1Converter',
+			'typeConverters' => array(
+				$className2 => array(0 => $this->getMockTypeConverter('Class2Converter', FALSE), 10 => $this->getMockTypeConverter('Class2Converter-HighPriority', FALSE)),
 
-		$mapper->map(array('property1'), $source, $target);
-		$this->assertTrue(is_array($target->property1));
-		$this->assertSame($existingObject, $target->property1[0]);
-	}
-
-	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function mapConvertsArraysInSourceToObjectsIfTargetPropertyIsObject() {
-		$this->mockObjectManager->expects($this->once())->method('create')->with('F3\FLOW3\Property\MappingResults')->will($this->returnValue($this->mappingResults));
-
-		$target = new \F3\FLOW3\Fixtures\ClassWithSetters();
-		$source = array(
-			'property1' => array('foo' => 'bar')
+				$interfaceName1 => array(4 => $this->getMockTypeConverter('Interface1Converter')),
+				$interfaceName2 => array(2 => $this->getMockTypeConverter('Interface2Converter')),
+				$interfaceName3 => array(2 => $this->getMockTypeConverter('Interface3Converter')),
+			),
+			'shouldFailWithException' => 'F3\FLOW3\Property\Exception\DuplicateTypeConverterException'
 		);
-		$classSchema = new \F3\FLOW3\Reflection\ClassSchema('F3\FLOW3\Fixture\Validation\ClassWithSetters');
-		$classSchema->addProperty('property1', '\F3\Foo\Bar');
 
-		$this->mockReflectionService->expects($this->once())->method('getClassSchema')->will($this->returnValue($classSchema));
-		$mapper = $this->getMock('F3\FLOW3\Property\PropertyMapper', array('transformToObject'));
-		$mapper->expects($this->once())->method('transformToObject')->with($source['property1'], 'F3\Foo\Bar', 'property1');
-		$mapper->injectReflectionService($this->mockReflectionService);
-		$mapper->injectObjectManager($this->mockObjectManager);
+		// If no interface converter wants to handle it, a converter for "object" is looked up.
+		$data[] = array(
+			'target' => $className3,
+			'expectedConverter' => 'GenericObjectConverter-HighPriority',
+			'typeConverters' => array(
+				$className2 => array(0 => $this->getMockTypeConverter('Class2Converter', FALSE), 10 => $this->getMockTypeConverter('Class2Converter-HighPriority', FALSE)),
 
-		$mapper->map(array('property1'), $source, $target);
+				$interfaceName1 => array(4 => $this->getMockTypeConverter('Interface1Converter', FALSE)),
+				$interfaceName2 => array(3 => $this->getMockTypeConverter('Interface2Converter', FALSE)),
+				$interfaceName3 => array(2 => $this->getMockTypeConverter('Interface3Converter', FALSE)),
+				'object' => array(1 => $this->getMockTypeConverter('GenericObjectConverter'), 10 => $this->getMockTypeConverter('GenericObjectConverter-HighPriority'))
+			),
+		);
+
+		// If the target is no valid class name and no simple type, an exception is thrown
+		$data[] = array(
+			'target' => 'SomeNotExistingClassName',
+			'expectedConverter' => 'GenericObjectConverter-HighPriority',
+			'typeConverters' => array(),
+			'shouldFailWithException' => 'F3\FLOW3\Property\Exception\InvalidTargetException'
+		);
+
+		// if the type converter is not found, we expect an exception
+		$data[] = array(
+			'target' => $className3,
+			'expectedConverter' => 'Class3Converter',
+			'typeConverters' => array(),
+			'shouldFailWithException' => 'F3\FLOW3\Property\Exception\TypeConverterException'
+		);
+
+		// If The target type is no string, we expect an exception.
+		$data[] = array(
+			'target' => new \stdClass,
+			'expectedConverter' => '',
+			'typeConverters' => array(),
+			'shouldFailWithException' => 'F3\FLOW3\Property\Exception\InvalidTargetException'
+		);
+		return $data;
 	}
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @dataProvider dataProviderForObjectTypeConverters
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	public function transformToObjectConvertsAnUuidStringToAnObject() {
-		$UUID = 'e104e469-9030-4b98-babf-3990f07dd3f1';
-		$existingObject = new \stdClass();
-		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\PersistenceManagerInterface');
-		$mockPersistenceManager->expects($this->once())->method('getObjectByIdentifier')->with($UUID)->will($this->returnValue($existingObject));
-
-		$mapper = $this->getAccessibleMock('F3\FLOW3\Property\PropertyMapper', array('dummy'));
-		$mapper->injectPersistenceManager($mockPersistenceManager);
-		$mapper->_call('transformToObject', $UUID, 'F3\Foo\Bar', 'someProp');
+	public function findTypeConverterShouldReturnConverterForTargetObjectIfItExists($targetClass, $expectedTypeConverter, $typeConverters, $shouldFailWithException = FALSE) {
+		$propertyMapper = $this->getAccessibleMock('F3\FLOW3\Property\PropertyMapper', array('dummy'));
+		$propertyMapper->_set('typeConverters', array('string' => $typeConverters));
+		try {
+			$actualTypeConverter = $propertyMapper->_call('findTypeConverter', 'someSourceString', $targetClass, $this->mockConfiguration);
+			if ($shouldFailWithException) {
+				$this->fail('Expected exception ' . $shouldFailWithException . ' which was not thrown.');
+			}
+			$this->assertSame($expectedTypeConverter, $actualTypeConverter->_name);
+		} catch (\Exception $e) {
+			if ($shouldFailWithException === FALSE) {
+				throw $e;
+			}
+			$this->assertInstanceOf($shouldFailWithException, $e);
+		}
 	}
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	public function transformToObjectConvertsAnIdentityArrayContainingAnUUIDToAnObject() {
-		$UUID = 'e104e469-9030-4b98-babf-3990f07dd3f1';
-		$existingObject = new \stdClass();
-		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\PersistenceManagerInterface');
-		$mockPersistenceManager->expects($this->once())->method('getObjectByIdentifier')->with($UUID)->will($this->returnValue($existingObject));
+	public function convertShouldAskConfigurationBuilderForDefaultConfiguration() {
+		$propertyMapper = $this->getAccessibleMock('F3\FLOW3\Property\PropertyMapper', array('dummy'));
+		$propertyMapper->injectPropertyMappingConfigurationBuilder($this->mockConfigurationBuilder);
 
-		$mapper = $this->getAccessibleMock('F3\FLOW3\Property\PropertyMapper', array('dummy'));
-		$mapper->injectPersistenceManager($mockPersistenceManager);
-		$mapper->_call('transformToObject', array('__identity' => $UUID), 'F3\Foo\Bar', 'someProp');
-	}
+		$this->mockConfigurationBuilder->expects($this->once())->method('build')->will($this->returnValue($this->mockConfiguration));
 
-	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function transformToObjectCallsFindObjectByIdentityPropertiesToConvertAnIdentityArrayContainingIdentityPropertiesIntoTheRealObject() {
-		$mapper = $this->getAccessibleMock('F3\FLOW3\Property\PropertyMapper', array('findObjectByIdentityProperties'));
-		$mapper->expects($this->once())->method('findObjectByIdentityProperties')->with(array('key1' => 'value1', 'key2' => 'value2'))->will($this->returnValue(new \stdClass()));
-		$mapper->_call('transformToObject', array('__identity' => array('key1' => 'value1', 'key2' => 'value2')), 'F3\Foo\Bar', 'someProp');
-	}
+		$converter = $this->getMockTypeConverter('string2string');
+		$typeConverters = array(
+			'string' => array(
+				'string' => array(10 => $converter)
+			)
+		);
 
-	/**
-	 * @test
-	 * @expectedException \F3\FLOW3\Property\Exception\TargetNotFoundException
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	public function transformToObjectThrowsExceptionIfTargetCantBeFound() {
-		$mapper = $this->getAccessibleMock('F3\FLOW3\Property\PropertyMapper', array('findObjectByIdentityProperties'));
-		$mapper->expects($this->once())->method('findObjectByIdentityProperties')->with(array('key1' => 'value1', 'key2' => 'value2'))->will($this->returnValue(NULL));
-		$mapper->_call('transformToObject', array('__identity' => array('key1' => 'value1', 'key2' => 'value2')), 'F3\Foo\Bar', 'someProp');
-	}
-
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function transformToObjectCallsObjectConverterIfOneSupportsTheCurrentTargetType() {
-		$propertyValue = array('foo' => 'bar');
-		$expectedObject = new \stdClass;
-
-		$mockObjectConverter = $this->getMock('F3\FLOW3\Property\ObjectConverterInterface');
-		$mockObjectConverter->expects($this->once())->method('convertFrom')->with($propertyValue)->will($this->returnValue($expectedObject));
-
-		$mapper = $this->getAccessibleMock('F3\FLOW3\Property\PropertyMapper', array('dummy'));
-		$mapper->_set('objectConverters', array('F3\Foo\Bar\Type' => $mockObjectConverter));
-		$result = $mapper->_call('transformToObject', $propertyValue, 'F3\Foo\Bar\Type', 'propertyName');
-
-		$this->assertSame($expectedObject, $result);
-	}
-
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function transformToObjectConvertsAnArrayIntoAFreshObjectWithThePropertiesSetToTheArrayValuesIfDataTypeIsAClassAndNoIdentityInformationIsFoundInTheValue() {
-		$theValue = array('property1' => 'value1', 'property2' => 'value2');
-		$theObject = new \stdClass();
-
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->at(0))->method('create')->with('F3\Foo\Bar')->will($this->returnValue($theObject));
-
-		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService');
-		$mockReflectionService->expects($this->at(0))->method('getMethodParameters')->with('F3\Foo\Bar', '__construct')->will($this->returnValue(array()));
-
-		$mapper = $this->getAccessibleMock('F3\FLOW3\Property\PropertyMapper', array('map'));
-		$mapper->injectReflectionService($mockReflectionService);
-		$mapper->injectObjectManager($mockObjectManager);
-		$mapper->expects($this->once())->method('map')->with(array('property1', 'property2'), $theValue, $theObject)->will($this->returnValue(TRUE));
-		$mapper->_call('transformToObject', $theValue, 'F3\Foo\Bar', 'someProp');
-	}
-
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function transformToObjectUsesConstructorArgumentsIfDataTypeIsAClass() {
-		$theValue = array('property1' => 'value1', 'fooBar' => 'quux', 'property2' => 'value2');
-		$theObject = new \stdClass();
-
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->at(0))->method('create')->with('F3\Foo\Bar', 'quux')->will($this->returnValue($theObject));
-
-		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService');
-		$mockReflectionService->expects($this->at(0))->method('getMethodParameters')->with('F3\Foo\Bar', '__construct')->will($this->returnValue(array('fooBar' => array('optional' => FALSE))));
-
-		$mapper = $this->getAccessibleMock('F3\FLOW3\Property\PropertyMapper', array('map'));
-		$mapper->injectReflectionService($mockReflectionService);
-		$mapper->injectObjectManager($mockObjectManager);
-		$mapper->expects($this->once())->method('map')->with(array('property1', 'property2'), array('property1' => 'value1', 'property2' => 'value2'), $theObject)->will($this->returnValue(TRUE));
-		$mapper->_call('transformToObject', $theValue, 'F3\Foo\Bar', 'someProp');
-	}
-
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function transformToObjectCallsMapIfValuesExistBesidesIdentity() {
-		$theValue = array('__identity' => array('dummy'), 'property1' => 'value1', 'property2' => 'value2');
-		$theObject = new \stdClass();
-
-		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService');
-		$mockReflectionService->expects($this->at(0))->method('isClassTaggedWith')->with('F3\Foo\Bar', 'valueobject')->will($this->returnValue(FALSE));
-
-		$mapper = $this->getAccessibleMock('F3\FLOW3\Property\PropertyMapper', array('findObjectByIdentityProperties', 'buildObject', 'map'));
-		$mapper->injectReflectionService($mockReflectionService);
-		$mapper->expects($this->once())->method('findObjectByIdentityProperties')->with(array('dummy'))->will($this->returnValue($theObject));
-		$mapper->expects($this->never())->method('buildObject');
-		$mapper->expects($this->once())->method('map')->will($this->returnValue(TRUE));
-		$mapper->_call('transformToObject', $theValue, 'F3\Foo\Bar', 'someProp');
-	}
-
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function transformToObjectBuildsNewValueObjectInsteadOfCallingMapIfValuesExistBesidesIdentity() {
-		$theValue = array('__identity' => array('dummy'), 'property1' => 'value1', 'property2' => 'value2');
-		$theObject = new \stdClass();
-
-		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService');
-		$mockReflectionService->expects($this->at(0))->method('isClassTaggedWith')->with('F3\Foo\Bar', 'valueobject')->will($this->returnValue(TRUE));
-
-		$mapper = $this->getAccessibleMock('F3\FLOW3\Property\PropertyMapper', array('findObjectByIdentityProperties', 'buildObject', 'map'));
-		$mapper->injectReflectionService($mockReflectionService);
-		$mapper->expects($this->once())->method('findObjectByIdentityProperties')->with(array('dummy'))->will($this->returnValue($theObject));
-		$mapper->expects($this->once())->method('buildObject')->with(array('property1' => 'value1', 'property2' => 'value2'));
-		$mapper->expects($this->never())->method('map');
-		$mapper->_call('transformToObject', $theValue, 'F3\Foo\Bar', 'someProp');
-	}
-
-	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function mapCallsTransformToObjectIfTargetIsAStringContainingAClassName() {
-		$source = array();
-		$target = '\F3\Foo\Bar';
-		$mapper = $this->getMock('F3\FLOW3\Property\PropertyMapper', array('transformToObject'));
-		$mapper->expects($this->once())->method('transformToObject')->with(array(), '\F3\Foo\Bar');
-
-		$mapper->map(array(), $source, $target);
-	}
-
-	/**
-	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	public function findObjectByIdentityPropertiesReturnsFirstMatchingObject() {
-		$mapper = $this->getAccessibleMock('F3\FLOW3\Property\PropertyMapper', array('dummy'));
-
-		$mockObject = new \stdClass();
-		$mockQuery = $this->getMock('F3\FLOW3\Persistence\QueryInterface');
-		$mockQueryResult = $this->getMock('F3\FLOW3\Persistence\QueryResultInterface');
-		$mockQueryResult->expects($this->once())->method('count')->will($this->returnValue(1));
-		$mockQueryResult->expects($this->once())->method('getFirst')->will($this->returnValue($mockObject));
-		$mockQuery->expects($this->once())->method('equals')->with('key1', 'value1');
-		$mockQuery->expects($this->once())->method('matching')->will($this->returnValue($mockQuery));
-		$mockQuery->expects($this->once())->method('execute')->will($this->returnValue($mockQueryResult));
-		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\PersistenceManagerInterface');
-		$mockPersistenceManager->expects($this->once())->method('createQueryForType')->with('SomeType')->will($this->returnValue($mockQuery));
-		$mapper->injectPersistenceManager($mockPersistenceManager);
-
-		$mockClassSchema = $this->getMock('F3\FLOW3\Reflection\ClassSchema', array(), array('Dummy'));
-		$mockClassSchema->expects($this->once())->method('getIdentityProperties')->will($this->returnValue(array('key1' => 'someType')));
-		$this->mockReflectionService->expects($this->once())->method('getClassSchema')->with('SomeType')->will($this->returnValue($mockClassSchema));
-		$mapper->injectReflectionService(($this->mockReflectionService));
-
-		$actualResult = $mapper->_call('findObjectByIdentityProperties', array('key1' => 'value1', 'key2' => 'value2'), 'SomeType');
-		$this->assertSame($mockObject, $actualResult);
-	}
-
-	/**
-	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	public function findObjectByIdentityPropertiesReturnsNullIfNoObjectWasFound() {
-		$mapper = $this->getAccessibleMock('F3\FLOW3\Property\PropertyMapper', array('dummy'));
-
-		$mockQueryResult = $this->getMock('F3\FLOW3\Persistence\QueryResultInterface');
-		$mockQueryResult->expects($this->once())->method('count')->will($this->returnValue(0));
-		$mockQueryResult->expects($this->never())->method('getFirst');
-		$mockQuery = $this->getMock('F3\FLOW3\Persistence\QueryInterface');
-		$mockQuery->expects($this->once())->method('equals')->with('key1', 'value1');
-		$mockQuery->expects($this->once())->method('matching')->will($this->returnValue($mockQuery));
-		$mockQuery->expects($this->once())->method('execute')->will($this->returnValue($mockQueryResult));
-		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\PersistenceManagerInterface');
-		$mockPersistenceManager->expects($this->once())->method('createQueryForType')->with('SomeType')->will($this->returnValue($mockQuery));
-		$mapper->injectPersistenceManager($mockPersistenceManager);
-
-		$mockClassSchema = $this->getMock('F3\FLOW3\Reflection\ClassSchema', array(), array('Dummy'));
-		$mockClassSchema->expects($this->once())->method('getIdentityProperties')->will($this->returnValue(array('key1' => 'someType')));
-		$this->mockReflectionService->expects($this->once())->method('getClassSchema')->with('SomeType')->will($this->returnValue($mockClassSchema));
-		$mapper->injectReflectionService(($this->mockReflectionService));
-
-		$actualResult = $mapper->_call('findObjectByIdentityProperties', array('key1' => 'value1', 'key2' => 'value2'), 'SomeType');
-		$this->assertNull($actualResult);
-	}
-
-	/**
-	 * @test
-	 * @expectedException \F3\FLOW3\Property\Exception\DuplicateObjectException
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	public function findObjectByIdentityPropertiesThrowsExceptionIfMoreThanOneObjectWasFound() {
-		$mapper = $this->getAccessibleMock('F3\FLOW3\Property\PropertyMapper', array('dummy'));
-
-		$mockQueryResult = $this->getMock('F3\FLOW3\Persistence\QueryResultInterface');
-		$mockQueryResult->expects($this->once())->method('count')->will($this->returnValue(2));
-		$mockQuery = $this->getMock('F3\FLOW3\Persistence\QueryInterface');
-		$mockQuery->expects($this->once())->method('equals')->with('key1', 'value1');
-		$mockQuery->expects($this->once())->method('matching')->will($this->returnValue($mockQuery));
-		$mockQuery->expects($this->once())->method('execute')->will($this->returnValue($mockQueryResult));
-		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\PersistenceManagerInterface');
-		$mockPersistenceManager->expects($this->once())->method('createQueryForType')->with('SomeType')->will($this->returnValue($mockQuery));
-		$mapper->injectPersistenceManager($mockPersistenceManager);
-
-		$mockClassSchema = $this->getMock('F3\FLOW3\Reflection\ClassSchema', array(), array('Dummy'));
-		$mockClassSchema->expects($this->once())->method('getIdentityProperties')->will($this->returnValue(array('key1' => 'someType')));
-		$this->mockReflectionService->expects($this->once())->method('getClassSchema')->with('SomeType')->will($this->returnValue($mockClassSchema));
-		$mapper->injectReflectionService(($this->mockReflectionService));
-
-		$mapper->_call('findObjectByIdentityProperties', array('key1' => 'value1', 'key2' => 'value2'), 'SomeType');
+		$propertyMapper->_set('typeConverters', $typeConverters);
+		$this->assertEquals('string2string', $propertyMapper->convert('source', 'string'));
 	}
 }
 ?>

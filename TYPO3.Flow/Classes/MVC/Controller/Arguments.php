@@ -261,5 +261,36 @@ class Arguments extends \ArrayObject {
 		}
 		$this->argumentNames = array();
 	}
+
+	/**
+	 * @return boolean TRUE if the arguments have validation or property mapping errors, FALSE otherwise
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function haveErrors() {
+		foreach ($this as $argument) {
+			if (!$argument->isValid()) {
+				return TRUE;
+			}
+		}
+		return FALSE;
+	}
+
+	/**
+	 * Get all property mapping / validation errors
+	 *
+	 * @return array<F3\FLOW3\Error\PropertyError>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function getValidationErrors() {
+		$errors = array();
+
+		foreach ($this as $argument) {
+			if (!$argument->isValid()) {
+				$errors[$argument->getName()] = $argument->getValidationErrors();
+ 			}
+		}
+
+		return $errors;
+	}
 }
 ?>

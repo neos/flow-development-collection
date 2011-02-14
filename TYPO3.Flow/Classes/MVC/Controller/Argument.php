@@ -32,32 +32,6 @@ namespace F3\FLOW3\MVC\Controller;
 class Argument {
 
 	/**
-	 * A preg pattern to match against UUIDs
-	 * @var string
-	 */
-	const PATTERN_MATCH_UUID = '/([a-f0-9]){8}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){12}/';
-
-	/**
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
-	 */
-	protected $objectManager;
-
-	/**
-	 * @var \F3\FLOW3\Reflection\ReflectionService
-	 */
-	protected $reflectionService;
-
-	/**
-	 * @var \F3\FLOW3\Persistence\PersistenceManagerInterface
-	 */
-	protected $persistenceManager;
-
-	/**
-	 * @var \F3\FLOW3\Property\PropertyMapper
-	 */
-	protected $propertyMapper;
-
-	/**
 	 * Name of this argument
 	 * @var string
 	 */
@@ -80,12 +54,6 @@ class Argument {
 	 * @var string
 	 */
 	protected $dataType = NULL;
-
-	/**
-	 * If the data type is an object, the class schema of the data type class is resolved
-	 * @var \F3\FLOW3\Reflection\ClassSchema
-	 */
-	protected $dataTypeClassSchema;
 
 	/**
 	 * TRUE if this argument is required
@@ -111,11 +79,35 @@ class Argument {
 	 */
 	protected $validator = NULL;
 
-	/**
-	 * A filter for this argument
-	 * @var \F3\FLOW3\Validation\FilterInterface
+	/**´
+	 * TRUE if this argument is currently valid, FALSE otherwise.
+	 * "valid" means that it has been validated with its associated validator,
+	 * and no property mapping errors occured.
+	 * @var boolean
 	 */
-	protected $filter = NULL;
+	protected $isValid = TRUE;
+
+	/**
+	 * If validation errors occured, this property contains them.
+	 * @var array<\F3\FLOW3\Error\Error>
+	 */
+	protected $validationErrors = NULL;
+
+	/**
+	 * @var \F3\FLOW3\MVC\Controller\MvcPropertyMappingConfiguration
+	 */
+	protected $propertyMappingConfiguration;
+
+
+	/**
+	 * @var \F3\FLOW3\Property\PropertyMapper
+	 */
+	protected $propertyMapper;
+
+	/**
+	 * @var \F3\FLOW3\Property\PropertyMappingConfigurationBuilder
+	 */
+	protected $propertyMappingConfigurationBuilder;
 
 	/**
 	 * Constructs this controller argument
@@ -134,57 +126,28 @@ class Argument {
 	}
 
 	/**
-	 * Injects the Object Manager
-	 *
-	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
+	 * @param \F3\FLOW3\Property\PropertyMapper $propertyMapper The property mapper
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
-		$this->objectManager = $objectManager;
-	}
-
-	/**
-	 * Injects the Reflection Service
-	 *
-	 * @param \F3\FLOW3\Reflection\ReflectionService $reflectionService
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function injectReflectionService(\F3\FLOW3\Reflection\ReflectionService $reflectionService) {
-		$this->reflectionService = $reflectionService;
-	}
-
-	/**
-	 * Injects the persistence manager
-	 *
-	 * @param \F3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function injectPersistenceManager(\F3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager) {
-		$this->persistenceManager = $persistenceManager;
-	}
-
-	/**
-	 * Injects the Property Mapper
-	 *
-	 * @param \F3\FLOW3\Property\PropertyMapper $propertyMapper
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectPropertyMapper(\F3\FLOW3\Property\PropertyMapper $propertyMapper) {
 		$this->propertyMapper = $propertyMapper;
 	}
 
 	/**
-	 * Initializes this object
+	 * @param \F3\FLOW3\Property\PropertyMappingConfigurationBuilder $propertyMappingConfigurationBuilder
+	 * @return void
+	 */
+	public function injectPropertyMappingConfigurationBuilder(\F3\FLOW3\Property\PropertyMappingConfigurationBuilder $propertyMappingConfigurationBuilder) {
+		$this->propertyMappingConfigurationBuilder = $propertyMappingConfigurationBuilder;
+	}
+
+	/**
+	 * Initializer.
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initializeObject() {
-		$this->dataTypeClassSchema = $this->reflectionService->getClassSchema($this->dataType);
+		$this->propertyMappingConfiguration = $this->propertyMappingConfigurationBuilder->build('F3\FLOW3\MVC\Controller\MvcPropertyMappingConfiguration');
 	}
 
 	/**
@@ -208,7 +171,9 @@ class Argument {
 	 * @api
 	 */
 	public function setShortName($shortName) {
-		if ($shortName !== NULL && (!is_string($shortName) || strlen($shortName) !== 1)) throw new \InvalidArgumentException('$shortName must be a single character or NULL', 1195824959);
+		if ($shortName !== NULL && (!is_string($shortName) || strlen($shortName) !== 1)) {
+			throw new \InvalidArgumentException('$shortName must be a single character or NULL', 1195824959);
+		}
 		$this->shortName = $shortName;
 		return $this;
 	}
@@ -269,7 +234,9 @@ class Argument {
 	 * @api
 	 */
 	public function setShortHelpMessage($message) {
-		if (!is_string($message)) throw new \InvalidArgumentException('The help message must be of type string, ' . gettype($message) . 'given.', 1187958170);
+		if (!is_string($message)) {
+			throw new \InvalidArgumentException('The help message must be of type string, ' . gettype($message) . 'given.', 1187958170);
+		}
 		$this->shortHelpMessage = $message;
 		return $this;
 	}
@@ -289,12 +256,13 @@ class Argument {
 	 * Sets the default value of the argument
 	 *
 	 * @param mixed $defaultValue Default value
-	 * @return void
+	 * @return \F3\FLOW3\MVC\Controller\Argument $this
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @api
 	 */
 	public function setDefaultValue($defaultValue) {
 		$this->defaultValue = $defaultValue;
+		return $this;
 	}
 
 	/**
@@ -333,107 +301,33 @@ class Argument {
 	}
 
 	/**
-	 * Set a filter
-	 *
-	 * @param mixed $filter Object name of a filter or the actual filter object
-	 * @return \F3\FLOW3\MVC\Controller\Argument Returns $this (used for fluent interface)
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function setFilter($filter) {
-		$this->filter = ($filter instanceof \F3\FLOW3\Validation\Filter\FilterInterface) ? $filter : $this->objectManager->get($filter);
-		return $this;
-	}
-
-	/**
-	 * Returns the set filter
-	 *
-	 * @return \F3\FLOW3\Validation\FilterInterface The set filter, NULL if none was set
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function getFilter() {
-		return $this->filter;
-	}
-
-	/**
 	 * Sets the value of this argument.
 	 *
 	 * @param mixed $value The value of this argument
 	 * @return \F3\FLOW3\MVC\Controller\Argument $this
-	 * @throws \F3\FLOW3\MVC\Exception\InvalidArgumentValueException if the argument is not a valid object of type $dataType
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	public function setValue($value) {
-		if ($value === NULL || $value instanceof $this->dataType) {
-			$this->value = $value;
+	public function setValue($rawValue) {
+		if ($rawValue === NULL) {
+			$this->value = NULL;
+			return $this;
+		}
+		if (is_object($rawValue) && $rawValue instanceof $this->dataType) {
+			$this->value = $rawValue;
+			return $this;
+		}
+		$this->value = $this->propertyMapper->convert($rawValue, $this->dataType, $this->propertyMappingConfiguration);
+
+		// TODO: was machen wir mit den PropertyMapping errors?
+		if ($this->validator === NULL || $this->validator->isValid($this->value)) {
+			$this->isValid = TRUE;
+			$this->validationErrors = NULL;
 		} else {
-			$this->value = $this->transformValue($value);
+			$this->isValid = FALSE;
+			$this->validationErrors = $this->validator->getErrors();
 		}
 
 		return $this;
-	}
-
-	/**
-	 * Checks if the value is a UUID or an array but should be an object, i.e.
-	 * the argument's data type class schema is set. If that is the case, this
-	 * method tries to look up the corresponding object instead.
-	 *
-	 * Additionally, it maps arrays to objects in case it is a normal object.
-	 *
-	 * @param mixed $value The value of an argument
-	 * @return mixed
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 */
-	protected function transformValue($value) {
-		$transformedValue = NULL;
-
-		switch ($this->dataType) {
-			case 'integer' :
-				return $value === '' ? NULL : (integer)$value;
-			case 'double' :
-			case 'float' :
-				return $value === '' ? NULL : (float)$value;
-			case 'boolean' :
-				if (strtolower($value) === 'true') {
-					return TRUE;
-				}
-				if (strtolower($value) === 'false') {
-					return FALSE;
-				}
-				if ($value < 0) {
-					return FALSE;
-				}
-				return $value === '' ? NULL : (boolean)$value;
-		}
-
-		if (!class_exists($this->dataType)) {
-			return $value;
-		}
-		if ($this->dataTypeClassSchema !== NULL) {
-				// The target object is an Entity or ValueObject.
-			if (is_string($value) && preg_match(self::PATTERN_MATCH_UUID, $value) === 1) {
-				$transformedValue = $this->persistenceManager->getObjectByIdentifier($value);
-			} elseif (is_array($value)) {
-				$transformedValue = $this->propertyMapper->map(array_keys($value), $value, $this->dataType);
-			}
-		} else {
-			if (!is_array($value)) {
-				throw new \F3\FLOW3\MVC\Exception\InvalidArgumentValueException('The value was not an array, so we could not map it to an object. Maybe the @entity or @valueobject annotations are missing?', 1251730701);
-			}
-			$transformedValue = $this->propertyMapper->map(array_keys($value), $value, $this->dataType);
-		}
-
-		if (!($transformedValue instanceof $this->dataType) && !($transformedValue === NULL && !$this->isRequired())) {
-			$mappingResults = $this->propertyMapper->getMappingResults();
-			$mappingErrorMessages = $mappingResults->hasErrors() ? ' Mapping errors: ' : '';
-			foreach ($mappingResults->getErrors() as $error) {
-				$mappingErrorMessages .= '#' . $error->getCode() . ': ' . $error->getMessage() . ' ';
-			}
-			throw new \F3\FLOW3\MVC\Exception\InvalidArgumentValueException('The value of argument "' . $this->name . '" must be of type "' . $this->dataType . '", but was of type "' . (is_object($transformedValue) ? get_class($transformedValue) : gettype($transformedValue)) . '".' . $mappingErrorMessages, 1269616784);
-		}
-		return $transformedValue;
 	}
 
 	/**
@@ -448,6 +342,35 @@ class Argument {
 	}
 
 	/**
+	 * Return the Property Mapping Configuration used for this argument; can be used by the initialize*action to modify the Property Mapping.
+	 *
+	 * @return \F3\FLOW3\MVC\Controller\MvcPropertyMappingConfiguration
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @api
+	 */
+	public function getPropertyMappingConfiguration() {
+		return $this->propertyMappingConfiguration;
+	}
+
+	/**
+	 * @return boolean TRUE if the argument is valid, FALSE otherwise
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @api
+	 */
+	public function isValid() {
+		return $this->isValid;
+	}
+
+	/**
+	 * @return array<F3\FLOW3\Error\Error> Validation errors which have occured.
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @api
+	 */
+	public function getValidationErrors() {
+		return $this->validationErrors;
+	}
+
+	/**
 	 * Returns a string representation of this argument's value
 	 *
 	 * @return string
@@ -457,6 +380,5 @@ class Argument {
 	public function __toString() {
 		return (string)$this->value;
 	}
-
 }
 ?>

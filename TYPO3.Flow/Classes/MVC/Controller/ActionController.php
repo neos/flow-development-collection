@@ -156,7 +156,7 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 		}
 
 		$this->mapRequestArgumentsToControllerArguments();
-		$this->controllerContext = new ControllerContext($this->request, $this->response, $this->arguments, $this->argumentsMappingResults, $this->uriBuilder, $this->flashMessageContainer);
+		$this->controllerContext = new ControllerContext($this->request, $this->response, $this->arguments, $this->uriBuilder, $this->flashMessageContainer);
 
 		if ($this->request->getFormat() === NULL) {
 			$this->request->setFormat($this->detectFormat());
@@ -275,7 +275,7 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 			$preparedArguments[] = $argument->getValue();
 		}
 
-		if ($this->argumentsMappingResults->hasErrors()) {
+		if ($this->arguments->haveErrors()) {
 			$actionResult = call_user_func(array($this, $this->errorMethodName));
 		} else {
 			$actionResult = call_user_func_array(array($this, $this->actionMethodName), $preparedArguments);
@@ -413,7 +413,7 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 * @api
 	 */
 	protected function errorAction() {
-		$this->request->setErrors($this->argumentsMappingResults->getErrors());
+		$this->request->setErrors($this->arguments->getValidationErrors());
 
 		$errorFlashMessage = $this->getErrorFlashMessage();
 		if ($errorFlashMessage !== FALSE) {
@@ -426,12 +426,10 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 		}
 
 		$message = 'An error occurred while trying to call ' . get_class($this) . '->' . $this->actionMethodName . '().' . PHP_EOL;
-		foreach ($this->argumentsMappingResults->getErrors() as $error) {
+		foreach ($this->arguments->getValidationErrors() as $error) {
 			$message .= 'Error:   ' . $error->getMessage() . PHP_EOL;
 		}
-		foreach ($this->argumentsMappingResults->getWarnings() as $warning) {
-			$message .= 'Warning: ' . $warning->getMessage() . PHP_EOL;
-		}
+
 		return $message;
 	}
 

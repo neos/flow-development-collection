@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Property;
+namespace F3\FLOW3\Tests\Functional\Property\Fixtures;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,22 +23,59 @@ namespace F3\FLOW3\Property;
  *                                                                        */
 
 /**
- * This object holds a mapping error.
+ * A simple entity for PropertyMapper test
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
+ * @entity
  */
-class MappingError extends \F3\FLOW3\Error\Error {
+class TestEntity {
 
 	/**
-	 * @var string The default (english) error message.
+	 * @var string
 	 */
-	protected $message = 'Unknown mapping error';
+	protected $name;
 
 	/**
-	 * @var string The error code
+	 *
+	 * @var integer
 	 */
-	protected $code = 1210349652;
+	protected $age;
+
+	/**
+	 *
+	 * @var float
+	 */
+	protected $averageNumberOfKids;
+
+	/**
+	 * @return string
+	 */
+	public function getName() {
+		return $this->name;
+	}
+
+	/**
+	 * @param string $name
+	 * @return void
+	 */
+	public function setName($name) {
+		$this->name = $name;
+	}
+
+	public function getAge() {
+		return $this->age;
+	}
+
+	public function setAge($age) {
+		$this->age = $age;
+	}
+
+	public function getAverageNumberOfKids() {
+		return $this->averageNumberOfKids;
+	}
+
+	public function setAverageNumberOfKids($averageNumberOfKids) {
+		$this->averageNumberOfKids = $averageNumberOfKids;
+	}
 }
-
 ?>

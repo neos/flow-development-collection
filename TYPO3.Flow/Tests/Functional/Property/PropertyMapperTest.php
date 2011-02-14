@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\MVC\Controller;
+namespace F3\FLOW3\Tests\Functional\Property;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,22 +23,48 @@ namespace F3\FLOW3\MVC\Controller;
  *                                                                        */
 
 /**
- * This object holds validation errors for one argument.
+ * Testcase for Property Mapper
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
- * @scope prototype
  */
-class ArgumentError extends \F3\FLOW3\Validation\PropertyError {
+class PropertyMapperTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
-	 * @var string The default (english) error message.
+	 * @var \F3\FLOW3\Tests\Functional\Property\Fixtures\TestEntityRepository
 	 */
-	protected $message = 'Validation errors for argument "%s"';
+	//protected $testEntityRepository;
 
 	/**
-	 * @var string The error code
+	 *
+	 * @var \F3\FLOW3\Property\PropertyMapper
 	 */
-	protected $code = 1245107351;
+	protected $propertyMapper;
+
+	/**
+	 * @return void
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function setUp() {
+		parent::setUp();
+
+		$this->propertyMapper = $this->objectManager->get('F3\FLOW3\Property\PropertyMapper');
+	}
+
+	/**
+	 * @test
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function domainObjectWithSimplePropertiesCanBeCreated() {
+		$source = array(
+			'name' => 'Robert Skaarhoj',
+			'age' => '25',
+			'averageNumberOfKids' => '1.5'
+		);
+
+		$result = $this->propertyMapper->convert($source, 'F3\FLOW3\Tests\Functional\Property\Fixtures\TestEntity');
+		$this->assertSame('Robert Skaarhoj', $result->getName());
+		$this->assertSame(25, $result->getAge());
+		$this->assertSame(1.5, $result->getAverageNumberOfKids());
+	}
 }
-
 ?>

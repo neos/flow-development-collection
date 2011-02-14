@@ -218,6 +218,5 @@ interface RequestInterface {
 	 * @api
 	 */
 	public function getErrors();
-
 }
 ?>

@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Property;
+namespace F3\FLOW3\Property\Exception;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,22 +23,12 @@ namespace F3\FLOW3\Property;
  *                                                                        */
 
 /**
- * This object holds a mapping warning.
+ * A "Type Converter" Exception
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
- * @scope prototype
+ * @api
  */
-class MappingWarning extends \F3\FLOW3\Error\Warning {
+class TypeConverterException extends \F3\FLOW3\Property\Exception {
 
-	/**
-	 * @var string The default (english) error message.
-	 */
-	protected $message = 'Unknown mapping warning';
-
-	/**
-	 * @var string The error code
-	 */
-	protected $code = 1210351446;
 }
-
 ?>
