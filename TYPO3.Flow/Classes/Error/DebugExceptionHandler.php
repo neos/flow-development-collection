@@ -52,12 +52,29 @@ class DebugExceptionHandler extends \F3\FLOW3\Error\AbstractExceptionHandler {
 			header("HTTP/1.1 500 Internal Server Error");
 		}
 
-		$pathPosition = strpos($exception->getFile(), 'Packages/');
-		$filePathAndName = ($pathPosition !== FALSE) ? substr($exception->getFile(), $pathPosition) : $exception->getFile();
+		$exceptionHeader = '';
+		while (true) {
+			$pathPosition = strpos($exception->getFile(), 'Packages/');
+			$filePathAndName = ($pathPosition !== FALSE) ? substr($exception->getFile(), $pathPosition) : $exception->getFile();
+			$exceptionCodeNumber = ($exception->getCode() > 0) ? '#' . $exception->getCode() . ': ' : '';
 
-		$exceptionCodeNumber = ($exception->getCode() > 0) ? '#' . $exception->getCode() . ': ' : '';
-		$moreInformationLink = ($exceptionCodeNumber != '') ? '(<a href="http://typo3.org/go/exception/' . $exception->getCode() . '">More information</a>)' : '';
-		$createIssueLink = $this->getCreateIssueLink($exception);
+			$moreInformationLink = ($exceptionCodeNumber != '') ? '(<a href="http://typo3.org/go/exception/' . $exception->getCode() . '">More information</a>)' : '';
+			$createIssueLink = $this->getCreateIssueLink($exception);
+			$exceptionHeader .= '
+				<strong style="color: #BE0027;">' . $exceptionCodeNumber . htmlspecialchars($exception->getMessage()) . '</strong> ' . $moreInformationLink . '<br />
+				<br />
+				<span class="ExceptionProperty">' . get_class($exception) . '</span> thrown in file<br />
+				<span class="ExceptionProperty">' . $filePathAndName . '</span> in line
+				<span class="ExceptionProperty">' . $exception->getLine() . '</span>.<br />';
+			if ($exception->getPrevious() === NULL) {
+				$exceptionHeader .= '<br /><a href="' . $createIssueLink . '">Go to the FORGE issue tracker and report the issue</a> - <strong>if you think it is a bug!</strong><br />';
+				break;
+			} else {
+				$exceptionHeader .= '<br /><div style="width: 100%; background-color: #515151; color: white; padding: 2px; margin: 0 0 6px 0;">Nested Exception</div>';
+				$exception = $exception->getPrevious();
+			}
+		}
+
 		$backtraceCode = $this->getBacktraceCode($exception->getTrace());
 
 		echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN"
@@ -92,13 +109,7 @@ class DebugExceptionHandler extends \F3\FLOW3\Error\AbstractExceptionHandler {
 				">
 				<div style="width: 100%; background-color: #515151; color: white; padding: 2px; margin: 0 0 6px 0;">Uncaught Exception in FLOW3</div>
 				<div style="width: 100%; padding: 2px; margin: 0 0 6px 0;">
-					<strong style="color: #BE0027;">' . $exceptionCodeNumber . htmlspecialchars($exception->getMessage()) . '</strong> ' . $moreInformationLink . '<br />
-					<br />
-					<span class="ExceptionProperty">' . get_class($exception) . '</span> thrown in file<br />
-					<span class="ExceptionProperty">' . $filePathAndName . '</span> in line
-					<span class="ExceptionProperty">' . $exception->getLine() . '</span>.<br />
-					<br />
-					<a href="' . $createIssueLink . '">Go to the FORGE issue tracker and report the issue</a> - <strong>if you think it is a bug!</strong><br />
+					' . $exceptionHeader . '
 					<br />
 					' . $backtraceCode . '
 				</div>

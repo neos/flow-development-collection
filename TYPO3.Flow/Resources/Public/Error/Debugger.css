@@ -20,6 +20,7 @@
 
 .F3-FLOW3-Error-Debugger-VarDump {
 	display: block;
+	text-align: left;
 	background: #b9b9b9;
 	border: 10px solid #b9b9b9;
 	-moz-border-radius: 10px;
