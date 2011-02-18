@@ -48,6 +48,7 @@ class ObjectAccess {
 	 *
 	 * Tries to get the property the following ways:
 	 * - if the target is an array, and has this property, we return it.
+	 * - if super cow powers should be used, fetch value through reflection
 	 * - if public getter method exists, call it.
 	 * - if the target object is an instance of ArrayAccess, it gets the property
 	 *   on it if it exists.
@@ -56,14 +57,15 @@ class ObjectAccess {
 	 *
 	 * @param mixed $subject Object or array to get the property from
 	 * @param string $propertyName name of the property to retrieve
-	 * @return object Value of the property.
+	 * @param boolean $alsoAccessIfNotPublic directly access property using reflection(!)
+	 * @return mixed Value of the property.
 	 * @throws \InvalidArgumentException in case $subject was not an object or $propertyName was not a string
 	 * @throws \F3\FLOW3\Reflection\Exception\PropertyNotAccessibleException if the property was not accessible
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	static public function getProperty($subject, $propertyName) {
+	static public function getProperty($subject, $propertyName, $alsoAccessIfNotPublic = FALSE) {
 		if (!is_object($subject) && !is_array($subject)) {
 			throw new \InvalidArgumentException('$subject must be an object or array, ' . gettype($subject). ' given.', 1237301367);
 		}
@@ -76,7 +78,10 @@ class ObjectAccess {
 				return $subject[$propertyName];
 			}
 		} else {
-			if (is_callable(array($subject, 'get' . ucfirst($propertyName)))) {
+			if ($alsoAccessIfNotPublic === TRUE) {
+				$propertyReflection = new \F3\FLOW3\Reflection\PropertyReflection(get_class($subject), $propertyName);
+				return $propertyReflection->getValue($subject);
+			} elseif (is_callable(array($subject, 'get' . ucfirst($propertyName)))) {
 				return call_user_func(array($subject, 'get' . ucfirst($propertyName)));
 			} elseif (is_callable(array($subject, 'is' . ucfirst($propertyName)))) {
 				return call_user_func(array($subject, 'is' . ucfirst($propertyName)));
@@ -130,6 +135,8 @@ class ObjectAccess {
 	/**
 	 * Set a property for a given object.
 	 * Tries to set the property the following ways:
+	 * - if target is an array, set value
+	 * - if super cow powers should be used, set value through reflection
 	 * - if public setter method exists, call it.
 	 * - if public property exists, set it directly.
 	 * - if the target object is an instance of ArrayAccess, it sets the property
@@ -139,12 +146,13 @@ class ObjectAccess {
 	 * @param mixed $subject The target object or array
 	 * @param string $propertyName Name of the property to set
 	 * @param object $propertyValue Value of the property
+	 * @param boolean $alsoAccessIfNotPublic directly access property using reflection(!)
 	 * @return boolean TRUE if the property could be set, FALSE otherwise
 	 * @throws \InvalidArgumentException in case $object was not an object or $propertyName was not a string
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	static public function setProperty(&$subject, $propertyName, $propertyValue) {
+	static public function setProperty(&$subject, $propertyName, $propertyValue, $alsoAccessIfNotPublic = FALSE) {
 		if (is_array($subject)) {
 			$subject[$propertyName] = $propertyValue;
 			return TRUE;
@@ -153,7 +161,10 @@ class ObjectAccess {
 		if (!is_object($subject)) throw new \InvalidArgumentException('subject must be an object or array, ' . gettype($subject). ' given.', 1237301368);
 		if (!is_string($propertyName)) throw new \InvalidArgumentException('Given property name is not of type string.', 1231178878);
 
-		if (is_callable(array($subject, $setterMethodName = self::buildSetterMethodName($propertyName)))) {
+		if ($alsoAccessIfNotPublic === TRUE) {
+			$propertyReflection = new \F3\FLOW3\Reflection\PropertyReflection(get_class($subject), $propertyName);
+			$propertyReflection->setValue($subject, $propertyValue);
+		} elseif (is_callable(array($subject, $setterMethodName = self::buildSetterMethodName($propertyName)))) {
 			call_user_func(array($subject, $setterMethodName), $propertyValue);
 		} elseif ($subject instanceof \ArrayAccess) {
 			$subject[$propertyName] = $propertyValue;

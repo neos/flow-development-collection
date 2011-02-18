@@ -64,6 +64,15 @@ class ObjectAccessTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getPropertyReturnsExpectedValueForUnexposedPropertyIfAlsoAccessIfNotPublicIsTrue() {
+		$property = \F3\FLOW3\Reflection\ObjectAccess::getProperty($this->dummyObject, 'unexposedProperty', TRUE);
+		$this->assertEquals($property, 'unexposed', 'A property of a given object was not returned correctly.');
+	}
+
+	/**
+	 * @test
 	 * @expectedException \F3\FLOW3\Reflection\Exception\PropertyNotAccessibleException
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
@@ -114,6 +123,15 @@ class ObjectAccessTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function setPropertyReturnsFalseIfPropertyIsNotAccessible() {
 		$this->assertFalse(\F3\FLOW3\Reflection\ObjectAccess::setProperty($this->dummyObject, 'protectedProperty', 42));
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function setPropertySetsValueIfPropertyIsNotAccessibleWhenAlsoAccessIfNotPublicIsTrue() {
+		$this->assertTrue(\F3\FLOW3\Reflection\ObjectAccess::setProperty($this->dummyObject, 'unexposedProperty', 'was set anyway', TRUE));
+		$this->assertAttributeEquals('was set anyway', 'unexposedProperty', $this->dummyObject);
 	}
 
 	/**

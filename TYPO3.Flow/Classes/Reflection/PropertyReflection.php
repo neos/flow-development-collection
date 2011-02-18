@@ -96,6 +96,26 @@ class PropertyReflection extends \ReflectionProperty {
 	}
 
 	/**
+	 * Returns the value of the reflected property - even if it is protected.
+	 *
+	 * @param object $object Instance of the declaring class to set the value on
+	 * @param mixed $value The value to set on the property
+	 * @return void
+	 * @throws \F3\FLOW3\Reflection\Exception
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function setValue($object = NULL, $value = NULL) {
+		if (!is_object($object)) throw new \F3\FLOW3\Reflection\Exception('$object is of type ' . gettype($object) . ', instance of class ' . $this->class . ' expected.', 1210859212);
+
+		if ($this->isPublic()) {
+			parent::setValue($object, $value);
+		} else {
+			parent::setAccessible(TRUE);
+			parent::setValue($object, $value);
+		}
+	}
+
+	/**
 	 * Returns an instance of the doc comment parser and
 	 * runs the parse() method.
 	 *

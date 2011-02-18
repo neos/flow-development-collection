@@ -36,7 +36,7 @@ class DummyClassWithGettersAndSetters {
 
 	protected $protectedProperty;
 
-	protected $unexposedProperty;
+	protected $unexposedProperty = 'unexposed';
 
 	public $publicProperty;
 	public $publicProperty2 = 42;
