@@ -39,14 +39,13 @@ class StringLengthValidator extends \F3\FLOW3\Validation\Validator\AbstractValid
 	 * If at least one error occurred, the result is FALSE.
 	 *
 	 * @param mixed $value The value that should be validated
-	 * @return boolean TRUE if the value is valid, FALSE if an error occured
+	 * @return void
 	 * @throws F3\FLOW3\Validation\Exception\InvalidSubjectException
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
-	public function isValid($value) {
-		$this->errors = array();
+	protected function isValid($value) {
 		if (isset($this->options['minimum']) && isset($this->options['maximum'])
 			&& $this->options['maximum'] < $this->options['minimum']) {
 			throw new \F3\FLOW3\Validation\Exception\InvalidValidationOptionsException('The \'maximum\' is shorter than the \'minimum\' in the StringLengthValidator.', 1238107096);
@@ -58,7 +57,6 @@ class StringLengthValidator extends \F3\FLOW3\Validation\Validator\AbstractValid
 			}
 		} elseif (!is_string($value)) {
 			$this->addError('The given value was not a valid string.', 1269883975);
-			return FALSE;
 		}
 
 		$stringLength = strlen($value);
@@ -75,8 +73,6 @@ class StringLengthValidator extends \F3\FLOW3\Validation\Validator\AbstractValid
 				$this->addError('This text may not exceed ' . $this->options['maximum'] . ' characters.', 1238108069);
 			}
 		}
-
-		return $isValid;
 	}
 }
 

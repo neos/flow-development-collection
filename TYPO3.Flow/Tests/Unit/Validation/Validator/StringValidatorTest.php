@@ -22,47 +22,37 @@ namespace F3\FLOW3\Tests\Unit\Validation\Validator;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+require_once('AbstractValidatorTestcase.php');
 /**
  * Testcase for the string length validator
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class StringValidatorTest extends \F3\FLOW3\Tests\UnitTestCase {
+class StringValidatorTest extends \F3\FLOW3\Tests\Unit\Validation\Validator\AbstractValidatorTestcase {
+
+	protected $validatorClassName = 'F3\FLOW3\Validation\Validator\StringValidator';
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	public function internalErrorsArrayIsResetOnIsValidCall() {
-		$validator = $this->getAccessibleMock('F3\FLOW3\Validation\Validator\StringValidator', array('dummy'), array(), '', FALSE);
-		$validator->_set('errors', array('existingError'));
-		$validator->isValid('foo');
-		$this->assertSame(array(), $validator->getErrors());
+	public function stringValidatorShouldValidateString() {
+		$this->assertFalse($this->validator->validate('Hello World')->hasErrors());
 	}
 
 	/**
 	 * @test
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	public function stringValidatorReturnsTrueIfStringIsGiven() {
-		$stringValidator = $this->getMock('F3\FLOW3\Validation\Validator\StringValidator', array('addError'), array(), '', FALSE);
-		$this->assertTrue($stringValidator->isValid("Hello World"));
+	public function stringValidatorShouldReturnErrorIfNumberIsGiven() {
+		$this->assertTrue($this->validator->validate(42)->hasErrors());
 	}
 
 	/**
 	 * @test
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	public function stringValidatorReturnsFalseIfNumberIsGiven() {
-		$stringValidator = $this->getMock('F3\FLOW3\Validation\Validator\StringValidator', array('addError'), array(), '', FALSE);
-		$this->assertFalse($stringValidator->isValid(42));
-	}
-	/**
-	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 */
-	public function stringValidatorReturnsFalseIfObjectWithToStringMethodStringIsGiven() {
-		$stringValidator = $this->getMock('F3\FLOW3\Validation\Validator\StringValidator', array('addError'), array(), '', FALSE);
+	public function stringValidatorShouldReturnErrorIfObjectWithToStringMethodStringIsGiven() {
 		$className = uniqid('TestClass');
 
 		eval('
@@ -73,7 +63,7 @@ class StringValidatorTest extends \F3\FLOW3\Tests\UnitTestCase {
 			}
 		');
 		$object = new $className();
-		$this->assertFalse($stringValidator->isValid($object));
+		$this->assertTrue($this->validator->validate($object)->hasErrors());
 	}
 
 }

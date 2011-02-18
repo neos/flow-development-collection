@@ -1543,7 +1543,9 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockPersistenceSession->expects($this->exactly(2))->method('isDirty')->will($this->onConsecutiveCalls(TRUE, TRUE));
 
 		$mockValidatorConjunction = $this->getMock('F3\FLOW3\Validation\Validator\ConjunctionValidator', array(), array(), '', FALSE);
-		$mockValidatorConjunction->expects($this->any())->method('isValid')->will($this->returnValue(TRUE));
+		$validationResults = $this->getMock('F3\FLOW3\Error\Result');
+		$validationResults->expects($this->exactly(2))->method('hasErrors')->will($this->returnValue(FALSE));
+		$mockValidatorConjunction->expects($this->any())->method('validate')->will($this->returnValue($validationResults));
 		$mockValidatorResolver = $this->getMock('F3\FLOW3\Validation\ValidatorResolver', array(), array(), '', FALSE);
 		$mockValidatorResolver->expects($this->exactly(2))->method('getBaseValidatorConjunction')->with($fullClassName)->will($this->returnValue($mockValidatorConjunction));
 
@@ -1577,9 +1579,12 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService');
 		$mockReflectionService->expects($this->any())->method('getClassSchema')->will($this->returnValue($classSchema));
 
+		$validationResults = $this->getMock('F3\FLOW3\Error\Result');
+		$validationResults->expects($this->once())->method('hasErrors')->will($this->returnValue(TRUE));
+		$validationResults->expects($this->any())->method('getErrors')->will($this->returnValue(new \F3\FLOW3\Error\Error('error', 1234)));
+
 		$mockValidator = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
-		$mockValidator->expects($this->once())->method('isValid')->will($this->returnValue(FALSE));
-		$mockValidator->expects($this->any())->method('getErrors')->will($this->returnValue(array()));
+		$mockValidator->expects($this->once())->method('validate')->will($this->returnValue($validationResults));
 
 		$mockPersistenceSession = $this->getMock('F3\FLOW3\Persistence\Generic\Session');
 		$mockPersistenceSession->injectReflectionService($mockReflectionService);
@@ -1617,9 +1622,12 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService');
 		$mockReflectionService->expects($this->any())->method('getClassSchema')->will($this->returnValue($classSchema));
 
+		$validationResults = $this->getMock('F3\FLOW3\Error\Result');
+		$validationResults->expects($this->once())->method('hasErrors')->will($this->returnValue(TRUE));
+		$validationResults->expects($this->any())->method('getErrors')->will($this->returnValue(new \F3\FLOW3\Error\Error('error', 1234)));
+
 		$mockValidator = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
-		$mockValidator->expects($this->once())->method('isValid')->will($this->returnValue(FALSE));
-		$mockValidator->expects($this->any())->method('getErrors')->will($this->returnValue(array()));
+		$mockValidator->expects($this->once())->method('validate')->will($this->returnValue($validationResults));
 
 		$mockPersistenceSession = $this->getMock('F3\FLOW3\Persistence\Generic\Session');
 		$mockPersistenceSession->injectReflectionService($mockReflectionService);

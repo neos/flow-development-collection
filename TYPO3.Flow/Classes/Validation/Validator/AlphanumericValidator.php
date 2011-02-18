@@ -27,7 +27,7 @@ namespace F3\FLOW3\Validation\Validator;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
- * @scope prototype
+ * @scope singleton
  */
 class AlphanumericValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator {
 
@@ -35,18 +35,14 @@ class AlphanumericValidator extends \F3\FLOW3\Validation\Validator\AbstractValid
 	 * Returns TRUE, if the given property ($propertyValue) is a valid
 	 * alphanumeric string, which is defined as [a-zA-Z0-9]*.
 	 *
-	 * If at least one error occurred, the result is FALSE.
-	 *
 	 * @param mixed $value The value that should be validated
-	 * @return boolean TRUE if the value is valid, FALSE if an error occured
+	 * @return void
 	 * @throws \F3\FLOW3\Validation\Exception\InvalidSubjectException if this validator cannot validate the given value
 	 * @api
 	 */
-	public function isValid($value) {
-		$this->errors = array();
-		if (is_string($value) && preg_match('/^[a-z0-9]*$/i', $value)) return TRUE;
+	protected function isValid($value) {
+		if (is_string($value) && preg_match('/^[a-z0-9]*$/i', $value)) return;
 		$this->addError('Only the characters a to z and numbers are allowed.', 1221551320);
-		return FALSE;
 	}
 }
 

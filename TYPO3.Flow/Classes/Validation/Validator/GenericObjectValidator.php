@@ -29,7 +29,7 @@ namespace F3\FLOW3\Validation\Validator;
  * @api
  * @scope prototype
  */
-class GenericObjectValidator extends \F3\FLOW3\Validation\Validator\AbstractObjectValidator {
+class GenericObjectValidator implements \F3\FLOW3\Validation\Validator\ValidatorInterface {
 
 	/**
 	 * @var array
@@ -37,9 +37,19 @@ class GenericObjectValidator extends \F3\FLOW3\Validation\Validator\AbstractObje
 	protected $propertyValidators = array();
 
 	/**
-	 * @var SplObjectStorage
+	 *
+	 * @var \SplObjectStorage
 	 */
 	static protected $instancesCurrentlyUnderValidation;
+
+	/**
+	 * Sets validation options for the validator
+	 *
+	 * @param array $validationOptions The validation options
+	 * @return void
+	 */
+	public function __construct($validationOptions) {
+	}
 
 	/**
 	 * Checks if the given value is valid according to the property validators
@@ -48,34 +58,82 @@ class GenericObjectValidator extends \F3\FLOW3\Validation\Validator\AbstractObje
 	 *
 	 * @param mixed $value The value that should be validated
 	 * @param boolean $resetInstancesCurrentlyUnderValidation Reserved for internal use!
-	 * @return boolean TRUE if the value is valid, FALSE if an error occured
+	 * @return \F3\FLOW3\Error\Result
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
-	public function isValid($value, $resetInstancesCurrentlyUnderValidation = TRUE) {
-		$this->errors = array();
-		if ($resetInstancesCurrentlyUnderValidation === TRUE) {
+	public function validate($object) {
+		$messages = new \F3\FLOW3\Error\Result();
+
+		if (self::$instancesCurrentlyUnderValidation === NULL) {
 			self::$instancesCurrentlyUnderValidation = new \SplObjectStorage();
 		}
-		if ($value === NULL) {
-			return TRUE;
+
+		if ($object === NULL) {
+			return $messages;
 		}
 
-		if (!is_object($value)) {
-			$this->addError('Value is no object.', 1241099148);
-			return FALSE;
+		if (!is_object($object)) {
+			$messages->addError(new \F3\FLOW3\Error\Error('Object expected, ' . gettype($object) . ' given.', 1241099149));
+			return $messages;
 		}
-		if (!self::$instancesCurrentlyUnderValidation->contains($value)) {
-			self::$instancesCurrentlyUnderValidation->attach($value);
+
+		if (self::$instancesCurrentlyUnderValidation->contains($object)) {
+			return $messages;
+		} else {
+			self::$instancesCurrentlyUnderValidation->attach($object);
 		}
-		$result = TRUE;
-		foreach (array_keys($this->propertyValidators) as $propertyName) {
-			if ($this->isPropertyValid($value, $propertyName) === FALSE) {
-				$result = FALSE;
-			}
+
+		foreach ($this->propertyValidators as $propertyName => $validators) {
+			$propertyValue = $this->getPropertyValue($object, $propertyName);
+			$this->checkProperty($propertyValue, $validators, $messages->forProperty($propertyName));
 		}
-		return $result;
+
+		self::$instancesCurrentlyUnderValidation->detach($object);
+		return $messages;
 	}
+
+	/**
+	 * Load the property value to be used for validation.
+	 *
+	 * In case the object is a doctrine proxy, we need to load the real instance first.
+	 *
+	 * @param object $object
+	 * @param string $propertyName
+	 * @return mixed
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	protected function getPropertyValue($object, $propertyName) {
+		if ($object instanceof \Doctrine\ORM\Proxy\Proxy) {
+			$reflectionLoadMethod = new \ReflectionMethod($object, '_load');
+			$reflectionLoadMethod->setAccessible(TRUE);
+			$reflectionLoadMethod->invoke($object);
+		}
+
+		if (\F3\FLOW3\Reflection\ObjectAccess::isPropertyGettable($object, $propertyName)) {
+			return \F3\FLOW3\Reflection\ObjectAccess::getProperty($object, $propertyName);
+		} else {
+			return \F3\FLOW3\Reflection\ObjectAccess::getProperty($object, $propertyName, TRUE);
+		}
+
+	}
+
+	/**
+	 * Checks if the specified property of the given object is valid.
+	 *
+	 * If at least one error occurred, the result is FALSE.
+	 *
+	 * @param object $object The object containing the property to validate
+	 * @param string $propertyName Name of the property to validate
+	 * @return void
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	protected function checkProperty($value, $validators, $messages) {
+		foreach ($validators as $validator) {
+			$messages->merge($validator->validate($value));
+		}
+	}
+
 
 	/**
 	 * Checks the given object can be validated by the validator implementation
@@ -87,53 +145,6 @@ class GenericObjectValidator extends \F3\FLOW3\Validation\Validator\AbstractObje
 	 */
 	public function canValidate($object) {
 		return is_object($object);
-	}
-
-	/**
-	 * Checks if the specified property of the given object is valid.
-	 *
-	 * If at least one error occurred, the result is FALSE.
-	 *
-	 * @param object $object The object containing the property to validate
-	 * @param string $propertyName Name of the property to validate
-	 * @return boolean TRUE if the property value is valid, FALSE if an error occured
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @api
-	 */
-	public function isPropertyValid($object, $propertyName) {
-		if (!is_object($object)) throw new \InvalidArgumentException('Object expected, ' . gettype($object) . ' given.', 1241099149);
-		if (!isset($this->propertyValidators[$propertyName])) return TRUE;
-
-		$result = TRUE;
-		foreach ($this->propertyValidators[$propertyName] as $validator) {
-			if (\F3\FLOW3\Reflection\ObjectAccess::isPropertyGettable($object, $propertyName)) {
-				$propertyValue = \F3\FLOW3\Reflection\ObjectAccess::getProperty($object, $propertyName);
-			} else {
-				$propertyReflection = new \F3\FLOW3\Reflection\PropertyReflection(get_class($object), $propertyName);
-				$propertyReflection->setAccessible(TRUE);
-				$propertyValue = $propertyReflection->getValue($object);
-			}
-			if (!is_object($propertyValue) || !self::$instancesCurrentlyUnderValidation->contains($propertyValue)) {
-				if ($validator->isValid($propertyValue, FALSE) === FALSE) {
-					$this->addErrorsForProperty($validator->getErrors(), $propertyName);
-					$result = FALSE;
-				}
-			}
-		}
-		return $result;
-	}
-
-	/**
-	 * @param array $errors Array of \F3\FLOW3\Validation\Error
-	 * @param string $propertyName Name of the property to add errors
-	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 */
-	protected function addErrorsForProperty($errors, $propertyName) {
-		if (!isset($this->errors[$propertyName])) {
-			$this->errors[$propertyName] = new \F3\FLOW3\Validation\PropertyError( $propertyName);
-		}
-		$this->errors[$propertyName]->addErrors($errors);
 	}
 
 	/**
@@ -158,7 +169,6 @@ class GenericObjectValidator extends \F3\FLOW3\Validation\Validator\AbstractObje
 	 * @param string $propertyName (optional) Name of the property to return validators for
 	 * @return array An array of validators
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @api
 	 */
 	public function getPropertyValidators($propertyName = NULL) {
 		if ($propertyName !== NULL) {
@@ -167,7 +177,6 @@ class GenericObjectValidator extends \F3\FLOW3\Validation\Validator\AbstractObje
 			return $this->propertyValidators;
 		}
 	}
-
 }
 
 ?>

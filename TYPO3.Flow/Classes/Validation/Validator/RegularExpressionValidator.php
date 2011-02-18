@@ -39,27 +39,22 @@ class RegularExpressionValidator extends \F3\FLOW3\Validation\Validator\Abstract
 	 * If at least one error occurred, the result is FALSE.
 	 *
 	 * @param mixed $value The value that should be validated
-	 * @return boolean TRUE if the value is valid, FALSE if an error occured
+	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
-	public function isValid($value) {
-		$this->errors = array();
+	protected function isValid($value) {
 		if (!isset($this->options['regularExpression'])) {
-			$this->addError('The regular expression was empty.', 1221565132);
-			return FALSE;
+			throw new \F3\FLOW3\Validation\Exception\InvalidValidationOptionsException('"regularExpression" in RegularExpressionValidator was empty.', 1298273029);
 		}
 		$result = preg_match($this->options['regularExpression'], $value);
 		if ($result === 0) {
 			$this->addError('The given subject did not match the pattern. Got: "' . $value . '"', 1221565130);
-			return FALSE;
 		}
 		if ($result === FALSE) {
-			$this->addError('The regular expression "' . $this->options['regularExpression'] . '" contained an error.', 1221565131);
-			return FALSE;
+			throw new \F3\FLOW3\Validation\Exception\InvalidValidationOptionsException('regularExpression "' . $this->options['regularExpression'] . '" in RegularExpressionValidator contained an error.', 1298273089);
 		}
-		return TRUE;
 	}
 }
 

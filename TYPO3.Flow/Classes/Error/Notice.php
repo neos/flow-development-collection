@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Validation\Validator;
+namespace F3\FLOW3\Error;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,35 +23,18 @@ namespace F3\FLOW3\Validation\Validator;
  *                                                                        */
 
 /**
- * Contract for an object validator
+ */
+
+/**
+ * An object representation of a generic notice. Subclass this to create
+ * more specific notices if necessary.
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
- * @author Robert Lemke <robert@typo3.org>
  * @api
+ * @scope prototype
  */
-interface ObjectValidatorInterface extends \F3\FLOW3\Validation\Validator\ValidatorInterface {
-
-	/**
-	 * Checks the given object can be validated by the validator implementation
-	 *
-	 * @param object $object The object to be checked
-	 * @return boolean TRUE if this validator can validate instances of the given object or FALSE if it can't
-	 * @api
-	 */
-	public function canValidate($object);
-
-	/**
-	 * Checks if the specified property of the given object is valid.
-	 *
-	 * If at least one error occurred, the result is FALSE.
-	 *
-	 * @param object $object The object containing the property to validate
-	 * @param string $propertyName Name of the property to validate
-	 * @return boolean TRUE if the property value is valid, FALSE if an error occured
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @api
-	 */
-	public function isPropertyValid($object, $propertyName);
+class Notice extends \F3\FLOW3\Error\Message {
+	protected $message = 'Unknown notice';
 }
 
 ?>

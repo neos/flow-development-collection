@@ -207,50 +207,26 @@ class ArgumentsTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	public function haveErrorsShouldBeTrueIfOneArgumentHasErrors() {
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$argument1 = $this->getMockBuilder('F3\FLOW3\MVC\Controller\Argument')->disableOriginalConstructor()->getMock();
-		$argument2 = $this->getMockBuilder('F3\FLOW3\MVC\Controller\Argument')->disableOriginalConstructor()->getMock();
-		$argument1->expects($this->once())->method('isValid')->will($this->returnValue(TRUE));
-		$argument2->expects($this->once())->method('isValid')->will($this->returnValue(FALSE));
-
-		$arguments = new \F3\FLOW3\MVC\Controller\Arguments($mockObjectManager);
-		$arguments->addArgument($argument1);
-		$arguments->addArgument($argument2);
-		$this->assertTrue($arguments->haveErrors());
-	}
-
-	/**
-	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 */
-	public function haveErrorsShouldBeFalseIfNoArgumentHasErrors() {
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$arguments = new \F3\FLOW3\MVC\Controller\Arguments($mockObjectManager);
-		$this->assertFalse($arguments->haveErrors());
-	}
-
-	/**
-	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 */
-	public function getValidationErrorsShouldFetchAllValidationErrorsFromArguments() {
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
+	public function getValidationResultsShouldFetchAllValidationResltsFromArguments() {
 		$error1 = new \F3\FLOW3\Error\Error('Validation error', 1234);
 		$error2 = new \F3\FLOW3\Error\Error('Validation error 2', 1235);
 
-		$argument1 = $this->getMock('F3\FLOW3\MVC\Controller\Argument', array('isValid', 'getValidationErrors'), array('name1', 'string'));
-		$argument1->expects($this->once())->method('isValid')->will($this->returnValue(FALSE));
-		$argument1->expects($this->once())->method('getValidationErrors')->will($this->returnValue($error1));
+		$results1 = new \F3\FLOW3\Error\Result();
+		$results1->addError($error1);
 
-		$argument2 = $this->getMock('F3\FLOW3\MVC\Controller\Argument', array('isValid', 'getValidationErrors'), array('name2', 'string'));
-		$argument2->expects($this->once())->method('isValid')->will($this->returnValue(FALSE));
-		$argument2->expects($this->once())->method('getValidationErrors')->will($this->returnValue($error2));
+		$results2 = new \F3\FLOW3\Error\Result();
+		$results2->addError($error2);
 
-		$arguments = new \F3\FLOW3\MVC\Controller\Arguments($mockObjectManager);
+		$argument1 = $this->getMock('F3\FLOW3\MVC\Controller\Argument', array('getValidationResults'), array('name1', 'string'));
+		$argument1->expects($this->once())->method('getValidationResults')->will($this->returnValue($results1));
+
+		$argument2 = $this->getMock('F3\FLOW3\MVC\Controller\Argument', array('getValidationResults'), array('name2', 'string'));
+		$argument2->expects($this->once())->method('getValidationResults')->will($this->returnValue($results2));
+
+		$arguments = new \F3\FLOW3\MVC\Controller\Arguments();
 		$arguments->addArgument($argument1);
 		$arguments->addArgument($argument2);
-		$this->assertSame(array('name1' => $error1, 'name2' => $error2), $arguments->getValidationErrors());
+		$this->assertSame(array('name1' => array($error1), 'name2' => array($error2)), $arguments->getValidationResults()->getFlattenedErrors());
 	}
 }
 ?>

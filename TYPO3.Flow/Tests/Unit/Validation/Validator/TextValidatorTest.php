@@ -22,31 +22,23 @@ namespace F3\FLOW3\Tests\Unit\Validation\Validator;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+require_once('AbstractValidatorTestcase.php');
+
 /**
  * Testcase for the text validator
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class TextValidatorTest extends \F3\FLOW3\Tests\UnitTestCase {
+class TextValidatorTest extends \F3\FLOW3\Tests\Unit\Validation\Validator\AbstractValidatorTestcase {
 
-	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function internalErrorsArrayIsResetOnIsValidCall() {
-		$validator = $this->getAccessibleMock('F3\FLOW3\Validation\Validator\TextValidator', array('dummy'), array(), '', FALSE);
-		$validator->_set('errors', array('existingError'));
-		$validator->isValid('foo');
-		$this->assertSame(array(), $validator->getErrors());
-	}
+	protected $validatorClassName = 'F3\FLOW3\Validation\Validator\TextValidator';
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function textValidatorReturnsTrueForASimpleString() {
-		$textValidator = new \F3\FLOW3\Validation\Validator\TextValidator();
-		$this->assertTrue($textValidator->isValid('this is a very simple string'));
+	public function textValidatorReturnsNoErrorForASimpleString() {
+		$this->assertFalse($this->validator->validate('this is a very simple string')->hasErrors());
 	}
 
 	/**
@@ -55,8 +47,7 @@ class TextValidatorTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function textValidatorAllowsTheNewLineCharacter() {
 		$sampleText = "Ierd Frot uechter mä get, Kirmesdag Milliounen all en, sinn main Stréi mä och. \nVu dan durch jéngt gréng, ze rou Monn voll stolz. \nKe kille Minutt d'Kirmes net. Hir Wand Lann Gaas da, wär hu Heck Gart zënter, Welt Ronn grousse der ke. Wou fond eraus Wisen am. Hu dénen d'Gaassen eng, eng am virun geplot d'Lëtzebuerger, get botze rëscht Blieder si. Dat Dauschen schéinste Milliounen fu. Ze riede méngem Keppchen déi, si gét fergiess erwaacht, räich jéngt duerch en nun. Gëtt Gaas d'Vullen hie hu, laacht Grénge der dé. Gemaacht gehéiert da aus, gutt gudden d'wäiss mat wa.";
-		$textValidator = $this->getMock('F3\FLOW3\Validation\Validator\TextValidator', array('addError'), array(), '', FALSE);
-		$this->assertTrue($textValidator->isValid($sampleText));
+		$this->assertFalse($this->validator->validate($sampleText)->hasErrors());
 	}
 
 	/**
@@ -65,17 +56,15 @@ class TextValidatorTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function textValidatorAllowsCommonSpecialCharacters() {
 		$sampleText = "3% of most people tend to use semikolae; we need to check & allow that. And hashes (#) are not evil either, nor is the sign called 'quote'.";
-		$textValidator = $this->getMock('F3\FLOW3\Validation\Validator\TextValidator', array('addError'), array(), '', FALSE);
-		$this->assertTrue($textValidator->isValid($sampleText));
+		$this->assertFalse($this->validator->validate($sampleText)->hasErrors());
 	}
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function textValidatorReturnsFalseForAStringWithHtml() {
-		$textValidator = $this->getMock('F3\FLOW3\Validation\Validator\TextValidator', array('addError'), array(), '', FALSE);
-		$this->assertFalse($textValidator->isValid('<span style="color: #BBBBBB;">a nice text</span>'));
+	public function textValidatorReturnsErrorForAStringWithHtml() {
+		$this->assertTrue($this->validator->validate('<span style="color: #BBBBBB;">a nice text</span>')->hasErrors());
 	}
 
 	/**
@@ -83,9 +72,8 @@ class TextValidatorTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function textValidatorCreatesTheCorrectErrorIfTheSubjectContainsHtmlEntities() {
-		$textValidator = $this->getMock('F3\FLOW3\Validation\Validator\TextValidator', array('addError'), array(), '', FALSE);
-		$textValidator->expects($this->once())->method('addError');
-		$textValidator->isValid('<span style="color: #BBBBBB;">a nice text</span>');
+		$expected = array(new \F3\FLOW3\Validation\Error('Valid text without any XML tags is expected.', 1221565786));
+		$this->assertEquals($expected, $this->validator->validate('<span style="color: #BBBBBB;">a nice text</span>')->getErrors());
 	}
 }
 

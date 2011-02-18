@@ -63,34 +63,53 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	protected $controllerSubpackageKey = NULL;
 
 	/**
-	 * @var string Object name of the controller which is supposed to handle this request.
+	 * Object name of the controller which is supposed to handle this request.
+	 *
+	 * @var string
 	 */
 	protected $controllerName = NULL;
 
 	/**
-	 * @var string Name of the action the controller is supposed to take.
+	 * Name of the action the controller is supposed to take.
+	 *
+	 * @var string
 	 */
 	protected $controllerActionName = NULL;
 
 	/**
-	 * @var array The arguments for this request
+	 * The arguments for this request
+	 *
+	 * @var array
 	 */
 	protected $arguments = array();
 
 	/**
-	 * @var string The requested representation format
+	 * The requested representation format
+	 *
+	 * @var string
 	 */
 	protected $format;
 
 	/**
-	 * @var boolean If this request has been changed and needs to be dispatched again
+	 * If this request has been changed and needs to be dispatched again
+	 *
+	 * @var boolean
 	 */
 	protected $dispatched = FALSE;
 
 	/**
-	 * @var array Errors that occured during this request
+	 * If this request is a forward because of an error, the original request gets filled.
+	 *
+	 * @var \F3\FLOW3\MVC\Request
 	 */
-	protected $errors = array();
+	protected $originalRequest = NULL;
+
+	/**
+	 * If the request is a foreward because of an error, these mapping results get filled here.
+	 *
+	 * @var \F3\FLOW3\Error\Result
+	 */
+	protected $originalRequestMappingResults = NULL;
 
 	/**
 	 * Injects the object manager
@@ -376,7 +395,7 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	}
 
 	/**
-	 * Returns an ArrayObject of arguments and their values
+	 * Returns an Array of arguments and their values
 	 *
 	 * @return array Array of arguments and their values (which may be arguments and values as well)
 	 * @author Robert Lemke <robert@typo3.org>
@@ -409,24 +428,40 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	}
 
 	/**
-	 * Set errors that occured during the request (e.g. argument mapping errors)
+	 * Returns the original request. Filled only if a property mapping error occured.
 	 *
-	 * @param array $errors An array of \F3\FLOW3\Error\Error objects
-	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @return \F3\FLOW3\MVC\Request the original request.
 	 */
-	public function setErrors(array $errors) {
-		$this->errors = $errors;
+	public function getOriginalRequest() {
+		return $this->originalRequest;
 	}
 
 	/**
-	 * Get errors that occured during the request (e.g. argument mapping errors)
-	 *
-	 * @return array The errors that occured during the request
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @param \F3\FLOW3\MVC\Request $originalRequest
+	 * @return void
 	 */
-	public function getErrors() {
-		return $this->errors;
+	public function setOriginalRequest(\F3\FLOW3\MVC\Request $originalRequest) {
+		$this->originalRequest = $originalRequest;
+	}
+
+	/**
+	 * Get the request mapping results for the original request.
+	 *
+	 * @return \F3\FLOW3\Error\Result
+	 */
+	public function getOriginalRequestMappingResults() {
+		if ($this->originalRequestMappingResults === NULL) {
+			return new \F3\FLOW3\Error\Result();
+		}
+		return $this->originalRequestMappingResults;
+	}
+
+	/**
+	 *
+	 * @param \F3\FLOW3\Error\Result $originalRequestMappingResults
+	 */
+	public function setOriginalRequestMappingResults(\F3\FLOW3\Error\Result $originalRequestMappingResults) {
+		$this->originalRequestMappingResults = $originalRequestMappingResults;
 	}
 }
 ?>

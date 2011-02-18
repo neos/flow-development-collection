@@ -22,33 +22,24 @@ namespace F3\FLOW3\Tests\Unit\Validation\Validator;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+require_once('AbstractValidatorTestcase.php');
+
 /**
  * Testcase for the UUID validator
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class UuidValidatorTest extends \F3\FLOW3\Tests\UnitTestCase {
+class UuidValidatorTest extends \F3\FLOW3\Tests\Unit\Validation\Validator\AbstractValidatorTestcase {
 
-	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function internalErrorsArrayIsResetOnIsValidCall() {
-		$validator = $this->getAccessibleMock('F3\FLOW3\Validation\Validator\UuidValidator', array('dummy'), array(), '', FALSE);
-		$validator->_set('errors', array('existingError'));
-		$validator->isValid('e104e469-9030-4b98-babf-3990f07dd3f1');
-		$this->assertSame(array(), $validator->getErrors());
-	}
+	protected $validatorClassName = 'F3\FLOW3\Validation\Validator\UuidValidator';
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function validatorAcceptsCorrectUUIDs() {
-		$validator = new \F3\FLOW3\Validation\Validator\UuidValidator();
-
-		$this->assertTrue($validator->isValid('e104e469-9030-4b98-babf-3990f07dd3f1'));
-		$this->assertTrue($validator->isValid('533548ca-8914-4a19-9404-ef390a6ce387'));
+		$this->assertFalse($this->validator->validate('e104e469-9030-4b98-babf-3990f07dd3f1')->hasErrors());
+		$this->assertFalse($this->validator->validate('533548ca-8914-4a19-9404-ef390a6ce387')->hasErrors());
 	}
 
 	/**
@@ -56,8 +47,7 @@ class UuidValidatorTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function tooShortUUIDIsRejected() {
-		$validator = $this->getMock('F3\FLOW3\Validation\Validator\UuidValidator', array('addError'), array(), '', FALSE);
-		$this->assertFalse($validator->isValid('e104e469-9030-4b98-babf-3990f07'));
+		$this->assertTrue($this->validator->validate('e104e469-9030-4b98-babf-3990f07')->hasErrors());
 	}
 
 	/**
@@ -65,8 +55,7 @@ class UuidValidatorTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function UUIDWithOtherThanHexValuesIsRejected() {
-		$validator = $this->getMock('F3\FLOW3\Validation\Validator\UuidValidator', array('addError'), array(), '', FALSE);
-		$this->assertFalse($validator->isValid('e104e469-9030-4g98-babf-3990f07dd3f1'));
+		$this->assertTrue($this->validator->validate('e104e469-9030-4g98-babf-3990f07dd3f1')->hasErrors());
 	}
 
 	/**
@@ -75,9 +64,8 @@ class UuidValidatorTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function UUIDValidatorCreatesTheCorrectErrorIfTheSubjectIsInvalid() {
-		$validator = $this->getMock('F3\FLOW3\Validation\Validator\UuidValidator', array('addError'), array(), '', FALSE);
-		$validator->expects($this->once())->method('addError');
-		$validator->isValid('e104e469-9030-4b98-babf-3990f07');
+		$expected = array(new \F3\FLOW3\Validation\Error('The given subject was not a valid UUID.', 1221565853));
+		$this->assertEquals($expected, $this->validator->validate('e104e469-9030-4b98-babf-3990f07')->getErrors());
 	}
 }
 

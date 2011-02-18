@@ -22,36 +22,29 @@ namespace F3\FLOW3\Tests\Unit\Validation\Validator;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+require_once('AbstractValidatorTestcase.php');
+
 /**
  * Testcase for the raw validator
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class RawValidatorTest extends \F3\FLOW3\Tests\UnitTestCase {
+class RawValidatorTest extends \F3\FLOW3\Tests\Unit\Validation\Validator\AbstractValidatorTestcase {
 
-	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function internalErrorsArrayIsResetOnIsValidCall() {
-		$validator = $this->getAccessibleMock('F3\FLOW3\Validation\Validator\RawValidator', array('dummy'));
-		$validator->_set('errors', array('existingError'));
-		$validator->isValid('foo');
-		$this->assertSame(array(), $validator->getErrors());
-	}
+	protected $validatorClassName = 'F3\FLOW3\Validation\Validator\RawValidator';
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function theRawValidatorAlwaysReturnsTRUE() {
-		$rawValidator = new \F3\FLOW3\Validation\Validator\RawValidator();
+	public function theRawValidatorAlwaysReturnsNoErrors() {
+		$rawValidator = new \F3\FLOW3\Validation\Validator\RawValidator(array());
 
-		$this->assertTrue($rawValidator->isValid('simple1expression'));
-		$this->assertTrue($rawValidator->isValid(''));
-		$this->assertTrue($rawValidator->isValid(NULL));
-		$this->assertTrue($rawValidator->isValid(FALSE));
-		$this->assertTrue($rawValidator->isValid(new \ArrayObject()));
+		$this->assertFalse($rawValidator->validate('simple1expression')->hasErrors());
+		$this->assertFalse($rawValidator->validate('')->hasErrors());
+		$this->assertFalse($rawValidator->validate(NULL)->hasErrors());
+		$this->assertFalse($rawValidator->validate(FALSE)->hasErrors());
+		$this->assertFalse($rawValidator->validate(new \ArrayObject())->hasErrors());
 	}
 }
 

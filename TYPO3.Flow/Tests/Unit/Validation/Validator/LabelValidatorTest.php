@@ -22,23 +22,16 @@ namespace F3\FLOW3\Tests\Unit\Validation\Validator;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+require_once('AbstractValidatorTestcase.php');
+
 /**
  * Testcase for the label validator
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class LabelValidatorTest extends \F3\FLOW3\Tests\UnitTestCase {
+class LabelValidatorTest extends \F3\FLOW3\Tests\Unit\Validation\Validator\AbstractValidatorTestcase {
 
-	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function internalErrorsArrayIsResetOnIsValidCall() {
-		$validator = $this->getAccessibleMock('F3\FLOW3\Validation\Validator\LabelValidator', array('dummy'), array(), '', FALSE);
-		$validator->_set('errors', array('existingError'));
-		$validator->isValid('foo');
-		$this->assertSame(array(), $validator->getErrors());
-	}
+	protected $validatorClassName = 'F3\FLOW3\Validation\Validator\LabelValidator';
 
 	/**
 	 * Data provider with valid labels
@@ -80,9 +73,8 @@ class LabelValidatorTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 * @dataProvider validLabels
 	 */
-	public function labelValidatorReturnsTrueForValidLabels($label) {
-		$validator = $this->getMock('F3\FLOW3\Validation\Validator\LabelValidator', array('addError'));
-		$this->assertTrue($validator->isValid($label));
+	public function labelValidatorReturnsNoErrorForValidLabels($label) {
+		 $this->assertFalse($this->validator->validate($label)->hasErrors());
 	}
 
 	/**
@@ -90,9 +82,8 @@ class LabelValidatorTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 * @dataProvider invalidLabels
 	 */
-	public function labelValidatorReturnsFalseForInvalidLabels($label) {
-		$validator = $this->getMock('F3\FLOW3\Validation\Validator\LabelValidator', array('addError'));
-		$this->assertFalse($validator->isValid($label));
+	public function labelValidatorReturnsErrorsForInvalidLabels($label) {
+		$this->assertTrue($this->validator->validate($label)->hasErrors());
 	}
 }
 

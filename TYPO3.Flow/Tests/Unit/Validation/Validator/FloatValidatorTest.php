@@ -22,23 +22,16 @@ namespace F3\FLOW3\Tests\Unit\Validation\Validator;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+require_once('AbstractValidatorTestcase.php');
+
 /**
  * Testcase for the float validator
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class FloatValidatorTest extends \F3\FLOW3\Tests\UnitTestCase {
+class FloatValidatorTest extends \F3\FLOW3\Tests\Unit\Validation\Validator\AbstractValidatorTestcase {
 
-	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function internalErrorsArrayIsResetOnIsValidCall() {
-		$validator = $this->getAccessibleMock('F3\FLOW3\Validation\Validator\FloatValidator', array('dummy'), array(), '', FALSE);
-		$validator->_set('errors', array('existingError'));
-		$validator->isValid(1.2);
-		$this->assertSame(array(), $validator->getErrors());
-	}
+	protected $validatorClassName = 'F3\FLOW3\Validation\Validator\FloatValidator';
 
 	/**
 	 * Data provider with valid floats
@@ -62,9 +55,8 @@ class FloatValidatorTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 * @dataProvider validFloats
 	 */
-	public function floatValidatorReturnsTrueForAValidFloat($address) {
-		$floatValidator = new \F3\FLOW3\Validation\Validator\FloatValidator();
-		$this->assertTrue($floatValidator->isValid($address));
+	public function floatValidatorReturnsNoErrorsForAValidFloat($float) {
+		$this->assertFalse($this->validator->validate($float)->hasErrors());
 	}
 
 	/**
@@ -86,20 +78,16 @@ class FloatValidatorTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 * @dataProvider invalidFloats
 	 */
-	public function floatValidatorReturnsFalseForAnInvalidFloat($address) {
-		$floatValidator = $this->getMock('F3\FLOW3\Validation\Validator\FloatValidator', array('addError'), array(), '', FALSE);
-		$this->assertFalse($floatValidator->isValid($address));
+	public function floatValidatorReturnsErrorForAnInvalidFloat($float) {
+		$this->assertTrue($this->validator->validate($float)->hasErrors());
 	}
 
 	/**
-	 * @test
+	 * test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function floatValidatorCreatesTheCorrectErrorForAnInvalidSubject() {
-		$floatValidator = new \F3\FLOW3\Validation\Validator\FloatValidator();
-		$floatValidator = $this->getMock('F3\FLOW3\Validation\Validator\FloatValidator', array('addError'), array(), '', FALSE);
-		$floatValidator->expects($this->once())->method('addError');
-		$floatValidator->isValid(123456);
+		$this->assertEquals(1, count($this->validator->validate(123456)->getErrors()));
 	}
 
 }

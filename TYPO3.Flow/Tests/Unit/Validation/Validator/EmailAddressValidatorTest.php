@@ -22,23 +22,16 @@ namespace F3\FLOW3\Tests\Unit\Validation\Validator;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+require_once('AbstractValidatorTestcase.php');
+
 /**
  * Testcase for the email address validator
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class EmailAddressValidatorTest extends \F3\FLOW3\Tests\UnitTestCase {
+class EmailAddressValidatorTest extends \F3\FLOW3\Tests\Unit\Validation\Validator\AbstractValidatorTestcase {
 
-	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function internalErrorsArrayIsResetOnIsValidCall() {
-		$validator = $this->getAccessibleMock('F3\FLOW3\Validation\Validator\EmailAddressValidator', array('dummy'), array(), '', FALSE);
-		$validator->_set('errors', array('existingError'));
-		$validator->isValid('foo@bar.de');
-		$this->assertSame(array(), $validator->getErrors());
-	}
+	protected $validatorClassName = 'F3\FLOW3\Validation\Validator\EmailAddressValidator';
 
 	/**
 	 * Data provider with valid email addresses
@@ -64,9 +57,8 @@ class EmailAddressValidatorTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 * @dataProvider validAddresses
 	 */
-	public function emailAddressValidatorReturnsTrueForAValidEmailAddress($address) {
-		$emailAddressValidator = new \F3\FLOW3\Validation\Validator\EmailAddressValidator();
-		$this->assertTrue($emailAddressValidator->isValid($address));
+	public function emailAddressValidatorReturnsNoErrorsForAValidEmailAddress($address) {
+		$this->assertFalse($this->validator->validate($address)->hasErrors());
 	}
 
 	/**
@@ -95,8 +87,7 @@ class EmailAddressValidatorTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @dataProvider invalidAddresses
 	 */
 	public function emailAddressValidatorReturnsFalseForAnInvalidEmailAddress($address) {
-		$emailAddressValidator = $this->getMock('F3\FLOW3\Validation\Validator\EmailAddressValidator', array('addError'), array(), '', FALSE);
-		$this->assertFalse($emailAddressValidator->isValid($address));
+		$this->assertTrue($this->validator->validate($address)->hasErrors());
 	}
 
 	/**
@@ -104,11 +95,7 @@ class EmailAddressValidatorTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function emailValidatorCreatesTheCorrectErrorForAnInvalidEmailAddress() {
-		$emailAddressValidator = $this->getMock('F3\FLOW3\Validation\Validator\EmailAddressValidator', array('addError'), array(), '', FALSE);
-		$emailAddressValidator->expects($this->once())->method('addError');
-		$emailAddressValidator->isValid('notAValidMail@Address');
+		$this->assertEquals(1, count($this->validator->validate('notAValidMail@Address')->getErrors()));
 	}
-
 }
-
 ?>

@@ -35,8 +35,6 @@ abstract class AbstractController implements ControllerInterface {
 
 	/**
 	 * @var \F3\FLOW3\Object\ObjectManagerInterface
-	 * @api
-	 * @todo Object Manager is only required for retrieving the validator in mapRequestArgumentsToControllerArguments(). Get rid of that!
 	 */
 	protected $objectManager;
 
@@ -114,7 +112,6 @@ abstract class AbstractController implements ControllerInterface {
 	/**
 	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
@@ -231,13 +228,19 @@ abstract class AbstractController implements ControllerInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
-	protected function forward($actionName, $controllerName = NULL, $packageKey = NULL, array $arguments = NULL) {
-		$this->arguments->removeAll();
+	protected function forward($actionName, $controllerName = NULL, $packageKey = NULL, array $arguments = array()) {
+		$originalRequest = clone $this->request;
+
 		$this->request->setDispatched(FALSE);
 		$this->request->setControllerActionName($actionName);
 		if ($controllerName !== NULL) $this->request->setControllerName($controllerName);
 		if ($packageKey !== NULL) $this->request->setControllerPackageKey($packageKey);
-		if ($arguments !== NULL) $this->request->setArguments($arguments);
+		$this->request->setArguments($arguments);
+
+		$this->request->setOriginalRequest($originalRequest);
+		$this->request->setOriginalRequestMappingResults($this->arguments->getValidationResults());
+
+		$this->arguments->removeAll();
 		throw new \F3\FLOW3\MVC\Exception\StopActionException();
 	}
 

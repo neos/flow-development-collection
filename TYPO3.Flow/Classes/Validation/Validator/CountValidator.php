@@ -32,29 +32,25 @@ namespace F3\FLOW3\Validation\Validator;
 class CountValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator {
 
 	/**
-	 * Returns TRUE, if the given property ($propertyValue) has a valid count in the given range.
-	 *
-	 * If at least one error occurred, the result is FALSE.
+	 * Returns no error, if the given property ($propertyValue) has a valid count in the given range.
 	 *
 	 * @param mixed $value The value that should be validated
 	 * @param \F3\FLOW3\Validation\Errors $errors An Errors object which will contain any errors which occurred during validation
-	 * @return boolean TRUE if the value is within the range, otherwise FALSE
+	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
-	public function isValid($value) {
-		$this->errors = array();
+	protected function isValid($value) {
 		if (!is_array($value) && !($value instanceof \Countable)) {
 			$this->addError('The given subject was not countable.', 1253718666);
-			return FALSE;
+			return;
 		}
 
 		$min = (isset($this->options['minimum'])) ? intval($this->options['minimum']) : 0;
 		$max = (isset($this->options['maximum'])) ? intval($this->options['maximum']) : PHP_INT_MAX;
-		if (count($value) >= $min && count($value) <= $max) return TRUE;
+		if (count($value) >= $min && count($value) <= $max) return;
 
 		$this->addError('The count must be between ' . $min . ' and ' . $max . '.', 1253718831);
-		return FALSE;
 	}
 }
 

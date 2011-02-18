@@ -27,7 +27,7 @@ namespace F3\FLOW3\Validation\Validator;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
- * @scope prototype
+ * @scope singleton
  */
 class FloatValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator {
 
@@ -37,17 +37,15 @@ class FloatValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator {
 	 * If at least one error occurred, the result is FALSE.
 	 *
 	 * @param mixed $value The value that should be validated
-	 * @return boolean TRUE if the value is valid, FALSE if an error occured
+	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
-	public function isValid($value) {
-		$this->errors = array();
+	protected function isValid($value) {
 		if (is_float($value) || (is_string($value) && strpos($value, '.') !== FALSE && preg_match('/^[0-9.e+-]+$/', $value))) {
-			return TRUE;
+			return;
 		}
 		$this->addError('A valid float number is expected.', 1221560288);
-		return FALSE;
 	}
 }
 

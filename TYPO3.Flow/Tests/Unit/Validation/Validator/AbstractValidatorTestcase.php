@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Validation\Validator;
+namespace F3\FLOW3\Tests\Unit\Validation\Validator;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,12 +23,33 @@ namespace F3\FLOW3\Validation\Validator;
  *                                                                        */
 
 /**
- * An abstract Object Validator
+ * Testcase for the Abstract Validator
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-abstract class AbstractObjectValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator implements \F3\FLOW3\Validation\Validator\ObjectValidatorInterface {
+abstract class AbstractValidatorTestcase extends \F3\FLOW3\Tests\UnitTestCase {
 
+	protected $validatorClassName;
+
+	/**
+	 *
+	 * @var \F3\FLOW3\Validation\Validator\ValidatorInterface
+	 */
+	protected $validator;
+
+	public function setUp() {
+		$this->validator = $this->getValidator();
+	}
+
+	protected function getValidator($options = array()) {
+		$validator = new $this->validatorClassName($options);
+
+		return $validator;
+	}
+
+	protected function validatorOptions($options) {
+		$this->validator = $this->getValidator($options);
+	}
 }
 
 ?>

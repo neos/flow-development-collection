@@ -84,16 +84,21 @@ class ValidatorResolverTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function createValidatorResolvesAndReturnsAValidatorAndPassesTheGivenOptions() {
 		$className = uniqid('Test');
-		$mockValidator = $this->getMock('F3\FLOW3\Validation\Validator\ObjectValidatorInterface', array(), array(), $className);
-		$mockValidator->expects($this->once())->method('setOptions')->with(array('foo' => 'bar'));
-
+		eval("class $className implements \F3\FLOW3\Validation\Validator\ValidatorInterface {" . '
+				public $validatorOptions;
+				public function __construct($validatorOptions) {
+					$this->validatorOptions = $validatorOptions;
+				}
+				public function validate($subject) {}
+			}');
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->any())->method('create')->with($className)->will($this->returnValue($mockValidator));
+		$mockObjectManager->expects($this->any())->method('getScope')->with($className)->will($this->returnValue(\F3\FLOW3\Object\Configuration\Configuration::SCOPE_PROTOTYPE));
 
 		$validatorResolver = $this->getMock('F3\FLOW3\Validation\ValidatorResolver',array('resolveValidatorObjectName'), array($mockObjectManager));
 		$validatorResolver->expects($this->once())->method('resolveValidatorObjectName')->with($className)->will($this->returnValue($className));
 		$validator = $validatorResolver->createValidator($className, array('foo' => 'bar'));
-		$this->assertSame($mockValidator, $validator);
+		$this->assertInstanceOf($className, $validator);
+		$this->assertEquals(array('foo' => 'bar'), $validator->validatorOptions);
 	}
 
 	/**

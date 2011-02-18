@@ -112,11 +112,21 @@ class ValidatorResolver {
 	public function createValidator($validatorType, array $validatorOptions = array()) {
 		$validatorObjectName = $this->resolveValidatorObjectName($validatorType);
 		if ($validatorObjectName === FALSE) return NULL;
-		$validator = $this->objectManager->create($validatorObjectName);
-		if (!($validator instanceof \F3\FLOW3\Validation\Validator\ValidatorInterface)) {
-			return NULL;
+
+		$scopeOfValidatorObject = $this->objectManager->getScope($validatorObjectName);
+
+		if ($scopeOfValidatorObject === \F3\FLOW3\Object\Configuration\Configuration::SCOPE_PROTOTYPE) {
+			$validator = new $validatorObjectName($validatorOptions);
+		} elseif ($scopeOfValidatorObject === \F3\FLOW3\Object\Configuration\Configuration::SCOPE_SINGLETON) {
+			$validator = $this->objectManager->get($validatorObjectName);
+		} else {
+			throw new \F3\FLOW3\Validation\Exception\NoSuchValidatorException('The validator "' . $validatorObjectName . '" is not of scope singleton or prototype!', 1300694835);
 		}
-		$validator->setOptions($validatorOptions);
+
+		if (!($validator instanceof \F3\FLOW3\Validation\Validator\ValidatorInterface)) {
+			throw new \F3\FLOW3\Validation\Exception\NoSuchValidatorException('The validator "' . $validatorObjectName . '" does not implement F3\FLOW3\Validation\Validator\ValidatorInterface!', 1300694875);
+		}
+
 		return $validator;
 	}
 

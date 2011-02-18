@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Validation\Validator;
+namespace F3\FLOW3\Error;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,31 +23,70 @@ namespace F3\FLOW3\Validation\Validator;
  *                                                                        */
 
 /**
- * Contract for a validator
+ */
+
+/**
+ * An object representation of a generic message. Usually, you will use Error, Warning or Notice instead of this one.
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
- * @author Robert Lemke <robert@typo3.org>
  * @api
+ * @scope prototype
  */
-interface ValidatorInterface {
+class Message {
 
 	/**
-	 * Sets validation options for the validator
-	 *
-	 * @param array $validationOptions The validation options
-	 * @api
+	 * @var string The default (english) error message.
 	 */
-	//public function __construct(array $validationOptions = array());
+	protected $message = 'Unknown message';
 
 	/**
-	 * Checks if the given value is valid according to the validator, and returns
-	 * the Error Messages object which occured.
+	 * @var string The error code
+	 */
+	protected $code;
+
+	/**
+	 * Constructs this error
 	 *
-	 * @param mixed $value The value that should be validated
-	 * @return \F3\FLOW3\Error\Result
+	 * @param string $message An english error message which is used if no other error message can be resolved
+	 * @param integer $code A unique error code
+	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
-	public function validate($value);
+	public function __construct($message, $code) {
+		$this->message = $message;
+		$this->code = $code;
+	}
 
+	/**
+	 * Returns the error message
+	 * @return string The error message
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @api
+	 */
+	public function getMessage() {
+		return $this->message;
+	}
+
+	/**
+	 * Returns the error code
+	 * @return string The error code
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @api
+	 */
+	public function getCode() {
+		return $this->code;
+	}
+
+	/**
+	 * Converts this error into a string
+	 *
+	 * @return string
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
+	 */
+	public function __toString() {
+		return $this->message . ' (#' . $this->code . ')';
+	}
 }
+
 ?>

@@ -60,10 +60,10 @@ class PropertyMapper {
 	protected $typeConverters = array();
 
 	/**
-	 * A list of property mapping errors which have occured on last mapping.
-	 * @var array<\F3\FLOW3\Error\Error>
+	 * A list of property mapping messages (errors, warnings) which have occured on last mapping.
+	 * @var \F3\FLOW3\Error\Result
 	 */
-	protected $errors;
+	protected $messages;
 
 	/**
 	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
@@ -124,7 +124,7 @@ class PropertyMapper {
 		}
 
 		$currentPropertyPath = array();
-		$this->errors = array();
+		$this->messages = new \F3\FLOW3\Error\Result();
 		try {
 			return $this->doMapping($source, $targetType, $configuration, $currentPropertyPath);
 		} catch (\Exception $e) {
@@ -133,14 +133,14 @@ class PropertyMapper {
 	}
 
 	/**
-	 * Get the errors of the last Property Mapping
+	 * Get the messages of the last Property Mapping
 	 *
-	 * @return array<\F3\FLOW3\Error\Error>
+	 * @return \F3\FLOW3\Error\Result
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @api
 	 */
-	public function getErrors() {
-		return $this->errors;
+	public function getMessages() {
+		return $this->messages;
 	}
 
 	/**
@@ -179,7 +179,7 @@ class PropertyMapper {
 		$result = $typeConverter->convertFrom($source, $targetType, $subProperties, $configuration);
 
 		if ($result instanceof \F3\FLOW3\Error\Error) {
-			$this->errors[implode('.', $currentPropertyPath)] = $result;
+			$this->messages->forProperty(implode('.', $currentPropertyPath))->addError($result);
 			$result = NULL;
 		}
 

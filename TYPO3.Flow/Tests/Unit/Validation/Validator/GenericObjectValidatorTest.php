@@ -22,153 +22,82 @@ namespace F3\FLOW3\Tests\Unit\Validation\Validator;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+require_once('AbstractValidatorTestcase.php');
+
 /**
  * Testcase for the Generic Object Validator
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class GenericObjectValidatorTest extends \F3\FLOW3\Tests\UnitTestCase {
+class GenericObjectValidatorTest extends \F3\FLOW3\Tests\Unit\Validation\Validator\AbstractValidatorTestcase {
+
+	protected $validatorClassName = 'F3\FLOW3\Validation\Validator\GenericObjectValidator';
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function internalErrorsArrayIsResetOnIsValidCall() {
-		$validator = $this->getAccessibleMock('F3\FLOW3\Validation\Validator\GenericObjectValidator', array('dummy'), array(), '', FALSE);
-		$validator->_set('errors', array('existingError'));
-		$validator->isValid(NULL);
-		$this->assertSame(array(), $validator->getErrors());
+	public function validatorShouldReturnErrorsIfTheValueIsNoObjectAndNotNull() {
+		$this->assertTrue($this->validator->validate('foo')->hasErrors());
 	}
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function isValidReturnsFalseIfTheValueIsNoObjectAndNotNull() {
-		$validator = $this->getMock('F3\FLOW3\Validation\Validator\GenericObjectValidator', array('addError', 'addErrorsForProperty'));
-		$this->assertFalse($validator->isValid('foo'));
+	public function validatorShouldReturnNoErrorsIfTheValueIsNull() {
+		$this->assertFalse($this->validator->validate(NULL)->hasErrors());
+	}
+
+	public function dataProviderForValidator() {
+		$error1 = new \F3\FLOW3\Error\Error('error1', 1);
+		$error2 = new \F3\FLOW3\Error\Error('error2', 2);
+
+		$emptyResult1 = new \F3\FLOW3\Error\Result();
+		$emptyResult2 = new \F3\FLOW3\Error\Result();
+
+		$resultWithError1 = new \F3\FLOW3\Error\Result();
+		$resultWithError1->addError($error1);
+
+		$resultWithError2 = new \F3\FLOW3\Error\Result();
+		$resultWithError2->addError($error2);
+
+		$classNameForObjectWithPrivateProperties = uniqid('FooBar');
+		eval('class ' . $classNameForObjectWithPrivateProperties . '{ protected $foo = \'foovalue\'; protected $bar = \'barvalue\'; }');
+		$objectWithPrivateProperties = new $classNameForObjectWithPrivateProperties();
+
+		return array(
+			// If no errors happened, this is shown
+			array($objectWithPrivateProperties, $emptyResult1, $emptyResult2, array()),
+
+			// If errors on two properties happened, they are merged together.
+			array($objectWithPrivateProperties, $resultWithError1, $resultWithError2, array('foo' => array($error1), 'bar' => array($error2)))
+		);
 	}
 
 	/**
 	 * @test
+	 * @dataProvider dataProviderForValidator
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function isValidReturnsTrueIfTheValueIsNull() {
-		$validator = $this->getMock('F3\FLOW3\Validation\Validator\GenericObjectValidator', array('addError', 'addErrorsForProperty'));
-		$this->asserttrue($validator->isValid(NULL));
-	}
+	public function validateChecksAllPropertiesForWhichAPropertyValidatorExists($mockObject, $validationResultForFoo, $validationResultForBar, $errors) {
 
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function isValidChecksAllPropertiesForWhichAPropertyValidatorExists() {
-		$mockPropertyValidators = array('foo' => 'validator', 'bar' => 'validator');
-		$mockObject = $this->getMock(uniqid('FooBar'), array('getFoo', 'getBar'));
+		$validatorForFoo = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
+		$validatorForFoo->expects($this->once())->method('validate')->with('foovalue')->will($this->returnValue($validationResultForFoo));
 
-		$validator = $this->getAccessibleMock('F3\FLOW3\Validation\Validator\GenericObjectValidator', array('addError', 'addErrorsForProperty', 'isPropertyValid'));
-		$validator->_set('propertyValidators', $mockPropertyValidators);
+		$validatorForBar = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
+		$validatorForBar->expects($this->once())->method('validate')->with('barvalue')->will($this->returnValue($validationResultForBar));
 
-		$validator->expects($this->at(0))->method('isPropertyValid')->with($mockObject, 'foo')->will($this->returnValue(TRUE));
-		$validator->expects($this->at(1))->method('isPropertyValid')->with($mockObject, 'bar')->will($this->returnValue(TRUE));
-
-		$validator->isValid($mockObject);
-	}
-
-	/**
-	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 */
-	public function isValidChecksAllPropertiesEvenIfOnePropertyValidatorFailed() {
-		$mockPropertyValidators = array('foo' => 'validator', 'bar' => 'validator');
-		$mockObject = $this->getMock(uniqid('FooBar'), array('getFoo', 'getBar'));
-
-		$validator = $this->getAccessibleMock('F3\FLOW3\Validation\Validator\GenericObjectValidator', array('addError', 'addErrorsForProperty', 'isPropertyValid'));
-		$validator->_set('propertyValidators', $mockPropertyValidators);
-
-		$validator->expects($this->at(0))->method('isPropertyValid')->with($mockObject, 'foo')->will($this->returnValue(FALSE));
-		$validator->expects($this->at(1))->method('isPropertyValid')->with($mockObject, 'bar')->will($this->returnValue(TRUE));
-
-		$this->assertEquals(FALSE, $validator->isValid($mockObject));
-	}
-
-	/**
-	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 */
-	public function isPropertyValidChecksAllValidatorsForAPropertyEvenIfOnePropertyValidatorFailed() {
-		$mockValidator1 = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
-		$mockValidator1->expects($this->once())->method('isValid')->will($this->returnValue(FALSE));
-		$mockValidator2 = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
-		$mockValidator2->expects($this->once())->method('isValid')->will($this->returnValue(TRUE));
-
-		$mockPropertyValidators = array('foo' => array($mockValidator1, $mockValidator2));
-		$mockObject = $this->getMock(uniqid('FooBar'), array('getFoo'));
-
-		$validator = $this->getAccessibleMock('F3\FLOW3\Validation\Validator\GenericObjectValidator', array('addErrorsForProperty'));
-		$validator->_set('propertyValidators', $mockPropertyValidators);
-
-		$this->assertEquals(FALSE, $validator->isPropertyValid($mockObject, 'foo'));
-	}
-
-	/**
-	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 */
-	public function isPropertyValidAddsErrorsForInvalidProperties() {
-		$mockValidator = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
-		$mockValidator->expects($this->any())->method('isValid')->will($this->returnValue(FALSE));
-		$mockValidator->expects($this->atLeastOnce())->method('getErrors')->will($this->returnValue(array('error')));
-
-		$mockPropertyValidators = array('foo' => array($mockValidator));
-		$mockObject = $this->getMock(uniqid('FooBar'), array('getFoo'));
-
-		$validator = $this->getAccessibleMock('F3\FLOW3\Validation\Validator\GenericObjectValidator', array('addErrorsForProperty'));
-		$validator->_set('propertyValidators', $mockPropertyValidators);
-
-		$validator->expects($this->once())->method('addErrorsForProperty')->with(array('error'), 'foo');
-
-		$validator->isPropertyValid($mockObject, 'foo');
-	}
-
-	/**
-	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 */
-	public function addErrorsForPropertyAddsPropertyErrorToErrorsIndexedByPropertyName() {
-		$validator = $this->getAccessibleMock('F3\FLOW3\Validation\Validator\GenericObjectValidator', array('dummy'));
-		$validator->_call('addErrorsForProperty', array('error'), 'foo');
-
-		$expectedPropertyError = new \F3\FLOW3\Validation\PropertyError('foo');
-		$expectedPropertyError->addErrors(array('error'));
-
-		$errors = $validator->_get('errors');
-		$this->assertEquals($expectedPropertyError, $errors['foo']);
+		$this->validator->addPropertyValidator('foo', $validatorForFoo);
+		$this->validator->addPropertyValidator('bar', $validatorForBar);
+		$this->assertEquals($errors, $this->validator->validate($mockObject)->getFlattenedErrors());
 	}
 
 	/**
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function isPropertyValidChecksPropertiesWhichArePrivate() {
-		$mockClassname = uniqid('FooBar');
-		eval('class ' . $mockClassname . '{ protected $foo = \'valueFromPrivateProperty\'; }');
-		$mockObject = new $mockClassname();
-
-		$mockValidator = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
-		$mockValidator->expects($this->any())->method('isValid')->with('valueFromPrivateProperty');
-
-		$validator = $this->getMock('F3\FLOW3\Validation\Validator\GenericObjectValidator', array('addErrorsForProperty'));
-		$validator->addPropertyValidator('foo', $mockValidator);
-
-		$validator->isPropertyValid($mockObject, 'foo');
-	}
-
-	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function isValidCanHandleRecursiveTargetsWithoutEndlessLooping() {
+	public function validateCanHandleRecursiveTargetsWithoutEndlessLooping() {
 		$classNameA = uniqid('A');
 		eval('class ' . $classNameA . '{ public $b; }');
 		$classNameB = uniqid('B');
@@ -178,19 +107,19 @@ class GenericObjectValidatorTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$A->b = $B;
 		$B->a = $A;
 
-		$aValidator = new \F3\FLOW3\Validation\Validator\GenericObjectValidator();
-		$bValidator = new \F3\FLOW3\Validation\Validator\GenericObjectValidator();
+		$aValidator = new \F3\FLOW3\Validation\Validator\GenericObjectValidator(array());
+		$bValidator = new \F3\FLOW3\Validation\Validator\GenericObjectValidator(array());
 		$aValidator->addPropertyValidator('b', $bValidator);
 		$bValidator->addPropertyValidator('a', $aValidator);
 
-		$this->assertTrue($aValidator->isValid($A));
+		$this->assertFalse($aValidator->validate($A)->hasErrors());
 	}
 
 	/**
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function isValidDetectsFailuresInRecursiveTargetsI() {
+	public function validateDetectsFailuresInRecursiveTargetsI() {
 		$classNameA = uniqid('A');
 		eval('class ' . $classNameA . '{ public $b; }');
 		$classNameB = uniqid('B');
@@ -200,22 +129,29 @@ class GenericObjectValidatorTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$A->b = $B;
 		$B->a = $A;
 
-		$aValidator = new \F3\FLOW3\Validation\Validator\GenericObjectValidator();
-		$bValidator = new \F3\FLOW3\Validation\Validator\GenericObjectValidator();
-		$uuidValidator = new \F3\FLOW3\Validation\Validator\UuidValidator();
+		$aValidator = $this->getValidator();
+		$bValidator = $this->getValidator();
+
+		$uuidValidator = new \F3\FLOW3\Validation\Validator\UuidValidator(array());
 
 		$aValidator->addPropertyValidator('b', $bValidator);
 		$bValidator->addPropertyValidator('a', $aValidator);
-		$bValidator->addPropertyValidator('uuid', $uuidValidator);
 
-		$this->assertFalse($aValidator->isValid($A));
+		$error = new \F3\FLOW3\Error\Error('error1', 123);
+		$result = new \F3\FLOW3\Error\Result();
+		$result->addError($error);
+		$mockUuidValidator = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
+		$mockUuidValidator->expects($this->any())->method('validate')->with(0xF)->will($this->returnValue($result));
+		$bValidator->addPropertyValidator('uuid', $mockUuidValidator);
+
+		$this->assertSame(array('b.uuid' => array($error)), $aValidator->validate($A)->getFlattenedErrors());
 	}
 
 	/**
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function isValidDetectsFailuresInRecursiveTargetsII() {
+	public function validateDetectsFailuresInRecursiveTargetsII() {
 		$classNameA = uniqid('A');
 		eval('class ' . $classNameA . '{ public $b; public $uuid = 0xF; }');
 		$classNameB = uniqid('B');
@@ -225,39 +161,23 @@ class GenericObjectValidatorTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$A->b = $B;
 		$B->a = $A;
 
-		$aValidator = new \F3\FLOW3\Validation\Validator\GenericObjectValidator();
-		$bValidator = new \F3\FLOW3\Validation\Validator\GenericObjectValidator();
-		$uuidValidator = new \F3\FLOW3\Validation\Validator\UuidValidator();
+		$aValidator = $this->getValidator();
+		$bValidator = $this->getValidator();
+
+		$uuidValidator = new \F3\FLOW3\Validation\Validator\UuidValidator(array());
+
 		$aValidator->addPropertyValidator('b', $bValidator);
-		$aValidator->addPropertyValidator('uuid', $uuidValidator);
-		$bValidator->addPropertyValidator('a', $aValidator);
-		$bValidator->addPropertyValidator('uuid', $uuidValidator);
-
-		$this->assertFalse($aValidator->isValid($A));
-	}
-
-	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function isValidDetectsFailuresInRecursiveTargetsIII() {
-		$classNameA = uniqid('A');
-		eval('class ' . $classNameA . '{ public $b; public $uuid = 0xF; }');
-		$classNameB = uniqid('B');
-		eval('class ' . $classNameB . '{ public $a; }');
-		$A = new $classNameA();
-		$B = new $classNameB();
-		$A->b = $B;
-		$B->a = $A;
-
-		$aValidator = new \F3\FLOW3\Validation\Validator\GenericObjectValidator();
-		$bValidator = new \F3\FLOW3\Validation\Validator\GenericObjectValidator();
-		$uuidValidator = new \F3\FLOW3\Validation\Validator\UuidValidator();
-		$aValidator->addPropertyValidator('b', $bValidator);
-		$aValidator->addPropertyValidator('uuid', $uuidValidator);
 		$bValidator->addPropertyValidator('a', $aValidator);
 
-		$this->assertFalse($aValidator->isValid($A));
+		$error1 = new \F3\FLOW3\Error\Error('error1', 123);
+		$result1 = new \F3\FLOW3\Error\Result();
+		$result1->addError($error1);
+		$mockUuidValidator = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
+		$mockUuidValidator->expects($this->any())->method('validate')->with(0xF)->will($this->returnValue($result1));
+		$aValidator->addPropertyValidator('uuid', $mockUuidValidator);
+		$bValidator->addPropertyValidator('uuid', $mockUuidValidator);
+
+		$this->assertSame(array('b.uuid' => array($error1), 'uuid' => array($error1)), $aValidator->validate($A)->getFlattenedErrors());
 	}
 }
 

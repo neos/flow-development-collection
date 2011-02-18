@@ -28,6 +28,7 @@ namespace F3\FLOW3\Property\TypeConverter;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  * @scope singleton
+ * @todo cleanup or throw away
  */
 class ArrayToSplObjectStorageConverter extends \F3\FLOW3\Property\TypeConverter\AbstractTypeConverter {
 

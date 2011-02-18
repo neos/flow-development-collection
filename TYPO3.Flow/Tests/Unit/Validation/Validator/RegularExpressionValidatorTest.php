@@ -22,35 +22,26 @@ namespace F3\FLOW3\Tests\Unit\Validation\Validator;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+require_once('AbstractValidatorTestcase.php');
+
 /**
  * Testcase for the regular expression validator
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class RegularExpressionValidatorTest extends \F3\FLOW3\Tests\UnitTestCase {
+class RegularExpressionValidatorTest extends \F3\FLOW3\Tests\Unit\Validation\Validator\AbstractValidatorTestcase {
 
-	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function internalErrorsArrayIsResetOnIsValidCall() {
-		$validator = $this->getAccessibleMock('F3\FLOW3\Validation\Validator\RegularExpressionValidator', array('dummy'), array(), '', FALSE);
-		$validator->setOptions(array('regularExpression' => '/^.+$/'));
-		$validator->_set('errors', array('existingError'));
-		$validator->isValid('foo');
-		$this->assertSame(array(), $validator->getErrors());
-	}
+	protected $validatorClassName = 'F3\FLOW3\Validation\Validator\RegularExpressionValidator';
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function regularExpressionValidatorMatchesABasicExpressionCorrectly() {
-		$regularExpressionValidator = $this->getMock('F3\FLOW3\Validation\Validator\RegularExpressionValidator', array('addError'), array(), '', FALSE);
-		$regularExpressionValidator->setOptions(array('regularExpression' => '/^simple[0-9]expression$/'));
+		$this->validatorOptions(array('regularExpression' => '/^simple[0-9]expression$/'));
 
-		$this->assertTrue($regularExpressionValidator->isValid('simple1expression'));
-		$this->assertFalse($regularExpressionValidator->isValid('simple1expressions'));
+		$this->assertFalse($this->validator->validate('simple1expression')->hasErrors());
+		$this->assertTrue($this->validator->validate('simple1expressions')->hasErrors());
 	}
 
 	/**
@@ -58,10 +49,9 @@ class RegularExpressionValidatorTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function regularExpressionValidatorCreatesTheCorrectErrorIfTheExpressionDidNotMatch() {
-		$regularExpressionValidator = $this->getMock('F3\FLOW3\Validation\Validator\RegularExpressionValidator', array('addError'), array(), '', FALSE);
-		$regularExpressionValidator->expects($this->once())->method('addError')->with('The given subject did not match the pattern. Got: "some subject that will not match"', 1221565130);
-		$regularExpressionValidator->setOptions(array('regularExpression' => '/^simple[0-9]expression$/'));
-		$regularExpressionValidator->isValid('some subject that will not match');
+		$this->validatorOptions(array('regularExpression' => '/^simple[0-9]expression$/'));
+		$errors = $this->validator->validate('some subject that will not match')->getErrors();
+		$this->assertEquals(array(new \F3\FLOW3\Validation\Error('The given subject did not match the pattern. Got: "some subject that will not match"', 1221565130)), $errors);
 	}
 }
 

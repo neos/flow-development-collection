@@ -201,22 +201,5 @@ interface RequestInterface {
 	 * @api
 	 */
 	public function getFormat();
-
-	/**
-	 * Set the request errors that occured during the request
-	 *
-	 * @param array $errors An array of F3\FLOW3\Error\Error objects
-	 * @return void
-	 * @api
-	 */
-	public function setErrors(array $errors);
-
-	/**
-	 * Get the request errors that occured during the request
-	 *
-	 * @return array An array of F3\FLOW3\Error\Error objects
-	 * @api
-	 */
-	public function getErrors();
 }
 ?>

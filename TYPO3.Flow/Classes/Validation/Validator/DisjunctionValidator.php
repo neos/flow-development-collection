@@ -41,24 +41,26 @@ class DisjunctionValidator extends \F3\FLOW3\Validation\Validator\AbstractCompos
 	 *
 	 * @param mixed $value The value that should be validated
 	 * @param boolean $resetInstancesCurrentlyUnderValidation Reserved for internal use!
-	 * @return boolean TRUE if at least one validator valid, FALSE if all validators fail
+	 * @return \F3\FLOW3\Error\Result
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 * @api
 	 */
-	public function isValid($value, $resetInstancesCurrentlyUnderValidation = TRUE) {
-		$result = FALSE;
-		$this->errors = array();
+	public function validate($value, $resetInstancesCurrentlyUnderValidation = TRUE) {
+		$result = new \F3\FLOW3\Error\Result();
+
+		$oneWithoutErrors = FALSE;
 		foreach ($this->validators as $validator) {
-			$validatorResult = $validator instanceof \F3\FLOW3\Validation\Validator\GenericObjectValidator ? $validator->isValid($value, $resetInstancesCurrentlyUnderValidation) : $validator->isValid($value);
-			if ($validatorResult === FALSE) {
-				$this->errors = array_merge($this->errors, $validator->getErrors());
+			$validatorResult = $validator->validate($value);
+			if ($validatorResult->hasErrors()) {
+				$result->merge($validatorResult);
 			} else {
-				$result = TRUE;
+				$oneWithoutErrors = TRUE;
 			}
 		}
-		if ($result === TRUE) {
-			$this->errors = array();
+
+		if ($oneWithoutErrors === TRUE) {
+			$result = new \F3\FLOW3\Error\Result();
 		}
 		return $result;
 	}

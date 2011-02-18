@@ -42,6 +42,11 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	protected $environment;
 
 	/**
+	 * @var \F3\FLOW3\Object\ObjectSerializer
+	 */
+	protected $objectSerializer;
+
+	/**
 	 * An array of formats (such as "html", "txt", "json" ...) which are supported
 	 * by this controller. If none is specified, this controller will default to
 	 * "html" for web requests and "txt" for command line requests.
@@ -122,6 +127,14 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 */
 	public function injectEnvironment(\F3\FLOW3\Utility\Environment $environment) {
 		$this->environment = $environment;
+	}
+
+	/**
+	 * @param \F3\FLOW3\Object\ObjectSerializer $objectSerializer
+	 * @return void
+	 */
+	public function injectObjectSerializer(\F3\FLOW3\Object\ObjectSerializer $objectSerializer) {
+		$this->objectSerializer = $objectSerializer;
 	}
 
 	/**
@@ -214,9 +227,6 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 * Adds the needed valiators to the Arguments:
 	 * - Validators checking the data type from the @param annotation
 	 * - Custom validators specified with @validate.
-	 *
-	 * In case @dontvalidate is NOT set for an argument, the following two
-	 * validators are also added:
 	 * - Model-based validators (@validate annotations in the model)
 	 * - Custom model validator classes
 	 *
@@ -226,20 +236,12 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	protected function initializeActionMethodValidators() {
 		$parameterValidators = $this->validatorResolver->buildMethodArgumentsValidatorConjunctions(get_class($this), $this->actionMethodName);
 
-		$dontValidateAnnotations = array();
-		$methodTagsValues = $this->reflectionService->getMethodTagsValues(get_class($this), $this->actionMethodName);
-		if (isset($methodTagsValues['dontvalidate'])) {
-			$dontValidateAnnotations = $methodTagsValues['dontvalidate'];
-		}
-
 		foreach ($this->arguments as $argument) {
 			$validator = $parameterValidators[$argument->getName()];
 
-			if (array_search('$' . $argument->getName(), $dontValidateAnnotations) === FALSE) {
-				$baseValidatorConjunction = $this->validatorResolver->getBaseValidatorConjunction($argument->getDataType());
-				if (count($baseValidatorConjunction) > 0) {
-					$validator->addValidator($baseValidatorConjunction);
-				}
+			$baseValidatorConjunction = $this->validatorResolver->getBaseValidatorConjunction($argument->getDataType());
+			if (count($baseValidatorConjunction) > 0) {
+				$validator->addValidator($baseValidatorConjunction);
 			}
 			$argument->setValidator($validator);
 		}
@@ -275,11 +277,35 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 			$preparedArguments[] = $argument->getValue();
 		}
 
-		if ($this->arguments->haveErrors()) {
-			$actionResult = call_user_func(array($this, $this->errorMethodName));
-		} else {
+		$validationResult = $this->arguments->getValidationResults();
+
+		if (!$validationResult->hasErrors()) {
 			$actionResult = call_user_func_array(array($this, $this->actionMethodName), $preparedArguments);
+		} else {
+			$methodTagsValues = $this->reflectionService->getMethodTagsValues(get_class($this), $this->actionMethodName);
+			$ignoreValidationAnnotations = array();
+			if (isset($methodTagsValues['ignorevalidation'])) {
+				$ignoreValidationAnnotations = $methodTagsValues['ignorevalidation'];
+			}
+
+				// if there exists more errors than in ignoreValidationAnnotations_=> call error method
+				// else => call action method
+			$shouldCallActionMethod = TRUE;
+			foreach ($validationResult->getSubResults() as $argumentName => $subValidationResult) {
+				if (!$subValidationResult->hasErrors()) continue;
+
+				if (array_search($argumentName, $ignoreValidationAnnotations) !== FALSE) continue;
+
+				$shouldCallActionMethod = FALSE;
+			}
+
+			if ($shouldCallActionMethod) {
+				$actionResult = call_user_func_array(array($this, $this->actionMethodName), $preparedArguments);
+			} else {
+				$actionResult = call_user_func(array($this, $this->errorMethodName));
+			}
 		}
+
 		if ($actionResult === NULL && $this->view instanceof \F3\FLOW3\MVC\View\ViewInterface) {
 			$this->response->appendContent($this->view->render());
 		} elseif (is_string($actionResult) && strlen($actionResult) > 0) {
@@ -413,8 +439,6 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 * @api
 	 */
 	protected function errorAction() {
-		$this->request->setErrors($this->arguments->getValidationErrors());
-
 		$errorFlashMessage = $this->getErrorFlashMessage();
 		if ($errorFlashMessage !== FALSE) {
 			$this->flashMessageContainer->add($errorFlashMessage);
@@ -422,12 +446,14 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 
 		if ($this->request->hasArgument('__referrer')) {
 			$referrer = $this->request->getArgument('__referrer');
-			$this->forward($referrer['actionName'], $referrer['controllerName'], $referrer['packageKey'], $this->request->getArguments());
+			$this->forward($referrer['actionName'], $referrer['controllerName'], $referrer['packageKey'], $this->objectSerializer->deserializeObjectsArray(unserialize($referrer['arguments'])));
 		}
 
 		$message = 'An error occurred while trying to call ' . get_class($this) . '->' . $this->actionMethodName . '().' . PHP_EOL;
-		foreach ($this->arguments->getValidationErrors() as $error) {
-			$message .= 'Error:   ' . $error->getMessage() . PHP_EOL;
+		foreach ($this->arguments->getValidationResults()->getFlattenedErrors() as $propertyPath => $errors) {
+			foreach ($errors as $error) {
+				$message .= 'Error for ' . $propertyPath . ':  ' . $error->getMessage() . PHP_EOL;
+			}
 		}
 
 		return $message;

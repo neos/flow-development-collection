@@ -22,40 +22,31 @@ namespace F3\FLOW3\Tests\Unit\Validation\Validator;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+require_once('AbstractValidatorTestcase.php');
+
 /**
  * Testcase for the alphanumeric validator
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class AlphanumericValidatorTest extends \F3\FLOW3\Tests\UnitTestCase {
+class AlphanumericValidatorTest extends \F3\FLOW3\Tests\Unit\Validation\Validator\AbstractValidatorTestcase {
+
+	protected $validatorClassName = 'F3\FLOW3\Validation\Validator\AlphanumericValidator';
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function internalErrorsArrayIsResetOnIsValidCall() {
-		$validator = $this->getAccessibleMock('F3\FLOW3\Validation\Validator\AlphanumericValidator', array('dummy'), array(), '', FALSE);
-		$validator->_set('errors', array('existingError'));
-		$validator->isValid('foo');
-		$this->assertSame(array(), $validator->getErrors());
+	public function alphanumericValidatorShouldReturnNoErrorsForAnAlphanumericString() {
+		$this->assertFalse($this->validator->validate('12ssDF34daweidf')->hasErrors());
 	}
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function alphanumericValidatorReturnsTrueForAnAlphanumericString() {
-		$alphanumericValidator = new \F3\FLOW3\Validation\Validator\AlphanumericValidator();
-		$this->assertTrue($alphanumericValidator->isValid('12ssDF34daweidf'));
-	}
-
-	/**
-	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function alphanumericValidatorReturnsFalseForAStringWithSpecialCharacters() {
-	$alphanumericValidator = $this->getMock('F3\FLOW3\Validation\Validator\AlphanumericValidator', array('addError'), array(), '', FALSE);
-	$this->assertFalse($alphanumericValidator->isValid('adsf%&/$jklsfdö'));
+	public function alphanumericValidatorReturnsErrorsForAStringWithSpecialCharacters() {
+		$this->assertTrue($this->validator->validate('adsf%&/$jklsfdö')->hasErrors());
 	}
 
 	/**
@@ -63,9 +54,8 @@ class AlphanumericValidatorTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function alphanumericValidatorCreatesTheCorrectErrorForAnInvalidSubject() {
-		$alphanumericValidator = $this->getMock('F3\FLOW3\Validation\Validator\AlphanumericValidator', array('addError'), array(), '', FALSE);
-		$alphanumericValidator->expects($this->once())->method('addError');
-		$alphanumericValidator->isValid('adsf%&/$jklsfdö');
+		$this->assertEquals(1, count($this->validator->validate('adsf%&/$jklsfdö')->getErrors()));
+
 	}
 }
 

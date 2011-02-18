@@ -32,50 +32,19 @@ namespace F3\FLOW3\Validation\Validator;
 abstract class AbstractCompositeValidator implements \F3\FLOW3\Validation\Validator\ValidatorInterface, \Countable {
 
 	/**
-	 * @var array
-	 */
-	protected $options = array();
-
-	/**
 	 * @var \SplObjectStorage
 	 */
 	protected $validators;
 
 	/**
-	 * @var array
-	 */
-	protected $errors = array();
-
-	/**
 	 * Constructs the validator conjunction
 	 *
+	 * @param array $validationOptions The validation options
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
-	public function __construct() {
+	public function __construct($validationOptions = array()) {
 		$this->validators = new \SplObjectStorage();
-	}
-
-	/**
-	 * Does nothing.
-	 *
-	 * @param array $options Not used
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @api
-	 */
-	public function setOptions(array $options) {
-	}
-
-	/**
-	 * Returns an array of errors which occurred during the last isValid() call.
-	 *
-	 * @return array An array of \F3\FLOW3\Validation\Error objects or an empty array if no errors occurred.
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @api
-	 */
-	public function getErrors() {
-		return $this->errors;
 	}
 
 	/**

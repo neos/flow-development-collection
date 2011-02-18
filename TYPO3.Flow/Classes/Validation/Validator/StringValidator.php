@@ -27,7 +27,7 @@ namespace F3\FLOW3\Validation\Validator;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
- * @scope prototype
+ * @scope singleton
  */
 class StringValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator {
 
@@ -37,17 +37,14 @@ class StringValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator {
 	 * Otherwise, it is FALSE.
 	 *
 	 * @param mixed $value The value that should be validated
-	 * @return boolean TRUE if the value is valid, FALSE if an error occured
+	 * @return void
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @api
 	 */
-	public function isValid($value) {
-		$this->errors = array();
-		$isValid = is_string($value);
-		if ($isValid === FALSE) {
+	protected function isValid($value) {
+		if(!is_string($value)) {
 			$this->addError('A valid string is expected.', 1238108067);
 		}
-		return $isValid;
 	}
 }
 

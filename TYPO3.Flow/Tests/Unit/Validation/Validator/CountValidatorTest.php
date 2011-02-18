@@ -22,23 +22,16 @@ namespace F3\FLOW3\Tests\Unit\Validation\Validator;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+require_once('AbstractValidatorTestcase.php');
+
 /**
  * Testcase for the count validator
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class CountValidatorTest extends \F3\FLOW3\Tests\UnitTestCase {
+class CountValidatorTest extends \F3\FLOW3\Tests\Unit\Validation\Validator\AbstractValidatorTestcase {
 
-	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function internalErrorsArrayIsResetOnIsValidCall() {
-		$validator = $this->getAccessibleMock('F3\FLOW3\Validation\Validator\CountValidator', array('dummy'), array(), '', FALSE);
-		$validator->_set('errors', array('existingError'));
-		$validator->isValid(array());
-		$this->assertSame(array(), $validator->getErrors());
-	}
+	protected $validatorClassName = 'F3\FLOW3\Validation\Validator\CountValidator';
 
 	/**
 	 * @author Karsten Dambekalns <karsten@typo3.org>
@@ -59,10 +52,8 @@ class CountValidatorTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function countValidatorReturnsTrueForValidCountables($countable) {
-		$countValidator = new \F3\FLOW3\Validation\Validator\CountValidator();
-		$countValidator->setOptions(array('minimum' => 1, 'maximum' => 10));
-
-		$this->assertTrue($countValidator->isValid($countable));
+		$this->validatorOptions(array('minimum' => 1, 'maximum' => 10));
+		$this->assertFalse($this->validator->validate($countable)->hasErrors());
 	}
 
 	/**
@@ -71,9 +62,8 @@ class CountValidatorTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function countValidatorReturnsFalseForInvalidCountables($countable) {
-		$countValidator = $this->getMock('F3\FLOW3\Validation\Validator\CountValidator', array('addError'));
-		$countValidator->setOptions(array('minimum' => 5, 'maximum' => 10));
-		$this->assertFalse($countValidator->isValid($countable));
+		$this->validatorOptions(array('minimum' => 5, 'maximum' => 10));
+		$this->assertTrue($this->validator->validate($countable)->hasErrors());
 	}
 
 	/**
@@ -95,10 +85,7 @@ class CountValidatorTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function countValidatorReturnsFalseForNonCountables($nonCountable) {
-		$countValidator = $this->getMock('F3\FLOW3\Validation\Validator\CountValidator', array('addError'));
-		$this->assertFalse($countValidator->isValid($nonCountable));
+		$this->assertTrue($this->validator->validate($nonCountable)->hasErrors());
 	}
-
 }
-
 ?>

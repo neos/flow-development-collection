@@ -79,19 +79,11 @@ class Argument {
 	 */
 	protected $validator = NULL;
 
-	/**´
-	 * TRUE if this argument is currently valid, FALSE otherwise.
-	 * "valid" means that it has been validated with its associated validator,
-	 * and no property mapping errors occured.
-	 * @var boolean
-	 */
-	protected $isValid = TRUE;
-
 	/**
-	 * If validation errors occured, this property contains them.
-	 * @var array<\F3\FLOW3\Error\Error>
+	 * The validation results. This can be asked if the argument has errors.
+	 * @var \F3\FLOW3\Error\Result
 	 */
-	protected $validationErrors = NULL;
+	protected $validationResults = NULL;
 
 	/**
 	 * @var \F3\FLOW3\MVC\Controller\MvcPropertyMappingConfiguration
@@ -317,14 +309,10 @@ class Argument {
 			return $this;
 		}
 		$this->value = $this->propertyMapper->convert($rawValue, $this->dataType, $this->propertyMappingConfiguration);
-
-		// TODO: was machen wir mit den PropertyMapping errors?
-		if ($this->validator === NULL || $this->validator->isValid($this->value)) {
-			$this->isValid = TRUE;
-			$this->validationErrors = NULL;
-		} else {
-			$this->isValid = FALSE;
-			$this->validationErrors = $this->validator->getErrors();
+		$this->validationResults = $this->propertyMapper->getMessages();
+		if ($this->validator !== NULL) {
+			$validationMessages = $this->validator->validate($this->value);
+			$this->validationResults->merge($validationMessages);
 		}
 
 		return $this;
@@ -358,27 +346,16 @@ class Argument {
 	 * @api
 	 */
 	public function isValid() {
-		return $this->isValid;
+		return !$this->validationResults->hasErrors();
 	}
 
 	/**
-	 * @return array<F3\FLOW3\Error\Error> Validation errors which have occured.
+	 * @return array<F3\FLOW3\Error\Result> Validation errors which have occured.
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @api
 	 */
-	public function getValidationErrors() {
-		return $this->validationErrors;
-	}
-
-	/**
-	 * Returns a string representation of this argument's value
-	 *
-	 * @return string
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @api
-	 */
-	public function __toString() {
-		return (string)$this->value;
+	public function getValidationResults() {
+		return $this->validationResults;
 	}
 }
 ?>

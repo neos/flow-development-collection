@@ -31,119 +31,70 @@ class DisjunctionValidatorTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function internalErrorsArrayIsResetOnIsValidCall() {
-		$validator = $this->getAccessibleMock('F3\FLOW3\Validation\Validator\DisjunctionValidator', array('dummy'));
-		$validator->_set('errors', array('existingError'));
-		$validator->isValid('foo');
-		$this->assertSame(array(), $validator->getErrors());
+	public function allValidatorsInTheDisjunctionAreCalledEvenIfOneReturnsNoError() {
+		$validatorDisjunction = new \F3\FLOW3\Validation\Validator\DisjunctionValidator(array());
+		$validatorObject = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
+		$validatorObject->expects($this->once())->method('validate')->will($this->returnValue(new \F3\FLOW3\Error\Result()));
+
+		$errors = new \F3\FLOW3\Error\Result();
+		$errors->addError(new \F3\FLOW3\Error\Error('Error', 123));
+
+		$secondValidatorObject = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
+		$secondValidatorObject->expects($this->exactly(1))->method('validate')->will($this->returnValue($errors));
+
+		$validatorDisjunction->addValidator($validatorObject);
+		$validatorDisjunction->addValidator($secondValidatorObject);
+
+		$validatorDisjunction->validate('some subject');
 	}
 
 	/**
 	 * @test
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function allValidatorsInTheDisjunctionAreCalledEvenIfOneReturnsTrue() {
-		$validatorDisjunction = new \F3\FLOW3\Validation\Validator\ConjunctionValidator();
+	public function validateReturnsNoErrorsIfOneValidatorReturnsNoError() {
+		$validatorDisjunction = new \F3\FLOW3\Validation\Validator\DisjunctionValidator(array());
 		$validatorObject = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
-		$validatorObject->expects($this->once())->method('isValid')->will($this->returnValue(TRUE));
+		$validatorObject->expects($this->any())->method('validate')->will($this->returnValue(new \F3\FLOW3\Error\Result()));
+
+		$errors = new \F3\FLOW3\Error\Result();
+		$errors->addError(new \F3\FLOW3\Error\Error('Error', 123));
 
 		$secondValidatorObject = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
-		$secondValidatorObject->expects($this->once())->method('isValid')->will($this->returnValue(FALSE));
-		$secondValidatorObject->expects($this->any())->method('getErrors')->will($this->returnValue(array()));
-		
+		$secondValidatorObject->expects($this->any())->method('validate')->will($this->returnValue($errors));
+
 		$validatorDisjunction->addValidator($validatorObject);
 		$validatorDisjunction->addValidator($secondValidatorObject);
 
-		$validatorDisjunction->isValid('some subject');
+		$this->assertFalse($validatorDisjunction->validate('some subject')->hasErrors());
 	}
 
 	/**
 	 * @test
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function isValidReturnsTrueIfOneValidatorReturnsTrue() {
-		$validatorDisjunction = new \F3\FLOW3\Validation\Validator\DisjunctionValidator();
-		$validatorObject = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
-		$validatorObject->expects($this->any())->method('isValid')->will($this->returnValue(TRUE));
+	public function validateReturnsAllErrorsIfAllValidatorsReturnErrrors() {
+		$validatorDisjunction = new \F3\FLOW3\Validation\Validator\DisjunctionValidator(array());
 
+		$error1 = new \F3\FLOW3\Error\Error('Error', 123);
+		$error2 = new \F3\FLOW3\Error\Error('Error2', 123);
+
+		$errors1 = new \F3\FLOW3\Error\Result();
+		$errors1->addError($error1);
+		$validatorObject = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
+		$validatorObject->expects($this->any())->method('validate')->will($this->returnValue($errors1));
+
+		$errors2 = new \F3\FLOW3\Error\Result();
+		$errors2->addError($error2);
 		$secondValidatorObject = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
-		$secondValidatorObject->expects($this->any())->method('isValid')->will($this->returnValue(FALSE));
-		$secondValidatorObject->expects($this->any())->method('getErrors')->will($this->returnValue(array()));
-		
+		$secondValidatorObject->expects($this->any())->method('validate')->will($this->returnValue($errors2));
+
 		$validatorDisjunction->addValidator($validatorObject);
 		$validatorDisjunction->addValidator($secondValidatorObject);
 
-		$this->assertTrue($validatorDisjunction->isValid('some subject'));
-	}
-
-	/**
-	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 */
-	public function isValidReturnsFalseIfAllValidatorsReturnFalse() {
-		$validatorDisjunction = new \F3\FLOW3\Validation\Validator\ConjunctionValidator();
-		$validatorObject = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
-		$validatorObject->expects($this->any())->method('isValid')->will($this->returnValue(FALSE));
-		$validatorObject->expects($this->any())->method('getErrors')->will($this->returnValue(array()));
-
-		$secondValidatorObject = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
-		$secondValidatorObject->expects($this->any())->method('isValid')->will($this->returnValue(FALSE));
-		$secondValidatorObject->expects($this->any())->method('getErrors')->will($this->returnValue(array()));
-		
-		$validatorDisjunction->addValidator($validatorObject);
-		$validatorDisjunction->addValidator($secondValidatorObject);
-
-		$this->assertFalse($validatorDisjunction->isValid('some subject'));
-	}
-
-	/**
-	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 */
-	public function getErrorsIsEmptyForValidDisjunctionEvenIfOneValidatorReturnsFalse() {
-		$error1 = new \F3\FLOW3\Validation\Error('foo', 1);
-		
-		$validatorDisjunction = new \F3\FLOW3\Validation\Validator\DisjunctionValidator();
-		$validatorObject = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
-		$validatorObject->expects($this->any())->method('isValid')->will($this->returnValue(TRUE));
-
-		$secondValidatorObject = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
-		$secondValidatorObject->expects($this->any())->method('isValid')->will($this->returnValue(FALSE));
-		$secondValidatorObject->expects($this->any())->method('getErrors')->will($this->returnValue(array($error1)));
-		
-		$validatorDisjunction->addValidator($validatorObject);
-		$validatorDisjunction->addValidator($secondValidatorObject);
-		
-		$validatorDisjunction->isValid('some subject');
-
-		$this->assertEquals(0, count($validatorDisjunction->getErrors()));
-	}
-
-	/**
-	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 */
-	public function getErrorsReturnsAllErrorsForInvalidDisjunction() {
-		$error1 = new \F3\FLOW3\Validation\Error('foo', 1);
-		$error2 = new \F3\FLOW3\Validation\Error('bar', 2);
-		
-		$validatorDisjunction = new \F3\FLOW3\Validation\Validator\DisjunctionValidator();
-		$validatorObject = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
-		$validatorObject->expects($this->any())->method('isValid')->will($this->returnValue(FALSE));
-		$validatorObject->expects($this->any())->method('getErrors')->will($this->returnValue(array($error1)));
-
-		$secondValidatorObject = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
-		$secondValidatorObject->expects($this->any())->method('isValid')->will($this->returnValue(FALSE));
-		$secondValidatorObject->expects($this->any())->method('getErrors')->will($this->returnValue(array($error2)));
-		
-		$validatorDisjunction->addValidator($validatorObject);
-		$validatorDisjunction->addValidator($secondValidatorObject);
-		
-		$validatorDisjunction->isValid('some subject');
-
-		$this->assertEquals(array($error1, $error2), $validatorDisjunction->getErrors());
+		$this->assertEquals(array($error1, $error2), $validatorDisjunction->validate('some subject')->getErrors());
 	}
 }
 

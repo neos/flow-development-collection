@@ -31,7 +31,7 @@ namespace F3\FLOW3\Validation\Validator;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
- * @scope prototype
+ * @scope singleton
  */
 class LabelValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator {
 
@@ -43,17 +43,14 @@ class LabelValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator {
 	 * If at least one error occurred, the result is FALSE.
 	 *
 	 * @param mixed $value The value that should be validated
-	 * @return boolean TRUE if the value is valid, FALSE if an error occured
+	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
-	public function isValid($value) {
-		$this->errors = array();
+	protected function isValid($value) {
 		if (preg_match(self::PATTERN_VALIDCHARACTERS, $value) === 0) {
 			$this->addError('Only letters, numbers, spaces and certain punctuation marks are expected.', 1272298003);
-			return FALSE;
 		}
-		return TRUE;
 	}
 }
 

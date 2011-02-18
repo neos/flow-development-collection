@@ -22,85 +22,52 @@ namespace F3\FLOW3\Tests\Unit\Validation\Validator;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+require_once('AbstractValidatorTestcase.php');
+
 /**
  * Testcase for the number range validator
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class NumberRangeValidatorTest extends \F3\FLOW3\Tests\UnitTestCase {
+class NumberRangeValidatorTest extends \F3\FLOW3\Tests\Unit\Validation\Validator\AbstractValidatorTestcase {
+
+	protected $validatorClassName = 'F3\FLOW3\Validation\Validator\NumberRangeValidator';
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function internalErrorsArrayIsResetOnIsValidCall() {
-		$validator = $this->getAccessibleMock('F3\FLOW3\Validation\Validator\NumberRangeValidator', array('dummy'), array(), '', FALSE);
-		$validator->_set('errors', array('existingError'));
-		$validator->isValid(12);
-		$this->assertSame(array(), $validator->getErrors());
+	public function numberRangeValidatorReturnsNoErrorForASimpleIntegerInRange() {
+		$this->validatorOptions(array('minimum' => 0, 'maximum' => 1000));
+
+		$this->assertFalse($this->validator->validate(10.5)->hasErrors());
 	}
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function numberRangeValidatorReturnsTrueForASimpleIntegerInRange() {
-		$numberRangeValidator = new \F3\FLOW3\Validation\Validator\NumberRangeValidator();
-		$numberRangeValidator->setOptions(array('minimum' => 0, 'maximum' => 1000));
-
-		$this->assertTrue($numberRangeValidator->isValid(10.5));
+	public function numberRangeValidatorReturnsErrorForANumberOutOfRange() {
+		$this->validatorOptions(array('minimum' => 0, 'maximum' => 1000));
+		$this->assertTrue($this->validator->validate(1000.1)->hasErrors());
 	}
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function numberRangeValidatorReturnsFalseForANumberOutOfRange() {
-		$numberRangeValidator = $this->getMock('F3\FLOW3\Validation\Validator\NumberRangeValidator', array('addError'), array(), '', FALSE);
-		$numberRangeValidator->setOptions(array('minimum' => 0, 'maximum' => 1000));
-		$this->assertFalse($numberRangeValidator->isValid(1000.1));
+	public function numberRangeValidatorReturnsNoErrorForANumberInReversedRange() {
+		$this->validatorOptions(array('minimum' => 1000, 'maximum' => 0));
+		$this->assertFalse($this->validator->validate(100)->hasErrors());
 	}
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function numberRangeValidatorReturnsTrueForANumberInReversedRange() {
-		$numberRangeValidator = $this->getMock('F3\FLOW3\Validation\Validator\NumberRangeValidator', array('addError'), array(), '', FALSE);
-		$numberRangeValidator->setOptions(array('minimum' => 1000, 'maximum' => 0));
-		$this->assertTrue($numberRangeValidator->isValid(100));
-	}
-
-	/**
-	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function numberRangeValidatorReturnsFalseForAString() {
-		$numberRangeValidator = $this->getMock('F3\FLOW3\Validation\Validator\NumberRangeValidator', array('addError'), array(), '', FALSE);
-		$numberRangeValidator->setOptions(array('minimum' => 0, 'maximum' => 1000));
-		$this->assertFalse($numberRangeValidator->isValid('not a number'));
-	}
-
-	/**
-	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function numberRangeValidatorCreatesTheCorrectErrorForANumberOutOfRange() {
-		$numberRangeValidator = $this->getMock('F3\FLOW3\Validation\Validator\NumberRangeValidator', array('addError'), array(), '', FALSE);
-		$numberRangeValidator->expects($this->once())->method('addError');
-		$numberRangeValidator->setOptions(array('minimum' => 1, 'maximum' => 42));
-		$numberRangeValidator->isValid(4711);
-	}
-
-	/**
-	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function numberRangeValidatorCreatesTheCorrectErrorForAStringSubject() {
-		$numberRangeValidator = $this->getMock('F3\FLOW3\Validation\Validator\NumberRangeValidator', array('addError'), array(), '', FALSE);
-		$numberRangeValidator->expects($this->once())->method('addError');
-		$numberRangeValidator->setOptions(array('minimum' => 0, 'maximum' => 42));
-		$numberRangeValidator->isValid('this is not between 0 an 42');
+	public function numberRangeValidatorReturnsErrorForAString() {
+		$this->validatorOptions(array('minimum' => 0, 'maximum' => 1000));
+		$this->assertTrue($this->validator->validate('not a number')->hasErrors());
 	}
 }
 

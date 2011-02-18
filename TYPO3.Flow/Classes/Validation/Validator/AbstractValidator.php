@@ -37,32 +37,43 @@ abstract class AbstractValidator implements \F3\FLOW3\Validation\Validator\Valid
 	protected $options = array();
 
 	/**
-	 * @var array
+	 * @var \F3\FLOW3\Error\Result
 	 */
-	protected $errors = array();
+	protected $result;
 
 	/**
 	 * Sets options for the validator
 	 *
-	 * @param array $options Options for the validator
+	 * @param array $validationOptions Options for the validator
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
-	public function setOptions(array $options) {
-		$this->options = $options;
+	public function __construct($validationOptions = array()) {
+		$this->options = $validationOptions;
 	}
 
 	/**
-	 * Returns an array of errors which occurred during the last isValid() call.
+	 * Checks if the given value is valid according to the validator, and returns
+	 * the Error Messages object which occured.
 	 *
-	 * @return array An array of \F3\FLOW3\Validation\Error objects or an empty array if no errors occurred.
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @param mixed $value The value that should be validated
+	 * @return \F3\FLOW3\Error\Result
 	 * @api
 	 */
-	public function getErrors() {
-		return $this->errors;
+	public function validate($value) {
+		$this->result = new \F3\FLOW3\Error\Result();
+		$this->isValid($value);
+		return $this->result;
 	}
+
+	/**
+	 * Check if $value is valid. If it is not valid, needs to add an error
+	 * to Result.
+	 *
+	 * @return void
+	 */
+	abstract protected function isValid($value);
 
 	/**
 	 * Creates a new validation error object and adds it to $this->errors
@@ -71,10 +82,11 @@ abstract class AbstractValidator implements \F3\FLOW3\Validation\Validator\Valid
 	 * @param integer $code The error code (a unix timestamp)
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @api
 	 */
 	protected function addError($message, $code) {
-		$this->errors[] = new \F3\FLOW3\Validation\Error($message, $code);
+		$this->result->addError(new \F3\FLOW3\Validation\Error($message, $code));
 	}
 }
 

@@ -28,25 +28,13 @@ namespace F3\FLOW3\Tests\Unit\Validation\Validator;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class ConjunctionValidatorTest extends \F3\FLOW3\Tests\UnitTestCase {
-
-	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function internalErrorsArrayIsResetOnIsValidCall() {
-		$validator = $this->getAccessibleMock('F3\FLOW3\Validation\Validator\ConjunctionValidator', array('dummy'));
-		$validator->_set('errors', array('existingError'));
-		$validator->isValid('foo');
-		$this->assertSame(array(), $validator->getErrors());
-	}
-
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function addingValidatorsToAJunctionValidatorWorks() {
 		$proxyClassName = $this->buildAccessibleProxy('F3\FLOW3\Validation\Validator\ConjunctionValidator');
-		$conjunctionValidator = new $proxyClassName;
+		$conjunctionValidator = new $proxyClassName(array());
 
 		$mockValidator = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
 		$conjunctionValidator->addValidator($mockValidator);
@@ -59,41 +47,42 @@ class ConjunctionValidatorTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function allValidatorsInTheConjunctionAreCalledEvenIfOneReturnsFalse() {
-		$validatorConjunction = new \F3\FLOW3\Validation\Validator\ConjunctionValidator();
+	public function allValidatorsInTheConjunctionAreCalledEvenIfOneReturnsError() {
+		$validatorConjunction = new \F3\FLOW3\Validation\Validator\ConjunctionValidator(array());
 		$validatorObject = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
-		$validatorObject->expects($this->once())->method('isValid')->will($this->returnValue(TRUE));
+		$validatorObject->expects($this->once())->method('validate')->will($this->returnValue(new \F3\FLOW3\Error\Result()));
 
+		$errors = new \F3\FLOW3\Error\Result();
+		$errors->addError(new \F3\FLOW3\Error\Error('Error', 123));
 		$secondValidatorObject = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
-		$secondValidatorObject->expects($this->once())->method('isValid')->will($this->returnValue(FALSE));
-		$secondValidatorObject->expects($this->any())->method('getErrors')->will($this->returnValue(array()));
+		$secondValidatorObject->expects($this->once())->method('validate')->will($this->returnValue($errors));
 
 		$thirdValidatorObject = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
-		$thirdValidatorObject->expects($this->once())->method('isValid')->will($this->returnValue(TRUE));
-		
+		$thirdValidatorObject->expects($this->once())->method('validate')->will($this->returnValue(new \F3\FLOW3\Error\Result()));
+
 		$validatorConjunction->addValidator($validatorObject);
 		$validatorConjunction->addValidator($secondValidatorObject);
 		$validatorConjunction->addValidator($thirdValidatorObject);
 
-		$validatorConjunction->isValid('some subject');
+		$validatorConjunction->validate('some subject');
 	}
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function validatorConjunctionReturnsTrueIfAllJunctionedValidatorsReturnTrue() {
-		$validatorConjunction = new \F3\FLOW3\Validation\Validator\ConjunctionValidator();
+	public function validatorConjunctionReturnsNoErrorsIfAllJunctionedValidatorsReturnNoErrors() {
+		$validatorConjunction = new \F3\FLOW3\Validation\Validator\ConjunctionValidator(array());
 		$validatorObject = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
-		$validatorObject->expects($this->any())->method('isValid')->will($this->returnValue(TRUE));
+		$validatorObject->expects($this->any())->method('validate')->will($this->returnValue(new \F3\FLOW3\Error\Result()));
 
 		$secondValidatorObject = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
-		$secondValidatorObject->expects($this->any())->method('isValid')->will($this->returnValue(TRUE));
+		$secondValidatorObject->expects($this->any())->method('validate')->will($this->returnValue(new \F3\FLOW3\Error\Result()));
 
 		$validatorConjunction->addValidator($validatorObject);
 		$validatorConjunction->addValidator($secondValidatorObject);
 
-		$this->assertTrue($validatorConjunction->isValid('some subject'));
+		$this->assertFalse($validatorConjunction->validate('some subject')->hasErrors());
 	}
 
 	/**
@@ -101,15 +90,18 @@ class ConjunctionValidatorTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function validatorConjunctionReturnsFalseIfOneValidatorReturnsFalse() {
-		$validatorConjunction = new \F3\FLOW3\Validation\Validator\ConjunctionValidator();
+	public function validatorConjunctionReturnsErrorsIfOneValidatorReturnsErrors() {
+		$validatorConjunction = new \F3\FLOW3\Validation\Validator\ConjunctionValidator(array());
 		$validatorObject = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
-		$validatorObject->expects($this->any())->method('isValid')->will($this->returnValue(FALSE));
-		$validatorObject->expects($this->any())->method('getErrors')->will($this->returnValue(array()));
+
+		$errors = new \F3\FLOW3\Error\Result();
+		$errors->addError(new \F3\FLOW3\Error\Error('Error', 123));
+
+		$validatorObject->expects($this->any())->method('validate')->will($this->returnValue($errors));
 
 		$validatorConjunction->addValidator($validatorObject);
 
-		$this->assertFalse($validatorConjunction->isValid('some subject'));
+		$this->assertTrue($validatorConjunction->validate('some subject')->hasErrors());
 	}
 
 	/**
@@ -117,7 +109,7 @@ class ConjunctionValidatorTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function removingAValidatorOfTheValidatorConjunctionWorks() {
-		$validatorConjunction = $this->getAccessibleMock('F3\FLOW3\Validation\Validator\ConjunctionValidator', array('dummy'), array(), '', TRUE);
+		$validatorConjunction = $this->getAccessibleMock('F3\FLOW3\Validation\Validator\ConjunctionValidator', array('dummy'), array(array()), '', TRUE);
 
 		$validator1 = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
 		$validator2 = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
@@ -137,7 +129,7 @@ class ConjunctionValidatorTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @expectedException F3\FLOW3\Validation\Exception\NoSuchValidatorException
 	 */
 	public function removingANotExistingValidatorIndexThrowsException() {
-		$validatorConjunction = new \F3\FLOW3\Validation\Validator\ConjunctionValidator();
+		$validatorConjunction = new \F3\FLOW3\Validation\Validator\ConjunctionValidator(array());
 		$validator = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
 		$validatorConjunction->removeValidator($validator);
 	}
@@ -147,7 +139,7 @@ class ConjunctionValidatorTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function countReturnesTheNumberOfValidatorsContainedInTheConjunction() {
-		$validatorConjunction = new \F3\FLOW3\Validation\Validator\ConjunctionValidator();
+		$validatorConjunction = new \F3\FLOW3\Validation\Validator\ConjunctionValidator(array());
 
 		$validator1 = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
 		$validator2 = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');

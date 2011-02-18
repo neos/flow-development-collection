@@ -35,11 +35,6 @@ class ResourceTypeConverter extends \F3\FLOW3\Property\TypeConverter\AbstractTyp
 	protected $priority = 1;
 
 	/**
-	 * @var F3\FLOW3\Object\ObjectManagerInterface
-	 */
-	protected $objectManager;
-
-	/**
 	 * @var \F3\FLOW3\Resource\ResourceManager
 	 */
 	protected $resourceManager;
@@ -48,17 +43,6 @@ class ResourceTypeConverter extends \F3\FLOW3\Property\TypeConverter\AbstractTyp
 	 * @var array
 	 */
 	protected $convertedResources = array();
-
-	/**
-	 * Injects the object manager
-	 *
-	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
-		$this->objectManager = $objectManager;
-	}
 
 	/**
 	 * Injects the resource manager
@@ -87,8 +71,7 @@ class ResourceTypeConverter extends \F3\FLOW3\Property\TypeConverter\AbstractTyp
 
 		if ($source['error'] === \UPLOAD_ERR_NO_FILE) return NULL;
 
-		// TODO: what about the error handling? Right now, we do not support returning an ERROR instance as it has been done below.
-		if ($source['error'] !== \UPLOAD_ERR_OK) return $this->objectManager->create('F3\FLOW3\Error\Error', \F3\FLOW3\Utility\Files::getUploadErrorMessage($source['error']) , 1264440823);
+		if ($source['error'] !== \UPLOAD_ERR_OK) return new \F3\FLOW3\Error\Error(\F3\FLOW3\Utility\Files::getUploadErrorMessage($source['error']) , 1264440823);
 
 		if (isset($this->convertedResources[$source['tmp_name']])) {
 			return $this->convertedResources[$source['tmp_name']];
@@ -96,8 +79,7 @@ class ResourceTypeConverter extends \F3\FLOW3\Property\TypeConverter\AbstractTyp
 
 		$resource = $this->resourceManager->importUploadedResource($source);
 		if ($resource === FALSE) {
-			// TODO: what about the error handling? Exception?
-			return $this->objectManager->create('F3\FLOW3\Error\Error', 'The resource manager could not create a ResourcePointer instance.' , 1264517906);
+			return new \F3\FLOW3\Error\Error('The resource manager could not create a ResourcePointer instance.' , 1264517906);
 		} else {
 			$this->convertedResources[$source['tmp_name']] = $resource;
 			return $resource;

@@ -331,12 +331,14 @@ abstract class AbstractBackend implements \F3\FLOW3\Persistence\Generic\Backend\
 	protected function validateObject($object) {
 		$classSchema = $this->reflectionService->getClassSchema($object);
 		$validator = $this->validatorResolver->getBaseValidatorConjunction($classSchema->getClassName());
-		if (!$validator->isValid($object)) {
+		if ($validator === NULL) return;
+		$validationResult = $validator->validate($object);
+		if ($validationResult->hasErrors()) {
 			$errorMessages = '';
-			foreach ($validator->getErrors() as $error) {
+			foreach ($validationResult->getErrors() as $error) {
 				$errorMessages .= (string)$error . PHP_EOL;
 			}
-			throw new \F3\FLOW3\Persistence\Generic\Exception\ObjectValidationFailedException('An instance of "' . get_class($object) . '" failed to pass validation with ' . count($validator->getErrors()) . ' error(s): ' . PHP_EOL . $errorMessages);
+			throw new \F3\FLOW3\Persistence\Generic\Exception\ObjectValidationFailedException('An instance of "' . get_class($object) . '" failed to pass validation with ' . count($validationResult->getErrors()) . ' error(s): ' . PHP_EOL . $errorMessages);
 		}
 	}
 

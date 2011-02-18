@@ -27,7 +27,7 @@ namespace F3\FLOW3\Validation\Validator;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
- * @scope prototype
+ * @scope singleton
  */
 class TextValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator {
 
@@ -37,19 +37,16 @@ class TextValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator {
 	 * If at least one error occurred, the result is FALSE.
 	 *
 	 * @param mixed $value The value that should be validated
-	 * @return boolean TRUE if the value is valid, FALSE if an error occured
+	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @author Jochen Rau <jochen.rau@typoplanet.de>
 	 * @api
 	 */
-	public function isValid($value) {
-		$this->errors = array();
+	protected function isValid($value) {
 		if ($value !== filter_var($value, FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES)) {
 			$this->addError('Valid text without any XML tags is expected.', 1221565786);
-			return FALSE;
 		}
-		return TRUE;
 	}
 }
 

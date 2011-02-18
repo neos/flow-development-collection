@@ -38,16 +38,15 @@ class NumberRangeValidator extends \F3\FLOW3\Validation\Validator\AbstractValida
 	 *
 	 * @param mixed $value The value that should be validated
 	 * @param \F3\FLOW3\Validation\Errors $errors An Errors object which will contain any errors which occurred during validation
-	 * @return boolean TRUE if the value is within the range, otherwise FALSE
+	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
-	public function isValid($value) {
-		$this->errors = array();
+	protected function isValid($value) {
 		if (!is_numeric($value)) {
 			$this->addError('A valid number is expected.', 1221563685);
-			return FALSE;
+			return;
 		}
 
 		$minimum = (isset($this->options['minimum'])) ? intval($this->options['minimum']) : 0;
@@ -57,10 +56,11 @@ class NumberRangeValidator extends \F3\FLOW3\Validation\Validator\AbstractValida
 			$minimum = $maximum;
 			$maximum = $x;
 		}
-		if ($value >= $minimum && $value <= $maximum) return TRUE;
+		if ($value >= $minimum && $value <= $maximum) {
+			return;
+		}
 
 		$this->addError('Please enter a valid number between ' . $minimum . ' and ' . $maximum . '.', 1221561046);
-		return FALSE;
 	}
 }
 

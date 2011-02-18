@@ -27,43 +27,29 @@ namespace F3\FLOW3\Validation\Validator;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
- * @scope prototype
+ * @scope singleton
  */
 class RawValidator implements \F3\FLOW3\Validation\Validator\ValidatorInterface {
+
+	/**
+	 * Sets validation options for the validator
+	 *
+	 * @param array $validationOptions The validation options
+	 * @return void
+	 */
+	public function __construct($validationOptions) {
+	}
 
 	/**
 	 * Always returns TRUE
 	 *
 	 * @param mixed $value The value that should be validated
-	 * @return boolean TRUE
+	 * @return \F3\FLOW3\Error\Result
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
-	public function isValid($value) {
-		return TRUE;
+	public function validate($value) {
+		return new \F3\FLOW3\Error\Result();
 	}
-
-	/**
-	 * Sets options for the validator
-	 *
-	 * @param array $options Not used
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @api
-	 */
-	public function setOptions(array $options) {
-	}
-
-	/**
-	 * Always returns an empty array.
-	 *
-	 * @return array An empty array.
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @api
-	 */
-	public function getErrors() {
-		return array();
-	}
-
 }
 ?>

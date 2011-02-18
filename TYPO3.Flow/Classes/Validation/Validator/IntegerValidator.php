@@ -27,7 +27,7 @@ namespace F3\FLOW3\Validation\Validator;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
- * @scope prototype
+ * @scope singleton
  */
 class IntegerValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator {
 
@@ -38,15 +38,13 @@ class IntegerValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator 
 	 *
 	 * @param mixed $value The value that should be validated
 	 * @param \F3\FLOW3\Validation\Errors $errors An Errors object which will contain any errors which occurred during validation
-	 * @return boolean TRUE if the value is valid, FALSE if an error occured
+	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
-	public function isValid($value) {
-		$this->errors = array();
-		if (filter_var($value, FILTER_VALIDATE_INT) !== FALSE) return TRUE;
+	protected function isValid($value) {
+		if (filter_var($value, FILTER_VALIDATE_INT) !== FALSE) return;
 		$this->addError('A valid integer number is expected.', 1221560494);
-		return FALSE;
 	}
 }
 

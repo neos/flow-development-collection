@@ -27,7 +27,7 @@ namespace F3\FLOW3\Validation\Validator;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
- * @scope prototype
+ * @scope singleton
  */
 class UuidValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator {
 
@@ -41,18 +41,15 @@ class UuidValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator {
 	 * Returns TRUE, if the given property ($propertyValue) is a formally valid UUID.
 	 *
 	 * @param mixed $value The value that should be validated
-	 * @return boolean TRUE if the value is valid, FALSE if an error occured
+	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
-	public function isValid($value) {
-		$this->errors = array();
+	protected function isValid($value) {
 		if (!is_string($value) || !preg_match(self::PATTERN_MATCH_UUID, $value)) {
 			$this->addError('The given subject was not a valid UUID.', 1221565853);
-			return FALSE;
 		}
-		return TRUE;
 	}
 }
 

@@ -27,7 +27,7 @@ namespace F3\FLOW3\Validation\Validator;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
- * @scope prototype
+ * @scope singleton
  */
 class EmailAddressValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator {
 
@@ -126,12 +126,11 @@ class EmailAddressValidator extends \F3\FLOW3\Validation\Validator\AbstractValid
 	 * (from http://ex-parrot.com/~pdw/Mail-RFC822-Address.html)
 	 *
 	 * @param mixed $value The value that should be validated
-	 * @return boolean TRUE if the value is valid, FALSE if an error occured
+	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
-	public function isValid($value) {
-		$this->errors = array();
+	protected function isValid($value) {
 		if(is_string($value) && preg_match('
 				/^
 					[a-z0-9!#$%&\'*+\/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&\'*+\/=?^_`{|}~-]+)*
@@ -141,9 +140,10 @@ class EmailAddressValidator extends \F3\FLOW3\Validation\Validator\AbstractValid
 						localhost|
 						(?:(?:\d{1,2}|1\d{1,2}|2[0-4][0-9]|25[0-5])\.){3}(?:(?:\d{1,2}|1\d{1,2}|2[0-4][0-9]|25[0-5]))
 					)
-				$/Dix', $value)) return TRUE;
+				$/Dix', $value)) {
+			return;
+		}
 		$this->addError('Please specify a valid email address.', 1221559976);
-		return FALSE;
 	}
 }
 

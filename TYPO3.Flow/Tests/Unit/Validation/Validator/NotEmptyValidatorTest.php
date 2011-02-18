@@ -22,49 +22,39 @@ namespace F3\FLOW3\Tests\Unit\Validation\Validator;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+require_once('AbstractValidatorTestcase.php');
+
 /**
  * Testcase for the not empty validator
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class NotEmptyValidatorTest extends \F3\FLOW3\Tests\UnitTestCase {
+class NotEmptyValidatorTest extends \F3\FLOW3\Tests\Unit\Validation\Validator\AbstractValidatorTestcase {
+
+	protected $validatorClassName = 'F3\FLOW3\Validation\Validator\NotEmptyValidator';
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function internalErrorsArrayIsResetOnIsValidCall() {
-		$validator = $this->getAccessibleMock('F3\FLOW3\Validation\Validator\NotEmptyValidator', array('dummy'), array(), '', FALSE);
-		$validator->_set('errors', array('existingError'));
-		$validator->isValid('foo');
-		$this->assertSame(array(), $validator->getErrors());
+	public function notEmptyValidatorReturnsNoErrorForASimpleString() {
+		$this->assertFalse($this->validator->validate('a not empty string')->hasErrors());
 	}
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function notEmptyValidatorReturnsTrueForASimpleString() {
-		$notEmptyValidator = new \F3\FLOW3\Validation\Validator\NotEmptyValidator();
-		$this->assertTrue($notEmptyValidator->isValid('a not empty string'));
+	public function notEmptyValidatorReturnsErrorForAnEmptyString() {
+		$this->assertTrue($this->validator->validate('')->hasErrors());
 	}
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function notEmptyValidatorReturnsFalseForAnEmptyString() {
-		$notEmptyValidator = $this->getMock('F3\FLOW3\Validation\Validator\NotEmptyValidator', array('addError'), array(), '', FALSE);
-		$this->assertFalse($notEmptyValidator->isValid(''));
-	}
-
-	/**
-	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function notEmptyValidatorReturnsFalseForANullValue() {
-		$notEmptyValidator = $this->getMock('F3\FLOW3\Validation\Validator\NotEmptyValidator', array('addError'), array(), '', FALSE);
-		$this->assertFalse($notEmptyValidator->isValid(NULL));
+	public function notEmptyValidatorReturnsErrorForANullValue() {
+		$this->assertTrue($this->validator->validate(NULL)->hasErrors());
 	}
 
 	/**
@@ -72,9 +62,7 @@ class NotEmptyValidatorTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function notEmptyValidatorCreatesTheCorrectErrorForAnEmptySubject() {
-		$notEmptyValidator = $this->getMock('F3\FLOW3\Validation\Validator\NotEmptyValidator', array('addError'), array(), '', FALSE);
-		$notEmptyValidator->expects($this->once())->method('addError');
-		$notEmptyValidator->isValid('');
+		$this->assertEquals(1, count($this->validator->validate('')->getErrors()));
 	}
 
 	/**
@@ -82,9 +70,7 @@ class NotEmptyValidatorTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function notEmptyValidatorCreatesTheCorrectErrorForANullValue() {
-		$notEmptyValidator = $this->getMock('F3\FLOW3\Validation\Validator\NotEmptyValidator', array('addError'), array(), '', FALSE);
-		$notEmptyValidator->expects($this->once())->method('addError');
-		$notEmptyValidator->isValid(NULL);
+		$this->assertEquals(1, count($this->validator->validate(NULL)->getErrors()));
 	}
 }
 

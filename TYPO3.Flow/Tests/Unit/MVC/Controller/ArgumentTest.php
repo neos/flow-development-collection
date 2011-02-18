@@ -209,6 +209,7 @@ class ArgumentTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	protected function setupPropertyMapperAndSetValue() {
 		$this->mockPropertyMapper->expects($this->once())->method('convert')->with('someRawValue', 'string', $this->mockConfiguration)->will($this->returnValue('convertedValue'));
+		$this->mockPropertyMapper->expects($this->once())->method('getMessages')->will($this->returnValue(new \F3\FLOW3\Error\Result()));
 		return $this->simpleValueArgument->setValue('someRawValue');
 	}
 
@@ -235,17 +236,17 @@ class ArgumentTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function setValueShouldSetValidationErrorsIfValidatorIsSetAndValidationFailed() {
-		$errors = array(
-			new \F3\FLOW3\Error\Error('some error', 1234)
-		);
+		$error = new \F3\FLOW3\Error\Error('Some Error', 1234);
+
 		$mockValidator = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
-		$mockValidator->expects($this->once())->method('isValid')->with('convertedValue')->will($this->returnValue(FALSE));
-		$mockValidator->expects($this->once())->method('getErrors')->will($this->returnValue($errors));
+		$validationMessages = new \F3\FLOW3\Error\Result();
+		$validationMessages->addError($error);
+		$mockValidator->expects($this->once())->method('validate')->with('convertedValue')->will($this->returnValue($validationMessages));
 
 		$this->simpleValueArgument->setValidator($mockValidator);
 		$this->setupPropertyMapperAndSetValue();
 		$this->assertFalse($this->simpleValueArgument->isValid());
-		$this->assertEquals($errors, $this->simpleValueArgument->getValidationErrors());
+		$this->assertEquals(array($error), $this->simpleValueArgument->getValidationResults()->getErrors());
 	}
 
 	/**
@@ -254,19 +255,6 @@ class ArgumentTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function defaultPropertyMappingConfigurationShouldBeFetchable() {
 		$this->assertSame($this->mockConfiguration, $this->simpleValueArgument->getPropertyMappingConfiguration());
-	}
-
-
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function toStringReturnsTheStringVersionOfTheArgumentsValue() {
-		$this->mockPropertyMapper->expects($this->any())->method('convert')->will($this->returnValue(123));
-		$this->simpleValueArgument->setValue('123');
-
-		$this->assertSame((string)$this->simpleValueArgument, '123', 'The returned argument is not a string.');
-		$this->assertNotSame((string)$this->simpleValueArgument, 123, 'The returned argument is identical to the set value.');
 	}
 }
 ?>
