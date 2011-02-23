@@ -35,9 +35,14 @@ class RequestBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
 	protected $requestBuilder;
 
 	/**
-	 * @var \F3\FLOW3\Utility\MockEnvironment
+	 * @var \F3\FLOW3\Utility\Environment
 	 */
-	protected $environment;
+	protected $mockEnvironment;
+
+	/**
+	 * @var ArrayObject
+	 */
+	protected $SERVER;
 
 	/**
 	 * Sets up this test case
@@ -51,11 +56,15 @@ class RequestBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
 		$mockObjectManager->expects($this->once())->method('create')->with('F3\FLOW3\MVC\CLI\Request')->will($this->returnValue($this->mockRequest));
 
-		$this->environment = new \F3\FLOW3\Utility\MockEnvironment();
-		$this->environment->SERVER['argc'] = 0;
-		$this->environment->SERVER['argv'] = array();
+		$this->SERVER = new \ArrayObject();
 
-		$this->requestBuilder = new \F3\FLOW3\MVC\CLI\RequestBuilder($mockObjectManager, $this->environment);
+		$this->mockEnvironment = $this->getAccessibleMock('F3\FLOW3\Utility\Environment', array('dummy'), array(), '', FALSE);
+		$this->mockEnvironment->_set('SERVER', $this->SERVER);
+
+		$this->SERVER['argc'] = 0;
+		$this->SERVER['argv'] = array();
+
+		$this->requestBuilder = new \F3\FLOW3\MVC\CLI\RequestBuilder($mockObjectManager, $this->mockEnvironment);
 	}
 
 	/**
@@ -69,8 +78,8 @@ class RequestBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$this->mockRequest->expects($this->once())->method('setControllerSubpackageKey')->with('MVC');
 		$this->mockRequest->expects($this->once())->method('setControllerName')->with('Standard');
 
-		$this->environment->SERVER['argc'] = 1;
-		$this->environment->SERVER['argv'][0] = 'index.php';
+		$this->SERVER['argc'] = 1;
+		$this->SERVER['argv'][0] = 'index.php';
 
 		$this->requestBuilder->build();
 	}
@@ -84,9 +93,9 @@ class RequestBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function CLIAccessWithPackageNameBuildsCorrectRequest() {
 		$this->mockRequest->expects($this->once())->method('setControllerPackageKey')->with('TestPackage');
 
-		$this->environment->SERVER['argc'] = 2;
-		$this->environment->SERVER['argv'][0] = 'index.php';
-		$this->environment->SERVER['argv'][1] = 'TestPackage';
+		$this->SERVER['argc'] = 2;
+		$this->SERVER['argv'][0] = 'index.php';
+		$this->SERVER['argv'][1] = 'TestPackage';
 
 		$this->requestBuilder->build();
 	}
@@ -99,10 +108,10 @@ class RequestBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @expectedException \F3\FLOW3\MVC\Exception\InvalidFormatException
 	 */
 	public function CLIAccessWithPackageAndControllerNameThrowsInvalidFormatException() {
-		$this->environment->SERVER['argc'] = 3;
-		$this->environment->SERVER['argv'][0] = 'index.php';
-		$this->environment->SERVER['argv'][1] = 'TestPackage';
-		$this->environment->SERVER['argv'][2] = 'Standard';
+		$this->SERVER['argc'] = 3;
+		$this->SERVER['argv'][0] = 'index.php';
+		$this->SERVER['argv'][1] = 'TestPackage';
+		$this->SERVER['argv'][2] = 'Standard';
 
 		$request = $this->requestBuilder->build();
 	}
@@ -118,11 +127,11 @@ class RequestBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$this->mockRequest->expects($this->once())->method('setControllerName')->with('Standard');
 		$this->mockRequest->expects($this->once())->method('setControllerActionName')->with('list');
 
-		$this->environment->SERVER['argc'] = 4;
-		$this->environment->SERVER['argv'][0] = 'index.php';
-		$this->environment->SERVER['argv'][1] = 'TestPackage';
-		$this->environment->SERVER['argv'][2] = 'Standard';
-		$this->environment->SERVER['argv'][3] = 'list';
+		$this->SERVER['argc'] = 4;
+		$this->SERVER['argv'][0] = 'index.php';
+		$this->SERVER['argv'][1] = 'TestPackage';
+		$this->SERVER['argv'][2] = 'Standard';
+		$this->SERVER['argv'][3] = 'list';
 
 		$request = $this->requestBuilder->build();
 	}
@@ -139,13 +148,13 @@ class RequestBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$this->mockRequest->expects($this->once())->method('setControllerActionName')->with('list');
 		$this->mockRequest->expects($this->once())->method('setArguments')->with(array('testArgument' => 'value', 'testArgument2' => 'value2'));
 
-		$this->environment->SERVER['argc'] = 6;
-		$this->environment->SERVER['argv'][0] = 'index.php';
-		$this->environment->SERVER['argv'][1] = 'TestPackage';
-		$this->environment->SERVER['argv'][2] = 'Standard';
-		$this->environment->SERVER['argv'][3] = 'list';
-		$this->environment->SERVER['argv'][4] = '--test-argument=value';
-		$this->environment->SERVER['argv'][5] = '--test-argument2=value2';
+		$this->SERVER['argc'] = 6;
+		$this->SERVER['argv'][0] = 'index.php';
+		$this->SERVER['argv'][1] = 'TestPackage';
+		$this->SERVER['argv'][2] = 'Standard';
+		$this->SERVER['argv'][3] = 'list';
+		$this->SERVER['argv'][4] = '--test-argument=value';
+		$this->SERVER['argv'][5] = '--test-argument2=value2';
 
 		$this->requestBuilder->build();
 	}
@@ -162,19 +171,19 @@ class RequestBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$this->mockRequest->expects($this->once())->method('setControllerActionName')->with('list');
 		$this->mockRequest->expects($this->once())->method('setArguments')->with(array('testArgument' => 'value', 'testArgument2' => 'value2', 'testArgument3' => 'value3', 'testArgument4' => 'value4'));
 
-		$this->environment->SERVER['argc'] = 12;
-		$this->environment->SERVER['argv'][0] = 'index.php';
-		$this->environment->SERVER['argv'][1] = 'TestPackage';
-		$this->environment->SERVER['argv'][2] = 'Standard';
-		$this->environment->SERVER['argv'][3] = 'list';
-		$this->environment->SERVER['argv'][4] = '--test-argument=';
-		$this->environment->SERVER['argv'][5] = 'value';
-		$this->environment->SERVER['argv'][6] = '--test-argument2';
-		$this->environment->SERVER['argv'][7] = '=value2';
-		$this->environment->SERVER['argv'][8] = '--test-argument3';
-		$this->environment->SERVER['argv'][9] = '=';
-		$this->environment->SERVER['argv'][10] = 'value3';
-		$this->environment->SERVER['argv'][11] = '--test-argument4=value4';
+		$this->SERVER['argc'] = 12;
+		$this->SERVER['argv'][0] = 'index.php';
+		$this->SERVER['argv'][1] = 'TestPackage';
+		$this->SERVER['argv'][2] = 'Standard';
+		$this->SERVER['argv'][3] = 'list';
+		$this->SERVER['argv'][4] = '--test-argument=';
+		$this->SERVER['argv'][5] = 'value';
+		$this->SERVER['argv'][6] = '--test-argument2';
+		$this->SERVER['argv'][7] = '=value2';
+		$this->SERVER['argv'][8] = '--test-argument3';
+		$this->SERVER['argv'][9] = '=';
+		$this->SERVER['argv'][10] = 'value3';
+		$this->SERVER['argv'][11] = '--test-argument4=value4';
 
 		$this->requestBuilder->build();
 	}
@@ -191,17 +200,17 @@ class RequestBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$this->mockRequest->expects($this->once())->method('setControllerActionName')->with('list');
 		$this->mockRequest->expects($this->once())->method('setArguments')->with(array('d' => 'valued', 'f' => 'valuef', 'a' => 'valuea'));
 
-		$this->environment->SERVER['argc'] = 10;
-		$this->environment->SERVER['argv'][0] = 'index.php';
-		$this->environment->SERVER['argv'][1] = 'TestPackage';
-		$this->environment->SERVER['argv'][2] = 'Standard';
-		$this->environment->SERVER['argv'][3] = 'list';
-		$this->environment->SERVER['argv'][4] = '-d';
-		$this->environment->SERVER['argv'][5] = 'valued';
-		$this->environment->SERVER['argv'][6] = '-f=valuef';
-		$this->environment->SERVER['argv'][7] = '-a';
-		$this->environment->SERVER['argv'][8] = '=';
-		$this->environment->SERVER['argv'][9] = 'valuea';
+		$this->SERVER['argc'] = 10;
+		$this->SERVER['argv'][0] = 'index.php';
+		$this->SERVER['argv'][1] = 'TestPackage';
+		$this->SERVER['argv'][2] = 'Standard';
+		$this->SERVER['argv'][3] = 'list';
+		$this->SERVER['argv'][4] = '-d';
+		$this->SERVER['argv'][5] = 'valued';
+		$this->SERVER['argv'][6] = '-f=valuef';
+		$this->SERVER['argv'][7] = '-a';
+		$this->SERVER['argv'][8] = '=';
+		$this->SERVER['argv'][9] = 'valuea';
 
 		$this->requestBuilder->build();
 	}
@@ -233,34 +242,34 @@ class RequestBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
 			'm' => NULL
 		));
 
-		$this->environment->SERVER['argc'] = 27;
-		$this->environment->SERVER['argv'][0] = 'index.php';
-		$this->environment->SERVER['argv'][1] = 'TestPackage';
-		$this->environment->SERVER['argv'][2] = 'Standard';
-		$this->environment->SERVER['argv'][3] = 'list';
-		$this->environment->SERVER['argv'][4] = '--test-argument=value';
-		$this->environment->SERVER['argv'][5] = '--test-argument2=';
-		$this->environment->SERVER['argv'][6] = 'value2';
-		$this->environment->SERVER['argv'][7] = '-k';
-		$this->environment->SERVER['argv'][8] = '--test-argument-3';
-		$this->environment->SERVER['argv'][9] = '=';
-		$this->environment->SERVER['argv'][10] = 'value3';
-		$this->environment->SERVER['argv'][11] = '--test-argument4=value4';
-		$this->environment->SERVER['argv'][12] = '-f';
-		$this->environment->SERVER['argv'][13] = 'valuef';
-		$this->environment->SERVER['argv'][14] = '-d=valued';
-		$this->environment->SERVER['argv'][15] = '-a';
-		$this->environment->SERVER['argv'][16] = '=';
-		$this->environment->SERVER['argv'][17] = 'valuea';
-		$this->environment->SERVER['argv'][18] = '-c';
-		$this->environment->SERVER['argv'][19] = '--testArgument7';
-		$this->environment->SERVER['argv'][20] = '--test-argument5';
-		$this->environment->SERVER['argv'][21] = '=';
-		$this->environment->SERVER['argv'][22] = '5';
-		$this->environment->SERVER['argv'][23] = '--test-argument6';
-		$this->environment->SERVER['argv'][24] = '-j';
-		$this->environment->SERVER['argv'][25] = 'kjk';
-		$this->environment->SERVER['argv'][26] = '-m';
+		$this->SERVER['argc'] = 27;
+		$this->SERVER['argv'][0] = 'index.php';
+		$this->SERVER['argv'][1] = 'TestPackage';
+		$this->SERVER['argv'][2] = 'Standard';
+		$this->SERVER['argv'][3] = 'list';
+		$this->SERVER['argv'][4] = '--test-argument=value';
+		$this->SERVER['argv'][5] = '--test-argument2=';
+		$this->SERVER['argv'][6] = 'value2';
+		$this->SERVER['argv'][7] = '-k';
+		$this->SERVER['argv'][8] = '--test-argument-3';
+		$this->SERVER['argv'][9] = '=';
+		$this->SERVER['argv'][10] = 'value3';
+		$this->SERVER['argv'][11] = '--test-argument4=value4';
+		$this->SERVER['argv'][12] = '-f';
+		$this->SERVER['argv'][13] = 'valuef';
+		$this->SERVER['argv'][14] = '-d=valued';
+		$this->SERVER['argv'][15] = '-a';
+		$this->SERVER['argv'][16] = '=';
+		$this->SERVER['argv'][17] = 'valuea';
+		$this->SERVER['argv'][18] = '-c';
+		$this->SERVER['argv'][19] = '--testArgument7';
+		$this->SERVER['argv'][20] = '--test-argument5';
+		$this->SERVER['argv'][21] = '=';
+		$this->SERVER['argv'][22] = '5';
+		$this->SERVER['argv'][23] = '--test-argument6';
+		$this->SERVER['argv'][24] = '-j';
+		$this->SERVER['argv'][25] = 'kjk';
+		$this->SERVER['argv'][26] = '-m';
 
 		$this->requestBuilder->build();
 	}
@@ -275,13 +284,13 @@ class RequestBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$this->mockRequest->expects($this->once())->method('setControllerName')->with('Test');
 		$this->mockRequest->expects($this->once())->method('setControllerActionName')->with('run');
 
-		$this->environment->SERVER['argc'] = 6;
-		$this->environment->SERVER['argv'][0] = 'index.php';
-		$this->environment->SERVER['argv'][1] = 'TestPackage';
-		$this->environment->SERVER['argv'][2] = 'Sub';
-		$this->environment->SERVER['argv'][3] = 'Package';
-		$this->environment->SERVER['argv'][4] = 'Test';
-		$this->environment->SERVER['argv'][5] = 'run';
+		$this->SERVER['argc'] = 6;
+		$this->SERVER['argv'][0] = 'index.php';
+		$this->SERVER['argv'][1] = 'TestPackage';
+		$this->SERVER['argv'][2] = 'Sub';
+		$this->SERVER['argv'][3] = 'Package';
+		$this->SERVER['argv'][4] = 'Test';
+		$this->SERVER['argv'][5] = 'run';
 
 		$this->requestBuilder->build();
 	}
@@ -294,13 +303,13 @@ class RequestBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$this->mockRequest->expects($this->once())->method('setControllerPackageKey')->with('TestPackage');
 		$this->mockRequest->expects($this->once())->method('setCommandLineArguments')->with(array('file1', 'file2'));
 
-		$this->environment->SERVER['argc'] = 6;
-		$this->environment->SERVER['argv'][0] = 'index.php';
-		$this->environment->SERVER['argv'][1] = 'TestPackage';
-		$this->environment->SERVER['argv'][2] = '--some';
-		$this->environment->SERVER['argv'][3] = '-option=value';
-		$this->environment->SERVER['argv'][4] = 'file1';
-		$this->environment->SERVER['argv'][5] = 'file2';
+		$this->SERVER['argc'] = 6;
+		$this->SERVER['argv'][0] = 'index.php';
+		$this->SERVER['argv'][1] = 'TestPackage';
+		$this->SERVER['argv'][2] = '--some';
+		$this->SERVER['argv'][3] = '-option=value';
+		$this->SERVER['argv'][4] = 'file1';
+		$this->SERVER['argv'][5] = 'file2';
 
 		$this->requestBuilder->build();
 	}
@@ -313,14 +322,14 @@ class RequestBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$this->mockRequest->expects($this->once())->method('setControllerPackageKey')->with('TestPackage');
 		$this->mockRequest->expects($this->once())->method('setCommandLineArguments')->with(array('file1', 'file2'));
 
-		$this->environment->SERVER['argc'] = 7;
-		$this->environment->SERVER['argv'][0] = 'index.php';
-		$this->environment->SERVER['argv'][1] = 'TestPackage';
-		$this->environment->SERVER['argv'][2] = 'Standard';
-		$this->environment->SERVER['argv'][3] = 'index';
-		$this->environment->SERVER['argv'][4] = '--';
-		$this->environment->SERVER['argv'][5] = 'file1';
-		$this->environment->SERVER['argv'][6] = 'file2';
+		$this->SERVER['argc'] = 7;
+		$this->SERVER['argv'][0] = 'index.php';
+		$this->SERVER['argv'][1] = 'TestPackage';
+		$this->SERVER['argv'][2] = 'Standard';
+		$this->SERVER['argv'][3] = 'index';
+		$this->SERVER['argv'][4] = '--';
+		$this->SERVER['argv'][5] = 'file1';
+		$this->SERVER['argv'][6] = 'file2';
 
 		$this->requestBuilder->build();
 	}
@@ -333,12 +342,12 @@ class RequestBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$this->mockRequest->expects($this->once())->method('setControllerPackageKey')->with('TestPackage');
 		$this->mockRequest->expects($this->once())->method('setCommandLineArguments')->with(array('file1', 'file2'));
 
-		$this->environment->SERVER['argc'] = 6;
-		$this->environment->SERVER['argv'][0] = 'index.php';
-		$this->environment->SERVER['argv'][1] = 'TestPackage';
-		$this->environment->SERVER['argv'][3] = '--';
-		$this->environment->SERVER['argv'][4] = 'file1';
-		$this->environment->SERVER['argv'][5] = 'file2';
+		$this->SERVER['argc'] = 6;
+		$this->SERVER['argv'][0] = 'index.php';
+		$this->SERVER['argv'][1] = 'TestPackage';
+		$this->SERVER['argv'][3] = '--';
+		$this->SERVER['argv'][4] = 'file1';
+		$this->SERVER['argv'][5] = 'file2';
 
 		$this->requestBuilder->build();
 	}

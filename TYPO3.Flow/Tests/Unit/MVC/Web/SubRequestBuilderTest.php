@@ -66,7 +66,7 @@ class SubRequestBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$this->mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
 		$this->mockUri = $this->getMock('F3\FLOW3\Property\DataType\Uri', array(), array(), '', FALSE);
 		$this->mockUri->expects($this->any())->method('getArguments')->will($this->returnValue(array()));
-		$this->mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment');
+		$this->mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
 		$this->mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request');
 		$this->mockSubRequest = $this->getMock('F3\FLOW3\MVC\Web\SubRequest', array(), array(), '', FALSE);
 		$this->mockSubRequest->expects($this->any())->method('getRequestUri')->will($this->returnValue($this->mockUri));

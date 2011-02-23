@@ -90,35 +90,20 @@ class Environment {
 	protected $baseUri;
 
 	/**
-	 * Sets the FLOW3 context
+	 * Initializes the environment instance. Copies the superglobals $_SERVER,
+	 * $_GET, $_POST, $_FILES to local variables.
 	 *
 	 * @param string $context The FLOW3 context
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setContext($context) {
+	public function __construct($context) {
 		$this->context = $context;
-	}
 
-	/**
-	 * Initializes the environment instance. Copies the superglobals $_SERVER,
-	 * $_GET, $_POST, $_FILES to local variables and replaces the superglobals
-	 * to block their use.
-	 *
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function initializeObject() {
-		if (!($_SERVER instanceof \F3\FLOW3\Utility\SuperGlobalReplacement)) {
-			$this->SERVER = $_SERVER;
-			$this->GET = $_GET;
-			$this->POST = $_POST;
-			$this->FILES = $this->untangleFilesArray($_FILES);
-
-			$_GET = new \F3\FLOW3\Utility\SuperGlobalReplacement('_GET', 'Please use the Request object which is built by the Request Handler instead of accessing the _GET superglobal directly.');
-			$_POST = new \F3\FLOW3\Utility\SuperGlobalReplacement('_POST', 'Please use the Request object which is built by the Request Handler instead of accessing the _POST superglobal directly.');
-			$_FILES = new \F3\FLOW3\Utility\SuperGlobalReplacement('_FILES', 'Please use the Request object which is built by the Request Handler instead of accessing the _FILES superglobal directly.');
-		}
+		$this->SERVER = $_SERVER;
+		$this->GET = $_GET;
+		$this->POST = $_POST;
+		$this->FILES = $this->untangleFilesArray($_FILES);
 	}
 
 	/**

@@ -166,7 +166,7 @@ class ResourceManagerTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
 		$mockObjectManager->expects($this->at(0))->method('create')->with('F3\FLOW3\Resource\Resource')->will($this->returnValue($mockResource));
 		$mockObjectManager->expects($this->at(1))->method('create')->with('F3\FLOW3\Resource\ResourcePointer', $hash)->will($this->returnValue($mockResourcePointer));
-		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment');
+		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
 		$mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue('vfs://Foo/Temporary/'));
 
 		$resourceManager = $this->getAccessibleMock('\F3\FLOW3\Resource\ResourceManager', array('dummy'), array(), '', FALSE);
@@ -201,7 +201,7 @@ class ResourceManagerTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
 		$mockObjectManager->expects($this->at(0))->method('create')->with('F3\FLOW3\Resource\Resource')->will($this->returnValue($mockResource));
 		$mockObjectManager->expects($this->at(1))->method('create')->with('F3\FLOW3\Resource\ResourcePointer', $hash)->will($this->returnValue($mockResourcePointer));
-		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment');
+		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
 		$mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue('vfs://Foo/Temporary/'));
 
 		$resourceManager = $this->getAccessibleMock('\F3\FLOW3\Resource\ResourceManager', array('dummy'), array(), '', FALSE);

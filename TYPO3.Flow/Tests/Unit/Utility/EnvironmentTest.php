@@ -34,7 +34,7 @@ class EnvironmentTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPathToTemporaryDirectoryReturnsPathWithTrailingSlash() {
-		$environment = new \F3\FLOW3\Utility\Environment();
+		$environment = new \F3\FLOW3\Utility\Environment('Testing');
 		$environment->setTemporaryDirectoryBase(sys_get_temp_dir('FLOW3EnvironmentTest'));
 		$path = $environment->getPathToTemporaryDirectory();
 		$this->assertEquals('/', substr($path, -1, 1), 'The temporary path did not end with slash.');
@@ -45,7 +45,7 @@ class EnvironmentTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPathToTemporaryDirectoryReturnsAnExistingPath() {
-		$environment = new \F3\FLOW3\Utility\Environment();
+		$environment = new \F3\FLOW3\Utility\Environment('Testing');
 		$environment->setTemporaryDirectoryBase(sys_get_temp_dir('FLOW3EnvironmentTest'));
 
 		$path = $environment->getPathToTemporaryDirectory();
@@ -58,12 +58,13 @@ class EnvironmentTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function getScriptPathAndFilenameReturnsCorrectPathAndFilename() {
 		$expectedPathAndFilename = '/this/is/the/file.php';
-		$environment = new \F3\FLOW3\Utility\MockEnvironment();
-		$environment->SERVER = array(
+		$environment = $this->getAccessibleMock('F3\FLOW3\Utility\Environment', array('dummy'), array('Testing'));
+		$environment->_set('SERVER', array(
 			'SCRIPT_FILENAME' => '/this/is/the/file.php'
-			);
-			$returnedPathAndFilename = $environment->getScriptPathAndFilename();
-			$this->assertEquals($expectedPathAndFilename, $returnedPathAndFilename, 'The returned path did not match the expected value.');
+			)
+		);
+		$returnedPathAndFilename = $environment->getScriptPathAndFilename();
+		$this->assertEquals($expectedPathAndFilename, $returnedPathAndFilename, 'The returned path did not match the expected value.');
 	}
 
 	/**
@@ -72,12 +73,13 @@ class EnvironmentTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function getScriptPathAndFilenameReturnsCorrectPathAndFilenameForWindowsStylePath() {
 		$expectedPathAndFilename = '/this/is/the/file.php';
-		$environment = new \F3\FLOW3\Utility\MockEnvironment();
-		$environment->SERVER = array(
+		$environment = $this->getAccessibleMock('F3\FLOW3\Utility\Environment', array('dummy'), array('Testing'));
+		$environment->_set('SERVER', array(
 			'SCRIPT_FILENAME' => '\\this\\is\\the\\file.php'
-			);
-			$returnedPathAndFilename = $environment->getScriptPathAndFilename();
-			$this->assertEquals($expectedPathAndFilename, $returnedPathAndFilename, 'The returned path did not match the expected value.');
+			)
+		);
+		$returnedPathAndFilename = $environment->getScriptPathAndFilename();
+		$this->assertEquals($expectedPathAndFilename, $returnedPathAndFilename, 'The returned path did not match the expected value.');
 	}
 
 	/**
@@ -86,9 +88,10 @@ class EnvironmentTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function getScriptRequestPathReturnsCorrectPath() {
 		$expectedPath = '/blog/Web/';
-		$environment = new \F3\FLOW3\Utility\MockEnvironment();
-		$environment->SERVER = array(
-			'SCRIPT_NAME' => '/blog/Web/index.php'
+		$environment = $this->getAccessibleMock('F3\FLOW3\Utility\Environment', array('dummy'), array('Testing'));
+		$environment->_set('SERVER', array(
+				'SCRIPT_NAME' => '/blog/Web/index.php'
+			)
 		);
 		$returnedPath = $environment->getScriptRequestPath();
 		$this->assertEquals($expectedPath, $returnedPath);
@@ -148,9 +151,10 @@ class EnvironmentTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getRequestUriReturnsExpectedUri($expectedUri, $SERVER) {
-		$environment = new \F3\FLOW3\Utility\MockEnvironment();
-		$environment->SAPIName = 'apache';
-		$environment->SERVER = $SERVER;
+		$environment = $this->getAccessibleMock('F3\FLOW3\Utility\Environment', array('dummy'), array('Testing'));
+		$environment->_set('SAPIName', 'apache');
+		$environment->_set('SERVER', $SERVER);
+
 		$returnedUriString = (string)$environment->getRequestUri();
 		$this->assertEquals((string)$expectedUri, $returnedUriString, 'The URI returned did not match the expected value.');
 	}
@@ -184,7 +188,7 @@ class EnvironmentTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function detectBaseUriRendersExpectedUriWhenUsingPlainRequests($requestUri, $expectedBaseUri, $SCRIPT_NAME) {
-		$environment = $this->getAccessibleMock('F3\FLOW3\Utility\Environment', array('getRequestUri'));
+		$environment = $this->getAccessibleMock('F3\FLOW3\Utility\Environment', array('getRequestUri'), array('Testing'));
 		$environment->expects($this->once())->method('getRequestUri')->will($this->returnValue($requestUri));
 		$environment->_set('SAPIName', 'apache');
 		$environment->_set('SERVER', array('SCRIPT_NAME' => $SCRIPT_NAME));
@@ -198,7 +202,7 @@ class EnvironmentTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getAcceptedFormatsReturnsListOfAcceptedFormatsAccordingToHTTPHeader($httpAcceptString, $expectedFormats) {
-		$environment = $this->getAccessibleMock('F3\FLOW3\Utility\Environment', array('getHTTPAccept'));
+		$environment = $this->getAccessibleMock('F3\FLOW3\Utility\Environment', array('getHTTPAccept'), array('Testing'));
 		$environment->expects($this->once())->method('getHTTPAccept')->will($this->returnValue($httpAcceptString));
 
 		$this->assertEquals($expectedFormats, $environment->getAcceptedFormats());
@@ -224,8 +228,8 @@ class EnvironmentTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getUploadedFilesJustReturnsThePreviouslyUntangledFILESVariable() {
-		$environment = new \F3\FLOW3\Utility\MockEnvironment();
-		$environment->FILES = array('foo' => 'bar');
+		$_FILES = array('foo' => 'bar');
+		$environment = new \F3\FLOW3\Utility\Environment('Testing');
 		$this->assertEquals(array('foo' => 'bar'), $environment->getUploadedFiles());
 	}
 
@@ -234,8 +238,8 @@ class EnvironmentTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getRawServerEnvironmentJustReturnsTheSERVERVariable() {
-		$environment = new \F3\FLOW3\Utility\MockEnvironment();
-		$environment->SERVER = array('foo' => 'bar');
+		$_SERVER = array('foo' => 'bar');
+		$environment = new \F3\FLOW3\Utility\Environment('Testing');
 		$this->assertEquals(array('foo' => 'bar'), $environment->getRawServerEnvironment());
 	}
 
@@ -244,7 +248,7 @@ class EnvironmentTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getSAPINameReturnsNotNullOnFreshlyConstructedEnvironment() {
-		$environment = new \F3\FLOW3\Utility\Environment();
+		$environment = new \F3\FLOW3\Utility\Environment('Testing');
 		$this->assertNotNull($environment->getSAPIName());
 	}
 
@@ -253,7 +257,7 @@ class EnvironmentTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getMaximumPathLengthReturnsCorrectValue() {
-		$environment = new \F3\FLOW3\Utility\Environment();
+		$environment = new \F3\FLOW3\Utility\Environment('Testing');
 		$expectedValue = PHP_MAXPATHLEN;
 		if ((integer)$expectedValue <= 0) {
 			$this->fail('The PHP Constant PHP_MAXPATHLEN is not available on your system! Please file a PHP bug report.');

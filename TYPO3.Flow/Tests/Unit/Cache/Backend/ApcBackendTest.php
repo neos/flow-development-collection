@@ -32,7 +32,7 @@ class ApcBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @var \F3\FLOW3\Utility\Environment
 	 */
-	protected $environment;
+	protected $mockEnvironment;
 
 	/**
 	 * Sets up this testcase
@@ -47,7 +47,7 @@ class ApcBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		if (ini_get('apc.slam_defense') == 1) {
 			$this->markTestSkipped('This testcase can only be executed with apc.slam_defense = Off');
 		}
-		$this->environment = new \F3\FLOW3\Utility\Environment();
+		$this->mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
 	}
 
 	/**
@@ -58,7 +58,7 @@ class ApcBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function setThrowsExceptionIfNoFrontEndHasBeenSet() {
 		$backend = new \F3\FLOW3\Cache\Backend\ApcBackend('Testing');
-		$backend->injectEnvironment($this->environment);
+		$backend->injectEnvironment($this->mockEnvironment);
 		$data = 'Some data';
 		$identifier = uniqid('MyIdentifier');
 		$backend->set($identifier, $data);
@@ -222,13 +222,13 @@ class ApcBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$thisCache = $this->getMock('F3\FLOW3\Cache\Frontend\FrontendInterface', array(), array(), '', FALSE);
 		$thisCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('thisCache'));
 		$thisBackend = new \F3\FLOW3\Cache\Backend\ApcBackend('Testing');
-		$thisBackend->injectEnvironment($this->environment);
+		$thisBackend->injectEnvironment($this->mockEnvironment);
 		$thisBackend->setCache($thisCache);
 
 		$thatCache = $this->getMock('F3\FLOW3\Cache\Frontend\FrontendInterface', array(), array(), '', FALSE);
 		$thatCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('thatCache'));
 		$thatBackend = new \F3\FLOW3\Cache\Backend\ApcBackend('Testing');
-		$thatBackend->injectEnvironment($this->environment);
+		$thatBackend->injectEnvironment($this->mockEnvironment);
 		$thatBackend->setCache($thatCache);
 
 		$thisBackend->set('thisEntry', 'Hello');
@@ -265,7 +265,7 @@ class ApcBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	protected function setUpBackend() {
 		$cache = $this->getMock('F3\FLOW3\Cache\Frontend\FrontendInterface', array(), array(), '', FALSE);
 		$backend = new \F3\FLOW3\Cache\Backend\ApcBackend('Testing');
-		$backend->injectEnvironment($this->environment);
+		$backend->injectEnvironment($this->mockEnvironment);
 		$backend->setCache($cache);
 		return $backend;
 	}

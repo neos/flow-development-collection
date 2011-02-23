@@ -32,7 +32,7 @@ class MemcachedBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @var \F3\FLOW3\Utility\Environment
 	 */
-	protected $environment;
+	protected $mockEnvironment;
 
 	/**
 	 * Sets up this testcase
@@ -53,7 +53,7 @@ class MemcachedBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 			$this->markTestSkipped('memcached not reachable');
 		}
 
-		$this->environment = new \F3\FLOW3\Utility\Environment();
+		$this->mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
 	}
 
 	/**
@@ -64,7 +64,7 @@ class MemcachedBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function setThrowsExceptionIfNoFrontEndHasBeenSet() {
 		$backendOptions = array('servers' => array('localhost:11211'));
 		$backend = new \F3\FLOW3\Cache\Backend\MemcachedBackend('Testing', $backendOptions);
-		$backend->injectEnvironment($this->environment);
+		$backend->injectEnvironment($this->mockEnvironment);
 		$backend->initializeObject();
 		$data = 'Some data';
 		$identifier = uniqid('MyIdentifier');
@@ -253,14 +253,14 @@ class MemcachedBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$thisCache = $this->getMock('F3\FLOW3\Cache\Frontend\AbstractFrontend', array(), array(), '', FALSE);
 		$thisCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('thisCache'));
 		$thisBackend = new \F3\FLOW3\Cache\Backend\MemcachedBackend('Testing', $backendOptions);
-		$thisBackend->injectEnvironment($this->environment);
+		$thisBackend->injectEnvironment($this->mockEnvironment);
 		$thisBackend->setCache($thisCache);
 		$thisBackend->initializeObject();
 
 		$thatCache = $this->getMock('F3\FLOW3\Cache\Frontend\AbstractFrontend', array(), array(), '', FALSE);
 		$thatCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('thatCache'));
 		$thatBackend = new \F3\FLOW3\Cache\Backend\MemcachedBackend('Testing', $backendOptions);
-		$thatBackend->injectEnvironment($this->environment);
+		$thatBackend->injectEnvironment($this->mockEnvironment);
 		$thatBackend->setCache($thatCache);
 		$thatBackend->initializeObject();
 
@@ -303,7 +303,7 @@ class MemcachedBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 			$backendOptions = array('servers' => array('localhost:11211'));
 		}
 		$backend = new \F3\FLOW3\Cache\Backend\MemcachedBackend('Testing', $backendOptions);
-		$backend->injectEnvironment($this->environment);
+		$backend->injectEnvironment($this->mockEnvironment);
 		$backend->setCache($cache);
 		$backend->initializeObject();
 		return $backend;

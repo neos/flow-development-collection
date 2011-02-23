@@ -38,7 +38,7 @@ class LockManagerTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$temporaryDirectoryUrl = \vfsStream::url('TestDirectory') . '/';
 		file_put_contents($temporaryDirectoryUrl . 'FLOW3.lock', '');
 
-		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment');
+		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
 		$mockEnvironment->expects($this->once())->method('getPathToTemporaryDirectory')->will($this->returnValue($temporaryDirectoryUrl));
 
 		$lockManager = new \F3\FLOW3\Core\LockManager();
@@ -57,7 +57,7 @@ class LockManagerTest extends \F3\FLOW3\Tests\UnitTestCase {
 		file_put_contents($temporaryDirectoryUrl . 'FLOW3.lock', '');
 		\vfsStreamWrapper::getRoot()->getChild('FLOW3.lock')->setFilemtime(time() - \F3\FLOW3\Core\LockManager::LOCKFILE_MAXIMUM_AGE - 2);
 
-		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment');
+		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
 		$mockEnvironment->expects($this->once())->method('getPathToTemporaryDirectory')->will($this->returnValue($temporaryDirectoryUrl));
 
 		$lockManager = new \F3\FLOW3\Core\LockManager();
@@ -75,7 +75,7 @@ class LockManagerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function lockSiteCreatesALockFileAndSetsTheStatusToLocked() {
 		$temporaryDirectoryUrl = \vfsStream::url('TestDirectory') . '/';
 
-		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment');
+		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
 		$mockEnvironment->expects($this->once())->method('getPathToTemporaryDirectory')->will($this->returnValue($temporaryDirectoryUrl));
 
 		$mockLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
@@ -98,7 +98,7 @@ class LockManagerTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$temporaryDirectoryUrl = \vfsStream::url('TestDirectory') . '/';
 		file_put_contents($temporaryDirectoryUrl . 'FLOW3.lock', '');
 
-		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment');
+		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
 		$mockEnvironment->expects($this->once())->method('getPathToTemporaryDirectory')->will($this->returnValue($temporaryDirectoryUrl));
 
 		$mockLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');

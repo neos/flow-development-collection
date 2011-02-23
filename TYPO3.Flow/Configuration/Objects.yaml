@@ -609,8 +609,6 @@ F3\FLOW3\Utility\Environment:
   properties:
     temporaryDirectoryBase:
       setting: FLOW3.utility.environment.temporaryDirectoryBase
-    context:
-      setting: FLOW3.core.context
 
 F3\FLOW3\Utility\PdoHelper:
   autowiring: off

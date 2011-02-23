@@ -40,14 +40,20 @@ class RequestTest extends \F3\FLOW3\Tests\UnitTestCase {
 	protected $requestUri;
 
 	/**
+	 * @var ArrayObject
+	 */
+	protected $SERVER;
+
+	/**
 	 * Sets up this test case
 	 *
 	 * @author  Robert Lemke <robert@typo3.org>
 	 */
 	protected function setUp() {
-		$this->environment = new \F3\FLOW3\Utility\MockEnvironment();
-		$this->environment->SERVER['ORIG_SCRIPT_NAME'] = '/path1/path2/index.php';
-		$this->environment->SERVER['SCRIPT_NAME'] = '/path1/path2/index.php';
+		$this->mockEnvironment = $this->getAccessibleMock('F3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
+
+		$this->SERVER = array();
+		$this->mockEnvironment->_set('SERVER', $this->SERVER);
 
 		$uriString = 'http://username:password@subdomain.domain.com:8080/path1/path2/index.php?argument1=value1&argument2=value2#anchor';
 		$this->requestUri = new \F3\FLOW3\Property\DataType\Uri($uriString);
