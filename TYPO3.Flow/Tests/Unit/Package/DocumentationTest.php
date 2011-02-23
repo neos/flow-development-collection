@@ -66,19 +66,10 @@ class DocumentationTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		\F3\FLOW3\Utility\Files::createDirectoryRecursively($documentationPath . 'DocBook/en');
 
-		$mockDocumentationFormat = $this->getMock('F3\FLOW3\Package\Documentation\Format', array('dummy'), array(), '', FALSE);
-
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->once())
-			->method('create')
-			->with('F3\FLOW3\Package\Documentation\Format', 'DocBook', $documentationPath . 'DocBook/')
-			->will($this->returnValue($mockDocumentationFormat));
-
 		$documentation = new \F3\FLOW3\Package\Documentation($mockPackage, 'Manual', $documentationPath);
-		$documentation->injectObjectManager($mockObjectManager);
 		$documentationFormats = $documentation->getDocumentationFormats();
 
-		$this->assertEquals(array('DocBook' => $mockDocumentationFormat), $documentationFormats);
+		$this->assertEquals('DocBook', $documentationFormats['DocBook']->getFormatName());
 	}
 }
 ?>

@@ -22,6 +22,8 @@ namespace F3\FLOW3\Package;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use \F3\FLOW3\Package\MetaData\XmlWriter as PackageMetaDataWriter;
+
 /**
  * The default TYPO3 Package Manager
  *
@@ -29,16 +31,6 @@ namespace F3\FLOW3\Package;
  * @api
  */
 class PackageManager implements \F3\FLOW3\Package\PackageManagerInterface {
-
-	/**
-	 * @var \F3\FLOW3\Package\MetaData\WriterInterface
-	 */
-	protected $packageMetaDataWriter;
-
-	/**
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
-	 */
-	protected $objectManager;
 
 	/**
 	 * @var \F3\FLOW3\Configuration\ConfigurationManager
@@ -62,28 +54,6 @@ class PackageManager implements \F3\FLOW3\Package\PackageManagerInterface {
 	 * @var array
 	 */
 	protected $activePackages = array();
-
-	/**
-	 * Injects a Package MetaData Writer
-	 *
-	 * @param \F3\FLOW3\Package\MetaData\WriterInterface $packageMetaDataWriter A package meta data writer instance to write package metadata
-	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 */
-	public function injectPackageMetaDataWriter(\F3\FLOW3\Package\MetaData\WriterInterface $packageMetaDataWriter) {
-		$this->packageMetaDataWriter = $packageMetaDataWriter;
-	}
-
-	/**
-	 * Injects the Object Manager
-	 *
-	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
-		$this->objectManager = $objectManager;
-	}
 
 	/**
 	 * Injects the Configuration Manager
@@ -225,7 +195,7 @@ class PackageManager implements \F3\FLOW3\Package\PackageManagerInterface {
 		if ($this->isPackageAvailable($packageKey)) throw new \F3\FLOW3\Package\Exception\PackageKeyAlreadyExistsException('The package key "' . $packageKey . '" already exists', 1220722873);
 
 		if ($packageMetaData === NULL) {
-			$packageMetaData = $this->objectManager->create('F3\FLOW3\Package\MetaData', $packageKey);
+			$packageMetaData = new \F3\FLOW3\Package\MetaData($packageKey);
 		}
 
 		if ($packagesPath === '') {
@@ -246,8 +216,8 @@ class PackageManager implements \F3\FLOW3\Package\PackageManagerInterface {
 			\F3\FLOW3\Utility\Files::createDirectoryRecursively(\F3\FLOW3\Utility\Files::concatenatePaths(array($packagePath, $path)));
 		}
 
-		$package = $this->objectManager->create('F3\FLOW3\Package\Package', $packageKey, $packagePath);
-		$result = $this->packageMetaDataWriter->writePackageMetaData($package, $packageMetaData);
+		$package = new \F3\FLOW3\Package\Package($packageKey, $packagePath);
+		$result = PackageMetaDataWriter::writePackageMetaData($package, $packageMetaData);
 		if ($result === FALSE) throw new \F3\FLOW3\Package\Exception('Error while writing the package meta data information at "' . $packagePath . '"', 1232625240);
 
 		$this->packages[$packageKey] = $package;
@@ -334,7 +304,7 @@ class PackageManager implements \F3\FLOW3\Package\PackageManagerInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function scanAvailablePackages() {
-		$this->packages = array('FLOW3' => $this->objectManager->create('F3\FLOW3\Package\Package', 'FLOW3', FLOW3_PATH_FLOW3));
+		$this->packages = array('FLOW3' => new \F3\FLOW3\Package\Package('FLOW3', FLOW3_PATH_FLOW3));
 		foreach (new \DirectoryIterator(FLOW3_PATH_PACKAGES) as $parentFileInfo) {
 			$parentFilename = $parentFileInfo->getFilename();
 			if ($parentFilename[0] === '.' || !$parentFileInfo->isDir()) continue;
@@ -346,10 +316,11 @@ class PackageManager implements \F3\FLOW3\Package\PackageManagerInterface {
 					if (isset($this->packages[$childFilename])) {
 						throw new \F3\FLOW3\Package\Exception\DuplicatePackageException('Detected a duplicate package, remove either "' . $this->packages[$childFilename]->getPackagePath() . '" or "' . $packagePath . '".', 1253716811);
 					}
-					$this->packages[$childFilename] = $this->objectManager->create('F3\FLOW3\Package\Package', $childFilename, $packagePath);
+					$this->packages[$childFilename] = new \F3\FLOW3\Package\Package($childFilename, $packagePath);
 				}
 			}
 		}
+
 		foreach (array_keys($this->packages) as $upperCamelCasedPackageKey) {
 			$this->packageKeys[strtolower($upperCamelCasedPackageKey)] = $upperCamelCasedPackageKey;
 		}

@@ -22,6 +22,8 @@ namespace F3\FLOW3\Package;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use \F3\FLOW3\Package\MetaData\XmlReader as PackageMetaDataReader;
+
 /**
  * A Package
  *
@@ -54,16 +56,6 @@ class Package implements PackageInterface {
 	protected $packagePath;
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
-	 */
-	protected $objectManager;
-
-	/**
-	 * @var \F3\FLOW3\Package\MetaData\ReaderInterface
-	 */
-	protected $metaDataReader;
-
-	/**
 	 * @var \F3\FLOW3\Package\MetaData Meta information about this package
 	 */
 	protected $packageMetaData;
@@ -92,28 +84,6 @@ class Package implements PackageInterface {
 	}
 
 	/**
-	 * Injects the Object Manager
-	 *
-	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
-	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 */
-	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
-		$this->objectManager = $objectManager;
-	}
-
-	/**
-	 * Injects a MetaData file reader
-	 *
-	 * @param \F3\FLOW3\Package\MetaData\ReaderInterface $metaDataReader
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function injectMetaDataReader(\F3\FLOW3\Package\MetaData\ReaderInterface $metaDataReader) {
-		$this->metaDataReader = $metaDataReader;
-	}
-
-	/**
 	 * Returns the package meta data object of this package.
 	 *
 	 * @return \F3\FLOW3\Package\MetaData
@@ -121,7 +91,7 @@ class Package implements PackageInterface {
 	 */
 	public function getPackageMetaData() {
 		if ($this->packageMetaData === NULL) {
-			$this->packageMetaData = $this->metaDataReader->readPackageMetaData($this);
+			$this->packageMetaData = PackageMetaDataReader::readPackageMetaData($this);
 		}
 		return $this->packageMetaData;
 	}
@@ -254,7 +224,7 @@ class Package implements PackageInterface {
 				$filename = $documentationsDirectoryIterator->getFilename();
 				if ($filename[0] != '.' && $documentationsDirectoryIterator->isDir()) {
 					$filename = $documentationsDirectoryIterator->getFilename();
-					$documentation = $this->objectManager->create('F3\FLOW3\Package\Documentation', $this, $filename, $documentationPath . $filename . '/');
+					$documentation = new \F3\FLOW3\Package\Documentation($this, $filename, $documentationPath . $filename . '/');
 					$documentations[$filename] = $documentation;
 				}
 				$documentationsDirectoryIterator->next();
@@ -279,6 +249,7 @@ class Package implements PackageInterface {
 	protected function buildArrayOfClassFiles($classesPath, $extraNamespaceSegment = '', $subDirectory = '', $recursionLevel = 0) {
 		$classFiles = array();
 		$currentPath = $classesPath . $subDirectory;
+		$currentRelativePath = substr($currentPath, strlen($this->packagePath));
 
 		if (!is_dir($currentPath)) return array();
 		if ($recursionLevel > 100) throw new \F3\FLOW3\Package\Exception('Recursion too deep.', 1166635495);
@@ -293,7 +264,7 @@ class Package implements PackageInterface {
 					} else {
 						if (substr($filename, -4, 4) === '.php') {
 							$className = (str_replace('/', '\\', ('F3/' . $this->packageKey . '/' . $extraNamespaceSegment . substr($currentPath, strlen($classesPath)) . substr($filename, 0, -4))));
-							$classFiles[$className] = $subDirectory . $filename;
+							$classFiles[$className] = $currentRelativePath . $filename;
 						}
 					}
 				}

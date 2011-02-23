@@ -45,10 +45,7 @@ class PackageManagerTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\ConfigurationManager', array('getConfiguration', 'saveConfiguration'), array(), '', FALSE);
 
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-
 		$this->packageManager = new \F3\FLOW3\Package\PackageManager();
-		$this->packageManager->injectObjectManager($mockObjectManager);
 		$this->packageManager->injectConfigurationManager($mockConfigurationManager);
 		$this->packageManager->initialize();
 	}

@@ -27,7 +27,7 @@ namespace F3\FLOW3\Package\MetaData;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class XmlWriter implements \F3\FLOW3\Package\MetaData\WriterInterface {
+class XmlWriter {
 
 	/**
 	 * Write metadata for the given package into a Package.xml file.
@@ -38,7 +38,7 @@ class XmlWriter implements \F3\FLOW3\Package\MetaData\WriterInterface {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function writePackageMetaData(\F3\FLOW3\Package\PackageInterface $package, \F3\FLOW3\Package\MetaDataInterface $meta) {
+	static public function writePackageMetaData(\F3\FLOW3\Package\PackageInterface $package, \F3\FLOW3\Package\MetaDataInterface $meta) {
 		$xml = new \XMLWriter();
 		if ($xml->openURI($package->getMetaPath() . 'Package.xml') === FALSE) return FALSE;
 
@@ -68,7 +68,7 @@ class XmlWriter implements \F3\FLOW3\Package\MetaData\WriterInterface {
 		if (count($meta->getParties())) {
 			$xml->startElement('parties');
 			foreach ($meta->getParties() as $party) {
-				$this->writeParty($xml, $party);
+				self::writeParty($xml, $party);
 			}
 			$xml->endElement();
 		}
@@ -80,7 +80,7 @@ class XmlWriter implements \F3\FLOW3\Package\MetaData\WriterInterface {
 				if (count($constraints)) {
 					$xml->startElement($constraintType);
 					foreach ($constraints as $constraint) {
-						$this->writeConstraint($xml, $constraint);
+						self::writeConstraint($xml, $constraint);
 					}
 					$xml->endElement();
 				}
@@ -101,7 +101,7 @@ class XmlWriter implements \F3\FLOW3\Package\MetaData\WriterInterface {
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	protected function writeParty(\XMLWriter $xml, \F3\FLOW3\Package\MetaData\AbstractParty $party) {
+	static protected function writeParty(\XMLWriter $xml, \F3\FLOW3\Package\MetaData\AbstractParty $party) {
 		$xml->startElement($party->getPartyType());
 
 		if (strlen($party->getRole())) $xml->writeAttribute('role', $party->getRole());
@@ -129,7 +129,7 @@ class XmlWriter implements \F3\FLOW3\Package\MetaData\WriterInterface {
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	protected function writeConstraint(\XMLWriter $xml, \F3\FLOW3\Package\MetaData\AbstractConstraint $constraint) {
+	static protected function writeConstraint(\XMLWriter $xml, \F3\FLOW3\Package\MetaData\AbstractConstraint $constraint) {
 		$xml->startElement($constraint->getConstraintScope());
 
 		if (strlen($constraint->getMinVersion())) $xml->writeAttribute('minVersion', $constraint->getMinVersion());

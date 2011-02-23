@@ -41,11 +41,6 @@ class Format {
 	protected $formatPath;
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
-	 */
-	protected $objectManager;
-
-	/**
 	 * Constructor
 	 *
 	 * @param string $formatName Name of the documentation format
@@ -55,17 +50,6 @@ class Format {
 	public function __construct($formatName, $formatPath) {
 		$this->formatName = $formatName;
 		$this->formatPath = $formatPath;
-	}
-
-	/**
-	 * Injects the Object Factory
-	 *
-	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
-	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 */
-	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
-		$this->objectManager = $objectManager;
 	}
 
 	/**

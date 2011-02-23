@@ -51,25 +51,6 @@ class PackageTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getPackageMetaDataUsesMetaDataReader() {
-		$mockMetaData = $this->getMock('F3\FLOW3\Package\MetaDataInterface');
-		$mockMetaDataReader = $this->getMock('F3\FLOW3\Package\MetaData\ReaderInterface');
-
-		$package = new \F3\FLOW3\Package\Package('FLOW3', FLOW3_PATH_FLOW3);
-		$package->injectMetaDataReader($mockMetaDataReader);
-
-		$mockMetaDataReader->expects($this->once())
-			->method('readPackageMetaData')
-			->will($this->returnValue($mockMetaData));
-
-		$this->assertSame($mockMetaData, $package->getPackageMetaData());
-	}
-
-	/**
-	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getMetaPathReturnsPathToMetaDirectory() {
@@ -88,36 +69,6 @@ class PackageTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$packageDocumentationPath = $package->getDocumentationPath();
 
 		$this->assertEquals($package->getPackagePath() . \F3\FLOW3\Package\Package::DIRECTORY_DOCUMENTATION, $packageDocumentationPath);
-	}
-
-	/**
-	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 */
-	public function getPackageDocumentationsScansDocumentationDirectoryAndCreatesDocumentationObjects() {
-		\vfsStreamWrapper::register();
-		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('testDirectory'));
-
-		$packagePath = \vfsStream::url('testDirectory') . '/';
-
-		\F3\FLOW3\Utility\Files::createDirectoryRecursively($packagePath . 'Documentation/Manual/DocBook/en');
-
-		$mockDocumentation = $this->getMock('F3\FLOW3\Package\Documentation', array('dummy'), array(), '', FALSE);
-
-		$package = new \F3\FLOW3\Package\Package('FLOW3', $packagePath);
-
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->once())
-			->method('create')
-			->with('F3\FLOW3\Package\Documentation', $package, 'Manual', $packagePath . 'Documentation/Manual/')
-			->will($this->returnValue($mockDocumentation));
-
-		$package->injectObjectManager($mockObjectManager);
-
-
-		$documentations = $package->getPackageDocumentations();
-
-		$this->assertEquals(array('Manual' => $mockDocumentation), $documentations);
 	}
 
 	/**

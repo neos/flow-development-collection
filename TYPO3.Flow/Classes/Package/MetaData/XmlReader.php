@@ -27,7 +27,7 @@ namespace F3\FLOW3\Package\MetaData;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class XmlReader implements \F3\FLOW3\Package\MetaData\ReaderInterface {
+class XmlReader {
 
 	/**
 	 * Read the package metadata for the given package from the
@@ -37,7 +37,7 @@ class XmlReader implements \F3\FLOW3\Package\MetaData\ReaderInterface {
 	 * @return MetaData A package meta data instance with the data from the package's Package.xml file.
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function readPackageMetaData(\F3\FLOW3\Package\PackageInterface $package) {
+	static public function readPackageMetaData(\F3\FLOW3\Package\PackageInterface $package) {
 		$packageInfoPath = $package->getMetaPath();
 
 		$meta = new \F3\FLOW3\Package\MetaData($package->getPackageKey());
@@ -50,11 +50,11 @@ class XmlReader implements \F3\FLOW3\Package\MetaData\ReaderInterface {
 			$meta->setTitle((string)$xml->title);
 			$meta->setDescription((string)$xml->description);
 
-			$this->readCategories($xml, $meta);
+			self::readCategories($xml, $meta);
 
-			$this->readParties($xml, $meta);
+			self::readParties($xml, $meta);
 
-			$this->readConstraints($xml, $meta);
+			self::readConstraints($xml, $meta);
 		}
 
 		return $meta;
@@ -68,7 +68,7 @@ class XmlReader implements \F3\FLOW3\Package\MetaData\ReaderInterface {
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	protected function readCategories(\SimpleXMLElement $xml, \F3\FLOW3\Package\MetaData $meta) {
+	static protected function readCategories(\SimpleXMLElement $xml, \F3\FLOW3\Package\MetaData $meta) {
 		if (isset($xml->categories) && count($xml->categories)) {
 			foreach ($xml->categories->category as $category) {
 				$meta->addCategory((string)$category);
@@ -84,7 +84,7 @@ class XmlReader implements \F3\FLOW3\Package\MetaData\ReaderInterface {
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	protected function readParties(\SimpleXMLElement $xml, \F3\FLOW3\Package\MetaData $meta) {
+	static protected function readParties(\SimpleXMLElement $xml, \F3\FLOW3\Package\MetaData $meta) {
 		if (isset($xml->parties) && count($xml->parties)) {
 			if (isset($xml->parties->person) && count($xml->parties->person)) {
 				foreach ($xml->parties->person as $person) {
@@ -112,7 +112,7 @@ class XmlReader implements \F3\FLOW3\Package\MetaData\ReaderInterface {
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	protected function readConstraints(\SimpleXMLElement $xml, \F3\FLOW3\Package\MetaData $meta) {
+	static protected function readConstraints(\SimpleXMLElement $xml, \F3\FLOW3\Package\MetaData $meta) {
 		foreach ($meta->getConstraintTypes() as $constraintType) {
 			if ($xml->constraints->{$constraintType}) {
 				foreach ($xml->constraints->{$constraintType}->children() as $constraint) {
