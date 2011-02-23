@@ -27,6 +27,7 @@ namespace F3\FLOW3\AOP\Pointcut;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
+ * @proxy disable
  */
 class PointcutFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 
@@ -49,10 +50,10 @@ class PointcutFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	protected $pointcut;
 
 	/**
-	 * A reference to the AOP Framework
-	 * @var \F3\FLOW3\AOP\Framework
+	 * A reference to the AOP Proxy ClassBuilder
+	 * @var \F3\FLOW3\AOP\Builder\ProxyClassBuilder
 	 */
-	protected $aopFramework;
+	protected $proxyClassBuilder;
 
 	/**
 	 * The constructor - initializes the pointcut filter with the name of the pointcut we're refering to
@@ -67,14 +68,14 @@ class PointcutFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	}
 
 	/**
-	 * Injects the AOP Framework
+	 * Injects the AOP Proxy Class Builder
 	 *
-	 * @param \F3\FLOW3\AOP\Framework $aopFramework
+	 * @param \F3\FLOW3\AOP\Builder\ProxyClassBuilder $proxyClassBuilder
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectAopFramework(\F3\FLOW3\AOP\Framework $aopFramework) {
-		$this->aopFramework = $aopFramework;
+	public function injectProxyClassBuilder(\F3\FLOW3\AOP\Builder\ProxyClassBuilder $proxyClassBuilder) {
+		$this->proxyClassBuilder = $proxyClassBuilder;
 	}
 
 	/**
@@ -89,7 +90,7 @@ class PointcutFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	 */
 	public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier) {
 		if ($this->pointcut === NULL) {
-			$this->pointcut = $this->aopFramework->findPointcut($this->aspectClassName, $this->pointcutMethodName);
+			$this->pointcut = $this->proxyClassBuilder->findPointcut($this->aspectClassName, $this->pointcutMethodName);
 		}
 		if ($this->pointcut === FALSE) throw new \F3\FLOW3\AOP\Exception\UnknownPointcutException('No pointcut "' . $this->pointcutMethodName . '" found in aspect class "' . $this->aspectClassName . '" .', 1172223694);
 		return $this->pointcut->matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier);
@@ -113,7 +114,7 @@ class PointcutFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	 */
 	public function getRuntimeEvaluationsDefinition() {
 		if ($this->pointcut === NULL) {
-			$this->pointcut = $this->aopFramework->findPointcut($this->aspectClassName, $this->pointcutMethodName);
+			$this->pointcut = $this->proxyClassBuilder->findPointcut($this->aspectClassName, $this->pointcutMethodName);
 		}
 		if ($this->pointcut === FALSE) return array();
 

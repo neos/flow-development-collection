@@ -36,6 +36,11 @@ abstract class AbstractMethodInterceptorBuilder {
 	protected $reflectionService;
 
 	/**
+	 * @var \F3\FLOW3\Object\Proxy\Compiler
+	 */
+	protected $compiler;
+
+	/**
 	 * Injects the reflection service
 	 *
 	 * @param F3\FLOW3\Reflection\ReflectionService $reflectionService The reflection service
@@ -44,6 +49,15 @@ abstract class AbstractMethodInterceptorBuilder {
 	 */
 	public function injectReflectionService(\F3\FLOW3\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
+	}
+
+	/**
+	 * @param \F3\FLOW3\Object\Proxy\Compiler $compiler
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectCompiler(\F3\FLOW3\Object\Proxy\Compiler $compiler) {
+		$this->compiler = $compiler;
 	}
 
 	/**
@@ -138,49 +152,32 @@ abstract class AbstractMethodInterceptorBuilder {
 	}
 
 	/**
-	 * Builds the method docblock for the specified method keeping the vital
-	 * annotations to be used in a method interceptor in the proxy class.
-	 *
-	 * @param string $className Name of the class the method is declared in
-	 * @param string $methodName Name of the method to create the parameters code for
-	 * @return string $methodDocumentation Passed by reference, will contain the DocComment for the given method
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function buildMethodDocumentation($className, $methodName) {
-
-		if ($className === NULL || $methodName === NULL) return '';
-
-		$methodDocumentation = '';
-		$methodTags = $this->reflectionService->getMethodTagsValues($className, $methodName);
-		$ignoredTags = $this->reflectionService->getIgnoredTags();
-		foreach ($methodTags as $tag => $values) {
-			if (!in_array($tag, $ignoredTags)) {
-				foreach ($values as $value) {
-					$methodDocumentation  .= chr(10) . chr(9) . ' * @' . $tag . ' ' . $value;
-				}
-			}
-		}
-		return $methodDocumentation;
-	}
-
-	/**
 	 * Builds the PHP code for the method arguments array which is passed to
 	 * the constructor of a new join point. Used in the method interceptor
-	 * functions
+	 * functions.
 	 *
 	 * @param string $className Name of the declaring class of the method
 	 * @param string $methodName Name of the method to create arguments array code for
+	 * @param boolean $useArgumentsArray If set, the $methodArguments array will be built from $arguments instead of using the actual parameter variables.
 	 * @return string The generated code to be used in an "array()" definition
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function buildMethodArgumentsArrayCode($className, $methodName) {
+	protected function buildMethodArgumentsArrayCode($className, $methodName, $useArgmentsArray = FALSE) {
 		if ($className === NULL || $methodName === NULL) return '';
-		$argumentsArrayCode = '';
+
+		$argumentsArrayCode = "\n\t\t\t\$methodArguments = array();\n";
+
 		$methodParameters = $this->reflectionService->getMethodParameters($className, $methodName);
 		if (count($methodParameters) > 0) {
 			$argumentsArrayCode .= "\n";
+			$argumentIndex = 0;
 			foreach ($methodParameters as $methodParameterName => $methodParameterInfo) {
-				$argumentsArrayCode .= "\t\t\t\t'" . $methodParameterName . "' => \$" . $methodParameterName . ",\n";
+				if ($useArgmentsArray) {
+					$argumentsArrayCode .= "\t\t\tif (isset(\$arguments[$argumentIndex])) \$methodArguments['$methodParameterName'] = \$arguments[$argumentIndex];\n";
+				} else {
+					$argumentsArrayCode .= "\t\t\t\$methodArguments['$methodParameterName'] = \$$methodParameterName;\n";
+				}
+				$argumentIndex ++;
 			}
 			$argumentsArrayCode .= "\t\t\t";
 		}
@@ -218,7 +215,7 @@ abstract class AbstractMethodInterceptorBuilder {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function buildAdvicesCode(array $groupedAdvices, $methodName, $targetClassName) {
-		$advicesCode = '';
+		$advicesCode = $this->buildMethodArgumentsArrayCode($targetClassName, $methodName, ($methodName === '__construct'));
 
 		if (isset ($groupedAdvices['F3\FLOW3\AOP\Advice\AfterThrowingAdvice']) || isset ($groupedAdvices['F3\FLOW3\AOP\Advice\AfterAdvice'])) {
 			$advicesCode .= "\n\t\t\$result = NULL;\n\t\t\$afterAdviceInvoked = FALSE;\n\t\ttry {\n";

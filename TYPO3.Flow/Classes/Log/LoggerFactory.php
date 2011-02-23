@@ -31,23 +31,6 @@ namespace F3\FLOW3\Log;
 class LoggerFactory {
 
 	/**
-	 * A reference to the object factory
-	 *
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
-	 */
-	protected $objectManager;
-
-	/**
-	 * Constructs this factory
-	 *
-	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager A reference to the object factory
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function __construct(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
-		$this->objectManager = $objectManager;
-	}
-
-	/**
 	 * Factory method which creates the specified logger along with the specified backend(s).
 	 *
 	 * @param string $identifier An identifier for the logger
@@ -58,18 +41,18 @@ class LoggerFactory {
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
-	public function create($identifier, $loggerObjectName, $backendObjectNames, array $backendOptions = array()) {
-		$logger = $this->objectManager->create($loggerObjectName);
+	static public function create($identifier, $loggerObjectName, $backendObjectNames, array $backendOptions = array()) {
+		$logger = new $loggerObjectName;
 
 		if (is_array($backendObjectNames)) {
 			foreach ($backendObjectNames as $i => $backendObjectName) {
 				if (isset($backendOptions[$i])) {
-					$backend = $this->objectManager->create($backendObjectName, $backendOptions[$i]);
+					$backend = new $backendObjectName($backendOptions[$i]);
 					$logger->addBackend($backend);
 				}
 			}
 		} else {
-			$backend = $this->objectManager->create($backendObjectNames, $backendOptions);
+			$backend = new $backendObjectNames($backendOptions);
 			$logger->addBackend($backend);
 		}
 		return $logger;

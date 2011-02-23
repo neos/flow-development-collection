@@ -42,43 +42,17 @@ class AdvicedMethodInterceptorBuilder extends \F3\FLOW3\AOP\Builder\AbstractMeth
 	public function build($methodName, array $interceptedMethods, $targetClassName) {
 		if ($methodName === '__construct') throw new \F3\FLOW3\AOP\Exception('The ' . __CLASS__ . ' cannot build constructor interceptor code.', 1173107446);
 
-		$groupedAdvices = $interceptedMethods[$methodName]['groupedAdvices'];
-		$declaringClassName = $interceptedMethods[$methodName]['declaringClassName'];
+		$proxyMethod = $this->compiler->getProxyClass($targetClassName)->getMethod($methodName);
 
-		$methodInterceptorCode = '';
+		$groupedAdvices = $interceptedMethods[$methodName]['groupedAdvices'];
 		$advicesCode = $this->buildAdvicesCode($groupedAdvices, $methodName, $targetClassName);
 
-		$methodDocumentation = $this->buildMethodDocumentation($declaringClassName, $methodName);
-		$methodParametersCode = $this->buildMethodParametersCode($declaringClassName, $methodName, TRUE);
-
-		$staticKeyword = $this->reflectionService->isMethodStatic($declaringClassName, $methodName) ? 'static ' : '';
-
-		$methodInterceptorCode .= '
-	/**
-	 * Interceptor for the method ' . $methodName . '().
-	 * ' . $methodDocumentation . '
-	 * @return mixed Result of the advice chain or the original method (see earlier @return annotation)
-	 */
-	' . $staticKeyword . 'public function ' . $methodName . '(' . $methodParametersCode . ') {
-';
 		if ($methodName !== NULL || $methodName === '__wakeup') {
-			$methodInterceptorCode .= '
+			$proxyMethod->addPreParentCallCode('
 		if (isset($this->FLOW3_AOP_Proxy_methodIsInAdviceMode[\'' . $methodName . '\'])) {
-';
-
-			if ($declaringClassName === NULL || interface_exists($declaringClassName, TRUE)) {
-				$methodInterceptorCode .= '
-			$result = NULL;
-';
-			} else {
-				$methodInterceptorCode .= '
-			$result = parent::' . $methodName . '(' . $this->buildMethodParametersCode($declaringClassName, $methodName, FALSE) . ');
-';
-			}
-			$methodInterceptorCode .= '
-		} else {';
-			$methodInterceptorCode .= '
-			$methodArguments = array(' . $this->buildMethodArgumentsArrayCode($declaringClassName, $methodName) . ');
+');
+			$proxyMethod->addPostParentCallCode('
+		} else {
 			$this->FLOW3_AOP_Proxy_methodIsInAdviceMode[\'' . $methodName . '\'] = TRUE;
 			try {
 			' . $advicesCode . '
@@ -88,13 +62,8 @@ class AdvicedMethodInterceptorBuilder extends \F3\FLOW3\AOP\Builder\AbstractMeth
 			}
 			unset($this->FLOW3_AOP_Proxy_methodIsInAdviceMode[\'' . $methodName . '\']);
 		}
-		return $result;
-';
+');
 		}
-		$methodInterceptorCode .= '
-	}
-';
-		return $methodInterceptorCode;
 	}
 }
 

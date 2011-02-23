@@ -41,11 +41,11 @@ class PointcutFilterTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$methodDeclaringClassName = 'Baz';
 		$pointcutQueryIdentifier = 42;
 
-		$mockAOPFramework = $this->getMock('F3\FLOW3\AOP\Framework', array('findPointcut'), array(), '', FALSE);
-		$mockAOPFramework->expects($this->once())->method('findPointcut')->with('Aspect', 'pointcut')->will($this->returnValue(FALSE));
+		$mockProxyClassBuilder = $this->getMock('F3\FLOW3\AOP\Builder\ProxyClassBuilder', array('findPointcut'), array(), '', FALSE);
+		$mockProxyClassBuilder->expects($this->once())->method('findPointcut')->with('Aspect', 'pointcut')->will($this->returnValue(FALSE));
 
 		$pointcutFilter = new \F3\FLOW3\AOP\Pointcut\PointcutFilter('Aspect', 'pointcut');
-		$pointcutFilter->injectAOPFramework($mockAOPFramework);
+		$pointcutFilter->injectProxyClassBuilder($mockProxyClassBuilder);
 		$pointcutFilter->matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier);
 	}
 
@@ -62,11 +62,11 @@ class PointcutFilterTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockPointcut = $this->getMock('F3\FLOW3\AOP\Pointcut\Pointcut', array('matches'), array(), '', FALSE);
 		$mockPointcut->expects($this->once())->method('matches')->with($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier)->will($this->returnValue('the result'));
 
-		$mockAOPFramework = $this->getMock('F3\FLOW3\AOP\Framework', array('findPointcut'), array(), '', FALSE);
-		$mockAOPFramework->expects($this->once())->method('findPointcut')->with('Aspect', 'pointcut')->will($this->returnValue($mockPointcut));
+		$mockProxyClassBuilder = $this->getMock('F3\FLOW3\AOP\Builder\ProxyClassBuilder', array('findPointcut'), array(), '', FALSE);
+		$mockProxyClassBuilder->expects($this->once())->method('findPointcut')->with('Aspect', 'pointcut')->will($this->returnValue($mockPointcut));
 
 		$pointcutFilter = new \F3\FLOW3\AOP\Pointcut\PointcutFilter('Aspect', 'pointcut');
-		$pointcutFilter->injectAOPFramework($mockAOPFramework);
+		$pointcutFilter->injectProxyClassBuilder($mockProxyClassBuilder);
 		$this->assertSame('the result', $pointcutFilter->matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier));
 	}
 
@@ -78,11 +78,11 @@ class PointcutFilterTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockPointcut = $this->getMock('F3\FLOW3\AOP\Pointcut\Pointcut', array(), array(), '', FALSE);
 		$mockPointcut->expects($this->once())->method('getRuntimeEvaluationsDefinition')->will($this->returnValue(array('evaluations')));
 
-		$mockAOPFramework = $this->getMock('F3\FLOW3\AOP\Framework', array('findPointcut'), array(), '', FALSE);
-		$mockAOPFramework->expects($this->once())->method('findPointcut')->with('Aspect', 'pointcut')->will($this->returnValue($mockPointcut));
+		$mockProxyClassBuilder = $this->getMock('F3\FLOW3\AOP\Builder\ProxyClassBuilder', array('findPointcut'), array(), '', FALSE);
+		$mockProxyClassBuilder->expects($this->once())->method('findPointcut')->with('Aspect', 'pointcut')->will($this->returnValue($mockPointcut));
 
 		$pointcutFilter = new \F3\FLOW3\AOP\Pointcut\PointcutFilter('Aspect', 'pointcut');
-		$pointcutFilter->injectAOPFramework($mockAOPFramework);
+		$pointcutFilter->injectProxyClassBuilder($mockProxyClassBuilder);
 		$this->assertEquals(array('evaluations'), $pointcutFilter->getRuntimeEvaluationsDefinition(), 'Something different from an array was returned.');
 	}
 
@@ -91,11 +91,11 @@ class PointcutFilterTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getRuntimeEvaluationsDefinitionReturnsAnEmptyArrayIfThePointcutDoesNotExist() {
-		$mockAOPFramework = $this->getMock('F3\FLOW3\AOP\Framework', array('findPointcut'), array(), '', FALSE);
-		$mockAOPFramework->expects($this->once())->method('findPointcut')->with('Aspect', 'pointcut')->will($this->returnValue(FALSE));
+		$mockProxyClassBuilder = $this->getMock('F3\FLOW3\AOP\Builder\ProxyClassBuilder', array('findPointcut'), array(), '', FALSE);
+		$mockProxyClassBuilder->expects($this->once())->method('findPointcut')->with('Aspect', 'pointcut')->will($this->returnValue(FALSE));
 
 		$pointcutFilter = new \F3\FLOW3\AOP\Pointcut\PointcutFilter('Aspect', 'pointcut');
-		$pointcutFilter->injectAOPFramework($mockAOPFramework);
+		$pointcutFilter->injectProxyClassBuilder($mockProxyClassBuilder);
 		$this->assertEquals(array(), $pointcutFilter->getRuntimeEvaluationsDefinition(), 'The definition array has not been returned as exptected.');
 	}
 }

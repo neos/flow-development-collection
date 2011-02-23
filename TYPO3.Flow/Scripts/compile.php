@@ -1,6 +1,5 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Object;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,12 +22,32 @@ namespace F3\FLOW3\Object;
  *                                                                        */
 
 /**
- * A marker interface for Proxy Classes
+ * Bootstrap for the FLOW3 code compiler
  *
  * @author Robert Lemke <robert@typo3.org>
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-interface ProxyInterface {
+
+require(__DIR__ . '/../Classes/Core/Bootstrap.php');
+
+if (PHP_SAPI !== 'cli') {
+	exit(1);
+};
+
+if ($argc !== 4) {
+	exit(2);
 }
+
+define('FLOW3_PATH_ROOT', $argv[2]);
+define('FLOW3_PATH_WEB', $argv[3]);
+\F3\FLOW3\Core\Bootstrap::defineConstants();
+
+if ($argv[1] === 'Testing') {
+	require_once('PHPUnit/Autoload.php');
+	require_once(FLOW3_PATH_ROOT . 'Packages/Framework/FLOW3/Tests/BaseTestCase.php');
+	require_once(FLOW3_PATH_ROOT . 'Packages/Framework/FLOW3/Tests/FunctionalTestCase.php');
+}
+
+$flow3 = new \F3\FLOW3\Core\Bootstrap($argv[1]);
+$flow3->compile();
 
 ?>

@@ -55,7 +55,8 @@ class ConfigurationBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$objectConfiguration->setLifecycleShutdownMethodName('shutdownMethod');
 		$objectConfiguration->setAutowiring(\F3\FLOW3\Object\Configuration\Configuration::AUTOWIRING_MODE_OFF);
 
-		$builtObjectConfiguration = \F3\FLOW3\Object\Configuration\ConfigurationBuilder::buildFromConfigurationArray('TestObject', $configurationArray, __CLASS__);
+		$configurationBuilder = $this->getAccessibleMock('F3\FLOW3\Object\Configuration\ConfigurationBuilder', array('dummy'));
+		$builtObjectConfiguration = $configurationBuilder->_call('parseConfigurationArray', 'TestObject', $configurationArray, __CLASS__);
 		$this->assertEquals($objectConfiguration, $builtObjectConfiguration, 'The manually created and the built object configuration don\'t match.');
 	}
 
@@ -69,12 +70,13 @@ class ConfigurationBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$configurationArray['arguments'][1]['object']['className'] = __CLASS__;
 
 		$argumentObjectConfiguration = new \F3\FLOW3\Object\Configuration\Configuration('Foo', __CLASS__);
-		$argumentObjectConfiguration->setConfigurationSourceHint(__CLASS__ . ' / argument "1"');
+		$argumentObjectConfiguration->setConfigurationSourceHint(__CLASS__ . ', argument "1"');
 
 		$objectConfiguration = new \F3\FLOW3\Object\Configuration\Configuration('TestObject', 'TestObject');
 		$objectConfiguration->setArgument(new \F3\FLOW3\Object\Configuration\ConfigurationArgument(1, $argumentObjectConfiguration, \F3\FLOW3\Object\Configuration\ConfigurationArgument::ARGUMENT_TYPES_OBJECT));
 
-		$builtObjectConfiguration = \F3\FLOW3\Object\Configuration\ConfigurationBuilder::buildFromConfigurationArray('TestObject', $configurationArray, __CLASS__);
+		$configurationBuilder = $this->getAccessibleMock('F3\FLOW3\Object\Configuration\ConfigurationBuilder', array('dummy'));
+		$builtObjectConfiguration = $configurationBuilder->_call('parseConfigurationArray', 'TestObject', $configurationArray, __CLASS__);
 		$this->assertEquals($objectConfiguration, $builtObjectConfiguration);
 	}
 
@@ -88,12 +90,13 @@ class ConfigurationBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$configurationArray['properties']['theProperty']['object']['className'] = __CLASS__;
 
 		$propertyObjectConfiguration = new \F3\FLOW3\Object\Configuration\Configuration('Foo', __CLASS__);
-		$propertyObjectConfiguration->setConfigurationSourceHint(__CLASS__ . ' / property "theProperty"');
+		$propertyObjectConfiguration->setConfigurationSourceHint(__CLASS__ . ', property "theProperty"');
 
 		$objectConfiguration = new \F3\FLOW3\Object\Configuration\Configuration('TestObject', 'TestObject');
 		$objectConfiguration->setProperty(new \F3\FLOW3\Object\Configuration\ConfigurationProperty('theProperty', $propertyObjectConfiguration, \F3\FLOW3\Object\Configuration\ConfigurationProperty::PROPERTY_TYPES_OBJECT));
 
-		$builtObjectConfiguration = \F3\FLOW3\Object\Configuration\ConfigurationBuilder::buildFromConfigurationArray('TestObject', $configurationArray, __CLASS__);
+		$configurationBuilder = $this->getAccessibleMock('F3\FLOW3\Object\Configuration\ConfigurationBuilder', array('dummy'));
+		$builtObjectConfiguration = $configurationBuilder->_call('parseConfigurationArray', 'TestObject', $configurationArray, __CLASS__);
 		$this->assertEquals($objectConfiguration, $builtObjectConfiguration);
 	}
 
@@ -110,7 +113,8 @@ class ConfigurationBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$objectConfiguration->setProperty(new \F3\FLOW3\Object\Configuration\ConfigurationProperty('straightValueProperty', array('foo' => 'bar', 'object' => 'nö')));
 		$objectConfiguration->setArgument(new \F3\FLOW3\Object\Configuration\ConfigurationArgument(1, array('foo' => 'bar', 'object' => 'nö')));
 
-		$builtObjectConfiguration = \F3\FLOW3\Object\Configuration\ConfigurationBuilder::buildFromConfigurationArray('TestObject', $configurationArray, __CLASS__);
+		$configurationBuilder = $this->getAccessibleMock('F3\FLOW3\Object\Configuration\ConfigurationBuilder', array('dummy'));
+		$builtObjectConfiguration = $configurationBuilder->_call('parseConfigurationArray', 'TestObject', $configurationArray, __CLASS__);
 		$this->assertEquals($objectConfiguration, $builtObjectConfiguration);
 	}
 
@@ -127,23 +131,9 @@ class ConfigurationBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$objectConfiguration->setArgument(new \F3\FLOW3\Object\Configuration\ConfigurationArgument(1, 'F3.Foo.Bar', \F3\FLOW3\Object\Configuration\ConfigurationProperty::PROPERTY_TYPES_SETTING));
 		$objectConfiguration->setProperty(new \F3\FLOW3\Object\Configuration\ConfigurationProperty('someProperty', 'F3.Bar.Baz', \F3\FLOW3\Object\Configuration\ConfigurationProperty::PROPERTY_TYPES_SETTING));
 
-		$builtObjectConfiguration = \F3\FLOW3\Object\Configuration\ConfigurationBuilder::buildFromConfigurationArray('TestObject', $configurationArray, __CLASS__);
+		$configurationBuilder = $this->getAccessibleMock('F3\FLOW3\Object\Configuration\ConfigurationBuilder', array('dummy'));
+		$builtObjectConfiguration = $configurationBuilder->_call('parseConfigurationArray', 'TestObject', $configurationArray, __CLASS__);
 		$this->assertEquals($objectConfiguration, $builtObjectConfiguration);
-	}
-
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function existingObjectConfigurationIsUsedIfSpecified() {
-		$configurationArray = array();
-		$configurationArray['scope'] = 'prototype';
-		$configurationArray['properties']['firstProperty'] = 'straightValue';
-
-		$objectConfiguration = new \F3\FLOW3\Object\Configuration\Configuration('TestObject', __CLASS__);
-
-		$builtObjectConfiguration = \F3\FLOW3\Object\Configuration\ConfigurationBuilder::buildFromConfigurationArray('TestObject', $configurationArray, __CLASS__, $objectConfiguration);
-		$this->assertSame($objectConfiguration, $builtObjectConfiguration, 'The returned object configuration object is not the one we passed to the builder.');
 	}
 
 	/**
@@ -153,7 +143,8 @@ class ConfigurationBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function invalidOptionResultsInException() {
 		$configurationArray = array('scoopy' => 'prototype');
-		$builtObjectConfiguration = \F3\FLOW3\Object\Configuration\ConfigurationBuilder::buildFromConfigurationArray('TestObject', $configurationArray, __CLASS__);
+		$configurationBuilder = $this->getAccessibleMock('F3\FLOW3\Object\Configuration\ConfigurationBuilder', array('dummy'));
+		$configurationBuilder->_call('parseConfigurationArray', 'TestObject', $configurationArray, __CLASS__);
 	}
 }
 ?>

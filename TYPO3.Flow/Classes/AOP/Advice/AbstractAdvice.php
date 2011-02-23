@@ -60,13 +60,13 @@ class AbstractAdvice implements \F3\FLOW3\AOP\Advice\AdviceInterface {
 	 *
 	 * @param string $aspectObjectName Name of the aspect object containing the advice
 	 * @param string $adviceMethodName Name of the advice method
-	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager A reference to the object manager
+	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager Only require if a runtime evaluations function is specified
 	 * @param \Closure $runtimeEvaluator Runtime evaluations function
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function __construct($aspectObjectName, $adviceMethodName, \F3\FLOW3\Object\ObjectManagerInterface $objectManager, \Closure $runtimeEvaluator = NULL) {
+	public function __construct($aspectObjectName, $adviceMethodName, \F3\FLOW3\Object\ObjectManagerInterface $objectManager = NULL, \Closure $runtimeEvaluator = NULL) {
 		$this->aspectObjectName = $aspectObjectName;
 		$this->adviceMethodName = $adviceMethodName;
 		$this->objectManager = $objectManager;

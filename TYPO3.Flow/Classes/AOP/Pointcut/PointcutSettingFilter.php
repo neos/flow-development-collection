@@ -29,6 +29,7 @@ namespace F3\FLOW3\AOP\Pointcut;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
+ * @proxy disable
  */
 class PointcutSettingFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 
@@ -45,7 +46,7 @@ class PointcutSettingFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInte
 	 * The value of the specified setting
 	 * @var mixed
 	 */
-	protected $actualSettingValue = FALSE;
+	protected $actualSettingValue;
 
 	/**
 	 * The condition value to match against the configuration setting
@@ -73,15 +74,6 @@ class PointcutSettingFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInte
 	 */
 	public function injectConfigurationManager(\F3\FLOW3\Configuration\ConfigurationManager $configurationManager) {
 		$this->configurationManager = $configurationManager;
-	}
-
-	/**
-	 * Initializes this filter
-	 *
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function initializeObject() {
 		$this->parseConfigurationOptionPath($this->settingComparisonExpression);
 	}
 

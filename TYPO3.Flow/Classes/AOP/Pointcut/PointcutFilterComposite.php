@@ -30,6 +30,7 @@ namespace F3\FLOW3\AOP\Pointcut;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @see \F3\FLOW3\AOP\Pointcut\PointcutExpressionParser, \F3\FLOW3\AOP\Pointcut\PointcutClassNameFilter, \F3\FLOW3\AOP\Pointcut\PointcutMethodFilter
  * @scope prototype
+ * @proxy disable
  */
 class PointcutFilterComposite implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 

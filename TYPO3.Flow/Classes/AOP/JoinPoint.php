@@ -33,7 +33,7 @@ namespace F3\FLOW3\AOP;
 class JoinPoint implements \F3\FLOW3\AOP\JoinPointInterface {
 
 	/**
-	 * @var \F3\FLOW3\AOP\ProxyInterface A reference to the proxy object
+	 * @var \F3\FLOW3\Object\Proxy\ProxyInterface A reference to the proxy object
 	 */
 	protected $proxy;
 
@@ -70,7 +70,7 @@ class JoinPoint implements \F3\FLOW3\AOP\JoinPointInterface {
 	/**
 	 * Constructor, creates the join point
 	 *
-	 * @param \F3\FLOW3\AOP\ProxyInterface $proxy Reference to the proxy class instance of the target class
+	 * @param object $proxy Reference to the proxy class instance of the target class
 	 * @param string $className Class name of the target class this join point refers to
 	 * @param string $methodName Method name of the target method which is about to or has been invoked
 	 * @param array $methodArguments Array of method arguments which have been passed to the target method
@@ -80,7 +80,7 @@ class JoinPoint implements \F3\FLOW3\AOP\JoinPointInterface {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(\F3\FLOW3\AOP\ProxyInterface $proxy, $className, $methodName, $methodArguments, $adviceChain = NULL, $result = NULL, $exception = NULL) {
+	public function __construct($proxy, $className, $methodName, $methodArguments, $adviceChain = NULL, $result = NULL, $exception = NULL) {
 		if ($adviceChain !== NULL && !$adviceChain instanceof \F3\FLOW3\AOP\Advice\AdviceChain) throw new \InvalidArgumentException('The advice chain must be an instance of \F3\FLOW3\AOP\Advice\AdviceChain.', 1171482537);
 
 		$this->proxy = $proxy;
@@ -95,7 +95,7 @@ class JoinPoint implements \F3\FLOW3\AOP\JoinPointInterface {
 	/**
 	 * Returns the reference to the proxy class instance
 	 *
-	 * @return \F3\FLOW3\AOP\ProxyInterface
+	 * @return \F3\FLOW3\Object\Proxy\ProxyInterface
 	 * @api
 	 * @author Robert Lemke <robert@typo3.org>
 	 */

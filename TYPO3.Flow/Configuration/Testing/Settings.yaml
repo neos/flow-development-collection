@@ -20,9 +20,9 @@ FLOW3:
 
   log:
     systemLogger:
-      backendOptions: { logFileURL: %FLOW3_PATH_DATA%Logs/%FLOW3_SAPITYPE%/System_Testing.log, createParentDirectories: y, severityThreshold: %LOG_DEBUG% }
+      backendOptions: { logFileURL: %FLOW3_PATH_DATA%Logs/System_Testing.log, createParentDirectories: y, severityThreshold: %LOG_DEBUG% }
     securityLogger:
-      backendOptions: { logFileURL: %FLOW3_PATH_DATA%Logs/%FLOW3_SAPITYPE%/Security_Testing.log, createParentDirectories: y, severityThreshold: %LOG_DEBUG% }
+      backendOptions: { logFileURL: %FLOW3_PATH_DATA%Logs/Security_Testing.log, createParentDirectories: y, severityThreshold: %LOG_DEBUG% }
 
   object:
     registerFunctionalTestClasses: y
@@ -40,3 +40,8 @@ FLOW3:
       providers:
         DefaultProvider:
           providerClass: F3\FLOW3\Security\Authentication\Provider\TestingProvider
+
+  tests:
+    functional:
+      aop:
+        pointcutExpressionSettingFilterOptionA: y

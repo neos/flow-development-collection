@@ -131,8 +131,7 @@ class ObjectSerializer {
 		}
 		$this->objectReferences->attach($object);
 
-		$className = ($object instanceof \F3\FLOW3\AOP\ProxyInterface) ? $object->FLOW3_AOP_Proxy_getProxyTargetClassName() : get_class($object);
-
+		$className = get_class($object);
 		$propertyArray = array();
 		foreach ($this->reflectionService->getClassPropertyNames($className) as $propertyName) {
 
@@ -140,12 +139,8 @@ class ObjectSerializer {
 				continue;
 			}
 
-			if ($object instanceof \F3\FLOW3\AOP\ProxyInterface) {
-				$propertyValue = $object->FLOW3_AOP_Proxy_getProperty($propertyName);
-			} else {
-				$propertyReflection = new \F3\FLOW3\Reflection\PropertyReflection($className, $propertyName);
-				$propertyValue = $propertyReflection->getValue($object);
-				}
+			$propertyReflection = new \F3\FLOW3\Reflection\PropertyReflection($className, $propertyName);
+			$propertyValue = $propertyReflection->getValue($object);
 
 			if (is_object($propertyValue) && isset($this->objectReferences[$propertyValue])) {
 				$propertyArray[$propertyName][self::TYPE] = 'object';
@@ -168,14 +163,13 @@ class ObjectSerializer {
 				$propertyArray[$propertyName][self::VALUE] = $this->buildStorageArrayForArrayProperty($propertyValue->getArrayCopy());
 
 			} elseif (is_object($propertyValue)
-						&& $propertyValue instanceof \F3\FLOW3\AOP\ProxyInterface
 						&& $propertyValue instanceof \F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface
 						&& $this->persistenceManager->isNewObject($propertyValue) === FALSE
 						&& ($this->reflectionService->isClassTaggedWith($propertyClassName, 'entity')
 						|| $this->reflectionService->isClassTaggedWith($propertyClassName, 'valueobject'))) {
 
 				$propertyArray[$propertyName][self::TYPE] = 'persistenceObject';
-				$propertyArray[$propertyName][self::VALUE] = $propertyValue->FLOW3_AOP_Proxy_getProxyTargetClassName() . ':' . $this->persistenceManager->getIdentifierByObject($propertyValue);
+				$propertyArray[$propertyName][self::VALUE] = get_class($propertyValue) . ':' . $this->persistenceManager->getIdentifierByObject($propertyValue);
 
 			} elseif (is_object($propertyValue)) {
 				$propertyObjectName = $this->objectManager->getObjectNameByClassName($propertyClassName);
@@ -299,13 +293,9 @@ class ObjectSerializer {
 					break;
 			}
 
-			if ($object instanceof \F3\FLOW3\AOP\ProxyInterface) {
-				$object->FLOW3_AOP_Proxy_setProperty($propertyName, $propertyValue);
-			} else {
-				$reflectionProperty = new \ReflectionProperty(get_class($object), $propertyName);
-				$reflectionProperty->setAccessible(TRUE);
-				$reflectionProperty->setValue($object, $propertyValue);
-			}
+			$reflectionProperty = new \ReflectionProperty(get_class($object), $propertyName);
+			$reflectionProperty->setAccessible(TRUE);
+			$reflectionProperty->setValue($object, $propertyValue);
 		}
 
 		return $object;

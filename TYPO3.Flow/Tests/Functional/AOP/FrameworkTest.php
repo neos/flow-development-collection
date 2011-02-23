@@ -76,5 +76,15 @@ class FrameworkTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 		$targetClass->setCurrentName($otherName);
 		$this->assertEquals('Hello, FLOW3', $targetClass->greetMany($splObjectStorage));
 	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function constructorAdvicesAreInvoked() {
+		$targetClass = $this->objectManager->get('F3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01');
+		$this->assertSame('AVRO RJ100 is lousier than A-380', $targetClass->constructorResult);
+	}
+
 }
 ?>

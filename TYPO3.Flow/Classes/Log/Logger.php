@@ -46,6 +46,21 @@ class Logger implements \F3\FLOW3\Log\SystemLoggerInterface, \F3\FLOW3\Log\Secur
 	}
 
 	/**
+	 * Sets the given backend as the only backend for this Logger.
+	 *
+	 * This method allows for conveniently injecting a backend through some Objects.yaml configuration.
+	 *
+	 * @param \F3\FLOW3\Log\Backend\BackendInterface $backend A backend implementation
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
+	 */
+	public function setBackend(\F3\FLOW3\Log\Backend\BackendInterface $backend) {
+		$this->backends = new \SplObjectStorage();
+		$this->backends->attach($backend);
+	}
+
+	/**
 	 * Adds the backend to which the logger sends the logging data
 	 *
 	 * @param \F3\FLOW3\Log\Backend\BackendInterface $backend A backend implementation

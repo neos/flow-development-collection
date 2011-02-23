@@ -27,6 +27,7 @@ namespace F3\FLOW3\Object\Configuration;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
+ * @proxy disable
  */
 class Configuration {
 
@@ -53,7 +54,7 @@ class Configuration {
 	 * If set, specifies the factory class used to create this object
 	 * @var string
 	 */
-	protected $factoryObjectName;
+	protected $factoryObjectName = '';
 
 	/**
 	 * Name of the factory method. Only used if $factoryObjectName is set.
@@ -337,7 +338,9 @@ class Configuration {
 			$this->arguments = array();
 		} else {
 			foreach ($arguments as $argument) {
-				$this->setArgument($argument);
+				if ($argument !== NULL) {
+					$this->setArgument($argument);
+				}
 			}
 		}
 	}

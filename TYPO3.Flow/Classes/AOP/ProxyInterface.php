@@ -28,7 +28,7 @@ namespace F3\FLOW3\AOP;
  * @author Robert Lemke <robert@typo3.org>
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-interface ProxyInterface extends \F3\FLOW3\Object\ProxyInterface {
+interface ProxyInterface extends \F3\FLOW3\Object\Proxy\ProxyInterface {
 
 	/**
 	 * Initializes the proxy and calls the (parent) constructor with the

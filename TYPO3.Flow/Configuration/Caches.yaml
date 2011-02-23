@@ -22,9 +22,6 @@ Default:
 ##
 # Definition of caches used by FLOW3:
 #
-FLOW3_AOP_ProxyClasses:
-  frontend: F3\FLOW3\Cache\Frontend\PhpFrontend
-  backend: F3\FLOW3\Cache\Backend\FileBackend
 FLOW3_AOP_ProxyBuildInformation: []
 FLOW3_AOP_TargetClassInformation: []
 FLOW3_Cache_ClassFiles: []
@@ -48,7 +45,10 @@ FLOW3_MVC_Web_Routing_Resolve:
   backend: F3\FLOW3\Cache\Backend\TransientMemoryBackend
   backendOptions:
     defaultLifetime: 0
-FLOW3_Object_Configurations: []
+FLOW3_Object_Classes:
+  frontend: F3\FLOW3\Cache\Frontend\PhpFrontend
+  backend: F3\FLOW3\Cache\Backend\FileBackend
+FLOW3_Object_Configuration: []
 FLOW3_ReflectionStatus:
   frontend: F3\FLOW3\Cache\Frontend\StringFrontend
 FLOW3_ReflectionData: []

@@ -189,7 +189,7 @@ class Debugger {
 			}
 		}
 
-		$className = ($object instanceof \F3\FLOW3\AOP\ProxyInterface) ? $object->FLOW3_AOP_Proxy_getProxyTargetClassName() : get_class($object);
+		$className = get_class($object);
 
 		if ($plaintext) {
 			$dump .= $className;
@@ -221,7 +221,7 @@ class Debugger {
 			}
 		}
 
-		if ($object instanceof \F3\FLOW3\AOP\ProxyInterface) {
+		if ($object instanceof \F3\FLOW3\Object\Proxy\ProxyInterface) {
 			if ($plaintext) {
 				$dump .= ' ' . self::ansiEscapeWrap('proxy', '41;37', $ansiColors);
 			} else {

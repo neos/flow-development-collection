@@ -33,6 +33,18 @@ class TargetClass01 {
 	protected $currentName;
 
 	/**
+	 * @var string
+	 */
+	public $constructorResult = '';
+
+	/**
+	 *
+	 */
+	public function __construct() {
+		$this->constructorResult .= 'AVRO RJ100';
+	}
+
+	/**
 	 * @return string
 	 */
 	public function sayHello() {

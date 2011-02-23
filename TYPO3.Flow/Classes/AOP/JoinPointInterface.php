@@ -34,7 +34,7 @@ interface JoinPointInterface {
 	/**
 	 * Returns the reference to the proxy class instance
 	 *
-	 * @return \F3\FLOW3\AOP\ProxyInterface
+	 * @return \F3\FLOW3\Object\Proxy\ProxyInterface
 	 */
 	public function getProxy();
 

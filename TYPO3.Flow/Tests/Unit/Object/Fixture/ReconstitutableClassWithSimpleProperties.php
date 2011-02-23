@@ -2,7 +2,7 @@
 declare(ENCODING = 'utf-8');
 namespace F3\FLOW3\Tests\Object\Fixture;
 
-class ReconstitutableClassWithSimpleProperties implements \F3\FLOW3\AOP\ProxyInterface {
+class ReconstitutableClassWithSimpleProperties implements \F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface, \F3\FLOW3\Object\Proxy\ProxyInterface {
 
 	/**
 	 * @var string

@@ -87,48 +87,6 @@ class AbstractMethodInterceptorBuilderTest extends \F3\FLOW3\Tests\UnitTestCase 
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function buildMethodDocumentationKeepsVitalAnnotations() {
-		$className = uniqid('TestClass');
-		eval('
-			class ' . $className . ' {
-				/**
-				 * @param string $arg1 Argument1
-				 * @param array $arg2 Argument2
-				 * @param \ArrayObject $arg3 Argument3
-				 * @return string ReturnValue
-				 * @validate $arg1 FooBar
-				 * @dontvalidate $arg3
-				 * @todo ingore this
-				 * @see something less important
-				 */
-				public function foo($arg1, array $arg2, \ArrayObject $arg3) {}
-			}
-		');
-
-		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService', array('detectAvailableClassNames', 'loadFromCache', 'saveToCache'), array(), '', FALSE, TRUE);
-		$mockReflectionService->expects($this->once())->method('detectAvailableClassNames')->will($this->returnValue(array($className)));
-		$mockReflectionService->expects($this->once())->method('loadFromCache')->will($this->returnValue(FALSE));
-		$mockReflectionService->initialize();
-
-		$expectedMethodDocumentation = '
-	 * @param string $arg1 Argument1
-	 * @param array $arg2 Argument2
-	 * @param \ArrayObject $arg3 Argument3
-	 * @return string ReturnValue
-	 * @validate $arg1 FooBar
-	 * @dontvalidate $arg3';
-
-		$builder = $this->getMock('F3\FLOW3\AOP\Builder\AbstractMethodInterceptorBuilder', array('build'), array(), '', FALSE);
-		$builder->injectReflectionService($mockReflectionService);
-
-		$actualMethodDocumentation = $builder->buildMethodDocumentation($className, 'foo');
-		$this->assertSame($expectedMethodDocumentation, $actualMethodDocumentation);
-	}
-
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
 	public function buildMethodParametersCodeReturnsAnEmptyStringIfTheClassNameIsNULL() {
 		$builder = $this->getAccessibleMock('F3\FLOW3\AOP\Builder\AbstractMethodInterceptorBuilder', array('build'), array(), '', FALSE);
 
@@ -153,11 +111,13 @@ class AbstractMethodInterceptorBuilderTest extends \F3\FLOW3\Tests\UnitTestCase 
 		$mockReflectionService->initialize(array($className));
 
 		$expectedCode = "
-				'arg1' => \$arg1,
-				'arg2' => \$arg2,
-				'arg3' => \$arg3,
-				'arg4' => \$arg4,
-				'arg5' => \$arg5,
+			\$methodArguments = array();
+
+			\$methodArguments['arg1'] = \$arg1;
+			\$methodArguments['arg2'] = \$arg2;
+			\$methodArguments['arg3'] = \$arg3;
+			\$methodArguments['arg4'] = \$arg4;
+			\$methodArguments['arg5'] = \$arg5;
 			";
 
 		$builder = $this->getAccessibleMock('F3\FLOW3\AOP\Builder\AbstractMethodInterceptorBuilder', array('build'), array(), '', FALSE);
@@ -202,128 +162,5 @@ class AbstractMethodInterceptorBuilderTest extends \F3\FLOW3\Tests\UnitTestCase 
 		$this->assertSame($expectedCode, $actualCode);
 	}
 
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function buildAdvicesCodeRendersMethodInterceptionCodeForAfterThrowingAdvice() {
-		$groupedAdvices = array(
-			'F3\FLOW3\AOP\Advice\AfterThrowingAdvice' => array()
-		);
-		$expectedCode = '
-		$result = NULL;
-		$afterAdviceInvoked = FALSE;
-		try {
-
-			$joinPoint = new \F3\FLOW3\AOP\JoinPoint($this, \'TargetClass\', \'foo\', $methodArguments);
-			$result = $this->FLOW3_AOP_Proxy_invokeJoinPoint($joinPoint);
-
-		} catch (\Exception $exception) {
-
-			$advices = $this->FLOW3_AOP_Proxy_targetMethodsAndGroupedAdvices[\'foo\'][\'F3\FLOW3\AOP\Advice\AfterThrowingAdvice\'];
-			$joinPoint = new \F3\FLOW3\AOP\JoinPoint($this, \'TargetClass\', \'foo\', $methodArguments, NULL, NULL, $exception);
-			foreach ($advices as $advice) {
-				$advice->invoke($joinPoint);
-			}
-
-			throw $exception;
-		}' . chr(10);
-
-		$builder = $this->getAccessibleMock('F3\FLOW3\AOP\Builder\AbstractMethodInterceptorBuilder', array('build'), array(), '', FALSE);
-		$actualCode = $builder->_call('buildAdvicesCode', $groupedAdvices, 'foo', 'TargetClass');
-		$this->assertSame($expectedCode, $actualCode);
-	}
-
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function buildAdvicesCodeRendersMethodInterceptionCodeForAfterAdvice() {
-		$groupedAdvices = array(
-			'F3\FLOW3\AOP\Advice\AfterAdvice' => array()
-		);
-		$expectedCode = '
-		$result = NULL;
-		$afterAdviceInvoked = FALSE;
-		try {
-
-			$joinPoint = new \F3\FLOW3\AOP\JoinPoint($this, \'TargetClass\', \'foo\', $methodArguments);
-			$result = $this->FLOW3_AOP_Proxy_invokeJoinPoint($joinPoint);
-
-			$advices = $this->FLOW3_AOP_Proxy_targetMethodsAndGroupedAdvices[\'foo\'][\'F3\FLOW3\AOP\Advice\AfterAdvice\'];
-			$joinPoint = new \F3\FLOW3\AOP\JoinPoint($this, \'TargetClass\', \'foo\', $methodArguments, NULL, $result);
-			$afterAdviceInvoked = TRUE;
-			foreach ($advices as $advice) {
-				$advice->invoke($joinPoint);
-			}
-
-		} catch (\Exception $exception) {
-
-			if (!$afterAdviceInvoked) {
-				$advices = $this->FLOW3_AOP_Proxy_targetMethodsAndGroupedAdvices[\'foo\'][\'F3\FLOW3\AOP\Advice\AfterAdvice\'];
-				$joinPoint = new \F3\FLOW3\AOP\JoinPoint($this, \'TargetClass\', \'foo\', $methodArguments, NULL, NULL, $exception);
-				foreach ($advices as $advice) {
-					$advice->invoke($joinPoint);
-				}
-			}
-
-			throw $exception;
-		}' . chr(10);
-
-		$builder = $this->getAccessibleMock('F3\FLOW3\AOP\Builder\AbstractMethodInterceptorBuilder', array('build'), array(), '', FALSE);
-		$actualCode = $builder->_call('buildAdvicesCode', $groupedAdvices, 'foo', 'TargetClass');
-		$this->assertSame($expectedCode, $actualCode);
-	}
-
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function buildAdvicesCodeRendersMethodInterceptionCodeForAroundAdviceCombinedWithBeforeAndAfterAdvice() {
-		$groupedAdvices = array(
-			'F3\FLOW3\AOP\Advice\BeforeAdvice' => array(),
-			'F3\FLOW3\AOP\Advice\AroundAdvice' => array(),
-			'F3\FLOW3\AOP\Advice\AfterAdvice' => array()
-		);
-		$expectedCode = '
-		$result = NULL;
-		$afterAdviceInvoked = FALSE;
-		try {
-
-			$advices = $this->FLOW3_AOP_Proxy_targetMethodsAndGroupedAdvices[\'foo\'][\'F3\FLOW3\AOP\Advice\BeforeAdvice\'];
-			$joinPoint = new \F3\FLOW3\AOP\JoinPoint($this, \'TargetClass\', \'foo\', $methodArguments);
-			foreach ($advices as $advice) {
-				$advice->invoke($joinPoint);
-			}
-
-			$adviceChains = $this->FLOW3_AOP_Proxy_getAdviceChains(\'foo\');
-			$adviceChain = $adviceChains[\'F3\FLOW3\AOP\Advice\AroundAdvice\'];
-			$adviceChain->rewind();
-			$result = $adviceChain->proceed(new \F3\FLOW3\AOP\JoinPoint($this, \'TargetClass\', \'foo\', $methodArguments, $adviceChain));
-
-			$advices = $this->FLOW3_AOP_Proxy_targetMethodsAndGroupedAdvices[\'foo\'][\'F3\FLOW3\AOP\Advice\AfterAdvice\'];
-			$joinPoint = new \F3\FLOW3\AOP\JoinPoint($this, \'TargetClass\', \'foo\', $methodArguments, NULL, $result);
-			$afterAdviceInvoked = TRUE;
-			foreach ($advices as $advice) {
-				$advice->invoke($joinPoint);
-			}
-
-		} catch (\Exception $exception) {
-
-			if (!$afterAdviceInvoked) {
-				$advices = $this->FLOW3_AOP_Proxy_targetMethodsAndGroupedAdvices[\'foo\'][\'F3\FLOW3\AOP\Advice\AfterAdvice\'];
-				$joinPoint = new \F3\FLOW3\AOP\JoinPoint($this, \'TargetClass\', \'foo\', $methodArguments, NULL, NULL, $exception);
-				foreach ($advices as $advice) {
-					$advice->invoke($joinPoint);
-				}
-			}
-
-			throw $exception;
-		}' . chr(10);
-
-		$builder = $this->getAccessibleMock('F3\FLOW3\AOP\Builder\AbstractMethodInterceptorBuilder', array('build'), array(), '', FALSE);
-		$actualCode = $builder->_call('buildAdvicesCode', $groupedAdvices, 'foo', 'TargetClass');
-		$this->assertSame($expectedCode, $actualCode);
-	}
 }
 ?>

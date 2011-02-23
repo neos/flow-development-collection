@@ -26,6 +26,7 @@ namespace F3\FLOW3\AOP\Builder;
  * A method interceptor build for constructors with advice.
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @proxy disable
  */
 class AdvicedConstructorInterceptorBuilder extends \F3\FLOW3\AOP\Builder\AbstractMethodInterceptorBuilder {
 
@@ -42,53 +43,28 @@ class AdvicedConstructorInterceptorBuilder extends \F3\FLOW3\AOP\Builder\Abstrac
 	public function build($methodName, array $interceptedMethods, $targetClassName) {
 		if ($methodName !== '__construct') throw new \F3\FLOW3\AOP\Exception('The ' . __CLASS__ . ' can only build constructor interceptor code.', 1231789021);
 
-		$declaringClassName = $interceptedMethods['__construct']['declaringClassName'];
-		if (method_exists($declaringClassName, '__construct')) {
-			$callParentCode = 'parent::__construct(' . $this->buildSavedConstructorParametersCode($declaringClassName) . ');';
-		} else {
-			$callParentCode = 'return;';
-		}
+		$proxyMethod = $this->compiler->getProxyClass($targetClassName)->getConstructor();
 
-		$interceptionCode = '
-		if (isset($this->FLOW3_AOP_Proxy_methodIsInAdviceMode[\'__construct\'])) {
-			' . $callParentCode . '
+		$groupedAdvices = $interceptedMethods[$methodName]['groupedAdvices'];
+		$advicesCode = $this->buildAdvicesCode($groupedAdvices, $methodName, $targetClassName);
+
+		if ($methodName !== NULL) {
+			$proxyMethod->addPreParentCallCode('
+		if (isset($this->FLOW3_AOP_Proxy_methodIsInAdviceMode[\'' . $methodName . '\'])) {
+');
+			$proxyMethod->addPostParentCallCode('
 		} else {
-			$methodArguments = $this->FLOW3_AOP_Proxy_originalConstructorArguments;
-			$this->FLOW3_AOP_Proxy_methodIsInAdviceMode[\'__construct\'] = TRUE;
+			$this->FLOW3_AOP_Proxy_methodIsInAdviceMode[\'' . $methodName . '\'] = TRUE;
 			try {
-			' . $this->buildAdvicesCode($interceptedMethods['__construct']['groupedAdvices'], '__construct', $targetClassName) . '
+			' . $advicesCode . '
 			} catch(\Exception $e) {
-				unset($this->FLOW3_AOP_Proxy_methodIsInAdviceMode[\'__construct\']);
+				unset($this->FLOW3_AOP_Proxy_methodIsInAdviceMode[\'' . $methodName . '\']);
 				throw $e;
 			}
-			unset($this->FLOW3_AOP_Proxy_methodIsInAdviceMode[\'__construct\']);
+			unset($this->FLOW3_AOP_Proxy_methodIsInAdviceMode[\'' . $methodName . '\']);
 		}
-';
-		$methodDocumentation = $this->buildMethodDocumentation($declaringClassName, '__construct');
-		$methodParametersCode = $this->buildMethodParametersCode($declaringClassName, '__construct', TRUE);
-
-		$constructorCode = '
-	/**
-	 * Interceptor for the constructor __construct().
-	 * ' . $methodDocumentation . '
-	 */
-	public function __construct(' . $methodParametersCode .') {
-		$this->FLOW3_AOP_Proxy_originalConstructorArguments = array(' . $this->buildMethodArgumentsArrayCode($declaringClassName, '__construct') . ');
-	}
-
-	/**
-	 * Initializes the proxy and calls the (parent) constructor with the orginial given arguments.
-	 * @return void
-	 */
-	public function FLOW3_AOP_Proxy_construct() {
-		$this->FLOW3_AOP_Proxy_declareMethodsAndAdvices();
-		$result = NULL;
-		' . $interceptionCode . '
-		return $result;
-	}
-';
-
-		return $constructorCode;
+');
+		}
 	}
 
 }

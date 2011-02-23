@@ -45,11 +45,11 @@ class AdviceChain {
 	 * Initializes the advice chain
 	 *
 	 * @param array $advices An array of \F3\FLOW3\AOP\Advice\AdviceInterface compatible objects which form the chain of advices
-	 * @param \F3\FLOW3\AOP\ProxyInterface $proxy A reference to the proxy object using the advice chain
+	 * @param object $proxy A reference to the proxy object using the advice chain
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(&$advices, \F3\FLOW3\AOP\ProxyInterface &$proxy) {
+	public function __construct($advices, $proxy) {
 		$this->advices = $advices;
 		$this->proxy = $proxy;
 	}

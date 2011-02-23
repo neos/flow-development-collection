@@ -13,3 +13,14 @@ F3\FLOW3\Session\SessionInterface:
 
 F3\FLOW3\Security\Authorization\AccessDecisionManagerInterface:
   className: F3\FLOW3\Security\Authorization\TestingAccessDecisionManager
+
+F3\FLOW3\Tests\Functional\Object\Fixtures\SingletonClassC:
+  arguments:
+    1 :
+      value: 'this is required'
+
+F3\FLOW3\Tests\Functional\Object\Fixtures\PrototypeClassAishInterface:
+  factoryObjectName: F3\FLOW3\Tests\Functional\Object\Fixtures\PrototypeClassAFactory
+  arguments:
+    1:
+      value: 'value defined in Objects.yaml'

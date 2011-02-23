@@ -117,6 +117,12 @@ FLOW3:
       username: null
       password: null
 
+  reflection:
+
+    # If enabled, the Reflection Service notes all incorrect or inconsistent usage
+    # of @param annotations in the default log.
+    logIncorrectDocCommentHints: n
+
   resource:
     publishing:
 

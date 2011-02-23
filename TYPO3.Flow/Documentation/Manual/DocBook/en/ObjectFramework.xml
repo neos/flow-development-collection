@@ -1586,18 +1586,18 @@ class Foo {
       object <emphasis>and</emphasis> after recreating/reconstituting an
       object, there are cases where different code should be executed. That is
       why the initialization method gets a parameter, which is one of the
-      <constant>\F3\FLOW3\Object\Container\ObjectContainerInterface::INITIALIZATIONCAUSE_*</constant>
+      <constant>\F3\FLOW3\Object\ObjectManagerInterface::INITIALIZATIONCAUSE_*</constant>
       constants:</para>
 
       <itemizedlist>
         <listitem>
-          <para><constant>\F3\FLOW3\Object\Container\ObjectContainerInterface::INITIALIZATIONCAUSE_CREATED</constant>
+          <para><constant>\F3\FLOW3\Object\ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED</constant>
           if the object is newly created (i.e. the constructor has been
           called)</para>
         </listitem>
 
         <listitem>
-          <para><constant>\F3\FLOW3\Object\Container\ObjectContainerInterface::INITIALIZATIONCAUSE_RECREATED</constant>
+          <para><constant>\F3\FLOW3\Object\ObjectManagerInterface::INITIALIZATIONCAUSE_RECREATED</constant>
           if the object has been recreated/reconstituted (i.e. the constructor
           has not been called)</para>
         </listitem>

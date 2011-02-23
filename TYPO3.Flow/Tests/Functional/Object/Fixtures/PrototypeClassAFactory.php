@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Object\Container;
+namespace F3\FLOW3\Tests\Functional\Object\Fixtures;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,34 +23,21 @@ namespace F3\FLOW3\Object\Container;
  *                                                                        */
 
 /**
- * Additional interface for a static object container
- *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * A factory which creates PrototypeClassA instances
  */
-interface StaticObjectContainerInterface extends \F3\FLOW3\Object\Container\ObjectContainerInterface {
+class PrototypeClassAFactory {
 
 	/**
-	 * Initializes the session and loads all existing instances of scope session.
+	 * Creates a new instance of PrototypeClassA
 	 *
-	 * @return void
+	 * @param string $someProperty
+	 * @return \F3\FLOW3\Tests\Functional\Object\Fixtures\FLOWPrototypeClassA
 	 */
-	public function initializeSession();
+	public function create($someProperty) {
+		$object = new PrototypeClassA();
+		$object->setSomeProperty($someProperty);
+		return $object;
+	}
 
-	/**
-	 * Imports object instances and shutdown objects from a Dynamic Container
-	 *
-	 * @param \F3\FLOW3\Object\Container\DynamicObjectContainer $dynamicObjectContainer
-	 * @return void
-	 */
-	public function import(\F3\FLOW3\Object\Container\DynamicObjectContainer $dynamicObjectContainer);
-	
-	/**
-	 * Shuts down this Object Container by calling the shutdown methods of all
-	 * object instances which were configured to be shut down.
-	 *
-	 * @return void
-	 */
-	public function shutdown();
-	
 }
 ?>

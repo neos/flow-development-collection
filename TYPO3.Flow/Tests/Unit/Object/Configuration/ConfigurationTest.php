@@ -44,16 +44,6 @@ class ConfigurationTest extends \F3\FLOW3\Tests\UnitTestCase {
 	}
 
 	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function setScopeAcceptsValidValues() {
-		$this->objectConfiguration->setScope(\F3\FLOW3\Object\Configuration\Configuration::SCOPE_SINGLETON);
-		$this->objectConfiguration->setScope(\F3\FLOW3\Object\Configuration\Configuration::SCOPE_PROTOTYPE);
-		$this->objectConfiguration->setScope(\F3\FLOW3\Object\Configuration\Configuration::SCOPE_SESSION);
-	}
-
-	/**
 	 * Checks if setProperties accepts only valid values
 	 *
 	 * @test

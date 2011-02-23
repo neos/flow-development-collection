@@ -30,21 +30,8 @@ namespace F3\FLOW3\Object;
  */
 interface ObjectManagerInterface {
 
-	/**
-	 * Sets the Object ObjectManager to a specific context. All operations related to objects
-	 * will be carried out based on the configuration for the current context.
-	 *
-	 * The context should be set as early as possible, preferably before any object has been
-	 * instantiated.
-	 *
-	 * By default the context is set to "default". Although the context can be freely chosen,
-	 * the following contexts are explicitly supported by FLOW3:
-	 * "Production", "Development", "Testing", "Profiling", "Staging"
-	 *
-	 * @param  string $context Name of the context
-	 * @return void
-	 */
-	public function setContext($context);
+	const INITIALIZATIONCAUSE_CREATED = 1;
+	const INITIALIZATIONCAUSE_RECREATED = 2;
 
 	/**
 	 * Returns the name of the currently set context.
@@ -159,19 +146,6 @@ interface ObjectManagerInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getScope($objectName);
-
-	/**
-	 * Discards the cached Static Object Container in order to rebuild it on the
-	 * next script run.
-	 *
-	 * This method is called by a signal emitted when files change.
-	 *
-	 * @param string $signalName Name of the signal which triggered this method
-	 * @param string $monitorIdentifier Identifier of the file monitor
-	 * @param array $changedFiles Path and file name of the changed files
-	 * @return void
-	 */
-	public function flushStaticObjectContainer($signalName, $monitorIdentifier, array $changedFiles);
 
 	/**
 	 * Initializes the session scope of the object container
