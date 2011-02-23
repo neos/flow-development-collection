@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Resource;
+namespace F3\FLOW3\Core;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -27,8 +27,14 @@ namespace F3\FLOW3\Resource;
  * directory of an object.
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @proxy disable
  */
 class ClassLoader {
+
+	/**
+	 * @var \F3\FLOW3\Cache\Frontend\PhpFrontend
+	 */
+	protected $classesCache;
 
 	/**
 	 * Class names and their absolute path and filename of specifically registered classes. Used for classes which don't follow the \F3\Package\Object scheme.
@@ -43,6 +49,23 @@ class ClassLoader {
 	protected $packages = array();
 
 	/**
+	 * A list of classes which this class loader previously tried to load but could not fin
+	 * @var array
+	 */
+	protected $notExistingClasses = array('string', 'integer', 'object', 'boolean', 'array');
+
+	/**
+	 * Injects the cache for storing the renamed original classes
+	 *
+	 * @param \F3\FLOW3\Cache\Frontend\PhpFrontend $classesCache
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectClassesCache(\F3\FLOW3\Cache\Frontend\PhpFrontend $classesCache) {
+		$this->classesCache = $classesCache;
+	}
+
+	/**
 	 * Loads php files containing classes or interfaces found in the classes directory of
 	 * a package and specifically registered classes.
 	 *
@@ -51,6 +74,16 @@ class ClassLoader {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function loadClass($className) {
+		if (in_array($className, $this->notExistingClasses)) {
+			return;
+		}
+		if ($this->classesCache !== NULL) {
+			$this->classesCache->requireOnce(str_replace('\\', '_', $className));
+			if (class_exists($className, FALSE)) {
+				return;
+			}
+		}
+
 		if (isset($this->specialClassNamesAndPaths[$className])) {
 			$classFilePathAndName = $this->specialClassNamesAndPaths[$className];
 		} else {
@@ -69,7 +102,9 @@ class ClassLoader {
 		}
 		if (isset($classFilePathAndName) && file_exists($classFilePathAndName)) {
 			require($classFilePathAndName);
-		} else {
+		}
+		if (class_exists($className, FALSE) === FALSE && interface_exists($className, FALSE) === FALSE) {
+			$this->notExistingClasses[] = $className;
 		}
 	}
 

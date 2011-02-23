@@ -72,10 +72,10 @@ class Bootstrap {
 	 * A reference to the FLOW3 package which can be used before the Package Manager is initialized
 	 * @var \F3\FLOW3\Package\Package
 	 */
-	protected $FLOW3Package;
+	protected $flow3Package;
 
 	/**
-	 * @var \F3\FLOW3\Resource\ClassLoader
+	 * @var \F3\FLOW3\Core\ClassLoader
 	 */
 	protected $classLoader;
 
@@ -167,7 +167,7 @@ class Bootstrap {
 		if ($this->context !== 'Production' && $this->context !== 'Development' && $this->context !== 'Testing') {
 			exit('FLOW3: Unknown context "' . $this->context . '" provided, currently only "Production", "Development" and "Testing" are supported. (Error #1254216868)');
 		}
-		$this->FLOW3Package = new \F3\FLOW3\Package\Package('FLOW3', FLOW3_PATH_FLOW3);
+		$this->flow3Package = new \F3\FLOW3\Package\Package('FLOW3', FLOW3_PATH_FLOW3);
 	}
 
 	/**
@@ -227,9 +227,9 @@ class Bootstrap {
 	 * @see initialize()
 	 */
 	public function initializeClassLoader() {
-		require_once(FLOW3_PATH_FLOW3 . 'Classes/Resource/ClassLoader.php');
-		$this->classLoader = new \F3\FLOW3\Resource\ClassLoader();
-		$this->classLoader->setPackages(array('FLOW3' => $this->FLOW3Package));
+		require_once(FLOW3_PATH_FLOW3 . 'Classes/Core/ClassLoader.php');
+		$this->classLoader = new \F3\FLOW3\Core\ClassLoader();
+		$this->classLoader->setPackages(array('FLOW3' => $this->flow3Package));
 		spl_autoload_register(array($this->classLoader, 'loadClass'), TRUE, TRUE);
 	}
 
@@ -243,7 +243,7 @@ class Bootstrap {
 	public function initializeConfiguration() {
 		$this->configurationManager = new \F3\FLOW3\Configuration\ConfigurationManager($this->context);
 		$this->configurationManager->injectConfigurationSource(new \F3\FLOW3\Configuration\Source\YamlSource());
-		$this->configurationManager->setPackages(array('FLOW3' => $this->FLOW3Package));
+		$this->configurationManager->setPackages(array('FLOW3' => $this->flow3Package));
 
 		$this->settings = $this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'FLOW3');
 	}
@@ -630,7 +630,7 @@ class Bootstrap {
 	protected function evaluatePackageConfiguration(\F3\FLOW3\Package\PackageInterface $package, array $packageConfiguration) {
 		if (isset($packageConfiguration['classLoader'])) {
 			if (isset($packageConfiguration['classLoader']['specialClassNameAndPaths'])) {
-				$classLoader = $this->objectManager->get('F3\FLOW3\Resource\ClassLoader');
+				$classLoader = $this->objectManager->get('F3\FLOW3\Core\ClassLoader');
 				foreach ($packageConfiguration['classLoader']['specialClassNameAndPaths'] as $className => $classFilePathAndName) {
 					$classFilePathAndName = str_replace('%PATH_PACKAGE%', $package->getPackagePath(), $classFilePathAndName);
 					$classFilePathAndName = str_replace('%PATH_PACKAGE_CLASSES%', $package->getClassesPath(), $classFilePathAndName);
