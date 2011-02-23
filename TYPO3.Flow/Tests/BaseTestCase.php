@@ -63,7 +63,7 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase {
 	 * @param boolean $callOriginalConstructor
 	 * @param boolean $callOriginalClone
 	 * @param boolean $callAutoload
-	 * @return object
+	 * @return \PHPUnit_Framework_MockObject_MockObject
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
@@ -81,7 +81,7 @@ abstract class BaseTestCase extends \PHPUnit_Framework_TestCase {
 	 * @param boolean $callOriginalConstructor
 	 * @param boolean $callOriginalClone
 	 * @param boolean $callAutoload
-	 * @return object
+	 * @return \PHPUnit_Framework_MockObject_MockObject
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
