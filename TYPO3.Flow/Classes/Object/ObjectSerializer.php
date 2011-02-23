@@ -57,26 +57,26 @@ class ObjectSerializer {
 
 	/**
 	 * The object manager
-	 * @var F3\FLOW3\Object\ObjectManagerInterface
+	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
 	 * The reflection service
-	 * @var F3\FLOW3\Reflection\ServiceInterface
+	 * @var \F3\FLOW3\Reflection\ServiceInterface
 	 */
 	protected $reflectionService;
 
 	/**
 	 * The persistence manager
-	 * @var F3\FLOW3\Persistence\PersistenceManagerInterface
+	 * @var \F3\FLOW3\Persistence\PersistenceManagerInterface
 	 */
 	protected $persistenceManager;
 
 	/**
 	 * Injects the object manager
 	 *
-	 * @param F3\FLOW3\Object\ObjectManagerInterface $objectManager The object manager
+	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager The object manager
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
@@ -87,7 +87,7 @@ class ObjectSerializer {
 	/**
 	 * Injects the reflection service
 	 *
-	 * @param F3\FLOW3\Reflection\ReflectionService $reflectionService The reflection service
+	 * @param \F3\FLOW3\Reflection\ReflectionService $reflectionService The reflection service
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
@@ -98,7 +98,7 @@ class ObjectSerializer {
 	/**
 	 * Inject the persistence manager
 	 *
-	 * @param F3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager The persistence manager
+	 * @param \F3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager The persistence manager
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */

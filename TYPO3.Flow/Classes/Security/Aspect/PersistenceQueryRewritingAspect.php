@@ -48,13 +48,13 @@ class PersistenceQueryRewritingAspect {
 
 	/**
 	 * The reflection service
-	 * @var F3\FLOW3\Reflection\ServiceInterface
+	 * @var \F3\FLOW3\Reflection\ServiceInterface
 	 */
 	protected $reflectionService;
 
 	/**
 	 * The persistence manager
-	 * @var F3\FLOW3\Persistence\PersistenceManagerInterface
+	 * @var \F3\FLOW3\Persistence\PersistenceManagerInterface
 	 */
 	protected $persistenceManager;
 
@@ -176,13 +176,13 @@ class PersistenceQueryRewritingAspect {
 	 * Builds a QOM constraint object for an array of constraint expressions
 	 *
 	 * @param array $constraintDefinitions The constraint expressions
-	 * @param \F3\FLOW3\Persistence\Query $query The query object to build the constraint with
+	 * @param \F3\FLOW3\Persistence\QueryInterface $query The query object to build the constraint with
 	 * @return \F3\FLOW3\Persistence\Qom\Constraint The build constraint object
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	protected function getQomConstraintForConstraintDefinitions(array $constraintDefinitions, \F3\FLOW3\Persistence\Query $query) {
+	protected function getQomConstraintForConstraintDefinitions(array $constraintDefinitions, \F3\FLOW3\Persistence\QueryInterface $query) {
 		$compositeConstraint = NULL;
-		foreach ($constraintDefinitions as $resource => $resourceConstraints) {
+		foreach ($constraintDefinitions as $resourceConstraints) {
 			foreach ($resourceConstraints as $operator => $policyConstraints) {
 				foreach ($policyConstraints as $key => $singlePolicyConstraint) {
 					if ($key === 'subConstraints') {
@@ -221,12 +221,12 @@ class PersistenceQueryRewritingAspect {
 	 * Builds a QOM constraint object for one single constraint expression
 	 *
 	 * @param array $constraintDefinition The constraint expression
-	 * @param \F3\FLOW3\Persistence\Query $query The query object to build the constraint with
+	 * @param \F3\FLOW3\Persistence\QueryInterface $query The query object to build the constraint with
 	 * @return \F3\FLOW3\Persistence\Qom\Constraint The build constraint object
 	 * @throws \F3\FLOW3\Security\Exception\InvalidQueryRewritingConstraintException
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	protected function getQomConstraintForSingleConstraintDefinition(array $constraintDefinition, \F3\FLOW3\Persistence\Query $query) {
+	protected function getQomConstraintForSingleConstraintDefinition(array $constraintDefinition, \F3\FLOW3\Persistence\QueryInterface $query) {
 		if (!is_array($constraintDefinition['leftValue']) && strpos($constraintDefinition['leftValue'], 'this.') === 0) {
 			$propertyName = substr($constraintDefinition['leftValue'], 5);
 			$operand = $this->getValueForOperand($constraintDefinition['rightValue']);
