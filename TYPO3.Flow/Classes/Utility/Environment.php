@@ -127,10 +127,8 @@ class Environment {
 	 * @param string $temporaryDirectoryBase Base path of the temporary directory, with trailing slash
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @api
 	 */
 	public function setTemporaryDirectoryBase($temporaryDirectoryBase) {
-		if (!is_string($temporaryDirectoryBase)) throw new \InvalidArgumentException('String expected.', 1228743683);
 		$this->temporaryDirectoryBase = $temporaryDirectoryBase;
 		$this->temporaryDirectory = NULL;
 	}
@@ -606,10 +604,7 @@ class Environment {
 	protected function createTemporaryDirectory($temporaryDirectoryBase) {
 		$temporaryDirectoryBase = \F3\FLOW3\Utility\Files::getUnixStylePath($temporaryDirectoryBase);
 		if (substr($temporaryDirectoryBase, -1, 1) !== '/') $temporaryDirectoryBase .= '/';
-
-		$processUser = extension_loaded('posix') ? posix_getpwuid(posix_geteuid()) : array('name' => 'default');
-		$pathHash = substr(md5(FLOW3_PATH_WEB . $this->getSAPIName() . $processUser['name'] . $this->context), 0, 12);
-		$temporaryDirectory = $temporaryDirectoryBase . $pathHash . '/';
+		$temporaryDirectory = $temporaryDirectoryBase . $this->context . '/';
 
 		if (!is_dir($temporaryDirectory)) {
 			try {

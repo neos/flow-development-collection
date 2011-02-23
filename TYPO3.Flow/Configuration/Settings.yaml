@@ -51,7 +51,7 @@ FLOW3:
     systemLogger:
       backend: F3\FLOW3\Log\Backend\FileBackend
       backendOptions:
-         logFileURL: %FLOW3_PATH_DATA%Logs/%FLOW3_SAPITYPE%/System.log
+         logFileURL: %FLOW3_PATH_DATA%Logs/System.log
          createParentDirectories: y
          severityThreshold: %LOG_INFO%
          maximumLogFileSize: 10485760
@@ -60,7 +60,7 @@ FLOW3:
     securityLogger:
       backend: F3\FLOW3\Log\Backend\FileBackend
       backendOptions:
-         logFileURL: %FLOW3_PATH_DATA%Logs/%FLOW3_SAPITYPE%/Security.log
+         logFileURL: %FLOW3_PATH_DATA%Logs/Security.log
          createParentDirectories: y
          severityThreshold: %LOG_INFO%
          maximumLogFileSize: 10485760
@@ -212,7 +212,7 @@ FLOW3:
     PHPSession:
 
       # Where to store session data in the filesystem. If this is empty, a default
-      # location is used (Data/Temporary/<hash>/Sessions/).
+      # location is used (Data/Temporary/<context>/Sessions/).
       savePath:
 
   utility:
