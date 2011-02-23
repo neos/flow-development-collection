@@ -96,15 +96,6 @@ abstract class FunctionalTestCase extends \F3\FLOW3\Tests\BaseTestCase {
 	}
 
 	/**
-	 * Partially shutdown FLOW3 to save caches (e.g. Reflection Service)
-	 */
-	public static function tearDownAfterClass() {
-		if (self::$flow3) {
-			self::$flow3->getObjectManager()->get('F3\FLOW3\Reflection\ReflectionService')->shutdownObject();
-		}
-	}
-
-	/**
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -140,10 +131,10 @@ abstract class FunctionalTestCase extends \F3\FLOW3\Tests\BaseTestCase {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function setUp() {
-		if ($this->testableSecurityEnabled) {
+		if ($this->testableSecurityEnabled === TRUE) {
 			$this->setupSecurity();
 		}
-		if ($this->testablePersistenceEnabled) {
+		if ($this->testablePersistenceEnabled === TRUE) {
 			$this->setupPersistence();
 		}
 	}
@@ -155,6 +146,8 @@ abstract class FunctionalTestCase extends \F3\FLOW3\Tests\BaseTestCase {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	protected function setupSecurity() {
+		$this->objectManager->get('F3\FLOW3\Security\Authorization\AccessDecisionManagerInterface');
+
 		$this->accessDecisionManager = $this->objectManager->get('F3\FLOW3\Security\Authorization\AccessDecisionManagerInterface');
 		$this->accessDecisionManager->setOverrideDecision(NULL);
 
@@ -213,14 +206,19 @@ abstract class FunctionalTestCase extends \F3\FLOW3\Tests\BaseTestCase {
 	/**
 	 * Tears down test requirements depending on the enabled tests
 	 *
+	 * Note: tearDown() is also called if an exception occurred in one of the tests. If the problem is caused by
+	 *       some security or persistence related part of FLOW3, the error might be hard to track because their
+	 *       specialized tearDown() methods might cause fatal errors. In those cases just output the original
+	 *       exception message by adding an echo($this->statusMessage) as the first line of this method.
+	 *
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function tearDown() {
-		if ($this->testableSecurityEnabled) {
+		if ($this->testableSecurityEnabled === TRUE) {
 			$this->tearDownSecurity();
 		}
-		if ($this->testablePersistenceEnabled) {
+		if ($this->testablePersistenceEnabled === TRUE) {
 			$this->tearDownPersistence();
 		}
 	}
