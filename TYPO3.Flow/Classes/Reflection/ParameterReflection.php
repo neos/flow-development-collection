@@ -27,20 +27,14 @@ namespace F3\FLOW3\Reflection;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
+ * @proxy disable
  */
 class ParameterReflection extends \ReflectionParameter {
 
 	/**
-	 * The constructor, initializes the reflection parameter
-	 *
-	 * @param  string $functionName Name of the function
-	 * @param  string $parameterName Name of the property to reflect
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @var string
 	 */
-	public function __construct($functionName, $parameterName) {
-		parent::__construct($functionName, $parameterName);
-	}
+	protected $parameterClassName;
 
 	/**
 	 * Returns the declaring class
@@ -49,7 +43,7 @@ class ParameterReflection extends \ReflectionParameter {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getDeclaringClass() {
-		return new \F3\FLOW3\Reflection\ClassReflection(parent::getDeclaringClass()->getName());
+		return new ClassReflection(parent::getDeclaringClass()->getName());
 	}
 
 	/**
@@ -66,7 +60,7 @@ class ParameterReflection extends \ReflectionParameter {
 			return NULL;
 		}
 
-		return is_object($class) ? new \F3\FLOW3\Reflection\ClassReflection($class->getName()) : NULL;
+		return is_object($class) ? new ClassReflection($class->getName()) : NULL;
 	}
 
 }

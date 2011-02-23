@@ -27,6 +27,7 @@ namespace F3\FLOW3\Reflection;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
+ * @proxy disable
  */
 class PropertyReflection extends \ReflectionProperty {
 
@@ -34,18 +35,6 @@ class PropertyReflection extends \ReflectionProperty {
 	 * @var \F3\FLOW3\Reflection\DocCommentParser: An instance of the doc comment parser
 	 */
 	protected $docCommentParser;
-
-	/**
-	 * The constructor, initializes the reflection class
-	 *
-	 * @param string $className Name of the property's class
-	 * @param string $propertyName Name of the property to reflect
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function __construct($className, $propertyName) {
-		parent::__construct($className, $propertyName);
-	}
 
 	/**
 	 * Checks if the doc comment of this property is tagged with
@@ -57,6 +46,16 @@ class PropertyReflection extends \ReflectionProperty {
 	public function isTaggedWith($tag) {
 		$result = $this->getDocCommentParser()->isTaggedWith($tag);
 		return $result;
+	}
+
+	/**
+	 * Returns the declaring class
+	 *
+	 * @return \F3\FLOW3\Reflection\ClassReflection The declaring class
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getDeclaringClass() {
+		return new ClassReflection(parent::getDeclaringClass()->getName());
 	}
 
 	/**
@@ -89,7 +88,7 @@ class PropertyReflection extends \ReflectionProperty {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getValue($object = NULL) {
-		if (!is_object($object)) throw new \F3\FLOW3\Reflection\Exception('$object is of type ' . gettype($object) . ', instance of class ' . $this->class . ' expected.', 1210859212);
+		if (!is_object($object)) throw new Exception('$object is of type ' . gettype($object) . ', instance of class ' . $this->class . ' expected.', 1210859212);
 		if ($this->isPublic()) return parent::getValue($object);
 
 		parent::setAccessible(TRUE);
@@ -105,7 +104,7 @@ class PropertyReflection extends \ReflectionProperty {
 	 */
 	protected function getDocCommentParser() {
 		if (!is_object($this->docCommentParser)) {
-			$this->docCommentParser = new \F3\FLOW3\Reflection\DocCommentParser;
+			$this->docCommentParser = new DocCommentParser;
 			$this->docCommentParser->parseDocComment($this->getDocComment());
 		}
 		return $this->docCommentParser;

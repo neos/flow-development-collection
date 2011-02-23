@@ -27,6 +27,7 @@ namespace F3\FLOW3\Reflection;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
+ * @proxy disable
  */
 class MethodReflection extends \ReflectionMethod {
 
@@ -36,25 +37,13 @@ class MethodReflection extends \ReflectionMethod {
 	protected $docCommentParser;
 
 	/**
-	 * The constructor, initializes the reflection class
-	 *
-	 * @param  string $className Name of the method's class
-	 * @param  string $methodName Name of the method to reflect
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function __construct($className, $methodName) {
-		parent::__construct($className, $methodName);
-	}
-
-	/**
 	 * Returns the declaring class
 	 *
 	 * @return \F3\FLOW3\Reflection\ClassReflection The declaring class
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getDeclaringClass() {
-		return new \F3\FLOW3\Reflection\ClassReflection(parent::getDeclaringClass()->getName());
+		return new ClassReflection(parent::getDeclaringClass()->getName());
 	}
 
 	/**
@@ -68,7 +57,7 @@ class MethodReflection extends \ReflectionMethod {
 	public function getParameters() {
 		$extendedParameters = array();
 		foreach (parent::getParameters() as $parameter) {
-			$extendedParameters[] = new \F3\FLOW3\Reflection\ParameterReflection(array($this->getDeclaringClass()->getName(), $this->getName()), $parameter->getName());
+			$extendedParameters[] = new ParameterReflection(array($this->getDeclaringClass()->getName(), $this->getName()), $parameter->getName());
 		}
 		return $extendedParameters;
 	}
@@ -81,8 +70,7 @@ class MethodReflection extends \ReflectionMethod {
 	 * @return boolean TRUE if such a tag has been defined, otherwise FALSE
 	 */
 	public function isTaggedWith($tag) {
-		$result = $this->getDocCommentParser()->isTaggedWith($tag);
-		return $result;
+		return $this->getDocCommentParser()->isTaggedWith($tag);
 	}
 
 	/**
@@ -115,7 +103,7 @@ class MethodReflection extends \ReflectionMethod {
 	 */
 	protected function getDocCommentParser() {
 		if (!is_object($this->docCommentParser)) {
-			$this->docCommentParser = new \F3\FLOW3\Reflection\DocCommentParser;
+			$this->docCommentParser = new DocCommentParser;
 			$this->docCommentParser->parseDocComment($this->getDocComment());
 		}
 		return $this->docCommentParser;

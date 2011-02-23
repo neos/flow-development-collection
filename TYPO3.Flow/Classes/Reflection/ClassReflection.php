@@ -27,6 +27,7 @@ namespace F3\FLOW3\Reflection;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
+ * @proxy disable
  */
 class ClassReflection extends \ReflectionClass {
 
@@ -36,13 +37,45 @@ class ClassReflection extends \ReflectionClass {
 	protected $docCommentParser;
 
 	/**
-	 * The constructor - initializes the class reflector
+	 * Replacement for the original getConstructor() method which makes sure
+	 * that \F3\FLOW3\Reflection\MethodReflection objects are returned instead of the
+	 * orginal ReflectionMethod instances.
 	 *
-	 * @param string $className Name of the class to reflect
+	 * @return \F3\FLOW3\Reflection\MethodReflection Method reflection object of the constructor method
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct($className) {
-		parent::__construct($className);
+	public function getConstructor() {
+		$parentConstructor = parent::getConstructor();
+		return (!is_object($parentConstructor)) ? $parentConstructor : new MethodReflection($this->getName(), $parentConstructor->getName());
+	}
+
+	/**
+	 * Replacement for the original getInterfaces() method which makes sure
+	 * that \F3\FLOW3\Reflection\ClassReflection objects are returned instead of the
+	 * orginal ReflectionClass instances.
+	 *
+	 * @return array of \F3\FLOW3\Reflection\ClassReflection Class reflection objects of the properties in this class
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getInterfaces() {
+		$extendedInterfaces = array();
+		$interfaces = parent::getInterfaces();
+		foreach ($interfaces as $interface) {
+			$extendedInterfaces[] = new ClassReflection($interface->getName());
+		}
+		return $extendedInterfaces;
+	}
+
+	/**
+	 * Replacement for the original getMethod() method which makes sure
+	 * that \F3\FLOW3\Reflection\MethodReflection objects are returned instead of the
+	 * orginal ReflectionMethod instances.
+	 *
+	 * @return \F3\FLOW3\Reflection\MethodReflection Method reflection object of the named method
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getMethod($name) {
+		return new MethodReflection($this->getName(), $name);
 	}
 
 	/**
@@ -59,37 +92,22 @@ class ClassReflection extends \ReflectionClass {
 
 		$methods = ($filter === NULL ? parent::getMethods() : parent::getMethods($filter));
 		foreach ($methods as $method) {
-			$extendedMethods[] = new \F3\FLOW3\Reflection\MethodReflection($this->getName(), $method->getName());
+			$extendedMethods[] = new MethodReflection($this->getName(), $method->getName());
 		}
 		return $extendedMethods;
 	}
 
 	/**
-	 * Replacement for the original getMethod() method which makes sure
-	 * that \F3\FLOW3\Reflection\MethodReflection objects are returned instead of the
-	 * orginal ReflectionMethod instances.
+	 * Replacement for the original getParentClass() method which makes sure
+	 * that a \F3\FLOW3\Reflection\ClassReflection object is returned instead of the
+	 * orginal ReflectionClass instance.
 	 *
-	 * @return \F3\FLOW3\Reflection\MethodReflection Method reflection object of the named method
+	 * @return \F3\FLOW3\Reflection\ClassReflection Reflection of the parent class - if any
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getMethod($name) {
-		$parentMethod = parent::getMethod($name);
-		if (!is_object($parentMethod)) return $parentMethod;
-		return new \F3\FLOW3\Reflection\MethodReflection($this->getName(), $parentMethod->getName());
-	}
-
-	/**
-	 * Replacement for the original getConstructor() method which makes sure
-	 * that \F3\FLOW3\Reflection\MethodReflection objects are returned instead of the
-	 * orginal ReflectionMethod instances.
-	 *
-	 * @return \F3\FLOW3\Reflection\MethodReflection Method reflection object of the constructor method
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getConstructor() {
-		$parentConstructor = parent::getConstructor();
-		if (!is_object($parentConstructor)) return $parentConstructor;
-		return new \F3\FLOW3\Reflection\MethodReflection($this->getName(), $parentConstructor->getName());
+	public function getParentClass() {
+		$parentClass = parent::getParentClass();
+		return ($parentClass === FALSE) ? FALSE : new ClassReflection($parentClass->getName());
 	}
 
 	/**
@@ -105,7 +123,7 @@ class ClassReflection extends \ReflectionClass {
 		$extendedProperties = array();
 		$properties = ($filter === NULL ? parent::getProperties() : parent::getProperties($filter));
 		foreach ($properties as $property) {
-			$extendedProperties[] = new \F3\FLOW3\Reflection\PropertyReflection($this->getName(), $property->getName());
+			$extendedProperties[] = new PropertyReflection($this->getName(), $property->getName());
 		}
 		return $extendedProperties;
 	}
@@ -120,37 +138,7 @@ class ClassReflection extends \ReflectionClass {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getProperty($name) {
-		return new \F3\FLOW3\Reflection\PropertyReflection($this->getName(), $name);
-	}
-
-	/**
-	 * Replacement for the original getInterfaces() method which makes sure
-	 * that \F3\FLOW3\Reflection\ClassReflection objects are returned instead of the
-	 * orginal ReflectionClass instances.
-	 *
-	 * @return array of \F3\FLOW3\Reflection\ClassReflection Class reflection objects of the properties in this class
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getInterfaces() {
-		$extendedInterfaces = array();
-		$interfaces = parent::getInterfaces();
-		foreach ($interfaces as $interface) {
-			$extendedInterfaces[] = new \F3\FLOW3\Reflection\ClassReflection($interface->getName());
-		}
-		return $extendedInterfaces;
-	}
-
-	/**
-	 * Replacement for the original getParentClass() method which makes sure
-	 * that a \F3\FLOW3\Reflection\ClassReflection object is returned instead of the
-	 * orginal ReflectionClass instance.
-	 *
-	 * @return \F3\FLOW3\Reflection\ClassReflection Reflection of the parent class - if any
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getParentClass() {
-		$parentClass = parent::getParentClass();
-		return ($parentClass === FALSE) ? FALSE : new \F3\FLOW3\Reflection\ClassReflection($parentClass->getName());
+		return new PropertyReflection($this->getName(), $name);
 	}
 
 	/**
@@ -162,8 +150,7 @@ class ClassReflection extends \ReflectionClass {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function isTaggedWith($tag) {
-		$result = $this->getDocCommentParser()->isTaggedWith($tag);
-		return $result;
+		return $this->getDocCommentParser()->isTaggedWith($tag);
 	}
 
 	/**
@@ -194,7 +181,7 @@ class ClassReflection extends \ReflectionClass {
 	 */
 	protected function getDocCommentParser() {
 		if (!is_object($this->docCommentParser)) {
-			$this->docCommentParser = new \F3\FLOW3\Reflection\DocCommentParser;
+			$this->docCommentParser = new DocCommentParser;
 			$this->docCommentParser->parseDocComment($this->getDocComment());
 		}
 		return $this->docCommentParser;
