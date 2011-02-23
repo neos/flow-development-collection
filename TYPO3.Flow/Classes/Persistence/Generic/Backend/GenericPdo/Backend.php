@@ -431,7 +431,13 @@ class Backend extends \F3\FLOW3\Persistence\Generic\Backend\AbstractSqlBackend {
 	 * @todo optimize so properties are ignored and the db is asked for the count only
 	 */
 	public function getObjectCountByQuery(\F3\FLOW3\Persistence\QueryInterface $query) {
-		return count($this->getObjectDataByQuery($query));
+		$parsedQuery = $this->buildQuery($query, TRUE);
+
+		$statementHandle = $this->databaseHandle->prepare($parsedQuery['sql']);
+		$statementHandle->execute($parsedQuery['parameters']);
+
+		$result = (int)$statementHandle->fetchColumn(0);
+		return $result;
 	}
 
 	/**
@@ -615,11 +621,11 @@ class Backend extends \F3\FLOW3\Persistence\Generic\Backend\AbstractSqlBackend {
 	 * Builds a query string from the given Query.
 	 *
 	 * @param \F3\FLOW3\Persistence\QueryInterface $query
-	 * @param array $parameters
+	 * @param boolean $countOnly
 	 * @return string
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function buildQuery(\F3\FLOW3\Persistence\QueryInterface $query) {
+	protected function buildQuery(\F3\FLOW3\Persistence\QueryInterface $query, $countOnly = FALSE) {
 		$sql = array(
 			'fields' => array('"_entity"."identifier" AS "identifier"', '"_entity"."type" AS "classname"'),
 			'tables' => array(),
@@ -644,9 +650,16 @@ class Backend extends \F3\FLOW3\Persistence\Generic\Backend\AbstractSqlBackend {
 			$parameters['values'][] = $query->getType();
 		}
 
-		$this->parseOrderings($query, $sql);
+		if ($countOnly === FALSE) {
+			$this->parseOrderings($query, $sql);
+		}
 
-		$sqlString = 'SELECT DISTINCT ' . implode(', ', $sql['fields']) . ' FROM ' . implode(' ', $sql['tables']) . ' WHERE ' . $sql['where'];
+		if ($countOnly === TRUE) {
+			$sqlString = 'SELECT COUNT(DISTINCT "_entity"."identifier") FROM ' . implode(' ', $sql['tables']) . ' WHERE ' . $sql['where'] . ' GROUP BY "_entity"."type" HAVING "_entity"."type"=?';
+			$parameters['values'][] = $query->getType();
+		} else {
+			$sqlString = 'SELECT DISTINCT ' . implode(', ', $sql['fields']) . ' FROM ' . implode(' ', $sql['tables']) . ' WHERE ' . $sql['where'];
+		}
 
 		if ($sql['orderings'] !== '') {
 			$sqlString .= ' ORDER BY ' . $sql['orderings'];
