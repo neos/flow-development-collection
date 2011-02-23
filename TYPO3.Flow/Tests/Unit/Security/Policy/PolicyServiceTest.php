@@ -61,8 +61,11 @@ class PolicyServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
 		$mockCache->expects($this->any())->method('has')->will($this->returnValue(FALSE));
 
+		$mockCacheManager = $this->getMock('F3\FLOW3\Cache\CacheManager', array(), array(), '', FALSE);
+		$mockCacheManager->expects($this->once())->method('getCache')->with('FLOW3_Security_Policy')->will($this->returnValue($mockCache));
+
 		$policyService = new \F3\FLOW3\Security\Policy\PolicyService();
-		$policyService->injectCache($mockCache);
+		$policyService->injectCacheManager($mockCacheManager);
 		$policyService->injectConfigurationManager($mockConfigurationManager);
 		$policyService->injectPolicyExpressionParser($mockPolicyExpressionParser);
 
@@ -92,9 +95,12 @@ class PolicyServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
 		$mockCache->expects($this->any())->method('has')->will($this->returnValue(FALSE));
 
+		$mockCacheManager = $this->getMock('F3\FLOW3\Cache\CacheManager', array(), array(), '', FALSE);
+		$mockCacheManager->expects($this->once())->method('getCache')->with('FLOW3_Security_Policy')->will($this->returnValue($mockCache));
+
 		$policyService = $this->getAccessibleMock('F3\FLOW3\Security\Policy\PolicyService', array('parseEntityAcls'), array(), '', FALSE);
 		$policyService->expects($this->once())->method('parseEntityAcls')->will($this->returnValue(array()));
-		$policyService->injectCache($mockCache);
+		$policyService->injectCacheManager($mockCacheManager);
 		$policyService->injectConfigurationManager($mockConfigurationManager);
 		$policyService->injectPolicyExpressionParser($mockPolicyExpressionParser);
 
@@ -157,9 +163,12 @@ class PolicyServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
 		$mockCache->expects($this->any())->method('has')->will($this->returnValue(FALSE));
 
+		$mockCacheManager = $this->getMock('F3\FLOW3\Cache\CacheManager', array(), array(), '', FALSE);
+		$mockCacheManager->expects($this->once())->method('getCache')->with('FLOW3_Security_Policy')->will($this->returnValue($mockCache));
+
 		$policyService = $this->getAccessibleMock('F3\FLOW3\Security\Policy\PolicyService', array('parseEntityAcls'), array(), '', FALSE);
 		$policyService->expects($this->once())->method('parseEntityAcls')->will($this->returnValue(array()));
-		$policyService->injectCache($mockCache);
+		$policyService->injectCacheManager($mockCacheManager);
 		$policyService->injectConfigurationManager($mockConfigurationManager);
 		$policyService->injectPolicyExpressionParser($mockPolicyExpressionParser);
 
@@ -543,11 +552,9 @@ class PolicyServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function getPrivilegeForResourceReturnsADenyPrivilegeIfAskedForAResourceThatIsNotConnectedToAPolicyEntry() {
 		$mockRole = $this->getMock('F3\FLOW3\Security\Policy\Role', array(), array(), '', FALSE);
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
 
 		$policyServiceClassName = $this->buildAccessibleProxy('F3\FLOW3\Security\Policy\PolicyService');
 		$policyService = new $policyServiceClassName();
-		$policyService->injectObjectManager($mockObjectManager);
 
 		$policyService->_set('acls', array());
 		$policyService->_set('resources', array('someResourceNotConnectedToAPolicyEntry' => 'someDefinition'));
@@ -569,8 +576,11 @@ class PolicyServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockCache->expects($this->at(2))->method('has')->with('entityResourcesConstraints')->will($this->returnValue(TRUE));
 		$mockCache->expects($this->at(3))->method('get')->with('entityResourcesConstraints')->will($this->returnValue(array('cachedConstraints')));
 
+		$mockCacheManager = $this->getMock('F3\FLOW3\Cache\CacheManager', array(), array(), '', FALSE);
+		$mockCacheManager->expects($this->once())->method('getCache')->with('FLOW3_Security_Policy')->will($this->returnValue($mockCache));
+
 		$policyService = $this->getAccessibleMock('F3\FLOW3\Security\Policy\PolicyService', array('setAclsForEverybodyRole'), array(), '', FALSE);
-		$policyService->injectCache($mockCache);
+		$policyService->injectCacheManager($mockCacheManager);
 		$policyService->injectConfigurationManager($mockConfigurationManager);
 
 		$policyService->initializeObject();
@@ -599,11 +609,14 @@ class PolicyServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockCache->expects($this->at(1))->method('get')->with('acls')->will($this->returnValue(array('cachedAcls')));
 		$mockCache->expects($this->at(2))->method('has')->with('entityResourcesConstraints')->will($this->returnValue(FALSE));
 
+		$mockCacheManager = $this->getMock('F3\FLOW3\Cache\CacheManager', array(), array(), '', FALSE);
+		$mockCacheManager->expects($this->once())->method('getCache')->with('FLOW3_Security_Policy')->will($this->returnValue($mockCache));
+
 		$mockPolicyExpressionParser = $this->getMock('F3\FLOW3\Security\Policy\PolicyExpressionParser', array(), array(), '', FALSE);
 		$mockPolicyExpressionParser->expects($this->once())->method('parseEntityResources')->with(array('firstEntity', 'secondEntity'))->will($this->returnValue(array('newParsedConstraints')));
 
 		$policyService = $this->getAccessibleMock('F3\FLOW3\Security\Policy\PolicyService', array('setAclsForEverybodyRole'), array(), '', FALSE);
-		$policyService->injectCache($mockCache);
+		$policyService->injectCacheManager($mockCacheManager);
 		$policyService->injectConfigurationManager($mockConfigurationManager);
 		$policyService->injectPolicyExpressionParser($mockPolicyExpressionParser);
 
@@ -626,10 +639,16 @@ class PolicyServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockCache->expects($this->at(1))->method('has')->with('entityResourcesConstraints')->will($this->returnValue(TRUE));
 		$mockCache->expects($this->at(2))->method('get')->with('entityResourcesConstraints')->will($this->returnValue(array('cachedConstraints')));
 
+		$mockCacheManager = $this->getMock('F3\FLOW3\Cache\CacheManager', array(), array(), '', FALSE);
+		$mockCacheManager->expects($this->once())->method('getCache')->with('FLOW3_Security_Policy')->will($this->returnValue($mockCache));
+
+		$policyService = $this->getAccessibleMock('F3\FLOW3\Security\Policy\PolicyService', array('parseEntityAcls'), array(), '', FALSE);
+		$policyService->expects($this->once())->method('parseEntityAcls')->will($this->returnValue(array()));
+
 		$policyService = $this->getAccessibleMock('F3\FLOW3\Security\Policy\PolicyService', array('parseEntityAcls', 'setAclsForEverybodyRole'), array(), '', FALSE);
 		$policyService->expects($this->once())->method('parseEntityAcls');
 
-		$policyService->injectCache($mockCache);
+		$policyService->injectCacheManager($mockCacheManager);
 		$policyService->injectConfigurationManager($mockConfigurationManager);
 
 		$policyService->initializeObject();
@@ -689,8 +708,11 @@ class PolicyServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockCache->expects($this->at(2))->method('has')->with('entityResourcesConstraints')->will($this->returnValue(FALSE));
 		$mockCache->expects($this->at(3))->method('set')->with('entityResourcesConstraints', array('entityResourcesConstraintsArray'));
 
+		$mockCacheManager = $this->getMock('F3\FLOW3\Cache\CacheManager', array(), array(), '', FALSE);
+		$mockCacheManager->expects($this->once())->method('getCache')->with('FLOW3_Security_Policy')->will($this->returnValue($mockCache));
+
 		$policyService = $this->getAccessibleMock('F3\FLOW3\Security\Policy\PolicyService', array('buildEntityConstraints'), array(), '', FALSE);
-		$policyService->injectCache($mockCache);
+		$policyService->injectCacheManager($mockCacheManager);
 		$policyService->_set('acls', array('aclsArray'));
 		$policyService->_set('entityResourcesConstraints', array('entityResourcesConstraintsArray'));
 

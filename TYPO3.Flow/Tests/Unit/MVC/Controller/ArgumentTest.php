@@ -47,7 +47,7 @@ class ArgumentTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @expectedException \InvalidArgumentException
 	 */
 	public function constructingArgumentWithoutNameThrowsException() {
-		new \F3\FLOW3\MVC\Controller\Argument(NULL, 'Text');
+		new \F3\FLOW3\MVC\Controller\Argument('', 'Text');
 	}
 
 	/**

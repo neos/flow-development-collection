@@ -36,11 +36,6 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 		PRIVILEGE_DENY = 2;
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
-	 */
-	protected $objectManager;
-
-	/**
 	 * The FLOW3 settings
 	 * @var array
 	 */
@@ -91,17 +86,6 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	protected $entityResourcesConstraints = array();
 
 	/**
-	 * Injects the object manager
-	 *
-	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
-		$this->objectManager = $objectManager;
-	}
-
-	/**
 	 * Injects the FLOW3 settings
 	 *
 	 * @param array $settings Settings of the FLOW3 package
@@ -124,14 +108,14 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	}
 
 	/**
-	 * Injects the policy cache
+	 * Injects the Cache Manager because we cannot inject an automatically factored cache during compile time.
 	 *
-	 * @param F3\FLOW3\Cache\Frontend\VariableFrontend $cache The cache
+	 * @param \F3\FLOW3\Cache\CacheManager $cacheManager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectCache(\F3\FLOW3\Cache\Frontend\VariableFrontend $cache) {
-		$this->cache = $cache;
+	public function injectCacheManager(\F3\FLOW3\Cache\CacheManager $cacheManager) {
+		$this->cache = $cacheManager->getCache('FLOW3_Security_Policy');
 	}
 
 	/**
@@ -293,7 +277,7 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 
 		$roles = array();
 		foreach (array_keys($this->acls[$methodIdentifier]) as $roleIdentifier) {
-			$roles[] = $this->objectManager->create('F3\FLOW3\Security\Policy\Role', $roleIdentifier);
+			$roles[] = new \F3\FLOW3\Security\Policy\Role($roleIdentifier);
 		}
 
 		return $roles;
@@ -317,7 +301,6 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 		if (!isset($this->acls[$methodIdentifier][$roleIdentifier])) return array();
 
 		$privileges = array();
-		$objectManager = $this->objectManager;
 		foreach ($this->acls[$methodIdentifier][$roleIdentifier] as $resource => $privilegeConfiguration) {
 			if ($privilegeConfiguration['runtimeEvaluationsClosureCode'] !== FALSE) {
 				eval('$runtimeEvaluator = ' . $privilegeConfiguration['runtimeEvaluationsClosureCode'] . ';');
@@ -326,7 +309,6 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 
 			$privileges[$resource] = $privilegeConfiguration['privilege'];
 		}
-		unset($objectManager);
 
 		return $privileges;
 	}

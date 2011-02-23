@@ -22,6 +22,8 @@ namespace F3\FLOW3\MVC\Web;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use \F3\FLOW3\Property\DataType\Uri;
+
 /**
  * Represents a web request.
  *
@@ -49,15 +51,25 @@ class Request extends \F3\FLOW3\MVC\Request {
 	protected $baseUri;
 
 	/**
-	 * Injects the environment
+	 * Sets the Request URI
 	 *
-	 * @param \F3\FLOW3\Utility\Environment $environment
+	 * @param \F3\FLOW3\Property\DataType\Uri $requestUri
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectEnvironment(\F3\FLOW3\Utility\Environment $environment) {
-		$this->requestUri = $environment->getRequestUri();
-		$this->baseUri = $environment->getBaseUri();
+	public function setRequestUri(Uri $requestUri) {
+		$this->requestUri = $requestUri;
+	}
+
+	/**
+	 * Sets the Base URI
+	 *
+	 * @param \F3\FLOW3\Property\DataType\Uri $baseUri
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setBaseUri(Uri $baseUri) {
+		$this->baseUri = $baseUri;
 	}
 
 	/**

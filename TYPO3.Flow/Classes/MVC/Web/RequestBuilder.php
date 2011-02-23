@@ -101,9 +101,11 @@ class RequestBuilder {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function build() {
-		$request = $this->objectManager->create('F3\FLOW3\MVC\Web\Request');
-		$request->injectEnvironment($this->environment);
+		$request = new \F3\FLOW3\MVC\Web\Request();
+		$request->setRequestUri($this->environment->getRequestUri());
+		$request->setBaseUri($this->environment->getBaseUri());
 		$request->setMethod($this->environment->getRequestMethod());
+
 		$this->setArgumentsFromRawRequestData($request);
 
 		$routesConfiguration = $this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_ROUTES);

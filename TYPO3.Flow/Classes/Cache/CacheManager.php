@@ -31,14 +31,9 @@ namespace F3\FLOW3\Cache;
 class CacheManager {
 
 	/**
-	 * @var \F3\FLOW3\Cache\CacheFactory
+	 * @var \F3\FLOW3\Cache\CacheFactory $cacheFactory
 	 */
 	protected $cacheFactory;
-
-	/**
-	 * @var \F3\FLOW3\Log\SystemLoggerInterface
-	 */
-	protected $systemLogger;
 
 	/**
 	 * @var array
@@ -55,6 +50,15 @@ class CacheManager {
 			'backendOptions' => array()
 		)
 	);
+
+	/**
+	 * @param \F3\FLOW3\Cache\CacheFactory $cacheFactory
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectCacheFactory(\F3\FLOW3\Cache\CacheFactory $cacheFactory) {
+		$this->cacheFactory = $cacheFactory;
+	}
 
 	/**
 	 * Sets configurations for caches. The key of each entry specifies the
@@ -80,46 +84,6 @@ class CacheManager {
 	}
 
 	/**
-	 * Injects the cache factory
-	 *
-	 * @param \F3\FLOW3\Cache\CacheFactory $cacheFactory The cache factory
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function injectCacheFactory(\F3\FLOW3\Cache\CacheFactory $cacheFactory) {
-		$this->cacheFactory = $cacheFactory;
-		$this->cacheFactory->setCacheManager($this);
-	}
-
-	/**
-	 * Injects the system logger
-	 *
-	 * @param \F3\FLOW3\Log\SystemLoggerInterface $systemLogger
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function injectSystemLogger(\F3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
-		$this->systemLogger = $systemLogger;
-	}
-
-	/**
-	 * Initializes the cache manager
-	 *
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function initialize() {
-		foreach ($this->cacheConfigurations as $identifier => $configuration) {
-			if ($identifier !== 'Default') {
-				$frontend = isset($configuration['frontend']) ? $configuration['frontend'] : $this->cacheConfigurations['Default']['frontend'];
-				$backend = isset($configuration['backend']) ? $configuration['backend'] : $this->cacheConfigurations['Default']['backend'];
-				$backendOptions = isset($configuration['backendOptions']) ? $configuration['backendOptions'] : $this->cacheConfigurations['Default']['backendOptions'];
-				$this->cacheFactory->create($identifier, $frontend, $backend, $backendOptions);
-			}
-		}
-	}
-
-	/**
 	 * Registers a cache so it can be retrieved at a later point.
 	 *
 	 * @param \F3\FLOW3\Cache\Frontend\FrontendInterface $cache The cache frontend to be registered
@@ -130,7 +94,9 @@ class CacheManager {
 	 */
 	public function registerCache(\F3\FLOW3\Cache\Frontend\FrontendInterface $cache) {
 		$identifier = $cache->getIdentifier();
-		if (isset($this->caches[$identifier])) throw new \F3\FLOW3\Cache\Exception\DuplicateIdentifierException('A cache with identifier "' . $identifier . '" has already been registered.', 1203698223);
+		if (isset($this->caches[$identifier])) {
+			throw new \F3\FLOW3\Cache\Exception\DuplicateIdentifierException('A cache with identifier "' . $identifier . '" has already been registered.', 1203698223);
+		}
 		$this->caches[$identifier] = $cache;
 	}
 
@@ -144,7 +110,12 @@ class CacheManager {
 	 * @api
 	 */
 	public function getCache($identifier) {
-		if (!isset($this->caches[$identifier])) throw new \F3\FLOW3\Cache\Exception\NoSuchCacheException('A cache with identifier "' . $identifier . '" does not exist.', 1203699034);
+		if ($this->hasCache($identifier) === FALSE) {
+			throw new \F3\FLOW3\Cache\Exception\NoSuchCacheException('A cache with identifier "' . $identifier . '" does not exist.', 1203699034);
+		}
+		if (!isset($this->caches[$identifier])) {
+			$this->createCache($identifier);
+		}
 		return $this->caches[$identifier];
 	}
 
@@ -157,7 +128,7 @@ class CacheManager {
 	 * @api
 	 */
 	public function hasCache($identifier) {
-		return isset($this->caches[$identifier]);
+		return isset($this->caches[$identifier]) || isset($this->cacheConfigurations[$identifier]);
 	}
 
 	/**
@@ -168,7 +139,7 @@ class CacheManager {
 	 * @api
 	 */
 	public function flushCaches() {
-		$this->systemLogger->log('Flushing all registered caches.', LOG_NOTICE);
+		$this->createAllCaches();
 		foreach ($this->caches as $cache) {
 			$cache->flush();
 		}
@@ -184,10 +155,38 @@ class CacheManager {
 	 * @api
 	 */
 	public function flushCachesByTag($tag) {
-		$this->systemLogger->log(sprintf('Flushing caches by tag "%s".', $tag), LOG_DEBUG);
+		$this->createAllCaches();
 		foreach ($this->caches as $cache) {
 			$cache->flushByTag($tag);
 		}
+	}
+
+	/**
+	 * Instantiates all registered caches.
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function createAllCaches() {
+		foreach (array_keys($this->cacheConfigurations) as $identifier) {
+			if ($identifier !== 'Default' && !isset($this->caches[$identifier])) {
+				$this->createCache($identifier);
+			}
+		}
+	}
+
+	/**
+	 * Instantiates the cache for $identifier.
+	 *
+	 * @param string $identifier
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function createCache($identifier) {
+		$frontend = isset($this->cacheConfigurations[$identifier]['frontend']) ? $this->cacheConfigurations[$identifier]['frontend'] : $this->cacheConfigurations['Default']['frontend'];
+		$backend = isset($this->cacheConfigurations[$identifier]['backend']) ? $this->cacheConfigurations[$identifier]['backend'] : $this->cacheConfigurations['Default']['backend'];
+		$backendOptions = isset($this->cacheConfigurations[$identifier]['backendOptions']) ? $this->cacheConfigurations[$identifier]['backendOptions'] : $this->cacheConfigurations['Default']['backendOptions'];
+		$this->cacheFactory->create($identifier, $frontend, $backend, $backendOptions);
 	}
 }
 ?>

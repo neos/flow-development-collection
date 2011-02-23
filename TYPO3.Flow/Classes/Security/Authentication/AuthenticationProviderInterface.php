@@ -38,8 +38,9 @@ interface AuthenticationProviderInterface {
 	 * @param string $name The name of this authentication provider
 	 * @param array $options Additional configuration options
 	 * @return void
+	 * @FIXME The constructor was certainly part of the interface for a reason
 	 */
-	public function __construct($name, array $options);
+#	public function __construct($name, array $options);
 
 	/**
 	 * Returns TRUE if the given token can be authenticated by this provider

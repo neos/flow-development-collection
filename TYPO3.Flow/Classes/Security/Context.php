@@ -22,6 +22,8 @@ namespace F3\FLOW3\Security;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use \F3\FLOW3\Security\Policy\Role;
+
 /**
  * This is the default implementation of a security context, which holds current
  * security information like Roles oder details auf authenticated users.
@@ -89,11 +91,6 @@ class Context {
 	protected $request;
 
 	/**
-	 * @var F3\FLOW3\Object\ObjectManagerInterface
-	 */
-	protected $objectManager;
-
-	/**
 	 * @var F3\FLOW3\Security\Authentication\AuthenticationManagerInterface
 	 */
 	protected $authenticationManager;
@@ -102,17 +99,6 @@ class Context {
 	 * @var \F3\FLOW3\Security\Policy\PolicyService
 	 */
 	protected $policyService;
-
-	/**
-	 * Inject the object manager
-	 *
-	 * @param F3\FLOW3\Object\ObjectManagerInterface $objectManager The object manager
-	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
-		$this->objectManager = $objectManager;
-	}
 
 	/**
 	 * Inject the authentication manager
@@ -231,7 +217,7 @@ class Context {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getRoles() {
-		$roles = array($this->objectManager->get('F3\FLOW3\Security\Policy\Role', 'Everybody'));
+		$roles = array(new Role('Everybody'));
 		foreach ($this->getAuthenticationTokens() as $token) {
 			if ($token->isAuthenticated()) {
 				$tokenRoles = $token->getRoles();

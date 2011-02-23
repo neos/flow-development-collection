@@ -50,9 +50,8 @@ class PolicyEnforcementAspect {
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function __construct(\F3\FLOW3\Security\Authorization\Interceptor\PolicyEnforcement $policyEnforcementInterceptor, \F3\FLOW3\Security\Authorization\Interceptor\AfterInvocation $afterInvocationInterceptor) {
+	public function __construct(\F3\FLOW3\Security\Authorization\Interceptor\PolicyEnforcement $policyEnforcementInterceptor) {
 		$this->policyEnforcementInterceptor = $policyEnforcementInterceptor;
-		$this->afterInvocationInterceptor = $afterInvocationInterceptor;
 	}
 
 	/**
@@ -67,14 +66,12 @@ class PolicyEnforcementAspect {
 	 */
 	public function enforcePolicy(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$this->policyEnforcementInterceptor->setJoinPoint($joinPoint);
-		$this->afterInvocationInterceptor->setJoinPoint($joinPoint);
-
 		$this->policyEnforcementInterceptor->invoke();
 
 		$result = $joinPoint->getAdviceChain()->proceed($joinPoint);
 
-		$this->afterInvocationInterceptor->setResult($result);
-		return $this->afterInvocationInterceptor->invoke();
+			// @TODO Once we use the AfterInvocation again, it needs to be invoked here and its result returned instead.
+		return $result;
 	}
 }
 

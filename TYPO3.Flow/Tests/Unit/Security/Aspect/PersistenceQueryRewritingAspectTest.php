@@ -731,7 +731,7 @@ class PersistenceQueryRewritingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function checkSingleConstraintDefinitionOnResultArrayComparesTheIdentifierWhenComparingPersitedObjects() {
 		$entityClassName = uniqid('entityClass');
-		eval('class ' . $entityClassName . ' implements \F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface, \F3\FLOW3\AOP\ProxyInterface {
+		eval('class ' . $entityClassName . ' implements \F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface, \F3\FLOW3\Object\Proxy\ProxyInterface {
 			public function FLOW3_AOP_Proxy_construct() {}
 			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
 			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return get_class($this); }

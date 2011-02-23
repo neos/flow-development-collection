@@ -314,14 +314,11 @@ class ContextTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockPolicyService->expects($this->any())->method('getAllParentRoles')->will($this->returnValue(array()));
 
 		$everybodyRole = new \F3\FLOW3\Security\Policy\Role('Everybody');
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
-		$mockObjectManager->expects($this->once())->method('get')->with('F3\FLOW3\Security\Policy\Role', 'Everybody')->will($this->returnValue($everybodyRole));
 
 		$securityContextProxy = $this->buildAccessibleProxy('F3\FLOW3\Security\Context');
 		$securityContext = new $securityContextProxy();
 		$securityContext->injectSettings($settings);
 		$securityContext->injectPolicyService($mockPolicyService);
-		$securityContext->injectObjectManager($mockObjectManager);
 		$securityContext->_set('activeTokens', array($token1, $token2, $token3, $token4, $token5));
 
 		$expectedResult = array($everybodyRole, $role1, $role11, $role2, $role5);
@@ -367,13 +364,9 @@ class ContextTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockPolicyService = $this->getMock('F3\FLOW3\Security\Policy\PolicyService', array(), array(), '', FALSE);
 		$mockPolicyService->expects($this->any())->method('getAllParentRoles')->will($this->returnCallback($policyServiceCallback));
 
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
-		$mockObjectManager->expects($this->once())->method('get')->with('F3\FLOW3\Security\Policy\Role', 'Everybody')->will($this->returnValue($everybodyRole));
-
 		$securityContext = $this->getAccessibleMock('F3\FLOW3\Security\Context', array('getAuthenticationTokens'), array(), '', FALSE);
 		$securityContext->expects($this->once())->method('getAuthenticationTokens')->will($this->returnValue(array($token1, $token2)));
 		$securityContext->injectPolicyService($mockPolicyService);
-		$securityContext->injectObjectManager($mockObjectManager);
 
 		$expectedResult = array($everybodyRole, $role1, $role2, $role3, $role4, $role5, $role6, $role7, $role8, $role9);
 		$result = $securityContext->getRoles();
@@ -396,15 +389,8 @@ class ContextTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$token2 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), '', FALSE);
 		$token2->expects($this->any())->method('isAuthenticated')->will($this->returnValue(FALSE));
 
-		$everybodyRole = new \F3\FLOW3\Security\Policy\Role('Everybody');
-
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
-		$mockObjectManager->expects($this->once())->method('get')->with('F3\FLOW3\Security\Policy\Role', 'Everybody')->will($this->returnValue($everybodyRole));
-
 		$securityContext = $this->getAccessibleMock('F3\FLOW3\Security\Context', array('getAuthenticationTokens'), array(), '', FALSE);
 		$securityContext->expects($this->once())->method('getAuthenticationTokens')->will($this->returnValue(array($token1, $token2)));
-
-		$securityContext->injectObjectManager($mockObjectManager);
 
 		$result = $securityContext->getRoles();
 
@@ -430,18 +416,12 @@ class ContextTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$token2->expects($this->any())->method('isAuthenticated')->will($this->returnValue(TRUE));
 		$token2->expects($this->once())->method('getRoles')->will($this->returnValue(array($role2, $role3)));
 
-		$everybodyRole = new \F3\FLOW3\Security\Policy\Role('Everybody');
-
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
-		$mockObjectManager->expects($this->once())->method('get')->with('F3\FLOW3\Security\Policy\Role', 'Everybody')->will($this->returnValue($everybodyRole));
-
 		$mockPolicyService = $this->getMock('F3\FLOW3\Security\Policy\PolicyService', array(), array(), '', FALSE);
 		$mockPolicyService->expects($this->any())->method('getAllParentRoles')->will($this->returnValue(array()));
 
 		$securityContext = $this->getAccessibleMock('F3\FLOW3\Security\Context', array('getAuthenticationTokens'), array(), '', FALSE);
 		$securityContext->expects($this->once())->method('getAuthenticationTokens')->will($this->returnValue(array($token1, $token2)));
 
-		$securityContext->injectObjectManager($mockObjectManager);
 		$securityContext->injectPolicyService($mockPolicyService);
 
 		$result = $securityContext->getRoles();

@@ -44,12 +44,6 @@ class AuthenticationProviderManager implements \F3\FLOW3\Security\Authentication
 	}
 
 	/**
-	 * The object manager
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
-	 */
-	protected $objectManager;
-
-	/**
 	 * The provider resolver
 	 * @var \F3\FLOW3\Security\Authentication\AuthenticationProviderResolver
 	 */
@@ -68,12 +62,6 @@ class AuthenticationProviderManager implements \F3\FLOW3\Security\Authentication
 	protected $requestPatternResolver;
 
 	/**
-	 * The authentication entry point resolver
-	 * @var \F3\FLOW3\Security\Authentication\EntryPointResolver
-	 */
-	protected $entryPointResolver;
-
-	/**
 	 * Array of \F3\FLOW3\Security\Authentication\AuthenticationProviderInterface objects
 	 * @var array
 	 */
@@ -88,21 +76,14 @@ class AuthenticationProviderManager implements \F3\FLOW3\Security\Authentication
 	/**
 	 * Constructor.
 	 *
-	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager The object manager
 	 * @param \F3\FLOW3\Security\Authentication\AuthenticationProviderResolver $providerResolver The provider resolver
 	 * @param \F3\FLOW3\Security\RequestPatternResolver $requestPatternResolver The request pattern resolver
-	 * @param \F3\FLOW3\Security\Authentication\EntryPointResolver $entryPointResolver The authentication entry point resolver
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function __construct(\F3\FLOW3\Object\ObjectManagerInterface $objectManager,
-			\F3\FLOW3\Security\Authentication\AuthenticationProviderResolver $providerResolver,
-			\F3\FLOW3\Security\RequestPatternResolver $requestPatternResolver,
-			\F3\FLOW3\Security\Authentication\EntryPointResolver $entryPointResolver) {
-		$this->objectManager = $objectManager;
+	public function __construct(AuthenticationProviderResolver $providerResolver, \F3\FLOW3\Security\RequestPatternResolver $requestPatternResolver) {
 		$this->providerResolver = $providerResolver;
 		$this->requestPatternResolver = $requestPatternResolver;
-		$this->entryPointResolver = $entryPointResolver;
 	}
 
 	/**
@@ -217,19 +198,25 @@ class AuthenticationProviderManager implements \F3\FLOW3\Security\Authentication
 	protected function buildProvidersAndTokensFromConfiguration(array $providerConfigurations) {
 		foreach ($providerConfigurations as $providerName => $providerConfiguration) {
 
-			if (!is_array($providerConfiguration) || !isset($providerConfiguration['providerClass'])) throw new \F3\FLOW3\Security\Exception\InvalidAuthenticationProviderException('The configured authentication provider "' . $providerConfiguration['providerClass'] . '" could not be found!', 1248209521);
+			if (!is_array($providerConfiguration) || !isset($providerConfiguration['providerClass'])) {
+				throw new \F3\FLOW3\Security\Exception\InvalidAuthenticationProviderException('The configured authentication provider "' . $providerConfiguration['providerClass'] . '" could not be found!', 1248209521);
+			}
 
 			$providerObjectName = $this->providerResolver->resolveProviderClass((string)$providerConfiguration['providerClass']);
-			if ($providerObjectName === NULL) throw new \F3\FLOW3\Security\Exception\InvalidAuthenticationProviderException('The configured authentication provider "' . $providerConfiguration['providerClass'] . '" could not be found!', 1237330453);
+			if ($providerObjectName === NULL) {
+				throw new \F3\FLOW3\Security\Exception\InvalidAuthenticationProviderException('The configured authentication provider "' . $providerConfiguration['providerClass'] . '" could not be found!', 1237330453);
+			}
 			$providerOptions = array();
 			if (isset($providerConfiguration['options']) && is_array($providerConfiguration['options'])) $providerOptions = $providerConfiguration['options'];
 
-			$providerInstance = $this->objectManager->get($providerObjectName, $providerName, $providerOptions);
+			$providerInstance = new $providerObjectName($providerName, $providerOptions);
 			$this->providers[] = $providerInstance;
 
 			foreach ($providerInstance->getTokenClassNames() as $tokenClassName) {
-				if (isset($providerConfiguration['tokenClass']) && $providerConfiguration['tokenClass'] !== $tokenClassName) continue;
-				$tokenInstance = $this->objectManager->get($tokenClassName);
+				if (isset($providerConfiguration['tokenClass']) && $providerConfiguration['tokenClass'] !== $tokenClassName) {
+					continue;
+				}
+				$tokenInstance = new $tokenClassName();
 				$tokenInstance->setAuthenticationProviderName($providerName);
 				$this->tokens[] = $tokenInstance;
 				break;
@@ -238,7 +225,8 @@ class AuthenticationProviderManager implements \F3\FLOW3\Security\Authentication
 			if (isset($providerConfiguration['requestPatterns']) && is_array($providerConfiguration['requestPatterns'])) {
 				$requestPatterns = array();
 				foreach($providerConfiguration['requestPatterns'] as $patternType => $patternConfiguration) {
-					$requestPattern = $this->objectManager->get($this->requestPatternResolver->resolveRequestPatternClass($patternType));
+					$patternClassName = $this->requestPatternResolver->resolveRequestPatternClass($patternType);
+					$requestPattern = new $patternClassName;
 					$requestPattern->setPattern($patternConfiguration);
 					$requestPatterns[] = $requestPattern;
 				}
@@ -247,10 +235,18 @@ class AuthenticationProviderManager implements \F3\FLOW3\Security\Authentication
 
 			if (isset($providerConfiguration['entryPoint']) && is_array($providerConfiguration['entryPoint'])) {
 				reset($providerConfiguration['entryPoint']);
-				$entryPointObjectName = key($providerConfiguration['entryPoint']);
 
-				$entryPoint = $this->objectManager->get($this->entryPointResolver->resolveEntryPointClass($entryPointObjectName));
-				$entryPoint->setOptions($providerConfiguration['entryPoint'][$entryPointObjectName]);
+				$entryPointName = key($providerConfiguration['entryPoint']);
+				$entryPointClassName = $entryPointName;
+				if (!class_exists($entryPointClassName)) {
+					$entryPointClassName = 'F3\FLOW3\Security\Authentication\EntryPoint\\' . $entryPointClassName;
+				}
+				if (!class_exists($entryPointClassName)) {
+					throw new \F3\FLOW3\Security\Exception\NoEntryPointFoundException('An entry point with the name: "' . $entryPointName . '" could not be resolved. Make sure it is a valid class name, either fully qualified or relative to F3\FLOW3\Security\Authentication\EntryPoint!', 1236767282);
+				}
+
+				$entryPoint = new $entryPointClassName();
+				$entryPoint->setOptions($providerConfiguration['entryPoint'][$entryPointName]);
 
 				$tokenInstance->setAuthenticationEntryPoint($entryPoint);
 			}

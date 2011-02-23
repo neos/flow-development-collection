@@ -353,7 +353,7 @@ class PersistenceQueryRewritingAspect {
 		if ($referenceToThisFound === FALSE) throw new \F3\FLOW3\Security\Exception\InvalidQueryRewritingConstraintException('An entity constraint has to have at least one operand that references to "this.". Got: "' . $constraintDefinition['leftValue'] . '" and "' . $constraintDefinition['rightValue'] . '"', 1277218400);
 
 		if (is_object($leftOperand)
-					&& $leftOperand instanceof \F3\FLOW3\AOP\ProxyInterface
+					&& $leftOperand instanceof \F3\FLOW3\Object\Proxy\ProxyInterface
 					&& $leftOperand instanceof \F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface
 					&& $this->persistenceManager->isNewObject($leftOperand) === FALSE
 					&& $this->reflectionService->isClassTaggedWith($leftOperand, 'entity')) {
@@ -361,7 +361,7 @@ class PersistenceQueryRewritingAspect {
 			$leftOperand = $this->persistenceManager->getIdentifierByObject($leftOperand);
 
 		} elseif (is_object($rightOperand)
-					&& $rightOperand instanceof \F3\FLOW3\AOP\ProxyInterface
+					&& $rightOperand instanceof \F3\FLOW3\Object\Proxy\ProxyInterface
 					&& $rightOperand instanceof \F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface
 					&& $this->persistenceManager->isNewObject($rightOperand) === FALSE
 					&& $this->reflectionService->isClassTaggedWith($rightOperand, 'entity')) {

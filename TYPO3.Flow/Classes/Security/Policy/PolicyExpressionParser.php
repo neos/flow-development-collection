@@ -26,6 +26,7 @@ namespace F3\FLOW3\Security\Policy;
  * A specialized pointcut expression parser tailored to policy expressions
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @proxy disable
  */
 class PolicyExpressionParser extends \F3\FLOW3\AOP\Pointcut\PointcutExpressionParser {
 
@@ -67,7 +68,7 @@ class PolicyExpressionParser extends \F3\FLOW3\AOP\Pointcut\PointcutExpressionPa
 			}
 		}
 
-		return $this->parse($pointcutExpression);
+		return $this->parse($pointcutExpression, 'method resources of a policy configuration');
 	}
 
 	/**

@@ -176,7 +176,7 @@ FLOW3:
         DefaultProvider:
           providerClass: PersistedUsernamePasswordProvider
           entryPoint:
-            webRedirect:
+            WebRedirect:
               uri: flow3/authentication
 
       # One of the available authentication strategies:
