@@ -40,9 +40,6 @@ FLOW3:
 
     errorHandler:
 
-      # Defines the global, last-resort error handler.
-      className: F3\FLOW3\Error\ErrorHandler
-
       # Defines which errors should result in an exception thrown - all other error
       # levels will be silently ignored. Only errors that can be handled in an
       # user-defined error handler are affected, of course.
@@ -147,11 +144,11 @@ FLOW3:
       # The filter configuration for the firewall. Here is an example configuration array:
       #
       # filters:
-      # 	-
+      #   -
       #     patternType:  URL
       #     patternValue: /some/url/.*
       #     interceptor:  AccessGrant
-      # 	-
+      #   -
       #     patternType:  URL
       #     patternValue: /some/url/blocked.*
       #     interceptor:  AccessDeny

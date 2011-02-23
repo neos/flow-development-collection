@@ -32,7 +32,8 @@ namespace F3\FLOW3\Cache\Frontend;
 class VariableFrontend extends \F3\FLOW3\Cache\Frontend\AbstractFrontend {
 
 	/**
-	 * If the extension "igbinary" is installed, use it for increased performance
+	 * If the extension "igbinary" is installed, use it for increased performance.
+	 * Caching the result of extension_loaded() here is faster than calling extension_loaded() multiple times.
 	 *
 	 * @var boolean
 	 */

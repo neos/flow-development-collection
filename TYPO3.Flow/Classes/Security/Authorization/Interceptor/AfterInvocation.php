@@ -31,6 +31,7 @@ namespace F3\FLOW3\Security\Authorization\Interceptor;
  * 4. Then the value is returned to the caller
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @scope prototype
  */
 class AfterInvocation implements \F3\FLOW3\Security\Authorization\InterceptorInterface {
 

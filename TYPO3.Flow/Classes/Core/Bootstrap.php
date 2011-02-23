@@ -249,14 +249,14 @@ class Bootstrap {
 	}
 
 	/**
-	 * Initializes the Error component
+	 * Initializes the error handling
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @see initialize()
 	 */
 	public function initializeErrorHandling() {
-		$errorHandler = new $this->settings['error']['errorHandler']['className'];
+		$errorHandler = new \F3\FLOW3\Error\ErrorHandler();
 		$errorHandler->setExceptionalErrors($this->settings['error']['errorHandler']['exceptionalErrors']);
 		$this->exceptionHandler = new $this->settings['error']['exceptionHandler']['className'];
 		$this->classLoader->loadClass('F3\FLOW3\Error\Debugger');

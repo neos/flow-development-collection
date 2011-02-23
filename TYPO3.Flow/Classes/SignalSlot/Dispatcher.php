@@ -87,7 +87,6 @@ class Dispatcher {
 	 */
 	public function connect($signalClassName, $signalMethodName, $slotClassNameOrObject, $slotMethodName = '', $omitSignalInformation = FALSE) {
 		$class = NULL;
-		$method = NULL;
 		$object = NULL;
 
 		if (is_object($slotClassNameOrObject)) {
@@ -125,6 +124,9 @@ class Dispatcher {
 			if (isset($slotInformation['object'])) {
 				$object = $slotInformation['object'];
 			} else {
+				if (!isset($this->objectManager)) {
+					throw new \F3\FLOW3\SignalSlot\Exception\InvalidSlotException(sprintf('Cannot dispatch to class %s. The object manager is not yet available in the Signal Slot Dispatcher and therefore it cannot dispatch classes.', $slotInformation['class']), 1298113624);
+				}
 				if (!$this->objectManager->isRegistered($slotInformation['class'])) {
 					throw new \F3\FLOW3\SignalSlot\Exception\InvalidSlotException('The given class "' . $slotInformation['class'] . '" is not a registered object.', 1245673367);
 				}

@@ -151,7 +151,7 @@ class ConfigurationManager {
 				if (isset($this->configurations[$configurationType])) {
 					$configuration = &$this->configurations[$configurationType];
 				}
-				break;
+			break;
 
 			case self::CONFIGURATION_TYPE_SETTINGS :
 				if ($packageKey === NULL) {
@@ -163,9 +163,8 @@ class ConfigurationManager {
 					$configuration = &$this->configurations[self::CONFIGURATION_TYPE_SETTINGS];
 					break;
 				}
-
+				// @TODO Check if CONFIGURATION_TYPE_PACKAGE can be implemented like OBJECTS (see below), ie. omit $packageKey
 			case self::CONFIGURATION_TYPE_PACKAGE :
-			case self::CONFIGURATION_TYPE_OBJECTS :
 				if ($packageKey === NULL) throw new \InvalidArgumentException('No package specified.', 1233336279);
 				if (!isset($this->configurations[$configurationType][$packageKey])) {
 					$this->loadConfiguration($configurationType, $this->packages);
@@ -173,7 +172,11 @@ class ConfigurationManager {
 				if (isset($this->configurations[$configurationType][$packageKey])) {
 					$configuration = &$this->configurations[$configurationType][$packageKey];
 				}
-				break;
+			break;
+			case self::CONFIGURATION_TYPE_OBJECTS :
+				$this->loadConfiguration($configurationType, $this->packages);
+				return $this->configurations[$configurationType];
+			break;
 
 			default :
 				throw new \F3\FLOW3\Configuration\Exception\InvalidConfigurationTypeException('Invalid configuration type "' . $configurationType . '"', 1206031879);

@@ -38,8 +38,6 @@ class AccessDeny implements \F3\FLOW3\Security\Authorization\InterceptorInterfac
 	 */
 	public function invoke() {
 		throw new \F3\FLOW3\Security\Exception\AccessDeniedException('You are not allowed to perform this action.', 1216919280);
-
-		return FALSE;
 	}
 }
 
