@@ -74,7 +74,7 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 		$this->addedObjects = new \SplObjectStorage();
 		$this->removedObjects = new \SplObjectStorage();
 		if ($this->objectType === NULL) {
-			$this->objectType = str_replace(array('\\Repository\\', 'Repository'), array('\\Model\\', ''), $this->FLOW3_AOP_Proxy_getProxyTargetClassName());
+			$this->objectType = str_replace(array('\\Repository\\', 'Repository'), array('\\Model\\', ''), get_class($this));
 		}
 	}
 
@@ -425,18 +425,5 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 		}
 		trigger_error('Call to undefined method ' . get_class($this) . '::' . $methodName, E_USER_ERROR);
 	}
-
-	/**
-	 * Returns the class name of this class. Seems useless until you think about
-	 * the possibility of $this *not* being an AOP proxy. If $this is an AOP proxy
-	 * this method will be overridden.
-	 *
-	 * @return string Class name of the repository. If it is proxied, it's still the (target) class name.
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	protected function FLOW3_AOP_Proxy_getProxyTargetClassName() {
-		return get_class($this);
-	}
-
 }
 ?>

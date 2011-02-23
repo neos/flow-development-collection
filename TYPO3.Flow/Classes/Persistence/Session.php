@@ -331,10 +331,10 @@ class Session {
 			return $this->objectMap[$object];
 		}
 
-		if ($object instanceof \F3\FLOW3\AOP\ProxyInterface
-				&& isset($this->classSchemata[$object->FLOW3_AOP_Proxy_getProxyTargetClassName()])
-				&& $this->classSchemata[$object->FLOW3_AOP_Proxy_getProxyTargetClassName()]->getUuidPropertyName() !== NULL) {
-			return $object->FLOW3_AOP_Proxy_getProperty($this->classSchemata[$object->FLOW3_AOP_Proxy_getProxyTargetClassName()]->getUuidPropertyName());
+		if ($object instanceof \F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface
+				&& isset($this->classSchemata[get_class($object)])
+				&& $this->classSchemata[get_class($object)]->getUuidPropertyName() !== NULL) {
+			return $object->FLOW3_AOP_Proxy_getProperty($this->classSchemata[get_class($object)]->getUuidPropertyName());
 		} elseif (property_exists($object, 'FLOW3_Persistence_Entity_UUID')) {
 			return $object->FLOW3_Persistence_Entity_UUID;
 		} elseif (property_exists($object, 'FLOW3_Persistence_ValueObject_Hash')) {

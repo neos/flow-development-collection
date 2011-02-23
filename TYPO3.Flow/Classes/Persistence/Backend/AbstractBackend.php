@@ -227,12 +227,12 @@ abstract class AbstractBackend implements \F3\FLOW3\Persistence\Backend\BackendI
 	 * in case of AOP-managed entities. Use isNewObject() if you need
 	 * to distinguish those cases.
 	 *
-	 * @param \F3\FLOW3\AOP\ProxyInterface $object
+	 * @param object $object
 	 * @return string The identifier for the object
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @deprecated since 1.0.0 alpha 14
 	 */
-	protected function getIdentifierByObject(\F3\FLOW3\AOP\ProxyInterface $object) {
+	protected function getIdentifierByObject($object) {
 		return $this->persistenceSession->getIdentifierByObject($object);
 	}
 
@@ -299,7 +299,7 @@ abstract class AbstractBackend implements \F3\FLOW3\Persistence\Backend\BackendI
 		$objectData = array();
 		$objectState = $this->storeObject($object, $identifier, $parentIdentifier, $objectData);
 
-		if ($this->classSchemata[$object->FLOW3_AOP_Proxy_getProxyTargetClassName()]->getModelType() === \F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY) {
+		if ($this->classSchemata[get_class($object)]->getModelType() === \F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY) {
 			$this->persistenceSession->registerReconstitutedEntity($object, $objectData);
 		}
 		$this->emitPersistedObject($object, $objectState);
@@ -360,14 +360,14 @@ abstract class AbstractBackend implements \F3\FLOW3\Persistence\Backend\BackendI
 	 * @api
 	 */
 	protected function validateObject($object) {
-		$classSchema = $this->classSchemata[$object->FLOW3_AOP_Proxy_getProxyTargetClassName()];
+		$classSchema = $this->classSchemata[get_class($object)];
 		$validator = $this->validatorResolver->getBaseValidatorConjunction($classSchema->getClassName());
 		if (!$validator->isValid($object)) {
 			$errorMessages = '';
 			foreach ($validator->getErrors() as $error) {
 				$errorMessages .= (string)$error . PHP_EOL;
 			}
-			throw new \F3\FLOW3\Persistence\Exception\ObjectValidationFailedException('An instance of "' . $object->FLOW3_AOP_Proxy_getProxyTargetClassName() . '" failed to pass validation with ' . count($validator->getErrors()) . ' error(s): ' . PHP_EOL . $errorMessages);
+			throw new \F3\FLOW3\Persistence\Exception\ObjectValidationFailedException('An instance of "' . get_class($object) . '" failed to pass validation with ' . count($validator->getErrors()) . ' error(s): ' . PHP_EOL . $errorMessages);
 		}
 	}
 
@@ -380,11 +380,7 @@ abstract class AbstractBackend implements \F3\FLOW3\Persistence\Backend\BackendI
 	 */
 	protected function getType($value) {
 		if (is_object($value)) {
-			if ($value instanceof \F3\FLOW3\AOP\ProxyInterface) {
-				return $value->FLOW3_AOP_Proxy_getProxyTargetClassName();
-			} else {
-				return get_class($value);
-			}
+			return get_class($value);
 		} else {
 			return gettype($value) === 'double' ? 'float' : gettype($value);
 		}
@@ -421,7 +417,7 @@ abstract class AbstractBackend implements \F3\FLOW3\Persistence\Backend\BackendI
 
 				// handle all objects now, because even clean ones need to be traversed
 				// as dirty checking is not recursive
-			if ($propertyValue instanceof \F3\FLOW3\AOP\ProxyInterface) {
+			if ($propertyValue instanceof \F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface) {
 				if ($this->persistenceSession->isDirty($object, $propertyName)) {
 					$dirty = TRUE;
 					$this->flattenValue($identifier, $object, $propertyName, $propertyMetaData, $propertyData);
@@ -441,7 +437,7 @@ abstract class AbstractBackend implements \F3\FLOW3\Persistence\Backend\BackendI
 	 * Convert a value to the internal object data format
 	 *
 	 * @param string $identifier The object's identifier
-	 * @param \F3\FLOW3\AOP\ProxyInterface $object The object with the property to flatten
+	 * @param object $object The object with the property to flatten
 	 * @param string $propertyName The name of the property
 	 * @param array $propertyMetaData The property metadata
 	 * @param array $propertyData Reference to the property data array
@@ -449,12 +445,12 @@ abstract class AbstractBackend implements \F3\FLOW3\Persistence\Backend\BackendI
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
-	protected function flattenValue($identifier, \F3\FLOW3\AOP\ProxyInterface $object, $propertyName, array $propertyMetaData, array &$propertyData) {
+	protected function flattenValue($identifier, $object, $propertyName, array $propertyMetaData, array &$propertyData) {
 		$propertyValue = $object->FLOW3_AOP_Proxy_getProperty($propertyName);
 
-		if ($propertyValue instanceof \F3\FLOW3\AOP\ProxyInterface) {
+		if ($propertyValue instanceof \F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface) {
 			$propertyData[$propertyName] = array(
-				'type' => $propertyValue->FLOW3_AOP_Proxy_getProxyTargetClassName(),
+				'type' => get_class($object),
 				'multivalue' => FALSE,
 				'value' => $this->processObject($propertyValue, $identifier)
 			);
@@ -493,12 +489,12 @@ abstract class AbstractBackend implements \F3\FLOW3\Persistence\Backend\BackendI
 	}
 
 	/**
-	 * @param \F3\FLOW3\AOP\ProxyInterface $object
+	 * @param object $object
 	 * @param string $identifier
 	 * @return array
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function processObject(\F3\FLOW3\AOP\ProxyInterface $object, $identifier) {
+	protected function processObject($object, $identifier) {
 		return array(
 			'identifier' => $this->persistObject($object, $identifier)
 		);
@@ -524,14 +520,14 @@ abstract class AbstractBackend implements \F3\FLOW3\Persistence\Backend\BackendI
 
 		if (is_object($propertyValue)) {
 			if ($propertyType === 'object') {
-				if (!($propertyValue instanceof \F3\FLOW3\AOP\ProxyInterface)) {
-					throw new \F3\FLOW3\Persistence\Exception\IllegalObjectTypeException('Property of generic type object holds "' . get_class($propertyValue) . '", which is not persistable (no @entity or @valueobject), in ' . $object->FLOW3_AOP_Proxy_getProxyTargetClassName() . '::' . $propertyName, 1283531761);
+				if (!($propertyValue instanceof \F3\FLOW3\Object\Proxy\ProxyInterface)) {
+					throw new \F3\FLOW3\Persistence\Exception\IllegalObjectTypeException('Property of generic type object holds "' . get_class($propertyValue) . '", which is not persistable (no @entity or @valueobject), in ' . get_class($object) . '::' . $propertyName, 1283531761);
 				}
 			} elseif(!($propertyValue instanceof $propertyType)) {
-				throw new \F3\FLOW3\Persistence\Exception\UnexpectedTypeException('Expected property of type ' . $propertyType . ', but got ' . get_class($propertyValue) . ' for ' . $object->FLOW3_AOP_Proxy_getProxyTargetClassName() . '::' . $propertyName, 1244465558);
+				throw new \F3\FLOW3\Persistence\Exception\UnexpectedTypeException('Expected property of type ' . $propertyType . ', but got ' . get_class($propertyValue) . ' for ' . get_class($object) . '::' . $propertyName, 1244465558);
 			}
 		} elseif ($propertyValue !== NULL && $propertyType !== $this->getType($propertyValue)) {
-			throw new \F3\FLOW3\Persistence\Exception\UnexpectedTypeException('Expected property of type ' . $propertyType . ', but got ' . gettype($propertyValue) . ' for ' . $object->FLOW3_AOP_Proxy_getProxyTargetClassName() . '::' . $propertyName, 1244465559);
+			throw new \F3\FLOW3\Persistence\Exception\UnexpectedTypeException('Expected property of type ' . $propertyType . ', but got ' . gettype($propertyValue) . ' for ' . get_class($object) . '::' . $propertyName, 1244465559);
 		}
 	}
 
@@ -736,10 +732,10 @@ abstract class AbstractBackend implements \F3\FLOW3\Persistence\Backend\BackendI
 
 			$object = $this->persistenceSession->getObjectByIdentifier($item['value']['identifier']);
 			if ($splObjectStorage === NULL || !$splObjectStorage->contains($object)) {
-				if ($this->classSchemata[$object->FLOW3_AOP_Proxy_getProxyTargetClassName()]->getModelType() === \F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY
-						&& $this->classSchemata[$object->FLOW3_AOP_Proxy_getProxyTargetClassName()]->isAggregateRoot() === FALSE) {
+				if ($this->classSchemata[get_class($object)]->getModelType() === \F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY
+						&& $this->classSchemata[get_class($object)]->isAggregateRoot() === FALSE) {
 					$this->removeEntity($object);
-				} elseif ($this->classSchemata[$object->FLOW3_AOP_Proxy_getProxyTargetClassName()]->getModelType() === \F3\FLOW3\Reflection\ClassSchema::MODELTYPE_VALUEOBJECT) {
+				} elseif ($this->classSchemata[get_class($object)]->getModelType() === \F3\FLOW3\Reflection\ClassSchema::MODELTYPE_VALUEOBJECT) {
 					$this->removeValueObject($object);
 				}
 			}

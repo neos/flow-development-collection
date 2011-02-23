@@ -164,13 +164,13 @@ class DataMapper {
 	/**
 	 * Sets the given properties on the object.
 	 *
-	 * @param \F3\FLOW3\AOP\ProxyInterface $object The object to set properties on
+	 * @param \F3\FLOW3\Persistence\Aspect\PersistenceMagicAspect $object The object to set properties on
 	 * @param string $identifier The identifier of the object
 	 * @param array $objectData
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function thawProperties(\F3\FLOW3\AOP\ProxyInterface $object, $identifier, array $objectData) {
+	public function thawProperties(\F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface $object, $identifier, array $objectData) {
 		$classSchema = $this->reflectionService->getClassSchema($objectData['classname']);
 
 		foreach ($objectData['properties'] as $propertyName => $propertyData) {

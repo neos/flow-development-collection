@@ -145,7 +145,7 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function createObjectRecord($object, $parentIdentifier) {
-		$classSchema = $this->classSchemata[$object->FLOW3_AOP_Proxy_getProxyTargetClassName()];
+		$classSchema = $this->classSchemata[get_class($object)];
 		$identifier = $this->getIdentifierFromObject($object);
 
 		if ($classSchema->getModelType() === \F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY) {
@@ -176,7 +176,7 @@ class Backend extends \F3\FLOW3\Persistence\Backend\AbstractSqlBackend {
 	 * @return integer one of self::OBJECTSTATE_*
 	 */
 	protected function storeObject($object, $identifier, $parentIdentifier, array &$objectData) {
-		$classSchema = $this->classSchemata[$object->FLOW3_AOP_Proxy_getProxyTargetClassName()];
+		$classSchema = $this->classSchemata[get_class($object)];
 		if ($this->persistenceSession->hasObject($object)) {
 			if ($classSchema->getModelType() === \F3\FLOW3\Reflection\ClassSchema::MODELTYPE_VALUEOBJECT) {
 				return $identifier;

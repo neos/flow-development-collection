@@ -61,7 +61,7 @@ class PersistenceTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function entitiesArePersistedAndReconstituted() {
-		$testEntity = $this->objectManager->create('F3\FLOW3\Tests\Functional\Persistence\Fixtures\TestEntity');
+		$testEntity = new \F3\FLOW3\Tests\Functional\Persistence\Fixtures\TestEntity;
 		$testEntity->setName('FLOW3');
 		$this->testEntityRepository->add($testEntity);
 
