@@ -98,7 +98,7 @@ class RequestBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$this->setUpRequestBuilder();
 
 		$request = $this->builder->build();
-		$this->assertType('F3\FLOW3\MVC\Web\Request', $request);
+		$this->assertInstanceOf('F3\FLOW3\MVC\Web\Request', $request);
 	}
 
 	/**
