@@ -203,7 +203,7 @@ class ConfigurationManagerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function saveConfigurationAllowsForSavingBackPackageStates() {
 		$configurations[\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_PACKAGESTATES]['Foo']['active'] = TRUE;
 
-		$mockConfigurationSource = $this->getMock('F3\FLOW3\Configuration\Source\SourceInterface');
+		$mockConfigurationSource = $this->getMock('F3\FLOW3\Configuration\Source\YamlSource');
 		$mockConfigurationSource->expects($this->once())->method('save')->with(FLOW3_PATH_CONFIGURATION . \F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_PACKAGESTATES, $configurations[\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_PACKAGESTATES]);
 
 		$configurationManager = $this->getAccessibleMock('F3\FLOW3\Configuration\ConfigurationManager', array('dummy'), array(), '', FALSE);
@@ -229,7 +229,7 @@ class ConfigurationManagerTest extends \F3\FLOW3\Tests\UnitTestCase {
 			\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SIGNALSSLOTS
 		);
 
-		$mockConfigurationSource = $this->getMock('F3\FLOW3\Configuration\Source\SourceInterface');
+		$mockConfigurationSource = $this->getMock('F3\FLOW3\Configuration\Source\YamlSource');
 
 		$configurationManager = $this->getAccessibleMock('F3\FLOW3\Configuration\ConfigurationManager', array('dummy'), array(), '', FALSE);
 		$configurationManager->injectConfigurationSource($mockConfigurationSource);
@@ -282,7 +282,7 @@ class ConfigurationManagerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function loadConfigurationOverridesSettingsByContext() {
-		$mockConfigurationSource = $this->getMock('F3\FLOW3\Configuration\Source\SourceInterface', array('load', 'save'));
+		$mockConfigurationSource = $this->getMock('F3\FLOW3\Configuration\Source\YamlSource', array('load', 'save'));
 		$mockConfigurationSource->expects($this->any())->method('load')->will($this->returnCallback(array($this, 'packageSettingsCallback')));
 
 		$mockPackageA = $this->getMock('F3\FLOW3\Package\Package', array(), array(), '', FALSE);
@@ -390,7 +390,7 @@ class ConfigurationManagerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function loadConfigurationForObjectsOverridesConfigurationByContext() {
-		$mockConfigurationSource = $this->getMock('F3\FLOW3\Configuration\Source\SourceInterface', array('load', 'save'));
+		$mockConfigurationSource = $this->getMock('F3\FLOW3\Configuration\Source\YamlSource', array('load', 'save'));
 		$mockConfigurationSource->expects($this->any())->method('load')->will($this->returnCallback(array($this, 'packageObjectsCallback')));
 
 		$mockPackageFlow3 = $this->getMock('F3\FLOW3\Package\Package', array(), array(), '', FALSE);
@@ -485,7 +485,7 @@ EOD;
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function loadConfigurationCorrectlyMergesSettings() {
-		$mockConfigurationSource = $this->getMock('F3\FLOW3\Configuration\Source\SourceInterface', array('load', 'save'));
+		$mockConfigurationSource = $this->getMock('F3\FLOW3\Configuration\Source\YamlSource', array('load', 'save'));
 		$mockConfigurationSource->expects($this->any())->method('load')->will($this->returnCallback(array($this, 'packageSettingsCallback')));
 
 		$configurationManager = $this->getAccessibleMock('F3\FLOW3\Configuration\ConfigurationManager', array('postProcessConfiguration'), array(), '', FALSE);

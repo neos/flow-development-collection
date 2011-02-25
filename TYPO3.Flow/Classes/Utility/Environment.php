@@ -85,7 +85,7 @@ class Environment {
 	protected $temporaryDirectory = NULL;
 
 	/**
-	 * @var F3\FLOW3\Property\DataType\Uri
+	 * @var \F3\FLOW3\Property\DataType\Uri
 	 */
 	protected $baseUri;
 
@@ -599,7 +599,7 @@ class Environment {
 		}
 
 		if (!is_writable($temporaryDirectory)) {
-			throw new \F3\FLOW3\Utility\Exception('The temporary directory "' . $temporaryDirectory . '" could not be created or is not writable for the current user "' . $processUser['name'] . '". Please make this directory writable or define another temporary directory by setting the respective system environment variable (eg. TMPDIR) or defining it in the FLOW3 settings.', 1216287176);
+			throw new \F3\FLOW3\Utility\Exception('The temporary directory "' . $temporaryDirectory . '" could not be created or is not writable. Please make this directory writable or define another temporary directory by setting the respective system environment variable (eg. TMPDIR) or defining it in the FLOW3 settings.', 1216287176);
 		}
 
 		return $temporaryDirectory;
