@@ -96,6 +96,7 @@ class PolicyExpressionParserTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		$parser = new \F3\FLOW3\Security\Policy\PolicyExpressionParser();
 		$parser->injectObjectManager($mockObjectManager);
+		$parser->injectReflectionService(($this->getMock('F3\FLOW3\Reflection\ReflectionService')));
 
 		$trace = array();
 		$parser->parseMethodResources('theIntegrativeResource', $resourcesTree, $trace);

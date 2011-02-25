@@ -642,9 +642,6 @@ class PolicyServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockCacheManager = $this->getMock('F3\FLOW3\Cache\CacheManager', array(), array(), '', FALSE);
 		$mockCacheManager->expects($this->once())->method('getCache')->with('FLOW3_Security_Policy')->will($this->returnValue($mockCache));
 
-		$policyService = $this->getAccessibleMock('F3\FLOW3\Security\Policy\PolicyService', array('parseEntityAcls'), array(), '', FALSE);
-		$policyService->expects($this->once())->method('parseEntityAcls')->will($this->returnValue(array()));
-
 		$policyService = $this->getAccessibleMock('F3\FLOW3\Security\Policy\PolicyService', array('parseEntityAcls', 'setAclsForEverybodyRole'), array(), '', FALSE);
 		$policyService->expects($this->once())->method('parseEntityAcls');
 
