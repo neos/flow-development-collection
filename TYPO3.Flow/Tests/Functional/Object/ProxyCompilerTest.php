@@ -48,7 +48,7 @@ class ProxyCompilerTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 	 */
 	public function classesAnnotatedWithProxyDisableAreNotProxied() {
 		$singletonB = $this->objectManager->get('F3\FLOW3\Tests\Functional\Object\Fixtures\SingletonClassB');
-		$this->assertNotType('F3\FLOW3\Object\Proxy\ProxyInterface', $singletonB);
+		$this->assertNotInstanceOf('F3\FLOW3\Object\Proxy\ProxyInterface', $singletonB);
 	}
 }
 ?>

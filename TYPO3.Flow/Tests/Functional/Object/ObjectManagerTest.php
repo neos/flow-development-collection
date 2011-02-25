@@ -37,8 +37,8 @@ class ObjectManagerTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 		$objectByInterface = $this->objectManager->get('F3\FLOW3\Tests\Functional\Object\Fixtures\InterfaceA');
 		$objectByClassName = $this->objectManager->get('F3\FLOW3\Tests\Functional\Object\Fixtures\InterfaceAImplementation');
 
-		$this->assertType('F3\FLOW3\Tests\Functional\Object\Fixtures\InterfaceAImplementation', $objectByInterface);
-		$this->assertType('F3\FLOW3\Tests\Functional\Object\Fixtures\InterfaceAImplementation', $objectByClassName);
+		$this->assertInstanceOf('F3\FLOW3\Tests\Functional\Object\Fixtures\InterfaceAImplementation', $objectByInterface);
+		$this->assertInstanceOf('F3\FLOW3\Tests\Functional\Object\Fixtures\InterfaceAImplementation', $objectByClassName);
 
 		$this->assertSame($objectByInterface, $objectByClassName);
 	}

@@ -71,7 +71,7 @@ class DependencyInjectionTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 	public function virtualObjectsDefinedInObjectsYamlCanUseAFactoryForTheirActualImplementation() {
 		$prototypeA = $this->objectManager->get('F3\FLOW3\Tests\Functional\Object\Fixtures\PrototypeClassAishInterface');
 
-		$this->assertType('F3\FLOW3\Tests\Functional\Object\Fixtures\PrototypeClassA', $prototypeA);
+		$this->assertInstanceOf('F3\FLOW3\Tests\Functional\Object\Fixtures\PrototypeClassA', $prototypeA);
 		$this->assertSame('value defined in Objects.yaml', $prototypeA->getSomeProperty());
 	}
 }
