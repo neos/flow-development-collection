@@ -233,7 +233,6 @@ class Compiler {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function registerClassFiles(array $packages) {
-		$this->allAvailableClassNames = array('DateTime');
 		$this->proxyableClassNames = array();
 		foreach ($packages as $package) {
 			$packagePath = $package->getPackagePath();
@@ -242,8 +241,13 @@ class Compiler {
 				$classFiles = array_merge($classFiles, $package->getFunctionalTestsClassFiles());
 			}
 			foreach ($classFiles as $fullClassName => $relativePathAndFilename) {
+				if (substr($fullClassName, -9, 9) === 'Exception') {
+					continue;
+				}
+
 				$this->allAvailableClassNames[] = $fullClassName;
-				if (interface_exists($fullClassName) || substr($fullClassName, -9, 9) === 'Exception') {
+
+				if (interface_exists($fullClassName)) {
 					continue;
 				}
 

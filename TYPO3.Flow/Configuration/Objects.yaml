@@ -9,6 +9,20 @@
 
 # @package FLOW3
 
+DateTime:
+  scope: prototype
+  autowiring: off
+
+#                                                                          #
+# Cache                                                                    #
+#                                                                          #
+
+F3\FLOW3\Cache\CacheFactory:
+  arguments:
+    1:
+      setting: FLOW3.context
+
+
 #                                                                          #
 # I18n                                                                     #
 #                                                                          #
@@ -172,6 +186,10 @@ F3\FLOW3\Resource\ResourceManager:
 # Security                                                                 #
 #                                                                          #
 
+F3\FLOW3\Security\Authentication\AuthenticationManagerInterface:
+  className: F3\FLOW3\Security\Authentication\AuthenticationProviderManager
+
+
 F3\FLOW3\Security\Cryptography\RsaWalletServiceInterface:
   className: F3\FLOW3\Security\Cryptography\RsaWalletServicePhp
   properties:
@@ -185,6 +203,9 @@ F3\FLOW3\Security\Cryptography\RsaWalletServiceInterface:
 
 F3\FLOW3\Security\Authorization\AccessDecisionManagerInterface:
   className: F3\FLOW3\Security\Authorization\AccessDecisionVoterManager
+
+F3\FLOW3\Security\Authorization\FirewallInterface:
+  className: F3\FLOW3\Security\Authorization\FilterFirewall
 
 #                                                                          #
 # Session                                                                  #

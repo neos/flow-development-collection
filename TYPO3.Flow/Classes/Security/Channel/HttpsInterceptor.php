@@ -40,15 +40,15 @@ class HttpsInterceptor implements \F3\FLOW3\Security\Authorization\InterceptorIn
 	 *
 	 * @param \F3\FLOW3\Security\Context $securityContext The current security context
 	 * @param \F3\FLOW3\Security\Authentication\AuthenticationManagerInterface $authenticationManager The authentication Manager
-	 * @param \F3\FLOW3\Log\LoggerInterface $logger A logger to log security relevant actions
+	 * @param \F3\FLOW3\Log\SystemLoggerInterface $logger A logger to log security relevant actions
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function __construct(
-					\F3\FLOW3\Security\Context $securityContext,
-					\F3\FLOW3\Security\Authentication\AuthenticationManagerInterface $authenticationManager,
-					\F3\FLOW3\Log\LoggerInterface $logger
-					) {
+		\F3\FLOW3\Security\Context $securityContext,
+		\F3\FLOW3\Security\Authentication\AuthenticationManagerInterface $authenticationManager,
+		\F3\FLOW3\Log\SystemLoggerInterface $logger
+	) {
 
 	}
 

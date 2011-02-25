@@ -78,11 +78,17 @@ class ConfigurationBuilder {
 			$objectName = $className;
 
 			if (interface_exists($className)) {
-				$className = $this->reflectionService->getDefaultImplementationClassNameForInterface($className);
+				$interfaceName = $className;
+				$className = $this->reflectionService->getDefaultImplementationClassNameForInterface($interfaceName);
 				if ($className === FALSE) {
 					continue;
 				}
 			}
+
+			if ($this->reflectionService->isClassAbstract($className) || $this->reflectionService->isClassFinal($className)) {
+				continue;
+			}
+
 			$rawObjectConfiguration = array('className' => $className);
 
 			if ($this->reflectionService->isClassTaggedWith($className, 'scope')) {
@@ -298,7 +304,8 @@ class ConfigurationBuilder {
 			$arguments = $objectConfiguration->getArguments();
 
 			if ($this->reflectionService->hasMethod($className, '__construct')) {
-				foreach ($this->reflectionService->getMethodParameters($className, '__construct') as $parameterInformation) {
+				foreach ($this->reflectionService->getMethodParameters($className, '__construct') as $parameterName => $parameterInformation) {
+					$debuggingHint = '';
 					$index = $parameterInformation['position'] + 1;
 					if (!isset($arguments[$index])) {
 						if ($parameterInformation['class'] !== NULL && isset($objectConfigurations[$parameterInformation['class']])) {
@@ -308,6 +315,8 @@ class ConfigurationBuilder {
 							$arguments[$index] = new \F3\FLOW3\Object\Configuration\ConfigurationArgument($index, $defaultValue, \F3\FLOW3\Object\Configuration\ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE);
 						} elseif ($parameterInformation['allowsNull'] === TRUE) {
 							$arguments[$index] = new \F3\FLOW3\Object\Configuration\ConfigurationArgument($index, NULL, \F3\FLOW3\Object\Configuration\ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE);
+						} elseif (interface_exists($parameterInformation['class'])) {
+							$debuggingHint = sprintf('No default implementation for the required interface %s was configured, therefore no specific class name could be used for this dependency. ', $parameterInformation['class']);
 						}
 
 						$methodTagsAndValues = $this->reflectionService->getMethodTagsValues($className, '__construct');
@@ -315,6 +324,10 @@ class ConfigurationBuilder {
 								|| isset($methodTagsAndValues['autowiring']) && $methodTagsAndValues['autowiring'] === array('off'))) {
 							$arguments[$index]->setAutowiring(\F3\FLOW3\Object\Configuration\Configuration::AUTOWIRING_MODE_OFF);
 							$arguments[$index]->set($index, NULL);
+						}
+
+						if (!isset($arguments[$index]) && $objectConfiguration->getScope() === Configuration::SCOPE_SINGLETON) {
+							throw new \F3\FLOW3\Object\Exception\UnresolvedDependenciesException(sprintf('Could not autowire required constructor argument $%s for singleton class %s. %sCheck the type hint of that argument and your Objects.yaml configuration.', $parameterName, $className, $debuggingHint), 1298629392);
 						}
 					}
 				}
