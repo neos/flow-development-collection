@@ -238,9 +238,9 @@ class EnvironmentTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getRawServerEnvironmentJustReturnsTheSERVERVariable() {
-		$_SERVER = array('foo' => 'bar');
+		$_SERVER = array('foo' => 'bar', 'REQUEST_TIME' => $_SERVER['REQUEST_TIME']);
 		$environment = new \F3\FLOW3\Utility\Environment('Testing');
-		$this->assertEquals(array('foo' => 'bar'), $environment->getRawServerEnvironment());
+		$this->assertEquals($_SERVER, $environment->getRawServerEnvironment());
 	}
 
 	/**
