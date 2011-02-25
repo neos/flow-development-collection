@@ -47,7 +47,7 @@ class ConfigurationManager {
 	protected $context;
 
 	/**
-	 * @var \F3\FLOW3\Configuration\Source\SourceInterface
+	 * @var \F3\FLOW3\Configuration\Source\YamlSource
 	 */
 	protected $configurationSource;
 
@@ -97,10 +97,10 @@ class ConfigurationManager {
 	/**
 	 * Injects the configuration source
 	 *
-	 * @param \F3\FLOW3\Configuration\Source\SourceInterface $configurationSource
+	 * @param \F3\FLOW3\Configuration\Source\YamlSource $configurationSource
 	 * @return void
 	 */
-	public function injectConfigurationSource(\F3\FLOW3\Configuration\Source\SourceInterface $configurationSource) {
+	public function injectConfigurationSource(\F3\FLOW3\Configuration\Source\YamlSource $configurationSource) {
 		$this->configurationSource = $configurationSource;
 	}
 

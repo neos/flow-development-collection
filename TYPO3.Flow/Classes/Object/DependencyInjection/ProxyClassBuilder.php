@@ -202,9 +202,7 @@ class ProxyClassBuilder {
 							if (!isset($this->objectConfigurations[$argumentValue])) {
 								throw new \F3\FLOW3\Object\Exception\UnknownObjectException('The object "' . $argumentValue . '" which was specified as an argument in the object configuration of object "' . $objectConfiguration->getObjectName() . '" does not exist.', 1264669967);
 							}
-							if ($this->objectConfigurations[$argumentValue]->getScope() !== \F3\FLOW3\Object\Configuration\Configuration::SCOPE_PROTOTYPE) {
-								$assignments[] = $assignmentPrologue . '\F3\FLOW3\Core\Bootstrap::$staticObjectManager->get(\'' . $argumentValue . '\')';
-							}
+							$assignments[] = $assignmentPrologue . '\F3\FLOW3\Core\Bootstrap::$staticObjectManager->get(\'' . $argumentValue . '\')';
 						}
 					break;
 
@@ -230,7 +228,11 @@ class ProxyClassBuilder {
 			if ($parameterInfo['optional'] === TRUE) {
 				break;
 			}
-			$code .= '		if (!isset($arguments[' . $index . '])) throw new \F3\FLOW3\Object\Exception\UnresolvedDependenciesException(\'Missing required constructor argument $' . $parameterName . ' in class \' . __CLASS__ . \'. Please check your calling code and Dependency Injection configuration.\', 1296143787);' . "\n";
+			if ($objectConfiguration->getScope() === \F3\FLOW3\Object\Configuration\Configuration::SCOPE_SINGLETON) {
+				$code .= '		if (!isset($arguments[' . $index . '])) throw new \F3\FLOW3\Object\Exception\UnresolvedDependenciesException(\'Missing required constructor argument $' . $parameterName . ' in class \' . __CLASS__ . \'. ' . 'Please check your calling code and Dependency Injection configuration.\', 1296143787);' . "\n";
+			} else {
+				$code .= '		if (!isset($arguments[' . $index . '])) throw new \F3\FLOW3\Object\Exception\UnresolvedDependenciesException(\'Missing required constructor argument $' . $parameterName . ' in class \' . __CLASS__ . \'. ' . 'Note that constructor injection is only support for objects of scope singleton (and this is not a singleton) – for other scopes you must pass each required argument to the constructor yourself.\', 1296143788);' . "\n";
+			}
 			$index ++;
 		}
 
@@ -284,7 +286,7 @@ class ProxyClassBuilder {
 							if ($propertyValue[0] === '\\') {
 								throw new \F3\FLOW3\Object\Exception\UnknownObjectException('The object name "' . $propertyValue . '" which was specified as a property in the object configuration of object "' . $objectName . '" (' . $configurationSource . ') starts with a leading backslash.', 1277827579);
 							} else {
-								throw new \F3\FLOW3\Object\Exception\UnknownObjectException('The object "' . $propertyValue . '" which was specified as a property in the object configuration of object "' . $objectName . '" (' . $configurationSource . ') does not exist.', 1265213849);
+								throw new \F3\FLOW3\Object\Exception\UnknownObjectException('The object "' . $propertyValue . '" which was specified as a property in the object configuration of object "' . $objectName . '" (' . $configurationSource . ') does not exist. Check for spelling mistakes and if that dependency is correctly configured.', 1265213849);
 							}
 						}
 						$propertyClassName = $this->objectConfigurations[$propertyValue]->getClassName();
