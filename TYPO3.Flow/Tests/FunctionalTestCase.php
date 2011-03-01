@@ -138,14 +138,46 @@ abstract class FunctionalTestCase extends \F3\FLOW3\Tests\BaseTestCase {
 	}
 
 	/**
+	 * Calls the given action of the given controller
+	 *
+	 * @param string $controllerName The name of the controller to be called
+	 * @param string $controllerPackageKey The package key the controller resides in
+	 * @param string $controllerActionName The name of the action to be called, e.g. 'index'
+	 * @param array $arguments Optional arguments passed to controller
+	 * @param string $format The request format, defaults to 'html'
+	 * @return string The result of the controller action
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	protected function sendWebRequest($controllerName, $controllerPackageKey, $controllerActionName, array $arguments = array(), $format = 'html') {
+		$controller = $this->objectManager->get('F3\\' . $controllerPackageKey . '\\Controller\\' . $controllerName . 'Controller');
+
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
+		$mockRequest->expects($this->any())->method('getControllerPackageKey')->will($this->returnValue($controllerPackageKey));
+		$mockRequest->expects($this->any())->method('getControllerActionName')->will($this->returnValue($controllerActionName));
+		$mockRequest->expects($this->any())->method('getControllerName')->will($this->returnValue($controllerName));
+		$mockRequest->expects($this->any())->method('getArguments')->will($this->returnValue($arguments));
+		$mockRequest->expects($this->any())->method('getFormat')->will($this->returnValue($format));
+		$mockRequest->expects($this->any())->method('getBaseUri')->will($this->returnValue('baseUri'));
+
+		$mockResponse = $this->getMock('F3\FLOW3\MVC\ResponseInterface', array(), array(), '', FALSE);
+
+		$content = '';
+		$mockResponse->expects($this->any())->method('appendContent')->will($this->returnCallback(function($newContent) use(&$content) {
+			$content .= $newContent;
+		}));
+
+		$controller->processRequest($mockRequest, $mockResponse);
+
+		return $content;
+	}
+
+	/**
 	 * Sets up security test requirements
 	 *
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	protected function setupSecurity() {
-		$this->objectManager->get('F3\FLOW3\Security\Authorization\AccessDecisionManagerInterface');
-
 		$this->accessDecisionManager = $this->objectManager->get('F3\FLOW3\Security\Authorization\AccessDecisionManagerInterface');
 		$this->accessDecisionManager->setOverrideDecision(NULL);
 
