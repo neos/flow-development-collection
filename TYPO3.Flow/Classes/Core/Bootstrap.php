@@ -205,7 +205,6 @@ class Bootstrap {
 		$startTime = microtime(TRUE);
 
 		$this->initializeClassLoader();
-		$this->initializeClassLoader();
 		$this->initializeConfiguration();
 		$this->initializeSystemLogger();
 		$this->initializeErrorHandling();
