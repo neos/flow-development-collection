@@ -39,6 +39,26 @@ class ObjectManagerTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 
 		$this->assertInstanceOf('F3\FLOW3\Tests\Functional\Object\Fixtures\InterfaceAImplementation', $objectByInterface);
 		$this->assertInstanceOf('F3\FLOW3\Tests\Functional\Object\Fixtures\InterfaceAImplementation', $objectByClassName);
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function prototypeIsTheDefaultScopeIfNothingElseWasDefined() {
+		$instanceA = new \F3\FLOW3\Tests\Functional\Object\Fixtures\PrototypeClassB();
+		$instanceB = new \F3\FLOW3\Tests\Functional\Object\Fixtures\PrototypeClassB();
+
+		$this->assertNotSame($instanceA, $instanceB);
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function interfaceObjectsHaveTheScopeDefinedInTheImplementationClassIfNothingElseWasSpecified() {
+		$objectByInterface = $this->objectManager->get('F3\FLOW3\Tests\Functional\Object\Fixtures\InterfaceA');
+		$objectByClassName = $this->objectManager->get('F3\FLOW3\Tests\Functional\Object\Fixtures\InterfaceAImplementation');
 
 		$this->assertSame($objectByInterface, $objectByClassName);
 	}

@@ -63,10 +63,9 @@ class Configuration {
 	protected $factoryMethodName = 'create';
 
 	/**
-	 * Instantiation scope for this object - overrides value set via annotation in the implementation class. Options supported by FLOW3
 	 * @var string
 	 */
-	protected $scope = self::SCOPE_SINGLETON;
+	protected $scope = self::SCOPE_PROTOTYPE;
 
 	/**
 	 * Arguments of the constructor detected by reflection

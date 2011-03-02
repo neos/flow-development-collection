@@ -77,26 +77,23 @@ class ConfigurationBuilder {
 		foreach ($availableClassNames as $className) {
 			$objectName = $className;
 
+			if ($this->reflectionService->isClassFinal($className)) {
+				continue;
+			}
+
 			if (interface_exists($className)) {
 				$interfaceName = $className;
 				$className = $this->reflectionService->getDefaultImplementationClassNameForInterface($interfaceName);
 				if ($className === FALSE) {
 					continue;
 				}
-			}
-
-			if ($this->reflectionService->isClassAbstract($className) || $this->reflectionService->isClassFinal($className)) {
-				continue;
+				if ($this->reflectionService->isClassTaggedWith($interfaceName, 'scope')) {
+					throw new \F3\FLOW3\Object\Exception\InvalidObjectConfigurationException(sprintf('@scope annotations in interfaces don\'t have any effect, therefore you better remove it from %s in order to avoid confusion.', $interfaceName), 1299095595);
+				}
 			}
 
 			$rawObjectConfiguration = array('className' => $className);
-
-			if ($this->reflectionService->isClassTaggedWith($className, 'scope')) {
-				$rawObjectConfiguration['scope'] = implode('', $this->reflectionService->getClassTagValues($className, 'scope'));
-			}
-			if ($this->reflectionService->isClassTaggedWith($className, 'autowiring')) {
-				$rawObjectConfiguration['autowiring'] = implode('', $this->reflectionService->getClassTagValues($className, 'autowiring'));
-			}
+			$rawObjectConfiguration = $this->enhanceRawConfigurationWithAnnotationOptions($className, $rawObjectConfiguration);
 			$objectConfigurations[$objectName] = $this->parseConfigurationArray($objectName, $rawObjectConfiguration, 'automatically registered class');
 		}
 
@@ -108,6 +105,9 @@ class ConfigurationBuilder {
 				}
 
 				$existingObjectConfiguration = (isset($objectConfigurations[$objectName])) ? $objectConfigurations[$objectName] : NULL;
+				if (isset($rawObjectConfiguration['className'])) {
+					$rawObjectConfiguration = $this->enhanceRawConfigurationWithAnnotationOptions($rawObjectConfiguration['className'], $rawObjectConfiguration);
+				}
 				$newObjectConfiguration = $this->parseConfigurationArray($objectName, $rawObjectConfiguration, 'configuration of package ' . $packageKey . ', definition for object "' . $objectName . '"', $existingObjectConfiguration);
 
 				if (!isset($objectConfigurations[$objectName]) && !interface_exists($objectName, TRUE) && !class_exists($objectName, FALSE)) {
@@ -126,6 +126,23 @@ class ConfigurationBuilder {
 		$this->autowireProperties($objectConfigurations);
 
 		return $objectConfigurations;
+	}
+
+	/**
+	 * Builds a raw configuration array by parsing possible scope and autowiring annotations from the given class or
+	 * interface.
+	 *
+	 * @param  $className
+	 * @return array
+	 */
+	protected function enhanceRawConfigurationWithAnnotationOptions($className, array $rawObjectConfiguration) {
+		if ($this->reflectionService->isClassTaggedWith($className, 'scope')) {
+			$rawObjectConfiguration['scope'] = implode('', $this->reflectionService->getClassTagValues($className, 'scope'));
+		}
+		if ($this->reflectionService->isClassTaggedWith($className, 'autowiring')) {
+			$rawObjectConfiguration['autowiring'] = implode('', $this->reflectionService->getClassTagValues($className, 'autowiring'));
+		}
+		return $rawObjectConfiguration;
 	}
 
 	/**
@@ -308,11 +325,13 @@ class ConfigurationBuilder {
 					$debuggingHint = '';
 					$index = $parameterInformation['position'] + 1;
 					if (!isset($arguments[$index])) {
-						if ($parameterInformation['class'] !== NULL && isset($objectConfigurations[$parameterInformation['class']])) {
-							$arguments[$index] = new \F3\FLOW3\Object\Configuration\ConfigurationArgument($index, $parameterInformation['class'], \F3\FLOW3\Object\Configuration\ConfigurationArgument::ARGUMENT_TYPES_OBJECT);
-						} elseif ($parameterInformation['optional'] === TRUE) {
+						if ($parameterInformation['optional'] === TRUE) {
 							$defaultValue = (isset($parameterInformation['defaultValue'])) ? $parameterInformation['defaultValue'] : NULL;
-							$arguments[$index] = new \F3\FLOW3\Object\Configuration\ConfigurationArgument($index, $defaultValue, \F3\FLOW3\Object\Configuration\ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE);
+							if ($defaultValue !== NULL) {
+								$arguments[$index] = new \F3\FLOW3\Object\Configuration\ConfigurationArgument($index, $defaultValue, \F3\FLOW3\Object\Configuration\ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE);
+							}
+						} elseif ($parameterInformation['class'] !== NULL && isset($objectConfigurations[$parameterInformation['class']])) {
+							$arguments[$index] = new \F3\FLOW3\Object\Configuration\ConfigurationArgument($index, $parameterInformation['class'], \F3\FLOW3\Object\Configuration\ConfigurationArgument::ARGUMENT_TYPES_OBJECT);
 						} elseif ($parameterInformation['allowsNull'] === TRUE) {
 							$arguments[$index] = new \F3\FLOW3\Object\Configuration\ConfigurationArgument($index, NULL, \F3\FLOW3\Object\Configuration\ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE);
 						} elseif (interface_exists($parameterInformation['class'])) {

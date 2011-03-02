@@ -752,8 +752,8 @@ class ReflectionService {
 				$this->reflectClass($className);
 				if ($this->isClassTaggedWith($className, 'entity') || $this->isClassTaggedWith($className, 'valueobject')) {
 					$classTagValues = $this->getClassTagValues($className, 'scope');
-					if (current($classTagValues) !== 'prototype') {
-						throw new \F3\FLOW3\Reflection\Exception('Classes tagged as @entity or @valueobject must be of @scope prototype (affected class: '  . $className . ')!', 1264103349);
+					if ($classTagValues !== array() && current($classTagValues) !== 'prototype') {
+						throw new \F3\FLOW3\Reflection\Exception(sprintf('Classes tagged as @entity or @valueobject must be of @scope prototype, however, %s is declared as %s.', $className, current($classTagValues)), 1264103349);
 					}
 					$classNamesToBuildSchemaFor[] = $className;
 				}
