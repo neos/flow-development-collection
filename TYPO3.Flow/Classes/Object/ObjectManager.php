@@ -140,6 +140,18 @@ class ObjectManager implements ObjectManagerInterface {
 	}
 
 	/**
+	 * Registers the passed shutdown lifecycle method for the given object
+	 *
+	 * @param object $object The object to register the shutdown method for
+	 * @param string $shutdownLifecycleMethodName The method name of the shutdown method to be called
+	 * @return void
+	 * @api
+	 */
+	public function registerShutdownObject($object, $shutdownLifecycleMethodName) {
+		$this->shutdownObjects[$object] = $shutdownLifecycleMethodName;
+	}
+
+	/**
 	 * Returns a fresh or existing instance of the object specified by $objectName.
 	 *
 	 * @param string $objectName The name of the object to return an instance of

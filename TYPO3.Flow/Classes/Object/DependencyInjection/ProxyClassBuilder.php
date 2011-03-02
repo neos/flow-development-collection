@@ -140,6 +140,7 @@ class ProxyClassBuilder {
 			$wakeupMethod->addPreParentCallCode($this->buildSetInstanceCode($objectConfiguration));
 			$wakeupMethod->addPreParentCallCode($this->buildSetRelatedEntitiesCode());
 			$wakeupMethod->addPostParentCallCode($this->buildLifecycleInitializationCode($objectConfiguration, \F3\FLOW3\Object\ObjectManagerInterface::INITIALIZATIONCAUSE_RECREATED));
+			$wakeupMethod->addPostParentCallCode($this->buildLifecycleShutdownCode($objectConfiguration));
 
 			$sleepMethod = $proxyClass->getMethod('__sleep');
 			$sleepMethod->addPostParentCallCode($this->buildSerializeRelatedEntitiesCode($objectConfiguration));
@@ -153,6 +154,7 @@ class ProxyClassBuilder {
 			}
 
 			$constructorPostCode .= $this->buildLifecycleInitializationCode($objectConfiguration, \F3\FLOW3\Object\ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED);
+			$constructorPostCode .= $this->buildLifecycleShutdownCode($objectConfiguration);
 
 			$constructor = $proxyClass->getConstructor();
 			$constructor->addPreParentCallCode($constructorPreCode);
@@ -423,6 +425,21 @@ class ProxyClassBuilder {
 			return '';
 		}
 		return "\n" . '		$this->' . $lifecycleInitializationMethodName . '(' . $cause . ');' . "\n";
+	}
+
+	/**
+	 * Builds code which registers the lifecycle shutdown method, if any.
+	 *
+	 * @param \F3\FLOW3\Object\Configuration\Configuration $objectConfiguration
+	 * @return string
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	protected function buildLifecycleShutdownCode(\F3\FLOW3\Object\Configuration\Configuration $objectConfiguration) {
+		$lifecycleShutdownMethodName = $objectConfiguration->getLifecycleShutdownMethodName();
+		if (!$this->reflectionService->hasMethod($objectConfiguration->getClassName(), $lifecycleShutdownMethodName)) {
+			return '';
+		}
+		return "\n" . '		\F3\FLOW3\Core\Bootstrap::$staticObjectManager->registerShutdownObject($this, \'' . $lifecycleShutdownMethodName . '\');' . PHP_EOL;
 	}
 
 	/**

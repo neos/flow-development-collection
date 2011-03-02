@@ -105,6 +105,16 @@ interface ObjectManagerInterface {
 	public function isRegistered($objectName);
 
 	/**
+	 * Registers the passed shutdown lifecycle method for the given object
+	 *
+	 * @param object $object The object to register the shutdown method for
+	 * @param string $shutdownLifecycleMethodName The method name of the shutdown method to be called
+	 * @return void
+	 * @api
+	 */
+	public function registerShutdownObject($object, $shutdownLifecycleMethodName);
+
+	/**
 	 * Returns the case sensitive object name of an object specified by a
 	 * case insensitive object name. If no object of that name exists,
 	 * FALSE is returned.
