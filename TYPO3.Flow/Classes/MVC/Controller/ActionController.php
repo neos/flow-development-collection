@@ -155,7 +155,7 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 		}
 
 		$this->mapRequestArgumentsToControllerArguments();
-		$this->controllerContext = $this->objectManager->create('F3\FLOW3\MVC\Controller\ControllerContext', $this->request, $this->response, $this->arguments, $this->argumentsMappingResults, $this->uriBuilder, $this->flashMessageContainer);
+		$this->controllerContext = new ControllerContext($this->request, $this->response, $this->arguments, $this->argumentsMappingResults, $this->uriBuilder, $this->flashMessageContainer);
 
 		if ($this->request->getFormat() === NULL) {
 			$this->request->setFormat($this->detectFormat());

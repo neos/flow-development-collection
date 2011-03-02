@@ -39,15 +39,6 @@ class ActionControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockRequest->expects($this->once())->method('getFormat')->will($this->returnValue(NULL));
 		$mockRequest->expects($this->once())->method('setFormat')->with('detectedformat');
 
-		$mockUriBuilder = $this->getMock('F3\FLOW3\MVC\Web\Routing\UriBuilder');
-		$mockUriBuilder->expects($this->once())->method('setRequest')->with($mockRequest);
-
-		$mockControllerContext = $this->getMock('F3\FLOW3\MVC\Controller\ControllerContext', array(), array(), '', FALSE);
-
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->at(0))->method('create')->with('F3\FLOW3\MVC\Web\Routing\UriBuilder')->will($this->returnValue($mockUriBuilder));
-		$mockObjectManager->expects($this->at(1))->method('create')->with('F3\FLOW3\MVC\Controller\ControllerContext')->will($this->returnValue($mockControllerContext));
-
 		$mockResponse = $this->getMock('F3\FLOW3\MVC\Web\Response', array(), array(), '', FALSE);
 
 		$mockView = $this->getMock('F3\FLOW3\MVC\View\ViewInterface');
@@ -57,7 +48,6 @@ class ActionControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 			'initializeActionMethodValidators', 'mapRequestArgumentsToControllerArguments', 'buildControllerContext',
 			'detectFormat', 'resolveView', 'initializeView', 'callActionMethod'),
 			array(), '', FALSE);
-		$mockController->_set('objectManager', $mockObjectManager);
 		$mockController->expects($this->at(0))->method('resolveActionMethodName')->will($this->returnValue('fooAction'));
 		$mockController->expects($this->at(1))->method('initializeActionMethodArguments');
 		$mockController->expects($this->at(2))->method('initializeActionMethodValidators');
@@ -69,10 +59,13 @@ class ActionControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockController->expects($this->at(8))->method('initializeView');
 		$mockController->expects($this->at(9))->method('callActionMethod');
 
+		$mockController->_set('arguments', new \F3\FLOW3\MVC\Controller\Arguments());
+		$mockController->_set('argumentsMappingResults', new \F3\FLOW3\Property\MappingResults());
+		$mockController->_set('flashMessageContainer', new \F3\FLOW3\MVC\Controller\FlashMessageContainer());
+
 		$mockController->processRequest($mockRequest, $mockResponse);
 		$this->assertSame($mockRequest, $mockController->_get('request'));
 		$this->assertSame($mockResponse, $mockController->_get('response'));
-		$this->assertSame($mockControllerContext, $mockController->getControllerContext());
 	}
 
 	/**

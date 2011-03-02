@@ -136,18 +136,14 @@ class GenericObjectValidatorTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function addErrorsForPropertyAddsPropertyErrorToErrorsIndexedByPropertyName() {
-		$mockPropertyError = $this->getMock('F3\FLOW3\Validation\PropertyError', array('addErrors'), array('foo'));
-		$mockPropertyError->expects($this->once())->method('addErrors')->with(array('error'));
-
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->once())->method('create')->with('F3\FLOW3\Validation\PropertyError', 'foo')->will($this->returnValue($mockPropertyError));
-
 		$validator = $this->getAccessibleMock('F3\FLOW3\Validation\Validator\GenericObjectValidator', array('dummy'));
-		$validator->_set('objectManager', $mockObjectManager);
 		$validator->_call('addErrorsForProperty', array('error'), 'foo');
 
+		$expectedPropertyError = new \F3\FLOW3\Validation\PropertyError('foo');
+		$expectedPropertyError->addErrors(array('error'));
+
 		$errors = $validator->_get('errors');
-		$this->assertEquals($mockPropertyError, $errors['foo']);
+		$this->assertEquals($expectedPropertyError, $errors['foo']);
 	}
 
 	/**
@@ -182,9 +178,8 @@ class GenericObjectValidatorTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$A->b = $B;
 		$B->a = $A;
 
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$aValidator = new \F3\FLOW3\Validation\Validator\GenericObjectValidator($mockObjectManager);
-		$bValidator = new \F3\FLOW3\Validation\Validator\GenericObjectValidator($mockObjectManager);
+		$aValidator = new \F3\FLOW3\Validation\Validator\GenericObjectValidator();
+		$bValidator = new \F3\FLOW3\Validation\Validator\GenericObjectValidator();
 		$aValidator->addPropertyValidator('b', $bValidator);
 		$bValidator->addPropertyValidator('a', $aValidator);
 
@@ -205,18 +200,10 @@ class GenericObjectValidatorTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$A->b = $B;
 		$B->a = $A;
 
-		$mockUuidPropertyError = $this->getMock('F3\FLOW3\Validation\PropertyError', array('dummy'), array('uuid'));
-		$mockBPropertyError = $this->getMock('F3\FLOW3\Validation\PropertyError', array('dummy'), array('b'));
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->at(0))->method('create')->with('F3\FLOW3\Validation\Error');
-		$mockObjectManager->expects($this->at(1))->method('create')->with('F3\FLOW3\Validation\PropertyError', 'uuid')->will($this->returnValue($mockUuidPropertyError));
-		$mockObjectManager->expects($this->at(2))->method('create')->with('F3\FLOW3\Validation\PropertyError', 'b')->will($this->returnValue($mockBPropertyError));
 		$aValidator = new \F3\FLOW3\Validation\Validator\GenericObjectValidator();
-		$aValidator->injectObjectManager($mockObjectManager);
 		$bValidator = new \F3\FLOW3\Validation\Validator\GenericObjectValidator();
-		$bValidator->injectObjectManager($mockObjectManager);
 		$uuidValidator = new \F3\FLOW3\Validation\Validator\UuidValidator();
-		$uuidValidator->injectObjectManager($mockObjectManager);
+
 		$aValidator->addPropertyValidator('b', $bValidator);
 		$bValidator->addPropertyValidator('a', $aValidator);
 		$bValidator->addPropertyValidator('uuid', $uuidValidator);
@@ -238,21 +225,9 @@ class GenericObjectValidatorTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$A->b = $B;
 		$B->a = $A;
 
-		$mockUuidPropertyError = $this->getMock('F3\FLOW3\Validation\PropertyError', array('dummy'), array('uuid'));
-		$mockAPropertyError = $this->getMock('F3\FLOW3\Validation\PropertyError', array('dummy'), array('a'));
-		$mockBPropertyError = $this->getMock('F3\FLOW3\Validation\PropertyError', array('dummy'), array('b'));
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->at(0))->method('create')->with('F3\FLOW3\Validation\Error');
-		$mockObjectManager->expects($this->at(1))->method('create')->with('F3\FLOW3\Validation\PropertyError', 'uuid')->will($this->returnValue($mockUuidPropertyError));
-		$mockObjectManager->expects($this->at(2))->method('create')->with('F3\FLOW3\Validation\PropertyError', 'b')->will($this->returnValue($mockBPropertyError));
-		$mockObjectManager->expects($this->at(3))->method('create')->with('F3\FLOW3\Validation\Error');
-		$mockObjectManager->expects($this->at(4))->method('create')->with('F3\FLOW3\Validation\PropertyError', 'uuid')->will($this->returnValue($mockUuidPropertyError));
 		$aValidator = new \F3\FLOW3\Validation\Validator\GenericObjectValidator();
-		$aValidator->injectObjectManager($mockObjectManager);
 		$bValidator = new \F3\FLOW3\Validation\Validator\GenericObjectValidator();
-		$bValidator->injectObjectManager($mockObjectManager);
 		$uuidValidator = new \F3\FLOW3\Validation\Validator\UuidValidator();
-		$uuidValidator->injectObjectManager($mockObjectManager);
 		$aValidator->addPropertyValidator('b', $bValidator);
 		$aValidator->addPropertyValidator('uuid', $uuidValidator);
 		$bValidator->addPropertyValidator('a', $aValidator);
@@ -275,17 +250,9 @@ class GenericObjectValidatorTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$A->b = $B;
 		$B->a = $A;
 
-		$mockUuidPropertyError = $this->getMock('F3\FLOW3\Validation\PropertyError', array('dummy'), array('uuid'));
-		$mockAPropertyError = $this->getMock('F3\FLOW3\Validation\PropertyError', array('dummy'), array('a'));
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->at(0))->method('create')->with('F3\FLOW3\Validation\Error');
-		$mockObjectManager->expects($this->at(1))->method('create')->with('F3\FLOW3\Validation\PropertyError', 'uuid')->will($this->returnValue($mockUuidPropertyError));
 		$aValidator = new \F3\FLOW3\Validation\Validator\GenericObjectValidator();
-		$aValidator->injectObjectManager($mockObjectManager);
 		$bValidator = new \F3\FLOW3\Validation\Validator\GenericObjectValidator();
-		$bValidator->injectObjectManager($mockObjectManager);
 		$uuidValidator = new \F3\FLOW3\Validation\Validator\UuidValidator();
-		$uuidValidator->injectObjectManager($mockObjectManager);
 		$aValidator->addPropertyValidator('b', $bValidator);
 		$aValidator->addPropertyValidator('uuid', $uuidValidator);
 		$bValidator->addPropertyValidator('a', $aValidator);

@@ -26,6 +26,7 @@ namespace F3\FLOW3\Package\MetaData;
  * Package person party meta model
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @scope prototype
  */
 class Person extends \F3\FLOW3\Package\MetaData\AbstractParty {
 
