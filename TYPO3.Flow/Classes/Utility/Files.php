@@ -259,7 +259,7 @@ class Files {
 			return FALSE;
 		}
 		$normalizedPathAndFilename = strtolower(self::getUnixStylePath($pathAndFilename));
-		$normalizedTargetPathAndFilename = strtolower(self::getUnixStylePath(readlink($pathAndFilename)));
+		$normalizedTargetPathAndFilename = strtolower(self::getUnixStylePath(realpath($pathAndFilename)));
 		return $normalizedPathAndFilename !== $normalizedTargetPathAndFilename;
 	}
 }

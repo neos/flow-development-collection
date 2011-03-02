@@ -179,7 +179,7 @@ class PrivateResourcesPublishingAspect {
 					\F3\FLOW3\Utility\Files::createDirectoryRecursively($roleDirectory);
 
 					if (file_exists($publishingPath . $role)) {
-						if (\F3\FLOW3\Utility\Files::is_link(\F3\FLOW3\Utility\Files::concatenatePaths(array($publishingPath, $role))) && (readlink(\F3\FLOW3\Utility\Files::concatenatePaths(array($publishingPath, $role))) === $roleDirectory)) {
+						if (\F3\FLOW3\Utility\Files::is_link(\F3\FLOW3\Utility\Files::concatenatePaths(array($publishingPath, $role))) && (realpath(\F3\FLOW3\Utility\Files::concatenatePaths(array($publishingPath, $role))) === $roleDirectory)) {
 							continue;
 						}
 						unlink($publishingPath . $role);

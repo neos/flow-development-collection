@@ -660,8 +660,8 @@ class PrivateResourcesPublishingAspectTest extends \F3\FLOW3\Tests\UnitTestCase 
 		$this->assertFileExists($temporaryDirectoryPath . 'PrivateResourcePublishing/Role3/');
 		$this->assertFileExists($publishPath . 'Persistent/TheCurrentSessionId/Role2');
 		$this->assertFileExists($publishPath . 'Persistent/TheCurrentSessionId/Role3');
-		$this->assertEquals($temporaryDirectoryPath . 'PrivateResourcePublishing/Role2', rtrim(readlink($publishPath . 'Persistent/TheCurrentSessionId/Role2'), '/'));
-		$this->assertEquals($temporaryDirectoryPath . 'PrivateResourcePublishing/Role3', rtrim(readlink($publishPath . 'Persistent/TheCurrentSessionId/Role3'), '/'));
+		$this->assertEquals($temporaryDirectoryPath . 'PrivateResourcePublishing/Role2', rtrim(realpath($publishPath . 'Persistent/TheCurrentSessionId/Role2'), '/'));
+		$this->assertEquals($temporaryDirectoryPath . 'PrivateResourcePublishing/Role3', rtrim(realpath($publishPath . 'Persistent/TheCurrentSessionId/Role3'), '/'));
 
 		\F3\FLOW3\Utility\Files::removeDirectoryRecursively($temporaryDirectoryPath);
 		\F3\FLOW3\Utility\Files::removeDirectoryRecursively($publishPath);

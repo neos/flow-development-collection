@@ -120,7 +120,7 @@ class FileSystemPublishingTarget extends \F3\FLOW3\Resource\Publishing\AbstractR
 
 		if ($this->settings['resource']['publishing']['fileSystem']['mirrorMode'] == 'link') {
 			if (file_exists($targetPath)) {
-				if (\F3\FLOW3\Utility\Files::is_link($targetPath) && (rtrim(\F3\FLOW3\Utility\Files::getUnixStylePath(readlink($targetPath)), '/') === $sourcePath)) {
+				if (\F3\FLOW3\Utility\Files::is_link($targetPath) && (rtrim(\F3\FLOW3\Utility\Files::getUnixStylePath(realpath($targetPath)), '/') === $sourcePath)) {
 					return TRUE;
 				} elseif (is_dir($targetPath)) {
 					\F3\FLOW3\Utility\Files::removeDirectoryRecursively($targetPath);
@@ -268,7 +268,7 @@ class FileSystemPublishingTarget extends \F3\FLOW3\Resource\Publishing\AbstractR
 				break;
 			case 'link' :
 				if (file_exists($targetPathAndFilename)) {
-					if (\F3\FLOW3\Utility\Files::is_link($targetPathAndFilename) && (readlink($targetPathAndFilename) === $sourcePathAndFilename)) {
+					if (\F3\FLOW3\Utility\Files::is_link($targetPathAndFilename) && (realpath($targetPathAndFilename) === $sourcePathAndFilename)) {
 						break;
 					}
 					unlink($targetPathAndFilename);
