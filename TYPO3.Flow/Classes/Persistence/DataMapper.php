@@ -26,6 +26,7 @@ namespace F3\FLOW3\Persistence;
  * A data mapper to map raw records to objects
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @scope singleton
  */
 class DataMapper {
 

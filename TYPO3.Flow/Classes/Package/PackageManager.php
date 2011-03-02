@@ -29,6 +29,7 @@ use \F3\FLOW3\Package\MetaData\XmlWriter as PackageMetaDataWriter;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
+ * @scope singleton
  */
 class PackageManager implements \F3\FLOW3\Package\PackageManagerInterface {
 

@@ -167,6 +167,7 @@ F3\FLOW3\MVC\Web\Routing\Aspect\RouterCachingAspect:
 
 F3\FLOW3\Object\ObjectManagerInterface:
   className: F3\FLOW3\Object\ObjectManager
+  scope: singleton
 
 #                                                                          #
 # Resource                                                                 #
@@ -192,6 +193,7 @@ F3\FLOW3\Security\Authentication\AuthenticationManagerInterface:
 
 F3\FLOW3\Security\Cryptography\RsaWalletServiceInterface:
   className: F3\FLOW3\Security\Cryptography\RsaWalletServicePhp
+  scope: singleton
   properties:
     keystoreCache:
       object:
@@ -213,6 +215,7 @@ F3\FLOW3\Security\Authorization\FirewallInterface:
 
 F3\FLOW3\Session\SessionInterface:
   className: F3\FLOW3\Session\PhpSession
+  scope: singleton
   properties:
     settings:
       setting: FLOW3

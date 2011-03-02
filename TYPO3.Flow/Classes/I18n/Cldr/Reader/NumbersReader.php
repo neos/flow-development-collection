@@ -37,6 +37,7 @@ namespace F3\FLOW3\I18n\Cldr\Reader;
  * - formatting numbers in other number systems than "latn"
  * - currency symbol substitution is simplified
  *
+ * @scope singleton
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @see http://www.unicode.org/reports/tr35/#Number_Elements
  * @see http://www.unicode.org/reports/tr35/#Number_Format_Patterns

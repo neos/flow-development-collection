@@ -27,6 +27,7 @@ namespace F3\FLOW3\Security\Authorization\Interceptor;
  * It is usally used by the firewall to define secured request that need proper authentication.
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @scope singleton
  */
 class RequireAuthentication implements \F3\FLOW3\Security\Authorization\InterceptorInterface {
 

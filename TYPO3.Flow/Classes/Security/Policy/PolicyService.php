@@ -27,6 +27,7 @@ namespace F3\FLOW3\Security\Policy;
  * The access decision voters get the roles and privileges configured (in the security policy) for a specific method invocation from this service.
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @scope singleton
  */
 class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 

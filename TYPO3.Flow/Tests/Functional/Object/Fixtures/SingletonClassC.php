@@ -24,6 +24,8 @@ namespace F3\FLOW3\Tests\Functional\Object\Fixtures;
 
 /**
  * A class of scope singleton
+ *
+ * @scope singleton
  */
 class SingletonClassC {
 

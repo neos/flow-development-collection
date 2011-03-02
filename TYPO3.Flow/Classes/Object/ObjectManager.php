@@ -29,6 +29,7 @@ use \F3\FLOW3\Object\Configuration\ConfigurationArgument as ObjectConfigurationA
  * Object Manager
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @scope singleton
  * @proxy disable
  */
 class ObjectManager implements ObjectManagerInterface {
@@ -145,7 +146,6 @@ class ObjectManager implements ObjectManagerInterface {
 	 */
 	public function get($objectName) {
 		if (func_num_args() > 1 && isset($this->objects[$objectName]) && $this->objects[$objectName]['s'] !== ObjectConfiguration::SCOPE_PROTOTYPE) {
-			debug_print_backtrace();
 			throw new \InvalidArgumentException('You cannot provide constructor arguments for singleton objects via get(). If you need to pass arguments to the constructor, define them in the Objects.yaml configuration.', 1298049934);
 		}
 		if (isset($this->objects[$objectName]['i'])) {

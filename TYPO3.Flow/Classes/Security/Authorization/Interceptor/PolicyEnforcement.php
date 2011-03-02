@@ -30,6 +30,7 @@ namespace F3\FLOW3\Security\Authorization\Interceptor;
  * 3. Then the configured AccessDecisionManager is called to authorize the request/action
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @scope singleton
  */
 class PolicyEnforcement implements \F3\FLOW3\Security\Authorization\InterceptorInterface {
 

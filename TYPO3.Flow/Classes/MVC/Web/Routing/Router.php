@@ -26,6 +26,7 @@ namespace F3\FLOW3\MVC\Web\Routing;
  * The default web router
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @scope singleton
  * @api
  */
 class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {

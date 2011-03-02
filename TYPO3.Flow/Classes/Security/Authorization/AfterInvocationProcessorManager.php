@@ -27,6 +27,7 @@ namespace F3\FLOW3\Security\Authorization;
  * It resolves automatically any available AfterInvcocationProcessorInterface for the given return object and calls them.
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @scope singleton
  */
 class AfterInvocationProcessorManager implements \F3\FLOW3\Security\Authorization\AfterInvocationManagerInterface {
 

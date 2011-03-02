@@ -31,6 +31,7 @@ namespace F3\FLOW3\I18n\Formatter;
  * - some less frequently used format characters are not supported
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @scope singleton
  * @api
  */
 class DatetimeFormatter implements \F3\FLOW3\I18n\Formatter\FormatterInterface {

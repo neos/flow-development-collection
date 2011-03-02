@@ -26,6 +26,7 @@ namespace F3\FLOW3\Resource;
  * The Resource Manager
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @scope singleton
  * @api
  */
 class ResourceManager {

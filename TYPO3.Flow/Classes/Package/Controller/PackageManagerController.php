@@ -26,6 +26,7 @@ namespace F3\FLOW3\Package\Controller;
  * Package controller to handle packages from CLI (create/activate/deactivate packages)
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @scope singleton
  */
 class PackageManagerController extends \F3\FLOW3\MVC\Controller\ActionController {
 

@@ -29,6 +29,7 @@ use \F3\FLOW3\MVC\Web\Routing\UriBuilder;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
+ * @scope singleton
  */
 abstract class AbstractController implements ControllerInterface {
 

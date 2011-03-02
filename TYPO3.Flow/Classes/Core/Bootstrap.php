@@ -33,6 +33,7 @@ require_once(__DIR__ . '/../Package/Package.php');
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  * @proxy disable
+ * @scope singleton
  */
 class Bootstrap {
 

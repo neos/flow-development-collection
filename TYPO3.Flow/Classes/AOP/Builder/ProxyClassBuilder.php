@@ -27,6 +27,7 @@ namespace F3\FLOW3\AOP\Builder;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @proxy disable
+ * @scope singleton
  */
 class ProxyClassBuilder {
 

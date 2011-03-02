@@ -26,6 +26,7 @@ namespace F3\FLOW3\Security;
  * The repository for accounts
  *
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @scope singleton
  */
 class AccountRepository extends \F3\FLOW3\Persistence\Repository {
 

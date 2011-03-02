@@ -27,6 +27,7 @@ namespace F3\FLOW3\MVC\Controller;
  * request, this controller is chosen.
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @scope singleton
  */
 class StandardController extends \F3\FLOW3\MVC\Controller\ActionController {
 

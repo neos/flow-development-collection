@@ -26,6 +26,7 @@ namespace F3\FLOW3\Security\Aspect;
  * An aspect which cares for a special publishing of private resources.
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @scope singleton
  * @aspect
  */
 class PrivateResourcesPublishingAspect {

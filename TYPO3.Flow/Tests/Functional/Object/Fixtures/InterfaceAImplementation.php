@@ -24,6 +24,8 @@ namespace F3\FLOW3\Tests\Functional\Object\Fixtures;
 
 /**
  * A class implementing Interface A
+ *
+ * @scope singleton
  */
 class InterfaceAImplementation implements InterfaceA {
 

@@ -41,6 +41,7 @@ namespace F3\FLOW3\I18n;
  * Actual translating is done by injected TranslationProvider instance, so
  * storage format depends on concrete implementation.
  *
+ * @scope singleton
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  * @see \F3\FLOW3\I18n\FormatResolver
