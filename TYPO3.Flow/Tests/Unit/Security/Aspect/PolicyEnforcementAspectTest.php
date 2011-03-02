@@ -147,7 +147,7 @@ class PolicyEnforcementAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @todo adjust when AfterInvocationInterceptor is used again
 	 */
-	public function enforcePolicyReturnsTheResultCorrectly() {
+	public function enforcePolicyReturnsTheResultOfTheOriginalMethodCorrectly() {
 		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
 		$mockAdviceChain = $this->getMock('F3\FLOW3\AOP\Advice\AdviceChain', array(), array(), '', FALSE);
 		// $mockAfterInvocationInterceptor = $this->getMock('F3\FLOW3\Security\Authorization\Interceptor\AfterInvocation', array(), array(), '', FALSE);
@@ -156,7 +156,8 @@ class PolicyEnforcementAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$someResult = 'blub';
 
 		$mockJoinPoint->expects($this->once())->method('getAdviceChain')->will($this->returnValue($mockAdviceChain));
-		// $mockAfterInvocationInterceptor->expects($this->once())->method('invoke')->will($this->returnValue($someResult));
+		$mockAdviceChain->expects($this->once())->method('proceed')->will($this->returnValue($someResult));
+		//$mockAfterInvocationInterceptor->expects($this->once())->method('invoke')->will($this->returnValue($someResult));
 
 		// $securityAdvice = new \F3\FLOW3\Security\Aspect\PolicyEnforcementAspect($mockPolicyEnforcementInterceptor, $mockAfterInvocationInterceptor);
 		$securityAdvice = new \F3\FLOW3\Security\Aspect\PolicyEnforcementAspect($mockPolicyEnforcementInterceptor);
