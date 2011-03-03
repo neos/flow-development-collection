@@ -86,5 +86,15 @@ class FrameworkTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 		$this->assertSame('AVRO RJ100 is lousier than A-380', $targetClass->constructorResult);
 	}
 
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function adviceInformationIsAlsoWhenTheTargetClassIsUnserialized() {
+		$className = 'F3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01';
+		$targetClass = unserialize('O:' . strlen($className) . ':"' . $className . '":0:{};');
+		$this->assertSame('Hello, me', $targetClass->greet('FLOW3'));
+	}
+
 }
 ?>

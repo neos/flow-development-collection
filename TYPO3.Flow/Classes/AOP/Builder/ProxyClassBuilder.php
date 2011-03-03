@@ -487,7 +487,9 @@ class ProxyClassBuilder {
 
 		$proxyClass->addInterfaces($introducedInterfaces);
 
-		$proxyClass->getConstructor()->addPreParentCallCode($this->buildMethodsAndAdvicesArrayCode($interceptedMethods));
+		$proxyClass->getMethod('FLOW3_AOP_Proxy_buildMethodsAndAdvicesArray')->addPreParentCallCode($this->buildMethodsAndAdvicesArrayCode($interceptedMethods));
+		$proxyClass->getConstructor()->addPreParentCallCode("\n\t\t\$this->FLOW3_AOP_Proxy_buildMethodsAndAdvicesArray();\n");
+		$proxyClass->getMethod('__wakeup')->addPreParentCallCode("\n\t\t\$this->FLOW3_AOP_Proxy_buildMethodsAndAdvicesArray();\n");
 
 		$this->buildGetAdviceChainsMethodCode($targetClassName);
 		$this->buildInvokeJoinPointMethodCode($targetClassName);
