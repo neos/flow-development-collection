@@ -217,7 +217,12 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 * @api
 	 */
 	public function logicalAnd($constraint1) {
-		return call_user_func_array(array($this->queryBuilder->expr(), 'andX'), func_get_args());
+		if (is_array($constraint1)) {
+			$constraints = $constraint1;
+		} else {
+			$constraints = func_get_args();
+		}
+		return call_user_func_array(array($this->queryBuilder->expr(), 'andX'), $constraints);
 	}
 
 	/**
@@ -230,7 +235,12 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 * @api
 	 */
 	public function logicalOr($constraint1) {
-		return call_user_func_array(array($this->queryBuilder->expr(), 'orX'), func_get_args());
+		if (is_array($constraint1)) {
+			$constraints = $constraint1;
+		} else {
+			$constraints = func_get_args();
+		}
+		return call_user_func_array(array($this->queryBuilder->expr(), 'orX'), $constraints);
 	}
 
 	/**
