@@ -32,26 +32,9 @@ namespace F3\FLOW3\MVC\Controller;
 class Arguments extends \ArrayObject {
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface A reference to the object factory
-	 */
-	protected $objectManager;
-
-	/**
 	 * @var array Names of the arguments contained by this object
 	 */
 	protected $argumentNames = array();
-
-	/**
-	 * Constructs this Arguments object
-	 *
-	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
-	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function __construct(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
-		$this->objectManager = $objectManager;
-		parent::__construct();
-	}
 
 	/**
 	 * Adds or replaces the argument specified by $value. The argument's name is taken from the
@@ -65,7 +48,7 @@ class Arguments extends \ArrayObject {
 	 * @api
 	 */
 	public function offsetSet($offset, $value) {
-		if (!$value instanceof \F3\FLOW3\MVC\Controller\Argument) throw new \InvalidArgumentException('Controller arguments must be valid \F3\FLOW3\MVC\Controller\Argument objects.', 1187953786);
+		if (!$value instanceof Argument) throw new \InvalidArgumentException('Controller arguments must be valid \F3\FLOW3\MVC\Controller\Argument objects.', 1187953786);
 
 		$argumentName = $value->getName();
 		parent::offsetSet($argumentName, $value);
@@ -82,7 +65,7 @@ class Arguments extends \ArrayObject {
 	 * @api
 	 */
 	public function append($value) {
-		if (!$value instanceof \F3\FLOW3\MVC\Controller\Argument) throw new \InvalidArgumentException('Controller arguments must be valid \F3\FLOW3\MVC\Controller\Argument objects.', 1187953786);
+		if (!$value instanceof Argument) throw new \InvalidArgumentException('Controller arguments must be valid \F3\FLOW3\MVC\Controller\Argument objects.', 1187953786);
 		$this->offsetSet(NULL, $value);
 	}
 
@@ -147,7 +130,7 @@ class Arguments extends \ArrayObject {
 	 * @api
 	 */
 	public function addNewArgument($name, $dataType = 'Text', $isRequired = TRUE, $defaultValue = NULL) {
-		$argument = $this->objectManager->create('F3\FLOW3\MVC\Controller\Argument', $name, $dataType);
+		$argument = new Argument($name, $dataType);
 		$argument->setRequired($isRequired);
 		$argument->setDefaultValue($defaultValue);
 

@@ -40,7 +40,7 @@ class ArgumentsValidatorTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockArgument2 = $this->getMock('F3\FLOW3\MVC\Controller\Argument', array(), array(), '', FALSE);
 		$mockArgument2->expects($this->any())->method('getName')->will($this->returnValue('bar'));
 
-		$arguments = new \F3\FLOW3\MVC\Controller\Arguments($this->getMock('F3\FLOW3\Object\ObjectManagerInterface'));
+		$arguments = new \F3\FLOW3\MVC\Controller\Arguments();
 		$arguments->addArgument($mockArgument1);
 		$arguments->addArgument($mockArgument2);
 
@@ -61,7 +61,7 @@ class ArgumentsValidatorTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockArgument2 = $this->getMock('F3\FLOW3\MVC\Controller\Argument', array(), array(), '', FALSE);
 		$mockArgument2->expects($this->any())->method('getName')->will($this->returnValue('bar'));
 
-		$arguments = new \F3\FLOW3\MVC\Controller\Arguments($this->getMock('F3\FLOW3\Object\ObjectManagerInterface'));
+		$arguments = new \F3\FLOW3\MVC\Controller\Arguments();
 		$arguments->addArgument($mockArgument1);
 		$arguments->addArgument($mockArgument2);
 
@@ -103,10 +103,6 @@ class ArgumentsValidatorTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockValidatorChain = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
 		$mockValidatorChain->expects($this->any())->method('getErrors')->will($this->returnValue(array()));
 
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockArgumentError = $this->getMock('F3\FLOW3\MVC\Controller\ArgumentError', array('addErrors'), array('foo'));
-		$mockObjectManager->expects($this->any())->method('create')->with('F3\FLOW3\MVC\Controller\ArgumentError')->will($this->returnValue($mockArgumentError));
-
 		$mockArgument = $this->getMock('F3\FLOW3\MVC\Controller\Argument', array(), array(), '', FALSE);
 		$mockArgument->expects($this->any())->method('getName')->will($this->returnValue('foo'));
 		$mockArgument->expects($this->any())->method('getValidator')->will($this->returnValue($mockValidatorChain));
@@ -114,11 +110,10 @@ class ArgumentsValidatorTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockArgument->expects($this->any())->method('getValue')->will($this->returnValue('fooValue'));
 		$mockArgument->expects($this->any())->method('isRequired')->will($this->returnValue(TRUE));
 
-		$arguments = new \F3\FLOW3\MVC\Controller\Arguments($this->getMock('F3\FLOW3\Object\ObjectManagerInterface'));
+		$arguments = new \F3\FLOW3\MVC\Controller\Arguments();
 		$arguments->addArgument($mockArgument);
 
 		$validator = new \F3\FLOW3\MVC\Controller\ArgumentsValidator();
-		$validator->injectObjectManager($mockObjectManager);
 
 		$mockValidatorChain->expects($this->at(0))->method('isValid')->with('fooValue')->will($this->returnValue(TRUE));
 		$mockValidatorChain->expects($this->at(1))->method('isValid')->with('fooValue')->will($this->returnValue(FALSE));
@@ -142,7 +137,7 @@ class ArgumentsValidatorTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockArgument->expects($this->any())->method('getValue')->will($this->returnValue('defaultValue'));
 		$mockArgument->expects($this->any())->method('isRequired')->will($this->returnValue(FALSE));
 
-		$arguments = new \F3\FLOW3\MVC\Controller\Arguments($this->getMock('F3\FLOW3\Object\ObjectManagerInterface'));
+		$arguments = new \F3\FLOW3\MVC\Controller\Arguments();
 		$arguments->addArgument($mockArgument);
 
 		$validator = new \F3\FLOW3\MVC\Controller\ArgumentsValidator();
@@ -168,7 +163,7 @@ class ArgumentsValidatorTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockArgument->expects($this->any())->method('getValue')->will($this->returnValue('defaultValue'));
 		$mockArgument->expects($this->any())->method('isRequired')->will($this->returnValue(TRUE));
 
-		$arguments = new \F3\FLOW3\MVC\Controller\Arguments($this->getMock('F3\FLOW3\Object\ObjectManagerInterface'));
+		$arguments = new \F3\FLOW3\MVC\Controller\Arguments();
 		$arguments->addArgument($mockArgument);
 
 		$validator = $this->getMock('F3\FLOW3\MVC\Controller\ArgumentsValidator', array('addErrorsForArgument'));
@@ -182,17 +177,14 @@ class ArgumentsValidatorTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function addErrorsForArgumentAddsErrorsToNewArgumentErrorIndexedByArgumentName() {
-		$mockArgumentError = $this->getMock('F3\FLOW3\MVC\Controller\ArgumentError', array('addErrors'), array('foo'));
-		$mockArgumentError->expects($this->once())->method('addErrors')->with(array('error'));
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->any())->method('create')->with('F3\FLOW3\MVC\Controller\ArgumentError')->will($this->returnValue($mockArgumentError));
+		$expectedError = new \F3\FLOW3\MVC\Controller\ArgumentError('foo');
+		$expectedError->addErrors(array('error'));
 
 		$validator = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\ArgumentsValidator', array('dummy'));
-		$validator->injectObjectManager($mockObjectManager);
 		$validator->_call('addErrorsForArgument', array('error'), 'foo');
 
 		$errors = $validator->getErrors();
-		$this->assertEquals($mockArgumentError, $errors['foo']);
+		$this->assertEquals($expectedError, $errors['foo']);
 	}
 
 }

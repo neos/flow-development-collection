@@ -77,7 +77,7 @@ class DateTimeValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator
 		if (!isset($this->options['locale'])) {
 			$locale = $this->localizationService->getDefaultLocale();
 		} elseif (is_string($this->options['locale'])) {
-			$locale = $this->objectManager->create('F3\FLOW3\I18n\Locale', $this->options['locale']);
+			$locale = new \F3\FLOW3\I18n\Locale($this->options['locale']);
 		} elseif ($this->options['locale'] instanceof \F3\FLOW3\I18n\Locale) {
 			$locale = $this->options['locale'];
 		} else {

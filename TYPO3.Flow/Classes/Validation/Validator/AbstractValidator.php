@@ -32,11 +32,6 @@ namespace F3\FLOW3\Validation\Validator;
 abstract class AbstractValidator implements \F3\FLOW3\Validation\Validator\ValidatorInterface {
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
-	 */
-	protected $objectManager;
-
-	/**
 	 * @var array
 	 */
 	protected $options = array();
@@ -45,17 +40,6 @@ abstract class AbstractValidator implements \F3\FLOW3\Validation\Validator\Valid
 	 * @var array
 	 */
 	protected $errors = array();
-
-	/**
-	 * Injector for the object factory
-	 *
-	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager A object factory implementation
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @api
-	 */
-	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
-		$this->objectManager = $objectManager;
-	}
 
 	/**
 	 * Sets options for the validator
@@ -90,7 +74,7 @@ abstract class AbstractValidator implements \F3\FLOW3\Validation\Validator\Valid
 	 * @api
 	 */
 	protected function addError($message, $code) {
-		$this->errors[] = $this->objectManager->create('F3\FLOW3\Validation\Error', $message, $code);
+		$this->errors[] = new \F3\FLOW3\Validation\Error($message, $code);
 	}
 }
 

@@ -26,6 +26,7 @@ namespace F3\FLOW3\Package\MetaData;
  * Package company party meta model
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @scope prototype
  */
 class Company extends \F3\FLOW3\Package\MetaData\AbstractParty {
 

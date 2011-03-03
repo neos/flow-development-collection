@@ -90,13 +90,8 @@ class NumberValidatorTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockNumberParser = $this->getMock('F3\FLOW3\I18n\Parser\NumberParser');
 		$mockNumberParser->expects($this->once())->method('parsePercentNumber', $sampleInvalidNumber)->will($this->returnValue(FALSE));
 
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->at(0))->method('create', 'F3\FLOW3\I18n\Locale', 'en_GB')->will($this->returnValue($this->sampleLocale));
-		$mockObjectManager->expects($this->at(1))->method('create', 'F3\FLOW3\Validation\Error');
-
 		$validator = new \F3\FLOW3\Validation\Validator\NumberValidator();
 		$validator->injectNumberParser($mockNumberParser);
-		$validator->injectObjectManager($mockObjectManager);
 		$validator->setOptions(array('locale' => 'en_GB', 'formatLength' => \F3\FLOW3\I18n\Cldr\Reader\NumbersReader::FORMAT_LENGTH_DEFAULT, 'formatType' => \F3\FLOW3\I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_PERCENT));
 
 		$this->assertFalse($validator->isValid($sampleInvalidNumber));

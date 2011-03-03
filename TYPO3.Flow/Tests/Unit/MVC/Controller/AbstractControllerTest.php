@@ -53,18 +53,13 @@ class AbstractControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		$mockResponse = $this->getMock('F3\FLOW3\MVC\Web\Response');
 
-		$mockUriBuilder = $this->getMock('F3\FLOW3\MVC\Web\Routing\UriBuilder');
-		$mockControllerContext = $this->getMock('F3\FLOW3\MVC\Controller\ControllerContext', array(), array(), '', FALSE);
-
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->at(0))->method('create')->with('F3\FLOW3\MVC\Web\Routing\UriBuilder')->will($this->returnValue($mockUriBuilder));
-		$mockObjectManager->expects($this->at(1))->method('create')->with('F3\FLOW3\MVC\Controller\ControllerContext')->will($this->returnValue($mockControllerContext));
-
 		$controller = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\AbstractController', array('initializeArguments', 'initializeControllerArgumentsBaseValidators', 'mapRequestArgumentsToControllerArguments', 'buildControllerContext'), array(), '', FALSE);
-		$controller->_set('objectManager', $mockObjectManager);
+		$controller->_set('arguments', new \F3\FLOW3\MVC\Controller\Arguments());
+		$controller->_set('argumentsMappingResults', new \F3\FLOW3\Property\MappingResults());
+		$controller->_set('flashMessageContainer', new \F3\FLOW3\MVC\Controller\FlashMessageContainer());
 		$controller->processRequest($mockRequest, $mockResponse);
 
-		$this->assertSame($mockControllerContext, $controller->getControllerContext());
+		$this->assertInstanceOf('F3\FLOW3\MVC\Controller\ControllerContext', $controller->getControllerContext());
 	}
 
 	/**
@@ -238,8 +233,6 @@ class AbstractControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initializeControllerArgumentsBaseValidatorsRegistersValidatorsDeclaredInTheArgumentModels() {
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-
 		$mockValidators = array(
 			'foo' => $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface'),
 		);
@@ -256,7 +249,7 @@ class AbstractControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockArgumentBar->expects($this->once())->method('getDataType')->will($this->returnValue('BarType'));
 		$mockArgumentBar->expects($this->never())->method('setValidator');
 
-		$mockArguments = new \F3\FLOW3\MVC\Controller\Arguments($mockObjectManager);
+		$mockArguments = new \F3\FLOW3\MVC\Controller\Arguments();
 		$mockArguments->addArgument($mockArgumentFoo);
 		$mockArguments->addArgument($mockArgumentBar);
 
@@ -283,7 +276,7 @@ class AbstractControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockArgumentBar = $this->getMock('F3\FLOW3\MVC\Controller\Argument', array(), array('bar', 'barType'));
 		$mockArgumentBar->expects($this->any())->method('getName')->will($this->returnValue('bar'));
 
-		$mockArguments = new \F3\FLOW3\MVC\Controller\Arguments($mockObjectManager);
+		$mockArguments = new \F3\FLOW3\MVC\Controller\Arguments();
 		$mockArguments->addArgument($mockArgumentFoo);
 		$mockArguments->addArgument($mockArgumentBar);
 
@@ -299,11 +292,11 @@ class AbstractControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockPropertyMapper->expects($this->once())->method('getMappingResults')->will($this->returnValue($mockMappingResults));
 
 		$controller = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\AbstractController', array('dummy'), array(), '', FALSE);
+		$controller->injectObjectManager($mockObjectManager);
 
 		$controller->_set('arguments', $mockArguments);
 		$controller->_set('request', $mockRequest);
 		$controller->_set('propertyMapper', $mockPropertyMapper);
-		$controller->_set('objectManager', $mockObjectManager);
 
 		$controller->_call('mapRequestArgumentsToControllerArguments');
 

@@ -22,17 +22,20 @@ namespace F3\FLOW3\MVC\Controller;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use \F3\FLOW3\MVC\Web\Routing\UriBuilder;
+
 /**
  * An abstract base class for Controllers
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */
-abstract class AbstractController implements \F3\FLOW3\MVC\Controller\ControllerInterface {
+abstract class AbstractController implements ControllerInterface {
 
 	/**
 	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 * @api
+	 * @todo Object Manager is only required for retrieving the validator in mapRequestArgumentsToControllerArguments(). Get rid of that!
 	 */
 	protected $objectManager;
 
@@ -112,13 +115,20 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	protected $flashMessageContainer;
 
 	/**
-	 * Constructs the controller.
+	 * Constructs the controller
 	 *
-	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager A reference to the Object Factory
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
-		$this->arguments = $objectManager->create('F3\FLOW3\MVC\Controller\Arguments');
+	public function __construct() {
+		$this->arguments = new Arguments(array());
+	}
+
+	/**
+	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
 	}
 
@@ -206,7 +216,7 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 
 		$this->initializeControllerArgumentsBaseValidators();
 		$this->mapRequestArgumentsToControllerArguments();
-		$this->controllerContext = $this->objectManager->create('F3\FLOW3\MVC\Controller\ControllerContext', $this->request, $this->response, $this->arguments, $this->argumentsMappingResults, $this->uriBuilder, $this->flashMessageContainer);
+		$this->controllerContext = new ControllerContext($this->request, $this->response, $this->arguments, $this->argumentsMappingResults, $this->uriBuilder, $this->flashMessageContainer);
 	}
 
 	/**
@@ -216,7 +226,7 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	protected function initializeUriBuilder() {
-		$this->uriBuilder = $this->objectManager->create('F3\FLOW3\MVC\Web\Routing\UriBuilder');
+		$this->uriBuilder = new UriBuilder();
 		$this->uriBuilder->setRequest($this->request);
 	}
 

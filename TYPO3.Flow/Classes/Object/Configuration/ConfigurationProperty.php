@@ -26,6 +26,8 @@ namespace F3\FLOW3\Object\Configuration;
  * Injection property as used in a Object Configuration
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @scope prototype
+ * @proxy disable
  */
 class ConfigurationProperty {
 

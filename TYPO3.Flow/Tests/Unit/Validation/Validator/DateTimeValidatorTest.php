@@ -71,13 +71,8 @@ class DateTimeValidatorTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockDatetimeParser = $this->getMock('F3\FLOW3\I18n\Parser\DatetimeParser');
 		$mockDatetimeParser->expects($this->once())->method('parseTime', $sampleInvalidTime)->will($this->returnValue(FALSE));
 
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->at(0))->method('create', 'F3\FLOW3\I18n\Locale', 'en_GB')->will($this->returnValue($this->sampleLocale));
-		$mockObjectManager->expects($this->at(1))->method('create', 'F3\FLOW3\Validation\Error');
-
 		$validator = new \F3\FLOW3\Validation\Validator\DateTimeValidator();
 		$validator->injectDatetimeParser($mockDatetimeParser);
-		$validator->injectObjectManager($mockObjectManager);
 		$validator->setOptions(array('locale' => 'en_GB', 'formatLength' => \F3\FLOW3\I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_DEFAULT, 'formatType' => \F3\FLOW3\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_TIME));
 
 		$this->assertFalse($validator->isValid($sampleInvalidTime));
