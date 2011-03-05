@@ -61,11 +61,6 @@ class PersistenceManager extends \F3\FLOW3\Persistence\AbstractPersistenceManage
 	protected $persistenceSession;
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
-	 */
-	protected $objectManager;
-
-	/**
 	 * Create new instance
 	 */
 	public function __construct() {
@@ -115,17 +110,6 @@ class PersistenceManager extends \F3\FLOW3\Persistence\AbstractPersistenceManage
 	 */
 	public function injectPersistenceSession(\F3\FLOW3\Persistence\Generic\Session $persistenceSession) {
 		$this->persistenceSession = $persistenceSession;
-	}
-
-	/**
-	 * Injects the object manager
-	 *
-	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
-		$this->objectManager = $objectManager;
 	}
 
 	/**

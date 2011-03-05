@@ -31,22 +31,6 @@ namespace F3\FLOW3\Persistence\Generic;
 class QueryFactory implements \F3\FLOW3\Persistence\Generic\QueryFactoryInterface {
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
-	 */
-	protected $objectManager;
-
-	/**
-	 * Injects the FLOW3 object factory
-	 *
-	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
-		$this->objectManager = $objectManager;
-	}
-
-	/**
 	 * Creates a query object working on the given class name
 	 *
 	 * @param string $className
@@ -55,7 +39,7 @@ class QueryFactory implements \F3\FLOW3\Persistence\Generic\QueryFactoryInterfac
 	 * @api
 	 */
 	public function create($className) {
-		return $this->objectManager->create('F3\FLOW3\Persistence\Generic\Query', $className);
+		return new \F3\FLOW3\Persistence\Generic\Query($className);
 	}
 
 }

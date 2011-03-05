@@ -30,11 +30,6 @@ namespace F3\FLOW3\Persistence\Generic;
 class DataMapper {
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
-	 */
-	protected $objectManager;
-
-	/**
 	 * @var \F3\FLOW3\Persistence\Generic\Session
 	 */
 	protected $persistenceSession;
@@ -48,17 +43,6 @@ class DataMapper {
 	 * @var \F3\FLOW3\Persistence\PersistenceManagerInterface
 	 */
 	protected $persistenceManager;
-
-	/**
-	 * Injects the object manager
-	 *
-	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
-		$this->objectManager = $objectManager;
-	}
 
 	/**
 	 * Injects the persistence session
@@ -131,8 +115,7 @@ class DataMapper {
 			$className = $objectData['classname'];
 			$classSchema = $this->reflectionService->getClassSchema($className);
 
-				// We expect that the object name === AOP proxy target class name of the model:
-			$object = $this->objectManager->recreate($className);
+			$object = unserialize('O:' . strlen($className) . ':"' . $className . '":0:{};');
 			$this->persistenceSession->registerObject($object, $objectData['identifier']);
 			if ($classSchema->getModelType() === \F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY) {
 				$this->persistenceSession->registerReconstitutedEntity($object, $objectData);
@@ -327,7 +310,7 @@ class DataMapper {
 					$objectIdentifiers[] = $arrayValue['value']['identifier'];
 				}
 			}
-			return $this->objectManager->get('F3\FLOW3\Persistence\Generic\LazySplObjectStorage', $objectIdentifiers);
+			return new LazySplObjectStorage($objectIdentifiers);
 		} else {
 			$objectStorage = new \SplObjectStorage();
 
