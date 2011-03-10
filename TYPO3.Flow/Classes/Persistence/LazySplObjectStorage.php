@@ -47,7 +47,7 @@ class LazySplObjectStorage extends \SplObjectStorage {
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectPersistenceManager($persistenceManager) {
+	public function injectPersistenceManager(\F3\FLOW3\Persistence\PersistenceManager $persistenceManager) {
 		$this->persistenceManager = $persistenceManager;
 	}
 

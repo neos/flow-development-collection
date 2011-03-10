@@ -243,7 +243,7 @@ class PackageManager implements \F3\FLOW3\Package\PackageManagerInterface {
 			unset($this->activePackages[$packageKey]);
 			$packageStatesConfiguration = $this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_PACKAGESTATES);
 			$packageStatesConfiguration[$packageKey]['state'] = 'inactive';
-			$packageStatesConfiguration = $this->configurationManager->setConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_PACKAGESTATES, $packageStatesConfiguration);
+			$this->configurationManager->setConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_PACKAGESTATES, $packageStatesConfiguration);
 			$this->configurationManager->saveConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_PACKAGESTATES);
 		} else {
 			throw new \F3\FLOW3\Package\Exception\InvalidPackageStateException('Package "' . $packageKey . '" is not active.', 1166543253);
