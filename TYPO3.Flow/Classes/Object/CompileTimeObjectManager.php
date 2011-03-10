@@ -38,9 +38,36 @@ use \F3\FLOW3\Reflection\ObjectAccess;
 class CompileTimeObjectManager extends ObjectManager {
 
 	/**
+	 * @var \F3\FLOW3\Cache\Frontend\VariableFrontend
+	 */
+	protected $configurationCache;
+
+	/**
+	 * @var \F3\FLOW3\Reflection\ReflectionService
+	 */
+	protected $reflectionService;
+
+	/**
+	 * @var \F3\FLOW3\Configuration\ConfigurationManager
+	 */
+	protected $configurationManager;
+
+	/**
+	 * @var \F3\FLOW3\Log\SystemLoggerInterface
+	 */
+	protected $systemLogger;
+
+	/**
 	 * @var array
 	 */
 	protected $objectConfigurations;
+
+	/**
+	 * A list of all class names known to the Object Manager
+	 *
+	 * @var array
+	 */
+	protected $registeredClassNames = array();
 
 	/**
 	 * @var array
@@ -48,14 +75,171 @@ class CompileTimeObjectManager extends ObjectManager {
 	protected $objectNameBuildStack = array();
 
 	/**
-	 * Sets the object configurations which were previously built by the ConfigurationBuilder.
-	 *
-	 * @param array $objectConfigurations
+	 * @param \F3\FLOW3\Reflection\ReflectionService $reflectionService
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setObjectConfigurations(array $objectConfigurations) {
-		$this->objectConfigurations = $objectConfigurations;
+	public function injectReflectionService(\F3\FLOW3\Reflection\ReflectionService $reflectionService) {
+		$this->reflectionService = $reflectionService;
+	}
+
+	/**
+	 * @param \F3\FLOW3\Configuration\ConfigurationManager $configurationManager
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectConfigurationManager(\F3\FLOW3\Configuration\ConfigurationManager $configurationManager) {
+		$this->configurationManager = $configurationManager;
+	}
+
+	/**
+	 * Injects the configuration cache of the Object Framework
+	 *
+	 * @param \F3\FLOW3\Cache\Frontend\VariableFrontend $configurationCache
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectConfigurationCache(\F3\FLOW3\Cache\Frontend\VariableFrontend $configurationCache) {
+		$this->configurationCache = $configurationCache;
+	}
+
+	/**
+	 * @param \F3\FLOW3\Log\SystemLoggerInterface $systemLogger
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectSystemLogger(\F3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
+		$this->systemLogger = $systemLogger;
+	}
+
+	/**
+	 * Initializes the the object configurations and some other parts of this Object Manager.
+	 *
+	 * @param array $packages An array of active packages to consider
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function initialize(array $packages) {
+		$this->registeredClassNames = $this->registerClassFiles($packages);
+		$this->reflectionService->buildReflectionData($this->registeredClassNames);
+
+		$rawCustomObjectConfigurations = $this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_OBJECTS);
+
+		$configurationBuilder = new \F3\FLOW3\Object\Configuration\ConfigurationBuilder();
+		$configurationBuilder->injectReflectionService($this->reflectionService);
+		$configurationBuilder->injectSystemLogger($this->systemLogger);
+
+		$this->objectConfigurations = $configurationBuilder->buildObjectConfigurations($this->registeredClassNames, $rawCustomObjectConfigurations);
+
+		$this->setObjects($this->buildObjectsArray());
+	}
+
+	/**
+	 * Sets the instance of the given object
+	 *
+	 * In the Compile Time Object Manager it is even allowed to set instances of not-yet-known objects as long as the Object
+	 * Manager is not initialized, because some few parts need an object registry even before the Object Manager is fully
+	 * functional.
+	 *
+	 * @param string $objectName The object name
+	 * @param object $instance A prebuilt instance
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setInstance($objectName, $instance) {
+		if ($this->registeredClassNames === array()) {
+			$this->objects[$objectName]['i'] = $instance;
+		} else {
+			parent::setInstance($objectName, $instance);
+		}
+	}
+
+
+	/**
+	 * Returns a list of all class names which were registered by registerClassFiles()
+	 *
+	 * @return array
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getRegisteredClassNames() {
+		return $this->registeredClassNames;
+	}
+
+	/**
+	 * Traverses through all class files of the active packages and registers collects the class names as
+	 * "all available class names". If the respective FLOW3 settings say so, also function test classes
+	 * are registered.
+	 *
+	 * For performance reasons this function ignores classes whose name ends with "Exception".
+	 *
+	 * @param array $packages A list of packages to consider
+	 * @return array A list of class names which were discovered in the given packages
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function registerClassFiles(array $packages) {
+		$availableClassNames = array('DateTime');
+
+		foreach ($packages as $package) {
+			$classFiles = $package->getClassFiles();
+			if ($this->allSettings['FLOW3']['object']['registerFunctionalTestClasses'] === TRUE) {
+				$classFiles = array_merge($classFiles, $package->getFunctionalTestsClassFiles());
+			}
+			foreach (array_keys($classFiles) as $fullClassName) {
+				if (substr($fullClassName, -9, 9) !== 'Exception') {
+					$availableClassNames[] = $fullClassName;
+				}
+			}
+		}
+		return array_unique($availableClassNames);
+	}
+
+	/**
+	 * Builds the  objects array which contains information about the registered objects,
+	 * their scope, class, built method etc.
+	 *
+	 * @return array
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function buildObjectsArray() {
+		$objects = array();
+		foreach ($this->objectConfigurations as $objectConfiguration) {
+			$objectName = $objectConfiguration->getObjectName();
+			$objects[$objectName] = array(
+				'l' => strtolower($objectName),
+				's' => $objectConfiguration->getScope()
+			);
+			if ($objectConfiguration->getClassName() !== $objectName) {
+				$objects[$objectName]['c'] = $objectConfiguration->getClassName();
+			}
+			if ($objectConfiguration->getFactoryObjectName() !== '') {
+				$objects[$objectName]['f'] = array(
+					$objectConfiguration->getFactoryObjectName(),
+					$objectConfiguration->getFactoryMethodName()
+				);
+
+				$objects[$objectName]['fa'] = array();
+				$factoryMethodArguments = $objectConfiguration->getArguments();
+				if (count($factoryMethodArguments) > 0) {
+					foreach ($factoryMethodArguments as $index => $argument) {
+						$objects[$objectName]['fa'][$index] = array(
+							't' => $argument->getType(),
+							'v' => $argument->getValue()
+						);
+					}
+				}
+			}
+		}
+		$this->configurationCache->set('objects', $objects);
+		return $objects;
+	}
+
+	/**
+	 * Returns object configurations which were previously built by the ConfigurationBuilder.
+	 *
+	 * @return array
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getObjectConfigurations() {
+		return $this->objectConfigurations;
 	}
 
 	/**
@@ -92,7 +276,7 @@ class CompileTimeObjectManager extends ObjectManager {
 					$value = $property->getValue();
 				break;
 				case Property::PROPERTY_TYPES_SETTING:
-					$value = \F3\FLOW3\Utility\Arrays::getValueByPath($this->settings, explode('.', $property->getValue()));
+					$value = \F3\FLOW3\Utility\Arrays::getValueByPath($this->allSettings, explode('.', $property->getValue()));
 				break;
 				case Property::PROPERTY_TYPES_OBJECT:
 					$propertyObjectName = $property->getValue();

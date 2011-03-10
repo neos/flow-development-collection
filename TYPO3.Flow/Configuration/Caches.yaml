@@ -24,7 +24,6 @@ Default:
 #
 FLOW3_AOP_ProxyBuildInformation: []
 FLOW3_AOP_TargetClassInformation: []
-FLOW3_Cache_ClassFiles: []
 FLOW3_Cache_ResourceFiles: []
 FLOW3_Configuration: []
 FLOW3_Core:

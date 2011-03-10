@@ -22,6 +22,8 @@ namespace F3\FLOW3\AOP\Builder;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use \F3\FLOW3\Cache\CacheManager;
+
 /**
  * The main class of the AOP (Aspect Oriented Programming) framework.
  *
@@ -64,11 +66,6 @@ class ProxyClassBuilder {
 	protected $proxyClassBuilder;
 
 	/**
-	 * @var \F3\FLOW3\Cache\Frontend\PhpFrontend
-	 */
-	protected $proxyClassesCache;
-
-	/**
 	 * @var \F3\FLOW3\Cache\Frontend\VariableFrontend
 	 */
 	protected $targetClassInformationCache;
@@ -77,6 +74,11 @@ class ProxyClassBuilder {
 	 * @var \F3\FLOW3\Cache\Frontend\VariableFrontend
 	 */
 	protected $proxyBuildInformationCache;
+
+	/**
+	 * @var \F3\FLOW3\Object\CompileTimeObjectManager
+	 */
+	protected $objectManager;
 
 	/**
 	 * Hardcoded list of FLOW3 sub packages (first 12 characters) which must be immune to AOP proxying for security, technical or conceptual reasons.
@@ -133,18 +135,6 @@ class ProxyClassBuilder {
 	 */
 	public function injectPointcutExpressionParser(\F3\FLOW3\AOP\Pointcut\PointcutExpressionParser $pointcutExpressionParser) {
 		$this->pointcutExpressionParser = $pointcutExpressionParser;
-	}
-
-	/**
-	 * Injects the cache for storing proxy class code
-	 *
-	 * @param \F3\FLOW3\Cache\Frontend\PhpFrontend $proxyClassesCache
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @autowiring off
-	 */
-	public function injectProxyClassesCache(\F3\FLOW3\Cache\Frontend\PhpFrontend $proxyClassesCache) {
-		$this->proxyClassesCache = $proxyClassesCache;
 	}
 
 	/**
@@ -216,6 +206,15 @@ class ProxyClassBuilder {
 	}
 
 	/**
+	 * @param \F3\FLOW3\Object\CompileTimeObjectManager $objectManager
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectObjectManager(\F3\FLOW3\Object\CompileTimeObjectManager $objectManager) {
+		$this->objectManager = $objectManager;
+	}
+
+	/**
 	 * Injects the FLOW3 settings
 	 *
 	 * @param array $settings The settings
@@ -238,54 +237,25 @@ class ProxyClassBuilder {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function build() {
-#		if (!$this->proxyBuildInformationCache->has('allProxyClassesUpToDate')) {
-			$allAvailableClassNames = array_unique($this->getAllImplementationClassesFromObjectConfigurations($this->compiler->getObjectConfigurations()));
-			$cachedTargetClassNames = ($this->proxyBuildInformationCache->has('targetClassNames')) ? $this->proxyBuildInformationCache->get('targetClassNames') : array();
-			$cachedAspectClassNames = ($this->proxyBuildInformationCache->has('aspectClassNames')) ? $this->proxyBuildInformationCache->get('aspectClassNames') : array();
-			$actualTargetClassNames = $this->getProxyableClasses($allAvailableClassNames);
+		if (!$this->proxyBuildInformationCache->has('allProxyClassesUpToDate')) {
+
+			$allAvailableClassNames = $this->objectManager->getRegisteredClassNames();
+			$possibleTargetClassNames = $this->getProxyableClasses($allAvailableClassNames);
 			$actualAspectClassNames = $this->reflectionService->getClassNamesByTag('aspect');
-			sort($actualTargetClassNames);
+			sort($possibleTargetClassNames);
 			sort($actualAspectClassNames);
 
 			$this->aspectContainers = $this->buildAspectContainers($allAvailableClassNames);
 
-			$dirtyTargetClassNames = $actualTargetClassNames;
-/* FIXME: Implement optimized version using the cache
-			if ($cachedAspectClassNames === $actualAspectClassNames) {
-				$validProxyClassesCount = 0;
-				$outdatedProxyClassesCount = 0;
-				foreach ($this->targetAndProxyClassNames as $targetClassName => $proxyClassName) {
-					if ($this->proxyClassesCache->has(str_replace('\\', '_', $proxyClassName))) {
-						$validProxyClassesCount ++;
-						$dirtyTargetClassNames = array_diff($dirtyTargetClassNames, array($targetClassName));
-					} else {
-						$outdatedProxyClassesCount ++;
-						unset($this->targetAndProxyClassNames[$targetClassName]);
-					}
-				}
-				$this->systemLogger->log(sprintf('At least one target class changed, aspects unchanged. Found %s valid and %s outdated proxy classes.', $validProxyClassesCount, $outdatedProxyClassesCount), LOG_INFO);
-			} else {
-				$this->systemLogger->log(sprintf('At least one aspect changed, rebuilding proxy classes for %s target classes.', count($actualTargetClassNames)), LOG_INFO);
-				$this->proxyClassesCache->flush();
-				$this->targetAndProxyClassNames = array();
-			}
-*/
-			foreach ($dirtyTargetClassNames as $targetClassName) {
+			foreach ($possibleTargetClassNames as $targetClassName) {
 				$proxyBuildResult = $this->buildProxyClass($targetClassName, $this->aspectContainers);
 				if ($proxyBuildResult !== FALSE) {
 					$this->systemLogger->log(sprintf('Built AOP proxy for class "%s".', $targetClassName), LOG_INFO);
 				}
 			}
 
-			$aspectClassesTags = array();
-			foreach ($actualAspectClassNames as $aspectClassName) {
-				$aspectClassesTags[] = $this->proxyBuildInformationCache->getClassTag($aspectClassName);
-			}
-
-			$this->proxyBuildInformationCache->set('aspectClassNames', $actualAspectClassNames, $aspectClassesTags);
-			$this->proxyBuildInformationCache->set('targetClassNames', $actualTargetClassNames);
-			$this->proxyBuildInformationCache->set('allProxyClassesUpToDate', '', array($this->proxyBuildInformationCache->getClassTag()));
-#		}
+			$this->proxyBuildInformationCache->set('allProxyClassesUpToDate', '', array(CacheManager::getClassTag()));
+		}
 	}
 
 	/**
@@ -319,21 +289,6 @@ class ProxyClassBuilder {
 		throw new \F3\FLOW3\AOP\Exception('This method is currently not supported.');
 		if (!isset($this->advicedMethodsInformationByTargetClass[$targetClassName])) return array();
 		return $this->advicedMethodsInformationByTargetClass[$targetClassName];
-	}
-
-	/**
-	 * Extracts all implementation class names out of the given object configurations.
-	 *
-	 * @param array $objectConfigurations The object configurations to consider
-	 * @return array Class names mentioned in the "className" property of each object configuration
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	protected function getAllImplementationClassesFromObjectConfigurations(array $objectConfigurations) {
-		$implementationClasses = array();
-		foreach ($objectConfigurations as $objectConfiguration) {
-			$implementationClasses[] = $objectConfiguration->getClassName();
-		}
-		return $implementationClasses;
 	}
 
 	/**

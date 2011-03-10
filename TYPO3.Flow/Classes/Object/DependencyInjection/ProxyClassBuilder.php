@@ -52,6 +52,11 @@ class ProxyClassBuilder {
 	protected $configurationManager;
 
 	/**
+	 * @var \F3\FLOW3\Object\CompileTimeObjectManager
+	 */
+	protected $objectManager;
+
+	/**
 	 * @var array<\F3\FLOW3\Object\Configuration\Configuration>
 	 */
 	protected $objectConfigurations;
@@ -93,6 +98,15 @@ class ProxyClassBuilder {
 	}
 
 	/**
+	 * @param \F3\FLOW3\Object\CompileTimeObjectManager $objectManager
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectObjectManager(\F3\FLOW3\Object\CompileTimeObjectManager $objectManager) {
+		$this->objectManager = $objectManager;
+	}
+
+	/**
 	 * Analyzes the Object Configuration provided by the compiler and builds the necessary PHP code for the proxy classes
 	 * to realize dependency injection.
 	 *
@@ -100,7 +114,7 @@ class ProxyClassBuilder {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function build() {
-		$this->objectConfigurations = $this->compiler->getObjectConfigurations();
+		$this->objectConfigurations = $this->objectManager->getObjectConfigurations();
 
 		foreach ($this->objectConfigurations as $objectName => $objectConfiguration) {
 			$className = $objectConfiguration->getClassName();

@@ -558,11 +558,9 @@ class ReflectionService {
 	 * @api
 	 */
 	public function isMethodTaggedWith($className, $methodName, $tag) {
-		$className = trim($className, '\\');
-		if (!isset($this->reflectedClassNames[$className])) $this->reflectClass($className);
-		if (!isset($this->methodTagsValues[$className])) return FALSE;
-		if (!isset($this->methodTagsValues[$className][$methodName])) return FALSE;
-		return isset($this->classTagsValues[$className][$methodName][$tag]);
+		$method = new \F3\FLOW3\Reflection\MethodReflection(trim($className, '\\'), $methodName);
+		$tagsValues = $method->getTagsValues();
+		return isset($tagsValues[$tag]);
 	}
 
 	/**
@@ -761,7 +759,9 @@ class ReflectionService {
 			}
 
 			$this->buildClassSchemata($classNamesToBuildSchemaFor);
-			$this->log(sprintf('Reflected %s emerged classes.', $count), LOG_INFO);
+			if ($count > 0) {
+				$this->log(sprintf('Reflected %s emerged classes.', $count), LOG_INFO);
+			}
 		}
 	}
 
@@ -773,11 +773,13 @@ class ReflectionService {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function reflectClass($className) {
+		$this->log(sprintf('Reflecting class %s', $className), LOG_DEBUG);
+
 		$className = trim($className, '\\');
 
 		$class = new ClassReflection($className);
 
-		$this->reflectedClassNames[$className] = ($this->settings['monitor']['detectClassChanges'] ? time() : 1);
+		$this->reflectedClassNames[$className] = $_SERVER['REQUEST_TIME'];
 
 		if ($class->isAbstract()) $this->abstractClasses[$className] = TRUE;
 		if ($class->isFinal()) $this->finalClasses[$className] = TRUE;
@@ -1040,11 +1042,11 @@ class ReflectionService {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function loadFromCache() {
-		if ($this->dataCache->has('ReflectionData') === FALSE) {
+		$data = $this->dataCache->get('ReflectionData');
+		if ($data === FALSE) {
 			return FALSE;
 		}
 
-		$data = $this->dataCache->get('ReflectionData');
 		foreach ($data as $propertyName => $propertyValue) {
 			$this->$propertyName = $propertyValue;
 		}
@@ -1063,8 +1065,11 @@ class ReflectionService {
 		if (!is_object($this->dataCache)) throw new \F3\FLOW3\Reflection\Exception('A cache must be injected before initializing the Reflection Service.', 1232044697);
 
 		$nonCachedClassNames = array_diff_assoc($this->reflectedClassNames, $this->cachedClassNames);
+		$emergedClassesCount = count($nonCachedClassNames);
+		if ($emergedClassesCount > 0) {
+			$this->log(sprintf('Found %s classes whose reflection data was not cached previously.', $emergedClassesCount), LOG_DEBUG);
+		}
 
-		$this->log('Found ' . count($nonCachedClassNames) . ' classes whose reflection data was not cached previously.', LOG_DEBUG);
 		foreach (array_keys($nonCachedClassNames) as $className) {
 			$this->statusCache->set(str_replace('\\', '_', $className), '', array($this->statusCache->getClassTag($className)));
 		}

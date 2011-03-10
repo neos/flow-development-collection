@@ -63,7 +63,8 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend implements \F3
 	public function setCache(\F3\FLOW3\Cache\Frontend\FrontendInterface $cache) {
 		parent::setCache($cache);
 
-		$cacheDirectory = $this->environment->getPathToTemporaryDirectory() . 'Cache/' . $this->cacheIdentifier . '/';
+		$codeOrData = ($cache instanceof \F3\FLOW3\Cache\Frontend\PhpFrontend) ? 'Code' : 'Data';
+		$cacheDirectory = $this->environment->getPathToTemporaryDirectory() . 'Cache/' . $codeOrData . '/' . $this->cacheIdentifier . '/';
 		if (!is_writable($cacheDirectory)) {
 			try {
 				\F3\FLOW3\Utility\Files::createDirectoryRecursively($cacheDirectory);

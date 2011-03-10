@@ -77,6 +77,13 @@ class ProxyClass {
 	protected $properties = array();
 
 	/**
+	 * A list of tags to attach to the cache entry this proxy class will be stored in
+	 *
+	 * @var array
+	 */
+	protected $cacheTags = array();
+
+	/**
 	 * @var \F3\FLOW3\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
@@ -95,6 +102,7 @@ class ProxyClass {
 			$this->originalClassName = substr($fullOriginalClassName, strlen($this->namespace) + 1);
 		}
 		$this->fullOriginalClassName = $fullOriginalClassName;
+		$this->addCacheTag(\F3\FLOW3\Cache\CacheManager::getClassTag($fullOriginalClassName));
 	}
 
 	/**
@@ -179,6 +187,26 @@ class ProxyClass {
 	}
 
 	/**
+	 * Adds the given tag to the list of cache entry tags
+	 *
+	 * @param string $tag A tag, usually a class name this proxy class depends on
+	 * @return void
+	 */
+	public function addCacheTag($tag) {
+		$this->cacheTags[] = $tag;
+	}
+
+	/**
+	 * Returns a list of cache tags for the cache entry of this proxy class
+	 *
+	 * @return array
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getCacheTags() {
+		return array_unique($this->cacheTags);
+	}
+
+	/**
 	 * Renders and returns the PHP code for this ProxyClass.
 	 *
 	 * @return string
@@ -193,7 +221,7 @@ class ProxyClass {
 		$constantsCode = $this->renderConstantsCode();
 		$propertiesCode = $this->renderPropertiesCode();
 
-		$methodsCode = $this->constructor->render();
+		$methodsCode = isset($this->constructor) ? $this->constructor->render() : '';
 		foreach ($this->methods as $proxyMethod) {
 			$methodsCode .= $proxyMethod->render();
 		}

@@ -50,9 +50,11 @@ class ObjectManager implements ObjectManagerInterface {
 	protected $objectSerializer;
 
 	/**
+	 * An array of settings of all packages, indexed by package key
+	 *
 	 * @var array
 	 */
-	protected $settings;
+	protected $allSettings;
 
 	/**
 	 * @var array
@@ -93,6 +95,7 @@ class ObjectManager implements ObjectManagerInterface {
 	public function setObjects(array $objects) {
 		$this->objects = $objects;
 		$this->objects['F3\FLOW3\Object\ObjectManagerInterface']['i'] = $this;
+		$this->objects[get_class($this)]['i'] = $this;
 	}
 
 	/**
@@ -100,10 +103,11 @@ class ObjectManager implements ObjectManagerInterface {
 	 *
 	 * @param array $settings The global settings
 	 * @return void
+	 * @autowiring off
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectSettings(array $settings) {
-		$this->settings = $settings;
+	public function injectAllSettings(array $settings) {
+		$this->allSettings = $settings;
 	}
 
 	/**
@@ -401,7 +405,7 @@ class ObjectManager implements ObjectManagerInterface {
 			switch ($argumentInformation['t']) {
 				case ObjectConfigurationArgument::ARGUMENT_TYPES_SETTING :
 					$settingPath = explode('.', $argumentInformation['v']);
-					$factoryMethodArguments[$index] = \F3\FLOW3\Utility\Arrays::getValueByPath($this->settings, $settingPath);
+					$factoryMethodArguments[$index] = \F3\FLOW3\Utility\Arrays::getValueByPath($this->allSettings, $settingPath);
 				break;
 				case ObjectConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE :
 					$factoryMethodArguments[$index] = $argumentInformation['v'];

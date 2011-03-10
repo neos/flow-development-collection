@@ -196,72 +196,6 @@ class Bootstrap {
 	}
 
 	/**
-	 * Initializes and executes all necessary steps for compiling static code and other cache information.
-	 *
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function compile() {
-		echo 'Compiling ...' . chr(10);
-		$startTime = microtime(TRUE);
-
-		$this->initializeClassLoader();
-		$this->initializeConfiguration();
-		$this->initializeSystemLogger();
-		$this->initializeErrorHandling();
-
-		$this->initializePackages();
-		$this->initializeCache();
-
-		$this->signalSlotDispatcher = new \F3\FLOW3\SignalSlot\Dispatcher();
-		$this->signalSlotDispatcher->injectSystemLogger($this->systemLogger);
-
-#		$this->monitorClassFiles();
-		$this->initializeReflection();
-
-		$compiler = new \F3\FLOW3\Object\Proxy\Compiler();
-		$compiler->injectClassesCache($this->cacheManager->getCache('FLOW3_Object_Classes'));
-		$compiler->injectConfigurationCache($this->cacheManager->getCache('FLOW3_Object_Configuration'));
-		$compiler->injectReflectionService($this->reflectionService);
-		$compiler->injectConfigurationManager($this->configurationManager);
-		$compiler->injectSystemLogger($this->systemLogger);
-		$compiler->injectSettings($this->settings);
-
-		$compiler->initialize($this->packageManager->getActivePackages());
-
-		$this->objectManager = new \F3\FLOW3\Object\CompileTimeObjectManager($this->context);
-		$this->objectManager->injectSettings($this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS));
-		$this->objectManager->setObjects($compiler->buildObjectsArray());
-		$this->objectManager->setObjectConfigurations($compiler->getObjectConfigurations());
-
-		$this->objectManager->setInstance('F3\FLOW3\Package\PackageManagerInterface', $this->packageManager);
-		$this->objectManager->setInstance('F3\FLOW3\Cache\CacheManager', $this->cacheManager);
-		$this->objectManager->setInstance('F3\FLOW3\Cache\CacheFactory', $this->cacheFactory);
-		$this->objectManager->setInstance('F3\FLOW3\Configuration\ConfigurationManager', $this->configurationManager);
-		$this->objectManager->setInstance('F3\FLOW3\Log\SystemLoggerInterface', $this->systemLogger);
-		$this->objectManager->setInstance('F3\FLOW3\Reflection\ReflectionService', $this->reflectionService);
-		$this->objectManager->setInstance('F3\FLOW3\Utility\Environment', $this->environment);
-		$this->objectManager->setInstance('F3\FLOW3\Object\Proxy\Compiler', $compiler);
-		$this->objectManager->setInstance('F3\FLOW3\SignalSlot\Dispatcher', $this->signalSlotDispatcher);
-		\F3\FLOW3\Error\Debugger::injectObjectManager($this->objectManager);
-
-		$this->signalSlotDispatcher->injectObjectManager($this->objectManager);
-		$this->initializeSignalsSlots();
-
-		$aopProxyClassBuilder = $this->objectManager->get('F3\FLOW3\AOP\Builder\ProxyClassBuilder');
-		$aopProxyClassBuilder->injectProxyBuildInformationCache($this->cacheManager->getCache('FLOW3_AOP_ProxyBuildInformation'));
-		$aopProxyClassBuilder->build();
-
-		$dependencyInjectionProxyClassBuilder = $this->objectManager->get('F3\FLOW3\Object\DependencyInjection\ProxyClassBuilder');;
-		$dependencyInjectionProxyClassBuilder->build();
-
-		$compiler->compile();
-
-		$this->emitFinishedCompilationRun();
-		echo 'done, took ' . round((microtime(TRUE) - $startTime), 3) . ' seconds' . chr(10);
-	}
-
-	/**
 	 * Signalizes that FLOW3 completed the shutdown process after a normal run.
 	 *
 	 * @return void
@@ -287,29 +221,66 @@ class Bootstrap {
 		$this->initializeSystemLogger();
 		$this->initializeErrorHandling();
 
-#		if ($this->context !== 'Production') {
-#			$command = 'php -c ' . php_ini_loaded_file() . ' ' . realpath(FLOW3_PATH_FLOW3 . 'Scripts/compile.php') . ' ' . $this->context . ' ' . FLOW3_PATH_ROOT . ' ' . FLOW3_PATH_WEB;
-#			(PHP_SAPI === 'cli') ? passthru($command) : exec($command);
-#		}
+		$this->initializePackageManagement();
+		$this->initializeCacheManagement();
+	}
 
-		$this->initializePackages();
-		$this->initializeCache();
-
-		$this->initializeReflection();
-		$this->reflectionService->initialize();
-
-		$this->initializeObjectManager();
-
-#		$this->initializeLockManager();
-#		if ($this->siteLocked === TRUE) return;
+	/**
+	 * Initializes and executes all necessary steps for compiling static code and other cache information.
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function compile() {
+		$this->objectManager = new \F3\FLOW3\Object\CompileTimeObjectManager($this->context);
+		$this->objectManager->setInstance('F3\FLOW3\Cache\CacheManager', $this->cacheManager);
 
 		$this->initializeSignalsSlots();
-		$this->initializeFileMonitor();
+		$this->monitorClassFiles();
+		$this->initializeReflectionService();
 
-		$this->initializePersistence();
-		$this->initializeSession();
-		$this->initializeResources();
-#		$this->initializeI18n();
+		$objectConfigurationCache = $this->cacheManager->getCache('FLOW3_Object_Configuration');
+		if ($objectConfigurationCache->has('allCompiledCodeUpToDate')) {
+			echo 'OK';
+			return;
+		}
+
+		$this->objectManager->injectAllSettings($this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS));
+		$this->objectManager->injectReflectionService($this->reflectionService);
+		$this->objectManager->injectConfigurationManager($this->configurationManager);
+		$this->objectManager->injectConfigurationCache($this->cacheManager->getCache('FLOW3_Object_Configuration'));
+		$this->objectManager->injectSystemLogger($this->systemLogger);
+		$this->objectManager->initialize($this->packageManager->getActivePackages());
+
+		$this->objectManager->setInstance('F3\FLOW3\Package\PackageManagerInterface', $this->packageManager);
+		$this->objectManager->setInstance('F3\FLOW3\Cache\CacheManager', $this->cacheManager);
+		$this->objectManager->setInstance('F3\FLOW3\Cache\CacheFactory', $this->cacheFactory);
+		$this->objectManager->setInstance('F3\FLOW3\Configuration\ConfigurationManager', $this->configurationManager);
+		$this->objectManager->setInstance('F3\FLOW3\Log\SystemLoggerInterface', $this->systemLogger);
+		$this->objectManager->setInstance('F3\FLOW3\Utility\Environment', $this->environment);
+		$this->objectManager->setInstance('F3\FLOW3\SignalSlot\Dispatcher', $this->signalSlotDispatcher);
+		$this->objectManager->setInstance('F3\FLOW3\Reflection\ReflectionService', $this->reflectionService);
+
+		$this->signalSlotDispatcher->injectObjectManager($this->objectManager);
+
+		$compiler = $this->objectManager->get('F3\FLOW3\Object\Proxy\Compiler');
+		$compiler->injectClassesCache($this->cacheManager->getCache('FLOW3_Object_Classes'));
+
+		\F3\FLOW3\Error\Debugger::injectObjectManager($this->objectManager);
+
+		$aopProxyClassBuilder = $this->objectManager->get('F3\FLOW3\AOP\Builder\ProxyClassBuilder');
+		$aopProxyClassBuilder->injectProxyBuildInformationCache($this->cacheManager->getCache('FLOW3_AOP_ProxyBuildInformation'));
+		$aopProxyClassBuilder->build();
+
+		$dependencyInjectionProxyClassBuilder = $this->objectManager->get('F3\FLOW3\Object\DependencyInjection\ProxyClassBuilder');
+		$dependencyInjectionProxyClassBuilder->build();
+
+		$compiler->compile();
+
+		$objectConfigurationCache->set('allCompiledCodeUpToDate', TRUE, array($objectConfigurationCache->getClassTag()));
+
+		$this->emitFinishedCompilationRun();
+		echo 'OK';
 	}
 
 	/**
@@ -321,7 +292,61 @@ class Bootstrap {
 	 * @api
 	 */
 	public function run() {
+		if (isset($_GET['FLOW3_BOOTSTRAP_ACTION']) && $_GET['FLOW3_BOOTSTRAP_ACTION'] === 'compile' && isset($_GET['FLOW3_BOOTSTRAP_COMPILEKEY'])) {
+			$compileKey = $_GET['FLOW3_BOOTSTRAP_COMPILEKEY'];
+			$compileKeyPathAndFilename = $this->environment->getPathToTemporaryDirectory() . 'CompileKey.txt';
+			if (!file_exists($compileKeyPathAndFilename) || $compileKey !== file_get_contents($compileKeyPathAndFilename)) {
+				$this->systemLogger->log(sprintf('Tried to execute compile run in %s context with invalid key (%s) ---', $this->context, $_GET['FLOW3_BOOTSTRAP_COMPILEKEY']), LOG_ALERT);
+				exit(1);
+			}
+
+			$this->systemLogger->log(sprintf('--- Compile run in %s context (compile key: %s) ---', $this->context, $_GET['FLOW3_BOOTSTRAP_COMPILEKEY']), LOG_INFO);
+			$this->compile();
+			unlink($compileKeyPathAndFilename);
+			exit;
+		}
+
 		if (!$this->siteLocked) {
+			$this->systemLogger->log(sprintf('--- Run FLOW3 in %s context. ---', $this->context), LOG_INFO);
+			$objectConfigurationCache = $this->cacheManager->getCache('FLOW3_Object_Configuration');
+			if (!$objectConfigurationCache->has('allCompiledCodeUpToDate') || $this->context !== 'Production') {
+
+				if (PHP_SAPI === 'cli') {
+					$command = 'php -c ' . php_ini_loaded_file() . ' ' . realpath(FLOW3_PATH_FLOW3 . 'Scripts/compile.php') . ' ' . $this->context . ' ' . FLOW3_PATH_ROOT . ' ' . FLOW3_PATH_WEB;
+					exec($command, $output, $exitCode);
+					if ($exitCode !==0) {
+						echo implode((PHP_SAPI === 'cli' ? PHP_EOL : '<br />'), $output);
+						throw new \F3\FLOW3\Exception(sprintf('Could not execute the FLOW3 compiler with "%s". ', $command), 1299854519);
+					}
+				} else {
+					$compileKey = \F3\FLOW3\Utility\Algorithms::generateUUID();
+					file_put_contents($this->environment->getPathToTemporaryDirectory() . 'CompileKey.txt', $compileKey);
+					$compileUri = $this->environment->getBaseUri() . '?FLOW3_BOOTSTRAP_ACTION=compile&FLOW3_BOOTSTRAP_COMPILEKEY=' . $compileKey;
+					try {
+						$result = file_get_contents($compileUri);
+					} catch (\Exception $exception) {
+						throw new \F3\FLOW3\Exception('The FLOW3 compile run failed due to an exception while sending the HTTP request.', 1300097425, $exception);
+					}
+					if ($result !== 'OK') {
+						$httpResult = (isset($http_response_header)) ? ('The HTTP request responded with ' . $http_response_header[0] . '.') : '';
+						throw new \F3\FLOW3\Exception('The FLOW3 compile run sub request failed. ' . $httpResult . ' Response output: ' . $result, 1300097426);
+					}
+				}
+			}
+
+			$this->initializeReflectionService();
+			$this->reflectionService->initialize();
+
+			$this->initializeObjectManager();
+
+			$this->initializeSignalsSlots();
+	#		$this->initializeFileMonitor();
+
+			$this->initializePersistence();
+			$this->initializeSession();
+			$this->initializeResources();
+	#		$this->initializeI18n();
+
 			$requestHandlerResolver = $this->objectManager->get('F3\FLOW3\MVC\RequestHandlerResolver');
 			$requestHandler = $requestHandlerResolver->resolveRequestHandler();
 			$requestHandler->handleRequest();
@@ -382,7 +407,6 @@ class Bootstrap {
 	 */
 	public function initializeSystemLogger() {
 		$this->systemLogger = \F3\FLOW3\Log\LoggerFactory::create('SystemLogger', 'F3\FLOW3\Log\Logger', $this->settings['log']['systemLogger']['backend'], $this->settings['log']['systemLogger']['backendOptions']);
-		$this->systemLogger->log(sprintf('--- Launching FLOW3 in %s context. ---', $this->context), LOG_INFO);
 	}
 
 	/**
@@ -408,7 +432,7 @@ class Bootstrap {
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @see initialize()
 	 */
-	public function initializePackages() {
+	public function initializePackageManagement() {
 		$this->packageManager = new \F3\FLOW3\Package\PackageManager();
 		$this->packageManager->injectConfigurationManager($this->configurationManager);
 		$this->packageManager->initialize();
@@ -431,7 +455,7 @@ class Bootstrap {
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @see initialize()
 	 */
-	public function initializeCache() {
+	public function initializeCacheManagement() {
 		$this->cacheManager = new \F3\FLOW3\Cache\CacheManager();
 		$this->cacheManager->setCacheConfigurations($this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_CACHES));
 
@@ -445,7 +469,7 @@ class Bootstrap {
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @see initialize()
 	 */
-	public function initializeReflection() {
+	public function initializeReflectionService() {
 		$this->reflectionService = new \F3\FLOW3\Reflection\ReflectionService();
 		$this->reflectionService->injectSystemLogger($this->systemLogger);
 		$this->reflectionService->setStatusCache($this->cacheManager->getCache('FLOW3_ReflectionStatus'));
@@ -468,7 +492,7 @@ class Bootstrap {
 			throw new \F3\FLOW3\Exception('Could not load object configuration from cache. This might be due to an unsuccesful compile run.', 1297263663);
 		}
 
-		$this->objectManager->injectSettings($this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS));
+		$this->objectManager->injectAllSettings($this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS));
 		$this->objectManager->setObjects($objects);
 
 		$this->classLoader->injectClassesCache($this->cacheManager->getCache('FLOW3_Object_Classes'));
@@ -506,7 +530,13 @@ class Bootstrap {
 	 * @see intialize()
 	 */
 	public function initializeSignalsSlots() {
-		$this->signalSlotDispatcher = $this->objectManager->get('F3\FLOW3\SignalSlot\Dispatcher');
+
+			// Need to instantiate the Dispatcher manually because this must work in compile mode as well as in run mode:
+		$this->signalSlotDispatcher = new \F3\FLOW3\SignalSlot\Dispatcher();
+		$this->signalSlotDispatcher->injectSystemLogger($this->systemLogger);
+		$this->signalSlotDispatcher->injectObjectManager($this->objectManager);
+
+		$this->objectManager->setInstance('F3\FLOW3\SignalSlot\Dispatcher', $this->signalSlotDispatcher);
 
 		$signalsSlotsConfiguration = $this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SIGNALSSLOTS);
 		foreach ($signalsSlotsConfiguration as $signalClassName => $signalSubConfiguration) {
@@ -548,17 +578,18 @@ class Bootstrap {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @FIXME This doesn't really work (efficiently) in compile mode
 	 */
 	protected function monitorClassFiles() {
 		$changeDetectionStrategy = new \F3\FLOW3\Monitor\ChangeDetectionStrategy\ModificationTimeStrategy();
 		$changeDetectionStrategy->injectCache($this->cacheManager->getCache('FLOW3_Monitor'));
+		$changeDetectionStrategy->initializeObject();
 
 		$monitor = new \F3\FLOW3\Monitor\FileMonitor('FLOW3_ClassFiles');
 		$monitor->injectCache($this->cacheManager->getCache('FLOW3_Monitor'));
 		$monitor->injectChangeDetectionStrategy($changeDetectionStrategy);
 		$monitor->injectSignalDispatcher($this->signalSlotDispatcher);
 		$monitor->injectSystemLogger($this->systemLogger);
+		$monitor->initializeObject();
 
 		foreach ($this->packageManager->getActivePackages() as $package) {
 			$classesPath = $package->getClassesPath();
@@ -567,26 +598,6 @@ class Bootstrap {
 			}
 		}
 
-		$classFileCache = $this->cacheManager->getCache('FLOW3_Cache_ClassFiles');
-		$cacheManager = $this->cacheManager;
-		$cacheFlushingSlot = function() use ($classFileCache, $cacheManager) {
-			list($signalName, $monitorIdentifier, $changedFiles) = func_get_args();
-			if ($monitorIdentifier === 'FLOW3_ClassFiles') {
-				if (count($changedFiles) > 5) {
-					$cacheManager->flushCachesByTag($classFileCache->getClassTag());
-				} else {
-					foreach ($changedFiles as $pathAndFilename => $status) {
-						$matches = array();
-						if (1 === preg_match('/.+\/(.+)\/Classes\/(.+)\.php/', $pathAndFilename, $matches)) {
-							$className = 'F3\\' . $matches[1] . '\\' . str_replace('/', '\\', $matches[2]);
-							$cacheManager->flushCachesByTag($classFileCache->getClassTag($className));
-						}
-					}
-				}
-			}
-		};
-
-		$this->signalSlotDispatcher->connect('F3\FLOW3\Monitor\FileMonitor', 'emitFilesHaveChanged', $cacheFlushingSlot);
 		$monitor->detectChanges();
 		$monitor->shutdownObject();
 		$changeDetectionStrategy->shutdownObject();

@@ -58,9 +58,7 @@ class ModificationTimeStrategy implements \F3\FLOW3\Monitor\ChangeDetectionStrat
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initializeObject() {
-		if ($this->cache->has('filesAndModificationTimes')) {
-			$this->filesAndModificationTimes = $this->cache->get('filesAndModificationTimes');
-		}
+		$this->filesAndModificationTimes = $this->cache->get('filesAndModificationTimes');
 	}
 
 	/**

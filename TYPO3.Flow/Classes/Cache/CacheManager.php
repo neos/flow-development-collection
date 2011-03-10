@@ -165,6 +165,32 @@ class CacheManager {
 	}
 
 	/**
+	 * Flushes entries tagged with class names if their class source files have changed.
+	 *
+	 * This method is used as a slot for a signal sent by the class file monitor defined
+	 * in the bootstrap.
+	 *
+	 * @param string $fileMonitorIdentifier Identifier of the File Monitor (must be "FLOW3_ClassFiles")
+	 * @param array $changedFiles A list of full paths to changed files
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function flushClassFileCachesByChangedFiles($fileMonitorIdentifier, array $changedFiles) {
+		if ($fileMonitorIdentifier !== 'FLOW3_ClassFiles') {
+			return;
+		}
+
+		$this->flushCachesByTag(self::getClassTag());
+		foreach ($changedFiles as $pathAndFilename => $status) {
+			$matches = array();
+			if (1 === preg_match('/.+\/(.+)\/Classes\/(.+)\.php/', $pathAndFilename, $matches)) {
+				$className = 'F3\\' . $matches[1] . '\\' . str_replace('/', '\\', $matches[2]);
+				$this->flushCachesByTag(self::getClassTag($className));
+			}
+		}
+	}
+
+	/**
 	 * Renders a tag which can be used to mark a cache entry as "depends on this class".
 	 * Whenever the specified class is modified, all cache entries tagged with the
 	 * class are flushed.
@@ -181,7 +207,8 @@ class CacheManager {
 		return ($className === '') ? FrontendInterface::TAG_CLASS : FrontendInterface::TAG_CLASS . str_replace('\\', '_', $className);
 	}
 
-	/** Instantiates all registered caches.
+	/**
+	 * Instantiates all registered caches.
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>

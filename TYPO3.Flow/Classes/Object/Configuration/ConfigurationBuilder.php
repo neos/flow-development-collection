@@ -158,7 +158,7 @@ class ConfigurationBuilder {
 	 */
 	protected function parseConfigurationArray($objectName, array $rawConfigurationOptions, $configurationSourceHint = '', $existingObjectConfiguration = NULL) {
 		$className = (isset($rawConfigurationOptions['className']) ? $rawConfigurationOptions['className'] : $objectName);
-		$objectConfiguration = ($existingObjectConfiguration instanceof \F3\FLOW3\Object\Configuration\Configuration) ? $existingObjectConfiguration : new \F3\FLOW3\Object\Configuration\Configuration($objectName, $className);
+		$objectConfiguration = ($existingObjectConfiguration instanceof Configuration) ? $existingObjectConfiguration : new Configuration($objectName, $className);
 		$objectConfiguration->setConfigurationSourceHint($configurationSourceHint);
 
 		foreach ($rawConfigurationOptions as $optionName => $optionValue) {
@@ -170,11 +170,11 @@ class ConfigurationBuilder {
 					if (is_array($optionValue)) {
 						foreach ($optionValue as $propertyName => $propertyValue) {
 							if (isset($propertyValue['value'])) {
-								$property = new \F3\FLOW3\Object\Configuration\ConfigurationProperty($propertyName, $propertyValue['value'], \F3\FLOW3\Object\Configuration\ConfigurationProperty::PROPERTY_TYPES_STRAIGHTVALUE);
+								$property = new ConfigurationProperty($propertyName, $propertyValue['value'], ConfigurationProperty::PROPERTY_TYPES_STRAIGHTVALUE);
 							} elseif (isset($propertyValue['object'])) {
 								$property = $this->parsePropertyOfTypeObject($propertyName, $propertyValue['object'], $configurationSourceHint);
 							} elseif (isset($propertyValue['setting'])) {
-								$property = new \F3\FLOW3\Object\Configuration\ConfigurationProperty($propertyName, $propertyValue['setting'], \F3\FLOW3\Object\Configuration\ConfigurationProperty::PROPERTY_TYPES_SETTING);
+								$property = new ConfigurationProperty($propertyName, $propertyValue['setting'], ConfigurationProperty::PROPERTY_TYPES_SETTING);
 							} else {
 								throw new \F3\FLOW3\Object\Exception\InvalidObjectConfigurationException('Invalid configuration syntax. Expecting "value", "object" or "setting" as value for property "' . $propertyName . '", instead found "' . (is_array($propertyValue) ? implode(', ', array_keys($propertyValue)) : $propertyValue) . '" (source: ' . $objectConfiguration->getConfigurationSourceHint() . ')', 1230563249);
 							}
@@ -186,11 +186,11 @@ class ConfigurationBuilder {
 					if (is_array($optionValue)) {
 						foreach ($optionValue as $argumentName => $argumentValue) {
 							if (isset($argumentValue['value'])) {
-								$argument = new \F3\FLOW3\Object\Configuration\ConfigurationArgument($argumentName, $argumentValue['value'], \F3\FLOW3\Object\Configuration\ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE);
+								$argument = new ConfigurationArgument($argumentName, $argumentValue['value'], ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE);
 							} elseif (isset($argumentValue['object'])) {
 								$argument = $this->parseArgumentOfTypeObject($argumentName, $argumentValue['object'], $configurationSourceHint);
 							} elseif (isset($argumentValue['setting'])) {
-								$argument = new \F3\FLOW3\Object\Configuration\ConfigurationArgument($argumentName, $argumentValue['setting'], \F3\FLOW3\Object\Configuration\ConfigurationArgument::ARGUMENT_TYPES_SETTING);
+								$argument = new ConfigurationArgument($argumentName, $argumentValue['setting'], ConfigurationArgument::ARGUMENT_TYPES_SETTING);
 							} else {
 								throw new \F3\FLOW3\Object\Exception\InvalidObjectConfigurationException('Invalid configuration syntax. Expecting "value", "object" or "setting" as value for argument "' . $argumentName . '", instead found "' . (is_array($argumentValue) ? implode(', ', array_keys($argumentValue)) : $argumentValue) . '" (source: ' . $objectConfiguration->getConfigurationSourceHint() . ')', 1230563250);
 							}
@@ -227,11 +227,11 @@ class ConfigurationBuilder {
 	protected function parseScope($value) {
 		switch ($value) {
 			case 'singleton':
-				return \F3\FLOW3\Object\Configuration\Configuration::SCOPE_SINGLETON;
+				return Configuration::SCOPE_SINGLETON;
 			case 'prototype':
-				return \F3\FLOW3\Object\Configuration\Configuration::SCOPE_PROTOTYPE;
+				return Configuration::SCOPE_PROTOTYPE;
 			case 'session':
-				return \F3\FLOW3\Object\Configuration\Configuration::SCOPE_SESSION;
+				return Configuration::SCOPE_SESSION;
 			default:
 				throw new \F3\FLOW3\Object\Exception\InvalidObjectConfigurationException('Invalid scope', 1167574991);
 		}
@@ -248,11 +248,11 @@ class ConfigurationBuilder {
 	static protected function parseAutowiring($value) {
 		switch ($value) {
 			case 'on':
-			case \F3\FLOW3\Object\Configuration\Configuration::AUTOWIRING_MODE_ON:
-				return \F3\FLOW3\Object\Configuration\Configuration::AUTOWIRING_MODE_ON;
+			case Configuration::AUTOWIRING_MODE_ON:
+				return Configuration::AUTOWIRING_MODE_ON;
 			case 'off':
-			case \F3\FLOW3\Object\Configuration\Configuration::AUTOWIRING_MODE_OFF:
-				return \F3\FLOW3\Object\Configuration\Configuration::AUTOWIRING_MODE_OFF;
+			case Configuration::AUTOWIRING_MODE_OFF:
+				return Configuration::AUTOWIRING_MODE_OFF;
 			default:
 				throw new \F3\FLOW3\Object\Exception\InvalidObjectConfigurationException('Invalid autowiring declaration', 1283866757);
 		}
@@ -280,9 +280,9 @@ class ConfigurationBuilder {
 				}
 			}
 			$objectConfiguration = $this->parseConfigurationArray($objectName, $objectNameOrConfiguration, $configurationSourceHint . ', property "' . $propertyName .'"');
-			$property = new \F3\FLOW3\Object\Configuration\ConfigurationProperty($propertyName, $objectConfiguration, \F3\FLOW3\Object\Configuration\ConfigurationProperty::PROPERTY_TYPES_OBJECT);
+			$property = new ConfigurationProperty($propertyName, $objectConfiguration, ConfigurationProperty::PROPERTY_TYPES_OBJECT);
 		} else {
-			$property = new \F3\FLOW3\Object\Configuration\ConfigurationProperty($propertyName, $objectNameOrConfiguration, \F3\FLOW3\Object\Configuration\ConfigurationProperty::PROPERTY_TYPES_OBJECT);
+			$property = new ConfigurationProperty($propertyName, $objectNameOrConfiguration, ConfigurationProperty::PROPERTY_TYPES_OBJECT);
 		}
 		return $property;
 	}
@@ -301,9 +301,9 @@ class ConfigurationBuilder {
 			$objectName = $objectNameOrConfiguration['name'];
 			unset($objectNameOrConfiguration['name']);
 			$objectConfiguration = $this->parseConfigurationArray($objectName, $objectNameOrConfiguration, $configurationSourceHint . ', argument "' . $argumentName .'"');
-			$argument = new \F3\FLOW3\Object\Configuration\ConfigurationArgument($argumentName,  $objectConfiguration, \F3\FLOW3\Object\Configuration\ConfigurationArgument::ARGUMENT_TYPES_OBJECT);
+			$argument = new ConfigurationArgument($argumentName,  $objectConfiguration, ConfigurationArgument::ARGUMENT_TYPES_OBJECT);
 		} else {
-			$argument = new \F3\FLOW3\Object\Configuration\ConfigurationArgument($argumentName,  $objectNameOrConfiguration, \F3\FLOW3\Object\Configuration\ConfigurationArgument::ARGUMENT_TYPES_OBJECT);
+			$argument = new ConfigurationArgument($argumentName,  $objectNameOrConfiguration, ConfigurationArgument::ARGUMENT_TYPES_OBJECT);
 		}
 		return $argument;
 	}
@@ -329,20 +329,20 @@ class ConfigurationBuilder {
 						if ($parameterInformation['optional'] === TRUE) {
 							$defaultValue = (isset($parameterInformation['defaultValue'])) ? $parameterInformation['defaultValue'] : NULL;
 							if ($defaultValue !== NULL) {
-								$arguments[$index] = new \F3\FLOW3\Object\Configuration\ConfigurationArgument($index, $defaultValue, \F3\FLOW3\Object\Configuration\ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE);
+								$arguments[$index] = new ConfigurationArgument($index, $defaultValue, ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE);
 							}
 						} elseif ($parameterInformation['class'] !== NULL && isset($objectConfigurations[$parameterInformation['class']])) {
-							$arguments[$index] = new \F3\FLOW3\Object\Configuration\ConfigurationArgument($index, $parameterInformation['class'], \F3\FLOW3\Object\Configuration\ConfigurationArgument::ARGUMENT_TYPES_OBJECT);
+							$arguments[$index] = new ConfigurationArgument($index, $parameterInformation['class'], ConfigurationArgument::ARGUMENT_TYPES_OBJECT);
 						} elseif ($parameterInformation['allowsNull'] === TRUE) {
-							$arguments[$index] = new \F3\FLOW3\Object\Configuration\ConfigurationArgument($index, NULL, \F3\FLOW3\Object\Configuration\ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE);
+							$arguments[$index] = new ConfigurationArgument($index, NULL, ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE);
 						} elseif (interface_exists($parameterInformation['class'])) {
 							$debuggingHint = sprintf('No default implementation for the required interface %s was configured, therefore no specific class name could be used for this dependency. ', $parameterInformation['class']);
 						}
 
 						$methodTagsAndValues = $this->reflectionService->getMethodTagsValues($className, '__construct');
-						if (isset ($arguments[$index]) && ($objectConfiguration->getAutowiring() === \F3\FLOW3\Object\Configuration\Configuration::AUTOWIRING_MODE_OFF
+						if (isset ($arguments[$index]) && ($objectConfiguration->getAutowiring() === Configuration::AUTOWIRING_MODE_OFF
 								|| isset($methodTagsAndValues['autowiring']) && $methodTagsAndValues['autowiring'] === array('off'))) {
-							$arguments[$index]->setAutowiring(\F3\FLOW3\Object\Configuration\Configuration::AUTOWIRING_MODE_OFF);
+							$arguments[$index]->setAutowiring(Configuration::AUTOWIRING_MODE_OFF);
 							$arguments[$index]->set($index, NULL);
 						}
 
@@ -372,10 +372,16 @@ class ConfigurationBuilder {
 			foreach (get_class_methods($className) as $methodName) {
 				if (substr($methodName, 0, 6) === 'inject') {
 					$propertyName = strtolower(substr($methodName, 6, 1)) . substr($methodName, 7);
+
+					$methodTagsAndValues = $this->reflectionService->getMethodTagsValues($className, $methodName);
+					if (isset($methodTagsAndValues['autowiring']) && $methodTagsAndValues['autowiring'] === array('off')) {
+						continue;
+					}
+
 					if ($methodName === 'injectSettings') {
 						$classNameParts = explode('\\', $className);
 						if (count($classNameParts) > 1) {
-							$properties[$propertyName] = new \F3\FLOW3\Object\Configuration\ConfigurationProperty($propertyName, $classNameParts[1], \F3\FLOW3\Object\Configuration\ConfigurationProperty::PROPERTY_TYPES_SETTING);
+							$properties[$propertyName] = new ConfigurationProperty($propertyName, $classNameParts[1], ConfigurationProperty::PROPERTY_TYPES_SETTING);
 						}
 					} else {
 						if (array_key_exists($propertyName, $properties)) {
@@ -388,17 +394,10 @@ class ConfigurationBuilder {
 						}
 						$methodParameter = array_pop($methodParameters);
 						if ($methodParameter['class'] === NULL) {
-							$this->systemLogger->log(sprintf('Could not autowire property %s because the method parameter in %s() contained no type hint.', "$className::$propertyName", $methodName), LOG_DEBUG);
+							$this->systemLogger->log(sprintf('Could not autowire property %s because the method parameter in %s() contained no class type hint.', "$className::$propertyName", $methodName), LOG_DEBUG);
 							continue;
 						}
-						$properties[$propertyName] = new \F3\FLOW3\Object\Configuration\ConfigurationProperty($propertyName, $methodParameter['class'], \F3\FLOW3\Object\Configuration\ConfigurationProperty::PROPERTY_TYPES_OBJECT);
-					}
-
-					$methodTagsAndValues = $this->reflectionService->getMethodTagsValues($className, $methodName);
-					if ($objectConfiguration->getAutowiring() === \F3\FLOW3\Object\Configuration\Configuration::AUTOWIRING_MODE_OFF ||
-							  isset($methodTagsAndValues['autowiring']) && $methodTagsAndValues['autowiring'] === array('off')) {
-						$properties[$propertyName]->setAutowiring(\F3\FLOW3\Object\Configuration\Configuration::AUTOWIRING_MODE_OFF);
-						$properties[$propertyName]->set($propertyName, NULL);
+						$properties[$propertyName] = new ConfigurationProperty($propertyName, $methodParameter['class'], ConfigurationProperty::PROPERTY_TYPES_OBJECT);
 					}
 				}
 			}
@@ -406,7 +405,7 @@ class ConfigurationBuilder {
 			foreach ($this->reflectionService->getPropertyNamesByTag($className, 'inject') as $propertyName) {
 				if (!array_key_exists($propertyName, $properties)) {
 					$objectName = trim(implode('', $this->reflectionService->getPropertyTagValues($className, $propertyName, 'var')), ' \\');
-					$properties[$propertyName] =  new \F3\FLOW3\Object\Configuration\ConfigurationProperty($propertyName, $objectName, \F3\FLOW3\Object\Configuration\ConfigurationProperty::PROPERTY_TYPES_OBJECT);
+					$properties[$propertyName] =  new ConfigurationProperty($propertyName, $objectName, ConfigurationProperty::PROPERTY_TYPES_OBJECT);
 				}
 			}
 

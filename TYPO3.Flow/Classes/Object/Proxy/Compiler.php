@@ -22,6 +22,8 @@ namespace F3\FLOW3\Object\Proxy;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use \F3\FLOW3\Cache\CacheManager;
+
 /**
  * Builder for proxy classes which are used to implement Dependency Injection and
  * Aspect-Oriented Programming
@@ -38,44 +40,19 @@ class Compiler {
 	protected $settings = array();
 
 	/**
+	 * @var \F3\FLOW3\Object\CompileTimeObjectManager
+	 */
+	protected $objectManager;
+
+	/**
 	 * @var \F3\FLOW3\Cache\Frontend\PhpFrontend
 	 */
 	protected $classesCache;
 
 	/**
-	 * @var \F3\FLOW3\Cache\Frontend\VariableFrontend
-	 */
-	protected $configurationCache;
-
-	/**
 	 * @var \F3\FLOW3\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
-
-	/**
-	 * @var \F3\FLOW3\Configuration\ConfigurationManager
-	 */
-	protected $configurationManager;
-
-	/**
-	 * @var \F3\FLOW3\Log\SystemLoggerInterface
-	 */
-	protected $systemLogger;
-
-	/**
-	 * @var array
-	 */
-	protected $allAvailableClassNames = array();
-
-	/**
-	 * @var array
-	 */
-	protected $proxyableClassNames = array();
-
-	/**
-	 * @var array
-	 */
-	protected $objectConfigurations;
 
 	/**
 	 * @var string
@@ -99,25 +76,24 @@ class Compiler {
 	}
 
 	/**
+	 * @param \F3\FLOW3\Object\CompileTimeObjectManager $objectManager
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectObjectManager(\F3\FLOW3\Object\CompileTimeObjectManager $objectManager) {
+		$this->objectManager = $objectManager;
+	}
+
+	/**
 	 * Injects the cache for storing the renamed original classes and proxy classes
 	 *
 	 * @param \F3\FLOW3\Cache\Frontend\PhpFrontend $classesCache
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @autowiring off
 	 */
 	public function injectClassesCache(\F3\FLOW3\Cache\Frontend\PhpFrontend $classesCache) {
 		$this->classesCache = $classesCache;
-	}
-
-	/**
-	 * Injects the configuration cache of the Object Framework
-	 *
-	 * @param \F3\FLOW3\Cache\Frontend\VariableFrontend $configurationCache
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function injectConfigurationCache(\F3\FLOW3\Cache\Frontend\VariableFrontend $configurationCache) {
-		$this->configurationCache = $configurationCache;
 	}
 
 	/**
@@ -127,78 +103,6 @@ class Compiler {
 	 */
 	public function injectReflectionService(\F3\FLOW3\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
-	}
-
-	/**
-	 * @param \F3\FLOW3\Configuration\ConfigurationManager $configurationManager
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function injectConfigurationManager(\F3\FLOW3\Configuration\ConfigurationManager $configurationManager) {
-		$this->configurationManager = $configurationManager;
-	}
-
-	/**
-	 * @param \F3\FLOW3\Log\SystemLoggerInterface $systemLogger
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function injectSystemLogger(\F3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
-		$this->systemLogger = $systemLogger;
-	}
-
-	/**
-	 * Initializes the Proxy Class Builder
-	 *
-	 * @param array $packages
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function initialize(array $packages) {
-		$this->classesCache->flush(); # FIXME
-
-		$this->registerClassFiles($packages);
-		$this->reflectionService->buildReflectionData($this->allAvailableClassNames);
-
-		$rawCustomObjectConfigurations = $this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_OBJECTS);
-
-		$configurationBuilder = new \F3\FLOW3\Object\Configuration\ConfigurationBuilder();
-		$configurationBuilder->injectReflectionService($this->reflectionService);
-		$configurationBuilder->injectSystemLogger($this->systemLogger);
-
-		$this->objectConfigurations = $configurationBuilder->buildObjectConfigurations($this->allAvailableClassNames, $rawCustomObjectConfigurations);
-	}
-
-	/**
-	 * Compiles the configured proxy classes and methods as static PHP code and stores it in the proxy class code cache.
-	 * Also builds the static object container which acts as a registry for non-prototype objects during runtime.
-	 *
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function compile() {
-		foreach ($this->allAvailableClassNames as $fullOriginalClassName) {
-			if (isset($this->proxyClasses[$fullOriginalClassName])) {
-				$proxyClassCode = $this->proxyClasses[$fullOriginalClassName]->render();
-				if ($proxyClassCode !== '') {
-					$this->classesCache->set(str_replace('\\', '_', $fullOriginalClassName), $proxyClassCode);
-				}
-			} else {
-				$this->classesCache->remove(str_replace('\\', '_', $fullOriginalClassName . self::$originalClassNameSuffix));
-			}
-		}
-		$this->configurationCache->set('objects', $this->buildObjectsArray());
-	}
-
-	/**
-	 * Provides the array of object configuration objects which have been generated by the Configuration Builder to
-	 * the proxy class builders configuring this Compiler.
-	 *
-	 * @return array The object configurations
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getObjectConfigurations() {
-		return $this->objectConfigurations;
 	}
 
 	/**
@@ -212,62 +116,48 @@ class Compiler {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getProxyClass($fullClassName) {
-		if (!in_array($fullClassName, $this->proxyableClassNames)) {
+		if (interface_exists($fullClassName) || in_array('F3\FLOW3\Tests\BaseTestCase', class_parents($fullClassName))) {
 			return FALSE;
 		}
+
+		$proxyAnnotationValues = $this->reflectionService->getClassTagValues($fullClassName, 'proxy');
+		if ($proxyAnnotationValues !== array() && $proxyAnnotationValues[0] === 'disable') {
+			return FALSE;
+		}
+
 		if (!isset($this->proxyClasses[$fullClassName])) {
 			$this->proxyClasses[$fullClassName] = new ProxyClass($fullClassName);
 			$this->proxyClasses[$fullClassName]->injectReflectionService($this->reflectionService);
+
+				// FIXME: Use reflection service:
+			$class = new \ReflectionClass($fullClassName);
+			$classPathAndFilename = $class->getFileName();
+			if ($classPathAndFilename === FALSE) {
+				return FALSE;
+			}
+			$this->cacheOriginalClassFile($fullClassName, $classPathAndFilename);
 		}
 		return $this->proxyClasses[$fullClassName];
 	}
 
 	/**
-	 * Traverses through all class files of the active packages and registers collects the class names as
-	 * "all available class names". Except of Interfaces and Exceptions, a copy of each class file is created
-	 * via cacheOriginalClassFile().
+	 * Compiles the configured proxy classes and methods as static PHP code and stores it in the proxy class code cache.
+	 * Also builds the static object container which acts as a registry for non-prototype objects during runtime.
 	 *
-	 * If the settings say so, also function test classes are registered.
-	 *
-	 * @param array $packages A list of packages to consider
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function registerClassFiles(array $packages) {
-		$this->proxyableClassNames = array();
-		foreach ($packages as $package) {
-			$packagePath = $package->getPackagePath();
-			$classFiles = $package->getClassFiles();
-			if ($this->settings['object']['registerFunctionalTestClasses'] === TRUE) {
-				$classFiles = array_merge($classFiles, $package->getFunctionalTestsClassFiles());
-			}
-			foreach ($classFiles as $fullClassName => $relativePathAndFilename) {
-				if (substr($fullClassName, -9, 9) === 'Exception') {
-					continue;
+	public function compile() {
+		foreach ($this->objectManager->getRegisteredClassNames() as $fullOriginalClassName) {
+			if (isset($this->proxyClasses[$fullOriginalClassName])) {
+				$proxyClassCode = $this->proxyClasses[$fullOriginalClassName]->render();
+				if ($proxyClassCode !== '') {
+					$this->classesCache->set(str_replace('\\', '_', $fullOriginalClassName), $proxyClassCode, $this->proxyClasses[$fullOriginalClassName]->getCacheTags());
 				}
-
-				$this->allAvailableClassNames[] = $fullClassName;
-
-				if (interface_exists($fullClassName)) {
-					continue;
-				}
-
-				$proxyAnnotationValues = $this->reflectionService->getClassTagValues($fullClassName, 'proxy');
-				if ($proxyAnnotationValues !== array() && $proxyAnnotationValues[0] === 'disable') {
-					$this->systemLogger->log(sprintf('Skipping class %s because it contains a @proxy disable annotation.', $fullClassName), LOG_DEBUG);
-					continue;
-				}
-				if (in_array('F3\FLOW3\Tests\BaseTestCase', class_parents($fullClassName))) {
-					continue;
-				}
-
-				$this->proxyableClassNames[] = $fullClassName;
-				$this->cacheOriginalClassFile($fullClassName, $packagePath . $relativePathAndFilename);
+			} else {
+				$this->classesCache->remove(str_replace('\\', '_', $fullOriginalClassName . self::$originalClassNameSuffix));
 			}
 		}
-
-		$this->allAvailableClassNames = array_unique($this->allAvailableClassNames);
-		$this->proxyableClassNames = array_unique($this->proxyableClassNames);
 	}
 
 	/**
@@ -285,46 +175,8 @@ class Compiler {
 		$classCode = preg_replace('/^([a-z ]*)(interface|class)\s+([a-zA-Z0-9_]+)/m', '$1$2 $3_Original', $classCode);
 
 		$classCode = preg_replace('/\\?>[\n\s\r]*$/', '', $classCode);
-		$this->classesCache->set(str_replace('\\', '_', $className . self::$originalClassNameSuffix), $classCode);
-	}
 
-	/**
-	 * Builds the PHP code of the object manager's objects array which contains information
-	 * about the registered objects, their scope, class, built method etc.
-	 *
-	 * @return string PHP code of the objects array
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function buildObjectsArray() {
-		$objects = array();
-		foreach ($this->objectConfigurations as $objectConfiguration) {
-			$objectName = $objectConfiguration->getObjectName();
-			$objects[$objectName] = array(
-				'l' => strtolower($objectName),
-				's' => $objectConfiguration->getScope()
-			);
-			if ($objectConfiguration->getClassName() !== $objectName) {
-				$objects[$objectName]['c'] = $objectConfiguration->getClassName();
-			}
-			if ($objectConfiguration->getFactoryObjectName() !== '') {
-				$objects[$objectName]['f'] = array(
-					$objectConfiguration->getFactoryObjectName(),
-					$objectConfiguration->getFactoryMethodName()
-				);
-
-				$objects[$objectName]['fa'] = array();
-				$factoryMethodArguments = $objectConfiguration->getArguments();
-				if (count($factoryMethodArguments) > 0) {
-					foreach ($factoryMethodArguments as $index => $argument) {
-						$objects[$objectName]['fa'][$index] = array(
-							't' => $argument->getType(),
-							'v' => $argument->getValue()
-						);
-					}
-				}
-			}
-		}
-		return $objects;
+		$this->classesCache->set(str_replace('\\', '_', $className . self::$originalClassNameSuffix), $classCode, array(CacheManager::getClassTag($className)));
 	}
 }
 

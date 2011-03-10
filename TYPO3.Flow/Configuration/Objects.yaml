@@ -168,6 +168,13 @@ F3\FLOW3\MVC\Web\Routing\Aspect\RouterCachingAspect:
 F3\FLOW3\Object\ObjectManagerInterface:
   className: F3\FLOW3\Object\ObjectManager
   scope: singleton
+  autowiring: off
+
+F3\FLOW3\Object\ObjectManager:
+  autowiring: off
+
+F3\FLOW3\Object\CompileTimeObjectManager:
+  autowiring: off
 
 #                                                                          #
 # Resource                                                                 #
