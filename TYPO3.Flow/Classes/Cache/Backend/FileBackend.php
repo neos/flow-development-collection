@@ -195,7 +195,7 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend implements \F3
 	 */
 	public function findIdentifiersByTag($searchedTag) {
 		$entryIdentifiers = array();
-		$now = time();
+		$now = $_SERVER['REQUEST_TIME'];
 		$cacheEntryFileExtensionLength = strlen($this->cacheEntryFileExtension);
 		for($directoryIterator = new \DirectoryIterator($this->cacheDirectory); $directoryIterator->valid(); $directoryIterator->next()) {
 			if ($directoryIterator->isDot()) continue;

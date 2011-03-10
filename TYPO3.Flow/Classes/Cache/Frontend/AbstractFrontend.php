@@ -22,6 +22,8 @@ namespace F3\FLOW3\Cache\Frontend;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use \F3\FLOW3\Cache\CacheManager;
+
 /**
  * An abstract cache
  *
@@ -156,9 +158,10 @@ abstract class AbstractFrontend implements \F3\FLOW3\Cache\Frontend\FrontendInte
 	 * @return string Class Tag
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
+	 * @deprecated since 1.0.0beta1 – Use CacheManager::getClassTag() instead
 	 */
 	public function getClassTag($className = '') {
-		return ($className === '') ? self::TAG_CLASS : self::TAG_CLASS . str_replace('\\', '_', $className);
+		return CacheManager::getClassTag($className);
 	}
 
 	/**

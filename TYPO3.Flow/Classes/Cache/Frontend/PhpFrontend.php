@@ -53,7 +53,7 @@ class PhpFrontend extends \F3\FLOW3\Cache\Frontend\StringFrontend {
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
-	public function set($entryIdentifier, $sourceCode, $tags = array(), $lifetime = NULL) {
+	public function set($entryIdentifier, $sourceCode, array $tags = array(), $lifetime = NULL) {
 		if (!$this->isValidEntryIdentifier($entryIdentifier)) throw new \InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1264023823);
 		if (!is_string($sourceCode)) throw new \F3\FLOW3\Cache\Exception\InvalidDataException('The given source code is not a valid string.', 1264023824);
 		foreach ($tags as $tag) {

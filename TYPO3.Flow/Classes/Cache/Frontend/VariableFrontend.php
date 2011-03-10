@@ -62,7 +62,7 @@ class VariableFrontend extends \F3\FLOW3\Cache\Frontend\AbstractFrontend {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
-	public function set($entryIdentifier, $variable, $tags = array(), $lifetime = NULL) {
+	public function set($entryIdentifier, $variable, array $tags = array(), $lifetime = NULL) {
 		if (!$this->isValidEntryIdentifier($entryIdentifier)) throw new \InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1233058264);
 		foreach ($tags as $tag) {
 			if (!$this->isValidTag($tag)) throw new \InvalidArgumentException('"' . $tag . '" is not a valid tag for a cache entry.', 1233058269);
