@@ -120,6 +120,10 @@ class Compiler {
 			return FALSE;
 		}
 
+		if (class_exists($fullClassName) === FALSE) {
+			return FALSE;
+		}
+
 		$proxyAnnotationValues = $this->reflectionService->getClassTagValues($fullClassName, 'proxy');
 		if ($proxyAnnotationValues !== array() && $proxyAnnotationValues[0] === 'disable') {
 			return FALSE;
@@ -128,16 +132,24 @@ class Compiler {
 		if (!isset($this->proxyClasses[$fullClassName])) {
 			$this->proxyClasses[$fullClassName] = new ProxyClass($fullClassName);
 			$this->proxyClasses[$fullClassName]->injectReflectionService($this->reflectionService);
-
-				// FIXME: Use reflection service:
-			$class = new \ReflectionClass($fullClassName);
-			$classPathAndFilename = $class->getFileName();
-			if ($classPathAndFilename === FALSE) {
-				return FALSE;
-			}
-			$this->cacheOriginalClassFile($fullClassName, $classPathAndFilename);
 		}
 		return $this->proxyClasses[$fullClassName];
+	}
+
+	/**
+	 * Checks if the specified class still exists in the code cache. If that is the case, it means that obviously
+	 * the proxy class doesn't have to be rebuilt because otherwise the cache would have been flushed by the file
+	 * monitor or some other mechanism.
+	 *
+	 * @param string $fullClassName Name of the original class
+	 * @return boolean TRUE if a cache entry exists
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function hasCacheEntryForClass($fullClassName) {
+		if (isset($this->proxyClasses[$fullClassName])) {
+			return FALSE;
+		}
+		return $this->classesCache->has(str_replace('\\', '_', $fullClassName));
 	}
 
 	/**
@@ -153,9 +165,12 @@ class Compiler {
 				$proxyClassCode = $this->proxyClasses[$fullOriginalClassName]->render();
 				if ($proxyClassCode !== '') {
 					$this->classesCache->set(str_replace('\\', '_', $fullOriginalClassName), $proxyClassCode, $this->proxyClasses[$fullOriginalClassName]->getCacheTags());
+
+						// FIXME: Use reflection service:
+					$class = new \ReflectionClass($fullOriginalClassName);
+					$classPathAndFilename = $class->getFileName();
+					$this->cacheOriginalClassFile($fullOriginalClassName, $classPathAndFilename);
 				}
-			} else {
-				$this->classesCache->remove(str_replace('\\', '_', $fullOriginalClassName . self::$originalClassNameSuffix));
 			}
 		}
 	}

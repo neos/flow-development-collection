@@ -71,11 +71,6 @@ class ProxyClassBuilder {
 	protected $targetClassInformationCache;
 
 	/**
-	 * @var \F3\FLOW3\Cache\Frontend\VariableFrontend
-	 */
-	protected $proxyBuildInformationCache;
-
-	/**
 	 * @var \F3\FLOW3\Object\CompileTimeObjectManager
 	 */
 	protected $objectManager;
@@ -147,18 +142,6 @@ class ProxyClassBuilder {
 	 */
 	public function injectTargetClassInformationCache(\F3\FLOW3\Cache\Frontend\VariableFrontend $targetClassInformationCache) {
 		$this->targetClassInformationCache = $targetClassInformationCache;
-	}
-
-	/**
-	 * Injects the cache for storing information about the AOP proxy build status
-	 *
-	 * @param \F3\FLOW3\Cache\Frontend\VariableFrontend $proxyBuildInformationCache
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @autowiring off
-	 */
-	public function injectProxyBuildInformationCache(\F3\FLOW3\Cache\Frontend\VariableFrontend $proxyBuildInformationCache) {
-		$this->proxyBuildInformationCache = $proxyBuildInformationCache;
 	}
 
 	/**
@@ -237,24 +220,30 @@ class ProxyClassBuilder {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function build() {
-		if (!$this->proxyBuildInformationCache->has('allProxyClassesUpToDate')) {
+		$allAvailableClassNames = $this->objectManager->getRegisteredClassNames();
+		$possibleTargetClassNames = $this->getProxyableClasses($allAvailableClassNames);
+		$actualAspectClassNames = $this->reflectionService->getClassNamesByTag('aspect');
+		sort($possibleTargetClassNames);
+		sort($actualAspectClassNames);
 
-			$allAvailableClassNames = $this->objectManager->getRegisteredClassNames();
-			$possibleTargetClassNames = $this->getProxyableClasses($allAvailableClassNames);
-			$actualAspectClassNames = $this->reflectionService->getClassNamesByTag('aspect');
-			sort($possibleTargetClassNames);
-			sort($actualAspectClassNames);
+		$this->aspectContainers = $this->buildAspectContainers($allAvailableClassNames);
 
-			$this->aspectContainers = $this->buildAspectContainers($allAvailableClassNames);
+		$rebuildEverything = FALSE;
+		foreach (array_keys($this->aspectContainers) as $aspectClassName) {
+			if ($this->compiler->hasCacheEntryForClass($aspectClassName) === FALSE) {
+				$rebuildEverything = TRUE;
+				$this->systemLogger->log(sprintf('Aspect %s has been modified, therefore rebuilding all target classes.', $aspectClassName), LOG_INFO);
+				break;
+			}
+		}
 
-			foreach ($possibleTargetClassNames as $targetClassName) {
+		foreach ($possibleTargetClassNames as $targetClassName) {
+			if ($rebuildEverything === TRUE || $this->compiler->hasCacheEntryForClass($targetClassName) === FALSE) {
 				$proxyBuildResult = $this->buildProxyClass($targetClassName, $this->aspectContainers);
 				if ($proxyBuildResult !== FALSE) {
 					$this->systemLogger->log(sprintf('Built AOP proxy for class "%s".', $targetClassName), LOG_INFO);
 				}
 			}
-
-			$this->proxyBuildInformationCache->set('allProxyClassesUpToDate', '', array(CacheManager::getClassTag()));
 		}
 	}
 
@@ -455,7 +444,6 @@ class ProxyClassBuilder {
 		$proxyClass->addProperty('FLOW3_AOP_Proxy_targetMethodsAndGroupedAdvices', 'array()');
 		$proxyClass->addProperty('FLOW3_AOP_Proxy_groupedAdviceChains', 'array()');
 		$proxyClass->addProperty('FLOW3_AOP_Proxy_methodIsInAdviceMode', 'array()');
-
 	}
 
 	/**

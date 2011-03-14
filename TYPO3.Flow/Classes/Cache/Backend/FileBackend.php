@@ -103,7 +103,6 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend implements \F3
 	 * @api
 	 */
 	public function set($entryIdentifier, $data, array $tags = array(), $lifetime = NULL) {
-		if (!$this->cache instanceof \F3\FLOW3\Cache\Frontend\FrontendInterface) throw new \F3\FLOW3\Cache\Exception('No cache frontend has been set yet via setCache().', 1204111375);
 		if (!is_string($data)) throw new \F3\FLOW3\Cache\Exception\InvalidDataException('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1204481674);
 		if ($entryIdentifier !== basename($entryIdentifier)) throw new \InvalidArgumentException('The specified entry identifier must not contain a path segment.', 1282073032);
 		if ($entryIdentifier === '') throw new \InvalidArgumentException('The specified entry identifier must not be empty.', 1298114280);
@@ -159,7 +158,7 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend implements \F3
 	public function has($entryIdentifier) {
 		if ($entryIdentifier !== basename($entryIdentifier)) throw new \InvalidArgumentException('The specified entry identifier must not contain a path segment.', 1282073034);
 
-		return !$this->isCacheFileExpired($this->cacheDirectory . $entryIdentifier);
+		return !$this->isCacheFileExpired($this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension);
 	}
 
 	/**
@@ -176,12 +175,8 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend implements \F3
 		if ($entryIdentifier === '') throw new \InvalidArgumentException('The specified entry identifier must not be empty.', 1298114279);
 
 		$pathAndFilename = $this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension;
-		if (!file_exists($pathAndFilename)) return FALSE;
+		if (file_exists($pathAndFilename) === FALSE) return FALSE;
 		if (unlink($pathAndFilename) === FALSE) return FALSE;
-		foreach($this->findTagFilesByEntry($entryIdentifier) as $pathAndFilename) {
-			if (!file_exists($pathAndFilename)) return FALSE;
-			if (unlink($pathAndFilename) === FALSE) return FALSE;
-		}
 		return TRUE;
 	}
 
@@ -256,7 +251,7 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend implements \F3
 	 * @api
 	 */
 	protected function isCacheFileExpired($cacheEntryPathAndFilename) {
-		if (!file_exists($cacheEntryPathAndFilename)) return TRUE;
+		if (file_exists($cacheEntryPathAndFilename) === FALSE) return TRUE;
 
 		$index = (integer) file_get_contents($cacheEntryPathAndFilename, NULL, NULL, filesize($cacheEntryPathAndFilename) - self::DATASIZE_DIGITS, self::DATASIZE_DIGITS);
 		$expiryTime = file_get_contents($cacheEntryPathAndFilename, NULL, NULL, $index, self::EXPIRYTIME_LENGTH);
@@ -271,8 +266,6 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend implements \F3
 	 * @api
 	 */
 	public function collectGarbage() {
-		if (!$this->cache instanceof \F3\FLOW3\Cache\Frontend\FrontendInterface) throw new \F3\FLOW3\Cache\Exception('Yet no cache frontend has been set via setCache().', 1222686150);
-
 		$pattern = $this->cacheDirectory . 'Data/' . $this->cacheIdentifier . '/*/*/*';
 		$filesFound = glob($pattern);
 		foreach ($filesFound as $cacheFilename) {
@@ -293,29 +286,10 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend implements \F3
 	 * @throws \F3\FLOW3\Cache\Exception if no frontend has been set
 	 */
 	protected function findCacheFilesByIdentifier($entryIdentifier) {
-		if (!$this->cache instanceof \F3\FLOW3\Cache\Frontend\FrontendInterface) throw new \F3\FLOW3\Cache\Exception('Yet no cache frontend has been set via setCache().', 1204111376);
-
 		$pattern = $this->cacheDirectory . $entryIdentifier;
 		$filesFound = glob($pattern);
 		if ($filesFound === FALSE || count($filesFound) === 0) return FALSE;
 		return $filesFound;
-	}
-
-
-	/**
-	 * Tries to find the tag entries for the specified cache entry.
-	 *
-	 * @param string $entryIdentifier The cache entry identifier to find tag files for
-	 * @return array The file names (including path)
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws \F3\FLOW3\Cache\Exception if no frontend has been set
-	 */
-	protected function findTagFilesByEntry($entryIdentifier) {
-		if (!$this->cache instanceof \F3\FLOW3\Cache\Frontend\FrontendInterface) throw new \F3\FLOW3\Cache\Exception('Yet no cache frontend has been set via setCache().', 1204111376);
-
-		$path = $this->cacheDirectory . 'Tags/';
-		$pattern = $path . '*/' . $this->cacheIdentifier . self::SEPARATOR . $entryIdentifier;
-		return glob($pattern) ?: array();
 	}
 
 	/**

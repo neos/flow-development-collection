@@ -118,6 +118,10 @@ class ProxyClassBuilder {
 
 		foreach ($this->objectConfigurations as $objectName => $objectConfiguration) {
 			$className = $objectConfiguration->getClassName();
+			if ($this->compiler->hasCacheEntryForClass($className) === TRUE) {
+				continue;
+			}
+
 			if ($objectName !== $className || $this->reflectionService->isClassAbstract($className) || $this->reflectionService->isClassFinal($className)) {
 				continue;
 			}

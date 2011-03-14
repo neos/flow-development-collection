@@ -269,7 +269,6 @@ class Bootstrap {
 		\F3\FLOW3\Error\Debugger::injectObjectManager($this->objectManager);
 
 		$aopProxyClassBuilder = $this->objectManager->get('F3\FLOW3\AOP\Builder\ProxyClassBuilder');
-		$aopProxyClassBuilder->injectProxyBuildInformationCache($this->cacheManager->getCache('FLOW3_AOP_ProxyBuildInformation'));
 		$aopProxyClassBuilder->build();
 
 		$dependencyInjectionProxyClassBuilder = $this->objectManager->get('F3\FLOW3\Object\DependencyInjection\ProxyClassBuilder');

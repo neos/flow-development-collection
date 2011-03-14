@@ -22,8 +22,6 @@ Default:
 ##
 # Definition of caches used by FLOW3:
 #
-FLOW3_AOP_ProxyBuildInformation: []
-FLOW3_AOP_TargetClassInformation: []
 FLOW3_Cache_ResourceFiles: []
 FLOW3_Configuration: []
 FLOW3_Core:

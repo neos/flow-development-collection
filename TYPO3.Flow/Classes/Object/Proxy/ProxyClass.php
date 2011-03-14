@@ -22,6 +22,8 @@ namespace F3\FLOW3\Object\Proxy;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use \F3\FLOW3\Cache\CacheManager;
+
 /**
  * Representation of a Proxy Class during rendering time
  *
@@ -102,7 +104,10 @@ class ProxyClass {
 			$this->originalClassName = substr($fullOriginalClassName, strlen($this->namespace) + 1);
 		}
 		$this->fullOriginalClassName = $fullOriginalClassName;
-		$this->addCacheTag(\F3\FLOW3\Cache\CacheManager::getClassTag($fullOriginalClassName));
+		$this->addClassDependency($fullOriginalClassName);
+		foreach (class_parents($fullOriginalClassName) as $parentClassName) {
+			$this->addClassDependency($parentClassName);
+		}
 	}
 
 	/**
@@ -184,16 +189,29 @@ class ProxyClass {
 	 */
 	public function addInterfaces(array $interfaceNames) {
 		$this->interfaces = array_merge($this->interfaces, $interfaceNames);
+		$this->addClassDependencies($interfaceNames);
 	}
 
 	/**
-	 * Adds the given tag to the list of cache entry tags
+	 * Adds a class or interface name as a dependency.
 	 *
-	 * @param string $tag A tag, usually a class name this proxy class depends on
+	 * @param string $className Class name this proxy class depends on
 	 * @return void
 	 */
-	public function addCacheTag($tag) {
-		$this->cacheTags[] = $tag;
+	public function addClassDependency($className) {
+		$this->cacheTags[] = CacheManager::getClassTag($className);
+	}
+
+	/**
+	 * Adds multiple classes or interfaces dependencies.
+	 *
+	 * @param string $className Class name this proxy class depends on
+	 * @return void
+	 */
+	public function addClassDependencies(array $classNames) {
+		foreach ($classNames as $className) {
+			$this->cacheTags[] = CacheManager::getClassTag($className);
+		}
 	}
 
 	/**
