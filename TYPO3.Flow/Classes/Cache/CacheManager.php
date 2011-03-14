@@ -181,7 +181,7 @@ class CacheManager {
 		return ($className === '') ? FrontendInterface::TAG_CLASS : FrontendInterface::TAG_CLASS . str_replace('\\', '_', $className);
 	}
 
-	 * Instantiates all registered caches.
+	/** Instantiates all registered caches.
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
