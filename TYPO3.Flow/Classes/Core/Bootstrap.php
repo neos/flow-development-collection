@@ -292,17 +292,29 @@ class Bootstrap {
 	 * @api
 	 */
 	public function run() {
-		if (isset($_GET['FLOW3_BOOTSTRAP_ACTION']) && $_GET['FLOW3_BOOTSTRAP_ACTION'] === 'compile' && isset($_GET['FLOW3_BOOTSTRAP_COMPILEKEY'])) {
-			$compileKey = $_GET['FLOW3_BOOTSTRAP_COMPILEKEY'];
+		if (isset($_GET['FLOW3_BOOTSTRAP_ACTION']) && $_GET['FLOW3_BOOTSTRAP_ACTION'] === 'compile') {
+			$compileKey =  isset($_GET['FLOW3_BOOTSTRAP_COMPILEKEY']) ? $_GET['FLOW3_BOOTSTRAP_COMPILEKEY'] : FALSE;
 			$compileKeyPathAndFilename = $this->environment->getPathToTemporaryDirectory() . 'CompileKey.txt';
 			if (!file_exists($compileKeyPathAndFilename) || $compileKey !== file_get_contents($compileKeyPathAndFilename)) {
 				$this->systemLogger->log(sprintf('Tried to execute compile run in %s context with invalid key (%s) ---', $this->context, $_GET['FLOW3_BOOTSTRAP_COMPILEKEY']), LOG_ALERT);
 				exit(1);
 			}
 
-			$this->systemLogger->log(sprintf('--- Compile run in %s context (compile key: %s) ---', $this->context, $_GET['FLOW3_BOOTSTRAP_COMPILEKEY']), LOG_INFO);
+			$this->systemLogger->log(sprintf('--- Compile run in %s context (compile key: %s) ---', $this->context, $compileKey), LOG_INFO);
 			$this->compile();
 			unlink($compileKeyPathAndFilename);
+			exit;
+		}
+
+		if (PHP_SAPI === 'cli' &&
+				$GLOBALS['argc'] === 4 &&
+				$GLOBALS['argv'][1] === 'FLOW3' &&
+				$GLOBALS['argv'][2] == 'Bootstrap' &&
+				$GLOBALS['argv'][3] === 'compile') {
+			$this->systemLogger->log(sprintf('--- Compile run in %s context (command line) ---', $this->context), LOG_INFO);
+			echo (sprintf('Compiling FLOW3 proxy classes for %s context ... ', $this->context));
+			$this->compile();
+			echo (PHP_EOL);
 			exit;
 		}
 
@@ -312,7 +324,7 @@ class Bootstrap {
 			if (!$objectConfigurationCache->has('allCompiledCodeUpToDate') || $this->context !== 'Production') {
 
 				if (PHP_SAPI === 'cli') {
-					$command = 'php -c ' . php_ini_loaded_file() . ' ' . realpath(FLOW3_PATH_FLOW3 . 'Scripts/compile.php') . ' ' . $this->context . ' ' . FLOW3_PATH_ROOT . ' ' . FLOW3_PATH_WEB;
+					$command = 'php -c ' . php_ini_loaded_file() . ' ' . realpath(FLOW3_PATH_FLOW3 . 'Scripts/FLOW3.php') . ' FLOW3 Core compile';
 					exec($command, $output, $exitCode);
 					if ($exitCode !==0) {
 						echo implode((PHP_SAPI === 'cli' ? PHP_EOL : '<br />'), $output);
