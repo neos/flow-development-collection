@@ -110,12 +110,28 @@ interface QueryInterface {
 	const ORDER_DESCENDING = 'DESC';
 
 	/**
-	 * Executes the query against the backend and returns the result
+	 * Returns the type this query cares for.
+	 *
+	 * @return string
+	 * @api
+	 */
+	public function getType();
+
+	/**
+	 * Executes the query and returns the result.
 	 *
 	 * @return \F3\FLOW3\Persistence\QueryResultInterface The query result
 	 * @api
 	 */
 	public function execute();
+
+	/**
+	 * Returns the query result count.
+	 *
+	 * @return integer The query result count
+	 * @api
+	 */
+	public function count();
 
 	/**
 	 * Sets the property names to order the result by. Expected like this:
@@ -131,8 +147,20 @@ interface QueryInterface {
 	public function setOrderings(array $orderings);
 
 	/**
+	 * Gets the property names to order the result by, like this:
+	 * array(
+	 *  'foo' => \F3\FLOW3\Persistence\QueryInterface::ORDER_ASCENDING,
+	 *  'bar' => \F3\FLOW3\Persistence\QueryInterface::ORDER_DESCENDING
+	 * )
+	 *
+	 * @return array
+	 * @api
+	 */
+	public function getOrderings();
+
+	/**
 	 * Sets the maximum size of the result set to limit. Returns $this to allow
-	 * for chaining (fluid interface)
+	 * for chaining (fluid interface).
 	 *
 	 * @param integer $limit
 	 * @return \F3\FLOW3\Persistence\QueryInterface
@@ -141,8 +169,16 @@ interface QueryInterface {
 	public function setLimit($limit);
 
 	/**
+	 * Returns the maximum size of the result set to limit.
+	 *
+	 * @param integer
+	 * @api
+	 */
+	public function getLimit();
+
+	/**
 	 * Sets the start offset of the result set to offset. Returns $this to
-	 * allow for chaining (fluid interface)
+	 * allow for chaining (fluid interface).
 	 *
 	 * @param integer $offset
 	 * @return \F3\FLOW3\Persistence\QueryInterface
@@ -151,14 +187,30 @@ interface QueryInterface {
 	public function setOffset($offset);
 
 	/**
+	 * Returns the start offset of the result set.
+	 *
+	 * @return integer
+	 * @api
+	 */
+	public function getOffset();
+
+	/**
 	 * The constraint used to limit the result set. Returns $this to allow
-	 * for chaining (fluid interface)
+	 * for chaining (fluid interface).
 	 *
 	 * @param object $constraint Some constraint, depending on the backend
 	 * @return \F3\FLOW3\Persistence\QueryInterface
 	 * @api
 	 */
 	public function matching($constraint);
+
+	/**
+	 * Gets the constraint for this query.
+	 *
+	 * @return mixed the constraint, or null if none
+	 * @api
+	*/
+	public function getConstraint();
 
 	/**
 	 * Performs a logical conjunction of the two given constraints. The method

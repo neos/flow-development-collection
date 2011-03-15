@@ -497,6 +497,9 @@ class ContextTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getPartyAsksTheCorrectAuthenticationTokenAndReturnsItsParty() {
+		require_once(FLOW3_PATH_PACKAGES . 'Framework/FLOW3/Resources/PHP/Doctrine/Common/Collections/Collection.php');
+		require_once(FLOW3_PATH_PACKAGES . 'Framework/FLOW3/Resources/PHP/Doctrine/Common/Collections/ArrayCollection.php');
+
 		$mockParty = $this->getMockForAbstractClass('F3\Party\Domain\Model\AbstractParty');
 
 		$mockAccount = $this->getMock('F3\FLOW3\Security\Account');
@@ -551,6 +554,9 @@ class ContextTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function getPartyByTypeReturnsTheFirstAuthenticatedPartyWithGivenType() {
+		require_once(FLOW3_PATH_PACKAGES . 'Framework/FLOW3/Resources/PHP/Doctrine/Common/Collections/Collection.php');
+		require_once(FLOW3_PATH_PACKAGES . 'Framework/FLOW3/Resources/PHP/Doctrine/Common/Collections/ArrayCollection.php');
+
 		$matchingMockParty = $this->getMockForAbstractClass('F3\Party\Domain\Model\AbstractParty', array(), 'MatchingParty');
 		$notMatchingMockParty = $this->getMockForAbstractClass('F3\Party\Domain\Model\AbstractParty', array(), 'NotMatchingParty');
 

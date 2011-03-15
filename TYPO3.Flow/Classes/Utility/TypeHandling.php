@@ -32,12 +32,17 @@ class TypeHandling {
 	/**
 	 * A property type parse pattern.
 	 */
-	const PARSE_TYPE_PATTERN = '/^\\\\?(?P<type>integer|int|float|double|boolean|bool|string|DateTime|F3\\\\[a-zA-Z0-9\\\\]+|object|array|ArrayObject|SplObjectStorage)(?:<\\\\?(?P<elementType>[a-zA-Z0-9\\\\]+)>)?/';
+	const PARSE_TYPE_PATTERN = '/^\\\\?(?P<type>integer|int|float|double|boolean|bool|string|DateTime|[A-Z][a-zA-Z0-9\\\\]+|object|array|ArrayObject|SplObjectStorage|Doctrine\\\\Common\\\\Collections\\\\ArrayCollection)(?:<\\\\?(?P<elementType>[a-zA-Z0-9\\\\]+)>)?/';
 
 	/**
 	 * A type pattern to detect literal types.
 	 */
 	const LITERAL_TYPE_PATTERN = '/^(?:integer|int|float|double|boolean|bool|string)$/';
+
+	/**
+	 * @var array
+	 */
+	static $collectionTypes = array('array', 'ArrayObject', 'SplObjectStorage', 'Doctrine\Common\Collections\ArrayCollection');
 
 	/**
 	 * Returns an array with type information, including element type for
@@ -53,7 +58,7 @@ class TypeHandling {
 			$type = self::normalizeType($matches['type']);
 			$elementType = isset($matches['elementType']) ? self::normalizeType($matches['elementType']) : NULL;
 
-			if ($elementType !== NULL && !in_array($type, array('array', 'ArrayObject', 'SplObjectStorage'))) {
+			if ($elementType !== NULL && !in_array($type, self::$collectionTypes)) {
 				throw new \InvalidArgumentException('Type "' . $type . '" must not have an element type hint (' . $elementType . ').', 1264093642);
 			}
 

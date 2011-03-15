@@ -1,0 +1,2 @@
+classLoader:
+  autoLoader: Resources/PHP/AutoLoader.php

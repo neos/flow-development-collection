@@ -87,11 +87,6 @@ class PropertyMapper {
 	protected $persistenceManager;
 
 	/**
-	 * @var \F3\FLOW3\Persistence\QueryFactoryInterface
-	 */
-	protected $queryFactory;
-
-	/**
 	 * Injects the object factory
 	 *
 	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
@@ -133,17 +128,6 @@ class PropertyMapper {
 	 */
 	public function injectPersistenceManager(\F3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager) {
 		$this->persistenceManager = $persistenceManager;
-	}
-
-	/**
-	 * Injects a QueryFactory instance
-	 *
-	 * @param \F3\FLOW3\Persistence\QueryFactoryInterface $queryFactory
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function injectQueryFactory(\F3\FLOW3\Persistence\QueryFactoryInterface $queryFactory) {
-		$this->queryFactory = $queryFactory;
 	}
 
 	/**
@@ -225,6 +209,7 @@ class PropertyMapper {
 		if (!is_object($target) && !is_array($target)) throw new \F3\FLOW3\Property\Exception\InvalidTargetException('The target must be a valid object, class name or array, ' . gettype($target) . ' given.', 1187807099);
 
 		if (is_object($target)) {
+				// fixme - make sure class schema can be fetched for doctrine proxies
 			$targetClassSchema = $this->reflectionService->getClassSchema($target);
 		} else {
 			$targetClassSchema = NULL;
@@ -267,7 +252,7 @@ class PropertyMapper {
 				}
 
 				if (isset($targetPropertyType)) {
-					if (in_array($targetPropertyType['type'], array('array', 'ArrayObject', 'SplObjectStorage')) && ($targetPropertyType['elementType'] !== NULL && !\F3\FLOW3\Utility\TypeHandling::isLiteral($targetPropertyType['elementType']))) {
+					if (in_array($targetPropertyType['type'], array('array', 'ArrayObject', 'SplObjectStorage', 'Doctrine\Common\Collections\ArrayCollection')) && ($targetPropertyType['elementType'] !== NULL && !\F3\FLOW3\Utility\TypeHandling::isLiteral($targetPropertyType['elementType']))) {
 						$objects = array();
 						if (is_array($propertyValue) || $propertyValue instanceof \Traversable) {
 							foreach ($propertyValue as $value) {
@@ -277,6 +262,8 @@ class PropertyMapper {
 
 						if ($targetPropertyType['type'] === 'ArrayObject') {
 							$propertyValue = new \ArrayObject($objects);
+						} elseif ($targetPropertyType['type'] === 'Doctrine\Common\Collections\ArrayCollection') {
+								$propertyValue = new \Doctrine\Common\Collections\ArrayCollection($objects);
 						} elseif ($targetPropertyType['type'] === 'SplObjectStorage') {
 							$propertyValue = new \SplObjectStorage();
 							foreach ($objects as $object) {
@@ -354,16 +341,16 @@ class PropertyMapper {
 				return $conversionResult;
 			}
 		}
-		if (is_string($propertyValue) && preg_match(self::PATTERN_MATCH_UUID, $propertyValue) === 1) {
-			$object = $this->persistenceManager->getObjectByIdentifier($propertyValue);
+		if (is_string($propertyValue)) {
+			$object = $this->persistenceManager->getObjectByIdentifier($propertyValue, $targetType);
 			if ($object === FALSE) {
-				$this->mappingResults->addError($this->objectManager->create('F3\FLOW3\Error\Error', 'Querying the repository for the specified object with UUID ' . $propertyValue . ' was not successful.' , 1249379517), $propertyName);
+				$this->mappingResults->addError($this->objectManager->create('F3\FLOW3\Error\Error', 'Querying the repository for the specified object of type "' . $targetType . '" with identifier "' . $propertyValue . '" was not successful.' , 1249379517), $propertyName);
 			}
 		} elseif (is_array($propertyValue)) {
 			if (isset($propertyValue['__identity'])) {
-				$existingObject = (is_array($propertyValue['__identity'])) ? $this->findObjectByIdentityProperties($propertyValue['__identity'], $targetType) : $this->persistenceManager->getObjectByIdentifier($propertyValue['__identity']);
+				$existingObject = (is_array($propertyValue['__identity'])) ? $this->findObjectByIdentityProperties($propertyValue['__identity'], $targetType) : $this->persistenceManager->getObjectByIdentifier($propertyValue['__identity'], $targetType);
 				if ($existingObject === NULL) {
-					throw new \F3\FLOW3\Property\Exception\TargetNotFoundException('Querying the repository for the specified object was not successful.', 1237305720);
+					throw new \F3\FLOW3\Property\Exception\TargetNotFoundException('Querying the repository for the specified object of type "' . $targetType . '"was not successful.', 1237305720);
 				}
 				if ($targetType === NULL) {
 					$targetType = get_class($existingObject);
@@ -442,7 +429,7 @@ class PropertyMapper {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function findObjectByIdentityProperties(array $identityProperties, $type) {
-		$query = $this->queryFactory->create($type);
+		$query = $this->persistenceManager->createQueryForType($type);
 		$classSchema = $this->reflectionService->getClassSchema($type);
 
 		$equals = array();

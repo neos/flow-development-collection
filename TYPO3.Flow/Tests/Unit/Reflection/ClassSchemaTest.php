@@ -118,6 +118,8 @@ class ClassSchemaTest extends \F3\FLOW3\Tests\UnitTestCase {
 			array('SplObjectStorage'),
 			array('F3\FLOW3\Foo'),
 			array('\F3\FLOW3\Bar'),
+			array('\Some\Object'),
+			array('SomeObject'),
 			array('array<string>'),
 			array('array<F3\FLOW3\Baz>')
 		);
@@ -130,7 +132,8 @@ class ClassSchemaTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function addPropertyAcceptsValidPropertyTypes($propertyType) {
 		$classSchema = new \F3\FLOW3\Reflection\ClassSchema('SomeClass');
-		$classSchema->addProperty('a', $propertyType);
+			// dummy assertion to avoid incomplete  test detection
+		$this->assertNull($classSchema->addProperty('a', $propertyType));
 	}
 
 	/**
@@ -140,7 +143,7 @@ class ClassSchemaTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function invalidPropertyTypes() {
 		return array(
 			array('stdClass'),
-			array('\SomeObject'),
+			array('\someObject'),
 			array('string<string>'),
 			array('int<F3\FLOW3\Baz>')
 		);

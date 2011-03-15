@@ -31,54 +31,21 @@ namespace F3\FLOW3\Persistence;
 interface PersistenceManagerInterface {
 
 	/**
-	 * Injects the FLOW3 settings
+	 * Injects the FLOW3 settings, called by FLOW3.
 	 *
 	 * @param array $settings
+	 * @return void
+	 * @api
 	 */
 	public function injectSettings(array $settings);
 
 	/**
-	 * Initializes the persistence manager
+	 * Initializes the persistence manager, called by FLOW3.
 	 *
 	 * @return void
+	 * @api
 	 */
 	public function initialize();
-
-	/**
-	 * Returns the number of records matching the query.
-	 *
-	 * @param \F3\FLOW3\Persistence\QueryInterface $query
-	 * @return integer
-	 * @api
-	 */
-	public function getObjectCountByQuery(\F3\FLOW3\Persistence\QueryInterface $query);
-
-	/**
-	 * Returns the object data matching the $query.
-	 *
-	 * @param \F3\FLOW3\Persistence\QueryInterface $query
-	 * @return array
-	 * @api
-	 */
-	public function getObjectDataByQuery(\F3\FLOW3\Persistence\QueryInterface $query);
-
-	/**
-	 * Replaces the given object by the second object.
-	 *
-	 * This method will unregister the existing object at the identity map and
-	 * register the new object instead. The existing object must therefore
-	 * already be registered at the identity map which is the case for all
-	 * reconstituted objects.
-	 *
-	 * The new object will be identified by the uuid which formerly belonged
-	 * to the existing object. The existing object looses its uuid.
-	 *
-	 * @param object $existingObject The existing object
-	 * @param object $newObject The new object
-	 * @return void
-	 * @api
-	 */
-	public function replaceObject($existingObject, $newObject);
 
 	/**
 	 * Commits new objects and changes to objects in the current persistence
@@ -107,7 +74,7 @@ interface PersistenceManagerInterface {
 	 * to distinguish those cases.
 	 *
 	 * @param object $object
-	 * @return string The identifier for the object if it is known, or NULL
+	 * @return mixed The identifier for the object if it is known, or NULL
 	 * @api
 	 */
 	public function getIdentifierByObject($object);
@@ -116,11 +83,49 @@ interface PersistenceManagerInterface {
 	 * Returns the object with the (internal) identifier, if it is known to the
 	 * backend. Otherwise NULL is returned.
 	 *
-	 * @param string $identifier
+	 * @param mixed $identifier
+	 * @param string $objectType
 	 * @return object The object for the identifier if it is known, or NULL
 	 * @api
 	 */
-	public function getObjectByIdentifier($identifier);
+	public function getObjectByIdentifier($identifier, $objectType = NULL);
+
+	/**
+	 * Return a query object for the given type.
+	 *
+	 * @param string $type
+	 * @return \F3\FLOW3\Persistence\QueryInterface
+	 * @api
+	 */
+	public function createQueryForType($type);
+
+	/**
+	 * Adds an object to the persistence.
+	 *
+	 * @param object $object The object to add
+	 * @return void
+	 * @api
+	 */
+	public function add($object);
+
+	/**
+	 * Removes an object to the persistence.
+	 *
+	 * @param object $object The object to remove
+	 * @return void
+	 * @api
+	 */
+	public function remove($object);
+
+	/**
+	 * Merge an object into the persistence.
+	 *
+	 * @param object $modifiedObject The modified object
+	 * @return void
+	 * @api
+	 */
+	public function merge($modifiedObject);
 
 }
+
 ?>

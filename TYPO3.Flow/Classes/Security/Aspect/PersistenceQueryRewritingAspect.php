@@ -23,7 +23,7 @@ namespace F3\FLOW3\Security\Aspect;
  *                                                                        */
 
 /**
- * An aspect which rewrites persistence query to filter object one should not be able to retrieve.
+ * An aspect which rewrites persistence query to filter objects one should not be able to retrieve.
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope singleton
@@ -48,13 +48,13 @@ class PersistenceQueryRewritingAspect {
 
 	/**
 	 * The reflection service
-	 * @var F3\FLOW3\Reflection\ServiceInterface
+	 * @var \F3\FLOW3\Reflection\ServiceInterface
 	 */
 	protected $reflectionService;
 
 	/**
 	 * The persistence manager
-	 * @var F3\FLOW3\Persistence\PersistenceManagerInterface
+	 * @var \F3\FLOW3\Persistence\PersistenceManagerInterface
 	 */
 	protected $persistenceManager;
 
@@ -122,7 +122,7 @@ class PersistenceQueryRewritingAspect {
 	/**
 	 * Rewrites the QOM query, by adding appropriate constraints according to the policy
 	 *
-	 * @before within(F3\FLOW3\Persistence\Backend\BackendInterface) && method(.*->(getObjectDataByQuery|getObjectCountByQuery)()) && setting(FLOW3.security.enable)
+	 * @before within(F3\FLOW3\Persistence\RepositoryInterface) && method(.*->(execute|count)()) && setting(FLOW3.security.enable)
 	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
@@ -131,7 +131,7 @@ class PersistenceQueryRewritingAspect {
 		if ($this->objectManager->isSessionInitialized() === FALSE) return;
 		if ($this->securityContext === NULL) $this->securityContext = $this->objectManager->get('F3\FLOW3\Security\Context');
 
-		$query = $joinPoint->getMethodArgument('query');
+		$query = $joinPoint->getProxy();
 		$entityType = $query->getType();
         $authenticatedRoles = $this->securityContext->getRoles();
 
@@ -150,7 +150,7 @@ class PersistenceQueryRewritingAspect {
 	/**
 	 * Checks, if the current policy allows the retrieval of the object fetched by getObjectDataByIdentifier()
 	 *
-	 * @around within(F3\FLOW3\Persistence\Backend\BackendInterface) && method(.*->getObjectDataByIdentifier()) && setting(FLOW3.security.enable)
+	 * @around within(F3\FLOW3\Persistence\RepositoryInterface) && method(.*->execute()) && setting(FLOW3.security.enable)
 	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
 	 * @return array The object data of the original object, or NULL if access is not permitted
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
@@ -161,10 +161,11 @@ class PersistenceQueryRewritingAspect {
 
 		if ($this->securityContext === NULL) $this->securityContext = $this->objectManager->get('F3\FLOW3\Security\Context');
 
-        $authenticatedRoles = $this->securityContext->getRoles();
+		$authenticatedRoles = $this->securityContext->getRoles();
+		$query = $joinPoint->getProxy();
 
-		if ($this->policyService->hasPolicyEntryForEntityType($queryResult['classname'], $authenticatedRoles)) {
-			$policyConstraintsDefinition = $this->policyService->getResourcesConstraintsForEntityTypeAndRoles($queryResult['classname'], $authenticatedRoles);
+		if ($this->policyService->hasPolicyEntryForEntityType($query->getType(), $authenticatedRoles)) {
+			$policyConstraintsDefinition = $this->policyService->getResourcesConstraintsForEntityTypeAndRoles($query->getType(), $authenticatedRoles);
 			if ($this->checkConstraintDefinitionsOnResultArray($policyConstraintsDefinition, $queryResult) === FALSE) return array();
 		}
 
@@ -175,13 +176,13 @@ class PersistenceQueryRewritingAspect {
 	 * Builds a QOM constraint object for an array of constraint expressions
 	 *
 	 * @param array $constraintDefinitions The constraint expressions
-	 * @param \F3\FLOW3\Persistence\Query $query The query object to build the constraint with
+	 * @param \F3\FLOW3\Persistence\QueryInterface $query The query object to build the constraint with
 	 * @return \F3\FLOW3\Persistence\Qom\Constraint The build constraint object
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	protected function getQomConstraintForConstraintDefinitions(array $constraintDefinitions, \F3\FLOW3\Persistence\Query $query) {
+	protected function getQomConstraintForConstraintDefinitions(array $constraintDefinitions, \F3\FLOW3\Persistence\QueryInterface $query) {
 		$compositeConstraint = NULL;
-		foreach ($constraintDefinitions as $resource => $resourceConstraints) {
+		foreach ($constraintDefinitions as $resourceConstraints) {
 			foreach ($resourceConstraints as $operator => $policyConstraints) {
 				foreach ($policyConstraints as $key => $singlePolicyConstraint) {
 					if ($key === 'subConstraints') {
@@ -220,12 +221,12 @@ class PersistenceQueryRewritingAspect {
 	 * Builds a QOM constraint object for one single constraint expression
 	 *
 	 * @param array $constraintDefinition The constraint expression
-	 * @param \F3\FLOW3\Persistence\Query $query The query object to build the constraint with
+	 * @param \F3\FLOW3\Persistence\QueryInterface $query The query object to build the constraint with
 	 * @return \F3\FLOW3\Persistence\Qom\Constraint The build constraint object
 	 * @throws \F3\FLOW3\Security\Exception\InvalidQueryRewritingConstraintException
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	protected function getQomConstraintForSingleConstraintDefinition(array $constraintDefinition, \F3\FLOW3\Persistence\Query $query) {
+	protected function getQomConstraintForSingleConstraintDefinition(array $constraintDefinition, \F3\FLOW3\Persistence\QueryInterface $query) {
 		if (!is_array($constraintDefinition['leftValue']) && strpos($constraintDefinition['leftValue'], 'this.') === 0) {
 			$propertyName = substr($constraintDefinition['leftValue'], 5);
 			$operand = $this->getValueForOperand($constraintDefinition['rightValue']);
@@ -292,7 +293,7 @@ class PersistenceQueryRewritingAspect {
 	protected function checkConstraintDefinitionsOnResultArray(array $constraintDefinitions, array $queryResult) {
 		$overallResult = TRUE;
 
-		foreach ($constraintDefinitions as $resource => $resourceConstraints) {
+		foreach ($constraintDefinitions as $resourceConstraints) {
 			foreach ($resourceConstraints as $operator => $policyConstraints) {
 				foreach ($policyConstraints as $key => $singlePolicyConstraint) {
 					if ($key === 'subConstraints') {
@@ -332,8 +333,6 @@ class PersistenceQueryRewritingAspect {
 	 */
 	protected function checkSingleConstraintDefinitionOnResultArray(array $constraintDefinition, array $queryResult) {
 		$referenceToThisFound = FALSE;
-		$leftOperand = NULL;
-		$rightOperand = NULL;
 
 		if (!is_array($constraintDefinition['leftValue']) && strpos($constraintDefinition['leftValue'], 'this.') === 0) {
 			$referenceToThisFound = TRUE;
@@ -354,16 +353,12 @@ class PersistenceQueryRewritingAspect {
 		if ($referenceToThisFound === FALSE) throw new \F3\FLOW3\Security\Exception\InvalidQueryRewritingConstraintException('An entity constraint has to have at least one operand that references to "this.". Got: "' . $constraintDefinition['leftValue'] . '" and "' . $constraintDefinition['rightValue'] . '"', 1277218400);
 
 		if (is_object($leftOperand)
-					&& $leftOperand instanceof \F3\FLOW3\Object\Proxy\ProxyInterface
-					&& $leftOperand instanceof \F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface
 					&& $this->persistenceManager->isNewObject($leftOperand) === FALSE
 					&& $this->reflectionService->isClassTaggedWith($leftOperand, 'entity')) {
 
 			$leftOperand = $this->persistenceManager->getIdentifierByObject($leftOperand);
 
 		} elseif (is_object($rightOperand)
-					&& $rightOperand instanceof \F3\FLOW3\Object\Proxy\ProxyInterface
-					&& $rightOperand instanceof \F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface
 					&& $this->persistenceManager->isNewObject($rightOperand) === FALSE
 					&& $this->reflectionService->isClassTaggedWith($rightOperand, 'entity')) {
 

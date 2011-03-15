@@ -22,6 +22,8 @@ namespace F3\FLOW3\Security;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use \Doctrine\Common\Collections\ArrayCollection;
+
 /**
  * An account model
  *
@@ -30,6 +32,15 @@ namespace F3\FLOW3\Security;
  * @entity
  */
 class Account {
+
+	/**
+	 * This ID is only for the ORM.
+	 *
+	 * @var integer
+	 * @Id
+	 * @GeneratedValue
+	 */
+	protected $artificialId;
 
 	/**
 	 * @var string
@@ -52,6 +63,8 @@ class Account {
 
 	/**
 	 * @var \F3\Party\Domain\Model\AbstractParty
+	 * @ManyToOne(inversedBy="accounts", cascade={"all"})
+	 * @JoinColumn(referencedColumnName="artificialId")
 	 */
 	protected $party;
 
@@ -66,7 +79,7 @@ class Account {
 	protected $expirationDate;
 
 	/**
-	 * @var array<\F3\FLOW3\Security\Policy\Role>
+	 * @var array
 	 */
 	protected $roles = array();
 
@@ -168,7 +181,11 @@ class Account {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getRoles() {
-		return $this->roles;
+		$roleObjects = array();
+		foreach ($this->roles as $role) {
+			$roleObjects[] = new \F3\FLOW3\Security\Policy\Role($role);
+		}
+		return $roleObjects;
 	}
 
 	/**
@@ -179,7 +196,10 @@ class Account {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function setRoles(array $roles) {
-		$this->roles = $roles;
+		$this->roles = array();
+		foreach ($roles as $role) {
+			$this->roles[] = (string)$role;
+		}
 	}
 
 	/**

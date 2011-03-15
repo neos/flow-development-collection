@@ -50,22 +50,6 @@ interface RepositoryInterface {
 	public function remove($object);
 
 	/**
-	 * Returns all objects of this repository add()ed but not yet persisted to
-	 * the storage layer.
-	 *
-	 * @return array An array of objects
-	 */
-	public function getAddedObjects();
-
-	/**
-	 * Returns an array with objects remove()d from the repository that
-	 * had been persisted to the storage layer before.
-	 *
-	 * @return array
-	 */
-	public function getRemovedObjects();
-
-	/**
 	 * Returns all objects of this repository.
 	 *
 	 * @return array An array of objects, empty if no objects found
@@ -76,11 +60,11 @@ interface RepositoryInterface {
 	/**
 	 * Finds an object matching the given identifier.
 	 *
-	 * @param string $uuid The identifier of the object to find
+	 * @param mixed $identifier The identifier of the object to find
 	 * @return object The matching object if found, otherwise NULL
 	 * @api
 	 */
-	public function findByUuid($uuid);
+	public function findByIdentifier($identifier);
 
 	/**
 	 * Returns a query for objects of this repository
@@ -121,18 +105,10 @@ interface RepositoryInterface {
 	public function setDefaultOrderings(array $defaultOrderings);
 
 	/**
-	 * Replaces an object by another after checking that existing and new
-	 * objects have the right types
-	 *
-	 * @param object $existingObject The existing object
-	 * @param object $newObject The new object
-	 * @api
-	 */
-	public function replace($existingObject, $newObject);
-
-	/**
 	 * Replaces an existing object with the same identifier by the given object
-	 * after checking the type of the object fits to the repositories type
+	 * after checking the type of the object fits to the repositories type.
+	 *
+	 * This is a convenience method that replaces a find/replace chain.
 	 *
 	 * @param object $modifiedObject The modified object
 	 * @api
