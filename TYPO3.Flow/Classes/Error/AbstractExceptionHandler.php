@@ -35,11 +35,6 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface {
 	protected $systemLogger;
 
 	/**
-	 * @var \F3\FLOW3\Core\LockManager
-	 */
-	protected $lockManager;
-
-	/**
 	 * Injects the system logger
 	 *
 	 * @param \F3\FLOW3\Log\SystemLoggerInterface $systemLogger
@@ -51,17 +46,6 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface {
 	}
 
 	/**
-	 * Injects the Lock Manager
-	 *
-	 * @param \F3\FLOW3\Core\LockManager $lockManager
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function injectLockManager(\F3\FLOW3\Core\LockManager $lockManager) {
-		$this->lockManager = $lockManager;
-	}
-
-	/**
 	 * Handles the given exception
 	 *
 	 * @param \Exception $exception The exception object
@@ -70,10 +54,6 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface {
 	public function handleException(\Exception $exception) {
 		if (is_object($this->systemLogger)) {
 			$this->systemLogger->logException($exception);
-		}
-
-		if (is_object($this->lockManager)) {
-			$this->lockManager->unlockSite();
 		}
 
 		switch (PHP_SAPI) {

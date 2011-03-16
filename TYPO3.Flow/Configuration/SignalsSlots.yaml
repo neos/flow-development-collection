@@ -6,10 +6,6 @@
 # Please refer to the FLOW3 manual for possible configuration options.   #
 #                                                                        #
 
-F3\FLOW3\Core\Bootstrap:
-  finishedNormalRun:
-    - [ F3\FLOW3\Core\LockManager, unlockSite ]
-
 F3\FLOW3\Monitor\FileMonitor:
   filesHaveChanged:
     - [ F3\FLOW3\Cache\CacheManager, flushClassFileCachesByChangedFiles, y]
