@@ -81,7 +81,7 @@ class DataMapperTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function mapToObjectReconstitutesExpectedObjectAndRegistersItWithIdentitymapToObjects() {
 		$mockEntityClassName = uniqid('Entity');
-		$mockEntity = $this->getMock('F3\FLOW3\AOP\ProxyInterface', array('FLOW3_AOP_Proxy_construct', 'FLOW3_AOP_Proxy_invokeJoinPoint', 'FLOW3_AOP_Proxy_hasProperty', 'FLOW3_AOP_Proxy_getProperty', 'FLOW3_AOP_Proxy_setProperty', 'FLOW3_AOP_Proxy_getProxyTargetClassName'));
+		$mockEntity = $this->getMock('F3\FLOW3\AOP\ProxyInterface', array('FLOW3_AOP_Proxy_construct', 'FLOW3_AOP_Proxy_invokeJoinPoint', 'FLOW3_AOP_Proxy_hasProperty', 'FLOW3_AOP_Proxy_getProperty', 'FLOW3_AOP_Proxy_setProperty', 'FLOW3_AOP_Proxy_getProxyTargetClassName'), array(), $mockEntityClassName);
 
 		$objectData = array('identifier' => '1234', 'classname' => $mockEntityClassName, 'properties' => array('foo'));
 
@@ -89,9 +89,6 @@ class DataMapperTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockClassSchema->expects($this->any())->method('getModelType')->will($this->returnValue(\F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY));
 		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService', array(), array(), '', FALSE);
 		$mockReflectionService->expects($this->any())->method('getClassSchema')->with($mockEntityClassName)->will($this->returnValue($mockClassSchema));
-		$mockObjectConfiguration = $this->getMock('F3\FLOW3\Object\Configuration\Configuration', array(), array(), '', FALSE);
-#		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-#		$mockObjectManager->expects($this->once())->method('recreate')->with($mockEntityClassName)->will($this->returnValue($mockEntity));
 		$mockSession = $this->getMock('F3\FLOW3\Persistence\Generic\Session');
 		$mockSession->expects($this->once())->method('registerReconstitutedEntity')->with($mockEntity, $objectData);
 		$mockSession->expects($this->once())->method('registerObject')->with($mockEntity, '1234');
@@ -100,7 +97,6 @@ class DataMapperTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$dataMapper->expects($this->once())->method('thawProperties')->with($mockEntity, $objectData['identifier'], $objectData);
 		$dataMapper->injectPersistenceSession($mockSession);
 		$dataMapper->injectReflectionService($mockReflectionService);
-#		$dataMapper->injectObjectManager($mockObjectManager);
 		$dataMapper->_call('mapToObject', $objectData);
 	}
 
