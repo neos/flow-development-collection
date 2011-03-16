@@ -26,6 +26,7 @@ namespace F3\FLOW3\Persistence\Doctrine;
  * FLOW3's Doctrine PersistenceManager
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @scope singleton
  * @api
  */
 class PersistenceManager extends \F3\FLOW3\Persistence\AbstractPersistenceManager {
@@ -44,40 +45,11 @@ class PersistenceManager extends \F3\FLOW3\Persistence\AbstractPersistenceManage
 	}
 
 	/**
-	 * Initializes the persistence manager
-	 *
-	 * @return void
-	 * @todo do the expensive tasks only if needed
-	 */
-	public function initialize() {
-		$this->validateMapping();
-		$this->createSchema();
-	}
-
-	/**
-	 * Makes sure the target database is up-to-date with the schema derived
-	 * from the entities and their metadata.
+	 * Initializes the persistence manager, called by FLOW3.
 	 *
 	 * @return void
 	 */
-	protected function createSchema() {
-		$schemaTool = new \Doctrine\ORM\Tools\SchemaTool($this->entityManager);
-		$schemaTool->updateSchema($this->entityManager->getMetadataFactory()->getAllMetadata());
-	}
-
-	/**
-	 * Validate the ORM mapping and log found errors.
-	 *
-	 * @return void
-	 */
-	protected function validateMapping() {
-		$validator = new \Doctrine\ORM\Tools\SchemaValidator($this->entityManager);
-		$errors = $validator->validateMapping();
-
-		if (count($errors) > 0) {
-			$this->systemLogger->log('Doctrine 2 schema validation failed.', LOG_CRIT, $errors);
-		}
-	}
+	public function initialize() {}
 
 	/**
 	 * Commits new objects and changes to objects in the current persistence
@@ -184,6 +156,32 @@ class PersistenceManager extends \F3\FLOW3\Persistence\AbstractPersistenceManage
 			throw new \F3\FLOW3\Persistence\Exception('Could not merge objects of type "' . get_class($modifiedObject) . '"', 1297778180, $exception);
 		}
 	}
+
+	/**
+	 * Called after a compile in FLOW3, validates the mapping and creates/updated
+	 * database tables accordingly.
+	 *
+	 * @return void
+	 */
+	public function compile() {
+			// "driver" is used only for Doctrine, thus we (mis-)use it here
+		if ($this->settings['backendOptions']['driver'] !== NULL) {
+			$validator = new \Doctrine\ORM\Tools\SchemaValidator($this->entityManager);
+			$errors = $validator->validateMapping();
+
+			if (count($errors) > 0) {
+				$this->systemLogger->log('Doctrine 2 schema validation failed.', LOG_CRIT, $errors);
+			}
+
+			$schemaTool = new \Doctrine\ORM\Tools\SchemaTool($this->entityManager);
+			$schemaTool->updateSchema($this->entityManager->getMetadataFactory()->getAllMetadata());
+
+			$proxyFactory = $this->entityManager->getProxyFactory();
+			$proxyFactory->generateProxyClasses($this->entityManager->getMetadataFactory()->getAllMetadata());
+			$this->systemLogger->log('Doctrine 2 setup finished');
+		}
+	}
+
 }
 
 ?>

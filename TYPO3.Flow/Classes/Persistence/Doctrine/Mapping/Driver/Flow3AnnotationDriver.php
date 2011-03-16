@@ -35,13 +35,12 @@ namespace F3\FLOW3\Persistence\Doctrine\Mapping\Driver;
  * "object" for objects.
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
- * @scope prototype
+ * @scope singleton
  */
 class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver {
 
 	/**
 	 * @var \F3\FLOW3\Reflection\ReflectionService
-	 * @inject
 	 */
 	protected $reflectionService;
 
@@ -62,6 +61,14 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver {
 	public function __construct() {
 		$this->reader = new \Doctrine\Common\Annotations\AnnotationReader();
 		$this->reader->setDefaultAnnotationNamespace('Doctrine\ORM\Mapping\\');
+	}
+
+	/**
+	 * @param \F3\FLOW3\Reflection\ReflectionService $reflectionService
+	 * @return void
+	 */
+	public function injectReflectionService(\F3\FLOW3\Reflection\ReflectionService $reflectionService) {
+		$this->reflectionService = $reflectionService;
 	}
 
 	/**
@@ -210,12 +217,9 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver {
 
 		foreach ($class->getProperties() as $property) {
 			if (!$classSchema->hasProperty($property->getName())
-					||
-					$metadata->isMappedSuperclass && !$property->isPrivate()
-					||
-					$metadata->isInheritedField($property->getName())
-					||
-					$metadata->isInheritedAssociation($property->getName())) {
+					|| $metadata->isMappedSuperclass && !$property->isPrivate()
+					|| $metadata->isInheritedField($property->getName())
+					|| $metadata->isInheritedAssociation($property->getName())) {
 				continue;
 			}
 
@@ -389,8 +393,8 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver {
 
 				}
 
-				if ($idAnnotation = $this->reader->getPropertyAnnotation($property, 'Doctrine\ORM\Mapping\Id')) {
-					$mapping['id'] = true;
+				if ($this->reader->getPropertyAnnotation($property, 'Doctrine\ORM\Mapping\Id') !== NULL) {
+					$mapping['id'] = TRUE;
 				}
 
 				if ($generatedValueAnnotation = $this->reader->getPropertyAnnotation($property, 'Doctrine\ORM\Mapping\GeneratedValue')) {
@@ -411,7 +415,7 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver {
 						'allocationSize' => $seqGeneratorAnnotation->allocationSize,
 						'initialValue' => $seqGeneratorAnnotation->initialValue
 					));
-				} else if ($tblGeneratorAnnotation = $this->reader->getPropertyAnnotation($property, 'Doctrine\ORM\Mapping\TableGenerator')) {
+				} elseif ($this->reader->getPropertyAnnotation($property, 'Doctrine\ORM\Mapping\TableGenerator') !== NULL) {
 					throw \Doctrine\ORM\Mapping\MappingException::tableIdGeneratorNotImplemented($className);
 				}
 			}

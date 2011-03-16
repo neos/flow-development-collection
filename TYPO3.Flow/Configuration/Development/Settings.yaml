@@ -21,12 +21,23 @@ FLOW3:
   monitor:
     detectClassChanges: y
 
+  persistence:
+    doctrine:
+      sqlLogger: 'F3\FLOW3\Persistence\Doctrine\Logging\SqlLogger'
+      autoGenerateProxyClasses: y
+
   resource:
     publishing:
       detectPackageResourceChanges: y
 
   log:
     systemLogger:
-      backendOptions: { logFileURL: %FLOW3_PATH_DATA%Logs/System_Development.log, createParentDirectories: y, severityThreshold: %LOG_DEBUG% }
+      backendOptions:
+        logFileURL: %FLOW3_PATH_DATA%Logs/System_Development.log
+        createParentDirectories: y
+        severityThreshold: %LOG_DEBUG%
     securityLogger:
-      backendOptions: { logFileURL: %FLOW3_PATH_DATA%Logs/Security_Development.log, createParentDirectories: y, severityThreshold: %LOG_DEBUG% }
+      backendOptions:
+        logFileURL: %FLOW3_PATH_DATA%Logs/Security_Development.log
+        createParentDirectories: y
+        severityThreshold: %LOG_DEBUG%

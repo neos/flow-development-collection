@@ -17,3 +17,4 @@ F3\FLOW3\Persistence\Backend\GenericPdo\Backend:
 F3\FLOW3\Core\Bootstrap:
   finishedCompilationRun:
     - [ F3\FLOW3\Security\Policy\PolicyService, savePolicyCache ]
+    - [ F3\FLOW3\Persistence\Doctrine\PersistenceManager, compile ]

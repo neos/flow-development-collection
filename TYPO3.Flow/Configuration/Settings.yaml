@@ -111,13 +111,17 @@ FLOW3:
 
   persistence:
 
-    # Options for the default PDO backend
+    # Options for the default Doctrine persistence
     backendOptions:
-      driver: 'pdo_sqlite'
-      path: '%FLOW3_PATH_DATA%Persistent/Objects.db'
+      driver: 'pdo_mysql'
+      path: '127.0.0.1'
       dbname: null
       user: null
       password: null
+    doctrine:
+      cacheImplementation: 'Doctrine\Common\Cache\ArrayCache'
+      sqlLogger: null
+      autoGenerateProxyClasses: n
 
   reflection:
 

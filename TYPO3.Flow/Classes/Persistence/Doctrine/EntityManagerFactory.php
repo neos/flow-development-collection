@@ -26,13 +26,14 @@ namespace F3\FLOW3\Persistence\Doctrine;
  * EntityManager factory for Doctrine integration
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License', version 3 or later
+ * @scope singleton
  */
 class EntityManagerFactory {
 
 	/**
-	 * @var \F3\FLOW3\Package\PackageManagerInterface
+	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 */
-	protected $packageManager;
+	protected $objectManager;
 
 	/**
 	 * @var \F3\FLOW3\Reflection\ReflectionService
@@ -50,11 +51,11 @@ class EntityManagerFactory {
 	protected $settings = array();
 
 	/**
-	 * @param \F3\FLOW3\Package\PackageManagerInterface $packageManager
+	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
 	 * @return void
 	 */
-	public function injectPackageManager(\F3\FLOW3\Package\PackageManagerInterface $packageManager) {
-		$this->packageManager = $packageManager;
+	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
+		$this->objectManager = $objectManager;
 	}
 
 	/**
@@ -94,30 +95,26 @@ class EntityManagerFactory {
 		$config = new \Doctrine\ORM\Configuration();
 		$config->setClassMetadataFactoryName('F3\FLOW3\Persistence\Doctrine\Mapping\ClassMetadataFactory');
 
-		$cache = new \Doctrine\Common\Cache\ArrayCache();
-		$config->setMetadataCacheImpl($cache);
-		$config->setQueryCacheImpl($cache);
-
-		$config->setSQLLogger(new Logging\SqlLogger());
-
-		$classPaths = array();
-		foreach ($this->packageManager->getActivePackages() as $package) {
-			$classPaths[] = $package->getClassesPath();
+		if (class_exists($this->settings['doctrine']['cacheImplementation'])) {
+			$cache = new $this->settings['doctrine']['cacheImplementation']();
+			$config->setMetadataCacheImpl($cache);
+			$config->setQueryCacheImpl($cache);
 		}
-		$reader = new \Doctrine\Common\Annotations\AnnotationReader();
-		$reader->setDefaultAnnotationNamespace('Doctrine\ORM\Mapping\\');
-		$metadataDriver = new Mapping\Driver\Flow3AnnotationDriver($reader, $classPaths);
-		$config->setMetadataDriverImpl($metadataDriver);
+
+		if (class_exists($this->settings['doctrine']['sqlLogger'])) {
+			$config->setSQLLogger(new $this->settings['doctrine']['sqlLogger']());
+		}
+
+			// must use ObjectManager in compile phase...
+		$config->setMetadataDriverImpl($this->objectManager->get('F3\FLOW3\Persistence\Doctrine\Mapping\Driver\Flow3AnnotationDriver'));
 
 		$proxyDirectory = \F3\FLOW3\Utility\Files::concatenatePaths(array($this->environment->getPathToTemporaryDirectory(), 'Doctrine/Proxies'));
 		\F3\FLOW3\Utility\Files::createDirectoryRecursively($proxyDirectory);
 		$config->setProxyDir($proxyDirectory);
 		$config->setProxyNamespace('F3\FLOW3\Persistence\Doctrine\Proxies');
-		$config->setAutoGenerateProxyClasses(TRUE);
+		$config->setAutoGenerateProxyClasses($this->settings['doctrine']['autoGenerateProxyClasses']);
 
-		$entityManager =  \Doctrine\ORM\EntityManager::create($this->settings['backendOptions'], $config);
-
-		return $entityManager;
+		return \Doctrine\ORM\EntityManager::create($this->settings['backendOptions'], $config);
 	}
 
 }
