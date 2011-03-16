@@ -22,6 +22,9 @@ namespace F3\FLOW3\Security\Aspect;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use \F3\FLOW3\Utility\Files;
+use \F3\FLOW3\Security\Policy\Role;
+
 /**
  * Testcase for the private resources publishing aspect
  *
@@ -65,17 +68,17 @@ class PrivateResourcesPublishingAspectTest extends \F3\FLOW3\Tests\UnitTestCase 
 	 */
 	public function rewritePersistentResourceWebUriForPrivateResourcesReturnsFalseIfNoneOfTheAllowedRolesIsInTheCurrentSecurityContext() {
 		$allowedRoles = array (
-			new \F3\FLOW3\Security\Policy\Role('Role1'),
-			new \F3\FLOW3\Security\Policy\Role('Role2'),
-			new \F3\FLOW3\Security\Policy\Role('Role3')
+			new Role('Role1'),
+			new Role('Role2'),
+			new Role('Role3')
 		);
 
 		$mockPublishingConfiguration = $this->getMock('F3\FLOW3\Security\Authorization\Resource\SecurityPublishingConfiguration', array(), array(), '', FALSE);
 		$mockPublishingConfiguration->expects($this->once())->method('getAllowedRoles')->will($this->returnValue($allowedRoles));
 
 		$actualRoles = array(
-			new \F3\FLOW3\Security\Policy\Role('Role5'),
-			new \F3\FLOW3\Security\Policy\Role('Role6')
+			new Role('Role5'),
+			new Role('Role6')
 		);
 
 		$mockSecurityContext = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
@@ -104,8 +107,8 @@ class PrivateResourcesPublishingAspectTest extends \F3\FLOW3\Tests\UnitTestCase 
 		$mockPublishingConfiguration->expects($this->once())->method('getAllowedRoles')->will($this->returnValue($allowedRoles));
 
 		$actualRoles = array(
-			new \F3\FLOW3\Security\Policy\Role('Role5'),
-			new \F3\FLOW3\Security\Policy\Role('Role6')
+			new Role('Role5'),
+			new Role('Role6')
 		);
 
 		$mockSecurityContext = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
@@ -131,17 +134,17 @@ class PrivateResourcesPublishingAspectTest extends \F3\FLOW3\Tests\UnitTestCase 
 		$settings = array('resource' => array('publishing' => array('fileSystem' => array('mirrorMode' => 'link'))));
 
 		$allowedRoles = array (
-			new \F3\FLOW3\Security\Policy\Role('Role2'),
-			new \F3\FLOW3\Security\Policy\Role('Role3')
+			new Role('Role2'),
+			new Role('Role3')
 		);
 
 		$mockPublishingConfiguration = $this->getMock('F3\FLOW3\Security\Authorization\Resource\SecurityPublishingConfiguration', array(), array(), '', FALSE);
 		$mockPublishingConfiguration->expects($this->once())->method('getAllowedRoles')->will($this->returnValue($allowedRoles));
 
 		$actualRoles = array(
-			new \F3\FLOW3\Security\Policy\Role('Role1'),
-			new \F3\FLOW3\Security\Policy\Role('Role2'),
-			new \F3\FLOW3\Security\Policy\Role('Role3')
+			new Role('Role1'),
+			new Role('Role2'),
+			new Role('Role3')
 		);
 
 		$mockSecurityContext = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
@@ -185,17 +188,17 @@ class PrivateResourcesPublishingAspectTest extends \F3\FLOW3\Tests\UnitTestCase 
 		$settings = array('resource' => array('publishing' => array('fileSystem' => array('mirrorMode' => 'copy'))));
 
 		$allowedRoles = array (
-			new \F3\FLOW3\Security\Policy\Role('Role2'),
-			new \F3\FLOW3\Security\Policy\Role('Role3')
+			new Role('Role2'),
+			new Role('Role3')
 		);
 
 		$mockPublishingConfiguration = $this->getMock('F3\FLOW3\Security\Authorization\Resource\SecurityPublishingConfiguration', array(), array(), '', FALSE);
 		$mockPublishingConfiguration->expects($this->once())->method('getAllowedRoles')->will($this->returnValue($allowedRoles));
 
 		$actualRoles = array(
-			new \F3\FLOW3\Security\Policy\Role('Role1'),
-			new \F3\FLOW3\Security\Policy\Role('Role2'),
-			new \F3\FLOW3\Security\Policy\Role('Role3')
+			new Role('Role1'),
+			new Role('Role2'),
+			new Role('Role3')
 		);
 
 		$mockSecurityContext = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
@@ -260,17 +263,17 @@ class PrivateResourcesPublishingAspectTest extends \F3\FLOW3\Tests\UnitTestCase 
 	 */
 	public function rewritePersistentResourcePublishPathAndFilenameForPrivateResourcesReturnsFalseIfNoneOfTheAllowedRolesIsInTheCurrentSecurityContext() {
 		$allowedRoles = array (
-			new \F3\FLOW3\Security\Policy\Role('Role1'),
-			new \F3\FLOW3\Security\Policy\Role('Role2'),
-			new \F3\FLOW3\Security\Policy\Role('Role3')
+			new Role('Role1'),
+			new Role('Role2'),
+			new Role('Role3')
 		);
 
 		$mockPublishingConfiguration = $this->getMock('F3\FLOW3\Security\Authorization\Resource\SecurityPublishingConfiguration', array(), array(), '', FALSE);
 		$mockPublishingConfiguration->expects($this->once())->method('getAllowedRoles')->will($this->returnValue($allowedRoles));
 
 		$actualRoles = array(
-			new \F3\FLOW3\Security\Policy\Role('Role5'),
-			new \F3\FLOW3\Security\Policy\Role('Role6')
+			new Role('Role5'),
+			new Role('Role6')
 		);
 
 		$mockSecurityContext = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
@@ -294,23 +297,23 @@ class PrivateResourcesPublishingAspectTest extends \F3\FLOW3\Tests\UnitTestCase 
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function rewritePersistentResourcePublishPathAndFilenameForPrivateResourcesCalculatesTheCorrectPathForAPrivateResourceThatIsPublishedInLinkModeAndNoFilenameIsRequested() {
-		$temporaryDirectoryPath = \F3\FLOW3\Utility\Files::concatenatePaths(array(sys_get_temp_dir(), 'FLOW3PrivateResourcesPublishingAspectTestTemporaryDirectory')) . '/';
-		$publishPath = \F3\FLOW3\Utility\Files::concatenatePaths(array(sys_get_temp_dir(), 'FLOW3PrivateResourcesPublishingAspectTestPublishDirectory')) . '/';
+		$temporaryDirectoryPath = Files::concatenatePaths(array(sys_get_temp_dir(), 'FLOW3PrivateResourcesPublishingAspectTestTemporaryDirectory')) . '/';
+		$publishPath = Files::concatenatePaths(array(sys_get_temp_dir(), 'FLOW3PrivateResourcesPublishingAspectTestPublishDirectory')) . '/';
 
 		$settings = array('resource' => array('publishing' => array('fileSystem' => array('mirrorMode' => 'link'))));
 
 		$allowedRoles = array (
-			new \F3\FLOW3\Security\Policy\Role('Role2'),
-			new \F3\FLOW3\Security\Policy\Role('Role3')
+			new Role('Role2'),
+			new Role('Role3')
 		);
 
 		$mockPublishingConfiguration = $this->getMock('F3\FLOW3\Security\Authorization\Resource\SecurityPublishingConfiguration', array(), array(), '', FALSE);
 		$mockPublishingConfiguration->expects($this->once())->method('getAllowedRoles')->will($this->returnValue($allowedRoles));
 
 		$actualRoles = array(
-			new \F3\FLOW3\Security\Policy\Role('Role1'),
-			new \F3\FLOW3\Security\Policy\Role('Role2'),
-			new \F3\FLOW3\Security\Policy\Role('Role3')
+			new Role('Role1'),
+			new Role('Role2'),
+			new Role('Role3')
 		);
 
 		$mockSecurityContext = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
@@ -351,8 +354,8 @@ class PrivateResourcesPublishingAspectTest extends \F3\FLOW3\Tests\UnitTestCase 
 
 		$this->assertEquals($result, $expectedResult);
 
-		\F3\FLOW3\Utility\Files::removeDirectoryRecursively($temporaryDirectoryPath);
-		\F3\FLOW3\Utility\Files::removeDirectoryRecursively($publishPath);
+		Files::removeDirectoryRecursively($temporaryDirectoryPath);
+		Files::removeDirectoryRecursively($publishPath);
 	}
 
 	/**
@@ -360,23 +363,23 @@ class PrivateResourcesPublishingAspectTest extends \F3\FLOW3\Tests\UnitTestCase 
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function rewritePersistentResourcePublishPathAndFilenameForPrivateResourcesCalculatesTheCorrectPathForAPrivateResourceThatIsPublishedInLinkModeAndTheFilenameIsRequested() {
-		$temporaryDirectoryPath = \F3\FLOW3\Utility\Files::concatenatePaths(array(sys_get_temp_dir(), 'FLOW3PrivateResourcesPublishingAspectTestTemporaryDirectory')) . '/';
-		$publishPath = \F3\FLOW3\Utility\Files::concatenatePaths(array(sys_get_temp_dir(), 'FLOW3PrivateResourcesPublishingAspectTestPublishDirectory')) . '/';
+		$temporaryDirectoryPath = Files::concatenatePaths(array(sys_get_temp_dir(), 'FLOW3PrivateResourcesPublishingAspectTestTemporaryDirectory')) . '/';
+		$publishPath = Files::concatenatePaths(array(sys_get_temp_dir(), 'FLOW3PrivateResourcesPublishingAspectTestPublishDirectory')) . '/';
 
 		$settings = array('resource' => array('publishing' => array('fileSystem' => array('mirrorMode' => 'link'))));
 
 		$allowedRoles = array (
-			new \F3\FLOW3\Security\Policy\Role('Role2'),
-			new \F3\FLOW3\Security\Policy\Role('Role3')
+			new Role('Role2'),
+			new Role('Role3')
 		);
 
 		$mockPublishingConfiguration = $this->getMock('F3\FLOW3\Security\Authorization\Resource\SecurityPublishingConfiguration', array(), array(), '', FALSE);
 		$mockPublishingConfiguration->expects($this->once())->method('getAllowedRoles')->will($this->returnValue($allowedRoles));
 
 		$actualRoles = array(
-			new \F3\FLOW3\Security\Policy\Role('Role1'),
-			new \F3\FLOW3\Security\Policy\Role('Role2'),
-			new \F3\FLOW3\Security\Policy\Role('Role3')
+			new Role('Role1'),
+			new Role('Role2'),
+			new Role('Role3')
 		);
 
 		$mockSecurityContext = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
@@ -419,8 +422,8 @@ class PrivateResourcesPublishingAspectTest extends \F3\FLOW3\Tests\UnitTestCase 
 
 		$this->assertEquals($result, $expectedResult);
 
-		\F3\FLOW3\Utility\Files::removeDirectoryRecursively($temporaryDirectoryPath);
-		\F3\FLOW3\Utility\Files::removeDirectoryRecursively($publishPath);
+		Files::removeDirectoryRecursively($temporaryDirectoryPath);
+		Files::removeDirectoryRecursively($publishPath);
 	}
 
 	/**
@@ -428,21 +431,21 @@ class PrivateResourcesPublishingAspectTest extends \F3\FLOW3\Tests\UnitTestCase 
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function rewritePersistentResourcePublishPathAndFilenameForPrivateResourcesCalculatesTheCorrectPathForAPrivateResourceThatIsPublishedInCopyModeAndNoFilenameIsRequested() {
-		$publishPath = \F3\FLOW3\Utility\Files::concatenatePaths(array(sys_get_temp_dir(), 'FLOW3PrivateResourcesPublishingAspectTestPublishDirectory')) . '/';
+		$publishPath = Files::concatenatePaths(array(sys_get_temp_dir(), 'FLOW3PrivateResourcesPublishingAspectTestPublishDirectory')) . '/';
 		$settings = array('resource' => array('publishing' => array('fileSystem' => array('mirrorMode' => 'copy'))));
 
 		$allowedRoles = array (
-			new \F3\FLOW3\Security\Policy\Role('Role2'),
-			new \F3\FLOW3\Security\Policy\Role('Role3')
+			new Role('Role2'),
+			new Role('Role3')
 		);
 
 		$mockPublishingConfiguration = $this->getMock('F3\FLOW3\Security\Authorization\Resource\SecurityPublishingConfiguration', array(), array(), '', FALSE);
 		$mockPublishingConfiguration->expects($this->once())->method('getAllowedRoles')->will($this->returnValue($allowedRoles));
 
 		$actualRoles = array(
-			new \F3\FLOW3\Security\Policy\Role('Role1'),
-			new \F3\FLOW3\Security\Policy\Role('Role2'),
-			new \F3\FLOW3\Security\Policy\Role('Role3')
+			new Role('Role1'),
+			new Role('Role2'),
+			new Role('Role3')
 		);
 
 		$mockSecurityContext = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
@@ -485,22 +488,22 @@ class PrivateResourcesPublishingAspectTest extends \F3\FLOW3\Tests\UnitTestCase 
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function rewritePersistentResourcePublishPathAndFilenameForPrivateResourcesCalculatesTheCorrectPathForAPrivateResourceThatIsPublishedInCopyModeAndTheFilenameIsRequested() {
-		$publishPath = \F3\FLOW3\Utility\Files::concatenatePaths(array(sys_get_temp_dir(), 'FLOW3PrivateResourcesPublishingAspectTestPublishDirectory')) . '/';
+		$publishPath = Files::concatenatePaths(array(sys_get_temp_dir(), 'FLOW3PrivateResourcesPublishingAspectTestPublishDirectory')) . '/';
 
 		$settings = array('resource' => array('publishing' => array('fileSystem' => array('mirrorMode' => 'copy'))));
 
 		$allowedRoles = array (
-			new \F3\FLOW3\Security\Policy\Role('Role2'),
-			new \F3\FLOW3\Security\Policy\Role('Role3')
+			new Role('Role2'),
+			new Role('Role3')
 		);
 
 		$mockPublishingConfiguration = $this->getMock('F3\FLOW3\Security\Authorization\Resource\SecurityPublishingConfiguration', array(), array(), '', FALSE);
 		$mockPublishingConfiguration->expects($this->once())->method('getAllowedRoles')->will($this->returnValue($allowedRoles));
 
 		$actualRoles = array(
-			new \F3\FLOW3\Security\Policy\Role('Role1'),
-			new \F3\FLOW3\Security\Policy\Role('Role2'),
-			new \F3\FLOW3\Security\Policy\Role('Role3')
+			new Role('Role1'),
+			new Role('Role2'),
+			new Role('Role3')
 		);
 
 		$mockSecurityContext = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
@@ -548,17 +551,17 @@ class PrivateResourcesPublishingAspectTest extends \F3\FLOW3\Tests\UnitTestCase 
 		$settings = array('resource' => array('publishing' => array('fileSystem' => array('mirrorMode' => 'copy'))));
 
 		$allowedRoles = array (
-			new \F3\FLOW3\Security\Policy\Role('Role2'),
-			new \F3\FLOW3\Security\Policy\Role('Role3')
+			new Role('Role2'),
+			new Role('Role3')
 		);
 
 		$mockPublishingConfiguration = $this->getMock('F3\FLOW3\Security\Authorization\Resource\SecurityPublishingConfiguration', array(), array(), '', FALSE);
 		$mockPublishingConfiguration->expects($this->once())->method('getAllowedRoles')->will($this->returnValue($allowedRoles));
 
 		$actualRoles = array(
-			new \F3\FLOW3\Security\Policy\Role('Role1'),
-			new \F3\FLOW3\Security\Policy\Role('Role2'),
-			new \F3\FLOW3\Security\Policy\Role('Role3')
+			new Role('Role1'),
+			new Role('Role2'),
+			new Role('Role3')
 		);
 
 		$mockSecurityContext = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
@@ -601,23 +604,23 @@ class PrivateResourcesPublishingAspectTest extends \F3\FLOW3\Tests\UnitTestCase 
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function inLinkModeRewritePersistentResourcePublishPathAndFilenameForPrivateResourcesCreatesRoleDirectoriesForEachAllowedRoleAndSymlinksThemIntoTheCurrentSessionDirectory() {
-		$temporaryDirectoryPath = \F3\FLOW3\Utility\Files::concatenatePaths(array(sys_get_temp_dir(), 'FLOW3PrivateResourcesPublishingAspectTestTemporaryDirectory')) . '/';
-		$publishPath = \F3\FLOW3\Utility\Files::concatenatePaths(array(sys_get_temp_dir(), 'FLOW3PrivateResourcesPublishingAspectTestPublishDirectory')) . '/';
+		$temporaryDirectoryPath = Files::concatenatePaths(array(sys_get_temp_dir(), 'FLOW3PrivateResourcesPublishingAspectTestTemporaryDirectory')) . '/';
+		$publishPath = Files::concatenatePaths(array(sys_get_temp_dir(), 'FLOW3PrivateResourcesPublishingAspectTestPublishDirectory')) . '/';
 
 		$settings = array('resource' => array('publishing' => array('fileSystem' => array('mirrorMode' => 'link'))));
 
 		$allowedRoles = array (
-			new \F3\FLOW3\Security\Policy\Role('Role2'),
-			new \F3\FLOW3\Security\Policy\Role('Role3')
+			new Role('Role2'),
+			new Role('Role3')
 		);
 
 		$mockPublishingConfiguration = $this->getMock('F3\FLOW3\Security\Authorization\Resource\SecurityPublishingConfiguration', array(), array(), '', FALSE);
 		$mockPublishingConfiguration->expects($this->once())->method('getAllowedRoles')->will($this->returnValue($allowedRoles));
 
 		$actualRoles = array(
-			new \F3\FLOW3\Security\Policy\Role('Role1'),
-			new \F3\FLOW3\Security\Policy\Role('Role2'),
-			new \F3\FLOW3\Security\Policy\Role('Role3')
+			new Role('Role1'),
+			new Role('Role2'),
+			new Role('Role3')
 		);
 
 		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
@@ -660,11 +663,14 @@ class PrivateResourcesPublishingAspectTest extends \F3\FLOW3\Tests\UnitTestCase 
 		$this->assertFileExists($temporaryDirectoryPath . 'PrivateResourcePublishing/Role3/');
 		$this->assertFileExists($publishPath . 'Persistent/TheCurrentSessionId/Role2');
 		$this->assertFileExists($publishPath . 'Persistent/TheCurrentSessionId/Role3');
+
+		$temporaryDirectoryPath = realpath($temporaryDirectoryPath) . '/';
+
 		$this->assertEquals($temporaryDirectoryPath . 'PrivateResourcePublishing/Role2', rtrim(realpath($publishPath . 'Persistent/TheCurrentSessionId/Role2'), '/'));
 		$this->assertEquals($temporaryDirectoryPath . 'PrivateResourcePublishing/Role3', rtrim(realpath($publishPath . 'Persistent/TheCurrentSessionId/Role3'), '/'));
 
-		\F3\FLOW3\Utility\Files::removeDirectoryRecursively($temporaryDirectoryPath);
-		\F3\FLOW3\Utility\Files::removeDirectoryRecursively($publishPath);
+		Files::removeDirectoryRecursively($temporaryDirectoryPath);
+		Files::removeDirectoryRecursively($publishPath);
 	}
 
 	/**
@@ -675,17 +681,17 @@ class PrivateResourcesPublishingAspectTest extends \F3\FLOW3\Tests\UnitTestCase 
 		$settings = array('resource' => array('publishing' => array('fileSystem' => array('mirrorMode' => 'copy'))));
 
 		$allowedRoles = array (
-			new \F3\FLOW3\Security\Policy\Role('Role2'),
-			new \F3\FLOW3\Security\Policy\Role('Role3')
+			new Role('Role2'),
+			new Role('Role3')
 		);
 
 		$mockPublishingConfiguration = $this->getMock('F3\FLOW3\Security\Authorization\Resource\SecurityPublishingConfiguration', array(), array(), '', FALSE);
 		$mockPublishingConfiguration->expects($this->once())->method('getAllowedRoles')->will($this->returnValue($allowedRoles));
 
 		$actualRoles = array(
-			new \F3\FLOW3\Security\Policy\Role('Role1'),
-			new \F3\FLOW3\Security\Policy\Role('Role2'),
-			new \F3\FLOW3\Security\Policy\Role('Role3')
+			new Role('Role1'),
+			new Role('Role2'),
+			new Role('Role3')
 		);
 
 		$mockSecurityContext = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);

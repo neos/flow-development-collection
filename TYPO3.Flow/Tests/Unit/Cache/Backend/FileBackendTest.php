@@ -83,7 +83,27 @@ class FileBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$backend->injectEnvironment($mockEnvironment);
 		$backend->setCache($mockCache);
 
-		$this->assertEquals('vfs://Foo/Cache/SomeCache/', $backend->getCacheDirectory());
+		$this->assertEquals('vfs://Foo/Cache/Data/SomeCache/', $backend->getCacheDirectory());
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function aDedicatedCacheDirectoryIsUsedForCodeCaches() {
+		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
+		$mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue('vfs://Foo/'));
+
+			// We need to create the directory here because vfs doesn't support touch() which is used by
+			// createDirectoryRecursively() in the setCache method.
+		mkdir ('vfs://Foo/Cache');
+
+		$backend = $this->getMock('F3\FLOW3\Cache\Backend\FileBackend', array('dummy'), array(), '', FALSE);
+		$backend->injectEnvironment($mockEnvironment);
+
+		new \F3\FLOW3\Cache\Frontend\PhpFrontend('SomeCache', $backend);
+
+		$this->assertEquals('vfs://Foo/Cache/Code/SomeCache/', $backend->getCacheDirectory());
 	}
 
 	/**
@@ -117,7 +137,7 @@ class FileBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		$data = 'some data' . microtime();
 		$entryIdentifier = 'BackendFileTest';
-		$pathAndFilename = 'vfs://Foo/Cache/UnitTestCache/' . '/' . $entryIdentifier;
+		$pathAndFilename = 'vfs://Foo/Cache/Data/UnitTestCache/' . $entryIdentifier;
 
 		$backend = $this->getMock('F3\FLOW3\Cache\Backend\FileBackend', array('dummy'), array(), '', FALSE);
 		$backend->injectEnvironment($mockEnvironment);
@@ -153,7 +173,7 @@ class FileBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$backend->set($entryIdentifier, $data1, array(), 500);
 		$backend->set($entryIdentifier, $data2, array(), 200);
 
-		$pathAndFilename = 'vfs://Foo/Cache/UnitTestCache/' . $entryIdentifier;
+		$pathAndFilename = 'vfs://Foo/Cache/Data/UnitTestCache/' . $entryIdentifier;
 		$this->assertFileExists($pathAndFilename);
 		$retrievedData = file_get_contents($pathAndFilename, NULL, NULL, 0, strlen($data2));
 		$this->assertEquals($data2, $retrievedData);
@@ -180,7 +200,7 @@ class FileBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		$backend->set($entryIdentifier, $data, array('Tag1', 'Tag2'));
 
-		$pathAndFilename = 'vfs://Foo/Cache/UnitTestCache/' . $entryIdentifier;
+		$pathAndFilename = 'vfs://Foo/Cache/Data/UnitTestCache/' . $entryIdentifier;
 		$this->assertFileExists($pathAndFilename);
 		$retrievedData = file_get_contents($pathAndFilename, NULL, NULL, (strlen($data) + \F3\FLOW3\Cache\Backend\FileBackend::EXPIRYTIME_LENGTH), 9);
 		$this->assertEquals('Tag1 Tag2', $retrievedData);
@@ -250,7 +270,7 @@ class FileBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue('vfs://Foo/'));
 
 		$backend = $this->getMock('F3\FLOW3\Cache\Backend\FileBackend', array('isCacheFileExpired'), array(), '', FALSE);
-		$backend->expects($this->once())->method('isCacheFileExpired')->with('vfs://Foo/Cache/UnitTestCache/ExpiredEntry')->will($this->returnValue(TRUE));
+		$backend->expects($this->once())->method('isCacheFileExpired')->with('vfs://Foo/Cache/Data/UnitTestCache/ExpiredEntry')->will($this->returnValue(TRUE));
 		$backend->injectEnvironment($mockEnvironment);
 		$backend->setCache($mockCache);
 
@@ -309,7 +329,7 @@ class FileBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		$data = 'some data' . microtime();
 		$entryIdentifier = 'BackendFileTest';
-		$pathAndFilename = 'vfs://Foo/Cache/UnitTestCache/' . '/' . $entryIdentifier;
+		$pathAndFilename = 'vfs://Foo/Cache/Data/UnitTestCache/' . $entryIdentifier;
 
 		$backend = $this->getMock('F3\FLOW3\Cache\Backend\FileBackend', array('dummy'), array(), '', FALSE);
 		$backend->injectEnvironment($mockEnvironment);
@@ -512,13 +532,13 @@ class FileBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$backend->set('BackendFileTest1', $data);
 		$backend->set('BackendFileTest2', $data);
 
-		$this->assertFileExists('vfs://Foo/Cache/UnitTestCache/BackendFileTest1');
-		$this->assertFileExists('vfs://Foo/Cache/UnitTestCache/BackendFileTest2');
+		$this->assertFileExists('vfs://Foo/Cache/Data/UnitTestCache/BackendFileTest1');
+		$this->assertFileExists('vfs://Foo/Cache/Data/UnitTestCache/BackendFileTest2');
 
 		$backend->flush();
 
-		$this->assertFileNotExists('vfs://Foo/Cache/UnitTestCache/BackendFileTest1');
-		$this->assertFileNotExists('vfs://Foo/Cache/UnitTestCache/BackendFileTest2');
+		$this->assertFileNotExists('vfs://Foo/Cache/Data/UnitTestCache/BackendFileTest1');
+		$this->assertFileNotExists('vfs://Foo/Cache/Data/UnitTestCache/BackendFileTest2');
 	}
 
 	/**
