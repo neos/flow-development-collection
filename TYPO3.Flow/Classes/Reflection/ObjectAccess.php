@@ -57,7 +57,7 @@ class ObjectAccess {
 	 *
 	 * @param mixed $subject Object or array to get the property from
 	 * @param string $propertyName name of the property to retrieve
-	 * @param boolean $alsoAccessIfNotPublic directly access property using reflection(!)
+	 * @param boolean $forceDirectAccess directly access property using reflection(!)
 	 * @return mixed Value of the property.
 	 * @throws \InvalidArgumentException in case $subject was not an object or $propertyName was not a string
 	 * @throws \F3\FLOW3\Reflection\Exception\PropertyNotAccessibleException if the property was not accessible
@@ -65,7 +65,7 @@ class ObjectAccess {
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	static public function getProperty($subject, $propertyName, $alsoAccessIfNotPublic = FALSE) {
+	static public function getProperty($subject, $propertyName, $forceDirectAccess = FALSE) {
 		if (!is_object($subject) && !is_array($subject)) {
 			throw new \InvalidArgumentException('$subject must be an object or array, ' . gettype($subject). ' given.', 1237301367);
 		}
@@ -78,7 +78,7 @@ class ObjectAccess {
 				return $subject[$propertyName];
 			}
 		} else {
-			if ($alsoAccessIfNotPublic === TRUE) {
+			if ($forceDirectAccess === TRUE) {
 				$propertyReflection = new \F3\FLOW3\Reflection\PropertyReflection(get_class($subject), $propertyName);
 				return $propertyReflection->getValue($subject);
 			} elseif (is_callable(array($subject, 'get' . ucfirst($propertyName)))) {
@@ -146,13 +146,13 @@ class ObjectAccess {
 	 * @param mixed $subject The target object or array
 	 * @param string $propertyName Name of the property to set
 	 * @param object $propertyValue Value of the property
-	 * @param boolean $alsoAccessIfNotPublic directly access property using reflection(!)
+	 * @param boolean $forceDirectAccess directly access property using reflection(!)
 	 * @return boolean TRUE if the property could be set, FALSE otherwise
 	 * @throws \InvalidArgumentException in case $object was not an object or $propertyName was not a string
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	static public function setProperty(&$subject, $propertyName, $propertyValue, $alsoAccessIfNotPublic = FALSE) {
+	static public function setProperty(&$subject, $propertyName, $propertyValue, $forceDirectAccess = FALSE) {
 		if (is_array($subject)) {
 			$subject[$propertyName] = $propertyValue;
 			return TRUE;
@@ -161,7 +161,7 @@ class ObjectAccess {
 		if (!is_object($subject)) throw new \InvalidArgumentException('subject must be an object or array, ' . gettype($subject). ' given.', 1237301368);
 		if (!is_string($propertyName)) throw new \InvalidArgumentException('Given property name is not of type string.', 1231178878);
 
-		if ($alsoAccessIfNotPublic === TRUE) {
+		if ($forceDirectAccess === TRUE) {
 			$propertyReflection = new \F3\FLOW3\Reflection\PropertyReflection(get_class($subject), $propertyName);
 			$propertyReflection->setValue($subject, $propertyValue);
 		} elseif (is_callable(array($subject, $setterMethodName = self::buildSetterMethodName($propertyName)))) {
