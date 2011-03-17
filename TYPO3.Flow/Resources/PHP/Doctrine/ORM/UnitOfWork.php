@@ -2062,7 +2062,11 @@ class UnitOfWork implements PropertyChangedListener
      */
     public function getEntityIdentifier($entity)
     {
-        return $this->entityIdentifiers[spl_object_hash($entity)];
+        if (isset($this->entityIdentifiers[spl_object_hash($entity)])) {
+            return $this->entityIdentifiers[spl_object_hash($entity)];
+        } else {
+            throw new ORMException('No identifier found for entity ' . get_class($entity));
+        }
     }
 
     /**
