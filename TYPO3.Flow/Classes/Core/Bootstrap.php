@@ -50,12 +50,6 @@ class Bootstrap {
 	protected $context;
 
 	/**
-	 * Flag telling if the site / application is currently locked, e.g. due to flushing the code caches
-	 * @var boolean
-	 */
-	protected $siteLocked = FALSE;
-
-	/**
 	 * @var \F3\FLOW3\Configuration\ConfigurationManager
 	 */
 	protected $configurationManager;
@@ -72,6 +66,7 @@ class Bootstrap {
 
 	/**
 	 * The same instance like $objectManager, but static, for use in the proxy classes.
+	 *
 	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 * @see initializeObjectManager(), getObjectManager()
 	 */
@@ -232,6 +227,12 @@ class Bootstrap {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function compile() {
+		if ($this->context === 'Testing') {
+			require_once('PHPUnit/Autoload.php');
+			require_once(FLOW3_PATH_FLOW3 . 'Tests/BaseTestCase.php');
+			require_once(FLOW3_PATH_FLOW3 . 'Tests/FunctionalTestCase.php');
+		}
+
 		$this->objectManager = new \F3\FLOW3\Object\CompileTimeObjectManager($this->context);
 		$this->objectManager->setInstance('F3\FLOW3\Cache\CacheManager', $this->cacheManager);
 
@@ -283,14 +284,13 @@ class Bootstrap {
 	}
 
 	/**
-	 * Runs the the FLOW3 Framework by resolving an appropriate Request Handler and passing control to it.
-	 * If the Framework is not initialized yet, it will be initialized.
+	 * Checks if this PHP request should be a compile run and if so compiles the necessary classes.
+	 * If a compile run is really triggered, this method will not return but exit directly.
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @api
 	 */
-	public function run() {
+	protected function executeCompileSubrequestIfTriggered() {
 		if (isset($_GET['FLOW3_BOOTSTRAP_ACTION']) && $_GET['FLOW3_BOOTSTRAP_ACTION'] === 'compile') {
 			$compileKey =  isset($_GET['FLOW3_BOOTSTRAP_COMPILEKEY']) ? $_GET['FLOW3_BOOTSTRAP_COMPILEKEY'] : FALSE;
 			$compileKeyPathAndFilename = $this->environment->getPathToTemporaryDirectory() . 'CompileKey.txt';
@@ -300,8 +300,9 @@ class Bootstrap {
 			}
 
 			$this->systemLogger->log(sprintf('--- Compile run in %s context (compile key: %s) ---', $this->context, $compileKey), LOG_INFO);
-			$this->compile();
 			unlink($compileKeyPathAndFilename);
+			$this->compile();
+			$this->systemLogger->log(sprintf('--- Finished compile run ---', $this->context), LOG_INFO);
 			exit;
 		}
 
@@ -314,66 +315,73 @@ class Bootstrap {
 			echo (sprintf('Compiling FLOW3 proxy classes for %s context ... ', $this->context));
 			$this->compile();
 			echo (PHP_EOL);
+			$this->systemLogger->log(sprintf('--- Finished compile run ---', $this->context), LOG_INFO);
 			exit;
 		}
+	}
 
-		if (!$this->siteLocked) {
-			$this->systemLogger->log(sprintf('--- Run FLOW3 in %s context. ---', $this->context), LOG_INFO);
-			$objectConfigurationCache = $this->cacheManager->getCache('FLOW3_Object_Configuration');
-			if (!$objectConfigurationCache->has('allCompiledCodeUpToDate') || $this->context !== 'Production') {
+	/**
+	 * Runs the the FLOW3 Framework by resolving an appropriate Request Handler and passing control to it.
+	 * If the Framework is not initialized yet, it will be initialized.
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
+	 */
+	public function run() {
+		$this->executeCompileSubrequestIfTriggered();
 
-				if (PHP_SAPI === 'cli') {
-					$command = 'php -c ' . php_ini_loaded_file() . ' ' . realpath(FLOW3_PATH_FLOW3 . 'Scripts/FLOW3.php') . ' FLOW3 Core compile';
-					exec($command, $output, $exitCode);
-					if ($exitCode !==0) {
-						echo implode((PHP_SAPI === 'cli' ? PHP_EOL : '<br />'), $output);
-						throw new \F3\FLOW3\Exception(sprintf('Could not execute the FLOW3 compiler with "%s". ', $command), 1299854519);
-					}
-				} else {
-					$compileKey = \F3\FLOW3\Utility\Algorithms::generateUUID();
-					file_put_contents($this->environment->getPathToTemporaryDirectory() . 'CompileKey.txt', $compileKey);
-					$compileUri = $this->environment->getBaseUri() . '?FLOW3_BOOTSTRAP_ACTION=compile&FLOW3_BOOTSTRAP_COMPILEKEY=' . $compileKey;
-					try {
-						$result = file_get_contents($compileUri);
-					} catch (\Exception $exception) {
-						throw new \F3\FLOW3\Exception('The FLOW3 compile run failed due to an exception while sending the HTTP request.', 1300097425, $exception);
-					}
-					if ($result !== 'OK') {
-						$httpResult = (isset($http_response_header)) ? ('The HTTP request responded with ' . $http_response_header[0] . '.') : '';
-						throw new \F3\FLOW3\Exception('The FLOW3 compile run sub request failed. ' . $httpResult . ' Response output: ' . $result, 1300097426);
-					}
+		$this->systemLogger->log(sprintf('--- Run FLOW3 in %s context. ---', $this->context), LOG_INFO);
+		$objectConfigurationCache = $this->cacheManager->getCache('FLOW3_Object_Configuration');
+		if (!$objectConfigurationCache->has('allCompiledCodeUpToDate') || $this->context !== 'Production') {
+
+			if (PHP_SAPI === 'cli') {
+				$command = 'php -c ' . php_ini_loaded_file() . ' ' . realpath(FLOW3_PATH_FLOW3 . 'Scripts/FLOW3.php') . ' FLOW3 Bootstrap compile';
+				exec($command, $output, $exitCode);
+				if ($exitCode !==0) {
+					echo implode((PHP_SAPI === 'cli' ? PHP_EOL : '<br />'), $output);
+					throw new \F3\FLOW3\Exception(sprintf('Could not execute the FLOW3 compiler with "%s". ', $command), 1299854519);
+				}
+			} else {
+				$compileKey = \F3\FLOW3\Utility\Algorithms::generateUUID();
+				file_put_contents($this->environment->getPathToTemporaryDirectory() . 'CompileKey.txt', $compileKey);
+				$compileUri = $this->environment->getBaseUri() . '?FLOW3_BOOTSTRAP_ACTION=compile&FLOW3_BOOTSTRAP_COMPILEKEY=' . $compileKey;
+				try {
+					$result = file_get_contents($compileUri);
+				} catch (\Exception $exception) {
+					throw new \F3\FLOW3\Exception('The FLOW3 compile run failed due to an exception while sending the HTTP request.', 1300097425, $exception);
+				}
+				if ($result !== 'OK') {
+					$httpResult = (isset($http_response_header)) ? ('The HTTP request responded with ' . $http_response_header[0] . '.') : '';
+					throw new \F3\FLOW3\Exception('The FLOW3 compile run sub request failed. ' . $httpResult . ' Response output: ' . $result, 1300097426);
 				}
 			}
-
-			$this->initializeReflectionService();
-			$this->reflectionService->initialize();
-
-			$this->initializeObjectManager();
-
-			$this->initializeSignalsSlots();
-	#		$this->initializeFileMonitor();
-
-			$this->initializePersistence();
-			$this->initializeSession();
-			$this->initializeResources();
-	#		$this->initializeI18n();
-
-			$requestHandlerResolver = $this->objectManager->get('F3\FLOW3\MVC\RequestHandlerResolver');
-			$requestHandler = $requestHandlerResolver->resolveRequestHandler();
-			$requestHandler->handleRequest();
-
-			$this->objectManager->get('F3\FLOW3\Persistence\PersistenceManagerInterface')->persistAll();
-
-			$this->emitFinishedNormalRun();
-			$this->systemLogger->log('Shutting down ...', LOG_INFO);
-
-			$this->configurationManager->shutdown();
-			$this->objectManager->shutdown();
-		} else {
-			header('HTTP/1.1 503 Service Temporarily Unavailable');
-			readfile('resource://FLOW3/Private/Core/LockHoldingStackPage.html');
-			$this->systemLogger->log('Site is locked, exiting.', LOG_NOTICE);
 		}
+
+		$this->initializeReflectionService();
+		$this->reflectionService->initialize();
+
+		$this->initializeObjectManager();
+
+		$this->initializeSignalsSlots();
+#		$this->initializeFileMonitor();
+
+		$this->initializePersistence();
+		$this->initializeSession();
+		$this->initializeResources();
+#		$this->initializeI18n();
+
+		$requestHandlerResolver = $this->objectManager->get('F3\FLOW3\MVC\RequestHandlerResolver');
+		$requestHandler = $requestHandlerResolver->resolveRequestHandler();
+		$requestHandler->handleRequest();
+
+		$this->objectManager->get('F3\FLOW3\Persistence\PersistenceManagerInterface')->persistAll();
+
+		$this->emitFinishedNormalRun();
+		$this->systemLogger->log('Shutting down ...', LOG_INFO);
+
+		$this->configurationManager->shutdown();
+		$this->objectManager->shutdown();
 	}
 
 	/**
@@ -518,19 +526,6 @@ class Bootstrap {
 		$this->objectManager->setInstance('F3\FLOW3\Utility\Environment', $this->environment);
 
 		\F3\FLOW3\Error\Debugger::injectObjectManager($this->objectManager);
-	}
-
-	/**
-	 * Initializes the Lock Manager
-	 *
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @see initialize()
-	 */
-	public function initializeLockManager() {
-		$lockManager = $this->objectManager->get('F3\FLOW3\Core\LockManager');
-		$this->siteLocked = $lockManager->isSiteLocked();
-		$this->exceptionHandler->injectLockManager($lockManager);
 	}
 
 	/**
