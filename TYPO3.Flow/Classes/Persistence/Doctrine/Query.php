@@ -81,9 +81,14 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 *
 	 * @return \F3\FLOW3\Persistence\QueryResultInterface The query result
 	 * @api
+	 * @todo improve try/catch block
 	 */
 	public function execute() {
-		return new \F3\FLOW3\Persistence\Doctrine\QueryResult($this->queryBuilder->getQuery()->getResult(), $this);
+		try {
+			return new \F3\FLOW3\Persistence\Doctrine\QueryResult($this->queryBuilder->getQuery()->getResult(), $this);
+		} catch (\Doctrine\ORM\ORMException $e) {
+			return new \F3\FLOW3\Persistence\Doctrine\QueryResult(array(), $this);
+		}
 	}
 
 	/**
@@ -91,12 +96,16 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 *
 	 * @return integer The query result count
 	 * @api
+	 * @todo improve try/catch block
 	 */
 	public function count() {
-		$dqlQuery = clone $this->queryBuilder->getQuery();
-		$dqlQuery->setHint(\Doctrine\ORM\Query::HINT_CUSTOM_TREE_WALKERS, array('F3\FLOW3\Persistence\Doctrine\CountWalker'));
-
-		return $dqlQuery->getSingleScalarResult();
+		try {
+			$dqlQuery = clone $this->queryBuilder->getQuery();
+			$dqlQuery->setHint(\Doctrine\ORM\Query::HINT_CUSTOM_TREE_WALKERS, array('F3\FLOW3\Persistence\Doctrine\CountWalker'));
+			return $dqlQuery->getSingleScalarResult();
+		} catch (\Doctrine\ORM\ORMException $e) {
+			return 0;
+		}
 	}
 
 	/**

@@ -84,10 +84,15 @@ class PersistenceManager extends \F3\FLOW3\Persistence\AbstractPersistenceManage
 	 * @param object $object
 	 * @return mixed The identifier for the object if it is known, or NULL
 	 * @api
+	 * @todo improve try/catch block
 	 */
 	public function getIdentifierByObject($object) {
 		if ($this->entityManager->contains($object)) {
-			return current($this->entityManager->getUnitOfWork()->getEntityIdentifier($object));
+			try {
+				return current($this->entityManager->getUnitOfWork()->getEntityIdentifier($object));
+			} catch (\Doctrine\ORM\ORMException $e) {
+				return NULL;
+			}
 		} else {
 			return NULL;
 		}
