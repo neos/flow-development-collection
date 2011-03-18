@@ -214,7 +214,9 @@ class Bootstrap {
 		$this->initializeClassLoader();
 		$this->initializeConfiguration();
 		$this->initializeSystemLogger();
-		$this->initializeErrorHandling();
+		if (!isset($_GET['FLOW3_BOOTSTRAP_ACTION'])) {
+			$this->initializeErrorHandling();
+		}
 
 		$this->initializePackageManagement();
 		$this->initializeCacheManagement();
@@ -287,22 +289,56 @@ class Bootstrap {
 	 * Checks if this PHP request should be a compile run and if so compiles the necessary classes.
 	 * If a compile run is really triggered, this method will not return but exit directly.
 	 *
+	 * The method makes sure that only one compile run is ever triggered concurrently. The other compile
+	 * runs will wait for the first one to finish.
+	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	protected function executeCompileSubrequestIfTriggered() {
 		if (isset($_GET['FLOW3_BOOTSTRAP_ACTION']) && $_GET['FLOW3_BOOTSTRAP_ACTION'] === 'compile') {
-			$compileKey =  isset($_GET['FLOW3_BOOTSTRAP_COMPILEKEY']) ? $_GET['FLOW3_BOOTSTRAP_COMPILEKEY'] : FALSE;
-			$compileKeyPathAndFilename = $this->environment->getPathToTemporaryDirectory() . 'CompileKey.txt';
-			if (!file_exists($compileKeyPathAndFilename) || $compileKey !== file_get_contents($compileKeyPathAndFilename)) {
-				$this->systemLogger->log(sprintf('Tried to execute compile run in %s context with invalid key (%s) ---', $this->context, $_GET['FLOW3_BOOTSTRAP_COMPILEKEY']), LOG_ALERT);
-				exit(1);
+
+			$pathOfLockDirectory = $this->environment->getPathToTemporaryDirectory() . 'CompilationLock';
+
+			$concurrentCompilationHasBeenRunning = FALSE;
+				// mkdir is an *atomic operation*, meaning this is our synchronization point.
+				// the "file_exists" check before is just a way to prevent a PHP warning of
+				// mkdir (which happens if the directory already exists) for most cases.
+
+			$i = 0;
+			while (file_exists($pathOfLockDirectory) || !mkdir($pathOfLockDirectory)) {
+				$concurrentCompilationHasBeenRunning = TRUE;
+					// If some other process is currently compiling, we'll wait for 0.3 seconds, and try again.
+				usleep(300000);
+
+					// After 9 seconds, we forcefully abort the other compilation and start our one (to prevent deadlocks!
+				if ($i >= 30) {
+					$concurrentCompilationHasBeenRunning = FALSE;
+					break;
+				}
+				$i++;
+			}
+			if ($concurrentCompilationHasBeenRunning === TRUE) {
+					// Another concurrent compilation has finished at this point, so it is safe to return
+					// the successful compilation, no? (or should we cross-check?)
+				echo 'OK';
+				exit;
 			}
 
-			$this->systemLogger->log(sprintf('--- Compile run in %s context (compile key: %s) ---', $this->context, $compileKey), LOG_INFO);
-			unlink($compileKeyPathAndFilename);
-			$this->compile();
-			$this->systemLogger->log(sprintf('--- Finished compile run ---', $this->context), LOG_INFO);
+			try {
+				$this->systemLogger->log(sprintf('--- Compile run in %s context ---', $this->context), LOG_INFO);
+				$this->compile();
+				$this->systemLogger->log(sprintf('--- Finished compile run ---', $this->context), LOG_INFO);
+			} catch (\Exception $exception) {
+				if (file_exists($pathOfLockDirectory)) {
+					rmdir($pathOfLockDirectory);
+				}
+				throw $exception;
+			}
+			if (file_exists($pathOfLockDirectory)) {
+				rmdir($pathOfLockDirectory);
+			}
 			exit;
 		}
 
@@ -343,9 +379,7 @@ class Bootstrap {
 					throw new \F3\FLOW3\Exception(sprintf('Could not execute the FLOW3 compiler with "%s". ', $command), 1299854519);
 				}
 			} else {
-				$compileKey = \F3\FLOW3\Utility\Algorithms::generateUUID();
-				file_put_contents($this->environment->getPathToTemporaryDirectory() . 'CompileKey.txt', $compileKey);
-				$compileUri = $this->environment->getBaseUri() . '?FLOW3_BOOTSTRAP_ACTION=compile&FLOW3_BOOTSTRAP_COMPILEKEY=' . $compileKey;
+				$compileUri = $this->environment->getBaseUri() . '?FLOW3_BOOTSTRAP_ACTION=compile';
 				try {
 					$result = file_get_contents($compileUri);
 				} catch (\Exception $exception) {
