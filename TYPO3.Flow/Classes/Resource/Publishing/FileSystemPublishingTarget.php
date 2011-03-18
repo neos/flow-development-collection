@@ -114,13 +114,12 @@ class FileSystemPublishingTarget extends \F3\FLOW3\Resource\Publishing\AbstractR
 		if (!is_dir($sourcePath)) {
 			return FALSE;
 		}
-
-		$sourcePath = rtrim(\F3\FLOW3\Utility\Files::getUnixStylePath($sourcePath), '/');
+		$sourcePath = $this->realpath(rtrim(\F3\FLOW3\Utility\Files::getUnixStylePath($sourcePath), '/'));
 		$targetPath = rtrim(\F3\FLOW3\Utility\Files::concatenatePaths(array($this->resourcesPublishingPath, 'Static', $relativeTargetPath)), '/');
 
 		if ($this->settings['resource']['publishing']['fileSystem']['mirrorMode'] == 'link') {
 			if (file_exists($targetPath)) {
-				if (\F3\FLOW3\Utility\Files::is_link($targetPath) && (rtrim(\F3\FLOW3\Utility\Files::getUnixStylePath(realpath($targetPath)), '/') === $sourcePath)) {
+				if (\F3\FLOW3\Utility\Files::is_link($targetPath) && (rtrim(\F3\FLOW3\Utility\Files::getUnixStylePath($this->realpath($targetPath)), '/') === $sourcePath)) {
 					return TRUE;
 				} elseif (is_dir($targetPath)) {
 					\F3\FLOW3\Utility\Files::removeDirectoryRecursively($targetPath);
@@ -268,7 +267,7 @@ class FileSystemPublishingTarget extends \F3\FLOW3\Resource\Publishing\AbstractR
 				break;
 			case 'link' :
 				if (file_exists($targetPathAndFilename)) {
-					if (\F3\FLOW3\Utility\Files::is_link($targetPathAndFilename) && (realpath($targetPathAndFilename) === $sourcePathAndFilename)) {
+					if (\F3\FLOW3\Utility\Files::is_link($targetPathAndFilename) && ($this->realpath($targetPathAndFilename) === $this->realpath($sourcePathAndFilename))) {
 						break;
 					}
 					unlink($targetPathAndFilename);
@@ -311,6 +310,18 @@ class FileSystemPublishingTarget extends \F3\FLOW3\Resource\Publishing\AbstractR
 		$publishPath = $this->resourcesPublishingPath . 'Persistent/';
 		if ($returnFilename === TRUE) return $publishPath . $resource->getResourcePointer()->getHash() . '.' . $resource->getFileExtension();
 		return $publishPath;
+	}
+
+	/**
+	 * Wrapper around realpath(). Needed for testing, as realpath() cannot be mocked
+	 * by vfsStream.
+	 *
+	 * @param string $path
+	 * @return string
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	protected function realpath($path) {
+		return realpath($path);
 	}
 }
 

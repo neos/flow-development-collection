@@ -26,6 +26,7 @@ namespace F3\FLOW3\Tests\Unit\Resource\Publishing;
  * Testcase for the File System Publishing Target
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @covers \F3\FLOW3\Resource\Publishing\FileSystemPublishingTarget<extended>
  */
 class FileSystemPublishingTargetTest extends \F3\FLOW3\Tests\UnitTestCase {
 
@@ -83,14 +84,17 @@ class FileSystemPublishingTargetTest extends \F3\FLOW3\Tests\UnitTestCase {
 		mkdir('vfs://Foo/Web/_Resources');
 
 
-		$publishingTarget = $this->getAccessibleMock('F3\FLOW3\Resource\Publishing\FileSystemPublishingTarget', array('mirrorFile'));
+		$publishingTarget = $this->getAccessibleMock('F3\FLOW3\Resource\Publishing\FileSystemPublishingTarget', array('mirrorFile', 'realpath'));
+		$publishingTarget->expects($this->at(0))->method('realpath')->will($this->returnCallback(function($path) {
+			return $path;
+		}));
 		$publishingTarget->_set('resourcesPublishingPath', 'vfs://Foo/Web/_Resources/');
 
-		$publishingTarget->expects($this->at(0))->method('mirrorFile')->with('vfs://Foo/Sources/SubDirectory/SubSubDirectory/file3.txt', 'vfs://Foo/Web/_Resources/Static/Bar/SubDirectory/SubSubDirectory/file3.txt');
-		$publishingTarget->expects($this->at(1))->method('mirrorFile')->with('vfs://Foo/Sources/SubDirectory/SubSubDirectory/file5.jpg', 'vfs://Foo/Web/_Resources/Static/Bar/SubDirectory/SubSubDirectory/file5.jpg');
-		$publishingTarget->expects($this->at(2))->method('mirrorFile')->with('vfs://Foo/Sources/SubDirectory/file2.txt', 'vfs://Foo/Web/_Resources/Static/Bar/SubDirectory/file2.txt');
-		$publishingTarget->expects($this->at(3))->method('mirrorFile')->with('vfs://Foo/Sources/file1.txt', 'vfs://Foo/Web/_Resources/Static/Bar/file1.txt');
-		$publishingTarget->expects($this->at(4))->method('mirrorFile')->with('vfs://Foo/Sources/file2.txt', 'vfs://Foo/Web/_Resources/Static/Bar/file2.txt');
+		$publishingTarget->expects($this->at(1))->method('mirrorFile')->with('vfs://Foo/Sources/SubDirectory/SubSubDirectory/file3.txt', 'vfs://Foo/Web/_Resources/Static/Bar/SubDirectory/SubSubDirectory/file3.txt');
+		$publishingTarget->expects($this->at(2))->method('mirrorFile')->with('vfs://Foo/Sources/SubDirectory/SubSubDirectory/file5.jpg', 'vfs://Foo/Web/_Resources/Static/Bar/SubDirectory/SubSubDirectory/file5.jpg');
+		$publishingTarget->expects($this->at(3))->method('mirrorFile')->with('vfs://Foo/Sources/SubDirectory/file2.txt', 'vfs://Foo/Web/_Resources/Static/Bar/SubDirectory/file2.txt');
+		$publishingTarget->expects($this->at(4))->method('mirrorFile')->with('vfs://Foo/Sources/file1.txt', 'vfs://Foo/Web/_Resources/Static/Bar/file1.txt');
+		$publishingTarget->expects($this->at(5))->method('mirrorFile')->with('vfs://Foo/Sources/file2.txt', 'vfs://Foo/Web/_Resources/Static/Bar/file2.txt');
 
 		$result = $publishingTarget->publishStaticResources('vfs://Foo/Sources', 'Bar');
 		$this->assertTrue($result);
@@ -146,7 +150,11 @@ class FileSystemPublishingTargetTest extends \F3\FLOW3\Tests\UnitTestCase {
 			}
 		};
 
-		$publishingTarget = $this->getAccessibleMock('F3\FLOW3\Resource\Publishing\FileSystemPublishingTarget', array('mirrorFile'));
+		$publishingTarget = $this->getAccessibleMock('F3\FLOW3\Resource\Publishing\FileSystemPublishingTarget', array('mirrorFile', 'realpath'));
+		$publishingTarget->expects($this->any())->method('realpath')->will($this->returnCallback(function($path) {
+			return $path;
+		}));
+
 		$publishingTarget->_set('resourcesPublishingPath', 'vfs://Foo/Web/_Resources/');
 
 		$publishingTarget->expects($this->exactly(2))->method('mirrorFile')->will($this->returnCallback($mirrorFileCallback));
