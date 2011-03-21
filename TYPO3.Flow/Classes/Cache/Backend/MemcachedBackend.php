@@ -272,7 +272,7 @@ class MemcachedBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 */
 	public function remove($entryIdentifier) {
 		$this->removeIdentifierFromAllTags($entryIdentifier);
-		return $this->memcache->delete($this->identifierPrefix . $entryIdentifier);
+		return $this->memcache->delete($this->identifierPrefix . $entryIdentifier, 0);
 	}
 
 	/**
@@ -384,12 +384,12 @@ class MemcachedBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 				if (count($identifiers)) {
 					$this->memcache->set($this->identifierPrefix . 'tag_' . $tag, $identifiers);
 				} else {
-					$this->memcache->delete($this->identifierPrefix . 'tag_' . $tag);
+					$this->memcache->delete($this->identifierPrefix . 'tag_' . $tag, 0);
 				}
 			}
 		}
 			// Clear reverse tag index for this identifier
-		$this->memcache->delete($this->identifierPrefix . 'ident_' . $entryIdentifier);
+		$this->memcache->delete($this->identifierPrefix . 'ident_' . $entryIdentifier, 0);
 	}
 
 	/**
