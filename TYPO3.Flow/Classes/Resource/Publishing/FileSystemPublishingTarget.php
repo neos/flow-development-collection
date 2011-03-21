@@ -114,7 +114,7 @@ class FileSystemPublishingTarget extends \F3\FLOW3\Resource\Publishing\AbstractR
 		if (!is_dir($sourcePath)) {
 			return FALSE;
 		}
-		$sourcePath = $this->realpath(rtrim(\F3\FLOW3\Utility\Files::getUnixStylePath($sourcePath), '/'));
+		$sourcePath = rtrim(\F3\FLOW3\Utility\Files::getUnixStylePath($this->realpath($sourcePath)), '/');
 		$targetPath = rtrim(\F3\FLOW3\Utility\Files::concatenatePaths(array($this->resourcesPublishingPath, 'Static', $relativeTargetPath)), '/');
 
 		if ($this->settings['resource']['publishing']['fileSystem']['mirrorMode'] == 'link') {
