@@ -233,7 +233,7 @@ class ConfigurationBuilder {
 			case 'session':
 				return Configuration::SCOPE_SESSION;
 			default:
-				throw new \F3\FLOW3\Object\Exception\InvalidObjectConfigurationException('Invalid scope', 1167574991);
+				throw new \F3\FLOW3\Object\Exception\InvalidObjectConfigurationException('Invalid scope "' . $value . '"', 1167574991);
 		}
 	}
 
