@@ -403,7 +403,7 @@ class Bootstrap {
 		$this->initializePersistence();
 		$this->initializeSession();
 		$this->initializeResources();
-#		$this->initializeI18n();
+		$this->initializeI18n();
 
 		$requestHandlerResolver = $this->objectManager->get('F3\FLOW3\MVC\RequestHandlerResolver');
 		$requestHandler = $requestHandlerResolver->resolveRequestHandler();
