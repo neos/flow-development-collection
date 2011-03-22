@@ -40,11 +40,6 @@ class XliffTranslationProvider implements \F3\FLOW3\I18n\TranslationProvider\Tra
 	protected $xliffBasePath = 'resource://FLOW3/Private/Locale/Translations/';
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
-	 */
-	protected $objectManager;
-
-	/**
 	 * @var \F3\FLOW3\I18n\Service
 	 */
 	protected $localizationService;
@@ -63,15 +58,6 @@ class XliffTranslationProvider implements \F3\FLOW3\I18n\TranslationProvider\Tra
 	 * @var array<\F3\FLOW3\I18n\Xliff\XliffModel>
 	 */
 	protected $models;
-
-	/**
-	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
-	 * @return void
-	 * @author Karol Gusak <firstname@lastname.eu>
-	 */
-	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
-		$this->objectManager = $objectManager;
-	}
 
 	/**
 	 * @param \F3\FLOW3\I18n\Service $localizationService
@@ -160,7 +146,7 @@ class XliffTranslationProvider implements \F3\FLOW3\I18n\TranslationProvider\Tra
 			return $this->models[$sourceName];
 		}
 
-		return $this->models[$sourceName] = $this->objectManager->create('F3\FLOW3\I18n\Xliff\XliffModel', $sourceName);
+		return $this->models[$sourceName] = new \F3\FLOW3\I18n\Xliff\XliffModel($sourceName);
 	}
 }
 
