@@ -62,7 +62,7 @@ class MemcachedBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	/**
 	 * Instance of the PHP Memcache class
 	 *
-	 * @var Memcache
+	 * @var \Memcache
 	 */
 	protected $memcache;
 

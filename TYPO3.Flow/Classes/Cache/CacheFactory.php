@@ -85,10 +85,16 @@ class CacheFactory {
 			throw new \F3\FLOW3\Cache\Exception\InvalidBackendException('"' . $backendObjectName . '" is not a valid cache backend object.', 1216304301);
 		}
 		$backend->injectEnvironment($this->environment);
+		if (is_callable(array($backend, 'initializeObject'))) {
+			$backend->initializeObject(\F3\FLOW3\Object\ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED);
+		}
 
 		$cache = new $cacheObjectName($cacheIdentifier, $backend);
 		if (!$cache instanceof \F3\FLOW3\Cache\Frontend\FrontendInterface) {
 			throw new \F3\FLOW3\Cache\Exception\InvalidCacheException('"' . $cacheObjectName . '" is not a valid cache frontend object.', 1216304300);
+		}
+		if (is_callable(array($cache, 'initializeObject'))) {
+			$cache->initializeObject(\F3\FLOW3\Object\ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED);
 		}
 
 		$this->cacheManager->registerCache($cache);
