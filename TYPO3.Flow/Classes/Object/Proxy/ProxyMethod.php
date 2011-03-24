@@ -48,6 +48,13 @@ class ProxyMethod {
 	protected $methodName;
 
 	/**
+	 * Visibility of the method
+	 *
+	 * @var string
+	 */
+	protected $visibility;
+
+	/**
 	 * @var string
 	 */
 	protected $addedPreParentCallCode = '';
@@ -88,6 +95,17 @@ class ProxyMethod {
 	 */
 	public function injectReflectionService(\F3\FLOW3\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
+	}
+
+	/**
+	 * Overrides the method's visibility
+	 *
+	 * @param string $visibility One of 'public', 'protected', 'private'
+	 * @return void
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function overrideMethodVisibility($visibility) {
+		$this->visibility = $visibility;
 	}
 
 	/**
@@ -136,11 +154,13 @@ class ProxyMethod {
 
 		$staticKeyword = $this->reflectionService->isMethodStatic($this->fullOriginalClassName, $this->methodName) ? 'static ' : '';
 
+		$visibility = ($this->visibility === NULL ? $this->getMethodVisibilityString() : $this->visibility);
+
 		$code = '';
 		if (strlen($this->addedPreParentCallCode) + strlen($this->addedPostParentCallCode) > 0) {
 			$code = "\n" .
 				$methodDocumentation .
-				"	" . $staticKeyword . "public function " . $this->methodName . "(" . $methodParametersCode . ") {\n" .
+				"	" . $staticKeyword . " " . $visibility . " function " . $this->methodName . "(" . $methodParametersCode . ") {\n" .
 				$this->addedPreParentCallCode;
 
 			if ($this->addedPostParentCallCode !== '') {
@@ -288,6 +308,23 @@ class ProxyMethod {
 			$code .= ', ';
 		}
 		return rtrim($code, ', ') . ')';
+	}
+
+	/**
+	 * Returns the method's visibility string found by the reflection service
+	 * Note: If the reflection service has no information about this method,
+	 * 'public' is returned.
+	 *
+	 * @return string One of 'public', 'protected' or 'private'
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	protected function getMethodVisibilityString() {
+		if ($this->reflectionService->isMethodProtected($this->fullOriginalClassName, $this->methodName)) {
+			return 'protected';
+		} elseif ($this->reflectionService->isMethodPrivate($this->fullOriginalClassName, $this->methodName)) {
+			return 'private';
+		}
+		return 'public';
 	}
 }
 ?>

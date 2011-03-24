@@ -432,8 +432,9 @@ class ProxyClassBuilder {
 		$proxyClass->addInterfaces($introducedInterfaces);
 
 		$proxyClass->getMethod('FLOW3_AOP_Proxy_buildMethodsAndAdvicesArray')->addPreParentCallCode($this->buildMethodsAndAdvicesArrayCode($interceptedMethods));
-		$proxyClass->getConstructor()->addPreParentCallCode("\n\t\t\$this->FLOW3_AOP_Proxy_buildMethodsAndAdvicesArray();\n");
-		$proxyClass->getMethod('__wakeup')->addPreParentCallCode("\n\t\t\$this->FLOW3_AOP_Proxy_buildMethodsAndAdvicesArray();\n");
+		$proxyClass->getMethod('FLOW3_AOP_Proxy_buildMethodsAndAdvicesArray')->overrideMethodVisibility('private');
+		$proxyClass->getConstructor()->addPreParentCallCode("\n\t\t\t\$this->FLOW3_AOP_Proxy_buildMethodsAndAdvicesArray();\n");
+		$proxyClass->getMethod('__wakeup')->addPreParentCallCode("\t\t\$this->FLOW3_AOP_Proxy_buildMethodsAndAdvicesArray();\n");
 
 		$this->buildGetAdviceChainsMethodCode($targetClassName);
 		$this->buildInvokeJoinPointMethodCode($targetClassName);
@@ -650,6 +651,7 @@ class ProxyClassBuilder {
 	protected function buildGetAdviceChainsMethodCode($targetClassName) {
 		$proxyMethod = $this->compiler->getProxyClass($targetClassName)->getMethod('FLOW3_AOP_Proxy_getAdviceChains');
 		$proxyMethod->setMethodParametersCode('$methodName');
+		$proxyMethod->overrideMethodVisibility('private');
 
 		$code = <<<'EOT'
 		$adviceChains = NULL;

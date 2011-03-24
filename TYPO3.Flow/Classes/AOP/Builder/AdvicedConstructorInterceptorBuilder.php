@@ -51,19 +51,19 @@ class AdvicedConstructorInterceptorBuilder extends \F3\FLOW3\AOP\Builder\Abstrac
 
 		if ($methodName !== NULL) {
 			$proxyMethod->addPreParentCallCode('
-		if (isset($this->FLOW3_AOP_Proxy_methodIsInAdviceMode[\'' . $methodName . '\'])) {
+			if (isset($this->FLOW3_AOP_Proxy_methodIsInAdviceMode[\'' . $methodName . '\'])) {
 ');
 			$proxyMethod->addPostParentCallCode('
-		} else {
-			$this->FLOW3_AOP_Proxy_methodIsInAdviceMode[\'' . $methodName . '\'] = TRUE;
-			try {
-			' . $advicesCode . '
-			} catch(\Exception $e) {
+			} else {
+				$this->FLOW3_AOP_Proxy_methodIsInAdviceMode[\'' . $methodName . '\'] = TRUE;
+				try {
+				' . $advicesCode . '
+				} catch(\Exception $e) {
+					unset($this->FLOW3_AOP_Proxy_methodIsInAdviceMode[\'' . $methodName . '\']);
+					throw $e;
+				}
 				unset($this->FLOW3_AOP_Proxy_methodIsInAdviceMode[\'' . $methodName . '\']);
-				throw $e;
 			}
-			unset($this->FLOW3_AOP_Proxy_methodIsInAdviceMode[\'' . $methodName . '\']);
-		}
 ');
 		}
 	}

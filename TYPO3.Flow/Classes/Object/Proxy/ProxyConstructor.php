@@ -65,7 +65,11 @@ class ProxyConstructor extends \F3\FLOW3\Object\Proxy\ProxyMethod {
 				$methodDocumentation .
 				"	" . $staticKeyword . "public function __construct() {\n" .
 				$argumentsCode .
-				$this->addedPreParentCallCode . $callParentMethodCode . $this->addedPostParentCallCode .
+				"		if (get_class(\$this) !== __CLASS__) {\n" .
+				"		" . $callParentMethodCode .
+				"		} else {\n" .
+				"			" . $this->addedPreParentCallCode . $callParentMethodCode . $this->addedPostParentCallCode .
+				"		}\n" .
 				"	}\n";
 		}
 		return $code;
