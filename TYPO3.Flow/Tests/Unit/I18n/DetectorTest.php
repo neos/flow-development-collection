@@ -39,14 +39,6 @@ class DetectorTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function setUp() {
-		$returnLocaleCallback = function() {
-			$args = func_get_args();
-			return new \F3\FLOW3\I18n\Locale($args[1]);
-		};
-
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->any())->method('create')->with('F3\FLOW3\I18n\Locale')->will($this->returnCallback($returnLocaleCallback));
-
 		$findBestMatchingLocaleCallback = function() {
 			$args = func_get_args();
 			$localeIdentifier = (string)$args[0];
@@ -70,7 +62,6 @@ class DetectorTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		$this->detector = $this->getAccessibleMock('F3\FLOW3\I18n\Detector', array('dummy'));
 		$this->detector->_set('localeBasePath', 'vfs://Foo/');
-		$this->detector->injectObjectManager($mockObjectManager);
 		$this->detector->injectLocaleCollection($mockLocaleCollection);
 		$this->detector->injectLocalizationService($mockLocalizationService);
 	}

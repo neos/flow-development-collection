@@ -48,7 +48,6 @@ class ServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		$desiredLocale = new \F3\FLOW3\I18n\Locale('en_GB');
 		$parentLocale = new \F3\FLOW3\I18n\Locale('en');
-		$defaultLocale = new \F3\FLOW3\I18n\Locale('sv_SE');
 
 		$filename = 'vfs://Foo/Bar/Public/images/foobar.png';
 		$expectedFilename = 'vfs://Foo/Bar/Public/images/foobar.en.png';
@@ -57,9 +56,6 @@ class ServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockLocaleCollection->expects($this->once())->method('findBestMatchingLocale')->with($desiredLocale)->will($this->returnValue($desiredLocale));
 		$mockLocaleCollection->expects($this->once())->method('getParentLocaleOf')->with($desiredLocale)->will($this->returnValue($parentLocale));
 
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->once())->method('create')->with('F3\FLOW3\I18n\Locale', 'sv_SE')->will($this->returnValue($defaultLocale));
-
 		$mockSettings = array('locale' => array('defaultLocaleIdentifier' => 'sv_SE'));
 
 		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
@@ -67,7 +63,6 @@ class ServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockCache->expects($this->once())->method('get')->with('availableLocales')->will($this->returnValue($mockLocaleCollection));
 
 		$service = new \F3\FLOW3\I18n\Service();
-		$service->injectObjectManager($mockObjectManager);
 		$service->injectLocaleCollection($mockLocaleCollection);
 		$service->injectSettings($mockSettings);
 		$service->injectCache($mockCache);
@@ -107,14 +102,6 @@ class ServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 			file_put_contents('vfs://Foo/Bar/Private/foobar.' . $localeIdentifier . '.baz', 'FooBar');
 		}
 
-		$returnLocaleCallback = function() {
-			$args = func_get_args();
-			return new \F3\FLOW3\I18n\Locale($args[1]);
-		};
-
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->any())->method('create')->with('F3\FLOW3\I18n\Locale')->will($this->returnCallback($returnLocaleCallback));
-
 		$mockPackage = $this->getMock('F3\FLOW3\Package\PackageInterface');
 		$mockPackage->expects($this->any())->method('getPackageKey')->will($this->returnValue('Bar'));
 
@@ -131,7 +118,6 @@ class ServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		$service = $this->getAccessibleMock('F3\FLOW3\I18n\Service', array('dummy'));
 		$service->_set('localeBasePath', 'vfs://Foo/');
-		$service->injectObjectManager($mockObjectManager);
 		$service->injectPackageManager($mockPackageManager);
 		$service->injectLocaleCollection($mockLocaleCollection);
 		$service->injectSettings($mockSettings);

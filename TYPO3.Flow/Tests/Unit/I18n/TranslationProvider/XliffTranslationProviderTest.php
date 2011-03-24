@@ -77,21 +77,12 @@ class XliffTranslationProviderTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function returnsTranslatedLabelWhenLabelIdProvided() {
-		$concatenatedFilename = \F3\FLOW3\Utility\Files::concatenatePaths(array('resource://FLOW3/Private/Locale/Translations/', $this->sampleSourceName . '.xlf'));
-
-		$mockLocalizationService = $this->getMock('F3\FLOW3\I18n\Service');
-		$mockLocalizationService->expects($this->once())->method('getLocalizedFilename', $concatenatedFilename, $this->sampleLocale)->will($this->returnValue('localized filename'));
-
 		$mockModel = $this->getMock('F3\FLOW3\I18n\Xliff\XliffModel', array(), array('foo'));
 		$mockModel->expects($this->once())->method('getTargetByTransUnitId')->with('bar', 1)->will($this->returnValue('baz'));
 
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->once())->method('create', 'F3\FLOW3\I18n\Xliff\XliffModel', 'localized filename')->will($this->returnValue($mockModel));
-
-		$translationProvider = new \F3\FLOW3\I18n\TranslationProvider\XliffTranslationProvider();
+		$translationProvider = $this->getAccessibleMock('F3\FLOW3\I18n\TranslationProvider\XliffTranslationProvider', array('getModel'));
 		$translationProvider->injectPluralsReader($this->mockPluralsReader);
-		$translationProvider->injectObjectManager($mockObjectManager);
-		$translationProvider->injectLocalizationService($mockLocalizationService);
+		$translationProvider->expects($this->once())->method('getModel')->with($this->sampleSourceName, $this->sampleLocale)->will($this->returnValue($mockModel));
 
 		$result = $translationProvider->getTranslationById($this->sampleSourceName, 'bar', $this->sampleLocale);
 		$this->assertEquals('baz', $result);

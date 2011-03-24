@@ -60,16 +60,9 @@ class CldrRepositoryTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function modelIsReturnedCorrectlyForSingleFile() {
 		file_put_contents('vfs://Foo/Bar.xml', '');
 
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->once())->method('create')->with('F3\FLOW3\I18n\Cldr\CldrModel')->will($this->returnValue('ModelWouldBeHere'));
-		$this->repository->injectObjectManager($mockObjectManager);
-
-		$result = $this->repository->getModel('Bar');
-		$this->assertEquals('ModelWouldBeHere', $result);
-
 			// Second access should not invoke objectManager request
 		$result = $this->repository->getModel('Bar');
-		$this->assertEquals('ModelWouldBeHere', $result);
+		$this->assertAttributeContains('vfs://Foo/Bar.xml', 'sourcePaths',  $result);
 
 		$result = $this->repository->getModel('NoSuchFile');
 		$this->assertEquals(FALSE, $result);
@@ -83,21 +76,14 @@ class CldrRepositoryTest extends \F3\FLOW3\Tests\UnitTestCase {
 		mkdir('vfs://Foo/Directory');
 		file_put_contents('vfs://Foo/Directory/en.xml', '');
 
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->once())->method('create')->with('F3\FLOW3\I18n\Cldr\CldrModel', array('vfs://Foo/Directory/root.xml', 'vfs://Foo/Directory/en.xml'))->will($this->returnValue('ModelWouldBeHere'));
-
 		$mockLocalizationService = $this->getMock('F3\FLOW3\I18n\Service');
 		$mockLocalizationService->expects($this->once())->method('getParentLocaleOf')->will($this->returnValue(NULL));
 
-		$this->repository->injectObjectManager($mockObjectManager);
 		$this->repository->injectLocalizationService($mockLocalizationService);
 
 		$result = $this->repository->getModelForLocale($this->dummyLocale, 'Directory');
-		$this->assertEquals('ModelWouldBeHere', $result);
-
-			// Second access should not invoke objectManager requests
-		$result = $this->repository->getModelForLocale($this->dummyLocale, 'Directory');
-		$this->assertEquals('ModelWouldBeHere', $result);
+		$this->assertAttributeContains('vfs://Foo/Directory/root.xml', 'sourcePaths',  $result);
+		$this->assertAttributeContains('vfs://Foo/Directory/en.xml', 'sourcePaths',  $result);
 
 		$result = $this->repository->getModelForLocale($this->dummyLocale, 'NoSuchDirectory');
 		$this->assertEquals(FALSE, $result);
