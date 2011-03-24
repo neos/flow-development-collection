@@ -86,7 +86,12 @@ class VariableFrontend extends \F3\FLOW3\Cache\Frontend\AbstractFrontend {
 	public function get($entryIdentifier) {
 		if (!$this->isValidEntryIdentifier($entryIdentifier)) throw new \InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1233058294);
 
-		return ($this->useIgBinary === TRUE) ? igbinary_unserialize($this->backend->get($entryIdentifier)) : unserialize($this->backend->get($entryIdentifier));
+		$rawResult = $this->backend->get($entryIdentifier);
+		if ($rawResult === FALSE) {
+			return FALSE;
+		} else {
+			return ($this->useIgBinary === TRUE) ? igbinary_unserialize($rawResult) : unserialize($rawResult);
+		}
 	}
 
 	/**
@@ -103,7 +108,10 @@ class VariableFrontend extends \F3\FLOW3\Cache\Frontend\AbstractFrontend {
 		$entries = array();
 		$identifiers = $this->backend->findIdentifiersByTag($tag);
 		foreach ($identifiers as $identifier) {
-			$entries[] = ($this->useIgBinary === TRUE) ? igbinary_unserialize($this->backend->get($identifier)) : unserialize($this->backend->get($identifier));
+			$rawResult = $this->backend->get($identifier);
+			if ($rawResult !== FALSE) {
+				$entries[] = ($this->useIgBinary === TRUE) ? igbinary_unserialize($rawResult) : unserialize($rawResult);
+			}
 		}
 		return $entries;
 	}
