@@ -37,11 +37,6 @@ class Service {
 	protected $settings;
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
-	 */
-	protected $objectManager;
-
-	/**
 	 * @var \F3\FLOW3\Package\PackageManagerInterface
 	 */
 	protected $packageManager;
@@ -73,17 +68,6 @@ class Service {
 	 */
 	public function injectSettings(array $settings) {
 		$this->settings = $settings;
-	}
-
-	/**
-	 * Injects the object factory
-	 *
-	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager A reference to the object manager
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
-		$this->objectManager = $objectManager;
 	}
 
 	/**
@@ -124,7 +108,7 @@ class Service {
 	 */
 	public function initialize() {
 		try {
-			$this->settings['locale']['defaultLocale'] = $this->objectManager->create('F3\FLOW3\I18n\Locale', $this->settings['locale']['defaultLocaleIdentifier']);
+			$this->settings['locale']['defaultLocale'] = new \F3\FLOW3\I18n\Locale($this->settings['locale']['defaultLocaleIdentifier']);
 		} catch (\F3\FLOW3\I18n\Exception\InvalidLocaleIdentifierException $exception) {
 			throw new \F3\FLOW3\I18n\Exception\InvalidLocaleIdentifierException('Default locale identifier set in the configuration is invalid.', 1280935191);
 		}
@@ -263,7 +247,7 @@ class Service {
 
 					if ($localeIdentifier !== FALSE) {
 						try {
-							$locale = $this->objectManager->create('F3\FLOW3\I18n\Locale', $localeIdentifier);
+							$locale = new \F3\FLOW3\I18n\Locale($localeIdentifier);
 							$this->localeCollection->addLocale($locale);
 						} catch (\F3\FLOW3\I18n\Exception\InvalidLocaleIdentifierException $exception) {
 								// Just ignore current file and proceed

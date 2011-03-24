@@ -42,11 +42,6 @@ class CldrRepository {
 	protected $cldrBasePath = 'resource://FLOW3/Private/Locale/CLDR/Sources/';
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
-	 */
-	protected $objectManager;
-
-	/**
 	 * @var \F3\FLOW3\I18n\Service
 	 */
 	protected $localizationService;
@@ -67,15 +62,6 @@ class CldrRepository {
 	 * @var array<\F3\FLOW3\I18n\Cldr\CldrModel>
 	 */
 	protected $models;
-
-	/**
-	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
-	 * @return void
-	 * @author Karol Gusak <karol@gusak.eu>
-	 */
-	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
-		$this->objectManager = $objectManager;
-	}
 
 	/**
 	 * @param \F3\FLOW3\I18n\Service $localizationService
@@ -109,7 +95,7 @@ class CldrRepository {
 			return FALSE;
 		}
 
-		return $this->models[$filename] = $this->objectManager->create('F3\FLOW3\I18n\Cldr\CldrModel', array($filename));
+		return $this->models[$filename] = new \F3\FLOW3\I18n\Cldr\CldrModel(array($filename));
 	}
 
 	/**
@@ -142,7 +128,7 @@ class CldrRepository {
 
 		$filesInHierarchy = $this->findLocaleChain($locale, $directoryPath);
 
-		return $this->models[$directoryPath][(string)$locale] = $this->objectManager->create('F3\FLOW3\I18n\Cldr\CldrModel', $filesInHierarchy);
+		return $this->models[$directoryPath][(string)$locale] = new \F3\FLOW3\I18n\Cldr\CldrModel($filesInHierarchy);
 	}
 
 	/**

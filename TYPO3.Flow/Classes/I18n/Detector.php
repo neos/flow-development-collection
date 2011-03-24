@@ -32,11 +32,6 @@ namespace F3\FLOW3\I18n;
 class Detector {
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
-	 */
-	protected $objectManager;
-
-	/**
 	 * @var \F3\FLOW3\I18n\Service
 	 */
 	protected $localizationService;
@@ -48,15 +43,6 @@ class Detector {
 	 * @var \F3\FLOW3\I18n\LocaleCollection
 	 */
 	protected $localeCollection;
-
-	/**
-	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
-	 * @return void
-	 * @author Karol Gusak <firstname@lastname.eu>
-	 */
-	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
-		$this->objectManager = $objectManager;
-	}
 
 	/**
 	 * @param \F3\FLOW3\I18n\Service $localizationService
@@ -99,7 +85,7 @@ class Detector {
 			}
 
 			try {
-				$locale = $this->objectManager->create('F3\FLOW3\I18n\Locale', $languageIdentifier);
+				$locale = new \F3\FLOW3\I18n\Locale($languageIdentifier);
 			} catch (\F3\FLOW3\I18n\Exception\InvalidLocaleIdentifierException $exception) {
 				continue;
 			}
@@ -126,7 +112,7 @@ class Detector {
 	 */
 	public function detectLocaleFromLocaleTag($localeIdentifier) {
 		try {
-			return $this->detectLocaleFromTemplateLocale($this->objectManager->create('F3\FLOW3\I18n\Locale', $localeIdentifier));
+			return $this->detectLocaleFromTemplateLocale(new \F3\FLOW3\I18n\Locale($localeIdentifier));
 		} catch (\F3\FLOW3\I18n\Exception\InvalidLocaleIdentifierException $e) {
 			return $this->localizationService->getDefaultLocale();
 		}
