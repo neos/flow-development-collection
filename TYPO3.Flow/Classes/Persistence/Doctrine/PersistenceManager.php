@@ -170,7 +170,8 @@ class PersistenceManager extends \F3\FLOW3\Persistence\AbstractPersistenceManage
 	 */
 	public function compile() {
 			// "driver" is used only for Doctrine, thus we (mis-)use it here
-		if ($this->settings['backendOptions']['driver'] !== NULL) {
+			// additionally, when no path is set, skip this step, assuming no DB is needed
+		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['path'] !== NULL) {
 			$validator = new \Doctrine\ORM\Tools\SchemaValidator($this->entityManager);
 			$errors = $validator->validateMapping();
 

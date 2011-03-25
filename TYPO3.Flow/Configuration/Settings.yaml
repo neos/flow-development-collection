@@ -114,7 +114,7 @@ FLOW3:
     # Options for the default Doctrine persistence
     backendOptions:
       driver: 'pdo_mysql'
-      path: '127.0.0.1'
+      path: null
       dbname: null
       user: null
       password: null
