@@ -1074,7 +1074,7 @@ class ReflectionService {
 		}
 
 		foreach (array_keys($nonCachedClassNames) as $className) {
-			$this->statusCache->set(str_replace('\\', '_', $className), '', array($this->statusCache->getClassTag($className)));
+			$this->statusCache->set(str_replace('\\', '_', $className), '', array(\F3\FLOW3\Cache\CacheManager::getClassTag($className)));
 		}
 
 		$data = array();
