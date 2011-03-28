@@ -37,9 +37,12 @@ class ProxyCompilerTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 	 */
 	public function proxyClassesStillContainAnnotationsFromItsOriginalClass() {
 		$class = new ClassReflection('F3\FLOW3\Tests\Functional\Object\Fixtures\PrototypeClassA');
+		$method = $class->getMethod('setSomeProperty');
 
 		$this->assertTrue($class->implementsInterface('F3\FLOW3\Object\Proxy\ProxyInterface'));
 		$this->assertTrue($class->isTaggedWith('foo'));
+		$this->assertTrue($class->isTaggedWith('bar'));
+		$this->assertTrue($method->isTaggedWith('bar'));
 	}
 
 	/**

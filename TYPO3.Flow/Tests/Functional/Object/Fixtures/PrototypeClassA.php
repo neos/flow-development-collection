@@ -27,6 +27,8 @@ namespace F3\FLOW3\Tests\Functional\Object\Fixtures;
  *
  * @scope prototype
  * @foo test annotation
+ * @bar
+ * @entity
  */
 class PrototypeClassA implements PrototypeClassAishInterface {
 
@@ -58,6 +60,7 @@ class PrototypeClassA implements PrototypeClassAishInterface {
 	/**
 	 * @param string $someProperty
 	 * @return void
+	 * @bar
 	 */
 	public function setSomeProperty($someProperty) {
 		$this->someProperty = $someProperty;
