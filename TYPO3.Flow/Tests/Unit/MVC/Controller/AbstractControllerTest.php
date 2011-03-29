@@ -135,7 +135,7 @@ class AbstractControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockResponse = $this->getMock('F3\FLOW3\MVC\Web\Response');
 
 		$mockUriBuilder = $this->getMock('F3\FLOW3\MVC\Web\Routing\UriBuilder');
-		$mockUriBuilder->expects($this->once())->method('setRequest')->with($mockRequest);
+		$mockUriBuilder->expects($this->once())->method('reset')->will($this->returnValue($mockUriBuilder));
 		$mockUriBuilder->expects($this->once())->method('uriFor')->with('show', $arguments, 'Stuff', 'Super', 'Duper\Package')->will($this->returnValue('the uri'));
 
 		$controller = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\AbstractController', array('redirectToUri'), array(), '', FALSE);
@@ -155,7 +155,7 @@ class AbstractControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockRequest->expects($this->atLeastOnce())->method('getFormat')->will($this->returnValue('json'));
 
 		$mockUriBuilder = $this->getMock('F3\FLOW3\MVC\Web\Routing\UriBuilder');
-		$mockUriBuilder->expects($this->once())->method('setRequest')->with($mockRequest);
+		$mockUriBuilder->expects($this->once())->method('reset')->will($this->returnValue($mockUriBuilder));
 		$mockUriBuilder->expects($this->once())->method('setFormat')->with('json')->will($this->returnValue($mockUriBuilder));
 
 		$controller = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\AbstractController', array('redirectToUri'), array(), '', FALSE);
@@ -173,42 +173,13 @@ class AbstractControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockRequest->expects($this->never())->method('getFormat');
 
 		$mockUriBuilder = $this->getMock('F3\FLOW3\MVC\Web\Routing\UriBuilder');
-		$mockUriBuilder->expects($this->once())->method('setRequest')->with($mockRequest);
+		$mockUriBuilder->expects($this->once())->method('reset')->will($this->returnValue($mockUriBuilder));
 		$mockUriBuilder->expects($this->once())->method('setFormat')->with('pdf')->will($this->returnValue($mockUriBuilder));
 
 		$controller = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\AbstractController', array('redirectToUri'), array(), '', FALSE);
 		$controller->_set('uriBuilder', $mockUriBuilder);
 		$controller->_set('request', $mockRequest);
 		$controller->_call('redirect', 'show', NULL, NULL, NULL, 0, 303, 'pdf');
-	}
-
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function redirectUsesTheTopLevelRequestForRedirection() {
-		$arguments = array('foo' => 'bar');
-
-		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request');
-		$mockResponse = $this->getMock('F3\FLOW3\MVC\Web\Response');
-
-		$mockSubRequest = $this->getMock('F3\FLOW3\MVC\Web\SubRequest', array(), array(), '', FALSE);
-		$mockSubRequest->expects($this->once())->method('getParentRequest')->will($this->returnValue($mockRequest));
-
-		$mockSubSubRequest = $this->getMock('F3\FLOW3\MVC\Web\SubRequest', array(), array(), '', FALSE);
-		$mockSubSubRequest->expects($this->once())->method('getParentRequest')->will($this->returnValue($mockSubRequest));
-
-
-		$mockUriBuilder = $this->getMock('F3\FLOW3\MVC\Web\Routing\UriBuilder');
-		$mockUriBuilder->expects($this->once())->method('setRequest')->with($mockRequest);
-		$mockUriBuilder->expects($this->once())->method('uriFor')->with('show', $arguments, 'Stuff', 'Super', 'Duper\Package')->will($this->returnValue('the uri'));
-
-		$controller = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\AbstractController', array('redirectToUri'), array(), '', FALSE);
-		$controller->expects($this->once())->method('redirectToUri')->with('the uri');
-		$controller->_set('uriBuilder', $mockUriBuilder);
-		$controller->_set('request', $mockSubSubRequest);
-		$controller->_set('response', $mockResponse);
-		$controller->_call('redirect', 'show', 'Stuff', 'Super\Duper\Package', $arguments);
 	}
 
 	/**

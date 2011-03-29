@@ -270,17 +270,14 @@ abstract class AbstractController implements ControllerInterface {
 		} else {
 			$subpackageKey = NULL;
 		}
-
-		$topLevelRequest = $this->request;
-		while ($topLevelRequest instanceof \F3\FLOW3\MVC\Web\SubRequest) {
-			$topLevelRequest = $topLevelRequest->getParentRequest();
+		$this->uriBuilder->reset();
+		if ($format === NULL) {
+			$this->uriBuilder->setFormat($this->request->getFormat());
+		} else {
+			$this->uriBuilder->setFormat($format);
 		}
 
-		$this->uriBuilder->setRequest($topLevelRequest);
-		$this->uriBuilder->setFormat(($format === NULL) ? $topLevelRequest->getFormat() : $format);
-
 		$uri = $this->uriBuilder->uriFor($actionName, $arguments, $controllerName, $packageKey, $subpackageKey);
-
 		$this->redirectToUri($this->request->getBaseUri() . $uri, $delay, $statusCode);
 	}
 
