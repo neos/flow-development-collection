@@ -116,8 +116,12 @@ class Files {
 		$directoryIterator = new \RecursiveDirectoryIterator($path);
 		$recursiveIterator = new \RecursiveIteratorIterator($directoryIterator);
 		foreach($recursiveIterator as $fileInfo) {
-			if (!$recursiveIterator->isDot() && @unlink($fileInfo->getPathname()) === FALSE) {
-				throw new \F3\FLOW3\Utility\Exception('Cannot unlink file "' . $fileInfo->getPathname() . '".', 1169047619);
+			try {
+				if (!$recursiveIterator->isDot() && @unlink($fileInfo->getPathname()) === FALSE) {
+					throw new \F3\FLOW3\Utility\Exception('Cannot unlink file "' . $fileInfo->getPathname() . '".', 1169047619);
+				}
+			} catch (\Exception $exception) {
+				throw new \F3\FLOW3\Utility\Exception('Cannot unlink file "' . $fileInfo->getPathname() . '".', 1301491043);
 			}
 		}
 		foreach ($directoryIterator as $fileInfo) {
