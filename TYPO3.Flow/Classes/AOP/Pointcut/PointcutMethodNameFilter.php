@@ -49,6 +49,11 @@ class PointcutMethodNameFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterI
 	protected $methodVisibility = NULL;
 
 	/**
+	 * @var \F3\FLOW3\Log\SystemLoggerInterface
+	 */
+	protected $systemLogger;
+
+	/**
 	 * @var array Array with constraints for method arguments
 	 */
 	protected $methodArgumentConstraints = array();
@@ -78,6 +83,15 @@ class PointcutMethodNameFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterI
 	 */
 	public function injectReflectionService(\F3\FLOW3\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
+	}
+
+	/**
+	 * @param \F3\FLOW3\Log\SystemLoggerInterface $systemLogger
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectSystemLogger(\F3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
+		$this->systemLogger = $systemLogger;
 	}
 
 	/**
@@ -126,6 +140,7 @@ class PointcutMethodNameFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterI
 			$objectAccess = explode('.', $argumentName, 2);
 			$argumentName = $objectAccess[0];
 			if (!array_key_exists($argumentName, $methodArguments)) {
+				$this->systemLogger->log('The argument "' . $argumentName . '" declared in pointcut does not exist in method ' . $methodDeclaringClassName . '->' . $methodName, LOG_NOTICE);
 				return FALSE;
 			}
 		}
