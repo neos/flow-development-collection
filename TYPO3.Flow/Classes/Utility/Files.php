@@ -91,10 +91,10 @@ class Files {
 
 		foreach ($directoryIterator as $file) {
 			$filename = $file->getFilename();
-			if ($file->isFile() && $filename[0] !== '.' && ($suffix === NULL || substr($filename, -$suffixLength) === $suffix)) {
+			if ($file->isFile() && !$file->isDot() && ($suffix === NULL || substr($filename, -$suffixLength) === $suffix)) {
 				$filenames[] = self::getUnixStylePath(($returnRealPath === TRUE ? realpath($file->getPathname()) : $file->getPathname()));
 			}
-			if ($file->isDir() && $filename[0] !== '.') {
+			if ($file->isDir() && !$file->isDot()) {
 				self::readDirectoryRecursively($file->getPathname(), $suffix, $returnRealPath, $filenames);
 			}
 		}
@@ -115,12 +115,12 @@ class Files {
 
 		$directoryIterator = new \RecursiveDirectoryIterator($path);
 		foreach(new \RecursiveIteratorIterator($directoryIterator) as $fileInfo) {
-			if (substr($fileInfo->getFilename(), 0, 1) !== '.' && @unlink($fileInfo->getPathname()) === FALSE) {
+			if (!$fileInfo->isDot() && @unlink($fileInfo->getPathname()) === FALSE) {
 				throw new \F3\FLOW3\Utility\Exception('Cannot unlink file "' . $fileInfo->getPathname() . '".', 1169047619);
 			}
 		}
 		foreach ($directoryIterator as $fileInfo) {
-			if ($fileInfo->isDir() && substr($fileInfo->getFilename(), 0, 1) !== '.') {
+			if ($fileInfo->isDir() && !$fileInfo->isDot()) {
 				self::removeDirectoryRecursively($fileInfo->getPathname());
 			}
 		}
