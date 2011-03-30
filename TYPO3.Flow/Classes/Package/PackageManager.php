@@ -287,7 +287,11 @@ class PackageManager implements \F3\FLOW3\Package\PackageManagerInterface {
 		}
 
 		$packagePath = $this->getPackage($packageKey)->getPackagePath();
-		\F3\FLOW3\Utility\Files::removeDirectoryRecursively($packagePath);
+		try {
+			\F3\FLOW3\Utility\Files::removeDirectoryRecursively($packagePath);
+		} catch (\F3\FLOW3\Utility\Exception $exception) {
+			throw new \F3\FLOW3\Package\Exception('Please check file permissions. The directory "' . $packagePath . '" for package "' . $packageKey . '" could not be removed.', 1301491089, $exception);
+		}
 
 		unset($this->packages[$packageKey]);
 		unset($this->packageKeys[strtolower($packageKey)]);
