@@ -47,12 +47,6 @@ class PdoBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	protected $password;
 
 	/**
-	 * Used to seperate stored data by user, SAPI, context, ...
-	 * @var string
-	 */
-	protected $scope;
-
-	/**
 	 * @var \PDO
 	 */
 	protected $databaseHandle;
@@ -99,20 +93,6 @@ class PdoBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	}
 
 	/**
-	 * Initializes the identifier prefix when setting the cache.
-	 *
-	 * @param \F3\FLOW3\Cache\Frontend\FrontendInterface $cache
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function setCache(\F3\FLOW3\Cache\Frontend\FrontendInterface $cache) {
-		parent::setCache($cache);
-		$processUser = extension_loaded('posix') ? posix_getpwuid(posix_geteuid()) : array('name' => 'default');
-		$this->scope = substr(md5(FLOW3_PATH_WEB . $this->environment->getSAPIName() . $processUser['name'] . $this->context), 0, 12);
-	}
-
-	/**
 	 * Initialize the cache backend.
 	 *
 	 * @author Karsten Dambekalns <karsten@typo3.org>
@@ -146,13 +126,13 @@ class PdoBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 
 		$lifetime = ($lifetime === NULL) ? $this->defaultLifetime : $lifetime;
 
-		$statementHandle = $this->databaseHandle->prepare('INSERT INTO "cache" ("identifier", "scope", "cache", "created", "lifetime", "content") VALUES (?, ?, ?, ?, ?, ?)');
-		$result = $statementHandle->execute(array($entryIdentifier, $this->scope, $this->cacheIdentifier, time(), $lifetime, $data));
+		$statementHandle = $this->databaseHandle->prepare('INSERT INTO "cache" ("identifier", "context", "cache", "created", "lifetime", "content") VALUES (?, ?, ?, ?, ?, ?)');
+		$result = $statementHandle->execute(array($entryIdentifier, $this->context, $this->cacheIdentifier, time(), $lifetime, $data));
 		if ($result === FALSE) throw new \F3\FLOW3\Cache\Exception('The cache entry "' . $entryIdentifier . '" could not be written.', 1259530791);
 
-		$statementHandle = $this->databaseHandle->prepare('INSERT INTO "tags" ("identifier", "scope", "cache", "tag") VALUES (?, ?, ?, ?)');
+		$statementHandle = $this->databaseHandle->prepare('INSERT INTO "tags" ("identifier", "context", "cache", "tag") VALUES (?, ?, ?, ?)');
 		foreach ($tags as $tag) {
-			$result = $statementHandle->execute(array($entryIdentifier, $this->scope, $this->cacheIdentifier, $tag));
+			$result = $statementHandle->execute(array($entryIdentifier, $this->context, $this->cacheIdentifier, $tag));
 			if ($result === FALSE) throw new \F3\FLOW3\Cache\Exception('The tag "' . $tag . ' for cache entry "' . $entryIdentifier . '" could not be written.', 1259530751);
 		}
 	}
@@ -166,8 +146,8 @@ class PdoBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @api
 	 */
 	public function get($entryIdentifier) {
-		$statementHandle = $this->databaseHandle->prepare('SELECT "content" FROM "cache" WHERE "identifier"=? AND "scope"=? AND "cache"=?' . $this->getNotExpiredStatement());
-		$statementHandle->execute(array($entryIdentifier, $this->scope, $this->cacheIdentifier));
+		$statementHandle = $this->databaseHandle->prepare('SELECT "content" FROM "cache" WHERE "identifier"=? AND "context"=? AND "cache"=?' . $this->getNotExpiredStatement());
+		$statementHandle->execute(array($entryIdentifier, $this->context, $this->cacheIdentifier));
 		return $statementHandle->fetchColumn();
 	}
 
@@ -180,8 +160,8 @@ class PdoBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @api
 	 */
 	public function has($entryIdentifier) {
-		$statementHandle = $this->databaseHandle->prepare('SELECT COUNT("identifier") FROM "cache" WHERE "identifier"=? AND "scope"=? AND "cache"=?' . $this->getNotExpiredStatement());
-		$statementHandle->execute(array($entryIdentifier, $this->scope, $this->cacheIdentifier));
+		$statementHandle = $this->databaseHandle->prepare('SELECT COUNT("identifier") FROM "cache" WHERE "identifier"=? AND "context"=? AND "cache"=?' . $this->getNotExpiredStatement());
+		$statementHandle->execute(array($entryIdentifier, $this->context, $this->cacheIdentifier));
 		return ($statementHandle->fetchColumn() > 0);
 	}
 
@@ -196,11 +176,11 @@ class PdoBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @api
 	 */
 	public function remove($entryIdentifier) {
-		$statementHandle = $this->databaseHandle->prepare('DELETE FROM "tags" WHERE "identifier"=? AND "scope"=? AND "cache"=?');
-		$statementHandle->execute(array($entryIdentifier, $this->scope, $this->cacheIdentifier));
+		$statementHandle = $this->databaseHandle->prepare('DELETE FROM "tags" WHERE "identifier"=? AND "context"=? AND "cache"=?');
+		$statementHandle->execute(array($entryIdentifier, $this->context, $this->cacheIdentifier));
 
-		$statementHandle = $this->databaseHandle->prepare('DELETE FROM "cache" WHERE "identifier"=? AND "scope"=? AND "cache"=?');
-		$statementHandle->execute(array($entryIdentifier, $this->scope, $this->cacheIdentifier));
+		$statementHandle = $this->databaseHandle->prepare('DELETE FROM "cache" WHERE "identifier"=? AND "context"=? AND "cache"=?');
+		$statementHandle->execute(array($entryIdentifier, $this->context, $this->cacheIdentifier));
 
 		return ($statementHandle->rowCount() > 0);
 	}
@@ -213,11 +193,11 @@ class PdoBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @api
 	 */
 	public function flush() {
-		$statementHandle = $this->databaseHandle->prepare('DELETE FROM "tags" WHERE "scope"=? AND "cache"=?');
-		$statementHandle->execute(array($this->scope, $this->cacheIdentifier));
+		$statementHandle = $this->databaseHandle->prepare('DELETE FROM "tags" WHERE "context"=? AND "cache"=?');
+		$statementHandle->execute(array($this->context, $this->cacheIdentifier));
 
-		$statementHandle = $this->databaseHandle->prepare('DELETE FROM "cache" WHERE "scope"=? AND "cache"=?');
-		$statementHandle->execute(array($this->scope, $this->cacheIdentifier));
+		$statementHandle = $this->databaseHandle->prepare('DELETE FROM "cache" WHERE "context"=? AND "cache"=?');
+		$statementHandle->execute(array($this->context, $this->cacheIdentifier));
 	}
 
 	/**
@@ -229,11 +209,11 @@ class PdoBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @api
 	 */
 	public function flushByTag($tag) {
-		$statementHandle = $this->databaseHandle->prepare('DELETE FROM "cache" WHERE "scope"=? AND "cache"=? AND "identifier" IN (SELECT "identifier" FROM "tags" WHERE "scope"=? AND "cache"=? AND "tag"=?)');
-		$statementHandle->execute(array($this->scope, $this->cacheIdentifier,$this->scope, $this->cacheIdentifier, $tag));
+		$statementHandle = $this->databaseHandle->prepare('DELETE FROM "cache" WHERE "context"=? AND "cache"=? AND "identifier" IN (SELECT "identifier" FROM "tags" WHERE "context"=? AND "cache"=? AND "tag"=?)');
+		$statementHandle->execute(array($this->context, $this->cacheIdentifier,$this->context, $this->cacheIdentifier, $tag));
 
-		$statementHandle = $this->databaseHandle->prepare('DELETE FROM "tags" WHERE "scope"=? AND "cache"=? AND "tag"=?');
-		$statementHandle->execute(array($this->scope, $this->cacheIdentifier, $tag));
+		$statementHandle = $this->databaseHandle->prepare('DELETE FROM "tags" WHERE "context"=? AND "cache"=? AND "tag"=?');
+		$statementHandle->execute(array($this->context, $this->cacheIdentifier, $tag));
 	}
 
 	/**
@@ -246,8 +226,8 @@ class PdoBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @api
 	 */
 	public function findIdentifiersByTag($tag) {
-		$statementHandle = $this->databaseHandle->prepare('SELECT "identifier" FROM "tags" WHERE "scope"=?  AND "cache"=? AND "tag"=?');// . $this->getNotExpiredStatement());
-		$statementHandle->execute(array($this->scope, $this->cacheIdentifier, $tag));
+		$statementHandle = $this->databaseHandle->prepare('SELECT "identifier" FROM "tags" WHERE "context"=?  AND "cache"=? AND "tag"=?');// . $this->getNotExpiredStatement());
+		$statementHandle->execute(array($this->context, $this->cacheIdentifier, $tag));
 		return $statementHandle->fetchAll(\PDO::FETCH_COLUMN);
 	}
 
@@ -259,11 +239,11 @@ class PdoBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @api
 	 */
 	public function collectGarbage() {
-		$statementHandle = $this->databaseHandle->prepare('DELETE FROM "tags" WHERE "scope"=? AND "cache"=? AND "identifier" IN (SELECT "identifier" FROM "cache" WHERE "scope"=? AND "cache"=? AND "lifetime" > 0 AND "created" + "lifetime" < ' . time() . ')');
-		$statementHandle->execute(array($this->scope, $this->cacheIdentifier, $this->scope, $this->cacheIdentifier));
+		$statementHandle = $this->databaseHandle->prepare('DELETE FROM "tags" WHERE "context"=? AND "cache"=? AND "identifier" IN (SELECT "identifier" FROM "cache" WHERE "context"=? AND "cache"=? AND "lifetime" > 0 AND "created" + "lifetime" < ' . time() . ')');
+		$statementHandle->execute(array($this->context, $this->cacheIdentifier, $this->context, $this->cacheIdentifier));
 
-		$statementHandle = $this->databaseHandle->prepare('DELETE FROM "cache" WHERE "scope"=? AND "cache"=? AND "lifetime" > 0 AND "created" + "lifetime" < ' . time());
-		$statementHandle->execute(array($this->scope, $this->cacheIdentifier));
+		$statementHandle = $this->databaseHandle->prepare('DELETE FROM "cache" WHERE "context"=? AND "cache"=? AND "lifetime" > 0 AND "created" + "lifetime" < ' . time());
+		$statementHandle->execute(array($this->context, $this->cacheIdentifier));
 	}
 
 	/**
