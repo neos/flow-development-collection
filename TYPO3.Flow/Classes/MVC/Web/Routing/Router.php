@@ -32,6 +32,11 @@ namespace F3\FLOW3\MVC\Web\Routing;
 class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 
 	/**
+	 * @var string
+	 */
+	protected $controllerObjectNamePattern = 'F3\@package\@subpackage\Controller\@controllerController';
+
+	/**
 	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
@@ -232,7 +237,8 @@ class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 				return $route->getMatchingUri();
 			}
 		}
-		return '';
+		$this->systemLogger->log('Router resolve(): Could not resolve a route for building an URI for the given route values.', LOG_WARNING, $routeValues);
+		throw new \F3\FLOW3\MVC\Exception\NoMatchingRouteException('Could not resolve a route and its corresponding URI for the given parameters. This may be due to referring to a not existing package / controller / action while building a link or URI. Refer to log and check the backtrace for more details.', 1301610453);
 	}
 
 	/**
@@ -264,6 +270,27 @@ class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 			}
 			$this->routesCreated = TRUE;
 		}
+	}
+
+	/**
+	 * Returns the object name of the controller defined by the package, subpackage key and
+	 * controller name
+	 *
+	 * @param string $packageKey the package key of the controller
+	 * @param string $subPackageKey the subpackage key of the controller
+	 * @param string $controllerName the controller name excluding the "Controller" suffix
+	 * @return string The controller's Object Name or NULL if the controller does not exist
+	 * @api
+	 */
+	public function getControllerObjectName($packageKey, $subpackageKey, $controllerName) {
+		$possibleObjectName = $this->controllerObjectNamePattern;
+		$possibleObjectName = str_replace('@package', $packageKey, $possibleObjectName);
+		$possibleObjectName = str_replace('@subpackage', $subpackageKey, $possibleObjectName);
+		$possibleObjectName = str_replace('@controller', $controllerName, $possibleObjectName);
+		$possibleObjectName = str_replace('\\\\', '\\', $possibleObjectName);
+
+		$controllerObjectName = $this->objectManager->getCaseSensitiveObjectName($possibleObjectName);
+		return ($controllerObjectName !== FALSE) ? $controllerObjectName : NULL;
 	}
 }
 ?>

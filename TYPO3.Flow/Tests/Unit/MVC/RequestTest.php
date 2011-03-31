@@ -32,71 +32,25 @@ class RequestTest extends \F3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function theDefaultPatternForBuildingTheControllerObjectNameIsPackageKeyControllerControllerNameController() {
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->once())->method('getCaseSensitiveObjectName')
-			->with($this->equalTo('f3\testpackage\controller\foocontroller'))
-			->will($this->returnValue('F3\TestPackage\Controller\FooController'));
-
-		$mockPackageManager = $this->getMock('F3\FLOW3\Package\PackageManagerInterface');
-		$mockPackageManager->expects($this->once())->method('getCaseSensitivePackageKey')
-			->will($this->returnValue('TestPackage'));
-
-		$request = new \F3\FLOW3\MVC\Request();
-		$request->injectObjectManager($mockObjectManager);
-		$request->injectPackageManager($mockPackageManager);
-		$request->setControllerPackageKey('TestPackage');
-		$request->setControllerName('Foo');
-		$this->assertEquals('F3\TestPackage\Controller\FooController', $request->getControllerObjectName());
-	}
-
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function lowerCasePackageKeysAndObjectNamesAreConvertedToTheRealObjectName() {
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->once())->method('getCaseSensitiveObjectName')
-			->with($this->equalTo('f3\testpackage\bar\baz\controller\foocontroller'))
-			->will($this->returnValue('F3\TestPackage\Bar\Baz\Controller\FooController'));
-
-		$mockPackageManager = $this->getMock('F3\FLOW3\Package\PackageManagerInterface');
-		$mockPackageManager->expects($this->once())->method('getCaseSensitivePackageKey')
-			->with($this->equalTo('testpackage'))
-			->will($this->returnValue('TestPackage'));
-
-		$request = new \F3\FLOW3\MVC\Request();
-		$request->injectObjectManager($mockObjectManager);
-		$request->injectPackageManager($mockPackageManager);
-		$request->setControllerPackageKey('testpackage');
-		$request->setControllerName('foo');
-		$request->setControllerSubpackageKey('bar\baz');
-
-		$this->assertEquals('F3\TestPackage\Bar\Baz\Controller\FooController', $request->getControllerObjectName());
-	}
-
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getControllerObjectNameReturnsAnEmptyStringIfTheResolvedControllerDoesNotExist() {
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->once())->method('getCaseSensitiveObjectName')
-			->with($this->equalTo('f3\testpackage\controller\foocontroller'))
-			->will($this->returnValue(FALSE));
+		$mockRouter = $this->getMock('F3\FLOW3\MVC\Web\Routing\RouterInterface');
+		$mockRouter->expects($this->once())->method('getControllerObjectName')
+			->with('SomePackage', 'Some\Subpackage', 'SomeController')
+			->will($this->returnValue(NULL));
 
 		$mockPackageManager = $this->getMock('F3\FLOW3\Package\PackageManagerInterface');
 		$mockPackageManager->expects($this->once())->method('getCaseSensitivePackageKey')
-			->with($this->equalTo('testpackage'))
-			->will($this->returnValue('TestPackage'));
+			->with($this->equalTo('Somepackage'))
+			->will($this->returnValue('SomePackage'));
 
 		$request = new \F3\FLOW3\MVC\Request();
-		$request->injectObjectManager($mockObjectManager);
+		$request->injectRouter($mockRouter);
 		$request->injectPackageManager($mockPackageManager);
-		$request->setControllerPackageKey('testpackage');
-		$request->setControllerName('foo');
+		$request->setControllerPackageKey('Somepackage');
+		$request->setControllerSubPackageKey('Some\Subpackage');
+		$request->setControllerName('SomeController');
 
 		$this->assertEquals('', $request->getControllerObjectName());
 	}
@@ -209,9 +163,9 @@ class RequestTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function theControllerNameCanBeSetAndRetrieved() {
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->once())->method('getCaseSensitiveObjectName')
-			->with($this->equalTo('f3\testpackage\controller\somecontroller'))
+		$mockRouter = $this->getMock('F3\FLOW3\MVC\Web\Routing\RouterInterface');
+		$mockRouter->expects($this->once())->method('getControllerObjectName')
+			->with('TestPackage', '', 'Some')
 			->will($this->returnValue('F3\TestPackage\Controller\SomeController'));
 
 		$mockPackageManager = $this->getMock('F3\FLOW3\Package\PackageManagerInterface');
@@ -219,7 +173,7 @@ class RequestTest extends \F3\FLOW3\Tests\UnitTestCase {
 			->will($this->returnValue('TestPackage'));
 
 		$request = new \F3\FLOW3\MVC\Request();
-		$request->injectObjectManager($mockObjectManager);
+		$request->injectRouter($mockRouter);
 		$request->injectPackageManager($mockPackageManager);
 		$request->setControllerPackageKey('TestPackage');
 		$request->setControllerName('Some');
@@ -334,10 +288,12 @@ class RequestTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function controllerNameDefaultsToNull() {
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->once())->method('getCaseSensitiveObjectName')->will($this->returnValue(''));
+		$mockRouter = $this->getMock('F3\FLOW3\MVC\Web\Routing\RouterInterface');
+		$mockRouter->expects($this->once())->method('getControllerObjectName')
+			->with('', '', '')
+			->will($this->returnValue(NULL));
 		$request = new \F3\FLOW3\MVC\Request();
-		$request->injectObjectManager($mockObjectManager);
+		$request->injectRouter($mockRouter);
 		$this->assertNull($request->getControllerName());
 	}
 
@@ -346,10 +302,12 @@ class RequestTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function controllerActionNameDefaultsToNull() {
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->once())->method('getCaseSensitiveObjectName')->will($this->returnValue(''));
+		$mockRouter = $this->getMock('F3\FLOW3\MVC\Web\Routing\RouterInterface');
+		$mockRouter->expects($this->once())->method('getControllerObjectName')
+			->with('', '', '')
+			->will($this->returnValue(NULL));
 		$request = new \F3\FLOW3\MVC\Request();
-		$request->injectObjectManager($mockObjectManager);
+		$request->injectRouter($mockRouter);
 		$this->assertNull($request->getControllerActionName());
 	}
 }

@@ -139,16 +139,16 @@ class Dispatcher {
 		$exception = NULL;
 		$controllerObjectName = $request->getControllerObjectName();
 		if ($controllerObjectName === '') {
-			$exception = new \F3\FLOW3\MVC\Controller\Exception\InvalidControllerException($request, 'no controller could be resolved which would match your request');
+			$exception = new \F3\FLOW3\MVC\Controller\Exception\InvalidControllerException('No controller could be resolved which would match your request', 1303209195, NULL, $request);
 		}
 
 		if ($exception !== NULL) {
 			$controller = $this->objectManager->get($this->settings['mvc']['notFoundController']);
-			if (!$controller instanceof \F3\FLOW3\MVC\Controller\NotFoundControllerInterface) throw new \F3\FLOW3\MVC\Exception\InvalidControllerException('The NotFoundController must implement "\F3\FLOW3\MVC\Controller\NotFoundControllerInterface", ' . (is_object($controller) ? get_class($controller) : gettype($controller)) . ' given.', 1246714416);
+			if (!$controller instanceof \F3\FLOW3\MVC\Controller\NotFoundControllerInterface) throw new \F3\FLOW3\MVC\Controller\Exception\InvalidControllerException('The NotFoundController must implement "\F3\FLOW3\MVC\Controller\NotFoundControllerInterface", ' . (is_object($controller) ? get_class($controller) : gettype($controller)) . ' given.', 1246714416, NULL, $request);
 			$controller->setException($exception);
 		} else {
 			$controller = $this->objectManager->get($controllerObjectName);
-			if (!$controller instanceof \F3\FLOW3\MVC\Controller\ControllerInterface) throw new \F3\FLOW3\MVC\Exception\InvalidControllerException('Invalid controller "' . $request->getControllerObjectName() . '". The controller must be a valid request handling controller, ' . (is_object($controller) ? get_class($controller) : gettype($controller)) . ' given.', 1202921619);
+			if (!$controller instanceof \F3\FLOW3\MVC\Controller\ControllerInterface) throw new \F3\FLOW3\MVC\Controller\Exception\InvalidControllerException('Invalid controller "' . $request->getControllerObjectName() . '". The controller must be a valid request handling controller, ' . (is_object($controller) ? get_class($controller) : gettype($controller)) . ' given.', 1202921619, NULL, $request);
 		}
 		return $controller;
 	}

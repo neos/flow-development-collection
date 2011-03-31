@@ -104,6 +104,7 @@ class Route {
 
 	/**
 	 * @var \F3\FLOW3\Object\ObjectManagerInterface
+	 * @inject
 	 */
 	protected $objectManager;
 
@@ -113,14 +114,9 @@ class Route {
 	protected $persistenceManager;
 
 	/**
-	 * Constructor
-	 *
-	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
-	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @var \F3\FLOW3\MVC\Web\Routing\RouterInterface
 	 */
-	public function __construct(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
-		$this->objectManager = $objectManager;
-	}
+	protected $router;
 
 	/**
 	 * Injects the Persistence Manager
@@ -131,6 +127,14 @@ class Route {
 	 */
 	public function injectPersistenceManager(\F3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager) {
 		$this->persistenceManager = $persistenceManager;
+	}
+
+	/**
+	 * @param \F3\FLOW3\MVC\Web\Routing\RouterInterface $router
+	 * @return void
+	 */
+	public function injectRouter(\F3\FLOW3\MVC\Web\Routing\RouterInterface $router) {
+		$this->router = $router;
 	}
 
 	/**
@@ -353,6 +357,7 @@ class Route {
 		}
 
 		$matchingUri = '';
+		$mergedRouteValues = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($this->defaults, $routeValues);
 		$requireOptionalRouteParts = FALSE;
 		$matchingOptionalUriPortion = '';
 		foreach ($this->routeParts as $routePart) {
@@ -389,6 +394,15 @@ class Route {
 			if (isset($routeValues['@format']) && $routeValues['@format'] === '') {
 				unset($routeValues['@format']);
 			}
+		}
+
+			// skip route if target controller/action does not exist
+		$packageKey = isset($mergedRouteValues['@package']) ? $mergedRouteValues['@package'] : '';
+		$subPackageKey = isset($mergedRouteValues['@subpackage']) ? $mergedRouteValues['@subpackage'] : '';
+		$controllerName = isset($mergedRouteValues['@controller']) ? $mergedRouteValues['@controller'] : '';
+		$controllerObjectName = $this->router->getControllerObjectName($packageKey, $subPackageKey, $controllerName);
+		if ($controllerObjectName === NULL) {
+			throw new \F3\FLOW3\MVC\Web\Routing\Exception\InvalidControllerException('No controller object was found for package "' . $packageKey . '", subpackage "' . $subPackageKey . '", controller "' . $controllerName . '" in route "' . $this->getName() . '".', 1301650951);
 		}
 
 			// add query string
@@ -468,14 +482,14 @@ class Route {
 							throw new \F3\FLOW3\MVC\Exception\InvalidRoutePartHandlerException('routePart handlers must implement "\F3\FLOW3\MVC\Web\Routing\DynamicRoutePartInterface" in route "' . $this->getName() . '"', 1218480972);
 						}
 					} else {
-						$routePart = $this->objectManager->create('F3\FLOW3\MVC\Web\Routing\DynamicRoutePart');
+						$routePart = new \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart();
 					}
 					if (isset($this->defaults[$routePartName])) {
 						$routePart->setDefaultValue($this->defaults[$routePartName]);
 					}
 					break;
 				case self::ROUTEPART_TYPE_STATIC:
-					$routePart = $this->objectManager->create('F3\FLOW3\MVC\Web\Routing\StaticRoutePart');
+					$routePart = new \F3\FLOW3\MVC\Web\Routing\StaticRoutePart();
 					if ($lastRoutePart !== NULL && $lastRoutePart instanceof \F3\FLOW3\MVC\Web\Routing\DynamicRoutePartInterface) {
 						$lastRoutePart->setSplitString($routePartName);
 					}

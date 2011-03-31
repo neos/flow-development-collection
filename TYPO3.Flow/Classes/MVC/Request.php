@@ -42,13 +42,6 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	protected $packageManager;
 
 	/**
-	 * Pattern after which the controller object name is built
-	 *
-	 * @var string
-	 */
-	protected $controllerObjectNamePattern = 'F3\@package\@subpackage\Controller\@controllerController';
-
-	/**
 	 * Package key of the controller which is supposed to handle this request.
 	 *
 	 * @var string
@@ -112,6 +105,11 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	protected $originalRequestMappingResults = NULL;
 
 	/**
+	 * @var \F3\FLOW3\MVC\Web\Routing\RouterInterface
+	 */
+	protected $router;
+
+	/**
 	 * Injects the object manager
 	 *
 	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager A reference to the object manager
@@ -131,6 +129,14 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	 */
 	public function injectPackageManager(\F3\FLOW3\Package\PackageManagerInterface $packageManager) {
 		$this->packageManager = $packageManager;
+	}
+
+	/**
+	 * @param \F3\FLOW3\MVC\Web\Routing\RouterInterface $router
+	 * @return void
+	 */
+	public function injectRouter(\F3\FLOW3\MVC\Web\Routing\RouterInterface $router) {
+		$this->router = $router;
 	}
 
 	/**
@@ -169,15 +175,8 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	 * @api
 	 */
 	public function getControllerObjectName() {
-		$possibleObjectName = $this->controllerObjectNamePattern;
-		$possibleObjectName = str_replace('@package', $this->controllerPackageKey, $possibleObjectName);
-		$possibleObjectName = str_replace('@subpackage', $this->controllerSubpackageKey, $possibleObjectName);
-		$possibleObjectName = str_replace('@controller', $this->controllerName, $possibleObjectName);
-		$possibleObjectName = str_replace('\\\\', '\\', $possibleObjectName);
-		$lowercaseObjectName = strtolower($possibleObjectName);
-
-		$objectName = $this->objectManager->getCaseSensitiveObjectName($lowercaseObjectName);
-		return ($objectName !== FALSE) ? $objectName : '';
+		$controllerObjectName = $this->router->getControllerObjectName($this->controllerPackageKey, $this->controllerSubpackageKey, $this->controllerName);
+		return ($controllerObjectName !== NULL) ? $controllerObjectName : '';
 	}
 
 	/**
