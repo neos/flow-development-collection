@@ -190,7 +190,8 @@ class ObjectManager implements ObjectManagerInterface {
 		$className = $this->getClassNameByObjectName($objectName);
 		if ($className === FALSE) {
 			$hint = ($objectName[0] === '\\') ? ' Hint: You specified an object name with a leading backslash!' : '';
-			throw new \F3\FLOW3\Object\Exception\UnknownObjectException('Object "' . $objectName . '" is not registered (or an interface without default implementation).' . $hint, 1264584588);
+			$hint .= (interface_exists($objectName[0])) ? sprintf('%s is an interface, but no default implementation was defined or could be determined automatically.', $objectName[0]) : '';
+			throw new \F3\FLOW3\Object\Exception\UnknownObjectException('Tried to create unknown object "' . $objectName . '".' . $hint, 1264584588);
 		}
 		if (isset($this->objects[$objectName]) && $this->objects[$objectName]['s'] !== ObjectConfiguration::SCOPE_PROTOTYPE) {
 			throw new \F3\FLOW3\Object\Exception\WrongScopeException('Object "' . $objectName . '" is of not of scope prototype, but only prototype is supported by create()', 1264584592);
