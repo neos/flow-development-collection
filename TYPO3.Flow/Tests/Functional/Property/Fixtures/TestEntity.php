@@ -27,8 +27,18 @@ namespace F3\FLOW3\Tests\Functional\Property\Fixtures;
  *
  * @scope prototype
  * @entity
+ * @Table(name="Property_TestEntity")
  */
 class TestEntity {
+
+	/**
+	 * This ID is only for the ORM.
+	 *
+	 * @var integer
+	 * @Id
+	 * @GeneratedValue
+	 */
+	protected $artificialId;
 
 	/**
 	 * @var string

@@ -29,7 +29,8 @@ FLOW3:
 
   persistence:
     backendOptions:
-      dataSourceName: 'sqlite::memory:'
+      driver: 'pdo_sqlite'
+      path: 'sqlite::memory:'
       username: null
       password: null
 

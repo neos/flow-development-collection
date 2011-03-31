@@ -88,10 +88,8 @@ abstract class FunctionalTestCase extends \F3\FLOW3\Tests\BaseTestCase {
 			}
 			require_once($_SERVER['FLOW3_ROOTPATH'] . 'Packages/Framework/FLOW3/Classes/Core/Bootstrap.php');
 
-			\F3\FLOW3\Core\Bootstrap::defineConstants();
-
 			self::$flow3 = new \F3\FLOW3\Core\Bootstrap('Testing');
-			self::$flow3->initialize();
+			self::$flow3->run();
 		}
 	}
 
@@ -168,7 +166,6 @@ abstract class FunctionalTestCase extends \F3\FLOW3\Tests\BaseTestCase {
 	protected function setupPersistence() {
 		$this->persistenceManager = $this->objectManager->get('F3\FLOW3\Persistence\PersistenceManagerInterface');
 		$this->persistenceManager->initialize();
-		$this->persistenceSession = $this->objectManager->get('F3\FLOW3\Persistence\Session');
 	}
 
 	/**
@@ -242,7 +239,6 @@ abstract class FunctionalTestCase extends \F3\FLOW3\Tests\BaseTestCase {
 	 */
 	protected function tearDownPersistence() {
 		$this->persistenceManager->persistAll();
-		$this->persistenceSession->destroy();
 	}
 
 }

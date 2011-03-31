@@ -31,6 +31,15 @@ namespace F3\FLOW3\Tests\Functional\Reflection\Fixtures;
 class ClassSchemaFixture {
 
 	/**
+	 * This ID is only for the ORM.
+	 *
+	 * @var integer
+	 * @Id
+	 * @GeneratedValue
+	 */
+	protected $artificialId;
+
+	/**
 	 * @var string
 	 */
 	protected $name;

@@ -250,6 +250,9 @@ class Bootstrap {
 				$this->shutdownForCompiletime();
 			} else {
 				$this->initializeForRuntime();
+
+				if ($this->context === 'Testing') return;
+
 				$request = $this->objectManager->get('F3\FLOW3\MVC\CLI\RequestBuilder')->build(array_slice($commandLine, 1));
 				$response = new \F3\FLOW3\MVC\CLI\Response();
 				$this->objectManager->get('F3\FLOW3\MVC\Dispatcher')->dispatch($request, $response);
