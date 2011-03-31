@@ -50,12 +50,6 @@ class ClassLoader {
 	protected $packages = array();
 
 	/**
-	 * A list of classes which this class loader previously tried to load but could not fin
-	 * @var array
-	 */
-	protected $notExistingClasses = array('string', 'integer', 'object', 'boolean', 'array');
-
-	/**
 	 * Injects the cache for storing the renamed original classes
 	 *
 	 * @param \F3\FLOW3\Cache\Frontend\PhpFrontend $classesCache
@@ -75,9 +69,6 @@ class ClassLoader {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function loadClass($className) {
-		if (in_array($className, $this->notExistingClasses)) {
-			return;
-		}
 		if ($this->classesCache !== NULL) {
 			$this->classesCache->requireOnce(str_replace('\\', '_', $className));
 			if (class_exists($className, FALSE)) {
@@ -85,27 +76,27 @@ class ClassLoader {
 			}
 		}
 
-		if (isset($this->specialClassNamesAndPaths[$className])) {
-			$classFilePathAndName = $this->specialClassNamesAndPaths[$className];
-		} else {
-			$classNameParts = explode('\\', $className);
-			if (is_array($classNameParts) && $classNameParts[0] === 'F3' && isset($this->packages[$classNameParts[1]])) {
-				if ($classNameParts[2] === 'Tests' && $classNameParts[3] === 'Functional') {
-					$classFilePathAndName = $this->packages[$classNameParts[1]]->getFunctionalTestsPath();
-					$classFilePathAndName .= implode(array_slice($classNameParts, 4, -1), '/') . '/';
-					$classFilePathAndName .= end($classNameParts) . '.php';
-				} else {
-					$classFilePathAndName = $this->packages[$classNameParts[1]]->getClassesPath();
-					$classFilePathAndName .= implode(array_slice($classNameParts, 2, -1), '/') . '/';
-					$classFilePathAndName .= end($classNameParts) . '.php';
-				}
+		$classNameParts = explode('\\', $className);
+		if (is_array($classNameParts) && $classNameParts[0] === 'F3' && isset($this->packages[$classNameParts[1]])) {
+			if ($classNameParts[2] === 'Tests' && $classNameParts[3] === 'Functional') {
+				$classFilePathAndName = $this->packages[$classNameParts[1]]->getFunctionalTestsPath();
+				$classFilePathAndName .= implode(array_slice($classNameParts, 4, -1), '/') . '/';
+				$classFilePathAndName .= end($classNameParts) . '.php';
+			} else {
+				$classFilePathAndName = $this->packages[$classNameParts[1]]->getClassesPath();
+				$classFilePathAndName .= implode(array_slice($classNameParts, 2, -1), '/') . '/';
+				$classFilePathAndName .= end($classNameParts) . '.php';
 			}
 		}
+
+		if (!isset($classFilePathAndName) && $this->packages === array() && $classNameParts[0] === 'F3' && $classNameParts[1] === 'FLOW3') {
+			$classFilePathAndName = FLOW3_PATH_FLOW3 . 'Classes/';
+			$classFilePathAndName .= implode(array_slice($classNameParts, 2, -1), '/') . '/';
+			$classFilePathAndName .= end($classNameParts) . '.php';
+		}
+
 		if (isset($classFilePathAndName) && file_exists($classFilePathAndName)) {
 			require($classFilePathAndName);
-		}
-		if (class_exists($className, FALSE) === FALSE && interface_exists($className, FALSE) === FALSE) {
-			$this->notExistingClasses[] = $className;
 		}
 	}
 

@@ -34,11 +34,6 @@ use \F3\FLOW3\Package\MetaData\XmlWriter as PackageMetaDataWriter;
 class PackageManager implements \F3\FLOW3\Package\PackageManagerInterface {
 
 	/**
-	 * @var \F3\FLOW3\Configuration\ConfigurationManager
-	 */
-	protected $configurationManager;
-
-	/**
 	 * Array of available packages, indexed by package key
 	 * @var array
 	 */
@@ -57,25 +52,22 @@ class PackageManager implements \F3\FLOW3\Package\PackageManagerInterface {
 	protected $activePackages = array();
 
 	/**
-	 * Injects the Configuration Manager
-	 *
-	 * @param \F3\FLOW3\Configuration\ConfigurationManager $configurationManager
-	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @var string
 	 */
-	public function injectConfigurationManager(\F3\FLOW3\Configuration\ConfigurationManager $configurationManager) {
-		$this->configurationManager = $configurationManager;
-	}
+	protected $packageStatesPathAndFilename;
 
 	/**
 	 * Initializes the package manager
 	 *
+	 * @param \F3\FLOW3\Core\Bootstrap $bootstrap The current bootstrap
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function initialize() {
+	public function initialize(\F3\FLOW3\Core\Bootstrap $bootstrap) {
 		$this->scanAvailablePackages();
-		$packageStatesConfiguration = $this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_PACKAGESTATES);
+		$this->packageStatesPathAndFilename = FLOW3_PATH_CONFIGURATION . 'PackageStates.php';
+
+		$packageStatesConfiguration = file_exists($this->packageStatesPathAndFilename) ? include($this->packageStatesPathAndFilename) : array();
 
 		if ($packageStatesConfiguration === array()) {
 			foreach ($this->packageKeys as $packageKey) {
@@ -86,6 +78,7 @@ class PackageManager implements \F3\FLOW3\Package\PackageManagerInterface {
 		foreach ($this->packages as $packageKey => $package) {
 			if ($packageKey === 'FLOW3' || (isset($packageStatesConfiguration[$packageKey]['state']) && $packageStatesConfiguration[$packageKey]['state'] === 'active')) {
 				$this->activePackages[$packageKey] = $package;
+				$package->boot($bootstrap);
 			}
 		}
 	}
@@ -237,14 +230,18 @@ class PackageManager implements \F3\FLOW3\Package\PackageManagerInterface {
 	 * @author Thomas Hempel <thomas@typo3.org>
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 * @api
+	 * @fixme
 	 */
 	public function deactivatePackage($packageKey) {
+		throw new \RuntimeException('Needs refactoring');
 		if ($this->isPackageActive($packageKey)) {
 			unset($this->activePackages[$packageKey]);
-			$packageStatesConfiguration = $this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_PACKAGESTATES);
-			$packageStatesConfiguration[$packageKey]['state'] = 'inactive';
-			$this->configurationManager->setConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_PACKAGESTATES, $packageStatesConfiguration);
-			$this->configurationManager->saveConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_PACKAGESTATES);
+
+			$packageStates = array();
+			foreach ($this->packageKeys as $currentPackageKey) {
+
+			}
+			file_put_contents($this->packageStatesPathAndFilename, var_export($packageStates, TRUE));
 		} else {
 			throw new \F3\FLOW3\Package\Exception\InvalidPackageStateException('Package "' . $packageKey . '" is not active.', 1166543253);
 		}
@@ -256,18 +253,18 @@ class PackageManager implements \F3\FLOW3\Package\PackageManagerInterface {
 	 * @param string $packageKey The package to activate
 	 * @return void
 	 * @throws \F3\FLOW3\Package\Exception\InvalidPackageStateException If the specified package is already active
-	 * @author Thomas Hempel <thomas@typo3.org>
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 * @api
 	 */
 	public function activatePackage($packageKey) {
 		if (!$this->isPackageActive($packageKey)) {
 			$package = $this->getPackage($packageKey);
 			$this->activePackages[$packageKey] = $package;
-			$packageStatesConfiguration = $this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_PACKAGESTATES);
-			$packageStatesConfiguration[$packageKey]['state'] = 'active';
-			$this->configurationManager->setConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_PACKAGESTATES, $packageStatesConfiguration);
-			$this->configurationManager->saveConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_PACKAGESTATES);
+
+			$packageStates = file_exists($this->packageStatesPathAndFilename) ? include($this->packageStatesPathAndFilename) : array();
+			$packageStates[$packageKey]['state'] = 'active';
+
+			$packageStatesCode = var_export($packageStates, TRUE);
+			file_put_contents($this->packageStatesPathAndFilename, "<?php\nreturn " . $packageStatesCode . "\n ?>");
 		} else {
 			throw new \F3\FLOW3\Package\Exception\InvalidPackageStateException('Package "' . $packageKey . '" is already active.', 1244620776);
 		}
@@ -305,19 +302,30 @@ class PackageManager implements \F3\FLOW3\Package\PackageManagerInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function scanAvailablePackages() {
-		$this->packages = array('FLOW3' => new \F3\FLOW3\Package\Package('FLOW3', FLOW3_PATH_FLOW3));
 		foreach (new \DirectoryIterator(FLOW3_PATH_PACKAGES) as $parentFileInfo) {
 			$parentFilename = $parentFileInfo->getFilename();
 			if ($parentFilename[0] === '.' || !$parentFileInfo->isDir()) continue;
 
 			foreach (new \DirectoryIterator($parentFileInfo->getPathname()) as $childFileInfo) {
 				$childFilename = $childFileInfo->getFilename();
-				if ($childFilename[0] !== '.' && $childFilename !== 'FLOW3') {
+				if ($childFilename[0] !== '.') {
 					$packagePath = \F3\FLOW3\Utility\Files::getUnixStylePath($childFileInfo->getPathName()) . '/';
-					if (isset($this->packages[$childFilename])) {
+					$packageKey = $childFilename;
+					if (isset($this->packages[$packageKey])) {
 						throw new \F3\FLOW3\Package\Exception\DuplicatePackageException('Detected a duplicate package, remove either "' . $this->packages[$childFilename]->getPackagePath() . '" or "' . $packagePath . '".', 1253716811);
 					}
-					$this->packages[$childFilename] = new \F3\FLOW3\Package\Package($childFilename, $packagePath);
+
+					$packageClassPathAndFilename = $packagePath . 'Classes/Package.php';
+					if (!file_exists($packageClassPathAndFilename)) {
+						$shortFilename = substr($packagePath, strlen(FLOW3_PATH_PACKAGES)) . 'Package.php';
+						throw new \F3\FLOW3\Package\Exception\CorruptPackageException(sprintf('Missing package class in package "%s". Please create a file "%s" and extend \F3\FLOW3\Package\Package.', $packageKey, $shortFilename), 1300782486);
+					}
+					require_once($packageClassPathAndFilename);
+					$packageClassName = sprintf('F3\%s\Package', $packageKey, $packageKey);
+					$this->packages[$packageKey] = new $packageClassName($childFilename, $packagePath);
+					if (!$this->packages[$packageKey] instanceof \F3\FLOW3\Package\PackageInterface) {
+						throw new \F3\FLOW3\Package\Exception\CorruptPackageException(sprintf('The package class %s in package "%s" does not implement \F3\FLOW3\Package\PackageInterface.', $packageClassName, $packageKey), 1300782487);
+					}
 				}
 			}
 		}

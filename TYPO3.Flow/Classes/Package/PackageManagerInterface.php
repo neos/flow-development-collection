@@ -32,13 +32,12 @@ namespace F3\FLOW3\Package;
 interface PackageManagerInterface {
 
 	/**
-	 * Initializes the package manager. Initialization includes:
+	 * Initializes the package manager.
 	 *
-	 *   - building the package registry
-	 *
+	 * @param \F3\FLOW3\Core\Bootstrap $bootstrap
 	 * @return void
 	 */
-	public function initialize();
+	public function initialize(\F3\FLOW3\Core\Bootstrap $bootstrap);
 
 	/**
 	 * Returns TRUE if a package is available (the package's files exist in the packages directory)
