@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\MVC\Controller;
+namespace F3\FLOW3\MVC\Exception;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,44 +23,11 @@ namespace F3\FLOW3\MVC\Controller;
  *                                                                        */
 
 /**
- * A Special Case of a Controller: If no controller has been specified in the
- * request, this controller is chosen.
+ * A "No Such Command" exception
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
- * @scope singleton
+ * @api
  */
-class StandardController extends \F3\FLOW3\MVC\Controller\ActionController {
-
-	/**
-	 * Overrides the standard resolveView method
-	 *
-	 * @return \F3\FLOW3\MVC\View\ViewInterface $view The view
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	protected function resolveView() {
-		$view = new \F3\Fluid\View\TemplateView();
-		$view->setControllerContext($this->controllerContext);
-		$view->setTemplatePathAndFilename(FLOW3_PATH_FLOW3 . 'Resources/Private/MVC/StandardView_Template.html');
-		return $view;
-	}
-
-	/**
-	 * Displays the default view
-	 *
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function indexAction() {
-
-		if (!$this->request instanceof \F3\FLOW3\MVC\Web\Request) {
-			return
-				"\nWelcome to FLOW3!\n\n" .
-				"This is the default view of the FLOW3 MVC object. You see this message because no \n" .
-				"other view is available. Please refer to the Developer's Guide for more information \n" .
-				"how to create and configure one.\n\n" .
-				"Have fun! The FLOW3 Development Team\n";
-		}
-	}
+class NoSuchCommandException extends \F3\FLOW3\MVC\Exception {
 }
-
 ?>

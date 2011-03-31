@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3\FLOW3\MVC\Controller;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -22,27 +23,12 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
- * Bootstrap for the FLOW3 Framework
+ * Interface for command controllers
  *
+ * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @author Robert Lemke <robert@typo3.org>
- * @author Karsten Dambekalns <karsten@typo3.org>
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  */
+interface CommandControllerInterface extends ControllerInterface {
 
-version_compare(phpversion(), '5.3.0', '>=') or die('Because FLOW3 uses namespaces, it requires at least PHP 5.3.0, you have ' . phpversion() . ' (Error #<a href="http://typo3.org/go/exception/1246258365">1246258365</a>)' . PHP_EOL);
-require(__DIR__ . '/../Classes/Core/Bootstrap.php');
-
-	// Need to take this detour because PHP < 5.3.0 would die with a parse error, not displaying our message above
-$className = '\F3\FLOW3\Core\Bootstrap';
-eval('\F3\FLOW3\Core\Bootstrap::defineConstants();');
-
-$context = getenv('FLOW3_CONTEXT');
-if ($context == '') {
-	$context = getenv('REDIRECT_FLOW3_CONTEXT');
 }
-
-$flow3 = new $className($context);
-$flow3->initialize();
-$flow3->run();
-
 ?>

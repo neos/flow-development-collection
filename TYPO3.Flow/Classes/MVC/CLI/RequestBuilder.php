@@ -31,52 +31,68 @@ namespace F3\FLOW3\MVC\CLI;
 class RequestBuilder {
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
-	 */
-	protected $objectManager;
-
-	/**
 	 * @var \F3\FLOW3\Utility\Environment
 	 */
 	protected $environment;
 
 	/**
-	 * Constructs the CLI Request Builder
-	 *
-	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager A reference to the object manager
-	 * @param \F3\FLOW3\Utility\Environment $environment The environment
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 */
-	public function __construct(\F3\FLOW3\Object\ObjectManagerInterface $objectManager, \F3\FLOW3\Utility\Environment $environment) {
-		$this->objectManager = $objectManager;
+	protected $objectManager;
+
+	/**
+	 * @param \F3\FLOW3\Utility\Environment $environment
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectEnvironment(\F3\FLOW3\Utility\Environment $environment) {
 		$this->environment = $environment;
 	}
 
 	/**
-	 * Builds a CLI request object from the raw command call
-	 *
-	 * @return \F3\FLOW3\MVC\CLI\Request The CLI request as an object
-	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
+	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function build() {
-		$request = $this->objectManager->create('F3\FLOW3\MVC\CLI\Request');
-		if ($this->environment->getCommandLineArgumentCount() < 2) {
-			$request->setControllerPackageKey('FLOW3');
-			$request->setControllerSubpackageKey('MVC');
-			$request->setControllerName('Standard');
-			return $request;
+	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
+		$this->objectManager = $objectManager;
+	}
+
+	/**
+	 * Builds a CLI request object from a command line.
+	 *
+	 * The given command line may be a string (e.g. "mypackage:foo do-that-thing --force") or
+	 * an array consisting of the individual parts. The array must not include the script
+	 * name (like in $argv) but start with command right away.
+	 *
+	 * @param mixed $commandLine The command line, either as a string or as an array
+	 * @return \F3\FLOW3\MVC\CLI\Request The CLI request as an object
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function build($commandLine) {
+		$request = new Request();
+
+		$rawCommandLineArguments = is_array($commandLine) ? $commandLine : explode(' ', $commandLine);
+		if (count($rawCommandLineArguments) < 1) {
+			$request->setControllerObjectName('F3\FLOW3\Command\CoreCommandController');
+			$request->setControllerCommandName('help');
+		} else {
+			list($controllerObjectName, $controllerCommandName) = $this->parseCommandIdentifier(array_shift($rawCommandLineArguments));
+			if ($controllerObjectName === FALSE) {
+				$request->setControllerObjectName('F3\FLOW3\Command\CoreCommandController');
+				$request->setControllerCommandName('help');
+			} else {
+				$request->setControllerObjectName($controllerObjectName);
+				$request->setControllerCommandName($controllerCommandName);
+			}
+
+	#		$commandLineArguments = $this->parseRawCommandLineArguments($commandLineArguments);
+
+
+	#		$this->setControllerOptions($request, $commandLineArguments['command']);
+	#		$request->setArguments($commandLineArguments['options']);
+	#		$request->setCommandLineArguments($commandLineArguments['arguments']);
 		}
-
-		$rawCommandLineArguments = $this->environment->getCommandLineArguments();
-		array_shift($rawCommandLineArguments);
-		$commandLineArguments = $this->parseRawCommandLineArguments($rawCommandLineArguments);
-
-		$this->setControllerOptions($request, $commandLineArguments['command']);
-		$request->setArguments($commandLineArguments['options']);
-		$request->setCommandLineArguments($commandLineArguments['arguments']);
 
 		return $request;
 	}
@@ -107,23 +123,14 @@ class RequestBuilder {
 	}
 
 	/**
-	 * Parses raw command line arguments and returns an array with
-	 *  command => being an array with
-	 *    package => package key
-	 *    controller => controller name
-	 *    action => action name
-	 *      (if no value is found for any of those keys, it will be NULL)
-	 *  options => array of name/value pairs, empty if no options found
-	 *  arguments => array of values, empty if no options found
 	 *
 	 * @param array $rawCommandLineArguments
 	 * @return array
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function parseRawCommandLineArguments(array $rawCommandLineArguments) {
 		$commandLineArguments = array('command' => array(), 'options' => array(), 'arguments' => array());
+
 		$command = array();
-		$commandHasEnded = FALSE;
 		$onlyArgumentsFollow = FALSE;
 
 		while (count($rawCommandLineArguments) > 0) {
@@ -157,10 +164,29 @@ class RequestBuilder {
 				}
 			}
 		}
-
-		$commandLineArguments['command'] = $this->buildCommandArrayFromRawCommandData($command);
+#		$commandLineArguments['command'] = $this->buildCommandArrayFromRawCommandData($command);
 
 		return $commandLineArguments;
+	}
+
+	/**
+	 * Parse a command identifier following the scheme "packagekey:controllername:commandname" and returns the
+	 * controller object name and command name.
+	 *
+	 * Example for a command identifier: "flow3:cache:flush"
+	 *
+	 * @return array Controller object name and command name
+	 */
+	protected function parseCommandIdentifier($commandIdentifier) {
+		$controllerNameParts = explode(':', trim($commandIdentifier));
+		if (count($controllerNameParts) !== 3) {
+			return FALSE;
+		}
+
+		$unknownCasedControllerObjectName = sprintf('F3\\%s\\Command\\%sCommandController', $controllerNameParts[0], $controllerNameParts[1]);
+		$controllerObjectName = $this->objectManager->getCaseSensitiveObjectName($unknownCasedControllerObjectName);
+		$controllerCommandName = $controllerNameParts[2];
+		return array($controllerObjectName, $controllerCommandName);
 	}
 
 	/**
@@ -222,8 +248,6 @@ class RequestBuilder {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function buildCommandArrayFromRawCommandData(array $rawCommand) {
-		if (count($rawCommand) === 2) throw new \F3\FLOW3\MVC\Exception\InvalidFormatException('For CLI calls you need to specify either only a package or package, controller and action.', 1222252361);
-
 		$command = array(
 			'package' => NULL,
 			'subpackages' => array(),

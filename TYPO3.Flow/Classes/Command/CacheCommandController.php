@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Cache\Controller;
+namespace F3\FLOW3\Command;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,22 +23,17 @@ namespace F3\FLOW3\Cache\Controller;
  *                                                                        */
 
 /**
- * Controller for managing caches
+ * Command controller for managing caches
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope singleton
  */
-class CacheManagerController extends \F3\FLOW3\MVC\Controller\ActionController {
+class CacheCommandController extends \F3\FLOW3\MVC\Controller\CommandController {
 
 	/**
-	 * @var F3\FLOW3\Cache\ManagerInterface
+	 * @var \F3\FLOW3\Cache\CacheManager
 	 */
 	protected $cacheManager;
-
-	/**
-	 * @var array
-	 */
-	protected $supportedRequestTypes = array('F3\FLOW3\MVC\CLI\Request');
 
 	/**
 	 * Injects the cache manager
@@ -55,9 +50,9 @@ class CacheManagerController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 *
 	 * @return void
 	 */
-	public function flushAction() {
+	public function flushCommand() {
 		$this->cacheManager->flushCaches();
-		return 'Flushed all caches.' . PHP_EOL;
+		return 'Flushed all caches.';
 	}
 }
 

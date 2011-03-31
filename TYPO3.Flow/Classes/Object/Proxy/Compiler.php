@@ -156,23 +156,25 @@ class Compiler {
 	 * Compiles the configured proxy classes and methods as static PHP code and stores it in the proxy class code cache.
 	 * Also builds the static object container which acts as a registry for non-prototype objects during runtime.
 	 *
-	 * @return void
+	 * @return integer Number of classes which have been compiled
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function compile() {
+		$classCount = 0;
 		foreach ($this->objectManager->getRegisteredClassNames() as $fullOriginalClassName) {
 			if (isset($this->proxyClasses[$fullOriginalClassName])) {
 				$proxyClassCode = $this->proxyClasses[$fullOriginalClassName]->render();
 				if ($proxyClassCode !== '') {
 					$this->classesCache->set(str_replace('\\', '_', $fullOriginalClassName), $proxyClassCode, $this->proxyClasses[$fullOriginalClassName]->getCacheTags());
 
-						// FIXME: Use reflection service:
 					$class = new \ReflectionClass($fullOriginalClassName);
 					$classPathAndFilename = $class->getFileName();
 					$this->cacheOriginalClassFile($fullOriginalClassName, $classPathAndFilename);
+					$classCount ++;
 				}
 			}
 		}
+		return $classCount;
 	}
 
 	/**

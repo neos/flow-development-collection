@@ -235,6 +235,16 @@ class ReflectionService {
 	}
 
 	/**
+	 * Initializes this service after dependencies have been injected.
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function initializeObject() {
+		$this->loadFromCache();
+	}
+
+	/**
 	 * Builds the reflection data cache during compile time.
 	 *
 	 * @param array $availableClassNames
@@ -244,20 +254,9 @@ class ReflectionService {
 	public function buildReflectionData(array $availableClassNames) {
 		$this->availableClassNames = $availableClassNames;
 
-		$this->loadFromCache();
 		$this->forgetChangedClasses();
 		$this->reflectEmergedClasses();
 		$this->saveToCache();
-	}
-
-	/**
-	 * Initializes this service for run time.
-	 *
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function initialize() {
-		$this->loadFromCache();
 	}
 
 	/**
@@ -1064,7 +1063,7 @@ class ReflectionService {
 	 * @throws \F3\FLOW3\Reflection\Exception if no cache has been injected
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function saveToCache() {
+	public function saveToCache() {
 		if (!is_object($this->dataCache)) throw new \F3\FLOW3\Reflection\Exception('A cache must be injected before initializing the Reflection Service.', 1232044697);
 
 		$nonCachedClassNames = array_diff_assoc($this->reflectedClassNames, $this->cachedClassNames);

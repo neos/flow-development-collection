@@ -140,6 +140,17 @@ class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 	}
 
 	/**
+	 * Returns a list of configured routes
+	 *
+	 * @return array
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getRoutes() {
+		$this->createRoutesFromConfiguration();
+		return $this->routes;
+	}
+
+	/**
 	 * Sets package key, subpackage key, controller name, action name and format
 	 * of the current request.
 	 *

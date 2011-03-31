@@ -29,6 +29,17 @@ namespace F3\FLOW3\MVC\CLI;
  * @scope prototype
  */
 class Response extends \F3\FLOW3\MVC\Response {
+
+	/**
+	 * Appends content to the already existing content.
+	 *
+	 * @param string $content More response content
+	 * @return void
+	 */
+	public function appendContent($content) {
+		$this->content .= $content . PHP_EOL;
+	}
+
 }
 
 ?>

@@ -92,10 +92,7 @@ class NotFoundController extends \F3\FLOW3\MVC\Controller\AbstractController imp
 				$response->setContent($this->notFoundView->render());
 				break;
 			default :
-				$response->setContent(
-					"\n404 Not Found\n\n" .
-					$this->exception->getMessage() . "\n"
-				);
+				$response->setContent("\nUnknown command\n\n");
 		}
 	}
 }

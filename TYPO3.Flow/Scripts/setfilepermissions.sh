@@ -56,6 +56,7 @@ find . -type d -exec chmod 2770 {} \;
 find . -type f \! -name commit-msg -exec chmod 660 {} \;
 
 chmod 770 flow3
+chmod 770 flow3_dev
 chmod 700 $0
 
 chown -R $WEBSERVER_USER:$WEBSERVER_GROUP Web/_Resources

@@ -47,21 +47,16 @@ class Dispatcher {
 	protected $settings = array();
 
 	/**
-	 * Constructs the global dispatcher
-	 *
-	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager A reference to the object manager
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
+	 * @return void
 	 */
-	public function __construct(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
+	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
 	}
 
 	/**
-	 * Injects the package manager
-	 *
 	 * @param \F3\FLOW3\Package\PackageManagerInterface $packageManager A reference to the package manager
 	 * @return void
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function injectPackageManager(\F3\FLOW3\Package\PackageManagerInterface $packageManager) {
 		$this->packageManager = $packageManager;
@@ -115,19 +110,11 @@ class Dispatcher {
 	 */
 	protected function resolveController(\F3\FLOW3\MVC\RequestInterface $request) {
 		$exception = NULL;
-		$packageKey = $request->getControllerPackageKey();
-		if ($packageKey === NULL) {
-			$exception = new \F3\FLOW3\MVC\Controller\Exception\InvalidPackageException($request, 'the request object contained no information about a controller, possibly because no route matched');
-		} elseif (!$this->packageManager->isPackageAvailable($packageKey)) {
-			$exception = new \F3\FLOW3\MVC\Controller\Exception\InvalidPackageException($request, 'package "' . $packageKey . '" does not exist');
-		} elseif (!$this->packageManager->isPackageActive($packageKey)) {
-			$exception = new \F3\FLOW3\MVC\Controller\Exception\InactivePackageException($request, 'package "' . $packageKey . '" is not active');
-		} else {
-			$controllerObjectName = $request->getControllerObjectName();
-			if ($controllerObjectName === '') {
-				$exception = new \F3\FLOW3\MVC\Controller\Exception\InvalidControllerException($request, 'no controller could be resolved which would match your request');
-			}
+		$controllerObjectName = $request->getControllerObjectName();
+		if ($controllerObjectName === '') {
+			$exception = new \F3\FLOW3\MVC\Controller\Exception\InvalidControllerException($request, 'no controller could be resolved which would match your request');
 		}
+
 		if ($exception !== NULL) {
 			$controller = $this->objectManager->get($this->settings['mvc']['notFoundController']);
 			if (!$controller instanceof \F3\FLOW3\MVC\Controller\NotFoundControllerInterface) throw new \F3\FLOW3\MVC\Exception\InvalidControllerException('The NotFoundController must implement "\F3\FLOW3\MVC\Controller\NotFoundControllerInterface", ' . (is_object($controller) ? get_class($controller) : gettype($controller)) . ' given.', 1246714416);
