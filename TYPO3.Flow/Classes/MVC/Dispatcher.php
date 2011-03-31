@@ -42,6 +42,11 @@ class Dispatcher {
 	protected $packageManager;
 
 	/**
+	 * @var \F3\FLOW3\SignalSlot\Dispatcher
+	 */
+	protected $signalSlotDispatcher;
+
+	/**
 	 * @var array
 	 */
 	protected $settings = array();
@@ -60,6 +65,14 @@ class Dispatcher {
 	 */
 	public function injectPackageManager(\F3\FLOW3\Package\PackageManagerInterface $packageManager) {
 		$this->packageManager = $packageManager;
+	}
+
+	/**
+	 * @param \F3\FLOW3\SignalSlot\Dispatcher $signalSlotDispatcher
+	 * @return void
+	 */
+	public function injectSignalSlotDispatcher(\F3\FLOW3\SignalSlot\Dispatcher $signalSlotDispatcher) {
+		$this->signalSlotDispatcher = $signalSlotDispatcher;
 	}
 
 	/**
@@ -91,12 +104,26 @@ class Dispatcher {
 			$controller = $this->resolveController($request);
 			try {
 				$controller->processRequest($request, $response);
+				$this->emitAfterControllerInvocation($controller);
 			} catch (\F3\FLOW3\MVC\Exception\StopActionException $stopActionException) {
+				$this->emitAfterControllerInvocation($controller);
 				if ($request instanceof \F3\FLOW3\MVC\Web\SubRequest && $request->isDispatched()) {
 					throw $stopActionException;
 				}
 			}
 		}
+	}
+
+	/**
+	 * This signal is emitted directly after the request has been dispatched to a controller and the controller
+	 * returned control back to the dispatcher.
+	 *
+	 * @param \F3\FLOW3\MVC\Controller\ControllerInterface $controller
+	 * @return void
+	 * @signal
+	 */
+	protected function emitAfterControllerInvocation(\F3\FLOW3\MVC\Controller\ControllerInterface $controller) {
+		$this->signalSlotDispatcher->dispatch(__CLASS__, 'afterControllerInvocation', array($controller));
 	}
 
 	/**
