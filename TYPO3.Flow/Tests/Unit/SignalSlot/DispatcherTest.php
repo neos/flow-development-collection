@@ -90,12 +90,10 @@ class DispatcherTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockSlot = function() use (&$arguments) { $arguments =  func_get_args(); };
 
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockSystemLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
 
 		$dispatcher = new \F3\FLOW3\SignalSlot\Dispatcher();
 		$dispatcher->connect('Foo', 'bar', $mockSlot, NULL, TRUE);
 		$dispatcher->injectObjectManager($mockObjectManager);
-		$dispatcher->injectSystemLogger($mockSystemLogger);
 
 		$dispatcher->dispatch('Foo', 'bar', array('foo' => 'bar', 'baz' => 'quux'));
 		$this->assertSame(array('bar', 'quux'), $arguments);
@@ -114,11 +112,8 @@ class DispatcherTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockObjectManager->expects($this->once())->method('isRegistered')->with($slotClassName)->will($this->returnValue(TRUE));
 		$mockObjectManager->expects($this->once())->method('get')->with($slotClassName)->will($this->returnValue($mockSlot));
 
-		$mockSystemLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
-
 		$dispatcher = new \F3\FLOW3\SignalSlot\Dispatcher();
 		$dispatcher->injectObjectManager($mockObjectManager);
-		$dispatcher->injectSystemLogger($mockSystemLogger);
 		$dispatcher->connect('Foo', 'emitBar', $slotClassName, 'slot', TRUE);
 
 		$dispatcher->dispatch('Foo', 'emitBar', array('foo' => 'bar', 'baz' => 'quux'));
@@ -134,11 +129,8 @@ class DispatcherTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
 		$mockObjectManager->expects($this->once())->method('isRegistered')->with('NonExistingClassName')->will($this->returnValue(FALSE));
 
-		$mockSystemLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
-
 		$dispatcher = new \F3\FLOW3\SignalSlot\Dispatcher();
 		$dispatcher->injectObjectManager($mockObjectManager);
-		$dispatcher->injectSystemLogger($mockSystemLogger);
 		$dispatcher->connect('Foo', 'emitBar', 'NonExistingClassName', 'slot', TRUE);
 		$dispatcher->dispatch('Foo', 'emitBar', array());
 	}
@@ -157,11 +149,8 @@ class DispatcherTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockObjectManager->expects($this->once())->method('isRegistered')->with($slotClassName)->will($this->returnValue(TRUE));
 		$mockObjectManager->expects($this->once())->method('get')->with($slotClassName)->will($this->returnValue($mockSlot));
 
-		$mockSystemLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
-
 		$dispatcher = new \F3\FLOW3\SignalSlot\Dispatcher();
 		$dispatcher->injectObjectManager($mockObjectManager);
-		$dispatcher->injectSystemLogger($mockSystemLogger);
 		$dispatcher->connect('Foo', 'emitBar', $slotClassName, 'unknownMethodName', TRUE);
 
 		$dispatcher->dispatch('Foo', 'emitBar', array('foo' => 'bar', 'baz' => 'quux'));
@@ -177,15 +166,13 @@ class DispatcherTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockSlot = function() use (&$arguments) { $arguments =  func_get_args(); };
 
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockSystemLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
 
 		$dispatcher = new \F3\FLOW3\SignalSlot\Dispatcher();
 		$dispatcher->connect('SignalClassName', 'methodName', $mockSlot, NULL, FALSE);
 		$dispatcher->injectObjectManager($mockObjectManager);
-		$dispatcher->injectSystemLogger($mockSystemLogger);
 
 		$dispatcher->dispatch('SignalClassName', 'methodName', array('foo' => 'bar', 'baz' => 'quux'));
-		$this->assertSame(array('SignalClassName::methodName', 'bar', 'quux'), $arguments);
+		$this->assertSame(array('bar', 'quux', 'SignalClassName::methodName'), $arguments);
 	}
 
 }

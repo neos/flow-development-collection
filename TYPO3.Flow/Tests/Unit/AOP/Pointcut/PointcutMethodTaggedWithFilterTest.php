@@ -39,7 +39,6 @@ class PointcutMethodTaggedWithFilterTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$className = 'F3\FLOW3\Tests\AOP\Fixture\MethodsTaggedWithSomething';
 
 		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'saveToCache'), array(), '', FALSE, TRUE);
-		$mockReflectionService->initialize(array($className));
 
 		$methodTaggedWithFilter = new \F3\FLOW3\AOP\Pointcut\PointcutMethodTaggedWithFilter('someMethod');
 		$methodTaggedWithFilter->injectReflectionService($mockReflectionService);

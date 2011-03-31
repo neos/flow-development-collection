@@ -39,7 +39,6 @@ class PointcutMethodNameFilterTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$className = 'F3\FLOW3\Tests\AOP\Fixture\MethodsTaggedWithSomething';
 
 		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'saveToCache'), array(), '', FALSE, TRUE);
-		$mockReflectionService->initialize(array($className));
 
 		$methodNameFilter = new \F3\FLOW3\AOP\Pointcut\PointcutMethodTaggedWithFilter('someMethod');
 		$methodNameFilter->injectReflectionService($mockReflectionService);
@@ -68,7 +67,6 @@ class PointcutMethodNameFilterTest extends \F3\FLOW3\Tests\UnitTestCase {
 		);
 
 		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'saveToCache'), array(), '', FALSE, TRUE);
-		$mockReflectionService->initialize(array($className));
 
 		$methodNameFilter = new \F3\FLOW3\AOP\Pointcut\PointcutMethodNameFilter('someFinalMethod');
 		$methodNameFilter->injectReflectionService($mockReflectionService);
@@ -91,7 +89,6 @@ class PointcutMethodNameFilterTest extends \F3\FLOW3\Tests\UnitTestCase {
 		);
 
 		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'saveToCache'), array(), '', FALSE, TRUE);
-		$mockReflectionService->initialize(array($className));
 
 		$methodNameFilter = new \F3\FLOW3\AOP\Pointcut\PointcutMethodNameFilter('some.*', 'public');
 		$methodNameFilter->injectReflectionService($mockReflectionService);
@@ -123,7 +120,6 @@ class PointcutMethodNameFilterTest extends \F3\FLOW3\Tests\UnitTestCase {
 		);
 
 		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'saveToCache'), array(), '', FALSE, TRUE);
-		$mockReflectionService->initialize(array($className));
 
 		$mockSystemLogger = $this->getMock('F3\FLOW3\Log\Logger');
 		$mockSystemLogger->expects($this->once())->method('log')->with($this->equalTo(

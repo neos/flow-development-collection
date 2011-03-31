@@ -45,7 +45,7 @@ class DispatcherTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockController = $this->getMock('F3\FLOW3\MVC\Controller\ControllerInterface', array('processRequest', 'canProcessRequest'));
 		$mockController->expects($this->exactly(2))->method('processRequest')->with($mockRequest, $mockResponse);
 
-		$dispatcher = $this->getMock('F3\FLOW3\MVC\Dispatcher', array('resolveController'), array(), '', FALSE);
+		$dispatcher = $this->getMock('F3\FLOW3\MVC\Dispatcher', array('resolveController', 'emitAfterControllerInvocation'), array(), '', FALSE);
 		$dispatcher->expects($this->any())->method('resolveController')->will($this->returnValue($mockController));
 		$dispatcher->dispatch($mockRequest, $mockResponse);
 	}
@@ -63,7 +63,7 @@ class DispatcherTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockController = $this->getMock('F3\FLOW3\MVC\Controller\ControllerInterface', array('processRequest', 'canProcessRequest'));
 		$mockController->expects($this->atLeastOnce())->method('processRequest')->will($this->throwException(new \F3\FLOW3\MVC\Exception\StopActionException()));
 
-		$dispatcher = $this->getMock('F3\FLOW3\MVC\Dispatcher', array('resolveController'), array(), '', FALSE);
+		$dispatcher = $this->getMock('F3\FLOW3\MVC\Dispatcher', array('resolveController', 'emitAfterControllerInvocation'), array(), '', FALSE);
 		$dispatcher->expects($this->any())->method('resolveController')->will($this->returnValue($mockController));
 		$dispatcher->dispatch($mockRequest, $mockResponse);
 	}
@@ -82,7 +82,7 @@ class DispatcherTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockController = $this->getMock('F3\FLOW3\MVC\Controller\ControllerInterface', array('processRequest', 'canProcessRequest'));
 		$mockController->expects($this->atLeastOnce())->method('processRequest')->will($this->throwException(new \F3\FLOW3\MVC\Exception\StopActionException()));
 
-		$dispatcher = $this->getMock('F3\FLOW3\MVC\Dispatcher', array('resolveController'), array(), '', FALSE);
+		$dispatcher = $this->getMock('F3\FLOW3\MVC\Dispatcher', array('resolveController', 'emitAfterControllerInvocation'), array(), '', FALSE);
 		$dispatcher->expects($this->any())->method('resolveController')->will($this->returnValue($mockController));
 		$dispatcher->dispatch($mockSubRequest, $mockResponse);
 	}
@@ -104,7 +104,7 @@ class DispatcherTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockResponse = $this->getMock('F3\FLOW3\MVC\ResponseInterface');
 		$mockController = $this->getMock('F3\FLOW3\MVC\Controller\ControllerInterface', array('processRequest', 'canProcessRequest'));
 
-		$dispatcher = $this->getMock('F3\FLOW3\MVC\Dispatcher', array('resolveController'), array(), '', FALSE);
+		$dispatcher = $this->getMock('F3\FLOW3\MVC\Dispatcher', array('resolveController', 'emitAfterControllerInvocation'), array(), '', FALSE);
 		$dispatcher->expects($this->any())->method('resolveController')->will($this->returnValue($mockController));
 		$dispatcher->dispatch($mockRequest, $mockResponse);
 	}
@@ -114,99 +114,40 @@ class DispatcherTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function resolveControllerReturnsTheNotFoundControllerDefinedInTheFLOW3SettingsAndInjectsCorrectExceptionIfTheResolvedControllerDoesNotExist() {
-		$mockController = $this->getMock('F3\FLOW3\MVC\Controller\NotFoundControllerInterface', array(), array(), '', FALSE);
+		$mockController = $this->getMock('F3\FLOW3\MVC\Controller\NotFoundControllerInterface');
 		$mockController->expects($this->once())->method('setException')->with($this->isInstanceOf('F3\FLOW3\MVC\Controller\Exception\InvalidControllerException'));
 
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
 		$mockObjectManager->expects($this->once())->method('get')->with($this->equalTo('F3\TestPackage\TheCustomNotFoundController'))->will($this->returnValue($mockController));
 
-		$mockRequest = $this->getMock('F3\FLOW3\MVC\RequestInterface');
-		$mockRequest->expects($this->any())->method('getControllerPackageKey')->will($this->returnValue('TestPackage'));
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\Request', array('getControllerPackageKey', 'getControllerObjectName'));
 		$mockRequest->expects($this->any())->method('getControllerObjectName')->will($this->returnValue(''));
 
-		$mockPackageManager = $this->getMock('F3\FLOW3\Package\PackageManager', array(), array(), '', FALSE);
-		$mockPackageManager->expects($this->once())->method('isPackageAvailable')->with($this->equalTo('TestPackage'))->will($this->returnValue(TRUE));
-		$mockPackageManager->expects($this->once())->method('isPackageActive')->with($this->equalTo('TestPackage'))->will($this->returnValue(TRUE));
-
-		$dispatcher = $this->getAccessibleMock('F3\FLOW3\MVC\Dispatcher', array('dummy'), array($mockObjectManager), '', TRUE);
+		$dispatcher = $this->getAccessibleMock('F3\FLOW3\MVC\Dispatcher', array('dummy'));
+		$dispatcher->injectObjectManager($mockObjectManager);
 		$dispatcher->injectSettings(array('mvc' => array('notFoundController' => 'F3\TestPackage\TheCustomNotFoundController')));
-		$dispatcher->injectPackageManager($mockPackageManager);
 
 		$this->assertEquals($mockController, $dispatcher->_call('resolveController', $mockRequest));
 	}
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @expectedException \F3\FLOW3\MVC\Exception\InvalidControllerException
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function resolveControllerReturnsTheNotFoundControllerDefinedInTheFLOW3SettingsAndInjectsCorrectExceptionIfTheResolvedPackageDoesNotExist() {
-		$mockController = $this->getMock('F3\FLOW3\MVC\Controller\NotFoundControllerInterface', array(), array(), '', FALSE);
-		$mockController->expects($this->once())->method('setException')->with($this->isInstanceOf('F3\FLOW3\MVC\Controller\Exception\InvalidPackageException'));
-
+	public function resolveControllerThrowsInvalidControllerExceptionIfTheNotFoundControllerDefinedInTheFLOW3SettingsDoesNotImplementTheNotFoundControllerInterface() {
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->once())->method('get')->with($this->equalTo('F3\TestPackage\TheCustomNotFoundController'))->will($this->returnValue($mockController));
+		$mockObjectManager->expects($this->once())->method('get')->with($this->equalTo('F3\TestPackage\TheCustomNotFoundController'))->will($this->returnValue(new \stdClass()));
 
-		$mockRequest = $this->getMock('F3\FLOW3\MVC\RequestInterface');
-		$mockRequest->expects($this->any())->method('getControllerPackageKey')->will($this->returnValue('TestPackage'));
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\Request', array('getControllerObjectName'));
+		$mockRequest->expects($this->any())->method('getControllerObjectName')->will($this->returnValue(''));
 
-		$mockPackageManager = $this->getMock('F3\FLOW3\Package\PackageManager', array(), array(), '', FALSE);
-		$mockPackageManager->expects($this->once())->method('isPackageAvailable')->with($this->equalTo('TestPackage'))->will($this->returnValue(FALSE));
-
-		$dispatcher = $this->getAccessibleMock('F3\FLOW3\MVC\Dispatcher', array('dummy'), array($mockObjectManager), '', TRUE);
+		$dispatcher = $this->getAccessibleMock('F3\FLOW3\MVC\Dispatcher', array('dummy'));
+		$dispatcher->injectObjectManager($mockObjectManager);
 		$dispatcher->injectSettings(array('mvc' => array('notFoundController' => 'F3\TestPackage\TheCustomNotFoundController')));
-		$dispatcher->injectPackageManager($mockPackageManager);
 
-		$this->assertEquals($mockController, $dispatcher->_call('resolveController', $mockRequest));
+		$dispatcher->_call('resolveController', $mockRequest);
 	}
 
-	/**
-	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	public function resolveControllerReturnsTheNotFoundControllerDefinedInTheFLOW3SettingsAndInjectsCorrectExceptionIfTheResolvedPackageIsNotActive() {
-		$mockController = $this->getMock('F3\FLOW3\MVC\Controller\NotFoundControllerInterface', array(), array(), '', FALSE);
-		$mockController->expects($this->once())->method('setException')->with($this->isInstanceOf('F3\FLOW3\MVC\Controller\Exception\InactivePackageException'));
-
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->once())->method('get')->with($this->equalTo('F3\TestPackage\TheCustomNotFoundController'))->will($this->returnValue($mockController));
-
-		$mockRequest = $this->getMock('F3\FLOW3\MVC\RequestInterface');
-		$mockRequest->expects($this->any())->method('getControllerPackageKey')->will($this->returnValue('TestPackage'));
-
-		$mockPackageManager = $this->getMock('F3\FLOW3\Package\PackageManager', array(), array(), '', FALSE);
-		$mockPackageManager->expects($this->once())->method('isPackageAvailable')->with($this->equalTo('TestPackage'))->will($this->returnValue(TRUE));
-		$mockPackageManager->expects($this->once())->method('isPackageActive')->with($this->equalTo('TestPackage'))->will($this->returnValue(FALSE));
-
-		$dispatcher = $this->getAccessibleMock('F3\FLOW3\MVC\Dispatcher', array('dummy'), array($mockObjectManager), '', TRUE);
-		$dispatcher->injectSettings(array('mvc' => array('notFoundController' => 'F3\TestPackage\TheCustomNotFoundController')));
-		$dispatcher->injectPackageManager($mockPackageManager);
-
-		$this->assertEquals($mockController, $dispatcher->_call('resolveController', $mockRequest));
-	}
-
-	/**
-	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	public function resolveControllerReturnsTheNotFoundControllerDefinedInTheFLOW3SettingsAndInjectsCorrectExceptionIfTheRequestDoesNotContainPackageKey() {
-		$mockController = $this->getMock('F3\FLOW3\MVC\Controller\NotFoundControllerInterface', array(), array(), '', FALSE);
-		$mockController->expects($this->once())->method('setException')->with($this->isInstanceOf('F3\FLOW3\MVC\Controller\Exception\InvalidPackageException'));
-
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->once())->method('get')->with($this->equalTo('F3\TestPackage\TheCustomNotFoundController'))->will($this->returnValue($mockController));
-
-		$mockRequest = $this->getMock('F3\FLOW3\MVC\RequestInterface');
-		$mockRequest->expects($this->any())->method('getControllerPackageKey')->will($this->returnValue(NULL));
-
-		$mockPackageManager = $this->getMock('F3\FLOW3\Package\PackageManager', array(), array(), '', FALSE);
-		$mockPackageManager->expects($this->never())->method('isPackageAvailable');
-		$mockPackageManager->expects($this->never())->method('isPackageActive');
-
-		$dispatcher = $this->getAccessibleMock('F3\FLOW3\MVC\Dispatcher', array('dummy'), array($mockObjectManager), '', TRUE);
-		$dispatcher->injectSettings(array('mvc' => array('notFoundController' => 'F3\TestPackage\TheCustomNotFoundController')));
-		$dispatcher->injectPackageManager($mockPackageManager);
-
-		$this->assertEquals($mockController, $dispatcher->_call('resolveController', $mockRequest));
-	}
 }
 ?>
