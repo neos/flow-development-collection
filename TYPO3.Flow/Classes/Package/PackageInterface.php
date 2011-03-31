@@ -23,13 +23,22 @@ namespace F3\FLOW3\Package;
  *                                                                        */
 
 /**
- * Interface for a TYPO3 Package class
+ * Interface for a FLOW3 Package class
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @author Robert Lemke <robert@typo3.org>
  * @api
  */
 interface PackageInterface {
+
+	const PATTERN_MATCH_PACKAGEKEY = '/^[A-Z][A-Za-z0-9_]+$/';
+
+	const DIRECTORY_CLASSES = 'Classes/';
+	const DIRECTORY_CONFIGURATION = 'Configuration/';
+	const DIRECTORY_DOCUMENTATION = 'Documentation/';
+	const DIRECTORY_METADATA = 'Meta/';
+	const DIRECTORY_TESTS_FUNCTIONAL = 'Tests/Functional/';
+	const DIRECTORY_RESOURCES = 'Resources/';
 
 	/**
 	 * Returns the package meta object of this package.

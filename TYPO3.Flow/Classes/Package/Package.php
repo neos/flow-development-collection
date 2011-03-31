@@ -32,17 +32,6 @@ use \F3\FLOW3\Package\MetaData\XmlReader as PackageMetaDataReader;
  */
 class Package implements PackageInterface {
 
-	const PATTERN_MATCH_PACKAGEKEY = '/^[A-Z][A-Za-z0-9_]+$/';
-
-	const DIRECTORY_CLASSES = 'Classes/';
-	const DIRECTORY_CONFIGURATION = 'Configuration/';
-	const DIRECTORY_DOCUMENTATION = 'Documentation/';
-	const DIRECTORY_METADATA = 'Meta/';
-	const DIRECTORY_TESTS_FUNCTIONAL = 'Tests/Functional/';
-	const DIRECTORY_RESOURCES = 'Resources/';
-
-	const FILENAME_PACKAGEINFO = 'Package.xml';
-
 	/**
 	 * Unique key of this package
 	 * @var string
@@ -81,6 +70,15 @@ class Package implements PackageInterface {
 
 		$this->packageKey = $packageKey;
 		$this->packagePath = $packagePath;
+	}
+
+	/**
+	 * Invokes custom PHP code directly after the package manager has been initialized.
+	 *
+	 * @param \F3\FLOW3\Core\Bootstrap $bootstrap The current bootstrap
+	 * @return void
+	 */
+	public function boot(\F3\FLOW3\Core\Bootstrap $bootstrap) {
 	}
 
 	/**

@@ -26,6 +26,8 @@ namespace F3\FLOW3\Core;
 require_once(__DIR__ . '/../Utility/Files.php');
 require_once(__DIR__ . '/../Package/PackageInterface.php');
 require_once(__DIR__ . '/../Package/Package.php');
+require_once(__DIR__ . '/../Package/PackageManagerInterface.php');
+require_once(__DIR__ . '/../Package/PackageManager.php');
 
 /**
  * General purpose central core hyper FLOW3 bootstrap class
@@ -81,12 +83,6 @@ class Bootstrap {
 	 * @var \F3\FLOW3\Package\PackageManagerInterface
 	 */
 	protected $packageManager;
-
-	/**
-	 * A reference to the FLOW3 package which can be used before the Package Manager is initialized
-	 * @var \F3\FLOW3\Package\Package
-	 */
-	protected $flow3Package;
 
 	/**
 	 * @var \F3\FLOW3\Core\ClassLoader
@@ -187,7 +183,6 @@ class Bootstrap {
 			exit('FLOW3: Unknown context "' . $this->context . '" provided, currently only "Production", "Development" and "Testing" are supported. (Error #1254216868)');
 		}
 
-		$this->flow3Package = new \F3\FLOW3\Package\Package('FLOW3', FLOW3_PATH_FLOW3);
 	}
 
 	/**
@@ -428,8 +423,24 @@ class Bootstrap {
 	public function initializeClassLoader() {
 		require_once(FLOW3_PATH_FLOW3 . 'Classes/Core/ClassLoader.php');
 		$this->classLoader = new \F3\FLOW3\Core\ClassLoader();
-		$this->classLoader->setPackages(array('FLOW3' => $this->flow3Package));
 		spl_autoload_register(array($this->classLoader, 'loadClass'), TRUE, TRUE);
+	}
+
+	/**
+	 * Initializes the package system and loads the package configuration and settings
+	 * provided by the packages.
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @see initialize()
+	 */
+	protected function initializePackageManagement() {
+		$this->packageManager = new \F3\FLOW3\Package\PackageManager();
+		$this->packageManager->initialize($this);
+
+		$activePackages = $this->packageManager->getActivePackages();
+
+		$this->classLoader->setPackages($activePackages);
 	}
 
 	/**
@@ -442,7 +453,7 @@ class Bootstrap {
 	public function initializeConfiguration() {
 		$this->configurationManager = new \F3\FLOW3\Configuration\ConfigurationManager($this->context);
 		$this->configurationManager->injectConfigurationSource(new \F3\FLOW3\Configuration\Source\YamlSource());
-		$this->configurationManager->setPackages(array('FLOW3' => $this->flow3Package));
+		$this->configurationManager->setPackages($this->packageManager->getActivePackages());
 
 		$this->settings = $this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'FLOW3');
 
@@ -478,41 +489,19 @@ class Bootstrap {
 	}
 
 	/**
-	 * Initializes the package system and loads the package configuration and settings
-	 * provided by the packages.
-	 *
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @see initialize()
-	 */
-	public function initializePackageManagement() {
-		$this->packageManager = new \F3\FLOW3\Package\PackageManager();
-		$this->packageManager->injectConfigurationManager($this->configurationManager);
-		$this->packageManager->initialize();
-
-		$activePackages = $this->packageManager->getActivePackages();
-
-		$this->classLoader->setPackages($activePackages);
-		$this->configurationManager->setPackages($activePackages);
-
-		foreach ($activePackages as $packageKey => $package) {
-			$packageConfiguration = $this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_PACKAGE, $packageKey);
-			$this->evaluatePackageConfiguration($package, $packageConfiguration);
-		}
-	}
-
-	/**
 	 * Initializes the cache framework
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @see initialize()
 	 */
-	public function initializeCacheManagement() {
+	protected function initializeCacheManagement() {
 		$this->cacheManager = new \F3\FLOW3\Cache\CacheManager();
 		$this->cacheManager->setCacheConfigurations($this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_CACHES));
 
 		$this->cacheFactory = new \F3\FLOW3\Cache\CacheFactory($this->context, $this->cacheManager, $this->environment);
+
+		$this->signalSlotDispatcher->connect('F3\FLOW3\Monitor\FileMonitor', 'emitFilesHaveChanged', $this->cacheManager, 'flushClassFileCachesByChangedFiles');
 	}
 
 	/**
@@ -782,47 +771,6 @@ class Bootstrap {
 		}
 		if (!is_dir(FLOW3_PATH_DATA . 'Persistent')) {
 			mkdir(FLOW3_PATH_DATA . 'Persistent');
-		}
-	}
-
-	/**
-	 * (For now) evaluates the package configuration
-	 *
-	 * @param \F3\FLOW3\Package\PackageInterface $package The package
-	 * @param array $packageConfiguration The configuration to evaluate
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @see initializePackages()
-	 * @todo needs refactoring and be moved to elsewhere (package manager)
-	 */
-	protected function evaluatePackageConfiguration(\F3\FLOW3\Package\PackageInterface $package, array $packageConfiguration) {
-		if (isset($packageConfiguration['classLoader'])) {
-			if (isset($packageConfiguration['classLoader']['specialClassNameAndPaths'])) {
-				$classLoader = $this->objectManager->get('F3\FLOW3\Core\ClassLoader');
-				foreach ($packageConfiguration['classLoader']['specialClassNameAndPaths'] as $className => $classFilePathAndName) {
-					$classFilePathAndName = str_replace('%PATH_PACKAGE%', $package->getPackagePath(), $classFilePathAndName);
-					$classFilePathAndName = str_replace('%PATH_PACKAGE_CLASSES%', $package->getClassesPath(), $classFilePathAndName);
-					$classFilePathAndName = str_replace('%PATH_PACKAGE_RESOURCES%', $package->getResourcesPath(), $classFilePathAndName);
-					$classLoader->setSpecialClassNameAndPath($className, $classFilePathAndName);
-				}
-			}
-
-			if (isset($packageConfiguration['classLoader']['includePaths'])) {
-				foreach ($packageConfiguration['classLoader']['includePaths'] as $includePath) {
-					$includePath = str_replace('%PATH_PACKAGE%', $package->getPackagePath(), $includePath);
-					$includePath = str_replace('%PATH_PACKAGE_CLASSES%', $package->getClassesPath(), $includePath);
-					$includePath = str_replace('%PATH_PACKAGE_RESOURCES%', $package->getResourcesPath(), $includePath);
-					$includePath = str_replace('/', DIRECTORY_SEPARATOR, $includePath);
-					set_include_path($includePath . PATH_SEPARATOR . get_include_path());
-				}
-			}
-
-			if (isset($packageConfiguration['classLoader']['autoLoader'])) {
-				$autoLoaderPathAndFilename = \F3\FLOW3\Utility\Files::concatenatePaths(array($package->getPackagePath(), $packageConfiguration['classLoader']['autoLoader']));
-				if (file_exists($autoLoaderPathAndFilename)) {
-					require($autoLoaderPathAndFilename);
-				}
-			}
 		}
 	}
 }
