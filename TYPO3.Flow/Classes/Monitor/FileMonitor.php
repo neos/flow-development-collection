@@ -273,7 +273,7 @@ class FileMonitor {
 	 * @api
 	 */
 	protected function emitFilesHaveChanged($monitorIdentifier, array $changedFiles) {
-		$this->signalDispatcher->dispatch(__CLASS__, __FUNCTION__, func_get_args());
+		$this->signalDispatcher->dispatch(__CLASS__, 'filesHaveChanged', array($monitorIdentifier, $changedFiles));
 	}
 
 	/**
@@ -287,7 +287,7 @@ class FileMonitor {
 	 * @api
 	 */
 	protected function emitDirectoriesHaveChanged($monitorIdentifier, array $changedDirectories) {
-		$this->signalDispatcher->dispatch(__CLASS__, __FUNCTION__, func_get_args());
+		$this->signalDispatcher->dispatch(__CLASS__, 'directoriesHaveChanged', array($monitorIdentifier, $changedDirectories));
 	}
 
 	/**
