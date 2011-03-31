@@ -185,6 +185,8 @@ class PersistenceManager extends \F3\FLOW3\Persistence\AbstractPersistenceManage
 			$proxyFactory = $this->entityManager->getProxyFactory();
 			$proxyFactory->generateProxyClasses($this->entityManager->getMetadataFactory()->getAllMetadata());
 			$this->systemLogger->log('Doctrine 2 setup finished');
+		} else {
+			$this->systemLogger->log('Doctrine 2 setup skipped, driver and path backend options not set!', LOG_NOTICE);
 		}
 	}
 
