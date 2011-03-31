@@ -256,7 +256,6 @@ class ReflectionService {
 
 		$this->forgetChangedClasses();
 		$this->reflectEmergedClasses();
-		$this->saveToCache();
 	}
 
 	/**

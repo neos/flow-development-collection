@@ -42,6 +42,11 @@ class CoreCommandController extends \F3\FLOW3\MVC\Controller\CommandController {
 	protected $dispatcher;
 
 	/**
+	 * @var \F3\FLOW3\SignalSlot\Dispatcher
+	 */
+	protected $signalSlotDispatcher;
+
+	/**
 	 * @var \F3\FLOW3\Core\Bootstrap
 	 */
 	protected $bootstrap;
@@ -80,6 +85,14 @@ class CoreCommandController extends \F3\FLOW3\MVC\Controller\CommandController {
 	 */
 	public function injectDispatcher(\F3\FLOW3\MVC\Dispatcher $dispatcher) {
 		$this->dispatcher = $dispatcher;
+	}
+
+	/**
+	 * @param \F3\FLOW3\SignalSlot\Dispatcher $signalSlotDispatcher
+	 * @return void
+	 */
+	public function injectSignalSlotDispatcher(\F3\FLOW3\SignalSlot\Dispatcher $signalSlotDispatcher) {
+		$this->signalSlotDispatcher = $signalSlotDispatcher;
 	}
 
 	/**
@@ -152,6 +165,8 @@ class CoreCommandController extends \F3\FLOW3\MVC\Controller\CommandController {
 		$classCount = $this->proxyClassCompiler->compile();
 
 		$objectConfigurationCache->set('allCompiledCodeUpToDate', TRUE, array($objectConfigurationCache->getClassTag()));
+
+		$this->emitFinishedCompileCommand($classCount);
 	}
 
 	/**
@@ -219,6 +234,17 @@ class CoreCommandController extends \F3\FLOW3\MVC\Controller\CommandController {
 		}
 
 		echo "Bye!\n";
+	}
+
+	/**
+	 * Signals that the compile command was successfully finished.
+	 *
+	 * @param integer $classCount Number of compiled proxy classes
+	 * @return void
+	 * @signal
+	 */
+	protected function emitFinishedCompileCommand($classCount) {
+		$this->signalSlotDispatcher->dispatch(__CLASS__, 'finishedCompileCommand', array($classCount));
 	}
 
 	/**

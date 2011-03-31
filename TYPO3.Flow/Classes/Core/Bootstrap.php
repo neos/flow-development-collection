@@ -243,12 +243,14 @@ class Bootstrap {
 			$this->handleCommandLineSlaveRequest();
 		} else {
 			if (isset($commandLine[1]) && $this->isCompiletimeCommandController($commandLine[1])) {
+				$runLevel = 'compiletime';
 				$this->initializeForCompileTime();
 				$request = $this->objectManager->get('F3\FLOW3\MVC\CLI\RequestBuilder')->build(array_slice($commandLine, 1));
 				$response = new \F3\FLOW3\MVC\CLI\Response();
 				$this->objectManager->get('F3\FLOW3\MVC\Dispatcher')->dispatch($request, $response);
-				$this->shutdownForCompiletime();
+				$this->emitFinishedCompiletimeRun();
 			} else {
+				$runLevel = 'runtime';
 				$this->initializeForRuntime();
 
 				if ($this->context === 'Testing') return;
@@ -256,10 +258,11 @@ class Bootstrap {
 				$request = $this->objectManager->get('F3\FLOW3\MVC\CLI\RequestBuilder')->build(array_slice($commandLine, 1));
 				$response = new \F3\FLOW3\MVC\CLI\Response();
 				$this->objectManager->get('F3\FLOW3\MVC\Dispatcher')->dispatch($request, $response);
-				$this->shutdownForRuntime();
+				$this->emitFinishedRuntimeRun();
 			}
 			$response->send();
 		}
+		$this->emitBootstrapShuttingDown($runLevel);
 	}
 
 	/**
@@ -296,7 +299,8 @@ class Bootstrap {
 		}
 
 		$this->systemLogger->log('Exiting sub process loop.', LOG_DEBUG);
-		$this->shutdownForRuntime();
+
+		$this->emitFinishedRuntimeRun();
 	}
 
 	/**
@@ -312,7 +316,8 @@ class Bootstrap {
 		$requestHandler = $requestHandlerResolver->resolveRequestHandler();
 		$requestHandler->handleRequest();
 
-		$this->shutdownForRuntime();
+		$this->emitFinishedRuntimeRun();
+		$this->emitBootstrapShuttingDown('runtime');
 	}
 
 	/**
@@ -350,6 +355,8 @@ class Bootstrap {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function initializeForRuntime() {
+		$this->monitorClassFiles();
+
 		$objectConfigurationCache = $this->cacheManager->getCache('FLOW3_Object_Configuration');
 		if ($objectConfigurationCache->has('allCompiledCodeUpToDate') === FALSE || $this->context !== 'Production') {
 			if (DIRECTORY_SEPARATOR === '/') {
@@ -379,29 +386,8 @@ class Bootstrap {
 		$this->initializeSession();
 		$this->initializeResources();
 		$this->initializeI18n();
+
 		$this->emitBootstrapReady();
-	}
-
-
-	/**
-	 * Shutdown sequence for compiletime mode.
-	 *
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	protected function shutdownForCompiletime() {
-		$this->signalSlotDispatcher->dispatch(__CLASS__, 'finishedCompilationRun', array());
-	}
-	/**
-	 * Shutdown sequence for runtime mode.
-	 *
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	protected function shutdownForRuntime() {
-		$this->objectManager->get('F3\FLOW3\Persistence\PersistenceManagerInterface')->persistAll();
-		$this->configurationManager->shutdown();
-		$this->objectManager->shutdown();
 	}
 
 	/**
@@ -555,7 +541,8 @@ class Bootstrap {
 	 */
 	protected function initializeFileMonitor() {
 		if ($this->settings['monitor']['detectClassChanges'] === TRUE) {
-			$this->monitorRoutesConfigurationFiles();
+// FIXME: Doesn't work at the moment
+#			$this->monitorRoutesConfigurationFiles();
 		}
 	}
 
@@ -687,6 +674,40 @@ class Bootstrap {
 	 */
 	protected function emitBootstrapReady() {
 		$this->signalSlotDispatcher->dispatch(__CLASS__, 'bootstrapReady', array($this));
+	}
+
+	/**
+	 * Emits a signal that the compile run was finished.
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @signal
+	 */
+	protected function emitFinishedCompiletimeRun() {
+		$this->signalSlotDispatcher->dispatch(__CLASS__, 'finishedCompiletimeRun', array());
+	}
+
+	/**
+	 * Emits a signal that the runtime run was finished.
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @signal
+	 */
+	protected function emitFinishedRuntimeRun() {
+		$this->signalSlotDispatcher->dispatch(__CLASS__, 'finishedRuntimeRun', array());
+	}
+
+	/**
+	 * Emits a signal that the bootstrap finished and is shutting down.
+	 *
+	 * @param string $runLevel
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @signal
+	 */
+	protected function emitBootstrapShuttingDown($runLevel) {
+		$this->signalSlotDispatcher->dispatch(__CLASS__, 'bootstrapShuttingDown', array($runLevel));
 	}
 
 	/**
