@@ -375,16 +375,18 @@ class ObjectManager implements ObjectManagerInterface {
 			$object->$methodName();
 		}
 
-		$this->objectSerializer->clearState();
+		if ($this->sessionInitialized) {
+			$this->objectSerializer->clearState();
 
-		$objectsAsArray = array();
-		foreach($this->objects as $information) {
-			if (isset($information['i']) && $information['s'] === ObjectConfiguration::SCOPE_SESSION) {
-				$objectsAsArray = array_merge($objectsAsArray, $this->objectSerializer->serializeObjectAsPropertyArray($information['i']));
+			$objectsAsArray = array();
+			foreach($this->objects as $information) {
+				if (isset($information['i']) && $information['s'] === ObjectConfiguration::SCOPE_SESSION) {
+					$objectsAsArray = array_merge($objectsAsArray, $this->objectSerializer->serializeObjectAsPropertyArray($information['i']));
+				}
 			}
+			$this->session->putData('F3_FLOW3_Object_ObjectManager', $objectsAsArray);
+			$this->session->close();
 		}
-		$this->session->putData('F3_FLOW3_Object_ObjectManager', $objectsAsArray);
-		$this->session->close();
 	}
 
 	/**
