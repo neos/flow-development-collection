@@ -33,7 +33,7 @@ class FrameworkTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function resultOfSayHelloMethodIsModifiedByWorldAdvice() {
-		$targetClass = $this->objectManager->get('F3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01');
+		$targetClass = new Fixtures\TargetClass01();
 		$this->assertSame('Hello World', $targetClass->sayHello());
 	}
 
@@ -42,7 +42,7 @@ class FrameworkTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function adviceRecoversFromException() {
-		$targetClass = $this->objectManager->get('F3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01');
+		$targetClass = new Fixtures\TargetClass01();
 		try {
 			$targetClass->sayHelloAndThrow(TRUE);
 		} catch(\Exception $e) {}
@@ -54,7 +54,7 @@ class FrameworkTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function resultOfGreetMethodIsModifiedBySpecialNameAdvice() {
-		$targetClass = $this->objectManager->get('F3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01');
+		$targetClass = new Fixtures\TargetClass01();
 		$this->assertSame('Hello, me', $targetClass->greet('FLOW3'));
 		$this->assertSame('Hello, Christopher', $targetClass->greet('Christopher'));
 	}
@@ -64,7 +64,7 @@ class FrameworkTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function containWithSplObjectStorageInRuntimeEvaluation() {
-		$targetClass = $this->objectManager->get('F3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01');
+		$targetClass = new Fixtures\TargetClass01();
 		$name = new \F3\FLOW3\Tests\Functional\AOP\Fixtures\Name('FLOW3');
 		$otherName = new \F3\FLOW3\Tests\Functional\AOP\Fixtures\Name('TYPO3');
 		$splObjectStorage = new \SplObjectStorage();
@@ -82,7 +82,7 @@ class FrameworkTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function constructorAdvicesAreInvoked() {
-		$targetClass = $this->objectManager->get('F3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01');
+		$targetClass = new Fixtures\TargetClass01();
 		$this->assertSame('AVRO RJ100 is lousier than A-380', $targetClass->constructorResult);
 	}
 
@@ -90,10 +90,26 @@ class FrameworkTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function adviceInformationIsAlsoWhenTheTargetClassIsUnserialized() {
+	public function adviceInformationIsAlsoBuiltWhenTheTargetClassIsUnserialized() {
 		$className = 'F3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01';
 		$targetClass = unserialize('O:' . strlen($className) . ':"' . $className . '":0:{};');
 		$this->assertSame('Hello, me', $targetClass->greet('FLOW3'));
+	}
+
+	/**
+	 * Due to the way the proxy classes are rendered, lifecycle methods such as
+	 * initializeObject() were called twice if the constructor is adviced by some
+	 * aspect. This test makes sure that any code after the AOP advice code is only
+	 * executed once.
+	 *
+	 * Test for bugfix #25610
+	 *
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function codeAfterTheAopCodeInTheProxyMethodIsOnlyCalledOnce() {
+		$targetClass = new Fixtures\TargetClass01();
+		$this->assertEquals(1, $targetClass->initializeObjectCallCounter);
 	}
 
 }

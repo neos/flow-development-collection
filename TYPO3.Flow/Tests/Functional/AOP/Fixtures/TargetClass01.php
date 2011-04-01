@@ -24,6 +24,8 @@ namespace F3\FLOW3\Tests\Functional\AOP\Fixtures;
 
 /**
  * A target class for testing the AOP framework
+ *
+ * @scope prototype
  */
 class TargetClass01 {
 
@@ -38,10 +40,22 @@ class TargetClass01 {
 	public $constructorResult = '';
 
 	/**
+	 * @var integer
+	 */
+	public $initializeObjectCallCounter = 0;
+
+	/**
 	 *
 	 */
 	public function __construct() {
 		$this->constructorResult .= 'AVRO RJ100';
+	}
+
+	/**
+	 *
+	 */
+	public function initializeObject() {
+		$this->initializeObjectCallCounter ++;
 	}
 
 	/**

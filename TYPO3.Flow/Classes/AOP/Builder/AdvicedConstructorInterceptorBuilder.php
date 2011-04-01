@@ -63,6 +63,7 @@ class AdvicedConstructorInterceptorBuilder extends \F3\FLOW3\AOP\Builder\Abstrac
 					throw $e;
 				}
 				unset($this->FLOW3_AOP_Proxy_methodIsInAdviceMode[\'' . $methodName . '\']);
+				return;
 			}
 ');
 		}
