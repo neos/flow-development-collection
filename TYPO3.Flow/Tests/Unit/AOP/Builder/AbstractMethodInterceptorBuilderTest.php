@@ -153,7 +153,7 @@ class AbstractMethodInterceptorBuilderTest extends \F3\FLOW3\Tests\UnitTestCase 
 		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'saveToCache'), array(), '', FALSE, TRUE);
 		$mockReflectionService->initialize(array($className));
 
-		$builder = $this->getAccessibleMock('F3\FLOW3\AOP\Builder\EmptyConstructorInterceptorBuilder', array('dummy'), array(), '', FALSE);
+		$builder = $this->getAccessibleMock('F3\FLOW3\AOP\Builder\AdvicedConstructorInterceptorBuilder', array('dummy'), array(), '', FALSE);
 		$builder->injectReflectionService($mockReflectionService);
 
 		$expectedCode = '$this->FLOW3_AOP_Proxy_originalConstructorArguments[\'arg1\'], $this->FLOW3_AOP_Proxy_originalConstructorArguments[\'arg2\'], $this->FLOW3_AOP_Proxy_originalConstructorArguments[\'arg3\'], $this->FLOW3_AOP_Proxy_originalConstructorArguments[\'arg4\'], $this->FLOW3_AOP_Proxy_originalConstructorArguments[\'arg5\']';

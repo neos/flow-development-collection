@@ -164,7 +164,7 @@ class ProxyMethod {
 				$this->addedPreParentCallCode;
 
 			if ($this->addedPostParentCallCode !== '') {
-				$code .= "		\$result = " . ($callParentMethodCode === '' ? 'NULL' : $callParentMethodCode) . ";\n";
+				$code .= "		\$result = " . ($callParentMethodCode === '' ? "NULL;\n" : $callParentMethodCode);
 				$code .= $this->addedPostParentCallCode;
 				$code .= "		return \$result;\n";
 			} else {

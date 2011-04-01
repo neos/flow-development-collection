@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Tests\Functional\AOP\Fixtures;
+namespace F3\FLOW3\Tests\Functional\AOP;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,94 +23,19 @@ namespace F3\FLOW3\Tests\Functional\AOP\Fixtures;
  *                                                                        */
 
 /**
- * A target class for testing the AOP framework
+ * Test suite for aop proxy classes
  *
- * @scope prototype
+ * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class TargetClass01 implements SayHelloInterface {
+class AopProxyTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
-	 * @var \F3\FLOW3\Tests\Functional\AOP\Fixtures\Name
+	 * @test
 	 */
-	protected $currentName;
-
-	/**
-	 * @var string
-	 */
-	public $constructorResult = '';
-
-	/**
-	 * @var integer
-	 */
-	public $initializeObjectCallCounter = 0;
-
-	/**
-	 *
-	 */
-	public function __construct() {
-		$this->constructorResult .= 'AVRO RJ100';
+	public function advicesAreExecutedAgainIfAnOverriddenMethodCallsItsParentMethod() {
+		$targetClass = new Fixtures\ChildClassOfTargetClass01();
+		$this->assertEquals('Greetings, I just wanted to say: Hello World World', $targetClass->sayHello());
 	}
 
-	/**
-	 *
-	 */
-	public function initializeObject() {
-		$this->initializeObjectCallCounter ++;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function sayHello() {
-		return 'Hello';
-	}
-
-	/**
-	 * @param boolean $throwException
-	 * @return string
-	 */
-	public function sayHelloAndThrow($throwException) {
-		if ($throwException) {
-			throw new \Exception();
-		}
-		return 'Hello';
-	}
-
-	/**
-	 * @param string $name
-	 * @return string
-	 */
-	public function greet($name) {
-		return 'Hello, ' . $name;
-	}
-
-	/**
-	 * @param \SplObjectStorage $names
-	 * @return string
-	 */
-	public function greetMany(\SplObjectStorage $names) {
-		$greet = '';
-		foreach ($names as $name) {
-			$greet .= $name;
-		}
-		return 'Hello, ' . $greet;
-	}
-
-	/**
-	 *
-	 * @return string
-	 */
-	public function getCurrentName() {
-		return $this->currentName;
-	}
-
-	/**
-	 *
-	 * @param \F3\FLOW3\Tests\Functional\AOP\Fixtures\Name $name
-	 * @return void
-	 */
-	public function setCurrentName(\F3\FLOW3\Tests\Functional\AOP\Fixtures\Name $name = NULL) {
-		$this->currentName = $name;
-	}
 }
 ?>

@@ -145,17 +145,6 @@ class ProxyClassBuilder {
 	}
 
 	/**
-	 * Injects the Empty Constructor Interceptor Builder
-	 *
-	 * @param \F3\FLOW3\AOP\Builder\EmptyConstructorInterceptorBuilder $builder
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function injectEmptyConstructorInterceptorBuilder(\F3\FLOW3\AOP\Builder\EmptyConstructorInterceptorBuilder $builder) {
-		$this->methodInterceptorBuilders['EmptyConstructor'] = $builder;
-	}
-
-	/**
 	 * Injects the Adviced Constructor Interceptor Builder
 	 *
 	 * @param \F3\FLOW3\AOP\Builder\AdvicedConstructorInterceptorBuilder $builder
@@ -164,17 +153,6 @@ class ProxyClassBuilder {
 	 */
 	public function injectAdvicedConstructorInterceptorBuilder(\F3\FLOW3\AOP\Builder\AdvicedConstructorInterceptorBuilder $builder) {
 		$this->methodInterceptorBuilders['AdvicedConstructor'] = $builder;
-	}
-
-	/**
-	 * Injects the Empty Method Interceptor Builder
-	 *
-	 * @param \F3\FLOW3\AOP\Builder\EmptyMethodInterceptorBuilder $builder
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function injectEmptyMethodInterceptorBuilder(\F3\FLOW3\AOP\Builder\EmptyMethodInterceptorBuilder $builder) {
-		$this->methodInterceptorBuilders['EmptyMethod'] = $builder;
 	}
 
 	/**
@@ -686,7 +664,8 @@ EOT;
 		$proxyMethod->setMethodParametersCode('\F3\FLOW3\AOP\JoinPointInterface $joinPoint');
 		$code = <<<'EOT'
 		if (isset($this->FLOW3_AOP_Proxy_methodIsInAdviceMode[$joinPoint->getMethodName()])) {
-			return call_user_func_array(array($this, $joinPoint->getMethodName()), $joinPoint->getMethodArguments());
+			if (__CLASS__ !== $joinPoint->getClassName()) return parent::FLOW3_AOP_Proxy_invokeJoinPoint($joinPoint);
+			return call_user_func_array(array('self', $joinPoint->getMethodName()), $joinPoint->getMethodArguments());
 		}
 
 EOT;
