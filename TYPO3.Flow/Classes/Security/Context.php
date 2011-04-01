@@ -22,6 +22,8 @@ namespace F3\FLOW3\Security;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+require_once(FLOW3_PATH_FLOW3 . 'Resources/PHP/iSecurity/Security_Randomizer.php');
+
 use \F3\FLOW3\Security\Policy\Role;
 
 /**
@@ -57,6 +59,21 @@ class Context {
 	 * could be authenticated.
 	 */
 	const AUTHENTICATE_AT_LEAST_ONE_TOKEN = 4;
+
+	/**
+	 * Creates one csrf token per session
+	 */
+	const CSRF_ONE_PER_SESSION = 1;
+
+	/**
+	 * Creates one csrf token per uri
+	 */
+	const CSRF_ONE_PER_URI = 2;
+
+	/**
+	 * Creates one csrf token per request
+	 */
+	const CSRF_ONE_PER_REQUEST = 3;
 
 	/**
 	 * Array of configured tokens (might have request patterns)
@@ -101,6 +118,22 @@ class Context {
 	protected $policyService;
 
 	/**
+	 * @var \F3\FLOW3\Security\Cryptography\HashService
+	 */
+	protected $hashService;
+
+	/**
+	 * One of the CSRF_* constants to set the csrf strategy
+	 * @var int
+	 */
+	protected $csrfStrategy = self::CSRF_ONE_PER_SESSION;
+
+	/**
+	 * @var string
+	 */
+	protected $csrfTokens = array();
+
+	/**
 	 * Inject the authentication manager
 	 *
 	 * @param F3\FLOW3\Security\Authentication\AuthenticationManagerInterface $authenticationManager The authentication manager
@@ -121,6 +154,17 @@ class Context {
 	 */
 	public function injectPolicyService(\F3\FLOW3\Security\Policy\PolicyService $policyService) {
 		$this->policyService = $policyService;
+	}
+
+	/**
+	 * Injects the hash service
+	 *
+	 * @param \F3\FLOW3\Security\Cryptography\HashService $hashService The hash service
+	 * @return void
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function injectHashService(\F3\FLOW3\Security\Cryptography\HashService $hashService) {
+		$this->hashService = $hashService;
 	}
 
 	/**
@@ -150,6 +194,23 @@ class Context {
 					throw new \F3\FLOW3\Exception('Invalid setting "' . $authenticationStrategyName . '" for security.authentication.authenticationStrategy', 1291043022);
 			}
 		}
+
+		if (isset($settings['security']['csrf']['csrfStrategy'])) {
+			$csrfStrategyName = $settings['security']['csrf']['csrfStrategy'];
+			switch ($csrfStrategyName) {
+				case 'onePerRequest':
+					$this->csrfStrategy = self::CSRF_ONE_PER_REQUEST;
+					break;
+				case 'onePerSession':
+					$this->csrfStrategy = self::CSRF_ONE_PER_SESSION;
+					break;
+				case 'onePerUri':
+					$this->csrfStrategy = self::CSRF_ONE_PER_URI;
+					break;
+				default:
+					throw new \F3\FLOW3\Exception('Invalid setting "' . $csrfStrategyName . '" for security.csrf.csrfStrategy', 1291043024);
+			}
+		}
 	}
 
 	/**
@@ -162,6 +223,8 @@ class Context {
 	 */
 	public function initialize(\F3\FLOW3\MVC\RequestInterface $request) {
 		$this->request = $request;
+		if ($this->csrfStrategy !== self::CSRF_ONE_PER_SESSION) $this->csrfTokens = array();
+
 		$this->tokens = $this->mergeTokens($this->authenticationManager->getTokens(), $this->tokens);
 		$this->separateActiveAndInactiveTokens();
 		$this->updateTokens($this->activeTokens);
@@ -322,6 +385,39 @@ class Context {
 			return $this->activeTokens[$authenticationProviderName]->getAccount();
 		}
 		return NULL;
+	}
+
+	/**
+	 * Returns the current CSRF protection token. A new one is created when needed, depending on the  configured CSRF
+	 * protection strategy.
+	 *
+	 * @return void
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getCsrfProtectionToken() {
+		if (count($this->csrfTokens) === 1 && $this->csrfStrategy !== self::CSRF_ONE_PER_URI) {
+			reset($this->csrfTokens);
+			return key($this->csrfTokens);
+		}
+		$newToken = \Security_Randomizer::getRandomToken(16);
+		$this->csrfTokens[$newToken] = TRUE;
+
+		return $newToken;
+	}
+
+	/**
+	 * Returns TRUE if the given string is a valid CSRF protection token. The token will be removed if the configured
+	 * csrf strategy is 'onePerUri'.
+	 *
+	 * @param string $token The token string to be validated
+	 * @return booelean TRUE, if the token is valid. FALSE otherwise.
+	 */
+	public function isCsrfProtectionTokenValid($csrfToken) {
+		if (isset($this->csrfTokens[$csrfToken])) {
+			if ($this->csrfStrategy === self::CSRF_ONE_PER_URI) unset($this->csrfTokens[$csrfToken]);
+			return TRUE;
+		}
+		return FALSE;
 	}
 
 	/**

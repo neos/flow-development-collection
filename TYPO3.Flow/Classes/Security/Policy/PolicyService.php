@@ -58,7 +58,7 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	protected $cache;
 
 	/**
-	 * @var F3\FLOW3\Security\Policy\PolicyExpressionParser
+	 * @var \F3\FLOW3\Security\Policy\PolicyExpressionParser
 	 */
 	protected $policyExpressionParser;
 
@@ -347,6 +347,33 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	}
 
 	/**
+	 * Checks if the given method has a policy entry. If $roles are given
+	 * this method returns only TRUE, if there is an acl entry for the method for
+	 * at least one of the given roles.
+	 *
+	 * @param string $className The class name to check the policy for
+	 * @param string $methodName The method name to check the policy for
+	 * @param array $roles
+	 * @return boolean TRUE if the given controller action has a policy entry
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function hasPolicyEntryForMethod($className, $methodName, array $roles = array()) {
+		$methodIdentifier = $className . '->' . $methodName;
+
+		if (isset($this->acls[$methodIdentifier])) {
+			if (count($roles) > 0) {
+				foreach ($roles as $roleIdentifier) {
+					if (isset($this->acls[$methodIdentifier][$roleIdentifier])) return TRUE;
+				}
+			} else {
+				return TRUE;
+			}
+		}
+
+		return FALSE;
+	}
+
+	/**
 	 * Checks if the given entity type has a policy entry for at least one of the given roles
 	 *
 	 * @param string $entityType The entity type (object name) to be checked
@@ -365,7 +392,7 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 			}
 		}
 
-        return FALSE;
+		return FALSE;
 	}
 
 	/**
@@ -439,7 +466,7 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 		foreach (array_keys($this->policy['resources']['methods']) as $resource) {
 			if (!isset($this->policy['acls']['Everybody']['methods'][$resource])) $this->policy['acls']['Everybody']['methods'][$resource] = 'ABSTAIN';
 		}
-		foreach ($this->policy['resources']['entities'] as $entityType => $resourceDefinition) {
+		foreach ($this->policy['resources']['entities'] as $resourceDefinition) {
 			foreach (array_keys($resourceDefinition) as $resource) {
 				if (!isset($this->policy['acls']['Everybody']['entities'][$resource])) $this->policy['acls']['Everybody']['entities'][$resource] = 'ABSTAIN';
 			}

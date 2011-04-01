@@ -171,7 +171,11 @@ FLOW3:
       #
       # If the objects are in the namespace "\F3\FLOW3\Security" it is enough to specify
       # the last name of the classname, e.g. AccessGrant
-      filters: []
+      filters:
+        -
+          patternType: CsrfProtection
+          patternValue:
+          interceptor: AccessDeny
 
     authentication:
 
@@ -215,6 +219,9 @@ FLOW3:
 
       # If this is set to TRUE access will be granted even if all voters abstain
       allowAccessIfAllVotersAbstain: FALSE
+
+    csrf:
+      csrfStrategy: onePerSession
 
     cryptography:
 

@@ -620,5 +620,62 @@ class ContextTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$this->assertSame(NULL, $mockContext->getAccountByAuthenticationProviderName('UnknownProvider'));
 	}
 
+	/**
+	 * @test
+	 * @category unit
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getCsrfProtectionTokenReturnsANewTokenIfNoneIsPresentInTheContext() {
+		$mockContext = $this->getAccessibleMock('F3\FLOW3\Security\Context', array('dummy'), array(), '', FALSE);
+		$mockContext->_set('csrfTokens', array());
+
+		$this->assertNotEmpty($mockContext->getCsrfProtectionToken());
+	}
+
+	/**
+	 * @test
+	 * @category unit
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getCsrfProtectionTokenReturnsANewTokenIfTheCsrfStrategyIsOnePerUri() {
+		$existingTokens = array('token1' => TRUE, 'token2' => TRUE);
+
+		$mockContext = $this->getAccessibleMock('F3\FLOW3\Security\Context', array('dummy'), array(), '', FALSE);
+		$mockContext->_set('csrfTokens', $existingTokens);
+		$mockContext->_set('csrfStrategy', \F3\FLOW3\Security\Context::CSRF_ONE_PER_URI);
+
+		$this->assertFalse(array_key_exists($mockContext->getCsrfProtectionToken(), $existingTokens));
+	}
+
+	/**
+	 * @test
+	 * @category unit
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function isCsrfProtectionTokenValidChecksIfTheGivenTokenIsExistingInTheContext() {
+		$existingTokens = array('csrfToken12345' => TRUE);
+
+		$mockContext = $this->getAccessibleMock('F3\FLOW3\Security\Context', array('dummy'), array(), '', FALSE);
+		$mockContext->_set('csrfTokens', $existingTokens);
+
+		$this->assertTrue($mockContext->isCsrfProtectionTokenValid('csrfToken12345'));
+		$this->assertFalse($mockContext->isCsrfProtectionTokenValid('csrfToken'));
+	}
+
+	/**
+	 * @test
+	 * @category unit
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function isCsrfProtectionTokenValidChecksIfTheGivenTokenIsExistingInTheContextAndUnsetsItIfTheCsrfStrategyIsOnePerUri() {
+		$existingTokens = array('csrfToken12345' => TRUE);
+
+		$mockContext = $this->getAccessibleMock('F3\FLOW3\Security\Context', array('dummy'), array(), '', FALSE);
+		$mockContext->_set('csrfTokens', $existingTokens);
+		$mockContext->_set('csrfStrategy', \F3\FLOW3\Security\Context::CSRF_ONE_PER_URI);
+
+		$this->assertTrue($mockContext->isCsrfProtectionTokenValid('csrfToken12345'));
+		$this->assertFalse($mockContext->isCsrfProtectionTokenValid('csrfToken12345'));
+	}
 }
 ?>
