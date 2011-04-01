@@ -32,15 +32,6 @@ namespace F3\FLOW3\Validation\Validator;
 class RawValidator implements \F3\FLOW3\Validation\Validator\ValidatorInterface {
 
 	/**
-	 * Sets validation options for the validator
-	 *
-	 * @param array $validationOptions The validation options
-	 * @return void
-	 */
-	public function __construct($validationOptions) {
-	}
-
-	/**
 	 * Always returns TRUE
 	 *
 	 * @param mixed $value The value that should be validated
