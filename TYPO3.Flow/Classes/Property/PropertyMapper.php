@@ -165,7 +165,7 @@ class PropertyMapper {
 			$targetPropertyName = $configuration->getTargetPropertyName($sourcePropertyName);
 			if (!$configuration->shouldMap($targetPropertyName)) continue;
 
-			$targetPropertyType = $typeConverter->getTypeOfProperty($targetType, $targetPropertyName);
+			$targetPropertyType = $typeConverter->getTypeOfProperty($targetType, $targetPropertyName, $configuration);
 
 			$subConfiguration = $configuration->getConfigurationFor($targetPropertyName);
 
@@ -202,6 +202,9 @@ class PropertyMapper {
 
 		if (!is_string($targetType)) {
 			throw new \F3\FLOW3\Property\Exception\InvalidTargetException('The target type was no string, but of type "' . gettype($targetType) . '"', 1297941727);
+		}
+		if (strpos($targetType, '<') !== FALSE) {
+			$targetType = substr($targetType, 0, strpos($targetType, '<'));
 		}
 		$converter = NULL;
 

@@ -47,6 +47,7 @@ class PersistentObjectConverter extends \F3\FLOW3\Property\TypeConverter\Abstrac
 	const PATTERN_MATCH_UUID = '/([a-f0-9]){8}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){12}/';
 	const CONFIGURATION_MODIFICATION_ALLOWED = 1;
 	const CONFIGURATION_CREATION_ALLOWED = 2;
+	const CONFIGURATION_TARGET_TYPE = 3;
 
 	/**
 	 * @var \F3\FLOW3\Object\ObjectManagerInterface
@@ -109,6 +110,9 @@ class PersistentObjectConverter extends \F3\FLOW3\Property\TypeConverter\Abstrac
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function getProperties($source) {
+		if (is_string($source)) {
+			return array();
+		}
 		if (isset($source['__identity'])) {
 			unset($source['__identity']);
 		}
@@ -120,16 +124,22 @@ class PersistentObjectConverter extends \F3\FLOW3\Property\TypeConverter\Abstrac
 	 *
 	 * @param string $targetType
 	 * @param string $propertyName
+	 * @param \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
 	 * @return string
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	public function getTypeOfProperty($targetType, $propertyName) {
+	public function getTypeOfProperty($targetType, $propertyName, \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration) {
+		$configuredTargetType = $configuration->getConfigurationFor($propertyName)->getConfigurationValue('F3\FLOW3\Property\TypeConverter\PersistentObjectConverter', self::CONFIGURATION_TARGET_TYPE);
+		if ($configuredTargetType !== NULL) {
+			return $configuredTargetType;
+		}
+
 		$schema = $this->reflectionService->getClassSchema($targetType);
 		if (!$schema->hasProperty($propertyName)) {
 			throw new \F3\FLOW3\Property\Exception\InvalidTargetException('Property "' . $propertyName . '" was not found in target object of type "' . $targetType . '".', 1297978366);
 		}
 		$propertyInformation = $schema->getProperty($propertyName);
-		return $propertyInformation['type'];
+		return $propertyInformation['type'] . ($propertyInformation['elementType']!==NULL ? '<' . $propertyInformation['elementType'] . '>' : '');
 	}
 
 	/**

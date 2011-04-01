@@ -446,7 +446,11 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 
 		if ($this->request->hasArgument('__referrer')) {
 			$referrer = $this->request->getArgument('__referrer');
-			$this->forward($referrer['actionName'], $referrer['controllerName'], $referrer['packageKey'], $this->objectSerializer->deserializeObjectsArray(unserialize($referrer['arguments'])));
+			$this->objectSerializer->clearState();
+			$deserializedObjects = $this->objectSerializer->deserializeObjectsArray(unserialize($referrer['arguments']));
+			$referrerArgumentsHolder = reset($deserializedObjects);
+			$referrerArguments = $referrerArgumentsHolder->getReferrerArguments();
+			$this->forward($referrer['actionName'], $referrer['controllerName'], $referrer['packageKey'], $referrerArguments);
 		}
 
 		$message = 'An error occurred while trying to call ' . get_class($this) . '->' . $this->actionMethodName . '().' . PHP_EOL;

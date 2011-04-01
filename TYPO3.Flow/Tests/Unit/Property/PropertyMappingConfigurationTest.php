@@ -113,55 +113,6 @@ class PropertyMappingConfigurationTest extends \F3\FLOW3\Tests\UnitTestCase {
 	}
 
 	/**
-	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 */
-	public function getConfigurationReturnsCurrentTypeConverterIfNoSubTypeConverterIsSet() {
-		$this->assertSame($this->propertyMappingConfiguration, $this->propertyMappingConfiguration->getConfigurationFor('someNotExplicitKey'));
-	}
-
-	/**
-	 * @return \F3\FLOW3\Property\PropertyMappingConfiguration
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 */
-	protected function buildChildConfigurationForAllProperties() {
-		$childConfiguration = $this->propertyMappingConfiguration->forAllProperties();
-		$childConfiguration->setTypeConverterOption('someConverter', 'foo', 'bar');
-
-		$this->propertyMappingConfiguration->setTypeConverterOption('someConverter', 'otherkey', 'parent');
-		$this->propertyMappingConfiguration->setTypeConverterOption('someConverter', 'foo', 'baz');
-
-		return $childConfiguration;
-	}
-
-	/**
-	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 */
-	public function getConfigurationReturnsSubConfigurationObject() {
-		$childConfiguration = $this->buildChildConfigurationForAllProperties();
-		$this->assertSame($childConfiguration, $this->propertyMappingConfiguration->getConfigurationFor('someNotExplicitKey'));
-	}
-
-	/**
-	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 */
-	public function subConfigurationOptionsCanBeRetrieved() {
-		$childConfiguration = $this->buildChildConfigurationForAllProperties();
-		$this->assertEquals('bar', $childConfiguration->getConfigurationValue('someConverter', 'foo'));
-	}
-
-	/**
-	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 */
-	public function subConfigurationOptionsAreInheritedFromParent() {
-		$childConfiguration = $this->buildChildConfigurationForAllProperties();
-		$this->assertEquals('parent', $childConfiguration->getConfigurationValue('someConverter', 'otherkey'));
-	}
-
-	/**
 	 * @return \F3\FLOW3\Property\PropertyMappingConfiguration
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
@@ -172,71 +123,6 @@ class PropertyMappingConfigurationTest extends \F3\FLOW3\Tests\UnitTestCase {
 		return $childConfiguration;
 	}
 
-	/**
-	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 */
-	public function subConfigurationOptionsForSpecificValuesOverrideForParent() {
-		$this->buildChildConfigurationForAllProperties();
-		$childConfiguration = $this->buildChildConfigurationForSingleProperty();
-		$this->assertSame($childConfiguration, $this->propertyMappingConfiguration->getConfigurationFor('key1')->getConfigurationFor('key2'));
-
-		$this->assertEquals('specialChildConverter', $childConfiguration->getConfigurationValue('someConverter', 'foo'));
-	}
-
-	/**
-	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 */
-	public function subConfigurationOptionsForSpecificValuesAreInheritedFromParent() {
-		$this->buildChildConfigurationForAllProperties();
-		$childConfiguration = $this->buildChildConfigurationForSingleProperty();
-
-		$this->assertEquals('parent', $childConfiguration->getConfigurationValue('someConverter', 'otherkey'));
-	}
-
-	/**
-	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 */
-	public function subConfigurationOptionsForSpecificValuesAreMergedWithGeneralOptionsForTheSameLayer() {
-		$this->propertyMappingConfiguration->setTypeConverterOption('someConverter', 'k1', 'global');
-		$this->propertyMappingConfiguration->setTypeConverterOption('someConverter', 'k2', 'global');
-		$this->propertyMappingConfiguration->setTypeConverterOption('someConverter', 'k3', 'global');
-
-		$this->propertyMappingConfiguration->forProperty('a.b.c')->setTypeConverterOption('someConverter', 'k1', 'local');
-		$this->propertyMappingConfiguration->forProperty('a')->forAllProperties()->setTypeConverterOption('someConverter', 'k1', 'middle');
-		$this->propertyMappingConfiguration->forProperty('a')->forAllProperties()->setTypeConverterOption('someConverter', 'k2', 'middle');
-
-		$that = $this;
-		$expectation = function($configuration, $path, $keysAndExpectations) use ($that) {
-			foreach (explode('.', $path) as $pathElement) {
-				$configuration = $configuration->getConfigurationFor($pathElement);
-			}
-			foreach ($keysAndExpectations as $key => $expected) {
-				$that->assertEquals($expected, $configuration->getConfigurationValue('someConverter', $key));
-			}
-
-		};
-
-		$expectation($this->propertyMappingConfiguration, 'a.b.c', array(
-			'k1' => 'local',
-			'k2' => 'middle',
-			'k3' => 'global',
-		));
-
-		$expectation($this->propertyMappingConfiguration, 'a.b', array(
-			'k1' => 'middle',
-			'k2' => 'middle',
-			'k3' => 'global',
-		));
-
-		$expectation($this->propertyMappingConfiguration, 'a', array(
-			'k1' => 'global',
-			'k2' => 'global',
-			'k3' => 'global',
-		));
-	}
 
 	/**
 	 * @test

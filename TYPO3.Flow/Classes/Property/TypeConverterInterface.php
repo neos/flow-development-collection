@@ -83,10 +83,11 @@ interface TypeConverterInterface {
 	 *
 	 * @param string $targetType
 	 * @param string $propertyName
+	 * @param \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
 	 * @return string the type of $propertyName in $targetType
 	 * @api
 	 */
-	public function getTypeOfProperty($targetType, $propertyName);
+	public function getTypeOfProperty($targetType, $propertyName, \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration);
 
 	/**
 	 * Actually convert from $source to $targetType, taking into account the fully

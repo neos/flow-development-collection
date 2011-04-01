@@ -55,5 +55,19 @@ class MvcPropertyMappingConfiguration extends \F3\FLOW3\Property\PropertyMapping
 	public function allowModificationForSubProperty($propertyPath) {
 		$this->forProperty($propertyPath)->setTypeConverterOption('F3\FLOW3\Property\TypeConverter\PersistentObjectConverter', \F3\FLOW3\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED, TRUE);
 	}
+
+	/**
+	 * Set the target type for a certain property. Especially useful
+	 * if there is an object which has a nested object which is abstract,
+	 * and you want to instanciate a concrete object instead.
+	 *
+	 * @param string $propertyPath
+	 * @param string $targetType
+	 * @return void
+	 * @api
+	 */
+	public function setTargetTypeForSubProperty($propertyPath, $targetType) {
+		$this->forProperty($propertyPath)->setTypeConverterOption('F3\FLOW3\Property\TypeConverter\PersistentObjectConverter', \F3\FLOW3\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_TARGET_TYPE, $targetType);
+	}
 }
 ?>

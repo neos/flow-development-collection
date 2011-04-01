@@ -117,10 +117,13 @@ abstract class AbstractTypeConverter implements \F3\FLOW3\Property\TypeConverter
 	/**
 	 * This method is never called, as getProperties() returns an empty array.
 	 *
+	 * @param string $targetType
+	 * @param string $propertyName
+	 * @param \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
 	 * @return array<string>
 	 * @api
 	 */
-	public function getTypeOfProperty($targetType, $propertyName) {
+	public function getTypeOfProperty($targetType, $propertyName, \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration) {
 	}
 }
 ?>
