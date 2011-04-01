@@ -133,8 +133,24 @@ class DebugExceptionHandler extends \F3\FLOW3\Error\AbstractExceptionHandler {
 
 		echo PHP_EOL . 'Uncaught Exception in FLOW3 ' . $exceptionCodeNumber . $exception->getMessage() . PHP_EOL;
 		echo 'thrown in file ' . $filePathAndName . PHP_EOL;
-		echo 'in line ' . $exception->getLine() . PHP_EOL . PHP_EOL;
+		echo 'in line ' . $exception->getLine() . PHP_EOL;
 
+		$indent = '  ';
+		while (($exception = $exception->getPrevious()) !== NULL) {
+			echo PHP_EOL . $indent . 'Nested exception:' . PHP_EOL;
+			$pathPosition = strpos($exception->getFile(), 'Packages/');
+			$filePathAndName = ($pathPosition !== FALSE) ? substr($exception->getFile(), $pathPosition) : $exception->getFile();
+
+			$exceptionCodeNumber = ($exception->getCode() > 0) ? '#' . $exception->getCode() . ': ' : '';
+
+			echo PHP_EOL . $indent . 'Uncaught Exception in FLOW3 ' . $exceptionCodeNumber . $exception->getMessage() . PHP_EOL;
+			echo $indent . 'thrown in file ' . $filePathAndName . PHP_EOL;
+			echo $indent . 'in line ' . $exception->getLine() . PHP_EOL;
+
+			$indent .= '  ';
+		}
+
+		echo PHP_EOL;
 		exit(1);
 	}
 
