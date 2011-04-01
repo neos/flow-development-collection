@@ -129,8 +129,20 @@ class PersistentObjectConverterTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockSchema->expects($this->any())->method('getProperty')->with('thePropertyName')->will($this->returnValue(array(
 			'type' => 'TheTypeOfSubObject'
 		)));
+		$configuration = $this->buildConfiguration(array());
+		$this->assertEquals('TheTypeOfSubObject', $this->converter->getTypeOfProperty('TheTargetType', 'thePropertyName', $configuration));
+	}
 
-		$this->assertEquals('TheTypeOfSubObject', $this->converter->getTypeOfProperty('TheTargetType', 'thePropertyName'));
+	/**
+	 * @test
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function getTypeOfPropertyShouldUseConfiguredTypeIfItWasSet() {
+		$this->mockReflectionService->expects($this->never())->method('getClassSchema');
+
+		$configuration = $this->buildConfiguration(array());
+		$configuration->forProperty('thePropertyName')->setTypeConverterOption('F3\FLOW3\Property\TypeConverter\PersistentObjectConverter', \F3\FLOW3\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_TARGET_TYPE, 'Foo\Bar');
+		$this->assertEquals('Foo\Bar', $this->converter->getTypeOfProperty('foo', 'thePropertyName', $configuration));
 	}
 
 	/**

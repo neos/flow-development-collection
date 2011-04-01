@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Property;
+namespace F3\FLOW3\Property\TypeConverter;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,28 +23,42 @@ namespace F3\FLOW3\Property;
  *                                                                        */
 
 /**
- * This builder creates the default configuration for Property Mapping, if no configuration has been passed to the Property Mapper.
+ * Converter which transforms an array to a Doctrine ArrayCollection.
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @api
  * @scope singleton
+ * @todo Implement functionality for converting collection properties.
  */
-class PropertyMappingConfigurationBuilder {
+class ArrayCollectionConverter extends \F3\FLOW3\Property\TypeConverter\AbstractTypeConverter {
+
+	protected $sourceTypes = array('string', 'array');
+	protected $targetType = 'Doctrine\Common\Collections\ArrayCollection';
+	protected $priority = 1;
+
+	public function convertFrom($source, $targetType, array $subProperties = array(), \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
+		return new \Doctrine\Common\Collections\ArrayCollection($subProperties);
+	}
+
+	public function getProperties($source) {
+		if (is_array($source)) {
+			return $source;
+		}
+		return array();
+	}
 
 	/**
-	 * Builds the default property mapping configuration.
+	 * This method is never called, as getProperties() returns an empty array.
 	 *
-	 * @param string $type the implementation class name of the PropertyMappingConfiguration to instanciate; must be a subclass of F3\FLOW3\Property\PropertyMappingConfiguration
-	 * @return \F3\FLOW3\Property\PropertyMappingConfiguration
+	 * @param string $targetType
+	 * @param string $propertyName
+	 * @param \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
+	 * @return array<string>
+	 * @api
 	 */
-	public function build($type = 'F3\FLOW3\Property\PropertyMappingConfiguration') {
-		$configuration = new $type();
-
-		$configuration->setTypeConverterOptions('F3\FLOW3\Property\TypeConverter\PersistentObjectConverter', array(
-			\F3\FLOW3\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED => TRUE,
-			\F3\FLOW3\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED => TRUE
-		));
-
-		return $configuration;
+	public function getTypeOfProperty($targetType, $propertyName, \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration) {
+		$subPropertyType = rtrim(substr($targetType, strpos($targetType, '<')+1), '>');
+		return $subPropertyType;
 	}
 }
 ?>

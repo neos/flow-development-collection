@@ -121,7 +121,7 @@ class ObjectSerializer {
 	 * Serializes an object as property array.
 	 *
 	 * @param object $object The object to store in the registry
-    * @param boolean $isTopLevelItem Internal flag for managing the recursion
+     * @param boolean $isTopLevelItem Internal flag for managing the recursion
 	 * @return array The property array
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @author Robert Lemke <robert@typo3.org>

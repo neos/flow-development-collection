@@ -51,8 +51,8 @@ class PropertyMappingConfigurationBuilderTest extends \F3\FLOW3\Tests\UnitTestCa
 		$this->assertTrue($defaultConfiguration->getConfigurationValue('F3\FLOW3\Property\TypeConverter\PersistentObjectConverter', \F3\FLOW3\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED));
 		$this->assertTrue($defaultConfiguration->getConfigurationValue('F3\FLOW3\Property\TypeConverter\PersistentObjectConverter', \F3\FLOW3\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED));
 
-		$this->assertFalse($defaultConfiguration->getConfigurationFor('foo')->getConfigurationValue('F3\FLOW3\Property\TypeConverter\PersistentObjectConverter', \F3\FLOW3\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED));
-		$this->assertFalse($defaultConfiguration->getConfigurationFor('foo')->getConfigurationValue('F3\FLOW3\Property\TypeConverter\PersistentObjectConverter', \F3\FLOW3\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED));
+		$this->assertNull($defaultConfiguration->getConfigurationFor('foo')->getConfigurationValue('F3\FLOW3\Property\TypeConverter\PersistentObjectConverter', \F3\FLOW3\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED));
+		$this->assertNull($defaultConfiguration->getConfigurationFor('foo')->getConfigurationValue('F3\FLOW3\Property\TypeConverter\PersistentObjectConverter', \F3\FLOW3\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED));
 	}
 }
 ?>

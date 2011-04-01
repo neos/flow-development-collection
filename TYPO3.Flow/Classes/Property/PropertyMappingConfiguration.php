@@ -42,13 +42,6 @@ class PropertyMappingConfiguration implements \F3\FLOW3\Property\PropertyMapping
 	protected $configuration;
 
 	/**
-	 * Stores the PropertyMappingConfiguration to be used for all child properties, if no explicit configuration is set.
-	 *
-	 * @var \F3\FLOW3\Property\PropertyMappingConfigurationInterface
-	 */
-	protected $defaultSubConfiguration;
-
-	/**
 	 * Stores the configuration for specific child properties.
 	 *
 	 * @var array<\F3\FLOW3\Property\PropertyMappingConfigurationInterface>
@@ -103,11 +96,7 @@ class PropertyMappingConfiguration implements \F3\FLOW3\Property\PropertyMapping
 			return $this->subConfigurationForProperty[$propertyName];
 		}
 
-		if ($this->defaultSubConfiguration !== NULL) {
-			return $this->defaultSubConfiguration;
-		}
-
-		return $this;
+		return new \F3\FLOW3\Property\PropertyMappingConfiguration();
 	}
 
 	/**
@@ -134,11 +123,7 @@ class PropertyMappingConfiguration implements \F3\FLOW3\Property\PropertyMapping
 	 */
 	public function getConfigurationValue($typeConverterClassName, $key) {
 		if (!isset($this->configuration[$typeConverterClassName][$key])) {
-			if ($this->parentConfiguration !== NULL) {
-				return $this->parentConfiguration->getConfigurationValueForSubLevel($typeConverterClassName, $key, $this);
-			} else {
-				return NULL;
-			}
+			return NULL;
 		}
 
 		return $this->configuration[$typeConverterClassName][$key];
@@ -155,29 +140,6 @@ class PropertyMappingConfiguration implements \F3\FLOW3\Property\PropertyMapping
 	 */
 	public function setMapping($sourcePropertyName, $targetPropertyName) {
 		$this->mapping[$sourcePropertyName] = $targetPropertyName;
-	}
-
-	/**
-	 * If a sub-configuration does NOT find a type converter option inside itself, it needs
-	 * to ask the parent. Now, this parent needs to see if there is a configuration value defined
-	 * for *all* his children, as this configuration value would then take precedence
-	 * before the current one.
-	 *
-	 * The $caller is required to prevent endless recursions.
-	 *
-	 * Only used internally!
-	 *
-	 * @param string $typeConverter
-	 * @param string $optionKey
-	 * @param object $caller
-	 * @return string
-	 */
-	public function getConfigurationValueForSubLevel($typeConverter, $optionKey, $caller) {
-		if ($this->defaultSubConfiguration !== NULL && $caller !== $this->defaultSubConfiguration) {
-			return $this->defaultSubConfiguration->getConfigurationValue($typeConverter, $optionKey);
-		} else {
-			return $this->getConfigurationValue($typeConverter, $optionKey);
-		}
 	}
 
 	/**
@@ -204,25 +166,6 @@ class PropertyMappingConfiguration implements \F3\FLOW3\Property\PropertyMapping
 	 */
 	public function setTypeConverterOption($typeConverter, $optionKey, $optionValue) {
 		$this->configuration[$typeConverter][$optionKey] = $optionValue;
-	}
-
-	/**
-	 * Returns the default configuration for all sub-objects, ready to be modified. Should be used
-	 * inside a fluent interface like:
-	 * $configuration->forAllProperties()->setTypeConverterOption(.....)
-	 *
-	 * @return \F3\FLOW3\Property\PropertyMappingConfiguration (or a subclass thereof)
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 * @api
-	 */
-	public function forAllProperties() {
-		if ($this->defaultSubConfiguration === NULL) {
-			$type = get_class($this);
-			$this->defaultSubConfiguration = new $type;
-			$this->defaultSubConfiguration->setParent($this);
-		}
-
-		return $this->defaultSubConfiguration;
 	}
 
 	/**

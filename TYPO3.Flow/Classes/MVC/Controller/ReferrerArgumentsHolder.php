@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Property;
+namespace F3\FLOW3\MVC\Controller;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,28 +23,31 @@ namespace F3\FLOW3\Property;
  *                                                                        */
 
 /**
- * This builder creates the default configuration for Property Mapping, if no configuration has been passed to the Property Mapper.
+ * A holder class for all reference arguments.
  *
+ * This is only a crux to pass arguments into the ObjectSerializer. As soon
+ * as we can use serialize, we can drop this class.
+ *
+ * @package FLOW3
+ * @subpackage MVC
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
- * @scope singleton
+ * @scope prototype
  */
-class PropertyMappingConfigurationBuilder {
-
+class ReferrerArgumentsHolder {
 	/**
-	 * Builds the default property mapping configuration.
-	 *
-	 * @param string $type the implementation class name of the PropertyMappingConfiguration to instanciate; must be a subclass of F3\FLOW3\Property\PropertyMappingConfiguration
-	 * @return \F3\FLOW3\Property\PropertyMappingConfiguration
+	 * @var array
 	 */
-	public function build($type = 'F3\FLOW3\Property\PropertyMappingConfiguration') {
-		$configuration = new $type();
+	protected $referrerArguments;
 
-		$configuration->setTypeConverterOptions('F3\FLOW3\Property\TypeConverter\PersistentObjectConverter', array(
-			\F3\FLOW3\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED => TRUE,
-			\F3\FLOW3\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED => TRUE
-		));
 
-		return $configuration;
+	public function __construct($referrerArguments) {
+		$this->referrerArguments = $referrerArguments;
 	}
+
+	public function getReferrerArguments() {
+		return $this->referrerArguments;
+	}
+
 }
+
 ?>
