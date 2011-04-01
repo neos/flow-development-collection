@@ -317,7 +317,7 @@ class PackageManager implements \F3\FLOW3\Package\PackageManagerInterface {
 
 					$packageClassPathAndFilename = $packagePath . 'Classes/Package.php';
 					if (!file_exists($packageClassPathAndFilename)) {
-						$shortFilename = substr($packagePath, strlen(FLOW3_PATH_PACKAGES)) . 'Package.php';
+						$shortFilename = substr($packagePath, strlen(FLOW3_PATH_PACKAGES)) . 'Classes/Package.php';
 						throw new \F3\FLOW3\Package\Exception\CorruptPackageException(sprintf('Missing package class in package "%s". Please create a file "%s" and extend \F3\FLOW3\Package\Package.', $packageKey, $shortFilename), 1300782486);
 					}
 					require_once($packageClassPathAndFilename);
