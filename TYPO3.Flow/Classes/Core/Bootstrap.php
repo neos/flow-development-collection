@@ -355,8 +355,6 @@ class Bootstrap {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function initializeForRuntime() {
-		$this->monitorClassFiles();
-
 		$objectConfigurationCache = $this->cacheManager->getCache('FLOW3_Object_Configuration');
 		if ($objectConfigurationCache->has('allCompiledCodeUpToDate') === FALSE || $this->context !== 'Production') {
 			if (DIRECTORY_SEPARATOR === '/') {
@@ -503,7 +501,7 @@ class Bootstrap {
 
 		$this->cacheFactory = new \F3\FLOW3\Cache\CacheFactory($this->context, $this->cacheManager, $this->environment);
 
-		$this->signalSlotDispatcher->connect('F3\FLOW3\Monitor\FileMonitor', 'emitFilesHaveChanged', $this->cacheManager, 'flushClassFileCachesByChangedFiles');
+		$this->signalSlotDispatcher->connect('F3\FLOW3\Monitor\FileMonitor', 'filesHaveChanged', $this->cacheManager, 'flushClassFileCachesByChangedFiles');
 	}
 
 	/**
@@ -606,7 +604,7 @@ class Bootstrap {
 			}
 		};
 
-		$this->signalSlotDispatcher->connect('F3\FLOW3\Monitor\FileMonitor', 'emitFilesHaveChanged', $cacheFlushingSlot);
+		$this->signalSlotDispatcher->connect('F3\FLOW3\Monitor\FileMonitor', 'filesHaveChanged', $cacheFlushingSlot);
 
 		$monitor->detectChanges();
 	}
