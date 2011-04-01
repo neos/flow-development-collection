@@ -111,13 +111,13 @@ class AbstractMethodInterceptorBuilderTest extends \F3\FLOW3\Tests\UnitTestCase 
 		$mockReflectionService->initialize(array($className));
 
 		$expectedCode = "
-			\$methodArguments = array();
+					\$methodArguments = array();
 
-			\$methodArguments['arg1'] = \$arg1;
-			\$methodArguments['arg2'] = \$arg2;
-			\$methodArguments['arg3'] = \$arg3;
-			\$methodArguments['arg4'] = \$arg4;
-			\$methodArguments['arg5'] = \$arg5;
+				\$methodArguments['arg1'] = \$arg1;
+				\$methodArguments['arg2'] = \$arg2;
+				\$methodArguments['arg3'] = \$arg3;
+				\$methodArguments['arg4'] = \$arg4;
+				\$methodArguments['arg5'] = \$arg5;
 			";
 
 		$builder = $this->getAccessibleMock('F3\FLOW3\AOP\Builder\AbstractMethodInterceptorBuilder', array('build'), array(), '', FALSE);

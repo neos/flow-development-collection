@@ -144,6 +144,7 @@ class ProxyClassBuilder {
 			if ($injectPropertiesCode !== '') {
 				$constructorPostCode .= '		$this->FLOW3_Proxy_injectProperties();' . "\n";
 				$proxyClass->getMethod('FLOW3_Proxy_injectProperties')->addPreParentCallCode($injectPropertiesCode);
+				$proxyClass->getMethod('FLOW3_Proxy_injectProperties')->overrideMethodVisibility('private');
 				$wakeupMethod->addPreParentCallCode("		\$this->FLOW3_Proxy_injectProperties();\n");
 			}
 
