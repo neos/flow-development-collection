@@ -148,7 +148,7 @@ class Bootstrap {
 	 * Returns the context this bootstrap was started in.
 	 *
 	 * @return string The context, for example "Development"
-	 * @api 
+	 * @api
 	 */
 	public function getContext() {
 		return $this->context;
@@ -347,16 +347,21 @@ class Bootstrap {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function initializeForRuntime() {
 		$objectConfigurationCache = $this->cacheManager->getCache('FLOW3_Object_Configuration');
 		if ($objectConfigurationCache->has('allCompiledCodeUpToDate') === FALSE || $this->context !== 'Production') {
-			$command = 'FLOW3_ROOTPATH=' . FLOW3_PATH_ROOT . ' ' . 'FLOW3_CONTEXT=' . $this->context . ' ' . PHP_BINDIR . '/php -c ' . php_ini_loaded_file() . ' ' . FLOW3_PATH_FLOW3 . 'Scripts/flow3' . ' flow3:core:compile';
+			if (DIRECTORY_SEPARATOR === '/') {
+				$command = 'FLOW3_ROOTPATH=' . FLOW3_PATH_ROOT . ' ' . 'FLOW3_CONTEXT=' . $this->context . ' ' . \F3\FLOW3\Utility\Files::getUnixStylePath($this->settings['core']['phpBinaryPathAndFilename']) . ' -c ' . \F3\FLOW3\Utility\Files::getUnixStylePath(php_ini_loaded_file()) . ' ' . FLOW3_PATH_FLOW3 . 'Scripts/flow3' . ' flow3:core:compile';
+			} else {
+				$command = 'SET FLOW3_ROOTPATH=' . FLOW3_PATH_ROOT . '&' . 'SET FLOW3_CONTEXT=' . $this->context . '&' . $this->settings['core']['phpBinaryPathAndFilename'] . ' -c ' . php_ini_loaded_file() . ' ' . FLOW3_PATH_FLOW3 . 'Scripts/flow3' . ' flow3:core:compile';
+			}
 			system($command);
 		}
 
 		if ($objectConfigurationCache->has('allCompiledCodeUpToDate') === FALSE) {
-			throw new \F3\FLOW3\Exception('Could not load object configuration from cache. This might be due to an unsuccesful compile run.', 1297263663);
+			throw new \F3\FLOW3\Exception('Could not load object configuration from cache. This might be due to an unsuccessful compile run. One reason might be, that your PHP binary is not located in "' . $this->settings['core']['phpBinaryPathAndFilename'] . '". In that case, set the correct path to the PHP executable in Configuration/Settings.yaml, setting FLOW3.core.phpBinaryPathAndFilename.', 1297263663);
 		}
 
 		$this->classLoader->injectClassesCache($this->cacheManager->getCache('FLOW3_Object_Classes'));
@@ -714,10 +719,11 @@ class Bootstrap {
 				}
 			}
 			if ($rootPath !== FALSE) {
-				$rootPath = str_replace('//', '/', str_replace('\\', '/', (realpath($rootPath)))) . '/';
-				$testPath = str_replace('//', '/', str_replace('\\', '/', (realpath($rootPath . 'Packages/Framework/FLOW3'))));
-				if ($testPath !== realpath(FLOW3_PATH_FLOW3)) {
-					exit('FLOW3: Invalid root path. (Error #1248964375)' . PHP_EOL . '"' . $testPath . '" does not lead to' . PHP_EOL . '"' . realpath(FLOW3_PATH_FLOW3) .'"' . PHP_EOL);
+				$rootPath = \F3\FLOW3\Utility\Files::getUnixStylePath(realpath($rootPath)) . '/';
+				$testPath = \F3\FLOW3\Utility\Files::getUnixStylePath(realpath(\F3\FLOW3\Utility\Files::concatenatePaths(array($rootPath, 'Packages/Framework/FLOW3')))) . '/';
+				$expectedPath = \F3\FLOW3\Utility\Files::getUnixStylePath(realpath(FLOW3_PATH_FLOW3)) . '/';
+				if ($testPath !== $expectedPath) {
+					exit('FLOW3: Invalid root path. (Error #1248964375)' . PHP_EOL . '"' . $testPath . '" does not lead to' . PHP_EOL . '"' . $expectedPath .'"' . PHP_EOL);
 				}
 				define('FLOW3_PATH_ROOT', $rootPath);
 				unset($rootPath);

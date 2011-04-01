@@ -30,6 +30,10 @@ FLOW3:
     # This setting is automatically set by the configuration manager and can't be set manually.
     context: ''
 
+    # Path and filename of the PHP binary
+    # The constant PHP_BINDIR usually contains the path, but on Windows this doesn't work reliably
+    phpBinaryPathAndFilename: '%PHP_BINDIR%/php'
+
   error:
 
     exceptionHandler:
