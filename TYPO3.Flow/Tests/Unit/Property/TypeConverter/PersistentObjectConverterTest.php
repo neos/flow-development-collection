@@ -127,7 +127,8 @@ class PersistentObjectConverterTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		$mockSchema->expects($this->any())->method('hasProperty')->with('thePropertyName')->will($this->returnValue(TRUE));
 		$mockSchema->expects($this->any())->method('getProperty')->with('thePropertyName')->will($this->returnValue(array(
-			'type' => 'TheTypeOfSubObject'
+			'type' => 'TheTypeOfSubObject',
+			'elementType' => NULL
 		)));
 		$configuration = $this->buildConfiguration(array());
 		$this->assertEquals('TheTypeOfSubObject', $this->converter->getTypeOfProperty('TheTargetType', 'thePropertyName', $configuration));

@@ -31,10 +31,31 @@ namespace F3\FLOW3\Property\TypeConverter;
  */
 class ArrayToArrayConverter extends \F3\FLOW3\Property\TypeConverter\AbstractTypeConverter {
 
+	/**
+	 * @var array
+	 */
 	protected $sourceTypes = array('array');
+
+	/**
+	 * @var string
+	 */
 	protected $targetType = 'array';
+
+	/**
+	 * @var integer
+	 */
 	protected $priority = 1;
 
+	/**
+	 * Actually convert from $source to $targetType, in fact a noop here.
+	 *
+	 * @param array $source
+	 * @param string $targetType
+	 * @param array $subProperties
+	 * @param \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
+	 * @return array
+	 * @api
+	 */
 	public function convertFrom($source, $targetType, array $subProperties = array(), \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
 		return $source;
 	}

@@ -32,14 +32,42 @@ namespace F3\FLOW3\Property\TypeConverter;
  */
 class ArrayCollectionConverter extends \F3\FLOW3\Property\TypeConverter\AbstractTypeConverter {
 
+	/**
+	 * @var array
+	 */
 	protected $sourceTypes = array('string', 'array');
+
+	/**
+	 * @var string
+	 */
 	protected $targetType = 'Doctrine\Common\Collections\ArrayCollection';
+
+	/**
+	 * @var integer
+	 */
 	protected $priority = 1;
 
+	/**
+	 * Actually convert from $source to $targetType, taking into account the fully
+	 * built $subProperties and $configuration.
+	 *
+	 * @param mixed $source
+	 * @param string $targetType
+	 * @param array $subProperties
+	 * @param \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
+	 * @return \Doctrine\Common\Collections\ArrayCollection
+	 * @api
+	 */
 	public function convertFrom($source, $targetType, array $subProperties = array(), \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
 		return new \Doctrine\Common\Collections\ArrayCollection($subProperties);
 	}
 
+	/**
+	 * Returns the source, if it is an array, otherwise an empty array.
+	 *
+	 * @return array
+	 * @api
+	 */
 	public function getProperties($source) {
 		if (is_array($source)) {
 			return $source;
@@ -48,17 +76,17 @@ class ArrayCollectionConverter extends \F3\FLOW3\Property\TypeConverter\Abstract
 	}
 
 	/**
-	 * This method is never called, as getProperties() returns an empty array.
+	 * Return the type of a given sub-property inside the $targetType
 	 *
 	 * @param string $targetType
 	 * @param string $propertyName
 	 * @param \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
-	 * @return array<string>
+	 * @return string
 	 * @api
 	 */
 	public function getTypeOfProperty($targetType, $propertyName, \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration) {
-		$subPropertyType = rtrim(substr($targetType, strpos($targetType, '<')+1), '>');
-		return $subPropertyType;
+		$parsedTargetType = \F3\FLOW3\Utility\TypeHandling::parseType($targetType);
+		return $parsedTargetType['elementType'];
 	}
 }
 ?>

@@ -31,14 +31,44 @@ namespace F3\FLOW3\Property\TypeConverter;
  */
 class StringToSplObjectStorageConverter extends \F3\FLOW3\Property\TypeConverter\AbstractTypeConverter {
 
+	/**
+	 * @var array
+	 */
 	protected $sourceTypes = array('string');
+
+	/**
+	 * @var string
+	 */
 	protected $targetType = 'SplObjectStorage';
+
+	/**
+	 * @var integer
+	 */
 	protected $priority = 1;
 
+	/**
+	 * Returns TRUE if the $source is an empty string.
+	 *
+	 * @param mixed $source the source data
+	 * @param string $targetType the type to convert to.
+	 * @return boolean TRUE if $source is an empty string, FALSE otherwise.
+	 * @api
+	 */
 	public function canConvert($source, $targetType) {
 		return $source === '';
 	}
 
+	/**
+	 * Actually convert from $source to $targetType, taking into account the fully
+	 * built $subProperties and $configuration.
+	 *
+	 * @param string $source
+	 * @param string $targetType
+	 * @param array $subProperties
+	 * @param \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
+	 * @return \SplObjectStorage
+	 * @api
+	 */
 	public function convertFrom($source, $targetType, array $subProperties = array(), \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
 		return new \SplObjectStorage();
 	}

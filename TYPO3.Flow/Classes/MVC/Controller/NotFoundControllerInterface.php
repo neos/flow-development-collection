@@ -25,8 +25,6 @@ namespace F3\FLOW3\MVC\Controller;
 /**
  * Interface for "not found" controllers
  *
- * @package FLOW3
- * @subpackage MVC
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 interface NotFoundControllerInterface extends ControllerInterface {
@@ -34,7 +32,7 @@ interface NotFoundControllerInterface extends ControllerInterface {
 	/**
 	 * Sets an exception with technical information about the reason why
 	 * no controller could be resolved.
-	 * 
+	 *
 	 * @param \F3\FLOW3\MVC\Controller\Exception $exception
 	 * @return void
 	 */

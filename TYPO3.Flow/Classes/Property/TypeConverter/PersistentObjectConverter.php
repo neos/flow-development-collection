@@ -40,14 +40,25 @@ namespace F3\FLOW3\Property\TypeConverter;
  */
 class PersistentObjectConverter extends \F3\FLOW3\Property\TypeConverter\AbstractTypeConverter {
 
-	protected $sourceTypes = array('string', 'array');
-	protected $targetType = 'object';
-	protected $priority = 1;
-
 	const PATTERN_MATCH_UUID = '/([a-f0-9]){8}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){12}/';
 	const CONFIGURATION_MODIFICATION_ALLOWED = 1;
 	const CONFIGURATION_CREATION_ALLOWED = 2;
 	const CONFIGURATION_TARGET_TYPE = 3;
+
+	/**
+	 * @var array
+	 */
+	protected $sourceTypes = array('string', 'array');
+
+	/**
+	 * @var strng
+	 */
+	protected $targetType = 'object';
+
+	/**
+	 * @var integer
+	 */
+	protected $priority = 1;
 
 	/**
 	 * @var \F3\FLOW3\Object\ObjectManagerInterface

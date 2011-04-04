@@ -28,22 +28,26 @@ namespace F3\FLOW3\MVC\Controller;
  * This is only a crux to pass arguments into the ObjectSerializer. As soon
  * as we can use serialize, we can drop this class.
  *
- * @package FLOW3
- * @subpackage MVC
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
 class ReferrerArgumentsHolder {
+
 	/**
 	 * @var array
 	 */
 	protected $referrerArguments;
 
-
-	public function __construct($referrerArguments) {
+	/**
+	 * @param array $referrerArguments
+	 */
+	public function __construct(array $referrerArguments) {
 		$this->referrerArguments = $referrerArguments;
 	}
 
+	/**
+	 * @return array
+	 */
 	public function getReferrerArguments() {
 		return $this->referrerArguments;
 	}

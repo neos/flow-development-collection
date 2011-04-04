@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Property\TypeConverter;
+namespace F3\FLOW3\Tests\Unit\Property\TypeConverter;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,42 +23,29 @@ namespace F3\FLOW3\Property\TypeConverter;
  *                                                                        */
 
 /**
- * Converter which transforms an array to an SplObjectStorage.
+ * Testcase for the ArrayCollection converter
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
- * @api
- * @scope singleton
- * @todo throw away?
  */
-class ArrayToSplObjectStorageConverter extends \F3\FLOW3\Property\TypeConverter\AbstractTypeConverter {
+class ArrayCollectinConverterTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
-	 * @var array
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected $sourceTypes = array('array');
-
-	/**
-	 * @var string
-	 */
-	protected $targetType = 'SplObjectStorage';
-
-	/**
-	 * @var integer
-	 */
-	protected $priority = 1;
-
-	/**
-	 * Actually convert from $source to $targetType.
-	 *
-	 * @param array $source
-	 * @param string $targetType
-	 * @param array $subProperties
-	 * @param \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
-	 * @return \SplObjectStorage
-	 * @api
-	 */
-	public function convertFrom($source, $targetType, array $subProperties = array(), \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
-		return new \SplObjectStorage($source);
+	public function getTypeOfPropertyReturnsElementTypeFromTargetTypeIfGiven() {
+		$converter = new \F3\FLOW3\Property\TypeConverter\ArrayCollectionConverter();
+		$this->assertEquals('FooBar', $converter->getTypeOfProperty('array<FooBar>', '', $this->getMock('F3\FLOW3\Property\PropertyMappingConfigurationInterface')));
 	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getTypeOfPropertyReturnsEmptyStringForElementTypeIfNotGivenInTargetType() {
+		$converter = new \F3\FLOW3\Property\TypeConverter\ArrayCollectionConverter();
+		$this->assertEquals('', $converter->getTypeOfProperty('array', '', $this->getMock('F3\FLOW3\Property\PropertyMappingConfigurationInterface')));
+	}
+
 }
 ?>

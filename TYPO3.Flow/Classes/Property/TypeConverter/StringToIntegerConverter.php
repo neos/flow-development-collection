@@ -31,10 +31,31 @@ namespace F3\FLOW3\Property\TypeConverter;
  */
 class StringToIntegerConverter extends \F3\FLOW3\Property\TypeConverter\AbstractTypeConverter {
 
+	/**
+	 * @var array
+	 */
 	protected $sourceTypes = array('string');
+
+	/**
+	 * @var string
+	 */
 	protected $targetType = 'integer';
+
+	/**
+	 * @var integer
+	 */
 	protected $priority = 1;
 
+	/**
+	 * Actually convert from $source to $targetType, by doing a typecast.
+	 *
+	 * @param string $source
+	 * @param string $targetType
+	 * @param array $subProperties
+	 * @param \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
+	 * @return integer
+	 * @api
+	 */
 	public function convertFrom($source, $targetType, array $subProperties = array(), \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
 		return (int)$source;
 	}

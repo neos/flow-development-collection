@@ -120,7 +120,7 @@ abstract class AbstractTypeConverter implements \F3\FLOW3\Property\TypeConverter
 	 * @param string $targetType
 	 * @param string $propertyName
 	 * @param \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
-	 * @return array<string>
+	 * @return string
 	 * @api
 	 */
 	public function getTypeOfProperty($targetType, $propertyName, \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration) {

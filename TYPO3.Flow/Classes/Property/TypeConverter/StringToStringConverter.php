@@ -31,10 +31,32 @@ namespace F3\FLOW3\Property\TypeConverter;
  */
 class StringToStringConverter extends \F3\FLOW3\Property\TypeConverter\AbstractTypeConverter {
 
+	/**
+	 * @var array
+	 */
 	protected $sourceTypes = array('string');
+
+	/**
+	 * @var string
+	 */
 	protected $targetType = 'string';
+
+	/**
+	 * @var integer
+	 */
 	protected $priority = 1;
 
+	/**
+	 * Actually convert from $source to $targetType, taking into account the fully
+	 * built $subProperties and $configuration.
+	 *
+	 * @param string $source
+	 * @param string $targetType
+	 * @param array $subProperties
+	 * @param \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
+	 * @return string
+	 * @api
+	 */
 	public function convertFrom($source, $targetType, array $subProperties = array(), \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
 		return $source;
 	}
