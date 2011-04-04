@@ -38,12 +38,6 @@ class ClassLoader {
 	protected $classesCache;
 
 	/**
-	 * Class names and their absolute path and filename of specifically registered classes. Used for classes which don't follow the \F3\Package\Object scheme.
-	 * @var array
-	 */
-	protected $specialClassNamesAndPaths = array();
-
-	/**
 	 * An array of \F3\FLOW3\Package\Package objects
 	 * @var array
 	 */
@@ -111,22 +105,6 @@ class ClassLoader {
 		$this->packages = $packages;
 	}
 
-	/**
-	 * Explicitly sets a file path and name which holds the implementation of
-	 * the given class.
-	 *
-	 * @param string $className Name of the class to register
-	 * @param string $classFilePathAndName Absolute path and file name of the file holding the class implementation
-	 * @return void
-	 * @throws \InvalidArgumentException if $className is not a valid string
-	 * @throws \F3\FLOW3\Resource\Exception if the specified file does not exist
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function setSpecialClassNameAndPath($className, $classFilePathAndName) {
-		if (!is_string($className)) throw new \InvalidArgumentException('Class name must be a valid string.', 1187009929);
-		if (!file_exists($classFilePathAndName)) throw new \F3\FLOW3\Resource\Exception('The specified class file does not exist.', 1187009987);
-		$this->specialClassNamesAndPaths[$className] = $classFilePathAndName;
-	}
 }
 
 ?>
