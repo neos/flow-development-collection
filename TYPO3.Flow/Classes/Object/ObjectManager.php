@@ -313,19 +313,15 @@ class ObjectManager implements ObjectManagerInterface {
 	public function initializeSession() {
 		$this->sessionInitialized = TRUE;
 
-		$this->objectSerializer = $this->get('F3\FLOW3\Object\ObjectSerializer');
 		$this->session = $this->get('F3\FLOW3\Session\SessionInterface');
 		$this->session->start();
 
 		if ($this->session->hasKey('F3_FLOW3_Object_ObjectManager') === TRUE) {
-			$objectsAsArray = $this->session->getData('F3_FLOW3_Object_ObjectManager');
-			if (is_array($objectsAsArray)) {
-				foreach ($this->objectSerializer->deserializeObjectsArray($objectsAsArray) as $object) {
-					if ($object instanceof \F3\FLOW3\Object\Proxy\ProxyInterface) {
-						$objectName = $this->getObjectNameByClassName(get_class($object));
-						if ($this->objects[$objectName]['s'] === ObjectConfiguration::SCOPE_SESSION) {
-							$this->objects[$objectName]['i'] = $object;
-						}
+			foreach ($this->session->getData('F3_FLOW3_Object_ObjectManager') as $object) {
+				if ($object instanceof \F3\FLOW3\Object\Proxy\ProxyInterface) {
+					$objectName = $this->getObjectNameByClassName(get_class($object));
+					if ($this->objects[$objectName]['s'] === ObjectConfiguration::SCOPE_SESSION) {
+						$this->objects[$objectName]['i'] = $object;
 					}
 				}
 			}
@@ -377,15 +373,13 @@ class ObjectManager implements ObjectManagerInterface {
 		}
 
 		if ($this->sessionInitialized) {
-			$this->objectSerializer->clearState();
-
-			$objectsAsArray = array();
+			$sessionObjects = array();
 			foreach($this->objects as $information) {
 				if (isset($information['i']) && $information['s'] === ObjectConfiguration::SCOPE_SESSION) {
-					$objectsAsArray = array_merge($objectsAsArray, $this->objectSerializer->serializeObjectAsPropertyArray($information['i']));
+					$sessionObjects[] = $information['i'];
 				}
 			}
-			$this->session->putData('F3_FLOW3_Object_ObjectManager', $objectsAsArray);
+			$this->session->putData('F3_FLOW3_Object_ObjectManager', $sessionObjects);
 			$this->session->close();
 		}
 	}
