@@ -143,7 +143,7 @@ class PluralsReader {
 			return self::RULE_OTHER;
 		}
 
-		$ruleset = $this->rulesets[$this->rulesetsIndices[$locale->getLanguage()]];
+		$ruleset = $this->rulesets[$locale->getLanguage()][$this->rulesetsIndices[$locale->getLanguage()]];
 
 		if ($ruleset === NULL) {
 			return self::RULE_OTHER;
@@ -204,7 +204,7 @@ class PluralsReader {
 			return array(self::RULE_OTHER);
 		}
 
-		return array_merge(array_keys($this->rulesets[$this->rulesetsIndices[$locale->getLanguage()]]), array(self::RULE_OTHER));
+		return array_merge(array_keys($this->rulesets[$locale->getLanguage()][$this->rulesetsIndices[$locale->getLanguage()]]), array(self::RULE_OTHER));
 	}
 
 	/**
@@ -229,18 +229,17 @@ class PluralsReader {
 				$this->rulesetsIndices[$localeLanguage] = $index;
 			}
 
-			if (!is_array($pluralRules)) {
-				$this->rulesets[$index] = NULL;
-				continue;
-			}
+			if (is_array($pluralRules)) {
+				$ruleset = array();
+				foreach ($pluralRules as $pluralRuleNodeString => $pluralRule) {
+					$pluralForm = $model->getAttributeValue($pluralRuleNodeString, 'count');
+					$ruleset[$pluralForm] = $this->parseRule($pluralRule);
+				}
 
-			$ruleset = array();
-			foreach ($pluralRules as $pluralRuleNodeString => $pluralRule) {
-				$pluralForm = $model->getAttributeValue($pluralRuleNodeString, 'count');
-				$ruleset[$pluralForm] = $this->parseRule($pluralRule);
+				foreach (explode(' ', $localeLanguages) as $localeLanguage) {
+					$this->rulesets[$localeLanguage][$index] = $ruleset;
+				}
 			}
-
-			$this->rulesets[$index] = $ruleset;
 
 			++$index;
 		}

@@ -121,6 +121,10 @@ class CldrParser extends \TYPO3\FLOW3\I18n\Xml\AbstractXmlParser {
 		$distinguishingAttributes[] = 'source';
 		$distinguishingAttributes[] = 'path';
 
+			// These are needed for proper plurals handling
+		$distinguishingAttributes[] = 'locales';
+		$distinguishingAttributes[] = 'count';
+
 		return in_array($attributeName, $distinguishingAttributes);
 	}
 }

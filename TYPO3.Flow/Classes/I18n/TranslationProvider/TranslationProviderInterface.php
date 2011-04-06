@@ -32,7 +32,7 @@ interface TranslationProviderInterface {
 	 * @param string $packageKey Key of the package containing the source file
 	 * @return mixed Translated label or FALSE on failure
 	 */
-	public function getTranslationByOriginalLabel($originalLabel, \TYPO3\FLOW3\I18n\Locale $locale, $pluralForm = \TYPO3\FLOW3\I18n\Cldr\Reader\PluralsReader::RULE_OTHER, $sourceName = 'Main', $packageKey = 'TYPO3.FLOW3');
+	public function getTranslationByOriginalLabel($originalLabel, \TYPO3\FLOW3\I18n\Locale $locale, $pluralForm = NULL, $sourceName = 'Main', $packageKey = 'TYPO3.FLOW3');
 
 	/**
 	 * Returns label for a key ($labelId) from a file defined by $sourceName.
@@ -46,7 +46,7 @@ interface TranslationProviderInterface {
 	 * @param string $packageKey Key of the package containing the source file
 	 * @return mixed Translated label or FALSE on failure
 	 */
-	public function getTranslationById($labelId, \TYPO3\FLOW3\I18n\Locale $locale, $pluralForm = \TYPO3\FLOW3\I18n\Cldr\Reader\PluralsReader::RULE_OTHER, $sourceName = 'Main', $packageKey = 'TYPO3.FLOW3');
+	public function getTranslationById($labelId, \TYPO3\FLOW3\I18n\Locale $locale, $pluralForm = NULL, $sourceName = 'Main', $packageKey = 'TYPO3.FLOW3');
 }
 
 ?>
