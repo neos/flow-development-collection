@@ -74,7 +74,6 @@ class SubRequestBuilder {
 	 */
 	public function build(\F3\FLOW3\MVC\Web\Request $parentRequest, $argumentNamespace = '', $subRequestClassName = 'F3\FLOW3\MVC\Web\SubRequest') {
 		$subRequest = $this->objectManager->create($subRequestClassName, $parentRequest);
-		$subRequest->setMethod($this->environment->getRequestMethod());
 		$subRequest->setArgumentNamespace($argumentNamespace);
 
 		$this->setArgumentsFromRawRequestData($subRequest);

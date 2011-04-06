@@ -29,14 +29,21 @@ namespace F3\FLOW3\Tests\Unit\MVC\Web;
  */
 class SubRequestTest extends \F3\FLOW3\Tests\UnitTestCase {
 
+	protected $subRequest;
+
+	protected $mockParentRequest;
+
+	public function setUp() {
+		$this->mockParentRequest = $this->getMock('F3\FLOW3\MVC\Web\Request');
+		$this->subRequest = new \F3\FLOW3\MVC\Web\SubRequest($this->mockParentRequest);
+	}
+
 	/**
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function constructorSetsParentRequest() {
-		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request');
-		$subRequest = new \F3\FLOW3\MVC\Web\SubRequest($mockRequest);
-		$this->assertSame($mockRequest, $subRequest->getParentRequest());
+		$this->assertSame($this->mockParentRequest, $this->subRequest->getParentRequest());
 	}
 
 	/**
@@ -44,9 +51,7 @@ class SubRequestTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function argumentNamespaceDefaultsToAnEmptyString() {
-		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request');
-		$subRequest = new \F3\FLOW3\MVC\Web\SubRequest($mockRequest);
-		$this->assertSame('', $subRequest->getArgumentNamespace());
+		$this->assertSame('', $this->subRequest->getArgumentNamespace());
 	}
 
 	/**
@@ -54,10 +59,75 @@ class SubRequestTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function argumentNamespaceCanBeSpecified() {
-		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request');
-		$subRequest = new \F3\FLOW3\MVC\Web\SubRequest($mockRequest);
-		$subRequest->setArgumentNamespace('someArgumentNamespace');
-		$this->assertSame('someArgumentNamespace', $subRequest->getArgumentNamespace());
+		$this->subRequest->setArgumentNamespace('someArgumentNamespace');
+		$this->assertSame('someArgumentNamespace', $this->subRequest->getArgumentNamespace());
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function setRequestUriSetsParentRequestUri() {
+		$mockUri = $this->getMock('F3\FLOW3\Property\DataType\Uri', array(), array(), '', FALSE);
+		$this->mockParentRequest->expects($this->once())->method('setRequestUri')->with($mockUri);
+		$this->subRequest->setRequestUri($mockUri);
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function getRequestUriReturnsParentRequestUri() {
+		$mockUri = $this->getMock('F3\FLOW3\Property\DataType\Uri', array(), array(), '', FALSE);
+		$this->mockParentRequest->expects($this->once())->method('getRequestUri')->will($this->returnValue($mockUri));
+		$this->assertSame($mockUri, $this->subRequest->getRequestUri());
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function setBaseUriSetsParentRequestBaseUri() {
+		$mockUri = $this->getMock('F3\FLOW3\Property\DataType\Uri', array(), array(), '', FALSE);
+		$this->mockParentRequest->expects($this->once())->method('setBaseUri')->with($mockUri);
+		$this->subRequest->setBaseUri($mockUri);
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function getBaseUriReturnsParentRequestBaseUri() {
+		$mockUri = $this->getMock('F3\FLOW3\Property\DataType\Uri', array(), array(), '', FALSE);
+		$this->mockParentRequest->expects($this->once())->method('getBaseUri')->will($this->returnValue($mockUri));
+		$this->assertSame($mockUri, $this->subRequest->getBaseUri());
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function setMethodSetsParentRequestMethod() {
+		$this->mockParentRequest->expects($this->once())->method('setMethod')->with('SomeMethod');
+		$this->subRequest->setMethod('SomeMethod');
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function getMethodReturnsParentRequestMethod() {
+		$this->mockParentRequest->expects($this->once())->method('getMethod')->will($this->returnValue('SomeMethod'));
+		$this->assertSame('SomeMethod', $this->subRequest->getMethod());
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function getRoutePathReturnsParentRequestRoutePath() {
+		$this->mockParentRequest->expects($this->once())->method('getRoutePath')->will($this->returnValue('SomeRoutePath'));
+		$this->assertSame('SomeRoutePath', $this->subRequest->getRoutePath());
 	}
 }
 ?>

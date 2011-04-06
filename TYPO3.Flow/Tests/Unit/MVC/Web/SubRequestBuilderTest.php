@@ -90,18 +90,6 @@ class SubRequestBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function buildSetsMethodOfEnvironment() {
-		$this->mockObjectManager->expects($this->once())->method('create')->with('F3\FLOW3\MVC\Web\SubRequest', $this->mockRequest)->will($this->returnValue($this->mockSubRequest));
-		$this->mockSubRequest->expects($this->any())->method('getArguments')->will($this->returnValue(array()));
-		$this->mockEnvironment->expects($this->once())->method('getRequestMethod')->will($this->returnValue('SomeRequestMethod'));
-		$this->mockSubRequest->expects($this->once())->method('setMethod')->with('SomeRequestMethod');
-		$this->subRequestBuilder->build($this->mockRequest);
-	}
-
-	/**
-	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
 	public function buildSetsArgumentNamespaceToAnEmptyStringByDefault() {
 		$this->mockObjectManager->expects($this->once())->method('create')->with('F3\FLOW3\MVC\Web\SubRequest', $this->mockRequest)->will($this->returnValue($this->mockSubRequest));
 		$this->mockSubRequest->expects($this->any())->method('getArguments')->will($this->returnValue(array()));

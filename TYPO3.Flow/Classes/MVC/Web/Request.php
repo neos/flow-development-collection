@@ -64,6 +64,17 @@ class Request extends \F3\FLOW3\MVC\Request {
 	}
 
 	/**
+	 * Returns the request URI
+	 *
+	 * @return \F3\FLOW3\Property\DataType\Uri URI of this web request
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
+	 */
+	public function getRequestUri() {
+		return $this->requestUri;
+	}
+
+	/**
 	 * Sets the Base URI
 	 *
 	 * @param \F3\FLOW3\Property\DataType\Uri $baseUri
@@ -72,6 +83,17 @@ class Request extends \F3\FLOW3\MVC\Request {
 	 */
 	public function setBaseUri(Uri $baseUri) {
 		$this->baseUri = $baseUri;
+	}
+
+	/**
+	 * Returns the base URI
+	 *
+	 * @return \F3\FLOW3\Property\DataType\Uri URI of this web request
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
+	 */
+	public function getBaseUri() {
+		return $this->baseUri;
 	}
 
 	/**
@@ -97,28 +119,6 @@ class Request extends \F3\FLOW3\MVC\Request {
 	 */
 	public function getMethod() {
 		return $this->method;
-	}
-
-	/**
-	 * Returns the request URI
-	 *
-	 * @return \F3\FLOW3\Property\DataType\Uri URI of this web request
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @api
-	 */
-	public function getRequestUri() {
-		return $this->requestUri;
-	}
-
-	/**
-	 * Returns the base URI
-	 *
-	 * @return \F3\FLOW3\Property\DataType\Uri URI of this web request
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @api
-	 */
-	public function getBaseUri() {
-		return $this->baseUri;
 	}
 
 	/**
