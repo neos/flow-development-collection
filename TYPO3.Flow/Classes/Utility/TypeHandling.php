@@ -115,7 +115,7 @@ class TypeHandling {
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	static public function isSimpleType($type) {
-		return in_array($type, array('array', 'string', 'float', 'integer', 'boolean'), TRUE);
+		return in_array(self::normalizeType($type), array('array', 'string', 'float', 'integer', 'boolean'), TRUE);
 	}
 }
 ?>

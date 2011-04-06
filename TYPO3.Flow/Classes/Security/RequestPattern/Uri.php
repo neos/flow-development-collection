@@ -32,7 +32,8 @@ namespace F3\FLOW3\Security\RequestPattern;
 class Uri implements \F3\FLOW3\Security\RequestPatternInterface {
 
 	/**
-	 * @var string The preg_match() styled URI pattern
+	 * The preg_match() styled URI pattern
+	 * @var string
 	 */
 	protected $uriPattern = '';
 

@@ -44,12 +44,14 @@ class Request implements RequestInterface {
 	protected $controllerCommandName = 'default';
 
 	/**
-	 * @var array The arguments for this request
+	 * The arguments for this request
+	 * @var array
 	 */
 	protected $arguments = array();
 
 	/**
-	 * @var boolean If this request has been changed and needs to be dispatched again
+	 * If this request has been changed and needs to be dispatched again
+	 * @var boolean
 	 */
 	protected $dispatched = FALSE;
 

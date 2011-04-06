@@ -31,7 +31,7 @@ namespace F3\FLOW3\Security\Authentication;
 class AuthenticationProviderResolver {
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface The object manager
+	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 

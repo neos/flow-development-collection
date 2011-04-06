@@ -45,12 +45,14 @@ class Package implements PackageInterface {
 	protected $packagePath;
 
 	/**
-	 * @var \F3\FLOW3\Package\MetaData Meta information about this package
+	 * Meta information about this package
+	 * @var \F3\FLOW3\Package\MetaData
 	 */
 	protected $packageMetaData;
 
 	/**
-	 * @var array Names and relative paths (to this package directory) of files containing classes
+	 * Names and relative paths (to this package directory) of files containing classes
+	 * @var array
 	 */
 	protected $classFiles;
 

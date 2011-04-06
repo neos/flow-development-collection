@@ -86,57 +86,68 @@ class RedisBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	const FAKED_UNLIMITED_LIFETIME = 31536000;
 
 	/**
-	 * @var string Key prefix for identifier->data entries
+	 * Key prefix for identifier->data entries
+	 * @var string
 	 */
 	const IDENTIFIER_DATA_PREFIX = 'identData:';
 
 	/**
-	 * @var string Key prefix for identifier->tags sets
+	 * Key prefix for identifier->tags sets
+	 * @var string
 	 */
 	const IDENTIFIER_TAGS_PREFIX = 'identTags:';
 
 	/**
-	 * @var string Key prefix for tag->identifiers sets
+	 * Key prefix for tag->identifiers sets
+	 * @var string
 	 */
 	const TAG_IDENTIFIERS_PREFIX = 'tagIdents:';
 
 	/**
-	 * @var \Redis Instance of the PHP redis class
+	 * Instance of the PHP redis class
+	 * @var \Redis
 	 */
 	protected $redis;
 
 	/**
-	 * @var boolean Indicates wether the server is connected
+	 * Indicates wether the server is connected
+	 * @var boolean
 	 */
 	protected $connected = FALSE;
 
 	/**
-	 * @var string Hostname / IP of the Redis server, defaults to 127.0.0.1.
+	 * Hostname / IP of the Redis server, defaults to 127.0.0.1.
+	 * @var string
 	 */
 	protected $hostname = '127.0.0.1';
 
 	/**
-	 * @var integer Port of the Redis server, defaults to 6379
+	 * Port of the Redis server, defaults to 6379
+	 * @var integer
 	 */
 	protected $port = 6379;
 
 	/**
-	 * @var integer Number of selected database, defaults to 0
+	 * Number of selected database, defaults to 0
+	 * @var integer
 	 */
 	protected $database = 0;
 
 	/**
-	 * @var string Password for redis authentication
+	 * Password for redis authentication
+	 * @var string
 	 */
 	protected $password = '';
 
 	/**
-	 * @var boolean Indicates wether data is compressed or not (requires php zlib)
+	 * Indicates wether data is compressed or not (requires php zlib)
+	 * @var boolean
 	 */
 	protected $compression = FALSE;
 
 	/**
-	 * @var integer -1 to 9, indicates zlib compression level: -1 = default level 6, 0 = no compression, 9 maximum compression
+	 * -1 to 9, indicates zlib compression level: -1 = default level 6, 0 = no compression, 9 maximum compression
+	 * @var integer
 	 */
 	protected $compressionLevel = -1;
 

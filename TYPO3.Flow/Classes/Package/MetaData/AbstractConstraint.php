@@ -31,23 +31,25 @@ abstract class AbstractConstraint {
 
 	/**
 	 * One of depends, conflicts or suggests
-	 *
-	 * @var string The constraint type
+	 * @var string
 	 */
 	protected $constraintType;
 
 	/**
-	 * @var string The constraint name or value
+	 * The constraint name or value
+	 * @var string
 	 */
 	protected $value;
 
 	/**
-	 * @var string The minimum version
+	 * The minimum version
+	 * @var string
 	 */
 	protected $minVersion;
 
 	/**
-	 * @var string The maximum version
+	 * The maximum version
+	 * @var string
 	 */
 	protected $maxVersion;
 

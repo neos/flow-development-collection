@@ -31,12 +31,12 @@ namespace F3\FLOW3\Validation;
 class Error extends \F3\FLOW3\Error\Error {
 
 	/**
-	 * @var string The default (english) error message.
+	 * @var string
 	 */
 	protected $message = 'Unknown validation error';
 
 	/**
-	 * @var string The error code
+	 * @var string
 	 */
 	protected $code = 1201447005;
 }

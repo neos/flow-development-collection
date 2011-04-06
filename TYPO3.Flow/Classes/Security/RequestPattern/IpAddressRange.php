@@ -31,7 +31,7 @@ namespace F3\FLOW3\Security\RequestPattern;
 class IpAddressRange implements \F3\FLOW3\Security\RequestPatternInterface {
 
 	/**
-	 * @var string The address range
+	 * @var string
 	 */
 	protected $ipAddressRange = '';
 

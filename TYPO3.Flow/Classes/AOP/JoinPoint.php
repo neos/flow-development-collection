@@ -33,37 +33,44 @@ namespace F3\FLOW3\AOP;
 class JoinPoint implements \F3\FLOW3\AOP\JoinPointInterface {
 
 	/**
-	 * @var \F3\FLOW3\Object\Proxy\ProxyInterface A reference to the proxy object
+	 * A reference to the proxy object
+	 * @var \F3\FLOW3\Object\Proxy\ProxyInterface
 	 */
 	protected $proxy;
 
 	/**
-	 * @var string Class name of the target class this join point refers to
+	 * Class name of the target class this join point refers to
+	 * @var string
 	 */
 	protected $className;
 
 	/**
-	 * @var string Method name of the target method which is about to or has been invoked
+	 * Method name of the target method which is about to or has been invoked
+	 * @var string
 	 */
 	protected $methodName;
 
 	/**
-	 * @var array Array of method arguments which have been passed to the target method
+	 * Array of method arguments which have been passed to the target method
+	 * @var array
 	 */
 	protected $methodArguments;
 
 	/**
-	 * @var \F3\FLOW3\AOP\Advice\AdviceChain The advice chain for this join point
+	 * The advice chain for this join point
+	 * @var \F3\FLOW3\AOP\Advice\AdviceChain
 	 */
 	protected $adviceChain;
 
 	/**
-	 * @var mixed The result of the method invocations (only used for After Returning advices)
+	 * The result of the method invocations (only used for After Returning advices)
+	 * @var mixed
 	 */
 	protected $result = NULL;
 
 	/**
-	 * @var Exception The exception thrown (only used for After Throwing advices)
+	 * The exception thrown (only used for After Throwing advices)
+	 * @var \Exception
 	 */
 	protected $exception = NULL;
 

@@ -31,17 +31,19 @@ namespace F3\FLOW3\Package;
 class Documentation {
 
 	/**
-	 * @var \F3\FLOW3\Package\PackageInterface Reference to the package of this documentation
+	 * Reference to the package of this documentation
+	 * @var \F3\FLOW3\Package\PackageInterface
 	 */
 	protected $package;
 
 	/**
-	 * @var string The documentation name
+	 * @var string
 	 */
 	protected $documentationName;
 
 	/**
-	 * @var string Absolute path to the documentation
+	 * Absolute path to the documentation
+	 * @var string
 	 */
 	protected $documentationPath;
 

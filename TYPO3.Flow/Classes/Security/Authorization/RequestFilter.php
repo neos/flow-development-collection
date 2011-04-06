@@ -32,7 +32,7 @@ namespace F3\FLOW3\Security\Authorization;
 class RequestFilter {
 
 	/**
-	 * @var \F3\FLOW3\Security\RequestPatternInterface The request pattern this filter should match
+	 * @var \F3\FLOW3\Security\RequestPatternInterface
 	 */
 	protected $pattern = NULL;
 

@@ -31,12 +31,14 @@ namespace F3\FLOW3\Reflection;
 class DocCommentParser {
 
 	/**
-	 * @var string The description as found in the doc comment
+	 * The description as found in the doc comment
+	 * @var string
 	 */
 	protected $description = '';
 
 	/**
-	 * @var array An array of tag names and their values (multiple values are possible)
+	 * An array of tag names and their values (multiple values are possible)
+	 * @var array
 	 */
 	protected $tags = array();
 

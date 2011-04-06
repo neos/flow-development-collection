@@ -62,32 +62,32 @@ class TextIterator implements \Iterator {
 		REGEXP_SENTENCE_DELIMITERS = '[\.|,|!|\?|;]';
 
 	/**
-	 * @var integer The iterator type (CODE_POINT, ...)
+	 * @var integer
 	 */
 	protected $iteratorType;
 
 	/**
-	 * @var string The iterator subject
+	 * @var string
 	 */
 	protected $subject;
 
 	/**
-	 * @var integer The current iterator Position
+	 * @var integer
 	 */
 	protected $currentPosition;
 
 	/**
-	 * @var \ArrayObject Cache the already processed string tokens
+	 * @var \ArrayObject
 	 */
 	protected $iteratorCache;
 
 	/**
-	 * @var ArrayIterator Iterator for the iteratorCache
+	 * @var \ArrayIterator
 	 */
 	protected $iteratorCacheIterator;
 
 	/**
-	 * @var \F3\FLOW3\Utility\Unicode\TextIteratorElement The previous element, seen from current()
+	 * @var \F3\FLOW3\Utility\Unicode\TextIteratorElement
 	 */
 	protected $previousElement;
 

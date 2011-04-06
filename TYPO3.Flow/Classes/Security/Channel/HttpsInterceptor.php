@@ -31,7 +31,7 @@ namespace F3\FLOW3\Security\Channel;
 class HttpsInterceptor implements \F3\FLOW3\Security\Authorization\InterceptorInterface {
 
 	/**
-	 * @var boolean If set to TRUE, the HTTPS protocol will be einforced.
+	 * @var boolean
 	 * @todo this has to be set by configuration
 	 */
 	protected $useSSL = FALSE;

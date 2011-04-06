@@ -40,47 +40,56 @@ class Uri {
 	const PATTERN_MATCH_FRAGMENT = '/^(?:[a-zA-Z0-9_~!&\',;=:@\/?\.\-\$\(\)\*\+]|(?:%[0-9a-fA-F]{2}))*$/';
 
 	/**
-	 * @var string The scheme / protocol of the locator, eg. http
+	 * The scheme / protocol of the locator, eg. http
+	 * @var string
 	 */
 	protected $scheme;
 
 	/**
-	 * @var string User name of a login, if any
+	 * User name of a login, if any
+	 * @var string
 	 */
 	protected $username;
 
 	/**
-	 * @var string Password of a login, if any
+	 * Password of a login, if any
+	 * @var string
 	 */
 	protected $password;
 
 	/**
-	 * @var string Host of the locator, eg. some.subdomain.example.com
+	 * Host of the locator, eg. some.subdomain.example.com
+	 * @var string
 	 */
 	protected $host;
 
 	/**
-	 * @var integer Port of the locator, if any was specified. Eg. 80
+	 * Port of the locator, if any was specified. Eg. 80
+	 * @var integer
 	 */
 	protected $port;
 
 	/**
-	 * @var string The hierarchical part of the URI, eg. /products/acme_soap
+	 * The hierarchical part of the URI, eg. /products/acme_soap
+	 * @var string
 	 */
 	protected $path;
 
 	/**
-	 * @var string Query string of the locator, if any. Eg. color=red&size=large
+	 * Query string of the locator, if any. Eg. color=red&size=large
+	 * @var string
 	 */
 	protected $query;
 
 	/**
-	 * @var array Array representation of the URI query
+	 * Array representation of the URI query
+	 * @var array
 	 */
 	protected $arguments = array();
 
 	/**
-	 * @var string Fragment / anchor, if one was specified.
+	 * Fragment / anchor, if one was specified.
+	 * @var string
 	 */
 	protected $fragment;
 

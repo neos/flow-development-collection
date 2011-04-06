@@ -32,7 +32,7 @@ namespace F3\FLOW3\MVC;
 class Response implements \F3\FLOW3\MVC\ResponseInterface {
 
 	/**
-	 * @var string The response content
+	 * @var string
 	 */
 	protected $content = NULL;
 

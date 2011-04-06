@@ -35,12 +35,14 @@ namespace F3\FLOW3\Error;
 class Message {
 
 	/**
-	 * @var string The default (english) error message.
+	 * The default (english) error message
+	 * @var string
 	 */
 	protected $message = 'Unknown message';
 
 	/**
-	 * @var string The error code
+	 * The error code
+	 * @var string
 	 */
 	protected $code;
 

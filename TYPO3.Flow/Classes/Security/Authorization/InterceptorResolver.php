@@ -31,7 +31,7 @@ namespace F3\FLOW3\Security\Authorization;
 class InterceptorResolver {
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface The object manager
+	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 

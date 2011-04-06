@@ -32,12 +32,14 @@ namespace F3\FLOW3\AOP\Advice;
 class AdviceChain {
 
 	/**
-	 * @var array An array of \F3\FLOW3\AOP\Advice objects which form the advice chain
+	 * An array of \F3\FLOW3\AOP\Advice objects which form the advice chain
+	 * @var array
 	 */
 	protected $advices;
 
 	/**
-	 * @var integer The number of the next advice which will be invoked on a proceed() call
+	 * The number of the next advice which will be invoked on a proceed() call
+	 * @var integer
 	 */
 	protected $adviceIndex = -1;
 
