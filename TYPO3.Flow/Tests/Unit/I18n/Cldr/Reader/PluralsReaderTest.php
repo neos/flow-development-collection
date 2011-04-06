@@ -11,6 +11,8 @@ namespace TYPO3\FLOW3\Tests\Unit\I18n\Cldr\Reader;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use \TYPO3\FLOW3\I18n\Cldr\Reader\PluralsReader;
+
 /**
  * Testcase for the PluralsReader
  *
@@ -44,32 +46,36 @@ class PluralsReaderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$mockCache->expects($this->at(1))->method('set')->with('rulesets');
 		$mockCache->expects($this->at(2))->method('set')->with('rulesetsIndices');
 
-		$this->reader = new \TYPO3\FLOW3\I18n\Cldr\Reader\PluralsReader();
+		$this->reader = new PluralsReader();
 		$this->reader->injectCldrRepository($mockRepository);
 		$this->reader->injectCache($mockCache);
 		$this->reader->initializeObject();
 	}
 
 	/**
-	 * @test
+	 * Data provider for returnsCorrectPluralForm
+	 *
+	 * @return array
 	 */
-	public function returnsCorrectPluralForm() {
+	public function quantities() {
+		return array(
+			array(1, PluralsReader::RULE_ONE),
+			array(2, PluralsReader::RULE_FEW),
+			array(100, PluralsReader::RULE_OTHER),
+			array(101, PluralsReader::RULE_FEW),
+			array(101.1, PluralsReader::RULE_OTHER),
+		);
+	}
+
+	/**
+	 * @test
+	 * @dataProvider quantities
+	 */
+	public function returnsCorrectPluralForm($quantity, $pluralForm) {
 		$locale = new \TYPO3\FLOW3\I18n\Locale('mo');
 
-		$result = $this->reader->getPluralForm(1, $locale);
-		$this->assertEquals(\TYPO3\FLOW3\I18n\Cldr\Reader\PluralsReader::RULE_ONE, $result);
-
-		$result = $this->reader->getPluralForm(2, $locale);
-		$this->assertEquals(\TYPO3\FLOW3\I18n\Cldr\Reader\PluralsReader::RULE_FEW, $result);
-
-		$result = $this->reader->getPluralForm(100, $locale);
-		$this->assertEquals(\TYPO3\FLOW3\I18n\Cldr\Reader\PluralsReader::RULE_OTHER, $result);
-
-		$result = $this->reader->getPluralForm(101, $locale);
-		$this->assertEquals(\TYPO3\FLOW3\I18n\Cldr\Reader\PluralsReader::RULE_FEW, $result);
-
-		$result = $this->reader->getPluralForm(101.1, $locale);
-		$this->assertEquals(\TYPO3\FLOW3\I18n\Cldr\Reader\PluralsReader::RULE_OTHER, $result);
+		$result = $this->reader->getPluralForm($quantity, $locale);
+		$this->assertEquals($pluralForm, $result);
 	}
 }
 

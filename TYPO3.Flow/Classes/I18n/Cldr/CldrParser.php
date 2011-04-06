@@ -96,7 +96,7 @@ class CldrParser extends \TYPO3\FLOW3\I18n\Xml\AbstractXmlParser {
 			}
 
 			if (!isset($parsedNode[$nameOfChild])) {
-					// We accept only first child when they are non distinguishable (i.e. they differs only by non-distringuishing attributes)
+					// We accept only first child when they are non distinguishable (i.e. they differs only by non-distinguishing attributes)
 				$parsedNode[$nameOfChild] = $parsedChild;
 			}
 		}

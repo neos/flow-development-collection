@@ -353,7 +353,10 @@ class CldrModel {
 				$sourcePath = implode('/', $currentPathNodeNames) . '/'. $sourcePath;
 
 				unset($data[$nodeString]);
-				$data = array_merge($this->getRawData($sourcePath), $data);
+				$sourceData = $this->getRawData($sourcePath);
+				if (is_array($sourceData)) {
+					$data = array_merge($sourceData, $data);
+				}
 				break;
 			} else {
 				$data[$nodeString] = $this->resolveAliases($data[$nodeString], ($currentPath === '') ? $nodeString : ($currentPath . '/' . $nodeString));

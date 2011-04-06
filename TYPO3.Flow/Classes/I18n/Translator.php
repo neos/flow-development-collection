@@ -174,7 +174,7 @@ class Translator {
 		if ($translatedMessage === FALSE) {
 				// Return the ID if no translation available
 			$translatedMessage = $labelId;
-		} else if (!empty($arguments)) {
+		} elseif (!empty($arguments)) {
 			$translatedMessage = $this->formatResolver->resolvePlaceholders($translatedMessage, $arguments, $locale);
 		}
 

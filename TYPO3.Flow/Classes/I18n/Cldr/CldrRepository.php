@@ -70,7 +70,7 @@ class CldrRepository {
 	 * file.
 	 *
 	 * @param string $filename Relative (from CLDR root) path to existing CLDR file
-	 * @return mixed A \TYPO3\FLOW3\I18n\Cldr\CldrModel instance or FALSE on failure
+	 * @return \TYPO3\FLOW3\I18n\Cldr\CldrModel|boolean A \TYPO3\FLOW3\I18n\Cldr\CldrModel instance or FALSE on failure
 	 */
 	public function getModel($filename) {
 		$filename = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array($this->cldrBasePath, $filename . '.xml'));
@@ -100,7 +100,7 @@ class CldrRepository {
 	 *
 	 * @param \TYPO3\FLOW3\I18n\Locale $locale A locale
 	 * @param string $directoryPath Relative path to existing CLDR directory which contains one file per locale (see 'main' directory in CLDR for example)
-	 * @return mixed A \TYPO3\FLOW3\I18n\Cldr\CldrModel instance or FALSE on failure
+	 * @return \TYPO3\FLOW3\I18n\Cldr\CldrModel|boolean A \TYPO3\FLOW3\I18n\Cldr\CldrModel instance or FALSE on failure
 	 */
 	public function getModelForLocale(\TYPO3\FLOW3\I18n\Locale $locale, $directoryPath = 'main') {
 		$directoryPath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array($this->cldrBasePath, $directoryPath));
