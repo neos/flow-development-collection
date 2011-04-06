@@ -43,11 +43,12 @@ class PackageManagerTest extends \F3\FLOW3\Tests\UnitTestCase {
 		\vfsStreamWrapper::register();
 		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('testDirectory'));
 
-		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\ConfigurationManager', array('getConfiguration', 'saveConfiguration'), array(), '', FALSE);
-
+		$mockBootstrap = $this->getMock('F3\FLOW3\Core\Bootstrap', array(), array(), '', FALSE);
+		$mockBootstrap->expects($this->any())->method('getSignalSlotDispatcher')->will($this->returnValue(
+			$this->getMock('F3\FLOW3\SignalSlot\Dispatcher')
+		));
 		$this->packageManager = new \F3\FLOW3\Package\PackageManager();
-		$this->packageManager->injectConfigurationManager($mockConfigurationManager);
-		$this->packageManager->initialize();
+		$this->packageManager->initialize($mockBootstrap);
 	}
 
 	/**

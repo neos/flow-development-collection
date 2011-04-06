@@ -46,7 +46,6 @@ class AbstractMethodInterceptorBuilderTest extends \F3\FLOW3\Tests\UnitTestCase 
 		');
 
 		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'saveToCache'), array(), '', FALSE, TRUE);
-		$mockReflectionService->initialize(array($className));
 
 		$expectedCode = '$arg1, array $arg2, \ArrayObject $arg3, $arg4 = \'foo\', $arg5 = TRUE, array $arg6 = array(0 => TRUE, \'foo\' => \'bar\', 1 => NULL, 3 => 1, 4 => 2.3)';
 		$parametersDocumentation = '';
@@ -71,7 +70,6 @@ class AbstractMethodInterceptorBuilderTest extends \F3\FLOW3\Tests\UnitTestCase 
 		');
 
 		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'saveToCache'), array(), '', FALSE, TRUE);
-		$mockReflectionService->initialize(array($className));
 
 		$expectedCode = '$arg1, $arg2, $arg3, $arg4, $arg5';
 		$parametersDocumentation = '';
@@ -108,7 +106,6 @@ class AbstractMethodInterceptorBuilderTest extends \F3\FLOW3\Tests\UnitTestCase 
 		');
 
 		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'saveToCache'), array(), '', FALSE, TRUE);
-		$mockReflectionService->initialize(array($className));
 
 		$expectedCode = "
 					\$methodArguments = array();
@@ -151,7 +148,6 @@ class AbstractMethodInterceptorBuilderTest extends \F3\FLOW3\Tests\UnitTestCase 
 		');
 
 		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'saveToCache'), array(), '', FALSE, TRUE);
-		$mockReflectionService->initialize(array($className));
 
 		$builder = $this->getAccessibleMock('F3\FLOW3\AOP\Builder\AdvicedConstructorInterceptorBuilder', array('dummy'), array(), '', FALSE);
 		$builder->injectReflectionService($mockReflectionService);

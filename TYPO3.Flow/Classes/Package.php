@@ -38,7 +38,7 @@ class Package extends BasePackage {
 	 * @return void
 	 */
 	public function boot(\F3\FLOW3\Core\Bootstrap $bootstrap) {
-		require(__DIR__ . '/../Resources/PHP/AutoLoader.php');
+		require_once(__DIR__ . '/../Resources/PHP/AutoLoader.php');
 
 		$bootstrap->registerCompiletimeCommandController('flow3:object');
 		$bootstrap->registerCompiletimeCommandController('flow3:core');

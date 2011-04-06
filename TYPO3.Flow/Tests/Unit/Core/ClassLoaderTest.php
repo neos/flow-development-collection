@@ -105,22 +105,5 @@ class ClassLoaderTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$this->assertTrue($vfsClassFile->eof());
 	}
 
-	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function specialClassNamesAndPathsSettingsOverrideClassLoaderBehaviour() {
-		$root = \vfsStream::newDirectory('Packages/Virtual/Resources/PHP');
-		\vfsStreamWrapper::setRoot($root);
-
-		$vfsClassFile = \vfsStream::newFile('Bar.php')
-			->withContent('<?php ?>')
-			->at($root->getChild('Virtual/Resources/PHP'));
-
-		$this->classLoader->setSpecialClassNameAndPath('Baz', \vfsStream::url('Virtual/Resources/PHP/Bar.php'));
-		$this->classLoader->loadClass('Baz');
-
-		$this->assertTrue($vfsClassFile->eof());
-	}
 }
 ?>
