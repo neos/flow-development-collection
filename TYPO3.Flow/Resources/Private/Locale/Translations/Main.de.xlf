@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+	<file original="" source-language="en" datatype="plaintext">
+		<body>
+			<trans-unit id="authentication.required">
+				<source>Authentication required</source>
+				<target>Authentifizierung erforderlich</target>
+			</trans-unit>
+			<trans-unit id="authentication.username">
+				<source>Username</source>
+				<target>Benutzername</target>
+			</trans-unit>
+			<trans-unit id="authentication.password">
+				<source>Password</source>
+				<target>Kennwort</target>
+			</trans-unit>
+			<trans-unit id="authentication.new-password">
+				<source>New password</source>
+				<target>Neues Kennwort</target>
+			</trans-unit>
+			<trans-unit id="authentication.login">
+				<source>Login</source>
+				<target>Anmelden</target>
+			</trans-unit>
+			<trans-unit id="authentication.logout">
+				<source>Logout</source>
+				<target>Abmelden</target>
+			</trans-unit>
+			<trans-unit id="update">
+				<source>Update</source>
+				<target>Aktualisieren</target>
+			</trans-unit>
+			<trans-unit id="submit">
+				<source>Submit</source>
+				<target>Absenden</target>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>
