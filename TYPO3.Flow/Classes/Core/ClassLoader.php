@@ -66,7 +66,7 @@ class ClassLoader {
 		if ($this->classesCache !== NULL) {
 			$this->classesCache->requireOnce(str_replace('\\', '_', $className));
 			if (class_exists($className, FALSE)) {
-				return;
+				return TRUE;
 			}
 		}
 

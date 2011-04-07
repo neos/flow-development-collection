@@ -485,7 +485,6 @@ class Bootstrap {
 		$errorHandler->setExceptionalErrors($this->settings['error']['errorHandler']['exceptionalErrors']);
 		$this->exceptionHandler = new $this->settings['error']['exceptionHandler']['className'];
 		$this->exceptionHandler->injectSystemLogger($this->systemLogger);
-		$this->classLoader->loadClass('F3\FLOW3\Error\Debugger');
 	}
 
 	/**
