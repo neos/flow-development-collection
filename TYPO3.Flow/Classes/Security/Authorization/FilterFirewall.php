@@ -31,27 +31,29 @@ namespace F3\FLOW3\Security\Authorization;
 class FilterFirewall implements \F3\FLOW3\Security\Authorization\FirewallInterface {
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectManager The object manager
+	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager = NULL;
 
 	/**
-	 * @var \F3\FLOW3\Security\RequestPatternResolver The request pattern resolver
+	 * @var \F3\FLOW3\Security\RequestPatternResolver
 	 */
 	protected $requestPatternResolver = NULL;
 
 	/**
-	 * @var \F3\FLOW3\Security\Authorization\InterceptorResolver The interceptor resolver
+	 * @var \F3\FLOW3\Security\Authorization\InterceptorResolver
 	 */
 	protected $interceptorResolver = NULL;
 
 	/**
-	 * @var array Array of \F3\FLOW3\Security\RequestFilter objects
+	 * @var array
 	 */
 	protected $filters = array();
 
 	/**
-	 * @var boolean If set to TRUE the firewall will reject any request except the ones explicitly whitelisted by a \F3\FLOW3\Security\Authorization\AccessGrantInterceptor
+	 * If set to TRUE the firewall will reject any request except the ones explicitly
+	 * whitelisted by a \F3\FLOW3\Security\Authorization\AccessGrantInterceptor
+	 * @var boolean
 	 */
 	protected $rejectAll = FALSE;
 

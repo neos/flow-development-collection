@@ -32,22 +32,22 @@ namespace F3\FLOW3\Validation;
 class PropertyError extends \F3\FLOW3\Validation\Error {
 
 	/**
-	 * @var string The default (english) error message.
+	 * @var string
 	 */
 	protected $message = '"%s": ';
 
 	/**
-	 * @var string The error code
+	 * @var string
 	 */
 	protected $code = 1242859509;
 
 	/**
-	 * @var string The property name
+	 * @var string
 	 */
 	protected $propertyName;
 
 	/**
-	 * @var array An array of \F3\FLOW3\Validation\Error for the property
+	 * @var array
 	 */
 	protected $errors = array();
 

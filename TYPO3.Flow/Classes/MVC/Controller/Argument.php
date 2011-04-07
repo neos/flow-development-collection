@@ -45,7 +45,7 @@ class Argument {
 
 	/**
 	 * Short help message for this argument
-	 * @var string Short help message for this argument
+	 * @var string
 	 */
 	protected $shortHelpMessage = NULL;
 

@@ -155,6 +155,8 @@ class ClassMetadataInfo implements ClassMetadata
 
     /**
      * READ-ONLY: The name of the entity class.
+     *
+     * @var string
      */
     public $name;
 
@@ -459,14 +461,14 @@ class ClassMetadataInfo implements ClassMetadata
      * READ-ONLY: A flag for whether or not instances of this class are to be versioned
      * with optimistic locking.
      *
-     * @var boolean $isVersioned
+     * @var boolean
      */
     public $isVersioned;
 
     /**
      * READ-ONLY: The name of the field which is used for versioning in optimistic locking (if any).
      *
-     * @var mixed $versionField
+     * @var mixed
      */
     public $versionField;
 

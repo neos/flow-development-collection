@@ -31,17 +31,20 @@ namespace F3\FLOW3\AOP;
 class Introduction {
 
 	/**
-	 * @var string Name of the aspect declaring this introduction
+	 * Name of the aspect declaring this introduction
+	 * @var string
 	 */
 	protected $declaringAspectClassName;
 
 	/**
-	 * @var string Name of the introduced interface
+	 * Name of the introduced interface
+	 * @var string
 	 */
 	protected $interfaceName;
 
 	/**
-	 * @var \F3\FLOW3\AOP\Pointcut\Pointcut The poincut this introduction applies to
+	 * The poincut this introduction applies to
+	 * @var \F3\FLOW3\AOP\Pointcut\Pointcut
 	 */
 	protected $pointcut;
 

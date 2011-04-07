@@ -64,7 +64,7 @@ class UsernamePassword implements \F3\FLOW3\Security\Authentication\TokenInterfa
 	protected $accountRepository;
 
 	/**
-	 * @var array The set request patterns
+	 * @var array
 	 */
 	protected $requestPatterns = NULL;
 

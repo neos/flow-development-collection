@@ -31,7 +31,8 @@ namespace F3\FLOW3\Security\RequestPattern;
 class ControllerObjectName implements \F3\FLOW3\Security\RequestPatternInterface {
 
 	/**
-	 * @var string The preg_match() styled controller object name pattern
+	 * The preg_match() styled controller object name pattern
+	 * @var string
 	 */
 	protected $controllerObjectNamePattern = '';
 

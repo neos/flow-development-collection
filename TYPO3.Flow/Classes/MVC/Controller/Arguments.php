@@ -32,7 +32,8 @@ namespace F3\FLOW3\MVC\Controller;
 class Arguments extends \ArrayObject {
 
 	/**
-	 * @var array Names of the arguments contained by this object
+	 * Names of the arguments contained by this object
+	 * @var array
 	 */
 	protected $argumentNames = array();
 

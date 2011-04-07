@@ -31,27 +31,32 @@ namespace F3\FLOW3\AOP\Advice;
 class AbstractAdvice implements \F3\FLOW3\AOP\Advice\AdviceInterface {
 
 	/**
-	 * @var string Holds the name of the aspect object containing the advice
+	 * Holds the name of the aspect object containing the advice
+	 * @var string
 	 */
 	protected $aspectObjectName;
 
 	/**
-	 * @var string Contains the name of the advice method
+	 * Contains the name of the advice method
+	 * @var string
 	 */
 	protected $adviceMethodName;
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface A reference to the Object Manager
+	 * A reference to the Object Manager
+	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
-	 * @var array Runtime evaluations definition array
+	 * Runtime evaluations definition array
+	 * @var array
 	 */
 	protected $runtimeEvaluationsDefinition;
 
 	/**
-	 * @var \Closure Runtime evaluations function
+	 * Runtime evaluations function
+	 * @var \Closure
 	 */
 	protected $runtimeEvaluator;
 

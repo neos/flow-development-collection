@@ -31,22 +31,22 @@ namespace F3\FLOW3\Utility\Unicode;
 class TextIteratorElement {
 
 	/**
-	 * @var string The element's value
+	 * @var string
 	 */
 	private $value;
 
 	/**
-	 * @var integer The element's offset
+	 * @var integer
 	 */
 	private $offset;
 
 	/**
-	 * @var integer The element's length
+	 * @var integer
 	 */
 	private $length;
 
 	/**
-	 * @var boolean The element is a boundary
+	 * @var boolean
 	 */
 	private $boundary;
 

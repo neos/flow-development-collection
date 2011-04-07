@@ -34,12 +34,14 @@ use \F3\FLOW3\Property\DataType\Uri;
 class Request extends \F3\FLOW3\MVC\Request {
 
 	/**
-	 * @var string Contains the request method
+	 * Contains the request method
+	 * @var string
 	 */
 	protected $method = 'GET';
 
 	/**
-	 * @var \F3\FLOW3\Property\DataType\Uri The request URI
+	 * The request URI
+	 * @var \F3\FLOW3\Property\DataType\Uri
 	 */
 	protected $requestUri;
 

@@ -32,7 +32,7 @@ namespace F3\FLOW3\Security\Authorization\Interceptor;
 class RequireAuthentication implements \F3\FLOW3\Security\Authorization\InterceptorInterface {
 
 	/**
-	 * @var \F3\FLOW3\Security\Authentication\AuthenticationManagerInterface The authentication manager
+	 * @var \F3\FLOW3\Security\Authentication\AuthenticationManagerInterface
 	 */
 	protected $authenticationManager = NULL;
 

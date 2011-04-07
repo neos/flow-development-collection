@@ -32,12 +32,13 @@ namespace F3\FLOW3\Package\Documentation;
 class Format {
 
 	/**
-	 * @var string The format name
+	 * @var string
 	 */
 	protected $formatName;
 
 	/**
-	 * @var string Absolute path to the documentation format
+	 * Absolute path to the documentation format
+	 * @var string
 	 */
 	protected $formatPath;
 

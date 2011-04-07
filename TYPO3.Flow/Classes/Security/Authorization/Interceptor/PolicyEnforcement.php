@@ -42,13 +42,13 @@ class PolicyEnforcement implements \F3\FLOW3\Security\Authorization\InterceptorI
 
 	/**
 	 * The access decision manager
-	 * @var \F3\FLOW3\Security\Authorization\AccessDecisionManagerInterface $accessDecisionManager
+	 * @var \F3\FLOW3\Security\Authorization\AccessDecisionManagerInterface
 	 */
 	protected $accessDecisionManager;
 
 	/**
 	 * The current joinpoint
-	 * @var \F3\FLOW3\AOP\JoinPointInterface $joinPoint
+	 * @var \F3\FLOW3\AOP\JoinPointInterface
 	 */
 	protected $joinPoint;
 

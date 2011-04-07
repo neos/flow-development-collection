@@ -32,7 +32,7 @@ namespace F3\FLOW3\MVC;
 class Dispatcher {
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface A reference to the object manager
+	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 

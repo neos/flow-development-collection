@@ -34,7 +34,7 @@ use \F3\FLOW3\Cache\Frontend\FrontendInterface;
 class CacheManager {
 
 	/**
-	 * @var \F3\FLOW3\Cache\CacheFactory $cacheFactory
+	 * @var \F3\FLOW3\Cache\CacheFactory
 	 */
 	protected $cacheFactory;
 

@@ -31,7 +31,7 @@ namespace F3\FLOW3\MVC\Web;
 class SubRequestBuilder {
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface $objectManager
+	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 

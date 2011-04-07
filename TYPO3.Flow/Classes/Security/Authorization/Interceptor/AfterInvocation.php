@@ -36,7 +36,7 @@ namespace F3\FLOW3\Security\Authorization\Interceptor;
 class AfterInvocation implements \F3\FLOW3\Security\Authorization\InterceptorInterface {
 
 	/**
-	 * @var \F3\FLOW3\Security\Authorization\AfterInvocationManagerInterface The after invocation manager
+	 * @var \F3\FLOW3\Security\Authorization\AfterInvocationManagerInterface
 	 */
 	protected $afterInvocationManager = NULL;
 

@@ -32,12 +32,14 @@ namespace F3\FLOW3\AOP;
 class Advisor {
 
 	/**
-	 * @var \F3\FLOW3\AOP\Advice\AdviceInterface: The advisor's advice
+	 * The advisor's advice
+	 * @var \F3\FLOW3\AOP\Advice\AdviceInterface
 	 */
 	protected $advice;
 
 	/**
-	 * @var \F3\FLOW3\AOP\Pointcut\Pointcut: The pointcut for the advice
+	 * The pointcut for the advice
+	 * @var \F3\FLOW3\AOP\Pointcut\Pointcut
 	 */
 	protected $pointcut;
 

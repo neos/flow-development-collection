@@ -34,7 +34,8 @@ use \F3\FLOW3\Cache\CacheManager;
 abstract class AbstractFrontend implements \F3\FLOW3\Cache\Frontend\FrontendInterface {
 
 	/**
-	 * @var string Identifies this cache
+	 * Identifies this cache
+	 * @var string
 	 */
 	protected $identifier;
 

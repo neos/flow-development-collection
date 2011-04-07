@@ -37,12 +37,12 @@ class RequestDispatchingAspect {
 	protected $securityLogger;
 
 	/**
-	 * @var F3\FLOW3\Security\Context A reference to the security context
+	 * @var F3\FLOW3\Security\Context
 	 */
 	protected $securityContext;
 
 	/**
-	 * @var F3\FLOW3\Security\Authorization\FirewallInterface A reference to the firewall
+	 * @var F3\FLOW3\Security\Authorization\FirewallInterface
 	 */
 	protected $firewall;
 
