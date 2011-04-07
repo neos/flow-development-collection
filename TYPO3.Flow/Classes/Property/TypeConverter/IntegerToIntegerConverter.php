@@ -32,7 +32,7 @@ namespace F3\FLOW3\Property\TypeConverter;
 class IntegerToIntegerConverter extends \F3\FLOW3\Property\TypeConverter\AbstractTypeConverter {
 
 	/**
-	 * @var array
+	 * @var array<string>
 	 */
 	protected $sourceTypes = array('integer');
 

@@ -30,8 +30,19 @@ namespace F3\FLOW3\Resource;
  */
 class ResourceTypeConverter extends \F3\FLOW3\Property\TypeConverter\AbstractTypeConverter {
 
+	/**
+	 * @var array<string>
+	 */
 	protected $sourceTypes = array('array');
+
+	/**
+	 * @var string
+	 */
 	protected $targetType = 'F3\FLOW3\Resource\Resource';
+
+	/**
+	 * @var integer
+	 */
 	protected $priority = 1;
 
 	/**

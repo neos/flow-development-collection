@@ -50,7 +50,7 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver {
 	protected $reader;
 
 	/**
-	 * @param array
+	 * @var array
 	 */
 	protected $classNames;
 
