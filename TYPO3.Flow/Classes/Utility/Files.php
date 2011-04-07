@@ -89,13 +89,13 @@ class Files {
 		$directoryIterator = new \DirectoryIterator($path);
 		$suffixLength = strlen($suffix);
 
-		foreach ($directoryIterator as $file) {
-			$filename = $file->getFilename();
-			if ($file->isFile() && !$file->isDot() && ($suffix === NULL || substr($filename, -$suffixLength) === $suffix)) {
-				$filenames[] = self::getUnixStylePath(($returnRealPath === TRUE ? realpath($file->getPathname()) : $file->getPathname()));
+		foreach ($directoryIterator as $fileInfo) {
+			$filename = $fileInfo->getFilename();
+			if ($fileInfo->isFile() && $filename[0] !== '.' && ($suffix === NULL || substr($filename, -$suffixLength) === $suffix)) {
+				$filenames[] = self::getUnixStylePath(($returnRealPath === TRUE ? realpath($fileInfo->getPathname()) : $fileInfo->getPathname()));
 			}
-			if ($file->isDir() && !$file->isDot()) {
-				self::readDirectoryRecursively($file->getPathname(), $suffix, $returnRealPath, $filenames);
+			if ($fileInfo->isDir() && !$fileInfo->isDot()) {
+				self::readDirectoryRecursively($fileInfo->getPathname(), $suffix, $returnRealPath, $filenames);
 			}
 		}
 		return $filenames;
@@ -114,13 +114,14 @@ class Files {
 		if (!is_dir($path)) throw new \F3\FLOW3\Utility\Exception('"' . $path . '" is no directory.', 1169047616);
 
 		$directoryIterator = new \RecursiveDirectoryIterator($path);
-		foreach(new \RecursiveIteratorIterator($directoryIterator) as $fileInfo) {
-			if (!$fileInfo->isDot() && @unlink($fileInfo->getPathname()) === FALSE) {
+		$recursiveIterator = new \RecursiveIteratorIterator($directoryIterator);
+		foreach($recursiveIterator as $fileInfo) {
+			if (!$recursiveIterator->isDot() && @unlink($fileInfo->getPathname()) === FALSE) {
 				throw new \F3\FLOW3\Utility\Exception('Cannot unlink file "' . $fileInfo->getPathname() . '".', 1169047619);
 			}
 		}
 		foreach ($directoryIterator as $fileInfo) {
-			if ($fileInfo->isDir() && !$fileInfo->isDot()) {
+			if ($fileInfo->isDir() && !$directoryIterator->isDot()) {
 				self::removeDirectoryRecursively($fileInfo->getPathname());
 			}
 		}
