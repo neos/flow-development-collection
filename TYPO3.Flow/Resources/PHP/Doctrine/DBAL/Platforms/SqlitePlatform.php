@@ -456,6 +456,7 @@ class SqlitePlatform extends AbstractPlatform
             'time'          => 'time',
             'float'         => 'float',
             'double'        => 'float',
+            'double precision' => 'float',
             'real'          => 'float',
             'decimal'       => 'decimal',
             'numeric'       => 'decimal',
