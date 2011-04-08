@@ -30,11 +30,6 @@ namespace F3\FLOW3\Tests\Functional\Property;
 class PropertyMapperTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
-	 * @var \F3\FLOW3\Tests\Functional\Property\Fixtures\TestEntityRepository
-	 */
-	//protected $testEntityRepository;
-
-	/**
 	 *
 	 * @var \F3\FLOW3\Property\PropertyMapper
 	 */
@@ -46,7 +41,6 @@ class PropertyMapperTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 	 */
 	public function setUp() {
 		parent::setUp();
-
 		$this->propertyMapper = $this->objectManager->get('F3\FLOW3\Property\PropertyMapper');
 	}
 

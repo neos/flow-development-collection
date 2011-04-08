@@ -56,17 +56,12 @@ abstract class FunctionalTestCase extends \F3\FLOW3\Tests\BaseTestCase {
 	/**
 	 * @var boolean
 	 */
-	protected $testablePersistenceEnabled = FALSE;
+	static protected $testablePersistenceEnabled = FALSE;
 
 	/**
 	 * @var \F3\FLOW3\Persistence\PersistenceManager
 	 */
 	protected $persistenceManager;
-
-	/**
-	 * @var \F3\FLOW3\Persistence\Session
-	 */
-	protected $persistenceSession;
 
 	/**
 	 * @var \F3\FLOW3\Security\Authorization\AccessDecisionManagerInterface
@@ -80,17 +75,34 @@ abstract class FunctionalTestCase extends \F3\FLOW3\Tests\BaseTestCase {
 
 	/**
 	 * Initialize FLOW3
+	 *
+	 * @return void
 	 */
-	public static function setUpBeforeClass() {
-		if (!self::$flow3) {
-			if (!isset($_SERVER['FLOW3_ROOTPATH'])) {
-				exit('The environment variable FLOW3_ROOTPATH must be defined in order to run functional tests.');
-			}
-			require_once($_SERVER['FLOW3_ROOTPATH'] . 'Packages/Framework/FLOW3/Classes/Core/Bootstrap.php');
+	static public function setUpBeforeClass() {
+		self::$flow3 = \F3\FLOW3\Core\Bootstrap::$staticObjectManager->get('F3\FLOW3\Core\Bootstrap');
 
-			self::$flow3 = new \F3\FLOW3\Core\Bootstrap('Testing');
-			self::$flow3->run();
+		if (static::$testablePersistenceEnabled === TRUE) {
+			self::$flow3->getObjectManager()->get('F3\FLOW3\Persistence\PersistenceManagerInterface')->initialize();
+			if (is_callable(array(self::$flow3->getObjectManager()->get('F3\FLOW3\Persistence\PersistenceManagerInterface'), 'compile'))) {
+				$result = self::$flow3->getObjectManager()->get('F3\FLOW3\Persistence\PersistenceManagerInterface')->compile();
+				if ($result === FALSE) {
+					self::markTestSkipped('Test skipped because setting up the persistence failed.');
+				}
+			}
 		}
+	}
+
+	/**
+	 * Tear down FLOW3
+	 *
+	 * @return void
+	 */
+	static public function tearDownAfterClass() {
+		$persistenceManager = self::$flow3->getObjectManager()->get('F3\FLOW3\Persistence\PersistenceManagerInterface');
+		if (is_callable(array($persistenceManager, 'tearDown'))) {
+			$persistenceManager->tearDown();
+		}
+		self::$flow3 = NULL;
 	}
 
 	/**
@@ -113,16 +125,6 @@ abstract class FunctionalTestCase extends \F3\FLOW3\Tests\BaseTestCase {
 	}
 
 	/**
-	 * Enables persistence tests for this testcase
-	 *
-	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 */
-	protected function enableTestablePersistence() {
-		$this->testablePersistenceEnabled = TRUE;
-	}
-
-	/**
 	 * Sets up test requirements depending on the enabled tests
 	 *
 	 * @return void
@@ -132,9 +134,58 @@ abstract class FunctionalTestCase extends \F3\FLOW3\Tests\BaseTestCase {
 		if ($this->testableSecurityEnabled === TRUE) {
 			$this->setupSecurity();
 		}
-		if ($this->testablePersistenceEnabled === TRUE) {
-			$this->setupPersistence();
+		if (static::$testablePersistenceEnabled === TRUE) {
+			$this->persistenceManager = $this->objectManager->get('F3\FLOW3\Persistence\PersistenceManagerInterface');
 		}
+	}
+
+	/**
+	 * Sets up security test requirements
+	 *
+	 * @return void
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	protected function setupSecurity() {
+		$this->accessDecisionManager = $this->objectManager->get('F3\FLOW3\Security\Authorization\AccessDecisionManagerInterface');
+		$this->accessDecisionManager->setOverrideDecision(NULL);
+
+		$this->testingProvider = $this->objectManager->get('F3\FLOW3\Security\Authentication\Provider\TestingProvider');
+		$this->testingProvider->setName('DefaultProvider');
+
+		$this->securityContext = $this->objectManager->get('F3\FLOW3\Security\Context');
+		$request = $this->getMock('F3\FLOW3\MVC\Web\Request');
+		$this->securityContext->initialize($request);
+	}
+
+	/**
+	 * Tears down test requirements depending on the enabled tests
+	 *
+	 * Note: tearDown() is also called if an exception occurred in one of the tests. If the problem is caused by
+	 *       some security or persistence related part of FLOW3, the error might be hard to track because their
+	 *       specialized tearDown() methods might cause fatal errors. In those cases just output the original
+	 *       exception message by adding an echo($this->statusMessage) as the first line of this method.
+	 *
+	 * @return void
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function tearDown() {
+		if ($this->testableSecurityEnabled === TRUE) {
+			$this->tearDownSecurity();
+		}
+		if (static::$testablePersistenceEnabled === TRUE) {
+			$this->persistenceManager->persistAll();
+		}
+	}
+
+	/**
+	 * Resets security test requirements
+	 *
+	 * @return void
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	protected function tearDownSecurity() {
+		$this->accessDecisionManager->reset();
+		$this->testingProvider->reset();
 	}
 
 	/**
@@ -172,35 +223,6 @@ abstract class FunctionalTestCase extends \F3\FLOW3\Tests\BaseTestCase {
 	}
 
 	/**
-	 * Sets up security test requirements
-	 *
-	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 */
-	protected function setupSecurity() {
-		$this->accessDecisionManager = $this->objectManager->get('F3\FLOW3\Security\Authorization\AccessDecisionManagerInterface');
-		$this->accessDecisionManager->setOverrideDecision(NULL);
-
-		$this->testingProvider = $this->objectManager->get('F3\FLOW3\Security\Authentication\Provider\TestingProvider');
-		$this->testingProvider->setName('DefaultProvider');
-
-		$this->securityContext = $this->objectManager->get('F3\FLOW3\Security\Context');
-		$request = $this->getMock('F3\FLOW3\MVC\Web\Request');
-		$this->securityContext->initialize($request);
-	}
-
-	/**
-	 * Sets up persistence test requirements
-	 *
-	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 */
-	protected function setupPersistence() {
-		$this->persistenceManager = $this->objectManager->get('F3\FLOW3\Persistence\PersistenceManagerInterface');
-		$this->persistenceManager->initialize();
-	}
-
-	/**
 	 * Authenticate the given role names for the current test
 	 *
 	 * @param array $roleNames
@@ -230,47 +252,6 @@ abstract class FunctionalTestCase extends \F3\FLOW3\Tests\BaseTestCase {
 	 */
 	protected function disableAuthorization() {
 		$this->accessDecisionManager->setOverrideDecision(TRUE);
-	}
-
-	/**
-	 * Tears down test requirements depending on the enabled tests
-	 *
-	 * Note: tearDown() is also called if an exception occurred in one of the tests. If the problem is caused by
-	 *       some security or persistence related part of FLOW3, the error might be hard to track because their
-	 *       specialized tearDown() methods might cause fatal errors. In those cases just output the original
-	 *       exception message by adding an echo($this->statusMessage) as the first line of this method.
-	 *
-	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 */
-	public function tearDown() {
-		if ($this->testableSecurityEnabled === TRUE) {
-			$this->tearDownSecurity();
-		}
-		if ($this->testablePersistenceEnabled === TRUE) {
-			$this->tearDownPersistence();
-		}
-	}
-
-	/**
-	 * Resets security test requirements
-	 *
-	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 */
-	protected function tearDownSecurity() {
-		$this->accessDecisionManager->reset();
-		$this->testingProvider->reset();
-	}
-
-	/**
-	 * Resets persistence test requirements
-	 *
-	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 */
-	protected function tearDownPersistence() {
-		$this->persistenceManager->persistAll();
 	}
 
 }

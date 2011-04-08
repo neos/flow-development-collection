@@ -30,6 +30,11 @@ namespace F3\FLOW3\Tests\Functional\Persistence;
 class PersistenceTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
+	 * @var boolean
+	 */
+	static protected $testablePersistenceEnabled = TRUE;
+
+	/**
 	 * @var \F3\FLOW3\Tests\Functional\Persistence\Fixtures\TestEntityRepository
 	 */
 	protected $testEntityRepository;
@@ -39,21 +44,8 @@ class PersistenceTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function setUp() {
-		$this->enableTestablePersistence();
-
 		parent::setUp();
-
-		$this->testEntityRepository = $this->objectManager->get('F3\FLOW3\Tests\Functional\Persistence\Fixtures\TestEntityRepository');
-	}
-
-	/**
-	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 */
-	public function tearDown() {
-		$this->testEntityRepository->removeAll();
-
-		parent::tearDown();
+		$this->testEntityRepository = new \F3\FLOW3\Tests\Functional\Persistence\Fixtures\TestEntityRepository();
 	}
 
 	/**
@@ -65,24 +57,11 @@ class PersistenceTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 		$testEntity->setName('FLOW3');
 		$this->testEntityRepository->add($testEntity);
 
-		$this->tearDownPersistence();
+			// FIXME this was tearDownPersistence(), which would reset objects in memory to a pristine state as well
+		$this->persistenceManager->persistAll();
 
 		$testEntity = $this->testEntityRepository->findAll()->getFirst();
 		$this->assertEquals('FLOW3', $testEntity->getName());
-	}
-
-	/**
-	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 */
-	public function testResetsPersistence() {
-		$testEntity = $this->objectManager->create('F3\FLOW3\Tests\Functional\Persistence\Fixtures\TestEntity');
-		$testEntity->setName('FLOW3');
-		$this->testEntityRepository->add($testEntity);
-
-		$this->tearDownPersistence();
-
-		$this->assertEquals(1, $this->testEntityRepository->countAll());
 	}
 
 }

@@ -30,19 +30,21 @@ namespace F3\FLOW3\Tests\Functional\Security;
 class MethodSecurityTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
+	 * @var boolean
+	 */
+	protected $testableSecurityEnabled = TRUE;
+
+	/**
 	 * @var \F3\FLOW3\Tests\Functional\Security\Fixtures\RestrictedController
 	 */
-	var $restrictedController;
+	protected $restrictedController;
 
 	/**
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function setUp() {
-		$this->enableTestableSecurity();
-
 		parent::setUp();
-
 		$this->restrictedController = $this->objectManager->get('F3\FLOW3\Tests\Functional\Security\Fixtures\RestrictedController');
 	}
 

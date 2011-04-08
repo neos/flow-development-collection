@@ -30,7 +30,7 @@ FLOW3:
   persistence:
     backendOptions:
       driver: 'pdo_sqlite'
-      path: 'sqlite::memory:'
+      path: ':memory:'
       username: null
       password: null
 

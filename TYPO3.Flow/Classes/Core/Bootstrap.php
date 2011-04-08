@@ -253,7 +253,10 @@ class Bootstrap {
 				$runLevel = 'runtime';
 				$this->initializeForRuntime();
 
-				if ($this->context === 'Testing') return;
+					// Functional tests are executed in "runtime" but don't need the regular request handling mechanism:
+				if ($this->context === 'Testing') {
+					return;
+				}
 
 				$request = $this->objectManager->get('F3\FLOW3\MVC\CLI\RequestBuilder')->build(array_slice($commandLine, 1));
 				$response = new \F3\FLOW3\MVC\CLI\Response();
