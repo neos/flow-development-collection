@@ -97,6 +97,16 @@ class FrameworkTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 	}
 
 	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function afterReturningAdviceIsTakingEffect() {
+		$targetClass = new Fixtures\TargetClass02();
+		$targetClass->publicTargetMethod('foo');
+		$this->assertTrue($targetClass->afterReturningAdviceWasInvoked);
+	}
+
+	/**
 	 * Due to the way the proxy classes are rendered, lifecycle methods such as
 	 * initializeObject() were called twice if the constructor is adviced by some
 	 * aspect. This test makes sure that any code after the AOP advice code is only
@@ -110,6 +120,21 @@ class FrameworkTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 	public function codeAfterTheAopCodeInTheProxyMethodIsOnlyCalledOnce() {
 		$targetClass = new Fixtures\TargetClass01();
 		$this->assertEquals(1, $targetClass->initializeObjectCallCounter);
+	}
+
+	/**
+	 * Checks if the target class is protected, the advice is woven in anyway.
+	 * The necessary advice is defined in BaseFunctionalityAspect.
+	 *
+	 * Test for bugfix #2581
+	 *
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function protectedMethodsCanAlsoBeAdviced() {
+		$targetClass = new Fixtures\TargetClass02();
+		$result = $targetClass->publicTargetMethod('foo');
+		$this->assertEquals('foo bar', $result);
 	}
 
 }

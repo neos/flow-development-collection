@@ -36,7 +36,7 @@ class PointcutExpressionParser {
 
 	const PATTERN_SPLITBYOPERATOR = '/\s*(\&\&|\|\|)\s*/';
 	const PATTERN_MATCHPOINTCUTDESIGNATOR = '/^\s*(classTaggedWith|class|methodTaggedWith|method|within|filter|setting|evaluate)/';
-	const PATTERN_MATCHVISIBILITYMODIFIER = '/(public|protected)/';
+	const PATTERN_MATCHVISIBILITYMODIFIER = '/^(public|protected) +/';
 	const PATTERN_MATCHRUNTIMEEVALUATIONSDEFINITION = '/(?:
 														(?:
 															\s*(   "(?:\\\"|[^"])*"

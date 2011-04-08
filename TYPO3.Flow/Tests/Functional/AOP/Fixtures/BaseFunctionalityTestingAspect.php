@@ -74,5 +74,23 @@ class BaseFunctionalityTestingAspect {
 	public function manyNamesAdvice(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		return 'Hello, special guest';
 	}
+
+	/**
+	 * @afterreturning method(F3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass02->publicTargetMethod())
+	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint
+	 * @return string
+	 */
+	public function anAfterReturningAdvice(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+		$joinPoint->getProxy()->afterReturningAdviceWasInvoked = TRUE;
+	}
+
+	/**
+	 * @around method(protected F3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass02->protectedTargetMethod())
+	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint
+	 * @return string
+	 */
+	public function anAdviceForAProtectedTargetMethod(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+		return $joinPoint->getAdviceChain()->proceed($joinPoint) . ' bar';
+	}
 }
 ?>
