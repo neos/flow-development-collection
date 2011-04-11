@@ -295,7 +295,7 @@ class PolicyServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$policyService->matches('Foo', 'bar', 'Baz', 1);
 
 		$expectedACLCache = array(
-			'Foo->bar' => array(
+			'foo->bar' => array(
 				'TheRole' => array(
 					'FirstResource' => array(
 						'privilege' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT,
@@ -366,7 +366,7 @@ class PolicyServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$policyService->matches('Foo', 'bar', 'Baz', 1);
 
 		$expectedPolicies = array(
-			'Foo->bar' => array(
+			'foo->bar' => array(
 				'theRole' => array(
 					'theResource' => array (
 						'privilege' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT,
@@ -391,7 +391,7 @@ class PolicyServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockJoinPoint->expects($this->once())->method('getMethodName')->will($this->returnValue('methodName'));
 
 		$policyService = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Security\Policy\PolicyService'), array('dummy'), array(), '', FALSE);
-		$policyService->_set('acls', array('className->methodName' => array()));
+		$policyService->_set('acls', array('classname->methodname' => array()));
 
 		$this->assertEquals(array(), $policyService->getPrivilegesForJoinPoint($this->getMock('F3\FLOW3\Security\Policy\Role', array(), array(), '', FALSE), $mockJoinPoint));
 	}
@@ -412,7 +412,7 @@ class PolicyServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$privilegesArray = array('FirstResource' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT, 'SecondResource' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY, 'ThirdResource' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT);
 
 		$aclsCache = array(
-						'className->methodName' =>
+						'classname->methodname' =>
 							array(
 								'role1' => array(
 									'FirstResource' => array(
@@ -453,7 +453,7 @@ class PolicyServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$privilegesArray = array('SecondResource' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT);
 
 		$aclsCache = array(
-						'className->methodName' => array(
+						'classname->methodname' => array(
 								'role1' => array(
 									'FirstResource' => array(
 										'runtimeEvaluationsClosureCode' => 'function () { return FALSE; };',
@@ -893,7 +893,7 @@ class PolicyServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function hasPolicyEntryForMethodWorksCorrectlyIfNoRolesAreGiven() {
 		$aclsCache = array(
-						'firstClass->firstMethod' =>
+						'firstclass->firstmethod' =>
 							array(
 								'role1' => array(
 									'FirstResource' => array(
@@ -902,7 +902,7 @@ class PolicyServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 									)
 								)
 							),
-						'secondClass->secondMethod' =>
+						'secondclass->secondmethod' =>
 							array(
 								'role2' => array(
 									'SecondResource' => array(
@@ -928,7 +928,7 @@ class PolicyServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function hasPolicyEntryForMethodWorksCorrectlyIfRolesAreGiven() {
 		$aclsCache = array(
-						'firstClass->firstMethod' =>
+						'firstclass->firstmethod' =>
 							array(
 								'role1' => array(
 									'FirstResource' => array(
@@ -937,7 +937,7 @@ class PolicyServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 									)
 								)
 							),
-						'secondClass->secondMethod' =>
+						'secondclass->secondmethod' =>
 							array(
 								'role2' => array(
 									'SecondResource' => array(
@@ -958,6 +958,43 @@ class PolicyServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$this->assertTrue($policyService->hasPolicyEntryForMethod('secondClass', 'secondMethod', array('role2')));
 
 		$this->assertFalse($policyService->hasPolicyEntryForMethod('thirdClass', 'thirdMethod'));
+	}
+
+	/**
+	 * @test
+	 * @category unit
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function hasPolicyEntryForMethodWorksWithCaseInsensitiveClassAndMethodNames() {
+		$aclsCache = array(
+						'firstclass->firstmethod' =>
+							array(
+								'role1' => array(
+									'FirstResource' => array(
+										'runtimeEvaluationsClosureCode' => FALSE,
+										'privilege' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT
+									)
+								)
+							),
+						'secondclass->secondmethod' =>
+							array(
+								'role2' => array(
+									'SecondResource' => array(
+										'runtimeEvaluationsClosureCode' => FALSE,
+										'privilege' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT
+									)
+								)
+							)
+						);
+
+		$policyService = $this->getAccessibleMock('F3\FLOW3\Security\Policy\PolicyService', array('dummy'), array(), '', FALSE);
+		$policyService->_set('acls', $aclsCache);
+
+		$this->assertTrue($policyService->hasPolicyEntryForMethod('FirstClass', 'firstmethod', array('role1')));
+		$this->assertFalse($policyService->hasPolicyEntryForMethod('firstClass', 'firstMethod', array('role2')));
+
+		$this->assertFalse($policyService->hasPolicyEntryForMethod('SecondClass', 'seconDMethod', array('role1')));
+		$this->assertTrue($policyService->hasPolicyEntryForMethod('secondclass', 'secondmethod', array('role2')));
 	}
 }
 ?>

@@ -202,7 +202,7 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 		foreach ($this->filters as $role => $filtersForRole) {
 			foreach ($filtersForRole as $resource => $filter) {
 				if ($filter->matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier)) {
-					$methodIdentifier = $className . '->' . $methodName;
+					$methodIdentifier = strtolower($className . '->' . $methodName);
 
 					$policyForJoinPoint = array();
 
@@ -273,7 +273,7 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getRolesForJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
-		$methodIdentifier = $joinPoint->getClassName() . '->' . $joinPoint->getMethodName();
+		$methodIdentifier = strtolower($joinPoint->getClassName() . '->' . $joinPoint->getMethodName());
 		if (!isset($this->acls[$methodIdentifier])) throw new \F3\FLOW3\Security\Exception\NoEntryInPolicyException('The given joinpoint was not found in the policy cache. Most likely you have to recreate the AOP proxy classes.', 1222084767);
 
 		$roles = array();
@@ -295,7 +295,7 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	 * @throws \F3\FLOW3\Security\Exception\NoEntryInPolicyException
 	 */
 	public function getPrivilegesForJoinPoint(\F3\FLOW3\Security\Policy\Role $role, \F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
-		$methodIdentifier = $joinPoint->getClassName() . '->' . $joinPoint->getMethodName();
+		$methodIdentifier = strtolower($joinPoint->getClassName() . '->' . $joinPoint->getMethodName());
 		$roleIdentifier = (string)$role;
 
 		if (!isset($this->acls[$methodIdentifier])) throw new \F3\FLOW3\Security\Exception\NoEntryInPolicyException('The given joinpoint was not found in the policy cache. Most likely you have to recreate the AOP proxy classes.', 1222100851);
@@ -358,7 +358,7 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function hasPolicyEntryForMethod($className, $methodName, array $roles = array()) {
-		$methodIdentifier = $className . '->' . $methodName;
+		$methodIdentifier = strtolower($className . '->' . $methodName);
 
 		if (isset($this->acls[$methodIdentifier])) {
 			if (count($roles) > 0) {
