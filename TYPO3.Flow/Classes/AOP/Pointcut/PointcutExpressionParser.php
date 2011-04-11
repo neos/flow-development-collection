@@ -251,6 +251,7 @@ class PointcutExpressionParser {
 		$classNameFilter = new PointcutClassNameFilter($classPattern);
 		$classNameFilter->injectReflectionService($this->reflectionService);
 		$methodNameFilter = new PointcutMethodNameFilter($methodNamePattern, $methodVisibility, $methodArgumentConstraints);
+		$methodNameFilter->injectSystemLogger($this->objectManager->get('F3\FLOW3\Log\SystemLoggerInterface'));
 		$methodNameFilter->injectReflectionService($this->reflectionService);
 
 		$subComposite = new PointcutFilterComposite();

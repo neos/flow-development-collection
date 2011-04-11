@@ -34,7 +34,7 @@ class PointcutMethodNameFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterI
 	const PATTERN_MATCHVISIBILITYMODIFIER = '/(|public|protected)/';
 
 	/**
-	 * @var F3\FLOW3\Reflection\ReflectionService
+	 * @var \F3\FLOW3\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
