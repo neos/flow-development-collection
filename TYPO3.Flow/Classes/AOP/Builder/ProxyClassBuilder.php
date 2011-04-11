@@ -426,8 +426,7 @@ class ProxyClassBuilder {
 	}
 
 	/**
-	 * Returns the methods of the target class. If no constructor exists in the target class,
-	 * it will nonetheless be added to the list of methods.
+	 * Returns the methods of the target class.
 	 *
 	 * @param string $targetClassName Name of the target class
 	 * @return array Method information with declaring class and method name pairs
@@ -435,13 +434,10 @@ class ProxyClassBuilder {
 	 */
 	protected function getMethodsFromTargetClass($targetClassName) {
 		$methods = array();
-		$existingMethodNames = get_class_methods($targetClassName);
-
-		if (array_search('__construct', $existingMethodNames) === FALSE) $methods[] = array(NULL, '__construct');
-		foreach ($existingMethodNames as $methodName) {
-			$methods[] = array($targetClassName, $methodName);
+		$class = new \ReflectionClass($targetClassName);
+		foreach ($class->getMethods() as $method) {
+			$methods[] = array($targetClassName, $method->getName());
 		}
-
 		return $methods;
 	}
 
