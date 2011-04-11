@@ -42,7 +42,7 @@ class Bootstrap {
 	/**
 	 * Required PHP version
 	 */
-	const MINIMUM_PHP_VERSION = '5.3.0RC2-dev';
+	const MINIMUM_PHP_VERSION = '5.3.2';
 	const MAXIMUM_PHP_VERSION = '5.99.9';
 
 	/**
