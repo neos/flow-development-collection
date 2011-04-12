@@ -183,16 +183,16 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	/**
 	 * Explicitly sets the object name of the controller
 	 *
-	 * @param string $controllerObjectName The fully qualified controller object name
+	 * @param string $unknownCasedControllerObjectName The fully qualified controller object name
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
-	public function setControllerObjectName($controllerObjectName) {
-		$controllerObjectName = $this->objectManager->getCaseSensitiveObjectName($controllerObjectName);
+	public function setControllerObjectName($unknownCasedControllerObjectName) {
+		$controllerObjectName = $this->objectManager->getCaseSensitiveObjectName($unknownCasedControllerObjectName);
 
 		if ($controllerObjectName === FALSE) {
-			throw new \F3\FLOW3\Object\Exception\UnknownObjectException('The object "' . $controllerObjectName . '" is not registered.', 1268844071);
+			throw new \F3\FLOW3\Object\Exception\UnknownObjectException('The object "' . $unknownCasedControllerObjectName . '" is not registered.', 1268844071);
 		}
 
 		$matches = array();
