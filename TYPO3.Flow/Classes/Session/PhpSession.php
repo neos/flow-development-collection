@@ -100,7 +100,7 @@ class PhpSession implements \F3\FLOW3\Session\SessionInterface {
 				$sessionsPath = $this->settings['session']['PHPSession']['savePath'];
 			}
 			if (!file_exists($sessionsPath)) {
-				mkdir($sessionsPath);
+				\F3\FLOW3\Utility\Files::createDirectoryRecursively($sessionsPath);
 			}
 			session_save_path($sessionsPath);
 			session_start();
