@@ -168,7 +168,7 @@ class ProxyMethod {
 				$code .= $this->addedPostParentCallCode;
 				$code .= "		return \$result;\n";
 			} else {
-				$code .= ($callParentMethodCode === '' ? '' : "		return " . $callParentMethodCode . ';\n');
+				$code .= ($callParentMethodCode === '' ? '' : "		return " . $callParentMethodCode . ";\n");
 			}
 			$code .= "	}\n";
 
