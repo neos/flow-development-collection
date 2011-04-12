@@ -223,9 +223,18 @@ class PropertyMapper {
 		return $converter;
 	}
 
+	/**
+	 * Tries to find a suitable type converter for the given source and target type.
+	 *
+	 * @param string $source The actual source value
+	 * @param string $sourceType Type of the source to convert from
+	 * @param string $targetClass Name of the target class to find a type converter for
+	 * @return mixed Either the matching object converter or NULL
+	 * @throws Exception\InvalidTargetException
+	 */
 	protected function findFirstEligibleTypeConverterInObjectHierarchy($source, $sourceType, $targetClass) {
-		if (!class_exists($targetClass)) {
-			throw new \F3\FLOW3\Property\Exception\InvalidTargetException('The target class "' . $targetClass . '" does not exist.', 1297948764);
+		if (!class_exists($targetClass) && !interface_exists($targetClass)) {
+			throw new \F3\FLOW3\Property\Exception\InvalidTargetException('Could not find a suitable type converter for "' . $targetClass . '" because no such class or interface exists.', 1297948764);
 		}
 
 		$convertersForSource = $this->typeConverters[$sourceType];
