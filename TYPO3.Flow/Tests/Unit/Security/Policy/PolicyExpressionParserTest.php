@@ -93,6 +93,7 @@ class PolicyExpressionParserTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
 		$mockObjectManager->expects($this->any())->method('create')->will($this->returnValue($mockPointcutFilterComposite));
+		$mockObjectManager->expects($this->any())->method('get')->will($this->returnValue($this->getMock('F3\FLOW3\Log\SystemLoggerInterface')));
 
 		$parser = new \F3\FLOW3\Security\Policy\PolicyExpressionParser();
 		$parser->injectObjectManager($mockObjectManager);
