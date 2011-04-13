@@ -201,6 +201,9 @@ F3\FLOW3\Resource\ResourceManager:
           1:
             value: FLOW3_Resource_Status
 
+F3\FLOW3\Resource\Publishing\ResourcePublishingTargetInterface:
+  className: F3\FLOW3\Resource\Publishing\FileSystemPublishingTarget
+
 #                                                                          #
 # Security                                                                 #
 #                                                                          #
