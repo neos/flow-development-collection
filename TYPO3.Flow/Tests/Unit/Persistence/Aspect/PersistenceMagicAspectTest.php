@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Tests\Unit\Persistence\Generic\Aspect;
+namespace F3\FLOW3\Tests\Unit\Persistence\Aspect;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -35,7 +35,7 @@ class PersistenceMagicAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function cloneObjectMarksTheObjectAsCloned() {
-		$aspect = new \F3\FLOW3\Persistence\Generic\Aspect\PersistenceMagicAspect();
+		$aspect = new \F3\FLOW3\Persistence\Aspect\PersistenceMagicAspect();
 
 		$object = new \stdClass();
 		$object->FLOW3_Persistence_cleanProperties = array('foo');
@@ -74,7 +74,7 @@ class PersistenceMagicAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface');
 		$mockJoinPoint->expects($this->any())->method('getProxy')->will($this->returnValue($object));
 
-		$aspect = new \F3\FLOW3\Persistence\Generic\Aspect\PersistenceMagicAspect();
+		$aspect = new \F3\FLOW3\Persistence\Aspect\PersistenceMagicAspect();
 		$aspect->injectReflectionService($mockReflectionService);
 		$aspect->generateValueHash($mockJoinPoint);
 		$this->assertEquals('537d18be833d6c766bfb842a955a977914d3f98c', $object->FLOW3_Persistence_Identifier);

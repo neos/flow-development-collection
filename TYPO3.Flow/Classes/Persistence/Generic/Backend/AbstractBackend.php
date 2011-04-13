@@ -391,7 +391,7 @@ abstract class AbstractBackend implements \F3\FLOW3\Persistence\Generic\Backend\
 
 				// handle all objects now, because even clean ones need to be traversed
 				// as dirty checking is not recursive
-			if ($propertyValue instanceof \F3\FLOW3\Persistence\Generic\Aspect\PersistenceMagicInterface) {
+			if ($propertyValue instanceof \F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface) {
 				if ($this->persistenceSession->isDirty($object, $propertyName)) {
 					$dirty = TRUE;
 					$this->flattenValue($identifier, $object, $propertyName, $propertyMetaData, $propertyData);
@@ -422,7 +422,7 @@ abstract class AbstractBackend implements \F3\FLOW3\Persistence\Generic\Backend\
 	protected function flattenValue($identifier, $object, $propertyName, array $propertyMetaData, array &$propertyData) {
 		$propertyValue = \F3\FLOW3\Reflection\ObjectAccess::getProperty($object, $propertyName, TRUE);
 
-		if ($propertyValue instanceof \F3\FLOW3\Persistence\Generic\Aspect\PersistenceMagicInterface) {
+		if ($propertyValue instanceof \F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface) {
 			$propertyData[$propertyName] = array(
 				'type' => $propertyValue->FLOW3_AOP_Proxy_getProxyTargetClassName(),
 				'multivalue' => FALSE,
@@ -493,7 +493,7 @@ abstract class AbstractBackend implements \F3\FLOW3\Persistence\Generic\Backend\
 
 		if (is_object($propertyValue)) {
 			if ($propertyType === 'object') {
-				if (!($propertyValue instanceof \F3\FLOW3\Persistence\Generic\Aspect\PersistenceMagicInterface)) {
+				if (!($propertyValue instanceof \F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface)) {
 					throw new \F3\FLOW3\Persistence\Exception\IllegalObjectTypeException('Property of generic type object holds "' . get_class($propertyValue) . '", which is not persistable (no @entity or @valueobject), in ' . get_class($object) . '::' . $propertyName, 1283531761);
 				}
 			} elseif(!($propertyValue instanceof $propertyType)) {

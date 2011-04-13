@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Persistence\Generic\Aspect;
+namespace F3\FLOW3\Persistence\Aspect;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -27,7 +27,7 @@ namespace F3\FLOW3\Persistence\Generic\Aspect;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @aspect
- * @introduce F3\FLOW3\Persistence\Generic\Aspect\PersistenceMagicInterface, F3\FLOW3\Persistence\Generic\Aspect\PersistenceMagicAspect->needsPersistenceMagicAspect
+ * @introduce F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface, F3\FLOW3\Persistence\Aspect\PersistenceMagicAspect->needsPersistenceMagicAspect
  */
 class PersistenceMagicAspect {
 
@@ -52,13 +52,13 @@ class PersistenceMagicAspect {
 	public function isEntityOrValueObject() {}
 
 	/**
-	 * @pointcut F3\FLOW3\Persistence\Generic\Aspect\PersistenceMagicAspect->isEntityOrValueObject && !within(F3\FLOW3\Persistence\Generic\Aspect\PersistenceMagicInterface)
+	 * @pointcut F3\FLOW3\Persistence\Aspect\PersistenceMagicAspect->isEntityOrValueObject && !within(F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface)
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function needsPersistenceMagicAspect() {}
 
 	/**
-	 * @introduce F3\FLOW3\Persistence\Generic\Aspect\PersistenceMagicAspect->needsPersistenceMagicAspect
+	 * @introduce F3\FLOW3\Persistence\Aspect\PersistenceMagicAspect->needsPersistenceMagicAspect
 	 * @var string
 	 */
 	protected $FLOW3_Persistence_Identifier;
@@ -126,7 +126,7 @@ class PersistenceMagicAspect {
 	 *
 	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
 	 * @return boolean if the object is a clone
-	 * @around F3\FLOW3\Persistence\Generic\Aspect\PersistenceMagicAspect->needsPersistenceMagicAspect && method(.*->FLOW3_Persistence_isClone())
+	 * @around F3\FLOW3\Persistence\Aspect\PersistenceMagicAspect->needsPersistenceMagicAspect && method(.*->FLOW3_Persistence_isClone())
 	 * @see \F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -146,11 +146,12 @@ class PersistenceMagicAspect {
 	 *
 	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint
 	 * @return void
-	 * @afterreturning F3\FLOW3\Persistence\Generic\Aspect\PersistenceMagicAspect->isEntityOrValueObject && method(.*->__clone())
+	 * @afterreturning F3\FLOW3\Persistence\Aspect\PersistenceMagicAspect->isEntityOrValueObject && method(.*->__clone())
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function cloneObject(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$joinPoint->getProxy()->FLOW3_Persistence_clone = TRUE;
 	}
+
 }
 ?>

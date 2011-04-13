@@ -282,7 +282,7 @@ class PersistenceManagerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function mergeRecursesOnSubobjects() {
 		$className = 'Object' . uniqid();
-		eval('class ' . $className . ' implements \F3\FLOW3\Persistence\Generic\Aspect\PersistenceMagicInterface {
+		eval('class ' . $className . ' implements \F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface {
 			public function FLOW3_Persistence_isClone() { return TRUE; }
 			public function FLOW3_AOP_Proxy_getProxyTargetClassName() {}
 			public function __clone() {}

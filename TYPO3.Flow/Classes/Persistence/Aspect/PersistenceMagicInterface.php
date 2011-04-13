@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Persistence\Generic\Aspect;
+namespace F3\FLOW3\Persistence\Aspect;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -40,8 +40,8 @@ interface PersistenceMagicInterface {
 	 * Introduces a clone method
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __clone();
+
 }
 ?>
