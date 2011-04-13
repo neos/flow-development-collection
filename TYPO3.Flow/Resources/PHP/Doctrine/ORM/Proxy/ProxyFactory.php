@@ -152,7 +152,15 @@ class ProxyFactory
 
         $file = str_replace($placeholders, $replacements, $file);
 
-        file_put_contents($fileName, $file, LOCK_EX);
+        $temporaryFileName = $fileName . uniqid( ) . '.temp';
+        $result = file_put_contents( $temporaryFileName, $file );
+
+        if($result === FALSE) throw new \RuntimeException('The temporary proxy class file "' . $temporaryFileName . '" could not be written.');
+        $i = 0;
+        while(!rename( $temporaryFileName, $fileName ) && $i < 5) {
+            $i++;
+        }
+        if($result === FALSE) throw new \RuntimeException('The proxy class file "' . $fileName . '" could not be written.');
     }
 
     /**
