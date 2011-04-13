@@ -79,8 +79,14 @@ class ObjectAccess {
 			}
 		} else {
 			if ($forceDirectAccess === TRUE) {
-				$propertyReflection = new \F3\FLOW3\Reflection\PropertyReflection(get_class($subject), $propertyName);
-				return $propertyReflection->getValue($subject);
+				if (property_exists(get_class($subject), $propertyName)) {
+					$propertyReflection = new \F3\FLOW3\Reflection\PropertyReflection(get_class($subject), $propertyName);
+					return $propertyReflection->getValue($subject);
+				} elseif (property_exists($subject, $propertyName)) {
+					return $subject->$propertyName;
+				} else {
+					throw new \F3\FLOW3\Reflection\Exception\PropertyNotAccessibleException('The property "' . $propertyName . '" on the subject does not exist.', 1302855001);
+				}
 			} elseif (is_callable(array($subject, 'get' . ucfirst($propertyName)))) {
 				return call_user_func(array($subject, 'get' . ucfirst($propertyName)));
 			} elseif (is_callable(array($subject, 'is' . ucfirst($propertyName)))) {
@@ -145,7 +151,7 @@ class ObjectAccess {
 	 *
 	 * @param mixed $subject The target object or array
 	 * @param string $propertyName Name of the property to set
-	 * @param object $propertyValue Value of the property
+	 * @param mixed $propertyValue Value of the property
 	 * @param boolean $forceDirectAccess directly access property using reflection(!)
 	 * @return boolean TRUE if the property could be set, FALSE otherwise
 	 * @throws \InvalidArgumentException in case $object was not an object or $propertyName was not a string
@@ -162,8 +168,12 @@ class ObjectAccess {
 		if (!is_string($propertyName)) throw new \InvalidArgumentException('Given property name is not of type string.', 1231178878);
 
 		if ($forceDirectAccess === TRUE) {
-			$propertyReflection = new \F3\FLOW3\Reflection\PropertyReflection(get_class($subject), $propertyName);
-			$propertyReflection->setValue($subject, $propertyValue);
+			if (property_exists(get_class($subject), $propertyName)) {
+				$propertyReflection = new \F3\FLOW3\Reflection\PropertyReflection(get_class($subject), $propertyName);
+				$propertyReflection->setValue($subject, $propertyValue);
+			} else {
+				$subject->$propertyName = $propertyValue;
+			}
 		} elseif (is_callable(array($subject, $setterMethodName = self::buildSetterMethodName($propertyName)))) {
 			call_user_func(array($subject, $setterMethodName), $propertyValue);
 		} elseif ($subject instanceof \ArrayAccess) {

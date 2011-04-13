@@ -66,9 +66,28 @@ class ObjectAccessTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function getPropertyReturnsExpectedValueForUnexposedPropertyIfAlsoAccessIfNotPublicIsTrue() {
+	public function getPropertyReturnsExpectedValueForUnexposedPropertyIfForceDirectAccessIsTrue() {
 		$property = \F3\FLOW3\Reflection\ObjectAccess::getProperty($this->dummyObject, 'unexposedProperty', TRUE);
 		$this->assertEquals($property, 'unexposed', 'A property of a given object was not returned correctly.');
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getPropertyReturnsExpectedValueForUnknownPropertyIfForceDirectAccessIsTrue() {
+		$this->dummyObject->unknownProperty = 'unknown';
+		$property = \F3\FLOW3\Reflection\ObjectAccess::getProperty($this->dummyObject, 'unknownProperty', TRUE);
+		$this->assertEquals($property, 'unknown', 'A property of a given object was not returned correctly.');
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @expectedException \F3\FLOW3\Reflection\Exception\PropertyNotAccessibleException
+	 */
+	public function getPropertyReturnsPropertyNotAccessibleExceptionForNotExistingPropertyIfForceDirectAccessIsTrue() {
+		$property = \F3\FLOW3\Reflection\ObjectAccess::getProperty($this->dummyObject, 'notExistingProperty', TRUE);
 	}
 
 	/**
@@ -129,9 +148,18 @@ class ObjectAccessTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function setPropertySetsValueIfPropertyIsNotAccessibleWhenAlsoAccessIfNotPublicIsTrue() {
+	public function setPropertySetsValueIfPropertyIsNotAccessibleWhenForceDirectAccessIsTrue() {
 		$this->assertTrue(\F3\FLOW3\Reflection\ObjectAccess::setProperty($this->dummyObject, 'unexposedProperty', 'was set anyway', TRUE));
 		$this->assertAttributeEquals('was set anyway', 'unexposedProperty', $this->dummyObject);
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function setPropertySetsValueIfPropertyDoesNotExistWhenForceDirectAccessIsTrue() {
+		$this->assertTrue(\F3\FLOW3\Reflection\ObjectAccess::setProperty($this->dummyObject, 'unknownProperty', 'was set anyway', TRUE));
+		$this->assertAttributeEquals('was set anyway', 'unknownProperty', $this->dummyObject);
 	}
 
 	/**
