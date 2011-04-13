@@ -94,7 +94,7 @@ class Files {
 			if ($fileInfo->isFile() && $filename[0] !== '.' && ($suffix === NULL || substr($filename, -$suffixLength) === $suffix)) {
 				$filenames[] = self::getUnixStylePath(($returnRealPath === TRUE ? realpath($fileInfo->getPathname()) : $fileInfo->getPathname()));
 			}
-			if ($fileInfo->isDir() && $filename[0] !== '.' && !$fileInfo->isDot()) {
+			if ($fileInfo->isDir() && $filename[0] !== '.') {
 				self::readDirectoryRecursively($fileInfo->getPathname(), $suffix, $returnRealPath, $filenames);
 			}
 		}
