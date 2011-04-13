@@ -27,6 +27,7 @@ namespace F3\FLOW3\Persistence\Generic\Aspect;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @aspect
+ * @introduce F3\FLOW3\Persistence\Generic\Aspect\PersistenceMagicInterface, F3\FLOW3\Persistence\Generic\Aspect\PersistenceMagicAspect->needsPersistenceMagicAspect
  */
 class PersistenceMagicAspect {
 
@@ -55,11 +56,6 @@ class PersistenceMagicAspect {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function needsPersistenceMagicAspect() {}
-
-	/**
-	 * @introduce F3\FLOW3\Persistence\Generic\Aspect\PersistenceMagicInterface, F3\FLOW3\Persistence\Generic\Aspect\PersistenceMagicAspect->needsPersistenceMagicAspect
-	 */
-	public $persistenceMagicInterface;
 
 	/**
 	 * Injects the reflection service

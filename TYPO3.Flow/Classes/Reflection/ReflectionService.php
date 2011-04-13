@@ -385,7 +385,7 @@ class ReflectionService {
 	 * Returns all tags and their values the specified class is tagged with
 	 *
 	 * @param string $className The class name to reflect
-	 * @return array An array of tags and their values or an empty array of no tags were found
+	 * @return array An array of tags and their values or an empty array if no tags were found
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */

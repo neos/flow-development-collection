@@ -357,25 +357,25 @@ class ProxyClassBuilder {
 				}
 			}
 		}
-		foreach ($this->reflectionService->getClassPropertyNames($aspectClassName) as $propertyName) {
-			foreach ($this->reflectionService->getPropertyTagsValues($aspectClassName, $propertyName) as $tagName => $tagValues) {
-				foreach ($tagValues as $tagValue) {
-					switch ($tagName) {
-						case 'introduce' :
-							$splittedTagValue = explode(',', $tagValue);
-							if (!is_array($splittedTagValue) || count($splittedTagValue) != 2)  throw new \F3\FLOW3\AOP\Exception('The introduction in class "' . $aspectClassName . '" does not contain the two required parameters.', 1172694761);
-							$pointcutExpression = trim($splittedTagValue[1]);
-							$pointcutFilterComposite = $this->pointcutExpressionParser->parse($pointcutExpression, $this->renderSourceHint($aspectClassName, $methodName, $tagName));
-							$pointcut = new \F3\FLOW3\AOP\Pointcut\Pointcut($pointcutExpression, $pointcutFilterComposite, $aspectClassName);
-							$interfaceName = trim($splittedTagValue[0]);
-							$introduction = new \F3\FLOW3\AOP\Introduction($aspectClassName, $interfaceName, $pointcut);
-							$aspectContainer->addIntroduction($introduction);
-						break;
-					}
+		foreach ($this->reflectionService->getClassTagsValues($aspectClassName) as $tagName => $tagValues) {
+			foreach ($tagValues as $tagValue) {
+				switch ($tagName) {
+					case 'introduce' :
+						$splittedTagValue = explode(',', $tagValue);
+						if (!is_array($splittedTagValue) || count($splittedTagValue) != 2) {
+							throw new \F3\FLOW3\AOP\Exception('The interface introduction in class "' . $aspectClassName . '" does not contain the two required parameters (interface name and pointcut expression).', 1172694761);
+						}
+						$pointcutExpression = trim($splittedTagValue[1]);
+						$pointcutFilterComposite = $this->pointcutExpressionParser->parse($pointcutExpression, $this->renderSourceHint($aspectClassName, $methodName, $tagName));
+						$pointcut = new \F3\FLOW3\AOP\Pointcut\Pointcut($pointcutExpression, $pointcutFilterComposite, $aspectClassName);
+						$interfaceName = trim($splittedTagValue[0]);
+						$introduction = new \F3\FLOW3\AOP\InterfaceIntroduction($aspectClassName, $interfaceName, $pointcut);
+						$aspectContainer->addInterfaceIntroduction($introduction);
+					break;
 				}
 			}
 		}
-		if (count($aspectContainer->getAdvisors()) < 1 && count($aspectContainer->getPointcuts()) < 1 && count($aspectContainer->getIntroductions()) < 1) throw new \F3\FLOW3\AOP\Exception('The class "' . $aspectClassName . '" is tagged to be an aspect but doesn\'t contain advices nor pointcut or introduction declarations.', 1169124534);
+		if (count($aspectContainer->getAdvisors()) < 1 && count($aspectContainer->getPointcuts()) < 1 && count($aspectContainer->getInterfaceIntroductions()) < 1) throw new \F3\FLOW3\AOP\Exception('The class "' . $aspectClassName . '" is tagged to be an aspect but doesn\'t contain advices nor pointcut or introduction declarations.', 1169124534);
 		return $aspectContainer;
 	}
 
@@ -388,11 +388,11 @@ class ProxyClassBuilder {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function buildProxyClass($targetClassName, array $aspectContainers) {
-		$introductions = $this->getMatchingIntroductions($aspectContainers, $targetClassName);
-		$introducedInterfaces = $this->getInterfaceNamesFromIntroductions($introductions);
+		$interfaceIntroductions = $this->getMatchingInterfaceIntroductions($aspectContainers, $targetClassName);
+		$introducedInterfaces = $this->getInterfaceNamesFromIntroductions($interfaceIntroductions);
 
 		$methodsFromTargetClass = $this->getMethodsFromTargetClass($targetClassName);
-		$methodsFromIntroducedInterfaces = $this->getIntroducedMethodsFromIntroductions($introductions, $targetClassName);
+		$methodsFromIntroducedInterfaces = $this->getIntroducedMethodsFromInterfaceIntroductions($interfaceIntroductions, $targetClassName);
 
 		$interceptedMethods = array();
 		$this->addAdvicedMethodsToInterceptedMethods($interceptedMethods, array_merge($methodsFromTargetClass, $methodsFromIntroducedInterfaces), $targetClassName, $aspectContainers);
@@ -483,9 +483,7 @@ class ProxyClassBuilder {
 
 	/**
 	 * Traverses all intercepted methods and their advices and builds PHP code to intercept
-	 * methods if neccessary. If methods were introduced by an introduction and there's
-	 * no advice for them, an empty placeholder method will be generated to meet the
-	 * interface contract.
+	 * methods if neccessary.
 	 *
 	 * The generated code is added directly to the proxy class by calling the respective
 	 * methods of the Compiler API.
@@ -497,8 +495,10 @@ class ProxyClassBuilder {
 	 */
 	protected function buildMethodsInterceptorCode($targetClassName, array $interceptedMethods) {
 		foreach ($interceptedMethods as $methodName => $methodMetaInformation) {
-			$hasAdvices = (count($methodMetaInformation['groupedAdvices']) > 0);
-			$builderType = ($hasAdvices ? 'Adviced' : 'Empty') . ($methodName === '__construct' ? 'Constructor' : 'Method');
+			if (count($methodMetaInformation['groupedAdvices']) === 0) {
+				throw new \F3\FLOW3\AOP\Exception\VoidImplementationException(sprintf('Refuse to introduce method %s into target class %s because it has no implementation code. You might want to create an around advice which implements this method.', $methodName, $targetClassName), 1303224472);
+			}
+			$builderType = 'Adviced' . ($methodName === '__construct' ? 'Constructor' : 'Method');
 			$this->methodInterceptorBuilders[$builderType]->build($methodName, $interceptedMethods, $targetClassName);
 		}
 	}
@@ -559,18 +559,18 @@ class ProxyClassBuilder {
 	}
 
 	/**
-	 * Traverses all aspect containers and returns an array of introductions
-	 * which match the target class.
+	 * Traverses all aspect containers and returns an array of interface
+	 * introductions which match the target class.
 	 *
 	 * @param array $aspectContainers All aspects to take into consideration
 	 * @param string $targetClassName Name of the class the pointcut should match with
 	 * @return array array of interface names
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function getMatchingIntroductions(array $aspectContainers, $targetClassName) {
+	protected function getMatchingInterfaceIntroductions(array $aspectContainers, $targetClassName) {
 		$introductions = array();
 		foreach ($aspectContainers as $aspectContainer) {
-			foreach ($aspectContainer->getIntroductions() as $introduction) {
+			foreach ($aspectContainer->getInterfaceIntroductions() as $introduction) {
 				$pointcut = $introduction->getPointcut();
 				if ($pointcut->matches($targetClassName, NULL, NULL, uniqid())) {
 					$introductions[] = $introduction;
@@ -583,13 +583,13 @@ class ProxyClassBuilder {
 	/**
 	 * Returns an array of interface names introduced by the given introductions
 	 *
-	 * @param array $introductions An array of introductions
+	 * @param array $interfaceIntroductions An array of interface introductions
 	 * @return array Array of interface names
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function getInterfaceNamesFromIntroductions(array $introductions) {
+	protected function getInterfaceNamesFromIntroductions(array $interfaceIntroductions) {
 		$interfaceNames = array();
-		foreach ($introductions as $introduction) {
+		foreach ($interfaceIntroductions as $introduction) {
 			$interfaceNames[] = '\\' . $introduction->getInterfaceName();
 		}
 		return $interfaceNames;
@@ -598,14 +598,14 @@ class ProxyClassBuilder {
 	/**
 	 * Returns all methods declared by the introduced interfaces
 	 *
-	 * @param array $introductions An array of \F3\FLOW3\AOP\Introduction
+	 * @param array $interfaceIntroductions An array of \F3\FLOW3\AOP\InterfaceIntroduction
 	 * @return array An array of method information (interface, method name)
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function getIntroducedMethodsFromIntroductions(array $introductions) {
+	protected function getIntroducedMethodsFromInterfaceIntroductions(array $interfaceIntroductions) {
 		$methods = array();
 		$methodsAndIntroductions = array();
-		foreach ($introductions as $introduction) {
+		foreach ($interfaceIntroductions as $introduction) {
 			$interfaceName = $introduction->getInterfaceName();
 			foreach (get_class_methods($interfaceName) as $newMethodName) {
 				if (isset($methodsAndIntroductions[$newMethodName])) throw new \F3\FLOW3\AOP\Exception('Method name conflict! Method "' . $newMethodName . '" introduced by "' . $introduction->getInterfaceName() . '" declared in aspect "' . $introduction->getDeclaringAspectClassName() . '" has already been introduced by "' . $methodsAndIntroductions[$newMethodName]->getInterfaceName() . '" declared in aspect "' . $methodsAndIntroductions[$newMethodName]->getDeclaringAspectClassName() . '".', 1173020942);

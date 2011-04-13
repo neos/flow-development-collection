@@ -34,8 +34,12 @@ namespace F3\FLOW3\AOP;
  * A pointcut declaration only contains a pointcut expression and is used to
  * make pointcut expressions reusable and combinable.
  *
- * An introduction declaration contains an interface name and a pointcut expression
- * and is used to introduce a new interface to the target class.
+ * An introduction declaration on the class level contains an interface name
+ * and a pointcut expression and is used to introduce a new interface to the
+ * target class.
+ *
+ * If used on a property an introduction contains a pointcut expression and is
+ * used to introduce the annotated property into the target class.
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
@@ -44,30 +48,32 @@ namespace F3\FLOW3\AOP;
 class AspectContainer {
 
 	/**
-	 * @var string Name of the aspect class
+	 * @var string
 	 */
 	protected $className;
 
 	/**
-	 * @var array An array of \F3\FLOW3\AOP\Advisor objects
+	 * An array of \F3\FLOW3\AOP\Advisor objects
+	 * @var array
 	 */
 	protected $advisors = array();
 
 	/**
-	 * @var array An array of \F3\FLOW3\AOP\Introduction objects
+	 * An array of \F3\FLOW3\AOP\InterfaceIntroduction objects
+	 * @var array
 	 */
-	protected $introductions = array();
+	protected $interfaceIntroductions = array();
 
 	/**
-	 * @var array An array of explicitly declared \F3\FLOW3\Pointcut objects
+	 * An array of explicitly declared \F3\FLOW3\Pointcut objects
+	 * @var array
 	 */
 	protected $pointcuts = array();
 
 	/**
 	 * The constructor
 	 *
-	 * @param  string $className Name of the aspect class
-	 * @return void
+	 * @param string $className Name of the aspect class
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct($className) {
@@ -95,13 +101,13 @@ class AspectContainer {
 	}
 
 	/**
-	 * Returns the introductions which were defined in the aspect
+	 * Returns the interface introductions which were defined in the aspect
 	 *
-	 * @return array Array of \F3\FLOW3\AOP\Introduction objects
+	 * @return array Array of \F3\FLOW3\AOP\InterfaceIntroduction objects
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getIntroductions() {
-		return $this->introductions;
+	public function getInterfaceIntroductions() {
+		return $this->interfaceIntroductions;
 	}
 
 	/**
@@ -130,12 +136,12 @@ class AspectContainer {
 	/**
 	 * Adds an introduction declaration to this aspect container
 	 *
-	 * @param \F3\FLOW3\AOP\Introduction $introduction
+	 * @param \F3\FLOW3\AOP\InterfaceIntroduction $introduction
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function addIntroduction(\F3\FLOW3\AOP\Introduction $introduction) {
-		$this->introductions[] = $introduction;
+	public function addInterfaceIntroduction(\F3\FLOW3\AOP\InterfaceIntroduction $introduction) {
+		$this->interfaceIntroductions[] = $introduction;
 	}
 
 	/**

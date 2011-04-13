@@ -151,13 +151,15 @@
         </varlistentry>
 
         <varlistentry>
-          <term>Introduction</term>
+          <term>Interface introduction</term>
 
           <listitem>
-            <para>An introduction redeclares the target class to implement an
-            additional interface. By declaring an introduction it is possible
-            to introduce new interfaces and an implementation of the required
-            methods without touching the code of the original class.</para>
+            <para>An interface introduction redeclares the target class to
+              implement an additional interface. By declaring an introduction
+              it is possible to introduce new interfaces and an implementation
+              of the required methods without touching the code of the original
+              class.
+            </para>
           </listitem>
         </varlistentry>
       </variablelist>
@@ -1058,7 +1060,7 @@ class LastNameRejectionAspect {
   <section xml:id="flow3.aopframework.introductions">
     <title>Introductions</title>
 
-    <para>Introductions (also known as <firstterm>Inter-type
+    <para>Interface Introductions (also known as <firstterm>Inter-type
     Declarations</firstterm>) allow to subsequently implement an interface in
     a given target class. The (usually) newly introduced methods (required by
     the new interface) can then be implemented by declaring an advice. If no
@@ -1066,12 +1068,11 @@ class LastNameRejectionAspect {
     automatically to satisfy the contract of the introduced interface.</para>
 
     <section>
-      <title>Declaring introductions</title>
+      <title>Declaring interface introductions</title>
 
       <para>Like advices, introductions are declared by annotations. But in
-      contrast to advices, the anchor for an introduction declaration is a
-      property of the aspect class. The annotation tag follows this
-      syntax:</para>
+      contrast to advices, the anchor for an introduction declaration is the
+      aspect class. The annotation tag follows this syntax:</para>
 
       <para><markup>@introduce <replaceable>NewInterfaceName</replaceable>,
       <replaceable>PointcutExpression</replaceable></markup></para>
@@ -1086,11 +1087,11 @@ class LastNameRejectionAspect {
 
       <para>The following example introduces a new interface
       <interfacename>NewInterface</interfacename> to the class
-      <classname>OldClass </classname>and also provides an implementation of
+      <classname>OldClass</classname> and also provides an implementation of
       the method <methodname>newMethod</methodname>.</para>
 
       <example>
-        <title>Declaring introductions</title>
+        <title>Declaring interface introductions</title>
 
         <programlisting language="php">namespace F3\MyPackage;
 
@@ -1098,15 +1099,9 @@ class LastNameRejectionAspect {
  * An aspect for demonstrating introductions
  *
  * @aspect
+ * @introduce F3\MyPackage\NewInterface, class(F3\MyPackage\OldClass)
  */
 class IntroductionAspect {
-
-	/**
-	 * Introduces \F3\MyPackage\NewInterface to the class \F3\MyPackage\OldClass:
-	 *
-	 * @introduce F3\MyPackage\NewInterface, class(F3\MyPackage\OldClass)
-	 */
-	public $newInterface;
 
 	/**
 	 * Around advice, implements the new method "newMethod" of the

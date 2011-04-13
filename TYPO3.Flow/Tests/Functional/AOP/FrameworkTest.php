@@ -164,5 +164,18 @@ class FrameworkTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 		$this->assertSame('Hello, Christopher', $targetClass->greetObject($name), 'Aspect should greet with given name if the current name is not equal to the name argument');
 	}
 
+	/**
+	 * An interface with a method which is not adviced and thus not implemented can be introduced.
+	 * The proxy class contains a place holder implementation of that introduced method.
+	 *
+	 * @test
+	 */
+	public function interfaceWithMethodCanBeIntroduced() {
+		$targetClass = new Fixtures\TargetClass03();
+
+		$this->assertInstanceOf('F3\FLOW3\Tests\Functional\AOP\Fixtures\Introduced01Interface', $targetClass);
+		$this->assertTrue(method_exists($targetClass, 'introducedMethod01'));
+	}
+
 }
 ?>

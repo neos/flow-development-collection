@@ -23,12 +23,12 @@ namespace F3\FLOW3\AOP;
  *                                                                        */
 
 /**
- * Implementation of the Introduction declaration.
+ * Implementation of the interface introduction declaration.
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
-class Introduction {
+class InterfaceIntroduction {
 
 	/**
 	 * Name of the aspect declaring this introduction
@@ -54,7 +54,6 @@ class Introduction {
 	 * @param string $declaringAspectClassName Name of the aspect containing the declaration for this introduction
 	 * @param string $interfaceName Name of the interface to introduce
 	 * @param \F3\FLOW3\AOP\Pointcut\Pointcut $pointcut The pointcut for this introduction
-	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct($declaringAspectClassName, $interfaceName, \F3\FLOW3\AOP\Pointcut\Pointcut $pointcut) {

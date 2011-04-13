@@ -25,6 +25,7 @@ namespace F3\FLOW3\Tests\Functional\AOP\Fixtures;
 /**
  * An aspect for testing the basic functionality of the AOP framework
  *
+ * @introduce F3\FLOW3\Tests\Functional\AOP\Fixtures\Introduced01Interface, class(F3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass03)
  * @aspect
  */
 class BaseFunctionalityTestingAspect {
@@ -109,6 +110,15 @@ class BaseFunctionalityTestingAspect {
 	 */
 	public function thisOnMethodArgumentAdvice(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		return 'Hello, you';
+	}
+
+	/**
+	 * @around method(F3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass03->introducedMethod01())
+	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint
+	 * @return string
+	 */
+	public function introducedMethod01Implementation(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+		return 'Implemented';
 	}
 
 }
