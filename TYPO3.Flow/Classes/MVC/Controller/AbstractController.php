@@ -298,11 +298,12 @@ abstract class AbstractController implements ControllerInterface {
 	protected function redirectToUri($uri, $delay = 0, $statusCode = 303) {
 		if (!$this->request instanceof \F3\FLOW3\MVC\Web\Request) throw new \F3\FLOW3\MVC\Exception\UnsupportedRequestTypeException('redirect() only supports web requests.', 1220539734);
 
-		$uri = (string)$uri;
 		$escapedUri = htmlentities($uri, ENT_QUOTES, 'utf-8');
 		$this->response->setContent('<html><head><meta http-equiv="refresh" content="' . intval($delay) . ';url=' . $escapedUri . '"/></head></html>');
 		$this->response->setStatus($statusCode);
-		$this->response->setHeader('Location', (string)$uri);
+		if ($delay === 0) {
+			$this->response->setHeader('Location', (string)$uri);
+		}
 		throw new \F3\FLOW3\MVC\Exception\StopActionException();
 	}
 
