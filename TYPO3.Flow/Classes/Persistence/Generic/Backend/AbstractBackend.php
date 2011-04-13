@@ -631,9 +631,9 @@ abstract class AbstractBackend implements \F3\FLOW3\Persistence\Generic\Backend\
 
 		foreach ($array as $value) {
 			if ($value instanceof $object
-					&& property_exists($value, 'FLOW3_Persistence_Entity_UUID')
-					&& property_exists($object, 'FLOW3_Persistence_Entity_UUID')
-					&& $value->FLOW3_Persistence_Entity_UUID === $object->FLOW3_Persistence_Entity_UUID) {
+					&& property_exists($value, 'FLOW3_Persistence_Identifier')
+					&& property_exists($object, 'FLOW3_Persistence_Identifier')
+					&& \F3\FLOW3\Reflection\ObjectAccess::getProperty($value, 'FLOW3_Persistence_Identifier', TRUE) === \F3\FLOW3\Reflection\ObjectAccess::getProperty($object, 'FLOW3_Persistence_Identifier', TRUE)) {
 				return TRUE;
 			}
 		}

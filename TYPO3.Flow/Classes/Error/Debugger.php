@@ -203,15 +203,12 @@ class Debugger {
 			$dump .= ($scope !== '') ? '<span class="debug-scope">' . $scope .'</span>' : '';
 		}
 
-		if (property_exists($object, 'FLOW3_Persistence_Entity_UUID')) {
-			$identifier = $object->FLOW3_Persistence_Entity_UUID;
-			$persistenceType = 'entity';
-		} elseif (property_exists($object, 'FLOW3_Persistence_ValueObject_Hash')) {
-			$identifier = $object->FLOW3_Persistence_ValueObject_Hash;
-			$persistenceType = 'value object';
+		if (property_exists($object, 'FLOW3_Persistence_Identifier')) {
+			$identifier = \F3\FLOW3\Reflection\ObjectAccess::getProperty($object, 'FLOW3_Persistence_Identifier', TRUE);
+			$persistenceType = 'entity or value object (FIXME)';
 		} else {
 			$identifier = 'unknown';
-			$persistenceType = 'strange object';
+			$persistenceType = 'object';
 		}
 		if ($plaintext) {
 			$dump .= ' ' . self::ansiEscapeWrap($persistenceType, '42;37', $ansiColors);

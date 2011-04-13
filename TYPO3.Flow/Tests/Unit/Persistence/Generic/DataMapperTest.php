@@ -181,7 +181,7 @@ class DataMapperTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$dataMapper->injectReflectionService($mockReflectionService);
 		$dataMapper->_call('thawProperties', $object, $objectData['identifier'], $objectData);
 
-		$this->assertAttributeEquals('c254d2e0-825a-11de-8a39-0800200c9a66', 'FLOW3_Persistence_Entity_UUID', $object);
+		$this->assertAttributeEquals('c254d2e0-825a-11de-8a39-0800200c9a66', 'FLOW3_Persistence_Identifier', $object);
 	}
 
 	/**

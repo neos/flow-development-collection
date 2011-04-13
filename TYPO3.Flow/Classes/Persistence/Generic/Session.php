@@ -332,10 +332,8 @@ class Session {
 		$classSchema = $this->reflectionService->getClassSchema($object);
 		if ($classSchema !== NULL && $classSchema->getUuidPropertyName() !== NULL) {
 			return \F3\FLOW3\Reflection\ObjectAccess::getProperty($object, $classSchema->getUuidPropertyName(), TRUE);
-		} elseif (property_exists($object, 'FLOW3_Persistence_Entity_UUID')) {
-			return $object->FLOW3_Persistence_Entity_UUID;
-		} elseif (property_exists($object, 'FLOW3_Persistence_ValueObject_Hash')) {
-			return $object->FLOW3_Persistence_ValueObject_Hash;
+		} elseif (property_exists($object, 'FLOW3_Persistence_Identifier')) {
+			return \F3\FLOW3\Reflection\ObjectAccess::getProperty($object, 'FLOW3_Persistence_Identifier', TRUE);
 		}
 
 		return NULL;

@@ -147,7 +147,7 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$className1 = 'RootClass' . uniqid();
 		$fullClassName1 = $namespace . '\\' . $className1;
 		eval('namespace ' . $namespace . '; class ' . $className1 . ' implements \F3\FLOW3\Persistence\Generic\Aspect\PersistenceMagicInterface {
-			public $FLOW3_Persistence_Entity_UUID = \'A\';
+			public $FLOW3_Persistence_Identifier = \'A\';
 			public $sub;
 			public function FLOW3_Persistence_isClone() {}
 			public function __clone() {}
@@ -156,7 +156,7 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$className2 = 'SubClass' . uniqid();
 		$fullClassName2 = $namespace . '\\' . $className2;
 		eval('namespace ' . $namespace . '; class ' . $className2 . ' implements \F3\FLOW3\Persistence\Generic\Aspect\PersistenceMagicInterface {
-			public $FLOW3_Persistence_Entity_UUID = \'B\';
+			public $FLOW3_Persistence_Identifier = \'B\';
 			public $sub;
 			public function FLOW3_Persistence_isClone() {}
 			public function __clone() {}
@@ -165,7 +165,7 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$className3 = 'SubClass' . uniqid();
 		$fullClassName3 = $namespace . '\\' . $className3;
 		eval('namespace ' . $namespace . '; class ' . $className3 . ' implements \F3\FLOW3\Persistence\Generic\Aspect\PersistenceMagicInterface {
-			public $FLOW3_Persistence_Entity_UUID = \'C\';
+			public $FLOW3_Persistence_Identifier = \'C\';
 			public $sub;
 			public function FLOW3_Persistence_isClone() {}
 			public function __clone() {}
@@ -203,17 +203,17 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		$mockSession = $this->getMock('F3\FLOW3\Persistence\Generic\Session', array('hasObject'));
 		$mockSession->injectReflectionService($mockReflectionService);
-		$mockSession->expects($this->at(0))->method('hasObject')->with($this->attribute($this->equalTo('A'), 'FLOW3_Persistence_Entity_UUID'))->will($this->returnValue(FALSE));
-		$mockSession->expects($this->at(1))->method('hasObject')->with($this->attribute($this->equalTo('A'), 'FLOW3_Persistence_Entity_UUID'))->will($this->returnValue(FALSE));
-		$mockSession->expects($this->at(2))->method('hasObject')->with($this->attribute($this->equalTo('A'), 'FLOW3_Persistence_Entity_UUID'))->will($this->returnValue(FALSE));
+		$mockSession->expects($this->at(0))->method('hasObject')->with($this->attribute($this->equalTo('A'), 'FLOW3_Persistence_Identifier'))->will($this->returnValue(FALSE));
+		$mockSession->expects($this->at(1))->method('hasObject')->with($this->attribute($this->equalTo('A'), 'FLOW3_Persistence_Identifier'))->will($this->returnValue(FALSE));
+		$mockSession->expects($this->at(2))->method('hasObject')->with($this->attribute($this->equalTo('A'), 'FLOW3_Persistence_Identifier'))->will($this->returnValue(FALSE));
 			// the following fails although the same object is present, neither equalTo nor identicalTo work...
 		//$mockSession->expects($this->at(0))->method('hasObject')->/*with($this->identicalTo($objectA))->*/will($this->returnValue(FALSE));
-		$mockSession->expects($this->at(3))->method('hasObject')->with($this->attribute($this->equalTo('B'), 'FLOW3_Persistence_Entity_UUID'))->will($this->returnValue(FALSE));
-		$mockSession->expects($this->at(4))->method('hasObject')->with($this->attribute($this->equalTo('B'), 'FLOW3_Persistence_Entity_UUID'))->will($this->returnValue(FALSE));
-		$mockSession->expects($this->at(5))->method('hasObject')->with($this->attribute($this->equalTo('B'), 'FLOW3_Persistence_Entity_UUID'))->will($this->returnValue(FALSE));
-		$mockSession->expects($this->at(6))->method('hasObject')->with($this->attribute($this->equalTo('C'), 'FLOW3_Persistence_Entity_UUID'))->will($this->returnValue(FALSE));
-		$mockSession->expects($this->at(7))->method('hasObject')->with($this->attribute($this->equalTo('C'), 'FLOW3_Persistence_Entity_UUID'))->will($this->returnValue(FALSE));
-		$mockSession->expects($this->at(8))->method('hasObject')->with($this->attribute($this->equalTo('C'), 'FLOW3_Persistence_Entity_UUID'))->will($this->returnValue(FALSE));
+		$mockSession->expects($this->at(3))->method('hasObject')->with($this->attribute($this->equalTo('B'), 'FLOW3_Persistence_Identifier'))->will($this->returnValue(FALSE));
+		$mockSession->expects($this->at(4))->method('hasObject')->with($this->attribute($this->equalTo('B'), 'FLOW3_Persistence_Identifier'))->will($this->returnValue(FALSE));
+		$mockSession->expects($this->at(5))->method('hasObject')->with($this->attribute($this->equalTo('B'), 'FLOW3_Persistence_Identifier'))->will($this->returnValue(FALSE));
+		$mockSession->expects($this->at(6))->method('hasObject')->with($this->attribute($this->equalTo('C'), 'FLOW3_Persistence_Identifier'))->will($this->returnValue(FALSE));
+		$mockSession->expects($this->at(7))->method('hasObject')->with($this->attribute($this->equalTo('C'), 'FLOW3_Persistence_Identifier'))->will($this->returnValue(FALSE));
+		$mockSession->expects($this->at(8))->method('hasObject')->with($this->attribute($this->equalTo('C'), 'FLOW3_Persistence_Identifier'))->will($this->returnValue(FALSE));
 
 		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Generic\Backend\GenericPdo\Backend'), array('createObjectRecord', 'setProperties', 'emitPersistedObject', 'validateObject'));
 		$backend->expects($this->exactly(3))->method('createObjectRecord')->will($this->onConsecutiveCalls('A', 'B', 'C'));
@@ -316,7 +316,7 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$fullClassName = 'F3\\FLOW3\Persistence\\Tests\\' . $className;
 		$identifier = \F3\FLOW3\Utility\Algorithms::generateUUID();
 		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $className . ' implements \F3\FLOW3\AOP\ProxyInterface {
-			public $FLOW3_Persistence_Entity_UUID = \'' . $identifier . '\';
+			public $FLOW3_Persistence_Identifier = \'' . $identifier . '\';
 			public function FLOW3_AOP_Proxy_construct() {}
 			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
 			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return get_class($this); }
@@ -353,7 +353,7 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$fullClassName = 'F3\\FLOW3\Persistence\\Tests\\' . $className;
 		$hash = sha1($fullClassName);
 		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $className . ' implements \F3\FLOW3\Persistence\Generic\Aspect\PersistenceMagicInterface {
-			public $FLOW3_Persistence_ValueObject_Hash = \'' . $hash . '\';
+			public $FLOW3_Persistence_Identifier = \'' . $hash . '\';
 			public function FLOW3_Persistence_isClone() {}
 			public function __clone() {}
 			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return get_class($this); }
@@ -444,7 +444,7 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$newObject = new $fullClassName();
 		$date = new \DateTime();
 		$newObject->date = $date;
-		$newObject->FLOW3_Persistence_Entity_UUID = NULL;
+		$newObject->FLOW3_Persistence_Identifier = NULL;
 
 		$expectedProperties = array(
 			'identifier' => NULL,
@@ -486,11 +486,11 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function valueObjectsAreStoredOnceAndReusedAsNeeded() {
 			// set up objects
 		$A = new \F3\TYPO3CR\Tests\Fixtures\AnEntity('A');
-		$A->FLOW3_Persistence_Entity_UUID = 'fakeUuidA';
+		$A->FLOW3_Persistence_Identifier = 'fakeUuidA';
 		$B = new \F3\TYPO3CR\Tests\Fixtures\AnEntity('B');
-		$B->FLOW3_Persistence_Entity_UUID = 'fakeUuidB';
+		$B->FLOW3_Persistence_Identifier = 'fakeUuidB';
 		$V = new \F3\TYPO3CR\Tests\Fixtures\AValue('V');
-		$V->FLOW3_Persistence_ValueObject_Hash = 'fakeHash';
+		$V->FLOW3_Persistence_Identifier = 'fakeHash';
 		$A->add($V);
 		$B->add($V);
 		$B->add($V);
@@ -600,9 +600,9 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function splObjectStorageIsStoredAsExpected() {
 			// set up object
 		$A = new \F3\TYPO3CR\Tests\Fixtures\AnEntity('A');
-		$A->FLOW3_Persistence_Entity_UUID = 'fakeUuuidA';
+		$A->FLOW3_Persistence_Identifier = 'fakeUuuidA';
 		$B = new \F3\TYPO3CR\Tests\Fixtures\AnEntity('B');
-		$B->FLOW3_Persistence_Entity_UUID = 'fakeUuuidB';
+		$B->FLOW3_Persistence_Identifier = 'fakeUuuidB';
 		$A->addObject($B);
 
 		$expectedPropertiesForB = array(
@@ -678,7 +678,7 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function dateTimeInSplObjectStorageIsStoredAsExpected() {
 			// set up object
 		$A = new \F3\TYPO3CR\Tests\Fixtures\AnEntity('A');
-		$A->FLOW3_Persistence_Entity_UUID = 'fakeUuidA';
+		$A->FLOW3_Persistence_Identifier = 'fakeUuidA';
 		$dateTime = new \DateTime;
 		$A->addObject($dateTime);
 

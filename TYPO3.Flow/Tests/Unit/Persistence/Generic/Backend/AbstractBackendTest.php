@@ -158,7 +158,7 @@ class AbstractBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function arrayContainsObjectReturnsTrueForSameEntity() {
 		$object = new \stdClass();
-		$object->FLOW3_Persistence_Entity_UUID = 'fakeUuid';
+		$object->FLOW3_Persistence_Identifier = 'fakeUuid';
 		$object->property = 'foo';
 
 		$clone = clone $object;

@@ -58,6 +58,12 @@ class PersistenceMagicAspect {
 	public function needsPersistenceMagicAspect() {}
 
 	/**
+	 * @introduce F3\FLOW3\Persistence\Generic\Aspect\PersistenceMagicAspect->needsPersistenceMagicAspect
+	 * @var string
+	 */
+	protected $FLOW3_Persistence_Identifier;
+
+	/**
 	 * Injects the reflection service
 	 *
 	 * @param \F3\FLOW3\Reflection\ReflectionService $reflectionService
@@ -87,7 +93,8 @@ class PersistenceMagicAspect {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function generateUUID(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
-		$joinPoint->getProxy()->FLOW3_Persistence_Entity_UUID = \F3\FLOW3\Utility\Algorithms::generateUUID();
+		$proxy = $joinPoint->getProxy();
+		\F3\FLOW3\Reflection\ObjectAccess::setProperty($proxy, 'FLOW3_Persistence_Identifier', \F3\FLOW3\Utility\Algorithms::generateUUID(), TRUE);
 	}
 
 	/**
@@ -107,13 +114,11 @@ class PersistenceMagicAspect {
 				$hashSource .= ($this->useIgBinary === TRUE) ? igbinary_serialize($propertyValue) : serialize($propertyValue);
 			} elseif (!is_object($propertyValue)) {
 				$hashSource .= $propertyValue;
-			} elseif (property_exists($propertyValue, 'FLOW3_Persistence_Entity_UUID')) {
-				$hashSource .= $propertyValue->FLOW3_Persistence_Entity_UUID;
-			} elseif (property_exists($propertyValue, 'FLOW3_Persistence_ValueObject_Hash')) {
-				$hashSource .= $propertyValue->FLOW3_Persistence_ValueObject_Hash;
+			} elseif (property_exists($propertyValue, 'FLOW3_Persistence_Identifier')) {
+				$hashSource .= \F3\FLOW3\Reflection\ObjectAccess::getProperty($propertyValue, 'FLOW3_Persistence_Identifier', TRUE);
 			}
 		}
-		$proxy->FLOW3_Persistence_ValueObject_Hash = sha1($hashSource);
+		\F3\FLOW3\Reflection\ObjectAccess::setProperty($proxy, 'FLOW3_Persistence_Identifier', sha1($hashSource), TRUE);
 	}
 
 	/**

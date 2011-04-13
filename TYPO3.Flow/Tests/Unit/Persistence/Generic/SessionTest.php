@@ -276,7 +276,7 @@ class SessionTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function isDirtyReturnsTrueForSplObjectStorageWhoseContainedObjectsDiffer() {
 		$object = new \stdClass();
-		$object->FLOW3_Persistence_Entity_UUID = 'dirtyUuid';
+		$object->FLOW3_Persistence_Identifier = 'dirtyUuid';
 		$splObjectStorage = new \SplObjectStorage();
 		$splObjectStorage->attach($object);
 		$className = 'Class' . md5(uniqid(mt_rand(), TRUE));
@@ -311,7 +311,7 @@ class SessionTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function isDirtyReturnsTrueForArraysWhoseContainedObjectsDiffer() {
 		$object = new \stdClass();
-		$object->FLOW3_Persistence_Entity_UUID = 'dirtyUuid';
+		$object->FLOW3_Persistence_Identifier = 'dirtyUuid';
 		$array = array();
 		$array[] = $object;
 		$className = 'Class' . md5(uniqid(mt_rand(), TRUE));
@@ -349,7 +349,7 @@ class SessionTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function isDirtyReturnsFalseForCleanArrays() {
 		$object = new \stdClass();
-		$object->FLOW3_Persistence_ValueObject_Hash = 'cleanHash';
+		$object->FLOW3_Persistence_Identifier = 'cleanHash';
 		$array = array();
 		$array[] = $object;
 		$className = 'Class' . md5(uniqid(mt_rand(), TRUE));
@@ -387,7 +387,7 @@ class SessionTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function isDirtyReturnsFalseForCleanNestedArrays() {
 		$object = new \stdClass();
-		$object->FLOW3_Persistence_ValueObject_Hash = 'cleanHash';
+		$object->FLOW3_Persistence_Identifier = 'cleanHash';
 		$array = array(array($object));
 		$className = 'Class' . md5(uniqid(mt_rand(), TRUE));
 		eval('class ' . $className . ' { public $array; }');
@@ -430,7 +430,7 @@ class SessionTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function isDirtyReturnsTrueForArraysWithNewMembers() {
 		$object = new \stdClass();
-		$object->FLOW3_Persistence_Entity_UUID = 'dirtyUuid';
+		$object->FLOW3_Persistence_Identifier = 'dirtyUuid';
 		$array = array();
 		$array[] = $object;
 		$className = 'Class' . md5(uniqid(mt_rand(), TRUE));
@@ -583,7 +583,7 @@ class SessionTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * Does it return the UUID for an AOP proxy not being in the identity map
-	 * but having FLOW3_Persistence_Entity_UUID?
+	 * but having FLOW3_Persistence_Identifier?
 	 *
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
@@ -591,7 +591,7 @@ class SessionTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function getIdentifierByObjectReturnsUuidForObjectBeingAOPProxy() {
 		$knownObject = $this->getMock('F3\FLOW3\AOP\ProxyInterface');
-		$knownObject->FLOW3_Persistence_Entity_UUID = 'fakeUuid';
+		$knownObject->FLOW3_Persistence_Identifier = 'fakeUuid';
 
 		$session = new \F3\FLOW3\Persistence\Generic\Session();
 		$session->injectReflectionService($this->getMock('F3\FLOW3\Reflection\ReflectionService'));
@@ -601,14 +601,14 @@ class SessionTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * Does it return the value object hash for an AOP proxy not being in the
-	 * identity map but having FLOW3_Persistence_ValueObject_Hash?
+	 * identity map but having FLOW3_Persistence_Identifier?
 	 *
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getIdentifierByObjectReturnsHashForObjectBeingAOPProxy() {
 		$knownObject = $this->getMock('F3\FLOW3\AOP\ProxyInterface');
-		$knownObject->FLOW3_Persistence_ValueObject_Hash = 'fakeHash';
+		$knownObject->FLOW3_Persistence_Identifier = 'fakeHash';
 
 		$session = new \F3\FLOW3\Persistence\Generic\Session();
 		$session->injectReflectionService($this->getMock('F3\FLOW3\Reflection\ReflectionService'));
@@ -635,7 +635,7 @@ class SessionTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * Does it return NULL for an AOP proxy not being in the identity map and
-	 * not having FLOW3_Persistence_Entity_UUID?
+	 * not having FLOW3_Persistence_Identifier?
 	 *
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>

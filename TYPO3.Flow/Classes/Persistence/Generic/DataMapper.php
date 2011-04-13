@@ -218,15 +218,11 @@ class DataMapper {
 			$object->FLOW3_Persistence_Metadata = $objectData['metadata'];
 		}
 
-		if ($classSchema->getModelType() === \F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY) {
-			$uuidPropertyName = $classSchema->getUuidPropertyName();
-			if ($uuidPropertyName === NULL) {
-				$object->FLOW3_Persistence_Entity_UUID = $identifier;
-			} else {
-				\F3\FLOW3\Reflection\ObjectAccess::setProperty($object, $uuidPropertyName, $identifier, TRUE);
-			}
+		$identifierPropertyName = $classSchema->getUuidPropertyName();
+		if ($identifierPropertyName === NULL) {
+			\F3\FLOW3\Reflection\ObjectAccess::setProperty($object, 'FLOW3_Persistence_Identifier', $identifier, TRUE);
 		} else {
-			$object->FLOW3_Persistence_ValueObject_Hash = $identifier;
+			\F3\FLOW3\Reflection\ObjectAccess::setProperty($object, $identifierPropertyName, $identifier, TRUE);
 		}
 	}
 
