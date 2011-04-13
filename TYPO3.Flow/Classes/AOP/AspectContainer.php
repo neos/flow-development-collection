@@ -65,6 +65,12 @@ class AspectContainer {
 	protected $interfaceIntroductions = array();
 
 	/**
+	 * An array of \F3\FLOW3\AOP\PropertyIntroduction objects
+	 * @var array
+	 */
+	protected $propertyIntroductions = array();
+
+	/**
 	 * An array of explicitly declared \F3\FLOW3\Pointcut objects
 	 * @var array
 	 */
@@ -111,6 +117,15 @@ class AspectContainer {
 	}
 
 	/**
+	 * Returns the property introductions which were defined in the aspect
+	 *
+	 * @return array Array of \F3\FLOW3\AOP\PropertyIntroduction objects
+	 */
+	public function getPropertyIntroductions() {
+		return $this->propertyIntroductions;
+	}
+
+	/**
 	 * Returns the pointcuts which were declared in the aspect. This
 	 * does not contain the pointcuts which were made out of the pointcut
 	 * expressions for the advisors!
@@ -142,6 +157,16 @@ class AspectContainer {
 	 */
 	public function addInterfaceIntroduction(\F3\FLOW3\AOP\InterfaceIntroduction $introduction) {
 		$this->interfaceIntroductions[] = $introduction;
+	}
+
+	/**
+	 * Adds an introduction declaration to this aspect container
+	 *
+	 * @param \F3\FLOW3\AOP\PropertyIntroduction $introduction
+	 * @return void
+	 */
+	public function addPropertyIntroduction(\F3\FLOW3\AOP\PropertyIntroduction $introduction) {
+		$this->propertyIntroductions[] = $introduction;
 	}
 
 	/**

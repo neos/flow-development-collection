@@ -31,6 +31,19 @@ namespace F3\FLOW3\Tests\Functional\AOP\Fixtures;
 class BaseFunctionalityTestingAspect {
 
 	/**
+	 * @introduce class(F3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass03)
+	 * @var string
+	 * @foo bar
+	 */
+	protected $introducedProtectedProperty;
+
+	/**
+	 * @introduce class(F3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass03)
+	 * @var array
+	 */
+	public $introducedPublicProperty;
+
+	/**
 	 * @around method(public F3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01->__construct())
 	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint
 	 * @return void

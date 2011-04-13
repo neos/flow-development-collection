@@ -162,6 +162,16 @@
             </para>
           </listitem>
         </varlistentry>
+
+        <varlistentry>
+          <term>Property introduction</term>
+
+          <listitem>
+            <para>A property introduction redeclares the target class to
+              contain an additional property.
+            </para>
+          </listitem>
+        </varlistentry>
       </variablelist>
 
       <para>The following terms are related to advices:</para>
@@ -1067,6 +1077,10 @@ class LastNameRejectionAspect {
     implementation is defined, an empty placeholder method will be generated
     automatically to satisfy the contract of the introduced interface.</para>
 
+    <para>Property Introductions allow to subsequently add a property to a
+    given target class. The introduced property is then fully usable as if it
+    was declared in the target class.</para>
+
     <section>
       <title>Declaring interface introductions</title>
 
@@ -1120,6 +1134,51 @@ class IntroductionAspect {
 		$b = $joinPoint-&gt;getMethodArgument('b');
 		return $a + $b;
 	}
+}</programlisting>
+      </example>
+    </section>
+
+    <section>
+      <title>Declaring property introductions</title>
+
+      <para>Like advices, introductions are declared by annotations. But in
+      contrast to advices, the anchor for an introduction declaration is the
+      property to introduce. The annotation tag follows this syntax:</para>
+
+      <para><markup>@introduce <replaceable>PointcutExpression</replaceable>
+      </markup></para>
+
+      <para>Although the <replaceable>PoincutExpression</replaceable> is just
+      a normal pointcut expression, which may also refer to named pointcuts,
+      be aware that only expressions filtering for
+      <emphasis>classes</emphasis> make sense. You cannot use the
+      <function>method()</function> pointcut designator in this context and
+      will typically take the <function>class()</function> designator
+      instead.</para>
+
+      <para>The following example introduces a new property to the class
+      <classname>OldClass</classname>.</para>
+
+      <example>
+        <title>Declaring property introductions</title>
+
+        <programlisting language="php">namespace F3\MyPackage;
+
+/**
+ * An aspect for demonstrating introductions
+ *
+ * @aspect
+ */
+class IntroductionAspect {
+
+	/**
+	 * New property will added to the target class
+	 *
+	 * @var string
+	 * @introduce class(F3\MyPackage\OldClass)
+	 */
+	public $newProperty;
+
 }</programlisting>
       </example>
     </section>

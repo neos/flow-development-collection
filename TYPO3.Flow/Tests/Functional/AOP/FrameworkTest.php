@@ -177,5 +177,17 @@ class FrameworkTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 		$this->assertTrue(method_exists($targetClass, 'introducedMethod01'));
 	}
 
+	/**
+	 * Public and protected properties can be introduced.
+	 *
+	 * @test
+	 */
+	public function propertiesCanBeIntroduced() {
+		$targetClass = new Fixtures\TargetClass03();
+
+		$this->assertTrue(property_exists(get_class($targetClass), 'introducedPublicProperty'));
+		$this->assertTrue(property_exists(get_class($targetClass), 'introducedProtectedProperty'));
+	}
+
 }
 ?>

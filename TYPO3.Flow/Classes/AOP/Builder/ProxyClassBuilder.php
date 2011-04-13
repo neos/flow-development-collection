@@ -375,6 +375,24 @@ class ProxyClassBuilder {
 				}
 			}
 		}
+		foreach ($this->reflectionService->getClassPropertyNames($aspectClassName) as $propertyName) {
+			foreach ($this->reflectionService->getPropertyTagsValues($aspectClassName, $propertyName) as $tagName => $tagValues) {
+				foreach ($tagValues as $tagValue) {
+					switch ($tagName) {
+						case 'introduce' :
+							if (empty($tagValue)) {
+								throw new \F3\FLOW3\AOP\Exception('The introduction in class "' . $aspectClassName . '" does not contain the required pointcut expression.', 1302695408);
+							}
+							$pointcutExpression = trim($tagValue);
+							$pointcutFilterComposite = $this->pointcutExpressionParser->parse($pointcutExpression, $this->renderSourceHint($aspectClassName, $propertyName, $tagName));
+							$pointcut = new \F3\FLOW3\AOP\Pointcut\Pointcut($pointcutExpression, $pointcutFilterComposite, $aspectClassName);
+							$introduction = new \F3\FLOW3\AOP\PropertyIntroduction($aspectClassName, $propertyName, $pointcut);
+							$aspectContainer->addPropertyIntroduction($introduction);
+						break;
+					}
+				}
+			}
+		}
 		if (count($aspectContainer->getAdvisors()) < 1 && count($aspectContainer->getPointcuts()) < 1 && count($aspectContainer->getInterfaceIntroductions()) < 1) throw new \F3\FLOW3\AOP\Exception('The class "' . $aspectClassName . '" is tagged to be an aspect but doesn\'t contain advices nor pointcut or introduction declarations.', 1169124534);
 		return $aspectContainer;
 	}
@@ -391,6 +409,8 @@ class ProxyClassBuilder {
 		$interfaceIntroductions = $this->getMatchingInterfaceIntroductions($aspectContainers, $targetClassName);
 		$introducedInterfaces = $this->getInterfaceNamesFromIntroductions($interfaceIntroductions);
 
+		$propertyIntroductions = $this->getMatchingPropertyIntroductions($aspectContainers, $targetClassName);
+
 		$methodsFromTargetClass = $this->getMethodsFromTargetClass($targetClassName);
 		$methodsFromIntroducedInterfaces = $this->getIntroducedMethodsFromInterfaceIntroductions($interfaceIntroductions, $targetClassName);
 
@@ -406,6 +426,10 @@ class ProxyClassBuilder {
 		}
 
 		$proxyClass->addInterfaces($introducedInterfaces);
+
+		foreach($propertyIntroductions as $propertyIntroduction) {
+			$proxyClass->addProperty($propertyIntroduction->getPropertyName(), 'NULL', $propertyIntroduction->getPropertyVisibility(), $propertyIntroduction->getPropertyDocComment());
+		}
 
 		$proxyClass->getMethod('FLOW3_AOP_Proxy_buildMethodsAndAdvicesArray')->addPreParentCallCode($this->buildMethodsAndAdvicesArrayCode($interceptedMethods));
 		$proxyClass->getMethod('FLOW3_AOP_Proxy_buildMethodsAndAdvicesArray')->overrideMethodVisibility('private');
@@ -571,6 +595,27 @@ class ProxyClassBuilder {
 		$introductions = array();
 		foreach ($aspectContainers as $aspectContainer) {
 			foreach ($aspectContainer->getInterfaceIntroductions() as $introduction) {
+				$pointcut = $introduction->getPointcut();
+				if ($pointcut->matches($targetClassName, NULL, NULL, uniqid())) {
+					$introductions[] = $introduction;
+				}
+			}
+		}
+		return $introductions;
+	}
+
+	/**
+	 * Traverses all aspect containers and returns an array of property
+	 * introductions which match the target class.
+	 *
+	 * @param array $aspectContainers All aspects to take into consideration
+	 * @param string $targetClassName Name of the class the pointcut should match with
+	 * @return array array of property introductions
+	 */
+	protected function getMatchingPropertyIntroductions(array $aspectContainers, $targetClassName) {
+		$introductions = array();
+		foreach ($aspectContainers as $aspectContainer) {
+			foreach ($aspectContainer->getPropertyIntroductions() as $introduction) {
 				$pointcut = $introduction->getPointcut();
 				if ($pointcut->matches($targetClassName, NULL, NULL, uniqid())) {
 					$introductions[] = $introduction;
