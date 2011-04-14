@@ -85,6 +85,14 @@ class TargetClass01 implements SayHelloInterface {
 	}
 
 	/**
+	 * @param \F3\FLOW3\Tests\Functional\AOP\Fixtures\Name $name
+	 * @return string
+	 */
+	public function greetObject(\F3\FLOW3\Tests\Functional\AOP\Fixtures\Name $name) {
+		return 'Hello, ' . $name;
+	}
+
+	/**
 	 * @param \SplObjectStorage $names
 	 * @return string
 	 */

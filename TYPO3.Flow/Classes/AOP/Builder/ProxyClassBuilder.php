@@ -469,10 +469,11 @@ class ProxyClassBuilder {
 		$methodsAndAdvicesArrayCode .= "\t\t\$this->FLOW3_AOP_Proxy_targetMethodsAndGroupedAdvices = array(\n";
 		foreach ($methodsAndGroupedAdvices as $methodName => $advicesAndDeclaringClass) {
 			$methodsAndAdvicesArrayCode .= "\t\t\t'" . $methodName . "' => array(\n";
-			foreach ($advicesAndDeclaringClass['groupedAdvices'] as $adviceType => $advices) {
+			foreach ($advicesAndDeclaringClass['groupedAdvices'] as $adviceType => $adviceConfigurations) {
 				$methodsAndAdvicesArrayCode .= "\t\t\t\t'" . $adviceType . "' => array(\n";
-				foreach ($advices as $advice) {
-					$methodsAndAdvicesArrayCode .= "\t\t\t\t\tnew \\" . get_class($advice) . "('" . $advice->getAspectObjectName() . "', '" . $advice->getAdviceMethodName() . "', \$objectManager, " . $methodsAndGroupedAdvices[$methodName]['runtimeEvaluationsClosureCode'] . "),\n";
+				foreach ($adviceConfigurations as $adviceConfiguration) {
+					$advice = $adviceConfiguration['advice'];
+					$methodsAndAdvicesArrayCode .= "\t\t\t\t\tnew \\" . get_class($advice) . "('" . $advice->getAspectObjectName() . "', '" . $advice->getAdviceMethodName() . "', \$objectManager, " . $adviceConfiguration['runtimeEvaluationsClosureCode'] . "),\n";
 				}
 				$methodsAndAdvicesArrayCode .= "\t\t\t\t),\n";
 			}
@@ -528,9 +529,11 @@ class ProxyClassBuilder {
 
 					if ($pointcut->matches($targetClassName, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier)) {
 						$advice = $advisor->getAdvice();
-						$interceptedMethods[$methodName]['groupedAdvices'][get_class($advice)][] = $advice;
+						$interceptedMethods[$methodName]['groupedAdvices'][get_class($advice)][] = array(
+							'advice' => $advice,
+							'runtimeEvaluationsClosureCode' => $pointcut->getRuntimeEvaluationsClosureCode()
+						);
 						$interceptedMethods[$methodName]['declaringClassName'] = $methodDeclaringClassName;
-						$interceptedMethods[$methodName]['runtimeEvaluationsClosureCode'] = $pointcut->getRuntimeEvaluationsClosureCode();
 					}
 					$pointcutQueryIdentifier ++;
 				}

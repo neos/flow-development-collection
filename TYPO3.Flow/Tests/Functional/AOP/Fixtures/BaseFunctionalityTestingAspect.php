@@ -92,5 +92,24 @@ class BaseFunctionalityTestingAspect {
 	public function anAdviceForAProtectedTargetMethod(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		return $joinPoint->getAdviceChain()->proceed($joinPoint) . ' bar';
 	}
+
+	/**
+	 * @around method(F3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01->greetObject(name.name === 'TYPO3'))
+	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint
+	 * @return string
+	 */
+	public function propertyOnMethodArgumentAdvice(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+		return 'Hello, old friend';
+	}
+
+	/**
+	 * @around method(F3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01->greetObject(name === this.currentName))
+	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint
+	 * @return string
+	 */
+	public function thisOnMethodArgumentAdvice(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+		return 'Hello, you';
+	}
+
 }
 ?>

@@ -137,5 +137,32 @@ class FrameworkTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 		$this->assertEquals('foo bar', $result);
 	}
 
+	/**
+	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function resultOfGreetObjectMethodIsModifiedByAdvice() {
+		$targetClass = $this->objectManager->get('F3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01');
+		$name = new \F3\FLOW3\Tests\Functional\AOP\Fixtures\Name('TYPO3');
+		$this->assertSame('Hello, old friend', $targetClass->greetObject($name), 'Aspect should greet with "old friend" if the name property equals "TYPO3"');
+		$name = new \F3\FLOW3\Tests\Functional\AOP\Fixtures\Name('Christopher');
+		$this->assertSame('Hello, Christopher', $targetClass->greetObject($name));
+	}
+
+	/**
+	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function thisIsSupportedInMethodRuntimeCondition() {
+		$targetClass = $this->objectManager->get('F3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01');
+		$name = new \F3\FLOW3\Tests\Functional\AOP\Fixtures\Name('Phoenix');
+		$targetClass->setCurrentName($name);
+		$this->assertSame('Hello, you', $targetClass->greetObject($name), 'Aspect should greet with "you" if the current name equals the name argument');
+
+		$name = new \F3\FLOW3\Tests\Functional\AOP\Fixtures\Name('Christopher');
+		$targetClass->setCurrentName(NULL);
+		$this->assertSame('Hello, Christopher', $targetClass->greetObject($name), 'Aspect should greet with given name if the current name is not equal to the name argument');
+	}
+
 }
 ?>
