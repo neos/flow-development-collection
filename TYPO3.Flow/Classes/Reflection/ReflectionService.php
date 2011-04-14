@@ -1069,34 +1069,34 @@ class ReflectionService {
 		$emergedClassesCount = count($nonCachedClassNames);
 		if ($emergedClassesCount > 0) {
 			$this->log(sprintf('Found %s classes whose reflection data was not cached previously.', $emergedClassesCount), LOG_DEBUG);
-		}
 
-		foreach (array_keys($nonCachedClassNames) as $className) {
-			$this->statusCache->set(str_replace('\\', '_', $className), '', array(\F3\FLOW3\Cache\CacheManager::getClassTag($className)));
-		}
+			foreach (array_keys($nonCachedClassNames) as $className) {
+				$this->statusCache->set(str_replace('\\', '_', $className), '', array(\F3\FLOW3\Cache\CacheManager::getClassTag($className)));
+			}
 
-		$data = array();
-		$propertyNames = array(
-			'reflectedClassNames',
-			'abstractClasses',
-			'classPropertyNames',
-			'classSchemata',
-			'classTagsValues',
-			'subClasses',
-			'finalClasses',
-			'finalMethods',
-			'staticMethods',
-			'interfaceImplementations',
-			'methodParameters',
-			'methodVisibilities',
-			'propertyTagsValues',
-			'taggedClasses'
-		);
-		foreach ($propertyNames as $propertyName) {
-			$data[$propertyName] = $this->$propertyName;
+			$data = array();
+			$propertyNames = array(
+				'reflectedClassNames',
+				'abstractClasses',
+				'classPropertyNames',
+				'classSchemata',
+				'classTagsValues',
+				'subClasses',
+				'finalClasses',
+				'finalMethods',
+				'staticMethods',
+				'interfaceImplementations',
+				'methodParameters',
+				'methodVisibilities',
+				'propertyTagsValues',
+				'taggedClasses'
+			);
+			foreach ($propertyNames as $propertyName) {
+				$data[$propertyName] = $this->$propertyName;
+			}
+			$this->dataCache->set('ReflectionData', $data);
+			$this->cachedClassNames = $this->reflectedClassNames;
 		}
-		$this->dataCache->set('ReflectionData', $data);
-		$this->cachedClassNames = $this->reflectedClassNames;
 	}
 
 	/**
