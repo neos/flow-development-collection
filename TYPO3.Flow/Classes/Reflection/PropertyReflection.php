@@ -79,6 +79,16 @@ class PropertyReflection extends \ReflectionProperty {
 	}
 
 	/**
+	 * Returns the description part of the doc comment
+	 *
+	 * @return string Doc comment description
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function getDescription() {
+		return $this->getDocCommentParser()->getDescription();
+	}
+
+	/**
 	 * Returns the value of the reflected property - even if it is protected.
 	 *
 	 * @param object $object Instance of the declaring class to read the value from
