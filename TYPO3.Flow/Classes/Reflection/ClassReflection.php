@@ -173,6 +173,16 @@ class ClassReflection extends \ReflectionClass {
 	}
 
 	/**
+	 * Returns the description part of the doc comment
+	 *
+	 * @return string Doc comment description
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function getDescription() {
+		return $this->getDocCommentParser()->getDescription();
+	}
+
+	/**
 	 * Returns an instance of the doc comment parser and
 	 * runs the parse() method.
 	 *
