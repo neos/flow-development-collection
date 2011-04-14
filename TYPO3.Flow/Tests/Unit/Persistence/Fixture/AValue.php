@@ -79,17 +79,6 @@ class AValue implements \F3\FLOW3\AOP\ProxyInterface {
 		return property_exists($this, $propertyName);
 	}
 
-	/**
-	 * Returns the value of an arbitrary property.
-	 * The method does not have to check if the property exists.
-	 *
-	 * @param string $propertyName Name of the property
-	 * @return mixed Value of the property
-	 */
-	public function FLOW3_AOP_Proxy_getProperty($propertyName) {
-		return $this->$propertyName;
-	}
-
 }
 
 ?>

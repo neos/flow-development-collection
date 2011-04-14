@@ -438,7 +438,6 @@ class ProxyClassBuilder {
 
 		$this->buildGetAdviceChainsMethodCode($targetClassName);
 		$this->buildInvokeJoinPointMethodCode($targetClassName);
-		$this->buildGetPropertyMethodCode($targetClassName);
 		$this->buildMethodsInterceptorCode($targetClassName, $interceptedMethods);
 
 		$proxyClass->addProperty('FLOW3_AOP_Proxy_targetMethodsAndGroupedAdvices', 'array()');
@@ -709,24 +708,6 @@ EOT;
 			if (__CLASS__ !== $joinPoint->getClassName()) return parent::FLOW3_AOP_Proxy_invokeJoinPoint($joinPoint);
 			return call_user_func_array(array('self', $joinPoint->getMethodName()), $joinPoint->getMethodArguments());
 		}
-
-EOT;
-		$proxyMethod->addPreParentCallCode($code);
-	}
-
-	/**
-	 *
-	 *
-	 * @param  $targetClassName
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @FIXME The FLOW3_AOP_Proxy_getProperty method should be removed altogether as soon as nothing else depends on it
-	 */
-	protected function buildGetPropertyMethodCode($targetClassName) {
-		$proxyMethod = $this->compiler->getProxyClass($targetClassName)->getMethod('FLOW3_AOP_Proxy_getProperty');
-		$proxyMethod->setMethodParametersCode('$name');
-		$code = <<<'EOT'
-		return $this->$name;
 
 EOT;
 		$proxyMethod->addPreParentCallCode($code);

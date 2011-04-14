@@ -62,10 +62,6 @@ class ReconstitutableClassWithSimpleProperties implements \F3\FLOW3\Persistence\
 		return property_exists($this, $propertyName);
 	}
 
-	public function FLOW3_AOP_Proxy_getProperty($propertyName) {
-		return $this->$propertyName;
-	}
-
 	public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
 
 	public function FLOW3_AOP_Proxy_declareMethodsAndAdvices() {}

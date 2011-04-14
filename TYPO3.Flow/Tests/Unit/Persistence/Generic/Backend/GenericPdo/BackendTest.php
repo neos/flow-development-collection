@@ -113,7 +113,6 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
 			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return get_class($this); }
 			public function FLOW3_AOP_Proxy_hasProperty($propertyName) {}
-			public function FLOW3_AOP_Proxy_getProperty($name) {}
 		}');
 		$newObject = new $fullClassName();
 		$oldObject = new $fullClassName();
@@ -279,7 +278,6 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
 			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return get_class($this); }
 			public function FLOW3_AOP_Proxy_hasProperty($propertyName) {}
-			public function FLOW3_AOP_Proxy_getProperty($name) { if ($name === \'idProp\') return \'' . $identifier . '\'; }
 		}');
 		$newObject = new $fullClassName();
 
@@ -319,7 +317,6 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
 			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return get_class($this); }
 			public function FLOW3_AOP_Proxy_hasProperty($propertyName) { return TRUE; }
-			public function FLOW3_AOP_Proxy_getProperty($propertyName) { return $this->$propertyName; }
 		}');
 		$newObject = new $fullClassName();
 
@@ -737,7 +734,6 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$identifier = \F3\FLOW3\Utility\Algorithms::generateUUID();
 		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $className . ' {
 			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return \'' . $fullClassName . '\'; }
-			public function FLOW3_AOP_Proxy_getProperty($propertyName) {}
 		}');
 		$object = new $fullClassName();
 
@@ -786,7 +782,6 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$identifier = \F3\FLOW3\Utility\Algorithms::generateUUID();
 		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $className . ' {
 			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return \'' . $fullClassName . '\'; }
-			public function FLOW3_AOP_Proxy_getProperty($propertyName) {}
 		}');
 		$object = new $fullClassName();
 
@@ -835,7 +830,6 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$identifier = \F3\FLOW3\Utility\Algorithms::generateUUID();
 		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $className . ' {
 			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return \'' . $fullClassName . '\'; }
-			public function FLOW3_AOP_Proxy_getProperty($propertyName) {}
 		}');
 		$object = new $fullClassName();
 
@@ -885,7 +879,6 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$identifier = \F3\FLOW3\Utility\Algorithms::generateUUID();
 		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $className . ' {
 			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return \'' . $fullClassName . '\'; }
-			public function FLOW3_AOP_Proxy_getProperty($propertyName) {}
 		}');
 		$object = new $fullClassName();
 
@@ -940,7 +933,6 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$identifier = \F3\FLOW3\Utility\Algorithms::generateUUID();
 		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $className . ' {
 			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return \'' . $fullClassName . '\'; }
-			public function FLOW3_AOP_Proxy_getProperty($propertyName) {}
 		}');
 		$object = new $fullClassName();
 

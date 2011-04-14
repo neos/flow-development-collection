@@ -418,7 +418,6 @@ class ObjectSerializerTest extends \F3\FLOW3\Tests\UnitTestCase {
 			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
 			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return get_class($this); }
 			public function FLOW3_AOP_Proxy_hasProperty($propertyName) {}
-			public function FLOW3_AOP_Proxy_getProperty($propertyName) {}
 			public function __clone() {}
 		}');
 
@@ -469,7 +468,6 @@ class ObjectSerializerTest extends \F3\FLOW3\Tests\UnitTestCase {
 			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
 			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return get_class($this); }
 			public function FLOW3_AOP_Proxy_hasProperty($propertyName) {}
-			public function FLOW3_AOP_Proxy_getProperty($propertyName) {}
 			public function __clone() {}
 		}');
 

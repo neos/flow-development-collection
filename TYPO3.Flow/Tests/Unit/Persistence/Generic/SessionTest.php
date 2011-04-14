@@ -617,23 +617,6 @@ class SessionTest extends \F3\FLOW3\Tests\UnitTestCase {
 	}
 
 	/**
-	 * Does it work for objects not being an AOP proxy, i.e. not having the
-	 * method FLOW3_AOP_Proxy_getProperty() and not known to the identity map?
-	 *
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 */
-	public function getIdentifierByObjectReturnsNullForUnknownObjectBeingPOPO() {
-		$unknownObject = $this->getMock('F3\FLOW3\AOP\ProxyInterface');
-
-		$session = new \F3\FLOW3\Persistence\Generic\Session();
-		$session->injectReflectionService($this->getMock('F3\FLOW3\Reflection\ReflectionService'));
-
-		$this->assertNull($session->getIdentifierByObject($unknownObject));
-	}
-
-	/**
 	 * Does it return NULL for an AOP proxy not being in the identity map and
 	 * not having FLOW3_Persistence_Identifier?
 	 *
