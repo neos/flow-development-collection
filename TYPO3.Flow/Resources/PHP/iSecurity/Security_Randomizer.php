@@ -164,13 +164,28 @@ class Security_Randomizer
 				return (binary) $random;
 		}
 
-		// Works on Sun Solaris, Unix and Linux systems.
-		$fp = @fopen('/dev/urandom', 'rb');
-		if ($fp)
-		{
-			$random = fread($fp, $length);
-			fclose($fp);
-			return (binary) $random;
+		// Only execute on unix based systems
+		if (DIRECTORY_SEPARATOR === '/') {
+
+			// Works on Sun Solaris, Unix and Linux systems.
+			$fp = @fopen('/dev/urandom', 'rb');
+			if ($fp)
+			{
+				$random = fread($fp, $length);
+				fclose($fp);
+				return (binary) $random;
+			}
+
+			// Works on servers with OpenSSL installed and PHP < 5.3.
+			// TODO: Make it to work when the install path is different.
+			$fp = @popen("/usr/bin/openssl rand $length", 'rb');
+			if ($fp)
+			{
+				$random = @stream_get_contents($fp);
+				pclose($fp);
+				if ($random)
+					return (binary) $random;
+			}
 		}
 
 		// Works on Windows x86.
@@ -215,17 +230,6 @@ class Security_Randomizer
 		if (isset($random))
 		{
 			return (binary) $random;
-		}
-
-		// Works on servers with OpenSSL installed and PHP < 5.3.
-		// TODO: Make it to work when the install path is different.
-		$fp = @popen("/usr/bin/openssl rand $length", 'rb');
-		if ($fp)
-		{
-			$random = @stream_get_contents($fp);
-			pclose($fp);
-			if ($random)
-				return (binary) $random;
 		}
 
 		// Falling back to PHP's mt_rand() and the rest if nothing worked.
