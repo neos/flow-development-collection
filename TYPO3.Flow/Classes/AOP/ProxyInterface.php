@@ -46,14 +46,6 @@ interface ProxyInterface extends \F3\FLOW3\Object\Proxy\ProxyInterface {
 	 */
 	public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint);
 
-	/**
-	 * Returns TRUE if the property exists.
-	 *
-	 * @param string $propertyName Name of the property
-	 * @return boolean TRUE if the property exists
-	 */
-	public function FLOW3_AOP_Proxy_hasProperty($propertyName);
-
 }
 
 ?>
