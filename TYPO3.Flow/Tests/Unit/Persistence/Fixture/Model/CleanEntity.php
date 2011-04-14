@@ -91,17 +91,6 @@ class CleanEntity implements \F3\FLOW3\AOP\ProxyInterface {
 	}
 
 	/**
-	 * Sets the value of an arbitrary property.
-	 *
-	 * @param string $propertyName Name of the property
-	 * @param mixed $propertyValue Value to set
-	 * @return void
-	 */
-	public function FLOW3_AOP_Proxy_setProperty($propertyName, $propertyValue) {
-
-	}
-
-	/**
 	 * Returns TRUE as this is a DirtyEntity
 	 *
 	 * @return boolean

@@ -114,7 +114,6 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return get_class($this); }
 			public function FLOW3_AOP_Proxy_hasProperty($propertyName) {}
 			public function FLOW3_AOP_Proxy_getProperty($name) {}
-			public function FLOW3_AOP_Proxy_setProperty($propertyName, $propertyValue) {}
 		}');
 		$newObject = new $fullClassName();
 		$oldObject = new $fullClassName();
@@ -281,7 +280,6 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return get_class($this); }
 			public function FLOW3_AOP_Proxy_hasProperty($propertyName) {}
 			public function FLOW3_AOP_Proxy_getProperty($name) { if ($name === \'idProp\') return \'' . $identifier . '\'; }
-			public function FLOW3_AOP_Proxy_setProperty($propertyName, $propertyValue) {}
 		}');
 		$newObject = new $fullClassName();
 
@@ -322,7 +320,6 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return get_class($this); }
 			public function FLOW3_AOP_Proxy_hasProperty($propertyName) { return TRUE; }
 			public function FLOW3_AOP_Proxy_getProperty($propertyName) { return $this->$propertyName; }
-			public function FLOW3_AOP_Proxy_setProperty($propertyName, $value) {}
 		}');
 		$newObject = new $fullClassName();
 

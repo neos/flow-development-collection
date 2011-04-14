@@ -741,7 +741,6 @@ class PersistenceQueryRewritingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return get_class($this); }
 			public function FLOW3_AOP_Proxy_hasProperty($propertyName) {}
 			public function FLOW3_AOP_Proxy_getProperty($propertyName) {}
-			public function FLOW3_AOP_Proxy_setProperty($propertyName, $propertyValue) {}
 			public function __clone() {}
 		}');
 		$mockEntity = $this->getMock($entityClassName, array(), array(), '', FALSE);

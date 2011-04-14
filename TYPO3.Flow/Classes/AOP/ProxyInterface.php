@@ -70,13 +70,6 @@ interface ProxyInterface extends \F3\FLOW3\Object\Proxy\ProxyInterface {
 	 */
 	public function FLOW3_AOP_Proxy_getProperty($propertyName);
 
-	/**
-	 * Sets the value of an arbitrary property.
-	 *
-	 * @param string $propertyName Name of the property
-	 * @param mixed $propertyValue Value to set
-	 * @return void
-	 */
-	public function FLOW3_AOP_Proxy_setProperty($propertyName, $propertyValue);}
+}
 
 ?>
