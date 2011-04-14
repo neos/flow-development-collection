@@ -386,7 +386,7 @@ class ProxyClassBuilder {
 	 *
 	 * @param string $targetClassName Name of the class to create a proxy class file for
 	 * @param array $aspectContainers The array of aspect containers from the AOP Framework
-	 * @return void
+	 * @return boolean TRUE if the proxy class could be built, FALSE otherwise.
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function buildProxyClass($targetClassName, array $aspectContainers) {
@@ -404,7 +404,7 @@ class ProxyClassBuilder {
 
 		$proxyClass = $this->compiler->getProxyClass($targetClassName);
 		if ($proxyClass === FALSE) {
-			return;
+			return FALSE;
 		}
 
 		$proxyClass->addInterfaces($introducedInterfaces);
@@ -423,6 +423,7 @@ class ProxyClassBuilder {
 		$proxyClass->addProperty('FLOW3_AOP_Proxy_targetMethodsAndGroupedAdvices', 'array()');
 		$proxyClass->addProperty('FLOW3_AOP_Proxy_groupedAdviceChains', 'array()');
 		$proxyClass->addProperty('FLOW3_AOP_Proxy_methodIsInAdviceMode', 'array()');
+		return TRUE;
 	}
 
 	/**
