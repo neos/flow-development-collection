@@ -47,13 +47,6 @@ interface ProxyInterface extends \F3\FLOW3\Object\Proxy\ProxyInterface {
 	public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint);
 
 	/**
-	 * Returns the name of the class this proxy extends.
-	 *
-	 * @return string Name of the target class
-	 */
-	public function FLOW3_AOP_Proxy_getProxyTargetClassName();
-
-	/**
 	 * Returns TRUE if the property exists.
 	 *
 	 * @param string $propertyName Name of the property

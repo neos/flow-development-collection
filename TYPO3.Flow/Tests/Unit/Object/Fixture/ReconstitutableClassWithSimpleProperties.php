@@ -42,10 +42,6 @@ class ReconstitutableClassWithSimpleProperties implements \F3\FLOW3\Persistence\
 		$this->stringDependency = $string;
 	}
 
-	public function FLOW3_AOP_Proxy_getProxyTargetClassName() {
-		return 'F3\FLOW3\Tests\Object\Fixture\ReconstitutableClassWithSimpleProperties';
-	}
-
 	/**
 	 * Initializes the proxy and calls the (parent) constructor with the orginial given arguments.
 	 * @return void

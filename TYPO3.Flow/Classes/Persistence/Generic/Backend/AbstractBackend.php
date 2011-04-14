@@ -351,11 +351,7 @@ abstract class AbstractBackend implements \F3\FLOW3\Persistence\Generic\Backend\
 	 */
 	protected function getType($value) {
 		if (is_object($value)) {
-			if ($value instanceof \F3\FLOW3\AOP\ProxyInterface) {
-				return $value->FLOW3_AOP_Proxy_getProxyTargetClassName();
-			} else {
-				return get_class($value);
-			}
+			return get_class($value);
 		} else {
 			return gettype($value) === 'double' ? 'float' : gettype($value);
 		}
@@ -424,7 +420,7 @@ abstract class AbstractBackend implements \F3\FLOW3\Persistence\Generic\Backend\
 
 		if ($propertyValue instanceof \F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface) {
 			$propertyData[$propertyName] = array(
-				'type' => $propertyValue->FLOW3_AOP_Proxy_getProxyTargetClassName(),
+				'type' => get_class($propertyValue),
 				'multivalue' => FALSE,
 				'value' => $this->processObject($propertyValue, $identifier)
 			);

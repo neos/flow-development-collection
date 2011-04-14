@@ -111,7 +111,6 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $className . ' implements \F3\FLOW3\AOP\ProxyInterface {
 			public function FLOW3_AOP_Proxy_construct() {}
 			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
-			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return get_class($this); }
 			public function FLOW3_AOP_Proxy_hasProperty($propertyName) {}
 		}');
 		$newObject = new $fullClassName();
@@ -149,7 +148,6 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 			public $sub;
 			public function FLOW3_Persistence_isClone() {}
 			public function __clone() {}
-			public function FLOW3_AOP_Proxy_getProxyTargetClassName() {return __CLASS__;}
 		}');
 		$className2 = 'SubClass' . uniqid();
 		$fullClassName2 = $namespace . '\\' . $className2;
@@ -158,7 +156,6 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 			public $sub;
 			public function FLOW3_Persistence_isClone() {}
 			public function __clone() {}
-			public function FLOW3_AOP_Proxy_getProxyTargetClassName() {return __CLASS__;}
 		}');
 		$className3 = 'SubClass' . uniqid();
 		$fullClassName3 = $namespace . '\\' . $className3;
@@ -167,7 +164,6 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 			public $sub;
 			public function FLOW3_Persistence_isClone() {}
 			public function __clone() {}
-			public function FLOW3_AOP_Proxy_getProxyTargetClassName() {return __CLASS__;}
 		}');
 		$objectA = new $fullClassName1();
 		$objectB = new $fullClassName2();
@@ -276,7 +272,6 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $className . ' implements \F3\FLOW3\AOP\ProxyInterface {
 			public function FLOW3_AOP_Proxy_construct() {}
 			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
-			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return get_class($this); }
 			public function FLOW3_AOP_Proxy_hasProperty($propertyName) {}
 		}');
 		$newObject = new $fullClassName();
@@ -315,7 +310,6 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 			public $FLOW3_Persistence_Identifier = \'' . $identifier . '\';
 			public function FLOW3_AOP_Proxy_construct() {}
 			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
-			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return get_class($this); }
 			public function FLOW3_AOP_Proxy_hasProperty($propertyName) { return TRUE; }
 		}');
 		$newObject = new $fullClassName();
@@ -350,7 +344,6 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 			public $FLOW3_Persistence_Identifier = \'' . $hash . '\';
 			public function FLOW3_Persistence_isClone() {}
 			public function __clone() {}
-			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return get_class($this); }
 		}');
 		$newObject = new $fullClassName();
 
@@ -385,7 +378,6 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 			public $simpleString = \'simpleValue\';
 			public function FLOW3_Persistence_isClone() {}
 			public function __clone() {}
-			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return get_class($this); }
 		}');
 		$dirtyObject = new $fullClassName();
 
@@ -433,7 +425,6 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 			public $date;
 			public function FLOW3_Persistence_isClone() {}
 			public function __clone() {}
-			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return get_class($this); }
 		}');
 		$newObject = new $fullClassName();
 		$date = new \DateTime();
@@ -732,9 +723,7 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$className = 'SomeClass' . uniqid();
 		$fullClassName = 'F3\\FLOW3\Persistence\\Tests\\' . $className;
 		$identifier = \F3\FLOW3\Utility\Algorithms::generateUUID();
-		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $className . ' {
-			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return \'' . $fullClassName . '\'; }
-		}');
+		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $className . ' {}');
 		$object = new $fullClassName();
 
 		$classSchema = new \F3\FLOW3\Reflection\ClassSchema($fullClassName);
@@ -780,9 +769,7 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$className = 'SomeClass' . uniqid();
 		$fullClassName = 'F3\\FLOW3\Persistence\\Tests\\' . $className;
 		$identifier = \F3\FLOW3\Utility\Algorithms::generateUUID();
-		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $className . ' {
-			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return \'' . $fullClassName . '\'; }
-		}');
+		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $className . ' {}');
 		$object = new $fullClassName();
 
 		$classSchema = new \F3\FLOW3\Reflection\ClassSchema($fullClassName);
@@ -828,9 +815,7 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$className = 'SomeClass' . uniqid();
 		$fullClassName = 'F3\\FLOW3\Persistence\\Tests\\' . $className;
 		$identifier = \F3\FLOW3\Utility\Algorithms::generateUUID();
-		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $className . ' {
-			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return \'' . $fullClassName . '\'; }
-		}');
+		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $className . ' {}');
 		$object = new $fullClassName();
 
 		$classSchema = new \F3\FLOW3\Reflection\ClassSchema($fullClassName);
@@ -877,9 +862,7 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$className = 'SomeClass' . uniqid();
 		$fullClassName = 'F3\\FLOW3\Persistence\\Tests\\' . $className;
 		$identifier = \F3\FLOW3\Utility\Algorithms::generateUUID();
-		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $className . ' {
-			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return \'' . $fullClassName . '\'; }
-		}');
+		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $className . ' {}');
 		$object = new $fullClassName();
 
 		$classSchema = new \F3\FLOW3\Reflection\ClassSchema($fullClassName);
@@ -931,9 +914,7 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$className = 'SomeClass' . uniqid();
 		$fullClassName = 'F3\\FLOW3\Persistence\\Tests\\' . $className;
 		$identifier = \F3\FLOW3\Utility\Algorithms::generateUUID();
-		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $className . ' {
-			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return \'' . $fullClassName . '\'; }
-		}');
+		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $className . ' {}');
 		$object = new $fullClassName();
 
 		$classSchema = new \F3\FLOW3\Reflection\ClassSchema($fullClassName);
@@ -1085,7 +1066,6 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $otherClassName . ' implements \F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface {
 			public function FLOW3_Persistence_isClone() {}
 			public function __clone() {}
-			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return __CLASS__; }
 		}');
 		$someClassName = 'SomeClass' . uniqid();
 		$fullSomeClassName = 'F3\\FLOW3\Persistence\\Tests\\' . $someClassName;
@@ -1093,7 +1073,6 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 			public $property;
 			public function FLOW3_Persistence_isClone() {}
 			public function __clone() {}
-			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return __CLASS__; }
 		}');
 		$otherAggregateRootObject = new $fullOtherClassName();
 		$someAggregateRootObject = new $fullSomeClassName();
@@ -1516,7 +1495,6 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 			protected $foo;
 			public function FLOW3_Persistence_isClone() {}
 			public function __clone() {}
-			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return __CLASS__; }
 		}');
 		$newObject = new $fullClassName();
 		$oldObject = new $fullClassName();
@@ -1559,7 +1537,6 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 			protected $foo;
 			public function FLOW3_Persistence_isClone() {}
 			public function __clone() {}
-			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return __CLASS__; }
 		}');
 		$newObject = new $fullClassName();
 
@@ -1602,7 +1579,6 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 			protected $foo;
 			public function FLOW3_Persistence_isClone() {}
 			public function __clone() {}
-			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return __CLASS__; }
 		}');
 		$oldObject = new $fullClassName();
 

@@ -53,15 +53,6 @@ class Entity2 implements \F3\FLOW3\AOP\ProxyInterface {
 	public $someReferenceArray = array();
 
 	/**
-	 * Returns the name of the class this proxy extends.
-	 *
-	 * @return string Name of the target class
-	 */
-	public function FLOW3_AOP_Proxy_getProxyTargetClassName() {
-		return 'F3\FLOW3\Tests\Persistence\Fixture\Model\Entity2';
-	}
-
-	/**
 	 * Initializes the proxy and calls the (parent) constructor with the orginial given arguments.
 	 * @return void
 	 */

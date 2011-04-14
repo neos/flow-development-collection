@@ -96,15 +96,6 @@ class AnEntity implements \F3\FLOW3\AOP\ProxyInterface {
 	}
 
 	/**
-	 * Returns the name of the class this proxy extends.
-	 *
-	 * @return string Name of the target class
-	 */
-	public function FLOW3_AOP_Proxy_getProxyTargetClassName() {
-		return get_class($this);
-	}
-
-	/**
 	 * Initializes the proxy and calls the (parent) constructor with the orginial given arguments.
 	 * @return void
 	 */
