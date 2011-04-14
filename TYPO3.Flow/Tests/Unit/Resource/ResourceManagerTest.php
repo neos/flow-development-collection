@@ -51,7 +51,7 @@ class ResourceManagerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initializeRegistersFoundStreamWrappers() {
-		$wrapperClassName = uniqid('MockWrapper');
+		$wrapperClassName = 'MockWrapper' . md5(uniqid(mt_rand(), TRUE));
 		$wrapperSchemeName = $wrapperClassName . 'scheme';
 		eval('class ' . $wrapperClassName . ' extends \F3\FLOW3\Resource\Streams\ResourceStreamWrapper { static public function getScheme() { return \'' . $wrapperSchemeName . '\'; } }');
 		$mockStreamWrapperAdapter = new $wrapperClassName();

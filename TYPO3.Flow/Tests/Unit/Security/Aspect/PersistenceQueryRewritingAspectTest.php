@@ -396,7 +396,7 @@ class PersistenceQueryRewritingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getValueForOperandReturnsTheCorrectValueFromGlobalObjects() {
-		$className = uniqid('dummyParty');
+		$className = 'dummyParty' . md5(uniqid(mt_rand(), TRUE));
 		eval('class ' . $className . ' {
 				public function getName() {
 					return "Andi";
@@ -734,7 +734,7 @@ class PersistenceQueryRewritingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function checkSingleConstraintDefinitionOnResultArrayComparesTheIdentifierWhenComparingPersitedObjects() {
-		$entityClassName = uniqid('entityClass');
+		$entityClassName = 'entityClass' . md5(uniqid(mt_rand(), TRUE));
 		eval('class ' . $entityClassName . ' implements \F3\FLOW3\Object\Proxy\ProxyInterface {
 			public function FLOW3_AOP_Proxy_construct() {}
 			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}

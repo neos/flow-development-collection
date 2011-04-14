@@ -62,7 +62,7 @@ class GenericObjectValidatorTest extends \F3\FLOW3\Tests\Unit\Validation\Validat
 		$resultWithError2 = new \F3\FLOW3\Error\Result();
 		$resultWithError2->addError($error2);
 
-		$classNameForObjectWithPrivateProperties = uniqid('FooBar');
+		$classNameForObjectWithPrivateProperties = 'B' . md5(uniqid(mt_rand(), TRUE));
 		eval('class ' . $classNameForObjectWithPrivateProperties . '{ protected $foo = \'foovalue\'; protected $bar = \'barvalue\'; }');
 		$objectWithPrivateProperties = new $classNameForObjectWithPrivateProperties();
 
@@ -98,9 +98,9 @@ class GenericObjectValidatorTest extends \F3\FLOW3\Tests\Unit\Validation\Validat
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function validateCanHandleRecursiveTargetsWithoutEndlessLooping() {
-		$classNameA = uniqid('A');
+		$classNameA = 'B' . md5(uniqid(mt_rand(), TRUE));
 		eval('class ' . $classNameA . '{ public $b; }');
-		$classNameB = uniqid('B');
+		$classNameB = 'B' . md5(uniqid(mt_rand(), TRUE));
 		eval('class ' . $classNameB . '{ public $a; }');
 		$A = new $classNameA();
 		$B = new $classNameB();
@@ -120,9 +120,9 @@ class GenericObjectValidatorTest extends \F3\FLOW3\Tests\Unit\Validation\Validat
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function validateDetectsFailuresInRecursiveTargetsI() {
-		$classNameA = uniqid('A');
+		$classNameA = 'A' . md5(uniqid(mt_rand(), TRUE));
 		eval('class ' . $classNameA . '{ public $b; }');
-		$classNameB = uniqid('B');
+		$classNameB = 'B' . md5(uniqid(mt_rand(), TRUE));
 		eval('class ' . $classNameB . '{ public $a; public $uuid = 0xF; }');
 		$A = new $classNameA();
 		$B = new $classNameB();
@@ -152,9 +152,9 @@ class GenericObjectValidatorTest extends \F3\FLOW3\Tests\Unit\Validation\Validat
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function validateDetectsFailuresInRecursiveTargetsII() {
-		$classNameA = uniqid('A');
+		$classNameA = 'A' . md5(uniqid(mt_rand(), TRUE));
 		eval('class ' . $classNameA . '{ public $b; public $uuid = 0xF; }');
-		$classNameB = uniqid('B');
+		$classNameB = 'B' . md5(uniqid(mt_rand(), TRUE));
 		eval('class ' . $classNameB . '{ public $a; public $uuid = 0xF; }');
 		$A = new $classNameA();
 		$B = new $classNameB();

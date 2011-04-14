@@ -709,7 +709,7 @@ class ReflectionServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function reflectClassStoresATimeStampWithEachReflectedClassIfClassChangeDetectionIsEnabled() {
 		$this->markTestSkipped('Refactor unit tests for Reflection Service!');
 
-		$className = uniqid('TestClass');
+		$className = 'TestClass' . md5(uniqid(mt_rand(), TRUE));
 		eval('class ' . $className . ' {}');
 
 		$startTime = time();

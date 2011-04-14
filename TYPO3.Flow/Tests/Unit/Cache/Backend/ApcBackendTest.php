@@ -60,7 +60,7 @@ class ApcBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$backend = new \F3\FLOW3\Cache\Backend\ApcBackend('Testing');
 		$backend->injectEnvironment($this->mockEnvironment);
 		$data = 'Some data';
-		$identifier = uniqid('MyIdentifier');
+		$identifier = 'MyIdentifier' . md5(uniqid(mt_rand(), TRUE));
 		$backend->set($identifier, $data);
 	}
 
@@ -71,7 +71,7 @@ class ApcBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function itIsPossibleToSetAndCheckExistenceInCache() {
 		$backend = $this->setUpBackend();
 		$data = 'Some data';
-		$identifier = uniqid('MyIdentifier');
+		$identifier = 'MyIdentifier' . md5(uniqid(mt_rand(), TRUE));
 		$backend->set($identifier, $data);
 		$inCache = $backend->has($identifier);
 		$this->assertTrue($inCache, 'APC backend failed to set and check entry');
@@ -84,7 +84,7 @@ class ApcBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function itIsPossibleToSetAndGetEntry() {
 		$backend = $this->setUpBackend();
 		$data = 'Some data';
-		$identifier = uniqid('MyIdentifier');
+		$identifier = 'MyIdentifier' . md5(uniqid(mt_rand(), TRUE));
 		$backend->set($identifier, $data);
 		$fetchedData = $backend->get($identifier);
 		$this->assertEquals($data, $fetchedData, 'APC backend failed to set and retrieve data');
@@ -97,7 +97,7 @@ class ApcBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function itIsPossibleToRemoveEntryFromCache() {
 		$backend = $this->setUpBackend();
 		$data = 'Some data';
-		$identifier = uniqid('MyIdentifier');
+		$identifier = 'MyIdentifier' . md5(uniqid(mt_rand(), TRUE));
 		$backend->set($identifier, $data);
 		$backend->remove($identifier);
 		$inCache = $backend->has($identifier);
@@ -111,7 +111,7 @@ class ApcBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function itIsPossibleToOverwriteAnEntryInTheCache() {
 		$backend = $this->setUpBackend();
 		$data = 'Some data';
-		$identifier = uniqid('MyIdentifier');
+		$identifier = 'MyIdentifier' . md5(uniqid(mt_rand(), TRUE));
 		$backend->set($identifier, $data);
 		$otherData = 'some other data';
 		$backend->set($identifier, $otherData);
@@ -127,7 +127,7 @@ class ApcBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$backend = $this->setUpBackend();
 
 		$data = 'Some data';
-		$identifier = uniqid('MyIdentifier');
+		$identifier = 'MyIdentifier' . md5(uniqid(mt_rand(), TRUE));
 		$backend->set($identifier, $data, array('UnitTestTag%tag1', 'UnitTestTag%tag2'));
 
 		$retrieved = $backend->findIdentifiersByTag('UnitTestTag%tag1');
@@ -145,7 +145,7 @@ class ApcBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$backend = $this->setUpBackend();
 
 		$data = 'Some data';
-		$identifier = uniqid('MyIdentifier');
+		$identifier = 'MyIdentifier' . md5(uniqid(mt_rand(), TRUE));
 		$backend->set($identifier, $data, array('UnitTestTag%tag1', 'UnitTestTag%tagX'));
 		$backend->set($identifier, $data, array('UnitTestTag%tag3'));
 
@@ -159,7 +159,7 @@ class ApcBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function hasReturnsFalseIfTheEntryDoesntExist() {
 		$backend = $this->setUpBackend();
-		$identifier = uniqid('NonExistingIdentifier');
+		$identifier = 'NonExistingIdentifier' . md5(uniqid(mt_rand(), TRUE));
 		$inCache = $backend->has($identifier);
 		$this->assertFalse($inCache,'"has" did not return false when checking on non existing identifier');
 	}
@@ -170,7 +170,7 @@ class ApcBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function removeReturnsFalseIfTheEntryDoesntExist() {
 		$backend = $this->setUpBackend();
-		$identifier = uniqid('NonExistingIdentifier');
+		$identifier = 'NonExistingIdentifier' . md5(uniqid(mt_rand(), TRUE));
 		$inCache = $backend->remove($identifier);
 		$this->assertFalse($inCache,'"remove" did not return false when checking on non existing identifier');
 	}
@@ -249,7 +249,7 @@ class ApcBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$backend = $this->setUpBackend();
 
 		$data = str_repeat('abcde', 1024 * 1024);
-		$identifier = uniqid('tooLargeData');
+		$identifier = 'tooLargeData' . md5(uniqid(mt_rand(), TRUE));
 		$backend->set($identifier, $data);
 
 		$this->assertTrue($backend->has($identifier));

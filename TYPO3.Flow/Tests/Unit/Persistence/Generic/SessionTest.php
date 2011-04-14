@@ -155,7 +155,7 @@ class SessionTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function isDirtyReturnsFalseForNullInBothCurrentAndCleanValue() {
-		$className = uniqid('Class');
+		$className = 'Class' . md5(uniqid(mt_rand(), TRUE));
 		eval('class ' . $className . ' { public $foo; }');
 		$object = new $className();
 
@@ -171,7 +171,7 @@ class SessionTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function isDirtyAsksIsPropertyDirtyForChangedLiterals() {
-		$className = uniqid('Class');
+		$className = 'Class' . md5(uniqid(mt_rand(), TRUE));
 		eval('class ' . $className . ' { public $foo; }');
 		$object = new $className();
 		$object->foo = 'different';
@@ -199,7 +199,7 @@ class SessionTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function isDirtyReturnsFalseForUnactivatedLazyObjects() {
-		$className = uniqid('Class');
+		$className = 'Class' . md5(uniqid(mt_rand(), TRUE));
 		eval('class ' . $className . ' { public $foo; }');
 		$object = new $className();
 		$object->FLOW3_Persistence_LazyLoadingObject_thawProperties = 'dummy';
@@ -214,7 +214,7 @@ class SessionTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function isDirtyReturnsTrueForTraversablesWhoseCountDiffers() {
-		$className = uniqid('Class');
+		$className = 'Class' . md5(uniqid(mt_rand(), TRUE));
 		eval('class ' . $className . ' { public $foo; }');
 		$object = new $className();
 		$object->foo = array('foo', 'bar', 'baz');
@@ -241,7 +241,7 @@ class SessionTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function isDirtyReturnsTrueForNestedArrayWhoseCountDiffers() {
-		$className = uniqid('Class');
+		$className = 'Class' . md5(uniqid(mt_rand(), TRUE));
 		eval('class ' . $className . ' { public $foo; }');
 		$object = new $className();
 		$object->foo = array('foo', array('bar', 'baz'));
@@ -279,7 +279,7 @@ class SessionTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$object->FLOW3_Persistence_Entity_UUID = 'dirtyUuid';
 		$splObjectStorage = new \SplObjectStorage();
 		$splObjectStorage->attach($object);
-		$className = uniqid('Class');
+		$className = 'Class' . md5(uniqid(mt_rand(), TRUE));
 		eval('class ' . $className . ' { public $splObjectStorage; }');
 		$parent = new $className();
 		$parent->splObjectStorage = $splObjectStorage;
@@ -314,7 +314,7 @@ class SessionTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$object->FLOW3_Persistence_Entity_UUID = 'dirtyUuid';
 		$array = array();
 		$array[] = $object;
-		$className = uniqid('Class');
+		$className = 'Class' . md5(uniqid(mt_rand(), TRUE));
 		eval('class ' . $className . ' { public $array; }');
 		$parent = new $className();
 		$parent->array = $array;
@@ -352,7 +352,7 @@ class SessionTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$object->FLOW3_Persistence_ValueObject_Hash = 'cleanHash';
 		$array = array();
 		$array[] = $object;
-		$className = uniqid('Class');
+		$className = 'Class' . md5(uniqid(mt_rand(), TRUE));
 		eval('class ' . $className . ' { public $array; }');
 		$parent = new $className();
 		$parent->array = $array;
@@ -389,7 +389,7 @@ class SessionTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$object = new \stdClass();
 		$object->FLOW3_Persistence_ValueObject_Hash = 'cleanHash';
 		$array = array(array($object));
-		$className = uniqid('Class');
+		$className = 'Class' . md5(uniqid(mt_rand(), TRUE));
 		eval('class ' . $className . ' { public $array; }');
 		$parent = new $className();
 		$parent->array = $array;
@@ -433,7 +433,7 @@ class SessionTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$object->FLOW3_Persistence_Entity_UUID = 'dirtyUuid';
 		$array = array();
 		$array[] = $object;
-		$className = uniqid('Class');
+		$className = 'Class' . md5(uniqid(mt_rand(), TRUE));
 		eval('class ' . $className . ' { public $array; }');
 		$parent = new $className();
 		$parent->array = $array;
@@ -655,7 +655,7 @@ class SessionTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function getIdentifierByObjectReturnsUuidPropertyForUnknownObjectWithUuidProperty() {
-		$className = uniqid('Class');
+		$className = 'Class' . md5(uniqid(mt_rand(), TRUE));
 		eval('class ' . $className . ' { public $myUuidProperty; }');
 		$unknownObject = new $className();
 		$unknownObject->myUuidProperty = 'fakeUUID';

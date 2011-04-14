@@ -62,22 +62,22 @@ class JsonViewTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function jsonViewTestData() {
 		$output = array();
-		
+
 		$object = new \stdClass();
 		$object->value1 = 'foo';
 		$object->value2 = 1;
 		$configuration = array();
 		$expected = array('value1' => 'foo', 'value2' => 1);
 		$output[] = array($object, $configuration, $expected, 'all direct child properties should be serialized');
-		
+
 		$configuration = array('_only' => array('value1'));
 		$expected = array('value1' => 'foo');
 		$output[] = array($object, $configuration, $expected, 'if "only" properties are specified, only these should be serialized');
-		
+
 		$configuration = array('_exclude' => array('value1'));
 		$expected = array('value2' => 1);
 		$output[] = array($object, $configuration, $expected, 'if "exclude" properties are specified, they should not be serialized');
-		
+
 		$object = new \stdClass();
 		$object->value1 = new \stdClass();
 		$object->value1->subvalue1 = 'Foo';
@@ -111,7 +111,7 @@ class JsonViewTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$output[] = array($object, $configuration, $expected, 'array of objects should be serialized');
 
 		$properties = array('foo' => 'bar', 'prohibited' => 'xxx');
-		$nestedObject = $this->getMock(uniqid('Test'), array('getName', 'getPath', 'getProperties', 'getOther'));
+		$nestedObject = $this->getMock('Test' . md5(uniqid(mt_rand(), TRUE)), array('getName', 'getPath', 'getProperties', 'getOther'));
 		$nestedObject->expects($this->any())->method('getName')->will($this->returnValue('name'));
 		$nestedObject->expects($this->any())->method('getPath')->will($this->returnValue('path'));
 		$nestedObject->expects($this->any())->method('getProperties')->will($this->returnValue($properties));
@@ -142,7 +142,7 @@ class JsonViewTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		return $output;
 	}
-	
+
 	/**
 	 * @test
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>

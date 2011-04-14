@@ -53,7 +53,7 @@ class StringValidatorTest extends \F3\FLOW3\Tests\Unit\Validation\Validator\Abst
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function stringValidatorShouldReturnErrorIfObjectWithToStringMethodStringIsGiven() {
-		$className = uniqid('TestClass');
+		$className = 'TestClass' . md5(uniqid(mt_rand(), TRUE));
 
 		eval('
 			class ' . $className . ' {

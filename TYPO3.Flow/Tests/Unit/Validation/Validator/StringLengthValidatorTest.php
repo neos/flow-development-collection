@@ -152,7 +152,7 @@ class StringLengthValidatorTest extends \F3\FLOW3\Tests\Unit\Validation\Validato
 		$this->validator = $this->getMock('F3\FLOW3\Validation\Validator\StringLengthValidator', array('addError'), array(), '', FALSE);
 		$this->validatorOptions(array('minimum' => 5, 'maximum' => 100));
 
-		$className = uniqid('TestClass');
+		$className = 'TestClass' . md5(uniqid(mt_rand(), TRUE));
 
 		eval('
 			class ' . $className . ' {
@@ -175,7 +175,7 @@ class StringLengthValidatorTest extends \F3\FLOW3\Tests\Unit\Validation\Validato
 		$this->validator = $this->getMock('F3\FLOW3\Validation\Validator\StringLengthValidator', array('addError'), array(), '', FALSE);
 		$this->validatorOptions(array('minimum' => 5, 'maximum' => 100));
 
-		$className = uniqid('TestClass');
+		$className = 'TestClass' . md5(uniqid(mt_rand(), TRUE));
 
 		eval('
 			class ' . $className . ' {

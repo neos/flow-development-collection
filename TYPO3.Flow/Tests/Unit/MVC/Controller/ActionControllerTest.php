@@ -398,7 +398,7 @@ class ActionControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function resolveActionMethodNameDoesNotThrowAnExceptionIfTheActionDefinedInTheRequestCanBeHandledByAMagicCallMethod() {
 		$this->markTestIncomplete();
-		$controllerClassName = uniqid('TestController');
+		$controllerClassName = 'TestController' . md5(uniqid(mt_rand(), TRUE));
 		eval("
 			class $controllerClassName extends \F3\FLOW3\MVC\Controller\ActionController {
 					public function __call(\$methodName, array \$arguments) {
