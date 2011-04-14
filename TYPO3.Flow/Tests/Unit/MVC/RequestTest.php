@@ -285,7 +285,7 @@ class RequestTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function theActionNamesCaseIsFixedIfItIsallLowerCaseAndTheControllerObjectNameIsKnown() {
-		$mockControllerClassName = uniqid('Mock');
+		$mockControllerClassName = 'Mock' . md5(uniqid(mt_rand(), TRUE));
 		eval('
 			class ' . $mockControllerClassName . ' extends \F3\FLOW3\MVC\Controller\ActionController {
 				public function someGreatAction() {}

@@ -65,7 +65,7 @@ class PersistenceMagicAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$subObject2 = new \stdClass();
 		$subObject2->FLOW3_Persistence_ValueObject_Hash = 'hash';
 
-		$className = uniqid('Class');
+		$className = 'Class' . md5(uniqid(mt_rand(), TRUE));
 		eval('class ' . $className . ' { public $foo; public $bar; }');
 		$object = new $className();
 		$object->foo = $subObject1;

@@ -35,7 +35,7 @@ class AbstractMethodInterceptorBuilderTest extends \F3\FLOW3\Tests\UnitTestCase 
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function buildMethodParametersCodeRendersParametersCodeWithCorrectTypeHintsAndDefaultValues() {
-		$className = uniqid('TestClass');
+		$className = 'TestClass' . md5(uniqid(mt_rand(), TRUE));
 		eval('
 			/**
 			 * @param string $arg1 Arg1
@@ -62,7 +62,7 @@ class AbstractMethodInterceptorBuilderTest extends \F3\FLOW3\Tests\UnitTestCase 
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function buildMethodParametersCodeOmitsTypeHintsAndDefaultValuesIfToldSo() {
-		$className = uniqid('TestClass');
+		$className = 'TestClass' . md5(uniqid(mt_rand(), TRUE));
 		eval('
 			class ' . $className . ' {
 				public function foo($arg1, array $arg2, \ArrayObject $arg3, $arg4= "foo", $arg5 = TRUE) {}
@@ -98,7 +98,7 @@ class AbstractMethodInterceptorBuilderTest extends \F3\FLOW3\Tests\UnitTestCase 
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function buildMethodArgumentsArrayCodeRendersCodeForPassingParametersToTheJoinPoint() {
-		$className = uniqid('TestClass');
+		$className = 'TestClass' . md5(uniqid(mt_rand(), TRUE));
 		eval('
 			class ' . $className . ' {
 				public function foo($arg1, array $arg2, \ArrayObject $arg3, $arg4= "foo", $arg5 = TRUE) {}
@@ -140,7 +140,7 @@ class AbstractMethodInterceptorBuilderTest extends \F3\FLOW3\Tests\UnitTestCase 
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function buildSavedConstructorParametersCodeReturnsTheCorrectParametersCode() {
-		$className = uniqid('TestClass');
+		$className = 'TestClass' . md5(uniqid(mt_rand(), TRUE));
 		eval('
 			class ' . $className . ' {
 				public function __construct($arg1, array $arg2, \ArrayObject $arg3, $arg4= "__construct", $arg5 = TRUE) {}

@@ -39,7 +39,7 @@ class AbstractBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setUp() {
-		$className = uniqid('ConcreteBackend_');
+		$className = 'ConcreteBackend_' . md5(uniqid(mt_rand(), TRUE));
 		eval('
 			class ' . $className. ' extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 				public function set($entryIdentifier, $data, array $tags = array(), $lifetime = NULL) {}

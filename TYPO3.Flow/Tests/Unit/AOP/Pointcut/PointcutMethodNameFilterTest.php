@@ -59,7 +59,7 @@ class PointcutMethodNameFilterTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function matchesIgnoresFinalMethodsEvenIfTheirNameMatches() {
-		$className = uniqid('TestClass');
+		$className = 'TestClass' . md5(uniqid(mt_rand(), TRUE));
 		eval("
 			class $className {
 				final public function someFinalMethod() {}
@@ -79,7 +79,7 @@ class PointcutMethodNameFilterTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function matchesTakesTheVisibilityModifierIntoAccountIfOneWasSpecified() {
-		$className = uniqid('TestClass');
+		$className = 'TestClass' . md5(uniqid(mt_rand(), TRUE));
 		eval("
 			class $className {
 				public function somePublicMethod() {}
@@ -110,7 +110,7 @@ class PointcutMethodNameFilterTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function matchesChecksTheAvailablityOfAnArgumentNameIfArgumentConstraintsHaveBeenConfigured() {
-		$className = uniqid('TestClass');
+		$className = 'TestClass' . md5(uniqid(mt_rand(), TRUE));
 		eval("
 			class $className {
 				public function somePublicMethod(\$arg1) {}

@@ -63,7 +63,7 @@ class PointcutClassNameFilterTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function matchesIgnoresFinalClasses() {
-		$className = uniqid('TestClass');
+		$className = 'TestClass' . md5(uniqid(mt_rand(), TRUE));
 		eval("
 			final class $className { }"
 		);
@@ -83,7 +83,7 @@ class PointcutClassNameFilterTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function matchesIgnoresClassesWithFinalConstructors() {
-		$className = uniqid('TestClass');
+		$className = 'TestClass' . md5(uniqid(mt_rand(), TRUE));
 		eval("
 			class $className {
 				final public function __construct() {}

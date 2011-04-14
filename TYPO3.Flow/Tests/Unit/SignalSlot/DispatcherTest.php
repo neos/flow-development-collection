@@ -104,7 +104,7 @@ class DispatcherTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function dispatchRetrievesSlotInstanceFromTheObjectManagerIfOnlyAClassNameWasSpecified() {
-		$slotClassName = uniqid('Mock_');
+		$slotClassName = 'Mock_' . md5(uniqid(mt_rand(), TRUE));
 		eval ('class ' . $slotClassName . ' { function slot($foo, $baz) { $this->arguments = array($foo, $baz); } }');
 		$mockSlot = new $slotClassName();
 
@@ -141,7 +141,7 @@ class DispatcherTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function dispatchThrowsAnExceptionIfTheSpecifiedSlotMethodDoesNotExist() {
-		$slotClassName = uniqid('Mock_');
+		$slotClassName = 'Mock_' . md5(uniqid(mt_rand(), TRUE));
 		eval ('class ' . $slotClassName . ' { function slot($foo, $baz) { $this->arguments = array($foo, $baz); } }');
 		$mockSlot = new $slotClassName();
 

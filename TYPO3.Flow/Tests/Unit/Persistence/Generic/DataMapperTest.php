@@ -80,7 +80,7 @@ class DataMapperTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function mapToObjectReconstitutesExpectedObjectAndRegistersItWithIdentitymapToObjects() {
-		$mockEntityClassName = uniqid('Entity');
+		$mockEntityClassName = 'Entity' . md5(uniqid(mt_rand(), TRUE));
 		$mockEntity = $this->getMock('F3\FLOW3\AOP\ProxyInterface', array('FLOW3_AOP_Proxy_construct', 'FLOW3_AOP_Proxy_invokeJoinPoint', 'FLOW3_AOP_Proxy_hasProperty', 'FLOW3_AOP_Proxy_getProperty', 'FLOW3_AOP_Proxy_setProperty', 'FLOW3_AOP_Proxy_getProxyTargetClassName'), array(), $mockEntityClassName);
 
 		$objectData = array('identifier' => '1234', 'classname' => $mockEntityClassName, 'properties' => array('foo'));
@@ -105,7 +105,7 @@ class DataMapperTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function thawPropertiesSetsPropertyValues() {
-		$className = uniqid('Class');
+		$className = 'Class' . md5(uniqid(mt_rand(), TRUE));
 		eval('class ' . $className . ' { public $firstProperty; public $secondProperty; public $thirdProperty; public $fourthProperty; }');
 		$object = new $className();
 
@@ -162,7 +162,7 @@ class DataMapperTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function thawPropertiesAssignsTheUuidToTheProxy() {
-		$className = uniqid('Class');
+		$className = 'Class' . md5(uniqid(mt_rand(), TRUE));
 		eval('class ' . $className . ' { public $FLOW3_Persistence_Entity_UUID; }');
 		$object = new $className();
 
@@ -192,7 +192,7 @@ class DataMapperTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function thawPropertiesAssignsTheUuidToTheDeclaredUuidPropertyInProxy() {
-		$className = uniqid('Class');
+		$className = 'Class' . md5(uniqid(mt_rand(), TRUE));
 		eval('class ' . $className . ' { public $myUuidProperty; }');
 		$object = new $className();
 
@@ -219,7 +219,7 @@ class DataMapperTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function thawPropertiesDelegatesHandlingOfArraysAndObjects() {
-		$className = uniqid('Class');
+		$className = 'Class' . md5(uniqid(mt_rand(), TRUE));
 		eval('class ' . $className . ' { public $firstProperty; public $secondProperty; public $thirdProperty; public $fourthProperty; }');
 		$object = new $className();
 
@@ -277,7 +277,7 @@ class DataMapperTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function thawPropertiesFollowsOrderOfGivenObjectData() {
 		$this->markTestSkipped('The test needs to check for the correct order again, somehow....');
 
-		$className = uniqid('Class');
+		$className = 'Class' . md5(uniqid(mt_rand(), TRUE));
 		eval('class ' . $className . ' { public $firstProperty; public $secondProperty; public $thirdProperty; }');
 		$object = new $className();
 
@@ -329,7 +329,7 @@ class DataMapperTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function thawPropertiesSkipsPropertiesNoLongerInClassSchema() {
-		$className = uniqid('Class');
+		$className = 'Class' . md5(uniqid(mt_rand(), TRUE));
 		eval('class ' . $className . ' { public $firstProperty; public $thirdProperty; }');
 		$object = new $className();
 
@@ -377,7 +377,7 @@ class DataMapperTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function thawPropertiesAssignsMetadataToTheProxyIfItExists() {
-		$className = uniqid('Class');
+		$className = 'Class' . md5(uniqid(mt_rand(), TRUE));
 		eval('class ' . $className . ' { public $FLOW3_Persistence_Metadata; }');
 		$object = new $className();
 

@@ -67,7 +67,7 @@ class MemcachedBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$backend->injectEnvironment($this->mockEnvironment);
 		$backend->initializeObject();
 		$data = 'Some data';
-		$identifier = uniqid('MyIdentifier');
+		$identifier = 'MyIdentifier' . md5(uniqid(mt_rand(), TRUE));
 		$backend->set($identifier, $data);
 	}
 
@@ -89,7 +89,7 @@ class MemcachedBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function setThrowsExceptionIfConfiguredServersAreUnreachable() {
 		$backend = $this->setUpBackend(array('servers' => array('julle.did.this:1234')));
 		$data = 'Somedata';
-		$identifier = uniqid('MyIdentifier');
+		$identifier = 'MyIdentifier' . md5(uniqid(mt_rand(), TRUE));
 		$backend->set($identifier, $data);
 	}
 
@@ -100,7 +100,7 @@ class MemcachedBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function itIsPossibleToSetAndCheckExistenceInCache() {
 		$backend = $this->setUpBackend();
 		$data = 'Some data';
-		$identifier = uniqid('MyIdentifier');
+		$identifier = 'MyIdentifier' . md5(uniqid(mt_rand(), TRUE));
 		$backend->set($identifier, $data);
 		$inCache = $backend->has($identifier);
 		$this->assertTrue($inCache, 'Memcache failed to set and check entry');
@@ -113,7 +113,7 @@ class MemcachedBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function itIsPossibleToSetAndGetEntry() {
 		$backend = $this->setUpBackend();
 		$data = 'Some data';
-		$identifier = uniqid('MyIdentifier');
+		$identifier = 'MyIdentifier' . md5(uniqid(mt_rand(), TRUE));
 		$backend->set($identifier, $data);
 		$fetchedData = $backend->get($identifier);
 		$this->assertEquals($data, $fetchedData, 'Memcache failed to set and retrieve data');
@@ -126,7 +126,7 @@ class MemcachedBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function itIsPossibleToRemoveEntryFromCache() {
 		$backend = $this->setUpBackend();
 		$data = 'Some data';
-		$identifier = uniqid('MyIdentifier');
+		$identifier = 'MyIdentifier' . md5(uniqid(mt_rand(), TRUE));
 		$backend->set($identifier, $data);
 		$backend->remove($identifier);
 		$inCache = $backend->has($identifier);
@@ -140,7 +140,7 @@ class MemcachedBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function itIsPossibleToOverwriteAnEntryInTheCache() {
 		$backend = $this->setUpBackend();
 		$data = 'Some data';
-		$identifier = uniqid('MyIdentifier');
+		$identifier = 'MyIdentifier' . md5(uniqid(mt_rand(), TRUE));
 		$backend->set($identifier, $data);
 		$otherData = 'some other data';
 		$backend->set($identifier, $otherData);
@@ -156,7 +156,7 @@ class MemcachedBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$backend = $this->setUpBackend();
 
 		$data = 'Some data';
-		$identifier = uniqid('MyIdentifier');
+		$identifier = 'MyIdentifier' . md5(uniqid(mt_rand(), TRUE));
 		$backend->set($identifier, $data, array('UnitTestTag%tag1', 'UnitTestTag%tag2'));
 
 		$retrieved = $backend->findIdentifiersByTag('UnitTestTag%tag1');
@@ -174,7 +174,7 @@ class MemcachedBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$backend = $this->setUpBackend();
 
 		$data = 'Some data';
-		$identifier = uniqid('MyIdentifier');
+		$identifier = 'MyIdentifier' . md5(uniqid(mt_rand(), TRUE));
 		$backend->set($identifier, $data, array('UnitTestTag%tag1', 'UnitTestTag%tagX'));
 		$backend->set($identifier, $data, array('UnitTestTag%tag3'));
 
@@ -188,7 +188,7 @@ class MemcachedBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function hasReturnsFalseIfTheEntryDoesntExist() {
 		$backend = $this->setUpBackend();
-		$identifier = uniqid('NonExistingIdentifier');
+		$identifier = 'NonExistingIdentifier' . md5(uniqid(mt_rand(), TRUE));
 		$inCache = $backend->has($identifier);
 		$this->assertFalse($inCache,'"has" did not return false when checking on non existing identifier');
 	}
@@ -199,7 +199,7 @@ class MemcachedBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function removeReturnsFalseIfTheEntryDoesntExist() {
 		$backend = $this->setUpBackend();
-		$identifier = uniqid('NonExistingIdentifier');
+		$identifier = 'NonExistingIdentifier' . md5(uniqid(mt_rand(), TRUE));
 		$inCache = $backend->remove($identifier);
 		$this->assertFalse($inCache,'"remove" did not return false when checking on non existing identifier');
 	}

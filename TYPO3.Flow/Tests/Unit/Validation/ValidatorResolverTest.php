@@ -83,7 +83,7 @@ class ValidatorResolverTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function createValidatorResolvesAndReturnsAValidatorAndPassesTheGivenOptions() {
-		$className = uniqid('Test');
+		$className = 'Test' . md5(uniqid(mt_rand(), TRUE));
 		eval("class $className implements \F3\FLOW3\Validation\Validator\ValidatorInterface {" . '
 				public $validatorOptions;
 				public function __construct($validatorOptions) {
@@ -297,20 +297,20 @@ class ValidatorResolverTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockReflectionService->expects($this->once())->method('getMethodParameters')->with(get_class($mockObject), 'fooAction')->will($this->returnValue($methodParameters));
 		$mockReflectionService->expects($this->once())->method('getMethodTagsValues')->with(get_class($mockObject), 'fooAction')->will($this->returnValue($methodTagsValues));
 
-		$mockPropertyValidator1 = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface', array(), array(), uniqid('v'), FALSE);
-		$mockPropertyValidator2 = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface', array(), array(), uniqid('v'), FALSE);
-		$mockFooValidator = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface', array(), array(), uniqid('v'), FALSE);
-		$mockBarValidator = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface', array(), array(), uniqid('v'), FALSE);
+		$mockPropertyValidator1 = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface', array(), array(), 'v' . md5(uniqid(mt_rand(), TRUE)), FALSE);
+		$mockPropertyValidator2 = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface', array(), array(), 'v' . md5(uniqid(mt_rand(), TRUE)), FALSE);
+		$mockFooValidator = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface', array(), array(), 'v' . md5(uniqid(mt_rand(), TRUE)), FALSE);
+		$mockBarValidator = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface', array(), array(), 'v' . md5(uniqid(mt_rand(), TRUE)), FALSE);
 
-		$mockObjectValidator1 = $this->getMock('F3\FLOW3\Validation\Validator\GenericObjectValidator', array(), array(), uniqid('v'), FALSE);
-		$mockObjectValidator2 = $this->getMock('F3\FLOW3\Validation\Validator\GenericObjectValidator', array(), array(), uniqid('v'), FALSE);
-		$mockObjectValidator2a = $this->getMock('F3\FLOW3\Validation\Validator\GenericObjectValidator', array(), array(), uniqid('v'), FALSE);
+		$mockObjectValidator1 = $this->getMock('F3\FLOW3\Validation\Validator\GenericObjectValidator', array(), array(), 'v' . md5(uniqid(mt_rand(), TRUE)), FALSE);
+		$mockObjectValidator2 = $this->getMock('F3\FLOW3\Validation\Validator\GenericObjectValidator', array(), array(), 'v' . md5(uniqid(mt_rand(), TRUE)), FALSE);
+		$mockObjectValidator2a = $this->getMock('F3\FLOW3\Validation\Validator\GenericObjectValidator', array(), array(), 'v' . md5(uniqid(mt_rand(), TRUE)), FALSE);
 
-		$conjunction1 = $this->getMock('F3\FLOW3\Validation\Validator\ConjunctionValidator', array(), array(), uniqid('v'), FALSE);
+		$conjunction1 = $this->getMock('F3\FLOW3\Validation\Validator\ConjunctionValidator', array(), array(), 'v' . md5(uniqid(mt_rand(), TRUE)), FALSE);
 		$conjunction1->expects($this->at(0))->method('addValidator')->with($mockFooValidator);
 		$conjunction1->expects($this->at(1))->method('addValidator')->with($mockObjectValidator1);
 
-		$conjunction2 = $this->getMock('F3\FLOW3\Validation\Validator\ConjunctionValidator', array(), array(), uniqid('v'), FALSE);
+		$conjunction2 = $this->getMock('F3\FLOW3\Validation\Validator\ConjunctionValidator', array(), array(), 'v' . md5(uniqid(mt_rand(), TRUE)), FALSE);
 		$conjunction2->expects($this->at(0))->method('addValidator')->with($mockBarValidator);
 		$conjunction2->expects($this->at(1))->method('addValidator')->with($mockObjectValidator2);
 
@@ -407,7 +407,7 @@ class ValidatorResolverTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function buildBaseValidatorConjunctionAddsCustomValidatorToTheReturnedConjunction() {
-		$modelClassName = uniqid('Page');
+		$modelClassName = 'Page' . md5(uniqid(mt_rand(), TRUE));
 		$validatorClassName = 'Domain\Validator\Content\\' . $modelClassName . 'Validator';
 		eval('namespace Domain\Model\Content; class ' . $modelClassName . '{}');
 		$mockValidator = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
@@ -436,11 +436,11 @@ class ValidatorResolverTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function buildBaseValidatorConjunctionAddsValidatorsOnlyForPropertiesHoldingPrototypes() {
-		$entityClassName = uniqid('Entity');
+		$entityClassName = 'Entity' . md5(uniqid(mt_rand(), TRUE));
 		eval('class ' . $entityClassName . '{}');
-		$otherClassName = uniqid('Other');
+		$otherClassName = 'Other' . md5(uniqid(mt_rand(), TRUE));
 		eval('class ' . $otherClassName . '{}');
-		$modelClassName = uniqid('Model');
+		$modelClassName = 'Model' . md5(uniqid(mt_rand(), TRUE));
 		eval('class ' . $modelClassName . '{}');
 
 		$mockConjunctionValidator = $this->getMock('F3\FLOW3\Validation\Validator\ConjunctionValidator', array(), array(), '', FALSE);

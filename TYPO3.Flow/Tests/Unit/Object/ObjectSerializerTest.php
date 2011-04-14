@@ -34,7 +34,7 @@ class ObjectSerializerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function serializeObjectAsPropertyArraySerializesTheCorrectPropertyArrayUnderTheCorrectObjectName() {
-		$className = uniqid('DummyClass');
+		$className = 'DummyClass' . md5(uniqid(mt_rand(), TRUE));
 		eval('class ' . $className . ' {
 			private $privateProperty = \'privateProperty\';
 			protected $protectedProperty = \'protectedProperty\';
@@ -76,7 +76,7 @@ class ObjectSerializerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function serializeObjectAsPropertyArraySerializesArrayPropertiesCorrectly() {
-		$className = uniqid('DummyClass');
+		$className = 'DummyClass' . md5(uniqid(mt_rand(), TRUE));
 		eval('class ' . $className . ' {
 			private $arrayProperty = array(1,2,3);
 		}');
@@ -110,7 +110,7 @@ class ObjectSerializerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function serializeObjectAsPropertyArraySerializesArrayObjectPropertiesCorrectly() {
-		$className = uniqid('DummyClass');
+		$className = 'DummyClass' . md5(uniqid(mt_rand(), TRUE));
 		eval('class ' . $className . ' {
 			private $arrayObjectProperty;
 
@@ -148,8 +148,8 @@ class ObjectSerializerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function serializeObjectAsPropertyArraySerializesObjectPropertiesCorrectly() {
-		$className1 = uniqid('DummyClass1');
-		$className2 = uniqid('DummyClass2');
+		$className1 = 'DummyClass1' . md5(uniqid(mt_rand(), TRUE));
+		$className2 = 'DummyClass2' . md5(uniqid(mt_rand(), TRUE));
 		eval('class ' . $className2 . '{}');
 
 		eval('class ' . $className1 . ' {
@@ -205,14 +205,14 @@ class ObjectSerializerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function serializeObjectAsPropertyArraySkipsObjectPropertiesThatAreScopeSingleton() {
-		$propertyClassName1 = uniqid('DummyClass');
-		$propertyClassName2 = uniqid('DummyClass');
-		$propertyClassName3 = uniqid('DummyClass');
+		$propertyClassName1 = 'DummyClass' . md5(uniqid(mt_rand(), TRUE));
+		$propertyClassName2 = 'DummyClass' . md5(uniqid(mt_rand(), TRUE));
+		$propertyClassName3 = 'DummyClass' . md5(uniqid(mt_rand(), TRUE));
 		eval('class ' . $propertyClassName1 . ' {}');
 		eval('class ' . $propertyClassName2 . ' {}');
 		eval('class ' . $propertyClassName3 . ' {}');
 
-		$className = uniqid('DummyClass');
+		$className = 'DummyClass' . md5(uniqid(mt_rand(), TRUE));
 		eval('class ' . $className . ' {
 			private $property1;
 			private $property2;
@@ -290,7 +290,7 @@ class ObjectSerializerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function serializeObjectAsPropertyArraySkipsPropertiesThatAreAnnotatedToBeTransient() {
-		$className = uniqid('DummyClass');
+		$className = 'DummyClass' . md5(uniqid(mt_rand(), TRUE));
 		eval('class ' . $className . ' {
 			private $privateProperty = \'privateProperty\';
 			protected $protectedProperty = \'protectedProperty\';
@@ -332,7 +332,7 @@ class ObjectSerializerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function serializeObjectSerializesObjectInstancesOnlyOnceToPreventRecursion() {
-		$className = uniqid('DummyClassForRecursion');
+		$className = 'DummyClassForRecursion' . md5(uniqid(mt_rand(), TRUE));
 		eval('class ' . $className . ' {
 			public $name;
 			public $parent;
@@ -407,12 +407,12 @@ class ObjectSerializerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function serializeObjectAsPropertyArraySerializesOnlyTheUuidOfEntityObjectsIfTheyAreNotMarkedAsNew() {
-		$sessionClassName = uniqid('dummyClass');
+		$sessionClassName = 'dummyClass' . md5(uniqid(mt_rand(), TRUE));
 		eval('class ' . $sessionClassName . ' {
 			public $entityProperty;
 		}');
 
-		$entityClassName = uniqid('entityClass');
+		$entityClassName = 'entityClass' . md5(uniqid(mt_rand(), TRUE));
 		eval('class ' . $entityClassName . ' implements \F3\FLOW3\Object\Proxy\ProxyInterface {
 			public function FLOW3_AOP_Proxy_construct() {}
 			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
@@ -459,12 +459,12 @@ class ObjectSerializerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function serializeObjectAsPropertyArraySerializessOnlyTheUuidOfPersistenceValueobjectsIfTheyAreNotMarkedAsNew() {
-		$sessionClassName = uniqid('dummyClass');
+		$sessionClassName = 'dummyClass' . md5(uniqid(mt_rand(), TRUE));
 		eval('class ' . $sessionClassName . ' {
 			public $entityProperty;
 		}');
 
-		$entityClassName = uniqid('entityClass');
+		$entityClassName = 'entityClass' . md5(uniqid(mt_rand(), TRUE));
 		eval('class ' . $entityClassName . ' implements \F3\FLOW3\Object\Proxy\ProxyInterface {
 			public function FLOW3_AOP_Proxy_construct() {}
 			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
@@ -534,14 +534,14 @@ class ObjectSerializerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function deserializeObjectsArrayCallsReconstituteObjectWithTheCorrectObjectData() {
-		$className = uniqid('dummyClass');
+		$className = 'dummyClass' . md5(uniqid(mt_rand(), TRUE));
 		eval('class ' . $className . ' {}');
 
-		$className1 = uniqid('class1');
+		$className1 = 'class1' . md5(uniqid(mt_rand(), TRUE));
 		$object1 = $this->getMock($className, array(), array(), $className1, FALSE);
-		$className2 = uniqid('class2');
+		$className2 = 'class2' . md5(uniqid(mt_rand(), TRUE));
 		$object2 = $this->getMock($className, array(), array(), $className2, FALSE);
-		$className3 = uniqid('class3');
+		$className3 = 'class3' . md5(uniqid(mt_rand(), TRUE));
 		$object3 = $this->getMock($className, array(), array(), $className3, FALSE);
 
 		$objectsAsArray = array(
@@ -633,7 +633,7 @@ class ObjectSerializerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function buildStorageArrayCreatesTheCorrectArrayForAnArrayPropertyWithContainingObject() {
-		$className = uniqid('DummyClass');
+		$className = 'DummyClass' . md5(uniqid(mt_rand(), TRUE));
 		eval('class ' . $className . ' {}');
 		$mockObject = $this->getMock($className);
 		$objectName = spl_object_hash($mockObject);
@@ -665,14 +665,14 @@ class ObjectSerializerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function serializeObjectAsPropertyArrayForSplObjectStoragePropertyBuildsTheCorrectArrayStructureAndStoresEveryObjectInsideSeparately() {
-		$propertyClassName1 = uniqid('DummyClass');
-		$propertyClassName2 = uniqid('DummyClass');
+		$propertyClassName1 = 'DummyClass' . md5(uniqid(mt_rand(), TRUE));
+		$propertyClassName2 = 'DummyClass' . md5(uniqid(mt_rand(), TRUE));
 		eval('class ' . $propertyClassName1 . ' {}');
 		eval('class ' . $propertyClassName2 . ' {}');
 		$propertyClass1 = new $propertyClassName1();
 		$propertyClass2 = new $propertyClassName2();
 
-		$className = uniqid('DummyClass');
+		$className = 'DummyClass' . md5(uniqid(mt_rand(), TRUE));
 		eval('class ' . $className . ' {
 			private $SplObjectProperty;
 
@@ -730,11 +730,11 @@ class ObjectSerializerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function reconstituteObjectCallsTheCorrectReconstitutePropertyTypeFunctionsAndSetsTheValuesInTheObject() {
-		$emptyClassName = uniqid('emptyClass');
+		$emptyClassName = 'emptyClass' . md5(uniqid(mt_rand(), TRUE));
 		eval('class ' . $emptyClassName . ' {}');
 		$emptyObject = new $emptyClassName();
 
-		$className = uniqid('someClass');
+		$className = 'someClass' . md5(uniqid(mt_rand(), TRUE));
 		eval('class ' . $className . ' {
 			private $simpleProperty;
 			private $arrayProperty;
@@ -968,8 +968,8 @@ class ObjectSerializerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function reconstituteSplObjectStorageWorks() {
-		$mockObject1 = $this->getMock(uniqid('dummyClass1'), array(), array(), '', FALSE);
-		$mockObject2 = $this->getMock(uniqid('dummyClass2'), array(), array(), '', FALSE);
+		$mockObject1 = $this->getMock('dummyClass1' . md5(uniqid(mt_rand(), TRUE)), array(), array(), '', FALSE);
+		$mockObject2 = $this->getMock('dummyClass2' . md5(uniqid(mt_rand(), TRUE)), array(), array(), '', FALSE);
 
 		$objectsAsArray = array(
 			'some object' => array('object1 data'),

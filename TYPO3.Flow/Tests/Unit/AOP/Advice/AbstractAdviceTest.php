@@ -36,7 +36,7 @@ class AbstractAdviceTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function invokeInvokesTheAdviceIfTheRuntimeEvaluatorReturnsTrue() {
 		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
 
-		$mockAspect = $this->getMock(uniqid('MockClass'), array('someMethod'));
+		$mockAspect = $this->getMock('MockClass' . md5(uniqid(mt_rand(), TRUE)), array('someMethod'));
 		$mockAspect->expects($this->once())->method('someMethod')->with($mockJoinPoint);
 
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
@@ -53,7 +53,7 @@ class AbstractAdviceTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function invokeDoesNotInvokeTheAdviceIfTheRuntimeEvaluatorReturnsFalse() {
 		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
 
-		$mockAspect = $this->getMock(uniqid('MockClass'), array('someMethod'));
+		$mockAspect = $this->getMock('MockClass' . md5(uniqid(mt_rand(), TRUE)), array('someMethod'));
 		$mockAspect->expects($this->never())->method('someMethod');
 
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);

@@ -35,10 +35,10 @@ class PolicyTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function voteForJoinPointAbstainsIfNoPrivilegeWasConfigured() {
-		$mockRoleAdministrator = $this->getMock('F3\FLOW3\Security\Policy\Role', array(), array(), uniqid('role1'), FALSE);
+		$mockRoleAdministrator = $this->getMock('F3\FLOW3\Security\Policy\Role', array(), array(), 'role1' . md5(uniqid(mt_rand(), TRUE)), FALSE);
 		$mockRoleAdministrator->expects($this->any())->method('__toString')->will($this->returnValue('ADMINISTRATOR'));
 
-		$mockRoleCustomer = $this->getMock('F3\FLOW3\Security\Policy\Role', array(), array(), uniqid('role2'), FALSE);
+		$mockRoleCustomer = $this->getMock('F3\FLOW3\Security\Policy\Role', array(), array(), 'role2' . md5(uniqid(mt_rand(), TRUE)), FALSE);
 		$mockRoleCustomer->expects($this->any())->method('__toString')->will($this->returnValue('CUSTOMER'));
 
 		$mockSecurityContext = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
@@ -90,8 +90,8 @@ class PolicyTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function voteForJoinPointDeniesAccessIfADenyPrivilegeWasConfiguredForOneOfTheRoles() {
-		$role1ClassName = uniqid('role1');
-		$role2ClassName = uniqid('role2');
+		$role1ClassName = 'role1' . md5(uniqid(mt_rand(), TRUE));
+		$role2ClassName = 'role2' . md5(uniqid(mt_rand(), TRUE));
 
 		$mockRoleAdministrator = $this->getMock('F3\FLOW3\Security\Policy\Role', array(), array(), $role1ClassName, FALSE);
 		$mockRoleAdministrator->expects($this->any())->method('__toString')->will($this->returnValue('Administrator'));
@@ -125,8 +125,8 @@ class PolicyTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function voteForJoinPointGrantsAccessIfAGrantPrivilegeAndNoDenyPrivilegeWasConfigured() {
-		$role1ClassName = uniqid('role1');
-		$role2ClassName = uniqid('role2');
+		$role1ClassName = 'role1' . md5(uniqid(mt_rand(), TRUE));
+		$role2ClassName = 'role2' . md5(uniqid(mt_rand(), TRUE));
 
 		$mockRoleAdministrator = $this->getMock('F3\FLOW3\Security\Policy\Role', array(), array(), $role1ClassName, FALSE);
 		$mockRoleAdministrator->expects($this->any())->method('__toString')->will($this->returnValue('Administrator'));
@@ -190,8 +190,8 @@ class PolicyTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function voteForResourceDeniesAccessIfADenyPrivilegeWasConfiguredForOneOfTheRoles() {
-		$role1ClassName = uniqid('role1');
-		$role2ClassName = uniqid('role2');
+		$role1ClassName = 'role1' . md5(uniqid(mt_rand(), TRUE));
+		$role2ClassName = 'role2' . md5(uniqid(mt_rand(), TRUE));
 
 		$mockRoleAdministrator = $this->getMock('F3\FLOW3\Security\Policy\Role', array(), array(), $role1ClassName, FALSE);
 		$mockRoleAdministrator->expects($this->any())->method('__toString')->will($this->returnValue('ADMINISTRATOR'));
@@ -224,8 +224,8 @@ class PolicyTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function voteForResourceGrantsAccessIfAGrantPrivilegeAndNoDenyPrivilegeWasConfigured() {
-		$role1ClassName = uniqid('role1');
-		$role2ClassName = uniqid('role2');
+		$role1ClassName = 'role1' . md5(uniqid(mt_rand(), TRUE));
+		$role2ClassName = 'role2' . md5(uniqid(mt_rand(), TRUE));
 
 		$mockRoleAdministrator = $this->getMock('F3\FLOW3\Security\Policy\Role', array(), array(), $role1ClassName, FALSE);
 		$mockRoleAdministrator->expects($this->any())->method('__toString')->will($this->returnValue('Administrator'));

@@ -441,10 +441,10 @@ class ContextTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function hasRoleWorks() {
-		$token1 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), uniqid('token1'));
+		$token1 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), 'token1' . md5(uniqid(mt_rand(), TRUE)));
 		$token1->expects($this->any())->method('getRoles')->will($this->returnValue(array('Administrator', 'LicenseToKill')));
 		$token1->expects($this->any())->method('isAuthenticated')->will($this->returnValue(TRUE));
-		$token2 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), uniqid('token2'));
+		$token2 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), 'token2' . md5(uniqid(mt_rand(), TRUE)));
 		$token2->expects($this->any())->method('getRoles')->will($this->returnValue(array('Customer')));
 		$token2->expects($this->any())->method('isAuthenticated')->will($this->returnValue(FALSE));
 
@@ -461,9 +461,9 @@ class ContextTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function hasRoleReturnsTrueForTheEverybodyRoleIfNoOtherRoleIsAuthenticated() {
-		$token1 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), uniqid('token1'));
+		$token1 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), 'token1' . md5(uniqid(mt_rand(), TRUE)));
 		$token1->expects($this->any())->method('isAuthenticated')->will($this->returnValue(FALSE));
-		$token2 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), uniqid('token2'));
+		$token2 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), 'token2' . md5(uniqid(mt_rand(), TRUE)));
 		$token2->expects($this->any())->method('isAuthenticated')->will($this->returnValue(FALSE));
 
 		$securityContext = $this->getMock('F3\FLOW3\Security\Context', array('getAuthenticationTokens'), array(), '', FALSE);
@@ -478,10 +478,10 @@ class ContextTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function hasRoleReturnsFalseForTheEverybodyRoleIfAtLeastOneOtherRoleIsAuthenticated() {
-		$token1 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), uniqid('token1'));
+		$token1 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), 'token1' . md5(uniqid(mt_rand(), TRUE)));
 		$token1->expects($this->any())->method('getRoles')->will($this->returnValue(array('Administrator', 'LicenseToKill')));
 		$token1->expects($this->any())->method('isAuthenticated')->will($this->returnValue(TRUE));
-		$token2 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), uniqid('token2'));
+		$token2 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), 'token2' . md5(uniqid(mt_rand(), TRUE)));
 		$token2->expects($this->any())->method('getRoles')->will($this->returnValue(array('Customer')));
 		$token2->expects($this->any())->method('isAuthenticated')->will($this->returnValue(FALSE));
 
@@ -505,15 +505,15 @@ class ContextTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockAccount = $this->getMock('F3\FLOW3\Security\Account');
 		$mockAccount->expects($this->once())->method('getParty')->will($this->returnValue($mockParty));
 
-		$token1 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), uniqid('token1'));
+		$token1 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), 'token1' . md5(uniqid(mt_rand(), TRUE)));
 		$token1->expects($this->any())->method('isAuthenticated')->will($this->returnValue(FALSE));
 		$token1->expects($this->never())->method('getAccount');
 
-		$token2 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), uniqid('token2'));
+		$token2 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), 'token2' . md5(uniqid(mt_rand(), TRUE)));
 		$token2->expects($this->any())->method('isAuthenticated')->will($this->returnValue(TRUE));
 		$token2->expects($this->once())->method('getAccount')->will($this->returnValue($mockAccount));
 
-		$token3 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), uniqid('token3'));
+		$token3 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), 'token3' . md5(uniqid(mt_rand(), TRUE)));
 		$token3->expects($this->any())->method('isAuthenticated')->will($this->returnValue(TRUE));
 		$token3->expects($this->never())->method('getAccount');
 
@@ -531,15 +531,15 @@ class ContextTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function getAccountReturnsTheAccountAttachedToTheFirstAuthenticatedToken() {
 		$mockAccount = $this->getMock('F3\FLOW3\Security\Account');
 
-		$token1 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), uniqid('token1'));
+		$token1 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), 'token1' . md5(uniqid(mt_rand(), TRUE)));
 		$token1->expects($this->any())->method('isAuthenticated')->will($this->returnValue(FALSE));
 		$token1->expects($this->never())->method('getAccount');
 
-		$token2 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), uniqid('token2'));
+		$token2 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), 'token2' . md5(uniqid(mt_rand(), TRUE)));
 		$token2->expects($this->any())->method('isAuthenticated')->will($this->returnValue(TRUE));
 		$token2->expects($this->once())->method('getAccount')->will($this->returnValue($mockAccount));
 
-		$token3 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), uniqid('token3'));
+		$token3 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), 'token3' . md5(uniqid(mt_rand(), TRUE)));
 		$token3->expects($this->any())->method('isAuthenticated')->will($this->returnValue(TRUE));
 		$token3->expects($this->never())->method('getAccount');
 
@@ -565,15 +565,15 @@ class ContextTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockAccount2 = $this->getMock('F3\FLOW3\Security\Account');
 		$mockAccount2->expects($this->any())->method('getParty')->will($this->returnValue($matchingMockParty));
 
-		$token1 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), uniqid('token1'));
+		$token1 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), 'token1' . md5(uniqid(mt_rand(), TRUE)));
 		$token1->expects($this->any())->method('isAuthenticated')->will($this->returnValue(FALSE));
 		$token1->expects($this->never())->method('getAccount');
 
-		$token2 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), uniqid('token2'));
+		$token2 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), 'token2' . md5(uniqid(mt_rand(), TRUE)));
 		$token2->expects($this->any())->method('isAuthenticated')->will($this->returnValue(TRUE));
 		$token2->expects($this->any())->method('getAccount')->will($this->returnValue($mockAccount1));
 
-		$token3 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), uniqid('token3'));
+		$token3 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), 'token3' . md5(uniqid(mt_rand(), TRUE)));
 		$token3->expects($this->any())->method('isAuthenticated')->will($this->returnValue(TRUE));
 		$token3->expects($this->any())->method('getAccount')->will($this->returnValue($mockAccount2));
 
@@ -591,15 +591,15 @@ class ContextTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockAccount1 = $this->getMock('F3\FLOW3\Security\Account');
 		$mockAccount2 = $this->getMock('F3\FLOW3\Security\Account');
 
-		$token1 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), uniqid('token1'));
+		$token1 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), 'token1' . md5(uniqid(mt_rand(), TRUE)));
 		$token1->expects($this->any())->method('isAuthenticated')->will($this->returnValue(FALSE));
 		$token1->expects($this->never())->method('getAccount');
 
-		$token2 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), uniqid('token2'));
+		$token2 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), 'token2' . md5(uniqid(mt_rand(), TRUE)));
 		$token2->expects($this->any())->method('isAuthenticated')->will($this->returnValue(TRUE));
 		$token2->expects($this->any())->method('getAccount')->will($this->returnValue($mockAccount1));
 
-		$token3 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), uniqid('token3'));
+		$token3 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), 'token3' . md5(uniqid(mt_rand(), TRUE)));
 		$token3->expects($this->any())->method('isAuthenticated')->will($this->returnValue(TRUE));
 		$token3->expects($this->any())->method('getAccount')->will($this->returnValue($mockAccount2));
 

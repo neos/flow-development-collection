@@ -34,7 +34,7 @@ class ConfigurationBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function allBasicOptionsAreSetCorrectly() {
-		$factoryObjectName = uniqid('ConfigurationBuilderTest');
+		$factoryObjectName = 'ConfigurationBuilderTest' . md5(uniqid(mt_rand(), TRUE));
 		eval('class ' . $factoryObjectName . ' { public function manufacture() {} } ');
 
 		$configurationArray = array();
