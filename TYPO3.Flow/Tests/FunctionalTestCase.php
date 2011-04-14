@@ -223,17 +223,18 @@ abstract class FunctionalTestCase extends \F3\FLOW3\Tests\BaseTestCase {
 	}
 
 	/**
-	 * Authenticate the given role names for the current test
+	 * Creates a new account, assigns it the given roles and authenticates it.
+	 * The created account is returned for further modification, for example for attaching a Party object to it.
 	 *
-	 * @param array $roleNames
-	 * @return void
+	 * @param array $roleNames A list of roles the new account should have
+	 * @return \F3\FLOW3\Security\Account The created account
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	protected function authenticateRoles($roleNames) {
-		$account = $this->objectManager->create('F3\FLOW3\Security\Account');
+	protected function authenticateRoles(array $roleNames) {
+		$account = new \F3\FLOW3\Security\Account();
 		$roles = array();
 		foreach ($roleNames as $roleName) {
-			$roles[] = $this->objectManager->create('F3\FLOW3\Security\Policy\Role', $roleName);
+			$roles[] = new \F3\FLOW3\Security\Policy\Role($roleName);
 		}
 		$account->setRoles($roles);
 
@@ -242,6 +243,7 @@ abstract class FunctionalTestCase extends \F3\FLOW3\Tests\BaseTestCase {
 
 		$request = $this->getMock('F3\FLOW3\MVC\Web\Request');
 		$this->securityContext->initialize($request);
+		return $account;
 	}
 
 	/**
