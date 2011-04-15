@@ -165,7 +165,7 @@ class CoreCommandController extends \F3\FLOW3\MVC\Controller\CommandController {
 
 		$classCount = $this->proxyClassCompiler->compile();
 
-		$objectConfigurationCache->set('allCompiledCodeUpToDate', TRUE, array($objectConfigurationCache->getClassTag()));
+		$objectConfigurationCache->set('allCompiledCodeUpToDate', TRUE, array(\F3\FLOW3\Cache\CacheManager::getClassTag()));
 
 		$this->emitFinishedCompileCommand($classCount);
 	}
