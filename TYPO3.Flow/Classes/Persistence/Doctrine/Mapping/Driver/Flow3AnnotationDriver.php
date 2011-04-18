@@ -223,7 +223,7 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver {
 				continue;
 			}
 
-			$data = $classSchema->getProperty($property->getName());
+			$propertyMetaData = $classSchema->getProperty($property->getName());
 
 			$mapping = array();
 			$mapping['fieldName'] = $property->getName();
@@ -260,7 +260,7 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver {
 				if ($oneToOneAnnotation->targetEntity) {
 					$mapping['targetEntity'] = $oneToOneAnnotation->targetEntity;
 				} else {
-					$mapping['targetEntity'] = $data['type'];
+					$mapping['targetEntity'] = $propertyMetaData['type'];
 				}
 				$mapping['joinColumns'] = $joinColumns;
 				$mapping['mappedBy'] = $oneToOneAnnotation->mappedBy;
@@ -274,7 +274,7 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver {
 				if ($oneToManyAnnotation->targetEntity) {
 					$mapping['targetEntity'] = $oneToManyAnnotation->targetEntity;
 				} else {
-					$mapping['targetEntity'] = $data['elementType'];
+					$mapping['targetEntity'] = $propertyMetaData['elementType'];
 				}
 				$mapping['cascade'] = $oneToManyAnnotation->cascade;
 				$mapping['orphanRemoval'] = $oneToManyAnnotation->orphanRemoval;
@@ -292,7 +292,7 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver {
 				if ($manyToOneAnnotation->targetEntity) {
 					$mapping['targetEntity'] = $manyToOneAnnotation->targetEntity;
 				} else {
-					$mapping['targetEntity'] = $data['type'];
+					$mapping['targetEntity'] = $propertyMetaData['type'];
 				}
 				$mapping['fetch'] = constant('Doctrine\ORM\Mapping\ClassMetadata::FETCH_' . $manyToOneAnnotation->fetch);
 				$metadata->mapManyToOne($mapping);
@@ -334,7 +334,7 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver {
 				if ($manyToManyAnnotation->targetEntity) {
 					$mapping['targetEntity'] = $manyToManyAnnotation->targetEntity;
 				} else {
-					$mapping['targetEntity'] = $data['elementType'];
+					$mapping['targetEntity'] = $propertyMetaData['elementType'];
 				}
 				$mapping['mappedBy'] = $manyToManyAnnotation->mappedBy;
 				$mapping['inversedBy'] = $manyToManyAnnotation->inversedBy;
@@ -370,7 +370,7 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver {
 				}
 
 				if (!isset($mapping['type'])) {
-					switch ($data['type']) {
+					switch ($propertyMetaData['type']) {
 						case 'DateTime':
 							$mapping['type'] = 'datetime';
 							break;
@@ -379,11 +379,11 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver {
 						case 'boolean':
 						case 'float':
 						case 'array':
-							$mapping['type'] = $data['type'];
+							$mapping['type'] = $propertyMetaData['type'];
 							break;
 						default:
-							if (strpos($data['type'], '\\') !== FALSE) {
-								if ($this->reflectionService->isClassTaggedWith($data['type'], 'valueobject')) {
+							if (strpos($propertyMetaData['type'], '\\') !== FALSE) {
+								if ($this->reflectionService->isClassTaggedWith($propertyMetaData['type'], 'valueobject')) {
 									$mapping['type'] = 'object';
 								}
 							} else {
