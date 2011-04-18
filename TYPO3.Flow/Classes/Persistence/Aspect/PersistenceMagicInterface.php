@@ -23,18 +23,10 @@ namespace F3\FLOW3\Persistence\Aspect;
  *                                                                        */
 
 /**
- * An interface used to introduce certain methods to support object persistence
+ * A marker interface used to support object persistence
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-interface PersistenceMagicInterface {
+interface PersistenceMagicInterface {}
 
-	/**
-	 * Introduces a clone method
-	 *
-	 * @return void
-	 */
-	public function __clone();
-
-}
 ?>

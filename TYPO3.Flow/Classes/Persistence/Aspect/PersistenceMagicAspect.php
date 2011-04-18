@@ -27,7 +27,7 @@ namespace F3\FLOW3\Persistence\Aspect;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @aspect
- * @introduce F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface, F3\FLOW3\Persistence\Aspect\PersistenceMagicAspect->needsPersistenceMagicAspect
+ * @introduce F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface, F3\FLOW3\Persistence\Aspect\PersistenceMagicAspect->isEntityOrValueObject
  */
 class PersistenceMagicAspect {
 
@@ -52,14 +52,8 @@ class PersistenceMagicAspect {
 	public function isEntityOrValueObject() {}
 
 	/**
-	 * @pointcut F3\FLOW3\Persistence\Aspect\PersistenceMagicAspect->isEntityOrValueObject && !within(F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface)
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function needsPersistenceMagicAspect() {}
-
-	/**
-	 * @introduce F3\FLOW3\Persistence\Aspect\PersistenceMagicAspect->needsPersistenceMagicAspect
 	 * @var string
+	 * @introduce F3\FLOW3\Persistence\Aspect\PersistenceMagicAspect->isEntityOrValueObject
 	 */
 	protected $FLOW3_Persistence_Identifier;
 
@@ -89,7 +83,7 @@ class PersistenceMagicAspect {
 	 *
 	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
 	 * @return void
-	 * @afterreturning classTaggedWith(entity) && method(.*->__construct())
+	 * @before classTaggedWith(entity) && method(.*->__construct())
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function generateUUID(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
@@ -102,7 +96,7 @@ class PersistenceMagicAspect {
 	 *
 	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
 	 * @return void
-	 * @afterreturning classTaggedWith(valueobject) && method(.*->__construct())
+	 * @before classTaggedWith(valueobject) && method(.*->__construct())
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function generateValueHash(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
