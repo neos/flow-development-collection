@@ -81,7 +81,7 @@ class DataMapperTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function mapToObjectReconstitutesExpectedObjectAndRegistersItWithIdentitymapToObjects() {
 		$mockEntityClassName = 'Entity' . md5(uniqid(mt_rand(), TRUE));
-		$mockEntity = $this->getMock('F3\FLOW3\AOP\ProxyInterface', array('FLOW3_AOP_Proxy_construct', 'FLOW3_AOP_Proxy_invokeJoinPoint'), array(), $mockEntityClassName);
+		$mockEntity = $this->getMock('F3\FLOW3\AOP\ProxyInterface', array('FLOW3_AOP_Proxy_invokeJoinPoint'), array(), $mockEntityClassName);
 
 		$objectData = array('identifier' => '1234', 'classname' => $mockEntityClassName, 'properties' => array('foo'));
 
