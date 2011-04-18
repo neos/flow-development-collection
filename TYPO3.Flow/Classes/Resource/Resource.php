@@ -32,16 +32,6 @@ namespace F3\FLOW3\Resource;
 class Resource {
 
 	/**
-	 * This ID does not "exist" in the domain model, it's only for the ORM.
-	 *
-	 * @var integer
-	 *
-	 * @Id
-	 * @GeneratedValue
-	 */
-	protected $id;
-
-	/**
 	 * @var F3\FLOW3\Resource\ResourcePointer
 	 * @ManyToOne(cascade={"all"})
 	 * @JoinColumn(referencedColumnName="hash")

@@ -32,15 +32,6 @@ namespace F3\FLOW3\Tests\Functional\Property\Fixtures;
 class TestEntity {
 
 	/**
-	 * This ID is only for the ORM.
-	 *
-	 * @var integer
-	 * @Id
-	 * @GeneratedValue
-	 */
-	protected $artificialId;
-
-	/**
 	 * @var string
 	 */
 	protected $name;

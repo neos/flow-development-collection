@@ -33,15 +33,6 @@ namespace F3\FLOW3\Tests\Functional\Object\Fixtures;
 class PrototypeClassA implements PrototypeClassAishInterface {
 
 	/**
-	 * This ID is only for the ORM.
-	 *
-	 * @var integer
-	 * @Id
-	 * @GeneratedValue
-	 */
-	protected $artificialId;
-
-	/**
 	 * @var \F3\FLOW3\Tests\Functional\Object\Fixtures\SingletonClassA
 	 */
 	protected $singletonA;

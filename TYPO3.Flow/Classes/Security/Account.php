@@ -34,15 +34,6 @@ use \Doctrine\Common\Collections\ArrayCollection;
 class Account {
 
 	/**
-	 * This ID is only for the ORM.
-	 *
-	 * @var integer
-	 * @Id
-	 * @GeneratedValue
-	 */
-	protected $artificialId;
-
-	/**
 	 * @var string
 	 * @identity
 	 * @validate NotEmpty, StringLength(minimum = 1, maximum = 255)
@@ -64,7 +55,6 @@ class Account {
 	/**
 	 * @var \F3\Party\Domain\Model\AbstractParty
 	 * @ManyToOne(inversedBy="accounts", cascade={"all"})
-	 * @JoinColumn(referencedColumnName="artificialId")
 	 */
 	protected $party;
 

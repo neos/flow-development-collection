@@ -32,16 +32,6 @@ namespace F3\FLOW3\Security\Authorization\Resource;
 class SecurityPublishingConfiguration implements \F3\FLOW3\Resource\Publishing\PublishingConfigurationInterface {
 
 	/**
-	 * This ID does not "exist" in the domain model, it's only for the ORM.
-	 *
-	 * @var integer
-	 *
-	 * @Id
-	 * @GeneratedValue
-	 */
-	protected $id;
-
-	/**
 	 * @var array
 	 */
 	protected $allowedRoles = array();
