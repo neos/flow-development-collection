@@ -598,6 +598,43 @@ class RouteTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
+	 * @dataProvider matchesThrowsExceptionIfRoutePartValueContainsObjectsDataProvider()
+	 * @param boolean $shouldThrowException
+	 * @param mixed $routePartValue
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function matchesThrowsExceptionIfRoutePartValueContainsObjects($shouldThrowException, $routePartValue) {
+		if ($shouldThrowException === TRUE) {
+			$this->setExpectedException('F3\FLOW3\MVC\Exception\InvalidRoutePartValueException');
+		}
+		$mockRoutePart = $this->getMock('F3\FLOW3\MVC\Web\Routing\RoutePartInterface');
+		$mockRoutePart->expects($this->once())->method('match')->with('foo')->will($this->returnValue(TRUE));
+		$mockRoutePart->expects($this->once())->method('getValue')->will($this->returnValue($routePartValue));
+
+		$this->route->setUriPattern('foo');
+		$this->route->_set('routeParts', array($mockRoutePart));
+		$this->route->_set('isParsed', TRUE);
+		$this->route->matches('foo');
+	}
+
+	/**
+	 * Data provider
+	 */
+	public function matchesThrowsExceptionIfRoutePartValueContainsObjectsDataProvider() {
+		$object = new \stdClass();
+		return array(
+			array(TRUE, array('foo' => $object)),
+			array(TRUE, array('foo' => 'bar', 'baz' => $object)),
+			array(TRUE, array('foo' => array('bar' => array('baz' => 'quux', 'here' => $object)))),
+			array(FALSE, array('no object')),
+			array(FALSE, array('foo' => 'no object')),
+			array(FALSE, array(TRUE))
+		);
+	}
+
+
+	/**
+	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function routeDoesNotMatchIfRoutePartDoesNotMatchAndIsOptionalButHasNoDefault() {
@@ -676,6 +713,21 @@ class RouteTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$this->routeValues = array('key1' => 'value1');
 
 		$this->assertTrue($this->route->resolves($this->routeValues));
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function resolvesAppendsDefaultValuesOfOptionalUriPartsToMatchingUri() {
+		$this->route->setUriPattern('foo(/{bar}/{baz})');
+		$this->route->setDefaults(array('bar' => 'barDefaultValue', 'baz' => 'bazDefaultValue'));
+		$this->routeValues = array('baz' => 'bazValue');
+
+		$this->route->resolves($this->routeValues);
+		$expectedResult = 'foo/barDefaultValue/bazValue';
+		$actualResult = $this->route->getMatchingUri();
+		$this->assertSame($expectedResult, $actualResult);
 	}
 
 	/**
@@ -845,5 +897,40 @@ class RouteTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		$this->assertTrue($this->route->resolves($this->routeValues));
 	}
+
+	/**
+	 * @test
+	 * @expectedException \F3\FLOW3\MVC\Exception\InvalidRoutePartValueException
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function resolvesThrowsExceptionIfRoutePartValueIsNoString() {
+		$mockRoutePart = $this->getMock('F3\FLOW3\MVC\Web\Routing\RoutePartInterface');
+		$mockRoutePart->expects($this->any())->method('resolve')->will($this->returnValue(TRUE));
+		$mockRoutePart->expects($this->any())->method('hasValue')->will($this->returnValue(TRUE));
+		$mockRoutePart->expects($this->once())->method('getValue')->will($this->returnValue(array('not a' => 'string')));
+
+		$this->route->setUriPattern('foo');
+		$this->route->_set('isParsed', TRUE);
+		$this->route->_set('routeParts', array($mockRoutePart));
+		$this->route->resolves(array());
+	}
+
+	/**
+	 * @test
+	 * @expectedException \F3\FLOW3\MVC\Exception\InvalidRoutePartValueException
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function resolvesThrowsExceptionIfRoutePartDefaultValueIsNoString() {
+		$mockRoutePart = $this->getMock('F3\FLOW3\MVC\Web\Routing\RoutePartInterface');
+		$mockRoutePart->expects($this->any())->method('resolve')->will($this->returnValue(TRUE));
+		$mockRoutePart->expects($this->any())->method('hasValue')->will($this->returnValue(FALSE));
+		$mockRoutePart->expects($this->once())->method('getDefaultValue')->will($this->returnValue(array('not a' => 'string')));
+
+		$this->route->setUriPattern('foo');
+		$this->route->_set('isParsed', TRUE);
+		$this->route->_set('routeParts', array($mockRoutePart));
+		$this->route->resolves(array());
+	}
+
 }
 ?>

@@ -325,8 +325,12 @@ class Route {
 					return FALSE;
 				}
 			}
-			if ($routePart->getValue() !== NULL) {
-				$matchResults[$routePart->getName()] = $routePart->getValue();
+			$routePartValue = $routePart->getValue();
+			if ($routePartValue !== NULL) {
+				if ($this->containsObject($routePartValue)) {
+					throw new \F3\FLOW3\MVC\Exception\InvalidRoutePartValueException('RoutePart::getValue() must only return simple types after calling RoutePart::match(). RoutePart "' . get_class($routePart) . '" returned one or more objects in Route "' . $this->getName() . '".');
+				}
+				$matchResults[$routePart->getName()] = $routePartValue;
 			}
 		}
 		if (strlen($routePath) > 0) {
@@ -366,16 +370,27 @@ class Route {
 					return FALSE;
 				}
 			}
+			$routePartValue = NULL;
+			if ($routePart->hasValue()) {
+				$routePartValue = $routePart->getValue();
+				if (!is_string($routePartValue)) {
+					throw new \F3\FLOW3\MVC\Exception\InvalidRoutePartValueException('RoutePart::getValue() must return a string after calling RoutePart::resolve(), got ' . (is_object($routePartValue) ? get_class($routePartValue) : gettype($routePartValue)) . ' for RoutePart "' . get_class($routePart) . '" in Route "' . $this->getName() . '".');
+				}
+			}
+			$routePartDefaultValue = $routePart->getDefaultValue();
+			if ($routePartDefaultValue !== NULL && !is_string($routePartDefaultValue)) {
+				throw new \F3\FLOW3\MVC\Exception\InvalidRoutePartValueException('RoutePart::getDefaultValue() must return a string, got ' . (is_object($routePartDefaultValue) ? get_class($routePartDefaultValue) : gettype($routePartDefaultValue)) . ' for RoutePart "' . get_class($routePart) . '" in Route "' . $this->getName() . '".');
+			}
 			if (!$routePart->isOptional()) {
-				$matchingUri .= $routePart->hasValue() ? $routePart->getValue() : $routePart->getDefaultValue();
+				$matchingUri .= $routePart->hasValue() ? $routePartValue : $routePartDefaultValue;
 				$requireOptionalRouteParts = FALSE;
 				continue;
 			}
-			if ($routePart->hasValue() && $routePart->getValue() !== $routePart->getDefaultValue()) {
-				$matchingOptionalUriPortion .= $routePart->getValue();
+			if ($routePart->hasValue() && $routePartValue !== $routePartDefaultValue) {
+				$matchingOptionalUriPortion .= $routePartValue;
 				$requireOptionalRouteParts = TRUE;
 			} else {
-				$matchingOptionalUriPortion .= $routePart->getDefaultValue();
+				$matchingOptionalUriPortion .= $routePartDefaultValue;
 			}
 			if ($requireOptionalRouteParts) {
 				$matchingUri .= $matchingOptionalUriPortion;
@@ -435,6 +450,28 @@ class Route {
 			}
 		}
 		return $routeValues;
+	}
+
+	/**
+	 * Checks if the given subject contains an object
+	 *
+	 * @param mixed $subject
+	 * @return boolean If it contains an object or not
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function containsObject($subject) {
+		if (is_object($subject)) {
+			return TRUE;
+		}
+		if (!is_array($subject)) {
+			return FALSE;
+		}
+		foreach ($subject as $key => $value) {
+			if ($this->containsObject($value)) {
+				return TRUE;
+			}
+		}
+		return FALSE;
 	}
 
 	/**
