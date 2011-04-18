@@ -35,29 +35,6 @@ class PointcutMethodNameFilterTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function matchesTellsIfTheSpecifiedRegularExpressionMatchesTheGivenMethodName() {
-		$className = 'F3\FLOW3\Tests\AOP\Fixture\MethodsTaggedWithSomething';
-
-		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'saveToCache'), array(), '', FALSE, TRUE);
-
-		$methodNameFilter = new \F3\FLOW3\AOP\Pointcut\PointcutMethodTaggedWithFilter('someMethod');
-		$methodNameFilter->injectReflectionService($mockReflectionService);
-		$this->assertTrue($methodNameFilter->matches($className, 'someMethod', $className, 1));
-
-		$methodNameFilter = new \F3\FLOW3\AOP\Pointcut\PointcutMethodTaggedWithFilter('some.*');
-		$methodNameFilter->injectReflectionService($mockReflectionService);
-		$this->assertTrue($methodNameFilter->matches($className, 'someMethod', $className, 1));
-		$this->assertTrue($methodNameFilter->matches($className, 'someOtherMethod', $className, 2));
-
-		$methodNameFilter = new \F3\FLOW3\AOP\Pointcut\PointcutMethodTaggedWithFilter('.*Method');
-		$methodNameFilter->injectReflectionService($mockReflectionService);
-		$this->assertFalse($methodNameFilter->matches($className, 'somethingCompletelyDifferent', $className, 1));
-	}
-
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
 	public function matchesIgnoresFinalMethodsEvenIfTheirNameMatches() {
 		$className = 'TestClass' . md5(uniqid(mt_rand(), TRUE));
 		eval("
@@ -66,7 +43,7 @@ class PointcutMethodNameFilterTest extends \F3\FLOW3\Tests\UnitTestCase {
 			}"
 		);
 
-		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'saveToCache'), array(), '', FALSE, TRUE);
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'saveToCache'));
 
 		$methodNameFilter = new \F3\FLOW3\AOP\Pointcut\PointcutMethodNameFilter('someFinalMethod');
 		$methodNameFilter->injectReflectionService($mockReflectionService);
@@ -88,7 +65,7 @@ class PointcutMethodNameFilterTest extends \F3\FLOW3\Tests\UnitTestCase {
 			}"
 		);
 
-		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'saveToCache'), array(), '', FALSE, TRUE);
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'saveToCache'));
 
 		$methodNameFilter = new \F3\FLOW3\AOP\Pointcut\PointcutMethodNameFilter('some.*', 'public');
 		$methodNameFilter->injectReflectionService($mockReflectionService);
@@ -119,7 +96,7 @@ class PointcutMethodNameFilterTest extends \F3\FLOW3\Tests\UnitTestCase {
 			}"
 		);
 
-		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'saveToCache'), array(), '', FALSE, TRUE);
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'saveToCache'));
 
 		$mockSystemLogger = $this->getMock('F3\FLOW3\Log\Logger');
 		$mockSystemLogger->expects($this->once())->method('log')->with($this->equalTo(

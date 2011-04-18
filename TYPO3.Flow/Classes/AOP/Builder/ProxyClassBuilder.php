@@ -456,9 +456,17 @@ class ProxyClassBuilder {
 	protected function getMethodsFromTargetClass($targetClassName) {
 		$methods = array();
 		$class = new \ReflectionClass($targetClassName);
+
+		foreach (array('__construct', '__clone') as $builtInMethodName) {
+			if (!$class->hasMethod($builtInMethodName)) {
+				$methods[] = array($targetClassName, $builtInMethodName);
+			}
+		}
+
 		foreach ($class->getMethods() as $method) {
 			$methods[] = array($targetClassName, $method->getName());
 		}
+
 		return $methods;
 	}
 

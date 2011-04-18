@@ -38,7 +38,8 @@ class PointcutMethodTaggedWithFilterTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function matchesTellsIfTheSpecifiedRegularExpressionMatchesTheGivenTag() {
 		$className = 'F3\FLOW3\Tests\AOP\Fixture\MethodsTaggedWithSomething';
 
-		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'saveToCache'), array(), '', FALSE, TRUE);
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'saveToCache', 'hasMethod'));
+		$mockReflectionService->expects($this->any())->method('hasMethod')->will($this->returnValue(TRUE));
 
 		$methodTaggedWithFilter = new \F3\FLOW3\AOP\Pointcut\PointcutMethodTaggedWithFilter('someMethod');
 		$methodTaggedWithFilter->injectReflectionService($mockReflectionService);

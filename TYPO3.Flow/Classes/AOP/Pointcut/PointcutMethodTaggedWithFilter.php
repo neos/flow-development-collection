@@ -32,7 +32,7 @@ namespace F3\FLOW3\AOP\Pointcut;
 class PointcutMethodTaggedWithFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 
 	/**
-	 * @var F3\FLOW3\Reflection\ReflectionService
+	 * @var \F3\FLOW3\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
@@ -66,22 +66,26 @@ class PointcutMethodTaggedWithFilter implements \F3\FLOW3\AOP\Pointcut\PointcutF
 	/**
 	 * Checks if the specified method matches with the method tag filter pattern
 	 *
-	 * @param string $className Name of the class to check against
-	 * @param string $methodName Name of the method - not used here
+	 * @param string $className Name of the class to check against - not used here
+	 * @param string $methodName Name of the method
 	 * @param string $methodDeclaringClassName Name of the class the method was originally declared in
-	 * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
+	 * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection - not used here
 	 * @return boolean TRUE if the class matches, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier) {
-		if ($methodDeclaringClassName === NULL) return FALSE;
+		if ($methodDeclaringClassName === NULL || !$this->reflectionService->hasMethod($methodDeclaringClassName, $methodDeclaringClassName)) {
+			return FALSE;
+		}
 
 		foreach ($this->reflectionService->getMethodTagsValues($methodDeclaringClassName, $methodName) as $tag => $values) {
-			$matchResult =  @preg_match('/^' . $this->methodTagFilterExpression . '$/', $tag);
+			$matchResult =  preg_match('/^' . $this->methodTagFilterExpression . '$/', $tag);
 			if ($matchResult === FALSE) {
 				throw new \F3\FLOW3\AOP\Exception('Error in regular expression "' . $this->methodTagFilterExpression . '" in pointcut method tag filter', 1229343988);
 			}
-			if ($matchResult === 1) return TRUE;
+			if ($matchResult === 1) {
+				return TRUE;
+			}
 		}
 		return FALSE;
 	}
