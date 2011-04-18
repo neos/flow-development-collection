@@ -885,11 +885,15 @@ class ReflectionService {
 
 				// those are added as property even if not tagged with entity/valueobject
 			$propertyTypeWhiteList = array('DateTime', 'SplObjectStorage', 'Doctrine\Common\Collections\ArrayCollection');
+			$needsArtificialIdentity = TRUE;
 			foreach ($this->getClassPropertyNames($className) as $propertyName) {
 				if ($this->isPropertyTaggedWith($className, $propertyName, 'var') && !$this->isPropertyTaggedWith($className, $propertyName, 'transient')) {
 					$declaredType = trim(implode(' ', $this->getPropertyTagValues($className, $propertyName, 'var')), ' \\');
 					if (preg_match('/\s/', $declaredType) === 1) {
 						throw new \F3\FLOW3\Reflection\Exception\InvalidPropertyTypeException('The @var annotation for "' . $className . '::$' . $propertyName . '" seems to be invalid.', 1284132314);
+					}
+					if ($this->isPropertyTaggedWith($className, $propertyName, 'Id')) {
+						$needsArtificialIdentity = FALSE;
 					}
 
 					$parsedType = \F3\FLOW3\Utility\TypeHandling::parseType($declaredType);
@@ -907,6 +911,9 @@ class ReflectionService {
 						$classSchema->markAsIdentityProperty($propertyName);
 					}
 				}
+			}
+			if ($needsArtificialIdentity === TRUE) {
+				$classSchema->addProperty('FLOW3_Persistence_Identifier', 'string');
 			}
 			$this->classSchemata[$className] = $classSchema;
 		}

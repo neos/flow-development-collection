@@ -53,7 +53,9 @@ class PersistenceMagicAspect {
 
 	/**
 	 * @var string
-	 * @introduce F3\FLOW3\Persistence\Aspect\PersistenceMagicAspect->isEntityOrValueObject
+	 * @Id
+	 * @Column(length="40")
+	 * @introduce F3\FLOW3\Persistence\Aspect\PersistenceMagicAspect->isEntityOrValueObject && filter(F3\FLOW3\Persistence\Doctrine\Mapping\Driver\Flow3AnnotationDriver)
 	 */
 	protected $FLOW3_Persistence_Identifier;
 

@@ -37,7 +37,10 @@ namespace F3\FLOW3\Persistence\Doctrine\Mapping\Driver;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope singleton
  */
-class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver {
+class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
+
+	const MAPPING_REGULAR = 0;
+	const MAPPING_INVERSE = 1;
 
 	/**
 	 * @var \F3\FLOW3\Reflection\ReflectionService
@@ -204,6 +207,37 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver {
 	}
 
 	/**
+	 * Check if the referenced column name is set (and valid) and if not make sure
+	 * it is initialized properly.
+	 *
+	 * @param array $joinColumns
+	 * @param \ReflectionProperty $property (use is to be coded)
+	 * @param integer $direction regular or inverse mapping (use is to be coded)
+	 * @return array
+	 * @todo make this do some "real" autodetection
+	 */
+	protected function buildJoinColumnsIfNeeded(array $joinColumns, \ReflectionProperty $property, $direction = self::MAPPING_REGULAR) {
+		if ($joinColumns === array()) {
+			$joinColumns[] = array(
+				'name' => NULL,
+				'referencedColumnName' => NULL,
+				'unique' => FALSE,
+				'nullable' => TRUE,
+				'onDelete' => NULL,
+				'onUpdate' => NULL,
+				'columnDefinition' => NULL,
+			);
+		}
+		foreach ($joinColumns as &$joinColumn) {
+			if ($joinColumn['referencedColumnName'] === NULL || $joinColumn['referencedColumnName'] === 'id') {
+				$joinColumn['referencedColumnName'] = 'FLOW3_Persistence_Identifier';
+			}
+		}
+
+		return $joinColumns;
+	}
+
+	/**
 	 * Evaluate the property annotations and amend the metadata accordingly.
 	 *
 	 * @param \Doctrine\ORM\Mapping\ClassMetadataInfo $metadata
@@ -262,7 +296,7 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver {
 				} else {
 					$mapping['targetEntity'] = $propertyMetaData['type'];
 				}
-				$mapping['joinColumns'] = $joinColumns;
+				$mapping['joinColumns'] = $this->buildJoinColumnsIfNeeded($joinColumns, $property);
 				$mapping['mappedBy'] = $oneToOneAnnotation->mappedBy;
 				$mapping['inversedBy'] = $oneToOneAnnotation->inversedBy;
 				$mapping['cascade'] = $oneToOneAnnotation->cascade;
@@ -286,7 +320,7 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver {
 
 				$metadata->mapOneToMany($mapping);
 			} elseif ($manyToOneAnnotation = $this->reader->getPropertyAnnotation($property, 'Doctrine\ORM\Mapping\ManyToOne')) {
-				$mapping['joinColumns'] = $joinColumns;
+				$mapping['joinColumns'] = $this->buildJoinColumnsIfNeeded($joinColumns, $property);
 				$mapping['cascade'] = $manyToOneAnnotation->cascade;
 				$mapping['inversedBy'] = $manyToOneAnnotation->inversedBy;
 				if ($manyToOneAnnotation->targetEntity) {
@@ -297,8 +331,6 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver {
 				$mapping['fetch'] = constant('Doctrine\ORM\Mapping\ClassMetadata::FETCH_' . $manyToOneAnnotation->fetch);
 				$metadata->mapManyToOne($mapping);
 			} elseif ($manyToManyAnnotation = $this->reader->getPropertyAnnotation($property, 'Doctrine\ORM\Mapping\ManyToMany')) {
-				$joinTable = array();
-
 				if ($joinTableAnnotation = $this->reader->getPropertyAnnotation($property, 'Doctrine\ORM\Mapping\JoinTable')) {
 					$joinTable = array(
 						'name' => $joinTableAnnotation->name,
@@ -316,6 +348,11 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver {
 							'columnDefinition' => $joinColumn->columnDefinition,
 						);
 					}
+					if (array_key_exists('joinColumns', $joinTable)) {
+						$joinTable['joinColumns'] = $this->buildJoinColumnsIfNeeded($joinTable['joinColumns'], $property);
+					} else {
+						$joinTable['joinColumns'] = $this->buildJoinColumnsIfNeeded(array(), $property);
+					}
 
 					foreach ($joinTableAnnotation->inverseJoinColumns as $joinColumn) {
 						$joinTable['inverseJoinColumns'][] = array(
@@ -328,6 +365,16 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver {
 							'columnDefinition' => $joinColumn->columnDefinition,
 						);
 					}
+					if (array_key_exists('inverseJoinColumns', $joinTable)) {
+						$joinTable['inverseJoinColumns'] = $this->buildJoinColumnsIfNeeded($joinTable['inverseJoinColumns'], $property, self::MAPPING_INVERSE);
+					} else {
+						$joinTable['inverseJoinColumns'] = $this->buildJoinColumnsIfNeeded(array(), $property, self::MAPPING_INVERSE);
+					}
+				} else {
+					$joinTable = array(
+						'joinColumns' => $this->buildJoinColumnsIfNeeded(array(), $property),
+						'inverseJoinColumns' => $this->buildJoinColumnsIfNeeded(array(), $property, self::MAPPING_INVERSE)
+					);
 				}
 
 				$mapping['joinTable'] = $joinTable;
@@ -513,6 +560,37 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver {
 				);
 	}
 
+	/**
+	 * Checks if the specified class and method matches against the filter
+	 *
+	 * @param string $className Name of the class to check against
+	 * @param string $methodName Name of the method to check against
+	 * @param string $methodDeclaringClassName Name of the class the method was originally declared in
+	 * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
+	 * @return boolean TRUE if the class / method match, otherwise FALSE
+	 */
+	public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier) {
+		$tags = $this->reflectionService->getPropertyNamesByTag($className, 'Id');
+		return $tags === array();
+	}
+
+	/**
+	 * Returns TRUE if this filter holds runtime evaluations for a previously matched pointcut
+	 *
+	 * @return boolean TRUE if this filter has runtime evaluations
+	 */
+	public function hasRuntimeEvaluationsDefinition() {
+		return FALSE;
+	}
+
+	/**
+	 * Returns runtime evaluations for a previously matched pointcut
+	 *
+	 * @return array Runtime evaluations
+	 */
+	public function getRuntimeEvaluationsDefinition() {
+		return array();
+	}
 }
 
 ?>
