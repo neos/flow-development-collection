@@ -146,7 +146,9 @@ class DoctrineCommandController extends \F3\FLOW3\MVC\Controller\CommandControll
 			$result = array();
 			$validator = new \Doctrine\ORM\Tools\SchemaValidator($this->entityManager);
 			$result = $validator->validateMapping();
-		} catch (\Exception $exception) {}
+		} catch (\Exception $exception) {
+			$result[] = array($exception->getMessage());
+		}
 		return $result;
 	}
 
