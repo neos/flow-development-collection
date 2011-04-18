@@ -144,7 +144,6 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		eval('namespace ' . $namespace . '; class ' . $className1 . ' implements \F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface {
 			public $FLOW3_Persistence_Identifier = \'A\';
 			public $sub;
-			public function FLOW3_Persistence_isClone() {}
 			public function __clone() {}
 		}');
 		$className2 = 'SubClass' . uniqid();
@@ -152,7 +151,6 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		eval('namespace ' . $namespace . '; class ' . $className2 . ' implements \F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface {
 			public $FLOW3_Persistence_Identifier = \'B\';
 			public $sub;
-			public function FLOW3_Persistence_isClone() {}
 			public function __clone() {}
 		}');
 		$className3 = 'SubClass' . uniqid();
@@ -160,7 +158,6 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		eval('namespace ' . $namespace . '; class ' . $className3 . ' implements \F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface {
 			public $FLOW3_Persistence_Identifier = \'C\';
 			public $sub;
-			public function FLOW3_Persistence_isClone() {}
 			public function __clone() {}
 		}');
 		$objectA = new $fullClassName1();
@@ -336,7 +333,6 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$hash = sha1($fullClassName);
 		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $className . ' implements \F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface {
 			public $FLOW3_Persistence_Identifier = \'' . $hash . '\';
-			public function FLOW3_Persistence_isClone() {}
 			public function __clone() {}
 		}');
 		$newObject = new $fullClassName();
@@ -370,7 +366,6 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$identifier = \F3\FLOW3\Utility\Algorithms::generateUUID();
 		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $className . ' implements \F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface {
 			public $simpleString = \'simpleValue\';
-			public function FLOW3_Persistence_isClone() {}
 			public function __clone() {}
 		}');
 		$dirtyObject = new $fullClassName();
@@ -417,7 +412,6 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$fullClassName = 'F3\\FLOW3\Persistence\\Tests\\' . $className;
 		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $className . ' implements \F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface {
 			public $date;
-			public function FLOW3_Persistence_isClone() {}
 			public function __clone() {}
 		}');
 		$newObject = new $fullClassName();
@@ -1058,14 +1052,12 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$otherClassName = 'OtherClass' . uniqid();
 		$fullOtherClassName = 'F3\\FLOW3\Persistence\\Tests\\' . $otherClassName;
 		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $otherClassName . ' implements \F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface {
-			public function FLOW3_Persistence_isClone() {}
 			public function __clone() {}
 		}');
 		$someClassName = 'SomeClass' . uniqid();
 		$fullSomeClassName = 'F3\\FLOW3\Persistence\\Tests\\' . $someClassName;
 		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $someClassName . ' implements \F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface {
 			public $property;
-			public function FLOW3_Persistence_isClone() {}
 			public function __clone() {}
 		}');
 		$otherAggregateRootObject = new $fullOtherClassName();
@@ -1487,7 +1479,6 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$fullClassName = 'F3\FLOW3\Persistence\Tests\\' . $className;
 		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $className . ' implements \F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface {
 			protected $foo;
-			public function FLOW3_Persistence_isClone() {}
 			public function __clone() {}
 		}');
 		$newObject = new $fullClassName();
@@ -1529,7 +1520,6 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$fullClassName = 'F3\FLOW3\Persistence\Tests\\' . $className;
 		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $className . ' implements \F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface {
 			protected $foo;
-			public function FLOW3_Persistence_isClone() {}
 			public function __clone() {}
 		}');
 		$newObject = new $fullClassName();
@@ -1571,7 +1561,6 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$fullClassName = 'F3\FLOW3\Persistence\Tests\\' . $className;
 		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $className . ' implements \F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface {
 			protected $foo;
-			public function FLOW3_Persistence_isClone() {}
 			public function __clone() {}
 		}');
 		$oldObject = new $fullClassName();

@@ -122,27 +122,7 @@ class PersistenceMagicAspect {
 	}
 
 	/**
-	 * Around advice, implements the FLOW3_Persistence_isClone() method introduced above
-	 *
-	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
-	 * @return boolean if the object is a clone
-	 * @around F3\FLOW3\Persistence\Aspect\PersistenceMagicAspect->needsPersistenceMagicAspect && method(.*->FLOW3_Persistence_isClone())
-	 * @see \F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function isClone(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
-		$joinPoint->getAdviceChain()->proceed($joinPoint);
-
-		$proxy = $joinPoint->getProxy();
-		return property_exists($proxy, 'FLOW3_Persistence_clone');
-	}
-
-	/**
 	 * Mark object as cloned after cloning.
-	 *
-	 * Note: this is done even if an object explicitly implements the
-	 * PersistenceMagicInterface to make sure it is proxied by the AOP
-	 * framework (we need that to happen)
 	 *
 	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint
 	 * @return void

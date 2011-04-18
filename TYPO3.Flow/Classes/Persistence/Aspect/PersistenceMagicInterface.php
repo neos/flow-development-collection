@@ -30,13 +30,6 @@ namespace F3\FLOW3\Persistence\Aspect;
 interface PersistenceMagicInterface {
 
 	/**
-	 * If the monitored object is a clone of another object
-	 *
-	 * @return boolean TRUE if the object is a clone, otherwise FALSE
-	 */
-	public function FLOW3_Persistence_isClone();
-
-	/**
 	 * Introduces a clone method
 	 *
 	 * @return void

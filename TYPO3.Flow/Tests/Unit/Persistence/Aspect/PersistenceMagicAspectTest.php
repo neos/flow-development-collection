@@ -46,9 +46,9 @@ class PersistenceMagicAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockJoinPoint->expects($this->any())->method('getAdviceChain')->will($this->returnValue($mockAdviceChain));
 		$mockJoinPoint->expects($this->any())->method('getProxy')->will($this->returnValue($object));
 
-		$this->assertFalse($aspect->isClone($mockJoinPoint));
+		$this->assertFalse(isset($mockJoinPoint->getProxy()->FLOW3_Persistence_clone));
 		$aspect->cloneObject($mockJoinPoint);
-		$this->assertTrue($aspect->isClone($mockJoinPoint));
+		$this->assertTrue($mockJoinPoint->getProxy()->FLOW3_Persistence_clone);
 	}
 
 	/**

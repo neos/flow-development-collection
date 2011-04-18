@@ -293,7 +293,7 @@ class PersistenceManager extends \F3\FLOW3\Persistence\AbstractPersistenceManage
 			}
 			$propertiesOfNewObject = \F3\FLOW3\Reflection\ObjectAccess::getGettableProperties($modifiedObject);
 			foreach ($propertiesOfNewObject as $subObject) {
-				if ($subObject instanceof \F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface && $subObject->FLOW3_Persistence_isClone()) {
+				if ($subObject instanceof \F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface && property_exists($subObject, 'FLOW3_Persistence_clone')) {
 					$this->merge($subObject);
 				}
 			}
