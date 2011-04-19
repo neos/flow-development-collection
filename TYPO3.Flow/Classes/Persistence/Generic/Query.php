@@ -131,7 +131,7 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 * @api
 	 */
 	public function execute() {
-		return $this->objectManager->create('F3\FLOW3\Persistence\QueryResultInterface', $this);
+		return new \F3\FLOW3\Persistence\Generic\QueryResult($this);
 	}
 
 	/**
@@ -141,7 +141,8 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 * @api
 	 */
 	public function count() {
-		return $this->objectManager->create('F3\FLOW3\Persistence\QueryResultInterface', $this)->count();
+		$result = new \F3\FLOW3\Persistence\Generic\QueryResult($this);
+		return $result->count();
 	}
 
 	/**

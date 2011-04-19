@@ -61,8 +61,6 @@ class QueryTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function executeReturnsQueryResultInstance() {
-		$resultProxy = $this->getMock('F3\FLOW3\Persistence\Generic\QueryResult', array(), array(), '', FALSE);
-		$this->objectManager->expects($this->once())->method('create')->with('F3\FLOW3\Persistence\QueryResultInterface', $this->query)->will($this->returnValue($resultProxy));
 		$result = $this->query->execute();
 		$this->assertInstanceOf('F3\FLOW3\Persistence\Generic\QueryResult', $result);
 	}
