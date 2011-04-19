@@ -51,9 +51,6 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	public function __construct() {
 		if ($this->objectType === NULL) {
 			$this->objectType = str_replace(array('\\Repository\\', 'Repository'), array('\\Model\\', ''), get_class($this));
-			if (strpos($this->objectType, '_AOPProxy') !== FALSE) {
-				$this->objectType = substr($this->objectType, 0, strrpos($this->objectType, '_AOPProxy'));
-			}
 		}
 	}
 
@@ -182,7 +179,8 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	 */
 	public function update($modifiedObject) {
 		if (!($modifiedObject instanceof $this->objectType)) {
-			throw new \F3\FLOW3\Persistence\Exception\IllegalObjectTypeException('The modified object given to update() was not of the type (' . $this->objectType . ') this repository manages.', 1249479625);
+			$type = (is_object($modifiedObject) ? get_class($modifiedObject) : gettype($modifiedObject));
+			throw new \F3\FLOW3\Persistence\Exception\IllegalObjectTypeException('The modified object given to update() was ' . $type . ' , however the ' . get_class($this) . ' can only store ' . $this->objectType . '.', 1249479625);
 		}
 
 		$this->persistenceManager->merge($modifiedObject);
