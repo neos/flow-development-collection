@@ -42,6 +42,11 @@ class RouteTest extends \F3\FLOW3\Tests\UnitTestCase {
 	protected $route;
 
 	/**
+	 * @var \F3\FLOW3\MVC\Web\Routing\RouterInterface
+	 */
+	protected $mockRouter;
+
+	/**
 	 * Sets up this test case
 	 *
 	 * @author Bastian Waidelich <bastian@typo3.org>
@@ -49,7 +54,12 @@ class RouteTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function setUp() {
 		$this->mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
 		$this->mockObjectManager->expects($this->any())->method('create')->will($this->returnCallback(array($this, 'objectManagerCallBack')));
-		$this->route = $this->getAccessibleMock('F3\FLOW3\MVC\Web\Routing\Route', array('dummy'), array($this->mockObjectManager, $this->mockObjectManager));
+		$this->route = $this->getAccessibleMock('F3\FLOW3\MVC\Web\Routing\Route', array('dummy'));
+		$this->route->_set('objectManager', $this->mockObjectManager);
+
+		$this->mockRouter = $this->getMock('F3\FLOW3\MVC\Web\Routing\RouterInterface');
+		$this->mockRouter->expects($this->any())->method('getControllerObjectName')->will($this->returnValue('SomeControllerObjectName'));
+		$this->route->injectRouter($this->mockRouter);
 	}
 
 	/**
@@ -713,6 +723,7 @@ class RouteTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function matchingRequestPathIsNullAfterUnsuccessfulResolve() {
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
 		$this->route = new \F3\FLOW3\MVC\Web\Routing\Route($this->mockObjectManager, $mockObjectManager);
+		$this->route->injectRouter($this->mockRouter);
 		$this->route->setUriPattern('{key1}');
 		$this->routeValues = array('key1' => 'value1');
 
@@ -798,6 +809,41 @@ class RouteTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$expectedResult = '?foo=bar&someObject%5B__identity%5D=uuid1&baz%5BsomeOtherObject%5D%5B__identity%5D=uuid2';
 
 		$this->assertEquals($expectedResult, $actualResult);
+	}
+
+	/**
+	 * This bugfix was generously sponsored with 260 beers at T3BOARD11 by snowflake productions gmbh (snowflake.ch)
+	 *
+	 * @test
+	 * @expectedException \F3\FLOW3\MVC\Web\Routing\Exception\InvalidControllerException
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function resolvesReturnsAnExceptionIfTargetControllerDoesNotExist() {
+		$this->route->setUriPattern('');
+		$this->route->setDefaults(array('@package' => 'Snow'));
+		$this->routeValues = array('@controller' => 'flake');
+
+		$mockRouter = $this->getMock('F3\FLOW3\MVC\Web\Routing\RouterInterface');
+		$mockRouter->expects($this->once())->method('getControllerObjectName')->with('Snow', '', 'flake')->will($this->returnValue(NULL));
+		$this->route->injectRouter($mockRouter);
+
+		$this->route->resolves($this->routeValues);
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function resolvesReturnsTrueIfTargetControllerExists() {
+		$this->route->setUriPattern('');
+		$this->route->setDefaults(array('@package' => 'SomePackage', '@controller' => 'SomeExistingController'));
+		$this->routeValues = array('@subpackage' => 'Some\Subpackage');
+
+		$mockRouter = $this->getMock('F3\FLOW3\MVC\Web\Routing\RouterInterface');
+		$mockRouter->expects($this->once())->method('getControllerObjectName')->with('SomePackage', 'Some\Subpackage', 'SomeExistingController')->will($this->returnValue('ControllerObjectName'));
+		$this->route->injectRouter($mockRouter);
+
+		$this->assertTrue($this->route->resolves($this->routeValues));
 	}
 }
 ?>

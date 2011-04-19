@@ -132,7 +132,7 @@ class DispatcherTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \F3\FLOW3\MVC\Exception\InvalidControllerException
+	 * @expectedException \F3\FLOW3\MVC\Controller\Exception\InvalidControllerException
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function resolveControllerThrowsInvalidControllerExceptionIfTheNotFoundControllerDefinedInTheFLOW3SettingsDoesNotImplementTheNotFoundControllerInterface() {

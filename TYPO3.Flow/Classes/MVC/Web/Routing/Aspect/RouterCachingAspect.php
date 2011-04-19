@@ -106,7 +106,7 @@ class RouterCachingAspect {
 		}
 
 		$matchingUri = $joinPoint->getAdviceChain()->proceed($joinPoint);
-		if ($matchingUri !== '') {
+		if ($matchingUri !== NULL) {
 			$this->resolveCache->set($cacheIdentifier, $matchingUri);
 		}
 		return $matchingUri;

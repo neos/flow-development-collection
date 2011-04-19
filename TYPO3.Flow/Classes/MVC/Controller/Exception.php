@@ -36,17 +36,16 @@ class Exception extends \F3\FLOW3\Exception {
 	protected $request;
 
 	/**
-	 * Constructor.
 	 * Overwrites parent constructor to be able to inject current request object.
 	 *
-	 * @param \F3\FLOW3\MVC\RequestInterface $request
 	 * @param string $message
 	 * @param integer $code
 	 * @param \Exception $previousException
+	 * @param \F3\FLOW3\MVC\RequestInterface $request
 	 * @see \Exception
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function __construct(\F3\FLOW3\MVC\RequestInterface $request, $message = '', $code = 0, \Exception $previousException = NULL) {
+	public function __construct($message = '', $code = 0, \Exception $previousException = NULL, \F3\FLOW3\MVC\RequestInterface $request) {
 		$this->request = $request;
 		parent::__construct($message, $code, $previousException);
 	}
@@ -60,7 +59,7 @@ class Exception extends \F3\FLOW3\Exception {
 	protected function getRequest() {
 		return $this->request;
 	}
-	
+
 }
 
 ?>

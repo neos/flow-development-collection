@@ -32,6 +32,7 @@ class RouterTest extends \F3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setRoutesConfigurationParsesTheGivenConfigurationAndBuildsRouteObjectsFromIt() {
 		$mockLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
@@ -41,14 +42,15 @@ class RouterTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$routesConfiguration['route2']['uriPattern'] = 'number2';
 		$routesConfiguration['route3']['uriPattern'] = 'number3';
 
-		$route1 = $this->getMock('F3\FLOW3\MVC\Web\Routing\Route', array('setUriPattern', 'setDefaults'), array(), '', FALSE);
+		$route1 = $this->getMock('F3\FLOW3\MVC\Web\Routing\Route');
 		$route1->expects($this->once())->method('setUriPattern')->with($this->equalTo('number1'));
 
-		$route2 = $this->getMock('F3\FLOW3\MVC\Web\Routing\Route', array('setUriPattern', 'setDefaults'), array(), '', FALSE);
+		$route2 = $this->getMock('F3\FLOW3\MVC\Web\Routing\Route');
 		$route2->expects($this->once())->method('setUriPattern')->with($this->equalTo('number2'));
 
-		$route3 = $this->getMock('F3\FLOW3\MVC\Web\Routing\Route', array('setUriPattern', 'setDefaults'), array(), '', FALSE);
+		$route3 = $this->getMock('F3\FLOW3\MVC\Web\Routing\Route');
 		$route3->expects($this->once())->method('setUriPattern')->with($this->equalTo('number3'));
+		$route3->expects($this->once())->method('resolves')->will($this->returnValue(TRUE));
 
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
 		$mockObjectManager->expects($this->exactly(3))->method('create')->will($this->onConsecutiveCalls($route1, $route2, $route3));
@@ -78,13 +80,37 @@ class RouterTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$route3 = $this->getMock('F3\FLOW3\MVC\Web\Routing\Route', array('resolves'), array(), '', FALSE);
 
 		$mockRoutes = array($route1, $route2, $route3);
+		$mockLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
 
 		$router = $this->getAccessibleMock('F3\FLOW3\MVC\Web\Routing\Router', array('createRoutesFromConfiguration'), array(), '', FALSE);
 		$router->expects($this->once())->method('createRoutesFromConfiguration');
 		$router->_set('routes', $mockRoutes);
+		$router->injectSystemLogger($mockLogger);
 
 		$matchingUri = $router->resolve($routeValues);
 		$this->assertSame('route2', $matchingUri);
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @expectedException \F3\FLOW3\MVC\Exception\NoMatchingRouteException
+	 */
+	public function resolveThrowsExceptionIfNoMatchingRouteWasFound() {
+		$route1 = $this->getMock('F3\FLOW3\MVC\Web\Routing\Route');
+		$route1->expects($this->once())->method('resolves')->will($this->returnValue(FALSE));
+
+		$route2 = $this->getMock('F3\FLOW3\MVC\Web\Routing\Route');
+		$route2->expects($this->once())->method('resolves')->will($this->returnValue(FALSE));
+
+		$mockRoutes = array($route1, $route2);
+		$mockLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
+
+		$router = $this->getAccessibleMock('F3\FLOW3\MVC\Web\Routing\Router', array('createRoutesFromConfiguration'));
+		$router->_set('routes', $mockRoutes);
+		$router->injectSystemLogger($mockLogger);
+
+		$router->resolve(array());
 	}
 
 	/**
@@ -315,6 +341,55 @@ class RouterTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$router->route($mockRequest);
 
 		$this->assertEquals('overwrittenformat', $format);
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function theDefaultPatternForBuildingTheControllerObjectNameIsPackageKeyControllerControllerNameController() {
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
+		$mockObjectManager->expects($this->once())->method('getCaseSensitiveObjectName')
+			->with($this->equalTo('F3\testpackage\Controller\fooController'))
+			->will($this->returnValue('F3\TestPackage\Controller\FooController'));
+
+		$router = new \F3\FLOW3\MVC\Web\Routing\Router();
+		$router->injectObjectManager($mockObjectManager);
+		$this->assertEquals('F3\TestPackage\Controller\FooController', $router->getControllerObjectName('testpackage', '', 'foo'));
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function lowerCasePackageKeysAndObjectNamesAreConvertedToTheRealObjectName() {
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
+		$mockObjectManager->expects($this->once())->method('getCaseSensitiveObjectName')
+			->with($this->equalTo('F3\testpackage\bar\baz\Controller\fooController'))
+			->will($this->returnValue('F3\TestPackage\Bar\Baz\Controller\FooController'));
+
+		$router = new \F3\FLOW3\MVC\Web\Routing\Router();
+		$router->injectObjectManager($mockObjectManager);
+
+		$this->assertEquals('F3\TestPackage\Bar\Baz\Controller\FooController', $router->getControllerObjectName('testpackage', 'bar\baz', 'foo'));
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function getControllerObjectNameReturnsNullIfTheResolvedControllerDoesNotExist() {
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
+		$mockObjectManager->expects($this->once())->method('getCaseSensitiveObjectName')
+			->with($this->equalTo('F3\testpackage\Controller\fooController'))
+			->will($this->returnValue(FALSE));
+
+		$router = new \F3\FLOW3\MVC\Web\Routing\Router();
+		$router->injectObjectManager($mockObjectManager);
+
+		$this->assertEquals('', $router->getControllerObjectName('testpackage', '', 'foo'));
 	}
 }
 ?>
