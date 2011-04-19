@@ -159,6 +159,7 @@ class CoreCommandController extends \F3\FLOW3\MVC\Controller\CommandController {
 
 		$this->proxyClassCompiler->injectClassesCache($this->cacheManager->getCache('FLOW3_Object_Classes'));
 
+		$this->aopProxyClassBuilder->injectObjectConfigurationCache($this->cacheManager->getCache('FLOW3_Object_Configuration'));
 		$this->aopProxyClassBuilder->build();
 		$this->dependencyInjectionProxyClassBuilder->build();
 

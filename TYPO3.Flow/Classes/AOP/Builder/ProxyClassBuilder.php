@@ -68,7 +68,7 @@ class ProxyClassBuilder {
 	/**
 	 * @var \F3\FLOW3\Cache\Frontend\VariableFrontend
 	 */
-	protected $targetClassInformationCache;
+	protected $objectConfigurationCache;
 
 	/**
 	 * @var \F3\FLOW3\Object\CompileTimeObjectManager
@@ -133,15 +133,14 @@ class ProxyClassBuilder {
 	}
 
 	/**
-	 * Injects the cache for storing information about target classes
+	 * Injects the cache for storing information about objects
 	 *
-	 * @param \F3\FLOW3\Cache\Frontend\VariableFrontend $targetClassInformationCache
+	 * @param \F3\FLOW3\Cache\Frontend\VariableFrontend $objectConfigurationCache
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @autowiring off
 	 */
-	public function injectTargetClassInformationCache(\F3\FLOW3\Cache\Frontend\VariableFrontend $targetClassInformationCache) {
-		$this->targetClassInformationCache = $targetClassInformationCache;
+	public function injectObjectConfigurationCache(\F3\FLOW3\Cache\Frontend\VariableFrontend $objectConfigurationCache) {
+		$this->objectConfigurationCache = $objectConfigurationCache;
 	}
 
 	/**
@@ -207,12 +206,11 @@ class ProxyClassBuilder {
 		$this->aspectContainers = $this->buildAspectContainers($allAvailableClassNames);
 
 		$rebuildEverything = FALSE;
-		foreach (array_keys($this->aspectContainers) as $aspectClassName) {
-			if ($this->compiler->hasCacheEntryForClass($aspectClassName) === FALSE) {
+		if ($this->objectConfigurationCache->has('allAspectClassesUpToDate') === FALSE) {
 				$rebuildEverything = TRUE;
-				$this->systemLogger->log(sprintf('Aspect %s has been modified, therefore rebuilding all target classes.', $aspectClassName), LOG_INFO);
-				break;
-			}
+				$this->systemLogger->log(sprintf('Aspects have been modified, therefore rebuilding all target classes.'), LOG_INFO);
+				$tags = array_map(function ($aspectClassName) { return \F3\FLOW3\Cache\CacheManager::getClassTag($aspectClassName); }, $actualAspectClassNames);
+				$this->objectConfigurationCache->set('allAspectClassesUpToDate', TRUE, $tags);
 		}
 
 		foreach ($possibleTargetClassNames as $targetClassName) {
