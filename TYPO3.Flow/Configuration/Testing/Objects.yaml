@@ -12,7 +12,10 @@ F3\FLOW3\Session\SessionInterface:
   className: F3\FLOW3\Session\TransientSession
 
 F3\FLOW3\Security\Authorization\AccessDecisionManagerInterface:
-  className: F3\FLOW3\Security\Authorization\TestingAccessDecisionManager
+  className: F3\FLOW3\Tests\Functional\Security\Authorization\TestingAccessDecisionManager
+
+F3\FLOW3\Resource\Publishing\ResourcePublishingTargetInterface:
+  className: F3\FLOW3\Tests\Functional\Resource\Publishing\TestingFileSystemPublishingTarget
 
 F3\FLOW3\Tests\Functional\Object\Fixtures\SingletonClassC:
   arguments:

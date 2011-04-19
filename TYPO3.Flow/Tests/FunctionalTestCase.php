@@ -200,6 +200,18 @@ abstract class FunctionalTestCase extends \F3\FLOW3\Tests\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function sendWebRequest($controllerName, $controllerPackageKey, $controllerActionName, array $arguments = array(), $format = 'html') {
+		if (!getenv('FLOW3_REWRITEURLS')) {
+				// Simulate the use of mod_rewrite for the test.
+			putenv('FLOW3_REWRITEURLS=1');
+		}
+
+			// Initialize the routes
+		$configurationManager = $this->objectManager->get('F3\FLOW3\Configuration\ConfigurationManager');
+		$routesConfiguration = $configurationManager->getConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_ROUTES);
+		$router = $this->objectManager->get('F3\FLOW3\MVC\Web\Routing\Router');
+		$router->setRoutesConfiguration($routesConfiguration);
+
+			// Build up Mock request behaving like the real one.
 		$controller = $this->objectManager->get('F3\\' . $controllerPackageKey . '\\Controller\\' . $controllerName . 'Controller');
 
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
@@ -207,9 +219,17 @@ abstract class FunctionalTestCase extends \F3\FLOW3\Tests\BaseTestCase {
 		$mockRequest->expects($this->any())->method('getControllerActionName')->will($this->returnValue($controllerActionName));
 		$mockRequest->expects($this->any())->method('getControllerName')->will($this->returnValue($controllerName));
 		$mockRequest->expects($this->any())->method('getArguments')->will($this->returnValue($arguments));
+		$mockRequest->expects($this->any())->method('getArgument')->will($this->returnCallback(function($argumentName) use ($arguments) {
+			return $arguments[$argumentName];
+		}));
+		$mockRequest->expects($this->any())->method('hasArgument')->will($this->returnCallback(function($argumentName) use ($arguments) {
+			return isset($arguments[$argumentName]);
+		}));
 		$mockRequest->expects($this->any())->method('getFormat')->will($this->returnValue($format));
-		$mockRequest->expects($this->any())->method('getBaseUri')->will($this->returnValue('baseUri'));
+		$mockRequest->expects($this->any())->method('getBaseUri')->will($this->returnValue('http://baseUri/'));
+		$mockRequest->expects($this->any())->method('getOriginalRequestMappingResults')->will($this->returnValue(new \F3\FLOW3\Error\Result()));
 
+			// Build up Mock response collecting the output.
 		$mockResponse = $this->getMock('F3\FLOW3\MVC\ResponseInterface', array(), array(), '', FALSE);
 
 		$content = '';
@@ -243,6 +263,10 @@ abstract class FunctionalTestCase extends \F3\FLOW3\Tests\BaseTestCase {
 
 		$request = $this->getMock('F3\FLOW3\MVC\Web\Request');
 		$this->securityContext->initialize($request);
+
+		$authenticationProviderManager = $this->objectManager->get('F3\FLOW3\Security\Authentication\AuthenticationProviderManager');
+		$authenticationProviderManager->authenticate();
+
 		return $account;
 	}
 
