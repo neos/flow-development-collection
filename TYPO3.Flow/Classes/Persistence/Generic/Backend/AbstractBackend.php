@@ -188,10 +188,6 @@ abstract class AbstractBackend implements \F3\FLOW3\Persistence\Generic\Backend\
 			$methodName = 'set' . ucfirst($optionName);
 			if (method_exists($this, $methodName)) {
 				$this->$methodName($optionValue);
-			} elseif ($optionValue ===  NULL) {
-				$this->systemLogger->log('Invalid backend option "' . $optionName . '" for backend of type "' . get_class($this) . '" ignored (NULL value).', LOG_DEBUG);
-			} else {
-				throw new \InvalidArgumentException('Invalid backend option "' . $optionName . '" for backend of type "' . get_class($this) . '"', 1259701878);
 			}
 		}
 	}
