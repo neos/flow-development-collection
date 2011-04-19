@@ -36,11 +36,13 @@ class DoctrineCommandController extends \F3\FLOW3\MVC\Controller\CommandControll
 	protected $settings = array();
 
 	/**
-	 * @var \Doctrine\Common\Persistence\ObjectManager
+	 * @inject
+	 * @var \F3\FLOW3\Persistence\Doctrine\Service
 	 */
-	protected $entityManager;
+	protected $service;
 
 	/**
+	 * @inject
 	 * @var \F3\FLOW3\Log\SystemLoggerInterface
 	 */
 	protected $systemLogger;
@@ -57,26 +59,12 @@ class DoctrineCommandController extends \F3\FLOW3\MVC\Controller\CommandControll
 	}
 
 	/**
-	 * @param \Doctrine\Common\Persistence\ObjectManager $entityManager
-	 * @return void
-	 */
-	public function injectEntityManager(\Doctrine\Common\Persistence\ObjectManager $entityManager) {
-		$this->entityManager = $entityManager;
-	}
-
-	/**
-	 * @param \F3\FLOW3\Log\SystemLoggerInterface $systemLogger
-	 * @return void
-	 */
-	public function injectSystemLogger(\F3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
-		$this->systemLogger = $systemLogger;
-	}
-
-	/**
 	 * @return void
 	 */
 	public function helpCommand() {
-		$this->response->appendContent('Available commands: validate, update, compile');
+		$this->response->appendContent('Available commands:
+		validate, compileproxies
+		create, update, updateandclean');
 	}
 
 	/**
@@ -89,7 +77,7 @@ class DoctrineCommandController extends \F3\FLOW3\MVC\Controller\CommandControll
 			// additionally, when no path is set, skip this step, assuming no DB is needed
 		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['path'] !== NULL) {
 			$this->response->appendContent('');
-			$classesAndErrors = $this->validateMapping();
+			$classesAndErrors = $this->service->validateMapping();
 			if (count($classesAndErrors) === 0) {
 				$this->response->appendContent('Mapping validation results: PASSED, no errors found. :o)');
 			} else {
@@ -102,7 +90,23 @@ class DoctrineCommandController extends \F3\FLOW3\MVC\Controller\CommandControll
 				}
 			}
 		} else {
-			$this->response->appendContent('Mapping validation results: SKIPPED, the driver and path backend options are not set.');
+			$this->response->appendContent('Mapping validation has been SKIPPED, the driver and path backend options are not set.');
+		}
+	}
+
+	/**
+	 * Action for updating the database schema
+	 *
+	 * @return void
+	 */
+	public function createCommand() {
+			// "driver" is used only for Doctrine, thus we (mis-)use it here
+			// additionally, when no path is set, skip this step, assuming no DB is needed
+		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['path'] !== NULL) {
+			$this->service->createSchema();
+			$this->response->appendContent('The database schema has been created.');
+		} else {
+			$this->response->appendContent('Database schema creation has been SKIPPED, the driver and path backend options are not set.');
 		}
 	}
 
@@ -115,10 +119,26 @@ class DoctrineCommandController extends \F3\FLOW3\MVC\Controller\CommandControll
 			// "driver" is used only for Doctrine, thus we (mis-)use it here
 			// additionally, when no path is set, skip this step, assuming no DB is needed
 		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['path'] !== NULL) {
-			$this->updateSchema();
+			$this->service->updateSchema();
 			$this->response->appendContent('The database schema has been updated.');
 		} else {
-			$this->response->appendContent('   Update has been SKIPPED, the driver and path backend options are not set.');
+			$this->response->appendContent('Database schema update has been SKIPPED, the driver and path backend options are not set.');
+		}
+	}
+
+	/**
+	 * Action for updating the database schema
+	 *
+	 * @return void
+	 */
+	public function updateAndCleanCommand() {
+			// "driver" is used only for Doctrine, thus we (mis-)use it here
+			// additionally, when no path is set, skip this step, assuming no DB is needed
+		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['path'] !== NULL) {
+			$this->service->updateSchema(FALSE);
+			$this->response->appendContent('The database schema has been updated.');
+		} else {
+			$this->response->appendContent('Database schema update has been SKIPPED, the driver and path backend options are not set.');
 		}
 	}
 
@@ -127,45 +147,15 @@ class DoctrineCommandController extends \F3\FLOW3\MVC\Controller\CommandControll
 	 *
 	 * @return void
 	 */
-	public function compileCommand() {
+	public function compileProxiesCommand() {
 			// "driver" is used only for Doctrine, thus we (mis-)use it here
 			// additionally, when no path is set, skip this step, assuming no DB is needed
 		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['path'] !== NULL) {
-			$this->compileProxies();
-			$this->response->appendContent('   Doctrine proxies have been compiled.');
+			$this->service->compileProxies();
+			$this->response->appendContent('Doctrine proxies have been compiled.');
 		} else {
-			$this->response->appendContent('   Compilation has been SKIPPED, the driver and path backend options are not set.');
+			$this->response->appendContent('Doctrine proxy compilation has been SKIPPED, the driver and path backend options are not set.');
 		}
-	}
-
-	/**
-	 * @return array
-	 */
-	protected function validateMapping() {
-		try {
-			$result = array();
-			$validator = new \Doctrine\ORM\Tools\SchemaValidator($this->entityManager);
-			$result = $validator->validateMapping();
-		} catch (\Exception $exception) {
-			$result[] = array($exception->getMessage());
-		}
-		return $result;
-	}
-
-	/**
-	 * @return void
-	 */
-	protected function updateSchema() {
-		$schemaTool = new \Doctrine\ORM\Tools\SchemaTool($this->entityManager);
-		$schemaTool->updateSchema($this->entityManager->getMetadataFactory()->getAllMetadata());
-	}
-
-	/**
-	 * @return void
-	 */
-	protected function compileProxies() {
-		$proxyFactory = $this->entityManager->getProxyFactory();
-		$proxyFactory->generateProxyClasses($this->entityManager->getMetadataFactory()->getAllMetadata());
 	}
 
 }
