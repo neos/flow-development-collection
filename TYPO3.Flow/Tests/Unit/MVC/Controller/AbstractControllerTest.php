@@ -184,6 +184,43 @@ class AbstractControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function redirectToUriSetsStatus() {
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request');
+
+		$mockResponse = $this->getMock('F3\FLOW3\MVC\Web\Response');
+		$mockResponse->expects($this->once())->method('setStatus')->with(303);
+
+		$controller = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\AbstractController', array('dummy'));
+		$controller->_set('response', $mockResponse);
+		$controller->_set('request', $mockRequest);
+		try {
+			$controller->_call('redirectToUri', 'theUri', 1);
+		} catch (\F3\FLOW3\MVC\Exception\StopActionException $exception) {}
+	}
+
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function redirectToUriUsesLocationHeaderOnlyIfDelayIsZero() {
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request');
+
+		$mockResponse = $this->getMock('F3\FLOW3\MVC\Web\Response');
+		$mockResponse->expects($this->never())->method('setHeader');
+
+		$controller = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\AbstractController', array('dummy'));
+		$controller->_set('response', $mockResponse);
+		$controller->_set('request', $mockRequest);
+		try {
+			$controller->_call('redirectToUri', 'theUri', 1);
+		} catch (\F3\FLOW3\MVC\Exception\StopActionException $exception) {}
+	}
+
+	/**
+	 * @test
 	 * @expectedException \F3\FLOW3\MVC\Exception\StopActionException
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
