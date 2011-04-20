@@ -213,7 +213,11 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \F3\
 	 * @return string
 	 */
 	protected function inferTableNameFromClassName($className) {
-		return strtolower(substr($className, strrpos($className, '\\')+1));
+		$classNameParts = explode('\\', $className);
+		$packageKey = $classNameParts[1];
+		$modelName = array_pop($classNameParts);
+		$modelNamePrefix = array_pop($classNameParts);
+		return strtolower($packageKey . '_' . ($modelNamePrefix === 'Model' ? '' : $modelNamePrefix . '_') . $modelName);
 	}
 
 	/**
@@ -240,7 +244,7 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \F3\
 		}
 		foreach ($joinColumns as &$joinColumn) {
 			if ($joinColumn['referencedColumnName'] === NULL || $joinColumn['referencedColumnName'] === 'id') {
-				$joinColumn['referencedColumnName'] = 'FLOW3_Persistence_Identifier';
+				$joinColumn['referencedColumnName'] = strtolower('FLOW3_Persistence_Identifier');
 			}
 		}
 
@@ -271,6 +275,7 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \F3\
 
 			$mapping = array();
 			$mapping['fieldName'] = $property->getName();
+			$mapping['columnName'] = strtolower($property->getName());
 
 				// Check for JoinColummn/JoinColumns annotations
 			$joinColumns = array();
