@@ -100,6 +100,248 @@ class Service {
 		$proxyFactory->generateProxyClasses($this->entityManager->getMetadataFactory()->getAllMetadata());
 	}
 
+	/**
+	 * Return the configuration needed for Migrations.
+	 *
+	 * @return \Doctrine\DBAL\Migrations\Configuration\Configuration
+	 */
+	protected function getMigrationConfiguration() {
+		$configuration = new \Doctrine\DBAL\Migrations\Configuration\Configuration($this->entityManager->getConnection());
+		$configuration->setMigrationsNamespace('F3\FLOW3\Persistence\Doctrine\Migrations');
+		$configuration->setMigrationsDirectory(\F3\FLOW3\Utility\Files::concatenatePaths(array(FLOW3_PATH_CONFIGURATION, 'Doctrine/Migrations')));
+		$configuration->registerMigrationsFromDirectory(\F3\FLOW3\Utility\Files::concatenatePaths(array(FLOW3_PATH_CONFIGURATION, 'Doctrine/Migrations')));
+		$configuration->setMigrationsTableName('flow3_doctrine_migrationstatus');
+		$configuration->createMigrationTable();
+		return $configuration;
+	}
+
+	/**
+	 * Returns the current migration status formatted as plain text.
+	 *
+	 * @return string
+	 */
+	public function getMigrationStatus() {
+		$configuration = $this->getMigrationConfiguration();
+
+		$currentVersion = $configuration->getCurrentVersion();
+		if ($currentVersion) {
+			$currentVersionFormatted = $configuration->formatVersion($currentVersion) . ' ('.$currentVersion.')';
+		} else {
+			$currentVersionFormatted = 0;
+		}
+		$latestVersion = $configuration->getLatestVersion();
+		if ($latestVersion) {
+			$latestVersionFormatted = $configuration->formatVersion($latestVersion) . ' ('.$latestVersion.')';
+		} else {
+			$latestVersionFormatted = 0;
+		}
+		$executedMigrations = $configuration->getNumberOfExecutedMigrations();
+		$availableMigrations = $configuration->getNumberOfAvailableMigrations();
+		$newMigrations = $availableMigrations - $executedMigrations;
+
+		$output = "\n == Configuration\n";
+
+		$info = array(
+			'Name'                  => $configuration->getName() ? $configuration->getName() : 'Doctrine Database Migrations',
+			'Database Driver'       => $configuration->getConnection()->getDriver()->getName(),
+			'Database Name'         => $configuration->getConnection()->getDatabase(),
+			'Configuration Source'  => $configuration instanceof \Doctrine\DBAL\Migrations\Configuration\AbstractFileConfiguration ? $configuration->getFile() : 'manually configured',
+			'Version Table Name'    => $configuration->getMigrationsTableName(),
+			'Migrations Namespace'  => $configuration->getMigrationsNamespace(),
+			'Migrations Directory'  => $configuration->getMigrationsDirectory(),
+			'Current Version'       => $currentVersionFormatted,
+			'Latest Version'        => $latestVersionFormatted,
+			'Executed Migrations'   => $executedMigrations,
+			'Available Migrations'  => $availableMigrations,
+			'New Migrations'        => $newMigrations
+		);
+		foreach ($info as $name => $value) {
+			$output .= '    >> ' . $name . ': ' . str_repeat(' ', 50 - strlen($name)) . $value . "\n";
+		}
+
+		if ($migrations = $configuration->getMigrations()) {
+			$output .= "\n == Migration Versions\n";
+			foreach ($migrations as $version) {
+				$status = $version->isMigrated() ? 'migrated' : "not migrated\n";
+				$output .= '    >> ' . $configuration->formatVersion($version->getVersion()) . ' (' . $version->getVersion() . ')' . str_repeat(' ', 30 - strlen($name)) . $status . "\n";
+			}
+		}
+
+		return $output;
+	}
+
+	/**
+	 * Generates an empty migration file and returns the path to it.
+	 *
+	 * @return string
+	 */
+	public function generateEmptyMigration() {
+		$configuration = $this->getMigrationConfiguration();
+
+		$version = date('YmdHis');
+		$path = $this->generateMigration($configuration, $version);
+
+		return sprintf('Generated empty migration class to "%s".', $path);
+	}
+
+	/**
+	 * Generates a migration file with the diff between current DB structure
+	 * and the found mapping metadata. The path to the new file is returned.
+	 *
+	 * @return string
+	 */
+	public function generateDiffMigration() {
+		$configuration = $this->getMigrationConfiguration();
+
+		$connection = $this->entityManager->getConnection();
+		$platform = $connection->getDatabasePlatform();
+		$metadata = $this->entityManager->getMetadataFactory()->getAllMetadata();
+
+		if (empty($metadata)) {
+			return 'No mapping information to process.';
+		}
+
+		$tool = new \Doctrine\ORM\Tools\SchemaTool($this->entityManager);
+
+		$fromSchema = $connection->getSchemaManager()->createSchema();
+		$toSchema = $tool->getSchemaFromMetadata($metadata);
+		$up = $this->buildCodeFromSql($configuration, $fromSchema->getMigrateToSql($toSchema, $platform));
+		$down = $this->buildCodeFromSql($configuration, $fromSchema->getMigrateFromSql($toSchema, $platform));
+
+		if (!$up && !$down) {
+			return 'No changes detected in your mapping information.';
+		}
+
+		$version = date('YmdHis');
+		$path = $this->generateMigration($configuration, $version, $up, $down);
+
+		return sprintf('Generated new migration class to "%s" from schema differences.', $path);
+	}
+
+	/**
+	 * Returns PHP code for a migration file that "executes" the given
+	 * array of SQL statements.
+	 *
+	 * @param \Doctrine\DBAL\Migrations\Configuration\Configuration $configuration
+	 * @param array $sql
+	 * @return string
+	 */
+	protected function buildCodeFromSql(\Doctrine\DBAL\Migrations\Configuration\Configuration $configuration, array $sql) {
+		$currentPlatform = $configuration->getConnection()->getDatabasePlatform()->getName();
+		$code = array(
+			"\$this->abortIf(\$this->connection->getDatabasePlatform()->getName() != \"$currentPlatform\");", "",
+		);
+		foreach ($sql as $query) {
+			if (strpos($query, $configuration->getMigrationsTableName()) !== FALSE) {
+				continue;
+			}
+			$code[] = "\$this->addSql(\"$query\");";
+		}
+		return implode("\n", $code);
+	}
+
+	/**
+	 * Execute a single migration in up or down direction. If $path is given, the
+	 * SQL statements will be writte to the file in $path instead of executed.
+	 *
+	 * @param  $version
+	 * @param string $direction
+	 * @param null $path
+	 * @param bool $dryRun
+	 * @return void
+	 */
+	public function executeMigration($version, $direction = 'up', $path = NULL, $dryRun = FALSE) {
+		$configuration = $this->getMigrationConfiguration();
+		$version = $configuration->getVersion($version);
+
+		if ($path !== NULL) {
+			$version->writeSqlFile($path, $direction);
+		} else {
+			$version->execute($direction, $dryRun);
+		}
+	}
+
+	/**
+	 * Execute all new migrations, up to $version if given. If $path is given, the
+	 * SQL statements will be writte to the file in $path instead of executed.
+	 *
+	 * @param null $version
+	 * @param null $path
+	 * @param bool $dryRun
+	 * @return void
+	 */
+	public function executeMigrations($version = NULL, $path = NULL, $dryRun = FALSE) {
+		$configuration = $this->getMigrationConfiguration();
+		$migration = new \Doctrine\DBAL\Migrations\Migration($configuration);
+
+		if ($path !== NULL) {
+			$migration->writeSqlFile($path, $version);
+		} else {
+			$migration->migrate($version, $dryRun);
+		}
+	}
+
+	/**
+	 * Writes a migration file with $up and $down code and the given $version
+	 * to the configured migrations directory.
+	 *
+	 * @param \Doctrine\DBAL\Migrations\Configuration\Configuration $configuration
+	 * @param string $version
+	 * @param string $up
+	 * @param string $down
+	 * @return string
+	 * @throws \RuntimeException
+	 */
+	protected function generateMigration(\Doctrine\DBAL\Migrations\Configuration\Configuration $configuration, $version, $up = NULL, $down = NULL) {
+		$namespace = $configuration->getMigrationsNamespace();
+		$className = 'Version' . $version;
+		$up = $up === NULL ? '' : "\n		" . implode("\n		", explode("\n", $up));
+		$down = $down === NULL ? '' : "\n		" . implode("\n		", explode("\n", $down));
+
+		$path = \F3\FLOW3\Utility\Files::concatenatePaths(array($configuration->getMigrationsDirectory(), 'Version' . $version . '.php'));
+		try {
+			\F3\FLOW3\Utility\Files::createDirectoryRecursively(dirname($path));
+		} catch (\F3\FLOW3\Utility\Exception $exception) {
+			throw new \RuntimeException(sprintf('Migrations directory "%s" does not exist.', dirname($path)), 1303298536, $exception);
+		}
+
+		$code = <<<EOT
+<?php
+declare(ENCODING = 'utf-8');
+namespace $namespace;
+
+use Doctrine\DBAL\Migrations\AbstractMigration,
+	Doctrine\DBAL\Schema\Schema;
+
+/**
+ * Auto-generated Migration: Please modify to your need!
+ */
+class $className extends AbstractMigration {
+
+	/**
+	 * @param Schema \$schema
+	 * @return void
+	 */
+	public function up(Schema \$schema) {
+			// this up() migration is autogenerated, please modify it to your needs$up
+	}
+
+	/**
+	 * @param Schema \$schema
+	 * @return void
+	 */
+	public function down(Schema \$schema) {
+			// this down() migration is autogenerated, please modify it to your needs$down
+	}
+}
+
+?>
+EOT;
+		file_put_contents($path, $code);
+
+		return $path;
+	 }
+
 }
 
 ?>

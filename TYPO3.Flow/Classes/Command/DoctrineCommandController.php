@@ -64,7 +64,8 @@ class DoctrineCommandController extends \F3\FLOW3\MVC\Controller\CommandControll
 	public function helpCommand() {
 		$this->response->appendContent('Available commands:
 		validate, compileproxies
-		create, update, updateandclean');
+		create, update, updateandclean
+		migrationstatus, migrate, migrationgenerate, migrationdiff, migrationexecute');
 	}
 
 	/**
@@ -155,6 +156,83 @@ class DoctrineCommandController extends \F3\FLOW3\MVC\Controller\CommandControll
 			$this->response->appendContent('Doctrine proxies have been compiled.');
 		} else {
 			$this->response->appendContent('Doctrine proxy compilation has been SKIPPED, the driver and path backend options are not set.');
+		}
+	}
+
+	/**
+	 * Action for showing migration status
+	 *
+	 * @return void
+	 */
+	public function migrationStatusCommand() {
+			// "driver" is used only for Doctrine, thus we (mis-)use it here
+			// additionally, when no path is set, skip this step, assuming no DB is needed
+		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['path'] !== NULL) {
+			$this->response->appendContent($this->service->getMigrationStatus());
+		} else {
+			$this->response->appendContent('Doctrine migration status not available, the driver and path backend options are not set.');
+		}
+	}
+
+	/**
+	 * Action for running migrations
+	 *
+	 * @return void
+	 */
+	public function migrateCommand() {
+		$version = NULL; // we need arguments for commands...
+			// "driver" is used only for Doctrine, thus we (mis-)use it here
+			// additionally, when no path is set, skip this step, assuming no DB is needed
+		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['path'] !== NULL) {
+			$this->response->appendContent($this->service->executeMigrations($version));
+		} else {
+			$this->response->appendContent('Doctrine migration not possible, the driver and path backend options are not set.');
+		}
+	}
+
+	/**
+	 * Action for generating a migration
+	 *
+	 * @return void
+	 */
+	public function migrationDiffCommand() {
+			// "driver" is used only for Doctrine, thus we (mis-)use it here
+			// additionally, when no path is set, skip this step, assuming no DB is needed
+		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['path'] !== NULL) {
+			$this->response->appendContent($this->service->generateDiffMigration());
+		} else {
+			$this->response->appendContent('Doctrine migration generation has been SKIPPED, the driver and path backend options are not set.');
+		}
+	}
+
+	/**
+	 * Action for generating an empty migration
+	 *
+	 * @return void
+	 */
+	public function migrationGenerateCommand() {
+			// "driver" is used only for Doctrine, thus we (mis-)use it here
+			// additionally, when no path is set, skip this step, assuming no DB is needed
+		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['path'] !== NULL) {
+			$this->response->appendContent($this->service->generateEmptyMigration());
+		} else {
+			$this->response->appendContent('Doctrine migration generation has been SKIPPED, the driver and path backend options are not set.');
+		}
+	}
+
+	/**
+	 * Action for executing a single migration
+	 *
+	 * @return void
+	 */
+	public function migrationExecuteCommand() {
+		$version = NULL; // we need arguments for commands...
+			// "driver" is used only for Doctrine, thus we (mis-)use it here
+			// additionally, when no path is set, skip this step, assuming no DB is needed
+		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['path'] !== NULL) {
+			$this->response->appendContent($this->service->executeMigration($version));
+		} else {
+			$this->response->appendContent('Doctrine migration not possible, the driver and path backend options are not set.');
 		}
 	}
 
