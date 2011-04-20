@@ -109,7 +109,6 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$className = 'SomeClass' . uniqid();
 		$fullClassName = 'F3\FLOW3\Persistence\Tests\\' . $className;
 		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $className . ' implements \F3\FLOW3\AOP\ProxyInterface {
-			public function FLOW3_AOP_Proxy_construct() {}
 			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
 		}');
 		$newObject = new $fullClassName();
@@ -269,7 +268,6 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$fullClassName = 'F3\\FLOW3\Persistence\\Tests\\' . $className;
 		$identifier = \F3\FLOW3\Utility\Algorithms::generateUUID();
 		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $className . ' implements \F3\FLOW3\AOP\ProxyInterface {
-			public function FLOW3_AOP_Proxy_construct() {}
 			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
 		}');
 		$newObject = new $fullClassName();
@@ -306,7 +304,6 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$identifier = \F3\FLOW3\Utility\Algorithms::generateUUID();
 		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $className . ' implements \F3\FLOW3\AOP\ProxyInterface {
 			public $FLOW3_Persistence_Identifier = \'' . $identifier . '\';
-			public function FLOW3_AOP_Proxy_construct() {}
 			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
 		}');
 		$newObject = new $fullClassName();

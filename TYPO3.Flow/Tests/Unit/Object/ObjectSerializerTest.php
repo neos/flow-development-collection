@@ -414,7 +414,6 @@ class ObjectSerializerTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		$entityClassName = 'entityClass' . md5(uniqid(mt_rand(), TRUE));
 		eval('class ' . $entityClassName . ' implements \F3\FLOW3\Object\Proxy\ProxyInterface {
-			public function FLOW3_AOP_Proxy_construct() {}
 			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
 			public function __clone() {}
 		}');
@@ -462,7 +461,6 @@ class ObjectSerializerTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		$entityClassName = 'entityClass' . md5(uniqid(mt_rand(), TRUE));
 		eval('class ' . $entityClassName . ' implements \F3\FLOW3\Object\Proxy\ProxyInterface {
-			public function FLOW3_AOP_Proxy_construct() {}
 			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
 			public function __clone() {}
 		}');
