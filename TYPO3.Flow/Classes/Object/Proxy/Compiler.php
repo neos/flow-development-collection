@@ -124,6 +124,11 @@ class Compiler {
 			return FALSE;
 		}
 
+		$classReflection = new \ReflectionClass($fullClassName);
+		if ($classReflection->isInternal() === TRUE) {
+			return FALSE;
+		}
+
 		$proxyAnnotationValues = $this->reflectionService->getClassTagValues($fullClassName, 'proxy');
 		if ($proxyAnnotationValues !== array() && $proxyAnnotationValues[0] === 'disable') {
 			return FALSE;
