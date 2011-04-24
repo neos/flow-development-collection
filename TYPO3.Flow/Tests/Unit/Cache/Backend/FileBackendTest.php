@@ -30,16 +30,6 @@ namespace F3\FLOW3\Tests\Unit\Cache\Backend;
 class FileBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
-	 * @var \F3\FLOW3\Cache\Backend\FileBackendBackend If set, the tearDown() method will clean up the cache subdirectory used by this unit test.
-	 */
-	protected $backend;
-
-	/**
-	 * @var \F3\FLOW3\Utility\Environment
-	 */
-	protected $environment;
-
-	/**
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setUp() {
