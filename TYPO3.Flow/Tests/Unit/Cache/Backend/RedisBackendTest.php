@@ -81,13 +81,10 @@ class RedisBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 */
 	protected function setUpBackend(array $backendOptions = array()) {
-		$mockSystemLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
-
 		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\FrontendInterface', array(), array(), '', FALSE);
 		$mockCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('TestCache'));
 
 		$this->backend = new \F3\FLOW3\Cache\Backend\RedisBackend('Testing', $backendOptions);
-		$this->backend->injectSystemLogger($mockSystemLogger);
 		$this->backend->setCache($mockCache);
 		$this->backend->initializeObject();
 	}
