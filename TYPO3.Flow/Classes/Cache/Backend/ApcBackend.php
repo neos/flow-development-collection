@@ -57,11 +57,6 @@ class ApcBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	protected $identifierPrefix;
 
 	/**
-	 * @var string
-	 */
-	protected $cacheIdentifier;
-
-	/**
 	 * Constructs this backend
 	 *
 	 * @param string $context FLOW3's application context
