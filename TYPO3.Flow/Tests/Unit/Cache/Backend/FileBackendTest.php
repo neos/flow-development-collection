@@ -545,5 +545,34 @@ class FileBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		$backend->flushByTag('UnitTestTag%special');
 	}
+
+	/**
+	 * @test
+	 * @author Christian Kuhn <lolli@schwarzbu.ch>
+	 */
+	public function collectGarbageRemovesExpiredCacheEntries() {
+		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\AbstractFrontend', array(), array(), '', FALSE);
+		$mockCache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
+
+		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
+		$mockEnvironment->expects($this->any())->method('getMaximumPathLength')->will($this->returnValue(255));
+		$mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue('vfs://Foo/'));
+
+		$backend = $this->getMock('F3\FLOW3\Cache\Backend\FileBackend', array('isCacheFileExpired'), array(), '', FALSE);
+		$backend->expects($this->exactly(2))->method('isCacheFileExpired')->will($this->onConsecutiveCalls(TRUE, FALSE));
+		$backend->injectEnvironment($mockEnvironment);
+		$backend->setCache($mockCache);
+
+		$data = 'some data';
+		$backend->set('BackendFileTest1', $data);
+		$backend->set('BackendFileTest2', $data);
+
+		$this->assertFileExists('vfs://Foo/Cache/Data/UnitTestCache/BackendFileTest1');
+		$this->assertFileExists('vfs://Foo/Cache/Data/UnitTestCache/BackendFileTest2');
+
+		$backend->collectGarbage();
+		$this->assertFileNotExists('vfs://Foo/Cache/Data/UnitTestCache/BackendFileTest1');
+		$this->assertFileExists('vfs://Foo/Cache/Data/UnitTestCache/BackendFileTest2');
+	}
 }
 ?>

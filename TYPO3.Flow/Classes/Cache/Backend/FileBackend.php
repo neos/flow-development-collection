@@ -266,11 +266,16 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend implements \F3
 	 * @api
 	 */
 	public function collectGarbage() {
-		$pattern = $this->cacheDirectory . 'Data/' . $this->cacheIdentifier . '/*/*/*';
-		$filesFound = glob($pattern);
-		foreach ($filesFound as $cacheFilename) {
-			if ($this->isCacheFileExpired($cacheFilename)) {
-				$this->remove(basename($cacheFilename));
+		for ($directoryIterator = new \DirectoryIterator($this->cacheDirectory); $directoryIterator->valid(); $directoryIterator->next()) {
+			if ($directoryIterator->isDot()) continue;
+
+			if ($this->isCacheFileExpired($directoryIterator->getPathname())) {
+				$cacheEntryFileExtensionLength = strlen($this->cacheEntryFileExtension);
+				if ($cacheEntryFileExtensionLength > 0) {
+					$this->remove(substr($directoryIterator->getFilename(), 0, - $cacheEntryFileExtensionLength));
+				} else {
+					$this->remove($directoryIterator->getFilename());
+				}
 			}
 		}
 	}
