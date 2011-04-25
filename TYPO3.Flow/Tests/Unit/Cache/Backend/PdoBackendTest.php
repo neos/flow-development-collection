@@ -243,7 +243,6 @@ class PdoBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$backend->setCache($mockCache);
 		$backend->setDataSourceName('sqlite::memory:');
 		$backend->initializeObject();
-		$this->backend = $backend;
 
 		return $backend;
 	}
