@@ -150,7 +150,7 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \F3\
 			$metadata->setPrimaryTable($primaryTable);
 		} else {
 			$className = $classSchema->getClassName();
-			$primaryTable = array('name' => strtolower(substr($className, strrpos($className, '\\')+1)));
+			$primaryTable = array('name' => $this->inferTableNameFromClassName($className));
 #			$idProperties = array_keys($classSchema->getIdentityProperties());
 #			$primaryTable['uniqueConstraints']['flow3_identifier'] = array(
 #				'columns' => $idProperties
@@ -204,6 +204,16 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \F3\
 
 			// Evaluate @HasLifecycleCallbacks annotation
 		$this->evaluateLifeCycleAnnotations($classAnnotations, $class, $metadata);
+	}
+
+	/**
+	 * Given a class name a table name is returned. That name should be reasonably unique.
+	 *
+	 * @param string $className
+	 * @return string
+	 */
+	protected function inferTableNameFromClassName($className) {
+		return strtolower(substr($className, strrpos($className, '\\')+1));
 	}
 
 	/**
