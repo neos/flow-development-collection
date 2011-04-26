@@ -138,7 +138,11 @@ class ProxyClassBuilder {
 
 			$wakeupMethod = $proxyClass->getMethod('__wakeup');
 			$wakeupMethod->addPreParentCallCode($this->buildSetInstanceCode($objectConfiguration));
+			$wakeupMethod->addPreParentCallCode($this->buildSetRelatedEntitiesCode());
 			$wakeupMethod->addPostParentCallCode($this->buildLifecycleInitializationCode($objectConfiguration, \F3\FLOW3\Object\ObjectManagerInterface::INITIALIZATIONCAUSE_RECREATED));
+
+			$sleepMethod = $proxyClass->getMethod('__sleep');
+			$sleepMethod->addPostParentCallCode($this->buildSerializeRelatedEntitiesCode($objectConfiguration));
 
 			$injectPropertiesCode = $this->buildPropertyInjectionCode($objectConfiguration);
 			if ($injectPropertiesCode !== '') {
@@ -157,8 +161,8 @@ class ProxyClassBuilder {
 	}
 
 	/**
-	 * Renders additional code for the constructor which registers the instance of the proxy class at the Object Manager
-	 * before constructor injection is executed.
+	 * Renders additional code which registers the instance of the proxy class at the Object Manager
+	 * before constructor injection is executed. Used in constructors and wakeup methods.
 	 *
 	 * This also makes sure that object creation does not end in an endless loop due to bi-directional dependencies.
 	 *
@@ -166,7 +170,7 @@ class ProxyClassBuilder {
 	 * @return string
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function buildSetInstanceCode(\F3\FLOW3\Object\Configuration\Configuration $objectConfiguration) {
+	protected function buildSetInstanceCode(\F3\FLOW3\Object\Configuration\Configuration $objectConfiguration) {
 		if ($objectConfiguration->getScope() === \F3\FLOW3\Object\Configuration\Configuration::SCOPE_PROTOTYPE) {
 			return '';
 		}
@@ -180,7 +184,72 @@ class ProxyClassBuilder {
 			}
 		}
 
+		return $code;
+	}
 
+	/**
+	 * Renders code to set related entities in an object from identifier/type information.
+	 * Used in wakeup methods.
+	 *
+	 * @return string
+	 */
+	protected function buildSetRelatedEntitiesCode() {
+		return "
+	if (property_exists(\$this, 'FLOW3_Persistence_RelatedEntities') && is_array(\$this->FLOW3_Persistence_RelatedEntities)) {
+		\$persistenceManager = \\F3\\FLOW3\\Core\\Bootstrap::\$staticObjectManager->get('F3\\FLOW3\\Persistence\\PersistenceManagerInterface');
+		foreach (\$this->FLOW3_Persistence_RelatedEntities as \$entityInformation) {
+			\$this->\$entityInformation['propertyName'] = \$persistenceManager->getObjectByIdentifier(\$entityInformation['identifier'], \$entityInformation['entityType']);
+		}
+		unset(\$this->FLOW3_Persistence_RelatedEntities);
+	}
+		";
+	}
+
+	/**
+	 * Renders code to create identifier/type information from related entities in an object.
+	 * Used in sleep methods.
+	 *
+	 * @param \F3\FLOW3\Object\Configuration\Configuration $objectConfiguration
+	 * @return string
+	 */
+	protected function buildSerializeRelatedEntitiesCode(\F3\FLOW3\Object\Configuration\Configuration $objectConfiguration) {
+		$className = $objectConfiguration->getClassName();
+		$code = '';
+		if ($this->reflectionService->hasMethod($className, '__sleep') === FALSE) {
+			$nonTransientProperties = array();
+			foreach ($this->reflectionService->getClassPropertyNames($className) as $propertyName) {
+				if ($this->reflectionService->isPropertyTaggedWith($className, $propertyName, 'transient')) continue;
+				$nonTransientProperties[] = $propertyName;
+			}
+			if (count($nonTransientProperties) > 0) {
+				$code = "\t\t\$result = array();
+	foreach(array(" . implode(',', array_map(function($propertyName) { return '\'' . $propertyName . '\''; }, $nonTransientProperties)) . ") as \$propertyName) {
+		if (is_object(\$this->\$propertyName) && !\$this->\$propertyName instanceof \\Doctrine\\Common\\Collections\\Collection) {
+			if (\$this->\$propertyName instanceof \\Doctrine\\ORM\\Proxy\\Proxy) {
+				\$className = get_parent_class(\$this->\$propertyName);
+			} else {
+				\$className = \\F3\\FLOW3\\Core\\Bootstrap::\$staticObjectManager->getObjectNameByClassName(get_class(\$this->\$propertyName));
+			}
+			if (\$this->\$propertyName instanceof \\F3\\FLOW3\\Persistence\\Aspect\\PersistenceMagicInterface) {
+				if (!property_exists(\$this, 'FLOW3_Persistence_RelatedEntities') || !is_array(\$this->FLOW3_Persistence_RelatedEntities)) {
+					\$this->FLOW3_Persistence_RelatedEntities = array();
+					\$result[] = 'FLOW3_Persistence_RelatedEntities';
+				}
+				\$this->FLOW3_Persistence_RelatedEntities[] = array(
+					'propertyName' => \$propertyName,
+					'entityType' => \$className,
+					'identifier' => \\F3\\FLOW3\\Core\\Bootstrap::\$staticObjectManager->get('F3\\FLOW3\\Persistence\\PersistenceManagerInterface')->getIdentifierByObject(\$this->\$propertyName)
+				);
+				continue;
+			}
+			if (\$className !== FALSE && \\F3\\FLOW3\\Core\\Bootstrap::\$staticObjectManager->getScope(\$className) === \\F3\\FLOW3\\Object\\Configuration\\Configuration::SCOPE_SINGLETON) {
+				continue;
+			}
+		}
+		\$result[] = \$propertyName;
+	}\n";
+			}
+		}
 		return $code;
 	}
 
@@ -431,6 +500,5 @@ class ProxyClassBuilder {
 		$parametersCode = $this->buildMethodParametersCode($arguments);
 		return '\F3\FLOW3\Core\Bootstrap::$staticObjectManager->get(\'' . $customFactoryObjectName . '\')->' . $customFactoryMethodName . '(' . $parametersCode . ')';
 	}
-
 }
 ?>
