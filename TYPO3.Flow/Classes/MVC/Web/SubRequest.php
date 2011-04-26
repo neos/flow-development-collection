@@ -149,5 +149,19 @@ class SubRequest extends \F3\FLOW3\MVC\Web\Request {
 		return $this->parentRequest->getRoutePath();
 	}
 
+	/**
+	 * Return the top most parent request
+	 *
+	 * @return \F3\FLOW3\MVC\Web\Request
+	 * @author Lienhart Woitok <lienhart.woitok@netlogix.de>
+	 */
+	public function getRootRequest() {
+		if ($this->parentRequest instanceof SubRequest) {
+			return $this->parentRequest->getRootRequest();
+		} else {
+			return $this->parentRequest;
+		}
+	}
+
 }
 ?>

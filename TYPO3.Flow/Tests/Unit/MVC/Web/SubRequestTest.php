@@ -129,5 +129,19 @@ class SubRequestTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$this->mockParentRequest->expects($this->once())->method('getRoutePath')->will($this->returnValue('SomeRoutePath'));
 		$this->assertSame('SomeRoutePath', $this->subRequest->getRoutePath());
 	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function getRootRequestReturnsTopMostParentRequest() {
+		$mockRootRequest = $this->getMock('F3\FLOW3\MVC\Web\Request');
+		$parentParentRequest = new \F3\FLOW3\MVC\Web\SubRequest($mockRootRequest);
+		$parentRequest = new \F3\FLOW3\MVC\Web\SubRequest($parentParentRequest);
+		$subRequest = new \F3\FLOW3\MVC\Web\SubRequest($parentRequest);
+
+		$this->assertSame($mockRootRequest, $subRequest->getRootRequest());
+	}
+
 }
 ?>
