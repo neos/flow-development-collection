@@ -50,8 +50,8 @@ class Package extends BasePackage {
 		$dispatcher->connect('F3\FLOW3\Core\Bootstrap', 'bootstrapShuttingDown', 'F3\FLOW3\Object\ObjectManagerInterface', 'shutdown');
 		$dispatcher->connect('F3\FLOW3\Core\Bootstrap', 'bootstrapShuttingDown', 'F3\FLOW3\Reflection\ReflectionService', 'saveToCache');
 
-		$dispatcher->connect('F3\FLOW3\Command\CoreCommandController', 'finishedCompileCommand', 'F3\FLOW3\Persistence\Doctrine\PersistenceManager', 'compile');
 		$dispatcher->connect('F3\FLOW3\Command\CoreCommandController', 'finishedCompileCommand', 'F3\FLOW3\Security\Policy\PolicyService', 'savePolicyCache');
+		$dispatcher->connect('F3\FLOW3\Command\CoreCommandController', 'finishedCompileCommand', 'F3\FLOW3\Persistence\Doctrine\PersistenceManager', 'compile');
 	}
 }
 
