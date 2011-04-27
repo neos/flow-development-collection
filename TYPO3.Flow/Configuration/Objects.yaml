@@ -187,6 +187,21 @@ Doctrine\Common\Persistence\ObjectManager:
 F3\FLOW3\Persistence\PersistenceManagerInterface:
   className: F3\FLOW3\Persistence\Doctrine\PersistenceManager
 
+F3\FLOW3\Persistence\Doctrine\Logging\SqlLogger:
+  properties:
+    logger:
+      object:
+        factoryObjectName: F3\FLOW3\Log\LoggerFactory
+        arguments:
+          1:
+            value: 'Sql_Queries'
+          2:
+            value: 'F3\FLOW3\Log\Logger'
+          3:
+            value: 'F3\FLOW3\Log\Backend\FileBackend'
+          4:
+            setting: FLOW3.log.sqlLogger.backendOptions
+
 #                                                                          #
 # Resource                                                                 #
 #                                                                          #

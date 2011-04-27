@@ -22,7 +22,7 @@ namespace F3\FLOW3\Persistence\Doctrine\Logging;
  *                                                                        */
 
 /**
- * A SQL logger that logs to the FLOW3 system logger.
+ * A SQL logger that logs to a FLOW3 logger.
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
@@ -30,17 +30,9 @@ namespace F3\FLOW3\Persistence\Doctrine\Logging;
 class SqlLogger implements \Doctrine\DBAL\Logging\SQLLogger {
 
 	/**
-	 * @var \F3\FLOW3\Log\SystemLoggerInterface
+	 * @var \F3\FLOW3\Log\LoggerInterface
 	 */
-	protected $systemLogger;
-
-	/**
-	 * @param \F3\FLOW3\Log\SystemLoggerInterface $systemLogger
-	 * @return void
-	 */
-	public function injectSystemLogger(\F3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
-		$this->systemLogger = $systemLogger;
-	}
+	protected $logger;
 
 	/**
 	 * Logs a SQL statement to the system logger (DEBUG priority).
@@ -51,9 +43,9 @@ class SqlLogger implements \Doctrine\DBAL\Logging\SQLLogger {
 	 * @return void
 	 */
 	public function startQuery($sql, array $params = null, array $types = null) {
-			// this is a safeguard for the compile phase where no logger might be available...
-		if ($this->systemLogger !== NULL) {
-			$this->systemLogger->log($sql, LOG_DEBUG, array('params' => $params, 'types' => $types));
+			// this is a safeguard for when no logger might be available...
+		if ($this->logger !== NULL) {
+			$this->logger->log($sql, LOG_DEBUG, array('params' => $params, 'types' => $types));
 		}
 	}
 

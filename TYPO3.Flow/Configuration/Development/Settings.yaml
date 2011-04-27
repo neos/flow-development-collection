@@ -40,3 +40,8 @@ FLOW3:
         logFileURL: %FLOW3_PATH_DATA%Logs/Security_Development.log
         createParentDirectories: y
         severityThreshold: %LOG_DEBUG%
+    sqlLogger:
+      backendOptions:
+        logFileURL: %FLOW3_PATH_DATA%Logs/Query_Development.log
+        createParentDirectories: y
+        severityThreshold: %LOG_DEBUG%
