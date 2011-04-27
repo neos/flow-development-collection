@@ -72,6 +72,43 @@ abstract class AbstractPersistenceManager implements \F3\FLOW3\Persistence\Persi
 		$this->settings = $settings['persistence'];
 	}
 
+	/**
+	 * Converts the given object into an array containing the identity of the domain object.
+	 *
+	 * @param object $object The object to be converted
+	 * @return array The identity array in the format array('__identity' => '...')
+	 * @throws \F3\FLOW3\Persistence\Exception\UnknownObjectException if the given object is not known to the Persistence Manager
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function convertObjectToIdentityArray($object) {
+		$identifier = $this->getIdentifierByObject($object);
+		if ($identifier === NULL) {
+			throw new \F3\FLOW3\Persistence\Exception\UnknownObjectException('The given object is unknown to the Persistence Manager.', 1302628242);
+		}
+		return array('__identity' => $identifier);
+	}
+
+	/**
+	 * Recursively iterates through the given array and turns objects
+	 * into an arrays containing the identity of the domain object.
+	 *
+	 * @param array $array The array to be iterated over
+	 * @return array The modified array without objects
+	 * @throws \F3\FLOW3\Persistence\Exception\UnknownObjectException if array contains objects that are not known to the Persistence Manager
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function convertObjectsToIdentityArrays(array $array) {
+		foreach ($array as $key => $value) {
+			if (is_array($value)) {
+				$array[$key] = $this->convertObjectsToIdentityArrays($value);
+			} elseif (is_object($value) && $value instanceof \Traversable) {
+				$array[$key] = $this->convertObjectsToIdentityArrays(iterator_to_array($value));
+			} elseif (is_object($value)) {
+				$array[$key] = $this->convertObjectToIdentityArray($value);
+			}
+		}
+		return $array;
+	}
 }
 
 ?>

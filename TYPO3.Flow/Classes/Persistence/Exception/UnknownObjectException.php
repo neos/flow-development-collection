@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Persistence\Generic\Exception;
+namespace F3\FLOW3\Persistence\Exception;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *

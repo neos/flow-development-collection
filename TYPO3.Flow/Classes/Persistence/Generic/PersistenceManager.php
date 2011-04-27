@@ -270,7 +270,7 @@ class PersistenceManager extends \F3\FLOW3\Persistence\AbstractPersistenceManage
 	 *
 	 * @param object $modifiedObject The modified object
 	 * @return void
-	 * @throws Exception\UnknownObjectException
+	 * @throws \F3\FLOW3\Persistence\Exception\UnknownObjectException
 	 * @api
 	 */
 	public function merge($modifiedObject) {
@@ -298,7 +298,7 @@ class PersistenceManager extends \F3\FLOW3\Persistence\AbstractPersistenceManage
 				}
 			}
 		} else {
-			throw new Exception\UnknownObjectException('The "modified object" does not have an existing counterpart in this repository.', 1249479819);
+			throw new \F3\FLOW3\Persistence\Exception\UnknownObjectException('The "modified object" does not have an existing counterpart in this repository.', 1249479819);
 		}
 	}
 

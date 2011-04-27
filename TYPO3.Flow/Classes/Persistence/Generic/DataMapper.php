@@ -189,7 +189,7 @@ class DataMapper {
 					break;
 					default:
 						if ($propertyData['value'] === FALSE) {
-							throw new \F3\FLOW3\Persistence\Generic\Exception\UnknownObjectException('An expected object was not found by the backend. It was expected for ' . $objectData['classname'] . '::' . $propertyName, 1289509867);
+							throw new \F3\FLOW3\Persistence\Exception\UnknownObjectException('An expected object was not found by the backend. It was expected for ' . $objectData['classname'] . '::' . $propertyName, 1289509867);
 						}
 						$propertyValue = $this->mapToObject($propertyData['value']);
 					break;

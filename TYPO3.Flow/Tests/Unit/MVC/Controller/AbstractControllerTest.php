@@ -109,18 +109,47 @@ class AbstractControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @expectedException \F3\FLOW3\MVC\Exception\StopActionException
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function forwardResetsArguments() {
+		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\PersistenceManagerInterface');
+		$mockPersistenceManager->expects($this->any())->method('convertObjectsToIdentityArrays')->will($this->returnValue(array()));
 		$mockArguments = $this->getMock('F3\FLOW3\MVC\Controller\Arguments', array('removeAll'), array(), '', FALSE);
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request');
 
 		$controller = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\AbstractController', array('dummy'), array(), '', FALSE);
 		$controller->_set('arguments', $mockArguments);
 		$controller->_set('request', $mockRequest);
+		$controller->_set('persistenceManager', $mockPersistenceManager);
 
 		$mockArguments->expects($this->once())->method('removeAll');
 
 		$controller->_call('forward', 'foo');
+	}
+
+	/**
+	 * @test
+	 * @expectedException \F3\FLOW3\MVC\Exception\StopActionException
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function forwardRemovesObjectsFromArgumentsBeforePassingThemToRequest() {
+		$originalArguments = array('foo' => 'bar', 'bar' => array('someObject' => new \stdClass()));
+		$convertedArguments = array('foo' => 'bar', 'bar' => array('someObject' => array('__identity' => 'x')));
+
+		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\PersistenceManagerInterface');
+		$mockPersistenceManager->expects($this->once())->method('convertObjectsToIdentityArrays')->with($originalArguments)->will($this->returnValue($convertedArguments));
+
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request');
+		$mockRequest->expects($this->once())->method('setArguments')->with($convertedArguments);
+
+		$mockArguments = $this->getMock('F3\FLOW3\MVC\Controller\Arguments', array('removeAll'), array(), '', FALSE);
+
+		$controller = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\AbstractController', array('dummy'), array(), '', FALSE);
+		$controller->_set('arguments', $mockArguments);
+		$controller->_set('request', $mockRequest);
+		$controller->_set('persistenceManager', $mockPersistenceManager);
+
+		$controller->_call('forward', 'someAction', 'SomeController', 'SomePackage', $originalArguments);
 	}
 
 	/**

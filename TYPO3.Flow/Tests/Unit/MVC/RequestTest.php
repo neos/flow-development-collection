@@ -133,6 +133,61 @@ class RequestTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
+	 * @expectedException \F3\FLOW3\MVC\Exception\InvalidArgumentNameException
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function setArgumentThrowsExceptionIfTheGivenArgumentNameIsNoString() {
+		$request = new \F3\FLOW3\MVC\Request();
+		$request->setArgument(123, 'theValue');
+	}
+
+	/**
+	 * @test
+	 * @expectedException \F3\FLOW3\MVC\Exception\InvalidArgumentNameException
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function setArgumentThrowsExceptionIfTheGivenArgumentNameIsAnEmptyString() {
+		$request = new \F3\FLOW3\MVC\Request();
+		$request->setArgument('', 'theValue');
+	}
+
+	/**
+	 * @test
+	 * @expectedException \F3\FLOW3\MVC\Exception\InvalidArgumentTypeException
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function setArgumentThrowsExceptionIfTheGivenArgumentValueIsAnObject() {
+		$request = new \F3\FLOW3\MVC\Request();
+		$request->setArgument('theKey', new \stdClass());
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function setArgumentsOverridesAllExistingArguments() {
+		$arguments = array('key1' => 'value1', 'key2' => 'value2');
+		$request = new \F3\FLOW3\MVC\Request();
+		$request->setArgument('someKey', 'shouldBeOverridden');
+		$request->setArguments($arguments);
+
+		$actualResult = $request->getArguments();
+		$this->assertEquals($arguments, $actualResult);
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function setArgumentsCallsSetArgumentForEveryArrayEntry() {
+		$request = $this->getMock('F3\FLOW3\MVC\Request', array('setArgument'));
+		$request->expects($this->at(0))->method('setArgument')->with('key1', 'value1');
+		$request->expects($this->at(1))->method('setArgument')->with('key2', 'value2');
+		$request->setArguments(array('key1' => 'value1', 'key2' => 'value2'));
+	}
+
+	/**
+	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function multipleArgumentsCanBeSetWithSetArgumentsAndRetrievedWithGetArguments() {

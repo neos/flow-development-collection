@@ -101,6 +101,12 @@ abstract class AbstractController implements ControllerInterface {
 	protected $flashMessageContainer;
 
 	/**
+	 * @var \F3\FLOW3\Persistence\PersistenceManagerInterface
+	 * @inject
+	 */
+	protected $persistenceManager;
+
+	/**
 	 * Constructs the controller
 	 *
 	 * @author Robert Lemke <robert@typo3.org>
@@ -235,6 +241,7 @@ abstract class AbstractController implements ControllerInterface {
 		$this->request->setControllerActionName($actionName);
 		if ($controllerName !== NULL) $this->request->setControllerName($controllerName);
 		if ($packageKey !== NULL) $this->request->setControllerPackageKey($packageKey);
+		$arguments = $this->persistenceManager->convertObjectsToIdentityArrays($arguments);
 		$this->request->setArguments($arguments);
 
 		$this->request->setOriginalRequest($originalRequest);

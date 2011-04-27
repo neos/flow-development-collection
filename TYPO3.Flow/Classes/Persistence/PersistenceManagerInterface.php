@@ -91,6 +91,28 @@ interface PersistenceManagerInterface {
 	public function getObjectByIdentifier($identifier, $objectType = NULL);
 
 	/**
+	 * Converts the given object into an array containing the identity of the domain object.
+	 *
+	 * @param object $object The object to be converted
+	 * @return array The identity array in the format array('__identity' => '...')
+	 * @throws \F3\FLOW3\Persistence\Exception\UnknownObjectException if the given object is not known to the Persistence Manager
+	 * @api
+	 */
+	public function convertObjectToIdentityArray($object);
+
+	/**
+	 * Recursively iterates through the given array and turns objects
+	 * into arrays containing the identity of the domain object.
+	 *
+	 * @param array $array The array to be iterated over
+	 * @return array The modified array without objects
+	 * @throws \F3\FLOW3\Persistence\Exception\UnknownObjectException if array contains objects that are not known to the Persistence Manager
+	 * @api
+	 * @see convertObjectToIdentityArray()
+	 */
+	public function convertObjectsToIdentityArrays(array $array);
+
+	/**
 	 * Return a query object for the given type.
 	 *
 	 * @param string $type

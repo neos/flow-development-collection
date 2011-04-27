@@ -348,23 +348,33 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	 * @param string $argumentName Name of the argument to set
 	 * @param mixed $value The new value
 	 * @return void
+	 * @throws \F3\FLOW3\MVC\Exception\InvalidArgumentNameException if the given argument name is no string
+	 * @throws \F3\FLOW3\MVC\Exception\InvalidArgumentTypeException if the given argument value is an object
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setArgument($argumentName, $value) {
-		if (!is_string($argumentName) || strlen($argumentName) === 0) throw new \F3\FLOW3\MVC\Exception\InvalidArgumentNameException('Invalid argument name.', 1210858767);
+		if (!is_string($argumentName) || strlen($argumentName) === 0) throw new \F3\FLOW3\MVC\Exception\InvalidArgumentNameException('Invalid argument name (must be a non-empty string).', 1210858767);
+		if (is_object($value)) throw new \F3\FLOW3\MVC\Exception\InvalidArgumentTypeException('You are not allowed to store objects in the request arguments. Please convert the object of type "' . get_class($value) . '" given for argument "' . $argumentName . '" to a simple type first.', 1302783022);
 		$this->arguments[$argumentName] = $value;
 	}
 
 	/**
-	 * Sets the whole arguments ArrayObject and therefore replaces any arguments
-	 * which existed before.
+	 * Sets the specified arguments.
+	 * The arguments array will be reset therefore any arguments
+	 * which existed before will be overwritten!
 	 *
 	 * @param array $arguments An array of argument names and their values
 	 * @return void
+	 * @throws \F3\FLOW3\MVC\Exception\InvalidArgumentNameException if an argument name is no string
+	 * @throws \F3\FLOW3\MVC\Exception\InvalidArgumentTypeException if an argument value is an object
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setArguments(array $arguments) {
-		$this->arguments = $arguments;
+		$this->arguments = array();
+		foreach ($arguments as $key => $value) {
+			$this->setArgument($key, $value);
+		}
 	}
 
 	/**

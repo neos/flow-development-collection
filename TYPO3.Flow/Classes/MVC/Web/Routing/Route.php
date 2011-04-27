@@ -422,34 +422,11 @@ class Route {
 
 			// add query string
 		if (count($routeValues) > 0) {
-			$routeValues = $this->convertDomainObjectsToIdentityArrays($routeValues);
+			$routeValues = $this->persistenceManager->convertObjectsToIdentityArrays($routeValues);
 			$matchingUri .= '?' . http_build_query($routeValues, NULL, '&');
 		}
 		$this->matchingUri = $matchingUri;
 		return TRUE;
-	}
-
-	/**
-	 * Recursively iterates through the specified routeValues and turns objects
-	 * into an arrays containing the UUID of the domain object.
-	 *
-	 * @param array $routeValues The routeValues to be iterated over
-	 * @return array The modified routeValues array
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	protected function convertDomainObjectsToIdentityArrays(array $routeValues) {
-		foreach ($routeValues as $routeValueKey => $routeValue) {
-			if (is_object($routeValue)) {
-				$uuid = $this->persistenceManager->getIdentifierByObject($routeValue);
-				if ($uuid === FALSE) {
-					throw new \F3\FLOW3\MVC\Exception\InvalidArgumentValueException('Route value "' . $routeValueKey . '" is an object but is unknown to the persistence manager.', 1242417960);
-				}
-				$routeValues[$routeValueKey] = array('__identity' => $uuid);
-			} elseif (is_array($routeValue)) {
-				$routeValues[$routeValueKey] = $this->convertDomainObjectsToIdentityArrays($routeValue);
-			}
-		}
-		return $routeValues;
 	}
 
 	/**
