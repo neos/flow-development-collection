@@ -360,16 +360,21 @@ class Bootstrap {
 	protected function initializeForRuntime() {
 		$objectConfigurationCache = $this->cacheManager->getCache('FLOW3_Object_Configuration');
 		if ($objectConfigurationCache->has('allCompiledCodeUpToDate') === FALSE || $this->context !== 'Production') {
-			if (DIRECTORY_SEPARATOR === '/') {
-				$command = 'FLOW3_ROOTPATH=' . FLOW3_PATH_ROOT . ' ' . 'FLOW3_CONTEXT=' . $this->context . ' ' . \F3\FLOW3\Utility\Files::getUnixStylePath($this->settings['core']['phpBinaryPathAndFilename']) . ' -c ' . \F3\FLOW3\Utility\Files::getUnixStylePath(php_ini_loaded_file()) . ' ' . FLOW3_PATH_FLOW3 . 'Scripts/flow3' . ' flow3:core:compile';
-			} else {
-				$command = 'SET FLOW3_ROOTPATH=' . FLOW3_PATH_ROOT . '&' . 'SET FLOW3_CONTEXT=' . $this->context . '&' . $this->settings['core']['phpBinaryPathAndFilename'] . ' -c ' . php_ini_loaded_file() . ' ' . FLOW3_PATH_FLOW3 . 'Scripts/flow3' . ' flow3:core:compile';
-			}
-			system($command);
+			$this->executeCommand('flow3:core:compile');
 		}
-
 		if ($objectConfigurationCache->has('allCompiledCodeUpToDate') === FALSE) {
 			throw new \F3\FLOW3\Exception('Could not load object configuration from cache. This might be due to an unsuccessful compile run. One reason might be, that your PHP binary is not located in "' . $this->settings['core']['phpBinaryPathAndFilename'] . '". In that case, set the correct path to the PHP executable in Configuration/Settings.yaml, setting FLOW3.core.phpBinaryPathAndFilename.', 1297263663);
+		}
+
+		if ($this->context !== 'Production') {
+			$coreCache = $this->cacheManager->getCache('FLOW3_Core');
+			if ($coreCache->has('doctrineSetupRunning') === FALSE) {
+				$coreCache->set('doctrineSetupRunning', 'White Russian', array(), 60);
+				$this->systemLogger->log('Updating Doctrine DB and proxies', LOG_DEBUG);
+				$this->executeCommand('flow3:doctrine:update');
+				$this->executeCommand('flow3:doctrine:compileproxies');
+				$coreCache->remove('doctrineSetupRunning');
+			}
 		}
 
 		$this->classLoader->injectClassesCache($this->cacheManager->getCache('FLOW3_Object_Classes'));
@@ -389,6 +394,21 @@ class Bootstrap {
 		$this->initializeI18n();
 
 		$this->emitBootstrapReady();
+	}
+
+	/**
+	 * Executes the given command as a sub-request to the FLOW3 CLI system.
+	 *
+	 * @param string $command E.g. flow3:cache:flush
+	 * @return void
+	 */
+	protected function executeCommand($command) {
+		if (DIRECTORY_SEPARATOR === '/') {
+			$command = 'FLOW3_ROOTPATH=' . FLOW3_PATH_ROOT . ' ' . 'FLOW3_CONTEXT=' . $this->context . ' ' . \F3\FLOW3\Utility\Files::getUnixStylePath($this->settings['core']['phpBinaryPathAndFilename']) . ' -c ' . \F3\FLOW3\Utility\Files::getUnixStylePath(php_ini_loaded_file()) . ' ' . FLOW3_PATH_FLOW3 . 'Scripts/flow3' . ' ' . $command;
+		} else {
+			$command = 'SET FLOW3_ROOTPATH=' . FLOW3_PATH_ROOT . '&' . 'SET FLOW3_CONTEXT=' . $this->context . '&' . $this->settings['core']['phpBinaryPathAndFilename'] . ' -c ' . php_ini_loaded_file() . ' ' . FLOW3_PATH_FLOW3 . 'Scripts/flow3' . ' ' . $command;
+		}
+		system($command);
 	}
 
 	/**

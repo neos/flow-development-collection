@@ -163,8 +163,7 @@ class PersistenceManager extends \F3\FLOW3\Persistence\AbstractPersistenceManage
 	}
 
 	/**
-	 * Called after a compile in FLOW3, validates the mapping and creates/updated
-	 * database tables accordingly.
+	 * Called from functional tests, creates/updates database tables and compiles proxies.
 	 *
 	 * @return void
 	 */
@@ -172,47 +171,22 @@ class PersistenceManager extends \F3\FLOW3\Persistence\AbstractPersistenceManage
 			// "driver" is used only for Doctrine, thus we (mis-)use it here
 			// additionally, when no path is set, skip this step, assuming no DB is needed
 		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['path'] !== NULL) {
-			$this->validateMapping();
-			$this->createOrUpdateSchema();
-			$this->compileProxies();
+			$schemaTool = new \Doctrine\ORM\Tools\SchemaTool($this->entityManager);
+			if ($this->settings['backendOptions']['driver'] === 'pdo_sqlite') {
+				$schemaTool->createSchema($this->entityManager->getMetadataFactory()->getAllMetadata());
+			} else {
+				$schemaTool->updateSchema($this->entityManager->getMetadataFactory()->getAllMetadata());
+			}
+
+			$proxyFactory = $this->entityManager->getProxyFactory();
+			$proxyFactory->generateProxyClasses($this->entityManager->getMetadataFactory()->getAllMetadata());
+
 			$this->systemLogger->log('Doctrine 2 setup finished');
 			return TRUE;
 		} else {
 			$this->systemLogger->log('Doctrine 2 setup skipped, driver and path backend options not set!', LOG_NOTICE);
 			return FALSE;
 		}
-	}
-
-	/**
-	 * @return void
-	 */
-	protected function validateMapping() {
-		$validator = new \Doctrine\ORM\Tools\SchemaValidator($this->entityManager);
-		$errors = $validator->validateMapping();
-
-		if (count($errors) > 0) {
-			$this->systemLogger->log('Doctrine 2 schema validation failed.', LOG_CRIT, $errors);
-		}
-	}
-
-	/**
-	 * @return void
-	 */
-	protected function createOrUpdateSchema() {
-		$schemaTool = new \Doctrine\ORM\Tools\SchemaTool($this->entityManager);
-		if ($this->settings['backendOptions']['driver'] === 'pdo_sqlite') {
-			$schemaTool->createSchema($this->entityManager->getMetadataFactory()->getAllMetadata());
-		} else {
-			$schemaTool->updateSchema($this->entityManager->getMetadataFactory()->getAllMetadata());
-		}
-	}
-
-	/**
-	 * @return void
-	 */
-	protected function compileProxies() {
-		$proxyFactory = $this->entityManager->getProxyFactory();
-		$proxyFactory->generateProxyClasses($this->entityManager->getMetadataFactory()->getAllMetadata());
 	}
 
 	/**
