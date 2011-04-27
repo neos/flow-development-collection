@@ -39,13 +39,7 @@ class DoctrineCommandController extends \F3\FLOW3\MVC\Controller\CommandControll
 	 * @inject
 	 * @var \F3\FLOW3\Persistence\Doctrine\Service
 	 */
-	protected $service;
-
-	/**
-	 * @inject
-	 * @var \F3\FLOW3\Log\SystemLoggerInterface
-	 */
-	protected $systemLogger;
+	protected $doctrineService;
 
 	/**
 	 * Injects the FLOW3 settings, the persistence part is kept
@@ -78,7 +72,7 @@ class DoctrineCommandController extends \F3\FLOW3\MVC\Controller\CommandControll
 			// additionally, when no path is set, skip this step, assuming no DB is needed
 		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['path'] !== NULL) {
 			$this->response->appendContent('');
-			$classesAndErrors = $this->service->validateMapping();
+			$classesAndErrors = $this->doctrineService->validateMapping();
 			if (count($classesAndErrors) === 0) {
 				$this->response->appendContent('Mapping validation results: PASSED, no errors found. :o)');
 			} else {
@@ -104,8 +98,7 @@ class DoctrineCommandController extends \F3\FLOW3\MVC\Controller\CommandControll
 			// "driver" is used only for Doctrine, thus we (mis-)use it here
 			// additionally, when no path is set, skip this step, assuming no DB is needed
 		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['path'] !== NULL) {
-			$this->service->createSchema();
-			$this->response->appendContent('The database schema has been created.');
+			$this->doctrineService->createSchema();
 		} else {
 			$this->response->appendContent('Database schema creation has been SKIPPED, the driver and path backend options are not set.');
 		}
@@ -120,8 +113,7 @@ class DoctrineCommandController extends \F3\FLOW3\MVC\Controller\CommandControll
 			// "driver" is used only for Doctrine, thus we (mis-)use it here
 			// additionally, when no path is set, skip this step, assuming no DB is needed
 		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['path'] !== NULL) {
-			$this->service->updateSchema();
-			$this->response->appendContent('The database schema has been updated.');
+			$this->doctrineService->updateSchema();
 		} else {
 			$this->response->appendContent('Database schema update has been SKIPPED, the driver and path backend options are not set.');
 		}
@@ -136,8 +128,7 @@ class DoctrineCommandController extends \F3\FLOW3\MVC\Controller\CommandControll
 			// "driver" is used only for Doctrine, thus we (mis-)use it here
 			// additionally, when no path is set, skip this step, assuming no DB is needed
 		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['path'] !== NULL) {
-			$this->service->updateSchema(FALSE);
-			$this->response->appendContent('The database schema has been updated.');
+			$this->doctrineService->updateSchema(FALSE);
 		} else {
 			$this->response->appendContent('Database schema update has been SKIPPED, the driver and path backend options are not set.');
 		}
@@ -152,8 +143,7 @@ class DoctrineCommandController extends \F3\FLOW3\MVC\Controller\CommandControll
 			// "driver" is used only for Doctrine, thus we (mis-)use it here
 			// additionally, when no path is set, skip this step, assuming no DB is needed
 		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['path'] !== NULL) {
-			$this->service->compileProxies();
-			$this->response->appendContent('Doctrine proxies have been compiled.');
+			$this->doctrineService->compileProxies();
 		} else {
 			$this->response->appendContent('Doctrine proxy compilation has been SKIPPED, the driver and path backend options are not set.');
 		}
@@ -168,7 +158,7 @@ class DoctrineCommandController extends \F3\FLOW3\MVC\Controller\CommandControll
 			// "driver" is used only for Doctrine, thus we (mis-)use it here
 			// additionally, when no path is set, skip this step, assuming no DB is needed
 		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['path'] !== NULL) {
-			$this->response->appendContent($this->service->getMigrationStatus());
+			$this->response->appendContent($this->doctrineService->getMigrationStatus());
 		} else {
 			$this->response->appendContent('Doctrine migration status not available, the driver and path backend options are not set.');
 		}
@@ -184,7 +174,7 @@ class DoctrineCommandController extends \F3\FLOW3\MVC\Controller\CommandControll
 			// "driver" is used only for Doctrine, thus we (mis-)use it here
 			// additionally, when no path is set, skip this step, assuming no DB is needed
 		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['path'] !== NULL) {
-			$this->response->appendContent($this->service->executeMigrations($version));
+			$this->response->appendContent($this->doctrineService->executeMigrations($version));
 		} else {
 			$this->response->appendContent('Doctrine migration not possible, the driver and path backend options are not set.');
 		}
@@ -199,7 +189,7 @@ class DoctrineCommandController extends \F3\FLOW3\MVC\Controller\CommandControll
 			// "driver" is used only for Doctrine, thus we (mis-)use it here
 			// additionally, when no path is set, skip this step, assuming no DB is needed
 		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['path'] !== NULL) {
-			$this->response->appendContent($this->service->generateDiffMigration());
+			$this->response->appendContent($this->doctrineService->generateDiffMigration());
 		} else {
 			$this->response->appendContent('Doctrine migration generation has been SKIPPED, the driver and path backend options are not set.');
 		}
@@ -214,7 +204,7 @@ class DoctrineCommandController extends \F3\FLOW3\MVC\Controller\CommandControll
 			// "driver" is used only for Doctrine, thus we (mis-)use it here
 			// additionally, when no path is set, skip this step, assuming no DB is needed
 		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['path'] !== NULL) {
-			$this->response->appendContent($this->service->generateEmptyMigration());
+			$this->response->appendContent($this->doctrineService->generateEmptyMigration());
 		} else {
 			$this->response->appendContent('Doctrine migration generation has been SKIPPED, the driver and path backend options are not set.');
 		}
@@ -230,7 +220,7 @@ class DoctrineCommandController extends \F3\FLOW3\MVC\Controller\CommandControll
 			// "driver" is used only for Doctrine, thus we (mis-)use it here
 			// additionally, when no path is set, skip this step, assuming no DB is needed
 		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['path'] !== NULL) {
-			$this->response->appendContent($this->service->executeMigration($version));
+			$this->response->appendContent($this->doctrineService->executeMigration($version));
 		} else {
 			$this->response->appendContent('Doctrine migration not possible, the driver and path backend options are not set.');
 		}
