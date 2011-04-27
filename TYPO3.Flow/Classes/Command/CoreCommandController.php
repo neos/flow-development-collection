@@ -150,8 +150,8 @@ class CoreCommandController extends \F3\FLOW3\MVC\Controller\CommandController {
 	 * @return void
 	 */
 	public function compileCommand($force = FALSE) {
+		$objectConfigurationCache = $this->cacheManager->getCache('FLOW3_Object_Configuration');
 		if ($force === FALSE) {
-			$objectConfigurationCache = $this->cacheManager->getCache('FLOW3_Object_Configuration');
 			if ($objectConfigurationCache->has('allCompiledCodeUpToDate')) {
 				return;
 			}
