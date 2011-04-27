@@ -112,7 +112,7 @@ class EntityManagerFactory {
 		\F3\FLOW3\Utility\Files::createDirectoryRecursively($proxyDirectory);
 		$config->setProxyDir($proxyDirectory);
 		$config->setProxyNamespace('F3\FLOW3\Persistence\Doctrine\Proxies');
-		$config->setAutoGenerateProxyClasses($this->settings['doctrine']['autoGenerateProxyClasses']);
+		$config->setAutoGenerateProxyClasses(FALSE);
 
 		return \Doctrine\ORM\EntityManager::create($this->settings['backendOptions'], $config);
 	}
