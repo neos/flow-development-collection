@@ -470,12 +470,7 @@ class ProxyClassBuilder {
 					break;
 
 					case \F3\FLOW3\Object\Configuration\ConfigurationArgument::ARGUMENT_TYPES_SETTING:
-						if (strpos($argumentValue, '.') !== FALSE) {
-							$settingPath = explode('.', $argumentValue);
-							$preparedArguments[] = '$this->settings[\'' . implode('\'][\'', $settingPath) . '\']';
-						} else {
-							$preparedArguments[] = '$this->settings[\''. $argumentValue . '\']';
-						}
+						$preparedArguments[] = '\F3\FLOW3\Core\Bootstrap::$staticObjectManager->getSettingsByPath(explode(\'.\', \''. $argumentValue . '\'))';
 					break;
 				}
 			}

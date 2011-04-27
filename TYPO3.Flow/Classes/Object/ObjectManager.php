@@ -385,6 +385,16 @@ class ObjectManager implements ObjectManagerInterface {
 	}
 
 	/**
+	 * Returns the an array of package settings or a single setting value by the given path.
+	 *
+	 * @param array $settingsPath Path to the setting(s) as an array, for example array('FLOW3', 'persistence', 'backendOptions')
+	 * @return mixed Either an array of settings or the value of a single setting
+	 */
+	public function getSettingsByPath(array $settingsPath) {
+		return \F3\FLOW3\Utility\Arrays::getValueByPath($this->allSettings, $settingsPath);
+	}
+
+	/**
 	 * Invokes the Factory defined in the object configuration of the specified object in order
 	 * to build an instance. Arguments which were defined in the object configuration are
 	 * passed to the factory method.
