@@ -51,6 +51,11 @@ class CsrfProtectionAspect {
 	protected $policyService;
 
 	/**
+	 * @var \F3\FLOW3\Utility\Environment
+	 */
+	protected $environment;
+
+	/**
 	 * Injects the object manager
 	 *
 	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager A reference to the object manager
@@ -93,6 +98,17 @@ class CsrfProtectionAspect {
 	}
 
 	/**
+	 * Injects the environment object
+	 *
+	 * @param \F3\FLOW3\Utility\Environment $environment The environment object
+	 * @return void
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function injectEnvironment(\F3\FLOW3\Utility\Environment $environment) {
+		$this->environment = $environment;
+	}
+
+	/**
 	 * Adds a CSRF token as argument in the URI builder
 	 *
 	 * @before method(F3\FLOW3\MVC\Web\Routing\UriBuilder->build()) && setting(FLOW3.security.enable)
@@ -122,6 +138,27 @@ class CsrfProtectionAspect {
 			$arguments['FLOW3-CSRF-TOKEN'] = $this->securityContext->getCsrfProtectionToken();
 			$uriBuilder->setArguments($arguments);
 		}
+	}
+
+	/**
+	 * Adds a CSRF token as argument in ExtDirect requests
+	 *
+	 * @around method(F3\ExtJS\ExtDirect\Transaction->buildRequest()) && setting(FLOW3.security.enable)
+	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
+	 * @return void
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function transferCsrfTokenToExtDirectRequests(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+		$arguments = $this->environment->getRequestUri()->getArguments();
+		$request = $joinPoint->getAdviceChain()->proceed($joinPoint);
+
+		if (isset($arguments['FLOW3-CSRF-TOKEN'])) {
+			$requestArguments = $request->getArguments();
+			$requestArguments['FLOW3-CSRF-TOKEN'] = $arguments['FLOW3-CSRF-TOKEN'];
+			$request->setArguments($requestArguments);
+		}
+
+		return $request;
 	}
 }
 
