@@ -125,7 +125,6 @@ FLOW3:
     doctrine:
       cacheImplementation: 'Doctrine\Common\Cache\ArrayCache'
       sqlLogger: null
-      autoGenerateProxyClasses: n
 
   reflection:
 
