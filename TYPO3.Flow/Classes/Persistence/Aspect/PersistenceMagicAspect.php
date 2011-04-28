@@ -39,13 +39,6 @@ class PersistenceMagicAspect {
 	protected $useIgBinary;
 
 	/**
-	 * The reflection service
-	 *
-	 * @var \F3\FLOW3\Reflection\ReflectionService
-	 */
-	protected $reflectionService;
-
-	/**
 	 * @pointcut classTaggedWith(entity) || classTaggedWith(valueobject)
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -58,17 +51,6 @@ class PersistenceMagicAspect {
 	 * @introduce F3\FLOW3\Persistence\Aspect\PersistenceMagicAspect->isEntityOrValueObject && filter(F3\FLOW3\Persistence\Doctrine\Mapping\Driver\Flow3AnnotationDriver)
 	 */
 	protected $FLOW3_Persistence_Identifier;
-
-	/**
-	 * Injects the reflection service
-	 *
-	 * @param \F3\FLOW3\Reflection\ReflectionService $reflectionService
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function injectReflectionService(\F3\FLOW3\Reflection\ReflectionService $reflectionService) {
-		$this->reflectionService = $reflectionService;
-	}
 
 	/**
 	 * Initializes this aspect
@@ -102,18 +84,17 @@ class PersistenceMagicAspect {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function generateValueHash(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
-		$proxy = $joinPoint->getProxy();
 		$hashSource = '';
-		foreach (array_keys($this->reflectionService->getClassSchema($joinPoint->getClassName())->getProperties()) as $propertyName) {
-			$propertyValue = \F3\FLOW3\Reflection\ObjectAccess::getProperty($proxy, $propertyName, TRUE);
-			if (is_array($propertyValue)) {
-				$hashSource .= ($this->useIgBinary === TRUE) ? igbinary_serialize($propertyValue) : serialize($propertyValue);
-			} elseif (!is_object($propertyValue)) {
-				$hashSource .= $propertyValue;
-			} elseif (property_exists($propertyValue, 'FLOW3_Persistence_Identifier')) {
-				$hashSource .= \F3\FLOW3\Reflection\ObjectAccess::getProperty($propertyValue, 'FLOW3_Persistence_Identifier', TRUE);
+		foreach ($joinPoint->getMethodArguments() as $argumentValue) {
+			if (is_array($argumentValue)) {
+				$hashSource .= ($this->useIgBinary === TRUE) ? igbinary_serialize($argumentValue) : serialize($argumentValue);
+			} elseif (!is_object($argumentValue)) {
+				$hashSource .= $argumentValue;
+			} elseif (property_exists($argumentValue, 'FLOW3_Persistence_Identifier')) {
+				$hashSource .= \F3\FLOW3\Reflection\ObjectAccess::getProperty($argumentValue, 'FLOW3_Persistence_Identifier', TRUE);
 			}
 		}
+		$proxy = $joinPoint->getProxy();
 		\F3\FLOW3\Reflection\ObjectAccess::setProperty($proxy, 'FLOW3_Persistence_Identifier', sha1($hashSource), TRUE);
 	}
 
