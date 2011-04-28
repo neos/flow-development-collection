@@ -93,6 +93,8 @@ class PersistenceManager extends \F3\FLOW3\Persistence\AbstractPersistenceManage
 			} catch (\Doctrine\ORM\ORMException $e) {
 				return NULL;
 			}
+		} elseif (property_exists($object, 'FLOW3_Persistence_Identifier')) {
+			return \F3\FLOW3\Reflection\ObjectAccess::getProperty($object, 'FLOW3_Persistence_Identifier', TRUE);
 		} else {
 			return NULL;
 		}
