@@ -635,7 +635,7 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Persistence\Generic\Backe
 				}
 
 				$object = $this->persistenceSession->getObjectByIdentifier($item['value']['identifier']);
-				if ($array === NULL || !$this->arrayContainsObject($array, $object)) {
+				if ($array === NULL || !$this->arrayContainsObject($array, $object, $item['value']['identifier'])) {
 					if ($this->reflectionService->getClassSchema($item['type'])->getModelType() === \TYPO3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY
 							&& $this->reflectionService->getClassSchema($item['type'])->isAggregateRoot() === FALSE) {
 						$this->removeEntity($this->persistenceSession->getObjectByIdentifier($item['value']['identifier']));
@@ -654,19 +654,17 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Persistence\Generic\Backe
 	 *
 	 * @param array $array
 	 * @param object $object
+	 * @param string $identifier
 	 * @return boolean
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function arrayContainsObject(array $array, $object) {
+	protected function arrayContainsObject(array $array, $object, $identifier) {
 		if (in_array($object, $array, TRUE) === TRUE) {
 			return TRUE;
 		}
 
 		foreach ($array as $value) {
-			if ($value instanceof $object
-					&& property_exists($value, 'FLOW3_Persistence_Identifier')
-					&& property_exists($object, 'FLOW3_Persistence_Identifier')
-					&& \TYPO3\FLOW3\Reflection\ObjectAccess::getProperty($value, 'FLOW3_Persistence_Identifier', TRUE) === \TYPO3\FLOW3\Reflection\ObjectAccess::getProperty($object, 'FLOW3_Persistence_Identifier', TRUE)) {
+			if ($value instanceof $object && $this->persistenceSession->getIdentifierByObject($value) === $identifier) {
 				return TRUE;
 			}
 		}

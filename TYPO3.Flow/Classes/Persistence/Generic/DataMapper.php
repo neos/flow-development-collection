@@ -218,12 +218,7 @@ class DataMapper {
 			$object->FLOW3_Persistence_Metadata = $objectData['metadata'];
 		}
 
-		$identifierPropertyName = $classSchema->getUuidPropertyName();
-		if ($identifierPropertyName === NULL) {
-			\TYPO3\FLOW3\Reflection\ObjectAccess::setProperty($object, 'FLOW3_Persistence_Identifier', $identifier, TRUE);
-		} else {
-			\TYPO3\FLOW3\Reflection\ObjectAccess::setProperty($object, $identifierPropertyName, $identifier, TRUE);
-		}
+		\TYPO3\FLOW3\Reflection\ObjectAccess::setProperty($object, 'FLOW3_Persistence_Identifier', $identifier, TRUE);
 	}
 
 	/**

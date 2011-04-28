@@ -22,7 +22,7 @@ namespace TYPO3\FLOW3\Tests\Persistence\Fixture\Model;
  *                                                                        */
 
 /**
- * A model fixture which is used for testing the class schema builder
+ * A model fixture
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @entity
@@ -33,7 +33,6 @@ class Entity1 {
 	 * An identifier property
 	 *
 	 * @var string
-	 * @uuid
 	 */
 	protected $someIdentifier;
 

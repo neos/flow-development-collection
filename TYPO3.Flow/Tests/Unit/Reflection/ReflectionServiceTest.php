@@ -877,36 +877,6 @@ class ReflectionServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function uuidPropertyNameIsDetectedFromAnnotation() {
-		$this->markTestSkipped('Refactor unit tests for Reflection Service!');
-
-		$reflectionService = $this->getAccessibleMock('TYPO3\FLOW3\Reflection\ReflectionService', array('dummy'));
-		$reflectionService->_call('buildClassSchemata', array('TYPO3\FLOW3\Tests\Reflection\Fixture\Model\Entity'));
-
-		$builtClassSchemata = $reflectionService->getClassSchemata();
-		$builtClassSchema = array_pop($builtClassSchemata);
-		$this->assertEquals($builtClassSchema->getUUIDPropertyName(), 'someIdentifier');
-	}
-
-	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function uuidPropertyNameIsSetAsRegularPropertyAsWell() {
-		$this->markTestSkipped('Refactor unit tests for Reflection Service!');
-
-		$reflectionService = $this->getAccessibleMock('TYPO3\FLOW3\Reflection\ReflectionService', array('dummy'));
-		$reflectionService->_call('buildClassSchemata', array('TYPO3\FLOW3\Tests\Reflection\Fixture\Model\Entity'));
-
-		$builtClassSchemata = $reflectionService->getClassSchemata();
-		$builtClassSchema = array_pop($builtClassSchemata);
-		$this->assertTrue(array_key_exists('someIdentifier', $builtClassSchema->getProperties()));
-	}
-
-	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
 	public function identityPropertiesAreDetectedFromAnnotation() {
 		$this->markTestSkipped('Refactor unit tests for Reflection Service!');
 

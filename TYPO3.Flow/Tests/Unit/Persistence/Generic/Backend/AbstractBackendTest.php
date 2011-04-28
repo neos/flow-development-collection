@@ -126,8 +126,12 @@ class AbstractBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function arrayContainsObjectReturnsTrueForSameObject() {
 		$object = new \stdClass();
 
+		$mockSession = $this->getMock('TYPO3\FLOW3\Persistence\Generic\Session');
+
 		$backend = $this->getAccessibleMockForAbstractClass('TYPO3\FLOW3\Persistence\Generic\Backend\AbstractBackend');
-		$this->assertTrue($backend->_call('arrayContainsObject', array($object), $object));
+		$backend->injectPersistenceSession($mockSession);
+
+		$this->assertTrue($backend->_call('arrayContainsObject', array($object), $object, 'fakeUuid'));
 	}
 
 	/**
@@ -135,8 +139,13 @@ class AbstractBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function arrayContainsObjectReturnsFalseForDifferentObject() {
+		$mockSession = $this->getMock('TYPO3\FLOW3\Persistence\Generic\Session');
+		$mockSession->expects($this->any())->method('getIdentifierByObject')->will($this->returnValue('uuid2'));
+
 		$backend = $this->getAccessibleMockForAbstractClass('TYPO3\FLOW3\Persistence\Generic\Backend\AbstractBackend');
-		$this->assertFalse($backend->_call('arrayContainsObject', array(new \stdClass()), new \stdClass()));
+		$backend->injectPersistenceSession($mockSession);
+
+		$this->assertFalse($backend->_call('arrayContainsObject', array(new \stdClass()), new \stdClass(), 'uuid1'));
 	}
 
 	/**
@@ -145,27 +154,16 @@ class AbstractBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function arrayContainsObjectReturnsFalseForClone() {
 		$object = new \stdClass();
-
-		$backend = $this->getAccessibleMockForAbstractClass('TYPO3\FLOW3\Persistence\Generic\Backend\AbstractBackend');
-		$this->assertFalse($backend->_call('arrayContainsObject', array($object), clone $object));
-	}
-
-	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function arrayContainsObjectReturnsTrueForSameEntity() {
-		$object = new \stdClass();
-		$object->FLOW3_Persistence_Identifier = 'fakeUuid';
-		$object->property = 'foo';
-
 		$clone = clone $object;
-		$clone->property = 'bar';
+
+		$mockSession = $this->getMock('TYPO3\FLOW3\Persistence\Generic\Session');
+		$mockSession->expects($this->any())->method('getIdentifierByObject')->with($object)->will($this->returnValue('fakeUuid'));
 
 		$backend = $this->getAccessibleMockForAbstractClass('TYPO3\FLOW3\Persistence\Generic\Backend\AbstractBackend');
-		$this->assertTrue($backend->_call('arrayContainsObject', array($object), $clone));
+		$backend->injectPersistenceSession($mockSession);
+
+		$this->assertFalse($backend->_call('arrayContainsObject', array($object), $clone, 'clonedFakeUuid'));
 	}
 
 }
-
 ?>
