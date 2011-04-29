@@ -19,12 +19,12 @@
     <title>Requirements</title>
 
     <para>The following minimum requirements are operating system independent.
-    Developers report working setups on Debian Linux, MacOS, Windows XP and
-    Windows Vista and Windows 7.</para>
+    Developers report working setups on Debian Linux, MacOS, Windows Vista and
+    Windows 7 (Windows should support symbolic links).</para>
 
     <itemizedlist>
       <listitem>
-        <para>PHP 5.3.0 or newer (but not PHP 6)<itemizedlist>
+        <para>PHP 5.3.2 or newer<itemizedlist>
             <listitem>
               <para>Modules: mbstring, pdo_sqlite</para>
             </listitem>
