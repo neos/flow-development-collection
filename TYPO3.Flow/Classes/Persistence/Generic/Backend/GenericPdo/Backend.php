@@ -436,8 +436,7 @@ class Backend extends \F3\FLOW3\Persistence\Generic\Backend\AbstractSqlBackend {
 		$statementHandle = $this->databaseHandle->prepare($parsedQuery['sql']);
 		$statementHandle->execute($parsedQuery['parameters']);
 
-		$result = (int)$statementHandle->fetchColumn(0);
-		return $result;
+		return (int)$statementHandle->fetchColumn(0);
 	}
 
 	/**
