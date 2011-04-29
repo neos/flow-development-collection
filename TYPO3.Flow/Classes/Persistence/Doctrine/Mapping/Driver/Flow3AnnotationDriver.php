@@ -124,14 +124,13 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \F3\
 		}
 
 			// Evaluate Table annotation
+		$primaryTable = array();
 		if (isset($classAnnotations['Doctrine\ORM\Mapping\Table'])) {
 			$tableAnnotation = $classAnnotations['Doctrine\ORM\Mapping\Table'];
-			$primaryTable = array(
-				'name' => $tableAnnotation->name,
-				'schema' => $tableAnnotation->schema
-			);
+			$primaryTable['name'] = $tableAnnotation->name;
+			$primaryTable['schema'] = $tableAnnotation->schema;
 
-			if ($tableAnnotation->indexes !== null) {
+			if ($tableAnnotation->indexes !== NULL) {
 				foreach ($tableAnnotation->indexes as $indexAnnotation) {
 					$primaryTable['indexes'][$indexAnnotation->name] = array(
 						'columns' => $indexAnnotation->columns
@@ -139,24 +138,24 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \F3\
 				}
 			}
 
-			if ($tableAnnotation->uniqueConstraints !== null) {
+			if ($tableAnnotation->uniqueConstraints !== NULL) {
 				foreach ($tableAnnotation->uniqueConstraints as $uniqueConstraint) {
 					$primaryTable['uniqueConstraints'][$uniqueConstraint->name] = array(
 						'columns' => $uniqueConstraint->columns
 					);
 				}
 			}
+		}
 
-			$metadata->setPrimaryTable($primaryTable);
-		} else {
+		if (!isset($primaryTable['name'])) {
 			$className = $classSchema->getClassName();
-			$primaryTable = array('name' => $this->inferTableNameFromClassName($className));
+			$primaryTable['name'] = $this->inferTableNameFromClassName($className);
 #			$idProperties = array_keys($classSchema->getIdentityProperties());
 #			$primaryTable['uniqueConstraints']['flow3_identifier'] = array(
 #				'columns' => $idProperties
 #			);
-			$metadata->setPrimaryTable($primaryTable);
 		}
+		$metadata->setPrimaryTable($primaryTable);
 
 			// Evaluate InheritanceType annotation
 		if (isset($classAnnotations['Doctrine\ORM\Mapping\InheritanceType'])) {
