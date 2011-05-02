@@ -218,21 +218,22 @@ class ProxyClassBuilder {
 		$className = $objectConfiguration->getClassName();
 		$code = '';
 		if ($this->reflectionService->hasMethod($className, '__sleep') === FALSE) {
-			$nonTransientProperties = array();
-			foreach ($this->reflectionService->getClassPropertyNames($className) as $propertyName) {
-				if ($this->reflectionService->isPropertyTaggedWith($className, $propertyName, 'transient')) continue;
-				$nonTransientProperties[] = $propertyName;
-			}
-			if (count($nonTransientProperties) > 0) {
-				$code = "\t\t\$result = array();
-	foreach(array(" . implode(',', array_map(function($propertyName) { return '\'' . $propertyName . '\''; }, $nonTransientProperties)) . ") as \$propertyName) {
+
+			$code = "\t\t\$result = array();
+	\$reflectionService = \\F3\\FLOW3\\Core\\Bootstrap::\$staticObjectManager->get('F3\\FLOW3\\Reflection\\ReflectionService');
+	\$reflectedClass = new \\ReflectionClass('".$className."');
+	\$allReflectedProperties = \$reflectedClass->getProperties();
+	foreach(\$allReflectedProperties as \$reflectionProperty) {
+		\$propertyName = \$reflectionProperty->name;
+		if (in_array(\$propertyName, array('FLOW3_AOP_Proxy_targetMethodsAndGroupedAdvices', 'FLOW3_AOP_Proxy_groupedAdviceChains', 'FLOW3_AOP_Proxy_methodIsInAdviceMode'))) continue;
+		if (\$reflectionService->isPropertyTaggedWith('".$className."', \$propertyName, 'transient')) continue;
 		if (is_object(\$this->\$propertyName) && !\$this->\$propertyName instanceof \\Doctrine\\Common\\Collections\\Collection) {
 			if (\$this->\$propertyName instanceof \\Doctrine\\ORM\\Proxy\\Proxy) {
 				\$className = get_parent_class(\$this->\$propertyName);
 			} else {
 				\$className = \\F3\\FLOW3\\Core\\Bootstrap::\$staticObjectManager->getObjectNameByClassName(get_class(\$this->\$propertyName));
 			}
-			if (\$this->\$propertyName instanceof \\F3\\FLOW3\\Persistence\\Aspect\\PersistenceMagicInterface) {
+			if (\$this->\$propertyName instanceof \\F3\\FLOW3\\Persistence\\Aspect\\PersistenceMagicInterface && !\\F3\\FLOW3\\Core\\Bootstrap::\$staticObjectManager->get('F3\\FLOW3\\Persistence\\PersistenceManagerInterface')->isNewObject(\$this->\$propertyName)) {
 				if (!property_exists(\$this, 'FLOW3_Persistence_RelatedEntities') || !is_array(\$this->FLOW3_Persistence_RelatedEntities)) {
 					\$this->FLOW3_Persistence_RelatedEntities = array();
 					\$result[] = 'FLOW3_Persistence_RelatedEntities';
@@ -250,7 +251,6 @@ class ProxyClassBuilder {
 		}
 		\$result[] = \$propertyName;
 	}\n";
-			}
 		}
 		return $code;
 	}
