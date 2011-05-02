@@ -461,14 +461,7 @@ class ProxyClassBuilder {
 								$settings = $this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, array_shift($settingPath));
 								$argumentValue = \F3\FLOW3\Utility\Arrays::getValueByPath($settings, $settingPath);
 							}
-							if (!isset($this->objectConfigurations[$argumentValue])) {
-								throw new \F3\FLOW3\Object\Exception\UnknownObjectException('The object "' . $argumentValue . '" which was specified as an argument in the object configuration of object "' . $objectconfiguration->getObjectName() . '" does not exist.', 1264669967);
-							}
-							if ($this->objectConfigurations[$argumentValue]->getScope() === \F3\FLOW3\Object\Configuration\Configuration::SCOPE_PROTOTYPE) {
-								$preparedArguments[] = 'X';
-							} else {
-								$preparedArguments[] = '\F3\FLOW3\Core\Bootstrap::$staticObjectManager->get(\'' . $argumentValue . '\')';
-							}
+							$preparedArguments[] = '\F3\FLOW3\Core\Bootstrap::$staticObjectManager->get(\'' . $argumentValue . '\')';
 						}
 					break;
 
