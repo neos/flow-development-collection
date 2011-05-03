@@ -87,6 +87,11 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	protected $entityResourcesConstraints = array();
 
 	/**
+	 * @var \F3\FLOW3\Object\ObjectManagerInterface
+	 */
+	protected $objectManager;
+
+	/**
 	 * Injects the FLOW3 settings
 	 *
 	 * @param array $settings Settings of the FLOW3 package
@@ -122,12 +127,23 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	/**
 	 * Injects the policy expression parser
 	 *
-	 * @param F3\FLOW3\Security\Policy\PolicyExpressionParser $parser
+	 * @param \F3\FLOW3\Security\Policy\PolicyExpressionParser $parser
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectPolicyExpressionParser(\F3\FLOW3\Security\Policy\PolicyExpressionParser $parser) {
 		$this->policyExpressionParser = $parser;
+	}
+
+	/**
+	 * Injects the object manager
+	 *
+	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
+	 * @return void
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
+		$this->objectManager = $objectManager;
 	}
 
 	/**
@@ -304,6 +320,8 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 		$privileges = array();
 		foreach ($this->acls[$methodIdentifier][$roleIdentifier] as $resource => $privilegeConfiguration) {
 			if ($privilegeConfiguration['runtimeEvaluationsClosureCode'] !== FALSE) {
+					// Make object manager usable as closure variable
+				$objectManager = $this->objectManager;
 				eval('$runtimeEvaluator = ' . $privilegeConfiguration['runtimeEvaluationsClosureCode'] . ';');
 				if ($runtimeEvaluator->__invoke($joinPoint) === FALSE) continue;
 			}
