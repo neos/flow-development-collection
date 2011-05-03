@@ -223,6 +223,18 @@ class PersistenceManager extends \F3\FLOW3\Persistence\AbstractPersistenceManage
 	}
 
 	/**
+	 * Returns the object data for the (internal) identifier, if it is known to
+	 * the backend. Otherwise FALSE is returned.
+	 *
+	 * @param string $identifier
+	 * @return object The object data for the identifier if it is known, or FALSE
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getObjectDataByIdentifier($identifier) {
+		return $this->backend->getObjectDataByIdentifier($identifier);
+	}
+
+	/**
 	 * Return a query object for the given type.
 	 *
 	 * @param string $type
