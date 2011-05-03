@@ -201,25 +201,29 @@ class JsonView extends \F3\FLOW3\MVC\View\AbstractView {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	protected function transformObject($object, $configuration) {
-		$propertyNames = \F3\FLOW3\Reflection\ObjectAccess::getGettablePropertyNames($object);
+		if ($object instanceof \DateTime) {
+			return $object->format('Y-m-d\TH:i:s');
+		} else {
+			$propertyNames = \F3\FLOW3\Reflection\ObjectAccess::getGettablePropertyNames($object);
 
-		$propertiesToRender = array();
-		foreach ($propertyNames as $propertyName) {
-			if (isset($configuration['_only']) && is_array($configuration['_only']) && !in_array($propertyName, $configuration['_only'])) continue;
-			if (isset($configuration['_exclude']) && is_array($configuration['_exclude']) && in_array($propertyName, $configuration['_exclude'])) continue;
+			$propertiesToRender = array();
+			foreach ($propertyNames as $propertyName) {
+				if (isset($configuration['_only']) && is_array($configuration['_only']) && !in_array($propertyName, $configuration['_only'])) continue;
+				if (isset($configuration['_exclude']) && is_array($configuration['_exclude']) && in_array($propertyName, $configuration['_exclude'])) continue;
 
-			$propertyValue = \F3\FLOW3\Reflection\ObjectAccess::getProperty($object, $propertyName);
+				$propertyValue = \F3\FLOW3\Reflection\ObjectAccess::getProperty($object, $propertyName);
 
-			if (!is_array($propertyValue) && !is_object($propertyValue)) {
-				$propertiesToRender[$propertyName] = $propertyValue;
-			} elseif (isset($configuration['_descend']) && array_key_exists($propertyName, $configuration['_descend'])) {
-				$propertiesToRender[$propertyName] = $this->transformValue($propertyValue, $configuration['_descend'][$propertyName]);
+				if (!is_array($propertyValue) && !is_object($propertyValue)) {
+					$propertiesToRender[$propertyName] = $propertyValue;
+				} elseif (isset($configuration['_descend']) && array_key_exists($propertyName, $configuration['_descend'])) {
+					$propertiesToRender[$propertyName] = $this->transformValue($propertyValue, $configuration['_descend'][$propertyName]);
+				}
 			}
+			if (isset($configuration['_exposeObjectIdentifier']) && $configuration['_exposeObjectIdentifier'] === TRUE) {
+				$propertiesToRender['__identity'] = $this->persistenceManager->getIdentifierByObject($object);
+			}
+			return $propertiesToRender;
 		}
-		if (isset($configuration['_exposeObjectIdentifier']) && $configuration['_exposeObjectIdentifier'] === TRUE) {
-			$propertiesToRender['__identity'] = $this->persistenceManager->getIdentifierByObject($object);
-		}
-		return $propertiesToRender;
 	}
 }
 

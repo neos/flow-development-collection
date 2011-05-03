@@ -140,6 +140,10 @@ class JsonViewTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$expected = array(array('value1' => 'foo'));
 		$output[] = array($value, $configuration, $expected, 'SplObjectStorage with objects should be serialized');
 
+		$dateTimeObject = new \DateTime('2011-02-03T03:15:23');
+		$configuration = array();
+		$expected = '2011-02-03T03:15:23';
+		$output[] = array($dateTimeObject, $configuration, $expected, 'DateTime object could not be serialized.');
 		return $output;
 	}
 
