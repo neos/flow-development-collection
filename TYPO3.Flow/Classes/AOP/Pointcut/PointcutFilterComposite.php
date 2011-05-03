@@ -285,9 +285,9 @@ class PointcutFilterComposite implements \F3\FLOW3\AOP\Pointcut\PointcutFilterIn
 				$rightValue = $this->buildArgumentEvaluationAccessCode($argumentConstraint['value'][$i], $useGlobalObjects);
 
 				if ($argumentConstraint['operator'][$i] === 'in') {
-					$argumentConstraintsConditionsCode .= ($isFirst === TRUE ? '(' : ' && ') . '(' . $rightValue . ' instanceof \SplObjectStorage ? ' . $leftValue . ' !== NULL && ' . $rightValue . '->contains(' . $leftValue  . ') : in_array(' . $leftValue . ', ' . $rightValue . '))';
+					$argumentConstraintsConditionsCode .= ($isFirst === TRUE ? '(' : ' && ') . '(' . $rightValue . ' instanceof \SplObjectStorage || ' . $rightValue . ' instanceof \Doctrine\Common\Collections\Collection ? ' . $leftValue . ' !== NULL && ' . $rightValue . '->contains(' . $leftValue  . ') : in_array(' . $leftValue . ', ' . $rightValue . '))';
 				} else if ($argumentConstraint['operator'][$i] === 'contains') {
-					$argumentConstraintsConditionsCode .= ($isFirst === TRUE ? '(' : ' && ') . '(' . $leftValue . ' instanceof \SplObjectStorage ? ' . $rightValue . ' !== NULL && ' . $leftValue . '->contains(' . $rightValue  . ') : in_array(' . $rightValue . ', ' . $leftValue . '))';
+					$argumentConstraintsConditionsCode .= ($isFirst === TRUE ? '(' : ' && ') . '(' . $leftValue . ' instanceof \SplObjectStorage || ' . $leftValue . ' instanceof \Doctrine\Common\Collections\Collection ? ' . $rightValue . ' !== NULL && ' . $leftValue . '->contains(' . $rightValue  . ') : in_array(' . $rightValue . ', ' . $leftValue . '))';
 				} else if ($argumentConstraint['operator'][$i] === 'matches') {
 					$argumentConstraintsConditionsCode .= ($isFirst === TRUE ? '(' : ' && ') . '(!empty(array_intersect(' . $leftValue . ', ' . $rightValue . ')))';
 				} else {
@@ -318,9 +318,9 @@ class PointcutFilterComposite implements \F3\FLOW3\AOP\Pointcut\PointcutFilterIn
 			$rightValue = $this->buildArgumentEvaluationAccessCode($constraint['rightValue'], $useGlobalObjects);
 
 			if ($constraint['operator'] === 'in') {
-				$evaluateConditionsCode .= ($isFirst === TRUE ? '(' : ' && ') . '(' . $rightValue . ' instanceof \SplObjectStorage ? ' . $leftValue . ' !== NULL && ' . $rightValue . '->contains(' . $leftValue  . ') : in_array(' . $leftValue . ', ' . $rightValue . '))';
+				$evaluateConditionsCode .= ($isFirst === TRUE ? '(' : ' && ') . '(' . $rightValue . ' instanceof \SplObjectStorage || ' . $rightValue . ' instanceof \Doctrine\Common\Collections\Collection ? ' . $leftValue . ' !== NULL && ' . $rightValue . '->contains(' . $leftValue  . ') : in_array(' . $leftValue . ', ' . $rightValue . '))';
 			} else if ($constraint['operator'] === 'contains') {
-				$evaluateConditionsCode .= ($isFirst === TRUE ? '(' : ' && ') . '(' . $leftValue . ' instanceof \SplObjectStorage ? ' . $rightValue . ' !== NULL && ' . $leftValue . '->contains(' . $rightValue  . ') : in_array(' . $rightValue . ', ' . $leftValue . '))';
+				$evaluateConditionsCode .= ($isFirst === TRUE ? '(' : ' && ') . '(' . $leftValue . ' instanceof \SplObjectStorage || ' . $leftValue . ' instanceof \Doctrine\Common\Collections\Collection ? ' . $rightValue . ' !== NULL && ' . $leftValue . '->contains(' . $rightValue  . ') : in_array(' . $rightValue . ', ' . $leftValue . '))';
 			} else if ($constraint['operator'] === 'matches') {
 				$evaluateConditionsCode .= ($isFirst === TRUE ? '(' : ' && ') . '(!empty(array_intersect(' . $leftValue . ', ' . $rightValue . ')))';
 			} else {
@@ -371,5 +371,6 @@ class PointcutFilterComposite implements \F3\FLOW3\AOP\Pointcut\PointcutFilterIn
 
 		return $argumentAccessCode;
 	}
+
 }
 ?>

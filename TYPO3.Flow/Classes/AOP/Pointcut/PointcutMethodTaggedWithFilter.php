@@ -74,12 +74,11 @@ class PointcutMethodTaggedWithFilter implements \F3\FLOW3\AOP\Pointcut\PointcutF
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier) {
-		if ($methodDeclaringClassName === NULL || !$this->reflectionService->hasMethod($methodDeclaringClassName, $methodDeclaringClassName)) {
+		if ($methodDeclaringClassName === NULL || !$this->reflectionService->hasMethod($methodDeclaringClassName, $methodName)) {
 			return FALSE;
 		}
-
 		foreach ($this->reflectionService->getMethodTagsValues($methodDeclaringClassName, $methodName) as $tag => $values) {
-			$matchResult =  preg_match('/^' . $this->methodTagFilterExpression . '$/', $tag);
+			$matchResult = preg_match('/^' . $this->methodTagFilterExpression . '$/', $tag);
 			if ($matchResult === FALSE) {
 				throw new \F3\FLOW3\AOP\Exception('Error in regular expression "' . $this->methodTagFilterExpression . '" in pointcut method tag filter', 1229343988);
 			}
@@ -109,6 +108,6 @@ class PointcutMethodTaggedWithFilter implements \F3\FLOW3\AOP\Pointcut\PointcutF
 	public function getRuntimeEvaluationsDefinition() {
 		return array();
 	}
-}
 
+}
 ?>

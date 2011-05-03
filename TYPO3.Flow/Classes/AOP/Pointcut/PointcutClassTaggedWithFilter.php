@@ -75,7 +75,7 @@ class PointcutClassTaggedWithFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFi
 	 */
 	public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier) {
 		foreach ($this->reflectionService->getClassTagsValues($className) as $tag => $values) {
-			$matchResult =  @preg_match('/^' . $this->classTagFilterExpression . '$/', $tag);
+			$matchResult = preg_match('/^' . $this->classTagFilterExpression . '$/', $tag);
 			if ($matchResult === FALSE) {
 				throw new \F3\FLOW3\AOP\Exception('Error in regular expression "' . $this->classTagFilterExpression . '" in pointcut class tag filter', 1212576034);
 			}

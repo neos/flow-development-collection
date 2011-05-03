@@ -204,7 +204,9 @@ class ProxyMethod {
 			$ignoredTags = $this->reflectionService->getIgnoredTags();
 			foreach ($methodTags as $tag => $values) {
 				if (!in_array($tag, $ignoredTags)) {
-					$methodDocumentation  .= "	 * @" . $tag . ' ' . implode(' ', $values) . "\n";
+					foreach ($values as $value) {
+						$methodDocumentation  .= "	 * @" . $tag . ' ' . $value . "\n";
+					}
 				}
 			}
 		}
