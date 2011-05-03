@@ -183,8 +183,8 @@ class CacheManager {
 		$this->flushCachesByTag(self::getClassTag());
 		foreach ($changedFiles as $pathAndFilename => $status) {
 			$matches = array();
-			if (1 === preg_match('/.+\/(.+)\/Classes\/(.+)\.php/', $pathAndFilename, $matches)) {
-				$className = 'F3\\' . $matches[1] . '\\' . str_replace('/', '\\', $matches[2]);
+			if (1 === preg_match('/.+\/(.+)\/(Classes|Tests)\/(.+)\.php/', $pathAndFilename, $matches)) {
+				$className = 'F3\\' . $matches[1] . '\\' . ($matches[2] === 'Tests' ? 'Tests\\' : '') . str_replace('/', '\\', $matches[3]);
 				$this->flushCachesByTag(self::getClassTag($className));
 			}
 		}
