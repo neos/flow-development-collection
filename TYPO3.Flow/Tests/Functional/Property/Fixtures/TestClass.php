@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Tests\Functional\Property;
+namespace F3\FLOW3\Tests\Functional\Property\Fixtures;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,57 +23,51 @@ namespace F3\FLOW3\Tests\Functional\Property;
  *                                                                        */
 
 /**
- * Testcase for Property Mapper
+ * A simple class for PropertyMapper test
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @scope prototype
  */
-class PropertyMapperTest extends \F3\FLOW3\Tests\FunctionalTestCase {
+class TestClass {
+
+	/**
+	 * @var string
+	 */
+	protected $name;
 
 	/**
 	 *
-	 * @var \F3\FLOW3\Property\PropertyMapper
+	 * @var integer
 	 */
-	protected $propertyMapper;
+	protected $size;
 
 	/**
+	 * @return string
+	 */
+	public function getName() {
+		return $this->name;
+	}
+
+	/**
+	 * @param string $name
 	 * @return void
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	public function setUp() {
-		parent::setUp();
-		$this->propertyMapper = $this->objectManager->get('F3\FLOW3\Property\PropertyMapper');
+	public function setName($name) {
+		$this->name = $name;
 	}
 
 	/**
-	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @return integer
 	 */
-	public function domainObjectWithSimplePropertiesCanBeCreated() {
-		$source = array(
-			'name' => 'Robert Skaarhoj',
-			'age' => '25',
-			'averageNumberOfKids' => '1.5'
-		);
-
-		$result = $this->propertyMapper->convert($source, 'F3\FLOW3\Tests\Functional\Property\Fixtures\TestEntity');
-		$this->assertSame('Robert Skaarhoj', $result->getName());
-		$this->assertSame(25, $result->getAge());
-		$this->assertSame(1.5, $result->getAverageNumberOfKids());
+	public function getSize() {
+		return $this->size;
 	}
 
 	/**
-	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @param integer $size
+	 * @return void
 	 */
-	public function simpleObjectWithSimplePropertiesCanBeCreated() {
-		$source = array(
-			'name' => 'Christopher',
-			'size' => '187'
-		);
-
-		$result = $this->propertyMapper->convert($source, 'F3\FLOW3\Tests\Functional\Property\Fixtures\TestClass');
-		$this->assertSame('Christopher', $result->getName());
-		$this->assertSame(187, $result->getSize());
+	public function setSize($size) {
+		$this->size = $size;
 	}
 
 }
