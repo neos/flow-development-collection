@@ -203,21 +203,28 @@ class ProxyClassBuilder {
 		sort($possibleTargetClassNames);
 		sort($actualAspectClassNames);
 
-		$this->aspectContainers = $this->buildAspectContainers($allAvailableClassNames);
+		$this->aspectContainers = $this->buildAspectContainers($actualAspectClassNames);
 
 		$rebuildEverything = FALSE;
 		if ($this->objectConfigurationCache->has('allAspectClassesUpToDate') === FALSE) {
-				$rebuildEverything = TRUE;
-				$this->systemLogger->log(sprintf('Aspects have been modified, therefore rebuilding all target classes.'), LOG_INFO);
-				$tags = array_map(function ($aspectClassName) { return \F3\FLOW3\Cache\CacheManager::getClassTag($aspectClassName); }, $actualAspectClassNames);
-				$this->objectConfigurationCache->set('allAspectClassesUpToDate', TRUE, $tags);
+			$rebuildEverything = TRUE;
+			$this->systemLogger->log(sprintf('Aspects have been modified, therefore rebuilding all target classes.'), LOG_INFO);
+			$tags = array_map(function ($aspectClassName) { return \F3\FLOW3\Cache\CacheManager::getClassTag($aspectClassName); }, $actualAspectClassNames);
+			$this->objectConfigurationCache->set('allAspectClassesUpToDate', TRUE, $tags);
 		}
 
 		foreach ($possibleTargetClassNames as $targetClassName) {
-			if ($rebuildEverything === TRUE || $this->compiler->hasCacheEntryForClass($targetClassName) === FALSE) {
+			$isUnproxied = $this->objectConfigurationCache->has('unproxiedClass-' . str_replace('\\', '_', $targetClassName));
+			$hasCacheEntry = $this->compiler->hasCacheEntryForClass($targetClassName) || $isUnproxied;
+			if ($rebuildEverything === TRUE || $hasCacheEntry === FALSE) {
 				$proxyBuildResult = $this->buildProxyClass($targetClassName, $this->aspectContainers);
 				if ($proxyBuildResult !== FALSE) {
+					if ($isUnproxied) {
+						$this->objectConfigurationCache->remove('unproxiedClass-' . str_replace('\\', '_', $targetClassName));
+					}
 					$this->systemLogger->log(sprintf('Built AOP proxy for class "%s".', $targetClassName), LOG_INFO);
+				} else {
+					$this->objectConfigurationCache->set('unproxiedClass-' . str_replace('\\', '_', $targetClassName), TRUE, array(\F3\FLOW3\Cache\CacheManager::getClassTag($targetClassName)));
 				}
 			}
 		}
@@ -281,16 +288,14 @@ class ProxyClassBuilder {
 	 * Checks the annotations of the specified classes for aspect tags
 	 * and creates an aspect with advisors accordingly.
 	 *
-	 * @param array $classNames Classes to check for aspect tags.
+	 * @param array &$classNames Classes to check for aspect tags.
 	 * @return array An array of \F3\FLOW3\AOP\AspectContainer for all aspects which were found.
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function buildAspectContainers($classNames) {
+	protected function buildAspectContainers(array &$classNames) {
 		$aspectContainers = array();
 		foreach ($classNames as $aspectClassName) {
-			if ($this->reflectionService->isClassReflected($aspectClassName) && $this->reflectionService->isClassTaggedWith($aspectClassName, 'aspect')) {
-				$aspectContainers[$aspectClassName] =  $this->buildAspectContainer($aspectClassName);
-			}
+			$aspectContainers[$aspectClassName] = $this->buildAspectContainer($aspectClassName);
 		}
 		return $aspectContainers;
 	}
@@ -400,11 +405,11 @@ class ProxyClassBuilder {
 	 * Builds methods for a single AOP proxy class for the specified class.
 	 *
 	 * @param string $targetClassName Name of the class to create a proxy class file for
-	 * @param array $aspectContainers The array of aspect containers from the AOP Framework
+	 * @param array &$aspectContainers The array of aspect containers from the AOP Framework
 	 * @return boolean TRUE if the proxy class could be built, FALSE otherwise.
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function buildProxyClass($targetClassName, array $aspectContainers) {
+	public function buildProxyClass($targetClassName, array &$aspectContainers) {
 		$interfaceIntroductions = $this->getMatchingInterfaceIntroductions($aspectContainers, $targetClassName);
 		$introducedInterfaces = $this->getInterfaceNamesFromIntroductions($interfaceIntroductions);
 
@@ -539,11 +544,11 @@ class ProxyClassBuilder {
 	 * @param array &$interceptedMethods An array (empty or not) which contains the names of the intercepted methods and additional information
 	 * @param array $methods An array of class and method names which are matched against the pointcut (class name = name of the class or interface the method was declared)
 	 * @param string $targetClassName Name of the class the pointcut should match with
-	 * @param array $aspectContainers All aspects to take into consideration
+	 * @param array &$aspectContainers All aspects to take into consideration
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function addAdvicedMethodsToInterceptedMethods(array &$interceptedMethods, array $methods, $targetClassName, array $aspectContainers) {
+	protected function addAdvicedMethodsToInterceptedMethods(array &$interceptedMethods, array $methods, $targetClassName, array &$aspectContainers) {
 		$pointcutQueryIdentifier = 0;
 
 		foreach ($aspectContainers as $aspectContainer) {
@@ -591,12 +596,12 @@ class ProxyClassBuilder {
 	 * Traverses all aspect containers and returns an array of interface
 	 * introductions which match the target class.
 	 *
-	 * @param array $aspectContainers All aspects to take into consideration
+	 * @param array &$aspectContainers All aspects to take into consideration
 	 * @param string $targetClassName Name of the class the pointcut should match with
 	 * @return array array of interface names
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function getMatchingInterfaceIntroductions(array $aspectContainers, $targetClassName) {
+	protected function getMatchingInterfaceIntroductions(array &$aspectContainers, $targetClassName) {
 		$introductions = array();
 		foreach ($aspectContainers as $aspectContainer) {
 			foreach ($aspectContainer->getInterfaceIntroductions() as $introduction) {
@@ -613,11 +618,11 @@ class ProxyClassBuilder {
 	 * Traverses all aspect containers and returns an array of property
 	 * introductions which match the target class.
 	 *
-	 * @param array $aspectContainers All aspects to take into consideration
+	 * @param array &$aspectContainers All aspects to take into consideration
 	 * @param string $targetClassName Name of the class the pointcut should match with
 	 * @return array array of property introductions
 	 */
-	protected function getMatchingPropertyIntroductions(array $aspectContainers, $targetClassName) {
+	protected function getMatchingPropertyIntroductions(array &$aspectContainers, $targetClassName) {
 		$introductions = array();
 		foreach ($aspectContainers as $aspectContainer) {
 			foreach ($aspectContainer->getPropertyIntroductions() as $introduction) {
@@ -665,7 +670,6 @@ class ProxyClassBuilder {
 		}
 		return $methods;
 	}
-
 
 	/**
 	 * Adds a "getAdviceChains()" method to the current proxy class.
