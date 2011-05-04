@@ -59,7 +59,7 @@ abstract class FunctionalTestCase extends \F3\FLOW3\Tests\BaseTestCase {
 	static protected $testablePersistenceEnabled = FALSE;
 
 	/**
-	 * @var \F3\FLOW3\Persistence\PersistenceManager
+	 * @var \F3\FLOW3\Persistence\PersistenceManagerInterface
 	 */
 	protected $persistenceManager;
 
@@ -69,7 +69,7 @@ abstract class FunctionalTestCase extends \F3\FLOW3\Tests\BaseTestCase {
 	protected $accessDecisionManager;
 
 	/**
-	 * @var \F3\FLOW3\Tests\Functional\Security\Authentication\Provider\TestingProvider
+	 * @var \F3\FLOW3\Security\Authentication\Provider\TestingProvider
 	 */
 	protected $testingProvider;
 
