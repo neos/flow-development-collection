@@ -102,7 +102,7 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 		try {
 			$dqlQuery = clone $this->queryBuilder->getQuery();
 			$dqlQuery->setHint(\Doctrine\ORM\Query::HINT_CUSTOM_TREE_WALKERS, array('F3\FLOW3\Persistence\Doctrine\CountWalker'));
-			return $dqlQuery->getSingleScalarResult();
+			return (int)$dqlQuery->getSingleScalarResult();
 		} catch (\Doctrine\ORM\ORMException $e) {
 			return 0;
 		}
