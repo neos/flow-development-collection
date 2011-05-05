@@ -429,7 +429,7 @@ abstract class AbstractBackend implements \F3\FLOW3\Persistence\Generic\Backend\
 					);
 				break;
 				case 'Doctrine\Common\Collections\ArrayCollection':
-					$propertyValue = $propertyValue->toArray();
+					$propertyValue = $propertyValue === NULL ? array() : $propertyValue->toArray();
 				case 'array':
 					$propertyData[$propertyName] = array(
 						'multivalue' => TRUE,
