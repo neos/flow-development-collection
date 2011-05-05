@@ -237,11 +237,11 @@ class PersistentObjectConverter extends \F3\FLOW3\Property\TypeConverter\Abstrac
 	}
 
 	/**
-	 * Builds a new instance of $objectType with the given $constructorArgumentValues. If
+	 * Builds a new instance of $objectType with the given $possibleConstructorArgumentValues. If
 	 * constructor argument values are missing from the given array the method
 	 * looks for a default value in the constructor signature. Furthermore, the constructor arguments are removed from $possibleConstructorArgumentValues
 	 *
-	 * @param array $possibleConstructorArgumentValues
+	 * @param array &$possibleConstructorArgumentValues
 	 * @param string $objectType
 	 * @return object The created instance
 	 * @throws \F3\FLOW3\Property\Exception\InvalidTargetException if a required constructor argument is missing

@@ -154,6 +154,10 @@ class PropertyMapper {
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	protected function doMapping($source, $targetType, \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration, &$currentPropertyPath) {
+		if ($source === NULL) {
+			$source = '';
+		}
+
 		$typeConverter = $this->findTypeConverter($source, $targetType, $configuration);
 
 		if (!is_object($typeConverter) || !($typeConverter instanceof \F3\FLOW3\Property\TypeConverterInterface)) {
@@ -267,6 +271,12 @@ class PropertyMapper {
 		}
 	}
 
+	/**
+	 * @param mixed $converters
+	 * @param mixed $source
+	 * @param string $targetType
+	 * @return mixed Either the matching object converter or NULL
+	 */
 	protected function findEligibleConverterWithHighestPriority($converters, $source, $targetType) {
 		if (!is_array($converters)) return NULL;
 		krsort($converters);
@@ -279,7 +289,13 @@ class PropertyMapper {
 		return NULL;
 	}
 
-	protected function getConvertersForInterfaces($convertersForSource, $interfaceNames) {
+	/**
+	 * @param array $convertersForSource
+	 * @param array $interfaceNames
+	 * @return array
+	 * @throws Exception\DuplicateTypeConverterException
+	 */
+	protected function getConvertersForInterfaces(array $convertersForSource, array $interfaceNames) {
 		$convertersForInterface = array();
 		foreach ($interfaceNames as $implementedInterface) {
 			if (isset($convertersForSource[$implementedInterface])) {
