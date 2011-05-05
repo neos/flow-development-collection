@@ -50,6 +50,9 @@ class ClassSchemaFixture {
 	/**
 	 * @param string $name
 	 * @return void
+	 * @validate foo1 bar1
+	 * @validate foo2 bar2
+	 * @skipCsrf
 	 */
 	public function setName($name) {
 		$this->name = $name;
