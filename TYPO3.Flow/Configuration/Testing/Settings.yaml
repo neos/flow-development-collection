@@ -46,3 +46,6 @@ FLOW3:
     functional:
       aop:
         pointcutExpressionSettingFilterOptionA: y
+      dependencyInjection:
+        singletonConstructorArgument: 'setting injected singleton value'
+        prototypeConstructorArgument: 'setting injected property value'
