@@ -74,5 +74,40 @@ class DependencyInjectionTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 		$this->assertInstanceOf('F3\FLOW3\Tests\Functional\Object\Fixtures\PrototypeClassA', $prototypeA);
 		$this->assertSame('value defined in Objects.yaml', $prototypeA->getSomeProperty());
 	}
+
+	/**
+	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function constructorInjectionInSingletonCanHandleArgumentDefinedInSettings() {
+		$objectC = $this->objectManager->get('F3\FLOW3\Tests\Functional\Object\Fixtures\SingletonClassC');
+
+			// Note: The "settingsArgument" is defined in the Settings.yaml of the FLOW3 package (testing context)
+		$this->assertSame('setting injected singleton value', $objectC->settingsArgument);
+	}
+
+	/**
+	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function singletonCanHandleInjectedPrototypeWithSettingArgument() {
+		$objectD = $this->objectManager->get('F3\FLOW3\Tests\Functional\Object\Fixtures\SingletonClassD');
+
+			// Note: The "settingsArgument" is defined in the Settings.yaml of the FLOW3 package (testing context)
+		$this->assertSame('setting injected property value', $objectD->prototypeClassC->settingsArgument);
+	}
+
+	/**
+	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function singletonCanHandleInjectedPrototypeWithCustomFactory() {
+		$objectD = $this->objectManager->get('F3\FLOW3\Tests\Functional\Object\Fixtures\SingletonClassD');
+
+			// Note: The "prototypeClassA" is defined with a custom factory in the Objects.yaml of the FLOW3 package (testing context)
+		$this->assertNotNull($objectD->prototypeClassA);
+		$this->assertSame('value defined in Objects.yaml', $objectD->prototypeClassA->getSomeProperty());
+	}
+
 }
 ?>

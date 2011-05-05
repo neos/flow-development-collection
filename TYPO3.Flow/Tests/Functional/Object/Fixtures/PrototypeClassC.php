@@ -23,21 +23,9 @@ namespace F3\FLOW3\Tests\Functional\Object\Fixtures;
  *                                                                        */
 
 /**
- * A class of scope singleton
- *
- * @scope singleton
+ * A class of scope prototype (but without explicit scope annotation)
  */
-class SingletonClassC {
-
-	/**
-	 * @var string
-	 */
-	public $requiredArgument;
-
-	/**
-	 * @var \F3\FLOW3\Tests\Functional\Object\Fixtures\InterfaceA
-	 */
-	public $interfaceAImplementation;
+class PrototypeClassC {
 
 	/**
 	 * @var string
@@ -45,16 +33,10 @@ class SingletonClassC {
 	public $settingsArgument;
 
 	/**
-	 * @param string $requiredArgument
-	 * @param \F3\FLOW3\Tests\Functional\Object\Fixtures\InterfaceA $interfaceAImplementation
-	 * @param string $settingsArgument
-	 * @param boolean $optionalArgument
+	 * @param string $settingsArgument 
 	 */
-	public function __construct($requiredArgument, InterfaceA $interfaceAImplementation, $settingsArgument, $optionalArgument = FALSE) {
-		$this->requiredArgument = $requiredArgument;
-		$this->interfaceAImplementation = $interfaceAImplementation;
+	public function __construct($settingsArgument) {
 		$this->settingsArgument = $settingsArgument;
-		$this->optionalArgument = $optionalArgument;
 	}
 
 }

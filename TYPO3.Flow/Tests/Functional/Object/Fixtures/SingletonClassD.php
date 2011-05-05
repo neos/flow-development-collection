@@ -27,35 +27,19 @@ namespace F3\FLOW3\Tests\Functional\Object\Fixtures;
  *
  * @scope singleton
  */
-class SingletonClassC {
+class SingletonClassD {
 
 	/**
-	 * @var string
+	 * @inject
+	 * @var \F3\FLOW3\Tests\Functional\Object\Fixtures\PrototypeClassC
 	 */
-	public $requiredArgument;
+	public $prototypeClassC;
 
 	/**
-	 * @var \F3\FLOW3\Tests\Functional\Object\Fixtures\InterfaceA
+	 * @inject
+	 * @var \F3\FLOW3\Tests\Functional\Object\Fixtures\PrototypeClassAishInterface
 	 */
-	public $interfaceAImplementation;
-
-	/**
-	 * @var string
-	 */
-	public $settingsArgument;
-
-	/**
-	 * @param string $requiredArgument
-	 * @param \F3\FLOW3\Tests\Functional\Object\Fixtures\InterfaceA $interfaceAImplementation
-	 * @param string $settingsArgument
-	 * @param boolean $optionalArgument
-	 */
-	public function __construct($requiredArgument, InterfaceA $interfaceAImplementation, $settingsArgument, $optionalArgument = FALSE) {
-		$this->requiredArgument = $requiredArgument;
-		$this->interfaceAImplementation = $interfaceAImplementation;
-		$this->settingsArgument = $settingsArgument;
-		$this->optionalArgument = $optionalArgument;
-	}
+	public $prototypeClassA;
 
 }
 ?>
