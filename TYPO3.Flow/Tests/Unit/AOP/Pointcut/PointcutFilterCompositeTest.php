@@ -435,7 +435,7 @@ class PointcutFilterCompositeTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		$result = $pointcutFilterComposite->_call('buildMethodArgumentsEvaluationConditionCode', $condition);
 
-		$expectedResult = '((array(\'usage1\', \'usage2\', "usage3") instanceof \SplObjectStorage ? $joinPoint->getMethodArgument(\'identifier\') !== NULL && array(\'usage1\', \'usage2\', "usage3")->contains($joinPoint->getMethodArgument(\'identifier\')) : in_array($joinPoint->getMethodArgument(\'identifier\'), array(\'usage1\', \'usage2\', "usage3"))))';
+		$expectedResult = '((array(\'usage1\', \'usage2\', "usage3") instanceof \SplObjectStorage || array(\'usage1\', \'usage2\', "usage3") instanceof \Doctrine\Common\Collections\Collection ? $joinPoint->getMethodArgument(\'identifier\') !== NULL && array(\'usage1\', \'usage2\', "usage3")->contains($joinPoint->getMethodArgument(\'identifier\')) : in_array($joinPoint->getMethodArgument(\'identifier\'), array(\'usage1\', \'usage2\', "usage3"))))';
 
 		$this->assertEquals($expectedResult, $result, 'The wrong Code has been built.');
 	}
@@ -511,7 +511,7 @@ class PointcutFilterCompositeTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		$result = $pointcutFilterComposite->_call('buildGlobalRuntimeEvaluationsConditionCode', $condition);
 
-		$expectedResult = '((array("foo", \F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($globalObjects[\'party\'], \'name\'), 5) instanceof \SplObjectStorage ? \F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($currentObject, \'some.thing\') !== NULL && array("foo", \F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($globalObjects[\'party\'], \'name\'), 5)->contains(\F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($currentObject, \'some.thing\')) : in_array(\F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($currentObject, \'some.thing\'), array("foo", \F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($globalObjects[\'party\'], \'name\'), 5))))';
+		$expectedResult = '((array("foo", \F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($globalObjects[\'party\'], \'name\'), 5) instanceof \SplObjectStorage || array("foo", \F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($globalObjects[\'party\'], \'name\'), 5) instanceof \Doctrine\Common\Collections\Collection ? \F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($currentObject, \'some.thing\') !== NULL && array("foo", \F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($globalObjects[\'party\'], \'name\'), 5)->contains(\F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($currentObject, \'some.thing\')) : in_array(\F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($currentObject, \'some.thing\'), array("foo", \F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($globalObjects[\'party\'], \'name\'), 5))))';
 
 		$this->assertEquals($expectedResult, $result, 'The wrong Code has been built.');
 	}
