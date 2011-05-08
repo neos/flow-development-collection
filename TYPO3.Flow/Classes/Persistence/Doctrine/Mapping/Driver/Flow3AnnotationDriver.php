@@ -82,9 +82,8 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \F3\
 	 * @throws \RuntimeException
 	 */
 	protected function getClassSchema($className) {
-		if (strpos($className, '_Original') !== FALSE) {
-			$className = substr($className, 0, strrpos($className, '_Original'));
-		}
+		$className = preg_replace('/_Original$/', '', $className);
+
 		$classSchema = $this->reflectionService->getClassSchema($className);
 		if (!$classSchema) {
 			throw new \RuntimeException('No class schema found for "' . $className . '"', 1295973082);
@@ -220,16 +219,46 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \F3\
 	}
 
 	/**
+	 * Given a class and property name a table name is returned. That name should be reasonably unique.
+	 *
+	 * @param string $className
+	 * @param string $propertyName
+	 * @return string
+	 */
+	protected function inferJoinTableNameFromClassAndPropertyName($className, $propertyName) {
+		$classNameParts = explode('\\', $className);
+		$packageKey = $classNameParts[1];
+		array_pop($classNameParts);
+		$modelNamePrefix = array_pop($classNameParts);
+		return strtolower($packageKey . '_' . ($modelNamePrefix === 'Model' ? '' : $modelNamePrefix . '_') . $propertyName . '_join');
+	}
+
+	/**
+	 * Build a name for a column in a jointable.
+	 *
+	 * @param string $className
+	 * @return string
+	 */
+	protected function buildJoinTableColumnName($className) {
+		$classNameParts = explode('\\', $className);
+		$packageKey = $classNameParts[1];
+		$modelName = array_pop($classNameParts);
+		$modelNamePrefix = array_pop($classNameParts);
+		return strtolower($packageKey . '_' . ($modelNamePrefix === 'Model' ? '' : $modelNamePrefix . '_') . $modelName);
+	}
+
+	/**
 	 * Check if the referenced column name is set (and valid) and if not make sure
 	 * it is initialized properly.
 	 *
 	 * @param array $joinColumns
-	 * @param \ReflectionProperty $property (use is to be coded)
+	 * @param array $mapping
+	 * @param \ReflectionProperty $property
 	 * @param integer $direction regular or inverse mapping (use is to be coded)
 	 * @return array
 	 * @todo make this do some "real" autodetection
 	 */
-	protected function buildJoinColumnsIfNeeded(array $joinColumns, \ReflectionProperty $property, $direction = self::MAPPING_REGULAR) {
+	protected function buildJoinColumnsIfNeeded(array $joinColumns, array $mapping, \ReflectionProperty $property, $direction = self::MAPPING_REGULAR) {
 		if ($joinColumns === array()) {
 			$joinColumns[] = array(
 				'name' => NULL,
@@ -243,7 +272,21 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \F3\
 		}
 		foreach ($joinColumns as &$joinColumn) {
 			if ($joinColumn['referencedColumnName'] === NULL || $joinColumn['referencedColumnName'] === 'id') {
-				$joinColumn['referencedColumnName'] = strtolower('FLOW3_Persistence_Identifier');
+				if ($direction === self::MAPPING_REGULAR) {
+					$idProperties = $this->reflectionService->getPropertyNamesByTag($mapping['targetEntity'], 'Id');
+					$joinColumnName = $this->buildJoinTableColumnName($mapping['targetEntity']);
+				} else {
+					$className = preg_replace('/_Original$/', '', $property->getDeclaringClass()->getName());
+					$idProperties = $this->reflectionService->getPropertyNamesByTag($className, 'Id');
+					$joinColumnName = $this->buildJoinTableColumnName($className);
+				}
+				if (count($idProperties) === 0) {
+					$joinColumn['name'] = $joinColumn['name'] === NULL ? $joinColumnName : $joinColumn['name'];
+					$joinColumn['referencedColumnName'] = strtolower('FLOW3_Persistence_Identifier');
+				} elseif(count($idProperties) === 1) {
+					$joinColumn['name'] = $joinColumn['name'] === NULL ? $joinColumnName : $joinColumn['name'];
+					$joinColumn['referencedColumnName'] = strtolower(current($idProperties));
+				}
 			}
 		}
 
@@ -275,6 +318,7 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \F3\
 			$mapping = array();
 			$mapping['fieldName'] = $property->getName();
 			$mapping['columnName'] = strtolower($property->getName());
+			$mapping['targetEntity'] = $propertyMetaData['type'];
 
 				// Check for JoinColummn/JoinColumns annotations
 			$joinColumns = array();
@@ -307,10 +351,8 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \F3\
 			if ($oneToOneAnnotation = $this->reader->getPropertyAnnotation($property, 'Doctrine\ORM\Mapping\OneToOne')) {
 				if ($oneToOneAnnotation->targetEntity) {
 					$mapping['targetEntity'] = $oneToOneAnnotation->targetEntity;
-				} else {
-					$mapping['targetEntity'] = $propertyMetaData['type'];
 				}
-				$mapping['joinColumns'] = $this->buildJoinColumnsIfNeeded($joinColumns, $property);
+				$mapping['joinColumns'] = $this->buildJoinColumnsIfNeeded($joinColumns, $mapping, $property);
 				$mapping['mappedBy'] = $oneToOneAnnotation->mappedBy;
 				$mapping['inversedBy'] = $oneToOneAnnotation->inversedBy;
 				$mapping['cascade'] = $oneToOneAnnotation->cascade;
@@ -321,7 +363,7 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \F3\
 				$mapping['mappedBy'] = $oneToManyAnnotation->mappedBy;
 				if ($oneToManyAnnotation->targetEntity) {
 					$mapping['targetEntity'] = $oneToManyAnnotation->targetEntity;
-				} else {
+				} elseif (isset($propertyMetaData['elementType'])) {
 					$mapping['targetEntity'] = $propertyMetaData['elementType'];
 				}
 				$mapping['cascade'] = $oneToManyAnnotation->cascade;
@@ -334,22 +376,28 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \F3\
 
 				$metadata->mapOneToMany($mapping);
 			} elseif ($manyToOneAnnotation = $this->reader->getPropertyAnnotation($property, 'Doctrine\ORM\Mapping\ManyToOne')) {
-				$mapping['joinColumns'] = $this->buildJoinColumnsIfNeeded($joinColumns, $property);
-				$mapping['cascade'] = $manyToOneAnnotation->cascade;
-				$mapping['inversedBy'] = $manyToOneAnnotation->inversedBy;
 				if ($manyToOneAnnotation->targetEntity) {
 					$mapping['targetEntity'] = $manyToOneAnnotation->targetEntity;
-				} else {
-					$mapping['targetEntity'] = $propertyMetaData['type'];
 				}
+				$mapping['joinColumns'] = $this->buildJoinColumnsIfNeeded($joinColumns, $mapping, $property);
+				$mapping['cascade'] = $manyToOneAnnotation->cascade;
+				$mapping['inversedBy'] = $manyToOneAnnotation->inversedBy;
 				$mapping['fetch'] = constant('Doctrine\ORM\Mapping\ClassMetadata::FETCH_' . $manyToOneAnnotation->fetch);
 				$metadata->mapManyToOne($mapping);
 			} elseif ($manyToManyAnnotation = $this->reader->getPropertyAnnotation($property, 'Doctrine\ORM\Mapping\ManyToMany')) {
+				if ($manyToManyAnnotation->targetEntity) {
+					$mapping['targetEntity'] = $manyToManyAnnotation->targetEntity;
+				} elseif (isset($propertyMetaData['elementType'])) {
+					$mapping['targetEntity'] = $propertyMetaData['elementType'];
+				}
 				if ($joinTableAnnotation = $this->reader->getPropertyAnnotation($property, 'Doctrine\ORM\Mapping\JoinTable')) {
 					$joinTable = array(
 						'name' => $joinTableAnnotation->name,
 						'schema' => $joinTableAnnotation->schema
 					);
+					if ($joinTable['name'] === NULL) {
+						$joinTable['name'] = $this->inferJoinTableNameFromClassAndPropertyName($className, $property->getName());
+					}
 
 					foreach ($joinTableAnnotation->joinColumns as $joinColumn) {
 						$joinTable['joinColumns'][] = array(
@@ -363,9 +411,9 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \F3\
 						);
 					}
 					if (array_key_exists('joinColumns', $joinTable)) {
-						$joinTable['joinColumns'] = $this->buildJoinColumnsIfNeeded($joinTable['joinColumns'], $property);
+						$joinTable['joinColumns'] = $this->buildJoinColumnsIfNeeded($joinTable['joinColumns'], $mapping, $property);
 					} else {
-						$joinTable['joinColumns'] = $this->buildJoinColumnsIfNeeded(array(), $property);
+						$joinTable['joinColumns'] = $this->buildJoinColumnsIfNeeded(array(), $mapping, $property);
 					}
 
 					foreach ($joinTableAnnotation->inverseJoinColumns as $joinColumn) {
@@ -380,23 +428,19 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \F3\
 						);
 					}
 					if (array_key_exists('inverseJoinColumns', $joinTable)) {
-						$joinTable['inverseJoinColumns'] = $this->buildJoinColumnsIfNeeded($joinTable['inverseJoinColumns'], $property, self::MAPPING_INVERSE);
+						$joinTable['inverseJoinColumns'] = $this->buildJoinColumnsIfNeeded($joinTable['inverseJoinColumns'], $mapping, $property, self::MAPPING_INVERSE);
 					} else {
-						$joinTable['inverseJoinColumns'] = $this->buildJoinColumnsIfNeeded(array(), $property, self::MAPPING_INVERSE);
+						$joinTable['inverseJoinColumns'] = $this->buildJoinColumnsIfNeeded(array(), $mapping, $property, self::MAPPING_INVERSE);
 					}
 				} else {
 					$joinTable = array(
-						'joinColumns' => $this->buildJoinColumnsIfNeeded(array(), $property),
-						'inverseJoinColumns' => $this->buildJoinColumnsIfNeeded(array(), $property, self::MAPPING_INVERSE)
+						'name' => $this->inferJoinTableNameFromClassAndPropertyName($className, $property->getName()),
+						'joinColumns' => $this->buildJoinColumnsIfNeeded(array(), $mapping, $property, self::MAPPING_INVERSE),
+						'inverseJoinColumns' => $this->buildJoinColumnsIfNeeded(array(), $mapping, $property)
 					);
 				}
 
 				$mapping['joinTable'] = $joinTable;
-				if ($manyToManyAnnotation->targetEntity) {
-					$mapping['targetEntity'] = $manyToManyAnnotation->targetEntity;
-				} else {
-					$mapping['targetEntity'] = $propertyMetaData['elementType'];
-				}
 				$mapping['mappedBy'] = $manyToManyAnnotation->mappedBy;
 				$mapping['inversedBy'] = $manyToManyAnnotation->inversedBy;
 				$mapping['cascade'] = $manyToManyAnnotation->cascade;
