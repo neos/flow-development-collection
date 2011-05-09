@@ -81,6 +81,28 @@ class ArraysTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function getValueByPathReturnsTheValueOfANestedArrayByFollowingTheGivenPathIfPathIsString() {
+		$path = 'Foo.Bar.Baz.2';
+		$array = array('Foo' => array('Bar' => array('Baz' => array(2 => 'the value'))));
+		$expectedResult = 'the value';
+		$actualResult = \F3\FLOW3\Utility\Arrays::getValueByPath($array, $path);
+		$this->assertSame($expectedResult, $actualResult);
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @expectedException \InvalidArgumentException
+	 */
+	public function getValueByPathThrowsExceptionIfPathIsNoArrayOrString() {
+		$array = array('Foo' => array('Bar' => array('Baz' => array(2 => 'the value'))));
+		\F3\FLOW3\Utility\Arrays::getValueByPath($array, NULL);
+	}
+
+	/**
+	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getValueByPathReturnsNullIfTheSegementsOfThePathDontExist() {
@@ -126,5 +148,108 @@ class ArraysTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$this->assertEquals($expected, $array);
 	}
 
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function setValueByPathSetsValueRecursivelyIfPathIsArray() {
+		$array = array();
+		$path = array('foo', 'bar', 'baz');
+		$expectedValue = array('foo' => array('bar' => array('baz' => 'The Value')));
+		$actualValue = \F3\FLOW3\Utility\Arrays::setValueByPath($array, $path, 'The Value');
+		$this->assertEquals($expectedValue, $actualValue);
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function setValueByPathSetsValueRecursivelyIfPathIsString() {
+		$array = array();
+		$path = 'foo.bar.baz';
+		$expectedValue = array('foo' => array('bar' => array('baz' => 'The Value')));
+		$actualValue = \F3\FLOW3\Utility\Arrays::setValueByPath($array, $path, 'The Value');
+		$this->assertEquals($expectedValue, $actualValue);
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function setValueByPathRecursivelyMergesAnArray() {
+		$array = array('foo' => array('bar' => 'should be overriden'), 'bar' => 'Baz');
+		$path = array('foo', 'bar', 'baz');
+		$expectedValue = array('foo' => array('bar' => array('baz' => 'The Value')), 'bar' => 'Baz');
+		$actualValue = \F3\FLOW3\Utility\Arrays::setValueByPath($array, $path, 'The Value');
+		$this->assertEquals($expectedValue, $actualValue);
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @expectedException \InvalidArgumentException
+	 */
+	public function setValueByPathThrowsExceptionIfPathIsNoArrayOrString() {
+		$array = array('Foo' => array('Bar' => array('Baz' => array(2 => 'the value'))));
+		\F3\FLOW3\Utility\Arrays::setValueByPath($array, NULL, 'Some Value');
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function unsetValueByPathDoesNotModifyAnArrayIfThePathWasNotFound() {
+		$array = array('foo' => array('bar' => array('baz' => 'Some Value')), 'bar' => 'Baz');
+		$path = array('foo', 'bar', 'nonExistingKey');
+		$expectedValue = $array;
+		$actualValue = \F3\FLOW3\Utility\Arrays::unsetValueByPath($array, $path);
+		$this->assertEquals($expectedValue, $actualValue);
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function unsetValueByPathRemovesSpecifiedKey() {
+		$array = array('foo' => array('bar' => array('baz' => 'Some Value')), 'bar' => 'Baz');
+		$path = array('foo', 'bar', 'baz');
+		$expectedValue = array('foo' => array('bar' => array()), 'bar' => 'Baz');;
+		$actualValue = \F3\FLOW3\Utility\Arrays::unsetValueByPath($array, $path);
+		$this->assertEquals($expectedValue, $actualValue);
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function unsetValueByPathRemovesSpecifiedKeyIfPathIsString() {
+		$array = array('foo' => array('bar' => array('baz' => 'Some Value')), 'bar' => 'Baz');
+		$path = 'foo.bar.baz';
+		$expectedValue = array('foo' => array('bar' => array()), 'bar' => 'Baz');;
+		$actualValue = \F3\FLOW3\Utility\Arrays::unsetValueByPath($array, $path);
+		$this->assertEquals($expectedValue, $actualValue);
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function unsetValueByPathRemovesSpecifiedBranch() {
+		$array = array('foo' => array('bar' => array('baz' => 'Some Value')), 'bar' => 'Baz');
+		$path = array('foo');
+		$expectedValue = array('bar' => 'Baz');;
+		$actualValue = \F3\FLOW3\Utility\Arrays::unsetValueByPath($array, $path);
+		$this->assertEquals($expectedValue, $actualValue);
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @expectedException \InvalidArgumentException
+	 */
+	public function unsetValueByPathThrowsExceptionIfPathIsNoArrayOrString() {
+		$array = array('Foo' => array('Bar' => array('Baz' => array(2 => 'the value'))));
+		\F3\FLOW3\Utility\Arrays::unsetValueByPath($array, NULL);
+	}
 }
 ?>

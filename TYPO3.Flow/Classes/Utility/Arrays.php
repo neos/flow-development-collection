@@ -151,12 +151,18 @@ class Arrays {
 	 * Returns the value of a nested array by following the specifed path.
 	 *
 	 * @param array &$array The array to traverse as a reference
-	 * @param array $path The path to follow, ie. a simple array of keys
+	 * @param array|string $path The path to follow. Either a simple array of keys or a string in the format 'foo.bar.baz'
 	 * @return mixed The value found, NULL if the path didn't exist
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	static public function getValueByPath(array &$array, array $path) {
+	static public function getValueByPath(array &$array, $path) {
+		if (is_string($path)) {
+			$path = explode('.', $path);
+		} elseif (!is_array($path)) {
+			throw new \InvalidArgumentException('getValueByPath() expects $path to be string or array, "' . gettype($path) . '" given.', 1304950007);
+		}
 		$key = array_shift($path);
 		if (isset($array[$key])) {
 			if (count($path) > 0) {
@@ -170,15 +176,21 @@ class Arrays {
 	}
 
 	/**
-	 * Sets the given value in a nested array by following the specifed path.
+	 * Sets the given value in a nested array by following the specified path.
 	 *
 	 * @param array $array The array
-	 * @param array $path The path to follow, ie. a simple array of keys
+	 * @param array|string $path The path to follow. Either a simple array of keys or a string in the format 'foo.bar.baz'
 	 * @param mixed $value The value to set
 	 * @return array The modified array
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	static public function setValueByPath(array $array, array $path, $value) {
+	static public function setValueByPath(array $array, $path, $value) {
+		if (is_string($path)) {
+			$path = explode('.', $path);
+		} elseif (!is_array($path)) {
+			throw new \InvalidArgumentException('setValueByPath() expects $path to be string or array, "' . gettype($path) . '" given.', 1305111499);
+		}
 		$key = array_shift($path);
 		if (count($path) === 0) {
 			$array[$key] = $value;
@@ -187,6 +199,32 @@ class Arrays {
 				$array[$key] = array();
 			}
 			$array[$key] = self::setValueByPath($array[$key], $path, $value);
+		}
+		return $array;
+	}
+
+	/**
+	 * Unsets an element/part of a nested array by following the specified path.
+	 *
+	 * @param array $array The array
+	 * @param array|string $path The path to follow. Either a simple array of keys or a string in the format 'foo.bar.baz'
+	 * @return array The modified array
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	static public function unsetValueByPath(array $array, $path) {
+		if (is_string($path)) {
+			$path = explode('.', $path);
+		} elseif (!is_array($path)) {
+			throw new \InvalidArgumentException('unsetValueByPath() expects $path to be string or array, "' . gettype($path) . '" given.', 1305111513);
+		}
+		$key = array_shift($path);
+		if (count($path) === 0) {
+			unset($array[$key]);
+		} else {
+			if (!isset($array[$key]) || !is_array($array[$key])) {
+				return $array;
+			}
+			$array[$key] = self::unsetValueByPath($array[$key], $path);
 		}
 		return $array;
 	}
