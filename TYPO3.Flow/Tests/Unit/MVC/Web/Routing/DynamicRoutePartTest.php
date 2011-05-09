@@ -275,7 +275,7 @@ class DynamicRoutePartTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function dynamicRoutePartLowerCasesValueIfSpecified() {
+	public function dynamicRoutePartLowerCasesValueIfLowerCaseIsTrue() {
 		$routePart = new \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart();
 		$routePart->setName('Foo');
 		$routePart->setLowerCase(TRUE);
@@ -283,6 +283,22 @@ class DynamicRoutePartTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		$this->assertTrue($routePart->resolve($routeValues));
 		$this->assertEquals('bar', $routePart->getValue(), 'Dynamic Route Part should lowercase the value if lowerCase is true.');
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function dynamicRoutePartLowerCasesAllArrayValuesIfLowerCaseIsTrue() {
+		$routePart = new \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart();
+		$routePart->setName('Foo');
+		$routePart->setLowerCase(TRUE);
+		$routeValues = array('Foo' => array('Key1' => 'Value 01', 'Key2' => 'Value 02', 'Key3' => array('Foo' => 'Bar')));
+
+		$this->assertTrue($routePart->resolve($routeValues));
+		$expectedResult = array('Key1' => 'value 01', 'Key2' => 'value 02', 'Key3' => array('Foo' => 'bar'));
+		$actualResult = $routePart->getValue();
+		$this->assertEquals($expectedResult, $actualResult);
 	}
 
 	/**
@@ -308,6 +324,19 @@ class DynamicRoutePartTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		$this->assertTrue($routePart->resolve($routeValues));
 		$this->assertEquals(array('differentString' => 'value2'), $routeValues, 'Dynamic Route Part should unset matching element from $routeValues on successful resolve.');
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function resolveRecursivelyUnsetsCurrentRouteValueOnSuccessfulResolve() {
+		$routePart = new \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart();
+		$routePart->setName('foo.bar.baz');
+		$routeValues = array('foo' => array('bar' => array('baz' => 'should be removed', 'otherKey' => 'should stay')), 'differentString' => 'value2');
+
+		$this->assertTrue($routePart->resolve($routeValues));
+		$this->assertEquals(array('foo' => array('bar' => array('otherKey' => 'should stay')), 'differentString' => 'value2'), $routeValues);
 	}
 
 	/**

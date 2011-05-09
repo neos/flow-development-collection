@@ -330,7 +330,7 @@ class Route {
 				if ($this->containsObject($routePartValue)) {
 					throw new \F3\FLOW3\MVC\Exception\InvalidRoutePartValueException('RoutePart::getValue() must only return simple types after calling RoutePart::match(). RoutePart "' . get_class($routePart) . '" returned one or more objects in Route "' . $this->getName() . '".');
 				}
-				$matchResults[$routePart->getName()] = $routePartValue;
+				$matchResults = \F3\FLOW3\Utility\Arrays::setValueByPath($matchResults, $routePart->getName(), $routePartValue);
 			}
 		}
 		if (strlen($routePath) > 0) {
@@ -398,17 +398,11 @@ class Route {
 			}
 		}
 
-			// Remove remaining route values of applied default values:
-		foreach ($this->defaults as $key => $defaultValue) {
-			if (isset($routeValues[$key])) {
-				if (strtolower($routeValues[$key]) !== strtolower($defaultValue)) {
-					return FALSE;
-				}
-				unset($routeValues[$key]);
-			}
-			if (isset($routeValues['@format']) && $routeValues['@format'] === '') {
-				unset($routeValues['@format']);
-			}
+		if ($this->compareAndRemoveMatchingDefaultValues($this->defaults, $routeValues) !== TRUE) {
+			return FALSE;
+		}
+		if (isset($routeValues['@format']) && $routeValues['@format'] === '') {
+			unset($routeValues['@format']);
 		}
 
 			// skip route if target controller/action does not exist
@@ -423,9 +417,43 @@ class Route {
 			// add query string
 		if (count($routeValues) > 0) {
 			$routeValues = $this->persistenceManager->convertObjectsToIdentityArrays($routeValues);
-			$matchingUri .= '?' . http_build_query($routeValues, NULL, '&');
+			$queryString = http_build_query($routeValues, NULL, '&');
+			if ($queryString !== '') {
+				$matchingUri .= '?' . $queryString;
+			}
 		}
 		$this->matchingUri = $matchingUri;
+		return TRUE;
+	}
+
+	/**
+	 * Recursively iterates through the defaults of this route.
+	 * If a route value is equal to a default value, it's removed
+	 * from $routeValues.
+	 * If a value exists but is not equal to is corresponding default,
+	 * iteration is interrupted and FALSE is returned.
+	 *
+	 * @param array $defaults
+	 * @param array $routeValues
+	 * @return boolean FALSE if one of the $routeValues is not equal to it's default value. Otherwise TRUE
+	 */
+	protected function compareAndRemoveMatchingDefaultValues(array $defaults, array &$routeValues) {
+		foreach ($defaults as $key => $defaultValue) {
+			if (isset($routeValues[$key])) {
+				if (is_array($defaultValue)) {
+					if (!is_array($routeValues[$key])) {
+						return FALSE;
+					}
+					return $this->compareAndRemoveMatchingDefaultValues($defaultValue, $routeValues[$key]);
+				} elseif (is_array($routeValues[$key])) {
+					return FALSE;
+				}
+				if (strtolower($routeValues[$key]) !== strtolower($defaultValue)) {
+					return FALSE;
+				}
+				unset($routeValues[$key]);
+			}
+		}
 		return TRUE;
 	}
 

@@ -154,7 +154,7 @@ class DynamicRoutePart extends \F3\FLOW3\MVC\Web\Routing\AbstractRoutePart imple
 		if (!$this->resolveValue($valueToResolve)) {
 			return FALSE;
 		}
-		unset($routeValues[$this->name]);
+		$routeValues = \F3\FLOW3\Utility\Arrays::unsetValueByPath($routeValues, $this->name);
 		return TRUE;
 	}
 
@@ -163,15 +163,12 @@ class DynamicRoutePart extends \F3\FLOW3\MVC\Web\Routing\AbstractRoutePart imple
 	 * This method can be overridden by custom RoutePartHandlers to implement custom resolving mechanisms.
 	 *
 	 * @param array $routeValues An array with key/value pairs to be resolved by Dynamic Route Parts.
-	 * @return string value to resolve.
+	 * @return string|array value to resolve.
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @api
 	 */
 	protected function findValueToResolve(array $routeValues) {
-		if (!isset($routeValues[$this->name])) {
-			return NULL;
-		}
-		return $routeValues[$this->name];
+		return \F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($routeValues, $this->name);
 	}
 
 	/**
@@ -179,7 +176,7 @@ class DynamicRoutePart extends \F3\FLOW3\MVC\Web\Routing\AbstractRoutePart imple
 	 * If $value is empty, this method checks whether a default value exists.
 	 * This method can be overridden by custom RoutePartHandlers to implement custom resolving mechanisms.
 	 *
-	 * @param string $value value to resolve
+	 * @param string|array $value value to resolve
 	 * @return boolean TRUE if value could be resolved successfully, otherwise FALSE.
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @api
@@ -190,7 +187,13 @@ class DynamicRoutePart extends \F3\FLOW3\MVC\Web\Routing\AbstractRoutePart imple
 		}
 		$this->value = $value;
 		if ($this->lowerCase) {
-			$this->value = strtolower($this->value);
+			if (is_array($this->value)) {
+				array_walk_recursive($this->value, function(&$value) {
+					$value = strtolower($value);
+				});
+			} else {
+				$this->value = strtolower($this->value);
+			}
 		}
 		return TRUE;
 	}
