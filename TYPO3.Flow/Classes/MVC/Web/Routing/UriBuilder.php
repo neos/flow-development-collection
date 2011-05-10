@@ -83,11 +83,6 @@ class UriBuilder {
 	protected $format = NULL;
 
 	/**
-	 * @var string
-	 */
-	protected $argumentPrefix = NULL;
-
-	/**
 	 * Injects the Router
 	 *
 	 * @param \F3\FLOW3\MVC\Web\Routing\RouterInterface $router
@@ -112,12 +107,13 @@ class UriBuilder {
 	/**
 	 * Sets the current request and resets the UriBuilder
 	 *
-	 * @param \F3\FLOW3\MVC\RequestInterface $request
+	 * @param \F3\FLOW3\MVC\Web\Request $request
 	 * @return void
 	 * @api
 	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @see reset()
 	 */
-	public function setRequest(\F3\FLOW3\MVC\RequestInterface $request) {
+	public function setRequest(\F3\FLOW3\MVC\Web\Request $request) {
 		$this->request = $request;
 		$this->reset();
 	}
@@ -143,11 +139,7 @@ class UriBuilder {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setArguments(array $arguments) {
-		if ($this->argumentPrefix !== NULL && strlen($this->argumentPrefix) > 0) {
-			$this->arguments[$this->argumentPrefix] = $arguments;
-		} else {
-			$this->arguments = $arguments;
-		}
+		$this->arguments = $arguments;
 		return $this;
 	}
 
@@ -272,26 +264,6 @@ class UriBuilder {
 	}
 
 	/**
-	 * Specifies the prefix to be used for all arguments.
-	 *
-	 * @param string $argumentPrefix
-	 * @return \F3\FLOW3\MVC\Web\Routing\UriBuilder the current UriBuilder to allow method chaining
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 */
-	public function setArgumentPrefix($argumentPrefix) {
-		$this->argumentPrefix = (string)$argumentPrefix;
-		return $this;
-	}
-
-	/**
-	 * @return string
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 */
-	public function getArgumentPrefix() {
-		return $this->argumentPrefix;
-	}
-
-	/**
 	 * Returns the arguments being used for the last URI being built.
 	 * This is only set after build() / uriFor() has been called.
 	 *
@@ -303,7 +275,8 @@ class UriBuilder {
 	}
 
 	/**
-	 * Resets all UriBuilder options to their default value
+	 * Resets all UriBuilder options to their default value.
+	 * Note: This won't reset the Request that is attached to this UriBuilder (@see setRequest())
 	 *
 	 * @return \F3\FLOW3\MVC\Web\Routing\UriBuilder the current UriBuilder to allow method chaining
 	 * @api
@@ -316,17 +289,6 @@ class UriBuilder {
 		$this->createAbsoluteUri = FALSE;
 		$this->addQueryString = FALSE;
 		$this->argumentsToBeExcludedFromQueryString = array();
-		$this->argumentPrefix = NULL;
-
-		if ($this->request instanceof \F3\FLOW3\MVC\Web\SubRequest) {
-			$this->setArgumentPrefix($this->request->getArgumentNamespace());
-			$parentRequest = $this->request->getParentRequest();
-			$this->arguments = $parentRequest->getArguments();
-			$this->arguments['@package'] = $parentRequest->getControllerPackageKey();
-			$this->arguments['@subpackage'] = $parentRequest->getControllerSubpackageKey();
-			$this->arguments['@controller'] = $parentRequest->getControllerName();
-			$this->arguments['@action'] = $parentRequest->getControllerActionName();
-		}
 
 		return $this;
 	}
@@ -367,43 +329,92 @@ class UriBuilder {
 			$controllerArguments['@format'] = $this->format;
 		}
 
-		if ($this->argumentPrefix !== NULL) {
-			$controllerArguments = array($this->argumentPrefix => $controllerArguments);
+		if ($this->request instanceof \F3\FLOW3\MVC\Web\SubRequest && $this->request->getArgumentNamespace() !== '') {
+			$controllerArguments = array($this->request->getArgumentNamespace() => $controllerArguments);
 		}
 
-		$this->arguments = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($this->arguments, $controllerArguments);
-
-		return $this->build();
+		return $this->build($controllerArguments);
 	}
 
 	/**
 	 * Builds the URI
 	 *
+	 * @param array $arguments optional URI arguments. Will be merged with $this->arguments with precedence to $arguments
 	 * @return string The URI
 	 * @api
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function build() {
-		$arguments = array();
-		if ($this->addQueryString === TRUE) {
-			$arguments = $this->request->getArguments();
-			foreach($this->argumentsToBeExcludedFromQueryString as $argumentToBeExcluded) {
-				unset($arguments[$argumentToBeExcluded]);
-			}
-		}
-		$arguments = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($arguments, $this->arguments);
+	public function build(array $arguments = array()) {
+		$arguments = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($this->arguments, $arguments);
+		$this->mergeArgumentsWithRequestArguments($arguments);
+
 		$uri = $this->router->resolve($arguments);
 		$this->lastArguments = $arguments;
-		if ($this->section !== '') {
-			$uri .= '#' . $this->section;
-		}
 		if (!$this->environment->isRewriteEnabled()) {
 			$uri = 'index.php/' . $uri;
 		}
 		if ($this->createAbsoluteUri === TRUE) {
 			$uri = $this->request->getBaseUri() . $uri;
 		}
+		if ($this->section !== '') {
+			$uri .= '#' . $this->section;
+		}
 		return $uri;
+	}
+
+	/**
+	 * Merges specified arguments with arguments from request.
+	 * If $this->request is no SubRequest, request arguments will only be merged if $this->addQueryString is set.
+	 * Otherwise all request arguments except for the ones prefixed with the current request argument namespace will
+	 * be merged. Additionally special arguments (PackageKey, SubpackageKey, ControllerName & Action) are merged.
+	 *
+	 * Note: values of $arguments always overrule request arguments!
+	 *
+	 * @param array $arguments
+	 * @return void
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	protected function mergeArgumentsWithRequestArguments(array &$arguments) {
+		$requestArguments = array();
+		if ($this->request instanceof \F3\FLOW3\MVC\Web\SubRequest) {
+			$rootRequest = $this->request->getRootRequest();
+			$requestArguments = $rootRequest->getArguments();
+				// remove all arguments of the current SubRequest
+			if ($this->request->getArgumentNamespace() !== '') {
+				unset($requestArguments[$this->request->getArgumentNamespace()]);
+			}
+
+				// merge special arguments (package, subpackage, controller & action) from root request
+			$rootRequestPackageKey = $rootRequest->getControllerPackageKey();
+			if (!empty($rootRequestPackageKey)) {
+				$requestArguments['@package'] = $rootRequestPackageKey;
+			}
+			$rootRequestSubpackageKey = $rootRequest->getControllerSubpackageKey();
+			if (!empty($rootRequestSubpackageKey)) {
+				$requestArguments['@subpackage'] = $rootRequestSubpackageKey;
+			}
+			$rootRequestControllerName = $rootRequest->getControllerName();
+			if (!empty($rootRequestControllerName)) {
+				$requestArguments['@controller'] = $rootRequestControllerName;
+			}
+			$rootRequestActionName = $rootRequest->getControllerActionName();
+			if (!empty($rootRequestActionName)) {
+				$requestArguments['@action'] = $rootRequestActionName;
+			}
+
+		} elseif ($this->addQueryString === TRUE) {
+			$requestArguments = $this->request->getArguments();
+		}
+
+		if (count($requestArguments) === 0) {
+			return;
+		}
+
+		foreach($this->argumentsToBeExcludedFromQueryString as $argumentToBeExcluded) {
+			unset($requestArguments[$argumentToBeExcluded]);
+		}
+
+		$arguments = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($requestArguments, $arguments);
 	}
 
 }
