@@ -118,7 +118,7 @@ class CsrfProtectionAspect {
 	 */
 	public function addCsrfTokenToUri(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$uriBuilder = $joinPoint->getProxy();
-		$arguments = $uriBuilder->getArguments();
+		$arguments = $joinPoint->getMethodArgument('arguments');
 		$packageKey = (isset($arguments['@package']) ? $arguments['@package'] : '');
 		$subpackageKey = (isset($arguments['@subpackage']) ? $arguments['@subpackage'] : '');
 		$controllerName = (isset($arguments['@controller']) ? $arguments['@controller'] : 'Standard');
@@ -132,11 +132,11 @@ class CsrfProtectionAspect {
 		$lowercaseObjectName = strtolower($possibleObjectName);
 
 		$className = $this->objectManager->getClassNameByObjectName($this->objectManager->getCaseSensitiveObjectName($lowercaseObjectName));
-
 		if ($this->policyService->hasPolicyEntryForMethod($className, $actionName)
 			&& !$this->reflectionService->isMethodTaggedWith($className, $actionName, 'skipCsrfProtection')) {
-			$arguments['FLOW3-CSRF-TOKEN'] = $this->securityContext->getCsrfProtectionToken();
-			$uriBuilder->setArguments($arguments);
+			$internalArguments = $uriBuilder->getArguments();
+			$internalArguments['FLOW3-CSRF-TOKEN'] = $this->securityContext->getCsrfProtectionToken();
+			$uriBuilder->setArguments($internalArguments);
 		}
 	}
 
