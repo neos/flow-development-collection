@@ -114,7 +114,14 @@ class EntityManagerFactory {
 		$config->setProxyNamespace('F3\FLOW3\Persistence\Doctrine\Proxies');
 		$config->setAutoGenerateProxyClasses(FALSE);
 
-		return \Doctrine\ORM\EntityManager::create($this->settings['backendOptions'], $config);
+		$entityManager = \Doctrine\ORM\EntityManager::create($this->settings['backendOptions'], $config);
+		if ($this->settings['doctrine']['dbal']['sessionInitialization'] !== '') {
+			$entityManager->getEventManager()->addEventSubscriber(
+				new \F3\FLOW3\Persistence\Doctrine\SessionInitializationHandler($this->settings['doctrine']['dbal']['sessionInitialization'])
+			);
+		}
+
+		return $entityManager;
 	}
 
 }
