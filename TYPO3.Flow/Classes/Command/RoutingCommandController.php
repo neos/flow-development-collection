@@ -43,7 +43,7 @@ class RoutingCommandController extends \F3\FLOW3\MVC\Controller\CommandControlle
 	protected $router;
 
 	/**
-	 * Action for flushing all caches
+	 * Lists the known routes
 	 *
 	 * @return void
 	 */

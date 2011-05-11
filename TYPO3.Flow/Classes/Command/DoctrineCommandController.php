@@ -53,17 +53,9 @@ class DoctrineCommandController extends \F3\FLOW3\MVC\Controller\CommandControll
 	}
 
 	/**
-	 * @return void
-	 */
-	public function helpCommand() {
-		$this->response->appendContent('Available commands:
-		validate, compileproxies
-		create, update, updateandclean
-		migrationstatus, migrate, migrationgenerate, migrationdiff, migrationexecute');
-	}
-
-	/**
-	 * Action for validating the mapping
+	 * Validates the class/table mappings
+	 *
+	 * The validate command checks if the current class model schema matches the table structure in the database.
 	 *
 	 * @return void
 	 */
@@ -90,7 +82,7 @@ class DoctrineCommandController extends \F3\FLOW3\MVC\Controller\CommandControll
 	}
 
 	/**
-	 * Action for updating the database schema
+	 * Creates the database schema
 	 *
 	 * @return void
 	 */
@@ -105,7 +97,7 @@ class DoctrineCommandController extends \F3\FLOW3\MVC\Controller\CommandControll
 	}
 
 	/**
-	 * Action for updating the database schema
+	 * Updates the database schema without data loss
 	 *
 	 * @return void
 	 */
@@ -120,7 +112,7 @@ class DoctrineCommandController extends \F3\FLOW3\MVC\Controller\CommandControll
 	}
 
 	/**
-	 * Action for updating the database schema
+	 * Updates database schema and removes obsolete tables / fields
 	 *
 	 * @return void
 	 */
@@ -135,7 +127,7 @@ class DoctrineCommandController extends \F3\FLOW3\MVC\Controller\CommandControll
 	}
 
 	/**
-	 * Action for compiling Doctrine proxies
+	 * Compiles the Doctrine proxy classes
 	 *
 	 * @return void
 	 */
@@ -150,7 +142,7 @@ class DoctrineCommandController extends \F3\FLOW3\MVC\Controller\CommandControll
 	}
 
 	/**
-	 * Action for showing migration status
+	 * Shows the current migration status
 	 *
 	 * @return void
 	 */
@@ -165,7 +157,7 @@ class DoctrineCommandController extends \F3\FLOW3\MVC\Controller\CommandControll
 	}
 
 	/**
-	 * Action for running migrations
+	 * Migrates the database schema
 	 *
 	 * @return void
 	 */
@@ -181,7 +173,7 @@ class DoctrineCommandController extends \F3\FLOW3\MVC\Controller\CommandControll
 	}
 
 	/**
-	 * Action for generating a migration
+	 * Generates a migration diff
 	 *
 	 * @return void
 	 */
@@ -196,7 +188,7 @@ class DoctrineCommandController extends \F3\FLOW3\MVC\Controller\CommandControll
 	}
 
 	/**
-	 * Action for generating an empty migration
+	 * Generates an empty migration
 	 *
 	 * @return void
 	 */
@@ -211,7 +203,7 @@ class DoctrineCommandController extends \F3\FLOW3\MVC\Controller\CommandControll
 	}
 
 	/**
-	 * Action for executing a single migration
+	 * Executes a single migration
 	 *
 	 * @return void
 	 */

@@ -136,17 +136,12 @@ class CoreCommandController extends \F3\FLOW3\MVC\Controller\CommandController {
 	}
 
 	/**
-	 * Help action
+	 * Explicitly compiles proxy classes
 	 *
-	 * @return string
-	 */
-	public function helpCommand() {
-		return "Help is not implemented yet.";
-	}
-
-	/**
-	 * Compiles all proxy classes
+	 * The compile command triggers the proxy class compilation. Although a compilation run is triggered automatically
+	 * by FLOW3, there might be cases in a production context where a manual compile run is needed.
 	 *
+	 * @param boolean $force If set, classes will be compiled even though the cache says that everything is up to date.
 	 * @return void
 	 */
 	public function compileCommand($force = FALSE) {
@@ -167,11 +162,14 @@ class CoreCommandController extends \F3\FLOW3\MVC\Controller\CommandController {
 
 		$objectConfigurationCache->set('allCompiledCodeUpToDate', TRUE, array(\F3\FLOW3\Cache\CacheManager::getClassTag()));
 
-		$this->emitFinishedCompileCommand($classCount);
+		$this->emitFinishedCompilationRun($classCount);
 	}
 
 	/**
-	 * Action which provides an interactive shell
+	 * Runs the interactive Shell
+	 *
+	 * The shell command runs FLOW3's interactive shell. This shell allows for entering commands like through the regular
+	 * command line interface but additionally supports autocompletion and a user-based command history.
 	 *
 	 * @return void
 	 */
@@ -244,8 +242,8 @@ class CoreCommandController extends \F3\FLOW3\MVC\Controller\CommandController {
 	 * @return void
 	 * @signal
 	 */
-	protected function emitFinishedCompileCommand($classCount) {
-		$this->signalSlotDispatcher->dispatch(__CLASS__, 'finishedCompileCommand', array($classCount));
+	protected function emitFinishedCompilationRun($classCount) {
+		$this->signalSlotDispatcher->dispatch(__CLASS__, 'finishedCompilationRun', array($classCount));
 	}
 
 	/**

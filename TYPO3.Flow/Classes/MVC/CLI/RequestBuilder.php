@@ -74,12 +74,12 @@ class RequestBuilder {
 
 		$rawCommandLineArguments = is_array($commandLine) ? $commandLine : explode(' ', $commandLine);
 		if (count($rawCommandLineArguments) < 1) {
-			$request->setControllerObjectName('F3\FLOW3\Command\CoreCommandController');
+			$request->setControllerObjectName('F3\FLOW3\Command\HelpCommandController');
 			$request->setControllerCommandName('help');
 		} else {
 			list($controllerObjectName, $controllerCommandName) = $this->parseCommandIdentifier(array_shift($rawCommandLineArguments));
 			if ($controllerObjectName === FALSE) {
-				$request->setControllerObjectName('F3\FLOW3\Command\CoreCommandController');
+				$request->setControllerObjectName('F3\FLOW3\Command\HelpCommandController');
 				$request->setControllerCommandName('help');
 			} else {
 				$request->setControllerObjectName($controllerObjectName);
