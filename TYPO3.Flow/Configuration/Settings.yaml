@@ -125,6 +125,8 @@ FLOW3:
     doctrine:
       cacheImplementation: 'Doctrine\Common\Cache\ArrayCache'
       sqlLogger: null
+      dbal:
+        sessionInitialization: ''
 
   reflection:
 
