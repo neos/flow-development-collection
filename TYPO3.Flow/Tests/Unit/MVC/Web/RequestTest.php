@@ -121,5 +121,29 @@ class RequestTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$request = new \F3\FLOW3\MVC\Web\Request();
 		$request->setMethod('sOmEtHing');
 	}
+
+	/**
+	 * @test
+	 */
+	public function getReferringRequestShouldReturnNullByDefault() {
+		$request = new \F3\FLOW3\MVC\Web\Request();
+		$this->assertNull($request->getReferringRequest());
+	}
+
+	/**
+	 * @test
+	 */
+	public function getReferringRequestShouldReturnCorrectlyBuiltReferringRequest() {
+		$request = new \F3\FLOW3\MVC\Web\Request();
+		$request->setArgument('__referrer', array(
+			'@controller' => 'Foo',
+			'@action' => 'bar'
+		));
+		$referringRequest = $request->getReferringRequest();
+		$this->assertNotNull($referringRequest);
+
+		$this->assertAttributeEquals('Foo', 'controllerName', $referringRequest);
+		$this->assertAttributeEquals('bar', 'controllerActionName', $referringRequest);
+	}
 }
 ?>

@@ -77,6 +77,15 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	protected $arguments = array();
 
 	/**
+	 * Framework-internal arguments for this request, such as __referrer.
+	 * All framework-internal arguments start with double underscore (__),
+	 * and are only used from within the framework. Not for user consumption.
+	 *
+	 * @var array
+	 */
+	protected $internalArguments = array();
+
+	/**
 	 * The requested representation format
 	 *
 	 * @var string
@@ -355,7 +364,30 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	public function setArgument($argumentName, $value) {
 		if (!is_string($argumentName) || strlen($argumentName) === 0) throw new \F3\FLOW3\MVC\Exception\InvalidArgumentNameException('Invalid argument name (must be a non-empty string).', 1210858767);
 		if (is_object($value)) throw new \F3\FLOW3\MVC\Exception\InvalidArgumentTypeException('You are not allowed to store objects in the request arguments. Please convert the object of type "' . get_class($value) . '" given for argument "' . $argumentName . '" to a simple type first.', 1302783022);
-		$this->arguments[$argumentName] = $value;
+
+		switch ($argumentName) {
+			case '@package':
+				$this->setControllerPackageKey($value);
+				break;
+			case '@subpackage':
+				$this->setControllerSubpackageKey($value);
+				break;
+			case '@controller':
+				$this->setControllerName($value);
+				break;
+			case '@action':
+				$this->setControllerActionName($value);
+				break;
+			case '@format':
+				$this->setFormat($value);
+				break;
+			default:
+				if ($argumentName[0] === '_' && $argumentName[1] === '_') {
+					$this->internalArguments[$argumentName] = $value;
+				} else {
+					$this->arguments[$argumentName] = $value;
+				}
+		}
 	}
 
 	/**
@@ -422,7 +454,7 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setFormat($format) {
-		$this->format = $format;
+		$this->format = strtolower($format);
 	}
 
 	/**
@@ -471,6 +503,16 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	 */
 	public function setOriginalRequestMappingResults(\F3\FLOW3\Error\Result $originalRequestMappingResults) {
 		$this->originalRequestMappingResults = $originalRequestMappingResults;
+	}
+
+	/**
+	 * Get the internal arguments of the request, i.e. every argument starting
+	 * with two underscores.
+	 *
+	 * @return array
+	 */
+	public function getInternalArguments() {
+		return $this->internalArguments;
 	}
 }
 ?>

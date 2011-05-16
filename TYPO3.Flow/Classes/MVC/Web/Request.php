@@ -132,5 +132,27 @@ class Request extends \F3\FLOW3\MVC\Request {
 		return substr($this->requestUri->getPath(), strlen($this->baseUri->getPath()));
 	}
 
+	/**
+	 * Get a freshly built request object pointing to the Referrer.
+	 *
+	 * @return Request the referring request, or NULL if no referrer found
+	 */
+	public function getReferringRequest() {
+		if (isset($this->internalArguments['__referrer']) && is_array($this->internalArguments['__referrer'])) {
+			$referrerArray = $this->internalArguments['__referrer'];
+
+			$referringRequest = new Request;
+
+			$arguments = array();
+			if (isset($referrerArray['arguments'])) {
+				$arguments = unserialize($referrerArray['arguments']);
+				unset($referrerArray['arguments']);
+			}
+
+			$referringRequest->setArguments(\F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($arguments, $referrerArray));
+			return $referringRequest;
+		}
+		return NULL;
+	}
 }
 ?>

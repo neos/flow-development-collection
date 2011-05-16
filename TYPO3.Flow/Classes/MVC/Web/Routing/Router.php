@@ -134,18 +134,11 @@ class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 		$routePath = $this->request->getRoutePath();
 		$matchResults = $this->findMatchResults($routePath);
 		if ($matchResults !== NULL) {
-			$this->setControllerKeysAndFormat($matchResults);
 			foreach ($matchResults as $argumentName => $argumentValue) {
-				if ($argumentName[0] !== '@') {
-						// if the argument is an array, we need to merge it recursively with existing request arguments
-					if (is_array($argumentValue) && $this->request->hasArgument($argumentName) && is_array($this->request->getArgument($argumentName))) {
-						$argumentValue = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($this->request->getArgument($argumentName), $argumentValue);
-					}
-					$this->request->setArgument($argumentName, $argumentValue);
-				}
+				$this->request->setArgument($argumentName, $argumentValue);
 			}
 		}
-		$this->setControllerKeysAndFormat($this->request->getArguments());
+		$this->setDefaultControllerAndActionNameIfNoneSpecified();
 	}
 
 	/**
@@ -160,36 +153,13 @@ class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 	}
 
 	/**
-	 * Sets package key, subpackage key, controller name, action name and format
-	 * of the current request.
+	 * Set the default controller and action names if none has been specified.
 	 *
-	 * @param array $arguments
 	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @see \F3\FLOW3\MVC\Web\Request
-	 * @api
 	 */
-	protected function setControllerKeysAndFormat(array $arguments) {
-		foreach($arguments as $argumentName => $argumentValue) {
-			switch ($argumentName) {
-				case '@package' :
-					$this->request->setControllerPackageKey($argumentValue);
-				break;
-				case '@subpackage' :
-					$this->request->setControllerSubpackageKey($argumentValue);
-				break;
-				case '@controller' :
-					$this->request->setControllerName($argumentValue);
-				break;
-				case '@action' :
-					$this->request->setControllerActionName($argumentValue);
-				break;
-				case '@format' :
-					$this->request->setFormat(strtolower($argumentValue));
-				break;
-			}
-		}
+	protected function setDefaultControllerAndActionNameIfNoneSpecified() {
 		if ($this->request->getControllerName() === NULL) {
 			$this->request->setControllerName('Standard');
 		}

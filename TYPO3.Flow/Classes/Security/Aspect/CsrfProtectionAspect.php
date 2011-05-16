@@ -135,7 +135,7 @@ class CsrfProtectionAspect {
 		if ($this->policyService->hasPolicyEntryForMethod($className, $actionName)
 			&& !$this->reflectionService->isMethodTaggedWith($className, $actionName, 'skipCsrfProtection')) {
 			$internalArguments = $uriBuilder->getArguments();
-			$internalArguments['FLOW3-CSRF-TOKEN'] = $this->securityContext->getCsrfProtectionToken();
+			$internalArguments['__CSRF-TOKEN'] = $this->securityContext->getCsrfProtectionToken();
 			$uriBuilder->setArguments($internalArguments);
 		}
 	}
@@ -152,9 +152,9 @@ class CsrfProtectionAspect {
 		$arguments = $this->environment->getRequestUri()->getArguments();
 		$request = $joinPoint->getAdviceChain()->proceed($joinPoint);
 
-		if (isset($arguments['FLOW3-CSRF-TOKEN'])) {
+		if (isset($arguments['__CSRF-TOKEN'])) {
 			$requestArguments = $request->getArguments();
-			$requestArguments['FLOW3-CSRF-TOKEN'] = $arguments['FLOW3-CSRF-TOKEN'];
+			$requestArguments['__CSRF-TOKEN'] = $arguments['__CSRF-TOKEN'];
 			$request->setArguments($requestArguments);
 		}
 

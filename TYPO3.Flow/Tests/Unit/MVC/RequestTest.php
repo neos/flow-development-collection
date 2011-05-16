@@ -188,6 +188,65 @@ class RequestTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
+	 */
+	public function setArgumentShouldSetControllerPackageKeyIfPackageKeyIsGiven() {
+		$request = $this->getMock('F3\FLOW3\MVC\Request', array('setControllerPackageKey'));
+		$request->expects($this->any())->method('setControllerPackageKey')->with('MyPackage');
+		$request->setArgument('@package', 'MyPackage');
+		$this->assertFalse($request->hasArgument('@package'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function setArgumentShouldSetControllerSubpackageKeyIfSubpackageKeyIsGiven() {
+		$request = $this->getMock('F3\FLOW3\MVC\Request', array('setControllerSubpackageKey'));
+		$request->expects($this->any())->method('setControllerSubpackageKey')->with('MySubPackage');
+		$request->setArgument('@subpackage', 'MySubPackage');
+		$this->assertFalse($request->hasArgument('@subpackage'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function setArgumentShouldSetControllerNameIfControllerIsGiven() {
+		$request = $this->getMock('F3\FLOW3\MVC\Request', array('setControllerName'));
+		$request->expects($this->any())->method('setControllerName')->with('MyController');
+		$request->setArgument('@controller', 'MyController');
+		$this->assertFalse($request->hasArgument('@controller'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function setArgumentShouldSetControllerActionNameIfActionIsGiven() {
+		$request = $this->getMock('F3\FLOW3\MVC\Request', array('setControllerActionName'));
+		$request->expects($this->any())->method('setControllerActionName')->with('foo');
+		$request->setArgument('@action', 'foo');
+		$this->assertFalse($request->hasArgument('@action'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function setArgumentShouldSetFormatIfFormatIsGiven() {
+		$request = $this->getMock('F3\FLOW3\MVC\Request', array('setFormat'));
+		$request->expects($this->any())->method('setFormat')->with('txt');
+		$request->setArgument('@format', 'txt');
+		$this->assertFalse($request->hasArgument('@format'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function internalArgumentsShouldNotBeReturnedAsNormalArgument() {
+		$request = new \F3\FLOW3\MVC\Request();
+		$request->setArgument('__referrer', 'foo');
+		$this->assertFalse($request->hasArgument('__referrer'));
+	}
+
+	/**
+	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function multipleArgumentsCanBeSetWithSetArgumentsAndRetrievedWithGetArguments() {
@@ -323,6 +382,15 @@ class RequestTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function theRepresentationFormatCanBeSetAndRetrieved() {
 		$request = new \F3\FLOW3\MVC\Request();
 		$request->setFormat('html');
+		$this->assertEquals('html', $request->getFormat());
+	}
+
+	/**
+	 * @test
+	 */
+	public function theRepresentationFormatIsAutomaticallyLowercased() {
+		$request = new \F3\FLOW3\MVC\Request();
+		$request->setFormat('hTmL');
 		$this->assertEquals('html', $request->getFormat());
 	}
 
