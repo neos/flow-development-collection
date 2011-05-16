@@ -91,7 +91,7 @@ class PrivateResourcesPublishingAspectTest extends \F3\FLOW3\Tests\UnitTestCase 
 		$mockJoinPoint->expects($this->once())->method('getMethodArgument')->with('resource')->will($this->returnValue($mockResource));
 
 		$publishingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PrivateResourcesPublishingAspect', array('dummy'), array(), '', FALSE);
-		$publishingAspect->injectSecurityContext($mockSecurityContext);
+		$publishingAspect->_set('securityContext', $mockSecurityContext);
 
 		$this->assertFalse($publishingAspect->_call('rewritePersistentResourceWebUriForPrivateResources', $mockJoinPoint));
 	}
@@ -121,7 +121,7 @@ class PrivateResourcesPublishingAspectTest extends \F3\FLOW3\Tests\UnitTestCase 
 		$mockJoinPoint->expects($this->once())->method('getMethodArgument')->with('resource')->will($this->returnValue($mockResource));
 
 		$publishingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PrivateResourcesPublishingAspect', array('dummy'), array(), '', FALSE);
-		$publishingAspect->injectSecurityContext($mockSecurityContext);
+		$publishingAspect->_set('securityContext', $mockSecurityContext);
 
 		$this->assertFalse($publishingAspect->_call('rewritePersistentResourceWebUriForPrivateResources', $mockJoinPoint));
 	}
@@ -169,9 +169,9 @@ class PrivateResourcesPublishingAspectTest extends \F3\FLOW3\Tests\UnitTestCase 
 		$mockSession->expects($this->once())->method('getID')->will($this->returnValue('TheCurrentSessionId'));
 
 		$publishingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PrivateResourcesPublishingAspect', array('dummy'), array(), '', FALSE);
-		$publishingAspect->injectSecurityContext($mockSecurityContext);
-		$publishingAspect->injectSession($mockSession);
-		$publishingAspect->injectSettings($settings);
+		$publishingAspect->_set('securityContext', $mockSecurityContext);
+		$publishingAspect->_set('session', $mockSession);
+		$publishingAspect->_set('settings', $settings);
 
 		$expectedResult = 'TheBaseURI/Persistent/TheCurrentSessionId/Role2/ResourceHash/ResourceFileName.ResourceFileExtension';
 
@@ -223,9 +223,9 @@ class PrivateResourcesPublishingAspectTest extends \F3\FLOW3\Tests\UnitTestCase 
 		$mockSession->expects($this->once())->method('getID')->will($this->returnValue('TheCurrentSessionId'));
 
 		$publishingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PrivateResourcesPublishingAspect', array('dummy'), array(), '', FALSE);
-		$publishingAspect->injectSecurityContext($mockSecurityContext);
-		$publishingAspect->injectSession($mockSession);
-		$publishingAspect->injectSettings($settings);
+		$publishingAspect->_set('securityContext', $mockSecurityContext);
+		$publishingAspect->_set('session', $mockSession);
+		$publishingAspect->_set('settings', $settings);
 
 		$expectedResult = 'TheBaseURI/Persistent/TheCurrentSessionId/ResourceHash/ResourceTitle.ResourceFileExtension';
 
@@ -287,7 +287,7 @@ class PrivateResourcesPublishingAspectTest extends \F3\FLOW3\Tests\UnitTestCase 
 		$mockJoinPoint->expects($this->at(1))->method('getMethodArgument')->with('returnFilename')->will($this->returnValue(FALSE));
 
 		$publishingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PrivateResourcesPublishingAspect', array('dummy'), array(), '', FALSE);
-		$publishingAspect->injectSecurityContext($mockSecurityContext);
+		$publishingAspect->_set('securityContext', $mockSecurityContext);
 
 		$this->assertFalse($publishingAspect->_call('rewritePersistentResourcePublishPathAndFilenameForPrivateResources', $mockJoinPoint));
 	}
@@ -342,11 +342,11 @@ class PrivateResourcesPublishingAspectTest extends \F3\FLOW3\Tests\UnitTestCase 
 		$mockAccessRestrictionPublisher = $this->getMock('F3\FLOW3\Security\Authorization\Resource\AccessRestrictionPublisherInterface', array(), array(), '', FALSE);
 
 		$publishingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PrivateResourcesPublishingAspect', array('dummy'), array(), '', FALSE);
-		$publishingAspect->injectSecurityContext($mockSecurityContext);
-		$publishingAspect->injectSession($mockSession);
-		$publishingAspect->injectEnvironment($mockEnvironment);
-		$publishingAspect->injectSettings($settings);
-		$publishingAspect->injectAccessRestrictionPublisher($mockAccessRestrictionPublisher);
+		$publishingAspect->_set('securityContext', $mockSecurityContext);
+		$publishingAspect->_set('session', $mockSession);
+		$publishingAspect->_set('environment', $mockEnvironment);
+		$publishingAspect->_set('settings', $settings);
+		$publishingAspect->_set('accessRestrictionPublisher', $mockAccessRestrictionPublisher);
 
 		$expectedResult = $publishPath . 'Persistent/TheCurrentSessionId/Role2/';
 
@@ -410,11 +410,11 @@ class PrivateResourcesPublishingAspectTest extends \F3\FLOW3\Tests\UnitTestCase 
 		$mockAccessRestrictionPublisher = $this->getMock('\F3\FLOW3\Security\Authorization\Resource\AccessRestrictionPublisherInterface', array(), array(), '', FALSE);
 
 		$publishingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PrivateResourcesPublishingAspect', array('dummy'), array(), '', FALSE);
-		$publishingAspect->injectSecurityContext($mockSecurityContext);
-		$publishingAspect->injectSession($mockSession);
-		$publishingAspect->injectEnvironment($mockEnvironment);
-		$publishingAspect->injectSettings($settings);
-		$publishingAspect->injectAccessRestrictionPublisher($mockAccessRestrictionPublisher);
+		$publishingAspect->_set('securityContext', $mockSecurityContext);
+		$publishingAspect->_set('session', $mockSession);
+		$publishingAspect->_set('environment', $mockEnvironment);
+		$publishingAspect->_set('settings', $settings);
+		$publishingAspect->_set('accessRestrictionPublisher', $mockAccessRestrictionPublisher);
 
 		$expectedResult = $publishPath . 'Persistent/TheCurrentSessionId/Role2/ResourceHash.ResourceFileExtension';
 
@@ -471,10 +471,10 @@ class PrivateResourcesPublishingAspectTest extends \F3\FLOW3\Tests\UnitTestCase 
 		$mockAccessRestrictionPublisher = $this->getMock('\F3\FLOW3\Security\Authorization\Resource\AccessRestrictionPublisherInterface', array(), array(), '', FALSE);
 
 		$publishingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PrivateResourcesPublishingAspect', array('dummy'), array(), '', FALSE);
-		$publishingAspect->injectSecurityContext($mockSecurityContext);
-		$publishingAspect->injectSession($mockSession);
-		$publishingAspect->injectSettings($settings);
-		$publishingAspect->injectAccessRestrictionPublisher($mockAccessRestrictionPublisher);
+		$publishingAspect->_set('securityContext', $mockSecurityContext);
+		$publishingAspect->_set('session', $mockSession);
+		$publishingAspect->_set('settings', $settings);
+		$publishingAspect->_set('accessRestrictionPublisher', $mockAccessRestrictionPublisher);
 
 		$expectedResult = $publishPath . 'TheBasePath/Persistent/TheCurrentSessionId/';
 
@@ -531,10 +531,10 @@ class PrivateResourcesPublishingAspectTest extends \F3\FLOW3\Tests\UnitTestCase 
 		$mockAccessRestrictionPublisher = $this->getMock('\F3\FLOW3\Security\Authorization\Resource\AccessRestrictionPublisherInterface', array(), array(), '', FALSE);
 
 		$publishingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PrivateResourcesPublishingAspect', array('dummy'), array(), '', FALSE);
-		$publishingAspect->injectSecurityContext($mockSecurityContext);
-		$publishingAspect->injectSession($mockSession);
-		$publishingAspect->injectSettings($settings);
-		$publishingAspect->injectAccessRestrictionPublisher($mockAccessRestrictionPublisher);
+		$publishingAspect->_set('securityContext', $mockSecurityContext);
+		$publishingAspect->_set('session', $mockSession);
+		$publishingAspect->_set('settings', $settings);
+		$publishingAspect->_set('accessRestrictionPublisher', $mockAccessRestrictionPublisher);
 
 		$expectedResult = $publishPath . 'TheBasePath/Persistent/TheCurrentSessionId/ResourceHash.ResourceFileExtension';
 
@@ -589,10 +589,10 @@ class PrivateResourcesPublishingAspectTest extends \F3\FLOW3\Tests\UnitTestCase 
 		$mockAccessRestrictionPublisher = $this->getMock('\F3\FLOW3\Security\Authorization\Resource\AccessRestrictionPublisherInterface', array(), array(), '', FALSE);
 
 		$publishingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PrivateResourcesPublishingAspect', array('dummy'), array(), '', FALSE);
-		$publishingAspect->injectSecurityContext($mockSecurityContext);
-		$publishingAspect->injectSession($mockSession);
-		$publishingAspect->injectSettings($settings);
-		$publishingAspect->injectAccessRestrictionPublisher($mockAccessRestrictionPublisher);
+		$publishingAspect->_set('securityContext', $mockSecurityContext);
+		$publishingAspect->_set('session', $mockSession);
+		$publishingAspect->_set('settings', $settings);
+		$publishingAspect->_set('accessRestrictionPublisher', $mockAccessRestrictionPublisher);
 
 		$publishingAspect->_call('rewritePersistentResourcePublishPathAndFilenameForPrivateResources', $mockJoinPoint);
 
@@ -651,11 +651,11 @@ class PrivateResourcesPublishingAspectTest extends \F3\FLOW3\Tests\UnitTestCase 
 		$mockAccessRestrictionPublisher = $this->getMock('\F3\FLOW3\Security\Authorization\Resource\AccessRestrictionPublisherInterface', array(), array(), '', FALSE);
 
 		$publishingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PrivateResourcesPublishingAspect', array('dummy'), array(), '', FALSE);
-		$publishingAspect->injectSecurityContext($mockSecurityContext);
-		$publishingAspect->injectSession($mockSession);
-		$publishingAspect->injectEnvironment($mockEnvironment);
-		$publishingAspect->injectSettings($settings);
-		$publishingAspect->injectAccessRestrictionPublisher($mockAccessRestrictionPublisher);
+		$publishingAspect->_set('securityContext', $mockSecurityContext);
+		$publishingAspect->_set('session', $mockSession);
+		$publishingAspect->_set('environment', $mockEnvironment);
+		$publishingAspect->_set('settings', $settings);
+		$publishingAspect->_set('accessRestrictionPublisher', $mockAccessRestrictionPublisher);
 
 		$publishingAspect->_call('rewritePersistentResourcePublishPathAndFilenameForPrivateResources', $mockJoinPoint);
 
@@ -720,10 +720,10 @@ class PrivateResourcesPublishingAspectTest extends \F3\FLOW3\Tests\UnitTestCase 
 		$mockAccessRestrictionPublisher->expects($this->once())->method('publishAccessRestrictionsForPath')->with('vfs://Foo/Web/_Resources/Persistent/TheCurrentSessionId/');
 
 		$publishingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PrivateResourcesPublishingAspect', array('dummy'), array(), '', FALSE);
-		$publishingAspect->injectSecurityContext($mockSecurityContext);
-		$publishingAspect->injectSession($mockSession);
-		$publishingAspect->injectSettings($settings);
-		$publishingAspect->injectAccessRestrictionPublisher($mockAccessRestrictionPublisher);
+		$publishingAspect->_set('securityContext', $mockSecurityContext);
+		$publishingAspect->_set('session', $mockSession);
+		$publishingAspect->_set('settings', $settings);
+		$publishingAspect->_set('accessRestrictionPublisher', $mockAccessRestrictionPublisher);
 
 		$publishingAspect->_call('rewritePersistentResourcePublishPathAndFilenameForPrivateResources', $mockJoinPoint);
 	}

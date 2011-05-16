@@ -33,16 +33,19 @@ class PrivateResourcesPublishingAspect {
 
 	/**
 	 * @var \F3\FLOW3\Security\Context
+	 * @inject
 	 */
 	protected $securityContext;
 
 	/**
 	 * @var \F3\FLOW3\Session\SessionInterface
+	 * @inject
 	 */
 	protected $session;
 
 	/**
 	 * @var \F3\FLOW3\Utility\Environment
+	 * @inject
 	 */
 	protected $environment;
 
@@ -53,41 +56,9 @@ class PrivateResourcesPublishingAspect {
 
 	/**
 	 * @var \F3\FLOW3\Security\Authorization\Resource\AccessRestrictionPublisherInterface
+	 * @inject
 	 */
 	protected $accessRestrictionPublisher;
-
-	/**
-	 * Injects the security context
-	 *
-	 * @param \F3\FLOW3\Security\Context $securityContext The security context
-	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function injectSecurityContext(\F3\FLOW3\Security\Context $securityContext) {
-		$this->securityContext = $securityContext;
-	}
-
-	/**
-	 * Injects the session
-	 *
-	 * @param \F3\FLOW3\Session\SessionInterface $session The session
-	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function injectSession(\F3\FLOW3\Session\SessionInterface $session) {
-		$this->session = $session;
-	}
-
-	/**
-	 * Injects the environment
-	 *
-	 * @param \F3\FLOW3\Utility\Environment $environment The environment
-	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function injectEnvironment(\F3\FLOW3\Utility\Environment $environment) {
-		$this->environment = $environment;
-	}
 
 	/**
 	 * Injects the settings of this package
@@ -98,17 +69,6 @@ class PrivateResourcesPublishingAspect {
 	 */
 	public function injectSettings(array $settings) {
 		$this->settings = $settings;
-	}
-
-	/**
-	 * Injects the access restriction publisher
-	 *
-	 * @param \F3\FLOW3\Security\Authorization\Resource\AccessRestrictionPublisherInterface $accessRestrictionPublisher The access restriction publisher
-	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function injectAccessRestrictionPublisher(\F3\FLOW3\Security\Authorization\Resource\AccessRestrictionPublisherInterface $accessRestrictionPublisher) {
-		$this->accessRestrictionPublisher = $accessRestrictionPublisher;
 	}
 
 	/**

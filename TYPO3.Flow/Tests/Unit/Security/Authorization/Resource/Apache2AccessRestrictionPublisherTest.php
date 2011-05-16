@@ -27,7 +27,6 @@ namespace F3\FLOW3\Security\Authorization\Resource;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-
 class Apache2AccessRestrictionPublisherTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
@@ -46,9 +45,8 @@ class Apache2AccessRestrictionPublisherTest extends \F3\FLOW3\Tests\UnitTestCase
 		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
 		$mockEnvironment->expects($this->once())->method('getRemoteAddress')->will($this->returnValue('192.168.1.234'));
 
-
-		$publisher = new Apache2AccessRestrictionPublisher();
-		$publisher->injectEnvironment($mockEnvironment);
+		$publisher = $this->getAccessibleMock('F3\FLOW3\Security\Authorization\Resource\Apache2AccessRestrictionPublisher', array('dummy'));
+		$publisher->_set('environment', $mockEnvironment);
 		$publisher->publishAccessRestrictionsForPath('vfs://Foo/');
 
 		$expectedFileContents = 'Deny from all' . chr(10) . 'Allow from 192.168.1.234';

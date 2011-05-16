@@ -44,8 +44,8 @@ class UsernamePasswordHttpBasicTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockEnvironment->expects($this->once())->method('getRequestHeaders')->will($this->returnValue($requestHeaders));
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Request');
 
-		$token = new \F3\FLOW3\Security\Authentication\Token\UsernamePasswordHttpBasic();
-		$token->injectEnvironment($mockEnvironment);
+		$token = $this->getAccessibleMock('F3\FLOW3\Security\Authentication\Token\UsernamePasswordHttpBasic', array('dummy'));
+		$token->_set('environment', $mockEnvironment);
 
 		$token->updateCredentials($mockRequest);
 
@@ -68,8 +68,8 @@ class UsernamePasswordHttpBasicTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockEnvironment->expects($this->once())->method('getRequestHeaders')->will($this->returnValue($requestHeaders));
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Request');
 
-		$token = new \F3\FLOW3\Security\Authentication\Token\UsernamePasswordHttpBasic();
-		$token->injectEnvironment($mockEnvironment);
+		$token = $this->getAccessibleMock('F3\FLOW3\Security\Authentication\Token\UsernamePasswordHttpBasic', array('dummy'));
+		$token->_set('environment', $mockEnvironment);
 
 		$token->updateCredentials($mockRequest);
 
@@ -90,8 +90,8 @@ class UsernamePasswordHttpBasicTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockEnvironment->expects($this->once())->method('getRequestHeaders')->will($this->returnValue($requestHeaders));
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Request');
 
-		$token = new \F3\FLOW3\Security\Authentication\Token\UsernamePasswordHttpBasic();
-		$token->injectEnvironment($mockEnvironment);
+		$token = $this->getAccessibleMock('F3\FLOW3\Security\Authentication\Token\UsernamePasswordHttpBasic', array('dummy'));
+		$token->_set('environment', $mockEnvironment);
 
 		$token->updateCredentials($mockRequest);
 

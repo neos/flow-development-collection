@@ -33,65 +33,27 @@ class CsrfProtection implements \F3\FLOW3\Security\RequestPatternInterface {
 
 	/**
 	 * @var \F3\FLOW3\Security\Context
+	 * @inject
 	 */
 	protected $securityContext;
 
 	/**
 	 * @var \F3\FLOW3\Object\ObjectManagerInterface
+	 * @inject
 	 */
 	protected $objectManager;
 
 	/**
 	 * @var \F3\FLOW3\Reflection\ReflectionService
+	 * @inject
 	 */
 	protected $reflectionService;
 
 	/**
 	 * @var \F3\FLOW3\Security\Policy\PolicyService
+	 * @inject
 	 */
 	protected $policyService;
-
-	/**
-	 * Injects the object manager
-	 *
-	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager A reference to the object manager
-	 * @return void
-	 */
-	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
-		$this->objectManager = $objectManager;
-	}
-
-	/**
-	 * Injects the reflection service
-	 *
-	 * @param \F3\FLOW3\Reflection\ReflectionService $reflectionService The reflection service
-	 * @return void
-	 */
-	public function injectReflectionService(\F3\FLOW3\Reflection\ReflectionService $reflectionService) {
-		$this->reflectionService = $reflectionService;
-	}
-
-	/**
-	 * Injects the security context
-	 *
-	 * @param \F3\FLOW3\Security\Context $securityContext The security context
-	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function injectSecurityContext(\F3\FLOW3\Security\Context $securityContext) {
-		$this->securityContext = $securityContext;
-	}
-
-	/**
-	 * Injects the policy service
-	 *
-	 * @param \F3\FLOW3\Security\Policy\PolicyService $policyService The policy service
-	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function injectPolicyService(\F3\FLOW3\Security\Policy\PolicyService $policyService) {
-		$this->policyService = $policyService;
-	}
 
 	/**
 	 * Returns TRUE, if this pattern can match against the given request object.

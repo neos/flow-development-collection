@@ -33,6 +33,7 @@ class LoggingAspect {
 
 	/**
 	 * @var \F3\FLOW3\Log\SecurityLoggerInterface
+	 * @inject
 	 */
 	protected $securityLogger;
 
@@ -40,14 +41,6 @@ class LoggingAspect {
 	 * @var boolean
 	 */
 	protected $alreadyLoggedAuthenticateCall = FALSE;
-
-	/**
-	 * @param \F3\FLOW3\Log\SecurityLoggerInterface $securityLogger
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function injectSecurityLogger(\F3\FLOW3\Log\SecurityLoggerInterface $securityLogger) {
-		$this->securityLogger = $securityLogger;
-	}
 
 	/**
 	 * Logs calls and results of the authenticate() method of the Authentication Manager

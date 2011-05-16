@@ -41,12 +41,6 @@ class RsaWalletServicePhpTest extends \F3\FLOW3\Tests\UnitTestCase {
 		if (!function_exists('openssl_pkey_new')) {
 			$this->markTestSkipped('openssl_pkey_new() not available');
 		} else {
-			$objectManagerCallback = function() {
-				return new \F3\FLOW3\Security\Cryptography\OpenSslRsaKey(func_get_arg(1), func_get_arg(2));
-			};
-			$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-			$mockObjectManager->expects($this->any())->method('create')->will($this->returnCallback($objectManagerCallback));
-
 			$currentKeys = array();
 			$setCallBack = function() use (&$currentKeys) {
 				$args = func_get_args();
@@ -65,9 +59,8 @@ class RsaWalletServicePhpTest extends \F3\FLOW3\Tests\UnitTestCase {
 			$mockCache->expects($this->any())->method('get')->will($this->returnCallback($getCallBack));
 			$mockCache->expects($this->any())->method('has')->will($this->returnCallback($hasCallBack));
 
-			$this->rsaWalletService = new \F3\FLOW3\Security\Cryptography\RsaWalletServicePhp();
-			$this->rsaWalletService->injectObjectManager($mockObjectManager);
-			$this->rsaWalletService->injectKeystoreCache($mockCache);
+			$this->rsaWalletService = $this->getAccessibleMock('F3\FLOW3\Security\Cryptography\RsaWalletServicePhp', array('dummy'));
+			$this->rsaWalletService->_set('keystoreCache', $mockCache);
 
 			$this->keyPairUuid = $this->rsaWalletService->generateNewKeypair();
 		}

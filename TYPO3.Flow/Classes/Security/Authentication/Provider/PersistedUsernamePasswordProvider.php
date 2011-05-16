@@ -34,11 +34,13 @@ class PersistedUsernamePasswordProvider implements \F3\FLOW3\Security\Authentica
 
 	/**
 	 * @var \F3\FLOW3\Security\AccountRepository
+	 * @inject
 	 */
 	protected $accountRepository;
 
 	/**
 	 * @var \F3\FLOW3\Security\Cryptography\HashService
+	 * @inject
 	 */
 	protected $hashService;
 
@@ -46,28 +48,6 @@ class PersistedUsernamePasswordProvider implements \F3\FLOW3\Security\Authentica
 	 * @var string
 	 */
 	protected $name;
-
-	/**
-	 * Injects the account repository
-	 *
-	 * @param F3\FLOW3\Security\AccountRepository $accountRepository The account repository
-	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function injectAccountRepository(\F3\FLOW3\Security\AccountRepository $accountRepository) {
-		$this->accountRepository = $accountRepository;
-	}
-
-	/**
-	 * Injects the hash service
-	 *
-	 * @param \F3\FLOW3\Security\Cryptography\HashService $hashService
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function injectHashService(\F3\FLOW3\Security\Cryptography\HashService $hashService) {
-		$this->hashService = $hashService;
-	}
 
 	/**
 	 * Constructor

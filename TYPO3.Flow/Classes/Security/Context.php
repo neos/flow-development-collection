@@ -114,11 +114,13 @@ class Context {
 
 	/**
 	 * @var \F3\FLOW3\Security\Policy\PolicyService
+	 * @inject
 	 */
 	protected $policyService;
 
 	/**
 	 * @var \F3\FLOW3\Security\Cryptography\HashService
+	 * @inject
 	 */
 	protected $hashService;
 
@@ -143,28 +145,6 @@ class Context {
 	public function injectAuthenticationManager(\F3\FLOW3\Security\Authentication\AuthenticationManagerInterface $authenticationManager) {
 		$this->authenticationManager = $authenticationManager;
 		$this->authenticationManager->setSecurityContext($this);
-	}
-
-	/**
-	 * Injects the security context
-	 *
-	 * @param \F3\FLOW3\Security\Policy\PolicyService $policyService The policy service
-	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function injectPolicyService(\F3\FLOW3\Security\Policy\PolicyService $policyService) {
-		$this->policyService = $policyService;
-	}
-
-	/**
-	 * Injects the hash service
-	 *
-	 * @param \F3\FLOW3\Security\Cryptography\HashService $hashService The hash service
-	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function injectHashService(\F3\FLOW3\Security\Cryptography\HashService $hashService) {
-		$this->hashService = $hashService;
 	}
 
 	/**

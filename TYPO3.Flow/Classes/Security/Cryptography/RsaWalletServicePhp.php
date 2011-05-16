@@ -145,7 +145,7 @@ class RsaWalletServicePhp implements \F3\FLOW3\Security\Cryptography\RsaWalletSe
 	 * Returns the public key for the given UUID
 	 *
 	 * @param string $uuid The UUID
-	 * @return \F3\FLOW3\Security\Cryptography\OpenSSLRSAPublicKey The public key
+	 * @return \F3\FLOW3\Security\Cryptography\OpenSslRsaKey The public key
 	 * @throws \F3\FLOW3\Security\Exception\InvalidKeyPairIdException If the given UUID identifies no valid key pair
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */

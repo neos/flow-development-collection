@@ -51,10 +51,10 @@ class CsrfProtectionTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockPolicyService = $this->getMock('F3\FLOW3\Security\Policy\PolicyService');
 		$mockPolicyService->expects($this->once())->method('hasPolicyEntryForMethod')->with($controllerObjectName, 'listAction')->will($this->returnValue(TRUE));
 
-		$mockCsrfProtectionPattern = $this->getMock('F3\FLOW3\Security\RequestPattern\CsrfProtection', array('dummy'));
-		$mockCsrfProtectionPattern->injectObjectManager($mockObjectManager);
-		$mockCsrfProtectionPattern->injectReflectionService($mockReflectionService);
-		$mockCsrfProtectionPattern->injectPolicyService($mockPolicyService);
+		$mockCsrfProtectionPattern = $this->getAccessibleMock('F3\FLOW3\Security\RequestPattern\CsrfProtection', array('dummy'));
+		$mockCsrfProtectionPattern->_set('objectManager', $mockObjectManager);
+		$mockCsrfProtectionPattern->_set('reflectionService', $mockReflectionService);
+		$mockCsrfProtectionPattern->_set('policyService', $mockPolicyService);
 
 		$this->assertFalse($mockCsrfProtectionPattern->matchRequest($mockRequest));
 	}
@@ -78,9 +78,9 @@ class CsrfProtectionTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockPolicyService = $this->getMock('F3\FLOW3\Security\Policy\PolicyService');
 		$mockPolicyService->expects($this->once())->method('hasPolicyEntryForMethod')->with($controllerObjectName, $controllerActionName . 'Action')->will($this->returnValue(FALSE));
 
-		$mockCsrfProtectionPattern = $this->getMock('F3\FLOW3\Security\RequestPattern\CsrfProtection', array('dummy'));
-		$mockCsrfProtectionPattern->injectObjectManager($mockObjectManager);
-		$mockCsrfProtectionPattern->injectPolicyService($mockPolicyService);
+		$mockCsrfProtectionPattern = $this->getAccessibleMock('F3\FLOW3\Security\RequestPattern\CsrfProtection', array('dummy'));
+		$mockCsrfProtectionPattern->_set('objectManager', $mockObjectManager);
+		$mockCsrfProtectionPattern->_set('policyService', $mockPolicyService);
 
 		$this->assertFalse($mockCsrfProtectionPattern->matchRequest($mockRequest));
 	}
@@ -108,10 +108,10 @@ class CsrfProtectionTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockPolicyService = $this->getMock('F3\FLOW3\Security\Policy\PolicyService');
 		$mockPolicyService->expects($this->once())->method('hasPolicyEntryForMethod')->with($controllerObjectName, $controllerActionName . 'Action')->will($this->returnValue(TRUE));
 
-		$mockCsrfProtectionPattern = $this->getMock('F3\FLOW3\Security\RequestPattern\CsrfProtection', array('dummy'));
-		$mockCsrfProtectionPattern->injectObjectManager($mockObjectManager);
-		$mockCsrfProtectionPattern->injectReflectionService($mockReflectionService);
-		$mockCsrfProtectionPattern->injectPolicyService($mockPolicyService);
+		$mockCsrfProtectionPattern = $this->getAccessibleMock('F3\FLOW3\Security\RequestPattern\CsrfProtection', array('dummy'));
+		$mockCsrfProtectionPattern->_set('objectManager', $mockObjectManager);
+		$mockCsrfProtectionPattern->_set('reflectionService', $mockReflectionService);
+		$mockCsrfProtectionPattern->_set('policyService', $mockPolicyService);
 
 		$this->assertTrue($mockCsrfProtectionPattern->matchRequest($mockRequest));
 	}
@@ -142,11 +142,11 @@ class CsrfProtectionTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockSecurityContext = $this->getMock('F3\FLOW3\Security\Context');
 		$mockSecurityContext->expects($this->once())->method('isCsrfProtectionTokenValid')->with('invalidCsrfToken')->will($this->returnValue(FALSE));
 
-		$mockCsrfProtectionPattern = $this->getMock('F3\FLOW3\Security\RequestPattern\CsrfProtection', array('dummy'));
-		$mockCsrfProtectionPattern->injectObjectManager($mockObjectManager);
-		$mockCsrfProtectionPattern->injectReflectionService($mockReflectionService);
-		$mockCsrfProtectionPattern->injectPolicyService($mockPolicyService);
-		$mockCsrfProtectionPattern->injectSecurityContext($mockSecurityContext);
+		$mockCsrfProtectionPattern = $this->getAccessibleMock('F3\FLOW3\Security\RequestPattern\CsrfProtection', array('dummy'));
+		$mockCsrfProtectionPattern->_set('objectManager', $mockObjectManager);
+		$mockCsrfProtectionPattern->_set('reflectionService', $mockReflectionService);
+		$mockCsrfProtectionPattern->_set('policyService', $mockPolicyService);
+		$mockCsrfProtectionPattern->_set('securityContext', $mockSecurityContext);
 
 		$this->assertTrue($mockCsrfProtectionPattern->matchRequest($mockRequest));
 	}
@@ -177,11 +177,11 @@ class CsrfProtectionTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockSecurityContext = $this->getMock('F3\FLOW3\Security\Context');
 		$mockSecurityContext->expects($this->once())->method('isCsrfProtectionTokenValid')->with('validToken')->will($this->returnValue(TRUE));
 
-		$mockCsrfProtectionPattern = $this->getMock('F3\FLOW3\Security\RequestPattern\CsrfProtection', array('dummy'));
-		$mockCsrfProtectionPattern->injectObjectManager($mockObjectManager);
-		$mockCsrfProtectionPattern->injectReflectionService($mockReflectionService);
-		$mockCsrfProtectionPattern->injectPolicyService($mockPolicyService);
-		$mockCsrfProtectionPattern->injectSecurityContext($mockSecurityContext);
+		$mockCsrfProtectionPattern = $this->getAccessibleMock('F3\FLOW3\Security\RequestPattern\CsrfProtection', array('dummy'));
+		$mockCsrfProtectionPattern->_set('objectManager', $mockObjectManager);
+		$mockCsrfProtectionPattern->_set('reflectionService', $mockReflectionService);
+		$mockCsrfProtectionPattern->_set('policyService', $mockPolicyService);
+		$mockCsrfProtectionPattern->_set('securityContext', $mockSecurityContext);
 
 		$this->assertFalse($mockCsrfProtectionPattern->matchRequest($mockRequest));
 	}

@@ -32,6 +32,7 @@ class UsernamePassword implements \F3\FLOW3\Security\Authentication\TokenInterfa
 
 	/**
 	 * @var \F3\FLOW3\Utility\Environment
+	 * @inject
 	 */
 	protected $environment;
 
@@ -60,6 +61,7 @@ class UsernamePassword implements \F3\FLOW3\Security\Authentication\TokenInterfa
 
 	/**
 	 * @var \F3\FLOW3\Security\AccountRepository
+	 * @inject
 	 */
 	protected $accountRepository;
 
@@ -73,24 +75,6 @@ class UsernamePassword implements \F3\FLOW3\Security\Authentication\TokenInterfa
 	 * @var \F3\FLOW3\Security\Authentication\EntryPointInterface
 	 */
 	protected $entryPoint = NULL;
-
-	/**
-	 * @param \F3\FLOW3\Utility\Environment $environment The current environment object
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function injectEnvironment(\F3\FLOW3\Utility\Environment $environment) {
-		$this->environment = $environment;
-	}
-
-	/**
-	 * @param \F3\FLOW3\Security\AccountRepository $accountRepository
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function injectAccountRepository(\F3\FLOW3\Security\AccountRepository $accountRepository) {
-		$this->accountRepository = $accountRepository;
-	}
 
 	/**
 	 * Returns the name of the authentication provider responsible for this token

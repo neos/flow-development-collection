@@ -32,19 +32,9 @@ class Apache2AccessRestrictionPublisher implements \F3\FLOW3\Security\Authorizat
 
 	/**
 	 * @var \F3\FLOW3\Utility\Environment
+	 * @inject
 	 */
 	protected $environment;
-
-	/**
-	 * Injects the environment
-	 *
-	 * @param \F3\FLOW3\Utility\Environment $environment The environment
-	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function injectEnvironment(\F3\FLOW3\Utility\Environment $environment) {
-		$this->environment = $environment;
-	}
 
 	/**
 	 * Publishes an Apache2 .htaccess file which allows access to the given directory only for the current session remote ip

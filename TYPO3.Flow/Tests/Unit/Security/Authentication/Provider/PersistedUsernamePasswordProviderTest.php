@@ -49,9 +49,9 @@ class PersistedUsernamePasswordProviderTest extends \F3\FLOW3\Tests\UnitTestCase
 		$mockToken->expects($this->once())->method('setAuthenticationStatus')->with(\F3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL);
 		$mockToken->expects($this->once())->method('setAccount')->with($mockAccount);
 
-		$usernamePasswordCRProvider = new \F3\FLOW3\Security\Authentication\Provider\PersistedUsernamePasswordProvider('myProvider', array());
-		$usernamePasswordCRProvider->injectAccountRepository($mockAccountRepository);
-		$usernamePasswordCRProvider->injectHashService($mockHashService);
+		$usernamePasswordCRProvider = $this->getAccessibleMock('F3\FLOW3\Security\Authentication\Provider\PersistedUsernamePasswordProvider', array('dummy'), array('myProvider', array()));
+		$usernamePasswordCRProvider->_set('accountRepository', $mockAccountRepository);
+		$usernamePasswordCRProvider->_set('hashService', $mockHashService);
 
 		$usernamePasswordCRProvider->authenticate($mockToken);
 	}
@@ -75,9 +75,9 @@ class PersistedUsernamePasswordProviderTest extends \F3\FLOW3\Tests\UnitTestCase
 		$mockToken->expects($this->once())->method('getCredentials')->will($this->returnValue(array('username' => 'admin', 'password' => 'wrong password')));
 		$mockToken->expects($this->once())->method('setAuthenticationStatus')->with(\F3\FLOW3\Security\Authentication\TokenInterface::WRONG_CREDENTIALS);
 
-		$usernamePasswordCRProvider = new \F3\FLOW3\Security\Authentication\Provider\PersistedUsernamePasswordProvider('myProvider', array());
-		$usernamePasswordCRProvider->injectAccountRepository($mockAccountRepository);
-		$usernamePasswordCRProvider->injectHashService($mockHashService);
+		$usernamePasswordCRProvider = $this->getAccessibleMock('F3\FLOW3\Security\Authentication\Provider\PersistedUsernamePasswordProvider', array('dummy'), array('myProvider', array()));
+		$usernamePasswordCRProvider->_set('accountRepository', $mockAccountRepository);
+		$usernamePasswordCRProvider->_set('hashService', $mockHashService);
 
 		$usernamePasswordCRProvider->authenticate($mockToken);
 	}

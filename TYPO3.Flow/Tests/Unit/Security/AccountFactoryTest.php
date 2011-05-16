@@ -33,31 +33,20 @@ class AccountFactoryTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function createAccountWithPasswordCreatesANewAccountWithTheGivenPasswordRolesAndProviderName() {
+	public function createAccountWithPasswordCreatesANewAccountWithTheGivenIdentifierPasswordRolesAndProviderName() {
 		$mockHashService = $this->getMock('F3\FLOW3\Security\Cryptography\HashService');
 		$mockHashService->expects($this->once())->method('generateSaltedMd5')->with('password')->will($this->returnValue('hashed password'));
 
-		$mockRole1 = $this->getMock('F3\FLOW3\Security\Policy\Role', array(), array(), '', FALSE);
-		$mockRole2 = $this->getMock('F3\FLOW3\Security\Policy\Role', array(), array(), '', FALSE);
+		$mockRole1 = new \F3\FLOW3\Security\Policy\Role('role1');
+		$mockRole2 = new \F3\FLOW3\Security\Policy\Role('role2');
 
-		$expectedAccount = $this->getMock('F3\FLOW3\Security\Account');
-		$expectedAccount->expects($this->once())->method('setAccountIdentifier')->with('username');
-		$expectedAccount->expects($this->once())->method('setAccountIdentifier')->with('username');
-		$expectedAccount->expects($this->once())->method('setCredentialsSource')->with('hashed password');
-		$expectedAccount->expects($this->once())->method('setAuthenticationProviderName')->with('OtherProvider');
-		$expectedAccount->expects($this->once())->method('setRoles')->with(array($mockRole1, $mockRole2));
-
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->at(0))->method('create')->with('F3\FLOW3\Security\Policy\Role', 'role1')->will($this->returnValue($mockRole1));
-		$mockObjectManager->expects($this->at(1))->method('create')->with('F3\FLOW3\Security\Policy\Role', 'role2')->will($this->returnValue($mockRole2));
-		$mockObjectManager->expects($this->at(2))->method('create')->with('F3\FLOW3\Security\Account')->will($this->returnValue($expectedAccount));
-
-		$factory = new \F3\FLOW3\Security\AccountFactory;
-		$factory->injectObjectManager($mockObjectManager);
-		$factory->injectHashService($mockHashService);
+		$factory = $this->getAccessibleMock('F3\FLOW3\Security\AccountFactory', array('dummy'));
+		$factory->_set('hashService', $mockHashService);
 
 		$actualAccount = $factory->createAccountWithPassword('username', 'password', array('role1', 'role2'), 'OtherProvider');
-		$this->assertSame($expectedAccount, $actualAccount);
+		$this->assertEquals('username', $actualAccount->getAccountIdentifier());
+		$this->assertEquals('OtherProvider', $actualAccount->getAuthenticationProviderName());
+		$this->assertEquals(array($mockRole1, $mockRole2), $actualAccount->getRoles());
 	}
 }
 ?>

@@ -104,11 +104,11 @@ class CsrfProtectionAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockSecurityContext = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
 		$mockSecurityContext->expects($this->any())->method('getCsrfProtectionToken')->will($this->returnValue('csrf-token'));
 
-		$csrfProtectionAspect = $this->getMock('F3\FLOW3\Security\Aspect\CsrfProtectionAspect', array('dummy'));
-		$csrfProtectionAspect->injectObjectManager($mockObjectManager);
-		$csrfProtectionAspect->injectReflectionService($this->mockReflectionService);
-		$csrfProtectionAspect->injectPolicyService($this->mockPolicyService);
-		$csrfProtectionAspect->injectSecurityContext($mockSecurityContext);
+		$csrfProtectionAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\CsrfProtectionAspect', array('dummy'));
+		$csrfProtectionAspect->_set('objectManager', $mockObjectManager);
+		$csrfProtectionAspect->_set('reflectionService', $this->mockReflectionService);
+		$csrfProtectionAspect->_set('policyService', $this->mockPolicyService);
+		$csrfProtectionAspect->_set('securityContext', $mockSecurityContext);
 
 		$this->csrfProtectionAspect = $csrfProtectionAspect;
 	}

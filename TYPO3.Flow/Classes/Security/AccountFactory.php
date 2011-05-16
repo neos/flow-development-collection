@@ -31,37 +31,10 @@ namespace F3\FLOW3\Security;
 class AccountFactory {
 
 	/**
-	 * @var F3\FLOW3\Object\ObjectManagerInterface
-	 */
-	protected $objectManager;
-
-	/**
-	 *
 	 * @var \F3\FLOW3\Security\Cryptography\HashService
+	 * @inject
 	 */
 	protected $hashService;
-
-	/**
-	 * Injects the object manager
-	 *
-	 * @param F3\FLOW3\Object\ObjectManagerInterface $objectManager
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
-		$this->objectManager = $objectManager;
-	}
-
-	/**
-	 * Injects the hash service
-	 *
-	 * @param \F3\FLOW3\Security\Cryptography\HashService $hashService
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function injectHashService(\F3\FLOW3\Security\Cryptography\HashService $hashService) {
-		$this->hashService = $hashService;
-	}
 
 	/**
 	 * Creates a new account and sets the given password and roles
@@ -70,16 +43,16 @@ class AccountFactory {
 	 * @param string $password The clear text password
 	 * @param array $roleIdentifiers Optionally an array of role identifiers to assign to the new account
 	 * @param string $authenticationProviderName Optinally the name of the authentication provider the account is affiliated with
-	 * @return F3\FLOW3\Security\Account A new account, not yet added to the account repository
+	 * @return \F3\FLOW3\Security\Account A new account, not yet added to the account repository
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function createAccountWithPassword($identifier, $password, $roleIdentifiers = array(), $authenticationProviderName = 'DefaultProvider') {
 		$roles = array();
 		foreach ($roleIdentifiers as $roleIdentifier) {
-			$roles[] = $this->objectManager->create('F3\FLOW3\Security\Policy\Role', $roleIdentifier);
+			$roles[] = new \F3\FLOW3\Security\Policy\Role($roleIdentifier);
 		}
 
-		$account = $this->objectManager->create('F3\FLOW3\Security\Account');
+		$account = new \F3\FLOW3\Security\Account();
 		$account->setAccountIdentifier($identifier);
 		$account->setCredentialsSource($this->hashService->generateSaltedMd5($password));
 		$account->setAuthenticationProviderName($authenticationProviderName);

@@ -43,8 +43,8 @@ class UsernamePasswordTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockEnvironment->expects($this->once())->method('getRawPostArguments')->will($this->returnValue($postArguments));
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Request');
 
-		$token = new \F3\FLOW3\Security\Authentication\Token\UsernamePassword();
-		$token->injectEnvironment($mockEnvironment);
+		$token = $this->getAccessibleMock('F3\FLOW3\Security\Authentication\Token\UsernamePassword', array('dummy'));
+		$token->_set('environment', $mockEnvironment);
 
 		$token->updateCredentials($mockRequest);
 
@@ -97,8 +97,8 @@ class UsernamePasswordTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockEnvironment->expects($this->once())->method('getRawPostArguments')->will($this->returnValue($postArguments));
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Request');
 
-		$token = new \F3\FLOW3\Security\Authentication\Token\UsernamePassword();
-		$token->injectEnvironment($mockEnvironment);
+		$token = $this->getAccessibleMock('F3\FLOW3\Security\Authentication\Token\UsernamePassword', array('dummy'));
+		$token->_set('environment', $mockEnvironment);
 
 		$token->updateCredentials($mockRequest);
 

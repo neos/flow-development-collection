@@ -33,16 +33,9 @@ class AuthenticationProviderManager implements \F3\FLOW3\Security\Authentication
 
 	/**
 	 * @var \F3\FLOW3\Log\SecurityLoggerInterface
+	 * @inject
 	 */
 	protected $securityLogger;
-
-	/**
-	 * @param \F3\FLOW3\Log\SecurityLoggerInterface $securityLogger
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function injectSecurityLogger(\F3\FLOW3\Log\SecurityLoggerInterface $securityLogger) {
-		$this->securityLogger = $securityLogger;
-	}
 
 	/**
 	 * The provider resolver

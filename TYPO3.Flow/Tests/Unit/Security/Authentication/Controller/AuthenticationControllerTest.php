@@ -39,8 +39,8 @@ class AuthenticationControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockAuthenticationManager = $this->getMock('F3\FLOW3\Security\Authentication\AuthenticationManagerInterface');
 		$mockAuthenticationManager->expects($this->once())->method('authenticate');
 
-		$authenticationController = $this->getMock('F3\FLOW3\Security\Authentication\Controller\AuthenticationController', array('dummy'), array(), '', FALSE);
-		$authenticationController->injectAuthenticationManager($mockAuthenticationManager);
+		$authenticationController = $this->getAccessibleMock('F3\FLOW3\Security\Authentication\Controller\AuthenticationController', array('dummy'), array(), '', FALSE);
+		$authenticationController->_set('authenticationManager', $mockAuthenticationManager);
 
 		$authenticationController->authenticateAction();
 	}
@@ -53,8 +53,8 @@ class AuthenticationControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockAuthenticationManager = $this->getMock('F3\FLOW3\Security\Authentication\AuthenticationManagerInterface');
 		$mockAuthenticationManager->expects($this->once())->method('logout');
 
-		$authenticationController = $this->getMock('F3\FLOW3\Security\Authentication\Controller\AuthenticationController', array('dummy'), array(), '', FALSE);
-		$authenticationController->injectAuthenticationManager($mockAuthenticationManager);
+		$authenticationController = $this->getAccessibleMock('F3\FLOW3\Security\Authentication\Controller\AuthenticationController', array('dummy'), array(), '', FALSE);
+		$authenticationController->_set('authenticationManager', $mockAuthenticationManager);
 
 		$authenticationController->logoutAction();
 	}
