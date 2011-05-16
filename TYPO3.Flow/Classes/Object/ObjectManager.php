@@ -317,13 +317,20 @@ class ObjectManager implements ObjectManagerInterface {
 		$this->session->start();
 
 		if ($this->session->hasKey('F3_FLOW3_Object_ObjectManager') === TRUE) {
-			foreach ($this->session->getData('F3_FLOW3_Object_ObjectManager') as $object) {
-				if ($object instanceof \F3\FLOW3\Object\Proxy\ProxyInterface) {
-					$objectName = $this->getObjectNameByClassName(get_class($object));
-					if ($this->objects[$objectName]['s'] === ObjectConfiguration::SCOPE_SESSION) {
-						$this->objects[$objectName]['i'] = $object;
+			$sessionObjects = $this->session->getData('F3_FLOW3_Object_ObjectManager');
+			if (is_array($sessionObjects)) {
+				foreach ($sessionObjects as $object) {
+					if ($object instanceof \F3\FLOW3\Object\Proxy\ProxyInterface) {
+						$objectName = $this->getObjectNameByClassName(get_class($object));
+						if ($this->objects[$objectName]['s'] === ObjectConfiguration::SCOPE_SESSION) {
+							$this->objects[$objectName]['i'] = $object;
+						}
 					}
 				}
+			} else {
+					// Fallback for some malformed session data, if it is no array but something else.
+					// In this case, we reset all session objects (graceful degradation).
+				$this->session->putData('F3_FLOW3_Object_ObjectManager', array());
 			}
 		}
 	}
