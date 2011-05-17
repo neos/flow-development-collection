@@ -193,6 +193,32 @@ class Account {
 	}
 
 	/**
+	 * Adds a role to this account
+	 *
+	 * @param \F3\FLOW3\Security\Policy\Role $role
+	 * @return void
+	 */
+	public function addRole(\F3\FLOW3\Security\Policy\Role $role) {
+		$roleIdentifier = (string)$role;
+		if (array_search($roleIdentifier, $this->roles, TRUE) === FALSE) {
+			$this->roles[] = $roleIdentifier;
+		}
+	}
+
+	/**
+	 * Removes a role from this account
+	 *
+	 * @param \F3\FLOW3\Security\Policy\Role $role
+	 * @return void
+	 */
+	public function removeRole(\F3\FLOW3\Security\Policy\Role $role) {
+		$roleIdentifier = (string)$role;
+		if (($key = array_search($roleIdentifier, $this->roles, TRUE)) !== FALSE) {
+			unset($this->roles[$key]);
+		}
+	}
+
+	/**
 	 * @return \DateTime
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
