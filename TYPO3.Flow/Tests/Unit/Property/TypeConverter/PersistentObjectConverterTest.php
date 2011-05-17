@@ -150,7 +150,7 @@ class PersistentObjectConverterTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	public function convertFromShouldFetcheObjectFromPersistenceIfUuidStringIsGiven() {
+	public function convertFromShouldFetchObjectFromPersistenceIfUuidStringIsGiven() {
 		$identifier = '550e8400-e29b-11d4-a716-446655440000';
 		$object = new \stdClass();
 
@@ -162,11 +162,14 @@ class PersistentObjectConverterTest extends \F3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 * @expectedException \F3\FLOW3\Property\Exception\InvalidSourceException
+	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function convertFromShouldThrowExceptionIfNonUuidStringIsGiven() {
-		$identifier = 'someString';
-		$this->converter->convertFrom($identifier, 'MySpecialType');
+	public function convertFromShouldFetchObjectFromPersistenceIfNonUuidStringIsGiven() {
+		$identifier = 'someIdentifier';
+		$object = new \stdClass();
+
+		$this->mockPersistenceManager->expects($this->once())->method('getObjectByIdentifier')->with($identifier)->will($this->returnValue($object));
+		$this->assertSame($object, $this->converter->convertFrom($identifier, 'MySpecialType'));
 	}
 
 	/**

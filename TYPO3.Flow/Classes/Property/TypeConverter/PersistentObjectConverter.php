@@ -164,11 +164,12 @@ class PersistentObjectConverter extends \F3\FLOW3\Property\TypeConverter\Abstrac
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function convertFrom($source, $targetType, array $subProperties = array(), \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
-		if (is_string($source)) {
+		if (is_array($source)) {
+			$object = $this->handleArrayData($source, $targetType, $subProperties, $configuration);
+		} elseif (is_string($source)) {
 			$object = $this->fetchObjectFromPersistence($source, $targetType);
 		} else {
-				// We know $source is an array, as we only handle strings and arrays
-			$object = $this->handleArrayData($source, $targetType, $subProperties, $configuration);
+			throw new \InvalidArgumentException('Only strings and arrays are accepted.', 1305630314);
 		}
 		foreach ($subProperties as $propertyName => $propertyValue) {
 			$result = \F3\FLOW3\Reflection\ObjectAccess::setProperty($object, $propertyName, $propertyValue);
@@ -217,16 +218,15 @@ class PersistentObjectConverter extends \F3\FLOW3\Property\TypeConverter\Abstrac
 	 * @param string $targetType
 	 * @return object
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function fetchObjectFromPersistence($identity, $targetType) {
-		if (is_numeric($identity)) {
-			$object = $this->persistenceManager->getObjectByIdentifier($identity, $targetType);
-		} elseif (is_string($identity) && preg_match(self::PATTERN_MATCH_UUID, $identity) === 1) {
+		if (is_string($identity)) {
 			$object = $this->persistenceManager->getObjectByIdentifier($identity, $targetType);
 		} elseif (is_array($identity)) {
 			$object = $this->findObjectByIdentityProperties($identity, $targetType);
 		} else {
-			throw new \F3\FLOW3\Property\Exception\InvalidSourceException('The identity property "' . $identity . '" is neither a number, nor a UUID nor an array.', 1297931020);
+			throw new \F3\FLOW3\Property\Exception\InvalidSourceException('The identity property "' . $identity . '" is neither a string nor an array.', 1297931020);
 		}
 
 		if ($object === NULL) {
