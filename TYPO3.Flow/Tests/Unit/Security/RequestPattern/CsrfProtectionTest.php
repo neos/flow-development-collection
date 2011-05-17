@@ -97,7 +97,7 @@ class CsrfProtectionTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Request');
 		$mockRequest->expects($this->once())->method('getControllerObjectName')->will($this->returnValue($controllerObjectName));
 		$mockRequest->expects($this->once())->method('getControllerActionName')->will($this->returnValue($controllerActionName));
-		$mockRequest->expects($this->once())->method('hasArgument')->with('FLOW3-CSRF-TOKEN')->will($this->returnValue(FALSE));
+		$mockRequest->expects($this->once())->method('getInternalArguments')->will($this->returnValue(array()));
 
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
 		$mockObjectManager->expects($this->once())->method('getClassNameByObjectName')->with($controllerObjectName)->will($this->returnValue($controllerObjectName));
@@ -128,8 +128,7 @@ class CsrfProtectionTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Request');
 		$mockRequest->expects($this->once())->method('getControllerObjectName')->will($this->returnValue($controllerObjectName));
 		$mockRequest->expects($this->once())->method('getControllerActionName')->will($this->returnValue($controllerActionName));
-		$mockRequest->expects($this->once())->method('hasArgument')->with('FLOW3-CSRF-TOKEN')->will($this->returnValue(TRUE));
-		$mockRequest->expects($this->once())->method('getArgument')->with('FLOW3-CSRF-TOKEN')->will($this->returnValue('csrf-token'));
+		$mockRequest->expects($this->once())->method('getInternalArguments')->will($this->returnValue(array('__CSRF-TOKEN' => 'invalidCsrfToken')));
 
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
 		$mockObjectManager->expects($this->once())->method('getClassNameByObjectName')->with($controllerObjectName)->will($this->returnValue($controllerObjectName));
@@ -141,7 +140,7 @@ class CsrfProtectionTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockPolicyService->expects($this->once())->method('hasPolicyEntryForMethod')->with($controllerObjectName, $controllerActionName . 'Action')->will($this->returnValue(TRUE));
 
 		$mockSecurityContext = $this->getMock('F3\FLOW3\Security\Context');
-		$mockSecurityContext->expects($this->once())->method('isCsrfProtectionTokenValid')->with('csrf-token')->will($this->returnValue(FALSE));
+		$mockSecurityContext->expects($this->once())->method('isCsrfProtectionTokenValid')->with('invalidCsrfToken')->will($this->returnValue(FALSE));
 
 		$mockCsrfProtectionPattern = $this->getMock('F3\FLOW3\Security\RequestPattern\CsrfProtection', array('dummy'));
 		$mockCsrfProtectionPattern->injectObjectManager($mockObjectManager);
@@ -164,8 +163,7 @@ class CsrfProtectionTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Request');
 		$mockRequest->expects($this->once())->method('getControllerObjectName')->will($this->returnValue($controllerObjectName));
 		$mockRequest->expects($this->once())->method('getControllerActionName')->will($this->returnValue($controllerActionName));
-		$mockRequest->expects($this->once())->method('hasArgument')->with('FLOW3-CSRF-TOKEN')->will($this->returnValue(TRUE));
-		$mockRequest->expects($this->once())->method('getArgument')->with('FLOW3-CSRF-TOKEN')->will($this->returnValue('csrf-token'));
+		$mockRequest->expects($this->once())->method('getInternalArguments')->will($this->returnValue(array('__CSRF-TOKEN' => 'validToken')));
 
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
 		$mockObjectManager->expects($this->once())->method('getClassNameByObjectName')->with($controllerObjectName)->will($this->returnValue($controllerObjectName));
@@ -177,7 +175,7 @@ class CsrfProtectionTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockPolicyService->expects($this->once())->method('hasPolicyEntryForMethod')->with($controllerObjectName, $controllerActionName . 'Action')->will($this->returnValue(TRUE));
 
 		$mockSecurityContext = $this->getMock('F3\FLOW3\Security\Context');
-		$mockSecurityContext->expects($this->once())->method('isCsrfProtectionTokenValid')->with('csrf-token')->will($this->returnValue(TRUE));
+		$mockSecurityContext->expects($this->once())->method('isCsrfProtectionTokenValid')->with('validToken')->will($this->returnValue(TRUE));
 
 		$mockCsrfProtectionPattern = $this->getMock('F3\FLOW3\Security\RequestPattern\CsrfProtection', array('dummy'));
 		$mockCsrfProtectionPattern->injectObjectManager($mockObjectManager);

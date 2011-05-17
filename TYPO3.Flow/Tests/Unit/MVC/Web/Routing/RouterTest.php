@@ -118,12 +118,11 @@ class RouterTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function packageKeyCanBeSetByRoute() {
-		$router = $this->getAccessibleMock('F3\FLOW3\MVC\Web\Routing\Router', array('findMatchResults'), array(), '', FALSE);
+		$router = $this->getRouter();
 		$router->expects($this->once())->method('findMatchResults')->with('foo')->will($this->returnValue(array('@package' => 'MyPackage')));
 
-		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array('getRoutePath', 'getArguments', 'setControllerPackageKey', 'getControllerObjectName'), array(), '', FALSE);
 		$mockRequest->expects($this->once())->method('getRoutePath')->will($this->returnValue('foo'));
-		$mockRequest->expects($this->once())->method('getArguments')->will($this->returnValue(array()));
 		$mockRequest->expects($this->once())->method('setControllerPackageKey')->with($this->equalTo('MyPackage'));
 
 		$router->route($mockRequest);
@@ -134,12 +133,11 @@ class RouterTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function subpackageKeyCanBeSetByRoute() {
-		$router = $this->getAccessibleMock('F3\FLOW3\MVC\Web\Routing\Router', array('findMatchResults'), array(), '', FALSE);
+		$router = $this->getRouter();
 		$router->expects($this->once())->method('findMatchResults')->with('foo')->will($this->returnValue(array('@subpackage' => 'MySubpackage')));
 
-		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array('getRoutePath', 'getArguments', 'setControllerSubpackageKey', 'getControllerObjectName'), array(), '', FALSE);
 		$mockRequest->expects($this->once())->method('getRoutePath')->will($this->returnValue('foo'));
-		$mockRequest->expects($this->once())->method('getArguments')->will($this->returnValue(array()));
 		$mockRequest->expects($this->once())->method('setControllerSubpackageKey')->with($this->equalTo('MySubpackage'));
 
 		$router->route($mockRequest);
@@ -150,31 +148,31 @@ class RouterTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function controllerNameCanBeSetByRoute() {
-		$router = $this->getAccessibleMock('F3\FLOW3\MVC\Web\Routing\Router', array('findMatchResults'), array(), '', FALSE);
+		$router = $this->getRouter();
 		$router->expects($this->once())->method('findMatchResults')->with('foo')->will($this->returnValue(array('@controller' => 'MyController')));
 
-		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array('getRoutePath', 'getArguments', 'setControllerName', 'getControllerObjectName'), array(), '', FALSE);
 		$mockRequest->expects($this->once())->method('getRoutePath')->will($this->returnValue('foo'));
-		$mockRequest->expects($this->once())->method('getArguments')->will($this->returnValue(array()));
 		$mockRequest->expects($this->once())->method('setControllerName')->with($this->equalTo('MyController'));
-		$mockRequest->expects($this->any())->method('getControllerName')->will($this->returnValue('MyController'));
 
 		$router->route($mockRequest);
 	}
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function setControllerKeysAndFormatSetsControllerNameToStandardIfItIsNotDefined() {
-		$router = $this->getAccessibleMock('F3\FLOW3\MVC\Web\Routing\Router', array('dummy'), array(), '', FALSE);
+	public function controllerNameAndActionAreSetToDefaultIfNotSpecifiedInArguments() {
+		$router = $this->getRouter();
+		$router->expects($this->once())->method('findMatchResults')->will($this->returnValue(array()));
 
-		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
-		$mockRequest->expects($this->any())->method('getControllerName')->will($this->returnValue(NULL));
-		$mockRequest->expects($this->once())->method('setControllerName')->with('Standard');
-		$router->_set('request', $mockRequest);
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array('getRoutePath', 'getArguments', 'getControllerName', 'setControllerName', 'getControllerActionName', 'setControllerActionName', 'getControllerObjectName'), array(), '', FALSE);
+		$mockRequest->expects($this->once())->method('getControllerName')->will($this->returnValue(NULL));
+		$mockRequest->expects($this->once())->method('setControllerName')->with($this->equalTo('Standard'));
 
-		$router->_call('setControllerKeysAndFormat', array());
+		$mockRequest->expects($this->once())->method('getControllerActionName')->will($this->returnValue(NULL));
+		$mockRequest->expects($this->once())->method('setControllerActionName')->with($this->equalTo('index'));
+
+		$router->route($mockRequest);
 	}
 
 	/**
@@ -182,246 +180,30 @@ class RouterTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function actionNameCanBeSetByRoute() {
-		$router = $this->getAccessibleMock('F3\FLOW3\MVC\Web\Routing\Router', array('findMatchResults'), array(), '', FALSE);
+		$router = $this->getRouter();
 		$router->expects($this->once())->method('findMatchResults')->with('foo')->will($this->returnValue(array('@action' => 'myAction')));
 
-		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array('getRoutePath', 'getControllerActionName', 'setControllerActionName', 'getControllerObjectName'), array(), '', FALSE);
 		$mockRequest->expects($this->once())->method('getRoutePath')->will($this->returnValue('foo'));
-		$mockRequest->expects($this->once())->method('getArguments')->will($this->returnValue(array()));
 		$mockRequest->expects($this->once())->method('setControllerActionName')->with('myAction');
-		$mockRequest->expects($this->any())->method('getControllerActionName')->will($this->returnValue('myAction'));
+		$mockRequest->expects($this->once())->method('getControllerActionName')->will($this->returnValue('myAction'));
 
 		$router->route($mockRequest);
 	}
-
-	/**
-	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	public function routeSetsRequestArgumentsFromMatchResults() {
-		$router = $this->getAccessibleMock('F3\FLOW3\MVC\Web\Routing\Router', array('findMatchResults'), array(), '', FALSE);
-		$router->expects($this->once())->method('findMatchResults')->will($this->returnValue(array('someArgumentName' => 'someArgumentValue')));
-
-		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
-		$mockRequest->expects($this->once())->method('getArguments')->will($this->returnValue(array()));
-		$mockRequest->expects($this->once())->method('setArgument')->with('someArgumentName', 'someArgumentValue');
-
-		$router->route($mockRequest);
-	}
-
-	/**
-	 * Note: I'n not sure, whether this behavior is correct, this test only documents this!
-	 *
-	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	public function routeDoesNotSetRequestArgumentsFromMatchResultsThatStartWithAnAtSign() {
-		$router = $this->getAccessibleMock('F3\FLOW3\MVC\Web\Routing\Router', array('findMatchResults'), array(), '', FALSE);
-		$router->expects($this->once())->method('findMatchResults')->will($this->returnValue(array('@foo' => 'bar')));
-
-		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
-		$mockRequest->expects($this->atLeastOnce())->method('getArguments')->will($this->returnValue(array()));
-		$mockRequest->expects($this->never())->method('setArgument');
-
-		$router->route($mockRequest);
-	}
-
-	/**
-	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	public function routeOverridesRequestArgumentsWithMatchResults() {
-		$router = $this->getAccessibleMock('F3\FLOW3\MVC\Web\Routing\Router', array('findMatchResults'), array(), '', FALSE);
-		$router->expects($this->once())->method('findMatchResults')->will($this->returnValue(array('someArgumentName' => 'someOverriddenValue')));
-
-		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
-		$mockRequest->expects($this->atLeastOnce())->method('getArguments')->will($this->returnValue(array('someArgumentName' => 'someArgumentValueFromRequest')));
-		$mockRequest->expects($this->atLeastOnce())->method('setArgument')->with('someArgumentName', 'someOverriddenValue');
-
-		$router->route($mockRequest);
-	}
-
-	/**
-	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	public function routeRecursivelyMergesRequestArgumentsWithMatchResults() {
-		$router = $this->getAccessibleMock('F3\FLOW3\MVC\Web\Routing\Router', array('findMatchResults'), array(), '', FALSE);
-		$router->expects($this->once())->method('findMatchResults')->will($this->returnValue(array('someArgumentName' => array('foo' => 'overridden', 'new' => 'value'))));
-
-		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
-		$mockRequest->expects($this->any())->method('getArguments')->will($this->returnValue(array()));
-		$mockRequest->expects($this->any())->method('hasArgument')->with('someArgumentName')->will($this->returnValue(TRUE));
-		$mockRequest->expects($this->atLeastOnce())->method('getArgument')->with('someArgumentName')->will($this->returnValue(array('foo' => 'bar', 'bar' => 'baz')));
-		$mockRequest->expects($this->atLeastOnce())->method('setArgument')->with('someArgumentName', array('foo' => 'overridden', 'bar' => 'baz', 'new' => 'value'));
-
-		$router->route($mockRequest);
-	}
-
-	/**
-	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	public function routeOverridesRequestArgumentWithMatchResultIfMatchResultIsOfTypeArrayAndArgumentNot() {
-		$router = $this->getAccessibleMock('F3\FLOW3\MVC\Web\Routing\Router', array('findMatchResults'), array(), '', FALSE);
-		$router->expects($this->once())->method('findMatchResults')->will($this->returnValue(array('someArgumentName' => array('foo' => 'overridden', 'new' => 'value'))));
-
-		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
-		$mockRequest->expects($this->any())->method('getArguments')->will($this->returnValue(array()));
-		$mockRequest->expects($this->any())->method('hasArgument')->with('someArgumentName')->will($this->returnValue(TRUE));
-		$mockRequest->expects($this->atLeastOnce())->method('getArgument')->with('someArgumentName')->will($this->returnValue('a string'));
-		$mockRequest->expects($this->atLeastOnce())->method('setArgument')->with('someArgumentName', array('foo' => 'overridden', 'new' => 'value'));
-
-		$router->route($mockRequest);
-	}
-
-	/**
-	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	public function setControllerKeysAndFormatSetsControllerActionNameToIndexIfItIsNotDefined() {
-		$router = $this->getAccessibleMock('F3\FLOW3\MVC\Web\Routing\Router', array('dummy'), array(), '', FALSE);
-
-		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
-		$mockRequest->expects($this->any())->method('getControllerActionName')->will($this->returnValue(NULL));
-		$mockRequest->expects($this->once())->method('setControllerActionName')->with('index');
-		$router->_set('request', $mockRequest);
-
-		$router->_call('setControllerKeysAndFormat', array());
-	}
-
 
 	/**
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function formatCanBeSetByRoute() {
-		$router = $this->getAccessibleMock('F3\FLOW3\MVC\Web\Routing\Router', array('findMatchResults'), array(), '', FALSE);
+		$router = $this->getRouter();
 		$router->expects($this->once())->method('findMatchResults')->with('foo')->will($this->returnValue(array('@format' => 'myFormat')));
 
-		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array('getRoutePath', 'setFormat', 'getControllerObjectName'), array(), '', FALSE);
 		$mockRequest->expects($this->once())->method('getRoutePath')->will($this->returnValue('foo'));
-		$mockRequest->expects($this->once())->method('getArguments')->will($this->returnValue(array()));
-		$mockRequest->expects($this->once())->method('setFormat')->with($this->equalTo('myformat'));
+		$mockRequest->expects($this->once())->method('setFormat')->with($this->equalTo('myFormat'));
 
 		$router->route($mockRequest);
-	}
-
-	/**
-	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	public function packageKeyCanBeOverwrittenByRequest() {
-		$packageKey = NULL;
-		$setControllerPackageKeyCallback = function() use (&$packageKey) {
-			$args = func_get_args();
-			$packageKey = $args[0];
-		};
-		$router = $this->getAccessibleMock('F3\FLOW3\MVC\Web\Routing\Router', array('findMatchResults'), array(), '', FALSE);
-		$router->expects($this->once())->method('findMatchResults')->with('foo')->will($this->returnValue(array('@package' => 'MyPackage')));
-
-		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
-		$mockRequest->expects($this->once())->method('getRoutePath')->will($this->returnValue('foo'));
-		$mockRequest->expects($this->any())->method('getArguments')->will($this->returnValue(array('@package' => 'OverwrittenPackage')));
-		$mockRequest->expects($this->exactly(2))->method('setControllerPackageKey')->will($this->returnCallback($setControllerPackageKeyCallback));
-
-		$router->route($mockRequest);
-
-		$this->assertEquals('OverwrittenPackage', $packageKey);
-	}
-
-	/**
-	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	public function subpackageKeyCanBeOverwrittenByRequest() {
-		$subpackageKey = NULL;
-		$setControllerSubpackageKeyCallback = function() use (&$subpackageKey) {
-			$args = func_get_args();
-			$subpackageKey = $args[0];
-		};
-		$router = $this->getAccessibleMock('F3\FLOW3\MVC\Web\Routing\Router', array('findMatchResults'), array(), '', FALSE);
-		$router->expects($this->once())->method('findMatchResults')->with('foo')->will($this->returnValue(array('@subpackage' => 'MySubpackage')));
-
-		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
-		$mockRequest->expects($this->once())->method('getRoutePath')->will($this->returnValue('foo'));
-		$mockRequest->expects($this->any())->method('getArguments')->will($this->returnValue(array('@subpackage' => 'OverwrittenSubpackage')));
-		$mockRequest->expects($this->exactly(2))->method('setControllerSubpackageKey')->will($this->returnCallback($setControllerSubpackageKeyCallback));
-
-		$router->route($mockRequest);
-
-		$this->assertEquals('OverwrittenSubpackage', $subpackageKey);
-	}
-
-	/**
-	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	public function controllerNameCanBeOverwrittenByRequest() {
-		$controllerName = NULL;
-		$setControllerNameCallback = function() use (&$controllerName) {
-			$args = func_get_args();
-			$controllerName = $args[0];
-		};
-		$router = $this->getAccessibleMock('F3\FLOW3\MVC\Web\Routing\Router', array('findMatchResults'), array(), '', FALSE);
-		$router->expects($this->once())->method('findMatchResults')->with('foo')->will($this->returnValue(array('@controller' => 'MyController')));
-
-		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
-		$mockRequest->expects($this->once())->method('getRoutePath')->will($this->returnValue('foo'));
-		$mockRequest->expects($this->any())->method('getArguments')->will($this->returnValue(array('@controller' => 'OverwrittenController')));
-		$mockRequest->expects($this->exactly(2))->method('setControllerName')->will($this->returnCallback($setControllerNameCallback));
-		$mockRequest->expects($this->any())->method('getControllerName')->will($this->returnValue('SomeController'));
-
-		$router->route($mockRequest);
-
-		$this->assertEquals('OverwrittenController', $controllerName);
-	}
-
-	/**
-	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	public function actionNameCanOverwrittenByRequest() {
-		$actionName = NULL;
-		$setControllerActionNameCallback = function() use (&$actionName) {
-			$args = func_get_args();
-			$actionName = $args[0];
-		};
-		$router = $this->getAccessibleMock('F3\FLOW3\MVC\Web\Routing\Router', array('findMatchResults'), array(), '', FALSE);
-		$router->expects($this->once())->method('findMatchResults')->with('foo')->will($this->returnValue(array('@action' => 'myAction')));
-
-		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
-		$mockRequest->expects($this->once())->method('getRoutePath')->will($this->returnValue('foo'));
-		$mockRequest->expects($this->any())->method('getArguments')->will($this->returnValue(array('@action' => 'overwrittenAction')));
-		$mockRequest->expects($this->exactly(2))->method('setControllerActionName')->will($this->returnCallback($setControllerActionNameCallback));
-		$mockRequest->expects($this->any())->method('getControllerActionName')->will($this->returnValue('SomeAction'));
-
-		$router->route($mockRequest);
-
-		$this->assertEquals('overwrittenAction', $actionName);
-	}
-
-	/**
-	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	public function formatCanBeOverwrittenByRequest() {
-		$format = NULL;
-		$setFormatCallback = function() use (&$format) {
-			$args = func_get_args();
-			$format = $args[0];
-		};
-		$router = $this->getAccessibleMock('F3\FLOW3\MVC\Web\Routing\Router', array('findMatchResults'), array(), '', FALSE);
-		$router->expects($this->once())->method('findMatchResults')->with('foo')->will($this->returnValue(array('@format' => 'myFormat')));
-
-		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
-		$mockRequest->expects($this->once())->method('getRoutePath')->will($this->returnValue('foo'));
-		$mockRequest->expects($this->any())->method('getArguments')->will($this->returnValue(array('@format' => 'overwrittenFormat')));
-		$mockRequest->expects($this->exactly(2))->method('setFormat')->will($this->returnCallback($setFormatCallback));
-
-		$router->route($mockRequest);
-
-		$this->assertEquals('overwrittenformat', $format);
 	}
 
 	/**
@@ -471,6 +253,10 @@ class RouterTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$router->injectObjectManager($mockObjectManager);
 
 		$this->assertEquals('', $router->getControllerObjectName('testpackage', '', 'foo'));
+	}
+
+	protected function getRouter() {
+		return $this->getAccessibleMock('F3\FLOW3\MVC\Web\Routing\Router', array('findMatchResults', 'setArgumentsFromRawRequestData'), array(), '', FALSE);
 	}
 }
 ?>

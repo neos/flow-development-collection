@@ -42,11 +42,6 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	protected $environment;
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectSerializer
-	 */
-	protected $objectSerializer;
-
-	/**
 	 * An array of formats (such as "html", "txt", "json" ...) which are supported
 	 * by this controller. If none is specified, this controller will default to
 	 * "html" for web requests and "txt" for command line requests.
@@ -129,13 +124,6 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 		$this->environment = $environment;
 	}
 
-	/**
-	 * @param \F3\FLOW3\Object\ObjectSerializer $objectSerializer
-	 * @return void
-	 */
-	public function injectObjectSerializer(\F3\FLOW3\Object\ObjectSerializer $objectSerializer) {
-		$this->objectSerializer = $objectSerializer;
-	}
 
 	/**
 	 * Handles a request. The result output is returned by altering the given response.
@@ -444,13 +432,9 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 			$this->flashMessageContainer->add($errorFlashMessage);
 		}
 
-		if ($this->request->hasArgument('__referrer')) {
-			$referrer = $this->request->getArgument('__referrer');
-			$this->objectSerializer->clearState();
-			$deserializedObjects = $this->objectSerializer->deserializeObjectsArray(unserialize($referrer['arguments']));
-			$referrerArgumentsHolder = reset($deserializedObjects);
-			$referrerArguments = $referrerArgumentsHolder->getReferrerArguments();
-			$this->forward($referrer['actionName'], $referrer['controllerName'], $referrer['packageKey'], $referrerArguments);
+		$referringRequest = $this->request->getReferringRequest();
+		if ($referringRequest !== NULL) {
+			$this->forward($referringRequest->getControllerActionName(), $referringRequest->getControllerName(), $referringRequest->getControllerPackageKey(), $referringRequest->getArguments());
 		}
 
 		$message = 'An error occurred while trying to call ' . get_class($this) . '->' . $this->actionMethodName . '().' . PHP_EOL;
