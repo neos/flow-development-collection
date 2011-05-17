@@ -34,7 +34,6 @@ class Resource {
 	/**
 	 * @var F3\FLOW3\Resource\ResourcePointer
 	 * @ManyToOne(cascade={"all"})
-	 * @JoinColumn(referencedColumnName="hash")
 	 * @identity
 	 */
 	protected $resourcePointer;
