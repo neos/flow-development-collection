@@ -228,9 +228,9 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \F3\
 	protected function inferJoinTableNameFromClassAndPropertyName($className, $propertyName) {
 		$classNameParts = explode('\\', $className);
 		$packageKey = $classNameParts[1];
-		array_pop($classNameParts);
+		$modelName = array_pop($classNameParts);
 		$modelNamePrefix = array_pop($classNameParts);
-		return strtolower($packageKey . '_' . ($modelNamePrefix === 'Model' ? '' : $modelNamePrefix . '_') . $propertyName . '_join');
+		return strtolower($packageKey . '_' . ($modelNamePrefix === 'Model' ? '' : $modelNamePrefix . '_') . $modelName . '_' . $propertyName . '_join');
 	}
 
 	/**

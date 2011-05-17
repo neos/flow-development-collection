@@ -436,3 +436,5 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 		return $previousJoinAlias . '.' . $propertyPathParts[$i];
 	}
 }
+
+?>
