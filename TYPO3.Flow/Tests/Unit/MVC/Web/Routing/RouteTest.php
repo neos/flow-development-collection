@@ -386,6 +386,73 @@ class RouteTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$this->assertEquals(array('key1' => '_match_invoked_', 'key2' => 'bar'), $this->route->getMatchResults());
 	}
 
+	/**
+	 * @test
+	 * @dataProvider matchesThrowsExceptionIfRoutePartValueContainsObjectsDataProvider()
+	 * @param boolean $shouldThrowException
+	 * @param mixed $routePartValue
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function matchesThrowsExceptionIfRoutePartValueContainsObjects($shouldThrowException, $routePartValue) {
+		if ($shouldThrowException === TRUE) {
+			$this->setExpectedException('F3\FLOW3\MVC\Exception\InvalidRoutePartValueException');
+		}
+		$mockRoutePart = $this->getMock('F3\FLOW3\MVC\Web\Routing\RoutePartInterface');
+		$mockRoutePart->expects($this->once())->method('match')->with('foo')->will($this->returnValue(TRUE));
+		$mockRoutePart->expects($this->any())->method('getName')->will($this->returnValue('TestRoutePart'));
+		$mockRoutePart->expects($this->once())->method('getValue')->will($this->returnValue($routePartValue));
+
+		$this->route->setUriPattern('foo');
+		$this->route->_set('routeParts', array($mockRoutePart));
+		$this->route->_set('isParsed', TRUE);
+		$this->route->matches('foo');
+	}
+
+	/**
+	 * Data provider
+	 */
+	public function matchesThrowsExceptionIfRoutePartValueContainsObjectsDataProvider() {
+		$object = new \stdClass();
+		return array(
+			array(TRUE, array('foo' => $object)),
+			array(TRUE, array('foo' => 'bar', 'baz' => $object)),
+			array(TRUE, array('foo' => array('bar' => array('baz' => 'quux', 'here' => $object)))),
+			array(FALSE, array('no object')),
+			array(FALSE, array('foo' => 'no object')),
+			array(FALSE, array(TRUE))
+		);
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function matchesRecursivelyMergesMatchResults() {
+		$mockRoutePart1 = $this->getMock('F3\FLOW3\MVC\Web\Routing\RoutePartInterface');
+		$mockRoutePart1->expects($this->once())->method('match')->will($this->returnValue(TRUE));
+		$mockRoutePart1->expects($this->atLeastOnce())->method('getName')->will($this->returnValue('firstLevel.secondLevel.routePart1'));
+		$mockRoutePart1->expects($this->once())->method('getValue')->will($this->returnValue('foo'));
+
+		$mockRoutePart2 = $this->getMock('F3\FLOW3\MVC\Web\Routing\RoutePartInterface');
+		$mockRoutePart2->expects($this->once())->method('match')->will($this->returnValue(TRUE));
+		$mockRoutePart2->expects($this->atLeastOnce())->method('getName')->will($this->returnValue('someOtherRoutePart'));
+		$mockRoutePart2->expects($this->once())->method('getValue')->will($this->returnValue('bar'));
+
+		$mockRoutePart3 = $this->getMock('F3\FLOW3\MVC\Web\Routing\RoutePartInterface');
+		$mockRoutePart3->expects($this->once())->method('match')->will($this->returnValue(TRUE));
+		$mockRoutePart3->expects($this->atLeastOnce())->method('getName')->will($this->returnValue('firstLevel.secondLevel.routePart2'));
+		$mockRoutePart3->expects($this->once())->method('getValue')->will($this->returnValue('baz'));
+
+		$this->route->setUriPattern('');
+		$this->route->_set('routeParts', array($mockRoutePart1, $mockRoutePart2, $mockRoutePart3));
+		$this->route->_set('isParsed', TRUE);
+		$this->route->matches('');
+
+		$expectedResult = array('firstLevel' => array('secondLevel' => array('routePart1' => 'foo', 'routePart2' => 'baz')), 'someOtherRoutePart' => 'bar');
+		$actualResult = $this->route->getMatchResults();
+		$this->assertEquals($expectedResult, $actualResult);
+	}
+
 	/*                                                                        *
 	 * URI matching (optional Route Parts)                                    *
 	 *                                                                        */
@@ -603,44 +670,6 @@ class RouteTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		$this->assertTrue($this->route->matches('optional1/optional2/required1/required2'));
 	}
-
-
-	/**
-	 * @test
-	 * @dataProvider matchesThrowsExceptionIfRoutePartValueContainsObjectsDataProvider()
-	 * @param boolean $shouldThrowException
-	 * @param mixed $routePartValue
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	public function matchesThrowsExceptionIfRoutePartValueContainsObjects($shouldThrowException, $routePartValue) {
-		if ($shouldThrowException === TRUE) {
-			$this->setExpectedException('F3\FLOW3\MVC\Exception\InvalidRoutePartValueException');
-		}
-		$mockRoutePart = $this->getMock('F3\FLOW3\MVC\Web\Routing\RoutePartInterface');
-		$mockRoutePart->expects($this->once())->method('match')->with('foo')->will($this->returnValue(TRUE));
-		$mockRoutePart->expects($this->once())->method('getValue')->will($this->returnValue($routePartValue));
-
-		$this->route->setUriPattern('foo');
-		$this->route->_set('routeParts', array($mockRoutePart));
-		$this->route->_set('isParsed', TRUE);
-		$this->route->matches('foo');
-	}
-
-	/**
-	 * Data provider
-	 */
-	public function matchesThrowsExceptionIfRoutePartValueContainsObjectsDataProvider() {
-		$object = new \stdClass();
-		return array(
-			array(TRUE, array('foo' => $object)),
-			array(TRUE, array('foo' => 'bar', 'baz' => $object)),
-			array(TRUE, array('foo' => array('bar' => array('baz' => 'quux', 'here' => $object)))),
-			array(FALSE, array('no object')),
-			array(FALSE, array('foo' => 'no object')),
-			array(FALSE, array(TRUE))
-		);
-	}
-
 
 	/**
 	 * @test
@@ -925,6 +954,69 @@ class RouteTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$this->route->_set('routeParts', array($mockRoutePart));
 		$this->route->resolves(array());
 	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function resolvesCallsCompareAndRemoveMatchingDefaultValues() {
+		$defaultValues = array('foo' => 'bar');
+		$routeValues = array('bar' => 'baz');
+
+		$mockRoutePart = $this->getMock('F3\FLOW3\MVC\Web\Routing\RoutePartInterface');
+		$mockRoutePart->expects($this->any())->method('resolve')->will($this->returnValue(TRUE));
+		$mockRoutePart->expects($this->any())->method('hasValue')->will($this->returnValue(FALSE));
+		$mockRoutePart->expects($this->once())->method('getDefaultValue')->will($this->returnValue('defaultValue'));
+
+		$route = $this->getAccessibleMock('F3\FLOW3\MVC\Web\Routing\Route', array('compareAndRemoveMatchingDefaultValues'));
+		$route->injectRouter($this->mockRouter);
+		$route->injectPersistenceManager($this->mockPersistenceManager);
+		$route->setUriPattern('foo');
+		$route->setDefaults($defaultValues);
+		$route->_set('isParsed', TRUE);
+		$route->_set('routeParts', array($mockRoutePart));
+
+		$route->expects($this->once())->method('compareAndRemoveMatchingDefaultValues')->with($defaultValues, $routeValues)->will($this->returnValue(TRUE));
+
+		$this->assertTrue($route->resolves($routeValues));
+	}
+
+	/**
+	 * @test
+	 * @dataProvider compareAndRemoveMatchingDefaultValuesDataProvider()
+	 * @param array $defaults
+	 * @param array $routeValues
+	 * @param array $expectedModifiedRouteValues
+	 * @param boolean $expectedResult
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function compareAndRemoveMatchingDefaultValuesTests(array $defaults, array $routeValues, $expectedModifiedRouteValues, $expectedResult) {
+		$actualResult = $this->route->_callRef('compareAndRemoveMatchingDefaultValues', $defaults, $routeValues);
+		$this->assertEquals($expectedResult, $actualResult);
+		if ($expectedResult === TRUE) {
+			$this->assertEquals($expectedModifiedRouteValues, $routeValues);
+		}
+	}
+
+	/**
+	 * Data provider
+	 */
+	public function compareAndRemoveMatchingDefaultValuesDataProvider() {
+		return array(
+			array(array(), array(), array(), TRUE),
+			array(array(), array('foo' => 'bar'), array('foo' => 'bar'), TRUE),
+			array(array('foo' => 'bar'), array(), array(), TRUE),
+			array(array('foo' => 'bar'), array('foo' => 'bar'), array(), TRUE),
+			array(array('somekey' => 'somevalue'), array('SomeKey' => 'SomeValue'), array('SomeKey' => 'SomeValue'), TRUE),
+			array(array('foo' => 'bar'), array('foo' => 'bar', 'bar' => 'baz'), array('bar' => 'baz'), TRUE),
+			array(array('foo' => 'bar', 'bar' => 'baz'), array('foo' => 'bar'), array(), TRUE),
+			array(array('firstLevel' => array('secondLevel' => array('someKey' => 'SomeValue'))), array('firstLevel' => array('secondLevel' => array('someKey' => 'SomeValue', 'someOtherKey' => 'someOtherValue'))), array('firstLevel' => array('secondLevel' => array('someOtherKey' => 'someOtherValue'))), TRUE),
+			array(array('foo' => 'bar'), array('foo' => 'baz'), NULL, FALSE),
+			array(array('foo' => 'bar'), array('foo' => array('bar' => 'bar')), NULL, FALSE),
+			array(array('firstLevel' => array('secondLevel' => array('someKey' => 'SomeValue'))), array('firstLevel' => array('secondLevel' => array('someKey' => 'SomeOtherValue'))), NULL, FALSE)
+		);
+	}
+
 
 }
 ?>

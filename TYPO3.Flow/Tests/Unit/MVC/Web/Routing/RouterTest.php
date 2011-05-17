@@ -118,7 +118,7 @@ class RouterTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function packageKeyCanBeSetByRoute() {
-		$router = $this->getAccessibleMock('F3\FLOW3\MVC\Web\Routing\Router', array('findMatchResults', 'setArgumentsFromRawRequestData'), array(), '', FALSE);
+		$router = $this->getAccessibleMock('F3\FLOW3\MVC\Web\Routing\Router', array('findMatchResults'), array(), '', FALSE);
 		$router->expects($this->once())->method('findMatchResults')->with('foo')->will($this->returnValue(array('@package' => 'MyPackage')));
 
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
@@ -134,7 +134,7 @@ class RouterTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function subpackageKeyCanBeSetByRoute() {
-		$router = $this->getAccessibleMock('F3\FLOW3\MVC\Web\Routing\Router', array('findMatchResults', 'setArgumentsFromRawRequestData'), array(), '', FALSE);
+		$router = $this->getAccessibleMock('F3\FLOW3\MVC\Web\Routing\Router', array('findMatchResults'), array(), '', FALSE);
 		$router->expects($this->once())->method('findMatchResults')->with('foo')->will($this->returnValue(array('@subpackage' => 'MySubpackage')));
 
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
@@ -150,7 +150,7 @@ class RouterTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function controllerNameCanBeSetByRoute() {
-		$router = $this->getAccessibleMock('F3\FLOW3\MVC\Web\Routing\Router', array('findMatchResults', 'setArgumentsFromRawRequestData'), array(), '', FALSE);
+		$router = $this->getAccessibleMock('F3\FLOW3\MVC\Web\Routing\Router', array('findMatchResults'), array(), '', FALSE);
 		$router->expects($this->once())->method('findMatchResults')->with('foo')->will($this->returnValue(array('@controller' => 'MyController')));
 
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
@@ -182,7 +182,7 @@ class RouterTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function actionNameCanBeSetByRoute() {
-		$router = $this->getAccessibleMock('F3\FLOW3\MVC\Web\Routing\Router', array('findMatchResults', 'setArgumentsFromRawRequestData'), array(), '', FALSE);
+		$router = $this->getAccessibleMock('F3\FLOW3\MVC\Web\Routing\Router', array('findMatchResults'), array(), '', FALSE);
 		$router->expects($this->once())->method('findMatchResults')->with('foo')->will($this->returnValue(array('@action' => 'myAction')));
 
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
@@ -198,7 +198,88 @@ class RouterTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function setControllerKeysAndFormatSetsControllerACtionNameToIndexIfItIsNotDefined() {
+	public function routeSetsRequestArgumentsFromMatchResults() {
+		$router = $this->getAccessibleMock('F3\FLOW3\MVC\Web\Routing\Router', array('findMatchResults'), array(), '', FALSE);
+		$router->expects($this->once())->method('findMatchResults')->will($this->returnValue(array('someArgumentName' => 'someArgumentValue')));
+
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
+		$mockRequest->expects($this->once())->method('getArguments')->will($this->returnValue(array()));
+		$mockRequest->expects($this->once())->method('setArgument')->with('someArgumentName', 'someArgumentValue');
+
+		$router->route($mockRequest);
+	}
+
+	/**
+	 * Note: I'n not sure, whether this behavior is correct, this test only documents this!
+	 *
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function routeDoesNotSetRequestArgumentsFromMatchResultsThatStartWithAnAtSign() {
+		$router = $this->getAccessibleMock('F3\FLOW3\MVC\Web\Routing\Router', array('findMatchResults'), array(), '', FALSE);
+		$router->expects($this->once())->method('findMatchResults')->will($this->returnValue(array('@foo' => 'bar')));
+
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
+		$mockRequest->expects($this->atLeastOnce())->method('getArguments')->will($this->returnValue(array()));
+		$mockRequest->expects($this->never())->method('setArgument');
+
+		$router->route($mockRequest);
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function routeOverridesRequestArgumentsWithMatchResults() {
+		$router = $this->getAccessibleMock('F3\FLOW3\MVC\Web\Routing\Router', array('findMatchResults'), array(), '', FALSE);
+		$router->expects($this->once())->method('findMatchResults')->will($this->returnValue(array('someArgumentName' => 'someOverriddenValue')));
+
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
+		$mockRequest->expects($this->atLeastOnce())->method('getArguments')->will($this->returnValue(array('someArgumentName' => 'someArgumentValueFromRequest')));
+		$mockRequest->expects($this->atLeastOnce())->method('setArgument')->with('someArgumentName', 'someOverriddenValue');
+
+		$router->route($mockRequest);
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function routeRecursivelyMergesRequestArgumentsWithMatchResults() {
+		$router = $this->getAccessibleMock('F3\FLOW3\MVC\Web\Routing\Router', array('findMatchResults'), array(), '', FALSE);
+		$router->expects($this->once())->method('findMatchResults')->will($this->returnValue(array('someArgumentName' => array('foo' => 'overridden', 'new' => 'value'))));
+
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
+		$mockRequest->expects($this->any())->method('getArguments')->will($this->returnValue(array()));
+		$mockRequest->expects($this->any())->method('hasArgument')->with('someArgumentName')->will($this->returnValue(TRUE));
+		$mockRequest->expects($this->atLeastOnce())->method('getArgument')->with('someArgumentName')->will($this->returnValue(array('foo' => 'bar', 'bar' => 'baz')));
+		$mockRequest->expects($this->atLeastOnce())->method('setArgument')->with('someArgumentName', array('foo' => 'overridden', 'bar' => 'baz', 'new' => 'value'));
+
+		$router->route($mockRequest);
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function routeOverridesRequestArgumentWithMatchResultIfMatchResultIsOfTypeArrayAndArgumentNot() {
+		$router = $this->getAccessibleMock('F3\FLOW3\MVC\Web\Routing\Router', array('findMatchResults'), array(), '', FALSE);
+		$router->expects($this->once())->method('findMatchResults')->will($this->returnValue(array('someArgumentName' => array('foo' => 'overridden', 'new' => 'value'))));
+
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
+		$mockRequest->expects($this->any())->method('getArguments')->will($this->returnValue(array()));
+		$mockRequest->expects($this->any())->method('hasArgument')->with('someArgumentName')->will($this->returnValue(TRUE));
+		$mockRequest->expects($this->atLeastOnce())->method('getArgument')->with('someArgumentName')->will($this->returnValue('a string'));
+		$mockRequest->expects($this->atLeastOnce())->method('setArgument')->with('someArgumentName', array('foo' => 'overridden', 'new' => 'value'));
+
+		$router->route($mockRequest);
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function setControllerKeysAndFormatSetsControllerActionNameToIndexIfItIsNotDefined() {
 		$router = $this->getAccessibleMock('F3\FLOW3\MVC\Web\Routing\Router', array('dummy'), array(), '', FALSE);
 
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
@@ -215,7 +296,7 @@ class RouterTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function formatCanBeSetByRoute() {
-		$router = $this->getAccessibleMock('F3\FLOW3\MVC\Web\Routing\Router', array('findMatchResults', 'setArgumentsFromRawRequestData'), array(), '', FALSE);
+		$router = $this->getAccessibleMock('F3\FLOW3\MVC\Web\Routing\Router', array('findMatchResults'), array(), '', FALSE);
 		$router->expects($this->once())->method('findMatchResults')->with('foo')->will($this->returnValue(array('@format' => 'myFormat')));
 
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
@@ -236,7 +317,7 @@ class RouterTest extends \F3\FLOW3\Tests\UnitTestCase {
 			$args = func_get_args();
 			$packageKey = $args[0];
 		};
-		$router = $this->getAccessibleMock('F3\FLOW3\MVC\Web\Routing\Router', array('findMatchResults', 'setArgumentsFromRawRequestData'), array(), '', FALSE);
+		$router = $this->getAccessibleMock('F3\FLOW3\MVC\Web\Routing\Router', array('findMatchResults'), array(), '', FALSE);
 		$router->expects($this->once())->method('findMatchResults')->with('foo')->will($this->returnValue(array('@package' => 'MyPackage')));
 
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
@@ -259,7 +340,7 @@ class RouterTest extends \F3\FLOW3\Tests\UnitTestCase {
 			$args = func_get_args();
 			$subpackageKey = $args[0];
 		};
-		$router = $this->getAccessibleMock('F3\FLOW3\MVC\Web\Routing\Router', array('findMatchResults', 'setArgumentsFromRawRequestData'), array(), '', FALSE);
+		$router = $this->getAccessibleMock('F3\FLOW3\MVC\Web\Routing\Router', array('findMatchResults'), array(), '', FALSE);
 		$router->expects($this->once())->method('findMatchResults')->with('foo')->will($this->returnValue(array('@subpackage' => 'MySubpackage')));
 
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
@@ -282,7 +363,7 @@ class RouterTest extends \F3\FLOW3\Tests\UnitTestCase {
 			$args = func_get_args();
 			$controllerName = $args[0];
 		};
-		$router = $this->getAccessibleMock('F3\FLOW3\MVC\Web\Routing\Router', array('findMatchResults', 'setArgumentsFromRawRequestData'), array(), '', FALSE);
+		$router = $this->getAccessibleMock('F3\FLOW3\MVC\Web\Routing\Router', array('findMatchResults'), array(), '', FALSE);
 		$router->expects($this->once())->method('findMatchResults')->with('foo')->will($this->returnValue(array('@controller' => 'MyController')));
 
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
@@ -306,7 +387,7 @@ class RouterTest extends \F3\FLOW3\Tests\UnitTestCase {
 			$args = func_get_args();
 			$actionName = $args[0];
 		};
-		$router = $this->getAccessibleMock('F3\FLOW3\MVC\Web\Routing\Router', array('findMatchResults', 'setArgumentsFromRawRequestData'), array(), '', FALSE);
+		$router = $this->getAccessibleMock('F3\FLOW3\MVC\Web\Routing\Router', array('findMatchResults'), array(), '', FALSE);
 		$router->expects($this->once())->method('findMatchResults')->with('foo')->will($this->returnValue(array('@action' => 'myAction')));
 
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
@@ -330,7 +411,7 @@ class RouterTest extends \F3\FLOW3\Tests\UnitTestCase {
 			$args = func_get_args();
 			$format = $args[0];
 		};
-		$router = $this->getAccessibleMock('F3\FLOW3\MVC\Web\Routing\Router', array('findMatchResults', 'setArgumentsFromRawRequestData'), array(), '', FALSE);
+		$router = $this->getAccessibleMock('F3\FLOW3\MVC\Web\Routing\Router', array('findMatchResults'), array(), '', FALSE);
 		$router->expects($this->once())->method('findMatchResults')->with('foo')->will($this->returnValue(array('@format' => 'myFormat')));
 
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);

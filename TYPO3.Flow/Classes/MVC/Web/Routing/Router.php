@@ -137,6 +137,10 @@ class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 			$this->setControllerKeysAndFormat($matchResults);
 			foreach ($matchResults as $argumentName => $argumentValue) {
 				if ($argumentName[0] !== '@') {
+						// if the argument is an array, we need to merge it recursively with existing request arguments
+					if (is_array($argumentValue) && $this->request->hasArgument($argumentName) && is_array($this->request->getArgument($argumentName))) {
+						$argumentValue = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($this->request->getArgument($argumentName), $argumentValue);
+					}
 					$this->request->setArgument($argumentName, $argumentValue);
 				}
 			}
