@@ -63,6 +63,11 @@ class PropertyMappingConfiguration implements \F3\FLOW3\Property\PropertyMapping
 	protected $mapping = array();
 
 	/**
+	 * @var \F3\FLOW3\Property\TypeConverterInterface
+	 */
+	protected $typeConverter = NULL;
+
+	/**
 	 * Set the parent PropertyMappingConfiguration. Only used internally!
 	 *
 	 * @param \F3\FLOW3\Property\PropertyMappingConfigurationInterface $parentConfiguration
@@ -205,14 +210,24 @@ class PropertyMappingConfiguration implements \F3\FLOW3\Property\PropertyMapping
 	}
 
 	/**
-	 * We do not want to use a specific typeConverter here, so we return NULL.
+	 * Return the type converter set for this configuration.
 	 *
 	 * @return \F3\FLOW3\Property\TypeConverterInterface
 	 * @api
-	 * @todo: Implement a setTypeConverter method, and then implement this method.
 	 */
 	public function getTypeConverter() {
-		return NULL;
+		return $this->typeConverter;
+	}
+
+	/**
+	 * Set a type converter which should be used for this specific conversion.
+	 *
+	 * @param \F3\FLOW3\Property\TypeConverterInterface $typeConverter
+	 * @return void
+	 * @api
+	 */
+	public function setTypeConverter(\F3\FLOW3\Property\TypeConverterInterface $typeConverter) {
+		$this->typeConverter = $typeConverter;
 	}
 }
 ?>

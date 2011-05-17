@@ -113,6 +113,16 @@ class PropertyMappingConfigurationTest extends \F3\FLOW3\Tests\UnitTestCase {
 	}
 
 	/**
+	 * @test
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function getTypeConverterReturnsTypeConverterIfItHasBeenSet() {
+		$mockTypeConverter = $this->getMock('F3\FLOW3\Property\TypeConverterInterface');
+		$this->propertyMappingConfiguration->setTypeConverter($mockTypeConverter);
+		$this->assertSame($mockTypeConverter, $this->propertyMappingConfiguration->getTypeConverter());
+	}
+
+	/**
 	 * @return \F3\FLOW3\Property\PropertyMappingConfiguration
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
