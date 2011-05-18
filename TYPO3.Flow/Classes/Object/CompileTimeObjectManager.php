@@ -299,7 +299,7 @@ class CompileTimeObjectManager extends ObjectManager {
 			} elseif (method_exists($object, $setterMethodName = 'set' . ucfirst($propertyName))) {
 				$object->$setterMethodName($value);
 			} else {
-				throw new Exception\UnresolvedDependenciesException('Could not inject configured property "' . $propertyName . '" into "' . $objectName . '" Because no injection method exists. Configuration source: ' . $this->objectConfigurations[$objectName]->getConfigurationSourceHint() . '.', 1297110953);
+				throw new Exception\UnresolvedDependenciesException('Could not inject configured property "' . $propertyName . '" into "' . $objectName . '" because no injection method exists, but for compile time use this is required. Configuration source: ' . $this->objectConfigurations[$objectName]->getConfigurationSourceHint() . '.', 1297110953);
 			}
 		}
 
