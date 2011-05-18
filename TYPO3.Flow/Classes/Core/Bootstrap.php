@@ -295,8 +295,7 @@ class Bootstrap {
 				$this->objectManager->get('F3\FLOW3\MVC\Dispatcher')->dispatch($request, $response);
 				$response->send();
 
-					// FIXME: This will be replaced by a signal / slot:
-				$this->objectManager->get('F3\FLOW3\Persistence\PersistenceManagerInterface')->persistAll();
+				$this->emitDispatchedCommandLineSlaveRequest();
 			}
 			echo "\nREADY\n";
 		}
@@ -716,6 +715,16 @@ class Bootstrap {
 	 */
 	protected function emitFinishedRuntimeRun() {
 		$this->signalSlotDispatcher->dispatch(__CLASS__, 'finishedRuntimeRun', array());
+	}
+
+	/**
+	 * Emits a signal that a CLI slave request was dispatched.
+	 *
+	 * @return void
+	 * @signal
+	 */
+	protected function emitDispatchedCommandLineSlaveRequest() {
+		$this->signalSlotDispatcher->dispatch(__CLASS__, 'dispatchedCommandLineSlaveRequest', array());
 	}
 
 	/**

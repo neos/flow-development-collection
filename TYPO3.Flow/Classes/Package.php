@@ -46,6 +46,7 @@ class Package extends BasePackage {
 
 		$dispatcher = $bootstrap->getSignalSlotDispatcher();
 		$dispatcher->connect('F3\FLOW3\Core\Bootstrap', 'finishedRuntimeRun', 'F3\FLOW3\Persistence\PersistenceManagerInterface', 'persistAll');
+		$dispatcher->connect('F3\FLOW3\Core\Bootstrap', 'dispatchedCommandLineSlaveRequest', 'F3\FLOW3\Persistence\PersistenceManagerInterface', 'persistAll');
 		$dispatcher->connect('F3\FLOW3\Core\Bootstrap', 'bootstrapShuttingDown', 'F3\FLOW3\Configuration\ConfigurationManager', 'shutdown');
 		$dispatcher->connect('F3\FLOW3\Core\Bootstrap', 'bootstrapShuttingDown', 'F3\FLOW3\Object\ObjectManagerInterface', 'shutdown');
 		$dispatcher->connect('F3\FLOW3\Core\Bootstrap', 'bootstrapShuttingDown', 'F3\FLOW3\Reflection\ReflectionService', 'saveToCache');
