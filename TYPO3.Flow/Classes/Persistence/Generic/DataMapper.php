@@ -130,7 +130,7 @@ class DataMapper {
 				$dataMapper = $this;
 				$identifier = $objectData['identifier'];
 				$modelType = $classSchema->getModelType();
-				$object->FLOW3_Persistence_LazyLoadingObject_thawProperties = function () use ($persistenceManager, $persistenceSession, $dataMapper, $identifier, $object, $modelType) {
+				$object->FLOW3_Persistence_LazyLoadingObject_thawProperties = function ($object) use ($persistenceManager, $persistenceSession, $dataMapper, $identifier, $modelType) {
 					$objectData = $persistenceManager->getObjectDataByIdentifier($identifier);
 					$dataMapper->thawProperties($object, $identifier, $objectData);
 					if ($modelType === \F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY) {
