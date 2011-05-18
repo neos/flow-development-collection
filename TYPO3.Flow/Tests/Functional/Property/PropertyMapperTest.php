@@ -68,12 +68,14 @@ class PropertyMapperTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 	public function simpleObjectWithSimplePropertiesCanBeCreated() {
 		$source = array(
 			'name' => 'Christopher',
-			'size' => '187'
+			'size' => '187',
+			'signedCla' => TRUE
 		);
 
 		$result = $this->propertyMapper->convert($source, 'F3\FLOW3\Tests\Functional\Property\Fixtures\TestClass');
 		$this->assertSame('Christopher', $result->getName());
 		$this->assertSame(187, $result->getSize());
+		$this->assertSame(TRUE, $result->getSignedCla());
 	}
 
 }
