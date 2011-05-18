@@ -280,9 +280,9 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 */
 	public function equals($propertyName, $operand, $caseSensitive = TRUE) {
 		if ($operand === NULL) {
-			return $this->queryBuilder->getRootAlias() . '.' . $propertyName . ' IS NULL';
+			return $this->getPropertyNameWithAlias($propertyName) . ' IS NULL';
 		} else {
-			return $this->queryBuilder->expr()->eq($this->queryBuilder->getRootAlias() . '.' . $propertyName, $this->getParamNeedle($operand));
+			return $this->queryBuilder->expr()->eq($this->getPropertyNameWithAlias($propertyName), $this->getParamNeedle($operand));
 		}
 	}
 
@@ -300,7 +300,7 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 * @api
 	 */
 	public function like($propertyName, $operand, $caseSensitive = TRUE) {
-		return $this->queryBuilder->expr()->like($this->queryBuilder->getRootAlias() . '.' . $propertyName, $this->getParamNeedle($operand));
+		return $this->queryBuilder->expr()->like($this->getPropertyNameWithAlias($propertyName), $this->getParamNeedle($operand));
 	}
 
 	/**
@@ -316,7 +316,7 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 * @api
 	 */
 	public function contains($propertyName, $operand) {
-		return '(' . $this->getParamNeedle($operand) . ' MEMBER OF ' . $this->queryBuilder->getRootAlias() . '.' . $propertyName . ')';
+		return '(' . $this->getParamNeedle($operand) . ' MEMBER OF ' . $this->getPropertyNameWithAlias($propertyName) . ')';
 	}
 
 	/**
@@ -329,7 +329,7 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 * @api
 	 */
 	public function isEmpty($propertyName) {
-		return '(' . $this->queryBuilder->getRootAlias() . '.' . $propertyName . ' IS EMPTY)';
+		return '(' . $this->getPropertyNameWithAlias($propertyName) . ' IS EMPTY)';
 	}
 
 	/**
@@ -345,7 +345,7 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	public function in($propertyName, $operand) {
 		// Take care: In cannot be needled at the moment! DQL escapes it, but only as literals, making caching a bit harder.
 		// This is a todo for Doctrine 2.1
-		return $this->queryBuilder->expr()->in($this->queryBuilder->getRootAlias() . '.' . $propertyName, $operand);
+		return $this->queryBuilder->expr()->in($this->getPropertyNameWithAlias($propertyName), $operand);
 	}
 
 	/**
@@ -358,7 +358,7 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 * @api
 	 */
 	public function lessThan($propertyName, $operand) {
-		return $this->queryBuilder->expr()->lt($this->queryBuilder->getRootAlias() . '.' . $propertyName, $this->getParamNeedle($operand));
+		return $this->queryBuilder->expr()->lt($this->getPropertyNameWithAlias($propertyName), $this->getParamNeedle($operand));
 	}
 
 	/**
@@ -371,7 +371,7 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 * @api
 	 */
 	public function lessThanOrEqual($propertyName, $operand) {
-		return $this->queryBuilder->expr()->lte($this->queryBuilder->getRootAlias() . '.' . $propertyName, $this->getParamNeedle($operand));
+		return $this->queryBuilder->expr()->lte($this->getPropertyNameWithAlias($propertyName), $this->getParamNeedle($operand));
 	}
 
 	/**
@@ -384,7 +384,7 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 * @api
 	 */
 	public function greaterThan($propertyName, $operand) {
-		return $this->queryBuilder->expr()->gt($this->queryBuilder->getRootAlias() . '.' . $propertyName, $this->getParamNeedle($operand));
+		return $this->queryBuilder->expr()->gt($this->getPropertyNameWithAlias($propertyName), $this->getParamNeedle($operand));
 	}
 
 	/**
@@ -397,7 +397,7 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 * @api
 	 */
 	public function greaterThanOrEqual($propertyName, $operand) {
-		return $this->queryBuilder->expr()->gte($this->queryBuilder->getRootAlias() . '.' . $propertyName, $this->getParamNeedle($operand));
+		return $this->queryBuilder->expr()->gte($this->getPropertyNameWithAlias($propertyName), $this->getParamNeedle($operand));
 	}
 
 	/**
@@ -410,5 +410,29 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 		$index = $this->parameterIndex++;
 		$this->queryBuilder->setParameter($index, $operand);
 		return '?' . $index;
+	}
+
+	/**
+	 * Adds left join clauses along the given property path to the query, if needed.
+	 * This enables us to set conditions on related objects.
+	 *
+	 * @param string $propertyPath The path to a sub property, e.g. property.subProperty.foo, or a simple property name
+	 * @return string The last part of the property name prefixed by the used join alias, if joins have been added
+	 */
+	protected function getPropertyNameWithAlias($propertyPath) {
+		if (strpos($propertyPath, '.') === FALSE) {
+			return $this->queryBuilder->getRootAlias() . '.' . $propertyPath;
+		}
+
+		$propertyPathParts = explode('.', $propertyPath);
+		$conditionPartsCount = count($propertyPathParts);
+		$previousJoinAlias = $this->queryBuilder->getRootAlias();
+		for ($i = 0; $i < $conditionPartsCount - 1; $i++) {
+			$joinAlias = uniqid($propertyPathParts[$i]);
+			$this->queryBuilder->leftJoin($previousJoinAlias . '.' . $propertyPathParts[$i], $joinAlias);
+			$previousJoinAlias = $joinAlias;
+		}
+
+		return $previousJoinAlias . '.' . $propertyPathParts[$i];
 	}
 }
