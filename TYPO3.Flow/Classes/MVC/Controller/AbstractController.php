@@ -235,17 +235,12 @@ abstract class AbstractController implements ControllerInterface {
 	 * @api
 	 */
 	protected function forward($actionName, $controllerName = NULL, $packageKey = NULL, array $arguments = array()) {
-		$originalRequest = clone $this->request;
-
 		$this->request->setDispatched(FALSE);
 		$this->request->setControllerActionName($actionName);
 		if ($controllerName !== NULL) $this->request->setControllerName($controllerName);
 		if ($packageKey !== NULL) $this->request->setControllerPackageKey($packageKey);
 		$arguments = $this->persistenceManager->convertObjectsToIdentityArrays($arguments);
 		$this->request->setArguments($arguments);
-
-		$this->request->setOriginalRequest($originalRequest);
-		$this->request->setOriginalRequestMappingResults($this->arguments->getValidationResults());
 
 		$this->arguments->removeAll();
 		throw new \F3\FLOW3\MVC\Exception\StopActionException();

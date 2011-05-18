@@ -434,6 +434,10 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 
 		$referringRequest = $this->request->getReferringRequest();
 		if ($referringRequest !== NULL) {
+			$originalRequest = clone $this->request;
+			$this->request->setOriginalRequest($originalRequest);
+			$this->request->setOriginalRequestMappingResults($this->arguments->getValidationResults());
+
 			$this->forward($referringRequest->getControllerActionName(), $referringRequest->getControllerName(), $referringRequest->getControllerPackageKey(), $referringRequest->getArguments());
 		}
 
