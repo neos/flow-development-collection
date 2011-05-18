@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Tests\Functional\Property\Fixtures;
+namespace F3\FLOW3\Property\TypeConverter;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,71 +23,41 @@ namespace F3\FLOW3\Tests\Functional\Property\Fixtures;
  *                                                                        */
 
 /**
- * A simple class for PropertyMapper test
+ * Converter which transforms a boolean to a boolean, so this is actually a "passthrough" converter.
  *
- * @scope prototype
+ * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @api
+ * @scope singleton
  */
-class TestClass {
+class BooleanToBooleanConverter extends \F3\FLOW3\Property\TypeConverter\AbstractTypeConverter {
+
+	/**
+	 * @var array<string>
+	 */
+	protected $sourceTypes = array('boolean');
 
 	/**
 	 * @var string
 	 */
-	protected $name;
+	protected $targetType = 'boolean';
 
 	/**
 	 * @var integer
 	 */
-	protected $size;
+	protected $priority = 1;
 
 	/**
-	 * @var boolean
-	 */
-	protected $signedCla;
-
-	/**
-	 * @return string
-	 */
-	public function getName() {
-		return $this->name;
-	}
-
-	/**
-	 * @param string $name
-	 * @return void
-	 */
-	public function setName($name) {
-		$this->name = $name;
-	}
-
-	/**
-	 * @return integer
-	 */
-	public function getSize() {
-		return $this->size;
-	}
-
-	/**
-	 * @param integer $size
-	 * @return void
-	 */
-	public function setSize($size) {
-		$this->size = $size;
-	}
-
-	/**
+	 * Actually convert from $source to $targetType
+	 *
+	 * @param string $source
+	 * @param string $targetType
+	 * @param array $subProperties
+	 * @param \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
 	 * @return boolean
+	 * @api
 	 */
-	public function getSignedCla() {
-		return $this->signedCla;
+	public function convertFrom($source, $targetType, array $subProperties = array(), \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
+		return $source;
 	}
-
-	/**
-	 * @param boolean $signedCla
-	 * @return void
-	 */
-	public function setSignedCla($signedCla) {
-		$this->signedCla = $signedCla;
-	}
-
 }
 ?>
