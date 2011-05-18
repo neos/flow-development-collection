@@ -233,15 +233,19 @@ class ProxyClassBuilder {
 			} else {
 				\$className = \\F3\\FLOW3\\Core\\Bootstrap::\$staticObjectManager->getObjectNameByClassName(get_class(\$this->\$propertyName));
 			}
-			if (\$this->\$propertyName instanceof \\F3\\FLOW3\\Persistence\\Aspect\\PersistenceMagicInterface && !\\F3\\FLOW3\\Core\\Bootstrap::\$staticObjectManager->get('F3\\FLOW3\\Persistence\\PersistenceManagerInterface')->isNewObject(\$this->\$propertyName)) {
+			if (\$this->\$propertyName instanceof \\F3\\FLOW3\\Persistence\\Aspect\\PersistenceMagicInterface && !\\F3\\FLOW3\\Core\\Bootstrap::\$staticObjectManager->get('F3\\FLOW3\\Persistence\\PersistenceManagerInterface')->isNewObject(\$this->\$propertyName) || \$this->\$propertyName instanceof \\Doctrine\\ORM\\Proxy\\Proxy) {
 				if (!property_exists(\$this, 'FLOW3_Persistence_RelatedEntities') || !is_array(\$this->FLOW3_Persistence_RelatedEntities)) {
 					\$this->FLOW3_Persistence_RelatedEntities = array();
 					\$result[] = 'FLOW3_Persistence_RelatedEntities';
 				}
+				\$identifier = \\F3\\FLOW3\\Core\\Bootstrap::\$staticObjectManager->get('F3\\FLOW3\\Persistence\\PersistenceManagerInterface')->getIdentifierByObject(\$this->\$propertyName);
+				if (!\$identifier && \$this->\$propertyName instanceof \\Doctrine\\ORM\\Proxy\\Proxy) {
+					\$identifier = current(\\F3\\FLOW3\\Reflection\\ObjectAccess::getProperty(\$this->\$propertyName, '_identifier', TRUE));
+				}
 				\$this->FLOW3_Persistence_RelatedEntities[] = array(
 					'propertyName' => \$propertyName,
 					'entityType' => \$className,
-					'identifier' => \\F3\\FLOW3\\Core\\Bootstrap::\$staticObjectManager->get('F3\\FLOW3\\Persistence\\PersistenceManagerInterface')->getIdentifierByObject(\$this->\$propertyName)
+					'identifier' => \$identifier
 				);
 				continue;
 			}
