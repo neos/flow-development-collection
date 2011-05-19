@@ -33,19 +33,16 @@ use \F3\FLOW3\MVC\CLI\Command;
 class HelpCommandController extends \F3\FLOW3\MVC\Controller\CommandController {
 
 	/**
-	 * @inject
 	 * @var \F3\FLOW3\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
 	/**
-	 * @inject
 	 * @var \F3\FLOW3\Package\PackageManagerInterface
 	 */
 	protected $packageManager;
 
 	/**
-	 * @inject
 	 * @var \F3\FLOW3\Core\Bootstrap
 	 */
 	protected $bootstrap;
@@ -54,6 +51,30 @@ class HelpCommandController extends \F3\FLOW3\MVC\Controller\CommandController {
 	 * @var array
 	 */
 	protected $commandsByPackagesAndControllers = array();
+
+	/**
+	 * @param \F3\FLOW3\Reflection\ReflectionService $reflectionService
+	 * @return void
+	 */
+	public function injectReflectionService(\F3\FLOW3\Reflection\ReflectionService $reflectionService) {
+		$this->reflectionService = $reflectionService;
+	}
+
+	/**
+	 * @param \F3\FLOW3\Package\PackageManagerInterface $packageManager
+	 * @return void
+	 */
+	public function injectPackageManager(\F3\FLOW3\Package\PackageManagerInterface $packageManager) {
+		$this->packageManager = $packageManager;
+	}
+
+	/**
+	 * @param \F3\FLOW3\Core\Bootstrap $bootstrap
+	 * @return void
+	 */
+	public function injectBootstrap(\F3\FLOW3\Core\Bootstrap $bootstrap) {
+		$this->bootstrap = $bootstrap;
+	}
 
 	/**
 	 * Display help for a command
