@@ -30,19 +30,39 @@ namespace F3\FLOW3\Security\Cryptography;
  */
 interface RsaWalletServiceInterface {
 
-
 	/**
 	 * Generates a new keypair and returns a UUID to refer to it
 	 *
-	 * @param boolean $usedForPasswords TRUE if this keypair should be used to decrypt passwords. (Decryption won't be allowed!)
+	 * @param boolean $usedForPasswords TRUE if this keypair should be used to encrypt passwords (then decryption won't be allowed!).
 	 * @return integer An UUID that identifies the generated keypair
 	 */
 	public function generateNewKeypair($usedForPasswords);
 
 	/**
+	 * Adds the specified keypair to the local store and returns a UUID to refer to it.
+	 *
+	 * @param string $privateKeyString The private key in its string representation
+	 * @param boolean $usedForPasswords TRUE if this keypair should be used to encrypt passwords (then decryption won't be allowed!).
+	 * @return string The UUID used for storing
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function registerKeyPairFromPrivateKeyString($privateKeyString, $usedForPasswords = FALSE);
+
+	/**
+	 * Adds the specified public key to the wallet and returns a UUID to refer to it.
+	 * This is helpful if you have not private key and want to use this key only to
+	 * verify incoming data.
+	 *
+	 * @param string $publicKeyString The public key in its string representation
+	 * @return string The UUID used for storing
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function registerPublicKeyFromString($publicKeyString);
+
+	/**
 	 * Returns the public key for the given UUID
 	 *
-	 * @param UUID $uuid The UUID
+	 * @param string $uuid The UUID
 	 * @return F3\FLOW3\Security\Cryptography\RSAKey The public key
 	 * @throws F3\FLOW3\Security\Exception\InvalidKeyPairIdException If the given UUID identifies no valid key pair
 	 */
@@ -54,7 +74,7 @@ interface RsaWalletServiceInterface {
 	 * to check passwords!
 	 *
 	 * @param string $cypher Cypher text to decrypt
-	 * @param UUID $uuid The uuid to identify to correct private key
+	 * @param string $uuid The uuid to identify to correct private key
 	 * @return string The decrypted text
 	 * @throws F3\FLOW3\Security\Exception\InvalidKeyPairIdException If the given UUID identifies no valid keypair
 	 * @throws F3\FLOW3\Security\Exception\DecryptionNotAllowedException If the given UUID identifies a keypair for encrypted passwords
@@ -62,10 +82,31 @@ interface RsaWalletServiceInterface {
 	public function decrypt($cypher, $uuid);
 
 	/**
+	 * Signs the given plaintext with the private key identified by the given UUID
+	 *
+	 * @param string $plaintext The plaintext to sign
+	 * @param string $uuid The uuid to identify to correct private key
+	 * @return string The signature of the given plaintext
+	 * @throws F3\FLOW3\Security\Exception\InvalidKeyPairIdException If the given UUID identifies no valid keypair
+	 */
+	public function sign($plaintext, $uuid);
+
+	/**
+	 * Checks whether the given signature is valid for the given plaintext
+	 * with the public key identified by the given UUID
+	 *
+	 * @param string $plaintext The plaintext to sign
+	 * @param string $signature The signature that should be verified
+	 * @param string $uuid The uuid to identify to correct public key
+	 * @return boolean TRUE if the signature is correct for the given plaintext and public key
+	 */
+	public function verifySignature($plaintext, $signature, $uuid);
+
+	/**
 	 * Encrypts the given plaintext with the public key identified by the given UUID
 	 *
 	 * @param string $plaintext The plaintext to encrypt
-	 * @param UUID $uuid The uuid to identify to correct public key
+	 * @param string $uuid The uuid to identify to correct public key
 	 * @return string The ciphertext
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
@@ -78,7 +119,7 @@ interface RsaWalletServiceInterface {
 	 * @param string $encryptedPassword The received, RSA encrypted password to check
 	 * @param string $passwordHash The md5 hashed password string (md5(md5(password) . salt))
 	 * @param string $salt The salt used in the md5 password hash
-	 * @param UUID $uuid The uuid to identify to correct private key
+	 * @param string $uuid The uuid to identify to correct private key
 	 * @return boolean TRUE if the password is correct
 	 */
 	public function checkRSAEncryptedPassword($encryptedPassword, $passwordHash, $salt, $uuid);
@@ -86,7 +127,7 @@ interface RsaWalletServiceInterface {
 	/**
 	 * Destroys the keypair identified by the given UUID
 	 *
-	 * @param UUID $uuid The UUID
+	 * @param string $uuid The UUID
 	 * @return void
 	 * @throws F3\FLOW3\Security\Exception\InvalidKeyPairIdException If the given UUID identifies no valid key pair
 	 */

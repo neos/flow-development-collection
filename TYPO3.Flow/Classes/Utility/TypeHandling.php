@@ -117,5 +117,21 @@ class TypeHandling {
 	static public function isSimpleType($type) {
 		return in_array(self::normalizeType($type), array('array', 'string', 'float', 'integer', 'boolean'), TRUE);
 	}
+
+	/**
+	 * Converts a hex encoded string into binary data
+	 *
+	 * @static
+	 * @param string $data A hex encoded string of data
+	 * @return binary
+	 */
+	static public function hex2bin($data) {
+		$len = strlen($data);
+		$newdata='';
+		for($i=0;$i<$len;$i+=2) {
+			$newdata .=  pack("C",hexdec(substr($data,$i,2)));
+		}
+		return $newdata;
+	}
 }
 ?>
