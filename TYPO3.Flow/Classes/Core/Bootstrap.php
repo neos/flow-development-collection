@@ -364,16 +364,8 @@ class Bootstrap {
 		if ($objectConfigurationCache->has('allCompiledCodeUpToDate') === FALSE) {
 			throw new \F3\FLOW3\Exception('Could not load object configuration from cache. This might be due to an unsuccessful compile run. One reason might be, that your PHP binary is not located in "' . $this->settings['core']['phpBinaryPathAndFilename'] . '". In that case, set the correct path to the PHP executable in Configuration/Settings.yaml, setting FLOW3.core.phpBinaryPathAndFilename.', 1297263663);
 		}
-
 		if ($this->context !== 'Production') {
-			$coreCache = $this->cacheManager->getCache('FLOW3_Core');
-			if ($coreCache->has('doctrineSetupRunning') === FALSE) {
-				$coreCache->set('doctrineSetupRunning', 'White Russian', array(), 60);
-				$this->systemLogger->log('Updating Doctrine DB and proxies', LOG_DEBUG);
-				$this->executeCommand('flow3:doctrine:update');
-				$this->executeCommand('flow3:doctrine:compileproxies');
-				$coreCache->remove('doctrineSetupRunning');
-			}
+			$this->updateDoctrine();
 		}
 
 		$this->classLoader->injectClassesCache($this->cacheManager->getCache('FLOW3_Object_Classes'));
@@ -393,6 +385,20 @@ class Bootstrap {
 		$this->initializeI18n();
 
 		$this->emitBootstrapReady();
+	}
+
+	/**
+	 * @return void
+	 */
+	protected function updateDoctrine() {
+		$coreCache = $this->cacheManager->getCache('FLOW3_Core');
+		if ($coreCache->has('doctrineSetupRunning') === FALSE) {
+			$coreCache->set('doctrineSetupRunning', 'White Russian', array(), 60);
+			$this->systemLogger->log('Updating Doctrine DB', LOG_DEBUG);
+			$this->executeCommand('flow3:doctrine:update');
+			$this->executeCommand('flow3:doctrine:compileproxies');
+			$coreCache->remove('doctrineSetupRunning');
+		}
 	}
 
 	/**
