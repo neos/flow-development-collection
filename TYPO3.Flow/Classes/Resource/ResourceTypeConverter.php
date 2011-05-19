@@ -51,6 +51,12 @@ class ResourceTypeConverter extends \F3\FLOW3\Property\TypeConverter\AbstractTyp
 	protected $resourceManager;
 
 	/**
+	 * @inject
+	 * @var \F3\FLOW3\Persistence\PersistenceManagerInterface
+	 */
+	protected $persistenceManager;
+
+	/**
 	 * @var array
 	 */
 	protected $convertedResources = array();
@@ -79,8 +85,18 @@ class ResourceTypeConverter extends \F3\FLOW3\Property\TypeConverter\AbstractTyp
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function convertFrom($source, $targetType, array $subProperties = array(), \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
-
-		if ($source['error'] === \UPLOAD_ERR_NO_FILE) return NULL;
+		if ($source['error'] === \UPLOAD_ERR_NO_FILE) {
+			if (isset($source['submittedFile']) && isset($source['submittedFile']['fileName']) && isset($source['submittedFile']['resourcePointer'])) {
+				$resourcePointer = $this->persistenceManager->getObjectByIdentifier($source['submittedFile']['resourcePointer'], 'F3\FLOW3\Resource\ResourcePointer');
+				if ($resourcePointer) {
+					$resource = new Resource();
+					$resource->setFileName($source['submittedFile']['fileName']);
+					$resource->setResourcePointer($resourcePointer);
+					return $resource;
+				}
+			}
+			return NULL;
+		}
 
 		if ($source['error'] !== \UPLOAD_ERR_OK) return new \F3\FLOW3\Error\Error(\F3\FLOW3\Utility\Files::getUploadErrorMessage($source['error']) , 1264440823);
 
@@ -90,7 +106,7 @@ class ResourceTypeConverter extends \F3\FLOW3\Property\TypeConverter\AbstractTyp
 
 		$resource = $this->resourceManager->importUploadedResource($source);
 		if ($resource === FALSE) {
-			return new \F3\FLOW3\Error\Error('The resource manager could not create a ResourcePointer instance.' , 1264517906);
+			return new \F3\FLOW3\Error\Error('The resource manager could not create a Resource instance.' , 1264517906);
 		} else {
 			$this->convertedResources[$source['tmp_name']] = $resource;
 			return $resource;
