@@ -187,6 +187,14 @@ class PhpSession implements \F3\FLOW3\Session\SessionInterface {
 	public function destroy() {
 		if ($this->started !== TRUE) throw new \F3\FLOW3\Session\Exception\SessionNotStartedException('The session has not been started yet.', 1218043311);
 		try {
+			$cookieInfo = session_get_cookie_params();
+			if ((empty($cookieInfo['domain'])) && (empty($cookieInfo['secure']))) {
+				setcookie(session_name(), '', time() - 3600, $cookieInfo['path']);
+			} elseif (empty($cookieInfo['secure'])) {
+				setcookie(session_name(), '', time() - 3600, $cookieInfo['path'], $cookieInfo['domain']);
+			} else {
+				setcookie(session_name(), '', time() - 3600, $cookieInfo['path'], $cookieInfo['domain'], $cookieInfo['secure']);
+			}
 			session_destroy();
 		} catch (\Exception $exception) {
 			throw new \F3\FLOW3\Session\Exception('The PHP session handler issued an error: ' . $exception->getMessage() . ' in ' . $exception->getFile() . ' in line ' . $exception->getLine() . '.', 1218474912);
