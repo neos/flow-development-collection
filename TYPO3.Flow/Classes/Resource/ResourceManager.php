@@ -57,6 +57,11 @@ class ResourceManager {
 	protected $statusCache;
 
 	/**
+	 * @var \F3\FLOW3\Persistence\PersistenceManagerInterface
+	 */
+	protected $persistenceManager;
+
+	/**
 	 * @var array
 	 */
 	protected $settings;
@@ -72,7 +77,7 @@ class ResourceManager {
 	protected $importedResources;
 
 	/**
-	 * Injects the cache manager
+	 * Injects the object manager
 	 *
 	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
 	 * @return void
@@ -124,6 +129,16 @@ class ResourceManager {
 	 */
 	public function injectStatusCache(\F3\FLOW3\Cache\Frontend\StringFrontend $statusCache) {
 		$this->statusCache = $statusCache;
+	}
+
+	/**
+	 * Injects the persistence manager
+	 *
+	 * @param \F3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager
+	 * @return void
+	 */
+	public function injectPersistenceManager(\F3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager) {
+		$this->persistenceManager = $persistenceManager;
 	}
 
 	/**
@@ -191,9 +206,11 @@ class ResourceManager {
 			unlink($temporaryTargetPathAndFilename);
 			return FALSE;
 		}
-		$resource = $this->objectManager->create('F3\FLOW3\Resource\Resource');
+		$resource = new \F3\FLOW3\Resource\Resource();
 		$resource->setFilename($pathInfo['basename']);
-		$resource->setResourcePointer($this->objectManager->create('F3\FLOW3\Resource\ResourcePointer', $hash));
+
+		$resourcePointer = $this->getResourcePointerForHash($hash);
+		$resource->setResourcePointer($resourcePointer);
 		$this->importedResources[$resource] = array(
 			'originalFilename' => $pathInfo['basename']
 		);
@@ -243,13 +260,34 @@ class ResourceManager {
 		if (move_uploaded_file($uploadInfo['tmp_name'], $finalTargetPathAndFilename) === FALSE) {
 			return FALSE;
 		}
-		$resource = $this->objectManager->create('F3\FLOW3\Resource\Resource');
+		$resource = new \F3\FLOW3\Resource\Resource();
 		$resource->setFilename($pathInfo['basename']);
-		$resource->setResourcePointer($this->objectManager->create('F3\FLOW3\Resource\ResourcePointer', $hash));
+
+		$resourcePointer = $this->getResourcePointerForHash($hash);
+		$resource->setResourcePointer($resourcePointer);
 		$this->importedResources[$resource] = array(
 			'originalFilename' => $pathInfo['basename']
 		);
 		return $resource;
+	}
+
+	/**
+	 * Helper function which creates or fetches a resource pointer object for a given hash.
+	 *
+	 * If a ResourcePointer with the given hash exists, this one is used. Else, a new one
+	 * is created. This is a workaround for missing ValueObject support in Doctrine.
+	 *
+	 * @param string $hash
+	 * @return \F3\FLOW3\Resource\ResourcePointer
+	 */
+	protected function getResourcePointerForHash($hash) {
+		$resourcePointer = $this->persistenceManager->getObjectByIdentifier($hash, 'F3\FLOW3\Resource\ResourcePointer');
+		if (!$resourcePointer) {
+			$resourcePointer = new \F3\FLOW3\Resource\ResourcePointer($hash);
+			$this->persistenceManager->add($resourcePointer);
+		}
+
+		return $resourcePointer;
 	}
 
 	/**

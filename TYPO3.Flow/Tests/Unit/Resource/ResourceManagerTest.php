@@ -157,26 +157,21 @@ class ResourceManagerTest extends \F3\FLOW3\Tests\UnitTestCase {
 		mkdir('vfs://Foo/Persistent');
 		mkdir('vfs://Foo/Persistent/Resources');
 
-		$mockResourcePointer = $this->getMock('F3\FLOW3\Resource\ResourcePointer', array(), array(), '', FALSE);
-
-		$mockResource = $this->getMock('F3\FLOW3\Resource\Resource', array(), array(), '', FALSE);
-		$mockResource->expects($this->once())->method('setFilename')->with('SomeResource.txt');
-		$mockResource->expects($this->once())->method('setResourcePointer')->with($mockResourcePointer);
-
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->at(0))->method('create')->with('F3\FLOW3\Resource\Resource')->will($this->returnValue($mockResource));
-		$mockObjectManager->expects($this->at(1))->method('create')->with('F3\FLOW3\Resource\ResourcePointer', $hash)->will($this->returnValue($mockResourcePointer));
 		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
 		$mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue('vfs://Foo/Temporary/'));
 
 		$resourceManager = $this->getAccessibleMock('\F3\FLOW3\Resource\ResourceManager', array('dummy'), array(), '', FALSE);
 		$resourceManager->_set('persistentResourcesStorageBaseUri', 'vfs://Foo/Persistent/Resources/');
 		$resourceManager->_set('importedResources', new \SplObjectStorage());
-		$resourceManager->injectObjectManager($mockObjectManager);
 		$resourceManager->injectEnvironment($mockEnvironment);
 
+		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\PersistenceManagerInterface');
+		$resourceManager->injectPersistenceManager($mockPersistenceManager);
+
 		$actualResource = $resourceManager->importResource('vfs://Foo/SomeResource.txt');
-		$this->assertSame($mockResource, $actualResource);
+		$this->assertEquals('SomeResource.txt', $actualResource->getFileName());
+		$this->assertEquals($hash, $actualResource->getResourcePointer()->getHash());
+
 		$this->assertFileEquals('vfs://Foo/SomeResource.txt', 'vfs://Foo/Persistent/Resources/' . $hash);
 	}
 
@@ -192,28 +187,22 @@ class ResourceManagerTest extends \F3\FLOW3\Tests\UnitTestCase {
 		mkdir('vfs://Foo/Persistent');
 		mkdir('vfs://Foo/Persistent/Resources');
 
-		$mockResourcePointer = $this->getMock('F3\FLOW3\Resource\ResourcePointer', array(), array(), '', FALSE);
-
-		$mockResource = $this->getMock('F3\FLOW3\Resource\Resource', array(), array(), '', FALSE);
-		$mockResource->expects($this->once())->method('setFilename')->with('SomeResource.txt');
-		$mockResource->expects($this->once())->method('setResourcePointer')->with($mockResourcePointer);
-
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->at(0))->method('create')->with('F3\FLOW3\Resource\Resource')->will($this->returnValue($mockResource));
-		$mockObjectManager->expects($this->at(1))->method('create')->with('F3\FLOW3\Resource\ResourcePointer', $hash)->will($this->returnValue($mockResourcePointer));
 		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
 		$mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue('vfs://Foo/Temporary/'));
 
 		$resourceManager = $this->getAccessibleMock('\F3\FLOW3\Resource\ResourceManager', array('dummy'), array(), '', FALSE);
 		$resourceManager->_set('persistentResourcesStorageBaseUri', 'vfs://Foo/Persistent/Resources/');
 		$resourceManager->_set('importedResources', new \SplObjectStorage());
-		$resourceManager->injectObjectManager($mockObjectManager);
 		$resourceManager->injectEnvironment($mockEnvironment);
+
+		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\PersistenceManagerInterface');
+		$resourceManager->injectPersistenceManager($mockPersistenceManager);
 
 		$resourceManager->importResource('vfs://Foo/SomeResource.txt');
 		$importedResources = $resourceManager->getImportedResources();
-
-		$this->assertSame('SomeResource.txt', $importedResources[$mockResource]['originalFilename']);
+		foreach ($importedResources as $importedResource) {
+			$this->assertSame('SomeResource.txt', $importedResources[$importedResource]['originalFilename']);
+		}
 	}
 }
 
