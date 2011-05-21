@@ -48,14 +48,14 @@ class Resource {
 	 * @validate StringLength(maximum = 100)
 	 * @identity
 	 */
-	protected $filename;
+	protected $filename = '';
 
 	/**
 	 * @var string
 	 * @validate StringLength(maximum = 100)
 	 * @identity
 	 */
-	protected $fileExtension;
+	protected $fileExtension = '';
 
 	/**
 	 * Sets the filename
@@ -63,11 +63,19 @@ class Resource {
 	 * @param string $filename
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setFileName($filename) {
-		$this->filename = $filename;
 		$pathInfo = pathinfo($filename);
-		$this->fileExtension = strtolower($pathInfo['extension']);
+		if (isset($pathInfo['extension'])) {
+			$this->fileExtension = strtolower($pathInfo['extension']);
+		} else {
+			$this->fileExtension = '';
+		}
+		$this->filename = $pathInfo['filename'];
+		if ($this->fileExtension !== '') {
+			$this->filename .= '.' . $this->fileExtension;
+		}
 	}
 
 	/**

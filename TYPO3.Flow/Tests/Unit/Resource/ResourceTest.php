@@ -32,11 +32,24 @@ class ResourceTest extends \F3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setFilenameStoresTheFileExtensionInLowerCase() {
 		$resource = new \F3\FLOW3\Resource\Resource();
 		$resource->setFilename('Something.Jpeg');
 		$this->assertSame('jpeg', $resource->getFileExtension());
+		$this->assertSame('Something.jpeg', $resource->getFileName());
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function setFilenameDoesNotAppendFileExtensionIfItIsEmpty() {
+		$resource = new \F3\FLOW3\Resource\Resource();
+		$resource->setFilename('FileWithoutExtension');
+		$this->assertSame('', $resource->getFileExtension());
+		$this->assertSame('FileWithoutExtension', $resource->getFileName());
 	}
 
 	/**
