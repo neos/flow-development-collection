@@ -364,7 +364,10 @@ class Bootstrap {
 		if ($objectConfigurationCache->has('allCompiledCodeUpToDate') === FALSE) {
 			throw new \F3\FLOW3\Exception('Could not load object configuration from cache. This might be due to an unsuccessful compile run. One reason might be, that your PHP binary is not located in "' . $this->settings['core']['phpBinaryPathAndFilename'] . '". In that case, set the correct path to the PHP executable in Configuration/Settings.yaml, setting FLOW3.core.phpBinaryPathAndFilename.', 1297263663);
 		}
-		if ($this->context !== 'Production') {
+
+		$allSettings = $this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS);
+
+		if (isset($allSettings['FLOW3']['persistence']['doctrine']['autoUpdate']) && $allSettings['FLOW3']['persistence']['doctrine']['autoUpdate'] === TRUE) {
 			$this->updateDoctrine();
 		}
 
@@ -373,7 +376,7 @@ class Bootstrap {
 
 		$this->objectManager = new \F3\FLOW3\Object\ObjectManager($this->context);
 		self::$staticObjectManager = $this->objectManager;
-		$this->objectManager->injectAllSettings($this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS));
+		$this->objectManager->injectAllSettings($allSettings);
 		$this->objectManager->setObjects($objectConfigurationCache->get('objects'));
 
 		$this->setInstancesOfEarlyServices();

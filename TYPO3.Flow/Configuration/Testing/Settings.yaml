@@ -33,6 +33,8 @@ FLOW3:
       path: ':memory:'
       username: null
       password: null
+    doctrine:
+      autoUpdate: y
 
   security:
     authentication:

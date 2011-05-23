@@ -127,6 +127,7 @@ FLOW3:
       sqlLogger: null
       dbal:
         sessionInitialization: ''
+      autoUpdate: n
 
   reflection:
 
