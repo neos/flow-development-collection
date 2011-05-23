@@ -55,7 +55,7 @@ class LazyLoadingObjectAspect {
 	public function initialize(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$proxy = $joinPoint->getProxy();
 		if (property_exists($proxy, 'FLOW3_Persistence_LazyLoadingObject_thawProperties') && $proxy->FLOW3_Persistence_LazyLoadingObject_thawProperties instanceof \Closure) {
-			$proxy->FLOW3_Persistence_LazyLoadingObject_thawProperties->__invoke();
+			$proxy->FLOW3_Persistence_LazyLoadingObject_thawProperties->__invoke($proxy);
 			unset($proxy->FLOW3_Persistence_LazyLoadingObject_thawProperties);
 		}
 	}
