@@ -181,6 +181,10 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \F3\
 				} else {
 					$discriminatorMap = array();
 					$subclassNames = $this->reflectionService->getAllSubClassNamesForClass($className);
+					if (!$this->reflectionService->isClassAbstract($className)) {
+						$mappedClassName = strtolower(str_replace('Domain_Model_', '', str_replace('\\', '_', $className)));
+						$discriminatorMap[$mappedClassName] = $className;
+					}
 					foreach ($subclassNames as $subclassName) {
 						$mappedSubclassName = strtolower(str_replace('Domain_Model_', '', str_replace('\\', '_', $subclassName)));
 						$discriminatorMap[$mappedSubclassName] = $subclassName;
