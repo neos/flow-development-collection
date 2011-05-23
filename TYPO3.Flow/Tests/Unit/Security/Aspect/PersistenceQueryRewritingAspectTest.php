@@ -442,22 +442,19 @@ class PersistenceQueryRewritingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function checkAccessAfterFetchingAnObjectByIdentifierChecksTheConstraintsGivenByThePolicyServiceForTheReturnedObjectArray() {
-		$queryResult = array(
-			'identifier' => '123',
-			'classname' => 'MyClass',
-			'properties' => array()
-		);
-
-		$mockQuery = $this->getMock('F3\FLOW3\Persistence\QueryInterface');
-		$mockQuery->expects($this->any())->method('getType')->will($this->returnValue('MyClass'));
+	public function checkAccessAfterFetchingAnObjectByIdentifierChecksTheConstraintsGivenByThePolicyServiceForTheReturnedObject() {
+		$entityClassName = 'entityClass' . md5(uniqid(mt_rand(), TRUE));
+		eval('class ' . $entityClassName . ' implements \F3\FLOW3\Object\Proxy\ProxyInterface {
+			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
+			public function __clone() {}
+		}');
+		$result = new $entityClassName();
 
 		$mockAdviceChain = $this->getMock('F3\FLOW3\AOP\Advice\AdviceChain', array(), array(), '', FALSE);
-		$mockAdviceChain->expects($this->any())->method('proceed')->will($this->returnValue($queryResult));
+		$mockAdviceChain->expects($this->any())->method('proceed')->will($this->returnValue($result));
 
 		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface');
 		$mockJoinPoint->expects($this->any())->method('getAdviceChain')->will($this->returnValue($mockAdviceChain));
-		$mockJoinPoint->expects($this->any())->method('getProxy')->will($this->returnValue($mockQuery));
 
 		$roles = array('role1', 'role2');
 
@@ -468,17 +465,17 @@ class PersistenceQueryRewritingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockObjectManager->expects($this->once())->method('get')->with('F3\FLOW3\Security\Context')->will($this->returnValue($mockSecurityContext));
 
 		$mockPolicyService = $this->getMock('F3\FLOW3\Security\Policy\PolicyService', array(), array(), '', FALSE);
-		$mockPolicyService->expects($this->any())->method('getResourcesConstraintsForEntityTypeAndRoles')->with('MyClass', $roles)->will($this->returnValue(array('parsedConstraints')));
-		$mockPolicyService->expects($this->any())->method('hasPolicyEntryForEntityType')->with('MyClass')->will($this->returnValue(TRUE));
+		$mockPolicyService->expects($this->any())->method('getResourcesConstraintsForEntityTypeAndRoles')->with($entityClassName, $roles)->will($this->returnValue(array('parsedConstraints')));
+		$mockPolicyService->expects($this->any())->method('hasPolicyEntryForEntityType')->with($entityClassName)->will($this->returnValue(TRUE));
 
-		$rewritingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('checkConstraintDefinitionsOnResultArray'), array(), '', FALSE);
-		$rewritingAspect->expects($this->at(0))->method('checkConstraintDefinitionsOnResultArray')->with(array('parsedConstraints'), $queryResult)->will($this->returnValue(TRUE));
-		$rewritingAspect->expects($this->at(1))->method('checkConstraintDefinitionsOnResultArray')->with(array('parsedConstraints'), $queryResult)->will($this->returnValue(FALSE));
+		$rewritingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('checkConstraintDefinitionsOnResultObject'), array(), '', FALSE);
+		$rewritingAspect->expects($this->at(0))->method('checkConstraintDefinitionsOnResultObject')->with(array('parsedConstraints'), $result)->will($this->returnValue(TRUE));
+		$rewritingAspect->expects($this->at(1))->method('checkConstraintDefinitionsOnResultObject')->with(array('parsedConstraints'), $result)->will($this->returnValue(FALSE));
 		$rewritingAspect->injectPolicyService($mockPolicyService);
 		$rewritingAspect->injectObjectManager($mockObjectManager);
 
-		$this->assertEquals($queryResult, $rewritingAspect->checkAccessAfterFetchingAnObjectByIdentifier($mockJoinPoint));
-		$this->assertEquals(array(), $rewritingAspect->checkAccessAfterFetchingAnObjectByIdentifier($mockJoinPoint));
+		$this->assertEquals($result, $rewritingAspect->checkAccessAfterFetchingAnObjectByIdentifier($mockJoinPoint));
+		$this->assertEquals(NULL, $rewritingAspect->checkAccessAfterFetchingAnObjectByIdentifier($mockJoinPoint));
 	}
 
 	/**
@@ -486,21 +483,14 @@ class PersistenceQueryRewritingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function checkAccessAfterFetchingAnObjectByIdentifierFetchesTheSecurityContextOnTheFirstCallToBeSureTheSessionHasAlreadyBeenInitializedWhenTheContextIsBuilt() {
-		$queryResult = array(
-			'identifier' => '123',
-			'classname' => 'MyClass',
-			'properties' => array()
-		);
-
 		$mockQuery = $this->getMock('F3\FLOW3\Persistence\QueryInterface');
 		$mockQuery->expects($this->any())->method('getType')->will($this->returnValue('MyClass'));
 
 		$mockAdviceChain = $this->getMock('F3\FLOW3\AOP\Advice\AdviceChain', array(), array(), '', FALSE);
-		$mockAdviceChain->expects($this->any())->method('proceed')->will($this->returnValue($queryResult));
+		$mockAdviceChain->expects($this->any())->method('proceed')->will($this->returnValue(NULL));
 
 		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface');
 		$mockJoinPoint->expects($this->any())->method('getAdviceChain')->will($this->returnValue($mockAdviceChain));
-		$mockJoinPoint->expects($this->any())->method('getProxy')->will($this->returnValue($mockQuery));
 
 		$mockSecurityContext = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
 		$mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue(array()));
@@ -523,7 +513,7 @@ class PersistenceQueryRewritingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function checkConstraintDefinitionsOnResultArrayBasicallyWorks() {
+	public function checkConstraintDefinitionsOnResultObjectBasicallyWorks() {
 		$parsedConstraints = array(
 			'resource' => array(
 				'&&' => array(
@@ -547,29 +537,27 @@ class PersistenceQueryRewritingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 			)
 		);
 
-		$rewritingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('checkSingleConstraintDefinitionOnResultArray'), array(), '', FALSE);
-		$rewritingAspect->expects($this->at(0))->method('checkSingleConstraintDefinitionOnResultArray')->with(array('firstConstraint'), array())->will($this->returnValue(FALSE));
-		$rewritingAspect->expects($this->at(1))->method('checkSingleConstraintDefinitionOnResultArray')->with(array('thirdConstraint'), array())->will($this->returnValue(FALSE));
-		$rewritingAspect->expects($this->at(2))->method('checkSingleConstraintDefinitionOnResultArray')->with(array('fourthConstraint'), array())->will($this->returnValue(TRUE));
-		$rewritingAspect->expects($this->at(3))->method('checkSingleConstraintDefinitionOnResultArray')->with(array('secondConstraint'), array())->will($this->returnValue(TRUE));
-		$rewritingAspect->expects($this->at(4))->method('checkSingleConstraintDefinitionOnResultArray')->with(array('fifthConstraint'), array())->will($this->returnValue(FALSE));
-		$rewritingAspect->expects($this->at(5))->method('checkSingleConstraintDefinitionOnResultArray')->with(array('sixthConstraint'), array())->will($this->returnValue(FALSE));
+		$rewritingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('checkSingleConstraintDefinitionOnResultObject'), array(), '', FALSE);
+		$rewritingAspect->expects($this->at(0))->method('checkSingleConstraintDefinitionOnResultObject')->with(array('firstConstraint'), array())->will($this->returnValue(FALSE));
+		$rewritingAspect->expects($this->at(1))->method('checkSingleConstraintDefinitionOnResultObject')->with(array('thirdConstraint'), array())->will($this->returnValue(FALSE));
+		$rewritingAspect->expects($this->at(2))->method('checkSingleConstraintDefinitionOnResultObject')->with(array('fourthConstraint'), array())->will($this->returnValue(TRUE));
+		$rewritingAspect->expects($this->at(3))->method('checkSingleConstraintDefinitionOnResultObject')->with(array('secondConstraint'), array())->will($this->returnValue(TRUE));
+		$rewritingAspect->expects($this->at(4))->method('checkSingleConstraintDefinitionOnResultObject')->with(array('fifthConstraint'), array())->will($this->returnValue(FALSE));
+		$rewritingAspect->expects($this->at(5))->method('checkSingleConstraintDefinitionOnResultObject')->with(array('sixthConstraint'), array())->will($this->returnValue(FALSE));
 
-		$result = $rewritingAspect->_call('checkConstraintDefinitionsOnResultArray', $parsedConstraints, array());
-
-		$this->assertTrue($result);
+		$this->assertTrue($rewritingAspect->_call('checkConstraintDefinitionsOnResultObject', $parsedConstraints, array()));
 	}
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function checkSingleConstraintDefinitionOnResultArrayCallsGetResultValueForObjectAccessStringForAllExpressionsStartingWithThis() {
-		$rewritingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('getValueForOperand', 'getResultValueForObjectAccessExpression'), array(), '', FALSE);
-		$rewritingAspect->expects($this->at(1))->method('getResultValueForObjectAccessExpression')->with('accounts.title', array());
-		$rewritingAspect->expects($this->at(2))->method('getResultValueForObjectAccessExpression')->with('accounts.title', array());
-		$rewritingAspect->expects($this->at(4))->method('getResultValueForObjectAccessExpression')->with('accounts.title', array());
-		$rewritingAspect->expects($this->at(5))->method('getResultValueForObjectAccessExpression')->with('party.name', array());
+	public function checkSingleConstraintDefinitionOnResultObjectCallsGetObjectValueByPathForAllExpressionsStartingWithThis() {
+		$rewritingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('getValueForOperand', 'getObjectValueByPath'), array(), '', FALSE);
+		$rewritingAspect->expects($this->at(1))->method('getObjectValueByPath')->with(NULL, 'accounts.title');
+		$rewritingAspect->expects($this->at(2))->method('getObjectValueByPath')->with(NULL, 'accounts.title');
+		$rewritingAspect->expects($this->at(4))->method('getObjectValueByPath')->with(NULL, 'accounts.title');
+		$rewritingAspect->expects($this->at(5))->method('getObjectValueByPath')->with(NULL, 'party.name');
 
 		$constraint1 = array(
 			'operator' => '==',
@@ -589,17 +577,17 @@ class PersistenceQueryRewritingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 			'rightValue' => 'this.party.name'
 		);
 
-		$rewritingAspect->_call('checkSingleConstraintDefinitionOnResultArray', $constraint1, array());
-		$rewritingAspect->_call('checkSingleConstraintDefinitionOnResultArray', $constraint2, array());
-		$rewritingAspect->_call('checkSingleConstraintDefinitionOnResultArray', $constraint3, array());
+		$rewritingAspect->_call('checkSingleConstraintDefinitionOnResultObject', $constraint1, NULL);
+		$rewritingAspect->_call('checkSingleConstraintDefinitionOnResultObject', $constraint2, NULL);
+		$rewritingAspect->_call('checkSingleConstraintDefinitionOnResultObject', $constraint3, NULL);
 	}
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function checkSingleConstraintDefinitionOnResultArrayCallsGetValueForOperandForAllExpressionsNotStartingWithThis() {
-		$rewritingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('getValueForOperand', 'getResultValueForObjectAccessExpression'), array(), '', FALSE);
+	public function checkSingleConstraintDefinitionOnResultObjectCallsGetValueForOperandForAllExpressionsNotStartingWithThis() {
+		$rewritingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('getValueForOperand', 'getObjectValueByPath'), array(), '', FALSE);
 		$rewritingAspect->expects($this->at(0))->method('getValueForOperand')->with('"blub"');
 		$rewritingAspect->expects($this->at(3))->method('getValueForOperand')->with('TRUE');
 		$rewritingAspect->expects($this->at(5))->method('getValueForOperand')->with('NULL');
@@ -622,9 +610,9 @@ class PersistenceQueryRewritingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 			'rightValue' => 'NULL'
 		);
 
-		$rewritingAspect->_call('checkSingleConstraintDefinitionOnResultArray', $constraint1, array());
-		$rewritingAspect->_call('checkSingleConstraintDefinitionOnResultArray', $constraint2, array());
-		$rewritingAspect->_call('checkSingleConstraintDefinitionOnResultArray', $constraint3, array());
+		$rewritingAspect->_call('checkSingleConstraintDefinitionOnResultObject', $constraint1, NULL);
+		$rewritingAspect->_call('checkSingleConstraintDefinitionOnResultObject', $constraint2, NULL);
+		$rewritingAspect->_call('checkSingleConstraintDefinitionOnResultObject', $constraint3, NULL);
 	}
 
 	/**
@@ -632,7 +620,7 @@ class PersistenceQueryRewritingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @expectedException \F3\FLOW3\Security\Exception\InvalidQueryRewritingConstraintException
 	 */
-	public function checkSingleConstraintDefinitionOnResultArrayThrowsAnExceptionIfAConstraintHasNoReferenceToTheCurrentObjectIndicatedByTheThisKeyword() {
+	public function checkSingleConstraintDefinitionOnResultObjectThrowsAnExceptionIfAConstraintHasNoReferenceToTheCurrentObjectIndicatedByTheThisKeyword() {
 		$rewritingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('dummy'), array(), '', FALSE);
 
 		$constraint = array(
@@ -641,17 +629,24 @@ class PersistenceQueryRewritingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 			'rightValue' =>  'NULL'
 		);
 
-		$rewritingAspect->_call('checkSingleConstraintDefinitionOnResultArray', $constraint, array());
+		$rewritingAspect->_call('checkSingleConstraintDefinitionOnResultObject', $constraint, NULL);
 	}
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function checkSingleConstraintDefinitionOnResultArrayWorksForEqualityOperators() {
-		$rewritingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('getValueForOperand', 'getResultValueForObjectAccessExpression'), array(), '', FALSE);
+	public function checkSingleConstraintDefinitionOnResultObjectWorksForEqualityOperators() {
+		$entityClassName = 'entityClass' . md5(uniqid(mt_rand(), TRUE));
+		eval('class ' . $entityClassName . ' implements \F3\FLOW3\Object\Proxy\ProxyInterface {
+			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
+			public function __clone() {}
+		}');
+		$mockEntity = $this->getMock($entityClassName, array(), array(), '', FALSE);
+
+		$rewritingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('getValueForOperand', 'getObjectValueByPath'), array(), '', FALSE);
 		$rewritingAspect->expects($this->any())->method('getValueForOperand')->with('"blub"')->will($this->returnValue('blub'));
-		$rewritingAspect->expects($this->any())->method('getResultValueForObjectAccessExpression')->with('accounts.title')->will($this->returnValue('blub'));
+		$rewritingAspect->expects($this->any())->method('getObjectValueByPath')->with($mockEntity, 'accounts.title')->will($this->returnValue('blub'));
 
 		$constraint1 = array(
 			'operator' => '==',
@@ -665,75 +660,15 @@ class PersistenceQueryRewritingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 			'rightValue' =>  'this.accounts.title'
 		);
 
-		$this->assertFalse($rewritingAspect->_call('checkSingleConstraintDefinitionOnResultArray', $constraint1, array()));
-		$this->assertTrue($rewritingAspect->_call('checkSingleConstraintDefinitionOnResultArray', $constraint2, array()));
+		$this->assertFalse($rewritingAspect->_call('checkSingleConstraintDefinitionOnResultObject', $constraint1, $mockEntity));
+		$this->assertTrue($rewritingAspect->_call('checkSingleConstraintDefinitionOnResultObject', $constraint2, $mockEntity));
 	}
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function checkSingleConstraintDefinitionOnResultArrayWorksForTheInOperator() {
-		$rewritingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('getValueForOperand', 'getResultValueForObjectAccessExpression'), array(), '', FALSE);
-		$rewritingAspect->expects($this->any())->method('getValueForOperand')->with('current.party')->will($this->returnValue('blub'));
-		$rewritingAspect->expects($this->at(1))->method('getResultValueForObjectAccessExpression')->with('party')->will($this->returnValue(array('bla', 'blub', 'foo')));
-		$rewritingAspect->expects($this->at(3))->method('getResultValueForObjectAccessExpression')->with('party')->will($this->returnValue(array('bla', 'foo', 'bar')));
-
-		$constraint = array(
-			'operator' => 'in',
-			'leftValue' => 'current.party',
-			'rightValue' =>  'this.party'
-		);
-
-		$this->assertFalse($rewritingAspect->_call('checkSingleConstraintDefinitionOnResultArray', $constraint, array()));
-		$this->assertTrue($rewritingAspect->_call('checkSingleConstraintDefinitionOnResultArray', $constraint, array()));
-	}
-
-	/**
-	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function checkSingleConstraintDefinitionOnResultArrayWorksForTheContainsOperator() {
-		$rewritingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('getValueForOperand', 'getResultValueForObjectAccessExpression'), array(), '', FALSE);
-		$rewritingAspect->expects($this->any())->method('getValueForOperand')->with('current.party')->will($this->returnValue(array('bla', 'blub', 'foo')));
-		$rewritingAspect->expects($this->at(1))->method('getResultValueForObjectAccessExpression')->with('party')->will($this->returnValue('blub'));
-		$rewritingAspect->expects($this->at(3))->method('getResultValueForObjectAccessExpression')->with('party')->will($this->returnValue('bar'));
-
-		$constraint = array(
-			'operator' => 'contains',
-			'leftValue' => 'current.party',
-			'rightValue' =>  'this.party'
-		);
-
-		$this->assertFalse($rewritingAspect->_call('checkSingleConstraintDefinitionOnResultArray', $constraint, array()));
-		$this->assertTrue($rewritingAspect->_call('checkSingleConstraintDefinitionOnResultArray', $constraint, array()));
-	}
-
-	/**
-	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function checkSingleConstraintDefinitionOnResultArrayWorksForTheMatchesOperator() {
-		$rewritingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('getValueForOperand', 'getResultValueForObjectAccessExpression'), array(), '', FALSE);
-		$rewritingAspect->expects($this->any())->method('getValueForOperand')->with('current.party')->will($this->returnValue(array('bla', 'blub', 'blubber')));
-		$rewritingAspect->expects($this->at(1))->method('getResultValueForObjectAccessExpression')->with('party')->will($this->returnValue(array('hinz', 'blub', 'kunz')));
-		$rewritingAspect->expects($this->at(3))->method('getResultValueForObjectAccessExpression')->with('party')->will($this->returnValue(array('foo', 'bar', 'baz')));
-
-		$constraint = array(
-			'operator' => 'matches',
-			'leftValue' => 'current.party',
-			'rightValue' =>  'this.party'
-		);
-
-		$this->assertFalse($rewritingAspect->_call('checkSingleConstraintDefinitionOnResultArray', $constraint, array()));
-		$this->assertTrue($rewritingAspect->_call('checkSingleConstraintDefinitionOnResultArray', $constraint, array()));
-	}
-
-	/**
-	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function checkSingleConstraintDefinitionOnResultArrayComparesTheIdentifierWhenComparingPersitedObjects() {
+	public function checkSingleConstraintDefinitionOnResultObjectWorksForTheInOperator() {
 		$entityClassName = 'entityClass' . md5(uniqid(mt_rand(), TRUE));
 		eval('class ' . $entityClassName . ' implements \F3\FLOW3\Object\Proxy\ProxyInterface {
 			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
@@ -741,18 +676,100 @@ class PersistenceQueryRewritingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 		}');
 		$mockEntity = $this->getMock($entityClassName, array(), array(), '', FALSE);
 
+		$rewritingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('getValueForOperand', 'getObjectValueByPath'), array(), '', FALSE);
+		$rewritingAspect->expects($this->any())->method('getValueForOperand')->with('current.party')->will($this->returnValue('blub'));
+		$rewritingAspect->expects($this->at(1))->method('getObjectValueByPath')->with($mockEntity, 'party')->will($this->returnValue(array('bla', 'blub', 'foo')));
+		$rewritingAspect->expects($this->at(3))->method('getObjectValueByPath')->with($mockEntity, 'party')->will($this->returnValue(array('bla', 'foo', 'bar')));
+
+		$constraint = array(
+			'operator' => 'in',
+			'leftValue' => 'current.party',
+			'rightValue' =>  'this.party'
+		);
+
+		$this->assertFalse($rewritingAspect->_call('checkSingleConstraintDefinitionOnResultObject', $constraint, $mockEntity));
+		$this->assertTrue($rewritingAspect->_call('checkSingleConstraintDefinitionOnResultObject', $constraint, $mockEntity));
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function checkSingleConstraintDefinitionOnResultObjectWorksForTheContainsOperator() {
+		$entityClassName = 'entityClass' . md5(uniqid(mt_rand(), TRUE));
+		eval('class ' . $entityClassName . ' implements \F3\FLOW3\Object\Proxy\ProxyInterface {
+			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
+			public function __clone() {}
+		}');
+		$mockEntity = $this->getMock($entityClassName, array(), array(), '', FALSE);
+
+		$rewritingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('getValueForOperand', 'getObjectValueByPath'), array(), '', FALSE);
+		$rewritingAspect->expects($this->any())->method('getValueForOperand')->with('current.party')->will($this->returnValue(array('bla', 'blub', 'foo')));
+		$rewritingAspect->expects($this->at(1))->method('getObjectValueByPath')->with($mockEntity, 'party')->will($this->returnValue('blub'));
+		$rewritingAspect->expects($this->at(3))->method('getObjectValueByPath')->with($mockEntity, 'party')->will($this->returnValue('bar'));
+
+		$constraint = array(
+			'operator' => 'contains',
+			'leftValue' => 'current.party',
+			'rightValue' =>  'this.party'
+		);
+
+		$this->assertFalse($rewritingAspect->_call('checkSingleConstraintDefinitionOnResultObject', $constraint, $mockEntity));
+		$this->assertTrue($rewritingAspect->_call('checkSingleConstraintDefinitionOnResultObject', $constraint, $mockEntity));
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function checkSingleConstraintDefinitionOnResultObjectWorksForTheMatchesOperator() {
+		$entityClassName = 'entityClass' . md5(uniqid(mt_rand(), TRUE));
+		eval('class ' . $entityClassName . ' implements \F3\FLOW3\Object\Proxy\ProxyInterface {
+			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
+			public function __clone() {}
+		}');
+		$mockEntity = $this->getMock($entityClassName, array(), array(), '', FALSE);
+
+		$rewritingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('getValueForOperand', 'getObjectValueByPath'), array(), '', FALSE);
+		$rewritingAspect->expects($this->any())->method('getValueForOperand')->with('current.party')->will($this->returnValue(array('bla', 'blub', 'blubber')));
+		$rewritingAspect->expects($this->at(1))->method('getObjectValueByPath')->with($mockEntity, 'party')->will($this->returnValue(array('hinz', 'blub', 'kunz')));
+		$rewritingAspect->expects($this->at(3))->method('getObjectValueByPath')->with($mockEntity, 'party')->will($this->returnValue(array('foo', 'bar', 'baz')));
+
+		$constraint = array(
+			'operator' => 'matches',
+			'leftValue' => 'current.party',
+			'rightValue' =>  'this.party'
+		);
+
+		$this->assertFalse($rewritingAspect->_call('checkSingleConstraintDefinitionOnResultObject', $constraint, $mockEntity));
+		$this->assertTrue($rewritingAspect->_call('checkSingleConstraintDefinitionOnResultObject', $constraint, $mockEntity));
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function checkSingleConstraintDefinitionOnResultObjectComparesTheIdentifierWhenComparingPersistedObjects() {
+		$entityClassName = 'entityClass' . md5(uniqid(mt_rand(), TRUE));
+		eval('class ' . $entityClassName . ' implements \F3\FLOW3\Object\Proxy\ProxyInterface {
+			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
+			public function __clone() {}
+		}');
+		$mockEntity = $this->getMock($entityClassName, array(), array(), '', FALSE);
+		$mockParty = $this->getMock('F3\Party\Domain\Model\AbstractParty', array(), array(), '', FALSE);
+
 		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\PersistenceManagerInterface', array(), array(), '', FALSE);
-		$mockPersistenceManager->expects($this->any())->method('isNewObject')->with($mockEntity)->will($this->returnValue(FALSE));
-		$mockPersistenceManager->expects($this->any())->method('getIdentifierByObject')->with($mockEntity)->will($this->returnValue('uuid'));
+		$mockPersistenceManager->expects($this->any())->method('isNewObject')->with($mockParty)->will($this->returnValue(FALSE));
+		$mockPersistenceManager->expects($this->any())->method('getIdentifierByObject')->with($mockParty)->will($this->returnValue('uuid'));
 
 		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService', array(), array(), '', FALSE);
-		$mockReflectionService->expects($this->any())->method('isClassTaggedWith')->with($mockEntity, 'entity')->will($this->returnValue(TRUE));
+		$mockReflectionService->expects($this->any())->method('isClassTaggedWith')->with($mockParty, 'entity')->will($this->returnValue(TRUE));
 
-		$rewritingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('getValueForOperand', 'getResultValueForObjectAccessExpression'), array(), '', FALSE);
-		$rewritingAspect->expects($this->at(0))->method('getValueForOperand')->with('current.party')->will($this->returnValue($mockEntity));
-		$rewritingAspect->expects($this->at(1))->method('getResultValueForObjectAccessExpression')->with('party')->will($this->returnValue('uuid'));
-		$rewritingAspect->expects($this->at(2))->method('getResultValueForObjectAccessExpression')->with('party')->will($this->returnValue('uuid'));
-		$rewritingAspect->expects($this->at(3))->method('getValueForOperand')->with('current.party')->will($this->returnValue($mockEntity));
+		$rewritingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('getValueForOperand', 'getObjectValueByPath'), array(), '', FALSE);
+		$rewritingAspect->expects($this->at(0))->method('getValueForOperand')->with('current.party')->will($this->returnValue($mockParty));
+		$rewritingAspect->expects($this->at(1))->method('getObjectValueByPath')->with($mockEntity, 'party')->will($this->returnValue($mockParty));
+		$rewritingAspect->expects($this->at(2))->method('getObjectValueByPath')->with($mockEntity, 'party')->will($this->returnValue($mockParty));
+		$rewritingAspect->expects($this->at(3))->method('getValueForOperand')->with('current.party')->will($this->returnValue($mockParty));
 
 		$rewritingAspect->injectReflectionService($mockReflectionService);
 		$rewritingAspect->injectPersistenceManager($mockPersistenceManager);
@@ -769,115 +786,8 @@ class PersistenceQueryRewritingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 			'rightValue' =>  'current.party'
 		);
 
-		$this->assertFalse($rewritingAspect->_call('checkSingleConstraintDefinitionOnResultArray', $constraint1, array()));
-		$this->assertFalse($rewritingAspect->_call('checkSingleConstraintDefinitionOnResultArray', $constraint2, array()));
-	}
-
-	/**
-	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function getResultValueForObjectAccessExpressionReturnsTheCorrectCodeForANestedObjectAccess() {
-		$rewritingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('dummy'), array(), '', FALSE);
-
-		$queryResult = array(
-			'type' => 'F3\MyObject',
-			'properties' => array(
-				'first' => array(
-					'type' => 'F3\MyObject',
-					'value' => array(
-						'properties' => array(
-							'second' => array(
-								'type' => 'F3\MyObject',
-								'value' => array(
-									'properties' => array(
-										'third' => array(
-											'type' => 'string',
-											'value' => 'TestValue'
-										)
-									)
-								)
-							)
-						)
-					)
-				)
-			)
-		);
-
-		$expression = 'first.second.third';
-
-		$result = $rewritingAspect->_call('getResultValueForObjectAccessExpression', $expression, $queryResult);
-
-		$this->assertEquals('TestValue', $result, 'The wrong value has been returned!');
-	}
-
-	/**
-	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function getResultValueForObjectAccessExpressionReturnsTheUUIDOfTheObjectForANestedObjectAccessPointNotToASimpleProperty() {
-		$rewritingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('dummy'), array(), '', FALSE);
-
-		$queryResult = array(
-			'type' => 'F3\MyObject',
-			'properties' => array(
-				'first' => array(
-					'type' => 'F3\MyObject',
-					'value' => array(
-						'properties' => array(
-							'second' => array(
-								'type' => 'F3\MyObject',
-								'value' => array(
-									'identifier' => 'some-uuid',
-									'properties' => array(
-										'third' => array(
-											'type' => 'string',
-											'value' => 'TestValue'
-										)
-									)
-								)
-							)
-						)
-					)
-				)
-			)
-		);
-
-		$expression = 'first.second';
-
-		$result = $rewritingAspect->_call('getResultValueForObjectAccessExpression', $expression, $queryResult);
-
-		$this->assertEquals('some-uuid', $result, 'The uuid of the object has not been returned as expected!');
-	}
-
-	/**
-	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @expectedException \F3\FLOW3\Security\Exception\InvalidQueryRewritingConstraintException
-	 */
-	public function getResultValueForObjectAccessExpressionThrowsAnExceptionIfTheGivenObejctPathDoesNotMatchTheReturnedObjectStructure() {
-		$rewritingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('dummy'), array(), '', FALSE);
-
-		$queryResult = array(
-			'classname' => 'F3\MyObject',
-			'properties' => array(
-				'first' => array(
-					'type' => 'F3\MyObject',
-					'value' => array(
-						'properties' => array(
-							'second' => array(
-								'type' => 'string',
-								'value' => 'TestValue'
-							)
-						)
-					)
-				)
-			)
-		);
-
-		$expression = 'first.second.third';
-
-		$rewritingAspect->_call('getResultValueForObjectAccessExpression', $expression, $queryResult);
+		$this->assertFalse($rewritingAspect->_call('checkSingleConstraintDefinitionOnResultObject', $constraint1, $mockEntity));
+		$this->assertFalse($rewritingAspect->_call('checkSingleConstraintDefinitionOnResultObject', $constraint2, $mockEntity));
 	}
 }
 ?>

@@ -122,7 +122,7 @@ class PersistenceQueryRewritingAspect {
 	/**
 	 * Rewrites the QOM query, by adding appropriate constraints according to the policy
 	 *
-	 * @before within(F3\FLOW3\Persistence\RepositoryInterface) && method(.*->(execute|count)()) && setting(FLOW3.security.enable)
+	 * @before within(F3\FLOW3\Persistence\QueryInterface) && method(.*->(execute|count)()) && setting(FLOW3.security.enable)
 	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
@@ -150,26 +150,31 @@ class PersistenceQueryRewritingAspect {
 	/**
 	 * Checks, if the current policy allows the retrieval of the object fetched by getObjectDataByIdentifier()
 	 *
-	 * @around within(F3\FLOW3\Persistence\RepositoryInterface) && method(.*->execute()) && setting(FLOW3.security.enable)
+	 * @around within(F3\FLOW3\Persistence\PersistenceManagerInterface) && method(.*->getObjectByIdentifier()) && setting(FLOW3.security.enable)
 	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
 	 * @return array The object data of the original object, or NULL if access is not permitted
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function checkAccessAfterFetchingAnObjectByIdentifier(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
-		$queryResult = $joinPoint->getAdviceChain()->proceed($joinPoint);
-		if ($this->objectManager->isSessionInitialized() === FALSE) return $queryResult;
+		$result = $joinPoint->getAdviceChain()->proceed($joinPoint);
+		if ($this->objectManager->isSessionInitialized() === FALSE) return $result;
 
 		if ($this->securityContext === NULL) $this->securityContext = $this->objectManager->get('F3\FLOW3\Security\Context');
 
 		$authenticatedRoles = $this->securityContext->getRoles();
-		$query = $joinPoint->getProxy();
 
-		if ($this->policyService->hasPolicyEntryForEntityType($query->getType(), $authenticatedRoles)) {
-			$policyConstraintsDefinition = $this->policyService->getResourcesConstraintsForEntityTypeAndRoles($query->getType(), $authenticatedRoles);
-			if ($this->checkConstraintDefinitionsOnResultArray($policyConstraintsDefinition, $queryResult) === FALSE) return array();
+		if ($result instanceof \Doctrine\ORM\Proxy\Proxy) {
+			$entityType = get_parent_class($result);
+		} else {
+			$entityType = get_class($result);
 		}
 
-		return $queryResult;
+		if ($this->policyService->hasPolicyEntryForEntityType($entityType, $authenticatedRoles)) {
+			$policyConstraintsDefinition = $this->policyService->getResourcesConstraintsForEntityTypeAndRoles($entityType, $authenticatedRoles);
+			if ($this->checkConstraintDefinitionsOnResultObject($policyConstraintsDefinition, $result) === FALSE) return NULL;
+		}
+
+		return $result;
 	}
 
 	/**
@@ -283,23 +288,23 @@ class PersistenceQueryRewritingAspect {
 	}
 
 	/**
-	 * Checks, if the given constraints hold for the passed query result.
+	 * Checks, if the given constraints hold for the passed result.
 	 *
 	 * @param array $constraintDefinitions The constraint definitions array
-	 * @param array $queryResult The result array returned by the persistence backend
+	 * @param object $result The result object returned by the persistence manager
 	 * @return boolean TRUE if the query result is valid for the given constraint
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	protected function checkConstraintDefinitionsOnResultArray(array $constraintDefinitions, array $queryResult) {
+	protected function checkConstraintDefinitionsOnResultObject(array $constraintDefinitions, $result) {
 		$overallResult = TRUE;
 
 		foreach ($constraintDefinitions as $resourceConstraints) {
 			foreach ($resourceConstraints as $operator => $policyConstraints) {
 				foreach ($policyConstraints as $key => $singlePolicyConstraint) {
 					if ($key === 'subConstraints') {
-						$currentResult = $this->checkConstraintDefinitionsOnResultArray(array($singlePolicyConstraint), $queryResult);
+						$currentResult = $this->checkConstraintDefinitionsOnResultObject(array($singlePolicyConstraint), $result);
 					} else {
-						$currentResult = $this->checkSingleConstraintDefinitionOnResultArray($singlePolicyConstraint, $queryResult);
+						$currentResult = $this->checkSingleConstraintDefinitionOnResultObject($singlePolicyConstraint, $result);
 					}
 
 					switch ($operator) {
@@ -324,20 +329,20 @@ class PersistenceQueryRewritingAspect {
 	}
 
 	/**
-	 * Checks, if the given constraint holds for the passed query result.
+	 * Checks, if the given constraint holds for the passed result.
 	 *
 	 * @param array $constraintDefinition The constraint definition array
-	 * @param array $queryResult The result array returned by the persistence backend
+	 * @param object $result The result object returned by the persistence manager
 	 * @return boolean TRUE if the query result is valid for the given constraint
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	protected function checkSingleConstraintDefinitionOnResultArray(array $constraintDefinition, array $queryResult) {
+	protected function checkSingleConstraintDefinitionOnResultObject(array $constraintDefinition, $result) {
 		$referenceToThisFound = FALSE;
 
 		if (!is_array($constraintDefinition['leftValue']) && strpos($constraintDefinition['leftValue'], 'this.') === 0) {
 			$referenceToThisFound = TRUE;
 			$propertyPath = substr($constraintDefinition['leftValue'], 5);
-			$leftOperand = $this->getResultValueForObjectAccessExpression($propertyPath, $queryResult);
+			$leftOperand = $this->getObjectValueByPath($result, $propertyPath);
 		} else {
 			$leftOperand = $this->getValueForOperand($constraintDefinition['leftValue']);
 		}
@@ -345,12 +350,12 @@ class PersistenceQueryRewritingAspect {
 		if (!is_array($constraintDefinition['rightValue']) && strpos($constraintDefinition['rightValue'], 'this.') === 0) {
 			$referenceToThisFound = TRUE;
 			$propertyPath = substr($constraintDefinition['rightValue'], 5);
-			$rightOperand = $this->getResultValueForObjectAccessExpression($propertyPath, $queryResult);
+			$rightOperand = $this->getObjectValueByPath($result, $propertyPath);
 		} else {
 			$rightOperand = $this->getValueForOperand($constraintDefinition['rightValue']);
 		}
 
-		if ($referenceToThisFound === FALSE) throw new \F3\FLOW3\Security\Exception\InvalidQueryRewritingConstraintException('An entity constraint has to have at least one operand that references to "this.". Got: "' . $constraintDefinition['leftValue'] . '" and "' . $constraintDefinition['rightValue'] . '"', 1277218400);
+		if ($referenceToThisFound === FALSE) throw new \F3\FLOW3\Security\Exception\InvalidQueryRewritingConstraintException('An entity security constraint must have at least one operand that references to "this.". Got: "' . $constraintDefinition['leftValue'] . '" and "' . $constraintDefinition['rightValue'] . '"', 1277218400);
 
 		if (is_object($leftOperand)
 					&& $this->persistenceManager->isNewObject($leftOperand) === FALSE
@@ -358,7 +363,8 @@ class PersistenceQueryRewritingAspect {
 
 			$leftOperand = $this->persistenceManager->getIdentifierByObject($leftOperand);
 
-		} elseif (is_object($rightOperand)
+		}
+		if (is_object($rightOperand)
 					&& $this->persistenceManager->isNewObject($rightOperand) === FALSE
 					&& $this->reflectionService->isClassTaggedWith($rightOperand, 'entity')) {
 
@@ -399,30 +405,6 @@ class PersistenceQueryRewritingAspect {
 	}
 
 	/**
-	 * Returns the value found by the given path expression on the array representation of an object.
-	 * Note: If the result is an object itself, its identifier (UUID) is returned.
-	 *
-	 * @param string $pathExpression The path expression to navigate to a property value
-	 * @param array $queryResult The result array of an object tree as returned by the persistence backend
-	 * @return mixed The value found at the given path in the objec tree
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	protected function getResultValueForObjectAccessExpression($pathExpression, array $queryResult) {
-		$pathParts = explode('.', $pathExpression);
-		$resultValue = $queryResult['properties'][$pathParts[0]];
-		array_shift($pathParts);
-
-		foreach ($pathParts as $part) {
-			if (in_array($resultValue['type'], array('string', 'integer', 'float', 'boolean', 'DateTime', 'SplObjectStorage'))) throw new \F3\FLOW3\Security\Exception\InvalidQueryRewritingConstraintException('The configured query constraint in the security policy did not match the object structure of the returned object.', 1277216979);
-			$resultValue = $resultValue['value']['properties'][$part];
-		}
-
-		if (!in_array($resultValue['type'], array('string', 'integer', 'float', 'boolean', 'DateTime', 'SplObjectStorage'))) return $resultValue['value']['identifier'];
-
-		return $resultValue['value'];
-	}
-
-	/**
 	 * Returns the static value of the given operand, this might be also a global object
 	 *
 	 * @param string $expression The expression string representing the operand
@@ -451,6 +433,19 @@ class PersistenceQueryRewritingAspect {
 		} else {
 			return trim($expression, '"\'');
 		}
+	}
+
+	/**
+	 * Redirects directly to \F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($result, $propertyPath)
+	 * This is only needed for unit tests!
+	 *
+	 * @param mixed $object The object to fetch the property from
+	 * @param string $propertyPath The path to the property to be fetched
+	 * @return mixed The property value
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	protected function getObjectValueByPath($object, $path) {
+		return \F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($object, $path);
 	}
 }
 
