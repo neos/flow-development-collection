@@ -28,8 +28,16 @@ namespace TYPO3\FLOW3\Tests\Unit\Security\Cryptography;
  */
 class HashServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
+	/**
+	 * @var \TYPO3\FLOW3\Security\Cryptography\HashService
+	 */
 	protected $hashService;
 
+	/**
+	 * Set up test dependencies
+	 *
+	 * @return void
+	 */
 	public function setUp() {
 		$this->hashService = new \TYPO3\FLOW3\Security\Cryptography\HashService();
 	}

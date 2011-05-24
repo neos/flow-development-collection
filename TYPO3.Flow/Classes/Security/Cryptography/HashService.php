@@ -36,6 +36,12 @@ class HashService {
 	protected $encryptionKey;
 
 	/**
+	 * @inject
+	 * @var \TYPO3\FLOW3\Security\Cryptography\PasswordHashingStrategyInterface
+	 */
+	protected $passwordHashingStrategy;
+
+	/**
 	 * @author Karsten Dambekalns <karsten@dambekalns.de>
 	 */
 	public function __construct() {
@@ -84,11 +90,10 @@ class HashService {
 	 * @return string Salted hash and the salt, separated by a comma ","
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @api
+	 * @deprecated Use hashPassword(...) instead
 	 */
 	public function generateSaltedMd5($clearString) {
-		$salt = substr(md5(uniqid(rand(), TRUE)), 0, rand(6, 10));
-		return (md5(md5($clearString) . $salt) . ',' . $salt);
+		return \TYPO3\FLOW3\Security\Cryptography\SaltedMd5HashingStrategy::generateSaltedMd5($clearString);
 	}
 
 	/**
@@ -99,14 +104,46 @@ class HashService {
 	 * @param string $hashedStringAndSalt
 	 * @return boolean TRUE if the clear string matches, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @api
+	 * @deprecated Use validatePassword(...) instead
 	 */
 	public function validateSaltedMd5($clearString, $hashedStringAndSalt) {
-		if (strpos($hashedStringAndSalt, ',') === FALSE) {
-			throw new \InvalidArgumentException('The hashed string must contain a salt, separated with comma from the hashed.', 1269872776);
-		}
-		list($passwordHash, $salt) = explode(',', $hashedStringAndSalt);
-		return (md5(md5($clearString) . $salt) === $passwordHash);
+		return \TYPO3\FLOW3\Security\Cryptography\SaltedMd5HashingStrategy::validateSaltedMd5($clearString, $hashedStringAndSalt);
 	}
+
+	/**
+	 * Hash a password using the configured password hashing strategy
+	 *
+	 * @param string $password The cleartext password
+	 * @return string A hashed password with salt (if used)
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @api
+	 */
+	public function hashPassword($password) {
+		return $this->passwordHashingStrategy->hashPassword($password, $this->encryptionKey);
+	}
+
+	/**
+	 * Validate a hashed password using the configured password hashing strategy
+	 *
+	 * @param string $password The cleartext password
+	 * @param string $hashedPasswordAndSalt The hashed password with salt (if used)
+	 * @return boolean TRUE if the given password matches the hashed password
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @api
+	 */
+	public function validatePassword($password, $hashedPasswordAndSalt) {
+		return $this->passwordHashingStrategy->validatePassword($password, $hashedPasswordAndSalt, $this->encryptionKey);
+	}
+
+	/**
+	 * Inject the password hashing strategy
+	 *
+	 * @param \TYPO3\FLOW3\Security\Cryptography\PasswordHashingStrategyInterface $passwordHashingStrategy
+	 * @return void
+	 */
+	public function setPasswordHashingStrategy(\TYPO3\FLOW3\Security\Cryptography\PasswordHashingStrategyInterface $passwordHashingStrategy) {
+		$this->passwordHashingStrategy = $passwordHashingStrategy;
+	}
+
 }
 ?>

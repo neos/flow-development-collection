@@ -102,7 +102,7 @@ class PersistedUsernamePasswordProvider implements \TYPO3\FLOW3\Security\Authent
 		}
 
 		if (is_object($account)) {
-			if ($this->hashService->validateSaltedMd5($credentials['password'], $account->getCredentialsSource())) {
+			if ($this->hashService->validatePassword($credentials['password'], $account->getCredentialsSource())) {
 				$authenticationToken->setAuthenticationStatus(\TYPO3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL);
 				$authenticationToken->setAccount($account);
 			} else {

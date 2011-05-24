@@ -35,7 +35,7 @@ class PersistedUsernamePasswordProviderTest extends \TYPO3\FLOW3\Tests\UnitTestC
 	 */
 	public function authenticatingAnUsernamePasswordTokenChecksIfTheGivenClearTextPasswordMatchesThePersistedHashedPassword() {
 		$mockHashService = $this->getMock('TYPO3\FLOW3\Security\Cryptography\HashService');
-		$mockHashService->expects($this->once())->method('validateSaltedMd5')->with('password', '8bf0abbb93000e2e47f0e0a80721e834,80f117a78cff75f3f73793fd02aa9086')->will($this->returnValue(TRUE));
+		$mockHashService->expects($this->once())->method('validatePassword')->with('password', '8bf0abbb93000e2e47f0e0a80721e834,80f117a78cff75f3f73793fd02aa9086')->will($this->returnValue(TRUE));
 
 		$mockAccount = $this->getMock('TYPO3\FLOW3\Security\Account', array(), array(), '', FALSE);
 		$mockAccount->expects($this->once())->method('getCredentialsSource')->will($this->returnValue('8bf0abbb93000e2e47f0e0a80721e834,80f117a78cff75f3f73793fd02aa9086'));
@@ -62,7 +62,7 @@ class PersistedUsernamePasswordProviderTest extends \TYPO3\FLOW3\Tests\UnitTestC
 	 */
 	public function authenticationFailsWithWrongCredentialsInAnUsernamePasswordToken() {
 		$mockHashService = $this->getMock('TYPO3\FLOW3\Security\Cryptography\HashService');
-		$mockHashService->expects($this->once())->method('validateSaltedMd5')->with('wrong password', '8bf0abbb93000e2e47f0e0a80721e834,80f117a78cff75f3f73793fd02aa9086')->will($this->returnValue(FALSE));
+		$mockHashService->expects($this->once())->method('validatePassword')->with('wrong password', '8bf0abbb93000e2e47f0e0a80721e834,80f117a78cff75f3f73793fd02aa9086')->will($this->returnValue(FALSE));
 
 		$mockAccount = $this->getMock('TYPO3\FLOW3\Security\Account', array(), array(), '', FALSE);
 		$mockAccount->expects($this->once())->method('getCredentialsSource')->will($this->returnValue('8bf0abbb93000e2e47f0e0a80721e834,80f117a78cff75f3f73793fd02aa9086'));
@@ -111,5 +111,6 @@ class PersistedUsernamePasswordProviderTest extends \TYPO3\FLOW3\Tests\UnitTestC
 		$this->assertTrue($usernamePasswordProvider->canAuthenticate($mockToken1));
 		$this->assertFalse($usernamePasswordProvider->canAuthenticate($mockToken2));
 	}
+
 }
 ?>

@@ -237,6 +237,17 @@ TYPO3:
           # See the PHP openSSL documentation for possible settings.
           openSSLConfiguration: []
 
+        Pbkdf2HashingStrategy:
+
+          # Length of the random, dynamic salt that will be stored with the hashed password
+          dynamicSaltLength: 8
+          # Iteration count, high enough to make brute-force attacks unfeasible, use a custom value!
+          iterationCount: 10000
+          # Length of the derived key (hashed password) in bytes
+          derivedKeyLength: 64
+          # Hash function to use for PBKDF2
+          algorithm: sha256
+
     session:
       PHPSession:
 

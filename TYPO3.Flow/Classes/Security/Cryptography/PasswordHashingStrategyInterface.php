@@ -1,5 +1,6 @@
 <?php
-namespace TYPO3\FLOW3\Security;
+declare(ENCODING = 'utf-8');
+namespace TYPO3\FLOW3\Security\Cryptography;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -22,43 +23,30 @@ namespace TYPO3\FLOW3\Security;
  *                                                                        */
 
 /**
- * A factory for conveniently creating new accounts
+ * A password hashing strategy interface
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
- * @scope singleton
+ * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  */
-class AccountFactory {
+interface PasswordHashingStrategyInterface {
 
 	/**
-	 * @var \TYPO3\FLOW3\Security\Cryptography\HashService
-	 * @inject
-	 */
-	protected $hashService;
-
-	/**
-	 * Creates a new account and sets the given password and roles
+	 * Hash a password for storage
 	 *
-	 * @param string $identifier Identifier of the account, must be unique
-	 * @param string $password The clear text password
-	 * @param array $roleIdentifiers Optionally an array of role identifiers to assign to the new account
-	 * @param string $authenticationProviderName Optinally the name of the authentication provider the account is affiliated with
-	 * @return \TYPO3\FLOW3\Security\Account A new account, not yet added to the account repository
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @param string $password Cleartext password that will be hashed
+	 * @param string $staticSalt Optional static salt that will not be stored in the hashed password
+	 * @return string The hashed password with dynamic salt (if used)
 	 */
-	public function createAccountWithPassword($identifier, $password, $roleIdentifiers = array(), $authenticationProviderName = 'DefaultProvider') {
-		$roles = array();
-		foreach ($roleIdentifiers as $roleIdentifier) {
-			$roles[] = new \TYPO3\FLOW3\Security\Policy\Role($roleIdentifier);
-		}
+	public function hashPassword($password, $staticSalt = NULL);
 
-		$account = new \TYPO3\FLOW3\Security\Account();
-		$account->setAccountIdentifier($identifier);
-		$account->setCredentialsSource($this->hashService->hashPassword($password));
-		$account->setAuthenticationProviderName($authenticationProviderName);
-		$account->setRoles($roles);
+	/**
+	 * Validate a hashed password against a cleartext password
+	 *
+	 * @param string $password
+	 * @param string $hashedPasswordAndSalt Hashed password with dynamic salt (if used)
+	 * @param string $staticSalt Optional static salt that will not be stored in the hashed password
+	 * @return boolean TRUE if the given cleartext password matched the hashed password
+	 */
+	public function validatePassword($password, $hashedPasswordAndSalt, $staticSalt = NULL);
 
-		return $account;
-	}
 }
-
 ?>

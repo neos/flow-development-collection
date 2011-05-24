@@ -34,7 +34,7 @@ class AccountFactoryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function createAccountWithPasswordCreatesANewAccountWithTheGivenIdentifierPasswordRolesAndProviderName() {
 		$mockHashService = $this->getMock('TYPO3\FLOW3\Security\Cryptography\HashService');
-		$mockHashService->expects($this->once())->method('generateSaltedMd5')->with('password')->will($this->returnValue('hashed password'));
+		$mockHashService->expects($this->once())->method('hashPassword')->with('password')->will($this->returnValue('hashed password'));
 
 		$mockRole1 = new \TYPO3\FLOW3\Security\Policy\Role('role1');
 		$mockRole2 = new \TYPO3\FLOW3\Security\Policy\Role('role2');

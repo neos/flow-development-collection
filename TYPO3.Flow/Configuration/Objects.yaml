@@ -245,6 +245,23 @@ TYPO3\FLOW3\Security\Authorization\AccessDecisionManagerInterface:
 TYPO3\FLOW3\Security\Authorization\FirewallInterface:
   className: TYPO3\FLOW3\Security\Authorization\FilterFirewall
 
+TYPO3\FLOW3\Security\Cryptography\PasswordHashingStrategyInterface:
+  className: TYPO3\FLOW3\Security\Cryptography\Pbkdf2HashingStrategy
+  scope: singleton
+
+TYPO3\FLOW3\Security\Cryptography\Pbkdf2HashingStrategy:
+  scope: singleton
+  arguments:
+    1:
+      setting: TYPO3.FLOW3.security.cryptography.Pbkdf2HashingStrategy.dynamicSaltLength
+    2:
+      setting: TYPO3.FLOW3.security.cryptography.Pbkdf2HashingStrategy.iterationCount
+    3:
+      setting: TYPO3.FLOW3.security.cryptography.Pbkdf2HashingStrategy.derivedKeyLength
+    4:
+      setting: TYPO3.FLOW3.security.cryptography.Pbkdf2HashingStrategy.algorithm
+
+
 #                                                                          #
 # Session                                                                  #
 #                                                                          #
