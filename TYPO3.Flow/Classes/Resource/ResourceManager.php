@@ -280,7 +280,7 @@ class ResourceManager {
 	 * @param string $hash
 	 * @return \F3\FLOW3\Resource\ResourcePointer
 	 */
-	protected function getResourcePointerForHash($hash) {
+	public function getResourcePointerForHash($hash) {
 		$resourcePointer = $this->persistenceManager->getObjectByIdentifier($hash, 'F3\FLOW3\Resource\ResourcePointer');
 		if (!$resourcePointer) {
 			$resourcePointer = new \F3\FLOW3\Resource\ResourcePointer($hash);
