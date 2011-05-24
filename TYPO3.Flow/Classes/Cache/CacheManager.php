@@ -191,6 +191,29 @@ class CacheManager {
 	}
 
 	/**
+	 * Marks Doctrine proxy classes as outdated when Model classes have been changed
+	 *
+	 * This method is used as a slot for a signal sent by the class file monitor defined
+	 * in the bootstrap.
+	 *
+	 * @param string $fileMonitorIdentifier Identifier of the File Monitor (must be "FLOW3_ClassFiles")
+	 * @param array $changedFiles A list of full paths to changed files
+	 * @return void
+	 */
+	public function markDoctrineProxyCodeOutdatedByChangedFiles($fileMonitorIdentifier, array $changedFiles) {
+		if ($fileMonitorIdentifier !== 'FLOW3_ClassFiles') {
+			return;
+		}
+
+		foreach ($changedFiles as $pathAndFilename => $status) {
+			if (preg_match('/.+\/(.+)\/(Classes|Tests)\/Domain\/Model\/(.+)\.php/', $pathAndFilename) === 1) {
+				$this->getCache('FLOW3_Object_Configuration')->remove('doctrineProxyCodeUpToDate');
+				break;
+			}
+		}
+	}
+
+	/**
 	 * Renders a tag which can be used to mark a cache entry as "depends on this class".
 	 * Whenever the specified class is modified, all cache entries tagged with the
 	 * class are flushed.

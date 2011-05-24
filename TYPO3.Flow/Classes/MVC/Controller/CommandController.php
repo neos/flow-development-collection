@@ -68,8 +68,8 @@ class CommandController implements ControllerInterface {
 	/**
 	 * Processes a command line request.
 	 *
-	 * @param \F3\FLOW3\MVC\CLI\Request $request The request object
-	 * @param \F3\FLOW3\MVC\CLI\Response $response The response, modified by this controller
+	 * @param \F3\FLOW3\MVC\RequestInterface $request The request object
+	 * @param \F3\FLOW3\MVC\ResponseInterface $response The response, modified by this controller
 	 * @return void
 	 * @throws \F3\FLOW3\MVC\Exception\UnsupportedRequestTypeException if the controller doesn't support the current request type
 	 * @author Robert Lemke <robert@typo3.org>
@@ -127,7 +127,6 @@ class CommandController implements ControllerInterface {
 	 * response object. If the command doesn't return anything and a valid
 	 * view exists, the view is rendered automatically.
 	 *
-	 * @param string $commandMethodName Name of the command method to call
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */

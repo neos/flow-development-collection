@@ -77,7 +77,7 @@ class DoctrineCommandController extends \F3\FLOW3\MVC\Controller\CommandControll
 				}
 			}
 		} else {
-			$this->response->appendContent('Mapping validation has been SKIPPED, the driver and path backend options are not set.');
+			$this->response->appendContent('Mapping validation has been SKIPPED, the driver and path backend options are not set in /Configuration/Settings.yaml.');
 		}
 	}
 
@@ -92,7 +92,7 @@ class DoctrineCommandController extends \F3\FLOW3\MVC\Controller\CommandControll
 		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['path'] !== NULL) {
 			$this->doctrineService->createSchema();
 		} else {
-			$this->response->appendContent('Database schema creation has been SKIPPED, the driver and path backend options are not set.');
+			$this->response->appendContent('Database schema creation has been SKIPPED, the driver and path backend options are not set in /Configuration/Settings.yaml.');
 		}
 	}
 
@@ -107,7 +107,7 @@ class DoctrineCommandController extends \F3\FLOW3\MVC\Controller\CommandControll
 		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['path'] !== NULL) {
 			$this->doctrineService->updateSchema();
 		} else {
-			$this->response->appendContent('Database schema update has been SKIPPED, the driver and path backend options are not set.');
+			$this->response->appendContent('Database schema update has been SKIPPED, the driver and path backend options are not set in /Configuration/Settings.yaml.');
 		}
 	}
 
@@ -122,7 +122,7 @@ class DoctrineCommandController extends \F3\FLOW3\MVC\Controller\CommandControll
 		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['path'] !== NULL) {
 			$this->doctrineService->updateSchema(FALSE);
 		} else {
-			$this->response->appendContent('Database schema update has been SKIPPED, the driver and path backend options are not set.');
+			$this->response->appendContent('Database schema update has been SKIPPED, the driver and path backend options are not set in /Configuration/Settings.yaml.');
 		}
 	}
 
@@ -137,7 +137,7 @@ class DoctrineCommandController extends \F3\FLOW3\MVC\Controller\CommandControll
 		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['path'] !== NULL) {
 			$this->doctrineService->compileProxies();
 		} else {
-			$this->response->appendContent('Doctrine proxy compilation has been SKIPPED, the driver and path backend options are not set.');
+			$this->response->appendContent('Doctrine proxy compilation has been SKIPPED, the driver and path backend options are not set in /Configuration/Settings.yaml.');
 		}
 	}
 
@@ -152,7 +152,7 @@ class DoctrineCommandController extends \F3\FLOW3\MVC\Controller\CommandControll
 		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['path'] !== NULL) {
 			$this->response->appendContent($this->doctrineService->getMigrationStatus());
 		} else {
-			$this->response->appendContent('Doctrine migration status not available, the driver and path backend options are not set.');
+			$this->response->appendContent('Doctrine migration status not available, the driver and path backend options are not set in /Configuration/Settings.yaml.');
 		}
 	}
 
@@ -168,7 +168,7 @@ class DoctrineCommandController extends \F3\FLOW3\MVC\Controller\CommandControll
 		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['path'] !== NULL) {
 			$this->response->appendContent($this->doctrineService->executeMigrations($version));
 		} else {
-			$this->response->appendContent('Doctrine migration not possible, the driver and path backend options are not set.');
+			$this->response->appendContent('Doctrine migration not possible, the driver and path backend options are not set in /Configuration/Settings.yaml.');
 		}
 	}
 
@@ -183,7 +183,7 @@ class DoctrineCommandController extends \F3\FLOW3\MVC\Controller\CommandControll
 		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['path'] !== NULL) {
 			$this->response->appendContent($this->doctrineService->generateDiffMigration());
 		} else {
-			$this->response->appendContent('Doctrine migration generation has been SKIPPED, the driver and path backend options are not set.');
+			$this->response->appendContent('Doctrine migration generation has been SKIPPED, the driver and path backend options are not set in /Configuration/Settings.yaml.');
 		}
 	}
 
@@ -198,7 +198,7 @@ class DoctrineCommandController extends \F3\FLOW3\MVC\Controller\CommandControll
 		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['path'] !== NULL) {
 			$this->response->appendContent($this->doctrineService->generateEmptyMigration());
 		} else {
-			$this->response->appendContent('Doctrine migration generation has been SKIPPED, the driver and path backend options are not set.');
+			$this->response->appendContent('Doctrine migration generation has been SKIPPED, the driver and path backend options are not set in /Configuration/Settings.yaml.');
 		}
 	}
 
@@ -214,7 +214,7 @@ class DoctrineCommandController extends \F3\FLOW3\MVC\Controller\CommandControll
 		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['path'] !== NULL) {
 			$this->response->appendContent($this->doctrineService->executeMigration($version));
 		} else {
-			$this->response->appendContent('Doctrine migration not possible, the driver and path backend options are not set.');
+			$this->response->appendContent('Doctrine migration not possible, the driver and path backend options are not set in /Configuration/Settings.yaml.');
 		}
 	}
 

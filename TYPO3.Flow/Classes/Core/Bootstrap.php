@@ -358,6 +358,7 @@ class Bootstrap {
 	 */
 	protected function initializeForRuntime() {
 		$objectConfigurationCache = $this->cacheManager->getCache('FLOW3_Object_Configuration');
+			// will be FALSE here only if caches are totally empty, class monitoring runs only in compiletime
 		if ($objectConfigurationCache->has('allCompiledCodeUpToDate') === FALSE || $this->context !== 'Production') {
 			$this->executeCommand('flow3:core:compile');
 		}
@@ -391,16 +392,21 @@ class Bootstrap {
 	}
 
 	/**
+	 * Update Doctrine 2 database and proxy classes
+	 *
 	 * @return void
 	 */
 	protected function updateDoctrine() {
+		$objectConfigurationCache = $this->cacheManager->getCache('FLOW3_Object_Configuration');
 		$coreCache = $this->cacheManager->getCache('FLOW3_Core');
-		if ($coreCache->has('doctrineSetupRunning') === FALSE) {
+		if ($objectConfigurationCache->has('doctrineProxyCodeUpToDate') === FALSE && $coreCache->has('doctrineSetupRunning') === FALSE) {
 			$coreCache->set('doctrineSetupRunning', 'White Russian', array(), 60);
-			$this->systemLogger->log('Updating Doctrine DB', LOG_DEBUG);
+			$this->systemLogger->log('Updating Doctrine database', LOG_DEBUG);
 			$this->executeCommand('flow3:doctrine:update');
+			$this->systemLogger->log('Compiling Doctrine proxies', LOG_DEBUG);
 			$this->executeCommand('flow3:doctrine:compileproxies');
 			$coreCache->remove('doctrineSetupRunning');
+			$objectConfigurationCache->set('doctrineProxyCodeUpToDate', TRUE);
 		}
 	}
 
@@ -532,6 +538,7 @@ class Bootstrap {
 		$this->cacheFactory = new \F3\FLOW3\Cache\CacheFactory($this->context, $this->cacheManager, $this->environment);
 
 		$this->signalSlotDispatcher->connect('F3\FLOW3\Monitor\FileMonitor', 'filesHaveChanged', $this->cacheManager, 'flushClassFileCachesByChangedFiles');
+		$this->signalSlotDispatcher->connect('F3\FLOW3\Monitor\FileMonitor', 'filesHaveChanged', $this->cacheManager, 'markDoctrineProxyCodeOutdatedByChangedFiles');
 	}
 
 	/**

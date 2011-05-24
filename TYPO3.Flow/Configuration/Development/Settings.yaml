@@ -24,7 +24,6 @@ FLOW3:
   persistence:
     doctrine:
       sqlLogger: 'F3\FLOW3\Persistence\Doctrine\Logging\SqlLogger'
-      autoUpdate: y
 
   resource:
     publishing:
