@@ -1,7 +1,5 @@
 <?php
 /*
- *  $Id$
- *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -33,9 +31,18 @@ namespace Doctrine\Common\Persistence\Mapping;
 interface ClassMetadata
 {
     /**
+     * Get fully-qualified class name of this persistent class.
+     * 
+     * @return string
+     */
+    public function getName();
+    
+    /**
      * Gets the mapped identifier field name.
+     * 
+     * The returned structure is an array of the identifier field names.
      *
-     * @return mixed
+     * @return array
      */
     public function getIdentifier();
 
@@ -85,4 +92,41 @@ interface ClassMetadata
      * @return boolean
      */
     public function isCollectionValuedAssociation($fieldName);
+    
+    /**
+     * A numerically indexed list of field names of this persistent class.
+     * 
+     * This array includes identifier fields if present on this class.
+     * 
+     * @return array
+     */
+    public function getFieldNames();
+    
+    /**
+     * A numerically indexed list of association names of this persistent class.
+     * 
+     * This array includes identifier associations if present on this class.
+     * 
+     * @return array
+     */
+    public function getAssociationNames();
+    
+    /**
+     * Returns a type name of this field.
+     * 
+     * This type names can be implementation specific but should at least include the php types:
+     * integer, string, boolean, float/double, datetime.
+     * 
+     * @param string $fieldName
+     * @return string
+     */
+    public function getTypeOfField($fieldName);
+    
+    /**
+     * Returns the target class name of the given association.
+     * 
+     * @param string $assocName
+     * @return string
+     */
+    public function getAssociationTargetClass($assocName);
 }

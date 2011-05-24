@@ -99,7 +99,7 @@ class Parser
 
     /**
      * Gets the lexer used by this parser.
-     * 
+     *
      * @return Lexer The lexer.
      */
     public function getLexer()
@@ -192,23 +192,25 @@ class Parser
      */
     public function parse($docBlockString, $context='')
     {
-        $this->context = $context;
-
         // Strip out some known inline tags.
         $input = str_replace(self::$strippedTags, '', $docBlockString);
 
-        // Cut of the beginning of the input until the first '@'.
-        $input = substr($input, strpos($input, '@'));
-
-        $this->lexer->reset();
-        $this->lexer->setInput(trim($input, '* /'));
-        $this->lexer->moveNext();
-
-        if ($this->lexer->isNextToken(Lexer::T_AT)) {
-            return $this->Annotations();
+        if (false === $pos = strpos($input, '@')) {
+            return array();
         }
 
-        return array();
+        // also parse whatever character is before the @
+        if ($pos > 0) {
+            $pos -= 1;
+        }
+        
+        $this->context = $context;
+
+        $this->lexer->reset();
+        $this->lexer->setInput(trim(substr($input, $pos), '* /'));
+        $this->lexer->moveNext();
+
+        return $this->Annotations();
     }
 
     /**
@@ -263,23 +265,42 @@ class Parser
      */
     public function Annotations()
     {
-        $this->isNestedAnnotation = false;
-
         $annotations = array();
-        $annot = $this->Annotation();
 
-        if ($annot !== false) {
-            $annotations[get_class($annot)] = $annot;
-            $this->lexer->skipUntil(Lexer::T_AT);
-        }
+        while (null !== $this->lexer->lookahead) {
+            if (Lexer::T_AT !== $this->lexer->lookahead['type']) {
+                $this->lexer->moveNext();
+                continue;
+            }
 
-        while ($this->lexer->lookahead !== null && $this->lexer->isNextToken(Lexer::T_AT)) {
+            // make sure the @ is preceeded by non-catchable pattern
+            if (null !== $this->lexer->token && $this->lexer->lookahead['position'] === $this->lexer->token['position'] + strlen($this->lexer->token['value'])) {
+                $this->lexer->moveNext();
+                continue;
+            }
+
+            // make sure the @ is followed by either a namespace separator, or an identifier token
+            if (($peek = $this->lexer->glimpse()) === null || 
+                (Lexer::T_NAMESPACE_SEPARATOR !== $peek['type'] && Lexer::T_IDENTIFIER !== $peek['type']) || 
+                $peek['position'] !== $this->lexer->lookahead['position'] + 1) {
+                $this->lexer->moveNext();
+                continue;
+            }
+
             $this->isNestedAnnotation = false;
-            $annot = $this->Annotation();
-
-            if ($annot !== false) {
-                $annotations[get_class($annot)] = $annot;
-                $this->lexer->skipUntil(Lexer::T_AT);
+            
+            if (($annot = $this->Annotation()) !== false) {
+                $class = get_class($annot);
+                
+                if (isset($annotations[$class])) {
+                    if ( ! is_array($annotations[$class])) {
+                        $annotations[$class] = array($annotations[$class]);
+                    }
+                    
+                    $annotations[$class][] = $annot;
+                } else {
+                    $annotations[$class] = $annot;
+                }
             }
         }
 
@@ -303,7 +324,14 @@ class Parser
         $nameParts = array();
 
         $this->match(Lexer::T_AT);
-        $this->match(Lexer::T_IDENTIFIER);
+        if ($this->isNestedAnnotation === false) {
+            if ($this->lexer->lookahead['type'] !== Lexer::T_IDENTIFIER) {
+                return false;
+            }
+            $this->lexer->moveNext();
+        } else {
+            $this->match(Lexer::T_IDENTIFIER);
+        }
         $nameParts[] = $this->lexer->token['value'];
 
         while ($this->lexer->isNextToken(Lexer::T_NAMESPACE_SEPARATOR)) {
@@ -313,6 +341,7 @@ class Parser
         }
 
         // Effectively pick the name of the class (append default NS if none, grab from NS alias, etc)
+        $namespacedAnnotation = false;
         if (strpos($nameParts[0], ':')) {
             list ($alias, $nameParts[0]) = explode(':', $nameParts[0]);
 
@@ -323,6 +352,7 @@ class Parser
             }
 
             $name = $this->namespaceAliases[$alias] . implode('\\', $nameParts);
+            $namespacedAnnotation = true;
         } else if (count($nameParts) == 1) {
             $name = $this->defaultAnnotationNamespace . $nameParts[0];
         } else {
@@ -442,11 +472,11 @@ class Parser
 
             case Lexer::T_INTEGER:
                 $this->match(Lexer::T_INTEGER);
-                return $this->lexer->token['value'];
+                return (int)$this->lexer->token['value'];
 
             case Lexer::T_FLOAT:
                 $this->match(Lexer::T_FLOAT);
-                return $this->lexer->token['value'];
+                return (float)$this->lexer->token['value'];
 
             case Lexer::T_TRUE:
                 $this->match(Lexer::T_TRUE);
@@ -455,6 +485,10 @@ class Parser
             case Lexer::T_FALSE:
                 $this->match(Lexer::T_FALSE);
                 return false;
+
+            case Lexer::T_NULL:
+                $this->match(Lexer::T_NULL);
+                return null;
 
             default:
                 $this->syntaxError('PlainValue');
