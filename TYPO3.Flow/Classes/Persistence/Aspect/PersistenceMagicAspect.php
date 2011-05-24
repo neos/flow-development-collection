@@ -83,7 +83,8 @@ class PersistenceMagicAspect {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function generateValueHash(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
-		$hashSource = '';
+		$proxy = $joinPoint->getProxy();
+		$hashSource = get_class($proxy);
 		foreach ($joinPoint->getMethodArguments() as $argumentValue) {
 			if (is_array($argumentValue)) {
 				$hashSource .= ($this->useIgBinary === TRUE) ? igbinary_serialize($argumentValue) : serialize($argumentValue);

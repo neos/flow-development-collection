@@ -67,7 +67,7 @@ class PersistenceMagicAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 		$aspect = new \TYPO3\FLOW3\Persistence\Aspect\PersistenceMagicAspect();
 		$aspect->generateValueHash($mockJoinPoint);
-		$this->assertEquals(sha1('uuidhash'), $object->FLOW3_Persistence_Identifier);
+		$this->assertEquals(sha1($className . 'uuidhash'), $object->FLOW3_Persistence_Identifier);
 	}
 }
 
