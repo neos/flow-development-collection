@@ -43,7 +43,7 @@ class Statement implements DriverStatement
      */
     private $_params = array();
     /**
-     * @var Doctrine\DBAL\Driver\Statement The underlying driver statement.
+     * @var \Doctrine\DBAL\Driver\Statement The underlying driver statement.
      */
     private $_stmt;
     /**

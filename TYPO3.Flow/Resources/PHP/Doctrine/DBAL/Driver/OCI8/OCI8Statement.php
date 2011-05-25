@@ -32,7 +32,6 @@ class OCI8Statement implements \Doctrine\DBAL\Driver\Statement
     /** Statement handle. */
     private $_sth;
     private $_executeMode;
-    private static $_PARAM = ':param';
     private static $fetchStyleMap = array(
         PDO::FETCH_BOTH => OCI_BOTH,
         PDO::FETCH_ASSOC => OCI_ASSOC,

@@ -46,15 +46,15 @@ class Configuration
      *
      * @param SQLLogger $logger
      */
-    public function setSQLLogger(SQLLogger $logger)
+    public function setSQLLogger(SQLLogger $logger = null)
     {
         $this->_attributes['sqlLogger'] = $logger;
     }
 
     /**
      * Gets the SQL logger that is used.
-     * 
-     * @return SQLLogger
+     *
+     * @return \Doctrine\DBAL\Logging\SQLLogger
      */
     public function getSQLLogger()
     {

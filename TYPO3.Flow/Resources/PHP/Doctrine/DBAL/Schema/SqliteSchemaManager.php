@@ -155,10 +155,8 @@ class SqliteSchemaManager extends AbstractSchemaManager
             case 'real':
             case 'decimal':
             case 'numeric':
-                if (array_key_exists('length', $tableColumn)) {
+                if (isset($tableColumn['length'])) {
                     list($precision, $scale) = array_map('trim', explode(', ', $tableColumn['length']));
-                } else {
-                    $precision = $scale = null;
                 }
                 $length = null;
                 break;

@@ -33,7 +33,6 @@ use PDO, Closure, Exception,
  * @license http://www.opensource.org/licenses/lgpl-license.php LGPL
  * @link    www.doctrine-project.org
  * @since   2.0
- * @version $Revision: 3938 $
  * @author  Guilherme Blanco <guilhermeblanco@hotmail.com>
  * @author  Jonathan Wage <jonwage@gmail.com>
  * @author  Roman Borschel <roman@code-factory.org>
@@ -62,6 +61,27 @@ class Connection implements DriverConnection
      * Constant for transaction isolation level SERIALIZABLE.
      */
     const TRANSACTION_SERIALIZABLE = 4;
+    
+    /**
+     * Represents an array of ints to be expanded by Doctrine SQL parsing.
+     * 
+     * @var int
+     */
+    const PARAM_INT_ARRAY = 101;
+    
+    /**
+     * Represents an array of strings to be expanded by Doctrine SQL parsing.
+     * 
+     * @var int
+     */
+    const PARAM_STR_ARRAY = 102;
+    
+    /**
+     * Offset by which PARAM_* constants are detected as arrays of the param type.
+     * 
+     * @var int
+     */
+    const ARRAY_PARAM_OFFSET = 100;
 
     /**
      * The wrapped driver connection.
@@ -79,6 +99,11 @@ class Connection implements DriverConnection
      * @var Doctrine\Common\EventManager
      */
     protected $_eventManager;
+    
+    /**
+     * @var Doctrine\DBAL\Query\ExpressionBuilder
+     */
+    protected $_expr;
 
     /**
      * Whether or not a connection has been established.
@@ -174,6 +199,9 @@ class Connection implements DriverConnection
 
         $this->_config = $config;
         $this->_eventManager = $eventManager;
+        
+        $this->_expr = new Query\Expression\ExpressionBuilder($this);
+        
         if ( ! isset($params['platform'])) {
             $this->_platform = $driver->getDatabasePlatform();
         } else if ($params['platform'] instanceof Platforms\AbstractPlatform) {
@@ -181,6 +209,7 @@ class Connection implements DriverConnection
         } else {
             throw DBALException::invalidPlatformSpecified();
         }
+        
         $this->_transactionIsolationLevel = $this->_platform->getDefaultTransactionIsolationLevel();
     }
 
@@ -247,7 +276,7 @@ class Connection implements DriverConnection
     /**
      * Gets the DBAL driver instance.
      *
-     * @return Doctrine\DBAL\Driver
+     * @return \Doctrine\DBAL\Driver
      */
     public function getDriver()
     {
@@ -257,7 +286,7 @@ class Connection implements DriverConnection
     /**
      * Gets the Configuration used by the Connection.
      *
-     * @return Doctrine\DBAL\Configuration
+     * @return \Doctrine\DBAL\Configuration
      */
     public function getConfiguration()
     {
@@ -267,7 +296,7 @@ class Connection implements DriverConnection
     /**
      * Gets the EventManager used by the Connection.
      *
-     * @return Doctrine\Common\EventManager
+     * @return \Doctrine\Common\EventManager
      */
     public function getEventManager()
     {
@@ -277,13 +306,23 @@ class Connection implements DriverConnection
     /**
      * Gets the DatabasePlatform for the connection.
      *
-     * @return Doctrine\DBAL\Platforms\AbstractPlatform
+     * @return \Doctrine\DBAL\Platforms\AbstractPlatform
      */
     public function getDatabasePlatform()
     {
         return $this->_platform;
     }
-
+    
+    /**
+     * Gets the ExpressionBuilder for the connection.
+     *
+     * @return Doctrine\DBAL\Query\ExpressionBuilder
+     */
+    public function getExpressionBuilder()
+    {
+        return $this->_expr;
+    }
+    
     /**
      * Establishes the connection with the database.
      *
@@ -536,7 +575,7 @@ class Connection implements DriverConnection
      * Prepares an SQL statement.
      *
      * @param string $statement The SQL statement to prepare.
-     * @return Doctrine\DBAL\Driver\Statement The prepared statement.
+     * @return \Doctrine\DBAL\Driver\Statement The prepared statement.
      */
     public function prepare($statement)
     {
@@ -553,7 +592,7 @@ class Connection implements DriverConnection
      *
      * @param string $query The SQL query to execute.
      * @param array $params The parameters to bind to the query, if any.
-     * @return Doctrine\DBAL\Driver\Statement The executed statement.
+     * @return \Doctrine\DBAL\Driver\Statement The executed statement.
      * @internal PERF: Directly prepares a driver statement, not a wrapper.
      */
     public function executeQuery($query, array $params = array(), $types = array())
@@ -566,6 +605,8 @@ class Connection implements DriverConnection
         }
 
         if ($params) {
+            list($query, $params, $types) = SQLParserUtils::expandListParameters($query, $params, $types);
+            
             $stmt = $this->_conn->prepare($query);
             if ($types) {
                 $this->_bindTypedValues($stmt, $params, $types);
@@ -645,6 +686,8 @@ class Connection implements DriverConnection
         }
 
         if ($params) {
+            list($query, $params, $types) = SQLParserUtils::expandListParameters($query, $params, $types);
+            
             $stmt = $this->_conn->prepare($query);
             if ($types) {
                 $this->_bindTypedValues($stmt, $params, $types);
@@ -1048,5 +1091,15 @@ class Connection implements DriverConnection
                 }
             }
         }
+    }
+    
+    /**
+     * Create a new instance of a SQL query builder.
+     * 
+     * @return Query\QueryBuilder 
+     */
+    public function createQueryBuilder()
+    {
+        return new Query\QueryBuilder($this);
     }
 }
