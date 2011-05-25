@@ -229,6 +229,10 @@ FLOW3:
 
       RSAWalletServicePHP:
 
+        # Path to the file where RSA keys shall be stored
+        # Note: This file must not be accessible by the public!
+        keystorePath: %FLOW3_PATH_DATA%Persistent/RsaWalletData
+
         # Defines the openSSL configuration used for key handling.
         # See the PHP openSSL documentation for possible settings.
         openSSLConfiguration: []
