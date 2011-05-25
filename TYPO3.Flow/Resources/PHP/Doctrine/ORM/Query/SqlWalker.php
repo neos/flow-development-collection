@@ -44,7 +44,7 @@ class SqlWalker implements TreeWalker
     private $_aliasCounter = 0;
     private $_tableAliasCounter = 0;
     private $_scalarResultCounter = 1;
-    private $_sqlParamIndex = 1;
+    private $_sqlParamIndex = 0;
 
     /**
      * @var ParserResult
@@ -576,7 +576,7 @@ class SqlWalker implements TreeWalker
                                 $columnAlias = $this->getSQLColumnAlias($srcColumn);
                                 $sql .= ", $sqlTableAlias." . $srcColumn . ' AS ' . $columnAlias;
                                 $columnAlias = $this->_platform->getSQLResultCasing($columnAlias);
-                                $this->_rsm->addMetaResult($dqlAlias, $this->_platform->getSQLResultCasing($columnAlias), $srcColumn);
+                                $this->_rsm->addMetaResult($dqlAlias, $this->_platform->getSQLResultCasing($columnAlias), $srcColumn, (isset($assoc['id']) && $assoc['id'] === true));
                             }
                         }
                     }
@@ -591,7 +591,7 @@ class SqlWalker implements TreeWalker
                                 $columnAlias = $this->getSQLColumnAlias($srcColumn);
                                 $sql .= ', ' . $sqlTableAlias . '.' . $srcColumn . ' AS ' . $columnAlias;
                                 $columnAlias = $this->_platform->getSQLResultCasing($columnAlias);
-                                $this->_rsm->addMetaResult($dqlAlias, $this->_platform->getSQLResultCasing($columnAlias), $srcColumn);
+                                $this->_rsm->addMetaResult($dqlAlias, $this->_platform->getSQLResultCasing($columnAlias), $srcColumn, (isset($assoc['id']) && $assoc['id'] === true));
                             }
                         }
                     }
@@ -960,7 +960,9 @@ class SqlWalker implements TreeWalker
         else if (
             $expr instanceof AST\SimpleArithmeticExpression ||
             $expr instanceof AST\ArithmeticTerm ||
-            $expr instanceof AST\ArithmeticFactor
+            $expr instanceof AST\ArithmeticFactor ||
+            $expr instanceof AST\ArithmeticPrimary ||
+            $expr instanceof AST\Literal
         ) {
             if ( ! $selectExpression->fieldIdentificationVariable) {
                 $resultAlias = $this->_scalarResultCounter++;
@@ -969,7 +971,11 @@ class SqlWalker implements TreeWalker
             }
 
             $columnAlias = 'sclr' . $this->_aliasCounter++;
-            $sql .= $this->walkSimpleArithmeticExpression($expr) . ' AS ' . $columnAlias;
+            if ($expr instanceof AST\Literal) {
+                $sql .= $this->walkLiteral($expr) . ' AS ' .$columnAlias;
+            } else {
+                $sql .= $this->walkSimpleArithmeticExpression($expr) . ' AS ' . $columnAlias;
+            }
             $this->_scalarResultAliasMap[$resultAlias] = $columnAlias;
 
             $columnAlias = $this->_platform->getSQLResultCasing($columnAlias);
@@ -1013,29 +1019,6 @@ class SqlWalker implements TreeWalker
 
                 $columnAlias = $this->_platform->getSQLResultCasing($columnAlias);
                 $this->_rsm->addFieldResult($dqlAlias, $columnAlias, $fieldName, $class->name);
-            }
-
-            if ($class->containsForeignIdentifier) {
-                // Add double entry for association identifier columns to simplify hydrator code
-                foreach ($class->identifier AS $idField) {
-                    if (isset($class->associationMappings[$idField])) {
-                        if (isset($mapping['inherited'])) {
-                            $tableName = $this->_em->getClassMetadata($mapping['inherited'])->table['name'];
-                        } else {
-                            $tableName = $class->table['name'];
-                        }
-
-                        if ($beginning) $beginning = false; else $sql .= ', ';
-
-                        $joinColumnName = $class->associationMappings[$idField]['joinColumns'][0]['name'];
-                        $sqlTableAlias = $this->getSQLTableAlias($tableName, $dqlAlias);
-                        $columnAlias = $this->getSQLColumnAlias($joinColumnName);
-                        $sql .= $sqlTableAlias . '.' . $joinColumnName . ' AS ' . $columnAlias;
-
-                        $columnAlias = $this->_platform->getSQLResultCasing($columnAlias);
-                        $this->_rsm->addMetaResult($dqlAlias, $columnAlias, $idField);
-                    }
-                }
             }
 
             // Add any additional fields of subclasses (excluding inherited fields)
@@ -1206,7 +1189,8 @@ class SqlWalker implements TreeWalker
         } else if (
             $expr instanceof AST\SimpleArithmeticExpression ||
             $expr instanceof AST\ArithmeticTerm ||
-            $expr instanceof AST\ArithmeticFactor
+            $expr instanceof AST\ArithmeticFactor ||
+            $expr instanceof AST\ArithmeticPrimary
         ) {
             if ( ! $simpleSelectExpression->fieldIdentificationVariable) {
                 $alias = $this->_scalarResultCounter++;
@@ -1252,9 +1236,25 @@ class SqlWalker implements TreeWalker
      */
     public function walkGroupByClause($groupByClause)
     {
-        return ' GROUP BY ' . implode(
-            ', ', array_map(array($this, 'walkGroupByItem'), $groupByClause->groupByItems)
-        );
+        $sql = '';
+        foreach ($groupByClause->groupByItems AS $groupByItem) {
+            if (is_string($groupByItem)) {
+                foreach ($this->_queryComponents[$groupByItem]['metadata']->identifier AS $idField) {
+                    if ($sql != '') {
+                        $sql .= ', ';
+                    }
+                    $groupByItem = new AST\PathExpression(AST\PathExpression::TYPE_STATE_FIELD, $groupByItem, $idField);
+                    $groupByItem->type = AST\PathExpression::TYPE_STATE_FIELD;
+                    $sql .= $this->walkGroupByItem($groupByItem);
+                }
+            } else {
+                if ($sql != '') {
+                    $sql .= ', ';
+                }
+                $sql .= $this->walkGroupByItem($groupByItem);
+            }
+        }
+        return ' GROUP BY ' . $sql;
     }
 
     /**

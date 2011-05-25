@@ -1,5 +1,7 @@
 <?php
 /*
+ *  $Id$
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -16,40 +18,36 @@
  * and is licensed under the LGPL. For more information, see
  * <http://www.doctrine-project.org>.
  */
- 
-namespace Doctrine\ORM;
+
+namespace Doctrine\ORM\Query\Expr;
 
 /**
- * Class to store and retrieve the version of Doctrine
+ * Expression class for building DQL and parts
  *
  * @license http://www.opensource.org/licenses/lgpl-license.php LGPL
  * @link    www.doctrine-project.org
  * @since   2.0
  * @version $Revision$
- * @author  Benjamin Eberlei <kontakt@beberlei.de>
  * @author  Guilherme Blanco <guilhermeblanco@hotmail.com>
  * @author  Jonathan Wage <jonwage@gmail.com>
  * @author  Roman Borschel <roman@code-factory.org>
  */
-class Version
+class Composite extends Base
 {
-    /**
-     * Current Doctrine Version
-     */
-    const VERSION = '2.1.0BETA2-DEV';
-
-    /**
-     * Compares a Doctrine version with the current one.
-     *
-     * @param string $version Doctrine version to compare.
-     * @return int Returns -1 if older, 0 if it is the same, 1 if version 
-     *             passed as argument is newer.
-     */
-    public static function compare($version)
+    public function __toString()
     {
-        $currentVersion = str_replace(' ', '', strtolower(self::VERSION));
-        $version = str_replace(' ', '', $version);
-
-        return version_compare($version, $currentVersion);
+        if ($this->count() === 1) {
+            return (string) $this->_parts[0];
+        }
+        
+        $components = array();
+        
+        foreach ($this->_parts as $part) {
+            $components[] = (is_object($part) && $part instanceof self && $part->count() > 1)
+                ? $this->_preSeparator . ((string) $part) . $this->_postSeparator
+                : ((string) $part);
+        }
+        
+        return implode($this->_separator, $components);
     }
 }

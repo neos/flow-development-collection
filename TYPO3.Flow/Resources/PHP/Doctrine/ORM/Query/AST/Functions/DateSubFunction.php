@@ -16,40 +16,43 @@
  * and is licensed under the LGPL. For more information, see
  * <http://www.doctrine-project.org>.
  */
- 
-namespace Doctrine\ORM;
+
+namespace Doctrine\ORM\Query\AST\Functions;
+
+use Doctrine\ORM\Query\Lexer;
+use Doctrine\ORM\Query\SqlWalker;
+use Doctrine\ORM\Query\Parser;
+use Doctrine\ORM\Query\QueryException;
 
 /**
- * Class to store and retrieve the version of Doctrine
+ * "DATE_ADD(date1, interval, unit)"
  *
  * @license http://www.opensource.org/licenses/lgpl-license.php LGPL
  * @link    www.doctrine-project.org
  * @since   2.0
- * @version $Revision$
  * @author  Benjamin Eberlei <kontakt@beberlei.de>
- * @author  Guilherme Blanco <guilhermeblanco@hotmail.com>
- * @author  Jonathan Wage <jonwage@gmail.com>
- * @author  Roman Borschel <roman@code-factory.org>
  */
-class Version
+class DateSubFunction extends DateAddFunction
 {
-    /**
-     * Current Doctrine Version
-     */
-    const VERSION = '2.1.0BETA2-DEV';
+    public $firstDateExpression = null;
+    public $intervalExpression = null;
+    public $unit = null;
 
-    /**
-     * Compares a Doctrine version with the current one.
-     *
-     * @param string $version Doctrine version to compare.
-     * @return int Returns -1 if older, 0 if it is the same, 1 if version 
-     *             passed as argument is newer.
-     */
-    public static function compare($version)
+    public function getSql(SqlWalker $sqlWalker)
     {
-        $currentVersion = str_replace(' ', '', strtolower(self::VERSION));
-        $version = str_replace(' ', '', $version);
-
-        return version_compare($version, $currentVersion);
+        $unit = strtolower($this->unit);
+        if ($unit == "day") {
+            return $sqlWalker->getConnection()->getDatabasePlatform()->getDateSubDaysExpression(
+                $this->firstDateExpression->dispatch($sqlWalker),
+                $this->intervalExpression->dispatch($sqlWalker)
+            );
+        } else if ($unit == "month") {
+            return $sqlWalker->getConnection()->getDatabasePlatform()->getDateSubMonthExpression(
+                $this->firstDateExpression->dispatch($sqlWalker),
+                $this->intervalExpression->dispatch($sqlWalker)
+            );
+        } else {
+            throw QueryException::semanticalError('DATE_SUB() only supports units of type day and month.');
+        }
     }
 }

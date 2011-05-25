@@ -20,8 +20,7 @@
 namespace Doctrine\ORM\Proxy;
 
 use Doctrine\ORM\EntityManager,
-    Doctrine\ORM\Mapping\ClassMetadata,
-    Doctrine\ORM\Mapping\AssociationMapping;
+    Doctrine\ORM\Mapping\ClassMetadata;
 
 /**
  * This factory is used to create proxy objects for entities at runtime.
@@ -121,12 +120,12 @@ class ProxyFactory
     /**
      * Generates a proxy class file.
      *
-     * @param $class
-     * @param $originalClassName
-     * @param $proxyClassName
-     * @param $file The path of the file to write to.
+     * @param \Doctrine\ORM\Mapping\ClassMetadata $class
+     * @param string $originalClassName
+     * @param string $proxyClassName
+     * @param string $file The path of the file to write to.
      */
-    private function _generateProxyClass($class, $proxyClassName, $fileName, $file)
+    private function _generateProxyClass(\Doctrine\ORM\Mapping\ClassMetadata $class, $proxyClassName, $fileName, $file)
     {
         $methods = $this->_generateMethods($class);
         $sleepImpl = $this->_generateSleep($class);
@@ -218,7 +217,7 @@ class ProxyFactory
 
                 $methods .= $parameterString . ')';
                 $methods .= PHP_EOL . '    {' . PHP_EOL;
-                $methods .= '        $this->_load();' . PHP_EOL;
+                $methods .= '        $this->__load();' . PHP_EOL;
                 $methods .= '        return parent::' . $method->getName() . '(' . $argumentString . ');';
                 $methods .= PHP_EOL . '    }' . PHP_EOL;
             }
@@ -278,7 +277,7 @@ class <proxyClassName> extends \<className> implements \Doctrine\ORM\Proxy\Proxy
         $this->_entityPersister = $entityPersister;
         $this->_identifier = $identifier;
     }
-    private function _load()
+    private function __load()
     {
         if (!$this->__isInitialized__ && $this->_entityPersister) {
             $this->__isInitialized__ = true;

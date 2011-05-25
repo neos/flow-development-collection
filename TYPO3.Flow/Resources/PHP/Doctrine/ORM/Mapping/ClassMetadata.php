@@ -63,10 +63,10 @@ class ClassMetadata extends ClassMetadataInfo
      */
     public function __construct($entityName)
     {
-        parent::__construct($entityName);
         $this->reflClass = new ReflectionClass($entityName);
         $this->namespace = $this->reflClass->getNamespaceName();
         $this->table['name'] = $this->reflClass->getShortName();
+        parent::__construct($this->reflClass->getName()); // do not use $entityName, possible case-problems
     }
 
     /**
@@ -210,10 +210,10 @@ class ClassMetadata extends ClassMetadataInfo
      * in an SQL statement.
      * 
      * @param string $field
-     * @param AbstractPlatform $platform
+     * @param \Doctrine\DBAL\Platforms\AbstractPlatform $platform
      * @return string
      */
-    public function getQuotedColumnName($field, $platform)
+    public function getQuotedColumnName($field, \Doctrine\DBAL\Platforms\AbstractPlatform $platform)
     {
         return isset($this->fieldMappings[$field]['quoted']) ?
                 $platform->quoteIdentifier($this->fieldMappings[$field]['columnName']) :
@@ -328,6 +328,14 @@ class ClassMetadata extends ClassMetadataInfo
 
         if ($this->lifecycleCallbacks) {
             $serialized[] = 'lifecycleCallbacks';
+        }
+
+        if ($this->namedQueries) {
+            $serialized[] = 'namedQueries';
+        }
+
+        if ($this->isReadOnly) {
+            $serialized[] = 'isReadOnly';
         }
 
         return $serialized;

@@ -16,40 +16,43 @@
  * and is licensed under the LGPL. For more information, see
  * <http://www.doctrine-project.org>.
  */
- 
-namespace Doctrine\ORM;
+
+namespace Doctrine\ORM\Query\AST\Functions;
+
+use Doctrine\ORM\Query\Lexer;
+use Doctrine\ORM\Query\SqlWalker;
+use Doctrine\ORM\Query\Parser;
 
 /**
- * Class to store and retrieve the version of Doctrine
+ * "DATE_DIFF(date1, date2)"
  *
  * @license http://www.opensource.org/licenses/lgpl-license.php LGPL
  * @link    www.doctrine-project.org
  * @since   2.0
- * @version $Revision$
  * @author  Benjamin Eberlei <kontakt@beberlei.de>
- * @author  Guilherme Blanco <guilhermeblanco@hotmail.com>
- * @author  Jonathan Wage <jonwage@gmail.com>
- * @author  Roman Borschel <roman@code-factory.org>
  */
-class Version
+class DateDiffFunction extends FunctionNode
 {
-    /**
-     * Current Doctrine Version
-     */
-    const VERSION = '2.1.0BETA2-DEV';
+    public $date1;
+    public $date2;
 
-    /**
-     * Compares a Doctrine version with the current one.
-     *
-     * @param string $version Doctrine version to compare.
-     * @return int Returns -1 if older, 0 if it is the same, 1 if version 
-     *             passed as argument is newer.
-     */
-    public static function compare($version)
+    public function getSql(SqlWalker $sqlWalker)
     {
-        $currentVersion = str_replace(' ', '', strtolower(self::VERSION));
-        $version = str_replace(' ', '', $version);
+        return $sqlWalker->getConnection()->getDatabasePlatform()->getDateDiffExpression(
+            $this->date1->dispatch($sqlWalker),
+            $this->date2->dispatch($sqlWalker)
+        );
+    }
 
-        return version_compare($version, $currentVersion);
+    public function parse(Parser $parser)
+    {
+        $parser->match(Lexer::T_IDENTIFIER);
+        $parser->match(Lexer::T_OPEN_PARENTHESIS);
+
+        $this->date1 = $parser->ArithmeticPrimary();
+        $parser->match(Lexer::T_COMMA);
+        $this->date2 = $parser->ArithmeticPrimary();
+
+        $parser->match(Lexer::T_CLOSE_PARENTHESIS);
     }
 }

@@ -104,7 +104,7 @@ class GenericObjectValidator implements \F3\FLOW3\Validation\Validator\Validator
 	 */
 	protected function getPropertyValue($object, $propertyName) {
 		if ($object instanceof \Doctrine\ORM\Proxy\Proxy) {
-			$reflectionLoadMethod = new \ReflectionMethod($object, '_load');
+			$reflectionLoadMethod = new \ReflectionMethod($object, '__load');
 			$reflectionLoadMethod->setAccessible(TRUE);
 			$reflectionLoadMethod->invoke($object);
 		}

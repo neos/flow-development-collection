@@ -195,7 +195,7 @@ abstract class AbstractHydrator
                     $cache[$key]['fieldName'] = $fieldName;
                     $cache[$key]['dqlAlias'] = $this->_rsm->columnOwnerMap[$key];
                     $classMetadata = $this->_em->getClassMetadata($this->_rsm->aliasMap[$cache[$key]['dqlAlias']]);
-                    $cache[$key]['isIdentifier'] = $classMetadata->isIdentifier($fieldName);
+                    $cache[$key]['isIdentifier'] = isset($this->_rsm->isIdentifierColumn[$cache[$key]['dqlAlias']][$key]);
                 }
             }
             
@@ -211,7 +211,16 @@ abstract class AbstractHydrator
             }
 
             if (isset($cache[$key]['isMetaColumn'])) {
-                $rowData[$dqlAlias][$cache[$key]['fieldName']] = $value;
+                if (!isset($rowData[$dqlAlias][$cache[$key]['fieldName']]) || $value !== null) {
+                    $rowData[$dqlAlias][$cache[$key]['fieldName']] = $value;
+                }
+                continue;
+            }
+            
+            // in an inheritance hierachy the same field could be defined several times.
+            // We overwrite this value so long we dont have a non-null value, that value we keep.
+            // Per definition it cannot be that a field is defined several times and has several values.
+            if (isset($rowData[$dqlAlias][$cache[$key]['fieldName']]) && $value === null) {
                 continue;
             }
 

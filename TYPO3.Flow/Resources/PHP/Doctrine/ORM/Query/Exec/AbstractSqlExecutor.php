@@ -34,6 +34,9 @@ use Doctrine\DBAL\Connection;
  */
 abstract class AbstractSqlExecutor
 {
+	/**
+	 * @var array
+	 */
     protected $_sqlStatements;
 
     /**

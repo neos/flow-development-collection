@@ -35,10 +35,8 @@ interface TreeWalker
      * @param Query $query The parsed Query.
      * @param ParserResult $parserResult The result of the parsing process.
      * @param array $queryComponents Query components (symbol table)
-     * TODO: The arguments must be included in the proxy class code of FLOW3 to mak
-e constructors in interfaces work
      */
-    #public function __construct($query, $parserResult, array $queryComponents);
+    public function __construct($query, $parserResult, array $queryComponents);
 
     /**
      * Walks down a SelectStatement AST node, thereby generating the appropriate SQL.

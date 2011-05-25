@@ -15,41 +15,40 @@
  * This software consists of voluntary contributions made by many individuals
  * and is licensed under the LGPL. For more information, see
  * <http://www.doctrine-project.org>.
- */
- 
-namespace Doctrine\ORM;
+*/
+
+namespace Doctrine\ORM\Event;
 
 /**
- * Class to store and retrieve the version of Doctrine
+ * Provides event arguments for the onClear event.
  *
- * @license http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link    www.doctrine-project.org
- * @since   2.0
- * @version $Revision$
- * @author  Benjamin Eberlei <kontakt@beberlei.de>
- * @author  Guilherme Blanco <guilhermeblanco@hotmail.com>
- * @author  Jonathan Wage <jonwage@gmail.com>
- * @author  Roman Borschel <roman@code-factory.org>
+ * @license     http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @link        www.doctrine-project.com
+ * @since       2.0
+ * @version     $Revision$
+ * @author      Roman Borschel <roman@code-factory.de>
+ * @author      Benjamin Eberlei <kontakt@beberlei.de>
  */
-class Version
+class OnClearEventArgs extends \Doctrine\Common\EventArgs
 {
     /**
-     * Current Doctrine Version
+     * @var \Doctrine\ORM\EntityManager
      */
-    const VERSION = '2.1.0BETA2-DEV';
+    private $em;
 
     /**
-     * Compares a Doctrine version with the current one.
-     *
-     * @param string $version Doctrine version to compare.
-     * @return int Returns -1 if older, 0 if it is the same, 1 if version 
-     *             passed as argument is newer.
+     * @param \Doctrine\ORM\EntityManager $em
      */
-    public static function compare($version)
+    public function __construct($em)
     {
-        $currentVersion = str_replace(' ', '', strtolower(self::VERSION));
-        $version = str_replace(' ', '', $version);
+        $this->em = $em;
+    }
 
-        return version_compare($version, $currentVersion);
+    /**
+     * @return \Doctrine\ORM\EntityManager
+     */
+    public function getEntityManager()
+    {
+        return $this->em;
     }
 }
