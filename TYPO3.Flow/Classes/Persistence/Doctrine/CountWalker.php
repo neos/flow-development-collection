@@ -20,6 +20,7 @@ use Doctrine\ORM\Query\AST\PathExpression;
  * A walker to transform a select query into a count query.
  *
  * @scope prototype
+ * @proxy disable
  */
 class CountWalker extends \Doctrine\ORM\Query\TreeWalkerAdapter {
 
