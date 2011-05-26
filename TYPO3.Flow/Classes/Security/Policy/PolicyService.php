@@ -185,29 +185,50 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier) {
-		if ($this->settings['security']['enable'] === FALSE) return FALSE;
+		if ($this->settings['security']['enable'] === FALSE) {
+			return FALSE;
+		}
 
 		$matches = FALSE;
 
-		if (count($this->filters) === 0) {
-			$methodResources = (isset($this->policy['resources']['methods']) ? $this->policy['resources']['methods'] : array());
+		if ($this->filters === array()) {
+			if (isset($this->policy['resources']['methods']) === FALSE) {
+				return FALSE;
+			}
 
 			foreach ($this->policy['acls'] as $role => $acl) {
-				if (!isset($acl['methods']) || !is_array($acl['methods'])) throw new \F3\FLOW3\Security\Exception\MissingConfigurationException('The configuration for method resources could not be found in the policy. Make sure to use the correct syntax in the Policy.yaml files.', 1277383564);
+				if (!isset($acl['methods'])) {
+					continue;
+				}
+				if (!is_array($acl['methods'])) {
+					throw new \F3\FLOW3\Security\Exception\MissingConfigurationException('The configuration for role "' . $role . '" on method resources is not correctly defined. Make sure to use the correct syntax in the Policy.yaml files.', 1277383564);
+				}
 
 				foreach ($acl['methods'] as $resource => $privilege) {
 					$resourceTrace = array();
-					$this->filters[$role][$resource] = $this->policyExpressionParser->parseMethodResources($resource, $methodResources, $resourceTrace);
+					$this->filters[$role][$resource] = $this->policyExpressionParser->parseMethodResources($resource, $this->policy['resources']['methods'], $resourceTrace);
 
 					foreach ($resourceTrace as $currentResource) {
 						$policyForResource = array();
-						if ($privilege === 'GRANT') $policyForResource['privilege'] = self::PRIVILEGE_GRANT;
-						else if ($privilege === 'DENY') $policyForResource['privilege'] = self::PRIVILEGE_DENY;
-						else if ($privilege === 'ABSTAIN') $policyForResource['privilege'] = self::PRIVILEGE_ABSTAIN;
-						else throw new \F3\FLOW3\Security\Exception\InvalidPrivilegeException('Invalid privilege defined in security policy. An ACL entry may have only one of the privileges ABSTAIN, GRANT or DENY, but we got:' . $privilege . ' for role : ' . $role . ' and resource: ' . $resource, 1267311437);
+						switch ($privilege) {
+							case 'GRANT':
+								$policyForResource['privilege'] = self::PRIVILEGE_GRANT;
+								break;
+							case 'DENY':
+								$policyForResource['privilege'] = self::PRIVILEGE_DENY;
+								break;
+							case 'ABSTAIN':
+								$policyForResource['privilege'] = self::PRIVILEGE_ABSTAIN;
+								break;
+							default:
+								throw new \F3\FLOW3\Security\Exception\InvalidPrivilegeException('Invalid privilege defined in security policy. An ACL entry may have only one of the privileges ABSTAIN, GRANT or DENY, but we got:' . $privilege . ' for role : ' . $role . ' and resource: ' . $resource, 1267311437);
+						}
 
-						if ($this->filters[$role][$resource]->hasRuntimeEvaluationsDefinition() === TRUE)  $policyForResource['runtimeEvaluationsClosureCode'] = $this->filters[$role][$resource]->getRuntimeEvaluationsClosureCode();
-						else $policyForResource['runtimeEvaluationsClosureCode'] = FALSE;
+						if ($this->filters[$role][$resource]->hasRuntimeEvaluationsDefinition() === TRUE) {
+							$policyForResource['runtimeEvaluationsClosureCode'] = $this->filters[$role][$resource]->getRuntimeEvaluationsClosureCode();
+						} else {
+							$policyForResource['runtimeEvaluationsClosureCode'] = FALSE;
+						}
 
 						$this->acls[$currentResource][$role] = $policyForResource;
 					}
@@ -218,20 +239,31 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 		foreach ($this->filters as $role => $filtersForRole) {
 			foreach ($filtersForRole as $resource => $filter) {
 				if ($filter->matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier)) {
+					$matches = TRUE;
 					$methodIdentifier = strtolower($className . '->' . $methodName);
 
 					$policyForJoinPoint = array();
+					switch ($this->policy['acls'][$role]['methods'][$resource]) {
+						case 'GRANT':
+							$policyForJoinPoint['privilege'] = self::PRIVILEGE_GRANT;
+							break;
+						case 'DENY':
+							$policyForJoinPoint['privilege'] = self::PRIVILEGE_DENY;
+							break;
+						case 'ABSTAIN':
+							$policyForJoinPoint['privilege'] = self::PRIVILEGE_ABSTAIN;
+							break;
+						default:
+							\F3\FLOW3\Security\Exception\InvalidPrivilegeException('Invalid privilege defined in security policy. An ACL entry may have only one of the privileges ABSTAIN, GRANT or DENY, but we got:' . $this->policy['acls'][$role]['methods'][$resource] . ' for role : ' . $role . ' and resource: ' . $resource, 1267308533);
+					}
 
-					if ($this->policy['acls'][$role]['methods'][$resource] === 'GRANT') $policyForJoinPoint['privilege'] = self::PRIVILEGE_GRANT;
-					else if ($this->policy['acls'][$role]['methods'][$resource] === 'DENY') $policyForJoinPoint['privilege'] = self::PRIVILEGE_DENY;
-					else if ($this->policy['acls'][$role]['methods'][$resource] === 'ABSTAIN') $policyForJoinPoint['privilege'] = self::PRIVILEGE_ABSTAIN;
-					else throw new \F3\FLOW3\Security\Exception\InvalidPrivilegeException('Invalid privilege defined in security policy. An ACL entry may have only one of the privileges ABSTAIN, GRANT or DENY, but we got:' . $this->policy['acls'][$role]['methods'][$resource] . ' for role : ' . $role . ' and resource: ' . $resource, 1267308533);
-
-					if ($filter->hasRuntimeEvaluationsDefinition() === TRUE)  $policyForJoinPoint['runtimeEvaluationsClosureCode'] = $filter->getRuntimeEvaluationsClosureCode();
-					else $policyForJoinPoint['runtimeEvaluationsClosureCode'] = FALSE;
+					if ($filter->hasRuntimeEvaluationsDefinition() === TRUE) {
+						$policyForJoinPoint['runtimeEvaluationsClosureCode'] = $filter->getRuntimeEvaluationsClosureCode();
+					} else {
+						$policyForJoinPoint['runtimeEvaluationsClosureCode'] = FALSE;
+					}
 
 					$this->acls[$methodIdentifier][$role][$resource] = $policyForJoinPoint;
-					$matches = TRUE;
 				}
 			}
 		}
