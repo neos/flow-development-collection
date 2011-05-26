@@ -438,7 +438,10 @@ class ProxyClassBuilder {
 		$proxyClass->getMethod('FLOW3_AOP_Proxy_buildMethodsAndAdvicesArray')->addPreParentCallCode($this->buildMethodsAndAdvicesArrayCode($interceptedMethods));
 		$proxyClass->getMethod('FLOW3_AOP_Proxy_buildMethodsAndAdvicesArray')->overrideMethodVisibility('private');
 		$proxyClass->getConstructor()->addPreParentCallCode("\n\t\t\t\$this->FLOW3_AOP_Proxy_buildMethodsAndAdvicesArray();\n");
-		$proxyClass->getMethod('__wakeup')->addPreParentCallCode("\t\tif (is_callable('parent::__wakeup')) parent::__wakeup();\n\t\t\$this->FLOW3_AOP_Proxy_buildMethodsAndAdvicesArray();\n");
+		$proxyClass->getMethod('__wakeup')->addPreParentCallCode("\t\t\$this->FLOW3_AOP_Proxy_buildMethodsAndAdvicesArray();\n");
+		if (!$this->reflectionService->hasMethod($targetClassName, '__wakeup')) {
+			$proxyClass->getMethod('__wakeup')->addPostParentCallCode("\t\tif (is_callable('parent::__wakeup')) parent::__wakeup();\n");
+		}
 
 		$this->buildGetAdviceChainsMethodCode($targetClassName);
 		$this->buildInvokeJoinPointMethodCode($targetClassName);
