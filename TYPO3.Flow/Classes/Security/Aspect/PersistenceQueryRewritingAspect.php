@@ -128,8 +128,15 @@ class PersistenceQueryRewritingAspect {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function rewriteQomQuery(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
-		if ($this->objectManager->isSessionInitialized() === FALSE) return;
-		if ($this->securityContext === NULL) $this->securityContext = $this->objectManager->get('F3\FLOW3\Security\Context');
+		if ($this->objectManager->isSessionInitialized() === FALSE) {
+			return;
+		}
+		if ($this->securityContext === NULL) {
+			$this->securityContext = $this->objectManager->get('F3\FLOW3\Security\Context');
+		}
+		if ($this->securityContext->isInitialized() === FALSE) {
+			return;
+		}
 
 		$query = $joinPoint->getProxy();
 		$entityType = $query->getType();
@@ -157,9 +164,15 @@ class PersistenceQueryRewritingAspect {
 	 */
 	public function checkAccessAfterFetchingAnObjectByIdentifier(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$result = $joinPoint->getAdviceChain()->proceed($joinPoint);
-		if ($this->objectManager->isSessionInitialized() === FALSE) return $result;
-
-		if ($this->securityContext === NULL) $this->securityContext = $this->objectManager->get('F3\FLOW3\Security\Context');
+		if ($this->objectManager->isSessionInitialized() === FALSE) {
+			return $result;
+		}
+		if ($this->securityContext === NULL) {
+			$this->securityContext = $this->objectManager->get('F3\FLOW3\Security\Context');
+		}
+		if ($this->securityContext->isInitialized() === FALSE) {
+			return $result;
+		}
 
 		$authenticatedRoles = $this->securityContext->getRoles();
 

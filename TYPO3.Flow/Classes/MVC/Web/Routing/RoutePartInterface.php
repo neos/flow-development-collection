@@ -23,7 +23,11 @@ namespace F3\FLOW3\MVC\Web\Routing;
  *                                                                        */
 
 /**
- * Contract for all Route Parts
+ * Contract for all Route Parts.
+ *
+ * !!! Warning: If you write your own RoutePart handler which does some queries to the
+ * persistence layer, be aware that *permission checks* are not yet done, i.e. you
+ * get back *all* objects, not just the objects visible to the current role.
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
@@ -32,7 +36,7 @@ interface RoutePartInterface {
 
 	/**
 	 * Sets name of the Route Part.
-	 * 
+	 *
 	 * @param string $partName
 	 * @return void
 	 */
@@ -40,35 +44,35 @@ interface RoutePartInterface {
 
 	/**
 	 * Returns name of the Route Part.
-	 * 
+	 *
 	 * @return string
 	 */
 	public function getName();
 
 	/**
 	 * Returns TRUE if a value is set for this Route Part, otherwise FALSE.
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public function hasValue();
 
 	/**
 	 * Returns value of the Route Part. Before match() is called this returns NULL.
-	 * 
+	 *
 	 * @return mixed
 	 */
 	public function getValue();
 
 	/**
 	 * Returns TRUE if a default value is set for this Route Part, otherwise FALSE.
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public function hasDefaultValue();
 
 	/**
 	 * Sets default value of the Route Part.
-	 * 
+	 *
 	 * @param mixed $defaultValue
 	 * @return void
 	 */
@@ -76,14 +80,14 @@ interface RoutePartInterface {
 
 	/**
 	 * Gets default value of the Route Part.
-	 * 
+	 *
 	 * @return mixed $defaultValue
 	 */
 	public function getDefaultValue();
 
 	/**
 	 * Specifies whether this Route part is optional.
-	 * 
+	 *
 	 * @param boolean $isOptional TRUE: this Route part is optional. FALSE: this Route part is required.
 	 * @return void
 	 */
@@ -114,7 +118,7 @@ interface RoutePartInterface {
 	/**
 	 * Defines options for this Route Part.
 	 * Options can be used to enrich a route part with parameters or settings like case sensivitity.
-	 * 
+	 *
 	 * @param array $options
 	 * @return void
 	 */
