@@ -257,7 +257,7 @@ class ResourceManager {
 		}
 		$hash = sha1_file($uploadInfo['tmp_name']);
 		$finalTargetPathAndFilename = $this->persistentResourcesStorageBaseUri . $hash;
-		if (move_uploaded_file($uploadInfo['tmp_name'], $finalTargetPathAndFilename) === FALSE) {
+		if (rename($uploadInfo['tmp_name'], $finalTargetPathAndFilename) === FALSE) {
 			return FALSE;
 		}
 		$resource = new \F3\FLOW3\Resource\Resource();
