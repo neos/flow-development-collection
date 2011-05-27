@@ -122,6 +122,27 @@ class Service {
 	}
 
 	/**
+	 * Run DQL and return the result as-is.
+	 *
+	 * @param string $dql
+	 * @param integer $hydrationMode
+	 * @param integer $firstResult
+	 * @param integer $maxResult
+	 * @return mixed
+	 */
+	public function runDql($dql, $hydrationMode = \Doctrine\ORM\Query::HYDRATE_OBJECT, $firstResult = NULL, $maxResult = NULL) {
+		$query = $this->entityManager->createQuery($dql);
+		if ($firstResult !== NULL){
+			$query->setFirstResult($firstResult);
+		}
+		if ($maxResult !== NULL) {
+			$query->setMaxResults($maxResult);
+		}
+
+		return $query->execute(array(), constant($hydrationMode));
+	}
+
+	/**
 	 * Return the configuration needed for Migrations.
 	 *
 	 * @return \Doctrine\DBAL\Migrations\Configuration\Configuration

@@ -176,6 +176,30 @@ class DoctrineCommandController extends \F3\FLOW3\MVC\Controller\CommandControll
 	}
 
 	/**
+	 * Run arbitrary DQL and display results.
+	 *
+	 * @param integer $depth
+	 * @param string $hydrationModeName
+	 * @param integer $firstResult
+	 * @param integer $maxResult
+	 * @return void
+	 * @throws \LogicException
+	 * @throws \RuntimeException
+	 */
+	public function dqlCommand($depth = 3, $hydrationModeName = 'object', $firstResult = NULL, $maxResult = NULL) {
+		$dqlSatetements = $this->request->getCommandLineArguments();
+		$hydrationMode = 'Doctrine\ORM\Query::HYDRATE_' . strtoupper(str_replace('-', '_', $hydrationModeName));
+		if (!defined($hydrationMode)) {
+			throw new \InvalidArgumentException('Hydration mode "' . $hydrationModeName . '" does not exist. It should be either: object, array, scalar or single-scalar.');
+		}
+
+		foreach ($dqlSatetements as $dql) {
+			$resultSet = $this->doctrineService->runDql($dql, $hydrationMode, $firstResult, $maxResult);
+			\Doctrine\Common\Util\Debug::dump($resultSet, $depth);
+		}
+	}
+
+	/**
 	 * Shows the current migration status
 	 *
 	 * @return void
