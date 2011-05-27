@@ -101,6 +101,27 @@ class Service {
 	}
 
 	/**
+	 * Returns basic information about which entities exist and possibly if their
+	 * mapping information contains errors or not.
+	 *
+	 * @return array
+	 */
+	public function getInfo() {
+		$entityClassNames = $this->entityManager->getConfiguration()->getMetadataDriverImpl()->getAllClassNames();
+		$info = array();
+		foreach ($entityClassNames as $entityClassName) {
+			try {
+				$this->entityManager->getClassMetadata($entityClassName);
+				$info[$entityClassName] = TRUE;
+			} catch (\Doctrine\ORM\Mapping\MappingException $e) {
+				$info[$entityClassName] = $e->getMessage();
+			}
+		}
+
+		return $info;
+	}
+
+	/**
 	 * Return the configuration needed for Migrations.
 	 *
 	 * @return \Doctrine\DBAL\Migrations\Configuration\Configuration

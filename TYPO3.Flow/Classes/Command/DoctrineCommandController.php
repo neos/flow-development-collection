@@ -142,6 +142,40 @@ class DoctrineCommandController extends \F3\FLOW3\MVC\Controller\CommandControll
 	}
 
 	/**
+	 * Shows the current status of Doctrine
+	 *
+	 * Shows basic information about which entities exist and possibly if their
+	 * mapping information contains errors or not.
+	 *
+	 * @return void
+	 */
+	public function infoCommand() {
+			// "driver" is used only for Doctrine, thus we (mis-)use it here
+			// additionally, when no path is set, skip this step, assuming no DB is needed
+		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['path'] !== NULL) {
+			$info = $this->doctrineService->getInfo();
+
+			if ($info === array()) {
+				$this->response->appendContent('You do not have any mapped Doctrine ORM entities according to the current configuration. ' .
+				'If you have entities or mapping files you should check your mapping configuration for errors.');
+			} else {
+				$this->response->appendContent('Found ' . count($info) . ' mapped entities:');
+				foreach ($info as $entityClassName => $entityStatus) {
+					if ($entityStatus === TRUE) {
+						$this->response->appendContent('[OK]   ' . $entityClassName);
+					} else {
+						$this->response->appendContent('[FAIL] ' . $entityClassName);
+						$this->response->appendContent($entityStatus);
+						$this->response->appendContent('');
+					}
+				}
+			}
+		} else {
+			$this->response->appendContent('Doctrine info not available, the driver and path backend options are not set in /Configuration/Settings.yaml.');
+		}
+	}
+
+	/**
 	 * Shows the current migration status
 	 *
 	 * @return void
