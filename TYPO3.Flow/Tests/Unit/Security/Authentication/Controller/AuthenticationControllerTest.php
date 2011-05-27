@@ -35,11 +35,13 @@ class AuthenticationControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function authenticateActionCallsAuthenticateOfTheAuthenticationManager() {
+		$mockSecurityContext = $this->getMock('F3\FLOW3\Security\Context');
 		$mockAuthenticationManager = $this->getMock('F3\FLOW3\Security\Authentication\AuthenticationManagerInterface');
 		$mockAuthenticationManager->expects($this->once())->method('authenticate');
 
 		$authenticationController = $this->getAccessibleMock('F3\FLOW3\Security\Authentication\Controller\AuthenticationController', array('dummy'), array(), '', FALSE);
 		$authenticationController->_set('authenticationManager', $mockAuthenticationManager);
+		$authenticationController->_set('securityContext', $mockSecurityContext);
 
 		$authenticationController->authenticateAction();
 	}

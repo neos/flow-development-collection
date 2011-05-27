@@ -37,13 +37,38 @@ class AuthenticationController extends \F3\FLOW3\MVC\Controller\ActionController
 	protected $authenticationManager;
 
 	/**
+	 * @var \F3\FLOW3\Security\Context
+	 * @inject
+	 */
+	protected $securityContext;
+
+	/**
 	 * Calls the authentication manager to authenticate all active tokens
+	 * and redirects to the original intercepted request on success (if there
+	 * is one stored in the security context)
 	 *
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function authenticateAction() {
-		$this->authenticationManager->authenticate();
+		$authenticated = FALSE;
+		try {
+			$this->authenticationManager->authenticate();
+			$authenticated = TRUE;
+		} catch (\F3\FLOW3\Security\Exception\AuthenticationRequiredException $exception) {
+		}
+
+		if ($authenticated) {
+			$storedRequest = $this->securityContext->getInterceptedRequest();
+			if ($storedRequest !== NULL) {
+				$packageKey = $storedRequest->getControllerPackageKey();
+				$subpackageKey = $storedRequest->getControllerSubpackageKey();
+				if ($subpackageKey !== NULL) $packageKey .= '\\' . $subpackageKey;
+				$this->redirect($storedRequest->getControllerActionName(), $storedRequest->getControllerName(), $packageKey, $storedRequest->getArguments());
+			}
+		} else {
+			return $this->errorAction();
+		}
 	}
 
 	/**
@@ -54,6 +79,18 @@ class AuthenticationController extends \F3\FLOW3\MVC\Controller\ActionController
 	 */
 	public function logoutAction() {
 		$this->authenticationManager->logout();
+	}
+
+	/**
+	 * A template method for displaying custom error flash messages, or to
+	 * display no flash message at all on errors. Override this to customize
+	 * the flash message in your action controller.
+	 *
+	 * @return string|boolean The flash message or FALSE if no flash message should be set
+	 * @api
+	 */
+	protected function getErrorFlashMessage() {
+		return 'Wrong credentials.';
 	}
 }
 ?>

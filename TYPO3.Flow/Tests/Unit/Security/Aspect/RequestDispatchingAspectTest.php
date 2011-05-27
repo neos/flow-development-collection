@@ -131,6 +131,53 @@ class RequestDispatchingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function forwardAuthenticationRequiredExceptionsToAnAuthenticationEntryPointStoresTheCurrentRootRequestForLaterResumingInTheSecurityContext() {
+		$rootRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
+		$request = $this->getMock('F3\FLOW3\MVC\Web\SubRequest', array(), array(), '', FALSE);
+		$request->expects($this->once())->method('getRootRequest')->will($this->returnValue($rootRequest));
+		$response = $this->getMock('F3\FLOW3\MVC\Web\Response', array(), array(), '', FALSE);
+		$exception = new \F3\FLOW3\Security\Exception\AuthenticationRequiredException('AuthenticationRequired Exception! Bad...', 1237212410);
+
+		$getMethodArgumentCallback = function() use (&$request, &$response) {
+			$args = func_get_args();
+
+			if ($args[0] === 'request') return $request;
+			elseif ($args[0] === 'response') return $response;
+		};
+
+		$getExceptionCallback = function() use (&$exception) {
+			return $exception;
+		};
+
+		$mockSecurityLogger = $this->getMock('F3\FLOW3\Log\SecurityLoggerInterface', array(), array(), '', FALSE);
+		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
+		$mockFirewall = $this->getMock('F3\FLOW3\Security\Authorization\FirewallInterface');
+		$mockContext = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
+		$mockToken = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), '', FALSE);
+		$mockEntryPoint = $this->getMock('F3\FLOW3\Security\Authentication\EntryPointInterface', array(), array(), '', FALSE);
+
+		$mockException = $this->getMock('F3\FLOW3\Security\Exception\AuthenticationRequiredException', array(), array(), '', FALSE);
+
+		$mockAdviceChain = $this->getMock('F3\FLOW3\AOP\Advice\AdviceChain', array(), array(), '', FALSE);
+		$mockAdviceChain->expects($this->once())->method('proceed')->will($this->throwException($mockException));
+
+		$mockJoinPoint->expects($this->any())->method('getAdviceChain')->will($this->returnValue($mockAdviceChain));
+		$mockJoinPoint->expects($this->any())->method('getMethodArgument')->will($this->returnCallback($getMethodArgumentCallback));
+		$mockJoinPoint->expects($this->any())->method('getException')->will($this->returnCallback($getExceptionCallback));
+		$mockContext->expects($this->atLeastOnce())->method('getAuthenticationTokens')->will($this->returnValue(array($mockToken)));
+		$mockContext->expects($this->once())->method('setInterceptedRequest')->with($rootRequest);
+		$mockToken->expects($this->once())->method('getAuthenticationEntryPoint')->will($this->returnValue($mockEntryPoint));
+		$mockEntryPoint->expects($this->once())->method('canForward')->will($this->returnValue(TRUE));
+		$mockEntryPoint->expects($this->once())->method('startAuthentication')->with($this->equalTo($rootRequest), $this->equalTo($response));
+
+		$dispatchingAspect = new \F3\FLOW3\Security\Aspect\RequestDispatchingAspect($mockContext, $mockFirewall, $mockSecurityLogger);
+		$dispatchingAspect->blockIllegalRequestsAndForwardToAuthenticationEntryPoints($mockJoinPoint);
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @expectedException \F3\FLOW3\Security\Exception\AuthenticationRequiredException
 	 */
 	public function forwardAuthenticationRequiredExceptionsToAnAuthenticationEntryPointThrowsTheOriginalExceptionIfNoEntryPointIsAvailable() {

@@ -143,6 +143,11 @@ class Context {
 	protected $csrfTokens = array();
 
 	/**
+	 * @var \F3\FLOW3\MVC\RequestInterface
+	 */
+	protected $interceptedRequest;
+
+	/**
 	 * Inject the authentication manager
 	 *
 	 * @param F3\FLOW3\Security\Authentication\AuthenticationManagerInterface $authenticationManager The authentication manager
@@ -413,6 +418,27 @@ class Context {
 			return TRUE;
 		}
 		return FALSE;
+	}
+
+	/**
+	 * Sets a request, to be stored for later resuming after it
+	 * has been intercepted by a security exception.
+	 *
+	 * @param \F3\FLOW3\MVC\RequestInterface $interceptedRequest
+	 * @return void
+	 */
+	public function setInterceptedRequest(\F3\FLOW3\MVC\RequestInterface $interceptedRequest = NULL) {
+		$this->interceptedRequest = $interceptedRequest;
+	}
+
+	/**
+	 * Returns the request, that has been stored for later resuming after it
+	 * has been intercepted by a security exception, NULL if there is none.
+	 *
+	 * @return \F3\FLOW3\MVC\RequestInterface
+	 */
+	public function getInterceptedRequest() {
+		return $this->interceptedRequest;
 	}
 
 	/**
