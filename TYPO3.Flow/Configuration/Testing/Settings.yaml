@@ -34,6 +34,8 @@ FLOW3:
       username: null
       password: null
     doctrine:
+      dbal:
+        sessionInitialization: ''
       autoUpdate: y
 
   security:
