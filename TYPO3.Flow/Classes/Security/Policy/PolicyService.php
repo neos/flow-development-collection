@@ -292,6 +292,20 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	}
 
 	/**
+	 * Returns an array of all configured roles
+	 *
+	 * @return array Array of all configured roles
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getRoles() {
+		$roles = array();
+		foreach ($this->policy['roles'] as $roleIdentifier => $parentRoles) {
+			$roles[] = new \F3\FLOW3\Security\Policy\Role($roleIdentifier);
+		}
+		return $roles;
+	}
+
+	/**
 	 * Returns all parent roles for the given role, that are configured in the policy.
 	 *
 	 * @param \F3\FLOW3\Security\Policy\Role $role The role to get the parents for
