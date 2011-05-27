@@ -42,6 +42,11 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	protected $queryBuilder;
 
 	/**
+	 * @var \Doctrine\ORM\EntityManager
+	 */
+	protected $entityManager;
+
+	/**
 	 * @var mixed
 	 */
 	protected $constraint;
@@ -54,14 +59,36 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	/**
 	 * @var integer
 	 */
-	private $parameterIndex = 1;
+	protected $limit;
+
+	/**
+	 * @var integer
+	 */
+	protected $offset;
+
+	/**
+	 * @var integer
+	 */
+	protected $parameterIndex = 1;
+
+	/**
+	 * @var array
+	 */
+	protected $parameters;
 
 	/**
 	 * @param string $entityClassName
-	 * @param \Doctrine\ORM\EntityManager $entityManager
 	 */
-	public function __construct($entityClassName, \Doctrine\ORM\EntityManager $entityManager) {
+	public function __construct($entityClassName) {
 		$this->entityClassName = $entityClassName;
+	}
+
+	/**
+	 * @param \Doctrine\Common\Persistence\ObjectManager $entityManager
+	 * @return void
+	 */
+	public function injectEntityManager(\Doctrine\Common\Persistence\ObjectManager $entityManager) {
+		$this->entityManager = $entityManager;
 		$this->queryBuilder = $entityManager->createQueryBuilder()->select('e')->from($this->entityClassName, 'e');
 	}
 
@@ -122,8 +149,8 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 * @api
 	 */
 	public function setOrderings(array $orderings) {
-		$this->queryBuilder->resetDQLPart('orderBy');
 		$this->orderings = $orderings;
+		$this->queryBuilder->resetDQLPart('orderBy');
 		foreach ($this->orderings AS $propertyName => $order) {
 			$this->queryBuilder->addOrderBy($this->queryBuilder->getRootAlias() . '.' . $propertyName, $order);
 		}
@@ -154,6 +181,7 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 * @api
 	 */
 	public function setLimit($limit) {
+		$this->limit = $limit;
 		$this->queryBuilder->setMaxResults($limit);
 		return $this;
 	}
@@ -178,6 +206,7 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 * @api
 	 */
 	public function setOffset($offset) {
+		$this->offset = $offset;
 		$this->queryBuilder->setFirstResult($offset);
 		return $this;
 	}
@@ -437,6 +466,35 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 
 		return $previousJoinAlias . '.' . $propertyPathParts[$i];
 	}
+
+	/**
+	 * We need to drop the query builder, as it contains a PDO instance deep inside.
+	 *
+	 * @return array
+	 */
+	public function __sleep() {
+		$this->parameters = $this->queryBuilder->getParameters();
+		return array('entityClassName', 'constraint', 'orderings', 'parameterIndex', 'limit', 'offset', 'parameters');
+	}
+
+	/**
+	 * Recreate query builder and set state again.
+	 *
+	 * @return void
+	 */
+	public function __wakeup() {
+		$this->queryBuilder->where($this->constraint);
+		if (is_array($this->orderings)) {
+			foreach ($this->orderings AS $propertyName => $order) {
+				$this->queryBuilder->addOrderBy($this->queryBuilder->getRootAlias() . '.' . $propertyName, $order);
+			}
+		}
+		$this->queryBuilder->setFirstResult($this->offset);
+		$this->queryBuilder->setMaxResults($this->limit);
+		$this->queryBuilder->setParameters($this->parameters);
+		unset($this->parameters);
+	}
+
 }
 
 ?>

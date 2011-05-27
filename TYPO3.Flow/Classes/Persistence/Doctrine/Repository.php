@@ -121,7 +121,7 @@ class Repository extends \Doctrine\ORM\EntityRepository implements \F3\FLOW3\Per
 	 * @api
 	 */
 	public function createQuery() {
-		$query = new \F3\FLOW3\Persistence\Doctrine\Query($this->objectType, $this->entityManager);
+		$query = new \F3\FLOW3\Persistence\Doctrine\Query($this->objectType);
 		if ($this->defaultOrderings) {
 			$query->setOrderings($this->defaultOrderings);
 		}

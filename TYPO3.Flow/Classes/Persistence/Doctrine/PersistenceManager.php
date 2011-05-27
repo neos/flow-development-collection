@@ -124,7 +124,7 @@ class PersistenceManager extends \F3\FLOW3\Persistence\AbstractPersistenceManage
 	 * @return \F3\FLOW3\Persistence\Doctrine\Query
 	 */
 	public function createQueryForType($type) {
-		return new \F3\FLOW3\Persistence\Doctrine\Query($type, $this->entityManager);
+		return new \F3\FLOW3\Persistence\Doctrine\Query($type);
 	}
 
 	/**

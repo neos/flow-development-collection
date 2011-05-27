@@ -34,12 +34,12 @@ class QueryResult implements \F3\FLOW3\Persistence\QueryResultInterface {
 	/**
 	 * @var array
 	 */
-	private $rows;
+	protected $rows;
 
 	/**
 	 * @var \F3\FLOW3\Persistence\Doctrine\Query
 	 */
-	private $query;
+	protected $query;
 
 	/**
 	 * @param array $rows

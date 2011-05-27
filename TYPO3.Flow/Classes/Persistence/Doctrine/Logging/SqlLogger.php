@@ -39,10 +39,10 @@ class SqlLogger implements \Doctrine\DBAL\Logging\SQLLogger {
 	 *
 	 * @param string $sql The SQL to be executed
 	 * @param array $params The SQL parameters
-	 * @param array $types
+	 * @param array $types The SQL parameter types.
 	 * @return void
 	 */
-	public function startQuery($sql, array $params = null, array $types = null) {
+	public function startQuery($sql, array $params = NULL, array $types = NULL) {
 			// this is a safeguard for when no logger might be available...
 		if ($this->logger !== NULL) {
 			$this->logger->log($sql, LOG_DEBUG, array('params' => $params, 'types' => $types));
