@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\Kickstart\Controller;
+namespace F3\Kickstart\Command;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "Kickstart".                  *
@@ -23,11 +23,11 @@ namespace F3\Kickstart\Controller;
  *                                                                        */
 
 /**
- * Controller for the Kickstart generator
+ * Command controller for the Kickstart generator
  *
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class KickstartController extends \F3\FLOW3\MVC\Controller\ActionController {
+class KickstartCommandController extends \F3\FLOW3\MVC\Controller\CommandController {
 
 	/**
 	 * @var \F3\FLOW3\Package\PackageManagerInterface
@@ -42,45 +42,13 @@ class KickstartController extends \F3\FLOW3\MVC\Controller\ActionController {
 	protected $generatorService;
 
 	/**
-	 * @var array
-	 */
-	protected $supportedRequestTypes = array('F3\FLOW3\MVC\CLI\Request');
-
-	/**
-	 * Index action - displays a help message.
-	 *
-	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 */
-	public function indexAction() {
-		$this->helpAction();
-	}
-
-	/**
-	 * Help action - displays a help message
-	 *
-	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 */
-	public function helpAction() {
-		$this->response->appendContent(
-			'FLOW3 Kickstart Generator' . PHP_EOL .
-			'Usage:' . PHP_EOL .
-			' php Public/index.php kickstart generator generatePackage --package-key <package-key>' . PHP_EOL .
-			' php Public/index.php kickstart generator generateController --package-key <package-key> [--controller-name <controller-name>]' . PHP_EOL .
-			' php Public/index.php kickstart generator generateModel --package-key <package-key> [--model-name <model-name>]' . PHP_EOL .
-			' php Public/index.php kickstart generator generateRepository --package-key <package-key> [--model-name <model-name>]' . PHP_EOL .  PHP_EOL
-		);
-	}
-
-	/**
 	 * Kickstart a package
 	 *
 	 * @param string $packageKey The package key
 	 * @return string
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function generatePackageAction($packageKey) {
+	public function generatePackageCommand($packageKey) {
 		if (!$this->packageManager->isPackageKeyValid($packageKey)) {
 			return 'Package key "' . $packageKey . '" is not valid. Only UpperCamelCase with alphanumeric characters and underscore, please!' . PHP_EOL;
 		}
@@ -90,19 +58,20 @@ class KickstartController extends \F3\FLOW3\MVC\Controller\ActionController {
 		}
 		$this->packageManager->createPackage($packageKey);
 		$this->packageManager->activatePackage($packageKey);
-		return $this->generateControllerAction($packageKey);
+		return $this->generateControllerCommand($packageKey);
 	}
 
 	/**
-	 * Generate a controller for a package. The package key can contain
-	 * a subpackage with a slash after the package key (e.g. "MyPackage/Admin").
+	 * Generate a controller for a package
+	 *
+	 * The package key can contain a subpackage with a slash after the package key (e.g. "MyPackage/Admin").
 	 *
 	 * @param string $packageKey The package key of the package for the new controller with an optional subpackage
 	 * @param string $controllerName The name for the new controller. This may also be a comma separated list of controller names.
-	 * @return void
+	 * @return string
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function generateControllerAction($packageKey, $controllerName = 'Standard') {
+	public function generateControllerCommand($packageKey, $controllerName = 'Standard') {
 		$subpackageName = '';
 		if (strpos('/', $packageKey) !== FALSE) {
 			list($packageKey, $subpackageName) = explode('/', $packageKey, 2);
@@ -122,24 +91,25 @@ class KickstartController extends \F3\FLOW3\MVC\Controller\ActionController {
 	}
 
 	/**
-	 * Generate a model class for a package with a given set of fields.
+	 * Generate a model class for a package with a given set of fields
+	 *
 	 * The fields are specified as a variable list of arguments with
 	 * field name and type separated by a colon (e.g. "title:string size:int type:MyType").
 	 *
 	 * @param string $packageKey The package key of the package for the domain model
 	 * @param string $modelName The name of the new domain model class
-	 * @return void
+	 * @return string
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function generateModelAction($packageKey, $modelName) {
+	public function generateModelCommand($packageKey, $modelName) {
 		if (!$this->packageManager->isPackageKeyValid($packageKey)) {
 			return 'Package key "' . $packageKey . '" is not valid. Only UpperCamelCase with alphanumeric characters and underscore, please!' . PHP_EOL;
 		}
 		if (!$this->packageManager->isPackageAvailable($packageKey)) {
 			return 'Package "' . $packageKey . '" is not available.' . PHP_EOL;
 		}
-		$fieldsArguments = $this->request->getCommandLineArguments();
 
+		$fieldsArguments = $this->request->getCommandLineArguments();
 		$fieldDefinitions = array();
 		foreach ($fieldsArguments as $fieldArgument) {
 			list($fieldName, $fieldType) = explode(':', $fieldArgument, 2);
@@ -160,10 +130,10 @@ class KickstartController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 *
 	 * @param string $packageKey The package key
 	 * @param string $modelName The name of the domain model class
-	 * @return void
+	 * @return string
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function generateRepositoryAction($packageKey, $modelName) {
+	public function generateRepositoryCommand($packageKey, $modelName) {
 		if (!$this->packageManager->isPackageKeyValid($packageKey)) {
 			return 'Package key "' . $packageKey . '" is not valid. Only UpperCamelCase with alphanumeric characters and underscore, please!' . PHP_EOL;
 		}
@@ -173,5 +143,6 @@ class KickstartController extends \F3\FLOW3\MVC\Controller\ActionController {
 		$generatedFiles = $this->generatorService->generateRepository($packageKey, $modelName);
 		return implode(PHP_EOL, $generatedFiles) . PHP_EOL;
 	}
+
 }
 ?>
