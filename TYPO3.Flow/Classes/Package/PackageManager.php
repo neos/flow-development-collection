@@ -214,6 +214,10 @@ class PackageManager implements \F3\FLOW3\Package\PackageManagerInterface {
 		$result = PackageMetaDataWriter::writePackageMetaData($package, $packageMetaData);
 		if ($result === FALSE) throw new \F3\FLOW3\Package\Exception('Error while writing the package meta data information at "' . $packagePath . '"', 1232625240);
 
+		$packagePhpSource = \F3\FLOW3\Utility\Files::getFileContents('resource://FLOW3/Private/Package/Package.php.tmpl');
+		$packagePhpSource = str_replace('###PACKAGE_KEY###', $packageKey, $packagePhpSource);
+		file_put_contents($package->getClassesPath() . 'Package.php', $packagePhpSource);
+
 		$this->packages[$packageKey] = $package;
 		foreach (array_keys($this->packages) as $upperCamelCasedPackageKey) {
 			$this->packageKeys[strtolower($upperCamelCasedPackageKey)] = $upperCamelCasedPackageKey;
