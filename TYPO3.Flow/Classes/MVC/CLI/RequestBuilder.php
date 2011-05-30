@@ -86,12 +86,9 @@ class RequestBuilder {
 				$request->setControllerCommandName($controllerCommandName);
 			}
 
-	#		$commandLineArguments = $this->parseRawCommandLineArguments($commandLineArguments);
-
-
-	#		$this->setControllerOptions($request, $commandLineArguments['command']);
-	#		$request->setArguments($commandLineArguments['options']);
-	#		$request->setCommandLineArguments($commandLineArguments['arguments']);
+			$commandLineArguments = $this->parseRawCommandLineArguments($rawCommandLineArguments);
+			$request->setArguments($commandLineArguments['options']);
+			$request->setCommandLineArguments($commandLineArguments['arguments']);
 		}
 
 		return $request;
@@ -128,27 +125,23 @@ class RequestBuilder {
 	 * @return array
 	 */
 	protected function parseRawCommandLineArguments(array $rawCommandLineArguments) {
-		$commandLineArguments = array('command' => array(), 'options' => array(), 'arguments' => array());
+		$commandLineArguments = array('options' => array(), 'arguments' => array());
 
-		$command = array();
 		$onlyArgumentsFollow = FALSE;
 
 		while (count($rawCommandLineArguments) > 0) {
+
 			$rawArgument = array_shift($rawCommandLineArguments);
 
 			if ($rawArgument === '--') {
 				$onlyArgumentsFollow = TRUE;
-				$commandHasEnded = TRUE;
 				continue;
 			}
 
 			if ($onlyArgumentsFollow) {
 				$commandLineArguments['arguments'][] = $rawArgument;
 			} else {
-				if (!$commandHasEnded && $rawArgument[0] !== '-') {
-					$command[] = $rawArgument;
-				} elseif ($rawArgument[0] === '-') {
-					$commandHasEnded = TRUE;
+				if ($rawArgument[0] === '-') {
 					if ($rawArgument[1] === '-') {
 							// long option (--blah=hurz)
 						$rawArgument = substr($rawArgument, 2);
@@ -164,7 +157,6 @@ class RequestBuilder {
 				}
 			}
 		}
-#		$commandLineArguments['command'] = $this->buildCommandArrayFromRawCommandData($command);
 
 		return $commandLineArguments;
 	}
@@ -218,8 +210,8 @@ class RequestBuilder {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function getValueOfCurrentCommandLineOption($currentArgument, array &$rawCommandLineArguments) {
-		if (isset($rawCommandLineArguments[0]) && $rawCommandLineArguments[0][0] === '-' && (strpos($currentArgument, '=') === FALSE)) {
-			return NULL;
+		if (!isset($rawCommandLineArguments[0]) || (isset($rawCommandLineArguments[0]) && $rawCommandLineArguments[0][0] === '-' && (strpos($currentArgument, '=') === FALSE))) {
+			return TRUE;
 		}
 
 		if (strpos($currentArgument, '=') === FALSE) {
