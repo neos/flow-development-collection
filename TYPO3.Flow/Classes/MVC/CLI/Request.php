@@ -56,6 +56,12 @@ class Request implements RequestInterface {
 	protected $dispatched = FALSE;
 
 	/**
+	 *
+	 * @var array
+	 */
+	protected $commandLineArguments;
+
+	/**
 	 * Sets the dispatched flag
 	 *
 	 * @param boolean $flag If this request has been dispatched
@@ -194,6 +200,25 @@ class Request implements RequestInterface {
 	 */
 	public function getArguments() {
 		return $this->arguments;
+	}
+
+	/**
+	 * Get command line arguments
+	 *
+	 * @return array
+	 */
+	public function getCommandLineArguments() {
+		return $this->commandLineArguments;
+	}
+
+	/**
+	 * Set the command line arguments
+	 *
+	 * @param array $commandLineArguments
+	 * @return void
+	 */
+	public function setCommandLineArguments(array $commandLineArguments) {
+		$this->commandLineArguments = $commandLineArguments;
 	}
 
 }

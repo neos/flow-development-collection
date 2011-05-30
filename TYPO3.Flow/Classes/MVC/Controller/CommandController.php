@@ -46,12 +46,28 @@ class CommandController implements ControllerInterface {
 	protected $arguments;
 
 	/**
+	 * @var \F3\FLOW3\Reflection\ReflectionService
+	 */
+	protected $reflectionService;
+
+	/**
 	 * Constructs the controller
 	 *
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct() {
 		$this->arguments = new Arguments(array());
+	}
+
+	/**
+	 * Injects the reflection service
+	 *
+	 * @param \F3\FLOW3\Reflection\ReflectionService $reflectionService
+	 * @return void
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function injectReflectionService(\F3\FLOW3\Reflection\ReflectionService $reflectionService) {
+		$this->reflectionService = $reflectionService;
 	}
 
 	/**
@@ -83,7 +99,8 @@ class CommandController implements ControllerInterface {
 		$this->response = $response;
 
 		$this->commandMethodName = $this->resolveCommandMethodName();
-#		$this->mapRequestArgumentsToControllerArguments();
+		$this->initializeCommandMethodArguments();
+		$this->mapRequestArgumentsToControllerArguments();
 		$this->callCommandMethod();
 	}
 
@@ -92,6 +109,7 @@ class CommandController implements ControllerInterface {
 	 *
 	 * @return string Method name of the current command
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @todo Find exact case of command method!
 	 */
 	protected function resolveCommandMethodName() {
 		$commandMethodName = $this->request->getControllerCommandName() . 'Command';
@@ -102,22 +120,47 @@ class CommandController implements ControllerInterface {
 	}
 
 	/**
+	 * Implementation of the arguments initialization in the action controller:
+	 * Automatically registers arguments of the current action
+	 *
+	 * Don't override this method - use initializeAction() instead.
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @see initializeArguments()
+	 */
+	protected function initializeCommandMethodArguments() {
+		$methodParameters = $this->reflectionService->getMethodParameters(get_class($this), $this->commandMethodName);
+
+		foreach ($methodParameters as $parameterName => $parameterInfo) {
+			$dataType = NULL;
+			if (isset($parameterInfo['type'])) {
+				$dataType = $parameterInfo['type'];
+			} elseif ($parameterInfo['array']) {
+				$dataType = 'array';
+			}
+			if ($dataType === NULL) throw new \F3\FLOW3\MVC\Exception\InvalidArgumentTypeException('The argument type for parameter $' . $parameterName . ' of method ' . get_class($this) . '->' . $this->actionMethodName . '() could not be detected.' , 1306755296);
+			$defaultValue = (isset($parameterInfo['defaultValue']) ? $parameterInfo['defaultValue'] : NULL);
+			$this->arguments->addNewArgument($parameterName, $dataType, ($parameterInfo['optional'] === FALSE), $defaultValue);
+		}
+	}
+
+	/**
 	 * Maps arguments delivered by the request object to the local controller arguments.
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function mapRequestArgumentsToControllerArguments() {
-		$optionalArgumentNames = array();
-		$allArgumentNames = $this->arguments->getArgumentNames();
-		foreach ($allArgumentNames as $argumentName) {
-			if ($this->arguments[$argumentName]->isRequired() === FALSE) $optionalArgumentNames[] = $argumentName;
+		foreach ($this->arguments as $argument) {
+			$argumentName = $argument->getName();
+
+			if ($this->request->hasArgument($argumentName)) {
+				$argument->setValue($this->request->getArgument($argumentName));
+			} elseif ($argument->isRequired()) {
+				throw new \F3\FLOW3\MVC\Exception\RequiredArgumentMissingException('Required argument "' . $argumentName  . '" is not set.', 1306755520);
+			}
 		}
-
-		$validator = $this->objectManager->get('F3\FLOW3\MVC\Controller\ArgumentsValidator');
-		$this->propertyMapper->mapAndValidate($allArgumentNames, $this->request->getArguments(), $this->arguments, $optionalArgumentNames, $validator);
-
-		$this->argumentsMappingResults = $this->propertyMapper->getMappingResults();
 	}
 
 	/**
@@ -146,5 +189,4 @@ class CommandController implements ControllerInterface {
 	}
 
 }
-
 ?>
