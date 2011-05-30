@@ -719,8 +719,8 @@ EOT;
 		$proxyMethod = $this->compiler->getProxyClass($targetClassName)->getMethod('FLOW3_AOP_Proxy_invokeJoinPoint');
 		$proxyMethod->setMethodParametersCode('\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint');
 		$code = <<<'EOT'
+		if (__CLASS__ !== $joinPoint->getClassName()) return parent::FLOW3_AOP_Proxy_invokeJoinPoint($joinPoint);
 		if (isset($this->FLOW3_AOP_Proxy_methodIsInAdviceMode[$joinPoint->getMethodName()])) {
-			if (__CLASS__ !== $joinPoint->getClassName()) return parent::FLOW3_AOP_Proxy_invokeJoinPoint($joinPoint);
 			return call_user_func_array(array('self', $joinPoint->getMethodName()), $joinPoint->getMethodArguments());
 		}
 

@@ -62,6 +62,15 @@ class BaseFunctionalityTestingAspect {
 	}
 
 	/**
+	 * @around method(public TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01->saySomethingSmart())
+	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint
+	 * @return string
+	 */
+	public function somethingSmartAdvice(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+		return $joinPoint->getAdviceChain()->proceed($joinPoint) . ' For big twos and small fives!';
+	}
+
+	/**
 	 * @around method(public TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01->sayHelloAndThrow())
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint
 	 * @return string
