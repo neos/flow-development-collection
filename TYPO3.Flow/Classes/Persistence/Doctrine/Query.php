@@ -194,7 +194,7 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 * @api
 	 */
 	public function getLimit() {
-		$this->queryBuilder->getMaxResults();
+		return $this->limit;
 	}
 
 	/**
@@ -219,7 +219,7 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 * @api
 	 */
 	public function getOffset() {
-		$this->queryBuilder->getFirstResult();
+		return $this->offset;
 	}
 
 	/**
