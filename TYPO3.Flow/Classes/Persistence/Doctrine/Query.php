@@ -100,7 +100,9 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 */
 	public function count() {
 		try {
-			$dqlQuery = clone $this->queryBuilder->getQuery();
+			$originalQuery = $this->queryBuilder->getQuery();
+			$dqlQuery = clone $originalQuery;
+			$dqlQuery->setParameters($originalQuery->getParameters());
 			$dqlQuery->setHint(\Doctrine\ORM\Query::HINT_CUSTOM_TREE_WALKERS, array('F3\FLOW3\Persistence\Doctrine\CountWalker'));
 			return (int)$dqlQuery->getSingleScalarResult();
 		} catch (\Doctrine\ORM\ORMException $e) {
