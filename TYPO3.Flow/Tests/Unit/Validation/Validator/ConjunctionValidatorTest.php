@@ -52,7 +52,7 @@ class ConjunctionValidatorTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$validatorObject->expects($this->once())->method('validate')->will($this->returnValue(new \F3\FLOW3\Error\Result()));
 
 		$errors = new \F3\FLOW3\Error\Result();
-		$errors->addError(new \F3\FLOW3\Error\Error('Error', 123));
+		$errors->addError(new \F3\FLOW3\Error\Error('Error'));
 		$secondValidatorObject = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
 		$secondValidatorObject->expects($this->once())->method('validate')->will($this->returnValue($errors));
 
@@ -94,7 +94,7 @@ class ConjunctionValidatorTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$validatorObject = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
 
 		$errors = new \F3\FLOW3\Error\Result();
-		$errors->addError(new \F3\FLOW3\Error\Error('Error', 123));
+		$errors->addError(new \F3\FLOW3\Error\Error('Error'));
 
 		$validatorObject->expects($this->any())->method('validate')->will($this->returnValue($errors));
 

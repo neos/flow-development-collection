@@ -43,7 +43,7 @@ class IntegerValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator 
 	 */
 	protected function isValid($value) {
 		if (filter_var($value, FILTER_VALIDATE_INT) !== FALSE) return;
-		$this->addError('A valid integer number is expected.', 1221560494);
+		$this->addError('A valid integer number is expected.');
 	}
 }
 

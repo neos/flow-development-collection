@@ -235,7 +235,7 @@ class ArgumentTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function setValueShouldSetValidationErrorsIfValidatorIsSetAndValidationFailed() {
-		$error = new \F3\FLOW3\Error\Error('Some Error', 1234);
+		$error = new \F3\FLOW3\Error\Error('Some Error');
 
 		$mockValidator = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
 		$validationMessages = new \F3\FLOW3\Error\Result();

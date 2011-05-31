@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Error;
+namespace F3\FLOW3\Tests\Unit\Error;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -22,89 +22,68 @@ namespace F3\FLOW3\Error;
  *                                                                        */
 
 /**
- */
-
-/**
- * An object representation of a generic message. Usually, you will use Error, Warning or Notice instead of this one.
+ * Testcase for the Message object
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
- * @api
- * @scope prototype
  */
-class Message {
+class MessageTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
-	 * The message text
-	 * @var string
-	 */
-	protected $message = '';
-
-	/**
-	 * The message arguments. Will be replaced in the message body
-	 * @var array
-	 */
-	protected $arguments = array();
-
-	/**
-	 * @param string $message message text
-	 * @param array $arguments Arguments that need to be replaced in the message
-	 * @param string $title optional message title
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Christian Müller <christian.mueller@typo3.org>
+	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
-	 * @api
 	 */
-	public function __construct($message, array $arguments = array()) {
-		$this->message = $message;
-		$this->arguments = $arguments;
+	public function constructorSetsMessage() {
+		$someMessage = 'The message';
+		$message = new \F3\FLOW3\Error\Message($someMessage);
+		$this->assertEquals($someMessage, $message->getMessage());
 	}
 
 	/**
-	 * @return string the message text
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
-	 * @api
 	 */
-	public function getMessage() {
-		return $this->message;
+	public function constructorSetsArguments() {
+		$someArguments = array('Foo', 'Bar');
+		$message = new \F3\FLOW3\Error\Message('', $someArguments);
+		$this->assertEquals($someArguments, $message->getArguments());
 	}
 
 	/**
-	 * @return array the message arguments
-	 * @author Christian Müller <christian.mueller@typo3.org>
+	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
-	 * @api
 	 */
-	public function getArguments() {
-		return $this->arguments;
+	public function renderReturnsTheMessageTextIfNoArgumentsAreSpecified() {
+		$someMessage = 'The message';
+		$message = new \F3\FLOW3\Error\Message($someMessage);
+		$this->assertEquals($someMessage, $message->render());
 	}
 
 	/**
-	 * Returns the message as string by replacing any arguments using sprintf()
-	 *
-	 * @return string
-	 * @author Christian Müller <christian.mueller@typo3.org>
+	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
-	 * @api
 	 */
-	public function render() {
-		if ($this->arguments !== array()) {
-			return vsprintf($this->message, $this->arguments);
-		} else {
-			return $this->message;
-		}
+	public function renderReplacesArgumentsInTheMessageText() {
+		$someMessage = 'The message with %2$s and %1$s';
+		$someArguments = array('Foo', 'Bar');
+		$message = new \F3\FLOW3\Error\Message($someMessage, $someArguments);
+
+		$expectedResult = 'The message with Bar and Foo';
+		$actualResult = $message->render();
+		$this->assertEquals($expectedResult, $actualResult);
 	}
 
 	/**
-	 * Converts this error into a string
-	 *
-	 * @return string
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Christian Müller <christian.mueller@typo3.org>
-	 * @api
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function __toString() {
-		return $this->render();
+	public function convertingTheMessageToStringRendersIt() {
+		$someMessage = 'The message with %2$s and %1$s';
+		$someArguments = array('Foo', 'Bar');
+		$message = new \F3\FLOW3\Error\Message($someMessage, $someArguments);
+
+		$expectedResult = 'The message with Bar and Foo';
+		$actualResult = (string)$message;
+		$this->assertEquals($expectedResult, $actualResult);
 	}
 }
 
