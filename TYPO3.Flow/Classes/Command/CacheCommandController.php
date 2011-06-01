@@ -46,7 +46,7 @@ class CacheCommandController extends \F3\FLOW3\MVC\Controller\CommandController 
 	}
 
 	/**
-	 * Flushes all caches
+	 * Flush all caches
 	 *
 	 * The flush command flushes all caches, including code caches, which have been registered with FLOW3's Cache Manager.
 	 *

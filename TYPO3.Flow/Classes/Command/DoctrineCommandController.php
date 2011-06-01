@@ -42,8 +42,7 @@ class DoctrineCommandController extends \F3\FLOW3\MVC\Controller\CommandControll
 	protected $doctrineService;
 
 	/**
-	 * Injects the FLOW3 settings, the persistence part is kept
-	 * for further use.
+	 * Injects the FLOW3 settings, only the persistence part is kept for further use.
 	 *
 	 * @param array $settings
 	 * @return void
@@ -53,7 +52,7 @@ class DoctrineCommandController extends \F3\FLOW3\MVC\Controller\CommandControll
 	}
 
 	/**
-	 * Validates the class/table mappings
+	 * Validate the class/table mappings
 	 *
 	 * The validate command checks if the current class model schema matches the table structure in the database.
 	 *
@@ -82,7 +81,7 @@ class DoctrineCommandController extends \F3\FLOW3\MVC\Controller\CommandControll
 	}
 
 	/**
-	 * Creates the database schema
+	 * Create the database schema based on current mapping information
 	 *
 	 * @return void
 	 */
@@ -97,7 +96,7 @@ class DoctrineCommandController extends \F3\FLOW3\MVC\Controller\CommandControll
 	}
 
 	/**
-	 * Updates the database schema without data loss
+	 * Update the database schema without data loss (as far as possible)
 	 *
 	 * @return void
 	 */
@@ -112,7 +111,7 @@ class DoctrineCommandController extends \F3\FLOW3\MVC\Controller\CommandControll
 	}
 
 	/**
-	 * Updates database schema and removes obsolete tables / fields
+	 * Update database schema and remove obsolete tables / fields
 	 *
 	 * @return void
 	 */
@@ -127,7 +126,7 @@ class DoctrineCommandController extends \F3\FLOW3\MVC\Controller\CommandControll
 	}
 
 	/**
-	 * Compiles the Doctrine proxy classes
+	 * Compile the Doctrine proxy classes
 	 *
 	 * @return void
 	 */
@@ -142,7 +141,7 @@ class DoctrineCommandController extends \F3\FLOW3\MVC\Controller\CommandControll
 	}
 
 	/**
-	 * Shows the current status of Doctrine
+	 * Show the current status of entities and mappings
 	 *
 	 * Shows basic information about which entities exist and possibly if their
 	 * mapping information contains errors or not.
@@ -176,7 +175,7 @@ class DoctrineCommandController extends \F3\FLOW3\MVC\Controller\CommandControll
 	}
 
 	/**
-	 * Run arbitrary DQL and display results.
+	 * Run arbitrary DQL and display results
 	 *
 	 * @param integer $depth
 	 * @param string $hydrationModeName
@@ -200,7 +199,7 @@ class DoctrineCommandController extends \F3\FLOW3\MVC\Controller\CommandControll
 	}
 
 	/**
-	 * Shows the current migration status
+	 * Show the current migration status
 	 *
 	 * @return void
 	 */
@@ -215,7 +214,7 @@ class DoctrineCommandController extends \F3\FLOW3\MVC\Controller\CommandControll
 	}
 
 	/**
-	 * Migrates the database schema
+	 * Migrate the database schema
 	 *
 	 * @return void
 	 */
@@ -231,7 +230,7 @@ class DoctrineCommandController extends \F3\FLOW3\MVC\Controller\CommandControll
 	}
 
 	/**
-	 * Generates a migration diff
+	 * Generate a migration diff
 	 *
 	 * @return void
 	 */
@@ -246,7 +245,7 @@ class DoctrineCommandController extends \F3\FLOW3\MVC\Controller\CommandControll
 	}
 
 	/**
-	 * Generates an empty migration
+	 * Generate an empty migration
 	 *
 	 * @return void
 	 */
@@ -261,7 +260,7 @@ class DoctrineCommandController extends \F3\FLOW3\MVC\Controller\CommandControll
 	}
 
 	/**
-	 * Executes a single migration
+	 * Execute a single migration
 	 *
 	 * @return void
 	 */
