@@ -172,7 +172,7 @@ class RequestBuilder {
 	protected function parseCommandIdentifier($commandIdentifier) {
 		$controllerNameParts = explode(':', trim($commandIdentifier));
 		if (count($controllerNameParts) !== 3) {
-			return FALSE;
+			return array(FALSE, FALSE);
 		}
 
 		$unknownCasedControllerObjectName = sprintf('F3\\%s\\Command\\%sCommandController', $controllerNameParts[0], $controllerNameParts[1]);

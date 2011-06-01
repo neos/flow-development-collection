@@ -28,7 +28,7 @@ namespace F3\FLOW3\MVC\Controller;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope singleton
  */
-class CommandController implements ControllerInterface {
+class CommandController implements CommandControllerInterface {
 
 	/**
 	 * @var \F3\FLOW3\MVC\CLI\Request
