@@ -46,7 +46,7 @@ class PackageCommandController extends \F3\FLOW3\MVC\Controller\CommandControlle
 	}
 
 	/**
-	 * Action for creating a new package
+	 * Create a new package
 	 *
 	 * @param string $packageKey The package key of the package to create
 	 * @return string
@@ -66,7 +66,7 @@ class PackageCommandController extends \F3\FLOW3\MVC\Controller\CommandControlle
 	}
 
 	/**
-	 * Action for deleting an existing package
+	 * Delete an existing package
 	 *
 	 * @param string $packageKey The package key of the package to create
 	 * @return string
@@ -84,7 +84,7 @@ class PackageCommandController extends \F3\FLOW3\MVC\Controller\CommandControlle
 	}
 
 	/**
-	 * Action for activating a package
+	 * Activate an available package
 	 *
 	 * @param string $packageKey The package key of the package to create
 	 * @return string
@@ -104,7 +104,7 @@ class PackageCommandController extends \F3\FLOW3\MVC\Controller\CommandControlle
 	}
 
 	/**
-	 * Action for deactivating a package
+	 * Deactivate a package
 	 *
 	 * @param string $packageKey The package key of the package to create
 	 * @return string
@@ -120,7 +120,7 @@ class PackageCommandController extends \F3\FLOW3\MVC\Controller\CommandControlle
 	}
 
 	/**
-	 * Action for listing active packages
+	 * List available (active and inactive) packages
 	 *
 	 * @return string
 	 * @author Karsten Dambekalns <karsten@typo3.org>
@@ -135,7 +135,7 @@ class PackageCommandController extends \F3\FLOW3\MVC\Controller\CommandControlle
 	}
 
 	/**
-	 * Action for listing active packages
+	 * List active packages
 	 *
 	 * @return string
 	 * @author Karsten Dambekalns <karsten@typo3.org>

@@ -136,7 +136,7 @@ class CoreCommandController extends \F3\FLOW3\MVC\Controller\CommandController {
 	}
 
 	/**
-	 * Explicitly compiles proxy classes
+	 * Explicitly compile proxy classes
 	 *
 	 * The compile command triggers the proxy class compilation. Although a compilation run is triggered automatically
 	 * by FLOW3, there might be cases in a production context where a manual compile run is needed.
@@ -166,7 +166,7 @@ class CoreCommandController extends \F3\FLOW3\MVC\Controller\CommandController {
 	}
 
 	/**
-	 * Runs the interactive Shell
+	 * Run the interactive Shell
 	 *
 	 * The shell command runs FLOW3's interactive shell. This shell allows for entering commands like through the regular
 	 * command line interface but additionally supports autocompletion and a user-based command history.

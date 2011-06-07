@@ -45,7 +45,7 @@ class SecurityCommandController extends \F3\FLOW3\MVC\Controller\CommandControll
 	}
 
 	/**
-	 * Reads a PEM formatted public key from stdin and imports it into the RSAWalletService
+	 * Read a PEM formatted public key from stdin and import it into the RSAWalletService
 	 *
 	 * @return void
 	 */
@@ -64,7 +64,7 @@ class SecurityCommandController extends \F3\FLOW3\MVC\Controller\CommandControll
 	}
 
 	/**
-	 * Reads a PEM formatted private key from stdin and imports it into the RSAWalletService
+	 * Read a PEM formatted private key from stdin and import it into the RSAWalletService
 	 *
 	 * The public key will be automatically extracted and stored together with the private key as a key pair
 	 *

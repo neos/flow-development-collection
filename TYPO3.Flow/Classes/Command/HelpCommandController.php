@@ -102,7 +102,6 @@ class HelpCommandController extends \F3\FLOW3\MVC\Controller\CommandController {
 				}
 			}
 		}
-		$this->response->appendContent("\nNOTE: Command line support is incomplete, passing arguments to commands is not yet implemented.\n");
 	}
 
 	/**
