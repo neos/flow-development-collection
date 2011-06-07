@@ -26,6 +26,7 @@ namespace F3\FLOW3\Tests\Unit\Security\Aspect;
  * Testcase for the persistence query rewriting aspect
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @covers F3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect
  */
 class PersistenceQueryRewritingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 
@@ -160,6 +161,27 @@ class PersistenceQueryRewritingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		$rewritingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('dummy'), array(), '', FALSE);
 		$rewritingAspect->injectPolicyService($mockPolicyService);
+		$rewritingAspect->injectObjectManager($mockObjectManager);
+
+		$rewritingAspect->rewriteQomQuery($mockJoinPoint);
+	}
+
+	/**
+	 * @test
+	 */
+	public function rewriteQomQueryDoesNotRewriteQueryIfSecurityContextIsNotInitialized() {
+		$mockQuery = $this->getMock('F3\FLOW3\Persistence\QueryInterface');
+
+		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface');
+
+		$mockSecurityContext = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
+		$mockSecurityContext->expects($this->once())->method('isInitialized')->will($this->returnValue(FALSE));
+
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
+		$mockObjectManager->expects($this->once())->method('get')->with('F3\FLOW3\Security\Context')->will($this->returnValue($mockSecurityContext));
+		$mockObjectManager->expects($this->once())->method('isSessionInitialized')->will($this->returnValue(TRUE));
+
+		$rewritingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('dummy'), array(), '', FALSE);
 		$rewritingAspect->injectObjectManager($mockObjectManager);
 
 		$rewritingAspect->rewriteQomQuery($mockJoinPoint);
@@ -504,6 +526,33 @@ class PersistenceQueryRewritingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		$rewritingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('dummy'), array(), '', FALSE);
 		$rewritingAspect->injectPolicyService($mockPolicyService);
+		$rewritingAspect->injectObjectManager($mockObjectManager);
+
+		$rewritingAspect->checkAccessAfterFetchingAnObjectByIdentifier($mockJoinPoint);
+	}
+
+
+	/**
+	 * @test
+	 */
+	public function checkAccessAfterFetchingAnObjectByIdentifierReturnsObjectIfSecurityContextIsNotInitialized() {
+		$mockQuery = $this->getMock('F3\FLOW3\Persistence\QueryInterface');
+		$mockQuery->expects($this->any())->method('getType')->will($this->returnValue('MyClass'));
+
+		$mockAdviceChain = $this->getMock('F3\FLOW3\AOP\Advice\AdviceChain', array(), array(), '', FALSE);
+		$mockAdviceChain->expects($this->any())->method('proceed')->will($this->returnValue(NULL));
+
+		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface');
+		$mockJoinPoint->expects($this->any())->method('getAdviceChain')->will($this->returnValue($mockAdviceChain));
+
+		$mockSecurityContext = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
+		$mockSecurityContext->expects($this->once())->method('isInitialized')->will($this->returnValue(FALSE));
+
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
+		$mockObjectManager->expects($this->once())->method('get')->with('F3\FLOW3\Security\Context')->will($this->returnValue($mockSecurityContext));
+		$mockObjectManager->expects($this->once())->method('isSessionInitialized')->will($this->returnValue(TRUE));
+
+		$rewritingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('dummy'), array(), '', FALSE);
 		$rewritingAspect->injectObjectManager($mockObjectManager);
 
 		$rewritingAspect->checkAccessAfterFetchingAnObjectByIdentifier($mockJoinPoint);

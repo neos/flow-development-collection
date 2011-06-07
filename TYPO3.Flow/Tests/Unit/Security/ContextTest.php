@@ -26,6 +26,7 @@ namespace F3\FLOW3\Tests\Unit\Security;
  * Testcase for the security context
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @covers F3\FLOW3\Security\Context
  */
 class ContextTest extends \F3\FLOW3\Tests\UnitTestCase {
 
@@ -46,6 +47,24 @@ class ContextTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$securityContext->initialize($mockRequest);
 
 		$this->assertSame($mockRequest, $securityContext->_get('request'));
+	}
+
+	/**
+	 * @test
+	 * @category unit
+	 */
+	public function securityContextIsSetToInitialized() {
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\RequestInterface');
+		$mockAuthenticationManager = $this->getMock('F3\FLOW3\Security\Authentication\AuthenticationManagerInterface');
+
+		$mockAuthenticationManager->expects($this->any())->method('getTokens')->will($this->returnValue(array()));
+
+		$securityContext = $this->getAccessibleMock('F3\FLOW3\Security\Context', array('separateActiveAndInactiveTokens'));
+		$securityContext->injectAuthenticationManager($mockAuthenticationManager);
+
+		$this->assertFalse($securityContext->isInitialized());
+		$securityContext->initialize($mockRequest);
+		$this->assertTrue($securityContext->isInitialized());
 	}
 
 	/**

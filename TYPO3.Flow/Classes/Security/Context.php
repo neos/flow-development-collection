@@ -76,6 +76,14 @@ class Context {
 	const CSRF_ONE_PER_REQUEST = 3;
 
 	/**
+	 * TRUE if the context is initialized in the current request, FALSE or NULL otherwise.
+	 *
+	 * @var boolean
+	 * @transient
+	 */
+	protected $initialized;
+
+	/**
 	 * Array of configured tokens (might have request patterns)
 	 * @var array
 	 */
@@ -204,10 +212,18 @@ class Context {
 	public function initialize(\F3\FLOW3\MVC\RequestInterface $request) {
 		$this->request = $request;
 		if ($this->csrfStrategy !== self::CSRF_ONE_PER_SESSION) $this->csrfTokens = array();
-
 		$this->tokens = $this->mergeTokens($this->authenticationManager->getTokens(), $this->tokens);
 		$this->separateActiveAndInactiveTokens();
 		$this->updateTokens($this->activeTokens);
+
+		$this->initialized = TRUE;
+	}
+
+	/**
+	 * @return boolean TRUE if the Context is initialized, FALSE otherwise.
+	 */
+	public function isInitialized() {
+		return (boolean)$this->initialized;
 	}
 
 	/**
