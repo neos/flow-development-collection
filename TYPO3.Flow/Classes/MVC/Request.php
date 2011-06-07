@@ -70,7 +70,8 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	protected $controllerActionName = NULL;
 
 	/**
-	 * The arguments for this request
+	 * The arguments for this request. They must be only simple types, no
+	 * objects allowed.
 	 *
 	 * @var array
 	 */
@@ -80,6 +81,7 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	 * Framework-internal arguments for this request, such as __referrer.
 	 * All framework-internal arguments start with double underscore (__),
 	 * and are only used from within the framework. Not for user consumption.
+	 * Internal Arguments can be objects, in contrast to public arguments
 	 *
 	 * @var array
 	 */
@@ -363,6 +365,12 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	 */
 	public function setArgument($argumentName, $value) {
 		if (!is_string($argumentName) || strlen($argumentName) === 0) throw new \F3\FLOW3\MVC\Exception\InvalidArgumentNameException('Invalid argument name (must be a non-empty string).', 1210858767);
+
+		if ($argumentName[0] === '_' && $argumentName[1] === '_') {
+			$this->internalArguments[$argumentName] = $value;
+			return;
+		}
+
 		if (is_object($value)) throw new \F3\FLOW3\MVC\Exception\InvalidArgumentTypeException('You are not allowed to store objects in the request arguments. Please convert the object of type "' . get_class($value) . '" given for argument "' . $argumentName . '" to a simple type first.', 1302783022);
 
 		switch ($argumentName) {
@@ -382,11 +390,7 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 				$this->setFormat($value);
 				break;
 			default:
-				if ($argumentName[0] === '_' && $argumentName[1] === '_') {
-					$this->internalArguments[$argumentName] = $value;
-				} else {
-					$this->arguments[$argumentName] = $value;
-				}
+				$this->arguments[$argumentName] = $value;
 		}
 	}
 
@@ -513,6 +517,17 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	 */
 	public function getInternalArguments() {
 		return $this->internalArguments;
+	}
+
+	/**
+	 * Returns the value of the specified argument
+	 *
+	 * @param string $argumentName Name of the argument
+	 * @return string Value of the argument, or NULL if not set.
+	 */
+	public function getInternalArgument($argumentName) {
+		if (!isset($this->internalArguments[$argumentName])) return NULL;
+		return $this->internalArguments[$argumentName];
 	}
 }
 ?>

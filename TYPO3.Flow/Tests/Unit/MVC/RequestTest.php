@@ -247,6 +247,34 @@ class RequestTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
+	 */
+	public function internalArgumentsShouldBeStoredAsInternalArguments() {
+		$request = new \F3\FLOW3\MVC\Request();
+		$request->setArgument('__referrer', 'foo');
+		$this->assertSame('foo', $request->getInternalArgument('__referrer'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function hasInternalArgumentShouldReturnNullIfArgumentNotFound() {
+		$request = new \F3\FLOW3\MVC\Request();
+		$this->assertNull($request->getInternalArgument('__nonExistingInternalArgument'));
+	}
+
+	/**
+	 * @test
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function setArgumentAcceptsObjectIfArgumentIsInternal() {
+		$request = new \F3\FLOW3\MVC\Request();
+		$object = new \stdClass();
+		$request->setArgument('__theKey', $object);
+		$this->assertSame($object, $request->getInternalArgument('__theKey'));
+	}
+
+	/**
+	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function multipleArgumentsCanBeSetWithSetArgumentsAndRetrievedWithGetArguments() {
