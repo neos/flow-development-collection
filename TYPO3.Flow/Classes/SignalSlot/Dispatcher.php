@@ -103,7 +103,10 @@ class Dispatcher {
 	 * @api
 	 */
 	public function dispatch($signalClassName, $signalName, array $signalArguments) {
-	if (!isset($this->slots[$signalClassName][$signalName])) return;
+		if (!isset($this->slots[$signalClassName][$signalName])) {
+			return;
+		}
+
 		foreach ($this->slots[$signalClassName][$signalName] as $slotInformation) {
 			if (isset($slotInformation['object'])) {
 				$object = $slotInformation['object'];

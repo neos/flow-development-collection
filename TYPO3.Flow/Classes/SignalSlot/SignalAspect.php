@@ -56,7 +56,8 @@ class SignalAspect {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function forwardSignalToDispatcher(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
-		$this->dispatcher->dispatch($joinPoint->getClassName(), $joinPoint->getMethodName(), $joinPoint->getMethodArguments());
+		$signalName = lcfirst(str_replace('emit', '', $joinPoint->getMethodName()));
+		$this->dispatcher->dispatch($joinPoint->getClassName(), $signalName, $joinPoint->getMethodArguments());
 	}
 }
 ?>
