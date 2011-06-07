@@ -238,7 +238,13 @@ abstract class AbstractController implements ControllerInterface {
 		$this->request->setDispatched(FALSE);
 		$this->request->setControllerActionName($actionName);
 		if ($controllerName !== NULL) $this->request->setControllerName($controllerName);
+		if ($packageKey !== NULL && strpos($packageKey, '\\') !== FALSE) {
+			list($packageKey, $subpackageKey) = explode('\\', $packageKey, 2);
+		} else {
+			$subpackageKey = NULL;
+		}
 		if ($packageKey !== NULL) $this->request->setControllerPackageKey($packageKey);
+		$this->request->setControllerSubpackageKey($subpackageKey);
 		$arguments = $this->persistenceManager->convertObjectsToIdentityArrays($arguments);
 		$this->request->setArguments($arguments);
 

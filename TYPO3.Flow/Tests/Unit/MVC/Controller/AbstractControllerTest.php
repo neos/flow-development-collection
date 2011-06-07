@@ -69,7 +69,8 @@ class AbstractControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function forwardThrowsAStopActionException() {
-		$this->markTestIncomplete('Sebastian -- fix after T3BOARD');
+		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\PersistenceManagerInterface');
+		$mockPersistenceManager->expects($this->once())->method('convertObjectsToIdentityArrays')->will($this->returnValue(array()));
 		$mockArguments = $this->getMock('F3\FLOW3\MVC\Controller\Arguments', array(), array(), '', FALSE);
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request');
 		$mockRequest->expects($this->once())->method('setDispatched')->with(FALSE);
@@ -78,6 +79,7 @@ class AbstractControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$controller = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\AbstractController', array('dummy'), array(), '', FALSE);
 		$controller->_set('arguments', $mockArguments);
 		$controller->_set('request', $mockRequest);
+		$controller->_set('persistenceManager', $mockPersistenceManager);
 		$controller->_call('forward', 'foo');
 	}
 
@@ -88,8 +90,9 @@ class AbstractControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function forwardSetsControllerAndArgumentsAtTheRequestObjectIfTheyAreSpecified() {
-		$this->markTestIncomplete('Sebastian -- fix after T3BOARD');
 		$arguments = array('foo' => 'bar');
+		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\PersistenceManagerInterface');
+		$mockPersistenceManager->expects($this->once())->method('convertObjectsToIdentityArrays')->will($this->returnValue($arguments));
 
 		$mockArguments = $this->getMock('F3\FLOW3\MVC\Controller\Arguments', array(), array(), '', FALSE);
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request');
@@ -101,6 +104,7 @@ class AbstractControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$controller = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\AbstractController', array('dummy'), array(), '', FALSE);
 		$controller->_set('arguments', $mockArguments);
 		$controller->_set('request', $mockRequest);
+		$controller->_set('persistenceManager', $mockPersistenceManager);
 		$controller->_call('forward', 'foo', 'Bar', 'Baz', $arguments);
 	}
 
@@ -125,6 +129,58 @@ class AbstractControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockArguments->expects($this->once())->method('removeAll');
 
 		$controller->_call('forward', 'foo');
+	}
+
+	/**
+	 * @test
+	 * @expectedException \F3\FLOW3\MVC\Exception\StopActionException
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function forwardSetsSubpackageKeyIfNeeded() {
+		$arguments = array('foo' => 'bar');
+
+		$mockArguments = $this->getMock('F3\FLOW3\MVC\Controller\Arguments', array(), array(), '', FALSE);
+		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\PersistenceManagerInterface');
+		$mockPersistenceManager->expects($this->any())->method('convertObjectsToIdentityArrays')->will($this->returnValue($arguments));
+
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request');
+		$mockRequest->expects($this->once())->method('setControllerActionName')->with('foo');
+		$mockRequest->expects($this->once())->method('setControllerName')->with('Bar');
+		$mockRequest->expects($this->once())->method('setControllerPackageKey')->with('Baz');
+		$mockRequest->expects($this->once())->method('setControllerSubpackageKey')->with('Blub');
+		$mockRequest->expects($this->once())->method('setArguments')->with($arguments);
+
+		$controller = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\AbstractController', array('dummy'), array(), '', FALSE);
+		$controller->_set('arguments', $mockArguments);
+		$controller->_set('request', $mockRequest);
+		$controller->_set('persistenceManager', $mockPersistenceManager);
+		$controller->_call('forward', 'foo', 'Bar', 'Baz\\Blub', $arguments);
+	}
+
+	/**
+	 * @test
+	 * @expectedException \F3\FLOW3\MVC\Exception\StopActionException
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function forwardResetsSubpackageKeyIfNeeded() {
+		$arguments = array('foo' => 'bar');
+
+		$mockArguments = $this->getMock('F3\FLOW3\MVC\Controller\Arguments', array(), array(), '', FALSE);
+		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\PersistenceManagerInterface');
+		$mockPersistenceManager->expects($this->any())->method('convertObjectsToIdentityArrays')->will($this->returnValue($arguments));
+
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request');
+		$mockRequest->expects($this->once())->method('setControllerActionName')->with('foo');
+		$mockRequest->expects($this->once())->method('setControllerName')->with('Bar');
+		$mockRequest->expects($this->once())->method('setControllerPackageKey')->with('Baz');
+		$mockRequest->expects($this->once())->method('setControllerSubpackageKey')->with(NULL);
+		$mockRequest->expects($this->once())->method('setArguments')->with($arguments);
+
+		$controller = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\AbstractController', array('dummy'), array(), '', FALSE);
+		$controller->_set('arguments', $mockArguments);
+		$controller->_set('request', $mockRequest);
+		$controller->_set('persistenceManager', $mockPersistenceManager);
+		$controller->_call('forward', 'foo', 'Bar', 'Baz', $arguments);
 	}
 
 	/**
