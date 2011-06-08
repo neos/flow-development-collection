@@ -82,7 +82,7 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \F3\
 	 * @throws \RuntimeException
 	 */
 	protected function getClassSchema($className) {
-		$className = preg_replace('/_Original$/', '', $className);
+		$className = preg_replace('/' . \F3\FLOW3\Object\Proxy\Compiler::ORIGINAL_CLASSNAME_SUFFIX . '$/', '', $className);
 
 		$classSchema = $this->reflectionService->getClassSchema($className);
 		if (!$classSchema) {
@@ -280,7 +280,7 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \F3\
 					$idProperties = $this->reflectionService->getPropertyNamesByTag($mapping['targetEntity'], 'Id');
 					$joinColumnName = $this->buildJoinTableColumnName($mapping['targetEntity']);
 				} else {
-					$className = preg_replace('/_Original$/', '', $property->getDeclaringClass()->getName());
+					$className = preg_replace('/' . \F3\FLOW3\Object\Proxy\Compiler::ORIGINAL_CLASSNAME_SUFFIX . '$/', '', $property->getDeclaringClass()->getName());
 					$idProperties = $this->reflectionService->getPropertyNamesByTag($className, 'Id');
 					$joinColumnName = $this->buildJoinTableColumnName($className);
 				}
@@ -597,7 +597,7 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \F3\
 		$this->classNames = array_filter($this->classNames,
 			function ($className) {
 				return !interface_exists($className, FALSE)
-						&& strpos($className, '_Original') === FALSE;
+						&& strpos($className, \F3\FLOW3\Object\Proxy\Compiler::ORIGINAL_CLASSNAME_SUFFIX) === FALSE;
 			}
 		);
 
@@ -613,7 +613,7 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \F3\
 	 * @return boolean
 	 */
 	public function isTransient($className) {
-		return strpos($className, '_Original') !== FALSE ||
+		return strpos($className, \F3\FLOW3\Object\Proxy\Compiler::ORIGINAL_CLASSNAME_SUFFIX) !== FALSE ||
 				(
 					!$this->reflectionService->isClassTaggedWith($className, 'valueobject') &&
 					!$this->reflectionService->isClassTaggedWith($className, 'entity') &&
