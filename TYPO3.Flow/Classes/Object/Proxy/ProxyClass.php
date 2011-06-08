@@ -237,7 +237,7 @@ class ProxyClass {
 	public function render() {
 		$namespace = $this->namespace;
 		$proxyClassName = $this->originalClassName;
-		$originalClassName = $this->originalClassName . \F3\FLOW3\Object\Proxy\Compiler::$originalClassNameSuffix;
+		$originalClassName = $this->originalClassName . \F3\FLOW3\Object\Proxy\Compiler::ORIGINAL_CLASSNAME_SUFFIX;
 		$abstractKeyword = $this->reflectionService->isClassAbstract($this->fullOriginalClassName) ? 'abstract ' : '';
 
 		$constantsCode = $this->renderConstantsCode();

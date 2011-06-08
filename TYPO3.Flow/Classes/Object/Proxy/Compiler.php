@@ -35,6 +35,11 @@ use \F3\FLOW3\Cache\CacheManager;
 class Compiler {
 
 	/**
+	 * @var string
+	 */
+	const ORIGINAL_CLASSNAME_SUFFIX = '_Original';
+
+	/**
 	 * @var array
 	 */
 	protected $settings = array();
@@ -53,11 +58,6 @@ class Compiler {
 	 * @var \F3\FLOW3\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
-
-	/**
-	 * @var string
-	 */
-	static $originalClassNameSuffix = '_Original';
 
 	/**
 	 * @var array
@@ -183,8 +183,8 @@ class Compiler {
 	}
 
 	/**
-	 * Reads the specified class file, appends "_Original" to its class name and stores the result in the
-	 * proxy classes cache.
+	 * Reads the specified class file, appends ORIGINAL_CLASSNAME_SUFFIX to its
+	 * class name and stores the result in the proxy classes cache.
 	 *
 	 * @param string $className Short class name of the class to copy
 	 * @param string $pathAndFilename Full path and file name of the original class file
@@ -194,11 +194,11 @@ class Compiler {
 	protected function cacheOriginalClassFile($className, $pathAndFilename) {
 		$classCode = file_get_contents($pathAndFilename);
 		$classCode = preg_replace('/^<\\?php.*\n/', '', $classCode);
-		$classCode = preg_replace('/^([a-z ]*)(interface|class)\s+([a-zA-Z0-9_]+)/m', '$1$2 $3_Original', $classCode);
+		$classCode = preg_replace('/^([a-z ]*)(interface|class)\s+([a-zA-Z0-9_]+)/m', '$1$2 $3' . self::ORIGINAL_CLASSNAME_SUFFIX, $classCode);
 
 		$classCode = preg_replace('/\\?>[\n\s\r]*$/', '', $classCode);
 
-		$this->classesCache->set(str_replace('\\', '_', $className . self::$originalClassNameSuffix), $classCode, array(CacheManager::getClassTag($className)));
+		$this->classesCache->set(str_replace('\\', '_', $className . self::ORIGINAL_CLASSNAME_SUFFIX), $classCode, array(CacheManager::getClassTag($className)));
 	}
 }
 
