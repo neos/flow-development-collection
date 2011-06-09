@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Tests\Unit\MVC;
+namespace F3\FLOW3\Tests\Unit\MVC\CLI;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -151,14 +151,6 @@ class RequestBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function argumentsAreDetectedAfterOptions() {
-		$this->environment->SERVER['argc'] = 6;
-		$this->environment->SERVER['argv'][0] = 'index.php';
-		$this->environment->SERVER['argv'][1] = 'TestPackage';
-		$this->environment->SERVER['argv'][2] = '--some';
-		$this->environment->SERVER['argv'][3] = '-option=value';
-		$this->environment->SERVER['argv'][4] = 'file1';
-		$this->environment->SERVER['argv'][5] = 'file2';
-
 		$request = $this->requestBuilder->build('test:default:list --some -option=value file1 file2');
 		$this->assertEquals('F3\Test\Command\DefaultCommandController', $request->getControllerObjectName());
 		$this->assertEquals('list', $request->getControllerCommandName());
