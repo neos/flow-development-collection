@@ -149,7 +149,7 @@ class MemcachedBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 				if (substr($server, 0, 6) === 'tcp://') {
 					$server = substr($server, 6);
 				}
-				if (strstr($server, ':') !== FALSE) {
+				if (strpos($server, ':') !== FALSE) {
 					list($host, $port) = explode(':', $server, 2);
 				} else {
 					$host = $server;
