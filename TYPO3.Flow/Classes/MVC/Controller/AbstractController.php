@@ -225,6 +225,9 @@ abstract class AbstractController implements ControllerInterface {
 	/**
 	 * Forwards the request to another action and / or controller.
 	 *
+	 * Request is directly transfered to the other action / controller
+	 * without the need for a new request.
+	 *
 	 * @param string $actionName Name of the action to forward to
 	 * @param string $controllerName Unqualified object name of the controller to forward to. If not specified, the current controller is used.
 	 * @param string $packageKey Key of the package containing the controller to forward to. If not specified, the current package is assumed.
@@ -232,6 +235,7 @@ abstract class AbstractController implements ControllerInterface {
 	 * @return void
 	 * @throws \F3\FLOW3\MVC\Exception\StopActionException
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @see redirect()
 	 * @api
 	 */
 	protected function forward($actionName, $controllerName = NULL, $packageKey = NULL, array $arguments = array()) {
@@ -255,6 +259,8 @@ abstract class AbstractController implements ControllerInterface {
 	/**
 	 * Redirects the request to another action and / or controller.
 	 *
+	 * Redirect will be sent to the client which then performs another request to the new URI.
+	 *
 	 * NOTE: This method only supports web requests and will throw an exception
 	 * if used with other request types.
 	 *
@@ -268,6 +274,7 @@ abstract class AbstractController implements ControllerInterface {
 	 * @return void
 	 * @throws \F3\FLOW3\MVC\Exception\StopActionException
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @see forward()
 	 * @api
 	 */
 	protected function redirect($actionName, $controllerName = NULL, $packageKey = NULL, array $arguments = NULL, $delay = 0, $statusCode = 303, $format = NULL) {
