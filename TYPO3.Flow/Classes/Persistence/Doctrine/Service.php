@@ -1,5 +1,4 @@
 <?php
-declare(ENCODING = 'utf-8');
 namespace F3\FLOW3\Persistence\Doctrine;
 
 /*                                                                        *
@@ -349,7 +348,6 @@ class Service {
 
 		$code = <<<EOT
 <?php
-declare(ENCODING = 'utf-8');
 namespace $namespace;
 
 use Doctrine\DBAL\Migrations\AbstractMigration,

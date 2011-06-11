@@ -1,5 +1,4 @@
 <?php
-declare(ENCODING = 'utf-8');
 namespace F3\FLOW3\Object\Proxy;
 
 /*                                                                        *
@@ -258,7 +257,6 @@ class ProxyClass {
 		}
 
 		$classCode =
-			"declare(ENCODING = 'utf-8');\n" .
 			"namespace $namespace;\n" .
 			"\n" .
 			"/**\n" .

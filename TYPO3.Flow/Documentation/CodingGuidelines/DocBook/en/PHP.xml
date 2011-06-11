@@ -86,7 +86,6 @@
             <title>The FLOW3 standard file header</title>
 
             <programlisting language="php">&lt;?php
-declare(ENCODING = 'utf-8');
 namespace F3\Your\Stuff\Here;
 
 /*                                                                        *
@@ -1636,15 +1635,13 @@ public function fooBar() {
         </listitem>
 
         <listitem>
-          <para>Add an encoding declaration as the first line of your PHP
-          code, followed by the namespace declaration. For TYPO3 the encoding
-          must be <acronym>UTF-8</acronym></para>
+          <para>The first line of your PHP code must be the namespace declaration.
+	      For TYPO3 the encoding must be <acronym>UTF-8</acronym></para>
 
           <example>
-            <title>Encoding and namespace statements for .php files</title>
+            <title>Namespace statement for .php files</title>
 
             <programlisting language="php">&lt;?php
-declare(ENCODING = 'utf-8');
 namespace F3\Your\Stuff\Here;
 
 ...</programlisting>
