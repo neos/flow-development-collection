@@ -41,7 +41,7 @@ class SignalAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockJoinPoint->expects($this->any())->method('getMethodArguments')->will($this->returnValue(array('arg1' => 'val1', 'arg2' => array('val2'))));
 
 		$mockDispatcher = $this->getMock('F3\FLOW3\SignalSlot\Dispatcher');
-		$mockDispatcher->expects($this->once())->method('dispatch')->with('SampleClass', 'emitSignal', array('arg1' => 'val1', 'arg2' => array('val2')));
+		$mockDispatcher->expects($this->once())->method('dispatch')->with('SampleClass', 'signal', array('arg1' => 'val1', 'arg2' => array('val2')));
 
 		$aspect = new \F3\FLOW3\SignalSlot\SignalAspect();
 		$aspect->injectDispatcher($mockDispatcher);
