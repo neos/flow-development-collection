@@ -41,6 +41,12 @@ class Service {
 	protected $entityManager;
 
 	/**
+	 * @inject
+	 * @var \F3\FLOW3\Package\PackageManagerInterface
+	 */
+	protected $packageManager;
+
+	/**
 	 * Injects the FLOW3 settings, the persistence part is kept
 	 * for further use.
 	 *
@@ -150,9 +156,20 @@ class Service {
 		$configuration = new \Doctrine\DBAL\Migrations\Configuration\Configuration($this->entityManager->getConnection());
 		$configuration->setMigrationsNamespace('F3\FLOW3\Persistence\Doctrine\Migrations');
 		$configuration->setMigrationsDirectory(\F3\FLOW3\Utility\Files::concatenatePaths(array(FLOW3_PATH_CONFIGURATION, 'Doctrine/Migrations')));
-		$configuration->registerMigrationsFromDirectory(\F3\FLOW3\Utility\Files::concatenatePaths(array(FLOW3_PATH_CONFIGURATION, 'Doctrine/Migrations')));
 		$configuration->setMigrationsTableName('flow3_doctrine_migrationstatus');
 		$configuration->createMigrationTable();
+
+		$databasePlatformName = ucfirst($this->entityManager->getConnection()->getDatabasePlatform()->getName());
+		foreach ($this->packageManager->getActivePackages() as $package) {
+			$configuration->registerMigrationsFromDirectory(
+				\F3\FLOW3\Utility\Files::concatenatePaths(array(
+					 $package->getPackagePath(),
+					 'Migrations',
+					 $databasePlatformName
+				))
+			);
+		}
+
 		return $configuration;
 	}
 
