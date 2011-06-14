@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Functional\AOP;
+namespace F3\FLOW3\Tests\Functional\AOP\Fixtures;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -22,29 +22,29 @@ namespace F3\FLOW3\Tests\Functional\AOP;
  *                                                                        */
 
 /**
- * Test suite for aop proxy classes
+ * A target class for testing introductions
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @scope prototype
+ * @entity
  */
-class AopProxyTest extends \F3\FLOW3\Tests\FunctionalTestCase {
+class EntityWithOptionalConstructorArguments {
+
+	public $argument1;
+
+	public $argument2;
+
+	public $argument3;
+
 
 	/**
-	 * @test
+	 * @param mixed $argument1
+	 * @param mixed $argument2
+	 * @param mixed $argument3
 	 */
-	public function advicesAreExecutedAgainIfAnOverriddenMethodCallsItsParentMethod() {
-		$targetClass = new Fixtures\ChildClassOfTargetClass01();
-		$this->assertEquals('Greetings, I just wanted to say: Hello World World', $targetClass->sayHello());
-	}
-
-	/**
-	 * @test
-	 */
-	public function methodArgumentsWithValueNullArePassedToTheProxiedMethod() {
-		$proxiedClass = new Fixtures\EntityWithOptionalConstructorArguments('argument1', NULL, 'argument3');
-
-		$this->assertEquals('argument1', $proxiedClass->argument1);
-		$this->assertNull($proxiedClass->argument2);
-		$this->assertEquals('argument3', $proxiedClass->argument3);
+	public function __construct($argument1, $argument2 = NULL, $argument3 = NULL) {
+		$this->argument1 = $argument1;
+		$this->argument2 = $argument2;
+		$this->argument3 = $argument3;
 	}
 
 }
