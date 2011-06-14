@@ -215,14 +215,16 @@ class DoctrineCommandController extends \F3\FLOW3\MVC\Controller\CommandControll
 	/**
 	 * Migrate the database schema
 	 *
+	 * @param string $version
+	 * @param string $path
+	 * @param bool $dryRun
 	 * @return void
 	 */
-	public function migrateCommand() {
-		$version = NULL; // we need arguments for commands...
+	public function migrateCommand($version = NULL, $path = NULL, $dryRun = FALSE) {
 			// "driver" is used only for Doctrine, thus we (mis-)use it here
 			// additionally, when no path is set, skip this step, assuming no DB is needed
 		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['path'] !== NULL) {
-			$this->response->appendContent($this->doctrineService->executeMigrations($version));
+			$this->response->appendContent($this->doctrineService->executeMigrations($version, $path, $dryRun));
 		} else {
 			$this->response->appendContent('Doctrine migration not possible, the driver and path backend options are not set in /Configuration/Settings.yaml.');
 		}
@@ -261,14 +263,17 @@ class DoctrineCommandController extends \F3\FLOW3\MVC\Controller\CommandControll
 	/**
 	 * Execute a single migration
 	 *
+	 * @param string $version
+	 * @param string $direction
+	 * @param string $path
+	 * @param bool $dryRun
 	 * @return void
 	 */
-	public function migrationExecuteCommand() {
-		$version = NULL; // we need arguments for commands...
+	public function migrationExecuteCommand($version = NULL, $direction = 'up', $path = NULL, $dryRun = FALSE) {
 			// "driver" is used only for Doctrine, thus we (mis-)use it here
 			// additionally, when no path is set, skip this step, assuming no DB is needed
 		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['path'] !== NULL) {
-			$this->response->appendContent($this->doctrineService->executeMigration($version));
+			$this->response->appendContent($this->doctrineService->executeMigration($version, $direction, $path, $dryRun));
 		} else {
 			$this->response->appendContent('Doctrine migration not possible, the driver and path backend options are not set in /Configuration/Settings.yaml.');
 		}
