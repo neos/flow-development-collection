@@ -28,11 +28,6 @@ class ObjectManager implements ObjectManagerInterface {
 	protected $session;
 
 	/**
-	 * @var boolean
-	 */
-	protected $sessionInitialized = FALSE;
-
-	/**
 	 * @var \TYPO3\FLOW3\Object\ObjectSerializer
 	 */
 	protected $objectSerializer;
@@ -152,6 +147,7 @@ class ObjectManager implements ObjectManagerInterface {
 		if (func_num_args() > 1 && isset($this->objects[$objectName]) && $this->objects[$objectName]['s'] !== ObjectConfiguration::SCOPE_PROTOTYPE) {
 			throw new \InvalidArgumentException('You cannot provide constructor arguments for singleton objects via get(). If you need to pass arguments to the constructor, define them in the Objects.yaml configuration.', 1298049934);
 		}
+
 		if (isset($this->objects[$objectName]['i'])) {
 			return $this->objects[$objectName]['i'];
 		}
@@ -201,7 +197,6 @@ class ObjectManager implements ObjectManagerInterface {
 
 	/**
 	 * Creates an instance of the specified object without calling its constructor.
-	 * This method is mainly used by the persistence and the session sub package.
 	 *
 	 * @param string $objectName Name of the object to create a skeleton for
 	 * @return object The recreated, uninitialized (ie. w/ uncalled constructor) object
@@ -308,54 +303,17 @@ class ObjectManager implements ObjectManagerInterface {
 	 * @param string $objectName The object name
 	 * @return string The package key or FALSE if no such object exists
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getPackageKeyByObjectName($objectName) {
 		return (isset($this->objects[$objectName]) ? $this->objects[$objectName]['p'] : FALSE);
 	}
 
 	/**
-	 * Initializes the session and loads all existing instances of scope session.
-	 *
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function initializeSession() {
-		$this->sessionInitialized = TRUE;
-
-		$this->session = $this->get('TYPO3\FLOW3\Session\SessionInterface');
-		$this->session->start();
-
-		if ($this->session->hasKey('TYPO3_FLOW3_Object_ObjectManager') === TRUE) {
-			$sessionObjects = $this->session->getData('TYPO3_FLOW3_Object_ObjectManager');
-			if (is_array($sessionObjects)) {
-				foreach ($sessionObjects as $object) {
-					if ($object instanceof \TYPO3\FLOW3\Object\Proxy\ProxyInterface) {
-						$objectName = $this->getObjectNameByClassName(get_class($object));
-						if ($this->objects[$objectName]['s'] === ObjectConfiguration::SCOPE_SESSION) {
-							$this->objects[$objectName]['i'] = $object;
-						}
-					}
-				}
-			} else {
-					// Fallback for some malformed session data, if it is no array but something else.
-					// In this case, we reset all session objects (graceful degradation).
-				$this->session->putData('TYPO3_FLOW3_Object_ObjectManager', array());
-			}
-		}
-	}
-
-	/**
-	 * Returns TRUE if the session has been initialized
-	 *
-	 * @return boolean TRUE if the session has been initialized
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function isSessionInitialized() {
-		return $this->sessionInitialized;
-	}
-
-	/**
 	 * Sets the instance of the given object
+	 *
+	 * Objects of scope sessions are assumed to be the real session object, not the
+	 * lazy loading proxy.
 	 *
 	 * @param string $objectName The object name
 	 * @param object $instance A prebuilt instance
@@ -392,6 +350,22 @@ class ObjectManager implements ObjectManagerInterface {
 	}
 
 	/**
+	 * Returns all instances of objects with scope session
+	 *
+	 * @return array
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getSessionInstances() {
+		$sessionObjects = array();
+		foreach($this->objects as $information) {
+			if (isset($information['i']) && $information['s'] === ObjectConfiguration::SCOPE_SESSION) {
+				$sessionObjects[] = $information['i'];
+			}
+		}
+		return $sessionObjects;
+	}
+
+	/**
 	 * Shuts down this Object Container by calling the shutdown methods of all
 	 * object instances which were configured to be shut down.
 	 *
@@ -402,17 +376,6 @@ class ObjectManager implements ObjectManagerInterface {
 		foreach ($this->shutdownObjects as $object) {
 			$methodName = $this->shutdownObjects[$object];
 			$object->$methodName();
-		}
-
-		if ($this->sessionInitialized) {
-			$sessionObjects = array();
-			foreach($this->objects as $information) {
-				if (isset($information['i']) && $information['s'] === ObjectConfiguration::SCOPE_SESSION) {
-					$sessionObjects[] = $information['i'];
-				}
-			}
-			$this->session->putData('TYPO3_FLOW3_Object_ObjectManager', $sessionObjects);
-			$this->session->close();
 		}
 	}
 

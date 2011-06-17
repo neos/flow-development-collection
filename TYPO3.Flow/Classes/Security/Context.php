@@ -69,7 +69,7 @@ class Context {
 	 * @var boolean
 	 * @transient
 	 */
-	protected $initialized;
+	protected $initialized = FALSE;
 
 	/**
 	 * Array of configured tokens (might have request patterns)
@@ -119,6 +119,12 @@ class Context {
 	 * @inject
 	 */
 	protected $hashService;
+
+	/**
+	 * @var \TYPO3\FLOW3\MVC\RequestHandlerResolver
+	 * @inject
+	 */
+	protected $requestHandlerResolver;
 
 	/**
 	 * One of the CSRF_* constants to set the csrf strategy
@@ -197,14 +203,17 @@ class Context {
 	/**
 	 * Initializes the security context for the given request.
 	 *
-	 * @param \TYPO3\FLOW3\MVC\RequestInterface $request The request the context should be initialized for
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function initialize(\TYPO3\FLOW3\MVC\RequestInterface $request) {
-		$this->request = $request;
-		if ($this->csrfStrategy !== self::CSRF_ONE_PER_SESSION) $this->csrfTokens = array();
+	public function initialize() {
+		$this->request = $this->requestHandlerResolver->resolveRequestHandler()->getRequest();
+
+		if ($this->csrfStrategy !== self::CSRF_ONE_PER_SESSION) {
+			$this->csrfTokens = array();
+		}
+
 		$this->tokens = $this->mergeTokens($this->authenticationManager->getTokens(), $this->tokens);
 		$this->separateActiveAndInactiveTokens();
 		$this->updateTokens($this->activeTokens);
@@ -216,7 +225,7 @@ class Context {
 	 * @return boolean TRUE if the Context is initialized, FALSE otherwise.
 	 */
 	public function isInitialized() {
-		return (boolean)$this->initialized;
+		return $this->initialized;
 	}
 
 	/**
@@ -226,6 +235,10 @@ class Context {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function getAuthenticationStrategy() {
+		if ($this->initialized === FALSE) {
+			$this->initialize();
+		}
+
 		return $this->authenticationStrategy;
 	}
 
@@ -238,6 +251,10 @@ class Context {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getAuthenticationTokens() {
+		if ($this->initialized === FALSE) {
+			$this->initialize();
+		}
+
 		return $this->activeTokens;
 	}
 
@@ -251,6 +268,10 @@ class Context {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getAuthenticationTokensOfType($className) {
+		if ($this->initialized === FALSE) {
+			$this->initialize();
+		}
+
 		$activeTokens = array();
 		foreach ($this->activeTokens as $token) {
 			if (($token instanceof $className) === FALSE) continue;
@@ -269,6 +290,10 @@ class Context {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getRoles() {
+		if ($this->initialized === FALSE) {
+			$this->initialize();
+		}
+
 		$roles = array(new Role('Everybody'));
 		foreach ($this->getAuthenticationTokens() as $token) {
 			if ($token->isAuthenticated()) {
@@ -294,6 +319,10 @@ class Context {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function hasRole($role) {
+		if ($this->initialized === FALSE) {
+			$this->initialize();
+		}
+
 		$authenticatedRolesExist = FALSE;
 		foreach ($this->getAuthenticationTokens() as $token) {
 			$tokenRoles = $token->getRoles();
@@ -319,6 +348,10 @@ class Context {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getParty() {
+		if ($this->initialized === FALSE) {
+			$this->initialize();
+		}
+
 		foreach ($this->getAuthenticationTokens() as $token) {
 			if ($token->isAuthenticated() === TRUE) return $token->getAccount() !== NULL ? $token->getAccount()->getParty() : NULL;
 		}
@@ -334,6 +367,10 @@ class Context {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function getPartyByType($className) {
+		if ($this->initialized === FALSE) {
+			$this->initialize();
+		}
+
 		foreach ($this->getAuthenticationTokens() as $token) {
 			if ($token->isAuthenticated() === TRUE && $token->getAccount()->getParty() instanceof $className) {
 				return $token->getAccount()->getParty();
@@ -353,6 +390,10 @@ class Context {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getAccount() {
+		if ($this->initialized === FALSE) {
+			$this->initialize();
+		}
+
 		foreach ($this->getAuthenticationTokens() as $token) {
 			if ($token->isAuthenticated() === TRUE) return $token->getAccount();
 		}
@@ -370,6 +411,10 @@ class Context {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function getAccountByAuthenticationProviderName($authenticationProviderName) {
+		if ($this->initialized === FALSE) {
+			$this->initialize();
+		}
+
 		if (isset($this->activeTokens[$authenticationProviderName]) && $this->activeTokens[$authenticationProviderName]->isAuthenticated() === TRUE) {
 			return $this->activeTokens[$authenticationProviderName]->getAccount();
 		}
@@ -384,6 +429,10 @@ class Context {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getCsrfProtectionToken() {
+		if ($this->initialized === FALSE) {
+			$this->initialize();
+		}
+
 		if (count($this->csrfTokens) === 1 && $this->csrfStrategy !== self::CSRF_ONE_PER_URI) {
 			reset($this->csrfTokens);
 			return key($this->csrfTokens);
@@ -402,6 +451,10 @@ class Context {
 	 * @return booelean TRUE, if the token is valid. FALSE otherwise.
 	 */
 	public function isCsrfProtectionTokenValid($csrfToken) {
+		if ($this->initialized === FALSE) {
+			$this->initialize();
+		}
+
 		if (isset($this->csrfTokens[$csrfToken])) {
 			if ($this->csrfStrategy === self::CSRF_ONE_PER_URI) unset($this->csrfTokens[$csrfToken]);
 			return TRUE;
@@ -437,11 +490,12 @@ class Context {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function clearContext() {
-		$this->tokens = NULL;
-		$this->activeTokens = NULL;
-		$this->inactiveTokens = NULL;
+		$this->tokens = array();
+		$this->activeTokens = array();
+		$this->inactiveTokens = array();
 		$this->request = NULL;
-		$this->authenticationStrategy = self::AUTHENTICATE_ONE_TOKEN;
+		$this->csrfTokens = array();
+		$this->initialized = FALSE;
 	}
 
 	/**
@@ -527,6 +581,10 @@ class Context {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function refreshTokens() {
+		if ($this->initialized === FALSE) {
+			$this->initialize();
+		}
+
 		$this->updateTokens($this->activeTokens);
 	}
 
@@ -538,6 +596,7 @@ class Context {
 	 */
 	public function shutdownObject() {
 		$this->tokens = array_merge($this->inactiveTokens, $this->activeTokens);
+		$this->initialized = FALSE;
 	}
 }
 

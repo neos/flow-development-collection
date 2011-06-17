@@ -43,6 +43,16 @@ class TransientSession implements \TYPO3\FLOW3\Session\SessionInterface {
 	protected $data = array();
 
 	/**
+	 * Tells if the session has been started already.
+	 *
+	 * @return boolean
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function isStarted() {
+		return $this->started;
+	}
+
+	/**
 	 * Starts the session, if it has not been already started
 	 *
 	 * @return void
@@ -51,6 +61,30 @@ class TransientSession implements \TYPO3\FLOW3\Session\SessionInterface {
 	public function start() {
 		$this->sessionId = uniqid();
 		$this->started = TRUE;
+	}
+
+	/**
+	 * Resumes an existing session, if any.
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function resume() {
+		if ($this->started === FALSE) {
+			$this->start();
+		}
+	}
+
+	/**
+	 * Generates and propagates a new session ID and transfers all existing data
+	 * to the new session.
+	 *
+	 * @return string The new session ID
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function renewId() {
+		$this->sessionId = uniqid();
+		return $this->sessionId;
 	}
 
 	/**

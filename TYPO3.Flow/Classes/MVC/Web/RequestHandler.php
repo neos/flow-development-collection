@@ -29,6 +29,11 @@ class RequestHandler implements \TYPO3\FLOW3\MVC\RequestHandlerInterface {
 	protected $requestBuilder;
 
 	/**
+	 * @var \TYPO3\FLOW3\MVC\Web\Request
+	 */
+	protected $request;
+
+	/**
 	 * Constructs the Web Request Handler
 	 *
 	 * @param \TYPO3\FLOW3\MVC\Dispatcher $dispatcher The request dispatcher
@@ -52,6 +57,8 @@ class RequestHandler implements \TYPO3\FLOW3\MVC\RequestHandlerInterface {
 	public function handleRequest() {
 		$request = $this->requestBuilder->build();
 		$response = new Response();
+
+		$this->request = $request;
 
 		switch ($request->getFormat()) {
 			case 'rss.xml' :
@@ -88,5 +95,23 @@ class RequestHandler implements \TYPO3\FLOW3\MVC\RequestHandlerInterface {
 	public function getPriority() {
 		return 100;
 	}
+
+	/**
+	 * Returns the top level request built by this request handler.
+	 *
+	 * In most cases the dispatcher or other parts of the request-response chain
+	 * should be preferred for retrieving the current request, because sub requests
+	 * or simulated requests are built later in the process.
+	 *
+	 * If, however, the original top level request is wanted, this is the right
+	 * method for getting it.
+	 *
+	 * @return \TYPO3\FLOW3\MVC\Web\Request The originally built web request
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getRequest() {
+		return $this->request;
+	}
+
 }
 ?>

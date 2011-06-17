@@ -29,6 +29,11 @@ class RequestHandlerResolver {
 	protected $reflectionService;
 
 	/**
+	 * @var \TYPO3\FLOW3\MVC\RequestHandlerInterface
+	 */
+	protected $preselectedRequestHandler;
+
+	/**
 	 * Injects the object manager
 	 *
 	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager A reference to the object manager
@@ -51,6 +56,21 @@ class RequestHandlerResolver {
 	}
 
 	/**
+	 * Sets a specific request handler as the one which is returned by resolveRequestHandler()
+	 *
+	 * This resolver won't test if the given request handler is capable of handling the
+	 * current request. The purpose is for functional tests to inject a mock request handler
+	 * which simulates different kinds of requests.
+	 *
+	 * @param \TYPO3\FLOW3\MVC\RequestHandlerInterface $requestHandler
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setPreselectedRequestHandler(\TYPO3\FLOW3\MVC\RequestHandlerInterface $requestHandler) {
+		$this->preselectedRequestHandler = $requestHandler;
+	}
+
+	/**
 	 * Analyzes the raw request and tries to find a request handler which can handle
 	 * it. If none is found, an exception is thrown.
 	 *
@@ -59,6 +79,10 @@ class RequestHandlerResolver {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function resolveRequestHandler() {
+		if (isset($this->preselectedRequestHandler)) {
+			return $this->preselectedRequestHandler;
+		}
+
 		$availableRequestHandlerClassNames = $this->reflectionService->getAllImplementationClassNamesForInterface('TYPO3\FLOW3\MVC\RequestHandlerInterface');
 
 		$suitableRequestHandlers = array();

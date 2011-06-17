@@ -660,10 +660,13 @@ class ProxyClassBuilder {
 		$methodsAndIntroductions = array();
 		foreach ($interfaceIntroductions as $introduction) {
 			$interfaceName = $introduction->getInterfaceName();
-			foreach (get_class_methods($interfaceName) as $newMethodName) {
-				if (isset($methodsAndIntroductions[$newMethodName])) throw new \TYPO3\FLOW3\AOP\Exception('Method name conflict! Method "' . $newMethodName . '" introduced by "' . $introduction->getInterfaceName() . '" declared in aspect "' . $introduction->getDeclaringAspectClassName() . '" has already been introduced by "' . $methodsAndIntroductions[$newMethodName]->getInterfaceName() . '" declared in aspect "' . $methodsAndIntroductions[$newMethodName]->getDeclaringAspectClassName() . '".', 1173020942);
-				$methods[] = array($interfaceName, $newMethodName);
-				$methodsAndIntroductions[$newMethodName] = $introduction;
+			$methodNames = get_class_methods($interfaceName);
+			if (is_array($methodNames)) {
+				foreach ($methodNames as $newMethodName) {
+					if (isset($methodsAndIntroductions[$newMethodName])) throw new \TYPO3\FLOW3\AOP\Exception('Method name conflict! Method "' . $newMethodName . '" introduced by "' . $introduction->getInterfaceName() . '" declared in aspect "' . $introduction->getDeclaringAspectClassName() . '" has already been introduced by "' . $methodsAndIntroductions[$newMethodName]->getInterfaceName() . '" declared in aspect "' . $methodsAndIntroductions[$newMethodName]->getDeclaringAspectClassName() . '".', 1173020942);
+					$methods[] = array($interfaceName, $newMethodName);
+					$methodsAndIntroductions[$newMethodName] = $introduction;
+				}
 			}
 		}
 		return $methods;

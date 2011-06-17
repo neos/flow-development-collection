@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\FLOW3\Object\Proxy;
+namespace TYPO3\FLOW3\Session\Aspect;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -12,21 +12,9 @@ namespace TYPO3\FLOW3\Object\Proxy;
  *                                                                        */
 
 /**
- * A marker interface for Proxy Classes
- *
- * @author Robert Lemke <robert@typo3.org>
+ * Marker interface for a Session Lazy Loading Proxy
  */
-interface ProxyInterface {
-
-	/**
-	 * Wake up method.
-	 *
-	 * Proxies need to have one as at least session handling relies on it.
-	 *
-	 * @return void
-	 */
-	public function __wakeup();
-
+interface LazyLoadingProxyInterface {
 }
 
 ?>

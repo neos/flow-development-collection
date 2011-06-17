@@ -54,5 +54,11 @@ class CleanEntity implements \TYPO3\FLOW3\AOP\ProxyInterface {
 	 * @return void
 	 */
 	public function FLOW3_Persistence_memorizeCleanState($propertyName = NULL) {}
+
+	/**
+	 * A stub to satisfy the FLOW3 Proxy Interface
+	 */
+	public function __wakeup() {}
+
 }
 ?>

@@ -11,9 +11,6 @@ namespace TYPO3\FLOW3\Tests\Unit\Persistence\Generic\Backend;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-require_once(__DIR__ . '/../../Fixture/AnEntity.php');
-require_once(__DIR__ . '/../../Fixture/AValue.php');
-
 /**
  * Testcase for \TYPO3\FLOW3\Persistence\Backend
  *

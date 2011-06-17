@@ -42,25 +42,10 @@ class RequestDispatchingAspect {
 	 * @param \TYPO3\FLOW3\Log\SecurityLoggerInterface $securityLogger
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(\TYPO3\FLOW3\Security\Context $securityContext, \TYPO3\FLOW3\Security\Authorization\FirewallInterface $firewall,
-			\TYPO3\FLOW3\Log\SecurityLoggerInterface $securityLogger) {
+	public function __construct(\TYPO3\FLOW3\Security\Context $securityContext, \TYPO3\FLOW3\Security\Authorization\FirewallInterface $firewall, \TYPO3\FLOW3\Log\SecurityLoggerInterface $securityLogger) {
 		$this->securityContext = $securityContext;
 		$this->firewall = $firewall;
 		$this->securityLogger = $securityLogger;
-	}
-
-	/**
-	 * Advices the dispatch method to initialize the security framework.
-	 *
-	 * @around method(TYPO3\FLOW3\MVC\Dispatcher->dispatch()) && setting(TYPO3.FLOW3.security.enable)
-	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
-	 * @return mixed Result of the advice chain
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function initializeSecurity(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
-		$request = $joinPoint->getMethodArgument('request');
-		$this->securityContext->initialize($request);
-		return $joinPoint->getAdviceChain()->proceed($joinPoint);
 	}
 
 	/**

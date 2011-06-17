@@ -11,6 +11,8 @@ namespace TYPO3\FLOW3\Session;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use \TYPO3\FLOW3\Object\Configuration\Configuration as ObjectConfiguration;
+
 /**
  * A simple session based on PHP session functions.
  *
@@ -19,9 +21,22 @@ namespace TYPO3\FLOW3\Session;
 class PhpSession implements \TYPO3\FLOW3\Session\SessionInterface {
 
 	/**
+	 * @inject
 	 * @var \TYPO3\FLOW3\Utility\Environment
 	 */
 	protected $environment;
+
+	/**
+	 * @inject
+	 * @var \TYPO3\FLOW3\Session\Aspect\LazyLoadingAspect
+	 */
+	protected $lazyLoadingAspect;
+
+	/**
+	 * @inject
+	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
+	 */
+	protected $objectManager;
 
 	/**
 	 * @var array
@@ -64,14 +79,62 @@ class PhpSession implements \TYPO3\FLOW3\Session\SessionInterface {
 	}
 
 	/**
-	 * Injects the environment
+	 * Initializes the PHP session according to the settings provided.
 	 *
-	 * @param \TYPO3\FLOW3\Utility\Environment $environment
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectEnvironment(\TYPO3\FLOW3\Utility\Environment $environment) {
-		$this->environment = $environment;
+	public function initializeObject() {
+		if (!empty($this->settings['session']['PHPSession']['name'])) {
+			session_name($this->settings['session']['PHPSession']['name']);
+		}
+
+		$cookieParameters = session_get_cookie_params();
+
+		if (!empty($this->settings['session']['PHPSession']['cookie']['domain'])) {
+			$cookieParameters['domain'] = $this->settings['session']['PHPSession']['cookie']['domain'];
+		}
+		if (!empty($this->settings['session']['PHPSession']['cookie']['lifetime'])) {
+			$cookieParameters['lifetime'] = $this->settings['session']['PHPSession']['cookie']['lifetime'];
+		}
+		if (!empty($this->settings['session']['PHPSession']['cookie']['path'])) {
+			$cookieParameters['path'] = $this->settings['session']['PHPSession']['cookie']['path'];
+		}
+		if (!empty($this->settings['session']['PHPSession']['cookie']['secure'])) {
+			$cookieParameters['secure'] = $this->settings['session']['PHPSession']['cookie']['secure'];
+		}
+		if (!empty($this->settings['session']['PHPSession']['cookie']['httponly'])) {
+			$cookieParameters['httponly'] = $this->settings['session']['PHPSession']['cookie']['httponly'];
+		}
+
+		session_set_cookie_params(
+			$cookieParameters['lifetime'],
+			$cookieParameters['path'],
+			$cookieParameters['domain'],
+			$cookieParameters['secure'],
+			$cookieParameters['httponly']
+		);
+
+		if (empty($this->settings['session']['PHPSession']['savePath'])) {
+			$sessionsPath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array($this->environment->getPathToTemporaryDirectory(), 'Sessions'));
+		} else {
+			$sessionsPath = $this->settings['session']['PHPSession']['savePath'];
+		}
+
+		if (!file_exists($sessionsPath)) {
+			\TYPO3\FLOW3\Utility\Files::createDirectoryRecursively($sessionsPath);
+		}
+		session_save_path($sessionsPath);
+	}
+
+	/**
+	 * Tells if the session has been started already.
+	 *
+	 * @return boolean
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function isStarted() {
+		return $this->started;
 	}
 
 	/**
@@ -82,41 +145,19 @@ class PhpSession implements \TYPO3\FLOW3\Session\SessionInterface {
 	 */
 	public function start() {
 		if ($this->started === FALSE) {
-			$cookieParameters = session_get_cookie_params();
-			if (isset($this->settings['session']['PHPSession']['cookie']['domain'])) {
-				$cookieParameters['domain'] = $this->settings['session']['PHPSession']['cookie']['domain'];
-			}
-			if (isset($this->settings['session']['PHPSession']['cookie']['lifetime'])) {
-				$cookieParameters['lifetime'] = $this->settings['session']['PHPSession']['cookie']['lifetime'];
-			}
-			if (isset($this->settings['session']['PHPSession']['cookie']['path'])) {
-				$cookieParameters['path'] = $this->settings['session']['PHPSession']['cookie']['path'];
-			}
-			if (isset($this->settings['session']['PHPSession']['cookie']['secure'])) {
-				$cookieParameters['secure'] = $this->settings['session']['PHPSession']['cookie']['secure'];
-			}
-			if (isset($this->settings['session']['PHPSession']['cookie']['httponly'])) {
-				$cookieParameters['httponly'] = $this->settings['session']['PHPSession']['cookie']['httponly'];
-			}
-			session_set_cookie_params(
-				$cookieParameters['lifetime'],
-				$cookieParameters['path'],
-				$cookieParameters['domain'],
-				$cookieParameters['secure'],
-				$cookieParameters['httponly']
-			);
-			if (empty($this->settings['session']['PHPSession']['savePath'])) {
-				$sessionsPath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array($this->environment->getPathToTemporaryDirectory(), 'Sessions'));
-			} else {
-				$sessionsPath = $this->settings['session']['PHPSession']['savePath'];
-			}
-			if (!file_exists($sessionsPath)) {
-				\TYPO3\FLOW3\Utility\Files::createDirectoryRecursively($sessionsPath);
-			}
-			session_save_path($sessionsPath);
-			session_start();
-			$this->sessionId = session_id();
-			$this->started = TRUE;
+			$this->startOrResume();
+		}
+	}
+
+	/**
+	 * Resumes an existing session, if any.
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function resume() {
+		if ($this->started === FALSE && isset($_COOKIE[session_name()])) {
+			$this->startOrResume();
 		}
 	}
 
@@ -129,6 +170,19 @@ class PhpSession implements \TYPO3\FLOW3\Session\SessionInterface {
 	 */
 	public function getId() {
 		if ($this->started !== TRUE) throw new \TYPO3\FLOW3\Session\Exception\SessionNotStartedException('The session has not been started yet.', 1218043307);
+		return $this->sessionId;
+	}
+
+	/**
+	 * Generates and propagates a new session ID and transfers all existing data
+	 * to the new session.
+	 *
+	 * @return string The new session ID
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function renewId() {
+		session_regenerate_id(TRUE);
+		$this->sessionId = session_id();
 		return $this->sessionId;
 	}
 
@@ -211,6 +265,51 @@ class PhpSession implements \TYPO3\FLOW3\Session\SessionInterface {
 			throw new \TYPO3\FLOW3\Session\Exception('The PHP session handler issued an error: ' . $exception->getMessage() . ' in ' . $exception->getFile() . ' in line ' . $exception->getLine() . '.', 1218474912);
 		}
 		unset($_SESSION);
+	}
+
+	/**
+	 * Shuts down this session
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function shutdownObject() {
+		if ($this->started === TRUE) {
+			$this->putData('TYPO3_FLOW3_Object_ObjectManager', $this->objectManager->getSessionInstances());
+			$this->close();
+		}
+	}
+
+	/**
+	 * Starts or resumes a session
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function startOrResume() {
+		session_start();
+		$this->sessionId = session_id();
+		$this->started = TRUE;
+
+		if ($this->hasKey('TYPO3_FLOW3_Object_ObjectManager') === TRUE) {
+			$sessionObjects = $this->getData('TYPO3_FLOW3_Object_ObjectManager');
+			if (is_array($sessionObjects)) {
+				foreach ($sessionObjects as $object) {
+					if ($object instanceof \TYPO3\FLOW3\Object\Proxy\ProxyInterface) {
+						$objectName = $this->objectManager->getObjectNameByClassName(get_class($object));
+						if ($this->objectManager->getScope($objectName) === ObjectConfiguration::SCOPE_SESSION) {
+							$this->objectManager->setInstance($objectName, $object);
+							$this->lazyLoadingAspect->registerSessionInstance($objectName, $object);
+							$object->__wakeup();
+						}
+					}
+				}
+			} else {
+					// Fallback for some malformed session data, if it is no array but something else.
+					// In this case, we reset all session objects (graceful degradation).
+				$this->putData('TYPO3_FLOW3_Object_ObjectManager', array());
+			}
+		}
 	}
 }
 

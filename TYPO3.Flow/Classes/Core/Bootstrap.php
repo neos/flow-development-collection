@@ -752,7 +752,7 @@ class Bootstrap {
 	}
 
 	/**
-	 * Initializes the Object Container's session scope
+	 * Initializes the session framework
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
@@ -760,7 +760,7 @@ class Bootstrap {
 	 */
 	protected function initializeSession() {
 		if (FLOW3_SAPITYPE === 'Web') {
-			$this->objectManager->initializeSession();
+			$this->objectManager->get('TYPO3\FLOW3\Session\SessionInterface')->resume();
 		}
 	}
 

@@ -20,28 +20,31 @@ namespace TYPO3\FLOW3\Security\Aspect;
 class PersistenceQueryRewritingAspect {
 
 	/**
+	 * @inject
 	 * @var \TYPO3\FLOW3\Security\Policy\PolicyService
 	 */
 	protected $policyService;
 
 	/**
+	 * @inject
 	 * @var \TYPO3\FLOW3\Security\Context
 	 */
 	protected $securityContext;
 
 	/**
-	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
+	 * @inject
+	 * @var \TYPO3\FLOW3\Session\SessionInterface
 	 */
-	protected $objectManager;
+	protected $session;
 
 	/**
-	 * The reflection service
-	 * @var \TYPO3\FLOW3\Reflection\ServiceInterface
+	 * @inject
+	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
 	/**
-	 * The persistence manager
+	 * @inject
 	 * @var \TYPO3\FLOW3\Persistence\PersistenceManagerInterface
 	 */
 	protected $persistenceManager;
@@ -64,50 +67,6 @@ class PersistenceQueryRewritingAspect {
 	}
 
 	/**
-	 * Injects the policy service
-	 *
-	 * @param \TYPO3\FLOW3\Security\Policy\PolicyService $policyService The policy service
-	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function injectPolicyService(\TYPO3\FLOW3\Security\Policy\PolicyService $policyService) {
-		$this->policyService = $policyService;
-	}
-
-	/**
-	 * Injects the object manager
-	 *
-	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager The object manager
-	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function injectObjectManager(\TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager) {
-		$this->objectManager = $objectManager;
-	}
-
-	/**
-	 * Injects the reflection service
-	 *
-	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService The reflection service
-	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
-		$this->reflectionService = $reflectionService;
-	}
-
-	/**
-	 * Inject the persistence manager
-	 *
-	 * @param \TYPO3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager The persistence manager
-	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function injectPersistenceManager(\TYPO3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager) {
-		$this->persistenceManager = $persistenceManager;
-	}
-
-	/**
 	 * Rewrites the QOM query, by adding appropriate constraints according to the policy
 	 *
 	 * @before within(TYPO3\FLOW3\Persistence\QueryInterface) && method(.*->(execute|count)()) && setting(TYPO3.FLOW3.security.enable)
@@ -116,19 +75,13 @@ class PersistenceQueryRewritingAspect {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function rewriteQomQuery(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
-		if ($this->objectManager->isSessionInitialized() === FALSE) {
-			return;
-		}
-		if ($this->securityContext === NULL) {
-			$this->securityContext = $this->objectManager->get('TYPO3\FLOW3\Security\Context');
-		}
 		if ($this->securityContext->isInitialized() === FALSE) {
 			return;
 		}
 
 		$query = $joinPoint->getProxy();
 		$entityType = $query->getType();
-        $authenticatedRoles = $this->securityContext->getRoles();
+		$authenticatedRoles = $this->securityContext->getRoles();
 
 		if ($this->policyService->hasPolicyEntryForEntityType($entityType, $authenticatedRoles)) {
 			$policyConstraintsDefinition = $this->policyService->getResourcesConstraintsForEntityTypeAndRoles($entityType, $authenticatedRoles);
@@ -152,12 +105,7 @@ class PersistenceQueryRewritingAspect {
 	 */
 	public function checkAccessAfterFetchingAnObjectByIdentifier(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$result = $joinPoint->getAdviceChain()->proceed($joinPoint);
-		if ($this->objectManager->isSessionInitialized() === FALSE) {
-			return $result;
-		}
-		if ($this->securityContext === NULL) {
-			$this->securityContext = $this->objectManager->get('TYPO3\FLOW3\Security\Context');
-		}
+
 		if ($this->securityContext->isInitialized() === FALSE) {
 			return $result;
 		}

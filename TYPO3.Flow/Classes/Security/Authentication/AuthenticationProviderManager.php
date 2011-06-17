@@ -124,6 +124,7 @@ class AuthenticationProviderManager implements \TYPO3\FLOW3\Security\Authenticat
 	 *
 	 * @return void
 	 * @throws \TYPO3\FLOW3\Security\Exception\AuthenticationRequiredException
+	 * @session autoStart = true
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function authenticate() {
@@ -139,6 +140,9 @@ class AuthenticationProviderManager implements \TYPO3\FLOW3\Security\Authenticat
 			foreach ($this->providers as $provider) {
 				if ($provider->canAuthenticate($token) && $token->getAuthenticationStatus() === \TYPO3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_NEEDED) {
 					$provider->authenticate($token);
+					if ($token->isAuthenticated()) {
+						$this->emitAuthenticatedToken($token);
+					}
 					break;
 				}
 			}
@@ -168,6 +172,26 @@ class AuthenticationProviderManager implements \TYPO3\FLOW3\Security\Authenticat
 		foreach ($this->securityContext->getAuthenticationTokens() as $token) {
 			$token->setAuthenticationStatus(\TYPO3\FLOW3\Security\Authentication\TokenInterface::NO_CREDENTIALS_GIVEN);
 		}
+		$this->emitLoggedOut();
+	}
+
+	/**
+	 * Signals that the specified token has been successfully authenticated.
+	 *
+	 * @param TokenInterface $token The token which has been authenticated
+	 * @return void
+	 * @signal
+	 */
+	protected function emitAuthenticatedToken(TokenInterface $token) {
+	}
+
+	/**
+	 * Signals that all active authentication tokens have been invalidated.
+	 *
+	 * @return void
+	 * @signal
+	 */
+	protected function emitLoggedOut() {
 	}
 
 	/**

@@ -37,6 +37,9 @@ class Package extends BasePackage {
 		$dispatcher->connect('TYPO3\FLOW3\Core\Bootstrap', 'bootstrapShuttingDown', 'TYPO3\FLOW3\Reflection\ReflectionService', 'saveToCache');
 
 		$dispatcher->connect('TYPO3\FLOW3\Command\CoreCommandController', 'finishedCompilationRun', 'TYPO3\FLOW3\Security\Policy\PolicyService', 'savePolicyCache');
+
+		$dispatcher->connect('TYPO3\FLOW3\Security\Authentication\AuthenticationProviderManager', 'authenticatedToken', 'TYPO3\FLOW3\Session\SessionInterface', 'renewId');
+		$dispatcher->connect('TYPO3\FLOW3\Security\Authentication\AuthenticationProviderManager', 'loggedOut', 'TYPO3\FLOW3\Session\SessionInterface', 'destroy');
 	}
 }
 

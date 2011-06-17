@@ -23,8 +23,8 @@ class ContextTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	public function afterSerializationAndUnserializationContextIsSetToUninitializedAgain() {
 		$context = $this->objectManager->get('TYPO3\FLOW3\Security\Context');
 		$this->assertFalse($context->isInitialized());
-		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface');
-		$context->initialize($mockRequest);
+
+		$context->initialize();
 		$this->assertTrue($context->isInitialized());
 
 		$serializedContext = serialize($context);

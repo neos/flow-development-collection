@@ -21,33 +21,6 @@ class RequestDispatchingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function initializeSecurityInitializesTheSecurityContextWithTheGivenRequest() {
-		$request = $this->getMock('TYPO3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
-
-		$getMethodArgumentCallback = function() use (&$request) {
-			$args = func_get_args();
-
-			if ($args[0] === 'request') return $request;
-		};
-
-		$mockSecurityLogger = $this->getMock('TYPO3\FLOW3\Log\SecurityLoggerInterface', array(), array(), '', FALSE);
-		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
-		$mockAdviceChain = $this->getMock('TYPO3\FLOW3\AOP\Advice\AdviceChain', array(), array(), '', FALSE);
-		$mockFirewall = $this->getMock('TYPO3\FLOW3\Security\Authorization\FirewallInterface');
-		$mockSecurityContext = $this->getMock('TYPO3\FLOW3\Security\Context');
-
-		$mockJoinPoint->expects($this->once())->method('getAdviceChain')->will($this->returnValue($mockAdviceChain));
-		$mockJoinPoint->expects($this->any())->method('getMethodArgument')->will($this->returnCallback($getMethodArgumentCallback));
-		$mockSecurityContext->expects($this->once())->method('initialize')->with($request);
-
-		$dispatchingAspect = new \TYPO3\FLOW3\Security\Aspect\RequestDispatchingAspect($mockSecurityContext, $mockFirewall, $mockSecurityLogger);
-		$dispatchingAspect->initializeSecurity($mockJoinPoint);
-	}
-
-	/**
-	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
 	public function blockIllegalRequestsAndForwardToAuthenticationEntryPointsCallsTheFirewallWithTheGivenRequest() {
 		$request = $this->getMock('TYPO3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
 		$response = $this->getMock('TYPO3\FLOW3\MVC\Web\Response', array(), array(), '', FALSE);

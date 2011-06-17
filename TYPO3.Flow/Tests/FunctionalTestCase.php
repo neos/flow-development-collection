@@ -52,6 +52,11 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 	protected $securityContext;
 
 	/**
+	 * @var \TYPO3\FLOW3\Tests\Functional\MVC\MockWebRequestHandler
+	 */
+	protected $mockRequestHandler;
+
+	/**
 	 * @var boolean
 	 */
 	static protected $testablePersistenceEnabled = FALSE;
@@ -115,6 +120,12 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function setUp() {
+		$this->mockWebRequestHandler = self::$flow3->getObjectManager()->get('TYPO3\FLOW3\Tests\Functional\MVC\MockWebRequestHandler');
+		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\Request');
+		$this->mockWebRequestHandler->setRequest($mockRequest);
+
+		self::$flow3->getObjectManager()->get('TYPO3\FLOW3\MVC\RequestHandlerResolver')->setPreselectedRequestHandler($this->mockWebRequestHandler);
+
 		if (static::$testablePersistenceEnabled === TRUE) {
 			self::$flow3->getObjectManager()->get('TYPO3\FLOW3\Persistence\PersistenceManagerInterface')->initialize();
 			if (is_callable(array(self::$flow3->getObjectManager()->get('TYPO3\FLOW3\Persistence\PersistenceManagerInterface'), 'compile'))) {
@@ -145,8 +156,7 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 		$this->testingProvider->setName('DefaultProvider');
 
 		$this->securityContext = $this->objectManager->get('TYPO3\FLOW3\Security\Context');
-		$request = $this->getMock('TYPO3\FLOW3\MVC\Web\Request');
-		$this->securityContext->initialize($request);
+		$this->securityContext->clearContext();
 	}
 
 	/**
@@ -255,8 +265,7 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 		$this->testingProvider->setAuthenticationStatus(\TYPO3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL);
 		$this->testingProvider->setAccount($account);
 
-		$request = $this->getMock('TYPO3\FLOW3\MVC\Web\Request');
-		$this->securityContext->initialize($request);
+		$this->securityContext->clearContext();
 
 		$authenticationProviderManager = $this->objectManager->get('TYPO3\FLOW3\Security\Authentication\AuthenticationProviderManager');
 		$authenticationProviderManager->authenticate();

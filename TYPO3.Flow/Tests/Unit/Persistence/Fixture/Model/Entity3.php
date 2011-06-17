@@ -40,5 +40,10 @@ class Entity3 implements \TYPO3\FLOW3\AOP\ProxyInterface {
 
 	}
 
+	/**
+	 * A stub to satisfy the FLOW3 Proxy Interface
+	 */
+	public function __wakeup() {}
+
 }
 ?>

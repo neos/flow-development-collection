@@ -259,6 +259,13 @@ TYPO3:
     session:
       PHPSession:
 
+        # A specific name for the session, used in the session cookie.
+        # The session name must be alphanumerical and must contain at least one
+        # character – not only numbers.
+        #
+        # If left empty, a the session name will be determined from the base URL.
+        name: 'FLOW3'
+
         # Where to store session data in the filesystem. If this is empty, a default
         # location is used (Data/Temporary/<context>/Sessions/).
         savePath:
@@ -266,20 +273,20 @@ TYPO3:
         # PHP default is used if one of the following parameters is empty.
         cookie:
           # Cookie lifetime in seconds
-          #lifetime: 3600
+          lifetime: 3600
 
           # Cookie path: set this if a cookie should be only valid for a subfolder of a domain.
-          #path: /
+          path: /
 
           # The cookie domain. Use dot notation if cookies should be valid for
           # all subdomains.
           #domain: .domain.com
 
           # Force SSL cookies.
-          #secure: false
+          secure: false
 
           # Allow http access only.
-          #httponly: false
+          httponly: true
 
     utility:
       environment:

@@ -19,6 +19,13 @@ namespace TYPO3\FLOW3\Session;
 interface SessionInterface {
 
 	/**
+	 * Tells if the session has been started already.
+	 *
+	 * @return boolean
+	 */
+	public function isStarted();
+
+	/**
 	 * Starts the session, if is has not been already started
 	 *
 	 * @return void
@@ -32,6 +39,16 @@ interface SessionInterface {
 	 * @throws \TYPO3\FLOW3\Session\Exception\SessionNotStartedException
 	 */
 	public function getId();
+
+	/**
+	 * Generates and propagates a new session ID and transfers all existing data
+	 * to the new session.
+	 *
+	 * Renewing the session ID is one counter measure against Session Fixation Attacks.
+	 *
+	 * @return string The new session ID
+	 */
+	public function renewId();
 
 	/**
 	 * Returns the contents (array) associated with the given key.

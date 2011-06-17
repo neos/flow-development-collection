@@ -153,28 +153,6 @@ interface ObjectManagerInterface {
 	public function getScope($objectName);
 
 	/**
-	 * Returns the an array of package settings or a single setting value by the given path.
-	 *
-	 * @param array $settingsPath Path to the setting(s) as an array, for example array('TYPO3', 'FLOW3', 'persistence', 'backendOptions')
-	 * @return mixed Either an array of settings or the value of a single setting
-	 */
-	public function getSettingsByPath(array $settingsPath);
-
-	/**
-	 * Initializes the session scope of the object container
-	 *
-	 * @return void
-	 */
-	public function initializeSession();
-
-	/**
-	 * Returns TRUE if the session has been initialized
-	 *
-	 * @return boolean TRUE if the session has been initialized
-	 */
-	public function isSessionInitialized();
-
-	/**
 	 * Sets the instance of the given object
 	 *
 	 * @param string $objectName The object name
