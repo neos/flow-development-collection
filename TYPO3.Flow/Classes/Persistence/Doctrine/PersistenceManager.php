@@ -105,15 +105,20 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 	 *
 	 * @param mixed $identifier
 	 * @param string $objectType
+	 * @param boolean $useLazyLoading Set to TRUE if you want to use lazy loading for this object
 	 * @return object The object for the identifier if it is known, or NULL
 	 * @throws \RuntimeException
 	 * @api
 	 */
-	public function getObjectByIdentifier($identifier, $objectType = NULL) {
+	public function getObjectByIdentifier($identifier, $objectType = NULL, $useLazyLoading = FALSE) {
 		if ($objectType === NULL) {
 			throw new \RuntimeException('Using only the identifier is not supported by Doctrine 2. Give classname as well or use repository to query identifier.', 1296646103);
 		}
-		return $this->entityManager->find($objectType, $identifier);
+		if ($useLazyLoading === TRUE) {
+			return $this->entityManager->getReference($objectType, $identifier);
+		} else {
+			return $this->entityManager->find($objectType, $identifier);
+		}
 	}
 
 	/**

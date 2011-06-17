@@ -213,11 +213,12 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 	 *
 	 * @param mixed $identifier
 	 * @param string $objectType
+	 * @param boolean $useLazyLoading This option is ignored in this persistence manager
 	 * @return object The object for the identifier if it is known, or NULL
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
-	public function getObjectByIdentifier($identifier, $objectType = NULL) {
+	public function getObjectByIdentifier($identifier, $objectType = NULL, $useLazyLoading = FALSE) {
 		if ($this->persistenceSession->hasIdentifier($identifier)) {
 			return $this->persistenceSession->getObjectByIdentifier($identifier);
 		} else {
