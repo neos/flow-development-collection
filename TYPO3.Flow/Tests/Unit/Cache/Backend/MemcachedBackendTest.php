@@ -45,7 +45,7 @@ class MemcachedBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		}
 
 		try {
-			if (!fsockopen('localhost', 11211)) {
+			if (!@fsockopen('localhost', 11211)) {
 				$this->markTestSkipped('memcached not reachable');
 			}
 		} catch (\Exception $e) {
