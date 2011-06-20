@@ -86,7 +86,7 @@ class MemcachedBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @expectedException \F3\FLOW3\Cache\Exception
 	 */
 	public function setThrowsExceptionIfConfiguredServersAreUnreachable() {
-		$backend = $this->setUpBackend(array('servers' => array('julle.did.this:1234')));
+		$backend = $this->setUpBackend(array('servers' => array('localhost:11212')));
 		$data = 'Somedata';
 		$identifier = 'MyIdentifier' . md5(uniqid(mt_rand(), TRUE));
 		$backend->set($identifier, $data);
