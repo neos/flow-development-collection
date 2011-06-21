@@ -31,11 +31,10 @@
   first.</para>
 
   <note>
-    <para>Please note that FLOW3 is still under heavy development. Although we
-    hope that the documentation is at least accurate and up to date, it is by
-    no means complete and most likely not proof-read. If you find errors or
-    would like to help us improving the documentation, we're happy to hear
-    from you on our mailing list!</para>
+    <para>Although we hope that the documentation is accurate and up to date,
+    it probably misses some important sections or parts that are hard to
+    understand. If you find errors or would like to help us improving the
+    documentation, we're happy to hear from you on our mailing list!</para>
   </note>
 
   <section xml:id="flow3.introduction.overview">
@@ -45,7 +44,7 @@
 
     <itemizedlist>
       <listitem>
-        <para>The <emphasis>FLOW3</emphasis> bootstrap takes care of
+        <para>The <emphasis>FLOW3 Bootstrap</emphasis> takes care of
         configuring and initializing the whole framework.</para>
       </listitem>
 
@@ -60,7 +59,7 @@
       </listitem>
 
       <listitem>
-        <para>The <emphasis>Configuration Framework</emphasis> reads and
+        <para>The <emphasis>Configuration</emphasis> framework reads and
         cascades various kinds of configuration from different sources and
         provides access to it.</para>
       </listitem>
@@ -71,7 +70,7 @@
       </listitem>
 
       <listitem>
-        <para>The <emphasis>MVC</emphasis> Framework takes care of requests
+        <para>The <emphasis>MVC</emphasis> framework takes care of requests
         and responses and provides you with a powerful, easy-to use
         Model-View-Controller implementation.</para>
       </listitem>
@@ -117,7 +116,7 @@
       </listitem>
 
       <listitem>
-        <para>The <emphasis>AOP</emphasis> Framework enables you to use the
+        <para>The <emphasis>AOP</emphasis> framework enables you to use the
         powerful techniques of <firstterm>Aspect Oriented
         Programming</firstterm>.</para>
       </listitem>
@@ -129,12 +128,12 @@
       </listitem>
 
       <listitem>
-        <para>The <emphasis>Security</emphasis> Framework enforces security
+        <para>The <emphasis>Security</emphasis> framework enforces security
         policies and provides an API for managing those.</para>
       </listitem>
 
       <listitem>
-        <para>The <emphasis>Session</emphasis> Framework takes care of session
+        <para>The <emphasis>Session</emphasis> framework takes care of session
         handling and storing session information in different backends</para>
       </listitem>
 
