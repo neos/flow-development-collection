@@ -51,13 +51,13 @@ mkdir -p Web/_Resources
 echo
 echo "Setting file permissions, this might take a minute ..."
 
-chown -R $COMMANDLINE_USER:$WEBSERVER_GROUP .
-find . -type d -exec chmod 2770 {} \;
-find . -type f \! -name commit-msg -exec chmod 660 {} \;
+sudo chown -R $COMMANDLINE_USER:$WEBSERVER_GROUP .
+find . -type d -exec sudo chmod 2770 {} \;
+find . -type f \! -name commit-msg -exec sudo chmod 660 {} \;
 
-chmod 770 flow3
-chmod 770 flow3_dev
-chmod 700 $0
+sudo chmod 770 flow3
+sudo chmod 770 flow3_dev
+sudo chmod 700 $0
 
-chown -R $WEBSERVER_USER:$WEBSERVER_GROUP Web/_Resources
-chmod 770 Web/_Resources
+sudo chown -R $WEBSERVER_USER:$WEBSERVER_GROUP Web/_Resources
+sudo chmod 770 Web/_Resources
