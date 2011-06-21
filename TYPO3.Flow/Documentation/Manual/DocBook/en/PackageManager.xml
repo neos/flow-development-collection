@@ -19,23 +19,23 @@
   other community members.</para>
 
   <note>
-    <para>At the time of this writing the package repository for FLOW3 is
-    still in the planning phase.</para>
+    <para>At the time of writing the package repository for FLOW3 is still in
+    the planning phase.</para>
   </note>
 
   <section xml:id="flow3.packagemanager.packagelocations">
     <title>Package Locations</title>
 
     <section>
-      <title>Global and Local Packages</title>
+      <title>Framework and Application Packages</title>
 
       <para>FLOW3 packages are located in a sub folder of the
       <filename>Packages</filename> directory. A typical application (such as
       TYPO3 for example) will use the core packages which are bundled with
       FLOW3 and use additional packages which are specific to the application.
-      The core packages are kept in a directory called
-      <filename>Global</filename> while the application specific packages
-      reside in the <filename>Local</filename> directory:</para>
+      The framework packages are kept in a directory called
+      <filename>Framework</filename> while the application specific packages
+      reside in the <filename>Application</filename> directory:</para>
 
       <variablelist>
         <varlistentry>
@@ -50,7 +50,8 @@
           <term><filename>Data/</filename></term>
 
           <listitem>
-            <para>The various data folders</para>
+            <para>The various data folders, temporary as well as
+            persistent</para>
           </listitem>
         </varlistentry>
 
@@ -60,10 +61,10 @@
           <listitem>
             <variablelist>
               <varlistentry>
-                <term><filename>Global/</filename></term>
+                <term><filename>Framework/</filename></term>
 
                 <listitem>
-                  <para>The Global directory contains packages of the FLOW3
+                  <para>The Framework directory contains packages of the FLOW3
                   distribution (just examples):</para>
 
                   <variablelist>
@@ -87,11 +88,11 @@
               </varlistentry>
 
               <varlistentry>
-                <term><filename>Local/</filename></term>
+                <term><filename>Application/</filename></term>
 
                 <listitem>
-                  <para>The Local directory contains your own / application
-                  specific packages:</para>
+                  <para>The Application directory contains your own /
+                  application specific packages:</para>
 
                   <variablelist>
                     <varlistentry>
@@ -117,12 +118,12 @@
         </varlistentry>
       </variablelist>
 
-      <para>The reason for separating packages into Global / Local directories
-      is that the core packages residing in <filename>Global/</filename> can
+      <para>The reason for separating packages into separate directories is
+      that the core packages residing in <filename>Framework/</filename> can
       reside in a different, shared location and be symlinked from the
-      application using it. Just delete the <filename>Global</filename>
+      application using it. Just delete the <filename>Framework</filename>
       directory and replace it with a symlink pointing to the
-      <filename>Packages/Global/</filename> directory of the FLOW3
+      <filename>Packages/Framework/</filename> directory of the FLOW3
       distribution.</para>
 
       <para>We recommend that you keep a version of the FLOW3 distribution in
@@ -135,11 +136,12 @@
     <section>
       <title>Additional Package Locations</title>
 
-      <para>Apart from the <filename>Local</filename> and
-      <filename>Global</filename> packages you may define your very own
+      <para>Apart from the <filename>Application</filename> and
+      <filename>Framework</filename> packages you may define your very own
       additional package locations by just creating another directory or
-      symlink in the application's <filename>Packages</filename>
-      directory.</para>
+      symlink in the application's <filename>Packages</filename> directory.
+      One example for this is the TYPO3 package, which expects packages with
+      website resources in a folder named <filename>Sites</filename>.</para>
     </section>
 
     <section>
@@ -181,6 +183,10 @@
                   the autoloading mechanism and will be registered at the
                   object manager automatically (and will thus be considered
                   "registered objects").</para>
+
+                  <para>One special file in here is the
+                  <filename>Package.php</filename> which contains the class
+                  with the package's bootstrap code.</para>
                 </listitem>
               </varlistentry>
 
@@ -192,7 +198,7 @@
                   the package reside in this directory. The configuration
                   files are immutable and must not be changed by the user or
                   administrator. The most prominent configuration files are
-                  the <filename>Objects.</filename>yaml file which may be used
+                  the <filename>Objects.yaml</filename> file which may be used
                   to configure the package's objects and the
                   <filename>Settings.yaml</filename> file which contains
                   general user-level settings.</para>
@@ -326,9 +332,24 @@
                 <term><filename>Tests</filename></term>
 
                 <listitem>
-                  <para>Holds the unit tests for the package. Test cases will
-                  be recognized by the <package>Testing</package> package if
-                  they follow the required naming convention.</para>
+                  <para><variablelist>
+                      <varlistentry>
+                        <term><filename>Unit</filename></term>
+
+                        <listitem>
+                          <para>Holds the unit tests for the package.</para>
+                        </listitem>
+                      </varlistentry>
+
+                      <varlistentry>
+                        <term><filename>Functional</filename></term>
+
+                        <listitem>
+                          <para>Holds the functional tests for the
+                          package.</para>
+                        </listitem>
+                      </varlistentry>
+                    </variablelist></para>
                 </listitem>
               </varlistentry>
             </variablelist>
@@ -340,8 +361,8 @@
     <filename>Classes</filename> directory will be detected and registered.
     However, this only works if you follow the naming rules equally for the
     class name as well as the file name. An example for a valid class name is
-    <classname>\F3\MyPackage\Controller\StandardController</classname> while
-    the file containing this class would be named
+    <classname>\MyPackage\Controller\StandardController</classname> while the
+    file containing this class would be named
     <filename>StandardController.php</filename> and is expected to be in a
     directory <filename>MyPackage/Classes/Controller</filename>.</para>
 
@@ -356,11 +377,6 @@
     <para>Package keys are used to uniquely identify packages and provide them
     with a namespace for different purposes. They save you from conflicts
     between packages which were provided by different parties.</para>
-
-    <para>Any public package needs to have a unique package key which you need
-    to register at <link ns6:href="http://typo3.org">forge.typo3.org</link>
-    prior to use. But even if you develop a package for private use only, it's
-    clever to register a package key for it.</para>
   </section>
 
   <section xml:id="flow3.packagemanager.installingpackages">
@@ -373,37 +389,59 @@
     <filename>Package.xml</filename> file in the <filename>Meta</filename>
     directory of your package.</para>
 
-    <para>If no <filename>PackageStates.yaml</filename> exists in your
+    <para>If no <filename>PackageStates.php</filename> exists in your
     <filename>Configuration</filename> folder, it will be created and all
     found packages will be activated. If
-    <filename>PackageStates.yaml</filename> exists, you can use the package
+    <filename>PackageStates.php</filename> exists, you can use the package
     manager to activate and deactivate packages through the FLOW3 command line
     script. The script <filename>flow3</filename> resides in the main
     directory of the FLOW3 distribution. From a Unix shell you should be able
     to run the script by entering <command>./flow3</command>:</para>
 
-    <screen>myhost:tutorial johndoe$ <command>./flow3</command> 
-FLOW3 Command Line Interface
+    <screen>myhost:tutorial johndoe$ <command>./flow3
+</command>FLOW3 1.0.0-beta1 (Production)
+usage: ./flow3 &lt;command identifier&gt;
 
-usage: flow3 &lt;options&gt; &lt;command&gt;
+The following commands are currently available:
 
-Options:
+FLOW3
 
-  -h, --help        - print this message
-  -p, --production  - execute in production context
+    flow3:cache:flush                       Flush all caches
 
-Available commands:
+    flow3:core:compile                      Explicitly compile proxy classes
+    flow3:core:shell                        Run the interactive Shell
 
-  package list available           - list available packages
-  package list active              - list active packages
-  package create &lt;package-key&gt;     - create a new package
-  package activate &lt;package-key&gt;   - activate a package
-  package deactivate &lt;package-key&gt; - deactivate a package
-  package delete &lt;package-key&gt;     - delete a package
+    flow3:doctrine:validate                 Validate the class/table mappings
+    flow3:doctrine:create                   Create the database schema based on current mapping information
+    flow3:doctrine:update                   Update the database schema without data loss (as far as possible)
+    flow3:doctrine:updateandclean           Update database schema and remove obsolete tables / fields
+    flow3:doctrine:compileproxies           Compile the Doctrine proxy classes
+    flow3:doctrine:info                     Show the current status of entities and mappings
+    flow3:doctrine:dql                      Run arbitrary DQL and display results
+    flow3:doctrine:migrationstatus          Show the current migration status
+    flow3:doctrine:migrate                  Migrate the database schema
+    flow3:doctrine:migrationdiff            Generate a migration diff
+    flow3:doctrine:migrationgenerate        Generate an empty migration
+    flow3:doctrine:migrationexecute         Execute a single migration
+
+    flow3:help:help                         Display help for a command
+
+    flow3:package:create                    Create a new package
+    flow3:package:delete                    Delete an existing package
+    flow3:package:activate                  Activate an available package
+    flow3:package:deactivate                Deactivate a package
+    flow3:package:listavailable             List available (active and inactive) packages
+    flow3:package:listactive                List active packages
+
+    flow3:routing:list                      List the known routes
+
+    flow3:security:help                     
+    flow3:security:importpublickey          Read a PEM formatted public key from stdin and import it into the RSAWalletService
+    flow3:security:importprivatekey         Read a PEM formatted private key from stdin and import it into the RSAWalletService
 </screen>
 
-    <para>Depending on your FLOW3 version you'll see more or less the above
-    available commands listed.</para>
+    <para>Depending on your FLOW3 version and the installed packages you'll
+    see more or less the above available commands listed.</para>
 
     <note>
       <para>We haven't developed a Windows batch script yet so for the time
@@ -415,10 +453,10 @@ c:\&gt; <command>set FLOW3_WEBPATH=C:\xampp\htdocs\tutorial\Web</command></scree
       for more than just the current shell session, you can use the
       <command>setx</command> command:<screen>c:\&gt; <command>setx FLOW3_CONTEXT Development</command>
 c:\&gt; <command>setx FLOW3_ROOTPATH C:\xampp\htdocs\tutorial</command>
-c:\&gt; <command>setX FLOW3_WEBPATH C:\xampp\htdocs\tutorial\Web</command></screen></para>
+c:\&gt; <command>setx FLOW3_WEBPATH C:\xampp\htdocs\tutorial\Web</command></screen></para>
 
-      <para>Listing the available packages is then as easy as typing:<screen>c:\&gt; (<command>php Packages\Framework\FLOW3\Scripts\FLOW3.php
-         FLOW3 Package PackageManager listavailable)</command></screen></para>
+      <para>Listing the available packages is then as easy as typing:<screen>c:\&gt; (<command>php Packages\Framework\FLOW3\Scripts\flow3
+         flow3:package:listavailable)</command></screen></para>
     </note>
   </section>
 
@@ -441,33 +479,57 @@ c:\&gt; <command>setX FLOW3_WEBPATH C:\xampp\htdocs\tutorial\Web</command></scre
     <title>Creating a New Package</title>
 
     <para>Just create the package folder and subdirectories manually and copy
-    &amp; adapt a <filename>Package.xml</filename> file from one of the other
-    packages. Apart from that no further steps are necessary.</para>
+    &amp; adapt a <filename>Package.xml</filename> and
+    <filename>Package.php</filename> file from one of the other packages.
+    Apart from that no further steps are necessary.</para>
   </section>
 
   <section xml:id="flow3.packagemanager.packagemetainformation">
     <title>Package Meta Information</title>
 
-    <para>All packages need to provide some meta information to the package
-    manager. This data is stored in a file called
-    <filename>Package.xml</filename> which resides in the
-    <filename>Meta</filename> directory of a package. The format of this file
-    follows a RelaxNG schema which is available at <link
-    ns6:href="http://typo3.org/ns/2008/flow3/package/Package.rng">http://typo3.org/ns/2008/flow3/package/Package.rng</link>.</para>
+    <para>All packages need to provide some meta information to FLOW3. The
+    data is split in two files, depending on primary use.</para>
 
-    <note>
-      <para>If you are working with Eclipse, you might want to install the
-      <link ns6:href="http://dev3.org">DEV3 plug-in</link> which - among other
-      tools - provides you with a convenient Package.xml editor</para>
-    </note>
+    <section>
+      <title>Classes/Package.php</title>
 
-    <para>Here is an example of a valid <filename>Package.xml</filename>
-    file:</para>
+      <para>This file contains bootstrap code for the package. It must exist,
+      but may contain only an empty class, if no bootstrap code is
+      needed.<example>
+          <title>Minimal Package.php</title>
 
-    <example>
-      <title>Package.xml</title>
+          <programlisting language="xml">&lt;?php
+namespace F3\FLOW3;
 
-      <programlisting language="xml">&lt;?xml version="1.0" encoding="utf-8" standalone="yes" ?&gt;
+use \F3\FLOW3\Package\Package as BasePackage;
+
+/**
+ * The FooBar Package
+ *
+ */
+class Package extends BasePackage {
+}
+
+?&gt;
+</programlisting>
+        </example></para>
+    </section>
+
+    <section>
+      <title>Meta/Package.xml</title>
+
+      <para>This file contains some meta information for the package manager.
+      The format of this file follows a RelaxNG schema which is available at
+      <link
+      ns6:href="http://typo3.org/ns/2008/flow3/package/Package.rng">http://typo3.org/ns/2008/flow3/package/Package.rng</link>.</para>
+
+      <para>Here is an example of a valid <filename>Package.xml</filename>
+      file:</para>
+
+      <example>
+        <title>Package.xml</title>
+
+        <programlisting language="xml">&lt;?xml version="1.0" encoding="utf-8" standalone="yes" ?&gt;
 &lt;package xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xmlns="http://typo3.org/ns/2008/flow3/package" version="1.0"&gt;
    &lt;key&gt;TestPackage&lt;/key&gt;
@@ -531,6 +593,7 @@ c:\&gt; <command>setX FLOW3_WEBPATH C:\xampp\htdocs\tutorial\Web</command></scre
    &lt;/repository&gt;
 &lt;/package&gt;
       </programlisting>
-    </example>
+      </example>
+    </section>
   </section>
 </chapter>
