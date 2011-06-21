@@ -22,7 +22,7 @@ namespace F3\FLOW3\Property\TypeConverter;
  *                                                                        */
 
 /**
- * Converter which transforms an array to a Doctrine ArrayCollection.
+ * Converter which transforms simple types to a Doctrine ArrayCollection.
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api

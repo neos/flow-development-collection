@@ -22,12 +22,12 @@ namespace F3\FLOW3\Tests\Unit\Property\TypeConverter;
  *                                                                        */
 
 /**
- * Testcase for the String to String converter
+ * Testcase for the String converter
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @covers \F3\FLOW3\Property\TypeConverter\StringToStringConverter<extended>
  */
-class StringToStringConverterTest extends \F3\FLOW3\Tests\UnitTestCase {
+class StringConverterTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @var \F3\FLOW3\Property\TypeConverterInterface
@@ -35,7 +35,7 @@ class StringToStringConverterTest extends \F3\FLOW3\Tests\UnitTestCase {
 	protected $converter;
 
 	public function setUp() {
-		$this->converter = new \F3\FLOW3\Property\TypeConverter\StringToStringConverter();
+		$this->converter = new \F3\FLOW3\Property\TypeConverter\StringConverter();
 	}
 
 	/**

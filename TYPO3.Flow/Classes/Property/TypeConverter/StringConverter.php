@@ -22,23 +22,23 @@ namespace F3\FLOW3\Property\TypeConverter;
  *                                                                        */
 
 /**
- * Converter which transforms an integer to an integer, so this is actually a "passthrough" converter.
+ * Converter which transforms simple types to a string.
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  * @scope singleton
  */
-class IntegerToIntegerConverter extends \F3\FLOW3\Property\TypeConverter\AbstractTypeConverter {
+class StringConverter extends \F3\FLOW3\Property\TypeConverter\AbstractTypeConverter {
 
 	/**
 	 * @var array<string>
 	 */
-	protected $sourceTypes = array('integer');
+	protected $sourceTypes = array('string');
 
 	/**
 	 * @var string
 	 */
-	protected $targetType = 'integer';
+	protected $targetType = 'string';
 
 	/**
 	 * @var integer
@@ -46,13 +46,14 @@ class IntegerToIntegerConverter extends \F3\FLOW3\Property\TypeConverter\Abstrac
 	protected $priority = 1;
 
 	/**
-	 * Actually convert from $source to $targetType, in fact a noop here.
+	 * Actually convert from $source to $targetType, taking into account the fully
+	 * built $subProperties and $configuration.
 	 *
-	 * @param integer $source
+	 * @param string $source
 	 * @param string $targetType
 	 * @param array $subProperties
 	 * @param \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
-	 * @return integer
+	 * @return string
 	 * @api
 	 */
 	public function convertFrom($source, $targetType, array $subProperties = array(), \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {

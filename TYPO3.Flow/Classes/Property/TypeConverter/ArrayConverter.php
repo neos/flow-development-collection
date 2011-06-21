@@ -22,23 +22,23 @@ namespace F3\FLOW3\Property\TypeConverter;
  *                                                                        */
 
 /**
- * Converter which transforms a string to an SplObjectStorage, by simply creating an empty SplObjectStorage.
+ * Converter which transforms arrays to arrays.
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  * @scope singleton
  */
-class StringToSplObjectStorageConverter extends \F3\FLOW3\Property\TypeConverter\AbstractTypeConverter {
+class ArrayConverter extends \F3\FLOW3\Property\TypeConverter\AbstractTypeConverter {
 
 	/**
 	 * @var array<string>
 	 */
-	protected $sourceTypes = array('string');
+	protected $sourceTypes = array('array');
 
 	/**
 	 * @var string
 	 */
-	protected $targetType = 'SplObjectStorage';
+	protected $targetType = 'array';
 
 	/**
 	 * @var integer
@@ -46,30 +46,17 @@ class StringToSplObjectStorageConverter extends \F3\FLOW3\Property\TypeConverter
 	protected $priority = 1;
 
 	/**
-	 * Returns TRUE if the $source is an empty string.
+	 * Actually convert from $source to $targetType, in fact a noop here.
 	 *
-	 * @param mixed $source the source data
-	 * @param string $targetType the type to convert to.
-	 * @return boolean TRUE if $source is an empty string, FALSE otherwise.
-	 * @api
-	 */
-	public function canConvert($source, $targetType) {
-		return $source === '';
-	}
-
-	/**
-	 * Actually convert from $source to $targetType, taking into account the fully
-	 * built $subProperties and $configuration.
-	 *
-	 * @param string $source
+	 * @param array $source
 	 * @param string $targetType
 	 * @param array $subProperties
 	 * @param \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
-	 * @return \SplObjectStorage
+	 * @return array
 	 * @api
 	 */
 	public function convertFrom($source, $targetType, array $subProperties = array(), \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
-		return new \SplObjectStorage();
+		return $source;
 	}
 }
 ?>

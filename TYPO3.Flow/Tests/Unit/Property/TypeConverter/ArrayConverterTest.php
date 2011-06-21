@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Property\TypeConverter;
+namespace F3\FLOW3\Tests\Unit\Property\TypeConverter;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -22,42 +22,39 @@ namespace F3\FLOW3\Property\TypeConverter;
  *                                                                        */
 
 /**
- * Converter which transforms a string to a string, so this is actually a "passthrough" converter.
+ * Testcase for the Array converter
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
- * @api
- * @scope singleton
  */
-class StringToStringConverter extends \F3\FLOW3\Property\TypeConverter\AbstractTypeConverter {
+class ArrayConverterTest extends \F3\FLOW3\Tests\UnitTestCase {
+
 
 	/**
-	 * @var array<string>
+	 * @var \F3\FLOW3\Property\TypeConverter\ArrayConverter
 	 */
-	protected $sourceTypes = array('string');
+	protected $converter;
+
+	public function setUp() {
+		$this->converter = new \F3\FLOW3\Property\TypeConverter\ArrayConverter();
+	}
 
 	/**
-	 * @var string
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	protected $targetType = 'string';
+	public function checkMetadata() {
+		$this->assertEquals(array('array'), $this->converter->getSupportedSourceTypes(), 'Source types do not match');
+		$this->assertEquals('array', $this->converter->getSupportedTargetType(), 'Target type does not match');
+		$this->assertEquals(1, $this->converter->getPriority(), 'Priority does not match');
+	}
 
 	/**
-	 * @var integer
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	protected $priority = 1;
-
-	/**
-	 * Actually convert from $source to $targetType, taking into account the fully
-	 * built $subProperties and $configuration.
-	 *
-	 * @param string $source
-	 * @param string $targetType
-	 * @param array $subProperties
-	 * @param \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
-	 * @return string
-	 * @api
-	 */
-	public function convertFrom($source, $targetType, array $subProperties = array(), \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
-		return $source;
+	public function convertFromDoesNotModifyTheSourceArray() {
+		$sourceArray = array('Foo' => 'Bar', 'Baz');
+		$this->assertEquals($sourceArray, $this->converter->convertFrom($sourceArray, 'array'));
 	}
 }
 ?>

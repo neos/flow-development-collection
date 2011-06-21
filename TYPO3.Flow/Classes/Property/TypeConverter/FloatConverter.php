@@ -22,23 +22,23 @@ namespace F3\FLOW3\Property\TypeConverter;
  *                                                                        */
 
 /**
- * Converter which transforms a string to a float, by simply casting it.
+ * Converter which transforms a simple type to a float, by simply casting it.
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  * @scope singleton
  */
-class ArrayToArrayConverter extends \F3\FLOW3\Property\TypeConverter\AbstractTypeConverter {
+class FloatConverter extends \F3\FLOW3\Property\TypeConverter\AbstractTypeConverter {
 
 	/**
 	 * @var array<string>
 	 */
-	protected $sourceTypes = array('array');
+	protected $sourceTypes = array('string');
 
 	/**
 	 * @var string
 	 */
-	protected $targetType = 'array';
+	protected $targetType = 'float';
 
 	/**
 	 * @var integer
@@ -46,17 +46,17 @@ class ArrayToArrayConverter extends \F3\FLOW3\Property\TypeConverter\AbstractTyp
 	protected $priority = 1;
 
 	/**
-	 * Actually convert from $source to $targetType, in fact a noop here.
+	 * Actually convert from $source to $targetType, by doing a typecast.
 	 *
-	 * @param array $source
+	 * @param string $source
 	 * @param string $targetType
 	 * @param array $subProperties
 	 * @param \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
-	 * @return array
+	 * @return float
 	 * @api
 	 */
 	public function convertFrom($source, $targetType, array $subProperties = array(), \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
-		return $source;
+		return (float)$source;
 	}
 }
 ?>

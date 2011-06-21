@@ -22,12 +22,12 @@ namespace F3\FLOW3\Tests\Unit\Property\TypeConverter;
  *                                                                        */
 
 /**
- * Testcase for the String to Float converter
+ * Testcase for the Integer converter
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @covers \F3\FLOW3\Property\TypeConverter\StringToIntegerConverter<extended>
  */
-class StringToFloatConverterTest extends \F3\FLOW3\Tests\UnitTestCase {
+class IntegerConverterTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @var \F3\FLOW3\Property\TypeConverterInterface
@@ -35,7 +35,7 @@ class StringToFloatConverterTest extends \F3\FLOW3\Tests\UnitTestCase {
 	protected $converter;
 
 	public function setUp() {
-		$this->converter = new \F3\FLOW3\Property\TypeConverter\StringToFloatConverter();
+		$this->converter = new \F3\FLOW3\Property\TypeConverter\IntegerConverter();
 	}
 
 	/**
@@ -43,8 +43,8 @@ class StringToFloatConverterTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function checkMetadata() {
-		$this->assertEquals(array('string'), $this->converter->getSupportedSourceTypes(), 'Source types do not match');
-		$this->assertEquals('float', $this->converter->getSupportedTargetType(), 'Target type does not match');
+		$this->assertEquals(array('integer', 'string'), $this->converter->getSupportedSourceTypes(), 'Source types do not match');
+		$this->assertEquals('integer', $this->converter->getSupportedTargetType(), 'Target type does not match');
 		$this->assertEquals(1, $this->converter->getPriority(), 'Priority does not match');
 	}
 
@@ -52,16 +52,33 @@ class StringToFloatConverterTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	public function convertFromShouldCastTheStringToFloat() {
-		$this->assertSame(1.5, $this->converter->convertFrom('1.5', 'float'));
+	public function convertFromShouldCastTheStringToInteger() {
+		$this->assertSame(15, $this->converter->convertFrom('15', 'integer'));
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function convertFromDoesNotModifyIntegers() {
+		$source = 123;
+		$this->assertSame($source, $this->converter->convertFrom($source, 'integer'));
 	}
 
 	/**
 	 * @test
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	public function canConvertShouldReturnTrue() {
-		$this->assertTrue($this->converter->canConvert('1.5', 'float'));
+	public function canConvertShouldReturnTrueForANumericStringSource() {
+		$this->assertTrue($this->converter->canConvert('15', 'integer'));
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function canConvertShouldReturnTrueForAnIntegerSource() {
+		$this->assertTrue($this->converter->canConvert(123, 'integer'));
 	}
 
 	/**

@@ -28,13 +28,32 @@ namespace F3\FLOW3\Tests\Unit\Property\TypeConverter;
  */
 class ArrayCollectinConverterTest extends \F3\FLOW3\Tests\UnitTestCase {
 
+
+	/**
+	 * @var \F3\FLOW3\Property\TypeConverter\ArrayCollectionConverter
+	 */
+	protected $converter;
+
+	public function setUp() {
+		$this->converter = new \F3\FLOW3\Property\TypeConverter\ArrayCollectionConverter();
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function checkMetadata() {
+		$this->assertEquals(array('string', 'array'), $this->converter->getSupportedSourceTypes(), 'Source types do not match');
+		$this->assertEquals('Doctrine\Common\Collections\ArrayCollection', $this->converter->getSupportedTargetType(), 'Target type does not match');
+		$this->assertEquals(1, $this->converter->getPriority(), 'Priority does not match');
+	}
+
 	/**
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getTypeOfPropertyReturnsElementTypeFromTargetTypeIfGiven() {
-		$converter = new \F3\FLOW3\Property\TypeConverter\ArrayCollectionConverter();
-		$this->assertEquals('FooBar', $converter->getTypeOfProperty('array<FooBar>', '', $this->getMock('F3\FLOW3\Property\PropertyMappingConfigurationInterface')));
+		$this->assertEquals('FooBar', $this->converter->getTypeOfProperty('array<FooBar>', '', $this->getMock('F3\FLOW3\Property\PropertyMappingConfigurationInterface')));
 	}
 
 	/**
@@ -42,8 +61,7 @@ class ArrayCollectinConverterTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getTypeOfPropertyReturnsEmptyStringForElementTypeIfNotGivenInTargetType() {
-		$converter = new \F3\FLOW3\Property\TypeConverter\ArrayCollectionConverter();
-		$this->assertEquals('', $converter->getTypeOfProperty('array', '', $this->getMock('F3\FLOW3\Property\PropertyMappingConfigurationInterface')));
+		$this->assertEquals('', $this->converter->getTypeOfProperty('array', '', $this->getMock('F3\FLOW3\Property\PropertyMappingConfigurationInterface')));
 	}
 
 }

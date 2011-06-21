@@ -22,18 +22,18 @@ namespace F3\FLOW3\Property\TypeConverter;
  *                                                                        */
 
 /**
- * Converter which transforms a string to an integer, by simply casting it.
+ * Converter which transforms a simple type to an integer, by simply casting it.
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  * @scope singleton
  */
-class StringToIntegerConverter extends \F3\FLOW3\Property\TypeConverter\AbstractTypeConverter {
+class IntegerConverter extends \F3\FLOW3\Property\TypeConverter\AbstractTypeConverter {
 
 	/**
 	 * @var array<string>
 	 */
-	protected $sourceTypes = array('string');
+	protected $sourceTypes = array('integer', 'string');
 
 	/**
 	 * @var string
@@ -46,9 +46,9 @@ class StringToIntegerConverter extends \F3\FLOW3\Property\TypeConverter\Abstract
 	protected $priority = 1;
 
 	/**
-	 * Actually convert from $source to $targetType, by doing a typecast.
+	 * Actually convert from $source to $targetType, in fact a noop here.
 	 *
-	 * @param string $source
+	 * @param integer $source
 	 * @param string $targetType
 	 * @param array $subProperties
 	 * @param \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
@@ -56,7 +56,7 @@ class StringToIntegerConverter extends \F3\FLOW3\Property\TypeConverter\Abstract
 	 * @api
 	 */
 	public function convertFrom($source, $targetType, array $subProperties = array(), \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
-		return (int)$source;
+		return (integer)$source;
 	}
 }
 ?>

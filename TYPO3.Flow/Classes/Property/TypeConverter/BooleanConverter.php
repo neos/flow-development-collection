@@ -22,24 +22,23 @@ namespace F3\FLOW3\Property\TypeConverter;
  *                                                                        */
 
 /**
- * Converter which transforms an array to an SplObjectStorage.
+ * Converter which transforms simple types to a boolean, by simply casting it.
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  * @scope singleton
- * @todo throw away?
  */
-class ArrayToSplObjectStorageConverter extends \F3\FLOW3\Property\TypeConverter\AbstractTypeConverter {
+class BooleanConverter extends \F3\FLOW3\Property\TypeConverter\AbstractTypeConverter {
 
 	/**
 	 * @var array<string>
 	 */
-	protected $sourceTypes = array('array');
+	protected $sourceTypes = array('boolean', 'string');
 
 	/**
 	 * @var string
 	 */
-	protected $targetType = 'SplObjectStorage';
+	protected $targetType = 'boolean';
 
 	/**
 	 * @var integer
@@ -47,17 +46,17 @@ class ArrayToSplObjectStorageConverter extends \F3\FLOW3\Property\TypeConverter\
 	protected $priority = 1;
 
 	/**
-	 * Actually convert from $source to $targetType.
+	 * Actually convert from $source to $targetType
 	 *
-	 * @param array $source
+	 * @param string $source
 	 * @param string $targetType
 	 * @param array $subProperties
 	 * @param \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
-	 * @return \SplObjectStorage
+	 * @return boolean
 	 * @api
 	 */
 	public function convertFrom($source, $targetType, array $subProperties = array(), \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
-		return new \SplObjectStorage($source);
+		return (boolean)$source;
 	}
 }
 ?>

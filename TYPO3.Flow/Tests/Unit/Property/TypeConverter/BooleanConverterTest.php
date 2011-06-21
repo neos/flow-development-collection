@@ -22,54 +22,57 @@ namespace F3\FLOW3\Tests\Unit\Property\TypeConverter;
  *                                                                        */
 
 /**
- * Testcase for the String to Integer converter
+ * Testcase for the Boolean converter
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
- * @covers \F3\FLOW3\Property\TypeConverter\StringToIntegerConverter<extended>
  */
-class StringToIntegerConverterTest extends \F3\FLOW3\Tests\UnitTestCase {
+class BooleanConverterTest extends \F3\FLOW3\Tests\UnitTestCase {
+
 
 	/**
-	 * @var \F3\FLOW3\Property\TypeConverterInterface
+	 * @var \F3\FLOW3\Property\TypeConverter\BooleanConverter
 	 */
 	protected $converter;
 
 	public function setUp() {
-		$this->converter = new \F3\FLOW3\Property\TypeConverter\StringToIntegerConverter();
+		$this->converter = new \F3\FLOW3\Property\TypeConverter\BooleanConverter();
 	}
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function checkMetadata() {
-		$this->assertEquals(array('string'), $this->converter->getSupportedSourceTypes(), 'Source types do not match');
-		$this->assertEquals('integer', $this->converter->getSupportedTargetType(), 'Target type does not match');
+		$this->assertEquals(array('boolean', 'string'), $this->converter->getSupportedSourceTypes(), 'Source types do not match');
+		$this->assertEquals('boolean', $this->converter->getSupportedTargetType(), 'Target type does not match');
 		$this->assertEquals(1, $this->converter->getPriority(), 'Priority does not match');
 	}
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function convertFromShouldCastTheStringToInteger() {
-		$this->assertSame(15, $this->converter->convertFrom('15', 'integer'));
+	public function convertFromDoesNotModifyTheBooleanSource() {
+		$source = TRUE;
+		$this->assertEquals($source, $this->converter->convertFrom($source, 'boolean'));
 	}
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function canConvertShouldReturnTrue() {
-		$this->assertTrue($this->converter->canConvert('15', 'integer'));
+	public function convertFromCastsSourceStringToBoolean() {
+		$source = 'true';
+		$this->assertSame(TRUE, $this->converter->convertFrom($source, 'boolean'));
 	}
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function getPropertiesShouldReturnEmptyArray() {
-		$this->assertEquals(array(), $this->converter->getProperties('myString'));
+	public function convertFromCastsNumericSourceStringToBoolean() {
+		$source = '1';
+		$this->assertSame(TRUE, $this->converter->convertFrom($source, 'boolean'));
 	}
 }
 ?>

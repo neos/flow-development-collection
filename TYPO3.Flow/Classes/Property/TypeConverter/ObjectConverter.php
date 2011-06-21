@@ -28,7 +28,7 @@ namespace F3\FLOW3\Property\TypeConverter;
  * @api
  * @scope singleton
  */
-class ArrayToObjectConverter extends \F3\FLOW3\Property\TypeConverter\AbstractTypeConverter {
+class ObjectConverter extends \F3\FLOW3\Property\TypeConverter\AbstractTypeConverter {
 
 	/**
 	 * @var integer
