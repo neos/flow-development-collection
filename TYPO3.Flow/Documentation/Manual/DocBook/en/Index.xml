@@ -81,8 +81,9 @@
 
   <xi:include href="Security.xml" />
 
-  <!-- Appendixes -->
+  <xi:include href="SignalSlot.xml" />
 
+  <!-- Appendixes -->
 
   <xi:include href="AppendixIDEsForPHP53.xml" />
 </book>
