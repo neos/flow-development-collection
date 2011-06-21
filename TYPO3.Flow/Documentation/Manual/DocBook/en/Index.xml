@@ -45,6 +45,8 @@
 
       <year>2010</year>
 
+      <year>2011</year>
+
       <holder>Robert Lemke</holder>
 
       <holder>Karsten Dambekalns</holder>
@@ -57,31 +59,30 @@
 
   <xi:include href="Installation.xml" />
 
-  <xi:include href="FLOW3Bootstrap.xml" />
+  <xi:include href="Flow3Bootstrap.xml" />
 
   <xi:include href="PackageManager.xml" />
 
-  <xi:include href="ObjectFramework.xml" />
+  <xi:include href="Object.xml" />
 
-  <xi:include href="ConfigurationFramework.xml" />
+  <xi:include href="Configuration.xml" />
 
   <xi:include href="ResourceManagement.xml" />
 
-  <xi:include href="MVCFramework.xml" />
+  <xi:include href="MVC.xml" />
 
-  <xi:include href="CacheFramework.xml" />
+  <xi:include href="Cache.xml" />
 
   <xi:include href="ErrorException.xml" />
 
-  <xi:include href="AOPFramework.xml" />
+  <xi:include href="AOP.xml" />
 
-  <xi:include href="PersistenceFramework.xml" />
+  <xi:include href="Persistence.xml" />
 
-  <xi:include href="SecurityFramework.xml" />
+  <xi:include href="Security.xml" />
 
   <!-- Appendixes -->
 
-  <xi:include href="AppendixInstallPHP53.xml" />
 
   <xi:include href="AppendixIDEsForPHP53.xml" />
 </book>

@@ -953,7 +953,7 @@ public function myAroundAdvice(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
           <mediaobject>
             <imageobject>
               <imagedata contentdepth="100%"
-                         fileref="AOPFramework_AdviceChain.png" scalefit="1"
+                         fileref="AOP_AdviceChain.png" scalefit="1"
                          width="100%"></imagedata>
             </imageobject>
           </mediaobject>
@@ -1199,7 +1199,7 @@ class IntroductionAspect {
         <mediaobject>
           <imageobject>
             <imagedata contentdepth="100%"
-                       fileref="AOPFramework_ProxyBuildingProcess.png"
+                       fileref="AOP_ProxyBuildingProcess.png"
                        scalefit="1" width="100%"></imagedata>
           </imageobject>
         </mediaobject>

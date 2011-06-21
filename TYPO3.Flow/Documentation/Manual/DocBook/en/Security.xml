@@ -137,7 +137,7 @@
         <mediaobject>
           <imageobject>
             <imagedata contentdepth="100%"
-                       fileref="SecurityFramework_BasicAuthenticationProcess.png"
+                       fileref="Security_BasicAuthenticationProcess.png"
                        scalefit="1" width="100%"/>
           </imageobject>
         </mediaobject>
@@ -812,7 +812,7 @@ $credentials['password'] = $postArguments['F3\FLOW3\Security\Authentication\Toke
         <mediaobject>
           <imageobject>
             <imagedata contentdepth="100%"
-                       fileref="SecurityFramework_BasicAuthorizationProcess.png"
+                       fileref="Security_BasicAuthorizationProcess.png"
                        scalefit="1" width="100%"/>
           </imageobject>
         </mediaobject>
@@ -903,7 +903,7 @@ $credentials['password'] = $postArguments['F3\FLOW3\Security\Authentication\Toke
         <mediaobject>
           <imageobject>
             <imagedata contentdepth="100%"
-                       fileref="SecurityFramework_FilterFirewall.png"
+                       fileref="Security_FilterFirewall.png"
                        scalefit="1" width="100%"/>
           </imageobject>
         </mediaobject>

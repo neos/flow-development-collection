@@ -55,7 +55,7 @@
         <mediaobject>
           <imageobject>
             <imagedata contentdepth="100%"
-                       fileref="MVCFramework_ModelViewController.png"
+                       fileref="MVC_ModelViewController.png"
                        scalefit="1" width="100%"/>
           </imageobject>
         </mediaobject>
@@ -299,7 +299,7 @@ class StandardController extends \F3\FLOW3\MVC\Controller\ActionController {
         <mediaobject>
           <imageobject>
             <imagedata contentdepth="100%"
-                       fileref="MVCFramework_RequestResponseWorkflow.png"
+                       fileref="MVC_RequestResponseWorkflow.png"
                        scalefit="1" width="100%"/>
           </imageobject>
         </mediaobject>

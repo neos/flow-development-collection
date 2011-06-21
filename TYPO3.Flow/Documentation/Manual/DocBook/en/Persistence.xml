@@ -20,7 +20,7 @@
         <mediaobject>
           <imageobject>
             <imagedata contentdepth="100%"
-                       fileref="PersistenceFramework_BlogDomainModel.png"
+                       fileref="Persistence_BlogDomainModel.png"
                        scalefit="1" width="100%"/>
           </imageobject>
         </mediaobject>
@@ -484,7 +484,7 @@ class BlogRepository extends \F3\FLOW3\Persistence\Repository {
           <mediaobject>
             <imageobject>
               <imagedata contentdepth="100%"
-                         fileref="PersistenceFramework_PersistenceProcess.png"
+                         fileref="Persistence_PersistenceProcess.png"
                          scalefit="1" width="100%"/>
             </imageobject>
           </mediaobject>
@@ -507,7 +507,7 @@ class BlogRepository extends \F3\FLOW3\Persistence\Repository {
           <mediaobject>
             <imageobject>
               <imagedata contentdepth="100%"
-                         fileref="PersistenceFramework_QueryProcess.png"
+                         fileref="Persistence_QueryProcess.png"
                          scalefit="1" width="100%"/>
             </imageobject>
           </mediaobject>
