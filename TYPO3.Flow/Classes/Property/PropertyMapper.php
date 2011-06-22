@@ -240,6 +240,10 @@ class PropertyMapper {
 			throw new \F3\FLOW3\Property\Exception\InvalidTargetException('Could not find a suitable type converter for "' . $targetClass . '" because no such class or interface exists.', 1297948764);
 		}
 
+		if (!isset($this->typeConverters[$sourceType])) {
+			return NULL;
+		}
+
 		$convertersForSource = $this->typeConverters[$sourceType];
 		if (isset($convertersForSource[$targetClass])) {
 			$converter = $this->findEligibleConverterWithHighestPriority($convertersForSource[$targetClass], $source, $targetClass);

@@ -311,5 +311,14 @@ class PropertyMapperTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$propertyMapper->_set('typeConverters', $typeConverters);
 		$this->assertEquals('string2string', $propertyMapper->convert('source', 'string'));
 	}
+
+	/**
+	 * @test
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function findFirstEligibleTypeConverterInObjectHierarchyShouldReturnNullIfSourceTypeIsUnknown() {
+		$propertyMapper = $this->getAccessibleMock('F3\FLOW3\Property\PropertyMapper', array('dummy'));
+		$this->assertNull($propertyMapper->_call('findFirstEligibleTypeConverterInObjectHierarchy', 'source', 'unknownSourceType', 'F3\FLOW3\Core\Bootstrap'));
+	}
 }
 ?>
