@@ -36,6 +36,22 @@
       <email>karsten@typo3.org</email>
     </author>
 
+    <author>
+      <personname>
+        <firstname>Andreas</firstname>
+
+        <surname>Förthner</surname>
+      </personname>
+    </author>
+
+   <author>
+      <personname>
+        <firstname>Sebastian</firstname>
+
+        <surname>Kurfürst</surname>
+      </personname>
+    </author>
+
     <copyright>
       <year>2007</year>
 
@@ -50,6 +66,10 @@
       <holder>Robert Lemke</holder>
 
       <holder>Karsten Dambekalns</holder>
+
+      <holder>Andreas Förthner</holder>
+
+      <holder>Sebastian Kurfürst</holder>
     </copyright>
   </info>
 
@@ -82,6 +102,8 @@
   <xi:include href="Security.xml" />
 
   <xi:include href="SignalSlot.xml" />
+
+  <xi:include href="PropertyMapper.xml" />
 
   <!-- Appendixes -->
 
