@@ -197,7 +197,11 @@ $person = $propertyMapper-&gt;convert($input, 'TYPO3\MyPackage\Domain\Model\Pers
 
     <para>It is possible to configure the conversion process by specifying a
     <code>PropertyMappingConfiguration</code> as third parameter to
-    <code>PropertyMapper::convert()</code>.</para>
+    <code>PropertyMapper::convert()</code>. If no
+    <code>PropertyMappingConfiguration</code> is specified, the
+    <code>PropertyMappingConfigurationBuilder</code> automatically creates a
+    default <code>PropertyMappingConfiguration</code> (described in <xref
+    linkend="property-mapper-default-configuration" />).</para>
 
     <para>In most cases, you should use the
     <code>PropertyMappingConfigurationBuilder</code> to create a new
@@ -221,7 +225,7 @@ $propertyMapper-&gt;convert($source, $targetType, <emphasis>$propertyMappingConf
     <itemizedlist>
       <listitem>
         <para><code>setMapping($sourcePropertyName,
-        $targetPropertyName)</code> can be used to rename properties. </para>
+        $targetPropertyName)</code> can be used to rename properties.</para>
 
         <para>Example: If the input array contains a property
         <code>lastName</code>, but the accordant property in the model is
@@ -339,14 +343,387 @@ $propertyMappingConfiguration
   <section>
     <title>Reference of existing TypeConverters</title>
 
-    <para>TODO - perhaps autogenerate it?</para>
+    <para>Here, all existing type converters are listed with their
+    options.</para>
+
+    <section>
+      <title>ArrayCollectionConverter</title>
+
+      <para>Transforms a list of array elements to a Doctrine
+      ArrayCollection.</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>Source type: string, array</para>
+        </listitem>
+
+        <listitem>
+          <para>Output type:
+          Doctrine\Common\Collections\ArrayCollection</para>
+        </listitem>
+
+        <listitem>
+          <para>Options: none</para>
+        </listitem>
+      </itemizedlist>
+    </section>
+
+    <section>
+      <title>ArrayConverter</title>
+
+      <para>Transforms arrays to arrays (no operation)</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>Source type: array</para>
+        </listitem>
+
+        <listitem>
+          <para>Output type: array</para>
+        </listitem>
+
+        <listitem>
+          <para>Options: none</para>
+        </listitem>
+      </itemizedlist>
+    </section>
+
+    <section>
+      <title>BooleanConverter</title>
+
+      <para>Transforms string and boolean to boolean.</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>Source type: string, boolean</para>
+        </listitem>
+
+        <listitem>
+          <para>Output type: boolean </para>
+        </listitem>
+
+        <listitem>
+          <para>Options: none</para>
+        </listitem>
+      </itemizedlist>
+    </section>
+
+    <section>
+      <title>DateTimeConverter</title>
+
+      <para>Transforms strings and arrays to DateTime</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>Source type: string, array</para>
+        </listitem>
+
+        <listitem>
+          <para>Output type: DateTime</para>
+        </listitem>
+
+        <listitem>
+          <para>Options</para>
+
+          <itemizedlist>
+            <listitem>
+              <para><code>F3\FLOW3\Property\TypeConverter\DateTimeConverter::CONFIGURATION_DATE_FORMAT</code>:
+              Date format to be used for conversion from string to DateTime,
+              in a format understood by <code
+              xlink:href="http://de3.php.net/manual/de/datetime.createfromformat.php">DateTime::createFromFormat</code>.
+              If nothing specified, uses the <emphasis
+              xlink:href="http://www.w3.org/TR/NOTE-datetime.html">W3C
+              standard</emphasis> for date time.</para>
+            </listitem>
+          </itemizedlist>
+        </listitem>
+      </itemizedlist>
+
+      <example>
+        <title>Simple example, without any configuration</title>
+
+        <programlisting>$inputData = '2005-08-15T15:52:01+00:00'; // in W3C format
+
+// alternative:
+$inputData = array(
+  'date' =&gt; '2005-08-15T15:52:01+00:00'
+);
+
+$dateTime = $propertyMapper-&gt;convert($inputData, 'DateTime');</programlisting>
+      </example>
+
+      <example>
+        <title>Custom date format specified in input array</title>
+
+        <programlisting>$inputData = array(
+  'date' =&gt; '15-08-2005',
+  'format' =&gt; 'd-m-Y'
+);
+
+$dateTime = $propertyMapper-&gt;convert($inputData, 'DateTime');</programlisting>
+
+        <para>Here, the format is specified in the input array itself.</para>
+      </example>
+
+      <example>
+        <title>Custom date format specified via property mapping
+        configuration</title>
+
+        <programlisting>$inputData = '15-08-2005';
+
+$propertyMappingConfiguration-&gt;setConfigurationOption(
+   'F3\FLOW3\Property\TypeConverter\DateTimeConverter',
+   \F3\FLOW3\Property\TypeConverter\DateTimeConverter::CONFIGURATION_DATE_FORMAT,
+   'd-m-Y'
+);
+
+$dateTime = $propertyMapper-&gt;convert($inputData, 'DateTime', $propertyMappingConfiguration);</programlisting>
+
+        <para>Here, the format is specified via a property mapping
+        configuration.</para>
+      </example>
+
+      <example>
+        <title>Setting hour, minute, second and timezone separately</title>
+
+        <programlisting>$inputData = array(
+  'date' =&gt; '2005-08-15T15:52:01+00:00',
+  'hour' =&gt; 10,
+  'minute' =&gt; 05, // defaults to 0 if not specified
+  'second' =&gt; 00,  // defaults to 0 if not specified
+  'timezone' =&gt; 'Europe/Paris'
+);
+
+$dateTime = $propertyMapper-&gt;convert($inputData, 'DateTime');</programlisting>
+
+        <para>Here, the time value of the date string is overridden to
+        10:05:00, with the timezone set to Europe/Paris. Valid time zone
+        identifiers are these understood by <code
+        xlink:href="http://php.net/manual/en/timezones.php">DateTimeZone::construct()</code>.</para>
+      </example>
+    </section>
+
+    <section>
+      <title>FloatConverter</title>
+
+      <para>Convert string to float, by simply casting it.</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>Source type: string</para>
+        </listitem>
+
+        <listitem>
+          <para>Output type: float</para>
+        </listitem>
+
+        <listitem>
+          <para>Options: none</para>
+        </listitem>
+      </itemizedlist>
+    </section>
+
+    <section>
+      <title>IntegerConverter</title>
+
+      <para>Convert a simple type to an integer, by casting it</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>Source type: integer, string</para>
+        </listitem>
+
+        <listitem>
+          <para>Output type: integer</para>
+        </listitem>
+
+        <listitem>
+          <para>Options: none</para>
+        </listitem>
+      </itemizedlist>
+    </section>
+
+    <section>
+      <title>PersistentObjectConverter</title>
+
+      <para>Convert arrays or UUID strings to their persistent objects.</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>Source type: array, string</para>
+        </listitem>
+
+        <listitem>
+          <para>Output type: objects tagged @entity or @valueobject</para>
+        </listitem>
+
+        <listitem>
+          <para>Options<itemizedlist>
+              <listitem>
+                <para><code>F3\FLOW3\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_TARGET_TYPE</code></para>
+
+                <para>Set target type for a specific sub-property, effectively
+                overriding the class annotations.</para>
+              </listitem>
+
+              <listitem>
+                <para><code>F3\FLOW3\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED</code></para>
+
+                <para>If <code>TRUE</code>, modification on persistent objects
+                is performed if necessary.</para>
+              </listitem>
+
+              <listitem>
+                <para><code>F3\FLOW3\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED</code></para>
+
+                <para>If <code>TRUE</code>, creation of new objects is
+                performed if necessary.</para>
+              </listitem>
+            </itemizedlist></para>
+        </listitem>
+      </itemizedlist>
+
+      <para>The PersistentObjectConverter has the following workflow:</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>If the input is <code>string</code>, it is assumed to be a
+          UUID. Then, the object is fetched from persistence and
+          returned.</para>
+        </listitem>
+
+        <listitem>
+          <para>If the input is <code>array</code>, we check if it has an
+          identity property.</para>
+        </listitem>
+
+        <listitem>
+          <para>If the input has an identity property and NO additional
+          properties, we fetch the object from persistence.</para>
+        </listitem>
+
+        <listitem>
+          <para>If the input has an identity property AND additional
+          properties, we fetch the object from persistence, create a clone on
+          it, and set the sub-properties. We only do this if the configuration
+          option <code>CONFIGURATION_MODIFICATION_ALLOWED</code> is
+          <code>TRUE</code>.</para>
+        </listitem>
+
+        <listitem>
+          <para>If the input has NO identity property, but additional
+          properties, we create a new object and return it. However, we only
+          do this if the configuration option
+          <code>CONFIGURATION_CREATION_ALLOWED</code> is
+          <code>TRUE</code>.</para>
+        </listitem>
+      </itemizedlist>
+
+      <example>
+        <title>Fetching an object from persistence</title>
+
+        <programlisting>$inputData = '72a26566-103b-4f05-8381-b5503959fe01';
+
+// alternative:
+$inputData = array(
+  '__identity' =&gt; '72a26566-103b-4f05-8381-b5503959fe01'
+);
+$myDomainObject = $propertyMapper-&gt;convert($inputData, 'My\Domain\Object\Here');</programlisting>
+
+        <para>In this case, <code>$myDomainObject</code> has <emphasis>not
+        been cloned</emphasis>, and all modifications on the domain object
+        will be automatically stored in the persistence layer at the end of
+        the request.</para>
+      </example>
+
+      <example>
+        <title>Fetching an object from persistence, modifying it
+        afterwards</title>
+
+        <programlisting>$inputData = array(
+  '__identity' =&gt; '72a26566-103b-4f05-8381-b5503959fe01',
+  'name' =&gt; 'My Name'
+);
+$myDomainObject = $propertyMapper-&gt;convert($inputData, 'My\Domain\Object\Here');</programlisting>
+
+        <para>In this case, <code>$myDomainObject</code> <emphasis>is
+        cloned</emphasis>, thus gets disconnected from the persistence layer.
+        Hence, all modifications on the domain object will
+        <emphasis>not</emphasis> be automatically persisted at the end of the
+        request. For converting <code>$name</code>, the
+        <code>PropertyMapper</code> is invoked recursively.</para>
+      </example>
+
+      <example>
+        <title>Fetching an object from persistence, modifying it
+        afterwards</title>
+
+        <programlisting>$inputData = array(
+  '__identity' =&gt; '72a26566-103b-4f05-8381-b5503959fe01',
+  'name' =&gt; 'My Name'
+);
+$myDomainObject = $propertyMapper-&gt;convert($inputData, 'My\Domain\Object\Here');</programlisting>
+
+        <para>In this case, <code>$myDomainObject</code> <emphasis>is
+        cloned</emphasis>, thus gets disconnected from the persistence layer.
+        Hence, all modifications on the domain object will
+        <emphasis>not</emphasis> be automatically persisted at the end of the
+        request. For converting <code>$name</code>, the
+        <code>PropertyMapper</code> is invoked recursively.</para>
+      </example>
+
+      <example>
+        <title>Creating a new object, also overriding the type of one
+        property</title>
+
+        <programlisting>$inputData = array(
+  'name' =&gt; 'My Name',
+  'role' =&gt; 'ADMIN_ROLE'
+);
+
+$propertyMappingConfiguration-&gt;<emphasis>forProperty('role')-&gt;</emphasis>setConfigurationOption(
+   'F3\FLOW3\Property\TypeConverter\PersistentObjectConverter',
+   \F3\FLOW3\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_TARGET_TYPE,
+   'My\Role\Object'
+);
+
+$myDomainObject = $propertyMapper-&gt;convert($inputData, 'My\Domain\Object\Here', $propertyMappingConfiguration);</programlisting>
+
+        <para>Here, a new domain object is being created, as no identity
+        property has been specified. Furthermore, the
+        <code>TypeConverter</code> will return the type
+        <code>My\Role\Object</code> when being asked for the type of
+        <code>$role</code>. This can be used to override <code>@var</code>
+        annotations in the domain model (i.e. when they are incorrect).</para>
+      </example>
+    </section>
+
+    <section>
+      <title>StringConverter</title>
+
+      <para>Convert string to string.</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>Source type: string</para>
+        </listitem>
+
+        <listitem>
+          <para>Output type: string</para>
+        </listitem>
+
+        <listitem>
+          <para>Options: none</para>
+        </listitem>
+      </itemizedlist>
+    </section>
   </section>
 
   <section>
     <title>The inner workings of the Property Mapper</title>
 
     <para>The Property Mapper applies the following steps to convert a simple
-    type to an object. Each step will be described in detail
+    type to an object. Some of the steps will be described in detail
     afterwards.</para>
 
     <orderedlist>
@@ -388,16 +765,141 @@ $propertyMappingConfiguration
       </listitem>
     </orderedlist>
 
+    <para>On first sight, the steps might seem complex and difficult, but they
+    account for a great deal of flexibility of the property mapper.</para>
+
     <section xml:id="property-mapper-resolving-typeconverters">
       <title>Automatic resolving of type converters</title>
 
-      <para></para>
+      <para>All type converters which implement
+      <interfacename>F3\FLOW3\Property\TypeConverterInterface</interfacename>
+      are automatically found in the resolving process. There are four API
+      methods in each <code>TypeConverter</code> which influence the resolving
+      process:</para>
+
+      <itemizedlist>
+        <listitem>
+          <para><methodname>getSupportedSourceTypes()</methodname>: returns an
+          array of simple types which are understood as source type by this
+          type converter</para>
+        </listitem>
+
+        <listitem>
+          <para><code>getSupportedTargetType()</code>: The target type this
+          type converter can convert into. Can be either a simple type, or a
+          class name.</para>
+        </listitem>
+
+        <listitem>
+          <para><code>getPriority()</code>: If two type converters have the
+          same source and target type, precedence is given to the one with
+          higher priority. All standard TypeConverters have a priority lower
+          than 100.</para>
+        </listitem>
+
+        <listitem>
+          <para><code>canConvertFrom($source, $targetType</code>) is called as
+          last check, when source and target types fit together. Here, the
+          TypeConverter can implement runtime constraints to decide whether it
+          can do the conversion.</para>
+        </listitem>
+      </itemizedlist>
+
+      <para>When a type converter has to be found, the following algorithm is
+      applied:</para>
+
+      <orderedlist>
+        <listitem>
+          <para>If <code>typeConverter</code> is set in the
+          <code>PropertyMappingConfiguration</code>, this is directly used.
+          </para>
+        </listitem>
+
+        <listitem>
+          <para>The inheritance hierarchy of the target type is traversed in
+          reverse order (from most specific to generic) until a TypeConverter
+          is found. If two type converters work on the same class, the one
+          with highest priority is used.</para>
+        </listitem>
+
+        <listitem>
+          <para>If no type converter could be found for the direct inheritance
+          hierarchy, it is checked if there is a TypeConverter for one of the
+          interfaces the target class implements. As it is not possible in PHP
+          to order interfaces in any meaningful way, the TypeConverter with
+          the highest priority is used (througout all interfaces).</para>
+        </listitem>
+
+        <listitem>
+          <para>If no type converter is found in the interfaces, it is checked
+          if there is an applicable type converter for the target type
+          <code>object</code>.</para>
+        </listitem>
+      </orderedlist>
+
+      <para>If a type converter is found according to the above algorithm,
+      <methodname>canConvertFrom</methodname> is called on the type converter,
+      so he can perform additional runtime checks. In case the TypeConverter
+      returns <code>FALSE</code>, the search is continued at the position
+      where it left off in the above algorithm.</para>
+
+      <para>For simple target types, the steps 2 and 3 are omitted.</para>
     </section>
   </section>
 
   <section>
     <title>Writing own TypeConverters</title>
 
-    <para>- exceptions vs errors vs null</para>
+    <para>Often, it is enough to subclass
+    <code>TYPO3\FLOW3\Property\TypeConverter\AbstractTypeConverter</code>
+    instead of implementing <code>TypeConverterInterface</code>.</para>
+
+    <para>Besides, good starting points for own type converters is the
+    <code>DateTimeConverter</code> or the <code>IntegerConverter</code>. If
+    you write your own type converter, you should set it to a priority greater
+    than 100, to make sure it is used before the standard converters by
+    FLOW3.</para>
+
+    <para>TypeConverters should not contain any internal state, as they are
+    re-used by the property mapper, even recursively during the same
+    run.</para>
+
+    <para>Of further importance is the <emphasis>exception and error
+    semantics</emphasis>, so there are a few possibilities what can be
+    returned in <code>convertFrom</code>:</para>
+
+    <itemizedlist>
+      <listitem>
+        <para>For fatal errors which hint at some wrong configuration of the
+        developer, throw an exception. This will show a stack trace in
+        development context. Also for detected security breaches, exceptions
+        should be thrown.</para>
+      </listitem>
+
+      <listitem>
+        <para>If at run-time the type converter does not wish to participate
+        in the results, <code>NULL</code> should be returned. For example, if
+        a file upload is expected, but there was no file upload, returning
+        <code>NULL</code> would be the appropriate way to handling
+        this.</para>
+      </listitem>
+
+      <listitem>
+        <para>If the error is recoverable, and the user should re-submit his
+        data, return a <code>TYPO3\FLOW3\Error\Error</code> object (or a
+        subclass thereof), containing information about the error. In this
+        case, the property is not mapped at all (<code>NULL</code> is
+        returned, like above).</para>
+
+        <para>If the Property Mapping occurs in the context of the MVC stack
+        (as it will be the case in most cases), the error is detected and a
+        forward is done to the last shown form. The end-user experiences the
+        same flow as when MVC validation errors happen.</para>
+
+        <para>This is the correct response for example if the file upload
+        could not be processed because of wrong checksums, or because the disk
+        on the server is full.</para>
+      </listitem>
+    </itemizedlist>
   </section>
 </chapter>
