@@ -35,6 +35,11 @@ class Service {
 	protected $settings = array();
 
 	/**
+	 * @var array
+	 */
+	public $output = array();
+
+	/**
 	 * @inject
 	 * @var \Doctrine\Common\Persistence\ObjectManager
 	 */
@@ -64,11 +69,13 @@ class Service {
 	 * @return array
 	 */
 	public function validateMapping() {
+		$result = array();
 		try {
-			$result = array();
 			$validator = new \Doctrine\ORM\Tools\SchemaValidator($this->entityManager);
 			$result = $validator->validateMapping();
-		} catch (\Exception $exception) {}
+		} catch (\Exception $exception) {
+			$result[] = $exception->getMessage();
+		}
 		return $result;
 	}
 
@@ -106,12 +113,12 @@ class Service {
 	}
 
 	/**
-	 * Returns basic information about which entities exist and possibly if their
+	 * Returns information about which entities exist and possibly if their
 	 * mapping information contains errors or not.
 	 *
 	 * @return array
 	 */
-	public function getInfo() {
+	public function getEntityStatus() {
 		$entityClassNames = $this->entityManager->getConfiguration()->getMetadataDriverImpl()->getAllClassNames();
 		$info = array();
 		foreach ($entityClassNames as $entityClassName) {
@@ -153,10 +160,19 @@ class Service {
 	 * @return \Doctrine\DBAL\Migrations\Configuration\Configuration
 	 */
 	protected function getMigrationConfiguration() {
-		$configuration = new \Doctrine\DBAL\Migrations\Configuration\Configuration($this->entityManager->getConnection());
+		$this->output = array();
+		$that = $this;
+		$outputWriter = new \Doctrine\DBAL\Migrations\OutputWriter(
+			function ($message) use ($that) {
+				$that->output[] = $message;
+			}
+		);
+
+		$configuration = new \Doctrine\DBAL\Migrations\Configuration\Configuration($this->entityManager->getConnection(), $outputWriter);
 		$configuration->setMigrationsNamespace('F3\FLOW3\Persistence\Doctrine\Migrations');
-		$configuration->setMigrationsDirectory(\F3\FLOW3\Utility\Files::concatenatePaths(array(FLOW3_PATH_CONFIGURATION, 'Doctrine/Migrations')));
+		$configuration->setMigrationsDirectory(\F3\FLOW3\Utility\Files::concatenatePaths(array(FLOW3_PATH_DATA, 'DoctrineMigrations')));
 		$configuration->setMigrationsTableName('flow3_doctrine_migrationstatus');
+
 		$configuration->createMigrationTable();
 
 		$databasePlatformName = ucfirst($this->entityManager->getConnection()->getDatabasePlatform()->getName());
@@ -206,7 +222,7 @@ class Service {
 			'Configuration Source'  => $configuration instanceof \Doctrine\DBAL\Migrations\Configuration\AbstractFileConfiguration ? $configuration->getFile() : 'manually configured',
 			'Version Table Name'    => $configuration->getMigrationsTableName(),
 			'Migrations Namespace'  => $configuration->getMigrationsNamespace(),
-			'Migrations Directory'  => $configuration->getMigrationsDirectory(),
+			'Migrations Target Directory'  => $configuration->getMigrationsDirectory(),
 			'Current Version'       => $currentVersionFormatted,
 			'Latest Version'        => $latestVersionFormatted,
 			'Executed Migrations'   => $executedMigrations,
@@ -229,138 +245,106 @@ class Service {
 	}
 
 	/**
-	 * Generates an empty migration file and returns the path to it.
+	 * Execute all new migrations, up to $version if given.
 	 *
+	 * If $outputPathAndFilename is given, the SQL statements will be written to the given file instead of executed.
+	 *
+	 * @param string $version The version to migrate to
+	 * @param string $outputPathAndFilename A file to write SQL to, instead of executing it
+	 * @param boolean $dryRun Whether to do a dry run or not
 	 * @return string
 	 */
-	public function generateEmptyMigration() {
+	public function executeMigrations($version = NULL, $outputPathAndFilename = NULL, $dryRun = FALSE) {
 		$configuration = $this->getMigrationConfiguration();
+		$migration = new \Doctrine\DBAL\Migrations\Migration($configuration);
 
-		$version = date('YmdHis');
-		$path = $this->generateMigration($configuration, $version);
-
-		return sprintf('Generated empty migration class to "%s".', $path);
-	}
-
-	/**
-	 * Generates a migration file with the diff between current DB structure
-	 * and the found mapping metadata. The path to the new file is returned.
-	 *
-	 * @return string
-	 */
-	public function generateDiffMigration() {
-		$configuration = $this->getMigrationConfiguration();
-
-		$connection = $this->entityManager->getConnection();
-		$platform = $connection->getDatabasePlatform();
-		$metadata = $this->entityManager->getMetadataFactory()->getAllMetadata();
-
-		if (empty($metadata)) {
-			return 'No mapping information to process.';
+		if ($outputPathAndFilename !== NULL) {
+			$migration->writeSqlFile($outputPathAndFilename, $version);
+		} else {
+			$migration->migrate($version, $dryRun);
 		}
-
-		$tool = new \Doctrine\ORM\Tools\SchemaTool($this->entityManager);
-
-		$fromSchema = $connection->getSchemaManager()->createSchema();
-		$toSchema = $tool->getSchemaFromMetadata($metadata);
-		$up = $this->buildCodeFromSql($configuration, $fromSchema->getMigrateToSql($toSchema, $platform));
-		$down = $this->buildCodeFromSql($configuration, $fromSchema->getMigrateFromSql($toSchema, $platform));
-
-		if (!$up && !$down) {
-			return 'No changes detected in your mapping information.';
-		}
-
-		$version = date('YmdHis');
-		$path = $this->generateMigration($configuration, $version, $up, $down);
-
-		return sprintf('Generated new migration class to "%s" from schema differences.', $path);
-	}
-
-	/**
-	 * Returns PHP code for a migration file that "executes" the given
-	 * array of SQL statements.
-	 *
-	 * @param \Doctrine\DBAL\Migrations\Configuration\Configuration $configuration
-	 * @param array $sql
-	 * @return string
-	 */
-	protected function buildCodeFromSql(\Doctrine\DBAL\Migrations\Configuration\Configuration $configuration, array $sql) {
-		$currentPlatform = $configuration->getConnection()->getDatabasePlatform()->getName();
-		$code = array(
-			"\$this->abortIf(\$this->connection->getDatabasePlatform()->getName() != \"$currentPlatform\");", "",
-		);
-		foreach ($sql as $query) {
-			if (strpos($query, $configuration->getMigrationsTableName()) !== FALSE) {
-				continue;
-			}
-			$code[] = "\$this->addSql(\"$query\");";
-		}
-		return implode("\n", $code);
+		return strip_tags(implode(PHP_EOL, $this->output));
 	}
 
 	/**
 	 * Execute a single migration in up or down direction. If $path is given, the
 	 * SQL statements will be writte to the file in $path instead of executed.
 	 *
-	 * @param  $version
+	 * @param string $version The version to migrate to
 	 * @param string $direction
-	 * @param null $path
-	 * @param bool $dryRun
-	 * @return void
+	 * @param string $outputPathAndFilename A file to write SQL to, instead of executing it
+	 * @param boolean $dryRun Whether to do a dry run or not
+	 * @return string
 	 */
-	public function executeMigration($version, $direction = 'up', $path = NULL, $dryRun = FALSE) {
-		$configuration = $this->getMigrationConfiguration();
-		$version = $configuration->getVersion($version);
+	public function executeMigration($version, $direction = 'up', $outputPathAndFilename = NULL, $dryRun = FALSE) {
+		$version = $this->getMigrationConfiguration()->getVersion($version);
 
-		if ($path !== NULL) {
-			$version->writeSqlFile($path, $direction);
+		if ($outputPathAndFilename !== NULL) {
+			$version->writeSqlFile($outputPathAndFilename, $direction);
 		} else {
 			$version->execute($direction, $dryRun);
 		}
+		return strip_tags(implode(PHP_EOL, $this->output));
 	}
 
 	/**
-	 * Execute all new migrations, up to $version if given. If $path is given, the
-	 * SQL statements will be writte to the file in $path instead of executed.
+	 * Generates a new migration file and returns the path to it.
 	 *
-	 * @param null $version
-	 * @param null $path
-	 * @param bool $dryRun
-	 * @return void
+	 * If $diffAgainstCurrent is TRUE, it generates a migration file with the
+	 * diff between current DB structure and the found mapping metadata.
+	 *
+	 * Otherwise an empty migration skeleton is generated.
+	 *
+	 * @param boolean $diffAgainstCurrent
+	 * @return string Path to the new file
 	 */
-	public function executeMigrations($version = NULL, $path = NULL, $dryRun = FALSE) {
+	public function generateMigration($diffAgainstCurrent = TRUE) {
 		$configuration = $this->getMigrationConfiguration();
-		$migration = new \Doctrine\DBAL\Migrations\Migration($configuration);
+		$up = NULL;
+		$down = NULL;
 
-		if ($path !== NULL) {
-			$migration->writeSqlFile($path, $version);
-		} else {
-			$migration->migrate($version, $dryRun);
+		if ($diffAgainstCurrent === TRUE) {
+			$connection = $this->entityManager->getConnection();
+			$platform = $connection->getDatabasePlatform();
+			$metadata = $this->entityManager->getMetadataFactory()->getAllMetadata();
+
+			if (empty($metadata)) {
+				return 'No mapping information to process.';
+			}
+
+			$tool = new \Doctrine\ORM\Tools\SchemaTool($this->entityManager);
+
+			$fromSchema = $connection->getSchemaManager()->createSchema();
+			$toSchema = $tool->getSchemaFromMetadata($metadata);
+			$up = $this->buildCodeFromSql($configuration, $fromSchema->getMigrateToSql($toSchema, $platform));
+			$down = $this->buildCodeFromSql($configuration, $fromSchema->getMigrateFromSql($toSchema, $platform));
+
+			if (!$up && !$down) {
+				return 'No changes detected in your mapping information.';
+			}
 		}
+
+		return $this->writeMigrationClassToFile($configuration, $up, $down);
 	}
 
 	/**
-	 * Writes a migration file with $up and $down code and the given $version
-	 * to the configured migrations directory.
-	 *
 	 * @param \Doctrine\DBAL\Migrations\Configuration\Configuration $configuration
-	 * @param string $version
 	 * @param string $up
 	 * @param string $down
 	 * @return string
 	 * @throws \RuntimeException
 	 */
-	protected function generateMigration(\Doctrine\DBAL\Migrations\Configuration\Configuration $configuration, $version, $up = NULL, $down = NULL) {
+	protected function writeMigrationClassToFile(\Doctrine\DBAL\Migrations\Configuration\Configuration $configuration, $up, $down) {
 		$namespace = $configuration->getMigrationsNamespace();
-		$className = 'Version' . $version;
+		$className = 'Version' . date('YmdHis');
 		$up = $up === NULL ? '' : "\n		" . implode("\n		", explode("\n", $up));
 		$down = $down === NULL ? '' : "\n		" . implode("\n		", explode("\n", $down));
 
-		$path = \F3\FLOW3\Utility\Files::concatenatePaths(array($configuration->getMigrationsDirectory(), 'Version' . $version . '.php'));
+		$path = \F3\FLOW3\Utility\Files::concatenatePaths(array($configuration->getMigrationsDirectory(), $className . '.php'));
 		try {
 			\F3\FLOW3\Utility\Files::createDirectoryRecursively(dirname($path));
 		} catch (\F3\FLOW3\Utility\Exception $exception) {
-			throw new \RuntimeException(sprintf('Migrations directory "%s" does not exist.', dirname($path)), 1303298536, $exception);
+			throw new \RuntimeException(sprintf('Migration target directory "%s" does not exist.', dirname($path)), 1303298536, $exception);
 		}
 
 		$code = <<<EOT
@@ -397,7 +381,29 @@ EOT;
 		file_put_contents($path, $code);
 
 		return $path;
-	 }
+	}
+
+	/**
+	 * Returns PHP code for a migration file that "executes" the given
+	 * array of SQL statements.
+	 *
+	 * @param \Doctrine\DBAL\Migrations\Configuration\Configuration $configuration
+	 * @param array $sql
+	 * @return string
+	 */
+	protected function buildCodeFromSql(\Doctrine\DBAL\Migrations\Configuration\Configuration $configuration, array $sql) {
+		$currentPlatform = $configuration->getConnection()->getDatabasePlatform()->getName();
+		$code = array(
+			"\$this->abortIf(\$this->connection->getDatabasePlatform()->getName() != \"$currentPlatform\");", "",
+		);
+		foreach ($sql as $query) {
+			if (strpos($query, $configuration->getMigrationsTableName()) !== FALSE) {
+				continue;
+			}
+			$code[] = "\$this->addSql(\"$query\");";
+		}
+		return implode("\n", $code);
+	}
 
 }
 

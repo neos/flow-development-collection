@@ -58,24 +58,18 @@ class DoctrineCommandController extends \F3\FLOW3\MVC\Controller\CommandControll
 	 * @return void
 	 */
 	public function validateCommand() {
-			// "driver" is used only for Doctrine, thus we (mis-)use it here
-			// additionally, when no path is set, skip this step, assuming no DB is needed
-		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['path'] !== NULL) {
-			$this->response->appendContent('');
-			$classesAndErrors = $this->doctrineService->validateMapping();
-			if (count($classesAndErrors) === 0) {
-				$this->response->appendContent('Mapping validation results: PASSED, no errors found. :o)');
-			} else {
-				$this->response->appendContent('Mapping validation results: FAILED!');
-				foreach ($classesAndErrors as $className => $errors) {
-					$this->response->appendContent('  ' . $className);
-					foreach ($errors as $errorMessage) {
-						$this->response->appendContent('    ' . $errorMessage);
-					}
+		$this->response->appendContent('');
+		$classesAndErrors = $this->doctrineService->validateMapping();
+		if (count($classesAndErrors) === 0) {
+			$this->response->appendContent('Mapping validation passed, no errors were found.');
+		} else {
+			$this->response->appendContent('Mapping validation FAILED!');
+			foreach ($classesAndErrors as $className => $errors) {
+				$this->response->appendContent('  ' . $className);
+				foreach ($errors as $errorMessage) {
+					$this->response->appendContent('    ' . $errorMessage);
 				}
 			}
-		} else {
-			$this->response->appendContent('Mapping validation has been SKIPPED, the driver and path backend options are not set in /Configuration/Settings.yaml.');
 		}
 	}
 
@@ -95,30 +89,18 @@ class DoctrineCommandController extends \F3\FLOW3\MVC\Controller\CommandControll
 	}
 
 	/**
-	 * Update the database schema without data loss (as far as possible)
+	 * Update the database schema, not using migrations
 	 *
+	 * It will, unless $safeMode is set to FALSE, not drop foreign keys, sequences and tables.
+	 *
+	 * @param boolean $safeMode
 	 * @return void
 	 */
-	public function updateCommand() {
+	public function updateCommand($safeMode = TRUE) {
 			// "driver" is used only for Doctrine, thus we (mis-)use it here
 			// additionally, when no path is set, skip this step, assuming no DB is needed
 		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['path'] !== NULL) {
-			$this->doctrineService->updateSchema();
-		} else {
-			$this->response->appendContent('Database schema update has been SKIPPED, the driver and path backend options are not set in /Configuration/Settings.yaml.');
-		}
-	}
-
-	/**
-	 * Update database schema and remove obsolete tables / fields
-	 *
-	 * @return void
-	 */
-	public function updateAndCleanCommand() {
-			// "driver" is used only for Doctrine, thus we (mis-)use it here
-			// additionally, when no path is set, skip this step, assuming no DB is needed
-		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['path'] !== NULL) {
-			$this->doctrineService->updateSchema(FALSE);
+			$this->doctrineService->updateSchema($safeMode);
 		} else {
 			$this->response->appendContent('Database schema update has been SKIPPED, the driver and path backend options are not set in /Configuration/Settings.yaml.');
 		}
@@ -130,46 +112,35 @@ class DoctrineCommandController extends \F3\FLOW3\MVC\Controller\CommandControll
 	 * @return void
 	 */
 	public function compileProxiesCommand() {
-			// "driver" is used only for Doctrine, thus we (mis-)use it here
-			// additionally, when no path is set, skip this step, assuming no DB is needed
-		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['path'] !== NULL) {
-			$this->doctrineService->compileProxies();
-		} else {
-			$this->response->appendContent('Doctrine proxy compilation has been SKIPPED, the driver and path backend options are not set in /Configuration/Settings.yaml.');
-		}
+		$this->doctrineService->compileProxies();
 	}
 
 	/**
 	 * Show the current status of entities and mappings
 	 *
 	 * Shows basic information about which entities exist and possibly if their
-	 * mapping information contains errors or not.
+	 * mapping information contains errors or not. To run a full validation,
+	 * use the validate command.
 	 *
 	 * @return void
 	 */
-	public function infoCommand() {
-			// "driver" is used only for Doctrine, thus we (mis-)use it here
-			// additionally, when no path is set, skip this step, assuming no DB is needed
-		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['path'] !== NULL) {
-			$info = $this->doctrineService->getInfo();
+	public function entityStatusCommand() {
+		$info = $this->doctrineService->getEntityStatus();
 
-			if ($info === array()) {
-				$this->response->appendContent('You do not have any mapped Doctrine ORM entities according to the current configuration. ' .
-				'If you have entities or mapping files you should check your mapping configuration for errors.');
-			} else {
-				$this->response->appendContent('Found ' . count($info) . ' mapped entities:');
-				foreach ($info as $entityClassName => $entityStatus) {
-					if ($entityStatus === TRUE) {
-						$this->response->appendContent('[OK]   ' . $entityClassName);
-					} else {
-						$this->response->appendContent('[FAIL] ' . $entityClassName);
-						$this->response->appendContent($entityStatus);
-						$this->response->appendContent('');
-					}
+		if ($info === array()) {
+			$this->response->appendContent('You do not have any mapped Doctrine ORM entities according to the current configuration. ' .
+			'If you have entities or mapping files you should check your mapping configuration for errors.');
+		} else {
+			$this->response->appendContent('Found ' . count($info) . ' mapped entities:');
+			foreach ($info as $entityClassName => $entityStatus) {
+				if ($entityStatus === TRUE) {
+					$this->response->appendContent('[OK]   ' . $entityClassName);
+				} else {
+					$this->response->appendContent('[FAIL] ' . $entityClassName);
+					$this->response->appendContent($entityStatus);
+					$this->response->appendContent('');
 				}
 			}
-		} else {
-			$this->response->appendContent('Doctrine info not available, the driver and path backend options are not set in /Configuration/Settings.yaml.');
 		}
 	}
 
@@ -185,15 +156,21 @@ class DoctrineCommandController extends \F3\FLOW3\MVC\Controller\CommandControll
 	 * @throws \RuntimeException
 	 */
 	public function dqlCommand($depth = 3, $hydrationModeName = 'object', $firstResult = NULL, $maxResult = NULL) {
-		$dqlSatetements = $this->request->getCommandLineArguments();
-		$hydrationMode = 'Doctrine\ORM\Query::HYDRATE_' . strtoupper(str_replace('-', '_', $hydrationModeName));
-		if (!defined($hydrationMode)) {
-			throw new \InvalidArgumentException('Hydration mode "' . $hydrationModeName . '" does not exist. It should be either: object, array, scalar or single-scalar.');
-		}
+			// "driver" is used only for Doctrine, thus we (mis-)use it here
+			// additionally, when no path is set, skip this step, assuming no DB is needed
+		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['path'] !== NULL) {
+			$dqlSatetements = $this->request->getCommandLineArguments();
+			$hydrationMode = 'Doctrine\ORM\Query::HYDRATE_' . strtoupper(str_replace('-', '_', $hydrationModeName));
+			if (!defined($hydrationMode)) {
+				throw new \InvalidArgumentException('Hydration mode "' . $hydrationModeName . '" does not exist. It should be either: object, array, scalar or single-scalar.');
+			}
 
-		foreach ($dqlSatetements as $dql) {
-			$resultSet = $this->doctrineService->runDql($dql, $hydrationMode, $firstResult, $maxResult);
-			\Doctrine\Common\Util\Debug::dump($resultSet, $depth);
+			foreach ($dqlSatetements as $dql) {
+				$resultSet = $this->doctrineService->runDql($dql, $hydrationMode, $firstResult, $maxResult);
+				\Doctrine\Common\Util\Debug::dump($resultSet, $depth);
+			}
+		} else {
+			$this->response->appendContent('DQL query is not possible, the driver and path backend options are not set in /Configuration/Settings.yaml.');
 		}
 	}
 
@@ -215,67 +192,58 @@ class DoctrineCommandController extends \F3\FLOW3\MVC\Controller\CommandControll
 	/**
 	 * Migrate the database schema
 	 *
-	 * @param string $version
-	 * @param string $path
-	 * @param bool $dryRun
+	 * @param string $version The version to migrate to
+	 * @param string $output A file to write SQL to, instead of executing it
+	 * @param boolean $dryRun Whether to do a dry run or not
 	 * @return void
 	 */
-	public function migrateCommand($version = NULL, $path = NULL, $dryRun = FALSE) {
+	public function migrateCommand($version = NULL, $output = NULL, $dryRun = FALSE) {
 			// "driver" is used only for Doctrine, thus we (mis-)use it here
 			// additionally, when no path is set, skip this step, assuming no DB is needed
 		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['path'] !== NULL) {
-			$this->response->appendContent($this->doctrineService->executeMigrations($version, $path, $dryRun));
+			$this->response->appendContent($this->doctrineService->executeMigrations($version, $output, $dryRun));
 		} else {
 			$this->response->appendContent('Doctrine migration not possible, the driver and path backend options are not set in /Configuration/Settings.yaml.');
-		}
-	}
-
-	/**
-	 * Generate a migration diff
-	 *
-	 * @return void
-	 */
-	public function migrationDiffCommand() {
-			// "driver" is used only for Doctrine, thus we (mis-)use it here
-			// additionally, when no path is set, skip this step, assuming no DB is needed
-		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['path'] !== NULL) {
-			$this->response->appendContent($this->doctrineService->generateDiffMigration());
-		} else {
-			$this->response->appendContent('Doctrine migration generation has been SKIPPED, the driver and path backend options are not set in /Configuration/Settings.yaml.');
-		}
-	}
-
-	/**
-	 * Generate an empty migration
-	 *
-	 * @return void
-	 */
-	public function migrationGenerateCommand() {
-			// "driver" is used only for Doctrine, thus we (mis-)use it here
-			// additionally, when no path is set, skip this step, assuming no DB is needed
-		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['path'] !== NULL) {
-			$this->response->appendContent($this->doctrineService->generateEmptyMigration());
-		} else {
-			$this->response->appendContent('Doctrine migration generation has been SKIPPED, the driver and path backend options are not set in /Configuration/Settings.yaml.');
 		}
 	}
 
 	/**
 	 * Execute a single migration
 	 *
-	 * @param string $version
-	 * @param string $direction
-	 * @param string $path
-	 * @param bool $dryRun
+	 * @param string $version The migration to execute
+	 * @param string $direction Whether to execute the migration up (default) or down
+	 * @param string $output A file to write SQL to, instead of executing it
+	 * @param boolean $dryRun Whether to do a dry run or not
 	 * @return void
 	 */
-	public function migrationExecuteCommand($version = NULL, $direction = 'up', $path = NULL, $dryRun = FALSE) {
+	public function migrationExecuteCommand($version, $direction = 'up', $output = NULL, $dryRun = FALSE) {
 			// "driver" is used only for Doctrine, thus we (mis-)use it here
 			// additionally, when no path is set, skip this step, assuming no DB is needed
 		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['path'] !== NULL) {
-			$this->response->appendContent($this->doctrineService->executeMigration($version, $direction, $path, $dryRun));
+			$this->response->appendContent($this->doctrineService->executeMigration($version, $direction, $output, $dryRun));
 		} else {
 			$this->response->appendContent('Doctrine migration not possible, the driver and path backend options are not set in /Configuration/Settings.yaml.');
+		}
+	}
+
+	/**
+	 * Generate a new migration
+	 *
+	 * If $diffAgainstCurrent is TRUE, it generates a migration file with the
+	 * diff between current DB structure and the found mapping metadata.
+	 *
+	 * Otherwise an empty migration skeleton is generated.
+	 *
+	 * @param boolean $diffAgainstCurrent
+	 * @return void
+	 */
+	public function migrationGenerateCommand($diffAgainstCurrent = TRUE) {
+			// "driver" is used only for Doctrine, thus we (mis-)use it here
+			// additionally, when no path is set, skip this step, assuming no DB is needed
+		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['path'] !== NULL) {
+			$this->response->appendContent(sprintf('Generated new migration class to "%s".', $this->doctrineService->generateMigration($diffAgainstCurrent)));
+		} else {
+			$this->response->appendContent('Doctrine migration generation has been SKIPPED, the driver and path backend options are not set in /Configuration/Settings.yaml.');
 		}
 	}
 
