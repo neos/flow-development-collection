@@ -131,8 +131,6 @@ class GenericObjectValidatorTest extends \F3\FLOW3\Tests\Unit\Validation\Validat
 		$aValidator = $this->getValidator();
 		$bValidator = $this->getValidator();
 
-		$uuidValidator = new \F3\FLOW3\Validation\Validator\UuidValidator(array());
-
 		$aValidator->addPropertyValidator('b', $bValidator);
 		$bValidator->addPropertyValidator('a', $aValidator);
 
@@ -162,8 +160,6 @@ class GenericObjectValidatorTest extends \F3\FLOW3\Tests\Unit\Validation\Validat
 
 		$aValidator = $this->getValidator();
 		$bValidator = $this->getValidator();
-
-		$uuidValidator = new \F3\FLOW3\Validation\Validator\UuidValidator(array());
 
 		$aValidator->addPropertyValidator('b', $bValidator);
 		$bValidator->addPropertyValidator('a', $aValidator);

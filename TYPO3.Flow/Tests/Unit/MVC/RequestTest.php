@@ -391,11 +391,11 @@ class RequestTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
 		$mockObjectManager->expects($this->once())->method('getClassNameByObjectName')
-			->with('F3\MyControllerObjectName')
+			->with('F3\FLOW3\MyControllerObjectName')
 			->will($this->returnValue(get_class($mockController)));
 
 		$request = $this->getMock('F3\FLOW3\MVC\Request', array('getControllerObjectName'), array(), '', FALSE);
-		$request->expects($this->once())->method('getControllerObjectName')->will($this->returnValue('F3\MyControllerObjectName'));
+		$request->expects($this->once())->method('getControllerObjectName')->will($this->returnValue('F3\FLOW3\MyControllerObjectName'));
 		$request->injectObjectManager($mockObjectManager);
 
 		$request->setControllerActionName('somegreat');

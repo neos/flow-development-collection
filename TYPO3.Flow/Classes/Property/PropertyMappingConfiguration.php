@@ -48,13 +48,6 @@ class PropertyMappingConfiguration implements \F3\FLOW3\Property\PropertyMapping
 	protected $subConfigurationForProperty = array();
 
 	/**
-	 * The parent PropertyMappingConfiguration. If a configuration value for the current entry is not found, we propagate the question to the parent.
-	 *
-	 * @var \F3\FLOW3\Property\PropertyMappingConfigurationInterface
-	 */
-	protected $parentConfiguration;
-
-	/**
 	 * Keys which should be renamed
 	 *
 	 * @var array
@@ -65,17 +58,6 @@ class PropertyMappingConfiguration implements \F3\FLOW3\Property\PropertyMapping
 	 * @var \F3\FLOW3\Property\TypeConverterInterface
 	 */
 	protected $typeConverter = NULL;
-
-	/**
-	 * Set the parent PropertyMappingConfiguration. Only used internally!
-	 *
-	 * @param \F3\FLOW3\Property\PropertyMappingConfigurationInterface $parentConfiguration
-	 * @return void
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 */
-	protected function setParent(\F3\FLOW3\Property\PropertyMappingConfigurationInterface $parentConfiguration) {
-		$this->parentConfiguration = $parentConfiguration;
-	}
 
 	/**
 	 * @return TRUE if the given propertyName should be mapped, FALSE otherwise.
@@ -203,7 +185,6 @@ class PropertyMappingConfiguration implements \F3\FLOW3\Property\PropertyMapping
 		if (!isset($this->subConfigurationForProperty[$currentProperty])) {
 			$type = get_class($this);
 			$this->subConfigurationForProperty[$currentProperty] = new $type;
-			$this->subConfigurationForProperty[$currentProperty]->setParent($this);
 		}
 		return $this->subConfigurationForProperty[$currentProperty]->traverseProperties($splittedPropertyPath);
 	}

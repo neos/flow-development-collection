@@ -56,7 +56,6 @@ class GenericObjectValidator implements \F3\FLOW3\Validation\Validator\Validator
 	 * If at least one error occurred, the result is FALSE.
 	 *
 	 * @param mixed $value The value that should be validated
-	 * @param boolean $resetInstancesCurrentlyUnderValidation Reserved for internal use!
 	 * @return \F3\FLOW3\Error\Result
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
@@ -73,7 +72,7 @@ class GenericObjectValidator implements \F3\FLOW3\Validation\Validator\Validator
 		}
 
 		if (!is_object($object)) {
-			$messages->addError(new \F3\FLOW3\Error\Error('Object expected, ' . gettype($object) . ' given.', 1241099149));
+			$messages->addError(new \F3\FLOW3\Validation\Error('Object expected, ' . gettype($object) . ' given.', 1241099149));
 			return $messages;
 		}
 
@@ -114,20 +113,19 @@ class GenericObjectValidator implements \F3\FLOW3\Validation\Validator\Validator
 		} else {
 			return \F3\FLOW3\Reflection\ObjectAccess::getProperty($object, $propertyName, TRUE);
 		}
-
 	}
 
 	/**
-	 * Checks if the specified property of the given object is valid.
+	 * Checks if the specified property of the given object is valid, and adds
+	 * found errors to the $messages object.
 	 *
-	 * If at least one error occurred, the result is FALSE.
-	 *
-	 * @param object $object The object containing the property to validate
-	 * @param string $propertyName Name of the property to validate
+	 * @param mixed $value The value to be validated
+	 * @param array $validators The validators to be called on the value
+	 * @param F3\FLOW3\Error\Result $messages the result object to which the validation errors should be added
 	 * @return void
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	protected function checkProperty($value, $validators, $messages) {
+	protected function checkProperty($value, $validators, \F3\FLOW3\Error\Result $messages) {
 		foreach ($validators as $validator) {
 			$messages->merge($validator->validate($value));
 		}

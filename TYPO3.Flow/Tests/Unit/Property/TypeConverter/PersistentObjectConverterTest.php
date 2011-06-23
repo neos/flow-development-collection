@@ -63,14 +63,6 @@ class PersistentObjectConverterTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$this->assertEquals(1, $this->converter->getPriority(), 'Priority does not match');
 	}
 
-	/**
-	 * test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 */
-	public function convertFromReturnsSourceString() {
-		$this->assertEquals('myString', $this->converter->convertFrom('myString', 'string'));
-	}
-
 	public function dataProviderForCanConvert() {
 		return array(
 			array(TRUE, FALSE, TRUE), // is entity => can convert

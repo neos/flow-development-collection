@@ -22,7 +22,13 @@ namespace F3\FLOW3\Property;
  *                                                                        */
 
 /**
- * Configuration object for the property mapper.
+ * Configuration object for the property mapper. This interface specified all methods
+ * which are used by the property mapper and by the type converters during the conversion
+ * process. Thus, this interface does only contain read-only methods, and no methods
+ * to set any of these options.
+ *
+ * As developer, you should probably subclass the PropertyMappingConfiguration class if
+ * adjustments are needed there.
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
