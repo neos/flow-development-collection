@@ -83,7 +83,7 @@ class ResourceTypeConverter extends \F3\FLOW3\Property\TypeConverter\AbstractTyp
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function convertFrom($source, $targetType, array $subProperties = array(), \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
+	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
 		if ($source['error'] === \UPLOAD_ERR_NO_FILE) {
 			if (isset($source['submittedFile']) && isset($source['submittedFile']['fileName']) && isset($source['submittedFile']['resourcePointer'])) {
 				$resourcePointer = $this->persistenceManager->getObjectByIdentifier($source['submittedFile']['resourcePointer'], 'F3\FLOW3\Resource\ResourcePointer');

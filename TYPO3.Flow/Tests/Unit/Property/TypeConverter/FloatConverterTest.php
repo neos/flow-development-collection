@@ -60,16 +60,16 @@ class FloatConverterTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	public function canConvertShouldReturnTrue() {
-		$this->assertTrue($this->converter->canConvert('1.5', 'float'));
+	public function canConvertFromShouldReturnTrue() {
+		$this->assertTrue($this->converter->canConvertFrom('1.5', 'float'));
 	}
 
 	/**
 	 * @test
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	public function getPropertiesShouldReturnEmptyArray() {
-		$this->assertEquals(array(), $this->converter->getProperties('myString'));
+	public function getSourceChildPropertiesToBeConvertedShouldReturnEmptyArray() {
+		$this->assertEquals(array(), $this->converter->getSourceChildPropertiesToBeConverted('myString'));
 	}
 }
 ?>

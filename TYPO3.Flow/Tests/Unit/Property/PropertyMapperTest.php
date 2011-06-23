@@ -85,14 +85,14 @@ class PropertyMapperTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$propertyMapper->_call('determineSourceType', $source);
 	}
 
-	protected function getMockTypeConverter($name = '', $canConvert = TRUE, $properties = array(), $typeOfSubObject = '') {
+	protected function getMockTypeConverter($name = '', $canConvertFrom = TRUE, $properties = array(), $typeOfSubObject = '') {
 		$mockTypeConverter = $this->getMock('F3\FLOW3\Property\TypeConverterInterface');
 		$mockTypeConverter->_name = $name;
-		$mockTypeConverter->expects($this->any())->method('canConvert')->will($this->returnValue($canConvert));
+		$mockTypeConverter->expects($this->any())->method('canConvertFrom')->will($this->returnValue($canConvertFrom));
 		$mockTypeConverter->expects($this->any())->method('convertFrom')->will($this->returnValue($name));
-		$mockTypeConverter->expects($this->any())->method('getProperties')->will($this->returnValue($properties));
+		$mockTypeConverter->expects($this->any())->method('getSourceChildPropertiesToBeConverted')->will($this->returnValue($properties));
 
-		$mockTypeConverter->expects($this->any())->method('getTypeOfProperty')->will($this->returnValue($typeOfSubObject));
+		$mockTypeConverter->expects($this->any())->method('getTypeOfChildProperty')->will($this->returnValue($typeOfSubObject));
 		return $mockTypeConverter;
 	}
 

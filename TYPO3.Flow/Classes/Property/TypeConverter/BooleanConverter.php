@@ -50,12 +50,12 @@ class BooleanConverter extends \F3\FLOW3\Property\TypeConverter\AbstractTypeConv
 	 *
 	 * @param string $source
 	 * @param string $targetType
-	 * @param array $subProperties
+	 * @param array $convertedChildProperties
 	 * @param \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
 	 * @return boolean
 	 * @api
 	 */
-	public function convertFrom($source, $targetType, array $subProperties = array(), \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
+	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
 		return (boolean)$source;
 	}
 }

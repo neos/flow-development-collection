@@ -89,7 +89,7 @@ class DateTimeConverter extends \F3\FLOW3\Property\TypeConverter\AbstractTypeCon
 	 * @return boolean
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function canConvert($source, $targetType) {
+	public function canConvertFrom($source, $targetType) {
 		if ($targetType !== 'DateTime') {
 			return FALSE;
 		}
@@ -104,12 +104,12 @@ class DateTimeConverter extends \F3\FLOW3\Property\TypeConverter\AbstractTypeCon
 	 *
 	 * @param string $source the string to be converted to a \DateTime object
 	 * @param string $targetType must be "DateTime"
-	 * @param array $subProperties not used currently
+	 * @param array $convertedChildProperties not used currently
 	 * @param \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
 	 * @return \DateTime
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function convertFrom($source, $targetType, array $subProperties = array(), \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
+	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
 		$dateFormat = $this->getDefaultDateFormat($configuration);
 		if (is_string($source)) {
 			$dateAsString = $source;

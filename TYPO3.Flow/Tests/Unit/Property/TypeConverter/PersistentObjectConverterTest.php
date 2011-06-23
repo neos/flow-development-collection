@@ -76,11 +76,11 @@ class PersistentObjectConverterTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @dataProvider dataProviderForCanConvert
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	public function canConvertReturnsTrueIfClassIsTaggedWithEntityOrValueObject($isEntity, $isValueObject, $expected) {
+	public function canConvertFromReturnsTrueIfClassIsTaggedWithEntityOrValueObject($isEntity, $isValueObject, $expected) {
 		$this->mockReflectionService->expects($this->at(0))->method('isClassTaggedWith')->with('TheTargetType', 'valueobject')->will($this->returnValue($isValueObject));
 		$this->mockReflectionService->expects($this->at(1))->method('isClassTaggedWith')->with('TheTargetType', 'entity')->will($this->returnValue($isEntity));
 
-		$this->assertEquals($expected, $this->converter->canConvert('myInputData', 'TheTargetType'));
+		$this->assertEquals($expected, $this->converter->canConvertFrom('myInputData', 'TheTargetType'));
 	}
 
 	/**
@@ -95,7 +95,7 @@ class PersistentObjectConverterTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	public function getPropertiesReturnsAllPropertiesExceptTheIdentityProperty() {
+	public function getSourceChildPropertiesToBeConvertedReturnsAllPropertiesExceptTheIdentityProperty() {
 		$source = array(
 			'k1' => 'v1',
 			'__identity' => 'someIdentity',
@@ -105,14 +105,14 @@ class PersistentObjectConverterTest extends \F3\FLOW3\Tests\UnitTestCase {
 			'k1' => 'v1',
 			'k2' => 'v2'
 		);
-		$this->assertEquals($expected, $this->converter->getProperties($source));
+		$this->assertEquals($expected, $this->converter->getSourceChildPropertiesToBeConverted($source));
 	}
 
 	/**
 	 * @test
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	public function getTypeOfPropertyShouldUseReflectionServiceToDetermineType() {
+	public function getTypeOfChildPropertyShouldUseReflectionServiceToDetermineType() {
 		$mockSchema = $this->getMockBuilder('F3\FLOW3\Reflection\ClassSchema')->disableOriginalConstructor()->getMock();
 		$this->mockReflectionService->expects($this->any())->method('getClassSchema')->with('TheTargetType')->will($this->returnValue($mockSchema));
 
@@ -122,19 +122,19 @@ class PersistentObjectConverterTest extends \F3\FLOW3\Tests\UnitTestCase {
 			'elementType' => NULL
 		)));
 		$configuration = $this->buildConfiguration(array());
-		$this->assertEquals('TheTypeOfSubObject', $this->converter->getTypeOfProperty('TheTargetType', 'thePropertyName', $configuration));
+		$this->assertEquals('TheTypeOfSubObject', $this->converter->getTypeOfChildProperty('TheTargetType', 'thePropertyName', $configuration));
 	}
 
 	/**
 	 * @test
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	public function getTypeOfPropertyShouldUseConfiguredTypeIfItWasSet() {
+	public function getTypeOfChildPropertyShouldUseConfiguredTypeIfItWasSet() {
 		$this->mockReflectionService->expects($this->never())->method('getClassSchema');
 
 		$configuration = $this->buildConfiguration(array());
 		$configuration->forProperty('thePropertyName')->setTypeConverterOption('F3\FLOW3\Property\TypeConverter\PersistentObjectConverter', \F3\FLOW3\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_TARGET_TYPE, 'Foo\Bar');
-		$this->assertEquals('Foo\Bar', $this->converter->getTypeOfProperty('foo', 'thePropertyName', $configuration));
+		$this->assertEquals('Foo\Bar', $this->converter->getTypeOfChildProperty('foo', 'thePropertyName', $configuration));
 	}
 
 	/**
@@ -218,13 +218,13 @@ class PersistentObjectConverterTest extends \F3\FLOW3\Tests\UnitTestCase {
 			'__identity' => $identifier,
 			'foo' => 'bar'
 		);
-		$subProperties = array(
+		$convertedChildProperties = array(
 			'property1' => 'someConvertedValue'
 		);
 		$this->mockPersistenceManager->expects($this->once())->method('getObjectByIdentifier')->with($identifier)->will($this->returnValue($object));
 
 		$configuration = $this->buildConfiguration(array(\F3\FLOW3\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED => TRUE));
-		$actual = $this->converter->convertFrom($source, 'MySpecialType', $subProperties, $configuration);
+		$actual = $this->converter->convertFrom($source, 'MySpecialType', $convertedChildProperties, $configuration);
 
 		$this->assertNotSame($object, $actual, 'The object has not been cloned.');
 		$this->assertEquals('asdf', $actual->someProperty, 'The object somehow lost its current state.');
@@ -324,14 +324,14 @@ class PersistentObjectConverterTest extends \F3\FLOW3\Tests\UnitTestCase {
 			'propertyX' => 'bar'
 		);
 		$object = new \F3\FLOW3\Fixtures\ClassWithSetters();
-		$subProperties = array(
+		$convertedChildProperties = array(
 			'property1' => 'bar'
 		);
 
 		$this->mockObjectManager->expects($this->once())->method('create')->with('F3\FLOW3\Fixtures\ClassWithSetters')->will($this->returnValue($object));
 		$this->mockReflectionService->expects($this->once())->method('getMethodParameters')->with('F3\FLOW3\Fixtures\ClassWithSetters', '__construct')->will($this->returnValue(array()));
 		$configuration = $this->buildConfiguration(array(\F3\FLOW3\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED => TRUE));
-		$result = $this->converter->convertFrom($source, 'F3\FLOW3\Fixtures\ClassWithSetters', $subProperties, $configuration);
+		$result = $this->converter->convertFrom($source, 'F3\FLOW3\Fixtures\ClassWithSetters', $convertedChildProperties, $configuration);
 		$this->assertSame($object, $result);
 	}
 
@@ -345,14 +345,14 @@ class PersistentObjectConverterTest extends \F3\FLOW3\Tests\UnitTestCase {
 			'propertyX' => 'bar'
 		);
 		$object = new \F3\FLOW3\Fixtures\ClassWithSetters();
-		$subProperties = array(
+		$convertedChildProperties = array(
 			'propertyNotExisting' => 'bar'
 		);
 
 		$this->mockObjectManager->expects($this->once())->method('create')->with('F3\FLOW3\Fixtures\ClassWithSetters')->will($this->returnValue($object));
 		$this->mockReflectionService->expects($this->once())->method('getMethodParameters')->with('F3\FLOW3\Fixtures\ClassWithSetters', '__construct')->will($this->returnValue(array()));
 		$configuration = $this->buildConfiguration(array(\F3\FLOW3\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED => TRUE));
-		$result = $this->converter->convertFrom($source, 'F3\FLOW3\Fixtures\ClassWithSetters', $subProperties, $configuration);
+		$result = $this->converter->convertFrom($source, 'F3\FLOW3\Fixtures\ClassWithSetters', $convertedChildProperties, $configuration);
 		$this->assertSame($object, $result);
 	}
 
@@ -365,7 +365,7 @@ class PersistentObjectConverterTest extends \F3\FLOW3\Tests\UnitTestCase {
 			'propertyX' => 'bar'
 		);
 		$object = new \F3\FLOW3\Fixtures\ClassWithSettersAndConstructor('param1');
-		$subProperties = array(
+		$convertedChildProperties = array(
 			'property1' => 'param1',
 			'property2' => 'bar'
 		);
@@ -375,7 +375,7 @@ class PersistentObjectConverterTest extends \F3\FLOW3\Tests\UnitTestCase {
 			'property1' => array('optional' => FALSE)
 		)));
 		$configuration = $this->buildConfiguration(array(\F3\FLOW3\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED => TRUE));
-		$result = $this->converter->convertFrom($source, 'F3\FLOW3\Fixtures\ClassWithSettersAndConstructor', $subProperties, $configuration);
+		$result = $this->converter->convertFrom($source, 'F3\FLOW3\Fixtures\ClassWithSettersAndConstructor', $convertedChildProperties, $configuration);
 		$this->assertSame($object, $result);
 		$this->assertEquals('bar', $object->getProperty2());
 	}
@@ -409,7 +409,7 @@ class PersistentObjectConverterTest extends \F3\FLOW3\Tests\UnitTestCase {
 			'propertyX' => 'bar'
 		);
 		$object = new \F3\FLOW3\Fixtures\ClassWithSettersAndConstructor('param1');
-		$subProperties = array(
+		$convertedChildProperties = array(
 			'property2' => 'bar'
 		);
 
@@ -417,7 +417,7 @@ class PersistentObjectConverterTest extends \F3\FLOW3\Tests\UnitTestCase {
 			'property1' => array('optional' => FALSE)
 		)));
 		$configuration = $this->buildConfiguration(array(\F3\FLOW3\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED => TRUE));
-		$result = $this->converter->convertFrom($source, 'F3\FLOW3\Fixtures\ClassWithSettersAndConstructor', $subProperties, $configuration);
+		$result = $this->converter->convertFrom($source, 'F3\FLOW3\Fixtures\ClassWithSettersAndConstructor', $convertedChildProperties, $configuration);
 		$this->assertSame($object, $result);
 	}
 }

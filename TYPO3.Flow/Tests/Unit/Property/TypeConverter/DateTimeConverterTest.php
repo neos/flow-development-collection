@@ -55,24 +55,24 @@ class DateTimeConverterTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function canConvertReturnsFalseIfTargetTypeIsNotDateTime() {
-		$this->assertFalse($this->converter->canConvert('Foo', 'SomeOtherType'));
+	public function canConvertFromReturnsFalseIfTargetTypeIsNotDateTime() {
+		$this->assertFalse($this->converter->canConvertFrom('Foo', 'SomeOtherType'));
 	}
 
 	/**
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function canConvertReturnsTrueIfSourceTypeIsAString() {
-		$this->assertTrue($this->converter->canConvert('Foo', 'DateTime'));
+	public function canConvertFromReturnsTrueIfSourceTypeIsAString() {
+		$this->assertTrue($this->converter->canConvertFrom('Foo', 'DateTime'));
 	}
 
 	/**
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function canConvertReturnsFalseIfSourceTypeIsAnEmptyString() {
-		$this->assertFalse($this->converter->canConvert('', 'DateTime'));
+	public function canConvertFromReturnsFalseIfSourceTypeIsAnEmptyString() {
+		$this->assertFalse($this->converter->canConvertFrom('', 'DateTime'));
 	}
 
 	/**
@@ -168,8 +168,8 @@ class DateTimeConverterTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function canConvertReturnsTrueIfSourceTypeIsAnArray() {
-		$this->assertTrue($this->converter->canConvert(array(), 'DateTime'));
+	public function canConvertFromReturnsTrueIfSourceTypeIsAnArray() {
+		$this->assertTrue($this->converter->canConvertFrom(array(), 'DateTime'));
 	}
 
 	/**

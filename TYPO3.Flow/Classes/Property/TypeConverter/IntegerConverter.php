@@ -50,12 +50,12 @@ class IntegerConverter extends \F3\FLOW3\Property\TypeConverter\AbstractTypeConv
 	 *
 	 * @param integer $source
 	 * @param string $targetType
-	 * @param array $subProperties
+	 * @param array $convertedChildProperties
 	 * @param \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
 	 * @return integer
 	 * @api
 	 */
-	public function convertFrom($source, $targetType, array $subProperties = array(), \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
+	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
 		return (integer)$source;
 	}
 }
