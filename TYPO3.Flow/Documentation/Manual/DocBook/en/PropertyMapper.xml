@@ -1,0 +1,403 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter version="5.0" xmlns="http://docbook.org/ns/docbook"
+         xmlns:xlink="http://www.w3.org/1999/xlink"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
+         xmlns:svg="http://www.w3.org/2000/svg"
+         xmlns:m="http://www.w3.org/1998/Math/MathML"
+         xmlns:html="http://www.w3.org/1999/xhtml"
+         xmlns:db="http://docbook.org/ns/docbook">
+  <title>Property Mapping Framework</title>
+
+  <para>The Property mappers task is to convert <emphasis>simple
+  types</emphasis>, like arrays, strings, numbers, to objects. This is most
+  prominently needed in the MVC framework: When a request arrives, it contains
+  all its data as simple types, that is strings, and arrays. We want to help
+  the developer thinking about <emphasis>objects</emphasis>, that's why we try
+  to transparently convert the incoming data to its correct object
+  representation. This is the objective of the <emphasis>Property
+  Mapper</emphasis>.</para>
+
+  <para>At first, we show some examples on how the property mapper can be
+  used, and then the internal structure is explained.</para>
+
+  <para>The main API of the <code>PropertyMapper</code> is very simple: It
+  just consists of one method
+  <methodname>convert(<replaceable>$source</replaceable>,
+  <replaceable>$targetType</replaceable>)</methodname>, which receives input
+  data as the first argument, and the target type as second argument. This
+  method returns the built object of type <code>$targetType</code>.</para>
+
+  <section>
+    <title>Example usage</title>
+
+    <para>The most simple usage is to convert simple types to different simple
+    types, i.e. converting a numeric <code>string</code> to a
+    <code>float</code> number, as shown in <xref
+    linkend="ex-property-mapper-simple-types" />.</para>
+
+    <example xml:id="ex-property-mapper-simple-types">
+      <title>Mapping simple types to other simple types using the property
+      mapper</title>
+
+      <programlisting>// $propertyMapper is of class TYPO3\FLOW3\Property\PropertyMapper
+$result = $propertyMapper-&gt;convert('12.5', 'float');
+// $result == (float)12.5</programlisting>
+    </example>
+
+    <para>This is of course a really conceived example, as the same result
+    could be archieved by just casting the numeric string to a floating point
+    number.</para>
+
+    <para>Our next example goes a bit further and shows how we can use the
+    Property Mapper to convert an array of data into a domain model shown in
+    <xref linkend="ex-property-mapper-domain-object" />.</para>
+
+    <example xml:id="ex-property-mapper-domain-object">
+      <title>The example domain object used for the property mapper</title>
+
+      <programlisting>/**
+ * @entity
+ */
+class TYPO3\MyPackage\Domain\Model\Person {
+  /**
+   * @var string
+   */
+  protected $name;
+
+  /**
+   * @var \DateTime
+   */
+  protected $birthDate;
+
+  /**
+   * @var TYPO3\MyPackage\Domain\Model\Person
+   */
+  protected $mother;
+
+  // ... furthermore contains getters and setters for the above properties.
+}
+
+$inputArray = array(
+  'name' =&gt; 'John Fisher',
+  'birthDate' =&gt; '1990-11-14T15:32:12+00:00'
+);
+$person = $propertyMapper-&gt;convert($inputArray, 'TYPO3\MyPackage\Domain\Model\Person');
+// $person is a newly created object of type TYPO3\MyPackage\Domain\Model\Person
+// $person-&gt;name == 'John Fisher'
+// $person-&gt;birthDate is a DateTime object with the correct date set.</programlisting>
+    </example>
+
+    <para>We'll first use a simple input array:</para>
+
+    <programlisting>$input = array(
+  'name' =&gt; 'John Fisher',
+  'birthDate' =&gt; '1990-11-14T15:32:12+00:00'
+);</programlisting>
+
+    <para>After calling <code>$propertyMapper-&gt;convert($input,
+    'TYPO3\MyPackage\Domain\Model\Person')</code>, we receive a new object of
+    type <code>Person</code> which has <code>$name</code> set to <code>John
+    Fisher</code>, and <code>$birthDate</code> set to a <code>DateTime</code>
+    object of the specified date. You might now wonder how the
+    <code>PropertyMapper</code> knows how to convert <code>DateTime</code>
+    objects and <code>Person</code> objects? The answer is: it does not know
+    that. However, the PropertyMapper calls specialized <code>Type
+    Converters</code> which take care of the actual conversion.</para>
+
+    <para>In our example, three type converters are called:</para>
+
+    <itemizedlist>
+      <listitem>
+        <para>First, to convert <code>'John Fisher'</code> to a
+        <code>string</code> (required by the annotation in the domain model),
+        a <code>StringConverter</code> is called. This converter simply passes
+        through the input string, without modification.</para>
+      </listitem>
+
+      <listitem>
+        <para>Then, a <code>DateTimeConverter</code> is called, whose
+        responsibility is to convert the input string into a valid
+        <code>DateTime</code> object.</para>
+      </listitem>
+
+      <listitem>
+        <para>At the end, the <code>Person</code> object still needs to be
+        built. For that, the <code>PersistentObjectConverter</code> is
+        responsible. It creates a fresh <code>Person</code> object, and sets
+        the <code>$name</code> and <code>$birthDate</code> properties which
+        were already built using the type converters above.</para>
+      </listitem>
+    </itemizedlist>
+
+    <para>This example should illustrate that property mapping is a
+    <emphasis>recursive process</emphasis>, and the
+    <code>PropertyMapper</code>s task is exactly to orchestrate the different
+    <code>TypeConverter</code>s needed to build a big, compound object.</para>
+
+    <para>The <code>PersistentObjectConverter</code> has some more features,
+    as it supports fetching objects from the persistence layer if an identity
+    for the object is given. Both the following inputs will result in the
+    corresponding object to be fetched from the persistence layer:</para>
+
+    <programlisting>$input = '14d20100-9d70-11e0-aa82-0800200c9a66';
+$person = $propertyMapper-&gt;convert($input, 'TYPO3\MyPackage\Domain\Model\Person');
+// The $person object with UUID 14d20100-9d70-11e0-aa82-0800200c9a66 is fetched from the persistence layer</programlisting>
+
+    <programlisting>$input = array(
+  '__identity' =&gt; '14d20100-9d70-11e0-aa82-0800200c9a66'
+);
+... same code as above ...</programlisting>
+
+    <para>In case some more properties are specified in the array (besides
+    <code>__identity</code>), the object is <code>cloned</code> and on the
+    clone, the submitted properties are modified. By cloning a domain object,
+    it looses its connection to the persistence layer, and modifications are
+    not automatically saved to the database at the end of the request.</para>
+
+    <para>So, let's walk through a more complete input example:</para>
+
+    <programlisting>$input = array(
+  '__identity' =&gt; '14d20100-9d70-11e0-aa82-0800200c9a66',
+  'name' =&gt; 'John Doe',
+  'mother' =&gt; 'efd3b461-6f24-499d-97bc-309dfbe01f05'
+);</programlisting>
+
+    <para>In this case, the following steps happen:</para>
+
+    <itemizedlist>
+      <listitem>
+        <para>The <code>Person</code> object with identity
+        <code>14d20100-9d70-11e0-aa82-0800200c9a66</code> is fetched from
+        persistence. After that, it is <code>cloned</code>, and loses its
+        connection to the persistence layer (i.e. modifications are not
+        automatically persisted anymore).</para>
+      </listitem>
+
+      <listitem>
+        <para>The <code>$name</code> of the fetched <code>$person</code>
+        object is updated to <code>John Doe</code></para>
+      </listitem>
+
+      <listitem>
+        <para>As the <code>$mother</code> property is also of type
+        <code>Person</code>, the <code>PersistentObjectConverter</code> is
+        invoked recursively. It fetches the <code>Person</code> object with
+        UUID <code>efd3b461-6f24-499d-97bc-309dfbe01f05</code>, which is then
+        set as the <code>$mother</code> property of the original
+        person.</para>
+      </listitem>
+    </itemizedlist>
+
+    <para>Here, you see that we can also set <emphasis>associations</emphasis>
+    using the Property Mapper.</para>
+  </section>
+
+  <section>
+    <title>Configuring the conversion process</title>
+
+    <para>It is possible to configure the conversion process by specifying a
+    <code>PropertyMappingConfiguration</code> as third parameter to
+    <code>PropertyMapper::convert()</code>.</para>
+
+    <para>In most cases, you should use the
+    <code>PropertyMappingConfigurationBuilder</code> to create a new
+    <code>PropertyMappingConfiguration</code>, so that you get a
+    safe-by-default configuration (see <xref
+    linkend="property-mapper-default-configuration" />):</para>
+
+    <example>
+      <title>Skeleton of creating a property mapping configuration</title>
+
+      <programlisting>// $propertyMappingConfigurationBuilder instanceof TYPO3\FLOW3\Property\PropertyMappingConfigurationBuilder
+$propertyMappingConfiguration = $propertyMappingConfigurationBuilder-&gt;build();
+
+<emphasis>// modify $propertyMappingConfiguration</emphasis>
+
+$propertyMapper-&gt;convert($source, $targetType, <emphasis>$propertyMappingConfiguration</emphasis>);</programlisting>
+    </example>
+
+    <para>The following configuration options exist:</para>
+
+    <itemizedlist>
+      <listitem>
+        <para><code>setMapping($sourcePropertyName,
+        $targetPropertyName)</code> can be used to rename properties. </para>
+
+        <para>Example: If the input array contains a property
+        <code>lastName</code>, but the accordant property in the model is
+        called <code>$givenName</code>, the following configuration performs
+        the renaming:</para>
+
+        <programlisting>$propertyMappingConfiguration-&gt;setMapping('lastName', 'givenName');</programlisting>
+      </listitem>
+
+      <listitem>
+        <para><code>setTypeConverter($typeConverter)</code> can be used to
+        directly set a type converter which should be used. This disables the
+        automatic resolving of type converters (see <xref
+        linkend="property-mapper-resolving-typeconverters" />).</para>
+      </listitem>
+
+      <listitem>
+        <para><code>setTypeConverterOption($typeConverterClassName,
+        $optionKey, $optionValue</code>) can be used to set type converter
+        specific options.</para>
+
+        <para>Example: The <code>DateTimeConverter</code> supports a
+        configuration option for the expected date format:</para>
+
+        <programlisting>$propertyMappingConfiguration-&gt;setTypeConverterOption(
+  'F3\FLOW3\Property\TypeConverter\DateTimeConverter',
+  \F3\FLOW3\Property\TypeConverter\DateTimeConverter::CONFIGURATION_DATE_FORMAT,
+  'Y-m-d'
+);</programlisting>
+      </listitem>
+
+      <listitem>
+        <para><code>setTypeConverterOptions($typeConverterClassName, array
+        $options)</code> can be used to set multiple configuration options for
+        the given TypeConverter. This overrides all previously set
+        configuration options for the TypeConverter.</para>
+      </listitem>
+    </itemizedlist>
+
+    <para>All the configuration options work <emphasis>only for the current
+    level</emphasis>, i.e. all of the above converter options would only work
+    for the toplevel type converter. However, it is also possible to specify
+    configuration options for lower levels, using
+    <code>forProperty($propertyPath)</code>. This is best shown with the
+    example from the previous section, <xref
+    linkend="ex-property-mapper-domain-object" />.</para>
+
+    <para>The following configuration sets a mapping on the top level, and
+    furthermore configures the <code>DateTime</code> converter for the
+    <code>birthDate</code> property:</para>
+
+    <programlisting>$propertyMappingConfiguration-&gt;setMapping('fullName', 'name');
+$propertyMappingConfiguration
+  -&gt;<emphasis>forProperty('birthDate')
+  </emphasis>-&gt;setTypeConverterOption(
+     'F3\FLOW3\Property\TypeConverter\DateTimeConverter',
+     \F3\FLOW3\Property\TypeConverter\DateTimeConverter::CONFIGURATION_DATE_FORMAT,
+     'Y-m-d'
+  );</programlisting>
+
+    <para><code>forProperty</code> also supports more than one nesting level
+    using the <code>dot</code> notation, so writing something like
+    <code>forProperty('mother.birthDate')</code> is possible.</para>
+
+    <section xml:id="property-mapper-default-configuration">
+      <title>Default Configuration - Security Considerations</title>
+
+      <para>The property mapping process can be security-relevant, as a small
+      example should show: Suppose there is a form where a person can create a
+      new account, and assign a role to this account (from a pre-defined
+      list). This role controls the access permissions the user has. The data
+      which is sent to the server might look like this:</para>
+
+      <programlisting>array(
+  'username' =&gt; 'mynewuser',
+  'role' =&gt; '5bc42c89-a418-457f-8095-062ace6d22fd'
+);</programlisting>
+
+      <para>Here, the <code>username</code> field contains the name of the
+      user, and the <code>role</code> field points to the role the user has
+      selected. Now, an attacker could modify the data, and submit the
+      following:</para>
+
+      <programlisting>array(
+  'username' =&gt; 'mynewuser',
+  'role' =&gt; array(
+     'name' =&gt; 'superuser',
+     'admin' =&gt; 1
+  )
+);</programlisting>
+
+      <para>As the property mapper works recursively, it would
+      <emphasis>create</emphasis> a new <code>Role</code> object with the
+      <code>admin</code> flag set to <code>TRUE</code>, which might compromise
+      the security in the system.</para>
+
+      <para>That's why the <code>PersistentObjectConverter</code> has two
+      options, <code>CONFIGURATION_MODIFICATION_ALLOWED</code> and
+      <code>CONFIGURATION_CREATION_ALLOWED</code>, which must be used to
+      explicitely activate the modification or creation of objects. By
+      default, the <code>PersistentObjectConverter</code> does only fetch
+      objects from the persistence, but does not create new ones or modifies
+      existing ones.</para>
+
+      <para>However, in the most-common use case, you want to use this magic
+      functionality at least for the top-level object which is being
+      submitted. That's why the default configuration (which is created by the
+      <code>PropertyMappingConfigurationBuilder</code>)
+      <emphasis>enables</emphasis> creation and modification for the
+      <emphasis>top-level object</emphasis>, and <emphasis>disables</emphasis>
+      it for all sub objects by default.</para>
+    </section>
+  </section>
+
+  <section>
+    <title>Reference of existing TypeConverters</title>
+
+    <para>TODO - perhaps autogenerate it?</para>
+  </section>
+
+  <section>
+    <title>The inner workings of the Property Mapper</title>
+
+    <para>The Property Mapper applies the following steps to convert a simple
+    type to an object. Each step will be described in detail
+    afterwards.</para>
+
+    <orderedlist>
+      <listitem>
+        <para>Figure out which type converter to use for the given source -
+        target pair.</para>
+      </listitem>
+
+      <listitem>
+        <para>Ask this type converter to return the <emphasis>child
+        properties</emphasis> of the source data (if it has any), by calling
+        <methodname>getSourceChildPropertiesToBeConverted()</methodname> on
+        the type converter.</para>
+      </listitem>
+
+      <listitem>
+        <para>For each child propery, do the following:</para>
+
+        <orderedlist>
+          <listitem>
+            <para>Ask the type converter about the <emphasis>data
+            type</emphasis> of the child property, by calling
+            <methodname>getTypeOfChildProperty()</methodname> on the type
+            converter.</para>
+          </listitem>
+
+          <listitem>
+            <para>Recursively invoke the <code>PropertyMapper</code> to build
+            the child object from the input data.</para>
+          </listitem>
+        </orderedlist>
+      </listitem>
+
+      <listitem>
+        <para>Now, call the type converter again (method
+        <code>convertFrom</code>), passing all (already built) child objects
+        along. The result of this call is returned as the final result of the
+        property mapping process.</para>
+      </listitem>
+    </orderedlist>
+
+    <section xml:id="property-mapper-resolving-typeconverters">
+      <title>Automatic resolving of type converters</title>
+
+      <para></para>
+    </section>
+  </section>
+
+  <section>
+    <title>Writing own TypeConverters</title>
+
+    <para>- exceptions vs errors vs null</para>
+  </section>
+</chapter>
