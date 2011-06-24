@@ -9,6 +9,18 @@
          xmlns:mathml="http://www.w3.org/1998/Math/MathML">
   <title>Persistence Framework</title>
 
+  <para>This chapter explains how to use object persistence in FLOW3. To do
+  this, it focuses on the persistence based on the
+  <emphasis>Doctrine</emphasis> 2 ORM first. There is another mechanism
+  available, called <emphasis>Generic</emphasis> persistence, which also can
+  be used to add your own persistence backends to FLOW3. It is explained
+  seperately later in the chapter.<tip>
+      <para>If you have experience with Doctrine 2 already, your knowledge can
+      be applied fully in FLOW3. If you have not worked with Doctrine 2 in the
+      past, it might be helpful to learn more about it, as that might clear up
+      questions this documentation might leave open.</para>
+    </tip></para>
+
   <section xml:id="flow3.persistenceframework.introduction">
     <title>Introductory Example</title>
 
@@ -20,15 +32,15 @@
         <mediaobject>
           <imageobject>
             <imagedata contentdepth="100%"
-                       fileref="Persistence_BlogDomainModel.png"
-                       scalefit="1" width="100%"/>
+                       fileref="Persistence_BlogDomainModel.png" scalefit="1"
+                       width="100%"/>
           </imageobject>
         </mediaobject>
       </figure></para>
 
-    <para>Connections between those objects are built by simple references in
-    PHP, as a look at the <methodname>addPost()</methodname> method of the
-    <classname>Blog</classname> class shows:<example>
+    <para>Connections between those objects are built (mostly) by simple
+    references in PHP, as a look at the <methodname>addPost()</methodname>
+    method of the <classname>Blog</classname> class shows:<example>
         <title>The Blog's addPost() method</title>
 
         <para><programlisting language="php">/**
@@ -36,7 +48,8 @@
  * @return void
  */
 public function addPost(\F3\Blog\Domain\Post $post) {
-    $this-&gt;posts[$post-&gt;getIdentifier()] = $post;
+    $post-&gt;setBlog($this);
+    $this-&gt;posts-&gt;add($post);
 }</programlisting></para>
       </example></para>
 
@@ -73,18 +86,21 @@ public function addPost(\F3\Blog\Domain\Post $post) {
         <para><programlisting language="php">/**
  * A Blog object
  *
- * @entity
+ * @Entity
  */
 class Blog {
 
     /**
      * @var string
+     * @validate Text, StringLength(minimum = 1, maximum = 80)
+     * @Column(length="80")
      */
     protected $title;
 
     /**
-     * @var \SplObjectStorage
-     * @lazy
+     * @var \Doctrine\Common\Collections\ArrayCollection&lt;\F3\Blog\Domain\Model\Post&gt;
+     * @OneToMany(mappedBy="blog",cascade={"all"})
+     * @OrderBy({"date" = "DESC"})
      */
     protected $posts;
 
@@ -92,18 +108,18 @@ class Blog {
 
 }</programlisting></para>
       </example>The first annotation to note is the
-    <emphasis>@entity</emphasis> annotation, which tells the persistence
+    <emphasis>@Entity</emphasis> annotation, which tells the persistence
     framework it needs to persist Blog instances if they have been added to a
     Repository. In the Blog class we have some member variables, they are
     persisted as well by default. The persistence framework knows their types
     by looking at the <emphasis>@var</emphasis> annotation you use anyway when
-    documenting your code (you do document your code, right?). In case of the
-    $posts property the persistence framework persists the objects held in
-    that SplObjectStorage as independent objects. The
-    <emphasis>@lazy</emphasis> annotation is used when reconstituting a Blog
-    to avoid loading all the posts immediately. Apart from those annotations
-    your domain object's code is completely unaware of the persistence
-    infrastructure.</para>
+    documenting your code (you do document your code, right?). The
+    <emphasis>@Column</emphasis> annotation on <varname>$title</varname> is an
+    optimisation since we allow only 80 chars anyway. In case of the $posts
+    property the persistence framework persists the objects held in that
+    ArrayCollection as independent objects in a one-to-many relationship.
+    Apart from those annotations your domain object's code is completely
+    unaware of the persistence infrastructure.</para>
 
     <para>Let's conclude by taking a look at the BlogRepository code:<example>
         <title>Code of a simple BlogRepository</title>
@@ -112,73 +128,96 @@ class Blog {
  * A BlogRepository
  */
 class BlogRepository extends \F3\FLOW3\Persistence\Repository {
-
-    /**
-     * Finds Blogs with a matching name.
-     *
-     * @param string $name
-     * @return array
-     */
-    public function findByName($name) {
-        $query = $this-&gt;createQuery();
-        return $query-&gt;matching($query-&gt;equals('name', $name))-&gt;execute();
-    }
 }</programlisting>
       </example>As you can see we get away with very little code by simply
-    extending the FLOW3-provided repository class. Nice, eh? If you like to do
-    things the hard way you can get away with implementing
+    extending the FLOW3-provided repository class, and still we already have
+    methods like <methodname>findAll()</methodname> and even magic calls like
+    <methodname>findOneBy<replaceable>PropertyName</replaceable>()</methodname>
+    available. If we need some specialized find methods in our repository, we
+    can make use of the query building API:<example>
+        <title>Using the query building API in a Repository</title>
+
+        <programlisting language="php">/**
+ * A PostRepository
+ */
+class PostRepository extends \F3\FLOW3\Persistence\Repository {
+
+    /**
+     * Finds posts by the specified tag and blog
+     *
+     * @param \F3\Blog\Domain\Model\Tag $tag
+     * @param \F3\Blog\Domain\Model\Blog $blog The blog the post must refer to
+     * @return \F3\FLOW3\Persistence\QueryResultProxy The posts
+     */
+    public function findByTagAndBlog(\F3\Blog\Domain\Model\Tag $tag, \F3\Blog\Domain\Model\Blog $blog) {
+        $query = $this-&gt;createQuery();
+        return $query-&gt;matching(
+            $query-&gt;logicalAnd(
+                $query-&gt;equals('blog', $blog),
+                $query-&gt;contains('tags', $tag)
+            )
+        )
+        -&gt;setOrderings(array('date' =&gt; \F3\FLOW3\Persistence\QueryInterface::ORDER_DESCENDING))
+        -&gt;execute();
+    }
+}</programlisting>
+      </example></para>
+
+    <para>If you like to do things the hard way you can get away with
+    implementing
     <interfacename>\F3\FLOW3\Persistence\RepositoryInterface</interfacename>
     yourself.</para>
   </section>
 
-  <section xml:id="flow3.persistenceframework.dddprinciples">
-    <title>On the Principles of DDD</title>
-
-    <para>From Evans, the rules we need to enforce include:</para>
-
-    <itemizedlist>
-      <listitem>
-        <para>The root Entity has global identity and is ultimately
-        responsible for checking invariants.</para>
-      </listitem>
-
-      <listitem>
-        <para>Root Entities have global identity. Entities inside the boundary
-        have local identity, unique only within the Aggregate.</para>
-      </listitem>
-
-      <listitem>
-        <para>Nothing outside the Aggregate boundary can hold a reference to
-        anything inside, except to the root Entity. The root Entity can hand
-        references to the internal Entities to other objects, but they can
-        only use them transiently (within a single method or block).</para>
-      </listitem>
-
-      <listitem>
-        <para>Only Aggregate Roots can be obtained directly with database
-        queries. Everything else must be done through traversal.</para>
-      </listitem>
-
-      <listitem>
-        <para>Objects within the Aggregate can hold references to other
-        Aggregate roots.</para>
-      </listitem>
-
-      <listitem>
-        <para>A delete operation must remove everything within the Aggregate
-        boundary all at once.</para>
-      </listitem>
-
-      <listitem>
-        <para>When a change to any object within the Aggregate boundary is
-        committed, all invariants of the whole Aggregate must be
-        satisfied.</para>
-      </listitem>
-    </itemizedlist>
-  </section>
-
   <section>
-    <title>Using the Persistence framework in your code</title>
+    <title>Basics of Persistence in FLOW3</title>
+
+    <section xml:id="flow3.persistenceframework.dddprinciples">
+      <title>On the Principles of DDD</title>
+
+      <para>From Evans, the rules we need to enforce include:</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>The root Entity has global identity and is ultimately
+          responsible for checking invariants.</para>
+        </listitem>
+
+        <listitem>
+          <para>Root Entities have global identity. Entities inside the
+          boundary have local identity, unique only within the
+          Aggregate.</para>
+        </listitem>
+
+        <listitem>
+          <para>Nothing outside the Aggregate boundary can hold a reference to
+          anything inside, except to the root Entity. The root Entity can hand
+          references to the internal Entities to other objects, but they can
+          only use them transiently (within a single method or block).</para>
+        </listitem>
+
+        <listitem>
+          <para>Only Aggregate Roots can be obtained directly with database
+          queries. Everything else must be done through traversal.</para>
+        </listitem>
+
+        <listitem>
+          <para>Objects within the Aggregate can hold references to other
+          Aggregate roots.</para>
+        </listitem>
+
+        <listitem>
+          <para>A delete operation must remove everything within the Aggregate
+          boundary all at once.</para>
+        </listitem>
+
+        <listitem>
+          <para>When a change to any object within the Aggregate boundary is
+          committed, all invariants of the whole Aggregate must be
+          satisfied.</para>
+        </listitem>
+      </itemizedlist>
+    </section>
 
     <section>
       <title>On the relationship between adding and retrieving</title>
@@ -200,7 +239,7 @@ class BlogRepository extends \F3\FLOW3\Persistence\Repository {
         </footnote>.</para>
 
       <para>If you need to query for objects you just created, feel free to
-      inject the <classname>PersistenceManager</classname> and use
+      have the <classname>PersistenceManager</classname> injected and use
       <methodname>persistAll()</methodname> in your code.</para>
     </section>
 
@@ -217,7 +256,7 @@ class BlogRepository extends \F3\FLOW3\Persistence\Repository {
           <listitem>
             <para>Repositories should reside in a
             <filename>Repository</filename> directory and be named
-            <classname>*Repository</classname></para>
+            <classname><replaceable>ModelName</replaceable>Repository</classname></para>
           </listitem>
 
           <listitem>
@@ -246,118 +285,8 @@ class BlogRepository extends \F3\FLOW3\Persistence\Repository {
       \Repository
         BlogRepository
         PostRepository
-
-\Domain
-  \Model
-    \Content
-      Page
-    Site
-    StructureNode
-  \Repository   
-    \Content
-      PageRepository
-    SiteRepository
-    StructureNodeRepository</literallayout>
+</literallayout>
       </example>
-    </section>
-
-    <section xml:id="flow3.persistenceframework.persistenceannotations">
-      <title>Persistence-related Annotations</title>
-
-      <para>The following table lists all annotations used by the persistence
-      framework with their name, scope and meaning:<table>
-          <title>Persistence-related code annotations</title>
-
-          <tgroup cols="3">
-            <colspec colwidth="1*"/>
-
-            <colspec colwidth="1*"/>
-
-            <colspec colwidth="6*"/>
-
-            <thead>
-              <row>
-                <entry>Annotation</entry>
-
-                <entry>Scope</entry>
-
-                <entry>Meaning</entry>
-              </row>
-            </thead>
-
-            <tbody>
-              <row>
-                <entry><code>@entity</code></entry>
-
-                <entry>Class</entry>
-
-                <entry>Declares a class as an Entity.</entry>
-              </row>
-
-              <row>
-                <entry><code>@valueobject</code></entry>
-
-                <entry>Class</entry>
-
-                <entry>Declares a class as a Value Object, allowing the
-                persistence framework to reuse an existing object if one
-                exists.</entry>
-              </row>
-
-              <row>
-                <entry><code>@var</code></entry>
-
-                <entry>Variable</entry>
-
-                <entry>Is used to detect the type a variable has.</entry>
-              </row>
-
-              <row>
-                <entry><code>@transient</code></entry>
-
-                <entry>Variable</entry>
-
-                <entry>Makes the persistence framework ignore the variable.
-                Neither will it's value be persisted, nor will it be touched
-                during reconstitution.</entry>
-              </row>
-
-              <row>
-                <entry><code>@uuid</code></entry>
-
-                <entry>Variable</entry>
-
-                <entry>Marks the variable as being the object uuid. This makes
-                the persistence backend use the value of this variable as
-                identifier for the internal representation of the object.
-                <emphasis>You must make sure your identifier is an
-                UUID.</emphasis></entry>
-              </row>
-
-              <row>
-                <entry><code>@identity</code></entry>
-
-                <entry>Variable</entry>
-
-                <entry>Marks the variable as being relevant for determining
-                the identity of an object in the domain.</entry>
-              </row>
-
-              <row>
-                <entry><code>@lazy</code></entry>
-
-                <entry>Class, Variable</entry>
-
-                <entry>When reconstituting the value of this property will be
-                loaded only when the property is used. Note: This is only
-                supported for properties of type
-                <classname>\SplObjectStorage</classname> and objects (marked
-                with <code>@lazy</code> in their source code, see
-                below).</entry>
-              </row>
-            </tbody>
-          </tgroup>
-        </table></para>
     </section>
 
     <section>
@@ -365,25 +294,962 @@ class BlogRepository extends \F3\FLOW3\Persistence\Repository {
 
       <para>Lazy Loading is a feature that can be equally helpful and
       dangerous when it comes to optimizing your application. FLOW3 defaults
-      to eager loading, i.e. it loads all the data in an object as soon as you
-      fetch the object from the persistence layer. That of course can lead to
-      massive amounts of objects being reconstituted if you have a large
-      object tree. So there might be situations when lazy loading comes in
-      handy to defer property thawing in objects until the point when those
+      to lazy loading when using Doctrine, i.e. it loads all the data in an
+      object as soon as you fetch the object from the persistence layer but
+      does not fetch data of associated objects. This avoids massive amounts
+      of objects being reconstituted if you have a large object tree. Instead
+      it defers property thawing in objects until the point when those
       properties are really needed.</para>
+
+      <para>The drawback of this: if you access associated objects, each
+      access will fire a request to the perisistent storage now. So there
+      might be situations when eager loading comes in handy to avoid excessive
+      database roundtrips. Eager loading is the default when using the
+      <emphasis>Generic</emphasis> persistence mechanism and can be achieved
+      for the Doctrine 2 ORM by using join operations in DQL or specifying the
+      fetch mode in the mapping configuration.</para>
+    </section>
+  </section>
+
+  <section>
+    <title><emphasis>Doctrine</emphasis> Persistence</title>
+
+    <para>Doctrine 2 ORM is used by default in FLOW3. Aside from very few
+    internal changes it consists of the regular Doctrine ORM, DBAL, Migrations
+    and Common libraries and is tied into FLOW3 by some glue code and (most
+    important) a custom annotation driver for metadata consumption.</para>
+
+    <section>
+      <title>Requirements and restrictions</title>
+
+      <para>There are some rules imposed by Doctrine (and/or FLOW3) you need
+      to follow for your entities (and value objects). Most of them are good
+      practice anyway, and thus are not really restrictions.</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>Entity classes must not be final or contain final
+          methods.</para>
+        </listitem>
+
+        <listitem>
+          <para>Persistent properties of any entity class should always be
+          protected, not public, otherwise lazy-loading might not work as
+          expected.</para>
+        </listitem>
+
+        <listitem>
+          <para>Implementing <methodname>__clone()</methodname> or
+          <methodname>__wakeup()</methodname> is not a problem with FLOW3, as
+          the instances always have an identity. If using your own identity
+          properties, you must wrap any code you intend to run in those
+          methods in an identity check.</para>
+        </listitem>
+
+        <listitem>
+          <para>Entity classes in a class hierarchy that inherit directly or
+          indirectly from one another must not have a mapped property with the
+          same name.</para>
+        </listitem>
+
+        <listitem>
+          <para>Entities cannot use <methodname>func_get_args()</methodname>
+          to implement variable parameters. The proxies generated by Doctrine
+          do not support this for performance reasons and your code might
+          actually fail to work when violating this restriction.</para>
+        </listitem>
+      </itemizedlist>
+
+      <para>Persisted instance variables must be accessed only from within the
+      entity instance itself, not by clients of the entity. The state of the
+      entity is available to clients only through the entity’s methods, i.e.
+      getter/setter methods or other business methods.</para>
+
+      <para>Collection-valued persistent fields and properties must be defined
+      in terms of the
+      <interfacename>Doctrine\Common\Collections\Collection</interfacename>
+      interface. The collection implementation type may be used by the
+      application to initialize fields or properties before the entity is made
+      persistent. Once the entity becomes managed (or detached), subsequent
+      access must be through the interface type.</para>
+    </section>
+
+    <section>
+      <title>Metadata mapping</title>
+
+      <para>The Doctrine 2 ORM needs to know a lot about your code to be able
+      to persist it. Natively Doctrine 2 supports the use of annotations, XML,
+      YAML and PHP to supply that information. In FLOW3, only annotations are
+      supported, as this aligns with the philosophy behind the
+      framework.</para>
+
+      <section xml:id="flow3.persistenceframework.doctrineannotations">
+        <title>Annotations for the Doctrine Persistence</title>
+
+        <para>The following table lists the most common annotations used by
+        the persistence framework with their name, scope and meaning:<table>
+            <title>Persistence-related code annotations</title>
+
+            <tgroup cols="3">
+              <colspec colwidth="1*"/>
+
+              <colspec colwidth="1*"/>
+
+              <colspec colwidth="6*"/>
+
+              <thead>
+                <row>
+                  <entry>Annotation</entry>
+
+                  <entry>Scope</entry>
+
+                  <entry>Meaning</entry>
+                </row>
+              </thead>
+
+              <tbody>
+                <row>
+                  <entry><code>@Entity</code></entry>
+
+                  <entry>Class</entry>
+
+                  <entry>Declares a class as an Entity.</entry>
+                </row>
+
+                <row>
+                  <entry><code>@valueobject</code></entry>
+
+                  <entry>Class</entry>
+
+                  <entry>Declares a class as a Value Object, allowing the
+                  persistence framework to reuse an existing object if one
+                  exists. <emphasis>Doctrine 2 does not (yet) support value
+                  objects, thus we handle this like an entity for the time
+                  being.</emphasis></entry>
+                </row>
+
+                <row>
+                  <entry><code>@Column</code></entry>
+
+                  <entry>Variable</entry>
+
+                  <entry>Allows to take influence on the column actually
+                  generated for this property in the database. Particularly
+                  useful with string properties to limit the space used or to
+                  enable storage of more than 255 characters.</entry>
+                </row>
+
+                <row>
+                  <entry><code>@ManyToOne</code>, <code>@OneToMany</code>,
+                  <code>@ManyToMany</code>, <code>@OneToOne</code></entry>
+
+                  <entry>Variable</entry>
+
+                  <entry>Defines the type of object associations, refer to the
+                  Doctrine 2 documentation for details. The most obvious
+                  difference to plain Doctrine 2 is that the
+                  <parameter>targetEntity</parameter> parameter can be
+                  omitted, it is taken from the <code>@var</code>
+                  annotation.</entry>
+                </row>
+
+                <row>
+                  <entry><code>@var</code></entry>
+
+                  <entry>Variable</entry>
+
+                  <entry>Is used to detect the type a variable has. For
+                  collections, the type is given in angle brackets.</entry>
+                </row>
+
+                <row>
+                  <entry><code>@transient</code></entry>
+
+                  <entry>Variable</entry>
+
+                  <entry>Makes the persistence framework ignore the variable.
+                  Neither will it's value be persisted, nor will it be touched
+                  during reconstitution.</entry>
+                </row>
+
+                <row>
+                  <entry><code>@identity</code></entry>
+
+                  <entry>Variable</entry>
+
+                  <entry>Marks the variable as being relevant for determining
+                  the identity of an object in the domain.</entry>
+                </row>
+              </tbody>
+            </tgroup>
+          </table>Doctrine supports many more annotations, for a full
+        reference please consult the Doctrine 2 ORM documentation.</para>
+      </section>
+
+      <section>
+        <title>Differences between FLOW3 and plain Doctrine</title>
+
+        <para>The custom annotation driver used by FLOW3 to collect mapping
+        information from the code makes a number of things easier, compared to
+        plain Doctrine 2.</para>
+
+        <variablelist>
+          <varlistentry>
+            <term>@Entity</term>
+
+            <listitem>
+              <itemizedlist>
+                <listitem>
+                  <para><emphasis>repositoryClass</emphasis> can be left out,
+                  if you follow the naming rules for your repository classes
+                  explained above.</para>
+                </listitem>
+              </itemizedlist>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>@Table</term>
+
+            <listitem>
+              <itemizedlist>
+                <listitem>
+                  <para><emphasis>name</emphasis> does not default to the
+                  unqualified entity classname, but a name is generated from
+                  classname, package key and more elements to make it
+                  unique.</para>
+                </listitem>
+              </itemizedlist>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>@Id</term>
+
+            <listitem>
+              <itemizedlist>
+                <listitem>
+                  <para>Can be left out, as it is automatically generated,
+                  this means you also do not need
+                  <emphasis>@GeneratedValue</emphasis>. Every entity will get
+                  a property injected that is filled with an UUID upon
+                  instantiation and used as technical identifier.</para>
+                </listitem>
+
+                <listitem>
+                  <para>If an <emphasis>@Id</emphasis> annotation is found, it
+                  is of course used as is and no magic will happen.</para>
+                </listitem>
+              </itemizedlist>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>@Column</term>
+
+            <listitem>
+              <itemizedlist>
+                <listitem>
+                  <para>Can usually be left out altogether, as the vital
+                  <emphasis>type</emphasis> information can be read from the
+                  <code>@var</code> annotation on a class member.<important>
+                      <para>Since PHP does not differentiate between short and
+                      long strings, but databases do, you must use
+                      <code>@Column(type="text")</code> if you intend to store
+                      more than 255 characters in a string property.</para>
+                    </important></para>
+                </listitem>
+              </itemizedlist>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>@OneToOne</term>
+
+            <term>@OneToMany</term>
+
+            <term>@ManyToOne</term>
+
+            <term>@ManyToMany</term>
+
+            <listitem>
+              <itemizedlist>
+                <listitem>
+                  <para><emphasis>targetEntity</emphasis> can be omitted, it
+                  is read from the <code>@var</code> annotation on the
+                  property</para>
+                </listitem>
+              </itemizedlist>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>@JoinTable</term>
+
+            <term>@JoinColumn</term>
+
+            <listitem>
+              <itemizedlist>
+                <listitem>
+                  <para>Can usually be left out completely, the needed
+                  information is gathered automatically</para>
+                </listitem>
+
+                <listitem>
+                  <para>But <emphasis>when using a self-referencing
+                  association</emphasis>, you will need to help FLOW3 a
+                  little, so it doesn't generate a join table with only one
+                  column. Here is an example:<example>
+                      <title>@JoinTable annotation for a self-referencing
+                      annotation</title>
+
+                      <programlisting language="php">/**
+ * @var \Doctrine\Common\Collections\ArrayCollection&lt;\F3\Blog\Domain\Model\Post&gt;
+ * @ManyToMany
+ * @JoinTable(inverseJoinColumns={@joinColumn(name="related_id")})
+ */
+protected $relatedPosts;
+</programlisting>
+                    </example>Without this, the created table would not
+                  contain two columns but only one, named after the
+                  identifiers of the associated entities - which is the same
+                  in this case.</para>
+                </listitem>
+              </itemizedlist>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term>@DiscriminatorColumn</term>
+
+            <term>@DiscriminatorMap</term>
+
+            <listitem>
+              <itemizedlist>
+                <listitem>
+                  <para>Can be left out, as they are automatically
+                  generated.</para>
+                </listitem>
+              </itemizedlist>
+            </listitem>
+          </varlistentry>
+        </variablelist>
+
+        <para>The generation of this metadata is slightly more expensive
+        compared to the plain Doctrine
+        <classname>AnnotationDriver</classname>, but since this information
+        can be cached after being generated once, we feel the gain when
+        developing outweighs this easily.</para>
+
+        <tip>
+          <para>Anything you explicitly specify in annotations regarding
+          Doctrine, has precedence over the automatically generated metadata.
+          This can be used to fully customize the mapping of database tables
+          to models.</para>
+        </tip>
+
+        <para>Here is an example to illustrate the things you can omit, due to
+        the automatisms in the FLOW3 annotation driver.</para>
+
+        <example>
+          <title>Annotation equivalents in FLOW3 and plain Doctrine 2</title>
+
+          <para>An entity with only the annotations needed in
+          FLOW3:<programlisting language="php">/**
+ * @Entity
+ */
+class Post {
+
+  /**
+   * @var \F3\Blog\Domain\Model\Blog
+   * @ManyToOne(inversedBy="posts")
+   */
+  protected $blog;
+
+  /**
+   * @var string
+   * @Column(length="100")
+   */
+  protected $title;
+
+  /**
+   * @var \DateTime
+   */
+  protected $date;
+
+  /**
+   * @var string
+   * @Column(type="text")
+   */
+  protected $content;
+
+  /**
+   * @var \Doctrine\Common\Collections\ArrayCollection&lt;\F3\Blog\Domain\Model\Comment&gt;
+   * @OneToMany(mappedBy="post", cascade={"all"}, orphanRemoval="true")
+   * @OrderBy({"date" = "DESC"})
+   */
+  protected $comments;
+</programlisting></para>
+
+          <para>The same code with all annotations needed in plain Doctrine 2
+          to result in the same metadata:<programlisting language="php">/**
+ * @Entity(repositoryClass="F3\Blog\Domain\Model\Repository\PostRepository")
+ * @Table(name="blog_post")
+ */
+class Post {
+
+  /**
+   * @var string
+   * @Id
+   * @Column(name="flow3_persistence_identifier", type="string", length="40")
+   */
+  protected $FLOW3_Persistence_Identifier;
+
+  /**
+   * @var \F3\Blog\Domain\Model\Blog
+   * @ManyToOne(targetEntity="F3\Blog\Domain\Model\Blog", inversedBy="posts")
+   * @JoinColumn(name="blog_blog", referencedColumnName="flow3_persistence_identifier")
+   */
+  protected $blog;
+
+  /**
+   * @var string
+   * @Column(type="string", length="100")
+   */
+  protected $title;
+
+  /**
+   * @var \DateTime
+   * @Column(type="datetime")
+   */
+  protected $date;
+
+  /**
+   * @var string
+   * @Column(type="text")
+   */
+  protected $content;
+
+  /**
+   * @var \Doctrine\Common\Collections\ArrayCollection&lt;\F3\Blog\Domain\Model\Comment&gt;
+   * @OneToMany(targetEntity="F3\Blog\Domain\Model\Comment", mappedBy="post", cascade={"all"}, orphanRemoval="true")
+   * @OrderBy({"date" = "DESC"})
+   */
+  protected $comments;
+</programlisting></para>
+        </example>
+      </section>
+    </section>
+
+    <section>
+      <title>Schema management</title>
+
+      <para>Doctrine offers a <emphasis>Migrations</emphasis> system as an
+      add-on part of it's DBAL for versioning of database schemas and easy
+      deployment of changes to them. There exist a number of commands in the
+      FLOW3 CLI toolchain to create and deploy migrations.</para>
+
+      <para>A Migration is a set of command sthat brings the schema from one
+      version to the next. In the simplest form that means creating a new
+      table, but it can be as complex as renaming a column and converting data
+      from one format to another along the way. Migrations can also be
+      reversed, so one can migrate up and down.</para>
+
+      <para>Each Migration is represented by a PHP class that contains the
+      needed commands. Those classes come with the package they relate to,
+      they have a name that is based on the time they were created. This
+      allows correct ordering of migrations coming from different
+      packages.</para>
+
+      <section>
+        <title>Query the schema status</title>
+
+        <para>To learn about the current schema and migration status, run the
+        following command:</para>
+
+        <para><command>./flow3 flow3:doctrine:migrationstatus</command></para>
+
+        <para>This will produce output similar to the following, obviously
+        varying depending on the actual state of schema and active
+        packages:</para>
+
+        <example>
+          <title>Migration status report</title>
+
+          <literallayout><computeroutput> == Configuration
+    &gt;&gt; Name:                                               Doctrine Database Migrations
+    &gt;&gt; Database Driver:                                    pdo_mysql
+    &gt;&gt; Database Name:                                      flow3
+    &gt;&gt; Configuration Source:                               manually configured
+    &gt;&gt; Version Table Name:                                 flow3_doctrine_migrationstatus
+    &gt;&gt; Migrations Namespace:                               F3\FLOW3\Persistence\Doctrine\Migrations
+    &gt;&gt; Migrations Target Directory:                        /path/to/Data/DoctrineMigrations
+    &gt;&gt; Current Version:                                    0
+    &gt;&gt; Latest Version:                                     2011-06-13 22:38:37 (20110613223837)
+    &gt;&gt; Executed Migrations:                                0
+    &gt;&gt; Available Migrations:                               1
+    &gt;&gt; New Migrations:                                     1
+
+ == Migration Versions
+    &gt;&gt; 2011-06-13 22:38:37 (20110613223837)                not migrated
+</computeroutput></literallayout>
+        </example>
+
+        <para>Whenever a version number needs to be given to a command, use
+        the short form as shown in parentheses in the output above. The
+        migrations directory in the output is only used when creating
+        migrations, see below for details on that.</para>
+      </section>
+
+      <section>
+        <title>Deploying migrations</title>
+
+        <para>On a pristine database it is very easy to create the tables
+        needed with the following command:</para>
+
+        <para><command>./flow3 flow3:doctrine:migrate</command></para>
+
+        <para>This will result in output that looks similar to the
+        following:</para>
+
+        <screen>Migrating up to 20110613223837 from 0
+
+  ++ migrating 20110613223837
+
+     -&gt; CREATE TABLE flow3_resource_resourcepointer (hash VARCHAR(255) NOT NULL, PRIMARY KEY(hash)) ENGINE = InnoDB
+     -&gt; ALTER TABLE flow3_resource_resource ADD FOREIGN KEY (flow3_resource_resourcepointer) REFERENCES flow3_resource_resourcepointer(hash)
+
+  ++ migrated (1.31s)
+
+  ------------------------
+
+  ++ finished in 1.31
+  ++ 1 migrations executed
+  ++ 6 sql queries</screen>
+
+        <para>This will deploy all migrations delivered with the currently
+        active packages to the configured database. During that process it
+        will display all the SQL statements executed and a summary of the
+        deployed migrations at the and. You can do a dry run using</para>
+
+        <para><command>./flow3 flow3:doctrine:migrate
+        --dry-run</command></para>
+
+        <para>This will result in output that looks similar to the
+        following:</para>
+
+        <screen>Executing dry run of migration up to 20110613223837 from 0
+
+  ++ migrating 20110613223837
+
+     -&gt; CREATE TABLE flow3_resource_resourcepointer (hash VARCHAR(255) NOT NULL, PRIMARY KEY(hash)) ENGINE = InnoDB
+     -&gt; ALTER TABLE flow3_resource_resource ADD FOREIGN KEY (flow3_resource_resourcepointer) REFERENCES flow3_resource_resourcepointer(hash)
+
+  ++ migrated (0.09s)
+
+  ------------------------
+
+  ++ finished in 0.09
+  ++ 1 migrations executed
+  ++ 6 sql queries</screen>
+
+        <para>to see the same output but without any changes actually being
+        done to the database. If you want to inspect and possibly adjust the
+        statements that would be run and deploy manually, you can write to a
+        file:</para>
+
+        <para><command>./flow3 flow3:doctrine:migrate --path
+        <replaceable>write/here/the.sql</replaceable></command></para>
+
+        <para>This will result in output that looks similar to the
+        following:</para>
+
+        <screen>Writing migration file to "<replaceable>write/here/the.sql</replaceable>"</screen>
+
+        <important>
+          <para>When actually making manual changes, you need to keep the
+          <literal>flow3_doctrine_migrationstatus</literal> table updated as
+          well! This is done with the
+          <command>flow3:doctrine:migrationversion</command> command. It takes
+          a <option>--version</option> option together with either an
+          <option>--add</option> or <option>--delete</option> flag to add or
+          remove the given version in the
+          <literal>flow3_doctrine_migrationstatus</literal> table. It does not
+          execute any migration code but simply marks the given version as
+          migrated or not.</para>
+        </important>
+      </section>
+
+      <section>
+        <title>Reverting migrations</title>
+
+        <para>The migrate command takes an optional --version option. If
+        given, migrations will be executed up or down to reach that version.
+        This can be used to revert changes, even completely:</para>
+
+        <para><command>./flow3 flow3:doctrine:migrate --version
+        <replaceable>0</replaceable> --dry-run</command></para>
+
+        <para>This will result in output that looks similar to the
+        following:</para>
+
+        <screen>Executing dry run of migration down to 0 from 20110613223837
+
+  -- reverting 20110613223837
+
+     -&gt; ALTER TABLE flow3_resource_resource DROP FOREIGN KEY 
+     -&gt; DROP TABLE flow3_resource_resourcepointer
+     -&gt; DROP TABLE flow3_resource_resource
+     -&gt; DROP TABLE flow3_security_account
+     -&gt; DROP TABLE flow3_resource_securitypublishingconfiguration
+     -&gt; DROP TABLE flow3_policy_role
+
+  -- reverted (0.05s)
+
+  ------------------------
+
+  ++ finished in 0.05
+  ++ 1 migrations executed
+  ++ 6 sql queries</screen>
+      </section>
+
+      <section>
+        <title>Executing or reverting a specific migration</title>
+
+        <para>Sometimes you need to deploy or revert a specific migration,
+        this is possible as well.</para>
+
+        <para><command>./flow3 flow3:doctrine:migrationexecute --version
+        <replaceable>20110613223837</replaceable> --direction
+        <replaceable>down</replaceable> --dry-run</command></para>
+
+        <para>This will result in output that looks similar to the
+        following:</para>
+
+        <screen>  -- reverting 20110613223837
+
+     -&gt; ALTER TABLE flow3_resource_resource DROP FOREIGN KEY 
+     -&gt; DROP TABLE flow3_resource_resourcepointer
+     -&gt; DROP TABLE flow3_resource_resource
+     -&gt; DROP TABLE flow3_security_account
+     -&gt; DROP TABLE flow3_resource_securitypublishingconfiguration
+     -&gt; DROP TABLE flow3_policy_role
+
+  -- reverted (0.41s)</screen>
+
+        <para>As you can see you need to specify the migration
+        <option>--version</option> you want to execute. If you want to revert
+        a migration, you need to give the <option>--direction</option> as
+        shown above, the default is to migrate "up". The
+        <option>--dry-run</option> and and <option>--output</option> options
+        work as with <command>flow3:doctrine:migrate</command>.</para>
+      </section>
+
+      <section>
+        <title>Creating migrations</title>
+
+        <para>Migrations make the schema match when a model changes, but how
+        are migrations created? The basics are simple, but rest assured that
+        database details and certain other things make sure you'll need to
+        practice… The command to scaffold a migration is the following:</para>
+
+        <para><command>./flow3
+        flow3:doctrine:migrationgenerate</command></para>
+
+        <para>This will result in output that looks similar to the
+        following:</para>
+
+        <screen>Generated new migration class to "/path/to/Data/DoctrineMigrations/Version20110624143847.php".</screen>
+
+        <para>Looking into that file reveals a basic migration class already
+        filled with the differences detected between the current schema and
+        the current models in the system:</para>
+
+        <example>
+          <title>Migration generated based on schema/model differences</title>
+
+          <programlisting language="php">&lt;?php
+namespace F3\FLOW3\Persistence\Doctrine\Migrations;
+
+use Doctrine\DBAL\Migrations\AbstractMigration,
+  Doctrine\DBAL\Schema\Schema;
+
+/**
+ * Auto-generated Migration: Please modify to your need!
+ */
+class Version20110624143847 extends AbstractMigration {
+
+  /**
+   * @param Schema $schema
+   * @return void
+   */
+  public function up(Schema $schema) {
+      // this up() migration is autogenerated, please modify it to your needs
+    $this-&gt;abortIf($this-&gt;connection-&gt;getDatabasePlatform()-&gt;getName() != "mysql");
+    
+    $this-&gt;addSql("CREATE TABLE party_abstractparty (…) ENGINE = InnoDB");
+  }
+
+  /**
+   * @param Schema $schema
+   * @return void
+   */
+  public function down(Schema $schema) {
+      // this down() migration is autogenerated, please modify it to your needs
+    $this-&gt;abortIf($this-&gt;connection-&gt;getDatabasePlatform()-&gt;getName() != "mysql");
+    
+    $this-&gt;addSql("DROP TABLE party_abstractparty");
+  }
+}
+
+?&gt;</programlisting>
+        </example>
+
+        <para>To create an empty migration skeleton, pass
+        <option>--diff-against-current 0</option> to the command.</para>
+
+        <important>
+          <para>The directory generated migrations are written to is only used
+          when creating migrations. The migrations visible to the system are
+          read from
+          <filename>Migrations/<replaceable>DbPlatForm</replaceable></filename>
+          in each package. The <replaceable>DbPlatform</replaceable>
+          represents the target platform, e.g. <literal>Mysql</literal> (as in
+          Doctrine DBAL but with the first character uppercased).</para>
+        </important>
+
+        <para>After you generated a migration, you will probably need to clean
+        up a little, as there might be differences being picked up that are
+        not useful or can be optimized. An example is when you rename a model:
+        the migration will drop the old table and create the new one, but what
+        you want instead is to rename the table. Also you must to make sure
+        each finished migration file only deals with one package and then move
+        it to the <filename>Migrations</filename> directory in that package.
+        This way different packages can be mixed and still a reasonable
+        migration history can be built up.</para>
+      </section>
+
+      <section>
+        <title>Schema updates without migrations</title>
+
+        <para>Migrations are the recommended and preferred way to bring your
+        schema up to date. But there might be situations where their use is
+        not possible (e.g. no migrations are available yet for the RDBMS you
+        are using) or not wanted (because of, um… something). The there are
+        two simple commands you can use to create and update your
+        schema.</para>
+
+        <para>To create the needed tables you can call <command>./flow3
+        flow3:doctrine:create</command> and it will create all needed tables.
+        If any target table already exists, an error will be the
+        result.</para>
+
+        <para>To update an existing schema to match with the current mapping
+        metadata (i.e. the current model structure), use <command>./flow3
+        flow3:doctrine:update</command> to have missing items (fields,
+        indexes, …) added. There is a flag to disable the safe mode used by
+        default. In safe mode, Doctrine tries to keep existing data as far as
+        possible, avoiding lossy actions.<warning>
+            <para>Be careful, the update command might destroy data, as it
+            could drop tables and fields irreversibly.</para>
+          </warning></para>
+      </section>
+    </section>
+  </section>
+
+  <section>
+    <title><emphasis>Generic</emphasis> Persistence</title>
+
+    <para>What is now called <emphasis>Generic</emphasis> Persistence, used to
+    be the only persistence layer in FLOW3. Back in those days there was no
+    ORM available that fit our needs. That being said, with the advent of
+    Doctrine 2, your best bet as a PHP developer is to use that instead of any
+    home-brewn ORM.</para>
+
+    <para>When your target is not a relational database, things look slightly
+    different, which is why the "old" code is still available for use,
+    primarily by alternative backends like the ones for CouchDB or Solr, that
+    are available. Using the Generic persistence layer to target a RDBMS is
+    still possible, but probably only useful for rare egde cases.</para>
+
+    <section>
+      <title>Switching to Generic Persistence</title>
+
+      <para>To switch back to Generic persistence on SQLite using PDO you need
+      to configure FLOW3 like this:</para>
+
+      <para><programlisting># this needs to go into Objects.yaml
+
+F3\FLOW3\Persistence\PersistenceManagerInterface:
+  className: 'F3\FLOW3\Persistence\Generic\PersistenceManager'
+
+F3\FLOW3\Persistence\QueryResultInterface:
+  scope: prototype
+  className: 'F3\FLOW3\Persistence\Generic\QueryResult'</programlisting></para>
+
+      <para><programlisting># this needs to go into Settings.yaml
+
+FLOW3:
+  persistence:
+    backendOptions:
+      dataSourceName: 'sqlite:%FLOW3_PATH_DATA%Persistent/Objects.db'
+      username: ~
+      password: ~
+      # set the following to null to have them ignored
+      driver: ~
+      path: ~
+      dbname: ~</programlisting></para>
+
+      <para>Using different database systems is possible, as long as there is
+      a PDO driver available in PHP. The syntax to use for
+      <emphasis>dataSourceName</emphasis> depends on the PDO driver used,
+      consult the PHP documentation for that.</para>
+
+      <para>When installing other backend packages, like CouchDB, the needed
+      object configuration should be contained in them, for the connection
+      settings, consult the package's documentation.</para>
+    </section>
+
+    <section>
+      <title>Requirements and restrictions</title>
+
+      <para>There are some rules imposed by FLOW3 you need to follow for your
+      entities (and value objects). Most of them are good practice anyway, and
+      thus are not really restrictions.</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>Entity classes must not be final or contain final
+          methods.</para>
+        </listitem>
+
+        <listitem>
+          <para>Persistent properties of any entity class should always be
+          protected, not public, otherwise lazy-loading might not work as
+          expected.</para>
+        </listitem>
+      </itemizedlist>
+    </section>
+
+    <section>
+      <title>Metadata mapping</title>
+
+      <para>The persistence layer needs to know a lot about your code to be
+      able to persist it. In FLOW3, the needed data is given in the source
+      code through annotations, as this aligns with the philosophy behind the
+      framework.</para>
+
+      <section xml:id="flow3.persistenceframework.genericannotations">
+        <title>Annotations for the Generic Persistence</title>
+
+        <para>The following table lists all annotations used by the
+        persistence framework with their name, scope and meaning:<table>
+            <title>Persistence-related code annotations</title>
+
+            <tgroup cols="3">
+              <colspec colwidth="1*"/>
+
+              <colspec colwidth="1*"/>
+
+              <colspec colwidth="6*"/>
+
+              <thead>
+                <row>
+                  <entry>Annotation</entry>
+
+                  <entry>Scope</entry>
+
+                  <entry>Meaning</entry>
+                </row>
+              </thead>
+
+              <tbody>
+                <row>
+                  <entry><code>@entity</code></entry>
+
+                  <entry>Class</entry>
+
+                  <entry>Declares a class as an Entity.</entry>
+                </row>
+
+                <row>
+                  <entry><code>@valueobject</code></entry>
+
+                  <entry>Class</entry>
+
+                  <entry>Declares a class as a Value Object, allowing the
+                  persistence framework to reuse an existing object if one
+                  exists.</entry>
+                </row>
+
+                <row>
+                  <entry><code>@var</code></entry>
+
+                  <entry>Variable</entry>
+
+                  <entry>Is used to detect the type a variable has.</entry>
+                </row>
+
+                <row>
+                  <entry><code>@transient</code></entry>
+
+                  <entry>Variable</entry>
+
+                  <entry>Makes the persistence framework ignore the variable.
+                  Neither will it's value be persisted, nor will it be touched
+                  during reconstitution.</entry>
+                </row>
+
+                <row>
+                  <entry><code>@uuid</code></entry>
+
+                  <entry>Variable</entry>
+
+                  <entry>Marks the variable as being the object uuid. This
+                  makes the persistence backend use the value of this variable
+                  as identifier for the internal representation of the object.
+                  <emphasis>You must make sure your identifier is an
+                  UUID.</emphasis></entry>
+                </row>
+
+                <row>
+                  <entry><code>@identity</code></entry>
+
+                  <entry>Variable</entry>
+
+                  <entry>Marks the variable as being relevant for determining
+                  the identity of an object in the domain.</entry>
+                </row>
+
+                <row>
+                  <entry><code>@lazy</code></entry>
+
+                  <entry>Class, Variable</entry>
+
+                  <entry>When reconstituting the value of this property will
+                  be loaded only when the property is used. Note: This is only
+                  supported for properties of type
+                  <classname>\SplObjectStorage</classname> and objects (marked
+                  with <code>@lazy</code> in their source code, see
+                  below).</entry>
+                </row>
+              </tbody>
+            </tgroup>
+          </table></para>
+      </section>
 
       <section>
         <title>Enabling Lazy Loading</title>
 
-        <para>If a class should be able to be lazy loaded, you need to
-        annotate it with <code>@lazy</code> in the class level docblock. This
-        is done to avoid creating proxy classes for objects that should never
-        be lazy loaded anyway. As soon as that annotation is found, AOP is
-        used to weave lazy loading support into your code that intercepts all
-        method calls and initializes the object before calling the expected
-        method. Such a proxy class is a subclass of your class, as such it
-        work fine with type hinting and checks and can be used the same way as
-        the original class.</para>
+        <para>If a class should be able to be lazy loaded by the PDO backend,
+        you need to annotate it with <code>@lazy</code> in the class level
+        docblock. This is done to avoid creating proxy classes for objects
+        that should never be lazy loaded anyway. As soon as that annotation is
+        found, AOP is used to weave lazy loading support into your code that
+        intercepts all method calls and initializes the object before calling
+        the expected method. Such a proxy class is a subclass of your class,
+        as such it work fine with type hinting and checks and can be used the
+        same way as the original class.</para>
 
         <para>To actually mark a property for lazy loading, you need to add
         the <code>@lazy</code> annotation to the property docblock in your
@@ -447,73 +1313,92 @@ class BlogRepository extends \F3\FLOW3\Persistence\Repository {
         <para>Properties of type <classname>\SplObjectStorage</classname> can
         always be lazy-loaded by adding the <code>@lazy</code> annotation on
         the property only.</para>
+
+        <para>How and if lazy-loading is handled by alternative backends is up
+        to the implementation.</para>
       </section>
     </section>
-  </section>
-
-  <section xml:id="flow3.persistenceframework.insidepersistence">
-    <title>Inside the Persistence Framework</title>
-
-    <para>To the domain code the persistence handling transparent, aside from
-    the need to add a few annotations. The custom repositories are a little
-    closer to the inner workings of the framework, but still the inner
-    workings are very invisible. This is how it is supposed to be, but a
-    little understanding of how persistence works internally can help
-    understand problems and develop more efficient client code.</para>
 
     <section>
-      <title>Persisting a Domain Object</title>
+      <title>Schema management</title>
 
-      <para>After an object has been added to a repository it will be seen
-      when FLOW3 calls <methodname>persistAll()</methodname> at the end of a
-      script run. Internally all instances implementing the
-      <interfacename>\F3\FLOW3\Persistence\RepositoryInterface</interfacename>
-      will be fetched and asked for the objects they hold. Those will then be
-      handed to the persistence backend in use and processed by it.</para>
+      <para>For the PDO backend that comes with FLOW3, the needed tables are
+      set up automatically. When models are changed, no adjustments to the
+      schema are needed. Effectively the schema is maintenance-free. If you
+      ever need to create or fix the schema manually, have a look at
+      <filename>Resources/Private/Persistence/SQL/DDL.sql</filename> in the
+      FLOW3 package.</para>
 
-      <para>FLOW3 defines interfaces for persistence backends and queries, the
-      details of how objects are persisted and queried are up to the
-      persistence backend implementation. Have a look at the documentatoin of
-      the respective package for more information. The following diagram shows
-      (most of) the way an object takes from creation until it is persisted
-      when using the FLOW3 default backend:</para>
-
-      <para><figure>
-          <title>Object persistence process</title>
-
-          <mediaobject>
-            <imageobject>
-              <imagedata contentdepth="100%"
-                         fileref="Persistence_PersistenceProcess.png"
-                         scalefit="1" width="100%"/>
-            </imageobject>
-          </mediaobject>
-        </figure>Keep in mind that the diagram omits some details like dirty
-      checking on objects and how exactly objects and their properties are
-      stored.</para>
+      <para>Whether other backends implement automatic schema management is up
+      to the developers, consult the documentation of the relevant backend for
+      details.</para>
     </section>
 
-    <section>
-      <title>Querying the Storage Backend</title>
+    <section xml:id="flow3.persistenceframework.insidepersistence">
+      <title>Inside the Generic Persistence</title>
 
-      <para>As we saw in the introductory example there is a query mechanism
-      available that provides easy fetching of objects through the persistence
-      framework. You ask for instances of a specific class that match certain
-      filters and get back an array of those reconstituted objects. Here is a
-      diagram of the internal process when using the FLOW3 default
-      backend:<figure>
-          <title>Object querying and reconstitution process</title>
+      <para>To the domain code the persistence handling transparent, aside
+      from the need to add a few annotations. The custom repositories are a
+      little closer to the inner workings of the framework, but still the
+      inner workings are very invisible. This is how it is supposed to be, but
+      a little understanding of how persistence works internally can help
+      understand problems and develop more efficient client code.</para>
 
-          <mediaobject>
-            <imageobject>
-              <imagedata contentdepth="100%"
-                         fileref="Persistence_QueryProcess.png"
-                         scalefit="1" width="100%"/>
-            </imageobject>
-          </mediaobject>
-        </figure>For the developer the complexity is hidden between the
-      query's <methodname>execute()</methodname> method and the array of
-      objects being returned.</para>
+      <section>
+        <title>Persisting a Domain Object</title>
+
+        <para>After an object has been added to a repository it will be seen
+        when FLOW3 calls <methodname>persistAll()</methodname> at the end of a
+        script run. Internally all instances implementing the
+        <interfacename>\F3\FLOW3\Persistence\RepositoryInterface</interfacename>
+        will be fetched and asked for the objects they hold. Those will then
+        be handed to the persistence backend in use and processed by
+        it.</para>
+
+        <para>FLOW3 defines interfaces for persistence backends and queries,
+        the details of how objects are persisted and queried are up to the
+        persistence backend implementation. Have a look at the documentatoin
+        of the respective package for more information. The following diagram
+        shows (most of) the way an object takes from creation until it is
+        persisted when using the FLOW3 default backend:</para>
+
+        <para><figure>
+            <title>Object persistence process</title>
+
+            <mediaobject>
+              <imageobject>
+                <imagedata contentdepth="100%"
+                           fileref="Persistence_PersistenceProcess.png"
+                           scalefit="1" width="100%"/>
+              </imageobject>
+            </mediaobject>
+          </figure>Keep in mind that the diagram omits some details like dirty
+        checking on objects and how exactly objects and their properties are
+        stored.</para>
+      </section>
+
+      <section>
+        <title>Querying the Storage Backend</title>
+
+        <para>As we saw in the introductory example there is a query mechanism
+        available that provides easy fetching of objects through the
+        persistence framework. You ask for instances of a specific class that
+        match certain filters and get back an array of those reconstituted
+        objects. Here is a diagram of the internal process when using the
+        FLOW3 default backend:<figure>
+            <title>Object querying and reconstitution process</title>
+
+            <mediaobject>
+              <imageobject>
+                <imagedata contentdepth="100%"
+                           fileref="Persistence_QueryProcess.png" scalefit="1"
+                           width="100%"/>
+              </imageobject>
+            </mediaobject>
+          </figure>For the developer the complexity is hidden between the
+        query's <methodname>execute()</methodname> method and the array of
+        objects being returned.</para>
+      </section>
     </section>
   </section>
 </chapter>
