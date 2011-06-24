@@ -52,16 +52,16 @@ class ArrayCollectinConverterTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function getTypeOfPropertyReturnsElementTypeFromTargetTypeIfGiven() {
-		$this->assertEquals('FooBar', $this->converter->getTypeOfProperty('array<FooBar>', '', $this->getMock('F3\FLOW3\Property\PropertyMappingConfigurationInterface')));
+	public function getTypeOfChildPropertyReturnsElementTypeFromTargetTypeIfGiven() {
+		$this->assertEquals('FooBar', $this->converter->getTypeOfChildProperty('array<FooBar>', '', $this->getMock('F3\FLOW3\Property\PropertyMappingConfigurationInterface')));
 	}
 
 	/**
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function getTypeOfPropertyReturnsEmptyStringForElementTypeIfNotGivenInTargetType() {
-		$this->assertEquals('', $this->converter->getTypeOfProperty('array', '', $this->getMock('F3\FLOW3\Property\PropertyMappingConfigurationInterface')));
+	public function getTypeOfChildPropertyReturnsEmptyStringForElementTypeIfNotGivenInTargetType() {
+		$this->assertEquals('', $this->converter->getTypeOfChildProperty('array', '', $this->getMock('F3\FLOW3\Property\PropertyMappingConfigurationInterface')));
 	}
 
 }

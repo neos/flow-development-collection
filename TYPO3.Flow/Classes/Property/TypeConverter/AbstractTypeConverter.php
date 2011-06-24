@@ -99,7 +99,7 @@ abstract class AbstractTypeConverter implements \F3\FLOW3\Property\TypeConverter
 	 * @return boolean TRUE if this TypeConverter can convert from $source to $targetType, FALSE otherwise.
 	 * @api
 	 */
-	public function canConvert($source, $targetType) {
+	public function canConvertFrom($source, $targetType) {
 		return TRUE;
 	}
 
@@ -109,12 +109,12 @@ abstract class AbstractTypeConverter implements \F3\FLOW3\Property\TypeConverter
 	 * @return array<string>
 	 * @api
 	 */
-	public function getProperties($source) {
+	public function getSourceChildPropertiesToBeConverted($source) {
 		return array();
 	}
 
 	/**
-	 * This method is never called, as getProperties() returns an empty array.
+	 * This method is never called, as getSourceChildPropertiesToBeConverted() returns an empty array.
 	 *
 	 * @param string $targetType
 	 * @param string $propertyName
@@ -122,7 +122,7 @@ abstract class AbstractTypeConverter implements \F3\FLOW3\Property\TypeConverter
 	 * @return string
 	 * @api
 	 */
-	public function getTypeOfProperty($targetType, $propertyName, \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration) {
+	public function getTypeOfChildProperty($targetType, $propertyName, \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration) {
 	}
 }
 ?>

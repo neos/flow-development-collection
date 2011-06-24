@@ -163,12 +163,12 @@ class PropertyMapper {
 			throw new \F3\FLOW3\Property\Exception\TypeConverterException('Type converter for "' . $source . '" -> "' . $targetType . '" not found.');
 		}
 
-		$subProperties = array();
-		foreach ($typeConverter->getProperties($source) as $sourcePropertyName => $sourcePropertyValue) {
+		$convertedChildProperties = array();
+		foreach ($typeConverter->getSourceChildPropertiesToBeConverted($source) as $sourcePropertyName => $sourcePropertyValue) {
 			$targetPropertyName = $configuration->getTargetPropertyName($sourcePropertyName);
 			if (!$configuration->shouldMap($targetPropertyName)) continue;
 
-			$targetPropertyType = $typeConverter->getTypeOfProperty($targetType, $targetPropertyName, $configuration);
+			$targetPropertyType = $typeConverter->getTypeOfChildProperty($targetType, $targetPropertyName, $configuration);
 
 			$subConfiguration = $configuration->getConfigurationFor($targetPropertyName);
 
@@ -176,10 +176,10 @@ class PropertyMapper {
 			$targetPropertyValue = $this->doMapping($sourcePropertyValue, $targetPropertyType, $subConfiguration, $currentPropertyPath);
 			array_pop($currentPropertyPath);
 			if ($targetPropertyValue !== NULL) {
-				$subProperties[$targetPropertyName] = $targetPropertyValue;
+				$convertedChildProperties[$targetPropertyName] = $targetPropertyValue;
 			}
 		}
-		$result = $typeConverter->convertFrom($source, $targetType, $subProperties, $configuration);
+		$result = $typeConverter->convertFrom($source, $targetType, $convertedChildProperties, $configuration);
 
 		if ($result instanceof \F3\FLOW3\Error\Error) {
 			$this->messages->forProperty(implode('.', $currentPropertyPath))->addError($result);
@@ -285,7 +285,7 @@ class PropertyMapper {
 		krsort($converters);
 		reset($converters);
 		foreach ($converters as $converter) {
-			if ($converter->canConvert($source, $targetType)) {
+			if ($converter->canConvertFrom($source, $targetType)) {
 				return $converter;
 			}
 		}

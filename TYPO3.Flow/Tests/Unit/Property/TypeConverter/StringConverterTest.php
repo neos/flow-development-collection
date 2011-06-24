@@ -60,16 +60,16 @@ class StringConverterTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	public function canConvertShouldReturnTrue() {
-		$this->assertTrue($this->converter->canConvert('myString', 'string'));
+	public function canConvertFromShouldReturnTrue() {
+		$this->assertTrue($this->converter->canConvertFrom('myString', 'string'));
 	}
 
 	/**
 	 * @test
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	public function getPropertiesShouldReturnEmptyArray() {
-		$this->assertEquals(array(), $this->converter->getProperties('myString'));
+	public function getSourceChildPropertiesToBeConvertedShouldReturnEmptyArray() {
+		$this->assertEquals(array(), $this->converter->getSourceChildPropertiesToBeConverted('myString'));
 	}
 }
 ?>

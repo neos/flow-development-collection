@@ -97,7 +97,7 @@ class ObjectConverter extends \F3\FLOW3\Property\TypeConverter\AbstractTypeConve
 	 * @return boolean
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function canConvert($source, $targetType) {
+	public function canConvertFrom($source, $targetType) {
 		$isValueObject = $this->reflectionService->isClassTaggedWith($targetType, 'valueobject');
 		$isEntity = $this->reflectionService->isClassTaggedWith($targetType, 'entity');
 		return !($isEntity || $isValueObject);
@@ -110,7 +110,7 @@ class ObjectConverter extends \F3\FLOW3\Property\TypeConverter\AbstractTypeConve
 	 * @return array
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function getProperties($source) {
+	public function getSourceChildPropertiesToBeConverted($source) {
 		return $source;
 	}
 
@@ -123,7 +123,7 @@ class ObjectConverter extends \F3\FLOW3\Property\TypeConverter\AbstractTypeConve
 	 * @return string
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	public function getTypeOfProperty($targetType, $propertyName, \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration) {
+	public function getTypeOfChildProperty($targetType, $propertyName, \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration) {
 		$configuredTargetType = $configuration->getConfigurationFor($propertyName)->getConfigurationValue('F3\FLOW3\Property\TypeConverter\ArrayToObjectConverter', self::CONFIGURATION_TARGET_TYPE);
 		if ($configuredTargetType !== NULL) {
 			return $configuredTargetType;
@@ -147,15 +147,15 @@ class ObjectConverter extends \F3\FLOW3\Property\TypeConverter\AbstractTypeConve
 	 *
 	 * @param mixed $source
 	 * @param string $targetType
-	 * @param array $subProperties
+	 * @param array $convertedChildProperties
 	 * @param \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
 	 * @return object the target type
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	public function convertFrom($source, $targetType, array $subProperties = array(), \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
-		$object = $this->buildObject($subProperties, $targetType);
+	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
+		$object = $this->buildObject($convertedChildProperties, $targetType);
 
-		foreach ($subProperties as $propertyName => $propertyValue) {
+		foreach ($convertedChildProperties as $propertyName => $propertyValue) {
 			$result = \F3\FLOW3\Reflection\ObjectAccess::setProperty($object, $propertyName, $propertyValue);
 			if ($result === FALSE) {
 				throw new \F3\FLOW3\Property\Exception\InvalidTargetException('Property "' . $propertyName . '" could not be set in target object of type "' . $targetType . '".', 1304538165);

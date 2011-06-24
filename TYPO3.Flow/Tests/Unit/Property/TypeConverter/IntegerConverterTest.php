@@ -69,24 +69,24 @@ class IntegerConverterTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	public function canConvertShouldReturnTrueForANumericStringSource() {
-		$this->assertTrue($this->converter->canConvert('15', 'integer'));
+	public function canConvertFromShouldReturnTrueForANumericStringSource() {
+		$this->assertTrue($this->converter->canConvertFrom('15', 'integer'));
 	}
 
 	/**
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function canConvertShouldReturnTrueForAnIntegerSource() {
-		$this->assertTrue($this->converter->canConvert(123, 'integer'));
+	public function canConvertFromShouldReturnTrueForAnIntegerSource() {
+		$this->assertTrue($this->converter->canConvertFrom(123, 'integer'));
 	}
 
 	/**
 	 * @test
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	public function getPropertiesShouldReturnEmptyArray() {
-		$this->assertEquals(array(), $this->converter->getProperties('myString'));
+	public function getSourceChildPropertiesToBeConvertedShouldReturnEmptyArray() {
+		$this->assertEquals(array(), $this->converter->getSourceChildPropertiesToBeConverted('myString'));
 	}
 }
 ?>

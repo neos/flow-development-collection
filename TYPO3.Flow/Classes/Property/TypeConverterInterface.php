@@ -66,7 +66,7 @@ interface TypeConverterInterface {
 	 * @return boolean TRUE if this TypeConverter can convert from $source to $targetType, FALSE otherwise.
 	 * @api
 	 */
-	public function canConvert($source, $targetType);
+	public function canConvertFrom($source, $targetType);
 
 	/**
 	 * Return a list of sub-properties inside the source object.
@@ -75,7 +75,7 @@ interface TypeConverterInterface {
 	 * @return array<mixed>
 	 * @api
 	 */
-	public function getProperties($source);
+	public function getSourceChildPropertiesToBeConverted($source);
 
 	/**
 	 * Return the type of a given sub-property inside the $targetType
@@ -86,11 +86,11 @@ interface TypeConverterInterface {
 	 * @return string the type of $propertyName in $targetType
 	 * @api
 	 */
-	public function getTypeOfProperty($targetType, $propertyName, \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration);
+	public function getTypeOfChildProperty($targetType, $propertyName, \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration);
 
 	/**
 	 * Actually convert from $source to $targetType, taking into account the fully
-	 * built $subProperties and $configuration.
+	 * built $convertedChildProperties and $configuration.
 	 *
 	 * The return value can be one of three types:
 	 * - an arbitrary object, or a simple type (which has been created while mapping).
@@ -101,11 +101,11 @@ interface TypeConverterInterface {
 	 *
 	 * @param mixed $source
 	 * @param string $targetType
-	 * @param array $subProperties
+	 * @param array $convertedChildProperties
 	 * @param \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
 	 * @return mixed the target type
 	 * @api
 	 */
-	public function convertFrom($source, $targetType, array $subProperties = array(), \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL);
+	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL);
 }
 ?>

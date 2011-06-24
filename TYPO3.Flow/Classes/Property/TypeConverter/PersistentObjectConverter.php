@@ -106,7 +106,7 @@ class PersistentObjectConverter extends \F3\FLOW3\Property\TypeConverter\Abstrac
 	 * @return boolean
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	public function canConvert($source, $targetType) {
+	public function canConvertFrom($source, $targetType) {
 		$isValueObject = $this->reflectionService->isClassTaggedWith($targetType, 'valueobject');
 		$isEntity = $this->reflectionService->isClassTaggedWith($targetType, 'entity');
 		return ($isEntity || $isValueObject);
@@ -119,7 +119,7 @@ class PersistentObjectConverter extends \F3\FLOW3\Property\TypeConverter\Abstrac
 	 * @return array
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	public function getProperties($source) {
+	public function getSourceChildPropertiesToBeConverted($source) {
 		if (is_string($source)) {
 			return array();
 		}
@@ -138,7 +138,7 @@ class PersistentObjectConverter extends \F3\FLOW3\Property\TypeConverter\Abstrac
 	 * @return string
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	public function getTypeOfProperty($targetType, $propertyName, \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration) {
+	public function getTypeOfChildProperty($targetType, $propertyName, \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration) {
 		$configuredTargetType = $configuration->getConfigurationFor($propertyName)->getConfigurationValue('F3\FLOW3\Property\TypeConverter\PersistentObjectConverter', self::CONFIGURATION_TARGET_TYPE);
 		if ($configuredTargetType !== NULL) {
 			return $configuredTargetType;
@@ -157,20 +157,20 @@ class PersistentObjectConverter extends \F3\FLOW3\Property\TypeConverter\Abstrac
 	 *
 	 * @param mixed $source
 	 * @param string $targetType
-	 * @param array $subProperties
+	 * @param array $convertedChildProperties
 	 * @param \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
 	 * @return object the target type
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	public function convertFrom($source, $targetType, array $subProperties = array(), \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
+	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
 		if (is_array($source)) {
-			$object = $this->handleArrayData($source, $targetType, $subProperties, $configuration);
+			$object = $this->handleArrayData($source, $targetType, $convertedChildProperties, $configuration);
 		} elseif (is_string($source)) {
 			$object = $this->fetchObjectFromPersistence($source, $targetType);
 		} else {
 			throw new \InvalidArgumentException('Only strings and arrays are accepted.', 1305630314);
 		}
-		foreach ($subProperties as $propertyName => $propertyValue) {
+		foreach ($convertedChildProperties as $propertyName => $propertyValue) {
 			$result = \F3\FLOW3\Reflection\ObjectAccess::setProperty($object, $propertyName, $propertyValue);
 			if ($result === FALSE) {
 				throw new \F3\FLOW3\Property\Exception\InvalidTargetException('Property "' . $propertyName . '" could not be set in target object of type "' . $targetType . '".', 1297935345);
@@ -185,12 +185,12 @@ class PersistentObjectConverter extends \F3\FLOW3\Property\TypeConverter\Abstrac
 	 *
 	 * @param array $source
 	 * @param string $targetType
-	 * @param array $subProperties
+	 * @param array $convertedChildProperties
 	 * @param \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
 	 * @return object
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	protected function handleArrayData(array $source, $targetType, array &$subProperties, \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
+	protected function handleArrayData(array $source, $targetType, array &$convertedChildProperties, \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
 		if (isset($source['__identity'])) {
 			$object = $this->fetchObjectFromPersistence($source['__identity'], $targetType);
 
@@ -206,7 +206,7 @@ class PersistentObjectConverter extends \F3\FLOW3\Property\TypeConverter\Abstrac
 			if ($configuration === NULL || $configuration->getConfigurationValue('F3\FLOW3\Property\TypeConverter\PersistentObjectConverter', self::CONFIGURATION_CREATION_ALLOWED) !== TRUE) {
 				throw new \F3\FLOW3\Property\Exception\InvalidPropertyMappingConfigurationException('Creation of objects not allowed. To enable this, you need to set the PropertyMappingConfiguration Value "CONFIGURATION_CREATION_ALLOWED" to TRUE');
 			}
-			return $this->buildObject($subProperties, $targetType);
+			return $this->buildObject($convertedChildProperties, $targetType);
 		}
 	}
 

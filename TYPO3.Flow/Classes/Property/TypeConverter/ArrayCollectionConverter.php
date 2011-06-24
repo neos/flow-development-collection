@@ -48,17 +48,17 @@ class ArrayCollectionConverter extends \F3\FLOW3\Property\TypeConverter\Abstract
 
 	/**
 	 * Actually convert from $source to $targetType, taking into account the fully
-	 * built $subProperties and $configuration.
+	 * built $convertedChildProperties and $configuration.
 	 *
 	 * @param mixed $source
 	 * @param string $targetType
-	 * @param array $subProperties
+	 * @param array $convertedChildProperties
 	 * @param \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
 	 * @return \Doctrine\Common\Collections\ArrayCollection
 	 * @api
 	 */
-	public function convertFrom($source, $targetType, array $subProperties = array(), \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
-		return new \Doctrine\Common\Collections\ArrayCollection($subProperties);
+	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
+		return new \Doctrine\Common\Collections\ArrayCollection($convertedChildProperties);
 	}
 
 	/**
@@ -67,7 +67,7 @@ class ArrayCollectionConverter extends \F3\FLOW3\Property\TypeConverter\Abstract
 	 * @return array
 	 * @api
 	 */
-	public function getProperties($source) {
+	public function getSourceChildPropertiesToBeConverted($source) {
 		if (is_array($source)) {
 			return $source;
 		}
@@ -83,7 +83,7 @@ class ArrayCollectionConverter extends \F3\FLOW3\Property\TypeConverter\Abstract
 	 * @return string
 	 * @api
 	 */
-	public function getTypeOfProperty($targetType, $propertyName, \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration) {
+	public function getTypeOfChildProperty($targetType, $propertyName, \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration) {
 		$parsedTargetType = \F3\FLOW3\Utility\TypeHandling::parseType($targetType);
 		return $parsedTargetType['elementType'];
 	}
