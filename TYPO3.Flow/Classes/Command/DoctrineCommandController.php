@@ -227,6 +227,27 @@ class DoctrineCommandController extends \F3\FLOW3\MVC\Controller\CommandControll
 	}
 
 	/**
+	 * Mark/unmark a migration as migrated
+	 *
+	 * @param string $version The migration to execute
+	 * @param boolean $add The migration to mark as migrated
+	 * @param boolean $delete The migration to mark as not migrated
+	 * @return void
+	 */
+	public function migrationVersionCommand($version, $add = FALSE, $delete = FALSE) {
+			// "driver" is used only for Doctrine, thus we (mis-)use it here
+			// additionally, when no path is set, skip this step, assuming no DB is needed
+		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['path'] !== NULL) {
+			if ($add === FALSE && $delete === FALSE) {
+				throw new \InvalidArgumentException('You must specify whether you want to --add or --delete the specified version.');
+			}
+			$this->response->appendContent($this->doctrineService->markAsMigrated($version, $add ?: FALSE));
+		} else {
+			$this->response->appendContent('Doctrine migration not possible, the driver and path backend options are not set in /Configuration/Settings.yaml.');
+		}
+	}
+
+	/**
 	 * Generate a new migration
 	 *
 	 * If $diffAgainstCurrent is TRUE, it generates a migration file with the

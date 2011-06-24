@@ -288,6 +288,40 @@ class Service {
 	}
 
 	/**
+	 * Add a migration version to the migrations table or remove it.
+	 *
+	 * This does not execute any migration code but simply records a version
+	 * as migrated or not.
+	 *
+	 * @param string $version The version to add or remove
+	 * @param boolean $markAsMigrated
+	 * @return void
+	 * @throws \Doctrine\DBAL\Migrations\MigrationException
+	 * @throws \LogicException
+	 */
+	public function markAsMigrated($version, $markAsMigrated) {
+		$configuration = $this->getMigrationConfiguration();
+
+		if ($configuration->hasVersion($version) === FALSE) {
+			throw \Doctrine\DBAL\Migrations\MigrationException::unknownMigrationVersion($version);
+		}
+
+		$version = $configuration->getVersion($version);
+		if ($markAsMigrated === TRUE && $configuration->hasVersionMigrated($version) === TRUE) {
+			throw new \LogicException(sprintf('The version "%s" already exists in the version table.', $version));
+		}
+
+		if ($markAsMigrated === FALSE && $configuration->hasVersionMigrated($version) === FALSE) {
+			throw new \LogicException(sprintf('The version "%s" does not exists in the version table.', $version));
+		}
+
+		if ($markAsMigrated === TRUE) {
+			$version->markMigrated();
+		} else {
+			$version->markNotMigrated();
+		}
+	}
+	/**
 	 * Generates a new migration file and returns the path to it.
 	 *
 	 * If $diffAgainstCurrent is TRUE, it generates a migration file with the
