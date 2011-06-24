@@ -1052,7 +1052,12 @@ class Version20110624143847 extends AbstractMigration {
         possible, avoiding lossy actions.<warning>
             <para>Be careful, the update command might destroy data, as it
             could drop tables and fields irreversibly.</para>
-          </warning></para>
+          </warning><tip>
+            <para>Both commands also support <option>--output
+            <replaceable>write/here/the.sql</replaceable></option> to write
+            the SQL statements to the given file instead of executing
+            it.</para>
+          </tip></para>
       </section>
     </section>
   </section>

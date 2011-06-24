@@ -76,13 +76,14 @@ class DoctrineCommandController extends \F3\FLOW3\MVC\Controller\CommandControll
 	/**
 	 * Create the database schema based on current mapping information
 	 *
+	 * @param string $output A file to write SQL to, instead of executing it
 	 * @return void
 	 */
-	public function createCommand() {
+	public function createCommand($output = NULL) {
 			// "driver" is used only for Doctrine, thus we (mis-)use it here
 			// additionally, when no path is set, skip this step, assuming no DB is needed
 		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['path'] !== NULL) {
-			$this->doctrineService->createSchema();
+			$this->doctrineService->createSchema($output);
 		} else {
 			$this->response->appendContent('Database schema creation has been SKIPPED, the driver and path backend options are not set in /Configuration/Settings.yaml.');
 		}
@@ -94,13 +95,14 @@ class DoctrineCommandController extends \F3\FLOW3\MVC\Controller\CommandControll
 	 * It will, unless $safeMode is set to FALSE, not drop foreign keys, sequences and tables.
 	 *
 	 * @param boolean $safeMode
+	 * @param string $output A file to write SQL to, instead of executing it
 	 * @return void
 	 */
-	public function updateCommand($safeMode = TRUE) {
+	public function updateCommand($safeMode = TRUE, $output = NULL) {
 			// "driver" is used only for Doctrine, thus we (mis-)use it here
 			// additionally, when no path is set, skip this step, assuming no DB is needed
 		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['path'] !== NULL) {
-			$this->doctrineService->updateSchema($safeMode);
+			$this->doctrineService->updateSchema($safeMode, $output);
 		} else {
 			$this->response->appendContent('Database schema update has been SKIPPED, the driver and path backend options are not set in /Configuration/Settings.yaml.');
 		}

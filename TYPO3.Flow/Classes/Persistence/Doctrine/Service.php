@@ -83,11 +83,16 @@ class Service {
 	 * Creates the needed DB schema using Doctrine's SchemaTool. If tables already
 	 * exist, this will thow an exception.
 	 *
-	 * @return void
+	 * @param string $outputPathAndFilename A file to write SQL to, instead of executing it
+	 * @return string
 	 */
-	public function createSchema() {
+	public function createSchema($outputPathAndFilename = NULL) {
 		$schemaTool = new \Doctrine\ORM\Tools\SchemaTool($this->entityManager);
-		$schemaTool->createSchema($this->entityManager->getMetadataFactory()->getAllMetadata());
+		if ($outputPathAndFilename === NULL) {
+			$schemaTool->createSchema($this->entityManager->getMetadataFactory()->getAllMetadata());
+		} else {
+			file_put_contents($outputPathAndFilename, implode(PHP_EOL, $schemaTool->getCreateSchemaSql($this->entityManager->getMetadataFactory()->getAllMetadata())));
+		}
 	}
 
 	/**
@@ -95,11 +100,16 @@ class Service {
 	 * to SchemaTool unchanged.
 	 *
 	 * @param boolean $safeMode
-	 * @return void
+	 * @param string $outputPathAndFilename A file to write SQL to, instead of executing it
+	 * @return string
 	 */
-	public function updateSchema($safeMode = TRUE) {
+	public function updateSchema($safeMode = TRUE, $outputPathAndFilename = NULL) {
 		$schemaTool = new \Doctrine\ORM\Tools\SchemaTool($this->entityManager);
-		$schemaTool->updateSchema($this->entityManager->getMetadataFactory()->getAllMetadata(), $safeMode);
+		if ($outputPathAndFilename === NULL) {
+			$schemaTool->updateSchema($this->entityManager->getMetadataFactory()->getAllMetadata(), $safeMode);
+		} else {
+			file_put_contents($outputPathAndFilename, implode(PHP_EOL, $schemaTool->getUpdateSchemaSql($this->entityManager->getMetadataFactory()->getAllMetadata(), $safeMode)));
+		}
 	}
 
 	/**
