@@ -115,8 +115,12 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 					$metadata->setCustomRepositoryClass($classSchema->getRepositoryClassName());
 				}
 			}
+			if ($entityAnnotation->readOnly) {
+				$metadata->markReadOnly();
+			}
 		} elseif ($classSchema->getModelType() === \TYPO3\FLOW3\Reflection\ClassSchema::MODELTYPE_VALUEOBJECT) {
-				// also ok...
+				// also ok... but we make it read-only
+			$metadata->markReadOnly();
 		} else {
 			throw \Doctrine\ORM\Mapping\MappingException::classIsNotAValidEntityOrMappedSuperClass($className);
 		}
