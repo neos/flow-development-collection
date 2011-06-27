@@ -64,12 +64,12 @@ class Dispatcher {
 	 * @param string $signalName Name of the signal
 	 * @param mixed $slotClassNameOrObject Name of the class containing the slot or the instantiated class or a Closure object
 	 * @param string $slotMethodName Name of the method to be used as a slot. If $slotClassNameOrObject is a Closure object, this parameter is ignored
-	 * @param boolean $omitSignalInformation If set to TRUE, the first argument passed to the slot will be the first argument of the signal instead of some information about the signal.
+	 * @param boolean $passSignalInformation If set to TRUE, the last argument passed to the slot will be information about the signal (EmitterClassName::signalName)
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
-	public function connect($signalClassName, $signalName, $slotClassNameOrObject, $slotMethodName = '', $omitSignalInformation = FALSE) {
+	public function connect($signalClassName, $signalName, $slotClassNameOrObject, $slotMethodName = '', $passSignalInformation = TRUE) {
 		$class = NULL;
 		$object = NULL;
 
@@ -86,7 +86,7 @@ class Dispatcher {
 			'class' => $class,
 			'method' => $method,
 			'object' => $object,
-			'omitSignalInformation' => ($omitSignalInformation === TRUE)
+			'passSignalInformation' => ($passSignalInformation === TRUE)
 		);
 	}
 
@@ -119,7 +119,7 @@ class Dispatcher {
 				$object = $this->objectManager->get($slotInformation['class']);
 			}
 			$slotArguments = $signalArguments;
-			if ($slotInformation['omitSignalInformation'] !== TRUE) {
+			if ($slotInformation['passSignalInformation'] === TRUE) {
 				$slotArguments[] = $signalClassName . '::' . $signalName;
 			}
 			if (!method_exists($object, $slotInformation['method'])) {

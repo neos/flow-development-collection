@@ -131,10 +131,10 @@ protected function emitCommentCreated(Comment $comment) {} </programlisting></
     omitted.</para>
 
     <para>There is one more parameter available here,
-    <varname>$omitSignalInformation</varname>. It controls whether or not the
+    <varname>$passSignalInformation</varname>. It controls whether or not the
     passing of signal information (classname and methodname of the signal
     emitter, seperated by <literal>::</literal>) to the slot is omitted and
-    defaults to <constant>FALSE</constant> (i.e. the information is
+    defaults to <constant>TRUE</constant> (i.e. the information is
     passed).</para>
   </section>
 </chapter>
