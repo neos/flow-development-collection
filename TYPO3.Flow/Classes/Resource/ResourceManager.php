@@ -205,7 +205,6 @@ class ResourceManager {
 			unlink($temporaryTargetPathAndFilename);
 			return FALSE;
 		}
-		$this->fixFilePermissions($finalTargetPathAndFilename);
 		$resource = new \F3\FLOW3\Resource\Resource();
 		$resource->setFilename($pathInfo['basename']);
 
@@ -260,7 +259,6 @@ class ResourceManager {
 		if (rename($uploadInfo['tmp_name'], $finalTargetPathAndFilename) === FALSE) {
 			return FALSE;
 		}
-		$this->fixFilePermissions($finalTargetPathAndFilename);
 		$resource = new \F3\FLOW3\Resource\Resource();
 		$resource->setFilename($pathInfo['basename']);
 
@@ -270,16 +268,6 @@ class ResourceManager {
 			'originalFilename' => $pathInfo['basename']
 		);
 		return $resource;
-	}
-
-	/**
-	 * Fixes the permissions as needed for FLOW3 to run fine in web and cli context.
-	 *
-	 * @param string $pathAndFilename
-	 * @return void
-	 */
-	protected function fileFilePersmissions($pathAndFilename) {
-		chmod($pathAndFilename, 0666 ^ umask());
 	}
 
 	/**
