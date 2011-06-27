@@ -39,7 +39,6 @@ TYPO3:
       doctrine:
         dbal:
           sessionInitialization: ''
-        autoUpdate: y
 
     security:
       authentication:

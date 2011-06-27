@@ -128,7 +128,6 @@ TYPO3:
         sqlLogger: null
         dbal:
           sessionInitialization: ''
-        autoUpdate: y
 
     reflection:
 

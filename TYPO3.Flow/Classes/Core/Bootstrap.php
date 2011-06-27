@@ -380,15 +380,13 @@ class Bootstrap {
 			// will be FALSE here only if caches are totally empty, class monitoring runs only in compiletime
 		if ($objectConfigurationCache->has('allCompiledCodeUpToDate') === FALSE || $this->context !== 'Production') {
 			$this->executeCommand('typo3.flow3:core:compile');
+			$this->compileDoctrineProxies();
 		}
 
 		if ($objectConfigurationCache->has('allCompiledCodeUpToDate') === FALSE) {
 			throw new \TYPO3\FLOW3\Exception('Could not load object configuration from cache. This might be due to an unsuccessful compile run. One reason might be, that your PHP binary is not located in "' . $this->settings['core']['phpBinaryPathAndFilename'] . '". In that case, set the correct path to the PHP executable in Configuration/Settings.yaml, setting FLOW3.core.phpBinaryPathAndFilename.', 1297263663);
 		}
 
-		if ($this->settings['persistence']['doctrine']['autoUpdate'] === TRUE) {
-			$this->updateDoctrine();
-		}
 
 		$this->classLoader->injectClassesCache($this->cacheManager->getCache('FLOW3_Object_Classes'));
 		$this->initializeReflectionService();
@@ -410,17 +408,19 @@ class Bootstrap {
 	}
 
 	/**
-	 * Update Doctrine 2 database and proxy classes
+	 * Update Doctrine 2 proxy classes
+	 *
+	 * This is not simply bound to the finishedCompilationRun signal because it
+	 * needs the advised proxy classes to run. When that signal is fired, they
+	 * have been written, but not loaded.
 	 *
 	 * @return void
 	 */
-	protected function updateDoctrine() {
+	protected function compileDoctrineProxies() {
 		$objectConfigurationCache = $this->cacheManager->getCache('FLOW3_Object_Configuration');
 		$coreCache = $this->cacheManager->getCache('FLOW3_Core');
 		if ($objectConfigurationCache->has('doctrineProxyCodeUpToDate') === FALSE && $coreCache->has('doctrineSetupRunning') === FALSE) {
 			$coreCache->set('doctrineSetupRunning', 'White Russian', array(), 60);
-			$this->systemLogger->log('Updating Doctrine database', LOG_DEBUG);
-			$this->executeCommand('typo3.flow3:doctrine:update');
 			$this->systemLogger->log('Compiling Doctrine proxies', LOG_DEBUG);
 			$this->executeCommand('typo3.flow3:doctrine:compileproxies');
 			$coreCache->remove('doctrineSetupRunning');
