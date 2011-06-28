@@ -149,6 +149,26 @@ class DebugExceptionHandler extends \TYPO3\FLOW3\Error\AbstractExceptionHandler 
 			$indent .= '  ';
 		}
 
+		if (function_exists('xdebug_get_function_stack')) {
+			$backtraceSteps = xdebug_get_function_stack();
+		} else {
+			$backtraceSteps = debug_backtrace();
+		}
+
+		for ($index = 0; $index < count($backtraceSteps); $index ++) {
+			echo PHP_EOL . '#' . $index . ' ' ;
+			if (isset($backtraceSteps[$index]['class'])) {
+				echo $backtraceSteps[$index]['class'];
+			}
+			if (isset($backtraceSteps[$index]['function'])) {
+				echo '::' . $backtraceSteps[$index]['function'] . '()';
+			}
+			echo PHP_EOL;
+			if (isset($backtraceSteps[$index]['file'])) {
+				echo '   ' . $backtraceSteps[$index]['file'] . (isset($backtraceSteps[$index]['line']) ? ':' . $backtraceSteps[$index]['line'] : '') . PHP_EOL;
+			}
+		}
+
 		echo PHP_EOL;
 		exit(1);
 	}
