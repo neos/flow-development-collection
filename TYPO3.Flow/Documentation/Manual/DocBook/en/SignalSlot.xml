@@ -74,7 +74,7 @@ protected function emitCommentCreated(Comment $comment) {} </programlisting></
   * @return void
   */
  public function sendNewCommentNotification(Comment $comment) { 
-    $mail = new \F3\SwiftMailer\Message();
+    $mail = new \TYPO3\SwiftMailer\Message();
     $mail-&gt;setFrom(array('john@doe.org ' =&gt; 'John Doe'))
          -&gt;setTo(array('karsten@typo3.org ' =&gt; 'Karsten Dambekalns'))
          -&gt;setSubject('New comment')
@@ -109,10 +109,10 @@ protected function emitCommentCreated(Comment $comment) {} </programlisting></
         <para><programlisting>/**
   * Boot the package. We wire some signals to slots here.
   *
-  * @param \F3\FLOW3\Core\Bootstrap $bootstrap The current bootstrap
+  * @param \TYPO3\FLOW3\Core\Bootstrap $bootstrap The current bootstrap
   * @return void
   */
- public function boot(\F3\FLOW3\Core\Bootstrap $bootstrap) {
+ public function boot(\TYPO3\FLOW3\Core\Bootstrap $bootstrap) {
      $dispatcher = $bootstrap-&gt;getSignalSlotDispatcher(); 
     $dispatcher-&gt;connect(
         'Some\Package\Controller\CommentController', 'commentCreated',

@@ -24,7 +24,7 @@
     <section xml:id="flow3.i18nframework.localeClass">
       <title>Locale class</title>
 
-      <para>Instances of <classname>\F3\FLOW3\I18n\Locale</classname> class
+      <para>Instances of <classname>\TYPO3\FLOW3\I18n\Locale</classname> class
       are fundamental for whole i18n and L10n functionality. They are used to
       specify what language should be used for translation, how date and time
       should be formatted, and so on. They can be treated as simple wrappers
@@ -65,7 +65,7 @@
       <title>Service</title>
 
       <para><classname>Service</classname> is a singleton instance of
-      <classname>\F3\FLOW3\I18n\Service</classname> class automatically
+      <classname>\TYPO3\FLOW3\I18n\Service</classname> class automatically
       created during the initialization of FLOW3 Framework. It generates a
       list of available locales (mentioned earlier), and provides simple API
       for accessing these. You can call
@@ -145,7 +145,7 @@
     <section xml:lang="flow3.i18nframework.translatorClass">
       <title>Translator class</title>
 
-      <para>The <classname>\F3\FLOW3\I18n\Translator</classname> class is the
+      <para>The <classname>\TYPO3\FLOW3\I18n\Translator</classname> class is the
       central place for whole translation-related functionality.</para>
 
       <para>First of all, one of two translation modes can be used:
@@ -218,7 +218,7 @@
 
       <para>The <classname>Translation Provider</classname> is a class
       implementing
-      <interfacename>\F3\FLOW3\I18n\TranslationProvider\TranslationProviderInterface</interfacename>.
+      <interfacename>\TYPO3\FLOW3\I18n\TranslationProvider\TranslationProviderInterface</interfacename>.
       It is used by the <classname>Translator</classname> class for accessing
       actual data from translation files (catalogs).</para>
 
@@ -228,7 +228,7 @@
 
       <variablelist>
         <varlistentry>
-          <term><classname>\F3\FLOW3\I18n\TranslationProvider\XliffTranslationProvider</classname></term>
+          <term><classname>\TYPO3\FLOW3\I18n\TranslationProvider\XliffTranslationProvider</classname></term>
 
           <listitem>
             <para>Stores translations in <literal>XLIFF</literal> format.
@@ -339,7 +339,7 @@
       <title>Formatters</title>
 
       <para><classname>Formatter</classname> is a class implementing
-      <interfacename>\F3\FLOW3\I18n\Formatter\FormatterInterface</interfacename>.
+      <interfacename>\TYPO3\FLOW3\I18n\Formatter\FormatterInterface</interfacename>.
       Formatter can be used to format a value of particular type, i.e. to
       convert it to string in locale-aware manner.</para>
 
@@ -358,7 +358,7 @@
 
       <variablelist>
         <varlistentry>
-          <term><classname>\F3\FLOW3\I18n\Formatter\NumberFormatter</classname></term>
+          <term><classname>\TYPO3\FLOW3\I18n\Formatter\NumberFormatter</classname></term>
 
           <listitem>
             <para>Formats integers or floats in order to display them as
@@ -375,7 +375,7 @@
         </varlistentry>
 
         <varlistentry>
-          <term><classname>\F3\FLOW3\I18n\Formatter\DatetimeFormatter</classname></term>
+          <term><classname>\TYPO3\FLOW3\I18n\Formatter\DatetimeFormatter</classname></term>
 
           <listitem>
             <para>Formats date and / or time part of PHP
@@ -416,8 +416,8 @@
       <para>You can create your own <classname>Formatter</classname> class
       which will be automatically available for use in placeholders. Just make
       sure your class implements
-      <interfacename>\F3\FLOW3\I18n\Formatter\FormatterInterface</interfacename>,
-      is placed in <package>\F3\FLOW3\I18n\Formatter\</package> namespace and
+      <interfacename>\TYPO3\FLOW3\I18n\Formatter\FormatterInterface</interfacename>,
+      is placed in <package>\TYPO3\FLOW3\I18n\Formatter\</package> namespace and
       is named with the <literal>*Formatter</literal> suffix.</para>
     </section>
 
@@ -482,14 +482,14 @@
       <title>Validators</title>
 
       <para>Validator is a class implementing
-      <interfacename>\F3\FLOW3\Validation\Validator\ValidatorInterface</interfacename>
+      <interfacename>\TYPO3\FLOW3\Validation\Validator\ValidatorInterface</interfacename>
       and is used by the FLOW3 Validation Framework for assuring correctness
       of user's input. FLOW3 provides few validators that utilize i18n
       functionality:</para>
 
       <variablelist>
         <varlistentry>
-          <term><classname>\F3\FLOW3\Validation\Validator\NumberValidator</classname></term>
+          <term><classname>\TYPO3\FLOW3\Validation\Validator\NumberValidator</classname></term>
 
           <listitem>
             <para>Validates decimal and integer numbers provided as strings
@@ -501,7 +501,7 @@
         </varlistentry>
 
         <varlistentry>
-          <term><classname>\F3\FLOW3\Validation\Validator\DateTimeValidator</classname></term>
+          <term><classname>\TYPO3\FLOW3\Validation\Validator\DateTimeValidator</classname></term>
 
           <listitem>
             <para>Validates date, time, or both date and time provided as
@@ -530,7 +530,7 @@
 
       <variablelist>
         <varlistentry>
-          <term><classname>\F3\FLOW3\I18n\Parser\NumberParser</classname></term>
+          <term><classname>\TYPO3\FLOW3\I18n\Parser\NumberParser</classname></term>
 
           <listitem>
             <para>Accepts string with integer or decimal number and converts
@@ -539,7 +539,7 @@
         </varlistentry>
 
         <varlistentry>
-          <term><classname>\F3\FLOW3\I18n\Parser\DatetimeParser</classname></term>
+          <term><classname>\TYPO3\FLOW3\I18n\Parser\DatetimeParser</classname></term>
 
           <listitem>
             <para>Accepts string with date, time or both date and time and

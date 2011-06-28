@@ -144,7 +144,7 @@
       <para>The caching framework architecture is based on these
       classes:<variablelist>
           <varlistentry>
-            <term><classname>F3\FLOW3\Cache\CacheFactory</classname></term>
+            <term><classname>TYPO3\FLOW3\Cache\CacheFactory</classname></term>
 
             <listitem>
               <para>Factory class to instantiate caches.</para>
@@ -152,7 +152,7 @@
           </varlistentry>
 
           <varlistentry>
-            <term><classname>F3\FLOW3\Cache\CacheManager</classname></term>
+            <term><classname>TYPO3\FLOW3\Cache\CacheManager</classname></term>
 
             <listitem>
               <para>Returns the cache frontend of a specific cache. Implements
@@ -161,7 +161,7 @@
           </varlistentry>
 
           <varlistentry>
-            <term><interfacename>F3\FLOW3\Cache\Frontend\FrontendInterface</interfacename></term>
+            <term><interfacename>TYPO3\FLOW3\Cache\Frontend\FrontendInterface</interfacename></term>
 
             <listitem>
               <para>Interface to handle cache entries of a specific cache.
@@ -170,7 +170,7 @@
           </varlistentry>
 
           <varlistentry>
-            <term><interfacename>F3\FLOW3\Cache\Backend\BackendInterface</interfacename></term>
+            <term><interfacename>TYPO3\FLOW3\Cache\Backend\BackendInterface</interfacename></term>
 
             <listitem>
               <para>Interface for different storage strategies. A set of
@@ -228,8 +228,8 @@
 # If no frontend, backend or options are specified for a cache, these values
 # will be taken to create the cache.
 Default:
-  frontend: F3\FLOW3\Cache\Frontend\VariableFrontend
-  backend: F3\FLOW3\Cache\Backend\FileBackend
+  frontend: TYPO3\FLOW3\Cache\Frontend\VariableFrontend
+  backend: TYPO3\FLOW3\Cache\Backend\FileBackend
   backendOptions:
     defaultLifetime: 0
 </programlisting>
@@ -243,7 +243,7 @@ Default:
         <title>Configuration to use RedisBackend for FooCache</title>
 
         <programlisting>FooCache:
-  backend: F3\FLOW3\Cache\Backend\RedisBackend
+  backend: TYPO3\FLOW3\Cache\Backend\RedisBackend
   backendOptions:
     database: 3
 </programlisting>
@@ -257,7 +257,7 @@ Default:
       <title>Frontend API</title>
 
       <para>All frontends must implement the API defined in the interface
-      <interfacename>F3\FLOW3\Cache\Frontend\FrontendInterface</interfacename>.
+      <interfacename>TYPO3\FLOW3\Cache\Frontend\FrontendInterface</interfacename>.
       All cache operations must be done with these methods.<variablelist>
           <varlistentry>
             <term><methodname>getIdentifier()</methodname></term>
@@ -363,7 +363,7 @@ Default:
       difference is the data types which can be stored using a specific
       frontend.<variablelist>
           <varlistentry>
-            <term><classname>F3\FLOW3\Cache\Frontend\StringFrontend</classname></term>
+            <term><classname>TYPO3\FLOW3\Cache\Frontend\StringFrontend</classname></term>
 
             <listitem>
               <para>The string frontend accepts strings as data to be
@@ -372,7 +372,7 @@ Default:
           </varlistentry>
 
           <varlistentry>
-            <term><classname>F3\FLOW3\Cache\Frontend\VariableFrontend</classname></term>
+            <term><classname>TYPO3\FLOW3\Cache\Frontend\VariableFrontend</classname></term>
 
             <listitem>
               <para>Strings, arrays and objects are accepted by this frontend.
@@ -388,7 +388,7 @@ Default:
           </varlistentry>
 
           <varlistentry>
-            <term><classname>F3\FLOW3\Cache\Frontend\PhpFrontend</classname></term>
+            <term><classname>TYPO3\FLOW3\Cache\Frontend\PhpFrontend</classname></term>
 
             <listitem>
               <para>This is a special frontend to cache PHP files. It extends
@@ -399,7 +399,7 @@ Default:
               code and becomes handy if a lot of reflection and dynamic PHP
               class construction is done. A backend to be used with the PHP
               frontend must implement the
-              <interfacename>F3\FLOW3\Cache\Backend\PhpCapableBackendInterface</interfacename>.
+              <interfacename>TYPO3\FLOW3\Cache\Backend\PhpCapableBackendInterface</interfacename>.
               Currently the file backend is the only backend which fulfills
               this requirement.</para>
 
@@ -472,7 +472,7 @@ Default:
     </section>
 
     <section>
-      <title>F3\FLOW3\Cache\Backend\FileBackend</title>
+      <title>TYPO3\FLOW3\Cache\Backend\FileBackend</title>
 
       <para>The file backend stores every cache entry as a single file to the
       file system. The lifetime and tags are added after the data part in the
@@ -516,7 +516,7 @@ Default:
     </section>
 
     <section>
-      <title>F3\FLOW3\Cache\Backend\PdoBackend</title>
+      <title>TYPO3\FLOW3\Cache\Backend\PdoBackend</title>
 
       <para>The PDO backend can be used as a native PDO interface to databases
       which are connected to PHP via PDO. The garbage collection is
@@ -616,7 +616,7 @@ Default:
     </section>
 
     <section>
-      <title>F3\FLOW3\Cache\Backend\RedisBackend</title>
+      <title>TYPO3\FLOW3\Cache\Backend\RedisBackend</title>
 
       <para><link ns5:href="http://redis.io/">Redis</link> is a key-value
       storage/database. In contrast to memcached, it allows structured values.
@@ -793,7 +793,7 @@ Default:
     </section>
 
     <section>
-      <title>F3\FLOW3\Cache\Backend\MemcachedBackend</title>
+      <title>TYPO3\FLOW3\Cache\Backend\MemcachedBackend</title>
 
       <para><link ns5:href="http://memcached.org/">Memcached</link> is a
       simple key/value RAM database which scales across multiple servers. To
@@ -965,7 +965,7 @@ Default:
     </section>
 
     <section>
-      <title>F3\FLOW3\Cache\Backend\ApcBackend</title>
+      <title>TYPO3\FLOW3\Cache\Backend\ApcBackend</title>
 
       <para><link ns5:href="http://pecl.php.net/package/APC">APC</link> is
       mostly known as an opcode cache for PHP source files but can be used to
@@ -1009,7 +1009,7 @@ Default:
     </section>
 
     <section>
-      <title>F3\FLOW3\Cache\Backend\TransientMemoryBackend</title>
+      <title>TYPO3\FLOW3\Cache\Backend\TransientMemoryBackend</title>
 
       <para>The transient memory backend stores data in a local array. It is
       only valid for one request. This becomes handy if code logic needs to do
@@ -1034,7 +1034,7 @@ Default:
     </section>
 
     <section>
-      <title>F3\FLOW3\Cache\Backend\NullBackend</title>
+      <title>TYPO3\FLOW3\Cache\Backend\NullBackend</title>
 
       <para>The null backend is a dummy backend which doesn't store any data
       and always returns <constant>FALSE</constant> on
@@ -1062,9 +1062,9 @@ Default:
       <para>To register a cache it must be configured in
       <filename>Caches.yaml</filename> of a package:<programlisting
       language="yaml">MyPackage_FooCache:
-  frontend: F3\FLOW3\Cache\Frontend\StringFrontend
+  frontend: TYPO3\FLOW3\Cache\Frontend\StringFrontend
 </programlisting>In this case
-      <classname>\F3\FLOW3\Cache\Frontend\StringFrontend</classname> was
+      <classname>\TYPO3\FLOW3\Cache\Frontend\StringFrontend</classname> was
       chosen, but that depends on individual needs. This setting is usually
       not changed by users. Any option not given is inherited from the
       configuration of the "Default" cache. The name
@@ -1086,11 +1086,11 @@ Default:
         <methodname>initializeObject()</methodname>. Here is an example for
         setter injection matching the configuration given above. First you
         need to configure the injection in
-        <filename>Settings.yaml</filename>:<programlisting language="yaml">F3\MyPackage\SomeClass:
+        <filename>Settings.yaml</filename>:<programlisting language="yaml">MyCompany\MyPackage\SomeClass:
   properties:
     fooCache:
       object:
-        factoryObjectName: F3\FLOW3\Cache\CacheManager
+        factoryObjectName: TYPO3\FLOW3\Cache\CacheManager
         factoryMethodName: getCache
         arguments:
           1:
@@ -1099,10 +1099,10 @@ Default:
         setter:<programlisting language="php">/**
  * Sets the foo cache
  *
- * @param \F3\FLOW3\Cache\Frontend\StringFrontend $cache Cache for foo data
+ * @param \TYPO3\FLOW3\Cache\Frontend\StringFrontend $cache Cache for foo data
  * @return void
  */
-public function setFooCache(\F3\FLOW3\Cache\Frontend\StringFrontend $cache) {
+public function setFooCache(\TYPO3\FLOW3\Cache\Frontend\StringFrontend $cache) {
 	$this-&gt;fooCache = $cache;
 }
 </programlisting>To make it even simpler you could omit the setter method and

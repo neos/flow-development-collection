@@ -113,9 +113,9 @@
       <example>
         <title>Hello World! controller</title>
 
-        <programlisting language="php">namespace F3\Demo\Controller;
+        <programlisting language="php">namespace TYPO3\Demo\Controller;
 
-class StandardController extends \F3\FLOW3\MVC\Controller\ActionController {
+class StandardController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	public function indexAction() {
 		return 'Hello World!';
 	}
@@ -146,9 +146,9 @@ class StandardController extends \F3\FLOW3\MVC\Controller\ActionController {
       <example>
         <title>Hello World! view</title>
 
-        <programlisting language="php">namespace F3\Demo\View\Standard;
+        <programlisting language="php">namespace TYPO3\Demo\View\Standard;
 
-class Index extends \F3\FLOW3\MVC\View\AbstractView {
+class Index extends \TYPO3\FLOW3\MVC\View\AbstractView {
 	public function render() {
 		return 'Hello World from your view!';
 	}
@@ -162,9 +162,9 @@ class Index extends \F3\FLOW3\MVC\View\AbstractView {
       <example>
         <title>Improved Hello World! controller</title>
 
-        <programlisting language="php">namespace F3\Demo\Controller;
+        <programlisting language="php">namespace TYPO3\Demo\Controller;
 
-class StandardController extends \F3\FLOW3\MVC\Controller\ActionController {
+class StandardController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	public function indexAction() {
 		return $this-&gt;view-&gt;render();
 	}
@@ -260,17 +260,17 @@ class StandardController extends \F3\FLOW3\MVC\Controller\ActionController {
       format).</para>
 
       <para>Depending on that, the controller
-      <classname>\F3\Demo\Controller\CustomerController</classname> (pattern:
-      '<code>F3\@package\Controller\@controllerController'</code>) and its
+      <classname>\TYPO3\Demo\Controller\CustomerController</classname> (pattern:
+      '<code>TYPO3\@package\Controller\@controllerController'</code>) and its
       method <methodname>listAction()</methodname> will be used. The
-      corresponding view is <classname>\F3\Demo\View\CustomerList</classname>
+      corresponding view is <classname>\TYPO3\Demo\View\CustomerList</classname>
       (Pattern:
-      <code>'F3\@package\View\@controller@action@format'</code>).</para>
+      <code>'TYPO3\@package\View\@controller@action@format'</code>).</para>
 
       <para>By looking at the view pattern you easily see that it's fairly
       easily to address a view which renders a different format, for example
       XML. All you need to do is creating a class called
-      <classname>\F3\Demo\View\Customer\ListXML</classname>. To see the output
+      <classname>\TYPO3\Demo\View\Customer\ListXML</classname>. To see the output
       of this new view, just use the URI
       <uri>http://localhost/demo/customer/list.xml</uri>.</para>
     </section>
@@ -329,7 +329,7 @@ class StandardController extends \F3\FLOW3\MVC\Controller\ActionController {
 
       <para>Custom request handlers for special purposes just need to
       implement the
-      <interfacename>\F3\FLOW3\MVC\RequestHandlerInterface</interfacename>.
+      <interfacename>\TYPO3\FLOW3\MVC\RequestHandlerInterface</interfacename>.
       All classes implementing that interface are automatically registered and
       will be considered while resolving a suitable request handler.</para>
     </section>
@@ -395,8 +395,8 @@ class StandardController extends \F3\FLOW3\MVC\Controller\ActionController {
 
       <para>FLOW3 supports the most important request types out of the box.
       Additional request types can easily be implemented by implementing the
-      <interfacename>\F3\FLOW3\MVC\RequestInterface</interfacename> or
-      extending the <classname>\F3\FLOW3\MVC\Request</classname> class and
+      <interfacename>\TYPO3\FLOW3\MVC\RequestInterface</interfacename> or
+      extending the <classname>\TYPO3\FLOW3\MVC\Request</classname> class and
       registering a request handling which can handle the new request type
       (and takes care of building the request object). Here are the request
       types which come with the default FLOW3 distribution:</para>
@@ -424,26 +424,26 @@ class StandardController extends \F3\FLOW3\MVC\Controller\ActionController {
 
     <para>The main responsibility of a controller is to process a request and
     deliver a meaningful response. The
-    <interfacename>\F3\FLOW3\MVC\Controller\ControllerInterface</interfacename>
+    <interfacename>\TYPO3\FLOW3\MVC\Controller\ControllerInterface</interfacename>
     therefore only contains two methods:</para>
 
     <programlisting language="php">/**
  * Checks if the current request type is supported by the controller.
  *
- * @param \F3\FLOW3\MVC\RequestInterface $request The current request
+ * @param \TYPO3\FLOW3\MVC\RequestInterface $request The current request
  * @return boolean TRUE if this request type is supported, otherwise FALSE
  */
-public function canProcessRequest(\F3\FLOW3\MVC\RequestInterface $request);
+public function canProcessRequest(\TYPO3\FLOW3\MVC\RequestInterface $request);
 
 /**
  * Processes a general request. The result can be returned by altering the given response.
  *
- * @param \F3\FLOW3\MVC\RequestInterface $request The request object
- * @param \F3\FLOW3\MVC\ResponseInterface $response The response, modified by the controller
+ * @param \TYPO3\FLOW3\MVC\RequestInterface $request The request object
+ * @param \TYPO3\FLOW3\MVC\ResponseInterface $response The response, modified by the controller
  * @return void
- * @throws \F3\FLOW3\MVC\Exception\UnsupportedRequestTypeException if the controller doesn't support the current request type
+ * @throws \TYPO3\FLOW3\MVC\Exception\UnsupportedRequestTypeException if the controller doesn't support the current request type
  */
-public function processRequest(\F3\FLOW3\MVC\RequestInterface $request, \F3\FLOW3\MVC\ResponseInterface $response);
+public function processRequest(\TYPO3\FLOW3\MVC\RequestInterface $request, \TYPO3\FLOW3\MVC\ResponseInterface $response);
 </programlisting>
 
     <para>However, only few applications will implement the whole request
@@ -454,7 +454,7 @@ public function processRequest(\F3\FLOW3\MVC\RequestInterface $request, \F3\FLOW
       <title>Action Controller</title>
 
       <para>The
-      <classname>\F3\FLOW3\MVC\Controller\ActionController</classname>
+      <classname>\TYPO3\FLOW3\MVC\Controller\ActionController</classname>
       processes a request by calling action methods. Actions are the
       foundation of your application's workflow and logic. Which action is
       called is usually determined by the URI as you have already seen in the
@@ -525,12 +525,12 @@ public function processRequest(\F3\FLOW3\MVC\RequestInterface $request, \F3\FLOW
           <programlisting language="php">/**
  * My web-specific controller
  */
-class StandardController extends \F3\FLOW3\MVC\Controller\ActionController {
+class StandardController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 
    /**
     * @var array
     */
-   protected $supportedRequestTypes = array('F3\FLOW3\MVC\Web\Request');
+   protected $supportedRequestTypes = array('TYPO3\FLOW3\MVC\Web\Request');
 
 </programlisting>
         </example>
@@ -580,7 +580,7 @@ public function exampleAction($emailAddress, $streetName, \TYPO3\Foo\Model\Custo
         <parameter>$streetName</parameter> and
         <parameter>$customer</parameter>. Their expected data types are
         <classname>Text</classname>, <classname>Text</classname> and
-        <classname>\F3\Foo\customer</classname> respectively.</para>
+        <classname>\TYPO3\Foo\customer</classname> respectively.</para>
 
         <para>In essence this means that if you send a GET parameter
         <parameter>emailAddress</parameter> with your request, it will end up
@@ -613,7 +613,7 @@ public function exampleAction($emailAddress, $streetName, \TYPO3\Foo\Model\Custo
  * @return void
  * @validate $emailAddress EmailAddress
  * @validate $streeName Alphanumeric, StringLength(minimum = 5, maximum = 100)
- * @validate $customer F3\Foo\Validator\PlatinumCustomerValidator
+ * @validate $customer TYPO3\Foo\Validator\PlatinumCustomerValidator
  */
 public function exampleAction($emailAddress, $streetName, \TYPO3\Foo\Model\Customer $customer) {
 
@@ -673,7 +673,7 @@ public function editAction(\TYPO3\Foo\Model\Customer $customer) {
         <title>Not Found Controller</title>
 
         <para>The
-        <classname>F3\FLOW3\MVC\Controller\NotFoundController</classname> is
+        <classname>TYPO3\FLOW3\MVC\Controller\NotFoundController</classname> is
         used whenever no other controller could be resolved which would match
         the current request. It displays a generic "404 Page Not Found"
         message.</para>
@@ -895,9 +895,9 @@ public function editAction(\TYPO3\Foo\Model\Customer $customer) {
           <title>Route part handler</title>
 
           <para>Route part handlers are classes that implement
-          <interfacename>F3\FLOW3\MVC\Web\Routing\DynamicRoutePartInterface</interfacename>.
+          <interfacename>TYPO3\FLOW3\MVC\Web\Routing\DynamicRoutePartInterface</interfacename>.
           But for most cases it will be sufficient to extend
-          <classname>F3\FLOW3\MVC\Web\Routing\DynamicRoutePart</classname> and
+          <classname>TYPO3\FLOW3\MVC\Web\Routing\DynamicRoutePart</classname> and
           overwrite the methods <methodname>matchValue</methodname> and
           <methodname>resolveValue</methodname>.</para>
 
@@ -905,7 +905,7 @@ public function editAction(\TYPO3\Foo\Model\Customer $customer) {
           the blog example:<example>
               <title>BlogRoutePartHandler.php</title>
 
-              <programlisting language="php">class BlogRoutePartHandler extends \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart {
+              <programlisting language="php">class BlogRoutePartHandler extends \TYPO3\FLOW3\MVC\Web\Routing\DynamicRoutePart {
 
 	/**
 	 * While matching, converts the blog title into an identifer array
@@ -922,11 +922,11 @@ public function editAction(\TYPO3\Foo\Model\Customer $customer) {
 	/**
 	 * Resolves the name of the blog
 	 *
-	 * @param \F3\Blog\Domain\Model\Blog $value The Blog object
+	 * @param \TYPO3\Blog\Domain\Model\Blog $value The Blog object
 	 * @return boolean TRUE if the name of the blog could be resolved and stored in $this-&gt;value, otherwise FALSE.
 	 */
 	protected function resolveValue($value) {
-		if (!$value instanceof \F3\Blog\Domain\Model\Blog) return FALSE;
+		if (!$value instanceof \TYPO3\Blog\Domain\Model\Blog) return FALSE;
 		$this-&gt;value = $value-&gt;getName();
 		return TRUE;
 	}
@@ -945,7 +945,7 @@ public function editAction(\TYPO3\Foo\Model\Customer $customer) {
     '@controller': Blog
   routeParts:
     blog:
-      handler: F3\Blog\RoutePartHandlers\BlogRoutePartHandler</programlisting>
+      handler: TYPO3\Blog\RoutePartHandlers\BlogRoutePartHandler</programlisting>
             </example></para>
 
           <para>Have a look at the blog example for a working setup.</para>

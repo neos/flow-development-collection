@@ -26,7 +26,7 @@
     section to learn more about configuration).</para>
 
     <para>The FLOW3 boot strap (i.e. the class
-    <classname>\F3\FLOW3\Core\Bootstrap</classname>) is always instantiated in
+    <classname>\TYPO3\FLOW3\Core\Bootstrap</classname>) is always instantiated in
     a single application context. By default (when calling the
     <filename>index.php</filename> file) the context is
     <literal>Production</literal>. To switch to another context you need to

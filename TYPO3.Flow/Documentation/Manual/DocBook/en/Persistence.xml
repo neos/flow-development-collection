@@ -44,10 +44,10 @@
         <title>The Blog's addPost() method</title>
 
         <para><programlisting language="php">/**
- * @param \F3\Blog\Domain\Post $post
+ * @param \TYPO3\Blog\Domain\Post $post
  * @return void
  */
-public function addPost(\F3\Blog\Domain\Post $post) {
+public function addPost(\TYPO3\Blog\Domain\Post $post) {
     $post-&gt;setBlog($this);
     $this-&gt;posts-&gt;add($post);
 }</programlisting></para>
@@ -98,7 +98,7 @@ class Blog {
     protected $title;
 
     /**
-     * @var \Doctrine\Common\Collections\ArrayCollection&lt;\F3\Blog\Domain\Model\Post&gt;
+     * @var \Doctrine\Common\Collections\ArrayCollection&lt;\TYPO3\Blog\Domain\Model\Post&gt;
      * @OneToMany(mappedBy="blog",cascade={"all"})
      * @OrderBy({"date" = "DESC"})
      */
@@ -127,7 +127,7 @@ class Blog {
         <programlisting language="php">/**
  * A BlogRepository
  */
-class BlogRepository extends \F3\FLOW3\Persistence\Repository {
+class BlogRepository extends \TYPO3\FLOW3\Persistence\Repository {
 }</programlisting>
       </example>As you can see we get away with very little code by simply
     extending the FLOW3-provided repository class, and still we already have
@@ -140,16 +140,16 @@ class BlogRepository extends \F3\FLOW3\Persistence\Repository {
         <programlisting language="php">/**
  * A PostRepository
  */
-class PostRepository extends \F3\FLOW3\Persistence\Repository {
+class PostRepository extends \TYPO3\FLOW3\Persistence\Repository {
 
     /**
      * Finds posts by the specified tag and blog
      *
-     * @param \F3\Blog\Domain\Model\Tag $tag
-     * @param \F3\Blog\Domain\Model\Blog $blog The blog the post must refer to
-     * @return \F3\FLOW3\Persistence\QueryResultProxy The posts
+     * @param \TYPO3\Blog\Domain\Model\Tag $tag
+     * @param \TYPO3\Blog\Domain\Model\Blog $blog The blog the post must refer to
+     * @return \TYPO3\FLOW3\Persistence\QueryResultProxy The posts
      */
-    public function findByTagAndBlog(\F3\Blog\Domain\Model\Tag $tag, \F3\Blog\Domain\Model\Blog $blog) {
+    public function findByTagAndBlog(\TYPO3\Blog\Domain\Model\Tag $tag, \TYPO3\Blog\Domain\Model\Blog $blog) {
         $query = $this-&gt;createQuery();
         return $query-&gt;matching(
             $query-&gt;logicalAnd(
@@ -157,7 +157,7 @@ class PostRepository extends \F3\FLOW3\Persistence\Repository {
                 $query-&gt;contains('tags', $tag)
             )
         )
-        -&gt;setOrderings(array('date' =&gt; \F3\FLOW3\Persistence\QueryInterface::ORDER_DESCENDING))
+        -&gt;setOrderings(array('date' =&gt; \TYPO3\FLOW3\Persistence\QueryInterface::ORDER_DESCENDING))
         -&gt;execute();
     }
 }</programlisting>
@@ -165,7 +165,7 @@ class PostRepository extends \F3\FLOW3\Persistence\Repository {
 
     <para>If you like to do things the hard way you can get away with
     implementing
-    <interfacename>\F3\FLOW3\Persistence\RepositoryInterface</interfacename>
+    <interfacename>\TYPO3\FLOW3\Persistence\RepositoryInterface</interfacename>
     yourself.</para>
   </section>
 
@@ -267,16 +267,16 @@ class PostRepository extends \F3\FLOW3\Persistence\Repository {
 
           <listitem>
             <para>Repositories must implement
-            <classname>\F3\FLOW3\Persistence\RepositoryInterface</classname>
+            <classname>\TYPO3\FLOW3\Persistence\RepositoryInterface</classname>
             (which is the case when extending
-            <classname>\F3\FLOW3\Persistence\Repository</classname>)</para>
+            <classname>\TYPO3\FLOW3\Persistence\Repository</classname>)</para>
           </listitem>
         </itemizedlist></para>
 
       <example>
         <title>Conventions for model and repository naming</title>
 
-        <literallayout>\F3
+        <literallayout>\TYPO3
   \Blog
     \Domain
       \Model
@@ -604,7 +604,7 @@ class PostRepository extends \F3\FLOW3\Persistence\Repository {
                       annotation</title>
 
                       <programlisting language="php">/**
- * @var \Doctrine\Common\Collections\ArrayCollection&lt;\F3\Blog\Domain\Model\Post&gt;
+ * @var \Doctrine\Common\Collections\ArrayCollection&lt;\TYPO3\Blog\Domain\Model\Post&gt;
  * @ManyToMany
  * @JoinTable(inverseJoinColumns={@joinColumn(name="related_id")})
  */
@@ -661,7 +661,7 @@ protected $relatedPosts;
 class Post {
 
   /**
-   * @var \F3\Blog\Domain\Model\Blog
+   * @var \TYPO3\Blog\Domain\Model\Blog
    * @ManyToOne(inversedBy="posts")
    */
   protected $blog;
@@ -684,7 +684,7 @@ class Post {
   protected $content;
 
   /**
-   * @var \Doctrine\Common\Collections\ArrayCollection&lt;\F3\Blog\Domain\Model\Comment&gt;
+   * @var \Doctrine\Common\Collections\ArrayCollection&lt;\TYPO3\Blog\Domain\Model\Comment&gt;
    * @OneToMany(mappedBy="post", cascade={"all"}, orphanRemoval="true")
    * @OrderBy({"date" = "DESC"})
    */
@@ -693,7 +693,7 @@ class Post {
 
           <para>The same code with all annotations needed in plain Doctrine 2
           to result in the same metadata:<programlisting language="php">/**
- * @Entity(repositoryClass="F3\Blog\Domain\Model\Repository\PostRepository")
+ * @Entity(repositoryClass="TYPO3\Blog\Domain\Model\Repository\PostRepository")
  * @Table(name="blog_post")
  */
 class Post {
@@ -706,8 +706,8 @@ class Post {
   protected $FLOW3_Persistence_Identifier;
 
   /**
-   * @var \F3\Blog\Domain\Model\Blog
-   * @ManyToOne(targetEntity="F3\Blog\Domain\Model\Blog", inversedBy="posts")
+   * @var \TYPO3\Blog\Domain\Model\Blog
+   * @ManyToOne(targetEntity="TYPO3\Blog\Domain\Model\Blog", inversedBy="posts")
    * @JoinColumn(name="blog_blog", referencedColumnName="flow3_persistence_identifier")
    */
   protected $blog;
@@ -731,8 +731,8 @@ class Post {
   protected $content;
 
   /**
-   * @var \Doctrine\Common\Collections\ArrayCollection&lt;\F3\Blog\Domain\Model\Comment&gt;
-   * @OneToMany(targetEntity="F3\Blog\Domain\Model\Comment", mappedBy="post", cascade={"all"}, orphanRemoval="true")
+   * @var \Doctrine\Common\Collections\ArrayCollection&lt;\TYPO3\Blog\Domain\Model\Comment&gt;
+   * @OneToMany(targetEntity="TYPO3\Blog\Domain\Model\Comment", mappedBy="post", cascade={"all"}, orphanRemoval="true")
    * @OrderBy({"date" = "DESC"})
    */
   protected $comments;
@@ -782,7 +782,7 @@ class Post {
     &gt;&gt; Database Name:                                      flow3
     &gt;&gt; Configuration Source:                               manually configured
     &gt;&gt; Version Table Name:                                 flow3_doctrine_migrationstatus
-    &gt;&gt; Migrations Namespace:                               F3\FLOW3\Persistence\Doctrine\Migrations
+    &gt;&gt; Migrations Namespace:                               TYPO3\FLOW3\Persistence\Doctrine\Migrations
     &gt;&gt; Migrations Target Directory:                        /path/to/Data/DoctrineMigrations
     &gt;&gt; Current Version:                                    0
     &gt;&gt; Latest Version:                                     2011-06-13 22:38:37 (20110613223837)
@@ -897,7 +897,7 @@ class Post {
 
   -- reverting 20110613223837
 
-     -&gt; ALTER TABLE flow3_resource_resource DROP FOREIGN KEY 
+     -&gt; ALTER TABLE flow3_resource_resource DROP FOREIGN KEY
      -&gt; DROP TABLE flow3_resource_resourcepointer
      -&gt; DROP TABLE flow3_resource_resource
      -&gt; DROP TABLE flow3_security_account
@@ -928,7 +928,7 @@ class Post {
 
         <screen>  -- reverting 20110613223837
 
-     -&gt; ALTER TABLE flow3_resource_resource DROP FOREIGN KEY 
+     -&gt; ALTER TABLE flow3_resource_resource DROP FOREIGN KEY
      -&gt; DROP TABLE flow3_resource_resourcepointer
      -&gt; DROP TABLE flow3_resource_resource
      -&gt; DROP TABLE flow3_security_account
@@ -969,7 +969,7 @@ class Post {
           <title>Migration generated based on schema/model differences</title>
 
           <programlisting language="php">&lt;?php
-namespace F3\FLOW3\Persistence\Doctrine\Migrations;
+namespace TYPO3\FLOW3\Persistence\Doctrine\Migrations;
 
 use Doctrine\DBAL\Migrations\AbstractMigration,
   Doctrine\DBAL\Schema\Schema;
@@ -986,7 +986,7 @@ class Version20110624143847 extends AbstractMigration {
   public function up(Schema $schema) {
       // this up() migration is autogenerated, please modify it to your needs
     $this-&gt;abortIf($this-&gt;connection-&gt;getDatabasePlatform()-&gt;getName() != "mysql");
-    
+
     $this-&gt;addSql("CREATE TABLE party_abstractparty (…) ENGINE = InnoDB");
   }
 
@@ -997,7 +997,7 @@ class Version20110624143847 extends AbstractMigration {
   public function down(Schema $schema) {
       // this down() migration is autogenerated, please modify it to your needs
     $this-&gt;abortIf($this-&gt;connection-&gt;getDatabasePlatform()-&gt;getName() != "mysql");
-    
+
     $this-&gt;addSql("DROP TABLE party_abstractparty");
   }
 }
@@ -1085,12 +1085,12 @@ class Version20110624143847 extends AbstractMigration {
 
       <para><programlisting># this needs to go into Objects.yaml
 
-F3\FLOW3\Persistence\PersistenceManagerInterface:
-  className: 'F3\FLOW3\Persistence\Generic\PersistenceManager'
+TYPO3\FLOW3\Persistence\PersistenceManagerInterface:
+  className: 'TYPO3\FLOW3\Persistence\Generic\PersistenceManager'
 
-F3\FLOW3\Persistence\QueryResultInterface:
+TYPO3\FLOW3\Persistence\QueryResultInterface:
   scope: prototype
-  className: 'F3\FLOW3\Persistence\Generic\QueryResult'</programlisting></para>
+  className: 'TYPO3\FLOW3\Persistence\Generic\QueryResult'</programlisting></para>
 
       <para><programlisting># this needs to go into Settings.yaml
 
@@ -1355,7 +1355,7 @@ FLOW3:
         <para>After an object has been added to a repository it will be seen
         when FLOW3 calls <methodname>persistAll()</methodname> at the end of a
         script run. Internally all instances implementing the
-        <interfacename>\F3\FLOW3\Persistence\RepositoryInterface</interfacename>
+        <interfacename>\TYPO3\FLOW3\Persistence\RepositoryInterface</interfacename>
         will be fetched and asked for the objects they hold. Those will then
         be handed to the persistence backend in use and processed by
         it.</para>

@@ -158,7 +158,7 @@
       </table>
 
       <para>In PHP, objects of the scope prototype are created with the
-      <function>new</function> operator:<programlisting language="php">$myFreshObject = new \F3\MyPackage\MyClassName;</programlisting></para>
+      <function>new</function> operator:<programlisting language="php">$myFreshObject = new \MyCompany\MyPackage\MyClassName;</programlisting></para>
 
       <para>In contrast to Prototype, the Singleton design pattern ensures
       that only one instance of a class exists at a time. In PHP the Singleton
@@ -192,7 +192,7 @@ class ASingletonClass {
       also: Configuring Objects). The recommended way to specify the scope is
       the <varname>@scope</varname> annotation:</para>
 
-      <programlisting language="php">namespace F3\MyPackage;
+      <programlisting language="php">namespace MyCompany\MyPackage;
 
 /**
  * A sample class
@@ -218,10 +218,10 @@ class SomeClass {
       object just call the Object Manager's <methodname>create</methodname>
       method:</para>
 
-      <para><programlisting language="php">$myFreshObject = $objectManager-&gt;create('F3\MyPackage\MyClassName');</programlisting></para>
+      <para><programlisting language="php">$myFreshObject = $objectManager-&gt;create('MyCompany\MyPackage\MyClassName');</programlisting></para>
 
       <para>The Object Factory
-      (<classname>\F3\FLOW3\Object\ObjectManagerInterface</classname>) itself
+      (<classname>\TYPO3\FLOW3\Object\ObjectManagerInterface</classname>) itself
       is a Singleton and can be acquired like any other object of that scope
       (see next section).</para>
 
@@ -230,7 +230,7 @@ class SomeClass {
       simply passed as additional arguments to the
       <methodname>create</methodname> method:</para>
 
-      <para><programlisting language="php">$myFreshObject = $objectManager-&gt;create('F3\MyPackage\MyClassName', ↩
+      <para><programlisting language="php">$myFreshObject = $objectManager-&gt;create('MyCompany\MyPackage\MyClassName', ↩
    'first argument', $secondArgument, 42, $fourthArgument);</programlisting></para>
     </section>
 
@@ -246,7 +246,7 @@ class SomeClass {
         <title>Retrieving the Object Manager through dependency
         injection</title>
 
-        <programlisting language="php">namespace F3\MyPackage;
+        <programlisting language="php">namespace MyCompany\MyPackage;
 
 /**
  * A sample class
@@ -254,7 +254,7 @@ class SomeClass {
 class SampleClass {
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
+	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
@@ -263,9 +263,9 @@ class SampleClass {
 	 * The Object Factory will automatically be passed (injected) by the object 
 	 * framework on instantiating this class.
 	 *
-	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager The object manager
+	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager The object manager
 	 */
-	public function __construct(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
+	public function __construct(\TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this-&gt;objectManager = $objectManager;
 	}
 }</programlisting>
@@ -286,14 +286,14 @@ class SampleClass {
       of the <classname>ObjectManager</classname> itself, again by taking
       advantage of constructor injection:</para>
 
-      <programlisting language="php">public function __construct(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
+      <programlisting language="php">public function __construct(\TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 	$this-&gt;objectManager = $objectManager;
 }</programlisting>
 
       <para>To explicitly retrieve an object instance use the
       <function>getObject()</function> method:</para>
 
-      <programlisting language="php">$myObjectInstance = $objectManager-&gt;getObject('F3\MyPackage\MyClassName');</programlisting>
+      <programlisting language="php">$myObjectInstance = $objectManager-&gt;getObject('MyCompany\MyPackage\MyClassName');</programlisting>
 
       <para>Like with the <classname>ObjectManager</classname>'s
       <methodname>create</methodname> method, it is possible to pass arguments
@@ -317,7 +317,7 @@ class SampleClass {
       <example>
         <title>A simple address book</title>
 
-        <programlisting language="php">namespace F3\Address;
+        <programlisting language="php">namespace TYPO3\Address;
 
 /**
  * A simple address book
@@ -326,11 +326,11 @@ class AddressBook {
 
 	protected $addresses = array();
 
-	public __construct(\F3\iCal\iCalConnectorInterface $iCalConnector) {
+	public __construct(\TYPO3\iCal\iCalConnectorInterface $iCalConnector) {
 		...
 	}
 
-	public addAddress(\F3\Address\Address $address) {
+	public addAddress(\TYPO3\Address\Address $address) {
 		$this-&gt;addresses[] = $address;
 	}
 }
@@ -353,15 +353,15 @@ class Address {
 
       <itemizedlist>
         <listitem>
-          <para>The class <classname>\F3\Address\AddressBook</classname> is
+          <para>The class <classname>\TYPO3\Address\AddressBook</classname> is
           supposed to be a Singleton and obviously depends on a third object
-          type <classname>\F3\iCal\iCalConnectorInterface</classname> which is
+          type <classname>\TYPO3\iCal\iCalConnectorInterface</classname> which is
           possibly solved by Dependency Injection (will be explained in a
           later section).</para>
         </listitem>
 
         <listitem>
-          <para>The class <classname>\F3\Address\Address</classname>
+          <para>The class <classname>\TYPO3\Address\Address</classname>
           represents the address entity and its instances must not be unique -
           we surely want more than one address. The Address object also
           expects a few parameters passed to its constructor.</para>
@@ -376,14 +376,14 @@ class Address {
 
         <programlisting language="php">// Explicitly fetch a unique instance of the address book (but better use 
 // Dependency Injection ...):
-$myAddressBook = $objectManager-&gt;getObject('F3\Address\AddressBook');
+$myAddressBook = $objectManager-&gt;getObject('TYPO3\Address\AddressBook');
 
 // Create two new addresses and add them to the address book:
-$newAddress = $objectManager-&gt;create('F3\Address\Address', 'Tryggevældevej', ↩
+$newAddress = $objectManager-&gt;create('TYPO3\Address\Address', 'Tryggevældevej', ↩
     '2720', 'København', 'DK');
 $myAddressbook-&gt;addAddress($newAddress);
 
-$newAddress = $objectManager-&gt;create('F3\Address\Address', 'An den Brodbänken', ↩
+$newAddress = $objectManager-&gt;create('TYPO3\Address\Address', 'An den Brodbänken', ↩
    '21335', 'Lüneburg', 'DE');
 $myAddressbook-&gt;addAddress($newAddress);</programlisting>
       </example>
@@ -476,7 +476,7 @@ $myAddressbook-&gt;addAddress($newAddress);</programlisting>
 		echo ('Constructing object ...');
 	}
 
-	public function injectBar(\F3\MyPackage\BarInterface $bar) {
+	public function injectBar(\MyCompany\MyPackage\BarInterface $bar) {
 		$this-&gt;bar = $bar;
 	}
 
@@ -523,7 +523,7 @@ Destructing object ...</screen>
 
       <para>For a list of available methods please refer to the API
       documentation of the interface
-      <classname>F3\FLOW3\Object\ObjectManagerInterface</classname>.</para>
+      <classname>TYPO3\FLOW3\Object\ObjectManagerInterface</classname>.</para>
     </section>
 
     <section>
@@ -531,7 +531,7 @@ Destructing object ...</screen>
 
       <para>By default, the name of an object is identical to the PHP class
       which contains the object's code. A class called
-      <classname>F3\MyPackage\MyImplementation</classname> will be
+      <classname>MyCompany\MyPackage\MyImplementation</classname> will be
       automatically available as an object with the exact same name. Every
       part of the system which asks for an object with a certain name will
       therefore - by default - get an instance of the class of that name. It
@@ -543,15 +543,15 @@ Destructing object ...</screen>
 
       <para>If the object name equals the name of a PHP interface, it is often
       referred to as a <emphasis>object type</emphasis>. An interface called
-      <interfacename>F3\MyPackage\MyInterface</interfacename> will be
+      <interfacename>MyCompany\MyPackage\MyInterface</interfacename> will be
       available as an object of the same name as long as there exists one
       class implementing that interface. Object types can be created and
       retrieved like regular objects:</para>
 
-      <programlisting language="php">$objectTypeInstance = $objectManager-&gt;create('F3\MyPackage\MyInterface');</programlisting>
+      <programlisting language="php">$objectTypeInstance = $objectManager-&gt;create('MyCompany\MyPackage\MyInterface');</programlisting>
 
       <para>If exactly one class implements the
-      <interfacename>F3\SomePackage\SomeInterfaceName</interfacename>
+      <interfacename>TYPO3\SomePackage\SomeInterfaceName</interfacename>
       interface, <varname>$otherObjectInstance</varname> will contain an
       instance of that class. If zero or more than one class implements the
       interface, the Object Factory will throw an exception.</para>
@@ -605,7 +605,7 @@ Destructing object ...</screen>
       <para>In the context of the previous example it means that the
       authentication object announces that it needs a logger which implements
       a certain PHP interface (e.g. the
-      <interfacename>F3\FLOW3\Log\Logger\BackendInterface</interfacename>).
+      <interfacename>TYPO3\FLOW3\Log\Logger\BackendInterface</interfacename>).
       The object itself has no control over what kind of logger backend
       (file-logger, sms-logger, ...) it finally gets and it doesn't have to
       care about it anyway as long as it matches the expected API. As soon as
@@ -643,13 +643,13 @@ Destructing object ...</screen>
         <example>
           <title>A simple example for Constructor Injection</title>
 
-          <programlisting language="php">namespace F3\MyPackage;
+          <programlisting language="php">namespace MyCompany\MyPackage;
 
 class Foo {
 
 	protected $bar;
 
-	public function __construct(\F3\MyPackage\BarInterface $bar) {
+	public function __construct(\MyCompany\MyPackage\BarInterface $bar) {
 		$this-&gt;bar = $bar;
 	}
 
@@ -661,7 +661,7 @@ class Foo {
 
         <para>So far there's nothing special about this class, it just makes
         sure that an instance of a class implementing the
-        <interfacename>\F3\MyPackage\BarInterface</interfacename> is passed to
+        <interfacename>\MyCompany\MyPackage\BarInterface</interfacename> is passed to
         the constructor. However, this is already a quite flexible approach
         because the type of <varname>$bar</varname> can be determined from
         outside by just passing one or the another implementation to the
@@ -671,7 +671,7 @@ class Foo {
         called <firstterm>Autowiring</firstterm> all dependencies which were
         declared in a constructor will be injected automagically if the
         constructor argument provides a type definition (i.e.
-        <classname>\F3\MyPackage\BarInterface</classname> in the above
+        <classname>\MyCompany\MyPackage\BarInterface</classname> in the above
         example). Autowiring is activated by default (but can be switched
         off), therefore all you have to do is to write your constructor
         method.</para>
@@ -684,15 +684,15 @@ class Foo {
         <example>
           <title>Objects.yaml file for Constructor Injection</title>
 
-          <programlisting language="yaml">F3\MyPackage\Foo:
+          <programlisting language="yaml">MyCompany\MyPackage\Foo:
   arguments:
-    1: { object: F3\MyPackage\Bar }</programlisting>
+    1: { object: MyCompany\MyPackage\Bar }</programlisting>
         </example>
 
         <para>The three lines above define that an object instance of
-        <interfacename>\F3\MyPackage\Bar</interfacename> must be passed to the
+        <interfacename>\MyCompany\MyPackage\Bar</interfacename> must be passed to the
         first argument of the constructor when an instance of the object
-        <classname>F3\MyPackage\Foo</classname> is created.</para>
+        <classname>MyCompany\MyPackage\Foo</classname> is created.</para>
       </section>
 
       <section>
@@ -708,13 +708,13 @@ class Foo {
         <example>
           <title>A simple example for Setter Injection</title>
 
-          <programlisting language="php">namespace F3\MyPackage;
+          <programlisting language="php">namespace MyCompany\MyPackage;
 
 class Foo {
 
 	protected $bar;
 
-	public function setBar(\F3\MyPackage\BarInterface $bar) {
+	public function setBar(\MyCompany\MyPackage\BarInterface $bar) {
 		$this-&gt;bar = $bar;
 	}
 
@@ -734,9 +734,9 @@ class Foo {
         <example>
           <title>Objects.yaml file for Setter Injection</title>
 
-          <programlisting language="php">F3\MyPackage\Foo:
+          <programlisting language="php">MyCompany\MyPackage\Foo:
   properties:
-    bar: { object: F3\MyPackage\BarInterface }</programlisting>
+    bar: { object: MyCompany\MyPackage\BarInterface }</programlisting>
         </example>
 
         <para>Unlike constructor injection, setter injection like in the above
@@ -752,13 +752,13 @@ class Foo {
           <title>The preferred way of Setter Injection, using an inject
           method</title>
 
-          <programlisting language="php">namespace F3\MyPackage;
+          <programlisting language="php">namespace MyCompany\MyPackage;
 
 class Foo {
 
 	protected $bar;
 
-	public function injectBar(\F3\MyPackage\BarInterface $bar) {
+	public function injectBar(\MyCompany\MyPackage\BarInterface $bar) {
 		$this-&gt;bar = $bar;
 	}
 
@@ -848,14 +848,14 @@ class Foo {
         <example>
           <title>Example for Property Injection</title>
 
-          <programlisting language="php">namespace F3\MyPackage;
+          <programlisting language="php">namespace MyCompany\MyPackage;
 
 class Foo {
 
 	/**
 	 * An instance of a BarInterface compatible object.
 	 *
-	 * @var \F3\MyPackage\BarInterface
+	 * @var \MyCompany\MyPackage\BarInterface
 	 * @inject
 	 */
 	protected $bar;
@@ -910,7 +910,7 @@ class Foo {
         <example>
           <title>Example for the magic injectSettings method</title>
 
-          <programlisting language="php">namespace F3\MyPackage;
+          <programlisting language="php">namespace MyCompany\MyPackage;
 
 class Foo {
 
@@ -949,7 +949,7 @@ class Foo {
       <example>
         <title>Marking a setter-injected dependency as optional</title>
 
-        <programlisting language="php">namespace F3\MyPackage;
+        <programlisting language="php">namespace MyCompany\MyPackage;
 
 /**
  * A very fooish class
@@ -957,18 +957,18 @@ class Foo {
 class Foo {
 
 	/**
-	 * @var \F3\MyPackage\BarInterface
+	 * @var \MyCompany\MyPackage\BarInterface
 	 */
 	protected $bar;
 
 	/**
 	 * Injects a bar-ish object
 	 *
-	 * @param \F3\MyPackage\BarInterface $bar a kind of Bar object
+	 * @param \MyCompany\MyPackage\BarInterface $bar a kind of Bar object
 	 * @return void
 	 * @optional
 	 */
-	public function injectBar(\F3\MyPackage\BarInterface $bar) {
+	public function injectBar(\MyCompany\MyPackage\BarInterface $bar) {
 		$this-&gt;bar = $bar;
 	}
 
@@ -1078,13 +1078,13 @@ class Foo {
 
 # @package MyPackage
 
-F3\MyPackage\Foo:
+MyCompany\MyPackage\Foo:
   arguments:
-    1: { object: F3\MyPackage\Baz }
+    1: { object: MyCompany\MyPackage\Baz }
     2: { value: "some string" }
     3: { value: false }
   properties:
-    bar: { object: F3\MyPackage\BarInterface }
+    bar: { object: MyCompany\MyPackage\BarInterface }
     enableCache: { setting: MyPackage.Cache.enable }</programlisting>
         </example>
       </section>
@@ -1140,10 +1140,10 @@ class SomeClass {
           <programlisting language="php">/**
  * This turns off autowiring for a single method:
  *
- * @param \F3\Foo\Bar $bar
+ * @param \TYPO3\Foo\Bar $bar
  * @autowiring off
  */
-public function injectMySpecialDependency(\F3\Foo\Bar $bar) {
+public function injectMySpecialDependency(\TYPO3\Foo\Bar $bar) {
 
 }</programlisting>
         </example>
@@ -1171,7 +1171,7 @@ public function injectMySpecialDependency(\F3\Foo\Bar $bar) {
       <example>
         <title>A simple Greeter class</title>
 
-        <programlisting language="php">namespace F3\MyPackage;
+        <programlisting language="php">namespace MyCompany\MyPackage;
 
 class Greeter {
 	public function sayHelloTo($name) {
@@ -1181,16 +1181,16 @@ class Greeter {
       </example>
 
       <para>During initialization the above class will automatically be
-      registered as the object <classname>F3\MyPackage\Greeter</classname> and
+      registered as the object <classname>MyCompany\MyPackage\Greeter</classname> and
       is available to other objects. In the class code of another object you
       might find these lines:</para>
 
       <example>
-        <title>Code using the object F3\MyPackage\Greeter</title>
+        <title>Code using the object MyCompany\MyPackage\Greeter</title>
 
         <programlisting language="php">  // Use setter injection for fetching an instance 
-  // of the \F3\MyPackage\Greeter object:
-public function injectGreeter(\F3\MyPackage\Greeter $greeter) {
+  // of the \MyCompany\MyPackage\Greeter object:
+public function injectGreeter(\MyCompany\MyPackage\Greeter $greeter) {
 	$this-&gt;greeter = $greeter;
 }
 
@@ -1201,17 +1201,17 @@ public function someAction() {
 
       <para>Great, that looks all fine and dandy but what if we want to use
       the much better object
-      <classname>\F3\OtherPackage\GreeterWithCompliments</classname>? Well,
+      <classname>\TYPO3\OtherPackage\GreeterWithCompliments</classname>? Well,
       you just configure the object
-      <classname>\F3\MyPackage\Greeter</classname> to use a different
+      <classname>\MyCompany\MyPackage\Greeter</classname> to use a different
       class:</para>
 
       <example>
         <title>Objects.yaml file for object replacement</title>
 
         <programlisting language="yaml">  // Change the name of the class which
-  // represents the object F3\MyPackage\Greeter
-F3\MyPackage\Greeter: className: F3\OtherPackage\GreeterWithCompliments</programlisting>
+  // represents the object MyCompany\MyPackage\Greeter
+MyCompany\MyPackage\Greeter: className: TYPO3\OtherPackage\GreeterWithCompliments</programlisting>
       </example>
 
       <para>Now all objects who ask for a traditional greeter will get the
@@ -1224,21 +1224,21 @@ F3\MyPackage\Greeter: className: F3\OtherPackage\GreeterWithCompliments</program
       <example>
         <title>The Greeter object type</title>
 
-        <programlisting language="php">namespace F3\MyPackage;
+        <programlisting language="php">namespace MyCompany\MyPackage;
 
 interface GreeterInterface {
 	public function sayHelloTo($name);
 }
 
-class Greeter implements \F3\MyPackage\GreeterInterface {
+class Greeter implements \MyCompany\MyPackage\GreeterInterface {
 	public function sayHelloTo($name) {
 		echo('Hello ' . $name);
 	}
 }
 
-namespace F3\OtherPackage;
+namespace TYPO3\OtherPackage;
 
-class GreeterWithCompliments implements \F3\MyPackage\GreeterInterface{
+class GreeterWithCompliments implements \MyCompany\MyPackage\GreeterInterface{
 	public function sayHelloTo($name) {
 		echo('Hello ' . $name . '! You look so great!');
 	}
@@ -1252,11 +1252,11 @@ class GreeterWithCompliments implements \F3\MyPackage\GreeterInterface{
 
       <example>
         <title>Code using the object type
-        F3\MyPackage\GreeterInterface</title>
+        MyCompany\MyPackage\GreeterInterface</title>
 
         <programlisting language="php">  // Use setter injection for fetching an instance ↩
-  // of the \F3\MyPackage\Greeter object:
-public function injectGreeter(\F3\MyPackage\GreeterInterface $greeter) {
+  // of the \MyCompany\MyPackage\Greeter object:
+public function injectGreeter(\MyCompany\MyPackage\GreeterInterface $greeter) {
 	$this-&gt;greeter = $greeter;
 }
 
@@ -1266,14 +1266,14 @@ public function someAction() {
       </example>
 
       <para>Finally we have to set which implementation of the
-      <interfacename>F3\MyPackage\GreeterInterface</interfacename> should be
+      <interfacename>MyCompany\MyPackage\GreeterInterface</interfacename> should be
       active:</para>
 
       <example>
         <title>Objects.yaml file for object type definition</title>
 
-        <para><programlisting language="yaml">F3\MyPackage\GreeterInterface:
-  className: 'F3\OtherPackage\GreeterWithCompliments'</programlisting></para>
+        <para><programlisting language="yaml">MyCompany\MyPackage\GreeterInterface:
+  className: 'TYPO3\OtherPackage\GreeterWithCompliments'</programlisting></para>
       </example>
     </section>
 
@@ -1328,7 +1328,7 @@ public function someAction() {
         <example>
           <title>Sample class for Constructor Injection</title>
 
-          <para><programlisting language="php">namespace F3\MyPackage;
+          <para><programlisting language="php">namespace MyCompany\MyPackage;
 
 class Foo {
 
@@ -1336,7 +1336,7 @@ class Foo {
 	protected $identifier;
 	protected $enableCache;
 
-	public function __construct(\F3\MyPackage\BarInterface $bar, $identifier, ↩
+	public function __construct(\MyCompany\MyPackage\BarInterface $bar, $identifier, ↩
     $enableCache) {
 		$this-&gt;bar = $bar;
 		$this-&gt;identifier = $identifier;
@@ -1352,9 +1352,9 @@ class Foo {
         <example>
           <title>Sample configuration for Constructor Injection</title>
 
-          <programlisting language="yaml">F3\MyPackage\Foo:
+          <programlisting language="yaml">MyCompany\MyPackage\Foo:
   arguments:
-    1: { object: F3\MyPackage\Bar }
+    1: { object: MyCompany\MyPackage\Bar }
     2: { value: "some string" }
     3: { setting: "MyPackage.Cache.enable" }</programlisting>
         </example>
@@ -1363,7 +1363,7 @@ class Foo {
           <para>It is usually not necessary to configure injection of objects
           explicitly. It is much more convent to just declare the type of the
           constructor arguments (like
-          <interfacename>F3\MyPackage\BarInterface</interfacename> in the
+          <interfacename>MyCompany\MyPackage\BarInterface</interfacename> in the
           above example) and let the autowiring feature configure and resolve
           the dependencies for you.</para>
         </note>
@@ -1379,7 +1379,7 @@ class Foo {
         <example>
           <title>Sample class for Setter Injection</title>
 
-          <para><programlisting language="php">namespace F3\MyPackage;
+          <para><programlisting language="php">namespace MyCompany\MyPackage;
 
 class Foo {
 
@@ -1387,7 +1387,7 @@ class Foo {
 	protected $identifier = 'Untitled';
 	protected $enableCache = FALSE;
 
-	public function injectBar(\F3\MyPackage\BarInterface $bar) {
+	public function injectBar(\MyCompany\MyPackage\BarInterface $bar) {
 		$this-&gt;bar = $bar;
 	}
 
@@ -1408,9 +1408,9 @@ class Foo {
         <example>
           <title>Sample configuration for Setter Injection</title>
 
-          <programlisting language="yaml">F3\MyPackage\Foo:
+          <programlisting language="yaml">MyCompany\MyPackage\Foo:
   properties:
-    bar: { object: F3\MyPackage\Bar }
+    bar: { object: MyCompany\MyPackage\Bar }
     identifier: { value: "some string" }
     enableCache: { setting: "MyPackage.Cache.enable" }</programlisting>
         </example>
@@ -1434,7 +1434,7 @@ class Foo {
         <example>
           <title>Injecting an object specified in the settings</title>
 
-          <programlisting language="yaml">F3\MyPackage\Foo:
+          <programlisting language="yaml">MyCompany\MyPackage\Foo:
   properties:
     bar: { object: MyPackage.fooStuff.barImplementation }</programlisting>
         </example>
@@ -1443,7 +1443,7 @@ class Foo {
           <title>Example Settings.yaml of MyPackage</title>
 
           <programlisting language="yaml">fooStuff:
-  barImplementation: F3\MyPackage\Bars\ASpecialBar</programlisting>
+  barImplementation: MyCompany\MyPackage\Bars\ASpecialBar</programlisting>
         </example>
       </section>
 
@@ -1466,16 +1466,16 @@ class Foo {
         <example>
           <title>Nesting object configuration</title>
 
-          <programlisting language="yaml">F3\MyPackage\Controller\StandardController:
+          <programlisting language="yaml">MyCompany\MyPackage\Controller\StandardController:
   properties:
     cache:
       object:
-        name: F3\FLOW3\Cache\VariableCache
+        name: TYPO3\FLOW3\Cache\VariableCache
         arguments:
           1: value: MyCache
           2: 
             object:
-              name: F3\FLOW3\Cache\Backend\File 
+              name: TYPO3\FLOW3\Cache\Backend\File 
               properties:
                 cacheDirectory: value: /tmp/</programlisting>
         </example>
@@ -1499,7 +1499,7 @@ class Foo {
         <example>
           <title>Turning off autowiring support in Objects.yaml</title>
 
-          <programlisting language="yaml">F3\MyPackage\MyObject:
+          <programlisting language="yaml">MyCompany\MyPackage\MyObject:
   autowiring: off;</programlisting>
         </example>
 
@@ -1519,12 +1519,12 @@ class Foo {
       all important settings and dependencies. As we have seen previously, a
       cache consists of a frontend, a backend and configuration options for
       that backend. Instead of creating and configuring these objects on your
-      own, you can use the <classname>F3\FLOW3\Cache\CacheFactory</classname>
+      own, you can use the <classname>TYPO3\FLOW3\Cache\CacheFactory</classname>
       which provides a convenient <methodname>create</methodname> method
       taking care of all the rest.</para>
 
-      <programlisting language="php">$myCache = $cacheFactory-&gt;create('MyCache', 'F3\FLOW3\Cache\VariableCache', ↩
-    'F3\FLOW3\Cache\Backend\File', array('cacheDirectory' =&gt; '/tmp'));</programlisting>
+      <programlisting language="php">$myCache = $cacheFactory-&gt;create('MyCache', 'TYPO3\FLOW3\Cache\VariableCache', ↩
+    'TYPO3\FLOW3\Cache\Backend\File', array('cacheDirectory' =&gt; '/tmp'));</programlisting>
 
       <para>It is possible to specify for each object if it should be created
       by a custom factory rather than the Object Builder. Consider the
@@ -1533,8 +1533,8 @@ class Foo {
       <example>
         <title>Sample configuration for a Custom Factory</title>
 
-        <programlisting language="yaml">F3\FLOW3\Cache\CacheInterface:
-  factoryObjectName: F3\FLOW3\Cache\CacheFactory
+        <programlisting language="yaml">TYPO3\FLOW3\Cache\CacheInterface:
+  factoryObjectName: TYPO3\FLOW3\Cache\CacheFactory
   factoryMethodName: create</programlisting>
       </example>
 
@@ -1549,11 +1549,11 @@ class Foo {
         <title>YAML configuration for a Custom Factory with default
         arguments</title>
 
-        <programlisting language="yaml">F3\FLOW3\Cache\CacheInterface:
-  factoryObjectName: F3\FLOW3\Cache\CacheFactory
+        <programlisting language="yaml">TYPO3\FLOW3\Cache\CacheInterface:
+  factoryObjectName: TYPO3\FLOW3\Cache\CacheFactory
   arguments:
-    2: value: F3\FLOW3\Cache\VariableCache
-    3: value: F3\FLOW3\Cache\Backend\File
+    2: value: TYPO3\FLOW3\Cache\VariableCache
+    3: value: TYPO3\FLOW3\Cache\Backend\File
     4: value: { cacheDirectory: /tmp }</programlisting>
       </example>
 
@@ -1564,7 +1564,7 @@ class Foo {
       </example>
 
       <para><varname>$objectManager</varname> is a reference to the
-      <classname>F3\FLOW3\Object\ObjectManager</classname>. The argument with
+      <classname>TYPO3\FLOW3\Object\ObjectManager</classname>. The argument with
       the value <literal>MyCache</literal> is passed to the Cache Factory as
       the first parameter. The required second and third argument and the
       optional fourth parameter are automatically built from the values
@@ -1586,18 +1586,18 @@ class Foo {
       object <emphasis>and</emphasis> after recreating/reconstituting an
       object, there are cases where different code should be executed. That is
       why the initialization method gets a parameter, which is one of the
-      <constant>\F3\FLOW3\Object\ObjectManagerInterface::INITIALIZATIONCAUSE_*</constant>
+      <constant>\TYPO3\FLOW3\Object\ObjectManagerInterface::INITIALIZATIONCAUSE_*</constant>
       constants:</para>
 
       <itemizedlist>
         <listitem>
-          <para><constant>\F3\FLOW3\Object\ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED</constant>
+          <para><constant>\TYPO3\FLOW3\Object\ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED</constant>
           if the object is newly created (i.e. the constructor has been
           called)</para>
         </listitem>
 
         <listitem>
-          <para><constant>\F3\FLOW3\Object\ObjectManagerInterface::INITIALIZATIONCAUSE_RECREATED</constant>
+          <para><constant>\TYPO3\FLOW3\Object\ObjectManagerInterface::INITIALIZATIONCAUSE_RECREATED</constant>
           if the object has been recreated/reconstituted (i.e. the constructor
           has not been called)</para>
         </listitem>
@@ -1611,7 +1611,7 @@ class Foo {
         <title>Objects.yaml configuration of the initialization and shutdown
         method</title>
 
-        <programlisting language="yaml">F3\MyPackage\MyObject:
+        <programlisting language="yaml">MyCompany\MyPackage\MyObject:
   lifecycleInitializationMethod: myInitializeMethodname
   lifecycleShutdownMethod: myShutdownMethodname</programlisting>
       </example>

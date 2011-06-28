@@ -28,7 +28,7 @@
         FLOW3.</para>
 
         <para>This means all classes are built like this:
-        <code>F3.<replaceable>PackageKey</replaceable>.<replaceable>SubNamespace</replaceable>.<replaceable>ClassName</replaceable></code>,
+        <code><replaceable>PackageKey</replaceable>.<replaceable>SubNamespace</replaceable>.<replaceable>ClassName</replaceable></code>,
         and this class is implemented in a JavaScript file located at
         <filename><replaceable>...
         Package</replaceable>/.../JavaScript/<replaceable>SubNamespace</replaceable>/<replaceable>ClassName</replaceable>.js</filename>.</para>
@@ -68,23 +68,23 @@
 
       <listitem>
         <para>Never create a class which has classes inside itself. Example:
-        if the class <classname>F3.TYPO3.Foo</classname> exists, it is
+        if the class <classname>TYPO3.Foo</classname> exists, it is
         prohibited to create a class
-        <classname>F3.TYPO3.Foo.Bar</classname>.You can easily check this: If
+        <classname>TYPO3.Foo.Bar</classname>.You can easily check this: If
         a directory with the same name as the JavaScript file exists, this is
         prohibited.</para>
 
         <para>Here follows an example:</para>
 
-        <programlisting>F3.TYPO3.Foo.Bar // implemented in .../Foo/Bar.js
-F3.TYPO3.Foo.Bar = ...
+        <programlisting>TYPO3.Foo.Bar // implemented in .../Foo/Bar.js
+TYPO3.Foo.Bar = ...
 
-F3.TYPO3.Foo // implemented in ...Foo.js
-F3.TYPO3.Foo = ..... <emphasis>overriding the "Bar" class</emphasis></programlisting>
+TYPO3.Foo // implemented in ...Foo.js
+TYPO3.Foo = ..... <emphasis>overriding the "Bar" class</emphasis></programlisting>
 
-        <para>So, if the class <classname>F3.TYPO3.Foo.Bar</classname> is
+        <para>So, if the class <classname>TYPO3.Foo.Bar</classname> is
         included <emphasis>before</emphasis>
-        <classname>F3.TYPO3.Foo</classname>, then the second class definition
+        <classname>TYPO3.Foo</classname>, then the second class definition
         completely overrides the <classname>Bar</classname> object. In order
         to prevent such issues, this constellation is forbidden.</para>
       </listitem>
@@ -165,7 +165,7 @@ F3.TYPO3.Foo = ..... <emphasis>overriding the "Bar" class</emphasis></programlis
       <example>
         <title>Example of a prototype class definition</title>
 
-        <programlisting>Ext.ns("F3.TYPO3.Content");<co
+        <programlisting>Ext.ns("TYPO3.TYPO3.Content");<co
             xml:id="prototypeClassDefinition.1" />
 
 /*                                                                        *
@@ -189,19 +189,19 @@ F3.TYPO3.Foo = ..... <emphasis>overriding the "Bar" class</emphasis></programlis
  *                                                                        */
 
 /**
- * @class F3.TYPO3.Content.FrontendEditor<co
+ * @class TYPO3.TYPO3.Content.FrontendEditor<co
             xml:id="prototypeClassDefinition.2" />
  *
  * The main frontend editor.<co xml:id="prototypeClassDefinition.3" />
  *
- * @namespace F3.TYPO3.Content<co xml:id="prototypeClassDefinition.4" />
+ * @namespace TYPO3.TYPO3.Content<co xml:id="prototypeClassDefinition.4" />
  * @extends Ext.Container
  */
-F3.TYPO3.Content.FrontendEditor = Ext.extend(Ext.Container, {<co
+TYPO3.TYPO3.Content.FrontendEditor = Ext.extend(Ext.Container, {<co
             xml:id="prototypeClassDefinition.5" />
 	// here comes the class contents
 });
-Ext.reg('F3.TYPO3.Content.FrontendEditor', F3.TYPO3.Content.FrontendEditor);<co
+Ext.reg('TYPO3.TYPO3.Content.FrontendEditor', TYPO3.TYPO3.Content.FrontendEditor);<co
             xml:id="prototypeClassDefinition.6" /></programlisting>
 
         <calloutlist>
@@ -243,11 +243,11 @@ Ext.reg('F3.TYPO3.Content.FrontendEditor', F3.TYPO3.Content.FrontendEditor);<co
       parameters. The possible configuration options need to be documented
       inside the class with the <code>@cfg</code> annotation:</para>
 
-      <programlisting>F3.TYPO3.Content.FrontendEditor = Ext.extend(Ext.Container, {
+      <programlisting>TYPO3.TYPO3.Content.FrontendEditor = Ext.extend(Ext.Container, {
 	/**
 	 * An explanation of the configuration option followed
 	 * by a blank line.
-	 * 
+	 *
 	 * @cfg {Number} configTwo
 	 */
 	configTwo: 10
@@ -265,7 +265,7 @@ Ext.reg('F3.TYPO3.Content.FrontendEditor', F3.TYPO3.Content.FrontendEditor);<co
       <example>
         <title>Example of a singleton class definition</title>
 
-        <programlisting>Ext.ns("F3.TYPO3.Core");
+        <programlisting>Ext.ns("TYPO3.TYPO3.Core");
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -288,15 +288,15 @@ Ext.reg('F3.TYPO3.Content.FrontendEditor', F3.TYPO3.Content.FrontendEditor);<co
  *                                                                        */
 
 /**
- * @class F3.TYPO3.Core.Application
+ * @class TYPO3.TYPO3.Core.Application
  *
  * The main entry point which controls the lifecycle of the application.
  *
- * @namespace F3.TYPO3.Core
+ * @namespace TYPO3.TYPO3.Core
  * @extends Ext.util.Observable
  * @singleton<co xml:id="singletonClassDefinition.1" />
  */
-F3.TYPO3.Core.Application = Ext.apply(new Ext.util.Observable, {<co
+TYPO3.TYPO3.Core.Application = Ext.apply(new Ext.util.Observable, {<co
             xml:id="singletonClassDefinition.2" />
 	// here comes the class contents
 });<co xml:id="singletonClassDefinition.3" /></programlisting>
@@ -377,13 +377,13 @@ F3.TYPO3.Core.Application = Ext.apply(new Ext.util.Observable, {<co
         <title>Example of a class doc comment without constructor</title>
 
         <programlisting>/**
- * @class F3.TYPO3.Foo.Bar
+ * @class Acme.Foo.Bar
  *
  * Some Description of the class,
  * which can possibly span multiple lines
  *
- * @namespace F3.TYPO3.Foo
- * @extends F3.TYPO3.Core.SomeOtherClass
+ * @namespace Acme.Foo
+ * @extends TYPO3.TYPO3.Core.SomeOtherClass
  */</programlisting>
       </example>
 
@@ -391,12 +391,12 @@ F3.TYPO3.Core.Application = Ext.apply(new Ext.util.Observable, {<co
         <title>Example of a class doc comment with constructor</title>
 
         <programlisting>/**
- * @class F3.TYPO3.Foo.ClassWithConstructor
+ * @class Acme.TYPO3.Foo.ClassWithConstructor
  *
  * This class has a constructor!
  *
- * @namespace F3.TYPO3.Foo
- * @extends F3.TYPO3.Core.SomeOtherClass
+ * @namespace Acme.TYPO3.Foo
+ * @extends TYPO3.TYPO3.Core.SomeOtherClass
  *
  * @constructor
  * @param {String} id The ID which to use
@@ -414,7 +414,7 @@ F3.TYPO3.Core.Application = Ext.apply(new Ext.util.Observable, {<co
       <title>Example of a method comment</title>
 
       <programlisting>...
-F3.TYPO3.Core.Application = Ext.apply(new Ext.util.Observable, { // this is just an example class definition
+TYPO3.TYPO3.Core.Application = Ext.apply(new Ext.util.Observable, { // this is just an example class definition
 	... propery definitions ...
 	/**
 	 * This is a method declaration; and the
@@ -478,7 +478,7 @@ F3.TYPO3.Core.Application = Ext.apply(new Ext.util.Observable, { // this is just
     the last line of its doc comment.</para>
 
     <programlisting>...
-F3.TYPO3.Core.Application = Ext.apply(new Ext.util.Observable, { // this is just an example class definition
+TYPO3.TYPO3.Core.Application = Ext.apply(new Ext.util.Observable, { // this is just an example class definition
 	/**
 	 * Explanation of the property
 	 * which is followed by a newline
@@ -601,7 +601,7 @@ function() {
 
         <programlisting>[
 	{
-		foo: 'bar'    
+		foo: 'bar'
 	}, {
 		x: y
 	}
@@ -733,17 +733,17 @@ jslint .</programlisting>
       <example>
         <title>Good Event Handler Code</title>
 
-        <programlisting>F3.TYPO3.Application.on('theEventName', this._onCustomEvent, this);</programlisting>
+        <programlisting>TYPO3.TYPO3.Application.on('theEventName', this._onCustomEvent, this);</programlisting>
       </example>
 
       <example>
         <title>Bad Event Handler Code</title>
 
-        <programlisting>F3.TYPO3.Application.on(
+        <programlisting>TYPO3.TYPO3.Application.on(
   'theEventName',
   function() {
     alert('Text');
-  }, 
+  },
   this
 );</programlisting>
       </example>
@@ -753,7 +753,7 @@ jslint .</programlisting>
 
       <para>Here follows an example:</para>
 
-      <programlisting>F3.TYPO3.Core.Application = Ext.apply(new Ext.util.Observable, { // this is just an example class definition
+      <programlisting>TYPO3.TYPO3.Core.Application = Ext.apply(new Ext.util.Observable, { // this is just an example class definition
 	/**
 	 * @event eventOne Event declaration
 	 */
@@ -791,7 +791,7 @@ jslint .</programlisting>
     <section>
       <title>How to extend data stores</title>
 
-      <programlisting>F3.TYPO3.Content.DummyStore = Ext.extend(Ext.data.Store, {
+      <programlisting>TYPO3.TYPO3.Content.DummyStore = Ext.extend(Ext.data.Store, {
 
 	constructor: function(cfg) {
 		cfg = cfg || {};
@@ -802,13 +802,13 @@ jslint .</programlisting>
 			cfg
 		);
 
-		F3.TYPO3.Content.DummyStore.superclass.constructor.call(
+		TYPO3.TYPO3.Content.DummyStore.superclass.constructor.call(
 			this,
 			config
 		);
 	}
 });
-Ext.reg('F3.TYPO3.Content.DummyStore', F3.TYPO3.Content.DummyStore);</programlisting>
+Ext.reg('TYPO3.TYPO3.Content.DummyStore', TYPO3.TYPO3.Content.DummyStore);</programlisting>
     </section>
   </section>
 
@@ -824,7 +824,7 @@ Ext.reg('F3.TYPO3.Content.DummyStore', F3.TYPO3.Content.DummyStore);</programlis
     possible.</para>
 
     <para>The namespace for the Unit test classes is
-    <classname>F3.Package.Tests</classname>.</para>
+    <classname>Package.Tests</classname>.</para>
 
     <para>TODO: Add some more information about Unit Testing for JS</para>
 

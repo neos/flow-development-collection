@@ -35,9 +35,9 @@
 
       <para>The first security advice (<literal>initializeSecurity</literal>
       in the
-      <literal>F3\FLOW3\Security\Aspect\RequestDispatchingAspect</literal>)
+      <literal>TYPO3\FLOW3\Security\Aspect\RequestDispatchingAspect</literal>)
       initializes the security context for the current request. The security
-      context (<literal>F3\FLOW3\Security\Context</literal>) shipped with
+      context (<literal>TYPO3\FLOW3\Security\Context</literal>) shipped with
       FLOW3, lies in session scope and holds context data like the current
       authentication status. That means, if you need data related to security,
       the security context (you can get it easily from the object manager)
@@ -104,8 +104,8 @@
           <title>Example for a simple login form</title>
 
           <programlisting language="xml">&lt;form action="flow3/authenticate" method="post" name="loginform"&gt;
-  &lt;input type="text" id="username" name="F3[FLOW3][Security][Authentication][Token][UsernamePassword][username]" value="" tabindex="1" /&gt;
-  &lt;input type="password" id="password" name="F3[FLOW3][Security][Authentication][Token][UsernamePassword][password]" value="" tabindex="2" /&gt;
+  &lt;input type="text" id="username" name="TYPO3[FLOW3][Security][Authentication][Token][UsernamePassword][username]" value="" tabindex="1" /&gt;
+  &lt;input type="password" id="password" name="TYPO3[FLOW3][Security][Authentication][Token][UsernamePassword][password]" value="" tabindex="2" /&gt;
   &lt;input type="submit" value="Login" tabindex="3" /&gt;
 &lt;/form&gt;</programlisting>
         </example></para>
@@ -163,7 +163,7 @@
             session.</para>
           </footnote>The constants are defined in the authentication token
         interface
-        (<literal>F3\FLOW3\Security\Authentication\TokenInterface</literal>)
+        (<literal>TYPO3\FLOW3\Security\Authentication\TokenInterface</literal>)
         and the status can be obtained from the
         <literal>getAuthenticationStatus()</literal>method of a token.<tip>
             <para>If you only want to know, if authentication was successful,
@@ -211,9 +211,9 @@
         token. The simple answer is: It's up to the token, to get them from
         somewhere. The default <literal>UsernamePassword</literal> token for
         example looks for a username and password in the two POST parameters:
-        <literal>F3\FLOW3\Security\Authentication\Token\UsernamePassword::username</literal>
+        <literal>TYPO3\FLOW3\Security\Authentication\Token\UsernamePassword::username</literal>
         and
-        <literal>F3\FLOW3\Security\Authentication\Token\UsernamePassword::password</literal>
+        <literal>TYPO3\FLOW3\Security\Authentication\Token\UsernamePassword::password</literal>
         (see <link linkend="UsingTheAuthenticationController">Using the
         authentication controller</link>). The framework only makes sure that
         <literal>updateCredentials()</literal> is called on every token, then
@@ -228,7 +228,7 @@
         <para>After the tokens have been initialized the original request will
         be processed by the resolved controller. In our case this is the
         special authentication controller
-        (<literal>F3\FLOW3\Security\Authentication\Controller\AuthenticationController</literal>)
+        (<literal>TYPO3\FLOW3\Security\Authentication\Controller\AuthenticationController</literal>)
         of FLOW3, which will call the authentication manager to authenticate
         the tokens. In turn the authentication manager calls all
         authentication providers in the configured order. A provider
@@ -241,7 +241,7 @@
         authentication provider to set the correct authentication status (see
         above) and <literal>Roles</literal> in its corresponding token. The
         role implementation resides in the
-        <literal>F3\FLOW3\Security\Poilcy</literal> namespace. (see the Policy
+        <literal>TYPO3\FLOW3\Security\Poilcy</literal> namespace. (see the Policy
         section for details).</para>
       </section>
     </section>
@@ -310,7 +310,7 @@
         provider:<example>
             <title>Add a new username/password account</title>
 
-            <programlisting language="php">$account = $this-&gt;objectManager-&gt;create('F3\FLOW3\Security\Account');
+            <programlisting language="php">$account = $this-&gt;objectManager-&gt;create('TYPO3\FLOW3\Security\Account');
 
 $username = 'andi';
 $password = 'secret';
@@ -319,7 +319,7 @@ $salt = 'someRandomSalt';
 $credentials = md5(md5($password) . $salt) . ',' . $salt;
 
 $roles = array(
-  $this-&gt;objectManager-&gt;create('F3\FLOW3\Security\Policy\Role', 'Administrator'),
+  $this-&gt;objectManager-&gt;create('TYPO3\FLOW3\Security\Policy\Role', 'Administrator'),
 );
 
 $account-&gt;setAccountIdentifier($username);
@@ -383,7 +383,7 @@ $this-&gt;accountRepository-&gt;add($account);</programlisting>
   authentication:
     providers:
       MyLDAPProvider:
-        providerClass: F3\MyCoolPackage\Security\Authentication\MyLDAPProvider
+        providerClass: TYPO3\MyCoolPackage\Security\Authentication\MyLDAPProvider
         options: 'Some LDAP configuration options'
       DefaultProvider:
         providerClass: PersistedUsernamePasswordProvider</programlisting></para>
@@ -442,14 +442,14 @@ $this-&gt;accountRepository-&gt;add($account);</programlisting>
   authentication:
     providers:
       MyLDAPProvider:
-        providerClass: F3\MyCoolPackage\Security\Authentication\MyLDAPProvider
+        providerClass: TYPO3\MyCoolPackage\Security\Authentication\MyLDAPProvider
         options: 'Some LDAP configuration options'
         requestPatterns:
-         controllerObjectName: F3\MyApplication\AdministrationArea\.*
+         controllerObjectName: TYPO3\MyApplication\AdministrationArea\.*
       DefaultProvider:
         providerClass: PersistedUsernamePasswordProvider
         requestPatterns:
-         controllerObjectName: F3\MyApplication\UserArea\.*</programlisting></para>
+         controllerObjectName: TYPO3\MyApplication\UserArea\.*</programlisting></para>
           </example></para>
 
         <para>Look at the new configuration option
@@ -483,7 +483,7 @@ $this-&gt;accountRepository-&gt;add($account);</programlisting>
         <tip>
           <para>You can easily implement your own pattern. Just implement the
           interface
-          "<literal>F3\FLOW3\Security\RequestPatternInterface</literal>" and
+          "<literal>TYPO3\FLOW3\Security\RequestPatternInterface</literal>" and
           configure the pattern with its full qualified namespace.</para>
         </tip>
 
@@ -517,7 +517,7 @@ $this-&gt;accountRepository-&gt;add($account);</programlisting>
 
                 <entry>Expects one regular expression, to match on the object
                 name. E.g.:
-                <literal>F3\MyApplication\AdministrationArea\.*</literal></entry>
+                <literal>TYPO3\MyApplication\AdministrationArea\.*</literal></entry>
               </row>
             </tbody>
           </tgroup>
@@ -557,7 +557,7 @@ $this-&gt;accountRepository-&gt;add($account);</programlisting>
         <para>Of course you can implement your own entry point and configure
         it by using its full qualified class name. Just make sure to implement
         the
-        "<literal>F3\FLOW3\Security\Authentication\EntryPointInterface</literal>"
+        "<literal>TYPO3\FLOW3\Security\Authentication\EntryPointInterface</literal>"
         interface.</para>
       </note>
 
@@ -619,9 +619,9 @@ $this-&gt;accountRepository-&gt;add($account);</programlisting>
 
         <para>The implementation of the corresponding authentication provider
         resides in the class
-        <literal>F3\FLOW3\Security\Authentication\Provider\PersistedUsernamePasswordProvider</literal>.
+        <literal>TYPO3\FLOW3\Security\Authentication\Provider\PersistedUsernamePasswordProvider</literal>.
         It is able to authenticate tokens of the type
-        <literal>F3\FLOW3\Security\Authentication\Token\UsernamePassword</literal>.
+        <literal>TYPO3\FLOW3\Security\Authentication\Token\UsernamePassword</literal>.
         It expects a credentials array in the token which looks like
         that:<programlisting language="php">array(
   'username' =&gt; 'admin',
@@ -630,7 +630,7 @@ $this-&gt;accountRepository-&gt;add($account);</programlisting>
 </programlisting></para>
 
         <para>It will try to find an account in the
-        <literal>F3\FLOW3\Security\AccountRepository</literal> that has the
+        <literal>TYPO3\FLOW3\Security\AccountRepository</literal> that has the
         username value as account identifier and fetch the credentials source,
         which has to be in the following format:<programlisting>MD5HashOfThePassword,Salt</programlisting><tip>
             <para>You should use a different, random salt for each
@@ -647,12 +647,12 @@ $this-&gt;accountRepository-&gt;add($account);</programlisting>
         <bridgehead>Token</bridgehead>
 
         <para>The username/password token is implemented in the class
-        <literal>F3\FLOW3\Security\Authentication\Token\UsernamePassword</literal>.
+        <literal>TYPO3\FLOW3\Security\Authentication\Token\UsernamePassword</literal>.
         It fetches the credentials from the HTTP POST data, look at the
         following program listing for details:<programlisting language="php">$postArguments = $environment-&gt;getRawPostArguments();
 
-$credentials['username'] = $postArguments['F3\FLOW3\Security\Authentication\Token\UsernamePassword::username'];
-$credentials['password'] = $postArguments['F3\FLOW3\Security\Authentication\Token\UsernamePassword::password'];
+$credentials['username'] = $postArguments['TYPO3\FLOW3\Security\Authentication\Token\UsernamePassword::username'];
+$credentials['password'] = $postArguments['TYPO3\FLOW3\Security\Authentication\Token\UsernamePassword::password'];
 </programlisting><note>
             <para>The token expects a plaintext password in the POST data.
             That does not mean, you have to transfer plaintext passwords,
@@ -676,7 +676,7 @@ $credentials['password'] = $postArguments['F3\FLOW3\Security\Authentication\Toke
 
       <para>You'll have to provide an authentication token, that implements
       the interface
-      <literal>F3\FLOW3\Security\Authentication\TokenInterface</literal>:</para>
+      <literal>TYPO3\FLOW3\Security\Authentication\TokenInterface</literal>:</para>
 
       <orderedlist>
         <listitem>
@@ -690,7 +690,7 @@ $credentials['password'] = $postArguments['F3\FLOW3\Security\Authentication\Toke
           <para>Implement the remaining methods of the interface. These are
           mostly getters and setters, have a look in one of the existing
           tokens (e.g.
-          <literal>F3\FLOW3\Security\Authentication\Token\UsernamePassword</literal>),
+          <literal>TYPO3\FLOW3\Security\Authentication\Token\UsernamePassword</literal>),
           if you need more information.</para>
         </listitem>
       </orderedlist>
@@ -699,7 +699,7 @@ $credentials['password'] = $postArguments['F3\FLOW3\Security\Authentication\Toke
 
       <para>After that you'll have to implement your own authentication
       strategy by providing a class, that implements the interface
-      <literal>F3\FLOW3\Security\Authentication\AuthenticationProviderInterface</literal>:</para>
+      <literal>TYPO3\FLOW3\Security\Authentication\AuthenticationProviderInterface</literal>:</para>
 
       <orderedlist>
         <listitem>
@@ -823,7 +823,7 @@ $credentials['password'] = $postArguments['F3\FLOW3\Security\Authentication\Toke
       protected and only be called by privileged users. In the chapter about
       AOP you've already read, that every method interception is implemented
       in a so called advice, which resides in an aspect class. Here we are:
-      the <literal>F3\FLOW3\Security\Aspect\PolicyEnforcementAspect</literal>.
+      the <literal>TYPO3\FLOW3\Security\Aspect\PolicyEnforcementAspect</literal>.
       Inside this aspect there is the <literal>enforcePolicy()</literal>
       advice, which hands over to FLOW3's authorization components.</para>
 
@@ -835,7 +835,7 @@ $credentials['password'] = $postArguments['F3\FLOW3\Security\Authentication\Toke
       throws an access denied exception. If you want, you could implement your
       own access decision manager. However, there is a very flexible one
       shipped with FLOW3
-      (<literal>F3\FLOW3\Security\Authorization\AccessDecisionVoterManager</literal>),
+      (<literal>TYPO3\FLOW3\Security\Authorization\AccessDecisionVoterManager</literal>),
       which uses the following voting process to meet its decision:</para>
 
       <orderedlist>
@@ -861,13 +861,13 @@ $credentials['password'] = $postArguments['F3\FLOW3\Security\Authentication\Toke
       voting. This makes the whole authorization process very flexible and
       very easily extensible. You can at any time write your own voter classes
       and register them, just make sure to implement the interface
-      <literal>F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface</literal>.
+      <literal>TYPO3\FLOW3\Security\Authorization\AccessDecisionVoterInterface</literal>.
       Then you have to register your custom voter as shown
       below:<programlisting language="yaml">security:
   authorization:
-    accessDecisionVoters: [F3\FLOW3\Security\Authorization\Voter\Policy, F3\MyPackage\Security\MyCustomVoter]</programlisting><note>
+    accessDecisionVoters: [TYPO3\FLOW3\Security\Authorization\Voter\Policy, MyCompany\MyPackage\Security\MyCustomVoter]</programlisting><note>
           <para>By default there is always one voter registered:
-          <literal>F3\FLOW3\Security\Authorization\Voter\Policy</literal>.
+          <literal>TYPO3\FLOW3\Security\Authorization\Voter\Policy</literal>.
           This voter connects the authorization system to the policy
           component, by returning a vote depending on the configured security
           policy. Read the section about Policies, to learn more about the
@@ -925,7 +925,7 @@ $credentials['password'] = $postArguments['F3\FLOW3\Security\Authentication\Toke
       <note>
         <para>Of course you can implement your own interceptor. Just make sure
         to implement the interface:
-        <literal>F3\FLOW3\Security\Authorization\InterceptorInterface</literal>.</para>
+        <literal>TYPO3\FLOW3\Security\Authorization\InterceptorInterface</literal>.</para>
       </note>
 
       <table>
@@ -983,9 +983,9 @@ $credentials['password'] = $postArguments['F3\FLOW3\Security\Authentication\Toke
           patternValue: /some/url/blocked.*
           interceptor:  AccessDeny
         -
-          patternType:  F3\MyPackage\Security\MyOwnRequestPattern
+          patternType:  MyCompany\MyPackage\Security\MyOwnRequestPattern
           patternValue: some pattern value
-          interceptor:  F3\MyPackage\Security\MyOwnSecurityInterceptor</programlisting></para>
+          interceptor:  MyCompany\MyPackage\Security\MyOwnSecurityInterceptor</programlisting></para>
         </example><note>
           <para>As you can see, you can easily use your own implementations
           for request patterns and security interceptors.</para>
@@ -1047,9 +1047,9 @@ $credentials['password'] = $postArguments['F3\FLOW3\Security\Authentication\Toke
 
         <para><programlisting language="yaml">resources:
   methods:
-   F3_FooPackage_update: 'method(F3\FooPackage\SomeClass-&gt;update.*())'
-   F3_FooPackage_delete: 'method(F3\FooPackage\.*-&gt;delete.*())'
-   F3_FooPackage_modify: 'F3_FooPackage_update || F3_FooPackage_delete'</programlisting></para>
+   TYPO3_FooPackage_update: 'method(TYPO3\FooPackage\SomeClass-&gt;update.*())'
+   TYPO3_FooPackage_delete: 'method(TYPO3\FooPackage\.*-&gt;delete.*())'
+   TYPO3_FooPackage_modify: 'TYPO3_FooPackage_update || TYPO3_FooPackage_delete'</programlisting></para>
       </example></para>
 
     <para>Each resource is defined by a unique name<footnote>
@@ -1078,14 +1078,14 @@ $credentials['password'] = $postArguments['F3\FLOW3\Security\Authentication\Toke
 
         <para><programlisting language="yaml">acls:
   Administrator:
-    F3_FooPackage_modify: GRANT
+    TYPO3_FooPackage_modify: GRANT
 
   Customer:
-    F3_FooPackage_modify: DENY
+    TYPO3_FooPackage_modify: DENY
 
   PrivilegedCustomer:
-    F3_FooPackage_update: GRANT
-    F3_FooPackage_delete: DENY
+    TYPO3_FooPackage_update: GRANT
+    TYPO3_FooPackage_delete: DENY
 </programlisting></para>
       </example>This will end up in <literal>Administrators</literal> being
     able to call all <literal>update*</literal> methods in the class
@@ -1110,8 +1110,8 @@ $credentials['password'] = $postArguments['F3\FLOW3\Security\Authentication\Toke
 
       <para><programlisting language="yaml">resources:
   methods:
-   F3_FooPackage_firstResource: 'method(F3\FooPackage\SomeClass-&gt;updateProject(title != "FLOW3"))'
-   F3_FooPackage_secondResource: F3_FooPackage_firstResource &amp;&amp; evaluate(current.party.name == "Andi")
+   TYPO3_FooPackage_firstResource: 'method(TYPO3\FooPackage\SomeClass-&gt;updateProject(title != "FLOW3"))'
+   TYPO3_FooPackage_secondResource: TYPO3_FooPackage_firstResource &amp;&amp; evaluate(current.party.name == "Andi")
 </programlisting></para>
     </example>
 
@@ -1131,7 +1131,7 @@ $credentials['password'] = $postArguments['F3\FLOW3\Security\Authentication\Toke
       so. If you are using the recommended Fluid templating engine, you can
       simply use the security view helpers shipped with Fluid. Otherwise you
       would have to ask the policy service
-      (<literal>F3\FLOW3\Security\Policy\PolicyService</literal>) for the
+      (<literal>TYPO3\FLOW3\Security\Policy\PolicyService</literal>) for the
       current privilege situation and implement the view logic on your own,
       however this seems not to be the best idea one can have. Below you'll
       find a short description of the available Fluid view helpers.</para>

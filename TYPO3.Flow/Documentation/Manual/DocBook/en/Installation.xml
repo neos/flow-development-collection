@@ -98,7 +98,7 @@
         parameters. On Debian Linux (Lenny) the commando would look like
         this:</para>
 
-        <para><command>./Packages/Framework/FLOW3/Scripts/setfilepermissions.sh
+        <para><command>./Packages/Framework/TYPO3/FLOW3/Scripts/setfilepermissions.sh
         johndoe www-data www-data</command></para>
       </step>
     </procedure>
@@ -152,13 +152,14 @@ remote: Total 3856 (delta 2016), reused 2721 (delta 1465)
 Receiving objects: 100% (3856/3856), 3.49 MiB | 1.18 MiB/s, done.
 Resolving deltas: 100% (2016/2016), done.
 Submodule 'Build/Common' (git://git.typo3.org/FLOW3/BuildEssentials.git) registered for path 'Build/Common'
-Submodule 'Packages/Framework/DocumentationBrowser' (git://git.typo3.org/FLOW3/Packages/DocumentationBrowser.git) registered for path 'Packages/Framework/DocumentationBrowser'
-Submodule 'Packages/Framework/ExtJS' (git://git.typo3.org/FLOW3/Packages/ExtJS.git) registered for path 'Packages/Framework/ExtJS'
-Submodule 'Packages/Framework/FLOW3' (git://git.typo3.org/FLOW3/Packages/FLOW3.git) registered for path 'Packages/Framework/FLOW3'
-Submodule 'Packages/Framework/Fluid' (git://git.typo3.org/FLOW3/Packages/Fluid.git) registered for path 'Packages/Framework/Fluid'
-Submodule 'Packages/Framework/Kickstart' (git://git.typo3.org/FLOW3/Packages/Kickstart.git) registered for path 'Packages/Framework/Kickstart'
-Submodule 'Packages/Framework/Party' (git://git.typo3.org/FLOW3/Packages/Party.git) registered for path 'Packages/Framework/Party'
-Submodule 'Packages/Framework/Welcome' (git://git.typo3.org/FLOW3/Packages/Welcome.git) registered for path 'Packages/Framework/Welcome'
+Submodule 'Packages/Framework/Doctrine' (git://git.typo3.org/FLOW3/Packages/Doctrine.git) registered for path 'Packages/Framework/Doctrine'
+Submodule 'Packages/Framework/TYPO3/DocumentationBrowser' (git://git.typo3.org/FLOW3/Packages/DocumentationBrowser.git) registered for path 'Packages/Framework/TYPO3/DocumentationBrowser'
+Submodule 'Packages/Framework/TYPO3/ExtJS' (git://git.typo3.org/FLOW3/Packages/ExtJS.git) registered for path 'Packages/Framework/TYPO3/ExtJS'
+Submodule 'Packages/Framework/TYPO3/FLOW3' (git://git.typo3.org/FLOW3/Packages/FLOW3.git) registered for path 'Packages/Framework/TYPO3/FLOW3'
+Submodule 'Packages/Framework/TYPO3/Fluid' (git://git.typo3.org/FLOW3/Packages/Fluid.git) registered for path 'Packages/Framework/TYPO3/Fluid'
+Submodule 'Packages/Framework/TYPO3/Kickstart' (git://git.typo3.org/FLOW3/Packages/Kickstart.git) registered for path 'Packages/Framework/TYPO3/Kickstart'
+Submodule 'Packages/Framework/TYPO3/Party' (git://git.typo3.org/FLOW3/Packages/Party.git) registered for path 'Packages/Framework/TYPO3/Party'
+Submodule 'Packages/Framework/TYPO3/Welcome' (git://git.typo3.org/FLOW3/Packages/Welcome.git) registered for path 'Packages/Framework/TYPO3/Welcome'
 Cloning into Build/Common...
 remote: Counting objects: 1420, done.
 remote: Compressing objects: 100% (617/617), done.
@@ -166,7 +167,7 @@ remote: Total 1420 (delta 816), reused 1375 (delta 794)
 Receiving objects: 100% (1420/1420), 3.08 MiB | 1.33 MiB/s, done.
 Resolving deltas: 100% (816/816), done.
 Submodule path 'Build/Common': checked out 'a40dd837c39f740a1679f43774f19835aad1abb3'
-Cloning into Packages/Framework/DocumentationBrowser...
+Cloning into Packages/Framework/Doctrine...
  ... more Git output follows ...
 </computeroutput></literallayout></para>
 
@@ -187,7 +188,7 @@ Cloning into Packages/Framework/DocumentationBrowser...
         parameters. On Debian Linux (Lenny) the commando would look like
         this:</para>
 
-        <para><command>./Packages/Framework/FLOW3/Scripts/setfilepermissions.sh
+        <para><command>./Packages/Framework/TYPO3/FLOW3/Scripts/setfilepermissions.sh
         johndoe www-data www-data</command></para>
       </step>
     </procedure>
@@ -240,16 +241,17 @@ Cloning into Packages/Framework/DocumentationBrowser...
         <para>Open <filename>Configuration/Settings.yaml</filename> and fill
         in the missing pieces of information.</para>
 
-        <para><literallayout>FLOW3:
-  persistence:
-    backendOptions:
-      driver: 'pdo_mysql' # adjust to your database type
-      dbname: 'flow3'     # adjust to your database name
-      user: 'root'        # adjust to your database user
-      password: ''        # adjust to your database password
-      host: '127.0.0.1'   # adjust to your database host
-      path: '127.0.0.1'   # adjust to your database host
-      port: 3306          # adjust to your database port</literallayout></para>
+        <para><literallayout>TYPO3:
+  FLOW3:
+    persistence:
+      backendOptions:
+        driver: 'pdo_mysql' # adjust to your database type
+        dbname: 'flow3'     # adjust to your database name
+        user: 'root'        # adjust to your database user
+        password: ''        # adjust to your database password
+        host: '127.0.0.1'   # adjust to your database host
+        path: '127.0.0.1'   # adjust to your database host
+        port: 3306          # adjust to your database port</literallayout></para>
 
         <tip>
           <para>If you do not have a
@@ -259,11 +261,16 @@ Cloning into Packages/Framework/DocumentationBrowser...
           scratch.</para>
         </tip>
       </step>
+
+      <step>
+        <para>Set up the database tables with:</para>
+
+        <para><command>./flow3_dev flow3:doctrine:migrate</command></para>
+      </step>
     </procedure>
 
-    <para>Now FLOW3 is ready to access your database, but you will need to
-    tell it how your database needs to be "migrated" to have a table structure
-    that matches your code. Information on this is available in the chapter on
-    the persistence layer.</para>
+    <para>Now FLOW3 is ready to access your database. More information on database
+    "migrations" to set up a table structure that matches your code is available in
+    the chapter on the persistence layer.</para>
   </section>
 </chapter>

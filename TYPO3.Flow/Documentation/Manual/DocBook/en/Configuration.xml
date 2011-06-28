@@ -185,7 +185,7 @@ TYPO3CR:
 
   # The storage backend configuration
   storage:
-    backend: 'F3\TYPO3CR\Storage\Backend\Pdo'
+    backend: 'TYPO3\TYPO3CR\Storage\Backend\Pdo'
     backendOptions:
       dataSourceName: 'sqlite:%FLOW3_PATH_DATA%Persistent/TYPO3CR.db'
       username: 
@@ -193,7 +193,7 @@ TYPO3CR:
 
   # The indexing/search backend configuration
   search:
-    backend: 'F3\TYPO3CR\Storage\Search\Lucene'
+    backend: 'TYPO3\TYPO3CR\Storage\Search\Lucene'
     backendOptions:
       indexLocation: '%FLOW3_PATH_DATA%Persistent/Index/'</programlisting>
       </example>
@@ -252,7 +252,7 @@ TYPO3CR:
       <example>
         <title>Settings Injection</title>
 
-        <programlisting language="php">namespace F3\Demo;
+        <programlisting language="php">namespace TYPO3\Demo;
 
 class SomeClass {
 
@@ -294,22 +294,22 @@ class SomeClass {
       <example>
         <title>Retrieving settings</title>
 
-        <programlisting language="php">namespace F3\Demo;
+        <programlisting language="php">namespace TYPO3\Demo;
 
 class SomeClass {
 
 	/**
-	 * @var \F3\FLOW3\Configuration\ConfigurationManager
+	 * @var \TYPO3\FLOW3\Configuration\ConfigurationManager
  	 */
 	protected $configurationManager;
 
 	/**
 	 * Inject the Configuration Manager
 	 *
-	 * @param \F3\FLOW3\Configuration\ConfigurationManager $configurationManager
+	 * @param \TYPO3\FLOW3\Configuration\ConfigurationManager $configurationManager
 	 * @return void
 	 */
-	public function injectConfigurationManager(\F3\FLOW3\Configuration\ConfigurationManager ⏎
+	public function injectConfigurationManager(\TYPO3\FLOW3\Configuration\ConfigurationManager ⏎
     $configurationManager) {
 		$this-&gt;configurationManager = $configurationManager;
 	}
@@ -320,7 +320,7 @@ class SomeClass {
 	 * @return void
 	 */
 	public function theMethod() {
-		$mySettings = $this-&gt;configurationManager-&gt;getConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Demo');
+		$mySettings = $this-&gt;configurationManager-&gt;getConfiguration(\TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Demo');
 		echo ($mySettings-&gt;administrator-&gt;name);
 		echo ($mySettings-&gt;administrator-&gt;email);
 	}

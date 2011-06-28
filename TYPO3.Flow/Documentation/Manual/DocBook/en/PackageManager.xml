@@ -361,8 +361,8 @@
     <filename>Classes</filename> directory will be detected and registered.
     However, this only works if you follow the naming rules equally for the
     class name as well as the file name. An example for a valid class name is
-    <classname>\MyPackage\Controller\StandardController</classname> while the
-    file containing this class would be named
+    <classname>\MyCompany\MyPackage\Controller\StandardController</classname> while
+    the file containing this class would be named
     <filename>StandardController.php</filename> and is expected to be in a
     directory <filename>MyPackage/Classes/Controller</filename>.</para>
 
@@ -499,9 +499,9 @@ c:\&gt; <command>setx FLOW3_WEBPATH C:\xampp\htdocs\tutorial\Web</command></scre
           <title>Minimal Package.php</title>
 
           <programlisting language="xml">&lt;?php
-namespace F3\FLOW3;
+namespace TYPO3\FLOW3;
 
-use \F3\FLOW3\Package\Package as BasePackage;
+use \TYPO3\FLOW3\Package\Package as BasePackage;
 
 /**
  * The FooBar Package

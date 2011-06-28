@@ -95,7 +95,7 @@
 
    /**
     * @inject
-    * @var \F3\FLOW3\Resource\ResourceManager
+    * @var \TYPO3\FLOW3\Resource\ResourceManager
     */
    protected $resourceManager;
 
@@ -110,7 +110,7 @@
    public function importImageAction($imagePathAndFilename) {
       $newResource = $this-&gt;resourceManager-&gt;importResource($imagePathAndFilename);
       
-      $newImage = $this-&gt;objectManager-&gt;create('F3\MyPackage\Domain\Model\Image');
+      $newImage = $this-&gt;objectManager-&gt;create('MyCompany\MyPackage\Domain\Model\Image');
       $newImage-&gt;setOriginalResource($newResource);
 
       $this-&gt;imageRepository-&gt;add($newImage);
@@ -194,7 +194,7 @@
 
    /**
     * @inject
-    * @var \F3\FLOW3\Resource\ResourceManager
+    * @var \TYPO3\FLOW3\Resource\ResourceManager
     */
    protected $resourceManager;
 
@@ -203,10 +203,10 @@
    /**
     * Creates a new image
     * 
-    * @param \F3\MyPacakge\Domain\Model\Image $newImage The new image
+    * @param \TYPO3\MyPacakge\Domain\Model\Image $newImage The new image
     * @return void
     */
-   public function createAction(\F3\MyPacakge\Domain\Model\Image $newImage) {
+   public function createAction(\TYPO3\MyPacakge\Domain\Model\Image $newImage) {
       $this-&gt;imageRepository-&gt;add($newImage);
       $this-&gt;forward('index');
    }
@@ -339,7 +339,7 @@
     <example>
       <title>Accessing static resources</title>
 
-      <programlisting language="php">$template = file_get_contents('resource://MyPackage/Private/Templates/SomeTemplate.html');</programlisting>
+      <programlisting language="php">$template = file_get_contents('resource://MyCompany\MyPackage/Private/Templates/SomeTemplate.html');</programlisting>
     </example>
 
     <para>Likewise you might get into a situation where you need to

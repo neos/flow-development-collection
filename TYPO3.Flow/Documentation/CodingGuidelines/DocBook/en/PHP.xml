@@ -71,8 +71,7 @@
 
           <para><orderedlist>
               <listitem>
-                <para>Declare your namespace. The namespace must start with
-                "F3"!</para>
+                <para>Declare your namespace.</para>
               </listitem>
 
               <listitem>
@@ -86,10 +85,10 @@
             <title>The FLOW3 standard file header</title>
 
             <programlisting language="php">&lt;?php
-namespace F3\Your\Stuff\Here;
+namespace YourCompany\Package\Stuff\Here;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script belongs to the FLOW3 package "Package".                    *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License as published by the *
@@ -180,9 +179,8 @@ public function getContextName() {
 
       <para>As a general note, english words (or abbreviations if neccessary)
       must be used for all class names, method names, comments, variables
-      names, database table and field names. Although PHP6 allows for using
-      funny japanese, tibetian or don't-know-what characters, the consensus is
-      that english is much better to read for the most of us.</para>
+      names, database table and field names. The consensus is that english is
+      much better to read for the most of us, compared to other languages.</para>
 
       <para>When using abbreviations or acronyms remember to make them
       camel-cased as needed, no all-uppercase stuff. Admittedly there are a
@@ -264,7 +262,7 @@ public function getContextName() {
 
             <tbody>
               <row>
-                <entry>\F3\FLOW3\Session\Php</entry>
+                <entry>\TYPO3\FLOW3\Session\Php</entry>
 
                 <entry>Php</entry>
 
@@ -272,7 +270,7 @@ public function getContextName() {
               </row>
 
               <row>
-                <entry>\F3\FLOW3\Cache\Backend\File</entry>
+                <entry>\TYPO3\FLOW3\Cache\Backend\File</entry>
 
                 <entry>File</entry>
 
@@ -280,7 +278,7 @@ public function getContextName() {
               </row>
 
               <row>
-                <entry>\F3\FLOW3\Session\Interface</entry>
+                <entry>\TYPO3\FLOW3\Session\Interface</entry>
 
                 <entry>Interface</entry>
 
@@ -288,7 +286,7 @@ public function getContextName() {
               </row>
 
               <row>
-                <entry>\F3\Foo\Controller\Default</entry>
+                <entry>\TYPO3\Foo\Controller\Default</entry>
 
                 <entry>Default</entry>
 
@@ -296,7 +294,7 @@ public function getContextName() {
               </row>
 
               <row>
-                <entry>\F3\FLOW3\Object\Manager</entry>
+                <entry>\TYPO3\FLOW3\Object\Manager</entry>
 
                 <entry>Manager</entry>
 
@@ -328,7 +326,7 @@ public function getContextName() {
 
             <tbody>
               <row>
-                <entry>\F3\FLOW3\Session\PhpSession</entry>
+                <entry>\TYPO3\FLOW3\Session\PhpSession</entry>
 
                 <entry>PHPSession</entry>
 
@@ -336,7 +334,7 @@ public function getContextName() {
               </row>
 
               <row>
-                <entry>\F3\FLOW3\Cache\Backend\FileBackend</entry>
+                <entry>\TYPO3\FLOW3\Cache\Backend\FileBackend</entry>
 
                 <entry>FileBackend</entry>
 
@@ -344,7 +342,7 @@ public function getContextName() {
               </row>
 
               <row>
-                <entry>\F3\FLOW3\Session\SessionInterface</entry>
+                <entry>\TYPO3\FLOW3\Session\SessionInterface</entry>
 
                 <entry>SessionInterface</entry>
 
@@ -352,7 +350,7 @@ public function getContextName() {
               </row>
 
               <row>
-                <entry>\F3\Foo\Controller\StandardController</entry>
+                <entry>\TYPO3\Foo\Controller\StandardController</entry>
 
                 <entry>StandardController</entry>
 
@@ -360,7 +358,7 @@ public function getContextName() {
               </row>
 
               <row>
-                <entry>\F3\FLOW3\Object\ObjectManager</entry>
+                <entry>\TYPO3\FLOW3\Object\ObjectManager</entry>
 
                 <entry>ObjectController</entry>
 
@@ -392,7 +390,7 @@ public function getContextName() {
 
             <tbody>
               <row>
-                <entry>\F3\FLOW3\MVC\ControllerInterface</entry>
+                <entry>\TYPO3\FLOW3\MVC\ControllerInterface</entry>
 
                 <entry>ControllerInterface</entry>
 
@@ -401,7 +399,7 @@ public function getContextName() {
               </row>
 
               <row>
-                <entry>\F3\FLOW3\MVC\Controller\ControllerInterface</entry>
+                <entry>\TYPO3\FLOW3\MVC\Controller\ControllerInterface</entry>
 
                 <entry/>
 
@@ -409,7 +407,7 @@ public function getContextName() {
               </row>
 
               <row>
-                <entry>\F3\FLOW3\Cache\AbstractBackend</entry>
+                <entry>\TYPO3\FLOW3\Cache\AbstractBackend</entry>
 
                 <entry>AbstractBackend</entry>
 
@@ -418,7 +416,7 @@ public function getContextName() {
               </row>
 
               <row>
-                <entry>\F3\FLOW3\Cache\Backend\AbstractBackend</entry>
+                <entry>\TYPO3\FLOW3\Cache\Backend\AbstractBackend</entry>
 
                 <entry/>
 
@@ -456,19 +454,19 @@ public function getContextName() {
 
           <itemizedlist>
             <listitem>
-              <para><classname>\F3\FLOW3\Object\ObjectInterface</classname></para>
+              <para><classname>\TYPO3\FLOW3\Object\ObjectInterface</classname></para>
             </listitem>
 
             <listitem>
-              <para><classname>\F3\FLOW3\Object\ObjectManagerInterface</classname></para>
+              <para><classname>\TYPO3\FLOW3\Object\ObjectManagerInterface</classname></para>
             </listitem>
 
             <listitem>
-              <para><classname>\F3\MyPackage\MyObject\MySubObjectInterface</classname></para>
+              <para><classname>\MyCompany\MyPackage\MyObject\MySubObjectInterface</classname></para>
             </listitem>
 
             <listitem>
-              <para><classname>\F3\MyPackage\MyObject\MyHtmlParserInterface</classname></para>
+              <para><classname>\MyCompany\MyPackage\MyObject\MyHtmlParserInterface</classname></para>
             </listitem>
           </itemizedlist>
         </example>
@@ -489,19 +487,19 @@ public function getContextName() {
 
           <itemizedlist>
             <listitem>
-              <para><classname>\F3\FLOW3\Object\Exception</classname></para>
+              <para><classname>\TYPO3\FLOW3\Object\Exception</classname></para>
             </listitem>
 
             <listitem>
-              <para><classname>\F3\FLOW3\Object\Exception\InvalidClassNameException</classname></para>
+              <para><classname>\TYPO3\FLOW3\Object\Exception\InvalidClassNameException</classname></para>
             </listitem>
 
             <listitem>
-              <para><classname>\F3\MyPackage\MyObject\Exception</classname></para>
+              <para><classname>\MyCompany\MyPackage\MyObject\Exception</classname></para>
             </listitem>
 
             <listitem>
-              <para><classname>\F3\MyPackage\MyObject\Exception\OutOfCoffeeException</classname></para>
+              <para><classname>\MyCompany\MyPackage\MyObject\Exception\OutOfCoffeeException</classname></para>
             </listitem>
           </itemizedlist>
         </example>
@@ -689,41 +687,41 @@ public function getContextName() {
                   <para><filename>TemplateEngine/TemplateEngineInterface.php</filename></para>
 
                   <para>Contains the interface
-                  <classname>\F3\TemplateEngine\TemplateEngineInterface</classname>
+                  <classname>\TYPO3\TemplateEngine\TemplateEngineInterface</classname>
                   which is part of the package
-                  <package>\F3\TemplateEngine</package></para>
+                  <package>\TYPO3\TemplateEngine</package></para>
                 </listitem>
 
                 <listitem>
                   <para><filename>Error/RuntimeException.php</filename></para>
 
                   <para>Contains the
-                  <classname>\F3\Error\RuntimeException</classname> being a
-                  part of the package <package>\F3\Error</package></para>
+                  <classname>\TYPO3\Error\RuntimeException</classname> being a
+                  part of the package <package>\TYPO3\Error</package></para>
                 </listitem>
 
                 <listitem>
                   <para><filename>DataAccess/Manager.php</filename></para>
 
                   <para>Contains class
-                  <classname>\F3\DataAccess\Manager</classname> which is part
-                  of the package <package>\F3\DataAccess</package></para>
+                  <classname>\TYPO3\DataAccess\Manager</classname> which is part
+                  of the package <package>\TYPO3\DataAccess</package></para>
                 </listitem>
 
                 <listitem>
                   <para><filename>FLOW3/Package/PackageManager.php</filename></para>
 
                   <para>Contains the class
-                  <classname>\F3\FLOW3\Package\PackageManager</classname>
+                  <classname>\TYPO3\FLOW3\Package\PackageManager</classname>
                   which is part of the package
-                  <package>\F3\FLOW3\Package</package></para>
+                  <package>\TYPO3\FLOW3\Package</package></para>
                 </listitem>
 
                 <listitem>
                   <para><filename>Package/PackageManagerTest.php</filename></para>
 
                   <para>Contains the class
-                  <classname>\F3\FLOW3\Package\PackageManagerTest</classname>
+                  <classname>\TYPO3\FLOW3\Package\PackageManagerTest</classname>
                   which is a test case for PHPUnit.</para>
                 </listitem>
               </itemizedlist></para>
@@ -791,7 +789,7 @@ public function getContextName() {
         <para>...<example>
             <title>Classes</title>
 
-            <programlisting language="php">namespace F3\MyPackage;
+            <programlisting language="php">namespace MyCompany\MyPackage;
 
 class MyObject {
 
@@ -1214,12 +1212,12 @@ protected $title = 'Untitled';</programlisting>
  *
  * Paragraphs are seperated by a empty line.
  *
- * @param \F3\Blog\Domain\Model\Post $post A post
+ * @param \TYPO3\Blog\Domain\Model\Post $post A post
  * @param string $someString This parameter should contain some string
  * @return void
  * @author Your Name &lt;your@email.here&gt;
  */
-public function addStringToPost(\F3\Blog\Domain\Model\Post $post, $someString) {
+public function addStringToPost(\TYPO3\Blog\Domain\Model\Post $post, $someString) {
  ...
 }</programlisting>
           </example></para>
@@ -1529,9 +1527,9 @@ public function fooBar() {
         even more general <classname>FLOW3</classname> exception). This all
         works because we have the following hierarchy:</para>
 
-        <literallayout>+ \F3\FLOW3\Exception
-  + \F3\FLOW3\Object\Exception
-    + \F3\FLOW3\Object\Exception\InvalidObjectNameException</literallayout>
+        <literallayout>+ \TYPO3\FLOW3\Exception
+  + \TYPO3\FLOW3\Object\Exception
+    + \TYPO3\FLOW3\Object\Exception\InvalidObjectNameException</literallayout>
 
         <section>
           <title>Throwing an exception</title>
@@ -1572,7 +1570,7 @@ public function fooBar() {
         <para><itemizedlist>
             <listitem>
               <para>When concatenating paths, always use
-              <methodname>\F3\FLOW3\Utility\Files::concatenatePaths()</methodname>
+              <methodname>\TYPO3\FLOW3\Utility\Files::concatenatePaths()</methodname>
               to avoid trouble.</para>
             </listitem>
           </itemizedlist></para>
@@ -1642,7 +1640,7 @@ public function fooBar() {
             <title>Namespace statement for .php files</title>
 
             <programlisting language="php">&lt;?php
-namespace F3\Your\Stuff\Here;
+namespace TYPO3\Your\Stuff\Here;
 
 ...</programlisting>
           </example>

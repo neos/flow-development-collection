@@ -58,7 +58,7 @@ $result = $propertyMapper-&gt;convert('12.5', 'float');
       <programlisting>/**
  * @entity
  */
-class TYPO3\MyPackage\Domain\Model\Person {
+class MyCompany\MyPackage\Domain\Model\Person {
   /**
    * @var string
    */
@@ -70,7 +70,7 @@ class TYPO3\MyPackage\Domain\Model\Person {
   protected $birthDate;
 
   /**
-   * @var TYPO3\MyPackage\Domain\Model\Person
+   * @var MyCompany\MyPackage\Domain\Model\Person
    */
   protected $mother;
 
@@ -81,8 +81,8 @@ $inputArray = array(
   'name' =&gt; 'John Fisher',
   'birthDate' =&gt; '1990-11-14T15:32:12+00:00'
 );
-$person = $propertyMapper-&gt;convert($inputArray, 'TYPO3\MyPackage\Domain\Model\Person');
-// $person is a newly created object of type TYPO3\MyPackage\Domain\Model\Person
+$person = $propertyMapper-&gt;convert($inputArray, 'MyCompany\MyPackage\Domain\Model\Person');
+// $person is a newly created object of type MyCompany\MyPackage\Domain\Model\Person
 // $person-&gt;name == 'John Fisher'
 // $person-&gt;birthDate is a DateTime object with the correct date set.</programlisting>
     </example>
@@ -95,7 +95,7 @@ $person = $propertyMapper-&gt;convert($inputArray, 'TYPO3\MyPackage\Domain\Model
 );</programlisting>
 
     <para>After calling <code>$propertyMapper-&gt;convert($input,
-    'TYPO3\MyPackage\Domain\Model\Person')</code>, we receive a new object of
+    'MyCompany\MyPackage\Domain\Model\Person')</code>, we receive a new object of
     type <code>Person</code> which has <code>$name</code> set to <code>John
     Fisher</code>, and <code>$birthDate</code> set to a <code>DateTime</code>
     object of the specified date. You might now wonder how the
@@ -140,7 +140,7 @@ $person = $propertyMapper-&gt;convert($inputArray, 'TYPO3\MyPackage\Domain\Model
     corresponding object to be fetched from the persistence layer:</para>
 
     <programlisting>$input = '14d20100-9d70-11e0-aa82-0800200c9a66';
-$person = $propertyMapper-&gt;convert($input, 'TYPO3\MyPackage\Domain\Model\Person');
+$person = $propertyMapper-&gt;convert($input, 'MyCompany\MyPackage\Domain\Model\Person');
 // The $person object with UUID 14d20100-9d70-11e0-aa82-0800200c9a66 is fetched from the persistence layer</programlisting>
 
     <programlisting>$input = array(
@@ -251,8 +251,8 @@ $propertyMapper-&gt;convert($source, $targetType, <emphasis>$propertyMappingConf
         configuration option for the expected date format:</para>
 
         <programlisting>$propertyMappingConfiguration-&gt;setTypeConverterOption(
-  'F3\FLOW3\Property\TypeConverter\DateTimeConverter',
-  \F3\FLOW3\Property\TypeConverter\DateTimeConverter::CONFIGURATION_DATE_FORMAT,
+  'TYPO3\FLOW3\Property\TypeConverter\DateTimeConverter',
+  \TYPO3\FLOW3\Property\TypeConverter\DateTimeConverter::CONFIGURATION_DATE_FORMAT,
   'Y-m-d'
 );</programlisting>
       </listitem>
@@ -281,8 +281,8 @@ $propertyMapper-&gt;convert($source, $targetType, <emphasis>$propertyMappingConf
 $propertyMappingConfiguration
   -&gt;<emphasis>forProperty('birthDate')
   </emphasis>-&gt;setTypeConverterOption(
-     'F3\FLOW3\Property\TypeConverter\DateTimeConverter',
-     \F3\FLOW3\Property\TypeConverter\DateTimeConverter::CONFIGURATION_DATE_FORMAT,
+     'TYPO3\FLOW3\Property\TypeConverter\DateTimeConverter',
+     \TYPO3\FLOW3\Property\TypeConverter\DateTimeConverter::CONFIGURATION_DATE_FORMAT,
      'Y-m-d'
   );</programlisting>
 
@@ -427,7 +427,7 @@ $propertyMappingConfiguration
 
           <itemizedlist>
             <listitem>
-              <para><code>F3\FLOW3\Property\TypeConverter\DateTimeConverter::CONFIGURATION_DATE_FORMAT</code>:
+              <para><code>TYPO3\FLOW3\Property\TypeConverter\DateTimeConverter::CONFIGURATION_DATE_FORMAT</code>:
               Date format to be used for conversion from string to DateTime,
               in a format understood by <code
               xlink:href="http://de3.php.net/manual/de/datetime.createfromformat.php">DateTime::createFromFormat</code>.
@@ -472,8 +472,8 @@ $dateTime = $propertyMapper-&gt;convert($inputData, 'DateTime');</programlisting
         <programlisting>$inputData = '15-08-2005';
 
 $propertyMappingConfiguration-&gt;setConfigurationOption(
-   'F3\FLOW3\Property\TypeConverter\DateTimeConverter',
-   \F3\FLOW3\Property\TypeConverter\DateTimeConverter::CONFIGURATION_DATE_FORMAT,
+   'TYPO3\FLOW3\Property\TypeConverter\DateTimeConverter',
+   \TYPO3\FLOW3\Property\TypeConverter\DateTimeConverter::CONFIGURATION_DATE_FORMAT,
    'd-m-Y'
 );
 
@@ -560,21 +560,21 @@ $dateTime = $propertyMapper-&gt;convert($inputData, 'DateTime');</programlisting
         <listitem>
           <para>Options<itemizedlist>
               <listitem>
-                <para><code>F3\FLOW3\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_TARGET_TYPE</code></para>
+                <para><code>TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_TARGET_TYPE</code></para>
 
                 <para>Set target type for a specific sub-property, effectively
                 overriding the class annotations.</para>
               </listitem>
 
               <listitem>
-                <para><code>F3\FLOW3\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED</code></para>
+                <para><code>TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED</code></para>
 
                 <para>If <code>TRUE</code>, modification on persistent objects
                 is performed if necessary.</para>
               </listitem>
 
               <listitem>
-                <para><code>F3\FLOW3\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED</code></para>
+                <para><code>TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED</code></para>
 
                 <para>If <code>TRUE</code>, creation of new objects is
                 performed if necessary.</para>
@@ -682,8 +682,8 @@ $myDomainObject = $propertyMapper-&gt;convert($inputData, 'My\Domain\Object\Here
 );
 
 $propertyMappingConfiguration-&gt;<emphasis>forProperty('role')-&gt;</emphasis>setConfigurationOption(
-   'F3\FLOW3\Property\TypeConverter\PersistentObjectConverter',
-   \F3\FLOW3\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_TARGET_TYPE,
+   'TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter',
+   \TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_TARGET_TYPE,
    'My\Role\Object'
 );
 
@@ -772,7 +772,7 @@ $myDomainObject = $propertyMapper-&gt;convert($inputData, 'My\Domain\Object\Here
       <title>Automatic resolving of type converters</title>
 
       <para>All type converters which implement
-      <interfacename>F3\FLOW3\Property\TypeConverterInterface</interfacename>
+      <interfacename>TYPO3\FLOW3\Property\TypeConverterInterface</interfacename>
       are automatically found in the resolving process. There are four API
       methods in each <code>TypeConverter</code> which influence the resolving
       process:</para>
