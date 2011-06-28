@@ -33,7 +33,7 @@ class CsrfProtectionAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @var array
 	 */
 	protected $arguments = array(
-		'@package' => 'MyPackage',
+		'@package' => 'Acme.MyPackage',
 		'@subpackage' => 'Subpackage',
 		'@controller' => 'Some',
 		'@action' => 'index',
@@ -43,7 +43,7 @@ class CsrfProtectionAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * Expected Controller object name
 	 * @var string
 	 */
-	protected $controllerObjectName = 'f3\\mypackage\\subpackage\\controller\\somecontroller';
+	protected $controllerObjectName = 'acme\\mypackage\\subpackage\\controller\\somecontroller';
 
 	/**
 	 * Arguments which have been set using UriBuilder::setArguments

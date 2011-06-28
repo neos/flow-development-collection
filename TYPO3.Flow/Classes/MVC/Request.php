@@ -204,21 +204,20 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 			throw new \F3\FLOW3\Object\Exception\UnknownObjectException('The object "' . $unknownCasedControllerObjectName . '" is not registered.', 1268844071);
 		}
 
+		$this->controllerPackageKey = $this->objectManager->getPackageKeyByObjectName($controllerObjectName);
+
 		$matches = array();
+		$subject = substr($controllerObjectName, strlen($this->controllerPackageKey) + 1);
 		preg_match('/
-			^F3
-			\\\\(?P<packageKey>[^\\\\]+)
-			\\\\
-			(
+			^(
 				Controller
 			|
 				(?P<subpackageKey>.+)\\\\Controller
 			)
 			\\\\(?P<controllerName>[a-z\\\\]+)Controller
-			$/ix', $controllerObjectName, $matches
+			$/ix', $subject, $matches
 		);
 
-		$this->controllerPackageKey = $matches['packageKey'];
 		$this->controllerSubpackageKey = (isset($matches['subpackageKey'])) ? $matches['subpackageKey'] : NULL;
 		$this->controllerName = $matches['controllerName'];
 	}

@@ -148,6 +148,14 @@ interface ObjectManagerInterface {
 	public function getClassNameByObjectName($objectName);
 
 	/**
+	 * Returns the key of the package the specified object is contained in.
+	 *
+	 * @param string $objectName The object name
+	 * @return string The package key or FALSE if no such object exists
+	 */
+	public function getPackageKeyByObjectName($objectName);
+
+	/**
 	 * Returns the scope of the specified object.
 	 *
 	 * @param string $objectName The object name

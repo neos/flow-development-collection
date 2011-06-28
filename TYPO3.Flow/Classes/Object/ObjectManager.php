@@ -316,6 +316,17 @@ class ObjectManager implements ObjectManagerInterface {
 	}
 
 	/**
+	 * Returns the key of the package the specified object is contained in.
+	 *
+	 * @param string $objectName The object name
+	 * @return string The package key or FALSE if no such object exists
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getPackageKeyByObjectName($objectName) {
+		return (isset($this->objects[$objectName]) ? $this->objects[$objectName]['p'] : FALSE);
+	}
+
+	/**
 	 * Initializes the session and loads all existing instances of scope session.
 	 *
 	 * @return void
@@ -327,8 +338,8 @@ class ObjectManager implements ObjectManagerInterface {
 		$this->session = $this->get('F3\FLOW3\Session\SessionInterface');
 		$this->session->start();
 
-		if ($this->session->hasKey('F3_FLOW3_Object_ObjectManager') === TRUE) {
-			$sessionObjects = $this->session->getData('F3_FLOW3_Object_ObjectManager');
+		if ($this->session->hasKey('TYPO3_FLOW3_Object_ObjectManager') === TRUE) {
+			$sessionObjects = $this->session->getData('TYPO3_FLOW3_Object_ObjectManager');
 			if (is_array($sessionObjects)) {
 				foreach ($sessionObjects as $object) {
 					if ($object instanceof \F3\FLOW3\Object\Proxy\ProxyInterface) {
@@ -341,7 +352,7 @@ class ObjectManager implements ObjectManagerInterface {
 			} else {
 					// Fallback for some malformed session data, if it is no array but something else.
 					// In this case, we reset all session objects (graceful degradation).
-				$this->session->putData('F3_FLOW3_Object_ObjectManager', array());
+				$this->session->putData('TYPO3_FLOW3_Object_ObjectManager', array());
 			}
 		}
 	}
@@ -397,7 +408,7 @@ class ObjectManager implements ObjectManagerInterface {
 					$sessionObjects[] = $information['i'];
 				}
 			}
-			$this->session->putData('F3_FLOW3_Object_ObjectManager', $sessionObjects);
+			$this->session->putData('TYPO3_FLOW3_Object_ObjectManager', $sessionObjects);
 			$this->session->close();
 		}
 	}
@@ -405,7 +416,7 @@ class ObjectManager implements ObjectManagerInterface {
 	/**
 	 * Returns the an array of package settings or a single setting value by the given path.
 	 *
-	 * @param array $settingsPath Path to the setting(s) as an array, for example array('FLOW3', 'persistence', 'backendOptions')
+	 * @param array $settingsPath Path to the setting(s) as an array, for example array('TYPO3.FLOW3', 'persistence', 'backendOptions')
 	 * @return mixed Either an array of settings or the value of a single setting
 	 */
 	public function getSettingsByPath(array $settingsPath) {

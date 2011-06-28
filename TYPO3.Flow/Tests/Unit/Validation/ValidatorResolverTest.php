@@ -123,10 +123,10 @@ class ValidatorResolverTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		$validatorResolver = $this->getMock('F3\FLOW3\Validation\ValidatorResolver', array('dummy'), array($mockObjectManager));
 
-		$result = $validatorResolver->getBaseValidatorConjunction('F3\Virtual\Foo');
+		$result = $validatorResolver->getBaseValidatorConjunction('TYPO3\Virtual\Foo');
 		$this->assertSame($mockConjunctionValidator, $result, '#1');
 
-		$result = $validatorResolver->getBaseValidatorConjunction('F3\Virtual\Foo');
+		$result = $validatorResolver->getBaseValidatorConjunction('TYPO3\Virtual\Foo');
 		$this->assertSame($mockConjunctionValidator, $result, '#2');
 	}
 
@@ -159,8 +159,8 @@ class ValidatorResolverTest extends \F3\FLOW3\Tests\UnitTestCase {
 						))),
 			array('$var Baz (Foo="B\"ar")', array('argumentName' => 'var', 'validators' => array(
 						array('validatorName' => 'Baz', 'validatorOptions' => array('Foo' => 'B"ar'))))),
-			array('$var F3\TestPackage\Quux', array('argumentName' => 'var', 'validators' => array(
-						array('validatorName' => 'F3\TestPackage\Quux', 'validatorOptions' => array())))),
+			array('$var TYPO3\TestPackage\Quux', array('argumentName' => 'var', 'validators' => array(
+						array('validatorName' => 'TYPO3\TestPackage\Quux', 'validatorOptions' => array())))),
 			array('$var Baz(Foo="5"), Bar(Quux="123")', array('argumentName' => 'var', 'validators' => array(
 							array('validatorName' => 'Baz', 'validatorOptions' => array('Foo' => '5')),
 							array('validatorName' => 'Bar', 'validatorOptions' => array('Quux' => '123'))))),
@@ -227,7 +227,7 @@ class ValidatorResolverTest extends \F3\FLOW3\Tests\UnitTestCase {
 			),
 			'validate' => array(
 				'$arg1 Foo(bar = baz), Bar',
-				'$arg2 F3\TestPackage\Quux'
+				'$arg2 TYPO3\TestPackage\Quux'
 			)
 		);
 
@@ -257,7 +257,7 @@ class ValidatorResolverTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$validatorResolver->expects($this->at(3))->method('createValidator')->with('array')->will($this->returnValue($mockArrayValidator));
 		$validatorResolver->expects($this->at(4))->method('createValidator')->with('Foo', array('bar' => 'baz'))->will($this->returnValue($mockFooValidator));
 		$validatorResolver->expects($this->at(5))->method('createValidator')->with('Bar')->will($this->returnValue($mockBarValidator));
-		$validatorResolver->expects($this->at(6))->method('createValidator')->with('F3\TestPackage\Quux')->will($this->returnValue($mockQuuxValidator));
+		$validatorResolver->expects($this->at(6))->method('createValidator')->with('TYPO3\TestPackage\Quux')->will($this->returnValue($mockQuuxValidator));
 
 		$validatorResolver->injectReflectionService($mockReflectionService);
 
@@ -274,17 +274,17 @@ class ValidatorResolverTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		$methodParameters = array(
 			'arg1' => array(
-				'type' => '\F3\Package\Model\Foo'
+				'type' => '\TYPO3\Package\Model\Foo'
 			),
 			'arg2' => array(
-				'type' => '\F3\Package\Model\Bar'
+				'type' => '\TYPO3\Package\Model\Bar'
 			)
 
 		);
 		$methodTagsValues = array(
 			'param' => array(
-				'\F3\Package\Model\Foo $arg1',
-				'\F3\Package\Model\Bar $arg2'
+				'\TYPO3\Package\Model\Foo $arg1',
+				'\TYPO3\Package\Model\Bar $arg2'
 			),
 			'validate' => array(
 				'$arg1.sub1a Validator1',
@@ -315,9 +315,9 @@ class ValidatorResolverTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		$validatorResolver = $this->getMock('F3\FLOW3\Validation\ValidatorResolver', array('createValidator'), array(), '', FALSE);
 		$validatorResolver->expects($this->at(0))->method('createValidator')->with('F3\FLOW3\Validation\Validator\ConjunctionValidator')->will($this->returnValue($conjunction1));
-		$validatorResolver->expects($this->at(1))->method('createValidator')->with('\F3\Package\Validator\FooValidator')->will($this->returnValue($mockFooValidator));
+		$validatorResolver->expects($this->at(1))->method('createValidator')->with('\TYPO3\Package\Validator\FooValidator')->will($this->returnValue($mockFooValidator));
 		$validatorResolver->expects($this->at(2))->method('createValidator')->with('F3\FLOW3\Validation\Validator\ConjunctionValidator')->will($this->returnValue($conjunction2));
-		$validatorResolver->expects($this->at(3))->method('createValidator')->with('\F3\Package\Validator\BarValidator')->will($this->returnValue($mockBarValidator));
+		$validatorResolver->expects($this->at(3))->method('createValidator')->with('\TYPO3\Package\Validator\BarValidator')->will($this->returnValue($mockBarValidator));
 		$validatorResolver->expects($this->at(4))->method('createValidator')->with('Validator1')->will($this->returnValue($mockPropertyValidator1));
 		$validatorResolver->expects($this->at(5))->method('createValidator')->with('F3\FLOW3\Validation\Validator\GenericObjectValidator')->will($this->returnValue($mockObjectValidator1));
 		$validatorResolver->expects($this->at(6))->method('createValidator')->with('Validator2')->will($this->returnValue($mockPropertyValidator2));
@@ -377,7 +377,7 @@ class ValidatorResolverTest extends \F3\FLOW3\Tests\UnitTestCase {
 				'string $arg1',
 			),
 			'validate' => array(
-				'$arg2 F3\TestPackage\Quux'
+				'$arg2 TYPO3\TestPackage\Quux'
 			)
 		);
 
@@ -393,7 +393,7 @@ class ValidatorResolverTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$validatorResolver = $this->getMock('F3\FLOW3\Validation\ValidatorResolver', array('createValidator'), array(), '', FALSE);
 		$validatorResolver->expects($this->at(0))->method('createValidator')->with('F3\FLOW3\Validation\Validator\ConjunctionValidator')->will($this->returnValue($conjunction1));
 		$validatorResolver->expects($this->at(1))->method('createValidator')->with('string')->will($this->returnValue($mockStringValidator));
-		$validatorResolver->expects($this->at(2))->method('createValidator')->with('F3\TestPackage\Quux')->will($this->returnValue($mockQuuxValidator));
+		$validatorResolver->expects($this->at(2))->method('createValidator')->with('TYPO3\TestPackage\Quux')->will($this->returnValue($mockQuuxValidator));
 
 		$validatorResolver->injectReflectionService($mockReflectionService);
 
@@ -494,7 +494,7 @@ class ValidatorResolverTest extends \F3\FLOW3\Tests\UnitTestCase {
 			'bar' => array(
 				'var' => array('integer'),
 				'validate' => array(
-					'F3\TestPackage\Quux'
+					'TYPO3\TestPackage\Quux'
 				)
 			)
 		);
@@ -520,7 +520,7 @@ class ValidatorResolverTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$validatorResolver->expects($this->at(1))->method('createValidator')->with('Foo', array('bar' => 'baz'))->will($this->returnValue($mockObjectValidator));
 		$validatorResolver->expects($this->at(2))->method('createValidator')->with('Bar')->will($this->returnValue($mockObjectValidator));
 		$validatorResolver->expects($this->at(3))->method('createValidator')->with('Baz')->will($this->returnValue($mockObjectValidator));
-		$validatorResolver->expects($this->at(4))->method('createValidator')->with('F3\TestPackage\Quux')->will($this->returnValue($mockObjectValidator));
+		$validatorResolver->expects($this->at(4))->method('createValidator')->with('TYPO3\TestPackage\Quux')->will($this->returnValue($mockObjectValidator));
 		$validatorResolver->expects($this->at(5))->method('createValidator')->with($className . 'Validator')->will($this->returnValue(NULL));
 
 		$result = $validatorResolver->_call('buildBaseValidatorConjunction', $className);

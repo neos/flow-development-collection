@@ -107,6 +107,7 @@ class Logger implements \F3\FLOW3\Log\SystemLoggerInterface, \F3\FLOW3\Log\Secur
 			$className = isset($backtrace[1]['class']) ? $backtrace[1]['class'] : NULL;
 			$methodName = isset($backtrace[1]['function']) ? $backtrace[1]['function'] : NULL;
 			$explodedClassName = explode('\\', $className);
+				// FIXME: This is not really the package key:
 			$packageKey = isset($explodedClassName[1]) ? $explodedClassName[1] : '';
 		}
 		foreach ($this->backends as $backend) {
@@ -134,6 +135,7 @@ class Logger implements \F3\FLOW3\Log\SystemLoggerInterface, \F3\FLOW3\Log\Secur
 		}
 
 		$explodedClassName = explode('\\', $className);
+			// FIXME: This is not really the package key:
 		$packageKey = (isset($explodedClassName[1])) ? $explodedClassName[1] : NULL;
 
 		$this->log($message, LOG_CRIT, $additionalData, $packageKey, $className, $methodName);

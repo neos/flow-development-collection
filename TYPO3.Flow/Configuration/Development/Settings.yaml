@@ -8,40 +8,43 @@
 # global Configuration directory and its sub directories.                #
 #                                                                        #
 
-FLOW3:
-  configuration:
-    compileConfigurationFiles: n
+TYPO3:
 
-  error:
-    exceptionHandler:
-      className: 'F3\FLOW3\Error\DebugExceptionHandler'
-    errorHandler:
-      exceptionalErrors: [%E_USER_ERROR%, %E_RECOVERABLE_ERROR%, %E_WARNING%, %E_NOTICE%, %E_USER_WARNING%, %E_USER_NOTICE%, %E_STRICT%]
+  FLOW3:
 
-  monitor:
-    detectClassChanges: y
+    configuration:
+      compileConfigurationFiles: n
 
-  persistence:
-    doctrine:
-      sqlLogger: 'F3\FLOW3\Persistence\Doctrine\Logging\SqlLogger'
+    error:
+      exceptionHandler:
+        className: 'F3\FLOW3\Error\DebugExceptionHandler'
+      errorHandler:
+        exceptionalErrors: [%E_USER_ERROR%, %E_RECOVERABLE_ERROR%, %E_WARNING%, %E_NOTICE%, %E_USER_WARNING%, %E_USER_NOTICE%, %E_STRICT%]
 
-  resource:
-    publishing:
-      detectPackageResourceChanges: y
+    monitor:
+      detectClassChanges: y
 
-  log:
-    systemLogger:
-      backendOptions:
-        logFileURL: %FLOW3_PATH_DATA%Logs/System_Development.log
-        createParentDirectories: y
-        severityThreshold: %LOG_DEBUG%
-    securityLogger:
-      backendOptions:
-        logFileURL: %FLOW3_PATH_DATA%Logs/Security_Development.log
-        createParentDirectories: y
-        severityThreshold: %LOG_DEBUG%
-    sqlLogger:
-      backendOptions:
-        logFileURL: %FLOW3_PATH_DATA%Logs/Query_Development.log
-        createParentDirectories: y
-        severityThreshold: %LOG_DEBUG%
+    persistence:
+      doctrine:
+        sqlLogger: 'F3\FLOW3\Persistence\Doctrine\Logging\SqlLogger'
+
+    resource:
+      publishing:
+        detectPackageResourceChanges: y
+
+    log:
+      systemLogger:
+        backendOptions:
+          logFileURL: %FLOW3_PATH_DATA%Logs/System_Development.log
+          createParentDirectories: y
+          severityThreshold: %LOG_DEBUG%
+      securityLogger:
+        backendOptions:
+          logFileURL: %FLOW3_PATH_DATA%Logs/Security_Development.log
+          createParentDirectories: y
+          severityThreshold: %LOG_DEBUG%
+      sqlLogger:
+        backendOptions:
+          logFileURL: %FLOW3_PATH_DATA%Logs/Query_Development.log
+          createParentDirectories: y
+          severityThreshold: %LOG_DEBUG%

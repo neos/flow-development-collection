@@ -35,8 +35,8 @@ class UsernamePasswordTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function credentialsAreSetCorrectlyFromPostArguments() {
 		$postArguments = array();
-		$postArguments['F3']['FLOW3']['Security']['Authentication']['Token']['UsernamePassword']['username'] = 'FLOW3';
-		$postArguments['F3']['FLOW3']['Security']['Authentication']['Token']['UsernamePassword']['password'] = 'verysecurepassword';
+		$postArguments['TYPO3']['FLOW3']['Security']['Authentication']['Token']['UsernamePassword']['username'] = 'johndoe';
+		$postArguments['TYPO3']['FLOW3']['Security']['Authentication']['Token']['UsernamePassword']['password'] = 'verysecurepassword';
 
 		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
 		$mockEnvironment->expects($this->once())->method('getRawPostArguments')->will($this->returnValue($postArguments));
@@ -47,7 +47,7 @@ class UsernamePasswordTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		$token->updateCredentials($mockRequest);
 
-		$expectedCredentials = array ('username' => 'FLOW3', 'password' => 'verysecurepassword');
+		$expectedCredentials = array ('username' => 'johndoe', 'password' => 'verysecurepassword');
 		$this->assertEquals($expectedCredentials, $token->getCredentials(), 'The credentials have not been extracted correctly from the POST arguments');
 	}
 
@@ -89,8 +89,8 @@ class UsernamePasswordTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function updateCredentialsSetsTheCorrectAuthenticationStatusIfNewCredentialsArrived() {
 		$postArguments = array();
-		$postArguments['F3']['FLOW3']['Security']['Authentication']['Token']['UsernamePassword']['username'] = 'FLOW3';
-		$postArguments['F3']['FLOW3']['Security']['Authentication']['Token']['UsernamePassword']['password'] = 'verysecurepassword';
+		$postArguments['TYPO3']['FLOW3']['Security']['Authentication']['Token']['UsernamePassword']['username'] = 'TYPO3.FLOW3';
+		$postArguments['TYPO3']['FLOW3']['Security']['Authentication']['Token']['UsernamePassword']['password'] = 'verysecurepassword';
 
 		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
 		$mockEnvironment->expects($this->once())->method('getRawPostArguments')->will($this->returnValue($postArguments));

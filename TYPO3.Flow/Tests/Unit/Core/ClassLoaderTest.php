@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\Core;
+namespace TYPO3\FLOW3\Tests\Unit\Core;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -29,9 +29,16 @@ namespace F3\FLOW3\Tests\Unit\Core;
 class ClassLoaderTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
-	 * @var \F3\FLOW3\Core\ClassLoader
+	 * @var \TYPO3\FLOW3\Core\ClassLoader
 	 */
 	protected $classLoader;
+
+	/**
+	 * Test flag used in in this test case
+	 *
+	 * @var boolean
+	 */
+	public static $testClassWasLoaded = FALSE;
 
 	/**
 	 * @author Karsten Dambekalns <karsten@typo3.org>
@@ -39,34 +46,30 @@ class ClassLoaderTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function setUp() {
 		\vfsStreamWrapper::register();
+		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('Test'));
 
-		$mockPackage = $this->getMock('F3\FLOW3\Package\Package', array(), array(), '', FALSE);
-		$mockPackage->expects($this->any())->method('getClassesPath')->will($this->returnValue(\vfsStream::url('Virtual/Classes/')));
-		$mockPackage->expects($this->any())->method('getFunctionalTestsPath')->will($this->returnValue(\vfsStream::url('Virtual/Tests/Functional/')));
-		$mockPackages = array(
-			'Virtual' => $mockPackage
-		);
+		mkdir('vfs://Test/Packages/Application/Acme/MyApp/Classes/', 0770, TRUE);
+		$package1 = new \TYPO3\FLOW3\Package\Package('Acme.MyApp', 'vfs://Test/Packages/Application/Acme/MyApp/');
+		mkdir('vfs://Test/Packages/Application/Acme/MyAppAddon/Classes/', 0770, TRUE);
+		$package2 = new \TYPO3\FLOW3\Package\Package('Acme.MyAppAddon', 'vfs://Test/Packages/Application/Acme/MyAppAddon/');
 
-		$this->classLoader = new \F3\FLOW3\Core\ClassLoader();
-		$this->classLoader->setPackages($mockPackages);
+		$this->classLoader = new \TYPO3\FLOW3\Core\ClassLoader();
+		$this->classLoader->setPackages(array('Acme.MyApp' => $package1, 'Acme.MyAppAddon' => $package2));
 	}
 
 	/**
 	 * Checks if the package autoloader loads classes from subdirectories.
 	 *
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function classesFromSubDirectoriesAreLoaded() {
-		$root = \vfsStream::newDirectory('Packages/Virtual/Classes/SubDirectory');
-		\vfsStreamWrapper::setRoot($root);
+		mkdir('vfs://Test/Packages/Application/Acme/MyApp/Classes/SubDirectory', 0770, TRUE);
+		file_put_contents('vfs://Test/Packages/Application/Acme/MyApp/Classes/SubDirectory/ClassInSubDirectory.php', '<?php ' . __CLASS__ . '::$testClassWasLoaded = TRUE; ?>');
 
-		$vfsClassFile = \vfsStream::newFile('ClassInSubDirectory.php')
-			->withContent('<?php ?>')
-			->at($root->getChild('Virtual/Classes/SubDirectory'));
-
-		$this->classLoader->loadClass('F3\Virtual\SubDirectory\ClassInSubDirectory');
-		$this->assertTrue($vfsClassFile->eof());
+		self::$testClassWasLoaded = FALSE;
+		$this->classLoader->loadClass('Acme\MyApp\SubDirectory\ClassInSubDirectory');
+		$this->assertTrue(self::$testClassWasLoaded);
 	}
 
 	/**
@@ -76,32 +79,41 @@ class ClassLoaderTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function classesFromFunctionalTestsDirectoriesAreLoaded() {
-		$root = \vfsStream::newDirectory('Packages/Virtual/Tests/Functional/SubDirectory');
-		\vfsStreamWrapper::setRoot($root);
-
-		$vfsClassFile = \vfsStream::newFile('ClassInSubDirectory.php')
-			->withContent('<?php ?>')
-			->at($root->getChild('Virtual/Tests/Functional/SubDirectory'));
-
-		$this->classLoader->loadClass('F3\Virtual\Tests\Functional\SubDirectory\ClassInSubDirectory');
-		$this->assertTrue($vfsClassFile->eof());
+		mkdir('vfs://Test/Packages/Application/Acme/MyApp/Tests/Functional/Essentials', 0770, TRUE);
+		file_put_contents('vfs://Test/Packages/Application/Acme/MyApp/Tests/Functional/Essentials/LawnMowerTest.php', '<?php ' . __CLASS__ . '::$testClassWasLoaded = TRUE; ?>');
+		self::$testClassWasLoaded = FALSE;
+		$this->classLoader->loadClass('Acme\MyApp\Tests\Functional\Essentials\LawnMowerTest');
+		$this->assertTrue(self::$testClassWasLoaded);
 	}
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function classesFromVeryDeeplyNestedSubDirectoriesAreLoaded() {
-		$root = \vfsStream::newDirectory('Packages/Virtual/Classes/SubDirectory/A/B/C/D/E/F/G/H/I/J');
-		\vfsStreamWrapper::setRoot($root);
+		mkdir('vfs://Test/Packages/Application/Acme/MyApp/Classes/SubDirectory/A/B/C/D/E/F/G/H/I/J', 0770, TRUE);
+		file_put_contents('vfs://Test/Packages/Application/Acme/MyApp/Classes/SubDirectory/A/B/C/D/E/F/G/H/I/J/K.php', '<?php ' . __CLASS__ . '::$testClassWasLoaded = TRUE; ?>');
 
-		$vfsClassFile = \vfsStream::newFile('TheClass.php')
-			->withContent('<?php ?>')
-			->at($root->getChild('Virtual/Classes/SubDirectory/A/B/C/D/E/F/G/H/I/J'));
+		self::$testClassWasLoaded = FALSE;
+		$this->classLoader->loadClass('Acme\MyApp\SubDirectory\A\B\C\D\E\F\G\H\I\J\K');
+		$this->assertTrue(self::$testClassWasLoaded);
+	}
 
-		$this->classLoader->loadClass('F3\Virtual\SubDirectory\A\B\C\D\E\F\G\H\I\J\TheClass');
+	/**
+	 * Checks if the package autoloader loads classes from packages that match a
+	 * substring of another package (e.g. TYPO3CR vs TYPO3).
+	 *
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function classesFromSubMatchingPackagesAreLoaded() {
+		mkdir('vfs://Test/Packages/Application/Acme/MyApp/Classes', 0770, TRUE);
+		mkdir('vfs://Test/Packages/Application/Acme/MyAppAddon/Classes', 0770, TRUE);
+		file_put_contents('vfs://Test/Packages/Application/Acme/MyAppAddon/Classes/Class.php', '<?php ' . __CLASS__ . '::$testClassWasLoaded = TRUE; ?>');
 
-		$this->assertTrue($vfsClassFile->eof());
+		self::$testClassWasLoaded = FALSE;
+		$this->classLoader->loadClass('Acme\MyAppAddon\Class');
+		$this->assertTrue(self::$testClassWasLoaded);
 	}
 
 }

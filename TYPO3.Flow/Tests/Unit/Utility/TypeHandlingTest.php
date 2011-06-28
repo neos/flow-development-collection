@@ -55,12 +55,12 @@ class TypeHandlingTest extends \F3\FLOW3\Tests\UnitTestCase {
 			array('int', array('type' => 'integer', 'elementType' => NULL)),
 			array('string', array('type' => 'string', 'elementType' => NULL)),
 			array('DateTime', array('type' => 'DateTime', 'elementType' => NULL)),
-			array('F3\Foo\Bar', array('type' => 'F3\Foo\Bar', 'elementType' => NULL)),
-			array('\F3\Foo\Bar', array('type' => 'F3\Foo\Bar', 'elementType' => NULL)),
+			array('TYPO3\Foo\Bar', array('type' => 'TYPO3\Foo\Bar', 'elementType' => NULL)),
+			array('\TYPO3\Foo\Bar', array('type' => 'TYPO3\Foo\Bar', 'elementType' => NULL)),
 			array('array<integer>', array('type' => 'array', 'elementType' => 'integer')),
 			array('ArrayObject<string>', array('type' => 'ArrayObject', 'elementType' => 'string')),
-			array('SplObjectStorage<F3\Foo\Bar>', array('type' => 'SplObjectStorage', 'elementType' => 'F3\Foo\Bar')),
-			array('SplObjectStorage<\F3\Foo\Bar>', array('type' => 'SplObjectStorage', 'elementType' => 'F3\Foo\Bar')),
+			array('SplObjectStorage<TYPO3\Foo\Bar>', array('type' => 'SplObjectStorage', 'elementType' => 'TYPO3\Foo\Bar')),
+			array('SplObjectStorage<\TYPO3\Foo\Bar>', array('type' => 'SplObjectStorage', 'elementType' => 'TYPO3\Foo\Bar')),
 		);
 	}
 

@@ -3,252 +3,253 @@
 #                                                                        #
 # This file contains the default base configuration for the FLOW3        #
 # Framework. Don't modify this file but add configuration options to     #
-# the FLOW3.yaml file in the in global Configuration/ directory instead. #
+# the Settings.yaml file in the in global Configuration/ directory       #
+# instead.                                                               #
 #                                                                        #
 
-# @package FLOW3
+TYPO3:
 
-FLOW3:
+  FLOW3:
 
-  aop:
+    aop:
 
-    # Registers global objects to be evaluated for dynamic pointcut expressions
-    globalObjects:
-      securityContext: F3\FLOW3\Security\Context
+      # Registers global objects to be evaluated for dynamic pointcut expressions
+      globalObjects:
+        securityContext: F3\FLOW3\Security\Context
 
-  configuration:
+    configuration:
 
-    # Enables the configuration file cache which compiles YAML files into
-    # much faster to load PHP files.
-    #
-    # NOTE: You must clear all caches right after switching this option OFF
-    compileConfigurationFiles: y
+      # Enables the configuration file cache which compiles YAML files into
+      # much faster to load PHP files.
+      #
+      # NOTE: You must clear all caches right after switching this option OFF
+      compileConfigurationFiles: y
 
-  core:
+    core:
 
-    # FLOW3's application context
-    # This setting is automatically set by the configuration manager and can't be set manually.
-    context: ''
+      # FLOW3's application context
+      # This setting is automatically set by the configuration manager and can't be set manually.
+      context: ''
 
-    # Path and filename of the PHP binary
-    # The constant PHP_BINDIR usually contains the path, but on Windows this doesn't work reliably
-    phpBinaryPathAndFilename: '%PHP_BINDIR%/php'
+      # Path and filename of the PHP binary
+      # The constant PHP_BINDIR usually contains the path, but on Windows this doesn't work reliably
+      phpBinaryPathAndFilename: '%PHP_BINDIR%/php'
 
-  error:
+    error:
 
-    exceptionHandler:
+      exceptionHandler:
 
-      # Defines the global, last-resort exception handler.
-      # The specified class must implement \F3\FLOW3\Error\ExceptionHandlerInterface
-      className: F3\FLOW3\Error\ProductionExceptionHandler
+        # Defines the global, last-resort exception handler.
+        # The specified class must implement \F3\FLOW3\Error\ExceptionHandlerInterface
+        className: F3\FLOW3\Error\ProductionExceptionHandler
 
-    errorHandler:
+      errorHandler:
 
-      # Defines which errors should result in an exception thrown - all other error
-      # levels will be silently ignored. Only errors that can be handled in an
-      # user-defined error handler are affected, of course.
-      exceptionalErrors: [%E_USER_ERROR%, %E_RECOVERABLE_ERROR%]
+        # Defines which errors should result in an exception thrown - all other error
+        # levels will be silently ignored. Only errors that can be handled in an
+        # user-defined error handler are affected, of course.
+        exceptionalErrors: [%E_USER_ERROR%, %E_RECOVERABLE_ERROR%]
 
-  log:
+    log:
 
-    # Settings for FLOW3's default loggers
-    systemLogger:
-      backend: F3\FLOW3\Log\Backend\FileBackend
+      # Settings for FLOW3's default loggers
+      systemLogger:
+        backend: F3\FLOW3\Log\Backend\FileBackend
+        backendOptions:
+           logFileURL: %FLOW3_PATH_DATA%Logs/System.log
+           createParentDirectories: y
+           severityThreshold: %LOG_INFO%
+           maximumLogFileSize: 10485760
+           logFilesToKeep: 1
+
+      securityLogger:
+        backend: F3\FLOW3\Log\Backend\FileBackend
+        backendOptions:
+           logFileURL: %FLOW3_PATH_DATA%Logs/Security.log
+           createParentDirectories: y
+           severityThreshold: %LOG_INFO%
+           maximumLogFileSize: 10485760
+           logFilesToKeep: 1
+           logIpAddress: y
+
+    locale:
+
+      # The default locale identifier.
+      defaultLocaleIdentifier: en
+
+      # The default locale.
+      #
+      # This configuration option is automatically filled by FLOW3's locale
+      # framework with a locale object considered to be the default locale
+      # of the application.
+      #
+      # The locale object will usually reflect the setting made in
+      # defaultLocaleIdentifier. However, depending on the application,
+      # it might be overriden by the application's user settings or auto detection
+      # mechanisms.
+      #
+      # It is recommended that all objects which are in need of some information
+      # about the locale use the locale object stored in this setting.
+      defaultLocale:
+
+    monitor:
+
+      # The File Monitoring detects changes in class and resource files and
+      # automatically flushes the dependent caches (such as the reflection cache).
+      # This mechanism comes with a speed penalty and should therefore be disabled in
+      # production context.
+      detectClassChanges: n
+
+    mvc:
+
+      # Object name of the controller to use if no other controller could be resolved
+      # matching the request.
+      notFoundController: F3\FLOW3\MVC\Controller\NotFoundController
+
+    object:
+
+      # If enabled, the Object Manager will - additionally to the class files found
+      # in the "Classes" directory - also register class files found in the directory
+      # "Tests/Functional/". Enabling this feature obviously only makes sense in a
+      # testing context.
+      registerFunctionalTestClasses: n
+
+    persistence:
+
+      # Options for the default Doctrine persistence
       backendOptions:
-         logFileURL: %FLOW3_PATH_DATA%Logs/System.log
-         createParentDirectories: y
-         severityThreshold: %LOG_INFO%
-         maximumLogFileSize: 10485760
-         logFilesToKeep: 1
+        driver: 'pdo_mysql'
+        path: null
+        dbname: null
+        user: null
+        password: null
+      doctrine:
+        cacheImplementation: 'Doctrine\Common\Cache\ArrayCache'
+        sqlLogger: null
+        dbal:
+          sessionInitialization: ''
+        autoUpdate: y
 
-    securityLogger:
-      backend: F3\FLOW3\Log\Backend\FileBackend
-      backendOptions:
-         logFileURL: %FLOW3_PATH_DATA%Logs/Security.log
-         createParentDirectories: y
-         severityThreshold: %LOG_INFO%
-         maximumLogFileSize: 10485760
-         logFilesToKeep: 1
-         logIpAddress: y
+    reflection:
 
-  locale:
+      # If enabled, the Reflection Service notes all incorrect or inconsistent usage
+      # of @param annotations in the default log.
+      logIncorrectDocCommentHints: n
 
-    # The default locale identifier.
-    defaultLocaleIdentifier: en
+    resource:
+      publishing:
 
-    # The default locale.
-    #
-    # This configuration option is automatically filled by FLOW3's locale
-    # framework with a locale object considered to be the default locale
-    # of the application.
-    #
-    # The locale object will usually reflect the setting made in
-    # defaultLocaleIdentifier. However, depending on the application,
-    # it might be overriden by the application's user settings or auto detection
-    # mechanisms.
-    #
-    # It is recommended that all objects which are in need of some information
-    # about the locale use the locale object stored in this setting.
-    defaultLocale:
+        # If enabled, the publisher will check if the static resources of active packages
+        # have changed and if so publishes them again. If disabled, static package resources
+        # are only published once and changes are unnoticed until the related cache is flushed.
+        detectPackageResourceChanges: n
 
-  monitor:
+        # Options for the File System publishing target
+        fileSystem:
 
-    # The File Monitoring detects changes in class and resource files and
-    # automatically flushes the dependent caches (such as the reflection cache).
-    # This mechanism comes with a speed penalty and should therefore be disabled in
-    # production context.
-    detectClassChanges: n
+          # Strategy for mirroring files: Either "copy" or "link"
+          mirrorMode: link
 
-  mvc:
+    security:
 
-    # Object name of the controller to use if no other controller could be resolved
-    # matching the request.
-    notFoundController: F3\FLOW3\MVC\Controller\NotFoundController
+      enable: y
 
-  object:
+      firewall:
 
-    # If enabled, the Object Manager will - additionally to the class files found
-    # in the "Classes" directory - also register class files found in the directory
-    # "Tests/Functional/". Enabling this feature obviously only makes sense in a
-    # testing context.
-    registerFunctionalTestClasses: n
+        # If set to yes, the firewall will reject any request that is not
+        # explicitly allowed by a configured request filter.
+        rejectAll: n
 
-  persistence:
+        # The filter configuration for the firewall. Here is an example configuration array:
+        #
+        # filters:
+        #   -
+        #     patternType:  URL
+        #     patternValue: /some/url/.*
+        #     interceptor:  AccessGrant
+        #   -
+        #     patternType:  URL
+        #     patternValue: /some/url/blocked.*
+        #     interceptor:  AccessDeny
+        #
+        # If the objects are in the namespace "\F3\FLOW3\Security" it is enough to specify
+        # the last name of the classname, e.g. AccessGrant
+        filters:
+          -
+            patternType: CsrfProtection
+            patternValue:
+            interceptor: AccessDeny
 
-    # Options for the default Doctrine persistence
-    backendOptions:
-      driver: 'pdo_mysql'
-      path: null
-      dbname: null
-      user: null
-      password: null
-    doctrine:
-      cacheImplementation: 'Doctrine\Common\Cache\ArrayCache'
-      sqlLogger: null
-      dbal:
-        sessionInitialization: ''
-      autoUpdate: y
+      authentication:
 
-  reflection:
+        # Array of authentication providers that should be used for authentication.
+        # If you define a request pattern, the provider will only be called if the pattern
+        # matches the current request. If the objects are in the namespace
+        # "\F3\FLOW3\Security" it is sufficient to specify the last name of the classname,
+        # e.g. PersistedUsernamePasswordProvider
+        # Note: Authentication will be performed in the given order of the providers.
+        # So make sure, that the primary authentication method is the first array entry.
+        providers:
+          DefaultProvider:
+            providerClass: PersistedUsernamePasswordProvider
+            entryPoint:
+              WebRedirect:
+                uri: flow3/authentication
 
-    # If enabled, the Reflection Service notes all incorrect or inconsistent usage
-    # of @param annotations in the default log.
-    logIncorrectDocCommentHints: n
+        # One of the available authentication strategies:
+        #
+        #   "anyToken" (default):
+        #     Authenticate as many tokens as possible but do not require
+        #     an authenticated token (e.g. for guests with role Everybody).
+        #
+        #   "allTokens":
+        #     Authenticate all active tokens and throw an exception if
+        #     an active token could not be authenticated.
+        #
+        #   "oneToken":
+        #     Stop authentication of tokens after first successful
+        #     authentication of a token. Requires an authenticated token.
+        #
+        #   "atLeastOneToken":
+        #     Authenticate as many tokens as possible but do not fail if
+        #     a token could not be authenticated as long as at least one
+        #     token could be authenticated.
+        authenticationStrategy: anyToken
 
-  resource:
-    publishing:
+      authorization:
+        # An array of access decision voters that should vote when access decisions are made
+        accessDecisionVoters: [F3\FLOW3\Security\Authorization\Voter\Policy]
 
-      # If enabled, the publisher will check if the static resources of active packages
-      # have changed and if so publishes them again. If disabled, static package resources
-      # are only published once and changes are unnoticed until the related cache is flushed.
-      detectPackageResourceChanges: n
+        # If this is set to TRUE access will be granted even if all voters abstain
+        allowAccessIfAllVotersAbstain: FALSE
 
-      # Options for the File System publishing target
-      fileSystem:
+      csrf:
+        csrfStrategy: onePerSession
 
-        # Strategy for mirroring files: Either "copy" or "link"
-        mirrorMode: link
+      cryptography:
 
-  security:
+        RSAWalletServicePHP:
 
-    enable: y
+          # Path to the file where RSA keys shall be stored
+          # Note: This file must not be accessible by the public!
+          keystorePath: %FLOW3_PATH_DATA%Persistent/RsaWalletData
 
-    firewall:
+          # Defines the openSSL configuration used for key handling.
+          # See the PHP openSSL documentation for possible settings.
+          openSSLConfiguration: []
 
-      # If set to yes, the firewall will reject any request that is not
-      # explicitly allowed by a configured request filter.
-      rejectAll: n
+    session:
+      PHPSession:
 
-      # The filter configuration for the firewall. Here is an example configuration array:
-      #
-      # filters:
-      #   -
-      #     patternType:  URL
-      #     patternValue: /some/url/.*
-      #     interceptor:  AccessGrant
-      #   -
-      #     patternType:  URL
-      #     patternValue: /some/url/blocked.*
-      #     interceptor:  AccessDeny
-      #
-      # If the objects are in the namespace "\F3\FLOW3\Security" it is enough to specify
-      # the last name of the classname, e.g. AccessGrant
-      filters:
-        -
-          patternType: CsrfProtection
-          patternValue:
-          interceptor: AccessDeny
+        # Where to store session data in the filesystem. If this is empty, a default
+        # location is used (Data/Temporary/<context>/Sessions/).
+        savePath:
 
-    authentication:
+    utility:
+      environment:
 
-      # Array of authentication providers that should be used for authentication.
-      # If you define a request pattern, the provider will only be called if the pattern
-      # matches the current request. If the objects are in the namespace
-      # "\F3\FLOW3\Security" it is sufficient to specify the last name of the classname,
-      # e.g. PersistedUsernamePasswordProvider
-      # Note: Authentication will be performed in the given order of the providers.
-      # So make sure, that the primary authentication method is the first array entry.
-      providers:
-        DefaultProvider:
-          providerClass: PersistedUsernamePasswordProvider
-          entryPoint:
-            WebRedirect:
-              uri: flow3/authentication
-
-      # One of the available authentication strategies:
-      #
-      #   "anyToken" (default):
-      #     Authenticate as many tokens as possible but do not require
-      #     an authenticated token (e.g. for guests with role Everybody).
-      #
-      #   "allTokens":
-      #     Authenticate all active tokens and throw an exception if
-      #     an active token could not be authenticated.
-      #
-      #   "oneToken":
-      #     Stop authentication of tokens after first successful
-      #     authentication of a token. Requires an authenticated token.
-      #
-      #   "atLeastOneToken":
-      #     Authenticate as many tokens as possible but do not fail if
-      #     a token could not be authenticated as long as at least one
-      #     token could be authenticated.
-      authenticationStrategy: anyToken
-
-    authorization:
-      # An array of access decision voters that should vote when access decisions are made
-      accessDecisionVoters: [F3\FLOW3\Security\Authorization\Voter\Policy]
-
-      # If this is set to TRUE access will be granted even if all voters abstain
-      allowAccessIfAllVotersAbstain: FALSE
-
-    csrf:
-      csrfStrategy: onePerSession
-
-    cryptography:
-
-      RSAWalletServicePHP:
-
-        # Path to the file where RSA keys shall be stored
-        # Note: This file must not be accessible by the public!
-        keystorePath: %FLOW3_PATH_DATA%Persistent/RsaWalletData
-
-        # Defines the openSSL configuration used for key handling.
-        # See the PHP openSSL documentation for possible settings.
-        openSSLConfiguration: []
-
-  session:
-    PHPSession:
-
-      # Where to store session data in the filesystem. If this is empty, a default
-      # location is used (Data/Temporary/<context>/Sessions/).
-      savePath:
-
-  utility:
-    environment:
-
-      # Defines the base directory which FLOW3 may use for storing different kinds
-      # of temporary files.
-      # The directory must be writable and FLOW3 will automatically create a sub
-      # directory named with a hash which will contain the actual temporary files.
-      temporaryDirectoryBase: %FLOW3_PATH_DATA%Temporary/
+        # Defines the base directory which FLOW3 may use for storing different kinds
+        # of temporary files.
+        # The directory must be writable and FLOW3 will automatically create a sub
+        # directory named with a hash which will contain the actual temporary files.
+        temporaryDirectoryBase: %FLOW3_PATH_DATA%Temporary/

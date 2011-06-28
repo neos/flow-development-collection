@@ -66,35 +66,38 @@ class ConfigurationBuilder {
 	 * into the overall configuration. Finally autowires dependencies of arguments and properties
 	 * which can be resolved automatically.
 	 *
-	 * @param array $availableClassNames An array of available class names
+	 * @param array $availableClassNamesByPackage An array of available class names, grouped by package key
 	 * @param array $rawObjectconfigurationsByPackages An array of package keys and their raw (ie. unparsed) object configurations
 	 * @return array<F3\FLOW3\Object\Configuration\Configuration> Object configurations
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function buildObjectConfigurations(array $availableClassNames, array $rawObjectConfigurationsByPackages) {
+	public function buildObjectConfigurations(array $availableClassNamesByPackage, array $rawObjectConfigurationsByPackages) {
 		$objectConfigurations = array();
 
-		foreach ($availableClassNames as $className) {
-			$objectName = $className;
+		foreach ($availableClassNamesByPackage as $packageKey => $classNames) {
+			foreach ($classNames as $className) {
+				$objectName = $className;
 
-			if ($this->reflectionService->isClassFinal($className)) {
-				continue;
-			}
-
-			if (interface_exists($className)) {
-				$interfaceName = $className;
-				$className = $this->reflectionService->getDefaultImplementationClassNameForInterface($interfaceName);
-				if ($className === FALSE) {
+				if ($this->reflectionService->isClassFinal($className)) {
 					continue;
 				}
-				if ($this->reflectionService->isClassTaggedWith($interfaceName, 'scope')) {
-					throw new \F3\FLOW3\Object\Exception\InvalidObjectConfigurationException(sprintf('@scope annotations in interfaces don\'t have any effect, therefore you better remove it from %s in order to avoid confusion.', $interfaceName), 1299095595);
-				}
-			}
 
-			$rawObjectConfiguration = array('className' => $className);
-			$rawObjectConfiguration = $this->enhanceRawConfigurationWithAnnotationOptions($className, $rawObjectConfiguration);
-			$objectConfigurations[$objectName] = $this->parseConfigurationArray($objectName, $rawObjectConfiguration, 'automatically registered class');
+				if (interface_exists($className)) {
+					$interfaceName = $className;
+					$className = $this->reflectionService->getDefaultImplementationClassNameForInterface($interfaceName);
+					if ($className === FALSE) {
+						continue;
+					}
+					if ($this->reflectionService->isClassTaggedWith($interfaceName, 'scope')) {
+						throw new \F3\FLOW3\Object\Exception\InvalidObjectConfigurationException(sprintf('@scope annotations in interfaces don\'t have any effect, therefore you better remove it from %s in order to avoid confusion.', $interfaceName), 1299095595);
+					}
+				}
+
+				$rawObjectConfiguration = array('className' => $className);
+				$rawObjectConfiguration = $this->enhanceRawConfigurationWithAnnotationOptions($className, $rawObjectConfiguration);
+				$objectConfigurations[$objectName] = $this->parseConfigurationArray($objectName, $rawObjectConfiguration, 'automatically registered class');
+				$objectConfigurations[$objectName]->setPackageKey($packageKey);
+			}
 		}
 
 		foreach ($rawObjectConfigurationsByPackages as $packageKey => $rawObjectConfigurations) {
@@ -119,6 +122,7 @@ class ConfigurationBuilder {
 				}
 
 				$objectConfigurations[$objectName] = $newObjectConfiguration;
+				$objectConfigurations[$objectName]->setPackageKey($packageKey);
 			}
 		}
 
@@ -378,9 +382,9 @@ class ConfigurationBuilder {
 					}
 
 					if ($methodName === 'injectSettings') {
-						$classNameParts = explode('\\', $className);
-						if (count($classNameParts) > 1) {
-							$properties[$propertyName] = new ConfigurationProperty($propertyName, $classNameParts[1], ConfigurationProperty::PROPERTY_TYPES_SETTING);
+						$packageKey = $objectConfiguration->getPackageKey();
+						if ($packageKey !== NULL) {
+							$properties[$propertyName] = new ConfigurationProperty($propertyName, $packageKey, ConfigurationProperty::PROPERTY_TYPES_SETTING);
 						}
 					} else {
 						if (array_key_exists($propertyName, $properties)) {

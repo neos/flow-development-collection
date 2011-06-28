@@ -16,8 +16,8 @@
 #
 # resources:
 #   methods:
-#     F3_FooPackage_PropertySetter:  "method(F3\FooPackage\SomeClass->setSomeProperty())"
-#     F3_FooPackage_BasicValidator: "method(F3\FooPackage\BasicClassValidator->.*())"
+#     F3_FooPackage_PropertySetter:  "method(TYPO3\FooPackage\SomeClass->setSomeProperty())"
+#     F3_FooPackage_BasicValidator: "method(TYPO3\FooPackage\BasicClassValidator->.*())"
 #     F3_FooPackage_CombinedResource: "theOneAndOnlyResource || theOtherLonelyResource"
 #
 #   entities:

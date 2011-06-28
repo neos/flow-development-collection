@@ -30,19 +30,10 @@ namespace F3\FLOW3\Command;
 class PackageCommandController extends \F3\FLOW3\MVC\Controller\CommandController {
 
 	/**
+	 * @inject
 	 * @var F3\FLOW3\Package\PackageManagerInterface
 	 */
 	protected $packageManager;
-
-	/**
-	 * Injects the package manager
-	 *
-	 * @param \F3\FLOW3\Package\PackageManagerInterface $packageManager
-	 * @return void
-	 */
-	public function injectPackageManager(\F3\FLOW3\Package\PackageManagerInterface $packageManager) {
-		$this->packageManager = $packageManager;
-	}
 
 	/**
 	 * Create a new package

@@ -47,7 +47,7 @@ class XmlWriterTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockPackage = $this->getMock('F3\FLOW3\Package\PackageInterface');
 		$mockPackage->expects($this->once())->method('getMetaPath')->will($this->returnValue($packageMetaDataPath));
 
-		$meta = new \F3\FLOW3\Package\MetaData('YetAnotherTestPackage');
+		$meta = new \F3\FLOW3\Package\MetaData('Acme.YetAnotherTestPackage');
 		$meta->setTitle('Yet another test package');
 		$meta->setDescription('A test package to test the creation of the Package.xml by the Package Manager');
 		$meta->setVersion('0.1.1');
@@ -55,7 +55,7 @@ class XmlWriterTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$meta->addCategory('System');
 		$meta->addParty(new \F3\FLOW3\Package\MetaData\Person('LeadDeveloper', 'Robert Lemke', 'robert@typo3.org', 'http://www.flow3.org', 'TYPO3 Association', 'robert'));
 		$meta->addParty(new \F3\FLOW3\Package\MetaData\Company(null, 'Acme Inc.', 'info@acme.com', 'http://www.acme.com'));
-		$meta->addConstraint(new \F3\FLOW3\Package\MetaData\PackageConstraint('depends', 'FLOW3', '1.0.0', '1.9.9'));
+		$meta->addConstraint(new \F3\FLOW3\Package\MetaData\PackageConstraint('depends', 'TYPO3.FLOW3', '1.0.0', '1.9.9'));
 		$meta->addConstraint(new \F3\FLOW3\Package\MetaData\SystemConstraint('depends', 'PHP', NULL, '5.3.0'));
 		$meta->addConstraint(new \F3\FLOW3\Package\MetaData\SystemConstraint('suggests', 'Memory', '16M'));
 

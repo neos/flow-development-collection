@@ -61,7 +61,8 @@ class RequestTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function setControllerObjectNameSplitsTheGivenObjectNameIntoItsParts($objectName, array $parts) {
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->at(0))->method('getCaseSensitiveObjectName')->will($this->returnValue($objectName));
+		$mockObjectManager->expects($this->once())->method('getCaseSensitiveObjectName')->will($this->returnValue($objectName));
+		$mockObjectManager->expects($this->once())->method('getPackageKeyByObjectName')->with($objectName)->will($this->returnValue($parts['controllerPackageKey']));
 
 		$request = $this->getAccessibleMock('F3\FLOW3\MVC\Request', array('dummy'));
 		$request->injectObjectManager($mockObjectManager);
@@ -78,41 +79,41 @@ class RequestTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function caseSensitiveObjectNames() {
 		return array(
 			array(
-				'F3\Foo\Controller\BarController',
+				'TYPO3\Foo\Controller\BarController',
 				array(
-					'controllerPackageKey' => 'Foo',
+					'controllerPackageKey' => 'TYPO3.Foo',
 					'controllerSubpackageKey' => '',
 					'controllerName' => 'Bar',
 				)
 			),
 			array(
-				'F3\Foo\Bar\Controller\BazController',
+				'TYPO3\Foo\Bar\Controller\BazController',
 				array(
-					'controllerPackageKey' => 'Foo',
+					'controllerPackageKey' => 'TYPO3.Foo',
 					'controllerSubpackageKey' => 'Bar',
 					'controllerName' => 'Baz',
 				)
 			),
 			array(
-				'F3\Foo\Bar\Bla\Controller\Baz\QuuxController',
+				'TYPO3\Foo\Bar\Bla\Controller\Baz\QuuxController',
 				array(
-					'controllerPackageKey' => 'Foo',
+					'controllerPackageKey' => 'TYPO3.Foo',
 					'controllerSubpackageKey' => 'Bar\Bla',
 					'controllerName' => 'Baz\Quux',
 				)
 			),
 			array(
-				'F3\Foo\Controller\Bar\BazController',
+				'TYPO3\Foo\Controller\Bar\BazController',
 				array(
-					'controllerPackageKey' => 'Foo',
+					'controllerPackageKey' => 'TYPO3.Foo',
 					'controllerSubpackageKey' => '',
 					'controllerName' => 'Bar\Baz',
 				)
 			),
 			array(
-				'F3\Foo\Controller\Bar\Baz\QuuxController',
+				'TYPO3\Foo\Controller\Bar\Baz\QuuxController',
 				array(
-					'controllerPackageKey' => 'Foo',
+					'controllerPackageKey' => 'TYPO3.Foo',
 					'controllerSubpackageKey' => '',
 					'controllerName' => 'Bar\Baz\Quux',
 				)
@@ -307,7 +308,7 @@ class RequestTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockRouter = $this->getMock('F3\FLOW3\MVC\Web\Routing\RouterInterface');
 		$mockRouter->expects($this->once())->method('getControllerObjectName')
 			->with('TestPackage', '', 'Some')
-			->will($this->returnValue('F3\TestPackage\Controller\SomeController'));
+			->will($this->returnValue('TYPO3\TestPackage\Controller\SomeController'));
 
 		$mockPackageManager = $this->getMock('F3\FLOW3\Package\PackageManagerInterface');
 		$mockPackageManager->expects($this->once())->method('getCaseSensitivePackageKey')
@@ -327,7 +328,7 @@ class RequestTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function theControllerNameWillBeExtractedFromTheControllerObjectNameToAssureTheCorrectCase() {
 		$request = $this->getMock('F3\FLOW3\MVC\Request', array('getControllerObjectName'), array(), '', FALSE);
-		$request->expects($this->once())->method('getControllerObjectName')->will($this->returnValue('F3\MyPackage\Controller\Foo\BarController'));
+		$request->expects($this->once())->method('getControllerObjectName')->will($this->returnValue('TYPO3\MyPackage\Controller\Foo\BarController'));
 
 		$request->setControllerName('foo\bar');
 		$this->assertEquals('Foo\Bar', $request->getControllerName());

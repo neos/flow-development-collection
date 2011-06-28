@@ -70,7 +70,7 @@ class XmlReaderTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		$this->assertInstanceOf('F3\FLOW3\Package\MetaData\PackageConstraint', $constraints[0]);
 		$this->assertEquals('depends', $constraints[0]->getConstraintType());
-		$this->assertEquals('FLOW3', $constraints[0]->getValue());
+		$this->assertEquals('TYPO3.FLOW3', $constraints[0]->getValue());
 		$this->assertEquals('1.0.0', $constraints[0]->getMinVersion());
 		$this->assertEquals('1.9.9', $constraints[0]->getMaxVersion());
 		$this->assertInstanceOf('F3\FLOW3\Package\MetaData\SystemConstraint', $constraints[1]);

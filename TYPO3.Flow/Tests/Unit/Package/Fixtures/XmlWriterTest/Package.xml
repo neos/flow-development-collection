@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <package xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://typo3.org/ns/2008/flow3/package" version="1.0">
-	<key>YetAnotherTestPackage</key>
+	<key>Acme.YetAnotherTestPackage</key>
 	<title>Yet another test package</title>
 	<description>A test package to test the creation of the Package.xml by the Package Manager</description>
 	<version>0.1.1</version>
@@ -24,7 +24,7 @@
 	</parties>
 	<constraints>
 		<depends>
-			<package minVersion="1.0.0" maxVersion="1.9.9">FLOW3</package>
+			<package minVersion="1.0.0" maxVersion="1.9.9">TYPO3.FLOW3</package>
 			<system minVersion="5.3.0" type="PHP"/>
 		</depends>
 		<suggests>

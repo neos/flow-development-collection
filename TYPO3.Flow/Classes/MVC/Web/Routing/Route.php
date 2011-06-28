@@ -234,7 +234,7 @@ class Route {
 	 * \F3\FLOW3\MVC\Web\Routing\DynamicRoutePartInterface.
 	 *
 	 * Usage: setRoutePartsConfiguration(array('@controller' =>
-	 *            array('handler' => 'F3\Package\Subpackage\MyRoutePartHandler')));
+	 *            array('handler' => 'TYPO3\Package\Subpackage\MyRoutePartHandler')));
 	 *
 	 * @param array $routePartsConfiguration Route Parts configuration options
 	 * @return void

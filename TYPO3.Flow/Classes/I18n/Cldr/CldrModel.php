@@ -39,7 +39,7 @@ class CldrModel {
 	 *
 	 * @var string
 	 */
-	protected $cldrBasePath = 'resource://FLOW3/Private/Locale/CLDR/Sources/';
+	protected $cldrBasePath = 'resource://TYPO3.FLOW3/Private/Locale/CLDR/Sources/';
 
 	/**
 	 * @var \F3\FLOW3\Cache\Frontend\VariableFrontend

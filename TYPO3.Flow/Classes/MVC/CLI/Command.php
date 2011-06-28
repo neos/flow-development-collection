@@ -55,11 +55,12 @@ class Command {
 		$this->controllerClassName = $controllerClassName;
 		$this->controllerCommandName = $controllerCommandName;
 
-		$classNameParts = explode('\\', $controllerClassName);
-		if (count($classNameParts) !== 4 || strpos($classNameParts[3], 'CommandController') === FALSE) {
-			throw new \InvalidArgumentException('Invalid controller class name "' . $$controllerClassName, '"', 1305100019);
+		$matchCount = preg_match('/^(?P<PackageNamespace>\w+(?:\\\\\w+)+)\\\\Command\\\\(?P<ControllerName>\w+)CommandController$/', $controllerClassName, $matches);
+		if ($matchCount !== 1) {
+			throw new \InvalidArgumentException('Invalid controller class name "' . $controllerClassName . '"', 1305100019);
 		}
-		$this->commandIdentifier = strtolower($classNameParts[1] . ':' . substr($classNameParts[3], 0, -17) . ':' . $controllerCommandName);
+
+		$this->commandIdentifier = strtolower(str_replace('\\', '.', $matches['PackageNamespace']) . ':' . $matches['ControllerName'] . ':' . $controllerCommandName);
 	}
 
 	/**

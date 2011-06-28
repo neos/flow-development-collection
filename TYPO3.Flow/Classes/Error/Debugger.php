@@ -44,19 +44,19 @@ class Debugger {
 	 * @var array
 	 */
 	static protected $blacklistedClassNames = '/
-		(F3\\\\FLOW3\\\\AOP.*)
-		(F3\\\\FLOW3\\\\Cac.*) |
-		(F3\\\\FLOW3\\\\Con.*) |
-		(F3\\\\FLOW3\\\\Uti.*) |
-		(F3\\\\FLOW3\\\\MVC\\\\Web\\\\Routing.*) |
-		(F3\\\\FLOW3\\\\Log.*) |
-		(F3\\\\FLOW3\\\\Obj.*) |
-		(F3\\\\FLOW3\\\\Pac.*) |
-		(F3\\\\FLOW3\\\\Per.*) |
-		(F3\\\\FLOW3\\\\Pro.*) |
-		(F3\\\\FLOW3\\\\Ref.*) |
-		(F3\\\\FLOW3\\\\Sec.*) |
-		(F3\\\\Fluid\\\\.*) |
+		(TYPO3\\\\FLOW3\\\\AOP.*)
+		(TYPO3\\\\FLOW3\\\\Cac.*) |
+		(TYPO3\\\\FLOW3\\\\Con.*) |
+		(TYPO3\\\\FLOW3\\\\Uti.*) |
+		(TYPO3\\\\FLOW3\\\\MVC\\\\Web\\\\Routing.*) |
+		(TYPO3\\\\FLOW3\\\\Log.*) |
+		(TYPO3\\\\FLOW3\\\\Obj.*) |
+		(TYPO3\\\\FLOW3\\\\Pac.*) |
+		(TYPO3\\\\FLOW3\\\\Per.*) |
+		(TYPO3\\\\FLOW3\\\\Pro.*) |
+		(TYPO3\\\\FLOW3\\\\Ref.*) |
+		(TYPO3\\\\FLOW3\\\\Sec.*) |
+		(TYPO3\\\\Fluid\\\\.*) |
 		(PHPUnit_Framework_MockObject_InvocationMocker)
 		/xs';
 
@@ -287,7 +287,7 @@ class Debugger {
 	}
 }
 
-namespace F3;
+namespace F3\FLOW3;
 
 /**
  * A var_dump function optimized for FLOW3's object structures
@@ -327,11 +327,11 @@ function var_dump($variable, $title = NULL, $return = FALSE, $plaintext = NULL) 
 		$output = $title . chr(10) . \F3\FLOW3\Error\Debugger::renderDump($variable, 0, TRUE, $ansiColors) . chr(10) . chr(10);
 	} else {
 		$output = '
-			<div class="F3-FLOW3-Error-Debugger-VarDump ' . ($return ? 'F3-FLOW3-Error-Debugger-VarDump-Inline' : 'F3-FLOW3-Error-Debugger-VarDump-Floating') . '">
-				<div class="F3-FLOW3-Error-Debugger-VarDump-Top">
+			<div class="FLOW3-Error-Debugger-VarDump ' . ($return ? 'FLOW3-Error-Debugger-VarDump-Inline' : 'FLOW3-Error-Debugger-VarDump-Floating') . '">
+				<div class="FLOW3-Error-Debugger-VarDump-Top">
 					' . htmlspecialchars($title) . '
 				</div>
-				<div class="F3-FLOW3-Error-Debugger-VarDump-Center">
+				<div class="FLOW3-Error-Debugger-VarDump-Center">
 					<pre dir="ltr">' . \F3\FLOW3\Error\Debugger::renderDump($variable, 0, FALSE, FALSE) . '</pre>
 				</div>
 			</div>

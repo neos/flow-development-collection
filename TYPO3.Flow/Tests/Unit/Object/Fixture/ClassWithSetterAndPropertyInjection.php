@@ -27,13 +27,13 @@ namespace F3\FLOW3\Tests\Object\Fixture;
 class ClassWithSetterAndPropertyInjection {
 
 	/**
-	 * @var F3\Foo\Bar
+	 * @var TYPO3\Foo\Bar
 	 * @inject
 	 */
 	protected $firstDependency;
 
 	/**
-	 * @var F3\Coffee\Bar
+	 * @var TYPO3\Coffee\Bar
 	 * @inject
 	 */
 	protected $secondDependency;

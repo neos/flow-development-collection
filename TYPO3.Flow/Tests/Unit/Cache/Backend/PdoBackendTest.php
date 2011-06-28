@@ -44,6 +44,15 @@ class PdoBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	protected $fixtureDB;
 
 	/**
+	 * Set up this testcase
+	 */
+	public function setUp() {
+		if (!extension_loaded('pdo_sqlite')) {
+			$this->markTestSkipped('The PHP PDO SQLite was not available');
+		}
+	}
+
+	/**
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @expectedException \F3\FLOW3\Cache\Exception

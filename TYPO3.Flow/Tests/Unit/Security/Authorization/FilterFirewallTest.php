@@ -38,14 +38,14 @@ class FilterFirewallTest extends \F3\FLOW3\Tests\UnitTestCase {
 			$args = func_get_args();
 
 			if ($args[0] === 'URI') return 'mockPatternURI';
-			elseif ($args[0] === 'F3\TestRequestPattern') return 'mockPatternTest';
+			elseif ($args[0] === 'TYPO3\TestRequestPattern') return 'mockPatternTest';
 		};
 
 		$resolveInterceptorClassCallback = function() {
 			$args = func_get_args();
 
 			if ($args[0] === 'AccessGrant') return 'mockInterceptorAccessGrant';
-			elseif ($args[0] === 'F3\TestSecurityInterceptor') return 'mockInterceptorTest';
+			elseif ($args[0] === 'TYPO3\TestSecurityInterceptor') return 'mockInterceptorTest';
 		};
 
 		$mockRequestPattern1 = $this->getMock('F3\FLOW3\Security\RequestPatternInterface', array(), array(), 'pattern1', FALSE);
@@ -81,9 +81,9 @@ class FilterFirewallTest extends \F3\FLOW3\Tests\UnitTestCase {
 				'interceptor' => 'AccessGrant'
 			),
 			array(
-				'patternType' => 'F3\TestRequestPattern',
+				'patternType' => 'TYPO3\TestRequestPattern',
 				'patternValue' => '/some/url/blocked.*',
-				'interceptor' => 'F3\TestSecurityInterceptor'
+				'interceptor' => 'TYPO3\TestSecurityInterceptor'
 			)
 		);
 

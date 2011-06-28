@@ -36,7 +36,7 @@ class XliffTranslationProvider implements \F3\FLOW3\I18n\TranslationProvider\Tra
 	 *
 	 * @var string
 	 */
-	protected $xliffBasePath = 'resource://FLOW3/Private/Locale/Translations/';
+	protected $xliffBasePath = 'resource://TYPO3.FLOW3/Private/Locale/Translations/';
 
 	/**
 	 * @var \F3\FLOW3\I18n\Service

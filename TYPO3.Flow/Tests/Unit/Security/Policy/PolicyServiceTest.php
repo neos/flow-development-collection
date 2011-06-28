@@ -700,7 +700,7 @@ class PolicyServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function savePolicyCacheStoresTheEntityConstraintsAndACLsCorrectlyInTheCache() {
 		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
 		$mockCache->expects($this->at(0))->method('has')->with('acls')->will($this->returnValue(FALSE));
-		$mockCache->expects($this->at(1))->method('set')->with('acls', array('aclsArray'), array('F3_FLOW3_AOP'));
+		$mockCache->expects($this->at(1))->method('set')->with('acls', array('aclsArray'), array('TYPO3_FLOW3_AOP'));
 		$mockCache->expects($this->at(2))->method('has')->with('entityResourcesConstraints')->will($this->returnValue(FALSE));
 		$mockCache->expects($this->at(3))->method('set')->with('entityResourcesConstraints', array('entityResourcesConstraintsArray'));
 
@@ -722,7 +722,7 @@ class PolicyServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function getResourcesConstraintsForEntityTypeAndRolesBasicallyWorks() {
 		$entityResourcesConstraints = array(
-			'F3_MyEntity' => array(
+			'TYPO3_MyEntity' => array(
 				'resource1' => 'constraint1',
 				'resource2' => 'constraint2',
 				'resource3' => 'constraint3'
@@ -751,7 +751,7 @@ class PolicyServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$policyService->_set('entityResourcesConstraints', $entityResourcesConstraints);
 		$policyService->_set('acls', $acls);
 
-		$result = $policyService->getResourcesConstraintsForEntityTypeAndRoles('F3\MyEntity', array('Customer', 'Administrator'));
+		$result = $policyService->getResourcesConstraintsForEntityTypeAndRoles('TYPO3\MyEntity', array('Customer', 'Administrator'));
 
 		$this->assertEquals($result, array('resource1' => 'constraint1', 'resource3' => 'constraint3'));
 	}
@@ -763,7 +763,7 @@ class PolicyServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function getResourcesConstraintsForEntityTypeAndRolesDoesNotReturnConstraintsForResourcesThatGotADenyAndAGrantPrivilege() {
 		$entityResourcesConstraints = array(
-			'F3_MyEntity' => array(
+			'TYPO3_MyEntity' => array(
 				'resource1' => 'constraint1',
 				'resource2' => 'constraint2',
 				'resource3' => 'constraint3'
@@ -795,7 +795,7 @@ class PolicyServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$policyService->_set('entityResourcesConstraints', $entityResourcesConstraints);
 		$policyService->_set('acls', $acls);
 
-		$result = $policyService->getResourcesConstraintsForEntityTypeAndRoles('F3\MyEntity', array('Customer', 'Administrator'));
+		$result = $policyService->getResourcesConstraintsForEntityTypeAndRoles('TYPO3\MyEntity', array('Customer', 'Administrator'));
 
 		$this->assertEquals($result, array('resource3' => 'constraint3'));
 	}
@@ -807,7 +807,7 @@ class PolicyServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function hasPolicyEntryForEntityTypeWorks() {
 		$entityResourcesConstraints = array(
-			'F3_MyEntity' => array(
+			'TYPO3_MyEntity' => array(
 				'resource1' => 'constraint1',
 				'resource2' => 'constraint2',
 				'resource3' => 'constraint3'
@@ -839,12 +839,12 @@ class PolicyServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$policyService->_set('entityResourcesConstraints', $entityResourcesConstraints);
 		$policyService->_set('acls', $acls);
 
-		$this->assertTrue($policyService->hasPolicyEntryForEntityType('F3\MyEntity', array('Manager', 'Administrator', 'Anonymous')));
-		$this->assertTrue($policyService->hasPolicyEntryForEntityType('F3\MyEntity', array('Manager', 'Customer')));
-		$this->assertFalse($policyService->hasPolicyEntryForEntityType('F3\MyOtherEntity', array('Manager', 'Administrator', 'Anonymous')));
-		$this->assertFalse($policyService->hasPolicyEntryForEntityType('F3\MyOtherEntity', array('Manager', 'Customer')));
-		$this->assertFalse($policyService->hasPolicyEntryForEntityType('F3\MyEntity', array('Manager', 'Anonymous')));
-		$this->assertFalse($policyService->hasPolicyEntryForEntityType('F3\MyEntity', array('Manager', 'King')));
+		$this->assertTrue($policyService->hasPolicyEntryForEntityType('TYPO3\MyEntity', array('Manager', 'Administrator', 'Anonymous')));
+		$this->assertTrue($policyService->hasPolicyEntryForEntityType('TYPO3\MyEntity', array('Manager', 'Customer')));
+		$this->assertFalse($policyService->hasPolicyEntryForEntityType('TYPO3\MyOtherEntity', array('Manager', 'Administrator', 'Anonymous')));
+		$this->assertFalse($policyService->hasPolicyEntryForEntityType('TYPO3\MyOtherEntity', array('Manager', 'Customer')));
+		$this->assertFalse($policyService->hasPolicyEntryForEntityType('TYPO3\MyEntity', array('Manager', 'Anonymous')));
+		$this->assertFalse($policyService->hasPolicyEntryForEntityType('TYPO3\MyEntity', array('Manager', 'King')));
 	}
 
 	/**

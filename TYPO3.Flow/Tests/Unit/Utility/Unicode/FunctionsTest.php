@@ -92,7 +92,7 @@ class FunctionsTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function strtoupperWorksWithLatinCharacters() {
 		$testString = 'typo3';
-		$this->assertEquals('TYPO3', \F3\FLOW3\Utility\Unicode\Functions::strtoupper($testString), 'F3\PHP6\Functions::strtoupper() with latin characters didn\'t work out.');
+		$this->assertEquals('TYPO3', \F3\FLOW3\Utility\Unicode\Functions::strtoupper($testString), 'TYPO3\PHP6\Functions::strtoupper() with latin characters didn\'t work out.');
 	}
 
 	/**
@@ -105,7 +105,7 @@ class FunctionsTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$testString = 'Here are some characters: äöüÄÖÜßéèêåÅøØæÆœŒ ...';
 		$expectedResult = 'HERE ARE SOME CHARACTERS: ÄÖÜÄÖÜSSÉÈÊÅÅØØÆÆŒŒ ...';
 		$result = \F3\FLOW3\Utility\Unicode\Functions::strtoupper($testString);
-		$this->assertEquals($expectedResult, $result, 'F3\PHP6\Functions::strtoupper() could not convert our selection of special characters.');
+		$this->assertEquals($expectedResult, $result, 'TYPO3\PHP6\Functions::strtoupper() could not convert our selection of special characters.');
 	}
 
 	/**

@@ -123,12 +123,12 @@ class ConfigurationBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function settingsCanBeInjectedAsArgumentOrProperty() {
 		$configurationArray = array();
-		$configurationArray['arguments'][1]['setting'] = 'F3.Foo.Bar';
-		$configurationArray['properties']['someProperty']['setting'] = 'F3.Bar.Baz';
+		$configurationArray['arguments'][1]['setting'] = 'TYPO3.Foo.Bar';
+		$configurationArray['properties']['someProperty']['setting'] = 'TYPO3.Bar.Baz';
 
 		$objectConfiguration = new \F3\FLOW3\Object\Configuration\Configuration('TestObject', 'TestObject');
-		$objectConfiguration->setArgument(new \F3\FLOW3\Object\Configuration\ConfigurationArgument(1, 'F3.Foo.Bar', \F3\FLOW3\Object\Configuration\ConfigurationProperty::PROPERTY_TYPES_SETTING));
-		$objectConfiguration->setProperty(new \F3\FLOW3\Object\Configuration\ConfigurationProperty('someProperty', 'F3.Bar.Baz', \F3\FLOW3\Object\Configuration\ConfigurationProperty::PROPERTY_TYPES_SETTING));
+		$objectConfiguration->setArgument(new \F3\FLOW3\Object\Configuration\ConfigurationArgument(1, 'TYPO3.Foo.Bar', \F3\FLOW3\Object\Configuration\ConfigurationProperty::PROPERTY_TYPES_SETTING));
+		$objectConfiguration->setProperty(new \F3\FLOW3\Object\Configuration\ConfigurationProperty('someProperty', 'TYPO3.Bar.Baz', \F3\FLOW3\Object\Configuration\ConfigurationProperty::PROPERTY_TYPES_SETTING));
 
 		$configurationBuilder = $this->getAccessibleMock('F3\FLOW3\Object\Configuration\ConfigurationBuilder', array('dummy'));
 		$builtObjectConfiguration = $configurationBuilder->_call('parseConfigurationArray', 'TestObject', $configurationArray, __CLASS__);

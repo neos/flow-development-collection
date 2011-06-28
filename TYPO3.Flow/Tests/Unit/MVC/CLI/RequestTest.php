@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Command;
+namespace F3\FLOW3\Tests\Unit\MVC\CLI;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -21,42 +21,41 @@ namespace F3\FLOW3\Command;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use \F3\FLOW3\MVC\CLI\Request;
+
 /**
- * Command controller for managing caches
- *
- * NOTE: This command controller will run in compile time (as defined in the package bootstrap)
- *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
- * @scope singleton
+ * Testcase for the CLI Request class
  */
-class CacheCommandController extends \F3\FLOW3\MVC\Controller\CommandController {
+class RequestTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
-	 * @var \F3\FLOW3\Cache\CacheManager
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected $cacheManager;
+	public function getCommandReturnsTheCommandObjectReflectingTheRequestInformation() {
+		$request = new Request();
+		$request->setControllerObjectName('F3\FLOW3\Command\CacheCommandController');
+		$request->setControllerCommandName('flush');
 
-	/**
-	 * Injects the cache manager
-	 *
-	 * @param \F3\FLOW3\Cache\CacheManager $cacheManager
-	 * @return void
-	 */
-	public function injectCacheManager(\F3\FLOW3\Cache\CacheManager $cacheManager) {
-		$this->cacheManager = $cacheManager;
+		$command = $request->getCommand();
+		$this->assertEquals('typo3.flow3:cache:flush', $command->getCommandIdentifier());
 	}
 
 	/**
-	 * Flush all caches
-	 *
-	 * The flush command flushes all caches, including code caches, which have been registered with FLOW3's Cache Manager.
-	 *
-	 * @return void
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function flushCommand() {
-		$this->cacheManager->flushCaches();
-		return 'Flushed all caches.';
+	public function setControllerObjectNameAndSetControllerCommandNameUnsetTheBuiltCommandObject() {
+		$request = new Request();
+		$request->setControllerObjectName('F3\FLOW3\Command\CacheCommandController');
+		$request->setControllerCommandName('flush');
+		$request->getCommand();
+
+		$request->setControllerObjectName('F3\FLOW3\Command\BeerCommandController');
+		$request->setControllerCommandName('drink');
+
+		$command = $request->getCommand();
+		$this->assertEquals('typo3.flow3:beer:drink', $command->getCommandIdentifier());
 	}
 }
-
 ?>

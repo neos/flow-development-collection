@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Command;
+namespace F3\FLOW3\Tests\Unit\Core;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -21,42 +21,40 @@ namespace F3\FLOW3\Command;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use \F3\FLOW3\Core\Bootstrap;
+
 /**
- * Command controller for managing caches
- *
- * NOTE: This command controller will run in compile time (as defined in the package bootstrap)
- *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
- * @scope singleton
+ * Testcase for the Bootstrap class
  */
-class CacheCommandController extends \F3\FLOW3\MVC\Controller\CommandController {
+class BootstrapTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
-	 * @var \F3\FLOW3\Cache\CacheManager
+	 * @return array
 	 */
-	protected $cacheManager;
-
-	/**
-	 * Injects the cache manager
-	 *
-	 * @param \F3\FLOW3\Cache\CacheManager $cacheManager
-	 * @return void
-	 */
-	public function injectCacheManager(\F3\FLOW3\Cache\CacheManager $cacheManager) {
-		$this->cacheManager = $cacheManager;
+	public function commandIdentifiersAndCompiletimeControllerInfo() {
+		return array(
+			array(array('typo3.flow3:core', 'typo3.flow3:cache'), 'typo3.flow3:core:shell', TRUE),
+			array(array('typo3.flow3:core', 'typo3.flow3:cache'), 'typo3.flow3:help:help', FALSE),
+			array(array('typo3.flow3:core', 'typo3.flow3:cache'), 'flow3:core:shell', TRUE),
+			array(array('typo3.flow3:core', 'typo3.flow3:cache'), 'flow3:cache:flush', TRUE),
+			array(array('typo3.flow3:core', 'typo3.flow3:cache'), 'flow5:core:shell', FALSE),
+			array(array('typo3.flow3:core', 'typo3.flow3:cache'), 'typo3:core:shell', FALSE),
+		);
 	}
 
 	/**
-	 * Flush all caches
-	 *
-	 * The flush command flushes all caches, including code caches, which have been registered with FLOW3's Cache Manager.
-	 *
-	 * @return void
+	 * @test
+	 * @dataProvider commandIdentifiersAndCompiletimeControllerInfo
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function flushCommand() {
-		$this->cacheManager->flushCaches();
-		return 'Flushed all caches.';
+	public function isCompileTimeCommandControllerChecksIfTheGivenCommandIdentifierRefersToACompileTimeController($compiletimeCommandControllerIdentifiers, $givenCommandIdentifier, $expectedResult) {
+		$bootstrap = new Bootstrap('Testing');
+		foreach ($compiletimeCommandControllerIdentifiers as $compiletimeCommandControllerIdentifier) {
+			$bootstrap->registerCompiletimeCommandController($compiletimeCommandControllerIdentifier);
+		}
+
+		$this->assertSame($expectedResult, $bootstrap->isCompiletimeCommandController($givenCommandIdentifier));
 	}
+
 }
-
 ?>

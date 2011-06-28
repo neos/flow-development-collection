@@ -20,7 +20,7 @@ DateTime:
 F3\FLOW3\Cache\CacheFactory:
   arguments:
     1:
-      setting: FLOW3.context
+      setting: TYPO3.FLOW3.context
 
 
 #                                                                          #
@@ -101,7 +101,7 @@ F3\FLOW3\Log\SystemLoggerInterface:
     3:
       value: 'F3\FLOW3\Log\Backend\FileBackend'
     4:
-      setting: FLOW3.log.systemLogger.backendOptions
+      setting: TYPO3.FLOW3.log.systemLogger.backendOptions
 
 F3\FLOW3\Log\SecurityLoggerInterface:
   scope: singleton
@@ -114,7 +114,7 @@ F3\FLOW3\Log\SecurityLoggerInterface:
     3:
       value: 'F3\FLOW3\Log\Backend\FileBackend'
     4:
-      setting: FLOW3.log.securityLogger.backendOptions
+      setting: TYPO3.FLOW3.log.securityLogger.backendOptions
 
 #                                                                          #
 # Monitor                                                                  #
@@ -200,7 +200,7 @@ F3\FLOW3\Persistence\Doctrine\Logging\SqlLogger:
           3:
             value: 'F3\FLOW3\Log\Backend\FileBackend'
           4:
-            setting: FLOW3.log.sqlLogger.backendOptions
+            setting: TYPO3.FLOW3.log.sqlLogger.backendOptions
 
 #                                                                          #
 # Resource                                                                 #
@@ -254,7 +254,7 @@ F3\FLOW3\Session\SessionInterface:
   scope: singleton
   properties:
     settings:
-      setting: FLOW3
+      setting: TYPO3.FLOW3
     environment:
       object: F3\FLOW3\Utility\Environment
 

@@ -63,7 +63,7 @@ class ReflectionServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$reflectionService->_set('reflectedClassNames', $reflectedClassNames);
 
 		$this->assertTrue($reflectionService->isClassReflected('F3\FLOW3\Tests\Reflection\Fixture\DummyClass'));
-		$this->assertFalse($reflectionService->isClassReflected('F3\Virtual\UnknownClass'));
+		$this->assertFalse($reflectionService->isClassReflected('TYPO3\Virtual\UnknownClass'));
 	}
 
 	/**

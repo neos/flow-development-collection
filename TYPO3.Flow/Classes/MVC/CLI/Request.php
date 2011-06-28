@@ -22,6 +22,7 @@ namespace F3\FLOW3\MVC\CLI;
  *                                                                        */
 
 use \F3\FLOW3\MVC\RequestInterface;
+use \F3\FLOW3\MVC\CLI\Command;
 
 /**
  * Represents a CLI request.
@@ -41,6 +42,11 @@ class Request implements RequestInterface {
 	 * @var string
 	 */
 	protected $controllerCommandName = 'default';
+
+	/**
+	 * @var \F3\FLOW3\MVC\CLI\Command
+	 */
+	protected $command;
 
 	/**
 	 * The arguments for this request
@@ -93,6 +99,7 @@ class Request implements RequestInterface {
 	 */
 	public function setControllerObjectName($controllerObjectName) {
 		$this->controllerObjectName = $controllerObjectName;
+		$this->command = NULL;
 	}
 
 	/**
@@ -106,20 +113,6 @@ class Request implements RequestInterface {
 	}
 
 	/**
-	 * Returns the command controller indentifier
-	 *
-	 * @return string command controller identifier, such as "flow3:core"
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getCommandIdentifier() {
-		$namespaceParts = explode('\\', $this->controllerObjectName);
-		if (count($namespaceParts) !== 4 || $namespaceParts[0] !== 'F3' || $namespaceParts[2] !== 'Command') {
-			return FALSE;
-		}
-		return strtolower($namespaceParts[1] . ':' . str_replace('CommandController', '', $namespaceParts[3]) . ':' . $this->controllerCommandName);
-	}
-
-	/**
 	 * Sets the name of the command contained in this request.
 	 *
 	 * Note that the command name must start with a lower case letter and is case sensitive.
@@ -130,6 +123,7 @@ class Request implements RequestInterface {
 	 */
 	public function setControllerCommandName($commandName) {
 		$this->controllerCommandName = $commandName;
+		$this->command = NULL;
 	}
 
 	/**
@@ -140,6 +134,19 @@ class Request implements RequestInterface {
 	 */
 	public function getControllerCommandName() {
 		return $this->controllerCommandName;
+	}
+
+	/**
+	 * Returns the command object for this request
+	 *
+	 * @return \F3\FLOW3\MVC\CLI\Command
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getCommand() {
+		if ($this->command === NULL) {
+			$this->command = new Command($this->controllerObjectName, $this->controllerCommandName);
+		}
+		return $this->command;
 	}
 
 	/**

@@ -37,11 +37,8 @@ class Package extends BasePackage {
 	 * @return void
 	 */
 	public function boot(\F3\FLOW3\Core\Bootstrap $bootstrap) {
-		require_once(__DIR__ . '/../Resources/PHP/AutoLoader.php');
-
-		$bootstrap->registerCompiletimeCommandController('flow3:object');
-		$bootstrap->registerCompiletimeCommandController('flow3:core');
-		$bootstrap->registerCompiletimeCommandController('flow3:cache');
+		$bootstrap->registerCompiletimeCommandController('typo3.flow3:core');
+		$bootstrap->registerCompiletimeCommandController('typo3.flow3:cache');
 
 		$dispatcher = $bootstrap->getSignalSlotDispatcher();
 		$dispatcher->connect('F3\FLOW3\Core\Bootstrap', 'finishedRuntimeRun', 'F3\FLOW3\Persistence\PersistenceManagerInterface', 'persistAll');

@@ -326,7 +326,7 @@ class Context {
 	 * if you need it you'll have to fetch it directly from the token.
 	 * (@see getAuthenticationTokens())
 	 *
-	 * @return \F3\Party\Domain\Model\AbstractParty The authenticated party
+	 * @return \TYPO3\Party\Domain\Model\AbstractParty The authenticated party
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getParty() {
@@ -340,7 +340,7 @@ class Context {
 	 * Returns the first authenticated party of the given type.
 	 *
 	 * @param string $className Class name of the party to find
-	 * @return \F3\Party\Domain\Model\AbstractParty The authenticated party
+	 * @return \TYPO3\Party\Domain\Model\AbstractParty The authenticated party
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */

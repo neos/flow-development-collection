@@ -39,7 +39,7 @@ class AbstractControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockResponse = $this->getMock('F3\FLOW3\MVC\Web\Response');
 
 		$controller = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\AbstractController', array('mapRequestArgumentsToControllerArguments'), array($this->getMock('F3\FLOW3\Object\ObjectManagerInterface')), '', FALSE);
-		$controller->_set('supportedRequestTypes', array('F3\Something\Request'));
+		$controller->_set('supportedRequestTypes', array('TYPO3\Something\Request'));
 		$controller->processRequest($mockRequest, $mockResponse);
 	}
 

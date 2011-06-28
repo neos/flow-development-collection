@@ -41,7 +41,7 @@ class CacheFactoryTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		$factory = new \F3\FLOW3\Cache\CacheFactory('Testing', $mockCacheManager, $mockEnvironment);
 
-		$cache = $factory->create('F3_FLOW3_Cache_FactoryTest_Cache', 'F3\FLOW3\Cache\Frontend\VariableFrontend', 'F3\FLOW3\Cache\Backend\NullBackend');
+		$cache = $factory->create('TYPO3_FLOW3_Cache_FactoryTest_Cache', 'F3\FLOW3\Cache\Frontend\VariableFrontend', 'F3\FLOW3\Cache\Backend\NullBackend');
 		$this->assertInstanceOf('F3\FLOW3\Cache\Frontend\VariableFrontend', $cache);
 	}
 
@@ -55,7 +55,7 @@ class CacheFactoryTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		$factory = new \F3\FLOW3\Cache\CacheFactory('Testing', $mockCacheManager, $mockEnvironment);
 
-		$cache = $factory->create('F3_FLOW3_Cache_FactoryTest_Cache', 'F3\FLOW3\Cache\Frontend\VariableFrontend', 'F3\FLOW3\Cache\Backend\FileBackend');
+		$cache = $factory->create('TYPO3_FLOW3_Cache_FactoryTest_Cache', 'F3\FLOW3\Cache\Frontend\VariableFrontend', 'F3\FLOW3\Cache\Backend\FileBackend');
 		$this->assertInstanceOf('F3\FLOW3\Cache\Backend\FileBackend', $cache->getBackend());
 	}
 
@@ -71,7 +71,7 @@ class CacheFactoryTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		$factory = new \F3\FLOW3\Cache\CacheFactory('Testing', $mockCacheManager, $mockEnvironment);
 
-		$factory->create('F3_FLOW3_Cache_FactoryTest_Cache', 'F3\FLOW3\Cache\Frontend\VariableFrontend', 'F3\FLOW3\Cache\Backend\FileBackend');
+		$factory->create('TYPO3_FLOW3_Cache_FactoryTest_Cache', 'F3\FLOW3\Cache\Frontend\VariableFrontend', 'F3\FLOW3\Cache\Backend\FileBackend');
 	}
 }
 ?>

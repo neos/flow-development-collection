@@ -31,20 +31,10 @@ namespace F3\FLOW3\SignalSlot;
 class SignalAspect {
 
 	/**
+	 * @inject
 	 * @var \F3\FLOW3\SignalSlot\Dispatcher
 	 */
 	protected $dispatcher;
-
-	/**
-	 * Injects the Signal Dispatcher
-	 *
-	 * @param \F3\FLOW3\SignalSlot\Dispatcher $dispatcher
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function injectDispatcher(\F3\FLOW3\SignalSlot\Dispatcher $dispatcher) {
-		$this->dispatcher = $dispatcher;
-	}
 
 	/**
 	 * Passes the signal over to the Dispatcher

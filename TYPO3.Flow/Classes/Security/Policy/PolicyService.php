@@ -308,7 +308,7 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	 * Returns all parent roles for the given role, that are configured in the policy.
 	 *
 	 * @param \F3\FLOW3\Security\Policy\Role $role The role to get the parents for
-	 * @return array<F3\Security\Policy\Role> Array of parent roles
+	 * @return array<TYPO3\Security\Policy\Role> Array of parent roles
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getAllParentRoles(\F3\FLOW3\Security\Policy\Role $role) {
@@ -544,7 +544,7 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function savePolicyCache() {
-		$tags = array('F3_FLOW3_AOP');
+		$tags = array('TYPO3_FLOW3_AOP');
 		if (!$this->cache->has('acls')) {
 			$this->cache->set('acls', $this->acls, $tags);
 		}

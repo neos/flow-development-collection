@@ -69,23 +69,22 @@ class ClassLoader {
 			}
 		}
 
-		$classNameParts = explode('\\', $className);
-		if (is_array($classNameParts) && $classNameParts[0] === 'F3' && isset($this->packages[$classNameParts[1]])) {
-			if ($classNameParts[2] === 'Tests' && $classNameParts[3] === 'Functional') {
-				$classFilePathAndName = $this->packages[$classNameParts[1]]->getFunctionalTestsPath();
-				$classFilePathAndName .= implode(array_slice($classNameParts, 4, -1), '/') . '/';
-				$classFilePathAndName .= end($classNameParts) . '.php';
-			} else {
-				$classFilePathAndName = $this->packages[$classNameParts[1]]->getClassesPath();
-				$classFilePathAndName .= implode(array_slice($classNameParts, 2, -1), '/') . '/';
-				$classFilePathAndName .= end($classNameParts) . '.php';
+		foreach ($this->packages as $packageKey => $package) {
+			$packageNamespace = str_replace('.', '\\', $packageKey);
+			$packageNamespaceLength = strlen($packageNamespace);
+			if (substr($className, 0, $packageNamespaceLength) === $packageNamespace && $className[$packageNamespaceLength] === '\\') {
+				if (substr($className, $packageNamespaceLength + 1, 16) === 'Tests\Functional') {
+					$classFilePathAndName = $this->packages[$packageKey]->getPackagePath();
+				} else {
+					$classFilePathAndName = $this->packages[$packageKey]->getClassesPath();
+				}
+				$classFilePathAndName .= str_replace('\\', '/', substr($className, $packageNamespaceLength + 1)) . '.php';
+				break;
 			}
 		}
 
-		if (!isset($classFilePathAndName) && $this->packages === array() && $classNameParts[0] === 'F3' && $classNameParts[1] === 'FLOW3') {
-			$classFilePathAndName = FLOW3_PATH_FLOW3 . 'Classes/';
-			$classFilePathAndName .= implode(array_slice($classNameParts, 2, -1), '/') . '/';
-			$classFilePathAndName .= end($classNameParts) . '.php';
+		if ($this->packages === array() && substr($className, 0, 11) === 'F3\FLOW3') {
+			$classFilePathAndName = FLOW3_PATH_FLOW3 . 'Classes/' . str_replace('\\', '/', substr($className, 12)) . '.php';
 		}
 
 		if (isset($classFilePathAndName) && file_exists($classFilePathAndName)) {

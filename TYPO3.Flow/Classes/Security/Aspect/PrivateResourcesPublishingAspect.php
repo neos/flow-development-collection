@@ -73,7 +73,7 @@ class PrivateResourcesPublishingAspect {
 	/**
 	 * Returns the web URI to be used to publish the specified persistent resource
 	 *
-	 * @around method(F3\FLOW3\Resource\Publishing\FileSystemPublishingTarget->buildPersistentResourceWebUri()) && setting(FLOW3.security.enable)
+	 * @around method(F3\FLOW3\Resource\Publishing\FileSystemPublishingTarget->buildPersistentResourceWebUri()) && setting(TYPO3.FLOW3.security.enable)
 	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
 	 * @return mixed Result of the target method, a rewritten private resource URI or FALSE on error
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
@@ -106,7 +106,7 @@ class PrivateResourcesPublishingAspect {
 	/**
 	 * Returns the publish path and filename to be used to publish the specified persistent resource
 	 *
-	 * @around method(F3\FLOW3\Resource\Publishing\FileSystemPublishingTarget->buildPersistentResourcePublishPathAndFilename()) && setting(FLOW3.security.enable)
+	 * @around method(F3\FLOW3\Resource\Publishing\FileSystemPublishingTarget->buildPersistentResourcePublishPathAndFilename()) && setting(TYPO3.FLOW3.security.enable)
 	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
 	 * @return mixed Result of the target method
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
@@ -159,7 +159,7 @@ class PrivateResourcesPublishingAspect {
 	/**
 	 * Unpublishes a private resource from all private user directories
 	 *
-	 * @after method(F3\FLOW3\Resource\Publishing\FileSystemPublishingTarget->unpublishPersistentResource()) && setting(FLOW3.security.enable)
+	 * @after method(F3\FLOW3\Resource\Publishing\FileSystemPublishingTarget->unpublishPersistentResource()) && setting(TYPO3.FLOW3.security.enable)
 	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
 	 * @return mixed Result of the target method
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>

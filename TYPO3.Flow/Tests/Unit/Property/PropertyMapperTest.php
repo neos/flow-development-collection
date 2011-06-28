@@ -146,13 +146,13 @@ class PropertyMapperTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$data = array();
 
 
-		$className1 = uniqid('F3_FLOW3_Testclass1_', FALSE);
-		$className2 = uniqid('F3_FLOW3_Testclass2_', FALSE);
-		$className3 = uniqid('F3_FLOW3_Testclass3_', FALSE);
+		$className1 = uniqid('TYPO3_FLOW3_Testclass1_', FALSE);
+		$className2 = uniqid('TYPO3_FLOW3_Testclass2_', FALSE);
+		$className3 = uniqid('TYPO3_FLOW3_Testclass3_', FALSE);
 
-		$interfaceName1 = uniqid('F3_FLOW3_TestInterface1_', FALSE);
-		$interfaceName2 = uniqid('F3_FLOW3_TestInterface2_', FALSE);
-		$interfaceName3 = uniqid('F3_FLOW3_TestInterface3_', FALSE);
+		$interfaceName1 = uniqid('TYPO3_FLOW3_TestInterface1_', FALSE);
+		$interfaceName2 = uniqid('TYPO3_FLOW3_TestInterface2_', FALSE);
+		$interfaceName3 = uniqid('TYPO3_FLOW3_TestInterface3_', FALSE);
 
 		eval("
 			interface $interfaceName2 {}

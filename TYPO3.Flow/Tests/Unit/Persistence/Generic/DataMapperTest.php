@@ -110,7 +110,7 @@ class DataMapperTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		$objectData = array(
 			'identifier' => '1234',
-			'classname' => 'F3\Post',
+			'classname' => 'TYPO3\Post',
 			'properties' => array(
 				'firstProperty' => array(
 					'type' => 'string',
@@ -135,7 +135,7 @@ class DataMapperTest extends \F3\FLOW3\Tests\UnitTestCase {
 			)
 		);
 
-		$classSchema = new \F3\FLOW3\Reflection\ClassSchema('F3\Post');
+		$classSchema = new \F3\FLOW3\Reflection\ClassSchema('TYPO3\Post');
 		$classSchema->addProperty('firstProperty', 'string');
 		$classSchema->addProperty('secondProperty', 'integer');
 		$classSchema->addProperty('thirdProperty', 'float');
@@ -167,11 +167,11 @@ class DataMapperTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		$objectData = array(
 			'identifier' => 'c254d2e0-825a-11de-8a39-0800200c9a66',
-			'classname' => 'F3\Post',
+			'classname' => 'TYPO3\Post',
 			'properties' => array()
 		);
 
-		$classSchema = new \F3\FLOW3\Reflection\ClassSchema('F3\Post');
+		$classSchema = new \F3\FLOW3\Reflection\ClassSchema('TYPO3\Post');
 
 		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService');
 		$mockReflectionService->expects($this->once())->method('getClassSchema')->will($this->returnValue($classSchema));
@@ -197,11 +197,11 @@ class DataMapperTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		$objectData = array(
 			'identifier' => 'c254d2e0-825a-11de-8a39-0800200c9a66',
-			'classname' => 'F3\Post',
+			'classname' => 'TYPO3\Post',
 			'properties' => array()
 		);
 
-		$classSchema = $this->getMock('F3\FLOW3\Reflection\ClassSchema', array('getUuidPropertyName'), array('F3\Post'));
+		$classSchema = $this->getMock('F3\FLOW3\Reflection\ClassSchema', array('getUuidPropertyName'), array('TYPO3\Post'));
 		$classSchema->expects($this->once())->method('getUUIDPropertyName')->will($this->returnValue('myUuidProperty'));
 
 		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService');
@@ -224,7 +224,7 @@ class DataMapperTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		$objectData = array(
 			'identifier' => '1234',
-			'classname' => 'F3\Post',
+			'classname' => 'TYPO3\Post',
 			'properties' => array(
 				'firstProperty' => array(
 					'type' => 'array',
@@ -242,18 +242,18 @@ class DataMapperTest extends \F3\FLOW3\Tests\UnitTestCase {
 					'value' => 'theUnixtime'
 				),
 				'fourthProperty' => array(
-					'type' => '\F3\Some\Domain\Model',
+					'type' => '\TYPO3\Some\Domain\Model',
 					'multivalue' => FALSE,
 					'value' => array('identifier' => 'theMappedObjectIdentifier')
 				)
 			)
 		);
 
-		$classSchema = new \F3\FLOW3\Reflection\ClassSchema('F3\Post');
+		$classSchema = new \F3\FLOW3\Reflection\ClassSchema('TYPO3\Post');
 		$classSchema->addProperty('firstProperty', 'array');
 		$classSchema->addProperty('secondProperty', 'SplObjectStorage');
 		$classSchema->addProperty('thirdProperty', 'DateTime');
-		$classSchema->addProperty('fourthProperty', '\F3\Some\Domain\Model');
+		$classSchema->addProperty('fourthProperty', '\TYPO3\Some\Domain\Model');
 
 		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService');
 		$mockReflectionService->expects($this->once())->method('getClassSchema')->will($this->returnValue($classSchema));
@@ -282,7 +282,7 @@ class DataMapperTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		$objectData = array(
 			'identifier' => '1234',
-			'classname' => 'F3\Post',
+			'classname' => 'TYPO3\Post',
 			'properties' => array(
 				'secondProperty' => array(
 					'type' => 'string',
@@ -302,7 +302,7 @@ class DataMapperTest extends \F3\FLOW3\Tests\UnitTestCase {
 			)
 		);
 
-		$classSchema = new \F3\FLOW3\Reflection\ClassSchema('F3\Post');
+		$classSchema = new \F3\FLOW3\Reflection\ClassSchema('TYPO3\Post');
 		$classSchema->addProperty('firstProperty', 'string');
 		$classSchema->addProperty('secondProperty', 'string');
 		$classSchema->addProperty('thirdProperty', 'string');
@@ -334,7 +334,7 @@ class DataMapperTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		$objectData = array(
 			'identifier' => '1234',
-			'classname' => 'F3\Post',
+			'classname' => 'TYPO3\Post',
 			'properties' => array(
 				'firstProperty' => array(
 					'type' => 'string',
@@ -354,7 +354,7 @@ class DataMapperTest extends \F3\FLOW3\Tests\UnitTestCase {
 			)
 		);
 
-		$classSchema = new \F3\FLOW3\Reflection\ClassSchema('F3\Post');
+		$classSchema = new \F3\FLOW3\Reflection\ClassSchema('TYPO3\Post');
 		$classSchema->addProperty('firstProperty', 'string');
 		$classSchema->addProperty('thirdProperty', 'string');
 
@@ -382,12 +382,12 @@ class DataMapperTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		$objectData = array(
 			'identifier' => 'c254d2e0-825a-11de-8a39-0800200c9a66',
-			'classname' => 'F3\Post',
+			'classname' => 'TYPO3\Post',
 			'properties' => array(),
 			'metadata' => array('My_Metadata' => 'Test')
 		);
 
-		$classSchema = new \F3\FLOW3\Reflection\ClassSchema('F3\Post');
+		$classSchema = new \F3\FLOW3\Reflection\ClassSchema('TYPO3\Post');
 
 		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService');
 		$mockReflectionService->expects($this->once())->method('getClassSchema')->will($this->returnValue($classSchema));
@@ -409,7 +409,7 @@ class DataMapperTest extends \F3\FLOW3\Tests\UnitTestCase {
 			array('value' => array('mappedObject2'))
 		);
 
-		$classSchema = new \F3\FLOW3\Reflection\ClassSchema('F3\Post');
+		$classSchema = new \F3\FLOW3\Reflection\ClassSchema('TYPO3\Post');
 		$classSchema->addProperty('firstProperty', 'SplObjectStorage');
 
 		$dataMapper = $this->getAccessibleMock('F3\FLOW3\Persistence\Generic\DataMapper', array('mapToObject'));

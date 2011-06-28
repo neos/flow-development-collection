@@ -21,6 +21,8 @@ namespace F3\FLOW3\Tests\Unit\Package;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use \F3\FLOW3\Package\PackageInterface;
+
 /**
  * Testcase for the default package manager
  *
@@ -40,28 +42,49 @@ class PackageManagerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	protected function setUp() {
 		\vfsStreamWrapper::register();
-		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('testDirectory'));
-
+		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('Test'));
 		$mockBootstrap = $this->getMock('F3\FLOW3\Core\Bootstrap', array(), array(), '', FALSE);
-		$mockBootstrap->expects($this->any())->method('getSignalSlotDispatcher')->will($this->returnValue(
-			$this->getMock('F3\FLOW3\SignalSlot\Dispatcher')
-		));
+		$mockBootstrap->expects($this->any())->method('getSignalSlotDispatcher')->will($this->returnValue($this->getMock('F3\FLOW3\SignalSlot\Dispatcher')));
 		$this->packageManager = new \F3\FLOW3\Package\PackageManager();
-		$this->packageManager->initialize($mockBootstrap);
+
+		mkdir('vfs://Test/Resources');
+		$packageClassTemplateUri = 'vfs://Test/Resources/Package.php.tmpl';
+		file_put_contents($packageClassTemplateUri, '<?php namespace {packageNamespace}; # The {packageKey} package');
+		$this->packageManager->setPackageClassTemplateUri($packageClassTemplateUri);
+
+		mkdir('vfs://Test/Packages/Application', 0700, TRUE);
+		mkdir('vfs://Test/Configuration');
+
+		$mockClassLoader = $this->getMock('F3\FLOW3\Core\ClassLoader', array(), array(), '', FALSE);
+
+		$this->packageManager->injectClassLoader($mockClassLoader);
+		$this->packageManager->initialize($mockBootstrap, 'vfs://Test/Packages/', 'vfs://Test/Configuration/PackageStates.php');
 	}
 
 	/**
-	 * Tests the method getPackage()
-	 *
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function initializeUsesPackageStatesConfigurationForActivePackages() {
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getPackageReturnsTheSpecifiedPackage() {
+		$this->packageManager->createPackage('TYPO3.FLOW3');
+
+		$package = $this->packageManager->getPackage('TYPO3.FLOW3');
+		$this->assertInstanceOf('F3\FLOW3\Package\PackageInterface', $package, 'The result of getPackage() was no valid package object.');
+	}
+
+	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @expectedException \F3\FLOW3\Package\Exception\UnknownPackageException
 	 */
-	public function getPackageReturnsPackagesAndThrowsExcpetions() {
-		$this->markTestSkipped('Rewrite tests for Package Manager!');
-
-		$package = $this->packageManager->getPackage('FLOW3');
-		$this->assertInstanceOf('F3\FLOW3\Package\PackageInterface', $package, 'The result of getPackage() was no valid package object.');
+	public function getPackageThrowsExcpetionOnUnknownPackage() {
 		$this->packageManager->getPackage('PrettyUnlikelyThatThisPackageExists');
 	}
 
@@ -70,269 +93,189 @@ class PackageManagerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getCaseSensitivePackageKeyReturnsTheUpperCamelCaseVersionOfAGivenPackageKeyIfThePackageIsRegistered() {
-		$this->markTestSkipped('Rewrite tests for Package Manager!');
-
 		$packageManager = $this->getAccessibleMock('F3\FLOW3\Package\PackageManager', array('dummy'), array(), '', FALSE);
-		$packageManager->_set('packageKeys', array('testpackage' => 'TestPackage'));
+		$packageManager->_set('packageKeys', array('acme.testpackage' => 'Acme.TestPackage'));
+		$this->assertEquals('Acme.TestPackage', $packageManager->getCaseSensitivePackageKey('acme.testpackage'));
+	}
 
-		$this->assertEquals('TestPackage', $packageManager->getCaseSensitivePackageKey('testpackage'));
+	/**
+	 * Data Provider returning valid package keys and the corresponding path
+	 *
+	 * @return array
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function packageKeysAndPaths() {
+		return array(
+			array('TYPO3.YetAnotherTestPackage', 'vfs://Test/Packages/Application/TYPO3/YetAnotherTestPackage/'),
+			array('RobertLemke.FLOW3.NothingElse', 'vfs://Test/Packages/Application/RobertLemke/FLOW3/NothingElse/')
+		);
 	}
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @dataProvider packageKeysAndPaths
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function createPackageCreatesPackageFolderAndReturnsPackage() {
-		$this->markTestSkipped('Rewrite tests for Package Manager!');
+	public function scanAvailablePackagesTraversesThePackagesDirectoryAndRegistersPackagesItFinds() {
+		$packageKeys = array(
+			'TYPO3.FLOW3' . md5(uniqid(mt_rand(), TRUE)),
+			'TYPO3.YetAnotherTestPackage' . md5(uniqid(mt_rand(), TRUE)),
+			'RobertLemke.FLOW3.NothingElse' . md5(uniqid(mt_rand(), TRUE))
+		);
 
-		$mockPackage = $this->getMock('F3\FLOW3\Package\PackageInterface');
+		foreach ($packageKeys as $packageKey) {
+			$packageNamespace = str_replace('.', '\\', $packageKey);
+			$packagePath = 'vfs://Test/Packages/Application/' . str_replace('.', '/', $packageNamespace) . '/';
+			$packageClassCode = '<?php
+					namespace ' . $packageNamespace . ';
+					class Package extends \F3\FLOW3\Package\Package {}
+			?>';
 
-		$packageKey = 'YetAnotherTestPackage';
-		$packagesPath = \vfsStream::url('testDirectory') . '/';
+			mkdir($packagePath, 0770, TRUE);
+			mkdir($packagePath . 'Classes');
+			mkdir($packagePath . 'Meta');
+			file_put_contents($packagePath . 'Classes/Package.php', $packageClassCode);
+			file_put_contents($packagePath . 'Meta/Package.xml', '<xml>...</xml>');
+		}
 
-		$packageMetaDataWriter = $this->getMock('F3\FLOW3\Package\MetaData\WriterInterface');
-		$packageMetaDataWriter->expects($this->once())->method('writePackageMetaData')->will($this->returnValue(TRUE));
+		$packageManager = $this->getAccessibleMock('F3\FLOW3\Package\PackageManager', array('dummy'), array(), '', FALSE);
+		$packageManager->_set('packagesBasePath', 'vfs://Test/Packages/');
+		$packageManager->_set('packageStatesPathAndFilename', 'vfs://Test/Configuration/PackageStates.php');
 
-		$this->packageManager->injectPackageMetaDataWriter($packageMetaDataWriter);
+		$packageManager->_set('packages', array());
+		$packageManager->_call('scanAvailablePackages');
+	}
 
-		$this->packageManager->initialize();
+	/**
+	 * @test
+	 * @expectedException F3\FLOW3\Package\Exception\CorruptPackageException
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function scanAvailablePackagesThrowsAnExceptionWhenItFindsACorruptPackage() {
+		mkdir('vfs://Test/Packages/Application/TYPO3/YetAnotherTestPackage/Meta', 0770, TRUE);
+		file_put_contents('vfs://Test/Packages/Application/TYPO3/YetAnotherTestPackage/Meta/Package.xml', '<xml>...</xml>');
 
-		$actualPackage = $this->packageManager->createPackage($packageKey, NULL, $packagesPath);
+		$packageManager = $this->getAccessibleMock('F3\FLOW3\Package\PackageManager', array('dummy'), array(), '', FALSE);
+		$packageManager->_set('packagesBasePath', 'vfs://Test/Packages/');
+		$packageManager->_set('packageStatesPathAndFilename', 'vfs://Test/Configuration/PackageStates.php');
 
-		$packagePath = $packagesPath . $packageKey . '/';
-		$this->assertTrue(is_dir($packagePath), 'Path "' . $packagePath . '" should exist after createPackage');
+		$packageManager->_call('scanAvailablePackages');
+	}
 
-		$this->assertSame($mockPackage, $actualPackage);
+	/**
+	 * @test
+	 * @dataProvider packageKeysAndPaths
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function createPackageCreatesPackageFolderAndReturnsPackage($packageKey, $expectedPackagePath) {
+		$actualPackage = $this->packageManager->createPackage($packageKey);
+		$actualPackagePath = $actualPackage->getPackagePath();
+
+		$this->assertEquals($expectedPackagePath, $actualPackagePath);
+		$this->assertTrue(is_dir($actualPackagePath), 'Package path should exist after createPackage()');
+		$this->assertEquals($packageKey, $actualPackage->getPackageKey());
 		$this->assertTrue($this->packageManager->isPackageAvailable($packageKey));
 	}
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function createPackageWithMetaDataUsesMetaDataWriter() {
-		$this->markTestSkipped('Rewrite tests for Package Manager!');
+	public function createPackageWritesAPackageMetaFileUsingTheGivenMetaObject() {
+		$metaData = new \F3\FLOW3\Package\MetaData('Acme.YetAnotherTestPackage');
+		$metaData->setTitle('Yet Another Test Package');
 
-		$metaDataWriter = $this->getMock('F3\FLOW3\Package\MetaData\WriterInterface');
-		$metaDataWriter->expects($this->atLeastOnce())
-			->method('writePackageMetaData')
-			->will($this->returnValue('<package/>'));
+		$package = $this->packageManager->createPackage('Acme.YetAnotherTestPackage', $metaData);
 
-		$this->packageManager->injectPackageMetaDataWriter($metaDataWriter);
-		$packagesPath = \vfsStream::url('testDirectory') . '/';
-
-		$metaData = $this->getMock('F3\FLOW3\Package\MetaData', array(), array('YetAnotherTestPackage'));
-
-		$this->packageManager->createPackage('YetAnotherTestPackage', $metaData, $packagesPath);
+		$actualPackageXml = simplexml_load_file($package->getMetaPath() . 'Package.xml');
+		$this->assertEquals('Acme.YetAnotherTestPackage', (string)$actualPackageXml->key);
+		$this->assertEquals('Yet Another Test Package', (string)$actualPackageXml->title);
 	}
 
 	/**
-	 * Check create package creates the folders for
-	 * classes, configuration, documentation, resources and tests
+	 * Checks if createPackage() creates the folders for classes, configuration, documentation, resources and tests and
+	 * the mandatory Package class.
 	 *
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function createPackageCreatesClassesConfigurationDocumentationResourcesAndTestsFolders() {
-		$this->markTestSkipped('Rewrite tests for Package Manager!');
+	public function createPackageCreatesCommonFoldersAndThePackageClass() {
+		$package = $this->packageManager->createPackage('Acme.YetAnotherTestPackage');
+		$packagePath = $package->getPackagePath();
 
-		$metaDataWriter = $this->getMock('F3\FLOW3\Package\MetaData\WriterInterface');
-		$metaDataWriter->expects($this->any())
-			->method('writePackageMetaData')
-			->will($this->returnValue('<package/>'));
+		$this->assertTrue(is_dir($packagePath . PackageInterface::DIRECTORY_CLASSES), "Classes directory was not created");
+		$this->assertTrue(is_dir($packagePath . PackageInterface::DIRECTORY_CONFIGURATION), "Configuration directory was not created");
+		$this->assertTrue(is_dir($packagePath . PackageInterface::DIRECTORY_DOCUMENTATION), "Documentation directory was not created");
+		$this->assertTrue(is_dir($packagePath . PackageInterface::DIRECTORY_RESOURCES), "Resources directory was not created");
+		$this->assertTrue(is_dir($packagePath . PackageInterface::DIRECTORY_TESTS_UNIT), "Tests/Unit directory was not created");
+		$this->assertTrue(is_dir($packagePath . PackageInterface::DIRECTORY_TESTS_FUNCTIONAL), "Tests/Functional directory was not created");
+		$this->assertTrue(is_dir($packagePath . PackageInterface::DIRECTORY_METADATA), "Metadata directory was not created");
 
-		$this->packageManager->injectPackageMetaDataWriter($metaDataWriter);
-		$packagesPath = \vfsStream::url('testDirectory') . '/';
-
-		$package = $this->packageManager->createPackage('YetAnotherTestPackage', NULL, $packagesPath);
-
-		$packagePath = $package->getPackagePath('YetAnotherTestPackage');
-		$this->assertTrue(is_dir($packagePath . \F3\FLOW3\Package\Package::DIRECTORY_CLASSES), "Classes directory was not created");
-		$this->assertTrue(is_dir($packagePath . \F3\FLOW3\Package\Package::DIRECTORY_CONFIGURATION), "Configuration directory was not created");
-		$this->assertTrue(is_dir($packagePath . \F3\FLOW3\Package\Package::DIRECTORY_DOCUMENTATION), "Documentation directory was not created");
-		$this->assertTrue(is_dir($packagePath . \F3\FLOW3\Package\Package::DIRECTORY_RESOURCES), "Resources directory was not created");
-		$this->assertTrue(is_dir($packagePath . \F3\FLOW3\Package\Package::DIRECTORY_TESTS_UNIT), "Tests/Unit directory was not created");
-		$this->assertTrue(is_dir($packagePath . \F3\FLOW3\Package\Package::DIRECTORY_TESTS_INTEGRATION), "Tests/Integration directory was not created");
-		$this->assertTrue(is_dir($packagePath . \F3\FLOW3\Package\Package::DIRECTORY_TESTS_SYSTEM), "Tests/System directory was not created");
-		$this->assertTrue(is_dir($packagePath . \F3\FLOW3\Package\Package::DIRECTORY_METADATA), "Metadata directory was not created");
+		$actualPackageClassCode = file_get_contents($packagePath . PackageInterface::DIRECTORY_CLASSES . 'Package.php');
+		$expectedPackageClassCode = '<?php namespace Acme\YetAnotherTestPackage; # The Acme.YetAnotherTestPackage package';
+		$this->assertEquals($expectedPackageClassCode, $actualPackageClassCode);
 	}
 
 	/**
-	 * Test creation of package with an invalid package key fails.
+	 * Makes sure that an exception is thrown and no directory is created on passing invalid package keys.
 	 *
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function createPackageThrowsExceptionForInvalidPackageKey() {
-		$this->markTestSkipped('Rewrite tests for Package Manager!');
-
-		$packagesPath = \vfsStream::url('testDirectory') . '/';
-
+	public function createPackageThrowsExceptionOnInvalidPackageKey() {
 		try {
-			$this->packageManager->createPackage('Invalid*PackageKey', NULL, $packagesPath);
-		} catch(Exception $exception) {
-			$this->assertEquals(1220722210, $exception->getCode(), 'createPackage() throwed an exception but with an unexpected error code.');
+			$this->packageManager->createPackage('Invalid_PackageKey');
+		} catch(\F3\FLOW3\Package\Exception\InvalidPackageKeyException $exception) {
 		}
-
-		$this->assertFalse(is_dir($packagesPath . 'Invalid_Package_Key'), 'Package folder with invalid package key was created');
+		$this->assertFalse(is_dir('vfs://Test/Packages/Application/Invalid_PackageKey'), 'Package folder with invalid package key was created');
 	}
 
 	/**
-	 * Test handling of duplicate package keys in package creation.
+	 * Makes sure that duplicate package keys are detected.
 	 *
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @expectedException F3\FLOW3\Package\Exception\PackageKeyAlreadyExistsException
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function createPackageThrowsExceptionForExistingPackageKey() {
-		$this->markTestSkipped('Rewrite tests for Package Manager!');
-
-		$metaDataWriter = $this->getMock('F3\FLOW3\Package\MetaData\WriterInterface');
-		$metaDataWriter->expects($this->any())
-			->method('writePackageMetaData')
-			->will($this->returnValue('<package/>'));
-
-		$this->packageManager->injectPackageMetaDataWriter($metaDataWriter);
-		$packagesPath = \vfsStream::url('testDirectory') . '/';
-
-		$this->packageManager->createPackage('TestPackage', NULL, $packagesPath);
-
-		try {
-			$this->packageManager->createPackage('TestPackage', NULL, $packagesPath);
-		} catch(Exception $exception) {
-			$this->assertEquals(1220722873, $exception->getCode(), 'createPackage() throwed an exception but with an unexpected error code.');
-			return;
-		}
-		$this->fail('Create package didn\'t throw an exception for an existing package key');
+		$this->packageManager->createPackage('Acme.YetAnotherTestPackage');
+		$this->packageManager->createPackage('Acme.YetAnotherTestPackage');
 	}
 
 	/**
 	 * @test
-	 * @author Thomas Hempel <thomas@typo3.org>
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function createPackageCreatesDeactivatedPackage() {
-		$this->markTestSkipped('Rewrite tests for Package Manager!');
-
-		$packageManager = new \F3\FLOW3\Package\PackageManager();
-		$packageManager->initialize();
-
-		$packageKey = 'YetAnotherTestPackage';
-		$packageManager->createPackage($packageKey);
-
-		$this->assertFalse($packageManager->isPackageActive($packageKey));
-	}
-
-
-	/**
-	 * Check package key validation accepts only valid keys
-	 *
-	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 */
-	public function getPackageKeyValidationWorks() {
-		$this->assertFalse($this->packageManager->isPackageKeyValid('invalidPackageKey'));
-		$this->assertFalse($this->packageManager->isPackageKeyValid('invalid PackageKey'));
-		$this->assertFalse($this->packageManager->isPackageKeyValid('1nvalidPackageKey'));
-		$this->assertTrue($this->packageManager->isPackageKeyValid('ValidPackageKey'));
-		$this->assertTrue($this->packageManager->isPackageKeyValid('Valid_PackageKey'));
-		$this->assertTrue($this->packageManager->isPackageKeyValid('ValidPackage123Key'));
+	public function createPackageActivatesTheNewlyCreatedPackage() {
+		$this->packageManager->createPackage('Acme.YetAnotherTestPackage');
+		$this->assertTrue($this->packageManager->isPackageActive('Acme.YetAnotherTestPackage'));
 	}
 
 	/**
 	 * @test
-	 * @author Thomas Hempel <thomas@typo3.org>
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function deactivatePackageRemovesPackageFromActivePackagesAndUpdatesPackageStatesConfiguration() {
-		$this->markTestSkipped('Rewrite tests for Package Manager!');
+	public function activatePackageAndDeactivatePackageActivateAndDeactivateTheGivenPackage() {
+		$packageKey = 'Acme.YetAnotherTestPackage';
 
-		$mockPackage = $this->getMock('F3\FLOW3\Package\PackageInterface');
-		$mockPackage->expects($this->any())->method('getPackageKey')->will($this->returnValue('YetAnotherTestPackage'));
+		$this->packageManager->createPackage($packageKey);
 
-		$configurationManager = $this->getMock('F3\FLOW3\Configuration\ConfigurationManager', array('getConfiguration', 'setConfiguration', 'saveConfiguration'), array(), '', FALSE);
-		$configurationManager->expects($this->once())
-			->method('getConfiguration')
-			->with(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_PACKAGESTATES)
-			->will($this->returnValue(array('YetAnotherTestPackage' => array('state' => 'active', 'foo' => 'bar'))));
-		$configurationManager->expects($this->once())
-			->method('setConfiguration')
-			->with(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_PACKAGESTATES, array('YetAnotherTestPackage' => array('state' => 'inactive', 'foo' => 'bar')));
-		$configurationManager->expects($this->once())
-			->method('saveConfiguration')
-			->with(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_PACKAGESTATES);
+		$this->packageManager->deactivatePackage($packageKey);
+		$this->assertFalse($this->packageManager->isPackageActive($packageKey));
 
-		$packageManager = $this->getAccessibleMock('F3\FLOW3\Package\PackageManager', array('dummy'));
-		$packageManager->injectConfigurationManager($configurationManager);
-		$packageManager->_set('packages', array('YetAnotherTestPackage' => $mockPackage));
-		$packageManager->_set('activePackages', array('YetAnotherTestPackage' => $mockPackage));
-		$packageManager->deactivatePackage('YetAnotherTestPackage');
-
-		$this->assertFalse($packageManager->isPackageActive('YetAnotherTestPackage'));
+		$this->packageManager->activatePackage($packageKey);
+		$this->assertTrue($this->packageManager->isPackageActive($packageKey));
 	}
 
 	/**
 	 * @test
-	 * @author Thomas Hempel <thomas@typo3.org>
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @expectedException \F3\FLOW3\Package\Exception\ProtectedPackageKeyException
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function activatePackagesAddsPackageToActivePackagesAndUpdatesPackageStatesConfiguration() {
-		$this->markTestSkipped('Rewrite tests for Package Manager!');
-
-		$mockPackage = $this->getMock('F3\FLOW3\Package\PackageInterface');
-		$mockPackage->expects($this->any())->method('getPackageKey')->will($this->returnValue('YetAnotherTestPackage'));
-
-		$configurationManager = $this->getMock('F3\FLOW3\Configuration\ConfigurationManager', array('getConfiguration', 'setConfiguration', 'saveConfiguration'), array(), '', FALSE);
-		$configurationManager->expects($this->once())
-			->method('getConfiguration')
-			->with(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_PACKAGESTATES)
-			->will($this->returnValue(array('YetAnotherTestPackage' => array('foo' => 'bar'))));
-		$configurationManager->expects($this->once())
-			->method('setConfiguration')
-			->with(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_PACKAGESTATES, array('YetAnotherTestPackage' => array('state' => 'active', 'foo' => 'bar')));
-		$configurationManager->expects($this->once())
-			->method('saveConfiguration')
-			->with(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_PACKAGESTATES);
-
-		$packageManager = $this->getAccessibleMock('F3\FLOW3\Package\PackageManager', array('dummy'));
-		$packageManager->injectConfigurationManager($configurationManager);
-		$packageManager->_set('packages', array('YetAnotherTestPackage' => $mockPackage));
-		$packageManager->_set('activePackages', array());
-		$packageManager->activatePackage('YetAnotherTestPackage');
-
-		$this->assertTrue($packageManager->isPackageActive('YetAnotherTestPackage'));
-	}
-
-	/**
-	 * @test
-	 * @expectedException \F3\FLOW3\Package\Exception\InvalidPackageStateException
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 */
-	public function activatePackageThrowsExceptionAndDoesntUpdateConfigurationForAlreadyActivePackage() {
-		$this->markTestSkipped('Rewrite tests for Package Manager!');
-
-		$mockPackage = $this->getMock('F3\FLOW3\Package\PackageInterface');
-		$mockPackage->expects($this->any())->method('getPackageKey')->will($this->returnValue('YetAnotherTestPackage'));
-
-		$configurationManager = $this->getMock('F3\FLOW3\Configuration\ConfigurationManager', array('getConfiguration', 'setConfiguration', 'save'), array(), '', FALSE);
-		$configurationManager->expects($this->never())->method('setConfiguration');
-		$configurationManager->expects($this->never())->method('saveConfiguration');
-
-		$packageManager = $this->getAccessibleMock('F3\FLOW3\Package\PackageManager', array('dummy'));
-		$packageManager->injectConfigurationManager($configurationManager);
-		$packageManager->_set('packages', array('YetAnotherTestPackage' => $mockPackage));
-		$packageManager->_set('activePackages', array('YetAnotherTestPackage' => $mockPackage));
-		$packageManager->activatePackage('YetAnotherTestPackage');
-	}
-
-	/**
-	 * @test
-	 * @expectedException \F3\FLOW3\Package\Exception\UnknownPackageException
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 */
-	public function activatePackageThrowsExceptionForUnavailablePackage() {
-		$this->markTestSkipped('Rewrite tests for Package Manager!');
-
-		$packageManager = $this->getAccessibleMock('F3\FLOW3\Package\PackageManager', array('dummy'));
-		$packageManager->activatePackage('YetAnotherTestPackage');
+	public function deactivatePackageThrowsAnExceptionIfPackageIsProtected() {
+		$package = $this->packageManager->createPackage('Acme.YetAnotherTestPackage');
+		$package->setProtected(TRUE);
+		$this->packageManager->deactivatePackage('Acme.YetAnotherTestPackage');
 	}
 
 	/**
@@ -340,122 +283,38 @@ class PackageManagerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @expectedException \F3\FLOW3\Package\Exception\UnknownPackageException
 	 * @author Thomas Hempel <thomas@typo3.org>
 	 */
-	public function removePackageThrowsErrorIfPackageIsNotAvailable() {
+	public function deletePackageThrowsErrorIfPackageIsNotAvailable() {
 		$this->packageManager->deletePackage('PrettyUnlikelyThatThisPackageExists');
 	}
 
 	/**
 	 * @test
 	 * @expectedException \F3\FLOW3\Package\Exception\ProtectedPackageKeyException
-	 * @author Thomas Hempel <thomas@typo3.org>
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function removePackageThrowsErrorIfPackageIsProtected() {
-		$this->packageManager->deletePackage('FLOW3');
+	public function deletePackageThrowsAnExceptionIfPackageIsProtected() {
+		$package = $this->packageManager->createPackage('Acme.YetAnotherTestPackage');
+		$package->setProtected(TRUE);
+		$this->packageManager->deletePackage('Acme.YetAnotherTestPackage');
 	}
 
 	/**
 	 * @test
-	 * @author Thomas Hempel <thomas@typo3.org>
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function removePackageRemovesPackageFromAvailablePackages() {
-		$this->markTestSkipped('Rewrite tests for Package Manager!');
+	public function deletePackageRemovesPackageFromAvailableAndActivePackagesAndDeletesThePackageDirectory() {
+		$package = $this->packageManager->createPackage('Acme.YetAnotherTestPackage');
+		$packagePath = $package->getPackagePath();
 
-		$packageManager = new \F3\FLOW3\Package\PackageManager();
-		$packageManager->initialize();
+		$this->assertTrue(is_dir($packagePath . PackageInterface::DIRECTORY_METADATA));
+		$this->assertTrue($this->packageManager->isPackageActive('Acme.YetAnotherTestPackage'));
+		$this->assertTrue($this->packageManager->isPackageAvailable('Acme.YetAnotherTestPackage'));
 
-		$packageKey = 'YetAnotherTestPackage';
-		$packageManager->createPackage($packageKey);
-		$packageManager->removePackage($packageKey);
+		$this->packageManager->deletePackage('Acme.YetAnotherTestPackage');
 
-		$this->assertFalse($packageManager->isPackageAvailable($packageKey));
-	}
-
-	/**
-	 * @test
-	 * @author Thomas Hempel <thomas@typo3.org>
-	 */
-	public function removePackageRemovesPackageFromActivePackages() {
-		$this->markTestSkipped('Rewrite tests for Package Manager!');
-
-		$packageManager = new \F3\FLOW3\Package\PackageManager();
-		$packageManager->initialize();
-
-		$packageKey = 'YetAnotherTestPackage';
-		$packageManager->createPackage($packageKey);
-		$packageManager->activatePackage($packageKey);
-		$packageManager->removePackage($packageKey);
-
-		$this->assertFalse($packageManager->isPackageActive($packageKey));
-	}
-
-	/**
-	 * @test
-	 * @author Thomas Hempel <thomas@typo3.org>
-	 */
-	public function deletePackageDeletesPackageDirectoryFromFilesystem() {
-		$this->markTestSkipped('Rewrite tests for Package Manager!');
-
-		$metaDataWriter = $this->getMock('F3\FLOW3\Package\MetaData\WriterInterface');
-		$metaDataWriter->expects($this->any())
-			->method('writePackageMetaData')
-			->will($this->returnValue('<package/>'));
-
-		$this->packageManager->injectPackageMetaDataWriter($metaDataWriter);
-		$packagesPath = \vfsStream::url('testDirectory') . '/';
-
-		$packageKey = 'YetAnotherTestPackage';
-		$package = $this->packageManager->createPackage($packageKey, NULL, $packagesPath);
-		$packagePath = $package->getPackagePath($packageKey);
-
-		$this->packageManager->deletePackage($packageKey);
-
-		$this->assertFalse(file_exists($packagePath), $packagePath, "Package directory was not deleted.");
-	}
-
-	/**
-	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 */
-	public function scanAvailablePackagesUsesObjectManagerToCreateNewPackages() {
-		$this->markTestSkipped('Rewrite tests for Package Manager!');
-	}
-
-	/**
-	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 */
-	public function initializeUsesPackageStatesConfigurationForActivePackages() {
-		$this->markTestSkipped('Rewrite tests for Package Manager!');
-
-		$packageStatesConfiguration = array(
-			'FLOW3' => array(
-				'state' => 'active'
-			)
-		);
-
-		$configurationManager = $this->getMock('F3\FLOW3\Configuration\ConfigurationManager', array('getConfiguration'), array(), '', FALSE);
-		$configurationManager->expects($this->once())->method('getConfiguration')->with(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_PACKAGESTATES)->will($this->returnValue($packageStatesConfiguration));
-
-		$mockFLOW3Package = $this->getMock('F3\FLOW3\Package\PackageInterface');
-		$mockFLOW3Package->expects($this->any())->method('getPackageKey')->will($this->returnValue('FLOW3'));
-		$mockTestPackage = $this->getMock('F3\FLOW3\Package\PackageInterface');
-		$mockTestPackage->expects($this->any())->method('getPackageKey')->will($this->returnValue('Test'));
-
-		$packageManager = $this->getAccessibleMock('F3\FLOW3\Package\PackageManager', array('scanAvailablePackages'));
-		$packageManager->_set('packages', array('FLOW3' => $mockFLOW3Package, 'Test' => $mockTestPackage));
-		$packageManager->injectConfigurationManager($configurationManager);
-		$packageManager->initialize();
-
-		$activePackages = $packageManager->getActivePackages();
-		$this->assertEquals(array('FLOW3' => $mockFLOW3Package), $activePackages);
-	}
-
-	/**
-	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 */
-	public function protectedPackagesAreAlwaysActive() {
-		$this->markTestSkipped('Rewrite tests for Package Manager!');
+		$this->assertFalse(is_dir($packagePath . PackageInterface::DIRECTORY_METADATA));
+		$this->assertFalse($this->packageManager->isPackageActive('Acme.YetAnotherTestPackage'));
+		$this->assertFalse($this->packageManager->isPackageAvailable('Acme.YetAnotherTestPackage'));
 	}
 }
 ?>

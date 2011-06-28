@@ -33,7 +33,7 @@ class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 	/**
 	 * @var string
 	 */
-	protected $controllerObjectNamePattern = 'F3\@package\@subpackage\Controller\@controllerController';
+	protected $controllerObjectNamePattern = '@package\@subpackage\Controller\@controllerController';
 
 	/**
 	 * @var \F3\FLOW3\Object\ObjectManagerInterface
@@ -257,7 +257,7 @@ class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 	 */
 	public function getControllerObjectName($packageKey, $subpackageKey, $controllerName) {
 		$possibleObjectName = $this->controllerObjectNamePattern;
-		$possibleObjectName = str_replace('@package', $packageKey, $possibleObjectName);
+		$possibleObjectName = str_replace('@package', str_replace('.', '\\', $packageKey), $possibleObjectName);
 		$possibleObjectName = str_replace('@subpackage', $subpackageKey, $possibleObjectName);
 		$possibleObjectName = str_replace('@controller', $controllerName, $possibleObjectName);
 		$possibleObjectName = str_replace('\\\\', '\\', $possibleObjectName);

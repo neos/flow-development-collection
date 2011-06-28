@@ -37,7 +37,7 @@ class StandardController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function resolveView() {
-		$view = new \F3\Fluid\View\TemplateView();
+		$view = new \TYPO3\Fluid\View\TemplateView();
 		$view->setControllerContext($this->controllerContext);
 		$view->setTemplatePathAndFilename(FLOW3_PATH_FLOW3 . 'Resources/Private/MVC/StandardView_Template.html');
 		return $view;

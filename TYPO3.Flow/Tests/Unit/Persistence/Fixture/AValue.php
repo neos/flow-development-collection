@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3CR\Tests\Fixtures;
+namespace TYPO3\TYPO3CR\Tests\Fixtures;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3CR".                    *

@@ -183,7 +183,7 @@ class Bootstrap {
 	 * during compiletime (versus runtime). The command controller must be totally
 	 * aware of the limited functionality FLOW3 provides at compiletime.
 	 *
-	 * @param string $commandIdentifier Package key and controller name separated by colon, e.g. "flow3:core"
+	 * @param string $commandIdentifier Package key and controller name separated by colon, e.g. "typo3.flow3:core"
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -194,7 +194,7 @@ class Bootstrap {
 	/**
 	 * Tells if the given command controller is registered for compiletime or not.
 	 *
-	 * @param string $commandIdentifier Package key, controller name and command name separated by colon, e.g. "flow3:cache:flush"
+	 * @param string $commandIdentifier Package key, controller name and command name separated by colon, e.g. "typo3.flow3:cache:flush"
 	 * @return boolean
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -204,7 +204,26 @@ class Bootstrap {
 			return FALSE;
 		}
 		unset($commandIdentifierParts[2]);
-		return isset($this->compiletimeCommandControllers[implode(':', $commandIdentifierParts)]);
+		$shortControllerIdentifier = implode(':', $commandIdentifierParts);
+		if (isset($this->compiletimeCommandControllers[$shortControllerIdentifier])) {
+			return TRUE;
+		}
+
+		foreach ($this->compiletimeCommandControllers as $fullControllerIdentifier => $isCompiletimeCommandController) {
+			if (substr($fullControllerIdentifier, - strlen($shortControllerIdentifier)) !== $shortControllerIdentifier) {
+				continue;
+			}
+			list($packageKey, $controllerName) = explode(':', $fullControllerIdentifier);
+			$packageKeyParts = explode('.', $packageKey);
+			for ($offset = 0; $offset < count($packageKeyParts); $offset++) {
+				$possibleComanndControllerIdentifier = implode('.', array_slice($packageKeyParts, $offset)) . ':' . $controllerName;
+				if ($possibleComanndControllerIdentifier === $shortControllerIdentifier) {
+					return TRUE;
+				}
+			}
+		}
+
+		return FALSE;
 	}
 
 	/**
@@ -357,17 +376,17 @@ class Bootstrap {
 	 */
 	protected function initializeForRuntime() {
 		$objectConfigurationCache = $this->cacheManager->getCache('FLOW3_Object_Configuration');
+
 			// will be FALSE here only if caches are totally empty, class monitoring runs only in compiletime
 		if ($objectConfigurationCache->has('allCompiledCodeUpToDate') === FALSE || $this->context !== 'Production') {
-			$this->executeCommand('flow3:core:compile');
+			$this->executeCommand('typo3.flow3:core:compile');
 		}
+
 		if ($objectConfigurationCache->has('allCompiledCodeUpToDate') === FALSE) {
 			throw new \F3\FLOW3\Exception('Could not load object configuration from cache. This might be due to an unsuccessful compile run. One reason might be, that your PHP binary is not located in "' . $this->settings['core']['phpBinaryPathAndFilename'] . '". In that case, set the correct path to the PHP executable in Configuration/Settings.yaml, setting FLOW3.core.phpBinaryPathAndFilename.', 1297263663);
 		}
 
-		$allSettings = $this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS);
-
-		if (isset($allSettings['FLOW3']['persistence']['doctrine']['autoUpdate']) && $allSettings['FLOW3']['persistence']['doctrine']['autoUpdate'] === TRUE) {
+		if ($this->settings['persistence']['doctrine']['autoUpdate'] === TRUE) {
 			$this->updateDoctrine();
 		}
 
@@ -376,7 +395,7 @@ class Bootstrap {
 
 		$this->objectManager = new \F3\FLOW3\Object\ObjectManager($this->context);
 		self::$staticObjectManager = $this->objectManager;
-		$this->objectManager->injectAllSettings($allSettings);
+		$this->objectManager->injectAllSettings($this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS));
 		$this->objectManager->setObjects($objectConfigurationCache->get('objects'));
 
 		$this->setInstancesOfEarlyServices();
@@ -401,9 +420,9 @@ class Bootstrap {
 		if ($objectConfigurationCache->has('doctrineProxyCodeUpToDate') === FALSE && $coreCache->has('doctrineSetupRunning') === FALSE) {
 			$coreCache->set('doctrineSetupRunning', 'White Russian', array(), 60);
 			$this->systemLogger->log('Updating Doctrine database', LOG_DEBUG);
-			$this->executeCommand('flow3:doctrine:update');
+			$this->executeCommand('typo3.flow3:doctrine:update');
 			$this->systemLogger->log('Compiling Doctrine proxies', LOG_DEBUG);
-			$this->executeCommand('flow3:doctrine:compileproxies');
+			$this->executeCommand('typo3.flow3:doctrine:compileproxies');
 			$coreCache->remove('doctrineSetupRunning');
 			$objectConfigurationCache->set('doctrineProxyCodeUpToDate', TRUE);
 		}
@@ -412,16 +431,17 @@ class Bootstrap {
 	/**
 	 * Executes the given command as a sub-request to the FLOW3 CLI system.
 	 *
-	 * @param string $command E.g. flow3:cache:flush
-	 * @return void
+	 * @param string $commandIdentifier E.g. typo3.flow3:cache:flush
+	 * @return boolean TRUE if the command execution was successful (exit code = 0)
 	 */
-	protected function executeCommand($command) {
+	protected function executeCommand($commandIdentifier) {
 		if (DIRECTORY_SEPARATOR === '/') {
-			$command = 'FLOW3_ROOTPATH=' . FLOW3_PATH_ROOT . ' ' . 'FLOW3_CONTEXT=' . $this->context . ' ' . \F3\FLOW3\Utility\Files::getUnixStylePath($this->settings['core']['phpBinaryPathAndFilename']) . ' -c ' . \F3\FLOW3\Utility\Files::getUnixStylePath(php_ini_loaded_file()) . ' ' . FLOW3_PATH_FLOW3 . 'Scripts/flow3' . ' ' . $command;
+			$command = 'XDEBUG_CONFIG="idekey=FLOW3_SUBREQUEST" FLOW3_ROOTPATH=' . FLOW3_PATH_ROOT . ' ' . 'FLOW3_CONTEXT=' . $this->context . ' ' . \F3\FLOW3\Utility\Files::getUnixStylePath($this->settings['core']['phpBinaryPathAndFilename']) . ' -c ' . \F3\FLOW3\Utility\Files::getUnixStylePath(php_ini_loaded_file()) . ' ' . FLOW3_PATH_FLOW3 . 'Scripts/flow3' . ' ' . escapeshellarg($commandIdentifier);
 		} else {
-			$command = 'SET FLOW3_ROOTPATH=' . FLOW3_PATH_ROOT . '&' . 'SET FLOW3_CONTEXT=' . $this->context . '&' . $this->settings['core']['phpBinaryPathAndFilename'] . ' -c ' . php_ini_loaded_file() . ' ' . FLOW3_PATH_FLOW3 . 'Scripts/flow3' . ' ' . $command;
+			$command = 'SET FLOW3_ROOTPATH=' . FLOW3_PATH_ROOT . '&' . 'SET FLOW3_CONTEXT=' . $this->context . '&' . $this->settings['core']['phpBinaryPathAndFilename'] . ' -c ' . php_ini_loaded_file() . ' ' . FLOW3_PATH_FLOW3 . 'Scripts/flow3' . ' ' . escape($commandIdentifier);
 		}
-		system($command);
+		system($command, $result);
+		return $result === 0;
 	}
 
 	/**
@@ -472,11 +492,8 @@ class Bootstrap {
 	 */
 	protected function initializePackageManagement() {
 		$this->packageManager = new \F3\FLOW3\Package\PackageManager();
+		$this->packageManager->injectClassLoader($this->classLoader);
 		$this->packageManager->initialize($this);
-
-		$activePackages = $this->packageManager->getActivePackages();
-
-		$this->classLoader->setPackages($activePackages);
 	}
 
 	/**
@@ -491,7 +508,7 @@ class Bootstrap {
 		$this->configurationManager->injectConfigurationSource(new \F3\FLOW3\Configuration\Source\YamlSource());
 		$this->configurationManager->setPackages($this->packageManager->getActivePackages());
 
-		$this->settings = $this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'FLOW3');
+		$this->settings = $this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.FLOW3');
 
 		$this->environment = new \F3\FLOW3\Utility\Environment($this->context);
 		$this->environment->setTemporaryDirectoryBase($this->settings['utility']['environment']['temporaryDirectoryBase']);
@@ -785,7 +802,7 @@ class Bootstrap {
 			}
 			if ($rootPath !== FALSE) {
 				$rootPath = \F3\FLOW3\Utility\Files::getUnixStylePath(realpath($rootPath)) . '/';
-				$testPath = \F3\FLOW3\Utility\Files::getUnixStylePath(realpath(\F3\FLOW3\Utility\Files::concatenatePaths(array($rootPath, 'Packages/Framework/FLOW3')))) . '/';
+				$testPath = \F3\FLOW3\Utility\Files::getUnixStylePath(realpath(\F3\FLOW3\Utility\Files::concatenatePaths(array($rootPath, 'Packages/Framework/TYPO3/FLOW3')))) . '/';
 				$expectedPath = \F3\FLOW3\Utility\Files::getUnixStylePath(realpath(FLOW3_PATH_FLOW3)) . '/';
 				if ($testPath !== $expectedPath) {
 					exit('FLOW3: Invalid root path. (Error #1248964375)' . PHP_EOL . '"' . $testPath . '" does not lead to' . PHP_EOL . '"' . $expectedPath .'"' . PHP_EOL);

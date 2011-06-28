@@ -21,6 +21,8 @@ namespace F3\FLOW3\MVC\CLI;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use \F3\FLOW3\MVC\CLI\Command;
+
 /**
  * Builds a CLI request object from the raw command call
  *
@@ -38,6 +40,11 @@ class RequestBuilder {
 	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
+
+	/**
+	 * @var \F3\FLOW3\Package\PackageManagerInterface
+	 */
+	protected $packageManager;
 
 	/**
 	 * @param \F3\FLOW3\Utility\Environment $environment
@@ -58,6 +65,15 @@ class RequestBuilder {
 	}
 
 	/**
+	 * @param \F3\FLOW3\Package\PackageManagerInterface $packageManager
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectPackageManager(\F3\FLOW3\Package\PackageManagerInterface $packageManager) {
+		$this->packageManager = $packageManager;
+	}
+
+	/**
 	 * Builds a CLI request object from a command line.
 	 *
 	 * The given command line may be a string (e.g. "mypackage:foo do-that-thing --force") or
@@ -70,27 +86,72 @@ class RequestBuilder {
 	 */
 	public function build($commandLine) {
 		$request = new Request();
+		$request->setControllerObjectName('F3\FLOW3\Command\HelpCommandController');
+		$request->setControllerCommandName('help');
 
 		$rawCommandLineArguments = is_array($commandLine) ? $commandLine : explode(' ', $commandLine);
-		if (count($rawCommandLineArguments) < 1) {
-			$request->setControllerObjectName('F3\FLOW3\Command\HelpCommandController');
-			$request->setControllerCommandName('help');
-		} else {
-			list($controllerObjectName, $controllerCommandName) = $this->parseCommandIdentifier(array_shift($rawCommandLineArguments));
-			if ($controllerObjectName === FALSE) {
-				$request->setControllerObjectName('F3\FLOW3\Command\HelpCommandController');
-				$request->setControllerCommandName('help');
-			} else {
-				$request->setControllerObjectName($controllerObjectName);
-				$request->setControllerCommandName($controllerCommandName);
-			}
-
-			$commandLineArguments = $this->parseRawCommandLineArguments($rawCommandLineArguments);
-			$request->setArguments($commandLineArguments['options']);
-			$request->setCommandLineArguments($commandLineArguments['arguments']);
+		if (count($rawCommandLineArguments) === 0) {
+			return $request;
 		}
 
+		$controllerNameParts = explode(':', trim(array_shift($rawCommandLineArguments)));
+		if (count($controllerNameParts) !== 3) {
+			return $request;
+		}
+
+		list($packageKey, $controllerName, $controllerCommandName) = $controllerNameParts;
+		$packageNamespace = $this->resolvePackageNamespace($packageKey);
+
+		if ($packageNamespace === FALSE) {
+			return $request;
+		}
+
+		$lowerCasesControllerObjectName = strtolower(sprintf('%s\\Command\\%sCommandController', $packageNamespace, $controllerName));
+		$controllerObjectName = $this->objectManager->getCaseSensitiveObjectName($lowerCasesControllerObjectName);
+		if ($controllerObjectName === FALSE) {
+			return $request;
+		}
+
+		$request->setControllerObjectName($controllerObjectName);
+		$request->setControllerCommandName($controllerCommandName);
+
+		$commandLineArguments = $this->parseRawCommandLineArguments($rawCommandLineArguments);
+		$request->setArguments($commandLineArguments['options']);
+		$request->setCommandLineArguments($commandLineArguments['arguments']);
+
 		return $request;
+	}
+
+	/**
+	 * Returns a PHP namespace string corresponding to the given package key.
+	 *
+	 * If the package key contains namespace segments separated by ".", they are converted to a PHP namespace
+	 * right away. If the package key is in short hand notation (ie. no "." exists, only the last namespace segment is
+	 * given), this function tries to determine the full namespace by searching for any matching active package.
+	 *
+	 * @param string $packageKey The fully qualified or shorthand package key
+	 * @return string The package namespace, or FALSE if the package key was ambiguous
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function resolvePackageNamespace($packageKey) {
+		if (strpos($packageKey, '.') !== FALSE) {
+			$packageNamespace = str_replace('.', '\\', $packageKey);
+		} else {
+			foreach ($this->packageManager->getActivePackages() as $package) {
+				$possiblePackageNamespace = $package->getPackageNamespace();
+				if (substr(strtolower($possiblePackageNamespace), - strlen($packageKey) - 1) === ('\\' . strtolower($packageKey))) {
+						// Ambiguous shorthand package key:
+					if (isset($packageNamespace)) {
+						return FALSE;
+					}
+					$packageNamespace = $possiblePackageNamespace;
+				}
+			}
+			if (!isset($packageNamespace)) {
+				return FALSE;
+			}
+		}
+		return $packageNamespace;
 	}
 
 	/**
@@ -161,26 +222,6 @@ class RequestBuilder {
 	}
 
 	/**
-	 * Parse a command identifier following the scheme "packagekey:controllername:commandname" and returns the
-	 * controller object name and command name.
-	 *
-	 * Example for a command identifier: "flow3:cache:flush"
-	 *
-	 * @return array Controller object name and command name
-	 */
-	protected function parseCommandIdentifier($commandIdentifier) {
-		$controllerNameParts = explode(':', trim($commandIdentifier));
-		if (count($controllerNameParts) !== 3) {
-			return array(FALSE, FALSE);
-		}
-
-		$unknownCasedControllerObjectName = sprintf('F3\\%s\\Command\\%sCommandController', $controllerNameParts[0], $controllerNameParts[1]);
-		$controllerObjectName = $this->objectManager->getCaseSensitiveObjectName($unknownCasedControllerObjectName);
-		$controllerCommandName = $controllerNameParts[2];
-		return array($controllerObjectName, $controllerCommandName);
-	}
-
-	/**
 	 * Converts the first element of the input to an argument name for a \F3\FLOW3\MVC\RequestInterface object.
 	 *
 	 * @param string $commandLineOption the command line option
@@ -229,32 +270,6 @@ class RequestBuilder {
 
 		$value = (isset($splitArgument[1])) ? $splitArgument[1] : '';
 		return $value;
-	}
-
-	/**
-	 * Transforms the raw command data into an array.
-	 *
-	 * @param array $rawCommand
-	 * @return array
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	protected function buildCommandArrayFromRawCommandData(array $rawCommand) {
-		$command = array(
-			'package' => NULL,
-			'subpackages' => array(),
-			'controller' => NULL,
-			'action' => NULL
-		);
-
-		$command['package'] = array_shift($rawCommand);
-		if (count($rawCommand) === 0) return $command;
-
-		$command['action'] = strtolower(array_pop($rawCommand));
-		$command['controller'] = array_pop($rawCommand);
-		if (count($rawCommand) === 0) return $command;
-
-		$command['subpackages'] = $rawCommand;
-		return $command;
 	}
 }
 ?>

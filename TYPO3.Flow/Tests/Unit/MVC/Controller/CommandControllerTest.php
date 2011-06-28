@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Command;
+namespace F3\FLOW3\Tests\Unit\MVC\Controller;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -22,41 +22,15 @@ namespace F3\FLOW3\Command;
  *                                                                        */
 
 /**
- * Command controller for managing caches
- *
- * NOTE: This command controller will run in compile time (as defined in the package bootstrap)
- *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
- * @scope singleton
+ * Testcase for the Command Controller
  */
-class CacheCommandController extends \F3\FLOW3\MVC\Controller\CommandController {
+class CommandControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
-	 * @var \F3\FLOW3\Cache\CacheManager
+	 * @test
 	 */
-	protected $cacheManager;
+	public function x() {
 
-	/**
-	 * Injects the cache manager
-	 *
-	 * @param \F3\FLOW3\Cache\CacheManager $cacheManager
-	 * @return void
-	 */
-	public function injectCacheManager(\F3\FLOW3\Cache\CacheManager $cacheManager) {
-		$this->cacheManager = $cacheManager;
-	}
-
-	/**
-	 * Flush all caches
-	 *
-	 * The flush command flushes all caches, including code caches, which have been registered with FLOW3's Cache Manager.
-	 *
-	 * @return void
-	 */
-	public function flushCommand() {
-		$this->cacheManager->flushCaches();
-		return 'Flushed all caches.';
 	}
 }
-
 ?>

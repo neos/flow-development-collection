@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3CR\Tests\Fixtures;
+namespace TYPO3\TYPO3CR\Tests\Fixtures;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3CR".                    *
@@ -50,7 +50,7 @@ class AnEntity implements \F3\FLOW3\AOP\ProxyInterface {
 	public $clone = FALSE;
 
 	/**
-	 * @var \F3\TYPO3CR\Tests\Fixtures\AValue
+	 * @var \TYPO3\TYPO3CR\Tests\Fixtures\AValue
 	 */
 	protected $value;
 
@@ -83,10 +83,10 @@ class AnEntity implements \F3\FLOW3\AOP\ProxyInterface {
 	}
 
 	/**
-	 * @param \F3\TYPO3CR\Tests\Fixtures\AValue $value
+	 * @param \TYPO3\TYPO3CR\Tests\Fixtures\AValue $value
 	 * @return void
 	 */
-	public function setValue(\F3\TYPO3CR\Tests\Fixtures\AValue $value) {
+	public function setValue(\TYPO3\TYPO3CR\Tests\Fixtures\AValue $value) {
 		$this->value = $value;
 	}
 

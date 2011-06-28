@@ -36,16 +36,10 @@ class SecurityCommandController extends \F3\FLOW3\MVC\Controller\CommandControll
 	protected $rsaWalletService;
 
 	/**
-	 * @return void
-	 */
-	public function helpCommand() {
-		$this->response->appendContent('Available commands:
-		importPublicKey,importPrivateKey');
-	}
-
-	/**
-	 * Read a PEM formatted public key from stdin and import it into the RSAWalletService
+	 * Import a public key
 	 *
+	 * Read a PEM formatted public key from stdin and import it into the RSAWalletService
+
 	 * @return void
 	 */
 	public function importPublicKeyCommand() {
@@ -63,15 +57,15 @@ class SecurityCommandController extends \F3\FLOW3\MVC\Controller\CommandControll
 	}
 
 	/**
-	 * Read a PEM formatted private key from stdin and import it into the RSAWalletService
+	 * Import a private key
 	 *
+	 * Read a PEM formatted private key from stdin and import it into the RSAWalletService
 	 * The public key will be automatically extracted and stored together with the private key as a key pair
 	 *
+	 * @param boolean $usedForPasswords
 	 * @return void
 	 */
-	public function importPrivateKeyCommand() {
-			//TODO: we need a parameter to set this variable by the command!
-		$usedForPasswords = FALSE;
+	public function importPrivateKeyCommand($usedForPasswords = FALSE) {
 		$keyData = '';
 			// no file_get_contents here because it does not work on php://stdin
 		$fp = fopen('php://stdin', 'rb');

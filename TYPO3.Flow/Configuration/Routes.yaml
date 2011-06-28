@@ -11,7 +11,7 @@
   name: 'Authentication with action'
   uriPattern: 'flow3/authentication/{@action}'
   defaults:
-    '@package':    'FLOW3'
+    '@package':    'TYPO3.FLOW3'
     '@subpackage': 'Security\Authentication'
     '@controller': 'Authentication'
 
@@ -19,7 +19,7 @@
   name: 'Authentication'
   uriPattern: 'flow3/authentication'
   defaults:
-    '@package':    'FLOW3'
+    '@package':    'TYPO3.FLOW3'
     '@subpackage': 'Security\Authentication'
     '@controller': 'Authentication'
     '@action':     'authenticate'
@@ -64,7 +64,7 @@
   name: 'fallback'
   uriPattern: ''
   defaults:
-    '@package':    'FLOW3'
+    '@package':    'TYPO3.FLOW3'
     '@subpackage': 'MVC'
     '@controller': 'Standard'
     '@action':     'index'

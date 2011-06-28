@@ -50,6 +50,12 @@ class Configuration {
 	protected $className;
 
 	/**
+	 * Key of the package the specified object is part of
+	 * @var string
+	 */
+	protected $packageKey;
+
+	/**
 	 * If set, specifies the factory class used to create this object
 	 * @var string
 	 */
@@ -151,6 +157,27 @@ class Configuration {
 	 */
 	public function getClassName() {
 		return $this->className;
+	}
+
+	/**
+	 * Sets the package key
+	 *
+	 * @param string $packageKey Key of the package this object is part of
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setPackageKey($packageKey) {
+		$this->packageKey = $packageKey;
+	}
+
+	/**
+	 * Returns the package key
+	 *
+	 * @return string Key of the package this object is part of
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getPackageKey() {
+		return $this->packageKey;
 	}
 
 	/**

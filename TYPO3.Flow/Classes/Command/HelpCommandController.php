@@ -88,19 +88,23 @@ class HelpCommandController extends \F3\FLOW3\MVC\Controller\CommandController {
 
 		$context = $this->bootstrap->getContext();
 
-		$this->response->appendContent("FLOW3 " . $this->packageManager->getPackage('FLOW3')->getPackageMetaData()->getVersion() . ' (' . $context . ')');
-		$this->response->appendContent("usage: ./flow3" . ($context === 'Development' ? '_dev' : '') . " <command identifier>\n");
-		$this->response->appendContent("The following commands are currently available:\n");
+		$this->response->appendContent('FLOW3 ' . $this->packageManager->getPackage('TYPO3.FLOW3')->getPackageMetaData()->getVersion() . ' (' . $context . ')');
+		$this->response->appendContent('usage: ./flow3' . ($context === 'Development' ? '_dev' : '') . ' <command identifier>');
+		$this->response->appendContent('');
+		$this->response->appendContent('The following commands are currently available:');
 
 		foreach ($this->commandsByPackagesAndControllers as $packageKey => $commandControllers) {
-			$this->response->appendContent(strtoupper($packageKey));
+			$this->response->appendContent('');
+			$this->response->appendContent(sprintf('PACKAGE "%s":', strtoupper($packageKey)));
 			foreach ($commandControllers as $commands) {
-				$this->response->appendContent("");
+				$this->response->appendContent('');
 				foreach ($commands as $command) {
-					$this->response->appendContent("    " . str_pad($command->getCommandIdentifier(), 40) . $command->getShortDescription());
+					$this->response->appendContent('    ' . str_pad($command->getCommandIdentifier(), 50) . '  ' . $command->getShortDescription());
 				}
 			}
 		}
+
+		$this->response->appendContent('');
 	}
 
 	/**

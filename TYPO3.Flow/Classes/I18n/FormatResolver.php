@@ -158,7 +158,7 @@ class FormatResolver {
 		}
 
 		try {
-			$formatter = $this->objectManager->get('F3\\FLOW3\\I18n\\Formatter\\' . $formatterName . 'Formatter');
+			$formatter = $this->objectManager->get('TYPO3\\FLOW3\\I18n\\Formatter\\' . $formatterName . 'Formatter');
 		} catch (\F3\FLOW3\Object\Exception\UnknownObjectException $exception) {
 			throw new \F3\FLOW3\I18n\Exception\UnknownFormatterException('Could not find formatter for "' . $formatterName . '".', 1278057791);
 		}

@@ -49,33 +49,16 @@ class ResourceStreamWrapper implements \F3\FLOW3\Resource\Streams\StreamWrapperI
 	protected $uri;
 
 	/**
+	 * @inject
 	 * @var \F3\FLOW3\Package\PackageManagerInterface
 	 */
 	protected $packageManager;
 
 	/**
-	 *
+	 * @inject
 	 * @var \F3\FLOW3\Resource\ResourceManager
 	 */
 	protected $resourceManager;
-
-	/**
-	 * @param \F3\FLOW3\Package\PackageManagerInterface $packageManager
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function injectPackageManager(\F3\FLOW3\Package\PackageManagerInterface $packageManager) {
-		$this->packageManager = $packageManager;
-	}
-
-	/**
-	 * @param \F3\FLOW3\Resource\ResourceManager $resourceManager
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function injectResourceManager(\F3\FLOW3\Resource\ResourceManager $resourceManager) {
-		$this->resourceManager = $resourceManager;
-	}
 
 	/**
 	 * Returns the scheme ("protocol") this wrapper handles.
@@ -506,6 +489,10 @@ class ResourceStreamWrapper implements \F3\FLOW3\Resource\Streams\StreamWrapperI
 			if (file_exists($resourcePath)) {
 				return $resourcePath;
 			}
+		}
+
+		if (!$this->packageManager->isPackageAvailable($uriParts['host'])) {
+			throw new \F3\FLOW3\Resource\Exception(sprintf('Invalid resource URI "%s": Package "%s" is not available.', $requestedPath, $uriParts['host']), 1309269952);
 		}
 
 		$package = $this->packageManager->getPackage($uriParts['host']);

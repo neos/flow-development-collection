@@ -36,7 +36,7 @@ class PolicyExpressionParserTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function parseMethodResourcesThrowsAnExceptionIfAResourceReferencesAnUndefinedResource() {
 		$resourcesTree = array(
-			'theOneAndOnlyResource' => 'method(F3\Foo\BasicClass->setSomeProperty()) || notExistingResource',
+			'theOneAndOnlyResource' => 'method(TYPO3\Foo\BasicClass->setSomeProperty()) || notExistingResource',
 		);
 
 		$mockPointcutFilterComposite = $this->getMock('F3\FLOW3\AOP\Pointcut\PointcutFilterComposite', array(), array(), '', FALSE);
@@ -58,8 +58,8 @@ class PolicyExpressionParserTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function parseMethodResourcesThrowsAnExceptionIfTheResourceTreeContainsCircularReferences() {
 		$resourcesTree = array(
-			'theOneAndOnlyResource' => 'method(F3\TestPackage\BasicClass->setSomeProperty()) || theIntegrativeResource',
-			'theOtherLonelyResource' => 'method(F3\TestPackage\BasicClassValidator->.*())',
+			'theOneAndOnlyResource' => 'method(TYPO3\TestPackage\BasicClass->setSomeProperty()) || theIntegrativeResource',
+			'theOtherLonelyResource' => 'method(TYPO3\TestPackage\BasicClassValidator->.*())',
 			'theIntegrativeResource' => 'theOneAndOnlyResource || theLonelyResource',
 
 		);
@@ -82,7 +82,7 @@ class PolicyExpressionParserTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function parseMethodResourcesStoresTheCorrectResourceTreeTraceInTheTraceParameter() {
 		$resourcesTree = array(
-			'theOneAndOnlyResource' => 'method(F3\TestPackage\BasicClass->setSomeProperty())',
+			'theOneAndOnlyResource' => 'method(TYPO3\TestPackage\BasicClass->setSomeProperty())',
 			'theOtherLonelyResource' => 'theOneAndOnlyResource',
 			'theIntegrativeResource' => 'theOtherLonelyResource',
 
@@ -113,12 +113,12 @@ class PolicyExpressionParserTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function parseEntityResourcesCallsParseSingleEntityResourceForEachResourceEntryOfAnEntityAndPassesTheCorrectResourceTree() {
 		$resourcesTree = array(
-			'F3\Party\Domain\Model\Account' => array(
+			'TYPO3\Party\Domain\Model\Account' => array(
 				'resource1' => 'someConstraint1',
 				'resource2' => 'someConstraint2',
 				'resource3' => 'someConstraint3',
 			),
-			'F3\Party\Domain\Model\AbstractParty' => array(
+			'TYPO3\Party\Domain\Model\AbstractParty' => array(
 				'anotherResource1' => 'someOtherConstraint1',
 				'anotherResource2' => 'someOtherConstraint2',
 				'anotherResource3' => 'someOtherConstraint3',
@@ -127,22 +127,22 @@ class PolicyExpressionParserTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		$parser = $this->getAccessibleMock('F3\FLOW3\Security\Policy\PolicyExpressionParser', array('parseSingleEntityResource'), array(), '', FALSE);
 
-		$parser->expects($this->at(0))->method('parseSingleEntityResource')->with('resource1', $resourcesTree['F3\Party\Domain\Model\Account'])->will($this->returnValue('parsedConstraint1'));
-		$parser->expects($this->at(1))->method('parseSingleEntityResource')->with('resource2', $resourcesTree['F3\Party\Domain\Model\Account'])->will($this->returnValue('parsedConstraint2'));
-		$parser->expects($this->at(2))->method('parseSingleEntityResource')->with('resource3', $resourcesTree['F3\Party\Domain\Model\Account'])->will($this->returnValue('parsedConstraint3'));
-		$parser->expects($this->at(3))->method('parseSingleEntityResource')->with('anotherResource1', $resourcesTree['F3\Party\Domain\Model\AbstractParty'])->will($this->returnValue('parsedConstraint4'));
-		$parser->expects($this->at(4))->method('parseSingleEntityResource')->with('anotherResource2', $resourcesTree['F3\Party\Domain\Model\AbstractParty'])->will($this->returnValue('parsedConstraint5'));
-		$parser->expects($this->at(5))->method('parseSingleEntityResource')->with('anotherResource3', $resourcesTree['F3\Party\Domain\Model\AbstractParty'])->will($this->returnValue('parsedConstraint6'));
+		$parser->expects($this->at(0))->method('parseSingleEntityResource')->with('resource1', $resourcesTree['TYPO3\Party\Domain\Model\Account'])->will($this->returnValue('parsedConstraint1'));
+		$parser->expects($this->at(1))->method('parseSingleEntityResource')->with('resource2', $resourcesTree['TYPO3\Party\Domain\Model\Account'])->will($this->returnValue('parsedConstraint2'));
+		$parser->expects($this->at(2))->method('parseSingleEntityResource')->with('resource3', $resourcesTree['TYPO3\Party\Domain\Model\Account'])->will($this->returnValue('parsedConstraint3'));
+		$parser->expects($this->at(3))->method('parseSingleEntityResource')->with('anotherResource1', $resourcesTree['TYPO3\Party\Domain\Model\AbstractParty'])->will($this->returnValue('parsedConstraint4'));
+		$parser->expects($this->at(4))->method('parseSingleEntityResource')->with('anotherResource2', $resourcesTree['TYPO3\Party\Domain\Model\AbstractParty'])->will($this->returnValue('parsedConstraint5'));
+		$parser->expects($this->at(5))->method('parseSingleEntityResource')->with('anotherResource3', $resourcesTree['TYPO3\Party\Domain\Model\AbstractParty'])->will($this->returnValue('parsedConstraint6'));
 
 		$result = $parser->parseEntityResources($resourcesTree);
 
 		$expectedResult = array(
-			'F3\Party\Domain\Model\Account' => array(
+			'TYPO3\Party\Domain\Model\Account' => array(
 				'resource1' => 'parsedConstraint1',
 				'resource2' => 'parsedConstraint2',
 				'resource3' => 'parsedConstraint3',
 			),
-			'F3\Party\Domain\Model\AbstractParty' => array(
+			'TYPO3\Party\Domain\Model\AbstractParty' => array(
 				'anotherResource1' => 'parsedConstraint4',
 				'anotherResource2' => 'parsedConstraint5',
 				'anotherResource3' => 'parsedConstraint6',

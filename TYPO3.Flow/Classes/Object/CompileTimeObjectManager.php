@@ -154,7 +154,7 @@ class CompileTimeObjectManager extends ObjectManager {
 
 
 	/**
-	 * Returns a list of all class names which were registered by registerClassFiles()
+	 * Returns a list of all class names, grouped by package key,  which were registered by registerClassFiles()
 	 *
 	 * @return array
 	 * @author Robert Lemke <robert@typo3.org>
@@ -175,20 +175,23 @@ class CompileTimeObjectManager extends ObjectManager {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function registerClassFiles(array $packages) {
-		$availableClassNames = array('DateTime');
+		$availableClassNames = array('' => array('DateTime'));
 
-		foreach ($packages as $package) {
-			$classFiles = $package->getClassFiles();
-			if ($this->allSettings['FLOW3']['object']['registerFunctionalTestClasses'] === TRUE) {
-				$classFiles = array_merge($classFiles, $package->getFunctionalTestsClassFiles());
-			}
-			foreach (array_keys($classFiles) as $fullClassName) {
-				if (substr($fullClassName, -9, 9) !== 'Exception') {
-					$availableClassNames[] = $fullClassName;
+		foreach ($packages as $packageKey => $package) {
+			if ($package->isObjectManagementEnabled()) {
+				$classFiles = $package->getClassFiles();
+				if ($this->allSettings['TYPO3']['FLOW3']['object']['registerFunctionalTestClasses'] === TRUE) {
+					$classFiles = array_merge($classFiles, $package->getFunctionalTestsClassFiles());
 				}
+				foreach (array_keys($classFiles) as $fullClassName) {
+					if (substr($fullClassName, -9, 9) !== 'Exception') {
+						$availableClassNames[$packageKey][] = $fullClassName;
+					}
+				}
+				$availableClassNames[$packageKey] = array_unique($availableClassNames[$packageKey]);
 			}
 		}
-		return array_unique($availableClassNames);
+		return $availableClassNames;
 	}
 
 	/**
@@ -204,7 +207,8 @@ class CompileTimeObjectManager extends ObjectManager {
 			$objectName = $objectConfiguration->getObjectName();
 			$objects[$objectName] = array(
 				'l' => strtolower($objectName),
-				's' => $objectConfiguration->getScope()
+				's' => $objectConfiguration->getScope(),
+				'p' => $objectConfiguration->getPackageKey()
 			);
 			if ($objectConfiguration->getClassName() !== $objectName) {
 				$objects[$objectName]['c'] = $objectConfiguration->getClassName();

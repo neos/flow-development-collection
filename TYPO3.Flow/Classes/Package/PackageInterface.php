@@ -30,13 +30,14 @@ namespace F3\FLOW3\Package;
  */
 interface PackageInterface {
 
-	const PATTERN_MATCH_PACKAGEKEY = '/^[A-Z][A-Za-z0-9_]+$/';
+	const PATTERN_MATCH_PACKAGEKEY = '/^[A-Z][A-Za-z0-9]+(?:\.[A-Z][A-Za-z0-9]+)*$/';
 
 	const DIRECTORY_CLASSES = 'Classes/';
 	const DIRECTORY_CONFIGURATION = 'Configuration/';
 	const DIRECTORY_DOCUMENTATION = 'Documentation/';
 	const DIRECTORY_METADATA = 'Meta/';
 	const DIRECTORY_TESTS_FUNCTIONAL = 'Tests/Functional/';
+	const DIRECTORY_TESTS_UNIT = 'Tests/Unit/';
 	const DIRECTORY_RESOURCES = 'Resources/';
 
 	/**
@@ -61,6 +62,38 @@ interface PackageInterface {
 	 * @api
 	 */
 	public function getPackageKey();
+
+	/**
+	 * Returns the PHP namespace of classes in this package.
+	 *
+	 * @return string
+	 * @api
+	 */
+	public function getPackageNamespace();
+
+	/**
+	 * Tells if this package is protected and therefore cannot be deactivated or deleted
+	 *
+	 * @return boolean
+	 * @api
+	 */
+	public function isProtected();
+
+	/**
+	 * Tells if files in the Classes directory should be registered and object management enabled for this package.
+	 *
+	 * @return boolean
+	 */
+	public function isObjectManagementEnabled();
+
+	/**
+	 * Sets the protection flag of the package
+	 *
+	 * @param boolean $protected TRUE if the package should be protected, otherwise FALSE
+	 * @return void
+	 * @api
+	 */
+	public function setProtected($protected);
 
 	/**
 	 * Returns the full path to this package's main directory

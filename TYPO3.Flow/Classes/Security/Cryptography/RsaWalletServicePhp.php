@@ -62,7 +62,7 @@ class RsaWalletServicePhp implements \F3\FLOW3\Security\Cryptography\RsaWalletSe
 		if (isset($settings['security']['cryptography']['RSAWalletServicePHP']['keystorePath'])) {
 			$this->keystorePathAndFilename = $settings['security']['cryptography']['RSAWalletServicePHP']['keystorePath'];
 		} else {
-			throw new \F3\FLOW3\Security\Exception\MissingConfigurationException('The configuration setting FLOW3.security.cryptography.RSAWalletServicePHP.keystorePath is missing. Please specifiy it in your Settings.yaml file. Beware: This file must not be accessbile by the public!', 1305711354);
+			throw new \F3\FLOW3\Security\Exception\MissingConfigurationException('The configuration setting TYPO3.FLOW3.security.cryptography.RSAWalletServicePHP.keystorePath is missing. Please specifiy it in your Settings.yaml file. Beware: This file must not be accessbile by the public!', 1305711354);
 		}
 	}
 

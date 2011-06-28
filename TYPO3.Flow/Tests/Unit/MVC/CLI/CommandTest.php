@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Command;
+namespace F3\FLOW3\Tests\Unit\MVC\CLI;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -21,42 +21,32 @@ namespace F3\FLOW3\Command;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use \F3\FLOW3\MVC\CLI\Command;
+
 /**
- * Command controller for managing caches
- *
- * NOTE: This command controller will run in compile time (as defined in the package bootstrap)
- *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
- * @scope singleton
+ * Testcase for the CLI Command class
  */
-class CacheCommandController extends \F3\FLOW3\MVC\Controller\CommandController {
+class CommandTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
-	 * @var \F3\FLOW3\Cache\CacheManager
+	 * @return array
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected $cacheManager;
-
-	/**
-	 * Injects the cache manager
-	 *
-	 * @param \F3\FLOW3\Cache\CacheManager $cacheManager
-	 * @return void
-	 */
-	public function injectCacheManager(\F3\FLOW3\Cache\CacheManager $cacheManager) {
-		$this->cacheManager = $cacheManager;
+	public function commandIdentifiers() {
+		return array(
+			array('F3\FLOW3\Command\CacheCommandController', 'flush', 'typo3.flow3:cache:flush'),
+			array('RobertLemke\Foo\Faa\Fuuum\Command\CoffeeCommandController', 'brew', 'robertlemke.foo.faa.fuuum:coffee:brew'),
+		);
 	}
 
 	/**
-	 * Flush all caches
-	 *
-	 * The flush command flushes all caches, including code caches, which have been registered with FLOW3's Cache Manager.
-	 *
-	 * @return void
+	 * @test
+	 * @dataProvider commandIdentifiers
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function flushCommand() {
-		$this->cacheManager->flushCaches();
-		return 'Flushed all caches.';
+	public function constructRendersACommandIdentifierByTheGivenControllerAndCommandName($controllerClassName, $commandName, $expectedCommandIdentifier) {
+		$command = new Command($controllerClassName, $commandName);
+		$this->assertEquals($expectedCommandIdentifier, $command->getCommandIdentifier());
 	}
 }
-
 ?>

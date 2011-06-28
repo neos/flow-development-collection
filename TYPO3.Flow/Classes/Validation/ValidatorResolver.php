@@ -248,8 +248,8 @@ class ValidatorResolver {
 	 * to the end of the conjunction. A custom validator is found if it follows the naming convention
 	 * "Replace '\Model\' by '\Validator\' and append 'Validator'".
 	 *
-	 * Example: $targetClassName is F3\Foo\Domain\Model\Quux, then the validator will be found if it has the
-	 * name F3\Foo\Domain\Validator\QuuxValidator
+	 * Example: $targetClassName is TYPO3\Foo\Domain\Model\Quux, then the validator will be found if it has the
+	 * name TYPO3\Foo\Domain\Validator\QuuxValidator
 	 *
 	 * @param string $targetClassName The data type to build the validation conjunction for. Needs to be the fully qualified class name.
 	 * @return F3\FLOW3\Validation\Validator\ConjunctionValidator The validator conjunction

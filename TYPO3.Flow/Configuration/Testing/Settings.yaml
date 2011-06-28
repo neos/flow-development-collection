@@ -8,48 +8,51 @@
 # global Configuration directory and its sub directories.                #
 #                                                                        #
 
-FLOW3:
-  configuration:
-    compileConfigurationFiles: n
+TYPO3:
 
-  error:
-    exceptionHandler:
-      className: 'F3\FLOW3\Error\DebugExceptionHandler'
-    errorHandler:
-      exceptionalErrors: [%E_USER_ERROR%, %E_RECOVERABLE_ERROR%, %E_WARNING%, %E_NOTICE%, %E_USER_WARNING%, %E_USER_NOTICE%, %E_STRICT%]
+  FLOW3:
 
-  log:
-    systemLogger:
-      backendOptions: { logFileURL: %FLOW3_PATH_DATA%Logs/System_Testing.log, createParentDirectories: y, severityThreshold: %LOG_DEBUG% }
-    securityLogger:
-      backendOptions: { logFileURL: %FLOW3_PATH_DATA%Logs/Security_Testing.log, createParentDirectories: y, severityThreshold: %LOG_DEBUG% }
+    configuration:
+      compileConfigurationFiles: n
 
-  object:
-    registerFunctionalTestClasses: y
+    error:
+      exceptionHandler:
+        className: 'F3\FLOW3\Error\DebugExceptionHandler'
+      errorHandler:
+        exceptionalErrors: [%E_USER_ERROR%, %E_RECOVERABLE_ERROR%, %E_WARNING%, %E_NOTICE%, %E_USER_WARNING%, %E_USER_NOTICE%, %E_STRICT%]
 
-  persistence:
-    backendOptions:
-      driver: 'pdo_sqlite'
-      path: ':memory:'
-      username: null
-      password: null
-    doctrine:
-      dbal:
-        sessionInitialization: ''
-      autoUpdate: y
+    log:
+      systemLogger:
+        backendOptions: { logFileURL: %FLOW3_PATH_DATA%Logs/System_Testing.log, createParentDirectories: y, severityThreshold: %LOG_DEBUG% }
+      securityLogger:
+        backendOptions: { logFileURL: %FLOW3_PATH_DATA%Logs/Security_Testing.log, createParentDirectories: y, severityThreshold: %LOG_DEBUG% }
 
-  security:
-    authentication:
-      authenticationStrategy: anyToken
+    object:
+      registerFunctionalTestClasses: y
 
-      providers:
-        DefaultProvider:
-          providerClass: F3\FLOW3\Security\Authentication\Provider\TestingProvider
+    persistence:
+      backendOptions:
+        driver: 'pdo_sqlite'
+        path: ':memory:'
+        username: null
+        password: null
+      doctrine:
+        dbal:
+          sessionInitialization: ''
+        autoUpdate: y
 
-  tests:
-    functional:
-      aop:
-        pointcutExpressionSettingFilterOptionA: y
-      dependencyInjection:
-        singletonConstructorArgument: 'setting injected singleton value'
-        prototypeConstructorArgument: 'setting injected property value'
+    security:
+      authentication:
+        authenticationStrategy: anyToken
+
+        providers:
+          DefaultProvider:
+            providerClass: F3\FLOW3\Security\Authentication\Provider\TestingProvider
+
+    tests:
+      functional:
+        aop:
+          pointcutExpressionSettingFilterOptionA: y
+        dependencyInjection:
+          singletonConstructorArgument: 'setting injected singleton value'
+          prototypeConstructorArgument: 'setting injected property value'

@@ -96,8 +96,8 @@ class UriBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function uriForRecursivelyMergesAndOverrulesControllerArgumentsWithArguments() {
 		$arguments = array('foo' => 'bar', 'additionalParam' => 'additionalValue');
-		$controllerArguments = array('foo' => 'overruled', 'baz' => array('FLOW3' => 'fluid'));
-		$expectedArguments = array('foo' => 'overruled', 'additionalParam' => 'additionalValue', 'baz' => array('FLOW3' => 'fluid'), '@controller' => 'somecontroller', '@package' => 'somepackage');
+		$controllerArguments = array('foo' => 'overruled', 'baz' => array('TYPO3.FLOW3' => 'fluid'));
+		$expectedArguments = array('foo' => 'overruled', 'additionalParam' => 'additionalValue', 'baz' => array('TYPO3.FLOW3' => 'fluid'), '@controller' => 'somecontroller', '@package' => 'somepackage');
 
 		$this->uriBuilder->setArguments($arguments);
 		$this->uriBuilder->uriFor(NULL, $controllerArguments, 'SomeController', 'SomePackage');

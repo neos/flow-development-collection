@@ -42,17 +42,17 @@ class PointcutClassNameFilterTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockReflectionService->expects($this->any())->method('isClassFinal')->will($this->returnValue(FALSE));
 		$mockReflectionService->expects($this->any())->method('isMethodFinal')->will($this->returnValue(FALSE));
 
-		$classFilter = new \F3\FLOW3\AOP\Pointcut\PointcutClassNameFilter('F3\Virtual\Foo\Bar');
+		$classFilter = new \F3\FLOW3\AOP\Pointcut\PointcutClassNameFilter('TYPO3\Virtual\Foo\Bar');
 		$classFilter->injectReflectionService($mockReflectionService);
-		$this->assertTrue($classFilter->matches('F3\Virtual\Foo\Bar', '', '', 1), 'No. 1');
+		$this->assertTrue($classFilter->matches('TYPO3\Virtual\Foo\Bar', '', '', 1), 'No. 1');
 
 		$classFilter = new \F3\FLOW3\AOP\Pointcut\PointcutClassNameFilter('.*Virtual.*');
 		$classFilter->injectReflectionService($mockReflectionService);
-		$this->assertTrue($classFilter->matches('F3\Virtual\Foo\Bar', '', '', 1), 'No. 2');
+		$this->assertTrue($classFilter->matches('TYPO3\Virtual\Foo\Bar', '', '', 1), 'No. 2');
 
-		$classFilter = new \F3\FLOW3\AOP\Pointcut\PointcutClassNameFilter('F3\Firtual.*');
+		$classFilter = new \F3\FLOW3\AOP\Pointcut\PointcutClassNameFilter('TYPO3\Firtual.*');
 		$classFilter->injectReflectionService($mockReflectionService);
-		$this->assertFalse($classFilter->matches('F3\Virtual\Foo\Bar', '', '', 1), 'No. 3');
+		$this->assertFalse($classFilter->matches('TYPO3\Virtual\Foo\Bar', '', '', 1), 'No. 3');
 	}
 
 	/**
@@ -69,7 +69,7 @@ class PointcutClassNameFilterTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'saveToCache'), array(), '', FALSE, TRUE);
 
-		$classFilter = new \F3\FLOW3\AOP\Pointcut\PointcutClassNameFilter('F3\Virtual\Foo\Bar');
+		$classFilter = new \F3\FLOW3\AOP\Pointcut\PointcutClassNameFilter('TYPO3\Virtual\Foo\Bar');
 		$classFilter->injectReflectionService($mockReflectionService);
 
 		$this->assertFalse($classFilter->matches($className, '', '', 1));
@@ -91,7 +91,7 @@ class PointcutClassNameFilterTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'saveToCache'), array(), '', FALSE, TRUE);
 
-		$classFilter = new \F3\FLOW3\AOP\Pointcut\PointcutClassNameFilter('F3\Virtual\Foo\Bar');
+		$classFilter = new \F3\FLOW3\AOP\Pointcut\PointcutClassNameFilter('TYPO3\Virtual\Foo\Bar');
 		$classFilter->injectReflectionService($mockReflectionService);
 
 		$this->assertFalse($classFilter->matches($className, '', '', 1));

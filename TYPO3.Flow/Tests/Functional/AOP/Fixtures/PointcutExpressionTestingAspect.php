@@ -30,7 +30,7 @@ class PointcutExpressionTestingAspect {
 
 	/**
 	 *
-	 * @around method(F3\FLOW3\Tests\Functional\AOP\Fixtures\PointcutExpressionTestingTarget->testSettingFilter()) && setting(FLOW3.tests.functional.aop.pointcutExpressionSettingFilterOptionA)
+	 * @around method(F3\FLOW3\Tests\Functional\AOP\Fixtures\PointcutExpressionTestingTarget->testSettingFilter()) && setting(TYPO3.FLOW3.tests.functional.aop.pointcutExpressionSettingFilterOptionA)
 	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint
 	 * @return void
 	 */

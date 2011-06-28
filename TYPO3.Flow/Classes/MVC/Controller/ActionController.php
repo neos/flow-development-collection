@@ -64,14 +64,14 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 * @var string
 	 * @api
 	 */
-	protected $viewObjectNamePattern = 'F3\@package\View\@controller\@action@format';
+	protected $viewObjectNamePattern = '@package\View\@controller\@action@format';
 
 	/**
 	 * A list of formats and object names of the views which should render them.
 	 *
 	 * Example:
 	 *
-	 * array('html' => 'F3\MyApp\MyHtmlView', 'json' => 'F3...
+	 * array('html' => 'MyCompany\MyApp\MyHtmlView', 'json' => 'MyCompany\...
 	 *
 	 * @var array
 	 */
@@ -84,7 +84,7 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 * @var string
 	 * @api
 	 */
-	protected $defaultViewObjectName = 'F3\Fluid\View\TemplateView';
+	protected $defaultViewObjectName = 'TYPO3\Fluid\View\TemplateView';
 
 	/**
 	 * Name of the action method
@@ -340,7 +340,7 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 * By default, this method tries to locate a view with a name matching
 	 * the current action.
 	 *
-	 * @return \F3\Fluid\View\ViewInterface the resolved view
+	 * @return \TYPO3\Fluid\View\ViewInterface the resolved view
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @author Bastian Waidelich <bastian@typo3.org>

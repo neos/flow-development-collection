@@ -32,7 +32,7 @@ use \F3\FLOW3\Package\MetaData\XmlReader as PackageMetaDataReader;
 class Package implements PackageInterface {
 
 	/**
-	 * Unique key of this package
+	 * Unique key of this package. Example for the FLOW3 package: "TYPO3.FLOW3"
 	 * @var string
 	 */
 	protected $packageKey;
@@ -42,6 +42,13 @@ class Package implements PackageInterface {
 	 * @var string
 	 */
 	protected $packagePath;
+
+	/**
+	 * If this package is protected and therefore cannot be deactivated or deleted
+	 * @var boolean
+	 * @api
+	 */
+	protected $protected = FALSE;
 
 	/**
 	 * Meta information about this package
@@ -54,6 +61,14 @@ class Package implements PackageInterface {
 	 * @var array
 	 */
 	protected $classFiles;
+
+	/**
+	 * If enabled, the files in the Classes directory are registered and Reflection, Dependency Injection, AOP etc. are supported.
+	 * Disable this flag if you don't need object management for your package and want to save some memory.
+	 * @var boolean
+	 * @api
+	 */
+	protected $objectManagementEnabled = TRUE;
 
 	/**
 	 * Constructor
@@ -127,6 +142,50 @@ class Package implements PackageInterface {
 	 */
 	public function getPackageKey() {
 		return $this->packageKey;
+	}
+
+	/**
+	/**
+	 * Returns the PHP namespace of classes in this package.
+	 *
+	 * @return string
+	 * @api
+	 */
+	public function getPackageNamespace() {
+		return str_replace('.', '\\', $this->packageKey);
+	}
+
+	/**
+	 * Tells if this package is protected and therefore cannot be deactivated or deleted
+	 *
+	 * @return boolean
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
+	 */
+	public function isProtected() {
+		return $this->protected;
+	}
+
+	/**
+	 * Tells if files in the Classes directory should be registered and object management enabled for this package.
+	 *
+	 * @return boolean
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function isObjectManagementEnabled() {
+		return $this->objectManagementEnabled;
+	}
+
+	/**
+	 * Sets the protection flag of the package
+	 *
+	 * @param boolean $protected TRUE if the package should be protected, otherwise FALSE
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
+	 */
+	public function setProtected($protected) {
+		$this->protected = (boolean)$protected;
 	}
 
 	/**
@@ -238,7 +297,7 @@ class Package implements PackageInterface {
 	 * directories.
 	 *
 	 * @param string $classesPath Base path acting as the parent directory for potential class files
-	 * @param string $extraNamespaceSegment A PHP class namespace segment which should be inserted like so: \F3\PackageKey\{namespacePrefix\}PathSegment\PathSegment\Filename
+	 * @param string $extraNamespaceSegment A PHP class namespace segment which should be inserted like so: \TYPO3\PackageKey\{namespacePrefix\}PathSegment\PathSegment\Filename
 	 * @param string $subDirectory Used internally
 	 * @param integer $recursionLevel Used internally
 	 * @return array
@@ -246,6 +305,7 @@ class Package implements PackageInterface {
 	 * @throws \F3\FLOW3\Package\Exception if recursion into directories was too deep or another error occurred
 	 */
 	protected function buildArrayOfClassFiles($classesPath, $extraNamespaceSegment = '', $subDirectory = '', $recursionLevel = 0) {
+		$packageNamespace = $this->getPackageNamespace();
 		$classFiles = array();
 		$currentPath = $classesPath . $subDirectory;
 		$currentRelativePath = substr($currentPath, strlen($this->packagePath));
@@ -262,7 +322,7 @@ class Package implements PackageInterface {
 						$classFiles = array_merge($classFiles, $this->buildArrayOfClassFiles($classesPath, $extraNamespaceSegment, $subDirectory . $filename . '/', ($recursionLevel+1)));
 					} else {
 						if (substr($filename, -4, 4) === '.php') {
-							$className = (str_replace('/', '\\', ('F3/' . $this->packageKey . '/' . $extraNamespaceSegment . substr($currentPath, strlen($classesPath)) . substr($filename, 0, -4))));
+							$className = (str_replace('/', '\\', ($packageNamespace . '/' . $extraNamespaceSegment . substr($currentPath, strlen($classesPath)) . substr($filename, 0, -4))));
 							$classFiles[$className] = $currentRelativePath . $filename;
 						}
 					}

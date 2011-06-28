@@ -44,8 +44,14 @@ class RequestBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author  Robert Lemke <robert@typo3.org>
 	 */
 	public function setUp() {
+		\vfsStreamWrapper::register();
+		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('Test'));
+		mkdir('vfs://Test/Packages/Application/Acme/Test', 0770, TRUE);
+		mkdir('vfs://Test/Packages/Application/Bcme/Test', 0770, TRUE);
+		mkdir('vfs://Test/Packages/Application/Acme/NoTest', 0770, TRUE);
+
 		$this->mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$this->mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->with('F3\test\Command\defaultCommandController')->will($this->returnValue('F3\Test\Command\DefaultCommandController'));
+		$this->mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->with('acme\test\command\defaultcommandcontroller')->will($this->returnValue('Acme\Test\Command\DefaultCommandController'));
 
 		$this->requestBuilder = new \F3\FLOW3\MVC\CLI\RequestBuilder();
 		$this->requestBuilder->injectObjectManager($this->mockObjectManager);
@@ -58,9 +64,53 @@ class RequestBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function checkIfCLIAccessWithPackageControllerAndActionNameBuildsCorrectRequest() {
-		$request = $this->requestBuilder->build('test:default:list');
-		$this->assertEquals('F3\Test\Command\DefaultCommandController', $request->getControllerObjectName());
+		$request = $this->requestBuilder->build('acme.test:default:list');
+		$this->assertEquals('Acme\Test\Command\DefaultCommandController', $request->getControllerObjectName());
 		$this->assertEquals('list', $request->getControllerCommandName(), 'The CLI request specifying a package, controller and action name did not return a request object pointing to the expected action.');
+	}
+
+	/**
+	 * Checks the support of short-hand package keys, ie. specifying just "flow3" instead of "typo3.flow3".
+	 *
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function ifThePackageNamespaceIsUnambiguousTheLastPartOfTheNamespaceSuffices() {
+		$packages = array(
+			'Acme.Test' => new \F3\FLOW3\Package\Package('Acme.Test', 'vfs://Test/Packages/Application/Acme/Test/'),
+			'Acme.NoTest' => new \F3\FLOW3\Package\Package('Acme.NoTest', 'vfs://Test/Packages/Application/Acme/NoTest/'),
+		);
+
+		$mockPackageManager = $this->getMock('F3\FLOW3\Package\PackageManagerInterface');
+		$mockPackageManager->expects($this->any())->method('getActivePackages')->will($this->returnValue($packages));
+		$this->requestBuilder->injectPackageManager($mockPackageManager);
+
+		$request = $this->requestBuilder->build('test:default:list');
+		$this->assertEquals('Acme\Test\Command\DefaultCommandController', $request->getControllerObjectName());
+	}
+
+	/**
+	 * Checks the support of short-hand package keys, ie. specifying just "flow3" instead of "typo3.flow3".
+	 *
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function ifThePackageNamespaceIsAmbiguousTheHelpScreenIsShown() {
+			// The following call is only made to satisfy PHPUnit. For some weird reason PHPUnit complains that the
+			// mocked method ("getCaseSensitiveObjectName") does not exist _if the mock object is not used_.
+		$this->mockObjectManager->getCaseSensitiveObjectName('acme\test\command\defaultcommandcontroller');
+
+		$packages = array(
+			'Acme.Test' => new \F3\FLOW3\Package\Package('Acme.Test', 'vfs://Test/Packages/Application/Acme/Test/'),
+			'Bcme.Test' => new \F3\FLOW3\Package\Package('Bcme.Test', 'vfs://Test/Packages/Application/Bcme/Test/')
+		);
+
+		$mockPackageManager = $this->getMock('F3\FLOW3\Package\PackageManagerInterface');
+		$mockPackageManager->expects($this->any())->method('getActivePackages')->will($this->returnValue($packages));
+		$this->requestBuilder->injectPackageManager($mockPackageManager);
+
+		$request = $this->requestBuilder->build('test:default:list');
+		$this->assertEquals('F3\FLOW3\Command\HelpCommandController', $request->getControllerObjectName());
 	}
 
 	/**
@@ -70,7 +120,7 @@ class RequestBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function CLIAccesWithPackageControllerActionAndArgumentsBuildsCorrectRequest() {
-		$request = $this->requestBuilder->build('test:default:list --test-argument=value --test-argument2=value2');
+		$request = $this->requestBuilder->build('acme.test:default:list --test-argument=value --test-argument2=value2');
 		$this->assertTrue($request->hasArgument('testArgument'), 'The given "testArgument" was not found in the built request.');
 		$this->assertTrue($request->hasArgument('testArgument2'), 'The given "testArgument2" was not found in the built request.');
 		$this->assertEquals($request->getArgument('testArgument'), 'value', 'The "testArgument" had not the given value.');
@@ -84,7 +134,7 @@ class RequestBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function checkIfCLIAccesWithPackageControllerActionAndArgumentsToleratesSpaces() {
-		$request = $this->requestBuilder->build('test:default:list --test-argument= value --test-argument2 =value2 --test-argument3 = value3 --test-argument4=value4');
+		$request = $this->requestBuilder->build('acme.test:default:list --test-argument= value --test-argument2 =value2 --test-argument3 = value3 --test-argument4=value4');
 		$this->assertTrue($request->hasArgument('testArgument'), 'The given "testArgument" was not found in the built request.');
 		$this->assertTrue($request->hasArgument('testArgument2'), 'The given "testArgument2" was not found in the built request.');
 		$this->assertTrue($request->hasArgument('testArgument3'), 'The given "testArgument3" was not found in the built request.');
@@ -102,7 +152,7 @@ class RequestBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function CLIAccesWithShortArgumentsBuildsCorrectRequest() {
-		$request = $this->requestBuilder->build('test:default:list -d valued -f=valuef -a = valuea');
+		$request = $this->requestBuilder->build('acme.test:default:list -d valued -f=valuef -a = valuea');
 		$this->assertTrue($request->hasArgument('d'), 'The given "d" was not found in the built request.');
 		$this->assertTrue($request->hasArgument('f'), 'The given "f" was not found in the built request.');
 		$this->assertTrue($request->hasArgument('a'), 'The given "a" was not found in the built request.');
@@ -119,7 +169,7 @@ class RequestBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function CLIAccesWithArgumentsWithAndWithoutValuesBuildsCorrectRequest() {
-		$request = $this->requestBuilder->build('test:default:list --test-argument=value --test-argument2= value2 -k --test-argument-3 = value3 --test-argument4=value4 -f valuef -d=valued -a = valuea -c --testArgument7 --test-argument5 = 5 --test-argument6 -j kjk -m');
+		$request = $this->requestBuilder->build('acme.test:default:list --test-argument=value --test-argument2= value2 -k --test-argument-3 = value3 --test-argument4=value4 -f valuef -d=valued -a = valuea -c --testArgument7 --test-argument5 = 5 --test-argument6 -j kjk -m');
 		$this->assertTrue($request->hasArgument('testArgument'), 'The given "testArgument" was not found in the built request.');
 		$this->assertTrue($request->hasArgument('testArgument2'), 'The given "testArgument2" was not found in the built request.');
 		$this->assertTrue($request->hasArgument('k'), 'The given "k" was not found in the built request.');
@@ -150,8 +200,7 @@ class RequestBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function argumentsAreDetectedAfterOptions() {
-		$request = $this->requestBuilder->build('test:default:list --some -option=value file1 file2');
-		$this->assertEquals('F3\Test\Command\DefaultCommandController', $request->getControllerObjectName());
+		$request = $this->requestBuilder->build('acme.test:default:list --some -option=value file1 file2');
 		$this->assertEquals('list', $request->getControllerCommandName());
 		$this->assertEquals(array('file1', 'file2'), $request->getCommandLineArguments());
 	}
@@ -161,8 +210,7 @@ class RequestBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function argumentsAreDetectedIfNoOptionsAreGiven() {
-		$request = $this->requestBuilder->build('test:default:list -- file1 file2');
-		$this->assertEquals('F3\Test\Command\DefaultCommandController', $request->getControllerObjectName());
+		$request = $this->requestBuilder->build('acme.test:default:list -- file1 file2');
 		$this->assertEquals('list', $request->getControllerCommandName());
 		$this->assertEquals(array('file1', 'file2'), $request->getCommandLineArguments());
 	}

@@ -29,7 +29,7 @@ require(__DIR__ . '/../Classes/Core/Bootstrap.php');
 
 $_SERVER['FLOW3_ROOTPATH'] = getenv('FLOW3_ROOTPATH') ?: '';
 
-$bootstrap = new \F3\FLOW3\Core\Bootstrap('Development');
+$bootstrap = new \TYPO3\FLOW3\Core\Bootstrap('Development');
 $bootstrap->run();
 
 ?>

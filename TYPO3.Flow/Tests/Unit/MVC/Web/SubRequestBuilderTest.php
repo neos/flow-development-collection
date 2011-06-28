@@ -195,9 +195,9 @@ class SubRequestBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function buildCreatesSpecifiedObject() {
-		$this->mockObjectManager->expects($this->once())->method('create')->with('F3\My\Custom\Subrequest', $this->mockRequest)->will($this->returnValue($this->mockSubRequest));
+		$this->mockObjectManager->expects($this->once())->method('create')->with('TYPO3\My\Custom\Subrequest', $this->mockRequest)->will($this->returnValue($this->mockSubRequest));
 		$this->mockSubRequest->expects($this->any())->method('getArguments')->will($this->returnValue(array()));
-		$this->subRequestBuilder->build($this->mockRequest, 'SomeArgumentNamespace', 'F3\My\Custom\Subrequest');
+		$this->subRequestBuilder->build($this->mockRequest, 'SomeArgumentNamespace', 'TYPO3\My\Custom\Subrequest');
 	}
 }
 ?>

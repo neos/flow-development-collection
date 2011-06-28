@@ -50,7 +50,7 @@ class AuthenticationProviderManagerTest extends \F3\FLOW3\Tests\UnitTestCase {
 			$args = func_get_args();
 
 			if ($args[0] === 'UsernamePassword') return 'provider1';
-			elseif ($args[0] === 'F3\TestAuthenticationProvider') return 'provider2';
+			elseif ($args[0] === 'TYPO3\TestAuthenticationProvider') return 'provider2';
 		};
 
 		$getObjectCallback = function() use (&$mockProvider1, &$mockProvider2, &$mockToken1, &$mockToken2) {
@@ -73,7 +73,7 @@ class AuthenticationProviderManagerTest extends \F3\FLOW3\Tests\UnitTestCase {
 				'options' => array('provider1options')
 			),
 			'AnotherProvider' => array(
-				'providerClass' => 'F3\TestAuthenticationProvider',
+				'providerClass' => 'TYPO3\TestAuthenticationProvider',
 				'tokenClass' => 'token2',
 				'options' => array('provider2options')
 			),
@@ -125,7 +125,7 @@ class AuthenticationProviderManagerTest extends \F3\FLOW3\Tests\UnitTestCase {
 			$args = func_get_args();
 
 			if ($args[0] === 'URI') return 'mockPatternURI';
-			elseif ($args[0] === 'F3\TestRequestPattern') return 'mockPatternTest';
+			elseif ($args[0] === 'TYPO3\TestRequestPattern') return 'mockPatternTest';
 		};
 
 		$mockPatternResolver = $this->getMock('F3\FLOW3\Security\RequestPatternResolver', array(), array(), '', FALSE);
@@ -140,7 +140,7 @@ class AuthenticationProviderManagerTest extends \F3\FLOW3\Tests\UnitTestCase {
 				'providerClass' => 'UsernamePassword',
 				'requestPatterns' => array(
 					'URI' => 'typo3/.*',
-					'F3\TestRequestPattern' => 'test',
+					'TYPO3\TestRequestPattern' => 'test',
 				),
 			),
 		);

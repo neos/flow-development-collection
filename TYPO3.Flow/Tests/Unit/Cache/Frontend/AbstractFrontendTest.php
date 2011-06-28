@@ -118,7 +118,7 @@ class AbstractFrontendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$backend = $this->getMock('F3\FLOW3\Cache\Backend\AbstractBackend', array('get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
 
 		$cache = $this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array('__construct', 'get', 'set', 'has', 'remove', 'getByTag'), array($identifier, $backend));
-		$this->assertEquals('%CLASS%F3_Foo_Bar_Baz', \F3\FLOW3\Cache\CacheManager::getClassTag('F3\Foo\Bar\Baz'));
+		$this->assertEquals('%CLASS%TYPO3_Foo_Bar_Baz', \F3\FLOW3\Cache\CacheManager::getClassTag('TYPO3\Foo\Bar\Baz'));
 	}
 
 	/**

@@ -24,7 +24,7 @@
 	</parties>
 	<constraints>
 		<depends>
-			<package minVersion="1.0.0" maxVersion="1.9.9">FLOW3</package>
+			<package minVersion="1.0.0" maxVersion="1.9.9">TYPO3.FLOW3</package>
 			<system type="PHP" minVersion="5.3.0" />
 		</depends>
 		<suggests>

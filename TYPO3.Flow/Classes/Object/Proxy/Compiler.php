@@ -165,16 +165,18 @@ class Compiler {
 	 */
 	public function compile() {
 		$classCount = 0;
-		foreach ($this->objectManager->getRegisteredClassNames() as $fullOriginalClassName) {
-			if (isset($this->proxyClasses[$fullOriginalClassName])) {
-				$proxyClassCode = $this->proxyClasses[$fullOriginalClassName]->render();
-				if ($proxyClassCode !== '') {
-					$this->classesCache->set(str_replace('\\', '_', $fullOriginalClassName), $proxyClassCode, $this->proxyClasses[$fullOriginalClassName]->getCacheTags());
+		foreach ($this->objectManager->getRegisteredClassNames() as $fullOriginalClassNames) {
+			foreach ($fullOriginalClassNames as $fullOriginalClassName) {
+				if (isset($this->proxyClasses[$fullOriginalClassName])) {
+					$proxyClassCode = $this->proxyClasses[$fullOriginalClassName]->render();
+					if ($proxyClassCode !== '') {
+						$this->classesCache->set(str_replace('\\', '_', $fullOriginalClassName), $proxyClassCode, $this->proxyClasses[$fullOriginalClassName]->getCacheTags());
 
-					$class = new \ReflectionClass($fullOriginalClassName);
-					$classPathAndFilename = $class->getFileName();
-					$this->cacheOriginalClassFile($fullOriginalClassName, $classPathAndFilename);
-					$classCount ++;
+						$class = new \ReflectionClass($fullOriginalClassName);
+						$classPathAndFilename = $class->getFileName();
+						$this->cacheOriginalClassFile($fullOriginalClassName, $classPathAndFilename);
+						$classCount ++;
+					}
 				}
 			}
 		}

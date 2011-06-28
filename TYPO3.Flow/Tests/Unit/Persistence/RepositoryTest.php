@@ -43,7 +43,7 @@ class RepositoryTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function modelAndRepositoryClassNames() {
 		return array(
-			array('F3\Blog\Domain\Repository', 'BlogRepository', 'F3\Blog\Domain\Model\Blog'),
+			array('TYPO3\Blog\Domain\Repository', 'BlogRepository', 'TYPO3\Blog\Domain\Model\Blog'),
 			array('Domain\Repository\Content', 'PageRepository', 'Domain\Model\Content\Page')
 		);
 	}

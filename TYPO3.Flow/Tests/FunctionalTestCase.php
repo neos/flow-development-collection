@@ -211,7 +211,7 @@ abstract class FunctionalTestCase extends \F3\FLOW3\Tests\BaseTestCase {
 		$router->setRoutesConfiguration($routesConfiguration);
 
 			// Build up Mock request behaving like the real one.
-		$controller = $this->objectManager->get('F3\\' . $controllerPackageKey . '\\Controller\\' . $controllerName . 'Controller');
+		$controller = $this->objectManager->get('TYPO3\\' . $controllerPackageKey . '\\Controller\\' . $controllerName . 'Controller');
 
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
 		$mockRequest->expects($this->any())->method('getControllerPackageKey')->will($this->returnValue($controllerPackageKey));

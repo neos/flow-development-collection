@@ -244,10 +244,10 @@ class ActionControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockView->expects($this->once())->method('setControllerContext')->with($mockControllerContext);
 
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
-		$mockObjectManager->expects($this->at(0))->method('create')->with('F3\Foo\Bar\HTMLView')->will($this->returnValue($mockView));
+		$mockObjectManager->expects($this->at(0))->method('create')->with('TYPO3\Foo\Bar\HTMLView')->will($this->returnValue($mockView));
 
 		$mockController = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\ActionController', array('resolveViewObjectName'), array(), '', FALSE);
-		$mockController->expects($this->once())->method('resolveViewObjectName')->will($this->returnValue('F3\Foo\Bar\HTMLView'));
+		$mockController->expects($this->once())->method('resolveViewObjectName')->will($this->returnValue('TYPO3\Foo\Bar\HTMLView'));
 
 		$mockController->_set('session', $mockSession);
 		$mockController->_set('controllerContext', $mockControllerContext);
@@ -302,7 +302,7 @@ class ActionControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockNotFoundView->expects($this->at(0))->method('assign')->with('errorMessage', 'No template was found. View could not be resolved for action "MyAction"');
 
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
-		$mockObjectManager->expects($this->at(0))->method('create')->with('F3\Fluid\View\TemplateView')->will($this->returnValue($mockOtherView));
+		$mockObjectManager->expects($this->at(0))->method('create')->with('TYPO3\Fluid\View\TemplateView')->will($this->returnValue($mockOtherView));
 		$mockObjectManager->expects($this->at(1))->method('create')->with('F3\FLOW3\MVC\View\NotFoundView')->will($this->returnValue($mockNotFoundView));
 
 		$mockController = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\ActionController', array('resolveViewObjectName'), array(), '', FALSE);
@@ -425,7 +425,7 @@ class ActionControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockArguments = $this->getMock('F3\FLOW3\MVC\Controller\Arguments', array('addNewArgument', 'removeAll'), array(), '', FALSE);
 		$mockArguments->expects($this->at(0))->method('addNewArgument')->with('stringArgument', 'string', TRUE);
 		$mockArguments->expects($this->at(1))->method('addNewArgument')->with('integerArgument', 'integer', TRUE);
-		$mockArguments->expects($this->at(2))->method('addNewArgument')->with('objectArgument', 'F3\Foo\Bar', TRUE);
+		$mockArguments->expects($this->at(2))->method('addNewArgument')->with('objectArgument', 'TYPO3\Foo\Bar', TRUE);
 
 		$mockController = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\ActionController', array('fooAction', 'evaluateDontValidateAnnotations'), array(), '', FALSE);
 
@@ -452,7 +452,7 @@ class ActionControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 				'array' => FALSE,
 				'optional' => FALSE,
 				'allowsNull' => FALSE,
-				'type' => 'F3\Foo\Bar'
+				'type' => 'TYPO3\Foo\Bar'
 			)
 		);
 
@@ -596,7 +596,7 @@ class ActionControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		$argument = $this->getMock('F3\FLOW3\MVC\Controller\Argument', array('getName', 'getDataType'), array(), '', FALSE);
 		$argument->expects($this->any())->method('getName')->will($this->returnValue('arg1'));
-		$argument->expects($this->any())->method('getDataType')->will($this->returnValue('F3\Foo\Quux'));
+		$argument->expects($this->any())->method('getDataType')->will($this->returnValue('TYPO3\Foo\Quux'));
 
 		$arguments = $this->getMock('F3\FLOW3\MVC\Controller\Arguments', array('dummy'), array(), '', FALSE);
 		$arguments->addArgument($argument);
@@ -617,7 +617,7 @@ class ActionControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		$mockValidatorResolver = $this->getMock('F3\FLOW3\Validation\ValidatorResolver', array(), array(), '', FALSE);
 		$mockValidatorResolver->expects($this->once())->method('buildMethodArgumentsValidatorConjunctions')->with(get_class($mockController), 'fooAction')->will($this->returnValue($methodArgumentsValidatorConjunctions));
-		$mockValidatorResolver->expects($this->once())->method('getBaseValidatorConjunction')->with('F3\Foo\Quux')->will($this->returnValue($quuxBaseValidatorConjunction));
+		$mockValidatorResolver->expects($this->once())->method('getBaseValidatorConjunction')->with('TYPO3\Foo\Quux')->will($this->returnValue($quuxBaseValidatorConjunction));
 
 		$mockController->injectReflectionService($mockReflectionService);
 		$mockController->injectValidatorResolver($mockValidatorResolver);
@@ -638,7 +638,7 @@ class ActionControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		$argument = $this->getMock('F3\FLOW3\MVC\Controller\Argument', array('getName', 'getDataType'), array(), '', FALSE);
 		$argument->expects($this->any())->method('getName')->will($this->returnValue('arg1'));
-		$argument->expects($this->any())->method('getDataType')->will($this->returnValue('F3\Foo\Quux'));
+		$argument->expects($this->any())->method('getDataType')->will($this->returnValue('TYPO3\Foo\Quux'));
 
 		$arguments = $this->getMock('F3\FLOW3\MVC\Controller\Arguments', array('dummy'), array(), '', FALSE);
 		$arguments->addArgument($argument);

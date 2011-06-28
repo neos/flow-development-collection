@@ -63,7 +63,7 @@ class RequestDispatchingAspect {
 	/**
 	 * Advices the dispatch method to initialize the security framework.
 	 *
-	 * @around method(F3\FLOW3\MVC\Dispatcher->dispatch()) && setting(FLOW3.security.enable)
+	 * @around method(F3\FLOW3\MVC\Dispatcher->dispatch()) && setting(TYPO3.FLOW3.security.enable)
 	 * @param F3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
 	 * @return mixed Result of the advice chain
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
@@ -78,7 +78,7 @@ class RequestDispatchingAspect {
 	 * Advices the dispatch method so that illegal requests are blocked before invoking
 	 * any controller.
 	 *
-	 * @around method(F3\FLOW3\MVC\Dispatcher->dispatch()) && setting(FLOW3.security.enable)
+	 * @around method(F3\FLOW3\MVC\Dispatcher->dispatch()) && setting(TYPO3.FLOW3.security.enable)
 	 * @param F3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
 	 * @return mixed Result of the advice chain
 	 * @author Robert Lemke <robert@typo3.org>
@@ -121,7 +121,7 @@ class RequestDispatchingAspect {
 	 * Advices the dispatch method so that access denied exceptions are transformed into the correct
 	 * response status.
 	 *
-	 * @around method(F3\FLOW3\MVC\Dispatcher->dispatch()) && setting(FLOW3.security.enable)
+	 * @around method(F3\FLOW3\MVC\Dispatcher->dispatch()) && setting(TYPO3.FLOW3.security.enable)
 	 * @param F3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
 	 * @return mixed Result of the advice chain
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>

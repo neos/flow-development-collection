@@ -181,9 +181,10 @@ class CacheManager {
 
 		$this->flushCachesByTag(self::getClassTag());
 		foreach ($changedFiles as $pathAndFilename => $status) {
+			$pathAndFilename = str_replace(FLOW3_PATH_PACKAGES, '', $pathAndFilename);
 			$matches = array();
-			if (1 === preg_match('/.+\/(.+)\/(Classes|Tests)\/(.+)\.php/', $pathAndFilename, $matches)) {
-				$className = 'F3\\' . $matches[1] . '\\' . ($matches[2] === 'Tests' ? 'Tests\\' : '') . str_replace('/', '\\', $matches[3]);
+			if (1 === preg_match('/[^\/]+\/(.+)\/(Classes|Tests)\/(.+)\.php/', $pathAndFilename, $matches)) {
+				$className = str_replace('/', '\\', $matches[1] . '\\' . ($matches[2] === 'Tests' ? 'Tests\\' : '') . $matches[3]);
 				$this->flushCachesByTag(self::getClassTag($className));
 			}
 		}
@@ -205,7 +206,7 @@ class CacheManager {
 		}
 
 		foreach ($changedFiles as $pathAndFilename => $status) {
-			if (preg_match('/.+\/(.+)\/(Classes|Tests)\/Domain\/Model\/(.+)\.php/', $pathAndFilename) === 1) {
+			if (1 === preg_match('/\/Domain\/Model\/(.+)\.php/', $pathAndFilename)) {
 				$this->getCache('FLOW3_Object_Configuration')->remove('doctrineProxyCodeUpToDate');
 				break;
 			}

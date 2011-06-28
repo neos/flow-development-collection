@@ -96,14 +96,14 @@ class LoggingAspect {
 
 		switch ($token->getAuthenticationStatus()) {
 			case \F3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL :
-				$this->securityLogger->log('Successfully authenticated token: ' . $token, LOG_NOTICE, array(), 'FLOW3', $joinPoint->getClassName(), $joinPoint->getMethodName());
+				$this->securityLogger->log('Successfully authenticated token: ' . $token, LOG_NOTICE, array(), 'TYPO3.FLOW3', $joinPoint->getClassName(), $joinPoint->getMethodName());
 				$this->alreadyLoggedAuthenticateCall = TRUE;
 			break;
 			case \F3\FLOW3\Security\Authentication\TokenInterface::WRONG_CREDENTIALS :
-				$this->securityLogger->log('Wrong credentials given for token: ' . $token, LOG_WARNING, array(), 'FLOW3', $joinPoint->getClassName(), $joinPoint->getMethodName());
+				$this->securityLogger->log('Wrong credentials given for token: ' . $token, LOG_WARNING, array(), 'TYPO3.FLOW3', $joinPoint->getClassName(), $joinPoint->getMethodName());
 			break;
 			case \F3\FLOW3\Security\Authentication\TokenInterface::NO_CREDENTIALS_GIVEN :
-				$this->securityLogger->log('No credentials given or no account found for token: ' . $token, LOG_WARNING, array(), 'FLOW3', $joinPoint->getClassName(), $joinPoint->getMethodName());
+				$this->securityLogger->log('No credentials given or no account found for token: ' . $token, LOG_WARNING, array(), 'TYPO3.FLOW3', $joinPoint->getClassName(), $joinPoint->getMethodName());
 			break;
 		}
 	}

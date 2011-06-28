@@ -62,7 +62,7 @@ class CsrfProtectionAspect {
 	/**
 	 * Adds a CSRF token as argument in the URI builder
 	 *
-	 * @before method(F3\FLOW3\MVC\Web\Routing\UriBuilder->build()) && setting(FLOW3.security.enable)
+	 * @before method(F3\FLOW3\MVC\Web\Routing\UriBuilder->build()) && setting(TYPO3.FLOW3.security.enable)
 	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
@@ -75,8 +75,8 @@ class CsrfProtectionAspect {
 		$controllerName = (isset($arguments['@controller']) ? $arguments['@controller'] : 'Standard');
 		$actionName = (isset($arguments['@action']) ? $arguments['@action'] : 'index') . 'Action';
 
-		$possibleObjectName = 'F3\@package\@subpackage\Controller\@controllerController';
-		$possibleObjectName = str_replace('@package', $packageKey, $possibleObjectName);
+		$possibleObjectName = '@package\@subpackage\Controller\@controllerController';
+		$possibleObjectName = str_replace('@package', str_replace('.', '\\', $packageKey), $possibleObjectName);
 		$possibleObjectName = str_replace('@subpackage', $subpackageKey, $possibleObjectName);
 		$possibleObjectName = str_replace('@controller', $controllerName, $possibleObjectName);
 		$possibleObjectName = str_replace('\\\\', '\\', $possibleObjectName);
@@ -94,7 +94,7 @@ class CsrfProtectionAspect {
 	/**
 	 * Adds a CSRF token as argument in ExtDirect requests
 	 *
-	 * @around method(F3\ExtJS\ExtDirect\Transaction->buildRequest()) && setting(FLOW3.security.enable)
+	 * @around method(TYPO3\ExtJS\ExtDirect\Transaction->buildRequest()) && setting(TYPO3.FLOW3.security.enable)
 	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>

@@ -22,7 +22,7 @@ F3\FLOW3\Tests\Functional\Object\Fixtures\SingletonClassC:
     1:
       value: 'this is required'
     3:
-      setting: FLOW3.tests.functional.dependencyInjection.singletonConstructorArgument
+      setting: TYPO3.FLOW3.tests.functional.dependencyInjection.singletonConstructorArgument
 
 F3\FLOW3\Tests\Functional\Object\Fixtures\PrototypeClassAishInterface:
   scope: singleton
@@ -34,4 +34,4 @@ F3\FLOW3\Tests\Functional\Object\Fixtures\PrototypeClassAishInterface:
 F3\FLOW3\Tests\Functional\Object\Fixtures\PrototypeClassC:
   arguments:
     1:
-      setting: FLOW3.tests.functional.dependencyInjection.prototypeConstructorArgument
+      setting: TYPO3.FLOW3.tests.functional.dependencyInjection.prototypeConstructorArgument

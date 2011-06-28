@@ -169,8 +169,8 @@ class UsernamePassword implements \F3\FLOW3\Security\Authentication\TokenInterfa
 	 */
 	public function updateCredentials(\F3\FLOW3\MVC\RequestInterface $request) {
 		$postArguments = $this->environment->getRawPostArguments();
-		$username = \F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($postArguments, 'F3.FLOW3.Security.Authentication.Token.UsernamePassword.username');
-		$password = \F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($postArguments, 'F3.FLOW3.Security.Authentication.Token.UsernamePassword.password');
+		$username = \F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($postArguments, 'TYPO3.FLOW3.Security.Authentication.Token.UsernamePassword.username');
+		$password = \F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($postArguments, 'TYPO3.FLOW3.Security.Authentication.Token.UsernamePassword.password');
 
 		if (!empty($username) && !empty($password)) {
 			$this->credentials['username'] = $username;

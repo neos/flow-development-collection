@@ -39,7 +39,7 @@ class ConfigurationTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setUp() {
-		$this->objectConfiguration = new \F3\FLOW3\Object\Configuration\Configuration('F3\Foo\Bar');
+		$this->objectConfiguration = new \F3\FLOW3\Object\Configuration\Configuration('TYPO3\Foo\Bar');
 	}
 
 	/**
@@ -121,7 +121,7 @@ class ConfigurationTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setFactoryObjectNameRejectsNamesOfNonExistingNlasses() {
-		$this->objectConfiguration->setFactoryObjectName('F3\Virtual\NonExistingClass');
+		$this->objectConfiguration->setFactoryObjectName('TYPO3\Virtual\NonExistingClass');
 	}
 
 	/**

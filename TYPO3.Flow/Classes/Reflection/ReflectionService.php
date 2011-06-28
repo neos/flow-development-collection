@@ -52,11 +52,6 @@ class ReflectionService {
 	protected $systemLogger;
 
 	/**
-	 * @var \F3\FLOW3\Package\PackageManagerInterface
-	 */
-	protected $packageManager;
-
-	/**
 	 * Settings of the FLOW3 package
 	 *
 	 * @var array
@@ -736,7 +731,10 @@ class ReflectionService {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function reflectEmergedClasses() {
-		$classNamesToReflect = $this->availableClassNames;
+		$classNamesToReflect = array();
+		foreach ($this->availableClassNames as $classNamesInOnePackage) {
+			$classNamesToReflect = array_merge($classNamesToReflect, $classNamesInOnePackage);
+		}
 		$reflectedClassNames = array_keys($this->reflectedClassNames);
 		sort($classNamesToReflect);
 		sort($reflectedClassNames);

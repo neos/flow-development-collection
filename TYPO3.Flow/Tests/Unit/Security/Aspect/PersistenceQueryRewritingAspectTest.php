@@ -804,7 +804,7 @@ class PersistenceQueryRewritingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 			public function __clone() {}
 		}');
 		$mockEntity = $this->getMock($entityClassName, array(), array(), '', FALSE);
-		$mockParty = $this->getMock('F3\Party\Domain\Model\AbstractParty', array(), array(), '', FALSE);
+		$mockParty = $this->getMock('TYPO3\Party\Domain\Model\AbstractParty', array(), array(), '', FALSE);
 
 		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\PersistenceManagerInterface', array(), array(), '', FALSE);
 		$mockPersistenceManager->expects($this->any())->method('isNewObject')->with($mockParty)->will($this->returnValue(FALSE));

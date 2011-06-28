@@ -107,7 +107,7 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function persistObjectCreatesRecordOnlyForNewObject() {
 		$className = 'SomeClass' . uniqid();
 		$fullClassName = 'F3\FLOW3\Persistence\Tests\\' . $className;
-		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $className . ' implements \F3\FLOW3\AOP\ProxyInterface {
+		eval('namespace TYPO3\\FLOW3\Persistence\\Tests; class ' . $className . ' implements \F3\FLOW3\AOP\ProxyInterface {
 			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
 		}');
 		$newObject = new $fullClassName();
@@ -258,9 +258,9 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function uuidPropertyNameFromNewObjectIsUsedForRecord() {
 		$className = 'SomeClass' . uniqid();
-		$fullClassName = 'F3\\FLOW3\Persistence\\Tests\\' . $className;
+		$fullClassName = 'TYPO3\\FLOW3\Persistence\\Tests\\' . $className;
 		$identifier = \F3\FLOW3\Utility\Algorithms::generateUUID();
-		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $className . ' implements \F3\FLOW3\AOP\ProxyInterface {
+		eval('namespace TYPO3\\FLOW3\Persistence\\Tests; class ' . $className . ' implements \F3\FLOW3\AOP\ProxyInterface {
 			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
 		}');
 		$newObject = new $fullClassName();
@@ -293,9 +293,9 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function uuidOfNewEntityIsUsedForRecord() {
 		$className = 'SomeClass' . uniqid();
-		$fullClassName = 'F3\\FLOW3\Persistence\\Tests\\' . $className;
+		$fullClassName = 'TYPO3\\FLOW3\Persistence\\Tests\\' . $className;
 		$identifier = \F3\FLOW3\Utility\Algorithms::generateUUID();
-		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $className . ' implements \F3\FLOW3\AOP\ProxyInterface {
+		eval('namespace TYPO3\\FLOW3\Persistence\\Tests; class ' . $className . ' implements \F3\FLOW3\AOP\ProxyInterface {
 			public $FLOW3_Persistence_Identifier = \'' . $identifier . '\';
 			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
 		}');
@@ -325,9 +325,9 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function hashOfNewValueObjectIsUsedForRecord() {
 		$className = 'SomeClass' . uniqid();
-		$fullClassName = 'F3\\FLOW3\Persistence\\Tests\\' . $className;
+		$fullClassName = 'TYPO3\\FLOW3\Persistence\\Tests\\' . $className;
 		$hash = sha1($fullClassName);
-		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $className . ' implements \F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface {
+		eval('namespace TYPO3\\FLOW3\Persistence\\Tests; class ' . $className . ' implements \F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface {
 			public $FLOW3_Persistence_Identifier = \'' . $hash . '\';
 		}');
 		$newObject = new $fullClassName();
@@ -357,9 +357,9 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function persistObjectProcessesDirtyObject() {
 		$className = 'SomeClass' . uniqid();
-		$fullClassName = 'F3\\FLOW3\Persistence\\Tests\\' . $className;
+		$fullClassName = 'TYPO3\\FLOW3\Persistence\\Tests\\' . $className;
 		$identifier = \F3\FLOW3\Utility\Algorithms::generateUUID();
-		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $className . ' implements \F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface {
+		eval('namespace TYPO3\\FLOW3\Persistence\\Tests; class ' . $className . ' implements \F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface {
 			public $simpleString = \'simpleValue\';
 		}');
 		$dirtyObject = new $fullClassName();
@@ -403,8 +403,8 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function persistObjectProcessesObjectsWithDateTimeMember() {
 		$className = 'SomeClass' . uniqid();
-		$fullClassName = 'F3\\FLOW3\Persistence\\Tests\\' . $className;
-		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $className . ' implements \F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface {
+		$fullClassName = 'TYPO3\\FLOW3\Persistence\\Tests\\' . $className;
+		eval('namespace TYPO3\\FLOW3\Persistence\\Tests; class ' . $className . ' implements \F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface {
 			public $date;
 		}');
 		$newObject = new $fullClassName();
@@ -451,11 +451,11 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function valueObjectsAreStoredOnceAndReusedAsNeeded() {
 			// set up objects
-		$A = new \F3\TYPO3CR\Tests\Fixtures\AnEntity('A');
+		$A = new \TYPO3\TYPO3CR\Tests\Fixtures\AnEntity('A');
 		$A->FLOW3_Persistence_Identifier = 'fakeUuidA';
-		$B = new \F3\TYPO3CR\Tests\Fixtures\AnEntity('B');
+		$B = new \TYPO3\TYPO3CR\Tests\Fixtures\AnEntity('B');
 		$B->FLOW3_Persistence_Identifier = 'fakeUuidB';
-		$V = new \F3\TYPO3CR\Tests\Fixtures\AValue('V');
+		$V = new \TYPO3\TYPO3CR\Tests\Fixtures\AValue('V');
 		$V->FLOW3_Persistence_Identifier = 'fakeHash';
 		$A->add($V);
 		$B->add($V);
@@ -466,7 +466,7 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		$expectedPropertiesForA = array(
 			'identifier' => 'fakeUuidA',
-			'classname' => 'F3\TYPO3CR\Tests\Fixtures\AnEntity',
+			'classname' => 'TYPO3\TYPO3CR\Tests\Fixtures\AnEntity',
 			'properties' => array(
 				'name' => array(
 					'type' => 'string',
@@ -478,7 +478,7 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 					'multivalue' => TRUE,
 					'value' => array(
 						array(
-							'type' => 'F3\TYPO3CR\Tests\Fixtures\AValue',
+							'type' => 'TYPO3\TYPO3CR\Tests\Fixtures\AValue',
 							'index' => '0',
 							'value' => array(
 								'identifier' => 'fakeHash'
@@ -490,7 +490,7 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		);
 		$expectedPropertiesForB = array(
 			'identifier' => 'fakeUuidB',
-			'classname' => 'F3\TYPO3CR\Tests\Fixtures\AnEntity',
+			'classname' => 'TYPO3\TYPO3CR\Tests\Fixtures\AnEntity',
 			'properties' => array(
 				'name' => array(
 					'type' => 'string',
@@ -502,14 +502,14 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 					'multivalue' => TRUE,
 					'value' => array(
 						array(
-							'type' => 'F3\TYPO3CR\Tests\Fixtures\AValue',
+							'type' => 'TYPO3\TYPO3CR\Tests\Fixtures\AValue',
 							'index' => '0',
 							'value' => array(
 								'identifier' => 'fakeHash'
 							)
 						),
 						array(
-							'type' => 'F3\TYPO3CR\Tests\Fixtures\AValue',
+							'type' => 'TYPO3\TYPO3CR\Tests\Fixtures\AValue',
 							'index' => '1',
 							'value' => array(
 								'identifier' => 'fakeHash'
@@ -521,17 +521,17 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		);
 
 			// set up needed infrastructure
-		$entityClassSchema = new \F3\FLOW3\Reflection\ClassSchema('F3\TYPO3CR\Tests\Fixtures\AnEntity');
+		$entityClassSchema = new \F3\FLOW3\Reflection\ClassSchema('TYPO3\TYPO3CR\Tests\Fixtures\AnEntity');
 		$entityClassSchema->setModelType(\F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY);
 		$entityClassSchema->addProperty('name', 'string');
 		$entityClassSchema->addProperty('members', 'array');
-		$valueClassSchema = new \F3\FLOW3\Reflection\ClassSchema('F3\TYPO3CR\Tests\Fixtures\AValue');
+		$valueClassSchema = new \F3\FLOW3\Reflection\ClassSchema('TYPO3\TYPO3CR\Tests\Fixtures\AValue');
 		$valueClassSchema->setModelType(\F3\FLOW3\Reflection\ClassSchema::MODELTYPE_VALUEOBJECT);
 		$valueClassSchema->addProperty('name', 'string');
 
 		$classSchemata = array(
-			'F3\TYPO3CR\Tests\Fixtures\AnEntity' => $entityClassSchema,
-			'F3\TYPO3CR\Tests\Fixtures\AValue' => $valueClassSchema
+			'TYPO3\TYPO3CR\Tests\Fixtures\AnEntity' => $entityClassSchema,
+			'TYPO3\TYPO3CR\Tests\Fixtures\AValue' => $valueClassSchema
 		);
 		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService');
 		$mockReflectionService->expects($this->any())->method('getClassSchema')->will($this->returnCallback(function ($object) use ($classSchemata) {
@@ -565,15 +565,15 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function splObjectStorageIsStoredAsExpected() {
 			// set up object
-		$A = new \F3\TYPO3CR\Tests\Fixtures\AnEntity('A');
+		$A = new \TYPO3\TYPO3CR\Tests\Fixtures\AnEntity('A');
 		$A->FLOW3_Persistence_Identifier = 'fakeUuuidA';
-		$B = new \F3\TYPO3CR\Tests\Fixtures\AnEntity('B');
+		$B = new \TYPO3\TYPO3CR\Tests\Fixtures\AnEntity('B');
 		$B->FLOW3_Persistence_Identifier = 'fakeUuuidB';
 		$A->addObject($B);
 
 		$expectedPropertiesForB = array(
 			'identifier' => 'fakeUuidB',
-			'classname' => 'F3\TYPO3CR\Tests\Fixtures\AnEntity',
+			'classname' => 'TYPO3\TYPO3CR\Tests\Fixtures\AnEntity',
 			'properties' => array(
 				'name' => array(
 					'type' => 'string',
@@ -589,7 +589,7 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		);
 		$expectedPropertiesForA = array(
 			'identifier' => 'fakeUuidA',
-			'classname' => 'F3\TYPO3CR\Tests\Fixtures\AnEntity',
+			'classname' => 'TYPO3\TYPO3CR\Tests\Fixtures\AnEntity',
 			'properties' => array(
 				'name' => array(
 					'type' => 'string',
@@ -601,7 +601,7 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 					'multivalue' => TRUE,
 					'value' => array(
 						array(
-							'type' => 'F3\TYPO3CR\Tests\Fixtures\AnEntity',
+							'type' => 'TYPO3\TYPO3CR\Tests\Fixtures\AnEntity',
 							'index' => NULL,
 							'value' => array('identifier' => 'fakeUuidB'),
 						),
@@ -611,7 +611,7 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		);
 
 			// set up needed infrastructure
-		$classSchema = new \F3\FLOW3\Reflection\ClassSchema('F3\TYPO3CR\Tests\Fixtures\AnEntity');
+		$classSchema = new \F3\FLOW3\Reflection\ClassSchema('TYPO3\TYPO3CR\Tests\Fixtures\AnEntity');
 		$classSchema->setModelType(\F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY);
 		$classSchema->addProperty('name', 'string');
 		$classSchema->addProperty('objects', 'SplObjectStorage');
@@ -643,14 +643,14 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function dateTimeInSplObjectStorageIsStoredAsExpected() {
 			// set up object
-		$A = new \F3\TYPO3CR\Tests\Fixtures\AnEntity('A');
+		$A = new \TYPO3\TYPO3CR\Tests\Fixtures\AnEntity('A');
 		$A->FLOW3_Persistence_Identifier = 'fakeUuidA';
 		$dateTime = new \DateTime;
 		$A->addObject($dateTime);
 
 		$expectedPropertiesForA = array(
 			'identifier' => 'fakeUuidA',
-			'classname' => 'F3\TYPO3CR\Tests\Fixtures\AnEntity',
+			'classname' => 'TYPO3\TYPO3CR\Tests\Fixtures\AnEntity',
 			'properties' => array(
 				'name' => array(
 					'type' => 'string',
@@ -672,7 +672,7 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		);
 
 			// set up needed infrastructure
-		$classSchema = new \F3\FLOW3\Reflection\ClassSchema('F3\TYPO3CR\Tests\Fixtures\AnEntity');
+		$classSchema = new \F3\FLOW3\Reflection\ClassSchema('TYPO3\TYPO3CR\Tests\Fixtures\AnEntity');
 		$classSchema->setModelType(\F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY);
 		$classSchema->addProperty('name', 'string');
 		$classSchema->addProperty('objects', 'SplObjectStorage');
@@ -702,9 +702,9 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function entitiesDetachedFromSplObjectStorageAreRemovedFromRepository() {
 		$className = 'SomeClass' . uniqid();
-		$fullClassName = 'F3\\FLOW3\Persistence\\Tests\\' . $className;
+		$fullClassName = 'TYPO3\\FLOW3\Persistence\\Tests\\' . $className;
 		$identifier = \F3\FLOW3\Utility\Algorithms::generateUUID();
-		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $className . ' {}');
+		eval('namespace TYPO3\\FLOW3\Persistence\\Tests; class ' . $className . ' {}');
 		$object = new $fullClassName();
 
 		$classSchema = new \F3\FLOW3\Reflection\ClassSchema($fullClassName);
@@ -748,9 +748,9 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function valueObjectsDetachedFromSplObjectStorageAreRemovedFromRepository() {
 		$className = 'SomeClass' . uniqid();
-		$fullClassName = 'F3\\FLOW3\Persistence\\Tests\\' . $className;
+		$fullClassName = 'TYPO3\\FLOW3\Persistence\\Tests\\' . $className;
 		$identifier = \F3\FLOW3\Utility\Algorithms::generateUUID();
-		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $className . ' {}');
+		eval('namespace TYPO3\\FLOW3\Persistence\\Tests; class ' . $className . ' {}');
 		$object = new $fullClassName();
 
 		$classSchema = new \F3\FLOW3\Reflection\ClassSchema($fullClassName);
@@ -794,9 +794,9 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function entitiesRemovedFromArrayAreRemovedFromRepository() {
 		$className = 'SomeClass' . uniqid();
-		$fullClassName = 'F3\\FLOW3\Persistence\\Tests\\' . $className;
+		$fullClassName = 'TYPO3\\FLOW3\Persistence\\Tests\\' . $className;
 		$identifier = \F3\FLOW3\Utility\Algorithms::generateUUID();
-		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $className . ' {}');
+		eval('namespace TYPO3\\FLOW3\Persistence\\Tests; class ' . $className . ' {}');
 		$object = new $fullClassName();
 
 		$classSchema = new \F3\FLOW3\Reflection\ClassSchema($fullClassName);
@@ -841,9 +841,9 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function entitiesRemovedFromNestedArrayAreRemovedFromRepository() {
 		$className = 'SomeClass' . uniqid();
-		$fullClassName = 'F3\\FLOW3\Persistence\\Tests\\' . $className;
+		$fullClassName = 'TYPO3\\FLOW3\Persistence\\Tests\\' . $className;
 		$identifier = \F3\FLOW3\Utility\Algorithms::generateUUID();
-		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $className . ' {}');
+		eval('namespace TYPO3\\FLOW3\Persistence\\Tests; class ' . $className . ' {}');
 		$object = new $fullClassName();
 
 		$classSchema = new \F3\FLOW3\Reflection\ClassSchema($fullClassName);
@@ -893,9 +893,9 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function valueObjectsRemovedFromArrayAreRemovedFromRepository() {
 		$className = 'SomeClass' . uniqid();
-		$fullClassName = 'F3\\FLOW3\Persistence\\Tests\\' . $className;
+		$fullClassName = 'TYPO3\\FLOW3\Persistence\\Tests\\' . $className;
 		$identifier = \F3\FLOW3\Utility\Algorithms::generateUUID();
-		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $className . ' {}');
+		eval('namespace TYPO3\\FLOW3\Persistence\\Tests; class ' . $className . ' {}');
 		$object = new $fullClassName();
 
 		$classSchema = new \F3\FLOW3\Reflection\ClassSchema($fullClassName);
@@ -1043,12 +1043,12 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function aggregateRootObjectsFoundWhenPersistingThatAreNotAmongAggregateRootObjectsCollectedFromRepositoriesArePersisted() {
 		$otherClassName = 'OtherClass' . uniqid();
-		$fullOtherClassName = 'F3\\FLOW3\Persistence\\Tests\\' . $otherClassName;
-		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $otherClassName . ' implements \F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface {
+		$fullOtherClassName = 'TYPO3\\FLOW3\Persistence\\Tests\\' . $otherClassName;
+		eval('namespace TYPO3\\FLOW3\Persistence\\Tests; class ' . $otherClassName . ' implements \F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface {
 		}');
 		$someClassName = 'SomeClass' . uniqid();
-		$fullSomeClassName = 'F3\\FLOW3\Persistence\\Tests\\' . $someClassName;
-		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $someClassName . ' implements \F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface {
+		$fullSomeClassName = 'TYPO3\\FLOW3\Persistence\\Tests\\' . $someClassName;
+		eval('namespace TYPO3\\FLOW3\Persistence\\Tests; class ' . $someClassName . ' implements \F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface {
 			public $property;
 		}');
 		$otherAggregateRootObject = new $fullOtherClassName();
@@ -1096,7 +1096,7 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function setPropertiesByParentEmitsExpectedSql() {
 		$propertyData = array(
 			'identifier' => 'identifier',
-			'classname' => 'F3\TYPO3CR\Tests\Fixtures\AnEntity',
+			'classname' => 'TYPO3\TYPO3CR\Tests\Fixtures\AnEntity',
 			'properties' => array(
 				'singleValue' => array(
 					'type' => 'string',
@@ -1468,7 +1468,7 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function persistObjectAsksForValidatorsForNewAndDirtyObjects() {
 		$className = 'SomeClass' . uniqid();
 		$fullClassName = 'F3\FLOW3\Persistence\Tests\\' . $className;
-		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $className . ' implements \F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface {
+		eval('namespace TYPO3\\FLOW3\Persistence\\Tests; class ' . $className . ' implements \F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface {
 			protected $foo;
 		}');
 		$newObject = new $fullClassName();
@@ -1508,7 +1508,7 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function persistObjectThrowsExceptionOnValidationFailureForNewObjects() {
 		$className = 'SomeClass' . uniqid();
 		$fullClassName = 'F3\FLOW3\Persistence\Tests\\' . $className;
-		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $className . ' implements \F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface {
+		eval('namespace TYPO3\\FLOW3\Persistence\\Tests; class ' . $className . ' implements \F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface {
 			protected $foo;
 		}');
 		$newObject = new $fullClassName();
@@ -1548,7 +1548,7 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function persistObjectThrowsExceptionOnValidationFailureForOldObjects() {
 		$className = 'SomeClass' . uniqid();
 		$fullClassName = 'F3\FLOW3\Persistence\Tests\\' . $className;
-		eval('namespace F3\\FLOW3\Persistence\\Tests; class ' . $className . ' implements \F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface {
+		eval('namespace TYPO3\\FLOW3\Persistence\\Tests; class ' . $className . ' implements \F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface {
 			protected $foo;
 		}');
 		$oldObject = new $fullClassName();
