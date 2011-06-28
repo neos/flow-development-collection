@@ -1,5 +1,5 @@
 <?php
-namespace F3\Kickstart;
+namespace TYPO3\Kickstart;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -21,7 +21,7 @@ namespace F3\Kickstart;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \F3\FLOW3\Package\Package as BasePackage;
+use \TYPO3\FLOW3\Package\Package as BasePackage;
 
 /**
  * The Kickstart Package
@@ -33,10 +33,10 @@ class Package extends BasePackage {
 	/**
 	 * Invokes custom PHP code directly after the package manager has been initialized.
 	 *
-	 * @param \F3\FLOW3\Core\Bootstrap $bootstrap The current bootstrap
+	 * @param \TYPO3\FLOW3\Core\Bootstrap $bootstrap The current bootstrap
 	 * @return void
 	 */
-	public function boot(\F3\FLOW3\Core\Bootstrap $bootstrap) {
+	public function boot(\TYPO3\FLOW3\Core\Bootstrap $bootstrap) {
 		require_once(__DIR__ . '/../Resources/Private/PHP/Sho_Inflect.php');
 	}
 

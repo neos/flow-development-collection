@@ -1,5 +1,5 @@
 <?php
-namespace F3\Kickstart\ViewHelpers;
+namespace TYPO3\Kickstart\ViewHelpers;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "Kickstart".                  *
@@ -37,7 +37,7 @@ namespace F3\Kickstart\ViewHelpers;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
-class UppercaseFirstViewHelper extends \F3\Fluid\Core\ViewHelper\AbstractViewHelper {
+class UppercaseFirstViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper {
 
 	/**
 	 * Uppercase first character

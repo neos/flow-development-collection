@@ -1,5 +1,5 @@
 <?php
-namespace F3\Kickstart\Tests\Unit\Service;
+namespace TYPO3\Kickstart\Tests\Unit\Service;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "Kickstart".                  *
@@ -26,13 +26,13 @@ namespace F3\Kickstart\Tests\Unit\Service;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class GeneratorServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
+class GeneratorServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function normalizeFieldDefinitionsConvertsBoolTypeToBoolean() {
-		$service = $this->getMock($this->buildAccessibleProxy('F3\Kickstart\Service\GeneratorService'), array('dummy'));
+		$service = $this->getMock($this->buildAccessibleProxy('TYPO3\Kickstart\Service\GeneratorService'), array('dummy'));
 		$fieldDefinitions = array(
 			'field' => array(
 				'type' => 'bool'
@@ -47,7 +47,7 @@ class GeneratorServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function normalizeFieldDefinitionsPrefixesGlobalClassesWithBackslash() {
-		$service = $this->getMock($this->buildAccessibleProxy('F3\Kickstart\Service\GeneratorService'), array('dummy'));
+		$service = $this->getMock($this->buildAccessibleProxy('TYPO3\Kickstart\Service\GeneratorService'), array('dummy'));
 		$fieldDefinitions = array(
 			'field' => array(
 				'type' => 'DateTime'
@@ -62,14 +62,14 @@ class GeneratorServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function normalizeFieldDefinitionsPrefixesLocalTypesWithNamespace() {
-		$service = $this->getMock($this->buildAccessibleProxy('F3\Kickstart\Service\GeneratorService'), array('dummy'));
+		$service = $this->getMock($this->buildAccessibleProxy('TYPO3\Kickstart\Service\GeneratorService'), array('dummy'));
 		$fieldDefinitions = array(
 			'field' => array(
 				'type' => 'Foo'
 			)
 		);		
-		$normalizedFieldDefinitions = $service->_call('normalizeFieldDefinitions', $fieldDefinitions, 'F3\Testing\Domain\Model');
-		$this->assertEquals('\F3\Testing\Domain\Model\Foo', $normalizedFieldDefinitions['field']['type']);
+		$normalizedFieldDefinitions = $service->_call('normalizeFieldDefinitions', $fieldDefinitions, 'TYPO3\Testing\Domain\Model');
+		$this->assertEquals('\TYPO3\Testing\Domain\Model\Foo', $normalizedFieldDefinitions['field']['type']);
 	}
 }
 ?>

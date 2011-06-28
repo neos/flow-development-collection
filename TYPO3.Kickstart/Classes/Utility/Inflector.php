@@ -1,5 +1,5 @@
 <?php
-namespace F3\Kickstart\Utility;
+namespace TYPO3\Kickstart\Utility;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "Kickstart".                  *

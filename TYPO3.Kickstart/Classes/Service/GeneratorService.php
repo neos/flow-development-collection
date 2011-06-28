@@ -1,5 +1,5 @@
 <?php
-namespace F3\Kickstart\Service;
+namespace TYPO3\Kickstart\Service;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "Kickstart".                  *
@@ -29,25 +29,25 @@ namespace F3\Kickstart\Service;
 class GeneratorService {
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
+	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
 	 * @inject
 	 */
 	protected $objectManager;
 
 	/**
-	 * @var \F3\FLOW3\Package\PackageManagerInterface
+	 * @var \TYPO3\FLOW3\Package\PackageManagerInterface
 	 * @inject
 	 */
 	protected $packageManager;
 
 	/**
-	 * @var \F3\Fluid\Core\Parser\TemplateParser
+	 * @var \TYPO3\Fluid\Core\Parser\TemplateParser
 	 * @inject
 	 */
 	protected $templateParser;
 
 	/**
-	 * @var \F3\Kickstart\Utility\Inflector
+	 * @var \TYPO3\Kickstart\Utility\Inflector
 	 * @inject
 	 */
 	protected $inflector;
@@ -69,10 +69,11 @@ class GeneratorService {
 	public function generateController($packageKey, $subpackage, $controllerName) {
 		$controllerClassName = ucfirst($controllerName) . 'Controller';
 
-		$templatePathAndFilename = 'resource://Kickstart/Private/Generator/Controller/ControllerTemplate.php.tmpl';
+		$templatePathAndFilename = 'resource://TYPO3.Kickstart/Private/Generator/Controller/ControllerTemplate.php.tmpl';
 
 		$contextVariables = array();
 		$contextVariables['packageKey'] = $packageKey;
+		$contextVariables['packageNamespace'] = str_replace('.', '\\', $packageKey);
 		$contextVariables['subpackage'] = $subpackage;
 		$contextVariables['isInSubpackage'] = ($subpackage != '');
 		$contextVariables['controllerClassName'] = $controllerClassName;
@@ -105,7 +106,7 @@ class GeneratorService {
 	public function generateView($packageKey, $subpackage, $controllerName, $viewName) {
 		$viewName = ucfirst($viewName);
 
-		$templatePathAndFilename = 'resource://Kickstart/Private/Generator/View/ViewTemplate.html.tmpl';
+		$templatePathAndFilename = 'resource://TYPO3.Kickstart/Private/Generator/View/ViewTemplate.html.tmpl';
 
 		$contextVariables = array();
 		$contextVariables['packageKey'] = $packageKey;
@@ -137,10 +138,10 @@ class GeneratorService {
 	 */
 	public function generateModel($packageKey, $modelName, array $fieldDefinitions) {
 		$modelName = ucfirst($modelName);
-		$namespace = 'F3\\' . $packageKey .  '\\Domain\\Model';
+		$namespace = str_replace('.', '\\', $packageKey) .  '\\Domain\\Model';
 		$fieldDefinitions = $this->normalizeFieldDefinitions($fieldDefinitions, $namespace);
 
-		$templatePathAndFilename = 'resource://Kickstart/Private/Generator/Model/EntityTemplate.php.tmpl';
+		$templatePathAndFilename = 'resource://TYPO3.Kickstart/Private/Generator/Model/EntityTemplate.php.tmpl';
 
 		$contextVariables = array();
 		$contextVariables['packageKey'] = $packageKey;
@@ -170,9 +171,9 @@ class GeneratorService {
 	public function generateRepository($packageKey, $modelName) {
 		$modelName = ucfirst($modelName);
 		$repositoryClassName = $modelName . 'Repository';
-		$namespace = 'F3\\' . $packageKey .  '\\Domain\\Repository';
+		$namespace = str_replace('.', '\\', $packageKey) .  '\\Domain\\Repository';
 
-		$templatePathAndFilename = 'resource://Kickstart/Private/Generator/Repository/RepositoryTemplate.php.tmpl';
+		$templatePathAndFilename = 'resource://TYPO3.Kickstart/Private/Generator/Repository/RepositoryTemplate.php.tmpl';
 
 		$contextVariables = array();
 		$contextVariables['packageKey'] = $packageKey;
@@ -226,7 +227,7 @@ class GeneratorService {
 	 */
 	protected function generateFile($targetPathAndFilename, $fileContent) {
 		if (!is_dir(dirname($targetPathAndFilename))) {
-			\F3\FLOW3\Utility\Files::createDirectoryRecursively(dirname($targetPathAndFilename));
+			\TYPO3\FLOW3\Utility\Files::createDirectoryRecursively(dirname($targetPathAndFilename));
 		}
 		file_put_contents($targetPathAndFilename, $fileContent);
 		$relativeTargetPathAndFilename = substr($targetPathAndFilename, strlen(FLOW3_PATH_ROOT) - 1);
@@ -242,9 +243,9 @@ class GeneratorService {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	protected function renderTemplate($templatePathAndFilename, array $contextVariables) {
-		$templateSource = \F3\FLOW3\Utility\Files::getFileContents($templatePathAndFilename, FILE_TEXT);
+		$templateSource = \TYPO3\FLOW3\Utility\Files::getFileContents($templatePathAndFilename, FILE_TEXT);
 		if ($templateSource === FALSE) {
-			throw new \F3\Fluid\Core\Exception('The template file "' . $templatePathAndFilename . '" could not be loaded.', 1225709595);
+			throw new \TYPO3\Fluid\Core\Exception('The template file "' . $templatePathAndFilename . '" could not be loaded.', 1225709595);
 		}
 		$parsedTemplate = $this->templateParser->parse($templateSource);
 
@@ -259,10 +260,10 @@ class GeneratorService {
 	 * @param array $contextVariables
 	 */
 	protected function buildRenderingContext(array $contextVariables) {
-		$renderingContext = $this->objectManager->create('F3\Fluid\Core\Rendering\RenderingContext');
+		$renderingContext = $this->objectManager->create('TYPO3\Fluid\Core\Rendering\RenderingContext');
 
-		$renderingContext->injectTemplateVariableContainer($this->objectManager->create('F3\Fluid\Core\ViewHelper\TemplateVariableContainer', $contextVariables));
-		$renderingContext->injectViewHelperVariableContainer($this->objectManager->create('F3\Fluid\Core\ViewHelper\ViewHelperVariableContainer'));
+		$renderingContext->injectTemplateVariableContainer($this->objectManager->create('TYPO3\Fluid\Core\ViewHelper\TemplateVariableContainer', $contextVariables));
+		$renderingContext->injectViewHelperVariableContainer($this->objectManager->create('TYPO3\Fluid\Core\ViewHelper\ViewHelperVariableContainer'));
 
 		return $renderingContext;
 	}

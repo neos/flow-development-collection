@@ -1,5 +1,5 @@
 <?php
-namespace F3\Kickstart\Command;
+namespace TYPO3\Kickstart\Command;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "Kickstart".                  *
@@ -26,16 +26,16 @@ namespace F3\Kickstart\Command;
  *
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class KickstartCommandController extends \F3\FLOW3\MVC\Controller\CommandController {
+class KickstartCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandController {
 
 	/**
-	 * @var \F3\FLOW3\Package\PackageManagerInterface
+	 * @var \TYPO3\FLOW3\Package\PackageManagerInterface
 	 * @inject
 	 */
 	protected $packageManager;
 
 	/**
-	 * @var \F3\Kickstart\Service\GeneratorService
+	 * @var \TYPO3\Kickstart\Service\GeneratorService
 	 * @inject
 	 */
 	protected $generatorService;
@@ -43,11 +43,11 @@ class KickstartCommandController extends \F3\FLOW3\MVC\Controller\CommandControl
 	/**
 	 * Kickstart a package
 	 *
-	 * @param string $packageKey The package key
+	 * @param string $packageKey The package key, for example "MyCompany.MyPackageName"
 	 * @return string
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function generatePackageCommand($packageKey) {
+	public function packageCommand($packageKey) {
 		if (!$this->packageManager->isPackageKeyValid($packageKey)) {
 			return 'Package key "' . $packageKey . '" is not valid. Only UpperCamelCase with alphanumeric characters and underscore, please!' . PHP_EOL;
 		}
@@ -56,21 +56,20 @@ class KickstartCommandController extends \F3\FLOW3\MVC\Controller\CommandControl
 			return 'Package "' . $packageKey . '" already exists.' . PHP_EOL;
 		}
 		$this->packageManager->createPackage($packageKey);
-		$this->packageManager->activatePackage($packageKey);
-		return $this->generateControllerCommand($packageKey);
+		return $this->controllerCommand($packageKey);
 	}
 
 	/**
-	 * Generate a controller for a package
+	 * Kickstart a controller class
 	 *
-	 * The package key can contain a subpackage with a slash after the package key (e.g. "MyPackage/Admin").
+	 * The package key can contain a subpackage with a slash after the package key (e.g. "MyCompany.MyPackage/Admin").
 	 *
 	 * @param string $packageKey The package key of the package for the new controller with an optional subpackage
 	 * @param string $controllerName The name for the new controller. This may also be a comma separated list of controller names.
 	 * @return string
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function generateControllerCommand($packageKey, $controllerName = 'Standard') {
+	public function controllerCommand($packageKey, $controllerName = 'Standard') {
 		$subpackageName = '';
 		if (strpos('/', $packageKey) !== FALSE) {
 			list($packageKey, $subpackageName) = explode('/', $packageKey, 2);
@@ -82,7 +81,7 @@ class KickstartCommandController extends \F3\FLOW3\MVC\Controller\CommandControl
 			return 'Package "' . $packageKey . '" is not available.' . PHP_EOL;
 		}
 		$generatedFiles = array();
-		$controllerNames = \F3\FLOW3\Utility\Arrays::trimExplode(',', $controllerName);
+		$controllerNames = \TYPO3\FLOW3\Utility\Arrays::trimExplode(',', $controllerName);
 		foreach ($controllerNames as $currentControllerName) {
 			$generatedFiles += $this->generatorService->generateController($packageKey, $subpackageName, $currentControllerName);
 		}
@@ -90,19 +89,19 @@ class KickstartCommandController extends \F3\FLOW3\MVC\Controller\CommandControl
 	}
 
 	/**
-	 * Generate a model class for a package with a given set of fields
+	 * Kickstart a domain model
 	 *
-	 * The fields are specified as a variable list of arguments with
-	 * field name and type separated by a colon (e.g. "title:string size:int type:MyType").
+	 * The fields are specified as a variable list of arguments with field name and type separated by a colon (e.g.
+	 * "title:string size:int type:MyType").
 	 *
 	 * @param string $packageKey The package key of the package for the domain model
 	 * @param string $modelName The name of the new domain model class
 	 * @return string
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function generateModelCommand($packageKey, $modelName) {
+	public function modelCommand($packageKey, $modelName) {
 		if (!$this->packageManager->isPackageKeyValid($packageKey)) {
-			return 'Package key "' . $packageKey . '" is not valid. Only UpperCamelCase with alphanumeric characters and underscore, please!' . PHP_EOL;
+			return 'Package key "' . $packageKey . '" is not valid. Only UpperCamelCase with alphanumeric characters and ".", please!' . PHP_EOL;
 		}
 		if (!$this->packageManager->isPackageAvailable($packageKey)) {
 			return 'Package "' . $packageKey . '" is not available.' . PHP_EOL;
@@ -125,14 +124,14 @@ class KickstartCommandController extends \F3\FLOW3\MVC\Controller\CommandControl
 	}
 
 	/**
-	 * Generate a repository for a model given a package key and model name
+	 * Kickstart a domain repository
 	 *
 	 * @param string $packageKey The package key
 	 * @param string $modelName The name of the domain model class
 	 * @return string
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function generateRepositoryCommand($packageKey, $modelName) {
+	public function repositoryCommand($packageKey, $modelName) {
 		if (!$this->packageManager->isPackageKeyValid($packageKey)) {
 			return 'Package key "' . $packageKey . '" is not valid. Only UpperCamelCase with alphanumeric characters and underscore, please!' . PHP_EOL;
 		}

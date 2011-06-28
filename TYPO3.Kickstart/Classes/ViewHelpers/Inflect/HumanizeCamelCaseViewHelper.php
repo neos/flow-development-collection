@@ -1,5 +1,5 @@
 <?php
-namespace F3\Kickstart\ViewHelpers\Inflect;
+namespace TYPO3\Kickstart\ViewHelpers\Inflect;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "Kickstart".                  *
@@ -36,10 +36,10 @@ namespace F3\Kickstart\ViewHelpers\Inflect;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
-class HumanizeCamelCaseViewHelper extends \F3\Fluid\Core\ViewHelper\AbstractViewHelper {
+class HumanizeCamelCaseViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper {
 
 	/**
-	 * @var F3\Kickstart\Utility\Inflector
+	 * @var TYPO3\Kickstart\Utility\Inflector
 	 * @inject
 	 */
 	protected $inflector;
