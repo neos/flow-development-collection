@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\MVC\Web\Routing;
+namespace TYPO3\FLOW3\MVC\Web\Routing;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -28,7 +28,7 @@ namespace F3\FLOW3\MVC\Web\Routing;
  * @api
  * @scope prototype
  */
-class DynamicRoutePart extends \F3\FLOW3\MVC\Web\Routing\AbstractRoutePart implements \F3\FLOW3\MVC\Web\Routing\DynamicRoutePartInterface {
+class DynamicRoutePart extends \TYPO3\FLOW3\MVC\Web\Routing\AbstractRoutePart implements \TYPO3\FLOW3\MVC\Web\Routing\DynamicRoutePartInterface {
 
 	/**
 	 * The split string represents the end of a Dynamic Route Part.
@@ -153,7 +153,7 @@ class DynamicRoutePart extends \F3\FLOW3\MVC\Web\Routing\AbstractRoutePart imple
 		if (!$this->resolveValue($valueToResolve)) {
 			return FALSE;
 		}
-		$routeValues = \F3\FLOW3\Utility\Arrays::unsetValueByPath($routeValues, $this->name);
+		$routeValues = \TYPO3\FLOW3\Utility\Arrays::unsetValueByPath($routeValues, $this->name);
 		return TRUE;
 	}
 
@@ -167,7 +167,7 @@ class DynamicRoutePart extends \F3\FLOW3\MVC\Web\Routing\AbstractRoutePart imple
 	 * @api
 	 */
 	protected function findValueToResolve(array $routeValues) {
-		return \F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($routeValues, $this->name);
+		return \TYPO3\FLOW3\Reflection\ObjectAccess::getPropertyPath($routeValues, $this->name);
 	}
 
 	/**

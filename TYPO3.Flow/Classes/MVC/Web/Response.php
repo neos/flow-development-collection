@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\MVC\Web;
+namespace TYPO3\FLOW3\MVC\Web;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -28,7 +28,7 @@ namespace F3\FLOW3\MVC\Web;
  * @api
  * @scope prototype
  */
-class Response extends \F3\FLOW3\MVC\Response {
+class Response extends \TYPO3\FLOW3\MVC\Response {
 
 	/**
 	 * The HTTP headers which will be sent in the response

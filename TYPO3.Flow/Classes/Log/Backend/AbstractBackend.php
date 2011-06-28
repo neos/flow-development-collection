@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Log\Backend;
+namespace TYPO3\FLOW3\Log\Backend;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -27,7 +27,7 @@ namespace F3\FLOW3\Log\Backend;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */
-abstract class AbstractBackend implements \F3\FLOW3\Log\Backend\BackendInterface {
+abstract class AbstractBackend implements \TYPO3\FLOW3\Log\Backend\BackendInterface {
 
 	/**
 	 * One of the LOG_* constants. Anything below that will be filtered out.

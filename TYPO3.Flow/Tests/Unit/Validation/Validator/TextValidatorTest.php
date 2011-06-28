@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\Validation\Validator;
+namespace TYPO3\FLOW3\Tests\Unit\Validation\Validator;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -28,9 +28,9 @@ require_once('AbstractValidatorTestcase.php');
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class TextValidatorTest extends \F3\FLOW3\Tests\Unit\Validation\Validator\AbstractValidatorTestcase {
+class TextValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validator\AbstractValidatorTestcase {
 
-	protected $validatorClassName = 'F3\FLOW3\Validation\Validator\TextValidator';
+	protected $validatorClassName = 'TYPO3\FLOW3\Validation\Validator\TextValidator';
 
 	/**
 	 * @test
@@ -71,7 +71,7 @@ class TextValidatorTest extends \F3\FLOW3\Tests\Unit\Validation\Validator\Abstra
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function textValidatorCreatesTheCorrectErrorIfTheSubjectContainsHtmlEntities() {
-		$expected = array(new \F3\FLOW3\Validation\Error('Valid text without any XML tags is expected.', 1221565786));
+		$expected = array(new \TYPO3\FLOW3\Validation\Error('Valid text without any XML tags is expected.', 1221565786));
 		$this->assertEquals($expected, $this->validator->validate('<span style="color: #BBBBBB;">a nice text</span>')->getErrors());
 	}
 }

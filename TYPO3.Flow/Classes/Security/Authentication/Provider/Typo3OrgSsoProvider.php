@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Security\Authentication\Provider;
+namespace TYPO3\FLOW3\Security\Authentication\Provider;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -27,16 +27,16 @@ namespace F3\FLOW3\Security\Authentication\Provider;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
-class Typo3OrgSsoProvider implements \F3\FLOW3\Security\Authentication\AuthenticationProviderInterface {
+class Typo3OrgSsoProvider implements \TYPO3\FLOW3\Security\Authentication\AuthenticationProviderInterface {
 
 	/**
-	 * @var \F3\FLOW3\Security\AccountRepository
+	 * @var \TYPO3\FLOW3\Security\AccountRepository
 	 * @inject
 	 */
 	protected $accountRepository;
 
 	/**
-	 * @var \F3\FLOW3\Security\Cryptography\RsaWalletServiceInterface
+	 * @var \TYPO3\FLOW3\Security\Cryptography\RsaWalletServiceInterface
 	 * @inject
 	 */
 	protected $rsaWalletService;
@@ -67,11 +67,11 @@ class Typo3OrgSsoProvider implements \F3\FLOW3\Security\Authentication\Authentic
 	/**
 	 * Returns TRUE if the given token can be authenticated by this provider
 	 *
-	 * @param F3\FLOW3\Security\Authentication\TokenInterface $authenticationToken The token that should be authenticated
+	 * @param \TYPO3\FLOW3\Security\Authentication\TokenInterface $authenticationToken The token that should be authenticated
 	 * @return boolean TRUE if the given token class can be authenticated by this provider
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function canAuthenticate(\F3\FLOW3\Security\Authentication\TokenInterface $authenticationToken) {
+	public function canAuthenticate(\TYPO3\FLOW3\Security\Authentication\TokenInterface $authenticationToken) {
 		if ($authenticationToken->getAuthenticationProviderName() === $this->name) return TRUE;
 		return FALSE;
 	}
@@ -83,19 +83,19 @@ class Typo3OrgSsoProvider implements \F3\FLOW3\Security\Authentication\Authentic
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getTokenClassNames() {
-		return array('F3\FLOW3\Security\Authentication\Token\Typo3OrgSsoToken');
+		return array('TYPO3\FLOW3\Security\Authentication\Token\Typo3OrgSsoToken');
 	}
 
 	/**
 	 * Sets isAuthenticated to TRUE for all tokens.
 	 *
-	 * @param F3\FLOW3\Security\Authentication\TokenInterface $authenticationToken The token to be authenticated
+	 * @param \TYPO3\FLOW3\Security\Authentication\TokenInterface $authenticationToken The token to be authenticated
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function authenticate(\F3\FLOW3\Security\Authentication\TokenInterface $authenticationToken) {
-		if (!($authenticationToken instanceof \F3\FLOW3\Security\Authentication\Token\Typo3OrgSsoToken)) {
-			throw new \F3\FLOW3\Security\Exception\UnsupportedAuthenticationTokenException('This provider cannot authenticate the given token.', 1217339840);
+	public function authenticate(\TYPO3\FLOW3\Security\Authentication\TokenInterface $authenticationToken) {
+		if (!($authenticationToken instanceof \TYPO3\FLOW3\Security\Authentication\Token\Typo3OrgSsoToken)) {
+			throw new \TYPO3\FLOW3\Security\Exception\UnsupportedAuthenticationTokenException('This provider cannot authenticate the given token.', 1217339840);
 		}
 
 		$account = NULL;
@@ -117,13 +117,13 @@ class Typo3OrgSsoProvider implements \F3\FLOW3\Security\Authentication\Authentic
 			if ($this->rsaWalletService->verifySignature($authenticationData, $credentials['signature'], $this->options['rsaKeyUuid'])
 				&& $credentials['expires'] > time()) {
 
-				$authenticationToken->setAuthenticationStatus(\F3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL);
+				$authenticationToken->setAuthenticationStatus(\TYPO3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL);
 				$authenticationToken->setAccount($account);
 			} else {
-				$authenticationToken->setAuthenticationStatus(\F3\FLOW3\Security\Authentication\TokenInterface::WRONG_CREDENTIALS);
+				$authenticationToken->setAuthenticationStatus(\TYPO3\FLOW3\Security\Authentication\TokenInterface::WRONG_CREDENTIALS);
 			}
-		} elseif ($authenticationToken->getAuthenticationStatus() !== \F3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL) {
-			$authenticationToken->setAuthenticationStatus(\F3\FLOW3\Security\Authentication\TokenInterface::NO_CREDENTIALS_GIVEN);
+		} elseif ($authenticationToken->getAuthenticationStatus() !== \TYPO3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL) {
+			$authenticationToken->setAuthenticationStatus(\TYPO3\FLOW3\Security\Authentication\TokenInterface::NO_CREDENTIALS_GIVEN);
 		}
 	}
 }

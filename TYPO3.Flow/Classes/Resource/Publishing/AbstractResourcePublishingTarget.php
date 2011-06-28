@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Resource\Publishing;
+namespace TYPO3\FLOW3\Resource\Publishing;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -27,7 +27,7 @@ namespace F3\FLOW3\Resource\Publishing;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-abstract class AbstractResourcePublishingTarget implements \F3\FLOW3\Resource\Publishing\ResourcePublishingTargetInterface {
+abstract class AbstractResourcePublishingTarget implements \TYPO3\FLOW3\Resource\Publishing\ResourcePublishingTargetInterface {
 
 	/**
 	 * Rewrites the given resource file name to a human readable but still URI compatible string.
@@ -43,11 +43,11 @@ abstract class AbstractResourcePublishingTarget implements \F3\FLOW3\Resource\Pu
 	/**
 	 * Returns the private path to the source of the given resource.
 	 *
-	 * @param \F3\FLOW3\Resource\Resource $resource
+	 * @param \TYPO3\FLOW3\Resource\Resource $resource
 	 * @return mixed The full path and filename to the source of the given resource or FALSE if the resource file doesn't exist
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function getPersistentResourceSourcePathAndFilename(\F3\FLOW3\Resource\Resource $resource) {
+	protected function getPersistentResourceSourcePathAndFilename(\TYPO3\FLOW3\Resource\Resource $resource) {
 		$pathAndFilename = FLOW3_PATH_DATA . 'Persistent/Resources/' . $resource->getResourcePointer()->getHash();
 		return (file_exists($pathAndFilename)) ? $pathAndFilename : FALSE;
 	}

@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Persistence\Doctrine\Mapping;
+namespace TYPO3\FLOW3\Persistence\Doctrine\Mapping;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -35,7 +35,7 @@ class ClassMetadata extends \Doctrine\ORM\Mapping\ClassMetadata {
 	 */
 	public function __construct($entityName) {
 		parent::__construct($entityName);
-		$this->reflClass = new \F3\FLOW3\Reflection\ClassReflection($entityName);
+		$this->reflClass = new \TYPO3\FLOW3\Reflection\ClassReflection($entityName);
 		$this->namespace = $this->reflClass->getNamespaceName();
 		$this->table['name'] = $this->reflClass->getShortName();
 	}

@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\MVC\Web\Routing\Aspect;
+namespace TYPO3\FLOW3\Tests\Unit\MVC\Web\Routing\Aspect;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,7 +26,7 @@ namespace F3\FLOW3\Tests\Unit\MVC\Web\Routing\Aspect;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class RouterCachingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
+class RouterCachingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @dataProvider subjectsWithAndWithoutObjects()
@@ -34,7 +34,7 @@ class RouterCachingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function containsObjectDetectsObjectsInVariousSituations($expectedResult, $subject) {
-		$aspect = $this->getAccessibleMock('F3\FLOW3\MVC\Web\Routing\Aspect\RouterCachingAspect', array('dummy'));
+		$aspect = $this->getAccessibleMock('TYPO3\FLOW3\MVC\Web\Routing\Aspect\RouterCachingAspect', array('dummy'));
 		$actualResult = $aspect->_call('containsObject', $subject);
 		$this->assertSame($expectedResult, $actualResult);
 	}

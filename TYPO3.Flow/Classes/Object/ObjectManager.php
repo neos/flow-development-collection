@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Object;
+namespace TYPO3\FLOW3\Object;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -21,8 +21,8 @@ namespace F3\FLOW3\Object;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \F3\FLOW3\Object\Configuration\Configuration as ObjectConfiguration;
-use \F3\FLOW3\Object\Configuration\ConfigurationArgument as ObjectConfigurationArgument;
+use \TYPO3\FLOW3\Object\Configuration\Configuration as ObjectConfiguration;
+use \TYPO3\FLOW3\Object\Configuration\ConfigurationArgument as ObjectConfigurationArgument;
 
 /**
  * Object Manager
@@ -34,7 +34,7 @@ use \F3\FLOW3\Object\Configuration\ConfigurationArgument as ObjectConfigurationA
 class ObjectManager implements ObjectManagerInterface {
 
 	/**
-	 * @var \F3\FLOW3\Session\SessionInterface
+	 * @var \TYPO3\FLOW3\Session\SessionInterface
 	 */
 	protected $session;
 
@@ -44,7 +44,7 @@ class ObjectManager implements ObjectManagerInterface {
 	protected $sessionInitialized = FALSE;
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectSerializer
+	 * @var \TYPO3\FLOW3\Object\ObjectSerializer
 	 */
 	protected $objectSerializer;
 
@@ -93,7 +93,7 @@ class ObjectManager implements ObjectManagerInterface {
 	 */
 	public function setObjects(array $objects) {
 		$this->objects = $objects;
-		$this->objects['F3\FLOW3\Object\ObjectManagerInterface']['i'] = $this;
+		$this->objects['TYPO3\FLOW3\Object\ObjectManagerInterface']['i'] = $this;
 		$this->objects[get_class($this)]['i'] = $this;
 	}
 
@@ -156,7 +156,7 @@ class ObjectManager implements ObjectManagerInterface {
 	 * @param string $objectName The name of the object to return an instance of
 	 * @return object The object instance
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws \F3\FLOW3\Object\Exception\UnknownObjectException if an object with the given name does not exist
+	 * @throws \TYPO3\FLOW3\Object\Exception\UnknownObjectException if an object with the given name does not exist
 	 * @api
 	 */
 	public function get($objectName) {
@@ -175,7 +175,7 @@ class ObjectManager implements ObjectManagerInterface {
 		$className = $this->getClassNameByObjectName($objectName);
 		if ($className === FALSE) {
 			$hint = ($objectName[0] === '\\') ? ' Hint: You specified an object name with a leading backslash!' : '';
-			throw new \F3\FLOW3\Object\Exception\UnknownObjectException('Object "' . $objectName . '" is not registered.' . $hint, 1264589155);
+			throw new \TYPO3\FLOW3\Object\Exception\UnknownObjectException('Object "' . $objectName . '" is not registered.' . $hint, 1264589155);
 		}
 
 		if (!isset($this->objects[$objectName]) || $this->objects[$objectName]['s'] === ObjectConfiguration::SCOPE_PROTOTYPE) {
@@ -192,8 +192,8 @@ class ObjectManager implements ObjectManagerInterface {
 	 * @param string $objectName The name of the object to create
 	 * @return object The new object instance
 	 * @throws \InvalidArgumentException if the object name starts with a backslash or is otherwise invalid
-	 * @throws \F3\FLOW3\Object\Exception\UnknownObjectException if an object with the given name does not exist
-	 * @throws \F3\FLOW3\Object\Exception\WrongScopeException if the specified object is not configured as Prototype
+	 * @throws \TYPO3\FLOW3\Object\Exception\UnknownObjectException if an object with the given name does not exist
+	 * @throws \TYPO3\FLOW3\Object\Exception\WrongScopeException if the specified object is not configured as Prototype
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @deprecated since 1.0.0beta1
 	 */
@@ -202,10 +202,10 @@ class ObjectManager implements ObjectManagerInterface {
 		if ($className === FALSE) {
 			$hint = ($objectName[0] === '\\') ? ' Hint: You specified an object name with a leading backslash!' : '';
 			$hint .= (interface_exists($objectName[0])) ? sprintf('%s is an interface, but no default implementation was defined or could be determined automatically.', $objectName[0]) : '';
-			throw new \F3\FLOW3\Object\Exception\UnknownObjectException('Tried to create unknown object "' . $objectName . '".' . $hint, 1264584588);
+			throw new \TYPO3\FLOW3\Object\Exception\UnknownObjectException('Tried to create unknown object "' . $objectName . '".' . $hint, 1264584588);
 		}
 		if (isset($this->objects[$objectName]) && $this->objects[$objectName]['s'] !== ObjectConfiguration::SCOPE_PROTOTYPE) {
-			throw new \F3\FLOW3\Object\Exception\WrongScopeException('Object "' . $objectName . '" is of not of scope prototype, but only prototype is supported by create()', 1264584592);
+			throw new \TYPO3\FLOW3\Object\Exception\WrongScopeException('Object "' . $objectName . '" is of not of scope prototype, but only prototype is supported by create()', 1264584592);
 		}
 		return $this->instantiateClass($className, array_slice(func_get_args(), 1));
 	}
@@ -223,7 +223,7 @@ class ObjectManager implements ObjectManagerInterface {
 		$className = $this->getClassNameByObjectName($objectName);
 		if ($className === FALSE) {
 			$hint = ($objectName[0] === '\\') ? ' Hint: You specified an object name with a leading backslash!' : '';
-			throw new \F3\FLOW3\Object\Exception\UnknownObjectException('Cannot recreate unknown object "' . $objectName . '".' . $hint, 1265297672);
+			throw new \TYPO3\FLOW3\Object\Exception\UnknownObjectException('Cannot recreate unknown object "' . $objectName . '".' . $hint, 1265297672);
 		}
 
 		return unserialize('O:' . strlen($className) . ':"' . $className . '":0:{};');
@@ -234,14 +234,14 @@ class ObjectManager implements ObjectManagerInterface {
 	 *
 	 * @param string $objectName The object name
 	 * @return integer One of the ObjectConfiguration::SCOPE_ constants
-	 * @throws \F3\FLOW3\Object\Exception\UnknownObjectException
+	 * @throws \TYPO3\FLOW3\Object\Exception\UnknownObjectException
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function getScope($objectName) {
 		if (!isset($this->objects[$objectName])) {
 			$hint = ($objectName[0] === '\\') ? ' Hint: You specified an object name with a leading backslash!' : '';
-			throw new \F3\FLOW3\Object\Exception\UnknownObjectException('Object "' . $objectName . '" is not registered.' . $hint, 1265367590);
+			throw new \TYPO3\FLOW3\Object\Exception\UnknownObjectException('Object "' . $objectName . '" is not registered.' . $hint, 1265367590);
 		}
 		return $this->objects[$objectName]['s'];
 	}
@@ -262,16 +262,14 @@ class ObjectManager implements ObjectManagerInterface {
 	 * @api
 	 */
 	public function getCaseSensitiveObjectName($caseInsensitiveObjectName) {
-		$lowerCasedObjectName = strtolower($caseInsensitiveObjectName);
+		$lowerCasedObjectName = ltrim(strtolower($caseInsensitiveObjectName), '\\');
 
 		foreach ($this->objects as $objectName => $information) {
 			if (isset($information['l']) && $information['l'] === $lowerCasedObjectName) {
 				return $objectName;
 			}
 		}
-		if ($caseInsensitiveObjectName[0] === '\\') {
-			throw new \InvalidArgumentException('Object names must not start with a backslash ("' . $caseInsensitiveObjectName . '")', 1270827377);
-		}
+
 		return FALSE;
 	}
 
@@ -335,14 +333,14 @@ class ObjectManager implements ObjectManagerInterface {
 	public function initializeSession() {
 		$this->sessionInitialized = TRUE;
 
-		$this->session = $this->get('F3\FLOW3\Session\SessionInterface');
+		$this->session = $this->get('TYPO3\FLOW3\Session\SessionInterface');
 		$this->session->start();
 
 		if ($this->session->hasKey('TYPO3_FLOW3_Object_ObjectManager') === TRUE) {
 			$sessionObjects = $this->session->getData('TYPO3_FLOW3_Object_ObjectManager');
 			if (is_array($sessionObjects)) {
 				foreach ($sessionObjects as $object) {
-					if ($object instanceof \F3\FLOW3\Object\Proxy\ProxyInterface) {
+					if ($object instanceof \TYPO3\FLOW3\Object\Proxy\ProxyInterface) {
 						$objectName = $this->getObjectNameByClassName(get_class($object));
 						if ($this->objects[$objectName]['s'] === ObjectConfiguration::SCOPE_SESSION) {
 							$this->objects[$objectName]['i'] = $object;
@@ -377,13 +375,13 @@ class ObjectManager implements ObjectManagerInterface {
 	public function setInstance($objectName, $instance) {
 		if (!isset($this->objects[$objectName])) {
 			if (!class_exists($objectName, FALSE)) {
-				throw new \F3\FLOW3\Object\Exception\UnknownObjectException('Cannot set instance of object "' . $objectName . '" because the object or class name is unknown to the Object Manager.', 1265370539);
+				throw new \TYPO3\FLOW3\Object\Exception\UnknownObjectException('Cannot set instance of object "' . $objectName . '" because the object or class name is unknown to the Object Manager.', 1265370539);
 			} else {
-				throw new \F3\FLOW3\Object\Exception\WrongScopeException('Cannot set instance of class "' . $objectName . '" because no matching object configuration was found. Classes which exist but are not registered are considered to be of scope prototype. However, setInstance() only accepts "session" and "singleton" instances. Check your object configuration and class name spellings.', 12653705341);
+				throw new \TYPO3\FLOW3\Object\Exception\WrongScopeException('Cannot set instance of class "' . $objectName . '" because no matching object configuration was found. Classes which exist but are not registered are considered to be of scope prototype. However, setInstance() only accepts "session" and "singleton" instances. Check your object configuration and class name spellings.', 12653705341);
 			}
 		}
 		if ($this->objects[$objectName]['s'] === ObjectConfiguration::SCOPE_PROTOTYPE) {
-			throw new \F3\FLOW3\Object\Exception\WrongScopeException('Cannot set instance of object "' . $objectName . '" because it is of scope prototype. Only session and singleton instances can be set.', 1265370540);
+			throw new \TYPO3\FLOW3\Object\Exception\WrongScopeException('Cannot set instance of object "' . $objectName . '" because it is of scope prototype. Only session and singleton instances can be set.', 1265370540);
 		}
 		$this->objects[$objectName]['i'] = $instance;
 	}
@@ -420,7 +418,7 @@ class ObjectManager implements ObjectManagerInterface {
 	 * @return mixed Either an array of settings or the value of a single setting
 	 */
 	public function getSettingsByPath(array $settingsPath) {
-		return \F3\FLOW3\Utility\Arrays::getValueByPath($this->allSettings, $settingsPath);
+		return \TYPO3\FLOW3\Utility\Arrays::getValueByPath($this->allSettings, $settingsPath);
 	}
 
 	/**
@@ -441,7 +439,7 @@ class ObjectManager implements ObjectManagerInterface {
 			switch ($argumentInformation['t']) {
 				case ObjectConfigurationArgument::ARGUMENT_TYPES_SETTING :
 					$settingPath = explode('.', $argumentInformation['v']);
-					$factoryMethodArguments[$index] = \F3\FLOW3\Utility\Arrays::getValueByPath($this->allSettings, $settingPath);
+					$factoryMethodArguments[$index] = \TYPO3\FLOW3\Utility\Arrays::getValueByPath($this->allSettings, $settingPath);
 				break;
 				case ObjectConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE :
 					$factoryMethodArguments[$index] = $argumentInformation['v'];
@@ -469,7 +467,7 @@ class ObjectManager implements ObjectManagerInterface {
 	 */
 	protected function instantiateClass($className, array $arguments) {
 		if (isset ($this->classesBeingInstantiated[$className])) {
-			throw new \F3\FLOW3\Object\Exception\CannotBuildObjectException('Circular dependency detected while trying to instantiate class "' . $className . '".', 1168505928);
+			throw new \TYPO3\FLOW3\Object\Exception\CannotBuildObjectException('Circular dependency detected while trying to instantiate class "' . $className . '".', 1168505928);
 		}
 
 		try {

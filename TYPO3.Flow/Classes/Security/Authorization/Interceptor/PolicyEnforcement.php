@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Security\Authorization\Interceptor;
+namespace TYPO3\FLOW3\Security\Authorization\Interceptor;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -31,35 +31,35 @@ namespace F3\FLOW3\Security\Authorization\Interceptor;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope singleton
  */
-class PolicyEnforcement implements \F3\FLOW3\Security\Authorization\InterceptorInterface {
+class PolicyEnforcement implements \TYPO3\FLOW3\Security\Authorization\InterceptorInterface {
 
 	/**
 	 * The authentication manager
-	 * @var \F3\FLOW3\Secuirty\Authentication\ManagerInterface
+	 * @var \TYPO3\FLOW3\Secuirty\Authentication\ManagerInterface
 	 */
 	protected $authenticationManager;
 
 	/**
 	 * The access decision manager
-	 * @var \F3\FLOW3\Security\Authorization\AccessDecisionManagerInterface
+	 * @var \TYPO3\FLOW3\Security\Authorization\AccessDecisionManagerInterface
 	 */
 	protected $accessDecisionManager;
 
 	/**
 	 * The current joinpoint
-	 * @var \F3\FLOW3\AOP\JoinPointInterface
+	 * @var \TYPO3\FLOW3\AOP\JoinPointInterface
 	 */
 	protected $joinPoint;
 
 	/**
 	 * Constructor.
 	 *
-	 * @param \F3\FLOW3\Security\Authentication\AuthenticationManagerInterface $authenticationManager The authentication manager
-	 * @param \F3\FLOW3\Security\Authorization\AccessDecisionManagerInterface $accessDecisionManager The access decision manager
+	 * @param \TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface $authenticationManager The authentication manager
+	 * @param \TYPO3\FLOW3\Security\Authorization\AccessDecisionManagerInterface $accessDecisionManager The access decision manager
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function __construct(\F3\FLOW3\Security\Authentication\AuthenticationManagerInterface $authenticationManager, \F3\FLOW3\Security\Authorization\AccessDecisionManagerInterface $accessDecisionManager) {
+	public function __construct(\TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface $authenticationManager, \TYPO3\FLOW3\Security\Authorization\AccessDecisionManagerInterface $accessDecisionManager) {
 		$this->authenticationManager = $authenticationManager;
 		$this->accessDecisionManager = $accessDecisionManager;
 	}
@@ -67,11 +67,11 @@ class PolicyEnforcement implements \F3\FLOW3\Security\Authorization\InterceptorI
 	/**
 	 * Sets the current joinpoint for this interception
 	 *
-	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
+	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function setJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function setJoinPoint(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$this->joinPoint = $joinPoint;
 	}
 
@@ -79,7 +79,7 @@ class PolicyEnforcement implements \F3\FLOW3\Security\Authorization\InterceptorI
 	 * Invokes the security interception
 	 *
 	 * @return boolean TRUE if the security checks was passed
-	 * @throws \F3\FLOW3\Security\Exception\AccessDeniedException
+	 * @throws \TYPO3\FLOW3\Security\Exception\AccessDeniedException
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function invoke() {

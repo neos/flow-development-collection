@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\MVC;
+namespace TYPO3\FLOW3\Tests\Unit\MVC;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,7 +26,7 @@ namespace F3\FLOW3\Tests\Unit\MVC;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class DispatcherTest extends \F3\FLOW3\Tests\UnitTestCase {
+class DispatcherTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
@@ -34,17 +34,17 @@ class DispatcherTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function dispatchCallsTheControllersProcessRequestMethodUntilTheIsDispatchedFlagInTheRequestObjectIsSet() {
-		$mockRequest = $this->getMock('F3\FLOW3\MVC\RequestInterface');
+		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface');
 		$mockRequest->expects($this->at(0))->method('isDispatched')->will($this->returnValue(FALSE));
 		$mockRequest->expects($this->at(1))->method('isDispatched')->will($this->returnValue(FALSE));
 		$mockRequest->expects($this->at(2))->method('isDispatched')->will($this->returnValue(TRUE));
 
-		$mockResponse = $this->getMock('F3\FLOW3\MVC\ResponseInterface');
+		$mockResponse = $this->getMock('TYPO3\FLOW3\MVC\ResponseInterface');
 
-		$mockController = $this->getMock('F3\FLOW3\MVC\Controller\ControllerInterface', array('processRequest', 'canProcessRequest'));
+		$mockController = $this->getMock('TYPO3\FLOW3\MVC\Controller\ControllerInterface', array('processRequest', 'canProcessRequest'));
 		$mockController->expects($this->exactly(2))->method('processRequest')->with($mockRequest, $mockResponse);
 
-		$dispatcher = $this->getMock('F3\FLOW3\MVC\Dispatcher', array('resolveController', 'emitAfterControllerInvocation'), array(), '', FALSE);
+		$dispatcher = $this->getMock('TYPO3\FLOW3\MVC\Dispatcher', array('resolveController', 'emitAfterControllerInvocation'), array(), '', FALSE);
 		$dispatcher->expects($this->any())->method('resolveController')->will($this->returnValue($mockController));
 		$dispatcher->dispatch($mockRequest, $mockResponse);
 	}
@@ -54,41 +54,41 @@ class DispatcherTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function dispatchIgnoresStopExceptionsByDefault() {
-		$mockRequest = $this->getMock('F3\FLOW3\MVC\RequestInterface');
+		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface');
 		$mockRequest->expects($this->at(0))->method('isDispatched')->will($this->returnValue(FALSE));
 		$mockRequest->expects($this->at(1))->method('isDispatched')->will($this->returnValue(TRUE));
 
-		$mockResponse = $this->getMock('F3\FLOW3\MVC\ResponseInterface');
-		$mockController = $this->getMock('F3\FLOW3\MVC\Controller\ControllerInterface', array('processRequest', 'canProcessRequest'));
-		$mockController->expects($this->atLeastOnce())->method('processRequest')->will($this->throwException(new \F3\FLOW3\MVC\Exception\StopActionException()));
+		$mockResponse = $this->getMock('TYPO3\FLOW3\MVC\ResponseInterface');
+		$mockController = $this->getMock('TYPO3\FLOW3\MVC\Controller\ControllerInterface', array('processRequest', 'canProcessRequest'));
+		$mockController->expects($this->atLeastOnce())->method('processRequest')->will($this->throwException(new \TYPO3\FLOW3\MVC\Exception\StopActionException()));
 
-		$dispatcher = $this->getMock('F3\FLOW3\MVC\Dispatcher', array('resolveController', 'emitAfterControllerInvocation'), array(), '', FALSE);
+		$dispatcher = $this->getMock('TYPO3\FLOW3\MVC\Dispatcher', array('resolveController', 'emitAfterControllerInvocation'), array(), '', FALSE);
 		$dispatcher->expects($this->any())->method('resolveController')->will($this->returnValue($mockController));
 		$dispatcher->dispatch($mockRequest, $mockResponse);
 	}
 
 	/**
 	 * @test
-	 * @expectedException F3\FLOW3\MVC\Exception\StopActionException
+	 * @expectedException TYPO3\FLOW3\MVC\Exception\StopActionException
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function dispatchRethrowsStopExceptionsForSubRequests() {
-		$mockSubRequest = $this->getMock('F3\FLOW3\MVC\Web\SubRequest', array(), array(), '', FALSE);
+		$mockSubRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\SubRequest', array(), array(), '', FALSE);
 		$mockSubRequest->expects($this->at(0))->method('isDispatched')->will($this->returnValue(FALSE));
 		$mockSubRequest->expects($this->at(1))->method('isDispatched')->will($this->returnValue(TRUE));
 
-		$mockResponse = $this->getMock('F3\FLOW3\MVC\ResponseInterface');
-		$mockController = $this->getMock('F3\FLOW3\MVC\Controller\ControllerInterface', array('processRequest', 'canProcessRequest'));
-		$mockController->expects($this->atLeastOnce())->method('processRequest')->will($this->throwException(new \F3\FLOW3\MVC\Exception\StopActionException()));
+		$mockResponse = $this->getMock('TYPO3\FLOW3\MVC\ResponseInterface');
+		$mockController = $this->getMock('TYPO3\FLOW3\MVC\Controller\ControllerInterface', array('processRequest', 'canProcessRequest'));
+		$mockController->expects($this->atLeastOnce())->method('processRequest')->will($this->throwException(new \TYPO3\FLOW3\MVC\Exception\StopActionException()));
 
-		$dispatcher = $this->getMock('F3\FLOW3\MVC\Dispatcher', array('resolveController', 'emitAfterControllerInvocation'), array(), '', FALSE);
+		$dispatcher = $this->getMock('TYPO3\FLOW3\MVC\Dispatcher', array('resolveController', 'emitAfterControllerInvocation'), array(), '', FALSE);
 		$dispatcher->expects($this->any())->method('resolveController')->will($this->returnValue($mockController));
 		$dispatcher->dispatch($mockSubRequest, $mockResponse);
 	}
 
 	/**
 	 * @test
-	 * @expectedException F3\FLOW3\MVC\Exception\InfiniteLoopException
+	 * @expectedException TYPO3\FLOW3\MVC\Exception\InfiniteLoopException
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
@@ -97,13 +97,13 @@ class DispatcherTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$requestCallBack = function() use (&$requestCallCounter) {
 			return ($requestCallCounter++ < 101) ? FALSE : TRUE;
 		};
-		$mockRequest = $this->getMock('F3\FLOW3\MVC\RequestInterface');
+		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface');
 		$mockRequest->expects($this->any())->method('isDispatched')->will($this->returnCallBack($requestCallBack, '__invoke'));
 
-		$mockResponse = $this->getMock('F3\FLOW3\MVC\ResponseInterface');
-		$mockController = $this->getMock('F3\FLOW3\MVC\Controller\ControllerInterface', array('processRequest', 'canProcessRequest'));
+		$mockResponse = $this->getMock('TYPO3\FLOW3\MVC\ResponseInterface');
+		$mockController = $this->getMock('TYPO3\FLOW3\MVC\Controller\ControllerInterface', array('processRequest', 'canProcessRequest'));
 
-		$dispatcher = $this->getMock('F3\FLOW3\MVC\Dispatcher', array('resolveController', 'emitAfterControllerInvocation'), array(), '', FALSE);
+		$dispatcher = $this->getMock('TYPO3\FLOW3\MVC\Dispatcher', array('resolveController', 'emitAfterControllerInvocation'), array(), '', FALSE);
 		$dispatcher->expects($this->any())->method('resolveController')->will($this->returnValue($mockController));
 		$dispatcher->dispatch($mockRequest, $mockResponse);
 	}
@@ -113,16 +113,16 @@ class DispatcherTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function resolveControllerReturnsTheNotFoundControllerDefinedInTheFLOW3SettingsAndInjectsCorrectExceptionIfTheResolvedControllerDoesNotExist() {
-		$mockController = $this->getMock('F3\FLOW3\MVC\Controller\NotFoundControllerInterface');
-		$mockController->expects($this->once())->method('setException')->with($this->isInstanceOf('F3\FLOW3\MVC\Controller\Exception\InvalidControllerException'));
+		$mockController = $this->getMock('TYPO3\FLOW3\MVC\Controller\NotFoundControllerInterface');
+		$mockController->expects($this->once())->method('setException')->with($this->isInstanceOf('TYPO3\FLOW3\MVC\Controller\Exception\InvalidControllerException'));
 
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
+		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
 		$mockObjectManager->expects($this->once())->method('get')->with($this->equalTo('TYPO3\TestPackage\TheCustomNotFoundController'))->will($this->returnValue($mockController));
 
-		$mockRequest = $this->getMock('F3\FLOW3\MVC\Request', array('getControllerPackageKey', 'getControllerObjectName'));
+		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\Request', array('getControllerPackageKey', 'getControllerObjectName'));
 		$mockRequest->expects($this->any())->method('getControllerObjectName')->will($this->returnValue(''));
 
-		$dispatcher = $this->getAccessibleMock('F3\FLOW3\MVC\Dispatcher', array('dummy'));
+		$dispatcher = $this->getAccessibleMock('TYPO3\FLOW3\MVC\Dispatcher', array('dummy'));
 		$dispatcher->injectObjectManager($mockObjectManager);
 		$dispatcher->injectSettings(array('mvc' => array('notFoundController' => 'TYPO3\TestPackage\TheCustomNotFoundController')));
 
@@ -131,17 +131,17 @@ class DispatcherTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \F3\FLOW3\MVC\Controller\Exception\InvalidControllerException
+	 * @expectedException \TYPO3\FLOW3\MVC\Controller\Exception\InvalidControllerException
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function resolveControllerThrowsInvalidControllerExceptionIfTheNotFoundControllerDefinedInTheFLOW3SettingsDoesNotImplementTheNotFoundControllerInterface() {
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
+		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
 		$mockObjectManager->expects($this->once())->method('get')->with($this->equalTo('TYPO3\TestPackage\TheCustomNotFoundController'))->will($this->returnValue(new \stdClass()));
 
-		$mockRequest = $this->getMock('F3\FLOW3\MVC\Request', array('getControllerObjectName'));
+		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\Request', array('getControllerObjectName'));
 		$mockRequest->expects($this->any())->method('getControllerObjectName')->will($this->returnValue(''));
 
-		$dispatcher = $this->getAccessibleMock('F3\FLOW3\MVC\Dispatcher', array('dummy'));
+		$dispatcher = $this->getAccessibleMock('TYPO3\FLOW3\MVC\Dispatcher', array('dummy'));
 		$dispatcher->injectObjectManager($mockObjectManager);
 		$dispatcher->injectSettings(array('mvc' => array('notFoundController' => 'TYPO3\TestPackage\TheCustomNotFoundController')));
 

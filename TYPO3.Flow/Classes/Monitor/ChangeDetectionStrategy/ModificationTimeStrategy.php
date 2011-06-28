@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Monitor\ChangeDetectionStrategy;
+namespace TYPO3\FLOW3\Monitor\ChangeDetectionStrategy;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -21,10 +21,10 @@ namespace F3\FLOW3\Monitor\ChangeDetectionStrategy;
  * @author Robert Lemke <robert@typo3.org>
  * @scope singleton
  */
-class ModificationTimeStrategy implements \F3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface {
+class ModificationTimeStrategy implements \TYPO3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface {
 
 	/**
-	 * @var \F3\FLOW3\Cache\Frontend\VariableFrontend
+	 * @var \TYPO3\FLOW3\Cache\Frontend\VariableFrontend
 	 */
 	protected $cache;
 
@@ -42,11 +42,11 @@ class ModificationTimeStrategy implements \F3\FLOW3\Monitor\ChangeDetectionStrat
 	/**
 	 * Injects the FLOW3_Monitor cache
 	 *
-	 * @param \F3\FLOW3\Cache\Frontend\VariableFrontend $cache
+	 * @param \TYPO3\FLOW3\Cache\Frontend\VariableFrontend $cache
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectCache(\F3\FLOW3\Cache\Frontend\VariableFrontend $cache) {
+	public function injectCache(\TYPO3\FLOW3\Cache\Frontend\VariableFrontend $cache) {
 		$this->cache = $cache;
 	}
 

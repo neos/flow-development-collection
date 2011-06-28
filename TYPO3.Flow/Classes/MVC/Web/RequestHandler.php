@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\MVC\Web;
+namespace TYPO3\FLOW3\MVC\Web;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -27,29 +27,29 @@ namespace F3\FLOW3\MVC\Web;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope singleton
  */
-class RequestHandler implements \F3\FLOW3\MVC\RequestHandlerInterface {
+class RequestHandler implements \TYPO3\FLOW3\MVC\RequestHandlerInterface {
 
 	/**
-	 * @var \F3\FLOW3\MVC\Dispatcher
+	 * @var \TYPO3\FLOW3\MVC\Dispatcher
 	 */
 	protected $dispatcher;
 
 	/**
-	 * @var \F3\FLOW3\MVC\Web\RequestBuilder
+	 * @var \TYPO3\FLOW3\MVC\Web\RequestBuilder
 	 */
 	protected $requestBuilder;
 
 	/**
 	 * Constructs the Web Request Handler
 	 *
-	 * @param \F3\FLOW3\MVC\Dispatcher $dispatcher The request dispatcher
-	 * @param \F3\FLOW3\MVC\Web\RequestBuilder $requestBuilder The request builder
+	 * @param \TYPO3\FLOW3\MVC\Dispatcher $dispatcher The request dispatcher
+	 * @param \TYPO3\FLOW3\MVC\Web\RequestBuilder $requestBuilder The request builder
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct(
-			\F3\FLOW3\MVC\Dispatcher $dispatcher,
-			\F3\FLOW3\MVC\Web\RequestBuilder $requestBuilder) {
+			\TYPO3\FLOW3\MVC\Dispatcher $dispatcher,
+			\TYPO3\FLOW3\MVC\Web\RequestBuilder $requestBuilder) {
 		$this->dispatcher = $dispatcher;
 		$this->requestBuilder = $requestBuilder;
 	}

@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Command;
+namespace TYPO3\FLOW3\Command;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -27,10 +27,10 @@ namespace F3\FLOW3\Command;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope singleton
  */
-class SecurityCommandController extends \F3\FLOW3\MVC\Controller\CommandController {
+class SecurityCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandController {
 
 	/**
-	 * @var \F3\FLOW3\Security\Cryptography\RsaWalletServicePhp
+	 * @var \TYPO3\FLOW3\Security\Cryptography\RsaWalletServicePhp
 	 * @inject
 	 */
 	protected $rsaWalletService;

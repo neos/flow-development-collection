@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\AOP\Advice;
+namespace TYPO3\FLOW3\AOP\Advice;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -27,17 +27,17 @@ namespace F3\FLOW3\AOP\Advice;
  *
  * @author Robert Lemke <robert@typo3.org>
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
- * @see \F3\FLOW3\AOP\InterceptorInterface
+ * @see \TYPO3\FLOW3\AOP\InterceptorInterface
  */
 interface AdviceInterface {
 
 	/**
 	 * Invokes the advice method
 	 *
-	 * @param  \F3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point which is passed to the advice method
+	 * @param  \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point which is passed to the advice method
 	 * @return Optionally the result of the advice method
 	 */
-	public function invoke(\F3\FLOW3\AOP\JoinPointInterface $joinPoint);
+	public function invoke(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint);
 
 	/**
 	 * Returns the aspect's object name which has been passed to the constructor

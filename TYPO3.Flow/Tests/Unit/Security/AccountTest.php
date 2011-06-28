@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\Security;
+namespace TYPO3\FLOW3\Tests\Unit\Security;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -21,15 +21,15 @@ namespace F3\FLOW3\Tests\Unit\Security;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use F3\FLOW3\Security\Account;
-use F3\FLOW3\Security\Policy\Role;
+use TYPO3\FLOW3\Security\Account;
+use TYPO3\FLOW3\Security\Policy\Role;
 
 /**
  * Testcase for the account
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class AccountTest extends \F3\FLOW3\Tests\UnitTestCase {
+class AccountTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @var Role

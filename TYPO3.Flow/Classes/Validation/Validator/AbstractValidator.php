@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Validation\Validator;
+namespace TYPO3\FLOW3\Validation\Validator;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -28,7 +28,7 @@ namespace F3\FLOW3\Validation\Validator;
  * @api
  * @scope prototype
  */
-abstract class AbstractValidator implements \F3\FLOW3\Validation\Validator\ValidatorInterface {
+abstract class AbstractValidator implements \TYPO3\FLOW3\Validation\Validator\ValidatorInterface {
 
 	/**
 	 * @var array
@@ -36,7 +36,7 @@ abstract class AbstractValidator implements \F3\FLOW3\Validation\Validator\Valid
 	protected $options = array();
 
 	/**
-	 * @var \F3\FLOW3\Error\Result
+	 * @var \TYPO3\FLOW3\Error\Result
 	 */
 	protected $result;
 
@@ -57,11 +57,11 @@ abstract class AbstractValidator implements \F3\FLOW3\Validation\Validator\Valid
 	 * the Error Messages object which occured.
 	 *
 	 * @param mixed $value The value that should be validated
-	 * @return \F3\FLOW3\Error\Result
+	 * @return \TYPO3\FLOW3\Error\Result
 	 * @api
 	 */
 	public function validate($value) {
-		$this->result = new \F3\FLOW3\Error\Result();
+		$this->result = new \TYPO3\FLOW3\Error\Result();
 		$this->isValid($value);
 		return $this->result;
 	}
@@ -85,7 +85,7 @@ abstract class AbstractValidator implements \F3\FLOW3\Validation\Validator\Valid
 	 * @api
 	 */
 	protected function addError($message, $code) {
-		$this->result->addError(new \F3\FLOW3\Validation\Error($message, $code));
+		$this->result->addError(new \TYPO3\FLOW3\Validation\Error($message, $code));
 	}
 }
 

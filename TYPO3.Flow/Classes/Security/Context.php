@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Security;
+namespace TYPO3\FLOW3\Security;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,7 +23,7 @@ namespace F3\FLOW3\Security;
 
 require_once(FLOW3_PATH_FLOW3 . 'Resources/PHP/iSecurity/Security_Randomizer.php');
 
-use \F3\FLOW3\Security\Policy\Role;
+use \TYPO3\FLOW3\Security\Policy\Role;
 
 /**
  * This is the default implementation of a security context, which holds current
@@ -109,24 +109,24 @@ class Context {
 	protected $authenticationStrategy = self::AUTHENTICATE_ANY_TOKEN;
 
 	/**
-	 * @var \F3\FLOW3\MVC\RequestInterface
+	 * @var \TYPO3\FLOW3\MVC\RequestInterface
 	 * @transient
 	 */
 	protected $request;
 
 	/**
-	 * @var F3\FLOW3\Security\Authentication\AuthenticationManagerInterface
+	 * @var TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface
 	 */
 	protected $authenticationManager;
 
 	/**
-	 * @var \F3\FLOW3\Security\Policy\PolicyService
+	 * @var \TYPO3\FLOW3\Security\Policy\PolicyService
 	 * @inject
 	 */
 	protected $policyService;
 
 	/**
-	 * @var \F3\FLOW3\Security\Cryptography\HashService
+	 * @var \TYPO3\FLOW3\Security\Cryptography\HashService
 	 * @inject
 	 */
 	protected $hashService;
@@ -143,18 +143,18 @@ class Context {
 	protected $csrfTokens = array();
 
 	/**
-	 * @var \F3\FLOW3\MVC\RequestInterface
+	 * @var \TYPO3\FLOW3\MVC\RequestInterface
 	 */
 	protected $interceptedRequest;
 
 	/**
 	 * Inject the authentication manager
 	 *
-	 * @param F3\FLOW3\Security\Authentication\AuthenticationManagerInterface $authenticationManager The authentication manager
+	 * @param \TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface $authenticationManager The authentication manager
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function injectAuthenticationManager(\F3\FLOW3\Security\Authentication\AuthenticationManagerInterface $authenticationManager) {
+	public function injectAuthenticationManager(\TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface $authenticationManager) {
 		$this->authenticationManager = $authenticationManager;
 		$this->authenticationManager->setSecurityContext($this);
 	}
@@ -183,7 +183,7 @@ class Context {
 					$this->authenticationStrategy = self::AUTHENTICATE_ANY_TOKEN;
 					break;
 				default:
-					throw new \F3\FLOW3\Exception('Invalid setting "' . $authenticationStrategyName . '" for security.authentication.authenticationStrategy', 1291043022);
+					throw new \TYPO3\FLOW3\Exception('Invalid setting "' . $authenticationStrategyName . '" for security.authentication.authenticationStrategy', 1291043022);
 			}
 		}
 
@@ -200,7 +200,7 @@ class Context {
 					$this->csrfStrategy = self::CSRF_ONE_PER_URI;
 					break;
 				default:
-					throw new \F3\FLOW3\Exception('Invalid setting "' . $csrfStrategyName . '" for security.csrf.csrfStrategy', 1291043024);
+					throw new \TYPO3\FLOW3\Exception('Invalid setting "' . $csrfStrategyName . '" for security.csrf.csrfStrategy', 1291043024);
 			}
 		}
 	}
@@ -208,12 +208,12 @@ class Context {
 	/**
 	 * Initializes the security context for the given request.
 	 *
-	 * @param F3\FLOW3\MVC\RequestInterface $request The request the context should be initialized for
+	 * @param \TYPO3\FLOW3\MVC\RequestInterface $request The request the context should be initialized for
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function initialize(\F3\FLOW3\MVC\RequestInterface $request) {
+	public function initialize(\TYPO3\FLOW3\MVC\RequestInterface $request) {
 		$this->request = $request;
 		if ($this->csrfStrategy !== self::CSRF_ONE_PER_SESSION) $this->csrfTokens = array();
 		$this->tokens = $this->mergeTokens($this->authenticationManager->getTokens(), $this->tokens);
@@ -241,11 +241,11 @@ class Context {
 	}
 
 	/**
-	 * Returns all \F3\FLOW3\Security\Authentication\Tokens of the security context which are
+	 * Returns all \TYPO3\FLOW3\Security\Authentication\Tokens of the security context which are
 	 * active for the current request. If a token has a request pattern that cannot match
 	 * against the current request it is determined as not active.
 	 *
-	 * @return array Array of set \F3\FLOW3\Authentication\Token objects
+	 * @return array Array of set \TYPO3\FLOW3\Authentication\Token objects
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getAuthenticationTokens() {
@@ -253,12 +253,12 @@ class Context {
 	}
 
 	/**
-	 * Returns all \F3\FLOW3\Security\Authentication\Tokens of the security context which are
+	 * Returns all \TYPO3\FLOW3\Security\Authentication\Tokens of the security context which are
 	 * active for the current request and of the given type. If a token has a request pattern that cannot match
 	 * against the current request it is determined as not active.
 	 *
 	 * @param string $className The class name
-	 * @return array Array of set \F3\FLOW3\Authentication\Token objects
+	 * @return array Array of set \TYPO3\FLOW3\Authentication\Token objects
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getAuthenticationTokensOfType($className) {
@@ -276,7 +276,7 @@ class Context {
 	 * Returns the roles of all active and authenticated tokens.
 	 * If no authenticated roles could be found the "Everbody" role is returned
 	 *
-	 * @return array Array of F3\FLOW3\Security\Policy\Role objects
+	 * @return array Array of TYPO3\FLOW3\Security\Policy\Role objects
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getRoles() {
@@ -360,7 +360,7 @@ class Context {
 	 * from the tokens.
 	 * (@see getAuthenticationTokens())
 	 *
-	 * @return \F3\FLOW3\Security\Account The authenticated account
+	 * @return \TYPO3\FLOW3\Security\Account The authenticated account
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getAccount() {
@@ -376,7 +376,7 @@ class Context {
 	 * authentication provider name.
 	 *
 	 * @param string $authenticationProviderName Authentication provider name of the account to find
-	 * @return \F3\FLOW3\Security\Account The authenticated account
+	 * @return \TYPO3\FLOW3\Security\Account The authenticated account
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
@@ -391,7 +391,7 @@ class Context {
 	 * Returns the current CSRF protection token. A new one is created when needed, depending on the  configured CSRF
 	 * protection strategy.
 	 *
-	 * @return void
+	 * @return string
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getCsrfProtectionToken() {
@@ -424,10 +424,10 @@ class Context {
 	 * Sets a request, to be stored for later resuming after it
 	 * has been intercepted by a security exception.
 	 *
-	 * @param \F3\FLOW3\MVC\RequestInterface $interceptedRequest
+	 * @param \TYPO3\FLOW3\MVC\RequestInterface $interceptedRequest
 	 * @return void
 	 */
-	public function setInterceptedRequest(\F3\FLOW3\MVC\RequestInterface $interceptedRequest = NULL) {
+	public function setInterceptedRequest(\TYPO3\FLOW3\MVC\RequestInterface $interceptedRequest = NULL) {
 		$this->interceptedRequest = $interceptedRequest;
 	}
 
@@ -435,7 +435,7 @@ class Context {
 	 * Returns the request, that has been stored for later resuming after it
 	 * has been intercepted by a security exception, NULL if there is none.
 	 *
-	 * @return \F3\FLOW3\MVC\RequestInterface
+	 * @return \TYPO3\FLOW3\MVC\RequestInterface
 	 */
 	public function getInterceptedRequest() {
 		return $this->interceptedRequest;
@@ -491,7 +491,7 @@ class Context {
 	 *
 	 * @param array $managerTokens Array of tokens provided by the authentication manager
 	 * @param array $sessionTokens Array of tokens resotored from the session
-	 * @return array Array of \F3\FLOW3\Security\Authentication\TokenInterface objects
+	 * @return array Array of \TYPO3\FLOW3\Security\Authentication\TokenInterface objects
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function mergeTokens($managerTokens, $sessionTokens) {

@@ -26,7 +26,7 @@ namespace TYPO3\FLOW3\Tests\Unit\Core;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class ClassLoaderTest extends \F3\FLOW3\Tests\UnitTestCase {
+class ClassLoaderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @var \TYPO3\FLOW3\Core\ClassLoader

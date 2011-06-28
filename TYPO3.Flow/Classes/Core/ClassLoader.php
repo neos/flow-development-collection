@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Core;
+namespace TYPO3\FLOW3\Core;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -32,12 +32,12 @@ namespace F3\FLOW3\Core;
 class ClassLoader {
 
 	/**
-	 * @var \F3\FLOW3\Cache\Frontend\PhpFrontend
+	 * @var \TYPO3\FLOW3\Cache\Frontend\PhpFrontend
 	 */
 	protected $classesCache;
 
 	/**
-	 * An array of \F3\FLOW3\Package\Package objects
+	 * An array of \TYPO3\FLOW3\Package\Package objects
 	 * @var array
 	 */
 	protected $packages = array();
@@ -45,11 +45,11 @@ class ClassLoader {
 	/**
 	 * Injects the cache for storing the renamed original classes
 	 *
-	 * @param \F3\FLOW3\Cache\Frontend\PhpFrontend $classesCache
+	 * @param \TYPO3\FLOW3\Cache\Frontend\PhpFrontend $classesCache
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectClassesCache(\F3\FLOW3\Cache\Frontend\PhpFrontend $classesCache) {
+	public function injectClassesCache(\TYPO3\FLOW3\Cache\Frontend\PhpFrontend $classesCache) {
 		$this->classesCache = $classesCache;
 	}
 
@@ -83,7 +83,7 @@ class ClassLoader {
 			}
 		}
 
-		if ($this->packages === array() && substr($className, 0, 11) === 'F3\FLOW3') {
+		if ($this->packages === array() && substr($className, 0, 11) === 'TYPO3\FLOW3') {
 			$classFilePathAndName = FLOW3_PATH_FLOW3 . 'Classes/' . str_replace('\\', '/', substr($className, 12)) . '.php';
 		}
 
@@ -95,7 +95,7 @@ class ClassLoader {
 	/**
 	 * Sets the available packages
 	 *
-	 * @param array $packages An array of \F3\FLOW3\Package\Package objects
+	 * @param array $packages An array of \TYPO3\FLOW3\Package\Package objects
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */

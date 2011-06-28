@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Object\Fixture;
+namespace TYPO3\FLOW3\Tests\Object\Fixture;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -197,7 +197,7 @@ class BasicClass {
 	 * @param  array $someArray Some array
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @see    \F3\FLOW3\AOP\Builder\AdvicedMethodInterceptorBuilderTest
+	 * @see    \TYPO3\FLOW3\AOP\Builder\AdvicedMethodInterceptorBuilderTest
 	 */
 	public function methodWhichExpectsAnArrayArgument(array $someArray) {
 	}

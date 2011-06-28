@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Security\Authentication;
+namespace TYPO3\FLOW3\Security\Authentication;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -22,9 +22,9 @@ namespace F3\FLOW3\Security\Authentication;
  *                                                                        */
 
 /**
- * Contract for an authentication provider used by the \F3\FLOW3\Security\Authenticaton\ProviderManager.
- * Has to add a \F3\FLOW3\Security\Authentication\TokenInterface to the securit context, which contains
- * a \F3\FLOW3\Security\Authentication\UserDetailsInterface.
+ * Contract for an authentication provider used by the \TYPO3\FLOW3\Security\Authenticaton\ProviderManager.
+ * Has to add a \TYPO3\FLOW3\Security\Authentication\TokenInterface to the securit context, which contains
+ * a \TYPO3\FLOW3\Security\Authentication\UserDetailsInterface.
  *
  * @author Andreas Förthner <andreas.foerthner@netlogix.de>
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
@@ -44,11 +44,11 @@ interface AuthenticationProviderInterface {
 	/**
 	 * Returns TRUE if the given token can be authenticated by this provider
 	 *
-	 * @param \F3\FLOW3\Security\Authentication\TokenInterface $token The token that should be authenticated
+	 * @param \TYPO3\FLOW3\Security\Authentication\TokenInterface $token The token that should be authenticated
 	 * @return boolean TRUE if the given token class can be authenticated by this provider
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function canAuthenticate(\F3\FLOW3\Security\Authentication\TokenInterface $token);
+	public function canAuthenticate(\TYPO3\FLOW3\Security\Authentication\TokenInterface $token);
 
 	/**
 	 * Returns the classnames of the tokens this provider is responsible for.
@@ -60,10 +60,10 @@ interface AuthenticationProviderInterface {
 	/**
 	 * Tries to authenticate the given token. Sets isAuthenticated to TRUE if authentication succeeded.
 	 *
-	 * @param \F3\FLOW3\Security\Authentication\TokenInterface $authenticationToken The token to be authenticated
+	 * @param \TYPO3\FLOW3\Security\Authentication\TokenInterface $authenticationToken The token to be authenticated
 	 * @return void
 	 */
-	public function authenticate(\F3\FLOW3\Security\Authentication\TokenInterface $authenticationToken);
+	public function authenticate(\TYPO3\FLOW3\Security\Authentication\TokenInterface $authenticationToken);
 }
 
 ?>

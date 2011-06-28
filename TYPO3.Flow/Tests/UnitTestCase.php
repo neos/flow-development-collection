@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests;
+namespace TYPO3\FLOW3\Tests;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -32,7 +32,7 @@ namespace F3\FLOW3\Tests;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */
-abstract class UnitTestCase extends \F3\FLOW3\Tests\BaseTestCase {
+abstract class UnitTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 
 }
 ?>

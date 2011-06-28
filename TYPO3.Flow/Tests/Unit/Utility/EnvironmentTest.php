@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\Utility;
+namespace TYPO3\FLOW3\Tests\Unit\Utility;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,14 +26,14 @@ namespace F3\FLOW3\Tests\Unit\Utility;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class EnvironmentTest extends \F3\FLOW3\Tests\UnitTestCase {
+class EnvironmentTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPathToTemporaryDirectoryReturnsPathWithTrailingSlash() {
-		$environment = new \F3\FLOW3\Utility\Environment('Testing');
+		$environment = new \TYPO3\FLOW3\Utility\Environment('Testing');
 		$environment->setTemporaryDirectoryBase(sys_get_temp_dir('FLOW3EnvironmentTest'));
 		$path = $environment->getPathToTemporaryDirectory();
 		$this->assertEquals('/', substr($path, -1, 1), 'The temporary path did not end with slash.');
@@ -44,7 +44,7 @@ class EnvironmentTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPathToTemporaryDirectoryReturnsAnExistingPath() {
-		$environment = new \F3\FLOW3\Utility\Environment('Testing');
+		$environment = new \TYPO3\FLOW3\Utility\Environment('Testing');
 		$environment->setTemporaryDirectoryBase(sys_get_temp_dir('FLOW3EnvironmentTest'));
 
 		$path = $environment->getPathToTemporaryDirectory();
@@ -57,7 +57,7 @@ class EnvironmentTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function getScriptPathAndFilenameReturnsCorrectPathAndFilename() {
 		$expectedPathAndFilename = '/this/is/the/file.php';
-		$environment = $this->getAccessibleMock('F3\FLOW3\Utility\Environment', array('dummy'), array('Testing'));
+		$environment = $this->getAccessibleMock('TYPO3\FLOW3\Utility\Environment', array('dummy'), array('Testing'));
 		$environment->_set('SERVER', array(
 			'SCRIPT_FILENAME' => '/this/is/the/file.php'
 			)
@@ -72,7 +72,7 @@ class EnvironmentTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function getScriptPathAndFilenameReturnsCorrectPathAndFilenameForWindowsStylePath() {
 		$expectedPathAndFilename = '/this/is/the/file.php';
-		$environment = $this->getAccessibleMock('F3\FLOW3\Utility\Environment', array('dummy'), array('Testing'));
+		$environment = $this->getAccessibleMock('TYPO3\FLOW3\Utility\Environment', array('dummy'), array('Testing'));
 		$environment->_set('SERVER', array(
 			'SCRIPT_FILENAME' => '\\this\\is\\the\\file.php'
 			)
@@ -87,7 +87,7 @@ class EnvironmentTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function getScriptRequestPathReturnsCorrectPath() {
 		$expectedPath = '/blog/Web/';
-		$environment = $this->getAccessibleMock('F3\FLOW3\Utility\Environment', array('dummy'), array('Testing'));
+		$environment = $this->getAccessibleMock('TYPO3\FLOW3\Utility\Environment', array('dummy'), array('Testing'));
 		$environment->_set('SERVER', array(
 				'SCRIPT_NAME' => '/blog/Web/index.php'
 			)
@@ -102,7 +102,7 @@ class EnvironmentTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function requestUriServerVariableArrayPairs() {
 		return array(
 			array(
-				new \F3\FLOW3\Property\DataType\Uri('http://flow3.typo3.org/is/the/base/for/typo3?5=0'),
+				new \TYPO3\FLOW3\Property\DataType\Uri('http://flow3.typo3.org/is/the/base/for/typo3?5=0'),
 				array(
 					'HTTP_HOST' => 'flow3.typo3.org',
 					'SCRIPT_NAME' => '/index.php',
@@ -110,7 +110,7 @@ class EnvironmentTest extends \F3\FLOW3\Tests\UnitTestCase {
 				)
 			),
 			array(
-				new \F3\FLOW3\Property\DataType\Uri('http://flow3.typo3.org/Web/is/the/base/for/typo3?5=0'),
+				new \TYPO3\FLOW3\Property\DataType\Uri('http://flow3.typo3.org/Web/is/the/base/for/typo3?5=0'),
 				array(
 					'HTTP_HOST' => 'flow3.typo3.org',
 					'SCRIPT_NAME' => '/Web/index.php',
@@ -118,7 +118,7 @@ class EnvironmentTest extends \F3\FLOW3\Tests\UnitTestCase {
 				),
 			),
 			array(
-				new \F3\FLOW3\Property\DataType\Uri('http://flow3.typo3.org/is/the/base/for/typo3?5=0'),
+				new \TYPO3\FLOW3\Property\DataType\Uri('http://flow3.typo3.org/is/the/base/for/typo3?5=0'),
 				array(
 					'HTTP_HOST' => 'flow3.typo3.org',
 					'SCRIPT_NAME' => '/index.php',
@@ -126,7 +126,7 @@ class EnvironmentTest extends \F3\FLOW3\Tests\UnitTestCase {
 				)
 			),
 			array(
-				new \F3\FLOW3\Property\DataType\Uri('http://flow3.typo3.org/Web/is/the/base/for/typo3?5=0'),
+				new \TYPO3\FLOW3\Property\DataType\Uri('http://flow3.typo3.org/Web/is/the/base/for/typo3?5=0'),
 				array(
 					'HTTP_HOST' => 'flow3.typo3.org',
 					'SCRIPT_NAME' => '/Web/index.php',
@@ -134,7 +134,7 @@ class EnvironmentTest extends \F3\FLOW3\Tests\UnitTestCase {
 				)
 			),
 			array(
-				new \F3\FLOW3\Property\DataType\Uri('http://flow3.typo3.org/dev/flow3/blog/Web/posts/index'),
+				new \TYPO3\FLOW3\Property\DataType\Uri('http://flow3.typo3.org/dev/flow3/blog/Web/posts/index'),
 				array(
 					'HTTP_HOST' => 'flow3.typo3.org',
 					'SCRIPT_NAME' => '/dev/flow3/blog/Web/index.php',
@@ -150,7 +150,7 @@ class EnvironmentTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getRequestUriReturnsExpectedUri($expectedUri, $SERVER) {
-		$environment = $this->getAccessibleMock('F3\FLOW3\Utility\Environment', array('dummy'), array('Testing'));
+		$environment = $this->getAccessibleMock('TYPO3\FLOW3\Utility\Environment', array('dummy'), array('Testing'));
 		$environment->_set('SAPIName', 'apache');
 		$environment->_set('SERVER', $SERVER);
 
@@ -164,18 +164,18 @@ class EnvironmentTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function requestUriBaseUriScriptNameTuples() {
 		return array(
 			array(
-				new \F3\FLOW3\Property\DataType\Uri('http://flow3.typo3.org/is/the/base/for/typo3?5=0'),
-				new \F3\FLOW3\Property\DataType\Uri('http://flow3.typo3.org/'),
+				new \TYPO3\FLOW3\Property\DataType\Uri('http://flow3.typo3.org/is/the/base/for/typo3?5=0'),
+				new \TYPO3\FLOW3\Property\DataType\Uri('http://flow3.typo3.org/'),
 				'/index.php'
 			),
 			array(
-				new \F3\FLOW3\Property\DataType\Uri('http://flow3.typo3.org/Web/is/the/base/for/typo3?5=0'),
-				new \F3\FLOW3\Property\DataType\Uri('http://flow3.typo3.org/Web/'),
+				new \TYPO3\FLOW3\Property\DataType\Uri('http://flow3.typo3.org/Web/is/the/base/for/typo3?5=0'),
+				new \TYPO3\FLOW3\Property\DataType\Uri('http://flow3.typo3.org/Web/'),
 				'/Web/index.php'
 			),
 			array(
-				new \F3\FLOW3\Property\DataType\Uri('http://flow3.typo3.org/cms/Web/is/the/base/for/typo3?5=0'),
-				new \F3\FLOW3\Property\DataType\Uri('http://flow3.typo3.org/cms/Web/'),
+				new \TYPO3\FLOW3\Property\DataType\Uri('http://flow3.typo3.org/cms/Web/is/the/base/for/typo3?5=0'),
+				new \TYPO3\FLOW3\Property\DataType\Uri('http://flow3.typo3.org/cms/Web/'),
 				'/cms/Web/index.php'
 			),
 		);
@@ -187,7 +187,7 @@ class EnvironmentTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function detectBaseUriRendersExpectedUriWhenUsingPlainRequests($requestUri, $expectedBaseUri, $SCRIPT_NAME) {
-		$environment = $this->getAccessibleMock('F3\FLOW3\Utility\Environment', array('getRequestUri'), array('Testing'));
+		$environment = $this->getAccessibleMock('TYPO3\FLOW3\Utility\Environment', array('getRequestUri'), array('Testing'));
 		$environment->expects($this->once())->method('getRequestUri')->will($this->returnValue($requestUri));
 		$environment->_set('SAPIName', 'apache');
 		$environment->_set('SERVER', array('SCRIPT_NAME' => $SCRIPT_NAME));
@@ -201,7 +201,7 @@ class EnvironmentTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getAcceptedFormatsReturnsListOfAcceptedFormatsAccordingToHTTPHeader($httpAcceptString, $expectedFormats) {
-		$environment = $this->getAccessibleMock('F3\FLOW3\Utility\Environment', array('getHTTPAccept'), array('Testing'));
+		$environment = $this->getAccessibleMock('TYPO3\FLOW3\Utility\Environment', array('getHTTPAccept'), array('Testing'));
 		$environment->expects($this->once())->method('getHTTPAccept')->will($this->returnValue($httpAcceptString));
 
 		$this->assertEquals($expectedFormats, $environment->getAcceptedFormats());
@@ -228,7 +228,7 @@ class EnvironmentTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function getUploadedFilesJustReturnsThePreviouslyUntangledFILESVariable() {
 		$_FILES = array('foo' => 'bar');
-		$environment = new \F3\FLOW3\Utility\Environment('Testing');
+		$environment = new \TYPO3\FLOW3\Utility\Environment('Testing');
 		$this->assertEquals(array('foo' => 'bar'), $environment->getUploadedFiles());
 	}
 
@@ -238,7 +238,7 @@ class EnvironmentTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function getRawServerEnvironmentJustReturnsTheSERVERVariable() {
 		$_SERVER = array('foo' => 'bar', 'REQUEST_TIME' => $_SERVER['REQUEST_TIME']);
-		$environment = new \F3\FLOW3\Utility\Environment('Testing');
+		$environment = new \TYPO3\FLOW3\Utility\Environment('Testing');
 		$this->assertEquals($_SERVER, $environment->getRawServerEnvironment());
 	}
 
@@ -247,7 +247,7 @@ class EnvironmentTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getSAPINameReturnsNotNullOnFreshlyConstructedEnvironment() {
-		$environment = new \F3\FLOW3\Utility\Environment('Testing');
+		$environment = new \TYPO3\FLOW3\Utility\Environment('Testing');
 		$this->assertNotNull($environment->getSAPIName());
 	}
 
@@ -256,7 +256,7 @@ class EnvironmentTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getMaximumPathLengthReturnsCorrectValue() {
-		$environment = new \F3\FLOW3\Utility\Environment('Testing');
+		$environment = new \TYPO3\FLOW3\Utility\Environment('Testing');
 		$expectedValue = PHP_MAXPATHLEN;
 		if ((integer)$expectedValue <= 0) {
 			$this->fail('The PHP Constant PHP_MAXPATHLEN is not available on your system! Please file a PHP bug report.');
@@ -453,7 +453,7 @@ class EnvironmentTest extends \F3\FLOW3\Tests\UnitTestCase {
 			)
 		);
 
-		$environment = $this->getAccessibleMock('F3\FLOW3\Utility\Environment', array('dummy'), array(), '', FALSE);
+		$environment = $this->getAccessibleMock('TYPO3\FLOW3\Utility\Environment', array('dummy'), array(), '', FALSE);
 		$result = $environment->_call('untangleFilesArray', $convolutedFiles);
 
 		$this->assertSame($untangledFiles, $result);
@@ -464,7 +464,7 @@ class EnvironmentTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function getRequestHeadersConvertsHTTPServerVariables() {
-		$environment = $this->getAccessibleMock('F3\FLOW3\Utility\Environment', array('dummy'), array(), '', FALSE);
+		$environment = $this->getAccessibleMock('TYPO3\FLOW3\Utility\Environment', array('dummy'), array(), '', FALSE);
 		$serverGlobal = array(
 			'HTTP_ACCEPT_ENCODING' => 'gzip,deflate',
 			'HTTP_CUSTOM_HEADER' => 'abcdefg'
@@ -483,7 +483,7 @@ class EnvironmentTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getRequestHeadersRespectsAuthorizationVariables() {
-		$environment = $this->getAccessibleMock('F3\FLOW3\Utility\Environment', array('dummy'), array(), '', FALSE);
+		$environment = $this->getAccessibleMock('TYPO3\FLOW3\Utility\Environment', array('dummy'), array(), '', FALSE);
 		$serverGlobal = array(
 			'HTTP_ACCEPT_ENCODING' => 'gzip,deflate',
 			'HTTP_CUSTOM_HEADER' => 'abcdefg',
@@ -506,7 +506,7 @@ class EnvironmentTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getRequestHeadersRespectsAuthorizationVariablesRedirectedWhenRunningPhpAsCgi() {
-		$environment = $this->getAccessibleMock('F3\FLOW3\Utility\Environment', array('dummy'), array(), '', FALSE);
+		$environment = $this->getAccessibleMock('TYPO3\FLOW3\Utility\Environment', array('dummy'), array(), '', FALSE);
 		$serverGlobal = array(
 			'HTTP_ACCEPT_ENCODING' => 'gzip,deflate',
 			'HTTP_CUSTOM_HEADER' => 'abcdefg',

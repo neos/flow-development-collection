@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Functional\Object\Fixtures;
+namespace TYPO3\FLOW3\Tests\Functional\Object\Fixtures;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -34,7 +34,7 @@ class SingletonClassC {
 	public $requiredArgument;
 
 	/**
-	 * @var \F3\FLOW3\Tests\Functional\Object\Fixtures\InterfaceA
+	 * @var \TYPO3\FLOW3\Tests\Functional\Object\Fixtures\InterfaceA
 	 */
 	public $interfaceAImplementation;
 
@@ -45,7 +45,7 @@ class SingletonClassC {
 
 	/**
 	 * @param string $requiredArgument
-	 * @param \F3\FLOW3\Tests\Functional\Object\Fixtures\InterfaceA $interfaceAImplementation
+	 * @param \TYPO3\FLOW3\Tests\Functional\Object\Fixtures\InterfaceA $interfaceAImplementation
 	 * @param string $settingsArgument
 	 * @param boolean $optionalArgument
 	 */

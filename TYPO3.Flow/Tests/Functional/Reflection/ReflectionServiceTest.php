@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Functional\Reflection;
+namespace TYPO3\FLOW3\Tests\Functional\Reflection;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,18 +26,18 @@ namespace F3\FLOW3\Tests\Functional\Reflection;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class ReflectionServiceTest extends \F3\FLOW3\Tests\FunctionalTestCase {
+class ReflectionServiceTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function theReflectionServiceBuildsClassSchemataForEntities() {
-		$reflectionService = $this->objectManager->get('F3\FLOW3\Reflection\ReflectionService');
-		$classSchema = $reflectionService->getClassSchema('F3\FLOW3\Tests\Functional\Reflection\Fixtures\ClassSchemaFixture');
+		$reflectionService = $this->objectManager->get('TYPO3\FLOW3\Reflection\ReflectionService');
+		$classSchema = $reflectionService->getClassSchema('TYPO3\FLOW3\Tests\Functional\Reflection\Fixtures\ClassSchemaFixture');
 
 		$this->assertNotNull($classSchema);
-		$this->assertSame('F3\FLOW3\Tests\Functional\Reflection\Fixtures\ClassSchemaFixture', $classSchema->getClassName());
+		$this->assertSame('TYPO3\FLOW3\Tests\Functional\Reflection\Fixtures\ClassSchemaFixture', $classSchema->getClassName());
 	}
 
 	/**
@@ -45,8 +45,8 @@ class ReflectionServiceTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function theReflectionServiceCorrectlyBuildsMethodTagsValues() {
-		$reflectionService = $this->objectManager->get('F3\FLOW3\Reflection\ReflectionService');
-		$actual = $reflectionService->getMethodTagsValues('F3\FLOW3\Tests\Functional\Reflection\Fixtures\ClassSchemaFixture', 'setName');
+		$reflectionService = $this->objectManager->get('TYPO3\FLOW3\Reflection\ReflectionService');
+		$actual = $reflectionService->getMethodTagsValues('TYPO3\FLOW3\Tests\Functional\Reflection\Fixtures\ClassSchemaFixture', 'setName');
 
 		$expected = array(
 			'param' => array(

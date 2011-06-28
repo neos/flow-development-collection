@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Security\Authentication\Token;
+namespace TYPO3\FLOW3\Security\Authentication\Token;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -27,18 +27,18 @@ namespace F3\FLOW3\Security\Authentication\Token;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
-class UsernamePasswordHttpBasic extends \F3\FLOW3\Security\Authentication\Token\UsernamePassword {
+class UsernamePasswordHttpBasic extends \TYPO3\FLOW3\Security\Authentication\Token\UsernamePassword {
 
 	/**
 	 * Updates the username and password credentials from the HTTP authorization header.
 	 * Sets the authentication status to AUTHENTICATION_NEEDED, if the header has been
 	 * sent, to NO_CREDENTIALS_GIVEN if no authorization header was there.
 	 *
-	 * @param \F3\FLOW3\MVC\RequestInterface $request The current request instance
+	 * @param \TYPO3\FLOW3\MVC\RequestInterface $request The current request instance
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function updateCredentials(\F3\FLOW3\MVC\RequestInterface $request) {
+	public function updateCredentials(\TYPO3\FLOW3\MVC\RequestInterface $request) {
 		$requestHeaders = $this->environment->getRequestHeaders();
 
 		if (isset($requestHeaders['User']) && isset($requestHeaders['Pw'])) {
@@ -47,7 +47,7 @@ class UsernamePasswordHttpBasic extends \F3\FLOW3\Security\Authentication\Token\
 			$this->setAuthenticationStatus(self::AUTHENTICATION_NEEDED);
 		} else {
 			$this->credentials = array('username' => NULL, 'password' => NULL);
-			$this->authenticationStatus = \F3\FLOW3\Security\Authentication\TokenInterface::NO_CREDENTIALS_GIVEN;
+			$this->authenticationStatus = \TYPO3\FLOW3\Security\Authentication\TokenInterface::NO_CREDENTIALS_GIVEN;
 		}
 	}
 }

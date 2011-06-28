@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Persistence;
+namespace TYPO3\FLOW3\Persistence;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -68,7 +68,7 @@ interface RepositoryInterface {
 	/**
 	 * Returns a query for objects of this repository
 	 *
-	 * @return \F3\FLOW3\Persistence\QueryInterface
+	 * @return \TYPO3\FLOW3\Persistence\QueryInterface
 	 * @api
 	 */
 	public function createQuery();
@@ -93,8 +93,8 @@ interface RepositoryInterface {
 	/**
 	 * Sets the property names to order results by. Expected like this:
 	 * array(
-	 *  'foo' => \F3\FLOW3\Persistence\QueryInterface::ORDER_ASCENDING,
-	 *  'bar' => \F3\FLOW3\Persistence\QueryInterface::ORDER_DESCENDING
+	 *  'foo' => \TYPO3\FLOW3\Persistence\QueryInterface::ORDER_ASCENDING,
+	 *  'bar' => \TYPO3\FLOW3\Persistence\QueryInterface::ORDER_DESCENDING
 	 * )
 	 *
 	 * @param array $defaultOrderings The property names to order by by default

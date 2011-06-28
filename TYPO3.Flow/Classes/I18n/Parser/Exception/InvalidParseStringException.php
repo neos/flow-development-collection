@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\I18n\Parser\Exception;
+namespace TYPO3\FLOW3\I18n\Parser\Exception;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -30,7 +30,7 @@ namespace F3\FLOW3\I18n\Parser\Exception;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */
-class InvalidParseStringException extends \F3\FLOW3\I18n\Exception {
+class InvalidParseStringException extends \TYPO3\FLOW3\I18n\Exception {
 
 }
 

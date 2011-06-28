@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Persistence\Generic;
+namespace TYPO3\FLOW3\Persistence\Generic;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -28,7 +28,7 @@ namespace F3\FLOW3\Persistence\Generic;
  * @scope singleton
  * @api
  */
-class PersistenceManager extends \F3\FLOW3\Persistence\AbstractPersistenceManager {
+class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceManager {
 
 	/**
 	 * @var \SplObjectStorage
@@ -41,22 +41,22 @@ class PersistenceManager extends \F3\FLOW3\Persistence\AbstractPersistenceManage
 	protected $removedObjects;
 
 	/**
-	 * @var \F3\FLOW3\Persistence\Generic\QueryFactoryInterface
+	 * @var \TYPO3\FLOW3\Persistence\Generic\QueryFactoryInterface
 	 */
 	protected $queryFactory;
 
 	/**
-	 * @var \F3\FLOW3\Persistence\Generic\DataMapper
+	 * @var \TYPO3\FLOW3\Persistence\Generic\DataMapper
 	 */
 	protected $dataMapper;
 
 	/**
-	 * @var \F3\FLOW3\Persistence\Generic\Backend\BackendInterface
+	 * @var \TYPO3\FLOW3\Persistence\Generic\Backend\BackendInterface
 	 */
 	protected $backend;
 
 	/**
-	 * @var \F3\FLOW3\Persistence\Generic\Session
+	 * @var \TYPO3\FLOW3\Persistence\Generic\Session
 	 */
 	protected $persistenceSession;
 
@@ -71,22 +71,22 @@ class PersistenceManager extends \F3\FLOW3\Persistence\AbstractPersistenceManage
 	/**
 	 * Injects a QueryFactory instance
 	 *
-	 * @param \F3\FLOW3\Persistence\Generic\QueryFactoryInterface $queryFactory
+	 * @param \TYPO3\FLOW3\Persistence\Generic\QueryFactoryInterface $queryFactory
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectQueryFactory(\F3\FLOW3\Persistence\Generic\QueryFactoryInterface $queryFactory) {
+	public function injectQueryFactory(\TYPO3\FLOW3\Persistence\Generic\QueryFactoryInterface $queryFactory) {
 		$this->queryFactory = $queryFactory;
 	}
 
 	/**
 	 * Injects the data mapper
 	 *
-	 * @param \F3\FLOW3\Persistence\Generic\DataMapper $dataMapper
+	 * @param \TYPO3\FLOW3\Persistence\Generic\DataMapper $dataMapper
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectDataMapper(\F3\FLOW3\Persistence\Generic\DataMapper $dataMapper) {
+	public function injectDataMapper(\TYPO3\FLOW3\Persistence\Generic\DataMapper $dataMapper) {
 		$this->dataMapper = $dataMapper;
 		$this->dataMapper->setPersistenceManager($this);
 	}
@@ -94,21 +94,21 @@ class PersistenceManager extends \F3\FLOW3\Persistence\AbstractPersistenceManage
 	/**
 	 * Injects the backend to use
 	 *
-	 * @param \F3\FLOW3\Persistence\Generic\Backend\BackendInterface $backend the backend to use for persistence
+	 * @param \TYPO3\FLOW3\Persistence\Generic\Backend\BackendInterface $backend the backend to use for persistence
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectBackend(\F3\FLOW3\Persistence\Generic\Backend\BackendInterface $backend) {
+	public function injectBackend(\TYPO3\FLOW3\Persistence\Generic\Backend\BackendInterface $backend) {
 		$this->backend = $backend;
 	}
 
 	/**
 	 * Injects the persistence session
 	 *
-	 * @param \F3\FLOW3\Persistence\Generic\Session $persistenceSession The persistence session
+	 * @param \TYPO3\FLOW3\Persistence\Generic\Session $persistenceSession The persistence session
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectPersistenceSession(\F3\FLOW3\Persistence\Generic\Session $persistenceSession) {
+	public function injectPersistenceSession(\TYPO3\FLOW3\Persistence\Generic\Session $persistenceSession) {
 		$this->persistenceSession = $persistenceSession;
 	}
 
@@ -119,7 +119,7 @@ class PersistenceManager extends \F3\FLOW3\Persistence\AbstractPersistenceManage
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initialize() {
-		if (!$this->backend instanceof \F3\FLOW3\Persistence\Generic\Backend\BackendInterface) throw new \F3\FLOW3\Persistence\Generic\Exception\MissingBackendException('A persistence backend must be set prior to initializing the persistence manager.', 1215508456);
+		if (!$this->backend instanceof \TYPO3\FLOW3\Persistence\Generic\Backend\BackendInterface) throw new \TYPO3\FLOW3\Persistence\Generic\Exception\MissingBackendException('A persistence backend must be set prior to initializing the persistence manager.', 1215508456);
 		$this->backend->setPersistenceManager($this);
 		$this->backend->initialize($this->settings['backendOptions']);
 	}
@@ -127,24 +127,24 @@ class PersistenceManager extends \F3\FLOW3\Persistence\AbstractPersistenceManage
 	/**
 	 * Returns the number of records matching the query.
 	 *
-	 * @param \F3\FLOW3\Persistence\QueryInterface $query
+	 * @param \TYPO3\FLOW3\Persistence\QueryInterface $query
 	 * @return integer
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
-	public function getObjectCountByQuery(\F3\FLOW3\Persistence\QueryInterface $query) {
+	public function getObjectCountByQuery(\TYPO3\FLOW3\Persistence\QueryInterface $query) {
 		return $this->backend->getObjectCountByQuery($query);
 	}
 
 	/**
 	 * Returns the object data matching the $query.
 	 *
-	 * @param \F3\FLOW3\Persistence\QueryInterface $query
+	 * @param \TYPO3\FLOW3\Persistence\QueryInterface $query
 	 * @return array
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
-	public function getObjectDataByQuery(\F3\FLOW3\Persistence\QueryInterface $query) {
+	public function getObjectDataByQuery(\TYPO3\FLOW3\Persistence\QueryInterface $query) {
 		return $this->backend->getObjectDataByQuery($query);
 	}
 
@@ -237,7 +237,7 @@ class PersistenceManager extends \F3\FLOW3\Persistence\AbstractPersistenceManage
 	 * Return a query object for the given type.
 	 *
 	 * @param string $type
-	 * @return \F3\FLOW3\Persistence\QueryInterface
+	 * @return \TYPO3\FLOW3\Persistence\QueryInterface
 	 */
 	public function createQueryForType($type) {
 		return $this->queryFactory->create($type);
@@ -281,7 +281,7 @@ class PersistenceManager extends \F3\FLOW3\Persistence\AbstractPersistenceManage
 	 *
 	 * @param object $modifiedObject The modified object
 	 * @return void
-	 * @throws \F3\FLOW3\Persistence\Exception\UnknownObjectException
+	 * @throws \TYPO3\FLOW3\Persistence\Exception\UnknownObjectException
 	 * @api
 	 */
 	public function merge($modifiedObject) {
@@ -302,14 +302,14 @@ class PersistenceManager extends \F3\FLOW3\Persistence\AbstractPersistenceManage
 				$this->addedObjects->detach($existingObject);
 				$this->addedObjects->attach($modifiedObject);
 			}
-			$propertiesOfNewObject = \F3\FLOW3\Reflection\ObjectAccess::getGettableProperties($modifiedObject);
+			$propertiesOfNewObject = \TYPO3\FLOW3\Reflection\ObjectAccess::getGettableProperties($modifiedObject);
 			foreach ($propertiesOfNewObject as $subObject) {
-				if ($subObject instanceof \F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface && property_exists($subObject, 'FLOW3_Persistence_clone')) {
+				if ($subObject instanceof \TYPO3\FLOW3\Persistence\Aspect\PersistenceMagicInterface && property_exists($subObject, 'FLOW3_Persistence_clone')) {
 					$this->merge($subObject);
 				}
 			}
 		} else {
-			throw new \F3\FLOW3\Persistence\Exception\UnknownObjectException('The "modified object" does not have an existing counterpart in this repository.', 1249479819);
+			throw new \TYPO3\FLOW3\Persistence\Exception\UnknownObjectException('The "modified object" does not have an existing counterpart in this repository.', 1249479819);
 		}
 	}
 

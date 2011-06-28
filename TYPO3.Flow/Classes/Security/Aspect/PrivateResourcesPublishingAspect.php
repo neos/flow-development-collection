@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Security\Aspect;
+namespace TYPO3\FLOW3\Security\Aspect;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -31,19 +31,19 @@ namespace F3\FLOW3\Security\Aspect;
 class PrivateResourcesPublishingAspect {
 
 	/**
-	 * @var \F3\FLOW3\Security\Context
+	 * @var \TYPO3\FLOW3\Security\Context
 	 * @inject
 	 */
 	protected $securityContext;
 
 	/**
-	 * @var \F3\FLOW3\Session\SessionInterface
+	 * @var \TYPO3\FLOW3\Session\SessionInterface
 	 * @inject
 	 */
 	protected $session;
 
 	/**
-	 * @var \F3\FLOW3\Utility\Environment
+	 * @var \TYPO3\FLOW3\Utility\Environment
 	 * @inject
 	 */
 	protected $environment;
@@ -54,7 +54,7 @@ class PrivateResourcesPublishingAspect {
 	protected $settings;
 
 	/**
-	 * @var \F3\FLOW3\Security\Authorization\Resource\AccessRestrictionPublisherInterface
+	 * @var \TYPO3\FLOW3\Security\Authorization\Resource\AccessRestrictionPublisherInterface
 	 * @inject
 	 */
 	protected $accessRestrictionPublisher;
@@ -73,18 +73,18 @@ class PrivateResourcesPublishingAspect {
 	/**
 	 * Returns the web URI to be used to publish the specified persistent resource
 	 *
-	 * @around method(F3\FLOW3\Resource\Publishing\FileSystemPublishingTarget->buildPersistentResourceWebUri()) && setting(TYPO3.FLOW3.security.enable)
-	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
+	 * @around method(TYPO3\FLOW3\Resource\Publishing\FileSystemPublishingTarget->buildPersistentResourceWebUri()) && setting(TYPO3.FLOW3.security.enable)
+	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
 	 * @return mixed Result of the target method, a rewritten private resource URI or FALSE on error
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @todo Rewrite of the resource title should be done by general string to uri rewrite function from somewhere else
 	 */
-	public function rewritePersistentResourceWebUriForPrivateResources(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function rewritePersistentResourceWebUriForPrivateResources(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$resource = $joinPoint->getMethodArgument('resource');
 		$filename = $resource->getFilename();
 		$configuration = $resource->getPublishingConfiguration();
 
-		if ($configuration === NULL || ($configuration instanceof \F3\FLOW3\Security\Authorization\Resource\SecurityPublishingConfiguration) === FALSE) {
+		if ($configuration === NULL || ($configuration instanceof \TYPO3\FLOW3\Security\Authorization\Resource\SecurityPublishingConfiguration) === FALSE) {
 			return $joinPoint->getAdviceChain()->proceed($joinPoint);
 		}
 
@@ -94,10 +94,10 @@ class PrivateResourcesPublishingAspect {
 
 		if (count(array_intersect($allowedRoles, $this->securityContext->getRoles())) > 0) {
 			$privatePathSegment = $this->session->getID();
-			if ($this->settings['resource']['publishing']['fileSystem']['mirrorMode'] === 'link') $privatePathSegment = \F3\FLOW3\Utility\Files::concatenatePaths(array($privatePathSegment, $allowedRoles[0]));
+			if ($this->settings['resource']['publishing']['fileSystem']['mirrorMode'] === 'link') $privatePathSegment = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array($privatePathSegment, $allowedRoles[0]));
 
 			$rewrittenFilename = ($filename === '' || $filename === NULL) ? '' : '/' . preg_replace(array('/ /', '/_/', '/[^-a-z0-9.]/i'), array('-', '-', ''), $filename);
-			$result = \F3\FLOW3\Utility\Files::concatenatePaths(array($joinPoint->getProxy()->getResourcesBaseUri(), 'Persistent/', $privatePathSegment, $resource->getResourcePointer()->getHash() . $rewrittenFilename));
+			$result = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array($joinPoint->getProxy()->getResourcesBaseUri(), 'Persistent/', $privatePathSegment, $resource->getResourcePointer()->getHash() . $rewrittenFilename));
 		}
 
 		return $result;
@@ -106,17 +106,17 @@ class PrivateResourcesPublishingAspect {
 	/**
 	 * Returns the publish path and filename to be used to publish the specified persistent resource
 	 *
-	 * @around method(F3\FLOW3\Resource\Publishing\FileSystemPublishingTarget->buildPersistentResourcePublishPathAndFilename()) && setting(TYPO3.FLOW3.security.enable)
-	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
+	 * @around method(TYPO3\FLOW3\Resource\Publishing\FileSystemPublishingTarget->buildPersistentResourcePublishPathAndFilename()) && setting(TYPO3.FLOW3.security.enable)
+	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
 	 * @return mixed Result of the target method
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function rewritePersistentResourcePublishPathAndFilenameForPrivateResources(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function rewritePersistentResourcePublishPathAndFilenameForPrivateResources(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$resource = $joinPoint->getMethodArgument('resource');
 		$configuration = $resource->getPublishingConfiguration();
 		$returnFilename = $joinPoint->getMethodArgument('returnFilename');
 
-		if ($configuration === NULL || ($configuration instanceof \F3\FLOW3\Security\Authorization\Resource\SecurityPublishingConfiguration) === FALSE) {
+		if ($configuration === NULL || ($configuration instanceof \TYPO3\FLOW3\Security\Authorization\Resource\SecurityPublishingConfiguration) === FALSE) {
 			return $joinPoint->getAdviceChain()->proceed($joinPoint);
 		}
 
@@ -125,32 +125,32 @@ class PrivateResourcesPublishingAspect {
 		$allowedRoles = $configuration->getAllowedRoles();
 
 		if (count(array_intersect($allowedRoles, $this->securityContext->getRoles())) > 0) {
-			$publishingPath = \F3\FLOW3\Utility\Files::concatenatePaths(array($joinPoint->getProxy()->getResourcesPublishingPath(), 'Persistent/', $this->session->getID())) . '/';
+			$publishingPath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array($joinPoint->getProxy()->getResourcesPublishingPath(), 'Persistent/', $this->session->getID())) . '/';
 			$filename = $resource->getResourcePointer()->getHash() . '.' . $resource->getFileExtension();
 
-			\F3\FLOW3\Utility\Files::createDirectoryRecursively($publishingPath);
+			\TYPO3\FLOW3\Utility\Files::createDirectoryRecursively($publishingPath);
 			$this->accessRestrictionPublisher->publishAccessRestrictionsForPath($publishingPath);
 
 			if ($this->settings['resource']['publishing']['fileSystem']['mirrorMode'] === 'link') {
 
 				foreach ($allowedRoles as $role) {
-					$roleDirectory = \F3\FLOW3\Utility\Files::concatenatePaths(array($this->environment->getPathToTemporaryDirectory(), 'PrivateResourcePublishing/', $role));
-					\F3\FLOW3\Utility\Files::createDirectoryRecursively($roleDirectory);
+					$roleDirectory = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array($this->environment->getPathToTemporaryDirectory(), 'PrivateResourcePublishing/', $role));
+					\TYPO3\FLOW3\Utility\Files::createDirectoryRecursively($roleDirectory);
 
 					if (file_exists($publishingPath . $role)) {
-						if (\F3\FLOW3\Utility\Files::is_link(\F3\FLOW3\Utility\Files::concatenatePaths(array($publishingPath, $role))) && (realpath(\F3\FLOW3\Utility\Files::concatenatePaths(array($publishingPath, $role))) === $roleDirectory)) {
+						if (\TYPO3\FLOW3\Utility\Files::is_link(\TYPO3\FLOW3\Utility\Files::concatenatePaths(array($publishingPath, $role))) && (realpath(\TYPO3\FLOW3\Utility\Files::concatenatePaths(array($publishingPath, $role))) === $roleDirectory)) {
 							continue;
 						}
 						unlink($publishingPath . $role);
-						symlink($roleDirectory, \F3\FLOW3\Utility\Files::concatenatePaths(array($publishingPath, $role)));
+						symlink($roleDirectory, \TYPO3\FLOW3\Utility\Files::concatenatePaths(array($publishingPath, $role)));
 					} else {
-						symlink($roleDirectory, \F3\FLOW3\Utility\Files::concatenatePaths(array($publishingPath, $role)));
+						symlink($roleDirectory, \TYPO3\FLOW3\Utility\Files::concatenatePaths(array($publishingPath, $role)));
 					}
 				}
-				$publishingPath = \F3\FLOW3\Utility\Files::concatenatePaths(array($publishingPath, $allowedRoles[0])) . '/';
+				$publishingPath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array($publishingPath, $allowedRoles[0])) . '/';
 			}
 
-			if ($returnFilename === TRUE) $publishingPath = \F3\FLOW3\Utility\Files::concatenatePaths(array($publishingPath, $filename));
+			if ($returnFilename === TRUE) $publishingPath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array($publishingPath, $filename));
 		}
 
 		return $publishingPath;
@@ -159,13 +159,13 @@ class PrivateResourcesPublishingAspect {
 	/**
 	 * Unpublishes a private resource from all private user directories
 	 *
-	 * @after method(F3\FLOW3\Resource\Publishing\FileSystemPublishingTarget->unpublishPersistentResource()) && setting(TYPO3.FLOW3.security.enable)
-	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
+	 * @after method(TYPO3\FLOW3\Resource\Publishing\FileSystemPublishingTarget->unpublishPersistentResource()) && setting(TYPO3.FLOW3.security.enable)
+	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
 	 * @return mixed Result of the target method
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @todo implement this method
 	 */
-	public function unpublishPrivateResource(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function unpublishPrivateResource(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		return FALSE;
 	}
 }

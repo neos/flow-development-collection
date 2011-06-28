@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Persistence\Generic;
+namespace TYPO3\FLOW3\Persistence\Generic;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -33,7 +33,7 @@ interface QueryFactoryInterface {
 	 * Creates a query object working on the given class name
 	 *
 	 * @param string $className
-	 * @return \F3\FLOW3\Persistence\QueryInterface
+	 * @return \TYPO3\FLOW3\Persistence\QueryInterface
 	 * @api
 	 */
 	public function create($className);

@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Security\Policy;
+namespace TYPO3\FLOW3\Security\Policy;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -28,7 +28,7 @@ namespace F3\FLOW3\Security\Policy;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope singleton
  */
-class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
+class PolicyService implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 
 	const
 		PRIVILEGE_ABSTAIN = 0,
@@ -42,7 +42,7 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	protected $settings;
 
 	/**
-	 * @var \F3\FLOW3\Configuration\ConfigurationManager
+	 * @var \TYPO3\FLOW3\Configuration\ConfigurationManager
 	 */
 	protected $configurationManager;
 
@@ -52,12 +52,12 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	protected $policy = array();
 
 	/**
-	 * @var \F3\FLOW3\Cache\Frontend\VariableFrontend
+	 * @var \TYPO3\FLOW3\Cache\Frontend\VariableFrontend
 	 */
 	protected $cache;
 
 	/**
-	 * @var \F3\FLOW3\Security\Policy\PolicyExpressionParser
+	 * @var \TYPO3\FLOW3\Security\Policy\PolicyExpressionParser
 	 */
 	protected $policyExpressionParser;
 
@@ -86,7 +86,7 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	protected $entityResourcesConstraints = array();
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
+	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
@@ -104,44 +104,44 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	/**
 	 * Injects the configuration manager
 	 *
-	 * @param \F3\FLOW3\Configuration\ConfigurationManager $configurationManager The configuration manager
+	 * @param \TYPO3\FLOW3\Configuration\ConfigurationManager $configurationManager The configuration manager
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function injectConfigurationManager(\F3\FLOW3\Configuration\ConfigurationManager $configurationManager) {
+	public function injectConfigurationManager(\TYPO3\FLOW3\Configuration\ConfigurationManager $configurationManager) {
 		$this->configurationManager = $configurationManager;
 	}
 
 	/**
 	 * Injects the Cache Manager because we cannot inject an automatically factored cache during compile time.
 	 *
-	 * @param \F3\FLOW3\Cache\CacheManager $cacheManager
+	 * @param \TYPO3\FLOW3\Cache\CacheManager $cacheManager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectCacheManager(\F3\FLOW3\Cache\CacheManager $cacheManager) {
+	public function injectCacheManager(\TYPO3\FLOW3\Cache\CacheManager $cacheManager) {
 		$this->cache = $cacheManager->getCache('FLOW3_Security_Policy');
 	}
 
 	/**
 	 * Injects the policy expression parser
 	 *
-	 * @param \F3\FLOW3\Security\Policy\PolicyExpressionParser $parser
+	 * @param \TYPO3\FLOW3\Security\Policy\PolicyExpressionParser $parser
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectPolicyExpressionParser(\F3\FLOW3\Security\Policy\PolicyExpressionParser $parser) {
+	public function injectPolicyExpressionParser(\TYPO3\FLOW3\Security\Policy\PolicyExpressionParser $parser) {
 		$this->policyExpressionParser = $parser;
 	}
 
 	/**
 	 * Injects the object manager
 	 *
-	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
+	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
+	public function injectObjectManager(\TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
 	}
 
@@ -152,7 +152,7 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initializeObject() {
-		$this->policy = $this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_POLICY);
+		$this->policy = $this->configurationManager->getConfiguration(\TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_POLICY);
 
 		$this->setAclsForEverybodyRole();
 
@@ -200,7 +200,7 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 					continue;
 				}
 				if (!is_array($acl['methods'])) {
-					throw new \F3\FLOW3\Security\Exception\MissingConfigurationException('The configuration for role "' . $role . '" on method resources is not correctly defined. Make sure to use the correct syntax in the Policy.yaml files.', 1277383564);
+					throw new \TYPO3\FLOW3\Security\Exception\MissingConfigurationException('The configuration for role "' . $role . '" on method resources is not correctly defined. Make sure to use the correct syntax in the Policy.yaml files.', 1277383564);
 				}
 
 				foreach ($acl['methods'] as $resource => $privilege) {
@@ -220,7 +220,7 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 								$policyForResource['privilege'] = self::PRIVILEGE_ABSTAIN;
 								break;
 							default:
-								throw new \F3\FLOW3\Security\Exception\InvalidPrivilegeException('Invalid privilege defined in security policy. An ACL entry may have only one of the privileges ABSTAIN, GRANT or DENY, but we got:' . $privilege . ' for role : ' . $role . ' and resource: ' . $resource, 1267311437);
+								throw new \TYPO3\FLOW3\Security\Exception\InvalidPrivilegeException('Invalid privilege defined in security policy. An ACL entry may have only one of the privileges ABSTAIN, GRANT or DENY, but we got:' . $privilege . ' for role : ' . $role . ' and resource: ' . $resource, 1267311437);
 						}
 
 						if ($this->filters[$role][$resource]->hasRuntimeEvaluationsDefinition() === TRUE) {
@@ -253,7 +253,7 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 							$policyForJoinPoint['privilege'] = self::PRIVILEGE_ABSTAIN;
 							break;
 						default:
-							\F3\FLOW3\Security\Exception\InvalidPrivilegeException('Invalid privilege defined in security policy. An ACL entry may have only one of the privileges ABSTAIN, GRANT or DENY, but we got:' . $this->policy['acls'][$role]['methods'][$resource] . ' for role : ' . $role . ' and resource: ' . $resource, 1267308533);
+							\TYPO3\FLOW3\Security\Exception\InvalidPrivilegeException('Invalid privilege defined in security policy. An ACL entry may have only one of the privileges ABSTAIN, GRANT or DENY, but we got:' . $this->policy['acls'][$role]['methods'][$resource] . ' for role : ' . $role . ' and resource: ' . $resource, 1267308533);
 					}
 
 					if ($filter->hasRuntimeEvaluationsDefinition() === TRUE) {
@@ -299,7 +299,7 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	public function getRoles() {
 		$roles = array();
 		foreach ($this->policy['roles'] as $roleIdentifier => $parentRoles) {
-			$roles[] = new \F3\FLOW3\Security\Policy\Role($roleIdentifier);
+			$roles[] = new \TYPO3\FLOW3\Security\Policy\Role($roleIdentifier);
 		}
 		return $roles;
 	}
@@ -307,15 +307,15 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	/**
 	 * Returns all parent roles for the given role, that are configured in the policy.
 	 *
-	 * @param \F3\FLOW3\Security\Policy\Role $role The role to get the parents for
+	 * @param \TYPO3\FLOW3\Security\Policy\Role $role The role to get the parents for
 	 * @return array<TYPO3\Security\Policy\Role> Array of parent roles
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function getAllParentRoles(\F3\FLOW3\Security\Policy\Role $role) {
+	public function getAllParentRoles(\TYPO3\FLOW3\Security\Policy\Role $role) {
 		$result = array();
 
 		foreach ($this->policy['roles'][(string)$role] as $currentIdentifier) {
-			$currentParent = new \F3\FLOW3\Security\Policy\Role($currentIdentifier);
+			$currentParent = new \TYPO3\FLOW3\Security\Policy\Role($currentIdentifier);
 			if (!in_array($currentParent, $result)) $result[] = $currentParent;
 			foreach ($this->getAllParentRoles($currentParent) as $currentGrandParent) {
 				if (!in_array($currentGrandParent, $result)) $result[] = $currentGrandParent;
@@ -328,18 +328,18 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	/**
 	 * Returns the configured roles for the given joinpoint
 	 *
-	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The joinpoint for which the roles should be returned
+	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The joinpoint for which the roles should be returned
 	 * @return array Array of roles
-	 * @throws \F3\FLOW3\Security\Exception\NoEntryInPolicyException
+	 * @throws \TYPO3\FLOW3\Security\Exception\NoEntryInPolicyException
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function getRolesForJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function getRolesForJoinPoint(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$methodIdentifier = strtolower($joinPoint->getClassName() . '->' . $joinPoint->getMethodName());
-		if (!isset($this->acls[$methodIdentifier])) throw new \F3\FLOW3\Security\Exception\NoEntryInPolicyException('The given joinpoint was not found in the policy cache. Most likely you have to recreate the AOP proxy classes.', 1222084767);
+		if (!isset($this->acls[$methodIdentifier])) throw new \TYPO3\FLOW3\Security\Exception\NoEntryInPolicyException('The given joinpoint was not found in the policy cache. Most likely you have to recreate the AOP proxy classes.', 1222084767);
 
 		$roles = array();
 		foreach (array_keys($this->acls[$methodIdentifier]) as $roleIdentifier) {
-			$roles[] = new \F3\FLOW3\Security\Policy\Role($roleIdentifier);
+			$roles[] = new \TYPO3\FLOW3\Security\Policy\Role($roleIdentifier);
 		}
 
 		return $roles;
@@ -349,17 +349,17 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	 * Returns the privileges a specific role has for the given joinpoint. The returned array
 	 * contains the privilege's resource as key of each privilege.
 	 *
-	 * @param \F3\FLOW3\Security\Policy\Role $role The role for which the privileges should be returned
-	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The joinpoint for which the privileges should be returned
+	 * @param \TYPO3\FLOW3\Security\Policy\Role $role The role for which the privileges should be returned
+	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The joinpoint for which the privileges should be returned
 	 * @return array Array of privileges
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @throws \F3\FLOW3\Security\Exception\NoEntryInPolicyException
+	 * @throws \TYPO3\FLOW3\Security\Exception\NoEntryInPolicyException
 	 */
-	public function getPrivilegesForJoinPoint(\F3\FLOW3\Security\Policy\Role $role, \F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function getPrivilegesForJoinPoint(\TYPO3\FLOW3\Security\Policy\Role $role, \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$methodIdentifier = strtolower($joinPoint->getClassName() . '->' . $joinPoint->getMethodName());
 		$roleIdentifier = (string)$role;
 
-		if (!isset($this->acls[$methodIdentifier])) throw new \F3\FLOW3\Security\Exception\NoEntryInPolicyException('The given joinpoint was not found in the policy cache. Most likely you have to recreate the AOP proxy classes.', 1222100851);
+		if (!isset($this->acls[$methodIdentifier])) throw new \TYPO3\FLOW3\Security\Exception\NoEntryInPolicyException('The given joinpoint was not found in the policy cache. Most likely you have to recreate the AOP proxy classes.', 1222100851);
 		if (!isset($this->acls[$methodIdentifier][$roleIdentifier])) return array();
 
 		$privileges = array();
@@ -382,18 +382,18 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	 * Note: Resources with runtime evaluations return always a PRIVILEGE_DENY!
 	 * @see getPrivilegesForJoinPoint() instead, if you need privileges for them.
 	 *
-	 * @param \F3\FLOW3\Security\Policy\Role $role The role for which the privileges should be returned
+	 * @param \TYPO3\FLOW3\Security\Policy\Role $role The role for which the privileges should be returned
 	 * @param string $resource The resource for which the privileges should be returned
 	 * @return integer One of: PRIVILEGE_GRANT, PRIVILEGE_DENY
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @throws \F3\FLOW3\Security\Exception\NoEntryInPolicyException
+	 * @throws \TYPO3\FLOW3\Security\Exception\NoEntryInPolicyException
 	 */
-	public function getPrivilegeForResource(\F3\FLOW3\Security\Policy\Role $role, $resource) {
+	public function getPrivilegeForResource(\TYPO3\FLOW3\Security\Policy\Role $role, $resource) {
 		if (!isset($this->acls[$resource])) {
 			if (isset($this->resources[$resource])) {
 				return self::PRIVILEGE_DENY;
 			} else {
-				throw new \F3\FLOW3\Security\Exception\NoEntryInPolicyException('The given resource ("' . $resource . '") was not found in the policy cache. Most likely you have to recreate the AOP proxy classes.', 1248348214);
+				throw new \TYPO3\FLOW3\Security\Exception\NoEntryInPolicyException('The given resource ("' . $resource . '") was not found in the policy cache. Most likely you have to recreate the AOP proxy classes.', 1248348214);
 			}
 		}
 

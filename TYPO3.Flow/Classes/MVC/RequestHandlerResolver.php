@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\MVC;
+namespace TYPO3\FLOW3\MVC;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -30,34 +30,34 @@ namespace F3\FLOW3\MVC;
 class RequestHandlerResolver {
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
+	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
-	 * @var \F3\FLOW3\Reflection\ReflectionService
+	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
 	/**
 	 * Injects the object manager
 	 *
-	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager A reference to the object manager
+	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager A reference to the object manager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
+	public function injectObjectManager(\TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
 	}
 
 	/**
 	 * Injects the reflection service
 	 *
-	 * @param \F3\FLOW3\Reflection\ReflectionService $reflectionService
+	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectReflectionService(\F3\FLOW3\Reflection\ReflectionService $reflectionService) {
+	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
 	}
 
@@ -65,12 +65,12 @@ class RequestHandlerResolver {
 	 * Analyzes the raw request and tries to find a request handler which can handle
 	 * it. If none is found, an exception is thrown.
 	 *
-	 * @return \F3\FLOW3\MVC\RequestHandler A request handler
-	 * @throws \F3\FLOW3\MVC\Exception
+	 * @return \TYPO3\FLOW3\MVC\RequestHandler A request handler
+	 * @throws \TYPO3\FLOW3\MVC\Exception
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function resolveRequestHandler() {
-		$availableRequestHandlerClassNames = $this->reflectionService->getAllImplementationClassNamesForInterface('F3\FLOW3\MVC\RequestHandlerInterface');
+		$availableRequestHandlerClassNames = $this->reflectionService->getAllImplementationClassNamesForInterface('TYPO3\FLOW3\MVC\RequestHandlerInterface');
 
 		$suitableRequestHandlers = array();
 		foreach ($availableRequestHandlerClassNames as $requestHandlerClassName) {
@@ -82,12 +82,12 @@ class RequestHandlerResolver {
 			if ($requestHandler->canHandleRequest() > 0) {
 				$priority = $requestHandler->getPriority();
 				if (isset($suitableRequestHandlers[$priority])) {
-					throw new \F3\FLOW3\MVC\Exception('More than one request handler with the same priority can handle the request, but only one handler may be active at a time!', 1176475350);
+					throw new \TYPO3\FLOW3\MVC\Exception('More than one request handler with the same priority can handle the request, but only one handler may be active at a time!', 1176475350);
 				}
 				$suitableRequestHandlers[$priority] = $requestHandler;
 			}
 		}
-		if (count($suitableRequestHandlers) === 0) throw new \F3\FLOW3\MVC\Exception('No suitable request handler found.', 1205414233);
+		if (count($suitableRequestHandlers) === 0) throw new \TYPO3\FLOW3\MVC\Exception('No suitable request handler found.', 1205414233);
 		ksort($suitableRequestHandlers);
 		return array_pop($suitableRequestHandlers);
 	}

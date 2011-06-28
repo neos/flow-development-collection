@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Security\Authorization\Resource;
+namespace TYPO3\FLOW3\Security\Authorization\Resource;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -28,7 +28,7 @@ namespace F3\FLOW3\Security\Authorization\Resource;
  * @scope prototype
  * @entity
  */
-class SecurityPublishingConfiguration implements \F3\FLOW3\Resource\Publishing\PublishingConfigurationInterface {
+class SecurityPublishingConfiguration implements \TYPO3\FLOW3\Resource\Publishing\PublishingConfigurationInterface {
 
 	/**
 	 * @var array
@@ -38,7 +38,7 @@ class SecurityPublishingConfiguration implements \F3\FLOW3\Resource\Publishing\P
 	/**
 	 * Sets the roles that are allowed to see the corresponding resource
 	 *
-	 * @param array<\F3\FLOW3\Security\Policy\Role> $allowedRoles An array of roles
+	 * @param array<\TYPO3\FLOW3\Security\Policy\Role> $allowedRoles An array of roles
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */

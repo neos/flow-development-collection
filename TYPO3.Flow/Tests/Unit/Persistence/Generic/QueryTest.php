@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\Persistence\Generic;
+namespace TYPO3\FLOW3\Tests\Unit\Persistence\Generic;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "FLOW3".                      *
@@ -22,24 +22,24 @@ namespace F3\FLOW3\Tests\Unit\Persistence\Generic;
  *                                                                        */
 
 /**
- * Testcase for \F3\FLOW3\Persistence\Query
+ * Testcase for \TYPO3\FLOW3\Persistence\Query
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class QueryTest extends \F3\FLOW3\Tests\UnitTestCase {
+class QueryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
-	 * @var \F3\FLOW3\Persistence\Generic\Query
+	 * @var \TYPO3\FLOW3\Persistence\Generic\Query
 	 */
 	protected $query;
 
 	/**
-	 * @var \F3\FLOW3\Reflection\ReflectionService
+	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
+	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
@@ -49,9 +49,9 @@ class QueryTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setUp() {
-		$this->reflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService');
-		$this->objectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$this->query = new \F3\FLOW3\Persistence\Generic\Query('someType', $this->reflectionService);
+		$this->reflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService');
+		$this->objectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
+		$this->query = new \TYPO3\FLOW3\Persistence\Generic\Query('someType', $this->reflectionService);
 		$this->query->injectObjectManager($this->objectManager);
 	}
 
@@ -61,7 +61,7 @@ class QueryTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function executeReturnsQueryResultInstance() {
 		$result = $this->query->execute();
-		$this->assertInstanceOf('F3\FLOW3\Persistence\Generic\QueryResult', $result);
+		$this->assertInstanceOf('TYPO3\FLOW3\Persistence\Generic\QueryResult', $result);
 	}
 
 	/**

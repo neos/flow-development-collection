@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Log;
+namespace TYPO3\FLOW3\Log;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -43,22 +43,22 @@ interface LoggerInterface {
 	/**
 	 * Adds a backend to which the logger sends the logging data
 	 *
-	 * @param \F3\FLOW3\Log\Backend\BackendInterface $backend A backend implementation
+	 * @param \TYPO3\FLOW3\Log\Backend\BackendInterface $backend A backend implementation
 	 * @return void
 	 * @api
 	 */
-	public function addBackend(\F3\FLOW3\Log\Backend\BackendInterface $backend);
+	public function addBackend(\TYPO3\FLOW3\Log\Backend\BackendInterface $backend);
 
 	/**
 	 * Runs the close() method of a backend and removes the backend
 	 * from the logger.
 	 *
-	 * @param \F3\FLOW3\Log\Backend\BackendInterface $backend The backend to remove
+	 * @param \TYPO3\FLOW3\Log\Backend\BackendInterface $backend The backend to remove
 	 * @return void
-	 * @throws \F3\FLOW3\Log\Exception\NoSuchBackendException if the given backend is unknown to this logger
+	 * @throws \TYPO3\FLOW3\Log\Exception\NoSuchBackendException if the given backend is unknown to this logger
 	 * @api
 	 */
-	public function removeBackend(\F3\FLOW3\Log\Backend\BackendInterface $backend);
+	public function removeBackend(\TYPO3\FLOW3\Log\Backend\BackendInterface $backend);
 
 	/**
 	 * Writes the given message along with the additional information into the log.

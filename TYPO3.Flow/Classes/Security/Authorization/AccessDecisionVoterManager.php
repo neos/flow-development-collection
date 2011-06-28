@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Security\Authorization;
+namespace TYPO3\FLOW3\Security\Authorization;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -31,18 +31,18 @@ class AccessDecisionVoterManager implements AccessDecisionManagerInterface {
 
 	/**
 	 * The object manager
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
+	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
 	 * The current security context
-	 * @var F3\FLOW3\Security\Context
+	 * @var TYPO3\FLOW3\Security\Context
 	 */
 	protected $securityContext;
 
 	/**
-	 * Array of \F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface objects
+	 * Array of \TYPO3\FLOW3\Security\Authorization\AccessDecisionVoterInterface objects
 	 * @var array
 	 */
 	protected $accessDecisionVoters = array();
@@ -56,12 +56,12 @@ class AccessDecisionVoterManager implements AccessDecisionManagerInterface {
 	/**
 	 * Constructor.
 	 *
-	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager The object manager
-	 * @param \F3\FLOW3\Security\Context $securityContext The security context
+	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager The object manager
+	 * @param \TYPO3\FLOW3\Security\Context $securityContext The security context
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function __construct(\F3\FLOW3\Object\ObjectManagerInterface $objectManager, \F3\FLOW3\Security\Context $securityContext) {
+	public function __construct(\TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager, \TYPO3\FLOW3\Security\Context $securityContext) {
 		$this->objectManager = $objectManager;
 		$this->securityContext = $securityContext;
 	}
@@ -81,7 +81,7 @@ class AccessDecisionVoterManager implements AccessDecisionManagerInterface {
 	/**
 	 * Returns the configured access decision voters
 	 *
-	 * @return array Array of \F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface objects
+	 * @return array Array of \TYPO3\FLOW3\Security\Authorization\AccessDecisionVoterInterface objects
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getAccessDecisionVoters() {
@@ -90,14 +90,14 @@ class AccessDecisionVoterManager implements AccessDecisionManagerInterface {
 
 	/**
 	 * Decides if access should be granted on the given object in the current security context.
-	 * It iterates over all available \F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface objects.
+	 * It iterates over all available \TYPO3\FLOW3\Security\Authorization\AccessDecisionVoterInterface objects.
 	 * If all voters abstain, access will be denied by default, except $allowAccessIfAllAbstain is set to TRUE.
 	 *
-	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The joinpoint to decide on
+	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The joinpoint to decide on
 	 * @return void
-	 * @throws \F3\FLOW3\Security\Exception\AccessDeniedException If access is not granted
+	 * @throws \TYPO3\FLOW3\Security\Exception\AccessDeniedException If access is not granted
 	 */
-	public function decideOnJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function decideOnJoinPoint(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$denyVotes = 0;
 		$grantVotes = 0;
 		$abstainVotes = 0;
@@ -105,13 +105,13 @@ class AccessDecisionVoterManager implements AccessDecisionManagerInterface {
 		foreach ($this->accessDecisionVoters as $voter) {
 			$vote = $voter->voteForJoinPoint($this->securityContext, $joinPoint);
 			switch ($vote) {
-				case \F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface::VOTE_DENY:
+				case \TYPO3\FLOW3\Security\Authorization\AccessDecisionVoterInterface::VOTE_DENY:
 					$denyVotes++;
 					break;
-				case \F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface::VOTE_GRANT:
+				case \TYPO3\FLOW3\Security\Authorization\AccessDecisionVoterInterface::VOTE_GRANT:
 					$grantVotes++;
 					break;
-				case \F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface::VOTE_ABSTAIN:
+				case \TYPO3\FLOW3\Security\Authorization\AccessDecisionVoterInterface::VOTE_ABSTAIN:
 					$abstainVotes++;
 					break;
 			}
@@ -125,17 +125,17 @@ class AccessDecisionVoterManager implements AccessDecisionManagerInterface {
 		}
 
 		$votes = sprintf('(%d denied, %d granted, %d abstained)', $denyVotes, $grantVotes, $abstainVotes);
-		throw new \F3\FLOW3\Security\Exception\AccessDeniedException('Access denied ' . $votes, 1222268609);
+		throw new \TYPO3\FLOW3\Security\Exception\AccessDeniedException('Access denied ' . $votes, 1222268609);
 	}
 
 	/**
 	 * Decides if access should be granted on the given resource in the current security context.
-	 * It iterates over all available \F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface objects.
+	 * It iterates over all available \TYPO3\FLOW3\Security\Authorization\AccessDecisionVoterInterface objects.
 	 * If all voters abstain, access will be denied by default, except $allowAccessIfAllAbstain is set to TRUE.
 	 *
 	 * @param string $resource The resource to decide on
 	 * @return void
-	 * @throws \F3\FLOW3\Security\Exception\AccessDeniedException If access is not granted
+	 * @throws \TYPO3\FLOW3\Security\Exception\AccessDeniedException If access is not granted
 	 */
 	public function decideOnResource($resource) {
 		$denyVotes = 0;
@@ -145,13 +145,13 @@ class AccessDecisionVoterManager implements AccessDecisionManagerInterface {
 		foreach ($this->accessDecisionVoters as $voter) {
 			$vote = $voter->voteForResource($this->securityContext, $resource);
 			switch ($vote) {
-				case \F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface::VOTE_DENY:
+				case \TYPO3\FLOW3\Security\Authorization\AccessDecisionVoterInterface::VOTE_DENY:
 					$denyVotes++;
 					break;
-				case \F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface::VOTE_GRANT:
+				case \TYPO3\FLOW3\Security\Authorization\AccessDecisionVoterInterface::VOTE_GRANT:
 					$grantVotes++;
 					break;
-				case \F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface::VOTE_ABSTAIN:
+				case \TYPO3\FLOW3\Security\Authorization\AccessDecisionVoterInterface::VOTE_ABSTAIN:
 					$abstainVotes++;
 					break;
 			}
@@ -165,7 +165,7 @@ class AccessDecisionVoterManager implements AccessDecisionManagerInterface {
 		}
 
 		$votes = sprintf('(%d denied, %d granted, %d abstained)', $denyVotes, $grantVotes, $abstainVotes);
-		throw new \F3\FLOW3\Security\Exception\AccessDeniedException('Access denied ' . $votes, 1283175927);
+		throw new \TYPO3\FLOW3\Security\Exception\AccessDeniedException('Access denied ' . $votes, 1283175927);
 	}
 
 	/**
@@ -177,10 +177,10 @@ class AccessDecisionVoterManager implements AccessDecisionManagerInterface {
 	 */
 	protected function createAccessDecisionVoters(array $voterClassNames) {
 		foreach ($voterClassNames as $voterClassName) {
-			if (!$this->objectManager->isRegistered($voterClassName)) throw new \F3\FLOW3\Security\Exception\VoterNotFoundException('No voter of type ' . $voterClassName . ' found!', 1222267934);
+			if (!$this->objectManager->isRegistered($voterClassName)) throw new \TYPO3\FLOW3\Security\Exception\VoterNotFoundException('No voter of type ' . $voterClassName . ' found!', 1222267934);
 
 			$voter = $this->objectManager->get($voterClassName);
-			if (!($voter instanceof \F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface)) throw new \F3\FLOW3\Security\Exception\VoterNotFoundException('The found voter class did not implement \F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface', 1222268008);
+			if (!($voter instanceof \TYPO3\FLOW3\Security\Authorization\AccessDecisionVoterInterface)) throw new \TYPO3\FLOW3\Security\Exception\VoterNotFoundException('The found voter class did not implement \TYPO3\FLOW3\Security\Authorization\AccessDecisionVoterInterface', 1222268008);
 
 			$this->accessDecisionVoters[] = $voter;
 		}

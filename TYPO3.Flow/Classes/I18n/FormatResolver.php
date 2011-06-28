@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\I18n;
+namespace TYPO3\FLOW3\I18n;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -45,37 +45,37 @@ namespace F3\FLOW3\I18n;
 class FormatResolver {
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
+	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
-	 * @var \F3\FLOW3\I18n\Service
+	 * @var \TYPO3\FLOW3\I18n\Service
 	 */
 	protected $localizationService;
 
 	/**
 	 * Array of concrete formatters used by this class.
 	 *
-	 * @var array<\F3\FLOW3\I18n\Formatter\FormatterInterface>
+	 * @var array<\TYPO3\FLOW3\I18n\Formatter\FormatterInterface>
 	 */
 	protected $formatters;
 
 	/**
-	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
+	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager
 	 * @return void
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
+	public function injectObjectManager(\TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
 	}
 
 	/**
-	 * @param \F3\FLOW3\I18n\Service $localizationService
+	 * @param \TYPO3\FLOW3\I18n\Service $localizationService
 	 * @return void
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function injectLocalizationService(\F3\FLOW3\I18n\Service $localizationService) {
+	public function injectLocalizationService(\TYPO3\FLOW3\I18n\Service $localizationService) {
 		$this->localizationService = $localizationService;
 	}
 
@@ -91,14 +91,14 @@ class FormatResolver {
 	 *
 	 * @param string $textWithPlaceholders String message with placeholder(s)
 	 * @param array $arguments An array of values to replace placeholders with
-	 * @param \F3\FLOW3\I18n\Locale $locale Locale to use (NULL for default one)
+	 * @param \TYPO3\FLOW3\I18n\Locale $locale Locale to use (NULL for default one)
 	 * @return string The $text with placeholders resolved
-	 * @throws \F3\FLOW3\I18n\Exception\InvalidFormatPlaceholderException When encountered incorrectly formatted placeholder
-	 * @throws \F3\FLOW3\I18n\Exception\IndexOutOfBoundsException When trying to format nonexistent value
+	 * @throws \TYPO3\FLOW3\I18n\Exception\InvalidFormatPlaceholderException When encountered incorrectly formatted placeholder
+	 * @throws \TYPO3\FLOW3\I18n\Exception\IndexOutOfBoundsException When trying to format nonexistent value
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @api
 	 */
-	public function resolvePlaceholders($textWithPlaceholders, array $arguments, \F3\FLOW3\I18n\Locale $locale = NULL) {
+	public function resolvePlaceholders($textWithPlaceholders, array $arguments, \TYPO3\FLOW3\I18n\Locale $locale = NULL) {
 		if ($locale === NULL) {
 			$locale = $this->localizationService->getDefaultLocale();
 		}
@@ -109,7 +109,7 @@ class FormatResolver {
 
 			if ($endOfPlaceholder === FALSE || ($startOfPlaceholder + 1) >= $endOfPlaceholder || ($startOfNextPlaceholder !== FALSE && $startOfNextPlaceholder < $endOfPlaceholder)) {
 					// There is no closing bracket, or it is placed before the opening bracket, or there is nothing between brackets
-				throw new \F3\FLOW3\I18n\Exception\InvalidFormatPlaceholderException('Text provided contains incorrectly formatted placeholders. Please make sure you conform the placeholder\'s syntax.', 1278057790);
+				throw new \TYPO3\FLOW3\I18n\Exception\InvalidFormatPlaceholderException('Text provided contains incorrectly formatted placeholders. Please make sure you conform the placeholder\'s syntax.', 1278057790);
 			}
 
 			$contentBetweenBrackets = substr($textWithPlaceholders, $startOfPlaceholder + 1, $endOfPlaceholder - $startOfPlaceholder - 1);
@@ -117,7 +117,7 @@ class FormatResolver {
 
 			$valueIndex = (int)$placeholderElements[0];
 			if ($valueIndex < 0 || $valueIndex >= count($arguments)) {
-				throw new \F3\FLOW3\I18n\Exception\IndexOutOfBoundsException('Placeholder has incorrect index or not enough values provided. Please make sure you try to access existing values.', 1278057791);
+				throw new \TYPO3\FLOW3\I18n\Exception\IndexOutOfBoundsException('Placeholder has incorrect index or not enough values provided. Please make sure you try to access existing values.', 1278057791);
 			}
 
 			if (isset($placeholderElements[1])) {
@@ -139,15 +139,15 @@ class FormatResolver {
 	 * Returns instance of concrete formatter.
 	 *
 	 * The name provided has to be a name of existing class placed in
-	 * \F3\FLOW3\I18n\Formatter package and implementing FormatterIntefrace
+	 * \TYPO3\FLOW3\I18n\Formatter package and implementing FormatterIntefrace
 	 * (also in this package). For example,  when $formatterName is 'number',
-	 * the \F3\FLOW3\I18n\Formatter\NumberFormatter class has to exist.
+	 * the \TYPO3\FLOW3\I18n\Formatter\NumberFormatter class has to exist.
 	 *
 	 * Throws exception if there is no formatter for name given.
 	 *
 	 * @param string $formatterName Name of the formatter class (without Formatter suffix)
-	 * @return \F3\FLOW3\I18n\Formatter\FormatterInterface The concrete formatter class
-	 * @throws \F3\FLOW3\I18n\Exception\UnknownFormatterException When formatter for a name given does not exist
+	 * @return \TYPO3\FLOW3\I18n\Formatter\FormatterInterface The concrete formatter class
+	 * @throws \TYPO3\FLOW3\I18n\Exception\UnknownFormatterException When formatter for a name given does not exist
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	protected function getFormatter($formatterName) {
@@ -159,8 +159,8 @@ class FormatResolver {
 
 		try {
 			$formatter = $this->objectManager->get('TYPO3\\FLOW3\\I18n\\Formatter\\' . $formatterName . 'Formatter');
-		} catch (\F3\FLOW3\Object\Exception\UnknownObjectException $exception) {
-			throw new \F3\FLOW3\I18n\Exception\UnknownFormatterException('Could not find formatter for "' . $formatterName . '".', 1278057791);
+		} catch (\TYPO3\FLOW3\Object\Exception\UnknownObjectException $exception) {
+			throw new \TYPO3\FLOW3\I18n\Exception\UnknownFormatterException('Could not find formatter for "' . $formatterName . '".', 1278057791);
 		}
 
 		return $this->formatters[$formatterName] = $formatter;

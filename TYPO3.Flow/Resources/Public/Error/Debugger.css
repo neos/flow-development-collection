@@ -52,7 +52,7 @@
 }
 
 .FLOW3-Error-Debugger-VarDump-Center {
-	background: #b9b9b9 url("/_Resources/Static/Packages/FLOW3/Error/LinesBackground.png") 0 18px repeat;
+	background: #b9b9b9 url("/_Resources/Static/Packages/TYPO3.FLOW3/Error/LinesBackground.png") 0 18px repeat;
 	font: normal normal 11px/18px Monospaced, "Lucida Console", monospace;
 	padding: 18px 10px;
 }

@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Persistence\Generic\Qom;
+namespace TYPO3\FLOW3\Persistence\Generic\Qom;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -33,25 +33,25 @@ namespace F3\FLOW3\Persistence\Generic\Qom;
  * @api
  * @scope prototype
  */
-class LogicalOr extends \F3\FLOW3\Persistence\Generic\Qom\Constraint {
+class LogicalOr extends \TYPO3\FLOW3\Persistence\Generic\Qom\Constraint {
 
 	/**
-	 * @var \F3\FLOW3\Persistence\Generic\Qom\Constraint
+	 * @var \TYPO3\FLOW3\Persistence\Generic\Qom\Constraint
 	 */
 	protected $constraint1;
 
 	/**
-	 * @var \F3\FLOW3\Persistence\Generic\Qom\Constraint
+	 * @var \TYPO3\FLOW3\Persistence\Generic\Qom\Constraint
 	 */
 	protected $constraint2;
 
 	/**
 	 *
-	 * @param \F3\FLOW3\Persistence\Generic\Qom\Constraint $constraint1
-	 * @param \F3\FLOW3\Persistence\Generic\Qom\Constraint $constraint2
+	 * @param \TYPO3\FLOW3\Persistence\Generic\Qom\Constraint $constraint1
+	 * @param \TYPO3\FLOW3\Persistence\Generic\Qom\Constraint $constraint2
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(\F3\FLOW3\Persistence\Generic\Qom\Constraint $constraint1, \F3\FLOW3\Persistence\Generic\Qom\Constraint $constraint2) {
+	public function __construct(\TYPO3\FLOW3\Persistence\Generic\Qom\Constraint $constraint1, \TYPO3\FLOW3\Persistence\Generic\Qom\Constraint $constraint2) {
 		$this->constraint1 = $constraint1;
 		$this->constraint2 = $constraint2;
 	}
@@ -59,7 +59,7 @@ class LogicalOr extends \F3\FLOW3\Persistence\Generic\Qom\Constraint {
 	/**
 	 * Gets the first constraint.
 	 *
-	 * @return \F3\FLOW3\Persistence\Generic\Qom\Constraint the constraint; non-null
+	 * @return \TYPO3\FLOW3\Persistence\Generic\Qom\Constraint the constraint; non-null
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
@@ -70,7 +70,7 @@ class LogicalOr extends \F3\FLOW3\Persistence\Generic\Qom\Constraint {
 	/**
 	 * Gets the second constraint.
 	 *
-	 * @return \F3\FLOW3\Persistence\Generic\Qom\Constraint the constraint; non-null
+	 * @return \TYPO3\FLOW3\Persistence\Generic\Qom\Constraint the constraint; non-null
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */

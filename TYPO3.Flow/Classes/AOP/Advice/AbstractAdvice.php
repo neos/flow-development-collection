@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\AOP\Advice;
+namespace TYPO3\FLOW3\AOP\Advice;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -27,7 +27,7 @@ namespace F3\FLOW3\AOP\Advice;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
-class AbstractAdvice implements \F3\FLOW3\AOP\Advice\AdviceInterface {
+class AbstractAdvice implements \TYPO3\FLOW3\AOP\Advice\AdviceInterface {
 
 	/**
 	 * Holds the name of the aspect object containing the advice
@@ -43,7 +43,7 @@ class AbstractAdvice implements \F3\FLOW3\AOP\Advice\AdviceInterface {
 
 	/**
 	 * A reference to the Object Manager
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
+	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
@@ -64,13 +64,13 @@ class AbstractAdvice implements \F3\FLOW3\AOP\Advice\AdviceInterface {
 	 *
 	 * @param string $aspectObjectName Name of the aspect object containing the advice
 	 * @param string $adviceMethodName Name of the advice method
-	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager Only require if a runtime evaluations function is specified
+	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager Only require if a runtime evaluations function is specified
 	 * @param \Closure $runtimeEvaluator Runtime evaluations function
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function __construct($aspectObjectName, $adviceMethodName, \F3\FLOW3\Object\ObjectManagerInterface $objectManager = NULL, \Closure $runtimeEvaluator = NULL) {
+	public function __construct($aspectObjectName, $adviceMethodName, \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager = NULL, \Closure $runtimeEvaluator = NULL) {
 		$this->aspectObjectName = $aspectObjectName;
 		$this->adviceMethodName = $adviceMethodName;
 		$this->objectManager = $objectManager;
@@ -80,12 +80,12 @@ class AbstractAdvice implements \F3\FLOW3\AOP\Advice\AdviceInterface {
 	/**
 	 * Invokes the advice method
 	 *
-	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point which is passed to the advice method
+	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point which is passed to the advice method
 	 * @return Result of the advice method
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function invoke(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function invoke(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		if ($this->runtimeEvaluator !== NULL && $this->runtimeEvaluator->__invoke($joinPoint) === FALSE) return;
 
 		$adviceObject = $this->objectManager->get($this->aspectObjectName);

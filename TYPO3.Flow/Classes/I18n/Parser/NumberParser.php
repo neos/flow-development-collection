@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\I18n\Parser;
+namespace TYPO3\FLOW3\I18n\Parser;
 
 /*
  * This script belongs to the FLOW3 framework.                            *
@@ -29,7 +29,7 @@ namespace F3\FLOW3\I18n\Parser;
  *
  * @scope singleton
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
- * @see \F3\FLOW3\I18n\Cldr\Reader\NumbersReader
+ * @see \TYPO3\FLOW3\I18n\Cldr\Reader\NumbersReader
  * @api
  * @todo Currency support
  */
@@ -47,16 +47,16 @@ class NumberParser {
 	const PATTERN_MATCH_NOT_DIGITS = '/[^0-9]+/';
 
 	/**
-	 * @var \F3\FLOW3\I18n\Cldr\Reader\NumbersReader
+	 * @var \TYPO3\FLOW3\I18n\Cldr\Reader\NumbersReader
 	 */
 	protected $numbersReader;
 
 	/**
-	 * @param \F3\FLOW3\I18n\Cldr\Reader\NumbersReader $numbersReader
+	 * @param \TYPO3\FLOW3\I18n\Cldr\Reader\NumbersReader $numbersReader
 	 * @return void
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function injectNumbersReader(\F3\FLOW3\I18n\Cldr\Reader\NumbersReader $numbersReader) {
+	public function injectNumbersReader(\TYPO3\FLOW3\I18n\Cldr\Reader\NumbersReader $numbersReader) {
 		$this->numbersReader = $numbersReader;
 	}
 
@@ -65,13 +65,13 @@ class NumberParser {
 	 *
 	 * @param string $numberToParse Number to be parsed
 	 * @param string $format Number format to use
-	 * @param \F3\FLOW3\I18n\Locale $locale Locale to use
+	 * @param \TYPO3\FLOW3\I18n\Locale $locale Locale to use
 	 * @param bool $strictMode Work mode (strict when TRUE, lenient when FALSE)
 	 * @return mixed Parsed float number or FALSE on failure
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @api
 	 */
-	public function parseNumberWithCustomPattern($numberToParse, $format, \F3\FLOW3\I18n\Locale $locale, $strictMode = TRUE) {
+	public function parseNumberWithCustomPattern($numberToParse, $format, \TYPO3\FLOW3\I18n\Locale $locale, $strictMode = TRUE) {
 		return $this->doParsingWithParsedFormat($numberToParse, $this->numbersReader->parseCustomFormat($format), $this->numbersReader->getLocalizedSymbolsForLocale($locale), $strictMode);
 	}
 
@@ -79,32 +79,32 @@ class NumberParser {
 	 * Parses decimal number using proper format from CLDR.
 	 *
 	 * @param string $numberToParse Number to be parsed
-	 * @param \F3\FLOW3\I18n\Locale $locale Locale to use
+	 * @param \TYPO3\FLOW3\I18n\Locale $locale Locale to use
 	 * @param string $formatLength One of NumbersReader FORMAT_LENGTH constants
 	 * @param bool $strictMode Work mode (strict when TRUE, lenient when FALSE)
 	 * @return mixed Parsed float number or FALSE on failure
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @api
 	 */
-	public function parseDecimalNumber($numberToParse, \F3\FLOW3\I18n\Locale $locale, $formatLength = \F3\FLOW3\I18n\Cldr\Reader\NumbersReader::FORMAT_LENGTH_DEFAULT, $strictMode = TRUE) {
-		\F3\FLOW3\I18n\Cldr\Reader\NumbersReader::validateFormatLength($formatLength);
-		return $this->doParsingWithParsedFormat($numberToParse, $this->numbersReader->parseFormatFromCldr($locale, \F3\FLOW3\I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_DECIMAL, $formatLength), $this->numbersReader->getLocalizedSymbolsForLocale($locale), $strictMode);
+	public function parseDecimalNumber($numberToParse, \TYPO3\FLOW3\I18n\Locale $locale, $formatLength = \TYPO3\FLOW3\I18n\Cldr\Reader\NumbersReader::FORMAT_LENGTH_DEFAULT, $strictMode = TRUE) {
+		\TYPO3\FLOW3\I18n\Cldr\Reader\NumbersReader::validateFormatLength($formatLength);
+		return $this->doParsingWithParsedFormat($numberToParse, $this->numbersReader->parseFormatFromCldr($locale, \TYPO3\FLOW3\I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_DECIMAL, $formatLength), $this->numbersReader->getLocalizedSymbolsForLocale($locale), $strictMode);
 	}
 
 	/**
 	 * Parses percent number using proper format from CLDR.
 	 *
 	 * @param string $numberToParse Number to be parsed
-	 * @param \F3\FLOW3\I18n\Locale $locale Locale to use
+	 * @param \TYPO3\FLOW3\I18n\Locale $locale Locale to use
 	 * @param string $formatLength One of NumbersReader FORMAT_LENGTH constants
 	 * @param bool $strictMode Work mode (strict when TRUE, lenient when FALSE)
 	 * @return mixed Parsed float number or FALSE on failure
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @api
 	 */
-	public function parsePercentNumber($numberToParse, \F3\FLOW3\I18n\Locale $locale, $formatLength = \F3\FLOW3\I18n\Cldr\Reader\NumbersReader::FORMAT_LENGTH_DEFAULT, $strictMode = TRUE) {
-		\F3\FLOW3\I18n\Cldr\Reader\NumbersReader::validateFormatLength($formatLength);
-		return $this->doParsingWithParsedFormat($numberToParse, $this->numbersReader->parseFormatFromCldr($locale, \F3\FLOW3\I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_PERCENT, $formatLength), $this->numbersReader->getLocalizedSymbolsForLocale($locale), $strictMode);
+	public function parsePercentNumber($numberToParse, \TYPO3\FLOW3\I18n\Locale $locale, $formatLength = \TYPO3\FLOW3\I18n\Cldr\Reader\NumbersReader::FORMAT_LENGTH_DEFAULT, $strictMode = TRUE) {
+		\TYPO3\FLOW3\I18n\Cldr\Reader\NumbersReader::validateFormatLength($formatLength);
+		return $this->doParsingWithParsedFormat($numberToParse, $this->numbersReader->parseFormatFromCldr($locale, \TYPO3\FLOW3\I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_PERCENT, $formatLength), $this->numbersReader->getLocalizedSymbolsForLocale($locale), $strictMode);
 	}
 
 	/**
@@ -137,33 +137,33 @@ class NumberParser {
 		$numberIsNegative = FALSE;
 
 		if (!empty($parsedFormat['negativePrefix']) && !empty($parsedFormat['negativeSuffix'])) {
-			if (\F3\FLOW3\I18n\Utility::stringBeginsWith($numberToParse, $parsedFormat['negativePrefix']) && \F3\FLOW3\I18n\Utility::stringEndsWith($numberToParse, $parsedFormat['negativeSuffix'])) {
+			if (\TYPO3\FLOW3\I18n\Utility::stringBeginsWith($numberToParse, $parsedFormat['negativePrefix']) && \TYPO3\FLOW3\I18n\Utility::stringEndsWith($numberToParse, $parsedFormat['negativeSuffix'])) {
 				$numberToParse = substr($numberToParse, strlen($parsedFormat['negativePrefix']), - strlen($parsedFormat['negativeSuffix']));
 				$numberIsNegative = TRUE;
 			}
-		} elseif (!empty($parsedFormat['negativePrefix']) && \F3\FLOW3\I18n\Utility::stringBeginsWith($numberToParse, $parsedFormat['negativePrefix'])) {
+		} elseif (!empty($parsedFormat['negativePrefix']) && \TYPO3\FLOW3\I18n\Utility::stringBeginsWith($numberToParse, $parsedFormat['negativePrefix'])) {
 			$numberToParse = substr($numberToParse, strlen($parsedFormat['negativePrefix']));
 			$numberIsNegative = TRUE;
-		} elseif (!empty($parsedFormat['negativeSuffix']) && \F3\FLOW3\I18n\Utility::stringEndsWith($numberToParse, $parsedFormat['negativeSuffix'])) {
+		} elseif (!empty($parsedFormat['negativeSuffix']) && \TYPO3\FLOW3\I18n\Utility::stringEndsWith($numberToParse, $parsedFormat['negativeSuffix'])) {
 			$numberToParse = substr($numberToParse, 0, - strlen($parsedFormat['negativeSuffix']));
 			$numberIsNegative = TRUE;
 		}
 
 		if (!$numberIsNegative) {
 			if (!empty($parsedFormat['positivePrefix']) && !empty($parsedFormat['positiveSuffix'])) {
-				if (\F3\FLOW3\I18n\Utility::stringBeginsWith($numberToParse, $parsedFormat['positivePrefix']) && \F3\FLOW3\I18n\Utility::stringEndsWith($numberToParse, $parsedFormat['positiveSuffix'])) {
+				if (\TYPO3\FLOW3\I18n\Utility::stringBeginsWith($numberToParse, $parsedFormat['positivePrefix']) && \TYPO3\FLOW3\I18n\Utility::stringEndsWith($numberToParse, $parsedFormat['positiveSuffix'])) {
 					$numberToParse = substr($numberToParse, strlen($parsedFormat['positivePrefix']), - strlen($parsedFormat['positiveSuffix']));
 				} else {
 					return FALSE;
 				}
 			} elseif (!empty($parsedFormat['positivePrefix'])) {
-				if (\F3\FLOW3\I18n\Utility::stringBeginsWith($numberToParse, $parsedFormat['positivePrefix'])) {
+				if (\TYPO3\FLOW3\I18n\Utility::stringBeginsWith($numberToParse, $parsedFormat['positivePrefix'])) {
 					$numberToParse = substr($numberToParse, strlen($parsedFormat['positivePrefix']));
 				} else {
 					return FALSE;
 				}
 			} elseif (!empty($parsedFormat['positiveSuffix'])) {
-				if (\F3\FLOW3\I18n\Utility::stringEndsWith($numberToParse, $parsedFormat['positiveSuffix'])) {
+				if (\TYPO3\FLOW3\I18n\Utility::stringEndsWith($numberToParse, $parsedFormat['positiveSuffix'])) {
 					$numberToParse = substr($numberToParse, 0, - strlen($parsedFormat['positiveSuffix']));
 				} else {
 					return FALSE;
@@ -295,12 +295,12 @@ class NumberParser {
 		$partAfterNumber = substr($numberToParse, - (strlen($numberToParse) - $positionOfLastDigit - 1));
 
 		if (!empty($parsedFormat['negativePrefix']) && !empty($parsedFormat['negativeSuffix'])) {
-			if (\F3\FLOW3\I18n\Utility::stringEndsWith($partBeforeNumber, $parsedFormat['negativePrefix']) && \F3\FLOW3\I18n\Utility::stringBeginsWith($partAfterNumber, $parsedFormat['negativeSuffix'])) {
+			if (\TYPO3\FLOW3\I18n\Utility::stringEndsWith($partBeforeNumber, $parsedFormat['negativePrefix']) && \TYPO3\FLOW3\I18n\Utility::stringBeginsWith($partAfterNumber, $parsedFormat['negativeSuffix'])) {
 				$numberIsNegative = TRUE;
 			}
-		} elseif (!empty($parsedFormat['negativePrefix']) && \F3\FLOW3\I18n\Utility::stringEndsWith($partBeforeNumber, $parsedFormat['negativePrefix'])) {
+		} elseif (!empty($parsedFormat['negativePrefix']) && \TYPO3\FLOW3\I18n\Utility::stringEndsWith($partBeforeNumber, $parsedFormat['negativePrefix'])) {
 			$numberIsNegative = TRUE;
-		} elseif (!empty($parsedFormat['negativeSuffix']) && \F3\FLOW3\I18n\Utility::stringBeginsWith($partAfterNumber, $parsedFormat['negativeSuffix'])) {
+		} elseif (!empty($parsedFormat['negativeSuffix']) && \TYPO3\FLOW3\I18n\Utility::stringBeginsWith($partAfterNumber, $parsedFormat['negativeSuffix'])) {
 			$numberIsNegative = TRUE;
 		}
 

@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\MVC\Web\Routing;
+namespace TYPO3\FLOW3\MVC\Web\Routing;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -102,37 +102,37 @@ class Route {
 	protected $routeParts = array();
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
+	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
 	 * @inject
 	 */
 	protected $objectManager;
 
 	/**
-	 * @var \F3\FLOW3\Persistence\PersistenceManagerInterface
+	 * @var \TYPO3\FLOW3\Persistence\PersistenceManagerInterface
 	 */
 	protected $persistenceManager;
 
 	/**
-	 * @var \F3\FLOW3\MVC\Web\Routing\RouterInterface
+	 * @var \TYPO3\FLOW3\MVC\Web\Routing\RouterInterface
 	 */
 	protected $router;
 
 	/**
 	 * Injects the Persistence Manager
 	 *
-	 * @param \F3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager
+	 * @param \TYPO3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager
 	 * @return void
 	 * @author Robert Lemke <rober@typo3.org>
 	 */
-	public function injectPersistenceManager(\F3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager) {
+	public function injectPersistenceManager(\TYPO3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager) {
 		$this->persistenceManager = $persistenceManager;
 	}
 
 	/**
-	 * @param \F3\FLOW3\MVC\Web\Routing\RouterInterface $router
+	 * @param \TYPO3\FLOW3\MVC\Web\Routing\RouterInterface $router
 	 * @return void
 	 */
-	public function injectRouter(\F3\FLOW3\MVC\Web\Routing\RouterInterface $router) {
+	public function injectRouter(\TYPO3\FLOW3\MVC\Web\Routing\RouterInterface $router) {
 		$this->router = $router;
 	}
 
@@ -227,11 +227,11 @@ class Route {
 
 	/**
 	 * By default all Dynamic Route Parts are resolved by
-	 * \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart.
+	 * \TYPO3\FLOW3\MVC\Web\Routing\DynamicRoutePart.
 	 * But you can specify different classes to handle particular Route Parts.
 	 *
 	 * Note: Route Part handlers must implement
-	 * \F3\FLOW3\MVC\Web\Routing\DynamicRoutePartInterface.
+	 * \TYPO3\FLOW3\MVC\Web\Routing\DynamicRoutePartInterface.
 	 *
 	 * Usage: setRoutePartsConfiguration(array('@controller' =>
 	 *            array('handler' => 'TYPO3\Package\Subpackage\MyRoutePartHandler')));
@@ -257,7 +257,7 @@ class Route {
 	 * Returns an array with the Route match results.
 	 *
 	 * @return array An array of Route Parts and their values for further handling by the Router
-	 * @see \F3\FLOW3\MVC\Web\Routing\Router
+	 * @see \TYPO3\FLOW3\MVC\Web\Routing\Router
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getMatchResults() {
@@ -327,15 +327,15 @@ class Route {
 			$routePartValue = $routePart->getValue();
 			if ($routePartValue !== NULL) {
 				if ($this->containsObject($routePartValue)) {
-					throw new \F3\FLOW3\MVC\Exception\InvalidRoutePartValueException('RoutePart::getValue() must only return simple types after calling RoutePart::match(). RoutePart "' . get_class($routePart) . '" returned one or more objects in Route "' . $this->getName() . '".');
+					throw new \TYPO3\FLOW3\MVC\Exception\InvalidRoutePartValueException('RoutePart::getValue() must only return simple types after calling RoutePart::match(). RoutePart "' . get_class($routePart) . '" returned one or more objects in Route "' . $this->getName() . '".');
 				}
-				$matchResults = \F3\FLOW3\Utility\Arrays::setValueByPath($matchResults, $routePart->getName(), $routePartValue);
+				$matchResults = \TYPO3\FLOW3\Utility\Arrays::setValueByPath($matchResults, $routePart->getName(), $routePartValue);
 			}
 		}
 		if (strlen($routePath) > 0) {
 			return FALSE;
 		}
-		$this->matchResults = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($this->defaults, $matchResults);
+		$this->matchResults = \TYPO3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($this->defaults, $matchResults);
 		return TRUE;
 	}
 
@@ -360,7 +360,7 @@ class Route {
 		}
 
 		$matchingUri = '';
-		$mergedRouteValues = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($this->defaults, $routeValues);
+		$mergedRouteValues = \TYPO3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($this->defaults, $routeValues);
 		$requireOptionalRouteParts = FALSE;
 		$matchingOptionalUriPortion = '';
 		foreach ($this->routeParts as $routePart) {
@@ -373,12 +373,12 @@ class Route {
 			if ($routePart->hasValue()) {
 				$routePartValue = $routePart->getValue();
 				if (!is_string($routePartValue)) {
-					throw new \F3\FLOW3\MVC\Exception\InvalidRoutePartValueException('RoutePart::getValue() must return a string after calling RoutePart::resolve(), got ' . (is_object($routePartValue) ? get_class($routePartValue) : gettype($routePartValue)) . ' for RoutePart "' . get_class($routePart) . '" in Route "' . $this->getName() . '".');
+					throw new \TYPO3\FLOW3\MVC\Exception\InvalidRoutePartValueException('RoutePart::getValue() must return a string after calling RoutePart::resolve(), got ' . (is_object($routePartValue) ? get_class($routePartValue) : gettype($routePartValue)) . ' for RoutePart "' . get_class($routePart) . '" in Route "' . $this->getName() . '".');
 				}
 			}
 			$routePartDefaultValue = $routePart->getDefaultValue();
 			if ($routePartDefaultValue !== NULL && !is_string($routePartDefaultValue)) {
-				throw new \F3\FLOW3\MVC\Exception\InvalidRoutePartValueException('RoutePart::getDefaultValue() must return a string, got ' . (is_object($routePartDefaultValue) ? get_class($routePartDefaultValue) : gettype($routePartDefaultValue)) . ' for RoutePart "' . get_class($routePart) . '" in Route "' . $this->getName() . '".');
+				throw new \TYPO3\FLOW3\MVC\Exception\InvalidRoutePartValueException('RoutePart::getDefaultValue() must return a string, got ' . (is_object($routePartDefaultValue) ? get_class($routePartDefaultValue) : gettype($routePartDefaultValue)) . ' for RoutePart "' . get_class($routePart) . '" in Route "' . $this->getName() . '".');
 			}
 			if (!$routePart->isOptional()) {
 				$matchingUri .= $routePart->hasValue() ? $routePartValue : $routePartDefaultValue;
@@ -410,7 +410,7 @@ class Route {
 		$controllerName = isset($mergedRouteValues['@controller']) ? $mergedRouteValues['@controller'] : '';
 		$controllerObjectName = $this->router->getControllerObjectName($packageKey, $subPackageKey, $controllerName);
 		if ($controllerObjectName === NULL) {
-			throw new \F3\FLOW3\MVC\Web\Routing\Exception\InvalidControllerException('No controller object was found for package "' . $packageKey . '", subpackage "' . $subPackageKey . '", controller "' . $controllerName . '" in route "' . $this->getName() . '".', 1301650951);
+			throw new \TYPO3\FLOW3\MVC\Web\Routing\Exception\InvalidControllerException('No controller object was found for package "' . $packageKey . '", subpackage "' . $subPackageKey . '", controller "' . $controllerName . '" in route "' . $this->getName() . '".', 1301650951);
 		}
 
 			// add query string
@@ -492,10 +492,10 @@ class Route {
 		$this->routeParts = array();
 		$currentRoutePartIsOptional = FALSE;
 		if (substr($this->uriPattern, -1) === '/') {
-			throw new \F3\FLOW3\MVC\Exception\InvalidUriPatternException('The URI pattern "' . $this->uriPattern . '" of route "' . $this->getName() . '" ends with a slash, which is not allowed. You can put the trailing slash in brackets to make it optional.', 1234782997);
+			throw new \TYPO3\FLOW3\MVC\Exception\InvalidUriPatternException('The URI pattern "' . $this->uriPattern . '" of route "' . $this->getName() . '" ends with a slash, which is not allowed. You can put the trailing slash in brackets to make it optional.', 1234782997);
 		}
 		if ($this->uriPattern[0] === '/') {
-			throw new \F3\FLOW3\MVC\Exception\InvalidUriPatternException('The URI pattern "' . $this->uriPattern . '" of route "' . $this->getName() . '" starts with a slash, which is not allowed.', 1234782983);
+			throw new \TYPO3\FLOW3\MVC\Exception\InvalidUriPatternException('The URI pattern "' . $this->uriPattern . '" of route "' . $this->getName() . '" starts with a slash, which is not allowed.', 1234782983);
 		}
 
 		$matches = array();
@@ -507,31 +507,31 @@ class Route {
 			$routePartName = $match['content'];
 			if (!empty($match['optionalStart'])) {
 				if ($lastRoutePart !== NULL && $lastRoutePart->isOptional()) {
-					throw new \F3\FLOW3\MVC\Exception\InvalidUriPatternException('the URI pattern "' . $this->uriPattern . '" of route "' . $this->getName() . '" contains succesive optional Route sections, which is not allowed.', 1234562050);
+					throw new \TYPO3\FLOW3\MVC\Exception\InvalidUriPatternException('the URI pattern "' . $this->uriPattern . '" of route "' . $this->getName() . '" contains succesive optional Route sections, which is not allowed.', 1234562050);
 				}
 				$currentRoutePartIsOptional = TRUE;
 			}
 			$routePart = NULL;
 			switch ($routePartType) {
 				case self::ROUTEPART_TYPE_DYNAMIC:
-					if ($lastRoutePart instanceof \F3\FLOW3\MVC\Web\Routing\DynamicRoutePartInterface) {
-						throw new \F3\FLOW3\MVC\Exception\InvalidUriPatternException('the URI pattern "' . $this->uriPattern . '" of route "' . $this->getName() . '" contains succesive Dynamic Route Parts, which is not allowed.', 1218446975);
+					if ($lastRoutePart instanceof \TYPO3\FLOW3\MVC\Web\Routing\DynamicRoutePartInterface) {
+						throw new \TYPO3\FLOW3\MVC\Exception\InvalidUriPatternException('the URI pattern "' . $this->uriPattern . '" of route "' . $this->getName() . '" contains succesive Dynamic Route Parts, which is not allowed.', 1218446975);
 					}
 					if (isset($this->routePartsConfiguration[$routePartName]['handler'])) {
 						$routePart = $this->objectManager->get($this->routePartsConfiguration[$routePartName]['handler']);
-						if (!$routePart instanceof \F3\FLOW3\MVC\Web\Routing\DynamicRoutePartInterface) {
-							throw new \F3\FLOW3\MVC\Exception\InvalidRoutePartHandlerException('routePart handlers must implement "\F3\FLOW3\MVC\Web\Routing\DynamicRoutePartInterface" in route "' . $this->getName() . '"', 1218480972);
+						if (!$routePart instanceof \TYPO3\FLOW3\MVC\Web\Routing\DynamicRoutePartInterface) {
+							throw new \TYPO3\FLOW3\MVC\Exception\InvalidRoutePartHandlerException('routePart handlers must implement "\TYPO3\FLOW3\MVC\Web\Routing\DynamicRoutePartInterface" in route "' . $this->getName() . '"', 1218480972);
 						}
 					} else {
-						$routePart = new \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart();
+						$routePart = new \TYPO3\FLOW3\MVC\Web\Routing\DynamicRoutePart();
 					}
 					if (isset($this->defaults[$routePartName])) {
 						$routePart->setDefaultValue($this->defaults[$routePartName]);
 					}
 					break;
 				case self::ROUTEPART_TYPE_STATIC:
-					$routePart = new \F3\FLOW3\MVC\Web\Routing\StaticRoutePart();
-					if ($lastRoutePart !== NULL && $lastRoutePart instanceof \F3\FLOW3\MVC\Web\Routing\DynamicRoutePartInterface) {
+					$routePart = new \TYPO3\FLOW3\MVC\Web\Routing\StaticRoutePart();
+					if ($lastRoutePart !== NULL && $lastRoutePart instanceof \TYPO3\FLOW3\MVC\Web\Routing\DynamicRoutePartInterface) {
 						$lastRoutePart->setSplitString($routePartName);
 					}
 			}
@@ -550,14 +550,14 @@ class Route {
 			$this->routeParts[] = $routePart;
 			if (!empty($match['optionalEnd'])) {
 				if (!$currentRoutePartIsOptional) {
-					throw new \F3\FLOW3\MVC\Exception\InvalidUriPatternException('The URI pattern "' . $this->uriPattern . '" of route "' . $this->getName() . '" contains an unopened optional section.', 1234564495);
+					throw new \TYPO3\FLOW3\MVC\Exception\InvalidUriPatternException('The URI pattern "' . $this->uriPattern . '" of route "' . $this->getName() . '" contains an unopened optional section.', 1234564495);
 				}
 				$currentRoutePartIsOptional = FALSE;
 			}
 			$lastRoutePart = $routePart;
 		}
 		if ($currentRoutePartIsOptional) {
-			throw new \F3\FLOW3\MVC\Exception\InvalidUriPatternException('The URI pattern "' . $this->uriPattern . '" of route "' . $this->getName() . '" contains an unterminated optional section.', 1234563922);
+			throw new \TYPO3\FLOW3\MVC\Exception\InvalidUriPatternException('The URI pattern "' . $this->uriPattern . '" of route "' . $this->getName() . '" contains an unterminated optional section.', 1234563922);
 		}
 		$this->isParsed = TRUE;
 	}

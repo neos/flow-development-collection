@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Persistence\Fixture\Model;
+namespace TYPO3\FLOW3\Tests\Persistence\Fixture\Model;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -27,7 +27,7 @@ namespace F3\FLOW3\Tests\Persistence\Fixture\Model;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @entity
  */
-class CleanEntity implements \F3\FLOW3\AOP\ProxyInterface {
+class CleanEntity implements \TYPO3\FLOW3\AOP\ProxyInterface {
 
 	/**
 	 * Just a normal string
@@ -44,10 +44,10 @@ class CleanEntity implements \F3\FLOW3\AOP\ProxyInterface {
 	/**
 	 * Invokes the joinpoint - calls the target methods.
 	 *
-	 * @param \F3\FLOW3\AOP\JoinPointInterface: The join point
+	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface: The join point
 	 * @return mixed Result of the target (ie. original) method
 	 */
-	public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function FLOW3_AOP_Proxy_invokeJoinPoint(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 
 	}
 

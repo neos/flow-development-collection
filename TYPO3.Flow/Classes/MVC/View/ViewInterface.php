@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\MVC\View;
+namespace TYPO3\FLOW3\MVC\View;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -32,11 +32,11 @@ interface ViewInterface {
 	/**
 	 * Sets the current controller context
 	 *
-	 * @param \F3\FLOW3\MVC\Controller\ControllerContext $controllerContext Context of the controller associated with this view
+	 * @param \TYPO3\FLOW3\MVC\Controller\ControllerContext $controllerContext Context of the controller associated with this view
 	 * @return void
 	 * @api
 	 */
-	public function setControllerContext(\F3\FLOW3\MVC\Controller\ControllerContext $controllerContext);
+	public function setControllerContext(\TYPO3\FLOW3\MVC\Controller\ControllerContext $controllerContext);
 
 	/**
 	 * Add a variable to the view data collection.
@@ -44,7 +44,7 @@ interface ViewInterface {
 	 *
 	 * @param string $key Key of variable
 	 * @param object $value Value of object
-	 * @return \F3\FLOW3\MVC\View\ViewInterface an instance of $this, to enable chaining
+	 * @return \TYPO3\FLOW3\MVC\View\ViewInterface an instance of $this, to enable chaining
 	 * @api
 	 */
 	public function assign($key, $value);
@@ -53,7 +53,7 @@ interface ViewInterface {
 	 * Add multiple variables to the view data collection
 	 *
 	 * @param array $values array in the format array(key1 => value1, key2 => value2)
-	 * @return \F3\FLOW3\MVC\View\ViewInterface an instance of $this, to enable chaining
+	 * @return \TYPO3\FLOW3\MVC\View\ViewInterface an instance of $this, to enable chaining
 	 * @api
 	 */
 	public function assignMultiple(array $values);
@@ -61,11 +61,11 @@ interface ViewInterface {
 	/**
 	 * Tells if the view implementation can render the view for the given context.
 	 * 
-	 * @param \F3\FLOW3\MVC\Controller\ControllerContext $controllerContext
+	 * @param \TYPO3\FLOW3\MVC\Controller\ControllerContext $controllerContext
 	 * @return boolean TRUE if the view has something useful to display, otherwise FALSE
 	 * @api
 	 */
-	public function canRender(\F3\FLOW3\MVC\Controller\ControllerContext $controllerContext);
+	public function canRender(\TYPO3\FLOW3\MVC\Controller\ControllerContext $controllerContext);
 
 	/**
 	 * Renders the view

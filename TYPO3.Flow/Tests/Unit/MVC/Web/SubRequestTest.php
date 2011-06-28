@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\MVC\Web;
+namespace TYPO3\FLOW3\Tests\Unit\MVC\Web;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,15 +26,15 @@ namespace F3\FLOW3\Tests\Unit\MVC\Web;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class SubRequestTest extends \F3\FLOW3\Tests\UnitTestCase {
+class SubRequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	protected $subRequest;
 
 	protected $mockParentRequest;
 
 	public function setUp() {
-		$this->mockParentRequest = $this->getMock('F3\FLOW3\MVC\Web\Request');
-		$this->subRequest = new \F3\FLOW3\MVC\Web\SubRequest($this->mockParentRequest);
+		$this->mockParentRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\Request');
+		$this->subRequest = new \TYPO3\FLOW3\MVC\Web\SubRequest($this->mockParentRequest);
 	}
 
 	/**
@@ -67,7 +67,7 @@ class SubRequestTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setRequestUriSetsParentRequestUri() {
-		$mockUri = $this->getMock('F3\FLOW3\Property\DataType\Uri', array(), array(), '', FALSE);
+		$mockUri = $this->getMock('TYPO3\FLOW3\Property\DataType\Uri', array(), array(), '', FALSE);
 		$this->mockParentRequest->expects($this->once())->method('setRequestUri')->with($mockUri);
 		$this->subRequest->setRequestUri($mockUri);
 	}
@@ -77,7 +77,7 @@ class SubRequestTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getRequestUriReturnsParentRequestUri() {
-		$mockUri = $this->getMock('F3\FLOW3\Property\DataType\Uri', array(), array(), '', FALSE);
+		$mockUri = $this->getMock('TYPO3\FLOW3\Property\DataType\Uri', array(), array(), '', FALSE);
 		$this->mockParentRequest->expects($this->once())->method('getRequestUri')->will($this->returnValue($mockUri));
 		$this->assertSame($mockUri, $this->subRequest->getRequestUri());
 	}
@@ -87,7 +87,7 @@ class SubRequestTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setBaseUriSetsParentRequestBaseUri() {
-		$mockUri = $this->getMock('F3\FLOW3\Property\DataType\Uri', array(), array(), '', FALSE);
+		$mockUri = $this->getMock('TYPO3\FLOW3\Property\DataType\Uri', array(), array(), '', FALSE);
 		$this->mockParentRequest->expects($this->once())->method('setBaseUri')->with($mockUri);
 		$this->subRequest->setBaseUri($mockUri);
 	}
@@ -97,7 +97,7 @@ class SubRequestTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getBaseUriReturnsParentRequestBaseUri() {
-		$mockUri = $this->getMock('F3\FLOW3\Property\DataType\Uri', array(), array(), '', FALSE);
+		$mockUri = $this->getMock('TYPO3\FLOW3\Property\DataType\Uri', array(), array(), '', FALSE);
 		$this->mockParentRequest->expects($this->once())->method('getBaseUri')->will($this->returnValue($mockUri));
 		$this->assertSame($mockUri, $this->subRequest->getBaseUri());
 	}
@@ -134,10 +134,10 @@ class SubRequestTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getRootRequestReturnsTopMostParentRequest() {
-		$mockRootRequest = $this->getMock('F3\FLOW3\MVC\Web\Request');
-		$parentParentRequest = new \F3\FLOW3\MVC\Web\SubRequest($mockRootRequest);
-		$parentRequest = new \F3\FLOW3\MVC\Web\SubRequest($parentParentRequest);
-		$subRequest = new \F3\FLOW3\MVC\Web\SubRequest($parentRequest);
+		$mockRootRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\Request');
+		$parentParentRequest = new \TYPO3\FLOW3\MVC\Web\SubRequest($mockRootRequest);
+		$parentRequest = new \TYPO3\FLOW3\MVC\Web\SubRequest($parentParentRequest);
+		$subRequest = new \TYPO3\FLOW3\MVC\Web\SubRequest($parentRequest);
 
 		$this->assertSame($mockRootRequest, $subRequest->getRootRequest());
 	}

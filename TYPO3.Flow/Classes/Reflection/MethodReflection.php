@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Reflection;
+namespace TYPO3\FLOW3\Reflection;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -31,14 +31,14 @@ namespace F3\FLOW3\Reflection;
 class MethodReflection extends \ReflectionMethod {
 
 	/**
-	 * @var \F3\FLOW3\Reflection\DocCommentParser: An instance of the doc comment parser
+	 * @var \TYPO3\FLOW3\Reflection\DocCommentParser: An instance of the doc comment parser
 	 */
 	protected $docCommentParser;
 
 	/**
 	 * Returns the declaring class
 	 *
-	 * @return \F3\FLOW3\Reflection\ClassReflection The declaring class
+	 * @return \TYPO3\FLOW3\Reflection\ClassReflection The declaring class
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getDeclaringClass() {
@@ -47,10 +47,10 @@ class MethodReflection extends \ReflectionMethod {
 
 	/**
 	 * Replacement for the original getParameters() method which makes sure
-	 * that \F3\FLOW3\Reflection\ParameterReflection objects are returned instead of the
+	 * that \TYPO3\FLOW3\Reflection\ParameterReflection objects are returned instead of the
 	 * orginal ReflectionParameter instances.
 	 *
-	 * @return array of \F3\FLOW3\Reflection\ParameterReflection Parameter reflection objects of the parameters of this method
+	 * @return array of \TYPO3\FLOW3\Reflection\ParameterReflection Parameter reflection objects of the parameters of this method
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getParameters() {
@@ -107,7 +107,7 @@ class MethodReflection extends \ReflectionMethod {
 	 * Returns an instance of the doc comment parser and
 	 * runs the parse() method.
 	 *
-	 * @return \F3\FLOW3\Reflection\DocCommentParser
+	 * @return \TYPO3\FLOW3\Reflection\DocCommentParser
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function getDocCommentParser() {

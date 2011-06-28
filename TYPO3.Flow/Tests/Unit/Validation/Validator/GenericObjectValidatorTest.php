@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\Validation\Validator;
+namespace TYPO3\FLOW3\Tests\Unit\Validation\Validator;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -28,9 +28,9 @@ require_once('AbstractValidatorTestcase.php');
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class GenericObjectValidatorTest extends \F3\FLOW3\Tests\Unit\Validation\Validator\AbstractValidatorTestcase {
+class GenericObjectValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validator\AbstractValidatorTestcase {
 
-	protected $validatorClassName = 'F3\FLOW3\Validation\Validator\GenericObjectValidator';
+	protected $validatorClassName = 'TYPO3\FLOW3\Validation\Validator\GenericObjectValidator';
 
 	/**
 	 * @test
@@ -49,16 +49,16 @@ class GenericObjectValidatorTest extends \F3\FLOW3\Tests\Unit\Validation\Validat
 	}
 
 	public function dataProviderForValidator() {
-		$error1 = new \F3\FLOW3\Error\Error('error1', 1);
-		$error2 = new \F3\FLOW3\Error\Error('error2', 2);
+		$error1 = new \TYPO3\FLOW3\Error\Error('error1', 1);
+		$error2 = new \TYPO3\FLOW3\Error\Error('error2', 2);
 
-		$emptyResult1 = new \F3\FLOW3\Error\Result();
-		$emptyResult2 = new \F3\FLOW3\Error\Result();
+		$emptyResult1 = new \TYPO3\FLOW3\Error\Result();
+		$emptyResult2 = new \TYPO3\FLOW3\Error\Result();
 
-		$resultWithError1 = new \F3\FLOW3\Error\Result();
+		$resultWithError1 = new \TYPO3\FLOW3\Error\Result();
 		$resultWithError1->addError($error1);
 
-		$resultWithError2 = new \F3\FLOW3\Error\Result();
+		$resultWithError2 = new \TYPO3\FLOW3\Error\Result();
 		$resultWithError2->addError($error2);
 
 		$classNameForObjectWithPrivateProperties = 'B' . md5(uniqid(mt_rand(), TRUE));
@@ -81,10 +81,10 @@ class GenericObjectValidatorTest extends \F3\FLOW3\Tests\Unit\Validation\Validat
 	 */
 	public function validateChecksAllPropertiesForWhichAPropertyValidatorExists($mockObject, $validationResultForFoo, $validationResultForBar, $errors) {
 
-		$validatorForFoo = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
+		$validatorForFoo = $this->getMock('TYPO3\FLOW3\Validation\Validator\ValidatorInterface');
 		$validatorForFoo->expects($this->once())->method('validate')->with('foovalue')->will($this->returnValue($validationResultForFoo));
 
-		$validatorForBar = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
+		$validatorForBar = $this->getMock('TYPO3\FLOW3\Validation\Validator\ValidatorInterface');
 		$validatorForBar->expects($this->once())->method('validate')->with('barvalue')->will($this->returnValue($validationResultForBar));
 
 		$this->validator->addPropertyValidator('foo', $validatorForFoo);
@@ -106,8 +106,8 @@ class GenericObjectValidatorTest extends \F3\FLOW3\Tests\Unit\Validation\Validat
 		$A->b = $B;
 		$B->a = $A;
 
-		$aValidator = new \F3\FLOW3\Validation\Validator\GenericObjectValidator(array());
-		$bValidator = new \F3\FLOW3\Validation\Validator\GenericObjectValidator(array());
+		$aValidator = new \TYPO3\FLOW3\Validation\Validator\GenericObjectValidator(array());
+		$bValidator = new \TYPO3\FLOW3\Validation\Validator\GenericObjectValidator(array());
 		$aValidator->addPropertyValidator('b', $bValidator);
 		$bValidator->addPropertyValidator('a', $aValidator);
 
@@ -134,10 +134,10 @@ class GenericObjectValidatorTest extends \F3\FLOW3\Tests\Unit\Validation\Validat
 		$aValidator->addPropertyValidator('b', $bValidator);
 		$bValidator->addPropertyValidator('a', $aValidator);
 
-		$error = new \F3\FLOW3\Error\Error('error1', 123);
-		$result = new \F3\FLOW3\Error\Result();
+		$error = new \TYPO3\FLOW3\Error\Error('error1', 123);
+		$result = new \TYPO3\FLOW3\Error\Result();
 		$result->addError($error);
-		$mockUuidValidator = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
+		$mockUuidValidator = $this->getMock('TYPO3\FLOW3\Validation\Validator\ValidatorInterface');
 		$mockUuidValidator->expects($this->any())->method('validate')->with(0xF)->will($this->returnValue($result));
 		$bValidator->addPropertyValidator('uuid', $mockUuidValidator);
 
@@ -164,10 +164,10 @@ class GenericObjectValidatorTest extends \F3\FLOW3\Tests\Unit\Validation\Validat
 		$aValidator->addPropertyValidator('b', $bValidator);
 		$bValidator->addPropertyValidator('a', $aValidator);
 
-		$error1 = new \F3\FLOW3\Error\Error('error1', 123);
-		$result1 = new \F3\FLOW3\Error\Result();
+		$error1 = new \TYPO3\FLOW3\Error\Error('error1', 123);
+		$result1 = new \TYPO3\FLOW3\Error\Result();
 		$result1->addError($error1);
-		$mockUuidValidator = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
+		$mockUuidValidator = $this->getMock('TYPO3\FLOW3\Validation\Validator\ValidatorInterface');
 		$mockUuidValidator->expects($this->any())->method('validate')->with(0xF)->will($this->returnValue($result1));
 		$aValidator->addPropertyValidator('uuid', $mockUuidValidator);
 		$bValidator->addPropertyValidator('uuid', $mockUuidValidator);

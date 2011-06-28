@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Persistence\Generic\Qom;
+namespace TYPO3\FLOW3\Persistence\Generic\Qom;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -30,26 +30,26 @@ namespace F3\FLOW3\Persistence\Generic\Qom;
  * @api
  * @scope prototype
  */
-class LogicalNot extends \F3\FLOW3\Persistence\Generic\Qom\Constraint {
+class LogicalNot extends \TYPO3\FLOW3\Persistence\Generic\Qom\Constraint {
 
 	/**
-	 * @var \F3\FLOW3\Persistence\Generic\Qom\Constraint
+	 * @var \TYPO3\FLOW3\Persistence\Generic\Qom\Constraint
 	 */
 	protected $constraint;
 
 	/**
 	 *
-	 * @param \F3\FLOW3\Persistence\Generic\Qom\Constraint $constraint
+	 * @param \TYPO3\FLOW3\Persistence\Generic\Qom\Constraint $constraint
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(\F3\FLOW3\Persistence\Generic\Qom\Constraint $constraint) {
+	public function __construct(\TYPO3\FLOW3\Persistence\Generic\Qom\Constraint $constraint) {
 		$this->constraint = $constraint;
 	}
 
 	/**
 	 * Gets the constraint negated by this Not constraint.
 	 *
-	 * @return \F3\FLOW3\Persistence\Generic\Qom\Constraint the constraint; non-null
+	 * @return \TYPO3\FLOW3\Persistence\Generic\Qom\Constraint the constraint; non-null
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */

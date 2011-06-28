@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Cache\Backend;
+namespace TYPO3\FLOW3\Cache\Backend;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -27,14 +27,14 @@ namespace F3\FLOW3\Cache\Backend;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */
-abstract class AbstractBackend implements \F3\FLOW3\Cache\Backend\BackendInterface {
+abstract class AbstractBackend implements \TYPO3\FLOW3\Cache\Backend\BackendInterface {
 
 	const DATETIME_EXPIRYTIME_UNLIMITED = '9999-12-31T23:59:59+0000';
 	const UNLIMITED_LIFETIME = 0;
 
 	/**
 	 * Reference to the cache frontend which uses this backend
-	 * @var \F3\FLOW3\Cache\Frontend\FrontendInterface
+	 * @var \TYPO3\FLOW3\Cache\Frontend\FrontendInterface
 	 */
 	protected $cache;
 
@@ -56,7 +56,7 @@ abstract class AbstractBackend implements \F3\FLOW3\Cache\Backend\BackendInterfa
 	protected $defaultLifetime = 3600;
 
 	/**
-	 * @var \F3\FLOW3\Utility\Environment
+	 * @var \TYPO3\FLOW3\Utility\Environment
 	 */
 	protected $environment;
 
@@ -85,23 +85,23 @@ abstract class AbstractBackend implements \F3\FLOW3\Cache\Backend\BackendInterfa
 	/**
 	 * Injects the Environment object
 	 *
-	 * @param \F3\FLOW3\Utility\Environment $environment
+	 * @param \TYPO3\FLOW3\Utility\Environment $environment
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectEnvironment(\F3\FLOW3\Utility\Environment $environment) {
+	public function injectEnvironment(\TYPO3\FLOW3\Utility\Environment $environment) {
 		$this->environment = $environment;
 	}
 
 	/**
 	 * Sets a reference to the cache frontend which uses this backend
 	 *
-	 * @param \F3\FLOW3\Cache\Frontend\FrontendInterface $cache The frontend for this backend
+	 * @param \TYPO3\FLOW3\Cache\Frontend\FrontendInterface $cache The frontend for this backend
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
-	public function setCache(\F3\FLOW3\Cache\Frontend\FrontendInterface $cache) {
+	public function setCache(\TYPO3\FLOW3\Cache\Frontend\FrontendInterface $cache) {
 		$this->cache = $cache;
 		$this->cacheIdentifier = $this->cache->getIdentifier();
 	}

@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Security\Aspect;
+namespace TYPO3\FLOW3\Security\Aspect;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -31,29 +31,29 @@ namespace F3\FLOW3\Security\Aspect;
 class PersistenceQueryRewritingAspect {
 
 	/**
-	 * @var \F3\FLOW3\Security\Policy\PolicyService
+	 * @var \TYPO3\FLOW3\Security\Policy\PolicyService
 	 */
 	protected $policyService;
 
 	/**
-	 * @var \F3\FLOW3\Security\Context
+	 * @var \TYPO3\FLOW3\Security\Context
 	 */
 	protected $securityContext;
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
+	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
 	 * The reflection service
-	 * @var \F3\FLOW3\Reflection\ServiceInterface
+	 * @var \TYPO3\FLOW3\Reflection\ServiceInterface
 	 */
 	protected $reflectionService;
 
 	/**
 	 * The persistence manager
-	 * @var \F3\FLOW3\Persistence\PersistenceManagerInterface
+	 * @var \TYPO3\FLOW3\Persistence\PersistenceManagerInterface
 	 */
 	protected $persistenceManager;
 
@@ -77,61 +77,61 @@ class PersistenceQueryRewritingAspect {
 	/**
 	 * Injects the policy service
 	 *
-	 * @param \F3\FLOW3\Security\Policy\PolicyService $policyService The policy service
+	 * @param \TYPO3\FLOW3\Security\Policy\PolicyService $policyService The policy service
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function injectPolicyService(\F3\FLOW3\Security\Policy\PolicyService $policyService) {
+	public function injectPolicyService(\TYPO3\FLOW3\Security\Policy\PolicyService $policyService) {
 		$this->policyService = $policyService;
 	}
 
 	/**
 	 * Injects the object manager
 	 *
-	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager The object manager
+	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager The object manager
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
+	public function injectObjectManager(\TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
 	}
 
 	/**
 	 * Injects the reflection service
 	 *
-	 * @param F3\FLOW3\Reflection\ReflectionService $reflectionService The reflection service
+	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService The reflection service
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function injectReflectionService(\F3\FLOW3\Reflection\ReflectionService $reflectionService) {
+	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
 	}
 
 	/**
 	 * Inject the persistence manager
 	 *
-	 * @param F3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager The persistence manager
+	 * @param \TYPO3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager The persistence manager
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function injectPersistenceManager(\F3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager) {
+	public function injectPersistenceManager(\TYPO3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager) {
 		$this->persistenceManager = $persistenceManager;
 	}
 
 	/**
 	 * Rewrites the QOM query, by adding appropriate constraints according to the policy
 	 *
-	 * @before within(F3\FLOW3\Persistence\QueryInterface) && method(.*->(execute|count)()) && setting(TYPO3.FLOW3.security.enable)
-	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
+	 * @before within(TYPO3\FLOW3\Persistence\QueryInterface) && method(.*->(execute|count)()) && setting(TYPO3.FLOW3.security.enable)
+	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function rewriteQomQuery(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function rewriteQomQuery(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		if ($this->objectManager->isSessionInitialized() === FALSE) {
 			return;
 		}
 		if ($this->securityContext === NULL) {
-			$this->securityContext = $this->objectManager->get('F3\FLOW3\Security\Context');
+			$this->securityContext = $this->objectManager->get('TYPO3\FLOW3\Security\Context');
 		}
 		if ($this->securityContext->isInitialized() === FALSE) {
 			return;
@@ -156,18 +156,18 @@ class PersistenceQueryRewritingAspect {
 	/**
 	 * Checks, if the current policy allows the retrieval of the object fetched by getObjectDataByIdentifier()
 	 *
-	 * @around within(F3\FLOW3\Persistence\PersistenceManagerInterface) && method(.*->getObjectByIdentifier()) && setting(TYPO3.FLOW3.security.enable)
-	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
+	 * @around within(TYPO3\FLOW3\Persistence\PersistenceManagerInterface) && method(.*->getObjectByIdentifier()) && setting(TYPO3.FLOW3.security.enable)
+	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
 	 * @return array The object data of the original object, or NULL if access is not permitted
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function checkAccessAfterFetchingAnObjectByIdentifier(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function checkAccessAfterFetchingAnObjectByIdentifier(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$result = $joinPoint->getAdviceChain()->proceed($joinPoint);
 		if ($this->objectManager->isSessionInitialized() === FALSE) {
 			return $result;
 		}
 		if ($this->securityContext === NULL) {
-			$this->securityContext = $this->objectManager->get('F3\FLOW3\Security\Context');
+			$this->securityContext = $this->objectManager->get('TYPO3\FLOW3\Security\Context');
 		}
 		if ($this->securityContext->isInitialized() === FALSE) {
 			return $result;
@@ -193,11 +193,11 @@ class PersistenceQueryRewritingAspect {
 	 * Builds a QOM constraint object for an array of constraint expressions
 	 *
 	 * @param array $constraintDefinitions The constraint expressions
-	 * @param \F3\FLOW3\Persistence\QueryInterface $query The query object to build the constraint with
-	 * @return \F3\FLOW3\Persistence\Qom\Constraint The build constraint object
+	 * @param \TYPO3\FLOW3\Persistence\QueryInterface $query The query object to build the constraint with
+	 * @return \TYPO3\FLOW3\Persistence\Qom\Constraint The build constraint object
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	protected function getQomConstraintForConstraintDefinitions(array $constraintDefinitions, \F3\FLOW3\Persistence\QueryInterface $query) {
+	protected function getQomConstraintForConstraintDefinitions(array $constraintDefinitions, \TYPO3\FLOW3\Persistence\QueryInterface $query) {
 		$compositeConstraint = NULL;
 		foreach ($constraintDefinitions as $resourceConstraints) {
 			foreach ($resourceConstraints as $operator => $policyConstraints) {
@@ -238,12 +238,12 @@ class PersistenceQueryRewritingAspect {
 	 * Builds a QOM constraint object for one single constraint expression
 	 *
 	 * @param array $constraintDefinition The constraint expression
-	 * @param \F3\FLOW3\Persistence\QueryInterface $query The query object to build the constraint with
-	 * @return \F3\FLOW3\Persistence\Qom\Constraint The build constraint object
-	 * @throws \F3\FLOW3\Security\Exception\InvalidQueryRewritingConstraintException
+	 * @param \TYPO3\FLOW3\Persistence\QueryInterface $query The query object to build the constraint with
+	 * @return \TYPO3\FLOW3\Persistence\Qom\Constraint The build constraint object
+	 * @throws \TYPO3\FLOW3\Security\Exception\InvalidQueryRewritingConstraintException
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	protected function getQomConstraintForSingleConstraintDefinition(array $constraintDefinition, \F3\FLOW3\Persistence\QueryInterface $query) {
+	protected function getQomConstraintForSingleConstraintDefinition(array $constraintDefinition, \TYPO3\FLOW3\Persistence\QueryInterface $query) {
 		if (!is_array($constraintDefinition['leftValue']) && strpos($constraintDefinition['leftValue'], 'this.') === 0) {
 			$propertyName = substr($constraintDefinition['leftValue'], 5);
 			$operand = $this->getValueForOperand($constraintDefinition['rightValue']);
@@ -251,7 +251,7 @@ class PersistenceQueryRewritingAspect {
 			$propertyName = substr($constraintDefinition['rightValue'], 5);
 			$operand = $this->getValueForOperand($constraintDefinition['leftValue']);
 		} else {
-			throw new \F3\FLOW3\Security\Exception\InvalidQueryRewritingConstraintException('An entity constraint has to have one operand that references to "this.". Got: "' . $constraintDefinition['leftValue'] . '" and "' . $constraintDefinition['rightValue'] . '"', 1267881842);
+			throw new \TYPO3\FLOW3\Security\Exception\InvalidQueryRewritingConstraintException('An entity constraint has to have one operand that references to "this.". Got: "' . $constraintDefinition['leftValue'] . '" and "' . $constraintDefinition['rightValue'] . '"', 1267881842);
 		}
 
 		switch ($constraintDefinition['operator']) {
@@ -296,7 +296,7 @@ class PersistenceQueryRewritingAspect {
 				break;
 		}
 
-		throw new \F3\FLOW3\Security\Exception\InvalidQueryRewritingConstraintException('The configured operator of the entity constraint is not valid. Got: ' . $constraintDefinition['operator'], 1270483540);
+		throw new \TYPO3\FLOW3\Security\Exception\InvalidQueryRewritingConstraintException('The configured operator of the entity constraint is not valid. Got: ' . $constraintDefinition['operator'], 1270483540);
 	}
 
 	/**
@@ -367,7 +367,7 @@ class PersistenceQueryRewritingAspect {
 			$rightOperand = $this->getValueForOperand($constraintDefinition['rightValue']);
 		}
 
-		if ($referenceToThisFound === FALSE) throw new \F3\FLOW3\Security\Exception\InvalidQueryRewritingConstraintException('An entity security constraint must have at least one operand that references to "this.". Got: "' . $constraintDefinition['leftValue'] . '" and "' . $constraintDefinition['rightValue'] . '"', 1277218400);
+		if ($referenceToThisFound === FALSE) throw new \TYPO3\FLOW3\Security\Exception\InvalidQueryRewritingConstraintException('An entity security constraint must have at least one operand that references to "this.". Got: "' . $constraintDefinition['leftValue'] . '" and "' . $constraintDefinition['rightValue'] . '"', 1277218400);
 
 		if (is_object($leftOperand)
 					&& $this->persistenceManager->isNewObject($leftOperand) === FALSE
@@ -413,7 +413,7 @@ class PersistenceQueryRewritingAspect {
 				break;
 		}
 
-		throw new \F3\FLOW3\Security\Exception\InvalidQueryRewritingConstraintException('The configured operator of the entity constraint is not valid. Got: ' . $constraintDefinition['operator'], 1277222521);
+		throw new \TYPO3\FLOW3\Security\Exception\InvalidQueryRewritingConstraintException('The configured operator of the entity constraint is not valid. Got: ' . $constraintDefinition['operator'], 1277222521);
 	}
 
 	/**
@@ -441,14 +441,14 @@ class PersistenceQueryRewritingAspect {
 		} else if (strpos($expression, 'current.') === 0) {
 			$objectAccess = explode('.', $expression, 3);
 			eval('$globalObject = ' . $this->globalObjects[$objectAccess[1]]);
-			return \F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($globalObject, $objectAccess[2]);
+			return \TYPO3\FLOW3\Reflection\ObjectAccess::getPropertyPath($globalObject, $objectAccess[2]);
 		} else {
 			return trim($expression, '"\'');
 		}
 	}
 
 	/**
-	 * Redirects directly to \F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($result, $propertyPath)
+	 * Redirects directly to \TYPO3\FLOW3\Reflection\ObjectAccess::getPropertyPath($result, $propertyPath)
 	 * This is only needed for unit tests!
 	 *
 	 * @param mixed $object The object to fetch the property from
@@ -457,7 +457,7 @@ class PersistenceQueryRewritingAspect {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function getObjectValueByPath($object, $path) {
-		return \F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($object, $path);
+		return \TYPO3\FLOW3\Reflection\ObjectAccess::getPropertyPath($object, $path);
 	}
 }
 

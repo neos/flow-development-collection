@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Package\MetaData;
+namespace TYPO3\FLOW3\Package\MetaData;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -27,7 +27,7 @@ namespace F3\FLOW3\Package\MetaData;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
-class Person extends \F3\FLOW3\Package\MetaData\AbstractParty {
+class Person extends \TYPO3\FLOW3\Package\MetaData\AbstractParty {
 
 	/**
 	 * Company of the person
@@ -82,7 +82,7 @@ class Person extends \F3\FLOW3\Package\MetaData\AbstractParty {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function getPartyType() {
-		return \F3\FLOW3\Package\MetaDataInterface::PARTY_TYPE_PERSON;
+		return \TYPO3\FLOW3\Package\MetaDataInterface::PARTY_TYPE_PERSON;
 	}
 }
 ?>

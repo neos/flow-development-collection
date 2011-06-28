@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\Configuration\Source;
+namespace TYPO3\FLOW3\Tests\Unit\Configuration\Source;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,7 +26,7 @@ namespace F3\FLOW3\Tests\Unit\Configuration\Source;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class YamlSourceTest extends \F3\FLOW3\Tests\UnitTestCase {
+class YamlSourceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * Sets up this test case
@@ -43,7 +43,7 @@ class YamlSourceTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function returnsEmptyArrayOnNonExistingFile() {
-		$configurationSource = new \F3\FLOW3\Configuration\Source\YamlSource();
+		$configurationSource = new \TYPO3\FLOW3\Configuration\Source\YamlSource();
 		$configuration = $configurationSource->load('/ThisFileDoesNotExist');
 		$this->assertEquals(array(), $configuration, 'No empty array was returned.');
 	}
@@ -54,7 +54,7 @@ class YamlSourceTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function optionSetInTheConfigurationFileReallyEndsUpInTheArray() {
 		$pathAndFilename = __DIR__ . '/../Fixture/YAMLConfigurationFile';
-		$configurationSource = new \F3\FLOW3\Configuration\Source\YamlSource();
+		$configurationSource = new \TYPO3\FLOW3\Configuration\Source\YamlSource();
 		$configuration = $configurationSource->load($pathAndFilename);
 		$this->assertTrue($configuration['configurationFileHasBeenLoaded'], 'The option has not been set by the fixture.');
 	}
@@ -65,7 +65,7 @@ class YamlSourceTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function saveWritesArrayToGivenFileAsYAML() {
 		$pathAndFilename = \vfsStream::url('testDirectory') . '/YAMLConfiguration';
-		$configurationSource = new \F3\FLOW3\Configuration\Source\YamlSource();
+		$configurationSource = new \TYPO3\FLOW3\Configuration\Source\YamlSource();
 		$configurationSource->save($pathAndFilename, array('configurationFileHasBeenLoaded' => TRUE));
 
 		$yaml = 'configurationFileHasBeenLoaded: true' . chr(10);
@@ -81,7 +81,7 @@ class YamlSourceTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$comment = '# This comment should stay' . chr(10) . 'Test: foo' . chr(10);
 		file_put_contents($pathAndFilename . '.yaml', $comment);
 
-		$configurationSource = new \F3\FLOW3\Configuration\Source\YamlSource();
+		$configurationSource = new \TYPO3\FLOW3\Configuration\Source\YamlSource();
 		$configurationSource->save($pathAndFilename, array('configurationFileHasBeenLoaded' => TRUE));
 
 		$yaml = file_get_contents($pathAndFilename . '.yaml');

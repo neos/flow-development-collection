@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\AOP\Advice;
+namespace TYPO3\FLOW3\Tests\Unit\AOP\Advice;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,22 +26,22 @@ namespace F3\FLOW3\Tests\Unit\AOP\Advice;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class AroundAdviceTest extends \F3\FLOW3\Tests\UnitTestCase {
+class AroundAdviceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function invokeInvokesTheAdviceIfTheRuntimeEvaluatorReturnsTrue() {
-		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
 
 		$mockAspect = $this->getMock('MockClass' . md5(uniqid(mt_rand(), TRUE)), array('someMethod'));
 		$mockAspect->expects($this->once())->method('someMethod')->with($mockJoinPoint)->will($this->returnValue('result'));
 
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
+		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
 		$mockObjectManager->expects($this->once())->method('get')->with('aspectObjectName')->will($this->returnValue($mockAspect));
 
-		$advice = new \F3\FLOW3\AOP\Advice\AroundAdvice('aspectObjectName', 'someMethod', $mockObjectManager, function(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) { if ($joinPoint !== NULL) return TRUE; });
+		$advice = new \TYPO3\FLOW3\AOP\Advice\AroundAdvice('aspectObjectName', 'someMethod', $mockObjectManager, function(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) { if ($joinPoint !== NULL) return TRUE; });
 		$result = $advice->invoke($mockJoinPoint);
 
 		$this->assertEquals($result, 'result', 'The around advice did not return the result value as expected.');
@@ -52,19 +52,19 @@ class AroundAdviceTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function invokeDoesNotInvokeTheAdviceIfTheRuntimeEvaluatorReturnsFalse() {
-		$mockAdviceChain = $this->getMock('F3\FLOW3\AOP\Advice\AdviceChain', array(), array(), '', FALSE);
+		$mockAdviceChain = $this->getMock('TYPO3\FLOW3\AOP\Advice\AdviceChain', array(), array(), '', FALSE);
 		$mockAdviceChain->expects($this->once())->method('proceed')->will($this->returnValue('result'));
 
-		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
 		$mockJoinPoint->expects($this->any())->method('getAdviceChain')->will($this->returnValue($mockAdviceChain));
 
 		$mockAspect = $this->getMock('MockClass' . md5(uniqid(mt_rand(), TRUE)), array('someMethod'));
 		$mockAspect->expects($this->never())->method('someMethod');
 
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
+		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
 		$mockObjectManager->expects($this->any())->method('get')->will($this->returnValue($mockAspect));
 
-		$advice = new \F3\FLOW3\AOP\Advice\AroundAdvice('aspectObjectName', 'someMethod', $mockObjectManager, function(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) { if ($joinPoint !== NULL) return FALSE; });
+		$advice = new \TYPO3\FLOW3\AOP\Advice\AroundAdvice('aspectObjectName', 'someMethod', $mockObjectManager, function(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) { if ($joinPoint !== NULL) return FALSE; });
 		$result = $advice->invoke($mockJoinPoint);
 
 		$this->assertEquals($result, 'result', 'The around advice did not return the result value as expected.');

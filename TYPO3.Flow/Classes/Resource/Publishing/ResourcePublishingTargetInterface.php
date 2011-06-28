@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Resource\Publishing;
+namespace TYPO3\FLOW3\Resource\Publishing;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -50,26 +50,26 @@ interface ResourcePublishingTargetInterface {
 	/**
 	 * Publishes a persistent resource.
 	 *
-	 * @param \F3\FLOW3\Resource\Resource $resource The resource to publish
+	 * @param \TYPO3\FLOW3\Resource\Resource $resource The resource to publish
 	 * @return mixed Either the web URI of the published resource or FALSE if the resource source file doesn't exist or the resource could not be published for other reasons
 	 */
-	public function publishPersistentResource(\F3\FLOW3\Resource\Resource $resource);
+	public function publishPersistentResource(\TYPO3\FLOW3\Resource\Resource $resource);
 
 	/**
 	 * Unpublishes a persistent resource.
 	 *
-	 * @param \F3\FLOW3\Resource\Resource $resource The resource to publish
+	 * @param \TYPO3\FLOW3\Resource\Resource $resource The resource to publish
 	 * @return boolean TRUE if at least one file was removed, FALSE otherwise
 	 */
-	public function unpublishPersistentResource(\F3\FLOW3\Resource\Resource $resource);
+	public function unpublishPersistentResource(\TYPO3\FLOW3\Resource\Resource $resource);
 
 	/**
 	 * Returns the URI pointing to the published persistent resource
 	 *
-	 * @param \F3\FLOW3\Resource\Resource $resource The resource to publish
+	 * @param \TYPO3\FLOW3\Resource\Resource $resource The resource to publish
 	 * @return mixed Either the web URI of the published resource or FALSE if the resource source file doesn't exist or the resource could not be published for other reasons
 	 */
-	public function getPersistentResourceWebUri(\F3\FLOW3\Resource\Resource $resource);
+	public function getPersistentResourceWebUri(\TYPO3\FLOW3\Resource\Resource $resource);
 }
 
 ?>

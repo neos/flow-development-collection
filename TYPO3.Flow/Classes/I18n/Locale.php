@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\I18n;
+namespace TYPO3\FLOW3\I18n;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -35,13 +35,13 @@ namespace F3\FLOW3\I18n;
  * Please note that this class represents locale identifier with valid syntax,
  * but it does not assures that represented locale is available (installed) in
  * current FLOW3 installation. In order to check that, various methods of
- * \F3\FLOW3\I18n\Service class can be used.
+ * \TYPO3\FLOW3\I18n\Service class can be used.
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  * @scope prototype
  * @see http://www.unicode.org/reports/tr35/
- * @see \F3\FLOW3\I18n\Service
+ * @see \TYPO3\FLOW3\I18n\Service
  */
 class Locale {
 
@@ -94,13 +94,13 @@ class Locale {
 	 *
 	 * @param string $localeIdentifier A valid locale identifier according to UTS#35
 	 * @throws \InvalidArgumentException When argument is not a string
-	 * @throws \F3\FLOW3\I18n\Exception\InvalidLocaleIdentifier If the locale identifier is not valid
+	 * @throws \TYPO3\FLOW3\I18n\Exception\InvalidLocaleIdentifier If the locale identifier is not valid
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function __construct($localeIdentifier) {
 		if (!is_string($localeIdentifier)) throw new \InvalidArgumentException('A locale identifier must be of type string, ' . gettype($localeIdentifier) . ' given.', 1221216120);
-		if (preg_match(self::PATTERN_MATCH_LOCALEIDENTIFIER, $localeIdentifier, $matches) === 0) throw new \F3\FLOW3\I18n\Exception\InvalidLocaleIdentifierException('"' . $localeIdentifier . '" is not a valid locale identifier.', 1221137814);
+		if (preg_match(self::PATTERN_MATCH_LOCALEIDENTIFIER, $localeIdentifier, $matches) === 0) throw new \TYPO3\FLOW3\I18n\Exception\InvalidLocaleIdentifierException('"' . $localeIdentifier . '" is not a valid locale identifier.', 1221137814);
 
 		$this->language = strtolower($matches['language']);
 		if (!empty($matches['script'])) $this->script = ucfirst(strtolower($matches['script']));

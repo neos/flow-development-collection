@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Reflection;
+namespace TYPO3\FLOW3\Reflection;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -133,7 +133,7 @@ class ClassSchema {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function addProperty($name, $type, $lazy = FALSE) {
-		$type = \F3\FLOW3\Utility\TypeHandling::parseType($type);
+		$type = \TYPO3\FLOW3\Utility\TypeHandling::parseType($type);
 		$this->properties[$name] = array(
 			'type' => $type['type'],
 			'elementType' => $type['elementType'],
@@ -208,11 +208,11 @@ class ClassSchema {
 	 *
 	 * @param string $repositoryClassName
 	 * @return void
-	 * @throws \F3\FLOW3\Reflection\Exception\ClassSchemaConstraintViolationException
+	 * @throws \TYPO3\FLOW3\Reflection\Exception\ClassSchemaConstraintViolationException
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setRepositoryClassName($repositoryClassName) {
-		if ($this->modelType === self::MODELTYPE_VALUEOBJECT && $repositoryClassName !== NULL) throw new \F3\FLOW3\Reflection\Exception\ClassSchemaConstraintViolationException('Value objects must not be aggregate roots (have a repository)', 1268739172);
+		if ($this->modelType === self::MODELTYPE_VALUEOBJECT && $repositoryClassName !== NULL) throw new \TYPO3\FLOW3\Reflection\Exception\ClassSchemaConstraintViolationException('Value objects must not be aggregate roots (have a repository)', 1268739172);
 		$this->repositoryClassName = $repositoryClassName;
 	}
 
@@ -253,7 +253,7 @@ class ClassSchema {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setUuidPropertyName($propertyName) {
-		if ($this->modelType === self::MODELTYPE_VALUEOBJECT) throw new \F3\FLOW3\Reflection\Exception\ClassSchemaConstraintViolationException('Value objects must not have a @uuid property', 1264102076);
+		if ($this->modelType === self::MODELTYPE_VALUEOBJECT) throw new \TYPO3\FLOW3\Reflection\Exception\ClassSchemaConstraintViolationException('Value objects must not have a @uuid property', 1264102076);
 		if (!array_key_exists($propertyName, $this->properties)) {
 			throw new \InvalidArgumentException('Property "' . $propertyName . '" must be added to the class schema before it can be marked as UUID property.', 1233863842);
 		}
@@ -281,7 +281,7 @@ class ClassSchema {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function markAsIdentityProperty($propertyName) {
-		if ($this->modelType === self::MODELTYPE_VALUEOBJECT) throw new \F3\FLOW3\Reflection\Exception\ClassSchemaConstraintViolationException('Value objects must not have @identity properties', 1264102084);
+		if ($this->modelType === self::MODELTYPE_VALUEOBJECT) throw new \TYPO3\FLOW3\Reflection\Exception\ClassSchemaConstraintViolationException('Value objects must not have @identity properties', 1264102084);
 		if (!array_key_exists($propertyName, $this->properties)) {
 			throw new \InvalidArgumentException('Property "' . $propertyName . '" must be added to the class schema before it can be marked as identity property.', 1233775407);
 		}

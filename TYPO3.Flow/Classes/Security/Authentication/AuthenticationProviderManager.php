@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Security\Authentication;
+namespace TYPO3\FLOW3\Security\Authentication;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -28,40 +28,40 @@ namespace F3\FLOW3\Security\Authentication;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope singleton
  */
-class AuthenticationProviderManager implements \F3\FLOW3\Security\Authentication\AuthenticationManagerInterface {
+class AuthenticationProviderManager implements \TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface {
 
 	/**
-	 * @var \F3\FLOW3\Log\SecurityLoggerInterface
+	 * @var \TYPO3\FLOW3\Log\SecurityLoggerInterface
 	 * @inject
 	 */
 	protected $securityLogger;
 
 	/**
 	 * The provider resolver
-	 * @var \F3\FLOW3\Security\Authentication\AuthenticationProviderResolver
+	 * @var \TYPO3\FLOW3\Security\Authentication\AuthenticationProviderResolver
 	 */
 	protected $providerResolver;
 
 	/**
 	 * The security context of the current request
-	 * @var \F3\FLOW3\Security\Context
+	 * @var \TYPO3\FLOW3\Security\Context
 	 */
 	protected $securityContext;
 
 	/**
 	 * The request pattern resolver
-	 * @var \F3\FLOW3\Security\RequestPatternResolver
+	 * @var \TYPO3\FLOW3\Security\RequestPatternResolver
 	 */
 	protected $requestPatternResolver;
 
 	/**
-	 * Array of \F3\FLOW3\Security\Authentication\AuthenticationProviderInterface objects
+	 * Array of \TYPO3\FLOW3\Security\Authentication\AuthenticationProviderInterface objects
 	 * @var array
 	 */
 	protected $providers = array();
 
 	/**
-	 * Array of \F3\FLOW3\Security\Authentication\TokenInterface objects
+	 * Array of \TYPO3\FLOW3\Security\Authentication\TokenInterface objects
 	 * @var array
 	 */
 	protected $tokens = array();
@@ -69,12 +69,12 @@ class AuthenticationProviderManager implements \F3\FLOW3\Security\Authentication
 	/**
 	 * Constructor.
 	 *
-	 * @param \F3\FLOW3\Security\Authentication\AuthenticationProviderResolver $providerResolver The provider resolver
-	 * @param \F3\FLOW3\Security\RequestPatternResolver $requestPatternResolver The request pattern resolver
+	 * @param \TYPO3\FLOW3\Security\Authentication\AuthenticationProviderResolver $providerResolver The provider resolver
+	 * @param \TYPO3\FLOW3\Security\RequestPatternResolver $requestPatternResolver The request pattern resolver
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function __construct(AuthenticationProviderResolver $providerResolver, \F3\FLOW3\Security\RequestPatternResolver $requestPatternResolver) {
+	public function __construct(AuthenticationProviderResolver $providerResolver, \TYPO3\FLOW3\Security\RequestPatternResolver $requestPatternResolver) {
 		$this->providerResolver = $providerResolver;
 		$this->requestPatternResolver = $requestPatternResolver;
 	}
@@ -96,18 +96,18 @@ class AuthenticationProviderManager implements \F3\FLOW3\Security\Authentication
 	/**
 	 * Sets the security context
 	 *
-	 * @param \F3\FLOW3\Security\Context $securityContext The security context of the current request
+	 * @param \TYPO3\FLOW3\Security\Context $securityContext The security context of the current request
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function setSecurityContext(\F3\FLOW3\Security\Context $securityContext) {
+	public function setSecurityContext(\TYPO3\FLOW3\Security\Context $securityContext) {
 		$this->securityContext = $securityContext;
 	}
 
 	/**
 	 * Returns the security context
 	 *
-	 * @return \F3\FLOW3\Security\Context $securityContext The security context of the current request
+	 * @return \TYPO3\FLOW3\Security\Context $securityContext The security context of the current request
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getSecurityContext() {
@@ -118,7 +118,7 @@ class AuthenticationProviderManager implements \F3\FLOW3\Security\Authentication
 	 * Returns clean tokens this manager is responsible for.
 	 * Note: The order of the tokens in the array is important, as the tokens will be authenticated in the given order.
 	 *
-	 * @return array Array of \F3\FLOW3\Security\Authentication\TokenInterface An array of tokens this manager is responsible for
+	 * @return array Array of \TYPO3\FLOW3\Security\Authentication\TokenInterface An array of tokens this manager is responsible for
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getTokens() {
@@ -134,39 +134,39 @@ class AuthenticationProviderManager implements \F3\FLOW3\Security\Authentication
 	 * "atLeastOne" will try to authenticate at least one and as many tokens as possible.
 	 *
 	 * @return void
-	 * @throws \F3\FLOW3\Security\Exception\AuthenticationRequiredException
+	 * @throws \TYPO3\FLOW3\Security\Exception\AuthenticationRequiredException
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function authenticate() {
 		$anyTokenAuthenticated = FALSE;
-		if ($this->securityContext === NULL) throw new \F3\FLOW3\Security\Exception('Cannot authenticate because no security context has been set.', 1232978667);
+		if ($this->securityContext === NULL) throw new \TYPO3\FLOW3\Security\Exception('Cannot authenticate because no security context has been set.', 1232978667);
 
 		$tokens = $this->securityContext->getAuthenticationTokens();
 		if (count($tokens) === 0) {
-			throw new \F3\FLOW3\Security\Exception\AuthenticationRequiredException('The security context contained no tokens which could be authenticated.', 1258721059);
+			throw new \TYPO3\FLOW3\Security\Exception\AuthenticationRequiredException('The security context contained no tokens which could be authenticated.', 1258721059);
 		}
 
 		foreach ($tokens as $token) {
 			foreach ($this->providers as $provider) {
-				if ($provider->canAuthenticate($token) && $token->getAuthenticationStatus() === \F3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_NEEDED) {
+				if ($provider->canAuthenticate($token) && $token->getAuthenticationStatus() === \TYPO3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_NEEDED) {
 					$provider->authenticate($token);
 					break;
 				}
 			}
 			if ($token->isAuthenticated()) {
 				$anyTokenAuthenticated = TRUE;
-				if ($this->securityContext->getAuthenticationStrategy() === \F3\FLOW3\Security\Context::AUTHENTICATE_ONE_TOKEN) {
+				if ($this->securityContext->getAuthenticationStrategy() === \TYPO3\FLOW3\Security\Context::AUTHENTICATE_ONE_TOKEN) {
 					return;
 				}
 			} else {
-				 if ($this->securityContext->getAuthenticationStrategy() === \F3\FLOW3\Security\Context::AUTHENTICATE_ALL_TOKENS) {
-					throw new \F3\FLOW3\Security\Exception\AuthenticationRequiredException('Could not authenticate all tokens, but authenticationStrategy was set to "all".', 1222203912);
+				 if ($this->securityContext->getAuthenticationStrategy() === \TYPO3\FLOW3\Security\Context::AUTHENTICATE_ALL_TOKENS) {
+					throw new \TYPO3\FLOW3\Security\Exception\AuthenticationRequiredException('Could not authenticate all tokens, but authenticationStrategy was set to "all".', 1222203912);
 				}
 			}
 		}
 
-		if (!$anyTokenAuthenticated && $this->securityContext->getAuthenticationStrategy() !== \F3\FLOW3\Security\Context::AUTHENTICATE_ANY_TOKEN) {
-			throw new \F3\FLOW3\Security\Exception\AuthenticationRequiredException('Could not authenticate any token. Might be missing or wrong credentials or no authentication provider matched.', 1222204027);
+		if (!$anyTokenAuthenticated && $this->securityContext->getAuthenticationStrategy() !== \TYPO3\FLOW3\Security\Context::AUTHENTICATE_ANY_TOKEN) {
+			throw new \TYPO3\FLOW3\Security\Exception\AuthenticationRequiredException('Could not authenticate any token. Might be missing or wrong credentials or no authentication provider matched.', 1222204027);
 		}
 	}
 
@@ -177,7 +177,7 @@ class AuthenticationProviderManager implements \F3\FLOW3\Security\Authentication
 	 */
 	public function logout() {
 		foreach ($this->securityContext->getAuthenticationTokens() as $token) {
-			$token->setAuthenticationStatus(\F3\FLOW3\Security\Authentication\TokenInterface::NO_CREDENTIALS_GIVEN);
+			$token->setAuthenticationStatus(\TYPO3\FLOW3\Security\Authentication\TokenInterface::NO_CREDENTIALS_GIVEN);
 		}
 	}
 
@@ -192,12 +192,12 @@ class AuthenticationProviderManager implements \F3\FLOW3\Security\Authentication
 		foreach ($providerConfigurations as $providerName => $providerConfiguration) {
 
 			if (!is_array($providerConfiguration) || !isset($providerConfiguration['providerClass'])) {
-				throw new \F3\FLOW3\Security\Exception\InvalidAuthenticationProviderException('The configured authentication provider "' . $providerConfiguration['providerClass'] . '" could not be found!', 1248209521);
+				throw new \TYPO3\FLOW3\Security\Exception\InvalidAuthenticationProviderException('The configured authentication provider "' . $providerConfiguration['providerClass'] . '" could not be found!', 1248209521);
 			}
 
 			$providerObjectName = $this->providerResolver->resolveProviderClass((string)$providerConfiguration['providerClass']);
 			if ($providerObjectName === NULL) {
-				throw new \F3\FLOW3\Security\Exception\InvalidAuthenticationProviderException('The configured authentication provider "' . $providerConfiguration['providerClass'] . '" could not be found!', 1237330453);
+				throw new \TYPO3\FLOW3\Security\Exception\InvalidAuthenticationProviderException('The configured authentication provider "' . $providerConfiguration['providerClass'] . '" could not be found!', 1237330453);
 			}
 			$providerOptions = array();
 			if (isset($providerConfiguration['options']) && is_array($providerConfiguration['options'])) $providerOptions = $providerConfiguration['options'];
@@ -232,10 +232,10 @@ class AuthenticationProviderManager implements \F3\FLOW3\Security\Authentication
 				$entryPointName = key($providerConfiguration['entryPoint']);
 				$entryPointClassName = $entryPointName;
 				if (!class_exists($entryPointClassName)) {
-					$entryPointClassName = 'F3\FLOW3\Security\Authentication\EntryPoint\\' . $entryPointClassName;
+					$entryPointClassName = 'TYPO3\FLOW3\Security\Authentication\EntryPoint\\' . $entryPointClassName;
 				}
 				if (!class_exists($entryPointClassName)) {
-					throw new \F3\FLOW3\Security\Exception\NoEntryPointFoundException('An entry point with the name: "' . $entryPointName . '" could not be resolved. Make sure it is a valid class name, either fully qualified or relative to F3\FLOW3\Security\Authentication\EntryPoint!', 1236767282);
+					throw new \TYPO3\FLOW3\Security\Exception\NoEntryPointFoundException('An entry point with the name: "' . $entryPointName . '" could not be resolved. Make sure it is a valid class name, either fully qualified or relative to TYPO3\FLOW3\Security\Authentication\EntryPoint!', 1236767282);
 				}
 
 				$entryPoint = new $entryPointClassName();

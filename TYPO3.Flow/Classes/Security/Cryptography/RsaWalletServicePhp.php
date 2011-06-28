@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Security\Cryptography;
+namespace TYPO3\FLOW3\Security\Cryptography;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -27,7 +27,7 @@ namespace F3\FLOW3\Security\Cryptography;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  * @scope singleton
  */
-class RsaWalletServicePhp implements \F3\FLOW3\Security\Cryptography\RsaWalletServiceInterface {
+class RsaWalletServicePhp implements \TYPO3\FLOW3\Security\Cryptography\RsaWalletServiceInterface {
 
 	/**
 	 * @var string
@@ -62,7 +62,7 @@ class RsaWalletServicePhp implements \F3\FLOW3\Security\Cryptography\RsaWalletSe
 		if (isset($settings['security']['cryptography']['RSAWalletServicePHP']['keystorePath'])) {
 			$this->keystorePathAndFilename = $settings['security']['cryptography']['RSAWalletServicePHP']['keystorePath'];
 		} else {
-			throw new \F3\FLOW3\Security\Exception\MissingConfigurationException('The configuration setting TYPO3.FLOW3.security.cryptography.RSAWalletServicePHP.keystorePath is missing. Please specifiy it in your Settings.yaml file. Beware: This file must not be accessbile by the public!', 1305711354);
+			throw new \TYPO3\FLOW3\Security\Exception\MissingConfigurationException('The configuration setting TYPO3.FLOW3.security.cryptography.RSAWalletServicePHP.keystorePath is missing. Please specifiy it in your Settings.yaml file. Beware: This file must not be accessbile by the public!', 1305711354);
 		}
 	}
 
@@ -89,7 +89,7 @@ class RsaWalletServicePhp implements \F3\FLOW3\Security\Cryptography\RsaWalletSe
 		$keyResource = openssl_pkey_new($this->openSSLConfiguration);
 
 		if ($keyResource === FALSE) {
-			throw new \F3\FLOW3\Security\Exception('OpenSSL private key generation failed.', 1254838154);
+			throw new \TYPO3\FLOW3\Security\Exception('OpenSSL private key generation failed.', 1254838154);
 		}
 
 		$modulus = $this->getModulus($keyResource);
@@ -144,12 +144,12 @@ class RsaWalletServicePhp implements \F3\FLOW3\Security\Cryptography\RsaWalletSe
 	 * Returns the public key for the given UUID
 	 *
 	 * @param string $uuid The UUID
-	 * @return \F3\FLOW3\Security\Cryptography\OpenSslRsaKey The public key
-	 * @throws \F3\FLOW3\Security\Exception\InvalidKeyPairIdException If the given UUID identifies no valid key pair
+	 * @return \TYPO3\FLOW3\Security\Cryptography\OpenSslRsaKey The public key
+	 * @throws \TYPO3\FLOW3\Security\Exception\InvalidKeyPairIdException If the given UUID identifies no valid key pair
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getPublicKey($uuid) {
-		if ($uuid === NULL || !isset($this->keys[$uuid])) throw new \F3\FLOW3\Security\Exception\InvalidKeyPairIdException('Invalid keypair UUID given', 1231438860);
+		if ($uuid === NULL || !isset($this->keys[$uuid])) throw new \TYPO3\FLOW3\Security\Exception\InvalidKeyPairIdException('Invalid keypair UUID given', 1231438860);
 
 		return $this->keys[$uuid]['publicKey'];
 	}
@@ -177,16 +177,16 @@ class RsaWalletServicePhp implements \F3\FLOW3\Security\Cryptography\RsaWalletSe
 	 * @param string $cipher cipher text to decrypt
 	 * @param string $uuid The uuid to identify to correct private key
 	 * @return string The decrypted text
-	 * @throws F3\FLOW3\Security\Exception\InvalidKeyPairIdException If the given UUID identifies no valid keypair
-	 * @throws F3\FLOW3\Security\Exception\DecryptionNotAllowedException If the given UUID identifies a keypair for encrypted passwords
+	 * @throws TYPO3\FLOW3\Security\Exception\InvalidKeyPairIdException If the given UUID identifies no valid keypair
+	 * @throws TYPO3\FLOW3\Security\Exception\DecryptionNotAllowedException If the given UUID identifies a keypair for encrypted passwords
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function decrypt($cipher, $uuid) {
-		if ($uuid === NULL || !isset($this->keys[$uuid])) throw new \F3\FLOW3\Security\Exception\InvalidKeyPairIdException('Invalid keypair UUID given', 1231438861);
+		if ($uuid === NULL || !isset($this->keys[$uuid])) throw new \TYPO3\FLOW3\Security\Exception\InvalidKeyPairIdException('Invalid keypair UUID given', 1231438861);
 
 		$keyPair = $this->keys[$uuid];
 
-		if ($keyPair['usedForPasswords']) throw new \F3\FLOW3\Security\Exception\DecryptionNotAllowedException('You are not allowed to decrypt passwords!', 1233655350);
+		if ($keyPair['usedForPasswords']) throw new \TYPO3\FLOW3\Security\Exception\DecryptionNotAllowedException('You are not allowed to decrypt passwords!', 1233655350);
 
 		return $this->decryptWithPrivateKey($cipher, $keyPair['privateKey']);
 	}
@@ -197,11 +197,11 @@ class RsaWalletServicePhp implements \F3\FLOW3\Security\Cryptography\RsaWalletSe
 	 * @param string $plaintext The plaintext to sign
 	 * @param string $uuid The uuid to identify to correct private key
 	 * @return string The signature of the given plaintext
-	 * @throws F3\FLOW3\Security\Exception\InvalidKeyPairIdException If the given UUID identifies no valid keypair
+	 * @throws TYPO3\FLOW3\Security\Exception\InvalidKeyPairIdException If the given UUID identifies no valid keypair
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function sign($plaintext, $uuid) {
-		if ($uuid === NULL || !isset($this->keys[$uuid])) throw new \F3\FLOW3\Security\Exception\InvalidKeyPairIdException('Invalid keypair UUID given', 1299095799);
+		if ($uuid === NULL || !isset($this->keys[$uuid])) throw new \TYPO3\FLOW3\Security\Exception\InvalidKeyPairIdException('Invalid keypair UUID given', 1299095799);
 
 		$signature = '';
 		openssl_sign($plaintext, $signature, $this->keys[$uuid]['privateKey']);
@@ -220,7 +220,7 @@ class RsaWalletServicePhp implements \F3\FLOW3\Security\Cryptography\RsaWalletSe
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function verifySignature($plaintext, $signature, $uuid) {
-		if ($uuid === NULL || !isset($this->keys[$uuid])) throw new \F3\FLOW3\Security\Exception\InvalidKeyPairIdException('Invalid keypair UUID given', 1304959763);
+		if ($uuid === NULL || !isset($this->keys[$uuid])) throw new \TYPO3\FLOW3\Security\Exception\InvalidKeyPairIdException('Invalid keypair UUID given', 1304959763);
 
 		$verifyResult = openssl_verify($plaintext, $signature, $this->getPublicKey($uuid)->getKeyString());
 
@@ -236,11 +236,11 @@ class RsaWalletServicePhp implements \F3\FLOW3\Security\Cryptography\RsaWalletSe
 	 * @param string $salt The salt used in the md5 password hash
 	 * @param string $uuid The uuid to identify to correct private key
 	 * @return boolean TRUE if the password is correct
-	 * @throws F3\FLOW3\Security\Exception\InvalidKeyPairIdException If the given UUID identifies no valid keypair
+	 * @throws TYPO3\FLOW3\Security\Exception\InvalidKeyPairIdException If the given UUID identifies no valid keypair
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function checkRSAEncryptedPassword($encryptedPassword, $passwordHash, $salt, $uuid) {
-		if ($uuid === NULL || !isset($this->keys[$uuid])) throw new \F3\FLOW3\Security\Exception\InvalidKeyPairIdException('Invalid keypair UUID given', 1233655216);
+		if ($uuid === NULL || !isset($this->keys[$uuid])) throw new \TYPO3\FLOW3\Security\Exception\InvalidKeyPairIdException('Invalid keypair UUID given', 1233655216);
 
 		$decryptedPassword = $this->decryptWithPrivateKey($encryptedPassword, $this->keys[$uuid]['privateKey']);
 
@@ -252,11 +252,11 @@ class RsaWalletServicePhp implements \F3\FLOW3\Security\Cryptography\RsaWalletSe
 	 *
 	 * @param string $uuid The UUID
 	 * @return void
-	 * @throws F3\FLOW3\Security\Exception\InvalidKeyPairIdException If the given UUID identifies no valid key pair
+	 * @throws TYPO3\FLOW3\Security\Exception\InvalidKeyPairIdException If the given UUID identifies no valid key pair
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function destroyKeypair($uuid) {
-		if ($uuid === NULL || !isset($this->keys[$uuid])) throw new \F3\FLOW3\Security\Exception\InvalidKeyPairIdException('Invalid keypair UUID given', 1231438863);
+		if ($uuid === NULL || !isset($this->keys[$uuid])) throw new \TYPO3\FLOW3\Security\Exception\InvalidKeyPairIdException('Invalid keypair UUID given', 1231438863);
 
 		unset($this->keys[$uuid]);
 	}
@@ -302,11 +302,11 @@ class RsaWalletServicePhp implements \F3\FLOW3\Security\Cryptography\RsaWalletSe
 	 * Decrypts the given ciphertext with the given private key
 	 *
 	 * @param string $cipher The ciphertext to decrypt
-	 * @param \F3\FLOW3\Security\Cryptography\OpenSslRsaKey $privateKey The private key
+	 * @param \TYPO3\FLOW3\Security\Cryptography\OpenSslRsaKey $privateKey The private key
 	 * @return string The decrypted plaintext
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	private function decryptWithPrivateKey($cipher, \F3\FLOW3\Security\Cryptography\OpenSslRsaKey $privateKey) {
+	private function decryptWithPrivateKey($cipher, \TYPO3\FLOW3\Security\Cryptography\OpenSslRsaKey $privateKey) {
 		$decrypted = '';
 		$key = openssl_pkey_get_private($privateKey->getKeyString());
 		openssl_private_decrypt($cipher, $decrypted, $key);
@@ -317,14 +317,14 @@ class RsaWalletServicePhp implements \F3\FLOW3\Security\Cryptography\RsaWalletSe
 	/**
 	 * Stores the given keypair under the returned UUID.
 	 *
-	 * @param \F3\FLOW3\Security\Cryptography\OpenSslRsaKey $publicKey The public key
-	 * @param \F3\FLOW3\Security\Cryptography\OpenSslRsaKey $privateKey The private key
+	 * @param \TYPO3\FLOW3\Security\Cryptography\OpenSslRsaKey $publicKey The public key
+	 * @param \TYPO3\FLOW3\Security\Cryptography\OpenSslRsaKey $privateKey The private key
 	 * @param boolean $usedForPasswords TRUE if this keypair should be used to encrypt passwords (then decryption won't be allowed!).
 	 * @return string The UUID used for storing
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	private function storeKeyPair($publicKey, $privateKey, $usedForPasswords) {
-		$keyPairUUID = str_replace('-', '_', \F3\FLOW3\Utility\Algorithms::generateUUID());
+		$keyPairUUID = str_replace('-', '_', \TYPO3\FLOW3\Utility\Algorithms::generateUUID());
 
 		$keyPair = array();
 		$keyPair['publicKey'] = $publicKey;
@@ -346,13 +346,13 @@ class RsaWalletServicePhp implements \F3\FLOW3\Security\Cryptography\RsaWalletSe
 		$result = file_put_contents($temporaryKeystorePathAndFilename, serialize($this->keys));
 
 		if ($result === FALSE) {
-			throw new \F3\FLOW3\Security\Exception('The temporary keystore file "' . $temporaryKeystorePathAndFilename . '" could not be written.', 1305812921);
+			throw new \TYPO3\FLOW3\Security\Exception('The temporary keystore file "' . $temporaryKeystorePathAndFilename . '" could not be written.', 1305812921);
 		}
 		$i = 0;
 		while (!rename($temporaryKeystorePathAndFilename, $this->keystorePathAndFilename) && $i < 5) {
 			$i++;
 		}
-		if ($result === FALSE) throw new \F3\FLOW3\Security\Exception('The keystore file "' . $this->keystorePathAndFilename . '" could not be written.', 1305812938);
+		if ($result === FALSE) throw new \TYPO3\FLOW3\Security\Exception('The keystore file "' . $this->keystorePathAndFilename . '" could not be written.', 1305812938);
 	}
 }
 ?>

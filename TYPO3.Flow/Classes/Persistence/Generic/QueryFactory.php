@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Persistence\Generic;
+namespace TYPO3\FLOW3\Persistence\Generic;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -27,18 +27,18 @@ namespace F3\FLOW3\Persistence\Generic;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */
-class QueryFactory implements \F3\FLOW3\Persistence\Generic\QueryFactoryInterface {
+class QueryFactory implements \TYPO3\FLOW3\Persistence\Generic\QueryFactoryInterface {
 
 	/**
 	 * Creates a query object working on the given class name
 	 *
 	 * @param string $className
-	 * @return \F3\FLOW3\Persistence\QueryInterface
+	 * @return \TYPO3\FLOW3\Persistence\QueryInterface
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function create($className) {
-		return new \F3\FLOW3\Persistence\Generic\Query($className);
+		return new \TYPO3\FLOW3\Persistence\Generic\Query($className);
 	}
 
 }

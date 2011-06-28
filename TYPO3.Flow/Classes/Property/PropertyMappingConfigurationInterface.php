@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Property;
+namespace TYPO3\FLOW3\Property;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -46,7 +46,7 @@ interface PropertyMappingConfigurationInterface {
 	 * Returns the sub-configuration for the passed $propertyName. Must ALWAYS return a valid configuration object!
 	 *
 	 * @param string $propertyName
-	 * @return \F3\FLOW3\Property\PropertyMappingConfigurationInterface the property mapping configuration for the given $propertyName.
+	 * @return \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface the property mapping configuration for the given $propertyName.
 	 * @api
 	 */
 	public function getConfigurationFor($propertyName);
@@ -72,7 +72,7 @@ interface PropertyMappingConfigurationInterface {
 	/**
 	 * This method can be used to explicitely force a TypeConverter to be used for this Configuration.
 	 *
-	 * @return \F3\FLOW3\Property\TypeConverterInterface The type converter to be used for this particular PropertyMappingConfiguration, or NULL if the system-wide configured type converter should be used.
+	 * @return \TYPO3\FLOW3\Property\TypeConverterInterface The type converter to be used for this particular PropertyMappingConfiguration, or NULL if the system-wide configured type converter should be used.
 	 * @api
 	 */
 	public function getTypeConverter();

@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Object\Proxy;
+namespace TYPO3\FLOW3\Object\Proxy;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -21,7 +21,7 @@ namespace F3\FLOW3\Object\Proxy;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \F3\FLOW3\Cache\CacheManager;
+use \TYPO3\FLOW3\Cache\CacheManager;
 
 /**
  * Builder for proxy classes which are used to implement Dependency Injection and
@@ -44,17 +44,17 @@ class Compiler {
 	protected $settings = array();
 
 	/**
-	 * @var \F3\FLOW3\Object\CompileTimeObjectManager
+	 * @var \TYPO3\FLOW3\Object\CompileTimeObjectManager
 	 */
 	protected $objectManager;
 
 	/**
-	 * @var \F3\FLOW3\Cache\Frontend\PhpFrontend
+	 * @var \TYPO3\FLOW3\Cache\Frontend\PhpFrontend
 	 */
 	protected $classesCache;
 
 	/**
-	 * @var \F3\FLOW3\Reflection\ReflectionService
+	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
@@ -75,32 +75,32 @@ class Compiler {
 	}
 
 	/**
-	 * @param \F3\FLOW3\Object\CompileTimeObjectManager $objectManager
+	 * @param \TYPO3\FLOW3\Object\CompileTimeObjectManager $objectManager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectObjectManager(\F3\FLOW3\Object\CompileTimeObjectManager $objectManager) {
+	public function injectObjectManager(\TYPO3\FLOW3\Object\CompileTimeObjectManager $objectManager) {
 		$this->objectManager = $objectManager;
 	}
 
 	/**
 	 * Injects the cache for storing the renamed original classes and proxy classes
 	 *
-	 * @param \F3\FLOW3\Cache\Frontend\PhpFrontend $classesCache
+	 * @param \TYPO3\FLOW3\Cache\Frontend\PhpFrontend $classesCache
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @autowiring off
 	 */
-	public function injectClassesCache(\F3\FLOW3\Cache\Frontend\PhpFrontend $classesCache) {
+	public function injectClassesCache(\TYPO3\FLOW3\Cache\Frontend\PhpFrontend $classesCache) {
 		$this->classesCache = $classesCache;
 	}
 
 	/**
-	 * @param \F3\FLOW3\Reflection\ReflectionService $reflectionService
+	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectReflectionService(\F3\FLOW3\Reflection\ReflectionService $reflectionService) {
+	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
 	}
 
@@ -111,11 +111,11 @@ class Compiler {
 	 * this function will create one and register it for later use.
 	 *
 	 * @param string $fullClassName Name of the original class
-	 * @return \F3\FLOW3\Object\Proxy\ProxyClass
+	 * @return \TYPO3\FLOW3\Object\Proxy\ProxyClass
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getProxyClass($fullClassName) {
-		if (interface_exists($fullClassName) || in_array('F3\FLOW3\Tests\BaseTestCase', class_parents($fullClassName))) {
+		if (interface_exists($fullClassName) || in_array('TYPO3\FLOW3\Tests\BaseTestCase', class_parents($fullClassName))) {
 			return FALSE;
 		}
 

@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Command;
+namespace TYPO3\FLOW3\Command;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -30,109 +30,109 @@ namespace F3\FLOW3\Command;
  * @scope singleton
  * @proxy disable
  */
-class CoreCommandController extends \F3\FLOW3\MVC\Controller\CommandController {
+class CoreCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandController {
 
 	/**
-	 * @var \F3\FLOW3\MVC\CLI\RequestBuilder
+	 * @var \TYPO3\FLOW3\MVC\CLI\RequestBuilder
 	 */
 	protected $requestBuilder;
 
 	/**
-	 * @var \F3\FLOW3\MVC\Dispatcher
+	 * @var \TYPO3\FLOW3\MVC\Dispatcher
 	 */
 	protected $dispatcher;
 
 	/**
-	 * @var \F3\FLOW3\SignalSlot\Dispatcher
+	 * @var \TYPO3\FLOW3\SignalSlot\Dispatcher
 	 */
 	protected $signalSlotDispatcher;
 
 	/**
-	 * @var \F3\FLOW3\Core\Bootstrap
+	 * @var \TYPO3\FLOW3\Core\Bootstrap
 	 */
 	protected $bootstrap;
 
 	/**
-	 * @var \F3\FLOW3\Cache\CacheManager
+	 * @var \TYPO3\FLOW3\Cache\CacheManager
 	 */
 	protected $cacheManager;
 
 	/**
-	 * @var \F3\FLOW3\Object\Proxy\Compiler
+	 * @var \TYPO3\FLOW3\Object\Proxy\Compiler
 	 */
 	protected $proxyClassCompiler;
 
 	/**
-	 * @var \F3\FLOW3\AOP\Builder\ProxyClassBuilder
+	 * @var \TYPO3\FLOW3\AOP\Builder\ProxyClassBuilder
 	 */
 	protected $aopProxyClassBuilder;
 
 	/**
-	 * @var \F3\FLOW3\Object\DependencyInjection\ProxyClassBuilder
+	 * @var \TYPO3\FLOW3\Object\DependencyInjection\ProxyClassBuilder
 	 */
 	protected $dependencyInjectionProxyClassBuilder;
 
 	/**
-	 * @param \F3\FLOW3\MVC\CLI\RequestBuilder $requestBuilder
+	 * @param \TYPO3\FLOW3\MVC\CLI\RequestBuilder $requestBuilder
 	 * @return void
 	 */
-	public function injectRequestBuilder(\F3\FLOW3\MVC\CLI\RequestBuilder $requestBuilder) {
+	public function injectRequestBuilder(\TYPO3\FLOW3\MVC\CLI\RequestBuilder $requestBuilder) {
 		$this->requestBuilder = $requestBuilder;
 	}
 
 	/**
-	 * @param \F3\FLOW3\MVC\Dispatcher $dispatcher
+	 * @param \TYPO3\FLOW3\MVC\Dispatcher $dispatcher
 	 * @return void
 	 */
-	public function injectDispatcher(\F3\FLOW3\MVC\Dispatcher $dispatcher) {
+	public function injectDispatcher(\TYPO3\FLOW3\MVC\Dispatcher $dispatcher) {
 		$this->dispatcher = $dispatcher;
 	}
 
 	/**
-	 * @param \F3\FLOW3\SignalSlot\Dispatcher $signalSlotDispatcher
+	 * @param \TYPO3\FLOW3\SignalSlot\Dispatcher $signalSlotDispatcher
 	 * @return void
 	 */
-	public function injectSignalSlotDispatcher(\F3\FLOW3\SignalSlot\Dispatcher $signalSlotDispatcher) {
+	public function injectSignalSlotDispatcher(\TYPO3\FLOW3\SignalSlot\Dispatcher $signalSlotDispatcher) {
 		$this->signalSlotDispatcher = $signalSlotDispatcher;
 	}
 
 	/**
-	 * @param \F3\FLOW3\Core\Bootstrap $bootstrap
+	 * @param \TYPO3\FLOW3\Core\Bootstrap $bootstrap
 	 * @return void
 	 */
-	public function injectBootstrap(\F3\FLOW3\Core\Bootstrap $bootstrap) {
+	public function injectBootstrap(\TYPO3\FLOW3\Core\Bootstrap $bootstrap) {
 		$this->bootstrap = $bootstrap;
 	}
 
 	/**
-	 * @param \F3\FLOW3\Cache\CacheManager $cacheManager
+	 * @param \TYPO3\FLOW3\Cache\CacheManager $cacheManager
 	 * @return void
 	 */
-	public function injectCacheManager(\F3\FLOW3\Cache\CacheManager $cacheManager) {
+	public function injectCacheManager(\TYPO3\FLOW3\Cache\CacheManager $cacheManager) {
 		$this->cacheManager = $cacheManager;
 	}
 
 	/**
-	 * @param \F3\FLOW3\Object\Proxy\Compiler $proxyClassCompiler
+	 * @param \TYPO3\FLOW3\Object\Proxy\Compiler $proxyClassCompiler
 	 * @return void
 	 */
-	public function injectProxyClassCompiler(\F3\FLOW3\Object\Proxy\Compiler $proxyClassCompiler) {
+	public function injectProxyClassCompiler(\TYPO3\FLOW3\Object\Proxy\Compiler $proxyClassCompiler) {
 		$this->proxyClassCompiler = $proxyClassCompiler;
 	}
 
 	/**
-	 * @param \F3\FLOW3\AOP\Builder\ProxyClassBuilder $aopProxyClassBuilder
+	 * @param \TYPO3\FLOW3\AOP\Builder\ProxyClassBuilder $aopProxyClassBuilder
 	 * @return void
 	 */
-	public function injectAopProxyClassBuilder(\F3\FLOW3\AOP\Builder\ProxyClassBuilder $aopProxyClassBuilder) {
+	public function injectAopProxyClassBuilder(\TYPO3\FLOW3\AOP\Builder\ProxyClassBuilder $aopProxyClassBuilder) {
 		$this->aopProxyClassBuilder = $aopProxyClassBuilder;
 	}
 
 	/**
-	 * @param \F3\FLOW3\Object\DependencyInjection\ProxyClassBuilder $dependencyInjectionProxyClassBuilder
+	 * @param \TYPO3\FLOW3\Object\DependencyInjection\ProxyClassBuilder $dependencyInjectionProxyClassBuilder
 	 * @return void
 	 */
-	public function injectDependencyInjectionProxyClassBuilder(\F3\FLOW3\Object\DependencyInjection\ProxyClassBuilder $dependencyInjectionProxyClassBuilder) {
+	public function injectDependencyInjectionProxyClassBuilder(\TYPO3\FLOW3\Object\DependencyInjection\ProxyClassBuilder $dependencyInjectionProxyClassBuilder) {
 		$this->dependencyInjectionProxyClassBuilder = $dependencyInjectionProxyClassBuilder;
 	}
 
@@ -161,7 +161,7 @@ class CoreCommandController extends \F3\FLOW3\MVC\Controller\CommandController {
 
 		$classCount = $this->proxyClassCompiler->compile();
 
-		$objectConfigurationCache->set('allCompiledCodeUpToDate', TRUE, array(\F3\FLOW3\Cache\CacheManager::getClassTag()));
+		$objectConfigurationCache->set('allCompiledCodeUpToDate', TRUE, array(\TYPO3\FLOW3\Cache\CacheManager::getClassTag()));
 
 		$this->emitFinishedCompilationRun($classCount);
 	}
@@ -195,7 +195,7 @@ class CoreCommandController extends \F3\FLOW3\MVC\Controller\CommandController {
 			readline_write_history($historyPathAndFilename);
 
 			$request = $this->requestBuilder->build($commandLine);
-			$response = new \F3\FLOW3\MVC\CLI\Response();
+			$response = new \TYPO3\FLOW3\MVC\CLI\Response();
 
 			if ($request === FALSE || $request->getCommandIdentifier() === FALSE) {
 				echo "Bad command\n";

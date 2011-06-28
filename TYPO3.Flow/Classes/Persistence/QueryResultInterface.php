@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Persistence;
+namespace TYPO3\FLOW3\Persistence;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -32,7 +32,7 @@ interface QueryResultInterface extends \Countable, \Iterator, \ArrayAccess {
 	/**
 	 * Returns a clone of the query object
 	 *
-	 * @return \F3\FLOW3\Persistence\QueryInterface
+	 * @return \TYPO3\FLOW3\Persistence\QueryInterface
 	 * @api
 	 */
 	public function getQuery();

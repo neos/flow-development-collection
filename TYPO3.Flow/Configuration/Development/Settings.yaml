@@ -17,7 +17,7 @@ TYPO3:
 
     error:
       exceptionHandler:
-        className: 'F3\FLOW3\Error\DebugExceptionHandler'
+        className: 'TYPO3\FLOW3\Error\DebugExceptionHandler'
       errorHandler:
         exceptionalErrors: [%E_USER_ERROR%, %E_RECOVERABLE_ERROR%, %E_WARNING%, %E_NOTICE%, %E_USER_WARNING%, %E_USER_NOTICE%, %E_STRICT%]
 
@@ -26,7 +26,7 @@ TYPO3:
 
     persistence:
       doctrine:
-        sqlLogger: 'F3\FLOW3\Persistence\Doctrine\Logging\SqlLogger'
+        sqlLogger: 'TYPO3\FLOW3\Persistence\Doctrine\Logging\SqlLogger'
 
     resource:
       publishing:

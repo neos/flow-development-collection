@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Security\Authentication\Controller;
+namespace TYPO3\FLOW3\Security\Authentication\Controller;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -27,17 +27,17 @@ namespace F3\FLOW3\Security\Authentication\Controller;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  * @scope singleton
  */
-class AuthenticationController extends \F3\FLOW3\MVC\Controller\ActionController {
+class AuthenticationController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 
 	/**
 	 * The authentication manager
-	 * @var \F3\FLOW3\Security\Authentication\AuthenticationManagerInterface
+	 * @var \TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface
 	 * @inject
 	 */
 	protected $authenticationManager;
 
 	/**
-	 * @var \F3\FLOW3\Security\Context
+	 * @var \TYPO3\FLOW3\Security\Context
 	 * @inject
 	 */
 	protected $securityContext;
@@ -55,7 +55,7 @@ class AuthenticationController extends \F3\FLOW3\MVC\Controller\ActionController
 		try {
 			$this->authenticationManager->authenticate();
 			$authenticated = TRUE;
-		} catch (\F3\FLOW3\Security\Exception\AuthenticationRequiredException $exception) {
+		} catch (\TYPO3\FLOW3\Security\Exception\AuthenticationRequiredException $exception) {
 		}
 
 		if ($authenticated) {

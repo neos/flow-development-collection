@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Property\TypeConverter;
+namespace TYPO3\FLOW3\Property\TypeConverter;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -29,7 +29,7 @@ namespace F3\FLOW3\Property\TypeConverter;
  * @scope singleton
  * @todo Implement functionality for converting collection properties.
  */
-class ArrayCollectionConverter extends \F3\FLOW3\Property\TypeConverter\AbstractTypeConverter {
+class ArrayCollectionConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTypeConverter {
 
 	/**
 	 * @var array<string>
@@ -53,11 +53,11 @@ class ArrayCollectionConverter extends \F3\FLOW3\Property\TypeConverter\Abstract
 	 * @param mixed $source
 	 * @param string $targetType
 	 * @param array $convertedChildProperties
-	 * @param \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
+	 * @param \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
 	 * @return \Doctrine\Common\Collections\ArrayCollection
 	 * @api
 	 */
-	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
+	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
 		return new \Doctrine\Common\Collections\ArrayCollection($convertedChildProperties);
 	}
 
@@ -79,12 +79,12 @@ class ArrayCollectionConverter extends \F3\FLOW3\Property\TypeConverter\Abstract
 	 *
 	 * @param string $targetType
 	 * @param string $propertyName
-	 * @param \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
+	 * @param \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
 	 * @return string
 	 * @api
 	 */
-	public function getTypeOfChildProperty($targetType, $propertyName, \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration) {
-		$parsedTargetType = \F3\FLOW3\Utility\TypeHandling::parseType($targetType);
+	public function getTypeOfChildProperty($targetType, $propertyName, \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration) {
+		$parsedTargetType = \TYPO3\FLOW3\Utility\TypeHandling::parseType($targetType);
 		return $parsedTargetType['elementType'];
 	}
 }

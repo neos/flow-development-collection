@@ -27,7 +27,7 @@ namespace TYPO3\TYPO3CR\Tests\Fixtures;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @value
  */
-class AValue implements \F3\FLOW3\AOP\ProxyInterface {
+class AValue implements \TYPO3\FLOW3\AOP\ProxyInterface {
 
 	/**
 	 * @var string
@@ -44,10 +44,10 @@ class AValue implements \F3\FLOW3\AOP\ProxyInterface {
 	/**
 	 * Invokes the joinpoint - calls the target methods.
 	 *
-	 * @param \F3\FLOW3\AOP\JoinPointInterface: The join point
+	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface: The join point
 	 * @return mixed Result of the target (ie. original) method
 	 */
-	public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function FLOW3_AOP_Proxy_invokeJoinPoint(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 
 	}
 

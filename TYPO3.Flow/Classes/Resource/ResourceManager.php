@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Resource;
+namespace TYPO3\FLOW3\Resource;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -31,32 +31,32 @@ namespace F3\FLOW3\Resource;
 class ResourceManager {
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
+	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
-	 * @var \F3\FLOW3\Reflection\ReflectionService
+	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
 	/**
-	 * @var \F3\FLOW3\Resource\Publishing\ResourcePublisher
+	 * @var \TYPO3\FLOW3\Resource\Publishing\ResourcePublisher
 	 */
 	protected $resourcePublisher;
 
 	/**
-	 * @var \F3\FLOW3\Utility\Environment
+	 * @var \TYPO3\FLOW3\Utility\Environment
 	 */
 	protected $environment;
 
 	/**
-	 * @var \F3\FLOW3\Cache\Frontend\StringFrontend
+	 * @var \TYPO3\FLOW3\Cache\Frontend\StringFrontend
 	 */
 	protected $statusCache;
 
 	/**
-	 * @var \F3\FLOW3\Persistence\PersistenceManagerInterface
+	 * @var \TYPO3\FLOW3\Persistence\PersistenceManagerInterface
 	 */
 	protected $persistenceManager;
 
@@ -78,65 +78,65 @@ class ResourceManager {
 	/**
 	 * Injects the object manager
 	 *
-	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
+	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
+	public function injectObjectManager(\TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
 	}
 
 	/**
 	 * Injects the resource publisher
 	 *
-	 * @param \F3\FLOW3\Resource\Publishing\ResourcePublisher $resourcePublisher
+	 * @param \TYPO3\FLOW3\Resource\Publishing\ResourcePublisher $resourcePublisher
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectResourcePublisher(\F3\FLOW3\Resource\Publishing\ResourcePublisher $resourcePublisher) {
+	public function injectResourcePublisher(\TYPO3\FLOW3\Resource\Publishing\ResourcePublisher $resourcePublisher) {
 		$this->resourcePublisher = $resourcePublisher;
 	}
 
 	/**
 	 * Injects the reflection service
 	 *
-	 * @param \F3\FLOW3\Reflection\ReflectionService $reflectionService
+	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectReflectionService(\F3\FLOW3\Reflection\ReflectionService $reflectionService) {
+	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
 	}
 
 	/**
 	 * Injects the environment
 	 *
-	 * @param \F3\FLOW3\Utility\Environment $environment
+	 * @param \TYPO3\FLOW3\Utility\Environment $environment
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectEnvironment(\F3\FLOW3\Utility\Environment $environment) {
+	public function injectEnvironment(\TYPO3\FLOW3\Utility\Environment $environment) {
 		$this->environment = $environment;
 	}
 
 	/**
 	 * Injects the status cache
 	 *
-	 * @param \F3\FLOW3\Cache\Frontend\StringFrontend $statusCache
+	 * @param \TYPO3\FLOW3\Cache\Frontend\StringFrontend $statusCache
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectStatusCache(\F3\FLOW3\Cache\Frontend\StringFrontend $statusCache) {
+	public function injectStatusCache(\TYPO3\FLOW3\Cache\Frontend\StringFrontend $statusCache) {
 		$this->statusCache = $statusCache;
 	}
 
 	/**
 	 * Injects the persistence manager
 	 *
-	 * @param \F3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager
+	 * @param \TYPO3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager
 	 * @return void
 	 */
-	public function injectPersistenceManager(\F3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager) {
+	public function injectPersistenceManager(\TYPO3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager) {
 		$this->persistenceManager = $persistenceManager;
 	}
 
@@ -152,28 +152,28 @@ class ResourceManager {
 	}
 
 	/**
-	 * Check for implementations of F3\FLOW3\Resource\Streams\StreamWrapperInterface and
+	 * Check for implementations of TYPO3\FLOW3\Resource\Streams\StreamWrapperInterface and
 	 * register them.
 	 *
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function initialize() {
-		\F3\FLOW3\Resource\Streams\StreamWrapperAdapter::injectObjectManager($this->objectManager);
-		$streamWrapperClassNames = $this->reflectionService->getAllImplementationClassNamesForInterface('F3\FLOW3\Resource\Streams\StreamWrapperInterface');
+		\TYPO3\FLOW3\Resource\Streams\StreamWrapperAdapter::injectObjectManager($this->objectManager);
+		$streamWrapperClassNames = $this->reflectionService->getAllImplementationClassNamesForInterface('TYPO3\FLOW3\Resource\Streams\StreamWrapperInterface');
 		foreach ($streamWrapperClassNames as $streamWrapperClassName) {
 			$scheme = $streamWrapperClassName::getScheme();
 			if (in_array($scheme, stream_get_wrappers())) {
 				stream_wrapper_unregister($scheme);
 			}
-			stream_wrapper_register($scheme, '\F3\FLOW3\Resource\Streams\StreamWrapperAdapter');
-			\F3\FLOW3\Resource\Streams\StreamWrapperAdapter::registerStreamWrapper($scheme, $streamWrapperClassName);
+			stream_wrapper_register($scheme, '\TYPO3\FLOW3\Resource\Streams\StreamWrapperAdapter');
+			\TYPO3\FLOW3\Resource\Streams\StreamWrapperAdapter::registerStreamWrapper($scheme, $streamWrapperClassName);
 		}
 
 			// For now this URI is hardcoded, but might be manageable in the future
 			// if additional persistent resources storages are supported.
 		$this->persistentResourcesStorageBaseUri = FLOW3_PATH_DATA . 'Persistent/Resources/';
-		\F3\FLOW3\Utility\Files::createDirectoryRecursively($this->persistentResourcesStorageBaseUri);
+		\TYPO3\FLOW3\Utility\Files::createDirectoryRecursively($this->persistentResourcesStorageBaseUri);
 
 		$this->importedResources = new \SplObjectStorage();
   	}
@@ -206,7 +206,7 @@ class ResourceManager {
 			return FALSE;
 		}
 		$this->fixFilePermissions($finalTargetPathAndFilename);
-		$resource = new \F3\FLOW3\Resource\Resource();
+		$resource = new \TYPO3\FLOW3\Resource\Resource();
 		$resource->setFilename($pathInfo['basename']);
 
 		$resourcePointer = $this->getResourcePointerForHash($hash);
@@ -261,7 +261,7 @@ class ResourceManager {
 			return FALSE;
 		}
 		$this->fixFilePermissions($finalTargetPathAndFilename);
-		$resource = new \F3\FLOW3\Resource\Resource();
+		$resource = new \TYPO3\FLOW3\Resource\Resource();
 		$resource->setFilename($pathInfo['basename']);
 
 		$resourcePointer = $this->getResourcePointerForHash($hash);
@@ -289,12 +289,12 @@ class ResourceManager {
 	 * is created. This is a workaround for missing ValueObject support in Doctrine.
 	 *
 	 * @param string $hash
-	 * @return \F3\FLOW3\Resource\ResourcePointer
+	 * @return \TYPO3\FLOW3\Resource\ResourcePointer
 	 */
 	public function getResourcePointerForHash($hash) {
-		$resourcePointer = $this->persistenceManager->getObjectByIdentifier($hash, 'F3\FLOW3\Resource\ResourcePointer');
+		$resourcePointer = $this->persistenceManager->getObjectByIdentifier($hash, 'TYPO3\FLOW3\Resource\ResourcePointer');
 		if (!$resourcePointer) {
-			$resourcePointer = new \F3\FLOW3\Resource\ResourcePointer($hash);
+			$resourcePointer = new \TYPO3\FLOW3\Resource\ResourcePointer($hash);
 			$this->persistenceManager->add($resourcePointer);
 		}
 
@@ -304,13 +304,13 @@ class ResourceManager {
 	/**
 	 * Deletes the file represented by the given resource instance.
 	 *
-	 * @param \F3\FLOW3\Resource\Resource $resource
+	 * @param \TYPO3\FLOW3\Resource\Resource $resource
 	 * @return boolean
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function deleteResource($resource) {
 			// instanceof instead of type hinting so it can be used as slot
-		if ($resource instanceof \F3\FLOW3\Resource\Resource) {
+		if ($resource instanceof \TYPO3\FLOW3\Resource\Resource) {
 			$this->resourcePublisher->unpublishPersistentResource($resource);
 			if (is_file($this->persistentResourcesStorageBaseUri . $resource->getResourcePointer()->getHash())) {
 				unlink($this->persistentResourcesStorageBaseUri . $resource->getResourcePointer()->getHash());
@@ -347,7 +347,7 @@ class ResourceManager {
 			$this->resourcePublisher->publishStaticResources($package->getResourcesPath() . 'Public/', 'Packages/' . $packageKey . '/');
 		}
 		if (!$this->statusCache->has('packageResourcesPublished')) {
-			$this->statusCache->set('packageResourcesPublished', 'y', array(\F3\FLOW3\Cache\Frontend\FrontendInterface::TAG_PACKAGE));
+			$this->statusCache->set('packageResourcesPublished', 'y', array(\TYPO3\FLOW3\Cache\Frontend\FrontendInterface::TAG_PACKAGE));
 		}
 	}
 }

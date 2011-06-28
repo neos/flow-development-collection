@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\I18n\Xliff;
+namespace TYPO3\FLOW3\Tests\Unit\I18n\Xliff;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,7 +26,7 @@ namespace F3\FLOW3\Tests\Unit\I18n\Xliff;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class XliffParserTest extends \F3\FLOW3\Tests\UnitTestCase {
+class XliffParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
@@ -36,7 +36,7 @@ class XliffParserTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockFilenamePath = __DIR__ . '/../Fixtures/MockXliffData.xlf';
 		$mockParsedData = require(__DIR__ . '/../Fixtures/MockParsedXliffData.php');
 
-		$parser = new \F3\FLOW3\I18n\Xliff\XliffParser();
+		$parser = new \TYPO3\FLOW3\I18n\Xliff\XliffParser();
 		$result = $parser->getParsedData($mockFilenamePath);
 		$this->assertEquals($mockParsedData, $result);
 	}

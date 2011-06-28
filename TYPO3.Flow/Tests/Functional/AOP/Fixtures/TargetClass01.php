@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Functional\AOP\Fixtures;
+namespace TYPO3\FLOW3\Tests\Functional\AOP\Fixtures;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -29,7 +29,7 @@ namespace F3\FLOW3\Tests\Functional\AOP\Fixtures;
 class TargetClass01 implements SayHelloInterface {
 
 	/**
-	 * @var \F3\FLOW3\Tests\Functional\AOP\Fixtures\Name
+	 * @var \TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\Name
 	 */
 	protected $currentName;
 
@@ -84,10 +84,10 @@ class TargetClass01 implements SayHelloInterface {
 	}
 
 	/**
-	 * @param \F3\FLOW3\Tests\Functional\AOP\Fixtures\Name $name
+	 * @param \TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\Name $name
 	 * @return string
 	 */
-	public function greetObject(\F3\FLOW3\Tests\Functional\AOP\Fixtures\Name $name) {
+	public function greetObject(\TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\Name $name) {
 		return 'Hello, ' . $name;
 	}
 
@@ -113,10 +113,10 @@ class TargetClass01 implements SayHelloInterface {
 
 	/**
 	 *
-	 * @param \F3\FLOW3\Tests\Functional\AOP\Fixtures\Name $name
+	 * @param \TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\Name $name
 	 * @return void
 	 */
-	public function setCurrentName(\F3\FLOW3\Tests\Functional\AOP\Fixtures\Name $name = NULL) {
+	public function setCurrentName(\TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\Name $name = NULL) {
 		$this->currentName = $name;
 	}
 }

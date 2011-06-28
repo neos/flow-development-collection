@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\Security\RequestPattern;
+namespace TYPO3\FLOW3\Tests\Unit\Security\RequestPattern;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,18 +26,18 @@ namespace F3\FLOW3\Tests\Unit\Security\RequestPattern;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class UriTest extends \F3\FLOW3\Tests\UnitTestCase {
+class UriTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
 	 * @category unit
-	 * @expectedException F3\FLOW3\Security\Exception\RequestTypeNotSupportedException
+	 * @expectedException TYPO3\FLOW3\Security\Exception\RequestTypeNotSupportedException
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function anExceptionIsThrownIfTheGivenRequestObjectIsNotSupported() {
-		$cliRequest = $this->getMock('F3\FLOW3\MVC\CLI\Request');
+		$cliRequest = $this->getMock('TYPO3\FLOW3\MVC\CLI\Request');
 
-		$requestPattern = new \F3\FLOW3\Security\RequestPattern\Uri();
+		$requestPattern = new \TYPO3\FLOW3\Security\RequestPattern\Uri();
 		$requestPattern->matchRequest($cliRequest);
 	}
 
@@ -47,9 +47,9 @@ class UriTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function canMatchReturnsTrueForASupportedRequestType() {
-		$webRequest = $this->getMock('F3\FLOW3\MVC\Web\Request');
+		$webRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\Request');
 
-		$requestPattern = new \F3\FLOW3\Security\RequestPattern\Uri();
+		$requestPattern = new \TYPO3\FLOW3\Security\RequestPattern\Uri();
 		$this->assertTrue($requestPattern->canMatch($webRequest));
 	}
 
@@ -59,9 +59,9 @@ class UriTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function canMatchReturnsFalseForAnUnsupportedRequestType() {
-		$cliRequest = $this->getMock('F3\FLOW3\MVC\CLI\Request');
+		$cliRequest = $this->getMock('TYPO3\FLOW3\MVC\CLI\Request');
 
-		$requestPattern = new \F3\FLOW3\Security\RequestPattern\Uri();
+		$requestPattern = new \TYPO3\FLOW3\Security\RequestPattern\Uri();
 		$this->assertFalse($requestPattern->canMatch($cliRequest));
 	}
 
@@ -71,13 +71,13 @@ class UriTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function requestMatchingBasicallyWorks() {
-		$request = $this->getMock('F3\FLOW3\MVC\Web\Request');
-		$uri = $this->getMock('F3\FLOW3\Property\DataType\Uri', array(), array(), '', FALSE);
+		$request = $this->getMock('TYPO3\FLOW3\MVC\Web\Request');
+		$uri = $this->getMock('TYPO3\FLOW3\Property\DataType\Uri', array(), array(), '', FALSE);
 
 		$request->expects($this->once())->method('getRequestUri')->will($this->returnValue($uri));
 		$uri->expects($this->once())->method('getPath')->will($this->returnValue('/some/nice/path/to/index.php'));
 
-		$requestPattern = new \F3\FLOW3\Security\RequestPattern\Uri();
+		$requestPattern = new \TYPO3\FLOW3\Security\RequestPattern\Uri();
 		$requestPattern->setPattern('/some/nice/.*');
 
 		$this->assertTrue($requestPattern->matchRequest($request));

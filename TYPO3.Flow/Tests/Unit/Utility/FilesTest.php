@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\Utility;
+namespace TYPO3\FLOW3\Tests\Unit\Utility;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,7 +26,7 @@ namespace F3\FLOW3\Tests\Unit\Utility;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class FilesTest extends \F3\FLOW3\Tests\UnitTestCase {
+class FilesTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
@@ -34,7 +34,7 @@ class FilesTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function getUnixStylePathWorksForPathWithoutSlashes() {
 		$path = 'foobar';
-		$this->assertEquals('foobar', \F3\FLOW3\Utility\Files::getUnixStylePath($path));
+		$this->assertEquals('foobar', \TYPO3\FLOW3\Utility\Files::getUnixStylePath($path));
 	}
 
 	/**
@@ -43,7 +43,7 @@ class FilesTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function getUnixStylePathWorksForPathWithForwardSlashes() {
 		$path = 'foo/bar/test/';
-		$this->assertEquals('foo/bar/test/', \F3\FLOW3\Utility\Files::getUnixStylePath($path));
+		$this->assertEquals('foo/bar/test/', \TYPO3\FLOW3\Utility\Files::getUnixStylePath($path));
 	}
 
 	/**
@@ -52,7 +52,7 @@ class FilesTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function getUnixStylePathWorksForPathWithBackwardSlashes() {
 		$path = 'foo\\bar\\test\\';
-		$this->assertEquals('foo/bar/test/', \F3\FLOW3\Utility\Files::getUnixStylePath($path));
+		$this->assertEquals('foo/bar/test/', \TYPO3\FLOW3\Utility\Files::getUnixStylePath($path));
 	}
 
 	/**
@@ -61,7 +61,7 @@ class FilesTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function getUnixStylePathWorksForPathWithForwardAndBackwardSlashes() {
 		$path = 'foo/bar\\test/';
-		$this->assertEquals('foo/bar/test/', \F3\FLOW3\Utility\Files::getUnixStylePath($path));
+		$this->assertEquals('foo/bar/test/', \TYPO3\FLOW3\Utility\Files::getUnixStylePath($path));
 	}
 
 	/**
@@ -69,7 +69,7 @@ class FilesTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function concatenatePathsWorksForEmptyPath() {
-		$this->assertEquals('', \F3\FLOW3\Utility\Files::concatenatePaths(array()));
+		$this->assertEquals('', \TYPO3\FLOW3\Utility\Files::concatenatePaths(array()));
 	}
 
 	/**
@@ -77,7 +77,7 @@ class FilesTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function concatenatePathsWorksForOnePath() {
-		$this->assertEquals('foo', \F3\FLOW3\Utility\Files::concatenatePaths(array('foo')));
+		$this->assertEquals('foo', \TYPO3\FLOW3\Utility\Files::concatenatePaths(array('foo')));
 	}
 
 	/**
@@ -85,7 +85,7 @@ class FilesTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function concatenatePathsWorksForTwoPath() {
-		$this->assertEquals('foo/bar', \F3\FLOW3\Utility\Files::concatenatePaths(array('foo', 'bar')));
+		$this->assertEquals('foo/bar', \TYPO3\FLOW3\Utility\Files::concatenatePaths(array('foo', 'bar')));
 	}
 
 	/**
@@ -93,7 +93,7 @@ class FilesTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function concatenatePathsWorksForPathsWithLeadingSlash() {
-		$this->assertEquals('/foo/bar', \F3\FLOW3\Utility\Files::concatenatePaths(array('/foo', 'bar')));
+		$this->assertEquals('/foo/bar', \TYPO3\FLOW3\Utility\Files::concatenatePaths(array('/foo', 'bar')));
 	}
 
 	/**
@@ -101,7 +101,7 @@ class FilesTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function concatenatePathsWorksForPathsWithTrailingSlash() {
-		$this->assertEquals('foo/bar', \F3\FLOW3\Utility\Files::concatenatePaths(array('foo', 'bar/')));
+		$this->assertEquals('foo/bar', \TYPO3\FLOW3\Utility\Files::concatenatePaths(array('foo', 'bar/')));
 	}
 
 	/**
@@ -109,7 +109,7 @@ class FilesTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function concatenatePathsWorksForPathsWithLeadingAndTrailingSlash() {
-		$this->assertEquals('/foo/bar/bar/foo', \F3\FLOW3\Utility\Files::concatenatePaths(array('/foo/bar/', '/bar/foo/')));
+		$this->assertEquals('/foo/bar/bar/foo', \TYPO3\FLOW3\Utility\Files::concatenatePaths(array('/foo/bar/', '/bar/foo/')));
 	}
 
 	/**
@@ -117,7 +117,7 @@ class FilesTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function concatenatePathsWorksForBrokenPaths() {
-		$this->assertEquals('/foo/bar/bar', \F3\FLOW3\Utility\Files::concatenatePaths(array('\\foo/bar\\', '\\bar')));
+		$this->assertEquals('/foo/bar/bar', \TYPO3\FLOW3\Utility\Files::concatenatePaths(array('\\foo/bar\\', '\\bar')));
 	}
 
 	/**
@@ -125,7 +125,7 @@ class FilesTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function concatenatePathsWorksForEmptyPathArrayElements() {
-		$this->assertEquals('foo/bar', \F3\FLOW3\Utility\Files::concatenatePaths(array('foo', '', 'bar')));
+		$this->assertEquals('foo/bar', \TYPO3\FLOW3\Utility\Files::concatenatePaths(array('foo', '', 'bar')));
 	}
 
 	/**
@@ -134,7 +134,7 @@ class FilesTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function getUnixStylePathWorksForPathWithDriveLetterAndBackwardSlashes() {
 		$path = 'c:\\foo\\bar\\test\\';
-		$this->assertEquals('c:/foo/bar/test/', \F3\FLOW3\Utility\Files::getUnixStylePath($path));
+		$this->assertEquals('c:/foo/bar/test/', \TYPO3\FLOW3\Utility\Files::getUnixStylePath($path));
 	}
 
 	/**
@@ -154,7 +154,7 @@ class FilesTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getUnixStylePathWorksForPathWithProtocol($path, $expected) {
-		$this->assertEquals($expected, \F3\FLOW3\Utility\Files::getUnixStylePath($path));
+		$this->assertEquals($expected, \TYPO3\FLOW3\Utility\Files::getUnixStylePath($path));
 	}
 
 	/**
@@ -162,7 +162,7 @@ class FilesTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function is_linkReturnsFalseForNonExistingFiles() {
-		$this->assertFalse(\F3\FLOW3\Utility\Files::is_link('NonExistingPath'));
+		$this->assertFalse(\TYPO3\FLOW3\Utility\Files::is_link('NonExistingPath'));
 	}
 
 	/**
@@ -170,9 +170,9 @@ class FilesTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function is_linkReturnsFalseForExistingFileThatIsNoSymlink() {
-		$targetPathAndFilename = \F3\FLOW3\Utility\Files::concatenatePaths(array(sys_get_temp_dir(), 'FLOW3FilesTestFile'));
+		$targetPathAndFilename = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array(sys_get_temp_dir(), 'FLOW3FilesTestFile'));
 		file_put_contents($targetPathAndFilename, 'some data');
-		$this->assertFalse(\F3\FLOW3\Utility\Files::is_link($targetPathAndFilename));
+		$this->assertFalse(\TYPO3\FLOW3\Utility\Files::is_link($targetPathAndFilename));
 	}
 
 	/**
@@ -180,14 +180,14 @@ class FilesTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function is_linkReturnsTrueForExistingSymlink() {
-		$targetPathAndFilename = \F3\FLOW3\Utility\Files::concatenatePaths(array(sys_get_temp_dir(), 'FLOW3FilesTestFile'));
+		$targetPathAndFilename = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array(sys_get_temp_dir(), 'FLOW3FilesTestFile'));
 		file_put_contents($targetPathAndFilename, 'some data');
-		$linkPathAndFilename = \F3\FLOW3\Utility\Files::concatenatePaths(array(sys_get_temp_dir(), 'FLOW3FilesTestLink'));
+		$linkPathAndFilename = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array(sys_get_temp_dir(), 'FLOW3FilesTestLink'));
 		if (file_exists($linkPathAndFilename)) {
 			unlink($linkPathAndFilename);
 		}
 		symlink($targetPathAndFilename, $linkPathAndFilename);
-		$this->assertTrue(\F3\FLOW3\Utility\Files::is_link($linkPathAndFilename));
+		$this->assertTrue(\TYPO3\FLOW3\Utility\Files::is_link($linkPathAndFilename));
 	}
 }
 ?>

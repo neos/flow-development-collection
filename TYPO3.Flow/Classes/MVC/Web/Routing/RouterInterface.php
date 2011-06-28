@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\MVC\Web\Routing;
+namespace TYPO3\FLOW3\MVC\Web\Routing;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -33,10 +33,10 @@ interface RouterInterface {
 	 * When a corresponding route is found, package, controller, action and possible parameters
 	 * are set on the $request object
 	 *
-	 * @param \F3\FLOW3\MVC\Web\Request $request
+	 * @param \TYPO3\FLOW3\MVC\Web\Request $request
 	 * @return boolean
 	 */
-	public function route(\F3\FLOW3\MVC\Web\Request $request);
+	public function route(\TYPO3\FLOW3\MVC\Web\Request $request);
 
 	/**
 	 * Walks through all configured routes and calls their respective resolves-method.

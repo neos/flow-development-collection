@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3;
+namespace TYPO3\FLOW3;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *

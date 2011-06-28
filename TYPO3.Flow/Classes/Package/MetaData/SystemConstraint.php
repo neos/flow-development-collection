@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Package\MetaData;
+namespace TYPO3\FLOW3\Package\MetaData;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -27,7 +27,7 @@ namespace F3\FLOW3\Package\MetaData;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
-class SystemConstraint extends \F3\FLOW3\Package\MetaData\AbstractConstraint {
+class SystemConstraint extends \TYPO3\FLOW3\Package\MetaData\AbstractConstraint {
 
 	/**
 	 * The type for a system scope constraint (e.g. "Memory")
@@ -62,11 +62,11 @@ class SystemConstraint extends \F3\FLOW3\Package\MetaData\AbstractConstraint {
 
 	/**
 	 * @return string The constraint scope
-	 * @see \F3\FLOW3\Package\MetaData\Constraint\getConstraintScope()
+	 * @see \TYPO3\FLOW3\Package\MetaData\Constraint\getConstraintScope()
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function getConstraintScope() {
-		return \F3\FLOW3\Package\MetaDataInterface::CONSTRAINT_SCOPE_SYSTEM;
+		return \TYPO3\FLOW3\Package\MetaDataInterface::CONSTRAINT_SCOPE_SYSTEM;
 	}
 }
 ?>

@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\Security\Authentication\Token;
+namespace TYPO3\FLOW3\Tests\Unit\Security\Authentication\Token;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,7 +26,7 @@ namespace F3\FLOW3\Tests\Unit\Security\Authentication\Token;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class UsernamePasswordTest extends \F3\FLOW3\Tests\UnitTestCase {
+class UsernamePasswordTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
@@ -38,11 +38,11 @@ class UsernamePasswordTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$postArguments['TYPO3']['FLOW3']['Security']['Authentication']['Token']['UsernamePassword']['username'] = 'johndoe';
 		$postArguments['TYPO3']['FLOW3']['Security']['Authentication']['Token']['UsernamePassword']['password'] = 'verysecurepassword';
 
-		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
+		$mockEnvironment = $this->getMock('TYPO3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
 		$mockEnvironment->expects($this->once())->method('getRawPostArguments')->will($this->returnValue($postArguments));
-		$mockRequest = $this->getMock('F3\FLOW3\MVC\Request');
+		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\Request');
 
-		$token = $this->getAccessibleMock('F3\FLOW3\Security\Authentication\Token\UsernamePassword', array('dummy'));
+		$token = $this->getAccessibleMock('TYPO3\FLOW3\Security\Authentication\Token\UsernamePassword', array('dummy'));
 		$token->_set('environment', $mockEnvironment);
 
 		$token->updateCredentials($mockRequest);
@@ -57,8 +57,8 @@ class UsernamePasswordTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function theAuthenticationStatusIsCorrectlyInitialized() {
-		$token = new \F3\FLOW3\Security\Authentication\Token\UsernamePassword();
-		$this->assertSame(\F3\FLOW3\Security\Authentication\TokenInterface::NO_CREDENTIALS_GIVEN, $token->getAuthenticationStatus());
+		$token = new \TYPO3\FLOW3\Security\Authentication\Token\UsernamePassword();
+		$this->assertSame(\TYPO3\FLOW3\Security\Authentication\TokenInterface::NO_CREDENTIALS_GIVEN, $token->getAuthenticationStatus());
 	}
 
 	/**
@@ -67,14 +67,14 @@ class UsernamePasswordTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function isAuthenticatedReturnsTheCorrectValueForAGivenStatus() {
-		$token1 = new \F3\FLOW3\Security\Authentication\Token\UsernamePassword();
-		$token1->setAuthenticationStatus(\F3\FLOW3\Security\Authentication\TokenInterface::NO_CREDENTIALS_GIVEN);
-		$token2 = new \F3\FLOW3\Security\Authentication\Token\UsernamePassword();
-		$token2->setAuthenticationStatus(\F3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_NEEDED);
-		$token3 = new \F3\FLOW3\Security\Authentication\Token\UsernamePassword();
-		$token3->setAuthenticationStatus(\F3\FLOW3\Security\Authentication\TokenInterface::WRONG_CREDENTIALS);
-		$token4 = new \F3\FLOW3\Security\Authentication\Token\UsernamePassword();
-		$token4->setAuthenticationStatus(\F3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL);
+		$token1 = new \TYPO3\FLOW3\Security\Authentication\Token\UsernamePassword();
+		$token1->setAuthenticationStatus(\TYPO3\FLOW3\Security\Authentication\TokenInterface::NO_CREDENTIALS_GIVEN);
+		$token2 = new \TYPO3\FLOW3\Security\Authentication\Token\UsernamePassword();
+		$token2->setAuthenticationStatus(\TYPO3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_NEEDED);
+		$token3 = new \TYPO3\FLOW3\Security\Authentication\Token\UsernamePassword();
+		$token3->setAuthenticationStatus(\TYPO3\FLOW3\Security\Authentication\TokenInterface::WRONG_CREDENTIALS);
+		$token4 = new \TYPO3\FLOW3\Security\Authentication\Token\UsernamePassword();
+		$token4->setAuthenticationStatus(\TYPO3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL);
 
 		$this->assertFalse($token1->isAuthenticated());
 		$this->assertFalse($token2->isAuthenticated());
@@ -92,26 +92,26 @@ class UsernamePasswordTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$postArguments['TYPO3']['FLOW3']['Security']['Authentication']['Token']['UsernamePassword']['username'] = 'TYPO3.FLOW3';
 		$postArguments['TYPO3']['FLOW3']['Security']['Authentication']['Token']['UsernamePassword']['password'] = 'verysecurepassword';
 
-		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
+		$mockEnvironment = $this->getMock('TYPO3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
 		$mockEnvironment->expects($this->once())->method('getRawPostArguments')->will($this->returnValue($postArguments));
-		$mockRequest = $this->getMock('F3\FLOW3\MVC\Request');
+		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\Request');
 
-		$token = $this->getAccessibleMock('F3\FLOW3\Security\Authentication\Token\UsernamePassword', array('dummy'));
+		$token = $this->getAccessibleMock('TYPO3\FLOW3\Security\Authentication\Token\UsernamePassword', array('dummy'));
 		$token->_set('environment', $mockEnvironment);
 
 		$token->updateCredentials($mockRequest);
 
-		$this->assertSame(\F3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_NEEDED, $token->getAuthenticationStatus());
+		$this->assertSame(\TYPO3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_NEEDED, $token->getAuthenticationStatus());
 	}
 
 	/**
 	 * @test
 	 * @category unit
-	 * @expectedException \F3\FLOW3\Security\Exception\InvalidAuthenticationStatusException
+	 * @expectedException \TYPO3\FLOW3\Security\Exception\InvalidAuthenticationStatusException
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function setAuthenticationStatusThrowsAnExceptionForAnInvalidStatus() {
-		$token = new \F3\FLOW3\Security\Authentication\Token\UsernamePassword();
+		$token = new \TYPO3\FLOW3\Security\Authentication\Token\UsernamePassword();
 		$token->setAuthenticationStatus(-1);
 	}
 
@@ -121,12 +121,12 @@ class UsernamePasswordTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getRolesReturnsTheRolesOfTheAuthenticatedAccount() {
-		$token = new \F3\FLOW3\Security\Authentication\Token\UsernamePassword();
-		$token->setAuthenticationStatus(\F3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL);
+		$token = new \TYPO3\FLOW3\Security\Authentication\Token\UsernamePassword();
+		$token->setAuthenticationStatus(\TYPO3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL);
 
 		$roles = array('role1', 'role2');
 
-		$mockAccount = $this->getMock('F3\FLOW3\Security\Account', array(), array(), '', FALSE);
+		$mockAccount = $this->getMock('TYPO3\FLOW3\Security\Account', array(), array(), '', FALSE);
 		$mockAccount->expects($this->once())->method('getRoles')->will($this->returnValue($roles));
 
 		$token->setAccount($mockAccount);
@@ -140,9 +140,9 @@ class UsernamePasswordTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getRolesReturnsAnEmptyArrayIfTheTokenIsNotAuthenticated() {
-		$token = new \F3\FLOW3\Security\Authentication\Token\UsernamePassword();
+		$token = new \TYPO3\FLOW3\Security\Authentication\Token\UsernamePassword();
 
-		$mockAccount = $this->getMock('F3\FLOW3\Security\Account', array(), array(), '', FALSE);
+		$mockAccount = $this->getMock('TYPO3\FLOW3\Security\Account', array(), array(), '', FALSE);
 		$mockAccount->expects($this->never())->method('getRoles');
 
 		$token->setAccount($mockAccount);
@@ -156,8 +156,8 @@ class UsernamePasswordTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getRolesReturnsAnEmptyArrayIfNoAccountHasBeenSet() {
-		$token = new \F3\FLOW3\Security\Authentication\Token\UsernamePassword();
-		$token->setAuthenticationStatus(\F3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL);
+		$token = new \TYPO3\FLOW3\Security\Authentication\Token\UsernamePassword();
+		$token->setAuthenticationStatus(\TYPO3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL);
 
 		$this->assertEquals(array(), $token->getRoles(), 'Roles have been returned, although no account has been set.');
 	}

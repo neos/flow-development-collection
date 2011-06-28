@@ -566,11 +566,11 @@ class StandardController extends \F3\FLOW3\MVC\Controller\ActionController {
  *
  * @param string $emailAddress Some email address
  * @param string $streetName Some street name
- * @param F3\Foo\Model\Customer $customer A customer object
+ * @param \TYPO3\Foo\Model\Customer $customer A customer object
  * @return void
  */
-public function exampleAction($emailAddress, $streetName, \F3\Foo\Model\Customer $customer) {
-   
+public function exampleAction($emailAddress, $streetName, \TYPO3\Foo\Model\Customer $customer) {
+
 }
 </programlisting>
         </example>
@@ -609,14 +609,14 @@ public function exampleAction($emailAddress, $streetName, \F3\Foo\Model\Customer
  *
  * @param string $emailAddress Some email address
  * @param string $streetName Some street name
- * @param F3\Foo\Model\Customer $customer A customer object
+ * @param \TYPO3\Foo\Model\Customer $customer A customer object
  * @return void
  * @validate $emailAddress EmailAddress
  * @validate $streeName Alphanumeric, StringLength(minimum = 5, maximum = 100)
  * @validate $customer F3\Foo\Validator\PlatinumCustomerValidator
  */
-public function exampleAction($emailAddress, $streetName, \F3\Foo\Model\Customer $customer) {
-   
+public function exampleAction($emailAddress, $streetName, \TYPO3\Foo\Model\Customer $customer) {
+
 }
 </programlisting>
         </example>
@@ -630,12 +630,12 @@ public function exampleAction($emailAddress, $streetName, \F3\Foo\Model\Customer
         <programlisting language="php">/**
  * An example edit action method
  *
- * @param F3\Foo\Model\Customer $customer A customer object
+ * @param \TYPO3\Foo\Model\Customer $customer A customer object
  * @return void
  * @dontvalidate $customer
  */
-public function editAction(\F3\Foo\Model\Customer $customer) {
-   
+public function editAction(\TYPO3\Foo\Model\Customer $customer) {
+
 }</programlisting>
       </section>
 

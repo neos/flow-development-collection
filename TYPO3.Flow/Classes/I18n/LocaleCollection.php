@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\I18n;
+namespace TYPO3\FLOW3\I18n;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -38,7 +38,7 @@ class LocaleCollection {
 	 *
 	 * The values are Locale objects, and the keys are these locale's tags.
 	 *
-	 * @var array<\F3\FLOW3\I18n\Locale>
+	 * @var array<\TYPO3\FLOW3\I18n\Locale>
 	 */
 	protected $localeCollection = array();
 
@@ -49,18 +49,18 @@ class LocaleCollection {
 	 * the value which is a parent Locale object. If it's not set, there is no
 	 * parent for given locale, or no parent was searched before.
 	 *
-	 * @var array<\F3\FLOW3\I18n\Locale>
+	 * @var array<\TYPO3\FLOW3\I18n\Locale>
 	 */
 	protected $localeParentCollection = array();
 
 	/**
 	 * Adds a locale to the collection.
 	 *
-	 * @param \F3\FLOW3\I18n\Locale $locale The Locale to be inserted
+	 * @param \TYPO3\FLOW3\I18n\Locale $locale The Locale to be inserted
 	 * @return boolean FALSE when same locale was already inserted before
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function addLocale(\F3\FLOW3\I18n\Locale $locale) {
+	public function addLocale(\TYPO3\FLOW3\I18n\Locale $locale) {
 		if (isset($this->localeCollection[(string)$locale])) {
 			return FALSE;
 		}
@@ -86,11 +86,11 @@ class LocaleCollection {
 	 * Note: to find a best-matching locale to one which doesn't exist in the
 	 * system, please use findBestMatchingLocale() method of this class.
 	 *
-	 * @param \F3\FLOW3\I18n\Locale $locale The Locale to search parent for
-	 * @return mixed Existing \F3\FLOW3\I18n\Locale instance or NULL on failure
+	 * @param \TYPO3\FLOW3\I18n\Locale $locale The Locale to search parent for
+	 * @return mixed Existing \TYPO3\FLOW3\I18n\Locale instance or NULL on failure
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function getParentLocaleOf(\F3\FLOW3\I18n\Locale $locale) {
+	public function getParentLocaleOf(\TYPO3\FLOW3\I18n\Locale $locale) {
 		$localeIdentifier = (string)$locale;
 
 		if (!isset($this->localeCollection[$localeIdentifier])) {
@@ -118,11 +118,11 @@ class LocaleCollection {
 	 * Returns Locale object which represents one of locales installed and which
 	 * is most similar to the "template" Locale object given as parameter.
 	 *
-	 * @param \F3\FLOW3\I18n\Locale $locale The "template" locale to be matched
-	 * @return mixed Existing \F3\FLOW3\I18n\Locale instance on success, NULL on failure
+	 * @param \TYPO3\FLOW3\I18n\Locale $locale The "template" locale to be matched
+	 * @return mixed Existing \TYPO3\FLOW3\I18n\Locale instance on success, NULL on failure
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function findBestMatchingLocale(\F3\FLOW3\I18n\Locale $locale) {
+	public function findBestMatchingLocale(\TYPO3\FLOW3\I18n\Locale $locale) {
 		$localeIdentifier = (string)$locale;
 
 		if (isset($this->localeCollection[$localeIdentifier])) {

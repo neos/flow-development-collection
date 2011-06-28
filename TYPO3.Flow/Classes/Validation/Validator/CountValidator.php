@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Validation\Validator;
+namespace TYPO3\FLOW3\Validation\Validator;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -28,13 +28,13 @@ namespace F3\FLOW3\Validation\Validator;
  * @api
  * @scope prototype
  */
-class CountValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator {
+class CountValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractValidator {
 
 	/**
 	 * Returns no error, if the given property ($propertyValue) has a valid count in the given range.
 	 *
 	 * @param mixed $value The value that should be validated
-	 * @param \F3\FLOW3\Validation\Errors $errors An Errors object which will contain any errors which occurred during validation
+	 * @param \TYPO3\FLOW3\Validation\Errors $errors An Errors object which will contain any errors which occurred during validation
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api

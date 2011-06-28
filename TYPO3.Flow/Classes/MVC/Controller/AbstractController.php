@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\MVC\Controller;
+namespace TYPO3\FLOW3\MVC\Controller;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -21,7 +21,7 @@ namespace F3\FLOW3\MVC\Controller;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \F3\FLOW3\MVC\Web\Routing\UriBuilder;
+use \TYPO3\FLOW3\MVC\Web\Routing\UriBuilder;
 
 /**
  * An abstract base class for Controllers
@@ -33,12 +33,12 @@ use \F3\FLOW3\MVC\Web\Routing\UriBuilder;
 abstract class AbstractController implements ControllerInterface {
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
+	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
-	 * @var \F3\FLOW3\MVC\Web\Routing\UriBuilder
+	 * @var \TYPO3\FLOW3\MVC\Web\Routing\UriBuilder
 	 */
 	protected $uriBuilder;
 
@@ -50,27 +50,27 @@ abstract class AbstractController implements ControllerInterface {
 	protected $settings;
 
 	/**
-	 * @var \F3\FLOW3\Validation\ValidatorResolver
+	 * @var \TYPO3\FLOW3\Validation\ValidatorResolver
 	 */
 	protected $validatorResolver;
 
 	/**
 	 * The current request
-	 * @var \F3\FLOW3\MVC\RequestInterface
+	 * @var \TYPO3\FLOW3\MVC\RequestInterface
 	 * @api
 	 */
 	protected $request;
 
 	/**
 	 * The response which will be returned by this action controller
-	 * @var \F3\FLOW3\MVC\ResponseInterface
+	 * @var \TYPO3\FLOW3\MVC\ResponseInterface
 	 * @api
 	 */
 	protected $response;
 
 	/**
 	 * Arguments passed to the controller
-	 * @var \F3\FLOW3\MVC\Controller\Arguments
+	 * @var \TYPO3\FLOW3\MVC\Controller\Arguments
 	 * @api
 	 */
 	protected $arguments;
@@ -82,11 +82,11 @@ abstract class AbstractController implements ControllerInterface {
 	 * @var array
 	 * @api
 	 */
-	protected $supportedRequestTypes = array('F3\FLOW3\MVC\Request');
+	protected $supportedRequestTypes = array('TYPO3\FLOW3\MVC\Request');
 
 	/**
 	 * Contains the controller context
-	 * @var \F3\FLOW3\MVC\Controller\ControllerContext
+	 * @var \TYPO3\FLOW3\MVC\Controller\ControllerContext
 	 */
 	protected $controllerContext;
 
@@ -94,13 +94,13 @@ abstract class AbstractController implements ControllerInterface {
 	 * The flash messages. Use $this->flashMessageContainer->add(...) to add a new Flash
 	 * Message.
 	 *
-	 * @var \F3\FLOW3\MVC\Controller\FlashMessageContainer
+	 * @var \TYPO3\FLOW3\MVC\Controller\FlashMessageContainer
 	 * @api
 	 */
 	protected $flashMessageContainer;
 
 	/**
-	 * @var \F3\FLOW3\Persistence\PersistenceManagerInterface
+	 * @var \TYPO3\FLOW3\Persistence\PersistenceManagerInterface
 	 * @inject
 	 */
 	protected $persistenceManager;
@@ -115,10 +115,10 @@ abstract class AbstractController implements ControllerInterface {
 	}
 
 	/**
-	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
+	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager
 	 * @return void
 	 */
-	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
+	public function injectObjectManager(\TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
 	}
 
@@ -136,22 +136,22 @@ abstract class AbstractController implements ControllerInterface {
 	/**
 	 * Injects the validator resolver
 	 *
-	 * @param \F3\FLOW3\Validation\ValidatorResolver $validatorResolver
+	 * @param \TYPO3\FLOW3\Validation\ValidatorResolver $validatorResolver
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectValidatorResolver(\F3\FLOW3\Validation\ValidatorResolver $validatorResolver) {
+	public function injectValidatorResolver(\TYPO3\FLOW3\Validation\ValidatorResolver $validatorResolver) {
 		$this->validatorResolver = $validatorResolver;
 	}
 
 	/**
 	 * Injects the flash message container
 	 *
-	 * @param \F3\FLOW3\MVC\Controller\FlashMessageContainer $flashMessageContainer the flash message container
+	 * @param \TYPO3\FLOW3\MVC\Controller\FlashMessageContainer $flashMessageContainer the flash message container
 	 * @return void
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	public function injectFlashMessageContainer(\F3\FLOW3\MVC\Controller\FlashMessageContainer $flashMessageContainer) {
+	public function injectFlashMessageContainer(\TYPO3\FLOW3\MVC\Controller\FlashMessageContainer $flashMessageContainer) {
 		$this->flashMessageContainer = $flashMessageContainer;
 	}
 
@@ -162,12 +162,12 @@ abstract class AbstractController implements ControllerInterface {
 	 * replace / modify the supporteRequestTypes property or override this
 	 * method.
 	 *
-	 * @param \F3\FLOW3\MVC\RequestInterface $request The current request
+	 * @param \TYPO3\FLOW3\MVC\RequestInterface $request The current request
 	 * @return boolean TRUE if this request type is supported, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
-	public function canProcessRequest(\F3\FLOW3\MVC\RequestInterface $request) {
+	public function canProcessRequest(\TYPO3\FLOW3\MVC\RequestInterface $request) {
 		foreach ($this->supportedRequestTypes as $supportedRequestType) {
 			if ($request instanceof $supportedRequestType) return TRUE;
 		}
@@ -177,15 +177,15 @@ abstract class AbstractController implements ControllerInterface {
 	/**
 	 * Processes a general request. The result can be returned by altering the given response.
 	 *
-	 * @param \F3\FLOW3\MVC\RequestInterface $request The request object
-	 * @param \F3\FLOW3\MVC\ResponseInterface $response The response, modified by this handler
+	 * @param \TYPO3\FLOW3\MVC\RequestInterface $request The request object
+	 * @param \TYPO3\FLOW3\MVC\ResponseInterface $response The response, modified by this handler
 	 * @return void
-	 * @throws \F3\FLOW3\MVC\Exception\UnsupportedRequestTypeException if the controller doesn't support the current request type
+	 * @throws \TYPO3\FLOW3\MVC\Exception\UnsupportedRequestTypeException if the controller doesn't support the current request type
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
-	public function processRequest(\F3\FLOW3\MVC\RequestInterface $request, \F3\FLOW3\MVC\ResponseInterface $response) {
-		if (!$this->canProcessRequest($request)) throw new \F3\FLOW3\MVC\Exception\UnsupportedRequestTypeException(get_class($this) . ' does not support requests of type "' . get_class($request) . '". Supported types are: ' . implode(' ', $this->supportedRequestTypes) , 1187701131);
+	public function processRequest(\TYPO3\FLOW3\MVC\RequestInterface $request, \TYPO3\FLOW3\MVC\ResponseInterface $response) {
+		if (!$this->canProcessRequest($request)) throw new \TYPO3\FLOW3\MVC\Exception\UnsupportedRequestTypeException(get_class($this) . ' does not support requests of type "' . get_class($request) . '". Supported types are: ' . implode(' ', $this->supportedRequestTypes) , 1187701131);
 
 		$this->request = $request;
 		$this->request->setDispatched(TRUE);
@@ -213,7 +213,7 @@ abstract class AbstractController implements ControllerInterface {
 	 * Returns this controller's context.
 	 * Note that the context is only available after processRequest() has been called.
 	 *
-	 * @return \F3\FLOW3\MVC\Controller\ControllerContext The current controller context
+	 * @return \TYPO3\FLOW3\MVC\Controller\ControllerContext The current controller context
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
@@ -232,7 +232,7 @@ abstract class AbstractController implements ControllerInterface {
 	 * @param string $packageKey Key of the package containing the controller to forward to. If not specified, the current package is assumed.
 	 * @param array $arguments Arguments to pass to the target action
 	 * @return void
-	 * @throws \F3\FLOW3\MVC\Exception\StopActionException
+	 * @throws \TYPO3\FLOW3\MVC\Exception\StopActionException
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @see redirect()
 	 * @api
@@ -252,7 +252,7 @@ abstract class AbstractController implements ControllerInterface {
 		$this->request->setArguments($arguments);
 
 		$this->arguments->removeAll();
-		throw new \F3\FLOW3\MVC\Exception\StopActionException();
+		throw new \TYPO3\FLOW3\MVC\Exception\StopActionException();
 	}
 
 	/**
@@ -271,13 +271,13 @@ abstract class AbstractController implements ControllerInterface {
 	 * @param integer $statusCode (optional) The HTTP status code for the redirect. Default is "303 See Other"
 	 * @param string $format The format to use for the redirect URI
 	 * @return void
-	 * @throws \F3\FLOW3\MVC\Exception\StopActionException
+	 * @throws \TYPO3\FLOW3\MVC\Exception\StopActionException
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @see forward()
 	 * @api
 	 */
 	protected function redirect($actionName, $controllerName = NULL, $packageKey = NULL, array $arguments = NULL, $delay = 0, $statusCode = 303, $format = NULL) {
-		if (!$this->request instanceof \F3\FLOW3\MVC\Web\Request) throw new \F3\FLOW3\MVC\Exception\UnsupportedRequestTypeException('redirect() only supports web requests.', 1238101344);
+		if (!$this->request instanceof \TYPO3\FLOW3\MVC\Web\Request) throw new \TYPO3\FLOW3\MVC\Exception\UnsupportedRequestTypeException('redirect() only supports web requests.', 1238101344);
 
 		if ($packageKey !== NULL && strpos($packageKey, '\\') !== FALSE) {
 			list($packageKey, $subpackageKey) = explode('\\', $packageKey, 2);
@@ -301,16 +301,16 @@ abstract class AbstractController implements ControllerInterface {
 	 * NOTE: This method only supports web requests and will throw an exception
 	 * if used with other request types.
 	 *
-	 * @param mixed $uri Either a string representation of a URI or a \F3\FLOW3\Property\DataType\Uri object
+	 * @param mixed $uri Either a string representation of a URI or a \TYPO3\FLOW3\Property\DataType\Uri object
 	 * @param integer $delay (optional) The delay in seconds. Default is no delay.
 	 * @param integer $statusCode (optional) The HTTP status code for the redirect. Default is "303 See Other"
-	 * @throws \F3\FLOW3\MVC\Exception\UnsupportedRequestTypeException If the request is not a web request
-	 * @throws \F3\FLOW3\MVC\Exception\StopActionException
+	 * @throws \TYPO3\FLOW3\MVC\Exception\UnsupportedRequestTypeException If the request is not a web request
+	 * @throws \TYPO3\FLOW3\MVC\Exception\StopActionException
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	protected function redirectToUri($uri, $delay = 0, $statusCode = 303) {
-		if (!$this->request instanceof \F3\FLOW3\MVC\Web\Request) throw new \F3\FLOW3\MVC\Exception\UnsupportedRequestTypeException('redirect() only supports web requests.', 1220539734);
+		if (!$this->request instanceof \TYPO3\FLOW3\MVC\Web\Request) throw new \TYPO3\FLOW3\MVC\Exception\UnsupportedRequestTypeException('redirect() only supports web requests.', 1220539734);
 
 		$escapedUri = htmlentities($uri, ENT_QUOTES, 'utf-8');
 		$this->response->setContent('<html><head><meta http-equiv="refresh" content="' . intval($delay) . ';url=' . $escapedUri . '"/></head></html>');
@@ -318,7 +318,7 @@ abstract class AbstractController implements ControllerInterface {
 		if ($delay === 0) {
 			$this->response->setHeader('Location', (string)$uri);
 		}
-		throw new \F3\FLOW3\MVC\Exception\StopActionException();
+		throw new \TYPO3\FLOW3\MVC\Exception\StopActionException();
 	}
 
 	/**
@@ -329,18 +329,18 @@ abstract class AbstractController implements ControllerInterface {
 	 * @param integer $statusCode The HTTP status code
 	 * @param string $statusMessage A custom HTTP status message
 	 * @param string $content Body content which further explains the status
-	 * @throws \F3\FLOW3\MVC\Exception\UnsupportedRequestTypeException If the request is not a web request
-	 * @throws \F3\FLOW3\MVC\Exception\StopActionException
+	 * @throws \TYPO3\FLOW3\MVC\Exception\UnsupportedRequestTypeException If the request is not a web request
+	 * @throws \TYPO3\FLOW3\MVC\Exception\StopActionException
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	protected function throwStatus($statusCode, $statusMessage = NULL, $content = NULL) {
-		if (!$this->request instanceof \F3\FLOW3\MVC\Web\Request) throw new \F3\FLOW3\MVC\Exception\UnsupportedRequestTypeException('throwStatus() only supports web requests.', 1220539739);
+		if (!$this->request instanceof \TYPO3\FLOW3\MVC\Web\Request) throw new \TYPO3\FLOW3\MVC\Exception\UnsupportedRequestTypeException('throwStatus() only supports web requests.', 1220539739);
 
 		$this->response->setStatus($statusCode, $statusMessage);
 		if ($content === NULL) $content = $this->response->getStatus();
 		$this->response->setContent($content);
-		throw new \F3\FLOW3\MVC\Exception\StopActionException();
+		throw new \TYPO3\FLOW3\MVC\Exception\StopActionException();
 	}
 
 	/**
@@ -370,7 +370,7 @@ abstract class AbstractController implements ControllerInterface {
 			if ($this->request->hasArgument($argumentName)) {
 				$argument->setValue($this->request->getArgument($argumentName));
 			} elseif ($argument->isRequired()) {
-				throw new \F3\FLOW3\MVC\Exception\RequiredArgumentMissingException('Required argument "' . $argumentName  . '" is not set.', 1298012500);
+				throw new \TYPO3\FLOW3\MVC\Exception\RequiredArgumentMissingException('Required argument "' . $argumentName  . '" is not set.', 1298012500);
 			}
 		}
 	}

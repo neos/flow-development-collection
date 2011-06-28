@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\MVC\Web\Routing;
+namespace TYPO3\FLOW3\MVC\Web\Routing;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *

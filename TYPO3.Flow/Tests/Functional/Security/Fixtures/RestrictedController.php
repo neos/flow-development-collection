@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Functional\Security\Fixtures;
+namespace TYPO3\FLOW3\Tests\Functional\Security\Fixtures;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,7 +26,7 @@ namespace F3\FLOW3\Tests\Functional\Security\Fixtures;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  */
-class RestrictedController extends \F3\FLOW3\MVC\Controller\ActionController {
+class RestrictedController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 
 	/**
 	 * @return void

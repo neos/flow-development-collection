@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Command;
+namespace TYPO3\FLOW3\Command;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -27,17 +27,17 @@ namespace F3\FLOW3\Command;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope singleton
  */
-class RoutingCommandController extends \F3\FLOW3\MVC\Controller\CommandController {
+class RoutingCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandController {
 
 	/**
 	 * @inject
-	 * @var \F3\FLOW3\Configuration\ConfigurationManager
+	 * @var \TYPO3\FLOW3\Configuration\ConfigurationManager
 	 */
 	protected $configurationManager;
 
 	/**
 	 * @inject
-	 * @var \F3\FLOW3\MVC\Web\Routing\RouterInterface
+	 * @var \TYPO3\FLOW3\MVC\Web\Routing\RouterInterface
 	 */
 	protected $router;
 
@@ -47,7 +47,7 @@ class RoutingCommandController extends \F3\FLOW3\MVC\Controller\CommandControlle
 	 * @return void
 	 */
 	public function listCommand() {
-		$routesConfiguration = $this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_ROUTES);
+		$routesConfiguration = $this->configurationManager->getConfiguration(\TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_ROUTES);
 		$this->router->setRoutesConfiguration($routesConfiguration);
 
 		$this->response->appendContent('Currently registered routes:');

@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\MVC;
+namespace TYPO3\FLOW3\MVC;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -28,7 +28,7 @@ namespace F3\FLOW3\MVC;
  * @api
  * @scope prototype
  */
-class Response implements \F3\FLOW3\MVC\ResponseInterface {
+class Response implements \TYPO3\FLOW3\MVC\ResponseInterface {
 
 	/**
 	 * @var string

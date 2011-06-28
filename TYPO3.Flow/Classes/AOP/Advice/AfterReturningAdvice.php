@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\AOP\Advice;
+namespace TYPO3\FLOW3\AOP\Advice;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -27,7 +27,7 @@ namespace F3\FLOW3\AOP\Advice;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
-class AfterReturningAdvice extends \F3\FLOW3\AOP\Advice\AbstractAdvice {
+class AfterReturningAdvice extends \TYPO3\FLOW3\AOP\Advice\AbstractAdvice {
 
 }
 ?>

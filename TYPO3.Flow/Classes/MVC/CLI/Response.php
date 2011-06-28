@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\MVC\CLI;
+namespace TYPO3\FLOW3\MVC\CLI;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -27,7 +27,7 @@ namespace F3\FLOW3\MVC\CLI;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
-class Response extends \F3\FLOW3\MVC\Response {
+class Response extends \TYPO3\FLOW3\MVC\Response {
 
 	/**
 	 * Appends content to the already existing content.

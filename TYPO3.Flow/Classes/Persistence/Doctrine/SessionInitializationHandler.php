@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Persistence\Doctrine;
+namespace TYPO3\FLOW3\Persistence\Doctrine;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *

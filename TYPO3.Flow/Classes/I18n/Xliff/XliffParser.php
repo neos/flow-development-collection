@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\I18n\Xliff;
+namespace TYPO3\FLOW3\I18n\Xliff;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -35,7 +35,7 @@ namespace F3\FLOW3\I18n\Xliff;
  * @see http://docs.oasis-open.org/xliff/v1.2/os/xliff-core.html [1]
  * @see http://docs.oasis-open.org/xliff/v1.2/xliff-profile-po/xliff-profile-po-1.2-cd02.html#s.detailed_mapping.tu [2]
  */
-class XliffParser extends \F3\FLOW3\I18n\Xml\AbstractXmlParser {
+class XliffParser extends \TYPO3\FLOW3\I18n\Xml\AbstractXmlParser {
 
 	/**
 	 * Returns array representation of XLIFF data, starting from a root node.

@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\Package\MetaData;
+namespace TYPO3\FLOW3\Tests\Unit\Package\MetaData;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,7 +26,7 @@ namespace F3\FLOW3\Tests\Unit\Package\MetaData;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class XmlReaderTest extends \F3\FLOW3\Tests\UnitTestCase {
+class XmlReaderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * Test the actual reading of a Package.xml file. This test
@@ -37,7 +37,7 @@ class XmlReaderTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function readPackageMetaDataReadsPackageXml() {
-		$mockPackage = $this->getMock('F3\FLOW3\Package\PackageInterface');
+		$mockPackage = $this->getMock('TYPO3\FLOW3\Package\PackageInterface');
 
 		$mockPackage->expects($this->atLeastOnce())
 			->method('getMetaPath')
@@ -47,7 +47,7 @@ class XmlReaderTest extends \F3\FLOW3\Tests\UnitTestCase {
 			->method('getPackageKey')
 			->will($this->returnValue('YetAnotherTestPackage'));
 
-		$metaReader = new \F3\FLOW3\Package\MetaData\XmlReader();
+		$metaReader = new \TYPO3\FLOW3\Package\MetaData\XmlReader();
 
 		$packageMetaData = $metaReader->readPackageMetaData($mockPackage);
 
@@ -60,7 +60,7 @@ class XmlReaderTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$parties = $packageMetaData->getParties();
 		$this->assertTrue(is_array($parties));
 		$person1 = $parties[0];
-		$this->assertInstanceOf('F3\FLOW3\Package\MetaData\Person', $person1);
+		$this->assertInstanceOf('TYPO3\FLOW3\Package\MetaData\Person', $person1);
 		$this->assertEquals('LeadDeveloper', $person1->getRole());
 		$this->assertEquals('Robert Lemke', $person1->getName());
 		$this->assertEquals('robert@typo3.org', $person1->getEmail());
@@ -68,12 +68,12 @@ class XmlReaderTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$constraints = $packageMetaData->getConstraintsByType('depends');
 		$this->assertTrue(is_array($constraints));
 
-		$this->assertInstanceOf('F3\FLOW3\Package\MetaData\PackageConstraint', $constraints[0]);
+		$this->assertInstanceOf('TYPO3\FLOW3\Package\MetaData\PackageConstraint', $constraints[0]);
 		$this->assertEquals('depends', $constraints[0]->getConstraintType());
 		$this->assertEquals('TYPO3.FLOW3', $constraints[0]->getValue());
 		$this->assertEquals('1.0.0', $constraints[0]->getMinVersion());
 		$this->assertEquals('1.9.9', $constraints[0]->getMaxVersion());
-		$this->assertInstanceOf('F3\FLOW3\Package\MetaData\SystemConstraint', $constraints[1]);
+		$this->assertInstanceOf('TYPO3\FLOW3\Package\MetaData\SystemConstraint', $constraints[1]);
 		$this->assertNull($constraints[1]->getValue());
 		$this->assertEquals('PHP', $constraints[1]->getType());
 		$this->assertEquals('5.3.0', $constraints[1]->getMinVersion());

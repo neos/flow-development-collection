@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\Package;
+namespace TYPO3\FLOW3\Tests\Unit\Package;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,7 +26,7 @@ namespace F3\FLOW3\Tests\Unit\Package;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class DocumentationTest extends \F3\FLOW3\Tests\UnitTestCase {
+class DocumentationTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * Sets up this test case
@@ -45,9 +45,9 @@ class DocumentationTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function constructSetsPackageNameAndPathToDocumentation() {
 		$documentationPath = \vfsStream::url('testDirectory') . '/';
 
-		$mockPackage = $this->getMock('F3\FLOW3\Package\PackageInterface');
+		$mockPackage = $this->getMock('TYPO3\FLOW3\Package\PackageInterface');
 
-		$documentation = new \F3\FLOW3\Package\Documentation($mockPackage, 'Manual', $documentationPath);
+		$documentation = new \TYPO3\FLOW3\Package\Documentation($mockPackage, 'Manual', $documentationPath);
 
 		$this->assertSame($mockPackage, $documentation->getPackage());
 		$this->assertEquals('Manual', $documentation->getDocumentationName());
@@ -61,11 +61,11 @@ class DocumentationTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function getDocumentationFormatsScansDocumentationDirectoryAndReturnsDocumentationFormatObjectsIndexedByFormatName() {
 		$documentationPath = \vfsStream::url('testDirectory') . '/';
 
-		$mockPackage = $this->getMock('F3\FLOW3\Package\PackageInterface');
+		$mockPackage = $this->getMock('TYPO3\FLOW3\Package\PackageInterface');
 
-		\F3\FLOW3\Utility\Files::createDirectoryRecursively($documentationPath . 'DocBook/en');
+		\TYPO3\FLOW3\Utility\Files::createDirectoryRecursively($documentationPath . 'DocBook/en');
 
-		$documentation = new \F3\FLOW3\Package\Documentation($mockPackage, 'Manual', $documentationPath);
+		$documentation = new \TYPO3\FLOW3\Package\Documentation($mockPackage, 'Manual', $documentationPath);
 		$documentationFormats = $documentation->getDocumentationFormats();
 
 		$this->assertEquals('DocBook', $documentationFormats['DocBook']->getFormatName());

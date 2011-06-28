@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Functional\Persistence\Doctrine;
+namespace TYPO3\FLOW3\Tests\Functional\Persistence\Doctrine;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -21,14 +21,14 @@ namespace F3\FLOW3\Tests\Functional\Persistence\Doctrine;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \F3\FLOW3\Persistence\Doctrine\Query;
+use \TYPO3\FLOW3\Persistence\Doctrine\Query;
 
 /**
  * Testcase for query
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class QueryTest extends \F3\FLOW3\Tests\FunctionalTestCase {
+class QueryTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @var boolean
@@ -39,7 +39,7 @@ class QueryTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function simpleQueryCanBeSerializedAndDeserialized() {
-		$query = new Query('F3\FLOW3\Tests\Functional\Persistence\Fixtures\TestEntity');
+		$query = new Query('TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\TestEntity');
 		$serializedQuery = serialize($query);
 		$unserializedQuery = unserialize($serializedQuery);
 
@@ -50,7 +50,7 @@ class QueryTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function moreComplexQueryCanBeSerializedAndDeserialized() {
-		$query = new Query('F3\FLOW3\Tests\Functional\Persistence\Fixtures\TestEntity');
+		$query = new Query('TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\TestEntity');
 		$query->matching($query->equals('name', 'some'));
 
 		$serializedQuery = serialize($query);
@@ -63,19 +63,19 @@ class QueryTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function moreComplexQueryCanBeExecutedAfterDeserialization() {
-		$testEntityRepository = new \F3\FLOW3\Tests\Functional\Persistence\Fixtures\TestEntityRepository();
+		$testEntityRepository = new \TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\TestEntityRepository();
 
-		$testEntity1 = new \F3\FLOW3\Tests\Functional\Persistence\Fixtures\TestEntity;
+		$testEntity1 = new \TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\TestEntity;
 		$testEntity1->setName('FLOW3');
 		$testEntityRepository->add($testEntity1);
 
-		$testEntity2 = new \F3\FLOW3\Tests\Functional\Persistence\Fixtures\TestEntity;
+		$testEntity2 = new \TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\TestEntity;
 		$testEntity2->setName('some');
 		$testEntityRepository->add($testEntity1);
 
 		$this->persistenceManager->persistAll();
 
-		$query = new Query('F3\FLOW3\Tests\Functional\Persistence\Fixtures\TestEntity');
+		$query = new Query('TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\TestEntity');
 		$query->matching($query->equals('name', 'FLOW3'));
 
 		$serializedQuery = serialize($query);

@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\I18n\Xml;
+namespace TYPO3\FLOW3\I18n\Xml;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -39,7 +39,7 @@ namespace F3\FLOW3\I18n\Xml;
 abstract class AbstractXmlModel {
 
 	/**
-	 * @var \F3\FLOW3\Cache\Frontend\VariableFrontend
+	 * @var \TYPO3\FLOW3\Cache\Frontend\VariableFrontend
 	 */
 	protected $cache;
 
@@ -47,7 +47,7 @@ abstract class AbstractXmlModel {
 	 * Concrete XML parser which is set by more specific model extending this
 	 * class.
 	 *
-	 * @var \F3\FLOW3\I18n\Xml\AbstractXmlParser
+	 * @var \TYPO3\FLOW3\I18n\Xml\AbstractXmlParser
 	 */
 	protected $xmlParser;
 
@@ -76,11 +76,11 @@ abstract class AbstractXmlModel {
 	/**
 	 * Injects the FLOW3_I18n_Xml_AbstractXmlModel cache
 	 *
-	 * @param \F3\FLOW3\Cache\Frontend\VariableFrontend $cache
+	 * @param \TYPO3\FLOW3\Cache\Frontend\VariableFrontend $cache
 	 * @return void
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function injectCache(\F3\FLOW3\Cache\Frontend\VariableFrontend $cache) {
+	public function injectCache(\TYPO3\FLOW3\Cache\Frontend\VariableFrontend $cache) {
 		$this->cache = $cache;
 	}
 

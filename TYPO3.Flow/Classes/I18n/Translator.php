@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\I18n;
+namespace TYPO3\FLOW3\I18n;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -43,65 +43,65 @@ namespace F3\FLOW3\I18n;
  * @scope singleton
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
- * @see \F3\FLOW3\I18n\FormatResolver
- * @see \F3\FLOW3\I18n\TranslationProvider\TranslationProviderInterface
- * @see \F3\FLOW3\I18n\Cldr\Reader\PluralsReader
+ * @see \TYPO3\FLOW3\I18n\FormatResolver
+ * @see \TYPO3\FLOW3\I18n\TranslationProvider\TranslationProviderInterface
+ * @see \TYPO3\FLOW3\I18n\Cldr\Reader\PluralsReader
  */
 class Translator {
 
 	/**
-	 * @var \F3\FLOW3\I18n\Service
+	 * @var \TYPO3\FLOW3\I18n\Service
 	 */
 	protected $localizationService;
 
 	/**
-	 * @var \F3\FLOW3\I18n\TranslationProvider\TranslationProviderInterface
+	 * @var \TYPO3\FLOW3\I18n\TranslationProvider\TranslationProviderInterface
 	 */
 	protected $translationProvider;
 
 	/**
-	 * @var \F3\FLOW3\I18n\FormatResolver
+	 * @var \TYPO3\FLOW3\I18n\FormatResolver
 	 */
 	protected $formatResolver;
 
 	/**
-	 * @var \F3\FLOW3\I18n\Cldr\Reader\PluralsReader
+	 * @var \TYPO3\FLOW3\I18n\Cldr\Reader\PluralsReader
 	 */
 	protected $pluralsReader;
 
 	/**
-	 * @param \F3\FLOW3\I18n\Service $localizationService
+	 * @param \TYPO3\FLOW3\I18n\Service $localizationService
 	 * @return void
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function injectLocalizationService(\F3\FLOW3\I18n\Service $localizationService) {
+	public function injectLocalizationService(\TYPO3\FLOW3\I18n\Service $localizationService) {
 		$this->localizationService = $localizationService;
 	}
 
 	/**
-	 * @param \F3\FLOW3\I18n\TranslationProvider\TranslationProviderInterface $translationProvider
+	 * @param \TYPO3\FLOW3\I18n\TranslationProvider\TranslationProviderInterface $translationProvider
 	 * @return void
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function injectTranslationProvider(\F3\FLOW3\I18n\TranslationProvider\TranslationProviderInterface $translationProvider) {
+	public function injectTranslationProvider(\TYPO3\FLOW3\I18n\TranslationProvider\TranslationProviderInterface $translationProvider) {
 		$this->translationProvider = $translationProvider;
 	}
 
 	/**
-	 * @param \F3\FLOW3\I18n\FormatResolver $formatResolver
+	 * @param \TYPO3\FLOW3\I18n\FormatResolver $formatResolver
 	 * @return void
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function injectFormatResolver(\F3\FLOW3\I18n\FormatResolver $formatResolver) {
+	public function injectFormatResolver(\TYPO3\FLOW3\I18n\FormatResolver $formatResolver) {
 		$this->formatResolver = $formatResolver;
 	}
 
 	/**
-	 * @param \F3\FLOW3\I18n\Cldr\Reader\PluralsReader $pluralsReader
+	 * @param \TYPO3\FLOW3\I18n\Cldr\Reader\PluralsReader $pluralsReader
 	 * @return void
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function injectPluralsReader(\F3\FLOW3\I18n\Cldr\Reader\PluralsReader $pluralsReader) {
+	public function injectPluralsReader(\TYPO3\FLOW3\I18n\Cldr\Reader\PluralsReader $pluralsReader) {
 		$this->pluralsReader = $pluralsReader;
 	}
 
@@ -125,18 +125,18 @@ class Translator {
 	 * @param string $sourceName Name of file with translations
 	 * @param array $arguments An array of values to replace placeholders with
 	 * @param mixed $quantity A number to find plural form for (float or int), NULL to not use plural forms
-	 * @param \F3\FLOW3\I18n\Locale $locale Locale to use (NULL for default one)
+	 * @param \TYPO3\FLOW3\I18n\Locale $locale Locale to use (NULL for default one)
 	 * @return string Translated $originalLabel or $originalLabel itself on failure
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @api
 	 */
-	public function translateByOriginalLabel($originalLabel, $sourceName, array $arguments = array(), $quantity = NULL, \F3\FLOW3\I18n\Locale $locale = NULL) {
+	public function translateByOriginalLabel($originalLabel, $sourceName, array $arguments = array(), $quantity = NULL, \TYPO3\FLOW3\I18n\Locale $locale = NULL) {
 		if ($locale === NULL) {
 			$locale = $this->localizationService->getDefaultLocale();
 		}
 
 		if ($quantity === NULL) {
-			$pluralForm = \F3\FLOW3\I18n\Cldr\Reader\PluralsReader::RULE_OTHER;
+			$pluralForm = \TYPO3\FLOW3\I18n\Cldr\Reader\PluralsReader::RULE_OTHER;
 		} else {
 			$pluralForm = $this->pluralsReader->getPluralForm($quantity, $locale);
 		}
@@ -165,19 +165,19 @@ class Translator {
 	 * @param string $sourceName Name of file with translations
 	 * @param array $arguments An array of values to replace placeholders with
 	 * @param mixed $quantity A number to find plural form for (float or int), NULL to not use plural forms
-	 * @param \F3\FLOW3\I18n\Locale $locale Locale to use (NULL for default one)
+	 * @param \TYPO3\FLOW3\I18n\Locale $locale Locale to use (NULL for default one)
 	 * @return string Translated message or $labelId on failure
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @api
-	 * @see \F3\FLOW3\I18n\Translator::translateByOriginalLabel()
+	 * @see \TYPO3\FLOW3\I18n\Translator::translateByOriginalLabel()
 	 */
-	public function translateById($labelId, $sourceName, array $arguments = array(), $quantity = NULL, \F3\FLOW3\I18n\Locale $locale = NULL) {
+	public function translateById($labelId, $sourceName, array $arguments = array(), $quantity = NULL, \TYPO3\FLOW3\I18n\Locale $locale = NULL) {
 		if ($locale === NULL) {
 			$locale = $this->localizationService->getDefaultLocale();
 		}
 
 		if ($quantity === NULL) {
-			$pluralForm = \F3\FLOW3\I18n\Cldr\Reader\PluralsReader::RULE_OTHER;
+			$pluralForm = \TYPO3\FLOW3\I18n\Cldr\Reader\PluralsReader::RULE_OTHER;
 		} else {
 			$pluralForm = $this->pluralsReader->getPluralForm($quantity, $locale);
 		}

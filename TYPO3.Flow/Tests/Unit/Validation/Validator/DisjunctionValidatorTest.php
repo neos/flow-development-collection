@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\Validation\Validator;
+namespace TYPO3\FLOW3\Tests\Unit\Validation\Validator;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,21 +26,21 @@ namespace F3\FLOW3\Tests\Unit\Validation\Validator;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class DisjunctionValidatorTest extends \F3\FLOW3\Tests\UnitTestCase {
+class DisjunctionValidatorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function allValidatorsInTheDisjunctionAreCalledEvenIfOneReturnsNoError() {
-		$validatorDisjunction = new \F3\FLOW3\Validation\Validator\DisjunctionValidator(array());
-		$validatorObject = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
-		$validatorObject->expects($this->once())->method('validate')->will($this->returnValue(new \F3\FLOW3\Error\Result()));
+		$validatorDisjunction = new \TYPO3\FLOW3\Validation\Validator\DisjunctionValidator(array());
+		$validatorObject = $this->getMock('TYPO3\FLOW3\Validation\Validator\ValidatorInterface');
+		$validatorObject->expects($this->once())->method('validate')->will($this->returnValue(new \TYPO3\FLOW3\Error\Result()));
 
-		$errors = new \F3\FLOW3\Error\Result();
-		$errors->addError(new \F3\FLOW3\Error\Error('Error', 123));
+		$errors = new \TYPO3\FLOW3\Error\Result();
+		$errors->addError(new \TYPO3\FLOW3\Error\Error('Error', 123));
 
-		$secondValidatorObject = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
+		$secondValidatorObject = $this->getMock('TYPO3\FLOW3\Validation\Validator\ValidatorInterface');
 		$secondValidatorObject->expects($this->exactly(1))->method('validate')->will($this->returnValue($errors));
 
 		$validatorDisjunction->addValidator($validatorObject);
@@ -54,14 +54,14 @@ class DisjunctionValidatorTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function validateReturnsNoErrorsIfOneValidatorReturnsNoError() {
-		$validatorDisjunction = new \F3\FLOW3\Validation\Validator\DisjunctionValidator(array());
-		$validatorObject = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
-		$validatorObject->expects($this->any())->method('validate')->will($this->returnValue(new \F3\FLOW3\Error\Result()));
+		$validatorDisjunction = new \TYPO3\FLOW3\Validation\Validator\DisjunctionValidator(array());
+		$validatorObject = $this->getMock('TYPO3\FLOW3\Validation\Validator\ValidatorInterface');
+		$validatorObject->expects($this->any())->method('validate')->will($this->returnValue(new \TYPO3\FLOW3\Error\Result()));
 
-		$errors = new \F3\FLOW3\Error\Result();
-		$errors->addError(new \F3\FLOW3\Error\Error('Error', 123));
+		$errors = new \TYPO3\FLOW3\Error\Result();
+		$errors->addError(new \TYPO3\FLOW3\Error\Error('Error', 123));
 
-		$secondValidatorObject = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
+		$secondValidatorObject = $this->getMock('TYPO3\FLOW3\Validation\Validator\ValidatorInterface');
 		$secondValidatorObject->expects($this->any())->method('validate')->will($this->returnValue($errors));
 
 		$validatorDisjunction->addValidator($validatorObject);
@@ -75,19 +75,19 @@ class DisjunctionValidatorTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function validateReturnsAllErrorsIfAllValidatorsReturnErrrors() {
-		$validatorDisjunction = new \F3\FLOW3\Validation\Validator\DisjunctionValidator(array());
+		$validatorDisjunction = new \TYPO3\FLOW3\Validation\Validator\DisjunctionValidator(array());
 
-		$error1 = new \F3\FLOW3\Error\Error('Error', 123);
-		$error2 = new \F3\FLOW3\Error\Error('Error2', 123);
+		$error1 = new \TYPO3\FLOW3\Error\Error('Error', 123);
+		$error2 = new \TYPO3\FLOW3\Error\Error('Error2', 123);
 
-		$errors1 = new \F3\FLOW3\Error\Result();
+		$errors1 = new \TYPO3\FLOW3\Error\Result();
 		$errors1->addError($error1);
-		$validatorObject = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
+		$validatorObject = $this->getMock('TYPO3\FLOW3\Validation\Validator\ValidatorInterface');
 		$validatorObject->expects($this->any())->method('validate')->will($this->returnValue($errors1));
 
-		$errors2 = new \F3\FLOW3\Error\Result();
+		$errors2 = new \TYPO3\FLOW3\Error\Result();
 		$errors2->addError($error2);
-		$secondValidatorObject = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
+		$secondValidatorObject = $this->getMock('TYPO3\FLOW3\Validation\Validator\ValidatorInterface');
 		$secondValidatorObject->expects($this->any())->method('validate')->will($this->returnValue($errors2));
 
 		$validatorDisjunction->addValidator($validatorObject);

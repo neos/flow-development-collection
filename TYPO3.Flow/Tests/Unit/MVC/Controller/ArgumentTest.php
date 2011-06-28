@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\MVC\Controller;
+namespace TYPO3\FLOW3\Tests\Unit\MVC\Controller;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -25,17 +25,17 @@ namespace F3\FLOW3\Tests\Unit\MVC\Controller;
  * Testcase for the MVC Controller Argument
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
- * @covers \F3\FLOW3\MVC\Controller\Argument
+ * @covers \TYPO3\FLOW3\MVC\Controller\Argument
  */
-class ArgumentTest extends \F3\FLOW3\Tests\UnitTestCase {
+class ArgumentTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
-	 * @var \F3\FLOW3\MVC\Controller\Argument
+	 * @var \TYPO3\FLOW3\MVC\Controller\Argument
 	 */
 	protected $simpleValueArgument;
 
 	/**
-	 * @var \F3\FLOW3\MVC\Controller\Argument
+	 * @var \TYPO3\FLOW3\MVC\Controller\Argument
 	 */
 	protected $objectArgument;
 
@@ -47,16 +47,16 @@ class ArgumentTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function setUp() {
-		$this->simpleValueArgument = new \F3\FLOW3\MVC\Controller\Argument('someName', 'string');
-		$this->objectArgument = new \F3\FLOW3\MVC\Controller\Argument('someName', 'DateTime');
+		$this->simpleValueArgument = new \TYPO3\FLOW3\MVC\Controller\Argument('someName', 'string');
+		$this->objectArgument = new \TYPO3\FLOW3\MVC\Controller\Argument('someName', 'DateTime');
 
-		$this->mockPropertyMapper = $this->getMock('F3\FLOW3\Property\PropertyMapper');
+		$this->mockPropertyMapper = $this->getMock('TYPO3\FLOW3\Property\PropertyMapper');
 		$this->simpleValueArgument->injectPropertyMapper($this->mockPropertyMapper);
 		$this->objectArgument->injectPropertyMapper($this->mockPropertyMapper);
 
-		$this->mockConfigurationBuilder = $this->getMock('F3\FLOW3\Property\PropertyMappingConfigurationBuilder');
-		$this->mockConfiguration = $this->getMock('F3\FLOW3\Property\PropertyMappingConfigurationInterface');
-		$this->mockConfigurationBuilder->expects($this->any())->method('build')->with('F3\FLOW3\MVC\Controller\MvcPropertyMappingConfiguration')->will($this->returnValue($this->mockConfiguration));
+		$this->mockConfigurationBuilder = $this->getMock('TYPO3\FLOW3\Property\PropertyMappingConfigurationBuilder');
+		$this->mockConfiguration = $this->getMock('TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface');
+		$this->mockConfigurationBuilder->expects($this->any())->method('build')->with('TYPO3\FLOW3\MVC\Controller\MvcPropertyMappingConfiguration')->will($this->returnValue($this->mockConfiguration));
 
 		$this->simpleValueArgument->injectPropertyMappingConfigurationBuilder($this->mockConfigurationBuilder);
 		$this->objectArgument->injectPropertyMappingConfigurationBuilder($this->mockConfigurationBuilder);
@@ -71,7 +71,7 @@ class ArgumentTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @expectedException \InvalidArgumentException
 	 */
 	public function constructingArgumentWithoutNameThrowsException() {
-		new \F3\FLOW3\MVC\Controller\Argument('', 'Text');
+		new \TYPO3\FLOW3\MVC\Controller\Argument('', 'Text');
 	}
 
 	/**
@@ -80,7 +80,7 @@ class ArgumentTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function constructingArgumentWithInvalidNameThrowsException() {
-		new \F3\FLOW3\MVC\Controller\Argument(new \ArrayObject(), 'Text');
+		new \TYPO3\FLOW3\MVC\Controller\Argument(new \ArrayObject(), 'Text');
 	}
 
 	/**
@@ -171,7 +171,7 @@ class ArgumentTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function setValidatorShouldProvideFluentInterfaceAndReallySetValidator() {
-		$mockValidator = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
+		$mockValidator = $this->getMock('TYPO3\FLOW3\Validation\Validator\ValidatorInterface');
 		$returnedArgument = $this->simpleValueArgument->setValidator($mockValidator);
 		$this->assertSame($this->simpleValueArgument, $returnedArgument, 'The returned argument is not the original argument.');
 		$this->assertSame($mockValidator, $this->simpleValueArgument->getValidator());
@@ -192,7 +192,7 @@ class ArgumentTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setValueUsesNullAsIs() {
-		$this->simpleValueArgument = new \F3\FLOW3\MVC\Controller\Argument('dummy', 'string');
+		$this->simpleValueArgument = new \TYPO3\FLOW3\MVC\Controller\Argument('dummy', 'string');
 		$this->simpleValueArgument->setValue(NULL);
 		$this->assertNull($this->simpleValueArgument->getValue());
 	}
@@ -208,7 +208,7 @@ class ArgumentTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	protected function setupPropertyMapperAndSetValue() {
 		$this->mockPropertyMapper->expects($this->once())->method('convert')->with('someRawValue', 'string', $this->mockConfiguration)->will($this->returnValue('convertedValue'));
-		$this->mockPropertyMapper->expects($this->once())->method('getMessages')->will($this->returnValue(new \F3\FLOW3\Error\Result()));
+		$this->mockPropertyMapper->expects($this->once())->method('getMessages')->will($this->returnValue(new \TYPO3\FLOW3\Error\Result()));
 		return $this->simpleValueArgument->setValue('someRawValue');
 	}
 
@@ -235,10 +235,10 @@ class ArgumentTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function setValueShouldSetValidationErrorsIfValidatorIsSetAndValidationFailed() {
-		$error = new \F3\FLOW3\Error\Error('Some Error', 1234);
+		$error = new \TYPO3\FLOW3\Error\Error('Some Error', 1234);
 
-		$mockValidator = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
-		$validationMessages = new \F3\FLOW3\Error\Result();
+		$mockValidator = $this->getMock('TYPO3\FLOW3\Validation\Validator\ValidatorInterface');
+		$validationMessages = new \TYPO3\FLOW3\Error\Result();
 		$validationMessages->addError($error);
 		$mockValidator->expects($this->once())->method('validate')->with('convertedValue')->will($this->returnValue($validationMessages));
 

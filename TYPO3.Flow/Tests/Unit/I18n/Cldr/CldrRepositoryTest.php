@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\I18n\Cldr;
+namespace TYPO3\FLOW3\Tests\Unit\I18n\Cldr;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,15 +26,15 @@ namespace F3\FLOW3\Tests\Unit\I18n\Cldr;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class CldrRepositoryTest extends \F3\FLOW3\Tests\UnitTestCase {
+class CldrRepositoryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
-	 * @var \F3\FLOW3\I18n\Cldr\CldrRepository
+	 * @var \TYPO3\FLOW3\I18n\Cldr\CldrRepository
 	 */
 	protected $repository;
 
 	/**
-	 * @var \F3\FLOW3\I18n\Locale
+	 * @var \TYPO3\FLOW3\I18n\Locale
 	 */
 	protected $dummyLocale;
 
@@ -46,10 +46,10 @@ class CldrRepositoryTest extends \F3\FLOW3\Tests\UnitTestCase {
 		\vfsStreamWrapper::register();
 		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('Foo'));
 
-		$this->repository = $this->getAccessibleMock('F3\FLOW3\I18n\Cldr\CldrRepository', array('dummy'));
+		$this->repository = $this->getAccessibleMock('TYPO3\FLOW3\I18n\Cldr\CldrRepository', array('dummy'));
 		$this->repository->_set('cldrBasePath', 'vfs://Foo/');
 
-		$this->dummyLocale = new \F3\FLOW3\I18n\Locale('en');
+		$this->dummyLocale = new \TYPO3\FLOW3\I18n\Locale('en');
 	}
 
 	/**
@@ -75,7 +75,7 @@ class CldrRepositoryTest extends \F3\FLOW3\Tests\UnitTestCase {
 		mkdir('vfs://Foo/Directory');
 		file_put_contents('vfs://Foo/Directory/en.xml', '');
 
-		$mockLocalizationService = $this->getMock('F3\FLOW3\I18n\Service');
+		$mockLocalizationService = $this->getMock('TYPO3\FLOW3\I18n\Service');
 		$mockLocalizationService->expects($this->once())->method('getParentLocaleOf')->will($this->returnValue(NULL));
 
 		$this->repository->injectLocalizationService($mockLocalizationService);

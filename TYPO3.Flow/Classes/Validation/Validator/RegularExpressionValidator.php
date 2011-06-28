@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Validation\Validator;
+namespace TYPO3\FLOW3\Validation\Validator;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -30,7 +30,7 @@ namespace F3\FLOW3\Validation\Validator;
  * @api
  * @scope prototype
  */
-class RegularExpressionValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator {
+class RegularExpressionValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractValidator {
 
 	/**
 	 * Returns TRUE, if the given property ($value) matches the given regular expression.
@@ -45,14 +45,14 @@ class RegularExpressionValidator extends \F3\FLOW3\Validation\Validator\Abstract
 	 */
 	protected function isValid($value) {
 		if (!isset($this->options['regularExpression'])) {
-			throw new \F3\FLOW3\Validation\Exception\InvalidValidationOptionsException('"regularExpression" in RegularExpressionValidator was empty.', 1298273029);
+			throw new \TYPO3\FLOW3\Validation\Exception\InvalidValidationOptionsException('"regularExpression" in RegularExpressionValidator was empty.', 1298273029);
 		}
 		$result = preg_match($this->options['regularExpression'], $value);
 		if ($result === 0) {
 			$this->addError('The given subject did not match the pattern. Got: "' . $value . '"', 1221565130);
 		}
 		if ($result === FALSE) {
-			throw new \F3\FLOW3\Validation\Exception\InvalidValidationOptionsException('regularExpression "' . $this->options['regularExpression'] . '" in RegularExpressionValidator contained an error.', 1298273089);
+			throw new \TYPO3\FLOW3\Validation\Exception\InvalidValidationOptionsException('regularExpression "' . $this->options['regularExpression'] . '" in RegularExpressionValidator contained an error.', 1298273089);
 		}
 	}
 }

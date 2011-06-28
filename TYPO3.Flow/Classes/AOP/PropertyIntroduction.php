@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\AOP;
+namespace TYPO3\FLOW3\AOP;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -55,7 +55,7 @@ class PropertyIntroduction {
 
 	/**
 	 * The poincut this introduction applies to
-	 * @var \F3\FLOW3\AOP\Pointcut\Pointcut
+	 * @var \TYPO3\FLOW3\AOP\Pointcut\Pointcut
 	 */
 	protected $pointcut;
 
@@ -64,9 +64,9 @@ class PropertyIntroduction {
 	 *
 	 * @param string $declaringAspectClassName Name of the aspect containing the declaration for this introduction
 	 * @param string $propertyName Name of the property to introduce
-	 * @param \F3\FLOW3\AOP\Pointcut\Pointcut $pointcut The pointcut for this introduction
+	 * @param \TYPO3\FLOW3\AOP\Pointcut\Pointcut $pointcut The pointcut for this introduction
 	 */
-	public function __construct($declaringAspectClassName, $propertyName, \F3\FLOW3\AOP\Pointcut\Pointcut $pointcut) {
+	public function __construct($declaringAspectClassName, $propertyName, \TYPO3\FLOW3\AOP\Pointcut\Pointcut $pointcut) {
 		$this->declaringAspectClassName = $declaringAspectClassName;
 		$this->propertyName = $propertyName;
 		$this->pointcut = $pointcut;
@@ -112,7 +112,7 @@ class PropertyIntroduction {
 	/**
 	 * Returns the poincut this introduction applies to
 	 *
-	 * @return \F3\FLOW3\AOP\Pointcut\Pointcut The pointcut
+	 * @return \TYPO3\FLOW3\AOP\Pointcut\Pointcut The pointcut
 	 */
 	public function getPointcut() {
 		return $this->pointcut;

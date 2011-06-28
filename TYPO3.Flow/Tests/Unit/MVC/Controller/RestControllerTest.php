@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\MVC\Controller;
+namespace TYPO3\FLOW3\Tests\Unit\MVC\Controller;
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
  *                                                                        *
@@ -25,17 +25,17 @@ namespace F3\FLOW3\Tests\Unit\MVC\Controller;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class RestControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
+class RestControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function resolveActionMethodNameOnlyResolvesRESTMethodNamesIfTheActionNameIsIndex() {
-		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
+		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
 		$mockRequest->expects($this->exactly(2))->method('getControllerActionName')->will($this->returnValue('foo'));
 
-		$controller = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\RestController', array('fooAction'), array(), '', FALSE);
+		$controller = $this->getAccessibleMock('TYPO3\FLOW3\MVC\Controller\RestController', array('fooAction'), array(), '', FALSE);
 		$controller->_set('request', $mockRequest);
 		$result = $controller->_call('resolveActionMethodName');
 
@@ -47,7 +47,7 @@ class RestControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function actionNameForGETRequestsWithoutProvidedResourceIsList() {
-		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
+		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
 		$mockRequest->expects($this->at(0))->method('getControllerActionName')->will($this->returnValue('index'));
 		$mockRequest->expects($this->once())->method('getMethod')->will($this->returnValue('GET'));
 		$mockRequest->expects($this->once())->method('hasArgument')->with('customResourceArgumentName')->will($this->returnValue(FALSE));
@@ -57,7 +57,7 @@ class RestControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		$mockRequest->expects($this->at(4))->method('getControllerActionName')->will($this->returnValue('list'));
 
-		$controller = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\RestController', array('listAction'), array(), '', FALSE);
+		$controller = $this->getAccessibleMock('TYPO3\FLOW3\MVC\Controller\RestController', array('listAction'), array(), '', FALSE);
 		$controller->_set('request', $mockRequest);
 		$controller->_set('resourceArgumentName', 'customResourceArgumentName');
 		$result = $controller->_call('resolveActionMethodName');
@@ -68,7 +68,7 @@ class RestControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function actionNameForGETRequestsWithProvidedResourceIsShow() {
-		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
+		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
 		$mockRequest->expects($this->at(0))->method('getControllerActionName')->will($this->returnValue('index'));
 		$mockRequest->expects($this->once())->method('getMethod')->will($this->returnValue('GET'));
 		$mockRequest->expects($this->once())->method('hasArgument')->with('customResourceArgumentName')->will($this->returnValue(TRUE));
@@ -78,7 +78,7 @@ class RestControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		$mockRequest->expects($this->at(4))->method('getControllerActionName')->will($this->returnValue('show'));
 
-		$controller = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\RestController', array('showAction'), array(), '', FALSE);
+		$controller = $this->getAccessibleMock('TYPO3\FLOW3\MVC\Controller\RestController', array('showAction'), array(), '', FALSE);
 		$controller->_set('request', $mockRequest);
 		$controller->_set('resourceArgumentName', 'customResourceArgumentName');
 		$result = $controller->_call('resolveActionMethodName');
@@ -89,7 +89,7 @@ class RestControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function actionNameForPOSTRequestsIsCreate() {
-		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
+		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
 		$mockRequest->expects($this->at(0))->method('getControllerActionName')->will($this->returnValue('index'));
 		$mockRequest->expects($this->once())->method('getMethod')->will($this->returnValue('POST'));
 
@@ -98,7 +98,7 @@ class RestControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		$mockRequest->expects($this->at(3))->method('getControllerActionName')->will($this->returnValue('create'));
 
-		$controller = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\RestController', array('createAction'), array(), '', FALSE);
+		$controller = $this->getAccessibleMock('TYPO3\FLOW3\MVC\Controller\RestController', array('createAction'), array(), '', FALSE);
 		$controller->_set('request', $mockRequest);
 		$controller->_set('resourceArgumentName', 'customResourceArgumentName');
 		$result = $controller->_call('resolveActionMethodName');
@@ -109,7 +109,7 @@ class RestControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function actionNameForPUTRequestsIsUpdate() {
-		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
+		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
 		$mockRequest->expects($this->at(0))->method('getControllerActionName')->will($this->returnValue('index'));
 		$mockRequest->expects($this->once())->method('getMethod')->will($this->returnValue('PUT'));
 		$mockRequest->expects($this->once())->method('hasArgument')->with('customResourceArgumentName')->will($this->returnValue(TRUE));
@@ -119,7 +119,7 @@ class RestControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		$mockRequest->expects($this->at(4))->method('getControllerActionName')->will($this->returnValue('update'));
 
-		$controller = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\RestController', array('updateAction'), array(), '', FALSE);
+		$controller = $this->getAccessibleMock('TYPO3\FLOW3\MVC\Controller\RestController', array('updateAction'), array(), '', FALSE);
 		$controller->_set('request', $mockRequest);
 		$controller->_set('resourceArgumentName', 'customResourceArgumentName');
 		$result = $controller->_call('resolveActionMethodName');
@@ -127,20 +127,20 @@ class RestControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \F3\FLOW3\MVC\Exception\StopActionException
+	 * @expectedException \TYPO3\FLOW3\MVC\Exception\StopActionException
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function aPUTRequestWithoutProvidedResourceWillThrowAStatus400() {
-		$throwStopException = function() { throw new \F3\FLOW3\MVC\Exception\StopActionException(); };
+		$throwStopException = function() { throw new \TYPO3\FLOW3\MVC\Exception\StopActionException(); };
 
-		$mockResponse = $this->getMock('F3\FLOW3\MVC\Web\Response', array(), array(), '', FALSE);
+		$mockResponse = $this->getMock('TYPO3\FLOW3\MVC\Web\Response', array(), array(), '', FALSE);
 
-		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
+		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
 		$mockRequest->expects($this->at(0))->method('getControllerActionName')->will($this->returnValue('index'));
 		$mockRequest->expects($this->once())->method('getMethod')->will($this->returnValue('PUT'));
 		$mockRequest->expects($this->once())->method('hasArgument')->with('customResourceArgumentName')->will($this->returnValue(FALSE));
 
-		$controller = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\RestController', array('throwStatus'), array(), '', FALSE);
+		$controller = $this->getAccessibleMock('TYPO3\FLOW3\MVC\Controller\RestController', array('throwStatus'), array(), '', FALSE);
 		$controller->expects($this->once())->method('throwStatus')->with(400)->will($this->returnCallBack(array($throwStopException, '__invoke')));
 		$controller->_set('resourceArgumentName', 'customResourceArgumentName');
 		$controller->_set('request', $mockRequest);
@@ -153,7 +153,7 @@ class RestControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function actionNameForDELETERequestsIsDelete() {
-		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
+		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
 		$mockRequest->expects($this->at(0))->method('getControllerActionName')->will($this->returnValue('index'));
 		$mockRequest->expects($this->once())->method('getMethod')->will($this->returnValue('DELETE'));
 		$mockRequest->expects($this->once())->method('hasArgument')->with('customResourceArgumentName')->will($this->returnValue(TRUE));
@@ -163,7 +163,7 @@ class RestControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		$mockRequest->expects($this->at(4))->method('getControllerActionName')->will($this->returnValue('delete'));
 
-		$controller = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\RestController', array('deleteAction'), array(), '', FALSE);
+		$controller = $this->getAccessibleMock('TYPO3\FLOW3\MVC\Controller\RestController', array('deleteAction'), array(), '', FALSE);
 		$controller->_set('resourceArgumentName', 'customResourceArgumentName');
 		$controller->_set('request', $mockRequest);
 		$result = $controller->_call('resolveActionMethodName');
@@ -171,20 +171,20 @@ class RestControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \F3\FLOW3\MVC\Exception\StopActionException
+	 * @expectedException \TYPO3\FLOW3\MVC\Exception\StopActionException
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function aDELETERequestWithoutResourceWillThrowAStatus400() {
-		$throwStopException = function() { throw new \F3\FLOW3\MVC\Exception\StopActionException(); };
+		$throwStopException = function() { throw new \TYPO3\FLOW3\MVC\Exception\StopActionException(); };
 
-		$mockResponse = $this->getMock('F3\FLOW3\MVC\Web\Response', array(), array(), '', FALSE);
+		$mockResponse = $this->getMock('TYPO3\FLOW3\MVC\Web\Response', array(), array(), '', FALSE);
 
-		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
+		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
 		$mockRequest->expects($this->at(0))->method('getControllerActionName')->will($this->returnValue('index'));
 		$mockRequest->expects($this->once())->method('getMethod')->will($this->returnValue('DELETE'));
 		$mockRequest->expects($this->once())->method('hasArgument')->with('customResourceArgumentName')->will($this->returnValue(FALSE));
 
-		$controller = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\RestController', array('throwStatus'), array(), '', FALSE);
+		$controller = $this->getAccessibleMock('TYPO3\FLOW3\MVC\Controller\RestController', array('throwStatus'), array(), '', FALSE);
 		$controller->expects($this->once())->method('throwStatus')->with(400)->will($this->returnCallBack(array($throwStopException, '__invoke')));
 		$controller->_set('resourceArgumentName', 'customResourceArgumentName');
 		$controller->_set('request', $mockRequest);

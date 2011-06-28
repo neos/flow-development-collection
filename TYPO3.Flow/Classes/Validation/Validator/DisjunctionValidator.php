@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Validation\Validator;
+namespace TYPO3\FLOW3\Validation\Validator;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -30,7 +30,7 @@ namespace F3\FLOW3\Validation\Validator;
  * @api
  * @scope prototype
  */
-class DisjunctionValidator extends \F3\FLOW3\Validation\Validator\AbstractCompositeValidator {
+class DisjunctionValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractCompositeValidator {
 
 	/**
 	 * Checks if the given value is valid according to the validators of the
@@ -40,13 +40,13 @@ class DisjunctionValidator extends \F3\FLOW3\Validation\Validator\AbstractCompos
 	 *
 	 * @param mixed $value The value that should be validated
 	 * @param boolean $resetInstancesCurrentlyUnderValidation Reserved for internal use!
-	 * @return \F3\FLOW3\Error\Result
+	 * @return \TYPO3\FLOW3\Error\Result
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 * @api
 	 */
 	public function validate($value, $resetInstancesCurrentlyUnderValidation = TRUE) {
-		$result = new \F3\FLOW3\Error\Result();
+		$result = new \TYPO3\FLOW3\Error\Result();
 
 		$oneWithoutErrors = FALSE;
 		foreach ($this->validators as $validator) {
@@ -59,7 +59,7 @@ class DisjunctionValidator extends \F3\FLOW3\Validation\Validator\AbstractCompos
 		}
 
 		if ($oneWithoutErrors === TRUE) {
-			$result = new \F3\FLOW3\Error\Result();
+			$result = new \TYPO3\FLOW3\Error\Result();
 		}
 		return $result;
 	}

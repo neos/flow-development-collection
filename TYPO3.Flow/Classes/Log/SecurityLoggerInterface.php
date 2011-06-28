@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Log;
+namespace TYPO3\FLOW3\Log;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -27,7 +27,7 @@ namespace F3\FLOW3\Log;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @author Robert Lemke <robert@typo3.org>
  */
-interface SecurityLoggerInterface extends \F3\FLOW3\Log\LoggerInterface {
+interface SecurityLoggerInterface extends \TYPO3\FLOW3\Log\LoggerInterface {
 }
 
 ?>

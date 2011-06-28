@@ -16,13 +16,13 @@
 #
 # resources:
 #   methods:
-#     F3_FooPackage_PropertySetter:  "method(TYPO3\FooPackage\SomeClass->setSomeProperty())"
-#     F3_FooPackage_BasicValidator: "method(TYPO3\FooPackage\BasicClassValidator->.*())"
-#     F3_FooPackage_CombinedResource: "theOneAndOnlyResource || theOtherLonelyResource"
+#     TYPO3_FooPackage_PropertySetter:  "method(TYPO3\FooPackage\SomeClass->setSomeProperty())"
+#     TYPO3_FooPackage_BasicValidator: "method(TYPO3\FooPackage\BasicClassValidator->.*())"
+#     TYPO3_FooPackage_CombinedResource: "theOneAndOnlyResource || theOtherLonelyResource"
 #
 #   entities:
-#     F3_FooPackage_Model_MyModelClass:
-#       F3_FooPackage_MyModelClassResource: this.property == TRUE
+#     TYPO3_FooPackage_Model_MyModelClass:
+#       TYPO3_FooPackage_MyModelClassResource: this.property == TRUE
 #
 resources:
   entities: []
@@ -47,13 +47,13 @@ roles: []
 #       deleteMethods:           GRANT
 #       MyPackageUpdateMethods:  DENY
 #     entities:
-#       F3_FooPackage_MyModelClassResource: GRANT
+#       TYPO3_FooPackage_MyModelClassResource: GRANT
 #
 #   Customer:
 #     methods:
 #       deleteMethods:          DENY
 #       MyPackageUpdateMethods: DENY
 #     entities:
-#       F3_FooPackage_MyModelClassResource: DENY
+#       TYPO3_FooPackage_MyModelClassResource: DENY
 #
 acls: []

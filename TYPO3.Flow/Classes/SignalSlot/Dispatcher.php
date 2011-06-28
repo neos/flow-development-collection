@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\SignalSlot;
+namespace TYPO3\FLOW3\SignalSlot;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -33,7 +33,7 @@ namespace F3\FLOW3\SignalSlot;
 class Dispatcher {
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
+	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
@@ -48,11 +48,11 @@ class Dispatcher {
 	/**
 	 * Injects the object manager
 	 *
-	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
+	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
+	public function injectObjectManager(\TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
 	}
 
@@ -97,7 +97,7 @@ class Dispatcher {
 	 * @param string $signalName Name of the signal
 	 * @param array $signalArguments arguments passed to the signal method
 	 * @return void
-	 * @throws \F3\FLOW3\SignalSlot\Exception\InvalidSlotException if the slot is not valid
+	 * @throws \TYPO3\FLOW3\SignalSlot\Exception\InvalidSlotException if the slot is not valid
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
@@ -111,10 +111,10 @@ class Dispatcher {
 				$object = $slotInformation['object'];
 			} else {
 				if (!isset($this->objectManager)) {
-					throw new \F3\FLOW3\SignalSlot\Exception\InvalidSlotException(sprintf('Cannot dispatch %s::%s to class %s. The object manager is not yet available in the Signal Slot Dispatcher and therefore it cannot dispatch classes.', $signalClassName, $signalName, $slotInformation['class']), 1298113624);
+					throw new \TYPO3\FLOW3\SignalSlot\Exception\InvalidSlotException(sprintf('Cannot dispatch %s::%s to class %s. The object manager is not yet available in the Signal Slot Dispatcher and therefore it cannot dispatch classes.', $signalClassName, $signalName, $slotInformation['class']), 1298113624);
 				}
 				if (!$this->objectManager->isRegistered($slotInformation['class'])) {
-					throw new \F3\FLOW3\SignalSlot\Exception\InvalidSlotException('The given class "' . $slotInformation['class'] . '" is not a registered object.', 1245673367);
+					throw new \TYPO3\FLOW3\SignalSlot\Exception\InvalidSlotException('The given class "' . $slotInformation['class'] . '" is not a registered object.', 1245673367);
 				}
 				$object = $this->objectManager->get($slotInformation['class']);
 			}
@@ -123,7 +123,7 @@ class Dispatcher {
 				$slotArguments[] = $signalClassName . '::' . $signalName;
 			}
 			if (!method_exists($object, $slotInformation['method'])) {
-				throw new \F3\FLOW3\SignalSlot\Exception\InvalidSlotException('The slot method ' . get_class($object) . '->' . $slotInformation['method'] . '() does not exist.', 1245673368);
+				throw new \TYPO3\FLOW3\SignalSlot\Exception\InvalidSlotException('The slot method ' . get_class($object) . '->' . $slotInformation['method'] . '() does not exist.', 1245673368);
 			}
 			call_user_func_array(array($object, $slotInformation['method']), $slotArguments);
 		}

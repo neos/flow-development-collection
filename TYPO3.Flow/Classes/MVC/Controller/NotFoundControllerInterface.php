@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\MVC\Controller;
+namespace TYPO3\FLOW3\MVC\Controller;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -32,10 +32,10 @@ interface NotFoundControllerInterface extends ControllerInterface {
 	 * Sets an exception with technical information about the reason why
 	 * no controller could be resolved.
 	 *
-	 * @param \F3\FLOW3\MVC\Controller\Exception $exception
+	 * @param \TYPO3\FLOW3\MVC\Controller\Exception $exception
 	 * @return void
 	 */
-	public function setException(\F3\FLOW3\MVC\Controller\Exception $exception);
+	public function setException(\TYPO3\FLOW3\MVC\Controller\Exception $exception);
 
 }
 

@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\Log\Backend;
+namespace TYPO3\FLOW3\Tests\Unit\Log\Backend;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,7 +26,7 @@ namespace F3\FLOW3\Tests\Unit\Log\Backend;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class FileBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
+class FileBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @author Robert Lemke <robert@typo3.org>
@@ -42,19 +42,19 @@ class FileBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function theLogFileIsOpenedWithOpen() {
 		$logFileUrl = \vfsStream::url('testDirectory') . '/test.log';
-		$backend = new \F3\FLOW3\Log\Backend\FileBackend(array('logFileUrl' => $logFileUrl));
+		$backend = new \TYPO3\FLOW3\Log\Backend\FileBackend(array('logFileUrl' => $logFileUrl));
 		$backend->open();
 		$this->assertTrue(\vfsStreamWrapper::getRoot()->hasChild('test.log'));
 	}
 
 	/**
 	 * @test
-	 * @expectedException \F3\FLOW3\Log\Exception\CouldNotOpenResourceException
+	 * @expectedException \TYPO3\FLOW3\Log\Exception\CouldNotOpenResourceException
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function openDoesNotCreateParentDirectoriesByDefault() {
 		$logFileUrl = \vfsStream::url('testDirectory') . '/foo/test.log';
-		$backend = new \F3\FLOW3\Log\Backend\FileBackend(array('logFileUrl' => $logFileUrl));
+		$backend = new \TYPO3\FLOW3\Log\Backend\FileBackend(array('logFileUrl' => $logFileUrl));
 		$backend->open();
 	}
 
@@ -64,7 +64,7 @@ class FileBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function openCreatesParentDirectoriesIfTheOptionSaysSo() {
 		$logFileUrl = \vfsStream::url('testDirectory') . '/foo/test.log';
-		$backend = new \F3\FLOW3\Log\Backend\FileBackend(array('logFileUrl' => $logFileUrl, 'createParentDirectories' => TRUE));
+		$backend = new \TYPO3\FLOW3\Log\Backend\FileBackend(array('logFileUrl' => $logFileUrl, 'createParentDirectories' => TRUE));
 		$backend->open();
 		$this->assertTrue(\vfsStreamWrapper::getRoot()->hasChild('foo'));
 	}
@@ -75,7 +75,7 @@ class FileBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function appendRendersALogEntryAndAppendsItToTheLogfile() {
 		$logFileUrl = \vfsStream::url('testDirectory') . '/test.log';
-		$backend = new \F3\FLOW3\Log\Backend\FileBackend(array('logFileUrl' => $logFileUrl));
+		$backend = new \TYPO3\FLOW3\Log\Backend\FileBackend(array('logFileUrl' => $logFileUrl));
 		$backend->open();
 
 		$backend->append('foo');
@@ -90,7 +90,7 @@ class FileBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function appendRendersALogEntryWithRemoteIpAddressAndAppendsItToTheLogfile() {
 		$logFileUrl = \vfsStream::url('testDirectory') . '/test.log';
-		$backend = new \F3\FLOW3\Log\Backend\FileBackend(array('logFileUrl' => $logFileUrl));
+		$backend = new \TYPO3\FLOW3\Log\Backend\FileBackend(array('logFileUrl' => $logFileUrl));
 		$backend->setLogIpAddress(TRUE);
 		$backend->open();
 
@@ -106,7 +106,7 @@ class FileBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function appendIgnoresMessagesAboveTheSeverityThreshold() {
 		$logFileUrl = \vfsStream::url('testDirectory') . '/test.log';
-		$backend = new \F3\FLOW3\Log\Backend\FileBackend(array('logFileUrl' => $logFileUrl));
+		$backend = new \TYPO3\FLOW3\Log\Backend\FileBackend(array('logFileUrl' => $logFileUrl));
 		$backend->setSeverityThreshold(LOG_EMERG);
 		$backend->open();
 
@@ -125,7 +125,7 @@ class FileBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$logFileUrl = \vfsStream::url('testDirectory') . '/test.log';
 		file_put_contents($logFileUrl, 'twentybytesofcontent');
 
-		$backend = $this->getAccessibleMock('F3\FLOW3\Log\Backend\FileBackend', array('dummy'), array(array('logFileUrl' => $logFileUrl)));
+		$backend = $this->getAccessibleMock('TYPO3\FLOW3\Log\Backend\FileBackend', array('dummy'), array(array('logFileUrl' => $logFileUrl)));
 		$backend->_set('maximumLogFileSize', 10);
 		$backend->setLogFilesToKeep(1);
 		$backend->open();

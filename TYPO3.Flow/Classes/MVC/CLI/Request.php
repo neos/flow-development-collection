@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\MVC\CLI;
+namespace TYPO3\FLOW3\MVC\CLI;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -21,8 +21,8 @@ namespace F3\FLOW3\MVC\CLI;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \F3\FLOW3\MVC\RequestInterface;
-use \F3\FLOW3\MVC\CLI\Command;
+use \TYPO3\FLOW3\MVC\RequestInterface;
+use \TYPO3\FLOW3\MVC\CLI\Command;
 
 /**
  * Represents a CLI request.
@@ -44,7 +44,7 @@ class Request implements RequestInterface {
 	protected $controllerCommandName = 'default';
 
 	/**
-	 * @var \F3\FLOW3\MVC\CLI\Command
+	 * @var \TYPO3\FLOW3\MVC\CLI\Command
 	 */
 	protected $command;
 
@@ -139,7 +139,7 @@ class Request implements RequestInterface {
 	/**
 	 * Returns the command object for this request
 	 *
-	 * @return \F3\FLOW3\MVC\CLI\Command
+	 * @return \TYPO3\FLOW3\MVC\CLI\Command
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getCommand() {
@@ -158,7 +158,7 @@ class Request implements RequestInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setArgument($argumentName, $value) {
-		if (!is_string($argumentName) || $argumentName === '') throw new \F3\FLOW3\MVC\Exception\InvalidArgumentNameException('Invalid argument name.', 1300893885);
+		if (!is_string($argumentName) || $argumentName === '') throw new \TYPO3\FLOW3\MVC\Exception\InvalidArgumentNameException('Invalid argument name.', 1300893885);
 		$this->arguments[$argumentName] = $value;
 	}
 
@@ -180,10 +180,10 @@ class Request implements RequestInterface {
 	 * @param string $argumentName Name of the argument
 	 * @return string Value of the argument
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws \F3\FLOW3\MVC\Exception\NoSuchArgumentException if such an argument does not exist
+	 * @throws \TYPO3\FLOW3\MVC\Exception\NoSuchArgumentException if such an argument does not exist
 	 */
 	public function getArgument($argumentName) {
-		if (!isset($this->arguments[$argumentName])) throw new \F3\FLOW3\MVC\Exception\NoSuchArgumentException('An argument "' . $argumentName . '" does not exist for this request.', 1300893886);
+		if (!isset($this->arguments[$argumentName])) throw new \TYPO3\FLOW3\MVC\Exception\NoSuchArgumentException('An argument "' . $argumentName . '" does not exist for this request.', 1300893886);
 		return $this->arguments[$argumentName];
 	}
 

@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Validation\Validator;
+namespace TYPO3\FLOW3\Validation\Validator;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -28,7 +28,7 @@ namespace F3\FLOW3\Validation\Validator;
  * @api
  * @scope singleton
  */
-class UuidValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator {
+class UuidValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractValidator {
 
 	/**
 	 * A preg pattern to match against UUIDs

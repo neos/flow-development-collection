@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Error;
+namespace TYPO3\FLOW3\Error;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -32,7 +32,7 @@ namespace F3\FLOW3\Error;
  * @api
  * @scope prototype
  */
-class Warning extends \F3\FLOW3\Error\Message {
+class Warning extends \TYPO3\FLOW3\Error\Message {
 
 	/**
 	 * @var string

@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Monitor;
+namespace TYPO3\FLOW3\Monitor;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -36,22 +36,22 @@ class FileMonitor {
 	protected $identifier;
 
 	/**
-	 * @var F3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface
+	 * @var TYPO3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface
 	 */
 	protected $changeDetectionStrategy;
 
 	/**
-	 * @var \F3\FLOW3\SignalSlot\Dispatcher
+	 * @var \TYPO3\FLOW3\SignalSlot\Dispatcher
 	 */
 	protected $signalDispatcher;
 
 	/**
-	 * @var \F3\FLOW3\Log\SystemLoggerInterface
+	 * @var \TYPO3\FLOW3\Log\SystemLoggerInterface
 	 */
 	protected $systemLogger;
 
 	/**
-	 * @var \F3\FLOW3\Cache\Frontend\VariableFrontend
+	 * @var \TYPO3\FLOW3\Cache\Frontend\VariableFrontend
 	 */
 	protected $cache;
 
@@ -90,11 +90,11 @@ class FileMonitor {
 	/**
 	 * Injects the Change Detection Strategy
 	 *
-	 * @param F3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface $changeDetectionStrategy The strategy to use for detecting changes
+	 * @param \TYPO3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface $changeDetectionStrategy The strategy to use for detecting changes
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectChangeDetectionStrategy(\F3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface $changeDetectionStrategy) {
+	public function injectChangeDetectionStrategy(\TYPO3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface $changeDetectionStrategy) {
 		$this->changeDetectionStrategy = $changeDetectionStrategy;
 	}
 
@@ -102,33 +102,33 @@ class FileMonitor {
 	 * Injects the Singal Slot Dispatcher because classes of the Monitor subpackage cannot be proxied by the AOP
 	 * framework because it is not initialized at the time the monitoring is used.
 	 *
-	 * @param \F3\FLOW3\SignalSlot\Dispatcher $signalDispatcher The Signal Slot Dispatcher
+	 * @param \TYPO3\FLOW3\SignalSlot\Dispatcher $signalDispatcher The Signal Slot Dispatcher
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectSignalDispatcher(\F3\FLOW3\SignalSlot\Dispatcher $signalDispatcher) {
+	public function injectSignalDispatcher(\TYPO3\FLOW3\SignalSlot\Dispatcher $signalDispatcher) {
 		$this->signalDispatcher = $signalDispatcher;
 	}
 
 	/**
 	 * Injects the system logger
 	 *
-	 * @param \F3\FLOW3\Log\SystemLoggerInterface $systemLogger
+	 * @param \TYPO3\FLOW3\Log\SystemLoggerInterface $systemLogger
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectSystemLogger(\F3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
+	public function injectSystemLogger(\TYPO3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
 		$this->systemLogger = $systemLogger;
 	}
 
 	/**
 	 * Injects the FLOW3_Monitor cache
 	 *
-	 * @param \F3\FLOW3\Cache\Frontend\VariableFrontend $cache
+	 * @param \TYPO3\FLOW3\Cache\Frontend\VariableFrontend $cache
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectCache(\F3\FLOW3\Cache\Frontend\VariableFrontend $cache) {
+	public function injectCache(\TYPO3\FLOW3\Cache\Frontend\VariableFrontend $cache) {
 		$this->cache = $cache;
 	}
 
@@ -155,7 +155,7 @@ class FileMonitor {
 	 */
 	public function monitorFile($pathAndFilename) {
 		if (!is_string($pathAndFilename)) throw new \InvalidArgumentException('String expected, ' . gettype($pathAndFilename), ' given.', 1231171809);
-		$pathAndFilename = \F3\FLOW3\Utility\Files::getUnixStylePath($pathAndFilename);
+		$pathAndFilename = \TYPO3\FLOW3\Utility\Files::getUnixStylePath($pathAndFilename);
 		if (array_search($pathAndFilename, $this->monitoredFiles) === FALSE) {
 			$this->monitoredFiles[] = $pathAndFilename;
 		}
@@ -172,7 +172,7 @@ class FileMonitor {
 	 */
 	public function monitorDirectory($path) {
 		if (!is_string($path)) throw new \InvalidArgumentException('String expected, ' . gettype($path), ' given.', 1231171810);
-		$path = rtrim(\F3\FLOW3\Utility\Files::getUnixStylePath($path), '/');
+		$path = rtrim(\TYPO3\FLOW3\Utility\Files::getUnixStylePath($path), '/');
 		if (array_search($path, $this->monitoredDirectories) === FALSE) {
 			$this->monitoredDirectories[] = $path;
 		}
@@ -214,9 +214,9 @@ class FileMonitor {
 
 		foreach ($this->monitoredDirectories as $path) {
 			if (!isset($this->directoriesAndFiles[$path])) {
-				$this->directoriesAndFiles[$path] = \F3\FLOW3\Utility\Files::readDirectoryRecursively($path);
+				$this->directoriesAndFiles[$path] = \TYPO3\FLOW3\Utility\Files::readDirectoryRecursively($path);
 				$this->directoriesChanged = TRUE;
-				$changedDirectories[$path] = \F3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_CREATED;
+				$changedDirectories[$path] = \TYPO3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_CREATED;
 			}
 		}
 
@@ -224,9 +224,9 @@ class FileMonitor {
 			if (!is_dir($path)) {
 				unset($this->directoriesAndFiles[$path]);
 				$this->directoriesChanged = TRUE;
-				$changedDirectories[$path] = \F3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_DELETED;
+				$changedDirectories[$path] = \TYPO3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_DELETED;
 			} else {
-				$currentSubDirectoriesAndFiles = \F3\FLOW3\Utility\Files::readDirectoryRecursively($path);
+				$currentSubDirectoriesAndFiles = \TYPO3\FLOW3\Utility\Files::readDirectoryRecursively($path);
 				if ($currentSubDirectoriesAndFiles != $pathAndFilenames) {
 					$pathAndFilenames = array_unique(array_merge($currentSubDirectoriesAndFiles, $pathAndFilenames));
 				}
@@ -254,7 +254,7 @@ class FileMonitor {
 		$changedFiles = array();
 		foreach ($pathAndFilenames as $pathAndFilename) {
 			$status = $this->changeDetectionStrategy->getFileStatus($pathAndFilename);
-			if ($status !== \F3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_UNCHANGED) {
+			if ($status !== \TYPO3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_UNCHANGED) {
 				$changedFiles[$pathAndFilename] = $status;
 			}
 		}

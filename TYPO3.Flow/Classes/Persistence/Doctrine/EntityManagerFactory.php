@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Persistence\Doctrine;
+namespace TYPO3\FLOW3\Persistence\Doctrine;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -30,17 +30,17 @@ namespace F3\FLOW3\Persistence\Doctrine;
 class EntityManagerFactory {
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
+	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
-	 * @var \F3\FLOW3\Reflection\ReflectionService
+	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
 	/**
-	 * @var \F3\FLOW3\Utility\Environment
+	 * @var \TYPO3\FLOW3\Utility\Environment
 	 */
 	protected $environment;
 
@@ -50,26 +50,26 @@ class EntityManagerFactory {
 	protected $settings = array();
 
 	/**
-	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
+	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager
 	 * @return void
 	 */
-	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
+	public function injectObjectManager(\TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
 	}
 
 	/**
-	 * @param \F3\FLOW3\Reflection\ReflectionService $reflectionService
+	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService
 	 * @return void
 	 */
-	public function injectReflectionService(\F3\FLOW3\Reflection\ReflectionService $reflectionService) {
+	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
 	}
 
 	/**
-	 * @param \F3\FLOW3\Utility\Environment $environment
+	 * @param \TYPO3\FLOW3\Utility\Environment $environment
 	 * @return void
 	 */
-	public function injectEnvironment(\F3\FLOW3\Utility\Environment $environment) {
+	public function injectEnvironment(\TYPO3\FLOW3\Utility\Environment $environment) {
 		$this->environment = $environment;
 	}
 
@@ -92,7 +92,7 @@ class EntityManagerFactory {
 	 */
 	public function create() {
 		$config = new \Doctrine\ORM\Configuration();
-		$config->setClassMetadataFactoryName('F3\FLOW3\Persistence\Doctrine\Mapping\ClassMetadataFactory');
+		$config->setClassMetadataFactoryName('TYPO3\FLOW3\Persistence\Doctrine\Mapping\ClassMetadataFactory');
 
 		if (class_exists($this->settings['doctrine']['cacheImplementation'])) {
 			$cache = new $this->settings['doctrine']['cacheImplementation']();
@@ -105,18 +105,18 @@ class EntityManagerFactory {
 		}
 
 			// must use ObjectManager in compile phase...
-		$config->setMetadataDriverImpl($this->objectManager->get('F3\FLOW3\Persistence\Doctrine\Mapping\Driver\Flow3AnnotationDriver'));
+		$config->setMetadataDriverImpl($this->objectManager->get('TYPO3\FLOW3\Persistence\Doctrine\Mapping\Driver\Flow3AnnotationDriver'));
 
-		$proxyDirectory = \F3\FLOW3\Utility\Files::concatenatePaths(array($this->environment->getPathToTemporaryDirectory(), 'Doctrine/Proxies'));
-		\F3\FLOW3\Utility\Files::createDirectoryRecursively($proxyDirectory);
+		$proxyDirectory = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array($this->environment->getPathToTemporaryDirectory(), 'Doctrine/Proxies'));
+		\TYPO3\FLOW3\Utility\Files::createDirectoryRecursively($proxyDirectory);
 		$config->setProxyDir($proxyDirectory);
-		$config->setProxyNamespace('F3\FLOW3\Persistence\Doctrine\Proxies');
+		$config->setProxyNamespace('TYPO3\FLOW3\Persistence\Doctrine\Proxies');
 		$config->setAutoGenerateProxyClasses(FALSE);
 
 		$entityManager = \Doctrine\ORM\EntityManager::create($this->settings['backendOptions'], $config);
 		if ($this->settings['doctrine']['dbal']['sessionInitialization'] !== '') {
 			$entityManager->getEventManager()->addEventSubscriber(
-				new \F3\FLOW3\Persistence\Doctrine\SessionInitializationHandler($this->settings['doctrine']['dbal']['sessionInitialization'])
+				new \TYPO3\FLOW3\Persistence\Doctrine\SessionInitializationHandler($this->settings['doctrine']['dbal']['sessionInitialization'])
 			);
 		}
 

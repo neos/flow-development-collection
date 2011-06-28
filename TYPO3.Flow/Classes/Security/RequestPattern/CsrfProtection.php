@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Security\RequestPattern;
+namespace TYPO3\FLOW3\Security\RequestPattern;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -28,28 +28,28 @@ namespace F3\FLOW3\Security\RequestPattern;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
-class CsrfProtection implements \F3\FLOW3\Security\RequestPatternInterface {
+class CsrfProtection implements \TYPO3\FLOW3\Security\RequestPatternInterface {
 
 	/**
-	 * @var \F3\FLOW3\Security\Context
+	 * @var \TYPO3\FLOW3\Security\Context
 	 * @inject
 	 */
 	protected $securityContext;
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
+	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
 	 * @inject
 	 */
 	protected $objectManager;
 
 	/**
-	 * @var \F3\FLOW3\Reflection\ReflectionService
+	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
 	 * @inject
 	 */
 	protected $reflectionService;
 
 	/**
-	 * @var \F3\FLOW3\Security\Policy\PolicyService
+	 * @var \TYPO3\FLOW3\Security\Policy\PolicyService
 	 * @inject
 	 */
 	protected $policyService;
@@ -57,12 +57,12 @@ class CsrfProtection implements \F3\FLOW3\Security\RequestPatternInterface {
 	/**
 	 * Returns TRUE, if this pattern can match against the given request object.
 	 *
-	 * @param \F3\FLOW3\MVC\RequestInterface $request The request that should be matched
+	 * @param \TYPO3\FLOW3\MVC\RequestInterface $request The request that should be matched
 	 * @return boolean TRUE if this pattern can match
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function canMatch(\F3\FLOW3\MVC\RequestInterface $request) {
-		if ($request instanceof \F3\FLOW3\MVC\Web\Request) return TRUE;
+	public function canMatch(\TYPO3\FLOW3\MVC\RequestInterface $request) {
+		if ($request instanceof \TYPO3\FLOW3\MVC\Web\Request) return TRUE;
 		return FALSE;
 	}
 
@@ -86,15 +86,15 @@ class CsrfProtection implements \F3\FLOW3\Security\RequestPatternInterface {
 	public function setPattern($uriPattern) {}
 
 	/**
-	 * Matches a \F3\FLOW3\MVC\RequestInterface against the configured CSRF pattern rules and searches for invalid
+	 * Matches a \TYPO3\FLOW3\MVC\RequestInterface against the configured CSRF pattern rules and searches for invalid
 	 * csrf tokens.
 	 *
-	 * @param \F3\FLOW3\MVC\RequestInterface $request The request that should be matched
+	 * @param \TYPO3\FLOW3\MVC\RequestInterface $request The request that should be matched
 	 * @return boolean TRUE if the pattern matched, FALSE otherwise
-	 * @throws \F3\FLOW3\Security\Exception\RequestTypeNotSupportedException
+	 * @throws \TYPO3\FLOW3\Security\Exception\RequestTypeNotSupportedException
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function matchRequest(\F3\FLOW3\MVC\RequestInterface $request) {
+	public function matchRequest(\TYPO3\FLOW3\MVC\RequestInterface $request) {
 		$controllerClassName = $this->objectManager->getClassNameByObjectName($request->getControllerObjectName());
 		$actionName = $request->getControllerActionName(). 'Action';
 

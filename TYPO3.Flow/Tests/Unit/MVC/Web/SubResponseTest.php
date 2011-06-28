@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\MVC\Web;
+namespace TYPO3\FLOW3\Tests\Unit\MVC\Web;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,15 +26,15 @@ namespace F3\FLOW3\Tests\Unit\MVC\Web;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class SubResponseTest extends \F3\FLOW3\Tests\UnitTestCase {
+class SubResponseTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function constructorSetsParentResponse() {
-		$mockResponse = $this->getMock('F3\FLOW3\MVC\Web\Response');
-		$subResponse = new \F3\FLOW3\MVC\Web\SubResponse($mockResponse);
+		$mockResponse = $this->getMock('TYPO3\FLOW3\MVC\Web\Response');
+		$subResponse = new \TYPO3\FLOW3\MVC\Web\SubResponse($mockResponse);
 		$this->assertSame($mockResponse, $subResponse->getParentResponse());
 	}
 
@@ -43,9 +43,9 @@ class SubResponseTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setStatusSetsStatusOfParentResponse() {
-		$mockResponse = $this->getMock('F3\FLOW3\MVC\Web\Response');
+		$mockResponse = $this->getMock('TYPO3\FLOW3\MVC\Web\Response');
 		$mockResponse->expects($this->once())->method('setStatus')->with('SomeStatusCode', 'SomeStatusMessage');
-		$subResponse = new \F3\FLOW3\MVC\Web\SubResponse($mockResponse);
+		$subResponse = new \TYPO3\FLOW3\MVC\Web\SubResponse($mockResponse);
 		$subResponse->setStatus('SomeStatusCode', 'SomeStatusMessage');
 	}
 
@@ -54,9 +54,9 @@ class SubResponseTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setHeaderSetsHeaderOfParentResponse() {
-		$mockResponse = $this->getMock('F3\FLOW3\MVC\Web\Response');
+		$mockResponse = $this->getMock('TYPO3\FLOW3\MVC\Web\Response');
 		$mockResponse->expects($this->once())->method('setHeader')->with('SomeName', 'SomeValue', FALSE);
-		$subResponse = new \F3\FLOW3\MVC\Web\SubResponse($mockResponse);
+		$subResponse = new \TYPO3\FLOW3\MVC\Web\SubResponse($mockResponse);
 		$subResponse->setHeader('SomeName', 'SomeValue', FALSE);
 	}
 }

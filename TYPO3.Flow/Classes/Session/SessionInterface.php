@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Session;
+namespace TYPO3\FLOW3\Session;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -41,7 +41,7 @@ interface SessionInterface {
 	 * Returns the current session ID.
 	 *
 	 * @return string The current session ID
-	 * @throws \F3\FLOW3\Session\Exception\SessionNotStartedException
+	 * @throws \TYPO3\FLOW3\Session\Exception\SessionNotStartedException
 	 */
 	public function getId();
 
@@ -50,7 +50,7 @@ interface SessionInterface {
 	 *
 	 * @param string $key An identifier for the content stored in the session.
 	 * @return array The contents associated with the given key
-	 * @throws \F3\FLOW3\Session\Exception\SessionNotStartedException
+	 * @throws \TYPO3\FLOW3\Session\Exception\SessionNotStartedException
 	 */
 	public function getData($key);
 
@@ -68,7 +68,7 @@ interface SessionInterface {
 	 * @param string $key The key under which the data should be stored
 	 * @param object $data The data to be stored
 	 * @return void
-	 * @throws \F3\FLOW3\Session\Exception\SessionNotStartedException
+	 * @throws \TYPO3\FLOW3\Session\Exception\SessionNotStartedException
 	 */
 	public function putData($key, $data);
 
@@ -76,7 +76,7 @@ interface SessionInterface {
 	 * Explicitly writes (persists) and closes the session
 	 *
 	 * @return void
-	 * @throws \F3\FLOW3\Session\Exception\SessionNotStartedException
+	 * @throws \TYPO3\FLOW3\Session\Exception\SessionNotStartedException
 	 */
 	public function close();
 
@@ -84,7 +84,7 @@ interface SessionInterface {
 	 * Explicitly destroys all session data
 	 *
 	 * @return void
-	 * @throws \F3\FLOW3\Session\Exception\SessionNotStartedException
+	 * @throws \TYPO3\FLOW3\Session\Exception\SessionNotStartedException
 	 */
 	public function destroy();
 

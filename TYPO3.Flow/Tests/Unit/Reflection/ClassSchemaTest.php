@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\Reflection;
+namespace TYPO3\FLOW3\Tests\Unit\Reflection;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -29,14 +29,14 @@ namespace F3\FLOW3\Tests\Unit\Reflection;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class ClassSchemaTest extends \F3\FLOW3\Tests\UnitTestCase {
+class ClassSchemaTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function hasPropertyReturnsTrueOnlyForExistingProperties() {
-		$classSchema = new \F3\FLOW3\Reflection\ClassSchema('SomeClass');
+		$classSchema = new \TYPO3\FLOW3\Reflection\ClassSchema('SomeClass');
 		$classSchema->addProperty('a', 'string');
 		$classSchema->addProperty('b', 'integer');
 
@@ -52,12 +52,12 @@ class ClassSchemaTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function getPropertiesReturnsAddedProperties() {
 		$expectedProperties = array(
 			'a' => array('type' => 'string', 'elementType' => NULL, 'lazy' => FALSE),
-			'b' => array('type' => 'F3\FLOW3\SomeObject', 'elementType' => NULL, 'lazy' => TRUE)
+			'b' => array('type' => 'TYPO3\FLOW3\SomeObject', 'elementType' => NULL, 'lazy' => TRUE)
 		);
 
-		$classSchema = new \F3\FLOW3\Reflection\ClassSchema('SomeClass');
+		$classSchema = new \TYPO3\FLOW3\Reflection\ClassSchema('SomeClass');
 		$classSchema->addProperty('a', 'string');
-		$classSchema->addProperty('b', 'F3\FLOW3\SomeObject', TRUE);
+		$classSchema->addProperty('b', 'TYPO3\FLOW3\SomeObject', TRUE);
 
 		$this->assertSame($expectedProperties, $classSchema->getProperties());
 	}
@@ -68,7 +68,7 @@ class ClassSchemaTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @expectedException \InvalidArgumentException
 	 */
 	public function markAsIdentityPropertyRejectsUnknownProperties() {
-		$classSchema = new \F3\FLOW3\Reflection\ClassSchema('SomeClass');
+		$classSchema = new \TYPO3\FLOW3\Reflection\ClassSchema('SomeClass');
 
 		$classSchema->markAsIdentityProperty('unknownProperty');
 	}
@@ -79,8 +79,8 @@ class ClassSchemaTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @expectedException \InvalidArgumentException
 	 */
 	public function markAsIdentityPropertyRejectsLazyLoadedProperties() {
-		$classSchema = new \F3\FLOW3\Reflection\ClassSchema('SomeClass');
-		$classSchema->addProperty('lazyProperty', 'F3\FLOW3\SomeObject', TRUE);
+		$classSchema = new \TYPO3\FLOW3\Reflection\ClassSchema('SomeClass');
+		$classSchema->addProperty('lazyProperty', 'TYPO3\FLOW3\SomeObject', TRUE);
 
 		$classSchema->markAsIdentityProperty('lazyProperty');
 	}
@@ -90,7 +90,7 @@ class ClassSchemaTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getIdentityPropertiesReturnsNamesAndTypes() {
-		$classSchema = new \F3\FLOW3\Reflection\ClassSchema('SomeClass');
+		$classSchema = new \TYPO3\FLOW3\Reflection\ClassSchema('SomeClass');
 		$classSchema->addProperty('a', 'string');
 		$classSchema->addProperty('b', 'integer');
 
@@ -115,12 +115,12 @@ class ClassSchemaTest extends \F3\FLOW3\Tests\UnitTestCase {
 			array('array'),
 			array('ArrayObject'),
 			array('SplObjectStorage'),
-			array('F3\FLOW3\Foo'),
-			array('\F3\FLOW3\Bar'),
+			array('TYPO3\FLOW3\Foo'),
+			array('\TYPO3\FLOW3\Bar'),
 			array('\Some\Object'),
 			array('SomeObject'),
 			array('array<string>'),
-			array('array<F3\FLOW3\Baz>')
+			array('array<TYPO3\FLOW3\Baz>')
 		);
 	}
 
@@ -130,7 +130,7 @@ class ClassSchemaTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function addPropertyAcceptsValidPropertyTypes($propertyType) {
-		$classSchema = new \F3\FLOW3\Reflection\ClassSchema('SomeClass');
+		$classSchema = new \TYPO3\FLOW3\Reflection\ClassSchema('SomeClass');
 			// dummy assertion to avoid incomplete  test detection
 		$this->assertNull($classSchema->addProperty('a', $propertyType));
 	}
@@ -144,7 +144,7 @@ class ClassSchemaTest extends \F3\FLOW3\Tests\UnitTestCase {
 			array('stdClass'),
 			array('\someObject'),
 			array('string<string>'),
-			array('int<F3\FLOW3\Baz>')
+			array('int<TYPO3\FLOW3\Baz>')
 		);
 	}
 	/**
@@ -154,7 +154,7 @@ class ClassSchemaTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function addPropertyRejectsInvalidPropertyTypes($propertyType) {
-		$classSchema = new \F3\FLOW3\Reflection\ClassSchema('SomeClass');
+		$classSchema = new \TYPO3\FLOW3\Reflection\ClassSchema('SomeClass');
 		$classSchema->addProperty('a', $propertyType);
 	}
 
@@ -165,33 +165,33 @@ class ClassSchemaTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function addPropertyStoresElementTypesForCollectionProperties() {
-		$classSchema = new \F3\FLOW3\Reflection\ClassSchema('SomeClass');
-		$classSchema->addProperty('a', 'array<\F3\FLOW3\Foo>');
+		$classSchema = new \TYPO3\FLOW3\Reflection\ClassSchema('SomeClass');
+		$classSchema->addProperty('a', 'array<\TYPO3\FLOW3\Foo>');
 
 		$properties = $classSchema->getProperties();
 		$this->assertEquals('array', $properties['a']['type']);
-		$this->assertEquals('F3\FLOW3\Foo', $properties['a']['elementType']);
+		$this->assertEquals('TYPO3\FLOW3\Foo', $properties['a']['elementType']);
 	}
 
 	/**
 	 * @test
-	 * @expectedException \F3\FLOW3\Reflection\Exception\ClassSchemaConstraintViolationException
+	 * @expectedException \TYPO3\FLOW3\Reflection\Exception\ClassSchemaConstraintViolationException
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setUuidPropertyNameThrowsExceptionForValueObjects() {
-		$classSchema = new \F3\FLOW3\Reflection\ClassSchema('SomeClass');
-		$classSchema->setModelType(\F3\FLOW3\Reflection\ClassSchema::MODELTYPE_VALUEOBJECT);
+		$classSchema = new \TYPO3\FLOW3\Reflection\ClassSchema('SomeClass');
+		$classSchema->setModelType(\TYPO3\FLOW3\Reflection\ClassSchema::MODELTYPE_VALUEOBJECT);
 		$classSchema->setUuidPropertyName('foo');
 	}
 
 	/**
 	 * @test
-	 * @expectedException \F3\FLOW3\Reflection\Exception\ClassSchemaConstraintViolationException
+	 * @expectedException \TYPO3\FLOW3\Reflection\Exception\ClassSchemaConstraintViolationException
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function markAsIdentityPropertyThrowsExceptionForValueObjects() {
-		$classSchema = new \F3\FLOW3\Reflection\ClassSchema('SomeClass');
-		$classSchema->setModelType(\F3\FLOW3\Reflection\ClassSchema::MODELTYPE_VALUEOBJECT);
+		$classSchema = new \TYPO3\FLOW3\Reflection\ClassSchema('SomeClass');
+		$classSchema->setModelType(\TYPO3\FLOW3\Reflection\ClassSchema::MODELTYPE_VALUEOBJECT);
 		$classSchema->markAsIdentityProperty('foo');
 	}
 
@@ -201,8 +201,8 @@ class ClassSchemaTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setModelTypeResetsUuidPropertyNameAndIdentityPropertiesAndAggregateRootForValueObjects() {
-		$classSchema = new \F3\FLOW3\Reflection\ClassSchema('SomeClass');
-		$classSchema->setModelType(\F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY);
+		$classSchema = new \TYPO3\FLOW3\Reflection\ClassSchema('SomeClass');
+		$classSchema->setModelType(\TYPO3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY);
 		$classSchema->addProperty('foo', 'string');
 		$classSchema->addProperty('bar', 'string');
 		$classSchema->setUuidPropertyName('foo');
@@ -211,7 +211,7 @@ class ClassSchemaTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$this->assertSame('foo', $classSchema->getUuidPropertyName());
 		$this->assertSame(array('bar' => 'string'), $classSchema->getIdentityProperties());
 
-		$classSchema->setModelType(\F3\FLOW3\Reflection\ClassSchema::MODELTYPE_VALUEOBJECT);
+		$classSchema->setModelType(\TYPO3\FLOW3\Reflection\ClassSchema::MODELTYPE_VALUEOBJECT);
 
 		$this->assertNull($classSchema->getUuidPropertyName());
 		$this->assertSame(array(), $classSchema->getIdentityProperties());

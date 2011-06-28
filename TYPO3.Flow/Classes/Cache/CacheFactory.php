@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Cache;
+namespace TYPO3\FLOW3\Cache;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -42,12 +42,12 @@ class CacheFactory {
 	/**
 	 * A reference to the cache manager
 	 *
-	 * @var \F3\FLOW3\Cache\CacheManager
+	 * @var \TYPO3\FLOW3\Cache\CacheManager
 	 */
 	protected $cacheManager;
 
 	/**
-	 * @var \F3\FLOW3\Utility\Environment
+	 * @var \TYPO3\FLOW3\Utility\Environment
 	 */
 	protected $environment;
 
@@ -55,11 +55,11 @@ class CacheFactory {
 	 * Constructs this cache factory
 	 *
 	 * @param string $context The current FLOW3 context
-	 * @param \F3\FLOW3\Cache\CacheManager $cacheManager
-	 * @param \F3\FLOW3\Utility\Environment $environment
+	 * @param \TYPO3\FLOW3\Cache\CacheManager $cacheManager
+	 * @param \TYPO3\FLOW3\Utility\Environment $environment
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct($context, \F3\FLOW3\Cache\CacheManager $cacheManager, \F3\FLOW3\Utility\Environment $environment) {
+	public function __construct($context, \TYPO3\FLOW3\Cache\CacheManager $cacheManager, \TYPO3\FLOW3\Utility\Environment $environment) {
 		$this->context = $context;
 		$this->cacheManager = $cacheManager;
 		$this->cacheManager->injectCacheFactory($this);
@@ -74,26 +74,26 @@ class CacheFactory {
 	 * @param string $cacheObjectName Object name of the cache frontend
 	 * @param string $backendObjectName Object name of the cache backend
 	 * @param array $backendOptions (optional) Array of backend options
-	 * @return \F3\FLOW3\Cache\Frontend\FrontendInterface The created cache frontend
+	 * @return \TYPO3\FLOW3\Cache\Frontend\FrontendInterface The created cache frontend
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function create($cacheIdentifier, $cacheObjectName, $backendObjectName, array $backendOptions = array()) {
 		$backend = new $backendObjectName($this->context, $backendOptions);
-		if (!$backend instanceof \F3\FLOW3\Cache\Backend\BackendInterface) {
-			throw new \F3\FLOW3\Cache\Exception\InvalidBackendException('"' . $backendObjectName . '" is not a valid cache backend object.', 1216304301);
+		if (!$backend instanceof \TYPO3\FLOW3\Cache\Backend\BackendInterface) {
+			throw new \TYPO3\FLOW3\Cache\Exception\InvalidBackendException('"' . $backendObjectName . '" is not a valid cache backend object.', 1216304301);
 		}
 		$backend->injectEnvironment($this->environment);
 		if (is_callable(array($backend, 'initializeObject'))) {
-			$backend->initializeObject(\F3\FLOW3\Object\ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED);
+			$backend->initializeObject(\TYPO3\FLOW3\Object\ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED);
 		}
 
 		$cache = new $cacheObjectName($cacheIdentifier, $backend);
-		if (!$cache instanceof \F3\FLOW3\Cache\Frontend\FrontendInterface) {
-			throw new \F3\FLOW3\Cache\Exception\InvalidCacheException('"' . $cacheObjectName . '" is not a valid cache frontend object.', 1216304300);
+		if (!$cache instanceof \TYPO3\FLOW3\Cache\Frontend\FrontendInterface) {
+			throw new \TYPO3\FLOW3\Cache\Exception\InvalidCacheException('"' . $cacheObjectName . '" is not a valid cache frontend object.', 1216304300);
 		}
 		if (is_callable(array($cache, 'initializeObject'))) {
-			$cache->initializeObject(\F3\FLOW3\Object\ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED);
+			$cache->initializeObject(\TYPO3\FLOW3\Object\ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED);
 		}
 
 		$this->cacheManager->registerCache($cache);

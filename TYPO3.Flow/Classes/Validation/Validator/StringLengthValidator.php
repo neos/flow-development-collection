@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Validation\Validator;
+namespace TYPO3\FLOW3\Validation\Validator;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -28,7 +28,7 @@ namespace F3\FLOW3\Validation\Validator;
  * @api
  * @scope prototype
  */
-class StringLengthValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator {
+class StringLengthValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractValidator {
 
 	/**
 	 * Returns TRUE, if the given property ($value) is a valid string and its length
@@ -39,7 +39,7 @@ class StringLengthValidator extends \F3\FLOW3\Validation\Validator\AbstractValid
 	 *
 	 * @param mixed $value The value that should be validated
 	 * @return void
-	 * @throws F3\FLOW3\Validation\Exception\InvalidSubjectException
+	 * @throws TYPO3\FLOW3\Validation\Exception\InvalidSubjectException
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
@@ -47,12 +47,12 @@ class StringLengthValidator extends \F3\FLOW3\Validation\Validator\AbstractValid
 	protected function isValid($value) {
 		if (isset($this->options['minimum']) && isset($this->options['maximum'])
 			&& $this->options['maximum'] < $this->options['minimum']) {
-			throw new \F3\FLOW3\Validation\Exception\InvalidValidationOptionsException('The \'maximum\' is shorter than the \'minimum\' in the StringLengthValidator.', 1238107096);
+			throw new \TYPO3\FLOW3\Validation\Exception\InvalidValidationOptionsException('The \'maximum\' is shorter than the \'minimum\' in the StringLengthValidator.', 1238107096);
 		}
 
 		if (is_object($value)) {
 			if (!method_exists($value, '__toString')) {
-				throw new \F3\FLOW3\Validation\Exception\InvalidSubjectException('The given object could not be converted to a string.', 1238110957);
+				throw new \TYPO3\FLOW3\Validation\Exception\InvalidSubjectException('The given object could not be converted to a string.', 1238110957);
 			}
 		} elseif (!is_string($value)) {
 			$this->addError('The given value was not a valid string.', 1269883975);

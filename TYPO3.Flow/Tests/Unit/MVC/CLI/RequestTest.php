@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\MVC\CLI;
+namespace TYPO3\FLOW3\Tests\Unit\MVC\CLI;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -21,12 +21,12 @@ namespace F3\FLOW3\Tests\Unit\MVC\CLI;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \F3\FLOW3\MVC\CLI\Request;
+use \TYPO3\FLOW3\MVC\CLI\Request;
 
 /**
  * Testcase for the CLI Request class
  */
-class RequestTest extends \F3\FLOW3\Tests\UnitTestCase {
+class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
@@ -34,7 +34,7 @@ class RequestTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function getCommandReturnsTheCommandObjectReflectingTheRequestInformation() {
 		$request = new Request();
-		$request->setControllerObjectName('F3\FLOW3\Command\CacheCommandController');
+		$request->setControllerObjectName('TYPO3\FLOW3\Command\CacheCommandController');
 		$request->setControllerCommandName('flush');
 
 		$command = $request->getCommand();
@@ -47,11 +47,11 @@ class RequestTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function setControllerObjectNameAndSetControllerCommandNameUnsetTheBuiltCommandObject() {
 		$request = new Request();
-		$request->setControllerObjectName('F3\FLOW3\Command\CacheCommandController');
+		$request->setControllerObjectName('TYPO3\FLOW3\Command\CacheCommandController');
 		$request->setControllerCommandName('flush');
 		$request->getCommand();
 
-		$request->setControllerObjectName('F3\FLOW3\Command\BeerCommandController');
+		$request->setControllerObjectName('TYPO3\FLOW3\Command\BeerCommandController');
 		$request->setControllerCommandName('drink');
 
 		$command = $request->getCommand();

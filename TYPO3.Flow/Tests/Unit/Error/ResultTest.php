@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\Error;
+namespace TYPO3\FLOW3\Tests\Unit\Error;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,16 +26,16 @@ namespace F3\FLOW3\Tests\Unit\Error;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class ResultTest extends \F3\FLOW3\Tests\UnitTestCase {
+class ResultTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 *
-	 * @var \F3\FLOW3\Error\Result
+	 * @var \TYPO3\FLOW3\Error\Result
 	 */
 	protected $result;
 
 	public function setUp() {
-		$this->result = new \F3\FLOW3\Error\Result();
+		$this->result = new \TYPO3\FLOW3\Error\Result();
 	}
 
 	public function dataTypes() {
@@ -47,7 +47,7 @@ class ResultTest extends \F3\FLOW3\Tests\UnitTestCase {
 	}
 
 	protected function getMockMessage($type) {
-		return $this->getMock('F3\FLOW3\Error\\' . $type, array(), array(), '', FALSE);
+		return $this->getMock('TYPO3\FLOW3\Error\\' . $type, array(), array(), '', FALSE);
 	}
 
 	/**
@@ -100,7 +100,7 @@ class ResultTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function forPropertyShouldReturnSubResult() {
 		$container2 = $this->result->forProperty('foo.bar');
-		$this->assertInstanceOf('F3\FLOW3\Error\Result', $container2);
+		$this->assertInstanceOf('TYPO3\FLOW3\Error\Result', $container2);
 		$this->assertSame($container2, $this->result->forProperty('foo')->forProperty('bar'));
 	}
 
@@ -230,7 +230,7 @@ class ResultTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$error2 = $this->getMockMessage('Error');
 		$error3 = $this->getMockMessage('Error');
 
-		$otherResult = new \F3\FLOW3\Error\Result();
+		$otherResult = new \TYPO3\FLOW3\Error\Result();
 
 		$otherResult->addNotice($notice1);
 		$otherResult->forProperty('foo.bar')->addNotice($notice2);

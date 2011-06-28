@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\Cache\Backend;
+namespace TYPO3\FLOW3\Tests\Unit\Cache\Backend;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,10 +26,10 @@ namespace F3\FLOW3\Tests\Unit\Cache\Backend;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class PdoBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
+class PdoBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
-	 * @var \F3\FLOW3\Utility\Environment
+	 * @var \TYPO3\FLOW3\Utility\Environment
 	 */
 	protected $environment;
 
@@ -55,11 +55,11 @@ class PdoBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @expectedException \F3\FLOW3\Cache\Exception
+	 * @expectedException \TYPO3\FLOW3\Cache\Exception
 	 */
 	public function setThrowsExceptionIfNoFrontEndHasBeenSet() {
-		$backend = new \F3\FLOW3\Cache\Backend\PdoBackend('Testing');
-		$backend->injectEnvironment($this->getMock('F3\FLOW3\Utility\Environment', array(), array(), '', FALSE));
+		$backend = new \TYPO3\FLOW3\Cache\Backend\PdoBackend('Testing');
+		$backend->injectEnvironment($this->getMock('TYPO3\FLOW3\Utility\Environment', array(), array(), '', FALSE));
 		$data = 'Some data';
 		$identifier = 'MyIdentifier';
 		$backend->set($identifier, $data);
@@ -216,12 +216,12 @@ class PdoBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function flushRemovesOnlyOwnEntries() {
-		$thisCache = $this->getMock('F3\FLOW3\Cache\Frontend\FrontendInterface', array(), array(), '', FALSE);
+		$thisCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\FrontendInterface', array(), array(), '', FALSE);
 		$thisCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('thisCache'));
 		$thisBackend = $this->setUpBackend();
 		$thisBackend->setCache($thisCache);
 
-		$thatCache = $this->getMock('F3\FLOW3\Cache\Frontend\FrontendInterface', array(), array(), '', FALSE);
+		$thatCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\FrontendInterface', array(), array(), '', FALSE);
 		$thatCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('thatCache'));
 		$thatBackend = $this->setUpBackend();
 		$thatBackend->setCache($thatCache);
@@ -237,16 +237,16 @@ class PdoBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * Sets up the APC backend used for testing
 	 *
-	 * @return \F3\FLOW3\Cache\Backend\PdoBackend
+	 * @return \TYPO3\FLOW3\Cache\Backend\PdoBackend
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function setUpBackend() {
-		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
+		$mockEnvironment = $this->getMock('TYPO3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
 
-		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\FrontendInterface', array(), array(), '', FALSE);
+		$mockCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\FrontendInterface', array(), array(), '', FALSE);
 		$mockCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('TestCache'));
 
-		$backend = new \F3\FLOW3\Cache\Backend\PdoBackend('Testing');
+		$backend = new \TYPO3\FLOW3\Cache\Backend\PdoBackend('Testing');
 		$backend->injectEnvironment($mockEnvironment);
 		$backend->setCache($mockCache);
 		$backend->setDataSourceName('sqlite::memory:');

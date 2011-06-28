@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\I18n;
+namespace TYPO3\FLOW3\Tests\Unit\I18n;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,7 +26,7 @@ namespace F3\FLOW3\Tests\Unit\I18n;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class LocaleTest extends \F3\FLOW3\Tests\UnitTestCase {
+class LocaleTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
@@ -34,21 +34,21 @@ class LocaleTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function theConstructorThrowsAnExceptionOnPassingAInvalidLocaleIdentifiers() {
 		try {
-			new \F3\FLOW3\I18n\Locale('');
+			new \TYPO3\FLOW3\I18n\Locale('');
 			$this->fail('Empty string');
-		} catch(\F3\FLOW3\I18n\Exception\InvalidLocaleIdentifierException $exception) {
+		} catch(\TYPO3\FLOW3\I18n\Exception\InvalidLocaleIdentifierException $exception) {
 		}
 
 		try {
-			new \F3\FLOW3\I18n\Locale('E');
+			new \TYPO3\FLOW3\I18n\Locale('E');
 			$this->fail('Single letter');
-		} catch(\F3\FLOW3\I18n\Exception\InvalidLocaleIdentifierException $exception) {
+		} catch(\TYPO3\FLOW3\I18n\Exception\InvalidLocaleIdentifierException $exception) {
 		}
 
 		try {
-			new \F3\FLOW3\I18n\Locale('deDE');
+			new \TYPO3\FLOW3\I18n\Locale('deDE');
 			$this->fail('No underscore');
-		} catch(\F3\FLOW3\I18n\Exception\InvalidLocaleIdentifierException $exception) {
+		} catch(\TYPO3\FLOW3\I18n\Exception\InvalidLocaleIdentifierException $exception) {
 		}
 	}
 
@@ -57,25 +57,25 @@ class LocaleTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function theConstructorRecognizesTheMostImportantValidLocaleIdentifiers() {
-		$locale = new \F3\FLOW3\I18n\Locale('de');
+		$locale = new \TYPO3\FLOW3\I18n\Locale('de');
 		$this->assertEquals('de', $locale->getLanguage());
 		$this->assertNull($locale->getScript());
 		$this->assertNull($locale->getRegion());
 		$this->assertNull($locale->getVariant());
 
-		$locale = new \F3\FLOW3\I18n\Locale('de_DE');
+		$locale = new \TYPO3\FLOW3\I18n\Locale('de_DE');
 		$this->assertEquals('de', $locale->getLanguage());
 		$this->assertEquals('DE', $locale->getRegion());
 		$this->assertNull($locale->getScript());
 		$this->assertNull($locale->getVariant());
 
-		$locale = new \F3\FLOW3\I18n\Locale('en_Latn_US');
+		$locale = new \TYPO3\FLOW3\I18n\Locale('en_Latn_US');
 		$this->assertEquals('en', $locale->getLanguage());
 		$this->assertEquals('Latn', $locale->getScript());
 		$this->assertEquals('US', $locale->getRegion());
 		$this->assertNull($locale->getVariant());
 
-		$locale = new \F3\FLOW3\I18n\Locale('AR-arab_ae');
+		$locale = new \TYPO3\FLOW3\I18n\Locale('AR-arab_ae');
 		$this->assertEquals('ar', $locale->getLanguage());
 		$this->assertEquals('Arab', $locale->getScript());
 		$this->assertEquals('AE', $locale->getRegion());
@@ -87,13 +87,13 @@ class LocaleTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function producesCorrectLocaleIdentifierWhenStringCasted() {
-		$locale = new \F3\FLOW3\I18n\Locale('de_DE');
+		$locale = new \TYPO3\FLOW3\I18n\Locale('de_DE');
 		$this->assertEquals('de_DE', (string)$locale);
 
-		$locale = new \F3\FLOW3\I18n\Locale('en_Latn_US');
+		$locale = new \TYPO3\FLOW3\I18n\Locale('en_Latn_US');
 		$this->assertEquals('en_Latn_US', (string)$locale);
 
-		$locale = new \F3\FLOW3\I18n\Locale('AR-arab_ae');
+		$locale = new \TYPO3\FLOW3\I18n\Locale('AR-arab_ae');
 		$this->assertEquals('ar_Arab_AE', (string)$locale);
 	}
 }

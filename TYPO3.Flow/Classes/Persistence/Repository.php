@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Persistence;
+namespace TYPO3\FLOW3\Persistence;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -27,10 +27,10 @@ namespace F3\FLOW3\Persistence;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */
-class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
+class Repository implements \TYPO3\FLOW3\Persistence\RepositoryInterface {
 
 	/**
-	 * @var \F3\FLOW3\Persistence\PersistenceManagerInterface
+	 * @var \TYPO3\FLOW3\Persistence\PersistenceManagerInterface
 	 */
 	protected $persistenceManager;
 
@@ -56,10 +56,10 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	/**
 	 * Injects the persistence manager
 	 *
-	 * @param \F3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager
+	 * @param \TYPO3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager
 	 * @return void
 	 */
-	public function injectPersistenceManager(\F3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager) {
+	public function injectPersistenceManager(\TYPO3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager) {
 		$this->persistenceManager = $persistenceManager;
 	}
 
@@ -72,7 +72,7 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	 */
 	public function add($object) {
 		if (!($object instanceof $this->objectType)) {
-			throw new \F3\FLOW3\Persistence\Exception\IllegalObjectTypeException('The object given to add() was not of the type (' . $this->objectType . ') this repository manages.', 1298403438);
+			throw new \TYPO3\FLOW3\Persistence\Exception\IllegalObjectTypeException('The object given to add() was not of the type (' . $this->objectType . ') this repository manages.', 1298403438);
 		}
 		$this->persistenceManager->add($object);
 	}
@@ -86,7 +86,7 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	 */
 	public function remove($object) {
 		if (!($object instanceof $this->objectType)) {
-			throw new \F3\FLOW3\Persistence\Exception\IllegalObjectTypeException('The object given to remove() was not of the type (' . $this->objectType . ') this repository manages.', 1298403442);
+			throw new \TYPO3\FLOW3\Persistence\Exception\IllegalObjectTypeException('The object given to remove() was not of the type (' . $this->objectType . ') this repository manages.', 1298403442);
 		}
 		$this->persistenceManager->remove($object);
 	}
@@ -94,12 +94,12 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	/**
 	 * Returns all objects of this repository
 	 *
-	 * @return \F3\FLOW3\Persistence\QueryResultInterface The query result
+	 * @return \TYPO3\FLOW3\Persistence\QueryResultInterface The query result
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @api
-	 * @see \F3\FLOW3\Persistence\QueryInterface::execute()
+	 * @see \TYPO3\FLOW3\Persistence\QueryInterface::execute()
 	 */
 	public function findAll() {
 		return $this->createQuery()->execute();
@@ -119,7 +119,7 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	/**
 	 * Returns a query for objects of this repository
 	 *
-	 * @return \F3\FLOW3\Persistence\Doctrine\Query
+	 * @return \TYPO3\FLOW3\Persistence\Doctrine\Query
 	 * @api
 	 */
 	public function createQuery() {
@@ -157,8 +157,8 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	/**
 	 * Sets the property names to order results by. Expected like this:
 	 * array(
-	 *  'foo' => \F3\FLOW3\Persistence\QueryInterface::ORDER_ASCENDING,
-	 *  'bar' => \F3\FLOW3\Persistence\QueryInterface::ORDER_DESCENDING
+	 *  'foo' => \TYPO3\FLOW3\Persistence\QueryInterface::ORDER_ASCENDING,
+	 *  'bar' => \TYPO3\FLOW3\Persistence\QueryInterface::ORDER_DESCENDING
 	 * )
 	 *
 	 * @param array $defaultOrderings The property names to order by by default
@@ -179,7 +179,7 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	public function update($modifiedObject) {
 		if (!($modifiedObject instanceof $this->objectType)) {
 			$type = (is_object($modifiedObject) ? get_class($modifiedObject) : gettype($modifiedObject));
-			throw new \F3\FLOW3\Persistence\Exception\IllegalObjectTypeException('The modified object given to update() was ' . $type . ' , however the ' . get_class($this) . ' can only store ' . $this->objectType . '.', 1249479625);
+			throw new \TYPO3\FLOW3\Persistence\Exception\IllegalObjectTypeException('The modified object given to update() was ' . $type . ' , however the ' . get_class($this) . ' can only store ' . $this->objectType . '.', 1249479625);
 		}
 
 		$this->persistenceManager->merge($modifiedObject);

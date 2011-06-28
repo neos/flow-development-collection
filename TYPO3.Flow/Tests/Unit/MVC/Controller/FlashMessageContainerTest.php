@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\MVC\Controller;
+namespace TYPO3\FLOW3\Tests\Unit\MVC\Controller;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,16 +26,16 @@ namespace F3\FLOW3\Tests\Unit\MVC\Controller;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class FlashMessageContainerTest extends \F3\FLOW3\Tests\UnitTestCase {
+class FlashMessageContainerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 *
-	 * @var F3\FLOW3\MVC\Controller\FlashMessageContainer
+	 * @var TYPO3\FLOW3\MVC\Controller\FlashMessageContainer
 	 */
 	protected $flashMessageContainer;
 
 	public function setUp() {
-		$this->flashMessageContainer = new \F3\FLOW3\MVC\Controller\FlashMessageContainer();
+		$this->flashMessageContainer = new \TYPO3\FLOW3\MVC\Controller\FlashMessageContainer();
 	}
 
 	/**

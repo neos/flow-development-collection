@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\MVC\Web;
+namespace TYPO3\FLOW3\MVC\Web;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -28,22 +28,22 @@ namespace F3\FLOW3\MVC\Web;
  * @api
  * @scope prototype
  */
-class SubResponse extends \F3\FLOW3\MVC\Web\Response {
+class SubResponse extends \TYPO3\FLOW3\MVC\Web\Response {
 
 	/**
-	 * @var \F3\FLOW3\MVC\Web\Response
+	 * @var \TYPO3\FLOW3\MVC\Web\Response
 	 */
 	protected $parentResponse;
 
 	/**
-	 * @param \F3\FLOW3\MVC\Web\Response $parentResponse
+	 * @param \TYPO3\FLOW3\MVC\Web\Response $parentResponse
 	 */
-	public function __construct(\F3\FLOW3\MVC\Web\Response $parentResponse) {
+	public function __construct(\TYPO3\FLOW3\MVC\Web\Response $parentResponse) {
 		$this->parentResponse = $parentResponse;
 	}
 
 	/**
-	 * @return \F3\FLOW3\MVC\Web\Response
+	 * @return \TYPO3\FLOW3\MVC\Web\Response
 	 */
 	public function getParentResponse() {
 		return $this->parentResponse;
@@ -57,7 +57,7 @@ class SubResponse extends \F3\FLOW3\MVC\Web\Response {
 	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @api
-	 * @see \F3\FLOW3\MVC\Web\Response::setStatus()
+	 * @see \TYPO3\FLOW3\MVC\Web\Response::setStatus()
 	 */
 	public function setStatus($code, $message = NULL) {
 		$this->parentResponse->setStatus($code, $message);
@@ -69,7 +69,7 @@ class SubResponse extends \F3\FLOW3\MVC\Web\Response {
 	 * @return string The status code and status message, eg. "404 Not Found"
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @api
-	 * @see \F3\FLOW3\MVC\Web\Response::getStatus()
+	 * @see \TYPO3\FLOW3\MVC\Web\Response::getStatus()
 	 */
 	public function getStatus() {
 		return $this->parentResponse->getStatus();
@@ -84,7 +84,7 @@ class SubResponse extends \F3\FLOW3\MVC\Web\Response {
 	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @api
-	 * @see \F3\FLOW3\MVC\Web\Response::setHeader()
+	 * @see \TYPO3\FLOW3\MVC\Web\Response::setHeader()
 	 */
 	public function setHeader($name, $value, $replaceExistingHeader = TRUE) {
 		$this->parentResponse->setHeader($name, $value, $replaceExistingHeader);
@@ -96,7 +96,7 @@ class SubResponse extends \F3\FLOW3\MVC\Web\Response {
 	 * @return string The HTTP headers
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @api
-	 * @see \F3\FLOW3\MVC\Web\Response::getHeaders()
+	 * @see \TYPO3\FLOW3\MVC\Web\Response::getHeaders()
 	 */
 	public function getHeaders() {
 		return $this->parentResponse->getHeaders();

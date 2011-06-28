@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\I18n\Exception;
+namespace TYPO3\FLOW3\I18n\Exception;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -25,13 +25,13 @@ namespace F3\FLOW3\I18n\Exception;
  * The "Unknown Formatter" exception
  *
  * Thrown when no suitable class can be found which would implement
- * \F3\FLOW3\Formatter\FormatterInterface and have requested name suffixed with
+ * \TYPO3\FLOW3\Formatter\FormatterInterface and have requested name suffixed with
  * "Formatter" at the same time.
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */
-class UnknownFormatterException extends \F3\FLOW3\I18n\Exception {
+class UnknownFormatterException extends \TYPO3\FLOW3\I18n\Exception {
 
 }
 

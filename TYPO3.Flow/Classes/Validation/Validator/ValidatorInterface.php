@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Validation\Validator;
+namespace TYPO3\FLOW3\Validation\Validator;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -43,7 +43,7 @@ interface ValidatorInterface {
 	 * the Error Messages object which occured.
 	 *
 	 * @param mixed $value The value that should be validated
-	 * @return \F3\FLOW3\Error\Result
+	 * @return \TYPO3\FLOW3\Error\Result
 	 * @api
 	 */
 	public function validate($value);

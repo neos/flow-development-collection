@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\MVC\Web\Routing;
+namespace TYPO3\FLOW3\MVC\Web\Routing;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,7 +26,7 @@ namespace F3\FLOW3\MVC\Web\Routing;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-abstract class AbstractRoutePart implements \F3\FLOW3\MVC\Web\Routing\RoutePartInterface {
+abstract class AbstractRoutePart implements \TYPO3\FLOW3\MVC\Web\Routing\RoutePartInterface {
 
 	/**
 	 * Name of the Route Part

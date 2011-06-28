@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Persistence;
+namespace TYPO3\FLOW3\Persistence;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -27,15 +27,15 @@ namespace F3\FLOW3\Persistence;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */
-abstract class AbstractPersistenceManager implements \F3\FLOW3\Persistence\PersistenceManagerInterface {
+abstract class AbstractPersistenceManager implements \TYPO3\FLOW3\Persistence\PersistenceManagerInterface {
 
 	/**
-	 * @var \F3\FLOW3\Log\SystemLoggerInterface
+	 * @var \TYPO3\FLOW3\Log\SystemLoggerInterface
 	 */
 	protected $systemLogger;
 
 	/**
-	 * @var \F3\FLOW3\Reflection\ReflectionService
+	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
@@ -45,18 +45,18 @@ abstract class AbstractPersistenceManager implements \F3\FLOW3\Persistence\Persi
 	protected $settings = array();
 
 	/**
-	 * @param \F3\FLOW3\Log\SystemLoggerInterface $systemLogger
+	 * @param \TYPO3\FLOW3\Log\SystemLoggerInterface $systemLogger
 	 * @return void
 	 */
-	public function injectSystemLogger(\F3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
+	public function injectSystemLogger(\TYPO3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
 		$this->systemLogger = $systemLogger;
 	}
 
 	/**
-	 * @param \F3\FLOW3\Reflection\ReflectionService $reflectionService
+	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService
 	 * @return void
 	 */
-	public function injectReflectionService(\F3\FLOW3\Reflection\ReflectionService $reflectionService) {
+	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
 	}
 
@@ -76,13 +76,13 @@ abstract class AbstractPersistenceManager implements \F3\FLOW3\Persistence\Persi
 	 *
 	 * @param object $object The object to be converted
 	 * @return array The identity array in the format array('__identity' => '...')
-	 * @throws \F3\FLOW3\Persistence\Exception\UnknownObjectException if the given object is not known to the Persistence Manager
+	 * @throws \TYPO3\FLOW3\Persistence\Exception\UnknownObjectException if the given object is not known to the Persistence Manager
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function convertObjectToIdentityArray($object) {
 		$identifier = $this->getIdentifierByObject($object);
 		if ($identifier === NULL) {
-			throw new \F3\FLOW3\Persistence\Exception\UnknownObjectException('The given object is unknown to the Persistence Manager.', 1302628242);
+			throw new \TYPO3\FLOW3\Persistence\Exception\UnknownObjectException('The given object is unknown to the Persistence Manager.', 1302628242);
 		}
 		return array('__identity' => $identifier);
 	}
@@ -93,7 +93,7 @@ abstract class AbstractPersistenceManager implements \F3\FLOW3\Persistence\Persi
 	 *
 	 * @param array $array The array to be iterated over
 	 * @return array The modified array without objects
-	 * @throws \F3\FLOW3\Persistence\Exception\UnknownObjectException if array contains objects that are not known to the Persistence Manager
+	 * @throws \TYPO3\FLOW3\Persistence\Exception\UnknownObjectException if array contains objects that are not known to the Persistence Manager
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function convertObjectsToIdentityArrays(array $array) {

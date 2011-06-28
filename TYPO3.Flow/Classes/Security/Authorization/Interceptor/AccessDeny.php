@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Security\Authorization\Interceptor;
+namespace TYPO3\FLOW3\Security\Authorization\Interceptor;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -27,17 +27,17 @@ namespace F3\FLOW3\Security\Authorization\Interceptor;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope singleton
  */
-class AccessDeny implements \F3\FLOW3\Security\Authorization\InterceptorInterface {
+class AccessDeny implements \TYPO3\FLOW3\Security\Authorization\InterceptorInterface {
 
 	/**
 	 * Invokes nothing, always throws an AccessDenied Exception.
 	 *
 	 * @return boolean Always returns FALSE
-	 * @throws \F3\FLOW3\Security\Exception\AccessDeniedException
+	 * @throws \TYPO3\FLOW3\Security\Exception\AccessDeniedException
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function invoke() {
-		throw new \F3\FLOW3\Security\Exception\AccessDeniedException('You are not allowed to perform this action.', 1216919280);
+		throw new \TYPO3\FLOW3\Security\Exception\AccessDeniedException('You are not allowed to perform this action.', 1216919280);
 	}
 }
 

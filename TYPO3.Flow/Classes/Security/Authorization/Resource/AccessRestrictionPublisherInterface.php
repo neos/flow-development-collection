@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Security\Authorization\Resource;
+namespace TYPO3\FLOW3\Security\Authorization\Resource;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *

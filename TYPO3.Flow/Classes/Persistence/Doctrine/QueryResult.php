@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Persistence\Doctrine;
+namespace TYPO3\FLOW3\Persistence\Doctrine;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -28,7 +28,7 @@ namespace F3\FLOW3\Persistence\Doctrine;
  * @scope prototype
  * @api
  */
-class QueryResult implements \F3\FLOW3\Persistence\QueryResultInterface {
+class QueryResult implements \TYPO3\FLOW3\Persistence\QueryResultInterface {
 
 	/**
 	 * @var array
@@ -36,15 +36,15 @@ class QueryResult implements \F3\FLOW3\Persistence\QueryResultInterface {
 	protected $rows;
 
 	/**
-	 * @var \F3\FLOW3\Persistence\Doctrine\Query
+	 * @var \TYPO3\FLOW3\Persistence\Doctrine\Query
 	 */
 	protected $query;
 
 	/**
 	 * @param array $rows
-	 * @param \F3\FLOW3\Persistence\Doctrine\Query $query
+	 * @param \TYPO3\FLOW3\Persistence\Doctrine\Query $query
 	 */
-	public function __construct(array $rows, \F3\FLOW3\Persistence\Doctrine\Query $query) {
+	public function __construct(array $rows, \TYPO3\FLOW3\Persistence\Doctrine\Query $query) {
 		$this->rows = $rows;
 		$this->query = $query;
 	}
@@ -52,7 +52,7 @@ class QueryResult implements \F3\FLOW3\Persistence\QueryResultInterface {
 	/**
 	 * Returns a clone of the query object
 	 *
-	 * @return \F3\FLOW3\Persistence\Doctrine\Query
+	 * @return \TYPO3\FLOW3\Persistence\Doctrine\Query
 	 * @api
 	 */
 	public function getQuery() {

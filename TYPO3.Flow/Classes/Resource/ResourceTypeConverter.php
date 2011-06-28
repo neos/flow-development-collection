@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Resource;
+namespace TYPO3\FLOW3\Resource;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -27,7 +27,7 @@ namespace F3\FLOW3\Resource;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope singleton
  */
-class ResourceTypeConverter extends \F3\FLOW3\Property\TypeConverter\AbstractTypeConverter {
+class ResourceTypeConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTypeConverter {
 
 	/**
 	 * @var array<string>
@@ -37,7 +37,7 @@ class ResourceTypeConverter extends \F3\FLOW3\Property\TypeConverter\AbstractTyp
 	/**
 	 * @var string
 	 */
-	protected $targetType = 'F3\FLOW3\Resource\Resource';
+	protected $targetType = 'TYPO3\FLOW3\Resource\Resource';
 
 	/**
 	 * @var integer
@@ -45,13 +45,13 @@ class ResourceTypeConverter extends \F3\FLOW3\Property\TypeConverter\AbstractTyp
 	protected $priority = 1;
 
 	/**
-	 * @var \F3\FLOW3\Resource\ResourceManager
+	 * @var \TYPO3\FLOW3\Resource\ResourceManager
 	 */
 	protected $resourceManager;
 
 	/**
 	 * @inject
-	 * @var \F3\FLOW3\Persistence\PersistenceManagerInterface
+	 * @var \TYPO3\FLOW3\Persistence\PersistenceManagerInterface
 	 */
 	protected $persistenceManager;
 
@@ -63,11 +63,11 @@ class ResourceTypeConverter extends \F3\FLOW3\Property\TypeConverter\AbstractTyp
 	/**
 	 * Injects the resource manager
 	 *
-	 * @param \F3\FLOW3\Resource\ResourceManager $resourceManager
+	 * @param \TYPO3\FLOW3\Resource\ResourceManager $resourceManager
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectResourceManager(\F3\FLOW3\Resource\ResourceManager $resourceManager) {
+	public function injectResourceManager(\TYPO3\FLOW3\Resource\ResourceManager $resourceManager) {
 		$this->resourceManager = $resourceManager;
 	}
 
@@ -79,14 +79,14 @@ class ResourceTypeConverter extends \F3\FLOW3\Property\TypeConverter\AbstractTyp
 	 * resource manager.
 	 *
 	 * @param array $source The upload info (expected keys: error, name, tmp_name)
-	 * @return object An object or an instance of F3\FLOW3\Error\Error if the input format is not supported or could not be converted for other reasons
+	 * @return object An object or an instance of TYPO3\FLOW3\Error\Error if the input format is not supported or could not be converted for other reasons
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
+	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
 		if ($source['error'] === \UPLOAD_ERR_NO_FILE) {
 			if (isset($source['submittedFile']) && isset($source['submittedFile']['fileName']) && isset($source['submittedFile']['resourcePointer'])) {
-				$resourcePointer = $this->persistenceManager->getObjectByIdentifier($source['submittedFile']['resourcePointer'], 'F3\FLOW3\Resource\ResourcePointer');
+				$resourcePointer = $this->persistenceManager->getObjectByIdentifier($source['submittedFile']['resourcePointer'], 'TYPO3\FLOW3\Resource\ResourcePointer');
 				if ($resourcePointer) {
 					$resource = new Resource();
 					$resource->setFileName($source['submittedFile']['fileName']);
@@ -97,7 +97,7 @@ class ResourceTypeConverter extends \F3\FLOW3\Property\TypeConverter\AbstractTyp
 			return NULL;
 		}
 
-		if ($source['error'] !== \UPLOAD_ERR_OK) return new \F3\FLOW3\Error\Error(\F3\FLOW3\Utility\Files::getUploadErrorMessage($source['error']) , 1264440823);
+		if ($source['error'] !== \UPLOAD_ERR_OK) return new \TYPO3\FLOW3\Error\Error(\TYPO3\FLOW3\Utility\Files::getUploadErrorMessage($source['error']) , 1264440823);
 
 		if (isset($this->convertedResources[$source['tmp_name']])) {
 			return $this->convertedResources[$source['tmp_name']];
@@ -105,7 +105,7 @@ class ResourceTypeConverter extends \F3\FLOW3\Property\TypeConverter\AbstractTyp
 
 		$resource = $this->resourceManager->importUploadedResource($source);
 		if ($resource === FALSE) {
-			return new \F3\FLOW3\Error\Error('The resource manager could not create a Resource instance.' , 1264517906);
+			return new \TYPO3\FLOW3\Error\Error('The resource manager could not create a Resource instance.' , 1264517906);
 		} else {
 			$this->convertedResources[$source['tmp_name']] = $resource;
 			return $resource;

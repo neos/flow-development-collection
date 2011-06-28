@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Security\Authorization;
+namespace TYPO3\FLOW3\Security\Authorization;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -33,10 +33,10 @@ interface FirewallInterface {
 	 * Analyzes a request against the configured firewall rules and blocks
 	 * any illegal request.
 	 *
-	 * @param \F3\FLOW3\MVC\RequestInterface $request The request to be analyzed
+	 * @param \TYPO3\FLOW3\MVC\RequestInterface $request The request to be analyzed
 	 * @return void
 	 */
-	public function blockIllegalRequests(\F3\FLOW3\MVC\RequestInterface $request);
+	public function blockIllegalRequests(\TYPO3\FLOW3\MVC\RequestInterface $request);
 }
 
 ?>

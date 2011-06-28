@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\MVC\Web;
+namespace TYPO3\FLOW3\Tests\Unit\MVC\Web;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,35 +26,35 @@ namespace F3\FLOW3\Tests\Unit\MVC\Web;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class SubRequestBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
+class SubRequestBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
-	 * @var \F3\FLOW3\MVC\Web\Request
+	 * @var \TYPO3\FLOW3\MVC\Web\Request
 	 */
 	protected $mockRequest;
 
 	/**
-	 * @var \F3\FLOW3\MVC\Web\SubRequest
+	 * @var \TYPO3\FLOW3\MVC\Web\SubRequest
 	 */
 	protected $mockSubRequest;
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
+	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $mockObjectManager;
 
 	/**
-	 * @var \F3\FLOW3\Utility\Environment
+	 * @var \TYPO3\FLOW3\Utility\Environment
 	 */
 	protected $mockEnvironment;
 
 	/**
-	 * @var \F3\FLOW3\MVC\Web\SubRequestBuilder
+	 * @var \TYPO3\FLOW3\MVC\Web\SubRequestBuilder
 	 */
 	protected $subRequestBuilder;
 
 	/**
-	 * @var \F3\FLOW3\Property\DataType\Uri
+	 * @var \TYPO3\FLOW3\Property\DataType\Uri
 	 */
 	protected $mockUri;
 
@@ -62,15 +62,15 @@ class SubRequestBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @return void
 	 */
 	public function setUp() {
-		$this->mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$this->mockUri = $this->getMock('F3\FLOW3\Property\DataType\Uri', array(), array(), '', FALSE);
+		$this->mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
+		$this->mockUri = $this->getMock('TYPO3\FLOW3\Property\DataType\Uri', array(), array(), '', FALSE);
 		$this->mockUri->expects($this->any())->method('getArguments')->will($this->returnValue(array()));
-		$this->mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
-		$this->mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request');
-		$this->mockSubRequest = $this->getMock('F3\FLOW3\MVC\Web\SubRequest', array(), array(), '', FALSE);
+		$this->mockEnvironment = $this->getMock('TYPO3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
+		$this->mockRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\Request');
+		$this->mockSubRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\SubRequest', array(), array(), '', FALSE);
 		$this->mockSubRequest->expects($this->any())->method('getRequestUri')->will($this->returnValue($this->mockUri));
 		$this->mockSubRequest->expects($this->any())->method('getParentRequest')->will($this->returnValue($this->mockRequest));
-		$this->subRequestBuilder = new \F3\FLOW3\MVC\Web\SubRequestBuilder();
+		$this->subRequestBuilder = new \TYPO3\FLOW3\MVC\Web\SubRequestBuilder();
 		$this->subRequestBuilder->injectObjectManager($this->mockObjectManager);
 		$this->subRequestBuilder->injectEnvironment($this->mockEnvironment);
 	}
@@ -80,7 +80,7 @@ class SubRequestBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function buildSetsParentRequest() {
-		$this->mockObjectManager->expects($this->once())->method('create')->with('F3\FLOW3\MVC\Web\SubRequest', $this->mockRequest)->will($this->returnValue($this->mockSubRequest));
+		$this->mockObjectManager->expects($this->once())->method('create')->with('TYPO3\FLOW3\MVC\Web\SubRequest', $this->mockRequest)->will($this->returnValue($this->mockSubRequest));
 		$this->mockSubRequest->expects($this->any())->method('getArguments')->will($this->returnValue(array()));
 		$this->subRequestBuilder->build($this->mockRequest);
 	}
@@ -90,7 +90,7 @@ class SubRequestBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function buildSetsArgumentNamespaceToAnEmptyStringByDefault() {
-		$this->mockObjectManager->expects($this->once())->method('create')->with('F3\FLOW3\MVC\Web\SubRequest', $this->mockRequest)->will($this->returnValue($this->mockSubRequest));
+		$this->mockObjectManager->expects($this->once())->method('create')->with('TYPO3\FLOW3\MVC\Web\SubRequest', $this->mockRequest)->will($this->returnValue($this->mockSubRequest));
 		$this->mockSubRequest->expects($this->any())->method('getArguments')->will($this->returnValue(array()));
 		$this->mockSubRequest->expects($this->once())->method('setArgumentNamespace')->with('');
 		$this->subRequestBuilder->build($this->mockRequest);
@@ -101,7 +101,7 @@ class SubRequestBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function buildSetsSpecifiedArgumentNamespace() {
-		$this->mockObjectManager->expects($this->once())->method('create')->with('F3\FLOW3\MVC\Web\SubRequest', $this->mockRequest)->will($this->returnValue($this->mockSubRequest));
+		$this->mockObjectManager->expects($this->once())->method('create')->with('TYPO3\FLOW3\MVC\Web\SubRequest', $this->mockRequest)->will($this->returnValue($this->mockSubRequest));
 		$this->mockSubRequest->expects($this->any())->method('getArguments')->will($this->returnValue(array()));
 		$this->mockSubRequest->expects($this->once())->method('setArgumentNamespace')->with('SomeArgumentNamespace');
 		$this->subRequestBuilder->build($this->mockRequest, 'SomeArgumentNamespace');
@@ -112,7 +112,7 @@ class SubRequestBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function buildDoesNotSetAnyArgumentsThatAreNotPrefix() {
-		$this->mockObjectManager->expects($this->once())->method('create')->with('F3\FLOW3\MVC\Web\SubRequest', $this->mockRequest)->will($this->returnValue($this->mockSubRequest));
+		$this->mockObjectManager->expects($this->once())->method('create')->with('TYPO3\FLOW3\MVC\Web\SubRequest', $this->mockRequest)->will($this->returnValue($this->mockSubRequest));
 		$this->mockSubRequest->expects($this->any())->method('getArguments')->will($this->returnValue(array()));
 		$this->mockSubRequest->expects($this->once())->method('getArgumentNamespace')->will($this->returnValue('argumentNamespace'));
 		$this->mockRequest->expects($this->once())->method('hasArgument')->with('argumentNamespace')->will($this->returnValue(FALSE));
@@ -127,7 +127,7 @@ class SubRequestBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function buildIgnoresNamespacedArgumentsOfTypeString() {
-		$this->mockObjectManager->expects($this->once())->method('create')->with('F3\FLOW3\MVC\Web\SubRequest', $this->mockRequest)->will($this->returnValue($this->mockSubRequest));
+		$this->mockObjectManager->expects($this->once())->method('create')->with('TYPO3\FLOW3\MVC\Web\SubRequest', $this->mockRequest)->will($this->returnValue($this->mockSubRequest));
 		$arguments = array(
 			'nonPrefixedArgument' => 'should be ignored',
 			'argumentNamespace' => 'should be an array'
@@ -146,7 +146,7 @@ class SubRequestBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function buildSetsNamespacedArgumentsFromParentRequest() {
-		$this->mockObjectManager->expects($this->once())->method('create')->with('F3\FLOW3\MVC\Web\SubRequest', $this->mockRequest)->will($this->returnValue($this->mockSubRequest));
+		$this->mockObjectManager->expects($this->once())->method('create')->with('TYPO3\FLOW3\MVC\Web\SubRequest', $this->mockRequest)->will($this->returnValue($this->mockSubRequest));
 		$arguments = array(
 			'nonPrefixedArgument' => 'should be ignored',
 			'argumentNamespace' => array(
@@ -171,7 +171,7 @@ class SubRequestBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function buildSetsControllerKeysAndFormat() {
-		$this->mockObjectManager->expects($this->once())->method('create')->with('F3\FLOW3\MVC\Web\SubRequest', $this->mockRequest)->will($this->returnValue($this->mockSubRequest));
+		$this->mockObjectManager->expects($this->once())->method('create')->with('TYPO3\FLOW3\MVC\Web\SubRequest', $this->mockRequest)->will($this->returnValue($this->mockSubRequest));
 		$prefixedArguments = array(
 			'prefixedArgument1' => 'argumentValue1',
 			'@package' => 'SomePackageKey',

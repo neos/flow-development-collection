@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Error;
+namespace TYPO3\FLOW3\Error;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -29,18 +29,18 @@ namespace F3\FLOW3\Error;
 abstract class AbstractExceptionHandler implements ExceptionHandlerInterface {
 
 	/**
-	 * @var \F3\FLOW3\Log\SystemLoggerInterface
+	 * @var \TYPO3\FLOW3\Log\SystemLoggerInterface
 	 */
 	protected $systemLogger;
 
 	/**
 	 * Injects the system logger
 	 *
-	 * @param \F3\FLOW3\Log\SystemLoggerInterface $systemLogger
+	 * @param \TYPO3\FLOW3\Log\SystemLoggerInterface $systemLogger
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectSystemLogger(\F3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
+	public function injectSystemLogger(\TYPO3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
 		$this->systemLogger = $systemLogger;
 	}
 

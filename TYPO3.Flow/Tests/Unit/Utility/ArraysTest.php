@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\Utility;
+namespace TYPO3\FLOW3\Tests\Unit\Utility;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,14 +26,14 @@ namespace F3\FLOW3\Tests\Unit\Utility;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class ArraysTest extends \F3\FLOW3\Tests\UnitTestCase {
+class ArraysTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function containsMultipleTypesReturnsFalseOnEmptyArray() {
-		$this->assertFalse(\F3\FLOW3\Utility\Arrays::containsMultipleTypes(array()), 'An empty array was seen as containing multiple types');
+		$this->assertFalse(\TYPO3\FLOW3\Utility\Arrays::containsMultipleTypes(array()), 'An empty array was seen as containing multiple types');
 	}
 
 	/**
@@ -41,7 +41,7 @@ class ArraysTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function containsMultipleTypesReturnsFalseOnArrayWithIntegers() {
-		$this->assertFalse(\F3\FLOW3\Utility\Arrays::containsMultipleTypes(array(1, 2, 3)), 'An array with only integers was seen as containing multiple types');
+		$this->assertFalse(\TYPO3\FLOW3\Utility\Arrays::containsMultipleTypes(array(1, 2, 3)), 'An array with only integers was seen as containing multiple types');
 	}
 
 	/**
@@ -49,7 +49,7 @@ class ArraysTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function containsMultipleTypesReturnsFalseOnArrayWithObjects() {
-		$this->assertFalse(\F3\FLOW3\Utility\Arrays::containsMultipleTypes(array(new \stdClass(), new \stdClass(), new \stdClass())), 'An array with only \stdClass was seen as containing multiple types');
+		$this->assertFalse(\TYPO3\FLOW3\Utility\Arrays::containsMultipleTypes(array(new \stdClass(), new \stdClass(), new \stdClass())), 'An array with only \stdClass was seen as containing multiple types');
 	}
 
 	/**
@@ -57,7 +57,7 @@ class ArraysTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function containsMultipleTypesReturnsTrueOnMixedArray() {
-		$this->assertTrue(\F3\FLOW3\Utility\Arrays::containsMultipleTypes(array(1, 'string', 1.25, new \stdClass())), 'An array with mixed contents was not seen as containing multiple types');
+		$this->assertTrue(\TYPO3\FLOW3\Utility\Arrays::containsMultipleTypes(array(1, 'string', 1.25, new \stdClass())), 'An array with mixed contents was not seen as containing multiple types');
 	}
 
 	/**
@@ -66,7 +66,7 @@ class ArraysTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function getValueByPathReturnsTheValueOfANestedArrayByFollowingTheGivenSimplePath() {
 		$array = array('Foo' => 'the value');
-		$this->assertSame('the value', \F3\FLOW3\Utility\Arrays::getValueByPath($array, array('Foo')));
+		$this->assertSame('the value', \TYPO3\FLOW3\Utility\Arrays::getValueByPath($array, array('Foo')));
 	}
 
 	/**
@@ -75,7 +75,7 @@ class ArraysTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function getValueByPathReturnsTheValueOfANestedArrayByFollowingTheGivenPath() {
 		$array = array('Foo' => array('Bar' => array('Baz' => array(2 => 'the value'))));
-		$this->assertSame('the value', \F3\FLOW3\Utility\Arrays::getValueByPath($array, array('Foo', 'Bar', 'Baz', 2)));
+		$this->assertSame('the value', \TYPO3\FLOW3\Utility\Arrays::getValueByPath($array, array('Foo', 'Bar', 'Baz', 2)));
 	}
 
 	/**
@@ -86,7 +86,7 @@ class ArraysTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$path = 'Foo.Bar.Baz.2';
 		$array = array('Foo' => array('Bar' => array('Baz' => array(2 => 'the value'))));
 		$expectedResult = 'the value';
-		$actualResult = \F3\FLOW3\Utility\Arrays::getValueByPath($array, $path);
+		$actualResult = \TYPO3\FLOW3\Utility\Arrays::getValueByPath($array, $path);
 		$this->assertSame($expectedResult, $actualResult);
 	}
 
@@ -97,7 +97,7 @@ class ArraysTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function getValueByPathThrowsExceptionIfPathIsNoArrayOrString() {
 		$array = array('Foo' => array('Bar' => array('Baz' => array(2 => 'the value'))));
-		\F3\FLOW3\Utility\Arrays::getValueByPath($array, NULL);
+		\TYPO3\FLOW3\Utility\Arrays::getValueByPath($array, NULL);
 	}
 
 	/**
@@ -106,7 +106,7 @@ class ArraysTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function getValueByPathReturnsNullIfTheSegementsOfThePathDontExist() {
 		$array = array('Foo' => array('Bar' => array('Baz' => array(2 => 'the value'))));
-		$this->assertNULL(\F3\FLOW3\Utility\Arrays::getValueByPath($array, array('Foo', 'Bar', 'Bax', 2)));
+		$this->assertNULL(\TYPO3\FLOW3\Utility\Arrays::getValueByPath($array, array('Foo', 'Bar', 'Bax', 2)));
 	}
 
 	/**
@@ -115,7 +115,7 @@ class ArraysTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function getValueByPathReturnsNullIfThePathHasMoreSegmentsThanTheGivenArray() {
 		$array = array('Foo' => array('Bar' => array('Baz' => 'the value')));
-		$this->assertNULL(\F3\FLOW3\Utility\Arrays::getValueByPath($array, array('Foo', 'Bar', 'Baz', 'Bux')));
+		$this->assertNULL(\TYPO3\FLOW3\Utility\Arrays::getValueByPath($array, array('Foo', 'Bar', 'Baz', 'Bux')));
 	}
 
 	/**
@@ -130,7 +130,7 @@ class ArraysTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$object->b->c = 'w';
 		$object->d = array('i' => 'foo', 'j' => 12, 'k' => TRUE, 'l' => new \stdClass());
 
-		$array = \F3\FLOW3\Utility\Arrays::convertObjectToArray($object);
+		$array = \TYPO3\FLOW3\Utility\Arrays::convertObjectToArray($object);
 		$expected = array(
 			'a' => 'v',
 			'b' => array(
@@ -155,7 +155,7 @@ class ArraysTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$array = array();
 		$path = array('foo', 'bar', 'baz');
 		$expectedValue = array('foo' => array('bar' => array('baz' => 'The Value')));
-		$actualValue = \F3\FLOW3\Utility\Arrays::setValueByPath($array, $path, 'The Value');
+		$actualValue = \TYPO3\FLOW3\Utility\Arrays::setValueByPath($array, $path, 'The Value');
 		$this->assertEquals($expectedValue, $actualValue);
 	}
 
@@ -167,7 +167,7 @@ class ArraysTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$array = array();
 		$path = 'foo.bar.baz';
 		$expectedValue = array('foo' => array('bar' => array('baz' => 'The Value')));
-		$actualValue = \F3\FLOW3\Utility\Arrays::setValueByPath($array, $path, 'The Value');
+		$actualValue = \TYPO3\FLOW3\Utility\Arrays::setValueByPath($array, $path, 'The Value');
 		$this->assertEquals($expectedValue, $actualValue);
 	}
 
@@ -179,7 +179,7 @@ class ArraysTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$array = array('foo' => array('bar' => 'should be overriden'), 'bar' => 'Baz');
 		$path = array('foo', 'bar', 'baz');
 		$expectedValue = array('foo' => array('bar' => array('baz' => 'The Value')), 'bar' => 'Baz');
-		$actualValue = \F3\FLOW3\Utility\Arrays::setValueByPath($array, $path, 'The Value');
+		$actualValue = \TYPO3\FLOW3\Utility\Arrays::setValueByPath($array, $path, 'The Value');
 		$this->assertEquals($expectedValue, $actualValue);
 	}
 
@@ -190,7 +190,7 @@ class ArraysTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function setValueByPathThrowsExceptionIfPathIsNoArrayOrString() {
 		$array = array('Foo' => array('Bar' => array('Baz' => array(2 => 'the value'))));
-		\F3\FLOW3\Utility\Arrays::setValueByPath($array, NULL, 'Some Value');
+		\TYPO3\FLOW3\Utility\Arrays::setValueByPath($array, NULL, 'Some Value');
 	}
 
 	/**
@@ -201,7 +201,7 @@ class ArraysTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$array = array('foo' => array('bar' => array('baz' => 'Some Value')), 'bar' => 'Baz');
 		$path = array('foo', 'bar', 'nonExistingKey');
 		$expectedValue = $array;
-		$actualValue = \F3\FLOW3\Utility\Arrays::unsetValueByPath($array, $path);
+		$actualValue = \TYPO3\FLOW3\Utility\Arrays::unsetValueByPath($array, $path);
 		$this->assertEquals($expectedValue, $actualValue);
 	}
 
@@ -213,7 +213,7 @@ class ArraysTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$array = array('foo' => array('bar' => array('baz' => 'Some Value')), 'bar' => 'Baz');
 		$path = array('foo', 'bar', 'baz');
 		$expectedValue = array('foo' => array('bar' => array()), 'bar' => 'Baz');;
-		$actualValue = \F3\FLOW3\Utility\Arrays::unsetValueByPath($array, $path);
+		$actualValue = \TYPO3\FLOW3\Utility\Arrays::unsetValueByPath($array, $path);
 		$this->assertEquals($expectedValue, $actualValue);
 	}
 
@@ -225,7 +225,7 @@ class ArraysTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$array = array('foo' => array('bar' => array('baz' => 'Some Value')), 'bar' => 'Baz');
 		$path = 'foo.bar.baz';
 		$expectedValue = array('foo' => array('bar' => array()), 'bar' => 'Baz');;
-		$actualValue = \F3\FLOW3\Utility\Arrays::unsetValueByPath($array, $path);
+		$actualValue = \TYPO3\FLOW3\Utility\Arrays::unsetValueByPath($array, $path);
 		$this->assertEquals($expectedValue, $actualValue);
 	}
 
@@ -237,7 +237,7 @@ class ArraysTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$array = array('foo' => array('bar' => array('baz' => 'Some Value')), 'bar' => 'Baz');
 		$path = array('foo');
 		$expectedValue = array('bar' => 'Baz');;
-		$actualValue = \F3\FLOW3\Utility\Arrays::unsetValueByPath($array, $path);
+		$actualValue = \TYPO3\FLOW3\Utility\Arrays::unsetValueByPath($array, $path);
 		$this->assertEquals($expectedValue, $actualValue);
 	}
 
@@ -248,7 +248,7 @@ class ArraysTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function unsetValueByPathThrowsExceptionIfPathIsNoArrayOrString() {
 		$array = array('Foo' => array('Bar' => array('Baz' => array(2 => 'the value'))));
-		\F3\FLOW3\Utility\Arrays::unsetValueByPath($array, NULL);
+		\TYPO3\FLOW3\Utility\Arrays::unsetValueByPath($array, NULL);
 	}
 }
 ?>

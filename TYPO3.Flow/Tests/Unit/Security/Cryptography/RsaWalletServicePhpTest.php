@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\Security\Cryptography;
+namespace TYPO3\FLOW3\Tests\Unit\Security\Cryptography;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,7 +26,7 @@ namespace F3\FLOW3\Tests\Unit\Security\Cryptography;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  */
-class RsaWalletServicePhpTest extends \F3\FLOW3\Tests\UnitTestCase {
+class RsaWalletServicePhpTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * Set up this testcase.
@@ -53,12 +53,12 @@ class RsaWalletServicePhpTest extends \F3\FLOW3\Tests\UnitTestCase {
 				$args = func_get_args();
 				return isset($currentKeys[$args[0]]);
 			};
-			$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
+			$mockCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
 			$mockCache->expects($this->any())->method('set')->will($this->returnCallback($setCallBack));
 			$mockCache->expects($this->any())->method('get')->will($this->returnCallback($getCallBack));
 			$mockCache->expects($this->any())->method('has')->will($this->returnCallback($hasCallBack));
 
-			$this->rsaWalletService = $this->getAccessibleMock('F3\FLOW3\Security\Cryptography\RsaWalletServicePhp', array('dummy'));
+			$this->rsaWalletService = $this->getAccessibleMock('TYPO3\FLOW3\Security\Cryptography\RsaWalletServicePhp', array('dummy'));
 			$this->rsaWalletService->_set('keystoreCache', $mockCache);
 
 			$this->keyPairUuid = $this->rsaWalletService->generateNewKeypair();
@@ -109,7 +109,7 @@ class RsaWalletServicePhpTest extends \F3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @expectedException \F3\FLOW3\Security\Exception\DecryptionNotAllowedException
+	 * @expectedException \TYPO3\FLOW3\Security\Exception\DecryptionNotAllowedException
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function decryptingWithAKeypairUUIDMarkedForPasswordUsageThrowsAnException() {

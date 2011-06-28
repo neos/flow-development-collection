@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Log;
+namespace TYPO3\FLOW3\Log;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -37,7 +37,7 @@ class LoggerFactory {
 	 * @param string $loggerObjectName Object name of the log frontend
 	 * @param mixed $backendObjectNames Object name (or array of object names) of the log backend(s)
 	 * @param array $backendOptions (optional) Array of backend options. If more than one backend is specified, this is an array of array.
-	 * @return \F3\FLOW3\Log\LoggerInterface The created logger frontend
+	 * @return \TYPO3\FLOW3\Log\LoggerInterface The created logger frontend
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */

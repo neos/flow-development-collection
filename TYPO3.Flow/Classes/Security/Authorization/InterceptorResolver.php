@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Security\Authorization;
+namespace TYPO3\FLOW3\Security\Authorization;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -30,18 +30,18 @@ namespace F3\FLOW3\Security\Authorization;
 class InterceptorResolver {
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
+	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
 	 * Constructor.
 	 *
-	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager The object manager
+	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager The object manager
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function __construct(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
+	public function __construct(\TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
 	}
 
@@ -50,7 +50,7 @@ class InterceptorResolver {
 	 *
 	 * @param string $name The (short) name of the interceptor
 	 * @return string The class name of the security interceptor, NULL if no class was found.
-	 * @throws \F3\FLOW3\Security\Exception\NoInterceptorFoundException
+	 * @throws \TYPO3\FLOW3\Security\Exception\NoInterceptorFoundException
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function resolveInterceptorClass($name) {
@@ -59,10 +59,10 @@ class InterceptorResolver {
 		$resolvedObjectName = $this->objectManager->getCaseSensitiveObjectName($name);
 		if ($resolvedObjectName !== FALSE) return $resolvedObjectName;
 
-		$resolvedObjectName = $this->objectManager->getCaseSensitiveObjectName('F3\FLOW3\Security\Authorization\Interceptor\\' . $name);
+		$resolvedObjectName = $this->objectManager->getCaseSensitiveObjectName('TYPO3\FLOW3\Security\Authorization\Interceptor\\' . $name);
 		if ($resolvedObjectName !== FALSE) return $resolvedObjectName;
 
-		throw new \F3\FLOW3\Security\Exception\NoInterceptorFoundException('A security interceptor with the name: "' . $name . '" could not be resolved.', 1217154134);
+		throw new \TYPO3\FLOW3\Security\Exception\NoInterceptorFoundException('A security interceptor with the name: "' . $name . '" could not be resolved.', 1217154134);
 	}
 }
 ?>

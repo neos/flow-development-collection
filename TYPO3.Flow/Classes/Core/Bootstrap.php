@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Core;
+namespace TYPO3\FLOW3\Core;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -51,60 +51,60 @@ class Bootstrap {
 	protected $context;
 
 	/**
-	 * @var \F3\FLOW3\Configuration\ConfigurationManager
+	 * @var \TYPO3\FLOW3\Configuration\ConfigurationManager
 	 */
 	protected $configurationManager;
 
 	/**
-	 * @var \F3\FLOW3\Utility\Environment
+	 * @var \TYPO3\FLOW3\Utility\Environment
 	 */
 	protected $environment;
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
+	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
 	 * The same instance like $objectManager, but static, for use in the proxy classes.
 	 *
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
+	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
 	 * @see initializeObjectManager(), getObjectManager()
 	 */
 	static public $staticObjectManager;
 
 	/**
-	 * @var \F3\FLOW3\Cache\CacheManager
+	 * @var \TYPO3\FLOW3\Cache\CacheManager
 	 */
 	protected $cacheManager;
 
 	/**
-	 * @var \F3\FLOW3\Package\PackageManagerInterface
+	 * @var \TYPO3\FLOW3\Package\PackageManagerInterface
 	 */
 	protected $packageManager;
 
 	/**
-	 * @var \F3\FLOW3\Core\ClassLoader
+	 * @var \TYPO3\FLOW3\Core\ClassLoader
 	 */
 	protected $classLoader;
 
 	/**
-	 * @var \F3\FLOW3\Reflection\ReflectionService
+	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
 	/**
-	 * @var \F3\FLOW3\SignalSlot\Dispatcher
+	 * @var \TYPO3\FLOW3\SignalSlot\Dispatcher
 	 */
 	protected $signalSlotDispatcher;
 
 	/**
-	 * @var \F3\FLOW3\Error\ExceptionHandlerInterface
+	 * @var \TYPO3\FLOW3\Error\ExceptionHandlerInterface
 	 */
 	protected $exceptionHandler;
 
 	/**
-	 * @var \F3\FLOW3\Log\SystemLoggerInterface
+	 * @var \TYPO3\FLOW3\Log\SystemLoggerInterface
 	 */
 	protected $systemLogger;
 
@@ -229,12 +229,12 @@ class Bootstrap {
 	/**
 	 * Returns the object manager instance
 	 *
-	 * @return \F3\FLOW3\Object\ObjectManagerInterface
+	 * @return \TYPO3\FLOW3\Object\ObjectManagerInterface
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getObjectManager() {
 		if ($this->objectManager === NULL) {
-			throw new \F3\FLOW3\Exception('The Object Manager is not available at this stage of the bootstrap run.', 1301120788);
+			throw new \TYPO3\FLOW3\Exception('The Object Manager is not available at this stage of the bootstrap run.', 1301120788);
 		}
 		return $this->objectManager;
 	}
@@ -242,7 +242,7 @@ class Bootstrap {
 	/**
 	 * Returns the signal slot dispatcher instance
 	 *
-	 * @return \F3\FLOW3\SignalSlot\Dispatcher
+	 * @return \TYPO3\FLOW3\SignalSlot\Dispatcher
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getSignalSlotDispatcher() {
@@ -263,9 +263,9 @@ class Bootstrap {
 			if (isset($commandLine[1]) && $this->isCompiletimeCommandController($commandLine[1])) {
 				$runLevel = 'compiletime';
 				$this->initializeForCompileTime();
-				$request = $this->objectManager->get('F3\FLOW3\MVC\CLI\RequestBuilder')->build(array_slice($commandLine, 1));
-				$response = new \F3\FLOW3\MVC\CLI\Response();
-				$this->objectManager->get('F3\FLOW3\MVC\Dispatcher')->dispatch($request, $response);
+				$request = $this->objectManager->get('TYPO3\FLOW3\MVC\CLI\RequestBuilder')->build(array_slice($commandLine, 1));
+				$response = new \TYPO3\FLOW3\MVC\CLI\Response();
+				$this->objectManager->get('TYPO3\FLOW3\MVC\Dispatcher')->dispatch($request, $response);
 				$this->emitFinishedCompiletimeRun();
 			} else {
 				$runLevel = 'runtime';
@@ -276,9 +276,9 @@ class Bootstrap {
 					return;
 				}
 
-				$request = $this->objectManager->get('F3\FLOW3\MVC\CLI\RequestBuilder')->build(array_slice($commandLine, 1));
-				$response = new \F3\FLOW3\MVC\CLI\Response();
-				$this->objectManager->get('F3\FLOW3\MVC\Dispatcher')->dispatch($request, $response);
+				$request = $this->objectManager->get('TYPO3\FLOW3\MVC\CLI\RequestBuilder')->build(array_slice($commandLine, 1));
+				$response = new \TYPO3\FLOW3\MVC\CLI\Response();
+				$this->objectManager->get('TYPO3\FLOW3\MVC\Dispatcher')->dispatch($request, $response);
 				$this->emitFinishedRuntimeRun();
 			}
 			$response->send();
@@ -305,12 +305,12 @@ class Bootstrap {
 			if ($commandLine === "QUIT\n") {
 				break;
 			}
-			$request = $this->objectManager->get('F3\FLOW3\MVC\CLI\RequestBuilder')->build($commandLine);
-			$response = new \F3\FLOW3\MVC\CLI\Response();
+			$request = $this->objectManager->get('TYPO3\FLOW3\MVC\CLI\RequestBuilder')->build($commandLine);
+			$response = new \TYPO3\FLOW3\MVC\CLI\Response();
 			if ($this->isCompiletimeCommandController($request->getCommandIdentifier())) {
 				echo "This command must be executed during compiletime.\n";
 			} else {
-				$this->objectManager->get('F3\FLOW3\MVC\Dispatcher')->dispatch($request, $response);
+				$this->objectManager->get('TYPO3\FLOW3\MVC\Dispatcher')->dispatch($request, $response);
 				$response->send();
 
 				$this->emitDispatchedCommandLineSlaveRequest();
@@ -332,7 +332,7 @@ class Bootstrap {
 	protected function handleWebRequest() {
 		$this->initializeForRuntime();
 
-		$requestHandlerResolver = $this->objectManager->get('F3\FLOW3\MVC\RequestHandlerResolver');
+		$requestHandlerResolver = $this->objectManager->get('TYPO3\FLOW3\MVC\RequestHandlerResolver');
 		$requestHandler = $requestHandlerResolver->resolveRequestHandler();
 		$requestHandler->handleRequest();
 
@@ -348,13 +348,13 @@ class Bootstrap {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function initializeForCompileTime() {
-		$this->objectManager = new \F3\FLOW3\Object\CompileTimeObjectManager($this->context);
-		$this->objectManager->setInstance('F3\FLOW3\Cache\CacheManager', $this->cacheManager);
+		$this->objectManager = new \TYPO3\FLOW3\Object\CompileTimeObjectManager($this->context);
+		$this->objectManager->setInstance('TYPO3\FLOW3\Cache\CacheManager', $this->cacheManager);
 
 		$this->monitorClassFiles();
 		$this->initializeReflectionService();
 
-		$this->objectManager->injectAllSettings($this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS));
+		$this->objectManager->injectAllSettings($this->configurationManager->getConfiguration(\TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS));
 		$this->objectManager->injectReflectionService($this->reflectionService);
 		$this->objectManager->injectConfigurationManager($this->configurationManager);
 		$this->objectManager->injectConfigurationCache($this->cacheManager->getCache('FLOW3_Object_Configuration'));
@@ -383,7 +383,7 @@ class Bootstrap {
 		}
 
 		if ($objectConfigurationCache->has('allCompiledCodeUpToDate') === FALSE) {
-			throw new \F3\FLOW3\Exception('Could not load object configuration from cache. This might be due to an unsuccessful compile run. One reason might be, that your PHP binary is not located in "' . $this->settings['core']['phpBinaryPathAndFilename'] . '". In that case, set the correct path to the PHP executable in Configuration/Settings.yaml, setting FLOW3.core.phpBinaryPathAndFilename.', 1297263663);
+			throw new \TYPO3\FLOW3\Exception('Could not load object configuration from cache. This might be due to an unsuccessful compile run. One reason might be, that your PHP binary is not located in "' . $this->settings['core']['phpBinaryPathAndFilename'] . '". In that case, set the correct path to the PHP executable in Configuration/Settings.yaml, setting FLOW3.core.phpBinaryPathAndFilename.', 1297263663);
 		}
 
 		if ($this->settings['persistence']['doctrine']['autoUpdate'] === TRUE) {
@@ -393,9 +393,9 @@ class Bootstrap {
 		$this->classLoader->injectClassesCache($this->cacheManager->getCache('FLOW3_Object_Classes'));
 		$this->initializeReflectionService();
 
-		$this->objectManager = new \F3\FLOW3\Object\ObjectManager($this->context);
+		$this->objectManager = new \TYPO3\FLOW3\Object\ObjectManager($this->context);
 		self::$staticObjectManager = $this->objectManager;
-		$this->objectManager->injectAllSettings($this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS));
+		$this->objectManager->injectAllSettings($this->configurationManager->getConfiguration(\TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS));
 		$this->objectManager->setObjects($objectConfigurationCache->get('objects'));
 
 		$this->setInstancesOfEarlyServices();
@@ -436,7 +436,7 @@ class Bootstrap {
 	 */
 	protected function executeCommand($commandIdentifier) {
 		if (DIRECTORY_SEPARATOR === '/') {
-			$command = 'XDEBUG_CONFIG="idekey=FLOW3_SUBREQUEST" FLOW3_ROOTPATH=' . FLOW3_PATH_ROOT . ' ' . 'FLOW3_CONTEXT=' . $this->context . ' ' . \F3\FLOW3\Utility\Files::getUnixStylePath($this->settings['core']['phpBinaryPathAndFilename']) . ' -c ' . \F3\FLOW3\Utility\Files::getUnixStylePath(php_ini_loaded_file()) . ' ' . FLOW3_PATH_FLOW3 . 'Scripts/flow3' . ' ' . escapeshellarg($commandIdentifier);
+			$command = 'XDEBUG_CONFIG="idekey=FLOW3_SUBREQUEST" FLOW3_ROOTPATH=' . FLOW3_PATH_ROOT . ' ' . 'FLOW3_CONTEXT=' . $this->context . ' ' . \TYPO3\FLOW3\Utility\Files::getUnixStylePath($this->settings['core']['phpBinaryPathAndFilename']) . ' -c ' . \TYPO3\FLOW3\Utility\Files::getUnixStylePath(php_ini_loaded_file()) . ' ' . FLOW3_PATH_FLOW3 . 'Scripts/flow3' . ' ' . escapeshellarg($commandIdentifier);
 		} else {
 			$command = 'SET FLOW3_ROOTPATH=' . FLOW3_PATH_ROOT . '&' . 'SET FLOW3_CONTEXT=' . $this->context . '&' . $this->settings['core']['phpBinaryPathAndFilename'] . ' -c ' . php_ini_loaded_file() . ' ' . FLOW3_PATH_FLOW3 . 'Scripts/flow3' . ' ' . escape($commandIdentifier);
 		}
@@ -455,17 +455,17 @@ class Bootstrap {
 	 */
 	protected function setInstancesOfEarlyServices() {
 		$this->objectManager->setInstance(__CLASS__, $this);
-		$this->objectManager->setInstance('F3\FLOW3\Package\PackageManagerInterface', $this->packageManager);
-		$this->objectManager->setInstance('F3\FLOW3\Cache\CacheManager', $this->cacheManager);
-		$this->objectManager->setInstance('F3\FLOW3\Cache\CacheFactory', $this->cacheFactory);
-		$this->objectManager->setInstance('F3\FLOW3\Configuration\ConfigurationManager', $this->configurationManager);
-		$this->objectManager->setInstance('F3\FLOW3\Log\SystemLoggerInterface', $this->systemLogger);
-		$this->objectManager->setInstance('F3\FLOW3\Utility\Environment', $this->environment);
-		$this->objectManager->setInstance('F3\FLOW3\SignalSlot\Dispatcher', $this->signalSlotDispatcher);
-		$this->objectManager->setInstance('F3\FLOW3\Reflection\ReflectionService', $this->reflectionService);
+		$this->objectManager->setInstance('TYPO3\FLOW3\Package\PackageManagerInterface', $this->packageManager);
+		$this->objectManager->setInstance('TYPO3\FLOW3\Cache\CacheManager', $this->cacheManager);
+		$this->objectManager->setInstance('TYPO3\FLOW3\Cache\CacheFactory', $this->cacheFactory);
+		$this->objectManager->setInstance('TYPO3\FLOW3\Configuration\ConfigurationManager', $this->configurationManager);
+		$this->objectManager->setInstance('TYPO3\FLOW3\Log\SystemLoggerInterface', $this->systemLogger);
+		$this->objectManager->setInstance('TYPO3\FLOW3\Utility\Environment', $this->environment);
+		$this->objectManager->setInstance('TYPO3\FLOW3\SignalSlot\Dispatcher', $this->signalSlotDispatcher);
+		$this->objectManager->setInstance('TYPO3\FLOW3\Reflection\ReflectionService', $this->reflectionService);
 
 		$this->signalSlotDispatcher->injectObjectManager($this->objectManager);
-		\F3\FLOW3\Error\Debugger::injectObjectManager($this->objectManager);
+		\TYPO3\FLOW3\Error\Debugger::injectObjectManager($this->objectManager);
 	}
 
 
@@ -478,7 +478,7 @@ class Bootstrap {
 	 */
 	protected function initializeClassLoader() {
 		require_once(FLOW3_PATH_FLOW3 . 'Classes/Core/ClassLoader.php');
-		$this->classLoader = new \F3\FLOW3\Core\ClassLoader();
+		$this->classLoader = new \TYPO3\FLOW3\Core\ClassLoader();
 		spl_autoload_register(array($this->classLoader, 'loadClass'), TRUE, TRUE);
 	}
 
@@ -491,7 +491,7 @@ class Bootstrap {
 	 * @see initialize()
 	 */
 	protected function initializePackageManagement() {
-		$this->packageManager = new \F3\FLOW3\Package\PackageManager();
+		$this->packageManager = new \TYPO3\FLOW3\Package\PackageManager();
 		$this->packageManager->injectClassLoader($this->classLoader);
 		$this->packageManager->initialize($this);
 	}
@@ -504,13 +504,13 @@ class Bootstrap {
 	 * @see initialize()
 	 */
 	protected function initializeConfiguration() {
-		$this->configurationManager = new \F3\FLOW3\Configuration\ConfigurationManager($this->context);
-		$this->configurationManager->injectConfigurationSource(new \F3\FLOW3\Configuration\Source\YamlSource());
+		$this->configurationManager = new \TYPO3\FLOW3\Configuration\ConfigurationManager($this->context);
+		$this->configurationManager->injectConfigurationSource(new \TYPO3\FLOW3\Configuration\Source\YamlSource());
 		$this->configurationManager->setPackages($this->packageManager->getActivePackages());
 
-		$this->settings = $this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.FLOW3');
+		$this->settings = $this->configurationManager->getConfiguration(\TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'TYPO3.FLOW3');
 
-		$this->environment = new \F3\FLOW3\Utility\Environment($this->context);
+		$this->environment = new \TYPO3\FLOW3\Utility\Environment($this->context);
 		$this->environment->setTemporaryDirectoryBase($this->settings['utility']['environment']['temporaryDirectoryBase']);
 
 		$this->configurationManager->injectEnvironment($this->environment);
@@ -523,7 +523,7 @@ class Bootstrap {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function initializeSystemLogger() {
-		$this->systemLogger = \F3\FLOW3\Log\LoggerFactory::create('SystemLogger', 'F3\FLOW3\Log\Logger', $this->settings['log']['systemLogger']['backend'], $this->settings['log']['systemLogger']['backendOptions']);
+		$this->systemLogger = \TYPO3\FLOW3\Log\LoggerFactory::create('SystemLogger', 'TYPO3\FLOW3\Log\Logger', $this->settings['log']['systemLogger']['backend'], $this->settings['log']['systemLogger']['backendOptions']);
 	}
 
 	/**
@@ -534,7 +534,7 @@ class Bootstrap {
 	 * @see initialize()
 	 */
 	protected function initializeErrorHandling() {
-		$errorHandler = new \F3\FLOW3\Error\ErrorHandler();
+		$errorHandler = new \TYPO3\FLOW3\Error\ErrorHandler();
 		$errorHandler->setExceptionalErrors($this->settings['error']['errorHandler']['exceptionalErrors']);
 		$this->exceptionHandler = new $this->settings['error']['exceptionHandler']['className'];
 		$this->exceptionHandler->injectSystemLogger($this->systemLogger);
@@ -548,13 +548,13 @@ class Bootstrap {
 	 * @see initialize()
 	 */
 	protected function initializeCacheManagement() {
-		$this->cacheManager = new \F3\FLOW3\Cache\CacheManager();
-		$this->cacheManager->setCacheConfigurations($this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_CACHES));
+		$this->cacheManager = new \TYPO3\FLOW3\Cache\CacheManager();
+		$this->cacheManager->setCacheConfigurations($this->configurationManager->getConfiguration(\TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_CACHES));
 
-		$this->cacheFactory = new \F3\FLOW3\Cache\CacheFactory($this->context, $this->cacheManager, $this->environment);
+		$this->cacheFactory = new \TYPO3\FLOW3\Cache\CacheFactory($this->context, $this->cacheManager, $this->environment);
 
-		$this->signalSlotDispatcher->connect('F3\FLOW3\Monitor\FileMonitor', 'filesHaveChanged', $this->cacheManager, 'flushClassFileCachesByChangedFiles');
-		$this->signalSlotDispatcher->connect('F3\FLOW3\Monitor\FileMonitor', 'filesHaveChanged', $this->cacheManager, 'markDoctrineProxyCodeOutdatedByChangedFiles');
+		$this->signalSlotDispatcher->connect('TYPO3\FLOW3\Monitor\FileMonitor', 'filesHaveChanged', $this->cacheManager, 'flushClassFileCachesByChangedFiles');
+		$this->signalSlotDispatcher->connect('TYPO3\FLOW3\Monitor\FileMonitor', 'filesHaveChanged', $this->cacheManager, 'markDoctrineProxyCodeOutdatedByChangedFiles');
 	}
 
 	/**
@@ -565,7 +565,7 @@ class Bootstrap {
 	 * @see initialize()
 	 */
 	protected function initializeReflectionService() {
-		$this->reflectionService = new \F3\FLOW3\Reflection\ReflectionService();
+		$this->reflectionService = new \TYPO3\FLOW3\Reflection\ReflectionService();
 		$this->reflectionService->injectSystemLogger($this->systemLogger);
 		$this->reflectionService->setStatusCache($this->cacheManager->getCache('FLOW3_ReflectionStatus'));
 		$this->reflectionService->setDataCache($this->cacheManager->getCache('FLOW3_ReflectionData'));
@@ -580,7 +580,7 @@ class Bootstrap {
 	 * @see intialize()
 	 */
 	protected function initializeSignalsSlots() {
-		$this->signalSlotDispatcher = new \F3\FLOW3\SignalSlot\Dispatcher();
+		$this->signalSlotDispatcher = new \TYPO3\FLOW3\SignalSlot\Dispatcher();
 	}
 
 	/**
@@ -605,11 +605,11 @@ class Bootstrap {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function monitorClassFiles() {
-		$changeDetectionStrategy = new \F3\FLOW3\Monitor\ChangeDetectionStrategy\ModificationTimeStrategy();
+		$changeDetectionStrategy = new \TYPO3\FLOW3\Monitor\ChangeDetectionStrategy\ModificationTimeStrategy();
 		$changeDetectionStrategy->injectCache($this->cacheManager->getCache('FLOW3_Monitor'));
 		$changeDetectionStrategy->initializeObject();
 
-		$monitor = new \F3\FLOW3\Monitor\FileMonitor('FLOW3_ClassFiles');
+		$monitor = new \TYPO3\FLOW3\Monitor\FileMonitor('FLOW3_ClassFiles');
 		$monitor->injectCache($this->cacheManager->getCache('FLOW3_Monitor'));
 		$monitor->injectChangeDetectionStrategy($changeDetectionStrategy);
 		$monitor->injectSignalDispatcher($this->signalSlotDispatcher);
@@ -642,7 +642,7 @@ class Bootstrap {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function monitorRoutesConfigurationFiles() {
-		$monitor = $this->objectManager->create('F3\FLOW3\Monitor\FileMonitor', 'FLOW3_RoutesConfigurationFiles');
+		$monitor = $this->objectManager->create('TYPO3\FLOW3\Monitor\FileMonitor', 'FLOW3_RoutesConfigurationFiles');
 		$monitor->monitorFile(FLOW3_PATH_CONFIGURATION . 'Routes.yaml');
 		$monitor->monitorFile(FLOW3_PATH_CONFIGURATION . $this->context . '/Routes.yaml');
 
@@ -657,7 +657,7 @@ class Bootstrap {
 			}
 		};
 
-		$this->signalSlotDispatcher->connect('F3\FLOW3\Monitor\FileMonitor', 'filesHaveChanged', $cacheFlushingSlot);
+		$this->signalSlotDispatcher->connect('TYPO3\FLOW3\Monitor\FileMonitor', 'filesHaveChanged', $cacheFlushingSlot);
 
 		$monitor->detectChanges();
 	}
@@ -670,7 +670,7 @@ class Bootstrap {
 	 * @see intialize()
 	 */
 	protected function initializeI18n() {
-		$this->objectManager->get('F3\FLOW3\I18n\Service')->initialize();
+		$this->objectManager->get('TYPO3\FLOW3\I18n\Service')->initialize();
 	}
 
 	/**
@@ -681,7 +681,7 @@ class Bootstrap {
 	 * @see initialize()
 	 */
 	protected function initializePersistence() {
-		$persistenceManager = $this->objectManager->get('F3\FLOW3\Persistence\PersistenceManagerInterface');
+		$persistenceManager = $this->objectManager->get('TYPO3\FLOW3\Persistence\PersistenceManagerInterface');
 		$persistenceManager->initialize();
 	}
 
@@ -707,7 +707,7 @@ class Bootstrap {
 	 * @see initialize()
 	 */
 	protected function initializeResources() {
-		$resourceManager = $this->objectManager->get('F3\FLOW3\Resource\ResourceManager');
+		$resourceManager = $this->objectManager->get('TYPO3\FLOW3\Resource\ResourceManager');
 		$resourceManager->initialize();
 		if (FLOW3_SAPITYPE === 'Web') {
 			$resourceManager->publishPublicPackageResources($this->packageManager->getActivePackages());
@@ -801,9 +801,9 @@ class Bootstrap {
 				}
 			}
 			if ($rootPath !== FALSE) {
-				$rootPath = \F3\FLOW3\Utility\Files::getUnixStylePath(realpath($rootPath)) . '/';
-				$testPath = \F3\FLOW3\Utility\Files::getUnixStylePath(realpath(\F3\FLOW3\Utility\Files::concatenatePaths(array($rootPath, 'Packages/Framework/TYPO3/FLOW3')))) . '/';
-				$expectedPath = \F3\FLOW3\Utility\Files::getUnixStylePath(realpath(FLOW3_PATH_FLOW3)) . '/';
+				$rootPath = \TYPO3\FLOW3\Utility\Files::getUnixStylePath(realpath($rootPath)) . '/';
+				$testPath = \TYPO3\FLOW3\Utility\Files::getUnixStylePath(realpath(\TYPO3\FLOW3\Utility\Files::concatenatePaths(array($rootPath, 'Packages/Framework/TYPO3/FLOW3')))) . '/';
+				$expectedPath = \TYPO3\FLOW3\Utility\Files::getUnixStylePath(realpath(FLOW3_PATH_FLOW3)) . '/';
 				if ($testPath !== $expectedPath) {
 					exit('FLOW3: Invalid root path. (Error #1248964375)' . PHP_EOL . '"' . $testPath . '" does not lead to' . PHP_EOL . '"' . $expectedPath .'"' . PHP_EOL);
 				}
@@ -819,16 +819,16 @@ class Bootstrap {
 			}
 			if (!defined('FLOW3_PATH_WEB')) {
 				if (isset($_SERVER['FLOW3_WEBPATH']) && is_dir($_SERVER['FLOW3_WEBPATH'])) {
-					define('FLOW3_PATH_WEB', \F3\FLOW3\Utility\Files::getUnixStylePath(realpath($_SERVER['FLOW3_WEBPATH'])) . '/');
+					define('FLOW3_PATH_WEB', \TYPO3\FLOW3\Utility\Files::getUnixStylePath(realpath($_SERVER['FLOW3_WEBPATH'])) . '/');
 				} else {
 					define('FLOW3_PATH_WEB', FLOW3_PATH_ROOT . 'Web/');
 				}
 			}
 		} else {
 			if (!defined('FLOW3_PATH_ROOT')) {
-				define('FLOW3_PATH_ROOT', \F3\FLOW3\Utility\Files::getUnixStylePath(realpath(dirname($_SERVER['SCRIPT_FILENAME']) . '/../')) . '/');
+				define('FLOW3_PATH_ROOT', \TYPO3\FLOW3\Utility\Files::getUnixStylePath(realpath(dirname($_SERVER['SCRIPT_FILENAME']) . '/../')) . '/');
 			}
-			define('FLOW3_PATH_WEB', \F3\FLOW3\Utility\Files::getUnixStylePath(realpath(dirname($_SERVER['SCRIPT_FILENAME']))) . '/');
+			define('FLOW3_PATH_WEB', \TYPO3\FLOW3\Utility\Files::getUnixStylePath(realpath(dirname($_SERVER['SCRIPT_FILENAME']))) . '/');
 		}
 
 		define('FLOW3_PATH_CONFIGURATION', FLOW3_PATH_ROOT . 'Configuration/');
@@ -853,9 +853,9 @@ class Bootstrap {
 			exit('FLOW3 requires the PHP extension "mbstring" for PHP versions below 6.0.0 (Error #1207148809)');
 		}
 
-		if (!extension_loaded('Reflection')) throw new \F3\FLOW3\Exception('The PHP extension "Reflection" is required by FLOW3.', 1218016725);
+		if (!extension_loaded('Reflection')) throw new \TYPO3\FLOW3\Exception('The PHP extension "Reflection" is required by FLOW3.', 1218016725);
 		$method = new \ReflectionMethod(__CLASS__, __FUNCTION__);
-		if ($method->getDocComment() === '') throw new \F3\FLOW3\Exception('Reflection of doc comments is not supported by your PHP setup. Please check if you have installed an accelerator which removes doc comments.', 1218016727);
+		if ($method->getDocComment() === '') throw new \TYPO3\FLOW3\Exception('Reflection of doc comments is not supported by your PHP setup. Please check if you have installed an accelerator which removes doc comments.', 1218016727);
 
 		set_time_limit(0);
 		ini_set('unicode.output_encoding', 'utf-8');

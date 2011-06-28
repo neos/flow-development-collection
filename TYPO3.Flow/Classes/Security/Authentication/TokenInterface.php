@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Security\Authentication;
+namespace TYPO3\FLOW3\Security\Authentication;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -60,36 +60,36 @@ interface TokenInterface {
 	/**
 	 * Sets the authentication entry point
 	 *
-	 * @param \F3\FLOW3\Security\Authentication\EntryPointInterface $entryPoint The authentication entry point
+	 * @param \TYPO3\FLOW3\Security\Authentication\EntryPointInterface $entryPoint The authentication entry point
 	 * @return void
 	 */
-	public function setAuthenticationEntryPoint(\F3\FLOW3\Security\Authentication\EntryPointInterface $entryPoint);
+	public function setAuthenticationEntryPoint(\TYPO3\FLOW3\Security\Authentication\EntryPointInterface $entryPoint);
 
 	/**
 	 * Returns the configured authentication entry point, NULL if none is available
 	 *
-	 * @return \F3\FLOW3\Security\Authentication\EntryPoint The configured authentication entry point, NULL if none is available
+	 * @return \TYPO3\FLOW3\Security\Authentication\EntryPoint The configured authentication entry point, NULL if none is available
 	 */
 	public function getAuthenticationEntryPoint();
 
 	/**
-	 * Returns TRUE if \F3\FLOW3\Security\RequestPattern were set
+	 * Returns TRUE if \TYPO3\FLOW3\Security\RequestPattern were set
 	 *
-	 * @return boolean True if a \F3\FLOW3\Security\RequestPattern was set
+	 * @return boolean True if a \TYPO3\FLOW3\Security\RequestPattern was set
 	 */
 	public function hasRequestPatterns();
 
 	/**
 	 * Sets request patterns
 	 *
-	 * @param array $requestPatterns Array of \F3\FLOW3\Security\RequestPattern to be set
+	 * @param array $requestPatterns Array of \TYPO3\FLOW3\Security\RequestPattern to be set
 	 * @return void
 	 * @see hasRequestPattern()
 	 */
 	public function setRequestPatterns(array $requestPatterns);
 
 	/**
-	 * Returns an array of set \F3\FLOW3\Security\RequestPatternInterface, NULL if none was set
+	 * Returns an array of set \TYPO3\FLOW3\Security\RequestPatternInterface, NULL if none was set
 	 *
 	 * @return array Array of set request patterns
 	 * @see hasRequestPattern()
@@ -103,25 +103,25 @@ interface TokenInterface {
 	 * make sure that the authentication manager will (re-)authenticate the tokens with the current credentials.
 	 * Note: You should not persist the credentials!
 	 *
-	 * @param \F3\FLOW3\MVC\RequestInterface $request The current request instance
+	 * @param \TYPO3\FLOW3\MVC\RequestInterface $request The current request instance
 	 * @return boolean TRUE if this token needs to be (re-)authenticated
 	 */
-	public function updateCredentials(\F3\FLOW3\MVC\RequestInterface $request);
+	public function updateCredentials(\TYPO3\FLOW3\MVC\RequestInterface $request);
 
 	/**
 	 * Returns the account if one is authenticated, NULL otherwise.
 	 *
-	 * @return F3\FLOW3\Security\Account An account object
+	 * @return \TYPO3\FLOW3\Security\Account An account object
 	 */
 	public function getAccount();
 
 	/**
 	 * Set the (authenticated) account
 	 *
-	 * @param F3\FLOW3\Security\Account $account An account object
+	 * @param \TYPO3\FLOW3\Security\Account $account An account object
 	 * @return void
 	 */
-	public function setAccount(\F3\FLOW3\Security\Account $account = NULL);
+	public function setAccount(\TYPO3\FLOW3\Security\Account $account = NULL);
 
 	/**
 	 * Returns the credentials of this token. The type depends on the provider
@@ -134,12 +134,12 @@ interface TokenInterface {
 	/**
 	 * Returns the currently valid roles.
 	 *
-	 * @return array Array of \F3\FLOW3\Security\Authentication\Role objects
+	 * @return array Array of \TYPO3\FLOW3\Security\Authentication\Role objects
 	 */
 	public function getRoles();
 
 	/**
-	 * Sets the authentication status. Usually called by the responsible \F3\FLOW3\Security\Authentication\AuthenticationManagerInterface
+	 * Sets the authentication status. Usually called by the responsible \TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface
 	 *
 	 * @param integer $authenticationStatus One of NO_CREDENTIALS_GIVEN, WRONG_CREDENTIALS, AUTHENTICATION_SUCCESSFUL
 	 * @return void

@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Cache\Backend;
+namespace TYPO3\FLOW3\Cache\Backend;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -28,7 +28,7 @@ namespace F3\FLOW3\Cache\Backend;
  * @api
  * @scope prototype
  */
-class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend implements \F3\FLOW3\Cache\Backend\PhpCapableBackendInterface {
+class FileBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend implements \TYPO3\FLOW3\Cache\Backend\PhpCapableBackendInterface {
 
 	const SEPARATOR = '^';
 
@@ -55,27 +55,27 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend implements \F3
 	 * Sets a reference to the cache frontend which uses this backend and
 	 * initializes the default cache directory
 	 *
-	 * @param \F3\FLOW3\Cache\Frontend\FrontendInterface $cache The cache frontend
+	 * @param \TYPO3\FLOW3\Cache\Frontend\FrontendInterface $cache The cache frontend
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setCache(\F3\FLOW3\Cache\Frontend\FrontendInterface $cache) {
+	public function setCache(\TYPO3\FLOW3\Cache\Frontend\FrontendInterface $cache) {
 		parent::setCache($cache);
 
-		$codeOrData = ($cache instanceof \F3\FLOW3\Cache\Frontend\PhpFrontend) ? 'Code' : 'Data';
+		$codeOrData = ($cache instanceof \TYPO3\FLOW3\Cache\Frontend\PhpFrontend) ? 'Code' : 'Data';
 		$cacheDirectory = $this->environment->getPathToTemporaryDirectory() . 'Cache/' . $codeOrData . '/' . $this->cacheIdentifier . '/';
 		if (!is_writable($cacheDirectory)) {
 			try {
-				\F3\FLOW3\Utility\Files::createDirectoryRecursively($cacheDirectory);
-			} catch (\F3\FLOW3\Utility\Exception $exception) {
-				throw new \F3\FLOW3\Cache\Exception('The cache directory "' . $cacheDirectory . '" could not be created.', 1264426237);
+				\TYPO3\FLOW3\Utility\Files::createDirectoryRecursively($cacheDirectory);
+			} catch (\TYPO3\FLOW3\Utility\Exception $exception) {
+				throw new \TYPO3\FLOW3\Cache\Exception('The cache directory "' . $cacheDirectory . '" could not be created.', 1264426237);
 			}
 		}
-		if (!is_dir($cacheDirectory)) throw new \F3\FLOW3\Cache\Exception('The cache directory "' . $cacheDirectory . '" does not exist.', 1203965199);
-		if (!is_writable($cacheDirectory)) throw new \F3\FLOW3\Cache\Exception('The cache directory "' . $cacheDirectory . '" is not writable.', 1203965200);
+		if (!is_dir($cacheDirectory)) throw new \TYPO3\FLOW3\Cache\Exception('The cache directory "' . $cacheDirectory . '" does not exist.', 1203965199);
+		if (!is_writable($cacheDirectory)) throw new \TYPO3\FLOW3\Cache\Exception('The cache directory "' . $cacheDirectory . '" is not writable.', 1203965200);
 
 		$this->cacheDirectory = $cacheDirectory;
-		$this->cacheEntryFileExtension = ($cache instanceof \F3\FLOW3\Cache\Frontend\PhpFrontend) ? '.php' : '';
+		$this->cacheEntryFileExtension = ($cache instanceof \TYPO3\FLOW3\Cache\Frontend\PhpFrontend) ? '.php' : '';
 	}
 
 	/**
@@ -97,12 +97,12 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend implements \F3
 	 * @param array $tags Tags to associate with this cache entry
 	 * @param integer $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited lifetime.
 	 * @return void
-	 * @throws \F3\FLOW3\Cache\Exception if the directory does not exist or is not writable or exceeds the maximum allowed path length, or if no cache frontend has been set.
+	 * @throws \TYPO3\FLOW3\Cache\Exception if the directory does not exist or is not writable or exceeds the maximum allowed path length, or if no cache frontend has been set.
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function set($entryIdentifier, $data, array $tags = array(), $lifetime = NULL) {
-		if (!is_string($data)) throw new \F3\FLOW3\Cache\Exception\InvalidDataException('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1204481674);
+		if (!is_string($data)) throw new \TYPO3\FLOW3\Cache\Exception\InvalidDataException('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1204481674);
 		if ($entryIdentifier !== basename($entryIdentifier)) throw new \InvalidArgumentException('The specified entry identifier must not contain a path segment.', 1282073032);
 		if ($entryIdentifier === '') throw new \InvalidArgumentException('The specified entry identifier must not be empty.', 1298114280);
 
@@ -110,20 +110,20 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend implements \F3
 
 		$temporaryCacheEntryPathAndFilename = $this->cacheDirectory . uniqid() . '.temp';
 		if (strlen($temporaryCacheEntryPathAndFilename) > $this->environment->getMaximumPathLength()) {
-			throw new \F3\FLOW3\Cache\Exception('The length of the temporary cache file path "' . $temporaryCacheEntryPathAndFilename . '" is ' . strlen($temporaryCacheEntryPathAndFilename) . ' characters long and exceeds the maximum path length of ' . $this->environment->getMaximumPathLength() . '. Please consider setting the temporaryDirectoryBase option to a shorter path. ', 1248710426);
+			throw new \TYPO3\FLOW3\Cache\Exception('The length of the temporary cache file path "' . $temporaryCacheEntryPathAndFilename . '" is ' . strlen($temporaryCacheEntryPathAndFilename) . ' characters long and exceeds the maximum path length of ' . $this->environment->getMaximumPathLength() . '. Please consider setting the temporaryDirectoryBase option to a shorter path. ', 1248710426);
 		}
 
 		$expiryTime = ($lifetime === NULL) ? 0 : (time() + $lifetime);
 		$metaData = str_pad($expiryTime, self::EXPIRYTIME_LENGTH) . implode(' ', $tags) . str_pad(strlen($data), self::DATASIZE_DIGITS);
 		$result = file_put_contents($temporaryCacheEntryPathAndFilename, $data . $metaData);
 
-		if ($result === FALSE) throw new \F3\FLOW3\Cache\Exception('The temporary cache file "' . $temporaryCacheEntryPathAndFilename . '" could not be written.', 1204026251);
+		if ($result === FALSE) throw new \TYPO3\FLOW3\Cache\Exception('The temporary cache file "' . $temporaryCacheEntryPathAndFilename . '" could not be written.', 1204026251);
 		$i = 0;
 		$cacheEntryPathAndFilename = $this->cacheDirectory . $entryIdentifier . $this->cacheEntryFileExtension;
 		while (!rename($temporaryCacheEntryPathAndFilename, $cacheEntryPathAndFilename) && $i < 5) {
 			$i++;
 		}
-		if ($result === FALSE) throw new \F3\FLOW3\Cache\Exception('The cache file "' . $cacheEntryPathAndFilename . '" could not be written.', 1222361632);
+		if ($result === FALSE) throw new \TYPO3\FLOW3\Cache\Exception('The cache file "' . $cacheEntryPathAndFilename . '" could not be written.', 1222361632);
 	}
 
 	/**
@@ -220,7 +220,7 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend implements \F3
 	 * @api
 	 */
 	public function flush() {
-		\F3\FLOW3\Utility\Files::emptyDirectoryRecursively($this->cacheDirectory);
+		\TYPO3\FLOW3\Utility\Files::emptyDirectoryRecursively($this->cacheDirectory);
 	}
 
 	/**
@@ -287,7 +287,7 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend implements \F3
 	 * @param string $entryIdentifier The cache entry identifier
 	 * @return mixed The file names (including path) as an array if one or more entries could be found, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws \F3\FLOW3\Cache\Exception if no frontend has been set
+	 * @throws \TYPO3\FLOW3\Cache\Exception if no frontend has been set
 	 */
 	protected function findCacheFilesByIdentifier($entryIdentifier) {
 		$pattern = $this->cacheDirectory . $entryIdentifier;

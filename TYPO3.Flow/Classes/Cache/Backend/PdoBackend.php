@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Cache\Backend;
+namespace TYPO3\FLOW3\Cache\Backend;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -28,7 +28,7 @@ namespace F3\FLOW3\Cache\Backend;
  * @api
  * @scope prototype
  */
-class PdoBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
+class PdoBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 
 	/**
 	 * @var string
@@ -109,15 +109,15 @@ class PdoBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @param array $tags Tags to associate with this cache entry
 	 * @param integer $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited liftime.
 	 * @return void
-	 * @throws \F3\FLOW3\Cache\Exception if no cache frontend has been set.
+	 * @throws \TYPO3\FLOW3\Cache\Exception if no cache frontend has been set.
 	 * @throws \InvalidArgumentException if the identifier is not valid
-	 * @throws \F3\FLOW3\Cache\Exception\InvalidDataException if $data is not a string
+	 * @throws \TYPO3\FLOW3\Cache\Exception\InvalidDataException if $data is not a string
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function set($entryIdentifier, $data, array $tags = array(), $lifetime = NULL) {
-		if (!$this->cache instanceof \F3\FLOW3\Cache\Frontend\FrontendInterface) throw new \F3\FLOW3\Cache\Exception('No cache frontend has been set yet via setCache().', 1259515600);
-		if (!is_string($data)) throw new \F3\FLOW3\Cache\Exception\InvalidDataException('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1259515601);
+		if (!$this->cache instanceof \TYPO3\FLOW3\Cache\Frontend\FrontendInterface) throw new \TYPO3\FLOW3\Cache\Exception('No cache frontend has been set yet via setCache().', 1259515600);
+		if (!is_string($data)) throw new \TYPO3\FLOW3\Cache\Exception\InvalidDataException('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1259515601);
 
 		if ($this->has($entryIdentifier)) {
 			$this->remove($entryIdentifier);
@@ -127,12 +127,12 @@ class PdoBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 
 		$statementHandle = $this->databaseHandle->prepare('INSERT INTO "cache" ("identifier", "context", "cache", "created", "lifetime", "content") VALUES (?, ?, ?, ?, ?, ?)');
 		$result = $statementHandle->execute(array($entryIdentifier, $this->context, $this->cacheIdentifier, time(), $lifetime, $data));
-		if ($result === FALSE) throw new \F3\FLOW3\Cache\Exception('The cache entry "' . $entryIdentifier . '" could not be written.', 1259530791);
+		if ($result === FALSE) throw new \TYPO3\FLOW3\Cache\Exception('The cache entry "' . $entryIdentifier . '" could not be written.', 1259530791);
 
 		$statementHandle = $this->databaseHandle->prepare('INSERT INTO "tags" ("identifier", "context", "cache", "tag") VALUES (?, ?, ?, ?)');
 		foreach ($tags as $tag) {
 			$result = $statementHandle->execute(array($entryIdentifier, $this->context, $this->cacheIdentifier, $tag));
-			if ($result === FALSE) throw new \F3\FLOW3\Cache\Exception('The tag "' . $tag . ' for cache entry "' . $entryIdentifier . '" could not be written.', 1259530751);
+			if ($result === FALSE) throw new \TYPO3\FLOW3\Cache\Exception('The tag "' . $tag . ' for cache entry "' . $entryIdentifier . '" could not be written.', 1259530751);
 		}
 	}
 
@@ -284,14 +284,14 @@ class PdoBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * Creates the tables needed for the cache backend.
 	 *
 	 * @return void
-	 * @throws \F3\FLOW3\Persistence\Exception if something goes wrong
+	 * @throws \TYPO3\FLOW3\Persistence\Exception if something goes wrong
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function createCacheTables() {
 		try {
-			\F3\FLOW3\Utility\PdoHelper::importSql($this->databaseHandle, $this->pdoDriver, FLOW3_PATH_FLOW3 . 'Resources/Private/Cache/SQL/DDL.sql');
+			\TYPO3\FLOW3\Utility\PdoHelper::importSql($this->databaseHandle, $this->pdoDriver, FLOW3_PATH_FLOW3 . 'Resources/Private/Cache/SQL/DDL.sql');
 		} catch (\PDOException $e) {
-			throw new \F3\FLOW3\Persistence\Exception('Could not create cache tables with DSN "' . $this->dataSourceName . '". PDO error: ' . $e->getMessage(), 1259576985);
+			throw new \TYPO3\FLOW3\Persistence\Exception('Could not create cache tables with DSN "' . $this->dataSourceName . '". PDO error: ' . $e->getMessage(), 1259576985);
 		}
 	}
 }

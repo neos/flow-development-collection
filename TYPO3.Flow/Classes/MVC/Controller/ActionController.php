@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\MVC\Controller;
+namespace TYPO3\FLOW3\MVC\Controller;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -28,15 +28,15 @@ namespace F3\FLOW3\MVC\Controller;
  * @scope singleton
  * @api
  */
-class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
+class ActionController extends \TYPO3\FLOW3\MVC\Controller\AbstractController {
 
 	/**
-	 * @var \F3\FLOW3\Reflection\ReflectionService
+	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
 	/**
-	 * @var \F3\FLOW3\Utility\Environment
+	 * @var \TYPO3\FLOW3\Utility\Environment
 	 */
 	protected $environment;
 
@@ -52,7 +52,7 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	/**
 	 * The current view, as resolved by resolveView()
 	 *
-	 * @var \F3\FLOW3\MVC\View\ViewInterface
+	 * @var \TYPO3\FLOW3\MVC\View\ViewInterface
 	 * @api
 	 */
 	protected $view = NULL;
@@ -104,22 +104,22 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	/**
 	 * Injects the reflection service
 	 *
-	 * @param \F3\FLOW3\Reflection\ReflectionService $reflectionService
+	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectReflectionService(\F3\FLOW3\Reflection\ReflectionService $reflectionService) {
+	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
 	}
 
 	/**
 	 * Injects the current environment
 	 *
-	 * @param \F3\FLOW3\Utility\Environment $environment
+	 * @param \TYPO3\FLOW3\Utility\Environment $environment
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectEnvironment(\F3\FLOW3\Utility\Environment $environment) {
+	public function injectEnvironment(\TYPO3\FLOW3\Utility\Environment $environment) {
 		$this->environment = $environment;
 	}
 
@@ -127,15 +127,15 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	/**
 	 * Handles a request. The result output is returned by altering the given response.
 	 *
-	 * @param \F3\FLOW3\MVC\RequestInterface $request The request object
-	 * @param \F3\FLOW3\MVC\ResponseInterface $response The response, modified by this handler
+	 * @param \TYPO3\FLOW3\MVC\RequestInterface $request The request object
+	 * @param \TYPO3\FLOW3\MVC\ResponseInterface $response The response, modified by this handler
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
-	public function processRequest(\F3\FLOW3\MVC\RequestInterface $request, \F3\FLOW3\MVC\ResponseInterface $response) {
+	public function processRequest(\TYPO3\FLOW3\MVC\RequestInterface $request, \TYPO3\FLOW3\MVC\ResponseInterface $response) {
 		if ($this->canProcessRequest($request) === FALSE) {
-			throw new \F3\FLOW3\MVC\Exception\UnsupportedRequestTypeException(get_class($this) . ' does not support requests of type "' . get_class($request) . '". Supported types are: ' . implode(' ', $this->supportedRequestTypes) , 1187701131);
+			throw new \TYPO3\FLOW3\MVC\Exception\UnsupportedRequestTypeException(get_class($this) . ' does not support requests of type "' . get_class($request) . '". Supported types are: ' . implode(' ', $this->supportedRequestTypes) , 1187701131);
 		}
 
 		$this->request = $request;
@@ -179,7 +179,7 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	protected function resolveActionMethodName() {
 		$actionMethodName = $this->request->getControllerActionName() . 'Action';
 		if (!is_callable(array($this, $actionMethodName))) {
-			throw new \F3\FLOW3\MVC\Exception\NoSuchActionException('An action "' . $actionMethodName . '" does not exist in controller "' . get_class($this) . '".', 1186669086);
+			throw new \TYPO3\FLOW3\MVC\Exception\NoSuchActionException('An action "' . $actionMethodName . '" does not exist in controller "' . get_class($this) . '".', 1186669086);
 		}
 		return $actionMethodName;
 	}
@@ -204,7 +204,7 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 			} elseif ($parameterInfo['array']) {
 				$dataType = 'array';
 			}
-			if ($dataType === NULL) throw new \F3\FLOW3\MVC\Exception\InvalidArgumentTypeException('The argument type for parameter $' . $parameterName . ' of method ' . get_class($this) . '->' . $this->actionMethodName . '() could not be detected.' , 1253175643);
+			if ($dataType === NULL) throw new \TYPO3\FLOW3\MVC\Exception\InvalidArgumentTypeException('The argument type for parameter $' . $parameterName . ' of method ' . get_class($this) . '->' . $this->actionMethodName . '() could not be detected.' , 1253175643);
 			$defaultValue = (isset($parameterInfo['defaultValue']) ? $parameterInfo['defaultValue'] : NULL);
 			$this->arguments->addNewArgument($parameterName, $dataType, ($parameterInfo['optional'] === FALSE), $defaultValue);
 		}
@@ -293,7 +293,7 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 			}
 		}
 
-		if ($actionResult === NULL && $this->view instanceof \F3\FLOW3\MVC\View\ViewInterface) {
+		if ($actionResult === NULL && $this->view instanceof \TYPO3\FLOW3\MVC\View\ViewInterface) {
 			$this->response->appendContent($this->view->render());
 		} elseif (is_string($actionResult) && strlen($actionResult) > 0) {
 			$this->response->appendContent($actionResult);
@@ -310,7 +310,7 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function detectFormat() {
-		if ($this->request instanceof \F3\FLOW3\MVC\Web\Request) {
+		if ($this->request instanceof \TYPO3\FLOW3\MVC\Web\Request) {
 			switch ($this->request->getMethod()) {
 				case 'GET' :
 				case 'POST' :
@@ -361,7 +361,7 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 			}
 		}
 		if (!isset($view)) {
-			$view = $this->objectManager->create('F3\FLOW3\MVC\View\NotFoundView');
+			$view = $this->objectManager->create('TYPO3\FLOW3\MVC\View\NotFoundView');
 			$view->assign('errorMessage', 'No template was found. View could not be resolved for action "' . $this->request->getControllerActionName() . '"');
 		}
 		$view->setControllerContext($this->controllerContext);
@@ -377,7 +377,7 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 * @api
 	 */
 	protected function resolveViewObjectName() {
-		$possibleViewName = $this->viewObjectNamePattern;
+		$possibleViewObjectName = $this->viewObjectNamePattern;
 		$packageKey = $this->request->getControllerPackageKey();
 		$subpackageKey = $this->request->getControllerSubpackageKey();
 		$format = $this->request->getFormat();
@@ -385,13 +385,13 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 		if ($subpackageKey !== NULL && $subpackageKey !== '') {
 			$packageKey.= '\\' . $subpackageKey;
 		}
-		$possibleViewName = str_replace('@package', $packageKey, $possibleViewName);
-		$possibleViewName = str_replace('@controller', $this->request->getControllerName(), $possibleViewName);
-		$possibleViewName = str_replace('@action', $this->request->getControllerActionName(), $possibleViewName);
+		$possibleViewObjectName = str_replace('@package', str_replace('.', '\\', $packageKey), $possibleViewObjectName);
+		$possibleViewObjectName = str_replace('@controller', $this->request->getControllerName(), $possibleViewObjectName);
+		$possibleViewObjectName = str_replace('@action', $this->request->getControllerActionName(), $possibleViewObjectName);
 
-		$viewObjectName = $this->objectManager->getCaseSensitiveObjectName(strtolower(str_replace('@format', $format, $possibleViewName)));
+		$viewObjectName = $this->objectManager->getCaseSensitiveObjectName(strtolower(str_replace('@format', $format, $possibleViewObjectName)));
 		if ($viewObjectName === FALSE) {
-			$viewObjectName = $this->objectManager->getCaseSensitiveObjectName(strtolower(str_replace('@format', '', $possibleViewName)));
+			$viewObjectName = $this->objectManager->getCaseSensitiveObjectName(strtolower(str_replace('@format', '', $possibleViewObjectName)));
 		}
 		if ($viewObjectName === FALSE && isset($this->viewFormatToObjectNameMap[$format])) {
 			$viewObjectName = $this->viewFormatToObjectNameMap[$format];
@@ -405,12 +405,12 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 * Override this method to solve assign variables common for all actions
 	 * or prepare the view in another way before the action is called.
 	 *
-	 * @param \F3\FLOW3\MVC\View\ViewInterface $view The view to be initialized
+	 * @param \TYPO3\FLOW3\MVC\View\ViewInterface $view The view to be initialized
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
-	protected function initializeView(\F3\FLOW3\MVC\View\ViewInterface $view) {
+	protected function initializeView(\TYPO3\FLOW3\MVC\View\ViewInterface $view) {
 	}
 
 	/**

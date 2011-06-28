@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests;
+namespace TYPO3\FLOW3\Tests;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -30,15 +30,15 @@ namespace F3\FLOW3\Tests;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */
-abstract class FunctionalTestCase extends \F3\FLOW3\Tests\BaseTestCase {
+abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
+	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
-	 * @var \F3\FLOW3\Core\Bootstrap
+	 * @var \TYPO3\FLOW3\Core\Bootstrap
 	 */
 	protected static $flow3;
 
@@ -48,7 +48,7 @@ abstract class FunctionalTestCase extends \F3\FLOW3\Tests\BaseTestCase {
 	protected $testableSecurityEnabled = FALSE;
 
 	/**
-	 * @var \F3\FLOW3\Security\Context
+	 * @var \TYPO3\FLOW3\Security\Context
 	 */
 	protected $securityContext;
 
@@ -58,17 +58,17 @@ abstract class FunctionalTestCase extends \F3\FLOW3\Tests\BaseTestCase {
 	static protected $testablePersistenceEnabled = FALSE;
 
 	/**
-	 * @var \F3\FLOW3\Persistence\PersistenceManagerInterface
+	 * @var \TYPO3\FLOW3\Persistence\PersistenceManagerInterface
 	 */
 	protected $persistenceManager;
 
 	/**
-	 * @var \F3\FLOW3\Security\Authorization\AccessDecisionManagerInterface
+	 * @var \TYPO3\FLOW3\Security\Authorization\AccessDecisionManagerInterface
 	 */
 	protected $accessDecisionManager;
 
 	/**
-	 * @var \F3\FLOW3\Security\Authentication\Provider\TestingProvider
+	 * @var \TYPO3\FLOW3\Security\Authentication\Provider\TestingProvider
 	 */
 	protected $testingProvider;
 
@@ -78,12 +78,12 @@ abstract class FunctionalTestCase extends \F3\FLOW3\Tests\BaseTestCase {
 	 * @return void
 	 */
 	static public function setUpBeforeClass() {
-		self::$flow3 = \F3\FLOW3\Core\Bootstrap::$staticObjectManager->get('F3\FLOW3\Core\Bootstrap');
+		self::$flow3 = \TYPO3\FLOW3\Core\Bootstrap::$staticObjectManager->get('TYPO3\FLOW3\Core\Bootstrap');
 
 		if (static::$testablePersistenceEnabled === TRUE) {
-			self::$flow3->getObjectManager()->get('F3\FLOW3\Persistence\PersistenceManagerInterface')->initialize();
-			if (is_callable(array(self::$flow3->getObjectManager()->get('F3\FLOW3\Persistence\PersistenceManagerInterface'), 'compile'))) {
-				$result = self::$flow3->getObjectManager()->get('F3\FLOW3\Persistence\PersistenceManagerInterface')->compile();
+			self::$flow3->getObjectManager()->get('TYPO3\FLOW3\Persistence\PersistenceManagerInterface')->initialize();
+			if (is_callable(array(self::$flow3->getObjectManager()->get('TYPO3\FLOW3\Persistence\PersistenceManagerInterface'), 'compile'))) {
+				$result = self::$flow3->getObjectManager()->get('TYPO3\FLOW3\Persistence\PersistenceManagerInterface')->compile();
 				if ($result === FALSE) {
 					self::markTestSkipped('Test skipped because setting up the persistence failed.');
 				}
@@ -97,7 +97,7 @@ abstract class FunctionalTestCase extends \F3\FLOW3\Tests\BaseTestCase {
 	 * @return void
 	 */
 	static public function tearDownAfterClass() {
-		$persistenceManager = self::$flow3->getObjectManager()->get('F3\FLOW3\Persistence\PersistenceManagerInterface');
+		$persistenceManager = self::$flow3->getObjectManager()->get('TYPO3\FLOW3\Persistence\PersistenceManagerInterface');
 		if (is_callable(array($persistenceManager, 'tearDown'))) {
 			$persistenceManager->tearDown();
 		}
@@ -134,7 +134,7 @@ abstract class FunctionalTestCase extends \F3\FLOW3\Tests\BaseTestCase {
 			$this->setupSecurity();
 		}
 		if (static::$testablePersistenceEnabled === TRUE) {
-			$this->persistenceManager = $this->objectManager->get('F3\FLOW3\Persistence\PersistenceManagerInterface');
+			$this->persistenceManager = $this->objectManager->get('TYPO3\FLOW3\Persistence\PersistenceManagerInterface');
 		}
 	}
 
@@ -145,14 +145,14 @@ abstract class FunctionalTestCase extends \F3\FLOW3\Tests\BaseTestCase {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	protected function setupSecurity() {
-		$this->accessDecisionManager = $this->objectManager->get('F3\FLOW3\Security\Authorization\AccessDecisionManagerInterface');
+		$this->accessDecisionManager = $this->objectManager->get('TYPO3\FLOW3\Security\Authorization\AccessDecisionManagerInterface');
 		$this->accessDecisionManager->setOverrideDecision(NULL);
 
-		$this->testingProvider = $this->objectManager->get('F3\FLOW3\Security\Authentication\Provider\TestingProvider');
+		$this->testingProvider = $this->objectManager->get('TYPO3\FLOW3\Security\Authentication\Provider\TestingProvider');
 		$this->testingProvider->setName('DefaultProvider');
 
-		$this->securityContext = $this->objectManager->get('F3\FLOW3\Security\Context');
-		$request = $this->getMock('F3\FLOW3\MVC\Web\Request');
+		$this->securityContext = $this->objectManager->get('TYPO3\FLOW3\Security\Context');
+		$request = $this->getMock('TYPO3\FLOW3\MVC\Web\Request');
 		$this->securityContext->initialize($request);
 	}
 
@@ -205,15 +205,15 @@ abstract class FunctionalTestCase extends \F3\FLOW3\Tests\BaseTestCase {
 		}
 
 			// Initialize the routes
-		$configurationManager = $this->objectManager->get('F3\FLOW3\Configuration\ConfigurationManager');
-		$routesConfiguration = $configurationManager->getConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_ROUTES);
-		$router = $this->objectManager->get('F3\FLOW3\MVC\Web\Routing\Router');
+		$configurationManager = $this->objectManager->get('TYPO3\FLOW3\Configuration\ConfigurationManager');
+		$routesConfiguration = $configurationManager->getConfiguration(\TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_ROUTES);
+		$router = $this->objectManager->get('TYPO3\FLOW3\MVC\Web\Routing\Router');
 		$router->setRoutesConfiguration($routesConfiguration);
 
 			// Build up Mock request behaving like the real one.
-		$controller = $this->objectManager->get('TYPO3\\' . $controllerPackageKey . '\\Controller\\' . $controllerName . 'Controller');
+		$controller = $this->objectManager->get(str_replace('.', '\\', $controllerPackageKey) . '\\Controller\\' . $controllerName . 'Controller');
 
-		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
+		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
 		$mockRequest->expects($this->any())->method('getControllerPackageKey')->will($this->returnValue($controllerPackageKey));
 		$mockRequest->expects($this->any())->method('getControllerActionName')->will($this->returnValue($controllerActionName));
 		$mockRequest->expects($this->any())->method('getControllerName')->will($this->returnValue($controllerName));
@@ -226,10 +226,10 @@ abstract class FunctionalTestCase extends \F3\FLOW3\Tests\BaseTestCase {
 		}));
 		$mockRequest->expects($this->any())->method('getFormat')->will($this->returnValue($format));
 		$mockRequest->expects($this->any())->method('getBaseUri')->will($this->returnValue('http://baseUri/'));
-		$mockRequest->expects($this->any())->method('getOriginalRequestMappingResults')->will($this->returnValue(new \F3\FLOW3\Error\Result()));
+		$mockRequest->expects($this->any())->method('getOriginalRequestMappingResults')->will($this->returnValue(new \TYPO3\FLOW3\Error\Result()));
 
 			// Build up Mock response collecting the output.
-		$mockResponse = $this->getMock('F3\FLOW3\MVC\ResponseInterface', array(), array(), '', FALSE);
+		$mockResponse = $this->getMock('TYPO3\FLOW3\MVC\ResponseInterface', array(), array(), '', FALSE);
 
 		$content = '';
 		$mockResponse->expects($this->any())->method('appendContent')->will($this->returnCallback(function($newContent) use(&$content) {
@@ -246,24 +246,24 @@ abstract class FunctionalTestCase extends \F3\FLOW3\Tests\BaseTestCase {
 	 * The created account is returned for further modification, for example for attaching a Party object to it.
 	 *
 	 * @param array $roleNames A list of roles the new account should have
-	 * @return \F3\FLOW3\Security\Account The created account
+	 * @return \TYPO3\FLOW3\Security\Account The created account
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	protected function authenticateRoles(array $roleNames) {
-		$account = new \F3\FLOW3\Security\Account();
+		$account = new \TYPO3\FLOW3\Security\Account();
 		$roles = array();
 		foreach ($roleNames as $roleName) {
-			$roles[] = new \F3\FLOW3\Security\Policy\Role($roleName);
+			$roles[] = new \TYPO3\FLOW3\Security\Policy\Role($roleName);
 		}
 		$account->setRoles($roles);
 
-		$this->testingProvider->setAuthenticationStatus(\F3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL);
+		$this->testingProvider->setAuthenticationStatus(\TYPO3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL);
 		$this->testingProvider->setAccount($account);
 
-		$request = $this->getMock('F3\FLOW3\MVC\Web\Request');
+		$request = $this->getMock('TYPO3\FLOW3\MVC\Web\Request');
 		$this->securityContext->initialize($request);
 
-		$authenticationProviderManager = $this->objectManager->get('F3\FLOW3\Security\Authentication\AuthenticationProviderManager');
+		$authenticationProviderManager = $this->objectManager->get('TYPO3\FLOW3\Security\Authentication\AuthenticationProviderManager');
 		$authenticationProviderManager->authenticate();
 
 		return $account;

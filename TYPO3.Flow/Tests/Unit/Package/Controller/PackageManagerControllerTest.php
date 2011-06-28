@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\Package\Controller;
+namespace TYPO3\FLOW3\Tests\Unit\Package\Controller;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,14 +26,14 @@ namespace F3\FLOW3\Tests\Unit\Package\Controller;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class PackageManagerControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
+class PackageManagerControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function indexActionReturnsHelperAction() {
-		$controller = $this->getMock('F3\FLOW3\Package\Controller\PackageManagerController', array('helpAction'), array(), '', FALSE);
+		$controller = $this->getMock('TYPO3\FLOW3\Package\Controller\PackageManagerController', array('helpAction'), array(), '', FALSE);
 		$controller->expects($this->once())->method('helpAction')->will($this->returnValue('some help'));
 
 		$response = $controller->indexAction();
@@ -45,11 +45,11 @@ class PackageManagerControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function createActionChecksIfPackageKeyIsValidAndDoesntCreatePackageIfPackageKeyIsInvalid() {
-		$mockPackageManager = $this->getMock('F3\FLOW3\Package\PackageManagerInterface');
+		$mockPackageManager = $this->getMock('TYPO3\FLOW3\Package\PackageManagerInterface');
 		$mockPackageManager->expects($this->once())->method('isPackageKeyValid')->with('SomeNewPackage')->will($this->returnValue(FALSE));
 		$mockPackageManager->expects($this->never())->method('createPackage');
 
-		$controller = $this->getAccessibleMock('F3\FLOW3\Package\Controller\PackageManagerController', array('dummy'), array(), '', FALSE);
+		$controller = $this->getAccessibleMock('TYPO3\FLOW3\Package\Controller\PackageManagerController', array('dummy'), array(), '', FALSE);
 		$controller->_set('packageManager', $mockPackageManager);
 
 		$controller->createAction('SomeNewPackage');
@@ -60,12 +60,12 @@ class PackageManagerControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function createActionChecksIfPackageKeyIsAvailableAndDoesntCreatePackageIfPackageExists() {
-		$mockPackageManager = $this->getMock('F3\FLOW3\Package\PackageManagerInterface');
+		$mockPackageManager = $this->getMock('TYPO3\FLOW3\Package\PackageManagerInterface');
 		$mockPackageManager->expects($this->any())->method('isPackageKeyValid')->will($this->returnValue(TRUE));
 		$mockPackageManager->expects($this->once())->method('isPackageAvailable')->with('SomeNewPackage')->will($this->returnValue(TRUE));
 		$mockPackageManager->expects($this->never())->method('createPackage');
 
-		$controller = $this->getAccessibleMock('F3\FLOW3\Package\Controller\PackageManagerController', array('dummy'), array(), '', FALSE);
+		$controller = $this->getAccessibleMock('TYPO3\FLOW3\Package\Controller\PackageManagerController', array('dummy'), array(), '', FALSE);
 		$controller->_set('packageManager', $mockPackageManager);
 
 		$controller->createAction('SomeNewPackage');
@@ -76,14 +76,14 @@ class PackageManagerControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function createActionCreatesPackageIfPackageKeyIsOkay() {
-		$mockPackage = $this->getMock('F3\FLOW3\Package\Package', array(), array(), '', FALSE);
+		$mockPackage = $this->getMock('TYPO3\FLOW3\Package\Package', array(), array(), '', FALSE);
 
-		$mockPackageManager = $this->getMock('F3\FLOW3\Package\PackageManagerInterface');
+		$mockPackageManager = $this->getMock('TYPO3\FLOW3\Package\PackageManagerInterface');
 		$mockPackageManager->expects($this->any())->method('isPackageKeyValid')->will($this->returnValue(TRUE));
 		$mockPackageManager->expects($this->any())->method('isPackageAvailable')->will($this->returnValue(FALSE));
 		$mockPackageManager->expects($this->once())->method('createPackage')->with('SomeNewPackage')->will($this->returnValue($mockPackage));
 
-		$controller = $this->getAccessibleMock('F3\FLOW3\Package\Controller\PackageManagerController', array('dummy'), array(), '', FALSE);
+		$controller = $this->getAccessibleMock('TYPO3\FLOW3\Package\Controller\PackageManagerController', array('dummy'), array(), '', FALSE);
 		$controller->_set('packageManager', $mockPackageManager);
 
 		$controller->createAction('SomeNewPackage');

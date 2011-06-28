@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Utility;
+namespace TYPO3\FLOW3\Utility;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -85,7 +85,7 @@ class Environment {
 	protected $temporaryDirectory = NULL;
 
 	/**
-	 * @var \F3\FLOW3\Property\DataType\Uri
+	 * @var \TYPO3\FLOW3\Property\DataType\Uri
 	 */
 	protected $baseUri;
 
@@ -222,7 +222,7 @@ class Environment {
 
 		$acceptedFormats = array();
 		foreach ($flattenedAcceptedTypes as $mimeType => $quality) {
-			$format = \F3\FLOW3\Utility\FileTypes::getFilenameExtensionFromMimeType($mimeType);
+			$format = \TYPO3\FLOW3\Utility\FileTypes::getFilenameExtensionFromMimeType($mimeType);
 			if ($format !== '') {
 				$acceptedFormats[$format] = TRUE;
 			}
@@ -290,7 +290,7 @@ class Environment {
 	 *
 	 * The script name "index.php" will be removed if it exists.
 	 *
-	 * @return \F3\FLOW3\Property\DataType\Uri The request URI
+	 * @return \TYPO3\FLOW3\Property\DataType\Uri The request URI
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
@@ -299,13 +299,13 @@ class Environment {
 			return FALSE;
 		}
 
-		return new \F3\FLOW3\Property\DataType\Uri($this->getRequestProtocol() . '://' . $this->getHTTPHost() . str_replace('/index.php' , '', $this->SERVER['REQUEST_URI']));
+		return new \TYPO3\FLOW3\Property\DataType\Uri($this->getRequestProtocol() . '://' . $this->getHTTPHost() . str_replace('/index.php' , '', $this->SERVER['REQUEST_URI']));
 	}
 
 	/**
 	 * Returns the current base URI which is the root FLOW3's relative URIs.
 	 *
-	 * @return \F3\FLOW3\Property\DataType\Uri The base URI
+	 * @return \TYPO3\FLOW3\Property\DataType\Uri The base URI
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getBaseUri() {
@@ -324,7 +324,7 @@ class Environment {
 	 * @api
 	 */
 	public function getScriptPathAndFilename() {
-		return \F3\FLOW3\Utility\Files::getUnixStylePath($this->SERVER['SCRIPT_FILENAME']);
+		return \TYPO3\FLOW3\Utility\Files::getUnixStylePath($this->SERVER['SCRIPT_FILENAME']);
 	}
 
 	/**
@@ -470,7 +470,7 @@ class Environment {
 
 		try {
 			$this->temporaryDirectory = $this->createTemporaryDirectory($this->temporaryDirectoryBase);
-		} catch (\F3\FLOW3\Utility\Exception $exception) {
+		} catch (\TYPO3\FLOW3\Utility\Exception $exception) {
 			$fallBackTemporaryDirectoryBase = (DIRECTORY_SEPARATOR === '/') ? '/tmp' : '\\WINDOWS\\TEMP';
 			$this->temporaryDirectory = $this->createTemporaryDirectory($fallBackTemporaryDirectoryBase);
 		}
@@ -543,10 +543,10 @@ class Environment {
 			} else {
 				$fileInformation = array();
 				foreach ($convolutedFiles[$fieldPath{0}] as $key => $subStructure) {
-					$fileInformation[$key] = \F3\FLOW3\Utility\Arrays::getValueByPath($subStructure, array_slice($fieldPath, 1));
+					$fileInformation[$key] = \TYPO3\FLOW3\Utility\Arrays::getValueByPath($subStructure, array_slice($fieldPath, 1));
 				}
 			}
-			$untangledFiles = \F3\FLOW3\Utility\Arrays::setValueByPath($untangledFiles, $fieldPath, $fileInformation);
+			$untangledFiles = \TYPO3\FLOW3\Utility\Arrays::setValueByPath($untangledFiles, $fieldPath, $fileInformation);
 		}
 		return $untangledFiles;
 	}
@@ -582,24 +582,24 @@ class Environment {
 	 *
 	 * @param string $temporaryDirectoryBase Full path to the base for the temporary directory
 	 * @return string The full path to the temporary directory
-	 * @throws \F3\FLOW3\Utility\Exception if the temporary directory could not be created or is not writable
+	 * @throws \TYPO3\FLOW3\Utility\Exception if the temporary directory could not be created or is not writable
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function createTemporaryDirectory($temporaryDirectoryBase) {
-		$temporaryDirectoryBase = \F3\FLOW3\Utility\Files::getUnixStylePath($temporaryDirectoryBase);
+		$temporaryDirectoryBase = \TYPO3\FLOW3\Utility\Files::getUnixStylePath($temporaryDirectoryBase);
 		if (substr($temporaryDirectoryBase, -1, 1) !== '/') $temporaryDirectoryBase .= '/';
 		$temporaryDirectory = $temporaryDirectoryBase . $this->context . '/';
 
 		if (!is_dir($temporaryDirectory)) {
 			try {
-				\F3\FLOW3\Utility\Files::createDirectoryRecursively($temporaryDirectory);
-			} catch (\F3\FLOW3\Error\Exception $exception) {
+				\TYPO3\FLOW3\Utility\Files::createDirectoryRecursively($temporaryDirectory);
+			} catch (\TYPO3\FLOW3\Error\Exception $exception) {
 			}
 		}
 
 		if (!is_writable($temporaryDirectory)) {
-			throw new \F3\FLOW3\Utility\Exception('The temporary directory "' . $temporaryDirectory . '" could not be created or is not writable. Please make this directory writable or define another temporary directory by setting the respective system environment variable (eg. TMPDIR) or defining it in the FLOW3 settings.', 1216287176);
+			throw new \TYPO3\FLOW3\Utility\Exception('The temporary directory "' . $temporaryDirectory . '" could not be created or is not writable. Please make this directory writable or define another temporary directory by setting the respective system environment variable (eg. TMPDIR) or defining it in the FLOW3 settings.', 1216287176);
 		}
 
 		return $temporaryDirectory;

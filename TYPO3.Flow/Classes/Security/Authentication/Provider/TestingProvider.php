@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Security\Authentication\Provider;
+namespace TYPO3\FLOW3\Security\Authentication\Provider;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -28,7 +28,7 @@ namespace F3\FLOW3\Security\Authentication\Provider;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope singleton
  */
-class TestingProvider implements \F3\FLOW3\Security\Authentication\AuthenticationProviderInterface {
+class TestingProvider implements \TYPO3\FLOW3\Security\Authentication\AuthenticationProviderInterface {
 
 	/**
 	 * @var string
@@ -36,14 +36,14 @@ class TestingProvider implements \F3\FLOW3\Security\Authentication\Authenticatio
 	protected $name;
 
 	/**
-	 * @var \F3\FLOW3\Security\Account
+	 * @var \TYPO3\FLOW3\Security\Account
 	 */
 	protected $account;
 
 	/**
 	 * @var int
 	 */
-	protected $authenticationStatus = \F3\FLOW3\Security\Authentication\TokenInterface::NO_CREDENTIALS_GIVEN;
+	protected $authenticationStatus = \TYPO3\FLOW3\Security\Authentication\TokenInterface::NO_CREDENTIALS_GIVEN;
 
 	/**
 	 * Constructor
@@ -60,11 +60,11 @@ class TestingProvider implements \F3\FLOW3\Security\Authentication\Authenticatio
 	/**
 	 * Returns TRUE if the given token can be authenticated by this provider
 	 *
-	 * @param F3\FLOW3\Security\Authentication\TokenInterface $authenticationToken The token that should be authenticated
+	 * @param \TYPO3\FLOW3\Security\Authentication\TokenInterface $authenticationToken The token that should be authenticated
 	 * @return boolean TRUE if the given token class can be authenticated by this provider
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function canAuthenticate(\F3\FLOW3\Security\Authentication\TokenInterface $authenticationToken) {
+	public function canAuthenticate(\TYPO3\FLOW3\Security\Authentication\TokenInterface $authenticationToken) {
 		if ($authenticationToken->getAuthenticationProviderName() === $this->name) return TRUE;
 		return FALSE;
 	}
@@ -76,20 +76,20 @@ class TestingProvider implements \F3\FLOW3\Security\Authentication\Authenticatio
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getTokenClassNames() {
-		return array('F3\FLOW3\Security\Authentication\Token\TestingToken');
+		return array('TYPO3\FLOW3\Security\Authentication\Token\TestingToken');
 	}
 
 	/**
 	 * Sets isAuthenticated to TRUE for all tokens.
 	 *
-	 * @param F3\FLOW3\Security\Authentication\TokenInterface $authenticationToken The token to be authenticated
+	 * @param \TYPO3\FLOW3\Security\Authentication\TokenInterface $authenticationToken The token to be authenticated
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function authenticate(\F3\FLOW3\Security\Authentication\TokenInterface $authenticationToken) {
+	public function authenticate(\TYPO3\FLOW3\Security\Authentication\TokenInterface $authenticationToken) {
 		$authenticationToken->setAuthenticationStatus($this->authenticationStatus);
-		if ($this->authenticationStatus === \F3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL) {
+		if ($this->authenticationStatus === \TYPO3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL) {
 			$authenticationToken->setAccount($this->account);
 		} else {
 			$authenticationToken->setAccount(NULL);
@@ -99,7 +99,7 @@ class TestingProvider implements \F3\FLOW3\Security\Authentication\Authenticatio
 	/**
 	 * Set the account that will be authenticated
 	 *
-	 * @param \F3\FLOW3\Security\Account $account
+	 * @param \TYPO3\FLOW3\Security\Account $account
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
@@ -137,7 +137,7 @@ class TestingProvider implements \F3\FLOW3\Security\Authentication\Authenticatio
 	 */
 	public function reset() {
 		$this->account = NULL;
-		$this->authenticationStatus = \F3\FLOW3\Security\Authentication\TokenInterface::NO_CREDENTIALS_GIVEN;
+		$this->authenticationStatus = \TYPO3\FLOW3\Security\Authentication\TokenInterface::NO_CREDENTIALS_GIVEN;
 	}
 }
 

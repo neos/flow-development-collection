@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\Security\RequestPattern;
+namespace TYPO3\FLOW3\Tests\Unit\Security\RequestPattern;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,7 +26,7 @@ namespace F3\FLOW3\Tests\Unit\Security\RequestPattern;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class ControllerObjectNameTest extends \F3\FLOW3\Tests\UnitTestCase {
+class ControllerObjectNameTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
@@ -34,11 +34,11 @@ class ControllerObjectNameTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function requestMatchingBasicallyWorks() {
-		$request = $this->getMock('F3\FLOW3\MVC\Web\Request');
-		$request->expects($this->once())->method('getControllerObjectName')->will($this->returnValue('F3\FLOW3\Security\Controller\LoginController'));
+		$request = $this->getMock('TYPO3\FLOW3\MVC\Web\Request');
+		$request->expects($this->once())->method('getControllerObjectName')->will($this->returnValue('TYPO3\FLOW3\Security\Controller\LoginController'));
 
-		$requestPattern = new \F3\FLOW3\Security\RequestPattern\ControllerObjectName();
-		$requestPattern->setPattern('F3\FLOW3\Security\.*');
+		$requestPattern = new \TYPO3\FLOW3\Security\RequestPattern\ControllerObjectName();
+		$requestPattern->setPattern('TYPO3\FLOW3\Security\.*');
 
 		$this->assertTrue($requestPattern->matchRequest($request));
 	}

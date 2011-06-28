@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\AOP\Pointcut;
+namespace TYPO3\FLOW3\AOP\Pointcut;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -28,7 +28,7 @@ namespace F3\FLOW3\AOP\Pointcut;
  * @scope prototype
  * @proxy disable
  */
-class PointcutFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
+class PointcutFilter implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 
 	/**
 	 * Name of the aspect class where the pointcut was declared
@@ -44,13 +44,13 @@ class PointcutFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 
 	/**
 	 * The pointcut this filter is based on
-	 * @var \F3\FLOW3\AOP\Pointcut\Pointcut
+	 * @var \TYPO3\FLOW3\AOP\Pointcut\Pointcut
 	 */
 	protected $pointcut;
 
 	/**
 	 * A reference to the AOP Proxy ClassBuilder
-	 * @var \F3\FLOW3\AOP\Builder\ProxyClassBuilder
+	 * @var \TYPO3\FLOW3\AOP\Builder\ProxyClassBuilder
 	 */
 	protected $proxyClassBuilder;
 
@@ -69,11 +69,11 @@ class PointcutFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	/**
 	 * Injects the AOP Proxy Class Builder
 	 *
-	 * @param \F3\FLOW3\AOP\Builder\ProxyClassBuilder $proxyClassBuilder
+	 * @param \TYPO3\FLOW3\AOP\Builder\ProxyClassBuilder $proxyClassBuilder
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectProxyClassBuilder(\F3\FLOW3\AOP\Builder\ProxyClassBuilder $proxyClassBuilder) {
+	public function injectProxyClassBuilder(\TYPO3\FLOW3\AOP\Builder\ProxyClassBuilder $proxyClassBuilder) {
 		$this->proxyClassBuilder = $proxyClassBuilder;
 	}
 
@@ -91,7 +91,7 @@ class PointcutFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 		if ($this->pointcut === NULL) {
 			$this->pointcut = $this->proxyClassBuilder->findPointcut($this->aspectClassName, $this->pointcutMethodName);
 		}
-		if ($this->pointcut === FALSE) throw new \F3\FLOW3\AOP\Exception\UnknownPointcutException('No pointcut "' . $this->pointcutMethodName . '" found in aspect class "' . $this->aspectClassName . '" .', 1172223694);
+		if ($this->pointcut === FALSE) throw new \TYPO3\FLOW3\AOP\Exception\UnknownPointcutException('No pointcut "' . $this->pointcutMethodName . '" found in aspect class "' . $this->aspectClassName . '" .', 1172223694);
 		return $this->pointcut->matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier);
 	}
 

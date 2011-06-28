@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Object\Fixture;
+namespace TYPO3\FLOW3\Tests\Object\Fixture;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *

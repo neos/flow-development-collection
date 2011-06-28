@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Persistence\Generic\Backend;
+namespace TYPO3\FLOW3\Persistence\Generic\Backend;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -32,10 +32,10 @@ interface BackendInterface {
 	/**
 	 * Set a PersistenceManager instance.
 	 *
-	 * @param \F3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager
+	 * @param \TYPO3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager
 	 * @return void
 	 */
-	public function setPersistenceManager(\F3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager);
+	public function setPersistenceManager(\TYPO3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager);
 
 	/**
 	 * Initializes the backend
@@ -75,20 +75,20 @@ interface BackendInterface {
 	/**
 	 * Returns the number of items matching the query.
 	 *
-	 * @param \F3\FLOW3\Persistence\QueryInterface $query
+	 * @param \TYPO3\FLOW3\Persistence\QueryInterface $query
 	 * @return integer
 	 * @api
 	 */
-	public function getObjectCountByQuery(\F3\FLOW3\Persistence\QueryInterface $query);
+	public function getObjectCountByQuery(\TYPO3\FLOW3\Persistence\QueryInterface $query);
 
 	/**
 	 * Returns the object data matching the $query.
 	 *
-	 * @param \F3\FLOW3\Persistence\QueryInterface $query
+	 * @param \TYPO3\FLOW3\Persistence\QueryInterface $query
 	 * @return array
 	 * @api
 	 */
-	public function getObjectDataByQuery(\F3\FLOW3\Persistence\QueryInterface $query);
+	public function getObjectDataByQuery(\TYPO3\FLOW3\Persistence\QueryInterface $query);
 
 	/**
 	 * Returns the object data for the given identifier.

@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Functional\AOP\Fixtures;
+namespace TYPO3\FLOW3\Tests\Functional\AOP\Fixtures;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -30,11 +30,11 @@ class PointcutExpressionTestingAspect {
 
 	/**
 	 *
-	 * @around method(F3\FLOW3\Tests\Functional\AOP\Fixtures\PointcutExpressionTestingTarget->testSettingFilter()) && setting(TYPO3.FLOW3.tests.functional.aop.pointcutExpressionSettingFilterOptionA)
-	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint
+	 * @around method(TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\PointcutExpressionTestingTarget->testSettingFilter()) && setting(TYPO3.FLOW3.tests.functional.aop.pointcutExpressionSettingFilterOptionA)
+	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint
 	 * @return void
 	 */
-	public function settingFilterAdvice(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function settingFilterAdvice(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		return 'pointcutExpressionSettingFilterOptionA on';
 	}
 }

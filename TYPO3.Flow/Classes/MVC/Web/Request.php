@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\MVC\Web;
+namespace TYPO3\FLOW3\MVC\Web;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -21,7 +21,7 @@ namespace F3\FLOW3\MVC\Web;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \F3\FLOW3\Property\DataType\Uri;
+use \TYPO3\FLOW3\Property\DataType\Uri;
 
 /**
  * Represents a web request.
@@ -30,7 +30,7 @@ use \F3\FLOW3\Property\DataType\Uri;
  * @api
  * @scope prototype
  */
-class Request extends \F3\FLOW3\MVC\Request {
+class Request extends \TYPO3\FLOW3\MVC\Request {
 
 	/**
 	 * Contains the request method
@@ -40,21 +40,21 @@ class Request extends \F3\FLOW3\MVC\Request {
 
 	/**
 	 * The request URI
-	 * @var \F3\FLOW3\Property\DataType\Uri
+	 * @var \TYPO3\FLOW3\Property\DataType\Uri
 	 */
 	protected $requestUri;
 
 	/**
 	 * The base URI for this request - ie. the host and path leading to which all FLOW3 URI paths are relative
 	 *
-	 * @var \F3\FLOW3\Property\DataType\Uri
+	 * @var \TYPO3\FLOW3\Property\DataType\Uri
 	 */
 	protected $baseUri;
 
 	/**
 	 * Sets the Request URI
 	 *
-	 * @param \F3\FLOW3\Property\DataType\Uri $requestUri
+	 * @param \TYPO3\FLOW3\Property\DataType\Uri $requestUri
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -65,7 +65,7 @@ class Request extends \F3\FLOW3\MVC\Request {
 	/**
 	 * Returns the request URI
 	 *
-	 * @return \F3\FLOW3\Property\DataType\Uri URI of this web request
+	 * @return \TYPO3\FLOW3\Property\DataType\Uri URI of this web request
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
@@ -76,7 +76,7 @@ class Request extends \F3\FLOW3\MVC\Request {
 	/**
 	 * Sets the Base URI
 	 *
-	 * @param \F3\FLOW3\Property\DataType\Uri $baseUri
+	 * @param \TYPO3\FLOW3\Property\DataType\Uri $baseUri
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -87,7 +87,7 @@ class Request extends \F3\FLOW3\MVC\Request {
 	/**
 	 * Returns the base URI
 	 *
-	 * @return \F3\FLOW3\Property\DataType\Uri URI of this web request
+	 * @return \TYPO3\FLOW3\Property\DataType\Uri URI of this web request
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
@@ -101,11 +101,11 @@ class Request extends \F3\FLOW3\MVC\Request {
 	 * @param string $method Name of the request method
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws \F3\FLOW3\MVC\Exception\InvalidRequestMethodException if the request method is not supported
+	 * @throws \TYPO3\FLOW3\MVC\Exception\InvalidRequestMethodException if the request method is not supported
 	 * @api
 	 */
 	public function setMethod($method) {
-		if ($method === '' || (strtoupper($method) !== $method)) throw new \F3\FLOW3\MVC\Exception\InvalidRequestMethodException('The request method "' . $method . '" is not supported.', 1217778382);
+		if ($method === '' || (strtoupper($method) !== $method)) throw new \TYPO3\FLOW3\MVC\Exception\InvalidRequestMethodException('The request method "' . $method . '" is not supported.', 1217778382);
 		$this->method = $method;
 	}
 
@@ -148,7 +148,7 @@ class Request extends \F3\FLOW3\MVC\Request {
 				unset($referrerArray['arguments']);
 			}
 
-			$referringRequest->setArguments(\F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($arguments, $referrerArray));
+			$referringRequest->setArguments(\TYPO3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($arguments, $referrerArray));
 			return $referringRequest;
 		}
 		return NULL;

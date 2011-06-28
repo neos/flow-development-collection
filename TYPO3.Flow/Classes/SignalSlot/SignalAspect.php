@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\SignalSlot;
+namespace TYPO3\FLOW3\SignalSlot;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -32,7 +32,7 @@ class SignalAspect {
 
 	/**
 	 * @inject
-	 * @var \F3\FLOW3\SignalSlot\Dispatcher
+	 * @var \TYPO3\FLOW3\SignalSlot\Dispatcher
 	 */
 	protected $dispatcher;
 
@@ -40,11 +40,11 @@ class SignalAspect {
 	 * Passes the signal over to the Dispatcher
 	 *
 	 * @afterreturning methodTaggedWith(signal)
-	 * @param F3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
+	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function forwardSignalToDispatcher(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function forwardSignalToDispatcher(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$signalName = lcfirst(str_replace('emit', '', $joinPoint->getMethodName()));
 		$this->dispatcher->dispatch($joinPoint->getClassName(), $signalName, $joinPoint->getMethodArguments());
 	}

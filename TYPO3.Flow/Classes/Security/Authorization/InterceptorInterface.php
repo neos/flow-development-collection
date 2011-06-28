@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Security\Authorization;
+namespace TYPO3\FLOW3\Security\Authorization;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -30,7 +30,7 @@ namespace F3\FLOW3\Security\Authorization;
 interface InterceptorInterface {
 
 	/**
-	 * Invokes the security interception (e.g. calls a \F3\FLOW3\Security\Ahtorization\AccessDecisionManagerInterface)
+	 * Invokes the security interception (e.g. calls a \TYPO3\FLOW3\Security\Ahtorization\AccessDecisionManagerInterface)
 	 *
 	 * @return boolean TRUE if the security checks was passed
 	 */

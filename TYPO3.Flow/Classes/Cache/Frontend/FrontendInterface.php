@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Cache\Frontend;
+namespace TYPO3\FLOW3\Cache\Frontend;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -61,7 +61,7 @@ interface FrontendInterface {
 	/**
 	 * Returns the backend used by this cache
 	 *
-	 * @return \F3\FLOW3\Cache\Backend\BackendInterface The backend used by this cache
+	 * @return \TYPO3\FLOW3\Cache\Backend\BackendInterface The backend used by this cache
 	 * @api
 	 */
 	public function getBackend();

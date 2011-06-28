@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Security\Authorization\Voter;
+namespace TYPO3\FLOW3\Security\Authorization\Voter;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -27,29 +27,29 @@ namespace F3\FLOW3\Security\Authorization\Voter;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope singleton
  */
-class AccessGrant implements \F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface {
+class AccessGrant implements \TYPO3\FLOW3\Security\Authorization\AccessDecisionVoterInterface {
 
 	/**
 	 * Votes to grant access, if the given object is one of the supported types
 	 *
-	 * @param \F3\FLOW3\Security\Context $securityContext The current securit context
-	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The joinpoint to decide on
+	 * @param \TYPO3\FLOW3\Security\Context $securityContext The current securit context
+	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The joinpoint to decide on
 	 * @return integer One of: VOTE_GRANT
-	 * @throws \F3\FLOW3\Security\Exception\AccessDeniedException If access is not granted
+	 * @throws \TYPO3\FLOW3\Security\Exception\AccessDeniedException If access is not granted
 	 */
-	public function voteForJoinPoint(\F3\FLOW3\Security\Context $securityContext, \F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function voteForJoinPoint(\TYPO3\FLOW3\Security\Context $securityContext, \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 
 	}
 
 	/**
 	 * Votes to grant access, if the resource exists
 	 *
-	 * @param \F3\FLOW3\Security\Context $securityContext The current securit context
+	 * @param \TYPO3\FLOW3\Security\Context $securityContext The current securit context
 	 * @param string $resource The resource to vote for
 	 * @return integer One of: VOTE_GRANT, VOTE_ABSTAIN, VOTE_DENY
-	 * @throws \F3\FLOW3\Security\Exception\AccessDeniedException If access is not granted
+	 * @throws \TYPO3\FLOW3\Security\Exception\AccessDeniedException If access is not granted
 	 */
-	public function voteForResource(\F3\FLOW3\Security\Context $securityContext, $resource) {
+	public function voteForResource(\TYPO3\FLOW3\Security\Context $securityContext, $resource) {
 
 	}
 }

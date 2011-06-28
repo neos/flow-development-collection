@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Object\Configuration;
+namespace TYPO3\FLOW3\Object\Configuration;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -33,30 +33,30 @@ namespace F3\FLOW3\Object\Configuration;
 class ConfigurationBuilder {
 
 	/**
-	 * @var \F3\FLOW3\Reflection\ReflectionService
+	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
 	/**
-	 * @var \F3\FLOW3\Log\SystemLoggerInterface
+	 * @var \TYPO3\FLOW3\Log\SystemLoggerInterface
 	 */
 	protected $systemLogger;
 
 	/**
-	 * @param \F3\FLOW3\Reflection\ReflectionService $reflectionService
+	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectReflectionService(\F3\FLOW3\Reflection\ReflectionService $reflectionService) {
+	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
 	}
 
 	/**
-	 * @param \F3\FLOW3\Log\SystemLoggerInterface $systemLogger
+	 * @param \TYPO3\FLOW3\Log\SystemLoggerInterface $systemLogger
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectSystemLogger(\F3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
+	public function injectSystemLogger(\TYPO3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
 		$this->systemLogger = $systemLogger;
 	}
 
@@ -68,7 +68,7 @@ class ConfigurationBuilder {
 	 *
 	 * @param array $availableClassNamesByPackage An array of available class names, grouped by package key
 	 * @param array $rawObjectconfigurationsByPackages An array of package keys and their raw (ie. unparsed) object configurations
-	 * @return array<F3\FLOW3\Object\Configuration\Configuration> Object configurations
+	 * @return array<TYPO3\FLOW3\Object\Configuration\Configuration> Object configurations
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function buildObjectConfigurations(array $availableClassNamesByPackage, array $rawObjectConfigurationsByPackages) {
@@ -89,7 +89,7 @@ class ConfigurationBuilder {
 						continue;
 					}
 					if ($this->reflectionService->isClassTaggedWith($interfaceName, 'scope')) {
-						throw new \F3\FLOW3\Object\Exception\InvalidObjectConfigurationException(sprintf('@scope annotations in interfaces don\'t have any effect, therefore you better remove it from %s in order to avoid confusion.', $interfaceName), 1299095595);
+						throw new \TYPO3\FLOW3\Object\Exception\InvalidObjectConfigurationException(sprintf('@scope annotations in interfaces don\'t have any effect, therefore you better remove it from %s in order to avoid confusion.', $interfaceName), 1299095595);
 					}
 				}
 
@@ -104,7 +104,7 @@ class ConfigurationBuilder {
 			foreach ($rawObjectConfigurations as $objectName => $rawObjectConfiguration) {
 				$objectName = str_replace('_', '\\', $objectName);
 				if (!is_array($rawObjectConfiguration)) {
-					throw new \F3\FLOW3\Object\Exception\InvalidObjectConfigurationException('Configuration of object "' . $objectName . '" in package "' . $packageKey. '" is not an array, please check your Objects.yaml for syntax errors.', 1295954338);
+					throw new \TYPO3\FLOW3\Object\Exception\InvalidObjectConfigurationException('Configuration of object "' . $objectName . '" in package "' . $packageKey. '" is not an array, please check your Objects.yaml for syntax errors.', 1295954338);
 				}
 
 				$existingObjectConfiguration = (isset($objectConfigurations[$objectName])) ? $objectConfigurations[$objectName] : NULL;
@@ -114,11 +114,11 @@ class ConfigurationBuilder {
 				$newObjectConfiguration = $this->parseConfigurationArray($objectName, $rawObjectConfiguration, 'configuration of package ' . $packageKey . ', definition for object "' . $objectName . '"', $existingObjectConfiguration);
 
 				if (!isset($objectConfigurations[$objectName]) && !interface_exists($objectName, TRUE) && !class_exists($objectName, FALSE)) {
-					throw new \F3\FLOW3\Object\Exception\InvalidObjectConfigurationException('Tried to configure unknown object "' . $objectName . '" in package "' . $packageKey. '". Please check your Objects.yaml.', 1184926175);
+					throw new \TYPO3\FLOW3\Object\Exception\InvalidObjectConfigurationException('Tried to configure unknown object "' . $objectName . '" in package "' . $packageKey. '". Please check your Objects.yaml.', 1184926175);
 				}
 
 				if ($objectName !== $newObjectConfiguration->getClassName() && !interface_exists($objectName, TRUE)) {
-					throw new \F3\FLOW3\Object\Exception\InvalidObjectConfigurationException('Tried to set a differing class name for class "' . $objectName . '" in the object configuration of package "' . $packageKey . '". Setting "className" is only allowed for interfaces, please check your Objects.yaml."', 1295954589);
+					throw new \TYPO3\FLOW3\Object\Exception\InvalidObjectConfigurationException('Tried to set a differing class name for class "' . $objectName . '" in the object configuration of package "' . $packageKey . '". Setting "className" is only allowed for interfaces, please check your Objects.yaml."', 1295954589);
 				}
 
 				$objectConfigurations[$objectName] = $newObjectConfiguration;
@@ -155,8 +155,8 @@ class ConfigurationBuilder {
 	 * @param string $objectName Name of the object
 	 * @param array configurationArray The configuration array with options for the object configuration
 	 * @param string configurationSourceHint A human readable hint on the original source of the configuration (for troubleshooting)
-	 * @param \F3\FLOW3\Object\Configuration\Configuration existingObjectConfiguration If set, this object configuration object will be used instead of creating a fresh one
-	 * @return \F3\FLOW3\Object\Configuration\Configuration The object configuration object
+	 * @param \TYPO3\FLOW3\Object\Configuration\Configuration existingObjectConfiguration If set, this object configuration object will be used instead of creating a fresh one
+	 * @return \TYPO3\FLOW3\Object\Configuration\Configuration The object configuration object
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function parseConfigurationArray($objectName, array $rawConfigurationOptions, $configurationSourceHint = '', $existingObjectConfiguration = NULL) {
@@ -179,7 +179,7 @@ class ConfigurationBuilder {
 							} elseif (isset($propertyValue['setting'])) {
 								$property = new ConfigurationProperty($propertyName, $propertyValue['setting'], ConfigurationProperty::PROPERTY_TYPES_SETTING);
 							} else {
-								throw new \F3\FLOW3\Object\Exception\InvalidObjectConfigurationException('Invalid configuration syntax. Expecting "value", "object" or "setting" as value for property "' . $propertyName . '", instead found "' . (is_array($propertyValue) ? implode(', ', array_keys($propertyValue)) : $propertyValue) . '" (source: ' . $objectConfiguration->getConfigurationSourceHint() . ')', 1230563249);
+								throw new \TYPO3\FLOW3\Object\Exception\InvalidObjectConfigurationException('Invalid configuration syntax. Expecting "value", "object" or "setting" as value for property "' . $propertyName . '", instead found "' . (is_array($propertyValue) ? implode(', ', array_keys($propertyValue)) : $propertyValue) . '" (source: ' . $objectConfiguration->getConfigurationSourceHint() . ')', 1230563249);
 							}
 							$objectConfiguration->setProperty($property);
 						}
@@ -195,7 +195,7 @@ class ConfigurationBuilder {
 							} elseif (isset($argumentValue['setting'])) {
 								$argument = new ConfigurationArgument($argumentName, $argumentValue['setting'], ConfigurationArgument::ARGUMENT_TYPES_SETTING);
 							} else {
-								throw new \F3\FLOW3\Object\Exception\InvalidObjectConfigurationException('Invalid configuration syntax. Expecting "value", "object" or "setting" as value for argument "' . $argumentName . '", instead found "' . (is_array($argumentValue) ? implode(', ', array_keys($argumentValue)) : $argumentValue) . '" (source: ' . $objectConfiguration->getConfigurationSourceHint() . ')', 1230563250);
+								throw new \TYPO3\FLOW3\Object\Exception\InvalidObjectConfigurationException('Invalid configuration syntax. Expecting "value", "object" or "setting" as value for argument "' . $argumentName . '", instead found "' . (is_array($argumentValue) ? implode(', ', array_keys($argumentValue)) : $argumentValue) . '" (source: ' . $objectConfiguration->getConfigurationSourceHint() . ')', 1230563250);
 							}
 							$objectConfiguration->setArgument($argument);
 						}
@@ -213,7 +213,7 @@ class ConfigurationBuilder {
 					$objectConfiguration->setAutowiring($this->parseAutowiring($optionValue));
 				break;
 				default:
-					throw new \F3\FLOW3\Object\Exception\InvalidObjectConfigurationException('Invalid configuration option "' . $optionName . '" (source: ' . $objectConfiguration->getConfigurationSourceHint() . ')', 1167574981);
+					throw new \TYPO3\FLOW3\Object\Exception\InvalidObjectConfigurationException('Invalid configuration option "' . $optionName . '" (source: ' . $objectConfiguration->getConfigurationSourceHint() . ')', 1167574981);
 			}
 		}
 		return $objectConfiguration;
@@ -224,7 +224,7 @@ class ConfigurationBuilder {
 	 *
 	 * @param  string $value Value of the option
 	 * @return integer The scope translated into a scope constant
-	 * @throws \F3\FLOW3\Object\Exception\InvalidObjectConfigurationException if an invalid scope has been specified
+	 * @throws \TYPO3\FLOW3\Object\Exception\InvalidObjectConfigurationException if an invalid scope has been specified
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function parseScope($value) {
@@ -236,7 +236,7 @@ class ConfigurationBuilder {
 			case 'session':
 				return Configuration::SCOPE_SESSION;
 			default:
-				throw new \F3\FLOW3\Object\Exception\InvalidObjectConfigurationException('Invalid scope "' . $value . '"', 1167574991);
+				throw new \TYPO3\FLOW3\Object\Exception\InvalidObjectConfigurationException('Invalid scope "' . $value . '"', 1167574991);
 		}
 	}
 
@@ -245,7 +245,7 @@ class ConfigurationBuilder {
 	 *
 	 * @param  string $value Value of the option
 	 * @return boolean The autowiring option translated into a boolean
-	 * @throws \F3\FLOW3\Object\Exception\InvalidObjectConfigurationException if an invalid option has been specified
+	 * @throws \TYPO3\FLOW3\Object\Exception\InvalidObjectConfigurationException if an invalid option has been specified
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	static protected function parseAutowiring($value) {
@@ -257,7 +257,7 @@ class ConfigurationBuilder {
 			case Configuration::AUTOWIRING_MODE_OFF:
 				return Configuration::AUTOWIRING_MODE_OFF;
 			default:
-				throw new \F3\FLOW3\Object\Exception\InvalidObjectConfigurationException('Invalid autowiring declaration', 1283866757);
+				throw new \TYPO3\FLOW3\Object\Exception\InvalidObjectConfigurationException('Invalid autowiring declaration', 1283866757);
 		}
 	}
 
@@ -267,7 +267,7 @@ class ConfigurationBuilder {
 	 * @param string $propertyName Name of the property
 	 * @param mixed $objectNameOrConfiguration Value of the "object" section of the property configuration - either a string or an array
 	 * @param string configurationSourceHint A human readable hint on the original source of the configuration (for troubleshooting)
-	 * @return \F3\FLOW3\Object\Configuration\ConfigurationProperty A configuration property of type object
+	 * @return \TYPO3\FLOW3\Object\Configuration\ConfigurationProperty A configuration property of type object
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function parsePropertyOfTypeObject($propertyName, $objectNameOrConfiguration, $configurationSourceHint) {
@@ -279,7 +279,7 @@ class ConfigurationBuilder {
 				if (isset($objectNameOrConfiguration['factoryObjectName'])) {
 					$objectName = NULL;
 				} else {
-					throw new \F3\FLOW3\Object\Exception\InvalidObjectConfigurationException('Object configuration for property "' . $propertyName . '" contains neither object name nor factory object name in '. $configurationSourceHint, 1297097815);
+					throw new \TYPO3\FLOW3\Object\Exception\InvalidObjectConfigurationException('Object configuration for property "' . $propertyName . '" contains neither object name nor factory object name in '. $configurationSourceHint, 1297097815);
 				}
 			}
 			$objectConfiguration = $this->parseConfigurationArray($objectName, $objectNameOrConfiguration, $configurationSourceHint . ', property "' . $propertyName .'"');
@@ -296,7 +296,7 @@ class ConfigurationBuilder {
 	 * @param string $argumentName Name of the argument
 	 * @param mixed $objectNameOrConfiguration Value of the "object" section of the argument configuration - either a string or an array
 	 * @param string configurationSourceHint A human readable hint on the original source of the configuration (for troubleshooting)
-	 * @return \F3\FLOW3\Object\Configuration\ConfigurationArgument A configuration argument of type object
+	 * @return \TYPO3\FLOW3\Object\Configuration\ConfigurationArgument A configuration argument of type object
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function parseArgumentOfTypeObject($argumentName, $objectNameOrConfiguration, $configurationSourceHint) {
@@ -350,7 +350,7 @@ class ConfigurationBuilder {
 						}
 
 						if (!isset($arguments[$index]) && $objectConfiguration->getScope() === Configuration::SCOPE_SINGLETON) {
-							throw new \F3\FLOW3\Object\Exception\UnresolvedDependenciesException(sprintf('Could not autowire required constructor argument $%s for singleton class %s. %sCheck the type hint of that argument and your Objects.yaml configuration.', $parameterName, $className, $debuggingHint), 1298629392);
+							throw new \TYPO3\FLOW3\Object\Exception\UnresolvedDependenciesException(sprintf('Could not autowire required constructor argument $%s for singleton class %s. %sCheck the type hint of that argument and your Objects.yaml configuration.', $parameterName, $className, $debuggingHint), 1298629392);
 						}
 					}
 				}
@@ -364,7 +364,7 @@ class ConfigurationBuilder {
 	 *
 	 * @param array
 	 * @return void
-	 * @throws \F3\FLOW3\Object\Exception\CannotBuildObjectException if a required property could not be autowired.
+	 * @throws \TYPO3\FLOW3\Object\Exception\CannotBuildObjectException if a required property could not be autowired.
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function autowireProperties(array &$objectConfigurations) {

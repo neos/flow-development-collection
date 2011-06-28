@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\Core;
+namespace TYPO3\FLOW3\Tests\Unit\Core;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -21,12 +21,12 @@ namespace F3\FLOW3\Tests\Unit\Core;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \F3\FLOW3\Core\Bootstrap;
+use \TYPO3\FLOW3\Core\Bootstrap;
 
 /**
  * Testcase for the Bootstrap class
  */
-class BootstrapTest extends \F3\FLOW3\Tests\UnitTestCase {
+class BootstrapTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @return array

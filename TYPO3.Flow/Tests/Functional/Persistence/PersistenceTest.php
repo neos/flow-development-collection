@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Functional\Persistence;
+namespace TYPO3\FLOW3\Tests\Functional\Persistence;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,7 +26,7 @@ namespace F3\FLOW3\Tests\Functional\Persistence;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class PersistenceTest extends \F3\FLOW3\Tests\FunctionalTestCase {
+class PersistenceTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @var boolean
@@ -34,7 +34,7 @@ class PersistenceTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 	static protected $testablePersistenceEnabled = TRUE;
 
 	/**
-	 * @var \F3\FLOW3\Tests\Functional\Persistence\Fixtures\TestEntityRepository
+	 * @var \TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\TestEntityRepository
 	 */
 	protected $testEntityRepository;
 
@@ -44,7 +44,7 @@ class PersistenceTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 	 */
 	public function setUp() {
 		parent::setUp();
-		$this->testEntityRepository = new \F3\FLOW3\Tests\Functional\Persistence\Fixtures\TestEntityRepository();
+		$this->testEntityRepository = new \TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\TestEntityRepository();
 	}
 
 	/**
@@ -52,7 +52,7 @@ class PersistenceTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function entitiesArePersistedAndReconstituted() {
-		$testEntity = new \F3\FLOW3\Tests\Functional\Persistence\Fixtures\TestEntity;
+		$testEntity = new \TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\TestEntity;
 		$testEntity->setName('FLOW3');
 		$this->testEntityRepository->add($testEntity);
 

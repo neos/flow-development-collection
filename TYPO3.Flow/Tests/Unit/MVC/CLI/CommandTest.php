@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\MVC\CLI;
+namespace TYPO3\FLOW3\Tests\Unit\MVC\CLI;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -21,12 +21,12 @@ namespace F3\FLOW3\Tests\Unit\MVC\CLI;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \F3\FLOW3\MVC\CLI\Command;
+use \TYPO3\FLOW3\MVC\CLI\Command;
 
 /**
  * Testcase for the CLI Command class
  */
-class CommandTest extends \F3\FLOW3\Tests\UnitTestCase {
+class CommandTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @return array
@@ -34,7 +34,7 @@ class CommandTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function commandIdentifiers() {
 		return array(
-			array('F3\FLOW3\Command\CacheCommandController', 'flush', 'typo3.flow3:cache:flush'),
+			array('TYPO3\FLOW3\Command\CacheCommandController', 'flush', 'typo3.flow3:cache:flush'),
 			array('RobertLemke\Foo\Faa\Fuuum\Command\CoffeeCommandController', 'brew', 'robertlemke.foo.faa.fuuum:coffee:brew'),
 		);
 	}

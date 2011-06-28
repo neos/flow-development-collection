@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\I18n\TranslationProvider\Exception;
+namespace TYPO3\FLOW3\I18n\TranslationProvider\Exception;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -31,7 +31,7 @@ namespace F3\FLOW3\I18n\TranslationProvider\Exception;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */
-class InvalidPluralFormException extends \F3\FLOW3\I18n\Exception {
+class InvalidPluralFormException extends \TYPO3\FLOW3\I18n\Exception {
 
 }
 

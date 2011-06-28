@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\MVC\Web;
+namespace TYPO3\FLOW3\MVC\Web;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -21,7 +21,7 @@ namespace F3\FLOW3\MVC\Web;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \F3\FLOW3\Property\DataType\Uri;
+use \TYPO3\FLOW3\Property\DataType\Uri;
 
 /**
  * Represents a web sub request (used in plugins for example)
@@ -30,10 +30,10 @@ use \F3\FLOW3\Property\DataType\Uri;
  * @api
  * @scope prototype
  */
-class SubRequest extends \F3\FLOW3\MVC\Web\Request {
+class SubRequest extends \TYPO3\FLOW3\MVC\Web\Request {
 
 	/**
-	 * @var \F3\FLOW3\MVC\Web\Request
+	 * @var \TYPO3\FLOW3\MVC\Web\Request
 	 */
 	protected $parentRequest;
 
@@ -43,14 +43,14 @@ class SubRequest extends \F3\FLOW3\MVC\Web\Request {
 	protected $argumentNamespace = '';
 
 	/**
-	 * @param \F3\FLOW3\MVC\Web\Request $parentRequest
+	 * @param \TYPO3\FLOW3\MVC\Web\Request $parentRequest
 	 */
-	public function __construct(\F3\FLOW3\MVC\Web\Request $parentRequest) {
+	public function __construct(\TYPO3\FLOW3\MVC\Web\Request $parentRequest) {
 		$this->parentRequest = $parentRequest;
 	}
 
 	/**
-	 * @return \F3\FLOW3\MVC\Web\Request
+	 * @return \TYPO3\FLOW3\MVC\Web\Request
 	 */
 	public function getParentRequest() {
 		return $this->parentRequest;
@@ -74,7 +74,7 @@ class SubRequest extends \F3\FLOW3\MVC\Web\Request {
 	/**
 	 * Sets the Request URI in the parent request
 	 *
-	 * @param \F3\FLOW3\Property\DataType\Uri $requestUri
+	 * @param \TYPO3\FLOW3\Property\DataType\Uri $requestUri
 	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
@@ -85,7 +85,7 @@ class SubRequest extends \F3\FLOW3\MVC\Web\Request {
 	/**
 	 * Returns the parent request URI
 	 *
-	 * @return \F3\FLOW3\Property\DataType\Uri URI of the parent web request
+	 * @return \TYPO3\FLOW3\Property\DataType\Uri URI of the parent web request
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @api
 	 */
@@ -96,7 +96,7 @@ class SubRequest extends \F3\FLOW3\MVC\Web\Request {
 	/**
 	 * Sets the Base URI of the parent request
 	 *
-	 * @param \F3\FLOW3\Property\DataType\Uri $baseUri
+	 * @param \TYPO3\FLOW3\Property\DataType\Uri $baseUri
 	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
@@ -107,7 +107,7 @@ class SubRequest extends \F3\FLOW3\MVC\Web\Request {
 	/**
 	 * Returns the base URI of the parent request
 	 *
-	 * @return \F3\FLOW3\Property\DataType\Uri URI of the parent web request
+	 * @return \TYPO3\FLOW3\Property\DataType\Uri URI of the parent web request
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @api
 	 */
@@ -151,7 +151,7 @@ class SubRequest extends \F3\FLOW3\MVC\Web\Request {
 	/**
 	 * Return the top most parent request
 	 *
-	 * @return \F3\FLOW3\MVC\Web\Request
+	 * @return \TYPO3\FLOW3\MVC\Web\Request
 	 * @author Lienhart Woitok <lienhart.woitok@netlogix.de>
 	 */
 	public function getRootRequest() {

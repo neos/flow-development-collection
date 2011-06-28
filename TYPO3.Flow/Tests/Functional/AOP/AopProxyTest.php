@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Functional\AOP;
+namespace TYPO3\FLOW3\Tests\Functional\AOP;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,7 +26,7 @@ namespace F3\FLOW3\Tests\Functional\AOP;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class AopProxyTest extends \F3\FLOW3\Tests\FunctionalTestCase {
+class AopProxyTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test

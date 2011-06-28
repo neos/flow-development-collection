@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Persistence\Doctrine;
+namespace TYPO3\FLOW3\Persistence\Doctrine;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -28,7 +28,7 @@ namespace F3\FLOW3\Persistence\Doctrine;
  * @scope singleton
  * @api
  */
-class PersistenceManager extends \F3\FLOW3\Persistence\AbstractPersistenceManager {
+class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceManager {
 
 	/**
 	 * @var \Doctrine\Common\Persistence\ObjectManager
@@ -93,7 +93,7 @@ class PersistenceManager extends \F3\FLOW3\Persistence\AbstractPersistenceManage
 				return NULL;
 			}
 		} elseif (property_exists($object, 'FLOW3_Persistence_Identifier')) {
-			return \F3\FLOW3\Reflection\ObjectAccess::getProperty($object, 'FLOW3_Persistence_Identifier', TRUE);
+			return \TYPO3\FLOW3\Reflection\ObjectAccess::getProperty($object, 'FLOW3_Persistence_Identifier', TRUE);
 		} else {
 			return NULL;
 		}
@@ -120,10 +120,10 @@ class PersistenceManager extends \F3\FLOW3\Persistence\AbstractPersistenceManage
 	 * Return a query object for the given type.
 	 *
 	 * @param string $type
-	 * @return \F3\FLOW3\Persistence\Doctrine\Query
+	 * @return \TYPO3\FLOW3\Persistence\Doctrine\Query
 	 */
 	public function createQueryForType($type) {
-		return new \F3\FLOW3\Persistence\Doctrine\Query($type);
+		return new \TYPO3\FLOW3\Persistence\Doctrine\Query($type);
 	}
 
 	/**
@@ -159,7 +159,7 @@ class PersistenceManager extends \F3\FLOW3\Persistence\AbstractPersistenceManage
 		try {
 			$this->entityManager->merge($modifiedObject);
 		} catch (\Exception $exception) {
-			throw new \F3\FLOW3\Persistence\Exception('Could not merge objects of type "' . get_class($modifiedObject) . '"', 1297778180, $exception);
+			throw new \TYPO3\FLOW3\Persistence\Exception('Could not merge objects of type "' . get_class($modifiedObject) . '"', 1297778180, $exception);
 		}
 	}
 

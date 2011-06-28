@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Persistence\Generic\Backend\GenericPdo;
+namespace TYPO3\FLOW3\Persistence\Generic\Backend\GenericPdo;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,10 +26,10 @@ namespace F3\FLOW3\Persistence\Generic\Backend\GenericPdo;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class Backend extends \F3\FLOW3\Persistence\Generic\Backend\AbstractSqlBackend {
+class Backend extends \TYPO3\FLOW3\Persistence\Generic\Backend\AbstractSqlBackend {
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
+	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
@@ -51,11 +51,11 @@ class Backend extends \F3\FLOW3\Persistence\Generic\Backend\AbstractSqlBackend {
 	/**
 	 * Injects the Object Factory
 	 *
-	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
+	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
+	public function injectObjectManager(\TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
 	}
 
@@ -98,14 +98,14 @@ class Backend extends \F3\FLOW3\Persistence\Generic\Backend\AbstractSqlBackend {
 	 * Creates the tables needed for the backend.
 	 *
 	 * @return void
-	 * @throws \F3\FLOW3\Persistence\Exception if something goes wrong
+	 * @throws \TYPO3\FLOW3\Persistence\Exception if something goes wrong
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function createTables() {
 		try {
-			\F3\FLOW3\Utility\PdoHelper::importSql($this->databaseHandle, $this->pdoDriver, FLOW3_PATH_FLOW3 . 'Resources/Private/Persistence/SQL/DDL.sql');
+			\TYPO3\FLOW3\Utility\PdoHelper::importSql($this->databaseHandle, $this->pdoDriver, FLOW3_PATH_FLOW3 . 'Resources/Private/Persistence/SQL/DDL.sql');
 		} catch (\PDOException $e) {
-			throw new \F3\FLOW3\Persistence\Exception('Could not create persistence tables with DSN "' . $this->dataSourceName . '". PDO error: ' . $e->getMessage(), 1259701414);
+			throw new \TYPO3\FLOW3\Persistence\Exception('Could not create persistence tables with DSN "' . $this->dataSourceName . '". PDO error: ' . $e->getMessage(), 1259701414);
 		}
 	}
 
@@ -147,7 +147,7 @@ class Backend extends \F3\FLOW3\Persistence\Generic\Backend\AbstractSqlBackend {
 		$classSchema = $this->reflectionService->getClassSchema($object);
 		$identifier = $this->persistenceSession->getIdentifierByObject($object);
 
-		if ($classSchema->getModelType() === \F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY) {
+		if ($classSchema->getModelType() === \TYPO3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY) {
 			$statementHandle = $this->databaseHandle->prepare('INSERT INTO "entities" ("identifier", "type", "parent") VALUES (?, ?, ?)');
 			$statementHandle->execute(array(
 				$identifier,
@@ -177,11 +177,11 @@ class Backend extends \F3\FLOW3\Persistence\Generic\Backend\AbstractSqlBackend {
 	protected function storeObject($object, $identifier, $parentIdentifier, array &$objectData) {
 		$classSchema = $this->reflectionService->getClassSchema($object);
 		if ($this->persistenceSession->hasObject($object)) {
-			if ($classSchema->getModelType() === \F3\FLOW3\Reflection\ClassSchema::MODELTYPE_VALUEOBJECT) {
+			if ($classSchema->getModelType() === \TYPO3\FLOW3\Reflection\ClassSchema::MODELTYPE_VALUEOBJECT) {
 				return $identifier;
 			}
 			$objectState = self::OBJECTSTATE_RECONSTITUTED;
-		} elseif ($classSchema->getModelType() === \F3\FLOW3\Reflection\ClassSchema::MODELTYPE_VALUEOBJECT && $this->hasValueobjectRecord($identifier)) {
+		} elseif ($classSchema->getModelType() === \TYPO3\FLOW3\Reflection\ClassSchema::MODELTYPE_VALUEOBJECT && $this->hasValueobjectRecord($identifier)) {
 			return $identifier;
 		} else {
 			$this->validateObject($object);
@@ -424,12 +424,12 @@ class Backend extends \F3\FLOW3\Persistence\Generic\Backend\AbstractSqlBackend {
 	/**
 	 * Returns the number of records matching the query.
 	 *
-	 * @param \F3\FLOW3\Persistence\QueryInterface $query
+	 * @param \TYPO3\FLOW3\Persistence\QueryInterface $query
 	 * @return integer
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo optimize so properties are ignored and the db is asked for the count only
 	 */
-	public function getObjectCountByQuery(\F3\FLOW3\Persistence\QueryInterface $query) {
+	public function getObjectCountByQuery(\TYPO3\FLOW3\Persistence\QueryInterface $query) {
 		$parsedQuery = $this->buildQuery($query, TRUE);
 
 		$statementHandle = $this->databaseHandle->prepare($parsedQuery['sql']);
@@ -473,11 +473,11 @@ class Backend extends \F3\FLOW3\Persistence\Generic\Backend\AbstractSqlBackend {
 	/**
 	 * Returns the object data matching the $query.
 	 *
-	 * @param \F3\FLOW3\Persistence\QueryInterface $query
+	 * @param \TYPO3\FLOW3\Persistence\QueryInterface $query
 	 * @return array
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function getObjectDataByQuery(\F3\FLOW3\Persistence\QueryInterface $query) {
+	public function getObjectDataByQuery(\TYPO3\FLOW3\Persistence\QueryInterface $query) {
 		$this->knownRecords = array();
 
 		$parsedQuery = $this->buildQuery($query);
@@ -618,12 +618,12 @@ class Backend extends \F3\FLOW3\Persistence\Generic\Backend\AbstractSqlBackend {
 	/**
 	 * Builds a query string from the given Query.
 	 *
-	 * @param \F3\FLOW3\Persistence\QueryInterface $query
+	 * @param \TYPO3\FLOW3\Persistence\QueryInterface $query
 	 * @param boolean $countOnly
 	 * @return string
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function buildQuery(\F3\FLOW3\Persistence\QueryInterface $query, $countOnly = FALSE) {
+	protected function buildQuery(\TYPO3\FLOW3\Persistence\QueryInterface $query, $countOnly = FALSE) {
 		$sql = array(
 			'fields' => array('"_entity"."identifier" AS "identifier"', '"_entity"."type" AS "classname"'),
 			'tables' => array(),
@@ -676,12 +676,12 @@ class Backend extends \F3\FLOW3\Persistence\Generic\Backend\AbstractSqlBackend {
 	/**
 	 * Transforms an orderings into SQL-like order parts
 	 *
-	 * @param \F3\FLOW3\Persistence\QueryInterface $query
+	 * @param \TYPO3\FLOW3\Persistence\QueryInterface $query
 	 * @param array &$sql
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function parseOrderings(\F3\FLOW3\Persistence\QueryInterface $query, array &$sql) {
+	protected function parseOrderings(\TYPO3\FLOW3\Persistence\QueryInterface $query, array &$sql) {
 		if ($query->getOrderings() === array()) return;
 
 		$orderings = array();
@@ -689,7 +689,7 @@ class Backend extends \F3\FLOW3\Persistence\Generic\Backend\AbstractSqlBackend {
 		$sql['tables'][] = 'LEFT JOIN "properties" ON "_entity"."identifier" = "properties"."parent"';
 		foreach ($query->getOrderings() as $propertyName => $order) {
 			if (!isset($propertyData[$propertyName])) {
-				throw new \F3\FLOW3\Persistence\Exception\InvalidQueryException('Unknown property "' . $propertyName . '" in query orderings.', 1284661371);
+				throw new \TYPO3\FLOW3\Persistence\Exception\InvalidQueryException('Unknown property "' . $propertyName . '" in query orderings.', 1284661371);
 			}
 			$sql['tables'][] = 'LEFT JOIN (SELECT "parent", "' . $this->getTypeName($propertyData[$propertyName]['elementType'] ?: $propertyData[$propertyName]['type']) . '" AS "' . $propertyName . '" FROM "properties_data" WHERE "name" = ' . $this->databaseHandle->quote($propertyName) . ') AS "_orderingtable' . count($orderings) . '" ON "_orderingtable' . count($orderings) . '"."parent" = "properties"."parent"';
 			$orderings[] = '"_orderingtable' . count($orderings) . '"."' . $propertyName . '" ' . $order;
@@ -700,30 +700,30 @@ class Backend extends \F3\FLOW3\Persistence\Generic\Backend\AbstractSqlBackend {
 	/**
 	 * Transforms a constraint into SQL and parameter arrays
 	 *
-	 * @param \F3\FLOW3\Persistence\Generic\Qom\Constraint $constraint
+	 * @param \TYPO3\FLOW3\Persistence\Generic\Qom\Constraint $constraint
 	 * @param array &$sql
 	 * @param array &$parameters
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function parseConstraint(\F3\FLOW3\Persistence\Generic\Qom\Constraint $constraint, array &$sql, array &$parameters) {
-		if ($constraint instanceof \F3\FLOW3\Persistence\Generic\Qom\LogicalAnd) {
+	protected function parseConstraint(\TYPO3\FLOW3\Persistence\Generic\Qom\Constraint $constraint, array &$sql, array &$parameters) {
+		if ($constraint instanceof \TYPO3\FLOW3\Persistence\Generic\Qom\LogicalAnd) {
 			$sql['where']['values'][] = '(';
 			$this->parseConstraint($constraint->getConstraint1(), $sql, $parameters);
 			$sql['where']['values'][] = ' AND ';
 			$this->parseConstraint($constraint->getConstraint2(), $sql, $parameters);
 			$sql['where']['values'][] = ') ';
-		} elseif ($constraint instanceof \F3\FLOW3\Persistence\Generic\Qom\LogicalOr) {
+		} elseif ($constraint instanceof \TYPO3\FLOW3\Persistence\Generic\Qom\LogicalOr) {
 			$sql['where']['values'][] = '(';
 			$this->parseConstraint($constraint->getConstraint1(), $sql, $parameters);
 			$sql['where']['values'][] = ' OR ';
 			$this->parseConstraint($constraint->getConstraint2(), $sql, $parameters);
 			$sql['where']['values'][] = ') ';
-		} elseif ($constraint instanceof \F3\FLOW3\Persistence\Generic\Qom\LogicalNot) {
+		} elseif ($constraint instanceof \TYPO3\FLOW3\Persistence\Generic\Qom\LogicalNot) {
 			$sql['where']['values'][] = '(NOT ';
 			$this->parseConstraint($constraint->getConstraint(), $sql, $parameters);
 			$sql['where']['values'][] = ') ';
-		} elseif ($constraint instanceof \F3\FLOW3\Persistence\Generic\Qom\Comparison) {
+		} elseif ($constraint instanceof \TYPO3\FLOW3\Persistence\Generic\Qom\Comparison) {
 			$this->parseComparison($constraint, $sql, $parameters);
 		}
 	}
@@ -731,22 +731,22 @@ class Backend extends \F3\FLOW3\Persistence\Generic\Backend\AbstractSqlBackend {
 	/**
 	 * Parse a Comparison into SQL and parameter arrays.
 	 *
-	 * @param \F3\FLOW3\Persistence\Generic\Qom\Comparison $comparison The comparison to parse
+	 * @param \TYPO3\FLOW3\Persistence\Generic\Qom\Comparison $comparison The comparison to parse
 	 * @param array &$sql SQL query parts to add to
 	 * @param array &$parameters Parameters to bind to the SQL
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function parseComparison(\F3\FLOW3\Persistence\Generic\Qom\Comparison $comparison, array &$sql, array &$parameters) {
+	protected function parseComparison(\TYPO3\FLOW3\Persistence\Generic\Qom\Comparison $comparison, array &$sql, array &$parameters) {
 		switch ($comparison->getOperator()) {
-			case \F3\FLOW3\Persistence\QueryInterface::OPERATOR_IN:
+			case \TYPO3\FLOW3\Persistence\QueryInterface::OPERATOR_IN:
 				$this->parseDynamicOperand($comparison->getOperand1(), $comparison->getOperator(), $sql, $parameters, NULL, $comparison->getOperand2());
 				foreach ($comparison->getOperand2() as $value) {
 					$parameters['values'][] = $this->getPlainValue($value);
 				}
 			break;
-			case \F3\FLOW3\Persistence\QueryInterface::OPERATOR_IS_EMPTY:
-			case \F3\FLOW3\Persistence\QueryInterface::OPERATOR_IS_NULL:
+			case \TYPO3\FLOW3\Persistence\QueryInterface::OPERATOR_IS_EMPTY:
+			case \TYPO3\FLOW3\Persistence\QueryInterface::OPERATOR_IS_NULL:
 				$this->parseDynamicOperand($comparison->getOperand1(), $comparison->getOperator(), $sql, $parameters);
 			break;
 			default:
@@ -776,7 +776,7 @@ class Backend extends \F3\FLOW3\Persistence\Generic\Backend\AbstractSqlBackend {
 	/**
 	 * Parse a DynamicOperand into SQL and parameter arrays.
 	 *
-	 * @param \F3\FLOW3\Persistence\Generic\Qom\DynamicOperand $operand
+	 * @param \TYPO3\FLOW3\Persistence\Generic\Qom\DynamicOperand $operand
 	 * @param string $operator One of the JCR_OPERATOR_* constants
 	 * @param array &$sql
 	 * @param array &$parameters
@@ -784,16 +784,16 @@ class Backend extends \F3\FLOW3\Persistence\Generic\Backend\AbstractSqlBackend {
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function parseDynamicOperand(\F3\FLOW3\Persistence\Generic\Qom\DynamicOperand $operand, $operator, array &$sql, array &$parameters, $valueFunction = NULL, $operand2 = NULL) {
-		if ($operand instanceof \F3\FLOW3\Persistence\Generic\Qom\LowerCase) {
+	protected function parseDynamicOperand(\TYPO3\FLOW3\Persistence\Generic\Qom\DynamicOperand $operand, $operator, array &$sql, array &$parameters, $valueFunction = NULL, $operand2 = NULL) {
+		if ($operand instanceof \TYPO3\FLOW3\Persistence\Generic\Qom\LowerCase) {
 			$this->parseDynamicOperand($operand->getOperand(), $operator, $sql, $parameters, 'LOWER');
-		} elseif ($operand instanceof \F3\FLOW3\Persistence\Generic\Qom\UpperCase) {
+		} elseif ($operand instanceof \TYPO3\FLOW3\Persistence\Generic\Qom\UpperCase) {
 			$this->parseDynamicOperand($operand->getOperand(), $operator, $sql, $parameters, 'UPPER');
-		} elseif ($operand instanceof \F3\FLOW3\Persistence\Generic\Qom\PropertyValue) {
+		} elseif ($operand instanceof \TYPO3\FLOW3\Persistence\Generic\Qom\PropertyValue) {
 			$selectorName = $operand->getSelectorName();
 			$coalesce = 'COALESCE("' . $selectorName . 'pd' . count($parameters['fields']) . '"."string", CAST("' . $selectorName . 'pd' . count($parameters['fields']) . '"."integer" AS CHAR), CAST("' . $selectorName . 'pd' . count($parameters['fields']) . '"."float" AS CHAR), CAST("' . $selectorName . 'pd' . count($parameters['fields']) . '"."datetime" AS CHAR), "' . $selectorName . 'pd' . count($parameters['fields']) . '"."boolean", "' . $selectorName . 'pd' . count($parameters['fields']) . '"."object")';
 			switch ($operator) {
-				case \F3\FLOW3\Persistence\QueryInterface::OPERATOR_IN:
+				case \TYPO3\FLOW3\Persistence\QueryInterface::OPERATOR_IN:
 					if ($valueFunction === NULL) {
 						$valueWhere = $coalesce . ' IN (';
 					} else {
@@ -801,15 +801,15 @@ class Backend extends \F3\FLOW3\Persistence\Generic\Backend\AbstractSqlBackend {
 					}
 					$valueWhere .= implode(', ', array_fill(0, count($operand2), '?')) . ') ';
 				break;
-				case \F3\FLOW3\Persistence\QueryInterface::OPERATOR_IS_EMPTY:
+				case \TYPO3\FLOW3\Persistence\QueryInterface::OPERATOR_IS_EMPTY:
 					$valueWhere = '("' . $selectorName . 'pd' . count($parameters['fields']) . '"."type" = \'NULL\' OR "' . $selectorName . 'pd' . count($parameters['fields']) . '"."type" IS NULL)';
 				break;
-				case \F3\FLOW3\Persistence\QueryInterface::OPERATOR_IS_NULL:
+				case \TYPO3\FLOW3\Persistence\QueryInterface::OPERATOR_IS_NULL:
 					$valueWhere = '("' . $selectorName . 'pd' . count($parameters['fields']) . '"."type" = \'NULL\' AND "' . $selectorName . 'pd' . count($parameters['fields']) . '"."type" IS NOT NULL)';
 				break;
-				case \F3\FLOW3\Persistence\QueryInterface::OPERATOR_CONTAINS:
+				case \TYPO3\FLOW3\Persistence\QueryInterface::OPERATOR_CONTAINS:
 						// in our data structure we can do this using equality...
-					$operator = \F3\FLOW3\Persistence\QueryInterface::OPERATOR_EQUAL_TO;
+					$operator = \TYPO3\FLOW3\Persistence\QueryInterface::OPERATOR_EQUAL_TO;
 				default:
 					if ($valueFunction === NULL) {
 						$valueWhere = $coalesce . ' ' . $this->resolveOperator($operator) . ' ?';

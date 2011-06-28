@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\Object\Configuration;
+namespace TYPO3\FLOW3\Tests\Unit\Object\Configuration;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,10 +26,10 @@ namespace F3\FLOW3\Tests\Unit\Object\Configuration;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class ConfigurationTest extends \F3\FLOW3\Tests\UnitTestCase {
+class ConfigurationTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
-	 * @var \F3\FLOW3\Object\Configuration\Configuration
+	 * @var \TYPO3\FLOW3\Object\Configuration\Configuration
 	 */
 	protected $objectConfiguration;
 
@@ -39,7 +39,7 @@ class ConfigurationTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setUp() {
-		$this->objectConfiguration = new \F3\FLOW3\Object\Configuration\Configuration('TYPO3\Foo\Bar');
+		$this->objectConfiguration = new \TYPO3\FLOW3\Object\Configuration\Configuration('TYPO3\Foo\Bar');
 	}
 
 	/**
@@ -51,7 +51,7 @@ class ConfigurationTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function setPropertiesOnlyAcceptsValidValues() {
 		$invalidProperties = array (
-			'validProperty' => new \F3\FLOW3\Object\Configuration\ConfigurationProperty('validProperty', 'simple string'),
+			'validProperty' => new \TYPO3\FLOW3\Object\Configuration\ConfigurationProperty('validProperty', 'simple string'),
 			'invalidProperty' => 'foo'
 		);
 
@@ -64,8 +64,8 @@ class ConfigurationTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function passingAnEmptyArrayToSetPropertiesRemovesAllExistingproperties() {
 		$someProperties = array (
-			'prop1' => new \F3\FLOW3\Object\Configuration\ConfigurationProperty('prop1', 'simple string'),
-			'prop2' => new \F3\FLOW3\Object\Configuration\ConfigurationProperty('prop2', 'another string')
+			'prop1' => new \TYPO3\FLOW3\Object\Configuration\ConfigurationProperty('prop1', 'simple string'),
+			'prop2' => new \TYPO3\FLOW3\Object\Configuration\ConfigurationProperty('prop2', 'another string')
 		);
 		$this->objectConfiguration->setProperties($someProperties);
 		$this->assertEquals($someProperties, $this->objectConfiguration->getProperties(), 'The set properties could not be retrieved again.');
@@ -83,7 +83,7 @@ class ConfigurationTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function setArgumentsOnlyAcceptsValidValues() {
 		$invalidArguments = array (
-			1 => new \F3\FLOW3\Object\Configuration\ConfigurationArgument(1, 'simple string'),
+			1 => new \TYPO3\FLOW3\Object\Configuration\ConfigurationArgument(1, 'simple string'),
 			2 => 'foo'
 		);
 
@@ -96,8 +96,8 @@ class ConfigurationTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function passingAnEmptyArrayToSetArgumentsRemovesAllExistingArguments() {
 		$someArguments = array (
-			1 => new \F3\FLOW3\Object\Configuration\ConfigurationArgument(1, 'simple string'),
-			2 => new \F3\FLOW3\Object\Configuration\ConfigurationArgument(2, 'another string')
+			1 => new \TYPO3\FLOW3\Object\Configuration\ConfigurationArgument(1, 'simple string'),
+			2 => new \TYPO3\FLOW3\Object\Configuration\ConfigurationArgument(2, 'another string')
 		);
 		$this->objectConfiguration->setArguments($someArguments);
 		$this->assertEquals($someArguments, $this->objectConfiguration->getArguments(), 'The set arguments could not be retrieved again.');
@@ -117,7 +117,7 @@ class ConfigurationTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException F3\FLOW3\Object\Exception\InvalidClassException
+	 * @expectedException TYPO3\FLOW3\Object\Exception\InvalidClassException
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setFactoryObjectNameRejectsNamesOfNonExistingNlasses() {

@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Security;
+namespace TYPO3\FLOW3\Security;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -30,7 +30,7 @@ namespace F3\FLOW3\Security;
 class AccountFactory {
 
 	/**
-	 * @var \F3\FLOW3\Security\Cryptography\HashService
+	 * @var \TYPO3\FLOW3\Security\Cryptography\HashService
 	 * @inject
 	 */
 	protected $hashService;
@@ -42,16 +42,16 @@ class AccountFactory {
 	 * @param string $password The clear text password
 	 * @param array $roleIdentifiers Optionally an array of role identifiers to assign to the new account
 	 * @param string $authenticationProviderName Optinally the name of the authentication provider the account is affiliated with
-	 * @return \F3\FLOW3\Security\Account A new account, not yet added to the account repository
+	 * @return \TYPO3\FLOW3\Security\Account A new account, not yet added to the account repository
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function createAccountWithPassword($identifier, $password, $roleIdentifiers = array(), $authenticationProviderName = 'DefaultProvider') {
 		$roles = array();
 		foreach ($roleIdentifiers as $roleIdentifier) {
-			$roles[] = new \F3\FLOW3\Security\Policy\Role($roleIdentifier);
+			$roles[] = new \TYPO3\FLOW3\Security\Policy\Role($roleIdentifier);
 		}
 
-		$account = new \F3\FLOW3\Security\Account();
+		$account = new \TYPO3\FLOW3\Security\Account();
 		$account->setAccountIdentifier($identifier);
 		$account->setCredentialsSource($this->hashService->generateSaltedMd5($password));
 		$account->setAuthenticationProviderName($authenticationProviderName);

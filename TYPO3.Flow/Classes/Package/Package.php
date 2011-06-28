@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Package;
+namespace TYPO3\FLOW3\Package;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -21,7 +21,7 @@ namespace F3\FLOW3\Package;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \F3\FLOW3\Package\MetaData\XmlReader as PackageMetaDataReader;
+use \TYPO3\FLOW3\Package\MetaData\XmlReader as PackageMetaDataReader;
 
 /**
  * A Package
@@ -52,7 +52,7 @@ class Package implements PackageInterface {
 
 	/**
 	 * Meta information about this package
-	 * @var \F3\FLOW3\Package\MetaData
+	 * @var \TYPO3\FLOW3\Package\MetaData
 	 */
 	protected $packageMetaData;
 
@@ -75,14 +75,14 @@ class Package implements PackageInterface {
 	 *
 	 * @param string $packageKey Key of this package
 	 * @param string $packagePath Absolute path to the package's main directory
-	 * @throws \F3\FLOW3\Package\Exception\InvalidPackageKeyException if an invalid package key was passed
-	 * @throws \F3\FLOW3\Package\Exception\InvalidPackagePathException if an invalid package path was passed
+	 * @throws \TYPO3\FLOW3\Package\Exception\InvalidPackageKeyException if an invalid package key was passed
+	 * @throws \TYPO3\FLOW3\Package\Exception\InvalidPackagePathException if an invalid package path was passed
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct($packageKey, $packagePath) {
-		if (preg_match(self::PATTERN_MATCH_PACKAGEKEY, $packageKey) !== 1) throw new \F3\FLOW3\Package\Exception\InvalidPackageKeyException('"' . $packageKey . '" is not a valid package key.', 1217959510);
-		if (!(is_dir($packagePath) || (\F3\FLOW3\Utility\Files::is_link($packagePath) && is_dir(realpath(rtrim($packagePath, '/')))))) throw new \F3\FLOW3\Package\Exception\InvalidPackagePathException('Package path does not exist or is no directory.', 1166631889);
-		if (substr($packagePath, -1, 1) != '/') throw new \F3\FLOW3\Package\Exception\InvalidPackagePathException('Package path has no trailing forward slash.', 1166633720);
+		if (preg_match(self::PATTERN_MATCH_PACKAGEKEY, $packageKey) !== 1) throw new \TYPO3\FLOW3\Package\Exception\InvalidPackageKeyException('"' . $packageKey . '" is not a valid package key.', 1217959510);
+		if (!(is_dir($packagePath) || (\TYPO3\FLOW3\Utility\Files::is_link($packagePath) && is_dir(realpath(rtrim($packagePath, '/')))))) throw new \TYPO3\FLOW3\Package\Exception\InvalidPackagePathException('Package path does not exist or is no directory.', 1166631889);
+		if (substr($packagePath, -1, 1) != '/') throw new \TYPO3\FLOW3\Package\Exception\InvalidPackagePathException('Package path has no trailing forward slash.', 1166633720);
 
 		$this->packageKey = $packageKey;
 		$this->packagePath = $packagePath;
@@ -91,16 +91,16 @@ class Package implements PackageInterface {
 	/**
 	 * Invokes custom PHP code directly after the package manager has been initialized.
 	 *
-	 * @param \F3\FLOW3\Core\Bootstrap $bootstrap The current bootstrap
+	 * @param \TYPO3\FLOW3\Core\Bootstrap $bootstrap The current bootstrap
 	 * @return void
 	 */
-	public function boot(\F3\FLOW3\Core\Bootstrap $bootstrap) {
+	public function boot(\TYPO3\FLOW3\Core\Bootstrap $bootstrap) {
 	}
 
 	/**
 	 * Returns the package meta data object of this package.
 	 *
-	 * @return \F3\FLOW3\Package\MetaData
+	 * @return \TYPO3\FLOW3\Package\MetaData
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPackageMetaData() {
@@ -268,7 +268,7 @@ class Package implements PackageInterface {
 	/**
 	 * Returns the available documentations for this package
 	 *
-	 * @return array Array of \F3\FLOW3\Package\Documentation
+	 * @return array Array of \TYPO3\FLOW3\Package\Documentation
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 * @api
 	 */
@@ -282,7 +282,7 @@ class Package implements PackageInterface {
 				$filename = $documentationsDirectoryIterator->getFilename();
 				if ($filename[0] != '.' && $documentationsDirectoryIterator->isDir()) {
 					$filename = $documentationsDirectoryIterator->getFilename();
-					$documentation = new \F3\FLOW3\Package\Documentation($this, $filename, $documentationPath . $filename . '/');
+					$documentation = new \TYPO3\FLOW3\Package\Documentation($this, $filename, $documentationPath . $filename . '/');
 					$documentations[$filename] = $documentation;
 				}
 				$documentationsDirectoryIterator->next();
@@ -302,7 +302,7 @@ class Package implements PackageInterface {
 	 * @param integer $recursionLevel Used internally
 	 * @return array
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws \F3\FLOW3\Package\Exception if recursion into directories was too deep or another error occurred
+	 * @throws \TYPO3\FLOW3\Package\Exception if recursion into directories was too deep or another error occurred
 	 */
 	protected function buildArrayOfClassFiles($classesPath, $extraNamespaceSegment = '', $subDirectory = '', $recursionLevel = 0) {
 		$packageNamespace = $this->getPackageNamespace();
@@ -311,7 +311,7 @@ class Package implements PackageInterface {
 		$currentRelativePath = substr($currentPath, strlen($this->packagePath));
 
 		if (!is_dir($currentPath)) return array();
-		if ($recursionLevel > 100) throw new \F3\FLOW3\Package\Exception('Recursion too deep.', 1166635495);
+		if ($recursionLevel > 100) throw new \TYPO3\FLOW3\Package\Exception('Recursion too deep.', 1166635495);
 
 		try {
 			$classesDirectoryIterator = new \DirectoryIterator($currentPath);
@@ -331,7 +331,7 @@ class Package implements PackageInterface {
 			}
 
 		} catch(\Exception $exception) {
-			throw new \F3\FLOW3\Package\Exception($exception->getMessage(), 1166633720);
+			throw new \TYPO3\FLOW3\Package\Exception($exception->getMessage(), 1166633720);
 		}
 		return $classFiles;
 	}

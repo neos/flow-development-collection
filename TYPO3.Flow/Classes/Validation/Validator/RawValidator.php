@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Validation\Validator;
+namespace TYPO3\FLOW3\Validation\Validator;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -28,18 +28,18 @@ namespace F3\FLOW3\Validation\Validator;
  * @api
  * @scope singleton
  */
-class RawValidator implements \F3\FLOW3\Validation\Validator\ValidatorInterface {
+class RawValidator implements \TYPO3\FLOW3\Validation\Validator\ValidatorInterface {
 
 	/**
 	 * Always returns TRUE
 	 *
 	 * @param mixed $value The value that should be validated
-	 * @return \F3\FLOW3\Error\Result
+	 * @return \TYPO3\FLOW3\Error\Result
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function validate($value) {
-		return new \F3\FLOW3\Error\Result();
+		return new \TYPO3\FLOW3\Error\Result();
 	}
 }
 ?>

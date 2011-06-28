@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\MVC\Controller;
+namespace TYPO3\FLOW3\MVC\Controller;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -29,64 +29,64 @@ namespace F3\FLOW3\MVC\Controller;
  * @scope singleton
  * @api
  */
-class NotFoundController extends \F3\FLOW3\MVC\Controller\AbstractController implements \F3\FLOW3\MVC\Controller\NotFoundControllerInterface {
+class NotFoundController extends \TYPO3\FLOW3\MVC\Controller\AbstractController implements \TYPO3\FLOW3\MVC\Controller\NotFoundControllerInterface {
 
 	/**
 	 * @var array
 	 */
-	protected $supportedRequestTypes = array('F3\FLOW3\MVC\Web\Request', 'F3\FLOW3\MVC\Cli\Request');
+	protected $supportedRequestTypes = array('TYPO3\FLOW3\MVC\Web\Request', 'TYPO3\FLOW3\MVC\Cli\Request');
 
 	/**
-	 * @var \F3\FLOW3\MVC\View\NotFoundView
+	 * @var \TYPO3\FLOW3\MVC\View\NotFoundView
 	 */
 	protected $notFoundView;
 
 	/**
-	 * @var \F3\FLOW3\MVC\Controller\Exception
+	 * @var \TYPO3\FLOW3\MVC\Controller\Exception
 	 */
 	protected $exception;
 
 	/**
 	 * Injects the NotFoundView.
 	 *
-	 * @param \F3\FLOW3\MVC\View\NotFoundView $notFoundView
+	 * @param \TYPO3\FLOW3\MVC\View\NotFoundView $notFoundView
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
-	public function injectNotFoundView(\F3\FLOW3\MVC\View\NotFoundView $notFoundView) {
+	public function injectNotFoundView(\TYPO3\FLOW3\MVC\View\NotFoundView $notFoundView) {
 		$this->notFoundView = $notFoundView;
 	}
 
 	/**
 	 * Sets the controller exception
 	 *
-	 * @param \F3\FLOW3\MVC\Controller\Exception $exception
+	 * @param \TYPO3\FLOW3\MVC\Controller\Exception $exception
 	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function setException(\F3\FLOW3\MVC\Controller\Exception $exception) {
+	public function setException(\TYPO3\FLOW3\MVC\Controller\Exception $exception) {
 		$this->exception = $exception;
 	}
 
 	/**
 	 * Processes a generic request and fills the response with the default view
 	 *
-	 * @param \F3\FLOW3\MVC\RequestInterface $request The request
-	 * @param \F3\FLOW3\MVC\ResponseInterface $response The response
+	 * @param \TYPO3\FLOW3\MVC\RequestInterface $request The request
+	 * @param \TYPO3\FLOW3\MVC\ResponseInterface $response The response
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
-	public function processRequest(\F3\FLOW3\MVC\RequestInterface $request, \F3\FLOW3\MVC\ResponseInterface $response) {
+	public function processRequest(\TYPO3\FLOW3\MVC\RequestInterface $request, \TYPO3\FLOW3\MVC\ResponseInterface $response) {
 		parent::processRequest($request, $response);
 		$this->notFoundView->setControllerContext($this->controllerContext);
 		if ($this->exception !== NULL) {
 			$this->notFoundView->assign('errorMessage', $this->exception->getMessage());
 		}
 		switch (get_class($request)) {
-			case 'F3\FLOW3\MVC\Web\Request' :
+			case 'TYPO3\FLOW3\MVC\Web\Request' :
 				$response->setStatus(404);
 				$response->setContent($this->notFoundView->render());
 				break;

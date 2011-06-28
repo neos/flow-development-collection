@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Object;
+namespace TYPO3\FLOW3\Object;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -21,9 +21,9 @@ namespace F3\FLOW3\Object;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \F3\FLOW3\Object\Configuration\Configuration;
-use \F3\FLOW3\Object\Configuration\ConfigurationProperty as Property;
-use \F3\FLOW3\Reflection\ObjectAccess;
+use \TYPO3\FLOW3\Object\Configuration\Configuration;
+use \TYPO3\FLOW3\Object\Configuration\ConfigurationProperty as Property;
+use \TYPO3\FLOW3\Reflection\ObjectAccess;
 
 /**
  * A specialized Object Manager which is able to do some basic dependency injection for
@@ -37,22 +37,22 @@ use \F3\FLOW3\Reflection\ObjectAccess;
 class CompileTimeObjectManager extends ObjectManager {
 
 	/**
-	 * @var \F3\FLOW3\Cache\Frontend\VariableFrontend
+	 * @var \TYPO3\FLOW3\Cache\Frontend\VariableFrontend
 	 */
 	protected $configurationCache;
 
 	/**
-	 * @var \F3\FLOW3\Reflection\ReflectionService
+	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
 	/**
-	 * @var \F3\FLOW3\Configuration\ConfigurationManager
+	 * @var \TYPO3\FLOW3\Configuration\ConfigurationManager
 	 */
 	protected $configurationManager;
 
 	/**
-	 * @var \F3\FLOW3\Log\SystemLoggerInterface
+	 * @var \TYPO3\FLOW3\Log\SystemLoggerInterface
 	 */
 	protected $systemLogger;
 
@@ -74,40 +74,40 @@ class CompileTimeObjectManager extends ObjectManager {
 	protected $objectNameBuildStack = array();
 
 	/**
-	 * @param \F3\FLOW3\Reflection\ReflectionService $reflectionService
+	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectReflectionService(\F3\FLOW3\Reflection\ReflectionService $reflectionService) {
+	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
 	}
 
 	/**
-	 * @param \F3\FLOW3\Configuration\ConfigurationManager $configurationManager
+	 * @param \TYPO3\FLOW3\Configuration\ConfigurationManager $configurationManager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectConfigurationManager(\F3\FLOW3\Configuration\ConfigurationManager $configurationManager) {
+	public function injectConfigurationManager(\TYPO3\FLOW3\Configuration\ConfigurationManager $configurationManager) {
 		$this->configurationManager = $configurationManager;
 	}
 
 	/**
 	 * Injects the configuration cache of the Object Framework
 	 *
-	 * @param \F3\FLOW3\Cache\Frontend\VariableFrontend $configurationCache
+	 * @param \TYPO3\FLOW3\Cache\Frontend\VariableFrontend $configurationCache
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectConfigurationCache(\F3\FLOW3\Cache\Frontend\VariableFrontend $configurationCache) {
+	public function injectConfigurationCache(\TYPO3\FLOW3\Cache\Frontend\VariableFrontend $configurationCache) {
 		$this->configurationCache = $configurationCache;
 	}
 
 	/**
-	 * @param \F3\FLOW3\Log\SystemLoggerInterface $systemLogger
+	 * @param \TYPO3\FLOW3\Log\SystemLoggerInterface $systemLogger
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectSystemLogger(\F3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
+	public function injectSystemLogger(\TYPO3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
 		$this->systemLogger = $systemLogger;
 	}
 
@@ -122,9 +122,9 @@ class CompileTimeObjectManager extends ObjectManager {
 		$this->registeredClassNames = $this->registerClassFiles($packages);
 		$this->reflectionService->buildReflectionData($this->registeredClassNames);
 
-		$rawCustomObjectConfigurations = $this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_OBJECTS);
+		$rawCustomObjectConfigurations = $this->configurationManager->getConfiguration(\TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_OBJECTS);
 
-		$configurationBuilder = new \F3\FLOW3\Object\Configuration\ConfigurationBuilder();
+		$configurationBuilder = new \TYPO3\FLOW3\Object\Configuration\ConfigurationBuilder();
 		$configurationBuilder->injectReflectionService($this->reflectionService);
 		$configurationBuilder->injectSystemLogger($this->systemLogger);
 
@@ -283,7 +283,7 @@ class CompileTimeObjectManager extends ObjectManager {
 					$value = $property->getValue();
 				break;
 				case Property::PROPERTY_TYPES_SETTING:
-					$value = \F3\FLOW3\Utility\Arrays::getValueByPath($this->allSettings, explode('.', $property->getValue()));
+					$value = \TYPO3\FLOW3\Utility\Arrays::getValueByPath($this->allSettings, explode('.', $property->getValue()));
 				break;
 				case Property::PROPERTY_TYPES_OBJECT:
 					$propertyObjectName = $property->getValue();

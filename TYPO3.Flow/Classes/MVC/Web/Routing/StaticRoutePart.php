@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\MVC\Web\Routing;
+namespace TYPO3\FLOW3\MVC\Web\Routing;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -27,7 +27,7 @@ namespace F3\FLOW3\MVC\Web\Routing;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
-class StaticRoutePart extends \F3\FLOW3\MVC\Web\Routing\AbstractRoutePart {
+class StaticRoutePart extends \TYPO3\FLOW3\MVC\Web\Routing\AbstractRoutePart {
 
 	/**
 	 * Gets default value of the Route Part.
@@ -68,7 +68,7 @@ class StaticRoutePart extends \F3\FLOW3\MVC\Web\Routing\AbstractRoutePart {
 	/**
 	 * Sets the Route Part value to the Route Part name and returns TRUE if successful.
 	 *
-	 * @param array $routeValues not used but needed to implement \F3\FLOW3\MVC\Web\Routing\AbstractRoutePart
+	 * @param array $routeValues not used but needed to implement \TYPO3\FLOW3\MVC\Web\Routing\AbstractRoutePart
 	 * @return boolean
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>

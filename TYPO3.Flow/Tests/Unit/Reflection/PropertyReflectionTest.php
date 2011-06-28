@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\Reflection;
+namespace TYPO3\FLOW3\Tests\Unit\Reflection;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,7 +26,7 @@ namespace F3\FLOW3\Tests\Unit\Reflection;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class PropertyReflectionTest extends \F3\FLOW3\Tests\UnitTestCase {
+class PropertyReflectionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @var string
@@ -46,10 +46,10 @@ class PropertyReflectionTest extends \F3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @expectedException \F3\FLOW3\Reflection\Exception
+	 * @expectedException \TYPO3\FLOW3\Reflection\Exception
 	 */
 	public function getValueThrowsAnExceptionOnReflectingANonObject() {
-		$reflectionProperty = new \F3\FLOW3\Reflection\PropertyReflection(__CLASS__, 'protectedProperty');
+		$reflectionProperty = new \TYPO3\FLOW3\Reflection\PropertyReflection(__CLASS__, 'protectedProperty');
 		$reflectionProperty->getValue(__CLASS__);
 	}
 
@@ -58,7 +58,7 @@ class PropertyReflectionTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getValueReturnsValueOfAPublicProperty() {
-		$reflectionProperty = new \F3\FLOW3\Reflection\PropertyReflection(__CLASS__, 'publicProperty');
+		$reflectionProperty = new \TYPO3\FLOW3\Reflection\PropertyReflection(__CLASS__, 'publicProperty');
 		$this->assertEquals('I\'m public', $reflectionProperty->getValue($this), 'ReflectionProperty->getValue($this) did not return the value of a public property.');
 	}
 
@@ -67,7 +67,7 @@ class PropertyReflectionTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getValueEvenReturnsValueOfAProtectedProperty() {
-		$reflectionProperty = new \F3\FLOW3\Reflection\PropertyReflection(__CLASS__, 'protectedProperty');
+		$reflectionProperty = new \TYPO3\FLOW3\Reflection\PropertyReflection(__CLASS__, 'protectedProperty');
 		$this->assertEquals('abc', $reflectionProperty->getValue($this), 'ReflectionProperty->getValue($this) did not return the value of a protected property.');
 
 		$this->protectedProperty = 'def';
@@ -79,7 +79,7 @@ class PropertyReflectionTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getValueReturnsValueOfAProtectedPropertyEvenIfItIsAnObject() {
-		$reflectionProperty = new \F3\FLOW3\Reflection\PropertyReflection(__CLASS__, 'protectedProperty');
+		$reflectionProperty = new \TYPO3\FLOW3\Reflection\PropertyReflection(__CLASS__, 'protectedProperty');
 		$this->protectedProperty = new \ArrayObject(array('1', '2', '3'));
 		$this->assertEquals($this->protectedProperty, $reflectionProperty->getValue($this), 'ReflectionProperty->getValue($this) did not return the object of our protected property.');
 
@@ -92,7 +92,7 @@ class PropertyReflectionTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setValueEvenSetsValueOfAPublicProperty() {
-		$reflectionProperty = new \F3\FLOW3\Reflection\PropertyReflection(__CLASS__, 'publicProperty');
+		$reflectionProperty = new \TYPO3\FLOW3\Reflection\PropertyReflection(__CLASS__, 'publicProperty');
 		$reflectionProperty->setValue($this, 'modified');
 		$this->assertEquals('modified', $this->publicProperty, 'ReflectionProperty->setValue() did not successfully set the value of a public property.');
 	}
@@ -102,7 +102,7 @@ class PropertyReflectionTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getValueEvenReturnsValueOfAPrivateProperty() {
-		$reflectionProperty = new \F3\FLOW3\Reflection\PropertyReflection(__CLASS__, 'privateProperty');
+		$reflectionProperty = new \TYPO3\FLOW3\Reflection\PropertyReflection(__CLASS__, 'privateProperty');
 		$this->assertEquals('123', $reflectionProperty->getValue($this), 'ReflectionProperty->getValue($this) did not return the value of a private property.');
 
 		$this->privateProperty = '456';
@@ -114,7 +114,7 @@ class PropertyReflectionTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getValueReturnsValueOfAPrivatePropertyEvenIfItIsAnObject() {
-		$reflectionProperty = new \F3\FLOW3\Reflection\PropertyReflection(__CLASS__, 'privateProperty');
+		$reflectionProperty = new \TYPO3\FLOW3\Reflection\PropertyReflection(__CLASS__, 'privateProperty');
 		$this->protectedProperty = new \ArrayObject(array('1', '2', '3'));
 		$this->assertEquals($this->privateProperty, $reflectionProperty->getValue($this), 'ReflectionProperty->getValue($this) did not return the object of our private property.');
 

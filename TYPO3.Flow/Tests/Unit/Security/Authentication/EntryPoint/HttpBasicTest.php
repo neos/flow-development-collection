@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\Security\Authentication\EntryPoint;
+namespace TYPO3\FLOW3\Tests\Unit\Security\Authentication\EntryPoint;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,7 +26,7 @@ namespace F3\FLOW3\Tests\Unit\Security\Authentication\EntryPoint;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  */
-class HttpBasicTest extends \F3\FLOW3\Tests\UnitTestCase {
+class HttpBasicTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
@@ -34,9 +34,9 @@ class HttpBasicTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function canForwardReturnsTrueForWebRequests() {
-		$entryPoint = new \F3\FLOW3\Security\Authentication\EntryPoint\HttpBasic();
+		$entryPoint = new \TYPO3\FLOW3\Security\Authentication\EntryPoint\HttpBasic();
 
-		$this->assertTrue($entryPoint->canForward($this->getMock('F3\FLOW3\MVC\Web\Request')));
+		$this->assertTrue($entryPoint->canForward($this->getMock('TYPO3\FLOW3\MVC\Web\Request')));
 	}
 
 	/**
@@ -45,22 +45,22 @@ class HttpBasicTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function canForwardReturnsFalseForNonWebRequests() {
-		$entryPoint = new \F3\FLOW3\Security\Authentication\EntryPoint\HttpBasic();
+		$entryPoint = new \TYPO3\FLOW3\Security\Authentication\EntryPoint\HttpBasic();
 
-		$this->assertFalse($entryPoint->canForward($this->getMock('F3\FLOW3\MVC\CLI\Request')));
-		$this->assertFalse($entryPoint->canForward($this->getMock('F3\FLOW3\MVC\RequestInterface')));
+		$this->assertFalse($entryPoint->canForward($this->getMock('TYPO3\FLOW3\MVC\CLI\Request')));
+		$this->assertFalse($entryPoint->canForward($this->getMock('TYPO3\FLOW3\MVC\RequestInterface')));
 	}
 
 	/**
 	 * @test
 	 * @category unit
-	 * @expectedException F3\FLOW3\Security\Exception\RequestTypeNotSupportedException
+	 * @expectedException TYPO3\FLOW3\Security\Exception\RequestTypeNotSupportedException
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function startAuthenticationThrowsAnExceptionIfItsCalledWithAnUnsupportedRequestType() {
-		$entryPoint = new \F3\FLOW3\Security\Authentication\EntryPoint\HttpBasic();
+		$entryPoint = new \TYPO3\FLOW3\Security\Authentication\EntryPoint\HttpBasic();
 
-		$entryPoint->startAuthentication($this->getMock('F3\FLOW3\MVC\CLI\Request'), $this->getMock('F3\FLOW3\MVC\CLI\Response'));
+		$entryPoint->startAuthentication($this->getMock('TYPO3\FLOW3\MVC\CLI\Request'), $this->getMock('TYPO3\FLOW3\MVC\CLI\Response'));
 	}
 
 	/**
@@ -69,14 +69,14 @@ class HttpBasicTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function startAuthenticationSetsTheCorrectValuesInTheResponseObject() {
-		$request = $this->getMock('F3\FLOW3\MVC\Web\Request');
-		$response = $this->getMock('F3\FLOW3\MVC\Web\Response', array('setStatus', 'setContent', 'setHeader'));
+		$request = $this->getMock('TYPO3\FLOW3\MVC\Web\Request');
+		$response = $this->getMock('TYPO3\FLOW3\MVC\Web\Response', array('setStatus', 'setContent', 'setHeader'));
 
 		$response->expects($this->once())->method('setStatus')->with(401);
 		$response->expects($this->once())->method('setHeader')->with('WWW-Authenticate', 'Basic realm="realm string"');
 		$response->expects($this->once())->method('setContent')->with('Authorization required!');
 
-		$entryPoint = new \F3\FLOW3\Security\Authentication\EntryPoint\HttpBasic();
+		$entryPoint = new \TYPO3\FLOW3\Security\Authentication\EntryPoint\HttpBasic();
 		$entryPoint->setOptions(array('realm' => 'realm string'));
 
 		$entryPoint->startAuthentication($request, $response);

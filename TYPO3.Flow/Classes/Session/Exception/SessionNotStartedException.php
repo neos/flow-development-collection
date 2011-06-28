@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Session\Exception;
+namespace TYPO3\FLOW3\Session\Exception;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -22,12 +22,12 @@ namespace F3\FLOW3\Session\Exception;
  *                                                                        */
 
 /**
- * A "\F3\FLOW3\Session\Exception\SessionNotStartedException" Exception
+ * A "\TYPO3\FLOW3\Session\Exception\SessionNotStartedException" Exception
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */
-class SessionNotStartedException extends \F3\FLOW3\Session\Exception {
+class SessionNotStartedException extends \TYPO3\FLOW3\Session\Exception {
 }
 
 ?>

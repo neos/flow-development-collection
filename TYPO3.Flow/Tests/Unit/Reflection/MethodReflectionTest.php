@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\Reflection;
+namespace TYPO3\FLOW3\Tests\Unit\Reflection;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -27,7 +27,7 @@ namespace F3\FLOW3\Tests\Unit\Reflection;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
-class MethodReflectionTest extends \F3\FLOW3\Tests\UnitTestCase {
+class MethodReflectionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @var mixed
@@ -39,8 +39,8 @@ class MethodReflectionTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getDeclaringClassReturnsFLOW3sClassReflection() {
-		$method = new \F3\FLOW3\Reflection\MethodReflection(__CLASS__, __FUNCTION__);
-		$this->assertInstanceOf('F3\FLOW3\Reflection\ClassReflection', $method->getDeclaringClass());
+		$method = new \TYPO3\FLOW3\Reflection\MethodReflection(__CLASS__, __FUNCTION__);
+		$this->assertInstanceOf('TYPO3\FLOW3\Reflection\ClassReflection', $method->getDeclaringClass());
 	}
 
 	/**
@@ -48,9 +48,9 @@ class MethodReflectionTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getParametersReturnsFLOW3sParameterReflection($dummyArg1 = NULL, $dummyArg2 = NULL) {
-		$method = new \F3\FLOW3\Reflection\MethodReflection(__CLASS__, __FUNCTION__);
+		$method = new \TYPO3\FLOW3\Reflection\MethodReflection(__CLASS__, __FUNCTION__);
 		foreach ($method->getParameters() as $parameter) {
-			$this->assertInstanceOf('F3\FLOW3\Reflection\ParameterReflection', $parameter);
+			$this->assertInstanceOf('TYPO3\FLOW3\Reflection\ParameterReflection', $parameter);
 			$this->assertEquals(__CLASS__, $parameter->getDeclaringClass()->getName());
 		}
 	}

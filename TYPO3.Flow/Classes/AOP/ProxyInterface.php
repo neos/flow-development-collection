@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\AOP;
+namespace TYPO3\FLOW3\AOP;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -27,15 +27,15 @@ namespace F3\FLOW3\AOP;
  * @author Robert Lemke <robert@typo3.org>
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-interface ProxyInterface extends \F3\FLOW3\Object\Proxy\ProxyInterface {
+interface ProxyInterface extends \TYPO3\FLOW3\Object\Proxy\ProxyInterface {
 
 	/**
 	 * Invokes the joinpoint - calls the target methods.
 	 *
-	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The join point
+	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The join point
 	 * @return mixed Result of the target (ie. original) method
 	 */
-	public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint);
+	public function FLOW3_AOP_Proxy_invokeJoinPoint(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint);
 
 }
 

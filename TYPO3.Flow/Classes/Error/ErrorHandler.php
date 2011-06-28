@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Error;
+namespace TYPO3\FLOW3\Error;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -62,7 +62,7 @@ class ErrorHandler {
 	 * @param string $errorFile Name of the file the error occurred in
 	 * @param integer $errorLine Line number where the error occurred
 	 * @return void
-	 * @throws \F3\FLOW3\Error\Exception with the data passed to this method
+	 * @throws \TYPO3\FLOW3\Error\Exception with the data passed to this method
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function handleError($errorLevel, $errorMessage, $errorFile, $errorLine) {
@@ -77,8 +77,8 @@ class ErrorHandler {
 		);
 
 		if (in_array($errorLevel, (array)$this->exceptionalErrors)) {
-			if (class_exists('F3\FLOW3\Error\Exception')) {
-				throw new \F3\FLOW3\Error\Exception($errorLevels[$errorLevel] . ': ' . $errorMessage . ' in ' . $errorFile . ' line ' . $errorLine, 1);
+			if (class_exists('TYPO3\FLOW3\Error\Exception')) {
+				throw new \TYPO3\FLOW3\Error\Exception($errorLevels[$errorLevel] . ': ' . $errorMessage . ' in ' . $errorFile . ' line ' . $errorLine, 1);
 			} else {
 				throw new \Exception($errorLevels[$errorLevel] . ': ' . $errorMessage . ' in ' . $errorFile . ' line ' . $errorLine, 1);
 			}

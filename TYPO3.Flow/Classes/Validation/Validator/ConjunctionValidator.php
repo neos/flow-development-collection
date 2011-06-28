@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Validation\Validator;
+namespace TYPO3\FLOW3\Validation\Validator;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -29,18 +29,18 @@ namespace F3\FLOW3\Validation\Validator;
  * @api
  * @scope prototype
  */
-class ConjunctionValidator extends \F3\FLOW3\Validation\Validator\AbstractCompositeValidator {
+class ConjunctionValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractCompositeValidator {
 
 	/**
 	 * Checks if the given value is valid according to the validators of the conjunction.
 	 *
 	 * @param mixed $value The value that should be validated
-	 * @return \F3\FLOW3\Error\Result
+	 * @return \TYPO3\FLOW3\Error\Result
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function validate($value) {
-		$result = new \F3\FLOW3\Error\Result();
+		$result = new \TYPO3\FLOW3\Error\Result();
 		foreach ($this->validators as $validator) {
 			$result->merge($validator->validate($value));
 		}

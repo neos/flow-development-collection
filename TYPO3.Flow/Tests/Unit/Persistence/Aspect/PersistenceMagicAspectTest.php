@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\Persistence\Aspect;
+namespace TYPO3\FLOW3\Tests\Unit\Persistence\Aspect;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,7 +26,7 @@ namespace F3\FLOW3\Tests\Unit\Persistence\Aspect;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class PersistenceMagicAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
+class PersistenceMagicAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
@@ -35,10 +35,10 @@ class PersistenceMagicAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function cloneObjectMarksTheObjectAsCloned() {
 		$object = new \stdClass();
-		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface');
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface');
 		$mockJoinPoint->expects($this->any())->method('getProxy')->will($this->returnValue($object));
 
-		$aspect = new \F3\FLOW3\Persistence\Aspect\PersistenceMagicAspect();
+		$aspect = new \TYPO3\FLOW3\Persistence\Aspect\PersistenceMagicAspect();
 		$aspect->cloneObject($mockJoinPoint);
 		$this->assertTrue($object->FLOW3_Persistence_clone);
 	}
@@ -61,11 +61,11 @@ class PersistenceMagicAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 		eval('class ' . $className . ' { public $foo; public $bar; }');
 		$object = new $className();
 
-		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface');
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface');
 		$mockJoinPoint->expects($this->atLeastOnce())->method('getProxy')->will($this->returnValue($object));
 		$mockJoinPoint->expects($this->atLeastOnce())->method('getMethodArguments')->will($this->returnValue($methodArguments));
 
-		$aspect = new \F3\FLOW3\Persistence\Aspect\PersistenceMagicAspect();
+		$aspect = new \TYPO3\FLOW3\Persistence\Aspect\PersistenceMagicAspect();
 		$aspect->generateValueHash($mockJoinPoint);
 		$this->assertEquals(sha1('uuidhash'), $object->FLOW3_Persistence_Identifier);
 	}

@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Property;
+namespace TYPO3\FLOW3\Property;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -28,7 +28,7 @@ namespace F3\FLOW3\Property;
  * @api
  * @scope prototype
  */
-class PropertyMappingConfiguration implements \F3\FLOW3\Property\PropertyMappingConfigurationInterface {
+class PropertyMappingConfiguration implements \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface {
 
 	/**
 	 * multi-dimensional array which stores type-converter specific configuration:
@@ -43,7 +43,7 @@ class PropertyMappingConfiguration implements \F3\FLOW3\Property\PropertyMapping
 	/**
 	 * Stores the configuration for specific child properties.
 	 *
-	 * @var array<\F3\FLOW3\Property\PropertyMappingConfigurationInterface>
+	 * @var array<\TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface>
 	 */
 	protected $subConfigurationForProperty = array();
 
@@ -55,7 +55,7 @@ class PropertyMappingConfiguration implements \F3\FLOW3\Property\PropertyMapping
 	protected $mapping = array();
 
 	/**
-	 * @var \F3\FLOW3\Property\TypeConverterInterface
+	 * @var \TYPO3\FLOW3\Property\TypeConverterInterface
 	 */
 	protected $typeConverter = NULL;
 
@@ -73,7 +73,7 @@ class PropertyMappingConfiguration implements \F3\FLOW3\Property\PropertyMapping
 	 * Returns the sub-configuration for the passed $propertyName. Must ALWAYS return a valid configuration object!
 	 *
 	 * @param string $propertyName
-	 * @return \F3\FLOW3\Property\PropertyMappingConfigurationInterface the property mapping configuration for the given $propertyName.
+	 * @return \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface the property mapping configuration for the given $propertyName.
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @api
 	 */
@@ -82,7 +82,7 @@ class PropertyMappingConfiguration implements \F3\FLOW3\Property\PropertyMapping
 			return $this->subConfigurationForProperty[$propertyName];
 		}
 
-		return new \F3\FLOW3\Property\PropertyMappingConfiguration();
+		return new \TYPO3\FLOW3\Property\PropertyMappingConfiguration();
 	}
 
 	/**
@@ -160,7 +160,7 @@ class PropertyMappingConfiguration implements \F3\FLOW3\Property\PropertyMapping
 	 * $configuration->forProperty('foo.bar')->setTypeConverterOption(....)
 	 *
 	 * @param string $propertyPath
-	 * @return \F3\FLOW3\Property\PropertyMappingConfiguration (or a subclass thereof)
+	 * @return \TYPO3\FLOW3\Property\PropertyMappingConfiguration (or a subclass thereof)
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @api
 	 */
@@ -173,7 +173,7 @@ class PropertyMappingConfiguration implements \F3\FLOW3\Property\PropertyMapping
 	 * Traverse the property configuration. Only used by forProperty().
 	 *
 	 * @param array $splittedPropertyPath
-	 * @return \F3\FLOW3\Property\PropertyMappingConfiguration (or a subclass thereof)
+	 * @return \TYPO3\FLOW3\Property\PropertyMappingConfiguration (or a subclass thereof)
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function traverseProperties(array $splittedPropertyPath) {
@@ -192,7 +192,7 @@ class PropertyMappingConfiguration implements \F3\FLOW3\Property\PropertyMapping
 	/**
 	 * Return the type converter set for this configuration.
 	 *
-	 * @return \F3\FLOW3\Property\TypeConverterInterface
+	 * @return \TYPO3\FLOW3\Property\TypeConverterInterface
 	 * @api
 	 */
 	public function getTypeConverter() {
@@ -202,11 +202,11 @@ class PropertyMappingConfiguration implements \F3\FLOW3\Property\PropertyMapping
 	/**
 	 * Set a type converter which should be used for this specific conversion.
 	 *
-	 * @param \F3\FLOW3\Property\TypeConverterInterface $typeConverter
+	 * @param \TYPO3\FLOW3\Property\TypeConverterInterface $typeConverter
 	 * @return void
 	 * @api
 	 */
-	public function setTypeConverter(\F3\FLOW3\Property\TypeConverterInterface $typeConverter) {
+	public function setTypeConverter(\TYPO3\FLOW3\Property\TypeConverterInterface $typeConverter) {
 		$this->typeConverter = $typeConverter;
 	}
 }

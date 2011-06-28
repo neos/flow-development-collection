@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Cache\Backend;
+namespace TYPO3\FLOW3\Cache\Backend;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -30,7 +30,7 @@ namespace F3\FLOW3\Cache\Backend;
  * @api
  * @scope prototype
  */
-class NullBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
+class NullBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 
 	/**
 	 * Acts as if it would save data

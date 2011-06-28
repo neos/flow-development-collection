@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\AOP\Pointcut;
+namespace TYPO3\FLOW3\AOP\Pointcut;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -28,10 +28,10 @@ namespace F3\FLOW3\AOP\Pointcut;
  * @scope prototype
  * @proxy disable
  */
-class PointcutClassNameFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
+class PointcutClassNameFilter implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 
 	/**
-	 * @var F3\FLOW3\Reflection\ReflectionService
+	 * @var TYPO3\FLOW3\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
@@ -54,11 +54,11 @@ class PointcutClassNameFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterIn
 	/**
 	 * Injects the reflection service
 	 *
-	 * @param F3\FLOW3\Reflection\ReflectionService $reflectionService The reflection service
+	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService The reflection service
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectReflectionService(\F3\FLOW3\Reflection\ReflectionService $reflectionService) {
+	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
 	}
 
@@ -80,11 +80,11 @@ class PointcutClassNameFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterIn
 			$matchResult = preg_match($this->classFilterExpression, $className);
 		}
 		catch (\Exception $exception) {
-			throw new \F3\FLOW3\AOP\Exception('Error in regular expression "' . $this->classFilterExpression . '" in pointcut class filter', 1292324509, $exception);
+			throw new \TYPO3\FLOW3\AOP\Exception('Error in regular expression "' . $this->classFilterExpression . '" in pointcut class filter', 1292324509, $exception);
 		}
 
 		if ($matchResult === FALSE) {
-			throw new \F3\FLOW3\AOP\Exception('Error in regular expression "' . $this->classFilterExpression . '" in pointcut class filter', 1168876955);
+			throw new \TYPO3\FLOW3\AOP\Exception('Error in regular expression "' . $this->classFilterExpression . '" in pointcut class filter', 1168876955);
 		}
 		return ($matchResult === 1);
 	}

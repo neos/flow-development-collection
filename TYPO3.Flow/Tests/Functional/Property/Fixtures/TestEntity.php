@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Functional\Property\Fixtures;
+namespace TYPO3\FLOW3\Tests\Functional\Property\Fixtures;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *

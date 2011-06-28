@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Functional\Object\Fixtures;
+namespace TYPO3\FLOW3\Tests\Functional\Object\Fixtures;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -32,7 +32,7 @@ namespace F3\FLOW3\Tests\Functional\Object\Fixtures;
 class PrototypeClassA implements PrototypeClassAishInterface {
 
 	/**
-	 * @var \F3\FLOW3\Tests\Functional\Object\Fixtures\SingletonClassA
+	 * @var \TYPO3\FLOW3\Tests\Functional\Object\Fixtures\SingletonClassA
 	 */
 	protected $singletonA;
 
@@ -42,15 +42,15 @@ class PrototypeClassA implements PrototypeClassAishInterface {
 	protected $someProperty;
 
 	/**
-	 * @param \F3\FLOW3\Tests\Functional\Object\Fixtures\SingletonClassA $singletonA
+	 * @param \TYPO3\FLOW3\Tests\Functional\Object\Fixtures\SingletonClassA $singletonA
 	 * @return void
 	 */
-	public function injectSingletonA(\F3\FLOW3\Tests\Functional\Object\Fixtures\SingletonClassA $singletonA) {
+	public function injectSingletonA(\TYPO3\FLOW3\Tests\Functional\Object\Fixtures\SingletonClassA $singletonA) {
 		$this->singletonA = $singletonA;
 	}
 
 	/**
-	 * @return \F3\FLOW3\Tests\Functional\Object\Fixtures\SingletonClassA
+	 * @return \TYPO3\FLOW3\Tests\Functional\Object\Fixtures\SingletonClassA
 	 */
 	public function getSingletonA() {
 		return $this->singletonA;

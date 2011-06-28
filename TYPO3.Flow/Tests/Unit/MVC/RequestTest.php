@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\MVC;
+namespace TYPO3\FLOW3\Tests\Unit\MVC;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,7 +26,7 @@ namespace F3\FLOW3\Tests\Unit\MVC;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class RequestTest extends \F3\FLOW3\Tests\UnitTestCase {
+class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
@@ -34,17 +34,17 @@ class RequestTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getControllerObjectNameReturnsAnEmptyStringIfTheResolvedControllerDoesNotExist() {
-		$mockRouter = $this->getMock('F3\FLOW3\MVC\Web\Routing\RouterInterface');
+		$mockRouter = $this->getMock('TYPO3\FLOW3\MVC\Web\Routing\RouterInterface');
 		$mockRouter->expects($this->once())->method('getControllerObjectName')
 			->with('SomePackage', 'Some\Subpackage', 'SomeController')
 			->will($this->returnValue(NULL));
 
-		$mockPackageManager = $this->getMock('F3\FLOW3\Package\PackageManagerInterface');
+		$mockPackageManager = $this->getMock('TYPO3\FLOW3\Package\PackageManagerInterface');
 		$mockPackageManager->expects($this->once())->method('getCaseSensitivePackageKey')
 			->with($this->equalTo('Somepackage'))
 			->will($this->returnValue('SomePackage'));
 
-		$request = new \F3\FLOW3\MVC\Request();
+		$request = new \TYPO3\FLOW3\MVC\Request();
 		$request->injectRouter($mockRouter);
 		$request->injectPackageManager($mockPackageManager);
 		$request->setControllerPackageKey('Somepackage');
@@ -60,11 +60,11 @@ class RequestTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setControllerObjectNameSplitsTheGivenObjectNameIntoItsParts($objectName, array $parts) {
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
+		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
 		$mockObjectManager->expects($this->once())->method('getCaseSensitiveObjectName')->will($this->returnValue($objectName));
 		$mockObjectManager->expects($this->once())->method('getPackageKeyByObjectName')->with($objectName)->will($this->returnValue($parts['controllerPackageKey']));
 
-		$request = $this->getAccessibleMock('F3\FLOW3\MVC\Request', array('dummy'));
+		$request = $this->getAccessibleMock('TYPO3\FLOW3\MVC\Request', array('dummy'));
 		$request->injectObjectManager($mockObjectManager);
 
 		$request->setControllerObjectName($objectName);
@@ -126,38 +126,38 @@ class RequestTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function aSingleArgumentCanBeSetWithSetArgumentAndRetrievedWithGetArgument() {
-		$request = new \F3\FLOW3\MVC\Request();
+		$request = new \TYPO3\FLOW3\MVC\Request();
 		$request->setArgument('someArgumentName', 'theValue');
 		$this->assertEquals('theValue', $request->getArgument('someArgumentName'));
 	}
 
 	/**
 	 * @test
-	 * @expectedException \F3\FLOW3\MVC\Exception\InvalidArgumentNameException
+	 * @expectedException \TYPO3\FLOW3\MVC\Exception\InvalidArgumentNameException
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setArgumentThrowsExceptionIfTheGivenArgumentNameIsNoString() {
-		$request = new \F3\FLOW3\MVC\Request();
+		$request = new \TYPO3\FLOW3\MVC\Request();
 		$request->setArgument(123, 'theValue');
 	}
 
 	/**
 	 * @test
-	 * @expectedException \F3\FLOW3\MVC\Exception\InvalidArgumentNameException
+	 * @expectedException \TYPO3\FLOW3\MVC\Exception\InvalidArgumentNameException
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setArgumentThrowsExceptionIfTheGivenArgumentNameIsAnEmptyString() {
-		$request = new \F3\FLOW3\MVC\Request();
+		$request = new \TYPO3\FLOW3\MVC\Request();
 		$request->setArgument('', 'theValue');
 	}
 
 	/**
 	 * @test
-	 * @expectedException \F3\FLOW3\MVC\Exception\InvalidArgumentTypeException
+	 * @expectedException \TYPO3\FLOW3\MVC\Exception\InvalidArgumentTypeException
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setArgumentThrowsExceptionIfTheGivenArgumentValueIsAnObject() {
-		$request = new \F3\FLOW3\MVC\Request();
+		$request = new \TYPO3\FLOW3\MVC\Request();
 		$request->setArgument('theKey', new \stdClass());
 	}
 
@@ -167,7 +167,7 @@ class RequestTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function setArgumentsOverridesAllExistingArguments() {
 		$arguments = array('key1' => 'value1', 'key2' => 'value2');
-		$request = new \F3\FLOW3\MVC\Request();
+		$request = new \TYPO3\FLOW3\MVC\Request();
 		$request->setArgument('someKey', 'shouldBeOverridden');
 		$request->setArguments($arguments);
 
@@ -180,7 +180,7 @@ class RequestTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setArgumentsCallsSetArgumentForEveryArrayEntry() {
-		$request = $this->getMock('F3\FLOW3\MVC\Request', array('setArgument'));
+		$request = $this->getMock('TYPO3\FLOW3\MVC\Request', array('setArgument'));
 		$request->expects($this->at(0))->method('setArgument')->with('key1', 'value1');
 		$request->expects($this->at(1))->method('setArgument')->with('key2', 'value2');
 		$request->setArguments(array('key1' => 'value1', 'key2' => 'value2'));
@@ -190,7 +190,7 @@ class RequestTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function setArgumentShouldSetControllerPackageKeyIfPackageKeyIsGiven() {
-		$request = $this->getMock('F3\FLOW3\MVC\Request', array('setControllerPackageKey'));
+		$request = $this->getMock('TYPO3\FLOW3\MVC\Request', array('setControllerPackageKey'));
 		$request->expects($this->any())->method('setControllerPackageKey')->with('MyPackage');
 		$request->setArgument('@package', 'MyPackage');
 		$this->assertFalse($request->hasArgument('@package'));
@@ -200,7 +200,7 @@ class RequestTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function setArgumentShouldSetControllerSubpackageKeyIfSubpackageKeyIsGiven() {
-		$request = $this->getMock('F3\FLOW3\MVC\Request', array('setControllerSubpackageKey'));
+		$request = $this->getMock('TYPO3\FLOW3\MVC\Request', array('setControllerSubpackageKey'));
 		$request->expects($this->any())->method('setControllerSubpackageKey')->with('MySubPackage');
 		$request->setArgument('@subpackage', 'MySubPackage');
 		$this->assertFalse($request->hasArgument('@subpackage'));
@@ -210,7 +210,7 @@ class RequestTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function setArgumentShouldSetControllerNameIfControllerIsGiven() {
-		$request = $this->getMock('F3\FLOW3\MVC\Request', array('setControllerName'));
+		$request = $this->getMock('TYPO3\FLOW3\MVC\Request', array('setControllerName'));
 		$request->expects($this->any())->method('setControllerName')->with('MyController');
 		$request->setArgument('@controller', 'MyController');
 		$this->assertFalse($request->hasArgument('@controller'));
@@ -220,7 +220,7 @@ class RequestTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function setArgumentShouldSetControllerActionNameIfActionIsGiven() {
-		$request = $this->getMock('F3\FLOW3\MVC\Request', array('setControllerActionName'));
+		$request = $this->getMock('TYPO3\FLOW3\MVC\Request', array('setControllerActionName'));
 		$request->expects($this->any())->method('setControllerActionName')->with('foo');
 		$request->setArgument('@action', 'foo');
 		$this->assertFalse($request->hasArgument('@action'));
@@ -230,7 +230,7 @@ class RequestTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function setArgumentShouldSetFormatIfFormatIsGiven() {
-		$request = $this->getMock('F3\FLOW3\MVC\Request', array('setFormat'));
+		$request = $this->getMock('TYPO3\FLOW3\MVC\Request', array('setFormat'));
 		$request->expects($this->any())->method('setFormat')->with('txt');
 		$request->setArgument('@format', 'txt');
 		$this->assertFalse($request->hasArgument('@format'));
@@ -240,7 +240,7 @@ class RequestTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function internalArgumentsShouldNotBeReturnedAsNormalArgument() {
-		$request = new \F3\FLOW3\MVC\Request();
+		$request = new \TYPO3\FLOW3\MVC\Request();
 		$request->setArgument('__referrer', 'foo');
 		$this->assertFalse($request->hasArgument('__referrer'));
 	}
@@ -249,7 +249,7 @@ class RequestTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function internalArgumentsShouldBeStoredAsInternalArguments() {
-		$request = new \F3\FLOW3\MVC\Request();
+		$request = new \TYPO3\FLOW3\MVC\Request();
 		$request->setArgument('__referrer', 'foo');
 		$this->assertSame('foo', $request->getInternalArgument('__referrer'));
 	}
@@ -258,7 +258,7 @@ class RequestTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function hasInternalArgumentShouldReturnNullIfArgumentNotFound() {
-		$request = new \F3\FLOW3\MVC\Request();
+		$request = new \TYPO3\FLOW3\MVC\Request();
 		$this->assertNull($request->getInternalArgument('__nonExistingInternalArgument'));
 	}
 
@@ -267,7 +267,7 @@ class RequestTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function setArgumentAcceptsObjectIfArgumentIsInternal() {
-		$request = new \F3\FLOW3\MVC\Request();
+		$request = new \TYPO3\FLOW3\MVC\Request();
 		$object = new \stdClass();
 		$request->setArgument('__theKey', $object);
 		$this->assertSame($object, $request->getInternalArgument('__theKey'));
@@ -283,7 +283,7 @@ class RequestTest extends \F3\FLOW3\Tests\UnitTestCase {
 			'dænishÅrgument' => 'görman välju',
 			'3a' => '3v'
 		);
-		$request = new \F3\FLOW3\MVC\Request();
+		$request = new \TYPO3\FLOW3\MVC\Request();
 		$request->setArguments($arguments);
 		$this->assertEquals($arguments, $request->getArguments());
 	}
@@ -293,7 +293,7 @@ class RequestTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function hasArgumentTellsIfAnArgumentExists() {
-		$request = new \F3\FLOW3\MVC\Request();
+		$request = new \TYPO3\FLOW3\MVC\Request();
 		$request->setArgument('existingArgument', 'theValue');
 
 		$this->assertTrue($request->hasArgument('existingArgument'));
@@ -305,16 +305,16 @@ class RequestTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function theControllerNameCanBeSetAndRetrieved() {
-		$mockRouter = $this->getMock('F3\FLOW3\MVC\Web\Routing\RouterInterface');
+		$mockRouter = $this->getMock('TYPO3\FLOW3\MVC\Web\Routing\RouterInterface');
 		$mockRouter->expects($this->once())->method('getControllerObjectName')
 			->with('TestPackage', '', 'Some')
 			->will($this->returnValue('TYPO3\TestPackage\Controller\SomeController'));
 
-		$mockPackageManager = $this->getMock('F3\FLOW3\Package\PackageManagerInterface');
+		$mockPackageManager = $this->getMock('TYPO3\FLOW3\Package\PackageManagerInterface');
 		$mockPackageManager->expects($this->once())->method('getCaseSensitivePackageKey')
 			->will($this->returnValue('TestPackage'));
 
-		$request = new \F3\FLOW3\MVC\Request();
+		$request = new \TYPO3\FLOW3\MVC\Request();
 		$request->injectRouter($mockRouter);
 		$request->injectPackageManager($mockPackageManager);
 		$request->setControllerPackageKey('TestPackage');
@@ -327,7 +327,7 @@ class RequestTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function theControllerNameWillBeExtractedFromTheControllerObjectNameToAssureTheCorrectCase() {
-		$request = $this->getMock('F3\FLOW3\MVC\Request', array('getControllerObjectName'), array(), '', FALSE);
+		$request = $this->getMock('TYPO3\FLOW3\MVC\Request', array('getControllerObjectName'), array(), '', FALSE);
 		$request->expects($this->once())->method('getControllerObjectName')->will($this->returnValue('TYPO3\MyPackage\Controller\Foo\BarController'));
 
 		$request->setControllerName('foo\bar');
@@ -339,11 +339,11 @@ class RequestTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function thePackageKeyOfTheControllerCanBeSetAndRetrieved() {
-		$mockPackageManager = $this->getMock('F3\FLOW3\Package\PackageManagerInterface');
+		$mockPackageManager = $this->getMock('TYPO3\FLOW3\Package\PackageManagerInterface');
 		$mockPackageManager->expects($this->once())->method('getCaseSensitivePackageKey')
 			->will($this->returnValue('TestPackage'));
 
-		$request = new \F3\FLOW3\MVC\Request();
+		$request = new \TYPO3\FLOW3\MVC\Request();
 		$request->injectPackageManager($mockPackageManager);
 		$request->setControllerPackageKey('TestPackage');
 		$this->assertEquals('TestPackage', $request->getControllerPackageKey());
@@ -355,11 +355,11 @@ class RequestTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function invalidPackageKeysAreRejected() {
-		$mockPackageManager = $this->getMock('F3\FLOW3\Package\PackageManagerInterface');
+		$mockPackageManager = $this->getMock('TYPO3\FLOW3\Package\PackageManagerInterface');
 		$mockPackageManager->expects($this->once())->method('getCaseSensitivePackageKey')
 			->will($this->returnValue(FALSE));
 
-		$request = new \F3\FLOW3\MVC\Request();
+		$request = new \TYPO3\FLOW3\MVC\Request();
 		$request->injectPackageManager($mockPackageManager);
 		$request->setControllerPackageKey('Some_Invalid_Key');
 	}
@@ -369,7 +369,7 @@ class RequestTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function theActionNameCanBeSetAndRetrieved() {
-		$request = $this->getMock('F3\FLOW3\MVC\Request', array('getControllerObjectName'), array(), '', FALSE);
+		$request = $this->getMock('TYPO3\FLOW3\MVC\Request', array('getControllerObjectName'), array(), '', FALSE);
 		$request->expects($this->once())->method('getControllerObjectName')->will($this->returnValue(''));
 
 		$request->setControllerActionName('theAction');
@@ -383,20 +383,20 @@ class RequestTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function theActionNamesCaseIsFixedIfItIsallLowerCaseAndTheControllerObjectNameIsKnown() {
 		$mockControllerClassName = 'Mock' . md5(uniqid(mt_rand(), TRUE));
 		eval('
-			class ' . $mockControllerClassName . ' extends \F3\FLOW3\MVC\Controller\ActionController {
+			class ' . $mockControllerClassName . ' extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 				public function someGreatAction() {}
 			}
      	');
 
 		$mockController = $this->getMock($mockControllerClassName, array('someGreatAction'), array(), '', FALSE);
 
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
+		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
 		$mockObjectManager->expects($this->once())->method('getClassNameByObjectName')
-			->with('F3\FLOW3\MyControllerObjectName')
+			->with('TYPO3\FLOW3\MyControllerObjectName')
 			->will($this->returnValue(get_class($mockController)));
 
-		$request = $this->getMock('F3\FLOW3\MVC\Request', array('getControllerObjectName'), array(), '', FALSE);
-		$request->expects($this->once())->method('getControllerObjectName')->will($this->returnValue('F3\FLOW3\MyControllerObjectName'));
+		$request = $this->getMock('TYPO3\FLOW3\MVC\Request', array('getControllerObjectName'), array(), '', FALSE);
+		$request->expects($this->once())->method('getControllerObjectName')->will($this->returnValue('TYPO3\FLOW3\MyControllerObjectName'));
 		$request->injectObjectManager($mockObjectManager);
 
 		$request->setControllerActionName('somegreat');
@@ -408,7 +408,7 @@ class RequestTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function theRepresentationFormatCanBeSetAndRetrieved() {
-		$request = new \F3\FLOW3\MVC\Request();
+		$request = new \TYPO3\FLOW3\MVC\Request();
 		$request->setFormat('html');
 		$this->assertEquals('html', $request->getFormat());
 	}
@@ -417,7 +417,7 @@ class RequestTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function theRepresentationFormatIsAutomaticallyLowercased() {
-		$request = new \F3\FLOW3\MVC\Request();
+		$request = new \TYPO3\FLOW3\MVC\Request();
 		$request->setFormat('hTmL');
 		$this->assertEquals('html', $request->getFormat());
 	}
@@ -427,7 +427,7 @@ class RequestTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function aFlagCanBeSetIfTheRequestNeedsToBeDispatchedAgain() {
-		$request = new \F3\FLOW3\MVC\Request();
+		$request = new \TYPO3\FLOW3\MVC\Request();
 		$this->assertFalse($request->isDispatched());
 
 		$request->setDispatched(TRUE);
@@ -439,11 +439,11 @@ class RequestTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function controllerNameDefaultsToNull() {
-		$mockRouter = $this->getMock('F3\FLOW3\MVC\Web\Routing\RouterInterface');
+		$mockRouter = $this->getMock('TYPO3\FLOW3\MVC\Web\Routing\RouterInterface');
 		$mockRouter->expects($this->once())->method('getControllerObjectName')
 			->with('', '', '')
 			->will($this->returnValue(NULL));
-		$request = new \F3\FLOW3\MVC\Request();
+		$request = new \TYPO3\FLOW3\MVC\Request();
 		$request->injectRouter($mockRouter);
 		$this->assertNull($request->getControllerName());
 	}
@@ -453,11 +453,11 @@ class RequestTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function controllerActionNameDefaultsToNull() {
-		$mockRouter = $this->getMock('F3\FLOW3\MVC\Web\Routing\RouterInterface');
+		$mockRouter = $this->getMock('TYPO3\FLOW3\MVC\Web\Routing\RouterInterface');
 		$mockRouter->expects($this->once())->method('getControllerObjectName')
 			->with('', '', '')
 			->will($this->returnValue(NULL));
-		$request = new \F3\FLOW3\MVC\Request();
+		$request = new \TYPO3\FLOW3\MVC\Request();
 		$request->injectRouter($mockRouter);
 		$this->assertNull($request->getControllerActionName());
 	}

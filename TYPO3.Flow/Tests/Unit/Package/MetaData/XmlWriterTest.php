@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\Package\MetaData;
+namespace TYPO3\FLOW3\Tests\Unit\Package\MetaData;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,7 +26,7 @@ namespace F3\FLOW3\Tests\Unit\Package\MetaData;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class XmlWriterTest extends \F3\FLOW3\Tests\UnitTestCase {
+class XmlWriterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @author Robert Lemke <robert@typo3.org>
@@ -44,22 +44,22 @@ class XmlWriterTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function testWritePackageMetaDataCreatesXml() {
 		$packageMetaDataPath = \vfsStream::url('testDirectory') . '/';
 
-		$mockPackage = $this->getMock('F3\FLOW3\Package\PackageInterface');
+		$mockPackage = $this->getMock('TYPO3\FLOW3\Package\PackageInterface');
 		$mockPackage->expects($this->once())->method('getMetaPath')->will($this->returnValue($packageMetaDataPath));
 
-		$meta = new \F3\FLOW3\Package\MetaData('Acme.YetAnotherTestPackage');
+		$meta = new \TYPO3\FLOW3\Package\MetaData('Acme.YetAnotherTestPackage');
 		$meta->setTitle('Yet another test package');
 		$meta->setDescription('A test package to test the creation of the Package.xml by the Package Manager');
 		$meta->setVersion('0.1.1');
 		$meta->addCategory('Testing');
 		$meta->addCategory('System');
-		$meta->addParty(new \F3\FLOW3\Package\MetaData\Person('LeadDeveloper', 'Robert Lemke', 'robert@typo3.org', 'http://www.flow3.org', 'TYPO3 Association', 'robert'));
-		$meta->addParty(new \F3\FLOW3\Package\MetaData\Company(null, 'Acme Inc.', 'info@acme.com', 'http://www.acme.com'));
-		$meta->addConstraint(new \F3\FLOW3\Package\MetaData\PackageConstraint('depends', 'TYPO3.FLOW3', '1.0.0', '1.9.9'));
-		$meta->addConstraint(new \F3\FLOW3\Package\MetaData\SystemConstraint('depends', 'PHP', NULL, '5.3.0'));
-		$meta->addConstraint(new \F3\FLOW3\Package\MetaData\SystemConstraint('suggests', 'Memory', '16M'));
+		$meta->addParty(new \TYPO3\FLOW3\Package\MetaData\Person('LeadDeveloper', 'Robert Lemke', 'robert@typo3.org', 'http://www.flow3.org', 'TYPO3 Association', 'robert'));
+		$meta->addParty(new \TYPO3\FLOW3\Package\MetaData\Company(null, 'Acme Inc.', 'info@acme.com', 'http://www.acme.com'));
+		$meta->addConstraint(new \TYPO3\FLOW3\Package\MetaData\PackageConstraint('depends', 'TYPO3.FLOW3', '1.0.0', '1.9.9'));
+		$meta->addConstraint(new \TYPO3\FLOW3\Package\MetaData\SystemConstraint('depends', 'PHP', NULL, '5.3.0'));
+		$meta->addConstraint(new \TYPO3\FLOW3\Package\MetaData\SystemConstraint('suggests', 'Memory', '16M'));
 
-		$metaWriter = new \F3\FLOW3\Package\MetaData\XmlWriter();
+		$metaWriter = new \TYPO3\FLOW3\Package\MetaData\XmlWriter();
 		$metaWriter->writePackageMetaData($mockPackage, $meta);
 		$this->assertXmlFileEqualsXmlFile($packageMetaDataPath . 'Package.xml', __DIR__ . '/../Fixtures/XmlWriterTest/Package.xml');
 	}

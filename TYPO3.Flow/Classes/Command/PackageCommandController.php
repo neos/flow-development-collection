@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Command;
+namespace TYPO3\FLOW3\Command;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -27,11 +27,11 @@ namespace F3\FLOW3\Command;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope singleton
  */
-class PackageCommandController extends \F3\FLOW3\MVC\Controller\CommandController {
+class PackageCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandController {
 
 	/**
 	 * @inject
-	 * @var F3\FLOW3\Package\PackageManagerInterface
+	 * @var TYPO3\FLOW3\Package\PackageManagerInterface
 	 */
 	protected $packageManager;
 

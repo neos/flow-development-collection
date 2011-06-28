@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Package\MetaData;
+namespace TYPO3\FLOW3\Package\MetaData;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -33,16 +33,16 @@ class XmlReader {
 	 * Read the package metadata for the given package from the
 	 * Package.xml file contained in the package
 	 *
-	 * @param \F3\FLOW3\Package\PackageInterface $package The package to read metadata for
+	 * @param \TYPO3\FLOW3\Package\PackageInterface $package The package to read metadata for
 	 * @return MetaData A package meta data instance with the data from the package's Package.xml file.
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	static public function readPackageMetaData(\F3\FLOW3\Package\PackageInterface $package) {
+	static public function readPackageMetaData(\TYPO3\FLOW3\Package\PackageInterface $package) {
 		$packageInfoPath = $package->getMetaPath();
 
-		$meta = new \F3\FLOW3\Package\MetaData($package->getPackageKey());
+		$meta = new \TYPO3\FLOW3\Package\MetaData($package->getPackageKey());
 
-		$xml = simplexml_load_file(\F3\FLOW3\Utility\Files::concatenatePaths(array($packageInfoPath, 'Package.xml')));
+		$xml = simplexml_load_file(\TYPO3\FLOW3\Utility\Files::concatenatePaths(array($packageInfoPath, 'Package.xml')));
 		if ($xml === FALSE) {
 			$meta->setDescription('[Package.xml could not be read.]');
 		} else {
@@ -64,11 +64,11 @@ class XmlReader {
 	 * Read categories from XML
 	 *
 	 * @param \SimpleXMLElement $xml The XML document
-	 * @param \F3\FLOW3\Package\MetaData $meta The meta information
+	 * @param \TYPO3\FLOW3\Package\MetaData $meta The meta information
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	static protected function readCategories(\SimpleXMLElement $xml, \F3\FLOW3\Package\MetaData $meta) {
+	static protected function readCategories(\SimpleXMLElement $xml, \TYPO3\FLOW3\Package\MetaData $meta) {
 		if (isset($xml->categories) && count($xml->categories)) {
 			foreach ($xml->categories->category as $category) {
 				$meta->addCategory((string)$category);
@@ -80,16 +80,16 @@ class XmlReader {
 	 * Read parties (persons and companies) from XML
 	 *
 	 * @param \SimpleXMLElement $xml The XML document
-	 * @param \F3\FLOW3\Package\MetaData $meta The meta information
+	 * @param \TYPO3\FLOW3\Package\MetaData $meta The meta information
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	static protected function readParties(\SimpleXMLElement $xml, \F3\FLOW3\Package\MetaData $meta) {
+	static protected function readParties(\SimpleXMLElement $xml, \TYPO3\FLOW3\Package\MetaData $meta) {
 		if (isset($xml->parties) && count($xml->parties)) {
 			if (isset($xml->parties->person) && count($xml->parties->person)) {
 				foreach ($xml->parties->person as $person) {
 					$role = (string)$person['role'];
-					$meta->addParty(new \F3\FLOW3\Package\MetaData\Person($role,
+					$meta->addParty(new \TYPO3\FLOW3\Package\MetaData\Person($role,
 						(string)$person->name, (string)$person->email, (string)$person->website,
 						(string)$person->company, (string)$person->repositoryUserName));
 				}
@@ -97,7 +97,7 @@ class XmlReader {
 			if (isset($xml->parties->company) && count($xml->parties->company)) {
 				foreach ($xml->parties->company as $company) {
 					$role = (string)$company['role'];
-					$meta->addParty(new \F3\FLOW3\Package\MetaData\Company($role,
+					$meta->addParty(new \TYPO3\FLOW3\Package\MetaData\Company($role,
 						(string)$company->name, (string)$company->email, (string)$company->website));
 				}
 			}
@@ -108,22 +108,22 @@ class XmlReader {
 	 * Read constraints by type and role (package, system) from XML
 	 *
 	 * @param \SimpleXMLElement $xml The XML document
-	 * @param \F3\FLOW3\Package\MetaData $meta The meta information
+	 * @param \TYPO3\FLOW3\Package\MetaData $meta The meta information
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	static protected function readConstraints(\SimpleXMLElement $xml, \F3\FLOW3\Package\MetaData $meta) {
+	static protected function readConstraints(\SimpleXMLElement $xml, \TYPO3\FLOW3\Package\MetaData $meta) {
 		foreach ($meta->getConstraintTypes() as $constraintType) {
 			if ($xml->constraints->{$constraintType}) {
 				foreach ($xml->constraints->{$constraintType}->children() as $constraint) {
 					switch ((string)$constraint->getName()) {
 						case 'package':
-							$meta->addConstraint(new \F3\FLOW3\Package\MetaData\PackageConstraint(
+							$meta->addConstraint(new \TYPO3\FLOW3\Package\MetaData\PackageConstraint(
 								$constraintType, (string)$constraint, (string)$constraint['minVersion'],
 								(string)$constraint['maxVersion']));
 							break;
 						case 'system':
-							$meta->addConstraint(new \F3\FLOW3\Package\MetaData\SystemConstraint(
+							$meta->addConstraint(new \TYPO3\FLOW3\Package\MetaData\SystemConstraint(
 								$constraintType, (string)$constraint['type'], (string)$constraint,
 								(string)$constraint['minVersion'], (string)$constraint['maxVersion']));
 							break;

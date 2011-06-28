@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\Log\Backend;
+namespace TYPO3\FLOW3\Tests\Unit\Log\Backend;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,10 +26,10 @@ namespace F3\FLOW3\Tests\Unit\Log\Backend;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class AbstractBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
+class AbstractBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
-	 * @var \F3\FLOW3\Log\Backend\AbstractBackend
+	 * @var \TYPO3\FLOW3\Log\Backend\AbstractBackend
 	 */
 	protected $backendClassName;
 
@@ -40,7 +40,7 @@ class AbstractBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function setUp() {
 		$this->backendClassName = 'ConcreteBackend_' . md5(uniqid(mt_rand(), TRUE));
 		eval('
-			class ' . $this->backendClassName . ' extends \F3\FLOW3\Log\Backend\AbstractBackend {
+			class ' . $this->backendClassName . ' extends \TYPO3\FLOW3\Log\Backend\AbstractBackend {
 				public function open() {}
 				public function append($message, $severity = 1, $additionalData = NULL, $packageKey = NULL, $className = NULL, $methodName = NULL) {}
 				public function close() {}

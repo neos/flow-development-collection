@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Validation\Validator;
+namespace TYPO3\FLOW3\Validation\Validator;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -28,7 +28,7 @@ namespace F3\FLOW3\Validation\Validator;
  * @api
  * @scope singleton
  */
-class AlphanumericValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator {
+class AlphanumericValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractValidator {
 
 	/**
 	 * Returns TRUE, if the given property ($propertyValue) is a valid
@@ -36,7 +36,7 @@ class AlphanumericValidator extends \F3\FLOW3\Validation\Validator\AbstractValid
 	 *
 	 * @param mixed $value The value that should be validated
 	 * @return void
-	 * @throws \F3\FLOW3\Validation\Exception\InvalidSubjectException if this validator cannot validate the given value
+	 * @throws \TYPO3\FLOW3\Validation\Exception\InvalidSubjectException if this validator cannot validate the given value
 	 * @api
 	 */
 	protected function isValid($value) {

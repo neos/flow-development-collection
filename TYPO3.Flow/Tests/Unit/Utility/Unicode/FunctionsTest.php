@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\Utility\Unicode;
+namespace TYPO3\FLOW3\Tests\Unit\Utility\Unicode;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "PHP6".                       *
@@ -26,7 +26,7 @@ namespace F3\FLOW3\Tests\Unit\Utility\Unicode;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class FunctionsTest extends \F3\FLOW3\Tests\UnitTestCase {
+class FunctionsTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * Checks if strtotitle() at least works with latin characters.
@@ -36,7 +36,7 @@ class FunctionsTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function strtotitleWorksWithLatinCharacters() {
 		$testString = 'this Is - my TestString.';
-		$this->assertEquals('This Is - My Teststring.', \F3\FLOW3\Utility\Unicode\Functions::strtotitle($testString), 'strtotitle() did not return the expected string.');
+		$this->assertEquals('This Is - My Teststring.', \TYPO3\FLOW3\Utility\Unicode\Functions::strtotitle($testString), 'strtotitle() did not return the expected string.');
 	}
 
 	/**
@@ -48,7 +48,7 @@ class FunctionsTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function strtotitleWorksWithUnicodeStrings() {
 		$testString = ' öl Ist nicht das GLEICHE wie øl.';
 		$expectedString = ' Öl Ist Nicht Das Gleiche Wie Øl.';
-		$this->assertEquals($expectedString, \F3\FLOW3\Utility\Unicode\Functions::strtotitle($testString), 'strtotitle() did not return the expected string for the unicode test.');
+		$this->assertEquals($expectedString, \TYPO3\FLOW3\Utility\Unicode\Functions::strtotitle($testString), 'strtotitle() did not return the expected string for the unicode test.');
 	}
 
 	/**
@@ -59,7 +59,7 @@ class FunctionsTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function substrWorksWithLatinCharacters() {
 		$testString = 'I say "hello world".';
-		$this->assertEquals('hello world', \F3\FLOW3\Utility\Unicode\Functions::substr($testString, 7, 11), 'substr() with latin characters did not return the expected string.');
+		$this->assertEquals('hello world', \TYPO3\FLOW3\Utility\Unicode\Functions::substr($testString, 7, 11), 'substr() with latin characters did not return the expected string.');
 	}
 
 	/**
@@ -70,7 +70,7 @@ class FunctionsTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function substrWorksWithUTF8Characters() {
 		$testString = 'Kasper Skårhøj implemented most versions of TYPO3.';
-		$this->assertEquals('Kasper Skårhøj', \F3\FLOW3\Utility\Unicode\Functions::substr($testString, 0, 14), 'substr() with UTF8 characters did not return the expected string.');
+		$this->assertEquals('Kasper Skårhøj', \TYPO3\FLOW3\Utility\Unicode\Functions::substr($testString, 0, 14), 'substr() with UTF8 characters did not return the expected string.');
 	}
 
 	/**
@@ -81,22 +81,22 @@ class FunctionsTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function substrWorksWithUTF8CharactersSpecifyingNoLength() {
 		$testString = 'Kasper Skårhøj implemented most versions of TYPO3.';
-		$this->assertEquals('implemented most versions of TYPO3.', \F3\FLOW3\Utility\Unicode\Functions::substr($testString, 15), 'substr() with UTF8 characters did not return the expected string after specifying no length.');
+		$this->assertEquals('implemented most versions of TYPO3.', \TYPO3\FLOW3\Utility\Unicode\Functions::substr($testString, 15), 'substr() with UTF8 characters did not return the expected string after specifying no length.');
 	}
 
 	/**
-	 * Checks if our version of \F3\FLOW3\Utility\Unicode\Functions::strtoupper basically works
+	 * Checks if our version of \TYPO3\FLOW3\Utility\Unicode\Functions::strtoupper basically works
 	 *
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function strtoupperWorksWithLatinCharacters() {
 		$testString = 'typo3';
-		$this->assertEquals('TYPO3', \F3\FLOW3\Utility\Unicode\Functions::strtoupper($testString), 'TYPO3\PHP6\Functions::strtoupper() with latin characters didn\'t work out.');
+		$this->assertEquals('TYPO3', \TYPO3\FLOW3\Utility\Unicode\Functions::strtoupper($testString), 'TYPO3\PHP6\Functions::strtoupper() with latin characters didn\'t work out.');
 	}
 
 	/**
-	 * Checks if our version of \F3\FLOW3\Utility\Unicode\Functions::strtoupper can at least handle some common special chars
+	 * Checks if our version of \TYPO3\FLOW3\Utility\Unicode\Functions::strtoupper can at least handle some common special chars
 	 *
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
@@ -104,7 +104,7 @@ class FunctionsTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function strtoupperWorksWithCertainSpecialChars() {
 		$testString = 'Here are some characters: äöüÄÖÜßéèêåÅøØæÆœŒ ...';
 		$expectedResult = 'HERE ARE SOME CHARACTERS: ÄÖÜÄÖÜSSÉÈÊÅÅØØÆÆŒŒ ...';
-		$result = \F3\FLOW3\Utility\Unicode\Functions::strtoupper($testString);
+		$result = \TYPO3\FLOW3\Utility\Unicode\Functions::strtoupper($testString);
 		$this->assertEquals($expectedResult, $result, 'TYPO3\PHP6\Functions::strtoupper() could not convert our selection of special characters.');
 	}
 
@@ -116,7 +116,7 @@ class FunctionsTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function strtolowerWorksWithLatinCharacters() {
 		$testString = 'TYPO3';
-		$this->assertEquals('typo3', \F3\FLOW3\Utility\Unicode\Functions::strtolower($testString), 'strtolower() with latin characters didn\'t work out.');
+		$this->assertEquals('typo3', \TYPO3\FLOW3\Utility\Unicode\Functions::strtolower($testString), 'strtolower() with latin characters didn\'t work out.');
 	}
 
 	/**
@@ -128,7 +128,7 @@ class FunctionsTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function strtolowerWorksWithCertainSpecialChars() {
 		$testString = 'HERE ARE SOME CHARACTERS: ÄÖÜÄÖÜßÉÈÊÅÅØØÆÆŒŒ ...';
 		$expectedResult = 'here are some characters: äöüäöüßéèêååøøææœœ ...';
-		$result = \F3\FLOW3\Utility\Unicode\Functions::strtolower($testString);
+		$result = \TYPO3\FLOW3\Utility\Unicode\Functions::strtolower($testString);
 		$this->assertEquals($expectedResult, $result, 'strtolower() could not convert our selection of special characters.');
 	}
 
@@ -140,7 +140,7 @@ class FunctionsTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function strlenWorksWithLatinCharacters() {
 		$testString = 'Feugiat tincidunt duo id, 23 quam delenit vocibus nam eu';
-		$this->assertEquals(56, \F3\FLOW3\Utility\Unicode\Functions::strlen($testString), 'strlen() did not return the correct string length for latin character string.');
+		$this->assertEquals(56, \TYPO3\FLOW3\Utility\Unicode\Functions::strlen($testString), 'strlen() did not return the correct string length for latin character string.');
 	}
 
 	/**
@@ -151,7 +151,7 @@ class FunctionsTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function strlenWorksWithCertainSpecialChars() {
 		$testString = 'here are some characters: äöüäöüßéèêååøøææœœ“” ...';
-		$this->assertEquals(50, \F3\FLOW3\Utility\Unicode\Functions::strlen($testString), 'strlen() did not return the correct string length for unicode string.');
+		$this->assertEquals(50, \TYPO3\FLOW3\Utility\Unicode\Functions::strlen($testString), 'strlen() did not return the correct string length for unicode string.');
 	}
 
 	/**
@@ -163,7 +163,7 @@ class FunctionsTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function ucfirstWorksWithLatinCharacters() {
 		$testString = 'feugiat tincidunt duo id, 23 quam delenit vocibus nam eu';
 		$expectedResult = 'Feugiat tincidunt duo id, 23 quam delenit vocibus nam eu';
-		$this->assertEquals($expectedResult, \F3\FLOW3\Utility\Unicode\Functions::ucfirst($testString), 'ucfirst() did not return the correct string for latin string.');
+		$this->assertEquals($expectedResult, \TYPO3\FLOW3\Utility\Unicode\Functions::ucfirst($testString), 'ucfirst() did not return the correct string for latin string.');
 	}
 
 	/**
@@ -175,11 +175,11 @@ class FunctionsTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function ucfirstWorksWithCertainSpecialChars() {
 		$testString = 'äeugiat tincidunt duo id, 23 quam delenit vocibus nam eu';
 		$expectedResult = 'Äeugiat tincidunt duo id, 23 quam delenit vocibus nam eu';
-		$this->assertEquals($expectedResult, \F3\FLOW3\Utility\Unicode\Functions::ucfirst($testString), 'ucfirst() did not return the correct string for a umlaut.');
+		$this->assertEquals($expectedResult, \TYPO3\FLOW3\Utility\Unicode\Functions::ucfirst($testString), 'ucfirst() did not return the correct string for a umlaut.');
 
 		$testString = 'åeugiat tincidunt duo id, 23 quam delenit vocibus nam eu';
 		$expectedResult = 'Åeugiat tincidunt duo id, 23 quam delenit vocibus nam eu';
-		$this->assertEquals($expectedResult, \F3\FLOW3\Utility\Unicode\Functions::ucfirst($testString), 'ucfirst() did not return the correct string for danish a.');
+		$this->assertEquals($expectedResult, \TYPO3\FLOW3\Utility\Unicode\Functions::ucfirst($testString), 'ucfirst() did not return the correct string for danish a.');
 	}
 
 	/**
@@ -191,7 +191,7 @@ class FunctionsTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function lcfirstWorksWithLatinCharacters() {
 		$testString = 'FEUGIAT TINCIDUNT DUO ID, 23 QUAM DELENIT VOCIBUS NAM EU';
 		$expectedResult = 'fEUGIAT TINCIDUNT DUO ID, 23 QUAM DELENIT VOCIBUS NAM EU';
-		$this->assertEquals($expectedResult, \F3\FLOW3\Utility\Unicode\Functions::lcfirst($testString), 'lcfirst() did not return the correct string for latin string.');
+		$this->assertEquals($expectedResult, \TYPO3\FLOW3\Utility\Unicode\Functions::lcfirst($testString), 'lcfirst() did not return the correct string for latin string.');
 	}
 
 	/**
@@ -203,11 +203,11 @@ class FunctionsTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function lcfirstWorksWithCertainSpecialChars() {
 		$testString = 'ÄEUGIAT TINCIDUNT DUO ID, 23 QUAM DELENIT VOCIBUS NAM EU';
 		$expectedResult = 'äEUGIAT TINCIDUNT DUO ID, 23 QUAM DELENIT VOCIBUS NAM EU';
-		$this->assertEquals($expectedResult, \F3\FLOW3\Utility\Unicode\Functions::lcfirst($testString), 'lcfirst() did not return the correct string for a umlaut.');
+		$this->assertEquals($expectedResult, \TYPO3\FLOW3\Utility\Unicode\Functions::lcfirst($testString), 'lcfirst() did not return the correct string for a umlaut.');
 
 		$testString = 'ÅEUGIAT TINCIDUNT DUO ID, 23 QUAM DELENIT VOCIBUS NAM EU';
 		$expectedResult = 'åEUGIAT TINCIDUNT DUO ID, 23 QUAM DELENIT VOCIBUS NAM EU';
-		$this->assertEquals($expectedResult, \F3\FLOW3\Utility\Unicode\Functions::lcfirst($testString), 'lcfirst() did not return the correct string for danish a.');
+		$this->assertEquals($expectedResult, \TYPO3\FLOW3\Utility\Unicode\Functions::lcfirst($testString), 'lcfirst() did not return the correct string for danish a.');
 	}
 
 	/**
@@ -229,7 +229,7 @@ class FunctionsTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function strposWorksWithCertainSpecialChars() {
 		$testString = 'Åeugiat tincidunt duo id, 23 quam delenit vocibus nam eu';
-		$this->assertEquals(8, \F3\FLOW3\Utility\Unicode\Functions::strpos($testString, 'tincidunt'), 'strpos() did not return the correct positions for a unicode string.');
+		$this->assertEquals(8, \TYPO3\FLOW3\Utility\Unicode\Functions::strpos($testString, 'tincidunt'), 'strpos() did not return the correct positions for a unicode string.');
 	}
 }
 ?>

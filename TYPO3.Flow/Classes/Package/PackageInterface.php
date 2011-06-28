@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Package;
+namespace TYPO3\FLOW3\Package;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -43,7 +43,7 @@ interface PackageInterface {
 	/**
 	 * Returns the package meta object of this package.
 	 *
-	 * @return \F3\FLOW3\Package\MetaData
+	 * @return \TYPO3\FLOW3\Package\MetaData
 	 */
 	public function getPackageMetaData();
 
@@ -146,7 +146,7 @@ interface PackageInterface {
 	/**
 	 * Returns the available documentations for this package
 	 *
-	 * @return array Array of \F3\FLOW3\Package\Documentation
+	 * @return array Array of \TYPO3\FLOW3\Package\Documentation
 	 * @api
 	 */
 	public function getPackageDocumentations();

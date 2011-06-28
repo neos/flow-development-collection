@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\I18n;
+namespace TYPO3\FLOW3\Tests\Unit\I18n;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,15 +26,15 @@ namespace F3\FLOW3\Tests\Unit\I18n;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class LocaleCollectionTest extends \F3\FLOW3\Tests\UnitTestCase {
+class LocaleCollectionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
-	 * @var array<\F3\FLOW3\I18n\Locale>
+	 * @var array<\TYPO3\FLOW3\I18n\Locale>
 	 */
 	protected $locales;
 
 	/**
-	 * @var \F3\FLOW3\I18n\LocaleCollection
+	 * @var \TYPO3\FLOW3\I18n\LocaleCollection
 	 */
 	protected $localeCollection;
 
@@ -44,13 +44,13 @@ class LocaleCollectionTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function setUp() {
 		$this->locales = array(
-			new \F3\FLOW3\I18n\Locale('en'),
-			new \F3\FLOW3\I18n\Locale('pl_PL'),
-			new \F3\FLOW3\I18n\Locale('de'),
-			new \F3\FLOW3\I18n\Locale('pl'),
+			new \TYPO3\FLOW3\I18n\Locale('en'),
+			new \TYPO3\FLOW3\I18n\Locale('pl_PL'),
+			new \TYPO3\FLOW3\I18n\Locale('de'),
+			new \TYPO3\FLOW3\I18n\Locale('pl'),
 		);
 		
-		$this->localeCollection = new \F3\FLOW3\I18n\LocaleCollection();
+		$this->localeCollection = new \TYPO3\FLOW3\I18n\LocaleCollection();
 	}
 
 	/**
@@ -71,7 +71,7 @@ class LocaleCollectionTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function existingLocaleIsNotAddedToTheCollection() {
 		$localeShouldBeAdded = $this->localeCollection->addLocale($this->locales[0]);
-		$localeShouldNotBeAdded = $this->localeCollection->addLocale(new \F3\FLOW3\I18n\Locale('en'));
+		$localeShouldNotBeAdded = $this->localeCollection->addLocale(new \TYPO3\FLOW3\I18n\Locale('en'));
 		$this->assertTrue($localeShouldBeAdded);
 		$this->assertFalse($localeShouldNotBeAdded);
 	}
@@ -86,8 +86,8 @@ class LocaleCollectionTest extends \F3\FLOW3\Tests\UnitTestCase {
 		}
 
 		$this->assertEquals($this->locales[1], $this->localeCollection->findBestMatchingLocale($this->locales[1]));
-		$this->assertEquals($this->locales[1], $this->localeCollection->findBestMatchingLocale(new \F3\FLOW3\I18n\Locale('pl_PL_DVORAK')));
-		$this->assertNull($this->localeCollection->findBestMatchingLocale(new \F3\FLOW3\I18n\Locale('sv')));
+		$this->assertEquals($this->locales[1], $this->localeCollection->findBestMatchingLocale(new \TYPO3\FLOW3\I18n\Locale('pl_PL_DVORAK')));
+		$this->assertNull($this->localeCollection->findBestMatchingLocale(new \TYPO3\FLOW3\I18n\Locale('sv')));
 	}
 
 	/**
@@ -99,7 +99,7 @@ class LocaleCollectionTest extends \F3\FLOW3\Tests\UnitTestCase {
 			$this->localeCollection->addLocale($locale);
 		}
 
-		$this->assertNull($this->localeCollection->getParentLocaleOf(new \F3\FLOW3\I18n\Locale('sv')));
+		$this->assertNull($this->localeCollection->getParentLocaleOf(new \TYPO3\FLOW3\I18n\Locale('sv')));
 		$this->assertNull($this->localeCollection->getParentLocaleOf($this->locales[0]));
 	}
 }

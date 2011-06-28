@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\MVC;
+namespace TYPO3\FLOW3\Tests\Unit\MVC;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,13 +26,13 @@ namespace F3\FLOW3\Tests\Unit\MVC;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class ResponseTest extends \F3\FLOW3\Tests\UnitTestCase {
+class ResponseTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function toStringReturnsContentOfResponse() {
-		$response = new \F3\FLOW3\MVC\Response();
+		$response = new \TYPO3\FLOW3\MVC\Response();
 		$response->setContent('SomeContent');
 
 		$expected = 'SomeContent';

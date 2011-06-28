@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Security\Cryptography;
+namespace TYPO3\FLOW3\Security\Cryptography;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -62,8 +62,8 @@ interface RsaWalletServiceInterface {
 	 * Returns the public key for the given UUID
 	 *
 	 * @param string $uuid The UUID
-	 * @return F3\FLOW3\Security\Cryptography\RSAKey The public key
-	 * @throws F3\FLOW3\Security\Exception\InvalidKeyPairIdException If the given UUID identifies no valid key pair
+	 * @return \TYPO3\FLOW3\Security\Cryptography\RSAKey The public key
+	 * @throws TYPO3\FLOW3\Security\Exception\InvalidKeyPairIdException If the given UUID identifies no valid key pair
 	 */
 	public function getPublicKey($uuid);
 
@@ -75,8 +75,8 @@ interface RsaWalletServiceInterface {
 	 * @param string $cypher Cypher text to decrypt
 	 * @param string $uuid The uuid to identify to correct private key
 	 * @return string The decrypted text
-	 * @throws F3\FLOW3\Security\Exception\InvalidKeyPairIdException If the given UUID identifies no valid keypair
-	 * @throws F3\FLOW3\Security\Exception\DecryptionNotAllowedException If the given UUID identifies a keypair for encrypted passwords
+	 * @throws TYPO3\FLOW3\Security\Exception\InvalidKeyPairIdException If the given UUID identifies no valid keypair
+	 * @throws TYPO3\FLOW3\Security\Exception\DecryptionNotAllowedException If the given UUID identifies a keypair for encrypted passwords
 	 */
 	public function decrypt($cypher, $uuid);
 
@@ -86,7 +86,7 @@ interface RsaWalletServiceInterface {
 	 * @param string $plaintext The plaintext to sign
 	 * @param string $uuid The uuid to identify to correct private key
 	 * @return string The signature of the given plaintext
-	 * @throws F3\FLOW3\Security\Exception\InvalidKeyPairIdException If the given UUID identifies no valid keypair
+	 * @throws TYPO3\FLOW3\Security\Exception\InvalidKeyPairIdException If the given UUID identifies no valid keypair
 	 */
 	public function sign($plaintext, $uuid);
 
@@ -128,7 +128,7 @@ interface RsaWalletServiceInterface {
 	 *
 	 * @param string $uuid The UUID
 	 * @return void
-	 * @throws F3\FLOW3\Security\Exception\InvalidKeyPairIdException If the given UUID identifies no valid key pair
+	 * @throws TYPO3\FLOW3\Security\Exception\InvalidKeyPairIdException If the given UUID identifies no valid key pair
 	 */
 	public function destroyKeypair($uuid);
 }

@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\Error;
+namespace TYPO3\FLOW3\Tests\Unit\Error;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,7 +26,7 @@ namespace F3\FLOW3\Tests\Unit\Error;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class AbstractExceptionHandlerTest extends \F3\FLOW3\Tests\UnitTestCase {
+class AbstractExceptionHandlerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
@@ -36,10 +36,10 @@ class AbstractExceptionHandlerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function handleExceptionLogsInformationAboutTheExceptionInTheSystemLog() {
 		$exception = new \Exception('The Message', 12345);
 
-		$mockSystemLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
+		$mockSystemLogger = $this->getMock('TYPO3\FLOW3\Log\SystemLoggerInterface');
 		$mockSystemLogger->expects($this->once())->method('logException')->with($exception);
 
-		$exceptionHandler = $this->getMockForAbstractClass('F3\FLOW3\Error\AbstractExceptionHandler', array(), '', FALSE);
+		$exceptionHandler = $this->getMockForAbstractClass('TYPO3\FLOW3\Error\AbstractExceptionHandler', array(), '', FALSE);
 		$exceptionHandler->injectSystemLogger($mockSystemLogger);
 		$exceptionHandler->handleException($exception);
 	}

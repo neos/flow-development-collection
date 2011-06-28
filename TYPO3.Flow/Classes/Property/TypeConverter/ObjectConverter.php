@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Property\TypeConverter;
+namespace TYPO3\FLOW3\Property\TypeConverter;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -28,7 +28,7 @@ namespace F3\FLOW3\Property\TypeConverter;
  * @api
  * @scope singleton
  */
-class ObjectConverter extends \F3\FLOW3\Property\TypeConverter\AbstractTypeConverter {
+class ObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTypeConverter {
 
 	/**
 	 * @var integer
@@ -51,41 +51,41 @@ class ObjectConverter extends \F3\FLOW3\Property\TypeConverter\AbstractTypeConve
 	protected $priority = 0;
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
+	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
-	 * @var \F3\FLOW3\Persistence\PersistenceManagerInterface
+	 * @var \TYPO3\FLOW3\Persistence\PersistenceManagerInterface
 	 */
 	protected $persistenceManager;
 
 	/**
-	 * @var \F3\FLOW3\Reflection\ReflectionService
+	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
 	/**
-	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
+	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager
 	 * @return void
 	 */
-	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
+	public function injectObjectManager(\TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
 	}
 
 	/**
-	 * @param \F3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager
+	 * @param \TYPO3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager
 	 * @return void
 	 */
-	public function injectPersistenceManager(\F3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager) {
+	public function injectPersistenceManager(\TYPO3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager) {
 		$this->persistenceManager = $persistenceManager;
 	}
 
 	/**
-	 * @param \F3\FLOW3\Reflection\ReflectionService $reflectionService
+	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService
 	 * @return void
 	 */
-	public function injectReflectionService(\F3\FLOW3\Reflection\ReflectionService $reflectionService) {
+	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
 	}
 
@@ -119,26 +119,26 @@ class ObjectConverter extends \F3\FLOW3\Property\TypeConverter\AbstractTypeConve
 	 *
 	 * @param string $targetType
 	 * @param string $propertyName
-	 * @param \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
+	 * @param \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
 	 * @return string
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	public function getTypeOfChildProperty($targetType, $propertyName, \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration) {
-		$configuredTargetType = $configuration->getConfigurationFor($propertyName)->getConfigurationValue('F3\FLOW3\Property\TypeConverter\ArrayToObjectConverter', self::CONFIGURATION_TARGET_TYPE);
+	public function getTypeOfChildProperty($targetType, $propertyName, \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration) {
+		$configuredTargetType = $configuration->getConfigurationFor($propertyName)->getConfigurationValue('TYPO3\FLOW3\Property\TypeConverter\ArrayToObjectConverter', self::CONFIGURATION_TARGET_TYPE);
 		if ($configuredTargetType !== NULL) {
 			return $configuredTargetType;
 		}
 
-		if ($this->reflectionService->hasMethod($targetType, \F3\FLOW3\Reflection\ObjectAccess::buildSetterMethodName($propertyName))) {
-			$methodParameters = $this->reflectionService->getMethodParameters($targetType, \F3\FLOW3\Reflection\ObjectAccess::buildSetterMethodName($propertyName));
+		if ($this->reflectionService->hasMethod($targetType, \TYPO3\FLOW3\Reflection\ObjectAccess::buildSetterMethodName($propertyName))) {
+			$methodParameters = $this->reflectionService->getMethodParameters($targetType, \TYPO3\FLOW3\Reflection\ObjectAccess::buildSetterMethodName($propertyName));
 			$methodParameter = current($methodParameters);
 			if (!isset($methodParameter['type'])) {
-				throw new \F3\FLOW3\Property\Exception\InvalidTargetException('Setter for property "' . $propertyName . '" had no type hint or documentation in target object of type "' . $targetType . '".', 1303379158);
+				throw new \TYPO3\FLOW3\Property\Exception\InvalidTargetException('Setter for property "' . $propertyName . '" had no type hint or documentation in target object of type "' . $targetType . '".', 1303379158);
 			} else {
 				return $methodParameter['type'];
 			}
 		} else {
-			throw new \F3\FLOW3\Property\Exception\InvalidTargetException('Property "' . $propertyName . '" had no setter in target object of type "' . $targetType . '".', 1303379126);
+			throw new \TYPO3\FLOW3\Property\Exception\InvalidTargetException('Property "' . $propertyName . '" had no setter in target object of type "' . $targetType . '".', 1303379126);
 		}
 	}
 
@@ -148,17 +148,17 @@ class ObjectConverter extends \F3\FLOW3\Property\TypeConverter\AbstractTypeConve
 	 * @param mixed $source
 	 * @param string $targetType
 	 * @param array $convertedChildProperties
-	 * @param \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
+	 * @param \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
 	 * @return object the target type
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
+	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
 		$object = $this->buildObject($convertedChildProperties, $targetType);
 
 		foreach ($convertedChildProperties as $propertyName => $propertyValue) {
-			$result = \F3\FLOW3\Reflection\ObjectAccess::setProperty($object, $propertyName, $propertyValue);
+			$result = \TYPO3\FLOW3\Reflection\ObjectAccess::setProperty($object, $propertyName, $propertyValue);
 			if ($result === FALSE) {
-				throw new \F3\FLOW3\Property\Exception\InvalidTargetException('Property "' . $propertyName . '" could not be set in target object of type "' . $targetType . '".', 1304538165);
+				throw new \TYPO3\FLOW3\Property\Exception\InvalidTargetException('Property "' . $propertyName . '" could not be set in target object of type "' . $targetType . '".', 1304538165);
 			}
 		}
 
@@ -175,7 +175,7 @@ class ObjectConverter extends \F3\FLOW3\Property\TypeConverter\AbstractTypeConve
 	 * @param array &$possibleConstructorArgumentValues
 	 * @param string $objectType
 	 * @return object The created instance
-	 * @throws \F3\FLOW3\Property\Exception\InvalidTargetException if a required constructor argument is missing
+	 * @throws \TYPO3\FLOW3\Property\Exception\InvalidTargetException if a required constructor argument is missing
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
@@ -189,7 +189,7 @@ class ObjectConverter extends \F3\FLOW3\Property\TypeConverter\AbstractTypeConve
 			} elseif ($constructorArgumentInformation['optional'] === TRUE) {
 				$constructorArguments[] = $constructorArgumentInformation['defaultValue'];
 			} else {
-				throw new \F3\FLOW3\Property\Exception\InvalidTargetException('Missing constructor argument "' . $constructorArgumentName . '" for object of type "' . $objectType . '".' , 1304538168);
+				throw new \TYPO3\FLOW3\Property\Exception\InvalidTargetException('Missing constructor argument "' . $constructorArgumentName . '" for object of type "' . $objectType . '".' , 1304538168);
 			}
 		}
 		return call_user_func_array(array($this->objectManager, 'create'), array_merge(array($objectType), $constructorArguments));

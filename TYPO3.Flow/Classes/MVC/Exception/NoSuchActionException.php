@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\MVC\Exception;
+namespace TYPO3\FLOW3\MVC\Exception;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -27,6 +27,6 @@ namespace F3\FLOW3\MVC\Exception;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */
-class NoSuchActionException extends \F3\FLOW3\MVC\Exception {
+class NoSuchActionException extends \TYPO3\FLOW3\MVC\Exception {
 }
 ?>

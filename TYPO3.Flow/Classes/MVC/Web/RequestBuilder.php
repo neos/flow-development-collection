@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\MVC\Web;
+namespace TYPO3\FLOW3\MVC\Web;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -30,85 +30,85 @@ namespace F3\FLOW3\MVC\Web;
 class RequestBuilder {
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
+	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
-	 * @var \F3\FLOW3\Utility\Environment
+	 * @var \TYPO3\FLOW3\Utility\Environment
 	 */
 	protected $environment;
 
 	/**
-	 * @var \F3\FLOW3\Configuration\ConfigurationManager
+	 * @var \TYPO3\FLOW3\Configuration\ConfigurationManager
 	 */
 	protected $configurationManager;
 
 	/**
-	 * @var \F3\FLOW3\MVC\Web\RouterInterface
+	 * @var \TYPO3\FLOW3\MVC\Web\RouterInterface
 	 */
 	protected $router;
 
 	/**
 	 * Injects the object factory
 	 *
-	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager A reference to the object factory
+	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager A reference to the object factory
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
+	public function injectObjectManager(\TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
 	}
 
 	/**
 	 * Injects the server environment
 	 *
-	 * @param \F3\FLOW3\Utility\Environment $environment The environment
+	 * @param \TYPO3\FLOW3\Utility\Environment $environment The environment
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectEnvironment(\F3\FLOW3\Utility\Environment $environment) {
+	public function injectEnvironment(\TYPO3\FLOW3\Utility\Environment $environment) {
 		$this->environment = $environment;
 	}
 
 	/**
 	 * Injects the configuration manager
 	 *
-	 * @param \F3\FLOW3\Configuration\ConfigurationManager $configurationManager A reference to the configuration manager
+	 * @param \TYPO3\FLOW3\Configuration\ConfigurationManager $configurationManager A reference to the configuration manager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectConfigurationManager(\F3\FLOW3\Configuration\ConfigurationManager $configurationManager) {
+	public function injectConfigurationManager(\TYPO3\FLOW3\Configuration\ConfigurationManager $configurationManager) {
 		$this->configurationManager = $configurationManager;
 	}
 
 	/**
 	 * Injects a router for routing the web request
 	 *
-	 * @param \F3\FLOW3\MVC\Web\Routing\RouterInterface $router A router which routes the web request to a controller and action
+	 * @param \TYPO3\FLOW3\MVC\Web\Routing\RouterInterface $router A router which routes the web request to a controller and action
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectRouter(\F3\FLOW3\MVC\Web\Routing\RouterInterface $router) {
+	public function injectRouter(\TYPO3\FLOW3\MVC\Web\Routing\RouterInterface $router) {
 		$this->router = $router;
 	}
 
 	/**
 	 * Builds a web request object from the raw HTTP information
 	 *
-	 * @return \F3\FLOW3\MVC\Web\Request The web request as an object
+	 * @return \TYPO3\FLOW3\MVC\Web\Request The web request as an object
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function build() {
-		$request = new \F3\FLOW3\MVC\Web\Request();
+		$request = new \TYPO3\FLOW3\MVC\Web\Request();
 		$request->setRequestUri($this->environment->getRequestUri());
 		$request->setBaseUri($this->environment->getBaseUri());
 		$request->setMethod($this->environment->getRequestMethod());
 
 		$this->setArgumentsFromRawRequestData($request);
 
-		$routesConfiguration = $this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_ROUTES);
+		$routesConfiguration = $this->configurationManager->getConfiguration(\TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_ROUTES);
 		$this->router->setRoutesConfiguration($routesConfiguration);
 		$this->router->route($request);
 
@@ -121,18 +121,18 @@ class RequestBuilder {
 	 * can be retrieved by the getArgument(s) method, no matter if they
 	 * have been GET, POST or PUT arguments before.
 	 *
-	 * @param \F3\FLOW3\MVC\Web\Request $request The web request which will contain the arguments
+	 * @param \TYPO3\FLOW3\MVC\Web\Request $request The web request which will contain the arguments
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function setArgumentsFromRawRequestData(\F3\FLOW3\MVC\Web\Request $request) {
+	protected function setArgumentsFromRawRequestData(\TYPO3\FLOW3\MVC\Web\Request $request) {
 		$arguments = $request->getRequestUri()->getArguments();
 		if ($request->getMethod() === 'POST') {
 			$postArguments = $this->environment->getRawPostArguments();
-			$arguments = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($arguments, $postArguments);
+			$arguments = \TYPO3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($arguments, $postArguments);
 
 			$uploadArguments = $this->environment->getUploadedFiles();
-			$arguments = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($arguments, $uploadArguments);
+			$arguments = \TYPO3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($arguments, $uploadArguments);
 		}
 		$request->setArguments($arguments);
 	}

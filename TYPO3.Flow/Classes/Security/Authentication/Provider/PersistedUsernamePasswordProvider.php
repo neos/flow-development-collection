@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Security\Authentication\Provider;
+namespace TYPO3\FLOW3\Security\Authentication\Provider;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,22 +23,22 @@ namespace F3\FLOW3\Security\Authentication\Provider;
 
 /**
  * An authentication provider that authenticates
- * F3\FLOW3\Security\Authentication\Token\UsernamePassword tokens.
+ * TYPO3\FLOW3\Security\Authentication\Token\UsernamePassword tokens.
  * The accounts are stored in the Content Repository.
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
-class PersistedUsernamePasswordProvider implements \F3\FLOW3\Security\Authentication\AuthenticationProviderInterface {
+class PersistedUsernamePasswordProvider implements \TYPO3\FLOW3\Security\Authentication\AuthenticationProviderInterface {
 
 	/**
-	 * @var \F3\FLOW3\Security\AccountRepository
+	 * @var \TYPO3\FLOW3\Security\AccountRepository
 	 * @inject
 	 */
 	protected $accountRepository;
 
 	/**
-	 * @var \F3\FLOW3\Security\Cryptography\HashService
+	 * @var \TYPO3\FLOW3\Security\Cryptography\HashService
 	 * @inject
 	 */
 	protected $hashService;
@@ -63,11 +63,11 @@ class PersistedUsernamePasswordProvider implements \F3\FLOW3\Security\Authentica
 	/**
 	 * Returns TRUE if the given token can be authenticated by this provider
 	 *
-	 * @param F3\FLOW3\Security\Authentication\TokenInterface $authenticationToken The token that should be authenticated
+	 * @param \TYPO3\FLOW3\Security\Authentication\TokenInterface $authenticationToken The token that should be authenticated
 	 * @return boolean TRUE if the given token class can be authenticated by this provider
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function canAuthenticate(\F3\FLOW3\Security\Authentication\TokenInterface $authenticationToken) {
+	public function canAuthenticate(\TYPO3\FLOW3\Security\Authentication\TokenInterface $authenticationToken) {
 		if ($authenticationToken->getAuthenticationProviderName() === $this->name) return TRUE;
 		return FALSE;
 	}
@@ -79,19 +79,19 @@ class PersistedUsernamePasswordProvider implements \F3\FLOW3\Security\Authentica
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getTokenClassNames() {
-		return array('F3\FLOW3\Security\Authentication\Token\UsernamePassword', 'F3\FLOW3\Security\Authentication\Token\UsernamePasswordHttpBasic');
+		return array('TYPO3\FLOW3\Security\Authentication\Token\UsernamePassword', 'TYPO3\FLOW3\Security\Authentication\Token\UsernamePasswordHttpBasic');
 	}
 
 	/**
 	 * Sets isAuthenticated to TRUE for all tokens.
 	 *
-	 * @param F3\FLOW3\Security\Authentication\TokenInterface $authenticationToken The token to be authenticated
+	 * @param \TYPO3\FLOW3\Security\Authentication\TokenInterface $authenticationToken The token to be authenticated
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function authenticate(\F3\FLOW3\Security\Authentication\TokenInterface $authenticationToken) {
-		if (!($authenticationToken instanceof \F3\FLOW3\Security\Authentication\Token\UsernamePassword)) {
-			throw new \F3\FLOW3\Security\Exception\UnsupportedAuthenticationTokenException('This provider cannot authenticate the given token.', 1217339840);
+	public function authenticate(\TYPO3\FLOW3\Security\Authentication\TokenInterface $authenticationToken) {
+		if (!($authenticationToken instanceof \TYPO3\FLOW3\Security\Authentication\Token\UsernamePassword)) {
+			throw new \TYPO3\FLOW3\Security\Exception\UnsupportedAuthenticationTokenException('This provider cannot authenticate the given token.', 1217339840);
 		}
 
 		$account = NULL;
@@ -103,13 +103,13 @@ class PersistedUsernamePasswordProvider implements \F3\FLOW3\Security\Authentica
 
 		if (is_object($account)) {
 			if ($this->hashService->validateSaltedMd5($credentials['password'], $account->getCredentialsSource())) {
-				$authenticationToken->setAuthenticationStatus(\F3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL);
+				$authenticationToken->setAuthenticationStatus(\TYPO3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL);
 				$authenticationToken->setAccount($account);
 			} else {
-				$authenticationToken->setAuthenticationStatus(\F3\FLOW3\Security\Authentication\TokenInterface::WRONG_CREDENTIALS);
+				$authenticationToken->setAuthenticationStatus(\TYPO3\FLOW3\Security\Authentication\TokenInterface::WRONG_CREDENTIALS);
 			}
-		} elseif ($authenticationToken->getAuthenticationStatus() !== \F3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL) {
-			$authenticationToken->setAuthenticationStatus(\F3\FLOW3\Security\Authentication\TokenInterface::NO_CREDENTIALS_GIVEN);
+		} elseif ($authenticationToken->getAuthenticationStatus() !== \TYPO3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL) {
+			$authenticationToken->setAuthenticationStatus(\TYPO3\FLOW3\Security\Authentication\TokenInterface::NO_CREDENTIALS_GIVEN);
 		}
 	}
 }

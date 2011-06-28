@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\Cache\Backend;
+namespace TYPO3\FLOW3\Tests\Unit\Cache\Backend;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,10 +26,10 @@ namespace F3\FLOW3\Tests\Unit\Cache\Backend;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class AbstractBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
+class AbstractBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
-	 * @var \F3\FLOW3\Cache\Backend\AbstractBackend
+	 * @var \TYPO3\FLOW3\Cache\Backend\AbstractBackend
 	 */
 	protected $backend;
 
@@ -40,7 +40,7 @@ class AbstractBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function setUp() {
 		$className = 'ConcreteBackend_' . md5(uniqid(mt_rand(), TRUE));
 		eval('
-			class ' . $className. ' extends \F3\FLOW3\Cache\Backend\AbstractBackend {
+			class ' . $className. ' extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 				public function set($entryIdentifier, $data, array $tags = array(), $lifetime = NULL) {}
 				public function get($entryIdentifier) {}
 				public function has($entryIdentifier) {}

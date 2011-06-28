@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\MVC\Controller;
+namespace TYPO3\FLOW3\MVC\Controller;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -30,22 +30,22 @@ namespace F3\FLOW3\MVC\Controller;
 class CommandController implements CommandControllerInterface {
 
 	/**
-	 * @var \F3\FLOW3\MVC\CLI\Request
+	 * @var \TYPO3\FLOW3\MVC\CLI\Request
 	 */
 	protected $request;
 
 	/**
-	 * @var \F3\FLOW3\MVC\CLI\Response
+	 * @var \TYPO3\FLOW3\MVC\CLI\Response
 	 */
 	protected $response;
 
 	/**
-	 * @var \F3\FLOW3\MVC\Controller\Arguments
+	 * @var \TYPO3\FLOW3\MVC\Controller\Arguments
 	 */
 	protected $arguments;
 
 	/**
-	 * @var \F3\FLOW3\Reflection\ReflectionService
+	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
@@ -61,37 +61,37 @@ class CommandController implements CommandControllerInterface {
 	/**
 	 * Injects the reflection service
 	 *
-	 * @param \F3\FLOW3\Reflection\ReflectionService $reflectionService
+	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function injectReflectionService(\F3\FLOW3\Reflection\ReflectionService $reflectionService) {
+	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
 	}
 
 	/**
 	 * Checks if the current request type is supported by the controller.
 	 *
-	 * @param \F3\FLOW3\MVC\RequestInterface $request The current request
+	 * @param \TYPO3\FLOW3\MVC\RequestInterface $request The current request
 	 * @return boolean TRUE if this request type is supported, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function canProcessRequest(\F3\FLOW3\MVC\RequestInterface $request) {
-		return $request instanceof \F3\FLOW3\MVC\CLI\Request;
+	public function canProcessRequest(\TYPO3\FLOW3\MVC\RequestInterface $request) {
+		return $request instanceof \TYPO3\FLOW3\MVC\CLI\Request;
 	}
 
 	/**
 	 * Processes a command line request.
 	 *
-	 * @param \F3\FLOW3\MVC\RequestInterface $request The request object
-	 * @param \F3\FLOW3\MVC\ResponseInterface $response The response, modified by this controller
+	 * @param \TYPO3\FLOW3\MVC\RequestInterface $request The request object
+	 * @param \TYPO3\FLOW3\MVC\ResponseInterface $response The response, modified by this controller
 	 * @return void
-	 * @throws \F3\FLOW3\MVC\Exception\UnsupportedRequestTypeException if the controller doesn't support the current request type
+	 * @throws \TYPO3\FLOW3\MVC\Exception\UnsupportedRequestTypeException if the controller doesn't support the current request type
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
-	public function processRequest(\F3\FLOW3\MVC\RequestInterface $request, \F3\FLOW3\MVC\ResponseInterface $response) {
-		if (!$this->canProcessRequest($request)) throw new \F3\FLOW3\MVC\Exception\UnsupportedRequestTypeException(get_class($this) . ' does not support requests of type "' . get_class($request) . '".' , 1300787096);
+	public function processRequest(\TYPO3\FLOW3\MVC\RequestInterface $request, \TYPO3\FLOW3\MVC\ResponseInterface $response) {
+		if (!$this->canProcessRequest($request)) throw new \TYPO3\FLOW3\MVC\Exception\UnsupportedRequestTypeException(get_class($this) . ' does not support requests of type "' . get_class($request) . '".' , 1300787096);
 
 		$this->request = $request;
 		$this->request->setDispatched(TRUE);
@@ -113,7 +113,7 @@ class CommandController implements CommandControllerInterface {
 	protected function resolveCommandMethodName() {
 		$commandMethodName = $this->request->getControllerCommandName() . 'Command';
 		if (!is_callable(array($this, $commandMethodName))) {
-			throw new \F3\FLOW3\MVC\Exception\NoSuchCommandException('A command method "' . $commandMethodName . '()" does not exist in controller "' . get_class($this) . '".', 1300902143);
+			throw new \TYPO3\FLOW3\MVC\Exception\NoSuchCommandException('A command method "' . $commandMethodName . '()" does not exist in controller "' . get_class($this) . '".', 1300902143);
 		}
 		return $commandMethodName;
 	}
@@ -138,7 +138,7 @@ class CommandController implements CommandControllerInterface {
 			} elseif ($parameterInfo['array']) {
 				$dataType = 'array';
 			}
-			if ($dataType === NULL) throw new \F3\FLOW3\MVC\Exception\InvalidArgumentTypeException('The argument type for parameter $' . $parameterName . ' of method ' . get_class($this) . '->' . $this->actionMethodName . '() could not be detected.' , 1306755296);
+			if ($dataType === NULL) throw new \TYPO3\FLOW3\MVC\Exception\InvalidArgumentTypeException('The argument type for parameter $' . $parameterName . ' of method ' . get_class($this) . '->' . $this->actionMethodName . '() could not be detected.' , 1306755296);
 			$defaultValue = (isset($parameterInfo['defaultValue']) ? $parameterInfo['defaultValue'] : NULL);
 			$this->arguments->addNewArgument($parameterName, $dataType, ($parameterInfo['optional'] === FALSE), $defaultValue);
 		}
@@ -157,7 +157,7 @@ class CommandController implements CommandControllerInterface {
 			if ($this->request->hasArgument($argumentName)) {
 				$argument->setValue($this->request->getArgument($argumentName));
 			} elseif ($argument->isRequired()) {
-				throw new \F3\FLOW3\MVC\Exception\RequiredArgumentMissingException('Required argument "' . $argumentName  . '" is not set.', 1306755520);
+				throw new \TYPO3\FLOW3\MVC\Exception\RequiredArgumentMissingException('Required argument "' . $argumentName  . '" is not set.', 1306755520);
 			}
 		}
 	}

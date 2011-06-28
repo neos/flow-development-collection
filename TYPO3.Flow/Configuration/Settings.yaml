@@ -15,7 +15,7 @@ TYPO3:
 
       # Registers global objects to be evaluated for dynamic pointcut expressions
       globalObjects:
-        securityContext: F3\FLOW3\Security\Context
+        securityContext: TYPO3\FLOW3\Security\Context
 
     configuration:
 
@@ -40,8 +40,8 @@ TYPO3:
       exceptionHandler:
 
         # Defines the global, last-resort exception handler.
-        # The specified class must implement \F3\FLOW3\Error\ExceptionHandlerInterface
-        className: F3\FLOW3\Error\ProductionExceptionHandler
+        # The specified class must implement \TYPO3\FLOW3\Error\ExceptionHandlerInterface
+        className: TYPO3\FLOW3\Error\ProductionExceptionHandler
 
       errorHandler:
 
@@ -54,7 +54,7 @@ TYPO3:
 
       # Settings for FLOW3's default loggers
       systemLogger:
-        backend: F3\FLOW3\Log\Backend\FileBackend
+        backend: TYPO3\FLOW3\Log\Backend\FileBackend
         backendOptions:
            logFileURL: %FLOW3_PATH_DATA%Logs/System.log
            createParentDirectories: y
@@ -63,7 +63,7 @@ TYPO3:
            logFilesToKeep: 1
 
       securityLogger:
-        backend: F3\FLOW3\Log\Backend\FileBackend
+        backend: TYPO3\FLOW3\Log\Backend\FileBackend
         backendOptions:
            logFileURL: %FLOW3_PATH_DATA%Logs/Security.log
            createParentDirectories: y
@@ -104,7 +104,7 @@ TYPO3:
 
       # Object name of the controller to use if no other controller could be resolved
       # matching the request.
-      notFoundController: F3\FLOW3\MVC\Controller\NotFoundController
+      notFoundController: TYPO3\FLOW3\MVC\Controller\NotFoundController
 
     object:
 
@@ -172,7 +172,7 @@ TYPO3:
         #     patternValue: /some/url/blocked.*
         #     interceptor:  AccessDeny
         #
-        # If the objects are in the namespace "\F3\FLOW3\Security" it is enough to specify
+        # If the objects are in the namespace "\TYPO3\FLOW3\Security" it is enough to specify
         # the last name of the classname, e.g. AccessGrant
         filters:
           -
@@ -185,7 +185,7 @@ TYPO3:
         # Array of authentication providers that should be used for authentication.
         # If you define a request pattern, the provider will only be called if the pattern
         # matches the current request. If the objects are in the namespace
-        # "\F3\FLOW3\Security" it is sufficient to specify the last name of the classname,
+        # "\TYPO3\FLOW3\Security" it is sufficient to specify the last name of the classname,
         # e.g. PersistedUsernamePasswordProvider
         # Note: Authentication will be performed in the given order of the providers.
         # So make sure, that the primary authentication method is the first array entry.
@@ -218,7 +218,7 @@ TYPO3:
 
       authorization:
         # An array of access decision voters that should vote when access decisions are made
-        accessDecisionVoters: [F3\FLOW3\Security\Authorization\Voter\Policy]
+        accessDecisionVoters: [TYPO3\FLOW3\Security\Authorization\Voter\Policy]
 
         # If this is set to TRUE access will be granted even if all voters abstain
         allowAccessIfAllVotersAbstain: FALSE

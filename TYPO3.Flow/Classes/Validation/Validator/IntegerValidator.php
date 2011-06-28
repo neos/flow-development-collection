@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Validation\Validator;
+namespace TYPO3\FLOW3\Validation\Validator;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -28,7 +28,7 @@ namespace F3\FLOW3\Validation\Validator;
  * @api
  * @scope singleton
  */
-class IntegerValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator {
+class IntegerValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractValidator {
 
 	/**
 	 * Checks if the given value is a valid integer.
@@ -36,7 +36,7 @@ class IntegerValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator 
 	 * If at least one error occurred, the result is FALSE.
 	 *
 	 * @param mixed $value The value that should be validated
-	 * @param \F3\FLOW3\Validation\Errors $errors An Errors object which will contain any errors which occurred during validation
+	 * @param \TYPO3\FLOW3\Validation\Errors $errors An Errors object which will contain any errors which occurred during validation
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api

@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Object\Fixture;
+namespace TYPO3\FLOW3\Tests\Object\Fixture;
 
 interface SomeInterface {}
 ?>

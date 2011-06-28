@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\I18n\Xml;
+namespace TYPO3\FLOW3\Tests\Unit\I18n\Xml;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,7 +26,7 @@ namespace F3\FLOW3\Tests\Unit\I18n\Xml;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class AbstractXmlModelTest extends \F3\FLOW3\Tests\UnitTestCase {
+class AbstractXmlModelTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
@@ -36,14 +36,14 @@ class AbstractXmlModelTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockFilenamePath = 'foo';
 		$mockParsedData = 'bar';
 
-		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
+		$mockCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
 		$mockCache->expects($this->once())->method('has')->with(md5($mockFilenamePath))->will($this->returnValue(FALSE));
 		$mockCache->expects($this->once())->method('set')->with(md5($mockFilenamePath), $mockParsedData);
 
-		$mockParser = $this->getAccessibleMock('F3\FLOW3\I18n\Xml\AbstractXmlParser', array('getParsedData', 'doParsingFromRoot'));
+		$mockParser = $this->getAccessibleMock('TYPO3\FLOW3\I18n\Xml\AbstractXmlParser', array('getParsedData', 'doParsingFromRoot'));
 		$mockParser->expects($this->once())->method('getParsedData')->with($mockFilenamePath)->will($this->returnValue($mockParsedData));
 
-		$model = $this->getAccessibleMock('F3\FLOW3\I18n\Xml\AbstractXmlModel', array('dummy'), array($mockFilenamePath));
+		$model = $this->getAccessibleMock('TYPO3\FLOW3\I18n\Xml\AbstractXmlModel', array('dummy'), array($mockFilenamePath));
 		$model->injectCache($mockCache);
 		$model->_set('xmlParser', $mockParser);
 		$model->initializeObject();

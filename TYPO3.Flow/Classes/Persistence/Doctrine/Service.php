@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Persistence\Doctrine;
+namespace TYPO3\FLOW3\Persistence\Doctrine;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -47,7 +47,7 @@ class Service {
 
 	/**
 	 * @inject
-	 * @var \F3\FLOW3\Package\PackageManagerInterface
+	 * @var \TYPO3\FLOW3\Package\PackageManagerInterface
 	 */
 	protected $packageManager;
 
@@ -179,8 +179,8 @@ class Service {
 		);
 
 		$configuration = new \Doctrine\DBAL\Migrations\Configuration\Configuration($this->entityManager->getConnection(), $outputWriter);
-		$configuration->setMigrationsNamespace('F3\FLOW3\Persistence\Doctrine\Migrations');
-		$configuration->setMigrationsDirectory(\F3\FLOW3\Utility\Files::concatenatePaths(array(FLOW3_PATH_DATA, 'DoctrineMigrations')));
+		$configuration->setMigrationsNamespace('TYPO3\FLOW3\Persistence\Doctrine\Migrations');
+		$configuration->setMigrationsDirectory(\TYPO3\FLOW3\Utility\Files::concatenatePaths(array(FLOW3_PATH_DATA, 'DoctrineMigrations')));
 		$configuration->setMigrationsTableName('flow3_doctrine_migrationstatus');
 
 		$configuration->createMigrationTable();
@@ -188,7 +188,7 @@ class Service {
 		$databasePlatformName = ucfirst($this->entityManager->getConnection()->getDatabasePlatform()->getName());
 		foreach ($this->packageManager->getActivePackages() as $package) {
 			$configuration->registerMigrationsFromDirectory(
-				\F3\FLOW3\Utility\Files::concatenatePaths(array(
+				\TYPO3\FLOW3\Utility\Files::concatenatePaths(array(
 					 $package->getPackagePath(),
 					 'Migrations',
 					 $databasePlatformName
@@ -384,10 +384,10 @@ class Service {
 		$up = $up === NULL ? '' : "\n		" . implode("\n		", explode("\n", $up));
 		$down = $down === NULL ? '' : "\n		" . implode("\n		", explode("\n", $down));
 
-		$path = \F3\FLOW3\Utility\Files::concatenatePaths(array($configuration->getMigrationsDirectory(), $className . '.php'));
+		$path = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array($configuration->getMigrationsDirectory(), $className . '.php'));
 		try {
-			\F3\FLOW3\Utility\Files::createDirectoryRecursively(dirname($path));
-		} catch (\F3\FLOW3\Utility\Exception $exception) {
+			\TYPO3\FLOW3\Utility\Files::createDirectoryRecursively(dirname($path));
+		} catch (\TYPO3\FLOW3\Utility\Exception $exception) {
 			throw new \RuntimeException(sprintf('Migration target directory "%s" does not exist.', dirname($path)), 1303298536, $exception);
 		}
 

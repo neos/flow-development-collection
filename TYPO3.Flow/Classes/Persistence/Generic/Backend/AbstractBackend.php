@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Persistence\Generic\Backend;
+namespace TYPO3\FLOW3\Persistence\Generic\Backend;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -28,7 +28,7 @@ namespace F3\FLOW3\Persistence\Generic\Backend;
  * @api
  * @scope prototype
  */
-abstract class AbstractBackend implements \F3\FLOW3\Persistence\Generic\Backend\BackendInterface {
+abstract class AbstractBackend implements \TYPO3\FLOW3\Persistence\Generic\Backend\BackendInterface {
 
 	/**
 	 * An object that was reconstituted
@@ -43,27 +43,27 @@ abstract class AbstractBackend implements \F3\FLOW3\Persistence\Generic\Backend\
 	const OBJECTSTATE_NEW = 2;
 
 	/**
-	 * @var \F3\FLOW3\Reflection\ReflectionService
+	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
 	/**
-	 * @var \F3\FLOW3\Persistence\Generic\Session
+	 * @var \TYPO3\FLOW3\Persistence\Generic\Session
 	 */
 	protected $persistenceSession;
 
 	/**
-	 * @var \F3\FLOW3\Persistence\PersistenceManagerInterface
+	 * @var \TYPO3\FLOW3\Persistence\PersistenceManagerInterface
 	 */
 	protected $persistenceManager;
 
 	/**
-	 * @var \F3\FLOW3\Validation\ValidatorResolver
+	 * @var \TYPO3\FLOW3\Validation\ValidatorResolver
 	 */
 	protected $validatorResolver;
 
 	/**
-	 * @var \F3\FLOW3\Log\SystemLoggerInterface
+	 * @var \TYPO3\FLOW3\Log\SystemLoggerInterface
 	 */
 	protected $systemLogger;
 
@@ -100,55 +100,55 @@ abstract class AbstractBackend implements \F3\FLOW3\Persistence\Generic\Backend\
 	/**
 	 * Injects a Reflection Service instance used for processing objects
 	 *
-	 * @param \F3\FLOW3\Reflection\ReflectionService $reflectionService
+	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectReflectionService(\F3\FLOW3\Reflection\ReflectionService $reflectionService) {
+	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
 	}
 
 	/**
 	 * Injects the persistence session
 	 *
-	 * @param \F3\FLOW3\Persistence\Session $persistenceSession
+	 * @param \TYPO3\FLOW3\Persistence\Session $persistenceSession
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectPersistenceSession(\F3\FLOW3\Persistence\Generic\Session $persistenceSession) {
+	public function injectPersistenceSession(\TYPO3\FLOW3\Persistence\Generic\Session $persistenceSession) {
 		$this->persistenceSession = $persistenceSession;
 	}
 
 	/**
 	 * Set a PersistenceManager instance.
 	 *
-	 * @param \F3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager
+	 * @param \TYPO3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function setPersistenceManager(\F3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager) {
+	public function setPersistenceManager(\TYPO3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager) {
 		$this->persistenceManager = $persistenceManager;
 	}
 
 	/**
 	 * Injects the ValidatorResolver
 	 *
-	 * @param \F3\FLOW3\Validation\ValidatorResolver $validatorResolver
+	 * @param \TYPO3\FLOW3\Validation\ValidatorResolver $validatorResolver
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectValidatorResolver(\F3\FLOW3\Validation\ValidatorResolver $validatorResolver) {
+	public function injectValidatorResolver(\TYPO3\FLOW3\Validation\ValidatorResolver $validatorResolver) {
 		$this->validatorResolver = $validatorResolver;
 	}
 
 	/**
 	 * Injects the system logger
 	 *
-	 * @param \F3\FLOW3\Log\SystemLoggerInterface $systemLogger
+	 * @param \TYPO3\FLOW3\Log\SystemLoggerInterface $systemLogger
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectSystemLogger(\F3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
+	public function injectSystemLogger(\TYPO3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
 		$this->systemLogger = $systemLogger;
 	}
 
@@ -263,7 +263,7 @@ abstract class AbstractBackend implements \F3\FLOW3\Persistence\Generic\Backend\
 		$objectData = array();
 		$objectState = $this->storeObject($object, $identifier, $parentIdentifier, $objectData);
 
-		if ($this->reflectionService->getClassSchema($object)->getModelType() === \F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY) {
+		if ($this->reflectionService->getClassSchema($object)->getModelType() === \TYPO3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY) {
 			$this->persistenceSession->registerReconstitutedEntity($object, $objectData);
 		}
 		$this->emitPersistedObject($object, $objectState);
@@ -333,7 +333,7 @@ abstract class AbstractBackend implements \F3\FLOW3\Persistence\Generic\Backend\
 			foreach ($validationResult->getErrors() as $error) {
 				$errorMessages .= (string)$error . PHP_EOL;
 			}
-			throw new \F3\FLOW3\Persistence\Generic\Exception\ObjectValidationFailedException('An instance of "' . get_class($object) . '" failed to pass validation with ' . count($validationResult->getErrors()) . ' error(s): ' . PHP_EOL . $errorMessages);
+			throw new \TYPO3\FLOW3\Persistence\Generic\Exception\ObjectValidationFailedException('An instance of "' . get_class($object) . '" failed to pass validation with ' . count($validationResult->getErrors()) . ' error(s): ' . PHP_EOL . $errorMessages);
 		}
 	}
 
@@ -382,7 +382,7 @@ abstract class AbstractBackend implements \F3\FLOW3\Persistence\Generic\Backend\
 
 				// handle all objects now, because even clean ones need to be traversed
 				// as dirty checking is not recursive
-			if ($propertyValue instanceof \F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface) {
+			if ($propertyValue instanceof \TYPO3\FLOW3\Persistence\Aspect\PersistenceMagicInterface) {
 				if ($this->persistenceSession->isDirty($object, $propertyName)) {
 					$dirty = TRUE;
 					$this->flattenValue($identifier, $object, $propertyName, $propertyMetaData, $propertyData);
@@ -411,9 +411,9 @@ abstract class AbstractBackend implements \F3\FLOW3\Persistence\Generic\Backend\
 	 * @api
 	 */
 	protected function flattenValue($identifier, $object, $propertyName, array $propertyMetaData, array &$propertyData) {
-		$propertyValue = \F3\FLOW3\Reflection\ObjectAccess::getProperty($object, $propertyName, TRUE);
+		$propertyValue = \TYPO3\FLOW3\Reflection\ObjectAccess::getProperty($object, $propertyName, TRUE);
 
-		if ($propertyValue instanceof \F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface) {
+		if ($propertyValue instanceof \TYPO3\FLOW3\Persistence\Aspect\PersistenceMagicInterface) {
 			$propertyData[$propertyName] = array(
 				'type' => get_class($propertyValue),
 				'multivalue' => FALSE,
@@ -472,26 +472,26 @@ abstract class AbstractBackend implements \F3\FLOW3\Persistence\Generic\Backend\
 	 * @param string $propertyName The name of the property to check
 	 * @param array $propertyMetaData Property metadata
 	 * @return mixed The value of the property
-	 * @throws \F3\FLOW3\Persistence\Exception
+	 * @throws \TYPO3\FLOW3\Persistence\Exception
 	 * @api
 	 */
 	protected function checkPropertyValue($object, $propertyName, array $propertyMetaData) {
-		$propertyValue = \F3\FLOW3\Reflection\ObjectAccess::getProperty($object, $propertyName, TRUE);
+		$propertyValue = \TYPO3\FLOW3\Reflection\ObjectAccess::getProperty($object, $propertyName, TRUE);
 		$propertyType = $propertyMetaData['type'];
 		if ($propertyType === 'ArrayObject') {
-			throw new \F3\FLOW3\Persistence\Exception('ArrayObject properties are not supported - missing feature?!?', 1283524355);
+			throw new \TYPO3\FLOW3\Persistence\Exception('ArrayObject properties are not supported - missing feature?!?', 1283524355);
 		}
 
 		if (is_object($propertyValue)) {
 			if ($propertyType === 'object') {
-				if (!($propertyValue instanceof \F3\FLOW3\Persistence\Aspect\PersistenceMagicInterface)) {
-					throw new \F3\FLOW3\Persistence\Exception\IllegalObjectTypeException('Property of generic type object holds "' . get_class($propertyValue) . '", which is not persistable (no @entity or @valueobject), in ' . get_class($object) . '::' . $propertyName, 1283531761);
+				if (!($propertyValue instanceof \TYPO3\FLOW3\Persistence\Aspect\PersistenceMagicInterface)) {
+					throw new \TYPO3\FLOW3\Persistence\Exception\IllegalObjectTypeException('Property of generic type object holds "' . get_class($propertyValue) . '", which is not persistable (no @entity or @valueobject), in ' . get_class($object) . '::' . $propertyName, 1283531761);
 				}
 			} elseif(!($propertyValue instanceof $propertyType)) {
-				throw new \F3\FLOW3\Persistence\Generic\Exception\UnexpectedTypeException('Expected property of type ' . $propertyType . ', but got ' . get_class($propertyValue) . ' for ' . get_class($object) . '::' . $propertyName, 1244465558);
+				throw new \TYPO3\FLOW3\Persistence\Generic\Exception\UnexpectedTypeException('Expected property of type ' . $propertyType . ', but got ' . get_class($propertyValue) . ' for ' . get_class($object) . '::' . $propertyName, 1244465558);
 			}
 		} elseif ($propertyValue !== NULL && $propertyType !== $this->getType($propertyValue)) {
-			throw new \F3\FLOW3\Persistence\Generic\Exception\UnexpectedTypeException('Expected property of type ' . $propertyType . ', but got ' . gettype($propertyValue) . ' for ' . get_class($object) . '::' . $propertyName, 1244465559);
+			throw new \TYPO3\FLOW3\Persistence\Generic\Exception\UnexpectedTypeException('Expected property of type ' . $propertyType . ', but got ' . gettype($propertyValue) . ' for ' . get_class($object) . '::' . $propertyName, 1244465559);
 		}
 	}
 
@@ -526,9 +526,9 @@ abstract class AbstractBackend implements \F3\FLOW3\Persistence\Generic\Backend\
 					'value' => $this->processDateTime($value)
 				);
 			} elseif ($value instanceof \SplObjectStorage) {
-				throw new \F3\FLOW3\Persistence\Exception('SplObjectStorage instances in arrays are not supported - missing feature?!?', 1261048721);
+				throw new \TYPO3\FLOW3\Persistence\Exception('SplObjectStorage instances in arrays are not supported - missing feature?!?', 1261048721);
 			} elseif ($value instanceof \ArrayObject) {
-				throw new \F3\FLOW3\Persistence\Exception('ArrayObject instances in arrays are not supported - missing feature?!?', 1283524345);
+				throw new \TYPO3\FLOW3\Persistence\Exception('ArrayObject instances in arrays are not supported - missing feature?!?', 1283524345);
 			} elseif (is_object($value)) {
 				$values[] = array(
 					'type' => $this->getType($value),
@@ -594,10 +594,10 @@ abstract class AbstractBackend implements \F3\FLOW3\Persistence\Generic\Backend\
 
 				$object = $this->persistenceSession->getObjectByIdentifier($item['value']['identifier']);
 				if ($array === NULL || !$this->arrayContainsObject($array, $object)) {
-					if ($this->reflectionService->getClassSchema($item['type'])->getModelType() === \F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY
+					if ($this->reflectionService->getClassSchema($item['type'])->getModelType() === \TYPO3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY
 							&& $this->reflectionService->getClassSchema($item['type'])->isAggregateRoot() === FALSE) {
 						$this->removeEntity($this->persistenceSession->getObjectByIdentifier($item['value']['identifier']));
-					} elseif ($this->reflectionService->getClassSchema($item['type'])->getModelType() === \F3\FLOW3\Reflection\ClassSchema::MODELTYPE_VALUEOBJECT) {
+					} elseif ($this->reflectionService->getClassSchema($item['type'])->getModelType() === \TYPO3\FLOW3\Reflection\ClassSchema::MODELTYPE_VALUEOBJECT) {
 						$this->removeValueObject($this->persistenceSession->getObjectByIdentifier($item['value']['identifier']));
 					}
 				}
@@ -624,7 +624,7 @@ abstract class AbstractBackend implements \F3\FLOW3\Persistence\Generic\Backend\
 			if ($value instanceof $object
 					&& property_exists($value, 'FLOW3_Persistence_Identifier')
 					&& property_exists($object, 'FLOW3_Persistence_Identifier')
-					&& \F3\FLOW3\Reflection\ObjectAccess::getProperty($value, 'FLOW3_Persistence_Identifier', TRUE) === \F3\FLOW3\Reflection\ObjectAccess::getProperty($object, 'FLOW3_Persistence_Identifier', TRUE)) {
+					&& \TYPO3\FLOW3\Reflection\ObjectAccess::getProperty($value, 'FLOW3_Persistence_Identifier', TRUE) === \TYPO3\FLOW3\Reflection\ObjectAccess::getProperty($object, 'FLOW3_Persistence_Identifier', TRUE)) {
 				return TRUE;
 			}
 		}
@@ -662,9 +662,9 @@ abstract class AbstractBackend implements \F3\FLOW3\Persistence\Generic\Backend\
 					'value' => $this->processDateTime($object)
 				);
 			} elseif ($object instanceof \SplObjectStorage) {
-				throw new \F3\FLOW3\Persistence\Exception('SplObjectStorage instances in SplObjectStorage are not supported - missing feature?!?', 1283524360);
+				throw new \TYPO3\FLOW3\Persistence\Exception('SplObjectStorage instances in SplObjectStorage are not supported - missing feature?!?', 1283524360);
 			} elseif ($object instanceof \ArrayObject) {
-				throw new \F3\FLOW3\Persistence\Exception('ArrayObject instances in SplObjectStorage are not supported - missing feature?!?', 1283524350);
+				throw new \TYPO3\FLOW3\Persistence\Exception('ArrayObject instances in SplObjectStorage are not supported - missing feature?!?', 1283524350);
 			} else {
 				$values[] = array(
 					'type' => $this->getType($object),
@@ -689,17 +689,17 @@ abstract class AbstractBackend implements \F3\FLOW3\Persistence\Generic\Backend\
 	protected function removeDeletedSplObjectStorageEntries(\SplObjectStorage $splObjectStorage = NULL, array $previousObjectStorage) {
 			// remove objects detached since reconstitution
 		foreach ($previousObjectStorage as $item) {
-			if ($splObjectStorage instanceof \F3\FLOW3\Persistence\Generic\LazySplObjectStorage && !$this->persistenceSession->hasIdentifier($item['value']['identifier'])) {
+			if ($splObjectStorage instanceof \TYPO3\FLOW3\Persistence\Generic\LazySplObjectStorage && !$this->persistenceSession->hasIdentifier($item['value']['identifier'])) {
 					// ingore this identifier, assume it was blocked by security query rewriting upon activation
 				continue;
 			}
 
 			$object = $this->persistenceSession->getObjectByIdentifier($item['value']['identifier']);
 			if ($splObjectStorage === NULL || !$splObjectStorage->contains($object)) {
-				if ($this->reflectionService->getClassSchema($object)->getModelType() === \F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY
+				if ($this->reflectionService->getClassSchema($object)->getModelType() === \TYPO3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY
 						&& $this->reflectionService->getClassSchema($object)->isAggregateRoot() === FALSE) {
 					$this->removeEntity($object);
-				} elseif ($this->reflectionService->getClassSchema($object)->getModelType() === \F3\FLOW3\Reflection\ClassSchema::MODELTYPE_VALUEOBJECT) {
+				} elseif ($this->reflectionService->getClassSchema($object)->getModelType() === \TYPO3\FLOW3\Reflection\ClassSchema::MODELTYPE_VALUEOBJECT) {
 					$this->removeValueObject($object);
 				}
 			}

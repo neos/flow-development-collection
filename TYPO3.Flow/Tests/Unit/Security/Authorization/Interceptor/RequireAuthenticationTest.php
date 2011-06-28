@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\Security\Authorization\Interceptor;
+namespace TYPO3\FLOW3\Tests\Unit\Security\Authorization\Interceptor;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,7 +26,7 @@ namespace F3\FLOW3\Tests\Unit\Security\Authorization\Interceptor;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class RequireAuthenticationTest extends \F3\FLOW3\Tests\UnitTestCase {
+class RequireAuthenticationTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
@@ -34,11 +34,11 @@ class RequireAuthenticationTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function invokeCallsTheAuthenticationManagerToPerformAuthentication() {
-		$authenticationManager = $this->getMock('F3\FLOW3\Security\Authentication\AuthenticationManagerInterface');
+		$authenticationManager = $this->getMock('TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface');
 
 		$authenticationManager->expects($this->once())->method('authenticate');
 
-		$interceptor = new \F3\FLOW3\Security\Authorization\Interceptor\RequireAuthentication($authenticationManager);
+		$interceptor = new \TYPO3\FLOW3\Security\Authorization\Interceptor\RequireAuthentication($authenticationManager);
 		$interceptor->invoke();
 	}
 }

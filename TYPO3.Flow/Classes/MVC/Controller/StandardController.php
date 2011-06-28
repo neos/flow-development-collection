@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\MVC\Controller;
+namespace TYPO3\FLOW3\MVC\Controller;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -28,12 +28,12 @@ namespace F3\FLOW3\MVC\Controller;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope singleton
  */
-class StandardController extends \F3\FLOW3\MVC\Controller\ActionController {
+class StandardController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 
 	/**
 	 * Overrides the standard resolveView method
 	 *
-	 * @return \F3\FLOW3\MVC\View\ViewInterface $view The view
+	 * @return \TYPO3\FLOW3\MVC\View\ViewInterface $view The view
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function resolveView() {
@@ -51,7 +51,7 @@ class StandardController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 */
 	public function indexAction() {
 
-		if (!$this->request instanceof \F3\FLOW3\MVC\Web\Request) {
+		if (!$this->request instanceof \TYPO3\FLOW3\MVC\Web\Request) {
 			return
 				"\nWelcome to FLOW3!\n\n" .
 				"This is the default view of the FLOW3 MVC object. You see this message because no \n" .

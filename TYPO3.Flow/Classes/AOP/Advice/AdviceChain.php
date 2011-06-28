@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\AOP\Advice;
+namespace TYPO3\FLOW3\AOP\Advice;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -31,7 +31,7 @@ namespace F3\FLOW3\AOP\Advice;
 class AdviceChain {
 
 	/**
-	 * An array of \F3\FLOW3\AOP\Advice objects which form the advice chain
+	 * An array of \TYPO3\FLOW3\AOP\Advice objects which form the advice chain
 	 * @var array
 	 */
 	protected $advices;
@@ -45,7 +45,7 @@ class AdviceChain {
 	/**
 	 * Initializes the advice chain
 	 *
-	 * @param array $advices An array of \F3\FLOW3\AOP\Advice\AdviceInterface compatible objects which form the chain of advices
+	 * @param array $advices An array of \TYPO3\FLOW3\AOP\Advice\AdviceInterface compatible objects which form the chain of advices
 	 * @param object $proxy A reference to the proxy object using the advice chain
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
@@ -61,11 +61,11 @@ class AdviceChain {
 	 * left in the chain, the proxy classes' method invokeJoinpoint() will finally
 	 * be called.
 	 *
-	 * @param  \F3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point (ie. the context)
+	 * @param  \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point (ie. the context)
 	 * @return mixed Result of the advice or the original method of the target class
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function proceed(\F3\FLOW3\AOP\JoinPointInterface &$joinPoint) {
+	public function proceed(\TYPO3\FLOW3\AOP\JoinPointInterface &$joinPoint) {
 		$this->adviceIndex++;
 		if ($this->adviceIndex < count($this->advices)) {
 			$result = $this->advices[$this->adviceIndex]->invoke($joinPoint);

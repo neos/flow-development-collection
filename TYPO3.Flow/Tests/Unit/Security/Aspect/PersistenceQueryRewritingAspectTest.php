@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\Security\Aspect;
+namespace TYPO3\FLOW3\Tests\Unit\Security\Aspect;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -25,9 +25,9 @@ namespace F3\FLOW3\Tests\Unit\Security\Aspect;
  * Testcase for the persistence query rewriting aspect
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
- * @covers F3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect
+ * @covers TYPO3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect
  */
-class PersistenceQueryRewritingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
+class PersistenceQueryRewritingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
@@ -36,29 +36,29 @@ class PersistenceQueryRewritingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function rewriteQomQueryAddsTheConstraintsGivenByThePolicyServiceCorrectlyToTheQueryObject() {
 		$entityType = 'MyClass';
 
-		$mockQuery = $this->getMock('F3\FLOW3\Persistence\QueryInterface');
+		$mockQuery = $this->getMock('TYPO3\FLOW3\Persistence\QueryInterface');
 		$mockQuery->expects($this->atLeastOnce())->method('getConstraint')->will($this->returnValue('existingConstraint'));
 		$mockQuery->expects($this->once())->method('getType')->will($this->returnValue($entityType));
 		$mockQuery->expects($this->once())->method('logicalNot')->with('newConstraints')->will($this->returnValue('newConstraintsNegated'));
 		$mockQuery->expects($this->once())->method('logicalAnd')->with('existingConstraint', 'newConstraintsNegated')->will($this->returnValue('mergedResultConstraints'));
 		$mockQuery->expects($this->once())->method('matching')->with('mergedResultConstraints');
 
-		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
 		$mockJoinPoint->expects($this->once())->method('getProxy')->will($this->returnValue($mockQuery));
 
 		$roles = array('role1', 'role2');
 
-		$mockSecurityContext = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
+		$mockSecurityContext = $this->getMock('TYPO3\FLOW3\Security\Context', array(), array(), '', FALSE);
 		$mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue($roles));
 
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
-		$mockObjectManager->expects($this->once())->method('get')->with('F3\FLOW3\Security\Context')->will($this->returnValue($mockSecurityContext));
+		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
+		$mockObjectManager->expects($this->once())->method('get')->with('TYPO3\FLOW3\Security\Context')->will($this->returnValue($mockSecurityContext));
 
-		$mockPolicyService = $this->getMock('F3\FLOW3\Security\Policy\PolicyService', array(), array(), '', FALSE);
+		$mockPolicyService = $this->getMock('TYPO3\FLOW3\Security\Policy\PolicyService', array(), array(), '', FALSE);
 		$mockPolicyService->expects($this->once())->method('getResourcesConstraintsForEntityTypeAndRoles')->with($entityType, $roles)->will($this->returnValue(array('parsedConstraints')));
 		$mockPolicyService->expects($this->once())->method('hasPolicyEntryForEntityType')->with($entityType)->will($this->returnValue(TRUE));
 
-		$rewritingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('getQomConstraintForConstraintDefinitions'), array(), '', FALSE);
+		$rewritingAspect = $this->getAccessibleMock('TYPO3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('getQomConstraintForConstraintDefinitions'), array(), '', FALSE);
 		$rewritingAspect->expects($this->once())->method('getQomConstraintForConstraintDefinitions')->with(array('parsedConstraints'), $mockQuery)->will($this->returnValue('newConstraints'));
 		$rewritingAspect->injectPolicyService($mockPolicyService);
 		$rewritingAspect->injectObjectManager($mockObjectManager);
@@ -74,29 +74,29 @@ class PersistenceQueryRewritingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function rewriteQomQueryUsesTheConstraintsGivenByThePolicyServiceInTheQueryObject() {
 		$entityType = 'MyClass';
 
-		$mockQuery = $this->getMock('F3\FLOW3\Persistence\QueryInterface');
+		$mockQuery = $this->getMock('TYPO3\FLOW3\Persistence\QueryInterface');
 		$mockQuery->expects($this->atLeastOnce())->method('getConstraint')->will($this->returnValue(NULL));
 		$mockQuery->expects($this->once())->method('getType')->will($this->returnValue($entityType));
 		$mockQuery->expects($this->once())->method('logicalNot')->with('newConstraints')->will($this->returnValue('newConstraintsNegated'));
 		$mockQuery->expects($this->never())->method('logicalAnd');
 		$mockQuery->expects($this->once())->method('matching')->with('newConstraintsNegated');
 
-		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface');
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface');
 		$mockJoinPoint->expects($this->once())->method('getProxy')->will($this->returnValue($mockQuery));
 
 		$roles = array('role1', 'role2');
 
-		$mockSecurityContext = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
+		$mockSecurityContext = $this->getMock('TYPO3\FLOW3\Security\Context', array(), array(), '', FALSE);
 		$mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue($roles));
 
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->once())->method('get')->with('F3\FLOW3\Security\Context')->will($this->returnValue($mockSecurityContext));
+		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
+		$mockObjectManager->expects($this->once())->method('get')->with('TYPO3\FLOW3\Security\Context')->will($this->returnValue($mockSecurityContext));
 
-		$mockPolicyService = $this->getMock('F3\FLOW3\Security\Policy\PolicyService', array(), array(), '', FALSE);
+		$mockPolicyService = $this->getMock('TYPO3\FLOW3\Security\Policy\PolicyService', array(), array(), '', FALSE);
 		$mockPolicyService->expects($this->once())->method('getResourcesConstraintsForEntityTypeAndRoles')->with($entityType, $roles)->will($this->returnValue(array('parsedConstraints')));
 		$mockPolicyService->expects($this->once())->method('hasPolicyEntryForEntityType')->with($entityType)->will($this->returnValue(TRUE));
 
-		$rewritingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('getQomConstraintForConstraintDefinitions'), array(), '', FALSE);
+		$rewritingAspect = $this->getAccessibleMock('TYPO3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('getQomConstraintForConstraintDefinitions'), array(), '', FALSE);
 		$rewritingAspect->expects($this->once())->method('getQomConstraintForConstraintDefinitions')->with(array('parsedConstraints'), $mockQuery)->will($this->returnValue('newConstraints'));
 		$rewritingAspect->injectPolicyService($mockPolicyService);
 		$rewritingAspect->injectObjectManager($mockObjectManager);
@@ -111,26 +111,26 @@ class PersistenceQueryRewritingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function rewriteQomQueryDoesNotChangeTheOriginalQueryConstraintsIfThereIsAPolicyEntryButNoAdditionalConstraintsAreNeededInTheCurrentSituation() {
 		$entityType = 'MyClass';
 
-		$mockQuery = $this->getMock('F3\FLOW3\Persistence\QueryInterface');
+		$mockQuery = $this->getMock('TYPO3\FLOW3\Persistence\QueryInterface');
 		$mockQuery->expects($this->once())->method('getType')->will($this->returnValue($entityType));
 		$mockQuery->expects($this->never())->method('matching');
 
-		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface');
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface');
 		$mockJoinPoint->expects($this->once())->method('getProxy')->will($this->returnValue($mockQuery));
 
 		$roles = array('role1', 'role2');
 
-		$mockSecurityContext = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
+		$mockSecurityContext = $this->getMock('TYPO3\FLOW3\Security\Context', array(), array(), '', FALSE);
 		$mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue($roles));
 
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
-		$mockObjectManager->expects($this->once())->method('get')->with('F3\FLOW3\Security\Context')->will($this->returnValue($mockSecurityContext));
+		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
+		$mockObjectManager->expects($this->once())->method('get')->with('TYPO3\FLOW3\Security\Context')->will($this->returnValue($mockSecurityContext));
 
-		$mockPolicyService = $this->getMock('F3\FLOW3\Security\Policy\PolicyService', array(), array(), '', FALSE);
+		$mockPolicyService = $this->getMock('TYPO3\FLOW3\Security\Policy\PolicyService', array(), array(), '', FALSE);
 		$mockPolicyService->expects($this->once())->method('getResourcesConstraintsForEntityTypeAndRoles')->with($entityType, $roles)->will($this->returnValue(array('parsedConstraints')));
 		$mockPolicyService->expects($this->once())->method('hasPolicyEntryForEntityType')->with($entityType)->will($this->returnValue(TRUE));
 
-		$rewritingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('getQomConstraintForConstraintDefinitions'), array(), '', FALSE);
+		$rewritingAspect = $this->getAccessibleMock('TYPO3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('getQomConstraintForConstraintDefinitions'), array(), '', FALSE);
 		$rewritingAspect->expects($this->once())->method('getQomConstraintForConstraintDefinitions')->with(array('parsedConstraints'), $mockQuery)->will($this->returnValue(NULL));
 		$rewritingAspect->injectPolicyService($mockPolicyService);
 		$rewritingAspect->injectObjectManager($mockObjectManager);
@@ -143,22 +143,22 @@ class PersistenceQueryRewritingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function rewriteQomQueryFetchesTheSecurityContextOnTheFirstCallToBeSureTheSessionHasAlreadyBeenInitializedWhenTheContextIsBuilt() {
-		$mockQuery = $this->getMock('F3\FLOW3\Persistence\QueryInterface');
+		$mockQuery = $this->getMock('TYPO3\FLOW3\Persistence\QueryInterface');
 
-		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface');
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface');
 		$mockJoinPoint->expects($this->once())->method('getProxy')->will($this->returnValue($mockQuery));
 
-		$mockSecurityContext = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
+		$mockSecurityContext = $this->getMock('TYPO3\FLOW3\Security\Context', array(), array(), '', FALSE);
 		$mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue(array()));
 
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->once())->method('get')->with('F3\FLOW3\Security\Context')->will($this->returnValue($mockSecurityContext));
+		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
+		$mockObjectManager->expects($this->once())->method('get')->with('TYPO3\FLOW3\Security\Context')->will($this->returnValue($mockSecurityContext));
 		$mockObjectManager->expects($this->once())->method('isSessionInitialized')->will($this->returnValue(TRUE));
 
-		$mockPolicyService = $this->getMock('F3\FLOW3\Security\Policy\PolicyService', array(), array(), '', FALSE);
+		$mockPolicyService = $this->getMock('TYPO3\FLOW3\Security\Policy\PolicyService', array(), array(), '', FALSE);
 		$mockPolicyService->expects($this->once())->method('hasPolicyEntryForEntityType')->will($this->returnValue(FALSE));
 
-		$rewritingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('dummy'), array(), '', FALSE);
+		$rewritingAspect = $this->getAccessibleMock('TYPO3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('dummy'), array(), '', FALSE);
 		$rewritingAspect->injectPolicyService($mockPolicyService);
 		$rewritingAspect->injectObjectManager($mockObjectManager);
 
@@ -169,18 +169,18 @@ class PersistenceQueryRewritingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function rewriteQomQueryDoesNotRewriteQueryIfSecurityContextIsNotInitialized() {
-		$mockQuery = $this->getMock('F3\FLOW3\Persistence\QueryInterface');
+		$mockQuery = $this->getMock('TYPO3\FLOW3\Persistence\QueryInterface');
 
-		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface');
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface');
 
-		$mockSecurityContext = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
+		$mockSecurityContext = $this->getMock('TYPO3\FLOW3\Security\Context', array(), array(), '', FALSE);
 		$mockSecurityContext->expects($this->once())->method('isInitialized')->will($this->returnValue(FALSE));
 
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->once())->method('get')->with('F3\FLOW3\Security\Context')->will($this->returnValue($mockSecurityContext));
+		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
+		$mockObjectManager->expects($this->once())->method('get')->with('TYPO3\FLOW3\Security\Context')->will($this->returnValue($mockSecurityContext));
 		$mockObjectManager->expects($this->once())->method('isSessionInitialized')->will($this->returnValue(TRUE));
 
-		$rewritingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('dummy'), array(), '', FALSE);
+		$rewritingAspect = $this->getAccessibleMock('TYPO3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('dummy'), array(), '', FALSE);
 		$rewritingAspect->injectObjectManager($mockObjectManager);
 
 		$rewritingAspect->rewriteQomQuery($mockJoinPoint);
@@ -193,22 +193,22 @@ class PersistenceQueryRewritingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function anQomQueryIsNotRewrittenIfThereIsNoPolicyEntryForItsEntityType() {
 		$entityType = 'MyClass';
 
-		$mockSecurityContext = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
+		$mockSecurityContext = $this->getMock('TYPO3\FLOW3\Security\Context', array(), array(), '', FALSE);
         $mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue(array()));
 
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->once())->method('get')->with('F3\FLOW3\Security\Context')->will($this->returnValue($mockSecurityContext));
+		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
+		$mockObjectManager->expects($this->once())->method('get')->with('TYPO3\FLOW3\Security\Context')->will($this->returnValue($mockSecurityContext));
 
-		$mockPolicyService = $this->getMock('F3\FLOW3\Security\Policy\PolicyService', array(), array(), '', FALSE);
+		$mockPolicyService = $this->getMock('TYPO3\FLOW3\Security\Policy\PolicyService', array(), array(), '', FALSE);
 		$mockPolicyService->expects($this->once())->method('hasPolicyEntryForEntityType')->with($entityType)->will($this->returnValue(FALSE));
 
-		$mockQuery = $this->getMock('F3\FLOW3\Persistence\QueryInterface');
+		$mockQuery = $this->getMock('TYPO3\FLOW3\Persistence\QueryInterface');
 		$mockQuery->expects($this->once())->method('getType')->will($this->returnValue($entityType));
 
-		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
 		$mockJoinPoint->expects($this->once())->method('getProxy')->will($this->returnValue($mockQuery));
 
-		$rewritingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('dummy'), array(), '', FALSE);
+		$rewritingAspect = $this->getAccessibleMock('TYPO3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('dummy'), array(), '', FALSE);
         $rewritingAspect->injectObjectManager($mockObjectManager);
 		$rewritingAspect->injectPolicyService($mockPolicyService);
 		$rewritingAspect->rewriteQomQuery($mockJoinPoint);
@@ -242,7 +242,7 @@ class PersistenceQueryRewritingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 			)
 		);
 
-		$mockQuery = $this->getMock('F3\FLOW3\Persistence\QueryInterface');
+		$mockQuery = $this->getMock('TYPO3\FLOW3\Persistence\QueryInterface');
 		$mockQuery->expects($this->at(0))->method('logicalAnd')->with('firstConstraintResult', 'thirdConstraintResult')->will($this->returnValue('firstAndThird'));
 		$mockQuery->expects($this->at(1))->method('logicalAnd')->with('firstAndThird', 'fourthConstraintResult')->will($this->returnValue('firstAndThirdAndFourth'));
 		$mockQuery->expects($this->at(2))->method('logicalOr')->with('firstAndThirdAndFourth', 'secondConstraintResult')->will($this->returnValue('firstAndThirdAndFourthOrSecond'));
@@ -251,7 +251,7 @@ class PersistenceQueryRewritingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockQuery->expects($this->at(5))->method('logicalNot')->with('sixthConstraintResult')->will($this->returnValue('notSixth'));
 		$mockQuery->expects($this->at(6))->method('logicalOr')->with('firstAndThirdAndFourthOrSecondAndNotFifth', 'notSixth')->will($this->returnValue('firstAndThirdAndFourthOrSecondAndNotFifthOrNotSixth'));
 
-		$rewritingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('getQomConstraintForSingleConstraintDefinition'), array(), '', FALSE);
+		$rewritingAspect = $this->getAccessibleMock('TYPO3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('getQomConstraintForSingleConstraintDefinition'), array(), '', FALSE);
 		$rewritingAspect->expects($this->at(0))->method('getQomConstraintForSingleConstraintDefinition')->with(array('firstConstraint'), $mockQuery)->will($this->returnValue('firstConstraintResult'));
 		$rewritingAspect->expects($this->at(1))->method('getQomConstraintForSingleConstraintDefinition')->with(array('thirdConstraint'), $mockQuery)->will($this->returnValue('thirdConstraintResult'));
 		$rewritingAspect->expects($this->at(2))->method('getQomConstraintForSingleConstraintDefinition')->with(array('fourthConstraint'), $mockQuery)->will($this->returnValue('fourthConstraintResult'));
@@ -267,10 +267,10 @@ class PersistenceQueryRewritingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @expectedException \F3\FLOW3\Security\Exception\InvalidQueryRewritingConstraintException
+	 * @expectedException \TYPO3\FLOW3\Security\Exception\InvalidQueryRewritingConstraintException
 	 */
 	public function getQomConstraintForSingleConstraintDefinitionThrowsAnExceptionIfAConstraintHasNoReferenceToTheCurrentObjectIndicatedByTheThisKeyword() {
-		$mockQuery = $this->getMock('F3\FLOW3\Persistence\QueryInterface');
+		$mockQuery = $this->getMock('TYPO3\FLOW3\Persistence\QueryInterface');
 
 		$constraint = array(
 			'operator' => '==',
@@ -278,7 +278,7 @@ class PersistenceQueryRewritingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 			'rightValue' =>  'current.some.other.object'
 		);
 
-		$rewritingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('dummy'), array(), '', FALSE);
+		$rewritingAspect = $this->getAccessibleMock('TYPO3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('dummy'), array(), '', FALSE);
 		$rewritingAspect->_call('getQomConstraintForSingleConstraintDefinition', $constraint, $mockQuery);
 	}
 
@@ -287,7 +287,7 @@ class PersistenceQueryRewritingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getQomConstraintFoSingleConstraintDefinitionBuildsTheCorrectConstraintObjectForAnEqualityOperatorComparingASimpleValue() {
-		$mockQuery = $this->getMock('F3\FLOW3\Persistence\QueryInterface');
+		$mockQuery = $this->getMock('TYPO3\FLOW3\Persistence\QueryInterface');
 		$mockQuery->expects($this->once())->method('equals')->with('party', 'Andi')->will($this->returnValue('resultQomConstraint'));
 
 		$constraint = array(
@@ -296,7 +296,7 @@ class PersistenceQueryRewritingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 			'rightValue' =>  'this.party'
 		);
 
-		$rewritingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('getValueForGlobalObject'), array(), '', FALSE);
+		$rewritingAspect = $this->getAccessibleMock('TYPO3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('getValueForGlobalObject'), array(), '', FALSE);
 		$resultConstraint = $rewritingAspect->_call('getQomConstraintForSingleConstraintDefinition', $constraint, $mockQuery);
 
 		$this->assertEquals('resultQomConstraint', $resultConstraint);
@@ -307,7 +307,7 @@ class PersistenceQueryRewritingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getQomConstraintForSingleConstraintDefinitionBuildsTheCorrectConstraintObjectForAnEqualityOperatorAccessingAGlobalObject() {
-		$mockQuery = $this->getMock('F3\FLOW3\Persistence\QueryInterface');
+		$mockQuery = $this->getMock('TYPO3\FLOW3\Persistence\QueryInterface');
 		$mockQuery->expects($this->once())->method('equals')->with('party', 'globalParty')->will($this->returnValue('resultQomConstraint'));
 
 		$constraint = array(
@@ -316,7 +316,7 @@ class PersistenceQueryRewritingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 			'rightValue' =>  'this.party'
 		);
 
-		$rewritingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('getValueForOperand'), array(), '', FALSE);
+		$rewritingAspect = $this->getAccessibleMock('TYPO3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('getValueForOperand'), array(), '', FALSE);
 		$rewritingAspect->expects($this->once())->method('getValueForOperand')->with('current.party')->will($this->returnValue('globalParty'));
 		$resultConstraint = $rewritingAspect->_call('getQomConstraintForSingleConstraintDefinition', $constraint, $mockQuery);
 
@@ -328,7 +328,7 @@ class PersistenceQueryRewritingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getQomConstraintForSingleConstraintDefinitionBuildsTheCorrectConstraintObjectForTheInOperator() {
-		$mockQuery = $this->getMock('F3\FLOW3\Persistence\QueryInterface');
+		$mockQuery = $this->getMock('TYPO3\FLOW3\Persistence\QueryInterface');
 		$mockQuery->expects($this->once())->method('in')->with('party', 'globalParty')->will($this->returnValue('resultQomConstraint'));
 
 		$constraint = array(
@@ -337,7 +337,7 @@ class PersistenceQueryRewritingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 			'rightValue' =>  'this.party'
 		);
 
-		$rewritingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('getValueForOperand'), array(), '', FALSE);
+		$rewritingAspect = $this->getAccessibleMock('TYPO3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('getValueForOperand'), array(), '', FALSE);
 		$rewritingAspect->expects($this->once())->method('getValueForOperand')->with('current.party')->will($this->returnValue('globalParty'));
 		$resultConstraint = $rewritingAspect->_call('getQomConstraintForSingleConstraintDefinition', $constraint, $mockQuery);
 
@@ -349,7 +349,7 @@ class PersistenceQueryRewritingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getQomConstraintForSingleConstraintDefinitionBuildsTheCorrectConstraintObjectForTheContainsOperator() {
-		$mockQuery = $this->getMock('F3\FLOW3\Persistence\QueryInterface');
+		$mockQuery = $this->getMock('TYPO3\FLOW3\Persistence\QueryInterface');
 		$mockQuery->expects($this->once())->method('contains')->with('party', 'globalParty')->will($this->returnValue('resultQomConstraint'));
 
 		$constraint = array(
@@ -358,7 +358,7 @@ class PersistenceQueryRewritingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 			'rightValue' =>  'this.party'
 		);
 
-		$rewritingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('getValueForOperand'), array(), '', FALSE);
+		$rewritingAspect = $this->getAccessibleMock('TYPO3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('getValueForOperand'), array(), '', FALSE);
 		$rewritingAspect->expects($this->once())->method('getValueForOperand')->with('current.party')->will($this->returnValue('globalParty'));
 		$resultConstraint = $rewritingAspect->_call('getQomConstraintForSingleConstraintDefinition', $constraint, $mockQuery);
 
@@ -370,7 +370,7 @@ class PersistenceQueryRewritingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getQomConstraintForSingleConstraintDefinitionBuildsTheCorrectConstraintObjectForTheMatchesOperator() {
-		$mockQuery = $this->getMock('F3\FLOW3\Persistence\QueryInterface');
+		$mockQuery = $this->getMock('TYPO3\FLOW3\Persistence\QueryInterface');
 		$mockQuery->expects($this->at(0))->method('contains')->with('accounts', 1)->will($this->returnValue('constraint1'));
 		$mockQuery->expects($this->at(1))->method('contains')->with('accounts', 'two')->will($this->returnValue('constraint2'));
 		$mockQuery->expects($this->at(2))->method('logicalAnd')->with('constraint2', 'constraint1')->will($this->returnValue('compositeConstraint1'));
@@ -383,7 +383,7 @@ class PersistenceQueryRewritingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 			'rightValue' =>  'this.accounts'
 		);
 
-		$rewritingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('getValueForOperand'), array(), '', FALSE);
+		$rewritingAspect = $this->getAccessibleMock('TYPO3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('getValueForOperand'), array(), '', FALSE);
 		$rewritingAspect->expects($this->once())->method('getValueForOperand')->with(array(1, '"two"', 3))->will($this->returnValue(array(1, 'two', 3)));
 		$resultConstraint = $rewritingAspect->_call('getQomConstraintForSingleConstraintDefinition', $constraint, $mockQuery);
 
@@ -395,7 +395,7 @@ class PersistenceQueryRewritingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getValueForOperandReturnsTheCorrectValueForSimpleValues() {
-		$rewritingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('dummy'), array(), '', FALSE);
+		$rewritingAspect = $this->getAccessibleMock('TYPO3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('dummy'), array(), '', FALSE);
 
 		$operandValues = array(
 			'"Andi"' => 'Andi',
@@ -433,7 +433,7 @@ class PersistenceQueryRewritingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 			)
 		);
 
-		$rewritingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('dummy'), array(), '', FALSE);
+		$rewritingAspect = $this->getAccessibleMock('TYPO3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('dummy'), array(), '', FALSE);
 		$rewritingAspect->injectSettings($settings);
 
 		$operand = 'current.party.name';
@@ -448,7 +448,7 @@ class PersistenceQueryRewritingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getValueForOperandReturnsTheCorrectValueForArrayOperands() {
-		$rewritingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('dummy'), array(), '', FALSE);
+		$rewritingAspect = $this->getAccessibleMock('TYPO3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('dummy'), array(), '', FALSE);
 
 		$operand = array(1, '"Andi"', 3, '\'Andi\'');
 
@@ -465,31 +465,31 @@ class PersistenceQueryRewritingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function checkAccessAfterFetchingAnObjectByIdentifierChecksTheConstraintsGivenByThePolicyServiceForTheReturnedObject() {
 		$entityClassName = 'entityClass' . md5(uniqid(mt_rand(), TRUE));
-		eval('class ' . $entityClassName . ' implements \F3\FLOW3\Object\Proxy\ProxyInterface {
-			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
+		eval('class ' . $entityClassName . ' implements \TYPO3\FLOW3\Object\Proxy\ProxyInterface {
+			public function FLOW3_AOP_Proxy_invokeJoinPoint(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
 			public function __clone() {}
 		}');
 		$result = new $entityClassName();
 
-		$mockAdviceChain = $this->getMock('F3\FLOW3\AOP\Advice\AdviceChain', array(), array(), '', FALSE);
+		$mockAdviceChain = $this->getMock('TYPO3\FLOW3\AOP\Advice\AdviceChain', array(), array(), '', FALSE);
 		$mockAdviceChain->expects($this->any())->method('proceed')->will($this->returnValue($result));
 
-		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface');
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface');
 		$mockJoinPoint->expects($this->any())->method('getAdviceChain')->will($this->returnValue($mockAdviceChain));
 
 		$roles = array('role1', 'role2');
 
-		$mockSecurityContext = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
+		$mockSecurityContext = $this->getMock('TYPO3\FLOW3\Security\Context', array(), array(), '', FALSE);
 		$mockSecurityContext->expects($this->any())->method('getRoles')->will($this->returnValue($roles));
 
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->once())->method('get')->with('F3\FLOW3\Security\Context')->will($this->returnValue($mockSecurityContext));
+		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
+		$mockObjectManager->expects($this->once())->method('get')->with('TYPO3\FLOW3\Security\Context')->will($this->returnValue($mockSecurityContext));
 
-		$mockPolicyService = $this->getMock('F3\FLOW3\Security\Policy\PolicyService', array(), array(), '', FALSE);
+		$mockPolicyService = $this->getMock('TYPO3\FLOW3\Security\Policy\PolicyService', array(), array(), '', FALSE);
 		$mockPolicyService->expects($this->any())->method('getResourcesConstraintsForEntityTypeAndRoles')->with($entityClassName, $roles)->will($this->returnValue(array('parsedConstraints')));
 		$mockPolicyService->expects($this->any())->method('hasPolicyEntryForEntityType')->with($entityClassName)->will($this->returnValue(TRUE));
 
-		$rewritingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('checkConstraintDefinitionsOnResultObject'), array(), '', FALSE);
+		$rewritingAspect = $this->getAccessibleMock('TYPO3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('checkConstraintDefinitionsOnResultObject'), array(), '', FALSE);
 		$rewritingAspect->expects($this->at(0))->method('checkConstraintDefinitionsOnResultObject')->with(array('parsedConstraints'), $result)->will($this->returnValue(TRUE));
 		$rewritingAspect->expects($this->at(1))->method('checkConstraintDefinitionsOnResultObject')->with(array('parsedConstraints'), $result)->will($this->returnValue(FALSE));
 		$rewritingAspect->injectPolicyService($mockPolicyService);
@@ -504,26 +504,26 @@ class PersistenceQueryRewritingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function checkAccessAfterFetchingAnObjectByIdentifierFetchesTheSecurityContextOnTheFirstCallToBeSureTheSessionHasAlreadyBeenInitializedWhenTheContextIsBuilt() {
-		$mockQuery = $this->getMock('F3\FLOW3\Persistence\QueryInterface');
+		$mockQuery = $this->getMock('TYPO3\FLOW3\Persistence\QueryInterface');
 		$mockQuery->expects($this->any())->method('getType')->will($this->returnValue('MyClass'));
 
-		$mockAdviceChain = $this->getMock('F3\FLOW3\AOP\Advice\AdviceChain', array(), array(), '', FALSE);
+		$mockAdviceChain = $this->getMock('TYPO3\FLOW3\AOP\Advice\AdviceChain', array(), array(), '', FALSE);
 		$mockAdviceChain->expects($this->any())->method('proceed')->will($this->returnValue(NULL));
 
-		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface');
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface');
 		$mockJoinPoint->expects($this->any())->method('getAdviceChain')->will($this->returnValue($mockAdviceChain));
 
-		$mockSecurityContext = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
+		$mockSecurityContext = $this->getMock('TYPO3\FLOW3\Security\Context', array(), array(), '', FALSE);
 		$mockSecurityContext->expects($this->once())->method('getRoles')->will($this->returnValue(array()));
 
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->once())->method('get')->with('F3\FLOW3\Security\Context')->will($this->returnValue($mockSecurityContext));
+		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
+		$mockObjectManager->expects($this->once())->method('get')->with('TYPO3\FLOW3\Security\Context')->will($this->returnValue($mockSecurityContext));
 		$mockObjectManager->expects($this->once())->method('isSessionInitialized')->will($this->returnValue(TRUE));
 
-		$mockPolicyService = $this->getMock('F3\FLOW3\Security\Policy\PolicyService', array(), array(), '', FALSE);
+		$mockPolicyService = $this->getMock('TYPO3\FLOW3\Security\Policy\PolicyService', array(), array(), '', FALSE);
 		$mockPolicyService->expects($this->once())->method('hasPolicyEntryForEntityType')->will($this->returnValue(FALSE));
 
-		$rewritingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('dummy'), array(), '', FALSE);
+		$rewritingAspect = $this->getAccessibleMock('TYPO3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('dummy'), array(), '', FALSE);
 		$rewritingAspect->injectPolicyService($mockPolicyService);
 		$rewritingAspect->injectObjectManager($mockObjectManager);
 
@@ -535,23 +535,23 @@ class PersistenceQueryRewritingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function checkAccessAfterFetchingAnObjectByIdentifierReturnsObjectIfSecurityContextIsNotInitialized() {
-		$mockQuery = $this->getMock('F3\FLOW3\Persistence\QueryInterface');
+		$mockQuery = $this->getMock('TYPO3\FLOW3\Persistence\QueryInterface');
 		$mockQuery->expects($this->any())->method('getType')->will($this->returnValue('MyClass'));
 
-		$mockAdviceChain = $this->getMock('F3\FLOW3\AOP\Advice\AdviceChain', array(), array(), '', FALSE);
+		$mockAdviceChain = $this->getMock('TYPO3\FLOW3\AOP\Advice\AdviceChain', array(), array(), '', FALSE);
 		$mockAdviceChain->expects($this->any())->method('proceed')->will($this->returnValue(NULL));
 
-		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface');
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface');
 		$mockJoinPoint->expects($this->any())->method('getAdviceChain')->will($this->returnValue($mockAdviceChain));
 
-		$mockSecurityContext = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
+		$mockSecurityContext = $this->getMock('TYPO3\FLOW3\Security\Context', array(), array(), '', FALSE);
 		$mockSecurityContext->expects($this->once())->method('isInitialized')->will($this->returnValue(FALSE));
 
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->once())->method('get')->with('F3\FLOW3\Security\Context')->will($this->returnValue($mockSecurityContext));
+		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
+		$mockObjectManager->expects($this->once())->method('get')->with('TYPO3\FLOW3\Security\Context')->will($this->returnValue($mockSecurityContext));
 		$mockObjectManager->expects($this->once())->method('isSessionInitialized')->will($this->returnValue(TRUE));
 
-		$rewritingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('dummy'), array(), '', FALSE);
+		$rewritingAspect = $this->getAccessibleMock('TYPO3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('dummy'), array(), '', FALSE);
 		$rewritingAspect->injectObjectManager($mockObjectManager);
 
 		$rewritingAspect->checkAccessAfterFetchingAnObjectByIdentifier($mockJoinPoint);
@@ -585,7 +585,7 @@ class PersistenceQueryRewritingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 			)
 		);
 
-		$rewritingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('checkSingleConstraintDefinitionOnResultObject'), array(), '', FALSE);
+		$rewritingAspect = $this->getAccessibleMock('TYPO3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('checkSingleConstraintDefinitionOnResultObject'), array(), '', FALSE);
 		$rewritingAspect->expects($this->at(0))->method('checkSingleConstraintDefinitionOnResultObject')->with(array('firstConstraint'), array())->will($this->returnValue(FALSE));
 		$rewritingAspect->expects($this->at(1))->method('checkSingleConstraintDefinitionOnResultObject')->with(array('thirdConstraint'), array())->will($this->returnValue(FALSE));
 		$rewritingAspect->expects($this->at(2))->method('checkSingleConstraintDefinitionOnResultObject')->with(array('fourthConstraint'), array())->will($this->returnValue(TRUE));
@@ -601,7 +601,7 @@ class PersistenceQueryRewritingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function checkSingleConstraintDefinitionOnResultObjectCallsGetObjectValueByPathForAllExpressionsStartingWithThis() {
-		$rewritingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('getValueForOperand', 'getObjectValueByPath'), array(), '', FALSE);
+		$rewritingAspect = $this->getAccessibleMock('TYPO3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('getValueForOperand', 'getObjectValueByPath'), array(), '', FALSE);
 		$rewritingAspect->expects($this->at(1))->method('getObjectValueByPath')->with(NULL, 'accounts.title');
 		$rewritingAspect->expects($this->at(2))->method('getObjectValueByPath')->with(NULL, 'accounts.title');
 		$rewritingAspect->expects($this->at(4))->method('getObjectValueByPath')->with(NULL, 'accounts.title');
@@ -635,7 +635,7 @@ class PersistenceQueryRewritingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function checkSingleConstraintDefinitionOnResultObjectCallsGetValueForOperandForAllExpressionsNotStartingWithThis() {
-		$rewritingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('getValueForOperand', 'getObjectValueByPath'), array(), '', FALSE);
+		$rewritingAspect = $this->getAccessibleMock('TYPO3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('getValueForOperand', 'getObjectValueByPath'), array(), '', FALSE);
 		$rewritingAspect->expects($this->at(0))->method('getValueForOperand')->with('"blub"');
 		$rewritingAspect->expects($this->at(3))->method('getValueForOperand')->with('TRUE');
 		$rewritingAspect->expects($this->at(5))->method('getValueForOperand')->with('NULL');
@@ -666,10 +666,10 @@ class PersistenceQueryRewritingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @expectedException \F3\FLOW3\Security\Exception\InvalidQueryRewritingConstraintException
+	 * @expectedException \TYPO3\FLOW3\Security\Exception\InvalidQueryRewritingConstraintException
 	 */
 	public function checkSingleConstraintDefinitionOnResultObjectThrowsAnExceptionIfAConstraintHasNoReferenceToTheCurrentObjectIndicatedByTheThisKeyword() {
-		$rewritingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('dummy'), array(), '', FALSE);
+		$rewritingAspect = $this->getAccessibleMock('TYPO3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('dummy'), array(), '', FALSE);
 
 		$constraint = array(
 			'operator' => '==',
@@ -686,13 +686,13 @@ class PersistenceQueryRewritingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function checkSingleConstraintDefinitionOnResultObjectWorksForEqualityOperators() {
 		$entityClassName = 'entityClass' . md5(uniqid(mt_rand(), TRUE));
-		eval('class ' . $entityClassName . ' implements \F3\FLOW3\Object\Proxy\ProxyInterface {
-			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
+		eval('class ' . $entityClassName . ' implements \TYPO3\FLOW3\Object\Proxy\ProxyInterface {
+			public function FLOW3_AOP_Proxy_invokeJoinPoint(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
 			public function __clone() {}
 		}');
 		$mockEntity = $this->getMock($entityClassName, array(), array(), '', FALSE);
 
-		$rewritingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('getValueForOperand', 'getObjectValueByPath'), array(), '', FALSE);
+		$rewritingAspect = $this->getAccessibleMock('TYPO3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('getValueForOperand', 'getObjectValueByPath'), array(), '', FALSE);
 		$rewritingAspect->expects($this->any())->method('getValueForOperand')->with('"blub"')->will($this->returnValue('blub'));
 		$rewritingAspect->expects($this->any())->method('getObjectValueByPath')->with($mockEntity, 'accounts.title')->will($this->returnValue('blub'));
 
@@ -718,13 +718,13 @@ class PersistenceQueryRewritingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function checkSingleConstraintDefinitionOnResultObjectWorksForTheInOperator() {
 		$entityClassName = 'entityClass' . md5(uniqid(mt_rand(), TRUE));
-		eval('class ' . $entityClassName . ' implements \F3\FLOW3\Object\Proxy\ProxyInterface {
-			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
+		eval('class ' . $entityClassName . ' implements \TYPO3\FLOW3\Object\Proxy\ProxyInterface {
+			public function FLOW3_AOP_Proxy_invokeJoinPoint(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
 			public function __clone() {}
 		}');
 		$mockEntity = $this->getMock($entityClassName, array(), array(), '', FALSE);
 
-		$rewritingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('getValueForOperand', 'getObjectValueByPath'), array(), '', FALSE);
+		$rewritingAspect = $this->getAccessibleMock('TYPO3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('getValueForOperand', 'getObjectValueByPath'), array(), '', FALSE);
 		$rewritingAspect->expects($this->any())->method('getValueForOperand')->with('current.party')->will($this->returnValue('blub'));
 		$rewritingAspect->expects($this->at(1))->method('getObjectValueByPath')->with($mockEntity, 'party')->will($this->returnValue(array('bla', 'blub', 'foo')));
 		$rewritingAspect->expects($this->at(3))->method('getObjectValueByPath')->with($mockEntity, 'party')->will($this->returnValue(array('bla', 'foo', 'bar')));
@@ -745,13 +745,13 @@ class PersistenceQueryRewritingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function checkSingleConstraintDefinitionOnResultObjectWorksForTheContainsOperator() {
 		$entityClassName = 'entityClass' . md5(uniqid(mt_rand(), TRUE));
-		eval('class ' . $entityClassName . ' implements \F3\FLOW3\Object\Proxy\ProxyInterface {
-			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
+		eval('class ' . $entityClassName . ' implements \TYPO3\FLOW3\Object\Proxy\ProxyInterface {
+			public function FLOW3_AOP_Proxy_invokeJoinPoint(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
 			public function __clone() {}
 		}');
 		$mockEntity = $this->getMock($entityClassName, array(), array(), '', FALSE);
 
-		$rewritingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('getValueForOperand', 'getObjectValueByPath'), array(), '', FALSE);
+		$rewritingAspect = $this->getAccessibleMock('TYPO3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('getValueForOperand', 'getObjectValueByPath'), array(), '', FALSE);
 		$rewritingAspect->expects($this->any())->method('getValueForOperand')->with('current.party')->will($this->returnValue(array('bla', 'blub', 'foo')));
 		$rewritingAspect->expects($this->at(1))->method('getObjectValueByPath')->with($mockEntity, 'party')->will($this->returnValue('blub'));
 		$rewritingAspect->expects($this->at(3))->method('getObjectValueByPath')->with($mockEntity, 'party')->will($this->returnValue('bar'));
@@ -772,13 +772,13 @@ class PersistenceQueryRewritingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function checkSingleConstraintDefinitionOnResultObjectWorksForTheMatchesOperator() {
 		$entityClassName = 'entityClass' . md5(uniqid(mt_rand(), TRUE));
-		eval('class ' . $entityClassName . ' implements \F3\FLOW3\Object\Proxy\ProxyInterface {
-			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
+		eval('class ' . $entityClassName . ' implements \TYPO3\FLOW3\Object\Proxy\ProxyInterface {
+			public function FLOW3_AOP_Proxy_invokeJoinPoint(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
 			public function __clone() {}
 		}');
 		$mockEntity = $this->getMock($entityClassName, array(), array(), '', FALSE);
 
-		$rewritingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('getValueForOperand', 'getObjectValueByPath'), array(), '', FALSE);
+		$rewritingAspect = $this->getAccessibleMock('TYPO3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('getValueForOperand', 'getObjectValueByPath'), array(), '', FALSE);
 		$rewritingAspect->expects($this->any())->method('getValueForOperand')->with('current.party')->will($this->returnValue(array('bla', 'blub', 'blubber')));
 		$rewritingAspect->expects($this->at(1))->method('getObjectValueByPath')->with($mockEntity, 'party')->will($this->returnValue(array('hinz', 'blub', 'kunz')));
 		$rewritingAspect->expects($this->at(3))->method('getObjectValueByPath')->with($mockEntity, 'party')->will($this->returnValue(array('foo', 'bar', 'baz')));
@@ -799,21 +799,21 @@ class PersistenceQueryRewritingAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function checkSingleConstraintDefinitionOnResultObjectComparesTheIdentifierWhenComparingPersistedObjects() {
 		$entityClassName = 'entityClass' . md5(uniqid(mt_rand(), TRUE));
-		eval('class ' . $entityClassName . ' implements \F3\FLOW3\Object\Proxy\ProxyInterface {
-			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
+		eval('class ' . $entityClassName . ' implements \TYPO3\FLOW3\Object\Proxy\ProxyInterface {
+			public function FLOW3_AOP_Proxy_invokeJoinPoint(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
 			public function __clone() {}
 		}');
 		$mockEntity = $this->getMock($entityClassName, array(), array(), '', FALSE);
 		$mockParty = $this->getMock('TYPO3\Party\Domain\Model\AbstractParty', array(), array(), '', FALSE);
 
-		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\PersistenceManagerInterface', array(), array(), '', FALSE);
+		$mockPersistenceManager = $this->getMock('TYPO3\FLOW3\Persistence\PersistenceManagerInterface', array(), array(), '', FALSE);
 		$mockPersistenceManager->expects($this->any())->method('isNewObject')->with($mockParty)->will($this->returnValue(FALSE));
 		$mockPersistenceManager->expects($this->any())->method('getIdentifierByObject')->with($mockParty)->will($this->returnValue('uuid'));
 
-		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService', array(), array(), '', FALSE);
+		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService', array(), array(), '', FALSE);
 		$mockReflectionService->expects($this->any())->method('isClassTaggedWith')->with($mockParty, 'entity')->will($this->returnValue(TRUE));
 
-		$rewritingAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('getValueForOperand', 'getObjectValueByPath'), array(), '', FALSE);
+		$rewritingAspect = $this->getAccessibleMock('TYPO3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect', array('getValueForOperand', 'getObjectValueByPath'), array(), '', FALSE);
 		$rewritingAspect->expects($this->at(0))->method('getValueForOperand')->with('current.party')->will($this->returnValue($mockParty));
 		$rewritingAspect->expects($this->at(1))->method('getObjectValueByPath')->with($mockEntity, 'party')->will($this->returnValue($mockParty));
 		$rewritingAspect->expects($this->at(2))->method('getObjectValueByPath')->with($mockEntity, 'party')->will($this->returnValue($mockParty));

@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Object\Proxy;
+namespace TYPO3\FLOW3\Object\Proxy;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,7 +26,7 @@ namespace F3\FLOW3\Object\Proxy;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class ProxyConstructor extends \F3\FLOW3\Object\Proxy\ProxyMethod {
+class ProxyConstructor extends \TYPO3\FLOW3\Object\Proxy\ProxyMethod {
 
 	/**
 	 * Name of the original method

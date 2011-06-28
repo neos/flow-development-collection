@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Configuration\Source;
+namespace TYPO3\FLOW3\Configuration\Source;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -28,7 +28,7 @@ namespace F3\FLOW3\Configuration\Source;
  * @scope singleton
  * @api
  */
-class YamlSource implements \F3\FLOW3\Configuration\Source\SourceInterface {
+class YamlSource implements \TYPO3\FLOW3\Configuration\Source\SourceInterface {
 
 	/**
 	 * Loads the specified configuration file and returns its content as an
@@ -42,9 +42,9 @@ class YamlSource implements \F3\FLOW3\Configuration\Source\SourceInterface {
 	public function load($pathAndFilename) {
 		if (file_exists($pathAndFilename . '.yaml')) {
 			try {
-				$configuration = \F3\FLOW3\Configuration\Source\YamlParser::loadFile($pathAndFilename . '.yaml');
-			} catch (\F3\FLOW3\Error\Exception $exception) {
-				throw new \F3\FLOW3\Configuration\Exception\ParseErrorException('A parse error occurred while parsing file "' . $pathAndFilename . '.yaml". Error message: ' . $exception->getMessage(), 1232014321);
+				$configuration = \TYPO3\FLOW3\Configuration\Source\YamlParser::loadFile($pathAndFilename . '.yaml');
+			} catch (\TYPO3\FLOW3\Error\Exception $exception) {
+				throw new \TYPO3\FLOW3\Configuration\Exception\ParseErrorException('A parse error occurred while parsing file "' . $pathAndFilename . '.yaml". Error message: ' . $exception->getMessage(), 1232014321);
 			}
 		} else {
 			$configuration = array();
@@ -65,7 +65,7 @@ class YamlSource implements \F3\FLOW3\Configuration\Source\SourceInterface {
 		if (file_exists($pathAndFilename . '.yaml')) {
 			$header = $this->getHeaderFromFile($pathAndFilename . '.yaml');
 		}
-		$yaml = \F3\FLOW3\Configuration\Source\YamlParser::dump($configuration);
+		$yaml = \TYPO3\FLOW3\Configuration\Source\YamlParser::dump($configuration);
 		file_put_contents($pathAndFilename . '.yaml', $header . PHP_EOL . $yaml);
 	}
 

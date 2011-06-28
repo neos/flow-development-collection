@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Persistence\Generic\Qom;
+namespace TYPO3\FLOW3\Persistence\Generic\Qom;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -36,7 +36,7 @@ namespace F3\FLOW3\Persistence\Generic\Qom;
  * @api
  * @scope prototype
  */
-class PropertyValue extends \F3\FLOW3\Persistence\Generic\Qom\DynamicOperand {
+class PropertyValue extends \TYPO3\FLOW3\Persistence\Generic\Qom\DynamicOperand {
 
 	/**
 	 * @var string

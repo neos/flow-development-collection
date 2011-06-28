@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Cache\Frontend;
+namespace TYPO3\FLOW3\Cache\Frontend;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -28,16 +28,16 @@ namespace F3\FLOW3\Cache\Frontend;
  * @api
  * @scope prototype
  */
-class PhpFrontend extends \F3\FLOW3\Cache\Frontend\StringFrontend {
+class PhpFrontend extends \TYPO3\FLOW3\Cache\Frontend\StringFrontend {
 
 	/**
 	 * Constructs the cache
 	 *
 	 * @param string $identifier A identifier which describes this cache
-	 * @param \F3\FLOW3\Cache\Backend\PhpCapableBackendInterface $backend Backend to be used for this cache
+	 * @param \TYPO3\FLOW3\Cache\Backend\PhpCapableBackendInterface $backend Backend to be used for this cache
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct($identifier, \F3\FLOW3\Cache\Backend\PhpCapableBackendInterface $backend) {
+	public function __construct($identifier, \TYPO3\FLOW3\Cache\Backend\PhpCapableBackendInterface $backend) {
 		parent::__construct($identifier, $backend);
 	}
 
@@ -54,7 +54,7 @@ class PhpFrontend extends \F3\FLOW3\Cache\Frontend\StringFrontend {
 	 */
 	public function set($entryIdentifier, $sourceCode, array $tags = array(), $lifetime = NULL) {
 		if (!$this->isValidEntryIdentifier($entryIdentifier)) throw new \InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1264023823);
-		if (!is_string($sourceCode)) throw new \F3\FLOW3\Cache\Exception\InvalidDataException('The given source code is not a valid string.', 1264023824);
+		if (!is_string($sourceCode)) throw new \TYPO3\FLOW3\Cache\Exception\InvalidDataException('The given source code is not a valid string.', 1264023824);
 		foreach ($tags as $tag) {
 			if (!$this->isValidTag($tag)) throw new \InvalidArgumentException('"' . $tag . '" is not a valid tag for a cache entry.', 1264023825);
 		}

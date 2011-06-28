@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Functional\Security\Authorization;
+namespace TYPO3\FLOW3\Tests\Functional\Security\Authorization;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -27,7 +27,7 @@ namespace F3\FLOW3\Tests\Functional\Security\Authorization;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope singleton
  */
-class TestingAccessDecisionManager extends \F3\FLOW3\Security\Authorization\AccessDecisionVoterManager {
+class TestingAccessDecisionManager extends \TYPO3\FLOW3\Security\Authorization\AccessDecisionVoterManager {
 
 	/**
 	 * @var boolean
@@ -37,14 +37,14 @@ class TestingAccessDecisionManager extends \F3\FLOW3\Security\Authorization\Acce
 	/**
 	 * Decides on a joinpoint
 	 *
-	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint
+	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint
 	 * @return void
-	 * @throws \F3\FLOW3\Security\Exception\AccessDeniedException If access is not granted
+	 * @throws \TYPO3\FLOW3\Security\Exception\AccessDeniedException If access is not granted
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function decideOnJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function decideOnJoinPoint(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		if ($this->overrideDecision === FALSE) {
-			throw new \F3\FLOW3\Security\Exception\AccessDeniedException('Access denied (override)', 1291652709);
+			throw new \TYPO3\FLOW3\Security\Exception\AccessDeniedException('Access denied (override)', 1291652709);
 		} elseif ($this->overrideDecision === TRUE) {
 			return;
 		}
@@ -56,11 +56,11 @@ class TestingAccessDecisionManager extends \F3\FLOW3\Security\Authorization\Acce
 	 *
 	 * @param string $resource The resource to decide on
 	 * @return void
-	 * @throws \F3\FLOW3\Security\Exception\AccessDeniedException If access is not granted
+	 * @throws \TYPO3\FLOW3\Security\Exception\AccessDeniedException If access is not granted
 	 */
 	public function decideOnResource($resource) {
 		if ($this->overrideDecision === FALSE) {
-			throw new \F3\FLOW3\Security\Exception\AccessDeniedException('Access denied (override)', 1291652709);
+			throw new \TYPO3\FLOW3\Security\Exception\AccessDeniedException('Access denied (override)', 1291652709);
 		} elseif ($this->overrideDecision === TRUE) {
 			return;
 		}

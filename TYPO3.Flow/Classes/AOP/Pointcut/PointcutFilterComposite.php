@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\AOP\Pointcut;
+namespace TYPO3\FLOW3\AOP\Pointcut;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -27,14 +27,14 @@ namespace F3\FLOW3\AOP\Pointcut;
  * doesn't match, the overall result is "no".
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
- * @see \F3\FLOW3\AOP\Pointcut\PointcutExpressionParser, \F3\FLOW3\AOP\Pointcut\PointcutClassNameFilter, \F3\FLOW3\AOP\Pointcut\PointcutMethodFilter
+ * @see \TYPO3\FLOW3\AOP\Pointcut\PointcutExpressionParser, \TYPO3\FLOW3\AOP\Pointcut\PointcutClassNameFilter, \TYPO3\FLOW3\AOP\Pointcut\PointcutMethodFilter
  * @scope prototype
  * @proxy disable
  */
-class PointcutFilterComposite implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
+class PointcutFilterComposite implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 
 	/**
-	 * @var array An array of \F3\FLOW3\AOP\Pointcut\Pointcut*Filter objects
+	 * @var array An array of \TYPO3\FLOW3\AOP\Pointcut\Pointcut*Filter objects
 	 */
 	protected $filters = array();
 
@@ -122,11 +122,11 @@ class PointcutFilterComposite implements \F3\FLOW3\AOP\Pointcut\PointcutFilterIn
 	 * Adds a class filter to the composite
 	 *
 	 * @param string $operator The operator for this filter
-	 * @param \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface $filter A configured class filter
+	 * @param \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterface $filter A configured class filter
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function addFilter($operator, \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface $filter) {
+	public function addFilter($operator, \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterface $filter) {
 		$this->filters[] = array($operator, $filter);
 		if ($operator !== '&&' && $operator !== '&&!') {
 			$this->earlyReturn = FALSE;
@@ -275,7 +275,7 @@ class PointcutFilterComposite implements \F3\FLOW3\AOP\Pointcut\PointcutFilterIn
 
 			$objectAccess = explode('.', $argumentName, 2);
 			if (count($objectAccess) === 2) {
-				$leftValue = '\F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($joinPoint->getMethodArgument(\'' . $objectAccess[0] . '\'), \'' . $objectAccess[1] . '\')';
+				$leftValue = '\TYPO3\FLOW3\Reflection\ObjectAccess::getPropertyPath($joinPoint->getMethodArgument(\'' . $objectAccess[0] . '\'), \'' . $objectAccess[1] . '\')';
 			} else {
 				$leftValue = '$joinPoint->getMethodArgument(\'' . $argumentName . '\')';
 			}
@@ -357,12 +357,12 @@ class PointcutFilterComposite implements \F3\FLOW3\AOP\Pointcut\PointcutFilterIn
 				if (count($objectAccess) === 1) {
 					$argumentAccessCode = '$globalObjects[\'' . $objectAccess[0] . '\']';
 				} else {
-					$argumentAccessCode = '\F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($globalObjects[\'' . $objectAccess[0] . '\'], \'' . $objectAccess[1] . '\')';
+					$argumentAccessCode = '\TYPO3\FLOW3\Reflection\ObjectAccess::getPropertyPath($globalObjects[\'' . $objectAccess[0] . '\'], \'' . $objectAccess[1] . '\')';
 				}
 
 				$useGlobalObjects = TRUE;
 			} else if (count($objectAccess) === 2 && $objectAccess[0] === 'this') {
-				$argumentAccessCode = '\F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($currentObject, \'' . $objectAccess[1] . '\')';
+				$argumentAccessCode = '\TYPO3\FLOW3\Reflection\ObjectAccess::getPropertyPath($currentObject, \'' . $objectAccess[1] . '\')';
 			} else {
 				$argumentAccessCode = $argumentAccess;
 			}

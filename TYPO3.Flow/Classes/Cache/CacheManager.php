@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Cache;
+namespace TYPO3\FLOW3\Cache;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -21,7 +21,7 @@ namespace F3\FLOW3\Cache;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \F3\FLOW3\Cache\Frontend\FrontendInterface;
+use \TYPO3\FLOW3\Cache\Frontend\FrontendInterface;
 
 /**
  * The Cache Manager
@@ -33,7 +33,7 @@ use \F3\FLOW3\Cache\Frontend\FrontendInterface;
 class CacheManager {
 
 	/**
-	 * @var \F3\FLOW3\Cache\CacheFactory
+	 * @var \TYPO3\FLOW3\Cache\CacheFactory
 	 */
 	protected $cacheFactory;
 
@@ -47,18 +47,18 @@ class CacheManager {
 	 */
 	protected $cacheConfigurations = array(
 		'Default' => array(
-			'frontend' => 'F3\FLOW3\Cache\Frontend\VariableFrontend',
-			'backend' =>  'F3\FLOW3\Cache\Backend\FileBackend',
+			'frontend' => 'TYPO3\FLOW3\Cache\Frontend\VariableFrontend',
+			'backend' =>  'TYPO3\FLOW3\Cache\Backend\FileBackend',
 			'backendOptions' => array()
 		)
 	);
 
 	/**
-	 * @param \F3\FLOW3\Cache\CacheFactory $cacheFactory
+	 * @param \TYPO3\FLOW3\Cache\CacheFactory $cacheFactory
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectCacheFactory(\F3\FLOW3\Cache\CacheFactory $cacheFactory) {
+	public function injectCacheFactory(\TYPO3\FLOW3\Cache\CacheFactory $cacheFactory) {
 		$this->cacheFactory = $cacheFactory;
 	}
 
@@ -88,16 +88,16 @@ class CacheManager {
 	/**
 	 * Registers a cache so it can be retrieved at a later point.
 	 *
-	 * @param \F3\FLOW3\Cache\Frontend\FrontendInterface $cache The cache frontend to be registered
+	 * @param \TYPO3\FLOW3\Cache\Frontend\FrontendInterface $cache The cache frontend to be registered
 	 * @return void
-	 * @throws \F3\FLOW3\Cache\Exception\DuplicateIdentifierException if a cache with the given identifier has already been registered.
+	 * @throws \TYPO3\FLOW3\Cache\Exception\DuplicateIdentifierException if a cache with the given identifier has already been registered.
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
-	public function registerCache(\F3\FLOW3\Cache\Frontend\FrontendInterface $cache) {
+	public function registerCache(\TYPO3\FLOW3\Cache\Frontend\FrontendInterface $cache) {
 		$identifier = $cache->getIdentifier();
 		if (isset($this->caches[$identifier])) {
-			throw new \F3\FLOW3\Cache\Exception\DuplicateIdentifierException('A cache with identifier "' . $identifier . '" has already been registered.', 1203698223);
+			throw new \TYPO3\FLOW3\Cache\Exception\DuplicateIdentifierException('A cache with identifier "' . $identifier . '" has already been registered.', 1203698223);
 		}
 		$this->caches[$identifier] = $cache;
 	}
@@ -106,14 +106,14 @@ class CacheManager {
 	 * Returns the cache specified by $identifier
 	 *
 	 * @param string $identifier Identifies which cache to return
-	 * @return \F3\FLOW3\Cache\Frontend\FrontendInterface The specified cache frontend
-	 * @throws \F3\FLOW3\Cache\Exception\NoSuchCacheException
+	 * @return \TYPO3\FLOW3\Cache\Frontend\FrontendInterface The specified cache frontend
+	 * @throws \TYPO3\FLOW3\Cache\Exception\NoSuchCacheException
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function getCache($identifier) {
 		if ($this->hasCache($identifier) === FALSE) {
-			throw new \F3\FLOW3\Cache\Exception\NoSuchCacheException('A cache with identifier "' . $identifier . '" does not exist.', 1203699034);
+			throw new \TYPO3\FLOW3\Cache\Exception\NoSuchCacheException('A cache with identifier "' . $identifier . '" does not exist.', 1203699034);
 		}
 		if (!isset($this->caches[$identifier])) {
 			$this->createCache($identifier);

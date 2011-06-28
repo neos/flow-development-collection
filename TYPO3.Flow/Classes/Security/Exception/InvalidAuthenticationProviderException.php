@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Security\Exception;
+namespace TYPO3\FLOW3\Security\Exception;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -27,7 +27,7 @@ namespace F3\FLOW3\Security\Exception;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */
-class InvalidAuthenticationProviderException extends \F3\FLOW3\Security\Exception {
+class InvalidAuthenticationProviderException extends \TYPO3\FLOW3\Security\Exception {
 
 }
 

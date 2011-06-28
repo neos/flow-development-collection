@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Reflection;
+namespace TYPO3\FLOW3\Reflection;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -31,7 +31,7 @@ namespace F3\FLOW3\Reflection;
 class PropertyReflection extends \ReflectionProperty {
 
 	/**
-	 * @var \F3\FLOW3\Reflection\DocCommentParser: An instance of the doc comment parser
+	 * @var \TYPO3\FLOW3\Reflection\DocCommentParser: An instance of the doc comment parser
 	 */
 	protected $docCommentParser;
 
@@ -50,7 +50,7 @@ class PropertyReflection extends \ReflectionProperty {
 	/**
 	 * Returns the declaring class
 	 *
-	 * @return \F3\FLOW3\Reflection\ClassReflection The declaring class
+	 * @return \TYPO3\FLOW3\Reflection\ClassReflection The declaring class
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getDeclaringClass() {
@@ -92,7 +92,7 @@ class PropertyReflection extends \ReflectionProperty {
 	 *
 	 * @param object $object Instance of the declaring class to read the value from
 	 * @return mixed Value of the property
-	 * @throws \F3\FLOW3\Reflection\Exception
+	 * @throws \TYPO3\FLOW3\Reflection\Exception
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
@@ -110,11 +110,11 @@ class PropertyReflection extends \ReflectionProperty {
 	 * @param object $object Instance of the declaring class to set the value on
 	 * @param mixed $value The value to set on the property
 	 * @return void
-	 * @throws \F3\FLOW3\Reflection\Exception
+	 * @throws \TYPO3\FLOW3\Reflection\Exception
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setValue($object = NULL, $value = NULL) {
-		if (!is_object($object)) throw new \F3\FLOW3\Reflection\Exception('$object is of type ' . gettype($object) . ', instance of class ' . $this->class . ' expected.', 1210859212);
+		if (!is_object($object)) throw new \TYPO3\FLOW3\Reflection\Exception('$object is of type ' . gettype($object) . ', instance of class ' . $this->class . ' expected.', 1210859212);
 
 		if ($this->isPublic()) {
 			parent::setValue($object, $value);
@@ -128,7 +128,7 @@ class PropertyReflection extends \ReflectionProperty {
 	 * Returns an instance of the doc comment parser and
 	 * runs the parse() method.
 	 *
-	 * @return \F3\FLOW3\Reflection\DocCommentParser
+	 * @return \TYPO3\FLOW3\Reflection\DocCommentParser
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function getDocCommentParser() {

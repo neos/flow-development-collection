@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Configuration\Source;
+namespace TYPO3\FLOW3\Configuration\Source;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -34,8 +34,8 @@ interface SourceInterface {
 	 * configuration container
 	 *
 	 * @param string $pathAndFilename Full path and file name of the file to load, excluding the dot and file extension
-	 * @return \F3\FLOW3\Configuration\Container
-	 * @throws \F3\FLOW3\Configuration\Exception\NoSuchFileException if the specified file does not exist
+	 * @return \TYPO3\FLOW3\Configuration\Container
+	 * @throws \TYPO3\FLOW3\Configuration\Exception\NoSuchFileException if the specified file does not exist
 	 */
 	public function load($pathAndFilename);
 

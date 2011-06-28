@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\AOP\Builder;
+namespace TYPO3\FLOW3\Tests\Unit\AOP\Builder;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,7 +26,7 @@ namespace F3\FLOW3\Tests\Unit\AOP\Builder;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class AbstractMethodInterceptorBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
+class AbstractMethodInterceptorBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
@@ -44,12 +44,12 @@ class AbstractMethodInterceptorBuilderTest extends \F3\FLOW3\Tests\UnitTestCase 
 			}
 		');
 
-		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'saveToCache'), array(), '', FALSE, TRUE);
+		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'saveToCache'), array(), '', FALSE, TRUE);
 
 		$expectedCode = '$arg1, array $arg2, \ArrayObject $arg3, $arg4 = \'foo\', $arg5 = TRUE, array $arg6 = array(0 => TRUE, \'foo\' => \'bar\', 1 => NULL, 3 => 1, 4 => 2.3)';
 		$parametersDocumentation = '';
 
-		$builder = $this->getMock('F3\FLOW3\AOP\Builder\AbstractMethodInterceptorBuilder', array('build'), array(), '', FALSE);
+		$builder = $this->getMock('TYPO3\FLOW3\AOP\Builder\AbstractMethodInterceptorBuilder', array('build'), array(), '', FALSE);
 		$builder->injectReflectionService($mockReflectionService);
 
 		$actualCode = $builder->buildMethodParametersCode($className, 'foo', TRUE, $parametersDocumentation);
@@ -68,12 +68,12 @@ class AbstractMethodInterceptorBuilderTest extends \F3\FLOW3\Tests\UnitTestCase 
 			}
 		');
 
-		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'saveToCache'), array(), '', FALSE, TRUE);
+		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'saveToCache'), array(), '', FALSE, TRUE);
 
 		$expectedCode = '$arg1, $arg2, $arg3, $arg4, $arg5';
 		$parametersDocumentation = '';
 
-		$builder = $this->getMock('F3\FLOW3\AOP\Builder\AbstractMethodInterceptorBuilder', array('build'), array(), '', FALSE);
+		$builder = $this->getMock('TYPO3\FLOW3\AOP\Builder\AbstractMethodInterceptorBuilder', array('build'), array(), '', FALSE);
 		$builder->injectReflectionService($mockReflectionService);
 
 		$actualCode = $builder->buildMethodParametersCode($className, 'foo', FALSE, $parametersDocumentation);
@@ -85,7 +85,7 @@ class AbstractMethodInterceptorBuilderTest extends \F3\FLOW3\Tests\UnitTestCase 
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function buildMethodParametersCodeReturnsAnEmptyStringIfTheClassNameIsNULL() {
-		$builder = $this->getAccessibleMock('F3\FLOW3\AOP\Builder\AbstractMethodInterceptorBuilder', array('build'), array(), '', FALSE);
+		$builder = $this->getAccessibleMock('TYPO3\FLOW3\AOP\Builder\AbstractMethodInterceptorBuilder', array('build'), array(), '', FALSE);
 
 		$parametersDocumentation = '';
 		$actualCode = $builder->buildMethodParametersCode(NULL, 'foo', TRUE, $parametersDocumentation);
@@ -104,7 +104,7 @@ class AbstractMethodInterceptorBuilderTest extends \F3\FLOW3\Tests\UnitTestCase 
 			}
 		');
 
-		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'saveToCache'), array(), '', FALSE, TRUE);
+		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'saveToCache'), array(), '', FALSE, TRUE);
 
 		$expectedCode = "
 					\$methodArguments = array();
@@ -116,7 +116,7 @@ class AbstractMethodInterceptorBuilderTest extends \F3\FLOW3\Tests\UnitTestCase 
 				\$methodArguments['arg5'] = \$arg5;
 			";
 
-		$builder = $this->getAccessibleMock('F3\FLOW3\AOP\Builder\AbstractMethodInterceptorBuilder', array('build'), array(), '', FALSE);
+		$builder = $this->getAccessibleMock('TYPO3\FLOW3\AOP\Builder\AbstractMethodInterceptorBuilder', array('build'), array(), '', FALSE);
 		$builder->injectReflectionService($mockReflectionService);
 
 		$actualCode = $builder->_call('buildMethodArgumentsArrayCode', $className, 'foo');
@@ -128,7 +128,7 @@ class AbstractMethodInterceptorBuilderTest extends \F3\FLOW3\Tests\UnitTestCase 
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function buildMethodArgumentsArrayCodeReturnsAnEmptyStringIfTheClassNameIsNULL() {
-		$builder = $this->getAccessibleMock('F3\FLOW3\AOP\Builder\AbstractMethodInterceptorBuilder', array('build'), array(), '', FALSE);
+		$builder = $this->getAccessibleMock('TYPO3\FLOW3\AOP\Builder\AbstractMethodInterceptorBuilder', array('build'), array(), '', FALSE);
 
 		$actualCode = $builder->_call('buildMethodArgumentsArrayCode', NULL, 'foo');
 		$this->assertSame('', $actualCode);
@@ -146,9 +146,9 @@ class AbstractMethodInterceptorBuilderTest extends \F3\FLOW3\Tests\UnitTestCase 
 			}
 		');
 
-		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'saveToCache'), array(), '', FALSE, TRUE);
+		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'saveToCache'), array(), '', FALSE, TRUE);
 
-		$builder = $this->getAccessibleMock('F3\FLOW3\AOP\Builder\AdvicedConstructorInterceptorBuilder', array('dummy'), array(), '', FALSE);
+		$builder = $this->getAccessibleMock('TYPO3\FLOW3\AOP\Builder\AdvicedConstructorInterceptorBuilder', array('dummy'), array(), '', FALSE);
 		$builder->injectReflectionService($mockReflectionService);
 
 		$expectedCode = '$this->FLOW3_AOP_Proxy_originalConstructorArguments[\'arg1\'], $this->FLOW3_AOP_Proxy_originalConstructorArguments[\'arg2\'], $this->FLOW3_AOP_Proxy_originalConstructorArguments[\'arg3\'], $this->FLOW3_AOP_Proxy_originalConstructorArguments[\'arg4\'], $this->FLOW3_AOP_Proxy_originalConstructorArguments[\'arg5\']';

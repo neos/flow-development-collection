@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\Security\Authentication\Token;
+namespace TYPO3\FLOW3\Tests\Unit\Security\Authentication\Token;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,7 +26,7 @@ namespace F3\FLOW3\Tests\Unit\Security\Authentication\Token;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class UsernamePasswordHttpBasicTest extends \F3\FLOW3\Tests\UnitTestCase {
+class UsernamePasswordHttpBasicTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
@@ -39,11 +39,11 @@ class UsernamePasswordHttpBasicTest extends \F3\FLOW3\Tests\UnitTestCase {
 			'Pw' => 'password'
 		);
 
-		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
+		$mockEnvironment = $this->getMock('TYPO3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
 		$mockEnvironment->expects($this->once())->method('getRequestHeaders')->will($this->returnValue($requestHeaders));
-		$mockRequest = $this->getMock('F3\FLOW3\MVC\Request');
+		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\Request');
 
-		$token = $this->getAccessibleMock('F3\FLOW3\Security\Authentication\Token\UsernamePasswordHttpBasic', array('dummy'));
+		$token = $this->getAccessibleMock('TYPO3\FLOW3\Security\Authentication\Token\UsernamePasswordHttpBasic', array('dummy'));
 		$token->_set('environment', $mockEnvironment);
 
 		$token->updateCredentials($mockRequest);
@@ -63,16 +63,16 @@ class UsernamePasswordHttpBasicTest extends \F3\FLOW3\Tests\UnitTestCase {
 			'Pw' => 'password'
 		);
 
-		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
+		$mockEnvironment = $this->getMock('TYPO3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
 		$mockEnvironment->expects($this->once())->method('getRequestHeaders')->will($this->returnValue($requestHeaders));
-		$mockRequest = $this->getMock('F3\FLOW3\MVC\Request');
+		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\Request');
 
-		$token = $this->getAccessibleMock('F3\FLOW3\Security\Authentication\Token\UsernamePasswordHttpBasic', array('dummy'));
+		$token = $this->getAccessibleMock('TYPO3\FLOW3\Security\Authentication\Token\UsernamePasswordHttpBasic', array('dummy'));
 		$token->_set('environment', $mockEnvironment);
 
 		$token->updateCredentials($mockRequest);
 
-		$this->assertSame(\F3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_NEEDED, $token->getAuthenticationStatus());
+		$this->assertSame(\TYPO3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_NEEDED, $token->getAuthenticationStatus());
 	}
 
 	/**
@@ -85,16 +85,16 @@ class UsernamePasswordHttpBasicTest extends \F3\FLOW3\Tests\UnitTestCase {
 			'Custom-Header' => 'xyt'
 		);
 
-		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
+		$mockEnvironment = $this->getMock('TYPO3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
 		$mockEnvironment->expects($this->once())->method('getRequestHeaders')->will($this->returnValue($requestHeaders));
-		$mockRequest = $this->getMock('F3\FLOW3\MVC\Request');
+		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\Request');
 
-		$token = $this->getAccessibleMock('F3\FLOW3\Security\Authentication\Token\UsernamePasswordHttpBasic', array('dummy'));
+		$token = $this->getAccessibleMock('TYPO3\FLOW3\Security\Authentication\Token\UsernamePasswordHttpBasic', array('dummy'));
 		$token->_set('environment', $mockEnvironment);
 
 		$token->updateCredentials($mockRequest);
 
-		$this->assertSame(\F3\FLOW3\Security\Authentication\TokenInterface::NO_CREDENTIALS_GIVEN, $token->getAuthenticationStatus());
+		$this->assertSame(\TYPO3\FLOW3\Security\Authentication\TokenInterface::NO_CREDENTIALS_GIVEN, $token->getAuthenticationStatus());
 	}
 }
 ?>

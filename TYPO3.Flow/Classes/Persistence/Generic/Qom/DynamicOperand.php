@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Persistence\Generic\Qom;
+namespace TYPO3\FLOW3\Persistence\Generic\Qom;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -27,7 +27,7 @@ namespace F3\FLOW3\Persistence\Generic\Qom;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
-class DynamicOperand extends \F3\FLOW3\Persistence\Generic\Qom\Operand {
+class DynamicOperand extends \TYPO3\FLOW3\Persistence\Generic\Qom\Operand {
 
 }
 

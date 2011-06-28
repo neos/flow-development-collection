@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Session;
+namespace TYPO3\FLOW3\Session;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -27,10 +27,10 @@ namespace F3\FLOW3\Session;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope singleton
  */
-class PhpSession implements \F3\FLOW3\Session\SessionInterface {
+class PhpSession implements \TYPO3\FLOW3\Session\SessionInterface {
 
 	/**
-	 * @var \F3\FLOW3\Utility\Environment
+	 * @var \TYPO3\FLOW3\Utility\Environment
 	 */
 	protected $environment;
 
@@ -60,7 +60,7 @@ class PhpSession implements \F3\FLOW3\Session\SessionInterface {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function __construct() {
-		if (ini_get('session.auto_start') != 0) throw new \F3\FLOW3\Session\Exception\SessionAutostartIsEnabledException('PHP\'s session.auto_start must be disabled.', 1219848292);
+		if (ini_get('session.auto_start') != 0) throw new \TYPO3\FLOW3\Session\Exception\SessionAutostartIsEnabledException('PHP\'s session.auto_start must be disabled.', 1219848292);
 	}
 
 	/**
@@ -77,11 +77,11 @@ class PhpSession implements \F3\FLOW3\Session\SessionInterface {
 	/**
 	 * Injects the environment
 	 *
-	 * @param \F3\FLOW3\Utility\Environment $environment
+	 * @param \TYPO3\FLOW3\Utility\Environment $environment
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectEnvironment(\F3\FLOW3\Utility\Environment $environment) {
+	public function injectEnvironment(\TYPO3\FLOW3\Utility\Environment $environment) {
 		$this->environment = $environment;
 	}
 
@@ -94,12 +94,12 @@ class PhpSession implements \F3\FLOW3\Session\SessionInterface {
 	public function start() {
 		if ($this->started === FALSE) {
 			if (empty($this->settings['session']['PHPSession']['savePath'])) {
-				$sessionsPath = \F3\FLOW3\Utility\Files::concatenatePaths(array($this->environment->getPathToTemporaryDirectory(), 'Sessions'));
+				$sessionsPath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array($this->environment->getPathToTemporaryDirectory(), 'Sessions'));
 			} else {
 				$sessionsPath = $this->settings['session']['PHPSession']['savePath'];
 			}
 			if (!file_exists($sessionsPath)) {
-				\F3\FLOW3\Utility\Files::createDirectoryRecursively($sessionsPath);
+				\TYPO3\FLOW3\Utility\Files::createDirectoryRecursively($sessionsPath);
 			}
 			session_save_path($sessionsPath);
 			session_start();
@@ -112,11 +112,11 @@ class PhpSession implements \F3\FLOW3\Session\SessionInterface {
 	 * Returns the current session ID.
 	 *
 	 * @return string The current session ID
-	 * @throws \F3\FLOW3\Session\Exception\SessionNotStartedException
+	 * @throws \TYPO3\FLOW3\Session\Exception\SessionNotStartedException
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getId() {
-		if ($this->started !== TRUE) throw new \F3\FLOW3\Session\Exception\SessionNotStartedException('The session has not been started yet.', 1218043307);
+		if ($this->started !== TRUE) throw new \TYPO3\FLOW3\Session\Exception\SessionNotStartedException('The session has not been started yet.', 1218043307);
 		return $this->sessionId;
 	}
 
@@ -125,11 +125,11 @@ class PhpSession implements \F3\FLOW3\Session\SessionInterface {
 	 *
 	 * @param string $key An identifier for the content stored in the session.
 	 * @return mixed The contents associated with the given key
-	 * @throws \F3\FLOW3\Session\Exception\SessionNotStartedException
+	 * @throws \TYPO3\FLOW3\Session\Exception\SessionNotStartedException
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getData($key) {
-		if ($this->started !== TRUE) throw new \F3\FLOW3\Session\Exception\SessionNotStartedException('The session has not been started yet.', 1218043308);
+		if ($this->started !== TRUE) throw new \TYPO3\FLOW3\Session\Exception\SessionNotStartedException('The session has not been started yet.', 1218043308);
 		return (array_key_exists($key, $_SESSION)) ? $_SESSION[$key] : NULL;
 	}
 
@@ -150,12 +150,12 @@ class PhpSession implements \F3\FLOW3\Session\SessionInterface {
 	 * @param string $key The key under which the data should be stored
 	 * @param mixed $data The data to be stored
 	 * @return void
-	 * @throws \F3\FLOW3\Session\Exception\SessionNotStartedException
+	 * @throws \TYPO3\FLOW3\Session\Exception\SessionNotStartedException
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function putData($key, $data) {
-		if ($this->started !== TRUE) throw new \F3\FLOW3\Session\Exception\SessionNotStartedException('The session has not been started yet.', 1218043309);
-		if (is_resource($data)) throw new \F3\FLOW3\Session\Exception\DataNotSerializeableException('The given data cannot be stored in a session, because it is of type "' . gettype($data) . '".', 1218475324);
+		if ($this->started !== TRUE) throw new \TYPO3\FLOW3\Session\Exception\SessionNotStartedException('The session has not been started yet.', 1218043309);
+		if (is_resource($data)) throw new \TYPO3\FLOW3\Session\Exception\DataNotSerializeableException('The given data cannot be stored in a session, because it is of type "' . gettype($data) . '".', 1218475324);
 		$_SESSION[$key] = $data;
 	}
 
@@ -163,15 +163,15 @@ class PhpSession implements \F3\FLOW3\Session\SessionInterface {
 	 * Explicitly writes and closes the session
 	 *
 	 * @return void
-	 * @throws \F3\FLOW3\Session\Exception\SessionNotStartedException
+	 * @throws \TYPO3\FLOW3\Session\Exception\SessionNotStartedException
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function close() {
-		if ($this->started !== TRUE) throw new \F3\FLOW3\Session\Exception\SessionNotStartedException('The session has not been started yet.', 1218043310);
+		if ($this->started !== TRUE) throw new \TYPO3\FLOW3\Session\Exception\SessionNotStartedException('The session has not been started yet.', 1218043310);
 		try {
 			session_write_close();
 		} catch (\Exception $exception) {
-			throw new \F3\FLOW3\Session\Exception('The PHP session handler issued an error: ' . $exception->getMessage() . ' in ' . $exception->getFile() . ' in line ' . $exception->getLine() . '.', 1218474911);
+			throw new \TYPO3\FLOW3\Session\Exception('The PHP session handler issued an error: ' . $exception->getMessage() . ' in ' . $exception->getFile() . ' in line ' . $exception->getLine() . '.', 1218474911);
 		}
 		unset($_SESSION);
 	}
@@ -180,11 +180,11 @@ class PhpSession implements \F3\FLOW3\Session\SessionInterface {
 	 * Explicitly destroys all session data
 	 *
 	 * @return void
-	 * @throws \F3\FLOW3\Session\Exception\SessionNotStartedException
+	 * @throws \TYPO3\FLOW3\Session\Exception\SessionNotStartedException
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function destroy() {
-		if ($this->started !== TRUE) throw new \F3\FLOW3\Session\Exception\SessionNotStartedException('The session has not been started yet.', 1218043311);
+		if ($this->started !== TRUE) throw new \TYPO3\FLOW3\Session\Exception\SessionNotStartedException('The session has not been started yet.', 1218043311);
 		try {
 			$cookieInfo = session_get_cookie_params();
 			if ((empty($cookieInfo['domain'])) && (empty($cookieInfo['secure']))) {
@@ -196,7 +196,7 @@ class PhpSession implements \F3\FLOW3\Session\SessionInterface {
 			}
 			session_destroy();
 		} catch (\Exception $exception) {
-			throw new \F3\FLOW3\Session\Exception('The PHP session handler issued an error: ' . $exception->getMessage() . ' in ' . $exception->getFile() . ' in line ' . $exception->getLine() . '.', 1218474912);
+			throw new \TYPO3\FLOW3\Session\Exception('The PHP session handler issued an error: ' . $exception->getMessage() . ' in ' . $exception->getFile() . ' in line ' . $exception->getLine() . '.', 1218474912);
 		}
 		unset($_SESSION);
 	}

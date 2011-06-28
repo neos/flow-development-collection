@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\MVC\Controller;
+namespace TYPO3\FLOW3\Tests\Unit\MVC\Controller;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -24,7 +24,7 @@ namespace F3\FLOW3\Tests\Unit\MVC\Controller;
 /**
  * Testcase for the Command Controller
  */
-class CommandControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
+class CommandControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test

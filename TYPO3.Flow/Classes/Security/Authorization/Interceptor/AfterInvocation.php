@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Security\Authorization\Interceptor;
+namespace TYPO3\FLOW3\Security\Authorization\Interceptor;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -32,10 +32,10 @@ namespace F3\FLOW3\Security\Authorization\Interceptor;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
-class AfterInvocation implements \F3\FLOW3\Security\Authorization\InterceptorInterface {
+class AfterInvocation implements \TYPO3\FLOW3\Security\Authorization\InterceptorInterface {
 
 	/**
-	 * @var \F3\FLOW3\Security\Authorization\AfterInvocationManagerInterface
+	 * @var \TYPO3\FLOW3\Security\Authorization\AfterInvocationManagerInterface
 	 */
 	protected $afterInvocationManager = NULL;
 
@@ -48,14 +48,14 @@ class AfterInvocation implements \F3\FLOW3\Security\Authorization\InterceptorInt
 	/**
 	 * Constructor.
 	 *
-	 * @param \F3\FLOW3\Security\Context $securityContext The current security context
-	 * @param \F3\FLOW3\Security\Authorization\AfterInvocationManagerInterface $afterInvocationManager The after invocation manager
+	 * @param \TYPO3\FLOW3\Security\Context $securityContext The current security context
+	 * @param \TYPO3\FLOW3\Security\Authorization\AfterInvocationManagerInterface $afterInvocationManager The after invocation manager
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function __construct(
-		\F3\FLOW3\Security\Context $securityContext,
-		\F3\FLOW3\Security\Authorization\AfterInvocationManagerInterface $afterInvocationManager
+		\TYPO3\FLOW3\Security\Context $securityContext,
+		\TYPO3\FLOW3\Security\Authorization\AfterInvocationManagerInterface $afterInvocationManager
 		) {
 
 	}
@@ -63,11 +63,11 @@ class AfterInvocation implements \F3\FLOW3\Security\Authorization\InterceptorInt
 	/**
 	 * Sets the current joinpoint for this interception
 	 *
-	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
+	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function setJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function setJoinPoint(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 
 	}
 

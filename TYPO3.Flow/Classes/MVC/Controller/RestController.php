@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\MVC\Controller;
+namespace TYPO3\FLOW3\MVC\Controller;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -27,17 +27,17 @@ namespace F3\FLOW3\MVC\Controller;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope singleton
  */
-class RestController extends \F3\FLOW3\MVC\Controller\ActionController {
+class RestController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 
 	/**
 	 * The current request
-	 * @var \F3\FLOW3\MVC\Web\Request
+	 * @var \TYPO3\FLOW3\MVC\Web\Request
 	 */
 	protected $request;
 
 	/**
 	 * The response which will be returned by this action controller
-	 * @var \F3\FLOW3\MVC\Web\Response
+	 * @var \TYPO3\FLOW3\MVC\Web\Response
 	 */
 	protected $response;
 
@@ -55,7 +55,7 @@ class RestController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * Determines the action method and assures that the method exists.
 	 *
 	 * @return string The action method name
-	 * @throws \F3\FLOW3\MVC\Exception\NoSuchActionException if the action specified in the request object does not exist (and if there's no default action either).
+	 * @throws \TYPO3\FLOW3\MVC\Exception\NoSuchActionException if the action specified in the request object does not exist (and if there's no default action either).
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function resolveActionMethodName() {
@@ -93,11 +93,11 @@ class RestController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * NOTE: This method only supports web requests and will throw an exception
 	 * if used with other request types.
 	 *
-	 * @param mixed $uri Either a string representation of a URI or a \F3\FLOW3\Property\DataType\Uri object
+	 * @param mixed $uri Either a string representation of a URI or a \TYPO3\FLOW3\Property\DataType\Uri object
 	 * @param integer $delay (optional) The delay in seconds. Default is no delay.
 	 * @param integer $statusCode (optional) The HTTP status code for the redirect. Default is "303 See Other"
-	 * @throws \F3\FLOW3\MVC\Exception\UnsupportedRequestTypeException If the request is not a web request
-	 * @throws \F3\FLOW3\MVC\Exception\StopActionException
+	 * @throws \TYPO3\FLOW3\MVC\Exception\UnsupportedRequestTypeException If the request is not a web request
+	 * @throws \TYPO3\FLOW3\MVC\Exception\StopActionException
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
@@ -106,7 +106,7 @@ class RestController extends \F3\FLOW3\MVC\Controller\ActionController {
 			// thus the code in catch - it's the expected state
 		try {
 			parent::redirectToUri($uri, $delay, $statusCode);
-		} catch (\F3\FLOW3\MVC\Exception\StopActionException $exception) {
+		} catch (\TYPO3\FLOW3\MVC\Exception\StopActionException $exception) {
 			if ($this->request->getFormat() === 'json') {
 				$this->response->setContent('');
 			}

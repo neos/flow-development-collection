@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\MVC\Web\Routing\Aspect;
+namespace TYPO3\FLOW3\MVC\Web\Routing\Aspect;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -31,46 +31,46 @@ namespace F3\FLOW3\MVC\Web\Routing\Aspect;
 class RouterCachingAspect {
 
 	/**
-	 * @var \F3\FLOW3\Cache\Frontend\VariableFrontend
+	 * @var \TYPO3\FLOW3\Cache\Frontend\VariableFrontend
 	 */
 	protected $findMatchResultsCache;
 
 	/**
-	 * @var \F3\FLOW3\Cache\Frontend\StringFrontend
+	 * @var \TYPO3\FLOW3\Cache\Frontend\StringFrontend
 	 */
 	protected $resolveCache;
 
 	/**
 	 * Injects the $findMatchResultsCache frontend
 	 *
-	 * @param \F3\FLOW3\Cache\Frontend\VariableFrontend $cache
+	 * @param \TYPO3\FLOW3\Cache\Frontend\VariableFrontend $cache
 	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function injectFindMatchResultsCache(\F3\FLOW3\Cache\Frontend\VariableFrontend $cache) {
+	public function injectFindMatchResultsCache(\TYPO3\FLOW3\Cache\Frontend\VariableFrontend $cache) {
 		$this->findMatchResultsCache = $cache;
 	}
 
 	/**
 	 * Injects the $resolveCache drontend
 	 *
-	 * @param \F3\FLOW3\Cache\Frontend\StringFrontend $cache
+	 * @param \TYPO3\FLOW3\Cache\Frontend\StringFrontend $cache
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectResolveCache(\F3\FLOW3\Cache\Frontend\StringFrontend $cache) {
+	public function injectResolveCache(\TYPO3\FLOW3\Cache\Frontend\StringFrontend $cache) {
 		$this->resolveCache = $cache;
 	}
 
 	/**
 	 * Around advice
 	 *
-	 * @around method(F3\FLOW3\MVC\Web\Routing\Router->findMatchResults())
-	 * @param F3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
+	 * @around method(TYPO3\FLOW3\MVC\Web\Routing\Router->findMatchResults())
+	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
 	 * @return array Result of the target method
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function cacheMatchingCall(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function cacheMatchingCall(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$routePath = $joinPoint->getMethodArgument('routePath');
 
 		$cacheIdentifier = md5($routePath);
@@ -88,16 +88,16 @@ class RouterCachingAspect {
 	/**
 	 * Around advice
 	 *
-	 * @around method(F3\FLOW3\MVC\Web\Routing\Router->resolve())
-	 * @param F3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
+	 * @around method(TYPO3\FLOW3\MVC\Web\Routing\Router->resolve())
+	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
 	 * @return string Result of the target method
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function cacheResolveCall(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function cacheResolveCall(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$routeValues = $joinPoint->getMethodArgument('routeValues');
 		$routeValues = $this->convertObjectsToHashes($routeValues);
-		\F3\FLOW3\Utility\Arrays::sortKeysRecursively($routeValues);
+		\TYPO3\FLOW3\Utility\Arrays::sortKeysRecursively($routeValues);
 
 		$cacheIdentifier = md5(http_build_query($routeValues));
 		if ($this->resolveCache->has($cacheIdentifier)) {

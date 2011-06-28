@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Security\Authentication\EntryPoint;
+namespace TYPO3\FLOW3\Security\Authentication\EntryPoint;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -27,7 +27,7 @@ namespace F3\FLOW3\Security\Authentication\EntryPoint;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
-class HttpBasic implements \F3\FLOW3\Security\Authentication\EntryPointInterface {
+class HttpBasic implements \TYPO3\FLOW3\Security\Authentication\EntryPointInterface {
 
 	/**
 	 * The configurations options
@@ -39,12 +39,12 @@ class HttpBasic implements \F3\FLOW3\Security\Authentication\EntryPointInterface
 	 * Returns TRUE if the given request can be authenticated by the authentication provider
 	 * represented by this entry point
 	 *
-	 * @param \F3\FLOW3\MVC\RequestInterface $request The current request
+	 * @param \TYPO3\FLOW3\MVC\RequestInterface $request The current request
 	 * @return boolean TRUE if authentication is possible
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function canForward(\F3\FLOW3\MVC\RequestInterface $request) {
-		return ($request instanceof \F3\FLOW3\MVC\Web\Request);
+	public function canForward(\TYPO3\FLOW3\MVC\RequestInterface $request) {
+		return ($request instanceof \TYPO3\FLOW3\MVC\Web\Request);
 	}
 
 	/**
@@ -71,13 +71,13 @@ class HttpBasic implements \F3\FLOW3\Security\Authentication\EntryPointInterface
 	/**
 	 * Starts the authentication: Send HTTP header
 	 *
-	 * @param \F3\FLOW3\MVC\RequestInterface $request The current request
-	 * @param \F3\FLOW3\MVC\ResponseInterface $response The current response
+	 * @param \TYPO3\FLOW3\MVC\RequestInterface $request The current request
+	 * @param \TYPO3\FLOW3\MVC\ResponseInterface $response The current response
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function startAuthentication(\F3\FLOW3\MVC\RequestInterface $request, \F3\FLOW3\MVC\ResponseInterface $response) {
-		if (!$this->canForward($request)) throw new \F3\FLOW3\Security\Exception\RequestTypeNotSupportedException('Unsupported request type for authentication entry point given.', 1237282465);
+	public function startAuthentication(\TYPO3\FLOW3\MVC\RequestInterface $request, \TYPO3\FLOW3\MVC\ResponseInterface $response) {
+		if (!$this->canForward($request)) throw new \TYPO3\FLOW3\Security\Exception\RequestTypeNotSupportedException('Unsupported request type for authentication entry point given.', 1237282465);
 		$response->setStatus(401);
 		$response->setHeader('WWW-Authenticate', 'Basic realm="' . (isset($this->options['realm']) ? $this->options['realm'] : 'Authentication required!') . '"');
 		$response->setContent('Authorization required!');

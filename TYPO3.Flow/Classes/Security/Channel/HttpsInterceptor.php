@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Security\Channel;
+namespace TYPO3\FLOW3\Security\Channel;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -27,7 +27,7 @@ namespace F3\FLOW3\Security\Channel;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope singleton
  */
-class HttpsInterceptor implements \F3\FLOW3\Security\Authorization\InterceptorInterface {
+class HttpsInterceptor implements \TYPO3\FLOW3\Security\Authorization\InterceptorInterface {
 
 	/**
 	 * @var boolean
@@ -38,16 +38,16 @@ class HttpsInterceptor implements \F3\FLOW3\Security\Authorization\InterceptorIn
 	/**
 	 * Constructor.
 	 *
-	 * @param \F3\FLOW3\Security\Context $securityContext The current security context
-	 * @param \F3\FLOW3\Security\Authentication\AuthenticationManagerInterface $authenticationManager The authentication Manager
-	 * @param \F3\FLOW3\Log\SystemLoggerInterface $logger A logger to log security relevant actions
+	 * @param \TYPO3\FLOW3\Security\Context $securityContext The current security context
+	 * @param \TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface $authenticationManager The authentication Manager
+	 * @param \TYPO3\FLOW3\Log\SystemLoggerInterface $logger A logger to log security relevant actions
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function __construct(
-		\F3\FLOW3\Security\Context $securityContext,
-		\F3\FLOW3\Security\Authentication\AuthenticationManagerInterface $authenticationManager,
-		\F3\FLOW3\Log\SystemLoggerInterface $logger
+		\TYPO3\FLOW3\Security\Context $securityContext,
+		\TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface $authenticationManager,
+		\TYPO3\FLOW3\Log\SystemLoggerInterface $logger
 	) {
 
 	}

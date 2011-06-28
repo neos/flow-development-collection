@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\MVC\Web;
+namespace TYPO3\FLOW3\Tests\Unit\MVC\Web;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,14 +26,14 @@ namespace F3\FLOW3\Tests\Unit\MVC\Web;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class ResponseTest extends \F3\FLOW3\Tests\UnitTestCase {
+class ResponseTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function theDefaultStatusHeaderIs200OK() {
-		$response = new \F3\FLOW3\MVC\Web\Response();
+		$response = new \TYPO3\FLOW3\MVC\Web\Response();
 		$this->assertEquals(array('HTTP/1.1 200 OK'), $response->getHeaders());
 	}
 
@@ -42,7 +42,7 @@ class ResponseTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function itIsPossibleToSetTheHTTPStatusCodeAndMessage() {
-		$response = new \F3\FLOW3\MVC\Web\Response();
+		$response = new \TYPO3\FLOW3\MVC\Web\Response();
 		$response->setStatus(400, 'Really Bad Request');
 		$this->assertEquals(array('HTTP/1.1 400 Really Bad Request'), $response->getHeaders());
 	}
@@ -52,7 +52,7 @@ class ResponseTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function additionalHeadersCanBeSetAndRetrieved() {
-		$response = new \F3\FLOW3\MVC\Web\Response();
+		$response = new \TYPO3\FLOW3\MVC\Web\Response();
 		$response->setStatus(123, 'Custom Status');
 		$response->setHeader('MyHeader', 'MyValue');
 		$response->setHeader('OtherHeader', 'OtherValue');
@@ -71,7 +71,7 @@ class ResponseTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function byDefaultHeadersOfTheSameNameAreReplaced() {
-		$response = new \F3\FLOW3\MVC\Web\Response();
+		$response = new \TYPO3\FLOW3\MVC\Web\Response();
 		$response->setHeader('MyHeader', 'MyValue');
 		$response->setHeader('MyHeader', 'OtherValue');
 
@@ -88,7 +88,7 @@ class ResponseTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function multipleHeadersOfTheSameNameMayBeDefined() {
-		$response = new \F3\FLOW3\MVC\Web\Response();
+		$response = new \TYPO3\FLOW3\MVC\Web\Response();
 		$response->setHeader('MyHeader', 'MyValue', FALSE);
 		$response->setHeader('MyHeader', 'OtherValue', FALSE);
 

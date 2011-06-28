@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Security\Aspect;
+namespace TYPO3\FLOW3\Security\Aspect;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -30,31 +30,31 @@ namespace F3\FLOW3\Security\Aspect;
 class CsrfProtectionAspect {
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
+	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
 	 * @inject
 	 */
 	protected $objectManager;
 
 	/**
-	 * @var \F3\FLOW3\Reflection\ReflectionService
+	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
 	 * @inject
 	 */
 	protected $reflectionService;
 
 	/**
-	 * @var \F3\FLOW3\Security\Context
+	 * @var \TYPO3\FLOW3\Security\Context
 	 * @inject
 	 */
 	protected $securityContext;
 
 	/**
-	 * @var \F3\FLOW3\Security\Policy\PolicyService
+	 * @var \TYPO3\FLOW3\Security\Policy\PolicyService
 	 * @inject
 	 */
 	protected $policyService;
 
 	/**
-	 * @var \F3\FLOW3\Utility\Environment
+	 * @var \TYPO3\FLOW3\Utility\Environment
 	 * @inject
 	 */
 	protected $environment;
@@ -62,12 +62,12 @@ class CsrfProtectionAspect {
 	/**
 	 * Adds a CSRF token as argument in the URI builder
 	 *
-	 * @before method(F3\FLOW3\MVC\Web\Routing\UriBuilder->build()) && setting(TYPO3.FLOW3.security.enable)
-	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
+	 * @before method(TYPO3\FLOW3\MVC\Web\Routing\UriBuilder->build()) && setting(TYPO3.FLOW3.security.enable)
+	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function addCsrfTokenToUri(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function addCsrfTokenToUri(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$uriBuilder = $joinPoint->getProxy();
 		$arguments = $joinPoint->getMethodArgument('arguments');
 		$packageKey = (isset($arguments['@package']) ? $arguments['@package'] : '');
@@ -95,11 +95,11 @@ class CsrfProtectionAspect {
 	 * Adds a CSRF token as argument in ExtDirect requests
 	 *
 	 * @around method(TYPO3\ExtJS\ExtDirect\Transaction->buildRequest()) && setting(TYPO3.FLOW3.security.enable)
-	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
+	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function transferCsrfTokenToExtDirectRequests(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function transferCsrfTokenToExtDirectRequests(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$arguments = $this->environment->getRequestUri()->getArguments();
 		$request = $joinPoint->getAdviceChain()->proceed($joinPoint);
 

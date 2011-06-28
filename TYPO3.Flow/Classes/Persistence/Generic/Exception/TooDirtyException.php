@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Persistence\Generic\Exception;
+namespace TYPO3\FLOW3\Persistence\Generic\Exception;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -27,7 +27,7 @@ namespace F3\FLOW3\Persistence\Generic\Exception;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */
-class TooDirtyException extends \F3\FLOW3\Persistence\Exception {
+class TooDirtyException extends \TYPO3\FLOW3\Persistence\Exception {
 }
 
 ?>

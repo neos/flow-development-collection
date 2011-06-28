@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Reflection\Fixture;
+namespace TYPO3\FLOW3\Tests\Reflection\Fixture;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,6 +26,6 @@ namespace F3\FLOW3\Tests\Reflection\Fixture;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class ImplementationOfDummyInterface1 implements \F3\FLOW3\Tests\Reflection\Fixture\DummyInterface1 {
+class ImplementationOfDummyInterface1 implements \TYPO3\FLOW3\Tests\Reflection\Fixture\DummyInterface1 {
 }
 ?>

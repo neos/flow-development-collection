@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\AOP;
+namespace TYPO3\FLOW3\AOP;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -29,11 +29,11 @@ namespace F3\FLOW3\AOP;
  * @scope prototype
  * @api
  */
-class JoinPoint implements \F3\FLOW3\AOP\JoinPointInterface {
+class JoinPoint implements \TYPO3\FLOW3\AOP\JoinPointInterface {
 
 	/**
 	 * A reference to the proxy object
-	 * @var \F3\FLOW3\Object\Proxy\ProxyInterface
+	 * @var \TYPO3\FLOW3\Object\Proxy\ProxyInterface
 	 */
 	protected $proxy;
 
@@ -57,7 +57,7 @@ class JoinPoint implements \F3\FLOW3\AOP\JoinPointInterface {
 
 	/**
 	 * The advice chain for this join point
-	 * @var \F3\FLOW3\AOP\Advice\AdviceChain
+	 * @var \TYPO3\FLOW3\AOP\Advice\AdviceChain
 	 */
 	protected $adviceChain;
 
@@ -80,14 +80,14 @@ class JoinPoint implements \F3\FLOW3\AOP\JoinPointInterface {
 	 * @param string $className Class name of the target class this join point refers to
 	 * @param string $methodName Method name of the target method which is about to or has been invoked
 	 * @param array $methodArguments Array of method arguments which have been passed to the target method
-	 * @param \F3\FLOW3\AOP\Advice\AdviceChain $adviceChain The advice chain for this join point
+	 * @param \TYPO3\FLOW3\AOP\Advice\AdviceChain $adviceChain The advice chain for this join point
 	 * @param mixed $result The result of the method invocations (only used for After Returning advices)
 	 * @param Exception $exception The exception thrown (only used for After Throwing advices)
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct($proxy, $className, $methodName, $methodArguments, $adviceChain = NULL, $result = NULL, $exception = NULL) {
-		if ($adviceChain !== NULL && !$adviceChain instanceof \F3\FLOW3\AOP\Advice\AdviceChain) throw new \InvalidArgumentException('The advice chain must be an instance of \F3\FLOW3\AOP\Advice\AdviceChain.', 1171482537);
+		if ($adviceChain !== NULL && !$adviceChain instanceof \TYPO3\FLOW3\AOP\Advice\AdviceChain) throw new \InvalidArgumentException('The advice chain must be an instance of \TYPO3\FLOW3\AOP\Advice\AdviceChain.', 1171482537);
 
 		$this->proxy = $proxy;
 		$this->className = $className;
@@ -101,7 +101,7 @@ class JoinPoint implements \F3\FLOW3\AOP\JoinPointInterface {
 	/**
 	 * Returns the reference to the proxy class instance
 	 *
-	 * @return \F3\FLOW3\Object\Proxy\ProxyInterface
+	 * @return \TYPO3\FLOW3\Object\Proxy\ProxyInterface
 	 * @api
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -151,7 +151,7 @@ class JoinPoint implements \F3\FLOW3\AOP\JoinPointInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getMethodArgument($argumentName) {
-		if (!array_key_exists($argumentName, $this->methodArguments)) throw new \F3\FLOW3\AOP\Exception\InvalidArgumentException('The argument "' . $argumentName . '" does not exist in method ' . $this->className . '->' . $this->methodName, 1172750905);
+		if (!array_key_exists($argumentName, $this->methodArguments)) throw new \TYPO3\FLOW3\AOP\Exception\InvalidArgumentException('The argument "' . $argumentName . '" does not exist in method ' . $this->className . '->' . $this->methodName, 1172750905);
 		return $this->methodArguments[$argumentName];
 	}
 
@@ -171,7 +171,7 @@ class JoinPoint implements \F3\FLOW3\AOP\JoinPointInterface {
 	/**
 	 * Returns the advice chain related to this join point
 	 *
-	 * @return \F3\FLOW3\AOP\Advice\AdviceChain The advice chain
+	 * @return \TYPO3\FLOW3\AOP\Advice\AdviceChain The advice chain
 	 * @api
 	 * @author Robert Lemke <robert@typo3.org>
 	 */

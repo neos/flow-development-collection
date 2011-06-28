@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Cache\Backend;
+namespace TYPO3\FLOW3\Cache\Backend;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -67,7 +67,7 @@ namespace F3\FLOW3\Cache\Backend;
  * @api
  * @scope prototype
  */
-class RedisBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
+class RedisBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 
 	/**
 	 * Faked unlimited lifetime = 31536000 (1 Year).
@@ -155,13 +155,13 @@ class RedisBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 *
 	 * @param string $context FLOW3's application context
 	 * @param array $options Configuration options
-	 * @throws \F3\FLOW3\Cache\Exception if php redis module is not loaded
+	 * @throws \TYPO3\FLOW3\Cache\Exception if php redis module is not loaded
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 */
 	public function __construct($context, array $options = array()) {
 		if (!extension_loaded('redis')) {
-			throw new \F3\FLOW3\Cache\Exception('The PHP extension "redis" must be installed and loaded in order to use the phpredis redis backend.', 1279462933);
+			throw new \TYPO3\FLOW3\Cache\Exception('The PHP extension "redis" must be installed and loaded in order to use the phpredis redis backend.', 1279462933);
 		}
 
 		parent::__construct($context, $options);
@@ -170,7 +170,7 @@ class RedisBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	/**
 	 * Initializes the redis backend
 	 *
-	 * @throws \F3\FLOW3\Cache\Exception if access to redis with password is denied or if database selection fails
+	 * @throws \TYPO3\FLOW3\Cache\Exception if access to redis with password is denied or if database selection fails
 	 * @return void
 	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 */
@@ -180,21 +180,21 @@ class RedisBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 		try {
 			$this->connected = $this->redis->connect($this->hostname, $this->port);
 		} catch (Exception $e) {
-			throw new \F3\FLOW3\Cache\Exception('Could not connect to redis server.', 1294734537, $e);
+			throw new \TYPO3\FLOW3\Cache\Exception('Could not connect to redis server.', 1294734537, $e);
 		}
 
 		if ($this->connected) {
 			if (strlen($this->password)) {
 				$success = $this->redis->auth($this->password);
 				if (!$success) {
-					throw new \F3\FLOW3\Cache\Exception('The given password was not accepted by the redis server.', 1279765134);
+					throw new \TYPO3\FLOW3\Cache\Exception('The given password was not accepted by the redis server.', 1279765134);
 				}
 			}
 
 			if ($this->database > 0) {
 				$success = $this->redis->select($this->database);
 				if (!$success) {
-					throw new \F3\FLOW3\Cache\Exception('The given database "' . $this->database . '" could not be selected.', 1279765144);
+					throw new \TYPO3\FLOW3\Cache\Exception('The given database "' . $this->database . '" could not be selected.', 1279765144);
 				}
 			}
 		}
@@ -304,7 +304,7 @@ class RedisBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @param integer $lifetime Lifetime of this cache entry in seconds. If NULL is specified, default lifetime is used. "0" means unlimited lifetime.
 	 * @return void
 	 * @throws \InvalidArgumentException if identifier is not valid
-	 * @throws \F3\FLOW3\Cache\Exception\InvalidDataException if data is not a string
+	 * @throws \TYPO3\FLOW3\Cache\Exception\InvalidDataException if data is not a string
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 * @api
@@ -314,7 +314,7 @@ class RedisBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 			throw new \InvalidArgumentException('The specified identifier is of type "' . gettype($entryIdentifier) . '" but a string is expected.', 1279470252);
 		}
 		if (!is_string($data)) {
-			throw new \F3\FLOW3\Cache\Exception\InvalidDataException('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1279469941);
+			throw new \TYPO3\FLOW3\Cache\Exception\InvalidDataException('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1279469941);
 		}
 
 		$lifetimeIsNull = is_null($lifetime);

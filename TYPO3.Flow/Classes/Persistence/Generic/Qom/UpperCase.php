@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Persistence\Generic\Qom;
+namespace TYPO3\FLOW3\Persistence\Generic\Qom;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -37,24 +37,24 @@ namespace F3\FLOW3\Persistence\Generic\Qom;
 class UpperCase {
 
 	/**
-	 * @var \F3\FLOW3\Persistence\Generic\Qom\DynamicOperand
+	 * @var \TYPO3\FLOW3\Persistence\Generic\Qom\DynamicOperand
 	 */
 	protected $operand;
 
 	/**
 	 * Constructs this UpperCase instance
 	 *
-	 * @param \F3\FLOW3\Persistence\Generic\Qom\DynamicOperand $operand
+	 * @param \TYPO3\FLOW3\Persistence\Generic\Qom\DynamicOperand $operand
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(\F3\FLOW3\Persistence\Generic\Qom\DynamicOperand $operand) {
+	public function __construct(\TYPO3\FLOW3\Persistence\Generic\Qom\DynamicOperand $operand) {
 		$this->operand = $operand;
 	}
 
 	/**
 	 * Gets the operand whose value is converted to a upper-case string.
 	 *
-	 * @return \F3\FLOW3\Persistence\Generic\Qom\DynamicOperand the operand; non-null
+	 * @return \TYPO3\FLOW3\Persistence\Generic\Qom\DynamicOperand the operand; non-null
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */

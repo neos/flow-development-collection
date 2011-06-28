@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Functional\Object\Fixtures;
+namespace TYPO3\FLOW3\Tests\Functional\Object\Fixtures;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -30,7 +30,7 @@ class PrototypeClassAFactory {
 	 * Creates a new instance of PrototypeClassA
 	 *
 	 * @param string $someProperty
-	 * @return \F3\FLOW3\Tests\Functional\Object\Fixtures\FLOWPrototypeClassA
+	 * @return \TYPO3\FLOW3\Tests\Functional\Object\Fixtures\FLOWPrototypeClassA
 	 */
 	public function create($someProperty) {
 		$object = new PrototypeClassA();

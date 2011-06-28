@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Resource;
+namespace TYPO3\FLOW3\Resource;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,7 +26,7 @@ namespace F3\FLOW3\Resource;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class ResourceTest extends \F3\FLOW3\Tests\UnitTestCase {
+class ResourceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
@@ -34,7 +34,7 @@ class ResourceTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setFilenameStoresTheFileExtensionInLowerCase() {
-		$resource = new \F3\FLOW3\Resource\Resource();
+		$resource = new \TYPO3\FLOW3\Resource\Resource();
 		$resource->setFilename('Something.Jpeg');
 		$this->assertSame('jpeg', $resource->getFileExtension());
 		$this->assertSame('Something.jpeg', $resource->getFileName());
@@ -45,7 +45,7 @@ class ResourceTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setFilenameDoesNotAppendFileExtensionIfItIsEmpty() {
-		$resource = new \F3\FLOW3\Resource\Resource();
+		$resource = new \TYPO3\FLOW3\Resource\Resource();
 		$resource->setFilename('FileWithoutExtension');
 		$this->assertSame('', $resource->getFileExtension());
 		$this->assertSame('FileWithoutExtension', $resource->getFileName());
@@ -56,15 +56,15 @@ class ResourceTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getMimeTypeReturnsMimeTypeBasedOnFileExtension() {
-		$resource = new \F3\FLOW3\Resource\Resource();
+		$resource = new \TYPO3\FLOW3\Resource\Resource();
 		$resource->setFilename('file.jpg');
 		$this->assertSame('image/jpeg', $resource->getMimeType());
 
-		$resource = new \F3\FLOW3\Resource\Resource();
+		$resource = new \TYPO3\FLOW3\Resource\Resource();
 		$resource->setFilename('file.zip');
 		$this->assertSame('application/x-zip-compressed', $resource->getMimeType());
 
-		$resource = new \F3\FLOW3\Resource\Resource();
+		$resource = new \TYPO3\FLOW3\Resource\Resource();
 		$resource->setFilename('file.someunknownextension');
 		$this->assertSame('application/octet-stream', $resource->getMimeType());
 	}

@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Security\Authorization\Voter;
+namespace TYPO3\FLOW3\Security\Authorization\Voter;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -27,46 +27,46 @@ namespace F3\FLOW3\Security\Authorization\Voter;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope singleton
  */
-class Policy implements \F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface {
+class Policy implements \TYPO3\FLOW3\Security\Authorization\AccessDecisionVoterInterface {
 
 	/**
 	 * The policy service
-	 * @var \F3\FLOW3\Security\Policy\PolicyService
+	 * @var \TYPO3\FLOW3\Security\Policy\PolicyService
 	 */
 	protected $policyService;
 
 	/**
 	 * Constructor.
 	 *
-	 * @param F3\FLOW3\Security\Policy\PolicyService $policyService The policy service
+	 * @param \TYPO3\FLOW3\Security\Policy\PolicyService $policyService The policy service
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function __construct(\F3\FLOW3\Security\Policy\PolicyService $policyService) {
+	public function __construct(\TYPO3\FLOW3\Security\Policy\PolicyService $policyService) {
 		$this->policyService = $policyService;
 	}
 
 	/**
 	 * This is the default Policy voter, it votes for the access privilege for the given join point
 	 *
-	 * @param F3\FLOW3\Security\Context $securityContext The current securit context
-	 * @param F3\FLOW3\AOP\JoinPointInterface $joinPoint The joinpoint to vote for
+	 * @param \TYPO3\FLOW3\Security\Context $securityContext The current securit context
+	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The joinpoint to vote for
 	 * @return integer One of: VOTE_GRANT, VOTE_ABSTAIN, VOTE_DENY
 	 */
-	public function voteForJoinPoint(\F3\FLOW3\Security\Context $securityContext, \F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function voteForJoinPoint(\TYPO3\FLOW3\Security\Context $securityContext, \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$accessGrants = 0;
 		$accessDenies = 0;
 		foreach ($securityContext->getRoles() as $role) {
 			try {
 				$privileges = $this->policyService->getPrivilegesForJoinPoint($role, $joinPoint);
-			} catch (\F3\FLOW3\Security\Exception\NoEntryInPolicyException $e) {
+			} catch (\TYPO3\FLOW3\Security\Exception\NoEntryInPolicyException $e) {
 				return self::VOTE_ABSTAIN;
 			}
 
 			foreach ($privileges as $privilege) {
-				if ($privilege === \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT) {
+				if ($privilege === \TYPO3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT) {
 					$accessGrants++;
-				} elseif ($privilege === \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY) {
+				} elseif ($privilege === \TYPO3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY) {
 					$accessDenies++;
 				}
 			}
@@ -85,25 +85,25 @@ class Policy implements \F3\FLOW3\Security\Authorization\AccessDecisionVoterInte
 	/**
 	 * This is the default Policy voter, it votes for the access privilege for the given resource
 	 *
-	 * @param F3\FLOW3\Security\Context $securityContext The current securit context
+	 * @param \TYPO3\FLOW3\Security\Context $securityContext The current securit context
 	 * @param string $resource The resource to vote for
 	 * @return integer One of: VOTE_GRANT, VOTE_ABSTAIN, VOTE_DENY
 	 */
-	public function voteForResource(\F3\FLOW3\Security\Context $securityContext, $resource) {
+	public function voteForResource(\TYPO3\FLOW3\Security\Context $securityContext, $resource) {
 		$accessGrants = 0;
 		$accessDenies = 0;
 		foreach ($securityContext->getRoles() as $role) {
 			try {
 				$privilege = $this->policyService->getPrivilegeForResource($role, $resource);
-			} catch (\F3\FLOW3\Security\Exception\NoEntryInPolicyException $e) {
+			} catch (\TYPO3\FLOW3\Security\Exception\NoEntryInPolicyException $e) {
 				return self::VOTE_ABSTAIN;
 			}
 
 			if ($privilege === NULL) continue;
 
-			if ($privilege === \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT) {
+			if ($privilege === \TYPO3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT) {
 				$accessGrants++;
-			} elseif ($privilege === \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY) {
+			} elseif ($privilege === \TYPO3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY) {
 				$accessDenies++;
 			}
 		}

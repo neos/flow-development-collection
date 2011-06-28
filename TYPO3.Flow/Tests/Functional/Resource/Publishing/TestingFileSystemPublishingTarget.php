@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Functional\Resource\Publishing;
+namespace TYPO3\FLOW3\Tests\Functional\Resource\Publishing;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -30,7 +30,7 @@ namespace F3\FLOW3\Tests\Functional\Resource\Publishing;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class TestingFileSystemPublishingTarget extends \F3\FLOW3\Resource\Publishing\FileSystemPublishingTarget {
+class TestingFileSystemPublishingTarget extends \TYPO3\FLOW3\Resource\Publishing\FileSystemPublishingTarget {
 
 	/**
 	 * Always returns a fixed base URI of http://baseuri/_Resources/

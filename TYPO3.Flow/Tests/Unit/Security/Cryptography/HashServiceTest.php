@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\Security\Cryptography;
+namespace TYPO3\FLOW3\Tests\Unit\Security\Cryptography;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,12 +26,12 @@ namespace F3\FLOW3\Tests\Unit\Security\Cryptography;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  */
-class HashServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
+class HashServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	protected $hashService;
 
 	public function setUp() {
-		$this->hashService = new \F3\FLOW3\Security\Cryptography\HashService();
+		$this->hashService = new \TYPO3\FLOW3\Security\Cryptography\HashService();
 	}
 
 	/**
@@ -64,7 +64,7 @@ class HashServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException F3\FLOW3\Security\Exception\InvalidArgumentForHashGenerationException
+	 * @expectedException TYPO3\FLOW3\Security\Exception\InvalidArgumentForHashGenerationException
 	 * @author Sebastian Kurfürst
 	 */
 	public function generateHmacThrowsExceptionIfNoStringGiven() {

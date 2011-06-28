@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Utility;
+namespace TYPO3\FLOW3\Utility;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -83,7 +83,7 @@ class Files {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	static public function readDirectoryRecursively($path, $suffix = NULL, $returnRealPath = FALSE, &$filenames = array()) {
-		if (!is_dir($path)) throw new \F3\FLOW3\Utility\Exception('"' . $path . '" is no directory.', 1207253462);
+		if (!is_dir($path)) throw new \TYPO3\FLOW3\Utility\Exception('"' . $path . '" is no directory.', 1207253462);
 
 		$directoryIterator = new \DirectoryIterator($path);
 		$suffixLength = strlen($suffix);
@@ -110,17 +110,17 @@ class Files {
 	 * @see removeDirectoryRecursively()
 	 */
 	static public function emptyDirectoryRecursively($path) {
-		if (!is_dir($path)) throw new \F3\FLOW3\Utility\Exception('"' . $path . '" is no directory.', 1169047616);
+		if (!is_dir($path)) throw new \TYPO3\FLOW3\Utility\Exception('"' . $path . '" is no directory.', 1169047616);
 
 		$directoryIterator = new \RecursiveDirectoryIterator($path);
 		$recursiveIterator = new \RecursiveIteratorIterator($directoryIterator);
 		foreach($recursiveIterator as $fileInfo) {
 			try {
 				if (!$recursiveIterator->isDot() && @unlink($fileInfo->getPathname()) === FALSE) {
-					throw new \F3\FLOW3\Utility\Exception('Cannot unlink file "' . $fileInfo->getPathname() . '".', 1169047619);
+					throw new \TYPO3\FLOW3\Utility\Exception('Cannot unlink file "' . $fileInfo->getPathname() . '".', 1169047619);
 				}
 			} catch (\Exception $exception) {
-				throw new \F3\FLOW3\Utility\Exception('Cannot unlink file "' . $fileInfo->getPathname() . '".', 1301491043);
+				throw new \TYPO3\FLOW3\Utility\Exception('Cannot unlink file "' . $fileInfo->getPathname() . '".', 1301491043);
 			}
 		}
 		foreach ($directoryIterator as $fileInfo) {
@@ -162,7 +162,7 @@ class Files {
 			$oldMask = umask(000);
 			mkdir($path, 0777, TRUE);
 			umask($oldMask);
-			if (!is_dir($path)) throw new \F3\FLOW3\Utility\Exception('Could not create directory "' . $path . '"!', 1170251400);
+			if (!is_dir($path)) throw new \TYPO3\FLOW3\Utility\Exception('Could not create directory "' . $path . '"!', 1170251400);
 		}
 	}
 
@@ -176,10 +176,10 @@ class Files {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	static public function copyDirectoryRecursively($sourceDirectory, $targetDirectory) {
-		if (!is_dir($sourceDirectory)) throw new \F3\FLOW3\Utility\Exception('"' . $sourceDirectory . '" is no directory.', 1235428779);
+		if (!is_dir($sourceDirectory)) throw new \TYPO3\FLOW3\Utility\Exception('"' . $sourceDirectory . '" is no directory.', 1235428779);
 
 		self::createDirectoryRecursively($targetDirectory);
-		if (!is_dir($targetDirectory)) throw new \F3\FLOW3\Utility\Exception('"' . $targetDirectory . '" is no directory.', 1235428779);
+		if (!is_dir($targetDirectory)) throw new \TYPO3\FLOW3\Utility\Exception('"' . $targetDirectory . '" is no directory.', 1235428779);
 
 		$resourceFilenames = self::readDirectoryRecursively($sourceDirectory);
 		foreach ($resourceFilenames as $filename) {
@@ -209,7 +209,7 @@ class Files {
 			} else {
 				$content = file_get_contents($pathAndFilename, $flags, $context, $offset);
 			}
-		} catch (\F3\FLOW3\Error\Exception $ignoredException) {
+		} catch (\TYPO3\FLOW3\Error\Exception $ignoredException) {
 			$content = FALSE;
 		}
 		return $content;

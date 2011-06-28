@@ -8,30 +8,30 @@
 # global Configuration directory and its sub directories.                #
 #                                                                        #
 
-F3\FLOW3\Session\SessionInterface:
-  className: F3\FLOW3\Session\TransientSession
+TYPO3\FLOW3\Session\SessionInterface:
+  className: TYPO3\FLOW3\Session\TransientSession
 
-F3\FLOW3\Security\Authorization\AccessDecisionManagerInterface:
-  className: F3\FLOW3\Tests\Functional\Security\Authorization\TestingAccessDecisionManager
+TYPO3\FLOW3\Security\Authorization\AccessDecisionManagerInterface:
+  className: TYPO3\FLOW3\Tests\Functional\Security\Authorization\TestingAccessDecisionManager
 
-F3\FLOW3\Resource\Publishing\ResourcePublishingTargetInterface:
-  className: F3\FLOW3\Tests\Functional\Resource\Publishing\TestingFileSystemPublishingTarget
+TYPO3\FLOW3\Resource\Publishing\ResourcePublishingTargetInterface:
+  className: TYPO3\FLOW3\Tests\Functional\Resource\Publishing\TestingFileSystemPublishingTarget
 
-F3\FLOW3\Tests\Functional\Object\Fixtures\SingletonClassC:
+TYPO3\FLOW3\Tests\Functional\Object\Fixtures\SingletonClassC:
   arguments:
     1:
       value: 'this is required'
     3:
       setting: TYPO3.FLOW3.tests.functional.dependencyInjection.singletonConstructorArgument
 
-F3\FLOW3\Tests\Functional\Object\Fixtures\PrototypeClassAishInterface:
+TYPO3\FLOW3\Tests\Functional\Object\Fixtures\PrototypeClassAishInterface:
   scope: singleton
-  factoryObjectName: F3\FLOW3\Tests\Functional\Object\Fixtures\PrototypeClassAFactory
+  factoryObjectName: TYPO3\FLOW3\Tests\Functional\Object\Fixtures\PrototypeClassAFactory
   arguments:
     1:
       value: 'value defined in Objects.yaml'
 
-F3\FLOW3\Tests\Functional\Object\Fixtures\PrototypeClassC:
+TYPO3\FLOW3\Tests\Functional\Object\Fixtures\PrototypeClassC:
   arguments:
     1:
       setting: TYPO3.FLOW3.tests.functional.dependencyInjection.prototypeConstructorArgument

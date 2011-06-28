@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Persistence;
+namespace TYPO3\FLOW3\Persistence;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -94,7 +94,7 @@ interface PersistenceManagerInterface {
 	 *
 	 * @param object $object The object to be converted
 	 * @return array The identity array in the format array('__identity' => '...')
-	 * @throws \F3\FLOW3\Persistence\Exception\UnknownObjectException if the given object is not known to the Persistence Manager
+	 * @throws \TYPO3\FLOW3\Persistence\Exception\UnknownObjectException if the given object is not known to the Persistence Manager
 	 * @api
 	 */
 	public function convertObjectToIdentityArray($object);
@@ -105,7 +105,7 @@ interface PersistenceManagerInterface {
 	 *
 	 * @param array $array The array to be iterated over
 	 * @return array The modified array without objects
-	 * @throws \F3\FLOW3\Persistence\Exception\UnknownObjectException if array contains objects that are not known to the Persistence Manager
+	 * @throws \TYPO3\FLOW3\Persistence\Exception\UnknownObjectException if array contains objects that are not known to the Persistence Manager
 	 * @api
 	 * @see convertObjectToIdentityArray()
 	 */
@@ -115,7 +115,7 @@ interface PersistenceManagerInterface {
 	 * Return a query object for the given type.
 	 *
 	 * @param string $type
-	 * @return \F3\FLOW3\Persistence\QueryInterface
+	 * @return \TYPO3\FLOW3\Persistence\QueryInterface
 	 * @api
 	 */
 	public function createQueryForType($type);

@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\Cache\Backend;
+namespace TYPO3\FLOW3\Tests\Unit\Cache\Backend;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -36,12 +36,12 @@ namespace F3\FLOW3\Tests\Unit\Cache\Backend;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class RedisBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
+class RedisBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * If set, the tearDown() method will flush the cache used by this unit test.
 	 *
-	 * @var \F3\FLOW3\Cache\Backend\RedisBackend
+	 * @var \TYPO3\FLOW3\Cache\Backend\RedisBackend
 	 */
 	protected $backend = NULL;
 
@@ -80,10 +80,10 @@ class RedisBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 */
 	protected function setUpBackend(array $backendOptions = array()) {
-		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\FrontendInterface', array(), array(), '', FALSE);
+		$mockCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\FrontendInterface', array(), array(), '', FALSE);
 		$mockCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('TestCache'));
 
-		$this->backend = new \F3\FLOW3\Cache\Backend\RedisBackend('Testing', $backendOptions);
+		$this->backend = new \TYPO3\FLOW3\Cache\Backend\RedisBackend('Testing', $backendOptions);
 		$this->backend->setCache($mockCache);
 		$this->backend->initializeObject();
 	}
@@ -104,7 +104,7 @@ class RedisBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Christian Kuhn <lolli@schwarzbu.ch>
 	 */
 	public function tearDown() {
-		if ($this->backend instanceof \F3\FLOW3\Cache\Backend\RedisBackend) {
+		if ($this->backend instanceof \TYPO3\FLOW3\Cache\Backend\RedisBackend) {
 			$this->backend->flush();
 		}
 	}
@@ -191,7 +191,7 @@ class RedisBackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test Functional
 	 * @author Christian Kuhn <lolli@schwarzbu.ch>
-	 * @expectedException \F3\FLOW3\Cache\Exception\InvalidDataException
+	 * @expectedException \TYPO3\FLOW3\Cache\Exception\InvalidDataException
 	 */
 	public function setThrowsExceptionIfDataIsNotAString() {
 		$this->setUpBackend();

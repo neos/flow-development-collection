@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Property\TypeConverter;
+namespace TYPO3\FLOW3\Property\TypeConverter;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -28,7 +28,7 @@ namespace F3\FLOW3\Property\TypeConverter;
  * @api
  * @scope singleton
  */
-class ArrayConverter extends \F3\FLOW3\Property\TypeConverter\AbstractTypeConverter {
+class ArrayConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTypeConverter {
 
 	/**
 	 * @var array<string>
@@ -51,11 +51,11 @@ class ArrayConverter extends \F3\FLOW3\Property\TypeConverter\AbstractTypeConver
 	 * @param array $source
 	 * @param string $targetType
 	 * @param array $convertedChildProperties
-	 * @param \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
+	 * @param \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
 	 * @return array
 	 * @api
 	 */
-	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
+	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
 		return $source;
 	}
 }

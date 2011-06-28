@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Reflection;
+namespace TYPO3\FLOW3\Reflection;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -31,16 +31,16 @@ namespace F3\FLOW3\Reflection;
 class ClassReflection extends \ReflectionClass {
 
 	/**
-	 * @var \F3\FLOW3\Reflection\DocCommentParser Holds an instance of the doc comment parser for this class
+	 * @var \TYPO3\FLOW3\Reflection\DocCommentParser Holds an instance of the doc comment parser for this class
 	 */
 	protected $docCommentParser;
 
 	/**
 	 * Replacement for the original getConstructor() method which makes sure
-	 * that \F3\FLOW3\Reflection\MethodReflection objects are returned instead of the
+	 * that \TYPO3\FLOW3\Reflection\MethodReflection objects are returned instead of the
 	 * orginal ReflectionMethod instances.
 	 *
-	 * @return \F3\FLOW3\Reflection\MethodReflection Method reflection object of the constructor method
+	 * @return \TYPO3\FLOW3\Reflection\MethodReflection Method reflection object of the constructor method
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getConstructor() {
@@ -50,10 +50,10 @@ class ClassReflection extends \ReflectionClass {
 
 	/**
 	 * Replacement for the original getInterfaces() method which makes sure
-	 * that \F3\FLOW3\Reflection\ClassReflection objects are returned instead of the
+	 * that \TYPO3\FLOW3\Reflection\ClassReflection objects are returned instead of the
 	 * orginal ReflectionClass instances.
 	 *
-	 * @return array of \F3\FLOW3\Reflection\ClassReflection Class reflection objects of the properties in this class
+	 * @return array of \TYPO3\FLOW3\Reflection\ClassReflection Class reflection objects of the properties in this class
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getInterfaces() {
@@ -67,10 +67,10 @@ class ClassReflection extends \ReflectionClass {
 
 	/**
 	 * Replacement for the original getMethod() method which makes sure
-	 * that \F3\FLOW3\Reflection\MethodReflection objects are returned instead of the
+	 * that \TYPO3\FLOW3\Reflection\MethodReflection objects are returned instead of the
 	 * orginal ReflectionMethod instances.
 	 *
-	 * @return \F3\FLOW3\Reflection\MethodReflection Method reflection object of the named method
+	 * @return \TYPO3\FLOW3\Reflection\MethodReflection Method reflection object of the named method
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getMethod($name) {
@@ -79,11 +79,11 @@ class ClassReflection extends \ReflectionClass {
 
 	/**
 	 * Replacement for the original getMethods() method which makes sure
-	 * that \F3\FLOW3\Reflection\MethodReflection objects are returned instead of the
+	 * that \TYPO3\FLOW3\Reflection\MethodReflection objects are returned instead of the
 	 * orginal ReflectionMethod instances.
 	 *
 	 * @param long $filter A filter mask
-	 * @return \F3\FLOW3\Reflection\MethodReflection Method reflection objects of the methods in this class
+	 * @return \TYPO3\FLOW3\Reflection\MethodReflection Method reflection objects of the methods in this class
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getMethods($filter = NULL) {
@@ -98,10 +98,10 @@ class ClassReflection extends \ReflectionClass {
 
 	/**
 	 * Replacement for the original getParentClass() method which makes sure
-	 * that a \F3\FLOW3\Reflection\ClassReflection object is returned instead of the
+	 * that a \TYPO3\FLOW3\Reflection\ClassReflection object is returned instead of the
 	 * orginal ReflectionClass instance.
 	 *
-	 * @return \F3\FLOW3\Reflection\ClassReflection Reflection of the parent class - if any
+	 * @return \TYPO3\FLOW3\Reflection\ClassReflection Reflection of the parent class - if any
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getParentClass() {
@@ -111,11 +111,11 @@ class ClassReflection extends \ReflectionClass {
 
 	/**
 	 * Replacement for the original getProperties() method which makes sure
-	 * that \F3\FLOW3\Reflection\PropertyReflection objects are returned instead of the
+	 * that \TYPO3\FLOW3\Reflection\PropertyReflection objects are returned instead of the
 	 * orginal ReflectionProperty instances.
 	 *
 	 * @param long $filter A filter mask
-	 * @return array of \F3\FLOW3\Reflection\PropertyReflection Property reflection objects of the properties in this class
+	 * @return array of \TYPO3\FLOW3\Reflection\PropertyReflection Property reflection objects of the properties in this class
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getProperties($filter = NULL) {
@@ -129,11 +129,11 @@ class ClassReflection extends \ReflectionClass {
 
 	/**
 	 * Replacement for the original getProperty() method which makes sure
-	 * that a \F3\FLOW3\Reflection\PropertyReflection object is returned instead of the
+	 * that a \TYPO3\FLOW3\Reflection\PropertyReflection object is returned instead of the
 	 * orginal ReflectionProperty instance.
 	 *
 	 * @param string $name Name of the property
-	 * @return \F3\FLOW3\Reflection\PropertyReflection Property reflection object of the specified property in this class
+	 * @return \TYPO3\FLOW3\Reflection\PropertyReflection Property reflection object of the specified property in this class
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getProperty($name) {
@@ -185,7 +185,7 @@ class ClassReflection extends \ReflectionClass {
 	 * Returns an instance of the doc comment parser and
 	 * runs the parse() method.
 	 *
-	 * @return \F3\FLOW3\Reflection\DocCommentParser
+	 * @return \TYPO3\FLOW3\Reflection\DocCommentParser
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function getDocCommentParser() {

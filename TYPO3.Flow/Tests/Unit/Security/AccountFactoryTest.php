@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\Security;
+namespace TYPO3\FLOW3\Tests\Unit\Security;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,20 +26,20 @@ namespace F3\FLOW3\Tests\Unit\Security;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class AccountFactoryTest extends \F3\FLOW3\Tests\UnitTestCase {
+class AccountFactoryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function createAccountWithPasswordCreatesANewAccountWithTheGivenIdentifierPasswordRolesAndProviderName() {
-		$mockHashService = $this->getMock('F3\FLOW3\Security\Cryptography\HashService');
+		$mockHashService = $this->getMock('TYPO3\FLOW3\Security\Cryptography\HashService');
 		$mockHashService->expects($this->once())->method('generateSaltedMd5')->with('password')->will($this->returnValue('hashed password'));
 
-		$mockRole1 = new \F3\FLOW3\Security\Policy\Role('role1');
-		$mockRole2 = new \F3\FLOW3\Security\Policy\Role('role2');
+		$mockRole1 = new \TYPO3\FLOW3\Security\Policy\Role('role1');
+		$mockRole2 = new \TYPO3\FLOW3\Security\Policy\Role('role2');
 
-		$factory = $this->getAccessibleMock('F3\FLOW3\Security\AccountFactory', array('dummy'));
+		$factory = $this->getAccessibleMock('TYPO3\FLOW3\Security\AccountFactory', array('dummy'));
 		$factory->_set('hashService', $mockHashService);
 
 		$actualAccount = $factory->createAccountWithPassword('username', 'password', array('role1', 'role2'), 'OtherProvider');

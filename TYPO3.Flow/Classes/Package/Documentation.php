@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Package;
+namespace TYPO3\FLOW3\Package;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -31,7 +31,7 @@ class Documentation {
 
 	/**
 	 * Reference to the package of this documentation
-	 * @var \F3\FLOW3\Package\PackageInterface
+	 * @var \TYPO3\FLOW3\Package\PackageInterface
 	 */
 	protected $package;
 
@@ -49,7 +49,7 @@ class Documentation {
 	/**
 	 * Constructor
 	 *
-	 * @param \F3\FLOW3\Package\PackageInterface $package Reference to the package of this documentation
+	 * @param \TYPO3\FLOW3\Package\PackageInterface $package Reference to the package of this documentation
 	 * @param string $documentationName Name of the documentation
 	 * @param string $documentationPath Absolute path to the documentation directory
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
@@ -63,7 +63,7 @@ class Documentation {
 	/**
 	 * Get the package of this documentation
 	 *
-	 * @return \F3\FLOW3\Package\PackageInterface The package of this documentation
+	 * @return \TYPO3\FLOW3\Package\PackageInterface The package of this documentation
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 * @api
 	 */
@@ -96,7 +96,7 @@ class Documentation {
 	/**
 	 * Returns the available documentation formats for this documentation
 	 *
-	 * @return array Array of \F3\FLOW3\Package\DocumentationFormat
+	 * @return array Array of \TYPO3\FLOW3\Package\DocumentationFormat
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 * @api
 	 */
@@ -108,7 +108,7 @@ class Documentation {
 		while ($documentationFormatsDirectoryIterator->valid()) {
 			$filename = $documentationFormatsDirectoryIterator->getFilename();
 			if ($filename[0] != '.' && $documentationFormatsDirectoryIterator->isDir()) {
-				$documentationFormat = new \F3\FLOW3\Package\Documentation\Format($filename, $this->documentationPath . $filename . '/');
+				$documentationFormat = new \TYPO3\FLOW3\Package\Documentation\Format($filename, $this->documentationPath . $filename . '/');
 				$documentationFormats[$filename] = $documentationFormat;
 			}
 			$documentationFormatsDirectoryIterator->next();

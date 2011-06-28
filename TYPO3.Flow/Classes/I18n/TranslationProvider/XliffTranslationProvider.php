@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\I18n\TranslationProvider;
+namespace TYPO3\FLOW3\I18n\TranslationProvider;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -28,7 +28,7 @@ namespace F3\FLOW3\I18n\TranslationProvider;
  * @scope singleton
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class XliffTranslationProvider implements \F3\FLOW3\I18n\TranslationProvider\TranslationProviderInterface {
+class XliffTranslationProvider implements \TYPO3\FLOW3\I18n\TranslationProvider\TranslationProviderInterface {
 
 	/**
 	 * An absolute path to the directory where translation files reside.
@@ -39,12 +39,12 @@ class XliffTranslationProvider implements \F3\FLOW3\I18n\TranslationProvider\Tra
 	protected $xliffBasePath = 'resource://TYPO3.FLOW3/Private/Locale/Translations/';
 
 	/**
-	 * @var \F3\FLOW3\I18n\Service
+	 * @var \TYPO3\FLOW3\I18n\Service
 	 */
 	protected $localizationService;
 
 	/**
-	 * @var \F3\FLOW3\I18n\Cldr\Reader\PluralsReader
+	 * @var \TYPO3\FLOW3\I18n\Cldr\Reader\PluralsReader
 	 */
 	protected $pluralsReader;
 
@@ -54,25 +54,25 @@ class XliffTranslationProvider implements \F3\FLOW3\I18n\TranslationProvider\Tra
 	 * This is an associative array with pairs as follow:
 	 * ['filename'] => $model,
 	 *
-	 * @var array<\F3\FLOW3\I18n\Xliff\XliffModel>
+	 * @var array<\TYPO3\FLOW3\I18n\Xliff\XliffModel>
 	 */
 	protected $models;
 
 	/**
-	 * @param \F3\FLOW3\I18n\Service $localizationService
+	 * @param \TYPO3\FLOW3\I18n\Service $localizationService
 	 * @return void
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function injectLocalizationService(\F3\FLOW3\I18n\Service $localizationService) {
+	public function injectLocalizationService(\TYPO3\FLOW3\I18n\Service $localizationService) {
 		$this->localizationService = $localizationService;
 	}
 
 	/**
-	 * @param \F3\FLOW3\I18n\Cldr\Reader\PluralsReader $pluralsReader
+	 * @param \TYPO3\FLOW3\I18n\Cldr\Reader\PluralsReader $pluralsReader
 	 * @return void
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function injectPluralsReader(\F3\FLOW3\I18n\Cldr\Reader\PluralsReader $pluralsReader) {
+	public function injectPluralsReader(\TYPO3\FLOW3\I18n\Cldr\Reader\PluralsReader $pluralsReader) {
 		$this->pluralsReader = $pluralsReader;
 	}
 
@@ -83,15 +83,15 @@ class XliffTranslationProvider implements \F3\FLOW3\I18n\TranslationProvider\Tra
 	 *
 	 * @param string $sourceName A relative path to the filename with translations (labels' catalog)
 	 * @param string $originalLabel Label used as a key in order to find translation
-	 * @param \F3\FLOW3\I18n\Locale $locale Locale to use
+	 * @param \TYPO3\FLOW3\I18n\Locale $locale Locale to use
 	 * @param string $pluralForm One of RULE constants of PluralsReader
 	 * @return mixed Translated label or FALSE on failure
 	 */
-	public function getTranslationByOriginalLabel($sourceName, $originalLabel, \F3\FLOW3\I18n\Locale $locale, $pluralForm = \F3\FLOW3\I18n\Cldr\Reader\PluralsReader::RULE_OTHER) {
+	public function getTranslationByOriginalLabel($sourceName, $originalLabel, \TYPO3\FLOW3\I18n\Locale $locale, $pluralForm = \TYPO3\FLOW3\I18n\Cldr\Reader\PluralsReader::RULE_OTHER) {
 		$pluralFormsForProvidedLocale = $this->pluralsReader->getPluralForms($locale);
 
 		if (!in_array($pluralForm, $pluralFormsForProvidedLocale)) {
-			throw new \F3\FLOW3\I18n\TranslationProvider\Exception\InvalidPluralFormException('There is no plural form "' . $pluralForm . '" in "' . (string)$locale . '" locale.', 1281033386);
+			throw new \TYPO3\FLOW3\I18n\TranslationProvider\Exception\InvalidPluralFormException('There is no plural form "' . $pluralForm . '" in "' . (string)$locale . '" locale.', 1281033386);
 		}
 
 		$model = $this->getModel($sourceName, $locale);
@@ -108,15 +108,15 @@ class XliffTranslationProvider implements \F3\FLOW3\I18n\TranslationProvider\Tra
 	 *
 	 * @param string $sourceName A relative path to the filename with translations (labels' catalog)
 	 * @param string $labelId Key used to find translated label
-	 * @param \F3\FLOW3\I18n\Locale $locale Locale to use
+	 * @param \TYPO3\FLOW3\I18n\Locale $locale Locale to use
 	 * @param string $pluralForm One of RULE constants of PluralsReader
 	 * @return mixed Translated label or FALSE on failure
 	 */
-	public function getTranslationById($sourceName, $labelId, \F3\FLOW3\I18n\Locale $locale, $pluralForm = \F3\FLOW3\I18n\Cldr\Reader\PluralsReader::RULE_OTHER) {
+	public function getTranslationById($sourceName, $labelId, \TYPO3\FLOW3\I18n\Locale $locale, $pluralForm = \TYPO3\FLOW3\I18n\Cldr\Reader\PluralsReader::RULE_OTHER) {
 		$pluralFormsForProvidedLocale = $this->pluralsReader->getPluralForms($locale);
 
 		if (!in_array($pluralForm, $pluralFormsForProvidedLocale)) {
-			throw new \F3\FLOW3\I18n\TranslationProvider\Exception\InvalidPluralFormException('There is no plural form "' . $pluralForm . '" in "' . (string)$locale . '" locale.', 1281033387);
+			throw new \TYPO3\FLOW3\I18n\TranslationProvider\Exception\InvalidPluralFormException('There is no plural form "' . $pluralForm . '" in "' . (string)$locale . '" locale.', 1281033387);
 		}
 
 		$model = $this->getModel($sourceName, $locale);
@@ -133,19 +133,19 @@ class XliffTranslationProvider implements \F3\FLOW3\I18n\TranslationProvider\Tra
 	 * file.
 	 *
 	 * @param string $sourceName Relative path to existing CLDR file
-	 * @param \F3\FLOW3\I18n\Locale $locale Locale object
-	 * @return \F3\FLOW3\I18n\Xliff\XliffModel New or existing instance
+	 * @param \TYPO3\FLOW3\I18n\Locale $locale Locale object
+	 * @return \TYPO3\FLOW3\I18n\Xliff\XliffModel New or existing instance
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	protected function getModel($sourceName, \F3\FLOW3\I18n\Locale $locale) {
-		$sourceName = \F3\FLOW3\Utility\Files::concatenatePaths(array($this->xliffBasePath, $sourceName . '.xlf'));
+	protected function getModel($sourceName, \TYPO3\FLOW3\I18n\Locale $locale) {
+		$sourceName = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array($this->xliffBasePath, $sourceName . '.xlf'));
 		$sourceName = $this->localizationService->getLocalizedFilename($sourceName, $locale);
 
 		if (isset($this->models[$sourceName])) {
 			return $this->models[$sourceName];
 		}
 
-		return $this->models[$sourceName] = new \F3\FLOW3\I18n\Xliff\XliffModel($sourceName);
+		return $this->models[$sourceName] = new \TYPO3\FLOW3\I18n\Xliff\XliffModel($sourceName);
 	}
 }
 

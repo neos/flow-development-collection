@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Persistence\Generic\Aspect;
+namespace TYPO3\FLOW3\Persistence\Generic\Aspect;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -35,7 +35,7 @@ class LazyLoadingObjectAspect {
 	public function isEntityOrValueObject() {}
 
 	/**
-	 * @pointcut F3\FLOW3\Persistence\Generic\Aspect\LazyLoadingObjectAspect->isEntityOrValueObject && classTaggedWith(lazy)
+	 * @pointcut TYPO3\FLOW3\Persistence\Generic\Aspect\LazyLoadingObjectAspect->isEntityOrValueObject && classTaggedWith(lazy)
 	 */
 	public function needsLazyLoadingObjectAspect() {}
 
@@ -46,12 +46,12 @@ class LazyLoadingObjectAspect {
 	 * to be a Closure that populates the object. That variable is unset after
 	 * initializing the object!
 	 *
-	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
+	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
 	 * @return void
-	 * @before F3\FLOW3\Persistence\Generic\Aspect\LazyLoadingObjectAspect->needsLazyLoadingObjectAspect && !method(.*->__construct())
+	 * @before TYPO3\FLOW3\Persistence\Generic\Aspect\LazyLoadingObjectAspect->needsLazyLoadingObjectAspect && !method(.*->__construct())
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function initialize(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function initialize(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$proxy = $joinPoint->getProxy();
 		if (property_exists($proxy, 'FLOW3_Persistence_LazyLoadingObject_thawProperties') && $proxy->FLOW3_Persistence_LazyLoadingObject_thawProperties instanceof \Closure) {
 			$proxy->FLOW3_Persistence_LazyLoadingObject_thawProperties->__invoke($proxy);

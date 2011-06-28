@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\Validation\Validator;
+namespace TYPO3\FLOW3\Tests\Unit\Validation\Validator;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -27,9 +27,9 @@ require_once('AbstractValidatorTestcase.php');
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class StringValidatorTest extends \F3\FLOW3\Tests\Unit\Validation\Validator\AbstractValidatorTestcase {
+class StringValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validator\AbstractValidatorTestcase {
 
-	protected $validatorClassName = 'F3\FLOW3\Validation\Validator\StringValidator';
+	protected $validatorClassName = 'TYPO3\FLOW3\Validation\Validator\StringValidator';
 
 	/**
 	 * @test

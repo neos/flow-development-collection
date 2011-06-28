@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Functional\Property;
+namespace TYPO3\FLOW3\Tests\Functional\Property;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,11 +26,11 @@ namespace F3\FLOW3\Tests\Functional\Property;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class PropertyMapperTest extends \F3\FLOW3\Tests\FunctionalTestCase {
+class PropertyMapperTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 *
-	 * @var \F3\FLOW3\Property\PropertyMapper
+	 * @var \TYPO3\FLOW3\Property\PropertyMapper
 	 */
 	protected $propertyMapper;
 
@@ -40,7 +40,7 @@ class PropertyMapperTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 	 */
 	public function setUp() {
 		parent::setUp();
-		$this->propertyMapper = $this->objectManager->get('F3\FLOW3\Property\PropertyMapper');
+		$this->propertyMapper = $this->objectManager->get('TYPO3\FLOW3\Property\PropertyMapper');
 	}
 
 	/**
@@ -54,7 +54,7 @@ class PropertyMapperTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 			'averageNumberOfKids' => '1.5'
 		);
 
-		$result = $this->propertyMapper->convert($source, 'F3\FLOW3\Tests\Functional\Property\Fixtures\TestEntity');
+		$result = $this->propertyMapper->convert($source, 'TYPO3\FLOW3\Tests\Functional\Property\Fixtures\TestEntity');
 		$this->assertSame('Robert Skaarhoj', $result->getName());
 		$this->assertSame(25, $result->getAge());
 		$this->assertSame(1.5, $result->getAverageNumberOfKids());
@@ -71,7 +71,7 @@ class PropertyMapperTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 			'signedCla' => TRUE
 		);
 
-		$result = $this->propertyMapper->convert($source, 'F3\FLOW3\Tests\Functional\Property\Fixtures\TestClass');
+		$result = $this->propertyMapper->convert($source, 'TYPO3\FLOW3\Tests\Functional\Property\Fixtures\TestClass');
 		$this->assertSame('Christopher', $result->getName());
 		$this->assertSame(187, $result->getSize());
 		$this->assertSame(TRUE, $result->getSignedCla());

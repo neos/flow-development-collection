@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Reflection;
+namespace TYPO3\FLOW3\Reflection;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -85,7 +85,7 @@ class DocCommentParser {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getTagValues($tagName) {
-		if (!$this->isTaggedWith($tagName)) throw new \F3\FLOW3\Reflection\Exception('Tag "' . $tagName . '" does not exist.', 1169128255);
+		if (!$this->isTaggedWith($tagName)) throw new \TYPO3\FLOW3\Reflection\Exception('Tag "' . $tagName . '" does not exist.', 1169128255);
 		return $this->tags[$tagName];
 	}
 

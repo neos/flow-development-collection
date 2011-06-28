@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Validation\Validator;
+namespace TYPO3\FLOW3\Validation\Validator;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -28,7 +28,7 @@ namespace F3\FLOW3\Validation\Validator;
  * @api
  * @scope prototype
  */
-class GenericObjectValidator implements \F3\FLOW3\Validation\Validator\ValidatorInterface {
+class GenericObjectValidator implements \TYPO3\FLOW3\Validation\Validator\ValidatorInterface {
 
 	/**
 	 * @var array
@@ -56,12 +56,12 @@ class GenericObjectValidator implements \F3\FLOW3\Validation\Validator\Validator
 	 * If at least one error occurred, the result is FALSE.
 	 *
 	 * @param mixed $value The value that should be validated
-	 * @return \F3\FLOW3\Error\Result
+	 * @return \TYPO3\FLOW3\Error\Result
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function validate($object) {
-		$messages = new \F3\FLOW3\Error\Result();
+		$messages = new \TYPO3\FLOW3\Error\Result();
 
 		if (self::$instancesCurrentlyUnderValidation === NULL) {
 			self::$instancesCurrentlyUnderValidation = new \SplObjectStorage();
@@ -72,7 +72,7 @@ class GenericObjectValidator implements \F3\FLOW3\Validation\Validator\Validator
 		}
 
 		if (!is_object($object)) {
-			$messages->addError(new \F3\FLOW3\Validation\Error('Object expected, ' . gettype($object) . ' given.', 1241099149));
+			$messages->addError(new \TYPO3\FLOW3\Validation\Error('Object expected, ' . gettype($object) . ' given.', 1241099149));
 			return $messages;
 		}
 
@@ -108,10 +108,10 @@ class GenericObjectValidator implements \F3\FLOW3\Validation\Validator\Validator
 			$reflectionLoadMethod->invoke($object);
 		}
 
-		if (\F3\FLOW3\Reflection\ObjectAccess::isPropertyGettable($object, $propertyName)) {
-			return \F3\FLOW3\Reflection\ObjectAccess::getProperty($object, $propertyName);
+		if (\TYPO3\FLOW3\Reflection\ObjectAccess::isPropertyGettable($object, $propertyName)) {
+			return \TYPO3\FLOW3\Reflection\ObjectAccess::getProperty($object, $propertyName);
 		} else {
-			return \F3\FLOW3\Reflection\ObjectAccess::getProperty($object, $propertyName, TRUE);
+			return \TYPO3\FLOW3\Reflection\ObjectAccess::getProperty($object, $propertyName, TRUE);
 		}
 	}
 
@@ -121,11 +121,11 @@ class GenericObjectValidator implements \F3\FLOW3\Validation\Validator\Validator
 	 *
 	 * @param mixed $value The value to be validated
 	 * @param array $validators The validators to be called on the value
-	 * @param F3\FLOW3\Error\Result $messages the result object to which the validation errors should be added
+	 * @param \TYPO3\FLOW3\Error\Result $messages the result object to which the validation errors should be added
 	 * @return void
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	protected function checkProperty($value, $validators, \F3\FLOW3\Error\Result $messages) {
+	protected function checkProperty($value, $validators, \TYPO3\FLOW3\Error\Result $messages) {
 		foreach ($validators as $validator) {
 			$messages->merge($validator->validate($value));
 		}
@@ -148,12 +148,12 @@ class GenericObjectValidator implements \F3\FLOW3\Validation\Validator\Validator
 	 * Adds the given validator for validation of the specified property.
 	 *
 	 * @param string $propertyName Name of the property to validate
-	 * @param \F3\FLOW3\Validation\Validator\ValidatorInterface $validator The property validator
+	 * @param \TYPO3\FLOW3\Validation\Validator\ValidatorInterface $validator The property validator
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
-	public function addPropertyValidator($propertyName, \F3\FLOW3\Validation\Validator\ValidatorInterface $validator) {
+	public function addPropertyValidator($propertyName, \TYPO3\FLOW3\Validation\Validator\ValidatorInterface $validator) {
 		if (!isset($this->propertyValidators[$propertyName])) {
 			$this->propertyValidators[$propertyName] = new \SplObjectStorage();
 		}

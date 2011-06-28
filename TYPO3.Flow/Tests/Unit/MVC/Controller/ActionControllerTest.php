@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\MVC\Controller;
+namespace TYPO3\FLOW3\Tests\Unit\MVC\Controller;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -25,12 +25,12 @@ namespace F3\FLOW3\Tests\Unit\MVC\Controller;
  * Testcase for the MVC Action Controller
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
- * @covers \F3\FLOW3\MVC\Controller\ActionController
+ * @covers \TYPO3\FLOW3\MVC\Controller\ActionController
  */
-class ActionControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
+class ActionControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
-	 * @var \F3\FLOW3\MVC\Controller\Arguments
+	 * @var \TYPO3\FLOW3\MVC\Controller\Arguments
 	 */
 	protected $mockArguments;
 
@@ -39,10 +39,10 @@ class ActionControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	protected $mockFlashMessageContainer;
 
 	public function setUp() {
-		$this->mockArguments = $this->getMock('F3\FLOW3\MVC\Controller\Arguments', array('getValidationResults'), array(), '', FALSE);
-		$this->mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
-		$this->mockResponse = $this->getMock('F3\FLOW3\MVC\Web\Response', array(), array(), '', FALSE);
-		$this->mockFlashMessageContainer = $this->getMock('F3\FLOW3\MVC\Controller\FlashMessageContainer', array(), array(), '', FALSE);
+		$this->mockArguments = $this->getMock('TYPO3\FLOW3\MVC\Controller\Arguments', array('getValidationResults'), array(), '', FALSE);
+		$this->mockRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
+		$this->mockResponse = $this->getMock('TYPO3\FLOW3\MVC\Web\Response', array(), array(), '', FALSE);
+		$this->mockFlashMessageContainer = $this->getMock('TYPO3\FLOW3\MVC\Controller\FlashMessageContainer', array(), array(), '', FALSE);
 	}
 
 	/**
@@ -54,9 +54,9 @@ class ActionControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$this->mockRequest->expects($this->once())->method('getFormat')->will($this->returnValue(NULL));
 		$this->mockRequest->expects($this->once())->method('setFormat')->with('detectedformat');
 
-		$mockView = $this->getMock('F3\FLOW3\MVC\View\ViewInterface');
+		$mockView = $this->getMock('TYPO3\FLOW3\MVC\View\ViewInterface');
 
-		$mockController = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\ActionController', array(
+		$mockController = $this->getAccessibleMock('TYPO3\FLOW3\MVC\Controller\ActionController', array(
 			'initializeFooAction', 'initializeAction', 'resolveActionMethodName', 'initializeActionMethodArguments',
 			'initializeActionMethodValidators', 'mapRequestArgumentsToControllerArguments', 'buildControllerContext',
 			'detectFormat', 'resolveView', 'initializeView', 'callActionMethod'),
@@ -93,11 +93,11 @@ class ActionControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function callActionMethodAppendsStringsReturnedByActionMethodToTheResponseObject() {
-		$result = new \F3\FLOW3\Error\Result();
+		$result = new \TYPO3\FLOW3\Error\Result();
 		$this->mockArguments->expects($this->once())->method('getValidationResults')->will($this->returnValue($result));
 		$this->mockResponse->expects($this->once())->method('appendContent')->with('the returned string');
 
-		$mockController = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\ActionController', array('fooAction', 'initializeAction'), array(), '', FALSE);
+		$mockController = $this->getAccessibleMock('TYPO3\FLOW3\MVC\Controller\ActionController', array('fooAction', 'initializeAction'), array(), '', FALSE);
 		$mockController->expects($this->once())->method('fooAction')->will($this->returnValue('the returned string'));
 
 		$this->injectDependenciesIntoController($mockController);
@@ -109,15 +109,15 @@ class ActionControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function callActionMethodRendersTheViewAutomaticallyIfTheActionReturnedNullAndAViewExists() {
-		$result = new \F3\FLOW3\Error\Result();
+		$result = new \TYPO3\FLOW3\Error\Result();
 		$this->mockArguments->expects($this->once())->method('getValidationResults')->will($this->returnValue($result));
 
 		$this->mockResponse->expects($this->once())->method('appendContent')->with('the view output');
 
-		$mockView = $this->getMock('F3\FLOW3\MVC\View\ViewInterface');
+		$mockView = $this->getMock('TYPO3\FLOW3\MVC\View\ViewInterface');
 		$mockView->expects($this->once())->method('render')->will($this->returnValue('the view output'));
 
-		$mockController = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\ActionController', array('fooAction', 'initializeAction'), array(), '', FALSE);
+		$mockController = $this->getAccessibleMock('TYPO3\FLOW3\MVC\Controller\ActionController', array('fooAction', 'initializeAction'), array(), '', FALSE);
 		$mockController->expects($this->once())->method('fooAction')->will($this->returnValue(NULL));
 		$this->injectDependenciesIntoController($mockController);
 		$mockController->_set('view', $mockView);
@@ -132,11 +132,11 @@ class ActionControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$this->markTestIncomplete('Sebastian -- fix after T3BOARD');
 		$this->mockResponse->expects($this->once())->method('appendContent')->with('the returned string from error action');
 
-		$result = new \F3\FLOW3\Error\Result();
-		$result->addError(new \F3\FLOW3\Error\Error('asdf', 1));
+		$result = new \TYPO3\FLOW3\Error\Result();
+		$result->addError(new \TYPO3\FLOW3\Error\Error('asdf', 1));
 		$this->mockArguments->expects($this->once())->method('getValidationResults')->will($this->returnValue($result));
 
-		$mockController = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\ActionController', array('barAction', 'initializeAction'), array(), '', FALSE);
+		$mockController = $this->getAccessibleMock('TYPO3\FLOW3\MVC\Controller\ActionController', array('barAction', 'initializeAction'), array(), '', FALSE);
 		$mockController->expects($this->once())->method('barAction')->will($this->returnValue('the returned string from error action'));
 		$this->injectDependenciesIntoController($mockController);
 		$mockController->_set('errorMethodName', 'barAction');
@@ -148,14 +148,14 @@ class ActionControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function callActionMethodPassesDefaultValuesAsArguments() {
-		$result = new \F3\FLOW3\Error\Result();
+		$result = new \TYPO3\FLOW3\Error\Result();
 		$this->mockArguments->expects($this->once())->method('getValidationResults')->will($this->returnValue($result));
 
-		$optionalArgument = new \F3\FLOW3\MVC\Controller\Argument('name1', 'string');
+		$optionalArgument = new \TYPO3\FLOW3\MVC\Controller\Argument('name1', 'string');
 		$optionalArgument->setDefaultValue('Default value');
 		$this->mockArguments[] = $optionalArgument;
 
-		$mockController = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\ActionController', array('fooAction', 'initializeAction'), array(), '', FALSE);
+		$mockController = $this->getAccessibleMock('TYPO3\FLOW3\MVC\Controller\ActionController', array('fooAction', 'initializeAction'), array(), '', FALSE);
 		$mockController->expects($this->once())->method('fooAction')->with('Default value');
 
 		$this->injectDependenciesIntoController($mockController);
@@ -167,9 +167,9 @@ class ActionControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function detectFormatUsesTextFormatForNonWebRequests() {
-		$this->mockRequest = $this->getMock('F3\FLOW3\MVC\CLI\Request', array(), array(), '', FALSE);
+		$this->mockRequest = $this->getMock('TYPO3\FLOW3\MVC\CLI\Request', array(), array(), '', FALSE);
 
-		$mockController = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\ActionController', array('dummy'), array(), '', FALSE);
+		$mockController = $this->getAccessibleMock('TYPO3\FLOW3\MVC\Controller\ActionController', array('dummy'), array(), '', FALSE);
 		$mockController->_set('request', $this->mockRequest);
 
 		$detectedFormat = $mockController->_call('detectFormat');
@@ -181,12 +181,12 @@ class ActionControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function detectFormatUsesHtmlFormatAsDefaultForWebRequests() {
-		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array('getAcceptedFormats'), array(), '', FALSE);
+		$mockEnvironment = $this->getMock('TYPO3\FLOW3\Utility\Environment', array('getAcceptedFormats'), array(), '', FALSE);
 		$mockEnvironment->expects($this->once())->method('getAcceptedFormats')->will($this->returnValue(array('xml', 'json')));
 
 		$this->mockRequest->expects($this->once())->method('getMethod')->will($this->returnValue('GET'));
 
-		$mockController = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\ActionController', array('dummy'), array(), '', FALSE);
+		$mockController = $this->getAccessibleMock('TYPO3\FLOW3\MVC\Controller\ActionController', array('dummy'), array(), '', FALSE);
 		$mockController->injectEnvironment($mockEnvironment);
 		$mockController->_set('request', $this->mockRequest);
 
@@ -199,12 +199,12 @@ class ActionControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function detectFormatUsesHtmlFormatAsDefaultForPostWebRequests() {
-		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array('getAcceptedFormats'), array(), '', FALSE);
+		$mockEnvironment = $this->getMock('TYPO3\FLOW3\Utility\Environment', array('getAcceptedFormats'), array(), '', FALSE);
 		$mockEnvironment->expects($this->once())->method('getAcceptedFormats')->will($this->returnValue(array('xml', 'json')));
 
 		$this->mockRequest->expects($this->once())->method('getMethod')->will($this->returnValue('POST'));
 
-		$mockController = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\ActionController', array('dummy'), array(), '', FALSE);
+		$mockController = $this->getAccessibleMock('TYPO3\FLOW3\MVC\Controller\ActionController', array('dummy'), array(), '', FALSE);
 		$mockController->injectEnvironment($mockEnvironment);
 		$mockController->_set('request', $this->mockRequest);
 
@@ -217,12 +217,12 @@ class ActionControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function detectFormatPrefersOtherFormatsThanHtmlIfControllerSupportsIt() {
-		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array('getAcceptedFormats'), array(), '', FALSE);
+		$mockEnvironment = $this->getMock('TYPO3\FLOW3\Utility\Environment', array('getAcceptedFormats'), array(), '', FALSE);
 		$mockEnvironment->expects($this->once())->method('getAcceptedFormats')->will($this->returnValue(array('html', 'json', 'xml')));
 
 		$this->mockRequest->expects($this->once())->method('getMethod')->will($this->returnValue('GET'));
 
-		$mockController = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\ActionController', array('dummy'), array(), '', FALSE);
+		$mockController = $this->getAccessibleMock('TYPO3\FLOW3\MVC\Controller\ActionController', array('dummy'), array(), '', FALSE);
 		$mockController->injectEnvironment($mockEnvironment);
 		$mockController->_set('request', $this->mockRequest);
 		$mockController->_set('supportedFormats', array('html', 'xml', 'json'));
@@ -236,17 +236,17 @@ class ActionControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function resolveViewUsesResolvedViewIfItCanRenderTheCurrentAction() {
-		$mockSession = $this->getMock('F3\FLOW3\Session\SessionInterface');
-		$mockControllerContext = $this->getMock('F3\FLOW3\MVC\Controller\ControllerContext', array(), array(), '', FALSE);
+		$mockSession = $this->getMock('TYPO3\FLOW3\Session\SessionInterface');
+		$mockControllerContext = $this->getMock('TYPO3\FLOW3\MVC\Controller\ControllerContext', array(), array(), '', FALSE);
 
-		$mockView = $this->getMock('F3\FLOW3\MVC\View\ViewInterface');
+		$mockView = $this->getMock('TYPO3\FLOW3\MVC\View\ViewInterface');
 		$mockView->expects($this->once())->method('canRender')->with($mockControllerContext)->will($this->returnValue(TRUE));
 		$mockView->expects($this->once())->method('setControllerContext')->with($mockControllerContext);
 
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
+		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
 		$mockObjectManager->expects($this->at(0))->method('create')->with('TYPO3\Foo\Bar\HTMLView')->will($this->returnValue($mockView));
 
-		$mockController = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\ActionController', array('resolveViewObjectName'), array(), '', FALSE);
+		$mockController = $this->getAccessibleMock('TYPO3\FLOW3\MVC\Controller\ActionController', array('resolveViewObjectName'), array(), '', FALSE);
 		$mockController->expects($this->once())->method('resolveViewObjectName')->will($this->returnValue('TYPO3\Foo\Bar\HTMLView'));
 
 		$mockController->_set('session', $mockSession);
@@ -262,16 +262,16 @@ class ActionControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function resolveViewPreparesTheViewSpecifiedInTheRequestObject() {
-		$mockSession = $this->getMock('F3\FLOW3\Session\SessionInterface');
-		$mockControllerContext = $this->getMock('F3\FLOW3\MVC\Controller\ControllerContext', array(), array(), '', FALSE);
+		$mockSession = $this->getMock('TYPO3\FLOW3\Session\SessionInterface');
+		$mockControllerContext = $this->getMock('TYPO3\FLOW3\MVC\Controller\ControllerContext', array(), array(), '', FALSE);
 
-		$mockView = $this->getMock('F3\FLOW3\MVC\View\ViewInterface');
+		$mockView = $this->getMock('TYPO3\FLOW3\MVC\View\ViewInterface');
 		$mockView->expects($this->once())->method('canRender')->with($mockControllerContext)->will($this->returnValue(TRUE));
 
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
+		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
 		$mockObjectManager->expects($this->once())->method('create')->with('ResolvedViewObjectName')->will($this->returnValue($mockView));
 
-		$mockController = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\ActionController', array('resolveViewObjectName'), array(), '', FALSE);
+		$mockController = $this->getAccessibleMock('TYPO3\FLOW3\MVC\Controller\ActionController', array('resolveViewObjectName'), array(), '', FALSE);
 		$mockController->expects($this->once())->method('resolveViewObjectName')->will($this->returnValue('ResolvedViewObjectName'));
 
 		$mockController->_set('session', $mockSession);
@@ -288,24 +288,24 @@ class ActionControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function resolveViewReturnsTheNonFoundViewIfNoOtherViewCouldNotBeResolved() {
 		$this->markTestIncomplete();
-		$this->mockRequest = $this->getMock('F3\FLOW3\MVC\RequestInterface', array(), array(), '', FALSE);
+		$this->mockRequest = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface', array(), array(), '', FALSE);
 		$this->mockRequest->expects($this->once())->method('getControllerActionName')->will($this->returnValue('MyAction'));
 
-		$mockSession = $this->getMock('F3\FLOW3\Session\SessionInterface');
-		$mockControllerContext = $this->getMock('F3\FLOW3\MVC\Controller\ControllerContext', array(), array(), '', FALSE);
+		$mockSession = $this->getMock('TYPO3\FLOW3\Session\SessionInterface');
+		$mockControllerContext = $this->getMock('TYPO3\FLOW3\MVC\Controller\ControllerContext', array(), array(), '', FALSE);
 
-		$mockOtherView = $this->getMock('F3\FLOW3\MVC\View\ViewInterface');
+		$mockOtherView = $this->getMock('TYPO3\FLOW3\MVC\View\ViewInterface');
 		$mockOtherView->expects($this->once())->method('canRender')->will($this->returnValue(FALSE));
 
-		$mockNotFoundView = $this->getMock('F3\FLOW3\MVC\View\ViewInterface');
+		$mockNotFoundView = $this->getMock('TYPO3\FLOW3\MVC\View\ViewInterface');
 		$mockNotFoundView->expects($this->once())->method('setControllerContext')->with($mockControllerContext);
 		$mockNotFoundView->expects($this->at(0))->method('assign')->with('errorMessage', 'No template was found. View could not be resolved for action "MyAction"');
 
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
+		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
 		$mockObjectManager->expects($this->at(0))->method('create')->with('TYPO3\Fluid\View\TemplateView')->will($this->returnValue($mockOtherView));
-		$mockObjectManager->expects($this->at(1))->method('create')->with('F3\FLOW3\MVC\View\NotFoundView')->will($this->returnValue($mockNotFoundView));
+		$mockObjectManager->expects($this->at(1))->method('create')->with('TYPO3\FLOW3\MVC\View\NotFoundView')->will($this->returnValue($mockNotFoundView));
 
-		$mockController = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\ActionController', array('resolveViewObjectName'), array(), '', FALSE);
+		$mockController = $this->getAccessibleMock('TYPO3\FLOW3\MVC\Controller\ActionController', array('resolveViewObjectName'), array(), '', FALSE);
 		$mockController->expects($this->once())->method('resolveViewObjectName')->will($this->returnValue(FALSE));
 
 		$mockController->_set('request', $this->mockRequest);
@@ -322,17 +322,17 @@ class ActionControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function resolveViewObjectNameUsesViewObjectNamePatternToResolveViewObjectName() {
 		$this->markTestIncomplete();
-		$this->mockRequest = $this->getMock('F3\FLOW3\MVC\RequestInterface', array(), array(), '', FALSE);
+		$this->mockRequest = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface', array(), array(), '', FALSE);
 		$this->mockRequest->expects($this->once())->method('getControllerPackageKey')->will($this->returnValue('MyPackage'));
 		$this->mockRequest->expects($this->once())->method('getControllerSubpackageKey')->will($this->returnValue('MySubPackage'));
 		$this->mockRequest->expects($this->once())->method('getControllerName')->will($this->returnValue('MyController'));
 		$this->mockRequest->expects($this->once())->method('getControllerActionName')->will($this->returnValue('MyAction'));
 		$this->mockRequest->expects($this->once())->method('getFormat')->will($this->returnValue('MyFormat'));
 
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
+		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
 		$mockObjectManager->expects($this->once())->method('getCaseSensitiveObjectName')->with('randomviewobjectpattern\mypackage\mysubpackage\mycontroller\myaction\myformat');
 
-		$mockController = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\ActionController', array('dummy'), array(), '', FALSE);
+		$mockController = $this->getAccessibleMock('TYPO3\FLOW3\MVC\Controller\ActionController', array('dummy'), array(), '', FALSE);
 		$mockController->_set('request', $this->mockRequest);
 		$mockController->_set('objectManager', $mockObjectManager);
 		$mockController->_set('viewObjectNamePattern', 'RandomViewObjectPattern\@package\@controller\@action\@format');
@@ -346,13 +346,13 @@ class ActionControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function resolveViewObjectNameReturnsExplicitlyConfiguredFormatView() {
 		$this->markTestIncomplete();
-		$this->mockRequest = $this->getMock('F3\FLOW3\MVC\RequestInterface', array(), array(), '', FALSE);
+		$this->mockRequest = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface', array(), array(), '', FALSE);
 		$this->mockRequest->expects($this->once())->method('getFormat')->will($this->returnValue('json'));
 
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
+		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
 		$mockObjectManager->expects($this->exactly(2))->method('getCaseSensitiveObjectName')->will($this->returnValue(FALSE));
 
-		$mockController = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\ActionController', array('dummy'), array(), '', FALSE);
+		$mockController = $this->getAccessibleMock('TYPO3\FLOW3\MVC\Controller\ActionController', array('dummy'), array(), '', FALSE);
 		$mockController->_set('request', $this->mockRequest);
 		$mockController->_set('objectManager', $mockObjectManager);
 		$mockController->_set('viewFormatToObjectNameMap', array('json' => 'JsonViewObjectName'));
@@ -366,10 +366,10 @@ class ActionControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function resolveActionMethodNameReturnsTheCurrentActionMethodNameFromTheRequest() {
 		$this->markTestIncomplete();
-		$this->mockRequest = $this->getMock('F3\FLOW3\MVC\RequestInterface', array(), array(), '', FALSE);
+		$this->mockRequest = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface', array(), array(), '', FALSE);
 		$this->mockRequest->expects($this->once())->method('getControllerActionName')->will($this->returnValue('fooBar'));
 
-		$mockController = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\ActionController', array('fooBarAction'), array(), '', FALSE);
+		$mockController = $this->getAccessibleMock('TYPO3\FLOW3\MVC\Controller\ActionController', array('fooBarAction'), array(), '', FALSE);
 		$mockController->_set('request', $this->mockRequest);
 
 		$this->assertEquals('fooBarAction', $mockController->_call('resolveActionMethodName'));
@@ -377,15 +377,15 @@ class ActionControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \F3\FLOW3\MVC\Exception\NoSuchActionException
+	 * @expectedException \TYPO3\FLOW3\MVC\Exception\NoSuchActionException
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function resolveActionMethodNameThrowsAnExceptionIfTheActionDefinedInTheRequestDoesNotExist() {
 		$this->markTestIncomplete();
-		$this->mockRequest = $this->getMock('F3\FLOW3\MVC\RequestInterface', array(), array(), '', FALSE);
+		$this->mockRequest = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface', array(), array(), '', FALSE);
 		$this->mockRequest->expects($this->once())->method('getControllerActionName')->will($this->returnValue('fooBar'));
 
-		$mockController = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\ActionController', array('otherBarAction'), array(), '', FALSE);
+		$mockController = $this->getAccessibleMock('TYPO3\FLOW3\MVC\Controller\ActionController', array('otherBarAction'), array(), '', FALSE);
 		$mockController->_set('request', $this->mockRequest);
 
 		$mockController->_call('resolveActionMethodName');
@@ -399,14 +399,14 @@ class ActionControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$this->markTestIncomplete();
 		$controllerClassName = 'TestController' . md5(uniqid(mt_rand(), TRUE));
 		eval("
-			class $controllerClassName extends \F3\FLOW3\MVC\Controller\ActionController {
+			class $controllerClassName extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 					public function __call(\$methodName, array \$arguments) {
 					}
 			}
 		");
 
 
-		$this->mockRequest = $this->getMock('F3\FLOW3\MVC\RequestInterface', array(), array(), '', FALSE);
+		$this->mockRequest = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface', array(), array(), '', FALSE);
 		$this->mockRequest->expects($this->once())->method('getControllerActionName')->will($this->returnValue('fooBar'));
 
 		$mockController = $this->getAccessibleMock($controllerClassName, array('dummy'), array(), '', FALSE);
@@ -420,14 +420,14 @@ class ActionControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initializeActionMethodArgumentsRegistersArgumentsFoundInTheSignatureOfTheCurrentActionMethod() {
-		$this->mockRequest = $this->getMock('F3\FLOW3\MVC\RequestInterface', array(), array(), '', FALSE);
+		$this->mockRequest = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface', array(), array(), '', FALSE);
 
-		$mockArguments = $this->getMock('F3\FLOW3\MVC\Controller\Arguments', array('addNewArgument', 'removeAll'), array(), '', FALSE);
+		$mockArguments = $this->getMock('TYPO3\FLOW3\MVC\Controller\Arguments', array('addNewArgument', 'removeAll'), array(), '', FALSE);
 		$mockArguments->expects($this->at(0))->method('addNewArgument')->with('stringArgument', 'string', TRUE);
 		$mockArguments->expects($this->at(1))->method('addNewArgument')->with('integerArgument', 'integer', TRUE);
 		$mockArguments->expects($this->at(2))->method('addNewArgument')->with('objectArgument', 'TYPO3\Foo\Bar', TRUE);
 
-		$mockController = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\ActionController', array('fooAction', 'evaluateDontValidateAnnotations'), array(), '', FALSE);
+		$mockController = $this->getAccessibleMock('TYPO3\FLOW3\MVC\Controller\ActionController', array('fooAction', 'evaluateDontValidateAnnotations'), array(), '', FALSE);
 
 		$methodParameters = array(
 			'stringArgument' => array(
@@ -456,7 +456,7 @@ class ActionControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 			)
 		);
 
-		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService', array(), array(), '', FALSE);
+		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService', array(), array(), '', FALSE);
 		$mockReflectionService->expects($this->once())->method('getMethodParameters')->with(get_class($mockController), 'fooAction')->will($this->returnValue($methodParameters));
 
 		$mockController->injectReflectionService($mockReflectionService);
@@ -471,14 +471,14 @@ class ActionControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initializeActionMethodArgumentsRegistersOptionalArgumentsAsSuch() {
-		$this->mockRequest = $this->getMock('F3\FLOW3\MVC\RequestInterface', array(), array(), '', FALSE);
+		$this->mockRequest = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface', array(), array(), '', FALSE);
 
-		$mockArguments = $this->getMock('F3\FLOW3\MVC\Controller\Arguments', array(), array(), '', FALSE);
+		$mockArguments = $this->getMock('TYPO3\FLOW3\MVC\Controller\Arguments', array(), array(), '', FALSE);
 		$mockArguments->expects($this->at(0))->method('addNewArgument')->with('arg1', 'string', TRUE);
 		$mockArguments->expects($this->at(1))->method('addNewArgument')->with('arg2', 'array', FALSE, array(21));
 		$mockArguments->expects($this->at(2))->method('addNewArgument')->with('arg3', 'string', FALSE, 42);
 
-		$mockController = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\ActionController', array('fooAction', 'evaluateDontValidateAnnotations'), array(), '', FALSE);
+		$mockController = $this->getAccessibleMock('TYPO3\FLOW3\MVC\Controller\ActionController', array('fooAction', 'evaluateDontValidateAnnotations'), array(), '', FALSE);
 
 		$methodParameters = array(
 			'arg1' => array(
@@ -508,7 +508,7 @@ class ActionControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 			)
 		);
 
-		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService', array(), array(), '', FALSE);
+		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService', array(), array(), '', FALSE);
 		$mockReflectionService->expects($this->once())->method('getMethodParameters')->with(get_class($mockController), 'fooAction')->will($this->returnValue($methodParameters));
 
 		$mockController->injectReflectionService($mockReflectionService);
@@ -521,14 +521,14 @@ class ActionControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 * @expectedException F3\FLOW3\MVC\Exception\InvalidArgumentTypeException
+	 * @expectedException TYPO3\FLOW3\MVC\Exception\InvalidArgumentTypeException
 	 */
 	public function initializeActionMethodArgumentsThrowsExceptionIfDataTypeWasNotSpecified() {
-		$this->mockRequest = $this->getMock('F3\FLOW3\MVC\RequestInterface', array(), array(), '', FALSE);
+		$this->mockRequest = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface', array(), array(), '', FALSE);
 
-		$mockArguments = $this->getMock('F3\FLOW3\MVC\Controller\Arguments', array(), array(), '', FALSE);
+		$mockArguments = $this->getMock('TYPO3\FLOW3\MVC\Controller\Arguments', array(), array(), '', FALSE);
 
-		$mockController = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\ActionController', array('fooAction'), array(), '', FALSE);
+		$mockController = $this->getAccessibleMock('TYPO3\FLOW3\MVC\Controller\ActionController', array('fooAction'), array(), '', FALSE);
 
 		$methodParameters = array(
 			'arg1' => array(
@@ -540,7 +540,7 @@ class ActionControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 			)
 		);
 
-		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService', array(), array(), '', FALSE);
+		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService', array(), array(), '', FALSE);
 		$mockReflectionService->expects($this->once())->method('getMethodParameters')->with(get_class($mockController), 'fooAction')->will($this->returnValue($methodParameters));
 
 		$mockController->injectReflectionService($mockReflectionService);
@@ -556,12 +556,12 @@ class ActionControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function initializeActionMethodValidatorsCorrectlyRegistersValidatorsBasedOnDataType() {
 		$this->markTestIncomplete('Sebastian -- fix after T3BOARD');
-		$mockController = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\ActionController', array('fooAction'), array(), '', FALSE);
+		$mockController = $this->getAccessibleMock('TYPO3\FLOW3\MVC\Controller\ActionController', array('fooAction'), array(), '', FALSE);
 
-		$argument = $this->getMock('F3\FLOW3\MVC\Controller\Argument', array('getName'), array(), '', FALSE);
+		$argument = $this->getMock('TYPO3\FLOW3\MVC\Controller\Argument', array('getName'), array(), '', FALSE);
 		$argument->expects($this->any())->method('getName')->will($this->returnValue('arg1'));
 
-		$arguments = $this->getMock('F3\FLOW3\MVC\Controller\Arguments', array('dummy'), array(), '', FALSE);
+		$arguments = $this->getMock('TYPO3\FLOW3\MVC\Controller\Arguments', array('dummy'), array(), '', FALSE);
 		$arguments->addArgument($argument);
 
 		$methodTagsValues = array(
@@ -569,12 +569,12 @@ class ActionControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 		);
 
 		$methodArgumentsValidatorConjunctions = array();
-		$methodArgumentsValidatorConjunctions['arg1'] = $this->getMock('F3\FLOW3\Validation\Validator\ConjunctionValidator', array(), array(), '', FALSE);
+		$methodArgumentsValidatorConjunctions['arg1'] = $this->getMock('TYPO3\FLOW3\Validation\Validator\ConjunctionValidator', array(), array(), '', FALSE);
 
-		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService', array(), array(), '', FALSE);
+		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService', array(), array(), '', FALSE);
 		$mockReflectionService->expects($this->once())->method('getMethodTagsValues')->with(get_class($mockController), 'fooAction')->will($this->returnValue($methodTagsValues));
 
-		$mockValidatorResolver = $this->getMock('F3\FLOW3\Validation\ValidatorResolver', array(), array(), '', FALSE);
+		$mockValidatorResolver = $this->getMock('TYPO3\FLOW3\Validation\ValidatorResolver', array(), array(), '', FALSE);
 		$mockValidatorResolver->expects($this->once())->method('buildMethodArgumentsValidatorConjunctions')->with(get_class($mockController), 'fooAction')->will($this->returnValue($methodArgumentsValidatorConjunctions));
 
 		$mockController->injectReflectionService($mockReflectionService);
@@ -592,30 +592,30 @@ class ActionControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function initializeActionMethodValidatorsRegistersModelBasedValidators() {
 		$this->markTestIncomplete('Sebastian -- fix after T3BOARD');
-		$mockController = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\ActionController', array('fooAction'), array(), '', FALSE);
+		$mockController = $this->getAccessibleMock('TYPO3\FLOW3\MVC\Controller\ActionController', array('fooAction'), array(), '', FALSE);
 
-		$argument = $this->getMock('F3\FLOW3\MVC\Controller\Argument', array('getName', 'getDataType'), array(), '', FALSE);
+		$argument = $this->getMock('TYPO3\FLOW3\MVC\Controller\Argument', array('getName', 'getDataType'), array(), '', FALSE);
 		$argument->expects($this->any())->method('getName')->will($this->returnValue('arg1'));
 		$argument->expects($this->any())->method('getDataType')->will($this->returnValue('TYPO3\Foo\Quux'));
 
-		$arguments = $this->getMock('F3\FLOW3\MVC\Controller\Arguments', array('dummy'), array(), '', FALSE);
+		$arguments = $this->getMock('TYPO3\FLOW3\MVC\Controller\Arguments', array('dummy'), array(), '', FALSE);
 		$arguments->addArgument($argument);
 
 		$methodTagsValues = array(
 
 		);
 
-		$quuxBaseValidatorConjunction = $this->getMock('F3\FLOW3\Validation\Validator\ConjunctionValidator', array(), array(), '', FALSE);
+		$quuxBaseValidatorConjunction = $this->getMock('TYPO3\FLOW3\Validation\Validator\ConjunctionValidator', array(), array(), '', FALSE);
 		$quuxBaseValidatorConjunction->expects($this->once())->method('count')->will($this->returnValue(1));
 
 		$methodArgumentsValidatorConjunctions = array();
-		$methodArgumentsValidatorConjunctions['arg1'] = $this->getMock('F3\FLOW3\Validation\Validator\ConjunctionValidator', array(), array(), '', FALSE);
+		$methodArgumentsValidatorConjunctions['arg1'] = $this->getMock('TYPO3\FLOW3\Validation\Validator\ConjunctionValidator', array(), array(), '', FALSE);
 		$methodArgumentsValidatorConjunctions['arg1']->expects($this->once())->method('addValidator')->with($quuxBaseValidatorConjunction);
 
-		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService', array(), array(), '', FALSE);
+		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService', array(), array(), '', FALSE);
 		$mockReflectionService->expects($this->once())->method('getMethodTagsValues')->with(get_class($mockController), 'fooAction')->will($this->returnValue($methodTagsValues));
 
-		$mockValidatorResolver = $this->getMock('F3\FLOW3\Validation\ValidatorResolver', array(), array(), '', FALSE);
+		$mockValidatorResolver = $this->getMock('TYPO3\FLOW3\Validation\ValidatorResolver', array(), array(), '', FALSE);
 		$mockValidatorResolver->expects($this->once())->method('buildMethodArgumentsValidatorConjunctions')->with(get_class($mockController), 'fooAction')->will($this->returnValue($methodArgumentsValidatorConjunctions));
 		$mockValidatorResolver->expects($this->once())->method('getBaseValidatorConjunction')->with('TYPO3\Foo\Quux')->will($this->returnValue($quuxBaseValidatorConjunction));
 
@@ -634,13 +634,13 @@ class ActionControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function initializeActionMethodValidatorsDoesNotRegisterModelBasedValidatorsIfDontValidateAnnotationIsSet() {
 		$this->markTestIncomplete('Sebastian -- fix after T3BOARD');
-		$mockController = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\ActionController', array('fooAction'), array(), '', FALSE);
+		$mockController = $this->getAccessibleMock('TYPO3\FLOW3\MVC\Controller\ActionController', array('fooAction'), array(), '', FALSE);
 
-		$argument = $this->getMock('F3\FLOW3\MVC\Controller\Argument', array('getName', 'getDataType'), array(), '', FALSE);
+		$argument = $this->getMock('TYPO3\FLOW3\MVC\Controller\Argument', array('getName', 'getDataType'), array(), '', FALSE);
 		$argument->expects($this->any())->method('getName')->will($this->returnValue('arg1'));
 		$argument->expects($this->any())->method('getDataType')->will($this->returnValue('TYPO3\Foo\Quux'));
 
-		$arguments = $this->getMock('F3\FLOW3\MVC\Controller\Arguments', array('dummy'), array(), '', FALSE);
+		$arguments = $this->getMock('TYPO3\FLOW3\MVC\Controller\Arguments', array('dummy'), array(), '', FALSE);
 		$arguments->addArgument($argument);
 
 		$methodTagsValues = array(
@@ -650,12 +650,12 @@ class ActionControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 		);
 
 		$methodArgumentsValidatorConjunctions = array();
-		$methodArgumentsValidatorConjunctions['arg1'] = $this->getMock('F3\FLOW3\Validation\Validator\ConjunctionValidator', array(), array(), '', FALSE);
+		$methodArgumentsValidatorConjunctions['arg1'] = $this->getMock('TYPO3\FLOW3\Validation\Validator\ConjunctionValidator', array(), array(), '', FALSE);
 
-		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService', array(), array(), '', FALSE);
+		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService', array(), array(), '', FALSE);
 		$mockReflectionService->expects($this->once())->method('getMethodTagsValues')->with(get_class($mockController), 'fooAction')->will($this->returnValue($methodTagsValues));
 
-		$mockValidatorResolver = $this->getMock('F3\FLOW3\Validation\ValidatorResolver', array(), array(), '', FALSE);
+		$mockValidatorResolver = $this->getMock('TYPO3\FLOW3\Validation\ValidatorResolver', array(), array(), '', FALSE);
 		$mockValidatorResolver->expects($this->once())->method('buildMethodArgumentsValidatorConjunctions')->with(get_class($mockController), 'fooAction')->will($this->returnValue($methodArgumentsValidatorConjunctions));
 		$mockValidatorResolver->expects($this->any())->method('getBaseValidatorConjunction')->will($this->throwException(new \Exception("This should not be called because the dontvalidate annotation is set.")));
 
@@ -671,13 +671,13 @@ class ActionControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 * @expectedException \F3\FLOW3\MVC\Exception\StopActionException
+	 * @expectedException \TYPO3\FLOW3\MVC\Exception\StopActionException
 	 */
 	public function defaultErrorActionForwardsToReferrerIfSet() {
 		$this->markTestIncomplete('Sebastian -- fix after T3BOARD');
-		$mockFlashMessageContainer = $this->getMock('F3\FLOW3\MVC\Controller\FlashMessageContainer', array(), array(), '', FALSE);
+		$mockFlashMessageContainer = $this->getMock('TYPO3\FLOW3\MVC\Controller\FlashMessageContainer', array(), array(), '', FALSE);
 
-		$mockController = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\ActionController', array('forward'), array(), '', FALSE);
+		$mockController = $this->getAccessibleMock('TYPO3\FLOW3\MVC\Controller\ActionController', array('forward'), array(), '', FALSE);
 		$mockController->_set('request', $this->mockRequest);
 		$mockController->_set('arguments', $this->mockArguments);
 		$mockController->_set('flashMessageContainer', $mockFlashMessageContainer);
@@ -692,7 +692,7 @@ class ActionControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$this->mockRequest->expects($this->any())->method('hasArgument')->with('__referrer')->will($this->returnValue(TRUE));
 		$this->mockRequest->expects($this->atLeastOnce())->method('getArgument')->with('__referrer')->will($this->returnValue($referrer));
 
-		$mockController->expects($this->once())->method('forward')->with('foo', 'Bar', 'Baz', array('a' => 'b'))->will($this->throwException(new \F3\FLOW3\MVC\Exception\StopActionException('', 1234)));
+		$mockController->expects($this->once())->method('forward')->with('foo', 'Bar', 'Baz', array('a' => 'b'))->will($this->throwException(new \TYPO3\FLOW3\MVC\Exception\StopActionException('', 1234)));
 
 		$mockController->_call('errorAction');
 	}
@@ -702,13 +702,13 @@ class ActionControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function defaultErrorActionAddsFlashMessageToFlashMessageContainer() {
-		$mockFlashMessageContainer = $this->getMock('F3\FLOW3\MVC\Controller\FlashMessageContainer', array(), array(), '', FALSE);
+		$mockFlashMessageContainer = $this->getMock('TYPO3\FLOW3\MVC\Controller\FlashMessageContainer', array(), array(), '', FALSE);
 		$mockFlashMessageContainer->expects($this->once())->method('add');
 
-		$mockController = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\ActionController', array('dummy'), array(), '', FALSE);
+		$mockController = $this->getAccessibleMock('TYPO3\FLOW3\MVC\Controller\ActionController', array('dummy'), array(), '', FALSE);
 		$mockController->_set('request', $this->mockRequest);
-		$result = new \F3\FLOW3\Error\Result();
-		$result->addError(new \F3\FLOW3\Error\Error('asdf', 1));
+		$result = new \TYPO3\FLOW3\Error\Result();
+		$result->addError(new \TYPO3\FLOW3\Error\Error('asdf', 1));
 		$this->mockArguments->expects($this->once())->method('getValidationResults')->will($this->returnValue($result));
 		$mockController->_set('arguments', $this->mockArguments);
 

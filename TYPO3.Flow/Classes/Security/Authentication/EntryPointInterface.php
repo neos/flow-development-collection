@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Security\Authentication;
+namespace TYPO3\FLOW3\Security\Authentication;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -33,10 +33,10 @@ interface EntryPointInterface {
 	 * Returns TRUE if the given request can be authenticated by the authentication provider
 	 * represented by this entry point
 	 *
-	 * @param \F3\FLOW3\MVC\RequestInterface $request The current request
+	 * @param \TYPO3\FLOW3\MVC\RequestInterface $request The current request
 	 * @return boolean TRUE if authentication is possible
 	 */
-	public function canForward(\F3\FLOW3\MVC\RequestInterface $request);
+	public function canForward(\TYPO3\FLOW3\MVC\RequestInterface $request);
 
 	/**
 	 * Sets the options array
@@ -56,11 +56,11 @@ interface EntryPointInterface {
 	/**
 	 * Starts the authentication. (e.g. redirect to login page or send 401 HTTP header)
 	 *
-	 * @param \F3\FLOW3\MVC\RequestInterface $request The current request
-	 * @param \F3\FLOW3\MVC\ResponseInterface $response The current response
+	 * @param \TYPO3\FLOW3\MVC\RequestInterface $request The current request
+	 * @param \TYPO3\FLOW3\MVC\ResponseInterface $response The current response
 	 * @return void
 	 */
-	public function startAuthentication(\F3\FLOW3\MVC\RequestInterface $request, \F3\FLOW3\MVC\ResponseInterface $response);
+	public function startAuthentication(\TYPO3\FLOW3\MVC\RequestInterface $request, \TYPO3\FLOW3\MVC\ResponseInterface $response);
 }
 
 ?>

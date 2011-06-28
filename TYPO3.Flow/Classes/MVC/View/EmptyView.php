@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\MVC\View;
+namespace TYPO3\FLOW3\MVC\View;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,17 +26,17 @@ namespace F3\FLOW3\MVC\View;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-final class EmptyView implements \F3\FLOW3\MVC\View\ViewInterface {
+final class EmptyView implements \TYPO3\FLOW3\MVC\View\ViewInterface {
 
 	/**
 	 * Dummy method to satisfy the ViewInterface
 	 *
-	 * @param \F3\FLOW3\MVC\Controller\ControllerContext $controllerContext
+	 * @param \TYPO3\FLOW3\MVC\Controller\ControllerContext $controllerContext
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
-	public function setControllerContext(\F3\FLOW3\MVC\Controller\ControllerContext $controllerContext) {
+	public function setControllerContext(\TYPO3\FLOW3\MVC\Controller\ControllerContext $controllerContext) {
 	}
 
 	/**
@@ -44,7 +44,7 @@ final class EmptyView implements \F3\FLOW3\MVC\View\ViewInterface {
 	 *
 	 * @param string $key
 	 * @param mixed $value
-	 * @return \F3\FLOW3\MVC\View\EmptyView instance of $this to allow chaining
+	 * @return \TYPO3\FLOW3\MVC\View\EmptyView instance of $this to allow chaining
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
@@ -56,7 +56,7 @@ final class EmptyView implements \F3\FLOW3\MVC\View\ViewInterface {
 	 * Dummy method to satisfy the ViewInterface
 	 *
 	 * @param array $values
-	 * @return \F3\FLOW3\MVC\View\EmptyView instance of $this to allow chaining
+	 * @return \TYPO3\FLOW3\MVC\View\EmptyView instance of $this to allow chaining
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
@@ -67,11 +67,11 @@ final class EmptyView implements \F3\FLOW3\MVC\View\ViewInterface {
 	/**
 	 * This view can be used in any case.
 	 *
-	 * @param \F3\FLOW3\MVC\Controller\ControllerContext $controllerContext
+	 * @param \TYPO3\FLOW3\MVC\Controller\ControllerContext $controllerContext
 	 * @return boolean TRUE
 	 * @api
 	 */
-	public function canRender(\F3\FLOW3\MVC\Controller\ControllerContext $controllerContext) {
+	public function canRender(\TYPO3\FLOW3\MVC\Controller\ControllerContext $controllerContext) {
 		return TRUE;
 	}
 

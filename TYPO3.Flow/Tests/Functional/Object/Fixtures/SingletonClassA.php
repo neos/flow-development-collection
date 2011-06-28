@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Functional\Object\Fixtures;
+namespace TYPO3\FLOW3\Tests\Functional\Object\Fixtures;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -29,19 +29,19 @@ namespace F3\FLOW3\Tests\Functional\Object\Fixtures;
 class SingletonClassA {
 
 	/**
-	 * @var \F3\FLOW3\Tests\Functional\Object\Fixtures\SingletonClassB
+	 * @var \TYPO3\FLOW3\Tests\Functional\Object\Fixtures\SingletonClassB
 	 */
 	protected $objectB;
 
 	/**
-	 * @param \F3\FLOW3\Tests\Functional\Object\Fixtures\SingletonClassB $objectB
+	 * @param \TYPO3\FLOW3\Tests\Functional\Object\Fixtures\SingletonClassB $objectB
 	 */
-	public function __construct(\F3\FLOW3\Tests\Functional\Object\Fixtures\SingletonClassB $objectB) {
+	public function __construct(\TYPO3\FLOW3\Tests\Functional\Object\Fixtures\SingletonClassB $objectB) {
 		$this->objectB = $objectB;
 	}
 
 	/**
-	 * @return \F3\FLOW3\Tests\Functional\Object\Fixtures\SingletonClassB
+	 * @return \TYPO3\FLOW3\Tests\Functional\Object\Fixtures\SingletonClassB
 	 */
 	public function getObjectB() {
 		return $this->objectB;

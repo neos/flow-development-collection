@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Configuration;
+namespace TYPO3\FLOW3\Configuration;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -46,12 +46,12 @@ class ConfigurationManager {
 	protected $context;
 
 	/**
-	 * @var \F3\FLOW3\Configuration\Source\YamlSource
+	 * @var \TYPO3\FLOW3\Configuration\Source\YamlSource
 	 */
 	protected $configurationSource;
 
 	/**
-	 * @var \F3\FLOW3\Utility\Environment
+	 * @var \TYPO3\FLOW3\Utility\Environment
 	 */
 	protected $environment;
 
@@ -70,7 +70,7 @@ class ConfigurationManager {
 
 	/**
 	 * Active packages to load the configuration for
-	 * @var array<F3\FLOW3\Package\PackageInterface>
+	 * @var array<TYPO3\FLOW3\Package\PackageInterface>
 	 */
 	protected $packages = array();
 
@@ -87,7 +87,7 @@ class ConfigurationManager {
 	public function __construct($context) {
 		$this->context = $context;
 		if (!is_dir(FLOW3_PATH_CONFIGURATION . $context)) {
-			\F3\FLOW3\Utility\Files::createDirectoryRecursively(FLOW3_PATH_CONFIGURATION . $context);
+			\TYPO3\FLOW3\Utility\Files::createDirectoryRecursively(FLOW3_PATH_CONFIGURATION . $context);
 		}
 		$this->includeCachedConfigurationsPathAndFilename = FLOW3_PATH_CONFIGURATION . $context . '/IncludeCachedConfigurations.php';
 		$this->loadConfigurationCache();
@@ -96,27 +96,27 @@ class ConfigurationManager {
 	/**
 	 * Injects the configuration source
 	 *
-	 * @param \F3\FLOW3\Configuration\Source\YamlSource $configurationSource
+	 * @param \TYPO3\FLOW3\Configuration\Source\YamlSource $configurationSource
 	 * @return void
 	 */
-	public function injectConfigurationSource(\F3\FLOW3\Configuration\Source\YamlSource $configurationSource) {
+	public function injectConfigurationSource(\TYPO3\FLOW3\Configuration\Source\YamlSource $configurationSource) {
 		$this->configurationSource = $configurationSource;
 	}
 
 	/**
 	 * Injects the environment
 	 *
-	 * @param \F3\FLOW3\Utility\Environment $environment
+	 * @param \TYPO3\FLOW3\Utility\Environment $environment
 	 * @return void
 	 */
-	public function injectEnvironment(\F3\FLOW3\Utility\Environment $environment) {
+	public function injectEnvironment(\TYPO3\FLOW3\Utility\Environment $environment) {
 		$this->environment = $environment;
 	}
 
 	/**
 	 * Sets the active packages to load the configuration for
 	 *
-	 * @param array<F3\FLOW3\Package\PackageInterface> $packages
+	 * @param array<TYPO3\FLOW3\Package\PackageInterface> $packages
 	 * @return void
 	 */
 	public function setPackages(array $packages) {
@@ -132,7 +132,7 @@ class ConfigurationManager {
 	 * @param string $configurationType The kind of configuration to fetch - must be one of the CONFIGURATION_TYPE_* constants
 	 * @param string $packageKey Key of the package to return the configuration for, e.g. 'TYPO3.FLOW3'
 	 * @return array The configuration
-	 * @throws \F3\FLOW3\Configuration\Exception\InvalidConfigurationTypeException on invalid configuration types
+	 * @throws \TYPO3\FLOW3\Configuration\Exception\InvalidConfigurationTypeException on invalid configuration types
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getConfiguration($configurationType, $packageKey = NULL) {
@@ -158,7 +158,7 @@ class ConfigurationManager {
 				if ($packageKey === NULL) {
 					$configuration = &$this->configurations[self::CONFIGURATION_TYPE_SETTINGS];
 				} else {
-					$configuration = \F3\FLOW3\Utility\Arrays::getValueByPath($this->configurations[self::CONFIGURATION_TYPE_SETTINGS], $packageKey);
+					$configuration = \TYPO3\FLOW3\Utility\Arrays::getValueByPath($this->configurations[self::CONFIGURATION_TYPE_SETTINGS], $packageKey);
 				}
 			break;
 
@@ -178,7 +178,7 @@ class ConfigurationManager {
 			break;
 
 			default :
-				throw new \F3\FLOW3\Configuration\Exception\InvalidConfigurationTypeException('Invalid configuration type "' . $configurationType . '"', 1206031879);
+				throw new \TYPO3\FLOW3\Configuration\Exception\InvalidConfigurationTypeException('Invalid configuration type "' . $configurationType . '"', 1206031879);
 		}
 		return $configuration;
 	}
@@ -190,7 +190,7 @@ class ConfigurationManager {
 	 * @param string $configurationType The kind of configuration to fetch - must be one of the CONFIGURATION_TYPE_* constants
 	 * @param array $configuration The new configuration
 	 * @return void
-	 * @throws \F3\FLOW3\Configuration\Exception\InvalidConfigurationTypeException on invalid configuration types
+	 * @throws \TYPO3\FLOW3\Configuration\Exception\InvalidConfigurationTypeException on invalid configuration types
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setConfiguration($configurationType, array $configuration) {
@@ -200,7 +200,7 @@ class ConfigurationManager {
 				$this->cacheNeedsUpdate = TRUE;
 			break;
 			default :
-				throw new \F3\FLOW3\Configuration\Exception\InvalidConfigurationTypeException('Invalid configuration type "' . $configurationType . '"', 1251127738);
+				throw new \TYPO3\FLOW3\Configuration\Exception\InvalidConfigurationTypeException('Invalid configuration type "' . $configurationType . '"', 1251127738);
 		}
 	}
 
@@ -218,7 +218,7 @@ class ConfigurationManager {
 				$this->configurationSource->save(FLOW3_PATH_CONFIGURATION . $configurationType, $this->configurations[$configurationType]);
 			break;
 			default :
-				throw new \F3\FLOW3\Configuration\Exception\InvalidConfigurationTypeException('Configuration type "' . $configurationType . '" does not support saving.', 1251127425);
+				throw new \TYPO3\FLOW3\Configuration\Exception\InvalidConfigurationTypeException('Configuration type "' . $configurationType . '" does not support saving.', 1251127425);
 		}
 	}
 
@@ -264,19 +264,19 @@ class ConfigurationManager {
 
 				$settings = array();
 				foreach ($packages as $packageKey => $package) {
-					if (\F3\FLOW3\Utility\Arrays::getValueByPath($settings, $packageKey) === NULL) {
-						$settings = \F3\FLOW3\Utility\Arrays::setValueByPath($settings, $packageKey, array());
+					if (\TYPO3\FLOW3\Utility\Arrays::getValueByPath($settings, $packageKey) === NULL) {
+						$settings = \TYPO3\FLOW3\Utility\Arrays::setValueByPath($settings, $packageKey, array());
 					}
-					$settings = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($settings, $this->configurationSource->load($package->getConfigurationPath() . self::CONFIGURATION_TYPE_SETTINGS));
+					$settings = \TYPO3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($settings, $this->configurationSource->load($package->getConfigurationPath() . self::CONFIGURATION_TYPE_SETTINGS));
 				}
-				$settings = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($settings, $this->configurationSource->load(FLOW3_PATH_CONFIGURATION . self::CONFIGURATION_TYPE_SETTINGS));
+				$settings = \TYPO3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($settings, $this->configurationSource->load(FLOW3_PATH_CONFIGURATION . self::CONFIGURATION_TYPE_SETTINGS));
 				foreach ($packages as $package) {
-					$settings = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($settings, $this->configurationSource->load($package->getConfigurationPath() . $this->context . '/' . self::CONFIGURATION_TYPE_SETTINGS));
+					$settings = \TYPO3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($settings, $this->configurationSource->load($package->getConfigurationPath() . $this->context . '/' . self::CONFIGURATION_TYPE_SETTINGS));
 				}
-				$settings = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($settings, $this->configurationSource->load(FLOW3_PATH_CONFIGURATION . $this->context . '/' . self::CONFIGURATION_TYPE_SETTINGS));
+				$settings = \TYPO3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($settings, $this->configurationSource->load(FLOW3_PATH_CONFIGURATION . $this->context . '/' . self::CONFIGURATION_TYPE_SETTINGS));
 
 				if ($this->configurations[self::CONFIGURATION_TYPE_SETTINGS] !== array()) {
-					$this->configurations[self::CONFIGURATION_TYPE_SETTINGS] = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($this->configurations[self::CONFIGURATION_TYPE_SETTINGS], $settings);
+					$this->configurations[self::CONFIGURATION_TYPE_SETTINGS] = \TYPO3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($this->configurations[self::CONFIGURATION_TYPE_SETTINGS], $settings);
 				} else {
 					$this->configurations[self::CONFIGURATION_TYPE_SETTINGS] = $settings;
 				}
@@ -287,9 +287,9 @@ class ConfigurationManager {
 			case self::CONFIGURATION_TYPE_PACKAGE :
 				$this->configurations[$configurationType] = array();
 				foreach ($packages as $packageKey => $package) {
-					$configuration = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($this->configurationSource->load($package->getConfigurationPath() . $configurationType), $this->configurationSource->load($package->getConfigurationPath() . $this->context . '/' . $configurationType));
-					$configuration = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($configuration, $this->configurationSource->load(FLOW3_PATH_CONFIGURATION . $configurationType));
-					$this->configurations[$configurationType][$packageKey] = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($configuration, $this->configurationSource->load(FLOW3_PATH_CONFIGURATION . $this->context . '/' . $configurationType));
+					$configuration = \TYPO3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($this->configurationSource->load($package->getConfigurationPath() . $configurationType), $this->configurationSource->load($package->getConfigurationPath() . $this->context . '/' . $configurationType));
+					$configuration = \TYPO3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($configuration, $this->configurationSource->load(FLOW3_PATH_CONFIGURATION . $configurationType));
+					$this->configurations[$configurationType][$packageKey] = \TYPO3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($configuration, $this->configurationSource->load(FLOW3_PATH_CONFIGURATION . $this->context . '/' . $configurationType));
 				}
 			break;
 			case self::CONFIGURATION_TYPE_CACHES :
@@ -297,10 +297,10 @@ class ConfigurationManager {
 			case self::CONFIGURATION_TYPE_SIGNALSSLOTS :
 				$this->configurations[$configurationType] = array();
 				foreach ($packages as $package) {
-					$this->configurations[$configurationType] = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $this->configurationSource->load($package->getConfigurationPath() . $configurationType));
+					$this->configurations[$configurationType] = \TYPO3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $this->configurationSource->load($package->getConfigurationPath() . $configurationType));
 				}
 				foreach ($packages as $package) {
-					$this->configurations[$configurationType] = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $this->configurationSource->load($package->getConfigurationPath() . $this->context . '/' . $configurationType));
+					$this->configurations[$configurationType] = \TYPO3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $this->configurationSource->load($package->getConfigurationPath() . $this->context . '/' . $configurationType));
 				}
 			break;
 			case self::CONFIGURATION_TYPE_ROUTES :
@@ -310,15 +310,15 @@ class ConfigurationManager {
 					$subRoutesConfiguration[$packageKey] = $this->configurationSource->load($package->getConfigurationPath() . $configurationType);
 				}
 				foreach ($packages as $packageKey => $package) {
-					$subRoutesConfiguration[$packageKey] = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($subRoutesConfiguration[$packageKey], $this->configurationSource->load($package->getConfigurationPath() . $this->context . '/' . $configurationType));
+					$subRoutesConfiguration[$packageKey] = \TYPO3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($subRoutesConfiguration[$packageKey], $this->configurationSource->load($package->getConfigurationPath() . $this->context . '/' . $configurationType));
 				}
 			break;
 			case self::CONFIGURATION_TYPE_PACKAGESTATES :
 				$configuration = $this->configurationSource->load(FLOW3_PATH_CONFIGURATION . self::CONFIGURATION_TYPE_PACKAGESTATES);
-				$this->configurations[$configurationType] = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($configuration, $this->configurationSource->load(FLOW3_PATH_CONFIGURATION . $this->context . '/' . self::CONFIGURATION_TYPE_PACKAGESTATES));
+				$this->configurations[$configurationType] = \TYPO3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($configuration, $this->configurationSource->load(FLOW3_PATH_CONFIGURATION . $this->context . '/' . self::CONFIGURATION_TYPE_PACKAGESTATES));
 			break;
 			default:
-				throw new \F3\FLOW3\Configuration\Exception\InvalidConfigurationTypeException('Configuration type "' . $configurationType . '" cannot be loaded with loadConfiguration().', 1251450613);
+				throw new \TYPO3\FLOW3\Configuration\Exception\InvalidConfigurationTypeException('Configuration type "' . $configurationType . '" cannot be loaded with loadConfiguration().', 1251450613);
 		}
 
 			// merge in global configuration
@@ -328,8 +328,8 @@ class ConfigurationManager {
 			case self::CONFIGURATION_TYPE_SIGNALSSLOTS :
 			case self::CONFIGURATION_TYPE_ROUTES :
 			case self::CONFIGURATION_TYPE_PACKAGESTATES :
-				$this->configurations[$configurationType] = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $this->configurationSource->load(FLOW3_PATH_CONFIGURATION . $configurationType));
-				$this->configurations[$configurationType] = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $this->configurationSource->load(FLOW3_PATH_CONFIGURATION . $this->context . '/' . $configurationType));
+				$this->configurations[$configurationType] = \TYPO3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $this->configurationSource->load(FLOW3_PATH_CONFIGURATION . $configurationType));
+				$this->configurations[$configurationType] = \TYPO3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $this->configurationSource->load(FLOW3_PATH_CONFIGURATION . $this->context . '/' . $configurationType));
 		}
 
 		if ($configurationType === self::CONFIGURATION_TYPE_ROUTES) {
@@ -361,7 +361,7 @@ class ConfigurationManager {
 	protected function saveConfigurationCache() {
 		$configurationCachePath = $this->environment->getPathToTemporaryDirectory() . 'Configuration/';
 		if (!file_exists($configurationCachePath)) {
-			\F3\FLOW3\Utility\Files::createDirectoryRecursively($configurationCachePath);
+			\TYPO3\FLOW3\Utility\Files::createDirectoryRecursively($configurationCachePath);
 		}
 		$cachePathAndFilename = $configurationCachePath  . $this->context . 'Configurations.php';
 		$includeCachedConfigurationsCode = <<< "EOD"
@@ -448,17 +448,17 @@ EOD;
 				$name .= isset($subRouteConfiguration['name']) ? $subRouteConfiguration['name'] : 'Subroute';
 
 				if (!isset($subRouteConfiguration['uriPattern'])) {
-					throw new \F3\FLOW3\Configuration\Exception\ParseErrorException('No uriPattern defined in route configuration "' . $name . '".', 1274197615);
+					throw new \TYPO3\FLOW3\Configuration\Exception\ParseErrorException('No uriPattern defined in route configuration "' . $name . '".', 1274197615);
 		     	}
 
 				$uriPattern = str_replace('<' . $subRouteKey . '>', $subRouteConfiguration['uriPattern'], $routeConfiguration['uriPattern']);
 				$defaults = isset($routeConfiguration['defaults']) ? $routeConfiguration['defaults'] : array();
 				if (isset($subRouteConfiguration['defaults'])) {
-					$defaults = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($defaults, $subRouteConfiguration['defaults']);
+					$defaults = \TYPO3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($defaults, $subRouteConfiguration['defaults']);
 				}
 				$routeParts = isset($routeConfiguration['routeParts']) ? $routeConfiguration['routeParts'] : array();
 				if (isset($subRouteConfiguration['routeParts'])) {
-					$routeParts = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($routeParts, $subRouteConfiguration['routeParts']);
+					$routeParts = \TYPO3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($routeParts, $subRouteConfiguration['routeParts']);
 				}
 				$toLowerCase = isset($routeConfiguration['toLowerCase']) ? (boolean)$routeConfiguration['toLowerCase'] : NULL;
 				if (isset($subRouteConfiguration['toLowerCase'])) {

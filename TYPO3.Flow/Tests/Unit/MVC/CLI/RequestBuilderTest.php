@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\MVC\CLI;
+namespace TYPO3\FLOW3\Tests\Unit\MVC\CLI;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,15 +26,15 @@ namespace F3\FLOW3\Tests\Unit\MVC\CLI;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class RequestBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
+class RequestBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
-	 * @var \F3\FLOW3\MVC\CLI\RequestBuilder
+	 * @var \TYPO3\FLOW3\MVC\CLI\RequestBuilder
 	 */
 	protected $requestBuilder;
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
+	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $mockObjectManager;
 
@@ -50,10 +50,10 @@ class RequestBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
 		mkdir('vfs://Test/Packages/Application/Bcme/Test', 0770, TRUE);
 		mkdir('vfs://Test/Packages/Application/Acme/NoTest', 0770, TRUE);
 
-		$this->mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
+		$this->mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
 		$this->mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->with('acme\test\command\defaultcommandcontroller')->will($this->returnValue('Acme\Test\Command\DefaultCommandController'));
 
-		$this->requestBuilder = new \F3\FLOW3\MVC\CLI\RequestBuilder();
+		$this->requestBuilder = new \TYPO3\FLOW3\MVC\CLI\RequestBuilder();
 		$this->requestBuilder->injectObjectManager($this->mockObjectManager);
 	}
 
@@ -77,11 +77,11 @@ class RequestBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function ifThePackageNamespaceIsUnambiguousTheLastPartOfTheNamespaceSuffices() {
 		$packages = array(
-			'Acme.Test' => new \F3\FLOW3\Package\Package('Acme.Test', 'vfs://Test/Packages/Application/Acme/Test/'),
-			'Acme.NoTest' => new \F3\FLOW3\Package\Package('Acme.NoTest', 'vfs://Test/Packages/Application/Acme/NoTest/'),
+			'Acme.Test' => new \TYPO3\FLOW3\Package\Package('Acme.Test', 'vfs://Test/Packages/Application/Acme/Test/'),
+			'Acme.NoTest' => new \TYPO3\FLOW3\Package\Package('Acme.NoTest', 'vfs://Test/Packages/Application/Acme/NoTest/'),
 		);
 
-		$mockPackageManager = $this->getMock('F3\FLOW3\Package\PackageManagerInterface');
+		$mockPackageManager = $this->getMock('TYPO3\FLOW3\Package\PackageManagerInterface');
 		$mockPackageManager->expects($this->any())->method('getActivePackages')->will($this->returnValue($packages));
 		$this->requestBuilder->injectPackageManager($mockPackageManager);
 
@@ -101,16 +101,16 @@ class RequestBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$this->mockObjectManager->getCaseSensitiveObjectName('acme\test\command\defaultcommandcontroller');
 
 		$packages = array(
-			'Acme.Test' => new \F3\FLOW3\Package\Package('Acme.Test', 'vfs://Test/Packages/Application/Acme/Test/'),
-			'Bcme.Test' => new \F3\FLOW3\Package\Package('Bcme.Test', 'vfs://Test/Packages/Application/Bcme/Test/')
+			'Acme.Test' => new \TYPO3\FLOW3\Package\Package('Acme.Test', 'vfs://Test/Packages/Application/Acme/Test/'),
+			'Bcme.Test' => new \TYPO3\FLOW3\Package\Package('Bcme.Test', 'vfs://Test/Packages/Application/Bcme/Test/')
 		);
 
-		$mockPackageManager = $this->getMock('F3\FLOW3\Package\PackageManagerInterface');
+		$mockPackageManager = $this->getMock('TYPO3\FLOW3\Package\PackageManagerInterface');
 		$mockPackageManager->expects($this->any())->method('getActivePackages')->will($this->returnValue($packages));
 		$this->requestBuilder->injectPackageManager($mockPackageManager);
 
 		$request = $this->requestBuilder->build('test:default:list');
-		$this->assertEquals('F3\FLOW3\Command\HelpCommandController', $request->getControllerObjectName());
+		$this->assertEquals('TYPO3\FLOW3\Command\HelpCommandController', $request->getControllerObjectName());
 	}
 
 	/**

@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Security;
+namespace TYPO3\FLOW3\Security;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -172,7 +172,7 @@ class Account {
 	public function getRoles() {
 		$roleObjects = array();
 		foreach ($this->roles as $role) {
-			$roleObjects[] = new \F3\FLOW3\Security\Policy\Role($role);
+			$roleObjects[] = new \TYPO3\FLOW3\Security\Policy\Role($role);
 		}
 		return $roleObjects;
 	}
@@ -180,7 +180,7 @@ class Account {
 	/**
 	 * Sets the roles for this account
 	 *
-	 * @param array $roles An array of F3\FLOW3\Security\Policy\Role objects
+	 * @param array $roles An array of TYPO3\FLOW3\Security\Policy\Role objects
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
@@ -194,10 +194,10 @@ class Account {
 	/**
 	 * Adds a role to this account
 	 *
-	 * @param \F3\FLOW3\Security\Policy\Role $role
+	 * @param \TYPO3\FLOW3\Security\Policy\Role $role
 	 * @return void
 	 */
-	public function addRole(\F3\FLOW3\Security\Policy\Role $role) {
+	public function addRole(\TYPO3\FLOW3\Security\Policy\Role $role) {
 		$roleIdentifier = (string)$role;
 		if (array_search($roleIdentifier, $this->roles, TRUE) === FALSE) {
 			$this->roles[] = $roleIdentifier;
@@ -207,10 +207,10 @@ class Account {
 	/**
 	 * Removes a role from this account
 	 *
-	 * @param \F3\FLOW3\Security\Policy\Role $role
+	 * @param \TYPO3\FLOW3\Security\Policy\Role $role
 	 * @return void
 	 */
-	public function removeRole(\F3\FLOW3\Security\Policy\Role $role) {
+	public function removeRole(\TYPO3\FLOW3\Security\Policy\Role $role) {
 		$roleIdentifier = (string)$role;
 		if (($key = array_search($roleIdentifier, $this->roles, TRUE)) !== FALSE) {
 			unset($this->roles[$key]);

@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Object\Proxy;
+namespace TYPO3\FLOW3\Object\Proxy;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *

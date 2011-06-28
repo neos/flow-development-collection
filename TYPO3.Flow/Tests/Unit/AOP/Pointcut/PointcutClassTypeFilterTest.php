@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\AOP\Pointcut;
+namespace TYPO3\FLOW3\Tests\Unit\AOP\Pointcut;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,25 +26,25 @@ namespace F3\FLOW3\Tests\Unit\AOP\Pointcut;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class PointcutClassTypeFilterTest extends \F3\FLOW3\Tests\UnitTestCase {
+class PointcutClassTypeFilterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function matchesTellsIfTheOneOfTheInterfaceNamesTheClassImplementsMatchesTheGivenRegularExpression() {
-		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService', array('getInterfaceNamesImplementedByClass'), array(), '', FALSE, TRUE);
+		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService', array('getInterfaceNamesImplementedByClass'), array(), '', FALSE, TRUE);
 		$mockReflectionService->expects($this->any())->method('getInterfaceNamesImplementedByClass')->with('Foo')->will($this->returnValue(array('Bar', 'Baz', 'Fu', 'Uta')));
 
-		$filter = new \F3\FLOW3\AOP\Pointcut\PointcutClassTypeFilter('.*ar');
+		$filter = new \TYPO3\FLOW3\AOP\Pointcut\PointcutClassTypeFilter('.*ar');
 		$filter->injectReflectionService($mockReflectionService);
 		$this->assertTrue($filter->matches('Foo', '', '', 1));
 
-		$filter = new \F3\FLOW3\AOP\Pointcut\PointcutClassTypeFilter('Fu');
+		$filter = new \TYPO3\FLOW3\AOP\Pointcut\PointcutClassTypeFilter('Fu');
 		$filter->injectReflectionService($mockReflectionService);
 		$this->assertTrue($filter->matches('Foo', '', '', 1));
 
-		$filter = new \F3\FLOW3\AOP\Pointcut\PointcutClassTypeFilter('Rob');
+		$filter = new \TYPO3\FLOW3\AOP\Pointcut\PointcutClassTypeFilter('Rob');
 		$filter->injectReflectionService($mockReflectionService);
 		$this->assertFalse($filter->matches('Foo', '', '', 1));
 	}

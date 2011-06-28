@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Log\Backend;
+namespace TYPO3\FLOW3\Log\Backend;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -28,7 +28,7 @@ namespace F3\FLOW3\Log\Backend;
  * @api
  * @scope prototype
  */
-class NullBackend extends \F3\FLOW3\Log\Backend\AbstractBackend {
+class NullBackend extends \TYPO3\FLOW3\Log\Backend\AbstractBackend {
 
 	/**
 	 * Does nothing

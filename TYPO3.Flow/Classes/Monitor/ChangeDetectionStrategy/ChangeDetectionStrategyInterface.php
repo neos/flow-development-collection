@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Monitor\ChangeDetectionStrategy;
+namespace TYPO3\FLOW3\Monitor\ChangeDetectionStrategy;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *

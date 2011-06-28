@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Log;
+namespace TYPO3\FLOW3\Log;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -28,7 +28,7 @@ namespace F3\FLOW3\Log;
  * @api
  * @scope prototype
  */
-class Logger implements \F3\FLOW3\Log\SystemLoggerInterface, \F3\FLOW3\Log\SecurityLoggerInterface {
+class Logger implements \TYPO3\FLOW3\Log\SystemLoggerInterface, \TYPO3\FLOW3\Log\SecurityLoggerInterface {
 
 	/**
 	 * @var \SplObjectStorage
@@ -49,12 +49,12 @@ class Logger implements \F3\FLOW3\Log\SystemLoggerInterface, \F3\FLOW3\Log\Secur
 	 *
 	 * This method allows for conveniently injecting a backend through some Objects.yaml configuration.
 	 *
-	 * @param \F3\FLOW3\Log\Backend\BackendInterface $backend A backend implementation
+	 * @param \TYPO3\FLOW3\Log\Backend\BackendInterface $backend A backend implementation
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
-	public function setBackend(\F3\FLOW3\Log\Backend\BackendInterface $backend) {
+	public function setBackend(\TYPO3\FLOW3\Log\Backend\BackendInterface $backend) {
 		$this->backends = new \SplObjectStorage();
 		$this->backends->attach($backend);
 	}
@@ -62,12 +62,12 @@ class Logger implements \F3\FLOW3\Log\SystemLoggerInterface, \F3\FLOW3\Log\Secur
 	/**
 	 * Adds the backend to which the logger sends the logging data
 	 *
-	 * @param \F3\FLOW3\Log\Backend\BackendInterface $backend A backend implementation
+	 * @param \TYPO3\FLOW3\Log\Backend\BackendInterface $backend A backend implementation
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
-	public function addBackend(\F3\FLOW3\Log\Backend\BackendInterface $backend) {
+	public function addBackend(\TYPO3\FLOW3\Log\Backend\BackendInterface $backend) {
 		$this->backends->attach($backend);
 		$backend->open();
 	}
@@ -76,14 +76,14 @@ class Logger implements \F3\FLOW3\Log\SystemLoggerInterface, \F3\FLOW3\Log\Secur
 	 * Runs the close() method of a backend and removes the backend
 	 * from the logger.
 	 *
-	 * @param \F3\FLOW3\Log\Backend\BackendInterface $backend The backend to remove
+	 * @param \TYPO3\FLOW3\Log\Backend\BackendInterface $backend The backend to remove
 	 * @return void
-	 * @throws \F3\FLOW3\Log\Exception\NoSuchBackendException if the given backend is unknown to this logger
+	 * @throws \TYPO3\FLOW3\Log\Exception\NoSuchBackendException if the given backend is unknown to this logger
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
-	public function removeBackend(\F3\FLOW3\Log\Backend\BackendInterface $backend) {
-		if (!$this->backends->contains($backend)) throw new \F3\FLOW3\Log\Exception\NoSuchBackendException('Backend is unknown to this logger.', 1229430381);
+	public function removeBackend(\TYPO3\FLOW3\Log\Backend\BackendInterface $backend) {
+		if (!$this->backends->contains($backend)) throw new \TYPO3\FLOW3\Log\Exception\NoSuchBackendException('Backend is unknown to this logger.', 1229430381);
 		$backend->close();
 		$this->backends->detach($backend);
 	}

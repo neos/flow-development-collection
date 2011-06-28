@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Security\Authorization;
+namespace TYPO3\FLOW3\Security\Authorization;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -22,8 +22,8 @@ namespace F3\FLOW3\Security\Authorization;
  *                                                                        */
 
 /**
- * A RequestFilter is configured to match specific \F3\FLOW3\MVC\RequestInterfaces and call
- * a \F3\FLOW3\Security\Authorization\InterceptorInterface if needed.
+ * A RequestFilter is configured to match specific \TYPO3\FLOW3\MVC\RequestInterfaces and call
+ * a \TYPO3\FLOW3\Security\Authorization\InterceptorInterface if needed.
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
@@ -31,24 +31,24 @@ namespace F3\FLOW3\Security\Authorization;
 class RequestFilter {
 
 	/**
-	 * @var \F3\FLOW3\Security\RequestPatternInterface
+	 * @var \TYPO3\FLOW3\Security\RequestPatternInterface
 	 */
 	protected $pattern = NULL;
 
 	/**
-	 * @var \F3\FLOW3\Security\Authorization\InterceptorInterface
+	 * @var \TYPO3\FLOW3\Security\Authorization\InterceptorInterface
 	 */
 	protected $securityInterceptor = NULL;
 
 	/**
 	 * Constructor.
 	 *
-	 * @param \F3\FLOW3\Security\RequestPatternInterface $pattern The pattern this filter matches
-	 * @param \F3\FLOW3\Security\Authorization\InterceptorInterface $securityInterceptor The interceptor called on pattern match
+	 * @param \TYPO3\FLOW3\Security\RequestPatternInterface $pattern The pattern this filter matches
+	 * @param \TYPO3\FLOW3\Security\Authorization\InterceptorInterface $securityInterceptor The interceptor called on pattern match
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function __construct(\F3\FLOW3\Security\RequestPatternInterface $pattern, \F3\FLOW3\Security\Authorization\InterceptorInterface $securityInterceptor) {
+	public function __construct(\TYPO3\FLOW3\Security\RequestPatternInterface $pattern, \TYPO3\FLOW3\Security\Authorization\InterceptorInterface $securityInterceptor) {
 		$this->pattern = $pattern;
 		$this->securityInterceptor = $securityInterceptor;
 	}
@@ -56,7 +56,7 @@ class RequestFilter {
 	/**
 	 * Returns the set request pattern
 	 *
-	 * @return \F3\FLOW3\Security\RequestPatternInterface The set request pattern
+	 * @return \TYPO3\FLOW3\Security\RequestPatternInterface The set request pattern
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getRequestPattern() {
@@ -66,7 +66,7 @@ class RequestFilter {
 	/**
 	 * Returns the set security interceptor
 	 *
-	 * @return \F3\FLOW3\Security\Authorization\InterceptorInterface The set security interceptor
+	 * @return \TYPO3\FLOW3\Security\Authorization\InterceptorInterface The set security interceptor
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getSecurityInterceptor() {
@@ -76,11 +76,11 @@ class RequestFilter {
 	/**
 	 * Tries to match the given request against this filter and calls the set security interceptor on success.
 	 *
-	 * @param \F3\FLOW3\MVC\RequestInterface $request The request to be matched
+	 * @param \TYPO3\FLOW3\MVC\RequestInterface $request The request to be matched
 	 * @return boolean Returns TRUE if the filter matched, FALSE otherwise
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function filterRequest(\F3\FLOW3\MVC\RequestInterface $request) {
+	public function filterRequest(\TYPO3\FLOW3\MVC\RequestInterface $request) {
 		if($this->pattern->canMatch($request) && $this->pattern->matchRequest($request)) {
 			$this->securityInterceptor->invoke();
 			return TRUE;

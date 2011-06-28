@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\MVC\Web;
+namespace TYPO3\FLOW3\Tests\Unit\MVC\Web;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,15 +26,15 @@ namespace F3\FLOW3\Tests\Unit\MVC\Web;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class RequestTest extends \F3\FLOW3\Tests\UnitTestCase {
+class RequestTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
-	 * @var \F3\FLOW3\MVC\Web\Request
+	 * @var \TYPO3\FLOW3\MVC\Web\Request
 	 */
 	protected $request;
 
 	/**
-	 * @var \F3\FLOW3\Property\DataType\Uri
+	 * @var \TYPO3\FLOW3\Property\DataType\Uri
 	 */
 	protected $requestUri;
 
@@ -49,13 +49,13 @@ class RequestTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author  Robert Lemke <robert@typo3.org>
 	 */
 	protected function setUp() {
-		$this->mockEnvironment = $this->getAccessibleMock('F3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
+		$this->mockEnvironment = $this->getAccessibleMock('TYPO3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
 
 		$this->SERVER = array();
 		$this->mockEnvironment->_set('SERVER', $this->SERVER);
 
 		$uriString = 'http://username:password@subdomain.domain.com:8080/path1/path2/index.php?argument1=value1&argument2=value2#anchor';
-		$this->requestUri = new \F3\FLOW3\Property\DataType\Uri($uriString);
+		$this->requestUri = new \TYPO3\FLOW3\Property\DataType\Uri($uriString);
 	}
 
 	/**
@@ -63,7 +63,7 @@ class RequestTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getArgumentsReturnsProperlyInitializedArgumentsArrayForNewRequest() {
-		$request = new \F3\FLOW3\MVC\Web\Request();
+		$request = new \TYPO3\FLOW3\MVC\Web\Request();
 		$this->assertInternalType('array', $request->getArguments(), 'getArguments() does not return an array for a virgin request object.');
 	}
 
@@ -74,9 +74,9 @@ class RequestTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getRequestUriReturnsTheBaseUriDetectedByTheEnvironmentClass() {
-		$expectedRequestUri = new \F3\FLOW3\Property\DataType\Uri('http://www.server.com/foo/bar');
+		$expectedRequestUri = new \TYPO3\FLOW3\Property\DataType\Uri('http://www.server.com/foo/bar');
 
-		$request = $this->getAccessibleMock('F3\FLOW3\MVC\Web\Request', array('dummy'));
+		$request = $this->getAccessibleMock('TYPO3\FLOW3\MVC\Web\Request', array('dummy'));
 		$request->_set('requestUri', $expectedRequestUri);
 
 		$this->assertEquals($expectedRequestUri, $request->getRequestUri());
@@ -89,9 +89,9 @@ class RequestTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getBaseUriReturnsTheBaseUriDetectedByTheEnvironmentClass() {
-		$expectedBaseUri = new \F3\FLOW3\Property\DataType\Uri('http://www.server.com/');
+		$expectedBaseUri = new \TYPO3\FLOW3\Property\DataType\Uri('http://www.server.com/');
 
-		$request = $this->getAccessibleMock('F3\FLOW3\MVC\Web\Request', array('dummy'));
+		$request = $this->getAccessibleMock('TYPO3\FLOW3\MVC\Web\Request', array('dummy'));
 		$request->_set('baseUri', $expectedBaseUri);
 
 		$this->assertEquals($expectedBaseUri, $request->getBaseUri(), 'The returned baseUri is not as expected.');
@@ -102,7 +102,7 @@ class RequestTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function theRequestMethodCanBeSetAndRetrieved() {
-		$request = new \F3\FLOW3\MVC\Web\Request();
+		$request = new \TYPO3\FLOW3\MVC\Web\Request();
 
 		$request->setMethod('GET');
 		$this->assertEquals('GET', $request->getMethod());
@@ -113,11 +113,11 @@ class RequestTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \F3\FLOW3\MVC\Exception\InvalidRequestMethodException
+	 * @expectedException \TYPO3\FLOW3\MVC\Exception\InvalidRequestMethodException
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function requestMethodsWhichAreNotCompletelyUpperCaseAreRejected() {
-		$request = new \F3\FLOW3\MVC\Web\Request();
+		$request = new \TYPO3\FLOW3\MVC\Web\Request();
 		$request->setMethod('sOmEtHing');
 	}
 
@@ -125,7 +125,7 @@ class RequestTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getReferringRequestShouldReturnNullByDefault() {
-		$request = new \F3\FLOW3\MVC\Web\Request();
+		$request = new \TYPO3\FLOW3\MVC\Web\Request();
 		$this->assertNull($request->getReferringRequest());
 	}
 
@@ -133,7 +133,7 @@ class RequestTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getReferringRequestShouldReturnCorrectlyBuiltReferringRequest() {
-		$request = new \F3\FLOW3\MVC\Web\Request();
+		$request = new \TYPO3\FLOW3\MVC\Web\Request();
 		$request->setArgument('__referrer', array(
 			'@controller' => 'Foo',
 			'@action' => 'bar'

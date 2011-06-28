@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\MVC\Web\Routing;
+namespace TYPO3\FLOW3\MVC\Web\Routing;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -31,17 +31,17 @@ namespace F3\FLOW3\MVC\Web\Routing;
 class UriBuilder {
 
 	/**
-	 * @var \F3\FLOW3\MVC\Web\Routing\RouterInterface
+	 * @var \TYPO3\FLOW3\MVC\Web\Routing\RouterInterface
 	 */
 	protected $router;
 
 	/**
-	 * @var \F3\FLOW3\Utility\Environment
+	 * @var \TYPO3\FLOW3\Utility\Environment
 	 */
 	protected $environment;
 
 	/**
-	 * @var \F3\FLOW3\MVC\Web\Request
+	 * @var \TYPO3\FLOW3\MVC\Web\Request
 	 */
 	protected $request;
 
@@ -84,35 +84,35 @@ class UriBuilder {
 	/**
 	 * Injects the Router
 	 *
-	 * @param \F3\FLOW3\MVC\Web\Routing\RouterInterface $router
+	 * @param \TYPO3\FLOW3\MVC\Web\Routing\RouterInterface $router
 	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function injectRouter(\F3\FLOW3\MVC\Web\Routing\RouterInterface $router) {
+	public function injectRouter(\TYPO3\FLOW3\MVC\Web\Routing\RouterInterface $router) {
 		$this->router = $router;
 	}
 
 	/**
 	 * Injects the environment
 	 *
-	 * @param \F3\FLOW3\Utility\Environment $environment
+	 * @param \TYPO3\FLOW3\Utility\Environment $environment
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectEnvironment(\F3\FLOW3\Utility\Environment $environment) {
+	public function injectEnvironment(\TYPO3\FLOW3\Utility\Environment $environment) {
 		$this->environment = $environment;
 	}
 
 	/**
 	 * Sets the current request and resets the UriBuilder
 	 *
-	 * @param \F3\FLOW3\MVC\Web\Request $request
+	 * @param \TYPO3\FLOW3\MVC\Web\Request $request
 	 * @return void
 	 * @api
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @see reset()
 	 */
-	public function setRequest(\F3\FLOW3\MVC\Web\Request $request) {
+	public function setRequest(\TYPO3\FLOW3\MVC\Web\Request $request) {
 		$this->request = $request;
 		$this->reset();
 	}
@@ -120,7 +120,7 @@ class UriBuilder {
 	/**
 	 * Gets the current request
 	 *
-	 * @return \F3\FLOW3\MVC\Web\Request
+	 * @return \TYPO3\FLOW3\MVC\Web\Request
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getRequest() {
@@ -133,7 +133,7 @@ class UriBuilder {
 	 * array('prefix1' => array('foo' => 'bar')) gets "&prefix1[foo]=bar"
 	 *
 	 * @param array $arguments
-	 * @return \F3\FLOW3\MVC\Web\Routing\UriBuilder the current UriBuilder to allow method chaining
+	 * @return \TYPO3\FLOW3\MVC\Web\Routing\UriBuilder the current UriBuilder to allow method chaining
 	 * @api
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
@@ -155,7 +155,7 @@ class UriBuilder {
 	 * If specified, adds a given HTML anchor to the URI (#...)
 	 *
 	 * @param string $section
-	 * @return \F3\FLOW3\MVC\Web\Routing\UriBuilder the current UriBuilder to allow method chaining
+	 * @return \TYPO3\FLOW3\MVC\Web\Routing\UriBuilder the current UriBuilder to allow method chaining
 	 * @api
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
@@ -177,7 +177,7 @@ class UriBuilder {
 	 * Specifies the format of the target (e.g. "html" or "xml")
 	 *
 	 * @param string $format (e.g. "html" or "xml"), will be transformed to lowercase!
-	 * @return \F3\FLOW3\MVC\Web\Routing\UriBuilder the current UriBuilder to allow method chaining
+	 * @return \TYPO3\FLOW3\MVC\Web\Routing\UriBuilder the current UriBuilder to allow method chaining
 	 * @api
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
@@ -199,7 +199,7 @@ class UriBuilder {
 	 * If set, the URI is prepended with the current base URI. Defaults to FALSE.
 	 *
 	 * @param boolean $createAbsoluteUri
-	 * @return \F3\FLOW3\MVC\Web\Routing\UriBuilder the current UriBuilder to allow method chaining
+	 * @return \TYPO3\FLOW3\MVC\Web\Routing\UriBuilder the current UriBuilder to allow method chaining
 	 * @api
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
@@ -221,7 +221,7 @@ class UriBuilder {
 	 * If set, the current query parameters will be merged with $this->arguments. Defaults to FALSE.
 	 *
 	 * @param boolean $addQueryString
-	 * @return \F3\FLOW3\MVC\Web\Routing\UriBuilder the current UriBuilder to allow method chaining
+	 * @return \TYPO3\FLOW3\MVC\Web\Routing\UriBuilder the current UriBuilder to allow method chaining
 	 * @api
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
@@ -244,7 +244,7 @@ class UriBuilder {
 	 * Only active if addQueryString is set
 	 *
 	 * @param array $argumentsToBeExcludedFromQueryString
-	 * @return \F3\FLOW3\MVC\Web\Routing\UriBuilder the current UriBuilder to allow method chaining
+	 * @return \TYPO3\FLOW3\MVC\Web\Routing\UriBuilder the current UriBuilder to allow method chaining
 	 * @api
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
@@ -277,7 +277,7 @@ class UriBuilder {
 	 * Resets all UriBuilder options to their default value.
 	 * Note: This won't reset the Request that is attached to this UriBuilder (@see setRequest())
 	 *
-	 * @return \F3\FLOW3\MVC\Web\Routing\UriBuilder the current UriBuilder to allow method chaining
+	 * @return \TYPO3\FLOW3\MVC\Web\Routing\UriBuilder the current UriBuilder to allow method chaining
 	 * @api
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
@@ -328,7 +328,7 @@ class UriBuilder {
 			$controllerArguments['@format'] = $this->format;
 		}
 
-		if ($this->request instanceof \F3\FLOW3\MVC\Web\SubRequest && $this->request->getArgumentNamespace() !== '') {
+		if ($this->request instanceof \TYPO3\FLOW3\MVC\Web\SubRequest && $this->request->getArgumentNamespace() !== '') {
 			$controllerArguments = array($this->request->getArgumentNamespace() => $controllerArguments);
 		}
 
@@ -344,7 +344,7 @@ class UriBuilder {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function build(array $arguments = array()) {
-		$arguments = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($this->arguments, $arguments);
+		$arguments = \TYPO3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($this->arguments, $arguments);
 		$this->mergeArgumentsWithRequestArguments($arguments);
 
 		$uri = $this->router->resolve($arguments);
@@ -375,7 +375,7 @@ class UriBuilder {
 	 */
 	protected function mergeArgumentsWithRequestArguments(array &$arguments) {
 		$requestArguments = array();
-		if ($this->request instanceof \F3\FLOW3\MVC\Web\SubRequest) {
+		if ($this->request instanceof \TYPO3\FLOW3\MVC\Web\SubRequest) {
 			$rootRequest = $this->request->getRootRequest();
 			$requestArguments = $rootRequest->getArguments();
 				// remove all arguments of the current SubRequest
@@ -413,7 +413,7 @@ class UriBuilder {
 			unset($requestArguments[$argumentToBeExcluded]);
 		}
 
-		$arguments = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($requestArguments, $arguments);
+		$arguments = \TYPO3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($requestArguments, $arguments);
 	}
 
 }

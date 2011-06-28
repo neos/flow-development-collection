@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Security\Authorization\Interceptor;
+namespace TYPO3\FLOW3\Security\Authorization\Interceptor;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -27,7 +27,7 @@ namespace F3\FLOW3\Security\Authorization\Interceptor;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope singleton
  */
-class AccessGrant implements \F3\FLOW3\Security\Authorization\InterceptorInterface {
+class AccessGrant implements \TYPO3\FLOW3\Security\Authorization\InterceptorInterface {
 
 	/**
 	 * Invokes nothing, always returns TRUE.

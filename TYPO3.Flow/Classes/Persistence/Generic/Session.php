@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Persistence\Generic;
+namespace TYPO3\FLOW3\Persistence\Generic;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -55,7 +55,7 @@ class Session {
 	protected $identifierMap = array();
 
 	/**
-	 * @var \F3\FLOW3\Reflection\ReflectionService
+	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
@@ -72,11 +72,11 @@ class Session {
 	/**
 	 * Injects a Reflection Service instance
 	 *
-	 * @param \F3\FLOW3\Reflection\ReflectionService $reflectionService
+	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function injectReflectionService(\F3\FLOW3\Reflection\ReflectionService $reflectionService) {
+	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
 	}
 
@@ -163,10 +163,10 @@ class Session {
 			return FALSE;
 		}
 
-		$currentValue = \F3\FLOW3\Reflection\ObjectAccess::getProperty($object, $propertyName, TRUE);
+		$currentValue = \TYPO3\FLOW3\Reflection\ObjectAccess::getProperty($object, $propertyName, TRUE);
 		$cleanData =& $this->reconstitutedEntitiesData[$this->getIdentifierByObject($object)]['properties'][$propertyName];
 
-		if ($currentValue instanceof \F3\FLOW3\Persistence\Generic\LazySplObjectStorage && !$currentValue->isInitialized()
+		if ($currentValue instanceof \TYPO3\FLOW3\Persistence\Generic\LazySplObjectStorage && !$currentValue->isInitialized()
 				|| ($currentValue === NULL && $cleanData['value'] === NULL)) {
 			return FALSE;
 		}
@@ -331,9 +331,9 @@ class Session {
 
 		$classSchema = $this->reflectionService->getClassSchema($object);
 		if ($classSchema !== NULL && $classSchema->getUuidPropertyName() !== NULL) {
-			return \F3\FLOW3\Reflection\ObjectAccess::getProperty($object, $classSchema->getUuidPropertyName(), TRUE);
+			return \TYPO3\FLOW3\Reflection\ObjectAccess::getProperty($object, $classSchema->getUuidPropertyName(), TRUE);
 		} elseif (property_exists($object, 'FLOW3_Persistence_Identifier')) {
-			return \F3\FLOW3\Reflection\ObjectAccess::getProperty($object, 'FLOW3_Persistence_Identifier', TRUE);
+			return \TYPO3\FLOW3\Reflection\ObjectAccess::getProperty($object, 'FLOW3_Persistence_Identifier', TRUE);
 		}
 
 		return NULL;

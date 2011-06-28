@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Resource\Streams;
+namespace TYPO3\FLOW3\Resource\Streams;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *

@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\MVC\CLI;
+namespace TYPO3\FLOW3\MVC\CLI;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -80,7 +80,7 @@ class Command {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getShortDescription() {
-		$class = new \F3\FLOW3\Reflection\MethodReflection($this->controllerClassName, $this->controllerCommandName . 'Command');
+		$class = new \TYPO3\FLOW3\Reflection\MethodReflection($this->controllerClassName, $this->controllerCommandName . 'Command');
 		$lines = explode(chr(10), $class->getDescription());
 		return (count($lines) > 0) ? $lines[0] : '<no description available>';
 	}

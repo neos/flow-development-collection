@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Security\Authorization;
+namespace TYPO3\FLOW3\Security\Authorization;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -37,22 +37,22 @@ interface AccessDecisionVoterInterface {
 	/**
 	 * Votes if access should be granted for the given object in the current security context
 	 *
-	 * @param \F3\FLOW3\Security\Context $securityContext The current securit context
-	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The joinpoint to vote for
+	 * @param \TYPO3\FLOW3\Security\Context $securityContext The current securit context
+	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The joinpoint to vote for
 	 * @return integer One of: VOTE_GRANT, VOTE_ABSTAIN, VOTE_DENY
-	 * @throws \F3\FLOW3\Security\Exception\AccessDeniedException If access is not granted
+	 * @throws \TYPO3\FLOW3\Security\Exception\AccessDeniedException If access is not granted
 	 */
-	public function voteForJoinPoint(\F3\FLOW3\Security\Context $securityContext, \F3\FLOW3\AOP\JoinPointInterface $joinPoint);
+	public function voteForJoinPoint(\TYPO3\FLOW3\Security\Context $securityContext, \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint);
 
 	/**
 	 * Votes if access should be granted for the given resource in the current security context
 	 *
-	 * @param \F3\FLOW3\Security\Context $securityContext The current securit context
+	 * @param \TYPO3\FLOW3\Security\Context $securityContext The current securit context
 	 * @param string $resource The resource to vote for
 	 * @return integer One of: VOTE_GRANT, VOTE_ABSTAIN, VOTE_DENY
-	 * @throws \F3\FLOW3\Security\Exception\AccessDeniedException If access is not granted
+	 * @throws \TYPO3\FLOW3\Security\Exception\AccessDeniedException If access is not granted
 	 */
-	public function voteForResource(\F3\FLOW3\Security\Context $securityContext, $resource);
+	public function voteForResource(\TYPO3\FLOW3\Security\Context $securityContext, $resource);
 }
 
 ?>

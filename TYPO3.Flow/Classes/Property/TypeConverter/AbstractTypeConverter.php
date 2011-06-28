@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Property\TypeConverter;
+namespace TYPO3\FLOW3\Property\TypeConverter;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -33,7 +33,7 @@ namespace F3\FLOW3\Property\TypeConverter;
  * @api
  * @scope singleton
  */
-abstract class AbstractTypeConverter implements \F3\FLOW3\Property\TypeConverterInterface {
+abstract class AbstractTypeConverter implements \TYPO3\FLOW3\Property\TypeConverterInterface {
 
 	/**
 	 * The source types this converter can convert.
@@ -118,11 +118,11 @@ abstract class AbstractTypeConverter implements \F3\FLOW3\Property\TypeConverter
 	 *
 	 * @param string $targetType
 	 * @param string $propertyName
-	 * @param \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
+	 * @param \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
 	 * @return string
 	 * @api
 	 */
-	public function getTypeOfChildProperty($targetType, $propertyName, \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration) {
+	public function getTypeOfChildProperty($targetType, $propertyName, \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration) {
 	}
 }
 ?>

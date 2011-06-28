@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\Log;
+namespace TYPO3\FLOW3\Tests\Unit\Log;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,17 +26,17 @@ namespace F3\FLOW3\Tests\Unit\Log;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class LoggerTest extends \F3\FLOW3\Tests\UnitTestCase {
+class LoggerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function logPassesItsArgumentsToTheBackendsAppendMethod() {
-		$mockBackend = $this->getMock('F3\FLOW3\Log\Backend\BackendInterface', array('open', 'append', 'close'));
+		$mockBackend = $this->getMock('TYPO3\FLOW3\Log\Backend\BackendInterface', array('open', 'append', 'close'));
 		$mockBackend->expects($this->once())->method('append')->with('theMessage', 2, array('foo'), 'Foo', 'Bar', 'Baz');
 
-		$logger = new \F3\FLOW3\Log\Logger();
+		$logger = new \TYPO3\FLOW3\Log\Logger();
 		$logger->addBackend($mockBackend);
 		$logger->log('theMessage', 2, array('foo'), 'Foo', 'Bar', 'Baz');
 	}
@@ -46,13 +46,13 @@ class LoggerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function addBackendAllowsForAddingMultipleBackends() {
-		$mockBackend1 = $this->getMock('F3\FLOW3\Log\Backend\BackendInterface', array('open', 'append', 'close'));
+		$mockBackend1 = $this->getMock('TYPO3\FLOW3\Log\Backend\BackendInterface', array('open', 'append', 'close'));
 		$mockBackend1->expects($this->once())->method('append')->with('theMessage', 2, array('foo'), 'Foo', 'Bar', 'Baz');
 
-		$mockBackend2 = $this->getMock('F3\FLOW3\Log\Backend\BackendInterface', array('open', 'append', 'close'));
+		$mockBackend2 = $this->getMock('TYPO3\FLOW3\Log\Backend\BackendInterface', array('open', 'append', 'close'));
 		$mockBackend2->expects($this->once())->method('append')->with('theMessage', 2, array('foo'), 'Foo', 'Bar', 'Baz');
 
-		$logger = new \F3\FLOW3\Log\Logger();
+		$logger = new \TYPO3\FLOW3\Log\Logger();
 		$logger->addBackend($mockBackend1);
 		$logger->addBackend($mockBackend2);
 		$logger->log('theMessage', 2, array('foo'), 'Foo', 'Bar', 'Baz');
@@ -63,10 +63,10 @@ class LoggerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function addBackendRunsTheBackendsOpenMethod() {
-		$mockBackend = $this->getMock('F3\FLOW3\Log\Backend\BackendInterface', array('open', 'append', 'close'));
+		$mockBackend = $this->getMock('TYPO3\FLOW3\Log\Backend\BackendInterface', array('open', 'append', 'close'));
 		$mockBackend->expects($this->once())->method('open');
 
-		$logger = new \F3\FLOW3\Log\Logger();
+		$logger = new \TYPO3\FLOW3\Log\Logger();
 		$logger->addBackend($mockBackend);
 	}
 
@@ -75,11 +75,11 @@ class LoggerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function removeBackendRunsTheBackendsCloseMethodAndRemovesItFromTheLogger() {
-		$mockBackend = $this->getMock('F3\FLOW3\Log\Backend\BackendInterface', array('open', 'append', 'close'));
+		$mockBackend = $this->getMock('TYPO3\FLOW3\Log\Backend\BackendInterface', array('open', 'append', 'close'));
 		$mockBackend->expects($this->once())->method('close');
 		$mockBackend->expects($this->once())->method('append');
 
-		$logger = new \F3\FLOW3\Log\Logger();
+		$logger = new \TYPO3\FLOW3\Log\Logger();
 		$logger->addBackend($mockBackend);
 		$logger->log('theMessage', 2, array('foo'), 'Foo', 'Bar', 'Baz');
 
@@ -89,13 +89,13 @@ class LoggerTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \F3\FLOW3\Log\Exception\NoSuchBackendException
+	 * @expectedException \TYPO3\FLOW3\Log\Exception\NoSuchBackendException
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function removeThrowsAnExceptionOnTryingToRemoveABackendNotPreviouslyAdded() {
-		$mockBackend = $this->getMock('F3\FLOW3\Log\Backend\BackendInterface', array('open', 'append', 'close'));
+		$mockBackend = $this->getMock('TYPO3\FLOW3\Log\Backend\BackendInterface', array('open', 'append', 'close'));
 
-		$logger = new \F3\FLOW3\Log\Logger();
+		$logger = new \TYPO3\FLOW3\Log\Logger();
 		$logger->removeBackend($mockBackend);
 	}
 
@@ -104,13 +104,13 @@ class LoggerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function theShutdownMethodRunsCloseOnAllRegisteredBackends() {
-		$mockBackend1 = $this->getMock('F3\FLOW3\Log\Backend\BackendInterface', array('open', 'append', 'close'));
+		$mockBackend1 = $this->getMock('TYPO3\FLOW3\Log\Backend\BackendInterface', array('open', 'append', 'close'));
 		$mockBackend1->expects($this->once())->method('close');
 
-		$mockBackend2 = $this->getMock('F3\FLOW3\Log\Backend\BackendInterface', array('open', 'append', 'close'));
+		$mockBackend2 = $this->getMock('TYPO3\FLOW3\Log\Backend\BackendInterface', array('open', 'append', 'close'));
 		$mockBackend2->expects($this->once())->method('close');
 
-		$logger = new \F3\FLOW3\Log\Logger();
+		$logger = new \TYPO3\FLOW3\Log\Logger();
 		$logger->addBackend($mockBackend1);
 		$logger->addBackend($mockBackend2);
 		$logger->shutdownObject();

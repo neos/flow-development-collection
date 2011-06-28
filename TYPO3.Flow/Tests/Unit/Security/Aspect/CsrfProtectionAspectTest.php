@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\Security\Aspect;
+namespace TYPO3\FLOW3\Tests\Unit\Security\Aspect;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,7 +26,7 @@ namespace F3\FLOW3\Tests\Unit\Security\Aspect;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class CsrfProtectionAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
+class CsrfProtectionAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * Arguments being passed to UriBuilder::build
@@ -65,7 +65,7 @@ class CsrfProtectionAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * The System Under Test (SUT)
-	 * @var F3\FLOW3\Security\Aspect\CsrfProtectionAspect
+	 * @var TYPO3\FLOW3\Security\Aspect\CsrfProtectionAspect
 	 */
 	protected $csrfProtectionAspect;
 
@@ -75,19 +75,19 @@ class CsrfProtectionAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @return void
 	 */
 	public function setUp() {
-		$this->mockUriBuilder = $this->getMock('F3\FLOW3\MVC\Web\Routing\UriBuilder');
+		$this->mockUriBuilder = $this->getMock('TYPO3\FLOW3\MVC\Web\Routing\UriBuilder');
 
 		$this->mockUriBuilder->expects($this->any())->method('getArguments')->will($this->returnValue($this->internalUriBuilderArguments));
 
-		$this->mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPoint', array(), array(), '', FALSE);
+		$this->mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPoint', array(), array(), '', FALSE);
 		$this->mockJoinPoint->expects($this->once())->method('getProxy')->will($this->returnValue($this->mockUriBuilder));
 		$this->mockJoinPoint->expects($this->once())->method('getMethodArgument')->with('arguments')->will($this->returnValue($this->arguments));
 
-		$this->mockPolicyService = $this->getMock('F3\FLOW3\Security\Policy\PolicyService');
+		$this->mockPolicyService = $this->getMock('TYPO3\FLOW3\Security\Policy\PolicyService');
 
-		$this->mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService', array('isMethodTaggedWith'));
+		$this->mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService', array('isMethodTaggedWith'));
 
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
+		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
 		$mockObjectManager
 			->expects($this->once())
 			->method('getCaseSensitiveObjectName')
@@ -100,10 +100,10 @@ class CsrfProtectionAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
 			->with($this->controllerObjectName)
 			->will($this->returnValue($this->controllerObjectName));
 
-		$mockSecurityContext = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
+		$mockSecurityContext = $this->getMock('TYPO3\FLOW3\Security\Context', array(), array(), '', FALSE);
 		$mockSecurityContext->expects($this->any())->method('getCsrfProtectionToken')->will($this->returnValue('csrf-token'));
 
-		$csrfProtectionAspect = $this->getAccessibleMock('F3\FLOW3\Security\Aspect\CsrfProtectionAspect', array('dummy'));
+		$csrfProtectionAspect = $this->getAccessibleMock('TYPO3\FLOW3\Security\Aspect\CsrfProtectionAspect', array('dummy'));
 		$csrfProtectionAspect->_set('objectManager', $mockObjectManager);
 		$csrfProtectionAspect->_set('reflectionService', $this->mockReflectionService);
 		$csrfProtectionAspect->_set('policyService', $this->mockPolicyService);

@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Error;
+namespace TYPO3\FLOW3\Error;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -29,7 +29,7 @@ namespace F3\FLOW3\Error;
 class Debugger {
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
+	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
 	 */
 	static protected $objectManager;
 
@@ -73,7 +73,7 @@ class Debugger {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	static public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
+	static public function injectObjectManager(\TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		self::$objectManager = $objectManager;
 	}
 
@@ -112,9 +112,9 @@ class Debugger {
 		} elseif (is_numeric($variable)) {
 			$dump = sprintf('%s %s', gettype($variable), self::ansiEscapeWrap($variable, '35', $ansiColors));
 		} elseif (is_array($variable)) {
-			$dump = \F3\FLOW3\Error\Debugger::renderArrayDump($variable, $level + 1, $plaintext, $ansiColors);
+			$dump = \TYPO3\FLOW3\Error\Debugger::renderArrayDump($variable, $level + 1, $plaintext, $ansiColors);
 		} elseif (is_object($variable)) {
-			$dump = \F3\FLOW3\Error\Debugger::renderObjectDump($variable, $level + 1, TRUE, $plaintext, $ansiColors);
+			$dump = \TYPO3\FLOW3\Error\Debugger::renderObjectDump($variable, $level + 1, TRUE, $plaintext, $ansiColors);
 		} elseif (is_bool($variable)) {
 			$dump = $variable ? self::ansiEscapeWrap('TRUE', '32', $ansiColors) : self::ansiEscapeWrap('FALSE', '31', $ansiColors);
 		} elseif (is_null($variable) || is_resource($variable)) {
@@ -165,13 +165,13 @@ class Debugger {
 			$objectName = self::$objectManager->getObjectNameByClassName(get_class($object));
 			if ($objectName !== FALSE) {
 				switch(self::$objectManager->getScope($objectName)) {
-					case \F3\FLOW3\Object\Configuration\Configuration::SCOPE_PROTOTYPE :
+					case \TYPO3\FLOW3\Object\Configuration\Configuration::SCOPE_PROTOTYPE :
 						$scope = 'prototype';
 						break;
-					case \F3\FLOW3\Object\Configuration\Configuration::SCOPE_SINGLETON :
+					case \TYPO3\FLOW3\Object\Configuration\Configuration::SCOPE_SINGLETON :
 						$scope = 'singleton';
 						break;
-					case \F3\FLOW3\Object\Configuration\Configuration::SCOPE_SESSION :
+					case \TYPO3\FLOW3\Object\Configuration\Configuration::SCOPE_SESSION :
 						$scope = 'session';
 						break;
 				}
@@ -203,7 +203,7 @@ class Debugger {
 		}
 
 		if (property_exists($object, 'FLOW3_Persistence_Identifier')) {
-			$identifier = \F3\FLOW3\Reflection\ObjectAccess::getProperty($object, 'FLOW3_Persistence_Identifier', TRUE);
+			$identifier = \TYPO3\FLOW3\Reflection\ObjectAccess::getProperty($object, 'FLOW3_Persistence_Identifier', TRUE);
 			$persistenceType = 'entity or value object (FIXME)';
 		} else {
 			$identifier = 'unknown';
@@ -215,7 +215,7 @@ class Debugger {
 			$dump .= '<span class="debug-ptype" title="' . $identifier . '">' . $persistenceType . '</span>';
 		}
 
-		if ($object instanceof \F3\FLOW3\Object\Proxy\ProxyInterface) {
+		if ($object instanceof \TYPO3\FLOW3\Object\Proxy\ProxyInterface) {
 			if ($plaintext) {
 				$dump .= ' ' . self::ansiEscapeWrap('proxy', '41;37', $ansiColors);
 			} else {
@@ -287,7 +287,7 @@ class Debugger {
 	}
 }
 
-namespace F3\FLOW3;
+namespace TYPO3\FLOW3;
 
 /**
  * A var_dump function optimized for FLOW3's object structures
@@ -316,15 +316,15 @@ function var_dump($variable, $title = NULL, $return = FALSE, $plaintext = NULL) 
 	if ($ansiColors) {
 		$title = "\x1B[1m" . $title . "\x1B[0m";
 	}
-	\F3\FLOW3\Error\Debugger::clearState();
+	\TYPO3\FLOW3\Error\Debugger::clearState();
 
-	if (!$plaintext && \F3\FLOW3\Error\Debugger::$stylesheetEchoed === FALSE) {
-		echo '<link rel="stylesheet" type="text/css" href="/_Resources/Static/Packages/FLOW3/Error/Debugger.css" />';
-		\F3\FLOW3\Error\Debugger::$stylesheetEchoed = TRUE;
+	if (!$plaintext && \TYPO3\FLOW3\Error\Debugger::$stylesheetEchoed === FALSE) {
+		echo '<link rel="stylesheet" type="text/css" href="/_Resources/Static/Packages/TYPO3.FLOW3/Error/Debugger.css" />';
+		\TYPO3\FLOW3\Error\Debugger::$stylesheetEchoed = TRUE;
 	}
 
 	if ($plaintext) {
-		$output = $title . chr(10) . \F3\FLOW3\Error\Debugger::renderDump($variable, 0, TRUE, $ansiColors) . chr(10) . chr(10);
+		$output = $title . chr(10) . \TYPO3\FLOW3\Error\Debugger::renderDump($variable, 0, TRUE, $ansiColors) . chr(10) . chr(10);
 	} else {
 		$output = '
 			<div class="FLOW3-Error-Debugger-VarDump ' . ($return ? 'FLOW3-Error-Debugger-VarDump-Inline' : 'FLOW3-Error-Debugger-VarDump-Floating') . '">
@@ -332,7 +332,7 @@ function var_dump($variable, $title = NULL, $return = FALSE, $plaintext = NULL) 
 					' . htmlspecialchars($title) . '
 				</div>
 				<div class="FLOW3-Error-Debugger-VarDump-Center">
-					<pre dir="ltr">' . \F3\FLOW3\Error\Debugger::renderDump($variable, 0, FALSE, FALSE) . '</pre>
+					<pre dir="ltr">' . \TYPO3\FLOW3\Error\Debugger::renderDump($variable, 0, FALSE, FALSE) . '</pre>
 				</div>
 			</div>
 		';

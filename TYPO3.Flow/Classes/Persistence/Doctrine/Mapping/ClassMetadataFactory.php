@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Persistence\Doctrine\Mapping;
+namespace TYPO3\FLOW3\Persistence\Doctrine\Mapping;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -33,10 +33,10 @@ class ClassMetadataFactory extends \Doctrine\ORM\Mapping\ClassMetadataFactory {
 	 * Creates a new ClassMetadata instance for the given class name.
 	 *
 	 * @param string $className
-	 * @return \F3\FLOW3\Persistence\Doctrine\Mapping\ClassMetadata
+	 * @return \TYPO3\FLOW3\Persistence\Doctrine\Mapping\ClassMetadata
 	 */
 	protected function newClassMetadataInstance($className) {
-		$classMetadata = new \F3\FLOW3\Persistence\Doctrine\Mapping\ClassMetadata($className);
+		$classMetadata = new \TYPO3\FLOW3\Persistence\Doctrine\Mapping\ClassMetadata($className);
 		return $classMetadata;
 	}
 

@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\I18n\Cldr\Reader;
+namespace TYPO3\FLOW3\I18n\Cldr\Reader;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -57,12 +57,12 @@ class PluralsReader {
 	const RULE_OTHER = 'other';
 
 	/**
-	 * @var \F3\FLOW3\I18n\Cldr\CldrRepository
+	 * @var \TYPO3\FLOW3\I18n\Cldr\CldrRepository
 	 */
 	protected $cldrRepository;
 
 	/**
-	 * @var \F3\FLOW3\Cache\Frontend\VariableFrontend
+	 * @var \TYPO3\FLOW3\Cache\Frontend\VariableFrontend
 	 */
 	protected $cache;
 
@@ -103,22 +103,22 @@ class PluralsReader {
 	protected $rulesetsIndices;
 
 	/**
-	 * @param \F3\FLOW3\I18n\Cldr\CldrRepository $repository
+	 * @param \TYPO3\FLOW3\I18n\Cldr\CldrRepository $repository
 	 * @return void
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function injectCldrRepository(\F3\FLOW3\I18n\Cldr\CldrRepository $repository) {
+	public function injectCldrRepository(\TYPO3\FLOW3\I18n\Cldr\CldrRepository $repository) {
 		$this->cldrRepository = $repository;
 	}
 
 	/**
 	 * Injects the FLOW3_I18n_Cldr_Reader_PluralsReader cache
 	 *
-	 * @param \F3\FLOW3\Cache\Frontend\VariableFrontend $cache
+	 * @param \TYPO3\FLOW3\Cache\Frontend\VariableFrontend $cache
 	 * @return void
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function injectCache(\F3\FLOW3\Cache\Frontend\VariableFrontend $cache) {
+	public function injectCache(\TYPO3\FLOW3\Cache\Frontend\VariableFrontend $cache) {
 		$this->cache = $cache;
 	}
 
@@ -147,11 +147,11 @@ class PluralsReader {
 	 * of the rules, or there is no rules for given locale.
 	 *
 	 * @param mixed $quantity A number to find plural form for (float or int)
-	 * @param \F3\FLOW3\I18n\Locale $locale
+	 * @param \TYPO3\FLOW3\I18n\Locale $locale
 	 * @return string One of plural form constants
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function getPluralForm($quantity, \F3\FLOW3\I18n\Locale $locale) {
+	public function getPluralForm($quantity, \TYPO3\FLOW3\I18n\Locale $locale) {
 		if (!isset($this->rulesetsIndices[$locale->getLanguage()])) {
 			return self::RULE_OTHER;
 		}
@@ -209,11 +209,11 @@ class PluralsReader {
 	/**
 	 * Returns array of plural forms available for particular locale.
 	 *
-	 * @param \F3\FLOW3\I18n\Locale $locale Locale to return plural forms for
+	 * @param \TYPO3\FLOW3\I18n\Locale $locale Locale to return plural forms for
 	 * @return array Plural forms' names (one, zero, two, few, many, other) available for language set in this model
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function getPluralForms(\F3\FLOW3\I18n\Locale $locale) {
+	public function getPluralForms(\TYPO3\FLOW3\I18n\Locale $locale) {
 		if (!isset($this->rulesetsIndices[$locale->getLanguage()])) {
 			return array(self::RULE_OTHER);
 		}
@@ -230,7 +230,7 @@ class PluralsReader {
 	 *
 	 * @return void
 	 * @author Karol Gusak <firstname@lastname.eu>
-	 * @see \F3\FLOW3\I18n\Cldr\Reader\PluralsReader::$rulesets
+	 * @see \TYPO3\FLOW3\I18n\Cldr\Reader\PluralsReader::$rulesets
 	 */
 	protected function generateRulesets() {
 		$model = $this->cldrRepository->getModel('supplemental/plurals');
@@ -282,7 +282,7 @@ class PluralsReader {
 	 *
 	 * @param string $rule
 	 * @return array Parsed rule
-	 * @throws \F3\FLOW3\I18n\Cldr\Reader\Exception\InvalidPluralRuleException When plural rule does not match regexp pattern
+	 * @throws \TYPO3\FLOW3\I18n\Cldr\Reader\Exception\InvalidPluralRuleException When plural rule does not match regexp pattern
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	protected function parseRule($rule) {
@@ -314,7 +314,7 @@ class PluralsReader {
 				$parsedRule[] = $subrule;
 			}
 		} else {
-			throw new \F3\FLOW3\I18n\Cldr\Reader\Exception\InvalidPluralRuleException('A plural rule string is invalid. CLDR files might be corrupted.', 1275493982);
+			throw new \TYPO3\FLOW3\I18n\Cldr\Reader\Exception\InvalidPluralRuleException('A plural rule string is invalid. CLDR files might be corrupted.', 1275493982);
 		}
 
 		return $parsedRule;

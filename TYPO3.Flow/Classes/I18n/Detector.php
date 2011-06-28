@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\I18n;
+namespace TYPO3\FLOW3\I18n;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -31,7 +31,7 @@ namespace F3\FLOW3\I18n;
 class Detector {
 
 	/**
-	 * @var \F3\FLOW3\I18n\Service
+	 * @var \TYPO3\FLOW3\I18n\Service
 	 */
 	protected $localizationService;
 
@@ -39,25 +39,25 @@ class Detector {
 	 * A collection of Locale objects representing currently installed locales,
 	 * in a hierarchical manner.
 	 *
-	 * @var \F3\FLOW3\I18n\LocaleCollection
+	 * @var \TYPO3\FLOW3\I18n\LocaleCollection
 	 */
 	protected $localeCollection;
 
 	/**
-	 * @param \F3\FLOW3\I18n\Service $localizationService
+	 * @param \TYPO3\FLOW3\I18n\Service $localizationService
 	 * @return void
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function injectLocalizationService(\F3\FLOW3\I18n\Service $localizationService) {
+	public function injectLocalizationService(\TYPO3\FLOW3\I18n\Service $localizationService) {
 		$this->localizationService = $localizationService;
 	}
 
 	/**
-	 * @param \F3\FLOW3\I18n\LocaleCollection $localeCollection
+	 * @param \TYPO3\FLOW3\I18n\LocaleCollection $localeCollection
 	 * @return void
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function injectLocaleCollection(\F3\FLOW3\I18n\LocaleCollection $localeCollection) {
+	public function injectLocaleCollection(\TYPO3\FLOW3\I18n\LocaleCollection $localeCollection) {
 		$this->localeCollection = $localeCollection;
 	}
 
@@ -67,12 +67,12 @@ class Detector {
 	 * successful matches were done.
 	 *
 	 * @param string $acceptLanguageHeader The Accept-Language HTTP header
-	 * @return \F3\FLOW3\I18n\Locale Best-matching existing Locale instance
+	 * @return \TYPO3\FLOW3\I18n\Locale Best-matching existing Locale instance
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @api
 	 */
 	public function detectLocaleFromHttpHeader($acceptLanguageHeader) {
-		$acceptableLanguages = \F3\FLOW3\I18n\Utility::parseAcceptLanguageHeader($acceptLanguageHeader);
+		$acceptableLanguages = \TYPO3\FLOW3\I18n\Utility::parseAcceptLanguageHeader($acceptLanguageHeader);
 
 		if ($acceptableLanguages === FALSE) {
 			return $this->localizationService->getDefaultLocale();
@@ -84,8 +84,8 @@ class Detector {
 			}
 
 			try {
-				$locale = new \F3\FLOW3\I18n\Locale($languageIdentifier);
-			} catch (\F3\FLOW3\I18n\Exception\InvalidLocaleIdentifierException $exception) {
+				$locale = new \TYPO3\FLOW3\I18n\Locale($languageIdentifier);
+			} catch (\TYPO3\FLOW3\I18n\Exception\InvalidLocaleIdentifierException $exception) {
 				continue;
 			}
 
@@ -105,14 +105,14 @@ class Detector {
 	 * successful matches were done.
 	 *
 	 * @param string $localeIdentifier The locale identifier as used in Locale class
-	 * @return \F3\FLOW3\I18n\Locale Best-matching existing Locale instance
+	 * @return \TYPO3\FLOW3\I18n\Locale Best-matching existing Locale instance
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @api
 	 */
 	public function detectLocaleFromLocaleTag($localeIdentifier) {
 		try {
-			return $this->detectLocaleFromTemplateLocale(new \F3\FLOW3\I18n\Locale($localeIdentifier));
-		} catch (\F3\FLOW3\I18n\Exception\InvalidLocaleIdentifierException $e) {
+			return $this->detectLocaleFromTemplateLocale(new \TYPO3\FLOW3\I18n\Locale($localeIdentifier));
+		} catch (\TYPO3\FLOW3\I18n\Exception\InvalidLocaleIdentifierException $e) {
 			return $this->localizationService->getDefaultLocale();
 		}
 	}
@@ -122,12 +122,12 @@ class Detector {
 	 * provided as parameter. System default locale will be returned if no
 	 * successful matches were done.
 	 *
-	 * @param \F3\FLOW3\I18n\Locale $locale The template Locale object
-	 * @return \F3\FLOW3\I18n\Locale Best-matching existing Locale instance
+	 * @param \TYPO3\FLOW3\I18n\Locale $locale The template Locale object
+	 * @return \TYPO3\FLOW3\I18n\Locale Best-matching existing Locale instance
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @api
 	 */
-	public function detectLocaleFromTemplateLocale(\F3\FLOW3\I18n\Locale $locale) {
+	public function detectLocaleFromTemplateLocale(\TYPO3\FLOW3\I18n\Locale $locale) {
 		$bestMatchingLocale = $this->localeCollection->findBestMatchingLocale($locale);
 
 		if ($bestMatchingLocale !== NULL) {

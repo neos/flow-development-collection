@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\AOP\Pointcut;
+namespace TYPO3\FLOW3\AOP\Pointcut;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -28,10 +28,10 @@ namespace F3\FLOW3\AOP\Pointcut;
  * @scope prototype
  * @proxy disable
  */
-class PointcutClassTypeFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
+class PointcutClassTypeFilter implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 
 	/**
-	 * @var F3\FLOW3\Reflection\ReflectionService
+	 * @var TYPO3\FLOW3\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
@@ -54,11 +54,11 @@ class PointcutClassTypeFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterIn
 	/**
 	 * Injects the reflection service
 	 *
-	 * @param F3\FLOW3\Reflection\ReflectionService $reflectionService The reflection service
+	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService The reflection service
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectReflectionService(\F3\FLOW3\Reflection\ReflectionService $reflectionService) {
+	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
 	}
 
@@ -76,7 +76,7 @@ class PointcutClassTypeFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterIn
 		$matches = FALSE;
 		foreach ($this->reflectionService->getInterfaceNamesImplementedByClass($className) as $interfaceName) {
 			$matchResult =  @preg_match('/^' . $this->classTypeFilterExpression . '$/', $interfaceName);
-			if ($matchResult === FALSE) throw new \F3\FLOW3\AOP\Exception('Error in regular expression "' . $this->classTypeFilterExpression . '" in pointcut class type filter', 1172483343);
+			if ($matchResult === FALSE) throw new \TYPO3\FLOW3\AOP\Exception('Error in regular expression "' . $this->classTypeFilterExpression . '" in pointcut class type filter', 1172483343);
 			if ($matchResult === 1) $matches = TRUE;
 		}
 		return ($matches);

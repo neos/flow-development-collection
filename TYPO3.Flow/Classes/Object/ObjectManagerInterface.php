@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Object;
+namespace TYPO3\FLOW3\Object;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -71,8 +71,8 @@ interface ObjectManagerInterface {
 	 * @param string $objectName The name of the object to create
 	 * @return object The new object instance
 	 * @throws \InvalidArgumentException if the object name starts with a backslash
-	 * @throws \F3\FLOW3\Object\Exception\UnknownObjectException if an object with the given name does not exist
-	 * @throws \F3\FLOW3\Object\Exception\WrongScopeException if the specified object is not configured as Prototype
+	 * @throws \TYPO3\FLOW3\Object\Exception\UnknownObjectException if an object with the given name does not exist
+	 * @throws \TYPO3\FLOW3\Object\Exception\WrongScopeException if the specified object is not configured as Prototype
 	 * @since 1.0.0 alpha 8
 	 * @api
 	 */

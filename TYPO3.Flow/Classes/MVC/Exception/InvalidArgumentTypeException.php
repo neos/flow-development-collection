@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\MVC\Exception;
+namespace TYPO3\FLOW3\MVC\Exception;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -28,7 +28,7 @@ namespace F3\FLOW3\MVC\Exception;
  * @api
  */
 
-class InvalidArgumentTypeException extends \F3\FLOW3\MVC\Exception {
+class InvalidArgumentTypeException extends \TYPO3\FLOW3\MVC\Exception {
 
 }
 ?>

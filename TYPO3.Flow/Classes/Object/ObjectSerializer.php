@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Object;
+namespace TYPO3\FLOW3\Object;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -56,52 +56,52 @@ class ObjectSerializer {
 
 	/**
 	 * The object manager
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
+	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
 	 * The reflection service
-	 * @var \F3\FLOW3\Reflection\ServiceInterface
+	 * @var \TYPO3\FLOW3\Reflection\ServiceInterface
 	 */
 	protected $reflectionService;
 
 	/**
 	 * The persistence manager
-	 * @var \F3\FLOW3\Persistence\PersistenceManagerInterface
+	 * @var \TYPO3\FLOW3\Persistence\PersistenceManagerInterface
 	 */
 	protected $persistenceManager;
 
 	/**
 	 * Injects the object manager
 	 *
-	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager The object manager
+	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager The object manager
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
+	public function injectObjectManager(\TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
 	}
 
 	/**
 	 * Injects the reflection service
 	 *
-	 * @param \F3\FLOW3\Reflection\ReflectionService $reflectionService The reflection service
+	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService The reflection service
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function injectReflectionService(\F3\FLOW3\Reflection\ReflectionService $reflectionService) {
+	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
 	}
 
 	/**
 	 * Inject the persistence manager
 	 *
-	 * @param \F3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager The persistence manager
+	 * @param \TYPO3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager The persistence manager
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function injectPersistenceManager(\F3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager) {
+	public function injectPersistenceManager(\TYPO3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager) {
 		$this->persistenceManager = $persistenceManager;
 	}
 
@@ -139,7 +139,7 @@ class ObjectSerializer {
 				continue;
 			}
 
-			$propertyReflection = new \F3\FLOW3\Reflection\PropertyReflection($className, $propertyName);
+			$propertyReflection = new \TYPO3\FLOW3\Reflection\PropertyReflection($className, $propertyName);
 			$propertyValue = $propertyReflection->getValue($object);
 
 			if (is_object($propertyValue) && isset($this->objectReferences[$propertyValue])) {
@@ -172,7 +172,7 @@ class ObjectSerializer {
 
 			} elseif (is_object($propertyValue)) {
 				$propertyObjectName = $this->objectManager->getObjectNameByClassName($propertyClassName);
-				if ($this->objectManager->getScope($propertyObjectName) === \F3\FLOW3\Object\Configuration\Configuration::SCOPE_SINGLETON) {
+				if ($this->objectManager->getScope($propertyObjectName) === \TYPO3\FLOW3\Object\Configuration\Configuration::SCOPE_SINGLETON) {
 					continue;
 				}
 

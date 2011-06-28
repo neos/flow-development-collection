@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\Cache\Frontend;
+namespace TYPO3\FLOW3\Tests\Unit\Cache\Frontend;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,7 +26,7 @@ namespace F3\FLOW3\Tests\Unit\Cache\Frontend;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class PhpFrontendTest extends \F3\FLOW3\Tests\UnitTestCase {
+class PhpFrontendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @expectedException \InvalidArgumentException
@@ -34,7 +34,7 @@ class PhpFrontendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setChecksIfTheIdentifierIsValid() {
-		$cache = $this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array('isValidEntryIdentifier'), array(), '', FALSE);
+		$cache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\StringFrontend', array('isValidEntryIdentifier'), array(), '', FALSE);
 		$cache->expects($this->once())->method('isValidEntryIdentifier')->with('foo')->will($this->returnValue(FALSE));
 		$cache->set('foo', 'bar');
 	}
@@ -47,10 +47,10 @@ class PhpFrontendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$originalSourceCode = 'return "hello world!";';
 		$modifiedSourceCode = '<?php' . chr(10) . $originalSourceCode . chr(10) . '#';
 
-		$mockBackend = $this->getMock('F3\FLOW3\Cache\Backend\PhpCapableBackendInterface', array(), array(), '', FALSE);
+		$mockBackend = $this->getMock('TYPO3\FLOW3\Cache\Backend\PhpCapableBackendInterface', array(), array(), '', FALSE);
 		$mockBackend->expects($this->once())->method('set')->with('Foo-Bar', $modifiedSourceCode, array('tags'), 1234);
 
-		$cache = $this->getAccessibleMock('F3\FLOW3\Cache\Frontend\PhpFrontend', array('dummy'), array(), '', FALSE);
+		$cache = $this->getAccessibleMock('TYPO3\FLOW3\Cache\Frontend\PhpFrontend', array('dummy'), array(), '', FALSE);
 		$cache->_set('backend', $mockBackend);
 		$cache->set('Foo-Bar', $originalSourceCode, array('tags'), 1234);
 	}
@@ -58,10 +58,10 @@ class PhpFrontendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @expectedException \F3\FLOW3\Cache\Exception\InvalidDataException
+	 * @expectedException \TYPO3\FLOW3\Cache\Exception\InvalidDataException
 	 */
 	public function setThrowsInvalidDataExceptionOnNonStringValues() {
-		$cache = $this->getMock('F3\FLOW3\Cache\Frontend\PhpFrontend', array('dummy'), array(), '', FALSE);
+		$cache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\PhpFrontend', array('dummy'), array(), '', FALSE);
 		$cache->set('Foo-Bar', array());
 	}
 
@@ -70,10 +70,10 @@ class PhpFrontendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function requireOnceCallsTheBackendsRequireOnceMethod() {
-		$mockBackend = $this->getMock('F3\FLOW3\Cache\Backend\PhpCapableBackendInterface', array(), array(), '', FALSE);
+		$mockBackend = $this->getMock('TYPO3\FLOW3\Cache\Backend\PhpCapableBackendInterface', array(), array(), '', FALSE);
 		$mockBackend->expects($this->once())->method('requireOnce')->with('Foo-Bar')->will($this->returnValue('hello world!'));
 
-		$cache = $this->getAccessibleMock('F3\FLOW3\Cache\Frontend\PhpFrontend', array('dummy'), array(), '', FALSE);
+		$cache = $this->getAccessibleMock('TYPO3\FLOW3\Cache\Frontend\PhpFrontend', array('dummy'), array(), '', FALSE);
 		$cache->_set('backend', $mockBackend);
 
 		$result = $cache->requireOnce('Foo-Bar');

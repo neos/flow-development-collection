@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Security;
+namespace TYPO3\FLOW3\Security;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -30,18 +30,18 @@ namespace F3\FLOW3\Security;
 class RequestPatternResolver {
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
+	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
 	 * Constructor.
 	 *
-	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager The object manager
+	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager The object manager
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function __construct(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
+	public function __construct(\TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
 	}
 
@@ -50,7 +50,7 @@ class RequestPatternResolver {
 	 *
 	 * @param string $name The (short) name of the pattern
 	 * @return string The class name of the request pattern, NULL if no class was found.
-	 * @throws \F3\FLOW3\Security\Exception\NoRequestPatternFoundException
+	 * @throws \TYPO3\FLOW3\Security\Exception\NoRequestPatternFoundException
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function resolveRequestPatternClass($name) {
@@ -59,10 +59,10 @@ class RequestPatternResolver {
 		$resolvedObjectName = $this->objectManager->getCaseSensitiveObjectName($name);
 		if ($resolvedObjectName !== FALSE) return $resolvedObjectName;
 
-		$resolvedObjectName = $this->objectManager->getCaseSensitiveObjectName('F3\FLOW3\Security\RequestPattern\\' . $name);
+		$resolvedObjectName = $this->objectManager->getCaseSensitiveObjectName('TYPO3\FLOW3\Security\RequestPattern\\' . $name);
 		if ($resolvedObjectName !== FALSE) return $resolvedObjectName;
 
-		throw new \F3\FLOW3\Security\Exception\NoRequestPatternFoundException('A request pattern with the name: "' . $name . '" could not be resolved.', 1217154134);
+		throw new \TYPO3\FLOW3\Security\Exception\NoRequestPatternFoundException('A request pattern with the name: "' . $name . '" could not be resolved.', 1217154134);
 	}
 }
 ?>

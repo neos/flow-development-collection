@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\Property;
+namespace TYPO3\FLOW3\Tests\Unit\Property;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -27,24 +27,24 @@ require_once (__DIR__ . '/../Fixtures/ClassWithSetters.php');
  * Testcase for the Property Mapper
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
- * @covers \F3\FLOW3\Property\PropertyMappingConfiguration
+ * @covers \TYPO3\FLOW3\Property\PropertyMappingConfiguration
  */
-class PropertyMappingConfigurationTest extends \F3\FLOW3\Tests\UnitTestCase {
+class PropertyMappingConfigurationTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 *
-	 * @var \F3\FLOW3\Property\PropertyMappingConfiguration
+	 * @var \TYPO3\FLOW3\Property\PropertyMappingConfiguration
 	 */
 	protected $propertyMappingConfiguration;
 
 	public function setUp() {
-		$this->propertyMappingConfiguration = new \F3\FLOW3\Property\PropertyMappingConfiguration();
+		$this->propertyMappingConfiguration = new \TYPO3\FLOW3\Property\PropertyMappingConfiguration();
 	}
 
 	/**
 	 * @test
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 * @covers \F3\FLOW3\Property\PropertyMappingConfiguration::getTargetPropertyName
+	 * @covers \TYPO3\FLOW3\Property\PropertyMappingConfiguration::getTargetPropertyName
 	 */
 	public function getTargetPropertyNameShouldReturnTheUnmodifiedPropertyNameWithoutConfiguration() {
 		$this->assertEquals('someSourceProperty', $this->propertyMappingConfiguration->getTargetPropertyName('someSourceProperty'));
@@ -53,7 +53,7 @@ class PropertyMappingConfigurationTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @covers \F3\FLOW3\Property\PropertyMappingConfiguration::shouldMap
+	 * @covers \TYPO3\FLOW3\Property\PropertyMappingConfiguration::shouldMap
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function shouldMapReturnsTrue() {
@@ -116,13 +116,13 @@ class PropertyMappingConfigurationTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function getTypeConverterReturnsTypeConverterIfItHasBeenSet() {
-		$mockTypeConverter = $this->getMock('F3\FLOW3\Property\TypeConverterInterface');
+		$mockTypeConverter = $this->getMock('TYPO3\FLOW3\Property\TypeConverterInterface');
 		$this->propertyMappingConfiguration->setTypeConverter($mockTypeConverter);
 		$this->assertSame($mockTypeConverter, $this->propertyMappingConfiguration->getTypeConverter());
 	}
 
 	/**
-	 * @return \F3\FLOW3\Property\PropertyMappingConfiguration
+	 * @return \TYPO3\FLOW3\Property\PropertyMappingConfiguration
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	protected function buildChildConfigurationForSingleProperty() {

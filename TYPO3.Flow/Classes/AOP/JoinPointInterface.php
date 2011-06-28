@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\AOP;
+namespace TYPO3\FLOW3\AOP;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -32,7 +32,7 @@ interface JoinPointInterface {
 	/**
 	 * Returns the reference to the proxy class instance
 	 *
-	 * @return \F3\FLOW3\Object\Proxy\ProxyInterface
+	 * @return \TYPO3\FLOW3\Object\Proxy\ProxyInterface
 	 */
 	public function getProxy();
 
@@ -77,7 +77,7 @@ interface JoinPointInterface {
 	/**
 	 * Returns the advice chain related to this join point
 	 *
-	 * @return \F3\FLOW3\AOP\Advice\AdviceChain The advice chain
+	 * @return \TYPO3\FLOW3\AOP\Advice\AdviceChain The advice chain
 	 */
 	public function getAdviceChain();
 

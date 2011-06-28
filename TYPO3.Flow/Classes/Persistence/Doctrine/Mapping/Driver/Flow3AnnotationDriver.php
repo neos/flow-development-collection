@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Persistence\Doctrine\Mapping\Driver;
+namespace TYPO3\FLOW3\Persistence\Doctrine\Mapping\Driver;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -36,13 +36,13 @@ namespace F3\FLOW3\Persistence\Doctrine\Mapping\Driver;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope singleton
  */
-class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
+class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 
 	const MAPPING_REGULAR = 0;
 	const MAPPING_INVERSE = 1;
 
 	/**
-	 * @var \F3\FLOW3\Reflection\ReflectionService
+	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
@@ -66,10 +66,10 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \F3\
 	}
 
 	/**
-	 * @param \F3\FLOW3\Reflection\ReflectionService $reflectionService
+	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService
 	 * @return void
 	 */
-	public function injectReflectionService(\F3\FLOW3\Reflection\ReflectionService $reflectionService) {
+	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
 	}
 
@@ -77,11 +77,11 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \F3\
 	 * Fetch a class schema for the given class, if possible.
 	 *
 	 * @param string $className
-	 * @return \F3\FLOW3\Reflection\ClassSchema
+	 * @return \TYPO3\FLOW3\Reflection\ClassSchema
 	 * @throws \RuntimeException
 	 */
 	protected function getClassSchema($className) {
-		$className = preg_replace('/' . \F3\FLOW3\Object\Proxy\Compiler::ORIGINAL_CLASSNAME_SUFFIX . '$/', '', $className);
+		$className = preg_replace('/' . \TYPO3\FLOW3\Object\Proxy\Compiler::ORIGINAL_CLASSNAME_SUFFIX . '$/', '', $className);
 
 		$classSchema = $this->reflectionService->getClassSchema($className);
 		if (!$classSchema) {
@@ -115,7 +115,7 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \F3\
 					$metadata->setCustomRepositoryClass($classSchema->getRepositoryClassName());
 				}
 			}
-		} elseif ($classSchema->getModelType() === \F3\FLOW3\Reflection\ClassSchema::MODELTYPE_VALUEOBJECT) {
+		} elseif ($classSchema->getModelType() === \TYPO3\FLOW3\Reflection\ClassSchema::MODELTYPE_VALUEOBJECT) {
 				// also ok...
 		} else {
 			throw \Doctrine\ORM\Mapping\MappingException::classIsNotAValidEntityOrMappedSuperClass($className);
@@ -279,7 +279,7 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \F3\
 					$idProperties = $this->reflectionService->getPropertyNamesByTag($mapping['targetEntity'], 'Id');
 					$joinColumnName = $this->buildJoinTableColumnName($mapping['targetEntity']);
 				} else {
-					$className = preg_replace('/' . \F3\FLOW3\Object\Proxy\Compiler::ORIGINAL_CLASSNAME_SUFFIX . '$/', '', $property->getDeclaringClass()->getName());
+					$className = preg_replace('/' . \TYPO3\FLOW3\Object\Proxy\Compiler::ORIGINAL_CLASSNAME_SUFFIX . '$/', '', $property->getDeclaringClass()->getName());
 					$idProperties = $this->reflectionService->getPropertyNamesByTag($className, 'Id');
 					$joinColumnName = $this->buildJoinTableColumnName($className);
 				}
@@ -596,7 +596,7 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \F3\
 		$this->classNames = array_filter($this->classNames,
 			function ($className) {
 				return !interface_exists($className, FALSE)
-						&& strpos($className, \F3\FLOW3\Object\Proxy\Compiler::ORIGINAL_CLASSNAME_SUFFIX) === FALSE;
+						&& strpos($className, \TYPO3\FLOW3\Object\Proxy\Compiler::ORIGINAL_CLASSNAME_SUFFIX) === FALSE;
 			}
 		);
 
@@ -612,7 +612,7 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \F3\
 	 * @return boolean
 	 */
 	public function isTransient($className) {
-		return strpos($className, \F3\FLOW3\Object\Proxy\Compiler::ORIGINAL_CLASSNAME_SUFFIX) !== FALSE ||
+		return strpos($className, \TYPO3\FLOW3\Object\Proxy\Compiler::ORIGINAL_CLASSNAME_SUFFIX) !== FALSE ||
 				(
 					!$this->reflectionService->isClassTaggedWith($className, 'valueobject') &&
 					!$this->reflectionService->isClassTaggedWith($className, 'entity') &&

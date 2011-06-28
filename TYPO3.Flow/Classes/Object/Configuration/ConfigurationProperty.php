@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Object\Configuration;
+namespace TYPO3\FLOW3\Object\Configuration;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -51,14 +51,14 @@ class ConfigurationProperty {
 
 	/**
 	 * If specified, this configuration is used for instantiating / retrieving an property of type object
-	 * @var \F3\FLOW3\Object\Configuration\Configuration
+	 * @var \TYPO3\FLOW3\Object\Configuration\Configuration
 	 */
 	protected $objectConfiguration = NULL;
 
 	/**
 	 * @var integer
 	 */
-	protected $autowiring = \F3\FLOW3\Object\Configuration\Configuration::AUTOWIRING_MODE_ON;
+	protected $autowiring = \TYPO3\FLOW3\Object\Configuration\Configuration::AUTOWIRING_MODE_ON;
 
 	/**
 	 * Constructor - sets the name, type and value of the property
@@ -66,7 +66,7 @@ class ConfigurationProperty {
 	 * @param string $name Name of the property
 	 * @param mixed $value Value of the property
 	 * @param integer $type Type of the property - one of the PROPERTY_TYPE_* constants
-	 * @param \F3\FLOW3\Object\Configuration\Configuration $objectConfiguration If $type is OBJECT, a custom object configuration may be specified
+	 * @param \TYPO3\FLOW3\Object\Configuration\Configuration $objectConfiguration If $type is OBJECT, a custom object configuration may be specified
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct($name, $value, $type = self::PROPERTY_TYPES_STRAIGHTVALUE, $objectConfiguration = NULL) {
@@ -79,7 +79,7 @@ class ConfigurationProperty {
 	 * @param string $name Name of the property
 	 * @param mixed $value Value of the property
 	 * @param integer $type Type of the property - one of the PROPERTY_TYPE_* constants
-	 * @param \F3\FLOW3\Object\Configuration\Configuration $objectConfiguration If $type is OBJECT, a custom object configuration may be specified
+	 * @param \TYPO3\FLOW3\Object\Configuration\Configuration $objectConfiguration If $type is OBJECT, a custom object configuration may be specified
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -123,7 +123,7 @@ class ConfigurationProperty {
 	/**
 	 * Returns the (optional) object configuration which may be defined for properties of type OBJECT
 	 *
-	 * @return \F3\FLOW3\Object\Configuration\Configuration The object configuration or NULL
+	 * @return \TYPO3\FLOW3\Object\Configuration\Configuration The object configuration or NULL
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getObjectConfiguration() {
@@ -133,7 +133,7 @@ class ConfigurationProperty {
 	/**
 	 * Sets autowiring for this property
 	 *
-	 * @param integer $autowiring One of the \F3\FLOW3\Object\Configuration\Configuration::AUTOWIRING_MODE_* constants
+	 * @param integer $autowiring One of the \TYPO3\FLOW3\Object\Configuration\Configuration::AUTOWIRING_MODE_* constants
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -144,7 +144,7 @@ class ConfigurationProperty {
 	/**
 	 * Returns the autowiring mode for this property
 	 *
-	 * @return integer Value of one of the \F3\FLOW3\Object\Configuration\Configuration::AUTOWIRING_MODE_* constants
+	 * @return integer Value of one of the \TYPO3\FLOW3\Object\Configuration\Configuration::AUTOWIRING_MODE_* constants
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getAutowiring() {

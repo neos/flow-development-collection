@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Utility;
+namespace TYPO3\FLOW3\Utility;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3CR".                    *

@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Functional\Object;
+namespace TYPO3\FLOW3\Tests\Functional\Object;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -21,24 +21,24 @@ namespace F3\FLOW3\Tests\Functional\Object;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \F3\FLOW3\Reflection\ClassReflection;
+use \TYPO3\FLOW3\Reflection\ClassReflection;
 
 /**
  * Functional tests for the Proxy Compiler and related features
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class ProxyCompilerTest extends \F3\FLOW3\Tests\FunctionalTestCase {
+class ProxyCompilerTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function proxyClassesStillContainAnnotationsFromItsOriginalClass() {
-		$class = new ClassReflection('F3\FLOW3\Tests\Functional\Object\Fixtures\PrototypeClassA');
+		$class = new ClassReflection('TYPO3\FLOW3\Tests\Functional\Object\Fixtures\PrototypeClassA');
 		$method = $class->getMethod('setSomeProperty');
 
-		$this->assertTrue($class->implementsInterface('F3\FLOW3\Object\Proxy\ProxyInterface'));
+		$this->assertTrue($class->implementsInterface('TYPO3\FLOW3\Object\Proxy\ProxyInterface'));
 		$this->assertTrue($class->isTaggedWith('foo'));
 		$this->assertTrue($class->isTaggedWith('bar'));
 		$this->assertTrue($method->isTaggedWith('bar'));
@@ -49,8 +49,8 @@ class ProxyCompilerTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function classesAnnotatedWithProxyDisableAreNotProxied() {
-		$singletonB = $this->objectManager->get('F3\FLOW3\Tests\Functional\Object\Fixtures\SingletonClassB');
-		$this->assertNotInstanceOf('F3\FLOW3\Object\Proxy\ProxyInterface', $singletonB);
+		$singletonB = $this->objectManager->get('TYPO3\FLOW3\Tests\Functional\Object\Fixtures\SingletonClassB');
+		$this->assertNotInstanceOf('TYPO3\FLOW3\Object\Proxy\ProxyInterface', $singletonB);
 	}
 }
 ?>

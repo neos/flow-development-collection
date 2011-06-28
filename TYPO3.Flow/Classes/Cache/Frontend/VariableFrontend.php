@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Cache\Frontend;
+namespace TYPO3\FLOW3\Cache\Frontend;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -28,7 +28,7 @@ namespace F3\FLOW3\Cache\Frontend;
  * @api
  * @scope prototype
  */
-class VariableFrontend extends \F3\FLOW3\Cache\Frontend\AbstractFrontend {
+class VariableFrontend extends \TYPO3\FLOW3\Cache\Frontend\AbstractFrontend {
 
 	/**
 	 * If the extension "igbinary" is installed, use it for increased performance.

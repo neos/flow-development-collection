@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\AOP\Builder;
+namespace TYPO3\FLOW3\AOP\Builder;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -28,7 +28,7 @@ namespace F3\FLOW3\AOP\Builder;
  * @proxy disable
  * @scope singleton
  */
-class AdvicedConstructorInterceptorBuilder extends \F3\FLOW3\AOP\Builder\AbstractMethodInterceptorBuilder {
+class AdvicedConstructorInterceptorBuilder extends \TYPO3\FLOW3\AOP\Builder\AbstractMethodInterceptorBuilder {
 
 	/**
 	 * Builds interception PHP code for an adviced constructor
@@ -41,7 +41,7 @@ class AdvicedConstructorInterceptorBuilder extends \F3\FLOW3\AOP\Builder\Abstrac
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function build($methodName, array $interceptedMethods, $targetClassName) {
-		if ($methodName !== '__construct') throw new \F3\FLOW3\AOP\Exception('The ' . __CLASS__ . ' can only build constructor interceptor code.', 1231789021);
+		if ($methodName !== '__construct') throw new \TYPO3\FLOW3\AOP\Exception('The ' . __CLASS__ . ' can only build constructor interceptor code.', 1231789021);
 
 		$proxyMethod = $this->compiler->getProxyClass($targetClassName)->getConstructor();
 

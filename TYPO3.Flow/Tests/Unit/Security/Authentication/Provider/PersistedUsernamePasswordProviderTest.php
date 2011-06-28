@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\Security\Authentication\Provider;
+namespace TYPO3\FLOW3\Tests\Unit\Security\Authentication\Provider;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,7 +26,7 @@ namespace F3\FLOW3\Tests\Unit\Security\Authentication\Provider;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class PersistedUsernamePasswordProviderTest extends \F3\FLOW3\Tests\UnitTestCase {
+class PersistedUsernamePasswordProviderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
@@ -34,21 +34,21 @@ class PersistedUsernamePasswordProviderTest extends \F3\FLOW3\Tests\UnitTestCase
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function authenticatingAnUsernamePasswordTokenChecksIfTheGivenClearTextPasswordMatchesThePersistedHashedPassword() {
-		$mockHashService = $this->getMock('F3\FLOW3\Security\Cryptography\HashService');
+		$mockHashService = $this->getMock('TYPO3\FLOW3\Security\Cryptography\HashService');
 		$mockHashService->expects($this->once())->method('validateSaltedMd5')->with('password', '8bf0abbb93000e2e47f0e0a80721e834,80f117a78cff75f3f73793fd02aa9086')->will($this->returnValue(TRUE));
 
-		$mockAccount = $this->getMock('F3\FLOW3\Security\Account', array(), array(), '', FALSE);
+		$mockAccount = $this->getMock('TYPO3\FLOW3\Security\Account', array(), array(), '', FALSE);
 		$mockAccount->expects($this->once())->method('getCredentialsSource')->will($this->returnValue('8bf0abbb93000e2e47f0e0a80721e834,80f117a78cff75f3f73793fd02aa9086'));
 
-		$mockAccountRepository = $this->getMock('F3\FLOW3\Security\AccountRepository', array(), array(), '', FALSE);
+		$mockAccountRepository = $this->getMock('TYPO3\FLOW3\Security\AccountRepository', array(), array(), '', FALSE);
 		$mockAccountRepository->expects($this->once())->method('findActiveByAccountIdentifierAndAuthenticationProviderName')->with('admin', 'myProvider')->will($this->returnValue($mockAccount));
 
-		$mockToken = $this->getMock('F3\FLOW3\Security\Authentication\Token\UsernamePassword', array(), array(), '', FALSE);
+		$mockToken = $this->getMock('TYPO3\FLOW3\Security\Authentication\Token\UsernamePassword', array(), array(), '', FALSE);
 		$mockToken->expects($this->once())->method('getCredentials')->will($this->returnValue(array('username' => 'admin', 'password' => 'password')));
-		$mockToken->expects($this->once())->method('setAuthenticationStatus')->with(\F3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL);
+		$mockToken->expects($this->once())->method('setAuthenticationStatus')->with(\TYPO3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL);
 		$mockToken->expects($this->once())->method('setAccount')->with($mockAccount);
 
-		$usernamePasswordCRProvider = $this->getAccessibleMock('F3\FLOW3\Security\Authentication\Provider\PersistedUsernamePasswordProvider', array('dummy'), array('myProvider', array()));
+		$usernamePasswordCRProvider = $this->getAccessibleMock('TYPO3\FLOW3\Security\Authentication\Provider\PersistedUsernamePasswordProvider', array('dummy'), array('myProvider', array()));
 		$usernamePasswordCRProvider->_set('accountRepository', $mockAccountRepository);
 		$usernamePasswordCRProvider->_set('hashService', $mockHashService);
 
@@ -61,20 +61,20 @@ class PersistedUsernamePasswordProviderTest extends \F3\FLOW3\Tests\UnitTestCase
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function authenticationFailsWithWrongCredentialsInAnUsernamePasswordToken() {
-		$mockHashService = $this->getMock('F3\FLOW3\Security\Cryptography\HashService');
+		$mockHashService = $this->getMock('TYPO3\FLOW3\Security\Cryptography\HashService');
 		$mockHashService->expects($this->once())->method('validateSaltedMd5')->with('wrong password', '8bf0abbb93000e2e47f0e0a80721e834,80f117a78cff75f3f73793fd02aa9086')->will($this->returnValue(FALSE));
 
-		$mockAccount = $this->getMock('F3\FLOW3\Security\Account', array(), array(), '', FALSE);
+		$mockAccount = $this->getMock('TYPO3\FLOW3\Security\Account', array(), array(), '', FALSE);
 		$mockAccount->expects($this->once())->method('getCredentialsSource')->will($this->returnValue('8bf0abbb93000e2e47f0e0a80721e834,80f117a78cff75f3f73793fd02aa9086'));
 
-		$mockAccountRepository = $this->getMock('F3\FLOW3\Security\AccountRepository', array(), array(), '', FALSE);
+		$mockAccountRepository = $this->getMock('TYPO3\FLOW3\Security\AccountRepository', array(), array(), '', FALSE);
 		$mockAccountRepository->expects($this->once())->method('findActiveByAccountIdentifierAndAuthenticationProviderName')->with('admin', 'myProvider')->will($this->returnValue($mockAccount));
 
-		$mockToken = $this->getMock('F3\FLOW3\Security\Authentication\Token\UsernamePassword', array(), array(), '', FALSE);
+		$mockToken = $this->getMock('TYPO3\FLOW3\Security\Authentication\Token\UsernamePassword', array(), array(), '', FALSE);
 		$mockToken->expects($this->once())->method('getCredentials')->will($this->returnValue(array('username' => 'admin', 'password' => 'wrong password')));
-		$mockToken->expects($this->once())->method('setAuthenticationStatus')->with(\F3\FLOW3\Security\Authentication\TokenInterface::WRONG_CREDENTIALS);
+		$mockToken->expects($this->once())->method('setAuthenticationStatus')->with(\TYPO3\FLOW3\Security\Authentication\TokenInterface::WRONG_CREDENTIALS);
 
-		$usernamePasswordCRProvider = $this->getAccessibleMock('F3\FLOW3\Security\Authentication\Provider\PersistedUsernamePasswordProvider', array('dummy'), array('myProvider', array()));
+		$usernamePasswordCRProvider = $this->getAccessibleMock('TYPO3\FLOW3\Security\Authentication\Provider\PersistedUsernamePasswordProvider', array('dummy'), array('myProvider', array()));
 		$usernamePasswordCRProvider->_set('accountRepository', $mockAccountRepository);
 		$usernamePasswordCRProvider->_set('hashService', $mockHashService);
 
@@ -84,13 +84,13 @@ class PersistedUsernamePasswordProviderTest extends \F3\FLOW3\Tests\UnitTestCase
 	/**
 	 * @test
 	 * @category unit
-	 * @expectedException \F3\FLOW3\Security\Exception\UnsupportedAuthenticationTokenException
+	 * @expectedException \TYPO3\FLOW3\Security\Exception\UnsupportedAuthenticationTokenException
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function authenticatingAnUnsupportedTokenThrowsAnException() {
-		$someNiceToken = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface');
+		$someNiceToken = $this->getMock('TYPO3\FLOW3\Security\Authentication\TokenInterface');
 
-		$usernamePasswordProvider = new \F3\FLOW3\Security\Authentication\Provider\PersistedUsernamePasswordProvider('myProvider', array());
+		$usernamePasswordProvider = new \TYPO3\FLOW3\Security\Authentication\Provider\PersistedUsernamePasswordProvider('myProvider', array());
 
 		$usernamePasswordProvider->authenticate($someNiceToken);
 	}
@@ -101,12 +101,12 @@ class PersistedUsernamePasswordProviderTest extends \F3\FLOW3\Tests\UnitTestCase
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function canAuthenticateReturnsTrueOnlyForAnTokenThatHasTheCorrectProviderNameSet() {
-		$mockToken1 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface');
+		$mockToken1 = $this->getMock('TYPO3\FLOW3\Security\Authentication\TokenInterface');
 		$mockToken1->expects($this->once())->method('getAuthenticationProviderName')->will($this->returnValue('myProvider'));
-		$mockToken2 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface');
+		$mockToken2 = $this->getMock('TYPO3\FLOW3\Security\Authentication\TokenInterface');
 		$mockToken2->expects($this->once())->method('getAuthenticationProviderName')->will($this->returnValue('someOtherProvider'));
 
-		$usernamePasswordProvider = new \F3\FLOW3\Security\Authentication\Provider\PersistedUsernamePasswordProvider('myProvider', array());
+		$usernamePasswordProvider = new \TYPO3\FLOW3\Security\Authentication\Provider\PersistedUsernamePasswordProvider('myProvider', array());
 
 		$this->assertTrue($usernamePasswordProvider->canAuthenticate($mockToken1));
 		$this->assertFalse($usernamePasswordProvider->canAuthenticate($mockToken2));

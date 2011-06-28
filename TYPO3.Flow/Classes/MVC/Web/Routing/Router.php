@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\MVC\Web\Routing;
+namespace TYPO3\FLOW3\MVC\Web\Routing;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -28,7 +28,7 @@ namespace F3\FLOW3\MVC\Web\Routing;
  * @scope singleton
  * @api
  */
-class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
+class Router implements \TYPO3\FLOW3\MVC\Web\Routing\RouterInterface {
 
 	/**
 	 * @var string
@@ -36,17 +36,17 @@ class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 	protected $controllerObjectNamePattern = '@package\@subpackage\Controller\@controllerController';
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
+	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
-	 * @var \F3\FLOW3\Utility\Environment
+	 * @var \TYPO3\FLOW3\Utility\Environment
 	 */
 	protected $environment;
 
 	/**
-	 * @var \F3\FLOW3\Log\SystemLoggerInterface
+	 * @var \TYPO3\FLOW3\Log\SystemLoggerInterface
 	 */
 	protected $systemLogger;
 
@@ -70,40 +70,40 @@ class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 
 	/**
 	 * The current request. Will be set in route()
-	 * @var \F3\FLOW3\MVC\Web\Request
+	 * @var \TYPO3\FLOW3\MVC\Web\Request
 	 */
 	protected $request;
 
 	/**
 	 * Injects the object manager
 	 *
-	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
+	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
+	public function injectObjectManager(\TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
 	}
 
 	/**
 	 * Injects the environment
 	 *
-	 * @param \F3\FLOW3\Utility\Environment $environment
+	 * @param \TYPO3\FLOW3\Utility\Environment $environment
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectEnvironment(\F3\FLOW3\Utility\Environment $environment) {
+	public function injectEnvironment(\TYPO3\FLOW3\Utility\Environment $environment) {
 		$this->environment = $environment;
 	}
 
 	/**
 	 * Injects the system logger
 	 *
-	 * @param \F3\FLOW3\Log\SystemLoggerInterface $systemLogger
+	 * @param \TYPO3\FLOW3\Log\SystemLoggerInterface $systemLogger
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectSystemLogger(\F3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
+	public function injectSystemLogger(\TYPO3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
 		$this->systemLogger = $systemLogger;
 	}
 
@@ -122,13 +122,13 @@ class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 	 * Routes the specified web request by setting the controller name, action and possible
 	 * parameters. If the request could not be routed, it will be left untouched.
 	 *
-	 * @param \F3\FLOW3\MVC\Web\Request $request The web request to be analyzed. Will be modified by the router.
+	 * @param \TYPO3\FLOW3\MVC\Web\Request $request The web request to be analyzed. Will be modified by the router.
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function route(\F3\FLOW3\MVC\Web\Request $request) {
+	public function route(\TYPO3\FLOW3\MVC\Web\Request $request) {
 		$this->request = $request;
 		$routePath = $this->request->getRoutePath();
 		$matchResults = $this->findMatchResults($routePath);
@@ -211,11 +211,11 @@ class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 			}
 		}
 		$this->systemLogger->log('Router resolve(): Could not resolve a route for building an URI for the given route values.', LOG_WARNING, $routeValues);
-		throw new \F3\FLOW3\MVC\Exception\NoMatchingRouteException('Could not resolve a route and its corresponding URI for the given parameters. This may be due to referring to a not existing package / controller / action while building a link or URI. Refer to log and check the backtrace for more details.', 1301610453);
+		throw new \TYPO3\FLOW3\MVC\Exception\NoMatchingRouteException('Could not resolve a route and its corresponding URI for the given parameters. This may be due to referring to a not existing package / controller / action while building a link or URI. Refer to log and check the backtrace for more details.', 1301610453);
 	}
 
 	/**
-	 * Creates F3\FLOW3\MVC\Web\Routing\Route objects from the injected routes
+	 * Creates TYPO3\FLOW3\MVC\Web\Routing\Route objects from the injected routes
 	 * configuration.
 	 *
 	 * @return void
@@ -225,7 +225,7 @@ class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 		if ($this->routesCreated === FALSE) {
 			$this->routes = array();
 			foreach ($this->routesConfiguration as $routeConfiguration) {
-				$route = $this->objectManager->create('F3\FLOW3\MVC\Web\Routing\Route');
+				$route = $this->objectManager->create('TYPO3\FLOW3\MVC\Web\Routing\Route');
 				if (isset($routeConfiguration['name'])) {
 					$route->setName($routeConfiguration['name']);
 				}

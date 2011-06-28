@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\I18n;
+namespace TYPO3\FLOW3\I18n;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -36,7 +36,7 @@ class Service {
 	protected $settings;
 
 	/**
-	 * @var \F3\FLOW3\Package\PackageManagerInterface
+	 * @var \TYPO3\FLOW3\Package\PackageManagerInterface
 	 */
 	protected $packageManager;
 
@@ -44,12 +44,12 @@ class Service {
 	 * A collection of Locale objects representing currently installed locales,
 	 * in a hierarchical manner.
 	 *
-	 * @var \F3\FLOW3\I18n\LocaleCollection
+	 * @var \TYPO3\FLOW3\I18n\LocaleCollection
 	 */
 	protected $localeCollection;
 
 	/**
-	 * @var \F3\FLOW3\Cache\Frontend\VariableFrontend
+	 * @var \TYPO3\FLOW3\Cache\Frontend\VariableFrontend
 	 */
 	protected $cache;
 
@@ -70,31 +70,31 @@ class Service {
 	}
 
 	/**
-	 * @param \F3\FLOW3\Package\PackageManagerInterface $packageManager
+	 * @param \TYPO3\FLOW3\Package\PackageManagerInterface $packageManager
 	 * @return void
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function injectPackageManager(\F3\FLOW3\Package\PackageManagerInterface $packageManager) {
+	public function injectPackageManager(\TYPO3\FLOW3\Package\PackageManagerInterface $packageManager) {
 		$this->packageManager = $packageManager;
 	}
 
 	/**
-	 * @param \F3\FLOW3\I18n\LocaleCollection $localeCollection
+	 * @param \TYPO3\FLOW3\I18n\LocaleCollection $localeCollection
 	 * @return void
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function injectLocaleCollection(\F3\FLOW3\I18n\LocaleCollection $localeCollection) {
+	public function injectLocaleCollection(\TYPO3\FLOW3\I18n\LocaleCollection $localeCollection) {
 		$this->localeCollection = $localeCollection;
 	}
 
 	/**
 	 * Injects the FLOW3_I18n_Service cache
 	 *
-	 * @param \F3\FLOW3\Cache\Frontend\VariableFrontend $cache
+	 * @param \TYPO3\FLOW3\Cache\Frontend\VariableFrontend $cache
 	 * @return void
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function injectCache(\F3\FLOW3\Cache\Frontend\VariableFrontend $cache) {
+	public function injectCache(\TYPO3\FLOW3\Cache\Frontend\VariableFrontend $cache) {
 		$this->cache = $cache;
 	}
 
@@ -107,9 +107,9 @@ class Service {
 	 */
 	public function initialize() {
 		try {
-			$this->settings['locale']['defaultLocale'] = new \F3\FLOW3\I18n\Locale($this->settings['locale']['defaultLocaleIdentifier']);
-		} catch (\F3\FLOW3\I18n\Exception\InvalidLocaleIdentifierException $exception) {
-			throw new \F3\FLOW3\I18n\Exception\InvalidLocaleIdentifierException('Default locale identifier set in the configuration is invalid.', 1280935191);
+			$this->settings['locale']['defaultLocale'] = new \TYPO3\FLOW3\I18n\Locale($this->settings['locale']['defaultLocaleIdentifier']);
+		} catch (\TYPO3\FLOW3\I18n\Exception\InvalidLocaleIdentifierException $exception) {
+			throw new \TYPO3\FLOW3\I18n\Exception\InvalidLocaleIdentifierException('Default locale identifier set in the configuration is invalid.', 1280935191);
 		}
 
 		if ($this->cache->has('availableLocales')) {
@@ -123,7 +123,7 @@ class Service {
 	/**
 	 * Returns the default Locale object for this FLOW3 installation.
 	 *
-	 * @return \F3\FLOW3\I18n\Locale The default Locale instance
+	 * @return \TYPO3\FLOW3\I18n\Locale The default Locale instance
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @api
 	 */
@@ -145,13 +145,13 @@ class Service {
 	 * Note: This method assumes that provided file exists.
 	 *
 	 * @param string $filename Path to the file
-	 * @param \F3\FLOW3\I18n\Locale $locale Desired locale of localized file
+	 * @param \TYPO3\FLOW3\I18n\Locale $locale Desired locale of localized file
 	 * @param bool $strict Whether to match only provided locale (TRUE) or search for best-matching locale (FALSE)
 	 * @return string Path to the localized file, or $filename when no localized file was found
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @api
 	 */
-	public function getLocalizedFilename($filename, \F3\FLOW3\I18n\Locale $locale = NULL, $strict = FALSE) {
+	public function getLocalizedFilename($filename, \TYPO3\FLOW3\I18n\Locale $locale = NULL, $strict = FALSE) {
 		if ($locale === NULL) {
 			$locale = $this->getDefaultLocale();
 		}
@@ -192,12 +192,12 @@ class Service {
 	/**
 	 * Returns a parent Locale object of the locale provided.
 	 *
-	 * @param \F3\FLOW3\I18n\Locale $locale The Locale to search parent for
-	 * @return mixed Existing \F3\FLOW3\I18n\Locale instance or NULL on failure
+	 * @param \TYPO3\FLOW3\I18n\Locale $locale The Locale to search parent for
+	 * @return mixed Existing \TYPO3\FLOW3\I18n\Locale instance or NULL on failure
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @api
 	 */
-	public function getParentLocaleOf(\F3\FLOW3\I18n\Locale $locale) {
+	public function getParentLocaleOf(\TYPO3\FLOW3\I18n\Locale $locale) {
 		return $this->localeCollection->getParentLocaleOf($locale);
 	}
 
@@ -206,12 +206,12 @@ class Service {
 	 * object given as parameter, from the collection of locales available in
 	 * the current FLOW3 installation.
 	 *
-	 * @param \F3\FLOW3\I18n\Locale $locale The "template" Locale to be matched
-	 * @return mixed Existing \F3\FLOW3\I18n\Locale instance on success, NULL on failure
+	 * @param \TYPO3\FLOW3\I18n\Locale $locale The "template" Locale to be matched
+	 * @return mixed Existing \TYPO3\FLOW3\I18n\Locale instance on success, NULL on failure
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 * @api
 	 */
-	public function findBestMatchingLocale(\F3\FLOW3\I18n\Locale $locale) {
+	public function findBestMatchingLocale(\TYPO3\FLOW3\I18n\Locale $locale) {
 		return $this->localeCollection->findBestMatchingLocale($locale);
 	}
 
@@ -242,13 +242,13 @@ class Service {
 
 			foreach ($recursiveIteratorIterator as $fileOrDirectory) {
 				if ($fileOrDirectory->isFile()) {
-					$localeIdentifier = \F3\FLOW3\I18n\Utility::extractLocaleTagFromFilename($fileOrDirectory->getPathName());
+					$localeIdentifier = \TYPO3\FLOW3\I18n\Utility::extractLocaleTagFromFilename($fileOrDirectory->getPathName());
 
 					if ($localeIdentifier !== FALSE) {
 						try {
-							$locale = new \F3\FLOW3\I18n\Locale($localeIdentifier);
+							$locale = new \TYPO3\FLOW3\I18n\Locale($localeIdentifier);
 							$this->localeCollection->addLocale($locale);
-						} catch (\F3\FLOW3\I18n\Exception\InvalidLocaleIdentifierException $exception) {
+						} catch (\TYPO3\FLOW3\I18n\Exception\InvalidLocaleIdentifierException $exception) {
 								// Just ignore current file and proceed
 						}
 					}

@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Command;
+namespace TYPO3\FLOW3\Command;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -27,7 +27,7 @@ namespace F3\FLOW3\Command;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope singleton
  */
-class DoctrineCommandController extends \F3\FLOW3\MVC\Controller\CommandController {
+class DoctrineCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandController {
 
 	/**
 	 * @var array
@@ -36,7 +36,7 @@ class DoctrineCommandController extends \F3\FLOW3\MVC\Controller\CommandControll
 
 	/**
 	 * @inject
-	 * @var \F3\FLOW3\Persistence\Doctrine\Service
+	 * @var \TYPO3\FLOW3\Persistence\Doctrine\Service
 	 */
 	protected $doctrineService;
 

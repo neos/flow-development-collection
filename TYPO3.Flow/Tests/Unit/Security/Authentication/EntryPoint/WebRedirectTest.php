@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\Security\Authentication\EntryPoint;
+namespace TYPO3\FLOW3\Tests\Unit\Security\Authentication\EntryPoint;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,7 +26,7 @@ namespace F3\FLOW3\Tests\Unit\Security\Authentication\EntryPoint;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  */
-class WebRedirectTest extends \F3\FLOW3\Tests\UnitTestCase {
+class WebRedirectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
@@ -34,9 +34,9 @@ class WebRedirectTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function canForwardReturnsTrueForWebRequests() {
-		$entryPoint = new \F3\FLOW3\Security\Authentication\EntryPoint\WebRedirect();
+		$entryPoint = new \TYPO3\FLOW3\Security\Authentication\EntryPoint\WebRedirect();
 
-		$this->assertTrue($entryPoint->canForward($this->getMock('F3\FLOW3\MVC\Web\Request')));
+		$this->assertTrue($entryPoint->canForward($this->getMock('TYPO3\FLOW3\MVC\Web\Request')));
 	}
 
 	/**
@@ -45,35 +45,35 @@ class WebRedirectTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function canForwardReturnsFalseForNonWebRequests() {
-		$entryPoint = new \F3\FLOW3\Security\Authentication\EntryPoint\WebRedirect();
+		$entryPoint = new \TYPO3\FLOW3\Security\Authentication\EntryPoint\WebRedirect();
 
-		$this->assertFalse($entryPoint->canForward($this->getMock('F3\FLOW3\MVC\CLI\Request')));
-		$this->assertFalse($entryPoint->canForward($this->getMock('F3\FLOW3\MVC\RequestInterface')));
+		$this->assertFalse($entryPoint->canForward($this->getMock('TYPO3\FLOW3\MVC\CLI\Request')));
+		$this->assertFalse($entryPoint->canForward($this->getMock('TYPO3\FLOW3\MVC\RequestInterface')));
 	}
 
 	/**
 	 * @test
 	 * @category unit
-	 * @expectedException F3\FLOW3\Security\Exception\MissingConfigurationException
+	 * @expectedException TYPO3\FLOW3\Security\Exception\MissingConfigurationException
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function startAuthenticationThrowsAnExceptionIfTheConfigurationOptionsAreMissing() {
-		$entryPoint = new \F3\FLOW3\Security\Authentication\EntryPoint\WebRedirect();
+		$entryPoint = new \TYPO3\FLOW3\Security\Authentication\EntryPoint\WebRedirect();
 		$entryPoint->setOptions(array('something' => 'irrelevant'));
 
-		$entryPoint->startAuthentication($this->getMock('F3\FLOW3\MVC\Web\Request'), $this->getMock('F3\FLOW3\MVC\Web\Response'));
+		$entryPoint->startAuthentication($this->getMock('TYPO3\FLOW3\MVC\Web\Request'), $this->getMock('TYPO3\FLOW3\MVC\Web\Response'));
 	}
 
 	/**
 	 * @test
 	 * @category unit
-	 * @expectedException F3\FLOW3\Security\Exception\RequestTypeNotSupportedException
+	 * @expectedException TYPO3\FLOW3\Security\Exception\RequestTypeNotSupportedException
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function startAuthenticationThrowsAnExceptionIfItsCalledWithAnUnsupportedRequestType() {
-		$entryPoint = new \F3\FLOW3\Security\Authentication\EntryPoint\WebRedirect();
+		$entryPoint = new \TYPO3\FLOW3\Security\Authentication\EntryPoint\WebRedirect();
 
-		$entryPoint->startAuthentication($this->getMock('F3\FLOW3\MVC\CLI\Request'), $this->getMock('F3\FLOW3\MVC\CLI\Response'));
+		$entryPoint->startAuthentication($this->getMock('TYPO3\FLOW3\MVC\CLI\Request'), $this->getMock('TYPO3\FLOW3\MVC\CLI\Response'));
 	}
 
 	/**
@@ -82,13 +82,13 @@ class WebRedirectTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function startAuthenticationSetsTheCorrectValuesInTheResponseObject() {
-		$request = $this->getMock('F3\FLOW3\MVC\Web\Request');
-		$response = $this->getMock('F3\FLOW3\MVC\Web\Response');
+		$request = $this->getMock('TYPO3\FLOW3\MVC\Web\Request');
+		$response = $this->getMock('TYPO3\FLOW3\MVC\Web\Response');
 
 		$response->expects($this->once())->method('setStatus')->with(303);
 		$response->expects($this->once())->method('setHeader')->with('Location', 'some/page');
 
-		$entryPoint = new \F3\FLOW3\Security\Authentication\EntryPoint\WebRedirect();
+		$entryPoint = new \TYPO3\FLOW3\Security\Authentication\EntryPoint\WebRedirect();
 		$entryPoint->setOptions(array('uri' => 'some/page'));
 
 		$entryPoint->startAuthentication($request, $response);

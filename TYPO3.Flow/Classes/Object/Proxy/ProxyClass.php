@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Object\Proxy;
+namespace TYPO3\FLOW3\Object\Proxy;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -21,7 +21,7 @@ namespace F3\FLOW3\Object\Proxy;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \F3\FLOW3\Cache\CacheManager;
+use \TYPO3\FLOW3\Cache\CacheManager;
 
 /**
  * Representation of a Proxy Class during rendering time
@@ -53,7 +53,7 @@ class ProxyClass {
 	protected $fullOriginalClassName;
 
 	/**
-	 * @var \F3\FLOW3\Object\Proxy\ProxyConstructor
+	 * @var \TYPO3\FLOW3\Object\Proxy\ProxyConstructor
 	 */
 	protected $constructor;
 
@@ -70,7 +70,7 @@ class ProxyClass {
 	/**
 	 * @var array
 	 */
-	protected $interfaces = array('\F3\FLOW3\Object\Proxy\ProxyInterface');
+	protected $interfaces = array('\TYPO3\FLOW3\Object\Proxy\ProxyInterface');
 
 	/**
 	 * @var array
@@ -85,7 +85,7 @@ class ProxyClass {
 	protected $cacheTags = array();
 
 	/**
-	 * @var \F3\FLOW3\Reflection\ReflectionService
+	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
@@ -112,23 +112,23 @@ class ProxyClass {
 	/**
 	 * Injects the Reflection Service
 	 *
-	 * @param \F3\FLOW3\Reflection\ReflectionService $reflectionService
+	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectReflectionService(\F3\FLOW3\Reflection\ReflectionService $reflectionService) {
+	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
 	}
 
 	/**
 	 * Returns the ProxyConstructor for this ProxyClass. Creates it if needed.
 	 *
-	 * @return \F3\FLOW3\Object\Proxy\ProxyConstructor
+	 * @return \TYPO3\FLOW3\Object\Proxy\ProxyConstructor
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getConstructor() {
 		if (!isset($this->constructor)) {
-			$this->constructor = new \F3\FLOW3\Object\Proxy\ProxyConstructor($this->fullOriginalClassName);
+			$this->constructor = new \TYPO3\FLOW3\Object\Proxy\ProxyConstructor($this->fullOriginalClassName);
 			$this->constructor->injectReflectionService($this->reflectionService);
 		}
 		return $this->constructor;
@@ -138,7 +138,7 @@ class ProxyClass {
 	 * Returns the named ProxyMethod for this ProxyClass. Creates it if needed.
 	 *
 	 * @param string $methodName The name of the methods to return
-	 * @return \F3\FLOW3\Object\Proxy\ProxyMethod
+	 * @return \TYPO3\FLOW3\Object\Proxy\ProxyMethod
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getMethod($methodName) {
@@ -146,7 +146,7 @@ class ProxyClass {
 			return $this->getConstructor();
 		}
 		if (!isset($this->methods[$methodName])) {
-			$this->methods[$methodName] = new \F3\FLOW3\Object\Proxy\ProxyMethod($this->fullOriginalClassName, $methodName);
+			$this->methods[$methodName] = new \TYPO3\FLOW3\Object\Proxy\ProxyMethod($this->fullOriginalClassName, $methodName);
 			$this->methods[$methodName]->injectReflectionService($this->reflectionService);
 		}
 		return $this->methods[$methodName];
@@ -184,7 +184,7 @@ class ProxyClass {
 	 * Adds one or more interfaces to the "implements" section of the class definition.
 	 *
 	 * Note that the passed interface names must already have a leading backslash,
-	 * for example "\F3\FLOW3\Foo\BarInterface".
+	 * for example "\TYPO3\FLOW3\Foo\BarInterface".
 	 *
 	 * @param array $interfaceNames Fully qualified names of the interfaces to introduce
 	 * @return void
@@ -236,7 +236,7 @@ class ProxyClass {
 	public function render() {
 		$namespace = $this->namespace;
 		$proxyClassName = $this->originalClassName;
-		$originalClassName = $this->originalClassName . \F3\FLOW3\Object\Proxy\Compiler::ORIGINAL_CLASSNAME_SUFFIX;
+		$originalClassName = $this->originalClassName . \TYPO3\FLOW3\Object\Proxy\Compiler::ORIGINAL_CLASSNAME_SUFFIX;
 		$abstractKeyword = $this->reflectionService->isClassAbstract($this->fullOriginalClassName) ? 'abstract ' : '';
 
 		$constantsCode = $this->renderConstantsCode();

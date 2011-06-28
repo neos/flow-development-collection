@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\Property\TypeConverter;
+namespace TYPO3\FLOW3\Tests\Unit\Property\TypeConverter;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,16 +26,16 @@ namespace F3\FLOW3\Tests\Unit\Property\TypeConverter;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class ArrayCollectinConverterTest extends \F3\FLOW3\Tests\UnitTestCase {
+class ArrayCollectinConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 
 	/**
-	 * @var \F3\FLOW3\Property\TypeConverter\ArrayCollectionConverter
+	 * @var \TYPO3\FLOW3\Property\TypeConverter\ArrayCollectionConverter
 	 */
 	protected $converter;
 
 	public function setUp() {
-		$this->converter = new \F3\FLOW3\Property\TypeConverter\ArrayCollectionConverter();
+		$this->converter = new \TYPO3\FLOW3\Property\TypeConverter\ArrayCollectionConverter();
 	}
 
 	/**
@@ -53,7 +53,7 @@ class ArrayCollectinConverterTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getTypeOfChildPropertyReturnsElementTypeFromTargetTypeIfGiven() {
-		$this->assertEquals('FooBar', $this->converter->getTypeOfChildProperty('array<FooBar>', '', $this->getMock('F3\FLOW3\Property\PropertyMappingConfigurationInterface')));
+		$this->assertEquals('FooBar', $this->converter->getTypeOfChildProperty('array<FooBar>', '', $this->getMock('TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface')));
 	}
 
 	/**
@@ -61,7 +61,7 @@ class ArrayCollectinConverterTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getTypeOfChildPropertyReturnsEmptyStringForElementTypeIfNotGivenInTargetType() {
-		$this->assertEquals('', $this->converter->getTypeOfChildProperty('array', '', $this->getMock('F3\FLOW3\Property\PropertyMappingConfigurationInterface')));
+		$this->assertEquals('', $this->converter->getTypeOfChildProperty('array', '', $this->getMock('TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface')));
 	}
 
 }

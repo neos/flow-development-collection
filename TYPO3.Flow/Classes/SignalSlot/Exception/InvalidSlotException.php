@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\SignalSlot\Exception;
+namespace TYPO3\FLOW3\SignalSlot\Exception;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -27,7 +27,7 @@ namespace F3\FLOW3\SignalSlot\Exception;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */
-class InvalidSlotException extends \F3\FLOW3\Object\Exception {
+class InvalidSlotException extends \TYPO3\FLOW3\Object\Exception {
 
 }
 

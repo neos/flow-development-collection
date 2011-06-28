@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\MVC\Web;
+namespace TYPO3\FLOW3\Tests\Unit\MVC\Web;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,37 +26,37 @@ namespace F3\FLOW3\Tests\Unit\MVC\Web;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class RequestBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
+class RequestBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * The mocked request
 	 *
-	 * @var \F3\FLOW3\MVC\Web\Request
+	 * @var \TYPO3\FLOW3\MVC\Web\Request
 	 */
 	protected $mockRequest;
 
 	/**
-	 * @var \F3\FLOW3\Property\DataType\Uri
+	 * @var \TYPO3\FLOW3\Property\DataType\Uri
 	 */
 	protected $requestUri;
 
 	/**
-	 * @var \F3\FLOW3\Utility\Environment
+	 * @var \TYPO3\FLOW3\Utility\Environment
 	 */
 	protected $mockEnvironment;
 
 	/**
-	 * @var \F3\FLOW3\MVC\Web\Routing\RouterInterface
+	 * @var \TYPO3\FLOW3\MVC\Web\Routing\RouterInterface
 	 */
 	protected $mockRouter;
 
 	/**
-	 * @var \F3\FLOW3\Configuration\ConfigurationManager
+	 * @var \TYPO3\FLOW3\Configuration\ConfigurationManager
 	 */
 	protected $mockConfigurationManager;
 
 	/**
-	 * @var \F3\FLOW3\MVC\Web\RequestBuilder
+	 * @var \TYPO3\FLOW3\MVC\Web\RequestBuilder
 	 */
 	protected $builder;
 
@@ -68,22 +68,22 @@ class RequestBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	protected function setUpRequestBuilder() {
 		if ($this->requestUri === NULL) {
-			$this->requestUri = new \F3\FLOW3\Property\DataType\Uri('http://localhost/foo?someArgument=GETArgument');
+			$this->requestUri = new \TYPO3\FLOW3\Property\DataType\Uri('http://localhost/foo?someArgument=GETArgument');
 		}
 
-		$baseUri = new \F3\FLOW3\Property\DataType\Uri('http://localhost');
+		$baseUri = new \TYPO3\FLOW3\Property\DataType\Uri('http://localhost');
 
-		$this->mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array('getRequestUri', 'getBaseUri', 'getRequestMethod'), array(), '', FALSE);
+		$this->mockEnvironment = $this->getMock('TYPO3\FLOW3\Utility\Environment', array('getRequestUri', 'getBaseUri', 'getRequestMethod'), array(), '', FALSE);
 		$this->mockEnvironment->expects($this->any())->method('getRequestMethod')->will($this->returnValue('GET'));
 		$this->mockEnvironment->expects($this->any())->method('getRequestUri')->will($this->returnValue($this->requestUri));
 		$this->mockEnvironment->expects($this->any())->method('getBaseUri')->will($this->returnValue($baseUri));
 
-		$this->mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\ConfigurationManager', array('getConfiguration'), array(), '', FALSE);
+		$this->mockConfigurationManager = $this->getMock('TYPO3\FLOW3\Configuration\ConfigurationManager', array('getConfiguration'), array(), '', FALSE);
 		$this->mockConfigurationManager->expects($this->once())->method('getConfiguration')->will($this->returnValue(array()));
 
-		$this->mockRouter = $this->getMock('F3\FLOW3\MVC\Web\Routing\RouterInterface', array('route', 'setRoutesConfiguration', 'resolve', 'getControllerObjectName'));
+		$this->mockRouter = $this->getMock('TYPO3\FLOW3\MVC\Web\Routing\RouterInterface', array('route', 'setRoutesConfiguration', 'resolve', 'getControllerObjectName'));
 
-		$this->builder = new \F3\FLOW3\MVC\Web\RequestBuilder();
+		$this->builder = new \TYPO3\FLOW3\MVC\Web\RequestBuilder();
 		$this->builder->injectEnvironment($this->mockEnvironment);
 		$this->builder->injectConfigurationManager($this->mockConfigurationManager);
 		$this->builder->injectRouter($this->mockRouter);
@@ -97,7 +97,7 @@ class RequestBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$this->setUpRequestBuilder();
 
 		$request = $this->builder->build();
-		$this->assertInstanceOf('F3\FLOW3\MVC\Web\Request', $request);
+		$this->assertInstanceOf('TYPO3\FLOW3\MVC\Web\Request', $request);
 	}
 
 	/**
@@ -209,18 +209,18 @@ class RequestBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
 			'argument6' => 'argument6Value',
 		);
 
-		$mockRequestUri = $this->getMock('F3\FLOW3\Property\DataType\Uri', array(), array(), '', FALSE);
+		$mockRequestUri = $this->getMock('TYPO3\FLOW3\Property\DataType\Uri', array(), array(), '', FALSE);
 		$mockRequestUri->expects($this->once())->method('getArguments')->will($this->returnValue($getArguments));
 
-		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
+		$mockEnvironment = $this->getMock('TYPO3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
 		$mockEnvironment->expects($this->any())->method('getRawPostArguments')->will($this->returnValue($postArguments));
 		$mockEnvironment->expects($this->any())->method('getUploadedFiles')->will($this->returnValue(array()));
 
-		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array('getMethod', 'getRequestUri'), array(), '', FALSE);
+		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\Request', array('getMethod', 'getRequestUri'), array(), '', FALSE);
 		$mockRequest->expects($this->any())->method('getRequestUri')->will($this->returnValue($mockRequestUri));
 		$mockRequest->expects($this->any())->method('getMethod')->will($this->returnValue('POST'));
 
-		$builder = $this->getAccessibleMock('F3\FLOW3\MVC\Web\RequestBuilder', array('dummy'), array(), '', FALSE);
+		$builder = $this->getAccessibleMock('TYPO3\FLOW3\MVC\Web\RequestBuilder', array('dummy'), array(), '', FALSE);
 		$builder->injectEnvironment($mockEnvironment);
 		$builder->_call('setArgumentsFromRawRequestData', $mockRequest);
 
@@ -314,18 +314,18 @@ class RequestBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
 			)
 		);
 
-		$mockRequestUri = $this->getMock('F3\FLOW3\Property\DataType\Uri', array(), array(), '', FALSE);
+		$mockRequestUri = $this->getMock('TYPO3\FLOW3\Property\DataType\Uri', array(), array(), '', FALSE);
 		$mockRequestUri->expects($this->once())->method('getArguments')->will($this->returnValue(array()));
 
-		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
+		$mockEnvironment = $this->getMock('TYPO3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
 		$mockEnvironment->expects($this->any())->method('getRawPostArguments')->will($this->returnValue($postArguments));
 		$mockEnvironment->expects($this->any())->method('getUploadedFiles')->will($this->returnValue($uploadedFiles));
 
-		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array('getMethod', 'getRequestUri'), array(), '', FALSE);
+		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\Request', array('getMethod', 'getRequestUri'), array(), '', FALSE);
 		$mockRequest->expects($this->any())->method('getRequestUri')->will($this->returnValue($mockRequestUri));
 		$mockRequest->expects($this->any())->method('getMethod')->will($this->returnValue('POST'));
 
-		$builder = $this->getAccessibleMock('F3\FLOW3\MVC\Web\RequestBuilder', array('dummy'), array(), '', FALSE);
+		$builder = $this->getAccessibleMock('TYPO3\FLOW3\MVC\Web\RequestBuilder', array('dummy'), array(), '', FALSE);
 		$builder->injectEnvironment($mockEnvironment);
 		$builder->_call('setArgumentsFromRawRequestData', $mockRequest);
 

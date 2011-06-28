@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\Reflection;
+namespace TYPO3\FLOW3\Tests\Unit\Reflection;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,15 +26,15 @@ namespace F3\FLOW3\Tests\Unit\Reflection;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class ParameterReflectionTest extends \F3\FLOW3\Tests\UnitTestCase {
+class ParameterReflectionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getDeclaringClassReturnsFLOW3sClassReflection($dummy = NULL) {
-		$parameter = new \F3\FLOW3\Reflection\ParameterReflection(array(__CLASS__, 'fixtureMethod'), 'arg2');
-		$this->assertInstanceOf('F3\FLOW3\Reflection\ClassReflection', $parameter->getDeclaringClass());
+		$parameter = new \TYPO3\FLOW3\Reflection\ParameterReflection(array(__CLASS__, 'fixtureMethod'), 'arg2');
+		$this->assertInstanceOf('TYPO3\FLOW3\Reflection\ClassReflection', $parameter->getDeclaringClass());
 	}
 
 	/**
@@ -42,8 +42,8 @@ class ParameterReflectionTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getClassReturnsFLOW3sClassReflection($dummy = NULL) {
-		$parameter = new \F3\FLOW3\Reflection\ParameterReflection(array(__CLASS__, 'fixtureMethod'), 'arg1');
-		$this->assertInstanceOf('F3\FLOW3\Reflection\ClassReflection', $parameter->getClass());
+		$parameter = new \TYPO3\FLOW3\Reflection\ParameterReflection(array(__CLASS__, 'fixtureMethod'), 'arg1');
+		$this->assertInstanceOf('TYPO3\FLOW3\Reflection\ClassReflection', $parameter->getClass());
 	}
 
 	/**

@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Functional\AOP;
+namespace TYPO3\FLOW3\Tests\Functional\AOP;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,7 +26,7 @@ namespace F3\FLOW3\Tests\Functional\AOP;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class FrameworkTest extends \F3\FLOW3\Tests\FunctionalTestCase {
+class FrameworkTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
@@ -64,8 +64,8 @@ class FrameworkTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 	 */
 	public function containWithSplObjectStorageInRuntimeEvaluation() {
 		$targetClass = new Fixtures\TargetClass01();
-		$name = new \F3\FLOW3\Tests\Functional\AOP\Fixtures\Name('FLOW3');
-		$otherName = new \F3\FLOW3\Tests\Functional\AOP\Fixtures\Name('TYPO3');
+		$name = new \TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\Name('FLOW3');
+		$otherName = new \TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\Name('TYPO3');
 		$splObjectStorage = new \SplObjectStorage();
 		$splObjectStorage->attach($name);
 		$targetClass->setCurrentName($name);
@@ -90,7 +90,7 @@ class FrameworkTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function adviceInformationIsAlsoBuiltWhenTheTargetClassIsUnserialized() {
-		$className = 'F3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01';
+		$className = 'TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01';
 		$targetClass = unserialize('O:' . strlen($className) . ':"' . $className . '":0:{};');
 		$this->assertSame('Hello, me', $targetClass->greet('FLOW3'));
 	}
@@ -141,10 +141,10 @@ class FrameworkTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function resultOfGreetObjectMethodIsModifiedByAdvice() {
-		$targetClass = $this->objectManager->get('F3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01');
-		$name = new \F3\FLOW3\Tests\Functional\AOP\Fixtures\Name('TYPO3');
+		$targetClass = $this->objectManager->get('TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01');
+		$name = new \TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\Name('TYPO3');
 		$this->assertSame('Hello, old friend', $targetClass->greetObject($name), 'Aspect should greet with "old friend" if the name property equals "TYPO3"');
-		$name = new \F3\FLOW3\Tests\Functional\AOP\Fixtures\Name('Christopher');
+		$name = new \TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\Name('Christopher');
 		$this->assertSame('Hello, Christopher', $targetClass->greetObject($name));
 	}
 
@@ -153,12 +153,12 @@ class FrameworkTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function thisIsSupportedInMethodRuntimeCondition() {
-		$targetClass = $this->objectManager->get('F3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01');
-		$name = new \F3\FLOW3\Tests\Functional\AOP\Fixtures\Name('Phoenix');
+		$targetClass = $this->objectManager->get('TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01');
+		$name = new \TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\Name('Phoenix');
 		$targetClass->setCurrentName($name);
 		$this->assertSame('Hello, you', $targetClass->greetObject($name), 'Aspect should greet with "you" if the current name equals the name argument');
 
-		$name = new \F3\FLOW3\Tests\Functional\AOP\Fixtures\Name('Christopher');
+		$name = new \TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\Name('Christopher');
 		$targetClass->setCurrentName(NULL);
 		$this->assertSame('Hello, Christopher', $targetClass->greetObject($name), 'Aspect should greet with given name if the current name is not equal to the name argument');
 	}
@@ -172,7 +172,7 @@ class FrameworkTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 	public function interfaceWithMethodCanBeIntroduced() {
 		$targetClass = new Fixtures\TargetClass03();
 
-		$this->assertInstanceOf('F3\FLOW3\Tests\Functional\AOP\Fixtures\Introduced01Interface', $targetClass);
+		$this->assertInstanceOf('TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\Introduced01Interface', $targetClass);
 		$this->assertTrue(method_exists($targetClass, 'introducedMethod01'));
 	}
 

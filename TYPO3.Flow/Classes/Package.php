@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3;
+namespace TYPO3\FLOW3;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -21,7 +21,7 @@ namespace F3\FLOW3;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \F3\FLOW3\Package\Package as BasePackage;
+use \TYPO3\FLOW3\Package\Package as BasePackage;
 
 /**
  * The FLOW3 Package
@@ -33,21 +33,21 @@ class Package extends BasePackage {
 	/**
 	 * Invokes custom PHP code directly after the package manager has been initialized.
 	 *
-	 * @param \F3\FLOW3\Core\Bootstrap $bootstrap The current bootstrap
+	 * @param \TYPO3\FLOW3\Core\Bootstrap $bootstrap The current bootstrap
 	 * @return void
 	 */
-	public function boot(\F3\FLOW3\Core\Bootstrap $bootstrap) {
+	public function boot(\TYPO3\FLOW3\Core\Bootstrap $bootstrap) {
 		$bootstrap->registerCompiletimeCommandController('typo3.flow3:core');
 		$bootstrap->registerCompiletimeCommandController('typo3.flow3:cache');
 
 		$dispatcher = $bootstrap->getSignalSlotDispatcher();
-		$dispatcher->connect('F3\FLOW3\Core\Bootstrap', 'finishedRuntimeRun', 'F3\FLOW3\Persistence\PersistenceManagerInterface', 'persistAll');
-		$dispatcher->connect('F3\FLOW3\Core\Bootstrap', 'dispatchedCommandLineSlaveRequest', 'F3\FLOW3\Persistence\PersistenceManagerInterface', 'persistAll');
-		$dispatcher->connect('F3\FLOW3\Core\Bootstrap', 'bootstrapShuttingDown', 'F3\FLOW3\Configuration\ConfigurationManager', 'shutdown');
-		$dispatcher->connect('F3\FLOW3\Core\Bootstrap', 'bootstrapShuttingDown', 'F3\FLOW3\Object\ObjectManagerInterface', 'shutdown');
-		$dispatcher->connect('F3\FLOW3\Core\Bootstrap', 'bootstrapShuttingDown', 'F3\FLOW3\Reflection\ReflectionService', 'saveToCache');
+		$dispatcher->connect('TYPO3\FLOW3\Core\Bootstrap', 'finishedRuntimeRun', 'TYPO3\FLOW3\Persistence\PersistenceManagerInterface', 'persistAll');
+		$dispatcher->connect('TYPO3\FLOW3\Core\Bootstrap', 'dispatchedCommandLineSlaveRequest', 'TYPO3\FLOW3\Persistence\PersistenceManagerInterface', 'persistAll');
+		$dispatcher->connect('TYPO3\FLOW3\Core\Bootstrap', 'bootstrapShuttingDown', 'TYPO3\FLOW3\Configuration\ConfigurationManager', 'shutdown');
+		$dispatcher->connect('TYPO3\FLOW3\Core\Bootstrap', 'bootstrapShuttingDown', 'TYPO3\FLOW3\Object\ObjectManagerInterface', 'shutdown');
+		$dispatcher->connect('TYPO3\FLOW3\Core\Bootstrap', 'bootstrapShuttingDown', 'TYPO3\FLOW3\Reflection\ReflectionService', 'saveToCache');
 
-		$dispatcher->connect('F3\FLOW3\Command\CoreCommandController', 'finishedCompilationRun', 'F3\FLOW3\Security\Policy\PolicyService', 'savePolicyCache');
+		$dispatcher->connect('TYPO3\FLOW3\Command\CoreCommandController', 'finishedCompilationRun', 'TYPO3\FLOW3\Security\Policy\PolicyService', 'savePolicyCache');
 	}
 }
 

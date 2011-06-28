@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\MVC\View;
+namespace TYPO3\FLOW3\Tests\Unit\MVC\View;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,15 +26,15 @@ namespace F3\FLOW3\Tests\Unit\MVC\View;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class NotFoundViewTest extends \F3\FLOW3\Tests\UnitTestCase {
+class NotFoundViewTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
-	 * @var \F3\FLOW3\MVC\Controller\ControllerContext
+	 * @var \TYPO3\FLOW3\MVC\Controller\ControllerContext
 	 */
 	protected $controllerContext;
 
 	/**
-	 * @var \F3\FLOW3\MVC\View\NotFoundView
+	 * @var \TYPO3\FLOW3\MVC\View\NotFoundView
 	 */
 	protected $view;
 
@@ -42,15 +42,15 @@ class NotFoundViewTest extends \F3\FLOW3\Tests\UnitTestCase {
 		\vfsStreamWrapper::register();
 		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('testDirectory'));
 
-		$this->view = $this->getMock('F3\FLOW3\MVC\View\NotFoundView', array('getTemplatePathAndFilename'));
+		$this->view = $this->getMock('TYPO3\FLOW3\MVC\View\NotFoundView', array('getTemplatePathAndFilename'));
 
-		$this->controllerContext = $this->getMock('F3\FLOW3\MVC\Controller\ControllerContext', array('getRequest'), array(), '', FALSE);
+		$this->controllerContext = $this->getMock('TYPO3\FLOW3\MVC\Controller\ControllerContext', array('getRequest'), array(), '', FALSE);
 		$this->view->setControllerContext($this->controllerContext);
 	}
 
 	/**
 	 * @test
-	 * @expectedException \F3\FLOW3\MVC\Exception
+	 * @expectedException \TYPO3\FLOW3\MVC\Exception
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function renderThrowsExceptionIfNoRequestIsAvailable() {
@@ -64,7 +64,7 @@ class NotFoundViewTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function renderReturnsContentOfTemplateReturnedByGetTemplatePathAndFilename() {
-		$mockRequest = $this->getMock('\F3\FLOW3\MVC\RequestInterface');
+		$mockRequest = $this->getMock('\TYPO3\FLOW3\MVC\RequestInterface');
 		$this->controllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($mockRequest));
 
 		$templateUrl = \vfsStream::url('testDirectory') . '/template.html';
@@ -79,7 +79,7 @@ class NotFoundViewTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function renderReplacesErrorMessageMarker() {
-		$mockRequest = $this->getMock('\F3\FLOW3\MVC\RequestInterface');
+		$mockRequest = $this->getMock('\TYPO3\FLOW3\MVC\RequestInterface');
 		$this->controllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($mockRequest));
 
 		$templateUrl = \vfsStream::url('testDirectory') . '/template.html';
@@ -96,7 +96,7 @@ class NotFoundViewTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function renderReplacesErrorMessageMarkerWithEmptyStringIfNoErrorMessageIsSet() {
-		$mockRequest = $this->getMock('\F3\FLOW3\MVC\RequestInterface');
+		$mockRequest = $this->getMock('\TYPO3\FLOW3\MVC\RequestInterface');
 		$this->controllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($mockRequest));
 
 		$templateUrl = \vfsStream::url('testDirectory') . '/template.html';
@@ -111,7 +111,7 @@ class NotFoundViewTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function renderReplacesBaseUriMarkerIfRequestIsWebRequest() {
-		$mockRequest = $this->getMock('\F3\FLOW3\MVC\Web\Request', array('getBaseUri'));
+		$mockRequest = $this->getMock('\TYPO3\FLOW3\MVC\Web\Request', array('getBaseUri'));
 		$mockRequest->expects($this->any())->method('getBaseUri')->will($this->returnValue('someBaseUri'));
 		$this->controllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($mockRequest));
 
@@ -127,7 +127,7 @@ class NotFoundViewTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function renderDoesNotReplaceBaseUriMarkerIfRequestIsNoWebRequest() {
-		$mockRequest = $this->getMock('\F3\FLOW3\MVC\RequestInterface');
+		$mockRequest = $this->getMock('\TYPO3\FLOW3\MVC\RequestInterface');
 		$mockRequest->expects($this->never())->method('getBaseUri');
 		$this->controllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($mockRequest));
 
@@ -143,12 +143,12 @@ class NotFoundViewTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function callingNonExistingMethodsWontThrowAnException() {
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
-		$mockPackageManager = $this->getMock('F3\FLOW3\Package\PackageManagerInterface', array(), array(), '', FALSE);
-		$mockResourceManager = $this->getMock('F3\FLOW3\Resource\ResourceManager', array(), array(), '', FALSE);
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
+		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
+		$mockPackageManager = $this->getMock('TYPO3\FLOW3\Package\PackageManagerInterface', array(), array(), '', FALSE);
+		$mockResourceManager = $this->getMock('TYPO3\FLOW3\Resource\ResourceManager', array(), array(), '', FALSE);
+		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
 
-		$view = new \F3\FLOW3\MVC\View\NotFoundView($mockObjectManager, $mockPackageManager, $mockResourceManager, $mockObjectManager);
+		$view = new \TYPO3\FLOW3\MVC\View\NotFoundView($mockObjectManager, $mockPackageManager, $mockResourceManager, $mockObjectManager);
 		$view->nonExistingMethod();
 	}
 }

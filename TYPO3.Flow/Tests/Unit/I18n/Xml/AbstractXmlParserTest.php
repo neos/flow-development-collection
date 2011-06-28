@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\I18n\Xml;
+namespace TYPO3\FLOW3\Tests\Unit\I18n\Xml;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,7 +26,7 @@ namespace F3\FLOW3\Tests\Unit\I18n\Xml;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class AbstractXmlParserTest extends \F3\FLOW3\Tests\UnitTestCase {
+class AbstractXmlParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
@@ -35,20 +35,20 @@ class AbstractXmlParserTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function invokesDoParsingFromRootMethodForActualParsing() {
 		$sampleXmlFilePath = __DIR__ . '/../Fixtures/MockCldrData.xml';
 
-		$parser = $this->getAccessibleMock('F3\FLOW3\I18n\Xml\AbstractXmlParser', array('doParsingFromRoot'));
+		$parser = $this->getAccessibleMock('TYPO3\FLOW3\I18n\Xml\AbstractXmlParser', array('doParsingFromRoot'));
 		$parser->expects($this->once())->method('doParsingFromRoot');
 		$parser->getParsedData($sampleXmlFilePath);
 	}
 
 	/**
 	 * @test
-	 * @expectedException \F3\FLOW3\I18n\Xml\Exception\InvalidXmlFileException
+	 * @expectedException \TYPO3\FLOW3\I18n\Xml\Exception\InvalidXmlFileException
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function throwsExceptionWhenBadFilenameGiven() {
 		$mockFilenamePath = 'foo';
 
-		$parser = $this->getAccessibleMock('F3\FLOW3\I18n\Xml\AbstractXmlParser', array('doParsingFromRoot'));
+		$parser = $this->getAccessibleMock('TYPO3\FLOW3\I18n\Xml\AbstractXmlParser', array('doParsingFromRoot'));
 		$parser->getParsedData($mockFilenamePath);
 	}
 }

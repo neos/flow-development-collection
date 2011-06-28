@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\Property;
+namespace TYPO3\FLOW3\Tests\Unit\Property;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -27,18 +27,18 @@ require_once (__DIR__ . '/../Fixtures/ClassWithSetters.php');
  * Testcase for the Property Mapper
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
- * @covers \F3\FLOW3\Property\PropertyMappingConfigurationBuilder
+ * @covers \TYPO3\FLOW3\Property\PropertyMappingConfigurationBuilder
  */
-class PropertyMappingConfigurationBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
+class PropertyMappingConfigurationBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 *
-	 * @var \F3\FLOW3\Property\PropertyMappingConfigurationBuilder
+	 * @var \TYPO3\FLOW3\Property\PropertyMappingConfigurationBuilder
 	 */
 	protected $propertyMappingConfigurationBuilder;
 
 	public function setUp() {
-		$this->propertyMappingConfigurationBuilder = new \F3\FLOW3\Property\PropertyMappingConfigurationBuilder();
+		$this->propertyMappingConfigurationBuilder = new \TYPO3\FLOW3\Property\PropertyMappingConfigurationBuilder();
 	}
 
 	/**
@@ -47,11 +47,11 @@ class PropertyMappingConfigurationBuilderTest extends \F3\FLOW3\Tests\UnitTestCa
 	 */
 	public function getTargetPropertyNameShouldReturnTheUnmodifiedPropertyNameWithoutConfiguration() {
 		$defaultConfiguration = $this->propertyMappingConfigurationBuilder->build();
-		$this->assertTrue($defaultConfiguration->getConfigurationValue('F3\FLOW3\Property\TypeConverter\PersistentObjectConverter', \F3\FLOW3\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED));
-		$this->assertTrue($defaultConfiguration->getConfigurationValue('F3\FLOW3\Property\TypeConverter\PersistentObjectConverter', \F3\FLOW3\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED));
+		$this->assertTrue($defaultConfiguration->getConfigurationValue('TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter', \TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED));
+		$this->assertTrue($defaultConfiguration->getConfigurationValue('TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter', \TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED));
 
-		$this->assertNull($defaultConfiguration->getConfigurationFor('foo')->getConfigurationValue('F3\FLOW3\Property\TypeConverter\PersistentObjectConverter', \F3\FLOW3\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED));
-		$this->assertNull($defaultConfiguration->getConfigurationFor('foo')->getConfigurationValue('F3\FLOW3\Property\TypeConverter\PersistentObjectConverter', \F3\FLOW3\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED));
+		$this->assertNull($defaultConfiguration->getConfigurationFor('foo')->getConfigurationValue('TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter', \TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED));
+		$this->assertNull($defaultConfiguration->getConfigurationFor('foo')->getConfigurationValue('TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter', \TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED));
 	}
 }
 ?>

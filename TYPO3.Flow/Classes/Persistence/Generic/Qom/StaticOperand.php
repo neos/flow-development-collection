@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Persistence\Generic\Qom;
+namespace TYPO3\FLOW3\Persistence\Generic\Qom;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -29,7 +29,7 @@ namespace F3\FLOW3\Persistence\Generic\Qom;
  * @api
  * @scope prototype
  */
-class StaticOperand extends \F3\FLOW3\Persistence\Generic\Qom\Operand {
+class StaticOperand extends \TYPO3\FLOW3\Persistence\Generic\Qom\Operand {
 
 }
 

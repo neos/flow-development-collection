@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\Utility;
+namespace TYPO3\FLOW3\Tests\Unit\Utility;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,7 +26,7 @@ namespace F3\FLOW3\Tests\Unit\Utility;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class TypeHandlingTest extends \F3\FLOW3\Tests\UnitTestCase {
+class TypeHandlingTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
@@ -34,7 +34,7 @@ class TypeHandlingTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function parseTypeThrowsExceptionOnInvalidType() {
-		\F3\FLOW3\Utility\TypeHandling::parseType('something not a type');
+		\TYPO3\FLOW3\Utility\TypeHandling::parseType('something not a type');
 	}
 
 	/**
@@ -43,7 +43,7 @@ class TypeHandlingTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function parseTypeThrowsExceptionOnInvalidElementTypeHint() {
-		\F3\FLOW3\Utility\TypeHandling::parseType('string<integer>');
+		\TYPO3\FLOW3\Utility\TypeHandling::parseType('string<integer>');
 	}
 
 	/**
@@ -71,7 +71,7 @@ class TypeHandlingTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function parseTypeReturnsArrayWithInformation($type, $expectedResult) {
 		$this->assertEquals(
-			\F3\FLOW3\Utility\TypeHandling::parseType($type),
+			\TYPO3\FLOW3\Utility\TypeHandling::parseType($type),
 			$expectedResult
 		);
 	}
@@ -95,7 +95,7 @@ class TypeHandlingTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function normalizeTypesReturnsNormalizedType($type, $normalized) {
-		$this->assertEquals(\F3\FLOW3\Utility\TypeHandling::normalizeType($type), $normalized);
+		$this->assertEquals(\TYPO3\FLOW3\Utility\TypeHandling::normalizeType($type), $normalized);
 	}
 
 	/**
@@ -118,7 +118,7 @@ class TypeHandlingTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function isLiteralReturnsFalseForNonLiteralTypes($type) {
-		$this->assertFalse(\F3\FLOW3\Utility\TypeHandling::isLiteral($type));
+		$this->assertFalse(\TYPO3\FLOW3\Utility\TypeHandling::isLiteral($type));
 	}
 
 	/**
@@ -143,7 +143,7 @@ class TypeHandlingTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function isLiteralReturnsTrueForLiteralType($type) {
-		$this->assertTrue(\F3\FLOW3\Utility\TypeHandling::isLiteral($type));
+		$this->assertTrue(\TYPO3\FLOW3\Utility\TypeHandling::isLiteral($type));
 	}
 }
 ?>

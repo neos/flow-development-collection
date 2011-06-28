@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\Error;
+namespace TYPO3\FLOW3\Tests\Unit\Error;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,7 +26,7 @@ namespace F3\FLOW3\Tests\Unit\Error;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class ErrorTest extends \F3\FLOW3\Tests\UnitTestCase {
+class ErrorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
@@ -34,7 +34,7 @@ class ErrorTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function theConstructorSetsTheErrorMessageCorrectly() {
 		$errorMessage = 'The message';
-		$error = new \F3\FLOW3\Error\Error($errorMessage, 0);
+		$error = new \TYPO3\FLOW3\Error\Error($errorMessage, 0);
 
 		$this->assertEquals($errorMessage, $error->getMessage());
 	}
@@ -45,7 +45,7 @@ class ErrorTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function theConstructorSetsTheErrorCodeCorrectly() {
 		$errorCode = 123456789;
-		$error = new \F3\FLOW3\Error\Error('', $errorCode);
+		$error = new \TYPO3\FLOW3\Error\Error('', $errorCode);
 
 		$this->assertEquals($errorCode, $error->getCode());
 	}

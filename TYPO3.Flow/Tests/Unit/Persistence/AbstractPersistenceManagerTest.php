@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\Persistence;
+namespace TYPO3\FLOW3\Tests\Unit\Persistence;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,15 +26,15 @@ namespace F3\FLOW3\Tests\Unit\Persistence;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class AbstractPersistenceManagerTest extends \F3\FLOW3\Tests\UnitTestCase {
+class AbstractPersistenceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
-	 * @var \F3\FLOW3\Tests\Unit\Persistence\AbstractPersistenceManager
+	 * @var \TYPO3\FLOW3\Tests\Unit\Persistence\AbstractPersistenceManager
 	 */
 	protected $abstractPersistenceManager;
 
 	public function setUp() {
-		$this->abstractPersistenceManager = $this->getMock('F3\FLOW3\Persistence\AbstractPersistenceManager', array('initialize', 'persistAll', 'isNewObject', 'getObjectByIdentifier', 'createQueryForType', 'add', 'remove', 'merge', 'getIdentifierByObject'));
+		$this->abstractPersistenceManager = $this->getMock('TYPO3\FLOW3\Persistence\AbstractPersistenceManager', array('initialize', 'persistAll', 'isNewObject', 'getObjectByIdentifier', 'createQueryForType', 'add', 'remove', 'merge', 'getIdentifierByObject'));
 	}
 
 	/**
@@ -52,7 +52,7 @@ class AbstractPersistenceManagerTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \F3\FLOW3\Persistence\Exception\UnknownObjectException
+	 * @expectedException \TYPO3\FLOW3\Persistence\Exception\UnknownObjectException
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function convertObjectToIdentityArrayThrowsExceptionIfIdentityForTheGivenObjectCantBeDetermined() {

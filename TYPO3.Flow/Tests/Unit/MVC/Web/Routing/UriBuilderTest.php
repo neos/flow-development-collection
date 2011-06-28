@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\MVC\Web\Routing;
+namespace TYPO3\FLOW3\Tests\Unit\MVC\Web\Routing;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,25 +26,25 @@ namespace F3\FLOW3\Tests\Unit\MVC\Web\Routing;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class UriBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
+class UriBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
-	 * @var \F3\FLOW3\MVC\Web\Routing\RouterInterface
+	 * @var \TYPO3\FLOW3\MVC\Web\Routing\RouterInterface
 	 */
 	protected $mockRouter;
 
 	/**
-	 * @var \F3\FLOW3\MVC\Web\Request
+	 * @var \TYPO3\FLOW3\MVC\Web\Request
 	 */
 	protected $mockRequest;
 
 	/**
-	 * @var \F3\FLOW3\MVC\Web\SubRequest
+	 * @var \TYPO3\FLOW3\MVC\Web\SubRequest
 	 */
 	protected $mockSubRequest;
 
 	/**
-	 * @var \F3\FLOW3\MVC\Web\Routing\UriBuilder
+	 * @var \TYPO3\FLOW3\MVC\Web\Routing\UriBuilder
 	 */
 	protected $uriBuilder;
 
@@ -54,15 +54,15 @@ class UriBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setUp() {
-		$this->mockRouter = $this->getMock('F3\FLOW3\MVC\Web\Routing\RouterInterface');
-		$this->mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request');
-		$this->mockSubRequest = $this->getMock('F3\FLOW3\MVC\Web\SubRequest', array(), array(), '', FALSE);
+		$this->mockRouter = $this->getMock('TYPO3\FLOW3\MVC\Web\Routing\RouterInterface');
+		$this->mockRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\Request');
+		$this->mockSubRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\SubRequest', array(), array(), '', FALSE);
 		$this->mockSubRequest->expects($this->any())->method('getRootRequest')->will($this->returnValue($this->mockRequest));
 		$this->mockSubRequest->expects($this->any())->method('getArgumentNamespace')->will($this->returnValue('CurrentNamespace'));
-		$environment = $this->getMock('F3\FLOW3\Utility\Environment', array('isRewriteEnabled'), array(), '', FALSE);
+		$environment = $this->getMock('TYPO3\FLOW3\Utility\Environment', array('isRewriteEnabled'), array(), '', FALSE);
 		$environment->expects($this->any())->method('isRewriteEnabled')->will($this->returnValue(TRUE));
 
-		$this->uriBuilder = new \F3\FLOW3\MVC\Web\Routing\UriBuilder();
+		$this->uriBuilder = new \TYPO3\FLOW3\MVC\Web\Routing\UriBuilder();
 		$this->uriBuilder->injectRouter($this->mockRouter);
 		$this->uriBuilder->injectEnvironment($environment);
 		$this->uriBuilder->setRequest($this->mockRequest);
@@ -369,7 +369,7 @@ class UriBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function buildPrependsIndexFileIfRewriteUrlsIsOff() {
 		$this->mockRouter->expects($this->once())->method('resolve')->will($this->returnValue('resolvedUri'));
-		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array('isRewriteEnabled'), array(), '', FALSE);
+		$mockEnvironment = $this->getMock('TYPO3\FLOW3\Utility\Environment', array('isRewriteEnabled'), array(), '', FALSE);
 		$this->uriBuilder->injectEnvironment($mockEnvironment);
 
 		$expectedResult = 'index.php/resolvedUri';
@@ -406,7 +406,7 @@ class UriBuilderTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setRequestResetsUriBuilder() {
-		$uriBuilder = $this->getAccessibleMock('F3\FLOW3\MVC\Web\Routing\UriBuilder', array('reset'));
+		$uriBuilder = $this->getAccessibleMock('TYPO3\FLOW3\MVC\Web\Routing\UriBuilder', array('reset'));
 		$uriBuilder->expects($this->once())->method('reset');
 		$uriBuilder->setRequest($this->mockRequest);
 	}

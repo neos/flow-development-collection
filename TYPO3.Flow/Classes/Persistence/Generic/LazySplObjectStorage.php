@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Persistence\Generic;
+namespace TYPO3\FLOW3\Persistence\Generic;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -37,16 +37,16 @@ class LazySplObjectStorage extends \SplObjectStorage {
 	protected $objectIdentifiers = array();
 
 	/**
-	 * @var \F3\FLOW3\Persistence\PersistenceManagerInterface
+	 * @var \TYPO3\FLOW3\Persistence\PersistenceManagerInterface
 	 */
 	protected $persistenceManager;
 
 	/**
-	 * @param \F3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager
+	 * @param \TYPO3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectPersistenceManager(\F3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager) {
+	public function injectPersistenceManager(\TYPO3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager) {
 		$this->persistenceManager = $persistenceManager;
 	}
 
@@ -69,7 +69,7 @@ class LazySplObjectStorage extends \SplObjectStorage {
 			foreach ($this->objectIdentifiers as $identifier) {
 				try {
 					parent::attach($this->persistenceManager->getObjectByIdentifier($identifier));
-				} catch (\F3\FLOW3\Persistence\Generic\Exception\InvalidObjectDataException $e) {
+				} catch (\TYPO3\FLOW3\Persistence\Generic\Exception\InvalidObjectDataException $e) {
 					// when security query rewriting holds back an object here, we skip it...
 				}
 			}

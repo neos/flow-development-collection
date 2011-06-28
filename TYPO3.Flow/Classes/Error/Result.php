@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Error;
+namespace TYPO3\FLOW3\Error;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -31,64 +31,64 @@ namespace F3\FLOW3\Error;
 class Result {
 
 	/**
-	 * @var array<\F3\FLOW3\Error\Error>
+	 * @var array<\TYPO3\FLOW3\Error\Error>
 	 */
 	protected $errors = array();
 
 	/**
-	 * @var array<\F3\FLOW3\Error\Warning>
+	 * @var array<\TYPO3\FLOW3\Error\Warning>
 	 */
 	protected $warnings = array();
 
 	/**
-	 * @var array<\F3\FLOW3\Error\Notice>
+	 * @var array<\TYPO3\FLOW3\Error\Notice>
 	 */
 	protected $notices = array();
 
 	/**
 	 * The result objects for the sub properties
 	 *
-	 * @var array<\F3\FLOW3\Error\Result>
+	 * @var array<\TYPO3\FLOW3\Error\Result>
 	 */
 	protected $propertyResults = array();
 
 	/**
 	 * Add an error to the current Result object
 	 *
-	 * @param \F3\FLOW3\Error\Error $error
+	 * @param \TYPO3\FLOW3\Error\Error $error
 	 * @return void
 	 * @api
 	 */
-	public function addError(\F3\FLOW3\Error\Error $error) {
+	public function addError(\TYPO3\FLOW3\Error\Error $error) {
 		$this->errors[] = $error;
 	}
 
 	/**
 	 * Add a warning to the current Result object
 	 *
-	 * @param \F3\FLOW3\Error\Warning $warning
+	 * @param \TYPO3\FLOW3\Error\Warning $warning
 	 * @return void
 	 * @api
 	 */
-	public function addWarning(\F3\FLOW3\Error\Warning $warning) {
+	public function addWarning(\TYPO3\FLOW3\Error\Warning $warning) {
 		$this->warnings[] = $warning;
 	}
 
 	/**
 	 * Add a notice to the current Result object
 	 *
-	 * @param \F3\FLOW3\Error\Notice $notice
+	 * @param \TYPO3\FLOW3\Error\Notice $notice
 	 * @return void
 	 * @api
 	 */
-	public function addNotice(\F3\FLOW3\Error\Notice $notice) {
+	public function addNotice(\TYPO3\FLOW3\Error\Notice $notice) {
 		$this->notices[] = $notice;
 	}
 
 	/**
 	 * Get all errors in the current Result object (non-recursive)
 	 *
-	 * @return array<\F3\FLOW3\Error\Error>
+	 * @return array<\TYPO3\FLOW3\Error\Error>
 	 * @api
 	 */
 	public function getErrors() {
@@ -98,7 +98,7 @@ class Result {
 	/**
 	 * Get all warnings in the current Result object (non-recursive)
 	 *
-	 * @return array<\F3\FLOW3\Error\Warning>
+	 * @return array<\TYPO3\FLOW3\Error\Warning>
 	 * @api
 	 */
 	public function getWarnings() {
@@ -108,7 +108,7 @@ class Result {
 	/**
 	 * Get all notices in the current Result object (non-recursive)
 	 *
-	 * @return array<\F3\FLOW3\Error\Notice>
+	 * @return array<\TYPO3\FLOW3\Error\Notice>
 	 * @api
 	 */
 	public function getNotices() {
@@ -118,7 +118,7 @@ class Result {
 	/**
 	 * Get the first error object of the current Result object (non-recursive)
 	 *
-	 * @return \F3\FLOW3\Error\Error
+	 * @return \TYPO3\FLOW3\Error\Error
 	 * @api
 	 */
 	public function getFirstError() {
@@ -129,7 +129,7 @@ class Result {
 	/**
 	 * Get the first warning object of the current Result object (non-recursive)
 	 *
-	 * @return \F3\FLOW3\Error\Warning
+	 * @return \TYPO3\FLOW3\Error\Warning
 	 * @api
 	 */
 	public function getFirstWarning() {
@@ -140,7 +140,7 @@ class Result {
 	/**
 	 * Get the first notice object of the curren Result object (non-recursive)
 	 *
-	 * @return \F3\FLOW3\Error\Notice
+	 * @return \TYPO3\FLOW3\Error\Notice
 	 * @api
 	 */
 	public function getFirstNotice() {
@@ -155,7 +155,7 @@ class Result {
 	 * for property "foo.bar"
 	 *
 	 * @param string $propertyPath
-	 * @return \F3\FLOW3\Error\Result
+	 * @return \TYPO3\FLOW3\Error\Result
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @api
 	 */
@@ -171,7 +171,7 @@ class Result {
 	 * Internal use only!
 	 *
 	 * @param array $pathSegments
-	 * @return \F3\FLOW3\Error\Result
+	 * @return \TYPO3\FLOW3\Error\Result
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function recurseThroughResult(array $pathSegments) {
@@ -182,7 +182,7 @@ class Result {
 		$propertyName = array_shift($pathSegments);
 
 		if (!isset($this->propertyResults[$propertyName])) {
-			$this->propertyResults[$propertyName] = new \F3\FLOW3\Error\Result();
+			$this->propertyResults[$propertyName] = new \TYPO3\FLOW3\Error\Result();
 		}
 
 		return $this->propertyResults[$propertyName]->recurseThroughResult($pathSegments);
@@ -246,7 +246,7 @@ class Result {
 	 * where the key is the property path where the error occured, and the
 	 * value is a list of all errors (stored as array)
 	 *
-	 * @return array<\F3\FLOW3\Error\Error>
+	 * @return array<\TYPO3\FLOW3\Error\Error>
 	 * @api
 	 */
 	public function getFlattenedErrors() {
@@ -260,7 +260,7 @@ class Result {
 	 * where the key is the property path where the warning occured, and the
 	 * value is a list of all warnings (stored as array)
 	 *
-	 * @return array<\F3\FLOW3\Error\Warning>
+	 * @return array<\TYPO3\FLOW3\Error\Warning>
 	 * @api
 	 */
 	public function getFlattenedWarnings() {
@@ -274,7 +274,7 @@ class Result {
 	 * where the key is the property path where the notice occured, and the
 	 * value is a list of all notices (stored as array)
 	 *
-	 * @return array<\F3\FLOW3\Error\Notice>
+	 * @return array<\TYPO3\FLOW3\Error\Notice>
 	 * @api
 	 */
 	public function getFlattenedNotices() {
@@ -307,12 +307,12 @@ class Result {
 	/**
 	 * Merge the given Result object into this one.
 	 *
-	 * @param \F3\FLOW3\Error\Result $otherResult
+	 * @param \TYPO3\FLOW3\Error\Result $otherResult
 	 * @return void
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @api
 	 */
-	public function merge(\F3\FLOW3\Error\Result $otherResult) {
+	public function merge(\TYPO3\FLOW3\Error\Result $otherResult) {
 		$this->mergeProperty($otherResult, 'getErrors', 'addError');
 		$this->mergeProperty($otherResult, 'getWarnings', 'addWarning');
 		$this->mergeProperty($otherResult, 'getNotices', 'addNotice');
@@ -325,13 +325,13 @@ class Result {
 	/**
 	 * Merge a single property from the other result object.
 	 *
-	 * @param \F3\FLOW3\Error\Result $otherResult
+	 * @param \TYPO3\FLOW3\Error\Result $otherResult
 	 * @param string $getterName
 	 * @param string $adderName
 	 * @return void
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	protected function mergeProperty(\F3\FLOW3\Error\Result $otherResult, $getterName, $adderName) {
+	protected function mergeProperty(\TYPO3\FLOW3\Error\Result $otherResult, $getterName, $adderName) {
 		foreach ($otherResult->$getterName() as $messageInOtherResult) {
 			$this->$adderName($messageInOtherResult);
 		}
@@ -340,7 +340,7 @@ class Result {
 	/**
 	 * Get a list of all sub Result objects available.
 	 *
-	 * @return array<\F3\FLOW3\Erro\Result>
+	 * @return array<\TYPO3\FLOW3\Erro\Result>
 	 */
 	public function getSubResults() {
 		return $this->propertyResults;

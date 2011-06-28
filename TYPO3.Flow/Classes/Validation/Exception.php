@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Validation;
+namespace TYPO3\FLOW3\Validation;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -27,7 +27,7 @@ namespace F3\FLOW3\Validation;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */
-class Exception extends \F3\FLOW3\Exception {
+class Exception extends \TYPO3\FLOW3\Exception {
 
 }
 

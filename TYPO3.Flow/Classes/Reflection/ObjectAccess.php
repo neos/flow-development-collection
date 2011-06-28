@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Reflection;
+namespace TYPO3\FLOW3\Reflection;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -59,7 +59,7 @@ class ObjectAccess {
 	 * @param boolean $forceDirectAccess directly access property using reflection(!)
 	 * @return mixed Value of the property.
 	 * @throws \InvalidArgumentException in case $subject was not an object or $propertyName was not a string
-	 * @throws \F3\FLOW3\Reflection\Exception\PropertyNotAccessibleException if the property was not accessible
+	 * @throws \TYPO3\FLOW3\Reflection\Exception\PropertyNotAccessibleException if the property was not accessible
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
@@ -79,12 +79,12 @@ class ObjectAccess {
 		} else {
 			if ($forceDirectAccess === TRUE) {
 				if (property_exists(get_class($subject), $propertyName)) {
-					$propertyReflection = new \F3\FLOW3\Reflection\PropertyReflection(get_class($subject), $propertyName);
+					$propertyReflection = new \TYPO3\FLOW3\Reflection\PropertyReflection(get_class($subject), $propertyName);
 					return $propertyReflection->getValue($subject);
 				} elseif (property_exists($subject, $propertyName)) {
 					return $subject->$propertyName;
 				} else {
-					throw new \F3\FLOW3\Reflection\Exception\PropertyNotAccessibleException('The property "' . $propertyName . '" on the subject does not exist.', 1302855001);
+					throw new \TYPO3\FLOW3\Reflection\Exception\PropertyNotAccessibleException('The property "' . $propertyName . '" on the subject does not exist.', 1302855001);
 				}
 			} elseif (is_callable(array($subject, 'get' . ucfirst($propertyName)))) {
 				return call_user_func(array($subject, 'get' . ucfirst($propertyName)));
@@ -97,7 +97,7 @@ class ObjectAccess {
 			}
 		}
 
-		throw new \F3\FLOW3\Reflection\Exception\PropertyNotAccessibleException('The property "' . $propertyName . '" on the subject was not accessible.', 1263391473);
+		throw new \TYPO3\FLOW3\Reflection\Exception\PropertyNotAccessibleException('The property "' . $propertyName . '" on the subject was not accessible.', 1263391473);
 	}
 
 	/**
@@ -168,7 +168,7 @@ class ObjectAccess {
 
 		if ($forceDirectAccess === TRUE) {
 			if (property_exists(get_class($subject), $propertyName)) {
-				$propertyReflection = new \F3\FLOW3\Reflection\PropertyReflection(get_class($subject), $propertyName);
+				$propertyReflection = new \TYPO3\FLOW3\Reflection\PropertyReflection(get_class($subject), $propertyName);
 				$propertyReflection->setValue($subject, $propertyValue);
 			} else {
 				$subject->$propertyName = $propertyValue;

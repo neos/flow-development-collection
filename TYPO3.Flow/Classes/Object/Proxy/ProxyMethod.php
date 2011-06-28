@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Object\Proxy;
+namespace TYPO3\FLOW3\Object\Proxy;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -69,7 +69,7 @@ class ProxyMethod {
 	protected $methodParametersCode = '';
 
 	/**
-	 * @var \F3\FLOW3\Reflection\ReflectionService
+	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
@@ -88,11 +88,11 @@ class ProxyMethod {
 	/**
 	 * Injects the Reflection Service
 	 *
-	 * @param \F3\FLOW3\Reflection\ReflectionService $reflectionService
+	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectReflectionService(\F3\FLOW3\Reflection\ReflectionService $reflectionService) {
+	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
 	}
 

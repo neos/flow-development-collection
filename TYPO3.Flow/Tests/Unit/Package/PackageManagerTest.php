@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\Package;
+namespace TYPO3\FLOW3\Tests\Unit\Package;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -21,17 +21,17 @@ namespace F3\FLOW3\Tests\Unit\Package;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \F3\FLOW3\Package\PackageInterface;
+use \TYPO3\FLOW3\Package\PackageInterface;
 
 /**
  * Testcase for the default package manager
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class PackageManagerTest extends \F3\FLOW3\Tests\UnitTestCase {
+class PackageManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
-	 * @var \F3\FLOW3\Package\PackageManager
+	 * @var \TYPO3\FLOW3\Package\PackageManager
 	 */
 	protected $packageManager;
 
@@ -43,9 +43,9 @@ class PackageManagerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	protected function setUp() {
 		\vfsStreamWrapper::register();
 		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('Test'));
-		$mockBootstrap = $this->getMock('F3\FLOW3\Core\Bootstrap', array(), array(), '', FALSE);
-		$mockBootstrap->expects($this->any())->method('getSignalSlotDispatcher')->will($this->returnValue($this->getMock('F3\FLOW3\SignalSlot\Dispatcher')));
-		$this->packageManager = new \F3\FLOW3\Package\PackageManager();
+		$mockBootstrap = $this->getMock('TYPO3\FLOW3\Core\Bootstrap', array(), array(), '', FALSE);
+		$mockBootstrap->expects($this->any())->method('getSignalSlotDispatcher')->will($this->returnValue($this->getMock('TYPO3\FLOW3\SignalSlot\Dispatcher')));
+		$this->packageManager = new \TYPO3\FLOW3\Package\PackageManager();
 
 		mkdir('vfs://Test/Resources');
 		$packageClassTemplateUri = 'vfs://Test/Resources/Package.php.tmpl';
@@ -55,7 +55,7 @@ class PackageManagerTest extends \F3\FLOW3\Tests\UnitTestCase {
 		mkdir('vfs://Test/Packages/Application', 0700, TRUE);
 		mkdir('vfs://Test/Configuration');
 
-		$mockClassLoader = $this->getMock('F3\FLOW3\Core\ClassLoader', array(), array(), '', FALSE);
+		$mockClassLoader = $this->getMock('TYPO3\FLOW3\Core\ClassLoader', array(), array(), '', FALSE);
 
 		$this->packageManager->injectClassLoader($mockClassLoader);
 		$this->packageManager->initialize($mockBootstrap, 'vfs://Test/Packages/', 'vfs://Test/Configuration/PackageStates.php');
@@ -76,13 +76,13 @@ class PackageManagerTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$this->packageManager->createPackage('TYPO3.FLOW3');
 
 		$package = $this->packageManager->getPackage('TYPO3.FLOW3');
-		$this->assertInstanceOf('F3\FLOW3\Package\PackageInterface', $package, 'The result of getPackage() was no valid package object.');
+		$this->assertInstanceOf('TYPO3\FLOW3\Package\PackageInterface', $package, 'The result of getPackage() was no valid package object.');
 	}
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @expectedException \F3\FLOW3\Package\Exception\UnknownPackageException
+	 * @expectedException \TYPO3\FLOW3\Package\Exception\UnknownPackageException
 	 */
 	public function getPackageThrowsExcpetionOnUnknownPackage() {
 		$this->packageManager->getPackage('PrettyUnlikelyThatThisPackageExists');
@@ -93,7 +93,7 @@ class PackageManagerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getCaseSensitivePackageKeyReturnsTheUpperCamelCaseVersionOfAGivenPackageKeyIfThePackageIsRegistered() {
-		$packageManager = $this->getAccessibleMock('F3\FLOW3\Package\PackageManager', array('dummy'), array(), '', FALSE);
+		$packageManager = $this->getAccessibleMock('TYPO3\FLOW3\Package\PackageManager', array('dummy'), array(), '', FALSE);
 		$packageManager->_set('packageKeys', array('acme.testpackage' => 'Acme.TestPackage'));
 		$this->assertEquals('Acme.TestPackage', $packageManager->getCaseSensitivePackageKey('acme.testpackage'));
 	}
@@ -128,7 +128,7 @@ class PackageManagerTest extends \F3\FLOW3\Tests\UnitTestCase {
 			$packagePath = 'vfs://Test/Packages/Application/' . str_replace('.', '/', $packageNamespace) . '/';
 			$packageClassCode = '<?php
 					namespace ' . $packageNamespace . ';
-					class Package extends \F3\FLOW3\Package\Package {}
+					class Package extends \TYPO3\FLOW3\Package\Package {}
 			?>';
 
 			mkdir($packagePath, 0770, TRUE);
@@ -138,7 +138,7 @@ class PackageManagerTest extends \F3\FLOW3\Tests\UnitTestCase {
 			file_put_contents($packagePath . 'Meta/Package.xml', '<xml>...</xml>');
 		}
 
-		$packageManager = $this->getAccessibleMock('F3\FLOW3\Package\PackageManager', array('dummy'), array(), '', FALSE);
+		$packageManager = $this->getAccessibleMock('TYPO3\FLOW3\Package\PackageManager', array('dummy'), array(), '', FALSE);
 		$packageManager->_set('packagesBasePath', 'vfs://Test/Packages/');
 		$packageManager->_set('packageStatesPathAndFilename', 'vfs://Test/Configuration/PackageStates.php');
 
@@ -148,14 +148,14 @@ class PackageManagerTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException F3\FLOW3\Package\Exception\CorruptPackageException
+	 * @expectedException TYPO3\FLOW3\Package\Exception\CorruptPackageException
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function scanAvailablePackagesThrowsAnExceptionWhenItFindsACorruptPackage() {
 		mkdir('vfs://Test/Packages/Application/TYPO3/YetAnotherTestPackage/Meta', 0770, TRUE);
 		file_put_contents('vfs://Test/Packages/Application/TYPO3/YetAnotherTestPackage/Meta/Package.xml', '<xml>...</xml>');
 
-		$packageManager = $this->getAccessibleMock('F3\FLOW3\Package\PackageManager', array('dummy'), array(), '', FALSE);
+		$packageManager = $this->getAccessibleMock('TYPO3\FLOW3\Package\PackageManager', array('dummy'), array(), '', FALSE);
 		$packageManager->_set('packagesBasePath', 'vfs://Test/Packages/');
 		$packageManager->_set('packageStatesPathAndFilename', 'vfs://Test/Configuration/PackageStates.php');
 
@@ -182,7 +182,7 @@ class PackageManagerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function createPackageWritesAPackageMetaFileUsingTheGivenMetaObject() {
-		$metaData = new \F3\FLOW3\Package\MetaData('Acme.YetAnotherTestPackage');
+		$metaData = new \TYPO3\FLOW3\Package\MetaData('Acme.YetAnotherTestPackage');
 		$metaData->setTitle('Yet Another Test Package');
 
 		$package = $this->packageManager->createPackage('Acme.YetAnotherTestPackage', $metaData);
@@ -225,7 +225,7 @@ class PackageManagerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function createPackageThrowsExceptionOnInvalidPackageKey() {
 		try {
 			$this->packageManager->createPackage('Invalid_PackageKey');
-		} catch(\F3\FLOW3\Package\Exception\InvalidPackageKeyException $exception) {
+		} catch(\TYPO3\FLOW3\Package\Exception\InvalidPackageKeyException $exception) {
 		}
 		$this->assertFalse(is_dir('vfs://Test/Packages/Application/Invalid_PackageKey'), 'Package folder with invalid package key was created');
 	}
@@ -234,7 +234,7 @@ class PackageManagerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * Makes sure that duplicate package keys are detected.
 	 *
 	 * @test
-	 * @expectedException F3\FLOW3\Package\Exception\PackageKeyAlreadyExistsException
+	 * @expectedException TYPO3\FLOW3\Package\Exception\PackageKeyAlreadyExistsException
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function createPackageThrowsExceptionForExistingPackageKey() {
@@ -269,7 +269,7 @@ class PackageManagerTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \F3\FLOW3\Package\Exception\ProtectedPackageKeyException
+	 * @expectedException \TYPO3\FLOW3\Package\Exception\ProtectedPackageKeyException
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function deactivatePackageThrowsAnExceptionIfPackageIsProtected() {
@@ -280,7 +280,7 @@ class PackageManagerTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \F3\FLOW3\Package\Exception\UnknownPackageException
+	 * @expectedException \TYPO3\FLOW3\Package\Exception\UnknownPackageException
 	 * @author Thomas Hempel <thomas@typo3.org>
 	 */
 	public function deletePackageThrowsErrorIfPackageIsNotAvailable() {
@@ -289,7 +289,7 @@ class PackageManagerTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \F3\FLOW3\Package\Exception\ProtectedPackageKeyException
+	 * @expectedException \TYPO3\FLOW3\Package\Exception\ProtectedPackageKeyException
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function deletePackageThrowsAnExceptionIfPackageIsProtected() {

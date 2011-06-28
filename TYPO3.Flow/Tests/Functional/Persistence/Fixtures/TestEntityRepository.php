@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Functional\Persistence\Fixtures;
+namespace TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -24,7 +24,7 @@ namespace F3\FLOW3\Tests\Functional\Persistence\Fixtures;
 /**
  * A repository for the test entities
  */
-class TestEntityRepository extends \F3\FLOW3\Persistence\Repository {
+class TestEntityRepository extends \TYPO3\FLOW3\Persistence\Repository {
 
 }
 ?>

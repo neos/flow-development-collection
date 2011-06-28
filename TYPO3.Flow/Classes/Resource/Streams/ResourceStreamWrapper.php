@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Resource\Streams;
+namespace TYPO3\FLOW3\Resource\Streams;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -27,7 +27,7 @@ namespace F3\FLOW3\Resource\Streams;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
-class ResourceStreamWrapper implements \F3\FLOW3\Resource\Streams\StreamWrapperInterface {
+class ResourceStreamWrapper implements \TYPO3\FLOW3\Resource\Streams\StreamWrapperInterface {
 
 	/**
 	 */
@@ -44,19 +44,19 @@ class ResourceStreamWrapper implements \F3\FLOW3\Resource\Streams\StreamWrapperI
 	protected $handle;
 
 	/**
-	 * @var \F3\FLOW3\Property\DataType\Uri
+	 * @var \TYPO3\FLOW3\Property\DataType\Uri
 	 */
 	protected $uri;
 
 	/**
 	 * @inject
-	 * @var \F3\FLOW3\Package\PackageManagerInterface
+	 * @var \TYPO3\FLOW3\Package\PackageManagerInterface
 	 */
 	protected $packageManager;
 
 	/**
 	 * @inject
-	 * @var \F3\FLOW3\Resource\ResourceManager
+	 * @var \TYPO3\FLOW3\Resource\ResourceManager
 	 */
 	protected $resourceManager;
 
@@ -492,11 +492,11 @@ class ResourceStreamWrapper implements \F3\FLOW3\Resource\Streams\StreamWrapperI
 		}
 
 		if (!$this->packageManager->isPackageAvailable($uriParts['host'])) {
-			throw new \F3\FLOW3\Resource\Exception(sprintf('Invalid resource URI "%s": Package "%s" is not available.', $requestedPath, $uriParts['host']), 1309269952);
+			throw new \TYPO3\FLOW3\Resource\Exception(sprintf('Invalid resource URI "%s": Package "%s" is not available.', $requestedPath, $uriParts['host']), 1309269952);
 		}
 
 		$package = $this->packageManager->getPackage($uriParts['host']);
-		$resourcePath = \F3\FLOW3\Utility\Files::concatenatePaths(array($package->getResourcesPath(), $uriParts['path']));
+		$resourcePath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array($package->getResourcesPath(), $uriParts['path']));
 
 		if ($checkForExistence === FALSE || file_exists($resourcePath)) {
 			return $resourcePath;

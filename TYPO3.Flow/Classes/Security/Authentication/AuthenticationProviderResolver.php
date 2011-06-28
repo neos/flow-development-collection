@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Security\Authentication;
+namespace TYPO3\FLOW3\Security\Authentication;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -30,18 +30,18 @@ namespace F3\FLOW3\Security\Authentication;
 class AuthenticationProviderResolver {
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
+	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
 	 * Constructor.
 	 *
-	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager The object manager
+	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager The object manager
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function __construct(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
+	public function __construct(\TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
 	}
 
@@ -50,7 +50,7 @@ class AuthenticationProviderResolver {
 	 *
 	 * @param string $providerName The (short) name of the provider
 	 * @return string The object name of the authentication provider
-	 * @throws \F3\FLOW3\Security\Exception\NoAuthenticationProviderFoundException
+	 * @throws \TYPO3\FLOW3\Security\Exception\NoAuthenticationProviderFoundException
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -58,10 +58,10 @@ class AuthenticationProviderResolver {
 		$resolvedObjectName = $this->objectManager->getCaseSensitiveObjectName($providerName);
 		if ($resolvedObjectName !== FALSE) return $resolvedObjectName;
 
-		$resolvedObjectName = $this->objectManager->getCaseSensitiveObjectName('F3\FLOW3\Security\Authentication\Provider\\' . $providerName);
+		$resolvedObjectName = $this->objectManager->getCaseSensitiveObjectName('TYPO3\FLOW3\Security\Authentication\Provider\\' . $providerName);
 		if ($resolvedObjectName !== FALSE) return $resolvedObjectName;
 
-		throw new \F3\FLOW3\Security\Exception\NoAuthenticationProviderFoundException('An authentication provider with the name "' . $providerName . '" could not be resolved.', 1217154134);
+		throw new \TYPO3\FLOW3\Security\Exception\NoAuthenticationProviderFoundException('An authentication provider with the name "' . $providerName . '" could not be resolved.', 1217154134);
 	}
 }
 ?>

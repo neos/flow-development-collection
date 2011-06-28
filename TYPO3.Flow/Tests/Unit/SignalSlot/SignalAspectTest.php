@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\SignalSlot;
+namespace TYPO3\FLOW3\Tests\Unit\SignalSlot;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -27,22 +27,22 @@ namespace F3\FLOW3\Tests\Unit\SignalSlot;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class SignalAspectTest extends \F3\FLOW3\Tests\UnitTestCase {
+class SignalAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function forwardSignalToDispatcherForwardsTheSignalsMethodArgumentsToTheDispatcher() {
-		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPoint', array(), array(), '', FALSE);
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPoint', array(), array(), '', FALSE);
 		$mockJoinPoint->expects($this->any())->method('getClassName')->will($this->returnValue('SampleClass'));
 		$mockJoinPoint->expects($this->any())->method('getMethodName')->will($this->returnValue('emitSignal'));
 		$mockJoinPoint->expects($this->any())->method('getMethodArguments')->will($this->returnValue(array('arg1' => 'val1', 'arg2' => array('val2'))));
 
-		$mockDispatcher = $this->getMock('F3\FLOW3\SignalSlot\Dispatcher');
+		$mockDispatcher = $this->getMock('TYPO3\FLOW3\SignalSlot\Dispatcher');
 		$mockDispatcher->expects($this->once())->method('dispatch')->with('SampleClass', 'signal', array('arg1' => 'val1', 'arg2' => array('val2')));
 
-		$aspect = $this->getAccessibleMock('F3\FLOW3\SignalSlot\SignalAspect', array('dummy'));
+		$aspect = $this->getAccessibleMock('TYPO3\FLOW3\SignalSlot\SignalAspect', array('dummy'));
 		$aspect->_set('dispatcher', $mockDispatcher);
 		$aspect->forwardSignalToDispatcher($mockJoinPoint);
 	}

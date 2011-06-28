@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Resource;
+namespace TYPO3\FLOW3\Resource;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -31,14 +31,14 @@ namespace F3\FLOW3\Resource;
 class Resource {
 
 	/**
-	 * @var F3\FLOW3\Resource\ResourcePointer
+	 * @var TYPO3\FLOW3\Resource\ResourcePointer
 	 * @ManyToOne(cascade={"all"})
 	 * @identity
 	 */
 	protected $resourcePointer;
 
 	/**
-	 * @var \F3\FLOW3\Resource\Publishing\PublishingConfigurationInterface
+	 * @var \TYPO3\FLOW3\Resource\Publishing\PublishingConfigurationInterface
 	 */
 	protected $publishingConfiguration;
 
@@ -104,24 +104,24 @@ class Resource {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getMimeType() {
-		return \F3\FLOW3\Utility\FileTypes::getMimeTypeFromFilename('x.' . $this->getFileExtension());
+		return \TYPO3\FLOW3\Utility\FileTypes::getMimeTypeFromFilename('x.' . $this->getFileExtension());
 	}
 
 	/**
 	 * Sets the resource pointer
 	 *
-	 * @param \F3\FLOW3\Resource\ResourcePointer $resourcePointer
+	 * @param \TYPO3\FLOW3\Resource\ResourcePointer $resourcePointer
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function setResourcePointer(\F3\FLOW3\Resource\ResourcePointer $resourcePointer) {
+	public function setResourcePointer(\TYPO3\FLOW3\Resource\ResourcePointer $resourcePointer) {
 		$this->resourcePointer = $resourcePointer;
 	}
 
 	/**
 	 * Returns the resource pointer
 	 *
-	 * @return \F3\FLOW3\Resource\ResourcePointer $resourcePointer
+	 * @return \TYPO3\FLOW3\Resource\ResourcePointer $resourcePointer
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getResourcePointer() {
@@ -131,18 +131,18 @@ class Resource {
 	/**
 	 * Sets the publishing configuration for this resource
 	 *
-	 * @param \F3\FLOW3\Resource\Publishing\PublishingConfigurationInterface $publishingConfiguration The publishing configuration
+	 * @param \TYPO3\FLOW3\Resource\Publishing\PublishingConfigurationInterface $publishingConfiguration The publishing configuration
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function setPublishingConfiguration(\F3\FLOW3\Resource\Publishing\PublishingConfigurationInterface $publishingConfiguration = NULL) {
+	public function setPublishingConfiguration(\TYPO3\FLOW3\Resource\Publishing\PublishingConfigurationInterface $publishingConfiguration = NULL) {
 		$this->publishingConfiguration = $publishingConfiguration;
 	}
 
 	/**
 	 * Returns the publishing configuration for this resource
 	 *
-	 * @return \F3\FLOW3\Resource\Publishing\PublishingConfigurationInterface The publishing configuration
+	 * @return \TYPO3\FLOW3\Resource\Publishing\PublishingConfigurationInterface The publishing configuration
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getPublishingConfiguration() {

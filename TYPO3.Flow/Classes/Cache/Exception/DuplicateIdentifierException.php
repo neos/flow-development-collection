@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Cache\Exception;
+namespace TYPO3\FLOW3\Cache\Exception;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -27,7 +27,7 @@ namespace F3\FLOW3\Cache\Exception;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */
-class DuplicateIdentifierException extends \F3\FLOW3\Cache\Exception {
+class DuplicateIdentifierException extends \TYPO3\FLOW3\Cache\Exception {
 
 }
 ?>

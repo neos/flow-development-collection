@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Security\Cryptography;
+namespace TYPO3\FLOW3\Security\Cryptography;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -40,12 +40,12 @@ class HashService {
 	 */
 	public function __construct() {
 		if (!file_exists(FLOW3_PATH_DATA . 'Persistent/EncryptionKey')) {
-			file_put_contents(FLOW3_PATH_DATA . 'Persistent/EncryptionKey', bin2hex(\F3\FLOW3\Utility\Algorithms::generateRandomBytes(96)));
+			file_put_contents(FLOW3_PATH_DATA . 'Persistent/EncryptionKey', bin2hex(\TYPO3\FLOW3\Utility\Algorithms::generateRandomBytes(96)));
 		}
 		$this->encryptionKey = file_get_contents(FLOW3_PATH_DATA . 'Persistent/EncryptionKey');
 
 		if (empty($this->encryptionKey)) {
-			throw new \F3\FLOW3\Security\Exception\MissingConfigurationException('No encryption key for the HashService was found and none could be created at "' . FLOW3_PATH_DATA . 'Persistent/EncryptionKey"', 1258991855);
+			throw new \TYPO3\FLOW3\Security\Exception\MissingConfigurationException('No encryption key for the HashService was found and none could be created at "' . FLOW3_PATH_DATA . 'Persistent/EncryptionKey"', 1258991855);
 		}
 	}
 
@@ -54,12 +54,12 @@ class HashService {
 	 *
 	 * @param string $string The string for which a hash should be generated
 	 * @return string The hash of the string
-	 * @throws F3\FLOW3\Security\Exception\InvalidArgumentForHashGenerationException if something else than a string was given as parameter
+	 * @throws TYPO3\FLOW3\Security\Exception\InvalidArgumentForHashGenerationException if something else than a string was given as parameter
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @todo Mark as API once it is more stable
 	 */
 	public function generateHmac($string) {
-		if (!is_string($string)) throw new \F3\FLOW3\Security\Exception\InvalidArgumentForHashGenerationException('A hash can only be generated for a string, but "' . gettype($string) . '" was given.', 1255069587);
+		if (!is_string($string)) throw new \TYPO3\FLOW3\Security\Exception\InvalidArgumentForHashGenerationException('A hash can only be generated for a string, but "' . gettype($string) . '" was given.', 1255069587);
 
 		return hash_hmac('sha1', $string, $this->encryptionKey);
 	}

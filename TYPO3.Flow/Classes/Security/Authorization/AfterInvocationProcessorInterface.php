@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Security\Authorization;
+namespace TYPO3\FLOW3\Security\Authorization;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -33,13 +33,13 @@ interface AfterInvocationProcessorInterface {
 	 * It is resolved and called automatically by the after invocation processor manager. The naming convention for after invocation processors is:
 	 * [InterceptedClassName]_[InterceptedMethodName]AfterInvocationProcessor
 	 *
-	 * @param \F3\FLOW3\Security\Context $securityContext The current securit context
+	 * @param \TYPO3\FLOW3\Security\Context $securityContext The current securit context
 	 * @param object $object The return object to be processed
-	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The joinpoint of the returning method
+	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The joinpoint of the returning method
 	 * @return void
-	 * @throws \F3\FLOW3\Security\Exception\AccessDeniedException If access is not granted
+	 * @throws \TYPO3\FLOW3\Security\Exception\AccessDeniedException If access is not granted
 	 */
-	public function process(\F3\FLOW3\Security\Context $securityContext, $object, \F3\FLOW3\AOP\JoinPointInterface $joinPoint);
+	public function process(\TYPO3\FLOW3\Security\Context $securityContext, $object, \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint);
 
 	/**
 	 * Returns TRUE if this after invocation processor can process return objects of the given classname

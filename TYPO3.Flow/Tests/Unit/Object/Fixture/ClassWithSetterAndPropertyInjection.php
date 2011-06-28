@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Object\Fixture;
+namespace TYPO3\FLOW3\Tests\Object\Fixture;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -39,9 +39,9 @@ class ClassWithSetterAndPropertyInjection {
 	protected $secondDependency;
 
 	/**
-	 * @param F3\FLOW3\Object\ObjectManagerInterface
+	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface
 	 */
-	public function injectFirstDependency(\F3\FLOW3\Object\ObjectManagerInterface $firstDependency) {
+	public function injectFirstDependency(\TYPO3\FLOW3\Object\ObjectManagerInterface $firstDependency) {
 		$this->firstDependency = $firstDependency;
 	}
 

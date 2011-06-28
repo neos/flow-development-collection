@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\I18n\Cldr;
+namespace TYPO3\FLOW3\I18n\Cldr;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -58,7 +58,7 @@ namespace F3\FLOW3\I18n\Cldr;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @see http://www.unicode.org/reports/tr35/#Inheritance_and_Validity [1]
  */
-class CldrParser extends \F3\FLOW3\I18n\Xml\AbstractXmlParser {
+class CldrParser extends \TYPO3\FLOW3\I18n\Xml\AbstractXmlParser {
 
 	/**
 	 * Returns array representation of XML data, starting from a root node.
@@ -66,7 +66,7 @@ class CldrParser extends \F3\FLOW3\I18n\Xml\AbstractXmlParser {
 	 * @param \SimpleXMLElement $root A root node
 	 * @return array An array representing parsed CLDR File
 	 * @author Karol Gusak <firstname@lastname.eu>
-	 * @see \F3\FLOW3\Xml\AbstractXmlParser::doParsingFromRoot()
+	 * @see \TYPO3\FLOW3\Xml\AbstractXmlParser::doParsingFromRoot()
 	 */
 	protected function doParsingFromRoot(\SimpleXMLElement $root) {
 		return $this->parseNode($root);

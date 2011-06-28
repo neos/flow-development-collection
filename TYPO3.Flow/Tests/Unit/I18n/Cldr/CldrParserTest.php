@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\I18n\Cldr;
+namespace TYPO3\FLOW3\Tests\Unit\I18n\Cldr;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,7 +26,7 @@ namespace F3\FLOW3\Tests\Unit\I18n\Cldr;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class CldrParserTest extends \F3\FLOW3\Tests\UnitTestCase {
+class CldrParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
@@ -36,7 +36,7 @@ class CldrParserTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$sampleFilenamePath = __DIR__ . '/../Fixtures/MockCldrData.xml';
 		$sampleParsedData = require(__DIR__ . '/../Fixtures/MockParsedCldrData.php');
 
-		$parser = new \F3\FLOW3\I18n\Cldr\CldrParser();
+		$parser = new \TYPO3\FLOW3\I18n\Cldr\CldrParser();
 
 		$result = $parser->getParsedData($sampleFilenamePath);
 		$this->assertEquals($sampleParsedData, $result);

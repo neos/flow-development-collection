@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Functional\Object\Fixtures;
+namespace TYPO3\FLOW3\Tests\Functional\Object\Fixtures;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -30,13 +30,13 @@ class SingletonClassD {
 
 	/**
 	 * @inject
-	 * @var \F3\FLOW3\Tests\Functional\Object\Fixtures\PrototypeClassC
+	 * @var \TYPO3\FLOW3\Tests\Functional\Object\Fixtures\PrototypeClassC
 	 */
 	public $prototypeClassC;
 
 	/**
 	 * @inject
-	 * @var \F3\FLOW3\Tests\Functional\Object\Fixtures\PrototypeClassAishInterface
+	 * @var \TYPO3\FLOW3\Tests\Functional\Object\Fixtures\PrototypeClassAishInterface
 	 */
 	public $prototypeClassA;
 

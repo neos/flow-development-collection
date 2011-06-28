@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Persistence\Generic;
+namespace TYPO3\FLOW3\Persistence\Generic;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -30,50 +30,50 @@ namespace F3\FLOW3\Persistence\Generic;
 class DataMapper {
 
 	/**
-	 * @var \F3\FLOW3\Persistence\Generic\Session
+	 * @var \TYPO3\FLOW3\Persistence\Generic\Session
 	 */
 	protected $persistenceSession;
 
 	/**
-	 * @var \F3\FLOW3\Reflection\ReflectionService
+	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
 	/**
-	 * @var \F3\FLOW3\Persistence\PersistenceManagerInterface
+	 * @var \TYPO3\FLOW3\Persistence\PersistenceManagerInterface
 	 */
 	protected $persistenceManager;
 
 	/**
 	 * Injects the persistence session
 	 *
-	 * @param \F3\FLOW3\Persistence\Generic\Session $persistenceSession The persistence session
+	 * @param \TYPO3\FLOW3\Persistence\Generic\Session $persistenceSession The persistence session
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectPersistenceSession(\F3\FLOW3\Persistence\Generic\Session $persistenceSession) {
+	public function injectPersistenceSession(\TYPO3\FLOW3\Persistence\Generic\Session $persistenceSession) {
 		$this->persistenceSession = $persistenceSession;
 	}
 
 	/**
 	 * Injects a Reflection Service instance used for processing objects
 	 *
-	 * @param \F3\FLOW3\Reflection\ReflectionService $reflectionService
+	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectReflectionService(\F3\FLOW3\Reflection\ReflectionService $reflectionService) {
+	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
 	}
 
 	/**
 	 * Injects the persistence manager
 	 *
-	 * @param \F3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager The persistence manager
+	 * @param \TYPO3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager The persistence manager
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function setPersistenceManager(\F3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager) {
+	public function setPersistenceManager(\TYPO3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager) {
 		$this->persistenceManager = $persistenceManager;
 	}
 
@@ -106,7 +106,7 @@ class DataMapper {
 	 */
 	public function mapToObject(array $objectData) {
 		if ($objectData === array()) {
-			throw new \F3\FLOW3\Persistence\Generic\Exception\InvalidObjectDataException('The array with object data was empty, probably object not found or access denied.', 1277974338);
+			throw new \TYPO3\FLOW3\Persistence\Generic\Exception\InvalidObjectDataException('The array with object data was empty, probably object not found or access denied.', 1277974338);
 		}
 
 		if ($this->persistenceSession->hasIdentifier($objectData['identifier'])) {
@@ -117,12 +117,12 @@ class DataMapper {
 
 			$object = unserialize('O:' . strlen($className) . ':"' . $className . '":0:{};');
 			$this->persistenceSession->registerObject($object, $objectData['identifier']);
-			if ($classSchema->getModelType() === \F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY) {
+			if ($classSchema->getModelType() === \TYPO3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY) {
 				$this->persistenceSession->registerReconstitutedEntity($object, $objectData);
 			}
 			if ($objectData['properties'] === array()) {
 				if (!$classSchema->isLazyLoadableObject()) {
-					throw new \F3\FLOW3\Persistence\Exception('The object of type "' . $className . '" is not marked as lazy loadable.', 1268309017);
+					throw new \TYPO3\FLOW3\Persistence\Exception('The object of type "' . $className . '" is not marked as lazy loadable.', 1268309017);
 				}
 				$persistenceManager = $this->persistenceManager;
 				$persistenceSession = $this->persistenceSession;
@@ -132,7 +132,7 @@ class DataMapper {
 				$object->FLOW3_Persistence_LazyLoadingObject_thawProperties = function ($object) use ($persistenceManager, $persistenceSession, $dataMapper, $identifier, $modelType) {
 					$objectData = $persistenceManager->getObjectDataByIdentifier($identifier);
 					$dataMapper->thawProperties($object, $identifier, $objectData);
-					if ($modelType === \F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY) {
+					if ($modelType === \TYPO3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY) {
 						$persistenceSession->registerReconstitutedEntity($object, $objectData);
 					}
 				};
@@ -189,7 +189,7 @@ class DataMapper {
 					break;
 					default:
 						if ($propertyData['value'] === FALSE) {
-							throw new \F3\FLOW3\Persistence\Exception\UnknownObjectException('An expected object was not found by the backend. It was expected for ' . $objectData['classname'] . '::' . $propertyName, 1289509867);
+							throw new \TYPO3\FLOW3\Persistence\Exception\UnknownObjectException('An expected object was not found by the backend. It was expected for ' . $objectData['classname'] . '::' . $propertyName, 1289509867);
 						}
 						$propertyValue = $this->mapToObject($propertyData['value']);
 					break;
@@ -211,7 +211,7 @@ class DataMapper {
 				}
 			}
 
-			\F3\FLOW3\Reflection\ObjectAccess::setProperty($object, $propertyName, $propertyValue, TRUE);
+			\TYPO3\FLOW3\Reflection\ObjectAccess::setProperty($object, $propertyName, $propertyValue, TRUE);
 		}
 
 		if (isset($objectData['metadata'])) {
@@ -220,9 +220,9 @@ class DataMapper {
 
 		$identifierPropertyName = $classSchema->getUuidPropertyName();
 		if ($identifierPropertyName === NULL) {
-			\F3\FLOW3\Reflection\ObjectAccess::setProperty($object, 'FLOW3_Persistence_Identifier', $identifier, TRUE);
+			\TYPO3\FLOW3\Reflection\ObjectAccess::setProperty($object, 'FLOW3_Persistence_Identifier', $identifier, TRUE);
 		} else {
-			\F3\FLOW3\Reflection\ObjectAccess::setProperty($object, $identifierPropertyName, $identifier, TRUE);
+			\TYPO3\FLOW3\Reflection\ObjectAccess::setProperty($object, $identifierPropertyName, $identifier, TRUE);
 		}
 	}
 

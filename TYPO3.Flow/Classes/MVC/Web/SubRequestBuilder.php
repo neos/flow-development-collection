@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\MVC\Web;
+namespace TYPO3\FLOW3\MVC\Web;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -30,48 +30,48 @@ namespace F3\FLOW3\MVC\Web;
 class SubRequestBuilder {
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
+	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
-	 * @var \F3\FLOW3\Utility\Environment
+	 * @var \TYPO3\FLOW3\Utility\Environment
 	 */
 	protected $environment;
 
 	/**
 	 * Injects the object factory
 	 *
-	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager A reference to the object factory
+	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager A reference to the object factory
 	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
+	public function injectObjectManager(\TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
 	}
 
 	/**
 	 * Injects the server environment
 	 *
-	 * @param \F3\FLOW3\Utility\Environment $environment The environment
+	 * @param \TYPO3\FLOW3\Utility\Environment $environment The environment
 	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function injectEnvironment(\F3\FLOW3\Utility\Environment $environment) {
+	public function injectEnvironment(\TYPO3\FLOW3\Utility\Environment $environment) {
 		$this->environment = $environment;
 	}
 
 	/**
 	 * Builds a sub request object. If you define the SubRequestClassName,
-	 * the class specified MUST be a subclass of F3\FLOW3\MVC\Web\SubRequest
+	 * the class specified MUST be a subclass of TYPO3\FLOW3\MVC\Web\SubRequest
 	 *
-	 * @param \F3\FLOW3\MVC\Web\Request $parentRequest
+	 * @param \TYPO3\FLOW3\MVC\Web\Request $parentRequest
 	 * @param string $argumentNamespace namespace that will be prefixed to URIs of this sub request
 	 * @param string $subRequestClassName the class name which should be instanciated. Must be a subclass of
-	 * @return \F3\FLOW3\MVC\Web\SubRequest The sub request as an object
+	 * @return \TYPO3\FLOW3\MVC\Web\SubRequest The sub request as an object
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function build(\F3\FLOW3\MVC\Web\Request $parentRequest, $argumentNamespace = '', $subRequestClassName = 'F3\FLOW3\MVC\Web\SubRequest') {
+	public function build(\TYPO3\FLOW3\MVC\Web\Request $parentRequest, $argumentNamespace = '', $subRequestClassName = 'TYPO3\FLOW3\MVC\Web\SubRequest') {
 		$subRequest = $this->objectManager->create($subRequestClassName, $parentRequest);
 		$subRequest->setArgumentNamespace($argumentNamespace);
 
@@ -84,11 +84,11 @@ class SubRequestBuilder {
 	 * Sets the arguments (GET & POST) from the parent request that are
 	 * prefixed with the current argument namespace
 	 *
-	 * @param \F3\FLOW3\MVC\Web\SubRequest $subRequest
+	 * @param \TYPO3\FLOW3\MVC\Web\SubRequest $subRequest
 	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	protected function setArgumentsFromRawRequestData(\F3\FLOW3\MVC\Web\SubRequest $subRequest) {
+	protected function setArgumentsFromRawRequestData(\TYPO3\FLOW3\MVC\Web\SubRequest $subRequest) {
 		$parentRequest = $subRequest->getParentRequest();
 		$argumentNamespace = $subRequest->getArgumentNamespace();
 		if ($parentRequest->hasArgument($argumentNamespace) === FALSE || !is_array($parentRequest->getArgument($argumentNamespace))) {
@@ -101,11 +101,11 @@ class SubRequestBuilder {
 	 * Sets package key, subpackage key, controller name, action name and format
 	 * of the current request.
 	 *
-	 * @param \F3\FLOW3\MVC\Web\SubRequest $subRequest
+	 * @param \TYPO3\FLOW3\MVC\Web\SubRequest $subRequest
 	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	protected function setControllerKeysAndFormat(\F3\FLOW3\MVC\Web\SubRequest $subRequest) {
+	protected function setControllerKeysAndFormat(\TYPO3\FLOW3\MVC\Web\SubRequest $subRequest) {
 		foreach($subRequest->getArguments() as $argumentName => $argumentValue) {
 			switch ($argumentName) {
 				case '@package' :

@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\I18n\Xliff;
+namespace TYPO3\FLOW3\Tests\Unit\I18n\Xliff;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,10 +26,10 @@ namespace F3\FLOW3\Tests\Unit\I18n\Xliff;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class XliffModelTest extends \F3\FLOW3\Tests\UnitTestCase {
+class XliffModelTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
-	 * @var \F3\FLOW3\I18n\Xliff\XliffModel
+	 * @var \TYPO3\FLOW3\I18n\Xliff\XliffModel
 	 */
 	protected $model;
 
@@ -41,13 +41,13 @@ class XliffModelTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockFilename = 'foo';
 		$mockParsedData = require(__DIR__ . '/../Fixtures/MockParsedXliffData.php');
 
-		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
+		$mockCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
 		$mockCache->expects($this->any())->method('has')->with(md5($mockFilename))->will($this->returnValue(FALSE));
 
-		$mockXliffParser = $this->getMock('F3\FLOW3\I18n\Xliff\XliffParser');
+		$mockXliffParser = $this->getMock('TYPO3\FLOW3\I18n\Xliff\XliffParser');
 		$mockXliffParser->expects($this->once())->method('getParsedData')->with($mockFilename)->will($this->returnValue($mockParsedData));
 
-		$this->model = new \F3\FLOW3\I18n\Xliff\XliffModel($mockFilename);
+		$this->model = new \TYPO3\FLOW3\I18n\Xliff\XliffModel($mockFilename);
 		$this->model->injectCache($mockCache);
 		$this->model->injectParser($mockXliffParser);
 		$this->model->initializeObject();

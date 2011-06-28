@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Persistence\Doctrine\Logging;
+namespace TYPO3\FLOW3\Persistence\Doctrine\Logging;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -30,7 +30,7 @@ namespace F3\FLOW3\Persistence\Doctrine\Logging;
 class SqlLogger implements \Doctrine\DBAL\Logging\SQLLogger {
 
 	/**
-	 * @var \F3\FLOW3\Log\LoggerInterface
+	 * @var \TYPO3\FLOW3\Log\LoggerInterface
 	 */
 	protected $logger;
 

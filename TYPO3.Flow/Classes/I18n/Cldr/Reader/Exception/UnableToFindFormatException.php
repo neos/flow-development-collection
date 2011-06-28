@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\I18n\Cldr\Reader\Exception;
+namespace TYPO3\FLOW3\I18n\Cldr\Reader\Exception;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -30,7 +30,7 @@ namespace F3\FLOW3\I18n\Cldr\Reader\Exception;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */
-class UnableToFindFormatException extends \F3\FLOW3\I18n\Cldr\Exception\InvalidCldrDataException {
+class UnableToFindFormatException extends \TYPO3\FLOW3\I18n\Cldr\Exception\InvalidCldrDataException {
 
 }
 

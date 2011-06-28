@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Error;
+namespace TYPO3\FLOW3\Error;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -29,7 +29,7 @@ namespace F3\FLOW3\Error;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope singleton
  */
-class DebugExceptionHandler extends \F3\FLOW3\Error\AbstractExceptionHandler {
+class DebugExceptionHandler extends \TYPO3\FLOW3\Error\AbstractExceptionHandler {
 
 	/**
 	 * Constructs this exception handler - registers itself as the default exception handler.

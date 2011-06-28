@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\AOP\Pointcut;
+namespace TYPO3\FLOW3\AOP\Pointcut;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -30,7 +30,7 @@ namespace F3\FLOW3\AOP\Pointcut;
  * @scope prototype
  * @proxy disable
  */
-class PointcutSettingFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
+class PointcutSettingFilter implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 
 	const PATTERN_SPLITBYEQUALSIGN = '/\s*( *= *)\s*/';
 	const PATTERN_MATCHVALUEINQUOTES = '/(?:"(?P<DoubleQuotedString>(?:\\"|[^"])*)"|\'(?P<SingleQuotedString>(?:\\\'|[^\'])*)\')/';
@@ -67,11 +67,11 @@ class PointcutSettingFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInte
 	/**
 	 * Injects the configuration manager
 	 *
-	 * @param \F3\FLOW3\Configuration\ConfigurationManager $configurationManager
+	 * @param \TYPO3\FLOW3\Configuration\ConfigurationManager $configurationManager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectConfigurationManager(\F3\FLOW3\Configuration\ConfigurationManager $configurationManager) {
+	public function injectConfigurationManager(\TYPO3\FLOW3\Configuration\ConfigurationManager $configurationManager) {
 		$this->configurationManager = $configurationManager;
 		$this->parseConfigurationOptionPath($this->settingComparisonExpression);
 	}
@@ -133,7 +133,7 @@ class PointcutSettingFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInte
 			} elseif (isset($matches['DoubleQuotedString']) && $matches['DoubleQuotedString'] !== '') {
 				$this->condition = $matches['DoubleQuotedString'];
 			} else {
-				throw new \F3\FLOW3\AOP\Exception\InvalidPointcutExpressionException('The given condition has a syntax error (Make sure to set quotes correctly). Got: "' . $settingComparisonExpression[1] . '"', 1230047529);
+				throw new \TYPO3\FLOW3\AOP\Exception\InvalidPointcutExpressionException('The given condition has a syntax error (Make sure to set quotes correctly). Got: "' . $settingComparisonExpression[1] . '"', 1230047529);
 			}
 		}
 
@@ -141,9 +141,9 @@ class PointcutSettingFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInte
 
 		if (count($configurationKeys) > 0) {
 			$settingPackageKey = array_shift($configurationKeys);
-			$settingValue = $this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, $settingPackageKey);
+			$settingValue = $this->configurationManager->getConfiguration(\TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, $settingPackageKey);
 			foreach ($configurationKeys as $currentKey) {
-				if (!isset($settingValue[$currentKey])) throw new \F3\FLOW3\AOP\Exception\InvalidPointcutExpressionException('The given configuration path in the pointcut designator "setting" did not exist. Got: "' . $settingComparisonExpression[0] . '"', 1230035614);
+				if (!isset($settingValue[$currentKey])) throw new \TYPO3\FLOW3\AOP\Exception\InvalidPointcutExpressionException('The given configuration path in the pointcut designator "setting" did not exist. Got: "' . $settingComparisonExpression[0] . '"', 1230035614);
 				$settingValue = $settingValue[$currentKey];
 			}
 			$this->actualSettingValue = $settingValue;

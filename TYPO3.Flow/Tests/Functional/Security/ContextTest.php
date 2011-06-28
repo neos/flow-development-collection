@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Functional\Security;
+namespace TYPO3\FLOW3\Tests\Functional\Security;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,15 +26,15 @@ namespace F3\FLOW3\Tests\Functional\Security;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class ContextTest extends \F3\FLOW3\Tests\FunctionalTestCase {
+class ContextTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
 	 */
 	public function afterSerializationAndUnserializationContextIsSetToUninitializedAgain() {
-		$context = $this->objectManager->get('F3\FLOW3\Security\Context');
+		$context = $this->objectManager->get('TYPO3\FLOW3\Security\Context');
 		$this->assertFalse($context->isInitialized());
-		$mockRequest = $this->getMock('F3\FLOW3\MVC\RequestInterface');
+		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\RequestInterface');
 		$context->initialize($mockRequest);
 		$this->assertTrue($context->isInitialized());
 

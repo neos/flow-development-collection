@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Package\Controller;
+namespace TYPO3\FLOW3\Package\Controller;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -27,25 +27,25 @@ namespace F3\FLOW3\Package\Controller;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope singleton
  */
-class PackageManagerController extends \F3\FLOW3\MVC\Controller\ActionController {
+class PackageManagerController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 
 	/**
-	 * @var F3\FLOW3\Package\PackageManagerInterface
+	 * @var TYPO3\FLOW3\Package\PackageManagerInterface
 	 */
 	protected $packageManager;
 
 	/**
 	 * @var array
 	 */
-	protected $supportedRequestTypes = array('F3\FLOW3\MVC\CLI\Request');
+	protected $supportedRequestTypes = array('TYPO3\FLOW3\MVC\CLI\Request');
 
 	/**
 	 * Injects the package manager
 	 *
-	 * @param \F3\FLOW3\Package\PackageManagerInterface $packageManager
+	 * @param \TYPO3\FLOW3\Package\PackageManagerInterface $packageManager
 	 * @return void
 	 */
-	public function injectPackageManager(\F3\FLOW3\Package\PackageManagerInterface $packageManager) {
+	public function injectPackageManager(\TYPO3\FLOW3\Package\PackageManagerInterface $packageManager) {
 		$this->packageManager = $packageManager;
 	}
 

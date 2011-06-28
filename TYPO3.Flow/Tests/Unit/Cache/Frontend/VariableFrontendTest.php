@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\Cache\Frontend;
+namespace TYPO3\FLOW3\Tests\Unit\Cache\Frontend;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,7 +26,7 @@ namespace F3\FLOW3\Tests\Unit\Cache\Frontend;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class VariableFrontendTest extends \F3\FLOW3\Tests\UnitTestCase {
+class VariableFrontendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @expectedException \InvalidArgumentException
@@ -34,7 +34,7 @@ class VariableFrontendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setChecksIfTheIdentifierIsValid() {
-		$cache = $this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array('isValidEntryIdentifier'), array(), '', FALSE);
+		$cache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\StringFrontend', array('isValidEntryIdentifier'), array(), '', FALSE);
 		$cache->expects($this->once())->method('isValidEntryIdentifier')->with('foo')->will($this->returnValue(FALSE));
 		$cache->set('foo', 'bar');
 	}
@@ -45,10 +45,10 @@ class VariableFrontendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function setPassesSerializedStringToBackend() {
 		$theString = 'Just some value';
-		$backend = $this->getMock('F3\FLOW3\Cache\Backend\AbstractBackend', array('get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
+		$backend = $this->getMock('TYPO3\FLOW3\Cache\Backend\AbstractBackend', array('get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
 		$backend->expects($this->once())->method('set')->with($this->equalTo('VariableCacheTest'), $this->equalTo(serialize($theString)));
 
-		$cache = new \F3\FLOW3\Cache\Frontend\VariableFrontend('VariableFrontend', $backend);
+		$cache = new \TYPO3\FLOW3\Cache\Frontend\VariableFrontend('VariableFrontend', $backend);
 		$cache->set('VariableCacheTest', $theString);
 	}
 
@@ -58,10 +58,10 @@ class VariableFrontendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function setPassesSerializedArrayToBackend() {
 		$theArray = array('Just some value', 'and another one.');
-		$backend = $this->getMock('F3\FLOW3\Cache\Backend\AbstractBackend', array('get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
+		$backend = $this->getMock('TYPO3\FLOW3\Cache\Backend\AbstractBackend', array('get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
 		$backend->expects($this->once())->method('set')->with($this->equalTo('VariableCacheTest'), $this->equalTo(serialize($theArray)));
 
-		$cache = new \F3\FLOW3\Cache\Frontend\VariableFrontend('VariableFrontend', $backend);
+		$cache = new \TYPO3\FLOW3\Cache\Frontend\VariableFrontend('VariableFrontend', $backend);
 		$cache->set('VariableCacheTest', $theArray);
 	}
 
@@ -72,10 +72,10 @@ class VariableFrontendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function setPassesLifetimeToBackend() {
 		$theString = 'Just some value';
 		$theLifetime = 1234;
-		$backend = $this->getMock('F3\FLOW3\Cache\Backend\AbstractBackend', array('get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
+		$backend = $this->getMock('TYPO3\FLOW3\Cache\Backend\AbstractBackend', array('get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
 		$backend->expects($this->once())->method('set')->with($this->equalTo('VariableCacheTest'), $this->equalTo(serialize($theString)), $this->equalTo(array()), $this->equalTo($theLifetime));
 
-		$cache = new \F3\FLOW3\Cache\Frontend\VariableFrontend('VariableFrontend', $backend);
+		$cache = new \TYPO3\FLOW3\Cache\Frontend\VariableFrontend('VariableFrontend', $backend);
 		$cache->set('VariableCacheTest', $theString, array(), $theLifetime);
 	}
 
@@ -89,10 +89,10 @@ class VariableFrontendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		}
 
 		$theString = 'Just some value';
-		$backend = $this->getMock('F3\FLOW3\Cache\Backend\AbstractBackend', array('get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
+		$backend = $this->getMock('TYPO3\FLOW3\Cache\Backend\AbstractBackend', array('get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
 		$backend->expects($this->once())->method('set')->with($this->equalTo('VariableCacheTest'), $this->equalTo(igbinary_serialize($theString)));
 
-		$cache = new \F3\FLOW3\Cache\Frontend\VariableFrontend('VariableFrontend', $backend);
+		$cache = new \TYPO3\FLOW3\Cache\Frontend\VariableFrontend('VariableFrontend', $backend);
 		$cache->initializeObject();
 		$cache->set('VariableCacheTest', $theString);
 	}
@@ -102,10 +102,10 @@ class VariableFrontendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getFetchesStringValueFromBackend() {
-		$backend = $this->getMock('F3\FLOW3\Cache\Backend\AbstractBackend', array('get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
+		$backend = $this->getMock('TYPO3\FLOW3\Cache\Backend\AbstractBackend', array('get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
 		$backend->expects($this->once())->method('get')->will($this->returnValue(serialize('Just some value')));
 
-		$cache = new \F3\FLOW3\Cache\Frontend\VariableFrontend('VariableFrontend', $backend);
+		$cache = new \TYPO3\FLOW3\Cache\Frontend\VariableFrontend('VariableFrontend', $backend);
 		$this->assertEquals('Just some value', $cache->get('VariableCacheTest'), 'The returned value was not the expected string.');
 	}
 
@@ -115,10 +115,10 @@ class VariableFrontendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function getFetchesArrayValueFromBackend() {
 		$theArray = array('Just some value', 'and another one.');
-		$backend = $this->getMock('F3\FLOW3\Cache\Backend\AbstractBackend', array('get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
+		$backend = $this->getMock('TYPO3\FLOW3\Cache\Backend\AbstractBackend', array('get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
 		$backend->expects($this->once())->method('get')->will($this->returnValue(serialize($theArray)));
 
-		$cache = new \F3\FLOW3\Cache\Frontend\VariableFrontend('VariableFrontend', $backend);
+		$cache = new \TYPO3\FLOW3\Cache\Frontend\VariableFrontend('VariableFrontend', $backend);
 		$this->assertEquals($theArray, $cache->get('VariableCacheTest'), 'The returned value was not the expected unserialized array.');
 	}
 
@@ -127,10 +127,10 @@ class VariableFrontendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getFetchesFalseBooleanValueFromBackend() {
-		$backend = $this->getMock('F3\FLOW3\Cache\Backend\AbstractBackend', array('get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
+		$backend = $this->getMock('TYPO3\FLOW3\Cache\Backend\AbstractBackend', array('get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
 		$backend->expects($this->once())->method('get')->will($this->returnValue(serialize(FALSE)));
 
-		$cache = new \F3\FLOW3\Cache\Frontend\VariableFrontend('VariableFrontend', $backend);
+		$cache = new \TYPO3\FLOW3\Cache\Frontend\VariableFrontend('VariableFrontend', $backend);
 		$this->assertFalse($cache->get('VariableCacheTest'), 'The returned value was not the FALSE.');
 	}
 
@@ -144,10 +144,10 @@ class VariableFrontendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		}
 
 		$theArray = array('Just some value', 'and another one.');
-		$backend = $this->getMock('F3\FLOW3\Cache\Backend\AbstractBackend', array('get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
+		$backend = $this->getMock('TYPO3\FLOW3\Cache\Backend\AbstractBackend', array('get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
 		$backend->expects($this->once())->method('get')->will($this->returnValue(igbinary_serialize($theArray)));
 
-		$cache = new \F3\FLOW3\Cache\Frontend\VariableFrontend('VariableFrontend', $backend);
+		$cache = new \TYPO3\FLOW3\Cache\Frontend\VariableFrontend('VariableFrontend', $backend);
 		$cache->initializeObject();
 
 		$this->assertEquals($theArray, $cache->get('VariableCacheTest'), 'The returned value was not the expected unserialized array.');
@@ -158,10 +158,10 @@ class VariableFrontendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function hasReturnsResultFromBackend() {
-		$backend = $this->getMock('F3\FLOW3\Cache\Backend\AbstractBackend', array('get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
+		$backend = $this->getMock('TYPO3\FLOW3\Cache\Backend\AbstractBackend', array('get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
 		$backend->expects($this->once())->method('has')->with($this->equalTo('VariableCacheTest'))->will($this->returnValue(TRUE));
 
-		$cache = new \F3\FLOW3\Cache\Frontend\VariableFrontend('VariableFrontend', $backend);
+		$cache = new \TYPO3\FLOW3\Cache\Frontend\VariableFrontend('VariableFrontend', $backend);
 		$this->assertTrue($cache->has('VariableCacheTest'), 'has() did not return TRUE.');
 	}
 
@@ -171,11 +171,11 @@ class VariableFrontendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function removeCallsBackend() {
 		$cacheIdentifier = 'someCacheIdentifier';
-		$backend = $this->getMock('F3\FLOW3\Cache\Backend\AbstractBackend', array('get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
+		$backend = $this->getMock('TYPO3\FLOW3\Cache\Backend\AbstractBackend', array('get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
 
 		$backend->expects($this->once())->method('remove')->with($this->equalTo($cacheIdentifier))->will($this->returnValue(TRUE));
 
-		$cache = new \F3\FLOW3\Cache\Frontend\VariableFrontend('VariableFrontend', $backend);
+		$cache = new \TYPO3\FLOW3\Cache\Frontend\VariableFrontend('VariableFrontend', $backend);
 		$this->assertTrue($cache->remove($cacheIdentifier), 'remove() did not return TRUE');
 	}
 
@@ -185,10 +185,10 @@ class VariableFrontendTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getByTagRejectsInvalidTags() {
-		$backend = $this->getMock('F3\FLOW3\Cache\Backend\BackendInterface', array(), array(), '', FALSE);
+		$backend = $this->getMock('TYPO3\FLOW3\Cache\Backend\BackendInterface', array(), array(), '', FALSE);
 		$backend->expects($this->never())->method('getByTag');
 
-		$cache = new \F3\FLOW3\Cache\Frontend\VariableFrontend('VariableFrontend', $backend);
+		$cache = new \TYPO3\FLOW3\Cache\Frontend\VariableFrontend('VariableFrontend', $backend);
 		$cache->getByTag('SomeInvalid\Tag');
 	}
 
@@ -200,12 +200,12 @@ class VariableFrontendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$tag = 'sometag';
 		$identifiers = array('one', 'two');
 		$entries = array('one value', 'two value');
-		$backend = $this->getMock('F3\FLOW3\Cache\Backend\AbstractBackend', array('get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
+		$backend = $this->getMock('TYPO3\FLOW3\Cache\Backend\AbstractBackend', array('get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
 
 		$backend->expects($this->once())->method('findIdentifiersByTag')->with($this->equalTo($tag))->will($this->returnValue($identifiers));
 		$backend->expects($this->exactly(2))->method('get')->will($this->onConsecutiveCalls(serialize('one value'), serialize('two value')));
 
-		$cache = new \F3\FLOW3\Cache\Frontend\VariableFrontend('VariableFrontend', $backend);
+		$cache = new \TYPO3\FLOW3\Cache\Frontend\VariableFrontend('VariableFrontend', $backend);
 		$this->assertEquals($entries, $cache->getByTag($tag), 'Did not receive the expected entries');
 	}
 
@@ -221,12 +221,12 @@ class VariableFrontendTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$tag = 'sometag';
 		$identifiers = array('one', 'two');
 		$entries = array('one value', 'two value');
-		$backend = $this->getMock('F3\FLOW3\Cache\Backend\AbstractBackend', array('get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
+		$backend = $this->getMock('TYPO3\FLOW3\Cache\Backend\AbstractBackend', array('get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
 
 		$backend->expects($this->once())->method('findIdentifiersByTag')->with($this->equalTo($tag))->will($this->returnValue($identifiers));
 		$backend->expects($this->exactly(2))->method('get')->will($this->onConsecutiveCalls(igbinary_serialize('one value'), igbinary_serialize('two value')));
 
-		$cache = new \F3\FLOW3\Cache\Frontend\VariableFrontend('VariableFrontend', $backend);
+		$cache = new \TYPO3\FLOW3\Cache\Frontend\VariableFrontend('VariableFrontend', $backend);
 		$cache->initializeObject();
 
 		$this->assertEquals($entries, $cache->getByTag($tag), 'Did not receive the expected entries');

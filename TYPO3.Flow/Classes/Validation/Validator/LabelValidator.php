@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Validation\Validator;
+namespace TYPO3\FLOW3\Validation\Validator;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -32,7 +32,7 @@ namespace F3\FLOW3\Validation\Validator;
  * @api
  * @scope singleton
  */
-class LabelValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator {
+class LabelValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractValidator {
 
 	const PATTERN_VALIDCHARACTERS = '/^[\p{L}\p{Sc} ,.:;?!%§&"\'\/+\-_=\(\)#0-9]*$/u';
 

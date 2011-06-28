@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Property;
+namespace TYPO3\FLOW3\Property;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -82,11 +82,11 @@ interface TypeConverterInterface {
 	 *
 	 * @param string $targetType
 	 * @param string $propertyName
-	 * @param \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
+	 * @param \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
 	 * @return string the type of $propertyName in $targetType
 	 * @api
 	 */
-	public function getTypeOfChildProperty($targetType, $propertyName, \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration);
+	public function getTypeOfChildProperty($targetType, $propertyName, \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration);
 
 	/**
 	 * Actually convert from $source to $targetType, taking into account the fully
@@ -96,16 +96,16 @@ interface TypeConverterInterface {
 	 * - an arbitrary object, or a simple type (which has been created while mapping).
 	 *   This is the normal case.
 	 * - NULL, indicating that this object should *not* be mapped (i.e. a "File Upload" Converter could return NULL if no file has been uploaded, and a silent failure should occur.
-	 * - An instance of \F3\FLOW3\Error\Error -- This will be a user-visible error message lateron.
+	 * - An instance of \TYPO3\FLOW3\Error\Error -- This will be a user-visible error message lateron.
 	 * Furthermore, it should throw an Exception if an unexpected failure occured or a configuration issue happened.
 	 *
 	 * @param mixed $source
 	 * @param string $targetType
 	 * @param array $convertedChildProperties
-	 * @param \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
+	 * @param \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
 	 * @return mixed the target type
 	 * @api
 	 */
-	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL);
+	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL);
 }
 ?>

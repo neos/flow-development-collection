@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\Package;
+namespace TYPO3\FLOW3\Tests\Unit\Package;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -21,14 +21,14 @@ namespace F3\FLOW3\Tests\Unit\Package;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \F3\FLOW3\Package\Package;
+use \TYPO3\FLOW3\Package\Package;
 
 /**
  * Testcase for the package class
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class PackageTest extends \F3\FLOW3\Tests\UnitTestCase {
+class PackageTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @author Robert Lemke <robert@typo3.org>
@@ -40,7 +40,7 @@ class PackageTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \F3\FLOW3\Package\Exception\InvalidPackagePathException
+	 * @expectedException \TYPO3\FLOW3\Package\Exception\InvalidPackagePathException
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function constructThrowsPackageDoesNotExistException() {
@@ -89,7 +89,7 @@ class PackageTest extends \F3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @dataProvider invalidPackageKeys
-	 * @expectedException \F3\FLOW3\Package\Exception\InvalidPackageKeyException
+	 * @expectedException \TYPO3\FLOW3\Package\Exception\InvalidPackageKeyException
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function constructRejectsInvalidPackageKeys($packageKey) {

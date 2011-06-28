@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\Security\Authentication\Controller;
+namespace TYPO3\FLOW3\Tests\Unit\Security\Authentication\Controller;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,20 +26,20 @@ namespace F3\FLOW3\Tests\Unit\Security\Authentication\Controller;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-use F3\FLOW3\Security\Authentication;
+use TYPO3\FLOW3\Security\Authentication;
 
-class AuthenticationControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
+class AuthenticationControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function authenticateActionCallsAuthenticateOfTheAuthenticationManager() {
-		$mockSecurityContext = $this->getMock('F3\FLOW3\Security\Context');
-		$mockAuthenticationManager = $this->getMock('F3\FLOW3\Security\Authentication\AuthenticationManagerInterface');
+		$mockSecurityContext = $this->getMock('TYPO3\FLOW3\Security\Context');
+		$mockAuthenticationManager = $this->getMock('TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface');
 		$mockAuthenticationManager->expects($this->once())->method('authenticate');
 
-		$authenticationController = $this->getAccessibleMock('F3\FLOW3\Security\Authentication\Controller\AuthenticationController', array('dummy'), array(), '', FALSE);
+		$authenticationController = $this->getAccessibleMock('TYPO3\FLOW3\Security\Authentication\Controller\AuthenticationController', array('dummy'), array(), '', FALSE);
 		$authenticationController->_set('authenticationManager', $mockAuthenticationManager);
 		$authenticationController->_set('securityContext', $mockSecurityContext);
 
@@ -51,10 +51,10 @@ class AuthenticationControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function logoutActionCallsLogoutOfTheAuthenticationManager() {
-		$mockAuthenticationManager = $this->getMock('F3\FLOW3\Security\Authentication\AuthenticationManagerInterface');
+		$mockAuthenticationManager = $this->getMock('TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface');
 		$mockAuthenticationManager->expects($this->once())->method('logout');
 
-		$authenticationController = $this->getAccessibleMock('F3\FLOW3\Security\Authentication\Controller\AuthenticationController', array('dummy'), array(), '', FALSE);
+		$authenticationController = $this->getAccessibleMock('TYPO3\FLOW3\Security\Authentication\Controller\AuthenticationController', array('dummy'), array(), '', FALSE);
 		$authenticationController->_set('authenticationManager', $mockAuthenticationManager);
 
 		$authenticationController->logoutAction();

@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\MVC\View;
+namespace TYPO3\FLOW3\MVC\View;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -28,10 +28,10 @@ namespace F3\FLOW3\MVC\View;
  * @scope prototype
  * @api
  */
-class JsonView extends \F3\FLOW3\MVC\View\AbstractView {
+class JsonView extends \TYPO3\FLOW3\MVC\View\AbstractView {
 
 	/**
-	 * @var \F3\FLOW3\MVC\Controller\ControllerContext
+	 * @var \TYPO3\FLOW3\MVC\Controller\ControllerContext
 	 */
 	protected $controllerContext;
 
@@ -95,7 +95,7 @@ class JsonView extends \F3\FLOW3\MVC\View\AbstractView {
 	protected $configuration = array();
 
 	/**
-	 * @var \F3\FLOW3\Persistence\PersistenceManagerInterface
+	 * @var \TYPO3\FLOW3\Persistence\PersistenceManagerInterface
 	 * @inject
 	 */
 	protected $persistenceManager;
@@ -203,14 +203,14 @@ class JsonView extends \F3\FLOW3\MVC\View\AbstractView {
 		if ($object instanceof \DateTime) {
 			return $object->format('Y-m-d\TH:i:s');
 		} else {
-			$propertyNames = \F3\FLOW3\Reflection\ObjectAccess::getGettablePropertyNames($object);
+			$propertyNames = \TYPO3\FLOW3\Reflection\ObjectAccess::getGettablePropertyNames($object);
 
 			$propertiesToRender = array();
 			foreach ($propertyNames as $propertyName) {
 				if (isset($configuration['_only']) && is_array($configuration['_only']) && !in_array($propertyName, $configuration['_only'])) continue;
 				if (isset($configuration['_exclude']) && is_array($configuration['_exclude']) && in_array($propertyName, $configuration['_exclude'])) continue;
 
-				$propertyValue = \F3\FLOW3\Reflection\ObjectAccess::getProperty($object, $propertyName);
+				$propertyValue = \TYPO3\FLOW3\Reflection\ObjectAccess::getProperty($object, $propertyName);
 
 				if (!is_array($propertyValue) && !is_object($propertyValue)) {
 					$propertiesToRender[$propertyName] = $propertyValue;

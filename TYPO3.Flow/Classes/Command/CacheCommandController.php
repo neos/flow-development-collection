@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Command;
+namespace TYPO3\FLOW3\Command;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -29,20 +29,20 @@ namespace F3\FLOW3\Command;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope singleton
  */
-class CacheCommandController extends \F3\FLOW3\MVC\Controller\CommandController {
+class CacheCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandController {
 
 	/**
-	 * @var \F3\FLOW3\Cache\CacheManager
+	 * @var \TYPO3\FLOW3\Cache\CacheManager
 	 */
 	protected $cacheManager;
 
 	/**
 	 * Injects the cache manager
 	 *
-	 * @param \F3\FLOW3\Cache\CacheManager $cacheManager
+	 * @param \TYPO3\FLOW3\Cache\CacheManager $cacheManager
 	 * @return void
 	 */
-	public function injectCacheManager(\F3\FLOW3\Cache\CacheManager $cacheManager) {
+	public function injectCacheManager(\TYPO3\FLOW3\Cache\CacheManager $cacheManager) {
 		$this->cacheManager = $cacheManager;
 	}
 

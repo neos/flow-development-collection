@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Reflection;
+namespace TYPO3\FLOW3\Reflection;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -38,7 +38,7 @@ class ParameterReflection extends \ReflectionParameter {
 	/**
 	 * Returns the declaring class
 	 *
-	 * @return \F3\FLOW3\Reflection\ClassReflection The declaring class
+	 * @return \TYPO3\FLOW3\Reflection\ClassReflection The declaring class
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getDeclaringClass() {
@@ -48,7 +48,7 @@ class ParameterReflection extends \ReflectionParameter {
 	/**
 	 * Returns the parameter class
 	 *
-	 * @return \F3\FLOW3\Reflection\ClassReflection The parameter class
+	 * @return \TYPO3\FLOW3\Reflection\ClassReflection The parameter class
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */

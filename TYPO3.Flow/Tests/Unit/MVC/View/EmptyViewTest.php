@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\MVC\View;
+namespace TYPO3\FLOW3\Tests\Unit\MVC\View;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,14 +26,14 @@ namespace F3\FLOW3\Tests\Unit\MVC\View;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class EmptyViewTest extends \F3\FLOW3\Tests\UnitTestCase {
+class EmptyViewTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function renderReturnsEmptyString() {
-		$view = new \F3\FLOW3\MVC\View\EmptyView();
+		$view = new \TYPO3\FLOW3\MVC\View\EmptyView();
 		$this->assertEquals('', $view->render());
 	}
 
@@ -42,7 +42,7 @@ class EmptyViewTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function callingNonExistingMethodsWontThrowAnException() {
-		$view = new \F3\FLOW3\MVC\View\EmptyView();
+		$view = new \TYPO3\FLOW3\MVC\View\EmptyView();
 		$view->nonExistingMethod();
 			// dummy assertion to satisfy strict mode in PHPUnit
 		$this->assertTrue(TRUE);
@@ -53,7 +53,7 @@ class EmptyViewTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function assignReturnsViewToAllowChaining() {
-		$view = new \F3\FLOW3\MVC\View\EmptyView();
+		$view = new \TYPO3\FLOW3\MVC\View\EmptyView();
 		$returnedView = $view->assign('foo', 'FooValue');
 		$this->assertSame($view, $returnedView);
 	}
@@ -63,7 +63,7 @@ class EmptyViewTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function assignMultipleReturnsViewToAllowChaining() {
-		$view = new \F3\FLOW3\MVC\View\EmptyView();
+		$view = new \TYPO3\FLOW3\MVC\View\EmptyView();
 		$returnedView = $view->assignMultiple(array('foo', 'FooValue'));
 		$this->assertSame($view, $returnedView);
 	}

@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Package\MetaData;
+namespace TYPO3\FLOW3\Package\MetaData;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -32,13 +32,13 @@ class XmlWriter {
 	/**
 	 * Write metadata for the given package into a Package.xml file.
 	 *
-	 * @param \F3\FLOW3\Package\PackageInterface $package The package - also contains information about where to write the Package meta file
-	 * @param \F3\FLOW3\Package\MetaDataInterface $meta The MetaData object containing the information to write
+	 * @param \TYPO3\FLOW3\Package\PackageInterface $package The package - also contains information about where to write the Package meta file
+	 * @param \TYPO3\FLOW3\Package\MetaDataInterface $meta The MetaData object containing the information to write
 	 * @return boolean If writing the XML file was successful returns TRUE, otherwise FALSE
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	static public function writePackageMetaData(\F3\FLOW3\Package\PackageInterface $package, \F3\FLOW3\Package\MetaDataInterface $meta) {
+	static public function writePackageMetaData(\TYPO3\FLOW3\Package\PackageInterface $package, \TYPO3\FLOW3\Package\MetaDataInterface $meta) {
 		$xml = new \XMLWriter();
 		if ($xml->openURI($package->getMetaPath() . 'Package.xml') === FALSE) return FALSE;
 
@@ -97,11 +97,11 @@ class XmlWriter {
 	 *
 	 *
 	 * @param \XMLWriter $xml The XMLWriter to write to
-	 * @param \F3\FLOW3\Package\MetaData\AbstractParty $party The party to write
+	 * @param \TYPO3\FLOW3\Package\MetaData\AbstractParty $party The party to write
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	static protected function writeParty(\XMLWriter $xml, \F3\FLOW3\Package\MetaData\AbstractParty $party) {
+	static protected function writeParty(\XMLWriter $xml, \TYPO3\FLOW3\Package\MetaData\AbstractParty $party) {
 		$xml->startElement($party->getPartyType());
 
 		if (strlen($party->getRole())) $xml->writeAttribute('role', $party->getRole());
@@ -125,21 +125,21 @@ class XmlWriter {
 	 * Write the constraint to a XMLWriter instance.
 	 *
 	 * @param \XMLWriter $xml The XMLWriter to write to
-	 * @param \F3\FLOW3\Package\MetaData\AbstractConstraint $constraint The constraint to write
+	 * @param \TYPO3\FLOW3\Package\MetaData\AbstractConstraint $constraint The constraint to write
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	static protected function writeConstraint(\XMLWriter $xml, \F3\FLOW3\Package\MetaData\AbstractConstraint $constraint) {
+	static protected function writeConstraint(\XMLWriter $xml, \TYPO3\FLOW3\Package\MetaData\AbstractConstraint $constraint) {
 		$xml->startElement($constraint->getConstraintScope());
 
 		if (strlen($constraint->getMinVersion())) $xml->writeAttribute('minVersion', $constraint->getMinVersion());
 		if (strlen($constraint->getMaxVersion())) $xml->writeAttribute('maxVersion', $constraint->getMaxVersion());
 
 		switch ($constraint->getConstraintScope()) {
-			case \F3\FLOW3\Package\MetaData::CONSTRAINT_SCOPE_SYSTEM :
+			case \TYPO3\FLOW3\Package\MetaData::CONSTRAINT_SCOPE_SYSTEM :
 				if(strlen($constraint->getType())) $xml->writeAttribute('type', $constraint->getType());
 			break;
-			case \F3\FLOW3\Package\MetaData::CONSTRAINT_SCOPE_PACKAGE :
+			case \TYPO3\FLOW3\Package\MetaData::CONSTRAINT_SCOPE_PACKAGE :
 			break;
 		}
 

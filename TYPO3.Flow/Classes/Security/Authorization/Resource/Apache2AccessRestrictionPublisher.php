@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Security\Authorization\Resource;
+namespace TYPO3\FLOW3\Security\Authorization\Resource;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -27,10 +27,10 @@ namespace F3\FLOW3\Security\Authorization\Resource;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope singleton
  */
-class Apache2AccessRestrictionPublisher implements \F3\FLOW3\Security\Authorization\Resource\AccessRestrictionPublisherInterface {
+class Apache2AccessRestrictionPublisher implements \TYPO3\FLOW3\Security\Authorization\Resource\AccessRestrictionPublisherInterface {
 
 	/**
-	 * @var \F3\FLOW3\Utility\Environment
+	 * @var \TYPO3\FLOW3\Utility\Environment
 	 * @inject
 	 */
 	protected $environment;

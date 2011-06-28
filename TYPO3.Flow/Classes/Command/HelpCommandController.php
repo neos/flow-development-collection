@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Command;
+namespace TYPO3\FLOW3\Command;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -21,7 +21,7 @@ namespace F3\FLOW3\Command;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \F3\FLOW3\MVC\CLI\Command;
+use \TYPO3\FLOW3\MVC\CLI\Command;
 
 /**
  * A Command Controller which provides help for available commands
@@ -29,20 +29,20 @@ use \F3\FLOW3\MVC\CLI\Command;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope singleton
  */
-class HelpCommandController extends \F3\FLOW3\MVC\Controller\CommandController {
+class HelpCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandController {
 
 	/**
-	 * @var \F3\FLOW3\Reflection\ReflectionService
+	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
 	/**
-	 * @var \F3\FLOW3\Package\PackageManagerInterface
+	 * @var \TYPO3\FLOW3\Package\PackageManagerInterface
 	 */
 	protected $packageManager;
 
 	/**
-	 * @var \F3\FLOW3\Core\Bootstrap
+	 * @var \TYPO3\FLOW3\Core\Bootstrap
 	 */
 	protected $bootstrap;
 
@@ -52,26 +52,26 @@ class HelpCommandController extends \F3\FLOW3\MVC\Controller\CommandController {
 	protected $commandsByPackagesAndControllers = array();
 
 	/**
-	 * @param \F3\FLOW3\Reflection\ReflectionService $reflectionService
+	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService
 	 * @return void
 	 */
-	public function injectReflectionService(\F3\FLOW3\Reflection\ReflectionService $reflectionService) {
+	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
 	}
 
 	/**
-	 * @param \F3\FLOW3\Package\PackageManagerInterface $packageManager
+	 * @param \TYPO3\FLOW3\Package\PackageManagerInterface $packageManager
 	 * @return void
 	 */
-	public function injectPackageManager(\F3\FLOW3\Package\PackageManagerInterface $packageManager) {
+	public function injectPackageManager(\TYPO3\FLOW3\Package\PackageManagerInterface $packageManager) {
 		$this->packageManager = $packageManager;
 	}
 
 	/**
-	 * @param \F3\FLOW3\Core\Bootstrap $bootstrap
+	 * @param \TYPO3\FLOW3\Core\Bootstrap $bootstrap
 	 * @return void
 	 */
-	public function injectBootstrap(\F3\FLOW3\Core\Bootstrap $bootstrap) {
+	public function injectBootstrap(\TYPO3\FLOW3\Core\Bootstrap $bootstrap) {
 		$this->bootstrap = $bootstrap;
 	}
 
@@ -115,9 +115,9 @@ class HelpCommandController extends \F3\FLOW3\MVC\Controller\CommandController {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function buildCommandsIndex() {
-		$commandControllerClassNames = $this->reflectionService->getAllSubClassNamesForClass('F3\FLOW3\MVC\Controller\CommandController');
+		$commandControllerClassNames = $this->reflectionService->getAllSubClassNamesForClass('TYPO3\FLOW3\MVC\Controller\CommandController');
 		foreach ($commandControllerClassNames as $className) {
-			$class = new \F3\FLOW3\Reflection\ClassReflection($className);
+			$class = new \TYPO3\FLOW3\Reflection\ClassReflection($className);
 			foreach ($class->getMethods() as $method) {
 				$methodName = $method->getName();
 				if (substr($methodName, -7, 7) === 'Command') {

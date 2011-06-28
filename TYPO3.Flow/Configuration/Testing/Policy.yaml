@@ -10,8 +10,8 @@
 
 resources:
   methods:
-    F3_FLOW3_Tests_Functional_Security_RestrictedController_customerAction: "method(F3\FLOW3\Tests\Functional\Security\Fixtures\RestrictedController->customerAction())"
-    F3_FLOW3_Tests_Functional_Security_RestrictedController_adminAction: "method(F3\FLOW3\Tests\Functional\Security\Fixtures\RestrictedController->adminAction())"
+    TYPO3_FLOW3_Tests_Functional_Security_RestrictedController_customerAction: "method(TYPO3\FLOW3\Tests\Functional\Security\Fixtures\RestrictedController->customerAction())"
+    TYPO3_FLOW3_Tests_Functional_Security_RestrictedController_adminAction: "method(TYPO3\FLOW3\Tests\Functional\Security\Fixtures\RestrictedController->adminAction())"
 
 roles:
   Customer: []
@@ -21,11 +21,11 @@ acls:
 
   Customer:
     methods:
-      F3_FLOW3_Tests_Functional_Security_RestrictedController_customerAction: GRANT
-      F3_FLOW3_Tests_Functional_Security_RestrictedController_adminAction:    DENY
+      TYPO3_FLOW3_Tests_Functional_Security_RestrictedController_customerAction: GRANT
+      TYPO3_FLOW3_Tests_Functional_Security_RestrictedController_adminAction:    DENY
 
   Administrator:
     methods:
-      F3_FLOW3_Tests_Functional_Security_RestrictedController_customerAction: GRANT
-      F3_FLOW3_Tests_Functional_Security_RestrictedController_adminAction:    GRANT
+      TYPO3_FLOW3_Tests_Functional_Security_RestrictedController_customerAction: GRANT
+      TYPO3_FLOW3_Tests_Functional_Security_RestrictedController_adminAction:    GRANT
 

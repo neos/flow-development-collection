@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Property\TypeConverter;
+namespace TYPO3\FLOW3\Property\TypeConverter;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -37,7 +37,7 @@ namespace F3\FLOW3\Property\TypeConverter;
  * @api
  * @scope singleton
  */
-class PersistentObjectConverter extends \F3\FLOW3\Property\TypeConverter\AbstractTypeConverter {
+class PersistentObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTypeConverter {
 
 	const PATTERN_MATCH_UUID = '/([a-f0-9]){8}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){12}/';
 	const CONFIGURATION_MODIFICATION_ALLOWED = 1;
@@ -60,41 +60,41 @@ class PersistentObjectConverter extends \F3\FLOW3\Property\TypeConverter\Abstrac
 	protected $priority = 1;
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
+	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
-	 * @var \F3\FLOW3\Persistence\PersistenceManagerInterface
+	 * @var \TYPO3\FLOW3\Persistence\PersistenceManagerInterface
 	 */
 	protected $persistenceManager;
 
 	/**
-	 * @var \F3\FLOW3\Reflection\ReflectionService
+	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
 	/**
-	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
+	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager
 	 * @return void
 	 */
-	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
+	public function injectObjectManager(\TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
 	}
 
 	/**
-	 * @param \F3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager
+	 * @param \TYPO3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager
 	 * @return void
 	 */
-	public function injectPersistenceManager(\F3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager) {
+	public function injectPersistenceManager(\TYPO3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager) {
 		$this->persistenceManager = $persistenceManager;
 	}
 
 	/**
-	 * @param \F3\FLOW3\Reflection\ReflectionService $reflectionService
+	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService
 	 * @return void
 	 */
-	public function injectReflectionService(\F3\FLOW3\Reflection\ReflectionService $reflectionService) {
+	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
 	}
 
@@ -134,19 +134,19 @@ class PersistentObjectConverter extends \F3\FLOW3\Property\TypeConverter\Abstrac
 	 *
 	 * @param string $targetType
 	 * @param string $propertyName
-	 * @param \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
+	 * @param \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
 	 * @return string
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	public function getTypeOfChildProperty($targetType, $propertyName, \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration) {
-		$configuredTargetType = $configuration->getConfigurationFor($propertyName)->getConfigurationValue('F3\FLOW3\Property\TypeConverter\PersistentObjectConverter', self::CONFIGURATION_TARGET_TYPE);
+	public function getTypeOfChildProperty($targetType, $propertyName, \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration) {
+		$configuredTargetType = $configuration->getConfigurationFor($propertyName)->getConfigurationValue('TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter', self::CONFIGURATION_TARGET_TYPE);
 		if ($configuredTargetType !== NULL) {
 			return $configuredTargetType;
 		}
 
 		$schema = $this->reflectionService->getClassSchema($targetType);
 		if (!$schema->hasProperty($propertyName)) {
-			throw new \F3\FLOW3\Property\Exception\InvalidTargetException('Property "' . $propertyName . '" was not found in target object of type "' . $targetType . '".', 1297978366);
+			throw new \TYPO3\FLOW3\Property\Exception\InvalidTargetException('Property "' . $propertyName . '" was not found in target object of type "' . $targetType . '".', 1297978366);
 		}
 		$propertyInformation = $schema->getProperty($propertyName);
 		return $propertyInformation['type'] . ($propertyInformation['elementType']!==NULL ? '<' . $propertyInformation['elementType'] . '>' : '');
@@ -158,11 +158,11 @@ class PersistentObjectConverter extends \F3\FLOW3\Property\TypeConverter\Abstrac
 	 * @param mixed $source
 	 * @param string $targetType
 	 * @param array $convertedChildProperties
-	 * @param \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
+	 * @param \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
 	 * @return object the target type
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
+	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
 		if (is_array($source)) {
 			$object = $this->handleArrayData($source, $targetType, $convertedChildProperties, $configuration);
 		} elseif (is_string($source)) {
@@ -171,9 +171,9 @@ class PersistentObjectConverter extends \F3\FLOW3\Property\TypeConverter\Abstrac
 			throw new \InvalidArgumentException('Only strings and arrays are accepted.', 1305630314);
 		}
 		foreach ($convertedChildProperties as $propertyName => $propertyValue) {
-			$result = \F3\FLOW3\Reflection\ObjectAccess::setProperty($object, $propertyName, $propertyValue);
+			$result = \TYPO3\FLOW3\Reflection\ObjectAccess::setProperty($object, $propertyName, $propertyValue);
 			if ($result === FALSE) {
-				throw new \F3\FLOW3\Property\Exception\InvalidTargetException('Property "' . $propertyName . '" could not be set in target object of type "' . $targetType . '".', 1297935345);
+				throw new \TYPO3\FLOW3\Property\Exception\InvalidTargetException('Property "' . $propertyName . '" could not be set in target object of type "' . $targetType . '".', 1297935345);
 			}
 		}
 
@@ -186,25 +186,25 @@ class PersistentObjectConverter extends \F3\FLOW3\Property\TypeConverter\Abstrac
 	 * @param array $source
 	 * @param string $targetType
 	 * @param array $convertedChildProperties
-	 * @param \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
+	 * @param \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
 	 * @return object
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	protected function handleArrayData(array $source, $targetType, array &$convertedChildProperties, \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
+	protected function handleArrayData(array $source, $targetType, array &$convertedChildProperties, \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
 		if (isset($source['__identity'])) {
 			$object = $this->fetchObjectFromPersistence($source['__identity'], $targetType);
 
 			if (count($source) > 1) {
-				if ($configuration === NULL || $configuration->getConfigurationValue('F3\FLOW3\Property\TypeConverter\PersistentObjectConverter', self::CONFIGURATION_MODIFICATION_ALLOWED) !== TRUE) {
-					throw new \F3\FLOW3\Property\Exception\InvalidPropertyMappingConfigurationException('Modification of persistent objects not allowed. To enable this, you need to set the PropertyMappingConfiguration Value "CONFIGURATION_MODIFICATION_ALLOWED" to TRUE.', 1297932028);
+				if ($configuration === NULL || $configuration->getConfigurationValue('TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter', self::CONFIGURATION_MODIFICATION_ALLOWED) !== TRUE) {
+					throw new \TYPO3\FLOW3\Property\Exception\InvalidPropertyMappingConfigurationException('Modification of persistent objects not allowed. To enable this, you need to set the PropertyMappingConfiguration Value "CONFIGURATION_MODIFICATION_ALLOWED" to TRUE.', 1297932028);
 				}
 				$object = clone $object;
 			}
 
 			return $object;
 		} else {
-			if ($configuration === NULL || $configuration->getConfigurationValue('F3\FLOW3\Property\TypeConverter\PersistentObjectConverter', self::CONFIGURATION_CREATION_ALLOWED) !== TRUE) {
-				throw new \F3\FLOW3\Property\Exception\InvalidPropertyMappingConfigurationException('Creation of objects not allowed. To enable this, you need to set the PropertyMappingConfiguration Value "CONFIGURATION_CREATION_ALLOWED" to TRUE');
+			if ($configuration === NULL || $configuration->getConfigurationValue('TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter', self::CONFIGURATION_CREATION_ALLOWED) !== TRUE) {
+				throw new \TYPO3\FLOW3\Property\Exception\InvalidPropertyMappingConfigurationException('Creation of objects not allowed. To enable this, you need to set the PropertyMappingConfiguration Value "CONFIGURATION_CREATION_ALLOWED" to TRUE');
 			}
 			return $this->buildObject($convertedChildProperties, $targetType);
 		}
@@ -225,11 +225,11 @@ class PersistentObjectConverter extends \F3\FLOW3\Property\TypeConverter\Abstrac
 		} elseif (is_array($identity)) {
 			$object = $this->findObjectByIdentityProperties($identity, $targetType);
 		} else {
-			throw new \F3\FLOW3\Property\Exception\InvalidSourceException('The identity property "' . $identity . '" is neither a string nor an array.', 1297931020);
+			throw new \TYPO3\FLOW3\Property\Exception\InvalidSourceException('The identity property "' . $identity . '" is neither a string nor an array.', 1297931020);
 		}
 
 		if ($object === NULL) {
-			throw new \F3\FLOW3\Property\Exception\TargetNotFoundException('Object with identity "' . print_r($identity, TRUE) . '" not found.', 1297933823);
+			throw new \TYPO3\FLOW3\Property\Exception\TargetNotFoundException('Object with identity "' . print_r($identity, TRUE) . '" not found.', 1297933823);
 		}
 
 		return $object;
@@ -243,7 +243,7 @@ class PersistentObjectConverter extends \F3\FLOW3\Property\TypeConverter\Abstrac
 	 * @param array &$possibleConstructorArgumentValues
 	 * @param string $objectType
 	 * @return object The created instance
-	 * @throws \F3\FLOW3\Property\Exception\InvalidTargetException if a required constructor argument is missing
+	 * @throws \TYPO3\FLOW3\Property\Exception\InvalidTargetException if a required constructor argument is missing
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
@@ -257,7 +257,7 @@ class PersistentObjectConverter extends \F3\FLOW3\Property\TypeConverter\Abstrac
 			} elseif ($constructorArgumentInformation['optional'] === TRUE) {
 				$constructorArguments[] = $constructorArgumentInformation['defaultValue'];
 			} else {
-				throw new \F3\FLOW3\Property\Exception\InvalidTargetException('Missing constructor argument "' . $constructorArgumentName . '" for object of type "' . $objectType . '".' , 1268734872);
+				throw new \TYPO3\FLOW3\Property\Exception\InvalidTargetException('Missing constructor argument "' . $constructorArgumentName . '" for object of type "' . $objectType . '".' , 1268734872);
 			}
 		}
 		return call_user_func_array(array($this->objectManager, 'create'), array_merge(array($objectType), $constructorArguments));
@@ -269,7 +269,7 @@ class PersistentObjectConverter extends \F3\FLOW3\Property\TypeConverter\Abstrac
 	 * @param array $identityProperties Property names and values to search for
 	 * @param string $type The object type to look for
 	 * @return object Either the object matching the identity or NULL if no object was found
-	 * @throws \F3\FLOW3\Property\Exception\DuplicateObjectException if more than one object was found
+	 * @throws \TYPO3\FLOW3\Property\Exception\DuplicateObjectException if more than one object was found
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @author Bastian Waidelich <bastian@typo3.org>
@@ -305,7 +305,7 @@ class PersistentObjectConverter extends \F3\FLOW3\Property\TypeConverter\Abstrac
 		} elseif ($numberOfResults === 0) {
 			return NULL;
 		} else {
-			throw new \F3\FLOW3\Property\Exception\DuplicateObjectException('More than one object was returned for the given identity, this is a constraint violation.', 1259612399);
+			throw new \TYPO3\FLOW3\Property\Exception\DuplicateObjectException('More than one object was returned for the given identity, this is a constraint violation.', 1259612399);
 		}
 	}
 }

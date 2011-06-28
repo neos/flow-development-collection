@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Security;
+namespace TYPO3\FLOW3\Security;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -27,24 +27,24 @@ namespace F3\FLOW3\Security;
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope singleton
  */
-class AccountRepository extends \F3\FLOW3\Persistence\Repository {
+class AccountRepository extends \TYPO3\FLOW3\Persistence\Repository {
 
 	/**
 	 * @var string
 	 */
-	protected $objectType = 'F3\FLOW3\Security\Account';
+	protected $objectType = 'TYPO3\FLOW3\Security\Account';
 
 	/**
 	 * @var array
 	 */
-	protected $defaultOrderings = array('creationDate' => \F3\FLOW3\Persistence\QueryInterface::ORDER_DESCENDING);
+	protected $defaultOrderings = array('creationDate' => \TYPO3\FLOW3\Persistence\QueryInterface::ORDER_DESCENDING);
 
 	/**
 	 * Returns the account for a specific authentication provider with the given identitifer
 	 *
 	 * @param string $accountIdentifier The account identifier
 	 * @param string $authenticationProviderName The authentication provider name
-	 * @return F3\FLOW3\Security\Account
+	 * @return \TYPO3\FLOW3\Security\Account
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function findByAccountIdentifierAndAuthenticationProviderName($accountIdentifier, $authenticationProviderName) {
@@ -62,7 +62,7 @@ class AccountRepository extends \F3\FLOW3\Persistence\Repository {
 	 *
 	 * @param string $accountIdentifier The account identifier
 	 * @param string $authenticationProviderName The authentication provider name
-	 * @return F3\FLOW3\Security\Account
+	 * @return \TYPO3\FLOW3\Security\Account
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function findActiveByAccountIdentifierAndAuthenticationProviderName($accountIdentifier, $authenticationProviderName) {

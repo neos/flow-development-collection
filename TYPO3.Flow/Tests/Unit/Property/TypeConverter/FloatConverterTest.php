@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\Property\TypeConverter;
+namespace TYPO3\FLOW3\Tests\Unit\Property\TypeConverter;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -25,17 +25,17 @@ namespace F3\FLOW3\Tests\Unit\Property\TypeConverter;
  * Testcase for the Float converter
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
- * @covers \F3\FLOW3\Property\TypeConverter\StringToIntegerConverter<extended>
+ * @covers \TYPO3\FLOW3\Property\TypeConverter\StringToIntegerConverter<extended>
  */
-class FloatConverterTest extends \F3\FLOW3\Tests\UnitTestCase {
+class FloatConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
-	 * @var \F3\FLOW3\Property\TypeConverterInterface
+	 * @var \TYPO3\FLOW3\Property\TypeConverterInterface
 	 */
 	protected $converter;
 
 	public function setUp() {
-		$this->converter = new \F3\FLOW3\Property\TypeConverter\FloatConverter();
+		$this->converter = new \TYPO3\FLOW3\Property\TypeConverter\FloatConverter();
 	}
 
 	/**

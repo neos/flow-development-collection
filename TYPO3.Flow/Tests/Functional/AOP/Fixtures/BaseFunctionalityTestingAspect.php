@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Functional\AOP\Fixtures;
+namespace TYPO3\FLOW3\Tests\Functional\AOP\Fixtures;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -24,112 +24,112 @@ namespace F3\FLOW3\Tests\Functional\AOP\Fixtures;
 /**
  * An aspect for testing the basic functionality of the AOP framework
  *
- * @introduce F3\FLOW3\Tests\Functional\AOP\Fixtures\Introduced01Interface, class(F3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass03)
+ * @introduce TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\Introduced01Interface, class(TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass03)
  * @aspect
  */
 class BaseFunctionalityTestingAspect {
 
 	/**
-	 * @introduce class(F3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass03)
+	 * @introduce class(TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass03)
 	 * @var string
 	 * @foo bar
 	 */
 	protected $introducedProtectedProperty;
 
 	/**
-	 * @introduce class(F3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass03)
+	 * @introduce class(TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass03)
 	 * @var array
 	 */
 	public $introducedPublicProperty;
 
 	/**
-	 * @around method(public F3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01->__construct())
-	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint
+	 * @around method(public TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01->__construct())
+	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint
 	 * @return void
 	 */
-	public function lousyConstructorAdvice(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function lousyConstructorAdvice(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$joinPoint->getAdviceChain()->proceed($joinPoint);
 		$joinPoint->getProxy()->constructorResult .= ' is lousier than A-380';
 	}
 
 	/**
-	 * @around within(F3\FLOW3\Tests\Functional\AOP\Fixtures\SayHelloInterface) && method(.*->sayHello())
-	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint
+	 * @around within(TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\SayHelloInterface) && method(.*->sayHello())
+	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint
 	 * @return string
 	 */
-	public function worldAdvice(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function worldAdvice(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		return $joinPoint->getAdviceChain()->proceed($joinPoint) . ' World';
 	}
 
 	/**
-	 * @around method(public F3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01->sayHelloAndThrow())
-	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint
+	 * @around method(public TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01->sayHelloAndThrow())
+	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint
 	 * @return string
 	 */
-	public function throwWorldAdvice(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function throwWorldAdvice(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		return $joinPoint->getAdviceChain()->proceed($joinPoint) . ' World';
 	}
 
 	/**
-	 * @around method(public F3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01->greet(name === 'FLOW3'))
-	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint
+	 * @around method(public TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01->greet(name === 'FLOW3'))
+	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint
 	 * @return string
 	 */
-	public function specialNameAdvice(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function specialNameAdvice(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		return 'Hello, me';
 	}
 
 	/**
-	 * @around method(public F3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01->greetMany(names contains this.currentName))
-	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint
+	 * @around method(public TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01->greetMany(names contains this.currentName))
+	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint
 	 * @return string
 	 */
-	public function manyNamesAdvice(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function manyNamesAdvice(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		return 'Hello, special guest';
 	}
 
 	/**
-	 * @afterreturning method(F3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass02->publicTargetMethod())
-	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint
+	 * @afterreturning method(TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass02->publicTargetMethod())
+	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint
 	 * @return string
 	 */
-	public function anAfterReturningAdvice(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function anAfterReturningAdvice(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$joinPoint->getProxy()->afterReturningAdviceWasInvoked = TRUE;
 	}
 
 	/**
-	 * @around method(protected F3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass02->protectedTargetMethod())
-	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint
+	 * @around method(protected TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass02->protectedTargetMethod())
+	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint
 	 * @return string
 	 */
-	public function anAdviceForAProtectedTargetMethod(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function anAdviceForAProtectedTargetMethod(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		return $joinPoint->getAdviceChain()->proceed($joinPoint) . ' bar';
 	}
 
 	/**
-	 * @around method(F3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01->greetObject(name.name === 'TYPO3'))
-	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint
+	 * @around method(TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01->greetObject(name.name === 'TYPO3'))
+	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint
 	 * @return string
 	 */
-	public function propertyOnMethodArgumentAdvice(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function propertyOnMethodArgumentAdvice(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		return 'Hello, old friend';
 	}
 
 	/**
-	 * @around method(F3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01->greetObject(name === this.currentName))
-	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint
+	 * @around method(TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01->greetObject(name === this.currentName))
+	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint
 	 * @return string
 	 */
-	public function thisOnMethodArgumentAdvice(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function thisOnMethodArgumentAdvice(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		return 'Hello, you';
 	}
 
 	/**
-	 * @around method(F3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass03->introducedMethod01())
-	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint
+	 * @around method(TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass03->introducedMethod01())
+	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint
 	 * @return string
 	 */
-	public function introducedMethod01Implementation(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function introducedMethod01Implementation(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		return 'Implemented';
 	}
 

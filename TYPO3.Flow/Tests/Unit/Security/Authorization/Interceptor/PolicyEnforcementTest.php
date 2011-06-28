@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\Security\Authorization\Interceptor;
+namespace TYPO3\FLOW3\Tests\Unit\Security\Authorization\Interceptor;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,7 +26,7 @@ namespace F3\FLOW3\Tests\Unit\Security\Authorization\Interceptor;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class PolicyEnforcementTest extends \F3\FLOW3\Tests\UnitTestCase {
+class PolicyEnforcementTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
@@ -34,13 +34,13 @@ class PolicyEnforcementTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function invokeCallsTheAuthenticationManager() {
-		$authenticationManager = $this->getMock('F3\FLOW3\Security\Authentication\AuthenticationManagerInterface');
-		$accessDecisionManager = $this->getMock('F3\FLOW3\Security\Authorization\AccessDecisionManagerInterface');
-		$joinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface');
+		$authenticationManager = $this->getMock('TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface');
+		$accessDecisionManager = $this->getMock('TYPO3\FLOW3\Security\Authorization\AccessDecisionManagerInterface');
+		$joinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface');
 
 		$authenticationManager->expects($this->once())->method('authenticate');
 
-		$interceptor = new \F3\FLOW3\Security\Authorization\Interceptor\PolicyEnforcement($authenticationManager, $accessDecisionManager);
+		$interceptor = new \TYPO3\FLOW3\Security\Authorization\Interceptor\PolicyEnforcement($authenticationManager, $accessDecisionManager);
 		$interceptor->setJoinPoint($joinPoint);
 		$interceptor->invoke();
 	}
@@ -52,13 +52,13 @@ class PolicyEnforcementTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function invokeCallsTheAccessDecisionManagerToDecideOnTheCurrentJoinPoint() {
-		$authenticationManager = $this->getMock('F3\FLOW3\Security\Authentication\AuthenticationManagerInterface');
-		$accessDecisionManager = $this->getMock('F3\FLOW3\Security\Authorization\AccessDecisionManagerInterface');
-		$joinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface');
+		$authenticationManager = $this->getMock('TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface');
+		$accessDecisionManager = $this->getMock('TYPO3\FLOW3\Security\Authorization\AccessDecisionManagerInterface');
+		$joinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface');
 
 		$accessDecisionManager->expects($this->once())->method('decideOnJoinPoint')->with($joinPoint);
 
-		$interceptor = new \F3\FLOW3\Security\Authorization\Interceptor\PolicyEnforcement($authenticationManager, $accessDecisionManager);
+		$interceptor = new \TYPO3\FLOW3\Security\Authorization\Interceptor\PolicyEnforcement($authenticationManager, $accessDecisionManager);
 		$interceptor->setJoinPoint($joinPoint);
 		$interceptor->invoke();
 	}

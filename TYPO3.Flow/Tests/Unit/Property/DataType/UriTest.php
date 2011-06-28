@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\Property\DataType;
+namespace TYPO3\FLOW3\Tests\Unit\Property\DataType;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,7 +26,7 @@ namespace F3\FLOW3\Tests\Unit\Property\DataType;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class UriTest extends \F3\FLOW3\Tests\UnitTestCase {
+class UriTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * Checks if a complete URI with all parts is transformed into an object correctly.
@@ -36,7 +36,7 @@ class UriTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function constructorParsesAFullBlownUriStringCorrectly() {
 		$uriString = 'http://username:password@subdomain.domain.com:8080/path1/path2/index.php?argument1=value1&argument2=value2&argument3[subargument1]=subvalue1#anchor';
-		$uri = new \F3\FLOW3\Property\DataType\Uri($uriString);
+		$uri = new \TYPO3\FLOW3\Property\DataType\Uri($uriString);
 
 		$check = (
 			$uri->getScheme() == 'http' &&
@@ -58,7 +58,7 @@ class UriTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function constructorParsesArgumentsWithSpecialCharactersCorrectly() {
 		$uriString = 'http://www.typo3.com/path1/?argumentäöü1=' . urlencode('valueåø€œ');
-		$uri = new \F3\FLOW3\Property\DataType\Uri($uriString);
+		$uri = new \TYPO3\FLOW3\Property\DataType\Uri($uriString);
 
 		$check = (
 			$uri->getScheme() == 'http' &&
@@ -78,7 +78,7 @@ class UriTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function stringRepresentationIsCorrect() {
 		$uriString = 'http://username:password@subdomain.domain.com:1234/pathx1/pathx2/index.php?argument1=value1&argument2=value2&argument3[subargument1]=subvalue1#anchorman';
-		$uri = new \F3\FLOW3\Property\DataType\Uri($uriString);
+		$uri = new \TYPO3\FLOW3\Property\DataType\Uri($uriString);
 		$this->assertEquals($uriString, (string)$uri, 'The string representation of the URI is not equal to the original URI string.');
 	}
 }

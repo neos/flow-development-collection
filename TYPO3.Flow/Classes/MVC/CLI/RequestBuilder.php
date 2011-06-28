@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\MVC\CLI;
+namespace TYPO3\FLOW3\MVC\CLI;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -21,7 +21,7 @@ namespace F3\FLOW3\MVC\CLI;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \F3\FLOW3\MVC\CLI\Command;
+use \TYPO3\FLOW3\MVC\CLI\Command;
 
 /**
  * Builds a CLI request object from the raw command call
@@ -32,44 +32,44 @@ use \F3\FLOW3\MVC\CLI\Command;
 class RequestBuilder {
 
 	/**
-	 * @var \F3\FLOW3\Utility\Environment
+	 * @var \TYPO3\FLOW3\Utility\Environment
 	 */
 	protected $environment;
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
+	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
-	 * @var \F3\FLOW3\Package\PackageManagerInterface
+	 * @var \TYPO3\FLOW3\Package\PackageManagerInterface
 	 */
 	protected $packageManager;
 
 	/**
-	 * @param \F3\FLOW3\Utility\Environment $environment
+	 * @param \TYPO3\FLOW3\Utility\Environment $environment
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectEnvironment(\F3\FLOW3\Utility\Environment $environment) {
+	public function injectEnvironment(\TYPO3\FLOW3\Utility\Environment $environment) {
 		$this->environment = $environment;
 	}
 
 	/**
-	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
+	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
+	public function injectObjectManager(\TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
 	}
 
 	/**
-	 * @param \F3\FLOW3\Package\PackageManagerInterface $packageManager
+	 * @param \TYPO3\FLOW3\Package\PackageManagerInterface $packageManager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectPackageManager(\F3\FLOW3\Package\PackageManagerInterface $packageManager) {
+	public function injectPackageManager(\TYPO3\FLOW3\Package\PackageManagerInterface $packageManager) {
 		$this->packageManager = $packageManager;
 	}
 
@@ -81,12 +81,12 @@ class RequestBuilder {
 	 * name (like in $argv) but start with command right away.
 	 *
 	 * @param mixed $commandLine The command line, either as a string or as an array
-	 * @return \F3\FLOW3\MVC\CLI\Request The CLI request as an object
+	 * @return \TYPO3\FLOW3\MVC\CLI\Request The CLI request as an object
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function build($commandLine) {
 		$request = new Request();
-		$request->setControllerObjectName('F3\FLOW3\Command\HelpCommandController');
+		$request->setControllerObjectName('TYPO3\FLOW3\Command\HelpCommandController');
 		$request->setControllerCommandName('help');
 
 		$rawCommandLineArguments = is_array($commandLine) ? $commandLine : explode(' ', $commandLine);
@@ -157,12 +157,12 @@ class RequestBuilder {
 	/**
 	 * Sets package, controller, action if found in $command
 	 *
-	 * @param \F3\FLOW3\MVC\CLI\Request $request
+	 * @param \TYPO3\FLOW3\MVC\CLI\Request $request
 	 * @param array $command
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function setControllerOptions(\F3\FLOW3\MVC\CLI\Request $request, array $command) {
+	protected function setControllerOptions(\TYPO3\FLOW3\MVC\CLI\Request $request, array $command) {
 		if ($command['package'] !== NULL) {
 			$request->setControllerPackageKey($command['package']);
 		}
@@ -222,7 +222,7 @@ class RequestBuilder {
 	}
 
 	/**
-	 * Converts the first element of the input to an argument name for a \F3\FLOW3\MVC\RequestInterface object.
+	 * Converts the first element of the input to an argument name for a \TYPO3\FLOW3\MVC\RequestInterface object.
 	 *
 	 * @param string $commandLineOption the command line option
 	 * @return string converted argument name

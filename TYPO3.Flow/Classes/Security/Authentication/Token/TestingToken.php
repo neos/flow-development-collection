@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Security\Authentication\Token;
+namespace TYPO3\FLOW3\Security\Authentication\Token;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -27,7 +27,7 @@ namespace F3\FLOW3\Security\Authentication\Token;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
-class TestingToken implements \F3\FLOW3\Security\Authentication\TokenInterface {
+class TestingToken implements \TYPO3\FLOW3\Security\Authentication\TokenInterface {
 
 	/**
 	 * @var string
@@ -47,7 +47,7 @@ class TestingToken implements \F3\FLOW3\Security\Authentication\TokenInterface {
 	protected $credentials = array();
 
 	/**
-	 * @var \F3\FLOW3\Security\Account
+	 * @var \TYPO3\FLOW3\Security\Account
 	 */
 	protected $account;
 
@@ -58,7 +58,7 @@ class TestingToken implements \F3\FLOW3\Security\Authentication\TokenInterface {
 
 	/**
 	 * The authentication entry point
-	 * @var \F3\FLOW3\Security\Authentication\EntryPointInterface
+	 * @var \TYPO3\FLOW3\Security\Authentication\EntryPointInterface
 	 */
 	protected $entryPoint = NULL;
 
@@ -96,18 +96,18 @@ class TestingToken implements \F3\FLOW3\Security\Authentication\TokenInterface {
 	/**
 	 * Sets the authentication entry point
 	 *
-	 * @param \F3\FLOW3\Security\Authentication\EntryPointInterface $entryPoint The authentication entry point
+	 * @param \TYPO3\FLOW3\Security\Authentication\EntryPointInterface $entryPoint The authentication entry point
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function setAuthenticationEntryPoint(\F3\FLOW3\Security\Authentication\EntryPointInterface $entryPoint) {
+	public function setAuthenticationEntryPoint(\TYPO3\FLOW3\Security\Authentication\EntryPointInterface $entryPoint) {
 		$this->entryPoint = $entryPoint;
 	}
 
 	/**
 	 * Returns the configured authentication entry point, NULL if none is available
 	 *
-	 * @return \F3\FLOW3\Security\Authentication\EntryPointInterface The configured authentication entry point, NULL if none is available
+	 * @return \TYPO3\FLOW3\Security\Authentication\EntryPointInterface The configured authentication entry point, NULL if none is available
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getAuthenticationEntryPoint() {
@@ -115,9 +115,9 @@ class TestingToken implements \F3\FLOW3\Security\Authentication\TokenInterface {
 	}
 
 	/**
-	 * Returns TRUE if \F3\FLOW3\Security\RequestPattern were set
+	 * Returns TRUE if \TYPO3\FLOW3\Security\RequestPattern were set
 	 *
-	 * @return boolean True if a \F3\FLOW3\Security\RequestPatternInterface was set
+	 * @return boolean True if a \TYPO3\FLOW3\Security\RequestPatternInterface was set
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function hasRequestPatterns() {
@@ -128,7 +128,7 @@ class TestingToken implements \F3\FLOW3\Security\Authentication\TokenInterface {
 	/**
 	 * Sets request patterns
 	 *
-	 * @param array $requestPatterns Array of \F3\FLOW3\Security\RequestPattern to be set
+	 * @param array $requestPatterns Array of \TYPO3\FLOW3\Security\RequestPattern to be set
 	 * @return void
 	 * @see hasRequestPattern()
 	 */
@@ -137,7 +137,7 @@ class TestingToken implements \F3\FLOW3\Security\Authentication\TokenInterface {
 	}
 
 	/**
-	 * Returns an array of set \F3\FLOW3\Security\RequestPatternInterface, NULL if none was set
+	 * Returns an array of set \TYPO3\FLOW3\Security\RequestPatternInterface, NULL if none was set
 	 *
 	 * @return array Array of set request patterns
 	 * @see hasRequestPattern()
@@ -149,12 +149,12 @@ class TestingToken implements \F3\FLOW3\Security\Authentication\TokenInterface {
 	/**
 	 * Simply sets the authentication status to AUTHENTICATION_NEEDED
 	 *
-	 * @param \F3\FLOW3\MVC\RequestInterface $request The current request instance
+	 * @param \TYPO3\FLOW3\MVC\RequestInterface $request The current request instance
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function updateCredentials(\F3\FLOW3\MVC\RequestInterface $request) {
+	public function updateCredentials(\TYPO3\FLOW3\MVC\RequestInterface $request) {
 		$this->authenticationStatus = self::AUTHENTICATION_NEEDED;
 	}
 
@@ -171,7 +171,7 @@ class TestingToken implements \F3\FLOW3\Security\Authentication\TokenInterface {
 	/**
 	 * Returns the account if one is authenticated, NULL otherwise.
 	 *
-	 * @return F3\FLOW3\Security\Account An account object
+	 * @return \TYPO3\FLOW3\Security\Account An account object
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getAccount() {
@@ -181,18 +181,18 @@ class TestingToken implements \F3\FLOW3\Security\Authentication\TokenInterface {
 	/**
 	 * Set the (authenticated) account
 	 *
-	 * @param F3\FLOW3\Security\Account $account An account object
+	 * @param \TYPO3\FLOW3\Security\Account $account An account object
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function setAccount(\F3\FLOW3\Security\Account $account = NULL) {
+	public function setAccount(\TYPO3\FLOW3\Security\Account $account = NULL) {
 		$this->account = $account;
 	}
 
 	/**
 	 * Returns the currently valid roles.
 	 *
-	 * @return array Array of F3\FLOW3\Security\Authentication\Role objects
+	 * @return array Array of TYPO3\FLOW3\Security\Authentication\Role objects
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getRoles() {
@@ -201,16 +201,16 @@ class TestingToken implements \F3\FLOW3\Security\Authentication\TokenInterface {
 	}
 
 	/**
-	 * Sets the authentication status. Usually called by the responsible \F3\FLOW3\Security\Authentication\AuthenticationManagerInterface
+	 * Sets the authentication status. Usually called by the responsible \TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface
 	 *
 	 * @param integer $authenticationStatus One of NO_CREDENTIALS_GIVEN, WRONG_CREDENTIALS, AUTHENTICATION_SUCCESSFUL, AUTHENTICATION_NEEDED
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @throws F3\FLOW3\Security\Exception\InvalidAuthenticationStatusException
+	 * @throws TYPO3\FLOW3\Security\Exception\InvalidAuthenticationStatusException
 	 */
 	public function setAuthenticationStatus($authenticationStatus) {
 		if (!in_array($authenticationStatus, array(self::NO_CREDENTIALS_GIVEN, self::WRONG_CREDENTIALS, self::AUTHENTICATION_SUCCESSFUL, self::AUTHENTICATION_NEEDED))) {
-			throw new \F3\FLOW3\Security\Exception\InvalidAuthenticationStatusException('Invalid authentication status.', 1237224453);
+			throw new \TYPO3\FLOW3\Security\Exception\InvalidAuthenticationStatusException('Invalid authentication status.', 1237224453);
 		}
 		$this->authenticationStatus = $authenticationStatus;
 	}

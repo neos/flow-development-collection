@@ -17,7 +17,7 @@ DateTime:
 # Cache                                                                    #
 #                                                                          #
 
-F3\FLOW3\Cache\CacheFactory:
+TYPO3\FLOW3\Cache\CacheFactory:
   arguments:
     1:
       setting: TYPO3.FLOW3.context
@@ -27,56 +27,56 @@ F3\FLOW3\Cache\CacheFactory:
 # I18n                                                                     #
 #                                                                          #
 
-F3\FLOW3\I18n\Service:
+TYPO3\FLOW3\I18n\Service:
   properties:
     cache:
       object:
-        factoryObjectName: F3\FLOW3\Cache\CacheManager
+        factoryObjectName: TYPO3\FLOW3\Cache\CacheManager
         factoryMethodName: getCache
         arguments:
           1:
             value: FLOW3_I18n_AvailableLocalesCache
-F3\FLOW3\I18n\Cldr\CldrModel:
+TYPO3\FLOW3\I18n\Cldr\CldrModel:
   properties:
     cache:
       object:
-        factoryObjectName: F3\FLOW3\Cache\CacheManager
+        factoryObjectName: TYPO3\FLOW3\Cache\CacheManager
         factoryMethodName: getCache
         arguments:
           1:
             value: FLOW3_I18n_Cldr_CldrModelCache
-F3\FLOW3\I18n\Xliff\XliffModel:
+TYPO3\FLOW3\I18n\Xliff\XliffModel:
   properties:
     cache:
       object:
-        factoryObjectName: F3\FLOW3\Cache\CacheManager
+        factoryObjectName: TYPO3\FLOW3\Cache\CacheManager
         factoryMethodName: getCache
         arguments:
           1:
             value: FLOW3_I18n_XmlModelCache
-F3\FLOW3\I18n\Cldr\Reader\DatesReader:
+TYPO3\FLOW3\I18n\Cldr\Reader\DatesReader:
   properties:
     cache:
       object:
-        factoryObjectName: F3\FLOW3\Cache\CacheManager
+        factoryObjectName: TYPO3\FLOW3\Cache\CacheManager
         factoryMethodName: getCache
         arguments:
           1:
             value: FLOW3_I18n_Cldr_Reader_DatesReaderCache
-F3\FLOW3\I18n\Cldr\Reader\NumbersReader:
+TYPO3\FLOW3\I18n\Cldr\Reader\NumbersReader:
   properties:
     cache:
       object:
-        factoryObjectName: F3\FLOW3\Cache\CacheManager
+        factoryObjectName: TYPO3\FLOW3\Cache\CacheManager
         factoryMethodName: getCache
         arguments:
           1:
             value: FLOW3_I18n_Cldr_Reader_NumbersReaderCache
-F3\FLOW3\I18n\Cldr\Reader\PluralsReader:
+TYPO3\FLOW3\I18n\Cldr\Reader\PluralsReader:
   properties:
     cache:
       object:
-        factoryObjectName: F3\FLOW3\Cache\CacheManager
+        factoryObjectName: TYPO3\FLOW3\Cache\CacheManager
         factoryMethodName: getCache
         arguments:
           1:
@@ -86,33 +86,33 @@ F3\FLOW3\I18n\Cldr\Reader\PluralsReader:
 # Log                                                                      #
 #                                                                          #
 
-F3\FLOW3\Log\Backend\FileBackend:
+TYPO3\FLOW3\Log\Backend\FileBackend:
   autowiring: off
-F3\FLOW3\Log\Backend\NullBackend:
+TYPO3\FLOW3\Log\Backend\NullBackend:
   autowiring: off
-F3\FLOW3\Log\SystemLoggerInterface:
+TYPO3\FLOW3\Log\SystemLoggerInterface:
   scope: singleton
-  factoryObjectName: F3\FLOW3\Log\LoggerFactory
+  factoryObjectName: TYPO3\FLOW3\Log\LoggerFactory
   arguments:
     1:
       value: 'FLOW3_System'
     2:
-      value: 'F3\FLOW3\Log\Logger'
+      value: 'TYPO3\FLOW3\Log\Logger'
     3:
-      value: 'F3\FLOW3\Log\Backend\FileBackend'
+      value: 'TYPO3\FLOW3\Log\Backend\FileBackend'
     4:
       setting: TYPO3.FLOW3.log.systemLogger.backendOptions
 
-F3\FLOW3\Log\SecurityLoggerInterface:
+TYPO3\FLOW3\Log\SecurityLoggerInterface:
   scope: singleton
-  factoryObjectName: F3\FLOW3\Log\LoggerFactory
+  factoryObjectName: TYPO3\FLOW3\Log\LoggerFactory
   arguments:
     1:
       value: 'FLOW3_Security'
     2:
-      value: 'F3\FLOW3\Log\Logger'
+      value: 'TYPO3\FLOW3\Log\Logger'
     3:
-      value: 'F3\FLOW3\Log\Backend\FileBackend'
+      value: 'TYPO3\FLOW3\Log\Backend\FileBackend'
     4:
       setting: TYPO3.FLOW3.log.securityLogger.backendOptions
 
@@ -120,21 +120,21 @@ F3\FLOW3\Log\SecurityLoggerInterface:
 # Monitor                                                                  #
 #                                                                          #
 
-F3\FLOW3\Monitor\ChangeDetectionStrategy\ModificationTimeStrategy:
+TYPO3\FLOW3\Monitor\ChangeDetectionStrategy\ModificationTimeStrategy:
   properties:
     cache:
       object:
-        factoryObjectName: F3\FLOW3\Cache\CacheManager
+        factoryObjectName: TYPO3\FLOW3\Cache\CacheManager
         factoryMethodName: getCache
         arguments:
           1:
             value: FLOW3_Monitor
 
-F3\FLOW3\Monitor\FileMonitor:
+TYPO3\FLOW3\Monitor\FileMonitor:
   properties:
     cache:
       object:
-        factoryObjectName: F3\FLOW3\Cache\CacheManager
+        factoryObjectName: TYPO3\FLOW3\Cache\CacheManager
         factoryMethodName: getCache
         arguments:
           1:
@@ -144,18 +144,18 @@ F3\FLOW3\Monitor\FileMonitor:
 # MVC                                                                      #
 #                                                                          #
 
-F3\FLOW3\MVC\Web\Routing\Aspect\RouterCachingAspect:
+TYPO3\FLOW3\MVC\Web\Routing\Aspect\RouterCachingAspect:
   properties:
     findMatchResultsCache:
       object:
-        factoryObjectName: F3\FLOW3\Cache\CacheManager
+        factoryObjectName: TYPO3\FLOW3\Cache\CacheManager
         factoryMethodName: getCache
         arguments:
           1:
             value: FLOW3_MVC_Web_Routing_FindMatchResults
     resolveCache:
       object:
-        factoryObjectName: F3\FLOW3\Cache\CacheManager
+        factoryObjectName: TYPO3\FLOW3\Cache\CacheManager
         factoryMethodName: getCache
         arguments:
           1:
@@ -165,15 +165,15 @@ F3\FLOW3\MVC\Web\Routing\Aspect\RouterCachingAspect:
 # Object                                                                   #
 #                                                                          #
 
-F3\FLOW3\Object\ObjectManagerInterface:
-  className: F3\FLOW3\Object\ObjectManager
+TYPO3\FLOW3\Object\ObjectManagerInterface:
+  className: TYPO3\FLOW3\Object\ObjectManager
   scope: singleton
   autowiring: off
 
-F3\FLOW3\Object\ObjectManager:
+TYPO3\FLOW3\Object\ObjectManager:
   autowiring: off
 
-F3\FLOW3\Object\CompileTimeObjectManager:
+TYPO3\FLOW3\Object\CompileTimeObjectManager:
   autowiring: off
 
 #                                                                          #
@@ -182,23 +182,23 @@ F3\FLOW3\Object\CompileTimeObjectManager:
 
 Doctrine\Common\Persistence\ObjectManager:
   scope: singleton
-  factoryObjectName: F3\FLOW3\Persistence\Doctrine\EntityManagerFactory
+  factoryObjectName: TYPO3\FLOW3\Persistence\Doctrine\EntityManagerFactory
 
-F3\FLOW3\Persistence\PersistenceManagerInterface:
-  className: F3\FLOW3\Persistence\Doctrine\PersistenceManager
+TYPO3\FLOW3\Persistence\PersistenceManagerInterface:
+  className: TYPO3\FLOW3\Persistence\Doctrine\PersistenceManager
 
-F3\FLOW3\Persistence\Doctrine\Logging\SqlLogger:
+TYPO3\FLOW3\Persistence\Doctrine\Logging\SqlLogger:
   properties:
     logger:
       object:
-        factoryObjectName: F3\FLOW3\Log\LoggerFactory
+        factoryObjectName: TYPO3\FLOW3\Log\LoggerFactory
         arguments:
           1:
             value: 'Sql_Queries'
           2:
-            value: 'F3\FLOW3\Log\Logger'
+            value: 'TYPO3\FLOW3\Log\Logger'
           3:
-            value: 'F3\FLOW3\Log\Backend\FileBackend'
+            value: 'TYPO3\FLOW3\Log\Backend\FileBackend'
           4:
             setting: TYPO3.FLOW3.log.sqlLogger.backendOptions
 
@@ -206,62 +206,62 @@ F3\FLOW3\Persistence\Doctrine\Logging\SqlLogger:
 # Resource                                                                 #
 #                                                                          #
 
-F3\FLOW3\Resource\ResourceManager:
+TYPO3\FLOW3\Resource\ResourceManager:
   properties:
     statusCache:
       object:
-        factoryObjectName: F3\FLOW3\Cache\CacheManager
+        factoryObjectName: TYPO3\FLOW3\Cache\CacheManager
         factoryMethodName: getCache
         arguments:
           1:
             value: FLOW3_Resource_Status
 
-F3\FLOW3\Resource\Publishing\ResourcePublishingTargetInterface:
-  className: F3\FLOW3\Resource\Publishing\FileSystemPublishingTarget
+TYPO3\FLOW3\Resource\Publishing\ResourcePublishingTargetInterface:
+  className: TYPO3\FLOW3\Resource\Publishing\FileSystemPublishingTarget
 
 #                                                                          #
 # Security                                                                 #
 #                                                                          #
 
-F3\FLOW3\Security\Authentication\AuthenticationManagerInterface:
-  className: F3\FLOW3\Security\Authentication\AuthenticationProviderManager
+TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface:
+  className: TYPO3\FLOW3\Security\Authentication\AuthenticationProviderManager
 
 
-F3\FLOW3\Security\Cryptography\RsaWalletServiceInterface:
-  className: F3\FLOW3\Security\Cryptography\RsaWalletServicePhp
+TYPO3\FLOW3\Security\Cryptography\RsaWalletServiceInterface:
+  className: TYPO3\FLOW3\Security\Cryptography\RsaWalletServicePhp
   scope: singleton
   properties:
     keystoreCache:
       object:
-        factoryObjectName: F3\FLOW3\Cache\CacheManager
+        factoryObjectName: TYPO3\FLOW3\Cache\CacheManager
         factoryMethodName: getCache
         arguments:
           1:
             value: FLOW3_Security_Cryptography_RSAWallet
 
-F3\FLOW3\Security\Authorization\AccessDecisionManagerInterface:
-  className: F3\FLOW3\Security\Authorization\AccessDecisionVoterManager
+TYPO3\FLOW3\Security\Authorization\AccessDecisionManagerInterface:
+  className: TYPO3\FLOW3\Security\Authorization\AccessDecisionVoterManager
 
-F3\FLOW3\Security\Authorization\FirewallInterface:
-  className: F3\FLOW3\Security\Authorization\FilterFirewall
+TYPO3\FLOW3\Security\Authorization\FirewallInterface:
+  className: TYPO3\FLOW3\Security\Authorization\FilterFirewall
 
 #                                                                          #
 # Session                                                                  #
 #                                                                          #
 
-F3\FLOW3\Session\SessionInterface:
-  className: F3\FLOW3\Session\PhpSession
+TYPO3\FLOW3\Session\SessionInterface:
+  className: TYPO3\FLOW3\Session\PhpSession
   scope: singleton
   properties:
     settings:
       setting: TYPO3.FLOW3
     environment:
-      object: F3\FLOW3\Utility\Environment
+      object: TYPO3\FLOW3\Utility\Environment
 
 #                                                                          #
 # Utility                                                                  #
 #                                                                          #
 
-F3\FLOW3\Utility\PdoHelper:
+TYPO3\FLOW3\Utility\PdoHelper:
   autowiring: off
   scope: prototype

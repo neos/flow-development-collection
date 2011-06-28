@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Cache\Backend;
+namespace TYPO3\FLOW3\Cache\Backend;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -24,12 +24,12 @@ namespace F3\FLOW3\Cache\Backend;
 /**
  * A caching backend which forgets everything immediately
  *
- * Used in \F3\FLOW3\Cache\FactoryTest
+ * Used in \TYPO3\FLOW3\Cache\FactoryTest
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
-class MockBackend extends \F3\FLOW3\Cache\Backend\NullBackend {
+class MockBackend extends \TYPO3\FLOW3\Cache\Backend\NullBackend {
 
 	/**
 	 * @var mixed

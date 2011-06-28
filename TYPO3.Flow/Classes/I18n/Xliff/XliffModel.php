@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\I18n\Xliff;
+namespace TYPO3\FLOW3\I18n\Xliff;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -39,14 +39,14 @@ namespace F3\FLOW3\I18n\Xliff;
  * @see http://docs.oasis-open.org/xliff/v1.2/xliff-profile-po/xliff-profile-po-1.2-cd02.html#s.detailed_mapping.tu
  * @scope prototype
  */
-class XliffModel extends \F3\FLOW3\I18n\Xml\AbstractXmlModel {
+class XliffModel extends \TYPO3\FLOW3\I18n\Xml\AbstractXmlModel {
 
 	/**
-	 * @param \F3\FLOW3\I18n\Xliff\XliffParser $parser
+	 * @param \TYPO3\FLOW3\I18n\Xliff\XliffParser $parser
 	 * @return void
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function injectParser(\F3\FLOW3\I18n\Xliff\XliffParser $parser) {
+	public function injectParser(\TYPO3\FLOW3\I18n\Xliff\XliffParser $parser) {
 		$this->xmlParser = $parser;
 	}
 

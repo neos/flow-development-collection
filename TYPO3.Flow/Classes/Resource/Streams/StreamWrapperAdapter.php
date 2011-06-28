@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Resource\Streams;
+namespace TYPO3\FLOW3\Resource\Streams;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,7 +23,7 @@ namespace F3\FLOW3\Resource\Streams;
 
 /**
  * A generic stream wrapper sitting between PHP and stream wrappers implementing
- * \F3\FLOW3\Resource\Streams\StreamWrapperInterface.
+ * \TYPO3\FLOW3\Resource\Streams\StreamWrapperInterface.
  *
  * The resource manager will register configured stream wrappers with this class,
  * enabling the use of FLOW3 goodies like DI in those stream wrappers.
@@ -38,7 +38,7 @@ namespace F3\FLOW3\Resource\Streams;
 class StreamWrapperAdapter {
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
+	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
 	 */
 	static protected $objectManager;
 
@@ -53,18 +53,18 @@ class StreamWrapperAdapter {
 	public $context ;
 
 	/**
-	 * @var \F3\FLOW3\Resource\Streams\StreamWrapperInterface
+	 * @var \TYPO3\FLOW3\Resource\Streams\StreamWrapperInterface
 	 */
 	protected $streamWrapper;
 
 	/**
 	 * Injects the Object Manager.
 	 *
-	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
+	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	static public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
+	static public function injectObjectManager(\TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		self::$objectManager = $objectManager;
 	}
 

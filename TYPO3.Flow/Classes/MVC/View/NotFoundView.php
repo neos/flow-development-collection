@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\MVC\View;
+namespace TYPO3\FLOW3\MVC\View;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -28,10 +28,10 @@ namespace F3\FLOW3\MVC\View;
  * @api
  * @scope prototype
  */
-class NotFoundView extends \F3\FLOW3\MVC\View\AbstractView {
+class NotFoundView extends \TYPO3\FLOW3\MVC\View\AbstractView {
 
 	/**
-	 * @var \F3\FLOW3\MVC\Controller\ControllerContext
+	 * @var \TYPO3\FLOW3\MVC\Controller\ControllerContext
 	 */
 	protected $controllerContext;
 
@@ -45,15 +45,15 @@ class NotFoundView extends \F3\FLOW3\MVC\View\AbstractView {
 	 *
 	 * @return string The rendered view
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @throws \F3\FLOW3\MVC\Exception if no request has been set
+	 * @throws \TYPO3\FLOW3\MVC\Exception if no request has been set
 	 * @api
 	 */
 	public function render() {
-		if (!is_object($this->controllerContext->getRequest())) throw new \F3\FLOW3\MVC\Exception('Can\'t render view without request object.', 1192450280);
+		if (!is_object($this->controllerContext->getRequest())) throw new \TYPO3\FLOW3\MVC\Exception('Can\'t render view without request object.', 1192450280);
 
 		$template = file_get_contents($this->getTemplatePathAndFilename());
 
-		if ($this->controllerContext->getRequest() instanceof \F3\FLOW3\MVC\Web\Request) {
+		if ($this->controllerContext->getRequest() instanceof \TYPO3\FLOW3\MVC\Web\Request) {
 			$template = str_replace('###BASEURI###', $this->controllerContext->getRequest()->getBaseUri(), $template);
 		}
 

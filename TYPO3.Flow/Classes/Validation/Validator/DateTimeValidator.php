@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Validation\Validator;
+namespace TYPO3\FLOW3\Validation\Validator;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -28,33 +28,33 @@ namespace F3\FLOW3\Validation\Validator;
  * @api
  * @scope prototype
  */
-class DateTimeValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator {
+class DateTimeValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractValidator {
 
 	/**
-	 * @var \F3\FLOW3\I18n\Service
+	 * @var \TYPO3\FLOW3\I18n\Service
 	 */
 	protected $localizationService;
 
 	/**
-	 * @var \F3\FLOW3\I18n\Parser\DatetimeParser
+	 * @var \TYPO3\FLOW3\I18n\Parser\DatetimeParser
 	 */
 	protected $datetimeParser;
 
 	/**
-	 * @param \F3\FLOW3\I18n\Service $localizationService
+	 * @param \TYPO3\FLOW3\I18n\Service $localizationService
 	 * @return void
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function injectLocalizationService(\F3\FLOW3\I18n\Service $localizationService) {
+	public function injectLocalizationService(\TYPO3\FLOW3\I18n\Service $localizationService) {
 		$this->localizationService = $localizationService;
 	}
 
 	/**
-	 * @param \F3\FLOW3\I18n\Parser\DatetimeParser $datetimeParser
+	 * @param \TYPO3\FLOW3\I18n\Parser\DatetimeParser $datetimeParser
 	 * @return void
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
-	public function injectDatetimeParser(\F3\FLOW3\I18n\Parser\DatetimeParser $datetimeParser) {
+	public function injectDatetimeParser(\TYPO3\FLOW3\I18n\Parser\DatetimeParser $datetimeParser) {
 		$this->datetimeParser = $datetimeParser;
 	}
 
@@ -72,8 +72,8 @@ class DateTimeValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator
 		if (!isset($this->options['locale'])) {
 			$locale = $this->localizationService->getDefaultLocale();
 		} elseif (is_string($this->options['locale'])) {
-			$locale = new \F3\FLOW3\I18n\Locale($this->options['locale']);
-		} elseif ($this->options['locale'] instanceof \F3\FLOW3\I18n\Locale) {
+			$locale = new \TYPO3\FLOW3\I18n\Locale($this->options['locale']);
+		} elseif ($this->options['locale'] instanceof \TYPO3\FLOW3\I18n\Locale) {
 			$locale = $this->options['locale'];
 		} else {
 			$this->addError('The "locale" option can be only set to string identifier, or Locale object.', 1281454676);
@@ -88,25 +88,25 @@ class DateTimeValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator
 
 		if (isset($this->options['formatLength'])) {
 			$formatLength = $this->options['formatLength'];
-			\F3\FLOW3\I18n\Cldr\Reader\DatesReader::validateFormatLength($formatLength);
+			\TYPO3\FLOW3\I18n\Cldr\Reader\DatesReader::validateFormatLength($formatLength);
 		} else {
-			$formatLength = \F3\FLOW3\I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_DEFAULT;
+			$formatLength = \TYPO3\FLOW3\I18n\Cldr\Reader\DatesReader::FORMAT_LENGTH_DEFAULT;
 		}
 
 		if (isset($this->options['formatType'])) {
 			$formatType = $this->options['formatType'];
-			\F3\FLOW3\I18n\Cldr\Reader\DatesReader::validateFormatType($formatType);
+			\TYPO3\FLOW3\I18n\Cldr\Reader\DatesReader::validateFormatType($formatType);
 		} else {
-			$formatType = \F3\FLOW3\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_DATE;
+			$formatType = \TYPO3\FLOW3\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_DATE;
 		}
 
-		if ($formatType === \F3\FLOW3\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_TIME) {
+		if ($formatType === \TYPO3\FLOW3\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_TIME) {
 			if ($this->datetimeParser->parseTime($value, $locale, $formatLength, $strictMode) === FALSE) {
 				$this->addError('A valid time is expected.', 1281454830);
 			} else {
 				return;
 			}
-		} elseif ($formatType === \F3\FLOW3\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_DATETIME) {
+		} elseif ($formatType === \TYPO3\FLOW3\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_DATETIME) {
 			if ($this->datetimeParser->parseDateAndTime($value, $locale, $formatLength, $strictMode) === FALSE) {
 				$this->addError('A valid date and time is expected.', 1281454831);
 			} else {

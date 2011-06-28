@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Persistence\Generic\Backend;
+namespace TYPO3\FLOW3\Persistence\Generic\Backend;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -28,7 +28,7 @@ namespace F3\FLOW3\Persistence\Generic\Backend;
  * @api
  * @scope prototype
  */
-abstract class AbstractSqlBackend extends \F3\FLOW3\Persistence\Generic\Backend\AbstractBackend {
+abstract class AbstractSqlBackend extends \TYPO3\FLOW3\Persistence\Generic\Backend\AbstractBackend {
 
 	/**
 	 * @var string
@@ -101,29 +101,29 @@ abstract class AbstractSqlBackend extends \F3\FLOW3\Persistence\Generic\Backend\
 	 */
 	protected function resolveOperator($operator) {
 		switch ($operator) {
-			case \F3\FLOW3\Persistence\QueryInterface::OPERATOR_EQUAL_TO:
+			case \TYPO3\FLOW3\Persistence\QueryInterface::OPERATOR_EQUAL_TO:
 				$operator = '=';
 				break;
-			case \F3\FLOW3\Persistence\QueryInterface::OPERATOR_NOT_EQUAL_TO:
+			case \TYPO3\FLOW3\Persistence\QueryInterface::OPERATOR_NOT_EQUAL_TO:
 				$operator = '!=';
 				break;
-			case \F3\FLOW3\Persistence\QueryInterface::OPERATOR_LESS_THAN:
+			case \TYPO3\FLOW3\Persistence\QueryInterface::OPERATOR_LESS_THAN:
 				$operator = '<';
 				break;
-			case \F3\FLOW3\Persistence\QueryInterface::OPERATOR_LESS_THAN_OR_EQUAL_TO:
+			case \TYPO3\FLOW3\Persistence\QueryInterface::OPERATOR_LESS_THAN_OR_EQUAL_TO:
 				$operator = '<=';
 				break;
-			case \F3\FLOW3\Persistence\QueryInterface::OPERATOR_GREATER_THAN:
+			case \TYPO3\FLOW3\Persistence\QueryInterface::OPERATOR_GREATER_THAN:
 				$operator = '>';
 				break;
-			case \F3\FLOW3\Persistence\QueryInterface::OPERATOR_GREATER_THAN_OR_EQUAL_TO:
+			case \TYPO3\FLOW3\Persistence\QueryInterface::OPERATOR_GREATER_THAN_OR_EQUAL_TO:
 				$operator = '>=';
 				break;
-			case \F3\FLOW3\Persistence\QueryInterface::OPERATOR_LIKE:
+			case \TYPO3\FLOW3\Persistence\QueryInterface::OPERATOR_LIKE:
 				$operator = 'LIKE';
 				break;
-			case \F3\FLOW3\Persistence\QueryInterface::OPERATOR_IS_EMPTY:
-			case \F3\FLOW3\Persistence\QueryInterface::OPERATOR_IS_NULL:
+			case \TYPO3\FLOW3\Persistence\QueryInterface::OPERATOR_IS_EMPTY:
+			case \TYPO3\FLOW3\Persistence\QueryInterface::OPERATOR_IS_NULL:
 				$operator = 'IS NULL';
 				break;
 			default:

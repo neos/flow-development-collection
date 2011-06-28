@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\Object\Proxy;
+namespace TYPO3\FLOW3\Tests\Unit\Object\Proxy;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -25,7 +25,7 @@ namespace F3\FLOW3\Tests\Unit\Object\Proxy;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class ProxyMethodTest extends \F3\FLOW3\Tests\UnitTestCase {
+class ProxyMethodTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
@@ -33,7 +33,7 @@ class ProxyMethodTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function buildMethodDocumentationShouldAddAllAnnotations() {
 
-		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\ReflectionService', array(), array(), '', FALSE);
+		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService', array(), array(), '', FALSE);
 		$mockReflectionService->expects($this->any())->method('hasMethod')->will($this->returnValue(TRUE));
 		$mockReflectionService->expects($this->any())->method('getIgnoredTags')->will($this->returnValue(array('return')));
 		$mockReflectionService->expects($this->any())->method('getMethodTagsValues')->with('My\Class\Name', 'myMethod')->will($this->returnValue(array(
@@ -52,7 +52,7 @@ class ProxyMethodTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 
 
-		$mockProxyMethod = $this->getAccessibleMock('F3\FLOW3\Object\Proxy\ProxyMethod', array('dummy'), array(), '', FALSE);
+		$mockProxyMethod = $this->getAccessibleMock('TYPO3\FLOW3\Object\Proxy\ProxyMethod', array('dummy'), array(), '', FALSE);
 		$mockProxyMethod->injectReflectionService($mockReflectionService);
 		$methodDocumentation = $mockProxyMethod->_call('buildMethodDocumentation', 'My\Class\Name', 'myMethod');
 

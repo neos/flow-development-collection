@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Cache\Frontend;
+namespace TYPO3\FLOW3\Cache\Frontend;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -21,7 +21,7 @@ namespace F3\FLOW3\Cache\Frontend;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \F3\FLOW3\Cache\CacheManager;
+use \TYPO3\FLOW3\Cache\CacheManager;
 
 /**
  * An abstract cache
@@ -30,7 +30,7 @@ use \F3\FLOW3\Cache\CacheManager;
  * @api
  * @scope prototype
  */
-abstract class AbstractFrontend implements \F3\FLOW3\Cache\Frontend\FrontendInterface {
+abstract class AbstractFrontend implements \TYPO3\FLOW3\Cache\Frontend\FrontendInterface {
 
 	/**
 	 * Identifies this cache
@@ -39,7 +39,7 @@ abstract class AbstractFrontend implements \F3\FLOW3\Cache\Frontend\FrontendInte
 	protected $identifier;
 
 	/**
-	 * @var \F3\FLOW3\Cache\Backend\AbstractBackend
+	 * @var \TYPO3\FLOW3\Cache\Backend\AbstractBackend
 	 */
 	protected $backend;
 
@@ -47,11 +47,11 @@ abstract class AbstractFrontend implements \F3\FLOW3\Cache\Frontend\FrontendInte
 	 * Constructs the cache
 	 *
 	 * @param string $identifier A identifier which describes this cache
-	 * @param \F3\FLOW3\Cache\Backend\BackendInterface $backend Backend to be used for this cache
+	 * @param \TYPO3\FLOW3\Cache\Backend\BackendInterface $backend Backend to be used for this cache
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @throws \InvalidArgumentException if the identifier doesn't match PATTERN_ENTRYIDENTIFIER
 	 */
-	public function __construct($identifier, \F3\FLOW3\Cache\Backend\BackendInterface $backend) {
+	public function __construct($identifier, \TYPO3\FLOW3\Cache\Backend\BackendInterface $backend) {
 		if (!preg_match(self::PATTERN_ENTRYIDENTIFIER, $identifier)) throw new \InvalidArgumentException('"' . $identifier . '" is not a valid cache identifier.', 1203584729);
 		$this->identifier = $identifier;
 		$this->backend = $backend;
@@ -72,7 +72,7 @@ abstract class AbstractFrontend implements \F3\FLOW3\Cache\Frontend\FrontendInte
 	/**
 	 * Returns the backend used by this cache
 	 *
-	 * @return \F3\FLOW3\Cache\Backend\BackendInterface The backend used by this cache
+	 * @return \TYPO3\FLOW3\Cache\Backend\BackendInterface The backend used by this cache
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */

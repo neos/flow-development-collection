@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\Security\Policy;
+namespace TYPO3\FLOW3\Tests\Unit\Security\Policy;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,7 +26,7 @@ namespace F3\FLOW3\Tests\Unit\Security\Policy;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class PolicyServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
+class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
@@ -34,7 +34,7 @@ class PolicyServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function thePolicyIsLoadedCorrectlyFromTheConfigurationManager() {
-		$mockPolicyExpressionParser = $this->getMock('F3\FLOW3\Security\Policy\PolicyExpressionParser', array(), array(), '', FALSE);
+		$mockPolicyExpressionParser = $this->getMock('TYPO3\FLOW3\Security\Policy\PolicyExpressionParser', array(), array(), '', FALSE);
 
 		$policy = array(
 			'roles' => array('THE_ROLE' => array()),
@@ -54,16 +54,16 @@ class PolicyServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 			)
 		);
 
-		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\ConfigurationManager', array(), array(), '', FALSE);
-		$mockConfigurationManager->expects($this->once())->method('getConfiguration')->with(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_POLICY)->will($this->returnValue($policy));
+		$mockConfigurationManager = $this->getMock('TYPO3\FLOW3\Configuration\ConfigurationManager', array(), array(), '', FALSE);
+		$mockConfigurationManager->expects($this->once())->method('getConfiguration')->with(\TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_POLICY)->will($this->returnValue($policy));
 
-		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
+		$mockCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
 		$mockCache->expects($this->any())->method('has')->will($this->returnValue(FALSE));
 
-		$mockCacheManager = $this->getMock('F3\FLOW3\Cache\CacheManager', array(), array(), '', FALSE);
+		$mockCacheManager = $this->getMock('TYPO3\FLOW3\Cache\CacheManager', array(), array(), '', FALSE);
 		$mockCacheManager->expects($this->once())->method('getCache')->with('FLOW3_Security_Policy')->will($this->returnValue($mockCache));
 
-		$policyService = new \F3\FLOW3\Security\Policy\PolicyService();
+		$policyService = new \TYPO3\FLOW3\Security\Policy\PolicyService();
 		$policyService->injectCacheManager($mockCacheManager);
 		$policyService->injectConfigurationManager($mockConfigurationManager);
 		$policyService->injectPolicyExpressionParser($mockPolicyExpressionParser);
@@ -77,7 +77,7 @@ class PolicyServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function initializeObjectSetsTheEverybodyRoleInThePolicy() {
-		$mockPolicyExpressionParser = $this->getMock('F3\FLOW3\Security\Policy\PolicyExpressionParser', array(), array(), '', FALSE);
+		$mockPolicyExpressionParser = $this->getMock('TYPO3\FLOW3\Security\Policy\PolicyExpressionParser', array(), array(), '', FALSE);
 
 		$policy = array(
 			'roles' => array(),
@@ -88,16 +88,16 @@ class PolicyServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 			'acls' => array()
 		);
 
-		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\ConfigurationManager', array(), array(), '', FALSE);
-		$mockConfigurationManager->expects($this->once())->method('getConfiguration')->with(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_POLICY)->will($this->returnValue($policy));
+		$mockConfigurationManager = $this->getMock('TYPO3\FLOW3\Configuration\ConfigurationManager', array(), array(), '', FALSE);
+		$mockConfigurationManager->expects($this->once())->method('getConfiguration')->with(\TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_POLICY)->will($this->returnValue($policy));
 
-		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
+		$mockCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
 		$mockCache->expects($this->any())->method('has')->will($this->returnValue(FALSE));
 
-		$mockCacheManager = $this->getMock('F3\FLOW3\Cache\CacheManager', array(), array(), '', FALSE);
+		$mockCacheManager = $this->getMock('TYPO3\FLOW3\Cache\CacheManager', array(), array(), '', FALSE);
 		$mockCacheManager->expects($this->once())->method('getCache')->with('FLOW3_Security_Policy')->will($this->returnValue($mockCache));
 
-		$policyService = $this->getAccessibleMock('F3\FLOW3\Security\Policy\PolicyService', array('parseEntityAcls'), array(), '', FALSE);
+		$policyService = $this->getAccessibleMock('TYPO3\FLOW3\Security\Policy\PolicyService', array('parseEntityAcls'), array(), '', FALSE);
 		$policyService->expects($this->once())->method('parseEntityAcls')->will($this->returnValue(array()));
 		$policyService->injectCacheManager($mockCacheManager);
 		$policyService->injectConfigurationManager($mockConfigurationManager);
@@ -128,7 +128,7 @@ class PolicyServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function initializeObjectAddsTheAbstainPrivilegeForTheEverybodyRoleToEveryResourceWhereNoOtherPrivilegeIsSetInThePolicy() {
-		$mockPolicyExpressionParser = $this->getMock('F3\FLOW3\Security\Policy\PolicyExpressionParser', array(), array(), '', FALSE);
+		$mockPolicyExpressionParser = $this->getMock('TYPO3\FLOW3\Security\Policy\PolicyExpressionParser', array(), array(), '', FALSE);
 
 		$policy = array(
 			'roles' => array(),
@@ -156,16 +156,16 @@ class PolicyServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 			))
 		);
 
-		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\ConfigurationManager', array(), array(), '', FALSE);
-		$mockConfigurationManager->expects($this->once())->method('getConfiguration')->with(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_POLICY)->will($this->returnValue($policy));
+		$mockConfigurationManager = $this->getMock('TYPO3\FLOW3\Configuration\ConfigurationManager', array(), array(), '', FALSE);
+		$mockConfigurationManager->expects($this->once())->method('getConfiguration')->with(\TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_POLICY)->will($this->returnValue($policy));
 
-		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
+		$mockCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
 		$mockCache->expects($this->any())->method('has')->will($this->returnValue(FALSE));
 
-		$mockCacheManager = $this->getMock('F3\FLOW3\Cache\CacheManager', array(), array(), '', FALSE);
+		$mockCacheManager = $this->getMock('TYPO3\FLOW3\Cache\CacheManager', array(), array(), '', FALSE);
 		$mockCacheManager->expects($this->once())->method('getCache')->with('FLOW3_Security_Policy')->will($this->returnValue($mockCache));
 
-		$policyService = $this->getAccessibleMock('F3\FLOW3\Security\Policy\PolicyService', array('parseEntityAcls'), array(), '', FALSE);
+		$policyService = $this->getAccessibleMock('TYPO3\FLOW3\Security\Policy\PolicyService', array('parseEntityAcls'), array(), '', FALSE);
 		$policyService->expects($this->once())->method('parseEntityAcls')->will($this->returnValue(array()));
 		$policyService->injectCacheManager($mockCacheManager);
 		$policyService->injectConfigurationManager($mockConfigurationManager);
@@ -225,13 +225,13 @@ class PolicyServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 			'acls' => array('TheRole' => array('methods' => array('theResource' => 'GRANT')))
 		);
 
-		$mockFilter = $this->getMock('F3\FLOW3\AOP\Pointcut\PointcutFilterComposite', array(), array(), '', FALSE);
+		$mockFilter = $this->getMock('TYPO3\FLOW3\AOP\Pointcut\PointcutFilterComposite', array(), array(), '', FALSE);
 		$mockFilter->expects($this->once())->method('matches')->with('Foo', 'bar', 'Baz')->will($this->returnValue(TRUE));
 
-		$mockPolicyExpressionParser = $this->getMock('F3\FLOW3\Security\Policy\PolicyExpressionParser', array(), array(), '', FALSE);
+		$mockPolicyExpressionParser = $this->getMock('TYPO3\FLOW3\Security\Policy\PolicyExpressionParser', array(), array(), '', FALSE);
 		$mockPolicyExpressionParser->expects($this->once())->method('parseMethodResources')->with('theResource', $policy['resources']['methods'])->will($this->returnValue($mockFilter));
 
-		$accessibleProxyClassName = $this->buildAccessibleProxy('F3\FLOW3\Security\Policy\PolicyService');
+		$accessibleProxyClassName = $this->buildAccessibleProxy('TYPO3\FLOW3\Security\Policy\PolicyService');
 		$policyService = new $accessibleProxyClassName();
 		$policyService->injectPolicyExpressionParser($mockPolicyExpressionParser);
 		$policyService->injectSettings($settings);
@@ -262,17 +262,17 @@ class PolicyServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 			))
 		);
 
-		$mockFilter1 = $this->getMock('F3\FLOW3\AOP\Pointcut\PointcutFilterComposite', array(), array(), '', FALSE);
+		$mockFilter1 = $this->getMock('TYPO3\FLOW3\AOP\Pointcut\PointcutFilterComposite', array(), array(), '', FALSE);
 		$mockFilter1->expects($this->once())->method('matches')->with('Foo', 'bar', 'Baz')->will($this->returnValue(TRUE));
 		$mockFilter1->expects($this->once())->method('hasRuntimeEvaluationsDefinition')->will($this->returnValue(TRUE));
 		$mockFilter1->expects($this->once())->method('getRuntimeEvaluationsClosureCode')->will($this->returnValue('closureCode1'));
 
-		$mockFilter2 = $this->getMock('F3\FLOW3\AOP\Pointcut\PointcutFilterComposite', array(), array(), '', FALSE);
+		$mockFilter2 = $this->getMock('TYPO3\FLOW3\AOP\Pointcut\PointcutFilterComposite', array(), array(), '', FALSE);
 		$mockFilter2->expects($this->once())->method('matches')->with('Foo', 'bar', 'Baz')->will($this->returnValue(TRUE));
 		$mockFilter2->expects($this->once())->method('hasRuntimeEvaluationsDefinition')->will($this->returnValue(FALSE));
 		$mockFilter2->expects($this->never())->method('getRuntimeEvaluationsClosureCode');
 
-		$mockFilter3 = $this->getMock('F3\FLOW3\AOP\Pointcut\PointcutFilterComposite', array(), array(), '', FALSE);
+		$mockFilter3 = $this->getMock('TYPO3\FLOW3\AOP\Pointcut\PointcutFilterComposite', array(), array(), '', FALSE);
 		$mockFilter3->expects($this->once())->method('matches')->with('Foo', 'bar', 'Baz')->will($this->returnValue(TRUE));
 		$mockFilter3->expects($this->once())->method('hasRuntimeEvaluationsDefinition')->will($this->returnValue(TRUE));
 		$mockFilter3->expects($this->once())->method('getRuntimeEvaluationsClosureCode')->will($this->returnValue('closureCode3'));
@@ -285,7 +285,7 @@ class PolicyServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 			)
 		);
 
-		$accessibleProxyClassName = $this->buildAccessibleProxy('F3\FLOW3\Security\Policy\PolicyService');
+		$accessibleProxyClassName = $this->buildAccessibleProxy('TYPO3\FLOW3\Security\Policy\PolicyService');
 		$policyService = new $accessibleProxyClassName();
 		$policyService->injectSettings($settings);
 		$policyService->_set('policy', $policy);
@@ -297,15 +297,15 @@ class PolicyServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 			'foo->bar' => array(
 				'TheRole' => array(
 					'FirstResource' => array(
-						'privilege' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT,
+						'privilege' => \TYPO3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT,
 						'runtimeEvaluationsClosureCode' => 'closureCode1'
 					),
 					'SecondResource' => array(
-						'privilege' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY,
+						'privilege' => \TYPO3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY,
 						'runtimeEvaluationsClosureCode' => FALSE
 					),
 					'ThirdResource' => array(
-						'privilege' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY,
+						'privilege' => \TYPO3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY,
 						'runtimeEvaluationsClosureCode' => 'closureCode3'
 					)
 				)
@@ -323,7 +323,7 @@ class PolicyServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function matchesAlwaysReturnsFalseIfSecurityIsDisabled() {
 		$settings = array('security' => array('enable' => FALSE));
 
-		$policyService = new \F3\FLOW3\Security\Policy\PolicyService();
+		$policyService = new \TYPO3\FLOW3\Security\Policy\PolicyService();
 		$policyService->injectSettings($settings);
 		$this->assertFalse($policyService->matches('Foo', 'bar', 'Baz', 1));
 	}
@@ -350,13 +350,13 @@ class PolicyServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 			'acls' => array('theRole' => array('methods' => array('theResource' => 'GRANT')))
 		);
 
-		$mockFilter = $this->getMock('F3\FLOW3\AOP\Pointcut\PointcutFilterComposite', array(), array(), '', FALSE);
+		$mockFilter = $this->getMock('TYPO3\FLOW3\AOP\Pointcut\PointcutFilterComposite', array(), array(), '', FALSE);
 		$mockFilter->expects($this->once())->method('matches')->with('Foo', 'bar', 'Baz')->will($this->returnValue(TRUE));
 
-		$mockPolicyExpressionParser = $this->getMock('F3\FLOW3\Security\Policy\PolicyExpressionParser', array(), array(), '', FALSE);
+		$mockPolicyExpressionParser = $this->getMock('TYPO3\FLOW3\Security\Policy\PolicyExpressionParser', array(), array(), '', FALSE);
 		$mockPolicyExpressionParser->expects($this->once())->method('parseMethodResources')->with('theResource', $policy['resources']['methods'])->will($this->returnValue($mockFilter));
 
-		$accessibleProxyClassName = $this->buildAccessibleProxy('F3\FLOW3\Security\Policy\PolicyService');
+		$accessibleProxyClassName = $this->buildAccessibleProxy('TYPO3\FLOW3\Security\Policy\PolicyService');
 		$policyService = new $accessibleProxyClassName();
 		$policyService->injectPolicyExpressionParser($mockPolicyExpressionParser);
 		$policyService->injectSettings($settings);
@@ -368,7 +368,7 @@ class PolicyServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 			'foo->bar' => array(
 				'theRole' => array(
 					'theResource' => array (
-						'privilege' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT,
+						'privilege' => \TYPO3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT,
                         'runtimeEvaluationsClosureCode' => FALSE
                     )
 				)
@@ -385,14 +385,14 @@ class PolicyServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getPrivilegesForJoinPointReturnsAnEmptyArrayIfNoPrivilegesCouldBeFound() {
-		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
 		$mockJoinPoint->expects($this->once())->method('getClassName')->will($this->returnValue('className'));
 		$mockJoinPoint->expects($this->once())->method('getMethodName')->will($this->returnValue('methodName'));
 
-		$policyService = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Security\Policy\PolicyService'), array('dummy'), array(), '', FALSE);
+		$policyService = $this->getMock($this->buildAccessibleProxy('TYPO3\FLOW3\Security\Policy\PolicyService'), array('dummy'), array(), '', FALSE);
 		$policyService->_set('acls', array('classname->methodname' => array()));
 
-		$this->assertEquals(array(), $policyService->getPrivilegesForJoinPoint($this->getMock('F3\FLOW3\Security\Policy\Role', array(), array(), '', FALSE), $mockJoinPoint));
+		$this->assertEquals(array(), $policyService->getPrivilegesForJoinPoint($this->getMock('TYPO3\FLOW3\Security\Policy\Role', array(), array(), '', FALSE), $mockJoinPoint));
 	}
 
 	/**
@@ -401,14 +401,14 @@ class PolicyServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getPrivilegesForJoinPointReturnsThePrivilegesArrayThatHasBeenParsedForTheGivenJoinPointAndRole() {
-		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
 		$mockJoinPoint->expects($this->once())->method('getClassName')->will($this->returnValue('className'));
 		$mockJoinPoint->expects($this->once())->method('getMethodName')->will($this->returnValue('methodName'));
 
-		$mockRole = $this->getMock('F3\FLOW3\Security\Policy\Role', array(), array(), '', FALSE);
+		$mockRole = $this->getMock('TYPO3\FLOW3\Security\Policy\Role', array(), array(), '', FALSE);
 		$mockRole->expects($this->once())->method('__toString')->will($this->returnValue('role1'));
 
-		$privilegesArray = array('FirstResource' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT, 'SecondResource' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY, 'ThirdResource' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT);
+		$privilegesArray = array('FirstResource' => \TYPO3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT, 'SecondResource' => \TYPO3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY, 'ThirdResource' => \TYPO3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT);
 
 		$aclsCache = array(
 						'classname->methodname' =>
@@ -416,21 +416,21 @@ class PolicyServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 								'role1' => array(
 									'FirstResource' => array(
 										'runtimeEvaluationsClosureCode' => FALSE,
-										'privilege' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT
+										'privilege' => \TYPO3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT
 									),
 									'SecondResource' => array(
 										'runtimeEvaluationsClosureCode' => FALSE,
-										'privilege' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY
+										'privilege' => \TYPO3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY
 									),
 									'ThirdResource' => array(
 										'runtimeEvaluationsClosureCode' => FALSE,
-										'privilege' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT
+										'privilege' => \TYPO3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT
 									)
 								)
 							)
 						);
 
-		$policyService = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Security\Policy\PolicyService'), array('dummy'), array(), '', FALSE);
+		$policyService = $this->getMock($this->buildAccessibleProxy('TYPO3\FLOW3\Security\Policy\PolicyService'), array('dummy'), array(), '', FALSE);
 		$policyService->_set('acls', $aclsCache);
 
 		$this->assertEquals($privilegesArray, $policyService->getPrivilegesForJoinPoint($mockRole, $mockJoinPoint));
@@ -442,31 +442,31 @@ class PolicyServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getPrivilegesForJoinPointReturnsOnlyPrivilgesThatPassedRuntimeEvaluationsInThePrivilegesArrayThatHasBeenParsedForTheGivenJoinPointAndRole() {
-		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
 		$mockJoinPoint->expects($this->once())->method('getClassName')->will($this->returnValue('className'));
 		$mockJoinPoint->expects($this->once())->method('getMethodName')->will($this->returnValue('methodName'));
 
-		$mockRole = $this->getMock('F3\FLOW3\Security\Policy\Role', array(), array(), '', FALSE);
+		$mockRole = $this->getMock('TYPO3\FLOW3\Security\Policy\Role', array(), array(), '', FALSE);
 		$mockRole->expects($this->once())->method('__toString')->will($this->returnValue('role1'));
 
-		$privilegesArray = array('SecondResource' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT);
+		$privilegesArray = array('SecondResource' => \TYPO3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT);
 
 		$aclsCache = array(
 						'classname->methodname' => array(
 								'role1' => array(
 									'FirstResource' => array(
 										'runtimeEvaluationsClosureCode' => 'function () { return FALSE; };',
-										'privilege' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY
+										'privilege' => \TYPO3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY
 									),
 									'SecondResource' => array(
 										'runtimeEvaluationsClosureCode' => 'function () { return TRUE; };',
-										'privilege' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT
+										'privilege' => \TYPO3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT
 									)
 								)
 							)
 						);
 
-		$policyService = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Security\Policy\PolicyService'), array('dummy'), array(), '', FALSE);
+		$policyService = $this->getMock($this->buildAccessibleProxy('TYPO3\FLOW3\Security\Policy\PolicyService'), array('dummy'), array(), '', FALSE);
 		$policyService->_set('acls', $aclsCache);
 
 		$this->assertEquals($privilegesArray, $policyService->getPrivilegesForJoinPoint($mockRole, $mockJoinPoint));
@@ -478,22 +478,22 @@ class PolicyServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getPrivilegeForResourceReturnsThePrivilegeThatHasBeenParsedForTheGivenResource() {
-		$mockRole = $this->getMock('F3\FLOW3\Security\Policy\Role', array(), array(), '', FALSE);
+		$mockRole = $this->getMock('TYPO3\FLOW3\Security\Policy\Role', array(), array(), '', FALSE);
 		$mockRole->expects($this->once())->method('__toString')->will($this->returnValue('role1'));
 
 		$aclsCache = array(
 						'someResource' => array(
 								'role1' => array(
 									'runtimeEvaluationsClosureCode' => FALSE,
-									'privilege' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT
+									'privilege' => \TYPO3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT
 								)
 							)
 						);
 
-		$policyService = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Security\Policy\PolicyService'), array('dummy'), array(), '', FALSE);
+		$policyService = $this->getMock($this->buildAccessibleProxy('TYPO3\FLOW3\Security\Policy\PolicyService'), array('dummy'), array(), '', FALSE);
 		$policyService->_set('acls', $aclsCache);
 
-		$this->assertEquals(\F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT, $policyService->getPrivilegeForResource($mockRole, 'someResource'));
+		$this->assertEquals(\TYPO3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT, $policyService->getPrivilegeForResource($mockRole, 'someResource'));
 	}
 
 	/**
@@ -502,22 +502,22 @@ class PolicyServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getPrivilegeForResourceReturnsADenyPrivilegeIfTheResourceHasRuntimeEvaluationsDefined() {
-		$mockRole = $this->getMock('F3\FLOW3\Security\Policy\Role', array(), array(), '', FALSE);
+		$mockRole = $this->getMock('TYPO3\FLOW3\Security\Policy\Role', array(), array(), '', FALSE);
 		$mockRole->expects($this->once())->method('__toString')->will($this->returnValue('role1'));
 
 		$aclsCache = array(
 						'someResource' => array(
 								'role1' => array(
 									'runtimeEvaluationsClosureCode' => 'function () { return TRUE; };',
-									'privilege' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT
+									'privilege' => \TYPO3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT
 								)
 							)
 						);
 
-		$policyService = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Security\Policy\PolicyService'), array('dummy'), array(), '', FALSE);
+		$policyService = $this->getMock($this->buildAccessibleProxy('TYPO3\FLOW3\Security\Policy\PolicyService'), array('dummy'), array(), '', FALSE);
 		$policyService->_set('acls', $aclsCache);
 
-		$this->assertEquals(\F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY, $policyService->getPrivilegeForResource($mockRole, 'someResource'));
+		$this->assertEquals(\TYPO3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY, $policyService->getPrivilegeForResource($mockRole, 'someResource'));
 	}
 
 	/**
@@ -526,19 +526,19 @@ class PolicyServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getPrivilegeForResourceReturnsNullIfTheGivenRoleHasNoPriviligesDefinedForTheGivenResource() {
-		$mockRole = $this->getMock('F3\FLOW3\Security\Policy\Role', array(), array(), '', FALSE);
+		$mockRole = $this->getMock('TYPO3\FLOW3\Security\Policy\Role', array(), array(), '', FALSE);
 		$mockRole->expects($this->once())->method('__toString')->will($this->returnValue('role2'));
 
 		$aclsCache = array(
 						'someResource' => array(
 								'role1' => array(
 									'runtimeEvaluationsClosureCode' => 'function () { return TRUE; };',
-									'privilege' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT
+									'privilege' => \TYPO3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT
 								)
 							)
 						);
 
-		$policyService = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Security\Policy\PolicyService'), array('dummy'), array(), '', FALSE);
+		$policyService = $this->getMock($this->buildAccessibleProxy('TYPO3\FLOW3\Security\Policy\PolicyService'), array('dummy'), array(), '', FALSE);
 		$policyService->_set('acls', $aclsCache);
 
 		$this->assertNull($policyService->getPrivilegeForResource($mockRole, 'someResource'));
@@ -550,15 +550,15 @@ class PolicyServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getPrivilegeForResourceReturnsADenyPrivilegeIfAskedForAResourceThatIsNotConnectedToAPolicyEntry() {
-		$mockRole = $this->getMock('F3\FLOW3\Security\Policy\Role', array(), array(), '', FALSE);
+		$mockRole = $this->getMock('TYPO3\FLOW3\Security\Policy\Role', array(), array(), '', FALSE);
 
-		$policyServiceClassName = $this->buildAccessibleProxy('F3\FLOW3\Security\Policy\PolicyService');
+		$policyServiceClassName = $this->buildAccessibleProxy('TYPO3\FLOW3\Security\Policy\PolicyService');
 		$policyService = new $policyServiceClassName();
 
 		$policyService->_set('acls', array());
 		$policyService->_set('resources', array('someResourceNotConnectedToAPolicyEntry' => 'someDefinition'));
 
-		$this->assertEquals(\F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY, $policyService->getPrivilegeForResource($mockRole, 'someResourceNotConnectedToAPolicyEntry'));
+		$this->assertEquals(\TYPO3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY, $policyService->getPrivilegeForResource($mockRole, 'someResourceNotConnectedToAPolicyEntry'));
 	}
 
 	/**
@@ -567,18 +567,18 @@ class PolicyServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function initializeObjectLoadsTheEntityConstraintsFromTheCache() {
-		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\ConfigurationManager', array(), array(), '', FALSE);
+		$mockConfigurationManager = $this->getMock('TYPO3\FLOW3\Configuration\ConfigurationManager', array(), array(), '', FALSE);
 
-		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
+		$mockCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
 		$mockCache->expects($this->at(0))->method('has')->with('acls')->will($this->returnValue(TRUE));
 		$mockCache->expects($this->at(1))->method('get')->with('acls')->will($this->returnValue(array('cachedAcls')));
 		$mockCache->expects($this->at(2))->method('has')->with('entityResourcesConstraints')->will($this->returnValue(TRUE));
 		$mockCache->expects($this->at(3))->method('get')->with('entityResourcesConstraints')->will($this->returnValue(array('cachedConstraints')));
 
-		$mockCacheManager = $this->getMock('F3\FLOW3\Cache\CacheManager', array(), array(), '', FALSE);
+		$mockCacheManager = $this->getMock('TYPO3\FLOW3\Cache\CacheManager', array(), array(), '', FALSE);
 		$mockCacheManager->expects($this->once())->method('getCache')->with('FLOW3_Security_Policy')->will($this->returnValue($mockCache));
 
-		$policyService = $this->getAccessibleMock('F3\FLOW3\Security\Policy\PolicyService', array('setAclsForEverybodyRole'), array(), '', FALSE);
+		$policyService = $this->getAccessibleMock('TYPO3\FLOW3\Security\Policy\PolicyService', array('setAclsForEverybodyRole'), array(), '', FALSE);
 		$policyService->injectCacheManager($mockCacheManager);
 		$policyService->injectConfigurationManager($mockConfigurationManager);
 
@@ -600,21 +600,21 @@ class PolicyServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 			)
 		);
 
-		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\ConfigurationManager', array(), array(), '', FALSE);
-		$mockConfigurationManager->expects($this->once())->method('getConfiguration')->with(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_POLICY)->will($this->returnValue($policy));
+		$mockConfigurationManager = $this->getMock('TYPO3\FLOW3\Configuration\ConfigurationManager', array(), array(), '', FALSE);
+		$mockConfigurationManager->expects($this->once())->method('getConfiguration')->with(\TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_POLICY)->will($this->returnValue($policy));
 
-		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
+		$mockCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
 		$mockCache->expects($this->at(0))->method('has')->with('acls')->will($this->returnValue(TRUE));
 		$mockCache->expects($this->at(1))->method('get')->with('acls')->will($this->returnValue(array('cachedAcls')));
 		$mockCache->expects($this->at(2))->method('has')->with('entityResourcesConstraints')->will($this->returnValue(FALSE));
 
-		$mockCacheManager = $this->getMock('F3\FLOW3\Cache\CacheManager', array(), array(), '', FALSE);
+		$mockCacheManager = $this->getMock('TYPO3\FLOW3\Cache\CacheManager', array(), array(), '', FALSE);
 		$mockCacheManager->expects($this->once())->method('getCache')->with('FLOW3_Security_Policy')->will($this->returnValue($mockCache));
 
-		$mockPolicyExpressionParser = $this->getMock('F3\FLOW3\Security\Policy\PolicyExpressionParser', array(), array(), '', FALSE);
+		$mockPolicyExpressionParser = $this->getMock('TYPO3\FLOW3\Security\Policy\PolicyExpressionParser', array(), array(), '', FALSE);
 		$mockPolicyExpressionParser->expects($this->once())->method('parseEntityResources')->with(array('firstEntity', 'secondEntity'))->will($this->returnValue(array('newParsedConstraints')));
 
-		$policyService = $this->getAccessibleMock('F3\FLOW3\Security\Policy\PolicyService', array('setAclsForEverybodyRole'), array(), '', FALSE);
+		$policyService = $this->getAccessibleMock('TYPO3\FLOW3\Security\Policy\PolicyService', array('setAclsForEverybodyRole'), array(), '', FALSE);
 		$policyService->injectCacheManager($mockCacheManager);
 		$policyService->injectConfigurationManager($mockConfigurationManager);
 		$policyService->injectPolicyExpressionParser($mockPolicyExpressionParser);
@@ -630,18 +630,18 @@ class PolicyServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function initializeObjectCallsParseEntityAclsIfTheAclCacheIsEmpty() {
-		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\ConfigurationManager', array(), array(), '', FALSE);
-		$mockConfigurationManager->expects($this->once())->method('getConfiguration')->with(\F3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_POLICY)->will($this->returnValue(array()));
+		$mockConfigurationManager = $this->getMock('TYPO3\FLOW3\Configuration\ConfigurationManager', array(), array(), '', FALSE);
+		$mockConfigurationManager->expects($this->once())->method('getConfiguration')->with(\TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_POLICY)->will($this->returnValue(array()));
 
-		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
+		$mockCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
 		$mockCache->expects($this->at(0))->method('has')->with('acls')->will($this->returnValue(FALSE));
 		$mockCache->expects($this->at(1))->method('has')->with('entityResourcesConstraints')->will($this->returnValue(TRUE));
 		$mockCache->expects($this->at(2))->method('get')->with('entityResourcesConstraints')->will($this->returnValue(array('cachedConstraints')));
 
-		$mockCacheManager = $this->getMock('F3\FLOW3\Cache\CacheManager', array(), array(), '', FALSE);
+		$mockCacheManager = $this->getMock('TYPO3\FLOW3\Cache\CacheManager', array(), array(), '', FALSE);
 		$mockCacheManager->expects($this->once())->method('getCache')->with('FLOW3_Security_Policy')->will($this->returnValue($mockCache));
 
-		$policyService = $this->getAccessibleMock('F3\FLOW3\Security\Policy\PolicyService', array('parseEntityAcls', 'setAclsForEverybodyRole'), array(), '', FALSE);
+		$policyService = $this->getAccessibleMock('TYPO3\FLOW3\Security\Policy\PolicyService', array('parseEntityAcls', 'setAclsForEverybodyRole'), array(), '', FALSE);
 		$policyService->expects($this->once())->method('parseEntityAcls');
 
 		$policyService->injectCacheManager($mockCacheManager);
@@ -673,19 +673,19 @@ class PolicyServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 			)
 		);
 
-		$policyService = $this->getAccessibleMock('F3\FLOW3\Security\Policy\PolicyService', array('dummy'), array(), '', FALSE);
+		$policyService = $this->getAccessibleMock('TYPO3\FLOW3\Security\Policy\PolicyService', array('dummy'), array(), '', FALSE);
 		$policyService->_set('policy', $policy);
 
 		$policyService->_call('parseEntityAcls');
 
 		$expectedAcls = array(
 			'theEntityResource' => array(
-				'theRole' => array('privilege' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT),
-				'theOtherRole' => array('privilege' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY)
+				'theRole' => array('privilege' => \TYPO3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT),
+				'theOtherRole' => array('privilege' => \TYPO3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY)
 			),
 			'theOtherEntityResource' => array(
-				'theRole' => array('privilege' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY),
-				'theOtherRole' => array('privilege' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT)
+				'theRole' => array('privilege' => \TYPO3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY),
+				'theOtherRole' => array('privilege' => \TYPO3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT)
 			)
 		);
 
@@ -698,16 +698,16 @@ class PolicyServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function savePolicyCacheStoresTheEntityConstraintsAndACLsCorrectlyInTheCache() {
-		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
+		$mockCache = $this->getMock('TYPO3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
 		$mockCache->expects($this->at(0))->method('has')->with('acls')->will($this->returnValue(FALSE));
 		$mockCache->expects($this->at(1))->method('set')->with('acls', array('aclsArray'), array('TYPO3_FLOW3_AOP'));
 		$mockCache->expects($this->at(2))->method('has')->with('entityResourcesConstraints')->will($this->returnValue(FALSE));
 		$mockCache->expects($this->at(3))->method('set')->with('entityResourcesConstraints', array('entityResourcesConstraintsArray'));
 
-		$mockCacheManager = $this->getMock('F3\FLOW3\Cache\CacheManager', array(), array(), '', FALSE);
+		$mockCacheManager = $this->getMock('TYPO3\FLOW3\Cache\CacheManager', array(), array(), '', FALSE);
 		$mockCacheManager->expects($this->once())->method('getCache')->with('FLOW3_Security_Policy')->will($this->returnValue($mockCache));
 
-		$policyService = $this->getAccessibleMock('F3\FLOW3\Security\Policy\PolicyService', array('buildEntityConstraints'), array(), '', FALSE);
+		$policyService = $this->getAccessibleMock('TYPO3\FLOW3\Security\Policy\PolicyService', array('buildEntityConstraints'), array(), '', FALSE);
 		$policyService->injectCacheManager($mockCacheManager);
 		$policyService->_set('acls', array('aclsArray'));
 		$policyService->_set('entityResourcesConstraints', array('entityResourcesConstraintsArray'));
@@ -732,22 +732,22 @@ class PolicyServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$acls = array(
 			'resource1' => array(
 				'Administrator' => array(
-					'privilege' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY
+					'privilege' => \TYPO3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY
 				),
 			),
 			'resource2' => array(
 				'SomeOtherRole' => array(
-                    'privilege' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY
+                    'privilege' => \TYPO3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY
 				),
 			),
 			'resource3' => array(
 				'Customer' => array(
-                    'privilege' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY
+                    'privilege' => \TYPO3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY
 				),
 			)
 		);
 
-		$policyService = $this->getAccessibleMock('F3\FLOW3\Security\Policy\PolicyService', array('buildEntityConstraints'), array(), '', FALSE);
+		$policyService = $this->getAccessibleMock('TYPO3\FLOW3\Security\Policy\PolicyService', array('buildEntityConstraints'), array(), '', FALSE);
 		$policyService->_set('entityResourcesConstraints', $entityResourcesConstraints);
 		$policyService->_set('acls', $acls);
 
@@ -773,25 +773,25 @@ class PolicyServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$acls = array(
 			'resource1' => array(
 				'Administrator' => array(
-					'privilege' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT
+					'privilege' => \TYPO3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT
 				),
 				'Customer' => array(
-					'privilege' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY
+					'privilege' => \TYPO3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY
 				)
 			),
 			'resource2' => array(
 				'SomeOtherRole' => array(
-					'privilege' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY
+					'privilege' => \TYPO3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY
 				),
 			),
 			'resource3' => array(
 				'Customer' => array(
-					'privilege' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY
+					'privilege' => \TYPO3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY
 				),
 			)
 		);
 
-		$policyService = $this->getAccessibleMock('F3\FLOW3\Security\Policy\PolicyService', array('buildEntityConstraints'), array(), '', FALSE);
+		$policyService = $this->getAccessibleMock('TYPO3\FLOW3\Security\Policy\PolicyService', array('buildEntityConstraints'), array(), '', FALSE);
 		$policyService->_set('entityResourcesConstraints', $entityResourcesConstraints);
 		$policyService->_set('acls', $acls);
 
@@ -817,25 +817,25 @@ class PolicyServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$acls = array(
 			'resource1' => array(
 				'Administrator' => array(
-					'privilege' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT
+					'privilege' => \TYPO3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT
 				),
 				'Customer' => array(
-					'privilege' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY
+					'privilege' => \TYPO3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY
 				)
 			),
 			'resource2' => array(
 				'SomeOtherRole' => array(
-					'privilege' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY
+					'privilege' => \TYPO3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY
 				),
 			),
 			'resource3' => array(
 				'Customer' => array(
-					'privilege' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY
+					'privilege' => \TYPO3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_DENY
 				),
 			)
 		);
 
-		$policyService = $this->getAccessibleMock('F3\FLOW3\Security\Policy\PolicyService', array('buildEntityConstraints'), array(), '', FALSE);
+		$policyService = $this->getAccessibleMock('TYPO3\FLOW3\Security\Policy\PolicyService', array('buildEntityConstraints'), array(), '', FALSE);
 		$policyService->_set('entityResourcesConstraints', $entityResourcesConstraints);
 		$policyService->_set('acls', $acls);
 
@@ -866,18 +866,18 @@ class PolicyServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 			'acls' => array()
 		);
 
-		$policyService = $this->getAccessibleMock('F3\FLOW3\Security\Policy\PolicyService', array('dummy'), array(), '', FALSE);
+		$policyService = $this->getAccessibleMock('TYPO3\FLOW3\Security\Policy\PolicyService', array('dummy'), array(), '', FALSE);
 		$policyService->_set('policy', $policy);
 
 		$expectedResult = array(
-			'Manager' => new \F3\FLOW3\Security\Policy\Role('Manager'),
-			'Administrator' => new \F3\FLOW3\Security\Policy\Role('Administrator'),
-			'Customer' => new \F3\FLOW3\Security\Policy\Role('Customer'),
-			'User' => new \F3\FLOW3\Security\Policy\Role('User'),
-			'Chief' => new \F3\FLOW3\Security\Policy\Role('Chief'),
+			'Manager' => new \TYPO3\FLOW3\Security\Policy\Role('Manager'),
+			'Administrator' => new \TYPO3\FLOW3\Security\Policy\Role('Administrator'),
+			'Customer' => new \TYPO3\FLOW3\Security\Policy\Role('Customer'),
+			'User' => new \TYPO3\FLOW3\Security\Policy\Role('User'),
+			'Chief' => new \TYPO3\FLOW3\Security\Policy\Role('Chief'),
 		);
 
-		$result = $policyService->getAllParentRoles(new \F3\FLOW3\Security\Policy\Role('Employee'));
+		$result = $policyService->getAllParentRoles(new \TYPO3\FLOW3\Security\Policy\Role('Employee'));
 
 		sort($expectedResult);
 		sort($result);
@@ -897,7 +897,7 @@ class PolicyServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 								'role1' => array(
 									'FirstResource' => array(
 										'runtimeEvaluationsClosureCode' => FALSE,
-										'privilege' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT
+										'privilege' => \TYPO3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT
 									)
 								)
 							),
@@ -906,13 +906,13 @@ class PolicyServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 								'role2' => array(
 									'SecondResource' => array(
 										'runtimeEvaluationsClosureCode' => FALSE,
-										'privilege' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT
+										'privilege' => \TYPO3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT
 									)
 								)
 							)
 						);
 
-		$policyService = $this->getAccessibleMock('F3\FLOW3\Security\Policy\PolicyService', array('dummy'), array(), '', FALSE);
+		$policyService = $this->getAccessibleMock('TYPO3\FLOW3\Security\Policy\PolicyService', array('dummy'), array(), '', FALSE);
 		$policyService->_set('acls', $aclsCache);
 
 		$this->assertTrue($policyService->hasPolicyEntryForMethod('firstClass', 'firstMethod'));
@@ -932,7 +932,7 @@ class PolicyServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 								'role1' => array(
 									'FirstResource' => array(
 										'runtimeEvaluationsClosureCode' => FALSE,
-										'privilege' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT
+										'privilege' => \TYPO3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT
 									)
 								)
 							),
@@ -941,13 +941,13 @@ class PolicyServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 								'role2' => array(
 									'SecondResource' => array(
 										'runtimeEvaluationsClosureCode' => FALSE,
-										'privilege' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT
+										'privilege' => \TYPO3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT
 									)
 								)
 							)
 						);
 
-		$policyService = $this->getAccessibleMock('F3\FLOW3\Security\Policy\PolicyService', array('dummy'), array(), '', FALSE);
+		$policyService = $this->getAccessibleMock('TYPO3\FLOW3\Security\Policy\PolicyService', array('dummy'), array(), '', FALSE);
 		$policyService->_set('acls', $aclsCache);
 
 		$this->assertTrue($policyService->hasPolicyEntryForMethod('firstClass', 'firstMethod', array('role1')));
@@ -971,7 +971,7 @@ class PolicyServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 								'role1' => array(
 									'FirstResource' => array(
 										'runtimeEvaluationsClosureCode' => FALSE,
-										'privilege' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT
+										'privilege' => \TYPO3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT
 									)
 								)
 							),
@@ -980,13 +980,13 @@ class PolicyServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 								'role2' => array(
 									'SecondResource' => array(
 										'runtimeEvaluationsClosureCode' => FALSE,
-										'privilege' => \F3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT
+										'privilege' => \TYPO3\FLOW3\Security\Policy\PolicyService::PRIVILEGE_GRANT
 									)
 								)
 							)
 						);
 
-		$policyService = $this->getAccessibleMock('F3\FLOW3\Security\Policy\PolicyService', array('dummy'), array(), '', FALSE);
+		$policyService = $this->getAccessibleMock('TYPO3\FLOW3\Security\Policy\PolicyService', array('dummy'), array(), '', FALSE);
 		$policyService->_set('acls', $aclsCache);
 
 		$this->assertTrue($policyService->hasPolicyEntryForMethod('FirstClass', 'firstmethod', array('role1')));

@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\AOP\Pointcut;
+namespace TYPO3\FLOW3\AOP\Pointcut;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -28,12 +28,12 @@ namespace F3\FLOW3\AOP\Pointcut;
  * @scope prototype
  * @proxy disable
  */
-class PointcutMethodNameFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
+class PointcutMethodNameFilter implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 
 	const PATTERN_MATCHVISIBILITYMODIFIER = '/(|public|protected)/';
 
 	/**
-	 * @var \F3\FLOW3\Reflection\ReflectionService
+	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
@@ -48,7 +48,7 @@ class PointcutMethodNameFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterI
 	protected $methodVisibility = NULL;
 
 	/**
-	 * @var \F3\FLOW3\Log\SystemLoggerInterface
+	 * @var \TYPO3\FLOW3\Log\SystemLoggerInterface
 	 */
 	protected $systemLogger;
 
@@ -68,7 +68,7 @@ class PointcutMethodNameFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterI
 	 */
 	public function __construct($methodNameFilterExpression, $methodVisibility = NULL, array $methodArgumentConstraints = array()) {
 		$this->methodNameFilterExpression = $methodNameFilterExpression;
-		if (preg_match(self::PATTERN_MATCHVISIBILITYMODIFIER, $methodVisibility) !== 1) throw new \F3\FLOW3\AOP\Exception\InvalidPointcutExpressionException('Invalid method visibility modifier.', 1172494794);
+		if (preg_match(self::PATTERN_MATCHVISIBILITYMODIFIER, $methodVisibility) !== 1) throw new \TYPO3\FLOW3\AOP\Exception\InvalidPointcutExpressionException('Invalid method visibility modifier.', 1172494794);
 		$this->methodVisibility = $methodVisibility;
         $this->methodArgumentConstraints = $methodArgumentConstraints;
 	}
@@ -76,20 +76,20 @@ class PointcutMethodNameFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterI
 	/**
 	 * Injects the reflection service
 	 *
-	 * @param F3\FLOW3\Reflection\ReflectionService $reflectionService The reflection service
+	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService The reflection service
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectReflectionService(\F3\FLOW3\Reflection\ReflectionService $reflectionService) {
+	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
 	}
 
 	/**
-	 * @param \F3\FLOW3\Log\SystemLoggerInterface $systemLogger
+	 * @param \TYPO3\FLOW3\Log\SystemLoggerInterface $systemLogger
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectSystemLogger(\F3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
+	public function injectSystemLogger(\TYPO3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
 		$this->systemLogger = $systemLogger;
 	}
 
@@ -112,7 +112,7 @@ class PointcutMethodNameFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterI
 		$matchResult = preg_match('/^' . $this->methodNameFilterExpression . '$/', $methodName);
 
 		if ($matchResult === FALSE) {
-			throw new \F3\FLOW3\AOP\Exception('Error in regular expression', 1168876915);
+			throw new \TYPO3\FLOW3\AOP\Exception('Error in regular expression', 1168876915);
 		} elseif ($matchResult !== 1) {
 			return FALSE;
 		}

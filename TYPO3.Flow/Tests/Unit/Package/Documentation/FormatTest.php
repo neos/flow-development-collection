@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\Package\Documentation;
+namespace TYPO3\FLOW3\Tests\Unit\Package\Documentation;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,7 +26,7 @@ namespace F3\FLOW3\Tests\Unit\Package\Documentation;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class FormatTest extends \F3\FLOW3\Tests\UnitTestCase {
+class FormatTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * Sets up this test case
@@ -45,7 +45,7 @@ class FormatTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function constructSetsNameAndPathToFormat() {
 		$documentationPath = \vfsStream::url('testDirectory') . '/';
 
-		$format = new \F3\FLOW3\Package\Documentation\Format('DocBook', $documentationPath);
+		$format = new \TYPO3\FLOW3\Package\Documentation\Format('DocBook', $documentationPath);
 
 		$this->assertEquals('DocBook', $format->getFormatName());
 		$this->assertEquals($documentationPath, $format->getFormatPath());
@@ -58,9 +58,9 @@ class FormatTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function getLanguagesScansFormatDirectoryAndReturnsLanguagesAsStrings() {
 		$formatPath = \vfsStream::url('testDirectory') . '/';
 
-		\F3\FLOW3\Utility\Files::createDirectoryRecursively($formatPath . 'en');
+		\TYPO3\FLOW3\Utility\Files::createDirectoryRecursively($formatPath . 'en');
 
-		$format = new \F3\FLOW3\Package\Documentation\Format('DocBook', $formatPath);
+		$format = new \TYPO3\FLOW3\Package\Documentation\Format('DocBook', $formatPath);
 		$availableLanguages = $format->getAvailableLanguages();
 
 		$this->assertEquals(array('en'), $availableLanguages);

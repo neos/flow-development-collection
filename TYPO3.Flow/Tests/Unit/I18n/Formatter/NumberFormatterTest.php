@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Unit\I18n\Formatter;
+namespace TYPO3\FLOW3\Tests\Unit\I18n\Formatter;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,10 +26,10 @@ namespace F3\FLOW3\Tests\Unit\I18n\Formatter;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class NumberFormatterTest extends \F3\FLOW3\Tests\UnitTestCase {
+class NumberFormatterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
-	 * @var \F3\FLOW3\I18n\Locale
+	 * @var \TYPO3\FLOW3\I18n\Locale
 	 */
 	protected $sampleLocale;
 
@@ -78,7 +78,7 @@ class NumberFormatterTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function setUp() {
-		$this->sampleLocale = new \F3\FLOW3\I18n\Locale('en');
+		$this->sampleLocale = new \TYPO3\FLOW3\I18n\Locale('en');
 	}
 
 	/**
@@ -88,9 +88,9 @@ class NumberFormatterTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function formatMethodsAreChoosenCorrectly() {
 		$sampleNumber = 123.456;
 
-		$formatter = $this->getAccessibleMock('F3\FLOW3\I18n\Formatter\NumberFormatter', array('formatDecimalNumber', 'formatPercentNumber'));
-		$formatter->expects($this->at(0))->method('formatDecimalNumber')->with($sampleNumber, $this->sampleLocale, \F3\FLOW3\I18n\Cldr\Reader\NumbersReader::FORMAT_LENGTH_DEFAULT)->will($this->returnValue('bar1'));
-		$formatter->expects($this->at(1))->method('formatPercentNumber')->with($sampleNumber, $this->sampleLocale, \F3\FLOW3\I18n\Cldr\Reader\NumbersReader::FORMAT_LENGTH_DEFAULT)->will($this->returnValue('bar2'));
+		$formatter = $this->getAccessibleMock('TYPO3\FLOW3\I18n\Formatter\NumberFormatter', array('formatDecimalNumber', 'formatPercentNumber'));
+		$formatter->expects($this->at(0))->method('formatDecimalNumber')->with($sampleNumber, $this->sampleLocale, \TYPO3\FLOW3\I18n\Cldr\Reader\NumbersReader::FORMAT_LENGTH_DEFAULT)->will($this->returnValue('bar1'));
+		$formatter->expects($this->at(1))->method('formatPercentNumber')->with($sampleNumber, $this->sampleLocale, \TYPO3\FLOW3\I18n\Cldr\Reader\NumbersReader::FORMAT_LENGTH_DEFAULT)->will($this->returnValue('bar2'));
 
 		$result = $formatter->format($sampleNumber, $this->sampleLocale);
 		$this->assertEquals('bar1', $result);
@@ -123,7 +123,7 @@ class NumberFormatterTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function parsedFormatsAreUsedCorrectly($number, $expectedResult, array $parsedFormat) {
-		$formatter = $this->getAccessibleMock('F3\FLOW3\I18n\Formatter\NumberFormatter', array('dummy'));
+		$formatter = $this->getAccessibleMock('TYPO3\FLOW3\I18n\Formatter\NumberFormatter', array('dummy'));
 		$result = $formatter->_call('doFormattingWithParsedFormat', $number, $parsedFormat, $this->sampleLocalizedSymbols);
 		$this->assertEquals($expectedResult, $result);
 	}
@@ -160,11 +160,11 @@ class NumberFormatterTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function formattingUsingCustomPatternWorks($number, $format, array $parsedFormat, $expectedResult) {
-		$mockNumbersReader = $this->getMock('F3\FLOW3\I18n\Cldr\Reader\NumbersReader');
+		$mockNumbersReader = $this->getMock('TYPO3\FLOW3\I18n\Cldr\Reader\NumbersReader');
 		$mockNumbersReader->expects($this->once())->method('parseCustomFormat')->with($format)->will($this->returnValue($parsedFormat));
 		$mockNumbersReader->expects($this->once())->method('getLocalizedSymbolsForLocale')->with($this->sampleLocale)->will($this->returnValue($this->sampleLocalizedSymbols));
 
-		$formatter = new \F3\FLOW3\I18n\Formatter\NumberFormatter();
+		$formatter = new \TYPO3\FLOW3\I18n\Formatter\NumberFormatter();
 		$formatter->injectNumbersReader($mockNumbersReader);
 
 		$result = $formatter->formatNumberWithCustomPattern($number, $format, $this->sampleLocale);
@@ -183,31 +183,31 @@ class NumberFormatterTest extends \F3\FLOW3\Tests\UnitTestCase {
 			array(
 				9999.9,
 				array_merge($this->templateFormat, array('maxDecimalDigits' => 3, 'primaryGroupingSize' => 3, 'secondaryGroupingSize' => 3)),
-				'9 999,9', \F3\FLOW3\I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_DECIMAL
+				'9 999,9', \TYPO3\FLOW3\I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_DECIMAL
 			),
 			array(
 				0.85,
 				array_merge($this->templateFormat, array('multiplier' => 100, 'positiveSuffix' => '%', 'negativeSuffix' => '%')),
-				'85%', \F3\FLOW3\I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_PERCENT),
+				'85%', \TYPO3\FLOW3\I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_PERCENT),
 			array(
 				5.5,
 				array_merge($this->templateFormat, array('minDecimalDigits' => 2, 'maxDecimalDigits' => 2, 'primaryGroupingSize' => 3, 'secondaryGroupingSize' => 3, 'positiveSuffix' => ' ¤', 'negativeSuffix' => ' ¤')),
-				'5,50 zł', \F3\FLOW3\I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_CURRENCY, 'zł'
+				'5,50 zł', \TYPO3\FLOW3\I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_CURRENCY, 'zł'
 			),
 			array(
 				acos(8),
 				array_merge($this->templateFormat, array('minDecimalDigits' => 2, 'maxDecimalDigits' => 2, 'primaryGroupingSize' => 3, 'secondaryGroupingSize' => 3)),
-				'NaN', \F3\FLOW3\I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_DECIMAL
+				'NaN', \TYPO3\FLOW3\I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_DECIMAL
 			),
 			array(
 				log(0),
 				array_merge($this->templateFormat, array('minDecimalDigits' => 2, 'maxDecimalDigits' => 2, 'primaryGroupingSize' => 3, 'secondaryGroupingSize' => 3)),
-				'-∞', \F3\FLOW3\I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_PERCENT
+				'-∞', \TYPO3\FLOW3\I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_PERCENT
 			),
 			array(
 				-log(0),
 				array_merge($this->templateFormat, array('minDecimalDigits' => 2, 'maxDecimalDigits' => 2, 'primaryGroupingSize' => 3, 'secondaryGroupingSize' => 3)),
-				'∞', \F3\FLOW3\I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_CURRENCY
+				'∞', \TYPO3\FLOW3\I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_CURRENCY
 			),
 		);
 	}
@@ -218,11 +218,11 @@ class NumberFormatterTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Karol Gusak <firstname@lastname.eu>
 	 */
 	public function specificFormattingMethodsWork($number, array $parsedFormat, $expectedResult, $formatType, $currencySign = NULL) {
-		$mockNumbersReader = $this->getMock('F3\FLOW3\I18n\Cldr\Reader\NumbersReader');
+		$mockNumbersReader = $this->getMock('TYPO3\FLOW3\I18n\Cldr\Reader\NumbersReader');
 		$mockNumbersReader->expects($this->once())->method('parseFormatFromCldr')->with($this->sampleLocale, $formatType, 'default')->will($this->returnValue($parsedFormat));
 		$mockNumbersReader->expects($this->once())->method('getLocalizedSymbolsForLocale')->with($this->sampleLocale)->will($this->returnValue($this->sampleLocalizedSymbols));
 
-		$formatter = new \F3\FLOW3\I18n\Formatter\NumberFormatter();
+		$formatter = new \TYPO3\FLOW3\I18n\Formatter\NumberFormatter();
 		$formatter->injectNumbersReader($mockNumbersReader);
 
 		if ($formatType === 'currency') {

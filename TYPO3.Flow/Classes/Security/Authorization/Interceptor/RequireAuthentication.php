@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Security\Authorization\Interceptor;
+namespace TYPO3\FLOW3\Security\Authorization\Interceptor;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -28,21 +28,21 @@ namespace F3\FLOW3\Security\Authorization\Interceptor;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope singleton
  */
-class RequireAuthentication implements \F3\FLOW3\Security\Authorization\InterceptorInterface {
+class RequireAuthentication implements \TYPO3\FLOW3\Security\Authorization\InterceptorInterface {
 
 	/**
-	 * @var \F3\FLOW3\Security\Authentication\AuthenticationManagerInterface
+	 * @var \TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface
 	 */
 	protected $authenticationManager = NULL;
 
 	/**
 	 * Constructor.
 	 *
-	 * @param \F3\FLOW3\Security\Authentication\AuthenticationManagerInterface $authenticationManager The authentication Manager
+	 * @param \TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface $authenticationManager The authentication Manager
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function __construct(\F3\FLOW3\Security\Authentication\AuthenticationManagerInterface $authenticationManager) {
+	public function __construct(\TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface $authenticationManager) {
 		$this->authenticationManager = $authenticationManager;
 	}
 

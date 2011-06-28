@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Tests\Functional\Security;
+namespace TYPO3\FLOW3\Tests\Functional\Security;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -26,7 +26,7 @@ namespace F3\FLOW3\Tests\Functional\Security;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class MethodSecurityTest extends \F3\FLOW3\Tests\FunctionalTestCase {
+class MethodSecurityTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @var boolean
@@ -34,7 +34,7 @@ class MethodSecurityTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 	protected $testableSecurityEnabled = TRUE;
 
 	/**
-	 * @var \F3\FLOW3\Tests\Functional\Security\Fixtures\RestrictedController
+	 * @var \TYPO3\FLOW3\Tests\Functional\Security\Fixtures\RestrictedController
 	 */
 	protected $restrictedController;
 
@@ -44,7 +44,7 @@ class MethodSecurityTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 	 */
 	public function setUp() {
 		parent::setUp();
-		$this->restrictedController = $this->objectManager->get('F3\FLOW3\Tests\Functional\Security\Fixtures\RestrictedController');
+		$this->restrictedController = $this->objectManager->get('TYPO3\FLOW3\Tests\Functional\Security\Fixtures\RestrictedController');
 	}
 
 	/**
@@ -75,7 +75,7 @@ class MethodSecurityTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \F3\FLOW3\Security\Exception\AccessDeniedException
+	 * @expectedException \TYPO3\FLOW3\Security\Exception\AccessDeniedException
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function customerActionIsDeniedForEverybody() {
@@ -102,7 +102,7 @@ class MethodSecurityTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \F3\FLOW3\Security\Exception\AccessDeniedException
+	 * @expectedException \TYPO3\FLOW3\Security\Exception\AccessDeniedException
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function adminActionIsDeniedForEverybody() {
@@ -111,7 +111,7 @@ class MethodSecurityTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \F3\FLOW3\Security\Exception\AccessDeniedException
+	 * @expectedException \TYPO3\FLOW3\Security\Exception\AccessDeniedException
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function adminActionIsDeniedForCustomer() {

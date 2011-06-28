@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\MVC\Web\Routing;
+namespace TYPO3\FLOW3\MVC\Web\Routing;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -27,7 +27,7 @@ namespace F3\FLOW3\MVC\Web\Routing;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */
-interface DynamicRoutePartInterface extends \F3\FLOW3\MVC\Web\Routing\RoutePartInterface {
+interface DynamicRoutePartInterface extends \TYPO3\FLOW3\MVC\Web\Routing\RoutePartInterface {
 
 	/**
 	 * Sets split string of the Route Part.
