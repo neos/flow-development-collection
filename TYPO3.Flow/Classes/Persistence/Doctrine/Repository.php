@@ -52,8 +52,10 @@ class Repository extends \Doctrine\ORM\EntityRepository implements \TYPO3\FLOW3\
 	 */
 	public function __construct(\Doctrine\Common\Persistence\ObjectManager $entityManager, \Doctrine\Common\Persistence\Mapping\ClassMetadata $class = NULL) {
 		if ($class === NULL) {
-			if ($this->objectType === NULL) {
+			if (static::ENTITY_CLASSNAME === NULL) {
 				$this->objectType = str_replace(array('\\Repository\\', 'Repository'), array('\\Model\\', ''), get_class($this));
+			} else {
+				$this->objectType = static::ENTITY_CLASSNAME;
 			}
 			$class = $entityManager->getClassMetadata($this->objectType);
 		}
@@ -69,6 +71,16 @@ class Repository extends \Doctrine\ORM\EntityRepository implements \TYPO3\FLOW3\
 	 */
 	public function injectPersistenceManager(\TYPO3\FLOW3\Persistence\PersistenceManagerInterface $persistenceManager) {
 		$this->persistenceManager = $persistenceManager;
+	}
+
+	/**
+	 * Returns the classname of the entities this repository is managing.
+	 *
+	 * @return string
+	 * @api
+	 */
+	public function getEntityClassName() {
+		return $this->objectType;
 	}
 
 	/**

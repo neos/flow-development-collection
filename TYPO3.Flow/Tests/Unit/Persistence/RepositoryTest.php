@@ -21,6 +21,8 @@ namespace TYPO3\FLOW3\Tests\Unit\Persistence;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+require_once('Fixture/Repository/NonstandardEntityRepository.php');
+
 /**
  * Testcase for the base Repository
  *
@@ -56,14 +58,24 @@ class RepositoryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function constructSetsObjectTypeFromClassName($repositoryNamespace, $repositoryClassName, $modelClassName) {
 		$idSuffix = uniqid();
 		$mockClassName = $repositoryNamespace . '\\' . $repositoryClassName . $idSuffix;
-		eval('namespace ' . $repositoryNamespace . '; class ' . $repositoryClassName . $idSuffix . ' extends \TYPO3\FLOW3\Persistence\Repository {
-			public function _getObjectType() {
-				return $this->objectType;
-			}
-		}');
+		eval('namespace ' . $repositoryNamespace . '; class ' . $repositoryClassName . $idSuffix . ' extends \TYPO3\FLOW3\Persistence\Repository {}');
 
 		$repository = new $mockClassName();
-		$this->assertEquals($modelClassName . $idSuffix, $repository->_getObjectType());
+		$this->assertEquals($modelClassName . $idSuffix, $repository->getEntityClassName());
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function constructSetsObjectTypeFromClassConstant() {
+		$repositoryNamespace = 'TYPO3\FLOW3\Tests\Persistence\Fixture\Repository';
+		$repositoryClassName = 'NonstandardEntityRepository';
+		$modelClassName = 'TYPO3\FLOW3\Tests\Persistence\Fixture\Model\Entity';
+		$fullRepositorClassName = $repositoryNamespace . '\\' . $repositoryClassName;
+
+		$repository = new $fullRepositorClassName();
+		$this->assertEquals($modelClassName, $repository->getEntityClassName());
 	}
 
 	/**
@@ -75,7 +87,7 @@ class RepositoryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$mockPersistenceManager->expects($this->once())->method('createQueryForType')->with('ExpectedType');
 
 		$repository = $this->getAccessibleMock('TYPO3\FLOW3\Persistence\Repository', array('dummy'));
-		$repository->_set('objectType', 'ExpectedType');
+		$repository->_set('entityClassName', 'ExpectedType');
 		$repository->injectPersistenceManager($mockPersistenceManager);
 
 		$repository->createQuery();
@@ -93,7 +105,7 @@ class RepositoryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$mockPersistenceManager->expects($this->exactly(2))->method('createQueryForType')->with('ExpectedType')->will($this->returnValue($mockQuery));
 
 		$repository = $this->getAccessibleMock('TYPO3\FLOW3\Persistence\Repository', array('dummy'));
-		$repository->_set('objectType', 'ExpectedType');
+		$repository->_set('entityClassName', 'ExpectedType');
 		$repository->injectPersistenceManager($mockPersistenceManager);
 		$repository->setDefaultOrderings($orderings);
 		$repository->createQuery();
@@ -131,7 +143,7 @@ class RepositoryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 		$repository = $this->getAccessibleMock('TYPO3\FLOW3\Persistence\Repository', array('createQuery'));
 		$repository->injectPersistenceManager($mockPersistenceManager);
-		$repository->_set('objectType', 'stdClass');
+		$repository->_set('entityClassName', 'stdClass');
 
 		$this->assertSame($object, $repository->findByIdentifier($identifier));
 	}
@@ -146,7 +158,7 @@ class RepositoryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$mockPersistenceManager->expects($this->once())->method('add')->with($object);
 		$repository = $this->getAccessibleMock('TYPO3\FLOW3\Persistence\Repository', array('dummy'));
 		$repository->injectPersistenceManager($mockPersistenceManager);
-		$repository->_set('objectType', get_class($object));
+		$repository->_set('entityClassName', get_class($object));
 		$repository->add($object);
 	}
 
@@ -160,7 +172,7 @@ class RepositoryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$mockPersistenceManager->expects($this->once())->method('remove')->with($object);
 		$repository = $this->getAccessibleMock('TYPO3\FLOW3\Persistence\Repository', array('dummy'));
 		$repository->injectPersistenceManager($mockPersistenceManager);
-		$repository->_set('objectType', get_class($object));
+		$repository->_set('entityClassName', get_class($object));
 		$repository->remove($object);
 	}
 
@@ -174,7 +186,7 @@ class RepositoryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$mockPersistenceManager->expects($this->once())->method('merge')->with($object);
 		$repository = $this->getAccessibleMock('TYPO3\FLOW3\Persistence\Repository', array('dummy'));
 		$repository->injectPersistenceManager($mockPersistenceManager);
-		$repository->_set('objectType', get_class($object));
+		$repository->_set('entityClassName', get_class($object));
 		$repository->update($object);
 	}
 
@@ -250,7 +262,7 @@ class RepositoryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function addChecksObjectType() {
 		$repository = $this->getAccessibleMock('TYPO3\FLOW3\Persistence\Repository', array('dummy'));
-		$repository->_set('objectType', 'ExpectedObjectType');
+		$repository->_set('entityClassName', 'ExpectedObjectType');
 
 		$repository->add(new \stdClass());
 	}
@@ -262,7 +274,7 @@ class RepositoryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function removeChecksObjectType() {
 		$repository = $this->getAccessibleMock('TYPO3\FLOW3\Persistence\Repository', array('dummy'));
-		$repository->_set('objectType', 'ExpectedObjectType');
+		$repository->_set('entityClassName', 'ExpectedObjectType');
 
 		$repository->remove(new \stdClass());
 	}
@@ -273,7 +285,7 @@ class RepositoryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function updateChecksObjectType() {
 		$repository = $this->getAccessibleMock('TYPO3\FLOW3\Persistence\Repository', array('dummy'));
-		$repository->_set('objectType', 'ExpectedObjectType');
+		$repository->_set('entityClassName', 'ExpectedObjectType');
 
 		$repository->update(new \stdClass());
 	}

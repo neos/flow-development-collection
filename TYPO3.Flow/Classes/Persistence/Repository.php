@@ -37,7 +37,7 @@ class Repository implements \TYPO3\FLOW3\Persistence\RepositoryInterface {
 	/**
 	 * @var string
 	 */
-	protected $objectType;
+	protected $entityClassName;
 
 	/**
 	 * @var array
@@ -48,8 +48,10 @@ class Repository implements \TYPO3\FLOW3\Persistence\RepositoryInterface {
 	 * Initializes a new Repository.
 	 */
 	public function __construct() {
-		if ($this->objectType === NULL) {
-			$this->objectType = str_replace(array('\\Repository\\', 'Repository'), array('\\Model\\', ''), get_class($this));
+		if (static::ENTITY_CLASSNAME === NULL) {
+			$this->entityClassName = str_replace(array('\\Repository\\', 'Repository'), array('\\Model\\', ''), get_class($this));
+		} else {
+			$this->entityClassName = static::ENTITY_CLASSNAME;
 		}
 	}
 
@@ -64,6 +66,16 @@ class Repository implements \TYPO3\FLOW3\Persistence\RepositoryInterface {
 	}
 
 	/**
+	 * Returns the classname of the entities this repository is managing.
+	 *
+	 * @return string
+	 * @api
+	 */
+	public function getEntityClassName() {
+		return $this->entityClassName;
+	}
+
+	/**
 	 * Adds an object to this repository.
 	 *
 	 * @param object $object The object to add
@@ -71,8 +83,8 @@ class Repository implements \TYPO3\FLOW3\Persistence\RepositoryInterface {
 	 * @api
 	 */
 	public function add($object) {
-		if (!($object instanceof $this->objectType)) {
-			throw new \TYPO3\FLOW3\Persistence\Exception\IllegalObjectTypeException('The object given to add() was not of the type (' . $this->objectType . ') this repository manages.', 1298403438);
+		if (!($object instanceof $this->entityClassName)) {
+			throw new \TYPO3\FLOW3\Persistence\Exception\IllegalObjectTypeException('The object given to add() was not of the type (' . $this->entityClassName . ') this repository manages.', 1298403438);
 		}
 		$this->persistenceManager->add($object);
 	}
@@ -85,8 +97,8 @@ class Repository implements \TYPO3\FLOW3\Persistence\RepositoryInterface {
 	 * @api
 	 */
 	public function remove($object) {
-		if (!($object instanceof $this->objectType)) {
-			throw new \TYPO3\FLOW3\Persistence\Exception\IllegalObjectTypeException('The object given to remove() was not of the type (' . $this->objectType . ') this repository manages.', 1298403442);
+		if (!($object instanceof $this->entityClassName)) {
+			throw new \TYPO3\FLOW3\Persistence\Exception\IllegalObjectTypeException('The object given to remove() was not of the type (' . $this->entityClassName . ') this repository manages.', 1298403442);
 		}
 		$this->persistenceManager->remove($object);
 	}
@@ -113,7 +125,7 @@ class Repository implements \TYPO3\FLOW3\Persistence\RepositoryInterface {
 	 * @api
 	 */
 	public function findByIdentifier($identifier) {
-		return $this->persistenceManager->getObjectByIdentifier($identifier, $this->objectType);
+		return $this->persistenceManager->getObjectByIdentifier($identifier, $this->entityClassName);
 	}
 
 	/**
@@ -123,7 +135,7 @@ class Repository implements \TYPO3\FLOW3\Persistence\RepositoryInterface {
 	 * @api
 	 */
 	public function createQuery() {
-		$query = $this->persistenceManager->createQueryForType($this->objectType);
+		$query = $this->persistenceManager->createQueryForType($this->entityClassName);
 		if ($this->defaultOrderings !== array()) {
 			$query->setOrderings($this->defaultOrderings);
 		}
@@ -177,9 +189,9 @@ class Repository implements \TYPO3\FLOW3\Persistence\RepositoryInterface {
 	 * @api
 	 */
 	public function update($modifiedObject) {
-		if (!($modifiedObject instanceof $this->objectType)) {
+		if (!($modifiedObject instanceof $this->entityClassName)) {
 			$type = (is_object($modifiedObject) ? get_class($modifiedObject) : gettype($modifiedObject));
-			throw new \TYPO3\FLOW3\Persistence\Exception\IllegalObjectTypeException('The modified object given to update() was ' . $type . ' , however the ' . get_class($this) . ' can only store ' . $this->objectType . '.', 1249479625);
+			throw new \TYPO3\FLOW3\Persistence\Exception\IllegalObjectTypeException('The modified object given to update() was ' . $type . ' , however the ' . get_class($this) . ' can only store ' . $this->entityClassName . '.', 1249479625);
 		}
 
 		$this->persistenceManager->merge($modifiedObject);

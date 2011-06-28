@@ -32,7 +32,7 @@ class AccountRepository extends \TYPO3\FLOW3\Persistence\Repository {
 	/**
 	 * @var string
 	 */
-	protected $objectType = 'TYPO3\FLOW3\Security\Account';
+	const ENTITY_CLASSNAME = 'TYPO3\FLOW3\Security\Account';
 
 	/**
 	 * @var array

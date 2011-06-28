@@ -872,7 +872,7 @@ class ReflectionService {
 				$classSchema->setLazyLoadableObject($this->isClassTaggedWith($className, 'lazy'));
 
 				$possibleRepositoryClassName = str_replace('\\Model\\', '\\Repository\\', $className) . 'Repository';
-				if ($this->isClassReflected($possibleRepositoryClassName)) {
+				if ($this->isClassReflected($possibleRepositoryClassName) === TRUE) {
 					$classSchema->setRepositoryClassName($possibleRepositoryClassName);
 				}
 			} elseif ($this->isClassTaggedWith($className, 'valueobject')) {
@@ -913,6 +913,14 @@ class ReflectionService {
 				$classSchema->addProperty('FLOW3_Persistence_Identifier', 'string');
 			}
 			$this->classSchemata[$className] = $classSchema;
+		}
+
+			// now look for repositories that declare themselves responsible for a specific model
+		foreach ($this->getAllImplementationClassNamesForInterface('TYPO3\FLOW3\Persistence\RepositoryInterface') as $repositoryClassname) {
+			$claimedObjectType = $repositoryClassname::ENTITY_CLASSNAME;
+			if ($claimedObjectType !== NULL && isset($this->classSchemata[$claimedObjectType])) {
+				$this->classSchemata[$claimedObjectType]->setRepositoryClassName($repositoryClassname);
+			}
 		}
 	}
 

@@ -1,0 +1,39 @@
+<?php
+namespace TYPO3\FLOW3\Tests\Reflection\Fixture\Repository;
+
+/*                                                                        *
+ * This script belongs to the FLOW3 framework.                            *
+ *                                                                        *
+ * It is free software; you can redistribute it and/or modify it under    *
+ * the terms of the GNU Lesser General Public License as published by the *
+ * Free Software Foundation, either version 3 of the License, or (at your *
+ * option) any later version.                                             *
+ *                                                                        *
+ * This script is distributed in the hope that it will be useful, but     *
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
+ * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser       *
+ * General Public License for more details.                               *
+ *                                                                        *
+ * You should have received a copy of the GNU Lesser General Public       *
+ * License along with the script.                                         *
+ * If not, see http://www.gnu.org/licenses/lgpl.html                      *
+ *                                                                        *
+ * The TYPO3 project - inspiring people to share!                         *
+ *                                                                        */
+
+/**
+ * A repository claiming responsibility for a model that cannot be matched
+ * to it via naming conventions.
+ *
+ * @scope singleton
+ */
+class NonstandardEntityRepository extends \TYPO3\FLOW3\Persistence\Repository {
+
+	/**
+	 * @var string
+	 */
+	const ENTITY_CLASSNAME = 'TYPO3\FLOW3\Tests\Reflection\Fixture\Model\Entity';
+
+}
+
+?>

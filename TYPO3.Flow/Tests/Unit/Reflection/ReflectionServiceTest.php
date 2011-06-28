@@ -41,6 +41,7 @@ require_once('Fixture/DummyClassWithMethods.php');
 require_once('Fixture/DummyClassWithProperties.php');
 require_once('Fixture/Model/Entity.php');
 require_once('Fixture/Model/ValueObject.php');
+require_once('Fixture/Repository/NonstandardEntityRepository.php');
 
 /**
  * testcase for the Reflection Service
@@ -927,18 +928,45 @@ class ReflectionServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function aggregateRootIsDetectedForEntities() {
-		$this->markTestSkipped('Refactor unit tests for Reflection Service!');
+	public function aggregateRootIsTrueWhenRepositoryClassNameIsNotNull() {
+		$classSchema = $this->getAccessibleMock('TYPO3\FLOW3\Reflection\ClassSchema', array('dummy'), array('FooBar'));
+		$classSchema->_set('repositoryClassName', 'FooBarRepository');
 
+		$this->assertTrue($classSchema->isAggregateRoot());
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function repositoryClassNameIsDetectedForEntities() {
 		$reflectionService = $this->getAccessibleMock('TYPO3\FLOW3\Reflection\ReflectionService', array('isClassReflected', 'isClassTaggedWith'));
-		$reflectionService->expects($this->at(0))->method('isClassTaggedWith')->will($this->returnValue(TRUE));
+		$reflectionService->expects($this->at(0))->method('isClassTaggedWith')->with('TYPO3\FLOW3\Tests\Reflection\Fixture\Model\Entity', 'entity')->will($this->returnValue(TRUE));
 		$reflectionService->expects($this->at(2))->method('isClassReflected')->with('TYPO3\FLOW3\Tests\Reflection\Fixture\Repository\EntityRepository')->will($this->returnValue(TRUE));
 		$reflectionService->_call('buildClassSchemata', array('TYPO3\FLOW3\Tests\Reflection\Fixture\Model\Entity'));
 
 		$builtClassSchemata = $reflectionService->getClassSchemata();
 		$builtClassSchema = array_pop($builtClassSchemata);
 
-		$this->assertTrue($builtClassSchema->isAggregateRoot());
+		$this->assertEquals('TYPO3\FLOW3\Tests\Reflection\Fixture\Repository\EntityRepository', $builtClassSchema->getRepositoryClassName());
+	}
+
+	/**
+	 * Does detection work for models where a repository declares itself responsible?
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function aggregateRootIsDetectedForEntitiesWithNonStandardRepository() {
+		$reflectionService = $this->getAccessibleMock('TYPO3\FLOW3\Reflection\ReflectionService', array('isClassReflected', 'isClassTaggedWith', 'getAllImplementationClassNamesForInterface'));
+		$reflectionService->expects($this->at(0))->method('isClassTaggedWith')->with('TYPO3\FLOW3\Tests\Reflection\Fixture\Model\Entity', 'entity')->will($this->returnValue(TRUE));
+		$reflectionService->expects($this->at(2))->method('isClassReflected')->with('TYPO3\FLOW3\Tests\Reflection\Fixture\Repository\EntityRepository')->will($this->returnValue(FALSE));
+		$reflectionService->expects($this->once())->method('getAllImplementationClassNamesForInterface')->with('TYPO3\FLOW3\Persistence\RepositoryInterface')->will($this->returnValue(array('TYPO3\FLOW3\Tests\Reflection\Fixture\Repository\NonstandardEntityRepository')));
+		$reflectionService->_call('buildClassSchemata', array('TYPO3\FLOW3\Tests\Reflection\Fixture\Model\Entity'));
+
+		$builtClassSchemata = $reflectionService->getClassSchemata();
+		$builtClassSchema = array_pop($builtClassSchemata);
+
+		$this->assertEquals('TYPO3\FLOW3\Tests\Reflection\Fixture\Repository\NonstandardEntityRepository', $builtClassSchema->getRepositoryClassName());
 	}
 
 	/**
