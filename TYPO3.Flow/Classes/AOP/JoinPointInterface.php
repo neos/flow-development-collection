@@ -63,6 +63,15 @@ interface JoinPointInterface {
 	public function isMethodArgument($argumentName);
 
 	/**
+	 * Sets the value of the specified method argument
+	 *
+	 * @param string $argumentName Name of the argument
+	 * @param mixed $argumentValue Value of the argument
+	 * @return void
+	 */
+	public function setMethodArgument($argumentName, $argumentValue);
+
+	/**
 	 * Returns the advice chain related to this join point
 	 *
 	 * @return \TYPO3\FLOW3\AOP\Advice\AdviceChain The advice chain

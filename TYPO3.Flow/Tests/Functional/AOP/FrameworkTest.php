@@ -186,5 +186,13 @@ class FrameworkTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$this->assertTrue(property_exists(get_class($targetClass), 'introducedProtectedProperty'));
 	}
 
+	/**
+	 * @test
+	 */
+	public function methodArgumentsCanBeSetInTheJoinpoint() {
+		$targetClass = new Fixtures\TargetClass01();
+		$result = $targetClass->greet('Andi');
+		$this->assertEquals('Hello, Robert', $result, 'The method argument "name" has not been changed as expected by the "changeNameArgumentAdvice".');
+	}
 }
 ?>

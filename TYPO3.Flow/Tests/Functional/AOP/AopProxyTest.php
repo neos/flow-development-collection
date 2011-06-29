@@ -44,13 +44,5 @@ class AopProxyTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$this->assertEquals('argument3', $proxiedClass->argument3);
 	}
 
-	/**
-	 * @test
-	 */
-	public function advicesOfAConcreteMethodInAnAbstractClassAreActiveInTheSubClassIfTheConcreteMethodWasNotOverriden() {
-		$proxiedClass = new Fixtures\SubClassOfAbstractClass();
-		$this->assertEquals('foo: bar adviced', $proxiedClass->concreteMethod('bar'));
-	}
-
 }
 ?>

@@ -89,6 +89,18 @@ class BaseFunctionalityTestingAspect {
 	}
 
 	/**
+	 * @FLOW3\Around("method(public TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01->greet())")
+	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint
+	 * @return string
+	 */
+	public function changeNameArgumentAdvice(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+		if ($joinPoint->getMethodArgument('name') === 'Andi') {
+			$joinPoint->setMethodArgument('name', 'Robert');
+		}
+		return $joinPoint->getAdviceChain()->proceed($joinPoint);
+	}
+
+	/**
 	 * @FLOW3\Around("method(public TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01->greetMany(names contains this.currentName))")
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint
 	 * @return string
