@@ -72,7 +72,7 @@ class GenericObjectValidator implements \F3\FLOW3\Validation\Validator\Validator
 		}
 
 		if (!is_object($object)) {
-			$messages->addError(new \F3\FLOW3\Validation\Error('Object expected, ' . gettype($object) . ' given.', 1241099149));
+			$messages->addError(new \F3\FLOW3\Error\Error('Object expected, %s given.', array(gettype($object))));
 			return $messages;
 		}
 

@@ -44,7 +44,7 @@ class TextValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator {
 	 */
 	protected function isValid($value) {
 		if ($value !== filter_var($value, FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES)) {
-			$this->addError('Valid text without any XML tags is expected.', 1221565786);
+			$this->addError('Valid text without any XML tags is expected.');
 		}
 	}
 }

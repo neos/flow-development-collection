@@ -71,7 +71,7 @@ class TextValidatorTest extends \F3\FLOW3\Tests\Unit\Validation\Validator\Abstra
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function textValidatorCreatesTheCorrectErrorIfTheSubjectContainsHtmlEntities() {
-		$expected = array(new \F3\FLOW3\Validation\Error('Valid text without any XML tags is expected.', 1221565786));
+		$expected = array(new \F3\FLOW3\Validation\Error('Valid text without any XML tags is expected.'));
 		$this->assertEquals($expected, $this->validator->validate('<span style="color: #BBBBBB;">a nice text</span>')->getErrors());
 	}
 }

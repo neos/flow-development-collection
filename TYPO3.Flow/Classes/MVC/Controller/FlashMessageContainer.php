@@ -21,6 +21,12 @@ namespace F3\FLOW3\MVC\Controller;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use \F3\FLOW3\MVC\Controller\FlashMessage;
+use \F3\FLOW3\Error\Message;
+use \F3\FLOW3\Error\Notice;
+use \F3\FLOW3\Error\Warning;
+use \F3\FLOW3\Error\Error;
+
 /**
  * This is a container for all Flash Messages. It is of scope session, thus, it is automatically persisted.
  *
@@ -31,28 +37,79 @@ namespace F3\FLOW3\MVC\Controller;
 class FlashMessageContainer {
 
 	/**
-	 * The array of flash messages
-	 * @var array<string>
+	 * The storage of flash messages
+	 * @var \SplObjectStorage<F3\FLOW3\MVC\Controller\FlashMessage>
 	 */
-	protected $flashMessages = array();
+	protected $flashMessages;
+
+	public function __construct() {
+		$this->flashMessages = new \SplObjectStorage;
+	}
 
 	/**
-	 * Add another flash message.
+	 * Add message with one of the default severity types.
 	 *
-	 * @param string $message
+	 * @param string $messageBody the body of the message to convey
+	 * @param string $messageTitle optional message title
+	 * @param string $severity severity of of the message (One of the FlashMessage::SEVERITY_* constants)
+	 * @param array $arguments array of arguments to be replaced in the message body
 	 * @return void
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @author Christian Müller <christian.mueller@typo3.org>
+	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @api
 	 */
-	public function add($message) {
-		if (!is_string($message)) throw new \InvalidArgumentException('The flash message must be string, ' . gettype($message) . ' given.', 1243258395);
-		$this->flashMessages[] = $message;
+	public function add($messageBody, $messageTitle = '', $severity = FlashMessage::SEVERITY_OK, $messageArguments = array()) {
+		if (!is_string($messageBody)) {
+			throw new \InvalidArgumentException('The message body must be of type string but ' . gettype($messageBody) . ' given.', 1243258395);
+		}
+
+		switch ($severity) {
+			case FlashMessage::SEVERITY_NOTICE:
+				$message = new Notice($messageBody, $messageArguments);
+				break;
+			case FlashMessage::SEVERITY_WARNING:
+				$message = new Warning($messageBody, $messageArguments);
+				break;
+			case FlashMessage::SEVERITY_ERROR:
+				$message = new Error($messageBody, $messageArguments);
+				break;
+			default:
+				$message = new Message($messageBody, $messageArguments);
+			break;
+		}
+		$flashMessage = new FlashMessage($message, $messageTitle, $severity);
+		$this->flashMessages->attach($flashMessage);
+	}
+
+	/**
+	 * Add message object (custom)
+	 *
+	 * @param $message \F3\FLOW3\Error\Message
+	 * @param $messageTitle optional message title
+	 * @return void
+	 * @author Christian Müller <christian.mueller@typo3.org>
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @api
+	 */
+	public function addMessage(Message $message, $messageTitle = '') {
+		if ($message instanceof Notice) {
+			$severity = FlashMessage::SEVERITY_NOTICE;
+		} elseif ($message instanceof Warning) {
+			$severity = FlashMessage::SEVERITY_WARNING;
+		} elseif ($message instanceof Error) {
+			$severity = FlashMessage::SEVERITY_ERROR;
+		} else {
+			$severity = FlashMessage::SEVERITY_OK;
+		}
+		$flashMessage = new FlashMessage($message, $messageTitle, $severity);
+		$this->flashMessages->attach($flashMessage);
 	}
 
 	/**
 	 * Get all flash messages currently available.
 	 *
-	 * @return array<string> An array of flash messages
+	 * @return \SplObjectStorage<F3\FLOW3\MVC\Controller\FlashMessage> A SplObjectStorage of messages
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @api
 	 */
@@ -68,20 +125,61 @@ class FlashMessageContainer {
 	 * @api
 	 */
 	public function flush() {
-		$this->flashMessages = array();
+		$this->flashMessages = new \SplObjectStorage;
 	}
 
 	/**
 	 * Get all flash messages currently available and delete them afterwards.
 	 *
-	 * @return array<string>
+	 * @return \SplObjectStorage<F3\FLOW3\MVC\Controller\FlashMessage>
 	 * @api
 	 */
 	public function getAllAndFlush() {
 		$flashMessages = $this->flashMessages;
-		$this->flashMessages = array();
+		$this->flush();
 		return $flashMessages;
 	}
-}
 
+	/**
+	 * @param string $severity severity of of the message (One of the FlashMessage::SEVERITY_* constants)
+	 * @return \SplObjectStorage<F3\FLOW3\MVC\Controller\FlashMessage>
+	 * @author Christian Müller <christian.mueller@typo3.org>
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @api
+	 */
+	public function getBySeverity($severity) {
+		$filteredFlashMessages = new \SplObjectStorage;
+		foreach($this->flashMessages as $flashMessage) {
+			if ($flashMessage->getSeverity() === $severity) {
+				$filteredFlashMessages->attach($flashMessage);
+			}
+		}
+		return $filteredFlashMessages;
+	}
+
+	/**
+	 * @param string $severity severity of of the message (One of the FlashMessage::SEVERITY_* constants)
+	 * @return \SplObjectStorage<F3\FLOW3\MVC\Controller\FlashMessage>
+	 * @author Christian Müller <christian.mueller@typo3.org>
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @api
+	 */
+	public function getAndFlushBySeverity($severity) {
+		$filteredFlashMessages = $this->getBySeverity($severity);
+		$this->flashMessages->removeAll($filteredFlashMessages);
+		return $filteredFlashMessages;
+	}
+
+	/**
+	 * @param string $severity severity of of the message (One of the FlashMessage::SEVERITY_* constants)
+	 * @return void
+	 * @author Christian Müller <christian.mueller@typo3.org>
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @api
+	 */
+	public function flushBySeverity($severity) {
+		$filteredFlashMessages = $this->getBySeverity($severity);
+		$this->flashMessages->removeAll($filteredFlashMessages);
+	}
+}
 ?>

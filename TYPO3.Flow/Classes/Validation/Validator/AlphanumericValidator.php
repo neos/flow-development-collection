@@ -41,7 +41,7 @@ class AlphanumericValidator extends \F3\FLOW3\Validation\Validator\AbstractValid
 	 */
 	protected function isValid($value) {
 		if (is_string($value) && preg_match('/^[a-z0-9]*$/i', $value)) return;
-		$this->addError('Only the characters a to z and numbers are allowed.', 1221551320);
+		$this->addError('Only the characters a to z and numbers are allowed.');
 	}
 }
 

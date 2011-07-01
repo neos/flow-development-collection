@@ -44,7 +44,7 @@ class NumberRangeValidator extends \F3\FLOW3\Validation\Validator\AbstractValida
 	 */
 	protected function isValid($value) {
 		if (!is_numeric($value)) {
-			$this->addError('A valid number is expected.', 1221563685);
+			$this->addError('A valid number is expected.');
 			return;
 		}
 
@@ -59,7 +59,7 @@ class NumberRangeValidator extends \F3\FLOW3\Validation\Validator\AbstractValida
 			return;
 		}
 
-		$this->addError('Please enter a valid number between ' . $minimum . ' and ' . $maximum . '.', 1221561046);
+		$this->addError('Please enter a valid number between %u and %u.', array($minimum, $maximum));
 	}
 }
 

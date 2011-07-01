@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Error;
+namespace F3\FLOW3\MVC\Controller;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -21,91 +21,97 @@ namespace F3\FLOW3\Error;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-/**
- */
+use \F3\FLOW3\Error\Message;
+use \F3\FLOW3\Error\Notice;
+use \F3\FLOW3\Error\Warning;
+use \F3\FLOW3\Error\Error;
 
 /**
- * An object representation of a generic message. Usually, you will use Error, Warning or Notice instead of this one.
+ * Flash Message
+ * @see \F3\FLOW3\MVC\Controller\FlashMessageContainer
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
- * @scope prototype
  */
-class Message {
+class FlashMessage {
+
+	const SEVERITY_NOTICE = 'Notice';
+	const SEVERITY_INFO = 'Information';
+	const SEVERITY_OK = 'Ok';
+	const SEVERITY_WARNING = 'Warning';
+	const SEVERITY_ERROR = 'Error';
 
 	/**
-	 * The message text
+	 * Severity of this flash message (One of the SEVERITY_* constants)
 	 * @var string
 	 */
-	protected $message = '';
+	protected $severity;
 
 	/**
-	 * The message arguments. Will be replaced in the message body
-	 * @var array
+	 * @var string
 	 */
-	protected $arguments = array();
+	protected $messageTitle = '';
 
 	/**
-	 * @param string $message message text
-	 * @param array $arguments Arguments that need to be replaced in the message
-	 * @param string $title optional message title
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Christian Müller <christian.mueller@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 * @api
+	 * @var \F3\FLOW3\Error\Message
 	 */
-	public function __construct($message, array $arguments = array()) {
+	protected $message;
+
+	/**
+	 * @param \F3\FLOW3\Error\Message $message message body
+	 * @param string $messageTitle optional message title
+	 * @param string $severity one of the SEVERITY_* constants
+	 */
+	public function __construct(Message $message, $messageTitle = '', $severity = self::SEVERITY_OK) {
 		$this->message = $message;
-		$this->arguments = $arguments;
+		$this->messageTitle = $messageTitle;
+		$this->severity = $severity;
 	}
 
 	/**
-	 * @return string the message text
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 * @api
+	 * @return string
+	 */
+	public function getMessageTitle() {
+		return $this->messageTitle;
+	}
+
+	/**
+	 * @return boolean TRUE if the message title is not empty
+	 */
+	public function hasMessageTitle() {
+		return strlen($this->messageTitle) > 0;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getSeverity() {
+		return $this->severity;
+	}
+
+	/**
+	 * @return \F3\FLOW3\Error\Message
 	 */
 	public function getMessage() {
 		return $this->message;
 	}
 
 	/**
-	 * @return array the message arguments
-	 * @author Christian Müller <christian.mueller@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 * @api
+	 * Renders the body of this flash message
+	 * @see \F3\FLOW3\Error\Message::render()
+	 * @return string
 	 */
-	public function getArguments() {
-		return $this->arguments;
+	public function renderMessage() {
+		return $this->message->render();
 	}
 
 	/**
-	 * Returns the message as string by replacing any arguments using sprintf()
-	 *
+	 * Renders the body of this flash message
 	 * @return string
-	 * @author Christian Müller <christian.mueller@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 * @api
-	 */
-	public function render() {
-		if ($this->arguments !== array()) {
-			return vsprintf($this->message, $this->arguments);
-		} else {
-			return $this->message;
-		}
-	}
-
-	/**
-	 * Converts this error into a string
-	 *
-	 * @return string
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Christian Müller <christian.mueller@typo3.org>
-	 * @api
+	 * @see renderMessage()
 	 */
 	public function __toString() {
-		return $this->render();
+		return $this->renderMessage();
 	}
 }
-
 ?>

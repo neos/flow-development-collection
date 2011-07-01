@@ -63,7 +63,7 @@ class UuidValidatorTest extends \F3\FLOW3\Tests\Unit\Validation\Validator\Abstra
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function UUIDValidatorCreatesTheCorrectErrorIfTheSubjectIsInvalid() {
-		$expected = array(new \F3\FLOW3\Validation\Error('The given subject was not a valid UUID.', 1221565853));
+		$expected = array(new \F3\FLOW3\Validation\Error('The given subject was not a valid UUID.'));
 		$this->assertEquals($expected, $this->validator->validate('e104e469-9030-4b98-babf-3990f07')->getErrors());
 	}
 }

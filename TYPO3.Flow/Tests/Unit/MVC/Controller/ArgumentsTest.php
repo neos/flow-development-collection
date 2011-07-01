@@ -207,8 +207,8 @@ class ArgumentsTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function getValidationResultsShouldFetchAllValidationResltsFromArguments() {
-		$error1 = new \F3\FLOW3\Error\Error('Validation error', 1234);
-		$error2 = new \F3\FLOW3\Error\Error('Validation error 2', 1235);
+		$error1 = new \F3\FLOW3\Error\Error('Validation error');
+		$error2 = new \F3\FLOW3\Error\Error('Validation error 2');
 
 		$results1 = new \F3\FLOW3\Error\Result();
 		$results1->addError($error1);

@@ -48,7 +48,7 @@ class LabelValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator {
 	 */
 	protected function isValid($value) {
 		if (preg_match(self::PATTERN_VALIDCHARACTERS, $value) === 0) {
-			$this->addError('Only letters, numbers, spaces and certain punctuation marks are expected.', 1272298003);
+			$this->addError('Only letters, numbers, spaces and certain punctuation marks are expected.');
 		}
 	}
 }

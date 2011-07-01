@@ -76,7 +76,7 @@ class DateTimeValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator
 		} elseif ($this->options['locale'] instanceof \F3\FLOW3\I18n\Locale) {
 			$locale = $this->options['locale'];
 		} else {
-			$this->addError('The "locale" option can be only set to string identifier, or Locale object.', 1281454676);
+			$this->addError('The "locale" option can be only set to string identifier, or Locale object.');
 			return;
 		}
 
@@ -102,19 +102,19 @@ class DateTimeValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator
 
 		if ($formatType === \F3\FLOW3\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_TIME) {
 			if ($this->datetimeParser->parseTime($value, $locale, $formatLength, $strictMode) === FALSE) {
-				$this->addError('A valid time is expected.', 1281454830);
+				$this->addError('A valid time is expected.');
 			} else {
 				return;
 			}
 		} elseif ($formatType === \F3\FLOW3\I18n\Cldr\Reader\DatesReader::FORMAT_TYPE_DATETIME) {
 			if ($this->datetimeParser->parseDateAndTime($value, $locale, $formatLength, $strictMode) === FALSE) {
-				$this->addError('A valid date and time is expected.', 1281454831);
+				$this->addError('A valid date and time is expected.');
 			} else {
 				return;
 			}
 		} else {
 			if ($this->datetimeParser->parseDate($value, $locale, $formatLength, $strictMode) === FALSE) {
-				$this->addError('A valid date is expected.', 1281454832);
+				$this->addError('A valid date is expected.');
 			} else {
 				return;
 			}
