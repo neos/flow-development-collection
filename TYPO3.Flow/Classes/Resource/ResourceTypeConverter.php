@@ -105,7 +105,7 @@ class ResourceTypeConverter extends \F3\FLOW3\Property\TypeConverter\AbstractTyp
 
 		$resource = $this->resourceManager->importUploadedResource($source);
 		if ($resource === FALSE) {
-			return new \F3\FLOW3\Error\Error('The resource manager could not create a Resource instance.');
+			return new \F3\FLOW3\Error\Error('The resource manager could not create a Resource instance.' , 1264517906);
 		} else {
 			$this->convertedResources[$source['tmp_name']] = $resource;
 			return $resource;

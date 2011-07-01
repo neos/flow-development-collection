@@ -43,10 +43,10 @@ class NotEmptyValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator
 	 */
 	protected function isValid($value) {
 		if ($value === NULL) {
-			$this->addError('This property is required.');
+			$this->addError('This property is required.', 1221560910);
 		}
 		if ($value === '') {
-			$this->addError('This property is required.');
+			$this->addError('This property is required.', 1221560718);
 		}
 	}
 }

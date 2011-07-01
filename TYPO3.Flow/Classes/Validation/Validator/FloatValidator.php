@@ -44,7 +44,7 @@ class FloatValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator {
 		if (is_float($value) || (is_string($value) && strpos($value, '.') !== FALSE && preg_match('/^[0-9.e+-]+$/', $value))) {
 			return;
 		}
-		$this->addError('A valid float number is expected.');
+		$this->addError('A valid float number is expected.', 1221560288);
 	}
 }
 

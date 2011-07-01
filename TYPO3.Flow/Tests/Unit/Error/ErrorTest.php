@@ -1,5 +1,5 @@
 <?php
-namespace F3\FLOW3\Error;
+namespace F3\FLOW3\Tests\Unit\Error;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -22,21 +22,33 @@ namespace F3\FLOW3\Error;
  *                                                                        */
 
 /**
- */
-
-/**
- * An object representation of a generic warning. Subclass this to create
- * more specific warnings if necessary.
+ * Testcase for the Error object
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
- * @api
- * @scope prototype
  */
-class Warning extends \F3\FLOW3\Error\Message {
+class ErrorTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
-	 * @var string
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	protected $message = 'Unknown warning';
+	public function theConstructorSetsTheErrorMessageCorrectly() {
+		$errorMessage = 'The message';
+		$error = new \F3\FLOW3\Error\Error($errorMessage, 0);
+
+		$this->assertEquals($errorMessage, $error->getMessage());
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function theConstructorSetsTheErrorCodeCorrectly() {
+		$errorCode = 123456789;
+		$error = new \F3\FLOW3\Error\Error('', $errorCode);
+
+		$this->assertEquals($errorCode, $error->getCode());
+	}
 }
+
 ?>

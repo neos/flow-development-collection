@@ -49,8 +49,8 @@ class GenericObjectValidatorTest extends \F3\FLOW3\Tests\Unit\Validation\Validat
 	}
 
 	public function dataProviderForValidator() {
-		$error1 = new \F3\FLOW3\Error\Error('error1');
-		$error2 = new \F3\FLOW3\Error\Error('error2');
+		$error1 = new \F3\FLOW3\Error\Error('error1', 1);
+		$error2 = new \F3\FLOW3\Error\Error('error2', 2);
 
 		$emptyResult1 = new \F3\FLOW3\Error\Result();
 		$emptyResult2 = new \F3\FLOW3\Error\Result();
@@ -134,7 +134,7 @@ class GenericObjectValidatorTest extends \F3\FLOW3\Tests\Unit\Validation\Validat
 		$aValidator->addPropertyValidator('b', $bValidator);
 		$bValidator->addPropertyValidator('a', $aValidator);
 
-		$error = new \F3\FLOW3\Error\Error('error1');
+		$error = new \F3\FLOW3\Error\Error('error1', 123);
 		$result = new \F3\FLOW3\Error\Result();
 		$result->addError($error);
 		$mockUuidValidator = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
@@ -164,7 +164,7 @@ class GenericObjectValidatorTest extends \F3\FLOW3\Tests\Unit\Validation\Validat
 		$aValidator->addPropertyValidator('b', $bValidator);
 		$bValidator->addPropertyValidator('a', $aValidator);
 
-		$error1 = new \F3\FLOW3\Error\Error('error1');
+		$error1 = new \F3\FLOW3\Error\Error('error1', 123);
 		$result1 = new \F3\FLOW3\Error\Result();
 		$result1->addError($error1);
 		$mockUuidValidator = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');

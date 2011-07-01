@@ -78,14 +78,14 @@ abstract class AbstractValidator implements \F3\FLOW3\Validation\Validator\Valid
 	 * Creates a new validation error object and adds it to $this->errors
 	 *
 	 * @param string $message The error message
-	 * @param array $arguments The arguments to be replaced in the message
+	 * @param integer $code The error code (a unix timestamp)
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @api
 	 */
-	protected function addError($message, $arguments = array()) {
-		$this->result->addError(new \F3\FLOW3\Validation\Error($message, $arguments));
+	protected function addError($message, $code) {
+		$this->result->addError(new \F3\FLOW3\Validation\Error($message, $code));
 	}
 }
 

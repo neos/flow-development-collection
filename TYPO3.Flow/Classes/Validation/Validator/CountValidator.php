@@ -41,15 +41,15 @@ class CountValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator {
 	 */
 	protected function isValid($value) {
 		if (!is_array($value) && !($value instanceof \Countable)) {
-			$this->addError('The given subject was not countable.');
+			$this->addError('The given subject was not countable.', 1253718666);
 			return;
 		}
 
-		$minimum = (isset($this->options['minimum'])) ? intval($this->options['minimum']) : 0;
-		$maximum = (isset($this->options['maximum'])) ? intval($this->options['maximum']) : PHP_INT_MAX;
-		if (count($value) >= $minimum && count($value) <= $maximum) return;
+		$min = (isset($this->options['minimum'])) ? intval($this->options['minimum']) : 0;
+		$max = (isset($this->options['maximum'])) ? intval($this->options['maximum']) : PHP_INT_MAX;
+		if (count($value) >= $min && count($value) <= $max) return;
 
-		$this->addError('The count must be between %u and %u.', array($minimum, $maximum));
+		$this->addError('The count must be between ' . $min . ' and ' . $max . '.', 1253718831);
 	}
 }
 

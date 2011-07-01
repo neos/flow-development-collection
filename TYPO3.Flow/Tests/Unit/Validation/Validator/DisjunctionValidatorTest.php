@@ -38,7 +38,7 @@ class DisjunctionValidatorTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$validatorObject->expects($this->once())->method('validate')->will($this->returnValue(new \F3\FLOW3\Error\Result()));
 
 		$errors = new \F3\FLOW3\Error\Result();
-		$errors->addError(new \F3\FLOW3\Error\Error('Error'));
+		$errors->addError(new \F3\FLOW3\Error\Error('Error', 123));
 
 		$secondValidatorObject = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
 		$secondValidatorObject->expects($this->exactly(1))->method('validate')->will($this->returnValue($errors));
@@ -59,7 +59,7 @@ class DisjunctionValidatorTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$validatorObject->expects($this->any())->method('validate')->will($this->returnValue(new \F3\FLOW3\Error\Result()));
 
 		$errors = new \F3\FLOW3\Error\Result();
-		$errors->addError(new \F3\FLOW3\Error\Error('Error'));
+		$errors->addError(new \F3\FLOW3\Error\Error('Error', 123));
 
 		$secondValidatorObject = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
 		$secondValidatorObject->expects($this->any())->method('validate')->will($this->returnValue($errors));
@@ -77,8 +77,8 @@ class DisjunctionValidatorTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function validateReturnsAllErrorsIfAllValidatorsReturnErrrors() {
 		$validatorDisjunction = new \F3\FLOW3\Validation\Validator\DisjunctionValidator(array());
 
-		$error1 = new \F3\FLOW3\Error\Error('Error');
-		$error2 = new \F3\FLOW3\Error\Error('Error2');
+		$error1 = new \F3\FLOW3\Error\Error('Error', 123);
+		$error2 = new \F3\FLOW3\Error\Error('Error2', 123);
 
 		$errors1 = new \F3\FLOW3\Error\Result();
 		$errors1->addError($error1);

@@ -142,7 +142,7 @@ class EmailAddressValidator extends \F3\FLOW3\Validation\Validator\AbstractValid
 				$/Dix', $value)) {
 			return;
 		}
-		$this->addError('Please specify a valid email address.');
+		$this->addError('Please specify a valid email address.', 1221559976);
 	}
 }
 

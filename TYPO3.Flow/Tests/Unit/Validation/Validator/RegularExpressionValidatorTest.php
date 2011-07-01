@@ -50,7 +50,7 @@ class RegularExpressionValidatorTest extends \F3\FLOW3\Tests\Unit\Validation\Val
 	public function regularExpressionValidatorCreatesTheCorrectErrorIfTheExpressionDidNotMatch() {
 		$this->validatorOptions(array('regularExpression' => '/^simple[0-9]expression$/'));
 		$errors = $this->validator->validate('some subject that will not match')->getErrors();
-		$this->assertEquals(array(new \F3\FLOW3\Validation\Error('The given subject did not match the pattern. Got: "%s"', array('some subject that will not match'))), $errors);
+		$this->assertEquals(array(new \F3\FLOW3\Validation\Error('The given subject did not match the pattern. Got: "some subject that will not match"', 1221565130)), $errors);
 	}
 }
 
