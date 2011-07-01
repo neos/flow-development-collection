@@ -428,11 +428,7 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	protected function errorAction() {
 		$errorFlashMessage = $this->getErrorFlashMessage();
 		if ($errorFlashMessage !== FALSE) {
-			if ($errorFlashMessage instanceof \F3\FLOW3\Error\Message) {
-				$this->flashMessageContainer->addMessage($errorFlashMessage);
-			} else {
-				$this->flashMessageContainer->add($errorFlashMessage, '', FlashMessage::SEVERITY_ERROR);
-			}
+			$this->flashMessageContainer->add($errorFlashMessage);
 		}
 
 		$referringRequest = $this->request->getReferringRequest();

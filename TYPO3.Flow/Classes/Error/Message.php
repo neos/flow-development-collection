@@ -34,35 +34,34 @@ namespace F3\FLOW3\Error;
 class Message {
 
 	/**
-	 * The message text
+	 * The default (english) error message
 	 * @var string
 	 */
-	protected $message = '';
+	protected $message = 'Unknown message';
 
 	/**
-	 * The message arguments. Will be replaced in the message body
-	 * @var array
+	 * The error code
+	 * @var string
 	 */
-	protected $arguments = array();
+	protected $code;
 
 	/**
-	 * @param string $message message text
-	 * @param array $arguments Arguments that need to be replaced in the message
-	 * @param string $title optional message title
+	 * Constructs this error
+	 *
+	 * @param string $message An english error message which is used if no other error message can be resolved
+	 * @param integer $code A unique error code
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Christian Müller <christian.mueller@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @api
 	 */
-	public function __construct($message, array $arguments = array()) {
+	public function __construct($message, $code) {
 		$this->message = $message;
-		$this->arguments = $arguments;
+		$this->code = $code;
 	}
 
 	/**
-	 * @return string the message text
+	 * Returns the error message
+	 * @return string The error message
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @api
 	 */
 	public function getMessage() {
@@ -70,29 +69,13 @@ class Message {
 	}
 
 	/**
-	 * @return array the message arguments
-	 * @author Christian Müller <christian.mueller@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * Returns the error code
+	 * @return string The error code
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @api
 	 */
-	public function getArguments() {
-		return $this->arguments;
-	}
-
-	/**
-	 * Returns the message as string by replacing any arguments using sprintf()
-	 *
-	 * @return string
-	 * @author Christian Müller <christian.mueller@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 * @api
-	 */
-	public function render() {
-		if ($this->arguments !== array()) {
-			return vsprintf($this->message, $this->arguments);
-		} else {
-			return $this->message;
-		}
+	public function getCode() {
+		return $this->code;
 	}
 
 	/**
@@ -100,11 +83,10 @@ class Message {
 	 *
 	 * @return string
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Christian Müller <christian.mueller@typo3.org>
 	 * @api
 	 */
 	public function __toString() {
-		return $this->render();
+		return $this->message . ' (#' . $this->code . ')';
 	}
 }
 

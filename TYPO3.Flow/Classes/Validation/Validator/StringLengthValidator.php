@@ -55,7 +55,7 @@ class StringLengthValidator extends \F3\FLOW3\Validation\Validator\AbstractValid
 				throw new \F3\FLOW3\Validation\Exception\InvalidSubjectException('The given object could not be converted to a string.', 1238110957);
 			}
 		} elseif (!is_string($value)) {
-			$this->addError('The given value was not a valid string.');
+			$this->addError('The given value was not a valid string.', 1269883975);
 		}
 
 		$stringLength = strlen($value);
@@ -65,11 +65,11 @@ class StringLengthValidator extends \F3\FLOW3\Validation\Validator\AbstractValid
 
 		if ($isValid === FALSE) {
 			if (isset($this->options['minimum']) && isset($this->options['maximum'])) {
-				$this->addError('The length of this text must be between %u and %u characters.', array($this->options['minimum'], $this->options['maximum']));
+				$this->addError('The length of this text must be between ' . $this->options['minimum'] . ' and ' . $this->options['maximum'] . ' characters.', 1238108067);
 			} elseif (isset($this->options['minimum'])) {
-				$this->addError('This field must contain at least %u characters.', array($this->options['minimum']));
+				$this->addError('This field must contain at least ' . $this->options['minimum'] . ' characters.', 1238108068);
 			} else {
-				$this->addError('This text may not exceed %u characters.',array($this->options['maximum']));
+				$this->addError('This text may not exceed ' . $this->options['maximum'] . ' characters.', 1238108069);
 			}
 		}
 	}

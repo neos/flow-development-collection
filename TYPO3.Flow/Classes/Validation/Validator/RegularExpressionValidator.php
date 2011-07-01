@@ -49,7 +49,7 @@ class RegularExpressionValidator extends \F3\FLOW3\Validation\Validator\Abstract
 		}
 		$result = preg_match($this->options['regularExpression'], $value);
 		if ($result === 0) {
-			$this->addError('The given subject did not match the pattern. Got: "%s"', array($value));
+			$this->addError('The given subject did not match the pattern. Got: "' . $value . '"', 1221565130);
 		}
 		if ($result === FALSE) {
 			throw new \F3\FLOW3\Validation\Exception\InvalidValidationOptionsException('regularExpression "' . $this->options['regularExpression'] . '" in RegularExpressionValidator contained an error.', 1298273089);

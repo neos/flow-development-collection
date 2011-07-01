@@ -79,7 +79,7 @@ class NumberValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator {
 		} elseif ($this->options['locale'] instanceof \F3\FLOW3\I18n\Locale) {
 			$locale = $this->options['locale'];
 		} else {
-			$this->addError('The "locale" option can be only set to string identifier, or Locale object.');
+			$this->addError('The "locale" option can be only set to string identifier, or Locale object.', 1281286579);
 			return;
 		}
 
@@ -105,13 +105,13 @@ class NumberValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator {
 
 		if ($formatType === \F3\FLOW3\I18n\Cldr\Reader\NumbersReader::FORMAT_TYPE_PERCENT) {
 			if ($this->numberParser->parsePercentNumber($value, $locale, $formatLength, $strictMode) === FALSE) {
-				$this->addError('A valid percent number is expected.');
+				$this->addError('A valid percent number is expected.', 1281452093);
 			} else {
 				return;
 			}
 		} else {
 			if ($this->numberParser->parseDecimalNumber($value, $locale, $formatLength, $strictMode) === FALSE) {
-				$this->addError('A valid decimal number is expected.');
+				$this->addError('A valid decimal number is expected.', 1281452094);
 			} else {
 				return;
 			}

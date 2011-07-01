@@ -1520,7 +1520,7 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		$validationResults = $this->getMock('F3\FLOW3\Error\Result');
 		$validationResults->expects($this->once())->method('hasErrors')->will($this->returnValue(TRUE));
-		$validationResults->expects($this->any())->method('getErrors')->will($this->returnValue(new \F3\FLOW3\Error\Error('error')));
+		$validationResults->expects($this->any())->method('getErrors')->will($this->returnValue(new \F3\FLOW3\Error\Error('error', 1234)));
 
 		$mockValidator = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
 		$mockValidator->expects($this->once())->method('validate')->will($this->returnValue($validationResults));
@@ -1560,7 +1560,7 @@ class BackendTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		$validationResults = $this->getMock('F3\FLOW3\Error\Result');
 		$validationResults->expects($this->once())->method('hasErrors')->will($this->returnValue(TRUE));
-		$validationResults->expects($this->any())->method('getErrors')->will($this->returnValue(new \F3\FLOW3\Error\Error('error')));
+		$validationResults->expects($this->any())->method('getErrors')->will($this->returnValue(new \F3\FLOW3\Error\Error('error', 1234)));
 
 		$mockValidator = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
 		$mockValidator->expects($this->once())->method('validate')->will($this->returnValue($validationResults));

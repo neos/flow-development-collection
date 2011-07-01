@@ -33,5 +33,10 @@ namespace F3\FLOW3\Error;
  * @scope prototype
  */
 class Error extends \F3\FLOW3\Error\Message {
+
+	/**
+	 * @var string
+	 */
+	protected $message = 'Unknown error';
 }
 ?>

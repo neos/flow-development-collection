@@ -133,7 +133,7 @@ class ActionControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$this->mockResponse->expects($this->once())->method('appendContent')->with('the returned string from error action');
 
 		$result = new \F3\FLOW3\Error\Result();
-		$result->addError(new \F3\FLOW3\Error\Error('asdf'));
+		$result->addError(new \F3\FLOW3\Error\Error('asdf', 1));
 		$this->mockArguments->expects($this->once())->method('getValidationResults')->will($this->returnValue($result));
 
 		$mockController = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\ActionController', array('barAction', 'initializeAction'), array(), '', FALSE);
@@ -700,62 +700,15 @@ class ActionControllerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function defaultErrorActionAddsFlashMessageToFlashMessageContainer() {
-		$errorMessage = 'Some error message';
 		$mockFlashMessageContainer = $this->getMock('F3\FLOW3\MVC\Controller\FlashMessageContainer', array(), array(), '', FALSE);
-		$mockFlashMessageContainer->expects($this->once())->method('add')->with($errorMessage, '', \F3\FLOW3\MVC\Controller\FlashMessage::SEVERITY_ERROR);
+		$mockFlashMessageContainer->expects($this->once())->method('add');
 
-		$mockController = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\ActionController', array('getErrorFlashMessage'), array(), '', FALSE);
-		$mockController->expects($this->atLeastOnce())->method('getErrorFlashMessage')->will($this->returnValue($errorMessage));
+		$mockController = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\ActionController', array('dummy'), array(), '', FALSE);
 		$mockController->_set('request', $this->mockRequest);
 		$result = new \F3\FLOW3\Error\Result();
-		$result->addError(new \F3\FLOW3\Error\Error('asdf'));
-		$this->mockArguments->expects($this->once())->method('getValidationResults')->will($this->returnValue($result));
-		$mockController->_set('arguments', $this->mockArguments);
-
-		$mockController->_set('flashMessageContainer', $mockFlashMessageContainer);
-
-		$mockController->_call('errorAction');
-	}
-
-	/**
-	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	public function defaultErrorActionAddsFlashMessageToFlashMessageContainerIfGetErrorFlashMessageReturnsMessageObject() {
-		$someMessage = $this->getMock('F3\FLOW3\Error\Notice', array(), array(), '', FALSE);
-		$mockFlashMessageContainer = $this->getMock('F3\FLOW3\MVC\Controller\FlashMessageContainer', array(), array(), '', FALSE);
-		$mockFlashMessageContainer->expects($this->once())->method('addMessage')->with($someMessage);
-
-		$mockController = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\ActionController', array('getErrorFlashMessage'), array(), '', FALSE);
-		$mockController->expects($this->atLeastOnce())->method('getErrorFlashMessage')->will($this->returnValue($someMessage));
-		$mockController->_set('request', $this->mockRequest);
-		$result = new \F3\FLOW3\Error\Result();
-		$result->addError(new \F3\FLOW3\Error\Error('asdf'));
-		$this->mockArguments->expects($this->once())->method('getValidationResults')->will($this->returnValue($result));
-		$mockController->_set('arguments', $this->mockArguments);
-
-		$mockController->_set('flashMessageContainer', $mockFlashMessageContainer);
-
-		$mockController->_call('errorAction');
-	}
-
-	/**
-	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	public function defaultErrorActionDoesNotAddFlashMessageToFlashMessageContainerIfGetErrorFlashMessageReturnsFalse() {
-		$mockFlashMessageContainer = $this->getMock('F3\FLOW3\MVC\Controller\FlashMessageContainer', array(), array(), '', FALSE);
-		$mockFlashMessageContainer->expects($this->never())->method('add');
-		$mockFlashMessageContainer->expects($this->never())->method('addMessage');
-
-		$mockController = $this->getAccessibleMock('F3\FLOW3\MVC\Controller\ActionController', array('getErrorFlashMessage'), array(), '', FALSE);
-		$mockController->expects($this->atLeastOnce())->method('getErrorFlashMessage')->will($this->returnValue(FALSE));
-		$mockController->_set('request', $this->mockRequest);
-		$result = new \F3\FLOW3\Error\Result();
-		$result->addError(new \F3\FLOW3\Error\Error('asdf'));
+		$result->addError(new \F3\FLOW3\Error\Error('asdf', 1));
 		$this->mockArguments->expects($this->once())->method('getValidationResults')->will($this->returnValue($result));
 		$mockController->_set('arguments', $this->mockArguments);
 
