@@ -175,7 +175,7 @@ class DynamicRoutePart extends \TYPO3\FLOW3\MVC\Web\Routing\AbstractRoutePart im
 	 * If $value is empty, this method checks whether a default value exists.
 	 * This method can be overridden by custom RoutePartHandlers to implement custom resolving mechanisms.
 	 *
-	 * @param string|array $value value to resolve
+	 * @param string $value value to resolve
 	 * @return boolean TRUE if value could be resolved successfully, otherwise FALSE.
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @api
@@ -184,15 +184,9 @@ class DynamicRoutePart extends \TYPO3\FLOW3\MVC\Web\Routing\AbstractRoutePart im
 		if ($value === NULL || is_object($value)) {
 			return FALSE;
 		}
-		$this->value = $value;
+		$this->value = (string)$value;
 		if ($this->lowerCase) {
-			if (is_array($this->value)) {
-				array_walk_recursive($this->value, function(&$value) {
-					$value = strtolower($value);
-				});
-			} else {
-				$this->value = strtolower($this->value);
-			}
+			$this->value = strtolower($this->value);
 		}
 		return TRUE;
 	}

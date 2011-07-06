@@ -288,22 +288,6 @@ class DynamicRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function dynamicRoutePartLowerCasesAllArrayValuesIfLowerCaseIsTrue() {
-		$routePart = new \TYPO3\FLOW3\MVC\Web\Routing\DynamicRoutePart();
-		$routePart->setName('Foo');
-		$routePart->setLowerCase(TRUE);
-		$routeValues = array('Foo' => array('Key1' => 'Value 01', 'Key2' => 'Value 02', 'Key3' => array('Foo' => 'Bar')));
-
-		$this->assertTrue($routePart->resolve($routeValues));
-		$expectedResult = array('Key1' => 'value 01', 'Key2' => 'value 02', 'Key3' => array('Foo' => 'bar'));
-		$actualResult = $routePart->getValue();
-		$this->assertEquals($expectedResult, $actualResult);
-	}
-
-	/**
-	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
 	public function resolveReturnsFalseIfNoCorrespondingValueIsGiven() {
 		$routePart = new \TYPO3\FLOW3\MVC\Web\Routing\DynamicRoutePart();
 		$routePart->setName('foo');
