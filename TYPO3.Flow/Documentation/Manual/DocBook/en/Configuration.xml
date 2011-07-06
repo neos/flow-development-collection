@@ -359,9 +359,10 @@ class SomeClass {
     <para>This feature can be configure through a switch in the
     <filename>Settings.yaml</filename> file:</para>
 
-    <programlisting language="yaml">FLOW3:
-  configuration:
-    compileConfigurationFiles: y</programlisting>
+    <programlisting language="yaml">TYPO3:
+  FLOW3:
+    configuration:
+      compileConfigurationFiles: y</programlisting>
 
     <para>When enabled, the configuration manager will compile all loaded
     configuration into a PHP file which will be loaded in subsequent calls

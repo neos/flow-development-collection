@@ -20,19 +20,17 @@
     contexts. An application context basically is a set of configuration which
     has been defined for a certain context. By default, FLOW3 provides
     configuration for the <literal>Production</literal>,
-    <literal>Development</literal>, <literal>Testing</literal>, and
-    <literal>Staging</literal> context. More contexts may be defined by just
-    adding configuration for it accordingly (refer to the Configuration
-    section to learn more about configuration).</para>
+    <literal>Development</literal> and <literal>Testing</literal>
+    context.</para>
 
-    <para>The FLOW3 boot strap (i.e. the class
-    <classname>\TYPO3\FLOW3\Core\Bootstrap</classname>) is always instantiated in
-    a single application context. By default (when calling the
+    <para>The FLOW3 bootstrap (i.e. the class
+    <classname>\TYPO3\FLOW3\Core\Bootstrap</classname>) is always instantiated
+    in a single application context. By default (when calling the
     <filename>index.php</filename> file) the context is
-    <literal>Production</literal>. To switch to another context you need to
+    <literal>Development</literal>. To switch to another context you need to
     define the environment variable FLOW3_CONTEXT with the corresponding
     value. You can do this either by adding (uncommenting) the corresponding
-    line (i.e. <literal>SetEnv FLOW3_CONTEXT Development</literal>) in the
+    line (i.e. <literal>SetEnv FLOW3_CONTEXT Production</literal>) in the
     <filename>.htaccess</filename>-file, which is located in the
     <filename>Web</filename>-folder. Another option is to add this line to
     your virtual hosts configuration.</para>

@@ -361,8 +361,8 @@
     <filename>Classes</filename> directory will be detected and registered.
     However, this only works if you follow the naming rules equally for the
     class name as well as the file name. An example for a valid class name is
-    <classname>\MyCompany\MyPackage\Controller\StandardController</classname> while
-    the file containing this class would be named
+    <classname>\MyCompany\MyPackage\Controller\StandardController</classname>
+    while the file containing this class would be named
     <filename>StandardController.php</filename> and is expected to be in a
     directory <filename>MyPackage/Classes/Controller</filename>.</para>
 
@@ -444,19 +444,7 @@ FLOW3
     see more or less the above available commands listed.</para>
 
     <note>
-      <para>We haven't developed a Windows batch script yet so for the time
-      being you'll have to call FLOW3 manually. Before you can run the FLOW3
-      command line script you need to set some environment variables:<screen>c:\&gt; <command>set FLOW3_CONTEXT=Development</command>
-c:\&gt; <command>set FLOW3_ROOTPATH=C:\xampp\htdocs\tutorial</command>
-c:\&gt; <command>set FLOW3_WEBPATH=C:\xampp\htdocs\tutorial\Web</command></screen>If
-      you like to make those variable settings permanent, so they are valid
-      for more than just the current shell session, you can use the
-      <command>setx</command> command:<screen>c:\&gt; <command>setx FLOW3_CONTEXT Development</command>
-c:\&gt; <command>setx FLOW3_ROOTPATH C:\xampp\htdocs\tutorial</command>
-c:\&gt; <command>setx FLOW3_WEBPATH C:\xampp\htdocs\tutorial\Web</command></screen></para>
-
-      <para>Listing the available packages is then as easy as typing:<screen>c:\&gt; (<command>php Packages\Framework\FLOW3\Scripts\flow3
-         flow3:package:listavailable)</command></screen></para>
+      <para>On Windows use the <literal>flow3.bat</literal> batch</para>
     </note>
   </section>
 

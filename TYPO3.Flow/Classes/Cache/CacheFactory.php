@@ -33,7 +33,7 @@ namespace TYPO3\FLOW3\Cache;
 class CacheFactory {
 
 	/**
-	 * The current FLOW3 context ("production", "development" etc.)
+	 * The current FLOW3 context ("Production", "Development" etc.)
 	 *
 	 * @var string
 	 */
