@@ -436,9 +436,9 @@ class Bootstrap {
 	 */
 	protected function executeCommand($commandIdentifier) {
 		if (DIRECTORY_SEPARATOR === '/') {
-			$command = 'XDEBUG_CONFIG="idekey=FLOW3_SUBREQUEST" FLOW3_ROOTPATH=' . FLOW3_PATH_ROOT . ' ' . 'FLOW3_CONTEXT=' . $this->context . ' ' . \TYPO3\FLOW3\Utility\Files::getUnixStylePath($this->settings['core']['phpBinaryPathAndFilename']) . ' -c ' . \TYPO3\FLOW3\Utility\Files::getUnixStylePath(php_ini_loaded_file()) . ' ' . FLOW3_PATH_FLOW3 . 'Scripts/flow3' . ' ' . escapeshellarg($commandIdentifier);
+			$command = 'XDEBUG_CONFIG="idekey=FLOW3_SUBREQUEST" FLOW3_ROOTPATH=' . FLOW3_PATH_ROOT . ' ' . 'FLOW3_CONTEXT=' . $this->context . ' ' . \TYPO3\FLOW3\Utility\Files::getUnixStylePath($this->settings['core']['phpBinaryPathAndFilename']) . ' -c ' . \TYPO3\FLOW3\Utility\Files::getUnixStylePath(php_ini_loaded_file()) . ' ' . FLOW3_PATH_FLOW3 . 'Scripts/flow3.php' . ' ' . escapeshellarg($commandIdentifier);
 		} else {
-			$command = 'SET FLOW3_ROOTPATH=' . FLOW3_PATH_ROOT . '&' . 'SET FLOW3_CONTEXT=' . $this->context . '&' . $this->settings['core']['phpBinaryPathAndFilename'] . ' -c ' . php_ini_loaded_file() . ' ' . FLOW3_PATH_FLOW3 . 'Scripts/flow3' . ' ' . escapeshellarg($commandIdentifier);
+			$command = 'SET FLOW3_ROOTPATH=' . FLOW3_PATH_ROOT . '&' . 'SET FLOW3_CONTEXT=' . $this->context . '&' . $this->settings['core']['phpBinaryPathAndFilename'] . ' -c ' . php_ini_loaded_file() . ' ' . FLOW3_PATH_FLOW3 . 'Scripts/flow3.php' . ' ' . escapeshellarg($commandIdentifier);
 		}
 		system($command, $result);
 		return $result === 0;

@@ -1,4 +1,3 @@
-#!/usr/bin/env php
 <?php
 
 /*                                                                        *
@@ -27,9 +26,10 @@
 
 require(__DIR__ . '/../Classes/Core/Bootstrap.php');
 
+$context = getenv('FLOW3_CONTEXT') ?: 'Production';
 $_SERVER['FLOW3_ROOTPATH'] = getenv('FLOW3_ROOTPATH') ?: '';
 
-$bootstrap = new \TYPO3\FLOW3\Core\Bootstrap('Development');
+$bootstrap = new \TYPO3\FLOW3\Core\Bootstrap($context);
 $bootstrap->run();
 
 ?>
