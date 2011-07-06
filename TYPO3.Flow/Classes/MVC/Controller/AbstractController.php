@@ -79,10 +79,11 @@ abstract class AbstractController implements ControllerInterface {
 	 * An array of supported request types. By default only web requests are supported.
 	 * Modify or replace this array if your specific controller supports certain
 	 * (additional) request types.
+	 *
 	 * @var array
 	 * @api
 	 */
-	protected $supportedRequestTypes = array('TYPO3\FLOW3\MVC\Request');
+	protected $supportedRequestTypes = array('TYPO3\FLOW3\MVC\Web\Request');
 
 	/**
 	 * Contains the controller context

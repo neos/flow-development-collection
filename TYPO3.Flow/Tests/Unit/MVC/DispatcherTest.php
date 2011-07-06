@@ -119,7 +119,7 @@ class DispatcherTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
 		$mockObjectManager->expects($this->once())->method('get')->with($this->equalTo('TYPO3\TestPackage\TheCustomNotFoundController'))->will($this->returnValue($mockController));
 
-		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\Request', array('getControllerPackageKey', 'getControllerObjectName'));
+		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\Request', array('getControllerPackageKey', 'getControllerObjectName'));
 		$mockRequest->expects($this->any())->method('getControllerObjectName')->will($this->returnValue(''));
 
 		$dispatcher = $this->getAccessibleMock('TYPO3\FLOW3\MVC\Dispatcher', array('dummy'));
@@ -138,7 +138,7 @@ class DispatcherTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
 		$mockObjectManager->expects($this->once())->method('get')->with($this->equalTo('TYPO3\TestPackage\TheCustomNotFoundController'))->will($this->returnValue(new \stdClass()));
 
-		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\Request', array('getControllerObjectName'));
+		$mockRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\Request', array('getControllerObjectName'));
 		$mockRequest->expects($this->any())->method('getControllerObjectName')->will($this->returnValue(''));
 
 		$dispatcher = $this->getAccessibleMock('TYPO3\FLOW3\MVC\Dispatcher', array('dummy'));
