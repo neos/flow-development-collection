@@ -525,8 +525,9 @@ class Route {
 					} else {
 						$routePart = new \TYPO3\FLOW3\MVC\Web\Routing\DynamicRoutePart();
 					}
-					if (isset($this->defaults[$routePartName])) {
-						$routePart->setDefaultValue($this->defaults[$routePartName]);
+					$routePartDefaultValue = \TYPO3\FLOW3\Reflection\ObjectAccess::getPropertyPath($this->defaults, $routePartName);
+					if ($routePartDefaultValue !== NULL) {
+						$routePart->setDefaultValue($routePartDefaultValue);
 					}
 					break;
 				case self::ROUTEPART_TYPE_STATIC:
