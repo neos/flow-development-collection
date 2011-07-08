@@ -107,7 +107,9 @@ class KickstartCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandCont
 			return 'Package "' . $packageKey . '" is not available.' . PHP_EOL;
 		}
 
-		$fieldsArguments = $this->request->getCommandLineArguments();
+		$fieldsArguments = $this->request->getArguments();
+		array_shift($fieldsArguments);
+		array_shift($fieldsArguments);
 		$fieldDefinitions = array();
 		foreach ($fieldsArguments as $fieldArgument) {
 			list($fieldName, $fieldType) = explode(':', $fieldArgument, 2);
