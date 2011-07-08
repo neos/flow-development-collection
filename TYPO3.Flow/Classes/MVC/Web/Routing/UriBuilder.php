@@ -328,11 +328,33 @@ class UriBuilder {
 			$controllerArguments['@format'] = $this->format;
 		}
 
-		if ($this->request instanceof \TYPO3\FLOW3\MVC\Web\SubRequest && $this->request->getArgumentNamespace() !== '') {
-			$controllerArguments = array($this->request->getArgumentNamespace() => $controllerArguments);
-		}
-
+		$controllerArguments = $this->addNamespaceToArguments($controllerArguments);
 		return $this->build($controllerArguments);
+	}
+
+	/**
+	 * Adds the argument namespace of the current request to the specified arguments.
+	 * This happens recursively iterating through the nested requests in case of a subrequest.
+	 * For example if this is executed inside a widget subrequest in a plugin subrequest, the result would be:
+	 * array(
+	 *   'pluginRequestNamespace' => array(
+	 *     'widgetRequestNamespace => $arguments
+	 *    )
+	 * )
+	 *
+	 * @param array $arguments arguments
+	 * @return array arguments with namespace
+	 */
+	protected function addNamespaceToArguments(array $arguments) {
+		$currentRequest = $this->request;
+		while($currentRequest instanceof \TYPO3\FLOW3\MVC\Web\SubRequest) {
+			$argumentNamespace = $currentRequest->getArgumentNamespace();
+			if ($argumentNamespace !== '') {
+				$arguments = array($argumentNamespace => $arguments);
+			}
+			$currentRequest = $currentRequest->getParentRequest();
+		}
+		return $arguments;
 	}
 
 	/**

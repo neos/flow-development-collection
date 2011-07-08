@@ -195,6 +195,45 @@ class UriBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function uriForRecursivelyPrefixesControllerArgumentsWithAllParentRequestArgumentNamespaces() {
+		$mockSubRequest1 = $this->getMock('TYPO3\FLOW3\MVC\Web\SubRequest', array(), array(), '', FALSE);
+		$mockSubRequest1->expects($this->any())->method('getRootRequest')->will($this->returnValue($this->mockRequest));
+		$mockSubRequest1->expects($this->any())->method('getParentRequest')->will($this->returnValue($this->mockRequest));
+		$mockSubRequest1->expects($this->any())->method('getArgumentNamespace')->will($this->returnValue('SubRequest1Namespace'));
+
+		$mockSubRequest2 = $this->getMock('TYPO3\FLOW3\MVC\Web\SubRequest', array(), array(), '', FALSE);
+		$mockSubRequest2->expects($this->any())->method('getRootRequest')->will($this->returnValue($this->mockRequest));
+		$mockSubRequest2->expects($this->any())->method('getParentRequest')->will($this->returnValue($mockSubRequest1));
+		$mockSubRequest2->expects($this->any())->method('getArgumentNamespace')->will($this->returnValue('SubRequest2Namespace'));
+
+		$mockSubRequest3 = $this->getMock('TYPO3\FLOW3\MVC\Web\SubRequest', array(), array(), '', FALSE);
+		$mockSubRequest3->expects($this->any())->method('getRootRequest')->will($this->returnValue($this->mockRequest));
+		$mockSubRequest3->expects($this->any())->method('getParentRequest')->will($this->returnValue($mockSubRequest2));
+		$mockSubRequest3->expects($this->any())->method('getArgumentNamespace')->will($this->returnValue('SubRequest3Namespace'));
+
+		$expectedArguments = array(
+			'SubRequest1Namespace' => array(
+				'SubRequest2Namespace' => array(
+					'SubRequest3Namespace' => array(
+						'arg1' => 'val1',
+						'@action' => 'someaction',
+						'@controller' => 'somecontroller',
+						'@package' => 'somepackage'
+					)
+				)
+			)
+		);
+
+		$this->uriBuilder->setRequest($mockSubRequest3);
+		$this->uriBuilder->uriFor('SomeAction', array('arg1' => 'val1'), 'SomeController', 'SomePackage');
+		$this->assertEquals($expectedArguments, $this->uriBuilder->getLastArguments());
+	}
+
+	/**
+	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function buildDoesNotMergeArgumentsWithRequestArgumentsByDefault() {
