@@ -37,9 +37,8 @@ for PARENT_PATH_PART in $PARENT_PATH_PARTS ; do
 	PARENT_PATH="$PARENT_PATH/$PARENT_PATH_PART"
 	sudo -u $WEBSERVER_USER test -x "$PARENT_PATH"
 	if [ $? -gt 0 ]; then
-		echo "  $PARENT_PATH is NOT searchable (executable) for user $WEBSERVER_USER!"
-		echo "  Sorry, you need to fix this yourself, I don't know your preferred permissions ..."
-		exit 1
+		echo "  $PARENT_PATH seems NOT to be searchable (executable) for user $WEBSERVER_USER!"
+		echo "  Sorry, you need to fix this yourself if it's a problem, I don't know your preferred permissions ..."
 	fi
 done
 
