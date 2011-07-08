@@ -106,9 +106,11 @@ class CommandController implements CommandControllerInterface {
 	/**
 	 * Resolves and checks the current command method name
 	 *
+	 * Note: The resulting command method name might not have the correct case, which isn't a problem because PHP is
+	 *       case insensitive regarding method names.
+	 *
 	 * @return string Method name of the current command
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @todo Find exact case of command method!
 	 */
 	protected function resolveCommandMethodName() {
 		$commandMethodName = $this->request->getControllerCommandName() . 'Command';
@@ -119,14 +121,11 @@ class CommandController implements CommandControllerInterface {
 	}
 
 	/**
-	 * Implementation of the arguments initialization in the action controller:
-	 * Automatically registers arguments of the current action
-	 *
-	 * Don't override this method - use initializeAction() instead.
+	 * Initializes the arguments array of this controller by creating an empty argument object for each of the
+	 * method arguments found in the designated command method.
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @see initializeArguments()
 	 */
 	protected function initializeCommandMethodArguments() {
 		$methodParameters = $this->reflectionService->getMethodParameters(get_class($this), $this->commandMethodName);
@@ -149,6 +148,7 @@ class CommandController implements CommandControllerInterface {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @todo Implement a more friendly error message (with usage) for when the argument is missing
 	 */
 	protected function mapRequestArgumentsToControllerArguments() {
 		foreach ($this->arguments as $argument) {

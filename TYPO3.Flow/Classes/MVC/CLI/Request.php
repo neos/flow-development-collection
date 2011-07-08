@@ -55,6 +55,11 @@ class Request implements RequestInterface {
 	protected $arguments = array();
 
 	/**
+	 * @var array
+	 */
+	protected $exceedingArguments = array();
+
+	/**
 	 * If this request has been changed and needs to be dispatched again
 	 * @var boolean
 	 */
@@ -163,8 +168,7 @@ class Request implements RequestInterface {
 	}
 
 	/**
-	 * Sets the whole arguments ArrayObject and therefore replaces any arguments
-	 * which existed before.
+	 * Sets the whole arguments array and therefore replaces any arguments which existed before.
 	 *
 	 * @param array $arguments An array of argument names and their values
 	 * @return void
@@ -209,22 +213,29 @@ class Request implements RequestInterface {
 	}
 
 	/**
-	 * Get command line arguments
+	 * Sets the exceeding arguments
 	 *
-	 * @return array
+	 * @param array $exceedingArguments Numeric array of exceeding arguments
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getCommandLineArguments() {
-		return $this->commandLineArguments;
+	public function setExceedingArguments(array $exceedingArguments) {
+		$this->exceedingArguments = $exceedingArguments;
 	}
 
 	/**
-	 * Set the command line arguments
+	 * Returns additional unnamed arguments (if any) which have been passed through the command line after all
+	 * required arguments (if any) have been specified.
 	 *
-	 * @param array $commandLineArguments
-	 * @return void
+	 * For a command method with the signature ($argument1, $argument2) and for the command line
+	 * ./flow3 acme:foo --argument1 Foo --argument2 Bar baz quux
+	 * this method would return array(0 => 'baz', 1 => 'quux')
+	 *
+	 * @return array Numeric array of exceeding argument values
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setCommandLineArguments(array $commandLineArguments) {
-		$this->commandLineArguments = $commandLineArguments;
+	public function getExceedingArguments() {
+		return $this->exceedingArguments;
 	}
 
 }

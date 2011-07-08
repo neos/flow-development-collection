@@ -39,6 +39,11 @@ class RequestBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	protected $mockObjectManager;
 
 	/**
+	 * @var \TYPO\FLOW3\Reflection\ReflectionService
+	 */
+	protected $reflectionService;
+
+	/**
 	 * Sets up this test case
 	 *
 	 * @author  Robert Lemke <robert@typo3.org>
@@ -53,8 +58,11 @@ class RequestBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$this->mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
 		$this->mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->with('acme\test\command\defaultcommandcontroller')->will($this->returnValue('Acme\Test\Command\DefaultCommandController'));
 
+		$this->mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService');
+
 		$this->requestBuilder = new \TYPO3\FLOW3\MVC\CLI\RequestBuilder();
 		$this->requestBuilder->injectObjectManager($this->mockObjectManager);
+		$this->requestBuilder->injectReflectionService($this->mockReflectionService);
 	}
 
 	/**
@@ -63,7 +71,9 @@ class RequestBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function checkIfCLIAccessWithPackageControllerAndActionNameBuildsCorrectRequest() {
+	public function cliAccessWithPackageControllerAndActionNameBuildsCorrectRequest() {
+		$this->mockReflectionService->expects($this->once())->method('getMethodParameters')->will($this->returnValue(array()));
+
 		$request = $this->requestBuilder->build('acme.test:default:list');
 		$this->assertEquals('Acme\Test\Command\DefaultCommandController', $request->getControllerObjectName());
 		$this->assertEquals('list', $request->getControllerCommandName(), 'The CLI request specifying a package, controller and action name did not return a request object pointing to the expected action.');
@@ -80,6 +90,8 @@ class RequestBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			'Acme.Test' => new \TYPO3\FLOW3\Package\Package('Acme.Test', 'vfs://Test/Packages/Application/Acme/Test/'),
 			'Acme.NoTest' => new \TYPO3\FLOW3\Package\Package('Acme.NoTest', 'vfs://Test/Packages/Application/Acme/NoTest/'),
 		);
+
+		$this->mockReflectionService->expects($this->once())->method('getMethodParameters')->will($this->returnValue(array()));
 
 		$mockPackageManager = $this->getMock('TYPO3\FLOW3\Package\PackageManagerInterface');
 		$mockPackageManager->expects($this->any())->method('getActivePackages')->will($this->returnValue($packages));
@@ -114,12 +126,40 @@ class RequestBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	}
 
 	/**
+	 * Checks the support of very short-hand command identifiers, only specifying controller name and command name.
+	 *
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function ifJustControllerAndCommandNameIsUnambiguousThatShortIdentifierSuffices() {
+		$this->markTestIncomplete();
+
+		$classNames = array(
+			md5(uniqid(mt_rand(), TRUE)) . 'Acme\Test\Command\FooCommandController',
+			md5(uniqid(mt_rand(), TRUE)) . 'Acme\Test\Command\BarCommandController',
+			md5(uniqid(mt_rand(), TRUE)) . 'Dooo\Test\Command\BarCommandController'
+		);
+
+		$this->mockReflectionService->expects($this->once())->method('getAllSubClassNamesForClass')->will($this->returnValue($classNames));
+
+		$request = $this->requestBuilder->build('foocommand:list');
+		$this->assertEquals($classNames[0], $request->getControllerObjectName());
+		$this->assertEquals('list', $request->getControllerCommandName());
+	}
+
+	/**
 	 * Checks if a CLI request specifying some "console style" (--my-argument=value) arguments results in the expected request object
 	 *
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function CLIAccesWithPackageControllerActionAndArgumentsBuildsCorrectRequest() {
+	public function cliAccesWithPackageControllerActionAndArgumentsBuildsCorrectRequest() {
+		$methodParameters = array(
+			'testArgument' => array('optional' => FALSE),
+			'testArgument2' => array('optional' => FALSE)
+		);
+		$this->mockReflectionService->expects($this->once())->method('getMethodParameters')->with('Acme\Test\Command\DefaultCommandController', 'listCommand')->will($this->returnValue($methodParameters));
+
 		$request = $this->requestBuilder->build('acme.test:default:list --test-argument=value --test-argument2=value2');
 		$this->assertTrue($request->hasArgument('testArgument'), 'The given "testArgument" was not found in the built request.');
 		$this->assertTrue($request->hasArgument('testArgument2'), 'The given "testArgument2" was not found in the built request.');
@@ -134,6 +174,14 @@ class RequestBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function checkIfCLIAccesWithPackageControllerActionAndArgumentsToleratesSpaces() {
+		$methodParameters = array(
+			'testArgument' => array('optional' => FALSE),
+			'testArgument2' => array('optional' => FALSE),
+			'testArgument3' => array('optional' => FALSE),
+			'testArgument4' => array('optional' => FALSE)
+		);
+		$this->mockReflectionService->expects($this->once())->method('getMethodParameters')->with('Acme\Test\Command\DefaultCommandController', 'listCommand')->will($this->returnValue($methodParameters));
+
 		$request = $this->requestBuilder->build('acme.test:default:list --test-argument= value --test-argument2 =value2 --test-argument3 = value3 --test-argument4=value4');
 		$this->assertTrue($request->hasArgument('testArgument'), 'The given "testArgument" was not found in the built request.');
 		$this->assertTrue($request->hasArgument('testArgument2'), 'The given "testArgument2" was not found in the built request.');
@@ -152,6 +200,13 @@ class RequestBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function CLIAccesWithShortArgumentsBuildsCorrectRequest() {
+		$methodParameters = array(
+			'a' => array('optional' => FALSE),
+			'd' => array('optional' => FALSE),
+			'f' => array('optional' => FALSE),
+		);
+		$this->mockReflectionService->expects($this->once())->method('getMethodParameters')->with('Acme\Test\Command\DefaultCommandController', 'listCommand')->will($this->returnValue($methodParameters));
+
 		$request = $this->requestBuilder->build('acme.test:default:list -d valued -f=valuef -a = valuea');
 		$this->assertTrue($request->hasArgument('d'), 'The given "d" was not found in the built request.');
 		$this->assertTrue($request->hasArgument('f'), 'The given "f" was not found in the built request.');
@@ -169,6 +224,24 @@ class RequestBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function CLIAccesWithArgumentsWithAndWithoutValuesBuildsCorrectRequest() {
+		$methodParameters = array(
+			'testArgument' => array('optional' => FALSE),
+			'testArgument2' => array('optional' => FALSE),
+			'testArgument3' => array('optional' => FALSE),
+			'testArgument4' => array('optional' => FALSE),
+			'testArgument5' => array('optional' => FALSE),
+			'testArgument6' => array('optional' => FALSE),
+			'testArgument7' => array('optional' => FALSE),
+			'f' => array('optional' => FALSE),
+			'd' => array('optional' => FALSE),
+			'a' => array('optional' => FALSE),
+			'c' => array('optional' => FALSE),
+			'j' => array('optional' => FALSE),
+			'k' => array('optional' => FALSE),
+			'm' => array('optional' => FALSE),
+		);
+		$this->mockReflectionService->expects($this->once())->method('getMethodParameters')->with('Acme\Test\Command\DefaultCommandController', 'listCommand')->will($this->returnValue($methodParameters));
+
 		$request = $this->requestBuilder->build('acme.test:default:list --test-argument=value --test-argument2= value2 -k --test-argument-3 = value3 --test-argument4=value4 -f valuef -d=valued -a = valuea -c --testArgument7 --test-argument5 = 5 --test-argument6 -j kjk -m');
 		$this->assertTrue($request->hasArgument('testArgument'), 'The given "testArgument" was not found in the built request.');
 		$this->assertTrue($request->hasArgument('testArgument2'), 'The given "testArgument2" was not found in the built request.');
@@ -197,22 +270,90 @@ class RequestBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function argumentsAreDetectedAfterOptions() {
-		$request = $this->requestBuilder->build('acme.test:default:list --some -option=value file1 file2');
-		$this->assertEquals('list', $request->getControllerCommandName());
-		$this->assertEquals(array('file1', 'file2'), $request->getCommandLineArguments());
+	public function insteadOfNamedArgumentsTheArgumentsCanBePassedUnnamedInTheCorrectOrder() {
+		$methodParameters = array(
+			'testArgument1' => array('optional' => FALSE),
+			'testArgument2' => array('optional' => FALSE),
+		);
+		$this->mockReflectionService->expects($this->exactly(2))->method('getMethodParameters')->with('Acme\Test\Command\DefaultCommandController', 'listCommand')->will($this->returnValue($methodParameters));
+
+		$request = $this->requestBuilder->build('acme.test:default:list --test-argument1 firstArgumentValue --test-argument2 secondArgumentValue');
+		$this->assertEquals('firstArgumentValue', $request->getArgument('testArgument1'));
+		$this->assertEquals('secondArgumentValue', $request->getArgument('testArgument2'));
+
+		$request = $this->requestBuilder->build('acme.test:default:list firstArgumentValue secondArgumentValue');
+		$this->assertEquals('firstArgumentValue', $request->getArgument('testArgument1'));
+		$this->assertEquals('secondArgumentValue', $request->getArgument('testArgument2'));
 	}
 
 	/**
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function argumentsAreDetectedIfNoOptionsAreGiven() {
-		$request = $this->requestBuilder->build('acme.test:default:list -- file1 file2');
+	public function argumentsAreDetectedAfterOptions() {
+		$methodParameters = array(
+			'some' => array('optional' => TRUE),
+			'option' => array('optional' => TRUE),
+			'argument1' => array('optional' => FALSE),
+			'argument2' => array('optional' => FALSE),
+		);
+		$this->mockReflectionService->expects($this->once())->method('getMethodParameters')->with('Acme\Test\Command\DefaultCommandController', 'listCommand')->will($this->returnValue($methodParameters));
+
+		$request = $this->requestBuilder->build('acme.test:default:list --some -option=value file1 file2');
 		$this->assertEquals('list', $request->getControllerCommandName());
-		$this->assertEquals(array('file1', 'file2'), $request->getCommandLineArguments());
+		$this->assertTrue($request->getArgument('some'));
+		$this->assertEquals('file1', $request->getArgument('argument1'));
+		$this->assertEquals('file2', $request->getArgument('argument2'));
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function exceedingArgumentsMayBeSpecified() {
+		$methodParameters = array(
+			'testArgument1' => array('optional' => FALSE),
+			'testArgument2' => array('optional' => FALSE),
+		);
+		$this->mockReflectionService->expects($this->once())->method('getMethodParameters')->with('Acme\Test\Command\DefaultCommandController', 'listCommand')->will($this->returnValue($methodParameters));
+
+		$expectedArguments = array('testArgument1' => 'firstArgumentValue', 'testArgument2' => 'secondArgumentValue', 0 => 'exceedingArgument1');
+
+		$request = $this->requestBuilder->build('acme.test:default:list --test-argument1=firstArgumentValue --test-argument2 secondArgumentValue exceedingArgument1');
+		$this->assertEquals($expectedArguments, $request->getArguments());
+		$this->assertEquals(array('exceedingArgument1'), $request->getExceedingArguments());
+	}
+
+	/**
+	 * @test
+	 * @expectedException \TYPO3\FLOW3\MVC\Exception\InvalidArgumentMixingException
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function ifNamedArgumentsAreUsedAllRequiredArgumentsMustBeNamed() {
+		$methodParameters = array(
+			'testArgument1' => array('optional' => FALSE),
+			'testArgument2' => array('optional' => FALSE),
+		);
+		$this->mockReflectionService->expects($this->once())->method('getMethodParameters')->with('Acme\Test\Command\DefaultCommandController', 'listCommand')->will($this->returnValue($methodParameters));
+
+		$this->requestBuilder->build('acme.test:default:list --test-argument1 firstArgumentValue secondArgumentValue');
+	}
+
+	/**
+	 * @test
+	 * @expectedException \TYPO3\FLOW3\MVC\Exception\InvalidArgumentMixingException
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function ifUnnamedArgumentsAreUsedAllRequiredArgumentsMustBeUnnamed() {
+		$methodParameters = array(
+			'requiredArgument1' => array('optional' => FALSE),
+			'requiredArgument2' => array('optional' => FALSE),
+		);
+		$this->mockReflectionService->expects($this->once())->method('getMethodParameters')->with('Acme\Test\Command\DefaultCommandController', 'listCommand')->will($this->returnValue($methodParameters));
+
+		$this->requestBuilder->build('acme.test:default:list firstArgumentValue --required-argument2 secondArgumentValue');
 	}
 
 }

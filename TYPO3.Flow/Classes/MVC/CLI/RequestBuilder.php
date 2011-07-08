@@ -47,6 +47,11 @@ class RequestBuilder {
 	protected $packageManager;
 
 	/**
+	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
+	 */
+	protected $reflectionService;
+
+	/**
 	 * @param \TYPO3\FLOW3\Utility\Environment $environment
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
@@ -74,6 +79,15 @@ class RequestBuilder {
 	}
 
 	/**
+	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
+		$this->reflectionService = $reflectionService;
+	}
+
+	/**
 	 * Builds a CLI request object from a command line.
 	 *
 	 * The given command line may be a string (e.g. "mypackage:foo do-that-thing --force") or
@@ -95,19 +109,27 @@ class RequestBuilder {
 		}
 
 		$controllerNameParts = explode(':', trim(array_shift($rawCommandLineArguments)));
-		if (count($controllerNameParts) !== 3) {
-			return $request;
+
+		switch (count($controllerNameParts)) {
+			case 3:
+				list($packageKey, $controllerName, $controllerCommandName) = $controllerNameParts;
+				$packageNamespace = $this->resolvePackageNamespace($packageKey);
+				if ($packageNamespace === FALSE) {
+					return $request;
+				}
+				$lowerCasesControllerObjectName = strtolower(sprintf('%s\\Command\\%sCommandController', $packageNamespace, $controllerName));
+				$controllerObjectName = $this->objectManager->getCaseSensitiveObjectName($lowerCasesControllerObjectName);
+			break;
+
+			case 2:
+				list($controllerName, $controllerCommandName) = $controllerNameParts;
+				$controllerObjectName = $this->resolveControllerObjectName($controllerName, $controllerCommandName);
+			break;
+
+			default:
+				return $request;
 		}
 
-		list($packageKey, $controllerName, $controllerCommandName) = $controllerNameParts;
-		$packageNamespace = $this->resolvePackageNamespace($packageKey);
-
-		if ($packageNamespace === FALSE) {
-			return $request;
-		}
-
-		$lowerCasesControllerObjectName = strtolower(sprintf('%s\\Command\\%sCommandController', $packageNamespace, $controllerName));
-		$controllerObjectName = $this->objectManager->getCaseSensitiveObjectName($lowerCasesControllerObjectName);
 		if ($controllerObjectName === FALSE) {
 			return $request;
 		}
@@ -115,11 +137,39 @@ class RequestBuilder {
 		$request->setControllerObjectName($controllerObjectName);
 		$request->setControllerCommandName($controllerCommandName);
 
-		$commandLineArguments = $this->parseRawCommandLineArguments($rawCommandLineArguments);
-		$request->setArguments($commandLineArguments['options']);
-		$request->setCommandLineArguments($commandLineArguments['arguments']);
+		list($commandLineArguments, $exceedingCommandLineArguments) = $this->parseRawCommandLineArguments($rawCommandLineArguments, $controllerObjectName, $controllerCommandName);
+		$request->setArguments($commandLineArguments);
+		$request->setExceedingArguments($exceedingCommandLineArguments);
 
 		return $request;
+	}
+
+	/**
+	 * Tries to determine the command controller's object name from an incomplete command identifier.
+	 *
+	 * @param $searchedCommandControllerName Only the "name" of the controller, e.g. "help" in case of TYPO3\FLOW3\Command\HelpCommandController
+	 * @param $searchedCommandName Name of the command, e.g. "listactive" in case of a method "listActiveCommand"
+	 * @return string The controller object name or FALSE if the object name could not be determined
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function resolveControllerObjectName($searchedCommandControllerName, $searchedCommandName) {
+		$foundCommands = array();
+
+		$commandControllerClassNames = $this->reflectionService->getAllSubClassNamesForClass('TYPO3\FLOW3\MVC\Controller\CommandController');
+		foreach ($commandControllerClassNames as $className) {
+			foreach (get_class_methods($className) as $methodName) {
+				if (substr($methodName, -7, 7) === 'Command') {
+					$command = new Command($className, substr($methodName, 0, -7));
+					list(, $commandControllerName, $commandName) = explode(':', $command->getCommandIdentifier());
+					$foundCommands[$commandControllerName . ':' . $commandName][] = $className;
+				}
+			}
+		}
+		if (!isset($foundCommands[$searchedCommandControllerName . ':' . $searchedCommandName]) ||
+				count($foundCommands[$searchedCommandControllerName . ':' . $searchedCommandName]) !== 1) {
+			return FALSE;
+		}
+		return $foundCommands[$searchedCommandControllerName . ':' . $searchedCommandName][0];
 	}
 
 	/**
@@ -180,65 +230,82 @@ class RequestBuilder {
 	}
 
 	/**
+	 * Takes an array of unparsed command line arguments and options and converts it separated
+	 * by named arguments, options and unnamed arguments.
 	 *
-	 * @param array $rawCommandLineArguments
-	 * @return array
+	 * @param array $rawCommandLineArguments The unparsed command parts (such as "--foo") as an array
+	 * @param string $controllerObjectName Object name of the designated command controller
+	 * @param string $controllerCommandName Command name of the recognized command (ie. method name without "Command" suffix)
+	 * @return array All and exceeding command line arguments
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function parseRawCommandLineArguments(array $rawCommandLineArguments) {
-		$commandLineArguments = array('options' => array(), 'arguments' => array());
+	protected function parseRawCommandLineArguments(array $rawCommandLineArguments, $controllerObjectName, $controllerCommandName) {
+		$commandLineArguments = array();
+		$exceedingArguments = array();
+		$commandMethodName = $controllerCommandName . 'Command';
+		$commandMethodParameters = $this->reflectionService->getMethodParameters($controllerObjectName, $commandMethodName);
 
-		$onlyArgumentsFollow = FALSE;
+		$requiredArgumentNames = array();
+		$optionalArgumentNames = array();
+		foreach ($commandMethodParameters as $parameterName => $parameterInfo) {
+			if ($parameterInfo['optional'] === FALSE) {
+				$requiredArgumentNames[strtolower($parameterName)] = $parameterName;
+			} else {
+				$optionalArgumentNames[strtolower($parameterName)] = $parameterName;
+			}
+		}
 
+		$decidedToUseNamedArguments = FALSE;
+		$decidedToUseUnnamedArguments = FALSE;
 		while (count($rawCommandLineArguments) > 0) {
 
 			$rawArgument = array_shift($rawCommandLineArguments);
 
-			if ($rawArgument === '--') {
-				$onlyArgumentsFollow = TRUE;
-				continue;
-			}
-
-			if ($onlyArgumentsFollow) {
-				$commandLineArguments['arguments'][] = $rawArgument;
-			} else {
-				if ($rawArgument[0] === '-') {
-					if ($rawArgument[1] === '-') {
-							// long option (--blah=hurz)
-						$rawArgument = substr($rawArgument, 2);
-					} else {
-							// short option (-b hurz)
-						$rawArgument = substr($rawArgument, 1);
-					}
-					$optionName = $this->convertCommandLineOptionToRequestArgumentName($rawArgument);
-					$optionValue = $this->getValueOfCurrentCommandLineOption($rawArgument, $rawCommandLineArguments);
-					$commandLineArguments['options'][$optionName] = $optionValue;
+			if ($rawArgument[0] === '-') {
+				if ($rawArgument[1] === '-') {
+					$rawArgument = substr($rawArgument, 2);
 				} else {
-					$commandLineArguments['arguments'][] = $rawArgument;
+					$rawArgument = substr($rawArgument, 1);
+				}
+				$argumentName = $this->extractArgumentNameFromCommandLinePart($rawArgument);
+				$argumentValue = $this->getValueOfCurrentCommandLineOption($rawArgument, $rawCommandLineArguments);
+
+				if (isset($optionalArgumentNames[$argumentName])) {
+					$commandLineArguments[$optionalArgumentNames[$argumentName]] = $argumentValue;
+				} elseif(isset($requiredArgumentNames[$argumentName])) {
+					if ($decidedToUseUnnamedArguments) {
+						throw new \TYPO3\FLOW3\MVC\Exception\InvalidArgumentMixingException(sprintf('Unexpected named argument "%s". If you use unnamed arguments, all required arguments must be passed without a name.', $argumentName), 1309971821);
+					}
+					$decidedToUseNamedArguments = TRUE;
+					$commandLineArguments[$requiredArgumentNames[$argumentName]] = $argumentValue;
+					unset($requiredArgumentNames[$argumentName]);
+				}
+			} else {
+				if (count($requiredArgumentNames) > 0) {
+					if ($decidedToUseNamedArguments) {
+						throw new \TYPO3\FLOW3\MVC\Exception\InvalidArgumentMixingException(sprintf('Unexpected unnamed argument "%s". If you use named arguments, all required arguments must be passed named.', $rawArgument), 1309971820);
+					}
+					$commandLineArguments[array_shift($requiredArgumentNames)] = $rawArgument;
+					$decidedToUseUnnamedArguments = TRUE;
+				} else {
+					$commandLineArguments[] = $rawArgument;
+					$exceedingArguments[] = $rawArgument;
 				}
 			}
 		}
 
-		return $commandLineArguments;
+		return array($commandLineArguments, $exceedingArguments);
 	}
 
 	/**
-	 * Converts the first element of the input to an argument name for a \TYPO3\FLOW3\MVC\RequestInterface object.
+	 * Extracts the option or argument name from the name / value pair of a command line.
 	 *
-	 * @param string $commandLineOption the command line option
-	 * @return string converted argument name
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @param string $commandLinePart Part of the command line, e.g. "my-important-option=SomeInterestingValue"
+	 * @return string The lowercased argument name, e.g. "myimportantoption"
 	 */
-	protected function convertCommandLineOptionToRequestArgumentName($commandLineOption) {
-		$explodedOption = explode('=', $commandLineOption, 2);
-		$argumentName = explode('-', $explodedOption[0]);
-		$convertedName = '';
-
-		foreach ($argumentName as $part) {
-			$convertedName .= ($convertedName !== '') ? ucfirst($part) : $part;
-		}
-
-		return $convertedName;
+	protected function extractArgumentNameFromCommandLinePart($commandLinePart) {
+		$nameAndValue = explode('=', $commandLinePart, 2);
+		return strtolower(str_replace('-', '', $nameAndValue[0]));
 	}
 
 	/**
@@ -271,5 +338,6 @@ class RequestBuilder {
 		$value = (isset($splitArgument[1])) ? $splitArgument[1] : '';
 		return $value;
 	}
+
 }
 ?>
