@@ -1016,6 +1016,57 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		);
 	}
 
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function parseSetsDefaultValueOfRouteParts() {
+		$this->route->setUriPattern('{key1}');
+		$this->route->setRoutePartsConfiguration(
+			array(
+				'key1' => array(
+					'handler' => 'SomeRoutePartHandler',
+				)
+			)
+		);
+		$this->route->setDefaults(
+			array(
+				'key1' => 'SomeDefaultValue',
+			)
+		);
+		$mockRoutePartHandler = $this->getMock('TYPO3\FLOW3\MVC\Web\Routing\DynamicRoutePartInterface');
+		$mockRoutePartHandler->expects($this->once())->method('setDefaultValue')->with('SomeDefaultValue');
+		$this->mockObjectManager->expects($this->once())->method('get')->with('SomeRoutePartHandler')->will($this->returnValue($mockRoutePartHandler));
+
+		$this->route->parse();
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function parseSetsDefaultValueOfRoutePartsRecursively() {
+		$this->route->setUriPattern('{foo.bar}');
+		$this->route->setRoutePartsConfiguration(
+			array(
+				'foo.bar' => array(
+					'handler' => 'SomeRoutePartHandler',
+				)
+			)
+		);
+		$this->route->setDefaults(
+			array(
+				'foo' => array(
+					'bar' => 'SomeDefaultValue'
+				)
+			)
+		);
+		$mockRoutePartHandler = $this->getMock('TYPO3\FLOW3\MVC\Web\Routing\DynamicRoutePartInterface');
+		$mockRoutePartHandler->expects($this->once())->method('setDefaultValue')->with('SomeDefaultValue');
+		$this->mockObjectManager->expects($this->once())->method('get')->with('SomeRoutePartHandler')->will($this->returnValue($mockRoutePartHandler));
+
+		$this->route->parse();
+	}
 
 }
 ?>
