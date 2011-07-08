@@ -307,7 +307,7 @@ class Bootstrap {
 			}
 			$request = $this->objectManager->get('TYPO3\FLOW3\MVC\CLI\RequestBuilder')->build($commandLine);
 			$response = new \TYPO3\FLOW3\MVC\CLI\Response();
-			if ($this->isCompiletimeCommandController($request->getCommandIdentifier())) {
+			if ($this->isCompiletimeCommandController($request->getCommand()->getCommandIdentifier())) {
 				echo "This command must be executed during compiletime.\n";
 			} else {
 				$this->objectManager->get('TYPO3\FLOW3\MVC\Dispatcher')->dispatch($request, $response);

@@ -197,11 +197,11 @@ class CoreCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControlle
 			$request = $this->requestBuilder->build($commandLine);
 			$response = new \TYPO3\FLOW3\MVC\CLI\Response();
 
-			if ($request === FALSE || $request->getCommandIdentifier() === FALSE) {
+			if ($request === FALSE || $request->getCommand()->getCommandIdentifier() === FALSE) {
 				echo "Bad command\n";
 				continue;
 			}
-			if ($this->bootstrap->isCompiletimeCommandController($request->getCommandIdentifier())) {
+			if ($this->bootstrap->isCompiletimeCommandController($request->getCommand()->getCommandIdentifier())) {
 				$this->dispatcher->dispatch($request, $response);
 				$response->send();
 				if (is_resource($subProcess)) {
