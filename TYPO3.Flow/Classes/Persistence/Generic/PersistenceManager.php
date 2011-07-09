@@ -226,11 +226,12 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 	 * the backend. Otherwise FALSE is returned.
 	 *
 	 * @param string $identifier
+	 * @param string $objectType
 	 * @return object The object data for the identifier if it is known, or FALSE
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function getObjectDataByIdentifier($identifier) {
-		return $this->backend->getObjectDataByIdentifier($identifier);
+	public function getObjectDataByIdentifier($identifier, $objectType = NULL) {
+		return $this->backend->getObjectDataByIdentifier($identifier, $objectType);
 	}
 
 	/**

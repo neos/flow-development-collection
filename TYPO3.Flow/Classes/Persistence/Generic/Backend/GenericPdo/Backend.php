@@ -442,10 +442,11 @@ class Backend extends \TYPO3\FLOW3\Persistence\Generic\Backend\AbstractSqlBacken
 	 * Returns the object data for the given identifier.
 	 *
 	 * @param string $identifier The UUID or Hash of the object
+	 * @param string $objectType
 	 * @return array
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function getObjectDataByIdentifier($identifier) {
+	public function getObjectDataByIdentifier($identifier, $objectType = NULL) {
 		$this->knownRecords = array();
 		return $this->_getObjectData($identifier);
 	}
