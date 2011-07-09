@@ -62,6 +62,7 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 	 */
 	public function __construct() {
 		$this->reader = new \Doctrine\Common\Annotations\AnnotationReader();
+		$this->reader->setIgnoreNotImportedAnnotations(TRUE);
 		$this->reader->setDefaultAnnotationNamespace('Doctrine\ORM\Mapping\\');
 	}
 
@@ -102,6 +103,13 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 		$class = $metadata->getReflectionClass();
 		$classSchema = $this->getClassSchema($class->getName());
 		$classAnnotations = $this->reader->getClassAnnotations($class);
+
+			// Compatibility with Doctrine Common 3.x
+		if ($classAnnotations && is_int(key($classAnnotations))) {
+			foreach ($classAnnotations as $annotation) {
+				$classAnnotations[get_class($annotation)] = $annotation;
+			}
+		}
 
 			// Evaluate Entity annotation
 		if (isset($classAnnotations['Doctrine\ORM\Mapping\MappedSuperclass'])) {
