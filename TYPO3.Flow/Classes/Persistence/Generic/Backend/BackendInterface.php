@@ -94,10 +94,11 @@ interface BackendInterface {
 	 * Returns the object data for the given identifier.
 	 *
 	 * @param string $identifier The UUID or Hash of the object
+	 * @param string $objectType
 	 * @return array
 	 * @api
 	 */
-	public function getObjectDataByIdentifier($identifier);
+	public function getObjectDataByIdentifier($identifier, $objectType = NULL);
 
 }
 ?>
