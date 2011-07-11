@@ -175,6 +175,9 @@ class CoreCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControlle
 	 * @return void
 	 */
 	public function shellCommand() {
+		if (!function_exists('readline_read_history')) {
+			return 'Interactive Shell is not available on this system!';
+		}
 		$subProcess = FALSE;
 		$pipes = array();
 
