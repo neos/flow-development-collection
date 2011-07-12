@@ -98,7 +98,7 @@
         parameters. On Debian Linux (Lenny) the commando would look like
         this:</para>
 
-        <para><command>./Packages/Framework/TYPO3/FLOW3/Scripts/setfilepermissions.sh
+        <para><command>./Packages/Framework/TYPO3.FLOW3/Scripts/setfilepermissions.sh
         johndoe www-data www-data</command></para>
       </step>
     </procedure>
@@ -153,13 +153,13 @@ Receiving objects: 100% (3856/3856), 3.49 MiB | 1.18 MiB/s, done.
 Resolving deltas: 100% (2016/2016), done.
 Submodule 'Build/Common' (git://git.typo3.org/FLOW3/BuildEssentials.git) registered for path 'Build/Common'
 Submodule 'Packages/Framework/Doctrine' (git://git.typo3.org/FLOW3/Packages/Doctrine.git) registered for path 'Packages/Framework/Doctrine'
-Submodule 'Packages/Framework/TYPO3/DocumentationBrowser' (git://git.typo3.org/FLOW3/Packages/DocumentationBrowser.git) registered for path 'Packages/Framework/TYPO3/DocumentationBrowser'
-Submodule 'Packages/Framework/TYPO3/ExtJS' (git://git.typo3.org/FLOW3/Packages/ExtJS.git) registered for path 'Packages/Framework/TYPO3/ExtJS'
-Submodule 'Packages/Framework/TYPO3/FLOW3' (git://git.typo3.org/FLOW3/Packages/FLOW3.git) registered for path 'Packages/Framework/TYPO3/FLOW3'
-Submodule 'Packages/Framework/TYPO3/Fluid' (git://git.typo3.org/FLOW3/Packages/Fluid.git) registered for path 'Packages/Framework/TYPO3/Fluid'
-Submodule 'Packages/Framework/TYPO3/Kickstart' (git://git.typo3.org/FLOW3/Packages/Kickstart.git) registered for path 'Packages/Framework/TYPO3/Kickstart'
-Submodule 'Packages/Framework/TYPO3/Party' (git://git.typo3.org/FLOW3/Packages/Party.git) registered for path 'Packages/Framework/TYPO3/Party'
-Submodule 'Packages/Framework/TYPO3/Welcome' (git://git.typo3.org/FLOW3/Packages/Welcome.git) registered for path 'Packages/Framework/TYPO3/Welcome'
+Submodule 'Packages/Framework/TYPO3.DocumentationBrowser' (git://git.typo3.org/FLOW3/Packages/DocumentationBrowser.git) registered for path 'Packages/Framework/TYPO3.DocumentationBrowser'
+Submodule 'Packages/Framework/TYPO3.ExtJS' (git://git.typo3.org/FLOW3/Packages/ExtJS.git) registered for path 'Packages/Framework/TYPO3.ExtJS'
+Submodule 'Packages/Framework/TYPO3.FLOW3' (git://git.typo3.org/FLOW3/Packages/FLOW3.git) registered for path 'Packages/Framework/TYPO3.FLOW3'
+Submodule 'Packages/Framework/TYPO3.Fluid' (git://git.typo3.org/FLOW3/Packages/Fluid.git) registered for path 'Packages/Framework/TYPO3.Fluid'
+Submodule 'Packages/Framework/TYPO3.Kickstart' (git://git.typo3.org/FLOW3/Packages/Kickstart.git) registered for path 'Packages/Framework/TYPO3.Kickstart'
+Submodule 'Packages/Framework/TYPO3.Party' (git://git.typo3.org/FLOW3/Packages/Party.git) registered for path 'Packages/Framework/TYPO3.Party'
+Submodule 'Packages/Framework/TYPO3.Welcome' (git://git.typo3.org/FLOW3/Packages/Welcome.git) registered for path 'Packages/Framework/TYPO3.Welcome'
 Cloning into Build/Common...
 remote: Counting objects: 1420, done.
 remote: Compressing objects: 100% (617/617), done.
@@ -188,7 +188,7 @@ Cloning into Packages/Framework/Doctrine...
         parameters. On Debian Linux (Lenny) the commando would look like
         this:</para>
 
-        <para><command>./Packages/Framework/TYPO3/FLOW3/Scripts/setfilepermissions.sh
+        <para><command>./Packages/Framework/TYPO3.FLOW3/Scripts/setfilepermissions.sh
         johndoe www-data www-data</command></para>
       </step>
     </procedure>

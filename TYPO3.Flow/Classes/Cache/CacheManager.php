@@ -185,6 +185,7 @@ class CacheManager {
 			$matches = array();
 			if (1 === preg_match('/[^\/]+\/(.+)\/(Classes|Tests)\/(.+)\.php/', $pathAndFilename, $matches)) {
 				$className = str_replace('/', '\\', $matches[1] . '\\' . ($matches[2] === 'Tests' ? 'Tests\\' : '') . $matches[3]);
+				$className = str_replace('.', '\\', $className);
 				$this->flushCachesByTag(self::getClassTag($className));
 			}
 		}

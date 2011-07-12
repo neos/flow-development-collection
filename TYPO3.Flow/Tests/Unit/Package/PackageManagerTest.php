@@ -106,8 +106,8 @@ class PackageManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function packageKeysAndPaths() {
 		return array(
-			array('TYPO3.YetAnotherTestPackage', 'vfs://Test/Packages/Application/TYPO3/YetAnotherTestPackage/'),
-			array('RobertLemke.FLOW3.NothingElse', 'vfs://Test/Packages/Application/RobertLemke/FLOW3/NothingElse/')
+			array('TYPO3.YetAnotherTestPackage', 'vfs://Test/Packages/Application/TYPO3.YetAnotherTestPackage/'),
+			array('RobertLemke.FLOW3.NothingElse', 'vfs://Test/Packages/Application/RobertLemke.FLOW3.NothingElse/')
 		);
 	}
 

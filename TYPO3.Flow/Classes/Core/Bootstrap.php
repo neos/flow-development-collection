@@ -796,13 +796,13 @@ class Bootstrap {
 			}
 			if (FLOW3_SAPITYPE === 'CLI' && $rootPath === FALSE) {
 				$rootPath = getcwd();
-				if (realpath(__DIR__) !== realpath($rootPath . '/Packages/Framework/FLOW3/Classes/Core')) {
+				if (realpath(__DIR__) !== realpath($rootPath . '/Packages/Framework/TYPO3.FLOW3/Classes/Core')) {
 					exit('FLOW3: Invalid root path. (Error #1301225173)' . PHP_EOL . 'You must start FLOW3 from the root directory or set the environment variable FLOW3_ROOTPATH correctly.' . PHP_EOL);
 				}
 			}
 			if ($rootPath !== FALSE) {
 				$rootPath = \TYPO3\FLOW3\Utility\Files::getUnixStylePath(realpath($rootPath)) . '/';
-				$testPath = \TYPO3\FLOW3\Utility\Files::getUnixStylePath(realpath(\TYPO3\FLOW3\Utility\Files::concatenatePaths(array($rootPath, 'Packages/Framework/TYPO3/FLOW3')))) . '/';
+				$testPath = \TYPO3\FLOW3\Utility\Files::getUnixStylePath(realpath(\TYPO3\FLOW3\Utility\Files::concatenatePaths(array($rootPath, 'Packages/Framework/TYPO3.FLOW3')))) . '/';
 				$expectedPath = \TYPO3\FLOW3\Utility\Files::getUnixStylePath(realpath(FLOW3_PATH_FLOW3)) . '/';
 				if ($testPath !== $expectedPath) {
 					exit('FLOW3: Invalid root path. (Error #1248964375)' . PHP_EOL . '"' . $testPath . '" does not lead to' . PHP_EOL . '"' . $expectedPath .'"' . PHP_EOL);
