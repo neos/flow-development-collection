@@ -55,7 +55,6 @@ find . -type d -exec sudo chmod 2770 {} \;
 find . -type f \! -name commit-msg -exec sudo chmod 660 {} \;
 
 sudo chmod 770 flow3
-sudo chmod 770 flow3_dev
 sudo chmod 700 $0
 
 sudo chown -R $WEBSERVER_USER:$WEBSERVER_GROUP Web/_Resources

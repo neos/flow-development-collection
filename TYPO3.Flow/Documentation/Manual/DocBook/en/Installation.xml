@@ -265,7 +265,7 @@ Cloning into Packages/Framework/Doctrine...
       <step>
         <para>Set up the database tables with:</para>
 
-        <para><command>./flow3_dev flow3:doctrine:migrate</command></para>
+        <para><command>./flow3 flow3:doctrine:migrate</command></para>
       </step>
     </procedure>
 
