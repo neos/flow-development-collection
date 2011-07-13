@@ -22,11 +22,38 @@ namespace TYPO3\FLOW3\MVC\Exception;
  *                                                                        */
 
 /**
- * A "No Such Command" exception
+ * An "Ambiguous command identifier" exception
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
- * @api
  */
-class NoSuchCommandException extends CommandException {
+class AmbiguousCommandIdentifierException extends CommandException {
+
+	/**
+	 * @var array<\TYPO3\FLOW3\MVC\CLI\Command>
+	 */
+	protected $matchingCommands = array();
+
+	/**
+	 * Overwrites parent constructor to be able to inject matching commands.
+	 *
+	 * @param string $message
+	 * @param integer $code
+	 * @param \Exception $previousException
+	 * @param array<\TYPO3\FLOW3\MVC\CLI\Command> $matchingCommands Commands that matched the command identifier
+	 * @see \Exception
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function __construct($message = '', $code = 0, \Exception $previousException = NULL, array $matchingCommands) {
+		$this->matchingCommands = $matchingCommands;
+		parent::__construct($message, $code, $previousException);
+	}
+
+	/**
+	 * @return array<\TYPO3\FLOW3\MVC\CLI\Command>
+	 */
+	public function getMatchingCommands() {
+		return $this->matchingCommands;
+	}
+
 }
 ?>

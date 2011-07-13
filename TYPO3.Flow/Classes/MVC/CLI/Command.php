@@ -45,6 +45,11 @@ class Command {
 	protected $commandIdentifier;
 
 	/**
+	 * @var \TYPO3\FLOW3\Reflection\MethodReflection
+	 */
+	protected $commandMethodReflection;
+
+	/**
 	 * Constructor
 	 *
 	 * @param string $controllerClassName Class name of the controller providing the command
@@ -64,6 +69,20 @@ class Command {
 	}
 
 	/**
+	 * @return string
+	 */
+	public function getControllerClassName() {
+		return $this->controllerClassName;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getControllerCommandName() {
+		return $this->controllerCommandName;
+	}
+
+	/**
 	 * Returns the command identifier for this command
 	 *
 	 * @return string The command identifier for this command, following the pattern packagekey:controllername:commandname
@@ -80,8 +99,7 @@ class Command {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getShortDescription() {
-		$class = new \TYPO3\FLOW3\Reflection\MethodReflection($this->controllerClassName, $this->controllerCommandName . 'Command');
-		$lines = explode(chr(10), $class->getDescription());
+		$lines = explode(chr(10), $this->getCommandMethodReflection()->getDescription());
 		return (count($lines) > 0) ? $lines[0] : '<no description available>';
 	}
 
@@ -92,10 +110,20 @@ class Command {
 	 *
 	 * @return boolean
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function isInternal() {
-		$shortDescription = $this->getShortDescription();
-		return (strtolower(substr($shortDescription, 0, 9)) === 'internal:');
+		return $this->getCommandMethodReflection()->isTaggedWith('internal');
+	}
+
+	/**
+	 * @return \TYPO3\FLOW3\Reflection\MethodReflection
+	 */
+	protected function getCommandMethodReflection() {
+		if ($this->commandMethodReflection === NULL) {
+			$this->commandMethodReflection = new \TYPO3\FLOW3\Reflection\MethodReflection($this->controllerClassName, $this->controllerCommandName . 'Command');
+		}
+		return $this->commandMethodReflection;
 	}
 }
 ?>

@@ -39,9 +39,19 @@ class RequestBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	protected $mockObjectManager;
 
 	/**
+	 * @var \TYPO3\FLOW3\MVC\CLI\Command
+	 */
+	protected $mockCommand;
+
+	/**
+	 * @var \TYPO3\FLOW3\MVC\CLI\CommandManager
+	 */
+	protected $mockCommandManager;
+
+	/**
 	 * @var \TYPO\FLOW3\Reflection\ReflectionService
 	 */
-	protected $reflectionService;
+	protected $mockReflectionService;
 
 	/**
 	 * Sets up this test case
@@ -49,20 +59,22 @@ class RequestBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @author  Robert Lemke <robert@typo3.org>
 	 */
 	public function setUp() {
-		\vfsStreamWrapper::register();
-		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('Test'));
-		mkdir('vfs://Test/Packages/Application/Acme/Test', 0770, TRUE);
-		mkdir('vfs://Test/Packages/Application/Bcme/Test', 0770, TRUE);
-		mkdir('vfs://Test/Packages/Application/Acme/NoTest', 0770, TRUE);
-
 		$this->mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
-		$this->mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->with('acme\test\command\defaultcommandcontroller')->will($this->returnValue('Acme\Test\Command\DefaultCommandController'));
+		$this->mockObjectManager->expects($this->any())->method('getObjectNameByClassName')->with('Acme\Test\Command\DefaultCommandController')->will($this->returnValue('Acme\Test\Command\DefaultCommandController'));
+
+		$this->mockCommand = $this->getMock('TYPO3\FLOW3\MVC\CLI\Command', array(), array(), '', FALSE);
+		$this->mockCommand->expects($this->any())->method('getControllerClassName')->will($this->returnValue('Acme\Test\Command\DefaultCommandController'));
+		$this->mockCommand->expects($this->any())->method('getControllerCommandName')->will($this->returnValue('list'));
+
+		$this->mockCommandManager = $this->getMock('TYPO3\FLOW3\MVC\CLI\CommandManager');
+		$this->mockCommandManager->expects($this->any())->method('getCommandByIdentifier')->with('acme.test:default:list')->will($this->returnValue($this->mockCommand));
 
 		$this->mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService');
 
 		$this->requestBuilder = new \TYPO3\FLOW3\MVC\CLI\RequestBuilder();
 		$this->requestBuilder->injectObjectManager($this->mockObjectManager);
 		$this->requestBuilder->injectReflectionService($this->mockReflectionService);
+		$this->requestBuilder->injectCommandManager($this->mockCommandManager);
 	}
 
 	/**
@@ -80,71 +92,22 @@ class RequestBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	}
 
 	/**
-	 * Checks the support of short-hand package keys, ie. specifying just "flow3" instead of "typo3.flow3".
-	 *
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function ifThePackageNamespaceIsUnambiguousTheLastPartOfTheNamespaceSuffices() {
-		$packages = array(
-			'Acme.Test' => new \TYPO3\FLOW3\Package\Package('Acme.Test', 'vfs://Test/Packages/Application/Acme/Test/'),
-			'Acme.NoTest' => new \TYPO3\FLOW3\Package\Package('Acme.NoTest', 'vfs://Test/Packages/Application/Acme/NoTest/'),
-		);
-
-		$this->mockReflectionService->expects($this->once())->method('getMethodParameters')->will($this->returnValue(array()));
-
-		$mockPackageManager = $this->getMock('TYPO3\FLOW3\Package\PackageManagerInterface');
-		$mockPackageManager->expects($this->any())->method('getActivePackages')->will($this->returnValue($packages));
-		$this->requestBuilder->injectPackageManager($mockPackageManager);
-
-		$request = $this->requestBuilder->build('test:default:list');
-		$this->assertEquals('Acme\Test\Command\DefaultCommandController', $request->getControllerObjectName());
-	}
-
-	/**
-	 * Checks the support of short-hand package keys, ie. specifying just "flow3" instead of "typo3.flow3".
-	 *
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function ifThePackageNamespaceIsAmbiguousTheHelpScreenIsShown() {
+	public function ifCommandCantBeResolvedTheHelpScreenIsShown() {
 			// The following call is only made to satisfy PHPUnit. For some weird reason PHPUnit complains that the
-			// mocked method ("getCaseSensitiveObjectName") does not exist _if the mock object is not used_.
-		$this->mockObjectManager->getCaseSensitiveObjectName('acme\test\command\defaultcommandcontroller');
+			// mocked method ("getObjectNameByClassName") does not exist _if the mock object is not used_.
+		$this->mockObjectManager->getObjectNameByClassName('Acme\Test\Command\DefaultCommandController');
+		$this->mockCommandManager->getCommandByIdentifier('acme.test:default:list');
 
-		$packages = array(
-			'Acme.Test' => new \TYPO3\FLOW3\Package\Package('Acme.Test', 'vfs://Test/Packages/Application/Acme/Test/'),
-			'Bcme.Test' => new \TYPO3\FLOW3\Package\Package('Bcme.Test', 'vfs://Test/Packages/Application/Bcme/Test/')
-		);
-
-		$mockPackageManager = $this->getMock('TYPO3\FLOW3\Package\PackageManagerInterface');
-		$mockPackageManager->expects($this->any())->method('getActivePackages')->will($this->returnValue($packages));
-		$this->requestBuilder->injectPackageManager($mockPackageManager);
+		$mockCommandManager = $this->getMock('TYPO3\FLOW3\MVC\CLI\CommandManager');
+		$mockCommandManager->expects($this->any())->method('getCommandByIdentifier')->with('test:default:list')->will($this->throwException(new \TYPO3\FLOW3\MVC\Exception\NoSuchCommandException()));
+		$this->requestBuilder->injectCommandManager($mockCommandManager);
 
 		$request = $this->requestBuilder->build('test:default:list');
 		$this->assertEquals('TYPO3\FLOW3\Command\HelpCommandController', $request->getControllerObjectName());
-	}
-
-	/**
-	 * Checks the support of very short-hand command identifiers, only specifying controller name and command name.
-	 *
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function ifJustControllerAndCommandNameIsUnambiguousThatShortIdentifierSuffices() {
-		$this->markTestIncomplete();
-
-		$classNames = array(
-			md5(uniqid(mt_rand(), TRUE)) . 'Acme\Test\Command\FooCommandController',
-			md5(uniqid(mt_rand(), TRUE)) . 'Acme\Test\Command\BarCommandController',
-			md5(uniqid(mt_rand(), TRUE)) . 'Dooo\Test\Command\BarCommandController'
-		);
-
-		$this->mockReflectionService->expects($this->once())->method('getAllSubClassNamesForClass')->will($this->returnValue($classNames));
-
-		$request = $this->requestBuilder->build('foocommand:list');
-		$this->assertEquals($classNames[0], $request->getControllerObjectName());
-		$this->assertEquals('list', $request->getControllerCommandName());
 	}
 
 	/**
@@ -153,7 +116,7 @@ class RequestBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function cliAccesWithPackageControllerActionAndArgumentsBuildsCorrectRequest() {
+	public function cliAccessWithPackageControllerActionAndArgumentsBuildsCorrectRequest() {
 		$methodParameters = array(
 			'testArgument' => array('optional' => FALSE),
 			'testArgument2' => array('optional' => FALSE)
