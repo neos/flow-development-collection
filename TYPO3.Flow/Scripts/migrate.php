@@ -47,7 +47,7 @@ Call this script with the --migrate to actually do the changes.
 }
 
 define('FLOW3_PATH_FLOW3', str_replace('//', '/', str_replace('\\', '/', (realpath(__DIR__ . '/../') . '/'))));
-define('FLOW3_PATH_ROOT', str_replace('//', '/', str_replace('\\', '/', (realpath(__DIR__ . '/../../../../../') . '/'))));
+define('FLOW3_PATH_ROOT', str_replace('//', '/', str_replace('\\', '/', (realpath(__DIR__ . '/../../../../') . '/'))));
 define('FLOW3_PATH_WEB', FLOW3_PATH_ROOT . 'Web/');
 define('FLOW3_PATH_CONFIGURATION', FLOW3_PATH_ROOT . 'Configuration/');
 define('FLOW3_PATH_DATA', FLOW3_PATH_ROOT . 'Data/');

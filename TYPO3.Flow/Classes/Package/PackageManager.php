@@ -244,7 +244,7 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 			$packagesPath = Files::getUnixStylePath(Files::concatenatePaths(array($this->packagesBasePath, 'Application')));
 		}
 
-		$packagePath = Files::concatenatePaths(array($packagesPath, str_replace('.', '/', $packageKey))) . '/';
+		$packagePath = Files::concatenatePaths(array($packagesPath, $packageKey)) . '/';
 		Files::createDirectoryRecursively($packagePath);
 
 		foreach (
