@@ -101,7 +101,7 @@ class Dispatcher {
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
-	public function dispatch($signalClassName, $signalName, array $signalArguments) {
+	public function dispatch($signalClassName, $signalName, array $signalArguments = array()) {
 		if (!isset($this->slots[$signalClassName][$signalName])) {
 			return;
 		}
@@ -118,14 +118,13 @@ class Dispatcher {
 				}
 				$object = $this->objectManager->get($slotInformation['class']);
 			}
-			$slotArguments = $signalArguments;
 			if ($slotInformation['passSignalInformation'] === TRUE) {
-				$slotArguments[] = $signalClassName . '::' . $signalName;
+				$signalArguments[] = $signalClassName . '::' . $signalName;
 			}
 			if (!method_exists($object, $slotInformation['method'])) {
 				throw new \TYPO3\FLOW3\SignalSlot\Exception\InvalidSlotException('The slot method ' . get_class($object) . '->' . $slotInformation['method'] . '() does not exist.', 1245673368);
 			}
-			call_user_func_array(array($object, $slotInformation['method']), $slotArguments);
+			call_user_func_array(array($object, $slotInformation['method']), $signalArguments);
 		}
 	}
 
