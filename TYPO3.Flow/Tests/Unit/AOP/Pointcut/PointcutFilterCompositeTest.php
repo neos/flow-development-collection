@@ -272,7 +272,7 @@ class PointcutFilterCompositeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 		$expectedResult = "\n\t\t\t\t\t\tfunction(\\TYPO3\\FLOW3\\AOP\\JoinPointInterface \$joinPoint) use (\$objectManager) {\n" .
 								"\t\t\t\t\t\t\t\$currentObject = \$joinPoint->getProxy();\n" .
-								"\t\t\t\t\t\t\t\$globalObjectNames = \$objectManager->get('TYPO3\FLOW3\Configuration\ConfigurationManager')->getConfiguration(\TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, NULL, array('TYPO3.FLOW3', 'aop', 'globalObjects'));\n" .
+								"\t\t\t\t\t\t\t\$globalObjectNames = \$objectManager->getSettingsByPath(array('TYPO3', 'FLOW3', 'aop', 'globalObjects'));\n" .
 								"\t\t\t\t\t\t\t\$globalObjects = array_map(function(\$objectName) use (\$objectManager) { return \$objectManager->get(\$objectName); }, \$globalObjectNames);\n" .
 								"\t\t\t\t\t\t\treturn (((\TYPO3\FLOW3\Reflection\ObjectAccess::getPropertyPath(\$currentObject, 'some.thing') != \TYPO3\FLOW3\Reflection\ObjectAccess::getPropertyPath(\$globalObjects['party'], 'name')) && (\$joinPoint->getMethodArgument('identifier') > 3 && \$joinPoint->getMethodArgument('identifier') <= 5)) || (\$joinPoint->getMethodArgument('identifier') == 42));\n" .
 								"\t\t\t\t\t\t}";
@@ -286,7 +286,7 @@ class PointcutFilterCompositeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$this->assertEquals($expectedResult, $result, 'The wrong Code has been built.');
 	}
 
-		/**
+	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
@@ -322,7 +322,7 @@ class PointcutFilterCompositeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 		$expectedResult = "\n\t\t\t\t\t\tfunction(\\TYPO3\\FLOW3\\AOP\\JoinPointInterface \$joinPoint) use (\$objectManager) {\n" .
 								"\t\t\t\t\t\t\t\$currentObject = \$joinPoint->getProxy();\n" .
-								"\t\t\t\t\t\t\t\$globalObjectNames = \$objectManager->get('TYPO3\FLOW3\Configuration\ConfigurationManager')->getConfiguration(\TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, NULL, array('TYPO3.FLOW3', 'aop', 'globalObjects'));\n" .
+								"\t\t\t\t\t\t\t\$globalObjectNames = \$objectManager->getSettingsByPath(array('TYPO3', 'FLOW3', 'aop', 'globalObjects'));\n" .
 								"\t\t\t\t\t\t\t\$globalObjects = array_map(function(\$objectName) use (\$objectManager) { return \$objectManager->get(\$objectName); }, \$globalObjectNames);\n" .
 								"\t\t\t\t\t\t\treturn (((\TYPO3\FLOW3\Reflection\ObjectAccess::getPropertyPath(\$currentObject, 'some.thing') != \TYPO3\FLOW3\Reflection\ObjectAccess::getPropertyPath(\$globalObjects['party'], 'name')) && (!(\$joinPoint->getMethodArgument('identifier') > 3 && \$joinPoint->getMethodArgument('identifier') <= 5))) || (!(\$joinPoint->getMethodArgument('identifier') == 42)));\n" .
 								"\t\t\t\t\t\t}";

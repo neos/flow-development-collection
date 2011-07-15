@@ -48,6 +48,12 @@ TYPO3:
           DefaultProvider:
             providerClass: TYPO3\FLOW3\Security\Authentication\Provider\TestingProvider
 
+    # Setting for functional tests to test global objects in runtime evaluations
+    aop:
+      globalObjects:
+        testContext: TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\TestContext
+
+    # Settings for functional tests to test setting designator and setting injection
     tests:
       functional:
         aop:

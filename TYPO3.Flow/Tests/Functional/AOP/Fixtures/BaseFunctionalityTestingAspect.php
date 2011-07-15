@@ -125,6 +125,15 @@ class BaseFunctionalityTestingAspect {
 	}
 
 	/**
+	 * @around method(public TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01->greet(name === current.testContext.nameOfTheWeek))
+	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint
+	 * @return string
+	 */
+	public function globalNameAdvice(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+		return 'Hello, superstar';
+	}
+
+	/**
 	 * @around method(TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass03->introducedMethod01())
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint
 	 * @return string

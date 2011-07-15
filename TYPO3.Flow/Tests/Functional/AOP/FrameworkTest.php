@@ -164,6 +164,16 @@ class FrameworkTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	}
 
 	/**
+	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function globalObjectsAreSupportedInMethodRuntimeCondition() {
+		$targetClass = $this->objectManager->get('TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01');
+		$this->assertSame('Hello, superstar', $targetClass->greet('Robbie'), 'Aspect should greet with "superstar" if the global context getNameOfTheWeek equals the given name');
+		$this->assertSame('Hello, Christopher', $targetClass->greet('Christopher'), 'Aspect should greet with given name if the global context getNameOfTheWeek does not equal the given name');
+	}
+
+	/**
 	 * An interface with a method which is not adviced and thus not implemented can be introduced.
 	 * The proxy class contains a place holder implementation of that introduced method.
 	 *
