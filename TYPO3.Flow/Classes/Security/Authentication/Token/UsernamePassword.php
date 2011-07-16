@@ -164,17 +164,18 @@ class UsernamePassword implements \TYPO3\FLOW3\Security\Authentication\TokenInte
 	 * are available. Sets the authentication status to REAUTHENTICATION_NEEDED, if credentials have been sent.
 	 *
 	 * Note: You need to send the username and password in these two POST parameters:
-	 *       TYPO3[FLOW3][Security][Authentication][Token][UsernamePassword][username]
-	 *   and TYPO3[FLOW3][Security][Authentication][Token][UsernamePassword][password]
+	 *       __authentication[TYPO3][FLOW3][Security][Authentication][Token][UsernamePassword][username]
+	 *   and __authentication[TYPO3][FLOW3][Security][Authentication][Token][UsernamePassword][password]
 	 *
 	 * @param \TYPO3\FLOW3\MVC\RequestInterface $request The current request instance
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function updateCredentials(\TYPO3\FLOW3\MVC\RequestInterface $request) {
 		$postArguments = $this->environment->getRawPostArguments();
-		$username = \TYPO3\FLOW3\Reflection\ObjectAccess::getPropertyPath($postArguments, 'TYPO3.FLOW3.Security.Authentication.Token.UsernamePassword.username');
-		$password = \TYPO3\FLOW3\Reflection\ObjectAccess::getPropertyPath($postArguments, 'TYPO3.FLOW3.Security.Authentication.Token.UsernamePassword.password');
+		$username = \TYPO3\FLOW3\Reflection\ObjectAccess::getPropertyPath($postArguments, '__authentication.TYPO3.FLOW3.Security.Authentication.Token.UsernamePassword.username');
+		$password = \TYPO3\FLOW3\Reflection\ObjectAccess::getPropertyPath($postArguments, '__authentication.TYPO3.FLOW3.Security.Authentication.Token.UsernamePassword.password');
 
 		if (!empty($username) && !empty($password)) {
 			$this->credentials['username'] = $username;
