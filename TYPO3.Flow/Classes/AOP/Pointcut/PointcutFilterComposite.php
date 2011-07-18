@@ -179,7 +179,7 @@ class PointcutFilterComposite implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilte
 			$code = "\n\t\t\t\t\t\tfunction(\\TYPO3\\FLOW3\\AOP\\JoinPointInterface \$joinPoint) use (\$objectManager) {\n" .
 					"\t\t\t\t\t\t\t\$currentObject = \$joinPoint->getProxy();\n";
 			if ($useGlobalObjects) {
-				$code .= "\t\t\t\t\t\t\t\$globalObjectNames = \$objectManager->get('TYPO3\\FLOW3\\Configuration\\ConfigurationManager')->getConfiguration(\\TYPO3\\FLOW3\\Configuration\\ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, NULL, array('TYPO3.FLOW3', 'aop', 'globalObjects'));\n";
+				$code .= "\t\t\t\t\t\t\t\$globalObjectNames = \$objectManager->getSettingsByPath(array('TYPO3', 'FLOW3', 'aop', 'globalObjects'));\n";
 				$code .= "\t\t\t\t\t\t\t\$globalObjects = array_map(function(\$objectName) use (\$objectManager) { return \$objectManager->get(\$objectName); }, \$globalObjectNames);\n";
 			}
 			$code .= "\t\t\t\t\t\t\treturn " . $conditionCode . ';' .
