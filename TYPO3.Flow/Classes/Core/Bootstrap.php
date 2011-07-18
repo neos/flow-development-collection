@@ -277,6 +277,10 @@ class Bootstrap {
 				}
 
 				$request = $this->objectManager->get('TYPO3\FLOW3\MVC\CLI\RequestBuilder')->build(array_slice($commandLine, 1));
+				$command = $request->getCommand();
+				if ($this->isCompiletimeCommandController($command->getCommandIdentifier())) {
+					throw new \TYPO3\FLOW3\MVC\Exception\InvalidCommandIdentifierException(sprintf('The command "%s" must be specified by its full command identifier because it is a compile time command which cannot be resolved from an abbreviated command identifier.', $command->getCommandIdentifier()), 1310992499);
+				}
 				$response = new \TYPO3\FLOW3\MVC\CLI\Response();
 				$this->objectManager->get('TYPO3\FLOW3\MVC\Dispatcher')->dispatch($request, $response);
 				$this->emitFinishedRuntimeRun();
