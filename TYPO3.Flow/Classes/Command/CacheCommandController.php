@@ -57,6 +57,32 @@ class CacheCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControll
 		$this->cacheManager->flushCaches();
 		return 'Flushed all caches.';
 	}
+
+	/**
+	 * Warm up caches
+	 *
+	 * The warm up caches command initializes and fills – as far as possible – all registered caches to get a snappier
+	 * response on the first following request. Apart from caches, other parts of the application may hook into this
+	 * command and execute tasks which take further steps for preparing the app for the big rush.
+	 *
+	 * @return void
+	 */
+	public function warmupCommand() {
+		$this->emitWarmupCaches();
+		return 'Warmed up caches.';
+	}
+
+	/**
+	 * Signals that caches should be warmed up.
+	 *
+	 * Other application parts may subscribe to this signal and execute additional tasks for preparing the application
+	 * for the first request.
+	 *
+	 * @return void
+	 * @signal
+	 */
+	public function emitWarmupCaches() {
+	}
 }
 
 ?>

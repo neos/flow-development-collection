@@ -117,7 +117,7 @@ class Bootstrap {
 	/**
 	 * @var array
 	 */
-	protected $compiletimeCommandControllers = array();
+	protected $compiletimeCommands = array();
 
 	/**
 	 * Constructor
@@ -179,16 +179,16 @@ class Bootstrap {
 	}
 
 	/**
-	 * Registers a command controller specified by the given identifier to be called
-	 * during compiletime (versus runtime). The command controller must be totally
+	 * Registers a command specified by the given identifier to be called during
+	 * compiletime (versus runtime). The related command controller must be totally
 	 * aware of the limited functionality FLOW3 provides at compiletime.
 	 *
-	 * @param string $commandIdentifier Package key and controller name separated by colon, e.g. "typo3.flow3:core"
+	 * @param string $commandIdentifier Package key, controller name and command name separated by colon, e.g. "typo3.flow3:core:shell", wildcard for command name possible: "typo3.flow3:core:*"
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function registerCompiletimeCommandController($commandIdentifier) {
-		$this->compiletimeCommandControllers[$commandIdentifier] = TRUE;
+	public function registerCompiletimeCommand($commandIdentifier) {
+		$this->compiletimeCommands[$commandIdentifier] = TRUE;
 	}
 
 	/**
@@ -198,27 +198,33 @@ class Bootstrap {
 	 * @return boolean
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function isCompiletimeCommandController($commandIdentifier) {
+	public function isCompiletimeCommand($commandIdentifier) {
 		$commandIdentifierParts = explode(':', $commandIdentifier);
 		if (count($commandIdentifierParts) !== 3) {
 			return FALSE;
 		}
-		unset($commandIdentifierParts[2]);
-		$shortControllerIdentifier = implode(':', $commandIdentifierParts);
-		if (isset($this->compiletimeCommandControllers[$shortControllerIdentifier])) {
+		if (isset($this->compiletimeCommands[$commandIdentifier])) {
 			return TRUE;
 		}
 
-		foreach ($this->compiletimeCommandControllers as $fullControllerIdentifier => $isCompiletimeCommandController) {
-			if (substr($fullControllerIdentifier, - strlen($shortControllerIdentifier)) !== $shortControllerIdentifier) {
-				continue;
-			}
-			list($packageKey, $controllerName) = explode(':', $fullControllerIdentifier);
+		unset($commandIdentifierParts[2]);
+		$shortControllerIdentifier = implode(':', $commandIdentifierParts);
+
+		foreach ($this->compiletimeCommands as $fullControllerIdentifier => $isCompiletimeCommandController) {
+			list($packageKey, $controllerName, $commandName) = explode(':', $fullControllerIdentifier);
 			$packageKeyParts = explode('.', $packageKey);
 			for ($offset = 0; $offset < count($packageKeyParts); $offset++) {
 				$possibleComanndControllerIdentifier = implode('.', array_slice($packageKeyParts, $offset)) . ':' . $controllerName;
-				if ($possibleComanndControllerIdentifier === $shortControllerIdentifier) {
-					return TRUE;
+
+				if (substr($fullControllerIdentifier, -2, 2) === ':*') {
+					if ($possibleComanndControllerIdentifier === $shortControllerIdentifier) {
+						return TRUE;
+					}
+				} else {
+					$possibleComanndControllerIdentifier .= ':' . $commandName;
+					if ($possibleComanndControllerIdentifier === $commandIdentifier) {
+						return TRUE;
+					}
 				}
 			}
 		}
@@ -260,7 +266,7 @@ class Bootstrap {
 		if (isset($commandLine[1]) && $commandLine[1] === '--start-slave') {
 			$this->handleCommandLineSlaveRequest();
 		} else {
-			if (isset($commandLine[1]) && $this->isCompiletimeCommandController($commandLine[1])) {
+			if (isset($commandLine[1]) && $this->isCompiletimeCommand($commandLine[1])) {
 				$runLevel = 'compiletime';
 				$this->initializeForCompileTime();
 				$request = $this->objectManager->get('TYPO3\FLOW3\MVC\CLI\RequestBuilder')->build(array_slice($commandLine, 1));
@@ -278,7 +284,7 @@ class Bootstrap {
 
 				$request = $this->objectManager->get('TYPO3\FLOW3\MVC\CLI\RequestBuilder')->build(array_slice($commandLine, 1));
 				$command = $request->getCommand();
-				if ($this->isCompiletimeCommandController($command->getCommandIdentifier())) {
+				if ($this->isCompiletimeCommand($command->getCommandIdentifier())) {
 					throw new \TYPO3\FLOW3\MVC\Exception\InvalidCommandIdentifierException(sprintf('The command "%s" must be specified by its full command identifier because it is a compile time command which cannot be resolved from an abbreviated command identifier.', $command->getCommandIdentifier()), 1310992499);
 				}
 				$response = new \TYPO3\FLOW3\MVC\CLI\Response();
@@ -311,7 +317,7 @@ class Bootstrap {
 			}
 			$request = $this->objectManager->get('TYPO3\FLOW3\MVC\CLI\RequestBuilder')->build($commandLine);
 			$response = new \TYPO3\FLOW3\MVC\CLI\Response();
-			if ($this->isCompiletimeCommandController($request->getCommand()->getCommandIdentifier())) {
+			if ($this->isCompiletimeCommand($request->getCommand()->getCommandIdentifier())) {
 				echo "This command must be executed during compiletime.\n";
 			} else {
 				$this->objectManager->get('TYPO3\FLOW3\MVC\Dispatcher')->dispatch($request, $response);

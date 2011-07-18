@@ -37,8 +37,8 @@ class Package extends BasePackage {
 	 * @return void
 	 */
 	public function boot(\TYPO3\FLOW3\Core\Bootstrap $bootstrap) {
-		$bootstrap->registerCompiletimeCommandController('typo3.flow3:core');
-		$bootstrap->registerCompiletimeCommandController('typo3.flow3:cache');
+		$bootstrap->registerCompiletimeCommand('typo3.flow3:core:*');
+		$bootstrap->registerCompiletimeCommand('typo3.flow3:cache:flush');
 
 		$dispatcher = $bootstrap->getSignalSlotDispatcher();
 		$dispatcher->connect('TYPO3\FLOW3\Core\Bootstrap', 'finishedRuntimeRun', 'TYPO3\FLOW3\Persistence\PersistenceManagerInterface', 'persistAll');

@@ -223,7 +223,7 @@ class CoreCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControlle
 				echo "Bad command\n";
 				continue;
 			}
-			if ($this->bootstrap->isCompiletimeCommandController($request->getCommand()->getCommandIdentifier())) {
+			if ($this->bootstrap->isCompiletimeCommand($request->getCommand()->getCommandIdentifier())) {
 				$this->dispatcher->dispatch($request, $response);
 				$response->send();
 				if (is_resource($subProcess)) {

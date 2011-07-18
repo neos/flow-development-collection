@@ -33,14 +33,15 @@ class BootstrapTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function commandIdentifiersAndCompiletimeControllerInfo() {
 		return array(
-			array(array('typo3.flow3:core', 'typo3.flow3:cache'), 'typo3.flow3:core:shell', TRUE),
-			array(array('typo3.flow3:core', 'typo3.flow3:cache'), 'flow3:core:shell', TRUE),
-			array(array('typo3.flow3:core', 'typo3.flow3:cache'), 'core:shell', FALSE),
-			array(array('typo3.flow3:core', 'typo3.flow3:cache'), 'typo3.flow3:help:help', FALSE),
-			array(array('typo3.flow3:core', 'typo3.flow3:cache'), 'flow3:core:shell', TRUE),
-			array(array('typo3.flow3:core', 'typo3.flow3:cache'), 'flow3:cache:flush', TRUE),
-			array(array('typo3.flow3:core', 'typo3.flow3:cache'), 'flow5:core:shell', FALSE),
-			array(array('typo3.flow3:core', 'typo3.flow3:cache'), 'typo3:core:shell', FALSE),
+			array(array('typo3.flow3:core:shell', 'typo3.flow3:cache:flush'), 'typo3.flow3:core:shell', TRUE),
+			array(array('typo3.flow3:core:shell', 'typo3.flow3:cache:flush'), 'flow3:core:shell', TRUE),
+			array(array('typo3.flow3:core:shell', 'typo3.flow3:cache:flush'), 'core:shell', FALSE),
+			array(array('typo3.flow3:core:*', 'typo3.flow3:cache:flush'), 'typo3.flow3:core:shell', TRUE),
+			array(array('typo3.flow3:core:*', 'typo3.flow3:cache:flush'), 'flow3:core:shell', TRUE),
+			array(array('typo3.flow3:core:shell', 'typo3.flow3:cache:flush'), 'typo3.flow3:help:help', FALSE),
+			array(array('typo3.flow3:core:*', 'typo3.flow3:cache:*'), 'flow3:cache:flush', TRUE),
+			array(array('typo3.flow3:core:*', 'typo3.flow3:cache:*'), 'flow5:core:shell', FALSE),
+			array(array('typo3.flow3:core:*', 'typo3.flow3:cache:*'), 'typo3:core:shell', FALSE),
 		);
 	}
 
@@ -52,10 +53,10 @@ class BootstrapTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function isCompileTimeCommandControllerChecksIfTheGivenCommandIdentifierRefersToACompileTimeController($compiletimeCommandControllerIdentifiers, $givenCommandIdentifier, $expectedResult) {
 		$bootstrap = new Bootstrap('Testing');
 		foreach ($compiletimeCommandControllerIdentifiers as $compiletimeCommandControllerIdentifier) {
-			$bootstrap->registerCompiletimeCommandController($compiletimeCommandControllerIdentifier);
+			$bootstrap->registerCompiletimeCommand($compiletimeCommandControllerIdentifier);
 		}
 
-		$this->assertSame($expectedResult, $bootstrap->isCompiletimeCommandController($givenCommandIdentifier));
+		$this->assertSame($expectedResult, $bootstrap->isCompiletimeCommand($givenCommandIdentifier));
 	}
 
 }

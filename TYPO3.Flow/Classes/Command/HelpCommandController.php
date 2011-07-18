@@ -114,12 +114,14 @@ class HelpCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControlle
 			foreach ($commandControllers as $commands) {
 				$this->response->appendContent('');
 				foreach ($commands as $command) {
-					$this->response->appendContent('    ' . str_pad($command->getCommandIdentifier(), 50) . '  ' . $command->getShortDescription());
+					$commandIdentifier = $command->getCommandIdentifier();
+					$compileTimeSymbol = ($this->bootstrap->isCompileTimeCommand($commandIdentifier) ? '⚒ ' : '  ');
+					$this->response->appendContent('  ' . $compileTimeSymbol . str_pad($commandIdentifier, 50) . '  ' . $command->getShortDescription());
 				}
 			}
 		}
 
-		$this->response->appendContent('');
+		$this->response->appendContent("\n⚒ compile time command\n");
 	}
 
 	/**
