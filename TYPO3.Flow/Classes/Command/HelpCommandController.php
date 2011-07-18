@@ -123,7 +123,9 @@ class HelpCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControlle
 				if (substr($methodName, -7, 7) === 'Command') {
 					$command = new Command($className, substr($methodName, 0, -7));
 					list($packageKey, $commandControllerName, $commandName) = explode(':', $command->getCommandIdentifier());
-					$this->commandsByPackagesAndControllers[$packageKey][$commandControllerName][$commandName] = $command;
+					if (!$command->isInternal()) {
+						$this->commandsByPackagesAndControllers[$packageKey][$commandControllerName][$commandName] = $command;
+					}
 				}
 			}
 		}
