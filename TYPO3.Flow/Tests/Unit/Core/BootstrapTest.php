@@ -34,6 +34,8 @@ class BootstrapTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function commandIdentifiersAndCompiletimeControllerInfo() {
 		return array(
 			array(array('typo3.flow3:core', 'typo3.flow3:cache'), 'typo3.flow3:core:shell', TRUE),
+			array(array('typo3.flow3:core', 'typo3.flow3:cache'), 'flow3:core:shell', TRUE),
+			array(array('typo3.flow3:core', 'typo3.flow3:cache'), 'core:shell', FALSE),
 			array(array('typo3.flow3:core', 'typo3.flow3:cache'), 'typo3.flow3:help:help', FALSE),
 			array(array('typo3.flow3:core', 'typo3.flow3:cache'), 'flow3:core:shell', TRUE),
 			array(array('typo3.flow3:core', 'typo3.flow3:cache'), 'flow3:cache:flush', TRUE),
