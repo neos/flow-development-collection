@@ -298,5 +298,142 @@ class PackageManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$this->assertFalse($this->packageManager->isPackageActive('Acme.YetAnotherTestPackage'));
 		$this->assertFalse($this->packageManager->isPackageAvailable('Acme.YetAnotherTestPackage'));
 	}
+
+	/**
+	 * @test
+	 */
+	public function getDependencyArrayForPackageReturnsCorrectResult() {
+		$mockFlow3Metadata = $this->getMock('TYPO3\FLOW3\Package\MetaDataInterface');
+		$mockFlow3Metadata->expects($this->any())->method('getConstraintsByType')->will($this->returnValue(array(
+			new \TYPO3\FLOW3\Package\MetaData\PackageConstraint('depends', 'TYPO3.Fluid'),
+			new \TYPO3\FLOW3\Package\MetaData\PackageConstraint('depends', 'Doctrine.ORM')
+		)));
+		$mockFlow3Package = $this->getMock('TYPO3\FLOW3\Package\PackageInterface');
+		$mockFlow3Package->expects($this->any())->method('getPackageMetaData')->will($this->returnValue($mockFlow3Metadata));
+
+		$mockFluidMetadata = $this->getMock('TYPO3\FLOW3\Package\MetaDataInterface');
+		$mockFluidMetadata->expects($this->any())->method('getConstraintsByType')->will($this->returnValue(array(
+			new \TYPO3\FLOW3\Package\MetaData\PackageConstraint('depends', 'TYPO3.FLOW3')
+		)));
+		$mockFluidPackage = $this->getMock('TYPO3\FLOW3\Package\PackageInterface');
+		$mockFluidPackage->expects($this->any())->method('getPackageMetaData')->will($this->returnValue($mockFluidMetadata));
+
+		$mockOrmMetadata = $this->getMock('TYPO3\FLOW3\Package\MetaDataInterface');
+		$mockOrmMetadata->expects($this->any())->method('getConstraintsByType')->will($this->returnValue(array(
+			new \TYPO3\FLOW3\Package\MetaData\PackageConstraint('depends', 'Doctrine.DBAL')
+		)));
+		$mockOrmPackage = $this->getMock('TYPO3\FLOW3\Package\PackageInterface');
+		$mockOrmPackage->expects($this->any())->method('getPackageMetaData')->will($this->returnValue($mockOrmMetadata));
+
+		$mockDbalMetadata = $this->getMock('TYPO3\FLOW3\Package\MetaDataInterface');
+		$mockDbalMetadata->expects($this->any())->method('getConstraintsByType')->will($this->returnValue(array(
+			new \TYPO3\FLOW3\Package\MetaData\PackageConstraint('depends', 'Doctrine.Common')
+		)));
+		$mockDbalPackage = $this->getMock('TYPO3\FLOW3\Package\PackageInterface');
+		$mockDbalPackage->expects($this->any())->method('getPackageMetaData')->will($this->returnValue($mockDbalMetadata));
+
+		$mockCommonMetadata = $this->getMock('TYPO3\FLOW3\Package\MetaDataInterface');
+		$mockCommonMetadata->expects($this->any())->method('getConstraintsByType')->will($this->returnValue(array()));
+		$mockCommonPackage = $this->getMock('TYPO3\FLOW3\Package\PackageInterface');
+		$mockCommonPackage->expects($this->any())->method('getPackageMetaData')->will($this->returnValue($mockCommonMetadata));
+
+		$packages = array(
+			'TYPO3.FLOW3' => $mockFlow3Package,
+			'TYPO3.Fluid' => $mockFluidPackage,
+			'Doctrine.ORM' => $mockOrmPackage,
+			'Doctrine.DBAL' => $mockDbalPackage,
+			'Doctrine.Common' => $mockCommonPackage
+		);
+
+		$packageManager = $this->getAccessibleMock('\TYPO3\FLOW3\Package\PackageManager', array('dummy'));
+		$packageManager->_set('packages', $packages);
+		$dependencyArray = $packageManager->_call('getDependencyArrayForPackage', 'TYPO3.FLOW3');
+
+		$this->assertEquals(array('Doctrine.Common', 'Doctrine.DBAL', 'Doctrine.ORM', 'TYPO3.Fluid'), $dependencyArray);
+	}
+
+	/**
+	 * @test
+	 */
+	public function sortAvailablePackagesByDependenciesMakesSureThatDependantPackagesAreStandingBeforeAPackageInTheInternalPackagesAndPackagesConfigurationArrays() {
+		$doctrineCommon = $this->getMock('\TYPO3\FLOW3\Package\PackageInterface');
+		$doctrineCommon->expects($this->any())->method('getPackageKey')->will($this->returnValue('Doctrine.Common'));
+
+		$doctrineDbal = $this->getMock('\TYPO3\FLOW3\Package\PackageInterface');
+		$doctrineDbal->expects($this->any())->method('getPackageKey')->will($this->returnValue('Doctrine.DBAL'));
+
+		$doctrineOrm = $this->getMock('\TYPO3\FLOW3\Package\PackageInterface');
+		$doctrineOrm->expects($this->any())->method('getPackageKey')->will($this->returnValue('Doctrine.ORM'));
+
+		$typo3Flow3 = $this->getMock('\TYPO3\FLOW3\Package\PackageInterface');
+		$typo3Flow3->expects($this->any())->method('getPackageKey')->will($this->returnValue('TYPO3.FLOW3'));
+
+		$symfonyComponentYaml = $this->getMock('\TYPO3\FLOW3\Package\PackageInterface');
+		$symfonyComponentYaml->expects($this->any())->method('getPackageKey')->will($this->returnValue('Symfony.Component.Yaml'));
+
+		$unsortedPackageStatesConfiguration = array('packages' =>
+			array(
+				'Doctrine.ORM' => array(
+					'dependencies' => array('Doctrine.Common', 'Doctrine.DBAL')
+				),
+				'Symfony.Component.Yaml' => array(
+					'dependencies' => array()
+				),
+				'TYPO3.FLOW3' => array(
+					'dependencies' => array('Symfony.Component.Yaml', 'Doctrine.Common', 'Doctrine.DBAL', 'Doctrine.ORM')
+				),
+				'Doctrine.Common' => array(
+					'dependencies' => array()
+				),
+				'Doctrine.DBAL' => array(
+					'dependencies' => array('Doctrine.Common')
+				)
+			)
+		);
+
+		$unsortedPackages = array(
+			'Doctrine.ORM' => $doctrineOrm,
+			'Symfony.Component.Yaml' => $symfonyComponentYaml,
+			'TYPO3.FLOW3' => $typo3Flow3,
+			'Doctrine.Common' => $doctrineCommon,
+			'Doctrine.DBAL' => $doctrineDbal
+		);
+
+		$packageManager = $this->getAccessibleMock('\TYPO3\FLOW3\Package\PackageManager', array('resolvePackageDependencies'));
+		$packageManager->_set('packages', $unsortedPackages);
+		$packageManager->_set('packageStatesConfiguration', $unsortedPackageStatesConfiguration);
+		$packageManager->_call('sortAvailablePackagesByDependencies');
+
+		$expectedSortedPackageKeys = array(
+			'Doctrine.Common',
+			'Doctrine.DBAL',
+			'Doctrine.ORM',
+			'Symfony.Component.Yaml',
+			'TYPO3.FLOW3'
+		);
+
+		$expectedSortedPackageStatesConfiguration = array('packages' =>
+			array(
+				'Doctrine.Common' => array(
+					'dependencies' => array()
+				),
+				'Doctrine.DBAL' => array(
+					'dependencies' => array('Doctrine.Common')
+				),
+				'Doctrine.ORM' => array(
+					'dependencies' => array('Doctrine.Common', 'Doctrine.DBAL')
+				),
+				'Symfony.Component.Yaml' => array(
+					'dependencies' => array()
+				),
+				'TYPO3.FLOW3' => array(
+					'dependencies' => array('Symfony.Component.Yaml', 'Doctrine.Common', 'Doctrine.DBAL', 'Doctrine.ORM')
+				)
+			)
+		);
+
+		$this->assertEquals($expectedSortedPackageKeys, array_keys($packageManager->_get('packages')), 'The packages have not been ordered according to their dependencies!');
+		$this->assertEquals($expectedSortedPackageStatesConfiguration, $packageManager->_get('packageStatesConfiguration'), 'The package states configurations have not been ordered according to their dependencies!');
+	}
 }
 ?>

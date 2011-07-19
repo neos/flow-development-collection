@@ -146,6 +146,14 @@ class ClassLoader {
 		foreach ($packages as $package) {
 			$this->packageNamespaces[$package->getPackageNamespace()] = array('namespaceLength' => strlen($package->getPackageNamespace()), 'classesPath' => $package->getClassesPath());
 		}
+
+			// sort longer package namespaces first, to find specific matches before generic ones
+		uksort($this->packageNamespaces, function($a, $b) {
+			if (strlen($a) === strlen($b)) {
+				return strcmp($a, $b);
+			}
+			return (strlen($a) > strlen($b)) ? -1 : 1;
+		});
 	}
 
 	/**

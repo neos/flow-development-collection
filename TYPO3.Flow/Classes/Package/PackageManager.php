@@ -335,7 +335,7 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 
 		$this->packageStatesConfiguration['packages'][$packageKey]['state'] = 'inactive';
 		$this->packageStatesConfiguration['packages'][$packageKey]['packagePath'] = $package->getPackagePath();
-		$this->savePackageStates();
+		$this->sortAndSavePackageStates();
 
 		return $package;
 	}
@@ -360,7 +360,7 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 
 		unset($this->activePackages[$packageKey]);
 		$this->packageStatesConfiguration['packages'][$packageKey]['state'] = 'inactive';
-		$this->savePackageStates();
+		$this->sortAndSavePackageStates();
 	}
 
 	/**
@@ -379,7 +379,7 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 		$this->activePackages[$packageKey] = $package;
 		$this->packageStatesConfiguration['packages'][$packageKey]['state'] = 'active';
 		$this->packageStatesConfiguration['packages'][$packageKey]['packagePath'] = $package->getPackagePath();
-		$this->savePackageStates();
+		$this->sortAndSavePackageStates();
 	}
 
 	/**
@@ -400,7 +400,7 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 		$this->bootstrap->getObjectManager()->get('TYPO3\FLOW3\Reflection\ReflectionService')->freezePackageReflection($packageKey);
 
 		$this->packageStatesConfiguration['packages'][$packageKey]['frozen'] = TRUE;
-		$this->savePackageStates();
+		$this->sortAndSavePackageStates();
 	}
 
 	/**
@@ -430,7 +430,7 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 		$this->bootstrap->getObjectManager()->get('TYPO3\FLOW3\Reflection\ReflectionService')->unfreezePackageReflection($packageKey);
 
 		unset($this->packageStatesConfiguration['packages'][$packageKey]['frozen']);
-		$this->savePackageStates();
+		$this->sortAndSavePackageStates();
 	}
 
 	/**
@@ -499,11 +499,8 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 		if ($this->packageStatesConfiguration === array() || !$this->bootstrap->getContext()->isProduction()) {
 			$this->scanAvailablePackages();
 		} else {
-			foreach ($this->packageStatesConfiguration['packages'] as $packageKey => $stateConfiguration) {
-				$this->packageKeys[strtolower($packageKey)] = $packageKey;
-			}
+			$this->registerPackages();
 		}
-		$this->registerPackages();
 	}
 
 	/**
@@ -549,7 +546,6 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 			if (isset($this->packages[$packageKey])) {
 				throw new \TYPO3\FLOW3\Package\Exception\DuplicatePackageException('Detected a duplicate package, remove either "' . $this->packages[$packageKey]->getPackagePath() . '" or "' . $packagePath . '".', 1253716811);
 			}
-			$this->packageKeys[strtolower($packageKey)] = $packageKey;
 			if (!isset($this->packageStatesConfiguration['packages'][$packageKey])) {
 				$this->packageStatesConfiguration['packages'][$packageKey]['state'] = 'active';
 				if (in_array($packageKey, $defaultFrozenPackages)) {
@@ -562,18 +558,9 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 			$this->packageStatesConfiguration['packages'][$packageKey]['classesPath'] = Package::DIRECTORY_CLASSES;
 		}
 
-			// sort longer package keys first, to find specific matches before generic ones
-		uksort($this->packageStatesConfiguration['packages'], function($a, $b) {
-			if (strlen($a) === strlen($b)) {
-				return strcmp($a, $b);
-			}
-			return (strlen($a) > strlen($b)) ? -1 : 1;
-		});
-
-		$this->packageStatesConfiguration['version'] = 2;
-
+		$this->registerPackages();
 		if ($this->packageStatesConfiguration != $previousPackageStatesConfiguration) {
-			$this->savePackageStates();
+			$this->sortAndsavePackageStates();
 		}
 	}
 
@@ -627,6 +614,7 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 				throw new \TYPO3\FLOW3\Package\Exception\CorruptPackageException(sprintf('The package class %s in package "%s" does not implement PackageInterface.', $packageClassName, $packageKey), 1300782487);
 			}
 
+			$this->packageKeys[strtolower($packageKey)] = $packageKey;
 			if ($stateConfiguration['state'] === 'active') {
 				$this->activePackages[$packageKey] = $this->packages[$packageKey];
 			}
@@ -639,7 +627,11 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 	 *
 	 * @return void
 	 */
-	protected function savePackageStates() {
+	protected function sortAndSavePackageStates() {
+		$this->sortAvailablePackagesByDependencies();
+
+		$this->packageStatesConfiguration['version'] = 2;
+
 		$fileDescription = "# PackageStates.php\n\n";
 		$fileDescription .= "# This file is maintained by FLOW3's package management. Although you can edit it\n";
 		$fileDescription .= "# manually, you should rather use the command line commands for maintaining packages.\n";
@@ -648,10 +640,97 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 		$fileDescription .= "# This file will be regenerated automatically if it doesn't exist. Deleting this file\n";
 		$fileDescription .= "# should, however, never become necessary if you use the package commands.\n";
 
+			// we do not need the dependencies on disk...
+		foreach ($this->packageStatesConfiguration['packages'] as &$packageConfiguration) {
+			if (isset($packageConfiguration['dependencies'])) {
+				unset($packageConfiguration['dependencies']);
+			}
+		}
 		$packageStatesCode = "<?php\n$fileDescription\nreturn " . var_export($this->packageStatesConfiguration, TRUE) . "\n ?>";
 		file_put_contents($this->packageStatesPathAndFilename, $packageStatesCode);
 	}
 
+	/**
+	 * Resolves the dependent packages from the meta data of all packages recursively. The
+	 * resolved direct or indirect dependencies of each package will put into the package
+	 * states configuration array.
+	 *
+	 * @return void
+	 */
+	protected function resolvePackageDependencies() {
+		foreach ($this->packages as $packageKey => $package) {
+			$this->packageStatesConfiguration['packages'][$packageKey]['dependencies'] = $this->getDependencyArrayForPackage($packageKey);
+		}
+	}
+
+	/**
+	 * Returns an array of dependent package keys for the given package. It will
+	 * do this recursively, so dependencies of dependant packages will also be
+	 * in the result.
+	 *
+	 * @param string $packageKey The package key to fetch the dependencies for
+	 * @param array $trace An array of already visited package keys, to detect circular dependencies
+	 * @return array An array of direct or indirect dependant packages
+	 */
+	protected function getDependencyArrayForPackage($packageKey, array &$dependentPackageKeys = array(), array $trace = array()) {
+		if (!isset($this->packages[$packageKey])) {
+			$previousPackageKey = array_shift($trace);
+			throw new \TYPO3\FLOW3\Mvc\Exception\InvalidPackageKeyException(sprintf('The package %s which was specified as a dependency of package %s does not exist. Please check the meta data of %s for possible errors.', $packageKey, $previousPackageKey, $previousPackageKey), 1337009112);
+		}
+		if (in_array($packageKey, $trace) !== FALSE) {
+			return $dependentPackageKeys;
+		}
+		$trace[] = $packageKey;
+		$dependentPackageConstraints = $this->packages[$packageKey]->getPackageMetaData()->getConstraintsByType(MetaDataInterface::CONSTRAINT_TYPE_DEPENDS);
+		foreach ($dependentPackageConstraints as $constraint) {
+			if ($constraint instanceof \TYPO3\FLOW3\Package\MetaData\PackageConstraint) {
+				$dependentPackageKey = $constraint->getValue();
+				if (in_array($dependentPackageKey, $dependentPackageKeys) === FALSE && in_array($dependentPackageKey, $trace) === FALSE) {
+					$dependentPackageKeys[] = $dependentPackageKey;
+				}
+				$this->getDependencyArrayForPackage($dependentPackageKey, $dependentPackageKeys, $trace);
+			}
+		}
+		return array_reverse($dependentPackageKeys);
+	}
+
+	/**
+	 * Orders all packages by comparing their dependencies. By this, the packages
+	 * and package configurations arrays holds all packages in the correct
+	 * initialization order.
+	 *
+	 * @return void
+	 */
+	protected function sortAvailablePackagesByDependencies() {
+		$this->resolvePackageDependencies();
+
+		$packageStatesConfiguration = $this->packageStatesConfiguration['packages'];
+
+		$comparator = function ($firstPackageKey, $secondPackageKey) use ($packageStatesConfiguration) {
+			if (isset($packageStatesConfiguration[$firstPackageKey]['dependencies'])
+					&& (in_array($secondPackageKey, $packageStatesConfiguration[$firstPackageKey]['dependencies'])
+						&& !in_array($firstPackageKey, $packageStatesConfiguration[$secondPackageKey]['dependencies']))) {
+				return 1;
+			} elseif (isset($packageStatesConfiguration[$secondPackageKey]['dependencies'])
+				&& (in_array($firstPackageKey, $packageStatesConfiguration[$secondPackageKey]['dependencies'])
+					&& !in_array($secondPackageKey, $packageStatesConfiguration[$firstPackageKey]['dependencies']))) {
+				return -1;
+			}
+			return strcmp($firstPackageKey, $secondPackageKey);
+		};
+
+		uasort($this->packages,
+			function(\TYPO3\FLOW3\Package\PackageInterface $firstPackage, \TYPO3\FLOW3\Package\PackageInterface $secondPackage) use ($comparator) {
+				return $comparator($firstPackage->getPackageKey(), $secondPackage->getPackageKey());
+			}
+		);
+
+		uksort($this->packageStatesConfiguration['packages'],
+			function($firstPackageKey, $secondPackageKey) use ($comparator) {
+				return $comparator($firstPackageKey, $secondPackageKey);
+			}
+		);
+	}
 }
 
 ?>
