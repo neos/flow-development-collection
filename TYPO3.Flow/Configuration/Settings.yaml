@@ -128,6 +128,8 @@ TYPO3:
         sqlLogger: null
         dbal:
           sessionInitialization: ''
+        # By default Doctrine is integrated in the FLOW3 bootstrap
+        enable: y
 
     reflection:
 

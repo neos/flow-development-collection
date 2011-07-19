@@ -384,13 +384,14 @@ class Bootstrap {
 			// will be FALSE here only if caches are totally empty, class monitoring runs only in compiletime
 		if ($objectConfigurationCache->has('allCompiledCodeUpToDate') === FALSE || $this->context !== 'Production') {
 			$this->executeCommand('typo3.flow3:core:compile');
-			$this->compileDoctrineProxies();
+			if (isset($this->settings['persistence']['doctrine']['enable']) && $this->settings['persistence']['doctrine']['enable'] === TRUE) {
+				$this->compileDoctrineProxies();
+			}
 		}
 
 		if ($objectConfigurationCache->has('allCompiledCodeUpToDate') === FALSE) {
 			throw new \TYPO3\FLOW3\Exception('Could not load object configuration from cache. This might be due to an unsuccessful compile run. One reason might be, that your PHP binary is not located in "' . $this->settings['core']['phpBinaryPathAndFilename'] . '". In that case, set the correct path to the PHP executable in Configuration/Settings.yaml, setting FLOW3.core.phpBinaryPathAndFilename.', 1297263663);
 		}
-
 
 		$this->classLoader->injectClassesCache($this->cacheManager->getCache('FLOW3_Object_Classes'));
 		$this->initializeReflectionService();
@@ -558,7 +559,9 @@ class Bootstrap {
 		$this->cacheFactory = new \TYPO3\FLOW3\Cache\CacheFactory($this->context, $this->cacheManager, $this->environment);
 
 		$this->signalSlotDispatcher->connect('TYPO3\FLOW3\Monitor\FileMonitor', 'filesHaveChanged', $this->cacheManager, 'flushClassFileCachesByChangedFiles');
-		$this->signalSlotDispatcher->connect('TYPO3\FLOW3\Monitor\FileMonitor', 'filesHaveChanged', $this->cacheManager, 'markDoctrineProxyCodeOutdatedByChangedFiles');
+		if (isset($this->settings['persistence']['doctrine']['enable']) && $this->settings['persistence']['doctrine']['enable'] === TRUE) {
+			$this->signalSlotDispatcher->connect('TYPO3\FLOW3\Monitor\FileMonitor', 'filesHaveChanged', $this->cacheManager, 'markDoctrineProxyCodeOutdatedByChangedFiles');
+		}
 	}
 
 	/**
