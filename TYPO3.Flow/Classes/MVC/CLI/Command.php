@@ -84,5 +84,18 @@ class Command {
 		$lines = explode(chr(10), $class->getDescription());
 		return (count($lines) > 0) ? $lines[0] : '<no description available>';
 	}
+
+	/**
+	 * Tells if this command is internal and thus should not be exposed through help texts, user documentation etc.
+	 * Internall commands are still accessible through the regular command line interface, but should not be used
+	 * by users.
+	 *
+	 * @return boolean
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function isInternal() {
+		$shortDescription = $this->getShortDescription();
+		return (strtolower(substr($shortDescription, 0, 9)) === 'internal:');
+	}
 }
 ?>
