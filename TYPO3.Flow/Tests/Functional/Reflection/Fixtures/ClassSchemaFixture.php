@@ -47,6 +47,8 @@ class ClassSchemaFixture {
 	}
 
 	/**
+	 * Some text with a @param annotation, which should not be parsed.
+	 *
 	 * @param string $name
 	 * @return void
 	 * @validate foo1 bar1

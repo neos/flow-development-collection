@@ -56,7 +56,7 @@ class DocCommentParser {
 
 		$lines = explode(chr(10), $docComment);
 		foreach ($lines as $line) {
-			if (strlen($line) > 0 && strpos($line, '@') !== FALSE) {
+			if (strlen($line) > 0 && strpos($line, '* @') !== FALSE) {
 				$this->parseTag(substr($line, strpos($line, '@')));
 			} else if (count($this->tags) === 0) {
 				$this->description .= preg_replace('/\s*\\/?[\\\\*]*(.*)$/', '$1', $line) . chr(10);
