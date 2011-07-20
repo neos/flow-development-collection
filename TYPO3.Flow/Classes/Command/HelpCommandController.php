@@ -22,6 +22,7 @@ namespace TYPO3\FLOW3\Command;
  *                                                                        */
 
 use \TYPO3\FLOW3\MVC\CLI\Command;
+use \TYPO3\FLOW3\MVC\CLI\CommandManager;
 
 /**
  * A Command Controller which provides help for available commands
@@ -45,6 +46,11 @@ class HelpCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControlle
 	 * @var \TYPO3\FLOW3\Core\Bootstrap
 	 */
 	protected $bootstrap;
+
+	/**
+	 * @var CommandManager
+	 */
+	protected $commandManager;
 
 	/**
 	 * @var array
@@ -76,6 +82,15 @@ class HelpCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControlle
 	}
 
 	/**
+	 * @param CommandManager $commandManager
+	 * @return void
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function injectCommandManager(CommandManager $commandManager) {
+		$this->commandManager = $commandManager;
+	}
+
+	/**
 	 * Display help for a command
 	 *
 	 * The help command displays help for a given command:
@@ -89,7 +104,7 @@ class HelpCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControlle
 		$context = $this->bootstrap->getContext();
 
 		$this->response->appendContent('FLOW3 ' . $this->packageManager->getPackage('TYPO3.FLOW3')->getPackageMetaData()->getVersion() . ' (' . $context . ')');
-		$this->response->appendContent('usage: ./flow3' . ($context === 'Development' ? '_dev' : '') . ' <command identifier>');
+		$this->response->appendContent('usage: ./flow3 <command identifier>');
 		$this->response->appendContent('');
 		$this->response->appendContent('The following commands are currently available:');
 
@@ -108,26 +123,44 @@ class HelpCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControlle
 	}
 
 	/**
+	 * Displays an error message
+	 *
+	 * @internal
+	 * @param \TYPO3\FLOW3\MVC\Exception\CommandException $exception
+	 * @return void
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function errorCommand(\TYPO3\FLOW3\MVC\Exception\CommandException $exception) {
+		$this->response->appendContent($exception->getMessage());
+		if ($exception instanceof \TYPO3\FLOW3\MVC\Exception\AmbiguousCommandIdentifierException) {
+			$this->response->appendContent('Please specify the complete command identifier. Matched commands:');
+			foreach ($exception->getMatchingCommands() as $matchingCommand) {
+				$this->response->appendContent('    ' . $matchingCommand->getCommandIdentifier());
+			}
+		}
+		$this->response->appendContent('');
+		$this->response->appendContent('Enter ./flow3 for help');
+	}
+
+	/**
 	 * Builds an index of available commands. For each of them a Command object is added to the commands array of this
 	 * class.
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function buildCommandsIndex() {
-		$commandControllerClassNames = $this->reflectionService->getAllSubClassNamesForClass('TYPO3\FLOW3\MVC\Controller\CommandController');
-		foreach ($commandControllerClassNames as $className) {
-			$class = new \TYPO3\FLOW3\Reflection\ClassReflection($className);
-			foreach ($class->getMethods() as $method) {
-				$methodName = $method->getName();
-				if (substr($methodName, -7, 7) === 'Command') {
-					$command = new Command($className, substr($methodName, 0, -7));
-					list($packageKey, $commandControllerName, $commandName) = explode(':', $command->getCommandIdentifier());
-					if (!$command->isInternal()) {
-						$this->commandsByPackagesAndControllers[$packageKey][$commandControllerName][$commandName] = $command;
-					}
-				}
+		$availableCommands = $this->commandManager->getAvailableCommands();
+		foreach ($availableCommands as $command) {
+			if ($command->isInternal()) {
+				continue;
 			}
+			$commandIdentifier = $command->getCommandIdentifier();
+			$packageKey = strstr($commandIdentifier, ':', TRUE);
+			$commandControllerClassName = $command->getControllerClassName();
+			$commandName = $command->getControllerCommandName();
+			$this->commandsByPackagesAndControllers[$packageKey][$commandControllerClassName][$commandName] = $command;
 		}
 	}
 }

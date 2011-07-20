@@ -22,6 +22,7 @@ namespace TYPO3\FLOW3\MVC\CLI;
  *                                                                        */
 
 use \TYPO3\FLOW3\MVC\CLI\Command;
+use \TYPO3\FLOW3\MVC\CLI\CommandManager;
 
 /**
  * Builds a CLI request object from the raw command call
@@ -50,6 +51,11 @@ class RequestBuilder {
 	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
+
+	/**
+	 * @var CommandManager
+	 */
+	protected $commandManager;
 
 	/**
 	 * @param \TYPO3\FLOW3\Utility\Environment $environment
@@ -88,6 +94,15 @@ class RequestBuilder {
 	}
 
 	/**
+	 * @param CommandManager $commandManager
+	 * @return void
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function injectCommandManager(CommandManager $commandManager) {
+		$this->commandManager = $commandManager;
+	}
+
+	/**
 	 * Builds a CLI request object from a command line.
 	 *
 	 * The given command line may be a string (e.g. "mypackage:foo do-that-thing --force") or
@@ -107,33 +122,16 @@ class RequestBuilder {
 		if (count($rawCommandLineArguments) === 0) {
 			return $request;
 		}
-
-		$controllerNameParts = explode(':', trim(array_shift($rawCommandLineArguments)));
-
-		switch (count($controllerNameParts)) {
-			case 3:
-				list($packageKey, $controllerName, $controllerCommandName) = $controllerNameParts;
-				$packageNamespace = $this->resolvePackageNamespace($packageKey);
-				if ($packageNamespace === FALSE) {
-					return $request;
-				}
-				$lowerCasesControllerObjectName = strtolower(sprintf('%s\\Command\\%sCommandController', $packageNamespace, $controllerName));
-				$controllerObjectName = $this->objectManager->getCaseSensitiveObjectName($lowerCasesControllerObjectName);
-			break;
-
-			case 2:
-				list($controllerName, $controllerCommandName) = $controllerNameParts;
-				$controllerObjectName = $this->resolveControllerObjectName($controllerName, $controllerCommandName);
-			break;
-
-			default:
-				return $request;
-		}
-
-		if ($controllerObjectName === FALSE) {
+		$commandIdentifier = trim(array_shift($rawCommandLineArguments));
+		try {
+			$command = $this->commandManager->getCommandByIdentifier($commandIdentifier);
+		} catch (\TYPO3\FLOW3\MVC\Exception\CommandException $exception) {
+			$request->setArgument('exception', $exception);
+			$request->setControllerCommandName('error');
 			return $request;
 		}
-
+		$controllerObjectName = $this->objectManager->getObjectNameByClassName($command->getControllerClassName());
+		$controllerCommandName = $command->getControllerCommandName();
 		$request->setControllerObjectName($controllerObjectName);
 		$request->setControllerCommandName($controllerCommandName);
 
@@ -142,91 +140,6 @@ class RequestBuilder {
 		$request->setExceedingArguments($exceedingCommandLineArguments);
 
 		return $request;
-	}
-
-	/**
-	 * Tries to determine the command controller's object name from an incomplete command identifier.
-	 *
-	 * @param $searchedCommandControllerName Only the "name" of the controller, e.g. "help" in case of TYPO3\FLOW3\Command\HelpCommandController
-	 * @param $searchedCommandName Name of the command, e.g. "listactive" in case of a method "listActiveCommand"
-	 * @return string The controller object name or FALSE if the object name could not be determined
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	protected function resolveControllerObjectName($searchedCommandControllerName, $searchedCommandName) {
-		$foundCommands = array();
-
-		$commandControllerClassNames = $this->reflectionService->getAllSubClassNamesForClass('TYPO3\FLOW3\MVC\Controller\CommandController');
-		foreach ($commandControllerClassNames as $className) {
-			foreach (get_class_methods($className) as $methodName) {
-				if (substr($methodName, -7, 7) === 'Command') {
-					$command = new Command($className, substr($methodName, 0, -7));
-					list(, $commandControllerName, $commandName) = explode(':', $command->getCommandIdentifier());
-					$foundCommands[$commandControllerName . ':' . $commandName][] = $className;
-				}
-			}
-		}
-		if (!isset($foundCommands[$searchedCommandControllerName . ':' . $searchedCommandName]) ||
-				count($foundCommands[$searchedCommandControllerName . ':' . $searchedCommandName]) !== 1) {
-			return FALSE;
-		}
-		return $foundCommands[$searchedCommandControllerName . ':' . $searchedCommandName][0];
-	}
-
-	/**
-	 * Returns a PHP namespace string corresponding to the given package key.
-	 *
-	 * If the package key contains namespace segments separated by ".", they are converted to a PHP namespace
-	 * right away. If the package key is in short hand notation (ie. no "." exists, only the last namespace segment is
-	 * given), this function tries to determine the full namespace by searching for any matching active package.
-	 *
-	 * @param string $packageKey The fully qualified or shorthand package key
-	 * @return string The package namespace, or FALSE if the package key was ambiguous
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	protected function resolvePackageNamespace($packageKey) {
-		if (strpos($packageKey, '.') !== FALSE) {
-			$packageNamespace = str_replace('.', '\\', $packageKey);
-		} else {
-			foreach ($this->packageManager->getActivePackages() as $package) {
-				$possiblePackageNamespace = $package->getPackageNamespace();
-				if (substr(strtolower($possiblePackageNamespace), - strlen($packageKey) - 1) === ('\\' . strtolower($packageKey))) {
-						// Ambiguous shorthand package key:
-					if (isset($packageNamespace)) {
-						return FALSE;
-					}
-					$packageNamespace = $possiblePackageNamespace;
-				}
-			}
-			if (!isset($packageNamespace)) {
-				return FALSE;
-			}
-		}
-		return $packageNamespace;
-	}
-
-	/**
-	 * Sets package, controller, action if found in $command
-	 *
-	 * @param \TYPO3\FLOW3\MVC\CLI\Request $request
-	 * @param array $command
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	protected function setControllerOptions(\TYPO3\FLOW3\MVC\CLI\Request $request, array $command) {
-		if ($command['package'] !== NULL) {
-			$request->setControllerPackageKey($command['package']);
-		}
-		if ($command['controller'] !== NULL) {
-			$request->setControllerName($command['controller']);
-		}
-		if ($command['action'] !== NULL) {
-			$request->setControllerActionName($command['action']);
-		}
-
-		if (count($command['subpackages']) > 0) {
-			$subPackages = implode('\\', $command['subpackages']);
-			$request->setControllerSubpackageKey($subPackages);
-		}
 	}
 
 	/**

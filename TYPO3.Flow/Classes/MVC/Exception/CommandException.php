@@ -22,11 +22,10 @@ namespace TYPO3\FLOW3\MVC\Exception;
  *                                                                        */
 
 /**
- * A "No Such Command" exception
+ * Base command exception
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
- * @api
  */
-class NoSuchCommandException extends CommandException {
+class CommandException extends \TYPO3\FLOW3\MVC\Exception {
 }
 ?>

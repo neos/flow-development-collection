@@ -137,11 +137,12 @@ class CoreCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControlle
 	}
 
 	/**
-	 * Internal: Explicitly compile proxy classes
+	 * Explicitly compile proxy classes
 	 *
 	 * The compile command triggers the proxy class compilation. Although a compilation run is triggered automatically
 	 * by FLOW3, there might be cases in a production context where a manual compile run is needed.
 	 *
+	 * @internal
 	 * @param boolean $force If set, classes will be compiled even though the cache says that everything is up to date.
 	 * @return void
 	 */

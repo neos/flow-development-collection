@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\FLOW3\MVC\Exception;
+namespace TYPO3\FLOW3\MVC\Fixture\CLI\Command;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -22,11 +22,23 @@ namespace TYPO3\FLOW3\MVC\Exception;
  *                                                                        */
 
 /**
- * A "No Such Command" exception
- *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
- * @api
+ * A mock CLI Command
  */
-class NoSuchCommandException extends CommandException {
+class MockACommandController extends \TYPO3\FLOW3\MVC\CLI\Command {
+
+	public function fooCommand() {
+	}
+
+	public function barCommand($someArgument) {
+	}
+}
+
+/**
+ * Another mock CLI Command
+ */
+class MockBCommandController extends \TYPO3\FLOW3\MVC\CLI\Command {
+
+	public function bazCommand() {
+	}
 }
 ?>
