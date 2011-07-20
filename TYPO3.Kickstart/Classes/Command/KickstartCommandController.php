@@ -56,11 +56,11 @@ class KickstartCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandCont
 			return 'Package "' . $packageKey . '" already exists.' . PHP_EOL;
 		}
 		$this->packageManager->createPackage($packageKey);
-		return $this->controllerCommand($packageKey);
+		return $this->actioncontrollerCommand($packageKey);
 	}
 
 	/**
-	 * Kickstart a controller class
+	 * Kickstart an action controller
 	 *
 	 * The package key can contain a subpackage with a slash after the package key (e.g. "MyCompany.MyPackage/Admin").
 	 *
@@ -69,7 +69,7 @@ class KickstartCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandCont
 	 * @return string
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function controllerCommand($packageKey, $controllerName = 'Standard') {
+	public function actionControllerCommand($packageKey, $controllerName = 'Standard') {
 		$subpackageName = '';
 		if (strpos('/', $packageKey) !== FALSE) {
 			list($packageKey, $subpackageName) = explode('/', $packageKey, 2);
@@ -84,6 +84,32 @@ class KickstartCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandCont
 		$controllerNames = \TYPO3\FLOW3\Utility\Arrays::trimExplode(',', $controllerName);
 		foreach ($controllerNames as $currentControllerName) {
 			$generatedFiles += $this->generatorService->generateController($packageKey, $subpackageName, $currentControllerName);
+		}
+		return implode(PHP_EOL, $generatedFiles) . PHP_EOL;
+	}
+
+	/**
+	 * Kickstart a command controller
+	 *
+	 * Creates a new command controller with the given name in the specified package. The generated controller class
+	 * already contains an example command.
+	 *
+	 * @param string $packageKey The package key of the package for the new controller
+	 * @param string $controllerName The name for the new controller. This may also be a comma separated list of controller names.
+	 * @return string
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function commandControllerCommand($packageKey, $controllerName) {
+		if (!$this->packageManager->isPackageKeyValid($packageKey)) {
+			return 'Package key "' . $packageKey . '" is not valid. Only UpperCamelCase with alphanumeric characters and underscore, please!' . PHP_EOL;
+		}
+		if (!$this->packageManager->isPackageAvailable($packageKey)) {
+			return 'Package "' . $packageKey . '" is not available.' . PHP_EOL;
+		}
+		$generatedFiles = array();
+		$controllerNames = \TYPO3\FLOW3\Utility\Arrays::trimExplode(',', $controllerName);
+		foreach ($controllerNames as $currentControllerName) {
+			$generatedFiles += $this->generatorService->generateCommandController($packageKey, $currentControllerName);
 		}
 		return implode(PHP_EOL, $generatedFiles) . PHP_EOL;
 	}

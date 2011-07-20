@@ -94,6 +94,36 @@ class GeneratorService {
 	}
 
 	/**
+	 * Generate a commnand controller with the given name for the given package
+	 *
+	 * @param string $packageKey The package key of the controller's package
+	 * @param string $controllerName The name of the new controller
+	 * @return array An array of generated filenames
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function generateCommandController($packageKey, $controllerName) {
+		$controllerClassName = ucfirst($controllerName) . 'CommandController';
+
+		$templatePathAndFilename = 'resource://TYPO3.Kickstart/Private/Generator/Controller/CommandControllerTemplate.php.tmpl';
+
+		$contextVariables = array();
+		$contextVariables['packageKey'] = $packageKey;
+		$contextVariables['packageNamespace'] = str_replace('.', '\\', $packageKey);
+		$contextVariables['controllerClassName'] = $controllerClassName;
+		$contextVariables['controllerName'] = $controllerName;
+
+		$fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
+
+		$controllerFilename = $controllerClassName . '.php';
+		$controllerPath = $this->packageManager->getPackage($packageKey)->getClassesPath() . 'Command/';
+		$targetPathAndFilename = $controllerPath . $controllerFilename;
+
+		$this->generateFile($targetPathAndFilename, $fileContent);
+
+		return $this->generatedFiles;
+	}
+
+	/**
 	 * Generate a view with the given name for the given package and controller
 	 *
 	 * @param string $packageKey The package key of the controller's package
