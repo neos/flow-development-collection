@@ -17,8 +17,8 @@ fi
 
 if [ "$#" != "3" ]; then
 	echo
-	echo "Usage: $0 <commandlineuser> <webuser> <webgroup>"
-	echo "Run as superuser, if needed (probably)"
+	echo "Usage: ./flow3 core:setfilepermissions <commandlineuser> <webuser> <webgroup>"
+	echo "Run as super user, if needed (probably)"
 	echo
 	exit 1
 fi
@@ -47,8 +47,17 @@ echo "Making sure Data and Web/_Resources exist ..."
 mkdir -p Data
 mkdir -p Web/_Resources
 
+sudo rm -rf Data/Temporary/*
+
 echo
-echo "Setting file permissions, this might take a minute ..."
+echo "Setting file permissions, trying with ACLs ..."
+
+sudo chmod +a "$WEBSERVER_USER allow delete,write,append,file_inherit,directory_inherit" Data Packages Web/_Resources
+sudo chmod +a "$WEBSERVER_GROUP allow delete,write,append,file_inherit,directory_inherit" Data Packages Web/_Resources
+if [ "$?" -eq "0" ]; then echo "... done."; exit 0; fi
+
+echo "Seems like ACLs are not supported or enabled for your filesystem."
+echo "Setting file permissions per file, this might take a while ..."
 
 sudo chown -R $COMMANDLINE_USER:$WEBSERVER_GROUP .
 find . -type d -exec sudo chmod 2770 {} \;
@@ -59,3 +68,5 @@ sudo chmod 700 $0
 
 sudo chown -R $WEBSERVER_USER:$WEBSERVER_GROUP Web/_Resources
 sudo chmod 770 Web/_Resources
+
+echo "Done."

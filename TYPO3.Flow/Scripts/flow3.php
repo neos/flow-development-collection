@@ -24,12 +24,21 @@
  * Bootstrap for the command line
  */
 
-require(__DIR__ . '/../Classes/Core/Bootstrap.php');
+if (isset($argv[1]) && ($argv[1] === 'typo3.flow3:core:setfilepermissions' || $argv[1] === 'flow3:core:setfilepermissions' || $argv[1] === 'core:setfilepermissions')) {
+	if (DIRECTORY_SEPARATOR !== '/') {
+		exit('The core:setfilepermissions command is only available on UNIX platforms.' . PHP_EOL);
+	}
+	array_shift($argv);
+	array_shift($argv);
+	system(__DIR__ . '/setfilepermissions.sh ' . implode($argv, ' '));
+} else {
+	require(__DIR__ . '/../Classes/Core/Bootstrap.php');
 
-$context = trim(getenv('FLOW3_CONTEXT'), '"\' ') ?: 'Development';
-$_SERVER['FLOW3_ROOTPATH'] = trim(getenv('FLOW3_ROOTPATH'), '"\' ') ?: '';
+	$context = trim(getenv('FLOW3_CONTEXT'), '"\' ') ?: 'Development';
+	$_SERVER['FLOW3_ROOTPATH'] = trim(getenv('FLOW3_ROOTPATH'), '"\' ') ?: '';
 
-$bootstrap = new \TYPO3\FLOW3\Core\Bootstrap($context);
-$bootstrap->run();
+	$bootstrap = new \TYPO3\FLOW3\Core\Bootstrap($context);
+	$bootstrap->run();
 
+}
 ?>

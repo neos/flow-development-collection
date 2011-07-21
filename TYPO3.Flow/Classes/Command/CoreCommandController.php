@@ -168,6 +168,24 @@ class CoreCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControlle
 	}
 
 	/**
+	 * Adjust file permissions for CLI and web server access
+	 *
+	 * This command adjusts the file permissions of the whole FLOW3 application to the given command line user and
+	 * webserver user / group.
+	 *
+	 * @param string $commandlineUser User name of the command line user, for example "john"
+	 * @param string $webserverUser User name of the webserver, for example "www-data"
+	 * @param string $webserverGroup Group name of the webserver, for example "www-data"
+	 * @return void
+	 */
+	public function setFilePermissionsCommand($commandlineUser, $webserverUser, $webserverGroup) {
+		// This command will never be really called. It rather acts as a stub for rendering the
+		// documentation for this command. In reality, the "flow3" command line script will already
+		// check if this command is supposed to be called and invoke the setfilepermissions script
+		// directly.
+	}
+
+	/**
 	 * Run the interactive Shell
 	 *
 	 * The shell command runs FLOW3's interactive shell. This shell allows for entering commands like through the regular
