@@ -270,7 +270,10 @@ class ValidatorResolver {
 				$parsedType = \TYPO3\FLOW3\Utility\TypeHandling::parseType(trim(implode('' , $classPropertyTagsValues['var']), ' \\'));
 				$propertyTargetClassName = $parsedType['type'];
 				if (class_exists($propertyTargetClassName) && $this->objectManager->isRegistered($propertyTargetClassName) && $this->objectManager->getScope($propertyTargetClassName) === \TYPO3\FLOW3\Object\Configuration\Configuration::SCOPE_PROTOTYPE) {
-					$objectValidator->addPropertyValidator($classPropertyName, $this->getBaseValidatorConjunction($propertyTargetClassName));
+					$validatorForProperty = $this->getBaseValidatorConjunction($propertyTargetClassName);
+					if (count($validatorForProperty) > 0) {
+						$objectValidator->addPropertyValidator($classPropertyName, $validatorForProperty);
+					}
 				}
 
 				if (isset($classPropertyTagsValues['validate'])) {
