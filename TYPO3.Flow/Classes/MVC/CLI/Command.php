@@ -60,7 +60,7 @@ class Command {
 		$this->controllerClassName = $controllerClassName;
 		$this->controllerCommandName = $controllerCommandName;
 
-		$matchCount = preg_match('/^(?P<PackageNamespace>\w+(?:\\\\\w+)+)\\\\Command\\\\(?P<ControllerName>\w+)CommandController$/', $controllerClassName, $matches);
+		$matchCount = preg_match('/^(?P<PackageNamespace>\w+(?:\\\\\w+)*)\\\\Command\\\\(?P<ControllerName>\w+)CommandController$/', $controllerClassName, $matches);
 		if ($matchCount !== 1) {
 			throw new \InvalidArgumentException('Invalid controller class name "' . $controllerClassName . '"', 1305100019);
 		}

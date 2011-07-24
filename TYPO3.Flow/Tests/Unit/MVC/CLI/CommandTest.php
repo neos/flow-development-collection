@@ -36,6 +36,7 @@ class CommandTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		return array(
 			array('TYPO3\FLOW3\Command\CacheCommandController', 'flush', 'typo3.flow3:cache:flush'),
 			array('RobertLemke\Foo\Faa\Fuuum\Command\CoffeeCommandController', 'brew', 'robertlemke.foo.faa.fuuum:coffee:brew'),
+			array('SomePackage\Command\CookieCommandController', 'bake', 'somepackage:cookie:bake')
 		);
 	}
 
