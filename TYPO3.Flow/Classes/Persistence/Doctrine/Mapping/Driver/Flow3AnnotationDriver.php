@@ -225,12 +225,14 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 	 * @param string $className
 	 * @return string
 	 */
-	protected function inferTableNameFromClassName($className) {
-		$classNameParts = explode('\\', $className);
-		$packageKey = $classNameParts[1];
-		$modelName = array_pop($classNameParts);
-		$modelNamePrefix = array_pop($classNameParts);
-		return strtolower($packageKey . '_' . ($modelNamePrefix === 'Model' ? '' : $modelNamePrefix . '_') . $modelName);
+	public function inferTableNameFromClassName($className) {
+		if (preg_match('/^(?P<PackageNamespace>\w+(?:\\\\\w+)*)\\\\Domain\\\\Model\\\\(?P<ModelNamePrefix>(\w+\\\\)?)(?P<ModelName>\w+)$/', $className, $matches)) {
+			$packageNamespaceParts = explode('\\', $matches['PackageNamespace']);
+			return strtolower(strtr($packageNamespaceParts[count($packageNamespaceParts) - 1], '\\', '_') . ($matches['ModelNamePrefix'] !== '' ? '_' . strtr(rtrim($matches['ModelNamePrefix'], '\\'), '\\', '_') : '') . '_' . $matches['ModelName']);
+		} else {
+			$classNameParts = explode('\\', $className);
+			return strtolower($classNameParts[1] . '_' . implode('_', array_slice($classNameParts, -2, 2)));
+		}
 	}
 
 	/**
@@ -241,11 +243,7 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 	 * @return string
 	 */
 	protected function inferJoinTableNameFromClassAndPropertyName($className, $propertyName) {
-		$classNameParts = explode('\\', $className);
-		$packageKey = $classNameParts[1];
-		$modelName = array_pop($classNameParts);
-		$modelNamePrefix = array_pop($classNameParts);
-		return strtolower($packageKey . '_' . ($modelNamePrefix === 'Model' ? '' : $modelNamePrefix . '_') . $modelName . '_' . $propertyName . '_join');
+		return $this->inferTableNameFromClassName($className) . '_' . strtolower($propertyName . '_join');
 	}
 
 	/**
@@ -255,11 +253,7 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 	 * @return string
 	 */
 	protected function buildJoinTableColumnName($className) {
-		$classNameParts = explode('\\', $className);
-		$packageKey = $classNameParts[1];
-		$modelName = array_pop($classNameParts);
-		$modelNamePrefix = array_pop($classNameParts);
-		return strtolower($packageKey . '_' . ($modelNamePrefix === 'Model' ? '' : $modelNamePrefix . '_') . $modelName);
+		return $this->inferTableNameFromClassName($className);
 	}
 
 	/**
@@ -664,6 +658,6 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 	public function getRuntimeEvaluationsDefinition() {
 		return array();
 	}
-}
 
+}
 ?>
