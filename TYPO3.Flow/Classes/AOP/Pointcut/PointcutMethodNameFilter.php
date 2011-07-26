@@ -30,7 +30,7 @@ namespace TYPO3\FLOW3\AOP\Pointcut;
  */
 class PointcutMethodNameFilter implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 
-	const PATTERN_MATCHVISIBILITYMODIFIER = '/(|public|protected)/';
+	const PATTERN_MATCHVISIBILITYMODIFIER = '/^(|public|protected)$/';
 
 	/**
 	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
@@ -68,7 +68,7 @@ class PointcutMethodNameFilter implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilt
 	 */
 	public function __construct($methodNameFilterExpression, $methodVisibility = NULL, array $methodArgumentConstraints = array()) {
 		$this->methodNameFilterExpression = $methodNameFilterExpression;
-		if (preg_match(self::PATTERN_MATCHVISIBILITYMODIFIER, $methodVisibility) !== 1) throw new \TYPO3\FLOW3\AOP\Exception\InvalidPointcutExpressionException('Invalid method visibility modifier.', 1172494794);
+		if (preg_match(self::PATTERN_MATCHVISIBILITYMODIFIER, $methodVisibility) !== 1) throw new \TYPO3\FLOW3\AOP\Exception\InvalidPointcutExpressionException('Invalid method visibility modifier "' . $methodVisibility . '".', 1172494794);
 		$this->methodVisibility = $methodVisibility;
         $this->methodArgumentConstraints = $methodArgumentConstraints;
 	}
@@ -167,6 +167,33 @@ class PointcutMethodNameFilter implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilt
 			'methodArgumentConstraints' => $this->methodArgumentConstraints
 		);
 	}
-}
 
+	/**
+	 * Returns the method name filter expression
+	 *
+	 * @return string
+	 */
+	public function getMethodNameFilterExpression() {
+		return $this->methodNameFilterExpression;
+	}
+
+	/**
+	 * Returns the method visibility
+	 *
+	 * @return string
+	 */
+	public function getMethodVisibility() {
+		return $this->methodVisibility;
+	}
+
+	/**
+	 * Returns the method argument constraints
+	 *
+	 * @return array
+	 */
+	public function getMethodArgumentConstraints() {
+		return $this->methodArgumentConstraints;
+	}
+
+}
 ?>

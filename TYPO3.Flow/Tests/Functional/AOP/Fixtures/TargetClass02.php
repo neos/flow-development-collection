@@ -39,10 +39,10 @@ class TargetClass02 {
 	}
 
 	/**
-	 * @param  $foo
+	 * @param $foo
 	 * @return void
 	 */
-	public function protectedTargetMethod($foo) {
+	protected function protectedTargetMethod($foo) {
 		return $foo;
 	}
 
