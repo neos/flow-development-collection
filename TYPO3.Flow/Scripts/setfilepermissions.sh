@@ -50,13 +50,20 @@ mkdir -p Web/_Resources
 sudo rm -rf Data/Temporary/*
 
 echo
-echo "Setting file permissions, trying with ACLs ..."
+echo "Setting file permissions, trying to set ACLs via chmod ..."
 
 sudo chmod +a "$WEBSERVER_USER allow delete,write,append,file_inherit,directory_inherit" Data Packages Web/_Resources
 sudo chmod +a "$WEBSERVER_GROUP allow delete,write,append,file_inherit,directory_inherit" Data Packages Web/_Resources
 if [ "$?" -eq "0" ]; then echo "... done."; exit 0; fi
 
-echo "Seems like ACLs are not supported or enabled for your filesystem."
+echo "Seems like ACLs are not support by chmod."
+echo "Trying to set ACLs via setfacl ..."
+
+sudo setfacl -Rdm u:$WEBSERVER_USER:rwx Data Packages Web/_Resources
+sudo setfacl -Rdm g:$WEBSERVER_GROUP:rwx Data Packages Web/_Resources
+if [ "$?" -eq "0" ]; then echo "... done."; exit 0; fi
+
+echo "Seems like setfacl is not supported or enabled for your filesystem."
 echo "Setting file permissions per file, this might take a while ..."
 
 sudo chown -R $COMMANDLINE_USER:$WEBSERVER_GROUP .
