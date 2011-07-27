@@ -1,0 +1,23 @@
+{namespace k=TYPO3\Kickstart\ViewHelpers}<![CDATA[<f:layout name="Default" />
+
+<f:section name="Title">]]>A list of <k:inflect.humanizeCamelCase lowercase="true"><k:inflect.pluralize>{modelName}</k:inflect.pluralize></k:inflect.humanizeCamelCase><![CDATA[</f:section>
+
+<f:section name="Content">]]>
+	<![CDATA[<f:if condition="{]]><k:inflect.pluralize>{modelName}</k:inflect.pluralize><![CDATA[}">
+		<f:then>
+			<ul>
+				<f:for each="{]]><k:inflect.pluralize>{modelName}</k:inflect.pluralize><![CDATA[}" as="]]>{modelName}<![CDATA[">
+					<li>
+						{]]>{modelName}<![CDATA[.name}
+						<f:link.action action="edit" arguments="{]]>{modelName}: {modelName}<![CDATA[}">Edit</f:link.action>
+						<f:link.action action="delete" arguments="{]]>{modelName}: {modelName}<![CDATA[}">Delete</f:link.action>
+					</li>
+				</f:for>
+			</ul>
+		</f:then>
+		<f:else>
+			]]><p>No <k:inflect.humanizeCamelCase lowercase="true"><k:inflect.pluralize>{modelName}</k:inflect.pluralize></k:inflect.humanizeCamelCase><![CDATA[ created yet.</p>
+		</f:else>
+	</f:if>
+	<p><f:link.action action="new">Create a new ]]><k:inflect.humanizeCamelCase lowercase="true">{modelName}</k:inflect.humanizeCamelCase><![CDATA[</f:link.action></p>]]>
+<![CDATA[</f:section>]]>

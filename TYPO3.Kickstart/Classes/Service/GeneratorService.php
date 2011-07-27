@@ -63,13 +63,14 @@ class GeneratorService {
 	 * @param string $packageKey The package key of the controller's package
 	 * @param string $subpackage An optional subpackage name
 	 * @param string $controllerName The name of the new controller
+	 * @param boolean $overwrite Overwrite any existing files?
 	 * @return array An array of generated filenames
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function generateController($packageKey, $subpackage, $controllerName) {
+	public function generateActionController($packageKey, $subpackage, $controllerName, $overwrite = FALSE) {
 		$controllerClassName = ucfirst($controllerName) . 'Controller';
 
-		$templatePathAndFilename = 'resource://TYPO3.Kickstart/Private/Generator/Controller/ControllerTemplate.php.tmpl';
+		$templatePathAndFilename = 'resource://TYPO3.Kickstart/Private/Generator/Controller/ActionControllerTemplate.php.tmpl';
 
 		$contextVariables = array();
 		$contextVariables['packageKey'] = $packageKey;
@@ -86,9 +87,46 @@ class GeneratorService {
 		$controllerPath = $this->packageManager->getPackage($packageKey)->getClassesPath() . $subpackagePath . 'Controller/';
 		$targetPathAndFilename = $controllerPath . $controllerFilename;
 
-		$this->generateFile($targetPathAndFilename, $fileContent);
+		$this->generateFile($targetPathAndFilename, $fileContent, $overwrite);
 
-		$this->generateView($packageKey, $subpackage, $controllerName, 'Index');
+		return $this->generatedFiles;
+	}
+
+	/**
+	 * Generate an Action Controller with pre-made CRUD methods
+	 *
+	 * @param string $packageKey The package key of the controller's package
+	 * @param string $subpackage An optional subpackage name
+	 * @param string $controllerName The name of the new controller
+	 * @param boolean $overwrite Overwrite any existing files?
+	 * @return array An array of generated filenames
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function generateCrudController($packageKey, $subpackage, $controllerName, $overwrite = FALSE) {
+		$controllerClassName = ucfirst($controllerName) . 'Controller';
+
+		$templatePathAndFilename = 'resource://TYPO3.Kickstart/Private/Generator/Controller/CrudControllerTemplate.php.tmpl';
+
+		$contextVariables = array();
+		$contextVariables['packageKey'] = $packageKey;
+		$contextVariables['packageNamespace'] = str_replace('.', '\\', $packageKey);
+		$contextVariables['subpackage'] = $subpackage;
+		$contextVariables['isInSubpackage'] = ($subpackage != '');
+		$contextVariables['controllerClassName'] = $controllerClassName;
+		$contextVariables['controllerName'] = $controllerName;
+		$contextVariables['modelName'] = strtolower($controllerName[0]) . substr($controllerName, 1);
+		$contextVariables['repositoryClassName'] = '\\' . str_replace('.', '\\', $packageKey) . ($subpackage != '' ? '\\' . $subpackage : '') . '\Domain\Repository\\' . $controllerName . 'Repository';
+		$contextVariables['modelFullClassName'] = '\\' . str_replace('.', '\\', $packageKey) . ($subpackage != '' ? '\\' . $subpackage : '') . '\Domain\Model\\' . $controllerName;
+		$contextVariables['modelClassName'] = ucfirst($contextVariables['modelName']);
+
+		$fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
+
+		$subpackagePath = $subpackage != '' ? $subpackage . '/' : '';
+		$controllerFilename = $controllerClassName . '.php';
+		$controllerPath = $this->packageManager->getPackage($packageKey)->getClassesPath() . $subpackagePath . 'Controller/';
+		$targetPathAndFilename = $controllerPath . $controllerFilename;
+
+		$this->generateFile($targetPathAndFilename, $fileContent, $overwrite);
 
 		return $this->generatedFiles;
 	}
@@ -98,10 +136,11 @@ class GeneratorService {
 	 *
 	 * @param string $packageKey The package key of the controller's package
 	 * @param string $controllerName The name of the new controller
+	 * @param boolean $overwrite Overwrite any existing files?
 	 * @return array An array of generated filenames
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function generateCommandController($packageKey, $controllerName) {
+	public function generateCommandController($packageKey, $controllerName, $overwrite = FALSE) {
 		$controllerClassName = ucfirst($controllerName) . 'CommandController';
 
 		$templatePathAndFilename = 'resource://TYPO3.Kickstart/Private/Generator/Controller/CommandControllerTemplate.php.tmpl';
@@ -118,7 +157,7 @@ class GeneratorService {
 		$controllerPath = $this->packageManager->getPackage($packageKey)->getClassesPath() . 'Command/';
 		$targetPathAndFilename = $controllerPath . $controllerFilename;
 
-		$this->generateFile($targetPathAndFilename, $fileContent);
+		$this->generateFile($targetPathAndFilename, $fileContent, $overwrite);
 
 		return $this->generatedFiles;
 	}
@@ -130,13 +169,14 @@ class GeneratorService {
 	 * @param string $subpackage An optional subpackage name
 	 * @param string $controllerName The name of the new controller
 	 * @param string $viewName The name of the view
+	 * @param boolean $overwrite Overwrite any existing files?
 	 * @return array An array of generated filenames
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function generateView($packageKey, $subpackage, $controllerName, $viewName) {
+	public function generateView($packageKey, $subpackage, $controllerName, $viewName, $templateName, $overwrite = FALSE) {
 		$viewName = ucfirst($viewName);
 
-		$templatePathAndFilename = 'resource://TYPO3.Kickstart/Private/Generator/View/ViewTemplate.html.tmpl';
+		$templatePathAndFilename = 'resource://TYPO3.Kickstart/Private/Generator/View/' . $templateName . 'Template.html';
 
 		$contextVariables = array();
 		$contextVariables['packageKey'] = $packageKey;
@@ -144,6 +184,11 @@ class GeneratorService {
 		$contextVariables['isInSubpackage'] = ($subpackage != '');
 		$contextVariables['controllerName'] = $controllerName;
 		$contextVariables['viewName'] = $viewName;
+		$contextVariables['modelName'] = strtolower($controllerName[0]) . substr($controllerName, 1);
+		$contextVariables['repositoryClassName'] = '\\' . str_replace('.', '\\', $packageKey) . ($subpackage != '' ? '\\' . $subpackage : '') . '\Domain\Repository\\' . $controllerName . 'Repository';
+		$contextVariables['modelFullClassName'] = '\\' . str_replace('.', '\\', $packageKey) . ($subpackage != '' ? '\\' . $subpackage : '') . '\Domain\Model\\' . $controllerName;
+		$contextVariables['modelClassName'] = ucfirst($contextVariables['modelName']);
+		$contextVariables['propertyNames'] = array('name');
 
 		$fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
 
@@ -152,7 +197,35 @@ class GeneratorService {
 		$viewPath = 'resource://' . $packageKey . '/Private/Templates/' . $subpackagePath . $controllerName . '/';
 		$targetPathAndFilename = $viewPath . $viewFilename;
 
-		$this->generateFile($targetPathAndFilename, $fileContent);
+		$this->generateFile($targetPathAndFilename, $fileContent, $overwrite);
+
+		return $this->generatedFiles;
+	}
+
+	/**
+	 * Generate a default layout
+	 *
+	 * @param string $packageKey The package key of the controller's package
+	 * @param string $layoutName The name of the layout
+	 * @param boolean $overwrite Overwrite any existing files?
+	 * @return array An array of generated filenames
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function generateLayout($packageKey, $layoutName, $overwrite = FALSE) {
+		$layoutName = ucfirst($layoutName);
+
+		$templatePathAndFilename = 'resource://TYPO3.Kickstart/Private/Generator/View/' . $layoutName . 'Layout.html';
+
+		$contextVariables = array();
+		$contextVariables['packageKey'] = $packageKey;
+
+		$fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
+
+		$layoutFilename = $layoutName . '.html';
+		$viewPath = 'resource://' . $packageKey . '/Private/Layouts/';
+		$targetPathAndFilename = $viewPath . $layoutFilename;
+
+		$this->generateFile($targetPathAndFilename, $fileContent, $overwrite);
 
 		return $this->generatedFiles;
 	}
@@ -163,10 +236,11 @@ class GeneratorService {
 	 * @param string $packageKey The package key of the controller's package
 	 * @param string $modelName The name of the new model
 	 * @param array $fieldDefinitions The field definitions
+	 * @param boolean $overwrite Overwrite any existing files?
 	 * @return array An array of generated filenames
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function generateModel($packageKey, $modelName, array $fieldDefinitions) {
+	public function generateModel($packageKey, $modelName, array $fieldDefinitions, $overwrite = FALSE) {
 		$modelName = ucfirst($modelName);
 		$namespace = str_replace('.', '\\', $packageKey) .  '\\Domain\\Model';
 		$fieldDefinitions = $this->normalizeFieldDefinitions($fieldDefinitions, $namespace);
@@ -185,7 +259,7 @@ class GeneratorService {
 		$modelPath = $this->packageManager->getPackage($packageKey)->getClassesPath() . 'Domain/Model/';
 		$targetPathAndFilename = $modelPath . $modelFilename;
 
-		$this->generateFile($targetPathAndFilename, $fileContent);
+		$this->generateFile($targetPathAndFilename, $fileContent, $overwrite);
 
 		return $this->generatedFiles;
 	}
@@ -196,9 +270,10 @@ class GeneratorService {
 	 * @param string $packageKey The package key
 	 * @param string $modelName The name of the model
 	 * @return array An array of generated filenames
+	 * @param boolean $overwrite Overwrite any existing files?
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function generateRepository($packageKey, $modelName) {
+	public function generateRepository($packageKey, $modelName, $overwrite = FALSE) {
 		$modelName = ucfirst($modelName);
 		$repositoryClassName = $modelName . 'Repository';
 		$namespace = str_replace('.', '\\', $packageKey) .  '\\Domain\\Repository';
@@ -217,7 +292,7 @@ class GeneratorService {
 		$repositoryPath = $this->packageManager->getPackage($packageKey)->getClassesPath() . 'Domain/Repository/';
 		$targetPathAndFilename = $repositoryPath . $repositoryFilename;
 
-		$this->generateFile($targetPathAndFilename, $fileContent);
+		$this->generateFile($targetPathAndFilename, $fileContent, $overwrite);
 
 		return $this->generatedFiles;
 	}
@@ -252,16 +327,29 @@ class GeneratorService {
 	 *
 	 * @param string $targetPathAndFilename
 	 * @param string $fileContent
+	 * @param boolean $force
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	protected function generateFile($targetPathAndFilename, $fileContent) {
+	protected function generateFile($targetPathAndFilename, $fileContent, $force = FALSE) {
 		if (!is_dir(dirname($targetPathAndFilename))) {
 			\TYPO3\FLOW3\Utility\Files::createDirectoryRecursively(dirname($targetPathAndFilename));
 		}
-		file_put_contents($targetPathAndFilename, $fileContent);
-		$relativeTargetPathAndFilename = substr($targetPathAndFilename, strlen(FLOW3_PATH_ROOT) - 1);
-		$this->generatedFiles[] = '+ ...' . $relativeTargetPathAndFilename;
+
+		if (substr($targetPathAndFilename, 0, 11) === 'resource://') {
+			list($packageKey, $resourcePath) = explode('/', substr($targetPathAndFilename, 11), 2);
+			$relativeTargetPathAndFilename = $packageKey . '/Resources/' . $resourcePath;
+
+		} else {
+			$relativeTargetPathAndFilename = substr($targetPathAndFilename, strrpos(substr($targetPathAndFilename, 0, strpos($targetPathAndFilename, 'Classes/') - 1), '/') + 1);
+		}
+
+		if (!file_exists($targetPathAndFilename) || $force === TRUE) {
+			file_put_contents($targetPathAndFilename, $fileContent);
+			$this->generatedFiles[] = 'Created .../' . $relativeTargetPathAndFilename;
+		} else {
+			$this->generatedFiles[] = 'Omitted .../' . $relativeTargetPathAndFilename;
+		}
 	}
 
 	/**

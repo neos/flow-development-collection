@@ -1,0 +1,18 @@
+{namespace k=TYPO3\Kickstart\ViewHelpers}<![CDATA[<f:layout name="Default" />
+
+<f:section name="Title">]]>Edit <k:inflect.humanizeCamelCase lowercase="true">{modelName}</k:inflect.humanizeCamelCase> "<![CDATA[{]]>{modelName}<![CDATA[.name}]]>"<![CDATA[</f:section>
+
+<f:section name="Content">]]>
+	<![CDATA[<f:form action="update" object="{]]>{modelName}<![CDATA[}]]>" name="{modelName}">
+		<ol><f:for each="{propertyNames}" as="propertyName">
+			<li>
+				<label for="{propertyName}"><k:inflect.humanizeCamelCase>{propertyName}</k:inflect.humanizeCamelCase></label>
+				<![CDATA[<f:form.textbox]]> property="{propertyName}" id="{propertyName}" />
+			</li>
+		</f:for>
+			<li>
+				<![CDATA[<f:form.submit value="Update"/>
+			</li>
+		</ol>
+	</f:form>]]>
+<![CDATA[</f:section>]]>

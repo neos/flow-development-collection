@@ -1,0 +1,89 @@
+{namespace k=TYPO3\Kickstart\ViewHelpers}<?php
+namespace {packageNamespace}<f:if condition="{isInSubpackage}">\{subpackage}</f:if>\Controller;
+
+/*                                                                        *
+<f:format.padding padLength="74"> * This script belongs to the FLOW3 package "{packageKey}".</f:format.padding>*
+ *                                                                        *
+ *                                                                        */
+
+use \TYPO3\FLOW3\MVC\Controller\ActionController;
+use {modelFullClassName};
+
+/**
+ * {controllerName} controller for the {packageKey} package <f:if condition="{isInSubpackage}"> and subpackage {subpackage}</f:if>
+ */
+class {controllerClassName} extends ActionController {
+
+	/**
+	 * @inject
+	 * @var {repositoryClassName}
+	 */
+	protected ${modelName}Repository;
+
+	/**
+	 * Shows a list of <k:inflect.humanizeCamelCase lowercase="true"><k:inflect.pluralize>{modelName}</k:inflect.pluralize></k:inflect.humanizeCamelCase>
+	 */
+	public function indexAction() {
+		$this->view->assign('<k:inflect.pluralize>{modelName}</k:inflect.pluralize>', $this->{modelName}Repository->findAll());
+	}
+
+	/**
+	 * Shows a single <k:inflect.humanizeCamelCase lowercase="true">{modelName}</k:inflect.humanizeCamelCase> object
+	 *
+	 * @param {modelFullClassName} ${modelName} The <k:inflect.humanizeCamelCase lowercase="true">{modelName}</k:inflect.humanizeCamelCase> to show
+	 */
+	public function showAction({modelClassName} ${modelName}) {
+		$this->view->assign('{modelName}', ${modelName});
+	}
+
+	/**
+	 * Shows a form for creating a new <k:inflect.humanizeCamelCase lowercase="true">{modelName}</k:inflect.humanizeCamelCase> object
+	 */
+	public function newAction() <![CDATA[{
+	}]]>
+
+	/**
+	 * Adds the given new <k:inflect.humanizeCamelCase lowercase="true">{modelName}</k:inflect.humanizeCamelCase> object to the <k:inflect.humanizeCamelCase lowercase="true">{modelName}</k:inflect.humanizeCamelCase> repository
+	 *
+	 * @param {modelFullClassName} ${modelName} A new <k:inflect.humanizeCamelCase lowercase="true">{modelName}</k:inflect.humanizeCamelCase> to add
+	 */
+	public function createAction({modelClassName} $new<k:uppercaseFirst>{modelName}</k:uppercaseFirst>) {
+		$this->{modelName}Repository->add($new<k:uppercaseFirst>{modelName}</k:uppercaseFirst>);
+		$this->flashMessageContainer->add('Created a new <k:inflect.humanizeCamelCase lowercase="true">{modelName}</k:inflect.humanizeCamelCase>.');
+		$this->redirect('index');
+	}
+
+	/**
+	 * Shows a form for editing an existing <k:inflect.humanizeCamelCase lowercase="true">{modelName}</k:inflect.humanizeCamelCase> object
+	 *
+	 * @param {modelFullClassName} ${modelName} The <k:inflect.humanizeCamelCase lowercase="true">{modelName}</k:inflect.humanizeCamelCase> to edit
+	 */
+	public function editAction({modelClassName} ${modelName}) {
+		$this->view->assign('{modelName}', ${modelName});
+	}
+
+	/**
+	 * Updates the given <k:inflect.humanizeCamelCase lowercase="true">{modelName}</k:inflect.humanizeCamelCase> object
+	 *
+	 * @param {modelFullClassName} ${modelName} The <k:inflect.humanizeCamelCase lowercase="true">{modelName}</k:inflect.humanizeCamelCase> to update
+	 */
+	public function updateAction({modelClassName} ${modelName}) {
+		$this->{modelName}Repository->update(${modelName});
+		$this->flashMessageContainer->add('Updated the <k:inflect.humanizeCamelCase lowercase="true">{modelName}</k:inflect.humanizeCamelCase>.');
+		$this->redirect('index');
+	}
+
+	/**
+	 * Removes the given <k:inflect.humanizeCamelCase lowercase="true">{modelName}</k:inflect.humanizeCamelCase> object from the <k:inflect.humanizeCamelCase lowercase="true">{modelName}</k:inflect.humanizeCamelCase> repository
+	 *
+	 * @param {modelFullClassName} ${modelName} The <k:inflect.humanizeCamelCase lowercase="true">{modelName}</k:inflect.humanizeCamelCase> to delete
+	 */
+	public function deleteAction({modelClassName} ${modelName}) {
+		$this->{modelName}Repository->remove(${modelName});
+		$this->flashMessageContainer->add('Deleted a <k:inflect.humanizeCamelCase lowercase="true">{modelName}</k:inflect.humanizeCamelCase>.');
+		$this->redirect('index');
+	}
+
+}
+
+?>
