@@ -57,7 +57,7 @@ class ObjectAccess {
 	 * @param mixed $subject Object or array to get the property from
 	 * @param string $propertyName name of the property to retrieve
 	 * @param boolean $forceDirectAccess directly access property using reflection(!)
-	 * @return mixed Value of the property.
+	 * @return mixed Value of the property
 	 * @throws \InvalidArgumentException in case $subject was not an object or $propertyName was not a string
 	 * @throws \TYPO3\FLOW3\Reflection\Exception\PropertyNotAccessibleException if the property was not accessible
 	 * @author Robert Lemke <robert@typo3.org>
@@ -72,32 +72,68 @@ class ObjectAccess {
 			throw new \InvalidArgumentException('Given property name is not of type string.', 1231178303);
 		}
 
+		$propertyExists = FALSE;
+		$propertyValue = self::getPropertyInternal($subject, $propertyName, $forceDirectAccess, $propertyExists);
+		if ($propertyExists === TRUE) {
+			return $propertyValue;
+		}
+		throw new \TYPO3\FLOW3\Reflection\Exception\PropertyNotAccessibleException('The property "' . $propertyName . '" on the subject was not accessible.', 1263391473);
+	}
+
+	/**
+	 * Gets a property of a given object or array.
+	 * This is an internal method that does only limited type checking for performance reasons.
+	 * If you can't make sure that $subject is either of type array or object and $propertyName of type string you should use getProperty() instead.
+	 * @see getProperty()
+	 *
+	 * @param mixed $subject Object or array to get the property from
+	 * @param string $propertyName name of the property to retrieve
+	 * @param boolean $forceDirectAccess directly access property using reflection(!)
+	 * @param boolean $propertyExists (by reference) will be set to TRUE if the specified property exists and is gettable
+	 * @return mixed Value of the property
+	 * @internal
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	static public function getPropertyInternal($subject, $propertyName, $forceDirectAccess, &$propertyExists) {
+		if ($subject === NULL) {
+			return;
+		}
+		$propertyExists = TRUE;
 		if (is_array($subject)) {
 			if (array_key_exists($propertyName, $subject)) {
 				return $subject[$propertyName];
 			}
-		} else {
-			if ($forceDirectAccess === TRUE) {
-				if (property_exists(get_class($subject), $propertyName)) {
-					$propertyReflection = new \TYPO3\FLOW3\Reflection\PropertyReflection(get_class($subject), $propertyName);
-					return $propertyReflection->getValue($subject);
-				} elseif (property_exists($subject, $propertyName)) {
-					return $subject->$propertyName;
-				} else {
-					throw new \TYPO3\FLOW3\Reflection\Exception\PropertyNotAccessibleException('The property "' . $propertyName . '" on the subject does not exist.', 1302855001);
-				}
-			} elseif (is_callable(array($subject, 'get' . ucfirst($propertyName)))) {
-				return call_user_func(array($subject, 'get' . ucfirst($propertyName)));
-			} elseif (is_callable(array($subject, 'is' . ucfirst($propertyName)))) {
-				return call_user_func(array($subject, 'is' . ucfirst($propertyName)));
-			} elseif ($subject instanceof \ArrayAccess && isset($subject[$propertyName])) {
-				return $subject[$propertyName];
-			} elseif (array_key_exists($propertyName, get_object_vars($subject))) {
+			$propertyExists = FALSE;
+			return;
+		}
+		if ($forceDirectAccess === TRUE) {
+			if (property_exists(get_class($subject), $propertyName)) {
+				$propertyReflection = new \TYPO3\FLOW3\Reflection\PropertyReflection(get_class($subject), $propertyName);
+				return $propertyReflection->getValue($subject);
+			} elseif (property_exists($subject, $propertyName)) {
 				return $subject->$propertyName;
+			} else {
+				throw new \TYPO3\FLOW3\Reflection\Exception\PropertyNotAccessibleException('The property "' . $propertyName . '" on the subject does not exist.', 1302855001);
 			}
 		}
-
-		throw new \TYPO3\FLOW3\Reflection\Exception\PropertyNotAccessibleException('The property "' . $propertyName . '" on the subject was not accessible.', 1263391473);
+		if ($subject instanceof \ArrayAccess && isset($subject[$propertyName])) {
+			return $subject[$propertyName];
+		}
+		$getterMethodName = 'get' . ucfirst($propertyName);
+		if (is_callable(array($subject, $getterMethodName))) {
+			return $subject->$getterMethodName();
+		}
+		$getterMethodName = 'is' . ucfirst($propertyName);
+		if (is_callable(array($subject, $getterMethodName))) {
+			return $subject->$getterMethodName();
+		}
+		if (array_key_exists($propertyName, get_object_vars($subject))) {
+			return $subject->$propertyName;
+		}
+		$propertyExists = FALSE;
 	}
 
 	/**
@@ -108,30 +144,21 @@ class ObjectAccess {
 	 *
 	 * For arrays the keys are checked likewise.
 	 *
-	 * If $evaluateClosures is TRUE, then the following happens:
-	 * In case a property on the path is a Closure, the Closure is executed,
-	 * and the return value of the closure is used for further processing.
-	 *
 	 * @param mixed $subject An object or array
 	 * @param string $propertyPath
-	 * @param boolean $evaluateClosures If set to TRUE, closures along the path will be evaluated and their return value will be used.
 	 * @return mixed Value of the property
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	static public function getPropertyPath($subject, $propertyPath, $evaluateClosures = FALSE) {
+	static public function getPropertyPath($subject, $propertyPath) {
 		$propertyPathSegments = explode('.', $propertyPath);
 		foreach ($propertyPathSegments as $pathSegment) {
-			if (is_object($subject) && self::isPropertyGettable($subject, $pathSegment)) {
-				$subject = self::getProperty($subject, $pathSegment);
-			} elseif ((is_array($subject) || $subject instanceof \ArrayAccess) && isset($subject[$pathSegment])) {
+			$propertyExists = FALSE;
+			$propertyValue = self::getPropertyInternal($subject, $pathSegment, FALSE, $propertyExists);
+			if ($propertyExists !== TRUE && (is_array($subject) || $subject instanceof \ArrayAccess) && isset($subject[$pathSegment])) {
 				$subject = $subject[$pathSegment];
 			} else {
-				return NULL;
-			}
-
-			if ($evaluateClosures && $subject instanceof \Closure) {
-				$subject = $subject();
+				$subject = $propertyValue;
 			}
 		}
 		return $subject;
@@ -174,7 +201,7 @@ class ObjectAccess {
 				$subject->$propertyName = $propertyValue;
 			}
 		} elseif (is_callable(array($subject, $setterMethodName = self::buildSetterMethodName($propertyName)))) {
-			call_user_func(array($subject, $setterMethodName), $propertyValue);
+			$subject->$setterMethodName($propertyValue);
 		} elseif ($subject instanceof \ArrayAccess) {
 			$subject[$propertyName] = $propertyValue;
 		} elseif (array_key_exists($propertyName, get_object_vars($subject))) {
@@ -279,15 +306,14 @@ class ObjectAccess {
 	 */
 	static public function isPropertyGettable($object, $propertyName) {
 		if (!is_object($object)) throw new \InvalidArgumentException('$object must be an object, ' . gettype($object). ' given.', 1259828921);
-		if ($object instanceof \stdClass && array_search($propertyName, array_keys(get_object_vars($object))) !== FALSE) {
+		if ($object instanceof \ArrayAccess && isset($object[$propertyName]) === TRUE) {
 			return TRUE;
-		} elseif (array_search($propertyName, array_keys(get_class_vars(get_class($object)))) !== FALSE) {
-			return TRUE;
-		} elseif ($object instanceof \ArrayAccess && isset($object[$propertyName]) === TRUE) {
+		} elseif ($object instanceof \stdClass && array_search($propertyName, array_keys(get_object_vars($object))) !== FALSE) {
 			return TRUE;
 		}
 		if (is_callable(array($object, 'get' . ucfirst($propertyName)))) return TRUE;
-		return is_callable(array($object, 'is' . ucfirst($propertyName)));
+		if (is_callable(array($object, 'is' . ucfirst($propertyName)))) return TRUE;
+		return (array_search($propertyName, array_keys(get_class_vars(get_class($object)))) !== FALSE);
 	}
 
 	/**
@@ -303,7 +329,11 @@ class ObjectAccess {
 		if (!is_object($object)) throw new \InvalidArgumentException('$object must be an object, ' . gettype($object). ' given.', 1237301370);
 		$properties = array();
 		foreach (self::getGettablePropertyNames($object) as $propertyName) {
-			$properties[$propertyName] = self::getProperty($object, $propertyName);
+			$propertyExists = FALSE;
+			$propertyValue = self::getPropertyInternal($object, $propertyName, FALSE, $propertyExists);
+			if ($propertyExists === TRUE) {
+				$properties[$propertyName] = $propertyValue;
+			}
 		}
 		return $properties;
 	}
