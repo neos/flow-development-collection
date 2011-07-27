@@ -118,8 +118,8 @@ class RequestBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function cliAccessWithPackageControllerActionAndArgumentsBuildsCorrectRequest() {
 		$methodParameters = array(
-			'testArgument' => array('optional' => FALSE),
-			'testArgument2' => array('optional' => FALSE)
+			'testArgument' => array('optional' => FALSE, 'type' => 'string'),
+			'testArgument2' => array('optional' => FALSE, 'type' => 'string')
 		);
 		$this->mockReflectionService->expects($this->once())->method('getMethodParameters')->with('Acme\Test\Command\DefaultCommandController', 'listCommand')->will($this->returnValue($methodParameters));
 
@@ -138,10 +138,10 @@ class RequestBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function checkIfCLIAccesWithPackageControllerActionAndArgumentsToleratesSpaces() {
 		$methodParameters = array(
-			'testArgument' => array('optional' => FALSE),
-			'testArgument2' => array('optional' => FALSE),
-			'testArgument3' => array('optional' => FALSE),
-			'testArgument4' => array('optional' => FALSE)
+			'testArgument' => array('optional' => FALSE, 'type' => 'string'),
+			'testArgument2' => array('optional' => FALSE, 'type' => 'string'),
+			'testArgument3' => array('optional' => FALSE, 'type' => 'string'),
+			'testArgument4' => array('optional' => FALSE, 'type' => 'string')
 		);
 		$this->mockReflectionService->expects($this->once())->method('getMethodParameters')->with('Acme\Test\Command\DefaultCommandController', 'listCommand')->will($this->returnValue($methodParameters));
 
@@ -164,9 +164,9 @@ class RequestBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function CLIAccesWithShortArgumentsBuildsCorrectRequest() {
 		$methodParameters = array(
-			'a' => array('optional' => FALSE),
-			'd' => array('optional' => FALSE),
-			'f' => array('optional' => FALSE),
+			'a' => array('optional' => FALSE, 'type' => 'string'),
+			'd' => array('optional' => FALSE, 'type' => 'string'),
+			'f' => array('optional' => FALSE, 'type' => 'string'),
 		);
 		$this->mockReflectionService->expects($this->once())->method('getMethodParameters')->with('Acme\Test\Command\DefaultCommandController', 'listCommand')->will($this->returnValue($methodParameters));
 
@@ -188,20 +188,20 @@ class RequestBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function CLIAccesWithArgumentsWithAndWithoutValuesBuildsCorrectRequest() {
 		$methodParameters = array(
-			'testArgument' => array('optional' => FALSE),
-			'testArgument2' => array('optional' => FALSE),
-			'testArgument3' => array('optional' => FALSE),
-			'testArgument4' => array('optional' => FALSE),
-			'testArgument5' => array('optional' => FALSE),
-			'testArgument6' => array('optional' => FALSE),
-			'testArgument7' => array('optional' => FALSE),
-			'f' => array('optional' => FALSE),
-			'd' => array('optional' => FALSE),
-			'a' => array('optional' => FALSE),
-			'c' => array('optional' => FALSE),
-			'j' => array('optional' => FALSE),
-			'k' => array('optional' => FALSE),
-			'm' => array('optional' => FALSE),
+			'testArgument' => array('optional' => FALSE, 'type' => 'string'),
+			'testArgument2' => array('optional' => FALSE, 'type' => 'string'),
+			'testArgument3' => array('optional' => FALSE, 'type' => 'string'),
+			'testArgument4' => array('optional' => FALSE, 'type' => 'string'),
+			'testArgument5' => array('optional' => FALSE, 'type' => 'string'),
+			'testArgument6' => array('optional' => FALSE, 'type' => 'string'),
+			'testArgument7' => array('optional' => FALSE, 'type' => 'string'),
+			'f' => array('optional' => FALSE, 'type' => 'string'),
+			'd' => array('optional' => FALSE, 'type' => 'string'),
+			'a' => array('optional' => FALSE, 'type' => 'string'),
+			'c' => array('optional' => FALSE, 'type' => 'string'),
+			'j' => array('optional' => FALSE, 'type' => 'string'),
+			'k' => array('optional' => FALSE, 'type' => 'string'),
+			'm' => array('optional' => FALSE, 'type' => 'string'),
 		);
 		$this->mockReflectionService->expects($this->once())->method('getMethodParameters')->with('Acme\Test\Command\DefaultCommandController', 'listCommand')->will($this->returnValue($methodParameters));
 
@@ -237,8 +237,8 @@ class RequestBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function insteadOfNamedArgumentsTheArgumentsCanBePassedUnnamedInTheCorrectOrder() {
 		$methodParameters = array(
-			'testArgument1' => array('optional' => FALSE),
-			'testArgument2' => array('optional' => FALSE),
+			'testArgument1' => array('optional' => FALSE, 'type' => 'string'),
+			'testArgument2' => array('optional' => FALSE, 'type' => 'string'),
 		);
 		$this->mockReflectionService->expects($this->exactly(2))->method('getMethodParameters')->with('Acme\Test\Command\DefaultCommandController', 'listCommand')->will($this->returnValue($methodParameters));
 
@@ -257,10 +257,10 @@ class RequestBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function argumentsAreDetectedAfterOptions() {
 		$methodParameters = array(
-			'some' => array('optional' => TRUE),
-			'option' => array('optional' => TRUE),
-			'argument1' => array('optional' => FALSE),
-			'argument2' => array('optional' => FALSE),
+			'some' => array('optional' => TRUE, 'type' => 'boolean'),
+			'option' => array('optional' => TRUE, 'type' => 'string'),
+			'argument1' => array('optional' => FALSE, 'type' => 'string'),
+			'argument2' => array('optional' => FALSE, 'type' => 'string'),
 		);
 		$this->mockReflectionService->expects($this->once())->method('getMethodParameters')->with('Acme\Test\Command\DefaultCommandController', 'listCommand')->will($this->returnValue($methodParameters));
 
@@ -277,8 +277,8 @@ class RequestBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function exceedingArgumentsMayBeSpecified() {
 		$methodParameters = array(
-			'testArgument1' => array('optional' => FALSE),
-			'testArgument2' => array('optional' => FALSE),
+			'testArgument1' => array('optional' => FALSE, 'type' => 'string'),
+			'testArgument2' => array('optional' => FALSE, 'type' => 'string'),
 		);
 		$this->mockReflectionService->expects($this->once())->method('getMethodParameters')->with('Acme\Test\Command\DefaultCommandController', 'listCommand')->will($this->returnValue($methodParameters));
 
@@ -296,8 +296,8 @@ class RequestBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function ifNamedArgumentsAreUsedAllRequiredArgumentsMustBeNamed() {
 		$methodParameters = array(
-			'testArgument1' => array('optional' => FALSE),
-			'testArgument2' => array('optional' => FALSE),
+			'testArgument1' => array('optional' => FALSE, 'type' => 'string'),
+			'testArgument2' => array('optional' => FALSE, 'type' => 'string'),
 		);
 		$this->mockReflectionService->expects($this->once())->method('getMethodParameters')->with('Acme\Test\Command\DefaultCommandController', 'listCommand')->will($this->returnValue($methodParameters));
 
@@ -311,14 +311,52 @@ class RequestBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function ifUnnamedArgumentsAreUsedAllRequiredArgumentsMustBeUnnamed() {
 		$methodParameters = array(
-			'requiredArgument1' => array('optional' => FALSE),
-			'requiredArgument2' => array('optional' => FALSE),
+			'requiredArgument1' => array('optional' => FALSE, 'type' => 'string'),
+			'requiredArgument2' => array('optional' => FALSE, 'type' => 'string'),
 		);
 		$this->mockReflectionService->expects($this->once())->method('getMethodParameters')->with('Acme\Test\Command\DefaultCommandController', 'listCommand')->will($this->returnValue($methodParameters));
 
 		$this->requestBuilder->build('acme.test:default:list firstArgumentValue --required-argument2 secondArgumentValue');
 	}
 
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function booleanOptionsAreConsideredEvenIfAnUnnamedArgumentFollows() {
+		$methodParameters = array(
+			'requiredArgument1' => array('optional' => FALSE, 'type' => 'string'),
+			'requiredArgument2' => array('optional' => FALSE, 'type' => 'string'),
+			'booleanOption' => array('optional' => TRUE, 'type' => 'boolean'),
+		);
+		$this->mockReflectionService->expects($this->once())->method('getMethodParameters')->with('Acme\Test\Command\DefaultCommandController', 'listCommand')->will($this->returnValue($methodParameters));
+
+		$expectedArguments = array('requiredArgument1' => 'firstArgumentValue', 'requiredArgument2' => 'secondArgumentValue', 'booleanOption' => TRUE);
+
+		$request = $this->requestBuilder->build('acme.test:default:list --booleanOption firstArgumentValue secondArgumentValue');
+		$this->assertEquals($expectedArguments, $request->getArguments());
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function booleanOptionsCanHaveOnlyCertainValuesIfTheValueIsAssignedWithoutEqualSign() {
+		$methodParameters = array(
+			'b1' => array('optional' => TRUE, 'type' => 'boolean'),
+			'b2' => array('optional' => TRUE, 'type' => 'boolean'),
+			'b3' => array('optional' => TRUE, 'type' => 'boolean'),
+			'b4' => array('optional' => TRUE, 'type' => 'boolean'),
+			'b5' => array('optional' => TRUE, 'type' => 'boolean'),
+			'b6' => array('optional' => TRUE, 'type' => 'boolean'),
+		);
+		$this->mockReflectionService->expects($this->once())->method('getMethodParameters')->with('Acme\Test\Command\DefaultCommandController', 'listCommand')->will($this->returnValue($methodParameters));
+
+		$expectedArguments = array('b1' => TRUE, 'b2' => TRUE, 'b3' => TRUE, 'b4' => FALSE, 'b5' => FALSE, 'b6' => FALSE);
+
+		$request = $this->requestBuilder->build('acme.test:default:list --b2 y --b1 1 --b3 true --b4 false --b5 n --b6 0');
+		$this->assertEquals($expectedArguments, $request->getArguments());
+	}
 }
 
 ?>

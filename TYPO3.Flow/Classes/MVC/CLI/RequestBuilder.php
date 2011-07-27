@@ -158,13 +158,13 @@ class RequestBuilder {
 		$commandMethodName = $controllerCommandName . 'Command';
 		$commandMethodParameters = $this->reflectionService->getMethodParameters($controllerObjectName, $commandMethodName);
 
-		$requiredArgumentNames = array();
-		$optionalArgumentNames = array();
+		$requiredArguments = array();
+		$optionalArguments = array();
 		foreach ($commandMethodParameters as $parameterName => $parameterInfo) {
 			if ($parameterInfo['optional'] === FALSE) {
-				$requiredArgumentNames[strtolower($parameterName)] = $parameterName;
+				$requiredArguments[strtolower($parameterName)] = array('parameterName' => $parameterName, 'type' => $parameterInfo['type']);
 			} else {
-				$optionalArgumentNames[strtolower($parameterName)] = $parameterName;
+				$optionalArguments[strtolower($parameterName)] = array('parameterName' => $parameterName, 'type' => $parameterInfo['type']);
 			}
 		}
 
@@ -181,24 +181,26 @@ class RequestBuilder {
 					$rawArgument = substr($rawArgument, 1);
 				}
 				$argumentName = $this->extractArgumentNameFromCommandLinePart($rawArgument);
-				$argumentValue = $this->getValueOfCurrentCommandLineOption($rawArgument, $rawCommandLineArguments);
 
-				if (isset($optionalArgumentNames[$argumentName])) {
-					$commandLineArguments[$optionalArgumentNames[$argumentName]] = $argumentValue;
-				} elseif(isset($requiredArgumentNames[$argumentName])) {
+				if (isset($optionalArguments[$argumentName])) {
+					$argumentValue = $this->getValueOfCurrentCommandLineOption($rawArgument, $rawCommandLineArguments, $optionalArguments[$argumentName]['type']);
+					$commandLineArguments[$optionalArguments[$argumentName]['parameterName']] = $argumentValue;
+				} elseif(isset($requiredArguments[$argumentName])) {
 					if ($decidedToUseUnnamedArguments) {
 						throw new \TYPO3\FLOW3\MVC\Exception\InvalidArgumentMixingException(sprintf('Unexpected named argument "%s". If you use unnamed arguments, all required arguments must be passed without a name.', $argumentName), 1309971821);
 					}
 					$decidedToUseNamedArguments = TRUE;
-					$commandLineArguments[$requiredArgumentNames[$argumentName]] = $argumentValue;
-					unset($requiredArgumentNames[$argumentName]);
+					$argumentValue = $this->getValueOfCurrentCommandLineOption($rawArgument, $rawCommandLineArguments, $requiredArguments[$argumentName]['type']);
+					$commandLineArguments[$requiredArguments[$argumentName]['parameterName']] = $argumentValue;
+					unset($requiredArguments[$argumentName]);
 				}
 			} else {
-				if (count($requiredArgumentNames) > 0) {
+				if (count($requiredArguments) > 0) {
 					if ($decidedToUseNamedArguments) {
 						throw new \TYPO3\FLOW3\MVC\Exception\InvalidArgumentMixingException(sprintf('Unexpected unnamed argument "%s". If you use named arguments, all required arguments must be passed named.', $rawArgument), 1309971820);
 					}
-					$commandLineArguments[array_shift($requiredArgumentNames)] = $rawArgument;
+					$argument = array_shift($requiredArguments);
+					$commandLineArguments[$argument['parameterName']] = $rawArgument;
 					$decidedToUseUnnamedArguments = TRUE;
 				} else {
 					$commandLineArguments[] = $rawArgument;
@@ -226,18 +228,30 @@ class RequestBuilder {
 	 *
 	 * @param string $currentArgument The current argument
 	 * @param array &$rawCommandLineArguments Array of the remaining command line arguments
+	 * @param string $expectedArgumentType The expected type of the current argument, because booleans get special attention
 	 * @return string The value of the first argument
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function getValueOfCurrentCommandLineOption($currentArgument, array &$rawCommandLineArguments) {
+	protected function getValueOfCurrentCommandLineOption($currentArgument, array &$rawCommandLineArguments, $expectedArgumentType) {
 		if (!isset($rawCommandLineArguments[0]) || (isset($rawCommandLineArguments[0]) && $rawCommandLineArguments[0][0] === '-' && (strpos($currentArgument, '=') === FALSE))) {
 			return TRUE;
 		}
 
 		if (strpos($currentArgument, '=') === FALSE) {
-			$possibleValue = array_shift($rawCommandLineArguments);
+			$possibleValue = trim(array_shift($rawCommandLineArguments));
 			if (strpos($possibleValue, '=') === FALSE) {
-				return $possibleValue;
+				if ($expectedArgumentType !== 'boolean') {
+					return $possibleValue;
+				}
+				if (array_search($possibleValue, array('on', '1', 'y', 'yes', 'true', 'TRUE')) !== FALSE) {
+					return TRUE;
+				}
+				if (array_search($possibleValue, array('off', '0', 'n', 'no', 'false', 'FALSE')) !== FALSE) {
+					return FALSE;
+				}
+				array_unshift($rawCommandLineArguments, $possibleValue);
+				return TRUE;
 			}
 			$currentArgument .= $possibleValue;
 		}
