@@ -31,18 +31,21 @@ class PackageCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContro
 
 	/**
 	 * @inject
-	 * @var TYPO3\FLOW3\Package\PackageManagerInterface
+	 * @var \TYPO3\FLOW3\Package\PackageManagerInterface
 	 */
 	protected $packageManager;
+
+	/**
+	 * @inject
+	 * @var \TYPO3\FLOW3\Core\Bootstrap
+	 */
+	protected $bootstrap;
 
 	/**
 	 * Create a new package
 	 *
 	 * @param string $packageKey The package key of the package to create
 	 * @return string
-	 * @author Tobias Liebig <mail_typo3@etobi.de>
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function createCommand($packageKey) {
 		if (!$this->packageManager->isPackageKeyValid($packageKey)) {
@@ -52,7 +55,9 @@ class PackageCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContro
 			return 'The package "' . $packageKey . '" already exists.' . PHP_EOL;
 		}
 		$package = $this->packageManager->createPackage($packageKey);
-		return 'New package "' . $packageKey . '" created at "' . $package->getPackagePath() . '".' . PHP_EOL;
+		echo 'New package "' . $packageKey . '" created at "' . $package->getPackagePath() . '".' . PHP_EOL;
+		$this->bootstrap->executeCommand('typo3.flow3:cache:flush');
+		exit(0);
 	}
 
 	/**
@@ -70,7 +75,9 @@ class PackageCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContro
 			return 'The package "' . $packageKey . '" does not exist.' . PHP_EOL;
 		}
 		$this->packageManager->deletePackage($packageKey);
-		return 'Package "' . $packageKey . '" has been deleted.' . PHP_EOL;
+		echo 'Package "' . $packageKey . '" has been deleted.' . PHP_EOL;
+		$this->bootstrap->executeCommand('typo3.flow3:cache:flush');
+		exit(0);
 	}
 
 	/**
@@ -90,7 +97,9 @@ class PackageCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContro
 		}
 
 		$this->packageManager->activatePackage($packageKey);
-		return 'Package "' . $packageKey . '" activated.' . PHP_EOL;
+		echo 'Package "' . $packageKey . '" activated.' . PHP_EOL;
+		$this->bootstrap->executeCommand('typo3.flow3:cache:flush');
+		exit(0);
 	}
 
 	/**
@@ -106,7 +115,9 @@ class PackageCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContro
 		}
 
 		$this->packageManager->deactivatePackage($packageKey);
-		return 'Package "' . $packageKey . '" deactivated.' . PHP_EOL;
+		echo 'Package "' . $packageKey . '" deactivated.' . PHP_EOL;
+		$this->bootstrap->executeCommand('typo3.flow3:cache:flush');
+		exit(0);
 	}
 
 	/**
