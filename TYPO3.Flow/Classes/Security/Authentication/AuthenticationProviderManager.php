@@ -212,7 +212,6 @@ class AuthenticationProviderManager implements \TYPO3\FLOW3\Security\Authenticat
 				$tokenInstance = new $tokenClassName();
 				$tokenInstance->setAuthenticationProviderName($providerName);
 				$this->tokens[] = $tokenInstance;
-				break;
 			}
 
 			if (isset($providerConfiguration['requestPatterns']) && is_array($providerConfiguration['requestPatterns'])) {
