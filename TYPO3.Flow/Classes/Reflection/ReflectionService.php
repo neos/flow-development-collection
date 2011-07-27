@@ -917,9 +917,12 @@ class ReflectionService {
 
 			// now look for repositories that declare themselves responsible for a specific model
 		foreach ($this->getAllImplementationClassNamesForInterface('TYPO3\FLOW3\Persistence\RepositoryInterface') as $repositoryClassname) {
-			$claimedObjectType = $repositoryClassname::ENTITY_CLASSNAME;
-			if ($claimedObjectType !== NULL && isset($this->classSchemata[$claimedObjectType])) {
-				$this->classSchemata[$claimedObjectType]->setRepositoryClassName($repositoryClassname);
+				// need to be extra careful because this code could be called during a cache:flush run with corrupted reflection cache
+			if (class_exists($repositoryClassname)) {
+				$claimedObjectType = $repositoryClassname::ENTITY_CLASSNAME;
+				if ($claimedObjectType !== NULL && isset($this->classSchemata[$claimedObjectType])) {
+					$this->classSchemata[$claimedObjectType]->setRepositoryClassName($repositoryClassname);
+				}
 			}
 		}
 	}
