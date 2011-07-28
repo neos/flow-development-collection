@@ -445,7 +445,7 @@ class Bootstrap {
 	 * @param string $commandIdentifier E.g. typo3.flow3:cache:flush
 	 * @return boolean TRUE if the command execution was successful (exit code = 0)
 	 */
-	protected function executeCommand($commandIdentifier) {
+	public function executeCommand($commandIdentifier) {
 		if (DIRECTORY_SEPARATOR === '/') {
 			$command = 'XDEBUG_CONFIG="idekey=FLOW3_SUBREQUEST" FLOW3_ROOTPATH=' . \escapeshellarg(FLOW3_PATH_ROOT) . ' ' . 'FLOW3_CONTEXT=' . \escapeshellarg($this->context) . ' ' . \escapeshellcmd($this->settings['core']['phpBinaryPathAndFilename']) . ' -c ' . \escapeshellarg(php_ini_loaded_file()) . ' ' . \escapeshellarg(FLOW3_PATH_FLOW3 . 'Scripts/flow3.php') . ' ' . escapeshellarg($commandIdentifier);
 		} else {
