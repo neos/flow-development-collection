@@ -442,6 +442,9 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Persistence\Generic\Backe
 					);
 				break;
 				default:
+					if ($propertyValue === NULL && !\TYPO3\FLOW3\Utility\TypeHandling::isSimpleType($propertyMetaData['type'])) {
+						$this->removeDeletedReference($object, $propertyName, $propertyMetaData);
+					}
 					$propertyData[$propertyName] = array(
 						'multivalue' => FALSE,
 						'value' => $propertyValue
@@ -449,6 +452,24 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Persistence\Generic\Backe
 				break;
 			}
 			$propertyData[$propertyName]['type'] = $propertyMetaData['type'];
+		}
+	}
+
+	/**
+	 * Remove any unreferenced non aggregate root entity
+	 *
+	 * @param object $object
+	 * @param string $propertyName
+	 * @param array $propertyMetaData
+	 * @return void
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	protected function removeDeletedReference($object, $propertyName, $propertyMetaData) {
+		$previousValue = $this->persistenceSession->getCleanStateOfProperty($object, $propertyName);
+		if ($previousValue !== NULL && is_array($previousValue) && isset($previousValue['value']['identifier'])
+			&& $this->reflectionService->getClassSchema($propertyMetaData['type'])->getModelType() === \TYPO3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY
+			&& $this->reflectionService->getClassSchema($propertyMetaData['type'])->isAggregateRoot() === FALSE) {
+			$this->removeEntity($this->persistenceSession->getObjectByIdentifier($previousValue['value']['identifier']));
 		}
 	}
 
