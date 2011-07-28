@@ -403,49 +403,5 @@ class ObjectAccessTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$this->assertNull(\TYPO3\FLOW3\Reflection\ObjectAccess::getPropertyPath($this->dummyObject, 'property2.property.not.existing'));
 	}
 
-	/**
-	 * @test
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
-	 */
-	public function getPropertyPathCallsClosureOnLastElementIfClosureSupportIsEnabled() {
-		$this->dummyObject->setProperty(function() {
-			return "TEST";
-		});
-
-		$expected = 'TEST';
-		$actual = \TYPO3\FLOW3\Reflection\ObjectAccess::getPropertyPath($this->dummyObject, 'property', TRUE);
-		$this->assertEquals($expected, $actual);
-	}
-
-	/**
-	 * @test
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
-	 */
-	public function getPropertyPathDoesNotCallClosureOnLastElementByDefault() {
-		$closure = function() {
-			return "TEST";
-		};
-		$this->dummyObject->setProperty($closure);
-
-		$expected = $closure;
-		$actual = \TYPO3\FLOW3\Reflection\ObjectAccess::getPropertyPath($this->dummyObject, 'property');
-		$this->assertEquals($expected, $actual);
-	}
-
-	/**
-	 * @test
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
-	 */
-	public function getPropertyPathCallsClosuresRecursivelyIfClosureSupportisEnabled() {
-		$alternativeObject = new \TYPO3\FLOW3\Tests\Reflection\Fixture\DummyClassWithGettersAndSetters();
-		$alternativeObject->setProperty2("TEST");
-		$this->dummyObject->setProperty(function() use ($alternativeObject) {
-			return $alternativeObject;
-		});
-
-		$expected = 'TEST';
-		$actual = \TYPO3\FLOW3\Reflection\ObjectAccess::getPropertyPath($this->dummyObject, 'property.property2', TRUE);
-		$this->assertEquals($expected, $actual);
-	}
 }
 ?>
