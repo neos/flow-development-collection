@@ -84,6 +84,7 @@ class DoctrineCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContr
 			// additionally, when no path is set, skip this step, assuming no DB is needed
 		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['path'] !== NULL) {
 			$this->doctrineService->createSchema($output);
+			$this->response->appendContent('Created database schema.');
 		} else {
 			$this->response->appendContent('Database schema creation has been SKIPPED, the driver and path backend options are not set in /Configuration/Settings.yaml.');
 		}
@@ -103,6 +104,7 @@ class DoctrineCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContr
 			// additionally, when no path is set, skip this step, assuming no DB is needed
 		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['path'] !== NULL) {
 			$this->doctrineService->updateSchema($safeMode, $output);
+			$this->response->appendContent('Executed a database schema update.');
 		} else {
 			$this->response->appendContent('Database schema update has been SKIPPED, the driver and path backend options are not set in /Configuration/Settings.yaml.');
 		}
