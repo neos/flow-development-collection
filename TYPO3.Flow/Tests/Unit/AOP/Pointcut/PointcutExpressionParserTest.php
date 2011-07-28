@@ -186,6 +186,32 @@ class PointcutExpressionParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function parseDesignatorMethodParsesVisibilityForPointcutMethodNameFilter() {
+		$composite = $this->getAccessibleMock('TYPO3\FLOW3\AOP\Pointcut\PointcutFilterComposite', array('dummy'));
+
+		$mockLogger = $this->getMock('TYPO3\FLOW3\Log\SystemLoggerInterface');
+		$this->mockObjectManager->expects($this->any())->method('get')->will($this->returnValue($mockLogger));
+
+		$parser = $this->getAccessibleMock('TYPO3\FLOW3\AOP\Pointcut\PointcutExpressionParser', array('dummy'), array(), '', FALSE);
+		$parser->injectReflectionService($this->mockReflectionService);
+		$parser->injectObjectManager($this->mockObjectManager);
+
+		$parser->_call('parseDesignatorMethod', '&&', 'protected Foo->bar()', $composite);
+		$filters = $composite->_get('filters');
+		foreach ($filters as $operatorAndFilter) {
+			list($operator, $filter) = $operatorAndFilter;
+			if ($filter instanceof \TYPO3\FLOW3\AOP\Pointcut\PointcutMethodNameFilter) {
+				$this->assertEquals('protected', $filter->getMethodVisibility());
+				return;
+			}
+		}
+		$this->fail('No filter for method name found');
+	}
+
+	/**
+	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getArgumentConstraintsFromMethodArgumentsPatternWorks() {

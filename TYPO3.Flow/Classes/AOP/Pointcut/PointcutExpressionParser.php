@@ -253,11 +253,16 @@ class PointcutExpressionParser {
 		$methodNameFilter->injectSystemLogger($this->objectManager->get('TYPO3\FLOW3\Log\SystemLoggerInterface'));
 		$methodNameFilter->injectReflectionService($this->reflectionService);
 
-		$subComposite = new PointcutFilterComposite();
-		$subComposite->addFilter('&&', $classNameFilter);
-		$subComposite->addFilter('&&', $methodNameFilter);
+		if ($operator !== '&&') {
+			$subComposite = new PointcutFilterComposite();
+			$subComposite->addFilter('&&', $classNameFilter);
+			$subComposite->addFilter('&&', $methodNameFilter);
 
-		$pointcutFilterComposite->addFilter($operator, $subComposite);
+			$pointcutFilterComposite->addFilter($operator, $subComposite);
+		} else {
+			$pointcutFilterComposite->addFilter('&&', $classNameFilter);
+			$pointcutFilterComposite->addFilter('&&', $methodNameFilter);
+		}
 	}
 
 	/**
@@ -403,7 +408,7 @@ class PointcutExpressionParser {
 			throw new \TYPO3\FLOW3\AOP\Exception\InvalidPointcutExpressionException('Error while matching visibility modifier in "' . $signaturePattern . '", defined in ' . $this->sourceHint, 1172492967);
 		}
 		if ($numberOfMatches === 1) {
-			$visibility = $matches[0][0];
+			$visibility = $matches[0][1];
 			$signaturePattern = trim(substr($signaturePattern, strlen($visibility)));
 		}
 		return $visibility;

@@ -43,11 +43,10 @@ class PointcutFilterComposite implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilte
 	 */
 	protected $earlyReturn = TRUE;
 
-		/**
+	/**
 	 * @var array An array of runtime evaluations
 	 */
 	protected $runtimeEvaluationsDefinition = array();
-
 
 	/**
 	 * @var array An array of global runtime evaluations
