@@ -59,7 +59,7 @@ class KickstartCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandCont
 			return 'Package "' . $packageKey . '" already exists.' . PHP_EOL;
 		}
 		$this->packageManager->createPackage($packageKey);
-		return $this->actioncontrollerCommand($packageKey, 'Standard');
+		return $this->actionControllerCommand($packageKey, 'Standard');
 	}
 
 	/**
