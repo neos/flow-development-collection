@@ -30,7 +30,7 @@ namespace TYPO3\FLOW3\Cache\Backend;
  * @api
  * @scope prototype
  */
-class NullBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
+class NullBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend implements \TYPO3\FLOW3\Cache\Backend\PhpCapableBackendInterface {
 
 	/**
 	 * Acts as if it would save data
@@ -123,6 +123,17 @@ class NullBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @api
 	 */
 	public function collectGarbage() {
+	}
+
+	/**
+	 * Does nothing
+	 *
+	 * @param string $identifier An identifier which describes the cache entry to load
+	 * @return void
+	 * @author Christian Kuhn <lolli@schwarzbu.ch>
+	 * @api
+	 */
+	public function requireOnce($identifier) {
 	}
 }
 // @codeCoverageIgnoreEnd
