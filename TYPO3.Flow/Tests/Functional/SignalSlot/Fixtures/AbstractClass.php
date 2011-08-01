@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Functional\AOP;
+namespace TYPO3\FLOW3\Tests\Functional\SignalSlot\Fixtures;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -22,44 +22,24 @@ namespace TYPO3\FLOW3\Tests\Functional\AOP;
  *                                                                        */
 
 /**
- * Test suite for aop proxy classes
+ * An abstract class with a signal
  *
+ * @scope prototype
  */
-class AopProxyTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
+abstract class AbstractClass {
 
 	/**
-	 * @test
+	 * @return void
 	 */
-	public function advicesAreExecutedAgainIfAnOverriddenMethodCallsItsParentMethod() {
-		$targetClass = new Fixtures\ChildClassOfTargetClass01();
-		$this->assertEquals('Greetings, I just wanted to say: Hello World World', $targetClass->sayHello());
+	public function triggerSomethingSignalFromAbstractClass() {
+		$this->emitSomething();
 	}
 
 	/**
-	 * @test
+	 * @signal
+	 * @return void
 	 */
-	public function anAdvicedParentMethodIsCalledCorrectlyIfANonAdvicedOverridingMethodCallsIt() {
-		$targetClass = new Fixtures\ChildClassOfTargetClass01();
-		$this->assertEquals('Two plus two makes five! For big twos and small fives! That was smart, eh?', $targetClass->saySomethingSmart());
-	}
-
-	/**
-	 * @test
-	 */
-	public function methodArgumentsWithValueNullArePassedToTheProxiedMethod() {
-		$proxiedClass = new Fixtures\EntityWithOptionalConstructorArguments('argument1', NULL, 'argument3');
-
-		$this->assertEquals('argument1', $proxiedClass->argument1);
-		$this->assertNull($proxiedClass->argument2);
-		$this->assertEquals('argument3', $proxiedClass->argument3);
-	}
-
-	/**
-	 * @test
-	 */
-	public function advicesOfAConcreteMethodInAnAbstractClassAreActiveInTheSubClassIfTheConcreteMethodWasNotOverriden() {
-		$proxiedClass = new Fixtures\SubClassOfAbstractClass();
-		$this->assertEquals('foo: bar adviced', $proxiedClass->concreteMethod('bar'));
+	public function emitSomething() {
 	}
 
 }
