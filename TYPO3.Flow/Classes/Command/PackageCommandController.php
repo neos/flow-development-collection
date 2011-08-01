@@ -49,10 +49,12 @@ class PackageCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContro
 	 */
 	public function createCommand($packageKey) {
 		if (!$this->packageManager->isPackageKeyValid($packageKey)) {
-			return 'The package key "' . $packageKey . '" is not valid.' . PHP_EOL;
+			$this->response->setExitCode(1);
+			return 'The package key "' . $packageKey . '" is not valid.';
 		}
 		if ($this->packageManager->isPackageAvailable($packageKey)) {
-			return 'The package "' . $packageKey . '" already exists.' . PHP_EOL;
+			$this->response->setExitCode(2);
+			return 'The package "' . $packageKey . '" already exists.';
 		}
 		$package = $this->packageManager->createPackage($packageKey);
 		echo 'New package "' . $packageKey . '" created at "' . $package->getPackagePath() . '".' . PHP_EOL;
@@ -72,7 +74,8 @@ class PackageCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContro
 			return $this->helpCommand();
 		}
 		if (!$this->packageManager->isPackageAvailable($packageKey)) {
-			return 'The package "' . $packageKey . '" does not exist.' . PHP_EOL;
+			$this->response->setExitCode(1);
+			return 'The package "' . $packageKey . '" does not exist.';
 		}
 		$this->packageManager->deletePackage($packageKey);
 		echo 'Package "' . $packageKey . '" has been deleted.' . PHP_EOL;
@@ -93,7 +96,8 @@ class PackageCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContro
 		}
 
 		if ($this->packageManager->isPackageActive($packageKey)) {
-			return 'Package "' . $packageKey . '" is already active.' . PHP_EOL;
+			$this->response->setExitCode(1);
+			return 'Package "' . $packageKey . '" is already active.';
 		}
 
 		$this->packageManager->activatePackage($packageKey);
@@ -111,7 +115,8 @@ class PackageCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContro
 	 */
 	public function deactivateCommand($packageKey) {
 		if (!$this->packageManager->isPackageActive($packageKey)) {
-			return 'Package "' . $packageKey . '" was not active.' . PHP_EOL;
+			$this->response->setExitCode(1);
+			return 'Package "' . $packageKey . '" was not active.';
 		}
 
 		$this->packageManager->deactivatePackage($packageKey);

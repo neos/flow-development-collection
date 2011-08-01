@@ -30,6 +30,11 @@ namespace TYPO3\FLOW3\MVC\CLI;
 class Response extends \TYPO3\FLOW3\MVC\Response {
 
 	/**
+	 * @var integer
+	 */
+	protected $exitCode = 0;
+
+	/**
 	 * Appends content to the already existing content.
 	 *
 	 * @param string $content More response content
@@ -39,6 +44,27 @@ class Response extends \TYPO3\FLOW3\MVC\Response {
 		$this->content .= $content . PHP_EOL;
 	}
 
+	/**
+	 * Sets the numerical exit code which should be returned when exiting this application.
+	 *
+	 * @param integer $exitCode
+	 * @return void
+	 */
+	public function setExitCode($exitCode) {
+		if (!is_integer($exitCode)) {
+			throw new \InvalidArgumentException(sprintf('Tried to set invalid exit code. The value must be integer, %s given.', gettype($exitCode)), 1312222064);
+		}
+		$this->exitCode = $exitCode;
+	}
+
+	/**
+	 * Rets the numerical exit code which should be returned when exiting this application.
+	 *
+	 * @return integer
+	 */
+	public function getExitCode() {
+		return $this->exitCode;
+	}
 }
 
 ?>
