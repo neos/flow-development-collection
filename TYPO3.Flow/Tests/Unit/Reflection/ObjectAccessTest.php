@@ -403,5 +403,25 @@ class ObjectAccessTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$this->assertNull(\TYPO3\FLOW3\Reflection\ObjectAccess::getPropertyPath($this->dummyObject, 'property2.property.not.existing'));
 	}
 
+	/**
+	 * @test
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function getPropertyPathReturnsNullIfSubjectIsNoObject() {
+		$string = 'Hello world';
+
+		$this->assertNull(\TYPO3\FLOW3\Reflection\ObjectAccess::getPropertyPath($string, 'property2'));
+	}
+
+	/**
+	 * @test
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function getPropertyPathReturnsNullIfSubjectOnPathIsNoObject() {
+		$object = new \stdClass();
+		$object->foo = 'Hello World';
+
+		$this->assertNull(\TYPO3\FLOW3\Reflection\ObjectAccess::getPropertyPath($object, 'foo.bar'));
+	}
 }
 ?>

@@ -130,7 +130,7 @@ class ObjectAccess {
 		if (is_callable(array($subject, $getterMethodName))) {
 			return $subject->$getterMethodName();
 		}
-		if (array_key_exists($propertyName, get_object_vars($subject))) {
+		if (is_object($subject) && array_key_exists($propertyName, get_object_vars($subject))) {
 			return $subject->$propertyName;
 		}
 		$propertyExists = FALSE;
