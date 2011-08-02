@@ -531,6 +531,17 @@ class Context {
 	}
 
 	/**
+	 * Refreshes all active tokens by updating the credentials.
+	 * This is useful when doing an explicit authentication inside a request.
+	 *
+	 * @return void
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function refreshTokens() {
+		$this->updateTokens($this->activeTokens);
+	}
+
+	/**
 	 * Shut the object down
 	 *
 	 * @return void
