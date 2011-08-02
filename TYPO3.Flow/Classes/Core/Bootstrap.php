@@ -726,9 +726,7 @@ class Bootstrap {
 	protected function initializeResources() {
 		$resourceManager = $this->objectManager->get('TYPO3\FLOW3\Resource\ResourceManager');
 		$resourceManager->initialize();
-		if (FLOW3_SAPITYPE === 'Web') {
-			$resourceManager->publishPublicPackageResources($this->packageManager->getActivePackages());
-		}
+		$resourceManager->publishPublicPackageResources($this->packageManager->getActivePackages());
 	}
 
 	/**
