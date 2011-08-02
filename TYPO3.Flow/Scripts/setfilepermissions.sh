@@ -56,8 +56,8 @@ if [ "$?" -eq "0" ]; then echo "Done."; exit 0; fi
 
 echo "Setting file permissions, trying to set ACLs via setfacl ..."
 
-sudo setfacl -R -m u:$WEBSERVER_USER:rwx -m u:$COMMANDLINE_USER:rwx Data Packages Web/_Resources >/dev/null 2>&1
-sudo setfacl -dR -m u:$WEBSERVER_USER:rwx -m u:$COMMANDLINE_USER:rwx Data Packages Web/_Resources >/dev/null 2>&1
+sudo setfacl -R -m u:$WEBSERVER_USER:rwx -m u:$COMMANDLINE_USER:rwx Configuration Data Packages Web/_Resources >/dev/null 2>&1
+sudo setfacl -dR -m u:$WEBSERVER_USER:rwx -m u:$COMMANDLINE_USER:rwx Configuration Data Packages Web/_Resources >/dev/null 2>&1
 if [ "$?" -eq "0" ]; then echo "Done."; exit 0; fi
 
 echo
