@@ -43,21 +43,21 @@ for PARENT_PATH_PART in $PARENT_PATH_PARTS ; do
 done
 
 echo "Making sure Data and Web/_Resources exist."
-mkdir -p Data
-mkdir -p Web/_Resources
+sudo mkdir -p Data
+sudo mkdir -p Web/_Resources
 
 sudo rm -rf Data/Temporary/*
 
 echo "Setting file permissions, trying to set ACLs via chmod ..."
 
+sudo chmod +a "$COMMANDLINE_USER allow delete,write,append,file_inherit,directory_inherit" Configuration Data Packages Web/_Resources >/dev/null 2>&1
 sudo chmod +a "$WEBSERVER_USER allow delete,write,append,file_inherit,directory_inherit" Configuration Data Packages Web/_Resources >/dev/null 2>&1
-sudo chmod +a "$WEBSERVER_GROUP allow delete,write,append,file_inherit,directory_inherit" Configuration Data Packages Web/_Resources >/dev/null 2>&1
 if [ "$?" -eq "0" ]; then echo "Done."; exit 0; fi
 
 echo "Setting file permissions, trying to set ACLs via setfacl ..."
 
-sudo setfacl -Rdm u:$WEBSERVER_USER:rwx Configuration Data Packages Web/_Resources >/dev/null 2>&1
-sudo setfacl -Rdm g:$WEBSERVER_GROUP:rwx Configuration Data Packages Web/_Resources >/dev/null 2>&1
+sudo setfacl -R -m u:$WEBSERVER_USER:rwx -m u:$COMMANDLINE_USER:rwx Data Packages Web/_Resources >/dev/null 2>&1
+sudo setfacl -dR -m u:$WEBSERVER_USER:rwx -m u:$COMMANDLINE_USER:rwx Data Packages Web/_Resources >/dev/null 2>&1
 if [ "$?" -eq "0" ]; then echo "Done."; exit 0; fi
 
 echo
