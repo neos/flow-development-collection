@@ -27,9 +27,9 @@ COMMANDLINE_USER="$1"
 WEBSERVER_USER="$2"
 WEBSERVER_GROUP="$3"
 
+echo "(if a password prompt appears, it's from sudo)"
 echo
-echo "Checking permissions from here upwards ..."
-echo " (if a password prompt appears it's from sudo)"
+echo "Checking permissions from here upwards."
 
 unset PARENT_PATH
 PARENT_PATH_PARTS=$(pwd | awk 'BEGIN{FS="/"}{for (i=1; i < NF; i++) print $i}')
@@ -42,28 +42,27 @@ for PARENT_PATH_PART in $PARENT_PATH_PARTS ; do
 	fi
 done
 
-echo
-echo "Making sure Data and Web/_Resources exist ..."
+echo "Making sure Data and Web/_Resources exist."
 mkdir -p Data
 mkdir -p Web/_Resources
 
 sudo rm -rf Data/Temporary/*
 
-echo
 echo "Setting file permissions, trying to set ACLs via chmod ..."
 
-sudo chmod +a "$WEBSERVER_USER allow delete,write,append,file_inherit,directory_inherit" Data Packages Web/_Resources
-sudo chmod +a "$WEBSERVER_GROUP allow delete,write,append,file_inherit,directory_inherit" Data Packages Web/_Resources
-if [ "$?" -eq "0" ]; then echo "... done."; exit 0; fi
+sudo chmod +a "$WEBSERVER_USER allow delete,write,append,file_inherit,directory_inherit" Configuration Data Packages Web/_Resources >/dev/null 2>&1
+sudo chmod +a "$WEBSERVER_GROUP allow delete,write,append,file_inherit,directory_inherit" Configuration Data Packages Web/_Resources >/dev/null 2>&1
+if [ "$?" -eq "0" ]; then echo "Done."; exit 0; fi
 
-echo "Seems like ACLs are not support by chmod."
-echo "Trying to set ACLs via setfacl ..."
+echo "Setting file permissions, trying to set ACLs via setfacl ..."
 
-sudo setfacl -Rdm u:$WEBSERVER_USER:rwx Data Packages Web/_Resources
-sudo setfacl -Rdm g:$WEBSERVER_GROUP:rwx Data Packages Web/_Resources
-if [ "$?" -eq "0" ]; then echo "... done."; exit 0; fi
+sudo setfacl -Rdm u:$WEBSERVER_USER:rwx Configuration Data Packages Web/_Resources >/dev/null 2>&1
+sudo setfacl -Rdm g:$WEBSERVER_GROUP:rwx Configuration Data Packages Web/_Resources >/dev/null 2>&1
+if [ "$?" -eq "0" ]; then echo "Done."; exit 0; fi
 
-echo "Seems like setfacl is not supported or enabled for your filesystem."
+echo
+echo "Note: Access Control Lists seem not to be supported by your system."
+echo
 echo "Setting file permissions per file, this might take a while ..."
 
 sudo chown -R $COMMANDLINE_USER:$WEBSERVER_GROUP .
