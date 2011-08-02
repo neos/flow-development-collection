@@ -64,6 +64,7 @@ class DoctrineCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContr
 			$this->response->appendContent('Mapping validation passed, no errors were found.');
 		} else {
 			$this->response->appendContent('Mapping validation FAILED!');
+			$this->response->setExitCode(1);
 			foreach ($classesAndErrors as $className => $errors) {
 				$this->response->appendContent('  ' . $className);
 				foreach ($errors as $errorMessage) {
@@ -87,6 +88,7 @@ class DoctrineCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContr
 			$this->response->appendContent('Created database schema.');
 		} else {
 			$this->response->appendContent('Database schema creation has been SKIPPED, the driver and path backend options are not set in /Configuration/Settings.yaml.');
+			$this->response->setExitCode(1);
 		}
 	}
 
@@ -107,6 +109,7 @@ class DoctrineCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContr
 			$this->response->appendContent('Executed a database schema update.');
 		} else {
 			$this->response->appendContent('Database schema update has been SKIPPED, the driver and path backend options are not set in /Configuration/Settings.yaml.');
+			$this->response->setExitCode(1);
 		}
 	}
 
@@ -175,6 +178,7 @@ class DoctrineCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContr
 			}
 		} else {
 			$this->response->appendContent('DQL query is not possible, the driver and path backend options are not set in /Configuration/Settings.yaml.');
+			$this->response->setExitCode(1);
 		}
 	}
 
@@ -190,6 +194,7 @@ class DoctrineCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContr
 			$this->response->appendContent($this->doctrineService->getMigrationStatus());
 		} else {
 			$this->response->appendContent('Doctrine migration status not available, the driver and path backend options are not set in /Configuration/Settings.yaml.');
+			$this->response->setExitCode(1);
 		}
 	}
 
@@ -205,9 +210,15 @@ class DoctrineCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContr
 			// "driver" is used only for Doctrine, thus we (mis-)use it here
 			// additionally, when no path is set, skip this step, assuming no DB is needed
 		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['path'] !== NULL) {
-			$this->response->appendContent($this->doctrineService->executeMigrations($version, $output, $dryRun));
+			$output = $this->doctrineService->executeMigrations($version, $output, $dryRun);
+			if ($output != '') {
+				$this->response->appendContent($output);
+			} else {
+				$this->response->appendContent('No migration was neccessary.');
+			}
 		} else {
 			$this->response->appendContent('Doctrine migration not possible, the driver and path backend options are not set in /Configuration/Settings.yaml.');
+			$this->response->setExitCode(1);
 		}
 	}
 
@@ -227,6 +238,7 @@ class DoctrineCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContr
 			$this->response->appendContent($this->doctrineService->executeMigration($version, $direction, $output, $dryRun));
 		} else {
 			$this->response->appendContent('Doctrine migration not possible, the driver and path backend options are not set in /Configuration/Settings.yaml.');
+			$this->response->setExitCode(1);
 		}
 	}
 
@@ -248,6 +260,7 @@ class DoctrineCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContr
 			$this->response->appendContent($this->doctrineService->markAsMigrated($version, $add ?: FALSE));
 		} else {
 			$this->response->appendContent('Doctrine migration not possible, the driver and path backend options are not set in /Configuration/Settings.yaml.');
+			$this->response->setExitCode(1);
 		}
 	}
 
@@ -269,6 +282,7 @@ class DoctrineCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContr
 			$this->response->appendContent(sprintf('Generated new migration class to "%s".', $this->doctrineService->generateMigration($diffAgainstCurrent)));
 		} else {
 			$this->response->appendContent('Doctrine migration generation has been SKIPPED, the driver and path backend options are not set in /Configuration/Settings.yaml.');
+			$this->response->setExitCode(1);
 		}
 	}
 

@@ -173,6 +173,7 @@ class Bootstrap {
 				$this->handleWebRequest();
 			break;
 			case 'CLI' :
+					// this method call will not return, but exit with the response's exit code:
 				$this->handleCommandLineRequest();
 			break;
 		}
@@ -294,6 +295,9 @@ class Bootstrap {
 			$response->send();
 		}
 		$this->emitBootstrapShuttingDown($runLevel);
+		if (isset($response)) {
+			exit($response->getExitCode());
+		}
 	}
 
 	/**
