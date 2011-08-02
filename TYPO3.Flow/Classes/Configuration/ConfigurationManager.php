@@ -152,7 +152,8 @@ class ConfigurationManager {
 			break;
 
 			case self::CONFIGURATION_TYPE_SETTINGS :
-				if ($this->configurations[$configurationType] === array()) {
+				if (!isset($this->configurations[$configurationType]) || $this->configurations[$configurationType] === array()) {
+					$this->configurations[$configurationType] = array();
 					$this->loadConfiguration($configurationType, $this->packages);
 				}
 				if ($packageKey === NULL) {
@@ -366,12 +367,11 @@ class ConfigurationManager {
 		$cachePathAndFilename = $configurationCachePath  . $this->context . 'Configurations.php';
 		$includeCachedConfigurationsCode = <<< "EOD"
 <?php
-if (file_exists('$cachePathAndFilename')) {
-	return require '$cachePathAndFilename';
-} else {
+if (__FILE__ !== '$this->includeCachedConfigurationsPathAndFilename' || !file_exists('$cachePathAndFilename')) {
 	unlink(__FILE__);
 	return array();
 }
+return require '$cachePathAndFilename';
 ?>
 EOD;
 		file_put_contents($cachePathAndFilename, '<?php return ' . var_export($this->configurations, TRUE) . '?>');
