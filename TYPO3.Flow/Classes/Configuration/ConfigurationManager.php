@@ -365,9 +365,10 @@ class ConfigurationManager {
 			\TYPO3\FLOW3\Utility\Files::createDirectoryRecursively($configurationCachePath);
 		}
 		$cachePathAndFilename = $configurationCachePath  . $this->context . 'Configurations.php';
+		$flow3RootPath = FLOW3_PATH_ROOT;
 		$includeCachedConfigurationsCode = <<< "EOD"
 <?php
-if (__FILE__ !== '$this->includeCachedConfigurationsPathAndFilename' || !file_exists('$cachePathAndFilename')) {
+if (FLOW3_PATH_ROOT !== '$flow3RootPath' || !file_exists('$cachePathAndFilename')) {
 	unlink(__FILE__);
 	return array();
 }
