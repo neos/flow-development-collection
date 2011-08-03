@@ -71,7 +71,7 @@ class FileBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend implements 
 				throw new \TYPO3\FLOW3\Cache\Exception('The cache directory "' . $cacheDirectory . '" could not be created.', 1264426237);
 			}
 		}
-		if (!is_dir($cacheDirectory)) throw new \TYPO3\FLOW3\Cache\Exception('The cache directory "' . $cacheDirectory . '" does not exist.', 1203965199);
+		if (!is_dir($cacheDirectory) && !is_link($cacheDirectory)) throw new \TYPO3\FLOW3\Cache\Exception('The cache directory "' . $cacheDirectory . '" does not exist.', 1203965199);
 		if (!is_writable($cacheDirectory)) throw new \TYPO3\FLOW3\Cache\Exception('The cache directory "' . $cacheDirectory . '" is not writable.', 1203965200);
 
 		$this->cacheDirectory = $cacheDirectory;

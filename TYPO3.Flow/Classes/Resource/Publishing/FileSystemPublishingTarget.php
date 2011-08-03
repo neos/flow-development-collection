@@ -85,13 +85,13 @@ class FileSystemPublishingTarget extends \TYPO3\FLOW3\Resource\Publishing\Abstra
 		if (!is_writable($this->resourcesPublishingPath)) {
 			\TYPO3\FLOW3\Utility\Files::createDirectoryRecursively($this->resourcesPublishingPath);
 		}
-		if (!is_dir($this->resourcesPublishingPath)) {
+		if (!is_dir($this->resourcesPublishingPath) && !is_link($this->resourcesPublishingPath)) {
 			throw new \TYPO3\FLOW3\Resource\Exception('The directory "' . $this->resourcesPublishingPath . '" does not exist.', 1207124538);
 		}
 		if (!is_writable($this->resourcesPublishingPath)) {
 			throw new \TYPO3\FLOW3\Resource\Exception('The directory "' . $this->resourcesPublishingPath . '" is not writable.', 1207124546);
 		}
-		if (!is_dir($this->resourcesPublishingPath . 'Persistent')) {
+		if (!is_dir($this->resourcesPublishingPath . 'Persistent') && !is_link($this->resourcesPublishingPath . 'Persistent')) {
 			\TYPO3\FLOW3\Utility\Files::createDirectoryRecursively($this->resourcesPublishingPath . 'Persistent');
 		}
 		if (!is_writable($this->resourcesPublishingPath . 'Persistent')) {

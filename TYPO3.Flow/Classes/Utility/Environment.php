@@ -591,7 +591,7 @@ class Environment {
 		if (substr($temporaryDirectoryBase, -1, 1) !== '/') $temporaryDirectoryBase .= '/';
 		$temporaryDirectory = $temporaryDirectoryBase . $this->context . '/';
 
-		if (!is_dir($temporaryDirectory)) {
+		if (!is_dir($temporaryDirectory) && !is_link($temporaryDirectory)) {
 			try {
 				\TYPO3\FLOW3\Utility\Files::createDirectoryRecursively($temporaryDirectory);
 			} catch (\TYPO3\FLOW3\Error\Exception $exception) {
