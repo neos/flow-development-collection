@@ -884,10 +884,10 @@ class Bootstrap {
 			exit('FLOW3 requires the PHP setting "magic_quotes_gpc" set to Off. (Error #1224003190)');
 		}
 
-		if (!is_dir(FLOW3_PATH_DATA)) {
+		if (!is_dir(FLOW3_PATH_DATA) && !is_link(FLOW3_PATH_DATA)) {
 			mkdir(FLOW3_PATH_DATA);
 		}
-		if (!is_dir(FLOW3_PATH_DATA . 'Persistent')) {
+		if (!is_dir(FLOW3_PATH_DATA . 'Persistent') && !is_link(FLOW3_PATH_DATA . 'Persistent')) {
 			mkdir(FLOW3_PATH_DATA . 'Persistent');
 		}
 	}
