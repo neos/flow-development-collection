@@ -58,19 +58,19 @@ class DoctrineCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContr
 	 * @return void
 	 */
 	public function validateCommand() {
-		$this->response->appendContent('');
+		$this->outputLine();
 		$classesAndErrors = $this->doctrineService->validateMapping();
 		if (count($classesAndErrors) === 0) {
-			$this->response->appendContent('Mapping validation passed, no errors were found.');
+			$this->outputLine('Mapping validation passed, no errors were found.');
 		} else {
-			$this->response->appendContent('Mapping validation FAILED!');
-			$this->response->setExitCode(1);
+			$this->outputLine('Mapping validation FAILED!');
 			foreach ($classesAndErrors as $className => $errors) {
-				$this->response->appendContent('  ' . $className);
+				$this->outputLine('  %s', array($className));
 				foreach ($errors as $errorMessage) {
-					$this->response->appendContent('    ' . $errorMessage);
+					$this->outputLine('    %s', array($errorMessage));
 				}
 			}
+			$this->quit(1);
 		}
 	}
 
@@ -85,10 +85,10 @@ class DoctrineCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContr
 			// additionally, when no path is set, skip this step, assuming no DB is needed
 		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['path'] !== NULL) {
 			$this->doctrineService->createSchema($output);
-			$this->response->appendContent('Created database schema.');
+			$this->outputLine('Created database schema.');
 		} else {
-			$this->response->appendContent('Database schema creation has been SKIPPED, the driver and path backend options are not set in /Configuration/Settings.yaml.');
-			$this->response->setExitCode(1);
+			$this->outputLine('Database schema creation has been SKIPPED, the driver and path backend options are not set in /Configuration/Settings.yaml.');
+			$this->quit(1);
 		}
 	}
 
@@ -106,10 +106,10 @@ class DoctrineCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContr
 			// additionally, when no path is set, skip this step, assuming no DB is needed
 		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['path'] !== NULL) {
 			$this->doctrineService->updateSchema($safeMode, $output);
-			$this->response->appendContent('Executed a database schema update.');
+			$this->outputLine('Executed a database schema update.');
 		} else {
-			$this->response->appendContent('Database schema update has been SKIPPED, the driver and path backend options are not set in /Configuration/Settings.yaml.');
-			$this->response->setExitCode(1);
+			$this->outputLine('Database schema update has been SKIPPED, the driver and path backend options are not set in /Configuration/Settings.yaml.');
+			$this->quit(1);
 		}
 	}
 
@@ -135,17 +135,17 @@ class DoctrineCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContr
 		$info = $this->doctrineService->getEntityStatus();
 
 		if ($info === array()) {
-			$this->response->appendContent('You do not have any mapped Doctrine ORM entities according to the current configuration. ' .
-			'If you have entities or mapping files you should check your mapping configuration for errors.');
+			$this->output('You do not have any mapped Doctrine ORM entities according to the current configuration. ');
+			$this->outputLine('If you have entities or mapping files you should check your mapping configuration for errors.');
 		} else {
-			$this->response->appendContent('Found ' . count($info) . ' mapped entities:');
+			$this->outputLine('Found %d mapped entities:', array(count($info)));
 			foreach ($info as $entityClassName => $entityStatus) {
 				if ($entityStatus === TRUE) {
-					$this->response->appendContent('[OK]   ' . $entityClassName);
+					$this->outputLine('[OK]   %s', array($entityClassName));
 				} else {
-					$this->response->appendContent('[FAIL] ' . $entityClassName);
-					$this->response->appendContent($entityStatus);
-					$this->response->appendContent('');
+					$this->outputLine('[FAIL] %s', array($entityClassName));
+					$this->outputLine($entityStatus);
+					$this->outputLine();
 				}
 			}
 		}
@@ -177,8 +177,8 @@ class DoctrineCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContr
 				\Doctrine\Common\Util\Debug::dump($resultSet, $depth);
 			}
 		} else {
-			$this->response->appendContent('DQL query is not possible, the driver and path backend options are not set in /Configuration/Settings.yaml.');
-			$this->response->setExitCode(1);
+			$this->outputLine('DQL query is not possible, the driver and path backend options are not set in /Configuration/Settings.yaml.');
+			$this->quit(1);
 		}
 	}
 
@@ -191,10 +191,10 @@ class DoctrineCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContr
 			// "driver" is used only for Doctrine, thus we (mis-)use it here
 			// additionally, when no path is set, skip this step, assuming no DB is needed
 		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['path'] !== NULL) {
-			$this->response->appendContent($this->doctrineService->getMigrationStatus());
+			$this->outputLine($this->doctrineService->getMigrationStatus());
 		} else {
-			$this->response->appendContent('Doctrine migration status not available, the driver and path backend options are not set in /Configuration/Settings.yaml.');
-			$this->response->setExitCode(1);
+			$this->outputLine('Doctrine migration status not available, the driver and path backend options are not set in /Configuration/Settings.yaml.');
+			$this->quit(1);
 		}
 	}
 
@@ -212,13 +212,13 @@ class DoctrineCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContr
 		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['path'] !== NULL) {
 			$output = $this->doctrineService->executeMigrations($version, $output, $dryRun);
 			if ($output != '') {
-				$this->response->appendContent($output);
+				$this->outputLine($output);
 			} else {
-				$this->response->appendContent('No migration was neccessary.');
+				$this->outputLine('No migration was neccessary.');
 			}
 		} else {
-			$this->response->appendContent('Doctrine migration not possible, the driver and path backend options are not set in /Configuration/Settings.yaml.');
-			$this->response->setExitCode(1);
+			$this->outputLine('Doctrine migration not possible, the driver and path backend options are not set in /Configuration/Settings.yaml.');
+			$this->quit(1);
 		}
 	}
 
@@ -235,10 +235,10 @@ class DoctrineCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContr
 			// "driver" is used only for Doctrine, thus we (mis-)use it here
 			// additionally, when no path is set, skip this step, assuming no DB is needed
 		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['path'] !== NULL) {
-			$this->response->appendContent($this->doctrineService->executeMigration($version, $direction, $output, $dryRun));
+			$this->outputLine($this->doctrineService->executeMigration($version, $direction, $output, $dryRun));
 		} else {
-			$this->response->appendContent('Doctrine migration not possible, the driver and path backend options are not set in /Configuration/Settings.yaml.');
-			$this->response->setExitCode(1);
+			$this->outputLine('Doctrine migration not possible, the driver and path backend options are not set in /Configuration/Settings.yaml.');
+			$this->quit(1);
 		}
 	}
 
@@ -257,10 +257,10 @@ class DoctrineCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContr
 			if ($add === FALSE && $delete === FALSE) {
 				throw new \InvalidArgumentException('You must specify whether you want to --add or --delete the specified version.');
 			}
-			$this->response->appendContent($this->doctrineService->markAsMigrated($version, $add ?: FALSE));
+			$this->outputLine($this->doctrineService->markAsMigrated($version, $add ?: FALSE));
 		} else {
-			$this->response->appendContent('Doctrine migration not possible, the driver and path backend options are not set in /Configuration/Settings.yaml.');
-			$this->response->setExitCode(1);
+			$this->outputLine('Doctrine migration not possible, the driver and path backend options are not set in /Configuration/Settings.yaml.');
+			$this->quit(1);
 		}
 	}
 
@@ -279,10 +279,10 @@ class DoctrineCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContr
 			// "driver" is used only for Doctrine, thus we (mis-)use it here
 			// additionally, when no path is set, skip this step, assuming no DB is needed
 		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['path'] !== NULL) {
-			$this->response->appendContent(sprintf('Generated new migration class to "%s".', $this->doctrineService->generateMigration($diffAgainstCurrent)));
+			$this->outputLine(sprintf('Generated new migration class to "%s".', $this->doctrineService->generateMigration($diffAgainstCurrent)));
 		} else {
-			$this->response->appendContent('Doctrine migration generation has been SKIPPED, the driver and path backend options are not set in /Configuration/Settings.yaml.');
-			$this->response->setExitCode(1);
+			$this->outputLine('Doctrine migration generation has been SKIPPED, the driver and path backend options are not set in /Configuration/Settings.yaml.');
+			$this->quit(1);
 		}
 	}
 

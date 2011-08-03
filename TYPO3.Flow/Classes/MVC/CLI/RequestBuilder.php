@@ -116,10 +116,10 @@ class RequestBuilder {
 	public function build($commandLine) {
 		$request = new Request();
 		$request->setControllerObjectName('TYPO3\FLOW3\Command\HelpCommandController');
-		$request->setControllerCommandName('help');
 
 		$rawCommandLineArguments = is_array($commandLine) ? $commandLine : explode(' ', $commandLine);
 		if (count($rawCommandLineArguments) === 0) {
+			$request->setControllerCommandName('help');
 			return $request;
 		}
 		$commandIdentifier = trim(array_shift($rawCommandLineArguments));
@@ -160,7 +160,9 @@ class RequestBuilder {
 
 		$requiredArguments = array();
 		$optionalArguments = array();
+		$argumentNames = array();
 		foreach ($commandMethodParameters as $parameterName => $parameterInfo) {
+			$argumentNames[] = $parameterName;
 			if ($parameterInfo['optional'] === FALSE) {
 				$requiredArguments[strtolower($parameterName)] = array('parameterName' => $parameterName, 'type' => $parameterInfo['type']);
 			} else {
@@ -170,6 +172,7 @@ class RequestBuilder {
 
 		$decidedToUseNamedArguments = FALSE;
 		$decidedToUseUnnamedArguments = FALSE;
+		$argumentIndex = 0;
 		while (count($rawCommandLineArguments) > 0) {
 
 			$rawArgument = array_shift($rawCommandLineArguments);
@@ -203,10 +206,14 @@ class RequestBuilder {
 					$commandLineArguments[$argument['parameterName']] = $rawArgument;
 					$decidedToUseUnnamedArguments = TRUE;
 				} else {
-					$commandLineArguments[] = $rawArgument;
-					$exceedingArguments[] = $rawArgument;
+					if ($argumentIndex < count($argumentNames)) {
+						$commandLineArguments[$argumentNames[$argumentIndex]] = $rawArgument;
+					} else {
+						$exceedingArguments[] = $rawArgument;
+					}
 				}
 			}
+			$argumentIndex ++;
 		}
 
 		return array($commandLineArguments, $exceedingArguments);

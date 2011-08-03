@@ -50,10 +50,10 @@ class RoutingCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContro
 		$routesConfiguration = $this->configurationManager->getConfiguration(\TYPO3\FLOW3\Configuration\ConfigurationManager::CONFIGURATION_TYPE_ROUTES);
 		$this->router->setRoutesConfiguration($routesConfiguration);
 
-		$this->response->appendContent('Currently registered routes:');
+		$this->outputLine('Currently registered routes:');
 		foreach ($this->router->getRoutes() as $route) {
 			$uriPattern = $route->getUriPattern();
-			$this->response->appendContent(str_pad($uriPattern, 80) . $route->getName());
+			$this->outputLine(str_pad($uriPattern, 80) . $route->getName());
 		}
 	}
 }

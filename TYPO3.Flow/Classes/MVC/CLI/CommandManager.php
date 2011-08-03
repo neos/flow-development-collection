@@ -35,9 +35,19 @@ class CommandManager {
 	protected $availableCommands = NULL;
 
 	/**
+	 * @var array
+	 */
+	protected $shortCommandIdentifiers = NULL;
+
+	/**
 	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
+
+	/**
+	 * @var \TYPO3\FLOW3\Core\Bootstrap
+	 */
+	protected $bootstrap;
 
 	/**
 	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService
@@ -48,6 +58,13 @@ class CommandManager {
 		$this->reflectionService = $reflectionService;
 	}
 
+	/**
+	 * @param \TYPO3\FLOW3\Core\Bootstrap $bootstrap
+	 * @return void
+	 */
+	public function injectBootstrap(\TYPO3\FLOW3\Core\Bootstrap $bootstrap) {
+		$this->bootstrap = $bootstrap;
+	}
 
 	/**
 	 * Returns an array of all commands
@@ -89,6 +106,9 @@ class CommandManager {
 	 */
 	public function getCommandByIdentifier($commandIdentifier) {
 		$commandIdentifier = strtolower(trim($commandIdentifier));
+		if ($commandIdentifier === 'help') {
+			$commandIdentifier = 'typo3.flow3:help:help';
+		}
 		$matchedCommands = array();
 		$availableCommands = $this->getAvailableCommands();
 		foreach ($availableCommands as $command) {
@@ -103,6 +123,65 @@ class CommandManager {
 			throw new \TYPO3\FLOW3\MVC\Exception\AmbiguousCommandIdentifierException('More than one command matches the command identifier "' . $commandIdentifier . '"', 1310557169, NULL, $matchedCommands);
 		}
 		return current($matchedCommands);
+	}
+
+	/**
+	 * Returns the shortest, non-ambiguous command identifier for the given command
+	 *
+	 * @param Command $command The command
+	 * @return string The shortest possible command identifier
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function getShortestIdentifierForCommand(Command $command) {
+		if ($command->getCommandIdentifier() === 'typo3.flow3:help:help') {
+			return 'help';
+		}
+		$shortCommandIdentifiers = $this->getShortCommandIdentifiers();
+		if (!isset($shortCommandIdentifiers[$command->getCommandIdentifier()])) {
+			$command->getCommandIdentifier();
+		}
+		return $shortCommandIdentifiers[$command->getCommandIdentifier()];
+	}
+
+	/**
+	 * Returns an array that contains all available command identifiers and their shortest non-ambiguous alias
+	 *
+	 * @return array in the format array('full.command:identifier1' => 'alias1', 'full.command:identifier2' => 'alias2')
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	protected function getShortCommandIdentifiers() {
+		if ($this->shortCommandIdentifiers === NULL) {
+			$commandsByCommandName = array();
+			foreach ($this->getAvailableCommands() as $availableCommand) {
+				list($packageKey, $controllerName, $commandName) = explode(':', $availableCommand->getCommandIdentifier());
+				if (!isset($commandsByCommandName[$commandName])) {
+					$commandsByCommandName[$commandName] = array();
+				}
+				if (!isset($commandsByCommandName[$commandName][$controllerName])) {
+					$commandsByCommandName[$commandName][$controllerName] = array();
+				}
+				$commandsByCommandName[$commandName][$controllerName][] = $packageKey;
+			}
+			foreach ($this->getAvailableCommands() as $availableCommand) {
+				list($packageKey, $controllerName, $commandName) = explode(':', $availableCommand->getCommandIdentifier());
+				if (count($commandsByCommandName[$commandName][$controllerName]) > 1 || $this->bootstrap->isCompiletimeCommand($availableCommand->getCommandIdentifier())) {
+					$packageKeyParts = array_reverse(explode('.', $packageKey));
+					for($i = 1; $i <= count($packageKeyParts); $i++) {
+						$shortCommandIdentifier = implode('.', array_slice($packageKeyParts, 0, $i)) .  ':' . $controllerName . ':' . $commandName;
+						try {
+							$this->getCommandByIdentifier($shortCommandIdentifier);
+							$this->shortCommandIdentifiers[$availableCommand->getCommandIdentifier()] = $shortCommandIdentifier;
+							break;
+						} catch (\TYPO3\FLOW3\MVC\Exception\CommandException $exception) {
+						}
+					}
+				} else {
+					$this->shortCommandIdentifiers[$availableCommand->getCommandIdentifier()] = sprintf('%s:%s', $controllerName, $commandName);;
+				}
+			}
+		}
+		return $this->shortCommandIdentifiers;
 	}
 
 	/**

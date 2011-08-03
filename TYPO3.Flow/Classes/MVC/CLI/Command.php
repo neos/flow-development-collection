@@ -50,6 +50,12 @@ class Command {
 	protected $commandMethodReflection;
 
 	/**
+	 * Reflection service
+	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
+	 */
+	private $reflectionService;
+
+	/**
 	 * Constructor
 	 *
 	 * @param string $controllerClassName Class name of the controller providing the command
@@ -66,6 +72,13 @@ class Command {
 		}
 
 		$this->commandIdentifier = strtolower(str_replace('\\', '.', $matches['PackageNamespace']) . ':' . $matches['ControllerName'] . ':' . $controllerCommandName);
+	}
+
+	/**
+	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService Reflection service
+	 */
+	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
+		$this->reflectionService = $reflectionService;
 	}
 
 	/**
@@ -101,6 +114,44 @@ class Command {
 	public function getShortDescription() {
 		$lines = explode(chr(10), $this->getCommandMethodReflection()->getDescription());
 		return (count($lines) > 0) ? $lines[0] : '<no description available>';
+	}
+
+	/**
+	 * Returns TRUE if this command expects required and/or optional arguments, otherwise FALSE
+	 *
+	 * @return boolean
+	 */
+	public function hasArguments() {
+		return count($this->getCommandMethodReflection()->getParameters()) > 0;
+	}
+
+	/**
+	 * Returns an array of \TYPO3\FLOW3\MVC\CLI\CommandArgumentDefinition that contains
+	 * information about required/optional arguments of this command.
+	 * If the command does not expect any arguments, an empty array is returned
+	 *
+	 * @return array<\TYPO3\FLOW3\MVC\CLI\CommandArgumentDefinition>
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function getArgumentDefinitions() {
+		if (!$this->hasArguments()) {
+			return array();
+		}
+		$commandArgumentDefinitions = array();
+		$commandMethodReflection = $this->getCommandMethodReflection();
+		$annotations = $commandMethodReflection->getTagsValues();
+		$commandParameters = $this->reflectionService->getMethodParameters($this->controllerClassName, $this->controllerCommandName . 'Command');
+		$i = 0;
+		foreach ($commandParameters as $commandParameterName => $commandParameterDefinition) {
+			$explodedAnnotation = explode(' ', $annotations['param'][$i]);
+			array_shift($explodedAnnotation);
+			array_shift($explodedAnnotation);
+			$description = implode(' ', $explodedAnnotation);
+			$required = $commandParameterDefinition['optional'] !== TRUE;
+			$commandArgumentDefinitions[] = new CommandArgumentDefinition($commandParameterName, $required, $description);
+			$i ++;
+		}
+		return $commandArgumentDefinitions;
 	}
 
 	/**

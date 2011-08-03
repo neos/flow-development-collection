@@ -53,7 +53,7 @@ class SecurityCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContr
 
 		$uuid = $this->rsaWalletService->registerPublicKeyFromString($keyData);
 
-		$this->response->appendContent('The public key has been successfully imported. Use the following uuid to refer to it in the RSAWalletService: ' . PHP_EOL . PHP_EOL . $uuid . PHP_EOL);
+		$this->outputLine('The public key has been successfully imported. Use the following uuid to refer to it in the RSAWalletService: ' . PHP_EOL . PHP_EOL . $uuid . PHP_EOL);
 	}
 
 	/**
@@ -76,7 +76,7 @@ class SecurityCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContr
 
 		$uuid = $this->rsaWalletService->registerKeyPairFromPrivateKeyString($keyData, $usedForPasswords);
 
-		$this->response->appendContent('The keypair has been successfully imported. Use the following uuid to refer to it in the RSAWalletService: ' . PHP_EOL . PHP_EOL . $uuid . PHP_EOL);
+		$this->outputLine('The keypair has been successfully imported. Use the following uuid to refer to it in the RSAWalletService: ' . PHP_EOL . PHP_EOL . $uuid . PHP_EOL);
 	}
 }
 

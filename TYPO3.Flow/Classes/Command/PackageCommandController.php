@@ -49,17 +49,16 @@ class PackageCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContro
 	 */
 	public function createCommand($packageKey) {
 		if (!$this->packageManager->isPackageKeyValid($packageKey)) {
-			$this->response->setExitCode(1);
-			return 'The package key "' . $packageKey . '" is not valid.';
+			$this->outputLine('The package key "%s" is not valid.', array($packageKey));
+			$this->quit(1);
 		}
 		if ($this->packageManager->isPackageAvailable($packageKey)) {
-			$this->response->setExitCode(2);
-			return 'The package "' . $packageKey . '" already exists.';
+			$this->outputLine('The package "%s" already exists.', array($packageKey));
+			$this->quit(1);
 		}
 		$package = $this->packageManager->createPackage($packageKey);
-		echo 'New package "' . $packageKey . '" created at "' . $package->getPackagePath() . '".' . PHP_EOL;
+		$this->outputLine('New package "' . $packageKey . '" created at "' . $package->getPackagePath() . '".');
 		$this->bootstrap->executeCommand('typo3.flow3:cache:flush');
-		exit(0);
 	}
 
 	/**
@@ -70,17 +69,13 @@ class PackageCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContro
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function deleteCommand($packageKey) {
-		if ($packageKey === '') {
-			return $this->helpCommand();
-		}
 		if (!$this->packageManager->isPackageAvailable($packageKey)) {
-			$this->response->setExitCode(1);
-			return 'The package "' . $packageKey . '" does not exist.';
+			$this->outputLine('The package "%s" does not exist.', array($packageKey));
+			$this->quit(1);
 		}
 		$this->packageManager->deletePackage($packageKey);
-		echo 'Package "' . $packageKey . '" has been deleted.' . PHP_EOL;
+		$this->outputLine('Package "%s" has been deleted.', array($packageKey));
 		$this->bootstrap->executeCommand('typo3.flow3:cache:flush');
-		exit(0);
 	}
 
 	/**
@@ -91,19 +86,14 @@ class PackageCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContro
 	 * @author Tobias Liebig <mail_typo3@etobi.de>
 	 */
 	public function activateCommand($packageKey) {
-		if ($packageKey === '') {
-			return $this->helpCommand();
-		}
-
 		if ($this->packageManager->isPackageActive($packageKey)) {
-			$this->response->setExitCode(1);
-			return 'Package "' . $packageKey . '" is already active.';
+			$this->outputLine('Package "%s" is already active.', array($packageKey));
+			$this->quit(1);
 		}
 
 		$this->packageManager->activatePackage($packageKey);
-		echo 'Package "' . $packageKey . '" activated.' . PHP_EOL;
+		$this->outputLine('Package "%s" activated.', array($packageKey));
 		$this->bootstrap->executeCommand('typo3.flow3:cache:flush');
-		exit(0);
 	}
 
 	/**
@@ -115,14 +105,13 @@ class PackageCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContro
 	 */
 	public function deactivateCommand($packageKey) {
 		if (!$this->packageManager->isPackageActive($packageKey)) {
-			$this->response->setExitCode(1);
-			return 'Package "' . $packageKey . '" was not active.';
+			$this->outputLine('Package "%s" was not active.', array($packageKey));
+			$this->quit(1);
 		}
 
 		$this->packageManager->deactivatePackage($packageKey);
-		echo 'Package "' . $packageKey . '" deactivated.' . PHP_EOL;
+		$this->outputLine('Package "%s" deactivated.', array($packageKey));
 		$this->bootstrap->executeCommand('typo3.flow3:cache:flush');
-		exit(0);
 	}
 
 	/**
@@ -152,20 +141,20 @@ class PackageCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContro
 		ksort($activePackages);
 		ksort($inactivePackages);
 
-		$output = 'ACTIVE PACKAGES:' . PHP_EOL;
+		$this->outputLine('ACTIVE PACKAGES:');
 		foreach ($activePackages as $package) {
 			$packageMetaData = $package->getPackageMetaData();
-			$output .= ' ' . str_pad($package->getPackageKey(), $longestPackageKey + 3) . str_pad($packageMetaData->getVersion(), 15) . $packageMetaData->getTitle() . PHP_EOL;
+			$this->outputLine(' ' . str_pad($package->getPackageKey(), $longestPackageKey + 3) . str_pad($packageMetaData->getVersion(), 15) . $packageMetaData->getTitle());
 		}
 
 		if (count($inactivePackages) > 0) {
-			$output .= PHP_EOL . 'INACTIVE PACKAGES:' . PHP_EOL;
+			$this->outputLine();
+			$this->outputLine('INACTIVE PACKAGES:');
 			foreach ($inactivePackages as $package) {
 				$packageMetaData = $package->getPackageMetaData();
-				$output .= ' ' . str_pad($package->getPackageKey(), $longestPackageKey + 3) . str_pad($packageMetaData->getVersion(), 15) . $packageMetaData->getTitle() . PHP_EOL;
+				$this->outputLine(' ' . str_pad($package->getPackageKey(), $longestPackageKey + 3) . str_pad($packageMetaData->getVersion(), 15) . $packageMetaData->getTitle());
 			}
 		}
-		return $output;
 	}
 }
 

@@ -55,7 +55,7 @@ class CacheCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControll
 	 */
 	public function flushCommand() {
 		$this->cacheManager->flushCaches();
-		return 'Flushed all caches.';
+		$this->outputLine('Flushed all caches.');
 	}
 
 	/**
@@ -69,7 +69,7 @@ class CacheCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControll
 	 */
 	public function warmupCommand() {
 		$this->emitWarmupCaches();
-		return 'Warmed up caches.';
+		$this->outputLine('Warmed up caches.');
 	}
 
 	/**

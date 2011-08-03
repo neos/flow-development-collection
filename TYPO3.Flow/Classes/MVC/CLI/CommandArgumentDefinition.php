@@ -22,39 +22,61 @@ namespace TYPO3\FLOW3\MVC\CLI;
  *                                                                        */
 
 /**
- * A CLI specific response implementation
+ * Represents a CommandArgumentDefinition
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
- * @scope prototype
  */
-class Response extends \TYPO3\FLOW3\MVC\Response {
+class CommandArgumentDefinition {
 
 	/**
-	 * @var integer
+	 * @var string
 	 */
-	protected $exitCode = 0;
+	protected $name = '';
 
 	/**
-	 * Sets the numerical exit code which should be returned when exiting this application.
+	 * @var boolean
+	 */
+	protected $required = FALSE;
+
+	/**
+	 * @var string
+	 */
+	protected $description = '';
+
+	/**
+	 * Constructor
 	 *
-	 * @param integer $exitCode
-	 * @return void
+	 * @param string $name name of the command argument (= parameter name)
+	 * @param boolean $required defines whether this argument is required or optional
+	 * @param string $description description of the argument
+	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function setExitCode($exitCode) {
-		if (!is_integer($exitCode)) {
-			throw new \InvalidArgumentException(sprintf('Tried to set invalid exit code. The value must be integer, %s given.', gettype($exitCode)), 1312222064);
-		}
-		$this->exitCode = $exitCode;
+	public function __construct($name, $required, $description) {
+		$this->name = $name;
+		$this->required = $required;
+		$this->description = $description;
 	}
 
 	/**
-	 * Rets the numerical exit code which should be returned when exiting this application.
-	 *
-	 * @return integer
+	 * @return string
 	 */
-	public function getExitCode() {
-		return $this->exitCode;
+	public function getName() {
+		return $this->name;
 	}
+
+	/**
+	 * @return string
+	 */
+	public function getDescription() {
+		return $this->description;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function isRequired() {
+		return $this->required;
+	}
+
 }
-
 ?>

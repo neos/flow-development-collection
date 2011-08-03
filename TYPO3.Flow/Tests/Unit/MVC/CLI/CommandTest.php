@@ -29,6 +29,25 @@ use \TYPO3\FLOW3\MVC\CLI\Command;
 class CommandTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
+	 * @var \TYPO3\FLOW3\MVC\CLI\Command
+	 */
+	protected $command;
+
+	/**
+	 * @var \TYPO3\FLOW3\Reflection\MethodReflection
+	 */
+	protected $mockMethodReflection;
+
+	/**
+	 * @return void
+	 */
+	public function setUp() {
+		$this->command = $this->getAccessibleMock('TYPO3\FLOW3\MVC\CLI\Command', array('getCommandMethodReflection'), array(), '', FALSE);
+		$this->mockMethodReflection = $this->getMock('TYPO3\FLOW3\Reflection\MethodReflection', array(), array(), '', FALSE);
+		$this->command->expects($this->any())->method('getCommandMethodReflection')->will($this->returnValue($this->mockMethodReflection));
+	}
+
+	/**
 	 * @return array
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -48,6 +67,55 @@ class CommandTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function constructRendersACommandIdentifierByTheGivenControllerAndCommandName($controllerClassName, $commandName, $expectedCommandIdentifier) {
 		$command = new Command($controllerClassName, $commandName);
 		$this->assertEquals($expectedCommandIdentifier, $command->getCommandIdentifier());
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function hasArgumentsReturnsFalseIfCommandExpectsNoArguments() {
+		$this->mockMethodReflection->expects($this->atLeastOnce())->method('getParameters')->will($this->returnValue(array()));
+		$this->assertFalse($this->command->hasArguments());
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function hasArgumentsReturnsTrueIfCommandExpectsArguments() {
+		$mockParameterReflection = $this->getMock('TYPO3\FLOW3\Reflection\ParameterReflection', array(), array(), '', FALSE);
+		$this->mockMethodReflection->expects($this->atLeastOnce())->method('getParameters')->will($this->returnValue(array($mockParameterReflection)));
+		$this->assertTrue($this->command->hasArguments());
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function getArgumentDefinitionsReturnsEmptyArrayIfCommandExpectsNoArguments() {
+		$this->mockMethodReflection->expects($this->atLeastOnce())->method('getParameters')->will($this->returnValue(array()));
+		$this->assertSame(array(), $this->command->getArgumentDefinitions());
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function getArgumentDefinitionsReturnsArrayOfArgumentDefinitionIfCommandExpectsArguments() {
+		$mockParameterReflection = $this->getMock('TYPO3\FLOW3\Reflection\ParameterReflection', array(), array(), '', FALSE);
+		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService');
+		$mockMethodParameters = array('argument1' => array('optional' => FALSE), 'argument2' => array('optional' => TRUE));
+		$mockReflectionService->expects($this->atLeastOnce())->method('getMethodParameters')->will($this->returnValue($mockMethodParameters));
+		$this->command->injectReflectionService($mockReflectionService);
+		$this->mockMethodReflection->expects($this->atLeastOnce())->method('getParameters')->will($this->returnValue(array($mockParameterReflection)));
+		$this->mockMethodReflection->expects($this->atLeastOnce())->method('getTagsValues')->will($this->returnValue(array('param' => array('@param $argument1 argument1 description', '@param $argument2 argument2 description'))));
+
+		$expectedResult = array(
+			new \TYPO3\FLOW3\MVC\CLI\CommandArgumentDefinition('argument1', TRUE, 'argument1 description'),
+			new \TYPO3\FLOW3\MVC\CLI\CommandArgumentDefinition('argument2', FALSE, 'argument2 description')
+		);
+		$actualResult = $this->command->getArgumentDefinitions();
+		$this->assertEquals($expectedResult, $actualResult);
 	}
 }
 ?>

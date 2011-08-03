@@ -29,6 +29,8 @@ namespace TYPO3\FLOW3\MVC\Controller;
  */
 class CommandController implements CommandControllerInterface {
 
+	const MAXIMUM_LINE_LENGTH = 79;
+
 	/**
 	 * @var \TYPO3\FLOW3\MVC\CLI\Request
 	 */
@@ -155,7 +157,7 @@ class CommandController implements CommandControllerInterface {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @todo Implement a more friendly error message (with usage) for when the argument is missing
+	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function mapRequestArgumentsToControllerArguments() {
 		foreach ($this->arguments as $argument) {
@@ -164,9 +166,33 @@ class CommandController implements CommandControllerInterface {
 			if ($this->request->hasArgument($argumentName)) {
 				$argument->setValue($this->request->getArgument($argumentName));
 			} elseif ($argument->isRequired()) {
-				throw new \TYPO3\FLOW3\MVC\Exception\RequiredArgumentMissingException('Required argument "' . $argumentName  . '" is not set.', 1306755520);
+				$exception = new \TYPO3\FLOW3\MVC\Exception\CommandException('Required argument "' . $argumentName  . '" is not set.', 1306755520);
+				$this->forward('error', 'TYPO3\FLOW3\Command\HelpCommandController', array('exception' => $exception));
 			}
 		}
+	}
+
+	/**
+	 * Forwards the request to another command and / or CommandController.
+	 *
+	 * Request is directly transferred to the other command / controller
+	 * without the need for a new request.
+	 *
+	 * @param string $commandName
+	 * @param string $controllerObjectName
+	 * @param array $arguments
+	 * @return void
+	 */
+	protected function forward($commandName, $controllerObjectName = NULL, array $arguments = array()) {
+		$this->request->setDispatched(FALSE);
+		$this->request->setControllerCommandName($commandName);
+		if ($controllerObjectName !== NULL) {
+			$this->request->setControllerObjectName($controllerObjectName);
+		}
+		$this->request->setArguments($arguments);
+
+		$this->arguments->removeAll();
+		throw new \TYPO3\FLOW3\MVC\Exception\StopActionException();
 	}
 
 	/**
@@ -192,6 +218,46 @@ class CommandController implements CommandControllerInterface {
 		} elseif (is_object($commandResult) && method_exists($commandResult, '__toString')) {
 			$this->response->appendContent((string)$commandResult);
 		}
+	}
+
+	/**
+	 * Outputs specified text to the console window
+	 * You can specify arguments that will be passed to the text via sprintf
+	 * @see http://www.php.net/sprintf
+	 *
+	 * @param string $text Text to output
+	 * @param array $arguments Optional arguments to use for sprintf
+	 * @return void
+	 */
+	protected function output($text, array $arguments = array()) {
+		if ($arguments !== array()) {
+			$text = vsprintf($text, $arguments);
+		}
+		$this->response->appendContent($text);
+	}
+
+	/**
+	 * Outputs specified text to the console window and appends a line break
+	 *
+	 * @param string $text Text to output
+	 * @param array $arguments Optional arguments to use for sprintf
+	 * @return void
+	 * @see output()
+	 */
+	protected function outputLine($text = '', array $arguments = array()) {
+		return $this->output($text . PHP_EOL, $arguments);
+	}
+
+	/**
+	 * Exits the CLI
+	 * An exit status code can be specified @see http://www.php.net/exit
+	 *
+	 * @param integer $exitCode Exit code to return on exit
+	 * @return void
+	 */
+	protected function quit($exitCode = 0) {
+		$this->response->setExitCode($exitCode);
+		throw new \TYPO3\FLOW3\MVC\Exception\StopActionException();
 	}
 
 }

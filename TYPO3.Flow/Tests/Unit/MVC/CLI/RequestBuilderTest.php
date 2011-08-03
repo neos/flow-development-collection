@@ -282,7 +282,7 @@ class RequestBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		);
 		$this->mockReflectionService->expects($this->once())->method('getMethodParameters')->with('Acme\Test\Command\DefaultCommandController', 'listCommand')->will($this->returnValue($methodParameters));
 
-		$expectedArguments = array('testArgument1' => 'firstArgumentValue', 'testArgument2' => 'secondArgumentValue', 0 => 'exceedingArgument1');
+		$expectedArguments = array('testArgument1' => 'firstArgumentValue', 'testArgument2' => 'secondArgumentValue');
 
 		$request = $this->requestBuilder->build('acme.test:default:list --test-argument1=firstArgumentValue --test-argument2 secondArgumentValue exceedingArgument1');
 		$this->assertEquals($expectedArguments, $request->getArguments());

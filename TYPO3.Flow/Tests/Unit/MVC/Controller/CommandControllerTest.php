@@ -27,10 +27,63 @@ namespace TYPO3\FLOW3\Tests\Unit\MVC\Controller;
 class CommandControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
+	 * @var \TYPO3\FLOW3\MVC\Controller\CommandController
+	 */
+	protected $commandController;
+
+	public function setUp() {
+		$this->commandController = $this->getAccessibleMock('TYPO3\FLOW3\MVC\Controller\CommandController', array('dummy'));
+	}
+
+	/**
 	 * @test
 	 */
-	public function x() {
+	public function outputAppendsGivenStringToTheResponseContent() {
+		$mockResponse = $this->getMock('TYPO3\FLOW3\MVC\CLI\Response');
+		$mockResponse->expects($this->once())->method('appendContent')->with('some text');
+		$this->commandController->_set('response', $mockResponse);
+		$this->commandController->_call('output', 'some text');
+	}
 
+	/**
+	 * @test
+	 */
+	public function outputReplacesArgumentsInGivenString() {
+		$mockResponse = $this->getMock('TYPO3\FLOW3\MVC\CLI\Response');
+		$mockResponse->expects($this->once())->method('appendContent')->with('some text');
+		$this->commandController->_set('response', $mockResponse);
+		$this->commandController->_call('output', '%2$s %1$s', array('text', 'some'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function outputLineAppendsGivenStringAndNewlineToTheResponseContent() {
+		$mockResponse = $this->getMock('TYPO3\FLOW3\MVC\CLI\Response');
+		$mockResponse->expects($this->once())->method('appendContent')->with('some text' . PHP_EOL);
+		$this->commandController->_set('response', $mockResponse);
+		$this->commandController->_call('outputLine', 'some text');
+	}
+
+	/**
+	 * @test
+	 * @expectedException \TYPO3\FLOW3\MVC\Exception\StopActionException
+	 */
+	public function quitThrowsStopActionException() {
+		$mockResponse = $this->getMock('TYPO3\FLOW3\MVC\CLI\Response');
+		$this->commandController->_set('response', $mockResponse);
+		$this->commandController->_call('quit');
+	}
+
+	/**
+	 * @test
+	 * @expectedException \TYPO3\FLOW3\MVC\Exception\StopActionException
+	 */
+	public function quitSetsResponseExitCode() {
+		$mockResponse = $this->getMock('TYPO3\FLOW3\MVC\CLI\Response');
+		$mockResponse->expects($this->once())->method('setExitCode')->with(123);
+		$this->commandController->_set('response', $mockResponse);
+		$this->commandController->_call('quit', 123);
 	}
 }
 ?>
