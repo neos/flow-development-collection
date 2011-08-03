@@ -86,7 +86,7 @@ class ConfigurationManager {
 	 */
 	public function __construct($context) {
 		$this->context = $context;
-		if (!is_dir(FLOW3_PATH_CONFIGURATION . $context)) {
+		if (!is_dir(FLOW3_PATH_CONFIGURATION . $context) && !is_link(FLOW3_PATH_CONFIGURATION . $context)) {
 			\TYPO3\FLOW3\Utility\Files::createDirectoryRecursively(FLOW3_PATH_CONFIGURATION . $context);
 		}
 		$this->includeCachedConfigurationsPathAndFilename = FLOW3_PATH_CONFIGURATION . $context . '/IncludeCachedConfigurations.php';
