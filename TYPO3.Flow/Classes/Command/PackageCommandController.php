@@ -126,35 +126,47 @@ class PackageCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContro
 	}
 
 	/**
-	 * List available (active and inactive) packages
+	 * List available packages
 	 *
-	 * @return string
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function listAvailableCommand() {
-		$packages = $this->packageManager->getAvailablePackages();
-		$output = 'Available packages:' . PHP_EOL;
-		foreach ($packages as $package) {
-			$output .= ' ' . str_pad($package->getPackageKey(), 30) . $package->getPackageMetaData()->getVersion() . PHP_EOL;
-		}
-		return $output . PHP_EOL;
-	}
-
-	/**
-	 * List active packages
+	 * Lists all locally available packages. Displays the package key, version and package title and its state –
+	 * active or inactive.
 	 *
-	 * @return string
-	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @return string The list of packages
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function listActiveCommand() {
-		$packages = $this->packageManager->getActivePackages();
-		$output = 'Active packages:' . PHP_EOL;
-		foreach ($packages as $package) {
-			$output .= ' ' . str_pad($package->getPackageKey(), 30) . $package->getPackageMetaData()->getVersion() . PHP_EOL;
+	public function listCommand() {
+		$activePackages = array();
+		$inactivePackages = array();
+		$longestPackageKey = 0;
+		foreach ($this->packageManager->getAvailablePackages() as $packageKey => $package) {
+			if (strlen($packageKey) > $longestPackageKey) {
+				$longestPackageKey = strlen($packageKey);
+			}
+			if ($this->packageManager->isPackageActive($packageKey)) {
+				$activePackages[$packageKey] = $package;
+			} else {
+				$inactivePackages[$packageKey] = $package;
+			}
 		}
-		return $output . PHP_EOL;
-	}
 
+		ksort($activePackages);
+		ksort($inactivePackages);
+
+		$output = 'ACTIVE PACKAGES:' . PHP_EOL;
+		foreach ($activePackages as $package) {
+			$packageMetaData = $package->getPackageMetaData();
+			$output .= ' ' . str_pad($package->getPackageKey(), $longestPackageKey + 3) . str_pad($packageMetaData->getVersion(), 15) . $packageMetaData->getTitle() . PHP_EOL;
+		}
+
+		if (count($inactivePackages) > 0) {
+			$output .= PHP_EOL . 'INACTIVE PACKAGES:' . PHP_EOL;
+			foreach ($inactivePackages as $package) {
+				$packageMetaData = $package->getPackageMetaData();
+				$output .= ' ' . str_pad($package->getPackageKey(), $longestPackageKey + 3) . str_pad($packageMetaData->getVersion(), 15) . $packageMetaData->getTitle() . PHP_EOL;
+			}
+		}
+		return $output;
+	}
 }
 
 ?>
