@@ -91,6 +91,8 @@ class ClassLoaderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function classesFromVeryDeeplyNestedSubDirectoriesAreLoaded() {
+		$this->markTestSkipped('Currently, this test is unbelievably slow, and CPU is increasing radically... It seems something weird happens inside of vfsStream.');
+
 		mkdir('vfs://Test/Packages/Application/Acme/MyApp/Classes/SubDirectory/A/B/C/D/E/F/G/H/I/J', 0770, TRUE);
 		file_put_contents('vfs://Test/Packages/Application/Acme/MyApp/Classes/SubDirectory/A/B/C/D/E/F/G/H/I/J/K.php', '<?php ' . __CLASS__ . '::$testClassWasLoaded = TRUE; ?>');
 
