@@ -560,14 +560,14 @@ EOD;
 
 		$expectedInclusionCode = <<< "EOD"
 <?php
-if (file_exists('vfs://FLOW3/TemporaryDirectory/Configuration/FooContextConfigurations.php')) {
-	return require 'vfs://FLOW3/TemporaryDirectory/Configuration/FooContextConfigurations.php';
-} else {
+if (FLOW3_PATH_ROOT !== 'XXX' || !file_exists('vfs://FLOW3/TemporaryDirectory/Configuration/FooContextConfigurations.php')) {
 	unlink(__FILE__);
 	return array();
 }
+return require 'vfs://FLOW3/TemporaryDirectory/Configuration/FooContextConfigurations.php';
 ?>
 EOD;
+		$expectedInclusionCode = str_replace('XXX', FLOW3_PATH_ROOT, $expectedInclusionCode);
 		$this->assertTrue(file_exists($temporaryDirectoryPath . 'Configuration'));
 		$this->assertStringEqualsFile($includeCachedConfigurationsPathAndFilename, $expectedInclusionCode);
 		$this->assertFileExists($temporaryDirectoryPath . 'Configuration/FooContextConfigurations.php');

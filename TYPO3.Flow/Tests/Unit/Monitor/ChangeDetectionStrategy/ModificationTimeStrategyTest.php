@@ -106,7 +106,7 @@ class ModificationTimeStrategyTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		file_put_contents($fileUrl, 'test data');
 
 		$this->strategy->getFileStatus($fileUrl);
-		\vfsStreamWrapper::getRoot()->getChild('test.txt')->setFilemtime(time() + 5);
+		\vfsStreamWrapper::getRoot()->getChild('test.txt')->lastModified(time() + 5);
 		clearstatcache();
 		$status = $this->strategy->getFileStatus($fileUrl);
 

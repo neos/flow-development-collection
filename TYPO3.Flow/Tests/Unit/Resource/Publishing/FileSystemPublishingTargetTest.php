@@ -139,7 +139,7 @@ class FileSystemPublishingTargetTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		\TYPO3\FLOW3\Utility\Files::createDirectoryRecursively('vfs://Foo/Web/_Resources/Static/Bar');
 
 		file_put_contents('vfs://Foo/Web/_Resources/Static/Bar/file2.txt', 1);
-		\vfsStreamWrapper::getRoot()->getChild('Web/_Resources/Static/Bar/file2.txt')->setFilemtime(time() - 5);
+		\vfsStreamWrapper::getRoot()->getChild('Web/_Resources/Static/Bar/file2.txt')->lastModified(time() - 5);
 
 		file_put_contents('vfs://Foo/Web/_Resources/Static/Bar/file3.txt', 1);
 
