@@ -133,7 +133,8 @@ class Bootstrap {
 
 		$this->context = $context;
 		if ($this->context !== 'Production' && $this->context !== 'Development' && $this->context !== 'Testing') {
-			exit('FLOW3: Unknown context "' . $this->context . '" provided, currently only "Production", "Development" and "Testing" are supported. (Error #1254216868)' . PHP_EOL);
+			echo('FLOW3: Unknown context "' . $this->context . '" provided, currently only "Production", "Development" and "Testing" are supported. (Error #1254216868)' . PHP_EOL);
+			exit(1);
 		}
 
 		if ($this->context === 'Testing') {
@@ -812,7 +813,8 @@ class Bootstrap {
 			if (FLOW3_SAPITYPE === 'CLI' && $rootPath === FALSE) {
 				$rootPath = getcwd();
 				if (realpath(__DIR__) !== realpath($rootPath . '/Packages/Framework/TYPO3.FLOW3/Classes/Core')) {
-					exit('FLOW3: Invalid root path. (Error #1301225173)' . PHP_EOL . 'You must start FLOW3 from the root directory or set the environment variable FLOW3_ROOTPATH correctly.' . PHP_EOL);
+					echo('FLOW3: Invalid root path. (Error #1301225173)' . PHP_EOL . 'You must start FLOW3 from the root directory or set the environment variable FLOW3_ROOTPATH correctly.' . PHP_EOL);
+					exit(1);
 				}
 			}
 			if ($rootPath !== FALSE) {
@@ -820,7 +822,8 @@ class Bootstrap {
 				$testPath = \TYPO3\FLOW3\Utility\Files::getUnixStylePath(realpath(\TYPO3\FLOW3\Utility\Files::concatenatePaths(array($rootPath, 'Packages/Framework/TYPO3.FLOW3')))) . '/';
 				$expectedPath = \TYPO3\FLOW3\Utility\Files::getUnixStylePath(realpath(FLOW3_PATH_FLOW3)) . '/';
 				if ($testPath !== $expectedPath) {
-					exit('FLOW3: Invalid root path. (Error #1248964375)' . PHP_EOL . '"' . $testPath . '" does not lead to' . PHP_EOL . '"' . $expectedPath .'"' . PHP_EOL);
+					echo('FLOW3: Invalid root path. (Error #1248964375)' . PHP_EOL . '"' . $testPath . '" does not lead to' . PHP_EOL . '"' . $expectedPath .'"' . PHP_EOL);
+					exit(1);
 				}
 				define('FLOW3_PATH_ROOT', $rootPath);
 				unset($rootPath);
@@ -830,7 +833,8 @@ class Bootstrap {
 
 		if (FLOW3_SAPITYPE === 'CLI') {
 			if (!defined('FLOW3_PATH_ROOT')) {
-				exit('FLOW3: No root path defined in environment variable FLOW3_ROOTPATH (Error #1248964376)' . PHP_EOL);
+				echo('FLOW3: No root path defined in environment variable FLOW3_ROOTPATH (Error #1248964376)' . PHP_EOL);
+				exit(1);
 			}
 			if (!defined('FLOW3_PATH_WEB')) {
 				if (isset($_SERVER['FLOW3_WEBPATH']) && is_dir($_SERVER['FLOW3_WEBPATH'])) {
@@ -859,13 +863,20 @@ class Bootstrap {
 	 */
 	protected function ensureRequiredEnvironment() {
 		if (version_compare(phpversion(), self::MINIMUM_PHP_VERSION, '<')) {
-			exit('FLOW3 requires PHP version ' . self::MINIMUM_PHP_VERSION . ' or higher but your installed version is currently ' . phpversion() . '. (Error #1172215790)');
+			echo('FLOW3 requires PHP version ' . self::MINIMUM_PHP_VERSION . ' or higher but your installed version is currently ' . phpversion() . '. (Error #1172215790)' . PHP_EOL);
+			exit(1);
 		}
 		if (version_compare(PHP_VERSION, self::MAXIMUM_PHP_VERSION, '>')) {
-			exit('FLOW3 requires PHP version ' . self::MAXIMUM_PHP_VERSION . ' or lower but your installed version is currently ' . PHP_VERSION . '. (Error #1172215790)');
+			echo('FLOW3 requires PHP version ' . self::MAXIMUM_PHP_VERSION . ' or lower but your installed version is currently ' . PHP_VERSION . '. (Error #1172215790)' . PHP_EOL);
+			exit(1);
 		}
 		if (version_compare(PHP_VERSION, '6.0.0', '<') && !extension_loaded('mbstring')) {
-			exit('FLOW3 requires the PHP extension "mbstring" for PHP versions below 6.0.0 (Error #1207148809)');
+			echo('FLOW3 requires the PHP extension "mbstring" for PHP versions below 6.0.0 (Error #1207148809)' . PHP_EOL);
+			exit(1);
+		}
+		if (DIRECTORY_SEPARATOR !== '/' && PHP_WINDOWS_VERSION_MAJOR < 6) {
+			echo('FLOW3 does not support Windows versions older than Windows Vista or Windows Server 2008 (Error #1312463704)' . PHP_EOL);
+			exit(1);
 		}
 
 		if (!extension_loaded('Reflection')) throw new \TYPO3\FLOW3\Exception('The PHP extension "Reflection" is required by FLOW3.', 1218016725);
@@ -881,7 +892,8 @@ class Bootstrap {
 			date_default_timezone_set('Europe/Copenhagen');
 		}
 		if (ini_get('magic_quotes_gpc') === '1' || ini_get('magic_quotes_gpc') === 'On') {
-			exit('FLOW3 requires the PHP setting "magic_quotes_gpc" set to Off. (Error #1224003190)');
+			echo('FLOW3 requires the PHP setting "magic_quotes_gpc" set to Off. (Error #1224003190)');
+			exit(1);
 		}
 
 		if (!is_dir(FLOW3_PATH_DATA) && !is_link(FLOW3_PATH_DATA)) {
