@@ -8,7 +8,7 @@
 			<ul>
 				<f:for each="{]]><k:inflect.pluralize>{modelName}</k:inflect.pluralize><![CDATA[}" as="]]>{modelName}<![CDATA[">
 					<li>
-						{]]>{modelName}<![CDATA[.name}
+						<f:link.action action="show" arguments="{]]>{modelName}: {modelName}<![CDATA[}">{]]>{modelName}<![CDATA[.name}</f:link.action>
 						<f:link.action action="edit" arguments="{]]>{modelName}: {modelName}<![CDATA[}">Edit</f:link.action>
 						<f:link.action action="delete" arguments="{]]>{modelName}: {modelName}<![CDATA[}">Delete</f:link.action>
 					</li>

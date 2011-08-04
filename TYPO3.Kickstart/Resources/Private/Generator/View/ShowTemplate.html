@@ -1,0 +1,12 @@
+{namespace k=TYPO3\Kickstart\ViewHelpers}<![CDATA[<f:layout name="Default" />
+
+<f:section name="Title">]]>Show <k:inflect.humanizeCamelCase lowercase="true">{modelName}</k:inflect.humanizeCamelCase> "<![CDATA[{]]>{modelName}<![CDATA[.name}]]>"<![CDATA[</f:section>
+
+<f:section name="Content">
+	<table><f:for each="{propertyNames}" as="propertyName">
+		<tr>
+			<th><k:inflect.humanizeCamelCase>{propertyName}</k:inflect.humanizeCamelCase></th>
+			<td>{]]>{modelName}<![CDATA[.{propertyName}}</td>
+		</tr>
+	</f:for></table>
+</f:section>]]>
