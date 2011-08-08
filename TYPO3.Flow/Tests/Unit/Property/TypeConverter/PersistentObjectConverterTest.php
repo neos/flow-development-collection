@@ -420,5 +420,16 @@ class PersistentObjectConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$result = $this->converter->convertFrom($source, 'TYPO3\FLOW3\Fixtures\ClassWithSettersAndConstructor', $convertedChildProperties, $configuration);
 		$this->assertSame($object, $result);
 	}
+
+	/**
+	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function convertFromShouldReturnNullForEmptyString() {
+		$source = '';
+		$result = $this->converter->convertFrom($source, 'TYPO3\FLOW3\Fixtures\ClassWithSettersAndConstructor');
+		$this->assertNull($result);
+	}
+
 }
 ?>

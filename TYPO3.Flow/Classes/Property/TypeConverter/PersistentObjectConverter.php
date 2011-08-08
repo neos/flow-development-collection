@@ -166,6 +166,9 @@ class PersistentObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\Abst
 		if (is_array($source)) {
 			$object = $this->handleArrayData($source, $targetType, $convertedChildProperties, $configuration);
 		} elseif (is_string($source)) {
+			if ($source === '') {
+				return NULL;
+			}
 			$object = $this->fetchObjectFromPersistence($source, $targetType);
 		} else {
 			throw new \InvalidArgumentException('Only strings and arrays are accepted.', 1305630314);
