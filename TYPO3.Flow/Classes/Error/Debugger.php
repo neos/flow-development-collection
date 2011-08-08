@@ -60,6 +60,10 @@ class Debugger {
 		(PHPUnit_Framework_MockObject_InvocationMocker)
 		/xs';
 
+	static protected $blacklistedPropertyNames = '/
+		(FLOW3_AOP_.*)
+		/xs';
+
 	/**
 	 * Is set to TRUE once the CSS file is included in the current page to prevent double inclusions of the CSS file.
 	 * @var boolean
@@ -244,6 +248,7 @@ class Debugger {
 				$classReflection = new \ReflectionClass($className);
 				$properties = $classReflection->getProperties();
 				foreach ($properties as $property) {
+					if (preg_match(self::$blacklistedPropertyNames, $property->getName())) continue;
 					$dump .= chr(10);
 					$dump .= str_repeat(' ', $level) . ($plaintext ? '' : '<span class="debug-property">') . self::ansiEscapeWrap($property->getName(), '36', $ansiColors) . ($plaintext ? '' : '</span>') . ' => ';
 					$property->setAccessible(TRUE);
