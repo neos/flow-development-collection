@@ -62,7 +62,7 @@ interface PackageManagerInterface {
 	 * A package is available, if the package directory contains valid meta information.
 	 *
 	 * @param string $packageKey
-	 * @return array Array of \TYPO3\FLOW3\Package\PackageInterface
+	 * @return \TYPO3\FLOW3\Package\PackageInterface
 	 * @api
 	 */
 	public function getPackage($packageKey);
