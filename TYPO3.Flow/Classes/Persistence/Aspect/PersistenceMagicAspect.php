@@ -85,6 +85,9 @@ class PersistenceMagicAspect {
 	public function generateValueHash(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$proxy = $joinPoint->getProxy();
 		$hashSource = get_class($proxy);
+		if (property_exists($proxy, 'FLOW3_Persistence_Identifier')) {
+			$hashSource .= \TYPO3\FLOW3\Reflection\ObjectAccess::getProperty($proxy, 'FLOW3_Persistence_Identifier', TRUE);
+		}
 		foreach ($joinPoint->getMethodArguments() as $argumentValue) {
 			if (is_array($argumentValue)) {
 				$hashSource .= ($this->useIgBinary === TRUE) ? igbinary_serialize($argumentValue) : serialize($argumentValue);

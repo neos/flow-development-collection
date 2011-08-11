@@ -69,6 +69,29 @@ class PersistenceMagicAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$aspect->generateValueHash($mockJoinPoint);
 		$this->assertEquals(sha1($className . 'uuidhash'), $object->FLOW3_Persistence_Identifier);
 	}
-}
 
+	/**
+	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function generateValueHashUsesExistingPersistenceIdentifierForNestedConstructorCalls() {
+		$methodArguments = array(
+			'foo' => 'bar'
+		);
+
+		$className = 'Class' . md5(uniqid(mt_rand(), TRUE));
+		eval('class ' . $className . ' { public $foo; public $bar; }');
+		$object = new $className();
+		$object->FLOW3_Persistence_Identifier = 'existinguuidhash';
+
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface');
+		$mockJoinPoint->expects($this->atLeastOnce())->method('getProxy')->will($this->returnValue($object));
+		$mockJoinPoint->expects($this->atLeastOnce())->method('getMethodArguments')->will($this->returnValue($methodArguments));
+
+		$aspect = new \TYPO3\FLOW3\Persistence\Aspect\PersistenceMagicAspect();
+		$aspect->generateValueHash($mockJoinPoint);
+		$this->assertEquals(sha1($className . 'existinguuidhash' . 'bar'), $object->FLOW3_Persistence_Identifier);
+	}
+
+}
 ?>
