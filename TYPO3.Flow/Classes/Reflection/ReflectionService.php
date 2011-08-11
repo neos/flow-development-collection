@@ -168,7 +168,7 @@ class ReflectionService {
 	 *
 	 * @var array
 	 */
-	protected $ignoredTags = array('api', 'package', 'subpackage', 'license', 'copyright', 'author', 'version', 'const', 'see', 'todo', 'throws');
+	protected $ignoredTags = array('api', 'package', 'subpackage', 'license', 'copyright', 'author', 'version', 'const', 'see', 'todo');
 
 	/**
 	 * Schemata of all classes which need to be persisted
