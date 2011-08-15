@@ -325,10 +325,30 @@ class CoreCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControlle
 	}
 
 	/**
-	 * To be implemented ...
+	 * Returns autocomplete suggestions on hitting the TAB key.
+	 *
+	 * @param string $partialCommand The current (partial) command where the TAB key was hit
+	 * @param integer $index The cursor index at the current (partial) command
+	 * @return array
 	 */
 	protected function autocomplete($partialCommand, $index) {
-		return array();
+		// @TODO Add more functionality by parsing the current buffer with readline_info()
+		// @TODO Filter file system elements (if possible at all)
+
+		$suggestions = array();
+
+		$availableCommands = $this->bootstrap->getObjectManager()
+			->get('TYPO3\FLOW3\MVC\CLI\CommandManager')
+			->getAvailableCommands();
+
+		/** @var $command \TYPO3\FLOW3\MVC\CLI\Command */
+		foreach ($availableCommands as $command) {
+			if ($command->isInternal() === FALSE) {
+				$suggestions[] = $command->getCommandIdentifier();
+			}
+		}
+
+		return $suggestions;
 	}
 }
 ?>
