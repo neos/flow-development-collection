@@ -52,16 +52,96 @@ class PersistenceTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function entitiesArePersistedAndReconstituted() {
-		$testEntity = new \TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\TestEntity;
-		$testEntity->setName('FLOW3');
-		$this->testEntityRepository->add($testEntity);
-
-			// FIXME this was tearDownPersistence(), which would reset objects in memory to a pristine state as well
-		$this->persistenceManager->persistAll();
+		$this->removeExampleEntities();
+		$this->insertExampleEntity();
 
 		$testEntity = $this->testEntityRepository->findAll()->getFirst();
 		$this->assertEquals('FLOW3', $testEntity->getName());
 	}
 
+	/**
+	 * @test
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function executingAQueryWillOnlyExecuteItLazily() {
+		$this->removeExampleEntities();
+		$this->insertExampleEntity();
+
+		$allResults = $this->testEntityRepository->findAll();
+		$this->assertInstanceOf('TYPO3\FLOW3\Persistence\Doctrine\QueryResult', $allResults);
+		$this->assertAttributeInternalType('null', 'rows', $allResults, 'Query Result did not load the result collection lazily.');
+
+		$allResultsArray = $allResults->toArray();
+		$this->assertEquals('FLOW3', $allResultsArray[0]->getName());
+		$this->assertAttributeInternalType('array', 'rows', $allResults);
+	}
+
+	/**
+	 * @test
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function serializingAQueryResultWillResetCachedResult() {
+		$this->removeExampleEntities();
+		$this->insertExampleEntity();
+
+		$allResults = $this->testEntityRepository->findAll();
+
+		$unserializedResults = unserialize(serialize($allResults));
+		$this->assertAttributeInternalType('null', 'rows', $unserializedResults, 'Query Result did not flush the result collection after serialization.');
+	}
+
+	/**
+	 * @test
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function resultCanStillBeTraversedAfterSerialization() {
+		$this->removeExampleEntities();
+		$this->insertExampleEntity();
+
+		$allResults = $this->testEntityRepository->findAll();
+		$this->assertEquals(1, count($allResults->toArray()), 'Not correct number of entities found before running test.');
+
+		$unserializedResults = unserialize(serialize($allResults));
+		$this->assertEquals(1, count($unserializedResults->toArray()));
+		$this->assertEquals('FLOW3', $unserializedResults[0]->getName());
+	}
+
+	/**
+	 * @test
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function getFirstShouldNotHaveSideEffects() {
+		$this->removeExampleEntities();
+		$this->insertExampleEntity('FLOW3');
+		$this->insertExampleEntity('TYPO3');
+
+		$allResults = $this->testEntityRepository->findAll();
+		$this->assertEquals('FLOW3', $allResults->getFirst()->getName());
+
+		$numberOfTotalResults = count($allResults->toArray());
+		$this->assertEquals(2, $numberOfTotalResults);
+	}
+
+	/**
+	 * Helper which inserts example data into the database.
+	 *
+	 * @param string $name
+	 */
+	protected function insertExampleEntity($name = 'FLOW3') {
+		$testEntity = new \TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\TestEntity;
+		$testEntity->setName($name);
+		$this->testEntityRepository->add($testEntity);
+
+		// FIXME this was tearDownPersistence(), which would reset objects in memory to a pristine state as well
+		$this->persistenceManager->persistAll();
+	}
+
+	/**
+	 * Remove all example entities to enforce a clean state
+	 */
+	protected function removeExampleEntities() {
+		$this->testEntityRepository->removeAll();
+		$this->persistenceManager->persistAll();
+	}
 }
 ?>

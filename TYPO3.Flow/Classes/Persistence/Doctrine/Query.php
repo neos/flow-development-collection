@@ -107,13 +107,25 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 *
 	 * @return \TYPO3\FLOW3\Persistence\QueryResultInterface The query result
 	 * @api
-	 * @todo improve try/catch block
 	 */
 	public function execute() {
+		return new \TYPO3\FLOW3\Persistence\Doctrine\QueryResult($this);
+	}
+
+	/**
+	 * Gets the results of this query as array.
+	 *
+	 * Really executes the query on the database.
+	 * This should only ever be executed from the QueryResult class.
+	 *
+	 * @return array result set
+	 * @todo improve try/catch block, at least we should log if something goes wrong here
+	 */
+	public function getResult() {
 		try {
-			return new \TYPO3\FLOW3\Persistence\Doctrine\QueryResult($this->queryBuilder->getQuery()->getResult(), $this);
+			return $this->queryBuilder->getQuery()->getResult();
 		} catch (\Doctrine\ORM\ORMException $e) {
-			return new \TYPO3\FLOW3\Persistence\Doctrine\QueryResult(array(), $this);
+			return array();
 		}
 	}
 
@@ -482,7 +494,9 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 * @return void
 	 */
 	public function __wakeup() {
-		$this->queryBuilder->where($this->constraint);
+		if ($this->constraint !== NULL) {
+			$this->queryBuilder->where($this->constraint);
+		}
 		if (is_array($this->orderings)) {
 			foreach ($this->orderings AS $propertyName => $order) {
 				$this->queryBuilder->addOrderBy($this->queryBuilder->getRootAlias() . '.' . $propertyName, $order);
@@ -494,6 +508,13 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 		unset($this->parameters);
 	}
 
+	/**
+	 * Cloning the query clones also the internal QueryBuilder,
+	 * as they are tightly coupled.
+	 */
+	public function __clone() {
+		$this->queryBuilder = clone $this->queryBuilder;
+	}
 }
 
 ?>

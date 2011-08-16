@@ -49,6 +49,27 @@ class QueryTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	/**
 	 * @test
 	 */
+	public function simpleQueryCanBeExecutedAfterDeserialization() {
+		$testEntityRepository = new \TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\TestEntityRepository();
+		$testEntityRepository->removeAll();
+
+		$testEntity1 = new \TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\TestEntity;
+		$testEntity1->setName('FLOW3');
+		$testEntityRepository->add($testEntity1);
+
+		$this->persistenceManager->persistAll();
+
+		$query = new Query('TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\TestEntity');
+		$serializedQuery = serialize($query);
+		$unserializedQuery = unserialize($serializedQuery);
+
+		$this->assertEquals(1, $unserializedQuery->execute()->count());
+		$this->assertEquals(array($testEntity1), $unserializedQuery->execute()->toArray());
+	}
+
+	/**
+	 * @test
+	 */
 	public function moreComplexQueryCanBeSerializedAndDeserialized() {
 		$query = new Query('TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\TestEntity');
 		$query->matching($query->equals('name', 'some'));
@@ -64,6 +85,7 @@ class QueryTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 */
 	public function moreComplexQueryCanBeExecutedAfterDeserialization() {
 		$testEntityRepository = new \TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\TestEntityRepository();
+		$testEntityRepository->removeAll();
 
 		$testEntity1 = new \TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\TestEntity;
 		$testEntity1->setName('FLOW3');

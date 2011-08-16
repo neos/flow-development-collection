@@ -32,6 +32,7 @@ class QueryResult implements \TYPO3\FLOW3\Persistence\QueryResultInterface {
 
 	/**
 	 * @var array
+	 * @transient
 	 */
 	protected $rows;
 
@@ -44,9 +45,19 @@ class QueryResult implements \TYPO3\FLOW3\Persistence\QueryResultInterface {
 	 * @param array $rows
 	 * @param \TYPO3\FLOW3\Persistence\Doctrine\Query $query
 	 */
-	public function __construct(array $rows, \TYPO3\FLOW3\Persistence\Doctrine\Query $query) {
-		$this->rows = $rows;
+	public function __construct(\TYPO3\FLOW3\Persistence\Doctrine\Query $query) {
 		$this->query = $query;
+	}
+
+	/**
+	 * Loads the objects this QueryResult is supposed to hold
+	 *
+	 * @return void
+	 */
+	protected function initialize() {
+		if (!is_array($this->rows)) {
+			$this->rows = $this->query->getResult();
+		}
 	}
 
 	/**
@@ -66,7 +77,15 @@ class QueryResult implements \TYPO3\FLOW3\Persistence\QueryResultInterface {
 	 * @api
 	 */
 	public function getFirst() {
-		return (isset($this->rows[0])) ? $this->rows[0] : NULL;
+		if (is_array($this->rows)) {
+			$rows = &$this->rows;
+		} else {
+			$query = clone $this->query;
+			$query->setLimit(1);
+			$rows = $query->getResult();
+		}
+
+		return (isset($rows[0])) ? $rows[0] : NULL;
 	}
 
 	/**
@@ -76,6 +95,7 @@ class QueryResult implements \TYPO3\FLOW3\Persistence\QueryResultInterface {
 	 * @api
 	 */
 	public function toArray() {
+		$this->initialize();
 		return $this->rows;
 	}
 
@@ -86,7 +106,7 @@ class QueryResult implements \TYPO3\FLOW3\Persistence\QueryResultInterface {
 	 * @api
 	 */
 	public function count() {
-		return count($this->rows);
+		return $this->query->count();
 	}
 
 	/**
@@ -97,6 +117,7 @@ class QueryResult implements \TYPO3\FLOW3\Persistence\QueryResultInterface {
 	 * @return boolean
 	 */
 	public function offsetExists($offset) {
+		$this->initialize();
 		return isset($this->rows[$offset]);
 	}
 
@@ -105,6 +126,7 @@ class QueryResult implements \TYPO3\FLOW3\Persistence\QueryResultInterface {
 	 * @return mixed
 	 */
 	public function offsetGet($offset) {
+		$this->initialize();
 		return $this->rows[$offset];
 	}
 
@@ -116,6 +138,7 @@ class QueryResult implements \TYPO3\FLOW3\Persistence\QueryResultInterface {
 	 * @return void
 	 */
 	public function offsetSet($offset, $value) {
+		$this->initialize();
 		$this->rows[$offset] = $value;
 	}
 
@@ -126,6 +149,7 @@ class QueryResult implements \TYPO3\FLOW3\Persistence\QueryResultInterface {
 	 * @return void
 	 */
 	public function offsetUnset($offset) {
+		$this->initialize();
 		unset($this->rows[$offset]);
 	}
 
@@ -133,6 +157,7 @@ class QueryResult implements \TYPO3\FLOW3\Persistence\QueryResultInterface {
 	 * @return mixed
 	 */
 	public function current() {
+		$this->initialize();
 		return current($this->rows);
 	}
 
@@ -140,6 +165,7 @@ class QueryResult implements \TYPO3\FLOW3\Persistence\QueryResultInterface {
 	 * @return mixed
 	 */
 	public function key() {
+		$this->initialize();
 		return key($this->rows);
 	}
 
@@ -147,6 +173,7 @@ class QueryResult implements \TYPO3\FLOW3\Persistence\QueryResultInterface {
 	 * @return void
 	 */
 	public function next() {
+		$this->initialize();
 		return next($this->rows);
 	}
 
@@ -154,6 +181,7 @@ class QueryResult implements \TYPO3\FLOW3\Persistence\QueryResultInterface {
 	 * @return void
 	 */
 	public function rewind() {
+		$this->initialize();
 		reset($this->rows);
 	}
 
@@ -161,6 +189,7 @@ class QueryResult implements \TYPO3\FLOW3\Persistence\QueryResultInterface {
 	 * @return void
 	 */
 	public function valid() {
+		$this->initialize();
 		return current($this->rows) !== FALSE;
 	}
 
