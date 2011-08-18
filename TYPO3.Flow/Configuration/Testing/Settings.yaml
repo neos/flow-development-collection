@@ -36,9 +36,6 @@ TYPO3:
         path: ':memory:'
         username: null
         password: null
-      doctrine:
-        dbal:
-          sessionInitialization: ''
 
     security:
       authentication:
