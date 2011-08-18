@@ -121,15 +121,13 @@ interface RepositoryInterface {
 	public function setDefaultOrderings(array $defaultOrderings);
 
 	/**
-	 * Replaces an existing object with the same identifier by the given object
-	 * after checking the type of the object fits to the repositories type.
+	 * Schedules a modified object for persistence.
 	 *
-	 * This is a convenience method that replaces a find/replace chain.
-	 *
-	 * @param object $modifiedObject The modified object
+	 * @param object $object The modified object
+	 * @return void
 	 * @api
 	 */
-	public function update($modifiedObject);
+	public function update($object);
 
 }
 ?>

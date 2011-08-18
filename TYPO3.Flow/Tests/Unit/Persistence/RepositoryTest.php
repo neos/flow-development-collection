@@ -183,7 +183,7 @@ class RepositoryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function updateDelegatesToPersistenceManager() {
 		$object = new \stdClass();
 		$mockPersistenceManager = $this->getMock('TYPO3\FLOW3\Persistence\PersistenceManagerInterface');
-		$mockPersistenceManager->expects($this->once())->method('merge')->with($object);
+		$mockPersistenceManager->expects($this->once())->method('update')->with($object);
 		$repository = $this->getAccessibleMock('TYPO3\FLOW3\Persistence\Repository', array('dummy'));
 		$repository->injectPersistenceManager($mockPersistenceManager);
 		$repository->_set('entityClassName', get_class($object));

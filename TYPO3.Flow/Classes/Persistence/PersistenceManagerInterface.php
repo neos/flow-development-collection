@@ -139,13 +139,14 @@ interface PersistenceManagerInterface {
 	public function remove($object);
 
 	/**
-	 * Merge an object into the persistence.
+	 * Update an object in the persistence.
 	 *
-	 * @param object $modifiedObject The modified object
+	 * @param object $object The modified object
 	 * @return void
+	 * @throws \TYPO3\FLOW3\Persistence\Exception\UnknownObjectException
 	 * @api
 	 */
-	public function merge($modifiedObject);
+	public function update($object);
 
 }
 

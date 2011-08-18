@@ -272,46 +272,18 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 	}
 
 	/**
-	 * Merge an object into the persistence.
+	 * Update an object in the persistence.
 	 *
-	 * Note:
-	 * The code may look funny, but the two calls to the $persistenceManager
-	 * yield different results - getIdentifierByObject() in this case returns the
-	 * identifier stored inside the $modifiedObject, whereas getObjectByIdentifier()
-	 * returns the existing object from the object map in the session.
-	 *
-	 * @param object $modifiedObject The modified object
+	 * @param object $object The modified object
 	 * @return void
 	 * @throws \TYPO3\FLOW3\Persistence\Exception\UnknownObjectException
 	 * @api
 	 */
-	public function merge($modifiedObject) {
-		$identifier = $this->persistenceSession->getIdentifierByObject($modifiedObject);
-		if ($identifier !== NULL) {
-			$existingObject = $this->getObjectByIdentifier($identifier);
-
-			$this->persistenceSession->replaceReconstitutedEntity($existingObject, $modifiedObject);
-				// We simply register again. This way the PM stills knows the old
-				// object, but whenever asked for the object via identifier it will
-				// return the new one.
-			$this->persistenceSession->registerObject($modifiedObject, $identifier);
-
-			if ($this->removedObjects->contains($existingObject)) {
-				$this->removedObjects->detach($existingObject);
-				$this->removedObjects->attach($modifiedObject);
-			} elseif ($this->addedObjects->contains($existingObject)) {
-				$this->addedObjects->detach($existingObject);
-				$this->addedObjects->attach($modifiedObject);
-			}
-			$propertiesOfNewObject = \TYPO3\FLOW3\Reflection\ObjectAccess::getGettableProperties($modifiedObject);
-			foreach ($propertiesOfNewObject as $subObject) {
-				if ($subObject instanceof \TYPO3\FLOW3\Persistence\Aspect\PersistenceMagicInterface && property_exists($subObject, 'FLOW3_Persistence_clone')) {
-					$this->merge($subObject);
-				}
-			}
-		} else {
-			throw new \TYPO3\FLOW3\Persistence\Exception\UnknownObjectException('The "modified object" does not have an existing counterpart in this repository.', 1249479819);
+	public function update($object) {
+		if ($this->isNewObject($object)) {
+			throw new \TYPO3\FLOW3\Persistence\Exception\UnknownObjectException('The object of type "' . get_class($object) . '" given to update must be persisted already, but is new.', 1249479819);
 		}
+		$this->changedObjects->attach($object);
 	}
 
 }

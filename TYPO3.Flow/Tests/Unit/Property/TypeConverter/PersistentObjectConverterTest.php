@@ -205,31 +205,6 @@ class PersistentObjectConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$configuration->setTypeConverterOptions('TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter', $typeConverterOptions);
 		return $configuration;
 	}
-	/**
-	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 */
-	public function convertFromShouldCloneTheFetchedObjectIfObjectNeedsToBeModified() {
-		$identifier = '550e8400-e29b-11d4-a716-446655440000';
-		$object = new \TYPO3\FLOW3\Fixtures\ClassWithSetters();
-		$object->someProperty = 'asdf';
-
-		$source = array(
-			'__identity' => $identifier,
-			'foo' => 'bar'
-		);
-		$convertedChildProperties = array(
-			'property1' => 'someConvertedValue'
-		);
-		$this->mockPersistenceManager->expects($this->once())->method('getObjectByIdentifier')->with($identifier)->will($this->returnValue($object));
-
-		$configuration = $this->buildConfiguration(array(\TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_MODIFICATION_ALLOWED => TRUE));
-		$actual = $this->converter->convertFrom($source, 'MySpecialType', $convertedChildProperties, $configuration);
-
-		$this->assertNotSame($object, $actual, 'The object has not been cloned.');
-		$this->assertEquals('asdf', $actual->someProperty, 'The object somehow lost its current state.');
-		$this->assertEquals('someConvertedValue', $actual->property1, 'The sub properties have not been set.');
-	}
 
 	/**
 	 * @param integer $numberOfResults

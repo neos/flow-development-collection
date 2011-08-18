@@ -29,7 +29,7 @@ namespace TYPO3\FLOW3\Property\TypeConverter;
  *
  * - If the input has an identity property and NO additional properties, we fetch the object from persistence.
  * - If the input has an identity property AND additional properties, we fetch the object from persistence,
- *   create a clone on it, and set the sub-properties. We only do this if the configuration option "CONFIGURATION_MODIFICATION_ALLOWED" is TRUE.
+ *   and set the sub-properties. We only do this if the configuration option "CONFIGURATION_MODIFICATION_ALLOWED" is TRUE.
  * - If the input has NO identity property, but additional properties, we create a new object and return it.
  *   However, we only do this if the configuration option "CONFIGURATION_CREATION_ALLOWED" is TRUE.
  *
@@ -197,11 +197,8 @@ class PersistentObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\Abst
 		if (isset($source['__identity'])) {
 			$object = $this->fetchObjectFromPersistence($source['__identity'], $targetType);
 
-			if (count($source) > 1) {
-				if ($configuration === NULL || $configuration->getConfigurationValue('TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter', self::CONFIGURATION_MODIFICATION_ALLOWED) !== TRUE) {
-					throw new \TYPO3\FLOW3\Property\Exception\InvalidPropertyMappingConfigurationException('Modification of persistent objects not allowed. To enable this, you need to set the PropertyMappingConfiguration Value "CONFIGURATION_MODIFICATION_ALLOWED" to TRUE.', 1297932028);
-				}
-				$object = clone $object;
+			if (count($source) > 1 && ($configuration === NULL || $configuration->getConfigurationValue('TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter', self::CONFIGURATION_MODIFICATION_ALLOWED) !== TRUE)) {
+				throw new \TYPO3\FLOW3\Property\Exception\InvalidPropertyMappingConfigurationException('Modification of persistent objects not allowed. To enable this, you need to set the PropertyMappingConfiguration Value "CONFIGURATION_MODIFICATION_ALLOWED" to TRUE.', 1297932028);
 			}
 
 			return $object;

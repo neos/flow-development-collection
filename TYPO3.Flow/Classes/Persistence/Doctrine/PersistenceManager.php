@@ -149,17 +149,22 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 	}
 
 	/**
-	 * Merge an object into the persistence.
+	 * Update an object in the persistence.
 	 *
-	 * @param object $modifiedObject The modified object
+	 * @param object $object The modified object
 	 * @return void
+	 * @throws \TYPO3\FLOW3\Persistence\Exception\UnknownObjectException
+	 * @throws \TYPO3\FLOW3\Persistence\Exception
 	 * @api
 	 */
-	public function merge($modifiedObject) {
+	public function update($object) {
+		if ($this->isNewObject($object)) {
+			throw new \TYPO3\FLOW3\Persistence\Exception\UnknownObjectException('The object of type "' . get_class($object) . '" given to update must be persisted already, but is new.', 1313663277);
+		}
 		try {
-			$this->entityManager->merge($modifiedObject);
+			$this->entityManager->persist($object);
 		} catch (\Exception $exception) {
-			throw new \TYPO3\FLOW3\Persistence\Exception('Could not merge objects of type "' . get_class($modifiedObject) . '"', 1297778180, $exception);
+			throw new \TYPO3\FLOW3\Persistence\Exception('Could not merge object of type "' . get_class($object) . '"', 1297778180, $exception);
 		}
 	}
 

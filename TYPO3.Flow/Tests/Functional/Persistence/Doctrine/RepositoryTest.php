@@ -23,13 +23,11 @@ namespace TYPO3\FLOW3\Tests\Functional\Persistence\Doctrine;
 
 use \TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\Post;
 use \TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\PostRepository;
-use \TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\Image;
-use \TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\Comment;
 
 /**
- * Testcase for aggregate-related behavior
+ * Testcase for basic repository operations
  */
-class AggregateTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
+class RepositoryTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @var boolean
@@ -42,16 +40,10 @@ class AggregateTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	protected $postRepository;
 
 	/**
-	 * @var \TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\CommentRepository;
-	 */
-	protected $commentRepository;
-
-	/**
 	 * @return void
 	 */
 	public function setUp() {
 		$this->postRepository = $this->objectManager->get('TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\PostRepository');
-		$this->commentRepository = $this->objectManager->get('TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\CommentRepository');
 		parent::setUp();
 	}
 
@@ -59,51 +51,51 @@ class AggregateTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function entitiesWithingAggregateAreRemovedAutomaticallyWithItsRootEntity() {
-		$image = new Image();
+	public function modificationsOnRetrievedEntitiesAreNotPersistedAutomatically() {
 		$post = new Post();
-		$post->setImage($image);
-
+		$post->setTitle('Sample');
 		$this->postRepository->add($post);
+
 		$this->persistenceManager->persistAll();
+		unset($post);
 
-		$imageIdentifier = $this->persistenceManager->getIdentifierByObject($image);
+		$post = $this->postRepository->findOneByTitle('Sample');
+		$post->setTitle('Modified Sample');
 
-		$retrievedImage = $this->persistenceManager->getObjectByIdentifier($imageIdentifier, 'TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\Image');
-		$this->assertSame($image, $retrievedImage);
-
-		$this->postRepository->remove($post);
 		$this->persistenceManager->persistAll();
+		unset($post);
 
-		$retrievedImage = $this->persistenceManager->getObjectByIdentifier($imageIdentifier, 'TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\Image');
-		$this->assertNull($retrievedImage);
+		$post = $this->postRepository->findOneByTitle('Modified Sample');
+		$this->assertNull($post);
+
+#		The following assertions won't work because findOneByTitle() will get the _modified_ post
+#		because it is still in Doctrine's identity map:
+#
+#		$post = $this->postRepository->findOneByTitle('Sample');
+#		$this->assertNotNull($post);
+#		$this->assertEquals('Sample', $post->getTitle());
 	}
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function entitiesWithOwnRepositoryAreNotRemovedIfRelatedRootEntityIsRemoved() {
-		$comment = new Comment();
-		$this->commentRepository->add($comment);
-
+	public function modificationsOnRetrievedEntitiesArePersistedIfUpdateHasBeenCalled() {
 		$post = new Post();
-		$post->setComment($comment);
-
+		$post->setTitle('Sample');
 		$this->postRepository->add($post);
+
 		$this->persistenceManager->persistAll();
 
-		$commentIdentifier = $this->persistenceManager->getIdentifierByObject($comment);
+		$post = $this->postRepository->findOneByTitle('Sample');
+		$post->setTitle('Modified Sample');
+		$this->postRepository->update($post);
 
-		$retrievedComment = $this->persistenceManager->getObjectByIdentifier($commentIdentifier, 'TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\Comment');
-		$this->assertSame($comment, $retrievedComment);
-
-		$this->postRepository->remove($post);
 		$this->persistenceManager->persistAll();
 
-		$retrievedComment = $this->persistenceManager->getObjectByIdentifier($commentIdentifier, 'TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\Comment');
-		$this->assertSame($comment, $retrievedComment);
+		$post = $this->postRepository->findOneByTitle('Modified Sample');
+		$this->assertNotNull($post);
+		$this->assertEquals('Modified Sample', $post->getTitle());
 	}
-
 }
 ?>

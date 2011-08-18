@@ -185,19 +185,19 @@ class Repository implements \TYPO3\FLOW3\Persistence\RepositoryInterface {
 	}
 
 	/**
-	 * Replaces an existing object with the same identifier by the given object
-	 * after checking the type of the object fits to the repositories type
+	 * Schedules a modified object for persistence.
 	 *
-	 * @param object $modifiedObject The modified object
+	 * @param object $object The modified object
+	 * @throws \TYPO3\FLOW3\Persistence\Exception\IllegalObjectTypeException
 	 * @api
 	 */
-	public function update($modifiedObject) {
-		if (!($modifiedObject instanceof $this->entityClassName)) {
-			$type = (is_object($modifiedObject) ? get_class($modifiedObject) : gettype($modifiedObject));
+	public function update($object) {
+		if (!($object instanceof $this->entityClassName)) {
+			$type = (is_object($object) ? get_class($object) : gettype($object));
 			throw new \TYPO3\FLOW3\Persistence\Exception\IllegalObjectTypeException('The modified object given to update() was ' . $type . ' , however the ' . get_class($this) . ' can only store ' . $this->entityClassName . '.', 1249479625);
 		}
 
-		$this->persistenceManager->merge($modifiedObject);
+		$this->persistenceManager->update($object);
 	}
 
 	/**

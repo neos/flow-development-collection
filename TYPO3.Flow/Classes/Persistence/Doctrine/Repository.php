@@ -182,53 +182,16 @@ class Repository extends \Doctrine\ORM\EntityRepository implements \TYPO3\FLOW3\
 	}
 
 	/**
-	 * Replaces an object by another after checking that existing and new
-	 * objects have the right types
+	 * Schedules a modified object for persistence.
 	 *
-	 * This method will unregister the existing object at the identity map and
-	 * register the new object instead. The existing object must therefore
-	 * already be registered at the identity map which is the case for all
-	 * reconstituted objects.
-	 *
-	 * The new object will be identified by the uuid which formerly belonged
-	 * to the existing object. The existing object looses its uuid.
-	 *
-	 * @param object $existingObject The existing object
-	 * @param object $newObject The new object
-	 * @throws \TYPO3\FLOW3\Persistence\Exception\IllegalObjectTypeException
-	 * @throws \RuntimeException
+	 * @param object $object The modified object
 	 * @api
 	 */
-	public function replace($existingObject, $newObject) {
-		if (!($existingObject instanceof $this->objectType)) {
+	public function update($object) {
+		if (!($object instanceof $this->objectType)) {
 			throw new \TYPO3\FLOW3\Persistence\Exception\IllegalObjectTypeException('The modified object given to update() was not of the type (' . $this->objectType . ') this repository manages.', 1249479625);
 		}
-		if (!($newObject instanceof $this->objectType)) {
-			throw new \TYPO3\FLOW3\Persistence\Exception\IllegalObjectTypeException('The modified object given to update() was not of the type (' . $this->objectType . ') this repository manages.', 1249479625);
-		}
-
-		$this->entityManager->merge($newObject);
-	}
-
-	/**
-	 * Replaces an existing object with the same identifier by the given object
-	 * after checking the type of the object fits to the repositories type
-	 *
-	 * This is a convenience method that replaces a find/replace chain.
-	 *
-	 * @param object $modifiedObject The modified object
-	 * @api
-	 */
-	public function update($modifiedObject) {
-		if (!($modifiedObject instanceof $this->objectType)) {
-			throw new \TYPO3\FLOW3\Persistence\Exception\IllegalObjectTypeException('The modified object given to update() was not of the type (' . $this->objectType . ') this repository manages.', 1249479625);
-		}
-
-		$class = get_class($modifiedObject);
-		$identifier = $this->entityManager->getClassMetadata($class)->getIdentifierValues($modifiedObject);
-		$existingObject = $this->entityManager->find($class, $identifier);
-
-		$this->replace($existingObject, $modifiedObject);
+		$this->persistenceManager->update($object);
 	}
 
 }
