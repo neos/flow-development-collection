@@ -67,7 +67,7 @@ class QueryResult implements \TYPO3\FLOW3\Persistence\QueryResultInterface {
 	 * @api
 	 */
 	public function getQuery() {
-		return $this->query;
+		return clone $this->query;
 	}
 
 	/**
