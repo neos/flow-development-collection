@@ -23,11 +23,10 @@ class XliffTranslationProvider implements \TYPO3\FLOW3\I18n\TranslationProvider\
 
 	/**
 	 * An absolute path to the directory where translation files reside.
-	 * It is changed only in tests.
 	 *
 	 * @var string
 	 */
-	protected $xliffBasePath = 'resource://TYPO3.FLOW3/Private/Locale/Translations/';
+	protected $xliffBasePath = 'Private/Locale/Translations/';
 
 	/**
 	 * @var \TYPO3\FLOW3\I18n\Service
@@ -70,20 +69,21 @@ class XliffTranslationProvider implements \TYPO3\FLOW3\I18n\TranslationProvider\
 	 *
 	 * Chooses particular form of label if available and defined in $pluralForm.
 	 *
-	 * @param string $sourceName A relative path to the filename with translations (labels' catalog)
 	 * @param string $originalLabel Label used as a key in order to find translation
 	 * @param \TYPO3\FLOW3\I18n\Locale $locale Locale to use
 	 * @param string $pluralForm One of RULE constants of PluralsReader
+	 * @param string $sourceName A relative path to the filename with translations (labels' catalog)
+	 * @param string $packageKey Key of the package containing the source file
 	 * @return mixed Translated label or FALSE on failure
 	 */
-	public function getTranslationByOriginalLabel($sourceName, $originalLabel, \TYPO3\FLOW3\I18n\Locale $locale, $pluralForm = \TYPO3\FLOW3\I18n\Cldr\Reader\PluralsReader::RULE_OTHER) {
+	public function getTranslationByOriginalLabel($originalLabel, \TYPO3\FLOW3\I18n\Locale $locale, $pluralForm = \TYPO3\FLOW3\I18n\Cldr\Reader\PluralsReader::RULE_OTHER, $sourceName = 'Main', $packageKey = 'TYPO3.FLOW3') {
 		$pluralFormsForProvidedLocale = $this->pluralsReader->getPluralForms($locale);
 
 		if (!in_array($pluralForm, $pluralFormsForProvidedLocale)) {
 			throw new \TYPO3\FLOW3\I18n\TranslationProvider\Exception\InvalidPluralFormException('There is no plural form "' . $pluralForm . '" in "' . (string)$locale . '" locale.', 1281033386);
 		}
 
-		$model = $this->getModel($sourceName, $locale);
+		$model = $this->getModel($packageKey, $sourceName, $locale);
 			// We need to convert plural form's string to index, as they are accessed using integers in XLIFF files
 		$translation = $model->getTargetBySource($originalLabel, (int)array_search($pluralForm, $pluralFormsForProvidedLocale));
 
@@ -95,20 +95,21 @@ class XliffTranslationProvider implements \TYPO3\FLOW3\I18n\TranslationProvider\
 	 *
 	 * Chooses particular form of label if available and defined in $pluralForm.
 	 *
-	 * @param string $sourceName A relative path to the filename with translations (labels' catalog)
 	 * @param string $labelId Key used to find translated label
 	 * @param \TYPO3\FLOW3\I18n\Locale $locale Locale to use
 	 * @param string $pluralForm One of RULE constants of PluralsReader
+	 * @param string $sourceName A relative path to the filename with translations (labels' catalog)
+	 * @param string $packageKey Key of the package containing the source file
 	 * @return mixed Translated label or FALSE on failure
 	 */
-	public function getTranslationById($sourceName, $labelId, \TYPO3\FLOW3\I18n\Locale $locale, $pluralForm = \TYPO3\FLOW3\I18n\Cldr\Reader\PluralsReader::RULE_OTHER) {
+	public function getTranslationById($labelId, \TYPO3\FLOW3\I18n\Locale $locale, $pluralForm = \TYPO3\FLOW3\I18n\Cldr\Reader\PluralsReader::RULE_OTHER, $sourceName = 'Main', $packageKey = 'TYPO3.FLOW3') {
 		$pluralFormsForProvidedLocale = $this->pluralsReader->getPluralForms($locale);
 
 		if (!in_array($pluralForm, $pluralFormsForProvidedLocale)) {
 			throw new \TYPO3\FLOW3\I18n\TranslationProvider\Exception\InvalidPluralFormException('There is no plural form "' . $pluralForm . '" in "' . (string)$locale . '" locale.', 1281033387);
 		}
 
-		$model = $this->getModel($sourceName, $locale);
+		$model = $this->getModel($packageKey, $sourceName, $locale);
 		$translation = $model->getTargetByTransUnitId($labelId, (int)array_search($pluralForm, $pluralFormsForProvidedLocale));
 
 		return $translation;
@@ -121,18 +122,18 @@ class XliffTranslationProvider implements \TYPO3\FLOW3\I18n\TranslationProvider\
 	 * requested before. Returns FALSE when $sourceName doesn't point to existing
 	 * file.
 	 *
+	 * @param string $packageKey Key of the package containing the source file
 	 * @param string $sourceName Relative path to existing CLDR file
 	 * @param \TYPO3\FLOW3\I18n\Locale $locale Locale object
 	 * @return \TYPO3\FLOW3\I18n\Xliff\XliffModel New or existing instance
 	 */
-	protected function getModel($sourceName, \TYPO3\FLOW3\I18n\Locale $locale) {
-		$sourceName = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array($this->xliffBasePath, $sourceName . '.xlf'));
+	protected function getModel($packageKey, $sourceName, \TYPO3\FLOW3\I18n\Locale $locale) {
+		$sourceName = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array('resource://' . $packageKey, $this->xliffBasePath, $sourceName . '.xlf'));
 		$sourceName = $this->localizationService->getLocalizedFilename($sourceName, $locale);
 
 		if (isset($this->models[$sourceName])) {
 			return $this->models[$sourceName];
 		}
-
 		return $this->models[$sourceName] = new \TYPO3\FLOW3\I18n\Xliff\XliffModel($sourceName);
 	}
 }

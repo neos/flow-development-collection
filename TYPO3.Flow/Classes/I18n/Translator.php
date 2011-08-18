@@ -16,7 +16,7 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 /**
  * A class for translating messages
  *
- * Messagess (labels) can be translated in two modes:
+ * Messages (labels) can be translated in two modes:
  * - by original label: untranslated label is used as a key
  * - by ID: string identifier is used as a key (eg. user.noaccess)
  *
@@ -107,16 +107,17 @@ class Translator {
 	 * be chosen and used to choose correct translation variant.
 	 *
 	 * If no $locale is provided, default system locale will be used.
-	 * 
+	 *
 	 * @param string $originalLabel Untranslated message
-	 * @param string $sourceName Name of file with translations
 	 * @param array $arguments An array of values to replace placeholders with
 	 * @param mixed $quantity A number to find plural form for (float or int), NULL to not use plural forms
 	 * @param \TYPO3\FLOW3\I18n\Locale $locale Locale to use (NULL for default one)
+	 * @param string $sourceName Name of file with translations, base path is $packageKey/Resources/Private/Locale/Translations/
+	 * @param string $packageKey Key of the package containing the source file
 	 * @return string Translated $originalLabel or $originalLabel itself on failure
 	 * @api
 	 */
-	public function translateByOriginalLabel($originalLabel, $sourceName, array $arguments = array(), $quantity = NULL, \TYPO3\FLOW3\I18n\Locale $locale = NULL) {
+	public function translateByOriginalLabel($originalLabel, array $arguments = array(), $quantity = NULL, \TYPO3\FLOW3\I18n\Locale $locale = NULL, $sourceName = 'Main', $packageKey = 'TYPO3.FLOW3') {
 		if ($locale === NULL) {
 			$locale = $this->localizationService->getDefaultLocale();
 		}
@@ -127,7 +128,7 @@ class Translator {
 			$pluralForm = $this->pluralsReader->getPluralForm($quantity, $locale);
 		}
 
-		$translatedMessage = $this->translationProvider->getTranslationByOriginalLabel($sourceName, $originalLabel, $locale, $pluralForm);
+		$translatedMessage = $this->translationProvider->getTranslationByOriginalLabel($originalLabel, $locale, $pluralForm, $sourceName, $packageKey);
 
 		if ($translatedMessage === FALSE) {
 				// Return original message if no translation available
@@ -148,15 +149,16 @@ class Translator {
 	 * ID, and not source message, as a key.
 	 *
 	 * @param string $labelId Key to use for finding translation
-	 * @param string $sourceName Name of file with translations
 	 * @param array $arguments An array of values to replace placeholders with
 	 * @param mixed $quantity A number to find plural form for (float or int), NULL to not use plural forms
 	 * @param \TYPO3\FLOW3\I18n\Locale $locale Locale to use (NULL for default one)
+	 * @param string $sourceName Name of file with translations, base path is $packageKey/Resources/Private/Locale/Translations/
+	 * @param string $packageKey Key of the package containing the source file
 	 * @return string Translated message or $labelId on failure
 	 * @api
 	 * @see \TYPO3\FLOW3\I18n\Translator::translateByOriginalLabel()
 	 */
-	public function translateById($labelId, $sourceName, array $arguments = array(), $quantity = NULL, \TYPO3\FLOW3\I18n\Locale $locale = NULL) {
+	public function translateById($labelId, array $arguments = array(), $quantity = NULL, \TYPO3\FLOW3\I18n\Locale $locale = NULL, $sourceName = 'Main', $packageKey = 'TYPO3.FLOW3') {
 		if ($locale === NULL) {
 			$locale = $this->localizationService->getDefaultLocale();
 		}
@@ -167,7 +169,7 @@ class Translator {
 			$pluralForm = $this->pluralsReader->getPluralForm($quantity, $locale);
 		}
 
-		$translatedMessage = $this->translationProvider->getTranslationById($sourceName, $labelId, $locale, $pluralForm);
+		$translatedMessage = $this->translationProvider->getTranslationById($labelId, $locale, $pluralForm, $sourceName, $packageKey);
 
 		if ($translatedMessage === FALSE) {
 				// Return the ID if no translation available

@@ -48,16 +48,16 @@ class TranslatorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function translatingIsDoneCorrectly() {
-		$mockTranslationProvicer = $this->getAccessibleMock('TYPO3\FLOW3\I18n\TranslationProvider\XliffTranslationProvider');
-		$mockTranslationProvicer->expects($this->once())->method('getTranslationByOriginalLabel', 'source', 'Untranslated label', $this->sampleLocale, \TYPO3\FLOW3\I18n\Cldr\Reader\PluralsReader::RULE_ONE)->will($this->returnValue('Translated label'));
+		$mockTranslationProvider = $this->getAccessibleMock('TYPO3\FLOW3\I18n\TranslationProvider\XliffTranslationProvider');
+		$mockTranslationProvider->expects($this->once())->method('getTranslationByOriginalLabel','packageKey', 'source', 'Untranslated label', $this->sampleLocale, \TYPO3\FLOW3\I18n\Cldr\Reader\PluralsReader::RULE_ONE)->will($this->returnValue('Translated label'));
 
 		$mockFormatResolver = $this->getMock('TYPO3\FLOW3\I18n\FormatResolver');
 		$mockFormatResolver->expects($this->once())->method('resolvePlaceholders', 'Translated label', array('value1', 'value2'), $this->sampleLocale)->will($this->returnValue('Formatted and translated label'));
 
-		$this->translator->injectTranslationProvider($mockTranslationProvicer);
+		$this->translator->injectTranslationProvider($mockTranslationProvider);
 		$this->translator->injectFormatResolver($mockFormatResolver);
 
-		$result = $this->translator->translateByOriginalLabel('Untranslated label', 'source', array('value1', 'value2'), 1);
+			$result = $this->translator->translateByOriginalLabel('Untranslated label', array('value1', 'value2'), 1, NULL, 'source', 'packageKey');
 		$this->assertEquals('Formatted and translated label', $result);
 	}
 
@@ -65,16 +65,16 @@ class TranslatorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function returnsOriginalLabelOrIdWhenTranslationNotAvailable() {
-		$mockTranslationProvicer = $this->getAccessibleMock('TYPO3\FLOW3\I18n\TranslationProvider\XliffTranslationProvider');
-		$mockTranslationProvicer->expects($this->once())->method('getTranslationByOriginalLabel', 'source', 'id', $this->sampleLocale, \TYPO3\FLOW3\I18n\Cldr\Reader\PluralsReader::RULE_ONE)->will($this->returnValue(FALSE));
-		$mockTranslationProvicer->expects($this->once())->method('getTranslationById', 'source', 'id', $this->sampleLocale, \TYPO3\FLOW3\I18n\Cldr\Reader\PluralsReader::RULE_ONE)->will($this->returnValue(FALSE));
+		$mockTranslationProvider = $this->getAccessibleMock('TYPO3\FLOW3\I18n\TranslationProvider\XliffTranslationProvider');
+		$mockTranslationProvider->expects($this->once())->method('getTranslationByOriginalLabel', 'packageKey', 'source', 'id', $this->sampleLocale, \TYPO3\FLOW3\I18n\Cldr\Reader\PluralsReader::RULE_ONE)->will($this->returnValue(FALSE));
+		$mockTranslationProvider->expects($this->once())->method('getTranslationById', 'packageKey', 'source', 'id', $this->sampleLocale, \TYPO3\FLOW3\I18n\Cldr\Reader\PluralsReader::RULE_ONE)->will($this->returnValue(FALSE));
 
-		$this->translator->injectTranslationProvider($mockTranslationProvicer);
+		$this->translator->injectTranslationProvider($mockTranslationProvider);
 
-		$result = $this->translator->translateByOriginalLabel('original label', 'source', array(), 1);
+		$result = $this->translator->translateByOriginalLabel('original label', array(), 1, NULL, 'source', 'packageKey');
 		$this->assertEquals('original label', $result);
 
-		$result = $this->translator->translateById('id', 'source', array(), NULL, $this->sampleLocale);
+		$result = $this->translator->translateById('id', array(), NULL, $this->sampleLocale, 'source', 'packageKey');
 		$this->assertEquals('id', $result);
 	}
 }
