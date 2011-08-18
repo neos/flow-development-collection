@@ -35,6 +35,9 @@ class Repository implements \TYPO3\FLOW3\Persistence\RepositoryInterface {
 	protected $persistenceManager;
 
 	/**
+	 * Warning: if you think you want to set this,
+	 * look at RepositoryInterface::ENTITY_CLASSNAME first!
+	 *
 	 * @var string
 	 */
 	protected $entityClassName;

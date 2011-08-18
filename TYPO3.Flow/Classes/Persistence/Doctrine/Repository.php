@@ -35,6 +35,9 @@ class Repository extends \Doctrine\ORM\EntityRepository implements \TYPO3\FLOW3\
 	protected $persistenceManager;
 
 	/**
+	 * Warning: if you think you want to set this,
+	 * look at RepositoryInterface::ENTITY_CLASSNAME first!
+	 *
 	 * @var string
 	 */
 	protected $objectType;

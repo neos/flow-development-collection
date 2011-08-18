@@ -53,7 +53,7 @@ class Account {
 
 	/**
 	 * @var \TYPO3\Party\Domain\Model\AbstractParty
-	 * @ManyToOne(inversedBy="accounts", cascade={"all"})
+	 * @ManyToOne(inversedBy="accounts")
 	 */
 	protected $party;
 

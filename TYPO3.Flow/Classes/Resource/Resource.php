@@ -32,7 +32,7 @@ class Resource {
 
 	/**
 	 * @var TYPO3\FLOW3\Resource\ResourcePointer
-	 * @ManyToOne(cascade={"all"})
+	 * @ManyToOne
 	 * @identity
 	 */
 	protected $resourcePointer;

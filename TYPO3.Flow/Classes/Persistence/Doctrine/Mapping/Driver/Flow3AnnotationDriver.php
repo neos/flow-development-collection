@@ -381,8 +381,16 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 				$mapping['joinColumns'] = $this->buildJoinColumnsIfNeeded($joinColumns, $mapping, $property);
 				$mapping['mappedBy'] = $oneToOneAnnotation->mappedBy;
 				$mapping['inversedBy'] = $oneToOneAnnotation->inversedBy;
-				$mapping['cascade'] = $oneToOneAnnotation->cascade;
-				$mapping['orphanRemoval'] = $oneToOneAnnotation->orphanRemoval;
+				if ($oneToOneAnnotation->cascade) {
+					$mapping['cascade'] = $oneToOneAnnotation->cascade;
+				} elseif ($this->getClassSchema($mapping['targetEntity'])->isAggregateRoot() === FALSE) {
+					$mapping['cascade'] = array('all');
+				}
+				if ($oneToOneAnnotation->orphanRemoval) {
+					$mapping['orphanRemoval'] = $oneToOneAnnotation->orphanRemoval;
+				} elseif ($this->getClassSchema($mapping['targetEntity'])->isAggregateRoot() === FALSE) {
+					$mapping['orphanRemoval'] = TRUE;
+				}
 				$mapping['fetch'] = constant('Doctrine\ORM\Mapping\ClassMetadata::FETCH_' . $oneToOneAnnotation->fetch);
 				$metadata->mapOneToOne($mapping);
 			} elseif ($oneToManyAnnotation = $this->reader->getPropertyAnnotation($property, 'Doctrine\ORM\Mapping\OneToMany')) {
@@ -392,8 +400,16 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 				} elseif (isset($propertyMetaData['elementType'])) {
 					$mapping['targetEntity'] = $propertyMetaData['elementType'];
 				}
-				$mapping['cascade'] = $oneToManyAnnotation->cascade;
-				$mapping['orphanRemoval'] = $oneToManyAnnotation->orphanRemoval;
+				if ($oneToManyAnnotation->cascade) {
+					$mapping['cascade'] = $oneToManyAnnotation->cascade;
+				} elseif ($this->getClassSchema($mapping['targetEntity'])->isAggregateRoot() === FALSE) {
+					$mapping['cascade'] = array('all');
+				}
+				if ($oneToManyAnnotation->orphanRemoval) {
+					$mapping['orphanRemoval'] = $oneToManyAnnotation->orphanRemoval;
+				} elseif ($this->getClassSchema($mapping['targetEntity'])->isAggregateRoot() === FALSE) {
+					$mapping['orphanRemoval'] = TRUE;
+				}
 				$mapping['fetch'] = constant('Doctrine\ORM\Mapping\ClassMetadata::FETCH_' . $oneToManyAnnotation->fetch);
 
 				if ($orderByAnnotation = $this->reader->getPropertyAnnotation($property, 'Doctrine\ORM\Mapping\OrderBy')) {
@@ -406,7 +422,11 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 					$mapping['targetEntity'] = $manyToOneAnnotation->targetEntity;
 				}
 				$mapping['joinColumns'] = $this->buildJoinColumnsIfNeeded($joinColumns, $mapping, $property);
-				$mapping['cascade'] = $manyToOneAnnotation->cascade;
+				if ($manyToOneAnnotation->cascade) {
+					$mapping['cascade'] = $manyToOneAnnotation->cascade;
+				} elseif ($this->getClassSchema($mapping['targetEntity'])->isAggregateRoot() === FALSE) {
+					$mapping['cascade'] = array('all');
+				}
 				$mapping['inversedBy'] = $manyToOneAnnotation->inversedBy;
 				$mapping['fetch'] = constant('Doctrine\ORM\Mapping\ClassMetadata::FETCH_' . $manyToOneAnnotation->fetch);
 				$metadata->mapManyToOne($mapping);
@@ -469,7 +489,11 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 				$mapping['joinTable'] = $joinTable;
 				$mapping['mappedBy'] = $manyToManyAnnotation->mappedBy;
 				$mapping['inversedBy'] = $manyToManyAnnotation->inversedBy;
-				$mapping['cascade'] = $manyToManyAnnotation->cascade;
+				if ($manyToManyAnnotation->cascade) {
+					$mapping['cascade'] = $manyToManyAnnotation->cascade;
+				} elseif ($this->getClassSchema($mapping['targetEntity'])->isAggregateRoot() === FALSE) {
+					$mapping['cascade'] = array('all');
+				}
 				$mapping['fetch'] = constant('Doctrine\ORM\Mapping\ClassMetadata::FETCH_' . $manyToManyAnnotation->fetch);
 
 				if ($orderByAnnotation = $this->reader->getPropertyAnnotation($property, 'Doctrine\ORM\Mapping\OrderBy')) {
@@ -648,13 +672,13 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 	}
 
 	/**
-	 * Checks if the specified class and method matches against the filter
+	 * Checks if the specified class has a property annotated with @Id
 	 *
 	 * @param string $className Name of the class to check against
 	 * @param string $methodName Name of the method to check against
 	 * @param string $methodDeclaringClassName Name of the class the method was originally declared in
 	 * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
-	 * @return boolean TRUE if the class / method match, otherwise FALSE
+	 * @return boolean TRUE if the class has *no* @Id properties
 	 */
 	public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier) {
 		$tags = $this->reflectionService->getPropertyNamesByTag($className, 'Id');
