@@ -95,6 +95,8 @@ class PersistenceMagicAspect {
 				$hashSource .= $argumentValue;
 			} elseif (property_exists($argumentValue, 'FLOW3_Persistence_Identifier')) {
 				$hashSource .= \TYPO3\FLOW3\Reflection\ObjectAccess::getProperty($argumentValue, 'FLOW3_Persistence_Identifier', TRUE);
+			} elseif ($argumentValue instanceof \DateTime) {
+				$hashSource .= $argumentValue->getTimestamp();
 			}
 		}
 		$proxy = $joinPoint->getProxy();
