@@ -231,7 +231,6 @@ class DateTimeConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			'timezone' => 'Atlantic/Reykjavik',
 		);
 		$date = $this->converter->convertFrom($source, 'DateTime');
-		$this->assertSame('2011-06-16', $date->format('Y-m-d'));
 		$this->assertSame('Atlantic/Reykjavik', $date->getTimezone()->getName());
 	}
 
