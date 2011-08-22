@@ -501,7 +501,7 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 									$mapping['type'] = 'object';
 								}
 							} else {
-								\Doctrine\ORM\Mapping\MappingException::propertyTypeIsRequired($className, $property->getName());
+								throw \Doctrine\ORM\Mapping\MappingException::propertyTypeIsRequired($className, $property->getName());
 							}
 					}
 
