@@ -123,11 +123,10 @@ TYPO3:
         dbname: null
         user: null
         password: null
+        charset: 'utf8'
       doctrine:
         cacheImplementation: 'Doctrine\Common\Cache\ArrayCache'
         sqlLogger: null
-        dbal:
-          sessionInitialization: ''
         # By default Doctrine is integrated in the FLOW3 bootstrap
         enable: y
 
