@@ -63,6 +63,9 @@ class CommandManager {
 
 			$commandControllerClassNames = $this->reflectionService->getAllSubClassNamesForClass('TYPO3\FLOW3\MVC\Controller\CommandController');
 			foreach ($commandControllerClassNames as $className) {
+				if (!class_exists($className)) {
+					continue;
+				}
 				foreach (get_class_methods($className) as $methodName) {
 					if (substr($methodName, -7, 7) === 'Command') {
 						$this->availableCommands[] = new Command($className, substr($methodName, 0, -7));
