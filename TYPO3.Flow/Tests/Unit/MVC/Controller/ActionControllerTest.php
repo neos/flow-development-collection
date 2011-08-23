@@ -703,7 +703,7 @@ class ActionControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function defaultErrorActionAddsFlashMessageToFlashMessageContainer() {
 		$mockFlashMessageContainer = $this->getMock('TYPO3\FLOW3\MVC\Controller\FlashMessageContainer', array(), array(), '', FALSE);
-		$mockFlashMessageContainer->expects($this->once())->method('add');
+		$mockFlashMessageContainer->expects($this->once())->method('addMessage');
 
 		$mockController = $this->getAccessibleMock('TYPO3\FLOW3\MVC\Controller\ActionController', array('dummy'), array(), '', FALSE);
 		$mockController->_set('request', $this->mockRequest);

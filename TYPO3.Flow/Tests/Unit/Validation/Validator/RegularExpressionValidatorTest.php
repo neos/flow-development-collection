@@ -49,8 +49,9 @@ class RegularExpressionValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\
 	 */
 	public function regularExpressionValidatorCreatesTheCorrectErrorIfTheExpressionDidNotMatch() {
 		$this->validatorOptions(array('regularExpression' => '/^simple[0-9]expression$/'));
-		$errors = $this->validator->validate('some subject that will not match')->getErrors();
-		$this->assertEquals(array(new \TYPO3\FLOW3\Validation\Error('The given subject did not match the pattern. Got: "some subject that will not match"', 1221565130)), $errors);
+		$subject = 'some subject that will not match';
+		$errors = $this->validator->validate($subject)->getErrors();
+		$this->assertEquals(array(new \TYPO3\FLOW3\Validation\Error('The given subject did not match the pattern. Got: %1$s', 1221565130, array($subject))), $errors);
 	}
 }
 

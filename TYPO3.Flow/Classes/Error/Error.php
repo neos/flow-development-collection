@@ -34,9 +34,5 @@ namespace TYPO3\FLOW3\Error;
  */
 class Error extends \TYPO3\FLOW3\Error\Message {
 
-	/**
-	 * @var string
-	 */
-	protected $message = 'Unknown error';
 }
 ?>

@@ -65,11 +65,11 @@ class StringLengthValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractVa
 
 		if ($isValid === FALSE) {
 			if (isset($this->options['minimum']) && isset($this->options['maximum'])) {
-				$this->addError('The length of this text must be between ' . $this->options['minimum'] . ' and ' . $this->options['maximum'] . ' characters.', 1238108067);
+				$this->addError('The length of this text must be between %1$d and %2$d characters.', 1238108067, array($this->options['minimum'], $this->options['maximum']));
 			} elseif (isset($this->options['minimum'])) {
-				$this->addError('This field must contain at least ' . $this->options['minimum'] . ' characters.', 1238108068);
+				$this->addError('This field must contain at least %1$d characters.', 1238108068, array($this->options['minimum']));
 			} else {
-				$this->addError('This text may not exceed ' . $this->options['maximum'] . ' characters.', 1238108069);
+				$this->addError('This text may not exceed %1$d characters.', 1238108069, array($this->options['maximum']));
 			}
 		}
 	}

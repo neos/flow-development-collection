@@ -45,11 +45,11 @@ class CountValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractValidator
 			return;
 		}
 
-		$min = (isset($this->options['minimum'])) ? intval($this->options['minimum']) : 0;
-		$max = (isset($this->options['maximum'])) ? intval($this->options['maximum']) : PHP_INT_MAX;
-		if (count($value) >= $min && count($value) <= $max) return;
+		$minimum = (isset($this->options['minimum'])) ? intval($this->options['minimum']) : 0;
+		$maximum = (isset($this->options['maximum'])) ? intval($this->options['maximum']) : PHP_INT_MAX;
+		if (count($value) >= $minimum && count($value) <= $maximum) return;
 
-		$this->addError('The count must be between ' . $min . ' and ' . $max . '.', 1253718831);
+		$this->addError('The count must be between %1$d and %2$d.', 1253718831, array($minimum, $maximum));
 	}
 }
 
