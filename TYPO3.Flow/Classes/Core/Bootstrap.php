@@ -89,6 +89,11 @@ class Bootstrap {
 	protected $classLoader;
 
 	/**
+	 * @var \TYPO3\FLOW3\Core\LockManager
+	 */
+	protected $lockManager;
+
+	/**
 	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
@@ -166,17 +171,18 @@ class Bootstrap {
 		$this->initializePackageManagement();
 		$this->initializeConfiguration();
 		$this->initializeSystemLogger();
+
+		$this->initializeLockManager();
+		$this->exitIfSiteIsLocked();
+
 		$this->initializeErrorHandling();
 		$this->initializeCacheManagement();
 
-		switch (FLOW3_SAPITYPE) {
-			case 'Web' :
-				$this->handleWebRequest();
-			break;
-			case 'CLI' :
-					// this method call will not return, but exit with the response's exit code:
-				$this->handleCommandLineRequest();
-			break;
+
+		if (FLOW3_SAPITYPE === 'Web') {
+			$this->handleWebRequest();
+		} else {
+			$this->handleCommandLineRequest();
 		}
 	}
 
@@ -271,9 +277,15 @@ class Bootstrap {
 			if (isset($commandLine[1]) && $this->isCompiletimeCommand($commandLine[1])) {
 				$runLevel = 'compiletime';
 				$this->initializeForCompileTime();
+
+				if ($this->context === 'Production') {
+					$this->lockManager->lockSite();
+				}
+
 				$request = $this->objectManager->get('TYPO3\FLOW3\MVC\CLI\RequestBuilder')->build(array_slice($commandLine, 1));
 				$response = new \TYPO3\FLOW3\MVC\CLI\Response();
 				$this->objectManager->get('TYPO3\FLOW3\MVC\Dispatcher')->dispatch($request, $response);
+
 				$this->emitFinishedCompiletimeRun();
 			} else {
 				$runLevel = 'runtime';
@@ -296,6 +308,9 @@ class Bootstrap {
 			$response->send();
 		}
 		$this->emitBootstrapShuttingDown($runLevel);
+		if ($this->context === 'Production' && $this->lockManager->isSiteLocked()) {
+			$this->lockManager->unlockSite();
+		}
 		if (isset($response)) {
 			exit($response->getExitCode());
 		}
@@ -554,6 +569,43 @@ class Bootstrap {
 		$errorHandler->setExceptionalErrors($this->settings['error']['errorHandler']['exceptionalErrors']);
 		$this->exceptionHandler = new $this->settings['error']['exceptionHandler']['className'];
 		$this->exceptionHandler->injectSystemLogger($this->systemLogger);
+	}
+
+	/**
+	 * Initializes the Lock Manager
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @see initialize()
+	 */
+	protected function initializeLockManager() {
+		if($this->context === 'Production') {
+			$this->lockManager = new \TYPO3\FLOW3\Core\LockManager();
+			$this->lockManager->injectEnvironment($this->environment);
+			$this->lockManager->injectSystemLogger($this->systemLogger);
+			$this->lockManager->initializeObject();
+		}
+	}
+
+	/**
+	 * Displays a message and exits if the site currently locked.
+	 *
+	 * @return
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function exitIfSiteIsLocked() {
+		if ($this->context !== 'Production' || $this->lockManager->isSiteLocked() === FALSE) {
+			return;
+		}
+
+		if (FLOW3_SAPITYPE === 'Web') {
+			header('HTTP/1.1 503 Service Temporarily Unavailable');
+			readfile(FLOW3_PATH_FLOW3 . 'Resources/Private/Core/LockHoldingStackPage.html');
+		} else {
+			echo "Site is currently locked, exiting.\n";
+		}
+		$this->systemLogger->log('Site is locked, exiting.', LOG_NOTICE);
+		exit(1);
 	}
 
 	/**
