@@ -499,6 +499,8 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 							if (strpos($propertyMetaData['type'], '\\') !== FALSE) {
 								if ($this->reflectionService->isClassTaggedWith($propertyMetaData['type'], 'valueobject')) {
 									$mapping['type'] = 'object';
+								} elseif (class_exists($propertyMetaData['type'])) {
+									throw \Doctrine\ORM\Mapping\MappingException::missingRequiredOption($property->getName(), 'OneToOne', 'You try to persist a non standard data type without defining the type of the relation. You have to use one of these annotations: @OneToOne, @OneToMany, @ManyToOne, @ManyToMany');
 								}
 							} else {
 								throw \Doctrine\ORM\Mapping\MappingException::propertyTypeIsRequired($className, $property->getName());
