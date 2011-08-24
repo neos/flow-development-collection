@@ -66,6 +66,9 @@ class DebugExceptionHandler extends \TYPO3\FLOW3\Error\AbstractExceptionHandler 
 				<span class="ExceptionProperty">' . get_class($exception) . '</span> thrown in file<br />
 				<span class="ExceptionProperty">' . $filePathAndName . '</span> in line
 				<span class="ExceptionProperty">' . $exception->getLine() . '</span>.<br />';
+			if ($exception instanceof \TYPO3\FLOW3\Exception) {
+				$exceptionHeader .= '<span class="ExceptionProperty">Reference code: ' . $exception->getReferenceCode() . '</span><br />';
+			}
 			if ($exception->getPrevious() === NULL) {
 				$exceptionHeader .= '<br /><a href="' . $createIssueLink . '">Go to the FORGE issue tracker and report the issue</a> - <strong>if you think it is a bug!</strong><br />';
 				break;
@@ -133,6 +136,9 @@ class DebugExceptionHandler extends \TYPO3\FLOW3\Error\AbstractExceptionHandler 
 		echo PHP_EOL . 'Uncaught Exception in FLOW3 ' . $exceptionCodeNumber . $exception->getMessage() . PHP_EOL;
 		echo 'thrown in file ' . $filePathAndName . PHP_EOL;
 		echo 'in line ' . $exception->getLine() . PHP_EOL;
+		if ($exception instanceof \TYPO3\FLOW3\Exception) {
+			echo 'Reference code: ' . $exception->getReferenceCode() . PHP_EOL;
+		}
 
 		$indent = '  ';
 		while (($exception = $exception->getPrevious()) !== NULL) {
@@ -145,6 +151,9 @@ class DebugExceptionHandler extends \TYPO3\FLOW3\Error\AbstractExceptionHandler 
 			echo PHP_EOL . $indent . 'Uncaught Exception in FLOW3 ' . $exceptionCodeNumber . $exception->getMessage() . PHP_EOL;
 			echo $indent . 'thrown in file ' . $filePathAndName . PHP_EOL;
 			echo $indent . 'in line ' . $exception->getLine() . PHP_EOL;
+			if ($exception instanceof \TYPO3\FLOW3\Exception) {
+				echo 'Reference code: ' . $exception->getReferenceCode() . PHP_EOL;
+			}
 
 			$indent .= '  ';
 		}

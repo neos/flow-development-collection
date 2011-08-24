@@ -29,6 +29,25 @@ namespace TYPO3\FLOW3;
  */
 class Exception extends \Exception {
 
+	/**
+	 * @var string
+	 */
+	protected $referenceCode;
+
+	/**
+	 * Returns a code which can be communicated publicly so that whoever experiences the exception can refer
+	 * to it and a developer can find more information about it in the system log.
+	 *
+	 * @return string
+	 * @api
+	 */
+	public function getReferenceCode() {
+		if (!isset($this->referenceCode)) {
+			$this->referenceCode = $_SERVER['REQUEST_TIME'] . substr(md5(rand()), 0, 6);
+		}
+		return $this->referenceCode;
+	}
+
 }
 
 ?>

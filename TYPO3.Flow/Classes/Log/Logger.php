@@ -138,6 +138,16 @@ class Logger implements \TYPO3\FLOW3\Log\SystemLoggerInterface, \TYPO3\FLOW3\Log
 			// FIXME: This is not really the package key:
 		$packageKey = (isset($explodedClassName[1])) ? $explodedClassName[1] : NULL;
 
+		if (!file_exists(FLOW3_PATH_DATA . 'Logs/Exceptions')) {
+			mkdir(FLOW3_PATH_DATA . 'Logs/Exceptions');
+		}
+		if (file_exists(FLOW3_PATH_DATA . 'Logs/Exceptions')) {
+			$referenceCode = ($exception instanceof \TYPO3\FLOW3\Exception) ? $exception->getReferenceCode() : $_SERVER['REQUEST_TIME'] . substr(md5(rand()), 0, 6);
+			$exceptionDumpPathAndFilename = FLOW3_PATH_DATA . 'Logs/Exceptions/' . $referenceCode . '.txt';
+			file_put_contents($exceptionDumpPathAndFilename, \TYPO3\FLOW3\var_dump($backTrace, 'Backtrace', TRUE, TRUE));
+			$message .= ' - See also: ' . basename($exceptionDumpPathAndFilename);
+		}
+
 		$this->log($message, LOG_CRIT, $additionalData, $packageKey, $className, $methodName);
 	}
 
