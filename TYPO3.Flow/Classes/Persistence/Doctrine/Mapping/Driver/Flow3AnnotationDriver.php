@@ -41,6 +41,8 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 	const MAPPING_REGULAR = 0;
 	const MAPPING_INVERSE = 1;
 
+	const TABLE_NAME_LENGTH_LIMIT = 64;
+
 	/**
 	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
 	 */
@@ -225,14 +227,12 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 	 * @param string $className
 	 * @return string
 	 */
-	public function inferTableNameFromClassName($className) {
-		if (preg_match('/^(?P<PackageNamespace>\w+(?:\\\\\w+)*)\\\\Domain\\\\Model\\\\(?P<ModelNamePrefix>(\w+\\\\)?)(?P<ModelName>\w+)$/', $className, $matches)) {
-			$packageNamespaceParts = explode('\\', $matches['PackageNamespace']);
-			return strtolower(strtr($packageNamespaceParts[count($packageNamespaceParts) - 1], '\\', '_') . ($matches['ModelNamePrefix'] !== '' ? '_' . strtr(rtrim($matches['ModelNamePrefix'], '\\'), '\\', '_') : '') . '_' . $matches['ModelName']);
-		} else {
-			$classNameParts = explode('\\', $className);
-			return strtolower($classNameParts[1] . '_' . implode('_', array_slice($classNameParts, -2, 2)));
+	public function inferTableNameFromClassName($className, $lengthLimit = self::TABLE_NAME_LENGTH_LIMIT) {
+		$tableName = str_replace('\\', '_', $className);
+		if (strlen($tableName) > $lengthLimit) {
+			$tableName = substr($tableName, 0, $lengthLimit - 6) . '_' . substr(sha1($className), 0, 5);
 		}
+		return strtolower($tableName);
 	}
 
 	/**
@@ -243,7 +243,12 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 	 * @return string
 	 */
 	protected function inferJoinTableNameFromClassAndPropertyName($className, $propertyName) {
-		return $this->inferTableNameFromClassName($className) . '_' . strtolower($propertyName . '_join');
+		$prefix = $this->inferTableNameFromClassName($className);
+		$suffix = '_' . strtolower($propertyName . '_join');
+		if (strlen($prefix . $suffix) > self::TABLE_NAME_LENGTH_LIMIT) {
+			$prefix = $this->inferTableNameFromClassName($className, self::TABLE_NAME_LENGTH_LIMIT - (strlen($prefix . $suffix) - self::TABLE_NAME_LENGTH_LIMIT));
+		}
+		return $prefix . $suffix;
 	}
 
 	/**
@@ -253,7 +258,19 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 	 * @return string
 	 */
 	protected function buildJoinTableColumnName($className) {
-		return $this->inferTableNameFromClassName($className);
+		if (preg_match('/^(?P<PackageNamespace>\w+(?:\\\\\w+)*)\\\\Domain\\\\Model\\\\(?P<ModelNamePrefix>(\w+\\\\)?)(?P<ModelName>\w+)$/', $className, $matches)) {
+			$packageNamespaceParts = explode('\\', $matches['PackageNamespace']);
+			$tableName = strtolower(strtr($packageNamespaceParts[count($packageNamespaceParts) - 1], '\\', '_') . ($matches['ModelNamePrefix'] !== '' ? '_' . strtr(rtrim($matches['ModelNamePrefix'], '\\'), '\\', '_') : '') . '_' . $matches['ModelName']);
+		} else {
+			$classNameParts = explode('\\', $className);
+			$tableName = strtolower($classNameParts[1] . '_' . implode('_', array_slice($classNameParts, -2, 2)));
+		}
+
+		if (strlen($tableName) > self::TABLE_NAME_LENGTH_LIMIT) {
+			$tableName = substr($tableName, 0, self::TABLE_NAME_LENGTH_LIMIT - 6) . '_' . substr(sha1($className), 0, 5);
+		}
+
+		return $tableName;
 	}
 
 	/**
