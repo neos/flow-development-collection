@@ -447,9 +447,6 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 	protected function savePackageStates() {
 		$packageStatesCode = "<?php\nreturn " . var_export($this->packageStatesConfiguration, TRUE) . "\n ?>";
 		file_put_contents($this->packageStatesPathAndFilename, $packageStatesCode);
-		if (strpos($this->packageStatesPathAndFilename, '://') === FALSE) {
-			chmod($this->packageStatesPathAndFilename, 0660);
-		}
 	}
 }
 
