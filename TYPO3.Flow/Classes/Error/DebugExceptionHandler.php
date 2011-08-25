@@ -78,7 +78,7 @@ class DebugExceptionHandler extends \TYPO3\FLOW3\Error\AbstractExceptionHandler 
 			}
 		}
 
-		$backtraceCode = $this->getBacktraceCode($exception->getTrace());
+		$backtraceCode = \TYPO3\FLOW3\Error\Debugger::getBacktraceCode($exception->getTrace());
 
 		echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN"
 				"http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
@@ -183,93 +183,6 @@ class DebugExceptionHandler extends \TYPO3\FLOW3\Error\AbstractExceptionHandler 
 	}
 
 	/**
-	 * Renders some backtrace
-	 *
-	 * @param array $trace The trace
-	 * @param boolean $includeCode Include code snippet
-	 * @return string Backtrace information
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	protected function getBacktraceCode(array $trace, $includeCode = TRUE) {
-		$backtraceCode = '';
-		if (count($trace)) {
-			foreach ($trace as $index => $step) {
-				$class = isset($step['class']) ? $step['class'] . '<span style="color:white;">::</span>' : '';
-
-				$arguments = '';
-				if (isset($step['args']) && is_array($step['args'])) {
-					foreach ($step['args'] as $argument) {
-						$arguments .= (strlen($arguments) === 0) ? '' : '<span style="color:white;">,</span> ';
-						if (is_object($argument)) {
-							$arguments .= '<span style="color:#FF8700;"><em>' . get_class($argument) . '</em></span>';
-						} elseif (is_string($argument)) {
-							$preparedArgument = (strlen($argument) < 100) ? $argument : substr($argument, 0, 50) . '…' . substr($argument, -50);
-							$preparedArgument = htmlspecialchars($preparedArgument);
-							$preparedArgument = str_replace("…", '<span style="color:white;">…</span>', $preparedArgument);
-							$preparedArgument = str_replace("\n", '<span style="color:white;">⏎</span>', $preparedArgument);
-							$arguments .= '"<span style="color:#FF8700;" title="' . htmlspecialchars($argument) . '">' . $preparedArgument . '</span>"';
-						} elseif (is_numeric($argument)) {
-							$arguments .= '<span style="color:#FF8700;">' . (string)$argument . '</span>';
-						} else {
-							$arguments .= '<span style="color:#FF8700;"><em>' . gettype($argument) . '</em></span>';
-						}
-					}
-				}
-
-				$backtraceCode .= '<pre style="color:#69A550; background-color: #414141; padding: 4px 2px 4px 2px;">';
-				$backtraceCode .= '<span style="color:white;">' . (count($trace) - $index) . '</span> ' . $class . $step['function'] . '<span style="color:white;">(' . $arguments . ')</span>';
-				$backtraceCode .= '</pre>';
-
-				if (isset($step['file']) && $includeCode) {
-					$backtraceCode .= $this->getCodeSnippet($step['file'], $step['line']) . '<br />';
-				}
-			}
-		}
-
-		return $backtraceCode;
-	}
-
-	/**
-	 * Returns a code snippet from the specified file.
-	 *
-	 * @param string $filePathAndName Absolute path and file name of the PHP file
-	 * @param integer $lineNumber Line number defining the center of the code snippet
-	 * @return string The code snippet
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	protected function getCodeSnippet($filePathAndName, $lineNumber) {
-		$pathPosition = strpos($filePathAndName, 'Packages/');
-		$codeSnippet = '<br />';
-		if (@file_exists($filePathAndName)) {
-			$phpFile = @file($filePathAndName);
-			if (is_array($phpFile)) {
-				$startLine = ($lineNumber > 2) ? ($lineNumber - 2) : 1;
-				$endLine = ($lineNumber < (count($phpFile) - 2)) ? ($lineNumber + 3) : count($phpFile) + 1;
-				if ($endLine > $startLine) {
-					if ($pathPosition !== FALSE) {
-						$codeSnippet = '<br /><span style="font-size:10px;">' . substr($filePathAndName, $pathPosition) . ':</span><br /><pre>';
-					} else {
-						$codeSnippet = '<br /><span style="font-size:10px;">' . $filePathAndName . ':</span><br /><pre>';
-					}
-					for ($line = $startLine; $line < $endLine; $line++) {
-						$codeLine = str_replace("\t", ' ', $phpFile[$line-1]);
-
-						if ($line === $lineNumber) {
-							$codeSnippet .= '</pre><pre style="background-color: #F1F1F1; color: black;">';
-						}
-						$codeSnippet .= sprintf('%05d', $line) . ': ' . $codeLine;
-						if ($line === $lineNumber) {
-							$codeSnippet .= '</pre><pre>';
-						}
-					}
-					$codeSnippet .= '</pre>';
-				}
-			}
-		}
-		return $codeSnippet;
-	}
-
-	/**
 	 * Returns a link pointing to Forge to create a new issue.
 	 *
 	 * @param Exception $exception
@@ -284,7 +197,7 @@ class DebugExceptionHandler extends \TYPO3\FLOW3\Error\AbstractExceptionHandler 
 			. urlencode(
 				$exception->getMessage() . chr(10)
 				. strip_tags(
-					str_replace(array('<br />', '</pre>'), chr(10), $this->getBacktraceCode($exception->getTrace(), FALSE))
+					str_replace(array('<br />', '</pre>'), chr(10), \TYPO3\FLOW3\Error\Debugger::getBacktraceCode($exception->getTrace(), FALSE))
 				  )
 				. chr(10) . 'Please include more helpful information!'
 			  )
