@@ -115,5 +115,18 @@ class PersistenceMagicAspect {
 		$joinPoint->getProxy()->FLOW3_Persistence_clone = TRUE;
 	}
 
+	/**
+	 * Generate new UUID for cloned entity
+	 *
+	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint
+	 * @return void
+	 * @afterreturning classTaggedWith(entity) && method(.*->__clone())
+	 * @author Christian Müller <christian.mueller@typo3.org>
+	 */
+	public function generateNewUuidForClone(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+		$proxy = $joinPoint->getProxy();
+		\TYPO3\FLOW3\Reflection\ObjectAccess::setProperty($proxy, 'FLOW3_Persistence_Identifier', \TYPO3\FLOW3\Utility\Algorithms::generateUUID(), TRUE);
+	}
+
 }
 ?>

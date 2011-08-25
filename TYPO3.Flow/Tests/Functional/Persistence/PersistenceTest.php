@@ -21,6 +21,9 @@ namespace TYPO3\FLOW3\Tests\Functional\Persistence;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use \TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\TestEntity;
+use \TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\TestEntityRepository;
+
 /**
  * Testcase for persistence
  *
@@ -34,7 +37,7 @@ class PersistenceTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	static protected $testablePersistenceEnabled = TRUE;
 
 	/**
-	 * @var \TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\TestEntityRepository
+	 * @var TestEntityRepository
 	 */
 	protected $testEntityRepository;
 
@@ -44,7 +47,7 @@ class PersistenceTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 */
 	public function setUp() {
 		parent::setUp();
-		$this->testEntityRepository = new \TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\TestEntityRepository();
+		$this->testEntityRepository = new TestEntityRepository();
 	}
 
 	/**
@@ -123,12 +126,25 @@ class PersistenceTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	}
 
 	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function aClonedEntityWillGetANewIdentifier() {
+		$testEntity = new TestEntity();
+		$firstIdentifier = $this->persistenceManager->getIdentifierByObject($testEntity);
+
+		$clonedEntity = clone $testEntity;
+		$secondIdentifier = $this->persistenceManager->getIdentifierByObject($clonedEntity);
+		$this->assertNotEquals($firstIdentifier, $secondIdentifier);
+	}
+
+	/**
 	 * Helper which inserts example data into the database.
 	 *
 	 * @param string $name
 	 */
 	protected function insertExampleEntity($name = 'FLOW3') {
-		$testEntity = new \TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\TestEntity;
+		$testEntity = new TestEntity;
 		$testEntity->setName($name);
 		$this->testEntityRepository->add($testEntity);
 

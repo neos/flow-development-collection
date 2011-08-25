@@ -45,6 +45,27 @@ class PersistenceMagicAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
+	 * @return void
+	 * @author Christian Müller <christian.mueller@typo3.org>
+	 */
+	public function cloneEntityCreatesNewUuid() {
+		$object = new \stdClass();
+		$mockJoinPoint = $this->getMock('TYPO3\FLOW3\AOP\JoinPointInterface');
+		$mockJoinPoint->expects($this->any())->method('getProxy')->will($this->returnValue($object));
+
+		$aspect = new \TYPO3\FLOW3\Persistence\Aspect\PersistenceMagicAspect();
+		$aspect->generateUUID($mockJoinPoint);
+
+		$originalUuid = $object->FLOW3_Persistence_Identifier;
+		$aspect->generateNewUuidForClone($mockJoinPoint);
+
+		$uuidIsDifferent = ($object->FLOW3_Persistence_Identifier !== $originalUuid);
+		$this->assertTrue($uuidIsDifferent);
+	}
+
+
+	/**
+	 * @test
 	 */
 	public function generateValueHashUsesIdentifierSubObjects() {
 		$subObject1 = new \stdClass();
