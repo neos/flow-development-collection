@@ -97,7 +97,7 @@ class MessageTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$someMessageCode = 12345;
 		$message = new \TYPO3\FLOW3\Error\Message($someMessage, $someMessageCode, $someArguments);
 
-		$expectedResult = 'The message with Bar and Foo (#' . $someMessageCode . ')';
+		$expectedResult = 'The message with Bar and Foo';
 		$actualResult = (string)$message;
 		$this->assertEquals($expectedResult, $actualResult);
 	}
