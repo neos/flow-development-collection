@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\FLOW3\Error;
+namespace TYPO3\FLOW3\MVC\Controller;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -21,102 +21,97 @@ namespace TYPO3\FLOW3\Error;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-/**
- */
+use \TYPO3\FLOW3\Error\Message;
+use \TYPO3\FLOW3\Error\Notice;
+use \TYPO3\FLOW3\Error\Warning;
+use \TYPO3\FLOW3\Error\Error;
 
 /**
- * An object representation of a generic message. Usually, you will use Error, Warning or Notice instead of this one.
+ * Flash Message
+ * @see \TYPO3\FLOW3\MVC\Controller\FlashMessageContainer
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
- * @scope prototype
  */
-class Message {
+class FlashMessage {
+
+	const SEVERITY_NOTICE = 'Notice';
+	const SEVERITY_INFO = 'Information';
+	const SEVERITY_OK = 'Ok';
+	const SEVERITY_WARNING = 'Warning';
+	const SEVERITY_ERROR = 'Error';
 
 	/**
-	 * the error message, could also be a key for translation
+	 * Severity of this flash message (One of the SEVERITY_* constants)
 	 * @var string
 	 */
-	protected $message = '';
+	protected $severity;
 
 	/**
-	 * The error code
-	 * @var integer
+	 * @var string
 	 */
-	protected $code = NULL;
+	protected $messageTitle = '';
 
 	/**
-	 * The message arguments. Will be replaced in the message body
-	 * @var array
+	 * @var \TYPO3\FLOW3\Error\Message
 	 */
-	protected $arguments = array();
+	protected $message;
 
 	/**
-	 * Constructs this error
-	 *
-	 * @param string $message An english error message which is used if no other error message can be resolved
-	 * @param integer $code A unique error code
-	 * @param array $arguments Array of arguments to be replaced in message
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Christian Müller <christian.mueller@typo3.org>
-	 * @api
+	 * @param \TYPO3\FLOW3\Error\Message $message message body
+	 * @param string $messageTitle optional message title
+	 * @param string $severity one of the SEVERITY_* constants
 	 */
-	public function __construct($message, $code = NULL, array $arguments = array()) {
+	public function __construct(Message $message, $messageTitle = '', $severity = self::SEVERITY_OK) {
 		$this->message = $message;
-		$this->code = $code;
-		$this->arguments = $arguments;
+		$this->messageTitle = $messageTitle;
+		$this->severity = $severity;
 	}
 
 	/**
-	 * Returns the error message
-	 * @return string The error message
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @api
+	 * @return string
+	 */
+	public function getMessageTitle() {
+		return $this->messageTitle;
+	}
+
+	/**
+	 * @return boolean TRUE if the message title is not empty
+	 */
+	public function hasMessageTitle() {
+		return strlen($this->messageTitle) > 0;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getSeverity() {
+		return $this->severity;
+	}
+
+	/**
+	 * @return \TYPO3\FLOW3\Error\Message
 	 */
 	public function getMessage() {
 		return $this->message;
 	}
 
 	/**
-	 * Returns the error code
-	 * @return integer The error code
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @api
-	 */
-	public function getCode() {
-		return $this->code;
-	}
-
-	/**
-	 * @return array
-	 * @author Christian Müller <christian.mueller@typo3.org>
-	 * @api
-	 */
-	public function getArguments() {
-		return $this->arguments;
-	}
-
-	/**
+	 * Renders the body of this flash message
+	 * @see \TYPO3\FLOW3\Error\Message::render()
 	 * @return string
 	 */
-	public function render() {
-		if ($this->arguments !== array()) {
-			return vsprintf($this->message, $this->arguments);
-		} else {
-			return $this->message;
-		}
+	public function renderMessage() {
+		return $this->message->render();
 	}
 
 	/**
-	 * Converts this error into a string
-	 *
+	 * Renders the body of this flash message
 	 * @return string
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @api
+	 * @see renderMessage()
 	 */
 	public function __toString() {
-		return $this->render();
+		return $this->renderMessage();
 	}
 }
-
 ?>

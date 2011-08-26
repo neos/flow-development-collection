@@ -59,7 +59,7 @@ class NumberRangeValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractVal
 			return;
 		}
 
-		$this->addError('Please enter a valid number between ' . $minimum . ' and ' . $maximum . '.', 1221561046);
+		$this->addError('Please enter a valid number between %1$d and %2$d.', 1221561046, array($minimum, $maximum));
 	}
 }
 

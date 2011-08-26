@@ -428,7 +428,11 @@ class ActionController extends \TYPO3\FLOW3\MVC\Controller\AbstractController {
 	protected function errorAction() {
 		$errorFlashMessage = $this->getErrorFlashMessage();
 		if ($errorFlashMessage !== FALSE) {
-			$this->flashMessageContainer->add($errorFlashMessage);
+			if ($errorFlashMessage instanceof \TYPO3\FLOW3\Error\Message) {
+				$this->flashMessageContainer->addMessage($errorFlashMessage);
+			} else {
+				$this->flashMessageContainer->add($errorFlashMessage, '', FlashMessage::SEVERITY_ERROR);
+			}
 		}
 
 		$referringRequest = $this->request->getReferringRequest();
@@ -455,11 +459,11 @@ class ActionController extends \TYPO3\FLOW3\MVC\Controller\AbstractController {
 	 * display no flash message at all on errors. Override this to customize
 	 * the flash message in your action controller.
 	 *
-	 * @return string|boolean The flash message or FALSE if no flash message should be set
+	 * @return \TYPO3\FLOW3\Error\Message The flash message or FALSE if no flash message should be set
 	 * @api
 	 */
 	protected function getErrorFlashMessage() {
-		return 'An error occurred while trying to call ' . get_class($this) . '->' . $this->actionMethodName . '()';
+		return new \TYPO3\FLOW3\Error\Error('An error occurred while trying to call %1$s->%2$s()', array(get_class($this), $this->actionMethodName));
 	}
 }
 ?>

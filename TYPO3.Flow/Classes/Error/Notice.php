@@ -34,10 +34,6 @@ namespace TYPO3\FLOW3\Error;
  */
 class Notice extends \TYPO3\FLOW3\Error\Message {
 
-	/**
-	 * @var string
-	 */
-	protected $message = 'Unknown notice';
 }
 
 ?>
