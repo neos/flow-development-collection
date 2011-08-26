@@ -248,7 +248,7 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 		$prefix = $this->inferTableNameFromClassName($className);
 		$suffix = '_' . strtolower($propertyName . '_join');
 		if (strlen($prefix . $suffix) > self::TABLE_NAME_LENGTH_LIMIT) {
-			$prefix = $this->inferTableNameFromClassName($className, self::TABLE_NAME_LENGTH_LIMIT - (strlen($prefix . $suffix) - self::TABLE_NAME_LENGTH_LIMIT));
+			$prefix = $this->inferTableNameFromClassName($className, self::TABLE_NAME_LENGTH_LIMIT - strlen($suffix));
 		}
 		return $prefix . $suffix;
 	}

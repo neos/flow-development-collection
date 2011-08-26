@@ -29,7 +29,7 @@ namespace TYPO3\FLOW3\Tests\Unit\Persistence\Doctrine\Mapping\Driver;
 class Flow3AnnotationDriverTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
-	 * Data provider for testInferTableNameFromClass
+	 * Data provider for testInferTableNameFromClassName
 	 *
 	 * @return array
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
@@ -49,9 +49,35 @@ class Flow3AnnotationDriverTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @dataProvider classNameToTableNameMappings
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function testInferTableNameFromClass($className, $tableName) {
+	public function testInferTableNameFromClassName($className, $tableName) {
 		$driver = new \TYPO3\FLOW3\Persistence\Doctrine\Mapping\Driver\Flow3AnnotationDriver();
 		$this->assertEquals($tableName, $driver->inferTableNameFromClassName($className));
+	}
+
+	/**
+	 * Data provider for testInferJoinTableNameFromClassAndPropertyName
+	 *
+	 * @return array
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function classAndPropertyNameToJoinTableNameMappings() {
+		return array(
+			array('TYPO3\Party\Domain\Model\Person', 'propertyName', 'typo3_party_domain_model_person_propertyname_join'),
+			array('SomePackage\Domain\Model\Blob', 'propertyName', 'somepackage_domain_model_blob_propertyname_join'),
+			array('TYPO3\FLOW3\Security\Policy\Role', 'propertyName', 'typo3_flow3_security_policy_role_propertyname_join'),
+			array('TYPO3\FLOW3\Security\Account', 'propertyName', 'typo3_flow3_security_account_propertyname_join'),
+			array('TYPO3\FLOW3\Security\Authorization\Resource\SecurityPublishingConfiguration', 'propertyName', 'typo3_flow3_security_authorization_resou_6180a_propertyname_join')
+		);
+	}
+
+	/**
+	 * @test
+	 * @dataProvider classAndPropertyNameToJoinTableNameMappings
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function testInferJoinTableNameFromClassAndPropertyName($className, $propertyName, $tableName) {
+		$driver = $this->getAccessibleMock('TYPO3\FLOW3\Persistence\Doctrine\Mapping\Driver\Flow3AnnotationDriver', array('dummy'));
+		$this->assertEquals($tableName, $driver->_call('inferJoinTableNameFromClassAndPropertyName', $className, $propertyName));
 	}
 
 }
