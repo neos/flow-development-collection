@@ -142,9 +142,9 @@ class Logger implements \TYPO3\FLOW3\Log\SystemLoggerInterface, \TYPO3\FLOW3\Log
 			mkdir(FLOW3_PATH_DATA . 'Logs/Exceptions');
 		}
 		if (file_exists(FLOW3_PATH_DATA . 'Logs/Exceptions') && is_dir(FLOW3_PATH_DATA . 'Logs/Exceptions') && is_writable(FLOW3_PATH_DATA . 'Logs/Exceptions')) {
-			$referenceCode = ($exception instanceof \TYPO3\FLOW3\Exception) ? $exception->getReferenceCode() : $_SERVER['REQUEST_TIME'] . substr(md5(rand()), 0, 6);
+			$referenceCode = ($exception instanceof \TYPO3\FLOW3\Exception) ? $exception->getReferenceCode() : date('YmdHis' , $_SERVER['REQUEST_TIME']) . substr(md5(rand()), 0, 6);
 			$exceptionDumpPathAndFilename = FLOW3_PATH_DATA . 'Logs/Exceptions/' . $referenceCode . '.txt';
-			file_put_contents($exceptionDumpPathAndFilename, \TYPO3\FLOW3\var_dump($backTrace, 'Backtrace', TRUE, TRUE));
+			file_put_contents($exceptionDumpPathAndFilename, $message . PHP_EOL . PHP_EOL . \TYPO3\FLOW3\Error\Debugger::getBacktraceCode($backTrace, FALSE, TRUE));
 			$message .= ' - See also: ' . basename($exceptionDumpPathAndFilename);
 		} else {
 			$this->log(sprintf('Could not write exception backtrace into %s because the directory could not be created or is not writable.', FLOW3_PATH_DATA . 'Logs/Exceptions/'), LOG_WARNING, array(), 'FLOW3', __CLASS__, __FUNCTION__);

@@ -275,6 +275,147 @@ class Debugger {
 	}
 
 	/**
+	 * Renders some backtrace
+	 *
+	 * @param array $trace The trace
+	 * @param boolean $includeCode Include code snippet
+	 * @param boolean $plaintext
+	 * @param boolean $ansiColors
+	 * @return string Backtrace information
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	static public function getBacktraceCode(array $trace, $includeCode = TRUE, $plaintext = FALSE) {
+		$backtraceCode = '';
+		if (count($trace)) {
+			foreach ($trace as $index => $step) {
+				if ($plaintext) {
+					$class = isset($step['class']) ? $step['class'] . '::' : '';
+				} else {
+					$class = isset($step['class']) ? $step['class'] . '<span style="color:white;">::</span>' : '';
+				}
+
+				$arguments = '';
+				if (isset($step['args']) && is_array($step['args'])) {
+					foreach ($step['args'] as $argument) {
+						if ($plaintext) {
+							$arguments .= (strlen($arguments) === 0) ? '' : ', ';
+						} else {
+							$arguments .= (strlen($arguments) === 0) ? '' : '<span style="color:white;">,</span> ';
+						}
+						if (is_object($argument)) {
+							if ($plaintext) {
+								$arguments .= get_class($argument);
+							} else {
+								$arguments .= '<span style="color:#FF8700;"><em>' . get_class($argument) . '</em></span>';
+							}
+						} elseif (is_string($argument)) {
+							$preparedArgument = (strlen($argument) < 100) ? $argument : substr($argument, 0, 50) . '…' . substr($argument, -50);
+							$preparedArgument = htmlspecialchars($preparedArgument);
+							if ($plaintext) {
+								$preparedArgument = str_replace("\n", '⏎', $preparedArgument);
+								$arguments .= '(' . $argument . ')' . $preparedArgument;
+							} else {
+								$preparedArgument = str_replace("…", '<span style="color:white;">…</span>', $preparedArgument);
+								$preparedArgument = str_replace("\n", '<span style="color:white;">⏎</span>', $preparedArgument);
+								$arguments .= '"<span style="color:#FF8700;" title="' . htmlspecialchars($argument) . '">' . $preparedArgument . '</span>"';
+							}
+						} elseif (is_numeric($argument)) {
+							if ($plaintext) {
+								$arguments .= (string)$argument;
+							} else {
+								$arguments .= '<span style="color:#FF8700;">' . (string)$argument . '</span>';
+							}
+						} else {
+							if ($plaintext) {
+								$arguments .= gettype($argument);
+							} else {
+								$arguments .= '<span style="color:#FF8700;"><em>' . gettype($argument) . '</em></span>';
+							}
+						}
+					}
+				}
+
+				if ($plaintext) {
+					$backtraceCode .= (count($trace) - $index) . ' ' . $class . $step['function'] . '(' . $arguments . ')';
+				} else {
+					$backtraceCode .= '<pre style="color:#69A550; background-color: #414141; padding: 4px 2px 4px 2px;">';
+					$backtraceCode .= '<span style="color:white;">' . (count($trace) - $index) . '</span> ' . $class . $step['function'] . '<span style="color:white;">(' . $arguments . ')</span>';
+					$backtraceCode .= '</pre>';
+				}
+
+				if (isset($step['file']) && $includeCode) {
+					$backtraceCode .= self::getCodeSnippet($step['file'], $step['line'], $plaintext);
+				}
+				if ($plaintext) {
+					$backtraceCode .= PHP_EOL;
+				} else {
+					$backtraceCode .= '<br />';
+				}
+			}
+		}
+
+		return $backtraceCode;
+	}
+
+	/**
+	 * Returns a code snippet from the specified file.
+	 *
+	 * @param string $filePathAndName Absolute path and file name of the PHP file
+	 * @param integer $lineNumber Line number defining the center of the code snippet
+	 * @param boolean $plaintext
+	 * @return string The code snippet
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @todo make plaintext-aware
+	 */
+	static public function getCodeSnippet($filePathAndName, $lineNumber, $plaintext = FALSE) {
+		$pathPosition = strpos($filePathAndName, 'Packages/');
+		if ($plaintext) {
+			$codeSnippet = PHP_EOL;
+		} else {
+			$codeSnippet = '<br />';
+		}
+		if (@file_exists($filePathAndName)) {
+			$phpFile = @file($filePathAndName);
+			if (is_array($phpFile)) {
+				$startLine = ($lineNumber > 2) ? ($lineNumber - 2) : 1;
+				$endLine = ($lineNumber < (count($phpFile) - 2)) ? ($lineNumber + 3) : count($phpFile) + 1;
+				if ($endLine > $startLine) {
+					if ($pathPosition !== FALSE) {
+						if ($plaintext) {
+							$codeSnippet = PHP_EOL . substr($filePathAndName, $pathPosition) . ':' . PHP_EOL;
+						} else {
+							$codeSnippet = '<br /><span style="font-size:10px;">' . substr($filePathAndName, $pathPosition) . ':</span><br /><pre>';
+						}
+					} else {
+						if ($plaintext) {
+							$codeSnippet = PHP_EOL . $filePathAndName . ':' . PHP_EOL;
+						} else {
+							$codeSnippet = '<br /><span style="font-size:10px;">' . $filePathAndName . ':</span><br /><pre>';
+						}
+					}
+					for ($line = $startLine; $line < $endLine; $line++) {
+						$codeLine = str_replace("\t", ' ', $phpFile[$line-1]);
+
+						if ($line === $lineNumber) {
+							if (!$plaintext) {
+								$codeSnippet .= '</pre><pre style="background-color: #F1F1F1; color: black;">';
+							}
+						}
+						$codeSnippet .= sprintf('%05d', $line) . ': ' . $codeLine;
+						if ($line === $lineNumber && !$plaintext) {
+							$codeSnippet .= '</pre><pre>';
+						}
+					}
+					if (!$plaintext) {
+						$codeSnippet .= '</pre>';
+					}
+				}
+			}
+		}
+		return $codeSnippet;
+	}
+
+	/**
 	 * Wrap a string with the ANSI escape sequence for colorful output
 	 *
 	 * @param string $string The string to wrap
