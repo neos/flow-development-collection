@@ -36,11 +36,11 @@ class Flow3AnnotationDriverTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function classNameToTableNameMappings() {
 		return array(
-			array('TYPO3\Party\Domain\Model\Person', 'party_person'),
-			array('SomePackage\Domain\Model\Blob', 'somepackage_blob'),
-			array('TYPO3\FLOW3\Security\Policy\Role', 'flow3_policy_role'),
-			array('TYPO3\FLOW3\Security\Account', 'flow3_security_account'),
-			array('TYPO3\FLOW3\Security\Authorization\Resource\SecurityPublishingConfiguration', 'flow3_resource_securitypublishingconfiguration')
+			array('TYPO3\Party\Domain\Model\Person', 'typo3_party_domain_model_person'),
+			array('SomePackage\Domain\Model\Blob', 'somepackage_domain_model_blob'),
+			array('TYPO3\FLOW3\Security\Policy\Role', 'typo3_flow3_security_policy_role'),
+			array('TYPO3\FLOW3\Security\Account', 'typo3_flow3_security_account'),
+			array('TYPO3\FLOW3\Security\Authorization\Resource\SecurityPublishingConfiguration', 'typo3_flow3_security_authorization_resource_securitypublis_6180a')
 		);
 	}
 
