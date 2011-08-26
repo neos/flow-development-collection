@@ -1,140 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<chapter version="5.0" xml:id="flow3.signalslot"
-         xmlns="http://docbook.org/ns/docbook"
-         xmlns:ns52="http://www.w3.org/1998/Math/MathML"
-         xmlns:ns5="http://www.w3.org/1999/xlink"
-         xmlns:ns4="http://www.w3.org/2000/svg"
-         xmlns:ns3="http://www.w3.org/1999/xhtml"
-         xmlns:ns="http://docbook.org/ns/docbook">
-  <title>Signal-Slot Event Handling</title>
-
-  <para>The concept of <emphasis>Signals</emphasis> and
-  <emphasis>Slots</emphasis> has been introduced by the Qt toolkit and allows
-  for easy implementation of the Observer pattern in software.</para>
-
-  <para>A Signal, which contains event information as it makes sense in the
-  case at hand, can be emitted (sent) by any part of the code and is received
-  by one or more Slots, which can be any function in FLOW3. Almost no
-  registration, deregistration or invocation code need be written, because
-  FLOW3 automatically generates the needed infrastructure using AOP.</para>
-
-  <section>
-    <title>Defining and using signals</title>
-
-    <para>To define a signal, simply create a method stub and annotate it with
-    a <varname>@signal</varname> annotation:<example>
-        <title>Definition of Signal in PHP</title>
-
-        <para><programlisting>/**
-  * @param Comment $comment
-   * @return void
- * @signal
- */
-protected function emitCommentCreated(Comment $comment) {} </programlisting></para>
-      </example>The method signature can be freely defined to fit the needs of
-    the event that is to be signalled. Whatever parameters are defined will be
-    handed over as given to any slots listening to that signal. <note>
-        <para>The <varname>@signal</varname> annotation is picked up by the
-        AOP framework and the method is advised as needed to actually do
-        something when the signal is emitted.</para>
-      </note></para>
-
-    <para>To emit a signal in your code, simply call the signal method
-    whenever it makes sense, like in this example:<example>
-        <title>Emitting a Signal</title>
-
-        <para><programlisting>/** 
- * @param Comment $newComment 
- * @return void 
- */
- public function createAction(Comment $newComment) {
-     … 
-    $this-&gt;emitCommentCreated($newComment); 
-    … 
-}</programlisting></para>
-      </example>The signal will be dispatched to all slots listening to
-    it.</para>
-  </section>
-
-  <section>
-    <title>Defining slots</title>
-
-    <para>Basically any method of any class can be used as a slot, even if
-    never written specifically for being a slot. The only requirement is a
-    matching signature between signal and slot, so that the parameters passed
-    to the signal can be handed over to the slot without problems. The
-    following shows a slot, as you can see it differs in no way from any
-    non-slot method.</para>
-
-    <example>
-      <title>A method that can be used as a slot</title>
-
-      <para><programlisting>/** 
- * @param Comment $comment
-  * @return void
-  */
- public function sendNewCommentNotification(Comment $comment) { 
-    $mail = new \TYPO3\SwiftMailer\Message();
-    $mail-&gt;setFrom(array('john@doe.org ' =&gt; 'John Doe'))
-         -&gt;setTo(array('karsten@typo3.org ' =&gt; 'Karsten Dambekalns'))
-         -&gt;setSubject('New comment')
-         -&gt;setBody($comment-&gt;getContent())
-         -&gt;send();
- } </programlisting></para>
-    </example>
-
-    <note>
-      <para>Depending on the wiring there might be an extra parameter being
-      given to the slot that contains the classname and method name of the
-      signal emitter, seperated by <literal>::</literal>.</para>
-    </note>
-  </section>
-
-  <section>
-    <title>Wiring signals and slots together</title>
-
-    <para>Which slot is actually listening for which signal is configured
-    ("wired") in the bootstrap code of a package. Any package can of course
-    freely wire it's own signals to it's own slots, but also wiring any other
-    signal to any other slot is possible. You should be a little careful when
-    wiring your own or even other package's signals to slots in other
-    packages, as the results could be non-obvious to someone using your
-    package.</para>
-
-    <para>When FLOW3 initializes, it runs the <methodname>boot</methodname>
-    method in a package's <classname>Package</classname> class. This is the
-    place to wire signals to slots as needed for your package:<example>
-        <title>Wiring signals and slots together</title>
-
-        <para><programlisting>/**
-  * Boot the package. We wire some signals to slots here.
-  *
-  * @param \TYPO3\FLOW3\Core\Bootstrap $bootstrap The current bootstrap
-  * @return void
-  */
- public function boot(\TYPO3\FLOW3\Core\Bootstrap $bootstrap) {
-     $dispatcher = $bootstrap-&gt;getSignalSlotDispatcher(); 
-    $dispatcher-&gt;connect(
-        'Some\Package\Controller\CommentController', 'commentCreated',
-        'Some\Package\Service\Notification', 'sendNewCommentNotification'
-    );
- } </programlisting></para>
-      </example>The first pair of parameters given to to
-    <methodname>connect</methodname> identifies the signal you want to wire,
-    the second pair the slot. Both pairs consist of classname and
-    methodname.</para>
-
-    <para>An alternative way of specifying the slot is to give an object
-    instead of a classname to the <methodname>connect</methodname> method.
-    This can also be used to use a <interfacename>Closure</interfacename>
-    instance to react to signals, in this case the slot method name can be
-    omitted.</para>
-
-    <para>There is one more parameter available here,
-    <varname>$passSignalInformation</varname>. It controls whether or not the
-    passing of signal information (classname and methodname of the signal
-    emitter, seperated by <literal>::</literal>) to the slot is omitted and
-    defaults to <constant>TRUE</constant> (i.e. the information is
-    passed).</para>
-  </section>
-</chapter>
