@@ -83,11 +83,11 @@ class DoctrineCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContr
 	public function createCommand($output = NULL) {
 			// "driver" is used only for Doctrine, thus we (mis-)use it here
 			// additionally, when no path is set, skip this step, assuming no DB is needed
-		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['path'] !== NULL) {
+		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['host'] !== NULL) {
 			$this->doctrineService->createSchema($output);
 			$this->outputLine('Created database schema.');
 		} else {
-			$this->outputLine('Database schema creation has been SKIPPED, the driver and path backend options are not set in /Configuration/Settings.yaml.');
+			$this->outputLine('Database schema creation has been SKIPPED, the driver and host backend options are not set in /Configuration/Settings.yaml.');
 			$this->quit(1);
 		}
 	}
@@ -104,11 +104,11 @@ class DoctrineCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContr
 	public function updateCommand($safeMode = TRUE, $output = NULL) {
 			// "driver" is used only for Doctrine, thus we (mis-)use it here
 			// additionally, when no path is set, skip this step, assuming no DB is needed
-		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['path'] !== NULL) {
+		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['host'] !== NULL) {
 			$this->doctrineService->updateSchema($safeMode, $output);
 			$this->outputLine('Executed a database schema update.');
 		} else {
-			$this->outputLine('Database schema update has been SKIPPED, the driver and path backend options are not set in /Configuration/Settings.yaml.');
+			$this->outputLine('Database schema update has been SKIPPED, the driver and host backend options are not set in /Configuration/Settings.yaml.');
 			$this->quit(1);
 		}
 	}
@@ -165,7 +165,7 @@ class DoctrineCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContr
 	public function dqlCommand($depth = 3, $hydrationModeName = 'object', $firstResult = NULL, $maxResult = NULL) {
 			// "driver" is used only for Doctrine, thus we (mis-)use it here
 			// additionally, when no path is set, skip this step, assuming no DB is needed
-		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['path'] !== NULL) {
+		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['host'] !== NULL) {
 			$dqlSatetements = $this->request->getCommandLineArguments();
 			$hydrationMode = 'Doctrine\ORM\Query::HYDRATE_' . strtoupper(str_replace('-', '_', $hydrationModeName));
 			if (!defined($hydrationMode)) {
@@ -177,7 +177,7 @@ class DoctrineCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContr
 				\Doctrine\Common\Util\Debug::dump($resultSet, $depth);
 			}
 		} else {
-			$this->outputLine('DQL query is not possible, the driver and path backend options are not set in /Configuration/Settings.yaml.');
+			$this->outputLine('DQL query is not possible, the driver and host backend options are not set in /Configuration/Settings.yaml.');
 			$this->quit(1);
 		}
 	}
@@ -190,10 +190,10 @@ class DoctrineCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContr
 	public function migrationStatusCommand() {
 			// "driver" is used only for Doctrine, thus we (mis-)use it here
 			// additionally, when no path is set, skip this step, assuming no DB is needed
-		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['path'] !== NULL) {
+		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['host'] !== NULL) {
 			$this->outputLine($this->doctrineService->getMigrationStatus());
 		} else {
-			$this->outputLine('Doctrine migration status not available, the driver and path backend options are not set in /Configuration/Settings.yaml.');
+			$this->outputLine('Doctrine migration status not available, the driver and host backend options are not set in /Configuration/Settings.yaml.');
 			$this->quit(1);
 		}
 	}
@@ -209,7 +209,7 @@ class DoctrineCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContr
 	public function migrateCommand($version = NULL, $output = NULL, $dryRun = FALSE) {
 			// "driver" is used only for Doctrine, thus we (mis-)use it here
 			// additionally, when no path is set, skip this step, assuming no DB is needed
-		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['path'] !== NULL) {
+		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['host'] !== NULL) {
 			$output = $this->doctrineService->executeMigrations($version, $output, $dryRun);
 			if ($output != '') {
 				$this->outputLine($output);
@@ -217,7 +217,7 @@ class DoctrineCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContr
 				$this->outputLine('No migration was neccessary.');
 			}
 		} else {
-			$this->outputLine('Doctrine migration not possible, the driver and path backend options are not set in /Configuration/Settings.yaml.');
+			$this->outputLine('Doctrine migration not possible, the driver and host backend options are not set in /Configuration/Settings.yaml.');
 			$this->quit(1);
 		}
 	}
@@ -234,10 +234,10 @@ class DoctrineCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContr
 	public function migrationExecuteCommand($version, $direction = 'up', $output = NULL, $dryRun = FALSE) {
 			// "driver" is used only for Doctrine, thus we (mis-)use it here
 			// additionally, when no path is set, skip this step, assuming no DB is needed
-		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['path'] !== NULL) {
+		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['host'] !== NULL) {
 			$this->outputLine($this->doctrineService->executeMigration($version, $direction, $output, $dryRun));
 		} else {
-			$this->outputLine('Doctrine migration not possible, the driver and path backend options are not set in /Configuration/Settings.yaml.');
+			$this->outputLine('Doctrine migration not possible, the driver and host backend options are not set in /Configuration/Settings.yaml.');
 			$this->quit(1);
 		}
 	}
@@ -253,13 +253,13 @@ class DoctrineCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContr
 	public function migrationVersionCommand($version, $add = FALSE, $delete = FALSE) {
 			// "driver" is used only for Doctrine, thus we (mis-)use it here
 			// additionally, when no path is set, skip this step, assuming no DB is needed
-		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['path'] !== NULL) {
+		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['host'] !== NULL) {
 			if ($add === FALSE && $delete === FALSE) {
 				throw new \InvalidArgumentException('You must specify whether you want to --add or --delete the specified version.');
 			}
 			$this->outputLine($this->doctrineService->markAsMigrated($version, $add ?: FALSE));
 		} else {
-			$this->outputLine('Doctrine migration not possible, the driver and path backend options are not set in /Configuration/Settings.yaml.');
+			$this->outputLine('Doctrine migration not possible, the driver and host backend options are not set in /Configuration/Settings.yaml.');
 			$this->quit(1);
 		}
 	}
@@ -278,10 +278,10 @@ class DoctrineCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContr
 	public function migrationGenerateCommand($diffAgainstCurrent = TRUE) {
 			// "driver" is used only for Doctrine, thus we (mis-)use it here
 			// additionally, when no path is set, skip this step, assuming no DB is needed
-		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['path'] !== NULL) {
+		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['host'] !== NULL) {
 			$this->outputLine(sprintf('Generated new migration class to "%s".', $this->doctrineService->generateMigration($diffAgainstCurrent)));
 		} else {
-			$this->outputLine('Doctrine migration generation has been SKIPPED, the driver and path backend options are not set in /Configuration/Settings.yaml.');
+			$this->outputLine('Doctrine migration generation has been SKIPPED, the driver and host backend options are not set in /Configuration/Settings.yaml.');
 			$this->quit(1);
 		}
 	}

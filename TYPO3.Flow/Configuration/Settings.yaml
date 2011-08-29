@@ -119,7 +119,7 @@ TYPO3:
       # Options for the default Doctrine persistence
       backendOptions:
         driver: 'pdo_mysql'
-        path: null
+        host: '127.0.0.1'
         dbname: null
         user: null
         password: null
@@ -127,7 +127,7 @@ TYPO3:
       doctrine:
         cacheImplementation: 'Doctrine\Common\Cache\ArrayCache'
         sqlLogger: null
-        # By default Doctrine is integrated in the FLOW3 bootstrap
+        # By default Doctrine proxy compilation is done in the FLOW3 bootstrap
         enable: y
 
     reflection:
