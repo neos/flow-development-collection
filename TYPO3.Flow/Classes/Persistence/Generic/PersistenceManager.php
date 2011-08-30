@@ -33,6 +33,11 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 	/**
 	 * @var \SplObjectStorage
 	 */
+	protected $changedObjects;
+
+	/**
+	 * @var \SplObjectStorage
+	 */
 	protected $addedObjects;
 
 	/**
@@ -66,6 +71,7 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 	public function __construct() {
 		$this->addedObjects = new \SplObjectStorage();
 		$this->removedObjects = new \SplObjectStorage();
+		$this->changedObjects = new \SplObjectStorage();
 	}
 
 	/**
@@ -163,11 +169,13 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 			// reconstituted entities must be fetched from the session and checked
 			// for changes by the underlying backend as well!
 		$this->backend->setAggregateRootObjects($this->addedObjects);
+		$this->backend->setChangedEntities($this->changedObjects);
 		$this->backend->setDeletedEntities($this->removedObjects);
 		$this->backend->commit();
 
 		$this->addedObjects = new \SplObjectStorage();
 		$this->removedObjects = new \SplObjectStorage();
+		$this->changedObjects = new \SplObjectStorage();
 	}
 
 	/**

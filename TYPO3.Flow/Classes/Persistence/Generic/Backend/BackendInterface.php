@@ -65,6 +65,15 @@ interface BackendInterface {
 	public function setDeletedEntities(\SplObjectStorage $entities);
 
 	/**
+	 * Sets the changed objects
+	 *
+	 * @param \SplObjectStorage $entities
+	 * @return void
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function setChangedEntities(\SplObjectStorage $entities);
+
+	/**
 	 * Commits the current persistence session
 	 *
 	 * @return void
