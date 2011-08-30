@@ -463,7 +463,7 @@ class ActionController extends \TYPO3\FLOW3\MVC\Controller\AbstractController {
 	 * @api
 	 */
 	protected function getErrorFlashMessage() {
-		return new \TYPO3\FLOW3\Error\Error('An error occurred while trying to call %1$s->%2$s()', array(get_class($this), $this->actionMethodName));
+		return new \TYPO3\FLOW3\Error\Error('An error occurred while trying to call %1$s->%2$s()', NULL, array(get_class($this), $this->actionMethodName));
 	}
 }
 ?>
