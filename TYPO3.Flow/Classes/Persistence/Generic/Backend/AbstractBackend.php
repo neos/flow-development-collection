@@ -83,6 +83,11 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Persistence\Generic\Backe
 	protected $deletedEntities;
 
 	/**
+	 * @var \SplObjectStorage
+	 */
+	protected $changedEntities;
+
+	/**
 	 * @var array
 	 */
 	protected $classSchemata = array();
@@ -95,6 +100,7 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Persistence\Generic\Backe
 	public function __construct() {
 		$this->aggregateRootObjects = new \SplObjectStorage();
 		$this->deletedEntities = new \SplObjectStorage();
+		$this->changedEntities = new \SplObjectStorage();
 	}
 
 	/**
@@ -203,6 +209,17 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Persistence\Generic\Backe
 	}
 
 	/**
+	 * Sets the changed objects
+	 *
+	 * @param \SplObjectStorage $entities
+	 * @return void
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function setChangedEntities(\SplObjectStorage $entities) {
+		$this->changedEntities = $entities;
+	}
+
+	/**
 	 * Sets the deleted objects
 	 *
 	 * @param \SplObjectStorage $entities
@@ -235,8 +252,8 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Persistence\Generic\Backe
 		foreach ($this->aggregateRootObjects as $object) {
 			$this->persistObject($object, NULL);
 		}
-		foreach ($this->persistenceSession->getReconstitutedEntities() as $entity) {
-			$this->persistObject($entity, NULL);
+		foreach ($this->changedEntities as $object) {
+			$this->persistObject($object, NULL);
 		}
 	}
 
@@ -251,10 +268,6 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Persistence\Generic\Backe
 	protected function persistObject($object, $parentIdentifier) {
 		if (isset($this->visitedDuringPersistence[$object])) {
 			return $this->visitedDuringPersistence[$object];
-		}
-
-		if (!$this->persistenceSession->hasObject($object) && property_exists($object, 'FLOW3_Persistence_clone') && $object->FLOW3_Persistence_clone === TRUE) {
-			$this->persistenceManager->merge($object);
 		}
 
 		$identifier = $this->persistenceSession->getIdentifierByObject($object);
@@ -475,14 +488,20 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Persistence\Generic\Backe
 
 	/**
 	 * @param object $object
-	 * @param string $identifier
+	 * @param string $parentIdentifier
 	 * @return array
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function processObject($object, $identifier) {
-		return array(
-			'identifier' => $this->persistObject($object, $identifier)
-		);
+	protected function processObject($object, $parentIdentifier) {
+		if (isset($this->classSchemata[get_class($object)]) && $this->classSchemata[get_class($object)]->isAggregateRoot() && !$this->persistenceManager->isNewObject($object)) {
+			return array(
+				'identifier' => $this->persistenceSession->getIdentifierByObject($object)
+			);
+		} else {
+			return array(
+				'identifier' => $this->persistObject($object, $parentIdentifier)
+			);
+		}
 	}
 
 	/**

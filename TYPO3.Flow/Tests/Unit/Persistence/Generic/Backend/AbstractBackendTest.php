@@ -52,11 +52,10 @@ class AbstractBackendTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$objects->attach(new \stdClass());
 
 		$mockPersistenceSession = $this->getMock('TYPO3\FLOW3\Persistence\Generic\Session');
-		$mockPersistenceSession->expects($this->once())->method('getReconstitutedEntities')->will($this->returnValue(clone $objects));
 		$backend = $this->getAccessibleMock('TYPO3\FLOW3\Persistence\Generic\Backend\AbstractBackend', array('persistObject', 'getObjectCountByQuery', 'getObjectDataByQuery', 'getObjectDataByIdentifier', 'removeEntity', 'removeValueObject', 'storeObject'));
 
 		$backend->injectPersistenceSession($mockPersistenceSession);
-		$backend->expects($this->exactly(4))->method('persistObject');
+		$backend->expects($this->exactly(2))->method('persistObject');
 		$backend->setAggregateRootObjects($objects);
 		$backend->_call('persistObjects');
 	}
