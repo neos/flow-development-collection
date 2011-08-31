@@ -533,6 +533,8 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Persistence\Generic\Backe
 		} elseif ($propertyValue !== NULL && $propertyType !== $this->getType($propertyValue)) {
 			throw new \TYPO3\FLOW3\Persistence\Generic\Exception\UnexpectedTypeException('Expected property of type ' . $propertyType . ', but got ' . gettype($propertyValue) . ' for ' . get_class($object) . '::' . $propertyName, 1244465559);
 		}
+
+		return $propertyValue;
 	}
 
 	/**
