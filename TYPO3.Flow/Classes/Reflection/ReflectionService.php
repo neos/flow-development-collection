@@ -886,7 +886,7 @@ class ReflectionService {
 			}
 
 				// those are added as property even if not tagged with entity/valueobject
-			$propertyTypeWhiteList = array('DateTime', 'SplObjectStorage', 'Doctrine\Common\Collections\ArrayCollection');
+			$propertyTypeWhiteList = array('DateTime', 'SplObjectStorage', 'Doctrine\Common\Collections\Collection', 'Doctrine\Common\Collections\ArrayCollection');
 			$needsArtificialIdentity = TRUE;
 			foreach ($this->getClassPropertyNames($className) as $propertyName) {
 				if ($this->isPropertyTaggedWith($className, $propertyName, 'var') && !$this->isPropertyTaggedWith($className, $propertyName, 'transient')) {

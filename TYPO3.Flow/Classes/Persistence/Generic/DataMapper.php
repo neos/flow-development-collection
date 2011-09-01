@@ -177,6 +177,7 @@ class DataMapper {
 					case 'array':
 						$propertyValue = $this->mapArray($propertyData['value']);
 					break;
+					case 'Doctrine\Common\Collections\Collection':
 					case 'Doctrine\Common\Collections\ArrayCollection':
 						$propertyValue = new \Doctrine\Common\Collections\ArrayCollection($this->mapArray($propertyData['value']));
 					break;
@@ -202,6 +203,7 @@ class DataMapper {
 					case 'array':
 						$propertyValue = $this->mapArray(NULL);
 					break;
+					case 'Doctrine\Common\Collections\Collection':
 					case 'Doctrine\Common\Collections\ArrayCollection':
 						$propertyValue = new \Doctrine\Common\Collections\ArrayCollection();
 					break;

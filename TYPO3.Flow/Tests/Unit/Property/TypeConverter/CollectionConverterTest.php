@@ -22,20 +22,20 @@ namespace TYPO3\FLOW3\Tests\Unit\Property\TypeConverter;
  *                                                                        */
 
 /**
- * Testcase for the ArrayCollection converter
+ * Testcase for the Collection converter
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class ArrayCollectinConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class CollectionConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 
 	/**
-	 * @var \TYPO3\FLOW3\Property\TypeConverter\ArrayCollectionConverter
+	 * @var \TYPO3\FLOW3\Property\TypeConverter\CollectionConverter
 	 */
 	protected $converter;
 
 	public function setUp() {
-		$this->converter = new \TYPO3\FLOW3\Property\TypeConverter\ArrayCollectionConverter();
+		$this->converter = new \TYPO3\FLOW3\Property\TypeConverter\CollectionConverter();
 	}
 
 	/**
@@ -44,7 +44,7 @@ class ArrayCollectinConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function checkMetadata() {
 		$this->assertEquals(array('string', 'array'), $this->converter->getSupportedSourceTypes(), 'Source types do not match');
-		$this->assertEquals('Doctrine\Common\Collections\ArrayCollection', $this->converter->getSupportedTargetType(), 'Target type does not match');
+		$this->assertEquals('Doctrine\Common\Collections\Collection', $this->converter->getSupportedTargetType(), 'Target type does not match');
 		$this->assertEquals(1, $this->converter->getPriority(), 'Priority does not match');
 	}
 

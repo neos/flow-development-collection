@@ -440,6 +440,7 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Persistence\Generic\Backe
 						'value' => $this->processDateTime($propertyValue)
 					);
 				break;
+				case 'Doctrine\Common\Collections\Collection':
 				case 'Doctrine\Common\Collections\ArrayCollection':
 					$propertyValue = $propertyValue === NULL ? array() : $propertyValue->toArray();
 				case 'array':

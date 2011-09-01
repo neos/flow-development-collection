@@ -29,7 +29,7 @@ namespace TYPO3\FLOW3\Property\TypeConverter;
  * @scope singleton
  * @todo Implement functionality for converting collection properties.
  */
-class ArrayCollectionConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTypeConverter {
+class CollectionConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTypeConverter {
 
 	/**
 	 * @var array<string>
@@ -39,7 +39,7 @@ class ArrayCollectionConverter extends \TYPO3\FLOW3\Property\TypeConverter\Abstr
 	/**
 	 * @var string
 	 */
-	protected $targetType = 'Doctrine\Common\Collections\ArrayCollection';
+	protected $targetType = 'Doctrine\Common\Collections\Collection';
 
 	/**
 	 * @var integer
