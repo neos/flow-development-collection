@@ -30,35 +30,57 @@ class RouterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function resolveCallsCreateRoutesFromConfiguration() {
+		$mockLogger = $this->getMock('TYPO3\FLOW3\Log\SystemLoggerInterface');
+		$router = $this->getAccessibleMock('TYPO3\FLOW3\MVC\Web\Routing\Router', array('createRoutesFromConfiguration'));
+		$router->injectSystemLogger($mockLogger);
+
+			// not saying anything, but seems better than to expect the exception we'd get otherwise
+		$mockRoute = $this->getMock('TYPO3\FLOW3\MVC\Web\Routing\Route');
+		$mockRoute->expects($this->once())->method('resolves')->will($this->returnValue(TRUE));
+		$mockRoute->expects($this->once())->method('getMatchingUri')->will($this->returnValue('foobar'));
+		$router->_set('routes', array($mockRoute));
+
+			// this we actually want to know
+		$router->expects($this->once())->method('createRoutesFromConfiguration');
+		$router->resolve(array());
+	}
+
+	/**
+	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function setRoutesConfigurationParsesTheGivenConfigurationAndBuildsRouteObjectsFromIt() {
+	public function createRoutesFromConfigurationParsesTheGivenConfigurationAndBuildsRouteObjectsFromIt() {
 		$mockLogger = $this->getMock('TYPO3\FLOW3\Log\SystemLoggerInterface');
 
 		$routesConfiguration = array();
 		$routesConfiguration['route1']['uriPattern'] = 'number1';
 		$routesConfiguration['route2']['uriPattern'] = 'number2';
-		$routesConfiguration['route3']['uriPattern'] = 'number3';
-
-		$route1 = $this->getMock('TYPO3\FLOW3\MVC\Web\Routing\Route');
-		$route1->expects($this->once())->method('setUriPattern')->with($this->equalTo('number1'));
-
-		$route2 = $this->getMock('TYPO3\FLOW3\MVC\Web\Routing\Route');
-		$route2->expects($this->once())->method('setUriPattern')->with($this->equalTo('number2'));
-
-		$route3 = $this->getMock('TYPO3\FLOW3\MVC\Web\Routing\Route');
-		$route3->expects($this->once())->method('setUriPattern')->with($this->equalTo('number3'));
-		$route3->expects($this->once())->method('resolves')->will($this->returnValue(TRUE));
-
-		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->exactly(3))->method('create')->will($this->onConsecutiveCalls($route1, $route2, $route3));
+		$routesConfiguration['route3'] = array(
+			'name' => 'route3',
+			'defaults' => array('foodefault'),
+			'routeParts' => array('fooroutepart'),
+			'uriPattern' => 'number3',
+			'toLowerCase' => TRUE
+		);
 
 		$router = $this->getAccessibleMock('TYPO3\FLOW3\MVC\Web\Routing\Router', array('dummy'));
 		$router->injectSystemLogger($mockLogger);
-		$router->_set('objectManager', $mockObjectManager);
 		$router->setRoutesConfiguration($routesConfiguration);
-		$router->resolve(array());
+		$router->_call('createRoutesFromConfiguration');
+		$createdRoutes = $router->_get('routes');
+
+		$this->assertEquals('number1', $createdRoutes[0]->getUriPattern());
+		$this->assertEquals('number2', $createdRoutes[1]->getUriPattern());
+		$this->assertEquals('route3', $createdRoutes[2]->getName());
+		$this->assertEquals(array('foodefault'), $createdRoutes[2]->getDefaults());
+		$this->assertEquals(array('fooroutepart'), $createdRoutes[2]->getRoutePartsConfiguration());
+		$this->assertEquals('number3', $createdRoutes[2]->getUriPattern());
+		$this->assertEquals(TRUE, $createdRoutes[2]->isLowerCase());
 	}
 
 	/**
