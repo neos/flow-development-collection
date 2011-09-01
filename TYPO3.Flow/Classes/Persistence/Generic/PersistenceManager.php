@@ -102,6 +102,7 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 	 *
 	 * @param \TYPO3\FLOW3\Persistence\Generic\Backend\BackendInterface $backend the backend to use for persistence
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @autowiring off
 	 */
 	public function injectBackend(\TYPO3\FLOW3\Persistence\Generic\Backend\BackendInterface $backend) {
 		$this->backend = $backend;
