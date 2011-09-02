@@ -55,7 +55,10 @@ class ErrorHandler {
 	}
 
 	/**
-	 * Handles an error by converting it into an exception
+	 * Handles an error by converting it into an exception.
+	 *
+	 * If error reporting is disabled, either in the php.ini or temporarily through
+	 * the shut-up operator "@", no exception will be thrown.
 	 *
 	 * @param integer $errorLevel The error level - one of the E_* constants
 	 * @param string $errorMessage The error message
@@ -66,6 +69,10 @@ class ErrorHandler {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function handleError($errorLevel, $errorMessage, $errorFile, $errorLine) {
+		if(error_reporting() === 0) {
+			return;
+		}
+
 		$errorLevels = array (
 			E_WARNING            => 'Warning',
 			E_NOTICE             => 'Notice',
