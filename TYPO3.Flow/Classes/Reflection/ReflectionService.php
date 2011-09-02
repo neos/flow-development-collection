@@ -771,6 +771,11 @@ class ReflectionService {
 		$this->log(sprintf('Reflecting class %s', $className), LOG_DEBUG);
 
 		$className = trim($className, '\\');
+		if (strpos($className, 'TYPO3\FLOW3\Persistence\Doctrine\Proxies') === 0 && array_search('Doctrine\ORM\Proxy\Proxy', class_implements($className))) {
+				// Somebody tried to reflect a doctrine proxy, which will have severe side effects.
+				// see bug http://forge.typo3.org/issues/29449 for details.
+				throw new Exception\InvalidClassException('The class with name "' . $className . '" is a Doctrine proxy. It is not supported to reflect doctrine proxy classes.', 1314944681);
+		}
 
 		$class = new ClassReflection($className);
 
