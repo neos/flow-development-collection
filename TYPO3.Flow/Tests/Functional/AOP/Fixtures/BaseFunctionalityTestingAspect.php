@@ -163,5 +163,14 @@ class BaseFunctionalityTestingAspect {
 		return 'Implemented';
 	}
 
+	/**
+	 * @FLOW3\Around("method(TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass03->introducedMethodWithArguments())")
+	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint
+	 * @return string
+	 */
+	public function introducedMethodWithArgumentsImplementation(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+		return 'Implemented';
+	}
+
 }
 ?>

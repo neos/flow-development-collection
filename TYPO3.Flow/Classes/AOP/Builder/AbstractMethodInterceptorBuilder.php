@@ -139,10 +139,11 @@ abstract class AbstractMethodInterceptorBuilder {
 	 * @param array $groupedAdvices The advices grouped by advice type
 	 * @param string $methodName Name of the method the advice applies to
 	 * @param string $targetClassName Name of the target class
+	 * @param string $declaringClassName Name of the declaring class. This is usually the same as the $targetClassName. However, it is the introduction interface for introduced methods.
 	 * @return string PHP code to be used in the method interceptor
 	 */
-	protected function buildAdvicesCode(array $groupedAdvices, $methodName, $targetClassName) {
-		$advicesCode = $this->buildMethodArgumentsArrayCode($targetClassName, $methodName, ($methodName === '__construct'));
+	protected function buildAdvicesCode(array $groupedAdvices, $methodName, $targetClassName, $declaringClassName) {
+		$advicesCode = $this->buildMethodArgumentsArrayCode($declaringClassName, $methodName, ($methodName === '__construct'));
 
 		if (isset ($groupedAdvices['TYPO3\FLOW3\AOP\Advice\AfterThrowingAdvice']) || isset ($groupedAdvices['TYPO3\FLOW3\AOP\Advice\AfterAdvice'])) {
 			$advicesCode .= "\n\t\t\$result = NULL;\n\t\t\$afterAdviceInvoked = FALSE;\n\t\ttry {\n";

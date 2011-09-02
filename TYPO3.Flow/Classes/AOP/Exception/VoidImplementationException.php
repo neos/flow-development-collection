@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Functional\AOP\Fixtures;
+namespace TYPO3\FLOW3\AOP\Exception;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -12,18 +12,12 @@ namespace TYPO3\FLOW3\Tests\Functional\AOP\Fixtures;
  *                                                                        */
 
 /**
- * An interface which is introduced into TargetClass03
+ * A "Void Implementation" Exception
+ *
+ * @api
  */
-interface Introduced01Interface {
+class VoidImplementationException extends \TYPO3\FLOW3\AOP\Exception {
 
-	/**
-	 * @return string
-	 */
-	public function introducedMethod01();
-
-	/**
-	 * @return string
-	 */
-	public function introducedMethodWithArguments($someString = "some string");
 }
+
 ?>

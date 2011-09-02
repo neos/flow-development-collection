@@ -172,6 +172,7 @@ class FrameworkTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 		$this->assertInstanceOf('TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\Introduced01Interface', $targetClass);
 		$this->assertTrue(method_exists($targetClass, 'introducedMethod01'));
+		$this->assertTrue(method_exists($targetClass, 'introducedMethodWithArguments'));
 	}
 
 	/**

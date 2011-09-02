@@ -33,10 +33,14 @@ class AdvicedConstructorInterceptorBuilder extends \TYPO3\FLOW3\AOP\Builder\Abst
 	public function build($methodName, array $interceptedMethods, $targetClassName) {
 		if ($methodName !== '__construct') throw new \TYPO3\FLOW3\AOP\Exception('The ' . __CLASS__ . ' can only build constructor interceptor code.', 1231789021);
 
+		$declaringClassName = $interceptedMethods[$methodName]['declaringClassName'];
 		$proxyMethod = $this->compiler->getProxyClass($targetClassName)->getConstructor();
+		if ($declaringClassName !== $targetClassName) {
+			$proxyMethod->setMethodParametersCode($this->buildMethodParametersCode($declaringClassName, $methodName, TRUE));
+		}
 
 		$groupedAdvices = $interceptedMethods[$methodName]['groupedAdvices'];
-		$advicesCode = $this->buildAdvicesCode($groupedAdvices, $methodName, $targetClassName);
+		$advicesCode = $this->buildAdvicesCode($groupedAdvices, $methodName, $targetClassName, $declaringClassName);
 
 		if ($methodName !== NULL) {
 			$proxyMethod->addPreParentCallCode('
