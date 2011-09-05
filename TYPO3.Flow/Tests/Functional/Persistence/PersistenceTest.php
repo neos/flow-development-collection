@@ -47,6 +47,9 @@ class PersistenceTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 */
 	public function setUp() {
 		parent::setUp();
+		if (!$this->persistenceManager instanceof \TYPO3\FLOW3\Persistence\Doctrine\PersistenceManager) {
+			$this->markTestSkipped('Doctrine persistence is not enabled');
+		}
 		$this->testEntityRepository = new TestEntityRepository();
 	}
 
