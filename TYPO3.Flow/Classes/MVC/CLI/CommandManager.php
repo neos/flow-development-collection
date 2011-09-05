@@ -132,6 +132,7 @@ class CommandManager {
 	 * @return string The shortest possible command identifier
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @api
 	 */
 	public function getShortestIdentifierForCommand(Command $command) {
 		if ($command->getCommandIdentifier() === 'typo3.flow3:help:help') {

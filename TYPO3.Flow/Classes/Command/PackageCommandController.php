@@ -44,6 +44,7 @@ class PackageCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContro
 	/**
 	 * Create a new package
 	 *
+	 * @flushesCaches
 	 * @param string $packageKey The package key of the package to create
 	 * @return string
 	 */
@@ -65,6 +66,7 @@ class PackageCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContro
 	/**
 	 * Delete an existing package
 	 *
+	 * @flushesCaches
 	 * @param string $packageKey The package key of the package to create
 	 * @return string
 	 * @author Robert Lemke <robert@typo3.org>
@@ -83,6 +85,7 @@ class PackageCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContro
 	/**
 	 * Activate an available package
 	 *
+	 * @flushesCaches
 	 * @param string $packageKey The package key of the package to create
 	 * @return string
 	 * @author Tobias Liebig <mail_typo3@etobi.de>
@@ -102,6 +105,7 @@ class PackageCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContro
 	/**
 	 * Deactivate a package
 	 *
+	 * @flushesCaches
 	 * @param string $packageKey The package key of the package to create
 	 * @return string
 	 * @author Tobias Liebig <mail_typo3@etobi.de>

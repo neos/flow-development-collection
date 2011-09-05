@@ -194,6 +194,7 @@ class Bootstrap {
 	 * @param string $commandIdentifier Package key, controller name and command name separated by colon, e.g. "typo3.flow3:core:shell", wildcard for command name possible: "typo3.flow3:core:*"
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function registerCompiletimeCommand($commandIdentifier) {
 		$this->compiletimeCommands[$commandIdentifier] = TRUE;

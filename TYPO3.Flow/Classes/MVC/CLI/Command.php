@@ -168,6 +168,18 @@ class Command {
 	}
 
 	/**
+	 * Tells if this command flushes all caches and thus needs special attention in the interactive shell.
+	 *
+	 * Note that neither this method nor the @flushesCaches annotation is currently part of the official API.
+	 *
+	 * @return boolean
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function isFlushingCaches() {
+		return $this->getCommandMethodReflection()->isTaggedWith('flushesCaches');
+	}
+
+	/**
 	 * @return \TYPO3\FLOW3\Reflection\MethodReflection
 	 */
 	protected function getCommandMethodReflection() {

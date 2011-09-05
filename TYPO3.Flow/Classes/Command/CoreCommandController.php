@@ -219,12 +219,13 @@ class CoreCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControlle
 
 			$request = $this->requestBuilder->build($commandLine);
 			$response = new \TYPO3\FLOW3\MVC\CLI\Response();
+			$command = $request->getCommand();
 
-			if ($request === FALSE || $request->getCommand()->getCommandIdentifier() === FALSE) {
+			if ($request === FALSE || $command->getCommandIdentifier() === FALSE) {
 				echo "Bad command\n";
 				continue;
 			}
-			if ($this->bootstrap->isCompiletimeCommand($request->getCommand()->getCommandIdentifier())) {
+			if ($this->bootstrap->isCompiletimeCommand($command->getCommandIdentifier())) {
 				$this->dispatcher->dispatch($request, $response);
 				$response->send();
 				if (is_resource($subProcess)) {
@@ -239,7 +240,7 @@ class CoreCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControlle
 				};
 				if (!is_resource($subProcess)) {
 					list($subProcess, $pipes) = $this->launchSubProcess();
-					if ($subProcess === FALSE) {
+					if ($subProcess === FALSE || !is_array($pipes)) {
 						echo "Failed launching the shell sub process for executing the runtime command.\n";
 						continue;
 					}
@@ -249,7 +250,11 @@ class CoreCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControlle
 				fwrite($pipes[0], "$commandLine\n");
 				fflush($pipes[0]);
 				$this->echoSubProcessResponse($pipes);
-			 }
+
+				if ($command->isFlushingCaches()) {
+					$this->quitSubProcess($subProcess, $pipes);
+				}
+			}
 		}
 
 		if (is_resource($subProcess)) {
@@ -276,7 +281,7 @@ class CoreCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControlle
 	 * @return array The new sub process and its STDIN, STDOUT, STDERR pipes – or FALSE if an error occurred.
 	 */
 	protected function launchSubProcess() {
-		$systemCommand = 'FLOW3_ROOTPATH=' . FLOW3_PATH_ROOT . ' ' . 'FLOW3_CONTEXT=' . $this->bootstrap->getContext() . ' ' . PHP_BINDIR . '/php -c ' . php_ini_loaded_file() . ' ' . FLOW3_PATH_FLOW3 . 'Scripts/flow3' . ' --start-slave';
+		$systemCommand = 'FLOW3_ROOTPATH=' . FLOW3_PATH_ROOT . ' ' . 'FLOW3_CONTEXT=' . $this->bootstrap->getContext() . ' ' . PHP_BINDIR . '/php -c ' . php_ini_loaded_file() . ' ' . FLOW3_PATH_FLOW3 . 'Scripts/flow3.php' . ' --start-slave';
 		$descriptorSpecification = array(array('pipe', 'r'), array('pipe', 'w'), array('pipe', 'a'));
 		$subProcess = proc_open($systemCommand, $descriptorSpecification, $pipes);
 		if (!is_resource($subProcess)) {
