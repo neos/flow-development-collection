@@ -122,7 +122,9 @@ class ConfigurationBuilder {
 				}
 
 				$objectConfigurations[$objectName] = $newObjectConfiguration;
-				$objectConfigurations[$objectName]->setPackageKey($packageKey);
+				if ($objectConfigurations[$objectName]->getPackageKey() === NULL) {
+					$objectConfigurations[$objectName]->setPackageKey($packageKey);
+				}
 			}
 		}
 
