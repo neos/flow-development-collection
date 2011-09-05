@@ -122,7 +122,6 @@ class Dispatcher {
 	 * @signal
 	 */
 	protected function emitAfterControllerInvocation(\TYPO3\FLOW3\MVC\Controller\ControllerInterface $controller) {
-		$this->signalSlotDispatcher->dispatch(__CLASS__, 'afterControllerInvocation', array($controller));
 	}
 
 	/**

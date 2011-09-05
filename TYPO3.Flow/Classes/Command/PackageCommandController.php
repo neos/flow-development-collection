@@ -59,6 +59,7 @@ class PackageCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContro
 		$package = $this->packageManager->createPackage($packageKey);
 		$this->outputLine('New package "' . $packageKey . '" created at "' . $package->getPackagePath() . '".');
 		$this->bootstrap->executeCommand('typo3.flow3:cache:flush');
+		$this->sendAndExit(0);
 	}
 
 	/**
@@ -76,6 +77,7 @@ class PackageCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContro
 		$this->packageManager->deletePackage($packageKey);
 		$this->outputLine('Package "%s" has been deleted.', array($packageKey));
 		$this->bootstrap->executeCommand('typo3.flow3:cache:flush');
+		$this->sendAndExit(0);
 	}
 
 	/**
@@ -94,6 +96,7 @@ class PackageCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContro
 		$this->packageManager->activatePackage($packageKey);
 		$this->outputLine('Package "%s" activated.', array($packageKey));
 		$this->bootstrap->executeCommand('typo3.flow3:cache:flush');
+		$this->sendAndExit(0);
 	}
 
 	/**
@@ -112,6 +115,7 @@ class PackageCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContro
 		$this->packageManager->deactivatePackage($packageKey);
 		$this->outputLine('Package "%s" deactivated.', array($packageKey));
 		$this->bootstrap->executeCommand('typo3.flow3:cache:flush');
+		$this->sendAndExit(0);
 	}
 
 	/**

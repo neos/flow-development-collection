@@ -25,6 +25,8 @@ namespace TYPO3\FLOW3\Core;
 /**
  * The Lock Manager controls the master lock of the whole site which is mainly
  * used to regenerate code caches in peace.
+ *
+ * @scope singleton
  */
 class LockManager {
 

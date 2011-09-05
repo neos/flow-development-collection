@@ -37,6 +37,11 @@ class CacheCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControll
 	protected $cacheManager;
 
 	/**
+	 * @var \TYPO3\FLOW3\Core\LockManager
+	 */
+	protected $lockManager;
+
+	/**
 	 * Injects the cache manager
 	 *
 	 * @param \TYPO3\FLOW3\Cache\CacheManager $cacheManager
@@ -44,6 +49,16 @@ class CacheCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControll
 	 */
 	public function injectCacheManager(\TYPO3\FLOW3\Cache\CacheManager $cacheManager) {
 		$this->cacheManager = $cacheManager;
+	}
+
+	/**
+	 * Injects the Lock Manager
+	 *
+	 * @param \TYPO3\FLOW3\Core\LockManager $lockManager
+	 * @return void
+	 */
+	public function injectLockManager(\TYPO3\FLOW3\Core\LockManager $lockManager) {
+		$this->lockManager = $lockManager;
 	}
 
 	/**
@@ -56,6 +71,10 @@ class CacheCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControll
 	public function flushCommand() {
 		$this->cacheManager->flushCaches();
 		$this->outputLine('Flushed all caches.');
+		if ($this->lockManager->isSiteLocked()) {
+			$this->lockManager->unlockSite();
+		}
+		$this->sendAndExit(0);
 	}
 
 	/**
