@@ -31,7 +31,7 @@ namespace TYPO3\FLOW3\Resource;
 class Resource {
 
 	/**
-	 * @var TYPO3\FLOW3\Resource\ResourcePointer
+	 * @var \TYPO3\FLOW3\Resource\ResourcePointer
 	 * @ManyToOne
 	 * @identity
 	 */
