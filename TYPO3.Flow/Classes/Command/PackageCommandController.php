@@ -164,6 +164,29 @@ class PackageCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContro
 			}
 		}
 	}
+
+	/**
+	 * Import a package from a remote location
+	 *
+	 * Imports the specified package from a remote git repository. The imported package will not be activated automatically.
+	 * Currently only packages located at forge.typo3.org are supported. Note that the git binary must be available
+	 *
+	 * @param string $packageKey The package key of the package to import
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function importCommand($packageKey) {
+		try {
+			$this->packageManager->importPackage($packageKey);
+			$this->outputLine('Imported package %s.', array($packageKey));
+			$this->bootstrap->executeCommand('typo3.flow3:cache:flush');
+			$this->sendAndExit(0);
+		} catch (\TYPO3\FLOW3\Package\Exception $exception) {
+			$this->outputLine($exception->getMessage());
+			$this->quit(1);
+		}
+	}
+
 }
 
 ?>

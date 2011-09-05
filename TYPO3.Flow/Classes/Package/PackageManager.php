@@ -81,6 +81,11 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 	protected $packageClassTemplateUri = 'resource://TYPO3.FLOW3/Private/Package/Package.php.tmpl';
 
 	/**
+	 * @var array
+	 */
+	protected $settings;
+
+	/**
 	 * @param \TYPO3\FLOW3\Core\ClassLoader $classLoader
 	 * @return void
 	 */
@@ -97,6 +102,14 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 	 */
 	public function setPackageClassTemplateUri($packageClassTemplateUri) {
 		$this->packageClassTemplateUri = $packageClassTemplateUri;
+	}
+
+	/**
+	 * @param array $settings
+	 * @return void
+	 */
+	public function injectSettings(array $settings) {
+		$this->settings = $settings;
 	}
 
 	/**
@@ -277,6 +290,43 @@ class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 		$this->activatePackage($packageKey);
 
 		return $package;
+	}
+
+	/**
+	 * Import a package from a remote location
+	 *
+	 * Imports the specified package from a remote git repository. The imported package will not be activated automatically.
+	 * Currently only packages located at forge.typo3.org are supported. Note that the git binary must be available.
+	 *
+	 * @param string $packageKey The package key of the package to import.
+	 * @return \TYPO3\FLOW3\Package\Package The imported package
+	 */
+	public function importPackage($packageKey) {
+		if ($this->isPackageAvailable($packageKey)) {
+			throw new \TYPO3\FLOW3\Package\Exception\PackageKeyAlreadyExistsException('The package already exists.', 1315223754);
+		}
+
+		if (substr($packageKey, 0, 6) !== 'TYPO3.') {
+			throw new \TYPO3\FLOW3\Package\Exception\InvalidPackageKeyException('Currently only packages of the TYPO3 namespace can be imported.', 1315223998);
+		}
+
+		exec($this->settings['package']['git']['gitBinary'] . ' --version', $output, $result);
+		if ($result !== 0) {
+			throw new \TYPO3\FLOW3\Package\Exception\PackageRepositoryException('Could not execute the git command line tool. Make sure to configure the right path in TYPO3:FLOW3:package:git:gitBinary.', 1315223755);
+		}
+		unset($output);
+
+		$packagesPath = Files::getUnixStylePath(Files::concatenatePaths(array($this->packagesBasePath, 'Application')));
+		$packagePath = Files::concatenatePaths(array($packagesPath, $packageKey)) . '/';
+		Files::createDirectoryRecursively($packagePath);
+
+		$gitCommand = ' clone --recursive git://git.typo3.org/FLOW3/Packages/' . substr($packageKey, 6) . '.git ' . $packagePath;
+		exec($this->settings['package']['git']['gitBinary'] . $gitCommand, $output, $result);
+		if ($result !== 0) {
+			throw new \TYPO3\FLOW3\Package\Exception\PackageRepositoryException('Could not clone the remote package.' . PHP_EOL . 'git ' . $gitCommand, 1315223852);
+		}
+
+		return new Package($packageKey, $packagePath);
 	}
 
 	/**

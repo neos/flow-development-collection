@@ -546,6 +546,7 @@ class Bootstrap {
 		$this->environment->setTemporaryDirectoryBase($this->settings['utility']['environment']['temporaryDirectoryBase']);
 
 		$this->configurationManager->injectEnvironment($this->environment);
+		$this->packageManager->injectSettings($this->settings);
 	}
 
 	/**

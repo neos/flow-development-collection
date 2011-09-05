@@ -114,6 +114,13 @@ TYPO3:
       # testing context.
       registerFunctionalTestClasses: n
 
+    package:
+
+      git:
+
+        # The full path and file name of the git binary.
+        gitBinary: '/usr/bin/env git'
+
     persistence:
 
       # Options for the default Doctrine persistence
