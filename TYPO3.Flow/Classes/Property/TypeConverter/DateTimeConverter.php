@@ -96,7 +96,7 @@ class DateTimeConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractType
 		if (is_array($source)) {
 			return TRUE;
 		}
-		return is_string($source) && $source !== '';
+		return is_string($source);
 	}
 
 	/**
@@ -122,9 +122,12 @@ class DateTimeConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractType
 				$dateFormat = $source['dateFormat'];
 			}
 		}
+		if ($dateAsString === '') {
+			return NULL;
+		}
 		$date = \DateTime::createFromFormat($dateFormat, $dateAsString);
-		if ($date === FALSE || $dateAsString === '') {
-			throw new \TYPO3\FLOW3\Property\Exception\TypeConverterException('The string"' . $dateAsString . '" could not be converted to DateTime with format "' . $dateFormat . '"', 1307719788);
+		if ($date === FALSE) {
+			return new \TYPO3\FLOW3\Validation\Error('The date "%s" was not recognized (for format "%s").', 1307719788, array($dateAsString, $dateFormat));
 		}
 		if (is_array($source)) {
 			$this->overrideTimeIfSpecified($date, $source);
