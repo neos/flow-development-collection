@@ -669,12 +669,43 @@ class ActionControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	}
 
 	/**
+	 * Data provider for error action test
+	 * @return array
+	 */
+	public function dataProviderForErrorActionForward() {
+		return array(
+			'Simple use case, no sub package' => array(
+				'action' => 'foo',
+				'controller' => 'Bar',
+				'package' => 'Baz',
+				'subpackage' => NULL,
+				'arguments' => array('a' => 'b'),
+				'expectedForwardArguments' => array(
+					'foo', 'Bar', 'Baz', array('a' => 'b')
+				)
+			),
+			'Invocation with subpackage' => array(
+				'action' => 'foo',
+				'controller' => 'Bar',
+				'package' => 'Baz',
+				'subpackage' => 'MySubPackage',
+				'arguments' => array('a' => 'b'),
+				'expectedForwardArguments' => array(
+					'foo', 'Bar', 'Baz\MySubPackage', array('a' => 'b')
+				)
+			)
+		);
+	}
+	/**
 	 * @test
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @dataProvider dataProviderForErrorActionForward
 	 * @expectedException \TYPO3\FLOW3\MVC\Exception\StopActionException
 	 */
-	public function defaultErrorActionForwardsToReferrerIfSet() {
-		$this->markTestIncomplete('Sebastian -- fix after T3BOARD');
+	public function defaultErrorActionForwardsToReferrerIfSet($action, $controller, $package, $subpackage, $arguments, $expectedForwardArguments) {
+		$this->mockArguments->expects($this->any())->method('getValidationResults')->will($this->returnValue(new \TYPO3\FLOW3\Error\Result()));
+
 		$mockFlashMessageContainer = $this->getMock('TYPO3\FLOW3\MVC\Controller\FlashMessageContainer', array(), array(), '', FALSE);
 
 		$mockController = $this->getAccessibleMock('TYPO3\FLOW3\MVC\Controller\ActionController', array('forward'), array(), '', FALSE);
@@ -682,17 +713,17 @@ class ActionControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$mockController->_set('arguments', $this->mockArguments);
 		$mockController->_set('flashMessageContainer', $mockFlashMessageContainer);
 
-		$referrer = array(
-			'actionName' => 'foo',
-			'controllerName' => 'Bar',
-			'packageKey' => 'Baz',
-			'arguments' => serialize(array('a' => 'b'))
-		);
+		$mockReferringRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\Request');
+		$this->mockRequest->expects($this->any())->method('getReferringRequest')->will($this->returnValue($mockReferringRequest));
 
-		$this->mockRequest->expects($this->any())->method('hasArgument')->with('__referrer')->will($this->returnValue(TRUE));
-		$this->mockRequest->expects($this->atLeastOnce())->method('getArgument')->with('__referrer')->will($this->returnValue($referrer));
+		$mockReferringRequest->expects($this->any())->method('getControllerActionName')->will($this->returnValue($action));
+		$mockReferringRequest->expects($this->any())->method('getControllerName')->will($this->returnValue($controller));
+		$mockReferringRequest->expects($this->any())->method('getControllerPackageKey')->will($this->returnValue($package));
+		$mockReferringRequest->expects($this->any())->method('getControllerSubpackageKey')->will($this->returnValue($subpackage));
+		$mockReferringRequest->expects($this->any())->method('getArguments')->will($this->returnValue($arguments));
 
-		$mockController->expects($this->once())->method('forward')->with('foo', 'Bar', 'Baz', array('a' => 'b'))->will($this->throwException(new \TYPO3\FLOW3\MVC\Exception\StopActionException('', 1234)));
+		$forwardMethodInvocationExpectation = call_user_func_array(array($mockController->expects($this->once())->method('forward'), 'with'), $expectedForwardArguments);
+		$forwardMethodInvocationExpectation->will($this->throwException(new \TYPO3\FLOW3\MVC\Exception\StopActionException('', 1234)));
 
 		$mockController->_call('errorAction');
 	}

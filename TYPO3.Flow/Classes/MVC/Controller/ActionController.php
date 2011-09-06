@@ -436,12 +436,19 @@ class ActionController extends \TYPO3\FLOW3\MVC\Controller\AbstractController {
 		}
 
 		$referringRequest = $this->request->getReferringRequest();
+
 		if ($referringRequest !== NULL) {
 			$originalRequest = clone $this->request;
 			$this->request->setOriginalRequest($originalRequest);
 			$this->request->setOriginalRequestMappingResults($this->arguments->getValidationResults());
 
-			$this->forward($referringRequest->getControllerActionName(), $referringRequest->getControllerName(), $referringRequest->getControllerPackageKey(), $referringRequest->getArguments());
+			if ($referringRequest->getControllerSubpackageKey() !== NULL) {
+				$packageAndSubpackageKey = $referringRequest->getControllerPackageKey() . '\\' . $referringRequest->getControllerSubpackageKey();
+			} else {
+				$packageAndSubpackageKey = $referringRequest->getControllerPackageKey();
+			}
+
+			$this->forward($referringRequest->getControllerActionName(), $referringRequest->getControllerName(), $packageAndSubpackageKey, $referringRequest->getArguments());
 		}
 
 		$message = 'An error occurred while trying to call ' . get_class($this) . '->' . $this->actionMethodName . '().' . PHP_EOL;
