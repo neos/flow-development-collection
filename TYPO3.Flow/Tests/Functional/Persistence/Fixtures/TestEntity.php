@@ -36,6 +36,11 @@ class TestEntity {
 	protected $name;
 
 	/**
+	 * @var array
+	 */
+	protected $arrayProperty = array();
+
+	/**
 	 * @return string
 	 */
 	public function getName() {
@@ -48,6 +53,21 @@ class TestEntity {
 	 */
 	public function setName($name) {
 		$this->name = $name;
+	}
+
+	/**
+	 * @param array $arrayProperty
+	 * @return void
+	 */
+	public function setArrayProperty($arrayProperty) {
+		$this->arrayProperty = $arrayProperty;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getArrayProperty() {
+		return $this->arrayProperty;
 	}
 
 }
