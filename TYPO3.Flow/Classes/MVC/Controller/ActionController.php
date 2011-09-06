@@ -340,7 +340,7 @@ class ActionController extends \TYPO3\FLOW3\MVC\Controller\AbstractController {
 	 * By default, this method tries to locate a view with a name matching
 	 * the current action.
 	 *
-	 * @return \TYPO3\Fluid\View\ViewInterface the resolved view
+	 * @return \TYPO3\FLOW3\MVC\View\ViewInterface the resolved view
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @author Bastian Waidelich <bastian@typo3.org>
