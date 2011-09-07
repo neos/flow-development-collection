@@ -50,9 +50,12 @@ class AggregateTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 * @return void
 	 */
 	public function setUp() {
+		parent::setUp();
+		if (!$this->persistenceManager instanceof \TYPO3\FLOW3\Persistence\Doctrine\PersistenceManager) {
+			$this->markTestSkipped('Doctrine persistence is not enabled');
+		}
 		$this->postRepository = $this->objectManager->get('TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\PostRepository');
 		$this->commentRepository = $this->objectManager->get('TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\CommentRepository');
-		parent::setUp();
 	}
 
 	/**
