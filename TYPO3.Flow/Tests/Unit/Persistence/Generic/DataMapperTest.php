@@ -184,36 +184,6 @@ class DataMapperTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	}
 
 	/**
-	 * After thawing the properties, the nodes' uuid will be available in the identifier
-	 * property of the proxy class.
-	 *
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function thawPropertiesAssignsTheUuidToTheDeclaredUuidPropertyInProxy() {
-		$className = 'Class' . md5(uniqid(mt_rand(), TRUE));
-		eval('class ' . $className . ' { public $myUuidProperty; }');
-		$object = new $className();
-
-		$objectData = array(
-			'identifier' => 'c254d2e0-825a-11de-8a39-0800200c9a66',
-			'classname' => 'TYPO3\Post',
-			'properties' => array()
-		);
-
-		$classSchema = $this->getMock('TYPO3\FLOW3\Reflection\ClassSchema', array('getUuidPropertyName'), array('TYPO3\Post'));
-		$classSchema->expects($this->once())->method('getUUIDPropertyName')->will($this->returnValue('myUuidProperty'));
-
-		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService');
-		$mockReflectionService->expects($this->once())->method('getClassSchema')->will($this->returnValue($classSchema));
-
-		$dataMapper = $this->getAccessibleMock('TYPO3\FLOW3\Persistence\Generic\DataMapper', array('dummy'));
-		$dataMapper->injectReflectionService($mockReflectionService);
-		$dataMapper->_call('thawProperties', $object, $objectData['identifier'], $objectData);
-		$this->assertAttributeEquals('c254d2e0-825a-11de-8a39-0800200c9a66', 'myUuidProperty', $object);
-	}
-
-	/**
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */

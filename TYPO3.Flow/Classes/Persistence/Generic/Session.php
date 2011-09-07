@@ -329,9 +329,10 @@ class Session {
 			return $this->objectMap[$object];
 		}
 
-		$classSchema = $this->reflectionService->getClassSchema($object);
-		if ($classSchema !== NULL && $classSchema->getUuidPropertyName() !== NULL) {
-			return \TYPO3\FLOW3\Reflection\ObjectAccess::getProperty($object, $classSchema->getUuidPropertyName(), TRUE);
+		$idPropertyNames = $this->reflectionService->getPropertyNamesByTag(get_class($object), 'Id');
+		if (count($idPropertyNames) === 1) {
+			$idPropertyName = $idPropertyNames[0];
+			return \TYPO3\FLOW3\Reflection\ObjectAccess::getProperty($object, $idPropertyName, TRUE);
 		} elseif (property_exists($object, 'FLOW3_Persistence_Identifier')) {
 			return \TYPO3\FLOW3\Reflection\ObjectAccess::getProperty($object, 'FLOW3_Persistence_Identifier', TRUE);
 		}

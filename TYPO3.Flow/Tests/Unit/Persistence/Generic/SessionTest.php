@@ -636,21 +636,19 @@ class SessionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function getIdentifierByObjectReturnsUuidPropertyForUnknownObjectWithUuidProperty() {
-		$className = 'Class' . md5(uniqid(mt_rand(), TRUE));
-		eval('class ' . $className . ' { public $myUuidProperty; }');
-		$unknownObject = new $className();
-		$unknownObject->myUuidProperty = 'fakeUUID';
+	public function getIdentifierByObjectReturnsValueOfPropertyTaggedWithId() {
+		$object = $this->getMock('TYPO3\FLOW3\AOP\ProxyInterface');
+		$object->FLOW3_Persistence_Identifier = 'randomlyGeneratedUuid';
+		$object->customId = 'customId';
 
-		$mockClassSchema = $this->getMock('TYPO3\FLOW3\Reflection\ClassSchema', array(), array(), '', FALSE);
-		$mockClassSchema->expects($this->any())->method('getUuidPropertyName')->will($this->returnValue('myUuidProperty'));
 		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService');
-		$mockReflectionService->expects($this->any())->method('getClassSchema')->with($unknownObject)->will($this->returnValue($mockClassSchema));
+		$mockReflectionService->expects($this->any())->method('getPropertyNamesByTag')->will($this->returnValue(array('customId')));
 
-		$session = $this->getAccessibleMock('TYPO3\FLOW3\Persistence\Generic\Session', array('dummy'));
+		$session = new \TYPO3\FLOW3\Persistence\Generic\Session();
 		$session->injectReflectionService($mockReflectionService);
 
-		$this->assertEquals('fakeUUID', $session->getIdentifierByObject($unknownObject));
+		$this->assertEquals('customId', $session->getIdentifierByObject($object));
 	}
+
 }
 ?>

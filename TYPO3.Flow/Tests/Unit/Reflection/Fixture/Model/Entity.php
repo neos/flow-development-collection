@@ -33,7 +33,6 @@ class Entity {
 	 * An identifier property
 	 *
 	 * @var string
-	 * @uuid
 	 */
 	protected $someIdentifier;
 

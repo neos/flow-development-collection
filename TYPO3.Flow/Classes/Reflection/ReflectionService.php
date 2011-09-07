@@ -906,9 +906,6 @@ class ReflectionService {
 					}
 
 					$classSchema->addProperty($propertyName, $declaredType, $this->isPropertyTaggedWith($className, $propertyName, 'lazy'));
-					if ($this->isPropertyTaggedWith($className, $propertyName, 'uuid')) {
-						$classSchema->setUuidPropertyName($propertyName);
-					}
 					if ($this->isPropertyTaggedWith($className, $propertyName, 'identity')) {
 						$classSchema->markAsIdentityProperty($propertyName);
 					}

@@ -61,13 +61,6 @@ class ClassSchema {
 	protected $repositoryClassName;
 
 	/**
-	 * The name of the property holding the uuid of an entity, if any.
-	 *
-	 * @var string
-	 */
-	protected $uuidPropertyName;
-
-	/**
 	 * Properties of the class which need to be persisted
 	 *
 	 * @var array
@@ -187,7 +180,6 @@ class ClassSchema {
 		if ($modelType !== self::MODELTYPE_ENTITY && $modelType !== self::MODELTYPE_VALUEOBJECT) throw new \InvalidArgumentException('"' . $modelType . '" is an invalid model type.', 1212519195);
 		$this->modelType = $modelType;
 		if ($modelType === self::MODELTYPE_VALUEOBJECT) {
-			$this->uuidPropertyName = NULL;
 			$this->identityProperties = array();
 			$this->repositoryClassName = NULL;
 		}
@@ -243,32 +235,6 @@ class ClassSchema {
 	 */
 	public function hasProperty($propertyName) {
 		return array_key_exists($propertyName, $this->properties);
-	}
-
-	/**
-	 * Sets the property marked as uuid of an object with @uuid
-	 *
-	 * @param string $propertyName
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function setUuidPropertyName($propertyName) {
-		if ($this->modelType === self::MODELTYPE_VALUEOBJECT) throw new \TYPO3\FLOW3\Reflection\Exception\ClassSchemaConstraintViolationException('Value objects must not have a @uuid property', 1264102076);
-		if (!array_key_exists($propertyName, $this->properties)) {
-			throw new \InvalidArgumentException('Property "' . $propertyName . '" must be added to the class schema before it can be marked as UUID property.', 1233863842);
-		}
-
-		$this->uuidPropertyName = $propertyName;
-	}
-
-	/**
-	 * Gets the name of the property marked as uuid of an object
-	 *
-	 * @return string
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function getUuidPropertyName() {
-		return $this->uuidPropertyName;
 	}
 
 	/**

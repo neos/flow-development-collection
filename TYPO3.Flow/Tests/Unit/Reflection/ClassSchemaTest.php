@@ -178,17 +178,6 @@ class ClassSchemaTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @expectedException \TYPO3\FLOW3\Reflection\Exception\ClassSchemaConstraintViolationException
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function setUuidPropertyNameThrowsExceptionForValueObjects() {
-		$classSchema = new \TYPO3\FLOW3\Reflection\ClassSchema('SomeClass');
-		$classSchema->setModelType(\TYPO3\FLOW3\Reflection\ClassSchema::MODELTYPE_VALUEOBJECT);
-		$classSchema->setUuidPropertyName('foo');
-	}
-
-	/**
-	 * @test
-	 * @expectedException \TYPO3\FLOW3\Reflection\Exception\ClassSchemaConstraintViolationException
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
 	public function markAsIdentityPropertyThrowsExceptionForValueObjects() {
 		$classSchema = new \TYPO3\FLOW3\Reflection\ClassSchema('SomeClass');
 		$classSchema->setModelType(\TYPO3\FLOW3\Reflection\ClassSchema::MODELTYPE_VALUEOBJECT);
@@ -200,20 +189,17 @@ class ClassSchemaTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function setModelTypeResetsUuidPropertyNameAndIdentityPropertiesAndAggregateRootForValueObjects() {
+	public function setModelTypeResetsIdentityPropertiesAndAggregateRootForValueObjects() {
 		$classSchema = new \TYPO3\FLOW3\Reflection\ClassSchema('SomeClass');
 		$classSchema->setModelType(\TYPO3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY);
 		$classSchema->addProperty('foo', 'string');
 		$classSchema->addProperty('bar', 'string');
-		$classSchema->setUuidPropertyName('foo');
 		$classSchema->markAsIdentityProperty('bar');
 		$classSchema->setRepositoryClassName('Some\Repository');
-		$this->assertSame('foo', $classSchema->getUuidPropertyName());
 		$this->assertSame(array('bar' => 'string'), $classSchema->getIdentityProperties());
 
 		$classSchema->setModelType(\TYPO3\FLOW3\Reflection\ClassSchema::MODELTYPE_VALUEOBJECT);
 
-		$this->assertNull($classSchema->getUuidPropertyName());
 		$this->assertSame(array(), $classSchema->getIdentityProperties());
 		$this->assertFalse($classSchema->isAggregateRoot());
 	}
