@@ -202,7 +202,7 @@ class ProxyClassBuilder {
 	if (property_exists(\$this, 'FLOW3_Persistence_RelatedEntities') && is_array(\$this->FLOW3_Persistence_RelatedEntities)) {
 		\$persistenceManager = \\TYPO3\\FLOW3\\Core\\Bootstrap::\$staticObjectManager->get('TYPO3\\FLOW3\\Persistence\\PersistenceManagerInterface');
 		foreach (\$this->FLOW3_Persistence_RelatedEntities as \$entityInformation) {
-			\$this->\$entityInformation['propertyName'] = \$persistenceManager->getObjectByIdentifier(\$entityInformation['identifier'], \$entityInformation['entityType']);
+			\$this->\$entityInformation['propertyName'] = \$persistenceManager->getObjectByIdentifier(\$entityInformation['identifier'], \$entityInformation['entityType'], TRUE);
 		}
 		unset(\$this->FLOW3_Persistence_RelatedEntities);
 	}
