@@ -84,10 +84,11 @@ interface PersistenceManagerInterface {
 	 *
 	 * @param mixed $identifier
 	 * @param string $objectType
+	 * @param boolean $useLazyLoading Set to TRUE if you want to use lazy loading for this object
 	 * @return object The object for the identifier if it is known, or NULL
 	 * @api
 	 */
-	public function getObjectByIdentifier($identifier, $objectType = NULL);
+	public function getObjectByIdentifier($identifier, $objectType = NULL, $useLazyLoading = FALSE);
 
 	/**
 	 * Converts the given object into an array containing the identity of the domain object.
