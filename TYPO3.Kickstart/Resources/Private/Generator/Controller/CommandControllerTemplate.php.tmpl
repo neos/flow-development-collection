@@ -28,9 +28,9 @@ class {controllerClassName} extends \TYPO3\FLOW3\MVC\Controller\CommandControlle
 	 * @return void
 	 */
 	public function exampleCommand($requiredArgument, $optionalArgument = NULL) {
-		$this->response->appendContent(sprintf('You called the example command and passed "%s" as the first argument.', $requiredArgument));
+		$this->outputLine('You called the example command and passed "%s" as the first argument.', array($requiredArgument));
 	}
-	
+
 }
 
 ?>

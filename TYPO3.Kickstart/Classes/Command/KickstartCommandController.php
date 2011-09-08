@@ -43,12 +43,15 @@ class KickstartCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandCont
 	/**
 	 * Kickstart a new package
 	 *
-	 * Creates a new package and creates a standard Action Controller and a sample template for its Index Action.
+	 * Creates a new package and creates a standard Action Controller and a sample
+	 * template for its Index Action.
+	 *
 	 * For creating a new package without sample code use the package:create command.
 	 *
 	 * @param string $packageKey The package key, for example "MyCompany.MyPackageName"
 	 * @return string
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @see typo3.flow3:package:create
 	 */
 	public function packageCommand($packageKey) {
 		if (!$this->packageManager->isPackageKeyValid($packageKey)) {
@@ -65,18 +68,25 @@ class KickstartCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandCont
 	/**
 	 * Kickstart a new action controller
 	 *
-	 * Generates an Action Controller with the given name in the specified package. In its default mode it will create
-	 * just the controller containing a sample indexAction.
+	 * Generates an Action Controller with the given name in the specified package.
+	 * In its default mode it will create just the controller containing a sample
+	 * indexAction.
 	 *
-	 * By specifying the --generate-actions flag, this command will also create a set of actions. If no model or repository
-	 * exists which matches the controller name (for example "CoffeeRepository" for "CoffeeController"), an error will be
-	 * shown. Likewise the command exists with an error of the specified package does not exist. By using the --generate-related
-	 * flag, missing package, model or repository can be created alongside, avoiding such an error.
+	 * By specifying the --generate-actions flag, this command will also create a
+	 * set of actions. If no model or repository exists which matches the
+	 * controller name (for example "CoffeeRepository" for "CoffeeController"),
+	 * an error will be shown.
 	 *
-	 * By specifying the --generate-templates flag, this command will also create matching Fluid templates for the actions
-	 * created. This option can only be used in combination with --generate-actions.
+	 * Likewise the command exits with an error if the specified package does not
+	 * exist. By using the --generate-related flag, a missing package, model or
+	 * repository can be created alongside, avoiding such an error.
 	 *
-	 * The default behavior is to not overwrite any existing code. This can be overridden by specifying the --force flag.
+	 * By specifying the --generate-templates flag, this command will also create
+	 * matching Fluid templates for the actions created. This option can only be
+	 * used in combination with --generate-actions.
+	 *
+	 * The default behavior is to not overwrite any existing code. This can be
+	 * overridden by specifying the --force flag.
 	 *
 	 * @param string $packageKey The package key of the package for the new controller with an optional subpackage, (e.g. "MyCompany.MyPackage/Admin").
 	 * @param string $controllerName The name for the new controller. This may also be a comma separated list of controller names.
@@ -86,6 +96,7 @@ class KickstartCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandCont
 	 * @param boolean $force Overwrite any existing controller or template code. Regardless of this flag, the package, model and repository will never be overwritten.
 	 * @return string
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @see typo3.kickstart:kickstart:commandcontroller
 	 */
 	public function actionControllerCommand($packageKey, $controllerName, $generateActions = FALSE, $generateTemplates = TRUE, $generateRelated = FALSE, $force = FALSE) {
 		$subpackageName = '';
@@ -149,14 +160,15 @@ class KickstartCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandCont
 	/**
 	 * Kickstart a new command controller
 	 *
-	 * Creates a new command controller with the given name in the specified package. The generated controller class
-	 * already contains an example command.
+	 * Creates a new command controller with the given name in the specified
+	 * package. The generated controller class already contains an example command.
 	 *
 	 * @param string $packageKey The package key of the package for the new controller
 	 * @param string $controllerName The name for the new controller. This may also be a comma separated list of controller names.
 	 * @param boolean $force Overwrite any existing controller.
 	 * @return string
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @see typo3.kickstart:kickstart:actioncontroller
 	 */
 	public function commandControllerCommand($packageKey, $controllerName, $force = FALSE) {
 		if (!$this->packageManager->isPackageKeyValid($packageKey)) {
@@ -176,14 +188,16 @@ class KickstartCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandCont
 	/**
 	 * Kickstart a new domain model
 	 *
-	 * The fields are specified as a variable list of arguments with field name and type separated by a colon (e.g.
-	 * "title:string size:int type:MyType").
+	 * This command generates a new domain model class. The fields are specified as
+	 * a variable list of arguments with field name and type separated by a colon
+	 * (for example "title:string size:int type:MyType").
 	 *
 	 * @param string $packageKey The package key of the package for the domain model
 	 * @param string $modelName The name of the new domain model class
 	 * @param boolean $force Overwrite any existing model.
 	 * @return string
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @see typo3.kickstart:kickstart:repository
 	 */
 	public function modelCommand($packageKey, $modelName, $force = FALSE) {
 		if (!$this->packageManager->isPackageKeyValid($packageKey)) {
@@ -213,11 +227,14 @@ class KickstartCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandCont
 	/**
 	 * Kickstart a new domain repository
 	 *
+	 * This command generates a new domain repository class for the given model name.
+	 *
 	 * @param string $packageKey The package key
 	 * @param string $modelName The name of the domain model class
 	 * @param boolean $force Overwrite any existing repository.
 	 * @return string
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @see typo3.kickstart:kickstart:model
 	 */
 	public function repositoryCommand($packageKey, $modelName, $force = FALSE) {
 		if (!$this->packageManager->isPackageKeyValid($packageKey)) {
