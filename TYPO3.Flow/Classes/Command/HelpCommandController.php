@@ -33,11 +33,6 @@ use \TYPO3\FLOW3\MVC\CLI\CommandManager;
 class HelpCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandController {
 
 	/**
-	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
-	 */
-	protected $reflectionService;
-
-	/**
 	 * @var \TYPO3\FLOW3\Package\PackageManagerInterface
 	 */
 	protected $packageManager;
@@ -56,14 +51,6 @@ class HelpCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControlle
 	 * @var array
 	 */
 	protected $commandsByPackagesAndControllers = array();
-
-	/**
-	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService
-	 * @return void
-	 */
-	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
-		$this->reflectionService = $reflectionService;
-	}
 
 	/**
 	 * @param \TYPO3\FLOW3\Package\PackageManagerInterface $packageManager
@@ -91,13 +78,32 @@ class HelpCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControlle
 	}
 
 	/**
+	 * Displays a short, general help message
+	 *
+	 * This only outputs the FLOW3 version number, context and some hint about how to
+	 * get more help about commands.
+	 *
+	 * @return void
+	 * @internal
+	 */
+	public function helpStubCommand() {
+		$context = $this->bootstrap->getContext();
+
+		$this->outputLine('<b>FLOW3 %s ("%s" context)</b>', array($this->packageManager->getPackage('TYPO3.FLOW3')->getPackageMetaData()->getVersion(), $context));
+		$this->outputLine('<i>usage: ./flow3 <command identifier></i>');
+		$this->outputLine();
+		$this->outputLine('See \'./flow3 help\' for a list of all available commands.');
+		$this->outputLine();
+	}
+
+	/**
 	 * Display help for a command
 	 *
 	 * The help command displays help for a given command:
 	 * ./flow3 help <commandIdentifier>
 	 *
 	 * @param string $commandIdentifier Identifier of a command for more details
-	 * @return string
+	 * @return void
 	 */
 	public function helpCommand($commandIdentifier = NULL) {
 		if ($commandIdentifier === NULL) {
@@ -120,9 +126,9 @@ class HelpCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControlle
 		$this->buildCommandsIndex();
 		$context = $this->bootstrap->getContext();
 
-		$this->outputLine('FLOW3 %s (%s)', array($this->packageManager->getPackage('TYPO3.FLOW3')->getPackageMetaData()->getVersion(), $context));
-		$this->outputLine('usage: ./flow3 <command identifier>');
-		$this->outputLine('');
+		$this->outputLine('<b>FLOW3 %s ("%s" context)</b>', array($this->packageManager->getPackage('TYPO3.FLOW3')->getPackageMetaData()->getVersion(), $context));
+		$this->outputLine('<i>usage: ./flow3 <command identifier></i>');
+		$this->outputLine();
 		$this->outputLine('The following commands are currently available:');
 
 		foreach ($this->commandsByPackagesAndControllers as $packageKey => $commandControllers) {
@@ -152,31 +158,82 @@ class HelpCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControlle
 	 * @return void
 	 */
 	protected function displayHelpForCommand(\TYPO3\FLOW3\MVC\CLI\Command $command) {
-		$this->outputLine($command->getShortDescription());
-		$commandArgumentDefinitions = $command->getArgumentDefinitions();
-		$usage = './flow3 ' . $this->commandManager->getShortestIdentifierForCommand($command);
-		foreach ($commandArgumentDefinitions as $commandArgumentDefinition) {
-			$argumentName = sprintf('<%s>', $commandArgumentDefinition->getName());
-			if (!$commandArgumentDefinition->isRequired()) {
-				$argumentName = sprintf('[%s]', $argumentName);
-			}
-			$usage .= ' ' . $argumentName;
-		}
 		$this->outputLine();
-		$this->outputLine('USAGE:');
-		$this->outputLine($usage);
+		$this->outputLine('<u>' . $command->getShortDescription() . '</u>');
+		$this->outputLine();
+
+		$this->outputLine('<b>COMMAND:</b>');
+		$name = '<i>' . $command->getCommandIdentifier() . '</i>';
+		$this->outputLine('%-2s%s', array(' ', $name));
+
+		$commandArgumentDefinitions = $command->getArgumentDefinitions();
+		$usage = '';
+		$hasOptions = FALSE;
+		foreach ($commandArgumentDefinitions as $commandArgumentDefinition) {
+			if (!$commandArgumentDefinition->isRequired()) {
+				$hasOptions = TRUE;
+			} else {
+				$usage .= sprintf(' <%s>', strtolower(preg_replace('/([A-Z])/', ' $1', $commandArgumentDefinition->getName())));
+			}
+		}
+
+		$usage = './flow3 ' . $this->commandManager->getShortestIdentifierForCommand($command) . ($hasOptions ? ' [<options>]' : '') . $usage;
+
+		$this->outputLine();
+		$this->outputLine('<b>USAGE:</b>');
+		$this->outputLine('  ' . $usage);
+
+		$argumentDescriptions = array();
+		$optionDescriptions = array();
+
 		if ($command->hasArguments()) {
-			$this->outputLine();
-			$this->outputLine('ARGUMENTS:');
 			foreach ($commandArgumentDefinitions as $commandArgumentDefinition) {
 				$argumentDescription = $commandArgumentDefinition->getDescription();
-				if (!$commandArgumentDefinition->isRequired()) {
-					$argumentDescription .= ' (optional)';
-				}
 				$argumentDescription = wordwrap($argumentDescription, self::MAXIMUM_LINE_LENGTH - 23, PHP_EOL . str_repeat(' ', 23), TRUE);
-				$this->outputLine('  %-20s %s', array($commandArgumentDefinition->getName(), $argumentDescription));
+				if ($commandArgumentDefinition->isRequired()) {
+					$argumentDescriptions[] = vsprintf('  %-20s %s', array($commandArgumentDefinition->getDashedName(), $argumentDescription));
+				} else {
+					$optionDescriptions[] = vsprintf('  %-20s %s', array($commandArgumentDefinition->getDashedName(), $argumentDescription));
+				}
 			}
 		}
+
+		if (count($argumentDescriptions) > 0) {
+			$this->outputLine();
+			$this->outputLine('<b>ARGUMENTS:</b>');
+			foreach ($argumentDescriptions as $argumentDescription) {
+				$this->outputLine($argumentDescription);
+			}
+		}
+
+		if (count($optionDescriptions) > 0) {
+			$this->outputLine();
+			$this->outputLine('<b>OPTIONS:</b>');
+			foreach ($optionDescriptions as $optionDescription) {
+				$this->outputLine($optionDescription);
+			}
+		}
+
+		if ($command->getDescription() !== '') {
+			$this->outputLine();
+			$this->outputLine('<b>DESCRIPTION:</b>');
+			$descriptionLines = explode(chr(10), $command->getDescription());
+			foreach ($descriptionLines as $descriptionLine) {
+				$this->outputLine('%-2s%s', array(' ', $descriptionLine));
+			}
+		}
+
+		$relatedCommandIdentifiers = $command->getRelatedCommandIdentifiers();
+		if ($relatedCommandIdentifiers !== array()) {
+			$this->outputLine();
+			$this->outputLine('<b>SEE ALSO:</b>');
+			foreach ($relatedCommandIdentifiers as $commandIdentifier) {
+				$command = $this->commandManager->getCommandByIdentifier($commandIdentifier);
+				$this->outputLine('%-2s%s (%s)', array(' ', $commandIdentifier, $command->getShortDescription()));
+			}
+		}
+
+		$this->outputLine();
 	}
 
 	/**

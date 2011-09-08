@@ -113,7 +113,28 @@ class Command {
 	 */
 	public function getShortDescription() {
 		$lines = explode(chr(10), $this->getCommandMethodReflection()->getDescription());
-		return (count($lines) > 0) ? $lines[0] : '<no description available>';
+		return (count($lines) > 0) ? trim($lines[0]) : '<no description available>';
+	}
+
+	/**
+	 * Returns a longer description of this command
+	 * This is the complete method description except for the first line which can be retrieved via getShortDescription()
+	 * If The command description only consists of one line, an empty string is returned
+	 *
+	 * @return string A longer description of this command
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function getDescription() {
+		$lines = explode(chr(10), $this->getCommandMethodReflection()->getDescription());
+		array_shift($lines);
+		$descriptionLines = array();
+		foreach ($lines as $line) {
+			$trimmedLine = trim($line);
+			if ($descriptionLines !== array() || $trimmedLine !== '') {
+				$descriptionLines[] = $trimmedLine;
+			}
+		}
+		return implode(chr(10), $descriptionLines);
 	}
 
 	/**
@@ -177,6 +198,28 @@ class Command {
 	 */
 	public function isFlushingCaches() {
 		return $this->getCommandMethodReflection()->isTaggedWith('flushesCaches');
+	}
+
+	/**
+	 * Returns an array of command identifiers which were specified in the "@see"
+	 * annotation of a command method.
+	 *
+	 * @return array
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getRelatedCommandIdentifiers() {
+		$commandMethodReflection = $this->getCommandMethodReflection();
+		if (!$commandMethodReflection->isTaggedWith('see')) {
+			return array();
+		}
+
+		$relatedCommandIdentifiers = array();
+		foreach ($commandMethodReflection->getTagValues('see') as $tagValue) {
+			if (preg_match('/^[\w\d\.]+:[\w\d]+:[\w\d]+$/', $tagValue) === 1) {
+				$relatedCommandIdentifiers[] = $tagValue;
+			}
+		}
+		return $relatedCommandIdentifiers;
 	}
 
 	/**

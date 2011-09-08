@@ -119,7 +119,7 @@ class RequestBuilder {
 
 		$rawCommandLineArguments = is_array($commandLine) ? $commandLine : explode(' ', $commandLine);
 		if (count($rawCommandLineArguments) === 0) {
-			$request->setControllerCommandName('help');
+			$request->setControllerCommandName('helpStub');
 			return $request;
 		}
 		$commandIdentifier = trim(array_shift($rawCommandLineArguments));
