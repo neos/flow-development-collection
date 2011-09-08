@@ -38,9 +38,11 @@ class SecurityCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContr
 	/**
 	 * Import a public key
 	 *
-	 * Read a PEM formatted public key from stdin and import it into the RSAWalletService
-
+	 * Read a PEM formatted public key from stdin and import it into the
+	 * RSAWalletService.
+	 *
 	 * @return void
+	 * @see typo3.flow3:security:importprivatekey
 	 */
 	public function importPublicKeyCommand() {
 		$keyData = '';
@@ -59,11 +61,13 @@ class SecurityCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContr
 	/**
 	 * Import a private key
 	 *
-	 * Read a PEM formatted private key from stdin and import it into the RSAWalletService
-	 * The public key will be automatically extracted and stored together with the private key as a key pair
+	 * Read a PEM formatted private key from stdin and import it into the
+	 * RSAWalletService. The public key will be automatically extracted and stored
+	 * together with the private key as a key pair.
 	 *
-	 * @param boolean $usedForPasswords
+	 * @param boolean $usedForPasswords If the private key should be used for passwords
 	 * @return void
+	 * @see typo3.flow3:security:importpublickey
 	 */
 	public function importPrivateKeyCommand($usedForPasswords = FALSE) {
 		$keyData = '';

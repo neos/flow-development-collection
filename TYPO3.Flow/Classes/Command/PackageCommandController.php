@@ -44,9 +44,13 @@ class PackageCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContro
 	/**
 	 * Create a new package
 	 *
+	 * This command creates a new package which contains only the mandatory
+	 * directories and files.
+	 *
 	 * @flushesCaches
 	 * @param string $packageKey The package key of the package to create
 	 * @return string
+	 * @see typo3.kickstart:kickstart:package
 	 */
 	public function createCommand($packageKey) {
 		if (!$this->packageManager->isPackageKeyValid($packageKey)) {
@@ -65,6 +69,8 @@ class PackageCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContro
 
 	/**
 	 * Delete an existing package
+	 *
+	 * This command deletes an existing package identified by the package key.
 	 *
 	 * @flushesCaches
 	 * @param string $packageKey The package key of the package to create
@@ -85,10 +91,13 @@ class PackageCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContro
 	/**
 	 * Activate an available package
 	 *
+	 * This command activates an existing, but currently inactive package.
+	 *
 	 * @flushesCaches
 	 * @param string $packageKey The package key of the package to create
 	 * @return string
 	 * @author Tobias Liebig <mail_typo3@etobi.de>
+	 * @see typo3.flow3:package:deactivate
 	 */
 	public function activateCommand($packageKey) {
 		if ($this->packageManager->isPackageActive($packageKey)) {
@@ -105,10 +114,13 @@ class PackageCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContro
 	/**
 	 * Deactivate a package
 	 *
+	 * This command deactivates a currently active package.
+	 *
 	 * @flushesCaches
 	 * @param string $packageKey The package key of the package to create
 	 * @return string
 	 * @author Tobias Liebig <mail_typo3@etobi.de>
+	 * @see typo3.flow3:package:activate
 	 */
 	public function deactivateCommand($packageKey) {
 		if (!$this->packageManager->isPackageActive($packageKey)) {
@@ -125,11 +137,13 @@ class PackageCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContro
 	/**
 	 * List available packages
 	 *
-	 * Lists all locally available packages. Displays the package key, version and package title and its state –
-	 * active or inactive.
+	 * Lists all locally available packages. Displays the package key, version and
+	 * package title and its state – active or inactive.
 	 *
 	 * @return string The list of packages
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @see typo3.flow3:package:activate
+	 * @see typo3.flow3:package:deactivate
 	 */
 	public function listCommand() {
 		$activePackages = array();
@@ -168,12 +182,17 @@ class PackageCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContro
 	/**
 	 * Import a package from a remote location
 	 *
-	 * Imports the specified package from a remote git repository. The imported package will not be activated automatically.
-	 * Currently only packages located at forge.typo3.org are supported. Note that the git binary must be available
+	 * Imports the specified package from a remote git repository.
+	 * The imported package will not be activated automatically.
+	 *
+	 * Currently only packages located at forge.typo3.org are supported.
+	 * Note that the git binary must be available
 	 *
 	 * @param string $packageKey The package key of the package to import
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @see typo3.flow3:package:activate
+	 * @see typo3.flow3:package:create
 	 */
 	public function importCommand($packageKey) {
 		try {

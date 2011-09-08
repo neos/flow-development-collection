@@ -139,8 +139,9 @@ class CoreCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControlle
 	/**
 	 * Explicitly compile proxy classes
 	 *
-	 * The compile command triggers the proxy class compilation. Although a compilation run is triggered automatically
-	 * by FLOW3, there might be cases in a production context where a manual compile run is needed.
+	 * The compile command triggers the proxy class compilation.
+	 * Although a compilation run is triggered automatically by FLOW3, there might
+	 * be cases in a production context where a manual compile run is needed.
 	 *
 	 * @internal
 	 * @param boolean $force If set, classes will be compiled even though the cache says that everything is up to date.
@@ -170,8 +171,8 @@ class CoreCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControlle
 	/**
 	 * Adjust file permissions for CLI and web server access
 	 *
-	 * This command adjusts the file permissions of the whole FLOW3 application to the given command line user and
-	 * webserver user / group.
+	 * This command adjusts the file permissions of the whole FLOW3 application to
+	 * the given command line user and webserver user / group.
 	 *
 	 * @param string $commandlineUser User name of the command line user, for example "john"
 	 * @param string $webserverUser User name of the webserver, for example "www-data"
@@ -188,8 +189,9 @@ class CoreCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControlle
 	/**
 	 * Run the interactive Shell
 	 *
-	 * The shell command runs FLOW3's interactive shell. This shell allows for entering commands like through the regular
-	 * command line interface but additionally supports autocompletion and a user-based command history.
+	 * The shell command runs FLOW3's interactive shell. This shell allows for
+	 * entering commands like through the regular command line interface but
+	 * additionally supports autocompletion and a user-based command history.
 	 *
 	 * @return void
 	 */

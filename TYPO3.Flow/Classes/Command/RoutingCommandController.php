@@ -44,6 +44,8 @@ class RoutingCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContro
 	/**
 	 * List the known routes
 	 *
+	 * This command displays a list of all currently registered routes.
+	 *
 	 * @return void
 	 */
 	public function listCommand() {

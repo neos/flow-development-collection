@@ -64,9 +64,11 @@ class CacheCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControll
 	/**
 	 * Flush all caches
 	 *
-	 * The flush command flushes all caches, including code caches, which have been registered with FLOW3's Cache Manager.
+	 * The flush command flushes all caches, including code caches, which have been
+	 * registered with FLOW3's Cache Manager.
 	 *
 	 * @return void
+	 * @see typo3.flow3:cache:warmup
 	 */
 	public function flushCommand() {
 		$this->cacheManager->flushCaches();
@@ -80,11 +82,14 @@ class CacheCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControll
 	/**
 	 * Warm up caches
 	 *
-	 * The warm up caches command initializes and fills – as far as possible – all registered caches to get a snappier
-	 * response on the first following request. Apart from caches, other parts of the application may hook into this
-	 * command and execute tasks which take further steps for preparing the app for the big rush.
+	 * The warm up caches command initializes and fills – as far as possible – all
+	 * registered caches to get a snappier response on the first following request.
+	 * Apart from caches, other parts of the application may hook into this command
+	 * and execute tasks which take further steps for preparing the app for the big
+	 * rush.
 	 *
 	 * @return void
+	 * @see typo3.flow3:cache:flush
 	 */
 	public function warmupCommand() {
 		$this->emitWarmupCaches();
@@ -94,8 +99,8 @@ class CacheCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControll
 	/**
 	 * Signals that caches should be warmed up.
 	 *
-	 * Other application parts may subscribe to this signal and execute additional tasks for preparing the application
-	 * for the first request.
+	 * Other application parts may subscribe to this signal and execute additional
+	 * tasks for preparing the application for the first request.
 	 *
 	 * @return void
 	 * @signal

@@ -146,6 +146,8 @@ class HelpCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControlle
 	}
 
 	/**
+	 * Render help text for a single command
+	 *
 	 * @param \TYPO3\FLOW3\MVC\CLI\Command $command
 	 * @return void
 	 */
@@ -199,8 +201,8 @@ class HelpCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControlle
 	}
 
 	/**
-	 * Builds an index of available commands. For each of them a Command object is added to the commands array of this
-	 * class.
+	 * Builds an index of available commands. For each of them a Command object is
+	 * added to the commands array of this class.
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>

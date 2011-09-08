@@ -41,7 +41,7 @@ class DoctrineCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContr
 	protected $doctrineService;
 
 	/**
-	 * Injects the FLOW3 settings, only the persistence part is kept for further use.
+	 * Injects the FLOW3 settings, only the persistence part is kept for further use
 	 *
 	 * @param array $settings
 	 * @return void
@@ -53,9 +53,15 @@ class DoctrineCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContr
 	/**
 	 * Validate the class/table mappings
 	 *
-	 * The validate command checks if the current class model schema matches the table structure in the database.
+	 * The validate command checks if the current class model schema is valid. Any
+	 * inconsistencies in the relations between models (for example caused by wrong
+	 * or missing annotations) will be reported.
+	 *
+	 * Note that this command does not check the table structure in the database in
+	 * any way.
 	 *
 	 * @return void
+	 * @see typo3.flow3:doctrine:entitystatus
 	 */
 	public function validateCommand() {
 		$this->outputLine();
@@ -75,10 +81,14 @@ class DoctrineCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContr
 	}
 
 	/**
-	 * Create the database schema based on current mapping information
+	 * Create the database schema
+	 *
+	 * Creates a new database schema based on the current mapping information.
 	 *
 	 * @param string $output A file to write SQL to, instead of executing it
 	 * @return void
+	 * @see typo3.flow3:doctrine:update
+	 * @see typo3.flow3:doctrine:migrate
 	 */
 	public function createCommand($output = NULL) {
 			// "driver" is used only for Doctrine, thus we (mis-)use it here
@@ -93,19 +103,23 @@ class DoctrineCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContr
 	}
 
 	/**
-	 * Update the database schema, not using migrations
+	 * Update the database schema
 	 *
-	 * It will, unless $safeMode is set to FALSE, not drop foreign keys, sequences and tables.
+	 * This comand updates the database schema without using existing migrations.
+	 * It will, unless --unsafe-mode is set, not drop foreign keys, sequences and
+	 * tables.
 	 *
-	 * @param boolean $safeMode
-	 * @param string $output A file to write SQL to, instead of executing it
+	 * @param boolean $unsafeMode If set, foreign keys, sequences and tables can potentially be dropped.
+	 * @param string $output A file to write SQL to, instead of executing the update directly
 	 * @return void
+	 * @see typo3.flow3:doctrine:create
+	 * @see typo3.flow3:doctrine:migrate
 	 */
-	public function updateCommand($safeMode = TRUE, $output = NULL) {
+	public function updateCommand($unsafeMode = FALSE, $output = NULL) {
 			// "driver" is used only for Doctrine, thus we (mis-)use it here
 			// additionally, when no path is set, skip this step, assuming no DB is needed
 		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['host'] !== NULL) {
-			$this->doctrineService->updateSchema($safeMode, $output);
+			$this->doctrineService->updateSchema(!$unsafeMode, $output);
 			$this->outputLine('Executed a database schema update.');
 		} else {
 			$this->outputLine('Database schema update has been SKIPPED, the driver and host backend options are not set in /Configuration/Settings.yaml.');
@@ -117,6 +131,7 @@ class DoctrineCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContr
 	 * Compile the Doctrine proxy classes
 	 *
 	 * @return void
+	 * @internal
 	 */
 	public function compileProxiesCommand() {
 		$this->doctrineService->compileProxies();
@@ -126,10 +141,11 @@ class DoctrineCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContr
 	 * Show the current status of entities and mappings
 	 *
 	 * Shows basic information about which entities exist and possibly if their
-	 * mapping information contains errors or not. To run a full validation,
-	 * use the validate command.
+	 * mapping information contains errors or not. To run a full validation, use
+	 * the validate command.
 	 *
 	 * @return void
+	 * @see typo3.flow3:doctrine:validate
 	 */
 	public function entityStatusCommand() {
 		$info = $this->doctrineService->getEntityStatus();
@@ -186,6 +202,10 @@ class DoctrineCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContr
 	 * Show the current migration status
 	 *
 	 * @return void
+	 * @see typo3.flow3:doctrine:migrate
+	 * @see typo3.flow3:doctrine:migrationexecute
+	 * @see typo3.flow3:doctrine:migrationgenerate
+	 * @see typo3.flow3:doctrine:migrationversion
 	 */
 	public function migrationStatusCommand() {
 			// "driver" is used only for Doctrine, thus we (mis-)use it here
@@ -201,10 +221,17 @@ class DoctrineCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContr
 	/**
 	 * Migrate the database schema
 	 *
+	 * This command adjusts the database structure by applying one or more doctrine
+	 * migrations provided by one or more active FLOW3 packages.
+	 *
 	 * @param string $version The version to migrate to
 	 * @param string $output A file to write SQL to, instead of executing it
 	 * @param boolean $dryRun Whether to do a dry run or not
 	 * @return void
+	 * @see typo3.flow3:doctrine:migrationstatus
+	 * @see typo3.flow3:doctrine:migrationexecute
+	 * @see typo3.flow3:doctrine:migrationgenerate
+	 * @see typo3.flow3:doctrine:migrationversion
 	 */
 	public function migrateCommand($version = NULL, $output = NULL, $dryRun = FALSE) {
 			// "driver" is used only for Doctrine, thus we (mis-)use it here
@@ -230,6 +257,10 @@ class DoctrineCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContr
 	 * @param string $output A file to write SQL to, instead of executing it
 	 * @param boolean $dryRun Whether to do a dry run or not
 	 * @return void
+	 * @see typo3.flow3:doctrine:migrate
+	 * @see typo3.flow3:doctrine:migrationstatus
+	 * @see typo3.flow3:doctrine:migrationgenerate
+	 * @see typo3.flow3:doctrine:migrationversion
 	 */
 	public function migrationExecuteCommand($version, $direction = 'up', $output = NULL, $dryRun = FALSE) {
 			// "driver" is used only for Doctrine, thus we (mis-)use it here
@@ -249,6 +280,10 @@ class DoctrineCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContr
 	 * @param boolean $add The migration to mark as migrated
 	 * @param boolean $delete The migration to mark as not migrated
 	 * @return void
+	 * @see typo3.flow3:doctrine:migrate
+	 * @see typo3.flow3:doctrine:migrationstatus
+	 * @see typo3.flow3:doctrine:migrationexecute
+	 * @see typo3.flow3:doctrine:migrationgenerate
 	 */
 	public function migrationVersionCommand($version, $add = FALSE, $delete = FALSE) {
 			// "driver" is used only for Doctrine, thus we (mis-)use it here
@@ -274,6 +309,10 @@ class DoctrineCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContr
 	 *
 	 * @param boolean $diffAgainstCurrent
 	 * @return void
+	 * @see typo3.flow3:doctrine:migrate
+	 * @see typo3.flow3:doctrine:migrationstatus
+	 * @see typo3.flow3:doctrine:migrationexecute
+	 * @see typo3.flow3:doctrine:migrationversion
 	 */
 	public function migrationGenerateCommand($diffAgainstCurrent = TRUE) {
 			// "driver" is used only for Doctrine, thus we (mis-)use it here
