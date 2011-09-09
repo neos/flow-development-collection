@@ -39,6 +39,14 @@ class AopProxyTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	/**
 	 * @test
 	 */
+	public function anAdvicedParentMethodIsCalledCorrectlyIfANonAdvicedOverridingMethodCallsIt() {
+		$targetClass = new Fixtures\ChildClassOfTargetClass01();
+		$this->assertEquals('Two plus two makes five! For big twos and small fives! That was smart, eh?', $targetClass->saySomethingSmart());
+	}
+
+	/**
+	 * @test
+	 */
 	public function methodArgumentsWithValueNullArePassedToTheProxiedMethod() {
 		$proxiedClass = new Fixtures\EntityWithOptionalConstructorArguments('argument1', NULL, 'argument3');
 

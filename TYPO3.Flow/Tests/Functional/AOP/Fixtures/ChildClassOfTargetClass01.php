@@ -33,5 +33,12 @@ class ChildClassOfTargetClass01 extends TargetClass01 {
 		return 'Greetings, I just wanted to say: ' . parent::sayHello();
 	}
 
+	/**
+	 * @return string
+	 */
+	public function saySomethingSmart() {
+		return parent::saySomethingSmart() . ' That was smart, eh?';
+	}
+
 }
 ?>
