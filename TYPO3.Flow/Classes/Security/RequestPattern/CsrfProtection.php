@@ -101,8 +101,8 @@ class CsrfProtection implements \TYPO3\FLOW3\Security\RequestPatternInterface {
 		if ($this->policyService->hasPolicyEntryForMethod($controllerClassName, $actionName)
 			&& !$this->reflectionService->isMethodTaggedWith($controllerClassName, $actionName, 'skipCsrfProtection')) {
 			$internalArguments = $request->getInternalArguments();
-			if (!isset($internalArguments['__CSRF-TOKEN'])) return TRUE;
-			$csrfToken = $internalArguments['__CSRF-TOKEN'];
+			if (!isset($internalArguments['__csrfToken'])) return TRUE;
+			$csrfToken = $internalArguments['__csrfToken'];
 			if ($this->securityContext->isCsrfProtectionTokenValid($csrfToken) === FALSE) return TRUE;
 		}
 		return FALSE;
