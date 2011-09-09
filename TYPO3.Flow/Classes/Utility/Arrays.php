@@ -175,16 +175,19 @@ class Arrays {
 	}
 
 	/**
-	 * Sets the given value in a nested array by following the specified path.
+	 * Sets the given value in a nested array or object by following the specified path.
 	 *
-	 * @param array $array The array
+	 * @param array|\ArrayAccess $subject The array or ArrayAccess instance to work on
 	 * @param array|string $path The path to follow. Either a simple array of keys or a string in the format 'foo.bar.baz'
 	 * @param mixed $value The value to set
-	 * @return array The modified array
+	 * @return array The modified array or object
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	static public function setValueByPath(array $array, $path, $value) {
+	static public function setValueByPath($subject, $path, $value) {
+		if (!is_array($subject) && !($subject instanceof \ArrayAccess)) {
+			throw new \InvalidArgumentException('setValueByPath() expects $subject to be array or an object implementing \ArrayAccess, "' . (is_object($subject) ? get_class($subject) : gettype($subject)) . '" given.', 1306424308);
+		}
 		if (is_string($path)) {
 			$path = explode('.', $path);
 		} elseif (!is_array($path)) {
@@ -192,14 +195,14 @@ class Arrays {
 		}
 		$key = array_shift($path);
 		if (count($path) === 0) {
-			$array[$key] = $value;
+			$subject[$key] = $value;
 		} else {
-			if (!isset($array[$key]) || !is_array($array[$key])) {
-				$array[$key] = array();
+			if (!isset($subject[$key]) || !is_array($subject[$key])) {
+				$subject[$key] = array();
 			}
-			$array[$key] = self::setValueByPath($array[$key], $path, $value);
+			$subject[$key] = self::setValueByPath($subject[$key], $path, $value);
 		}
-		return $array;
+		return $subject;
 	}
 
 	/**

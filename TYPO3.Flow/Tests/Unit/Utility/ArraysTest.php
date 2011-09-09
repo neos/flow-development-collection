@@ -195,6 +195,33 @@ class ArraysTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
+	 * @expectedException \InvalidArgumentException
+	 */
+	public function setValueByPathThrowsExceptionIfSubjectIsNoArray() {
+		$subject = 'foobar';
+		\TYPO3\FLOW3\Utility\Arrays::setValueByPath($subject, 'foo', 'bar');
+	}
+
+	/**
+	 * @test
+	 * @expectedException \InvalidArgumentException
+	 */
+	public function setValueByPathThrowsExceptionIfSubjectIsNoArrayAccess() {
+		$subject = new \stdClass();
+		\TYPO3\FLOW3\Utility\Arrays::setValueByPath($subject, 'foo', 'bar');
+	}
+
+	/**
+	 * @test
+	 */
+	public function setValueByLeavesInputArrayUnchanged() {
+		$subject = $subjectBackup = array('foo' => 'bar');
+		\TYPO3\FLOW3\Utility\Arrays::setValueByPath($subject, 'foo', 'baz');
+		$this->assertEquals($subject, $subjectBackup);
+	}
+
+	/**
+	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function unsetValueByPathDoesNotModifyAnArrayIfThePathWasNotFound() {
