@@ -7,28 +7,31 @@
 # Make sure to set the webserver group name to the one used by your system.
 
 echo FLOW3 File Permission Script
+echo
 
 if [ ! -d "Web" -o ! -d "Packages" -o ! -d "Configuration" ]; then
-	echo
 	echo Make sure you run this from the FLOW3 root directory!
 	echo
 	exit 1
 fi
 
 if [ "$#" != "3" ]; then
-	echo
 	echo "Usage: ./flow3 core:setfilepermissions <commandlineuser> <webuser> <webgroup>"
-	echo "Run as super user, if needed (probably)"
+	echo "Run as super user."
 	echo
 	exit 1
+fi
+
+if [ "$(id -u)" != "0" ]; then
+   echo "This command must be called as super user. Use 'sudo' or run as root." 1>&2
+	echo
+   exit 1
 fi
 
 COMMANDLINE_USER="$1"
 WEBSERVER_USER="$2"
 WEBSERVER_GROUP="$3"
 
-echo "(if a password prompt appears, it's from sudo)"
-echo
 echo "Checking permissions from here upwards."
 
 unset PARENT_PATH
