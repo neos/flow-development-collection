@@ -417,7 +417,12 @@ class Bootstrap {
 		}
 
 		if ($objectConfigurationCache->has('allCompiledCodeUpToDate') === FALSE) {
-			throw new \TYPO3\FLOW3\Exception('Could not load object configuration from cache. This might be due to an unsuccessful compile run. One reason might be, that your PHP binary is not located in "' . $this->settings['core']['phpBinaryPathAndFilename'] . '". In that case, set the correct path to the PHP executable in Configuration/Settings.yaml, setting FLOW3.core.phpBinaryPathAndFilename.', 1297263663);
+			$command = escapeshellcmd($this->settings['core']['phpBinaryPathAndFilename']) . ' -c ' . escapeshellarg(php_ini_loaded_file()) . ' -v';
+			system($command, $result);
+			if ($result !== 0) {
+				throw new \TYPO3\FLOW3\Exception('It seems like the PHP binary "' . $this->settings['core']['phpBinaryPathAndFilename'] . '" cannot be executed by FLOW3. Set the correct path to the PHP executable in Configuration/Settings.yaml, setting FLOW3.core.phpBinaryPathAndFilename.', 1315561483);
+			}
+			throw new \TYPO3\FLOW3\Exception('The compile run failed. Please check the error output or system log for more information.', 1297263663);
 		}
 
 		$this->classLoader->injectClassesCache($this->cacheManager->getCache('FLOW3_Object_Classes'));
