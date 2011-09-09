@@ -267,7 +267,11 @@ class ValidatorResolver {
 			foreach ($this->reflectionService->getClassPropertyNames($targetClassName) as $classPropertyName) {
 				$classPropertyTagsValues = $this->reflectionService->getPropertyTagsValues($targetClassName, $classPropertyName);
 
-				$parsedType = \TYPO3\FLOW3\Utility\TypeHandling::parseType(trim(implode('' , $classPropertyTagsValues['var']), ' \\'));
+				try {
+					$parsedType = \TYPO3\FLOW3\Utility\TypeHandling::parseType(trim(implode('' , $classPropertyTagsValues['var']), ' \\'));
+				} catch (\TYPO3\FLOW3\Utility\Exception\InvalidTypeException $exception) {
+					throw new \InvalidArgumentException(sprintf(' @var annotation of ' . $exception->getMessage(), 'class "' . $targetClassName . '", property "' . $classPropertyName . '"'), 1315564744);
+				}
 				$propertyTargetClassName = $parsedType['type'];
 				if (class_exists($propertyTargetClassName) && $this->objectManager->isRegistered($propertyTargetClassName) && $this->objectManager->getScope($propertyTargetClassName) === \TYPO3\FLOW3\Object\Configuration\Configuration::SCOPE_PROTOTYPE) {
 					$validatorForProperty = $this->getBaseValidatorConjunction($propertyTargetClassName);

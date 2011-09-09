@@ -30,7 +30,7 @@ class TypeHandlingTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \InvalidArgumentException
+	 * @expectedException \TYPO3\FLOW3\Utility\Exception\InvalidTypeException
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function parseTypeThrowsExceptionOnInvalidType() {
@@ -39,7 +39,7 @@ class TypeHandlingTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \InvalidArgumentException
+	 * @expectedException \TYPO3\FLOW3\Utility\Exception\InvalidTypeException
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function parseTypeThrowsExceptionOnInvalidElementTypeHint() {

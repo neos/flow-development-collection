@@ -898,7 +898,12 @@ class ReflectionService {
 						$needsArtificialIdentity = FALSE;
 					}
 
-					$parsedType = \TYPO3\FLOW3\Utility\TypeHandling::parseType($declaredType);
+					try {
+						$parsedType = \TYPO3\FLOW3\Utility\TypeHandling::parseType($declaredType);
+					} catch (\TYPO3\FLOW3\Utility\Exception\InvalidTypeException $exception) {
+						throw new \InvalidArgumentException(sprintf($exception->getMessage(), 'class "' . $className . '" for property "' . $propertyName . '"'), 1315564475);
+					}
+
 					if (!in_array($parsedType['type'], $propertyTypeWhiteList)
 							&& (class_exists($parsedType['type']) || interface_exists($parsedType['type']))
 							&& !($this->isClassTaggedWith($parsedType['type'], 'entity') || $this->isClassTaggedWith($parsedType['type'], 'valueobject'))) {

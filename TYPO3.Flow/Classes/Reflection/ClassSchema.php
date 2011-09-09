@@ -126,7 +126,11 @@ class ClassSchema {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function addProperty($name, $type, $lazy = FALSE) {
-		$type = \TYPO3\FLOW3\Utility\TypeHandling::parseType($type);
+		try {
+			$type = \TYPO3\FLOW3\Utility\TypeHandling::parseType($type);
+		} catch (\TYPO3\FLOW3\Utility\Exception\InvalidTypeException $exception) {
+			throw new \InvalidArgumentException(sprintf($exception->getMessage(), 'class "' . $name . '"'), 1315564474);
+		}
 		$this->properties[$name] = array(
 			'type' => $type['type'],
 			'elementType' => $type['elementType'],
