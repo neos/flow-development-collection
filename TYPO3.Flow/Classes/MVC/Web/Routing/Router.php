@@ -225,7 +225,7 @@ class Router implements \TYPO3\FLOW3\MVC\Web\Routing\RouterInterface {
 		if ($this->routesCreated === FALSE) {
 			$this->routes = array();
 			foreach ($this->routesConfiguration as $routeConfiguration) {
-				$route = $this->objectManager->create('TYPO3\FLOW3\MVC\Web\Routing\Route');
+				$route = new \TYPO3\FLOW3\MVC\Web\Routing\Route();
 				if (isset($routeConfiguration['name'])) {
 					$route->setName($routeConfiguration['name']);
 				}
