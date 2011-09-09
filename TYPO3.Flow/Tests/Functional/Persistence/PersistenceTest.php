@@ -142,6 +142,42 @@ class PersistenceTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	}
 
 	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function persistedEntitiesLyingInArraysAreNotSerializedButReferencedByTheirIdentifierAndReloadedFromPersistenceOnWakeup() {
+		$testEntityLyingInsideTheArray = new TestEntity();
+		$testEntityLyingInsideTheArray->setName('FLOW3');
+
+		$arrayProperty = array(
+			'some' => array(
+				'nestedArray' => array(
+					'key' => $testEntityLyingInsideTheArray
+				)
+			)
+		);
+
+		$testEntityWithArrayProperty = new TestEntity();
+		$testEntityWithArrayProperty->setArrayProperty($arrayProperty);
+
+		$this->testEntityRepository->add($testEntityLyingInsideTheArray);
+		$this->testEntityRepository->add($testEntityWithArrayProperty);
+
+		$this->persistenceManager->persistAll();
+
+		$serializedData = serialize($testEntityWithArrayProperty);
+
+		$testEntityLyingInsideTheArray->setName('TYPO3');
+		$this->persistenceManager->persistAll();
+
+		$testEntityWithArrayPropertyUnserialized = unserialize($serializedData);
+		$arrayPropertyAfterUnserialize = $testEntityWithArrayPropertyUnserialized->getArrayProperty();
+
+		$this->assertNotSame($testEntityWithArrayProperty, $testEntityWithArrayPropertyUnserialized);
+		$this->assertEquals('TYPO3', $arrayPropertyAfterUnserialize['some']['nestedArray']['key']->getName(), 'The entity inside the array property has not been updated to the current persistend state after wakeup.');
+	}
+
+	/**
 	 * Helper which inserts example data into the database.
 	 *
 	 * @param string $name

@@ -147,6 +147,11 @@ class ProxyClassBuilder {
 			$sleepMethod = $proxyClass->getMethod('__sleep');
 			$sleepMethod->addPostParentCallCode($this->buildSerializeRelatedEntitiesCode($objectConfiguration));
 
+			$searchForEntitiesAndStoreIdentifierArrayMethod = $proxyClass->getMethod('searchForEntitiesAndStoreIdentifierArray');
+			$searchForEntitiesAndStoreIdentifierArrayMethod->setMethodParametersCode('$path, $propertyValue, $originalPropertyName');
+			$searchForEntitiesAndStoreIdentifierArrayMethod->overrideMethodVisibility('private');
+			$searchForEntitiesAndStoreIdentifierArrayMethod->addPreParentCallCode($this->buildSearchForEntitiesAndStoreIdentifierArrayCode());
+
 			$injectPropertiesCode = $this->buildPropertyInjectionCode($objectConfiguration);
 			if ($injectPropertiesCode !== '') {
 				$constructorPostCode .= '		$this->FLOW3_Proxy_injectProperties();' . "\n";
@@ -202,7 +207,12 @@ class ProxyClassBuilder {
 	if (property_exists(\$this, 'FLOW3_Persistence_RelatedEntities') && is_array(\$this->FLOW3_Persistence_RelatedEntities)) {
 		\$persistenceManager = \\TYPO3\\FLOW3\\Core\\Bootstrap::\$staticObjectManager->get('TYPO3\\FLOW3\\Persistence\\PersistenceManagerInterface');
 		foreach (\$this->FLOW3_Persistence_RelatedEntities as \$entityInformation) {
-			\$this->\$entityInformation['propertyName'] = \$persistenceManager->getObjectByIdentifier(\$entityInformation['identifier'], \$entityInformation['entityType'], TRUE);
+			\$entity = \$persistenceManager->getObjectByIdentifier(\$entityInformation['identifier'], \$entityInformation['entityType'], TRUE);
+			if (isset(\$entityInformation['entityPath'])) {
+				\$this->\$entityInformation['propertyName'] = \\TYPO3\\FLOW3\\Utility\\Arrays::setValueByPath(\$this->\$entityInformation['propertyName'], \$entityInformation['entityPath'], \$entity);
+			} else {
+				\$this->\$entityInformation['propertyName'] = \$entity;
+			}
 		}
 		unset(\$this->FLOW3_Persistence_RelatedEntities);
 	}
@@ -221,7 +231,7 @@ class ProxyClassBuilder {
 		$code = '';
 		if ($this->reflectionService->hasMethod($className, '__sleep') === FALSE) {
 
-			$code = "\t\t\$result = array();
+			$code = "\t\t\$this->FLOW3_Object_PropertiesToSerialize = array();
 	\$reflectionService = \\TYPO3\\FLOW3\\Core\\Bootstrap::\$staticObjectManager->get('TYPO3\\FLOW3\\Reflection\\ReflectionService');
 	\$reflectedClass = new \\ReflectionClass('".$className."');
 	\$allReflectedProperties = \$reflectedClass->getProperties();
@@ -229,6 +239,11 @@ class ProxyClassBuilder {
 		\$propertyName = \$reflectionProperty->name;
 		if (in_array(\$propertyName, array('FLOW3_AOP_Proxy_targetMethodsAndGroupedAdvices', 'FLOW3_AOP_Proxy_groupedAdviceChains', 'FLOW3_AOP_Proxy_methodIsInAdviceMode'))) continue;
 		if (\$reflectionService->isPropertyTaggedWith('".$className."', \$propertyName, 'transient')) continue;
+		if (is_array(\$this->\$propertyName) || (is_object(\$this->\$propertyName) && (\$this->\$propertyName instanceof \\ArrayObject || \$this->\$propertyName instanceof \\SplObjectStorage ||\$this->\$propertyName instanceof \\Doctrine\\Common\\Collections\\Collection))) {
+			foreach(\$this->\$propertyName as \$key => \$value) {
+				\$this->searchForEntitiesAndStoreIdentifierArray((string)\$key, \$value, \$propertyName);
+			}
+		}
 		if (is_object(\$this->\$propertyName) && !\$this->\$propertyName instanceof \\Doctrine\\Common\\Collections\\Collection) {
 			if (\$this->\$propertyName instanceof \\Doctrine\\ORM\\Proxy\\Proxy) {
 				\$className = get_parent_class(\$this->\$propertyName);
@@ -238,13 +253,13 @@ class ProxyClassBuilder {
 			if (\$this->\$propertyName instanceof \\TYPO3\\FLOW3\\Persistence\\Aspect\\PersistenceMagicInterface && !\\TYPO3\\FLOW3\\Core\\Bootstrap::\$staticObjectManager->get('TYPO3\\FLOW3\\Persistence\\PersistenceManagerInterface')->isNewObject(\$this->\$propertyName) || \$this->\$propertyName instanceof \\Doctrine\\ORM\\Proxy\\Proxy) {
 				if (!property_exists(\$this, 'FLOW3_Persistence_RelatedEntities') || !is_array(\$this->FLOW3_Persistence_RelatedEntities)) {
 					\$this->FLOW3_Persistence_RelatedEntities = array();
-					\$result[] = 'FLOW3_Persistence_RelatedEntities';
+					\$this->FLOW3_Object_PropertiesToSerialize[] = 'FLOW3_Persistence_RelatedEntities';
 				}
 				\$identifier = \\TYPO3\\FLOW3\\Core\\Bootstrap::\$staticObjectManager->get('TYPO3\\FLOW3\\Persistence\\PersistenceManagerInterface')->getIdentifierByObject(\$this->\$propertyName);
 				if (!\$identifier && \$this->\$propertyName instanceof \\Doctrine\\ORM\\Proxy\\Proxy) {
 					\$identifier = current(\\TYPO3\\FLOW3\\Reflection\\ObjectAccess::getProperty(\$this->\$propertyName, '_identifier', TRUE));
 				}
-				\$this->FLOW3_Persistence_RelatedEntities[] = array(
+				\$this->FLOW3_Persistence_RelatedEntities[\$propertyName] = array(
 					'propertyName' => \$propertyName,
 					'entityType' => \$className,
 					'identifier' => \$identifier
@@ -255,9 +270,47 @@ class ProxyClassBuilder {
 				continue;
 			}
 		}
-		\$result[] = \$propertyName;
-	}\n";
+		\$this->FLOW3_Object_PropertiesToSerialize[] = \$propertyName;
+	}
+	\$result = \$this->FLOW3_Object_PropertiesToSerialize;\n";
 		}
+		return $code;
+	}
+
+	/**
+	 * Renders the code needed to serialize entities that are inside an array or SplObjectStorage
+	 *
+	 * @return string
+	 */
+	protected function buildSearchForEntitiesAndStoreIdentifierArrayCode() {
+		$code = "
+		if (is_array(\$propertyValue) || (is_object(\$propertyValue) && (\$propertyValue instanceof \\ArrayObject || \$propertyValue instanceof \\SplObjectStorage))) {
+			foreach(\$propertyValue as \$key => \$value) {
+				\$this->searchForEntitiesAndStoreIdentifierArray(\$path . '.' . \$key, \$value, \$originalPropertyName);
+			}
+		} elseif (\$propertyValue instanceof \\TYPO3\\FLOW3\\Persistence\\Aspect\\PersistenceMagicInterface && !\\TYPO3\\FLOW3\\Core\\Bootstrap::\$staticObjectManager->get('TYPO3\\FLOW3\\Persistence\\PersistenceManagerInterface')->isNewObject(\$propertyValue) || \$propertyValue instanceof \\Doctrine\\ORM\\Proxy\\Proxy) {
+			if (!property_exists(\$this, 'FLOW3_Persistence_RelatedEntities') || !is_array(\$this->FLOW3_Persistence_RelatedEntities)) {
+				\$this->FLOW3_Persistence_RelatedEntities = array();
+				\$this->FLOW3_Object_PropertiesToSerialize[] = 'FLOW3_Persistence_RelatedEntities';
+			}
+			if (\$propertyValue instanceof \\Doctrine\\ORM\\Proxy\\Proxy) {
+				\$className = get_parent_class(\$propertyValue);
+			} else {
+				\$className = \\TYPO3\\FLOW3\\Core\\Bootstrap::\$staticObjectManager->getObjectNameByClassName(get_class(\$propertyValue));
+			}
+			\$identifier = \\TYPO3\\FLOW3\\Core\\Bootstrap::\$staticObjectManager->get('TYPO3\\FLOW3\\Persistence\\PersistenceManagerInterface')->getIdentifierByObject(\$propertyValue);
+			if (!\$identifier && \$propertyValue instanceof \\Doctrine\\ORM\\Proxy\\Proxy) {
+				\$identifier = current(\\TYPO3\\FLOW3\\Reflection\\ObjectAccess::getProperty(\$propertyValue, '_identifier', TRUE));
+			}
+			\$this->FLOW3_Persistence_RelatedEntities[\$originalPropertyName . '.' . \$path] = array(
+				'propertyName' => \$originalPropertyName,
+				'entityType' => \$className,
+				'identifier' => \$identifier,
+				'entityPath' => \$path
+			);
+			\$this->\$originalPropertyName = \\TYPO3\\FLOW3\\Utility\\Arrays::setValueByPath(\$this->\$originalPropertyName, \$path, NULL);
+		}
+		";
 		return $code;
 	}
 
