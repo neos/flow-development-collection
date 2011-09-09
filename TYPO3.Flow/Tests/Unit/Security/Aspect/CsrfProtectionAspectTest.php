@@ -196,7 +196,7 @@ class CsrfProtectionAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	protected function assertThat_CsrfTokenIsAddedToArguments() {
 		$expected = $this->internalUriBuilderArguments;
-		$expected['__CSRF-TOKEN'] = 'csrf-token';
+		$expected['__csrfToken'] = 'csrf-token';
 		$this->mockUriBuilder->expects($this->once())->method('setArguments')->with($expected);
 	}
 }
