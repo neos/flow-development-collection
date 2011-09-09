@@ -163,7 +163,7 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 		$this->orderings = $orderings;
 		$this->queryBuilder->resetDQLPart('orderBy');
 		foreach ($this->orderings AS $propertyName => $order) {
-			$this->queryBuilder->addOrderBy($this->queryBuilder->getRootAlias() . '.' . $propertyName, $order);
+			$this->queryBuilder->addOrderBy($this->getPropertyNameWithAlias($propertyName), $order);
 		}
 		return $this;
 	}
