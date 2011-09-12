@@ -33,7 +33,6 @@ namespace TYPO3\Kickstart\ViewHelpers\Inflect;
  * Output:
  * Camel cased model name
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
 class HumanizeCamelCaseViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper {

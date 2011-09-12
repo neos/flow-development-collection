@@ -24,7 +24,6 @@ namespace TYPO3\Kickstart\Service;
 /**
  * Service for the Kickstart generator
  *
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class GeneratorService {
 

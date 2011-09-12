@@ -24,7 +24,6 @@ namespace TYPO3\Kickstart\Command;
 /**
  * Command controller for the Kickstart generator
  *
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class KickstartCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandController {
 

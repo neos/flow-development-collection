@@ -25,7 +25,6 @@ namespace TYPO3\Kickstart\Utility;
  * Inflector utilities for the Kickstarter. This is a basic conversion from PHP
  * class and field names to a human readable form.
  *
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class Inflector {
 

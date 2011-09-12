@@ -26,7 +26,6 @@ require_once(__DIR__ . '/../../../Resources/Private/PHP/Sho_Inflect.php');
 /**
  * Testcase for the Inflector
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class InflectorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
