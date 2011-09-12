@@ -27,7 +27,6 @@ require_once (__DIR__ . '/../../Fixtures/ClassWithSettersAndConstructor.php');
 /**
  * Testcase for the String to String converter
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @covers \TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter<extended>
  */
 class PersistentObjectConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {

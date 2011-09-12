@@ -40,7 +40,6 @@ namespace TYPO3\FLOW3\AOP;
  * If used on a property an introduction contains a pointcut expression and is
  * used to introduce the annotated property into the target class.
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  * @proxy disable
  */

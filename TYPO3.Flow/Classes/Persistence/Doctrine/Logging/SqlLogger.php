@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Persistence\Doctrine\Logging;
 /**
  * A SQL logger that logs to a FLOW3 logger.
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
 class SqlLogger implements \Doctrine\DBAL\Logging\SQLLogger {

@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Security\Aspect;
 /**
  * An aspect which rewrites persistence query to filter objects one should not be able to retrieve.
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope singleton
  * @aspect
  */

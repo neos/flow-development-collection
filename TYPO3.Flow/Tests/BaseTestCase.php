@@ -27,7 +27,6 @@ namespace TYPO3\FLOW3\Tests;
  * Don't sub class this test case but rather choose a more specialized base test case,
  * such as Unit*, Functional* or Selenium*.
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */
 abstract class BaseTestCase extends \PHPUnit_Framework_TestCase {

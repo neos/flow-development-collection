@@ -27,7 +27,6 @@ use \TYPO3\FLOW3\MVC\CLI\CommandManager;
 /**
  * A Command Controller which provides help for available commands
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope singleton
  */
 class HelpCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandController {

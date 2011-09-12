@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Package\Exception;
 /**
  * "Unknown Package" Exception
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */
 class UnknownPackageException extends \TYPO3\FLOW3\Package\Exception {

@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Tests\Unit\I18n\Xml;
 /**
  * Testcase for the AbstractXmlParser class
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class AbstractXmlParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 

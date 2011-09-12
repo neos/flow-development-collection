@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Tests\Unit\Security\Aspect;
 /**
  * Testcase for the persistence query rewriting aspect
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @covers TYPO3\FLOW3\Security\Aspect\PersistenceQueryRewritingAspect
  */
 class PersistenceQueryRewritingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {

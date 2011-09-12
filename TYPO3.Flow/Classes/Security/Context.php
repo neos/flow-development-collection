@@ -29,7 +29,6 @@ use \TYPO3\FLOW3\Security\Policy\Role;
  * This is the default implementation of a security context, which holds current
  * security information like Roles oder details auf authenticated users.
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope session
  */
 class Context {

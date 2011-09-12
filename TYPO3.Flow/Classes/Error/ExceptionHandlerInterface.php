@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Error;
 /**
  * Contract for an exception handler
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 interface ExceptionHandlerInterface {
 

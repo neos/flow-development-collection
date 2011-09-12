@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\MVC\Web\Routing;
 /**
  * Contract for a Web Router
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 interface RouterInterface {
 

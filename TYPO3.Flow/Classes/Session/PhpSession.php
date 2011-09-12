@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Session;
 /**
  * A simple session based on PHP session functions.
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope singleton
  */
 class PhpSession implements \TYPO3\FLOW3\Session\SessionInterface {

@@ -41,7 +41,6 @@ namespace TYPO3\FLOW3\I18n;
  * storage format depends on concrete implementation.
  *
  * @scope singleton
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  * @see \TYPO3\FLOW3\I18n\FormatResolver
  * @see \TYPO3\FLOW3\I18n\TranslationProvider\TranslationProviderInterface

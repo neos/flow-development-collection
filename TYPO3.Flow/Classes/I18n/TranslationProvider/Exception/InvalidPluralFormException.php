@@ -28,7 +28,6 @@ namespace TYPO3\FLOW3\I18n\TranslationProvider\Exception;
  * provider, passing as parameter plural form which is not used in language
  * defined in provided locale.
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */
 class InvalidPluralFormException extends \TYPO3\FLOW3\I18n\Exception {

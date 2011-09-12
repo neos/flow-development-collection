@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Tests\Unit\Utility;
 /**
  * Testcase for the Utility\TypeHandling class
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class TypeHandlingTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 

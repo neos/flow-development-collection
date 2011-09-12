@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\I18n\Parser;
 /**
  * Parser for date and time.
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope singleton
  * @api
  */

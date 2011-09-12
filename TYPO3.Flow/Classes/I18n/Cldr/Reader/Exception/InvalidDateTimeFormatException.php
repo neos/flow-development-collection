@@ -27,7 +27,6 @@ namespace TYPO3\FLOW3\I18n\Cldr\Reader\Exception;
  * Thrown when date and / or time pattern does not conform constraints defined
  * in CLDR specification.
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */
 class InvalidDateTimeFormatException extends \TYPO3\FLOW3\I18n\Exception\InvalidArgumentException {

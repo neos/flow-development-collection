@@ -26,7 +26,6 @@ require_once (FLOW3_PATH_FLOW3 . 'Tests/Unit/AOP/Fixtures/MethodsTaggedWithSomet
 /**
  * Testcase for the Pointcut Method-Tagged-With Filter
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class PointcutMethodTaggedWithFilterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 

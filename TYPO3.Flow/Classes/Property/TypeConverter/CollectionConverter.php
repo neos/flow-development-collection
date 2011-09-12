@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Property\TypeConverter;
 /**
  * Converter which transforms simple types to a Doctrine ArrayCollection.
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  * @scope singleton
  * @todo Implement functionality for converting collection properties.

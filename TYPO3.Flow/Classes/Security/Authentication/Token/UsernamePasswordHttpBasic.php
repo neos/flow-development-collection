@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Security\Authentication\Token;
 /**
  * An authentication token used for simple username and password authentication via HTTP Basic Auth.
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
 class UsernamePasswordHttpBasic extends \TYPO3\FLOW3\Security\Authentication\Token\UsernamePassword {

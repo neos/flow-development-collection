@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Property\Exception;
 /**
  * An "Invalid Target" Exception
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */
 class InvalidTargetException extends \TYPO3\FLOW3\Property\Exception {

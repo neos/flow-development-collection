@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Package\Exception;
 /**
  * A "Protected Package Key" exception
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */
 class ProtectedPackageKeyException extends \TYPO3\FLOW3\Package\Exception {

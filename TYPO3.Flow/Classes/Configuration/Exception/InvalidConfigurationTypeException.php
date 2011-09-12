@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Configuration\Exception;
 /**
  * An Invalid Configuration Type Exception
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */
 class InvalidConfigurationTypeException extends \TYPO3\FLOW3\Configuration\Exception {

@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Persistence\Doctrine;
 /**
  * A Query class for Doctrine 2
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  * @scope prototype
  */

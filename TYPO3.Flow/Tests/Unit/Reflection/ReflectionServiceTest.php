@@ -46,7 +46,6 @@ require_once('Fixture/Repository/NonstandardEntityRepository.php');
 /**
  * testcase for the Reflection Service
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class ReflectionServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 

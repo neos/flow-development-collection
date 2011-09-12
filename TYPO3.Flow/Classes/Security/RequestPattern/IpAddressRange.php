@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Security\RequestPattern;
 /**
  * This class holds an ipAddressRange pattern an decides, if a \TYPO3\FLOW3\MVC\RequestInterface object matches against this pattern
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
 class IpAddressRange implements \TYPO3\FLOW3\Security\RequestPatternInterface {

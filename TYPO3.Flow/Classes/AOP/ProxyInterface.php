@@ -25,7 +25,6 @@ namespace TYPO3\FLOW3\AOP;
  * Contract and marker interface for the AOP Proxy classes
  *
  * @author Robert Lemke <robert@typo3.org>
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 interface ProxyInterface extends \TYPO3\FLOW3\Object\Proxy\ProxyInterface {
 

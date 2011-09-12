@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Persistence\Generic\Exception;
 /**
  * An "Invalid Object Data" Exception
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */
 class InvalidObjectDataException extends \TYPO3\FLOW3\Persistence\Exception {

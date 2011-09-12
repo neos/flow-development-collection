@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Persistence\Doctrine;
 /**
  * FLOW3's Doctrine PersistenceManager
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope singleton
  * @api
  */

@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Security\Authorization;
 /**
  * Contract for an after invocation manager. It is used to check return values of a method against security rules.
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 interface AfterInvocationManagerInterface {
 

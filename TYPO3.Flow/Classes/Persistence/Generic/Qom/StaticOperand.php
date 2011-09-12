@@ -25,7 +25,6 @@ namespace TYPO3\FLOW3\Persistence\Generic\Qom;
  * An operand whose value can be determined from static analysis of the query,
  * prior to its evaluation.
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  * @scope prototype
  */

@@ -30,7 +30,6 @@ use \TYPO3\FLOW3\Reflection\ObjectAccess;
  * singleton scoped objets. This Object Manager is used during compile time when the proxy
  * class based DI mechanism is not yet available.
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope singleton
  * @proxy disable
  */

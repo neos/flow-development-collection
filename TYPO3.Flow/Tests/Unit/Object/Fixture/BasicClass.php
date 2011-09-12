@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Tests\Object\Fixture;
 /**
  * Fixture class for unit tests mainly of the object manager
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class BasicClass {
 

@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Security\Exception;
 /**
  * A "DecryptionNotAllowed" Exception
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  * @api
  */
 class DecryptionNotAllowedException extends \TYPO3\FLOW3\Security\Exception {

@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Validation;
 /**
  * This object holds a validation error.
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
 class Error extends \TYPO3\FLOW3\Error\Error {

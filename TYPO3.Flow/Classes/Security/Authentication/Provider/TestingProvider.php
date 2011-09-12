@@ -25,7 +25,6 @@ namespace TYPO3\FLOW3\Security\Authentication\Provider;
  * A singleton authentication provider for functional tests with
  * mockable authentication.
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope singleton
  */
 class TestingProvider implements \TYPO3\FLOW3\Security\Authentication\AuthenticationProviderInterface {

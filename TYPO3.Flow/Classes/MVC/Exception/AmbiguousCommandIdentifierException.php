@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\MVC\Exception;
 /**
  * An "Ambiguous command identifier" exception
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class AmbiguousCommandIdentifierException extends CommandException {
 

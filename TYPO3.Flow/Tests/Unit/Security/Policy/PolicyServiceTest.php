@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Tests\Unit\Security\Policy;
 /**
  * Testcase for for the policy service
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class PolicyServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 

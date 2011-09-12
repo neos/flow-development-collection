@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Tests\Reflection\Fixture;
 /**
  * Proxy of the implementation of dummy interface number 1 for the Reflection tests
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class ProxyOfImplementationOfDummyInterface1 extends ImplementationOfDummyInterface1 implements \TYPO3\FLOW3\Object\Proxy\ProxyInterface {
 }

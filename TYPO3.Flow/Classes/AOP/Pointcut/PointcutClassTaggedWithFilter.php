@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\AOP\Pointcut;
 /**
  * A class filter which fires on classes tagged with a certain annotation
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  * @proxy disable
  */

@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Tests\Functional\Security\Fixtures;
 /**
  * A controller for functional testing
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  */
 class RestrictedController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 

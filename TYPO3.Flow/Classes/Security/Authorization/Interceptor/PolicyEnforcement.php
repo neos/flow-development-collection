@@ -28,7 +28,6 @@ namespace TYPO3\FLOW3\Security\Authorization\Interceptor;
  * 2. If a AuthenticationRequired exception has been thrown we look for an authentication entry point in the active tokens to redirect to authentication
  * 3. Then the configured AccessDecisionManager is called to authorize the request/action
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope singleton
  */
 class PolicyEnforcement implements \TYPO3\FLOW3\Security\Authorization\InterceptorInterface {

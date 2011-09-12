@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Tests\Unit\AOP\Pointcut;
 /**
  * Testcase for the default AOP Pointcut implementation
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class PointcutTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 

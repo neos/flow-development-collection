@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Property\TypeConverter;
 /**
  * Converter which transforms a simple type to an integer, by simply casting it.
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  * @scope singleton
  */

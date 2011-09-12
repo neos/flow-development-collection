@@ -64,7 +64,6 @@ namespace TYPO3\FLOW3\Persistence\Generic\Qom;
  * * the string "\x" matches the character "x", and
  *   all other characters match themselves.
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  * @scope prototype
  */

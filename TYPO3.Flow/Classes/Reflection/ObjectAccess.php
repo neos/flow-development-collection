@@ -34,7 +34,6 @@ namespace TYPO3\FLOW3\Reflection;
  * Some methods support arrays as well, most notably getProperty() and
  * getPropertyPath().
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class ObjectAccess {
 

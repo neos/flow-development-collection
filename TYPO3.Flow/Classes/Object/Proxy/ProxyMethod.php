@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Object\Proxy;
 /**
  * Representation of a method within a proxy class
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @proxy disable
  */
 class ProxyMethod {

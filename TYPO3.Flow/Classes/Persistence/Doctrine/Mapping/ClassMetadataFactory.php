@@ -25,7 +25,6 @@ namespace TYPO3\FLOW3\Persistence\Doctrine\Mapping;
  * A factory for Doctrine to create our ClassMetadata instances, aware of
  * the object manager.
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class ClassMetadataFactory extends \Doctrine\ORM\Mapping\ClassMetadataFactory {
 

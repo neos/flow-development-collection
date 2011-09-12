@@ -26,7 +26,6 @@ namespace TYPO3\FLOW3\AOP\Pointcut;
  * by only one method call. All registered filters will be invoked and if one filter
  * doesn't match, the overall result is "no".
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @see \TYPO3\FLOW3\AOP\Pointcut\PointcutExpressionParser, \TYPO3\FLOW3\AOP\Pointcut\PointcutClassNameFilter, \TYPO3\FLOW3\AOP\Pointcut\PointcutMethodFilter
  * @scope prototype
  * @proxy disable

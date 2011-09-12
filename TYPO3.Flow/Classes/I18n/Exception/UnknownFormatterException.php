@@ -28,7 +28,6 @@ namespace TYPO3\FLOW3\I18n\Exception;
  * \TYPO3\FLOW3\Formatter\FormatterInterface and have requested name suffixed with
  * "Formatter" at the same time.
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */
 class UnknownFormatterException extends \TYPO3\FLOW3\I18n\Exception {

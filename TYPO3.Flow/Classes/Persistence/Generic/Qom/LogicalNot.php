@@ -26,7 +26,6 @@ namespace TYPO3\FLOW3\Persistence\Generic\Qom;
  *
  * To satisfy the Not constraint, the tuple must not satisfy $constraint.
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  * @scope prototype
  */

@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Monitor;
 /**
  * A monitor which detects changes in directories or files
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  * @api
  */

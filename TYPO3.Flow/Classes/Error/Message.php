@@ -27,7 +27,6 @@ namespace TYPO3\FLOW3\Error;
 /**
  * An object representation of a generic message. Usually, you will use Error, Warning or Notice instead of this one.
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  * @scope prototype
  */

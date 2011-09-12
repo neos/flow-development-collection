@@ -33,7 +33,6 @@ namespace TYPO3\FLOW3\I18n\Xml;
  *
  * Parsed data is cached under the key being absolute file path.
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
 abstract class AbstractXmlModel {

@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\AOP\Pointcut;
 /**
  * A little filter which filters for method names
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  * @proxy disable
  */

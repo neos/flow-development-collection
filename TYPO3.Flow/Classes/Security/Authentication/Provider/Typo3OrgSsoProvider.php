@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Security\Authentication\Provider;
 /**
  * An authentication provider that authenticates SSO requests from typo3.org
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
 class Typo3OrgSsoProvider implements \TYPO3\FLOW3\Security\Authentication\AuthenticationProviderInterface {

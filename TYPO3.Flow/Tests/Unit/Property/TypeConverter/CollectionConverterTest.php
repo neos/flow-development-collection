@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Tests\Unit\Property\TypeConverter;
 /**
  * Testcase for the Collection converter
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class CollectionConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 

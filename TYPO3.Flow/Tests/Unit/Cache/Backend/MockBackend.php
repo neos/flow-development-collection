@@ -26,7 +26,6 @@ namespace TYPO3\FLOW3\Cache\Backend;
  *
  * Used in \TYPO3\FLOW3\Cache\FactoryTest
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
 class MockBackend extends \TYPO3\FLOW3\Cache\Backend\NullBackend {

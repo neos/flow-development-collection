@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Persistence\Aspect;
 /**
  * Adds the aspect of persistence magic to relevant objects
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @aspect
  * @introduce TYPO3\FLOW3\Persistence\Aspect\PersistenceMagicInterface, TYPO3\FLOW3\Persistence\Aspect\PersistenceMagicAspect->isEntityOrValueObject
  */

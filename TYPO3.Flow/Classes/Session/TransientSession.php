@@ -27,7 +27,6 @@ namespace TYPO3\FLOW3\Session;
  * This session behaves like any other session except that it only stores the
  * data during one request.
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope singleton
  */
 class TransientSession implements \TYPO3\FLOW3\Session\SessionInterface {

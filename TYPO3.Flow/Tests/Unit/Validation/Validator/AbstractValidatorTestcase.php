@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Tests\Unit\Validation\Validator;
 /**
  * Testcase for the Abstract Validator
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 abstract class AbstractValidatorTestcase extends \TYPO3\FLOW3\Tests\UnitTestCase {
 

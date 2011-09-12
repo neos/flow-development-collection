@@ -25,7 +25,6 @@ namespace TYPO3\FLOW3\Utility\Unicode;
  * A class with UTF-8 string functions, some inspired by what might be in some
  * future PHP version...
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope singleton
  * @api
  */

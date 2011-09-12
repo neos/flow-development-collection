@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Tests\Unit\Security\Authentication\Controller;
 /**
  * Testcase for the authentication controller
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 use TYPO3\FLOW3\Security\Authentication;
 

@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\AOP\Advice;
 /**
  * Implementation of the Before Advice.
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
 class BeforeAdvice extends \TYPO3\FLOW3\AOP\Advice\AbstractAdvice implements \TYPO3\FLOW3\AOP\Advice\AdviceInterface {

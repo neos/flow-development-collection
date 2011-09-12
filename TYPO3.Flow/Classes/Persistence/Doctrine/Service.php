@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Persistence\Doctrine;
 /**
  * Service class for tasks related to Doctrine
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope singleton
  */
 class Service {

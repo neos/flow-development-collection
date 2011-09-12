@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Security\Authorization\Interceptor;
 /**
  * This security interceptor always denys access.
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope singleton
  */
 class AccessDeny implements \TYPO3\FLOW3\Security\Authorization\InterceptorInterface {

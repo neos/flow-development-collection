@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Persistence\Doctrine;
 /**
  * EntityManager factory for Doctrine integration
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License', version 3 or later
  * @scope singleton
  */
 class EntityManagerFactory {

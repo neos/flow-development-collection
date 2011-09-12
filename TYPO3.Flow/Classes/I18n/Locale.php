@@ -37,7 +37,6 @@ namespace TYPO3\FLOW3\I18n;
  * current FLOW3 installation. In order to check that, various methods of
  * \TYPO3\FLOW3\I18n\Service class can be used.
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  * @scope prototype
  * @see http://www.unicode.org/reports/tr35/

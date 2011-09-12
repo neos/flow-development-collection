@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Persistence\Generic\Qom;
 /**
  * An operand whose value can only be determined in evaluating the query.
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
 class DynamicOperand extends \TYPO3\FLOW3\Persistence\Generic\Qom\Operand {

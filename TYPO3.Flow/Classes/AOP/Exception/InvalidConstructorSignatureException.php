@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\AOP\Exception;
 /**
  * A "Invalid Constructor Signature" Exception
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */
 class InvalidConstructorSignatureException extends \TYPO3\FLOW3\AOP\Exception {

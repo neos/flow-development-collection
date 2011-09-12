@@ -27,7 +27,6 @@ use \TYPO3\FLOW3\Configuration\ConfigurationManager;
 /**
  * A Proxy Class Builder which integrates Dependency Injection.
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope singleton
  * @proxy disable
  */

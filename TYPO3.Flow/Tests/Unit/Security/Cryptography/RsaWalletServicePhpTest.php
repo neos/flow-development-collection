@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Tests\Unit\Security\Cryptography;
 /**
  * Testcase for for the PHP (OpenSSL) based RSAWalletService
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  */
 class RsaWalletServicePhpTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 

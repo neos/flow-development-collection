@@ -26,7 +26,6 @@ require_once('Fixture/Repository/NonstandardEntityRepository.php');
 /**
  * Testcase for the base Repository
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class RepositoryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 

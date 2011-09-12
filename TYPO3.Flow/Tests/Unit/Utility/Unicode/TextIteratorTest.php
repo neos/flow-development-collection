@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Tests\Unit\Utility\Unicode;
 /**
  * Testcase for the TextIterator port
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class TextIteratorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 

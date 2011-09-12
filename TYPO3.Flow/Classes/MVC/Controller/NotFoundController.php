@@ -25,7 +25,6 @@ namespace TYPO3\FLOW3\MVC\Controller;
  * A Special Case of a Controller: If no controller could be resolved this
  * controller is chosen.
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope singleton
  * @api
  */

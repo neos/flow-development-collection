@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Resource\Streams;
 /**
  * A stream wrapper for package resources.
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
 class ResourceStreamWrapper implements \TYPO3\FLOW3\Resource\Streams\StreamWrapperInterface {

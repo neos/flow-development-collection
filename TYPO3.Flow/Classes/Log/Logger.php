@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Log;
 /**
  * The default logger of the FLOW3 framework
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  * @scope prototype
  */

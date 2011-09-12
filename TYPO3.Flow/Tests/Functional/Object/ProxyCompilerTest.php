@@ -26,7 +26,6 @@ use \TYPO3\FLOW3\Reflection\ClassReflection;
 /**
  * Functional tests for the Proxy Compiler and related features
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class ProxyCompilerTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 

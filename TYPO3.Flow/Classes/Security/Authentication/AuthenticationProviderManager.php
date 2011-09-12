@@ -25,7 +25,6 @@ namespace TYPO3\FLOW3\Security\Authentication;
  * The default authentication manager, which relies on Authentication Providers
  * to authenticate the tokens stored in the security context.
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope singleton
  */
 class AuthenticationProviderManager implements \TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface {

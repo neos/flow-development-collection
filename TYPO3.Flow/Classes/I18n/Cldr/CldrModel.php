@@ -28,7 +28,6 @@ namespace TYPO3\FLOW3\I18n\Cldr;
  * all files will be parsed and merged according to the inheritance rules defined
  * in CLDR specification. Aliases are also resolved correctly.
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
 class CldrModel {

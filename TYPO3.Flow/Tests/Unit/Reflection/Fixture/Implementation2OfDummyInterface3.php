@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Tests\Reflection\Fixture;
 /**
  * Implementation 2 of dummy interface number 3 for the Reflection tests
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class Implementation2OfDummyInterface3 implements \TYPO3\FLOW3\Tests\Reflection\Fixture\DummyInterface3 {
 }

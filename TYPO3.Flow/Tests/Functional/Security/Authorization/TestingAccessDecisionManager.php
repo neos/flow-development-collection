@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Tests\Functional\Security\Authorization;
 /**
  * An access decision manager that can be overriden for functional tests
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope singleton
  */
 class TestingAccessDecisionManager extends \TYPO3\FLOW3\Security\Authorization\AccessDecisionVoterManager {

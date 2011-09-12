@@ -17,7 +17,6 @@ namespace TYPO3\FLOW3\Tests\Unit\Monitor;
 /**
  * Testcase for the File Monitor class
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class FileMonitorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 

@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Tests\Unit\Security\Authentication\Provider;
 /**
  * Testcase for username/password authentication provider. The account are stored in the CR.
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class PersistedUsernamePasswordProviderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 

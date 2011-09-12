@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Security\Policy;
 /**
  * A specialized pointcut expression parser tailored to policy expressions
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope singleton
  * @proxy disable
  */

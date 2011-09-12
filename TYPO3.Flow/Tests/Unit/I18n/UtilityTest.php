@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Tests\Unit\I18n;
 /**
  * Testcase for the Locale Utility
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class UtilityTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 

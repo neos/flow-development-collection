@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\I18n\Cldr\Reader\Exception;
 /**
  * The "Unsupported Number Format" exception
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */
 class UnsupportedNumberFormatException extends \TYPO3\FLOW3\I18n\Exception\InvalidArgumentException {

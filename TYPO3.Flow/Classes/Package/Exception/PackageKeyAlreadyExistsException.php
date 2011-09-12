@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Package\Exception;
 /**
  * A "Package Key Already Exists" exception
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */
 class PackageKeyAlreadyExistsException extends \TYPO3\FLOW3\Package\Exception {

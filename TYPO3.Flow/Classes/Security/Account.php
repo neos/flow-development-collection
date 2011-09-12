@@ -26,7 +26,6 @@ use \Doctrine\Common\Collections\ArrayCollection;
 /**
  * An account model
  *
- * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  * @entity
  */

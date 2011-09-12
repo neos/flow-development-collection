@@ -25,7 +25,6 @@ namespace TYPO3\FLOW3\AOP;
  * Contract for a join point
  *
  * @author Robert Lemke <robert@typo3.org>
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 interface JoinPointInterface {
 

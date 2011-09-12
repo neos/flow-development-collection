@@ -29,7 +29,6 @@ namespace TYPO3\FLOW3\Tests;
  * at some point, specific behavior needs to be implemented for unit tests, your test cases
  * will profit from it automatically.
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */
 abstract class UnitTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {

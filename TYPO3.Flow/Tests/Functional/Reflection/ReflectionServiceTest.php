@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Tests\Functional\Reflection;
 /**
  * Functional tests for the Dependency Injection features
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class ReflectionServiceTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 

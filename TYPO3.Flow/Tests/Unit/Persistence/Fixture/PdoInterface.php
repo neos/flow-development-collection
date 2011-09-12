@@ -26,7 +26,6 @@ namespace TYPO3\FLOW3\Tests\Unit\Persistence\Fixture;
  * mock cannot be created because "You cannot serialize or unserialize PDO
  * instances"...
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 interface PdoInterface {
 	public function __construct($dsn, $username = NULL, $password = NULL, $driver_options = NULL);

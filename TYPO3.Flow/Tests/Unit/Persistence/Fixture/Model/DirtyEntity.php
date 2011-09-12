@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Tests\Persistence\Fixture\Model;
 /**
  * A model fixture used for testing the persistence manager
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @entity
  */
 class DirtyEntity implements \TYPO3\FLOW3\AOP\ProxyInterface {

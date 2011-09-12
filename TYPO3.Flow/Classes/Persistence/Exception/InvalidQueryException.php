@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Persistence\Exception;
 /**
  * An "Invalid Query" Exception
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */
 class InvalidQueryException extends \TYPO3\FLOW3\Persistence\Exception {

@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\MVC\View;
 /**
  * An empty view - a special case.
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 final class EmptyView implements \TYPO3\FLOW3\MVC\View\ViewInterface {
 

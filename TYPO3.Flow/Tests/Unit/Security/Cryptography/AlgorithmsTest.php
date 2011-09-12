@@ -25,7 +25,6 @@ namespace TYPO3\FLOW3\Tests\Unit\Security\Cryptography;
 /**
  * Testcase for the cryptographic algorithms
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  */
 class AlgorithmsTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 

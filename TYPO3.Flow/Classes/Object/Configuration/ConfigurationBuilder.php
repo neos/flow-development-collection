@@ -26,7 +26,6 @@ namespace TYPO3\FLOW3\Object\Configuration;
  * from information collected by reflection combined with arrays of configuration
  * options as defined in an Objects.yaml file.
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope singleton
  * @proxy disable
  */

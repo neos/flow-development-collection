@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Tests\Unit\Persistence\Doctrine\Mapping\Driver;
 /**
  * Testcase for the FLOW3 annotation driver
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class Flow3AnnotationDriverTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 

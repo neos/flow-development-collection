@@ -33,7 +33,6 @@ namespace TYPO3\FLOW3\I18n\Cldr\Reader;
  *   joined with "and" or "or" logical operator.
  *
  * @scope singleton
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @see http://www.unicode.org/reports/tr35/#Language_Plural_Rules
  */
 class PluralsReader {

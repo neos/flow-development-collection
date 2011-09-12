@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Tests\Unit\Configuration;
 /**
  * Testcase for the configuration manager
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class ConfigurationManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 

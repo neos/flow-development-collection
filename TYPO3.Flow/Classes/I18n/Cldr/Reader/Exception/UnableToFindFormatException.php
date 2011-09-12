@@ -27,7 +27,6 @@ namespace TYPO3\FLOW3\I18n\Cldr\Reader\Exception;
  * Thrown when string format was not returned from CLDR repository (which
  * probably is corrupted).
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */
 class UnableToFindFormatException extends \TYPO3\FLOW3\I18n\Cldr\Exception\InvalidCldrDataException {

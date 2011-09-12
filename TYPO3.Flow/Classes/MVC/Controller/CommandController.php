@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\MVC\Controller;
 /**
  * A controller which processes requests from the command line
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope singleton
  */
 class CommandController implements CommandControllerInterface {

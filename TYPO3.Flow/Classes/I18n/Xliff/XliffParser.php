@@ -31,7 +31,6 @@ namespace TYPO3\FLOW3\I18n\Xliff;
  * - reads only "source" and "target" in "trans-unit" tags
  *
  * @scope singleton
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @see http://docs.oasis-open.org/xliff/v1.2/os/xliff-core.html [1]
  * @see http://docs.oasis-open.org/xliff/v1.2/xliff-profile-po/xliff-profile-po-1.2-cd02.html#s.detailed_mapping.tu [2]
  */

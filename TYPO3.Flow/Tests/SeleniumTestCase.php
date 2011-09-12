@@ -27,7 +27,6 @@ namespace TYPO3\FLOW3\Tests;
  * Probably later phpunit version have better support to set url and other
  * selenium parameters flexible - for now this is done here
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */
 abstract class SeleniumTestCase extends \PHPUnit_Extensions_SeleniumTestCase {

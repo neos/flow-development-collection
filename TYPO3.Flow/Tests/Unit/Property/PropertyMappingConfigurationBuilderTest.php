@@ -26,7 +26,6 @@ require_once (__DIR__ . '/../Fixtures/ClassWithSetters.php');
 /**
  * Testcase for the Property Mapper
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @covers \TYPO3\FLOW3\Property\PropertyMappingConfigurationBuilder
  */
 class PropertyMappingConfigurationBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {

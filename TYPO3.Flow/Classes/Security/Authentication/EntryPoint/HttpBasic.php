@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Security\Authentication\EntryPoint;
 /**
  * An authentication entry point, that sends an HTTP header to start HTTP Basic authentication.
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
 class HttpBasic implements \TYPO3\FLOW3\Security\Authentication\EntryPointInterface {

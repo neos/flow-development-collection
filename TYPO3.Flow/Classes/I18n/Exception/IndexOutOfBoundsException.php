@@ -27,7 +27,6 @@ namespace TYPO3\FLOW3\I18n\Exception;
  * Generic exception thrown when tried to access unexisting element (ie. with
  * too high index value).
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */
 class IndexOutOfBoundsException extends \TYPO3\FLOW3\I18n\Exception {

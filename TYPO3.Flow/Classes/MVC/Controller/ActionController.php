@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\MVC\Controller;
 /**
  * A multi action controller
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope singleton
  * @api
  */

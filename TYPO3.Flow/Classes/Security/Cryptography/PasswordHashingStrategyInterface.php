@@ -25,7 +25,6 @@ namespace TYPO3\FLOW3\Security\Cryptography;
 /**
  * A password hashing strategy interface
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  */
 interface PasswordHashingStrategyInterface {
 

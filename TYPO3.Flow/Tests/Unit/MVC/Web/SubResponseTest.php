@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Tests\Unit\MVC\Web;
 /**
  * Testcase for the MVC Web SubResponse class
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class SubResponseTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 

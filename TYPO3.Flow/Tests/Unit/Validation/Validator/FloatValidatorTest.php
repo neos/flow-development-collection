@@ -26,7 +26,6 @@ require_once('AbstractValidatorTestcase.php');
 /**
  * Testcase for the float validator
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class FloatValidatorTest extends \TYPO3\FLOW3\Tests\Unit\Validation\Validator\AbstractValidatorTestcase {
 

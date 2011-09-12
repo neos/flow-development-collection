@@ -27,7 +27,6 @@ namespace TYPO3\FLOW3\Security\Cryptography;
  *
  * Right now this class provides a PHP based PBKDF2 implementation.
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  */
 class Algorithms {
 

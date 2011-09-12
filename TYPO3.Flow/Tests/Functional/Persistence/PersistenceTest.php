@@ -27,7 +27,6 @@ use \TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\TestEntityRepository;
 /**
  * Testcase for persistence
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class PersistenceTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 

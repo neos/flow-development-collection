@@ -25,7 +25,6 @@ namespace TYPO3\FLOW3\Security\Authorization;
  * A RequestFilter is configured to match specific \TYPO3\FLOW3\MVC\RequestInterfaces and call
  * a \TYPO3\FLOW3\Security\Authorization\InterceptorInterface if needed.
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
 class RequestFilter {

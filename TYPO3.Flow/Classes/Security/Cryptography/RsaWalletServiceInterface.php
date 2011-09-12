@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Security\Cryptography;
 /**
  * RSA related service functions (e.g. used for the RSA authentication provider)
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  * @author Andreas Förthner <andreas.foerthner@netlogix.de>
  */
 interface RsaWalletServiceInterface {

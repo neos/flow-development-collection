@@ -38,7 +38,6 @@ namespace TYPO3\FLOW3\I18n;
  * {0,number,decimal}
  * {1,datetime,time,full}
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope singleton
  * @api
  */

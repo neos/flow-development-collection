@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Command;
 /**
  * Command controller for tasks related to security
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope singleton
  */
 class SecurityCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandController {

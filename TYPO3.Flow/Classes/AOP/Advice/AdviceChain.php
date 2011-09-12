@@ -25,7 +25,6 @@ namespace TYPO3\FLOW3\AOP\Advice;
  * The advice chain holds a number of subsequent advices that
  * match a given join point and calls the advices in the right order.
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
 class AdviceChain {

@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\I18n\Xml\Exception;
 /**
  * The "Invalid XML File" exception
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */
 class InvalidXmlFileException extends \TYPO3\FLOW3\I18n\Exception\InvalidArgumentException {

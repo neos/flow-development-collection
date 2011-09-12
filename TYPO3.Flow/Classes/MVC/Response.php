@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\MVC;
 /**
  * A generic and very basic response implementation
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  * @scope prototype
  */

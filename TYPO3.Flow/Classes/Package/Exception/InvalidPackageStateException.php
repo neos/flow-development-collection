@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Package\Exception;
 /**
  * An "Invalid Package State" exception
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */
 class InvalidPackageStateException extends \TYPO3\FLOW3\Package\Exception {

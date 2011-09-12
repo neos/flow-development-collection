@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Configuration\Exception;
 /**
  * A Container Is Locked exception
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */
 class ContainerIsLockedException extends \TYPO3\FLOW3\Configuration\Exception {

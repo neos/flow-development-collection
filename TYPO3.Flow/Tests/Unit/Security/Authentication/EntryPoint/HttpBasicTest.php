@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Tests\Unit\Security\Authentication\EntryPoint;
 /**
  * Testcase for HTTP Basic Auth authentication entry point
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  */
 class HttpBasicTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 

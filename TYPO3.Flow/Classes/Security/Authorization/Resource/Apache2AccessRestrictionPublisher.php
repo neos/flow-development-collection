@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Security\Authorization\Resource;
 /**
  * An access restriction publisher that publishes .htaccess files to configure apache2 restrictions
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope singleton
  */
 class Apache2AccessRestrictionPublisher implements \TYPO3\FLOW3\Security\Authorization\Resource\AccessRestrictionPublisherInterface {

@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Tests\Unit\AOP\Builder;
 /**
  * Testcase for the Abstract Method Interceptor Builder
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class AbstractMethodInterceptorBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 

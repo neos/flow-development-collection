@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Property\DataType;
 /**
  * Represents a Unique Resource Identifier according to STD 66 / RFC 3986
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  * @scope prototype
  */

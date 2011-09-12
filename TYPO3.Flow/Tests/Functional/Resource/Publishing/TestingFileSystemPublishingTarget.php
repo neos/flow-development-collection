@@ -28,7 +28,6 @@ namespace TYPO3\FLOW3\Tests\Functional\Resource\Publishing;
  * In Objects.yaml for testing it is configured that this class is taken instead
  * of the normal FileSystemPublishingTarget.
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class TestingFileSystemPublishingTarget extends \TYPO3\FLOW3\Resource\Publishing\FileSystemPublishingTarget {
 

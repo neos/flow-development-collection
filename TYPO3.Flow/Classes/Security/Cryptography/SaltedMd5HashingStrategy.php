@@ -25,7 +25,6 @@ namespace TYPO3\FLOW3\Security\Cryptography;
 /**
  * A salted MD5 based password hashing strategy
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  */
 class SaltedMd5HashingStrategy implements \TYPO3\FLOW3\Security\Cryptography\PasswordHashingStrategyInterface {
 

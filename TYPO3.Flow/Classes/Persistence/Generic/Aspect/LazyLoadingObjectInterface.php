@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Persistence\Generic\Aspect;
 /**
  * An interface used to introduce certain methods to support lazy loading objects
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 interface LazyLoadingObjectInterface {
 

@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Error;
 /**
  * Result object for operations dealing with objects, such as the Property Mapper or the Validators.
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  * @scope prototype
  */

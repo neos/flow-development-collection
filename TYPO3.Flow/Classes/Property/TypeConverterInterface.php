@@ -26,7 +26,6 @@ namespace TYPO3\FLOW3\Property;
  *
  * All Type Converters should have NO INTERNAL STATE, such that they can be used as singletons and multiple times in succession (as this improves performance dramatically).
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */
 interface TypeConverterInterface {

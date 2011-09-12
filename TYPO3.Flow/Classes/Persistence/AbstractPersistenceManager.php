@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Persistence;
 /**
  * The FLOW3 Persistence Manager base class
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */
 abstract class AbstractPersistenceManager implements \TYPO3\FLOW3\Persistence\PersistenceManagerInterface {

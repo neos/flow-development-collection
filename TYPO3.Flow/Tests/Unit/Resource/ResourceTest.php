@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Resource;
 /**
  * Testcase for the File class
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class ResourceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 

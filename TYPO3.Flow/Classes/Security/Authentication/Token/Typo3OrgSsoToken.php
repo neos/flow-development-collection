@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Security\Authentication\Token;
 /**
  * An authentication token used for sso credentials coming from typo3.org
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
 class Typo3OrgSsoToken implements \TYPO3\FLOW3\Security\Authentication\TokenInterface {

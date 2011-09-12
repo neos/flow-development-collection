@@ -63,7 +63,6 @@ namespace TYPO3\FLOW3\Cache\Backend;
  * identified with numbers 0 .. 15. setDatabase() can be used to select one.
  * The unit tests use and flush database numbers 0 and 1, production use should start from 2.
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  * @scope prototype
  */

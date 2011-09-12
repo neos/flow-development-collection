@@ -25,7 +25,6 @@ namespace TYPO3\FLOW3\MVC\Controller;
  * A Special Case of a Controller: If no controller has been specified in the
  * request, this controller is chosen.
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope singleton
  */
 class StandardController extends \TYPO3\FLOW3\MVC\Controller\ActionController {

@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Tests\Unit\Security\Authentication;
 /**
  * Testcase for authentication provider manager
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class AuthenticationProviderManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 

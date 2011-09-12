@@ -29,7 +29,6 @@ namespace TYPO3\FLOW3\Persistence\Generic\Qom;
  *  satisfy constraint2 but not constraint1, or
  *  satisfy both constraint1 and constraint2.
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  * @scope prototype
  */

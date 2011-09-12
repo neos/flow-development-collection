@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Tests\Functional\Security;
 /**
  * Testcase for context
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class ContextTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 

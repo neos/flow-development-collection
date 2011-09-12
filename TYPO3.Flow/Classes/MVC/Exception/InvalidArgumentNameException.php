@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\MVC\Exception;
 /**
  * An "Invalid Argument Name" exception
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */
 class InvalidArgumentNameException extends \TYPO3\FLOW3\MVC\Exception {

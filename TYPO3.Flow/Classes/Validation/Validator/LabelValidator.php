@@ -28,7 +28,6 @@ namespace TYPO3\FLOW3\Validation\Validator;
  * the space character. What you don't want in labels though are tabs, new
  * line characters or HTML tags. This validator is for such uses.
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  * @scope singleton
  */

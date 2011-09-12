@@ -27,7 +27,6 @@ namespace TYPO3\FLOW3\Tests;
  * Subclass this base class if you want to take advantage of the framework
  * capabilities, for example are in need of the object manager.
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */
 abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {

@@ -27,7 +27,6 @@ namespace TYPO3\FLOW3\I18n\Cldr\Reader\Exception;
  * Thrown when plural rule equation from CLDR is invalid (which probably means
  * that CLDR repository is corrupted).
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */
 class InvalidPluralRuleException extends \TYPO3\FLOW3\I18n\Cldr\Exception\InvalidCldrDataException {

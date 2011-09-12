@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Resource\Publishing;
 /**
  * Interface implemented by special publishing configuration objects for persistent resources
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * implementations must be tagged entity
  */
 interface PublishingConfigurationInterface {

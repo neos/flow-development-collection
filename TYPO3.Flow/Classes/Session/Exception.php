@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Session;
 /**
  * A "\TYPO3\FLOW3\Session\Exception" Exception
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */
 class Exception extends \TYPO3\FLOW3\Exception {

@@ -33,7 +33,6 @@ namespace TYPO3\FLOW3\Persistence\Doctrine\Mapping\Driver;
  * If a property is not marked as an association the mapping type is set to
  * "object" for objects.
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope singleton
  */
 class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterface {

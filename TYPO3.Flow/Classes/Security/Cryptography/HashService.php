@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Security\Cryptography;
 /**
  * A hash service which should be used to generate and validate hashes.
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  * @scope singleton
  */
 class HashService {

@@ -30,7 +30,6 @@ namespace TYPO3\FLOW3\Property;
  * As developer, you should probably subclass the PropertyMappingConfiguration class if
  * adjustments are needed there.
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  * @scope prototype
  */

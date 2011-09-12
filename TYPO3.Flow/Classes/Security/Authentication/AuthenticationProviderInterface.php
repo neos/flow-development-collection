@@ -27,7 +27,6 @@ namespace TYPO3\FLOW3\Security\Authentication;
  * a \TYPO3\FLOW3\Security\Authentication\UserDetailsInterface.
  *
  * @author Andreas Förthner <andreas.foerthner@netlogix.de>
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 interface AuthenticationProviderInterface {
 

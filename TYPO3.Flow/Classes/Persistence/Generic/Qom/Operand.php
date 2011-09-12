@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Persistence\Generic\Qom;
 /**
  * An operand to a binary operation specified by a Comparison.
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
 class Operand {

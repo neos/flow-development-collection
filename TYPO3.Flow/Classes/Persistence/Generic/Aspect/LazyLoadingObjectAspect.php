@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Persistence\Generic\Aspect;
 /**
  * Adds the aspect of lazy loading to relevant objects
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @aspect
  */
 class LazyLoadingObjectAspect {

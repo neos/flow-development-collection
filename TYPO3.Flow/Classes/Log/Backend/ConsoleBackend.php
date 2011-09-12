@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Log\Backend;
 /**
  * A log backend which writes log entries to the console (STDOUT or STDERR)
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  * @scope prototype
  */

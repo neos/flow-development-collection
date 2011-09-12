@@ -27,7 +27,6 @@ use \TYPO3\FLOW3\MVC\Controller\Argument;
 /**
  * Testcase for the MVC Controller Arguments
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @covers \TYPO3\FLOW3\MVC\Controller\Arguments
  */
 class ArgumentsTest extends \TYPO3\FLOW3\Tests\UnitTestCase {

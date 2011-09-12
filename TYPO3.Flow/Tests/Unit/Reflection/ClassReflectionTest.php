@@ -27,7 +27,6 @@ require_once('Fixture/DummyInterface2.php');
 /**
  * Testcase for ClassReflection
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
 class ClassReflectionTest extends \TYPO3\FLOW3\Tests\UnitTestCase implements \TYPO3\FLOW3\Tests\Reflection\Fixture\DummyInterface1, \TYPO3\FLOW3\Tests\Reflection\Fixture\DummyInterface2 {

@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Resource;
 /**
  * An type converter for ResourcePointer objects
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope singleton
  */
 class ResourceTypeConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTypeConverter {

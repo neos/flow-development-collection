@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Cache\Backend;
 /**
  * A PDO database cache backend
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  * @scope prototype
  */

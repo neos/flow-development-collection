@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\SignalSlot\Exception;
 /**
  * "Invalid Slot" Exception
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */
 class InvalidSlotException extends \TYPO3\FLOW3\Object\Exception {

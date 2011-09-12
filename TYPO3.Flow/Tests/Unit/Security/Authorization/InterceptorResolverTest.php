@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Tests\Unit\Security\Authorization;
 /**
  * Testcase for the security interceptor resolver
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class InterceptorResolverTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 

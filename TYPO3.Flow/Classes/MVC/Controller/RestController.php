@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\MVC\Controller;
 /**
  * An action controller for RESTful web services
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope singleton
  */
 class RestController extends \TYPO3\FLOW3\MVC\Controller\ActionController {

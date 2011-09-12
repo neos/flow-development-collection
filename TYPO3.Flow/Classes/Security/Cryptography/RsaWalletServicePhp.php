@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Security\Cryptography;
 /**
  * Implementation of the RSAWalletServiceInterface using PHP's OpenSSL extension
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  * @scope singleton
  */
 class RsaWalletServicePhp implements \TYPO3\FLOW3\Security\Cryptography\RsaWalletServiceInterface {

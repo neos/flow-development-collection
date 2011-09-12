@@ -27,7 +27,6 @@ namespace TYPO3\FLOW3\I18n\Cldr\Reader\Exception;
  * Thrown when $formatType parameter provided to any Readers' method is not
  * one of allowed values.
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */
 class InvalidFormatTypeException extends \TYPO3\FLOW3\I18n\Exception\InvalidArgumentException {

@@ -25,7 +25,6 @@ namespace TYPO3\FLOW3\Package;
  * Interface for TYPO3 Package MetaData information
  *
  * @author Christopher Hlubek <hlubek@networkteam.com>
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 interface MetaDataInterface {
 

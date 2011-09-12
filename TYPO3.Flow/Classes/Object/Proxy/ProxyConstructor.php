@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Object\Proxy;
 /**
  * Representation of a constructor method within a proxy class
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class ProxyConstructor extends \TYPO3\FLOW3\Object\Proxy\ProxyMethod {
 

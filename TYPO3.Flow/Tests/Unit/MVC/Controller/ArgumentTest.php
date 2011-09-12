@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Tests\Unit\MVC\Controller;
 /**
  * Testcase for the MVC Controller Argument
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @covers \TYPO3\FLOW3\MVC\Controller\Argument
  */
 class ArgumentTest extends \TYPO3\FLOW3\Tests\UnitTestCase {

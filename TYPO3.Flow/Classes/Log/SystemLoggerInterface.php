@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Log;
 /**
  * Marker interface for the system logger.
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @author Robert Lemke <robert@typo3.org>
  */
 interface SystemLoggerInterface extends \TYPO3\FLOW3\Log\LoggerInterface {

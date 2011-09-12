@@ -27,7 +27,6 @@ use TYPO3\FLOW3\Security\Policy\Role;
 /**
  * Testcase for the account
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class AccountTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 

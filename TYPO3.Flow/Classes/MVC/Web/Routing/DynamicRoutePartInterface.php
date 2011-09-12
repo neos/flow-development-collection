@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\MVC\Web\Routing;
 /**
  * Contract for Dynamic Route Parts
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */
 interface DynamicRoutePartInterface extends \TYPO3\FLOW3\MVC\Web\Routing\RoutePartInterface {

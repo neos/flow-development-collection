@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Tests\Unit\Package;
 /**
  * Testcase for the package documentation class
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class DocumentationTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 

@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Utility\Unicode;
 /**
  * A PHP-based port of PHP6's built in TextIterator
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope singleton
  */
 class TextIteratorElement {

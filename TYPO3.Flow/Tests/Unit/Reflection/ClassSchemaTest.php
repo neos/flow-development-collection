@@ -27,7 +27,6 @@ namespace TYPO3\FLOW3\Tests\Unit\Reflection;
  * Note that many parts of the class schema functionality are already tested by the class
  * schema builder testcase.
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class ClassSchemaTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 

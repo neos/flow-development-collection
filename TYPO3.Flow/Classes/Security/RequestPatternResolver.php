@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Security;
 /**
  * The request pattern resolver. It resolves the class name of a request pattern based on names.
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope singleton
  */
 class RequestPatternResolver {

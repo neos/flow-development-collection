@@ -33,7 +33,6 @@ namespace TYPO3\FLOW3\Property\TypeConverter;
  * - If the input has NO identity property, but additional properties, we create a new object and return it.
  *   However, we only do this if the configuration option "CONFIGURATION_CREATION_ALLOWED" is TRUE.
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  * @scope singleton
  */

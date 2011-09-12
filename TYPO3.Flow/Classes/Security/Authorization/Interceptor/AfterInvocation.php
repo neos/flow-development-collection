@@ -29,7 +29,6 @@ namespace TYPO3\FLOW3\Security\Authorization\Interceptor;
  * 3. If a PermissionDeniedException was thrown we look for any an authentication entry point in the active tokens to redirect to authentication
  * 4. Then the value is returned to the caller
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
 class AfterInvocation implements \TYPO3\FLOW3\Security\Authorization\InterceptorInterface {

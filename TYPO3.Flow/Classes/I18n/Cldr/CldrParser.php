@@ -55,7 +55,6 @@ namespace TYPO3\FLOW3\I18n\Cldr;
  * )
  *
  * @scope singleton
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @see http://www.unicode.org/reports/tr35/#Inheritance_and_Validity [1]
  */
 class CldrParser extends \TYPO3\FLOW3\I18n\Xml\AbstractXmlParser {

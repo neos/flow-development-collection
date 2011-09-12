@@ -29,7 +29,6 @@ use \TYPO3\FLOW3\Utility\Files;
 /**
  * The default TYPO3 Package Manager
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  * @scope singleton
  */

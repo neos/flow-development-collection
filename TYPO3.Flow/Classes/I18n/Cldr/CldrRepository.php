@@ -28,7 +28,6 @@ namespace TYPO3\FLOW3\I18n\Cldr;
  * only one instance of CldrModel for every unique CLDR data file or file group.
  *
  * @scope singleton
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class CldrRepository {
 

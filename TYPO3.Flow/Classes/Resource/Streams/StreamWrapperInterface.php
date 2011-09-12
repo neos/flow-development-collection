@@ -30,7 +30,6 @@ namespace TYPO3\FLOW3\Resource\Streams;
  *  * methods that should not be implemented in the PHP prototype when not being
  *    supported (like mkdir) must throw a \BadMethodCallException instead.
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */
 interface StreamWrapperInterface {

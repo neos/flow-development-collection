@@ -26,7 +26,6 @@ namespace TYPO3\FLOW3\SignalSlot;
  * and passing them the method arguments which were originally passed to the
  * signal method.
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope singleton
  * @api
  */

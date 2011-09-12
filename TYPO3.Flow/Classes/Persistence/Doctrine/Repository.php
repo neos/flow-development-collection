@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Persistence\Doctrine;
 /**
  * The FLOW3 default Repository, based on Doctrine 2
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */
 class Repository extends \Doctrine\ORM\EntityRepository implements \TYPO3\FLOW3\Persistence\RepositoryInterface {

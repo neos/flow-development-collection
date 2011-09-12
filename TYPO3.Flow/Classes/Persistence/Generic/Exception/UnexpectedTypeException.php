@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Persistence\Generic\Exception;
 /**
  * A "FLOW3 Persistence Unexpected Type" Exception
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */
 class UnexpectedTypeException extends \TYPO3\FLOW3\Persistence\Exception {

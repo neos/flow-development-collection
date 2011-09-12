@@ -25,7 +25,6 @@ namespace TYPO3\FLOW3\Persistence\Generic;
  * The Query classs used to run queries like
  * $query->matching($query->equals('foo', 'bar'))->setLimit(10)->execute();
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  * @scope prototype
  */

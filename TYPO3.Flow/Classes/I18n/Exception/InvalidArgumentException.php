@@ -27,7 +27,6 @@ namespace TYPO3\FLOW3\I18n\Exception;
  * Generic exception thrown when any (most probably string) argument of some
  * method does not conforms constraints.
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */
 class InvalidArgumentException extends \TYPO3\FLOW3\I18n\Exception {

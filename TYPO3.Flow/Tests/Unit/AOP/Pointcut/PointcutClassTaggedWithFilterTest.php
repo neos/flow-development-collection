@@ -26,7 +26,6 @@ require_once (FLOW3_PATH_FLOW3 . 'Tests/Unit/AOP/Fixtures/ClassTaggedWithSomethi
 /**
  * Testcase for the Pointcut Class-Tagged-With Filter
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class PointcutClassTaggedWithFilterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 

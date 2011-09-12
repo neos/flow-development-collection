@@ -25,7 +25,6 @@ namespace TYPO3\FLOW3\Tests\Unit\Security\Cryptography;
 /**
  * Testcase for the Pbkdf2HashingStrategy
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  */
 class Pbkdf2HashingStrategyTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 

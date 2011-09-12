@@ -25,7 +25,6 @@ namespace TYPO3\FLOW3\Security\RequestPattern;
  * This class holds a request pattern that decides, if csrf protection was enabled for the current request and searches
  * for invalid csrf protection tokens.
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
 class CsrfProtection implements \TYPO3\FLOW3\Security\RequestPatternInterface {

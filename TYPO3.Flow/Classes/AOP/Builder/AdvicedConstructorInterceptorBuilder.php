@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\AOP\Builder;
 /**
  * A method interceptor build for constructors with advice.
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @proxy disable
  * @scope singleton
  */

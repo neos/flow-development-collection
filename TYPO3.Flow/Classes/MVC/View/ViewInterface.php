@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\MVC\View;
 /**
  * Interface of a view
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  */
 interface ViewInterface {

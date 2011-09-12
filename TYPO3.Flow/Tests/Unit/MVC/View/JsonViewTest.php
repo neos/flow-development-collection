@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Tests\Unit\MVC\View;
 /**
  * Testcase for the JSON view
  *
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class JsonViewTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 

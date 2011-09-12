@@ -27,7 +27,6 @@ use \TYPO3\FLOW3\MVC\CLI\CommandManager;
 /**
  * Builds a CLI request object from the raw command call
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope singleton
  */
 class RequestBuilder {

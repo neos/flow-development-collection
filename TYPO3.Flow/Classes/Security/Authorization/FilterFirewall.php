@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Security\Authorization;
 /**
  * Default Firewall which analyzes the request with a RequestFilter chain.
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope singleton
  */
 class FilterFirewall implements \TYPO3\FLOW3\Security\Authorization\FirewallInterface {

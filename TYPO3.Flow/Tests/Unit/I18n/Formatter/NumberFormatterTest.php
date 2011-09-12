@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Tests\Unit\I18n\Formatter;
 /**
  * Testcase for the NumberFormatter
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class NumberFormatterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 

@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Tests\Unit\I18n\Parser;
 /**
  * Testcase for the NumberParser
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class NumberParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 

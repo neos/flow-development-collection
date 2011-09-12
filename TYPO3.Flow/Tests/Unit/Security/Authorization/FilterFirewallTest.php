@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Tests\Unit\Security\Authorization;
 /**
  * Testcase for the filter firewall
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class FilterFirewallTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 

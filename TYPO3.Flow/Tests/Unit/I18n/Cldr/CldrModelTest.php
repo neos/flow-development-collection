@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Tests\Unit\I18n\Cldr;
 /**
  * Testcase for the CldrModel
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class CldrModelTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 

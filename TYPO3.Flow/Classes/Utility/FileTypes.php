@@ -26,7 +26,6 @@ namespace TYPO3\FLOW3\Utility;
  *
  * Inspired by René Fritz DAM extension for TYPO3 v4
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class FileTypes {
 

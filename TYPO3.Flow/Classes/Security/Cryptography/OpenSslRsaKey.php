@@ -24,7 +24,6 @@ namespace TYPO3\FLOW3\Security\Cryptography;
 /**
  * An RSA key
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  * @scope prototype
  */
 class OpenSslRsaKey {
