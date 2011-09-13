@@ -31,7 +31,7 @@ namespace TYPO3\FLOW3\Validation\Validator;
 class RawValidator implements \TYPO3\FLOW3\Validation\Validator\ValidatorInterface {
 
 	/**
-	 * Always returns TRUE
+	 * Always returns an empty result.
 	 *
 	 * @param mixed $value The value that should be validated
 	 * @return \TYPO3\FLOW3\Error\Result
