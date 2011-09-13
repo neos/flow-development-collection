@@ -280,7 +280,7 @@ class ActionController extends \TYPO3\FLOW3\MVC\Controller\AbstractController {
 			foreach ($validationResult->getSubResults() as $argumentName => $subValidationResult) {
 				if (!$subValidationResult->hasErrors()) continue;
 
-				if (array_search($argumentName, $ignoreValidationAnnotations) !== FALSE) continue;
+				if (array_search('$' . $argumentName, $ignoreValidationAnnotations) !== FALSE) continue;
 
 				$shouldCallActionMethod = FALSE;
 			}
