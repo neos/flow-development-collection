@@ -115,7 +115,7 @@ class FileSystemPublishingTarget extends \TYPO3\FLOW3\Resource\Publishing\Abstra
 		$sourcePath = rtrim(\TYPO3\FLOW3\Utility\Files::getUnixStylePath($this->realpath($sourcePath)), '/');
 		$targetPath = rtrim(\TYPO3\FLOW3\Utility\Files::concatenatePaths(array($this->resourcesPublishingPath, 'Static', $relativeTargetPath)), '/');
 
-		if ($this->settings['resource']['publishing']['fileSystem']['mirrorMode'] == 'link') {
+		if ($this->settings['resource']['publishing']['fileSystem']['mirrorMode'] === 'link') {
 			if (file_exists($targetPath)) {
 				if (\TYPO3\FLOW3\Utility\Files::is_link($targetPath) && (rtrim(\TYPO3\FLOW3\Utility\Files::getUnixStylePath($this->realpath($targetPath)), '/') === $sourcePath)) {
 					return TRUE;

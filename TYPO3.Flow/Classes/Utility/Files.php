@@ -115,11 +115,13 @@ class Files {
 		$recursiveIterator = new \RecursiveIteratorIterator($directoryIterator);
 		foreach($recursiveIterator as $fileInfo) {
 			try {
-				if (!$recursiveIterator->isDot() && @unlink($fileInfo->getPathname()) === FALSE) {
-					throw new \TYPO3\FLOW3\Utility\Exception('Cannot unlink file "' . $fileInfo->getPathname() . '".', 1169047619);
+				if (self::is_link($path)) {
+					unlink($path);
+				} elseif (!$recursiveIterator->isDot() && unlink($fileInfo->getPathname()) === FALSE) {
+					throw new \TYPO3\FLOW3\Utility\Exception('Could not unlink file "' . $fileInfo->getPathname() . '".', 1169047619);
 				}
 			} catch (\Exception $exception) {
-				throw new \TYPO3\FLOW3\Utility\Exception('Cannot unlink file "' . $fileInfo->getPathname() . '".', 1301491043);
+				throw new \TYPO3\FLOW3\Utility\Exception('Could not unlink file "' . $fileInfo->getPathname() . '".', 1301491043);
 			}
 		}
 		foreach ($directoryIterator as $fileInfo) {
@@ -139,8 +141,20 @@ class Files {
 	 * @see emptyDirectoryRecursively()
 	 */
 	static public function removeDirectoryRecursively($path) {
-		self::emptyDirectoryRecursively($path);
-		rmdir($path);
+		if (self::is_link($path)) {
+			try {
+				unlink($path);
+			} catch (\Exception $exception) {
+				throw new \TYPO3\FLOW3\Utility\Exception('Could not unlink symbolic link "' . $path . '".', 1316000297);
+			}
+		} else {
+			self::emptyDirectoryRecursively($path);
+			try {
+				rmdir($path);
+			} catch (\Exception $exception) {
+				throw new \TYPO3\FLOW3\Utility\Exception('Could not remove directory "' . $path . '".', 1316000298);
+			}
+		}
 	}
 
 	/**
