@@ -54,14 +54,16 @@ class KickstartCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandCont
 	 */
 	public function packageCommand($packageKey) {
 		if (!$this->packageManager->isPackageKeyValid($packageKey)) {
-			return 'Package key "' . $packageKey . '" is not valid. Only UpperCamelCase with alphanumeric characters and underscore, please!' . PHP_EOL;
+			$this->outputLine('Package key "%s" is not valid. Only UpperCamelCase with alphanumeric characters and underscore, please!', array($packageKey));
+			$this->quit(1);
 		}
 
 		if ($this->packageManager->isPackageAvailable($packageKey)) {
-			return 'Package "' . $packageKey . '" already exists.' . PHP_EOL;
+			$this->outputLine('Package "%s" already exists.', array($packageKey));
+			$this->quit(2);
 		}
 		$this->packageManager->createPackage($packageKey);
-		return $this->actionControllerCommand($packageKey, 'Standard');
+		$this->actionControllerCommand($packageKey, 'Standard');
 	}
 
 	/**
@@ -103,22 +105,29 @@ class KickstartCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandCont
 			list($packageKey, $subpackageName) = explode('/', $packageKey, 2);
 		}
 		if (!$this->packageManager->isPackageKeyValid($packageKey)) {
-			return 'Package key "' . $packageKey . '" is not valid. Only UpperCamelCase with alphanumeric characters and underscore, please!' . PHP_EOL;
+			$this->outputLine('Package key "%s" is not valid. Only UpperCamelCase with alphanumeric characters and underscore, please!', array($packageKey));
+			$this->quit(1);
 		}
 		if (!$this->packageManager->isPackageAvailable($packageKey)) {
 			if ($generateRelated === FALSE) {
-				return 'Package "' . $packageKey . '" is not available.' . PHP_EOL . 'Hint: Use --generate-related for creating it!' . PHP_EOL;
+				$this->outputLine('Package "%s" is not available.', array($packageKey));
+				$this->outputLine('Hint: Use --generate-related for creating it!');
+				$this->quit(2);
 			}
 			$this->packageManager->createPackage($packageKey);
 		}
 		$generatedFiles = array();
+		$generatedModels = FALSE;
 		if ($generateActions === TRUE) {
 			$modelClassName = str_replace('.', '\\', $packageKey) . '\Domain\Model\\' . $controllerName;
 			if (!class_exists($modelClassName)) {
 				if ($generateRelated === TRUE) {
 					$generatedFiles += $this->generatorService->generateModel($packageKey, $controllerName, array('name' => array('type' => 'string')));
+					$generatedModels = TRUE;
 				} else {
-					return sprintf('The model %s does not exist, but is necessary for creating the respective actions.', $modelClassName) . PHP_EOL . 'Hint: Use --generate-related for creating it!' . PHP_EOL;
+					$this->outputLine('The model %s does not exist, but is necessary for creating the respective actions.', array($modelClassName));
+					$this->outputLine('Hint: Use --generate-related for creating it!');
+					$this->quit(3);
 				}
 			}
 
@@ -127,7 +136,9 @@ class KickstartCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandCont
 				if ($generateRelated === TRUE) {
 					$generatedFiles += $this->generatorService->generateRepository($packageKey, $controllerName);
 				} else {
-					return sprintf('The repository %s does not exist, but is necessary for creating the respective actions.', $repositoryClassName) . PHP_EOL . 'Hint: Use --generate-related for creating it!' . PHP_EOL;
+					$this->outputLine('The repository %s does not exist, but is necessary for creating the respective actions.', array($repositoryClassName));
+					$this->outputLine('Hint: Use --generate-related for creating it!');
+					$this->quit(4);
 				}
 			}
 		}
@@ -153,7 +164,11 @@ class KickstartCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandCont
 			}
 		}
 
-		return implode(PHP_EOL, $generatedFiles) . PHP_EOL;
+		$this->outputLine(implode(PHP_EOL, $generatedFiles));
+
+		if ($generatedModels === TRUE) {
+			$this->outputLine('As new models were generated, don\'t forget to update the database schema with the respective doctrine:* commands.');
+		}
 	}
 
 	/**
@@ -171,17 +186,19 @@ class KickstartCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandCont
 	 */
 	public function commandControllerCommand($packageKey, $controllerName, $force = FALSE) {
 		if (!$this->packageManager->isPackageKeyValid($packageKey)) {
-			return 'Package key "' . $packageKey . '" is not valid. Only UpperCamelCase with alphanumeric characters and underscore, please!' . PHP_EOL;
+			$this->outputLine('Package key "%s" is not valid. Only UpperCamelCase with alphanumeric characters and underscore, please!', array($packageKey));
+			$this->quit(1);
 		}
 		if (!$this->packageManager->isPackageAvailable($packageKey)) {
-			return 'Package "' . $packageKey . '" is not available.' . PHP_EOL;
+			$this->outputLine('Package "%s" is not available.', array($packageKey));
+			$this->quit(2);
 		}
 		$generatedFiles = array();
 		$controllerNames = \TYPO3\FLOW3\Utility\Arrays::trimExplode(',', $controllerName);
 		foreach ($controllerNames as $currentControllerName) {
 			$generatedFiles += $this->generatorService->generateCommandController($packageKey, $currentControllerName, $force);
 		}
-		return implode(PHP_EOL, $generatedFiles) . PHP_EOL;
+		$this->outputLine(implode(PHP_EOL, $generatedFiles));
 	}
 
 	/**
@@ -200,10 +217,12 @@ class KickstartCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandCont
 	 */
 	public function modelCommand($packageKey, $modelName, $force = FALSE) {
 		if (!$this->packageManager->isPackageKeyValid($packageKey)) {
-			return 'Package key "' . $packageKey . '" is not valid. Only UpperCamelCase with alphanumeric characters and ".", please!' . PHP_EOL;
+			$this->outputLine('Package key "%s" is not valid. Only UpperCamelCase with alphanumeric characters and ".", please!', array($packageKey));
+			$this->quit(1);
 		}
 		if (!$this->packageManager->isPackageAvailable($packageKey)) {
-			return 'Package "' . $packageKey . '" is not available.' . PHP_EOL;
+			$this->outputLine('Package "%s" is not available.', array($packageKey));
+			$this->quit(2);
 		}
 
 		$fieldsArguments = $this->request->getExceedingArguments();
@@ -220,7 +239,8 @@ class KickstartCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandCont
 		};
 
 		$generatedFiles = $this->generatorService->generateModel($packageKey, $modelName, $fieldDefinitions, $force);
-		return implode(PHP_EOL, $generatedFiles) . PHP_EOL;
+		$this->outputLine(implode(PHP_EOL, $generatedFiles));
+		$this->outputLine('As a new model was generated, don\'t forget to update the database schema with the respective doctrine:* commands.');
 	}
 
 	/**
@@ -237,14 +257,16 @@ class KickstartCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandCont
 	 */
 	public function repositoryCommand($packageKey, $modelName, $force = FALSE) {
 		if (!$this->packageManager->isPackageKeyValid($packageKey)) {
-			return 'Package key "' . $packageKey . '" is not valid. Only UpperCamelCase with alphanumeric characters and underscore, please!' . PHP_EOL;
+			$this->outputLine('Package key "%s" is not valid. Only UpperCamelCase with alphanumeric characters and underscore, please!', array($packageKey));
+			$this->quit(1);
 		}
 		if (!$this->packageManager->isPackageAvailable($packageKey)) {
-			return 'Package "' . $packageKey . '" is not available.' . PHP_EOL;
+			$this->outputLine('Package "%s" is not available.', array($packageKey));
+			$this->quit(2);
 		}
 
 		$generatedFiles = $this->generatorService->generateRepository($packageKey, $modelName, $force);
-		return implode(PHP_EOL, $generatedFiles) . PHP_EOL;
+		$this->outputLine(implode(PHP_EOL, $generatedFiles));
 	}
 
 }
