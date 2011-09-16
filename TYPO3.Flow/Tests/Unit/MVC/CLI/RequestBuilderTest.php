@@ -338,6 +338,42 @@ class RequestBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function optionsAreNotMappedToCommandArgumentsIfTheyAreUnnamed() {
+		$methodParameters = array(
+			'requiredArgument1' => array('optional' => FALSE, 'type' => 'string'),
+			'requiredArgument2' => array('optional' => FALSE, 'type' => 'string'),
+			'booleanOption' => array('optional' => TRUE, 'type' => 'boolean'),
+		);
+		$this->mockReflectionService->expects($this->once())->method('getMethodParameters')->with('Acme\Test\Command\DefaultCommandController', 'listCommand')->will($this->returnValue($methodParameters));
+
+		$expectedArguments = array('requiredArgument1' => 'firstArgumentValue', 'requiredArgument2' => 'secondArgumentValue');
+
+		$request = $this->requestBuilder->build('acme.test:default:list firstArgumentValue secondArgumentValue true');
+		$this->assertEquals($expectedArguments, $request->getArguments());
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function afterAllRequiredArgumentsUnnamedParametersAreStoredAsExceedingArguments() {
+		$methodParameters = array(
+			'requiredArgument1' => array('optional' => FALSE, 'type' => 'string'),
+			'requiredArgument2' => array('optional' => FALSE, 'type' => 'string'),
+			'booleanOption' => array('optional' => TRUE, 'type' => 'boolean'),
+		);
+		$this->mockReflectionService->expects($this->once())->method('getMethodParameters')->with('Acme\Test\Command\DefaultCommandController', 'listCommand')->will($this->returnValue($methodParameters));
+
+		$expectedExceedingArguments = array('true');
+
+		$request = $this->requestBuilder->build('acme.test:default:list firstArgumentValue secondArgumentValue true');
+		$this->assertEquals($expectedExceedingArguments, $request->getExceedingArguments());
+	}
+
+	/**
+	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function booleanOptionsCanHaveOnlyCertainValuesIfTheValueIsAssignedWithoutEqualSign() {
@@ -356,6 +392,7 @@ class RequestBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$request = $this->requestBuilder->build('acme.test:default:list --b2 y --b1 1 --b3 true --b4 false --b5 n --b6 0');
 		$this->assertEquals($expectedArguments, $request->getArguments());
 	}
+
 }
 
 ?>
