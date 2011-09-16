@@ -105,6 +105,11 @@ class HelpCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControlle
 	 * @return void
 	 */
 	public function helpCommand($commandIdentifier = NULL) {
+		$exceedingArguments = $this->request->getExceedingArguments();
+		if (count($exceedingArguments) > 0 && $commandIdentifier === NULL) {
+			$commandIdentifier = $exceedingArguments[0];
+		}
+
 		if ($commandIdentifier === NULL) {
 			$this->displayHelpIndex();
 		} else {
