@@ -85,8 +85,9 @@ class Repository implements \TYPO3\FLOW3\Persistence\RepositoryInterface {
 	 * @api
 	 */
 	public function add($object) {
-		if (!($object instanceof $this->entityClassName)) {
-			throw new \TYPO3\FLOW3\Persistence\Exception\IllegalObjectTypeException('The object given to add() was not of the type (' . $this->entityClassName . ') this repository manages.', 1298403438);
+		if (!is_object($object) || !($object instanceof $this->entityClassName)) {
+			$type = (is_object($object) ? get_class($object) : gettype($object));
+			throw new \TYPO3\FLOW3\Persistence\Exception\IllegalObjectTypeException('The value given to add() was ' . $type . ' , however the ' . get_class($this) . ' can only store ' . $this->entityClassName . ' instances.', 1298403438);
 		}
 		$this->persistenceManager->add($object);
 	}
@@ -99,8 +100,9 @@ class Repository implements \TYPO3\FLOW3\Persistence\RepositoryInterface {
 	 * @api
 	 */
 	public function remove($object) {
-		if (!($object instanceof $this->entityClassName)) {
-			throw new \TYPO3\FLOW3\Persistence\Exception\IllegalObjectTypeException('The object given to remove() was not of the type (' . $this->entityClassName . ') this repository manages.', 1298403442);
+		if (!is_object($object) || !($object instanceof $this->entityClassName)) {
+			$type = (is_object($object) ? get_class($object) : gettype($object));
+			throw new \TYPO3\FLOW3\Persistence\Exception\IllegalObjectTypeException('The value given to add() was ' . $type . ' , however the ' . get_class($this) . ' can only store ' . $this->entityClassName . ' instances.', 1298403442);
 		}
 		$this->persistenceManager->remove($object);
 	}
@@ -191,9 +193,9 @@ class Repository implements \TYPO3\FLOW3\Persistence\RepositoryInterface {
 	 * @api
 	 */
 	public function update($object) {
-		if (!($object instanceof $this->entityClassName)) {
+		if (!is_object($object) || !($object instanceof $this->entityClassName)) {
 			$type = (is_object($object) ? get_class($object) : gettype($object));
-			throw new \TYPO3\FLOW3\Persistence\Exception\IllegalObjectTypeException('The modified object given to update() was ' . $type . ' , however the ' . get_class($this) . ' can only store ' . $this->entityClassName . '.', 1249479625);
+			throw new \TYPO3\FLOW3\Persistence\Exception\IllegalObjectTypeException('The value given to update() was ' . $type . ' , however the ' . get_class($this) . ' can only store ' . $this->entityClassName . ' instances.', 1249479625);
 		}
 
 		$this->persistenceManager->update($object);
