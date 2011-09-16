@@ -163,6 +163,11 @@ class PersistentObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\Abst
 	 */
 	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
 		if (is_array($source)) {
+			if ($this->reflectionService->isClassTaggedWith($targetType, 'valueobject')) {
+				// Unset identity for valueobject to use constructor mapping, since the identity is determined from
+				// constructor arguments
+				unset($source['__identity']);
+			}
 			$object = $this->handleArrayData($source, $targetType, $convertedChildProperties, $configuration);
 		} elseif (is_string($source)) {
 			if ($source === '') {

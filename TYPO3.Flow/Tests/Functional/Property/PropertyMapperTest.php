@@ -76,5 +76,21 @@ class PropertyMapperTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$this->assertSame(TRUE, $result->getSignedCla());
 	}
 
+	/**
+	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function valueobjectCanBeMapped() {
+		$source = array(
+			'__identity' => 'abcdefghijkl',
+			'name' => 'Christopher',
+			'age' => '28'
+		);
+
+		$result = $this->propertyMapper->convert($source, 'TYPO3\FLOW3\Tests\Functional\Property\Fixtures\TestValueobject');
+		$this->assertSame('Christopher', $result->getName());
+		$this->assertSame(28, $result->getAge());
+	}
+
 }
 ?>
