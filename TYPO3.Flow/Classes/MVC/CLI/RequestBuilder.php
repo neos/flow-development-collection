@@ -205,7 +205,11 @@ class RequestBuilder {
 					$commandLineArguments[$argument['parameterName']] = $rawArgument;
 					$decidedToUseUnnamedArguments = TRUE;
 				} else {
-					$exceedingArguments[] = $rawArgument;
+					if ($argumentIndex < count($argumentNames)) {
+						$commandLineArguments[$argumentNames[$argumentIndex]] = $rawArgument;
+					} else {
+						$exceedingArguments[] = $rawArgument;
+					}
 				}
 			}
 			$argumentIndex ++;
