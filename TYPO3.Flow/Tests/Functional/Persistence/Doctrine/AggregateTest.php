@@ -62,7 +62,7 @@ class AggregateTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function entitiesWithingAggregateAreRemovedAutomaticallyWithItsRootEntity() {
+	public function entitiesWithinAggregateAreRemovedAutomaticallyWithItsRootEntity() {
 		$image = new Image();
 		$post = new Post();
 		$post->setImage($image);
