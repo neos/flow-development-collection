@@ -369,6 +369,7 @@ class ObjectManager implements ObjectManagerInterface {
 	 *
 	 * @param string $objectName The object name
 	 * @param object $instance A prebuilt instance
+	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setInstance($objectName, $instance) {
@@ -383,6 +384,21 @@ class ObjectManager implements ObjectManagerInterface {
 			throw new \TYPO3\FLOW3\Object\Exception\WrongScopeException('Cannot set instance of object "' . $objectName . '" because it is of scope prototype. Only session and singleton instances can be set.', 1265370540);
 		}
 		$this->objects[$objectName]['i'] = $instance;
+	}
+
+	/**
+	 * Unsets the instance of the given object
+	 *
+	 * If run during standard runtime, the whole application might become unstable
+	 * because certain parts might already use an instance of this object. Therefore
+	 * this method should only be used in a setUp() method of a functional test case.
+	 *
+	 * @param $objectName The object name
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function forgetInstance($objectName) {
+		unset($this->objects[$objectName]['i']);
 	}
 
 	/**
