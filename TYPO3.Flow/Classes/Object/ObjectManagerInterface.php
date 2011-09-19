@@ -185,6 +185,27 @@ interface ObjectManagerInterface {
 	public function isSessionInitialized();
 
 	/**
+	 * Sets the instance of the given object
+	 *
+	 * @param string $objectName The object name
+	 * @param object $instance A prebuilt instance
+	 * @return void
+	 */
+	public function setInstance($objectName, $instance);
+
+	/**
+	 * Unsets the instance of the given object
+	 *
+	 * If run during standard runtime, the whole application might become unstable
+	 * because certain parts might already use an instance of this object. Therefore
+	 * this method should only be used in a setUp() method of a functional test case.
+	 *
+	 * @param $objectName The object name
+	 * @return void
+	 */
+	public function forgetInstance($objectName);
+
+	/**
 	 * Shuts the object manager down and calls the shutdown methods of all objects
 	 * which are configured for it.
 	 *
