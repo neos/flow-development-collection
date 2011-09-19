@@ -78,16 +78,6 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 	 */
 	static public function setUpBeforeClass() {
 		self::$flow3 = \TYPO3\FLOW3\Core\Bootstrap::$staticObjectManager->get('TYPO3\FLOW3\Core\Bootstrap');
-
-		if (static::$testablePersistenceEnabled === TRUE) {
-			self::$flow3->getObjectManager()->get('TYPO3\FLOW3\Persistence\PersistenceManagerInterface')->initialize();
-			if (is_callable(array(self::$flow3->getObjectManager()->get('TYPO3\FLOW3\Persistence\PersistenceManagerInterface'), 'compile'))) {
-				$result = self::$flow3->getObjectManager()->get('TYPO3\FLOW3\Persistence\PersistenceManagerInterface')->compile();
-				if ($result === FALSE) {
-					self::markTestSkipped('Test skipped because setting up the persistence failed.');
-				}
-			}
-		}
 	}
 
 	/**
@@ -96,10 +86,6 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 	 * @return void
 	 */
 	static public function tearDownAfterClass() {
-		$persistenceManager = self::$flow3->getObjectManager()->get('TYPO3\FLOW3\Persistence\PersistenceManagerInterface');
-		if (is_callable(array($persistenceManager, 'tearDown'))) {
-			$persistenceManager->tearDown();
-		}
 		self::$flow3 = NULL;
 	}
 
@@ -129,11 +115,19 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function setUp() {
+		if (static::$testablePersistenceEnabled === TRUE) {
+			self::$flow3->getObjectManager()->get('TYPO3\FLOW3\Persistence\PersistenceManagerInterface')->initialize();
+			if (is_callable(array(self::$flow3->getObjectManager()->get('TYPO3\FLOW3\Persistence\PersistenceManagerInterface'), 'compile'))) {
+				$result = self::$flow3->getObjectManager()->get('TYPO3\FLOW3\Persistence\PersistenceManagerInterface')->compile();
+				if ($result === FALSE) {
+					self::markTestSkipped('Test skipped because setting up the persistence failed.');
+				}
+			}
+			$this->persistenceManager = $this->objectManager->get('TYPO3\FLOW3\Persistence\PersistenceManagerInterface');
+		}
+
 		if ($this->testableSecurityEnabled === TRUE) {
 			$this->setupSecurity();
-		}
-		if (static::$testablePersistenceEnabled === TRUE) {
-			$this->persistenceManager = $this->objectManager->get('TYPO3\FLOW3\Persistence\PersistenceManagerInterface');
 		}
 	}
 
@@ -170,8 +164,10 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 		if ($this->testableSecurityEnabled === TRUE) {
 			$this->tearDownSecurity();
 		}
-		if (static::$testablePersistenceEnabled === TRUE) {
-			$this->persistenceManager->persistAll();
+
+		$persistenceManager = self::$flow3->getObjectManager()->get('TYPO3\FLOW3\Persistence\PersistenceManagerInterface');
+		if (is_callable(array($persistenceManager, 'tearDown'))) {
+			$persistenceManager->tearDown();
 		}
 	}
 
