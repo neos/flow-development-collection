@@ -55,6 +55,6 @@ interface RouterInterface {
 	 * @param string $controllerName the controller name excluding the "Controller" suffix
 	 * @return string The controller's Object Name or NULL if the controller does not exist
 	 */
-	public function getControllerObjectName($packageKey, $subpackageKey, $controllerName);
+	public function getControllerObjectName($packageKey, $subPackageKey, $controllerName);
 }
 ?>

@@ -254,10 +254,10 @@ class Router implements \TYPO3\FLOW3\MVC\Web\Routing\RouterInterface {
 	 * @return string The controller's Object Name or NULL if the controller does not exist
 	 * @api
 	 */
-	public function getControllerObjectName($packageKey, $subpackageKey, $controllerName) {
+	public function getControllerObjectName($packageKey, $subPackageKey, $controllerName) {
 		$possibleObjectName = $this->controllerObjectNamePattern;
 		$possibleObjectName = str_replace('@package', str_replace('.', '\\', $packageKey), $possibleObjectName);
-		$possibleObjectName = str_replace('@subpackage', $subpackageKey, $possibleObjectName);
+		$possibleObjectName = str_replace('@subpackage', $subPackageKey, $possibleObjectName);
 		$possibleObjectName = str_replace('@controller', $controllerName, $possibleObjectName);
 		$possibleObjectName = str_replace('\\\\', '\\', $possibleObjectName);
 
