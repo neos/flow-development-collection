@@ -58,6 +58,7 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 	 */
 	public function persistAll() {
 		$this->entityManager->flush();
+		$this->emitAllObjectsPersisted();
 	}
 
 	/**
@@ -214,6 +215,15 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 		} else {
 			$this->systemLogger->log('Doctrine 2 destroy skipped, driver and path backend options not set!', LOG_NOTICE);
 		}
+	}
+
+	/**
+	 * Signals that all persistAll() has been executed successfully.
+	 *
+	 * @signal
+	 * @return void
+	 */
+	protected function emitAllObjectsPersisted() {
 	}
 
 }
