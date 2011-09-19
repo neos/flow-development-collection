@@ -224,7 +224,7 @@ abstract class FunctionalTestCase extends \TYPO3\FLOW3\Tests\BaseTestCase {
 		$mockRequest->expects($this->any())->method('getOriginalRequestMappingResults')->will($this->returnValue(new \TYPO3\FLOW3\Error\Result()));
 
 			// Build up Mock response collecting the output.
-		$mockResponse = $this->getMock('TYPO3\FLOW3\MVC\ResponseInterface', array(), array(), '', FALSE);
+		$mockResponse = $this->getMock('TYPO3\FLOW3\MVC\Web\Response', array(), array(), '', FALSE);
 
 		$content = '';
 		$mockResponse->expects($this->any())->method('appendContent')->will($this->returnCallback(function($newContent) use(&$content) {
