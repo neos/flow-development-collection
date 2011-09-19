@@ -143,13 +143,10 @@ class ResourceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	}
 
 	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 *
+	 * @return \TYPO3\FLOW3\Resource\ResourceManager
 	 */
-	public function importResourceImportsTheGivenFileAndReturnsAResourceObject() {
+	protected function setupResourceManager() {
 		file_put_contents('vfs://Foo/SomeResource.txt', '12345');
-		$hash = sha1_file('vfs://Foo/SomeResource.txt');
 
 		mkdir('vfs://Foo/Temporary');
 		mkdir('vfs://Foo/Persistent');
@@ -165,6 +162,18 @@ class ResourceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 		$mockPersistenceManager = $this->getMock('TYPO3\FLOW3\Persistence\PersistenceManagerInterface');
 		$resourceManager->injectPersistenceManager($mockPersistenceManager);
+
+		return $resourceManager;
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 *
+	 */
+	public function importResourceImportsTheGivenFileAndReturnsAResourceObject() {
+		$resourceManager = $this->setupResourceManager();
+		$hash = sha1_file('vfs://Foo/SomeResource.txt');
 
 		$actualResource = $resourceManager->importResource('vfs://Foo/SomeResource.txt');
 		$this->assertEquals('SomeResource.txt', $actualResource->getFileName());
@@ -178,23 +187,7 @@ class ResourceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getImportedResourcesReturnsAListOfResourceObjectsAndSomeInformationAboutTheirImport() {
-		file_put_contents('vfs://Foo/SomeResource.txt', '12345');
-		$hash = sha1_file('vfs://Foo/SomeResource.txt');
-
-		mkdir('vfs://Foo/Temporary');
-		mkdir('vfs://Foo/Persistent');
-		mkdir('vfs://Foo/Persistent/Resources');
-
-		$mockEnvironment = $this->getMock('TYPO3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
-		$mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue('vfs://Foo/Temporary/'));
-
-		$resourceManager = $this->getAccessibleMock('\TYPO3\FLOW3\Resource\ResourceManager', array('dummy'), array(), '', FALSE);
-		$resourceManager->_set('persistentResourcesStorageBaseUri', 'vfs://Foo/Persistent/Resources/');
-		$resourceManager->_set('importedResources', new \SplObjectStorage());
-		$resourceManager->injectEnvironment($mockEnvironment);
-
-		$mockPersistenceManager = $this->getMock('TYPO3\FLOW3\Persistence\PersistenceManagerInterface');
-		$resourceManager->injectPersistenceManager($mockPersistenceManager);
+		$resourceManager = $this->setupResourceManager();
 
 		$resourceManager->importResource('vfs://Foo/SomeResource.txt');
 		$importedResources = $resourceManager->getImportedResources();
@@ -202,6 +195,33 @@ class ResourceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			$this->assertSame('SomeResource.txt', $importedResources[$importedResource]['originalFilename']);
 		}
 	}
-}
 
+	/**
+	 * @test
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function importResourceReturnsFalseForPhpFiles() {
+		$resourceManager = $this->setupResourceManager();
+
+		$this->assertFalse($resourceManager->importResource('vfs://Foo/SomeResource.php'));
+	}
+
+	/**
+	 * @test
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function importResourceWorksForFilesWithoutFileEnding() {
+		$resourceManager = $this->setupResourceManager();
+
+		file_put_contents('vfs://Foo/bar', 'Hello world');
+
+		$resource = $resourceManager->importResource('vfs://Foo/bar');
+		$this->assertInstanceOf('TYPO3\FLOW3\Resource\Resource', $resource);
+
+		$hash = sha1_file('vfs://Foo/bar');
+
+		$this->assertEquals($hash, $resource->getResourcePointer()->getHash());
+		$this->assertFileEquals('vfs://Foo/bar', 'vfs://Foo/Persistent/Resources/' . $hash);
+	}
+}
 ?>
