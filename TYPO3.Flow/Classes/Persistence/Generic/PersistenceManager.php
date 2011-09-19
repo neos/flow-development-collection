@@ -176,6 +176,8 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 		$this->addedObjects = new \SplObjectStorage();
 		$this->removedObjects = new \SplObjectStorage();
 		$this->changedObjects = new \SplObjectStorage();
+
+		$this->emitAllObjectsPersisted();
 	}
 
 	/**
@@ -293,6 +295,15 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 			throw new \TYPO3\FLOW3\Persistence\Exception\UnknownObjectException('The object of type "' . get_class($object) . '" given to update must be persisted already, but is new.', 1249479819);
 		}
 		$this->changedObjects->attach($object);
+	}
+
+	/**
+	 * Signals that all persistAll() has been executed successfully.
+	 *
+	 * @signal
+	 * @return void
+	 */
+	protected function emitAllObjectsPersisted() {
 	}
 
 }
