@@ -506,7 +506,7 @@ class Route {
 			$routePartName = $match['content'];
 			if (!empty($match['optionalStart'])) {
 				if ($lastRoutePart !== NULL && $lastRoutePart->isOptional()) {
-					throw new \TYPO3\FLOW3\MVC\Exception\InvalidUriPatternException('the URI pattern "' . $this->uriPattern . '" of route "' . $this->getName() . '" contains succesive optional Route sections, which is not allowed.', 1234562050);
+					throw new \TYPO3\FLOW3\MVC\Exception\InvalidUriPatternException('the URI pattern "' . $this->uriPattern . '" of route "' . $this->getName() . '" contains successive optional Route sections, which is not allowed.', 1234562050);
 				}
 				$currentRoutePartIsOptional = TRUE;
 			}
@@ -514,12 +514,18 @@ class Route {
 			switch ($routePartType) {
 				case self::ROUTEPART_TYPE_DYNAMIC:
 					if ($lastRoutePart instanceof \TYPO3\FLOW3\MVC\Web\Routing\DynamicRoutePartInterface) {
-						throw new \TYPO3\FLOW3\MVC\Exception\InvalidUriPatternException('the URI pattern "' . $this->uriPattern . '" of route "' . $this->getName() . '" contains succesive Dynamic Route Parts, which is not allowed.', 1218446975);
+						throw new \TYPO3\FLOW3\MVC\Exception\InvalidUriPatternException('the URI pattern "' . $this->uriPattern . '" of route "' . $this->getName() . '" contains successive Dynamic Route Parts, which is not allowed.', 1218446975);
 					}
 					if (isset($this->routePartsConfiguration[$routePartName]['handler'])) {
 						$routePart = $this->objectManager->get($this->routePartsConfiguration[$routePartName]['handler']);
 						if (!$routePart instanceof \TYPO3\FLOW3\MVC\Web\Routing\DynamicRoutePartInterface) {
 							throw new \TYPO3\FLOW3\MVC\Exception\InvalidRoutePartHandlerException('routePart handlers must implement "\TYPO3\FLOW3\MVC\Web\Routing\DynamicRoutePartInterface" in route "' . $this->getName() . '"', 1218480972);
+						}
+					} elseif (isset($this->routePartsConfiguration[$routePartName]['objectType'])) {
+						$routePart = new \TYPO3\FLOW3\MVC\Web\Routing\IdentityRoutePart();
+						$routePart->setObjectType($this->routePartsConfiguration[$routePartName]['objectType']);
+						if (isset($this->routePartsConfiguration[$routePartName]['uriPattern'])) {
+							$routePart->setUriPattern($this->routePartsConfiguration[$routePartName]['uriPattern']);
 						}
 					} else {
 						$routePart = new \TYPO3\FLOW3\MVC\Web\Routing\DynamicRoutePart();

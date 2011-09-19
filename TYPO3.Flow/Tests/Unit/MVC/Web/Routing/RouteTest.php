@@ -108,7 +108,7 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function routePartHandlerIsInstanciated() {
+	public function routePartHandlerIsInstantiated() {
 		$this->route->setUriPattern('{key1}/{key2}');
 		$this->route->setRoutePartsConfiguration(
 			array(
@@ -141,6 +141,46 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$this->mockObjectManager->expects($this->once())->method('get')->with('TYPO3\FLOW3\MVC\Web\Routing\StaticRoutePart')->will($this->returnValue($mockRoutePartHandler));
 
 		$this->route->parse();
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function ifAnObjectTypeIsSpecifiedTheIdentityRoutePartHandlerIsInstantiated() {
+		$this->route->setUriPattern('{key1}');
+		$this->route->setRoutePartsConfiguration(
+			array(
+				'key1' => array(
+					'objectType' => 'SomeObjectType',
+				)
+			)
+		);
+
+		$this->route->parse();
+		$identityRoutePart = current($this->route->_get('routeParts'));
+		$this->assertInstanceOf('TYPO3\FLOW3\MVC\Web\Routing\IdentityRoutePart', $identityRoutePart);
+		$this->assertSame('SomeObjectType', $identityRoutePart->getObjectType());
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function parseSetsUriPatternOfIdentityRoutePartIfSpecified() {
+		$this->route->setUriPattern('{key1}');
+		$this->route->setRoutePartsConfiguration(
+			array(
+				'key1' => array(
+					'objectType' => 'SomeObjectType',
+					'uriPattern' => 'SomeUriPattern'
+				)
+			)
+		);
+
+		$this->route->parse();
+		$identityRoutePart = current($this->route->_get('routeParts'));
+		$this->assertSame('SomeUriPattern', $identityRoutePart->getUriPattern());
 	}
 
 	/**
