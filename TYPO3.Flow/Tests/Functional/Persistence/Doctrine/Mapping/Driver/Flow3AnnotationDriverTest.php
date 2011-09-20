@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures;
+namespace TYPO3\FLOW3\Tests\Functional\Persistence\Doctrine\Mapping\Driver;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -22,78 +22,21 @@ namespace TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures;
  *                                                                        */
 
 /**
- * A sample entity for tests
- *
- * @scope prototype
- * @entity
- * @HasLifecycleCallbacks
+ * Testcase for ORM annotation driver
  */
-class Post {
+class Flow3AnnotationDriverTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
-	 * @var string
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected $title;
-
-	/**
-	 * @var \TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\Image
-	 * @OneToOne
-	 */
-	protected $image;
-
-	/**
-	 * Yeah, only one comment allowed for a post ;-)
-	 * But that's the easiest option for our functional test.
-	 *
-	 * @var \TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\Comment
-	 * @OneToOne
-	 */
-	protected $comment;
-
-	/**
-	 * @return string
-	 * @PrePersist
-	 */
-	public function getTitle() {
-		return $this->title;
-	}
-
-	/**
-	 * @param string $title
-	 * @return void
-	 */
-	public function setTitle($title) {
-		$this->title = $title;
-	}
-
-	/**
-	 * @param \TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\Image $image
-	 */
-	public function setImage($image) {
-		$this->image = $image;
-	}
-
-	/**
-	 * @return \TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\Image
-	 */
-	public function getImage() {
-		return $this->image;
-	}
-
-	/**
-	 * @param $comment
-	 * @return void
-	 */
-	public function setComment($comment)	{
-		$this->comment = $comment;
-	}
-
-	/**
-	 * @return Comment
-	 */
-	public function getComment()	{
-		return $this->comment;
+	public function lifecycleEventAnnotationsAreDetected() {
+		$classMetadataInfo = new \Doctrine\ORM\Mapping\ClassMetadataInfo('TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\Post');
+		$driver = $this->objectManager->get('TYPO3\FLOW3\Persistence\Doctrine\Mapping\Driver\Flow3AnnotationDriver');
+		$driver->loadMetadataForClass('TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\Post', $classMetadataInfo);
+		$this->assertTrue($classMetadataInfo->hasLifecycleCallbacks('prePersist'));
 	}
 
 }
+
 ?>
