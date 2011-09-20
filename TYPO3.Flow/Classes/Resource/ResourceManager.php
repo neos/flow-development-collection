@@ -189,7 +189,7 @@ class ResourceManager {
 	 */
 	public function importResource($uri) {
 		$pathInfo = pathinfo($uri);
-		if (!isset($pathInfo['extension']) || substr(strtolower($pathInfo['extension']), -3, 3) === 'php' ) {
+		if (isset($pathInfo['extension']) && substr(strtolower($pathInfo['extension']), -3, 3) === 'php' ) {
 			return FALSE;
 		}
 
@@ -256,7 +256,7 @@ class ResourceManager {
 		}
 		$hash = sha1_file($uploadInfo['tmp_name']);
 		$finalTargetPathAndFilename = $this->persistentResourcesStorageBaseUri . $hash;
-		if (rename($uploadInfo['tmp_name'], $finalTargetPathAndFilename) === FALSE) {
+		if (move_uploaded_file($uploadInfo['tmp_name'], $finalTargetPathAndFilename) === FALSE) {
 			return FALSE;
 		}
 		$this->fixFilePermissions($finalTargetPathAndFilename);
