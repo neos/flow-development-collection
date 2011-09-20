@@ -27,6 +27,23 @@ namespace TYPO3\FLOW3\Tests\Unit\MVC\Web\Routing;
  */
 class DynamicRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
+	/**
+	 * @var \TYPO3\FLOW3\MVC\Web\Routing\DynamicRoutePart
+	 */
+	protected $dynamicRoutPart;
+
+	/**
+	 * @var \TYPO3\FLOW3\Persistence\PersistenceManagerInterface
+	 */
+	protected $mockPersistenceManager;
+
+	public function setUp() {
+		$this->dynamicRoutPart = $this->getAccessibleMock('TYPO3\FLOW3\MVC\Web\Routing\DynamicRoutePart', array('dummy'));
+
+		$this->mockPersistenceManager = $this->getMock('TYPO3\FLOW3\Persistence\PersistenceManagerInterface');
+		$this->dynamicRoutPart->_set('persistenceManager', $this->mockPersistenceManager);
+	}
+
 	/*                                                                        *
 	 * URI matching                                                           *
 	 *                                                                        */
@@ -36,14 +53,13 @@ class DynamicRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function dynamicRoutePartDoesNotMatchIfRequestPathIsNullOrEmpty() {
-		$routePart = new \TYPO3\FLOW3\MVC\Web\Routing\DynamicRoutePart();
-		$routePart->setName('foo');
+		$this->dynamicRoutPart->setName('foo');
 
 		$routePath = NULL;
-		$this->assertFalse($routePart->match($routePath), 'Dynamic Route Part should not match if $routePath is NULL.');
+		$this->assertFalse($this->dynamicRoutPart->match($routePath), 'Dynamic Route Part should not match if $routePath is NULL.');
 
 		$routePath = '';
-		$this->assertFalse($routePart->match($routePath), 'Dynamic Route Part should not match if $routePath is empty.');
+		$this->assertFalse($this->dynamicRoutPart->match($routePath), 'Dynamic Route Part should not match if $routePath is empty.');
 
 	}
 
@@ -52,12 +68,11 @@ class DynamicRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function dynamicRoutePartDoesNotMatchEmptyRequestPathEvenIfDefaultValueIsSet() {
-		$routePart = new \TYPO3\FLOW3\MVC\Web\Routing\DynamicRoutePart();
-		$routePart->setName('foo');
-		$routePart->setDefaultValue('bar');
+		$this->dynamicRoutPart->setName('foo');
+		$this->dynamicRoutPart->setDefaultValue('bar');
 
 		$routePath = '';
-		$this->assertFalse($routePart->match($routePath), 'Dynamic Route Part should not match if $routePath is empty.');
+		$this->assertFalse($this->dynamicRoutPart->match($routePath), 'Dynamic Route Part should not match if $routePath is empty.');
 	}
 
 	/**
@@ -65,10 +80,9 @@ class DynamicRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function dynamicRoutePartDoesNotMatchIfNameIsNotSet() {
-		$routePart = new \TYPO3\FLOW3\MVC\Web\Routing\DynamicRoutePart();
 		$routePath = 'foo';
 
-		$this->assertFalse($routePart->match($routePath), 'Dynamic Route Part should not match if name is not set.');
+		$this->assertFalse($this->dynamicRoutPart->match($routePath), 'Dynamic Route Part should not match if name is not set.');
 	}
 
 
@@ -77,15 +91,14 @@ class DynamicRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function valueMatchesFirstRequestPathSegmentAfterSuccessfulMatch() {
-		$routePart = new \TYPO3\FLOW3\MVC\Web\Routing\DynamicRoutePart();
-		$routePart->setName('foo');
-		$routePart->setDefaultValue('bar');
-		$routePart->setSplitString('/');
+		$this->dynamicRoutPart->setName('foo');
+		$this->dynamicRoutPart->setDefaultValue('bar');
+		$this->dynamicRoutPart->setSplitString('/');
 
 		$routePath = 'firstSegment/secondSegment';
-		$routePart->match($routePath);
+		$this->dynamicRoutPart->match($routePath);
 
-		$this->assertEquals('firstSegment', $routePart->getValue(), 'value of Dynamic Route Part should be equal to first request path segment after successful match.');
+		$this->assertEquals('firstSegment', $this->dynamicRoutPart->getValue(), 'value of Dynamic Route Part should be equal to first request path segment after successful match.');
 	}
 
 	/**
@@ -93,16 +106,15 @@ class DynamicRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function valueIsNullAfterUnsuccessfulMatch() {
-		$routePart = new \TYPO3\FLOW3\MVC\Web\Routing\DynamicRoutePart();
-		$routePart->setName('foo');
-		$routePart->setSplitString('/');
+		$this->dynamicRoutPart->setName('foo');
+		$this->dynamicRoutPart->setSplitString('/');
 
 		$routePath = 'foo/bar';
-		$routePart->match($routePath);
+		$this->dynamicRoutPart->match($routePath);
 
 		$routePath = '/bar';
-		$routePart->match($routePath);
-		$this->assertNull($routePart->getValue(), 'Dynamic Route Part value should be NULL after unsuccessful match.');
+		$this->dynamicRoutPart->match($routePath);
+		$this->assertNull($this->dynamicRoutPart->getValue(), 'Dynamic Route Part value should be NULL after unsuccessful match.');
 	}
 
 	/**
@@ -110,12 +122,11 @@ class DynamicRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function routePathIsShortenedByOneSegmentAfterSuccessfulMatch() {
-		$routePart = new \TYPO3\FLOW3\MVC\Web\Routing\DynamicRoutePart();
-		$routePart->setName('bar');
-		$routePart->setSplitString('/');
+		$this->dynamicRoutPart->setName('bar');
+		$this->dynamicRoutPart->setSplitString('/');
 
 		$routePath = 'bar/foo/test';
-		$routePart->match($routePath);
+		$this->dynamicRoutPart->match($routePath);
 
 		$this->assertSame('/foo/test', $routePath, 'Dynamic Route Part should shorten request path by one segment on successful match.');
 	}
@@ -125,12 +136,11 @@ class DynamicRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function dynamicRouteDoesNotMatchRequestPathWithMoreThanOneSegmentIfSplitStringIsNotSet() {
-		$routePart = new \TYPO3\FLOW3\MVC\Web\Routing\DynamicRoutePart();
-		$routePart->setName('foo');
+		$this->dynamicRoutPart->setName('foo');
 
 		$routePath = 'foo/bar';
 
-		$this->assertFalse($routePart->match($routePath), 'Dynamic Route Part should not match if request Path has more than one segment and no split string is set.');
+		$this->assertFalse($this->dynamicRoutPart->match($routePath), 'Dynamic Route Part should not match if request Path has more than one segment and no split string is set.');
 	}
 
 	/**
@@ -138,13 +148,12 @@ class DynamicRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function dynamicRouteDoesNotMatchRequestPathWithMoreThanOneSegmentIfSplitStringIsNotFound() {
-		$routePart = new \TYPO3\FLOW3\MVC\Web\Routing\DynamicRoutePart();
-		$routePart->setName('foo');
-		$routePart->setSplitString('not-existing');
+		$this->dynamicRoutPart->setName('foo');
+		$this->dynamicRoutPart->setSplitString('not-existing');
 
 		$routePath = 'foo/bar';
 
-		$this->assertFalse($routePart->match($routePath), 'Dynamic Route Part should not match if request Path has more than one segment and does not contain split string.');
+		$this->assertFalse($this->dynamicRoutPart->match($routePath), 'Dynamic Route Part should not match if request Path has more than one segment and does not contain split string.');
 	}
 
 	/**
@@ -152,13 +161,12 @@ class DynamicRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function dynamicRouteMatchesRequestPathWithOnlyOneSegmentIfSplitStringIsNotSet() {
-		$routePart = new \TYPO3\FLOW3\MVC\Web\Routing\DynamicRoutePart();
-		$routePart->setName('foo');
+		$this->dynamicRoutPart->setName('foo');
 
 		$routePath = 'bar';
 
-		$this->assertTrue($routePart->match($routePath));
-		$this->assertEquals('bar', $routePart->getValue(), 'Dynamic Route Part should match if request Path has only one segment and no split string is set.');
+		$this->assertTrue($this->dynamicRoutPart->match($routePath));
+		$this->assertEquals('bar', $this->dynamicRoutPart->getValue(), 'Dynamic Route Part should match if request Path has only one segment and no split string is set.');
 	}
 
 	/**
@@ -166,14 +174,13 @@ class DynamicRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function dynamicRouteMatchesRequestPathWithOnlyOneSegmentIfSplitStringIsNotFound() {
-		$routePart = new \TYPO3\FLOW3\MVC\Web\Routing\DynamicRoutePart();
-		$routePart->setName('foo');
-		$routePart->setSplitString('not-existing');
+		$this->dynamicRoutPart->setName('foo');
+		$this->dynamicRoutPart->setSplitString('not-existing');
 
 		$routePath = 'bar';
 
-		$this->assertTrue($routePart->match($routePath));
-		$this->assertEquals('bar', $routePart->getValue(), 'Dynamic Route Part should match if request Path has only one segment and does not contain split string.');
+		$this->assertTrue($this->dynamicRoutPart->match($routePath));
+		$this->assertEquals('bar', $this->dynamicRoutPart->getValue(), 'Dynamic Route Part should match if request Path has only one segment and does not contain split string.');
 	}
 
 	/**
@@ -181,13 +188,12 @@ class DynamicRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function dynamicRoutePartDoesNotMatchIfSplitStringIsAtFirstPosition() {
-		$routePart = new \TYPO3\FLOW3\MVC\Web\Routing\DynamicRoutePart();
-		$routePart->setName('foo');
-		$routePart->setSplitString('-');
+		$this->dynamicRoutPart->setName('foo');
+		$this->dynamicRoutPart->setSplitString('-');
 
 		$routePath = '-foo/bar';
 
-		$this->assertFalse($routePart->match($routePath), 'Dynamic Route Part should not match if split string is first character of current request path.');
+		$this->assertFalse($this->dynamicRoutPart->match($routePath), 'Dynamic Route Part should not match if split string is first character of current request path.');
 	}
 
 	/**
@@ -195,12 +201,11 @@ class DynamicRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function dynamicRoutePartMatchesIfSplitStringContainsMultipleCharactersThatAreFoundInRequestPath() {
-		$routePart = new \TYPO3\FLOW3\MVC\Web\Routing\DynamicRoutePart();
-		$routePart->setName('foo');
-		$routePart->setSplitString('_-_');
+		$this->dynamicRoutPart->setName('foo');
+		$this->dynamicRoutPart->setSplitString('_-_');
 
 		$routePath = 'foo_-_bar';
-		$this->assertTrue($routePart->match($routePath), 'Dynamic Route Part with a split string of "_-_" should match request path of "foo_-_bar".');
+		$this->assertTrue($this->dynamicRoutPart->match($routePath), 'Dynamic Route Part with a split string of "_-_" should match request path of "foo_-_bar".');
 	}
 
 	/*                                                                        *
@@ -212,10 +217,9 @@ class DynamicRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function dynamicRoutePartDoesNotResolveIfNameIsNotSet() {
-		$routePart = new \TYPO3\FLOW3\MVC\Web\Routing\DynamicRoutePart();
 		$routeValues = array('foo' => 'bar');
 
-		$this->assertFalse($routePart->resolve($routeValues), 'Dynamic Route Part should not resolve if name is not set.');
+		$this->assertFalse($this->dynamicRoutPart->resolve($routeValues), 'Dynamic Route Part should not resolve if name is not set.');
 	}
 
 	/**
@@ -223,12 +227,11 @@ class DynamicRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function dynamicRoutePartResolvesSimpleValueArray() {
-		$routePart = new \TYPO3\FLOW3\MVC\Web\Routing\DynamicRoutePart();
-		$routePart->setName('foo');
+		$this->dynamicRoutPart->setName('foo');
 		$routeValues = array('foo' => 'bar');
 
-		$this->assertTrue($routePart->resolve($routeValues));
-		$this->assertEquals('bar', $routePart->getValue(), 'Dynamic Route Part should resolve if an element with the same name exists in $routeValues.');
+		$this->assertTrue($this->dynamicRoutPart->resolve($routeValues));
+		$this->assertEquals('bar', $this->dynamicRoutPart->getValue(), 'Dynamic Route Part should resolve if an element with the same name exists in $routeValues.');
 	}
 
 	/**
@@ -236,11 +239,10 @@ class DynamicRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function dynamicRoutePartDoesNotResolveEmptyArray() {
-		$routePart = new \TYPO3\FLOW3\MVC\Web\Routing\DynamicRoutePart();
-		$routePart->setName('foo');
+		$this->dynamicRoutPart->setName('foo');
 		$routeValues = array();
 
-		$this->assertFalse($routePart->resolve($routeValues), 'Dynamic Route Part should not resolve an empty $routeValues-array.');
+		$this->assertFalse($this->dynamicRoutPart->resolve($routeValues), 'Dynamic Route Part should not resolve an empty $routeValues-array.');
 	}
 
 	/**
@@ -248,12 +250,11 @@ class DynamicRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function dynamicRoutePartDoesNotResolveEmptyArrayEvenIfDefaultValueIsSet() {
-		$routePart = new \TYPO3\FLOW3\MVC\Web\Routing\DynamicRoutePart();
-		$routePart->setName('foo');
-		$routePart->setDefaultValue('defaultValue');
+		$this->dynamicRoutPart->setName('foo');
+		$this->dynamicRoutPart->setDefaultValue('defaultValue');
 		$routeValues = array();
 
-		$this->assertFalse($routePart->resolve($routeValues), 'Dynamic Route Part should not resolve an empty $routeValues-array even if default Value is set.');
+		$this->assertFalse($this->dynamicRoutPart->resolve($routeValues), 'Dynamic Route Part should not resolve an empty $routeValues-array even if default Value is set.');
 	}
 
 	/**
@@ -261,12 +262,11 @@ class DynamicRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function dynamicRoutePartDoesNotAlterCaseOfValueWhenCallingResolveByDefault() {
-		$routePart = new \TYPO3\FLOW3\MVC\Web\Routing\DynamicRoutePart();
-		$routePart->setName('Foo');
+		$this->dynamicRoutPart->setName('Foo');
 		$routeValues = array('Foo' => 'Bar');
 
-		$this->assertTrue($routePart->resolve($routeValues));
-		$this->assertEquals('Bar', $routePart->getValue(), 'By default Dynamic Route Part should not alter the case of route values.');
+		$this->assertTrue($this->dynamicRoutPart->resolve($routeValues));
+		$this->assertEquals('Bar', $this->dynamicRoutPart->getValue(), 'By default Dynamic Route Part should not alter the case of route values.');
 	}
 
 	/**
@@ -274,13 +274,12 @@ class DynamicRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function dynamicRoutePartLowerCasesValueIfLowerCaseIsTrue() {
-		$routePart = new \TYPO3\FLOW3\MVC\Web\Routing\DynamicRoutePart();
-		$routePart->setName('Foo');
-		$routePart->setLowerCase(TRUE);
+		$this->dynamicRoutPart->setName('Foo');
+		$this->dynamicRoutPart->setLowerCase(TRUE);
 		$routeValues = array('Foo' => 'Bar');
 
-		$this->assertTrue($routePart->resolve($routeValues));
-		$this->assertEquals('bar', $routePart->getValue(), 'Dynamic Route Part should lowercase the value if lowerCase is true.');
+		$this->assertTrue($this->dynamicRoutPart->resolve($routeValues));
+		$this->assertEquals('bar', $this->dynamicRoutPart->getValue(), 'Dynamic Route Part should lowercase the value if lowerCase is true.');
 	}
 
 	/**
@@ -288,11 +287,10 @@ class DynamicRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function resolveReturnsFalseIfNoCorrespondingValueIsGiven() {
-		$routePart = new \TYPO3\FLOW3\MVC\Web\Routing\DynamicRoutePart();
-		$routePart->setName('foo');
+		$this->dynamicRoutPart->setName('foo');
 		$routeValues = array('notFoo' => 'bar');
 
-		$this->assertFalse($routePart->resolve($routeValues), 'Dynamic Route Part should not resolve if no element with the same name exists in $routeValues and no default value is set.');
+		$this->assertFalse($this->dynamicRoutPart->resolve($routeValues), 'Dynamic Route Part should not resolve if no element with the same name exists in $routeValues and no default value is set.');
 	}
 
 	/**
@@ -300,11 +298,10 @@ class DynamicRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function resolveUnsetsCurrentRouteValueOnSuccessfulResolve() {
-		$routePart = new \TYPO3\FLOW3\MVC\Web\Routing\DynamicRoutePart();
-		$routePart->setName('foo');
+		$this->dynamicRoutPart->setName('foo');
 		$routeValues = array('foo' => 'bar', 'differentString' => 'value2');
 
-		$this->assertTrue($routePart->resolve($routeValues));
+		$this->assertTrue($this->dynamicRoutPart->resolve($routeValues));
 		$this->assertEquals(array('differentString' => 'value2'), $routeValues, 'Dynamic Route Part should unset matching element from $routeValues on successful resolve.');
 	}
 
@@ -313,11 +310,10 @@ class DynamicRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function resolveRecursivelyUnsetsCurrentRouteValueOnSuccessfulResolve() {
-		$routePart = new \TYPO3\FLOW3\MVC\Web\Routing\DynamicRoutePart();
-		$routePart->setName('foo.bar.baz');
+		$this->dynamicRoutPart->setName('foo.bar.baz');
 		$routeValues = array('foo' => array('bar' => array('baz' => 'should be removed', 'otherKey' => 'should stay')), 'differentString' => 'value2');
 
-		$this->assertTrue($routePart->resolve($routeValues));
+		$this->assertTrue($this->dynamicRoutPart->resolve($routeValues));
 		$this->assertEquals(array('foo' => array('bar' => array('otherKey' => 'should stay')), 'differentString' => 'value2'), $routeValues);
 	}
 
@@ -326,24 +322,45 @@ class DynamicRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function resolveDoesNotChangeRouteValuesOnUnsuccessfulResolve() {
-		$routePart = new \TYPO3\FLOW3\MVC\Web\Routing\DynamicRoutePart();
-		$routePart->setName('foo');
+		$this->dynamicRoutPart->setName('foo');
 		$routeValues = array('differentString' => 'bar');
 
-		$this->assertFalse($routePart->resolve($routeValues));
+		$this->assertFalse($this->dynamicRoutPart->resolve($routeValues));
 		$this->assertEquals(array('differentString' => 'bar'), $routeValues, 'Dynamic Route Part should not change $routeValues on unsuccessful resolve.');
 	}
 
 	/**
-	 * Objects cannot be resolved by the standard DynamicRoutePart handler.
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function resolveValueReturnsTrueAndSetTheValueToTheIdentifierIfTheValueToBeResolvedIsAnObject() {
+		$object = new \stdClass();
+		$this->mockPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($object)->will($this->returnValue('TheIdentifier'));
+		$this->assertTrue($this->dynamicRoutPart->_call('resolveValue', $object));
+		$this->assertSame('TheIdentifier', $this->dynamicRoutPart->getValue());
+	}
+
+	/**
+	 * Objects that are unknown to the persistence manager cannot be resolved by the standard DynamicRoutePart handler.
 	 *
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function resolveValueReturnsFalseIfTheValueToBeResolvedIsAnObject() {
-		$className = $this->buildAccessibleProxy('TYPO3\FLOW3\MVC\Web\Routing\DynamicRoutePart');
-		$routePart = new $className;
-		$this->assertFalse($routePart->_call('resolveValue', new \stdclass));
+	public function resolveValueReturnsFalseIfTheValueToBeResolvedIsAnObjectThatIsUnknownToThePersistenceManager() {
+		$object = new \stdClass();
+		$this->mockPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($object)->will($this->returnValue(NULL));
+		$this->assertFalse($this->dynamicRoutPart->_call('resolveValue', $object));
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function resolveValueReturnsFalseIfTheValueToBeResolvedIsAnObjectWithAnIdentifierThatIsNoString() {
+		$object = new \stdClass();
+		$this->mockPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($object)->will($this->returnValue(array('foo', 'bar')));
+		$this->assertFalse($this->dynamicRoutPart->_call('resolveValue', $object));
 	}
 
 	/**
@@ -351,15 +368,14 @@ class DynamicRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function routePartValueIsNullAfterUnsuccessfulResolve() {
-		$routePart = new \TYPO3\FLOW3\MVC\Web\Routing\DynamicRoutePart();
-		$routePart->setName('foo');
+		$this->dynamicRoutPart->setName('foo');
 		$routeValues = array('foo' => 'bar');
 
-		$this->assertTrue($routePart->resolve($routeValues));
+		$this->assertTrue($this->dynamicRoutPart->resolve($routeValues));
 
 		$routeValues = array();
-		$this->assertFalse($routePart->resolve($routeValues));
-		$this->assertNull($routePart->getValue(), 'Dynamic Route Part value should be NULL when call to resolve() was not successful.');
+		$this->assertFalse($this->dynamicRoutPart->resolve($routeValues));
+		$this->assertNull($this->dynamicRoutPart->getValue(), 'Dynamic Route Part value should be NULL when call to resolve() was not successful.');
 	}
 
 }

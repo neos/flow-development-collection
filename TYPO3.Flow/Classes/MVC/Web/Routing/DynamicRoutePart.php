@@ -30,6 +30,12 @@ namespace TYPO3\FLOW3\MVC\Web\Routing;
 class DynamicRoutePart extends \TYPO3\FLOW3\MVC\Web\Routing\AbstractRoutePart implements \TYPO3\FLOW3\MVC\Web\Routing\DynamicRoutePartInterface {
 
 	/**
+	 * @var \TYPO3\FLOW3\Persistence\PersistenceManagerInterface
+	 * @inject
+	 */
+	protected $persistenceManager;
+
+	/**
 	 * The split string represents the end of a Dynamic Route Part.
 	 * If it is empty, Route Part will be equal to the remaining request path.
 	 *
@@ -180,8 +186,14 @@ class DynamicRoutePart extends \TYPO3\FLOW3\MVC\Web\Routing\AbstractRoutePart im
 	 * @api
 	 */
 	protected function resolveValue($value) {
-		if ($value === NULL || is_object($value)) {
+		if ($value === NULL) {
 			return FALSE;
+		}
+		if (is_object($value)) {
+			$value = $this->persistenceManager->getIdentifierByObject($value);
+			if ($value === NULL || !is_string($value)) {
+				return FALSE;
+			}
 		}
 		$this->value = (string)$value;
 		if ($this->lowerCase) {
