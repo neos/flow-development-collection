@@ -206,7 +206,7 @@ class ProxyClassBuilder {
 		$rebuildEverything = FALSE;
 		if ($this->objectConfigurationCache->has('allAspectClassesUpToDate') === FALSE) {
 			$rebuildEverything = TRUE;
-			$this->systemLogger->log(sprintf('Aspects have been modified, therefore rebuilding all target classes.'), LOG_INFO);
+			$this->systemLogger->log('Aspects have been modified, therefore rebuilding all target classes.', LOG_INFO);
 			$tags = array_map(function ($aspectClassName) { return \TYPO3\FLOW3\Cache\CacheManager::getClassTag($aspectClassName); }, $actualAspectClassNames);
 			$this->objectConfigurationCache->set('allAspectClassesUpToDate', TRUE, $tags);
 		}
@@ -435,10 +435,14 @@ class ProxyClassBuilder {
 			$proxyClass->addProperty($propertyIntroduction->getPropertyName(), 'NULL', $propertyIntroduction->getPropertyVisibility(), $propertyIntroduction->getPropertyDocComment());
 		}
 
+		$proxyClass->getMethod('FLOW3_AOP_Proxy_buildMethodsAndAdvicesArray')->addPreParentCallCode("\t\tif (is_callable('parent::FLOW3_AOP_Proxy_buildMethodsAndAdvicesArray')) parent::FLOW3_AOP_Proxy_buildMethodsAndAdvicesArray();\n");
 		$proxyClass->getMethod('FLOW3_AOP_Proxy_buildMethodsAndAdvicesArray')->addPreParentCallCode($this->buildMethodsAndAdvicesArrayCode($interceptedMethods));
-		$proxyClass->getMethod('FLOW3_AOP_Proxy_buildMethodsAndAdvicesArray')->overrideMethodVisibility('private');
-		$proxyClass->getConstructor()->addPreParentCallCode("\n\t\t\t\$this->FLOW3_AOP_Proxy_buildMethodsAndAdvicesArray();\n");
-		$proxyClass->getMethod('__wakeup')->addPreParentCallCode("\t\t\$this->FLOW3_AOP_Proxy_buildMethodsAndAdvicesArray();\n");
+		$proxyClass->getMethod('FLOW3_AOP_Proxy_buildMethodsAndAdvicesArray')->overrideMethodVisibility('protected');
+
+		$callBuildMethodsAndAdvicesArrayCode = "\n\t\t\$this->FLOW3_AOP_Proxy_buildMethodsAndAdvicesArray();\n";
+		$proxyClass->getConstructor()->addPreParentCallCode($callBuildMethodsAndAdvicesArrayCode);
+		$proxyClass->getMethod('__wakeup')->addPreParentCallCode($callBuildMethodsAndAdvicesArrayCode);
+
 		if (!$this->reflectionService->hasMethod($targetClassName, '__wakeup')) {
 			$proxyClass->getMethod('__wakeup')->addPostParentCallCode("\t\tif (is_callable('parent::__wakeup')) parent::__wakeup();\n");
 		}
@@ -450,6 +454,7 @@ class ProxyClassBuilder {
 		$proxyClass->addProperty('FLOW3_AOP_Proxy_targetMethodsAndGroupedAdvices', 'array()');
 		$proxyClass->addProperty('FLOW3_AOP_Proxy_groupedAdviceChains', 'array()');
 		$proxyClass->addProperty('FLOW3_AOP_Proxy_methodIsInAdviceMode', 'array()');
+
 		return TRUE;
 	}
 
@@ -687,17 +692,15 @@ class ProxyClassBuilder {
 		$proxyMethod->overrideMethodVisibility('private');
 
 		$code = <<<'EOT'
-		$adviceChains = NULL;
-		if (is_array($this->FLOW3_AOP_Proxy_groupedAdviceChains)) {
-			if (isset($this->FLOW3_AOP_Proxy_groupedAdviceChains[$methodName])) {
-				$adviceChains = $this->FLOW3_AOP_Proxy_groupedAdviceChains[$methodName];
-			} else {
-				if (isset($this->FLOW3_AOP_Proxy_targetMethodsAndGroupedAdvices[$methodName])) {
-					$groupedAdvices = $this->FLOW3_AOP_Proxy_targetMethodsAndGroupedAdvices[$methodName];
-					if (isset($groupedAdvices['TYPO3\FLOW3\AOP\Advice\AroundAdvice'])) {
-						$this->FLOW3_AOP_Proxy_groupedAdviceChains[$methodName]['TYPO3\FLOW3\AOP\Advice\AroundAdvice'] = new \TYPO3\FLOW3\AOP\Advice\AdviceChain($groupedAdvices['TYPO3\FLOW3\AOP\Advice\AroundAdvice'], $this);
-						$adviceChains = $this->FLOW3_AOP_Proxy_groupedAdviceChains[$methodName];
-					}
+		$adviceChains = array();
+		if (isset($this->FLOW3_AOP_Proxy_groupedAdviceChains[$methodName])) {
+			$adviceChains = $this->FLOW3_AOP_Proxy_groupedAdviceChains[$methodName];
+		} else {
+			if (isset($this->FLOW3_AOP_Proxy_targetMethodsAndGroupedAdvices[$methodName])) {
+				$groupedAdvices = $this->FLOW3_AOP_Proxy_targetMethodsAndGroupedAdvices[$methodName];
+				if (isset($groupedAdvices['TYPO3\FLOW3\AOP\Advice\AroundAdvice'])) {
+					$this->FLOW3_AOP_Proxy_groupedAdviceChains[$methodName]['TYPO3\FLOW3\AOP\Advice\AroundAdvice'] = new \TYPO3\FLOW3\AOP\Advice\AdviceChain($groupedAdvices['TYPO3\FLOW3\AOP\Advice\AroundAdvice'], $this);
+					$adviceChains = $this->FLOW3_AOP_Proxy_groupedAdviceChains[$methodName];
 				}
 			}
 		}

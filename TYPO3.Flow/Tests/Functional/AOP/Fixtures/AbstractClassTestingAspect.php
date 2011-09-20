@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\FLOW3\Tests\Functional\AOP;
+namespace TYPO3\FLOW3\Tests\Functional\AOP\Fixtures;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -22,45 +22,30 @@ namespace TYPO3\FLOW3\Tests\Functional\AOP;
  *                                                                        */
 
 /**
- * Test suite for aop proxy classes
+ * An aspect for testing functionality related to abstract classes
  *
+ * @aspect
  */
-class AopProxyTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
+class AbstractClassTestingAspect {
 
 	/**
-	 * @test
+	 * @around method(public TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\SubClassOfAbstractClass->abstractMethod())
+	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint
+	 * @return void
 	 */
-	public function advicesAreExecutedAgainIfAnOverriddenMethodCallsItsParentMethod() {
-		$targetClass = new Fixtures\ChildClassOfTargetClass01();
-		$this->assertEquals('Greetings, I just wanted to say: Hello World World', $targetClass->sayHello());
+	public function abstractMethodInSubClassAdvice(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+		$result = $joinPoint->getAdviceChain()->proceed($joinPoint);
+		return $result . ' adviced';
 	}
 
 	/**
-	 * @test
+	 * @around method(public TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\AbstractClass->concreteMethod())
+	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint
+	 * @return void
 	 */
-	public function anAdvicedParentMethodIsCalledCorrectlyIfANonAdvicedOverridingMethodCallsIt() {
-		$targetClass = new Fixtures\ChildClassOfTargetClass01();
-		$this->assertEquals('Two plus two makes five! For big twos and small fives! That was smart, eh?', $targetClass->saySomethingSmart());
+	public function concreteMethodInAbstractClassAdvice(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+		$result = $joinPoint->getAdviceChain()->proceed($joinPoint);
+		return $result . ' adviced';
 	}
-
-	/**
-	 * @test
-	 */
-	public function methodArgumentsWithValueNullArePassedToTheProxiedMethod() {
-		$proxiedClass = new Fixtures\EntityWithOptionalConstructorArguments('argument1', NULL, 'argument3');
-
-		$this->assertEquals('argument1', $proxiedClass->argument1);
-		$this->assertNull($proxiedClass->argument2);
-		$this->assertEquals('argument3', $proxiedClass->argument3);
-	}
-
-	/**
-	 * @test
-	 */
-	public function advicesOfAConcreteMethodInAnAbstractClassAreActiveInTheSubClassIfTheConcreteMethodWasNotOverriden() {
-		$proxiedClass = new Fixtures\SubClassOfAbstractClass();
-		$this->assertEquals('foo: bar adviced', $proxiedClass->concreteMethod('bar'));
-	}
-
 }
 ?>
