@@ -33,14 +33,31 @@ class ActionControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	protected $mockArguments;
 
+	/**
+	 * @var \TYPO3\FLOW3\MVC\Web\Request
+	 */
 	protected $mockRequest;
+
+	/**
+	 * @var \TYPO3\FLOW3\MVC\Web\Response
+	 */
 	protected $mockResponse;
+
+	/**
+	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
+	 */
+	protected $mockReflectionService;
+
+	/**
+	 * @var \TYPO3\FLOW3\MVC\Controller\FlashMessageContainer
+	 */
 	protected $mockFlashMessageContainer;
 
 	public function setUp() {
 		$this->mockArguments = $this->getMock('TYPO3\FLOW3\MVC\Controller\Arguments', array('getValidationResults'), array(), '', FALSE);
 		$this->mockRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
 		$this->mockResponse = $this->getMock('TYPO3\FLOW3\MVC\Web\Response', array(), array(), '', FALSE);
+		$this->mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService', array(), array(), '', FALSE);
 		$this->mockFlashMessageContainer = $this->getMock('TYPO3\FLOW3\MVC\Controller\FlashMessageContainer', array(), array(), '', FALSE);
 	}
 
@@ -84,6 +101,7 @@ class ActionControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$mockController->_set('request', $this->mockRequest);
 		$mockController->_set('response', $this->mockResponse);
 		$mockController->_set('arguments', $this->mockArguments);
+		$mockController->injectReflectionService($this->mockReflectionService);
 		$mockController->_set('flashMessageContainer', $this->mockFlashMessageContainer);
 		$mockController->_set('actionMethodName', 'fooAction');
 	}
@@ -139,6 +157,27 @@ class ActionControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$mockController->expects($this->once())->method('barAction')->will($this->returnValue('the returned string from error action'));
 		$this->injectDependenciesIntoController($mockController);
 		$mockController->_set('errorMethodName', 'barAction');
+		$mockController->_call('callActionMethod');
+	}
+
+	/**
+	 * @test
+	 */
+	public function callActionMethodIgnoresArgumentsWithErrorsIfIgnoreValidationsIsUsed() {
+		$this->mockResponse->expects($this->once())->method('appendContent')->with('the returned string from the action');
+
+		$result = new \TYPO3\FLOW3\Error\Result();
+		$result->forProperty('invalidArgument')->addError(new \TYPO3\FLOW3\Error\Error('asdf', 1));
+		$this->mockArguments->expects($this->once())->method('getValidationResults')->will($this->returnValue($result));
+
+		$mockController = $this->getAccessibleMock('TYPO3\FLOW3\MVC\Controller\ActionController', array('errorAction', 'fooAction', 'initializeAction'), array(), '', FALSE);
+		$mockController->expects($this->never())->method('errorAction');
+		$mockController->expects($this->once())->method('fooAction')->will($this->returnValue('the returned string from the action'));
+
+		$this->mockReflectionService->expects($this->atLeastOnce())->method('getMethodTagsValues')->with(get_class($mockController), 'fooAction')->will($this->returnValue(array('ignorevalidation' => array('$invalidArgument'))));
+
+		$this->injectDependenciesIntoController($mockController);
+		$mockController->_set('errorMethodName', 'errorAction');
 		$mockController->_call('callActionMethod');
 	}
 
