@@ -164,6 +164,10 @@ class Debugger {
 		$scope = '';
 		$additionalAttributes = '';
 
+		if (preg_match(self::$blacklistedClassNames, get_class($object)) !== 0) {
+			$renderProperties = FALSE;
+		}
+
 		if (self::$objectManager !== NULL) {
 			$objectName = self::$objectManager->getObjectNameByClassName(get_class($object));
 			if ($objectName !== FALSE) {
