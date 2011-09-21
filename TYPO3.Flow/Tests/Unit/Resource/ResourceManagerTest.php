@@ -167,9 +167,11 @@ class ResourceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	}
 
 	/**
+	 * Note: this test triggers a warning from chmod about a file not existing.
+	 * This is a limitation of chmod() which does not work with stream wrappers.
+	 *
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
-	 *
 	 */
 	public function importResourceImportsTheGivenFileAndReturnsAResourceObject() {
 		$resourceManager = $this->setupResourceManager();
@@ -183,6 +185,9 @@ class ResourceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	}
 
 	/**
+	 * Note: this test triggers a warning from chmod about a file not existing.
+	 * This is a limitation of chmod() which does not work with stream wrappers.
+	 *
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -207,6 +212,9 @@ class ResourceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	}
 
 	/**
+	 * Note: this test triggers a warning from chmod about a file not existing.
+	 * This is a limitation of chmod() which does not work with stream wrappers.
+	 *
 	 * @test
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
