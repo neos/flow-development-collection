@@ -158,6 +158,9 @@ class DynamicRoutePart extends \TYPO3\FLOW3\MVC\Web\Routing\AbstractRoutePart im
 		if (!$this->resolveValue($valueToResolve)) {
 			return FALSE;
 		}
+		if ($this->lowerCase) {
+			$this->value = strtolower($this->value);
+		}
 		$routeValues = \TYPO3\FLOW3\Utility\Arrays::unsetValueByPath($routeValues, $this->name);
 		return TRUE;
 	}

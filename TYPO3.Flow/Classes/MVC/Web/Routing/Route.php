@@ -59,7 +59,7 @@ class Route {
 	 *
 	 * @var boolean
 	 */
-	protected $lowerCase = FALSE;
+	protected $lowerCase = TRUE;
 
 	/**
 	 * Contains the routing results (indexed by "package", "controller" and
@@ -543,9 +543,7 @@ class Route {
 			}
 			$routePart->setName($routePartName);
 			$routePart->setOptional($currentRoutePartIsOptional);
-			if ($this->lowerCase) {
-				$routePart->setLowerCase(TRUE);
-			}
+			$routePart->setLowerCase($this->lowerCase);
 			if (isset($this->routePartsConfiguration[$routePartName]['options'])) {
 				$routePart->setOptions($this->routePartsConfiguration[$routePartName]['options']);
 			}

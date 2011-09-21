@@ -60,7 +60,7 @@ abstract class AbstractRoutePart implements \TYPO3\FLOW3\MVC\Web\Routing\RoutePa
 	 *
 	 * @var boolean
 	 */
-	protected $lowerCase = FALSE;
+	protected $lowerCase = TRUE;
 
 	/**
 	 * Contains options for this Route Part.
