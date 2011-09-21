@@ -482,7 +482,10 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Persistence\Generic\Backe
 		if ($previousValue !== NULL && is_array($previousValue) && isset($previousValue['value']['identifier'])
 			&& $this->reflectionService->getClassSchema($propertyMetaData['type'])->getModelType() === \TYPO3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY
 			&& $this->reflectionService->getClassSchema($propertyMetaData['type'])->isAggregateRoot() === FALSE) {
-			$this->removeEntity($this->persistenceSession->getObjectByIdentifier($previousValue['value']['identifier']));
+			$object = $this->persistenceSession->getObjectByIdentifier($previousValue['value']['identifier']);
+			if (!$this->visitedDuringPersistence->contains($object)) {
+				$this->removeEntity($object);
+			}
 		}
 	}
 
