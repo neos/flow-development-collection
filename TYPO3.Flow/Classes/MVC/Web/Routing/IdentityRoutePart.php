@@ -286,9 +286,6 @@ class IdentityRoutePart extends \TYPO3\FLOW3\MVC\Web\Routing\DynamicRoutePart {
 		$value = preg_replace('/\\' . $spaceCharacter . '{2,}/', $spaceCharacter, $value);
 		$value = trim($value, $spaceCharacter);
 
-		if ($this->lowerCase) {
-			$value = strtolower($value);
-		}
 		return $value;
 	}
 

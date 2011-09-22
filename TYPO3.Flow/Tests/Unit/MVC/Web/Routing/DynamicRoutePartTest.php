@@ -261,25 +261,25 @@ class DynamicRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function dynamicRoutePartDoesNotAlterCaseOfValueWhenCallingResolveByDefault() {
+	public function dynamicRoutePartLowerCasesValueWhenCallingResolveByDefault() {
 		$this->dynamicRoutPart->setName('Foo');
 		$routeValues = array('Foo' => 'Bar');
 
 		$this->assertTrue($this->dynamicRoutPart->resolve($routeValues));
-		$this->assertEquals('Bar', $this->dynamicRoutPart->getValue(), 'By default Dynamic Route Part should not alter the case of route values.');
+		$this->assertEquals('bar', $this->dynamicRoutPart->getValue(), 'By default Dynamic Route Part should lowercase route values.');
 	}
 
 	/**
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function dynamicRoutePartLowerCasesValueIfLowerCaseIsTrue() {
+	public function dynamicRoutePartDoesNotChangeCaseOfValueIfLowerCaseIsFale() {
 		$this->dynamicRoutPart->setName('Foo');
-		$this->dynamicRoutPart->setLowerCase(TRUE);
+		$this->dynamicRoutPart->setLowerCase(FALSE);
 		$routeValues = array('Foo' => 'Bar');
 
 		$this->assertTrue($this->dynamicRoutPart->resolve($routeValues));
-		$this->assertEquals('bar', $this->dynamicRoutPart->getValue(), 'Dynamic Route Part should lowercase the value if lowerCase is true.');
+		$this->assertEquals('Bar', $this->dynamicRoutPart->getValue(), 'Dynamic Route Part should not change the case of the value if lowerCase is false.');
 	}
 
 	/**
@@ -333,12 +333,25 @@ class DynamicRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function resolveValueReturnsTrueAndSetTheValueToTheIdentifierIfTheValueToBeResolvedIsAnObject() {
+	public function resolveValueReturnsTrueAndSetTheValueToTheLowerCasedIdentifierIfTheValueToBeResolvedIsAnObject() {
 		$object = new \stdClass();
 		$this->mockPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($object)->will($this->returnValue('TheIdentifier'));
 		$this->assertTrue($this->dynamicRoutPart->_call('resolveValue', $object));
+		$this->assertSame('theidentifier', $this->dynamicRoutPart->getValue());
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function resolveValueReturnsTrueAndSetTheValueToTheCorrectylCasedIdentifierIfTheValueToBeResolvedIsAnObjectAndLowerCaseIsFalse() {
+		$object = new \stdClass();
+		$this->mockPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($object)->will($this->returnValue('TheIdentifier'));
+		$this->dynamicRoutPart->setLowerCase(FALSE);
+		$this->assertTrue($this->dynamicRoutPart->_call('resolveValue', $object));
 		$this->assertSame('TheIdentifier', $this->dynamicRoutPart->getValue());
 	}
+
 
 	/**
 	 * Objects that are unknown to the persistence manager cannot be resolved by the standard DynamicRoutePart handler.

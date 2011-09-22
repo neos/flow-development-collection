@@ -346,7 +346,7 @@ class IdentityRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			array($object, '{property2}', 'Property2Vaeluee'),
 			array($object, '{property1}{property2}', 'Property1ValueProperty2Vaeluee'),
 			array($object, '{property1}/static{property2}', 'Property1Value/staticProperty2Vaeluee'),
-			array($object, 'stätic1/static2{property2}static3{property1}static4', 'stätic1/static2Property2Vaelueestatic3Property1Valuestatic4'),
+			array($object, 'stäticValüe1/staticValue2{property2}staticValue3{property1}staticValue4', 'stäticValüe1/staticValue2Property2VaelueestaticValue3Property1ValuestaticValue4'),
 			array($object, '{nonExistingProperty}', ''),
 			array($object, '{dateProperty}', '1980-12-13'),
 			array($object, '{dateProperty:y}', '80'),

@@ -801,7 +801,7 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$this->routeValues = array('baz' => 'bazValue');
 
 		$this->route->resolves($this->routeValues);
-		$expectedResult = 'foo/barDefaultValue/bazValue';
+		$expectedResult = 'foo/barDefaultValue/bazvalue';
 		$actualResult = $this->route->getMatchingUri();
 		$this->assertSame($expectedResult, $actualResult);
 	}
@@ -810,25 +810,25 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function resolvesDoesNotAlterTheCaseOfMatchingUriByDefault() {
+	public function resolvesLowerCasesMatchingUriByDefault() {
 		$this->route->setUriPattern('CamelCase/{someKey}');
 		$this->routeValues = array('someKey' => 'CamelCase');
 
 		$this->assertTrue($this->route->resolves($this->routeValues));
-		$this->assertEquals('CamelCase/CamelCase', $this->route->getMatchingUri());
+		$this->assertEquals('camelcase/camelcase', $this->route->getMatchingUri());
 	}
 
 	/**
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function resolvesLowerCasesMatchingUriIfToLowerCaseIsSet() {
+	public function resolvesKeepsCaseOfResolvedUriIfToLowerCaseIsFalse() {
 		$this->route->setUriPattern('CamelCase/{someKey}');
-		$this->route->setLowerCase(TRUE);
+		$this->route->setLowerCase(FALSE);
 		$this->routeValues = array('someKey' => 'CamelCase');
 
 		$this->assertTrue($this->route->resolves($this->routeValues));
-		$this->assertEquals('camelcase/camelcase', $this->route->getMatchingUri());
+		$this->assertEquals('CamelCase/CamelCase', $this->route->getMatchingUri());
 	}
 
 	/**
