@@ -216,5 +216,17 @@ class ArgumentsTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$arguments->addArgument($argument2);
 		$this->assertSame(array('name1' => array($error1), 'name2' => array($error2)), $arguments->getValidationResults()->getFlattenedErrors());
 	}
+
+	/**
+	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function addingAnArgumentUsesStringAsDataTypeDefault() {
+		$arguments = new Arguments();
+		$argument = $arguments->addNewArgument('someArgumentName');
+
+		$this->assertEquals('string', $argument->getDataType());
+	}
+
 }
 ?>

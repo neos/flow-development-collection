@@ -118,7 +118,7 @@ class Arguments extends \ArrayObject {
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
-	public function addNewArgument($name, $dataType = 'Text', $isRequired = TRUE, $defaultValue = NULL) {
+	public function addNewArgument($name, $dataType = 'string', $isRequired = TRUE, $defaultValue = NULL) {
 		$argument = new Argument($name, $dataType);
 		$argument->setRequired($isRequired);
 		$argument->setDefaultValue($defaultValue);
