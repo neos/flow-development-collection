@@ -137,7 +137,12 @@ class ObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTypeCo
 				return $methodParameter['type'];
 			}
 		} else {
-			throw new \TYPO3\FLOW3\Property\Exception\InvalidTargetException('Property "' . $propertyName . '" had no setter in target object of type "' . $targetType . '".', 1303379126);
+			$methodParameters = $this->reflectionService->getMethodParameters($targetType, '__construct');
+			if (isset($methodParameters[$propertyName]) && isset($methodParameters[$propertyName]['type'])) {
+				return $methodParameters[$propertyName]['type'];
+			} else {
+				throw new \TYPO3\FLOW3\Property\Exception\InvalidTargetException('Property "' . $propertyName . '" had no setter or constructor argument in target object of type "' . $targetType . '".', 1303379126);
+			}
 		}
 	}
 
