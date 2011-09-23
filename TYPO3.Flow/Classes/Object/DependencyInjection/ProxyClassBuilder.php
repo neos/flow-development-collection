@@ -183,12 +183,12 @@ class ProxyClassBuilder {
 			return '';
 		}
 
-		$code = '		\TYPO3\FLOW3\Core\Bootstrap::$staticObjectManager->setInstance(\'' . $objectConfiguration->getObjectName() . '\', $this);' . "\n";
+		$code = '		if (get_class($this) === \'' . $objectConfiguration->getClassName() . '\') \TYPO3\FLOW3\Core\Bootstrap::$staticObjectManager->setInstance(\'' . $objectConfiguration->getObjectName() . '\', $this);' . "\n";
 
 		$className = $objectConfiguration->getClassName();
 		foreach ($this->objectConfigurations as $otherObjectConfiguration) {
 			if	 ($otherObjectConfiguration !== $objectConfiguration && $otherObjectConfiguration->getClassName() === $className) {
-				$code .= '		\TYPO3\FLOW3\Core\Bootstrap::$staticObjectManager->setInstance(\'' . $otherObjectConfiguration->getObjectName() . '\', $this);' . "\n";
+				$code .= '		if (get_class($this) === \'' . $otherObjectConfiguration->getClassName() . '\') \TYPO3\FLOW3\Core\Bootstrap::$staticObjectManager->setInstance(\'' . $otherObjectConfiguration->getObjectName() . '\', $this);' . "\n";
 			}
 		}
 
