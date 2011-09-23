@@ -42,6 +42,12 @@ class GeneratorService {
 	protected $inflector;
 
 	/**
+	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
+	 * @inject
+	 */
+	protected $reflectionService;
+
+	/**
 	 * @var array
 	 */
 	protected $generatedFiles = array();
@@ -177,7 +183,19 @@ class GeneratorService {
 		$contextVariables['repositoryClassName'] = '\\' . str_replace('.', '\\', $packageKey) . ($subpackage != '' ? '\\' . $subpackage : '') . '\Domain\Repository\\' . $controllerName . 'Repository';
 		$contextVariables['modelFullClassName'] = '\\' . str_replace('.', '\\', $packageKey) . ($subpackage != '' ? '\\' . $subpackage : '') . '\Domain\Model\\' . $controllerName;
 		$contextVariables['modelClassName'] = ucfirst($contextVariables['modelName']);
-		$contextVariables['propertyNames'] = array('name');
+
+		$modelClassSchema = $this->reflectionService->getClassSchema($contextVariables['modelFullClassName']);
+		if ($modelClassSchema !== NULL) {
+			$contextVariables['propertyNames'] = array_keys($modelClassSchema->getProperties());
+			$i = array_search('FLOW3_Persistence_Identifier', $contextVariables['propertyNames']);
+			if ($i !== FALSE) {
+				unset($contextVariables['propertyNames'][$i]);
+			}
+		}
+
+		if (!isset($contextVariables['propertyNames'])) {
+			$contextVariables['propertyNames'] = array('name');
+		}
 
 		$fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
 
