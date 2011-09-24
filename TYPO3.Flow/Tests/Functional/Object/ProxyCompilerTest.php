@@ -51,5 +51,22 @@ class ProxyCompilerTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$singletonB = $this->objectManager->get('TYPO3\FLOW3\Tests\Functional\Object\Fixtures\SingletonClassB');
 		$this->assertNotInstanceOf('TYPO3\FLOW3\Object\Proxy\ProxyInterface', $singletonB);
 	}
+
+	/**
+	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function setInstanceOfSubClassDoesNotOverrideParentClass() {
+		$singletonE = $this->objectManager->get('TYPO3\FLOW3\Tests\Functional\Object\Fixtures\SingletonClassE');
+		$this->assertEquals('TYPO3\FLOW3\Tests\Functional\Object\Fixtures\SingletonClassE', get_class($singletonE));
+
+		$singletonEsub = $this->objectManager->get('TYPO3\FLOW3\Tests\Functional\Object\Fixtures\SingletonClassEsub');
+		$this->assertEquals('TYPO3\FLOW3\Tests\Functional\Object\Fixtures\SingletonClassEsub', get_class($singletonEsub));
+
+		$singletonE2 = $this->objectManager->get('TYPO3\FLOW3\Tests\Functional\Object\Fixtures\SingletonClassE');
+		$this->assertEquals('TYPO3\FLOW3\Tests\Functional\Object\Fixtures\SingletonClassE', get_class($singletonE2));
+		$this->assertSame($singletonE, $singletonE2);
+	}
+
 }
 ?>
