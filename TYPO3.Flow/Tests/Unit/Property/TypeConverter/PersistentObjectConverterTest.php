@@ -25,7 +25,7 @@ require_once (__DIR__ . '/../../Fixtures/ClassWithSetters.php');
 require_once (__DIR__ . '/../../Fixtures/ClassWithSettersAndConstructor.php');
 
 /**
- * Testcase for the String to String converter
+ * Testcase for the PersistentObjectConverter
  *
  * @covers \TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter<extended>
  */
@@ -80,14 +80,6 @@ class PersistentObjectConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$this->mockReflectionService->expects($this->at(1))->method('isClassTaggedWith')->with('TheTargetType', 'entity')->will($this->returnValue($isEntity));
 
 		$this->assertEquals($expected, $this->converter->canConvertFrom('myInputData', 'TheTargetType'));
-	}
-
-	/**
-	 * test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 */
-	public function getPropertyNamesReturnsEmptyArray() {
-		$this->assertEquals(array(), $this->converter->getPropertyNames('myString'));
 	}
 
 	/**
@@ -274,7 +266,7 @@ class PersistentObjectConverterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$source = array(
 			'__identity' => array('key1' => 'value1', 'key2' => 'value2')
 		);
-		$actual = $this->converter->convertFrom($source, 'SomeType');
+		$this->converter->convertFrom($source, 'SomeType');
 	}
 
 	/**
