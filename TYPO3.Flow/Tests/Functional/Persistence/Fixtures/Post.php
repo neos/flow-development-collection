@@ -32,13 +32,27 @@ class Post {
 	protected $image;
 
 	/**
+	 * @var \TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\Image
+	 * @OneToOne
+	 */
+	protected $thumbnail;
+
+	/**
 	 * Yeah, only one comment allowed for a post ;-)
 	 * But that's the easiest option for our functional test.
 	 *
 	 * @var \TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\Comment
 	 * @OneToOne
+	 * @JoinColumn(onDelete="SET NULL")
 	 */
 	protected $comment;
+
+	/**
+	 * @var \Doctrine\Common\Collections\Collection<\TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\Post>
+	 * @ManyToMany
+	 * @JoinTable(inverseJoinColumns={@joinColumn(name="related_post_id")})
+	 */
+	protected $related;
 
 	/**
 	 * @return string

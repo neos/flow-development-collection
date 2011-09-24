@@ -285,13 +285,8 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 	protected function buildJoinColumnsIfNeeded(array $joinColumns, array $mapping, \ReflectionProperty $property, $direction = self::MAPPING_REGULAR) {
 		if ($joinColumns === array()) {
 			$joinColumns[] = array(
-				'name' => NULL,
+				'name' => strtolower($property->getName()),
 				'referencedColumnName' => NULL,
-				'unique' => FALSE,
-				'nullable' => TRUE,
-				'onDelete' => NULL,
-				'onUpdate' => NULL,
-				'columnDefinition' => NULL,
 			);
 		}
 		foreach ($joinColumns as &$joinColumn) {
@@ -344,31 +339,7 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 			$mapping['columnName'] = strtolower($property->getName());
 			$mapping['targetEntity'] = $propertyMetaData['type'];
 
-				// Check for JoinColummn/JoinColumns annotations
-			$joinColumns = array();
-			if ($joinColumnAnnotation = $this->reader->getPropertyAnnotation($property, 'Doctrine\ORM\Mapping\JoinColumn')) {
-				$joinColumns[] = array(
-					'name' => $joinColumnAnnotation->name,
-					'referencedColumnName' => $joinColumnAnnotation->referencedColumnName,
-					'unique' => $joinColumnAnnotation->unique,
-					'nullable' => $joinColumnAnnotation->nullable,
-					'onDelete' => $joinColumnAnnotation->onDelete,
-					'onUpdate' => $joinColumnAnnotation->onUpdate,
-					'columnDefinition' => $joinColumnAnnotation->columnDefinition,
-				);
-			} else if ($joinColumnsAnnotation = $this->reader->getPropertyAnnotation($property, 'Doctrine\ORM\Mapping\JoinColumns')) {
-				foreach ($joinColumnsAnnotation->value as $joinColumn) {
-					$joinColumns[] = array(
-						'name' => $joinColumn->name,
-						'referencedColumnName' => $joinColumn->referencedColumnName,
-						'unique' => $joinColumn->unique,
-						'nullable' => $joinColumn->nullable,
-						'onDelete' => $joinColumn->onDelete,
-						'onUpdate' => $joinColumn->onUpdate,
-						'columnDefinition' => $joinColumn->columnDefinition,
-					);
-				}
-			}
+			$joinColumns = $this->evaluateJoinColumnAnnotations($property);
 
 				// Field can only be annotated with one of:
 				// @OneToOne, @OneToMany, @ManyToOne, @ManyToMany, @Column (optional)
@@ -435,52 +406,19 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 					$mapping['targetEntity'] = $propertyMetaData['elementType'];
 				}
 				if ($joinTableAnnotation = $this->reader->getPropertyAnnotation($property, 'Doctrine\ORM\Mapping\JoinTable')) {
-					$joinTable = array(
-						'name' => $joinTableAnnotation->name,
-						'schema' => $joinTableAnnotation->schema
-					);
-					if ($joinTable['name'] === NULL) {
-						$joinTable['name'] = $this->inferJoinTableNameFromClassAndPropertyName($className, $property->getName());
-					}
-
-					foreach ($joinTableAnnotation->joinColumns as $joinColumn) {
-						$joinTable['joinColumns'][] = array(
-							'name' => $joinColumn->name,
-							'referencedColumnName' => $joinColumn->referencedColumnName,
-							'unique' => $joinColumn->unique,
-							'nullable' => $joinColumn->nullable,
-							'onDelete' => $joinColumn->onDelete,
-							'onUpdate' => $joinColumn->onUpdate,
-							'columnDefinition' => $joinColumn->columnDefinition,
-						);
-					}
-					if (array_key_exists('joinColumns', $joinTable)) {
-						$joinTable['joinColumns'] = $this->buildJoinColumnsIfNeeded($joinTable['joinColumns'], $mapping, $property);
-					} else {
-						$joinTable['joinColumns'] = $this->buildJoinColumnsIfNeeded(array(), $mapping, $property);
-					}
-
-					foreach ($joinTableAnnotation->inverseJoinColumns as $joinColumn) {
-						$joinTable['inverseJoinColumns'][] = array(
-							'name' => $joinColumn->name,
-							'referencedColumnName' => $joinColumn->referencedColumnName,
-							'unique' => $joinColumn->unique,
-							'nullable' => $joinColumn->nullable,
-							'onDelete' => $joinColumn->onDelete,
-							'onUpdate' => $joinColumn->onUpdate,
-							'columnDefinition' => $joinColumn->columnDefinition,
-						);
-					}
-					if (array_key_exists('inverseJoinColumns', $joinTable)) {
-						$joinTable['inverseJoinColumns'] = $this->buildJoinColumnsIfNeeded($joinTable['inverseJoinColumns'], $mapping, $property, self::MAPPING_INVERSE);
-					} else {
-						$joinTable['inverseJoinColumns'] = $this->buildJoinColumnsIfNeeded(array(), $mapping, $property, self::MAPPING_INVERSE);
-					}
+					$joinTable = $this->evaluateJoinTableAnnotation($joinTableAnnotation, $property, $className, $mapping);
 				} else {
+					$joinColumns = array(
+						array(
+							'name' => NULL,
+							'referencedColumnName' => NULL,
+						)
+					);
+
 					$joinTable = array(
 						'name' => $this->inferJoinTableNameFromClassAndPropertyName($className, $property->getName()),
-						'joinColumns' => $this->buildJoinColumnsIfNeeded(array(), $mapping, $property, self::MAPPING_INVERSE),
-						'inverseJoinColumns' => $this->buildJoinColumnsIfNeeded(array(), $mapping, $property)
+						'joinColumns' => $this->buildJoinColumnsIfNeeded($joinColumns, $mapping, $property, self::MAPPING_INVERSE),
+						'inverseJoinColumns' => $this->buildJoinColumnsIfNeeded($joinColumns, $mapping, $property)
 					);
 				}
 
@@ -577,6 +515,111 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 			}
 
 		}
+	}
+
+	/**
+	 * Evaluate JoinTable annotations and fill missing bits as needed.
+	 *
+	 * @param \Doctrine\ORM\Mapping\JoinTable $joinTableAnnotation
+	 * @param \ReflectionProperty $property
+	 * @param string $className
+	 * @param array $mapping
+	 * @return array
+	 */
+	protected function evaluateJoinTableAnnotation(\Doctrine\ORM\Mapping\JoinTable $joinTableAnnotation, \ReflectionProperty $property, $className, array $mapping) {
+		$joinTable = array(
+			'name' => $joinTableAnnotation->name,
+			'schema' => $joinTableAnnotation->schema
+		);
+		if ($joinTable['name'] === NULL) {
+			$joinTable['name'] = $this->inferJoinTableNameFromClassAndPropertyName($className, $property->getName());
+		}
+
+		foreach ($joinTableAnnotation->joinColumns as $joinColumn) {
+			$joinTable['joinColumns'][] = array(
+				'name' => $joinColumn->name,
+				'referencedColumnName' => $joinColumn->referencedColumnName,
+				'unique' => $joinColumn->unique,
+				'nullable' => $joinColumn->nullable,
+				'onDelete' => $joinColumn->onDelete,
+				'onUpdate' => $joinColumn->onUpdate,
+				'columnDefinition' => $joinColumn->columnDefinition,
+			);
+		}
+		if (array_key_exists('joinColumns', $joinTable)) {
+			$joinTable['joinColumns'] = $this->buildJoinColumnsIfNeeded($joinTable['joinColumns'], $mapping, $property);
+		} else {
+			$joinColumns = array(
+				array(
+					'name' => NULL,
+					'referencedColumnName' => NULL,
+				)
+			);
+			$joinTable['joinColumns'] = $this->buildJoinColumnsIfNeeded($joinColumns, $mapping, $property);
+		}
+
+		foreach ($joinTableAnnotation->inverseJoinColumns as $joinColumn) {
+			$joinTable['inverseJoinColumns'][] = array(
+				'name' => $joinColumn->name,
+				'referencedColumnName' => $joinColumn->referencedColumnName,
+				'unique' => $joinColumn->unique,
+				'nullable' => $joinColumn->nullable,
+				'onDelete' => $joinColumn->onDelete,
+				'onUpdate' => $joinColumn->onUpdate,
+				'columnDefinition' => $joinColumn->columnDefinition,
+			);
+		}
+		if (array_key_exists('inverseJoinColumns', $joinTable)) {
+			$joinTable['inverseJoinColumns'] = $this->buildJoinColumnsIfNeeded($joinTable['inverseJoinColumns'], $mapping, $property, self::MAPPING_INVERSE);
+		} else {
+			$joinColumns = array(
+				array(
+					'name' => NULL,
+					'referencedColumnName' => NULL,
+				)
+			);
+			$joinTable['inverseJoinColumns'] = $this->buildJoinColumnsIfNeeded($joinColumns, $mapping, $property, self::MAPPING_INVERSE);
+		}
+
+		return $joinTable;
+	}
+
+	/**
+	 * Check for and build JoinColummn/JoinColumns annotations.
+	 *
+	 * If no annotations are found, a default is returned.
+	 *
+	 * @param \ReflectionProperty $property
+	 * @return array
+	 */
+	protected function evaluateJoinColumnAnnotations(\ReflectionProperty $property) {
+		$joinColumns = array();
+
+		if ($joinColumnAnnotation = $this->reader->getPropertyAnnotation($property, 'Doctrine\ORM\Mapping\JoinColumn')) {
+			$joinColumns[] = array(
+				'name' => $joinColumnAnnotation->name === NULL ? strtolower($property->getName()) : $joinColumnAnnotation->name,
+				'referencedColumnName' => $joinColumnAnnotation->referencedColumnName,
+				'unique' => $joinColumnAnnotation->unique,
+				'nullable' => $joinColumnAnnotation->nullable,
+				'onDelete' => $joinColumnAnnotation->onDelete,
+				'onUpdate' => $joinColumnAnnotation->onUpdate,
+				'columnDefinition' => $joinColumnAnnotation->columnDefinition,
+			);
+		} else if ($joinColumnsAnnotation = $this->reader->getPropertyAnnotation($property, 'Doctrine\ORM\Mapping\JoinColumns')) {
+			foreach ($joinColumnsAnnotation->value as $joinColumnAnnotation) {
+				$joinColumns[] = array(
+					'name' => $joinColumnAnnotation->name === NULL ? strtolower($property->getName()) : $joinColumnAnnotation->name,
+					'referencedColumnName' => $joinColumnAnnotation->referencedColumnName,
+					'unique' => $joinColumnAnnotation->unique,
+					'nullable' => $joinColumnAnnotation->nullable,
+					'onDelete' => $joinColumnAnnotation->onDelete,
+					'onUpdate' => $joinColumnAnnotation->onUpdate,
+					'columnDefinition' => $joinColumnAnnotation->columnDefinition,
+				);
+			}
+		}
+
+		return $joinColumns;
 	}
 
 	/**
