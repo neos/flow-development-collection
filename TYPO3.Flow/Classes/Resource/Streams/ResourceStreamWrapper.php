@@ -475,8 +475,10 @@ class ResourceStreamWrapper implements \TYPO3\FLOW3\Resource\Streams\StreamWrapp
 
 		if (strlen($uriParts['host']) === 40) {
 			$resourcePath = $this->resourceManager->getPersistentResourcesStorageBaseUri() . $uriParts['host'];
-			if (file_exists($resourcePath) || !$checkForExistence) {
+			if ($checkForExistence === FALSE || file_exists($resourcePath)) {
 				return $resourcePath;
+			} else {
+				return FALSE;
 			}
 		}
 
