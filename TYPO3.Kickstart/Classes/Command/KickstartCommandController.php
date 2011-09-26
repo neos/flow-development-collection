@@ -91,7 +91,7 @@ class KickstartCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandCont
 	 *
 	 * @param string $packageKey The package key of the package for the new controller with an optional subpackage, (e.g. "MyCompany.MyPackage/Admin").
 	 * @param string $controllerName The name for the new controller. This may also be a comma separated list of controller names.
-	 * @param boolean $generateActions Also generate index, new, create, edit, update and delete actions.
+	 * @param boolean $generateActions Also generate index, show, new, create, edit, update and delete actions.
 	 * @param boolean $generateTemplates Also generate the templates for each action.
 	 * @param boolean $generateRelated Also create the mentioned package, related model and repository if neccessary.
 	 * @param boolean $force Overwrite any existing controller or template code. Regardless of this flag, the package, model and repository will never be overwritten.
