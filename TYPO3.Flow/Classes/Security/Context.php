@@ -330,7 +330,7 @@ class Context {
 	 */
 	public function getParty() {
 		foreach ($this->getAuthenticationTokens() as $token) {
-			if ($token->isAuthenticated() === TRUE) return $token->getAccount()->getParty();
+			if ($token->isAuthenticated() === TRUE) return $token->getAccount() !== NULL ? $token->getAccount()->getParty() : NULL;
 		}
 		return NULL;
 	}
