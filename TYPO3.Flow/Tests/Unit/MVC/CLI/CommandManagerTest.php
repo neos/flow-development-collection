@@ -36,13 +36,21 @@ class CommandManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	protected $mockReflectionService;
 
 	/**
-	 * @var CommandManager
+	 * @var \TYPO3\FLOW3\Core\Bootstrap
+	 */
+	protected $mockBootstrap;
+
+	/**
+	 * @var \TYPO3\FLOW3\MVC\CLI\CommandManager
 	 */
 	protected $commandManager;
 
 	public function setUp() {
 		$this->mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService');
 		$this->commandManager = $this->getMock('TYPO3\FLOW3\MVC\CLI\CommandManager', array('getAvailableCommands'));
+
+		$this->mockBootstrap = $this->getMock('TYPO3\FLOW3\Core\Bootstrap', array(), array(), '', FALSE);
+		$this->commandManager->injectBootstrap($this->mockBootstrap);
 	}
 
 	/**
@@ -130,6 +138,70 @@ class CommandManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$this->commandManager->expects($this->once())->method('getAvailableCommands')->will($this->returnValue($mockCommands));
 
 		$this->commandManager->getCommandByIdentifier('controller:command');
+	}
+
+	/**
+	 * @test
+	 */
+	public function getShortestIdentifierForCommandAlwaysReturnsShortNameForFlow3HelpCommand() {
+		$mockHelpCommand = $this->getMock('TYPO3\FLOW3\MVC\CLI\Command', array(), array(), '', FALSE);
+		$mockHelpCommand->expects($this->once())->method('getCommandIdentifier')->will($this->returnValue('typo3.flow3:help:help'));
+		$commandIdentifier = $this->commandManager->getShortestIdentifierForCommand($mockHelpCommand);
+		$this->assertSame('help', $commandIdentifier);
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function getShortestIdentifierForCommandReturnsTheCompleteIdentifiersForCustomHelpCommands() {
+		$mockFlow3HelpCommand = $this->getMock('TYPO3\FLOW3\MVC\CLI\Command', array(), array(), '', FALSE);
+		$mockFlow3HelpCommand->expects($this->atLeastOnce())->method('getCommandIdentifier')->will($this->returnValue('typo3.flow3:help:help'));
+		$mockCustomHelpCommand = $this->getMock('TYPO3\FLOW3\MVC\CLI\Command', array(), array(), '', FALSE);
+		$mockCustomHelpCommand->expects($this->atLeastOnce())->method('getCommandIdentifier')->will($this->returnValue('custom.package:help:help'));
+		$mockCommands = array($mockFlow3HelpCommand, $mockCustomHelpCommand);
+		$this->commandManager->expects($this->atLeastOnce())->method('getAvailableCommands')->will($this->returnValue($mockCommands));
+
+		$commandIdentifier = $this->commandManager->getShortestIdentifierForCommand($mockCustomHelpCommand);
+		$this->assertSame('package:help:help', $commandIdentifier);
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function getShortestIdentifierForCommandReturnsShortestUnambiguousCommandIdentifiers() {
+		$mockCommand1 = $this->getMock('TYPO3\FLOW3\MVC\CLI\Command', array(), array(), '', FALSE);
+		$mockCommand1->expects($this->atLeastOnce())->method('getCommandIdentifier')->will($this->returnValue('package.key:controller:command'));
+		$mockCommand2 = $this->getMock('TYPO3\FLOW3\MVC\CLI\Command', array(), array(), '', FALSE);
+		$mockCommand2->expects($this->atLeastOnce())->method('getCommandIdentifier')->will($this->returnValue('otherpackage.key:controller2:command'));
+		$mockCommand3 = $this->getMock('TYPO3\FLOW3\MVC\CLI\Command', array(), array(), '', FALSE);
+		$mockCommand3->expects($this->atLeastOnce())->method('getCommandIdentifier')->will($this->returnValue('packagekey:controller:command'));
+		$mockCommand4 = $this->getMock('TYPO3\FLOW3\MVC\CLI\Command', array(), array(), '', FALSE);
+		$mockCommand4->expects($this->atLeastOnce())->method('getCommandIdentifier')->will($this->returnValue('packagekey:controller:othercommand'));
+		$mockCommands = array($mockCommand1, $mockCommand2, $mockCommand3, $mockCommand4);
+		$this->commandManager->expects($this->atLeastOnce())->method('getAvailableCommands')->will($this->returnValue($mockCommands));
+
+		$this->assertSame('key:controller:command', $this->commandManager->getShortestIdentifierForCommand($mockCommand1));
+		$this->assertSame('controller2:command', $this->commandManager->getShortestIdentifierForCommand($mockCommand2));
+		$this->assertSame('packagekey:controller:command', $this->commandManager->getShortestIdentifierForCommand($mockCommand3));
+		$this->assertSame('controller:othercommand', $this->commandManager->getShortestIdentifierForCommand($mockCommand4));
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function getShortestIdentifierForCommandReturnsCompleteCommandIdentifierForCommandsWithTheSameControllerAndCommandName() {
+		$mockCommand1 = $this->getMock('TYPO3\FLOW3\MVC\CLI\Command', array(), array(), '', FALSE);
+		$mockCommand1->expects($this->atLeastOnce())->method('getCommandIdentifier')->will($this->returnValue('package.key:controller:command'));
+		$mockCommand2 = $this->getMock('TYPO3\FLOW3\MVC\CLI\Command', array(), array(), '', FALSE);
+		$mockCommand2->expects($this->atLeastOnce())->method('getCommandIdentifier')->will($this->returnValue('otherpackage.key:controller:command'));
+		$mockCommands = array($mockCommand1, $mockCommand2);
+		$this->commandManager->expects($this->atLeastOnce())->method('getAvailableCommands')->will($this->returnValue($mockCommands));
+
+		$this->assertSame('package.key:controller:command', $this->commandManager->getShortestIdentifierForCommand($mockCommand1));
+		$this->assertSame('otherpackage.key:controller:command', $this->commandManager->getShortestIdentifierForCommand($mockCommand2));
 	}
 
 }
