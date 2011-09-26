@@ -34,6 +34,7 @@ class PersistentObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\Abst
 	const CONFIGURATION_MODIFICATION_ALLOWED = 1;
 	const CONFIGURATION_CREATION_ALLOWED = 2;
 	const CONFIGURATION_TARGET_TYPE = 3;
+	const CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED = 4;
 
 	/**
 	 * @var array
@@ -115,6 +116,9 @@ class PersistentObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\Abst
 		if (isset($source['__identity'])) {
 			unset($source['__identity']);
 		}
+		if (isset($source['__type'])) {
+			unset($source['__type']);
+		}
 		return $source;
 	}
 
@@ -185,20 +189,29 @@ class PersistentObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\Abst
 	 * @return object
 	 */
 	protected function handleArrayData(array $source, $targetType, array &$convertedChildProperties, \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
+		$effectiveTargetType = $targetType;
+		if (isset($source['__type'])) {
+			if ($configuration->getConfigurationValue('TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter', self::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED) !== TRUE) {
+				throw new \TYPO3\FLOW3\Property\Exception\InvalidPropertyMappingConfigurationException('Override of target type not allowed. To enable this, you need to set the PropertyMappingConfiguration Value "CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED" to TRUE.', 1317050430);
+			}
+			$effectiveTargetType = $source['__type'];
+		}
 		if (isset($source['__identity'])) {
-			$object = $this->fetchObjectFromPersistence($source['__identity'], $targetType);
+			$object = $this->fetchObjectFromPersistence($source['__identity'], $effectiveTargetType);
 
 			if (count($source) > 1 && ($configuration === NULL || $configuration->getConfigurationValue('TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter', self::CONFIGURATION_MODIFICATION_ALLOWED) !== TRUE)) {
 				throw new \TYPO3\FLOW3\Property\Exception\InvalidPropertyMappingConfigurationException('Modification of persistent objects not allowed. To enable this, you need to set the PropertyMappingConfiguration Value "CONFIGURATION_MODIFICATION_ALLOWED" to TRUE.', 1297932028);
 			}
-
-			return $object;
 		} else {
 			if ($configuration === NULL || $configuration->getConfigurationValue('TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter', self::CONFIGURATION_CREATION_ALLOWED) !== TRUE) {
 				throw new \TYPO3\FLOW3\Property\Exception\InvalidPropertyMappingConfigurationException('Creation of objects not allowed. To enable this, you need to set the PropertyMappingConfiguration Value "CONFIGURATION_CREATION_ALLOWED" to TRUE');
 			}
-			return $this->buildObject($convertedChildProperties, $targetType);
+			$object = $this->buildObject($convertedChildProperties, $effectiveTargetType);
 		}
+		if ($effectiveTargetType !== $targetType && !$object instanceof $targetType) {
+			throw new \TYPO3\FLOW3\Property\Exception\InvalidDataTypeException('The given type "' . $effectiveTargetType . '" is not a subtype of "' . $targetType .'"', 1317048056);
+		}
+		return $object;
 	}
 
 	/**

@@ -43,6 +43,16 @@ class MvcPropertyMappingConfiguration extends \TYPO3\FLOW3\Property\PropertyMapp
 	}
 
 	/**
+	 * Allow override of the target type through a special "__type" parameter
+	 *
+	 * @return void
+	 * @api
+	 */
+	public function allowOverrideTargetType() {
+		$this->setTypeConverterOption('TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter', \TYPO3\FLOW3\Property\TypeConverter\PersistentObjectConverter::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED, TRUE);
+	}
+
+	/**
 	 * Set the target type for a certain property. Especially useful
 	 * if there is an object which has a nested object which is abstract,
 	 * and you want to instanciate a concrete object instead.

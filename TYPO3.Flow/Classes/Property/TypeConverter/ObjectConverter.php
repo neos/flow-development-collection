@@ -27,6 +27,11 @@ class ObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTypeCo
 	const CONFIGURATION_TARGET_TYPE = 3;
 
 	/**
+	 * @var integer
+	 */
+	const CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED = 4;
+
+	/**
 	 * @var array
 	 */
 	protected $sourceTypes = array('array');
@@ -87,6 +92,9 @@ class ObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTypeCo
 	 * @return array
 	 */
 	public function getSourceChildPropertiesToBeConverted($source) {
+		if (isset($source['__type'])) {
+			unset($source['__type']);
+		}
 		return $source;
 	}
 
@@ -132,7 +140,17 @@ class ObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTypeCo
 	 * @return object the target type
 	 */
 	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
-		$object = $this->buildObject($convertedChildProperties, $targetType);
+		$effectiveTargetType = $targetType;
+		if (isset($source['__type'])) {
+			if ($configuration->getConfigurationValue('TYPO3\FLOW3\Property\TypeConverter\ObjectConverter', self::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED) !== TRUE) {
+				throw new \TYPO3\FLOW3\Property\Exception\InvalidPropertyMappingConfigurationException('Override of target type not allowed. To enable this, you need to set the PropertyMappingConfiguration Value "CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED" to TRUE.', 1317051258);
+			}
+			$effectiveTargetType = $source['__type'];
+		}
+		$object = $this->buildObject($convertedChildProperties, $effectiveTargetType);
+		if ($effectiveTargetType !== $targetType && !$object instanceof $targetType) {
+			throw new \TYPO3\FLOW3\Property\Exception\InvalidDataTypeException('The given type "' . $source['__type'] . '" is not a subtype of "' . $targetType .'"', 1317051266);
+		}
 
 		foreach ($convertedChildProperties as $propertyName => $propertyValue) {
 			$result = \TYPO3\FLOW3\Reflection\ObjectAccess::setProperty($object, $propertyName, $propertyValue);
