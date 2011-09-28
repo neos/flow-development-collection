@@ -232,8 +232,12 @@ class HelpCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControlle
 			$this->outputLine();
 			$this->outputLine('<b>SEE ALSO:</b>');
 			foreach ($relatedCommandIdentifiers as $commandIdentifier) {
-				$command = $this->commandManager->getCommandByIdentifier($commandIdentifier);
-				$this->outputLine('%-2s%s (%s)', array(' ', $commandIdentifier, $command->getShortDescription()));
+				try {
+					$command = $this->commandManager->getCommandByIdentifier($commandIdentifier);
+					$this->outputLine('%-2s%s (%s)', array(' ', $commandIdentifier, $command->getShortDescription()));
+				} catch (\TYPO3\FLOW3\MVC\Exception\CommandException $exception) {
+					$this->outputLine('%-2s%s (%s)', array(' ', $commandIdentifier, '<i>Command not available</i>'));
+				}
 			}
 		}
 
