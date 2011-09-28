@@ -92,5 +92,20 @@ class PropertyMapperTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$this->assertSame(28, $result->getAge());
 	}
 
+	/**
+	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function integerCanBeMappedToString() {
+		$source = array(
+			'name' => 42,
+			'size' => 23
+		);
+
+		$result = $this->propertyMapper->convert($source, 'TYPO3\FLOW3\Tests\Functional\Property\Fixtures\TestClass');
+		$this->assertSame('42', $result->getName());
+		$this->assertSame(23, $result->getSize());
+	}
+
 }
 ?>

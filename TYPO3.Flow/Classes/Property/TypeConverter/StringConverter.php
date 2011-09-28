@@ -32,7 +32,7 @@ class StringConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTypeCo
 	/**
 	 * @var array<string>
 	 */
-	protected $sourceTypes = array('string');
+	protected $sourceTypes = array('string', 'integer');
 
 	/**
 	 * @var string
@@ -56,7 +56,7 @@ class StringConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTypeCo
 	 * @api
 	 */
 	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
-		return $source;
+		return (string)$source;
 	}
 }
 ?>
