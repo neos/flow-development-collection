@@ -525,7 +525,7 @@ class ContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 		$token2 = $this->getMock('TYPO3\FLOW3\Security\Authentication\TokenInterface', array(), array(), 'token2' . md5(uniqid(mt_rand(), TRUE)));
 		$token2->expects($this->any())->method('isAuthenticated')->will($this->returnValue(TRUE));
-		$token2->expects($this->once())->method('getAccount')->will($this->returnValue($mockAccount));
+		$token2->expects($this->atLeastOnce())->method('getAccount')->will($this->returnValue($mockAccount));
 
 		$token3 = $this->getMock('TYPO3\FLOW3\Security\Authentication\TokenInterface', array(), array(), 'token3' . md5(uniqid(mt_rand(), TRUE)));
 		$token3->expects($this->any())->method('isAuthenticated')->will($this->returnValue(TRUE));
