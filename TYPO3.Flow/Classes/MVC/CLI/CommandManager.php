@@ -22,7 +22,7 @@ namespace TYPO3\FLOW3\MVC\CLI;
  *                                                                        */
 
 /**
- * A helper for
+ * A helper for CLI Commands
  *
  * @scope singleton
  */
@@ -139,7 +139,7 @@ class CommandManager {
 		}
 		$shortCommandIdentifiers = $this->getShortCommandIdentifiers();
 		if (!isset($shortCommandIdentifiers[$command->getCommandIdentifier()])) {
-			$command->getCommandIdentifier();
+			return $command->getCommandIdentifier();
 		}
 		return $shortCommandIdentifiers[$command->getCommandIdentifier()];
 	}
@@ -177,7 +177,7 @@ class CommandManager {
 						}
 					}
 				} else {
-					$this->shortCommandIdentifiers[$availableCommand->getCommandIdentifier()] = sprintf('%s:%s', $controllerName, $commandName);;
+					$this->shortCommandIdentifiers[$availableCommand->getCommandIdentifier()] = sprintf('%s:%s', $controllerName, $commandName);
 				}
 			}
 		}
