@@ -209,6 +209,8 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 			// "driver" is used only for Doctrine, thus we (mis-)use it here
 			// additionally, when no path is set, skip this step, assuming no DB is needed
 		if ($this->settings['backendOptions']['driver'] !== NULL && $this->settings['backendOptions']['path'] !== NULL) {
+			$this->entityManager->clear();
+
 			$schemaTool = new \Doctrine\ORM\Tools\SchemaTool($this->entityManager);
 			$schemaTool->dropDatabase();
 			$this->systemLogger->log('Doctrine 2 schema destroyed.', LOG_NOTICE);
