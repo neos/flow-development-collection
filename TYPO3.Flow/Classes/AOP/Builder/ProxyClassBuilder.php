@@ -435,7 +435,7 @@ class ProxyClassBuilder {
 			$proxyClass->addProperty($propertyIntroduction->getPropertyName(), 'NULL', $propertyIntroduction->getPropertyVisibility(), $propertyIntroduction->getPropertyDocComment());
 		}
 
-		$proxyClass->getMethod('FLOW3_AOP_Proxy_buildMethodsAndAdvicesArray')->addPreParentCallCode("\t\tif (is_callable('parent::FLOW3_AOP_Proxy_buildMethodsAndAdvicesArray')) parent::FLOW3_AOP_Proxy_buildMethodsAndAdvicesArray();\n");
+		$proxyClass->getMethod('FLOW3_AOP_Proxy_buildMethodsAndAdvicesArray')->addPreParentCallCode("\t\tif (method_exists(get_parent_class(\$this), 'FLOW3_AOP_Proxy_buildMethodsAndAdvicesArray') && is_callable('parent::FLOW3_AOP_Proxy_buildMethodsAndAdvicesArray')) parent::FLOW3_AOP_Proxy_buildMethodsAndAdvicesArray();\n");
 		$proxyClass->getMethod('FLOW3_AOP_Proxy_buildMethodsAndAdvicesArray')->addPreParentCallCode($this->buildMethodsAndAdvicesArrayCode($interceptedMethods));
 		$proxyClass->getMethod('FLOW3_AOP_Proxy_buildMethodsAndAdvicesArray')->overrideMethodVisibility('protected');
 
@@ -444,7 +444,7 @@ class ProxyClassBuilder {
 		$proxyClass->getMethod('__wakeup')->addPreParentCallCode($callBuildMethodsAndAdvicesArrayCode);
 
 		if (!$this->reflectionService->hasMethod($targetClassName, '__wakeup')) {
-			$proxyClass->getMethod('__wakeup')->addPostParentCallCode("\t\tif (is_callable('parent::__wakeup')) parent::__wakeup();\n");
+			$proxyClass->getMethod('__wakeup')->addPostParentCallCode("\t\tif (method_exists(get_parent_class(\$this), '__wakeup') && is_callable('parent::__wakeup')) parent::__wakeup();\n");
 		}
 
 		$this->buildGetAdviceChainsMethodCode($targetClassName);
