@@ -176,7 +176,7 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 	/**
 	 * Called from functional tests, creates/updates database tables and compiles proxies.
 	 *
-	 * @return void
+	 * @return boolean
 	 */
 	public function compile() {
 			// "driver" is used only for Doctrine, thus we (mis-)use it here
