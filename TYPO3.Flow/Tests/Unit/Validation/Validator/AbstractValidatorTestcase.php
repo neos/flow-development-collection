@@ -30,9 +30,7 @@ abstract class AbstractValidatorTestcase extends \TYPO3\FLOW3\Tests\UnitTestCase
 	}
 
 	protected function getValidator($options = array()) {
-		$validator = new $this->validatorClassName($options);
-
-		return $validator;
+		return $this->getAccessibleMock($this->validatorClassName, array('dummy'), array($options), '', TRUE);
 	}
 
 	protected function validatorOptions($options) {

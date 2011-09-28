@@ -329,6 +329,69 @@ class ValidatorResolverTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
+	public function buildBaseValidatorConjunctionAddsValidatorsDefinedByAnnotationsInTheClassToTheReturnedConjunction() {
+		$mockObject = $this->getMock('stdClass');
+		$className = get_class($mockObject);
+
+		$propertyTagsValues = array(
+			'foo' => array(
+				'var' => array('string'),
+			),
+			'bar' => array(
+				'var' => array('integer'),
+			),
+			'baz' => array(
+				'var' => array('array<TYPO3\TestPackage\Quux>')
+			)
+		);
+		$validateAnnotations = array(
+			'foo' => array(
+				new \TYPO3\FLOW3\Annotations\Validate(array(
+					'type' => 'Foo',
+					'options' => array('bar' => 'baz'),
+				)),
+				new \TYPO3\FLOW3\Annotations\Validate(array(
+					'type' => 'Bar',
+				)),
+				new \TYPO3\FLOW3\Annotations\Validate(array(
+					'type' => 'Baz',
+				)),
+			),
+			'bar' => array(
+				new \TYPO3\FLOW3\Annotations\Validate(array(
+					'type' => 'TYPO3\TestPackage\Quux',
+				)),
+			),
+		);
+
+		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService', array(), array(), '', FALSE);
+		$mockReflectionService->expects($this->at(0))->method('getClassPropertyNames')->with($className)->will($this->returnValue(array('foo', 'bar', 'baz')));
+		$mockReflectionService->expects($this->at(1))->method('getPropertyTagsValues')->with($className, 'foo')->will($this->returnValue($propertyTagsValues['foo']));
+		$mockReflectionService->expects($this->at(2))->method('getPropertyAnnotations')->with(get_class($mockObject), 'foo', 'TYPO3\FLOW3\Annotations\Validate')->will($this->returnValue($validateAnnotations['foo']));
+		$mockReflectionService->expects($this->at(3))->method('getPropertyTagsValues')->with($className, 'bar')->will($this->returnValue($propertyTagsValues['bar']));
+		$mockReflectionService->expects($this->at(4))->method('getPropertyAnnotations')->with(get_class($mockObject), 'bar', 'TYPO3\FLOW3\Annotations\Validate')->will($this->returnValue($validateAnnotations['bar']));
+		$mockReflectionService->expects($this->at(5))->method('getPropertyTagsValues')->with($className, 'baz')->will($this->returnValue($propertyTagsValues['baz']));
+		$mockReflectionService->expects($this->at(6))->method('getPropertyAnnotations')->with(get_class($mockObject), 'baz', 'TYPO3\FLOW3\Annotations\Validate')->will($this->returnValue(array()));
+
+		$mockObjectValidator = $this->getMock('TYPO3\FLOW3\Validation\Validator\GenericObjectValidator', array(), array(), '', FALSE);
+
+		$validatorResolver = $this->getAccessibleMock('TYPO3\FLOW3\Validation\ValidatorResolver', array('resolveValidatorObjectName', 'createValidator'));
+		$validatorResolver->_set('reflectionService', $mockReflectionService);
+
+		$validatorResolver->expects($this->at(0))->method('createValidator')->with('Foo', array('bar' => 'baz'))->will($this->returnValue($mockObjectValidator));
+		$validatorResolver->expects($this->at(1))->method('createValidator')->with('Bar')->will($this->returnValue($mockObjectValidator));
+		$validatorResolver->expects($this->at(2))->method('createValidator')->with('Baz')->will($this->returnValue($mockObjectValidator));
+		$validatorResolver->expects($this->at(3))->method('createValidator')->with('TYPO3\TestPackage\Quux')->will($this->returnValue($mockObjectValidator));
+		$validatorResolver->expects($this->at(4))->method('createValidator')->with('TYPO3\FLOW3\Validation\Validator\CollectionValidator', array('elementType' => 'TYPO3\TestPackage\Quux'))->will($this->returnValue($mockObjectValidator));
+
+		$validatorResolver->_call('buildBaseValidatorConjunction', $className);
+		$builtValidators = $validatorResolver->_get('baseValidatorConjunctions');
+		$this->assertInstanceOf('TYPO3\FLOW3\Validation\Validator\ConjunctionValidator', $builtValidators[$className]);
+	}
+
+	/**
+	 * @test
+	 */
 	public function resolveValidatorObjectNameCallsGetValidatorType() {
 		$mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
 		$validatorResolver = $this->getAccessibleMock('TYPO3\FLOW3\Validation\ValidatorResolver', array('getValidatorType'));

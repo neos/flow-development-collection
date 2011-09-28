@@ -30,7 +30,7 @@ class TypeHandling {
 	/**
 	 * @var array
 	 */
-	static $collectionTypes = array('array', 'ArrayObject', 'SplObjectStorage', 'Doctrine\Common\Collections\Collection', 'Doctrine\Common\Collections\ArrayCollection');
+	static $collectionTypes = array('array', 'ArrayObject', 'SplObjectStorage', 'Doctrine\Common\Collections\Collection', 'Doctrine\Common\Collections\ArrayCollection', 'Doctrine\ORM\PersistentCollection');
 
 	/**
 	 * Returns an array with type information, including element type for
@@ -100,6 +100,16 @@ class TypeHandling {
 	 */
 	static public function isSimpleType($type) {
 		return in_array(self::normalizeType($type), array('array', 'string', 'float', 'integer', 'boolean'), TRUE);
+	}
+
+	/**
+	 * Returns TRUE if the $type is a collection type.
+	 *
+	 * @param string $type
+	 * @return boolean
+	 */
+	static public function isCollectionType($type) {
+		return in_array($type, self::$collectionTypes, TRUE);
 	}
 
 	/**

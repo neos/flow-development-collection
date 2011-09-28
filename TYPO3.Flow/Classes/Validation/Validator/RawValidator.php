@@ -22,6 +22,14 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 class RawValidator implements \TYPO3\FLOW3\Validation\Validator\ValidatorInterface {
 
 	/**
+	 * Sets options for the validator
+	 *
+	 * @param array $validationOptions Options for the validator
+	 * @api
+	 */
+	public function __construct(array $validationOptions = array()) {}
+
+	/**
 	 * Always returns an empty result.
 	 *
 	 * @param mixed $value The value that should be validated

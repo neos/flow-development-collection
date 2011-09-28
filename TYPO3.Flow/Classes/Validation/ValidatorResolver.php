@@ -235,7 +235,10 @@ class ValidatorResolver {
 					throw new \InvalidArgumentException(sprintf(' @var annotation of ' . $exception->getMessage(), 'class "' . $targetClassName . '", property "' . $classPropertyName . '"'), 1315564744);
 				}
 				$propertyTargetClassName = $parsedType['type'];
-				if (class_exists($propertyTargetClassName) && $this->objectManager->isRegistered($propertyTargetClassName) && $this->objectManager->getScope($propertyTargetClassName) === \TYPO3\FLOW3\Object\Configuration\Configuration::SCOPE_PROTOTYPE) {
+				if (\TYPO3\FLOW3\Utility\TypeHandling::isCollectionType($propertyTargetClassName) === TRUE) {
+						$collectionValidator = $this->createValidator('TYPO3\FLOW3\Validation\Validator\CollectionValidator', array('elementType' =>$parsedType['elementType']));
+						$objectValidator->addPropertyValidator($classPropertyName, $collectionValidator);
+				} elseif (class_exists($propertyTargetClassName) && $this->objectManager->isRegistered($propertyTargetClassName) && $this->objectManager->getScope($propertyTargetClassName) === \TYPO3\FLOW3\Object\Configuration\Configuration::SCOPE_PROTOTYPE) {
 					$validatorForProperty = $this->getBaseValidatorConjunction($propertyTargetClassName);
 					if (count($validatorForProperty) > 0) {
 						$objectValidator->addPropertyValidator($classPropertyName, $validatorForProperty);
