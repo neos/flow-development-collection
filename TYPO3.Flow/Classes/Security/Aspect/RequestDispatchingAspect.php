@@ -59,9 +59,9 @@ class RequestDispatchingAspect {
 	 */
 	public function blockIllegalRequestsAndForwardToAuthenticationEntryPoints(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$request = $joinPoint->getMethodArgument('request');
-		$this->firewall->blockIllegalRequests($request);
 
 		try {
+			$this->firewall->blockIllegalRequests($request);
 			return $joinPoint->getAdviceChain()->proceed($joinPoint);
 		} catch (\TYPO3\FLOW3\Security\Exception\AuthenticationRequiredException $exception) {
 			$response = $joinPoint->getMethodArgument('response');

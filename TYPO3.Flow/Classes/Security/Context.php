@@ -133,7 +133,7 @@ class Context {
 	protected $csrfStrategy = self::CSRF_ONE_PER_SESSION;
 
 	/**
-	 * @var string
+	 * @var array
 	 */
 	protected $csrfTokens = array();
 
@@ -444,11 +444,20 @@ class Context {
 	}
 
 	/**
+	 * Returns TRUE if the context has CSRF protection tokens.
+	 *
+	 * @return boolean TRUE, if the token is valid. FALSE otherwise.
+	 */
+	public function hasCsrfProtectionTokens() {
+		return count($this->csrfTokens) > 0;
+	}
+
+	/**
 	 * Returns TRUE if the given string is a valid CSRF protection token. The token will be removed if the configured
 	 * csrf strategy is 'onePerUri'.
 	 *
 	 * @param string $token The token string to be validated
-	 * @return booelean TRUE, if the token is valid. FALSE otherwise.
+	 * @return boolean TRUE, if the token is valid. FALSE otherwise.
 	 */
 	public function isCsrfProtectionTokenValid($csrfToken) {
 		if ($this->initialized === FALSE) {

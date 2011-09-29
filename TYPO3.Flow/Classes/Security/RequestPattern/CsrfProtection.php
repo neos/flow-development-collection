@@ -92,6 +92,9 @@ class CsrfProtection implements \TYPO3\FLOW3\Security\RequestPatternInterface {
 			$internalArguments = $request->getInternalArguments();
 			if (!isset($internalArguments['__csrfToken'])) return TRUE;
 			$csrfToken = $internalArguments['__csrfToken'];
+			if (!$this->securityContext->hasCsrfProtectionTokens()) {
+				throw new \TYPO3\FLOW3\Security\Exception\AuthenticationRequiredException('No tokens in security context, possible session timeout', 1317309673);
+			}
 			if ($this->securityContext->isCsrfProtectionTokenValid($csrfToken) === FALSE) return TRUE;
 		}
 		return FALSE;

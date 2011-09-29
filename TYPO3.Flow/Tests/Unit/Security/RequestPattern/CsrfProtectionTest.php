@@ -129,6 +129,7 @@ class CsrfProtectionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 		$mockSecurityContext = $this->getMock('TYPO3\FLOW3\Security\Context');
 		$mockSecurityContext->expects($this->once())->method('isCsrfProtectionTokenValid')->with('invalidCsrfToken')->will($this->returnValue(FALSE));
+		$mockSecurityContext->expects($this->any())->method('hasCsrfProtectionTokens')->will($this->returnValue(TRUE));
 
 		$mockCsrfProtectionPattern = $this->getAccessibleMock('TYPO3\FLOW3\Security\RequestPattern\CsrfProtection', array('dummy'));
 		$mockCsrfProtectionPattern->_set('objectManager', $mockObjectManager);
@@ -164,6 +165,7 @@ class CsrfProtectionTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 		$mockSecurityContext = $this->getMock('TYPO3\FLOW3\Security\Context');
 		$mockSecurityContext->expects($this->once())->method('isCsrfProtectionTokenValid')->with('validToken')->will($this->returnValue(TRUE));
+		$mockSecurityContext->expects($this->any())->method('hasCsrfProtectionTokens')->will($this->returnValue(TRUE));
 
 		$mockCsrfProtectionPattern = $this->getAccessibleMock('TYPO3\FLOW3\Security\RequestPattern\CsrfProtection', array('dummy'));
 		$mockCsrfProtectionPattern->_set('objectManager', $mockObjectManager);
