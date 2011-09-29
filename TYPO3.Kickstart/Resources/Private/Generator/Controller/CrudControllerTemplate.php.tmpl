@@ -24,6 +24,8 @@ class {controllerClassName} extends ActionController {
 
 	/**
 	 * Shows a list of <k:inflect.humanizeCamelCase lowercase="true"><k:inflect.pluralize>{modelName}</k:inflect.pluralize></k:inflect.humanizeCamelCase>
+	 *
+	 * @return void
 	 */
 	public function indexAction() {
 		$this->view->assign('<k:inflect.pluralize>{modelName}</k:inflect.pluralize>', $this->{modelName}Repository->findAll());
@@ -33,6 +35,8 @@ class {controllerClassName} extends ActionController {
 	 * Shows a single <k:inflect.humanizeCamelCase lowercase="true">{modelName}</k:inflect.humanizeCamelCase> object
 	 *
 	 * @param {modelFullClassName} ${modelName} The <k:inflect.humanizeCamelCase lowercase="true">{modelName}</k:inflect.humanizeCamelCase> to show
+	 *
+	 * @return void
 	 */
 	public function showAction({modelClassName} ${modelName}) {
 		$this->view->assign('{modelName}', ${modelName});
@@ -40,6 +44,8 @@ class {controllerClassName} extends ActionController {
 
 	/**
 	 * Shows a form for creating a new <k:inflect.humanizeCamelCase lowercase="true">{modelName}</k:inflect.humanizeCamelCase> object
+	 *
+	 * @return void
 	 */
 	public function newAction() <![CDATA[{
 	}]]>
@@ -48,6 +54,8 @@ class {controllerClassName} extends ActionController {
 	 * Adds the given new <k:inflect.humanizeCamelCase lowercase="true">{modelName}</k:inflect.humanizeCamelCase> object to the <k:inflect.humanizeCamelCase lowercase="true">{modelName}</k:inflect.humanizeCamelCase> repository
 	 *
 	 * @param {modelFullClassName} ${modelName} A new <k:inflect.humanizeCamelCase lowercase="true">{modelName}</k:inflect.humanizeCamelCase> to add
+	 *
+	 * @return void
 	 */
 	public function createAction({modelClassName} $new<k:uppercaseFirst>{modelName}</k:uppercaseFirst>) {
 		$this->{modelName}Repository->add($new<k:uppercaseFirst>{modelName}</k:uppercaseFirst>);
@@ -59,6 +67,8 @@ class {controllerClassName} extends ActionController {
 	 * Shows a form for editing an existing <k:inflect.humanizeCamelCase lowercase="true">{modelName}</k:inflect.humanizeCamelCase> object
 	 *
 	 * @param {modelFullClassName} ${modelName} The <k:inflect.humanizeCamelCase lowercase="true">{modelName}</k:inflect.humanizeCamelCase> to edit
+	 *
+	 * @return void
 	 */
 	public function editAction({modelClassName} ${modelName}) {
 		$this->view->assign('{modelName}', ${modelName});
@@ -68,6 +78,8 @@ class {controllerClassName} extends ActionController {
 	 * Updates the given <k:inflect.humanizeCamelCase lowercase="true">{modelName}</k:inflect.humanizeCamelCase> object
 	 *
 	 * @param {modelFullClassName} ${modelName} The <k:inflect.humanizeCamelCase lowercase="true">{modelName}</k:inflect.humanizeCamelCase> to update
+	 *
+	 * @return void
 	 */
 	public function updateAction({modelClassName} ${modelName}) {
 		$this->{modelName}Repository->update(${modelName});
@@ -79,6 +91,8 @@ class {controllerClassName} extends ActionController {
 	 * Removes the given <k:inflect.humanizeCamelCase lowercase="true">{modelName}</k:inflect.humanizeCamelCase> object from the <k:inflect.humanizeCamelCase lowercase="true">{modelName}</k:inflect.humanizeCamelCase> repository
 	 *
 	 * @param {modelFullClassName} ${modelName} The <k:inflect.humanizeCamelCase lowercase="true">{modelName}</k:inflect.humanizeCamelCase> to delete
+	 *
+	 * @return void
 	 */
 	public function deleteAction({modelClassName} ${modelName}) {
 		$this->{modelName}Repository->remove(${modelName});
