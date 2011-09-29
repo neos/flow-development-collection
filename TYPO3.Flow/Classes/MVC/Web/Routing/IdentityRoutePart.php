@@ -113,6 +113,7 @@ class IdentityRoutePart extends \TYPO3\FLOW3\MVC\Web\Routing\DynamicRoutePart {
 	 * @return boolean TRUE if value could be matched successfully, otherwise FALSE.
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @api
+	 * @todo make findOneByObjectTypeUriPatternAndPathSegment case sensitive if lowerCase = FALSE (this is not yet supported by the persistence)
 	 */
 	protected function matchValue($value) {
 		if ($value === NULL || $value === '') {
@@ -140,21 +141,17 @@ class IdentityRoutePart extends \TYPO3\FLOW3\MVC\Web\Routing\DynamicRoutePart {
 		if (!isset($routePath) || $routePath === '' || $routePath[0] === '/') {
 			return '';
 		}
-		$valueToMatch = $routePath;
-		if ($this->splitString === '') {
-			return $valueToMatch;
-		}
-		$splitStringPosition = strpos($valueToMatch, $this->splitString);
-		if ($splitStringPosition !== FALSE) {
-			$valueToMatch = substr($valueToMatch, 0, $splitStringPosition);
-		}
 		$uriPattern = $this->getUriPattern();
 		if ($uriPattern === '') {
-			return $valueToMatch;
+			return '';
 		}
-		$regexPattern = preg_replace('/{[^}]+}/', '[^\/]+', str_replace('/', '\/', $uriPattern));
+		$regexPattern = preg_quote($uriPattern, '/');
+		$regexPattern = preg_replace('/\\\\{[^}]+\\\\}/', '[^\/]+', $regexPattern);
+		if ($this->splitString !== '') {
+			$regexPattern .= '(?=' . preg_quote($this->splitString, '/') . ')';
+		}
 		$matches = array();
-		preg_match('/^' . $regexPattern . '$/', trim($valueToMatch, '/'), $matches);
+		preg_match('/^' . $regexPattern . '/', trim($routePath, '/'), $matches);
 		return isset($matches[0]) ? $matches[0] : '';
 	}
 
@@ -182,10 +179,12 @@ class IdentityRoutePart extends \TYPO3\FLOW3\MVC\Web\Routing\DynamicRoutePart {
 			if ($pathSegmentLoopCount++ > 99) {
 				throw new \TYPO3\FLOW3\MVC\Exception\InfiniteLoopException('No unique path segment could be found after ' . ($pathSegmentLoopCount - 1) . ' iterations.', 1316441798);
 			}
-			$objectPathMapping = $this->objectPathMappingRepository->findOneByObjectTypeUriPatternAndPathSegment($this->objectType, $this->getUriPattern(), $uniquePathSegment);
-			if ($objectPathMapping === NULL) {
-				$this->storeObjectPathMapping($uniquePathSegment, $identifier);
-				break;
+			if ($uniquePathSegment !== '') {
+				$objectPathMapping = $this->objectPathMappingRepository->findOneByObjectTypeUriPatternAndPathSegment($this->objectType, $this->getUriPattern(), $uniquePathSegment);
+				if ($objectPathMapping === NULL) {
+					$this->storeObjectPathMapping($uniquePathSegment, $identifier);
+					break;
+				}
 			}
 			$uniquePathSegment = sprintf('%s-%d', $pathSegment, $pathSegmentLoopCount);
 		} while (TRUE);

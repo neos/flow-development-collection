@@ -33,6 +33,11 @@ class IdentityRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	protected $mockReflectionService;
 
 	/**
+	 * @var \TYPO3\FLOW3\Reflection\ClassSchema
+	 */
+	protected $mockClassSchema;
+
+	/**
 	 * @var \TYPO3\FLOW3\MVC\Web\Routing\ObjectPathMappingRepository
 	 */
 	protected $mockObjectPathMappingRepository;
@@ -47,6 +52,8 @@ class IdentityRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$this->identityRoutePart->_set('persistenceManager', $this->mockPersistenceManager);
 
 		$this->mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService');
+		$this->mockClassSchema = $this->getMock('TYPO3\FLOW3\Reflection\ClassSchema', array(), array(), '', FALSE);
+		$this->mockReflectionService->expects($this->any())->method('getClassSchema')->will($this->returnValue($this->mockClassSchema));
 		$this->identityRoutePart->_set('reflectionService', $this->mockReflectionService);
 
 		$this->mockObjectPathMappingRepository = $this->getMock('TYPO3\FLOW3\MVC\Web\Routing\ObjectPathMappingRepository');
@@ -67,10 +74,9 @@ class IdentityRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getUriPatternReturnsAnEmptyStringIfObjectTypeHasNotIdentityPropertiesAndNoPatternWasSpecified() {
-		$mockClassSchema = $this->getMock('TYPO3\FLOW3\Reflection\ClassSchema', array(), array(), '', FALSE);
-		$mockClassSchema->expects($this->once())->method('getIdentityProperties')->will($this->returnValue(array()));
+		$this->mockClassSchema->expects($this->once())->method('getIdentityProperties')->will($this->returnValue(array()));
 
-		$this->mockReflectionService->expects($this->any())->method('getClassSchema')->with('SomeObjectType')->will($this->returnValue($mockClassSchema));
+		//$this->mockReflectionService->expects($this->any())->method('getClassSchema')->with('SomeObjectType')->will($this->returnValue($mockClassSchema));
 		$this->identityRoutePart->setObjectType('SomeObjectType');
 		$this->assertSame('', $this->identityRoutePart->getUriPattern());
 	}
@@ -80,10 +86,7 @@ class IdentityRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getUriPatternReturnsBasedOnTheIdentityPropertiesOfTheObjectTypeIfNoPatternWasSpecified() {
-		$mockClassSchema = $this->getMock('TYPO3\FLOW3\Reflection\ClassSchema', array(), array(), '', FALSE);
-		$mockClassSchema->expects($this->once())->method('getIdentityProperties')->will($this->returnValue(array('property1' => 'string', 'property2' => 'integer', 'property3' => 'DateTime')));
-
-		$this->mockReflectionService->expects($this->any())->method('getClassSchema')->with('SomeObjectType')->will($this->returnValue($mockClassSchema));
+		$this->mockClassSchema->expects($this->once())->method('getIdentityProperties')->will($this->returnValue(array('property1' => 'string', 'property2' => 'integer', 'property3' => 'DateTime')));
 		$this->identityRoutePart->setObjectType('SomeObjectType');
 		$this->assertSame('{property1}/{property2}/{property3}', $this->identityRoutePart->getUriPattern());
 	}
@@ -137,28 +140,20 @@ class IdentityRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function findValueToMatchReturnsTheRoutePathIfNoSplitStringIsSpecified() {
-		$this->assertSame('The/Complete/RoutPath', $this->identityRoutePart->_call('findValueToMatch', 'The/Complete/RoutPath'));
-	}
-
-	/**
-	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	public function findValueToMatchReturnsTheRoutePathIfTheSpecifiedSplitStringCantBeFoundInTheRoutePath() {
+	public function findValueToMatchReturnsAnEmptyStringIfTheSpecifiedSplitStringCantBeFoundInTheRoutePath() {
 		$this->identityRoutePart->setUriPattern('');
 		$this->identityRoutePart->setSplitString('SplitStringThatIsNotInTheCurrentRoutePath');
-		$this->assertSame('The/Complete/RoutPath', $this->identityRoutePart->_call('findValueToMatch', 'The/Complete/RoutPath'));
+		$this->assertSame('', $this->identityRoutePart->_call('findValueToMatch', 'The/Complete/RoutPath'));
 	}
 
 	/**
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function findValueToMatchReturnsTheSubstringOfTheRoutePathThatComesBeforeTheSpecifiedSplitStringIfTheUriPatternIsEmpty() {
+	public function findValueToMatchReturnsAnEmptyStringIfTheCalculatedUriPatternIsEmpty() {
 		$this->identityRoutePart->setUriPattern('');
 		$this->identityRoutePart->setSplitString('TheSplitString');
-		$this->assertSame('First/Part/Of/The/Complete/RoutPath/', $this->identityRoutePart->_call('findValueToMatch', 'First/Part/Of/The/Complete/RoutPath/TheSplitString/SomeThingElse'));
+		$this->assertSame('', $this->identityRoutePart->_call('findValueToMatch', 'First/Part/Of/The/Complete/RoutPath/TheSplitString/SomeThingElse'));
 	}
 
 	/**
@@ -167,13 +162,16 @@ class IdentityRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function findValueToMatchProvider() {
 		return array(
-			array('staticPattern/Foo', 'staticPattern', 'Foo', 'staticPattern'),
+			array('staticPattern/Foo', 'staticPattern', '/Foo', 'staticPattern'),
 			array('staticPattern/Foo', 'staticPattern', 'NonExistingSplitString', ''),
-			array('The/Route/Path', '{property1}/{property2}', 'Path', 'The/Route'),
-			array('static/dynamic/splitString', 'static/{property1}', 'splitString', 'static/dynamic'),
-			array('dynamic/exceeding/splitString', '{property1}', 'splitString', ''),
+			array('The/Route/Path', '{property1}/{property2}', '/Path', 'The/Route'),
+			array('static/dynamic/splitString', 'static/{property1}', '/splitString', 'static/dynamic'),
+			array('dynamic/exceeding/splitString', '{property1}', '/splitString', ''),
 			array('dynamic1static1dynamic2/static2splitString', '{property1}static1{property2}/static2', 'splitString', 'dynamic1static1dynamic2/static2'),
 			array('static1dynamic1dynamic2/static2splitString', 'static1{property1}{property2}/static2', 'splitString', 'static1dynamic1dynamic2/static2'),
+			array('foo/bar/baz', '{foo}/{bar}', '/', 'foo/bar'),
+			array('foo/bar/baz', '{foo}/{bar}', '/baz', 'foo/bar'),
+			array('foo/bar/notTheSplitString', '{foo}/{bar}', '/splitString', ''),
 		);
 	}
 
@@ -277,6 +275,32 @@ class IdentityRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$this->identityRoutePart->setUriPattern('SomeUriPattern');
 		$this->assertTrue($this->identityRoutePart->_call('resolveValue', $object));
 		$this->assertSame('The/Path/Segment-2', $this->identityRoutePart->getValue());
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function resolveValueAppendsCounterIfCreatedPathSegmentIsEmpty() {
+		$object = new \stdClass();
+		$this->mockPersistenceManager->expects($this->once())->method('getIdentifierByObject')->with($object)->will($this->returnValue('TheIdentifier'));
+		$this->mockObjectPathMappingRepository->expects($this->once())->method('findOneByObjectTypeUriPatternAndIdentifier')->with('stdClass', 'SomeUriPattern', 'TheIdentifier')->will($this->returnValue(NULL));
+
+		$this->identityRoutePart->expects($this->once())->method('createPathSegmentForObject')->with($object)->will($this->returnValue(''));
+		$this->mockObjectPathMappingRepository->expects($this->once())->method('findOneByObjectTypeUriPatternAndPathSegment')->with('stdClass', 'SomeUriPattern', '-1')->will($this->returnValue(NULL));
+
+		$expectedObjectPathMapping = new \TYPO3\FLOW3\MVC\Web\Routing\ObjectPathMapping();
+		$expectedObjectPathMapping->setObjectType('stdClass');
+		$expectedObjectPathMapping->setUriPattern('SomeUriPattern');
+		$expectedObjectPathMapping->setPathSegment('-1');
+		$expectedObjectPathMapping->setIdentifier('TheIdentifier');
+		$this->mockObjectPathMappingRepository->expects($this->once())->method('add')->with($expectedObjectPathMapping);
+		$this->mockPersistenceManager->expects($this->once())->method('persistAll');
+
+		$this->identityRoutePart->setObjectType('stdClass');
+		$this->identityRoutePart->setUriPattern('SomeUriPattern');
+		$this->assertTrue($this->identityRoutePart->_call('resolveValue', $object));
+		$this->assertSame('-1', $this->identityRoutePart->getValue());
 	}
 
 	/**
