@@ -19,9 +19,10 @@ namespace TYPO3\FLOW3\Tests\Reflection\Fixture\Model;
 class Entity {
 
 	/**
-	 * An identifier property
+	 * An identity property
 	 *
 	 * @var string
+	 * @identity
 	 */
 	protected $someIdentifier;
 
@@ -29,7 +30,6 @@ class Entity {
 	 * Just a normal string
 	 *
 	 * @var string
-	 * @identity
 	 */
 	protected $someString;
 

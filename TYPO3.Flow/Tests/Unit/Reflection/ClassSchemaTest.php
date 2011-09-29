@@ -193,6 +193,29 @@ class ClassSchemaTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$this->assertFalse($classSchema->isAggregateRoot());
 	}
 
+	/**
+	 * @return array
+	 */
+	public function collectionTypes() {
+		return array(
+			array('array'),
+			array('SplObjectStorage'),
+			array('Doctrine\Common\Collections\Collection'),
+			array('Doctrine\Common\Collections\ArrayCollection')
+		);
+	}
+
+	/**
+	 * @test
+	 * @dataProvider collectionTypes
+	 * @param string $type
+	 */
+	public function isMultiValuedPropertyReturnsTrueForCollectionTypes($type) {
+		$classSchema = new \TYPO3\FLOW3\Reflection\ClassSchema('SomeClass');
+		$classSchema->addProperty('testProperty', $type);
+		$this->assertTrue($classSchema->isMultiValuedProperty('testProperty'));
+	}
+
 }
 
 ?>

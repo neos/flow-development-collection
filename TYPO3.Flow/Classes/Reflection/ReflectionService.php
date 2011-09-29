@@ -874,44 +874,81 @@ class ReflectionService {
 				$classSchema->setModelType(\TYPO3\FLOW3\Reflection\ClassSchema::MODELTYPE_VALUEOBJECT);
 			}
 
-				// those are added as property even if not tagged with entity/valueobject
-			$propertyTypeWhiteList = array('DateTime', 'SplObjectStorage', 'Doctrine\Common\Collections\Collection', 'Doctrine\Common\Collections\ArrayCollection');
-			$needsArtificialIdentity = TRUE;
-			foreach ($this->getClassPropertyNames($className) as $propertyName) {
-				if ($this->isPropertyTaggedWith($className, $propertyName, 'var') && !$this->isPropertyTaggedWith($className, $propertyName, 'transient')) {
-					$declaredType = trim(implode(' ', $this->getPropertyTagValues($className, $propertyName, 'var')), ' \\');
-					if (preg_match('/\s/', $declaredType) === 1) {
-						throw new \TYPO3\FLOW3\Reflection\Exception\InvalidPropertyTypeException('The @var annotation for "' . $className . '::$' . $propertyName . '" seems to be invalid.', 1284132314);
-					}
-					if ($this->isPropertyTaggedWith($className, $propertyName, 'Id')) {
-						$needsArtificialIdentity = FALSE;
-					}
+			$this->addPropertiesToClassSchema($classSchema);
 
-					try {
-						$parsedType = \TYPO3\FLOW3\Utility\TypeHandling::parseType($declaredType);
-					} catch (\TYPO3\FLOW3\Utility\Exception\InvalidTypeException $exception) {
-						throw new \InvalidArgumentException(sprintf($exception->getMessage(), 'class "' . $className . '" for property "' . $propertyName . '"'), 1315564475);
-					}
-
-					if (!in_array($parsedType['type'], $propertyTypeWhiteList)
-							&& (class_exists($parsedType['type']) || interface_exists($parsedType['type']))
-							&& !($this->isClassTaggedWith($parsedType['type'], 'entity') || $this->isClassTaggedWith($parsedType['type'], 'valueobject'))) {
-						continue;
-					}
-
-					$classSchema->addProperty($propertyName, $declaredType, $this->isPropertyTaggedWith($className, $propertyName, 'lazy'));
-					if ($this->isPropertyTaggedWith($className, $propertyName, 'identity')) {
-						$classSchema->markAsIdentityProperty($propertyName);
-					}
-				}
-			}
-			if ($needsArtificialIdentity === TRUE) {
-				$classSchema->addProperty('FLOW3_Persistence_Identifier', 'string');
-			}
 			$this->classSchemata[$className] = $classSchema;
 		}
 
-			// now look for repositories that declare themselves responsible for a specific model
+		$this->registerRepositoryResponsibilities();
+	}
+
+	/**
+	 * Adds properties of the class at hand to the class schema.
+	 *
+	 * Only non-transient properties annotated with a var annotation will be added.
+	 * Invalid annotations will cause an exception to be thrown. Properties pointing
+	 * to existing classes will only be added if the target type is annotated as
+	 * entity or valueobject.
+	 *
+	 * @param \TYPO3\FLOW3\Reflection\ClassSchema $classSchema
+	 * @return void
+	 * @throws \InvalidArgumentException
+	 * @throws \TYPO3\FLOW3\Reflection\Exception\InvalidPropertyTypeException
+	 */
+	protected function addPropertiesToClassSchema(\TYPO3\FLOW3\Reflection\ClassSchema $classSchema) {
+
+			// those are added as property even if not tagged with entity/valueobject
+		$propertyTypeWhiteList = array(
+			'DateTime',
+			'SplObjectStorage',
+			'Doctrine\Common\Collections\Collection',
+			'Doctrine\Common\Collections\ArrayCollection'
+		);
+
+		$className = $classSchema->getClassName();
+		$needsArtificialIdentity = TRUE;
+		foreach ($this->getClassPropertyNames($className) as $propertyName) {
+			if ($this->isPropertyTaggedWith($className, $propertyName, 'var') && !$this->isPropertyTaggedWith($className, $propertyName, 'transient')) {
+				$declaredType = trim(implode(' ', $this->getPropertyTagValues($className, $propertyName, 'var')), ' \\');
+				if (preg_match('/\s/', $declaredType) === 1) {
+					throw new \TYPO3\FLOW3\Reflection\Exception\InvalidPropertyTypeException('The @var annotation for "' . $className . '::$' . $propertyName . '" seems to be invalid.', 1284132314);
+				}
+				if ($this->isPropertyTaggedWith($className, $propertyName, 'Id')) {
+					$needsArtificialIdentity = FALSE;
+				}
+
+				try {
+					$parsedType = \TYPO3\FLOW3\Utility\TypeHandling::parseType($declaredType);
+				} catch (\TYPO3\FLOW3\Utility\Exception\InvalidTypeException $exception) {
+					throw new \InvalidArgumentException(sprintf($exception->getMessage(), 'class "' . $className . '" for property "' . $propertyName . '"'), 1315564475);
+				}
+
+				if (!in_array($parsedType['type'], $propertyTypeWhiteList)
+						&& (class_exists($parsedType['type']) || interface_exists($parsedType['type']))
+						&& !($this->isClassTaggedWith($parsedType['type'], 'entity') || $this->isClassTaggedWith($parsedType['type'], 'valueobject'))) {
+					continue;
+				}
+
+				$classSchema->addProperty($propertyName, $declaredType, $this->isPropertyTaggedWith($className, $propertyName, 'lazy'));
+				if ($this->isPropertyTaggedWith($className, $propertyName, 'identity')) {
+					$classSchema->markAsIdentityProperty($propertyName);
+				}
+			}
+		}
+		if ($needsArtificialIdentity === TRUE) {
+			$classSchema->addProperty('FLOW3_Persistence_Identifier', 'string');
+		}
+	}
+
+	/**
+	 * This method looks for repositories that declare themselves responsible
+	 * for a specific model and sets a repository classname on the corresponding
+	 * models.
+	 *
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function registerRepositoryResponsibilities() {
 		foreach ($this->getAllImplementationClassNamesForInterface('TYPO3\FLOW3\Persistence\RepositoryInterface') as $repositoryClassname) {
 				// need to be extra careful because this code could be called during a cache:flush run with corrupted reflection cache
 			if (class_exists($repositoryClassname)) {
