@@ -88,14 +88,14 @@ class Post {
 	 * @param $comment
 	 * @return void
 	 */
-	public function setComment($comment)	{
+	public function setComment($comment) {
 		$this->comment = $comment;
 	}
 
 	/**
 	 * @return Comment
 	 */
-	public function getComment()	{
+	public function getComment() {
 		return $this->comment;
 	}
 

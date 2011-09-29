@@ -43,7 +43,7 @@ class ReflectionServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function isClassReflectedTellsIfTheReflectionServiceKnowsTheSpecfiedClass() {
+	public function isClassReflectedTellsIfTheReflectionServiceKnowsTheSpecifiedClass() {
 		$this->markTestSkipped('Refactor unit tests for Reflection Service!');
 
 		$reflectedClassNames = array(
