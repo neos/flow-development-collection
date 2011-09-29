@@ -234,51 +234,5 @@ class FileBackend extends \TYPO3\FLOW3\Log\Backend\AbstractBackend {
 	 */
 	public function close() {}
 
-	/**
-	 * Returns a suitable form of a variable (be it a string, array, object ...) for logfile output
-	 *
-	 * @param mixed $var The variable
-	 * @param integer $spaces Number of spaces to add before a line
-	 * @return string text output
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	protected function getFormattedVarDump($var, $spaces = 4) {
-		if ($spaces > 100) {
-			return NULL;
-		}
-		$output = '';
-		if (is_array($var)) {
-			foreach ($var as $k=>$v) {
-				if (is_array($v)) {
-					$output .= str_repeat(' ',$spaces) . $k . ' => array (' . PHP_EOL . $this->getFormattedVarDump($v, $spaces+3) . str_repeat (' ', $spaces) . ')' . PHP_EOL;
-				} else {
-					if (is_object($v)) {
-						$output .= str_repeat(' ', $spaces) . $k . ' => object: ' . get_class($v) . PHP_EOL;
-					} else {
-						$output .= str_repeat(' ',$spaces) . $k . ' => ' . ($v === NULL ? '␀' : $v) . PHP_EOL;
-					}
-				}
-			}
-		} else {
-			if (is_object($var)) {
-				$output .= str_repeat(' ', $spaces) . ' [ OBJECT: ' . strtoupper(get_class($var)) . ' ]:' . PHP_EOL;
-				if (is_array(get_object_vars ($var))) {
-					foreach (get_object_vars ($var) as $objVarName => $objVarValue) {
-						if (is_array($objVarValue) || is_object($objVarValue)) {
-							$output .= str_repeat(' ', $spaces) . $objVarName . ' => ' . PHP_EOL;
-							$output .= $this->getFormattedVarDump($objVarValue, $spaces + 3);
-						} else {
-							$output .= str_repeat(' ', $spaces) . $objVarName . ' => ' . ($objVarValue === NULL ? '␀' : $objVarValue) . PHP_EOL;
-						}
-					}
-				}
-				$output .= PHP_EOL;
-			} else {
-				$output .= str_repeat(' ', $spaces) . '=> ' . ($var === NULL ? '␀' : $var) . PHP_EOL;
-			}
-		}
-		return $output;
-	}
 }
 ?>

@@ -21,7 +21,6 @@ class ProxyMethodTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function buildMethodDocumentationShouldAddAllAnnotations() {
-
 		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService', array(), array(), '', FALSE);
 		$mockReflectionService->expects($this->any())->method('hasMethod')->will($this->returnValue(TRUE));
 		$mockReflectionService->expects($this->any())->method('getIgnoredTags')->will($this->returnValue(array('return')));
@@ -39,8 +38,6 @@ class ProxyMethodTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			'skipCsrf' => array()
 		)));
 
-
-
 		$mockProxyMethod = $this->getAccessibleMock('TYPO3\FLOW3\Object\Proxy\ProxyMethod', array('dummy'), array(), '', FALSE);
 		$mockProxyMethod->injectReflectionService($mockReflectionService);
 		$methodDocumentation = $mockProxyMethod->_call('buildMethodDocumentation', 'My\Class\Name', 'myMethod');
@@ -54,6 +51,71 @@ class ProxyMethodTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			'	 * @skipCsrf' . chr(10) .
 			'	 */' . chr(10);
 		$this->assertEquals($expected, $methodDocumentation);
+	}
+
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function buildMethodParametersCodeRendersParametersCodeWithCorrectTypeHintsAndDefaultValues() {
+		$className = 'TestClass' . md5(uniqid(mt_rand(), TRUE));
+		eval('
+			/**
+			 * @param string $arg1 Arg1
+			 */
+			class ' . $className . ' {
+				public function foo($arg1, array $arg2, \ArrayObject $arg3, $arg4= "foo", $arg5 = TRUE, array $arg6 = array(TRUE, \'foo\' => \'bar\', NULL, 3 => 1, 2.3)) {}
+			}
+		');
+
+		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'saveToCache'), array(), '', FALSE, TRUE);
+
+		$expectedCode = '$arg1, array $arg2, \ArrayObject $arg3, $arg4 = \'foo\', $arg5 = TRUE, array $arg6 = array(0 => TRUE, \'foo\' => \'bar\', 1 => NULL, 3 => 1, 4 => 2.3)';
+		$parametersDocumentation = '';
+
+		$builder = $this->getMock('TYPO3\FLOW3\Object\Proxy\ProxyMethod', array('dummyy'), array(), '', FALSE);
+		$builder->injectReflectionService($mockReflectionService);
+
+		$actualCode = $builder->buildMethodParametersCode($className, 'foo', TRUE, $parametersDocumentation);
+		$this->assertSame($expectedCode, $actualCode);
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function buildMethodParametersCodeOmitsTypeHintsAndDefaultValuesIfToldSo() {
+		$className = 'TestClass' . md5(uniqid(mt_rand(), TRUE));
+		eval('
+			class ' . $className . ' {
+				public function foo($arg1, array $arg2, \ArrayObject $arg3, $arg4= "foo", $arg5 = TRUE) {}
+			}
+		');
+
+		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'saveToCache'), array(), '', FALSE, TRUE);
+
+		$expectedCode = '$arg1, $arg2, $arg3, $arg4, $arg5';
+		$parametersDocumentation = '';
+
+		$builder = $this->getMock('TYPO3\FLOW3\Object\Proxy\ProxyMethod', array('dummy'), array(), '', FALSE);
+		$builder->injectReflectionService($mockReflectionService);
+
+		$actualCode = $builder->buildMethodParametersCode($className, 'foo', FALSE, $parametersDocumentation);
+		$this->assertSame($expectedCode, $actualCode);
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function buildMethodParametersCodeReturnsAnEmptyStringIfTheClassNameIsNULL() {
+		$builder = $this->getMock('TYPO3\FLOW3\Object\Proxy\ProxyMethod', array('dummy'), array(), '', FALSE);
+
+		$parametersDocumentation = '';
+		$actualCode = $builder->buildMethodParametersCode(NULL, 'foo', TRUE, $parametersDocumentation);
+		$this->assertSame('', $actualCode);
 	}
 }
 

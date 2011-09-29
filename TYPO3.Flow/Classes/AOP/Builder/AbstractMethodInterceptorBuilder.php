@@ -60,60 +60,6 @@ abstract class AbstractMethodInterceptorBuilder {
 	abstract public function build($methodName, array $methodMetaInformation, $targetClassName);
 
 	/**
-	 * Builds the PHP code for the parameters of the specified method to be
-	 * used in a method interceptor in the proxy class
-	 *
-	 * @param string $className Name of the class the method is declared in
-	 * @param string $methodName Name of the method to create the parameters code for
-	 * @param boolean $addTypeAndDefaultValue Adds the type and default value for each parameters (if any)
-	 * @return string A comma speparated list of parameters
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function buildMethodParametersCode($className, $methodName, $addTypeAndDefaultValue) {
-		$methodParametersCode = '';
-		$methodParameterTypeName = '';
-		$defaultValue = '';
-		$byReferenceSign = '';
-
-		if ($className === NULL || $methodName === NULL) return '';
-
-		$methodParameters = $this->reflectionService->getMethodParameters($className, $methodName);
-		if (count($methodParameters) > 0) {
-			$methodParametersCount = 0;
-			foreach ($methodParameters as $methodParameterName => $methodParameterInfo) {
-				if ($addTypeAndDefaultValue) {
-					if ($methodParameterInfo['array'] === TRUE) {
-						$methodParameterTypeName = 'array';
-					} else {
-						$methodParameterTypeName = ($methodParameterInfo['class'] === NULL) ? '' : '\\' . $methodParameterInfo['class'];
-					}
-					if ($methodParameterInfo['optional'] === TRUE) {
-						$rawDefaultValue = (isset($methodParameterInfo['defaultValue']) ? $methodParameterInfo['defaultValue'] : NULL);
-						if ($rawDefaultValue === NULL) {
-							$defaultValue = ' = NULL';
-						} elseif (is_bool($rawDefaultValue)) {
-							$defaultValue = ($rawDefaultValue ? ' = TRUE' : ' = FALSE');
-						} elseif (is_numeric($rawDefaultValue)) {
-							$defaultValue = ' = ' . $rawDefaultValue;
-						} elseif (is_string($rawDefaultValue)) {
-							$defaultValue = " = '" . $rawDefaultValue . "'";
-						} elseif (is_array($rawDefaultValue)) {
-							$defaultValue = " = " . $this->buildArraySetupCode($rawDefaultValue);
-						}
-					}
-					$byReferenceSign = ($methodParameterInfo['byReference'] ? '&' : '');
-				}
-
-				$methodParametersCode .= ($methodParametersCount > 0 ? ', ' : '') . ($methodParameterTypeName ? $methodParameterTypeName . ' ' : '') . $byReferenceSign . '$' . $methodParameterName . $defaultValue;
-				$methodParametersCount ++;
-			}
-		}
-
-		return $methodParametersCode;
-	}
-
-	/**
 	 * Builds a string containing PHP code to build the array given as input.
 	 *
 	 * @param array $array
