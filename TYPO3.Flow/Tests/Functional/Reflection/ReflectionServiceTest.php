@@ -66,5 +66,18 @@ class ReflectionServiceTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$reflectionService = $this->objectManager->get('TYPO3\FLOW3\Reflection\ReflectionService');
 		$reflectionService->getClassTagsValues('\TYPO3\FLOW3\Persistence\Doctrine\Proxies\FakePackageDomainModelBrokenClassProxy'); // TODO
 	}
+
+	/**
+	 * @test
+	 */
+	public function aggregateRootAssignmentsInHierarchiesAreCorrect() {
+		/** @var $reflectionService \TYPO3\FLOW3\Reflection\ReflectionService */
+		$reflectionService = $this->objectManager->get('TYPO3\FLOW3\Reflection\ReflectionService');
+
+		$this->assertEquals('TYPO3\FLOW3\Tests\Functional\Reflection\Fixtures\Repository\SuperEntityRepository', $reflectionService->getClassSchema('TYPO3\FLOW3\Tests\Functional\Reflection\Fixtures\Model\SuperEntity')->getRepositoryClassName());
+		$this->assertEquals('TYPO3\FLOW3\Tests\Functional\Reflection\Fixtures\Repository\SuperEntityRepository', $reflectionService->getClassSchema('TYPO3\FLOW3\Tests\Functional\Reflection\Fixtures\Model\SubEntity')->getRepositoryClassName());
+		$this->assertEquals('TYPO3\FLOW3\Tests\Functional\Reflection\Fixtures\Repository\SubSubEntityRepository', $reflectionService->getClassSchema('TYPO3\FLOW3\Tests\Functional\Reflection\Fixtures\Model\SubSubEntity')->getRepositoryClassName());
+		$this->assertEquals('TYPO3\FLOW3\Tests\Functional\Reflection\Fixtures\Repository\SubSubEntityRepository', $reflectionService->getClassSchema('TYPO3\FLOW3\Tests\Functional\Reflection\Fixtures\Model\SubSubSubEntity')->getRepositoryClassName());
+	}
 }
 ?>

@@ -879,7 +879,8 @@ class ReflectionService {
 			$this->classSchemata[$className] = $classSchema;
 		}
 
-		$this->registerRepositoryResponsibilities();
+		$this->completeRepositoryAssignments();
+		$this->ensureAggregateRootInheritanceChainConsistency();
 	}
 
 	/**
@@ -941,20 +942,72 @@ class ReflectionService {
 	}
 
 	/**
+	 * Complete repository-to-entity assignments.
+	 *
 	 * This method looks for repositories that declare themselves responsible
 	 * for a specific model and sets a repository classname on the corresponding
 	 * models.
 	 *
+	 * It then walks the inheritance chain for all aggregate roots and checks
+	 * the subclasses for their aggregate root status - if no repository is
+	 * assigned yet, that will be done.
+	 *
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function registerRepositoryResponsibilities() {
+	protected function completeRepositoryAssignments() {
 		foreach ($this->getAllImplementationClassNamesForInterface('TYPO3\FLOW3\Persistence\RepositoryInterface') as $repositoryClassname) {
-				// need to be extra careful because this code could be called during a cache:flush run with corrupted reflection cache
+				// need to be extra careful because this code could be called
+				// during a cache:flush run with corrupted reflection cache
 			if (class_exists($repositoryClassname)) {
 				$claimedObjectType = $repositoryClassname::ENTITY_CLASSNAME;
 				if ($claimedObjectType !== NULL && isset($this->classSchemata[$claimedObjectType])) {
 					$this->classSchemata[$claimedObjectType]->setRepositoryClassName($repositoryClassname);
+				}
+			}
+		}
+
+		foreach (array_values($this->classSchemata) as $classSchema) {
+			if ($classSchema->isAggregateRoot()) {
+				$this->makeChildClassesAggregateRoot($classSchema);
+			}
+		}
+	}
+
+	/**
+	 * Assigns the repository of any aggregate root to all it's
+	 * subclasses, unless they are aggregate root already.
+	 *
+	 * @param \TYPO3\FLOW3\Reflection\ClassSchema $classSchema
+	 * @return void
+	 */
+	protected function makeChildClassesAggregateRoot(\TYPO3\FLOW3\Reflection\ClassSchema $classSchema) {
+		foreach ($this->getAllSubClassNamesForClass($classSchema->getClassName()) as $childClassName) {
+			if ($this->classSchemata[$childClassName]->isAggregateRoot()) {
+				continue;
+			} else {
+				$this->classSchemata[$childClassName]->setRepositoryClassName($classSchema->getRepositoryClassName());
+				$this->makeChildClassesAggregateRoot($this->classSchemata[$childClassName]);
+			}
+		}
+	}
+
+	/**
+	 * Checks whether all aggregate roots having superclasses
+	 * have a repository assigned up to the tip of their hierarchy.
+	 *
+	 * @return void
+	 * @throws \TYPO3\FLOW3\Reflection\Exception
+	 */
+	protected function ensureAggregateRootInheritanceChainConsistency() {
+		foreach ($this->classSchemata as $className => $classSchema) {
+			if ($classSchema->isAggregateRoot() === FALSE) {
+				continue;
+			}
+
+			foreach (class_parents($className) as $parentClassName) {
+				if ($this->classSchemata[$parentClassName]->isAggregateRoot() === FALSE) {
+					throw new \TYPO3\FLOW3\Reflection\Exception('In a class hierarchy either all or no classes must be an aggregate root, "' . $className . '" is one but the parent class "' . $parentClassName . '" is not.', 1316009511);
 				}
 			}
 		}
