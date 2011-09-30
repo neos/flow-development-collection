@@ -968,7 +968,7 @@ class ReflectionService {
 		}
 
 		foreach (array_values($this->classSchemata) as $classSchema) {
-			if ($classSchema->isAggregateRoot()) {
+			if (class_exists($classSchema->getClassName()) && $classSchema->isAggregateRoot()) {
 				$this->makeChildClassesAggregateRoot($classSchema);
 			}
 		}
@@ -1001,7 +1001,7 @@ class ReflectionService {
 	 */
 	protected function ensureAggregateRootInheritanceChainConsistency() {
 		foreach ($this->classSchemata as $className => $classSchema) {
-			if ($classSchema->isAggregateRoot() === FALSE) {
+			if (!class_exists($className) || $classSchema->isAggregateRoot() === FALSE) {
 				continue;
 			}
 
@@ -1133,6 +1133,11 @@ class ReflectionService {
 				unset($this->{$propertyName}[$className]);
 			}
 		}
+
+		if (isset($this->classSchemata[$className])) {
+			unset($this->classSchemata[$className]);
+		}
+
 		unset($this->reflectedClassNames[$className]);
 		unset($this->classesCurrentlyBeingForgotten[$className]);
 	}
