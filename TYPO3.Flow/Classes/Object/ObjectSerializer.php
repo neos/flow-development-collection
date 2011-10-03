@@ -51,7 +51,7 @@ class ObjectSerializer {
 
 	/**
 	 * The reflection service
-	 * @var \TYPO3\FLOW3\Reflection\ServiceInterface
+	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
