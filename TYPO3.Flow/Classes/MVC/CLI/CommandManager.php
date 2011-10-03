@@ -98,6 +98,10 @@ class CommandManager {
 		if ($commandIdentifier === 'help') {
 			$commandIdentifier = 'typo3.flow3:help:help';
 		}
+		if ($commandIdentifier === 'sys') {
+			$commandIdentifier = 'typo3.flow3:cache:sys';
+		}
+
 		$matchedCommands = array();
 		$availableCommands = $this->getAvailableCommands();
 		foreach ($availableCommands as $command) {
