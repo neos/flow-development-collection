@@ -186,15 +186,14 @@ class GeneratorService {
 
 		$modelClassSchema = $this->reflectionService->getClassSchema($contextVariables['modelFullClassName']);
 		if ($modelClassSchema !== NULL) {
-			$contextVariables['propertyNames'] = array_keys($modelClassSchema->getProperties());
-			$i = array_search('FLOW3_Persistence_Identifier', $contextVariables['propertyNames']);
-			if ($i !== FALSE) {
-				unset($contextVariables['propertyNames'][$i]);
+			$contextVariables['properties'] = $modelClassSchema->getProperties();
+			if (isset($contextVariables['properties']['FLOW3_Persistence_Identifier'])) {
+				unset($contextVariables['properties']['FLOW3_Persistence_Identifier']);
 			}
 		}
 
-		if (!isset($contextVariables['propertyNames'])) {
-			$contextVariables['propertyNames'] = array('name');
+		if (!isset($contextVariables['properties']) || $contextVariables['properties'] === array()) {
+			$contextVariables['properties'] = array('name' => array('type' => 'string'));
 		}
 
 		$fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);

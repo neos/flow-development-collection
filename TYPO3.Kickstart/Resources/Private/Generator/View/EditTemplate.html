@@ -4,10 +4,10 @@
 
 <f:section name="Content">]]>
 	<![CDATA[<f:form action="update" object="{]]>{modelName}<![CDATA[}]]>" name="{modelName}">
-		<ol><f:for each="{propertyNames}" as="propertyName">
+		<ol><f:for each="{properties}" as="property" key="propertyName">
 			<li>
 				<label for="{propertyName}"><k:inflect.humanizeCamelCase>{propertyName}</k:inflect.humanizeCamelCase></label>
-				<![CDATA[<f:form.textbox]]> property="{propertyName}" id="{propertyName}" />
+				<f:if condition="{0: property.type} == {0: 'DateTime'}"><f:then><![CDATA[<f:form.textfield]]> type="datetime" value="<![CDATA[{]]>{modelName}.{propertyName}<![CDATA[ -> f:format.date(format: 'Y-m-d\TH:i:sP')}]]>" property="{propertyName}" id="{propertyName}" /></f:then><f:else><![CDATA[<f:form.textfield]]> property="{propertyName}" id="{propertyName}" /></f:else></f:if>
 			</li>
 		</f:for>
 			<li>
