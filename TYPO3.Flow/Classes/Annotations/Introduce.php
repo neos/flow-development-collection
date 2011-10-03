@@ -1,0 +1,48 @@
+<?php
+namespace TYPO3\FLOW3\Annotations;
+
+/*                                                                        *
+ * This script belongs to the FLOW3 framework.                            *
+ *                                                                        *
+ * It is free software; you can redistribute it and/or modify it under    *
+ * the terms of the GNU Lesser General Public License, either version 3   *
+ * of the License, or (at your option) any later version.                 *
+ *                                                                        *
+ * The TYPO3 project - inspiring people to share!                         *
+ *                                                                        */
+
+use Doctrine\Common\Annotations\Annotation as DoctrineAnnotation;
+
+/**
+ * @Annotation
+ * @DoctrineAnnotation\Target("CLASS")
+ */
+final class Introduce {
+
+	/**
+	 * @var string
+	 */
+	public $pointcutExpression;
+
+	/**
+	 * @var string
+	 */
+	public $interfaceName;
+
+	/**
+	 * @param array $values
+	 */
+	public function __construct(array $values) {
+		if (!isset($values['value']) && !isset($values['pointcutExpression'])) {
+			throw new \InvalidArgumentException('An Introduce annotation must specify a pointcut expression.', 1318456624);
+		}
+		$this->pointcutExpression = isset($values['pointcutExpression']) ? $values['pointcutExpression'] : $values['value'];
+
+		if (isset($values['interfaceName'])) {
+			$this->interfaceName = $values['interfaceName'];
+		}
+	}
+
+}
+
+?>
