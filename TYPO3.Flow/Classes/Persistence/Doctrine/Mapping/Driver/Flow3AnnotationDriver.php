@@ -52,7 +52,7 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 	 * docblock annotations.
 	 */
 	public function __construct() {
-		$this->reader = new \Doctrine\Common\Annotations\AnnotationReader();
+		$this->reader = new \Doctrine\Common\Annotations\IndexedReader(new \Doctrine\Common\Annotations\AnnotationReader());
 		$this->reader->setIgnoreNotImportedAnnotations(TRUE);
 		$this->reader->setDefaultAnnotationNamespace('Doctrine\ORM\Mapping\\');
 	}
@@ -83,21 +83,6 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 	}
 
 	/**
-	 * Helper to ensure compatibility with Doctrine Common 3.x
-	 *
-	 * @param array $annotations
-	 * @return array
-	 */
-	protected function mapAnnotationsToKeys(array $annotations) {
-		if ($annotations && is_int(key($annotations))) {
-			foreach ($annotations as $annotation) {
-				$annotations[get_class($annotation)] = $annotation;
-			}
-		}
-		return $annotations;
-	}
-
-	/**
 	 * Loads the metadata for the specified class into the provided container.
 	 *
 	 * @param string $className
@@ -108,7 +93,7 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 	public function loadMetadataForClass($className, \Doctrine\ORM\Mapping\ClassMetadataInfo $metadata) {
 		$class = $metadata->getReflectionClass();
 		$classSchema = $this->getClassSchema($class->getName());
-		$classAnnotations = $this->mapAnnotationsToKeys($this->reader->getClassAnnotations($class));
+		$classAnnotations = $this->reader->getClassAnnotations($class);
 
 			// Evaluate Entity annotation
 		if (isset($classAnnotations['Doctrine\ORM\Mapping\MappedSuperclass'])) {
@@ -634,7 +619,7 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 		if (isset($classAnnotations['Doctrine\ORM\Mapping\HasLifecycleCallbacks'])) {
 			foreach ($class->getMethods() as $method) {
 				if ($method->isPublic()) {
-					$annotations = $this->mapAnnotationsToKeys($this->reader->getMethodAnnotations($method));
+					$annotations = $this->reader->getMethodAnnotations($method);
 
 					if (isset($annotations['Doctrine\ORM\Mapping\PrePersist'])) {
 						$metadata->addLifecycleCallback($method->getName(), \Doctrine\ORM\Events::prePersist);
