@@ -137,6 +137,22 @@ class StaticRoutePartTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$this->assertSame('foo/test', $routePath, 'Static Route Part should shorten $routePath by matching substring on successful match.');
 	}
 
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function matchResetsValueBeforeProcessingTheRoutePath() {
+		$routePart = new \TYPO3\FLOW3\MVC\Web\Routing\StaticRoutePart();
+		$routePart->setName('foo');
+		$routeValues = array();
+		$routePart->resolve($routeValues);
+		$this->assertSame('foo', $routePart->getValue());
+
+		$routePath = 'foo';
+		$routePart->match($routePath);
+		$this->assertNull($routePart->getValue(), 'Static Route Part must reset their value to NULL.');
+	}
+
 	/*                                                                        *
 	 * URI resolving                                                          *
 	 *                                                                        */

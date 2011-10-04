@@ -38,6 +38,7 @@ class StaticRoutePart extends \TYPO3\FLOW3\MVC\Web\Routing\AbstractRoutePart {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function match(&$routePath) {
+		$this->value = NULL;
 		if ($this->name === NULL || $this->name === '') {
 			return FALSE;
 		}
