@@ -60,6 +60,9 @@ class Repository implements \TYPO3\FLOW3\Persistence\RepositoryInterface {
 	/**
 	 * Returns the classname of the entities this repository is managing.
 	 *
+	 * Note that anything that is an "instanceof" this class is accepted
+	 * by the repository.
+	 *
 	 * @return string
 	 * @api
 	 */
