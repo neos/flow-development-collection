@@ -44,7 +44,7 @@ class Package extends BasePackage {
 		$bootstrap->registerCompiletimeCommand('typo3.flow3:cache:flush');
 
 		$dispatcher = $bootstrap->getSignalSlotDispatcher();
-		$dispatcher->connect('TYPO3\FLOW3\Core\Bootstrap', 'finishedRuntimeRun', 'TYPO3\FLOW3\Persistence\PersistenceManagerInterface', 'persistAll');
+		$dispatcher->connect('TYPO3\FLOW3\Core\Bootstrap', 'afterControllerInvocation', 'TYPO3\FLOW3\Persistence\PersistenceManagerInterface', 'persistAll');
 		$dispatcher->connect('TYPO3\FLOW3\Cli\SlaveRequestHandler', 'dispatchedCommandLineSlaveRequest', 'TYPO3\FLOW3\Persistence\PersistenceManagerInterface', 'persistAll');
 		$dispatcher->connect('TYPO3\FLOW3\Core\Bootstrap', 'bootstrapShuttingDown', 'TYPO3\FLOW3\Configuration\ConfigurationManager', 'shutdown');
 		$dispatcher->connect('TYPO3\FLOW3\Core\Bootstrap', 'bootstrapShuttingDown', 'TYPO3\FLOW3\Object\ObjectManagerInterface', 'shutdown');
