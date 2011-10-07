@@ -164,6 +164,21 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 	}
 
 	/**
+	 * Clears the in-memory state of the persistence.
+	 *
+	 * Managed instances become detached, any fetches will
+	 * return data directly from the persistence "backend".
+	 *
+	 * @return void
+	 */
+	public function clearState() {
+		$this->addedObjects = new \SplObjectStorage();
+		$this->removedObjects = new \SplObjectStorage();
+		$this->changedObjects = new \SplObjectStorage();
+		$this->persistenceSession->destroy();
+	}
+
+	/**
 	 * Checks if the given object has ever been persisted.
 	 *
 	 * @param object $object The object to check

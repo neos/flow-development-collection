@@ -39,23 +39,6 @@ class PersistenceManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function persistAllCanBeCalledIfNoRepositoryClassesAreFound() {
-		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService');
-		$mockReflectionService->expects($this->any())->method('getAllImplementationClassNamesForInterface')->will($this->returnValue(array()));
-		$mockBackend = $this->getMock('TYPO3\FLOW3\Persistence\Generic\Backend\BackendInterface');
-		$session = new \TYPO3\FLOW3\Persistence\Generic\Session();
-
-		$manager = new \TYPO3\FLOW3\Persistence\Generic\PersistenceManager();
-		$manager->injectBackend($mockBackend);
-		$manager->injectReflectionService($mockReflectionService);
-		$manager->injectPersistenceSession($session);
-
-		$manager->persistAll();
-	}
-
-	/**
-	 * @test
-	 */
 	public function persistAllPassesAddedObjectsToBackend() {
 		$entity2 = new \TYPO3\FLOW3\Tests\Persistence\Fixture\Model\Entity2();
 		$objectStorage = new \SplObjectStorage();
