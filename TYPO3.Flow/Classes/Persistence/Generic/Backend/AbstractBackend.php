@@ -518,7 +518,7 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Persistence\Generic\Backe
 		if (is_object($propertyValue)) {
 			if ($propertyType === 'object') {
 				if (!($propertyValue instanceof \TYPO3\FLOW3\Persistence\Aspect\PersistenceMagicInterface)) {
-					throw new \TYPO3\FLOW3\Persistence\Exception\IllegalObjectTypeException('Property of generic type object holds "' . get_class($propertyValue) . '", which is not persistable (no @entity or @valueobject), in ' . get_class($object) . '::' . $propertyName, 1283531761);
+					throw new \TYPO3\FLOW3\Persistence\Exception\IllegalObjectTypeException('Property of generic type object holds "' . get_class($propertyValue) . '", which is not persistable (no entity or value object), in ' . get_class($object) . '::' . $propertyName, 1283531761);
 				}
 			} elseif(!($propertyValue instanceof $propertyType)) {
 				throw new \TYPO3\FLOW3\Persistence\Generic\Exception\UnexpectedTypeException('Expected property of type ' . $propertyType . ', but got ' . get_class($propertyValue) . ' for ' . get_class($object) . '::' . $propertyName, 1244465558);

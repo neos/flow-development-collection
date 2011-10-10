@@ -176,25 +176,20 @@ class ValidatorResolver {
 			$validatorConjunctions[$parameterName] = $validatorConjunction;
 		}
 
-		$methodTagsValues = $this->reflectionService->getMethodTagsValues($className, $methodName);
-		if (isset($methodTagsValues['validate'])) {
-			foreach ($methodTagsValues['validate'] as $validateValue) {
-				$parsedAnnotation = $this->parseValidatorAnnotation($validateValue);
-				foreach ($parsedAnnotation['validators'] as $validatorConfiguration) {
-					$newValidator = $this->createValidator($validatorConfiguration['validatorName'], $validatorConfiguration['validatorOptions']);
-					if ($newValidator === NULL) {
-						throw new \TYPO3\FLOW3\Validation\Exception\NoSuchValidatorException('Invalid validate annotation in ' . $className . '->' . $methodName . '(): Could not resolve class name for  validator "' . $validatorConfiguration['validatorName'] . '".', 1239853109);
-					}
-					if (isset($validatorConjunctions[$parsedAnnotation['argumentName']])) {
-						$validatorConjunctions[$parsedAnnotation['argumentName']]->addValidator($newValidator);
-					} elseif (strpos($parsedAnnotation['argumentName'], '.') !== FALSE) {
-						$objectPath = explode('.', $parsedAnnotation['argumentName']);
-						$argumentName = array_shift($objectPath);
-						$validatorConjunctions[$argumentName]->addValidator($this->buildSubObjectValidator($objectPath, $newValidator));
-					} else {
-						throw new \TYPO3\FLOW3\Validation\Exception\InvalidValidationConfigurationException('Invalid validate annotation in ' . $className . '->' . $methodName . '(): Validator specified for argument name "' . $parsedAnnotation['argumentName'] . '", but this argument does not exist.', 1253172726);
-					}
-				}
+		$validateAnnotations = $this->reflectionService->getMethodAnnotations($className, $methodName, 'TYPO3\FLOW3\Annotations\Validate');
+		foreach ($validateAnnotations as $validateAnnotation) {
+			$newValidator = $this->createValidator($validateAnnotation->type, $validateAnnotation->options);
+			if ($newValidator === NULL) {
+				throw new \TYPO3\FLOW3\Validation\Exception\NoSuchValidatorException('Invalid validate annotation in ' . $className . '->' . $methodName . '(): Could not resolve class name for  validator "' . $validateAnnotation->type . '".', 1239853109);
+			}
+			if (isset($validatorConjunctions[$validateAnnotation->argumentName])) {
+				$validatorConjunctions[$validateAnnotation->argumentName]->addValidator($newValidator);
+			} elseif (strpos($validateAnnotation->argumentName, '.') !== FALSE) {
+				$objectPath = explode('.', $validateAnnotation->argumentName);
+				$argumentName = array_shift($objectPath);
+				$validatorConjunctions[$argumentName]->addValidator($this->buildSubObjectValidator($objectPath, $newValidator));
+			} else {
+				throw new \TYPO3\FLOW3\Validation\Exception\InvalidValidationConfigurationException('Invalid validate annotation in ' . $className . '->' . $methodName . '(): Validator specified for argument name "' . $validateAnnotation->argumentName . '", but this argument does not exist.', 1253172726);
 			}
 		}
 		return $validatorConjunctions;
@@ -269,17 +264,13 @@ class ValidatorResolver {
 					}
 				}
 
-				if (isset($classPropertyTagsValues['validate'])) {
-					foreach ($classPropertyTagsValues['validate'] as $validateValue) {
-						$parsedAnnotation = $this->parseValidatorAnnotation($validateValue);
-						foreach ($parsedAnnotation['validators'] as $validatorConfiguration) {
-							$newValidator = $this->createValidator($validatorConfiguration['validatorName'], $validatorConfiguration['validatorOptions']);
-							if ($newValidator === NULL) {
-								throw new \TYPO3\FLOW3\Validation\Exception\NoSuchValidatorException('Invalid validate annotation in ' . $targetClassName . '::' . $classPropertyName . ': Could not resolve class name for  validator "' . $validatorConfiguration['validatorName'] . '".', 1241098027);
-							}
-							$objectValidator->addPropertyValidator($classPropertyName, $newValidator);
-						}
+				$validateAnnotations = $this->reflectionService->getPropertyAnnotations($targetClassName, $classPropertyName, 'TYPO3\FLOW3\Annotations\Validate');
+				foreach ($validateAnnotations as $validateAnnotation) {
+					$newValidator = $this->createValidator($validateAnnotation->type, $validateAnnotation->options);
+					if ($newValidator === NULL) {
+						throw new \TYPO3\FLOW3\Validation\Exception\NoSuchValidatorException('Invalid validate annotation in ' . $targetClassName . '::' . $classPropertyName . ': Could not resolve class name for  validator "' . $validateAnnotation->type . '".', 1241098027);
 					}
+					$objectValidator->addPropertyValidator($classPropertyName, $newValidator);
 				}
 			}
 			if (count($objectValidator->getPropertyValidators()) > 0) $conjunctionValidator->addValidator($objectValidator);
@@ -291,77 +282,6 @@ class ValidatorResolver {
 				$conjunctionValidator->addValidator($customValidator);
 			}
 		}
-	}
-
-	/**
-	 * Parses the validator options given in @validate annotations.
-	 *
-	 * @param string $validateValue
-	 * @return array
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	protected function parseValidatorAnnotation($validateValue) {
-		$matches = array();
-		if ($validateValue[0] === '$') {
-			$parts = explode(' ', $validateValue, 2);
-			$validatorConfiguration = array('argumentName' => ltrim($parts[0], '$'), 'validators' => array());
-			preg_match_all(self::PATTERN_MATCH_VALIDATORS, $parts[1], $matches, PREG_SET_ORDER);
-		} else {
-			$validatorConfiguration = array('validators' => array());
-			preg_match_all(self::PATTERN_MATCH_VALIDATORS, $validateValue, $matches, PREG_SET_ORDER);
-		}
-
-		foreach ($matches as $match) {
-			$validatorOptions = array();
-			if (isset($match['validatorOptions'])) {
-				$validatorOptions = $this->parseValidatorOptions($match['validatorOptions']);
-			}
-			$validatorConfiguration['validators'][] = array('validatorName' => $match['validatorName'], 'validatorOptions' => $validatorOptions);
-		}
-
-		return $validatorConfiguration;
-	}
-
-	/**
-	 * Parses $rawValidatorOptions not containing quoted option values.
-	 * $rawValidatorOptions will be an empty string afterwards (pass by ref!).
-	 *
-	 * @param string &$rawValidatorOptions
-	 * @return array An array of optionName/optionValue pairs
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	protected function parseValidatorOptions($rawValidatorOptions) {
-		$validatorOptions = array();
-		$parsedValidatorOptions = array();
-		preg_match_all(self::PATTERN_MATCH_VALIDATOROPTIONS, $rawValidatorOptions, $validatorOptions, PREG_SET_ORDER);
-		foreach ($validatorOptions as $validatorOption) {
-			$parsedValidatorOptions[trim($validatorOption['optionName'])] = trim($validatorOption['optionValue']);
-		}
-		array_walk($parsedValidatorOptions, array($this, 'unquoteString'));
-		return $parsedValidatorOptions;
-	}
-
-	/**
-	 * Removes escapings from a given argument string and trims the outermost
-	 * quotes.
-	 *
-	 * This method is meant as a helper for regular expression results.
-	 *
-	 * @param string &$quotedValue Value to unquote
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	protected function unquoteString(&$quotedValue) {
-		switch ($quotedValue[0]) {
-			case '"':
-				$quotedValue = str_replace('\"', '"', trim($quotedValue, '"'));
-			break;
-			case '\'':
-				$quotedValue = str_replace('\\\'', '\'', trim($quotedValue, '\''));
-			break;
-		}
-		$quotedValue = str_replace('\\\\', '\\', $quotedValue);
 	}
 
 	/**

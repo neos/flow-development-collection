@@ -359,7 +359,7 @@ class ProxyClassBuilder {
 				}
 			} else {
 				if (isset($argumentNumberToOptionalInfo[$argumentNumber]) && $argumentNumberToOptionalInfo[$argumentNumber] === TRUE) {
-						$assignments[] = $assignmentPrologue . 'NULL';
+					$assignments[] = $assignmentPrologue . 'NULL';
 				}
 			}
 		}

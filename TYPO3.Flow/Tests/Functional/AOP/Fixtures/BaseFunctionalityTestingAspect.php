@@ -22,7 +22,6 @@ class BaseFunctionalityTestingAspect {
 	/**
 	 * @introduce class(TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass03)
 	 * @var string
-	 * @foo bar
 	 */
 	protected $introducedProtectedProperty;
 

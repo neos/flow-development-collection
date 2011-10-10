@@ -50,7 +50,7 @@ class Post {
 	/**
 	 * @var \Doctrine\Common\Collections\Collection<\TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\Post>
 	 * @ManyToMany
-	 * @JoinTable(inverseJoinColumns={@joinColumn(name="related_post_id")})
+	 * @JoinTable(inverseJoinColumns={@JoinColumn(name="related_post_id")})
 	 */
 	protected $related;
 

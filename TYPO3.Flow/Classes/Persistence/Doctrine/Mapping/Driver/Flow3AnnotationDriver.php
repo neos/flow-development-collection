@@ -53,8 +53,6 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 	 */
 	public function __construct() {
 		$this->reader = new \Doctrine\Common\Annotations\IndexedReader(new \Doctrine\Common\Annotations\AnnotationReader());
-		$this->reader->setIgnoreNotImportedAnnotations(TRUE);
-		$this->reader->setDefaultAnnotationNamespace('Doctrine\ORM\Mapping\\');
 	}
 
 	/**
@@ -98,8 +96,8 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 			// Evaluate Entity annotation
 		if (isset($classAnnotations['Doctrine\ORM\Mapping\MappedSuperclass'])) {
 			$metadata->isMappedSuperclass = TRUE;
-		} elseif (isset($classAnnotations['Doctrine\ORM\Mapping\Entity'])) {
-			$entityAnnotation = $classAnnotations['Doctrine\ORM\Mapping\Entity'];
+		} elseif (isset($classAnnotations['TYPO3\FLOW3\Annotations\Entity']) || isset($classAnnotations['Doctrine\ORM\Mapping\Entity'])) {
+			$entityAnnotation = isset($classAnnotations['TYPO3\FLOW3\Annotations\Entity']) ? $classAnnotations['TYPO3\FLOW3\Annotations\Entity'] : $classAnnotations['Doctrine\ORM\Mapping\Entity'];
 			if ($entityAnnotation->repositoryClass) {
 				$metadata->setCustomRepositoryClass($entityAnnotation->repositoryClass);
 			} elseif ($classSchema->getRepositoryClassName() !== NULL) {
@@ -154,16 +152,16 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 			// Evaluate InheritanceType annotation
 		if (isset($classAnnotations['Doctrine\ORM\Mapping\InheritanceType'])) {
 			$inheritanceTypeAnnotation = $classAnnotations['Doctrine\ORM\Mapping\InheritanceType'];
-			$metadata->setInheritanceType(constant('Doctrine\ORM\Mapping\ClassMetadata::INHERITANCE_TYPE_' . $inheritanceTypeAnnotation->value));
+			$metadata->setInheritanceType(constant('Doctrine\ORM\Mapping\ClassMetadata::INHERITANCE_TYPE_' . strtoupper($inheritanceTypeAnnotation->value)));
 
-			if ($metadata->inheritanceType != \Doctrine\ORM\Mapping\ClassMetadata::INHERITANCE_TYPE_NONE) {
+			if ($metadata->inheritanceType !== \Doctrine\ORM\Mapping\ClassMetadata::INHERITANCE_TYPE_NONE) {
 					// Evaluate DiscriminatorColumn annotation
 				if (isset($classAnnotations['Doctrine\ORM\Mapping\DiscriminatorColumn'])) {
-					$discrColumnAnnotation = $classAnnotations['Doctrine\ORM\Mapping\DiscriminatorColumn'];
+					$discriminatorColumnAnnotation = $classAnnotations['Doctrine\ORM\Mapping\DiscriminatorColumn'];
 					$metadata->setDiscriminatorColumn(array(
-						'name' => $discrColumnAnnotation->name,
-						'type' => $discrColumnAnnotation->type,
-						'length' => $discrColumnAnnotation->length
+						'name' => $discriminatorColumnAnnotation->name,
+						'type' => $discriminatorColumnAnnotation->type,
+						'length' => $discriminatorColumnAnnotation->length
 					));
 				} else {
 					$metadata->setDiscriminatorColumn(array('name' => 'dtype', 'type' => 'string', 'length' => 255));
@@ -193,7 +191,7 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 			// Evaluate DoctrineChangeTrackingPolicy annotation
 		if (isset($classAnnotations['Doctrine\ORM\Mapping\ChangeTrackingPolicy'])) {
 			$changeTrackingAnnotation = $classAnnotations['Doctrine\ORM\Mapping\ChangeTrackingPolicy'];
-			$metadata->setChangeTrackingPolicy(constant('Doctrine\ORM\Mapping\ClassMetadata::CHANGETRACKING_' . $changeTrackingAnnotation->value));
+			$metadata->setChangeTrackingPolicy(constant('Doctrine\ORM\Mapping\ClassMetadata::CHANGETRACKING_' . strtoupper($changeTrackingAnnotation->value)));
 		} else {
 			$metadata->setChangeTrackingPolicy(\Doctrine\ORM\Mapping\ClassMetadata::CHANGETRACKING_DEFERRED_EXPLICIT);
 		}
@@ -277,11 +275,11 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 		foreach ($joinColumns as &$joinColumn) {
 			if ($joinColumn['referencedColumnName'] === NULL || $joinColumn['referencedColumnName'] === 'id') {
 				if ($direction === self::MAPPING_REGULAR) {
-					$idProperties = $this->reflectionService->getPropertyNamesByTag($mapping['targetEntity'], 'Id');
+					$idProperties = $this->reflectionService->getPropertyNamesByTag($mapping['targetEntity'], 'id');
 					$joinColumnName = $this->buildJoinTableColumnName($mapping['targetEntity']);
 				} else {
 					$className = preg_replace('/' . \TYPO3\FLOW3\Object\Proxy\Compiler::ORIGINAL_CLASSNAME_SUFFIX . '$/', '', $property->getDeclaringClass()->getName());
-					$idProperties = $this->reflectionService->getPropertyNamesByTag($className, 'Id');
+					$idProperties = $this->reflectionService->getPropertyNamesByTag($className, 'id');
 					$joinColumnName = $this->buildJoinTableColumnName($className);
 				}
 				if (count($idProperties) === 0) {
@@ -345,7 +343,7 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 				} elseif ($this->getClassSchema($mapping['targetEntity'])->isAggregateRoot() === FALSE) {
 					$mapping['orphanRemoval'] = TRUE;
 				}
-				$mapping['fetch'] = constant('Doctrine\ORM\Mapping\ClassMetadata::FETCH_' . $oneToOneAnnotation->fetch);
+				$mapping['fetch'] = constant('Doctrine\ORM\Mapping\ClassMetadata::FETCH_' . strtoupper($oneToOneAnnotation->fetch));
 				$metadata->mapOneToOne($mapping);
 			} elseif ($oneToManyAnnotation = $this->reader->getPropertyAnnotation($property, 'Doctrine\ORM\Mapping\OneToMany')) {
 				$mapping['mappedBy'] = $oneToManyAnnotation->mappedBy;
@@ -364,7 +362,7 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 				} elseif ($this->getClassSchema($mapping['targetEntity'])->isAggregateRoot() === FALSE) {
 					$mapping['orphanRemoval'] = TRUE;
 				}
-				$mapping['fetch'] = constant('Doctrine\ORM\Mapping\ClassMetadata::FETCH_' . $oneToManyAnnotation->fetch);
+				$mapping['fetch'] = constant('Doctrine\ORM\Mapping\ClassMetadata::FETCH_' . strtoupper($oneToManyAnnotation->fetch));
 
 				if ($orderByAnnotation = $this->reader->getPropertyAnnotation($property, 'Doctrine\ORM\Mapping\OrderBy')) {
 					$mapping['orderBy'] = $orderByAnnotation->value;
@@ -382,7 +380,7 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 					$mapping['cascade'] = array('all');
 				}
 				$mapping['inversedBy'] = $manyToOneAnnotation->inversedBy;
-				$mapping['fetch'] = constant('Doctrine\ORM\Mapping\ClassMetadata::FETCH_' . $manyToOneAnnotation->fetch);
+				$mapping['fetch'] = constant('Doctrine\ORM\Mapping\ClassMetadata::FETCH_' . strtoupper($manyToOneAnnotation->fetch));
 				$metadata->mapManyToOne($mapping);
 			} elseif ($manyToManyAnnotation = $this->reader->getPropertyAnnotation($property, 'Doctrine\ORM\Mapping\ManyToMany')) {
 				if ($manyToManyAnnotation->targetEntity) {
@@ -415,7 +413,7 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 				} elseif ($this->getClassSchema($mapping['targetEntity'])->isAggregateRoot() === FALSE) {
 					$mapping['cascade'] = array('all');
 				}
-				$mapping['fetch'] = constant('Doctrine\ORM\Mapping\ClassMetadata::FETCH_' . $manyToManyAnnotation->fetch);
+				$mapping['fetch'] = constant('Doctrine\ORM\Mapping\ClassMetadata::FETCH_' . strtoupper($manyToManyAnnotation->fetch));
 
 				if ($orderByAnnotation = $this->reader->getPropertyAnnotation($property, 'Doctrine\ORM\Mapping\OrderBy')) {
 					$mapping['orderBy'] = $orderByAnnotation->value;
@@ -459,7 +457,7 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 							break;
 						default:
 							if (strpos($propertyMetaData['type'], '\\') !== FALSE) {
-								if ($this->reflectionService->isClassTaggedWith($propertyMetaData['type'], 'valueobject')) {
+								if ($this->reflectionService->isClassAnnotatedWith($propertyMetaData['type'], 'TYPO3\FLOW3\Annotations\ValueObject')) {
 									$mapping['type'] = 'object';
 								} elseif (class_exists($propertyMetaData['type'])) {
 
@@ -477,11 +475,10 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 				}
 
 				if ($generatedValueAnnotation = $this->reader->getPropertyAnnotation($property, 'Doctrine\ORM\Mapping\GeneratedValue')) {
-					$metadata->setIdGeneratorType(constant('Doctrine\ORM\Mapping\ClassMetadata::GENERATOR_TYPE_' . $generatedValueAnnotation->strategy));
+					$metadata->setIdGeneratorType(constant('Doctrine\ORM\Mapping\ClassMetadata::GENERATOR_TYPE_' . strtoupper($generatedValueAnnotation->strategy)));
 				}
 
-				if ($this->reflectionService->isPropertyTaggedWith($className, $property->getName(), 'version')
-						|| $this->reflectionService->isPropertyTaggedWith($className, $property->getName(), 'Version')) {
+				if ($this->reflectionService->isPropertyAnnotatedWith($className, $property->getName(), 'Doctrine\ORM\Mapping\Version')) {
 					$metadata->setVersionMapping($mapping);
 				}
 
@@ -527,7 +524,6 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 				'unique' => $joinColumn->unique,
 				'nullable' => $joinColumn->nullable,
 				'onDelete' => $joinColumn->onDelete,
-				'onUpdate' => $joinColumn->onUpdate,
 				'columnDefinition' => $joinColumn->columnDefinition,
 			);
 		}
@@ -550,7 +546,6 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 				'unique' => $joinColumn->unique,
 				'nullable' => $joinColumn->nullable,
 				'onDelete' => $joinColumn->onDelete,
-				'onUpdate' => $joinColumn->onUpdate,
 				'columnDefinition' => $joinColumn->columnDefinition,
 			);
 		}
@@ -587,7 +582,6 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 				'unique' => $joinColumnAnnotation->unique,
 				'nullable' => $joinColumnAnnotation->nullable,
 				'onDelete' => $joinColumnAnnotation->onDelete,
-				'onUpdate' => $joinColumnAnnotation->onUpdate,
 				'columnDefinition' => $joinColumnAnnotation->columnDefinition,
 			);
 		} else if ($joinColumnsAnnotation = $this->reader->getPropertyAnnotation($property, 'Doctrine\ORM\Mapping\JoinColumns')) {
@@ -598,7 +592,6 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 					'unique' => $joinColumnAnnotation->unique,
 					'nullable' => $joinColumnAnnotation->nullable,
 					'onDelete' => $joinColumnAnnotation->onDelete,
-					'onUpdate' => $joinColumnAnnotation->onUpdate,
 					'columnDefinition' => $joinColumnAnnotation->columnDefinition,
 				);
 			}
@@ -666,8 +659,7 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 		$this->classNames = array_merge(
 			$this->reflectionService->getClassNamesByTag('valueobject'),
 			$this->reflectionService->getClassNamesByTag('entity'),
-			$this->reflectionService->getClassNamesByTag('Entity'),
-			$this->reflectionService->getClassNamesByTag('MappedSuperclass')
+			$this->reflectionService->getClassNamesByTag('mappedsuperclass')
 		);
 		$this->classNames = array_filter($this->classNames,
 			function ($className) {
@@ -690,10 +682,10 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 	public function isTransient($className) {
 		return strpos($className, \TYPO3\FLOW3\Object\Proxy\Compiler::ORIGINAL_CLASSNAME_SUFFIX) !== FALSE ||
 				(
-					!$this->reflectionService->isClassTaggedWith($className, 'valueobject') &&
-					!$this->reflectionService->isClassTaggedWith($className, 'entity') &&
-					!$this->reflectionService->isClassTaggedWith($className, 'Entity') &&
-					!$this->reflectionService->isClassTaggedWith($className, 'MappedSuperclass')
+					!$this->reflectionService->isClassAnnotatedWith($className, 'TYPO3\FLOW3\Annotations\ValueObject') &&
+					!$this->reflectionService->isClassAnnotatedWith($className, 'TYPO3\FLOW3\Annotations\Entity') &&
+					!$this->reflectionService->isClassAnnotatedWith($className, 'Doctrine\ORM\Mapping\Entity') &&
+					!$this->reflectionService->isClassAnnotatedWith($className, 'Doctrine\ORM\Mapping\MappedSuperclass')
 				);
 	}
 
@@ -707,7 +699,7 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 	 * @return boolean TRUE if the class has *no* @Id properties
 	 */
 	public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier) {
-		$tags = $this->reflectionService->getPropertyNamesByTag($className, 'Id');
+		$tags = $this->reflectionService->getPropertyNamesByTag($className, 'id');
 		return $tags === array();
 	}
 

@@ -318,7 +318,7 @@ class Session {
 			return $this->objectMap[$object];
 		}
 
-		$idPropertyNames = $this->reflectionService->getPropertyNamesByTag(get_class($object), 'Id');
+		$idPropertyNames = $this->reflectionService->getPropertyNamesByTag(get_class($object), 'id');
 		if (count($idPropertyNames) === 1) {
 			$idPropertyName = $idPropertyNames[0];
 			return \TYPO3\FLOW3\Reflection\ObjectAccess::getProperty($object, $idPropertyName, TRUE);

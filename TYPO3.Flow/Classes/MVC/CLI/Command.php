@@ -166,7 +166,7 @@ class Command {
 
 	/**
 	 * Tells if this command is internal and thus should not be exposed through help texts, user documentation etc.
-	 * Internall commands are still accessible through the regular command line interface, but should not be used
+	 * Internal commands are still accessible through the regular command line interface, but should not be used
 	 * by users.
 	 *
 	 * @return boolean
@@ -186,7 +186,7 @@ class Command {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function isFlushingCaches() {
-		return $this->getCommandMethodReflection()->isTaggedWith('flushesCaches');
+		return $this->getCommandMethodReflection()->isTaggedWith('flushescaches');
 	}
 
 	/**

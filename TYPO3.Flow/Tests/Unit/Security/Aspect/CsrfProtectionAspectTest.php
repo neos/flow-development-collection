@@ -165,7 +165,7 @@ class CsrfProtectionAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$this->mockReflectionService
 			->expects($this->any())
 			->method('isMethodTaggedWith')
-			->with($this->controllerObjectName, $this->arguments['@action'] . 'Action', 'skipCsrfProtection')
+			->with($this->controllerObjectName, $this->arguments['@action'] . 'Action', 'skipcsrfprotection')
 			->will($this->returnValue($expected));
 	}
 

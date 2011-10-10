@@ -65,7 +65,7 @@ class Response extends \TYPO3\FLOW3\MVC\Response {
 	}
 
 	/**
-	 * Rets the numerical exit code which should be returned when exiting this application.
+	 * Gets the numerical exit code which should be returned when exiting this application.
 	 *
 	 * @return integer
 	 * @api

@@ -41,9 +41,9 @@ class ClassSchemaFixture {
 	 *
 	 * @param string $name
 	 * @return void
-	 * @validate foo1 bar1
-	 * @validate foo2 bar2
-	 * @skipCsrf
+	 * @FLOW3\Validate("$name", type="foo1")
+	 * @FLOW3\Validate("$name", type="foo2")
+	 * @FLOW3\SkipCsrfProtection
 	 */
 	public function setName($name) {
 		$this->name = $name;

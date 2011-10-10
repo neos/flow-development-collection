@@ -68,7 +68,7 @@ class PropertyIntroduction {
 		} else {
 			$this->propertyVisibility = 'public';
 		}
-		$this->propertyDocComment = preg_replace('/@introduce.+$/mi', 'introduced by ' . $declaringAspectClassName, $propertyReflection->getDocComment());
+		$this->propertyDocComment = preg_replace('/@(TYPO3\\\\FLOW3\\\\Annotations|FLOW3)\\\\Introduce.+$/mi', 'introduced by ' . $declaringAspectClassName, $propertyReflection->getDocComment());
 	}
 
 	/**

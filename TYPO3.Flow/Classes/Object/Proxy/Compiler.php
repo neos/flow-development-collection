@@ -117,8 +117,8 @@ class Compiler {
 			return FALSE;
 		}
 
-		$proxyAnnotationValues = $this->reflectionService->getClassTagValues($fullClassName, 'proxy');
-		if ($proxyAnnotationValues !== array() && $proxyAnnotationValues[0] === 'disable') {
+		$proxyAnnotation = $this->reflectionService->getClassAnnotation($fullClassName, 'TYPO3\FLOW3\Annotations\Proxy');
+		if ($proxyAnnotation !== NULL && $proxyAnnotation->enabled === FALSE) {
 			return FALSE;
 		}
 
@@ -190,6 +190,58 @@ class Compiler {
 
 		$this->classesCache->set(str_replace('\\', '_', $className . self::ORIGINAL_CLASSNAME_SUFFIX), $classCode, array(CacheManager::getClassTag($className)));
 	}
+
+
+	/**
+	 * Render the source (string) form of an Annotation instance.
+	 *
+	 * @param \Doctrine\Common\Annotations\Annotation $annotation
+	 * @return string
+	 */
+	static public function renderAnnotation($annotation) {
+		$annotationAsString = '@' . get_class($annotation);
+
+		$optionNames = get_class_vars(get_class($annotation));
+		$optionsAsStrings = array();
+		foreach ($optionNames as $optionName => $optionDefault) {
+			$optionValue = $annotation->$optionName;
+			$optionValueAsString = '';
+			if (is_object($optionValue)) {
+				$optionValueAsString = self::renderAnnotation($optionValue);
+			} elseif (is_scalar($optionValue) && is_string($optionValue)) {
+				$optionValueAsString = '"' . $optionValue . '"';
+			} elseif (is_array($optionValue)) {
+				$values = array();
+				foreach ($optionValue as $k => $v) {
+					$value = '';
+					if (is_string($k)) {
+						$value .= '"' . $k . '"=';
+					}
+					if (is_object($v)) {
+						$value .= self::renderAnnotation($v);
+					} elseif (is_scalar($v) && is_string($v)) {
+						$value .= '"' . $v . '"';
+					} elseif (is_scalar($v)) {
+						$value .= $v;
+					}
+					$values[] = $value;
+				}
+				$optionValueAsString = '{ ' . implode(', ', $values) . ' }';
+			}
+			switch ($optionName) {
+				case 'value':
+					$optionsAsStrings[] = $optionValueAsString;
+					break;
+				default:
+					if ($optionValue === $optionDefault) {
+						continue;
+					}
+					$optionsAsStrings[] = $optionName . '=' . $optionValueAsString;
+			}
+		}
+		return $annotationAsString . ($optionsAsStrings !== array() ? '(' . implode(', ', $optionsAsStrings) . ')' : '');
+	}
+
 }
 
 ?>

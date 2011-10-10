@@ -15,8 +15,6 @@ namespace TYPO3\FLOW3\Tests\Functional\Object\Fixtures;
  * A class of scope prototype
  *
  * @scope prototype
- * @foo test annotation
- * @bar
  * @entity
  */
 class PrototypeClassA implements PrototypeClassAishInterface {
@@ -49,7 +47,7 @@ class PrototypeClassA implements PrototypeClassAishInterface {
 	/**
 	 * @param string $someProperty
 	 * @return void
-	 * @bar
+	 * @session
 	 */
 	public function setSomeProperty($someProperty) {
 		$this->someProperty = $someProperty;

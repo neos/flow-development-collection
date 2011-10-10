@@ -89,7 +89,7 @@ interface JoinPointInterface {
 
 	/**
 	 * Returns the result of the method invocation. The result is only
-	 * available for afterReturning advices.
+	 * available for AfterReturning advices.
 	 *
 	 * @return mixed Result of the method invocation
 	 */

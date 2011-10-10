@@ -45,10 +45,10 @@ class ReflectionServiceTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 				'void'
 			),
 			'validate' => array(
-				'foo1 bar1',
-				'foo2 bar2'
+				'$name", type="foo1',
+				'$name", type="foo2'
 			),
-			'skipCsrf' => array()
+			'skipcsrfprotection' => array()
 		);
 		$this->assertSame($expected, $actual);
 	}

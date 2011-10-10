@@ -35,7 +35,7 @@ class PersistenceMagicAspect {
 	/**
 	 * @var string
 	 * @Id
-	 * @Column(length="40")
+	 * @Column(length=40)
 	 * @introduce TYPO3\FLOW3\Persistence\Aspect\PersistenceMagicAspect->isEntityOrValueObject && filter(TYPO3\FLOW3\Persistence\Doctrine\Mapping\Driver\Flow3AnnotationDriver)
 	 */
 	protected $FLOW3_Persistence_Identifier;

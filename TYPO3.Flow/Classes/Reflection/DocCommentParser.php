@@ -101,17 +101,22 @@ class DocCommentParser {
 
 	/**
 	 * Parses a line of a doc comment for a tag and its value.
-	 * The result is stored in the interal tags array.
+	 * The result is stored in the internal tags array.
 	 *
 	 * @param string $line A line of a doc comment which starts with an @-sign
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function parseTag($line) {
-		$tagAndValue = preg_split('/\s/', $line, 2);
-		$tag = substr($tagAndValue[0], 1);
+		$tagAndValue = array();
+		if (preg_match('/@[A-Za-z0-9\\\\]+\\\\([A-Za-z0-9]+)(?:\\((.*)\\))?$/', $line, $tagAndValue) === 0) {
+			$tagAndValue = preg_split('/\s/', $line, 2);
+		} else {
+			array_shift($tagAndValue);
+		}
+		$tag = strtolower(trim($tagAndValue[0], '@'));
 		if (count($tagAndValue) > 1) {
-			$this->tags[$tag][] = trim($tagAndValue[1]);
+			$this->tags[$tag][] = trim($tagAndValue[1], ' "');
 		} else {
 			$this->tags[$tag] = array();
 		}

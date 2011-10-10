@@ -20,7 +20,7 @@ namespace TYPO3\FLOW3\AOP\Pointcut;
 class PointcutClassTaggedWithFilter implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 
 	/**
-	 * @var TYPO3\FLOW3\Reflection\ReflectionService
+	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
@@ -63,7 +63,7 @@ class PointcutClassTaggedWithFilter implements \TYPO3\FLOW3\AOP\Pointcut\Pointcu
 	 */
 	public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier) {
 		foreach ($this->reflectionService->getClassTagsValues($className) as $tag => $values) {
-			$matchResult = preg_match('/^' . $this->classTagFilterExpression . '$/', $tag);
+			$matchResult = preg_match('/^' . $this->classTagFilterExpression . '$/i', $tag);
 			if ($matchResult === FALSE) {
 				throw new \TYPO3\FLOW3\AOP\Exception('Error in regular expression "' . $this->classTagFilterExpression . '" in pointcut class tag filter', 1212576034);
 			}

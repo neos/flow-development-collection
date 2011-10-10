@@ -77,7 +77,7 @@ class Request implements RequestInterface {
 	 * The dispatcher will try to dispatch the request again if it has not been
 	 * addressed yet.
 	 *
-	 * @return boolean TRUE if this request has been disptached successfully
+	 * @return boolean TRUE if this request has been dispatched successfully
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function isDispatched() {

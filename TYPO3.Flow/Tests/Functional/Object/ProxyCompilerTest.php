@@ -28,9 +28,8 @@ class ProxyCompilerTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$method = $class->getMethod('setSomeProperty');
 
 		$this->assertTrue($class->implementsInterface('TYPO3\FLOW3\Object\Proxy\ProxyInterface'));
-		$this->assertTrue($class->isTaggedWith('foo'));
-		$this->assertTrue($class->isTaggedWith('bar'));
-		$this->assertTrue($method->isTaggedWith('bar'));
+		$this->assertTrue($class->isTaggedWith('scope'));
+		$this->assertTrue($method->isTaggedWith('session'));
 	}
 
 	/**

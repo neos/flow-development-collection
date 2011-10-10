@@ -32,7 +32,7 @@ class ConfigurationBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$configurationArray['factoryMethodName'] = 'manufacture';
 		$configurationArray['lifecycleInitializationMethodName'] = 'initializationMethod';
 		$configurationArray['lifecycleShutdownMethodName'] = 'shutdownMethod';
-		$configurationArray['autowiring'] = 'off';
+		$configurationArray['autowiring'] = FALSE;
 
 		$objectConfiguration = new \TYPO3\FLOW3\Object\Configuration\Configuration('TestObject', __CLASS__);
 		$objectConfiguration->setScope(\TYPO3\FLOW3\Object\Configuration\Configuration::SCOPE_PROTOTYPE);

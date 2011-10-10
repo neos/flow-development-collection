@@ -899,9 +899,9 @@ class ReflectionServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function repositoryClassNameIsDetectedForEntities() {
-		$reflectionService = $this->getAccessibleMock('TYPO3\FLOW3\Reflection\ReflectionService', array('isClassReflected', 'isClassTaggedWith'));
-		$reflectionService->expects($this->at(0))->method('isClassTaggedWith')->with('TYPO3\FLOW3\Tests\Reflection\Fixture\Model\Entity', 'entity')->will($this->returnValue(TRUE));
-		$reflectionService->expects($this->at(2))->method('isClassReflected')->with('TYPO3\FLOW3\Tests\Reflection\Fixture\Repository\EntityRepository')->will($this->returnValue(TRUE));
+		$reflectionService = $this->getAccessibleMock('TYPO3\FLOW3\Reflection\ReflectionService', array('isClassReflected', 'loadFromCache'));
+		$reflectionService->expects($this->atLeastOnce())->method('isClassReflected')->with('TYPO3\FLOW3\Tests\Reflection\Fixture\Repository\EntityRepository')->will($this->returnValue(TRUE));
+		$reflectionService->initializeObject();
 		$reflectionService->_call('buildClassSchemata', array('TYPO3\FLOW3\Tests\Reflection\Fixture\Model\Entity'));
 
 		$builtClassSchemata = $reflectionService->getClassSchemata();
@@ -916,10 +916,10 @@ class ReflectionServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function aggregateRootIsDetectedForEntitiesWithNonStandardRepository() {
-		$reflectionService = $this->getAccessibleMock('TYPO3\FLOW3\Reflection\ReflectionService', array('isClassReflected', 'isClassTaggedWith', 'getAllImplementationClassNamesForInterface'));
-		$reflectionService->expects($this->at(0))->method('isClassTaggedWith')->with('TYPO3\FLOW3\Tests\Reflection\Fixture\Model\Entity', 'entity')->will($this->returnValue(TRUE));
-		$reflectionService->expects($this->at(2))->method('isClassReflected')->with('TYPO3\FLOW3\Tests\Reflection\Fixture\Repository\EntityRepository')->will($this->returnValue(FALSE));
+		$reflectionService = $this->getAccessibleMock('TYPO3\FLOW3\Reflection\ReflectionService', array('isClassReflected', 'getAllImplementationClassNamesForInterface', 'loadFromCache'));
+		$reflectionService->expects($this->atLeastOnce())->method('isClassReflected')->with('TYPO3\FLOW3\Tests\Reflection\Fixture\Repository\EntityRepository')->will($this->returnValue(FALSE));
 		$reflectionService->expects($this->once())->method('getAllImplementationClassNamesForInterface')->with('TYPO3\FLOW3\Persistence\RepositoryInterface')->will($this->returnValue(array('TYPO3\FLOW3\Tests\Reflection\Fixture\Repository\NonstandardEntityRepository')));
+		$reflectionService->initializeObject();
 		$reflectionService->_call('buildClassSchemata', array('TYPO3\FLOW3\Tests\Reflection\Fixture\Model\Entity'));
 
 		$builtClassSchemata = $reflectionService->getClassSchemata();

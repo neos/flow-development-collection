@@ -66,7 +66,7 @@ class PointcutMethodTaggedWithFilter implements \TYPO3\FLOW3\AOP\Pointcut\Pointc
 			return FALSE;
 		}
 		foreach ($this->reflectionService->getMethodTagsValues($methodDeclaringClassName, $methodName) as $tag => $values) {
-			$matchResult = preg_match('/^' . $this->methodTagFilterExpression . '$/', $tag);
+			$matchResult = preg_match('/^' . $this->methodTagFilterExpression . '$/i', $tag);
 			if ($matchResult === FALSE) {
 				throw new \TYPO3\FLOW3\AOP\Exception('Error in regular expression "' . $this->methodTagFilterExpression . '" in pointcut method tag filter', 1229343988);
 			}

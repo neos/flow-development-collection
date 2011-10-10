@@ -77,8 +77,8 @@ class ConfigurationBuilder {
 					if ($className === FALSE) {
 						continue;
 					}
-					if ($this->reflectionService->isClassTaggedWith($interfaceName, 'scope')) {
-						throw new \TYPO3\FLOW3\Object\Exception\InvalidObjectConfigurationException(sprintf('@scope annotations in interfaces don\'t have any effect, therefore you better remove it from %s in order to avoid confusion.', $interfaceName), 1299095595);
+					if ($this->reflectionService->isClassAnnotatedWith($interfaceName, 'TYPO3\FLOW3\Annotations\Scope')) {
+						throw new \TYPO3\FLOW3\Object\Exception\InvalidObjectConfigurationException(sprintf('Scope annotations in interfaces don\'t have any effect, therefore you better remove it from %s in order to avoid confusion.', $interfaceName), 1299095595);
 					}
 				}
 
@@ -131,11 +131,11 @@ class ConfigurationBuilder {
 	 * @return array
 	 */
 	protected function enhanceRawConfigurationWithAnnotationOptions($className, array $rawObjectConfiguration) {
-		if ($this->reflectionService->isClassTaggedWith($className, 'scope')) {
-			$rawObjectConfiguration['scope'] = implode('', $this->reflectionService->getClassTagValues($className, 'scope'));
+		if ($this->reflectionService->isClassAnnotatedWith($className, 'TYPO3\FLOW3\Annotations\Scope')) {
+			$rawObjectConfiguration['scope'] = $this->reflectionService->getClassAnnotation($className, 'TYPO3\FLOW3\Annotations\Scope')->value;
 		}
-		if ($this->reflectionService->isClassTaggedWith($className, 'autowiring')) {
-			$rawObjectConfiguration['autowiring'] = implode('', $this->reflectionService->getClassTagValues($className, 'autowiring'));
+		if ($this->reflectionService->isClassAnnotatedWith($className, 'TYPO3\FLOW3\Annotations\Autowiring')) {
+			$rawObjectConfiguration['autowiring'] = $this->reflectionService->getClassAnnotation($className, 'TYPO3\FLOW3\Annotations\Autowiring')->enabled;
 		}
 		return $rawObjectConfiguration;
 	}
@@ -148,6 +148,7 @@ class ConfigurationBuilder {
 	 * @param string configurationSourceHint A human readable hint on the original source of the configuration (for troubleshooting)
 	 * @param \TYPO3\FLOW3\Object\Configuration\Configuration existingObjectConfiguration If set, this object configuration object will be used instead of creating a fresh one
 	 * @return \TYPO3\FLOW3\Object\Configuration\Configuration The object configuration object
+	 * @throws \TYPO3\FLOW3\Object\Exception\InvalidObjectConfigurationException if errors occurred during parsing
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function parseConfigurationArray($objectName, array $rawConfigurationOptions, $configurationSourceHint = '', $existingObjectConfiguration = NULL) {
@@ -214,7 +215,7 @@ class ConfigurationBuilder {
 	 * Parses the value of the option "scope"
 	 *
 	 * @param  string $value Value of the option
-	 * @return integer The scope translated into a scope constant
+	 * @return integer The scope translated into a Configuration::SCOPE_* constant
 	 * @throws \TYPO3\FLOW3\Object\Exception\InvalidObjectConfigurationException if an invalid scope has been specified
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -234,17 +235,17 @@ class ConfigurationBuilder {
 	/**
 	 * Parses the value of the option "autowiring"
 	 *
-	 * @param  string $value Value of the option
-	 * @return boolean The autowiring option translated into a boolean
+	 * @param  mixed $value Value of the option
+	 * @return integer The autowiring option translated into one of Configuration::AUTOWIRING_MODE_*
 	 * @throws \TYPO3\FLOW3\Object\Exception\InvalidObjectConfigurationException if an invalid option has been specified
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	static protected function parseAutowiring($value) {
 		switch ($value) {
-			case 'on':
+			case TRUE:
 			case Configuration::AUTOWIRING_MODE_ON:
 				return Configuration::AUTOWIRING_MODE_ON;
-			case 'off':
+			case FALSE:
 			case Configuration::AUTOWIRING_MODE_OFF:
 				return Configuration::AUTOWIRING_MODE_OFF;
 			default:
@@ -331,9 +332,9 @@ class ConfigurationBuilder {
 							$debuggingHint = sprintf('No default implementation for the required interface %s was configured, therefore no specific class name could be used for this dependency. ', $parameterInformation['class']);
 						}
 
-						$methodTagsAndValues = $this->reflectionService->getMethodTagsValues($className, '__construct');
+						$autowiringAnnotation = $this->reflectionService->getMethodAnnotation($className, '__construct', 'TYPO3\FLOW3\Annotations\Autowiring');
 						if (isset ($arguments[$index]) && ($objectConfiguration->getAutowiring() === Configuration::AUTOWIRING_MODE_OFF
-								|| isset($methodTagsAndValues['autowiring']) && $methodTagsAndValues['autowiring'] === array('off'))) {
+								|| $autowiringAnnotation !== NULL && $autowiringAnnotation->enabled === FALSE)) {
 							$arguments[$index]->setAutowiring(Configuration::AUTOWIRING_MODE_OFF);
 							$arguments[$index]->set($index, NULL);
 						}
@@ -365,8 +366,8 @@ class ConfigurationBuilder {
 				if (substr($methodName, 0, 6) === 'inject') {
 					$propertyName = strtolower(substr($methodName, 6, 1)) . substr($methodName, 7);
 
-					$methodTagsAndValues = $this->reflectionService->getMethodTagsValues($className, $methodName);
-					if (isset($methodTagsAndValues['autowiring']) && $methodTagsAndValues['autowiring'] === array('off')) {
+					$autowiringAnnotation = $this->reflectionService->getMethodAnnotation($className, $methodName, 'TYPO3\FLOW3\Annotations\Autowiring');
+					if ($autowiringAnnotation !== NULL && $autowiringAnnotation->enabled === FALSE) {
 						continue;
 					}
 

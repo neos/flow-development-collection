@@ -12,13 +12,18 @@ namespace TYPO3\FLOW3\Reflection;
  *                                                                        */
 
 /**
- * A service for aquiring reflection based information in a performant way.
+ * A service for acquiring reflection based information in a performant way.
  *
  * @api
  * @scope singleton
  * @proxy disable
  */
 class ReflectionService {
+
+	/**
+	 * @var \Doctrine\Common\Annotations\Reader
+	 */
+	protected $annotationReader;
 
 	/**
 	 * @var array
@@ -225,6 +230,12 @@ class ReflectionService {
 	 */
 	public function initializeObject() {
 		$this->loadFromCache();
+		$this->annotationReader = new \Doctrine\Common\Annotations\AnnotationReader();
+		\Doctrine\Common\Annotations\AnnotationReader::addGlobalIgnoredName('fixme');
+		\Doctrine\Common\Annotations\AnnotationReader::addGlobalIgnoredName('test');
+		\Doctrine\Common\Annotations\AnnotationReader::addGlobalIgnoredName('expectedException');
+		\Doctrine\Common\Annotations\AnnotationReader::addGlobalIgnoredName('dataProvider');
+		\Doctrine\Common\Annotations\AnnotationRegistry::registerLoader(array(new \TYPO3\FLOW3\Core\ClassLoader(), 'loadClass'));
 	}
 
 	/**
@@ -247,8 +258,20 @@ class ReflectionService {
 	 *
 	 * @return array
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @deprecated since 1.0.0
 	 */
 	public function getIgnoredTags() {
+		return $this->ignoredTags;
+	}
+
+	/**
+	 * Returns an array with annotations that are ignored while reflecting class
+	 * and method annotations.
+	 *
+	 * @return array
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getIgnoredAnnotations() {
 		return $this->ignoredTags;
 	}
 
@@ -359,6 +382,7 @@ class ReflectionService {
 	 * @return array An array of class names tagged by the tag
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
+	 * @deprecated since 1.0.0
 	 */
 	public function getClassNamesByTag($tag) {
 		return (isset($this->taggedClasses[$tag])) ? $this->taggedClasses[$tag] : array();
@@ -371,6 +395,7 @@ class ReflectionService {
 	 * @return array An array of tags and their values or an empty array if no tags were found
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
+	 * @deprecated since 1.0.0
 	 */
 	public function getClassTagsValues($className) {
 		$className = trim($className, '\\');
@@ -386,6 +411,7 @@ class ReflectionService {
 	 * @return array An array of values or an empty array of the class is not tagged with the tag or the tag has no values
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
+	 * @deprecated since 1.0.0
 	 */
 	public function getClassTagValues($className, $tag) {
 		if (!isset($this->reflectedClassNames[$className])) $this->reflectClass($className);
@@ -401,12 +427,63 @@ class ReflectionService {
 	 * @return boolean TRUE if the class is tagged with $tag, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
+	 * @deprecated since 1.0.0
 	 */
 	public function isClassTaggedWith($className, $tag) {
 		$className = trim($className, '\\');
 		if (!isset($this->reflectedClassNames[$className])) $this->reflectClass($className);
 		if (!isset($this->classTagsValues[$className])) return FALSE;
 		return isset($this->classTagsValues[$className][$tag]);
+	}
+
+	/**
+	 * Tells if the specified class has the given annotation
+	 *
+	 * @param string $className Name of the class
+	 * @param string $annotationName Annotation to check for
+	 * @return boolean
+	 * @api
+	 */
+	public function isClassAnnotatedWith($className, $annotationName) {
+		return $this->getClassAnnotations($className, $annotationName) !== array();
+	}
+
+	/**
+	 * Returns the specified class annotations or an empty array
+	 *
+	 * @param string $className Name of the class
+	 * @param string $annotationName Annotation to filter for
+	 * @return array<object>
+	 */
+	public function getClassAnnotations($className, $annotationName = NULL) {
+		$className = trim($className, '\\');
+		$annotations = array();
+		$classAnnotations = $this->annotationReader->getClassAnnotations(new ClassReflection($className));
+		if ($annotationName === NULL) {
+			return $classAnnotations;
+		} else {
+			foreach ($classAnnotations as $annotation) {
+				if ($annotation instanceof $annotationName) {
+					$annotations[] = $annotation;
+				}
+			}
+			return $annotations;
+		}
+	}
+
+	/**
+	 * Returns the specified class annotation or NULL.
+	 *
+	 * If multiple annotations are set on the target you will
+	 * get one (random) instance of them.
+	 *
+	 * @param string $className Name of the class
+	 * @param string $annotationName Annotation to filter for
+	 * @return object
+	 */
+	public function getClassAnnotation($className, $annotationName) {
+		$annotations = $this->getClassAnnotations($className, $annotationName);
+		return $annotations === array() ? NULL : current($annotations);
 	}
 
 	/**
@@ -537,11 +614,66 @@ class ReflectionService {
 	 * @return boolean TRUE if the method is tagged with $tag, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
+	 * @deprecated since 1.0.0
 	 */
 	public function isMethodTaggedWith($className, $methodName, $tag) {
 		$method = new \TYPO3\FLOW3\Reflection\MethodReflection(trim($className, '\\'), $methodName);
 		$tagsValues = $method->getTagsValues();
 		return isset($tagsValues[$tag]);
+	}
+
+	/**
+	 * Tells if the specified method has the given annotation
+	 *
+	 * @param string $className Name of the class
+	 * @param string $methodName Name of the method
+	 * @param string $annotationName Annotation to check for
+	 * @return boolean
+	 * @api
+	 */
+	public function isMethodAnnotatedWith($className, $methodName, $annotationName) {
+		return $this->getMethodAnnotations($className, $methodName, $annotationName) !== array();
+	}
+
+	/**
+	 * Returns the specified method annotations or an empty array
+	 *
+	 * @param string $className Name of the class
+	 * @param string $methodName Name of the method
+	 * @param string $annotationName Annotation to filter for
+	 * @return array<object>
+	 * @api
+	 */
+	public function getMethodAnnotations($className, $methodName, $annotationName = NULL) {
+		$className = trim($className, '\\');
+		$annotations = array();
+		$methodAnnotations = $this->annotationReader->getMethodAnnotations(new MethodReflection($className, $methodName));
+		if ($annotationName === NULL) {
+			return $methodAnnotations;
+		} else {
+			foreach ($methodAnnotations as $annotation) {
+				if ($annotation instanceof $annotationName) {
+					$annotations[] = $annotation;
+				}
+			}
+			return $annotations;
+		}
+	}
+
+	/**
+	 * Returns the specified method annotation or NULL.
+	 *
+	 * If multiple annotations are set on the target you will
+	 * get one (random) instance of them.
+	 *
+	 * @param string $className Name of the class
+	 * @param string $methodName Name of the method
+	 * @param string $annotationName Annotation to filter for
+	 * @return object
+	 */
+	public function getMethodAnnotation($className, $methodName, $annotationName) {
+		$annotations = $this->getMethodAnnotations($className, $methodName, $annotationName);
+		return $annotations === array() ? NULL : current($annotations);
 	}
 
 	/**
@@ -579,6 +711,7 @@ class ReflectionService {
 	 * @return array An array of tags and their values or an empty array of no tags were found
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
+	 * @deprecated since 1.0.0
 	 */
 	public function getMethodTagsValues($className, $methodName) {
 		$method = new \TYPO3\FLOW3\Reflection\MethodReflection(trim($className, '\\'), $methodName);
@@ -624,6 +757,7 @@ class ReflectionService {
 	 * @return array An array of property names tagged by the tag
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
+	 * @deprecated since 1.0.0
 	 */
 	public function getPropertyNamesByTag($className, $tag) {
 		$className = trim($className, '\\');
@@ -644,6 +778,7 @@ class ReflectionService {
 	 * @return array An array of tags and their values or an empty array of no tags were found
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
+	 * @deprecated since 1.0.0
 	 */
 	public function getPropertyTagsValues($className, $propertyName) {
 		$className = trim($className, '\\');
@@ -661,6 +796,7 @@ class ReflectionService {
 	 * @return array An array of values or an empty array if the tag was not found
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
+	 * @deprecated since 1.0.0
 	 */
 	public function getPropertyTagValues($className, $propertyName, $tag) {
 		$className = trim($className, '\\');
@@ -679,6 +815,7 @@ class ReflectionService {
 	 * @return boolean TRUE if the class property is tagged with $tag, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
+	 * @deprecated since 1.0.0
 	 */
 	public function isPropertyTaggedWith($className, $propertyName, $tag) {
 		$className = trim($className, '\\');
@@ -686,6 +823,60 @@ class ReflectionService {
 		if (!isset($this->propertyTagsValues[$className])) return FALSE;
 		if (!isset($this->propertyTagsValues[$className][$propertyName])) return FALSE;
 		return isset($this->propertyTagsValues[$className][$propertyName][$tag]);
+	}
+
+	/**
+	 * Tells if the specified property has the given annotation
+	 *
+	 * @param string $className Name of the class
+	 * @param string $propertyName Name of the method
+	 * @param string $annotationName Annotation to check for
+	 * @return boolean
+	 * @api
+	 */
+	public function isPropertyAnnotatedWith($className, $propertyName, $annotationName) {
+		return $this->getPropertyAnnotations($className, $propertyName, $annotationName) !== array();
+	}
+
+	/**
+	 * Returns the specified property annotations or an empty array
+	 *
+	 * @param string $className Name of the class
+	 * @param string $propertyName Name of the property
+	 * @param string $annotationName Annotation to filter for
+	 * @return array<object>
+	 * @api
+	 */
+	public function getPropertyAnnotations($className, $propertyName, $annotationName = NULL) {
+		$className = trim($className, '\\');
+		$annotations = array();
+		$propertyAnnotations = $this->annotationReader->getPropertyAnnotations(new PropertyReflection($className, $propertyName));
+		if ($annotationName === NULL) {
+			return $propertyAnnotations;
+		} else {
+			foreach ($propertyAnnotations as $annotation) {
+				if ($annotation instanceof $annotationName) {
+					$annotations[] = $annotation;
+				}
+			}
+			return $annotations;
+		}
+	}
+
+	/**
+	 * Returns the specified property annotation or NULL.
+	 *
+	 * If multiple annotations are set on the target you will
+	 * get one (random) instance of them.
+	 *
+	 * @param string $className Name of the class
+	 * @param string $propertyName Name of the property
+	 * @param string $annotationName Annotation to filter for
+	 * @return object
+	 */
+	public function getPropertyAnnotation($className, $propertyName, $annotationName) {
+		$annotations = $this->getPropertyAnnotations($className, $propertyName, $annotationName);
+		return $annotations === array() ? NULL : current($annotations);
 	}
 
 	/**
@@ -733,10 +924,10 @@ class ReflectionService {
 			foreach (array_diff($classNamesToReflect, $reflectedClassNames) as $className) {
 				$count ++;
 				$this->reflectClass($className);
-				if ($this->isClassTaggedWith($className, 'entity') || $this->isClassTaggedWith($className, 'valueobject')) {
-					$classTagValues = $this->getClassTagValues($className, 'scope');
-					if ($classTagValues !== array() && current($classTagValues) !== 'prototype') {
-						throw new \TYPO3\FLOW3\Reflection\Exception(sprintf('Classes tagged as @entity or @valueobject must be of @scope prototype, however, %s is declared as %s.', $className, current($classTagValues)), 1264103349);
+				if ($this->isClassAnnotatedWith($className, 'TYPO3\FLOW3\Annotations\Entity') || $this->isClassAnnotatedWith($className, 'Doctrine\ORM\Mapping\Entity') || $this->isClassAnnotatedWith($className, 'TYPO3\FLOW3\Annotations\ValueObject')) {
+					$scopeAnnotation = $this->getClassAnnotation($className, 'TYPO3\FLOW3\Annotations\Scope');
+					if ($scopeAnnotation !== NULL && $scopeAnnotation->value !== 'prototype') {
+						throw new \TYPO3\FLOW3\Reflection\Exception(sprintf('Classes tagged as entity or value object must be of scope prototype, however, %s is declared as %s.', $className, current($classTagValues)), 1264103349);
 					}
 					$classNamesToBuildSchemaFor[] = $className;
 				}
@@ -861,15 +1052,15 @@ class ReflectionService {
 	protected function buildClassSchemata(array $classNames) {
 		foreach ($classNames as $className) {
 			$classSchema = new \TYPO3\FLOW3\Reflection\ClassSchema($className);
-			if ($this->isClassTaggedWith($className, 'entity')) {
+			if ($this->isClassAnnotatedWith($className, 'TYPO3\FLOW3\Annotations\Entity') || $this->isClassAnnotatedWith($className, 'Doctrine\ORM\Mapping\Entity')) {
 				$classSchema->setModelType(\TYPO3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY);
-				$classSchema->setLazyLoadableObject($this->isClassTaggedWith($className, 'lazy'));
+				$classSchema->setLazyLoadableObject($this->isClassAnnotatedWith($className, 'TYPO3\FLOW3\Annotations\Lazy'));
 
 				$possibleRepositoryClassName = str_replace('\\Model\\', '\\Repository\\', $className) . 'Repository';
 				if ($this->isClassReflected($possibleRepositoryClassName) === TRUE) {
 					$classSchema->setRepositoryClassName($possibleRepositoryClassName);
 				}
-			} elseif ($this->isClassTaggedWith($className, 'valueobject')) {
+			} elseif ($this->isClassAnnotatedWith($className, 'TYPO3\FLOW3\Annotations\ValueObject')) {
 				$this->checkValueObjectRequirements($className);
 				$classSchema->setModelType(\TYPO3\FLOW3\Reflection\ClassSchema::MODELTYPE_VALUEOBJECT);
 			}
@@ -909,12 +1100,12 @@ class ReflectionService {
 		$className = $classSchema->getClassName();
 		$needsArtificialIdentity = TRUE;
 		foreach ($this->getClassPropertyNames($className) as $propertyName) {
-			if ($this->isPropertyTaggedWith($className, $propertyName, 'var') && !$this->isPropertyTaggedWith($className, $propertyName, 'transient')) {
+			if ($this->isPropertyTaggedWith($className, $propertyName, 'var') && !$this->isPropertyAnnotatedWith($className, $propertyName, 'TYPO3\FLOW3\Annotations\Transient')) {
 				$declaredType = trim(implode(' ', $this->getPropertyTagValues($className, $propertyName, 'var')), ' \\');
 				if (preg_match('/\s/', $declaredType) === 1) {
 					throw new \TYPO3\FLOW3\Reflection\Exception\InvalidPropertyTypeException('The @var annotation for "' . $className . '::$' . $propertyName . '" seems to be invalid.', 1284132314);
 				}
-				if ($this->isPropertyTaggedWith($className, $propertyName, 'Id')) {
+				if ($this->isPropertyAnnotatedWith($className, $propertyName, 'Doctrine\ORM\Mapping\Id')) {
 					$needsArtificialIdentity = FALSE;
 				}
 
@@ -926,12 +1117,12 @@ class ReflectionService {
 
 				if (!in_array($parsedType['type'], $propertyTypeWhiteList)
 						&& (class_exists($parsedType['type']) || interface_exists($parsedType['type']))
-						&& !($this->isClassTaggedWith($parsedType['type'], 'entity') || $this->isClassTaggedWith($parsedType['type'], 'valueobject'))) {
+						&& !($this->isClassAnnotatedWith($parsedType['type'], 'TYPO3\FLOW3\Annotations\Entity') || $this->isClassAnnotatedWith($parsedType['type'], 'Doctrine\ORM\Mapping\Entity') || $this->isClassAnnotatedWith($parsedType['type'], 'TYPO3\FLOW3\Annotations\ValueObject'))) {
 					continue;
 				}
 
-				$classSchema->addProperty($propertyName, $declaredType, $this->isPropertyTaggedWith($className, $propertyName, 'lazy'));
-				if ($this->isPropertyTaggedWith($className, $propertyName, 'identity')) {
+				$classSchema->addProperty($propertyName, $declaredType, $this->isPropertyAnnotatedWith($className, $propertyName, 'TYPO3\FLOW3\Annotations\Lazy'));
+				if ($this->isPropertyAnnotatedWith($className, $propertyName, 'TYPO3\FLOW3\Annotations\Identity')) {
 					$classSchema->markAsIdentityProperty($propertyName);
 				}
 			}
@@ -1068,6 +1259,8 @@ class ReflectionService {
 		}
 		if (!isset($parameterInformation['type']) && $parameterClass !== NULL) {
 			$parameterInformation['type'] = ltrim($parameterClass->getName(), '\\');
+		} elseif (!isset($parameterInformation['type'])) {
+			$parameterInformation['type'] = 'mixed';
 		}
 		return $parameterInformation;
 	}

@@ -195,7 +195,7 @@ class JoinPoint implements \TYPO3\FLOW3\AOP\JoinPointInterface {
 
 	/**
 	 * Returns the result of the method invocation. The result is only
-	 * available for afterReturning advices.
+	 * available for AfterReturning advices.
 	 *
 	 * @return mixed Result of the method invocation
 	 * @api
