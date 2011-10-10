@@ -212,15 +212,15 @@ class Bootstrap {
 			list($packageKey, $controllerName, $commandName) = explode(':', $fullControllerIdentifier);
 			$packageKeyParts = explode('.', $packageKey);
 			for ($offset = 0; $offset < count($packageKeyParts); $offset++) {
-				$possibleComanndControllerIdentifier = implode('.', array_slice($packageKeyParts, $offset)) . ':' . $controllerName;
+				$possibleCommandControllerIdentifier = implode('.', array_slice($packageKeyParts, $offset)) . ':' . $controllerName;
 
 				if (substr($fullControllerIdentifier, -2, 2) === ':*') {
-					if ($possibleComanndControllerIdentifier === $shortControllerIdentifier) {
+					if ($possibleCommandControllerIdentifier === $shortControllerIdentifier) {
 						return TRUE;
 					}
 				} else {
-					$possibleComanndControllerIdentifier .= ':' . $commandName;
-					if ($possibleComanndControllerIdentifier === $commandIdentifier) {
+					$possibleCommandControllerIdentifier .= ':' . $commandName;
+					if ($possibleCommandControllerIdentifier === $commandIdentifier) {
 						return TRUE;
 					}
 				}
