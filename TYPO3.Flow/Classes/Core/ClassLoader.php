@@ -78,6 +78,7 @@ class ClassLoader {
 
 		if (isset($classFilePathAndName) && file_exists($classFilePathAndName)) {
 			require($classFilePathAndName);
+			return TRUE;
 		}
 	}
 
