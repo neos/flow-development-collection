@@ -14,6 +14,11 @@
  * Bootstrap for the command line
  */
 
+if (PHP_SAPI !== 'cli') {
+	echo(sprintf("The FLOW3 command line script or sub process was executed with a '%s' PHP binary. Make sure that you specified a CLI capable PHP binary in your PATH or FLOW3's Settings.yaml.", PHP_SAPI) . PHP_EOL);
+	exit(1);
+}
+
 if (isset($argv[1]) && ($argv[1] === 'typo3.flow3:core:setfilepermissions' || $argv[1] === 'flow3:core:setfilepermissions' || $argv[1] === 'core:setfilepermissions')) {
 	if (DIRECTORY_SEPARATOR !== '/') {
 		exit('The core:setfilepermissions command is only available on UNIX platforms.' . PHP_EOL);
