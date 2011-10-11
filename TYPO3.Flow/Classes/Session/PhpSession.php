@@ -75,13 +75,36 @@ class PhpSession implements \TYPO3\FLOW3\Session\SessionInterface {
 	}
 
 	/**
-	 * Starts the session, if is has not been already started
+	 * Starts the session, if it has not been already started
 	 *
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function start() {
 		if ($this->started === FALSE) {
+			$cookieParameters = session_get_cookie_params();
+			if (isset($this->settings['session']['PHPSession']['cookie']['domain'])) {
+				$cookieParameters['domain'] = $this->settings['session']['PHPSession']['cookie']['domain'];
+			}
+			if (isset($this->settings['session']['PHPSession']['cookie']['lifetime'])) {
+				$cookieParameters['lifetime'] = $this->settings['session']['PHPSession']['cookie']['lifetime'];
+			}
+			if (isset($this->settings['session']['PHPSession']['cookie']['path'])) {
+				$cookieParameters['path'] = $this->settings['session']['PHPSession']['cookie']['path'];
+			}
+			if (isset($this->settings['session']['PHPSession']['cookie']['secure'])) {
+				$cookieParameters['secure'] = $this->settings['session']['PHPSession']['cookie']['secure'];
+			}
+			if (isset($this->settings['session']['PHPSession']['cookie']['httponly'])) {
+				$cookieParameters['httponly'] = $this->settings['session']['PHPSession']['cookie']['httponly'];
+			}
+			session_set_cookie_params(
+				$cookieParameters['lifetime'],
+				$cookieParameters['path'],
+				$cookieParameters['domain'],
+				$cookieParameters['secure'],
+				$cookieParameters['httponly']
+			);
 			if (empty($this->settings['session']['PHPSession']['savePath'])) {
 				$sessionsPath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array($this->environment->getPathToTemporaryDirectory(), 'Sessions'));
 			} else {

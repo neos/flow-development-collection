@@ -263,6 +263,24 @@ TYPO3:
         # location is used (Data/Temporary/<context>/Sessions/).
         savePath:
 
+        # PHP default is used if one of the following parameters is empty.
+        cookie:
+          # Cookie lifetime in seconds
+          #lifetime: 3600
+
+          # Cookie path: set this if a cookie should be only valid for a subfolder of a domain.
+          #path: /
+
+          # The cookie domain. Use dot notation if cookies should be valid for
+          # all subdomains.
+          #domain: .domain.com
+
+          # Force SSL cookies.
+          #secure: false
+
+          # Allow http access only.
+          #httponly: false
+
     utility:
       environment:
 
