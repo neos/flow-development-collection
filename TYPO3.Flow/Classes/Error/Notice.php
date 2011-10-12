@@ -23,6 +23,12 @@ namespace TYPO3\FLOW3\Error;
  */
 class Notice extends \TYPO3\FLOW3\Error\Message {
 
+	/**
+	 * The severity of this message ('Notice').
+	 * @var string
+	 */
+	protected $severity = self::SEVERITY_NOTICE;
+
 }
 
 ?>

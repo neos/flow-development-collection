@@ -43,7 +43,7 @@ class ControllerContext {
 	protected $uriBuilder;
 
 	/**
-	 * @var \TYPO3\FLOW3\MVC\Controller\FlashMessageContainer
+	 * @var \TYPO3\FLOW3\MVC\FlashMessageContainer
 	 */
 	protected $flashMessageContainer;
 
@@ -54,10 +54,10 @@ class ControllerContext {
 	 * @param \TYPO3\FLOW3\MVC\ResponseInterface $response
 	 * @param \TYPO3\FLOW3\MVC\Controller\Arguments $arguments
 	 * @param \TYPO3\FLOW3\MVC\Web\Routing\UriBuilder $uriBuilder
-	 * @param \TYPO3\FLOW3\MVC\Controller\FlashMessageContainer $flashMessageContainer The flash messages
+	 * @param \TYPO3\FLOW3\MVC\FlashMessageContainer $flashMessageContainer The flash messages
 	 */
 	public function __construct(\TYPO3\FLOW3\MVC\RequestInterface $request, \TYPO3\FLOW3\MVC\ResponseInterface $response, \TYPO3\FLOW3\MVC\Controller\Arguments $arguments,
-			\TYPO3\FLOW3\MVC\Web\Routing\UriBuilder $uriBuilder, \TYPO3\FLOW3\MVC\Controller\FlashMessageContainer $flashMessageContainer) {
+			\TYPO3\FLOW3\MVC\Web\Routing\UriBuilder $uriBuilder, \TYPO3\FLOW3\MVC\FlashMessageContainer $flashMessageContainer) {
 		$this->request = $request;
 		$this->response = $response;
 		$this->arguments = $arguments;
@@ -112,7 +112,7 @@ class ControllerContext {
 	/**
 	 * Get the flash message container
 	 *
-	 * @return \TYPO3\FLOW3\MVC\Controller\FlashMessageContainer A container for flash messages
+	 * @return \TYPO3\FLOW3\MVC\FlashMessageContainer A container for flash messages
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @api
 	 */

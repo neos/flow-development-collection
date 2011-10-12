@@ -20,11 +20,19 @@ namespace TYPO3\FLOW3\MVC\Controller;
 class ActionController extends \TYPO3\FLOW3\MVC\Controller\AbstractController {
 
 	/**
+	 * @inject
+	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
+	 */
+	protected $objectManager;
+
+	/**
+	 * @inject
 	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
 	/**
+	 * @inject
 	 * @var \TYPO3\FLOW3\Utility\Environment
 	 */
 	protected $environment;
@@ -89,29 +97,6 @@ class ActionController extends \TYPO3\FLOW3\MVC\Controller\AbstractController {
 	 * @api
 	 */
 	protected $errorMethodName = 'errorAction';
-
-	/**
-	 * Injects the reflection service
-	 *
-	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
-		$this->reflectionService = $reflectionService;
-	}
-
-	/**
-	 * Injects the current environment
-	 *
-	 * @param \TYPO3\FLOW3\Utility\Environment $environment
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function injectEnvironment(\TYPO3\FLOW3\Utility\Environment $environment) {
-		$this->environment = $environment;
-	}
-
 
 	/**
 	 * Handles a request. The result output is returned by altering the given response.
@@ -338,19 +323,19 @@ class ActionController extends \TYPO3\FLOW3\MVC\Controller\AbstractController {
 	protected function resolveView() {
 		$viewObjectName = $this->resolveViewObjectName();
 		if ($viewObjectName !== FALSE) {
-			$view = $this->objectManager->create($viewObjectName);
+			$view = $this->objectManager->get($viewObjectName);
 			if ($view->canRender($this->controllerContext) === FALSE) {
 				unset($view);
 			}
 		}
 		if (!isset($view) && $this->defaultViewObjectName != '') {
-			$view = $this->objectManager->create($this->defaultViewObjectName);
+			$view = $this->objectManager->get($this->defaultViewObjectName);
 			if ($view->canRender($this->controllerContext) === FALSE) {
 				unset($view);
 			}
 		}
 		if (!isset($view)) {
-			$view = $this->objectManager->create('TYPO3\FLOW3\MVC\View\NotFoundView');
+			$view = $this->objectManager->get('TYPO3\FLOW3\MVC\View\NotFoundView');
 			$view->assign('errorMessage', 'No template was found. View could not be resolved for action "' . $this->request->getControllerActionName() . '"');
 		}
 		$view->setControllerContext($this->controllerContext);
@@ -417,11 +402,7 @@ class ActionController extends \TYPO3\FLOW3\MVC\Controller\AbstractController {
 	protected function errorAction() {
 		$errorFlashMessage = $this->getErrorFlashMessage();
 		if ($errorFlashMessage !== FALSE) {
-			if ($errorFlashMessage instanceof \TYPO3\FLOW3\Error\Message) {
-				$this->flashMessageContainer->addMessage($errorFlashMessage);
-			} else {
-				$this->flashMessageContainer->add($errorFlashMessage, '', FlashMessage::SEVERITY_ERROR);
-			}
+			$this->flashMessageContainer->addMessage($errorFlashMessage);
 		}
 
 		$referringRequest = $this->request->getReferringRequest();

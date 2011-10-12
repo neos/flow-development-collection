@@ -44,7 +44,7 @@ class AbstractControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 		$controller = $this->getAccessibleMock('TYPO3\FLOW3\MVC\Controller\AbstractController', array('initializeArguments', 'initializeControllerArgumentsBaseValidators', 'mapRequestArgumentsToControllerArguments', 'buildControllerContext'), array(), '', FALSE);
 		$controller->_set('arguments', new \TYPO3\FLOW3\MVC\Controller\Arguments());
-		$controller->_set('flashMessageContainer', new \TYPO3\FLOW3\MVC\Controller\FlashMessageContainer());
+		$controller->_set('flashMessageContainer', new \TYPO3\FLOW3\MVC\FlashMessageContainer());
 		$controller->processRequest($mockRequest, $mockResponse);
 
 		$this->assertInstanceOf('TYPO3\FLOW3\MVC\Controller\ControllerContext', $controller->getControllerContext());
@@ -338,7 +338,7 @@ class AbstractControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 		$controller = $this->getAccessibleMock('TYPO3\FLOW3\MVC\Controller\AbstractController', array('dummy'), array(), '', FALSE);
 		$controller->_set('arguments', $mockArguments);
-		$controller->injectValidatorResolver($mockValidatorResolver);
+		$controller->_set('validatorResolver', $mockValidatorResolver);
 		$controller->_call('initializeControllerArgumentsBaseValidators');
 	}
 

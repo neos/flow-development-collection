@@ -22,23 +22,40 @@ namespace TYPO3\FLOW3\Error;
  */
 class Message {
 
+	const SEVERITY_NOTICE = 'Notice';
+	const SEVERITY_WARNING = 'Warning';
+	const SEVERITY_ERROR = 'Error';
+	const SEVERITY_MESSAGE = 'Message';
+
 	/**
-	 * the error message, could also be a key for translation
+	 * The error message, could also be a key for translation.
 	 * @var string
 	 */
 	protected $message = '';
 
 	/**
-	 * The error code
+	 * An optional title for the message (used eg. in flashMessages).
+	 * @var string
+	 */
+	protected $title = '';
+
+	/**
+	 * The error code.
 	 * @var integer
 	 */
 	protected $code = NULL;
 
 	/**
-	 * The message arguments. Will be replaced in the message body
+	 * The message arguments. Will be replaced in the message body.
 	 * @var array
 	 */
 	protected $arguments = array();
+
+	/**
+	 * The severity of this message ('Message'), overwrite in your own implementation.
+	 * @var string
+	 */
+	protected $severity = self::SEVERITY_MESSAGE;
 
 	/**
 	 * Constructs this error
@@ -46,14 +63,16 @@ class Message {
 	 * @param string $message An english error message which is used if no other error message can be resolved
 	 * @param integer $code A unique error code
 	 * @param array $arguments Array of arguments to be replaced in message
+	 * @param string $title optional title for the message
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Christian Müller <christian.mueller@typo3.org>
 	 * @api
 	 */
-	public function __construct($message, $code = NULL, array $arguments = array()) {
+	public function __construct($message, $code = NULL, array $arguments = array(), $title = '') {
 		$this->message = $message;
 		$this->code = $code;
 		$this->arguments = $arguments;
+		$this->title = $title;
 	}
 
 	/**
@@ -83,6 +102,22 @@ class Message {
 	 */
 	public function getArguments() {
 		return $this->arguments;
+	}
+
+	/**
+	 * @return string
+	 * @api
+	 */
+	public function getTitle() {
+		return $this->title;
+	}
+
+	/**
+	 * @return string
+	 * @api
+	 */
+	public function getSeverity() {
+		return $this->severity;
 	}
 
 	/**

@@ -22,11 +22,6 @@ use \TYPO3\FLOW3\MVC\Web\Routing\UriBuilder;
 abstract class AbstractController implements ControllerInterface {
 
 	/**
-	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
-	 */
-	protected $objectManager;
-
-	/**
 	 * @var \TYPO3\FLOW3\MVC\Web\Routing\UriBuilder
 	 */
 	protected $uriBuilder;
@@ -39,6 +34,7 @@ abstract class AbstractController implements ControllerInterface {
 	protected $settings;
 
 	/**
+	 * @inject
 	 * @var \TYPO3\FLOW3\Validation\ValidatorResolver
 	 */
 	protected $validatorResolver;
@@ -75,23 +71,23 @@ abstract class AbstractController implements ControllerInterface {
 	protected $supportedRequestTypes = array('TYPO3\FLOW3\MVC\Web\Request');
 
 	/**
-	 * Contains the controller context
 	 * @var \TYPO3\FLOW3\MVC\Controller\ControllerContext
 	 */
 	protected $controllerContext;
 
 	/**
-	 * The flash messages. Use $this->flashMessageContainer->add(...) to add a new Flash
+	 * The flash messages. Use $this->flashMessageContainer->addMessage(...) to add a new Flash
 	 * Message.
 	 *
-	 * @var \TYPO3\FLOW3\MVC\Controller\FlashMessageContainer
+	 * @inject
+	 * @var \TYPO3\FLOW3\MVC\FlashMessageContainer
 	 * @api
 	 */
 	protected $flashMessageContainer;
 
 	/**
-	 * @var \TYPO3\FLOW3\Persistence\PersistenceManagerInterface
 	 * @inject
+	 * @var \TYPO3\FLOW3\Persistence\PersistenceManagerInterface
 	 */
 	protected $persistenceManager;
 
@@ -105,14 +101,6 @@ abstract class AbstractController implements ControllerInterface {
 	}
 
 	/**
-	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager
-	 * @return void
-	 */
-	public function injectObjectManager(\TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager) {
-		$this->objectManager = $objectManager;
-	}
-
-	/**
 	 * Injects the settings of the package this controller belongs to.
 	 *
 	 * @param array $settings Settings container of the current package
@@ -121,28 +109,6 @@ abstract class AbstractController implements ControllerInterface {
 	 */
 	public function injectSettings(array $settings) {
 		$this->settings = $settings;
-	}
-
-	/**
-	 * Injects the validator resolver
-	 *
-	 * @param \TYPO3\FLOW3\Validation\ValidatorResolver $validatorResolver
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function injectValidatorResolver(\TYPO3\FLOW3\Validation\ValidatorResolver $validatorResolver) {
-		$this->validatorResolver = $validatorResolver;
-	}
-
-	/**
-	 * Injects the flash message container
-	 *
-	 * @param \TYPO3\FLOW3\MVC\Controller\FlashMessageContainer $flashMessageContainer the flash message container
-	 * @return void
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 */
-	public function injectFlashMessageContainer(\TYPO3\FLOW3\MVC\Controller\FlashMessageContainer $flashMessageContainer) {
-		$this->flashMessageContainer = $flashMessageContainer;
 	}
 
 	/**

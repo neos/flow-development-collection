@@ -23,5 +23,11 @@ namespace TYPO3\FLOW3\Error;
  */
 class Warning extends \TYPO3\FLOW3\Error\Message {
 
+	/**
+	 * The severity of this message ('Warning').
+	 * @var string
+	 */
+	protected $severity = self::SEVERITY_WARNING;
+
 }
 ?>
