@@ -314,15 +314,19 @@ class ProxyClassBuilder {
 		$assignments = array();
 
 		$argumentConfigurations = $objectConfiguration->getArguments();
+		$constructorParameterInfo = $this->reflectionService->getMethodParameters($objectConfiguration->getClassName(), '__construct');
+		$argumentNumberToOptionalInfo = array();
+		foreach ($constructorParameterInfo as $parameterInfo) {
+			$argumentNumberToOptionalInfo[($parameterInfo['position'] +1)] = $parameterInfo['optional'];
+		}
 
 		foreach ($argumentConfigurations as $argumentNumber => $argumentConfiguration) {
 			if ($argumentConfiguration === NULL) {
 				continue;
 			}
 			$argumentValue = $argumentConfiguration->getValue();
+			$assignmentPrologue = 'if (!isset($arguments[' . ($argumentNumber - 1) . '])) $arguments[' . ($argumentNumber - 1) . '] = ';
 			if ($argumentValue !== NULL) {
-				$assignmentPrologue = 'if (!isset($arguments[' . ($argumentNumber - 1) . '])) $arguments[' . ($argumentNumber - 1) . '] = ';
-
 				switch ($argumentConfiguration->getType()) {
 					case \TYPO3\FLOW3\Object\Configuration\ConfigurationArgument::ARGUMENT_TYPES_OBJECT:
 						if ($argumentValue instanceof \TYPO3\FLOW3\Object\Configuration\Configuration) {
@@ -353,12 +357,16 @@ class ProxyClassBuilder {
 						$assignments[] = $assignmentPrologue . '\TYPO3\FLOW3\Core\Bootstrap::$staticObjectManager->getSettingsByPath(explode(\'.\', \''. $argumentValue . '\'))';
 					break;
 				}
+			} else {
+				if (isset($argumentNumberToOptionalInfo[$argumentNumber]) && $argumentNumberToOptionalInfo[$argumentNumber] === TRUE) {
+						$assignments[] = $assignmentPrologue . 'NULL';
+				}
 			}
 		}
 		$code = count($assignments) > 0 ? "\n\t\t" . implode(";\n\t\t", $assignments) . ";\n" : '';
 
 		$index = 0;
-		foreach($this->reflectionService->getMethodParameters($objectConfiguration->getClassName(), '__construct') as $parameterName => $parameterInfo) {
+		foreach($constructorParameterInfo as $parameterName => $parameterInfo) {
 			if ($parameterInfo['optional'] === TRUE) {
 				break;
 			}

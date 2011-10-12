@@ -38,8 +38,11 @@ class SingletonClassC {
 	 * @param \TYPO3\FLOW3\Tests\Functional\Object\Fixtures\InterfaceA $interfaceAImplementation
 	 * @param string $settingsArgument
 	 * @param boolean $optionalArgument
+	 * @param integer $alsoOptionalArgument
+	 * @param array $thirdOptionalArgument
+	 * @param string $fourthOptionalArgument
 	 */
-	public function __construct($requiredArgument, InterfaceA $interfaceAImplementation, $settingsArgument, $optionalArgument = FALSE) {
+	public function __construct($requiredArgument, InterfaceA $interfaceAImplementation, $settingsArgument, $optionalArgument = FALSE, $alsoOptionalArgument = NULL, $thirdOptionalArgument = array(), $fourthOptionalArgument = '') {
 		$this->requiredArgument = $requiredArgument;
 		$this->interfaceAImplementation = $interfaceAImplementation;
 		$this->settingsArgument = $settingsArgument;

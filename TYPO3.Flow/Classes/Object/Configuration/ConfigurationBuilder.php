@@ -322,9 +322,7 @@ class ConfigurationBuilder {
 					if (!isset($arguments[$index])) {
 						if ($parameterInformation['optional'] === TRUE) {
 							$defaultValue = (isset($parameterInformation['defaultValue'])) ? $parameterInformation['defaultValue'] : NULL;
-							if ($defaultValue !== NULL) {
-								$arguments[$index] = new ConfigurationArgument($index, $defaultValue, ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE);
-							}
+							$arguments[$index] = new ConfigurationArgument($index, $defaultValue, ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE);
 						} elseif ($parameterInformation['class'] !== NULL && isset($objectConfigurations[$parameterInformation['class']])) {
 							$arguments[$index] = new ConfigurationArgument($index, $parameterInformation['class'], ConfigurationArgument::ARGUMENT_TYPES_OBJECT);
 						} elseif ($parameterInformation['allowsNull'] === TRUE) {
