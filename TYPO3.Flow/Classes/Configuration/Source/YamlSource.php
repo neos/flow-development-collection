@@ -31,7 +31,8 @@ class YamlSource implements \TYPO3\FLOW3\Configuration\Source\SourceInterface {
 	public function load($pathAndFilename) {
 		if (file_exists($pathAndFilename . '.yaml')) {
 			try {
-				$configuration = \TYPO3\FLOW3\Configuration\Source\YamlParser::loadFile($pathAndFilename . '.yaml');
+				\Symfony\Component\Yaml\Yaml::setSpecVersion('1.1');
+				$configuration = \Symfony\Component\Yaml\Yaml::load($pathAndFilename . '.yaml');
 			} catch (\TYPO3\FLOW3\Error\Exception $exception) {
 				throw new \TYPO3\FLOW3\Configuration\Exception\ParseErrorException('A parse error occurred while parsing file "' . $pathAndFilename . '.yaml". Error message: ' . $exception->getMessage(), 1232014321);
 			}
@@ -54,7 +55,7 @@ class YamlSource implements \TYPO3\FLOW3\Configuration\Source\SourceInterface {
 		if (file_exists($pathAndFilename . '.yaml')) {
 			$header = $this->getHeaderFromFile($pathAndFilename . '.yaml');
 		}
-		$yaml = \TYPO3\FLOW3\Configuration\Source\YamlParser::dump($configuration);
+		$yaml = \Symfony\Component\Yaml\Yaml::dump($configuration);
 		file_put_contents($pathAndFilename . '.yaml', $header . PHP_EOL . $yaml);
 	}
 

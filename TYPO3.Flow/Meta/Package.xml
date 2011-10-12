@@ -22,6 +22,7 @@
 			<system minVersion="1.2.0" type="PHPExtension">json</system>
 			<system type="PHPExtension">session</system>
 			<package>Fluid</package>
+			<package>Symfony.Component.Yaml</package>
 		</depends>
 		<conflicts>
 			<system maxVersion="0.9.4" type="PHPExtension">eAccelerator</system>
