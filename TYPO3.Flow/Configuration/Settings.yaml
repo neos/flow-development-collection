@@ -205,7 +205,7 @@ TYPO3:
 
         # One of the available authentication strategies:
         #
-        #   "anyToken" (default):
+        #   "anyToken":
         #     Authenticate as many tokens as possible but do not require
         #     an authenticated token (e.g. for guests with role Everybody).
         #
@@ -217,11 +217,11 @@ TYPO3:
         #     Stop authentication of tokens after first successful
         #     authentication of a token. Requires an authenticated token.
         #
-        #   "atLeastOneToken":
+        #   "atLeastOneToken" (default):
         #     Authenticate as many tokens as possible but do not fail if
         #     a token could not be authenticated as long as at least one
         #     token could be authenticated.
-        authenticationStrategy: anyToken
+        authenticationStrategy: atLeastOneToken
 
       authorization:
         # An array of access decision voters that should vote when access decisions are made
