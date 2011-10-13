@@ -54,6 +54,13 @@ class Route {
 	protected $lowerCase = TRUE;
 
 	/**
+	 * Specifies whether Route Values, that are not part of the Routes configuration, should be appended as query string
+	 *
+	 * @var boolean
+	 */
+	protected $appendExceedingArguments = FALSE;
+
+	/**
 	 * Contains the routing results (indexed by "package", "controller" and
 	 * "action") after a successful call of matches()
 	 *
@@ -202,7 +209,7 @@ class Route {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setLowerCase($lowerCase) {
-		$this->lowerCase = $lowerCase;
+		$this->lowerCase = (boolean)$lowerCase;
 	}
 
 	/**
@@ -214,6 +221,28 @@ class Route {
 	 */
 	public function isLowerCase() {
 		return $this->lowerCase;
+	}
+
+	/**
+	 * Specifies whether Route values, that are not part of the Route configuration, should be appended to the
+	 * Resulting URI as query string.
+	 * If set to FALSE, the route won't resolve if there are route values left after iterating through all Route Part
+	 * handlers and removing the matching default values.
+	 *
+	 * @param boolean $appendExceedingArguments TRUE: exceeding arguments will be appended to the resulting URI
+	 * @return void
+	 */
+	public function setAppendExceedingArguments($appendExceedingArguments) {
+		$this->appendExceedingArguments = (boolean)$appendExceedingArguments;
+	}
+
+	/**
+	 * Returns TRUE if exceeding arguments should be appended to the URI as query string, otherwise FALSE
+	 *
+	 * @return boolean
+	 */
+	public function getAppendExceedingArguments() {
+		return $this->appendExceedingArguments;
 	}
 
 	/**
@@ -236,6 +265,7 @@ class Route {
 	}
 
 	/**
+	 * Returns the route parts configuration of this route
 	 *
 	 * @return array $routePartsConfiguration
 	 * @author Bastian Waidelich <bastian@typo3.org>
@@ -395,18 +425,19 @@ class Route {
 			unset($routeValues['@format']);
 		}
 
-			// skip route if target controller/action does not exist
-		$packageKey = isset($mergedRouteValues['@package']) ? $mergedRouteValues['@package'] : '';
-		$subPackageKey = isset($mergedRouteValues['@subpackage']) ? $mergedRouteValues['@subpackage'] : '';
-		$controllerName = isset($mergedRouteValues['@controller']) ? $mergedRouteValues['@controller'] : '';
-		$controllerObjectName = $this->router->getControllerObjectName($packageKey, $subPackageKey, $controllerName);
-		if ($controllerObjectName === NULL) {
-			throw new \TYPO3\FLOW3\MVC\Web\Routing\Exception\InvalidControllerException('No controller object was found for package "' . $packageKey . '", subpackage "' . $subPackageKey . '", controller "' . $controllerName . '" in route "' . $this->getName() . '".', 1301650951);
-		}
+		$this->throwExceptionIfTargetControllerDoesNotExist($mergedRouteValues);
 
 			// add query string
 		if (count($routeValues) > 0) {
+			$routeValues = \TYPO3\FLOW3\Utility\Arrays::removeEmptyElementsRecursively($routeValues);
 			$routeValues = $this->persistenceManager->convertObjectsToIdentityArrays($routeValues);
+			if (!$this->appendExceedingArguments) {
+				$internalArguments = $this->extractInternalArguments($routeValues);
+				if ($routeValues !== array()) {
+					return FALSE;
+				}
+				$routeValues = $internalArguments;
+			}
 			$queryString = http_build_query($routeValues, NULL, '&');
 			if ($queryString !== '') {
 				$matchingUri .= '?' . $queryString;
@@ -445,6 +476,50 @@ class Route {
 			}
 		}
 		return TRUE;
+	}
+
+	/**
+	 * Removes all internal arguments (prefixed with two underscores) from the given $arguments
+	 * and returns them as array
+	 *
+	 * @param array $arguments
+	 * @return array the internal arguments
+	 */
+	function extractInternalArguments(array &$arguments) {
+		$internalArguments = array();
+		foreach($arguments as $argumentKey => &$argumentValue) {
+			if (substr($argumentKey, 0, 2) === '__') {
+				$internalArguments[$argumentKey] = $argumentValue;
+				unset($arguments[$argumentKey]);
+			}
+			if (is_array($argumentValue)) {
+				$internalArguments[$argumentKey] = $this->extractInternalArguments($argumentValue);
+				if ($internalArguments[$argumentKey] === array()) {
+					unset($internalArguments[$argumentKey]);
+				}
+				if ($argumentValue === array()) {
+					unset($arguments[$argumentKey]);
+				}
+			}
+		}
+		return $internalArguments;
+	}
+
+	/**
+	 * Try to get the controller object name from the given $routeValues and throw an exception, if it can't be resolved.
+	 *
+	 * @throws Exception\InvalidControllerException
+	 * @param array $routeValues
+	 * @return void
+	 */
+	protected function throwExceptionIfTargetControllerDoesNotExist(array $routeValues) {
+		$packageKey = isset($routeValues['@package']) ? $routeValues['@package'] : '';
+		$subPackageKey = isset($routeValues['@subpackage']) ? $routeValues['@subpackage'] : '';
+		$controllerName = isset($routeValues['@controller']) ? $routeValues['@controller'] : '';
+		$controllerObjectName = $this->router->getControllerObjectName($packageKey, $subPackageKey, $controllerName);
+		if ($controllerObjectName === NULL) {
+			throw new Exception\InvalidControllerException('No controller object was found for package "' . $packageKey . '", subpackage "' . $subPackageKey . '", controller "' . $controllerName . '" in route "' . $this->getName() . '".', 1301650951);
+		}
 	}
 
 	/**

@@ -587,9 +587,11 @@ EOD;
 
 	/**
 	 * @test
+	 * @expectedException \TYPO3\FLOW3\Configuration\Exception\ParseErrorException
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function mergeRoutesWithSubRoutesSkipsInactivePackages() {
+	public function mergeRoutesWithSubRoutesThrowsExceptionIfRouteRefersToNonExistingOrInactivePackages() {
 		$routesConfiguration= array(
 			array(
 				'name' => 'Welcome',
@@ -605,8 +607,6 @@ EOD;
 
 		$configurationManager = $this->getAccessibleMock('TYPO3\FLOW3\Configuration\ConfigurationManager', array('dummy'), array('Testing'));
 		$configurationManager->_callRef('mergeRoutesWithSubRoutes', $routesConfiguration, $subRoutesConfiguration);
-
-		$this->assertEquals(0, count($routesConfiguration));
 	}
 
 	/**
@@ -640,6 +640,7 @@ EOD;
 				'name' => 'Standard route',
 				'uriPattern' => 'flow3/welcome',
 				'defaults' => array(
+					'@package' => 'OverriddenPackage',
 					'@controller' => 'Standard',
 					'@action' => 'index'
 				)
@@ -657,7 +658,8 @@ EOD;
 						'new' => 'ZZZ'
 					)
 				),
-				'toLowerCase' => FALSE
+				'toLowerCase' => FALSE,
+				'appendExceedingArguments' => TRUE
 			)
 		);
 		$expectedResult = array(
@@ -665,7 +667,7 @@ EOD;
 				'name' => 'Welcome :: Standard route',
 				'uriPattern' => 'flow3/welcome',
 				'defaults' => array(
-					'@package' => 'Welcome',
+					'@package' => 'OverriddenPackage',
 					'@controller' => 'Standard',
 					'@action' => 'index'
 				),
@@ -675,7 +677,7 @@ EOD;
 						'baz' => 'Xyz'
 					)
 				),
-				'toLowerCase' => TRUE
+				'toLowerCase' => TRUE,
 			),
 			array(
 				'name' => 'Welcome :: Redirect',
@@ -692,7 +694,8 @@ EOD;
 						'new' => 'ZZZ'
 					)
 				),
-				'toLowerCase' => FALSE
+				'toLowerCase' => FALSE,
+				'appendExceedingArguments' => TRUE
 			)
 		);
 		$configurationManager = $this->getAccessibleMock('TYPO3\FLOW3\Configuration\ConfigurationManager', array('dummy'), array('Testing'));

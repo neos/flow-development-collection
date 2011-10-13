@@ -230,6 +230,9 @@ class Router implements \TYPO3\FLOW3\MVC\Web\Routing\RouterInterface {
 				if (isset($routeConfiguration['toLowerCase'])) {
 					$route->setLowerCase($routeConfiguration['toLowerCase']);
 				}
+				if (isset($routeConfiguration['appendExceedingArguments'])) {
+					$route->setAppendExceedingArguments($routeConfiguration['appendExceedingArguments']);
+				}
 				$this->routes[] = $route;
 			}
 			$this->routesCreated = TRUE;

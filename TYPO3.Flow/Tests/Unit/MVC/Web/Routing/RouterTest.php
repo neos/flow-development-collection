@@ -54,7 +54,8 @@ class RouterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			'defaults' => array('foodefault'),
 			'routeParts' => array('fooroutepart'),
 			'uriPattern' => 'number3',
-			'toLowerCase' => TRUE
+			'toLowerCase' => FALSE,
+			'appendExceedingArguments' => TRUE,
 		);
 
 		$router = $this->getAccessibleMock('TYPO3\FLOW3\MVC\Web\Routing\Router', array('dummy'));
@@ -64,12 +65,15 @@ class RouterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$createdRoutes = $router->_get('routes');
 
 		$this->assertEquals('number1', $createdRoutes[0]->getUriPattern());
+		$this->assertTrue($createdRoutes[0]->isLowerCase());
+		$this->assertFalse($createdRoutes[0]->getAppendExceedingArguments());
 		$this->assertEquals('number2', $createdRoutes[1]->getUriPattern());
 		$this->assertEquals('route3', $createdRoutes[2]->getName());
 		$this->assertEquals(array('foodefault'), $createdRoutes[2]->getDefaults());
 		$this->assertEquals(array('fooroutepart'), $createdRoutes[2]->getRoutePartsConfiguration());
 		$this->assertEquals('number3', $createdRoutes[2]->getUriPattern());
-		$this->assertEquals(TRUE, $createdRoutes[2]->isLowerCase());
+		$this->assertFalse($createdRoutes[2]->isLowerCase());
+		$this->assertTrue($createdRoutes[2]->getAppendExceedingArguments());
 	}
 
 	/**

@@ -264,5 +264,26 @@ class Arrays {
 		}
 		return $subject;
 	}
+
+	/**
+	 * Recursively removes empty array elements.
+	 *
+	 * @param array $array
+	 * @return array the modified array
+	 */
+	static public function removeEmptyElementsRecursively(array $array) {
+		$result = $array;
+		foreach($result as $key => $value) {
+			if (is_array($value)) {
+				$result[$key] = self::removeEmptyElementsRecursively($value);
+				if ($result[$key] === array()) {
+					unset($result[$key]);
+				}
+			} elseif ($value === NULL) {
+				unset($result[$key]);
+			}
+		}
+		return $result;
+	}
 }
 ?>

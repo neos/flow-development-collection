@@ -266,5 +266,27 @@ class ArraysTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$array = array('Foo' => array('Bar' => array('Baz' => array(2 => 'the value'))));
 		\TYPO3\FLOW3\Utility\Arrays::unsetValueByPath($array, NULL);
 	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function removeEmptyElementsRecursivelyRemovesNullValues() {
+		$array = array('EmptyElement' => NULL, 'Foo' => array('Bar' => array('Baz' => array('NotNull' => '', 'AnotherEmptyElement' => NULL))));
+		$expectedResult = array('Foo' => array('Bar' => array('Baz' => array('NotNull' => ''))));
+		$actualResult = \TYPO3\FLOW3\Utility\Arrays::removeEmptyElementsRecursively($array);
+		$this->assertEquals($expectedResult, $actualResult);
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function removeEmptyElementsRecursivelyRemovesEmptySubArrays() {
+		$array = array('EmptyElement' => array(), 'Foo' => array('Bar' => array('Baz' => array('AnotherEmptyElement' => NULL))), 'NotNull' => 123);
+		$expectedResult = array('NotNull' => 123);
+		$actualResult = \TYPO3\FLOW3\Utility\Arrays::removeEmptyElementsRecursively($array);
+		$this->assertEquals($expectedResult, $actualResult);
+	}
 }
 ?>

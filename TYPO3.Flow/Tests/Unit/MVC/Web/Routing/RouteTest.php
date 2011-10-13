@@ -760,13 +760,39 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function routeAppendsAdditionalQueryParametersIfUriPatternContainsLessValuesThanAreSpecified() {
+	public function byDefaultRouteDoesNotResolveIfUriPatternContainsLessValuesThanAreSpecified() {
 		$this->route->setUriPattern('{key1}-{key2}/{key3}.{key4}.{@format}');
 		$this->route->setDefaults(array('@format' => 'xml'));
 		$this->routeValues = array('key1' => 'value1', 'key2' => 'value2', 'key3' => 'value3', 'key4' => 'value4', 'nonexistingkey' => 'foo');
 
+		$this->assertFalse($this->route->resolves($this->routeValues));
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function routeAlwaysAppendsExceedingInternalArguments() {
+		$this->route->setUriPattern('{key1}-{key2}/{key3}.{key4}.{@format}');
+		$this->route->setDefaults(array('@format' => 'xml'));
+		$this->routeValues = array('key1' => 'value1', 'key2' => 'value2', 'key3' => 'value3', 'key4' => 'value4', '__someInternalArgument' => 'someValue');
+
 		$this->assertTrue($this->route->resolves($this->routeValues));
-		$this->assertEquals('value1-value2/value3.value4.xml?nonexistingkey=foo', $this->route->getMatchingUri());
+		$this->assertEquals('value1-value2/value3.value4.xml?__someInternalArgument=someValue', $this->route->getMatchingUri());
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function routeAppendsAllAdditionalQueryParametersIfUriPatternContainsLessValuesThanAreSpecifiedIfAppendExceedingArgumentsIsTrue() {
+		$this->route->setUriPattern('{key1}-{key2}/{key3}.{key4}.{@format}');
+		$this->route->setDefaults(array('@format' => 'xml'));
+		$this->routeValues = array('key1' => 'value1', 'key2' => 'value2', 'key3' => 'value3', 'key4' => 'value4', '__someInternalArgument' => 'someValue', 'nonexistingkey' => 'foo');
+		$this->route->setAppendExceedingArguments(TRUE);
+
+		$this->assertTrue($this->route->resolves($this->routeValues));
+		$this->assertEquals('value1-value2/value3.value4.xml?__someInternalArgument=someValue&nonexistingkey=foo', $this->route->getMatchingUri());
 	}
 
 	/**
@@ -877,16 +903,30 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function resolvesAppendsRemainingRouteValuesToMatchingUri() {
+	public function resolvesReturnsFalseIfNotAllRouteValuesCanBeResolved() {
 		$this->route->setUriPattern('foo');
 		$this->route->_set('isParsed', TRUE);
-		$this->route->resolves(array('foo' => 'bar', 'baz' => array('foo2' => 'bar2')));
+		$routeValues = array('foo' => 'bar', 'baz' => array('foo2' => 'bar2'));
+		$this->assertFalse($this->route->resolves($routeValues));
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function resolvesAppendsRemainingRouteValuesToMatchingUriIfAppendExceedingArgumentsIsTrue() {
+		$this->route->setUriPattern('foo');
+		$this->route->setAppendExceedingArguments(TRUE);
+		$this->route->_set('isParsed', TRUE);
+		$routeValues = array('foo' => 'bar', 'baz' => array('foo2' => 'bar2'));
+		$this->route->resolves($routeValues);
 
 		$actualResult = $this->route->getMatchingUri();
 		$expectedResult = '?foo=bar&baz%5Bfoo2%5D=bar2';
 
 		$this->assertEquals($expectedResult, $actualResult);
 	}
+
 
 	/**
 	 * @test
@@ -905,6 +945,7 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$this->route->injectPersistenceManager($mockPersistenceManager);
 
 		$this->route->setUriPattern('foo');
+		$this->route->setAppendExceedingArguments(TRUE);
 		$this->route->_set('isParsed', TRUE);
 		$this->route->resolves($originalArray);
 
@@ -938,7 +979,7 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function resolvesReturnsTrueIfTargetControllerExists() {
-		$this->route->setUriPattern('');
+		$this->route->setUriPattern('{@package}/{@subpackage}/{@controller}');
 		$this->route->setDefaults(array('@package' => 'SomePackage', '@controller' => 'SomeExistingController'));
 		$this->routeValues = array('@subpackage' => 'Some\Subpackage');
 
@@ -997,6 +1038,7 @@ class RouteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$mockRoutePart->expects($this->once())->method('getDefaultValue')->will($this->returnValue('defaultValue'));
 
 		$route = $this->getAccessibleMock('TYPO3\FLOW3\MVC\Web\Routing\Route', array('compareAndRemoveMatchingDefaultValues'));
+		$route->setAppendExceedingArguments(TRUE);
 		$route->injectRouter($this->mockRouter);
 		$route->injectPersistenceManager($this->mockPersistenceManager);
 		$route->setUriPattern('foo');

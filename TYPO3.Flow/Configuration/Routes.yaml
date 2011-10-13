@@ -23,10 +23,10 @@
     '@subpackage': 'Security\Authentication'
     '@controller': 'Authentication'
     '@action':     'authenticate'
-    
+
 
 ##
-# Default route to map the first three URL segments to package, controller and action 
+# Default route to map the first three URL segments to package, controller and action
 # including optional format-suffix
 
 -
@@ -34,6 +34,7 @@
   uriPattern: '{@package}/{@controller}/{@action}(.{@format})'
   defaults:
     '@format':     'html'
+  appendExceedingArguments: true
 
 ##
 # Default route to map the first two URL segments to package and controller

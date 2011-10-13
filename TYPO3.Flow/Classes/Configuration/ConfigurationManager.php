@@ -412,7 +412,7 @@ EOD;
 			$mergedSubRoutesConfiguration = array($routeConfiguration);
 			foreach($routeConfiguration['subRoutes'] as $subRouteKey => $subRouteOptions) {
 				if (!isset($subRouteOptions['package']) || !isset($subRoutesConfiguration[$subRouteOptions['package']])) {
-					continue 2;
+					throw new \TYPO3\FLOW3\Configuration\Exception\ParseErrorException('Missing package configuration for SubRoute "' . (isset($routeConfiguration['name']) ? $routeConfiguration['name'] : 'unnamed Route') . '".', 1318414040);
 				}
 				$packageSubRoutesConfiguration = $subRoutesConfiguration[$subRouteOptions['package']];
 				$mergedSubRoutesConfiguration = $this->buildSubrouteConfigurations($mergedSubRoutesConfiguration, $packageSubRoutesConfiguration, $subRouteKey);
@@ -432,40 +432,20 @@ EOD;
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function buildSubrouteConfigurations(array $routesConfiguration, array $subRoutesConfiguration, $subRouteKey) {
-		$mergedSubRoutesConfiguration = array();
+		$mergedSubRoutesConfigurations = array();
 		foreach($subRoutesConfiguration as $subRouteConfiguration) {
 			foreach($routesConfiguration as $routeConfiguration) {
-				$name = isset($routeConfiguration['name']) ? $routeConfiguration['name'] : $routeConfiguration;
-				$name .= ' :: ';
-				$name .= isset($subRouteConfiguration['name']) ? $subRouteConfiguration['name'] : 'Subroute';
-
+				$subRouteConfiguration['name'] = sprintf('%s :: %s', isset($routeConfiguration['name']) ? $routeConfiguration['name'] : 'Unnamed Route', isset($subRouteConfiguration['name']) ? $subRouteConfiguration['name'] : 'Unnamed Subroute');
 				if (!isset($subRouteConfiguration['uriPattern'])) {
-					throw new \TYPO3\FLOW3\Configuration\Exception\ParseErrorException('No uriPattern defined in route configuration "' . $name . '".', 1274197615);
-		     	}
-
-				$uriPattern = str_replace('<' . $subRouteKey . '>', $subRouteConfiguration['uriPattern'], $routeConfiguration['uriPattern']);
-				$defaults = isset($routeConfiguration['defaults']) ? $routeConfiguration['defaults'] : array();
-				if (isset($subRouteConfiguration['defaults'])) {
-					$defaults = \TYPO3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($defaults, $subRouteConfiguration['defaults']);
+					throw new \TYPO3\FLOW3\Configuration\Exception\ParseErrorException('No uriPattern defined in route configuration "' . $subRouteConfiguration['name'] . '".', 1274197615);
 				}
-				$routeParts = isset($routeConfiguration['routeParts']) ? $routeConfiguration['routeParts'] : array();
-				if (isset($subRouteConfiguration['routeParts'])) {
-					$routeParts = \TYPO3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($routeParts, $subRouteConfiguration['routeParts']);
-				}
-				$toLowerCase = isset($routeConfiguration['toLowerCase']) ? (boolean)$routeConfiguration['toLowerCase'] : NULL;
-				if (isset($subRouteConfiguration['toLowerCase'])) {
-					$toLowerCase = (boolean)$subRouteConfiguration['toLowerCase'];
-				}
-				$mergedSubRoutesConfiguration[] = array(
-					'name' => $name,
-					'uriPattern' => $uriPattern,
-					'defaults' => $defaults,
-					'routeParts' => $routeParts,
-					'toLowerCase' => $toLowerCase
-				);
+				$subRouteConfiguration['uriPattern'] = str_replace('<' . $subRouteKey . '>', $subRouteConfiguration['uriPattern'], $routeConfiguration['uriPattern']);
+				$subRouteConfiguration = \TYPO3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($routeConfiguration, $subRouteConfiguration);
+				unset($subRouteConfiguration['subRoutes']);
+				$mergedSubRoutesConfigurations[] = $subRouteConfiguration;
 			}
 		}
-		return $mergedSubRoutesConfiguration;
+		return $mergedSubRoutesConfigurations;
 	}
 }
 ?>
