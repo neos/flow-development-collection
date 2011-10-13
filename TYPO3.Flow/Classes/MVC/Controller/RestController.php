@@ -11,10 +11,12 @@ namespace TYPO3\FLOW3\MVC\Controller;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * An action controller for RESTful web services
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class RestController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 

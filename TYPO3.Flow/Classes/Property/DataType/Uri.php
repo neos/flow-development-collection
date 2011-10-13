@@ -11,11 +11,13 @@ namespace TYPO3\FLOW3\Property\DataType;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Represents a Unique Resource Identifier according to STD 66 / RFC 3986
  *
  * @api
- * @scope prototype
+ * @FLOW3\Scope("prototype")
  */
 class Uri {
 

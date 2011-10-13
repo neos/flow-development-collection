@@ -11,10 +11,12 @@ namespace TYPO3\FLOW3\MVC\Web;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Builds a web request object from the raw HTTP information
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class RequestBuilder {
 

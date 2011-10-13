@@ -11,10 +11,12 @@ namespace TYPO3\FLOW3\Package\MetaData;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Package company party meta model
  *
- * @scope prototype
+ * @FLOW3\Scope("prototype")
  */
 class Company extends \TYPO3\FLOW3\Package\MetaData\AbstractParty {
 

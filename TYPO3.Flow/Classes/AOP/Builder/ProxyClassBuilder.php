@@ -13,11 +13,13 @@ namespace TYPO3\FLOW3\AOP\Builder;
 
 use \TYPO3\FLOW3\Cache\CacheManager;
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * The main class of the AOP (Aspect Oriented Programming) framework.
  *
- * @proxy disable
- * @scope singleton
+ * @FLOW3\Proxy(false)
+ * @FLOW3\Scope("singleton")
  */
 class ProxyClassBuilder {
 
@@ -125,7 +127,7 @@ class ProxyClassBuilder {
 	 *
 	 * @param \TYPO3\FLOW3\Cache\Frontend\VariableFrontend $objectConfigurationCache
 	 * @return void
-	 * @autowiring off
+	 * @FLOW3\Autowiring(false)
 	 */
 	public function injectObjectConfigurationCache(\TYPO3\FLOW3\Cache\Frontend\VariableFrontend $objectConfigurationCache) {
 		$this->objectConfigurationCache = $objectConfigurationCache;

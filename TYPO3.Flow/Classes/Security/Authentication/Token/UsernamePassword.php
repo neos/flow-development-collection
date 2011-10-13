@@ -11,16 +11,18 @@ namespace TYPO3\FLOW3\Security\Authentication\Token;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * An authentication token used for simple username and password authentication.
  *
- * @scope prototype
+ * @FLOW3\Scope("prototype")
  */
 class UsernamePassword implements \TYPO3\FLOW3\Security\Authentication\TokenInterface {
 
 	/**
 	 * @var \TYPO3\FLOW3\Utility\Environment
-	 * @inject
+	 * @FLOW3\Inject
 	 */
 	protected $environment;
 
@@ -38,7 +40,7 @@ class UsernamePassword implements \TYPO3\FLOW3\Security\Authentication\TokenInte
 	/**
 	 * The username/password credentials
 	 * @var array
-	 * @transient
+	 * @FLOW3\Transient
 	 */
 	protected $credentials = array('username' => '', 'password' => '');
 
@@ -49,7 +51,7 @@ class UsernamePassword implements \TYPO3\FLOW3\Security\Authentication\TokenInte
 
 	/**
 	 * @var \TYPO3\FLOW3\Security\AccountRepository
-	 * @inject
+	 * @FLOW3\Inject
 	 */
 	protected $accountRepository;
 

@@ -11,14 +11,16 @@ namespace TYPO3\FLOW3\AOP\Pointcut;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * The pointcut defines the set of join points (ie. "situations") in which certain
  * code associated with the pointcut (ie. advices) should be executed. This set of
  * join points is defined by a poincut expression which is matched against class
  * and method signatures.
  *
- * @scope prototype
- * @proxy disable
+ * @FLOW3\Scope("prototype")
+ * @FLOW3\Proxy(false)
  */
 class Pointcut {
 

@@ -11,28 +11,30 @@ namespace TYPO3\FLOW3\Tests\Functional\AOP\Fixtures;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * An aspect for testing the basic functionality of the AOP framework
  *
- * @introduce TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\Introduced01Interface, class(TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass03)
- * @aspect
+ * @FLOW3\Introduce("class(TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass03)", interfaceName="TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\Introduced01Interface")
+ * @FLOW3\Aspect
  */
 class BaseFunctionalityTestingAspect {
 
 	/**
-	 * @introduce class(TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass03)
+	 * @FLOW3\Introduce("class(TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass03)")
 	 * @var string
 	 */
 	protected $introducedProtectedProperty;
 
 	/**
-	 * @introduce class(TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass03)
+	 * @FLOW3\Introduce("class(TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass03)")
 	 * @var array
 	 */
 	public $introducedPublicProperty;
 
 	/**
-	 * @around method(public TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01->__construct())
+	 * @FLOW3\Around("method(public TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01->__construct())")
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint
 	 * @return void
 	 */
@@ -42,7 +44,7 @@ class BaseFunctionalityTestingAspect {
 	}
 
 	/**
-	 * @around within(TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\SayHelloInterface) && method(.*->sayHello())
+	 * @FLOW3\Around("within(TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\SayHelloInterface) && method(.*->sayHello())")
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint
 	 * @return string
 	 */
@@ -51,7 +53,7 @@ class BaseFunctionalityTestingAspect {
 	}
 
 	/**
-	 * @around method(public TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01->saySomethingSmart())
+	 * @FLOW3\Around("method(public TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01->saySomethingSmart())")
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint
 	 * @return string
 	 */
@@ -60,7 +62,7 @@ class BaseFunctionalityTestingAspect {
 	}
 
 	/**
-	 * @around method(public TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01->sayHelloAndThrow())
+	 * @FLOW3\Around("method(public TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01->sayHelloAndThrow())")
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint
 	 * @return string
 	 */
@@ -69,7 +71,7 @@ class BaseFunctionalityTestingAspect {
 	}
 
 	/**
-	 * @around method(public TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01->greet(name === 'FLOW3'))
+	 * @FLOW3\Around("method(public TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01->greet(name === 'FLOW3'))")
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint
 	 * @return string
 	 */
@@ -78,7 +80,7 @@ class BaseFunctionalityTestingAspect {
 	}
 
 	/**
-	 * @around method(public TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01->greetMany(names contains this.currentName))
+	 * @FLOW3\Around("method(public TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01->greetMany(names contains this.currentName))")
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint
 	 * @return string
 	 */
@@ -87,7 +89,7 @@ class BaseFunctionalityTestingAspect {
 	}
 
 	/**
-	 * @afterreturning method(TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass02->publicTargetMethod())
+	 * @FLOW3\AfterReturning("method(TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass02->publicTargetMethod())")
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint
 	 * @return string
 	 */
@@ -96,7 +98,7 @@ class BaseFunctionalityTestingAspect {
 	}
 
 	/**
-	 * @around method(protected TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass02->protectedTargetMethod())
+	 * @FLOW3\Around("method(protected TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass02->protectedTargetMethod())")
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint
 	 * @return string
 	 */
@@ -105,7 +107,7 @@ class BaseFunctionalityTestingAspect {
 	}
 
 	/**
-	 * @around method(TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01->greetObject(name.name === 'TYPO3'))
+	 * @FLOW3\Around("method(TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01->greetObject(name.name === 'TYPO3'))")
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint
 	 * @return string
 	 */
@@ -114,7 +116,7 @@ class BaseFunctionalityTestingAspect {
 	}
 
 	/**
-	 * @around method(TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01->greetObject(name === this.currentName))
+	 * @FLOW3\Around("method(TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01->greetObject(name === this.currentName))")
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint
 	 * @return string
 	 */
@@ -123,7 +125,7 @@ class BaseFunctionalityTestingAspect {
 	}
 
 	/**
-	 * @around method(public TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01->greet(name === current.testContext.nameOfTheWeek))
+	 * @FLOW3\Around("method(public TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass01->greet(name === current.testContext.nameOfTheWeek))")
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint
 	 * @return string
 	 */
@@ -132,7 +134,7 @@ class BaseFunctionalityTestingAspect {
 	}
 
 	/**
-	 * @around method(TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass03->introducedMethod01())
+	 * @FLOW3\Around("method(TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\TargetClass03->introducedMethod01())")
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint
 	 * @return string
 	 */

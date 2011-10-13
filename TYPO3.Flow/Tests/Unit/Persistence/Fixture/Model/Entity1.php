@@ -11,10 +11,12 @@ namespace TYPO3\FLOW3\Tests\Persistence\Fixture\Model;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * A model fixture
  *
- * @entity
+ * @FLOW3\Entity
  */
 class Entity1 {
 
@@ -29,7 +31,7 @@ class Entity1 {
 	 * Just a normal string
 	 *
 	 * @var string
-	 * @identity
+	 * @FLOW3\Identity
 	 */
 	protected $someString;
 
@@ -45,13 +47,13 @@ class Entity1 {
 
 	/**
 	 * @var \DateTime
-	 * @identity
+	 * @FLOW3\Identity
 	 */
 	protected $someDate;
 
 	/**
 	 * @var \SplObjectStorage
-	 * @lazy
+	 * @FLOW3\Lazy
 	 */
 	protected $someSplObjectStorage;
 
@@ -59,7 +61,7 @@ class Entity1 {
 	 * A transient string
 	 *
 	 * @var string
-	 * @transient
+	 * @FLOW3\Transient
 	 */
 	protected $someTransientString;
 

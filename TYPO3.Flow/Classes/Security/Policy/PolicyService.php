@@ -11,11 +11,13 @@ namespace TYPO3\FLOW3\Security\Policy;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * The policy service reads the policy configuration. The security adivce asks this service which methods have to be intercepted by a security interceptor.
  * The access decision voters get the roles and privileges configured (in the security policy) for a specific method invocation from this service.
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class PolicyService implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 

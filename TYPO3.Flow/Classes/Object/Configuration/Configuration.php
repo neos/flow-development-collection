@@ -11,11 +11,14 @@ namespace TYPO3\FLOW3\Object\Configuration;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Doctrine\ORM\Mapping as ORM;
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * FLOW3 Object Configuration
  *
- * @scope prototype
- * @proxy disable
+ * @FLOW3\Scope("prototype")
+ * @FLOW3\Proxy(false)
  */
 class Configuration {
 

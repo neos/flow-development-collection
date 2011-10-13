@@ -11,17 +11,19 @@ namespace TYPO3\FLOW3\Security\Authentication;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * The default authentication manager, which relies on Authentication Providers
  * to authenticate the tokens stored in the security context.
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class AuthenticationProviderManager implements \TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface {
 
 	/**
 	 * @var \TYPO3\FLOW3\Log\SecurityLoggerInterface
-	 * @inject
+	 * @FLOW3\Inject
 	 */
 	protected $securityLogger;
 
@@ -124,7 +126,7 @@ class AuthenticationProviderManager implements \TYPO3\FLOW3\Security\Authenticat
 	 *
 	 * @return void
 	 * @throws \TYPO3\FLOW3\Security\Exception\AuthenticationRequiredException
-	 * @session autoStart = true
+	 * @FLOW3\Session(autoStart=true)
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function authenticate() {
@@ -180,7 +182,7 @@ class AuthenticationProviderManager implements \TYPO3\FLOW3\Security\Authenticat
 	 *
 	 * @param TokenInterface $token The token which has been authenticated
 	 * @return void
-	 * @signal
+	 * @FLOW3\Signal
 	 */
 	protected function emitAuthenticatedToken(TokenInterface $token) {
 	}
@@ -189,7 +191,7 @@ class AuthenticationProviderManager implements \TYPO3\FLOW3\Security\Authenticat
 	 * Signals that all active authentication tokens have been invalidated.
 	 *
 	 * @return void
-	 * @signal
+	 * @FLOW3\Signal
 	 */
 	protected function emitLoggedOut() {
 	}

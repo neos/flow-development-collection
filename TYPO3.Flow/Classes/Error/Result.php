@@ -11,11 +11,13 @@ namespace TYPO3\FLOW3\Error;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Result object for operations dealing with objects, such as the Property Mapper or the Validators.
  *
  * @api
- * @scope prototype
+ * @FLOW3\Scope("prototype")
  */
 class Result {
 

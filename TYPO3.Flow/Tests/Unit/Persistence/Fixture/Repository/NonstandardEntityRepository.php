@@ -11,11 +11,13 @@ namespace TYPO3\FLOW3\Tests\Persistence\Fixture\Repository;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * A repository claiming responsibility for a model that cannot be matched
  * to it via naming conventions.
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class NonstandardEntityRepository extends \TYPO3\FLOW3\Persistence\Repository {
 

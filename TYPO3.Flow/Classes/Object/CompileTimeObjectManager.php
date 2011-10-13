@@ -15,13 +15,16 @@ use \TYPO3\FLOW3\Object\Configuration\Configuration;
 use \TYPO3\FLOW3\Object\Configuration\ConfigurationProperty as Property;
 use \TYPO3\FLOW3\Reflection\ObjectAccess;
 
+use Doctrine\ORM\Mapping as ORM;
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * A specialized Object Manager which is able to do some basic dependency injection for
  * singleton scoped objets. This Object Manager is used during compile time when the proxy
  * class based DI mechanism is not yet available.
  *
- * @scope singleton
- * @proxy disable
+ * @FLOW3\Scope("singleton")
+ * @FLOW3\Proxy(false)
  */
 class CompileTimeObjectManager extends ObjectManager {
 

@@ -11,10 +11,12 @@ namespace TYPO3\FLOW3\Security\Authorization;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Default Firewall which analyzes the request with a RequestFilter chain.
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class FilterFirewall implements \TYPO3\FLOW3\Security\Authorization\FirewallInterface {
 

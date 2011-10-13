@@ -11,10 +11,12 @@ namespace TYPO3\FLOW3\MVC\CLI;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Represents a Command
  *
- * @scope prototype
+ * @FLOW3\Scope("prototype")
  */
 class Command {
 
@@ -180,7 +182,7 @@ class Command {
 	/**
 	 * Tells if this command flushes all caches and thus needs special attention in the interactive shell.
 	 *
-	 * Note that neither this method nor the @flushesCaches annotation is currently part of the official API.
+	 * Note that neither this method nor the @FLOW3\FlushesCaches annotation is currently part of the official API.
 	 *
 	 * @return boolean
 	 * @author Robert Lemke <robert@typo3.org>

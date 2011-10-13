@@ -11,10 +11,12 @@ namespace TYPO3\FLOW3\MVC;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * This is a container for all Flash Messages.
  *
- * @scope session
+ * @FLOW3\Scope("session")
  * @api
  */
 class FlashMessageContainer {
@@ -29,7 +31,7 @@ class FlashMessageContainer {
 	 *
 	 * @param \TYPO3\FLOW3\Error\Message $message
 	 * @return void
-	 * @session autoStart=true
+	 * @FLOW3\Session(autoStart=true)
 	 * @api
 	 */
 	public function addMessage(\TYPO3\FLOW3\Error\Message $message) {
@@ -62,7 +64,7 @@ class FlashMessageContainer {
 	 *
 	 * @param string $severity severity of messages (from \TYPO3\FLOW3\Error\Message::SEVERITY_* constants) to remove.
 	 * @return void
-	 * @session autoStart=true
+	 * @FLOW3\Session(autoStart=true)
 	 * @api
 	 */
 	public function flush($severity = NULL) {

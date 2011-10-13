@@ -21,10 +21,12 @@ namespace TYPO3\FLOW3\Persistence\Generic;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * A lazy loading variant of \SplObjectStorage
  *
- * @scope prototype
+ * @FLOW3\Scope("prototype")
  * @api
  */
 class LazySplObjectStorage extends \SplObjectStorage {

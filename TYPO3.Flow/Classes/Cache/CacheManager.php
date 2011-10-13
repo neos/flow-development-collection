@@ -13,10 +13,12 @@ namespace TYPO3\FLOW3\Cache;
 
 use \TYPO3\FLOW3\Cache\Frontend\FrontendInterface;
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * The Cache Manager
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  * @api
  */
 class CacheManager {

@@ -13,12 +13,15 @@ namespace TYPO3\FLOW3\Object\Proxy;
 
 use \TYPO3\FLOW3\Cache\CacheManager;
 
+use Doctrine\ORM\Mapping as ORM;
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Builder for proxy classes which are used to implement Dependency Injection and
  * Aspect-Oriented Programming
  *
- * @scope singleton
- * @proxy disable
+ * @FLOW3\Scope("singleton")
+ * @FLOW3\Proxy(false)
  */
 class Compiler {
 
@@ -78,7 +81,7 @@ class Compiler {
 	 * @param \TYPO3\FLOW3\Cache\Frontend\PhpFrontend $classesCache
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @autowiring off
+	 * @FLOW3\Autowiring(false)
 	 */
 	public function injectClassesCache(\TYPO3\FLOW3\Cache\Frontend\PhpFrontend $classesCache) {
 		$this->classesCache = $classesCache;

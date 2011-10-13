@@ -11,10 +11,12 @@ namespace TYPO3\FLOW3\Security\Channel;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * This security interceptor switches the current channel between HTTP and HTTPS protocol.
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class HttpsInterceptor implements \TYPO3\FLOW3\Security\Authorization\InterceptorInterface {
 

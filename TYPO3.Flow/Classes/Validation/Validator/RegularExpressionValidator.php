@@ -11,13 +11,15 @@ namespace TYPO3\FLOW3\Validation\Validator;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Validator based on regular expressions
  *
  * The regular expression is specified in the options by using the array key "regularExpression"
  *
  * @api
- * @scope prototype
+ * @FLOW3\Scope("prototype")
  */
 class RegularExpressionValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractValidator {
 

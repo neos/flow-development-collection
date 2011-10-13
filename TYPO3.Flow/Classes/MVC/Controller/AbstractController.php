@@ -13,11 +13,13 @@ namespace TYPO3\FLOW3\MVC\Controller;
 
 use \TYPO3\FLOW3\MVC\Web\Routing\UriBuilder;
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * An abstract base class for Controllers
  *
  * @api
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 abstract class AbstractController implements ControllerInterface {
 
@@ -34,7 +36,7 @@ abstract class AbstractController implements ControllerInterface {
 	protected $settings;
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Validation\ValidatorResolver
 	 */
 	protected $validatorResolver;
@@ -79,14 +81,14 @@ abstract class AbstractController implements ControllerInterface {
 	 * The flash messages. Use $this->flashMessageContainer->addMessage(...) to add a new Flash
 	 * Message.
 	 *
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\MVC\FlashMessageContainer
 	 * @api
 	 */
 	protected $flashMessageContainer;
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Persistence\PersistenceManagerInterface
 	 */
 	protected $persistenceManager;

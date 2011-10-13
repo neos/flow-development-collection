@@ -11,11 +11,14 @@ namespace TYPO3\FLOW3\Security\Policy;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Doctrine\ORM\Mapping as ORM;
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * A role for the PolicyService. These roles can be structured in a tree.
  *
- * @scope prototype
- * @entity
+ * @FLOW3\Scope("prototype")
+ * @FLOW3\Entity
  */
 class Role {
 
@@ -23,8 +26,8 @@ class Role {
 	 * The string identifier of this role
 	 *
 	 * @var string
-	 * @identity
-	 * @Id
+	 * @FLOW3\Identity
+	 * @ORM\Id
 	 */
 	protected $identifier;
 

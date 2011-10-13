@@ -13,11 +13,13 @@ namespace TYPO3\FLOW3\MVC\Web;
 
 use \TYPO3\FLOW3\Property\DataType\Uri;
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Represents a web sub request (used in plugins for example)
  *
  * @api
- * @scope prototype
+ * @FLOW3\Scope("prototype")
  */
 class SubRequest extends \TYPO3\FLOW3\MVC\Web\Request {
 

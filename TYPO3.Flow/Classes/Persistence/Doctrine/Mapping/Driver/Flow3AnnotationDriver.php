@@ -11,6 +11,8 @@ namespace TYPO3\FLOW3\Persistence\Doctrine\Mapping\Driver;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * This driver reads the mapping metadata from docblock annotations.
  * It gives precedence to Doctrine annotations but fills gaps from other info
@@ -23,7 +25,7 @@ namespace TYPO3\FLOW3\Persistence\Doctrine\Mapping\Driver;
  * If a property is not marked as an association the mapping type is set to
  * "object" for objects.
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 
@@ -690,13 +692,13 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 	}
 
 	/**
-	 * Checks if the specified class has a property annotated with @Id
+	 * Checks if the specified class has a property annotated with Id
 	 *
 	 * @param string $className Name of the class to check against
 	 * @param string $methodName Name of the method to check against
 	 * @param string $methodDeclaringClassName Name of the class the method was originally declared in
 	 * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
-	 * @return boolean TRUE if the class has *no* @Id properties
+	 * @return boolean TRUE if the class has *no* Id properties
 	 */
 	public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier) {
 		$tags = $this->reflectionService->getPropertyNamesByTag($className, 'id');

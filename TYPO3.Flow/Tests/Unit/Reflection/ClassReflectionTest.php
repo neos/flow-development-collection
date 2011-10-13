@@ -14,10 +14,12 @@ namespace TYPO3\FLOW3\Tests\Unit\Reflection;
 require_once('Fixture/DummyInterface1.php');
 require_once('Fixture/DummyInterface2.php');
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Testcase for ClassReflection
  *
- * @scope prototype
+ * @FLOW3\Scope("prototype")
  */
 class ClassReflectionTest extends \TYPO3\FLOW3\Tests\UnitTestCase implements \TYPO3\FLOW3\Tests\Reflection\Fixture\DummyInterface1, \TYPO3\FLOW3\Tests\Reflection\Fixture\DummyInterface2 {
 

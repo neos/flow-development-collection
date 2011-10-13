@@ -11,6 +11,8 @@ namespace TYPO3\FLOW3\I18n\Formatter;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Formatter for date and time.
  *
@@ -19,7 +21,7 @@ namespace TYPO3\FLOW3\I18n\Formatter;
  * - rules for displaying timezone names are simplified
  * - some less frequently used format characters are not supported
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  * @api
  */
 class DatetimeFormatter implements \TYPO3\FLOW3\I18n\Formatter\FormatterInterface {

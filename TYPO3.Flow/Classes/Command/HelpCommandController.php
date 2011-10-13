@@ -11,13 +11,15 @@ namespace TYPO3\FLOW3\Command;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 use \TYPO3\FLOW3\MVC\CLI\Command;
 use \TYPO3\FLOW3\MVC\CLI\CommandManager;
 
 /**
  * A Command Controller which provides help for available commands
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class HelpCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandController {
 
@@ -73,7 +75,7 @@ class HelpCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControlle
 	 * get more help about commands.
 	 *
 	 * @return void
-	 * @internal
+	 * @FLOW3\Internal
 	 */
 	public function helpStubCommand() {
 		$context = $this->bootstrap->getContext();
@@ -237,7 +239,7 @@ class HelpCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControlle
 	/**
 	 * Displays an error message
 	 *
-	 * @internal
+	 * @FLOW3\Internal
 	 * @param \TYPO3\FLOW3\MVC\Exception\CommandException $exception
 	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>

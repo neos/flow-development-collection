@@ -11,23 +11,25 @@ namespace TYPO3\FLOW3\Security\Authentication\Controller;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * An action controller for generic authentication in FLOW3
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class AuthenticationController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 
 	/**
 	 * The authentication manager
 	 * @var \TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface
-	 * @inject
+	 * @FLOW3\Inject
 	 */
 	protected $authenticationManager;
 
 	/**
 	 * @var \TYPO3\FLOW3\Security\Context
-	 * @inject
+	 * @FLOW3\Inject
 	 */
 	protected $securityContext;
 

@@ -11,11 +11,13 @@ namespace TYPO3\FLOW3\Security\Authorization;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * The default after invocation manager that uses AfterInvocationProcessorInterface to process the return objects.
  * It resolves automatically any available AfterInvcocationProcessorInterface for the given return object and calls them.
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class AfterInvocationProcessorManager implements \TYPO3\FLOW3\Security\Authorization\AfterInvocationManagerInterface {
 

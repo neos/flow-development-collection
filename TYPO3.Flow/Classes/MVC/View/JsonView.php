@@ -11,10 +11,12 @@ namespace TYPO3\FLOW3\MVC\View;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * A JSON view
  *
- * @scope prototype
+ * @FLOW3\Scope("prototype")
  * @api
  */
 class JsonView extends \TYPO3\FLOW3\MVC\View\AbstractView {
@@ -85,7 +87,7 @@ class JsonView extends \TYPO3\FLOW3\MVC\View\AbstractView {
 
 	/**
 	 * @var \TYPO3\FLOW3\Persistence\PersistenceManagerInterface
-	 * @inject
+	 * @FLOW3\Inject
 	 */
 	protected $persistenceManager;
 

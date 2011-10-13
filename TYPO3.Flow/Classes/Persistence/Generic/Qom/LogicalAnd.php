@@ -11,6 +11,8 @@ namespace TYPO3\FLOW3\Persistence\Generic\Qom;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Performs a logical conjunction of two other constraints.
  *
@@ -18,7 +20,7 @@ namespace TYPO3\FLOW3\Persistence\Generic\Qom;
  * constraint2.
  *
  * @api
- * @scope prototype
+ * @FLOW3\Scope("prototype")
  */
 class LogicalAnd extends \TYPO3\FLOW3\Persistence\Generic\Qom\Constraint {
 

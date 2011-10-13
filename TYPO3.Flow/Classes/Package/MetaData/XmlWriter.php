@@ -11,10 +11,12 @@ namespace TYPO3\FLOW3\Package\MetaData;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * A package meta XML writer implementation based on the Package.xml format
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class XmlWriter {
 

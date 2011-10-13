@@ -11,11 +11,14 @@ namespace TYPO3\FLOW3\MVC\Web\Routing;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Doctrine\ORM\Mapping as ORM;
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * An ObjectPathMapping model
  * This contains the URI representation of an object (pathSegment)
  *
- * @entity
+ * @FLOW3\Entity
  */
 class ObjectPathMapping {
 
@@ -23,8 +26,8 @@ class ObjectPathMapping {
 	 * Class name of the object this mapping belongs to
 	 *
 	 * @var string
-	 * @Id
-	 * @validate NotEmpty
+	 * @ORM\Id
+	 * @FLOW3\Validate(type="NotEmpty")
 	 */
 	protected $objectType;
 
@@ -32,8 +35,8 @@ class ObjectPathMapping {
 	 * Pattern of the path segment (for example "{date}/{title}")
 	 *
 	 * @var string
-	 * @Id
-	 * @validate NotEmpty
+	 * @ORM\Id
+	 * @FLOW3\Validate(type="NotEmpty")
 	 */
 	protected $uriPattern;
 
@@ -41,8 +44,8 @@ class ObjectPathMapping {
 	 * Path segment (URI representation) of the object this mapping belongs to
 	 *
 	 * @var string
-	 * @Id
-	 * @validate NotEmpty
+	 * @ORM\Id
+	 * @FLOW3\Validate(type="NotEmpty")
 	 */
 	protected $pathSegment;
 

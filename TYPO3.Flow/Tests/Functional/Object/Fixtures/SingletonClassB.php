@@ -11,11 +11,13 @@ namespace TYPO3\FLOW3\Tests\Functional\Object\Fixtures;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * A class of scope singleton
  *
- * @scope singleton
- * @proxy disable
+ * @FLOW3\Scope("singleton")
+ * @FLOW3\Proxy(false)
  */
 class SingletonClassB {
 

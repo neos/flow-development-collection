@@ -14,11 +14,13 @@ namespace TYPO3\FLOW3\Monitor\ChangeDetectionStrategy;
  * Public License for more details.                                       *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * A change detection strategy based on modification times
  *
  * @author Robert Lemke <robert@typo3.org>
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class ModificationTimeStrategy implements \TYPO3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface {
 

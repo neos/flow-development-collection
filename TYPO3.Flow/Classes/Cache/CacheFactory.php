@@ -11,12 +11,14 @@ namespace TYPO3\FLOW3\Cache;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * This cache factory takes care of instantiating a cache frontend and injecting
  * a certain cache backend. After creation of the new cache, the cache object
  * is registered at the cache manager.
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  * @api
  */
 class CacheFactory {

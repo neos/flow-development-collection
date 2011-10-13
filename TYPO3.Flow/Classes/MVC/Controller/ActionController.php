@@ -11,28 +11,30 @@ namespace TYPO3\FLOW3\MVC\Controller;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * A multi action controller
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  * @api
  */
 class ActionController extends \TYPO3\FLOW3\MVC\Controller\AbstractController {
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Utility\Environment
 	 */
 	protected $environment;
@@ -187,8 +189,8 @@ class ActionController extends \TYPO3\FLOW3\MVC\Controller\AbstractController {
 	/**
 	 * Adds the needed valiators to the Arguments:
 	 * - Validators checking the data type from the @param annotation
-	 * - Custom validators specified with @validate.
-	 * - Model-based validators (@validate annotations in the model)
+	 * - Custom validators specified with validate annotations.
+	 * - Model-based validators (validate annotations in the model)
 	 * - Custom model validator classes
 	 *
 	 * @return void

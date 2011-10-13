@@ -11,14 +11,13 @@ namespace TYPO3\FLOW3\MVC\CLI;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \TYPO3\FLOW3\MVC\RequestInterface;
-use \TYPO3\FLOW3\MVC\CLI\Command;
+use TYPO3\FLOW3\MVC\RequestInterface;
+use TYPO3\FLOW3\MVC\CLI\Command;
 
 /**
  * Represents a CLI request.
  *
  * @api
- * @scope prototype
  */
 class Request implements RequestInterface {
 

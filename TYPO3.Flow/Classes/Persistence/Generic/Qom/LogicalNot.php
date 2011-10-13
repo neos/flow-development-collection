@@ -11,13 +11,15 @@ namespace TYPO3\FLOW3\Persistence\Generic\Qom;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Performs a logical negation of another constraint.
  *
  * To satisfy the Not constraint, the tuple must not satisfy $constraint.
  *
  * @api
- * @scope prototype
+ * @FLOW3\Scope("prototype")
  */
 class LogicalNot extends \TYPO3\FLOW3\Persistence\Generic\Qom\Constraint {
 

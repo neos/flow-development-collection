@@ -11,11 +11,13 @@ namespace TYPO3\FLOW3\Tests\Functional\Reflection\Fixtures;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * A fixture for testing class schema building
  *
- * @scope prototype
- * @entity
+ * @FLOW3\Scope("prototype")
+ * @FLOW3\Entity
  */
 class ClassSchemaFixture {
 

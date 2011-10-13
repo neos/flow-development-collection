@@ -11,11 +11,13 @@ namespace TYPO3\FLOW3\I18n\TranslationProvider;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * The concrete implementation of TranslationProviderInterface which uses XLIFF
  * file format to store labels.
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class XliffTranslationProvider implements \TYPO3\FLOW3\I18n\TranslationProvider\TranslationProviderInterface {
 

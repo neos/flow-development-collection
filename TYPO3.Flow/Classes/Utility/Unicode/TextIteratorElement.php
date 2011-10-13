@@ -11,10 +11,12 @@ namespace TYPO3\FLOW3\Utility\Unicode;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * A PHP-based port of PHP6's built in TextIterator
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class TextIteratorElement {
 

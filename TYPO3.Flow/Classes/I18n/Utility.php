@@ -11,10 +11,12 @@ namespace TYPO3\FLOW3\I18n;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * The Utility class for locale specific actions
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class Utility {
 

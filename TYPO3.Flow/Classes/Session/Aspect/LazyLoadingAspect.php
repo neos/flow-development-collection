@@ -11,29 +11,31 @@ namespace TYPO3\FLOW3\Session\Aspect;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Adds the aspect of lazy loading to objects with scope session.
  *
- * @aspect
- * @introduce TYPO3\FLOW3\Session\Aspect\LazyLoadingProxyInterface, filter(TYPO3\FLOW3\Session\Aspect\SessionObjectMethodsPointcutFilter)
- * @scope singleton
+ * @FLOW3\Aspect
+ * @FLOW3\Introduce("filter(TYPO3\FLOW3\Session\Aspect\SessionObjectMethodsPointcutFilter)", interfaceName = "TYPO3\FLOW3\Session\Aspect\LazyLoadingProxyInterface")
+ * @FLOW3\Scope("singleton")
  */
 class LazyLoadingAspect {
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Session\SessionInterface
 	 */
 	protected $session;
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Log\SystemLoggerInterface
 	 */
 	protected $systemLogger;
@@ -56,14 +58,14 @@ class LazyLoadingAspect {
 	}
 
 	/**
-	 * Before advice for all methods annotated with "@session autoStart = true".
-	 * Those methods will trigger a session intialization if a session does not exist
+	 * Before advice for all methods annotated with "@FLOW3\Session(autoStart=true)".
+	 * Those methods will trigger a session initialization if a session does not exist
 	 * yet.
 	 *
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
 	 * @return void
-	 * @fixme The pointcut expression below does not consider the options of the @session annotation – needs adjustments in the AOP framework
-	 * @before methodTaggedWith(session)
+	 * @fixme The pointcut expression below does not consider the options of the session annotation – needs adjustments in the AOP framework
+	 * @FLOW3\Before("methodTaggedWith(session)")
 	 */
 	public function initializeSession(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		if ($this->session->isStarted() === TRUE) {
@@ -83,7 +85,7 @@ class LazyLoadingAspect {
 	 *
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
 	 * @return void
-	 * @around filter(TYPO3\FLOW3\Session\Aspect\SessionObjectMethodsPointcutFilter)
+	 * @FLOW3\Around("filter(TYPO3\FLOW3\Session\Aspect\SessionObjectMethodsPointcutFilter)")
 	 */
 	public function callMethodOnOriginalSessionObject(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$objectName = $this->objectManager->getObjectNameByClassName(get_class($joinPoint->getProxy()));

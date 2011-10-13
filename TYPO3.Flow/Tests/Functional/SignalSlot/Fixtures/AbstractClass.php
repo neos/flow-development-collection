@@ -11,10 +11,13 @@ namespace TYPO3\FLOW3\Tests\Functional\SignalSlot\Fixtures;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Doctrine\ORM\Mapping as ORM;
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * An abstract class with a signal
  *
- * @scope prototype
+ * @FLOW3\Scope("prototype")
  */
 abstract class AbstractClass {
 
@@ -26,7 +29,7 @@ abstract class AbstractClass {
 	}
 
 	/**
-	 * @signal
+	 * @FLOW3\Signal
 	 * @return void
 	 */
 	public function emitSomething() {

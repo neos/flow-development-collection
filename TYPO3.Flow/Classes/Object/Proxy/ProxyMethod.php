@@ -11,10 +11,13 @@ namespace TYPO3\FLOW3\Object\Proxy;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Doctrine\ORM\Mapping as ORM;
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Representation of a method within a proxy class
  *
- * @proxy disable
+ * @FLOW3\Proxy(false)
  */
 class ProxyMethod {
 

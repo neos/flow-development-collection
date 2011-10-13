@@ -11,14 +11,16 @@ namespace TYPO3\FLOW3\AOP\Pointcut;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * The pointcut expression parser parses the definition of the place and circumstances
  * where advices can be inserted later on. The input of the parse() function is a string
  * from a pointcut- or advice annotation and returns a pointcut filter composite.
  *
  * @see \TYPO3\FLOW3\AOP\Pointcut, PointcutFilterComposite
- * @scope singleton
- * @proxy disable
+ * @FLOW3\Scope("singleton")
+ * @FLOW3\Proxy(false)
  */
 class PointcutExpressionParser {
 

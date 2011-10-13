@@ -11,11 +11,13 @@ namespace TYPO3\FLOW3\MVC\Web\Routing;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * An URI Builder
  *
  * @api
- * @scope prototype
+ * @FLOW3\Scope("prototype")
  */
 class UriBuilder {
 

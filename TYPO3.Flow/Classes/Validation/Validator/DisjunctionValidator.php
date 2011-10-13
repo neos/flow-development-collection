@@ -11,13 +11,15 @@ namespace TYPO3\FLOW3\Validation\Validator;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Validator to chain many validators in a disjunction (logical or). So only one
  * validator has to be valid, to make the whole disjunction valid. Errors are
  * only returned if all validators failed.
  *
  * @api
- * @scope prototype
+ * @FLOW3\Scope("prototype")
  */
 class DisjunctionValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractCompositeValidator {
 

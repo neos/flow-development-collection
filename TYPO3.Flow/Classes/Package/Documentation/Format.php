@@ -11,10 +11,12 @@ namespace TYPO3\FLOW3\Package\Documentation;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Documentation format of a documentation
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  * @api
  */
 class Format {

@@ -11,11 +11,13 @@ namespace TYPO3\FLOW3\Property\TypeConverter;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Converter which transforms simple types to a boolean, by simply casting it.
  *
  * @api
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class BooleanConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTypeConverter {
 

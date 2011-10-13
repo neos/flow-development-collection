@@ -11,6 +11,8 @@ namespace TYPO3\FLOW3\I18n;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * The LocaleCollection class contains all locales available in current
  * FLOW3 installation, and describes hierarchical relations between them.
@@ -18,7 +20,7 @@ namespace TYPO3\FLOW3\I18n;
  * This class maintans a hierarchical relation between locales. For
  * example, a locale "en_GB" will be a child of a locale "en".
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class LocaleCollection {
 

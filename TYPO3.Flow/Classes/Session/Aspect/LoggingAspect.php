@@ -11,24 +11,26 @@ namespace TYPO3\FLOW3\Session\Aspect;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * An aspect which centralizes the logging of important session actions.
  *
- * @scope singleton
- * @aspect
+ * @FLOW3\Aspect
+ * @FLOW3\Scope("singleton")
  */
 class LoggingAspect {
 
 	/**
 	 * @var \TYPO3\FLOW3\Log\SystemLoggerInterface
-	 * @inject
+	 * @FLOW3\Inject
 	 */
 	protected $systemLogger;
 
 	/**
 	 * Logs calls of start()
 	 *
-	 * @after within(TYPO3\FLOW3\Session\SessionInterface) && method(.*->start())
+	 * @FLOW3\After("within(TYPO3\FLOW3\Session\SessionInterface) && method(.*->start())")
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
 	 * @return mixed The result of the target method if it has not been intercepted
 	 * @author Robert Lemke <robert@typo3.org>
@@ -43,7 +45,7 @@ class LoggingAspect {
 	/**
 	 * Logs calls of resume()
 	 *
-	 * @after within(TYPO3\FLOW3\Session\SessionInterface) && method(.*->resume())
+	 * @FLOW3\After("within(TYPO3\FLOW3\Session\SessionInterface) && method(.*->resume())")
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
 	 * @return mixed The result of the target method if it has not been intercepted
 	 * @author Robert Lemke <robert@typo3.org>
@@ -58,7 +60,7 @@ class LoggingAspect {
 	/**
 	 * Logs calls of destroy()
 	 *
-	 * @before within(TYPO3\FLOW3\Session\SessionInterface) && method(.*->destroy())
+	 * @FLOW3\Before("within(TYPO3\FLOW3\Session\SessionInterface) && method(.*->destroy())")
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
 	 * @return mixed The result of the target method if it has not been intercepted
 	 * @author Robert Lemke <robert@typo3.org>
@@ -73,7 +75,7 @@ class LoggingAspect {
 	/**
 	 * Logs calls of renewId()
 	 *
-	 * @around within(TYPO3\FLOW3\Session\SessionInterface) && method(.*->renewId())
+	 * @FLOW3\Around("within(TYPO3\FLOW3\Session\SessionInterface) && method(.*->renewId())")
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
 	 * @return mixed The result of the target method if it has not been intercepted
 	 * @author Robert Lemke <robert@typo3.org>

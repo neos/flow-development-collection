@@ -11,6 +11,8 @@ namespace TYPO3\FLOW3\Cache\Backend;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * A caching backend which stores cache entries by using Memcached.
  *
@@ -37,7 +39,7 @@ namespace TYPO3\FLOW3\Cache\Backend;
  * data will be split into chunks to make them fit into the memcached limits.
  *
  * @api
- * @scope prototype
+ * @FLOW3\Scope("prototype")
  */
 class MemcachedBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 

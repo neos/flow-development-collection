@@ -11,12 +11,15 @@ namespace TYPO3\FLOW3\Cache\Backend;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Doctrine\ORM\Mapping as ORM;
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * A caching backend which forgets everything immediately
  *
  * Used in \TYPO3\FLOW3\Cache\FactoryTest
  *
- * @scope prototype
+ * @FLOW3\Scope("prototype")
  */
 class MockBackend extends \TYPO3\FLOW3\Cache\Backend\NullBackend {
 

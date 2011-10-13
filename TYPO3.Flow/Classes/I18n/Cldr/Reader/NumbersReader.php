@@ -11,6 +11,8 @@ namespace TYPO3\FLOW3\I18n\Cldr\Reader;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * A reader for data placed in "numbers" tag in CLDR.
  *
@@ -26,7 +28,7 @@ namespace TYPO3\FLOW3\I18n\Cldr\Reader;
  * - formatting numbers in other number systems than "latn"
  * - currency symbol substitution is simplified
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  * @see http://www.unicode.org/reports/tr35/#Number_Elements
  * @see http://www.unicode.org/reports/tr35/#Number_Format_Patterns
  */

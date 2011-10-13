@@ -11,11 +11,13 @@ namespace TYPO3\FLOW3\MVC\View;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * The not found view - a special case.
  *
  * @api
- * @scope prototype
+ * @FLOW3\Scope("prototype")
  */
 class NotFoundView extends \TYPO3\FLOW3\MVC\View\AbstractView {
 

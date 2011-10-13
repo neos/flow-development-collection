@@ -11,6 +11,8 @@ namespace TYPO3\FLOW3\I18n;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * A class for translating messages
  *
@@ -30,7 +32,7 @@ namespace TYPO3\FLOW3\I18n;
  * Actual translating is done by injected TranslationProvider instance, so
  * storage format depends on concrete implementation.
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  * @api
  * @see \TYPO3\FLOW3\I18n\FormatResolver
  * @see \TYPO3\FLOW3\I18n\TranslationProvider\TranslationProviderInterface

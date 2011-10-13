@@ -11,10 +11,12 @@ namespace TYPO3\FLOW3\Command;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Command controller for tasks related to Doctrine
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class DoctrineCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandController {
 
@@ -24,7 +26,7 @@ class DoctrineCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContr
 	protected $settings = array();
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Persistence\Doctrine\Service
 	 */
 	protected $doctrineService;
@@ -120,7 +122,7 @@ class DoctrineCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContr
 	 * Compile the Doctrine proxy classes
 	 *
 	 * @return void
-	 * @internal
+	 * @FLOW3\Internal
 	 */
 	public function compileProxiesCommand() {
 		$this->doctrineService->compileProxies();

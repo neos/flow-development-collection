@@ -11,11 +11,13 @@ namespace TYPO3\FLOW3\Log;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * The default logger of the FLOW3 framework
  *
  * @api
- * @scope prototype
+ * @FLOW3\Scope("prototype")
  */
 class Logger implements \TYPO3\FLOW3\Log\SystemLoggerInterface, \TYPO3\FLOW3\Log\SecurityLoggerInterface {
 

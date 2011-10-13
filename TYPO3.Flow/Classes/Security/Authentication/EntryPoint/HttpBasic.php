@@ -11,10 +11,12 @@ namespace TYPO3\FLOW3\Security\Authentication\EntryPoint;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * An authentication entry point, that sends an HTTP header to start HTTP Basic authentication.
  *
- * @scope prototype
+ * @FLOW3\Scope("prototype")
  */
 class HttpBasic implements \TYPO3\FLOW3\Security\Authentication\EntryPointInterface {
 

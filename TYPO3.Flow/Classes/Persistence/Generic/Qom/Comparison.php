@@ -11,6 +11,8 @@ namespace TYPO3\FLOW3\Persistence\Generic\Qom;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Filters tuples based on the outcome of a binary operation.
  *
@@ -55,7 +57,7 @@ namespace TYPO3\FLOW3\Persistence\Generic\Qom;
  *   all other characters match themselves.
  *
  * @api
- * @scope prototype
+ * @FLOW3\Scope("prototype")
  */
 class Comparison extends \TYPO3\FLOW3\Persistence\Generic\Qom\Constraint {
 

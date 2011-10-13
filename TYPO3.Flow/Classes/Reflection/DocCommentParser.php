@@ -11,10 +11,12 @@ namespace TYPO3\FLOW3\Reflection;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * A little parser which creates tag objects from doc comments
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class DocCommentParser {
 

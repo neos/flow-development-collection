@@ -11,10 +11,12 @@ namespace TYPO3\FLOW3\Property;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * This builder creates the default configuration for Property Mapping, if no configuration has been passed to the Property Mapper.
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class PropertyMappingConfigurationBuilder {
 

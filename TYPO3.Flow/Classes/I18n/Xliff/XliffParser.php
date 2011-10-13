@@ -11,6 +11,8 @@ namespace TYPO3\FLOW3\I18n\Xliff;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * A class which parses XLIFF file to simple but useful array representation.
  *
@@ -20,7 +22,7 @@ namespace TYPO3\FLOW3\I18n\Xliff;
  *   forms
  * - reads only "source" and "target" in "trans-unit" tags
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  * @see http://docs.oasis-open.org/xliff/v1.2/os/xliff-core.html [1]
  * @see http://docs.oasis-open.org/xliff/v1.2/xliff-profile-po/xliff-profile-po-1.2-cd02.html#s.detailed_mapping.tu [2]
  */
@@ -32,7 +34,7 @@ class XliffParser extends \TYPO3\FLOW3\I18n\Xml\AbstractXmlParser {
 	 * @param \SimpleXMLElement $root A root node
 	 * @return array An array representing parsed XLIFF
 	 * @author Karol Gusak <firstname@lastname.eu>
-	 * @todo: Support "approved" attribute
+	 * @todo Support "approved" attribute
 	 */
 	protected function doParsingFromRoot(\SimpleXMLElement $root) {
 		$parsedData = array();

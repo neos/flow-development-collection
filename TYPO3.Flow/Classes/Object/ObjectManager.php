@@ -14,11 +14,14 @@ namespace TYPO3\FLOW3\Object;
 use \TYPO3\FLOW3\Object\Configuration\Configuration as ObjectConfiguration;
 use \TYPO3\FLOW3\Object\Configuration\ConfigurationArgument as ObjectConfigurationArgument;
 
+use Doctrine\ORM\Mapping as ORM;
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Object Manager
  *
- * @scope singleton
- * @proxy disable
+ * @FLOW3\Scope("singleton")
+ * @FLOW3\Proxy(false)
  */
 class ObjectManager implements ObjectManagerInterface {
 
@@ -86,7 +89,7 @@ class ObjectManager implements ObjectManagerInterface {
 	 *
 	 * @param array $settings The global settings
 	 * @return void
-	 * @autowiring off
+	 * @FLOW3\Autowiring(false)
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectAllSettings(array $settings) {

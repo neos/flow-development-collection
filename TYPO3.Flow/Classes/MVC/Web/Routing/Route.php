@@ -11,11 +11,13 @@ namespace TYPO3\FLOW3\MVC\Web\Routing;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Implementation of a standard route
  *
  * @copyright Copyright belongs to the respective authors
- * @scope prototype
+ * @FLOW3\Scope("prototype")
  */
 class Route {
 
@@ -92,7 +94,7 @@ class Route {
 
 	/**
 	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
-	 * @inject
+	 * @FLOW3\Inject
 	 */
 	protected $objectManager;
 

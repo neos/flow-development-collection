@@ -11,10 +11,12 @@ namespace TYPO3\FLOW3\AOP\Advice;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Implementation of the After Throwing Advice.
  *
- * @scope prototype
+ * @FLOW3\Scope("prototype")
  */
 class AfterThrowingAdvice extends \TYPO3\FLOW3\AOP\Advice\AbstractAdvice implements \TYPO3\FLOW3\AOP\Advice\AdviceInterface {
 

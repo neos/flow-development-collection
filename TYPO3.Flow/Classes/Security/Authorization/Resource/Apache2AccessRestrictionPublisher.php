@@ -11,16 +11,18 @@ namespace TYPO3\FLOW3\Security\Authorization\Resource;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * An access restriction publisher that publishes .htaccess files to configure apache2 restrictions
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class Apache2AccessRestrictionPublisher implements \TYPO3\FLOW3\Security\Authorization\Resource\AccessRestrictionPublisherInterface {
 
 	/**
 	 * @var \TYPO3\FLOW3\Utility\Environment
-	 * @inject
+	 * @FLOW3\Inject
 	 */
 	protected $environment;
 

@@ -11,14 +11,16 @@ namespace TYPO3\FLOW3\AOP\Pointcut;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * This composite allows to check for match against a row pointcut filters
  * by only one method call. All registered filters will be invoked and if one filter
  * doesn't match, the overall result is "no".
  *
  * @see \TYPO3\FLOW3\AOP\Pointcut\PointcutExpressionParser, \TYPO3\FLOW3\AOP\Pointcut\PointcutClassNameFilter, \TYPO3\FLOW3\AOP\Pointcut\PointcutMethodFilter
- * @scope prototype
- * @proxy disable
+ * @FLOW3\Scope("prototype")
+ * @FLOW3\Proxy(false)
  */
 class PointcutFilterComposite implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 

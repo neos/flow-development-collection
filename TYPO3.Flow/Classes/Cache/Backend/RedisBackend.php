@@ -11,6 +11,8 @@ namespace TYPO3\FLOW3\Cache\Backend;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * A caching backend which stores cache entries by using Redis with phpredis
  * PHP module. Redis is a noSQL database with very good scaling characteristics
@@ -54,7 +56,7 @@ namespace TYPO3\FLOW3\Cache\Backend;
  * The unit tests use and flush database numbers 0 and 1, production use should start from 2.
  *
  * @api
- * @scope prototype
+ * @FLOW3\Scope("prototype")
  */
 class RedisBackend extends \TYPO3\FLOW3\Cache\Backend\AbstractBackend {
 

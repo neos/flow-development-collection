@@ -11,12 +11,15 @@ namespace TYPO3\FLOW3\Tests\Functional\Property\Fixtures;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Doctrine\ORM\Mapping as ORM;
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * A simple entity for PropertyMapper test
  *
- * @scope prototype
- * @entity
- * @Table(name="Property_TestEntity")
+ * @FLOW3\Scope("prototype")
+ * @FLOW3\Entity
+ * @ORM\Table(name="Property_TestEntity")
  */
 class TestEntity {
 

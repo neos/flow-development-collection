@@ -15,11 +15,13 @@ namespace TYPO3\FLOW3\Persistence\Doctrine;
 
 use Doctrine\ORM\Query\AST\PathExpression;
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * A walker to transform a select query into a count query.
  *
- * @scope prototype
- * @proxy disable
+ * @FLOW3\Scope("prototype")
+ * @FLOW3\Proxy(false)
  */
 class CountWalker extends \Doctrine\ORM\Query\TreeWalkerAdapter {
 

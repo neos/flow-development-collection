@@ -11,12 +11,14 @@ namespace TYPO3\FLOW3\Reflection;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * A service for acquiring reflection based information in a performant way.
  *
  * @api
- * @scope singleton
- * @proxy disable
+ * @FLOW3\Scope("singleton")
+ * @FLOW3\Proxy(false)
  */
 class ReflectionService {
 

@@ -11,29 +11,31 @@ namespace TYPO3\FLOW3\Security\Aspect;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * An aspect which cares for a special publishing of private resources.
  *
- * @scope singleton
- * @aspect
+ * @FLOW3\Scope("singleton")
+ * @FLOW3\Aspect
  */
 class PrivateResourcesPublishingAspect {
 
 	/**
 	 * @var \TYPO3\FLOW3\Security\Context
-	 * @inject
+	 * @FLOW3\Inject
 	 */
 	protected $securityContext;
 
 	/**
 	 * @var \TYPO3\FLOW3\Session\SessionInterface
-	 * @inject
+	 * @FLOW3\Inject
 	 */
 	protected $session;
 
 	/**
 	 * @var \TYPO3\FLOW3\Utility\Environment
-	 * @inject
+	 * @FLOW3\Inject
 	 */
 	protected $environment;
 
@@ -44,7 +46,7 @@ class PrivateResourcesPublishingAspect {
 
 	/**
 	 * @var \TYPO3\FLOW3\Security\Authorization\Resource\AccessRestrictionPublisherInterface
-	 * @inject
+	 * @FLOW3\Inject
 	 */
 	protected $accessRestrictionPublisher;
 
@@ -62,7 +64,7 @@ class PrivateResourcesPublishingAspect {
 	/**
 	 * Returns the web URI to be used to publish the specified persistent resource
 	 *
-	 * @around method(TYPO3\FLOW3\Resource\Publishing\FileSystemPublishingTarget->buildPersistentResourceWebUri()) && setting(TYPO3.FLOW3.security.enable)
+	 * @FLOW3\Around("method(TYPO3\FLOW3\Resource\Publishing\FileSystemPublishingTarget->buildPersistentResourceWebUri()) && setting(TYPO3.FLOW3.security.enable)")
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
 	 * @return mixed Result of the target method, a rewritten private resource URI or FALSE on error
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
@@ -95,7 +97,7 @@ class PrivateResourcesPublishingAspect {
 	/**
 	 * Returns the publish path and filename to be used to publish the specified persistent resource
 	 *
-	 * @around method(TYPO3\FLOW3\Resource\Publishing\FileSystemPublishingTarget->buildPersistentResourcePublishPathAndFilename()) && setting(TYPO3.FLOW3.security.enable)
+	 * @FLOW3\Around("method(TYPO3\FLOW3\Resource\Publishing\FileSystemPublishingTarget->buildPersistentResourcePublishPathAndFilename()) && setting(TYPO3.FLOW3.security.enable)")
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
 	 * @return mixed Result of the target method
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
@@ -148,7 +150,7 @@ class PrivateResourcesPublishingAspect {
 	/**
 	 * Unpublishes a private resource from all private user directories
 	 *
-	 * @after method(TYPO3\FLOW3\Resource\Publishing\FileSystemPublishingTarget->unpublishPersistentResource()) && setting(TYPO3.FLOW3.security.enable)
+	 * @FLOW3\After("method(TYPO3\FLOW3\Resource\Publishing\FileSystemPublishingTarget->unpublishPersistentResource()) && setting(TYPO3.FLOW3.security.enable)")
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
 	 * @return mixed Result of the target method
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>

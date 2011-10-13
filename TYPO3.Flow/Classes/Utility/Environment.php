@@ -11,6 +11,8 @@ namespace TYPO3\FLOW3\Utility;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Abstraction methods which return system environment variables regardless
  * of server OS, CGI/MODULE version etc. Basically they are the _SERVER
@@ -22,7 +24,7 @@ namespace TYPO3\FLOW3\Utility;
  * WARNING: Don't try to subclass this class except for use in unit tests. The
  * superglobal replacement will lead to unexpected behavior (on your side).
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  * @api
  */
 class Environment {

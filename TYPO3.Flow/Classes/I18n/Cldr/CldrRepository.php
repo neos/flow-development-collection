@@ -11,13 +11,15 @@ namespace TYPO3\FLOW3\I18n\Cldr;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * The CldrRepository class
  *
  * CldrRepository manages CldrModel instances across the framework, so there is
  * only one instance of CldrModel for every unique CLDR data file or file group.
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class CldrRepository {
 

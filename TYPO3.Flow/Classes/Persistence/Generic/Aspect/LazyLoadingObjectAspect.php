@@ -11,20 +11,22 @@ namespace TYPO3\FLOW3\Persistence\Generic\Aspect;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Adds the aspect of lazy loading to relevant objects
  *
- * @aspect
+ * @FLOW3\Aspect
  */
 class LazyLoadingObjectAspect {
 
 	/**
-	 * @pointcut classTaggedWith(entity) || classTaggedWith(valueobject)
+	 * @FLOW3\Pointcut("classTaggedWith(entity) || classTaggedWith(valueobject)")
 	 */
 	public function isEntityOrValueObject() {}
 
 	/**
-	 * @pointcut TYPO3\FLOW3\Persistence\Generic\Aspect\LazyLoadingObjectAspect->isEntityOrValueObject && classTaggedWith(lazy)
+	 * @FLOW3\Pointcut("TYPO3\FLOW3\Persistence\Generic\Aspect\LazyLoadingObjectAspect->isEntityOrValueObject && classTaggedWith(lazy)")
 	 */
 	public function needsLazyLoadingObjectAspect() {}
 
@@ -37,7 +39,7 @@ class LazyLoadingObjectAspect {
 	 *
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
 	 * @return void
-	 * @before TYPO3\FLOW3\Persistence\Generic\Aspect\LazyLoadingObjectAspect->needsLazyLoadingObjectAspect && !method(.*->__construct())
+	 * @FLOW3\Before("TYPO3\FLOW3\Persistence\Generic\Aspect\LazyLoadingObjectAspect->needsLazyLoadingObjectAspect && !method(.*->__construct())")
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function initialize(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {

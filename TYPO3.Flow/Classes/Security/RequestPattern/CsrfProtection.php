@@ -11,35 +11,37 @@ namespace TYPO3\FLOW3\Security\RequestPattern;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * This class holds a request pattern that decides, if csrf protection was enabled for the current request and searches
  * for invalid csrf protection tokens.
  *
- * @scope prototype
+ * @FLOW3\Scope("prototype")
  */
 class CsrfProtection implements \TYPO3\FLOW3\Security\RequestPatternInterface {
 
 	/**
 	 * @var \TYPO3\FLOW3\Security\Context
-	 * @inject
+	 * @FLOW3\Inject
 	 */
 	protected $securityContext;
 
 	/**
 	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
-	 * @inject
+	 * @FLOW3\Inject
 	 */
 	protected $objectManager;
 
 	/**
 	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
-	 * @inject
+	 * @FLOW3\Inject
 	 */
 	protected $reflectionService;
 
 	/**
 	 * @var \TYPO3\FLOW3\Security\Policy\PolicyService
-	 * @inject
+	 * @FLOW3\Inject
 	 */
 	protected $policyService;
 

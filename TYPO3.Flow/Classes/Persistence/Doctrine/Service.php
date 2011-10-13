@@ -11,10 +11,12 @@ namespace TYPO3\FLOW3\Persistence\Doctrine;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Service class for tasks related to Doctrine
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class Service {
 
@@ -29,13 +31,13 @@ class Service {
 	public $output = array();
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \Doctrine\Common\Persistence\ObjectManager
 	 */
 	protected $entityManager;
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Package\PackageManagerInterface
 	 */
 	protected $packageManager;

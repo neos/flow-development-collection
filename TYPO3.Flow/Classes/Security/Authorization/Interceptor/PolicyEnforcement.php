@@ -11,6 +11,8 @@ namespace TYPO3\FLOW3\Security\Authorization\Interceptor;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * This is the main security interceptor, which enforces the current security policy and is usually called by the central security aspect:
  *
@@ -18,7 +20,7 @@ namespace TYPO3\FLOW3\Security\Authorization\Interceptor;
  * 2. If a AuthenticationRequired exception has been thrown we look for an authentication entry point in the active tokens to redirect to authentication
  * 3. Then the configured AccessDecisionManager is called to authorize the request/action
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class PolicyEnforcement implements \TYPO3\FLOW3\Security\Authorization\InterceptorInterface {
 

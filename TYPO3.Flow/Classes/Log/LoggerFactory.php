@@ -11,11 +11,13 @@ namespace TYPO3\FLOW3\Log;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * The logger factory used to create logger instances.
  *
  * @api
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class LoggerFactory {
 

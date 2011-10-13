@@ -11,17 +11,19 @@ namespace TYPO3\FLOW3\Security\Aspect;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * An aspect which centralizes the logging of security relevant actions.
  *
- * @scope singleton
- * @aspect
+ * @FLOW3\Scope("singleton")
+ * @FLOW3\Aspect
  */
 class LoggingAspect {
 
 	/**
 	 * @var \TYPO3\FLOW3\Log\SecurityLoggerInterface
-	 * @inject
+	 * @FLOW3\Inject
 	 */
 	protected $securityLogger;
 
@@ -33,7 +35,7 @@ class LoggingAspect {
 	/**
 	 * Logs calls and results of the authenticate() method of the Authentication Manager
 	 *
-	 * @after within(TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface) && method(.*->authenticate())
+	 * @FLOW3\After("within(TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface) && method(.*->authenticate())")
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
 	 * @return mixed The result of the target method if it has not been intercepted
 	 * @author Robert Lemke <robert@typo3.org>
@@ -56,7 +58,7 @@ class LoggingAspect {
 	/**
 	 * Logs calls and results of the logout() method of the Authentication Manager
 	 *
-	 * @afterreturning within(TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface) && method(.*->logout())
+	 * @FLOW3\AfterReturning("within(TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface) && method(.*->logout())")
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
 	 * @return mixed The result of the target method if it has not been intercepted
 	 * @author Robert Lemke <robert@typo3.org>
@@ -75,7 +77,7 @@ class LoggingAspect {
 	/**
 	 * Logs calls and results of the authenticate() method of an authentication provider
 	 *
-	 * @afterreturning within(TYPO3\FLOW3\Security\Authentication\AuthenticationProviderInterface) && method(.*->authenticate())
+	 * @FLOW3\AfterReturning("within(TYPO3\FLOW3\Security\Authentication\AuthenticationProviderInterface) && method(.*->authenticate())")
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
 	 * @return mixed The result of the target method if it has not been intercepted
 	 * @author Robert Lemke <robert@typo3.org>
@@ -100,7 +102,7 @@ class LoggingAspect {
 	/**
 	 * Logs calls and results of decideOnJoinPoint()
 	 *
-	 * @afterthrowing method(TYPO3\FLOW3\Security\Authorization\AccessDecisionVoterManager->decideOnJoinPoint())
+	 * @FLOW3\AfterThrowing("method(TYPO3\FLOW3\Security\Authorization\AccessDecisionVoterManager->decideOnJoinPoint())")
 	 *
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint
 	 * @return void

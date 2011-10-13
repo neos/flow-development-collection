@@ -11,12 +11,15 @@ namespace TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Doctrine\ORM\Mapping as ORM;
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * A sample entity for tests
  *
- * @scope prototype
- * @entity
- * @HasLifecycleCallbacks
+ * @FLOW3\Scope("prototype")
+ * @FLOW3\Entity
+ * @ORM\HasLifecycleCallbacks
  */
 class Post {
 
@@ -27,13 +30,13 @@ class Post {
 
 	/**
 	 * @var \TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\Image
-	 * @OneToOne
+	 * @ORM\OneToOne
 	 */
 	protected $image;
 
 	/**
 	 * @var \TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\Image
-	 * @OneToOne
+	 * @ORM\OneToOne
 	 */
 	protected $thumbnail;
 
@@ -42,21 +45,21 @@ class Post {
 	 * But that's the easiest option for our functional test.
 	 *
 	 * @var \TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\Comment
-	 * @OneToOne
-	 * @JoinColumn(onDelete="SET NULL")
+	 * @ORM\OneToOne
+	 * @ORM\JoinColumn(onDelete="SET NULL")
 	 */
 	protected $comment;
 
 	/**
 	 * @var \Doctrine\Common\Collections\Collection<\TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures\Post>
-	 * @ManyToMany
-	 * @JoinTable(inverseJoinColumns={@JoinColumn(name="related_post_id")})
+	 * @ORM\ManyToMany
+	 * @ORM\JoinTable(inverseJoinColumns={@ORM\JoinColumn(name="related_post_id")})
 	 */
 	protected $related;
 
 	/**
 	 * @return string
-	 * @PrePersist
+	 * @ORM\PrePersist
 	 */
 	public function getTitle() {
 		return $this->title;

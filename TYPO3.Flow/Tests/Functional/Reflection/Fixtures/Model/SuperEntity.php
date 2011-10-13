@@ -11,10 +11,12 @@ namespace TYPO3\FLOW3\Tests\Functional\Reflection\Fixtures\Model;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * A model fixture which is used for testing the class schema building
  *
- * @entity
+ * @FLOW3\Entity
  */
 class SuperEntity {
 

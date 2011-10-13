@@ -11,40 +11,42 @@ namespace TYPO3\FLOW3\Security\Aspect;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * An aspect which rewrites persistence query to filter objects one should not be able to retrieve.
  *
- * @scope singleton
- * @aspect
+ * @FLOW3\Scope("singleton")
+ * @FLOW3\Aspect
  */
 class PersistenceQueryRewritingAspect {
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Security\Policy\PolicyService
 	 */
 	protected $policyService;
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Security\Context
 	 */
 	protected $securityContext;
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Session\SessionInterface
 	 */
 	protected $session;
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Persistence\PersistenceManagerInterface
 	 */
 	protected $persistenceManager;
@@ -69,7 +71,7 @@ class PersistenceQueryRewritingAspect {
 	/**
 	 * Rewrites the QOM query, by adding appropriate constraints according to the policy
 	 *
-	 * @before within(TYPO3\FLOW3\Persistence\QueryInterface) && method(.*->(execute|count)()) && setting(TYPO3.FLOW3.security.enable)
+	 * @FLOW3\Before("within(TYPO3\FLOW3\Persistence\QueryInterface) && method(.*->(execute|count)()) && setting(TYPO3.FLOW3.security.enable)")
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
@@ -98,7 +100,7 @@ class PersistenceQueryRewritingAspect {
 	/**
 	 * Checks, if the current policy allows the retrieval of the object fetched by getObjectDataByIdentifier()
 	 *
-	 * @around within(TYPO3\FLOW3\Persistence\PersistenceManagerInterface) && method(.*->getObjectByIdentifier()) && setting(TYPO3.FLOW3.security.enable)
+	 * @FLOW3\Around("within(TYPO3\FLOW3\Persistence\PersistenceManagerInterface) && method(.*->getObjectByIdentifier()) && setting(TYPO3.FLOW3.security.enable)")
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
 	 * @return array The object data of the original object, or NULL if access is not permitted
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>

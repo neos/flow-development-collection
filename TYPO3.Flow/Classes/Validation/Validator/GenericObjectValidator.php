@@ -11,11 +11,13 @@ namespace TYPO3\FLOW3\Validation\Validator;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * A generic object validator which allows for specifying property validators
  *
  * @api
- * @scope prototype
+ * @FLOW3\Scope("prototype")
  */
 class GenericObjectValidator implements \TYPO3\FLOW3\Validation\Validator\ValidatorInterface {
 

@@ -11,6 +11,8 @@ namespace TYPO3\FLOW3\Property\TypeConverter;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Type converter which provides sensible default implementations for most methods. If you extend this class
  * you only need to do the following:
@@ -20,7 +22,7 @@ namespace TYPO3\FLOW3\Property\TypeConverter;
  * - implement convertFrom()
  *
  * @api
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 abstract class AbstractTypeConverter implements \TYPO3\FLOW3\Property\TypeConverterInterface {
 

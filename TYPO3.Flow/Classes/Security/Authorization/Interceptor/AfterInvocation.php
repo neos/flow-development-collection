@@ -11,6 +11,8 @@ namespace TYPO3\FLOW3\Security\Authorization\Interceptor;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * This is the second main security interceptor, which enforces the current security policy for return values and is usually applied over AOP:
  *
@@ -19,7 +21,7 @@ namespace TYPO3\FLOW3\Security\Authorization\Interceptor;
  * 3. If a PermissionDeniedException was thrown we look for any an authentication entry point in the active tokens to redirect to authentication
  * 4. Then the value is returned to the caller
  *
- * @scope prototype
+ * @FLOW3\Scope("prototype")
  */
 class AfterInvocation implements \TYPO3\FLOW3\Security\Authorization\InterceptorInterface {
 

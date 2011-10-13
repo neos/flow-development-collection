@@ -11,16 +11,18 @@ namespace TYPO3\FLOW3\SignalSlot;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Aspect which connects signal methods with the Signal Dispatcher
  *
- * @scope singleton
- * @aspect
+ * @FLOW3\Scope("singleton")
+ * @FLOW3\Aspect
  */
 class SignalAspect {
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\SignalSlot\Dispatcher
 	 */
 	protected $dispatcher;
@@ -28,7 +30,7 @@ class SignalAspect {
 	/**
 	 * Passes the signal over to the Dispatcher
 	 *
-	 * @afterreturning methodTaggedWith(signal)
+	 * @FLOW3\AfterReturning("methodTaggedWith(signal)")
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>

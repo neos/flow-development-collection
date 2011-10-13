@@ -11,11 +11,13 @@ namespace TYPO3\FLOW3\Tests\Functional\Object\Fixtures;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * A class of scope prototype
  *
- * @scope prototype
- * @entity
+ * @FLOW3\Scope("prototype")
+ * @FLOW3\Entity
  */
 class PrototypeClassA implements PrototypeClassAishInterface {
 
@@ -47,7 +49,7 @@ class PrototypeClassA implements PrototypeClassAishInterface {
 	/**
 	 * @param string $someProperty
 	 * @return void
-	 * @session
+	 * @FLOW3\Session(autoStart=true)
 	 */
 	public function setSomeProperty($someProperty) {
 		$this->someProperty = $someProperty;

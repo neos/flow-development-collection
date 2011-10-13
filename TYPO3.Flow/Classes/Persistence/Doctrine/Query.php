@@ -11,11 +11,13 @@ namespace TYPO3\FLOW3\Persistence\Doctrine;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * A Query class for Doctrine 2
  *
  * @api
- * @scope prototype
+ * @FLOW3\Scope("prototype")
  */
 class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 
@@ -306,7 +308,7 @@ class Query implements \TYPO3\FLOW3\Persistence\QueryInterface {
 	 * @param boolean $caseSensitive Whether the equality test should be done case-sensitive for strings
 	 * @return object
 	 * @todo remove null handling as soon as supported natively by Doctrine
-	 * @fixme implement case-sensitivity switch
+	 * @todo implement case-sensitivity switch
 	 * @api
 	 */
 	public function equals($propertyName, $operand, $caseSensitive = TRUE) {

@@ -11,11 +11,13 @@ namespace TYPO3\FLOW3\MVC;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Dispatches requests to the controller which was specified by the request and
  * returns the response the controller generated.
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class Dispatcher {
 
@@ -108,7 +110,7 @@ class Dispatcher {
 	 *
 	 * @param \TYPO3\FLOW3\MVC\Controller\ControllerInterface $controller
 	 * @return void
-	 * @signal
+	 * @FLOW3\Signal
 	 */
 	protected function emitAfterControllerInvocation(\TYPO3\FLOW3\MVC\Controller\ControllerInterface $controller) {
 	}

@@ -11,10 +11,12 @@ namespace TYPO3\FLOW3\Security\Authorization\Voter;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * An access decision voter, that asks the FLOW3 PolicyService for a decision.
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class Policy implements \TYPO3\FLOW3\Security\Authorization\AccessDecisionVoterInterface {
 

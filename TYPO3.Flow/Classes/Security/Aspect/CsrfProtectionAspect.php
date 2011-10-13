@@ -11,47 +11,49 @@ namespace TYPO3\FLOW3\Security\Aspect;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * An aspect which cares for CSRF protection.
  *
- * @aspect
+ * @FLOW3\Aspect
  */
 class CsrfProtectionAspect {
 
 	/**
 	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
-	 * @inject
+	 * @FLOW3\Inject
 	 */
 	protected $objectManager;
 
 	/**
 	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
-	 * @inject
+	 * @FLOW3\Inject
 	 */
 	protected $reflectionService;
 
 	/**
 	 * @var \TYPO3\FLOW3\Security\Context
-	 * @inject
+	 * @FLOW3\Inject
 	 */
 	protected $securityContext;
 
 	/**
 	 * @var \TYPO3\FLOW3\Security\Policy\PolicyService
-	 * @inject
+	 * @FLOW3\Inject
 	 */
 	protected $policyService;
 
 	/**
 	 * @var \TYPO3\FLOW3\Utility\Environment
-	 * @inject
+	 * @FLOW3\Inject
 	 */
 	protected $environment;
 
 	/**
 	 * Adds a CSRF token as argument in the URI builder
 	 *
-	 * @before method(TYPO3\FLOW3\MVC\Web\Routing\UriBuilder->build()) && setting(TYPO3.FLOW3.security.enable)
+	 * @FLOW3\Before("method(TYPO3\FLOW3\MVC\Web\Routing\UriBuilder->build()) && setting(TYPO3.FLOW3.security.enable)")
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
@@ -83,7 +85,7 @@ class CsrfProtectionAspect {
 	/**
 	 * Adds a CSRF token as argument in ExtDirect requests
 	 *
-	 * @around method(TYPO3\ExtJS\ExtDirect\Transaction->buildRequest()) && setting(TYPO3.FLOW3.security.enable)
+	 * @FLOW3\Around("method(TYPO3\ExtJS\ExtDirect\Transaction->buildRequest()) && setting(TYPO3.FLOW3.security.enable)")
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>

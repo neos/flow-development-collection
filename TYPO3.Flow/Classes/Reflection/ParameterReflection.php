@@ -11,11 +11,13 @@ namespace TYPO3\FLOW3\Reflection;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Extended version of the ReflectionParameter
  *
- * @scope prototype
- * @proxy disable
+ * @FLOW3\Scope("prototype")
+ * @FLOW3\Proxy(false)
  */
 class ParameterReflection extends \ReflectionParameter {
 

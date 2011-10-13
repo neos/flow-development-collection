@@ -11,11 +11,13 @@ namespace TYPO3\FLOW3\Property;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * The Property Mapper transforms simple types (arrays, strings, integers, floats, booleans) to objects or other simple types.
  * It is used most prominently to map incoming HTTP arguments to objects.
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  * @api
  */
 class PropertyMapper {

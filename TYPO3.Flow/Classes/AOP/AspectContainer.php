@@ -11,6 +11,8 @@ namespace TYPO3\FLOW3\AOP;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * An aspect is represented by class tagged with the "aspect" annotation.
  * The aspect class may contain advices and pointcut declarations. Aspect
@@ -30,8 +32,8 @@ namespace TYPO3\FLOW3\AOP;
  * If used on a property an introduction contains a pointcut expression and is
  * used to introduce the annotated property into the target class.
  *
- * @scope prototype
- * @proxy disable
+ * @FLOW3\Scope("prototype")
+ * @FLOW3\Proxy(false)
  */
 class AspectContainer {
 

@@ -11,12 +11,14 @@ namespace TYPO3\FLOW3\Persistence\Generic\Qom;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * An operand whose value can be determined from static analysis of the query,
  * prior to its evaluation.
  *
  * @api
- * @scope prototype
+ * @FLOW3\Scope("prototype")
  */
 class StaticOperand extends \TYPO3\FLOW3\Persistence\Generic\Qom\Operand {
 

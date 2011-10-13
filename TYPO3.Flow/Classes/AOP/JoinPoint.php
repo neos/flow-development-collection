@@ -11,11 +11,13 @@ namespace TYPO3\FLOW3\AOP;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * In FLOW3 the join point object contains context information when a point cut
  * matches and the registered advices are executed.
  *
- * @scope prototype
+ * @FLOW3\Scope("prototype")
  * @api
  */
 class JoinPoint implements \TYPO3\FLOW3\AOP\JoinPointInterface {

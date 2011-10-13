@@ -11,10 +11,12 @@ namespace TYPO3\FLOW3\Security;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * The repository for accounts
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class AccountRepository extends \TYPO3\FLOW3\Persistence\Repository {
 

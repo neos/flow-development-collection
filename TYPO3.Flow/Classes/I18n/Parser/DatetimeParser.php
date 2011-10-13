@@ -11,10 +11,12 @@ namespace TYPO3\FLOW3\I18n\Parser;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Parser for date and time.
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  * @api
  */
 class DatetimeParser {

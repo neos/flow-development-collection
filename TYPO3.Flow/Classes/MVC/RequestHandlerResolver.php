@@ -11,10 +11,12 @@ namespace TYPO3\FLOW3\MVC;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Analyzes the raw request and delivers a request handler which can handle it.
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class RequestHandlerResolver {
 

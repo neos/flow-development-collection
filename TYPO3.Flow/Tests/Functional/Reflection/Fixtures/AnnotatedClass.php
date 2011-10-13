@@ -49,7 +49,7 @@ class AnnotatedClass {
 
 	/**
 	 * @param string $foo
-	 * @FLOW3\Validate("foo", type="StringLength", options={ mininum=2, maximum=5 })
+	 * @FLOW3\Validate("foo", type="StringLength", options={ "mininum"=2, "maximum"=5 })
 	 */
 	public function someFlow3Annotations($foo) {}
 }

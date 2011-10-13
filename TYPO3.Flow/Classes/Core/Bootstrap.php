@@ -18,12 +18,14 @@ require_once(__DIR__ . '/../Package/Package.php');
 require_once(__DIR__ . '/../Package/PackageManagerInterface.php');
 require_once(__DIR__ . '/../Package/PackageManager.php');
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * General purpose central core hyper FLOW3 bootstrap class
  *
  * @api
- * @proxy disable
- * @scope singleton
+ * @FLOW3\Proxy(false)
+ * @FLOW3\Scope("singleton")
  */
 class Bootstrap {
 
@@ -785,7 +787,7 @@ class Bootstrap {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @signal
+	 * @FLOW3\Signal
 	 */
 	protected function emitBootstrapReady() {
 		$this->signalSlotDispatcher->dispatch(__CLASS__, 'bootstrapReady', array($this));
@@ -796,7 +798,7 @@ class Bootstrap {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @signal
+	 * @FLOW3\Signal
 	 */
 	protected function emitFinishedCompiletimeRun() {
 		$this->signalSlotDispatcher->dispatch(__CLASS__, 'finishedCompiletimeRun', array());
@@ -807,7 +809,7 @@ class Bootstrap {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @signal
+	 * @FLOW3\Signal
 	 */
 	protected function emitFinishedRuntimeRun() {
 		$this->signalSlotDispatcher->dispatch(__CLASS__, 'finishedRuntimeRun', array());
@@ -817,7 +819,7 @@ class Bootstrap {
 	 * Emits a signal that a CLI slave request was dispatched.
 	 *
 	 * @return void
-	 * @signal
+	 * @FLOW3\Signal
 	 */
 	protected function emitDispatchedCommandLineSlaveRequest() {
 		$this->signalSlotDispatcher->dispatch(__CLASS__, 'dispatchedCommandLineSlaveRequest', array());
@@ -829,7 +831,7 @@ class Bootstrap {
 	 * @param string $runLevel
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @signal
+	 * @FLOW3\Signal
 	 */
 	protected function emitBootstrapShuttingDown($runLevel) {
 		$this->signalSlotDispatcher->dispatch(__CLASS__, 'bootstrapShuttingDown', array($runLevel));

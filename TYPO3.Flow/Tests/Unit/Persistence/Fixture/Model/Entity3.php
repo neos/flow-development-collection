@@ -11,10 +11,12 @@ namespace TYPO3\FLOW3\Tests\Persistence\Fixture\Model;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * A model fixture used for testing the persistence manager
  *
- * @entity
+ * @FLOW3\Entity
  */
 class Entity3 implements \TYPO3\FLOW3\AOP\ProxyInterface {
 

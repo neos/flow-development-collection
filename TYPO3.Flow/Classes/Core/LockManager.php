@@ -11,11 +11,13 @@ namespace TYPO3\FLOW3\Core;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * The Lock Manager controls the master lock of the whole site which is mainly
  * used to regenerate code caches in peace.
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class LockManager {
 

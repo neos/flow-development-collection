@@ -11,11 +11,13 @@ namespace TYPO3\FLOW3\Persistence\Generic\Backend;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * An abstract storage backend for the FLOW3 persistence
  *
  * @api
- * @scope prototype
+ * @FLOW3\Scope("prototype")
  */
 abstract class AbstractBackend implements \TYPO3\FLOW3\Persistence\Generic\Backend\BackendInterface {
 
@@ -153,7 +155,7 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Persistence\Generic\Backe
 	 * @param object $object The object that will be removed
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @signal
+	 * @FLOW3\Signal
 	 * @api
 	 */
 	protected function emitRemovedObject($object) {}
@@ -165,7 +167,7 @@ abstract class AbstractBackend implements \TYPO3\FLOW3\Persistence\Generic\Backe
 	 * @param integer $objectState The state, see self::OBJECTSTATE_*
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @signal
+	 * @FLOW3\Signal
 	 * @api
 	 */
 	protected function emitPersistedObject($object, $objectState) {}

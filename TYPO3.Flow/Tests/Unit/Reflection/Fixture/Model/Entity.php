@@ -11,10 +11,12 @@ namespace TYPO3\FLOW3\Tests\Reflection\Fixture\Model;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * A model fixture which is used for testing the class schema building
  *
- * @entity
+ * @FLOW3\Entity
  */
 class Entity {
 
@@ -22,7 +24,7 @@ class Entity {
 	 * An identity property
 	 *
 	 * @var string
-	 * @identity
+	 * @FLOW3\Identity
 	 */
 	protected $someIdentifier;
 
@@ -45,13 +47,13 @@ class Entity {
 
 	/**
 	 * @var \DateTime
-	 * @identity
+	 * @FLOW3\Identity
 	 */
 	protected $someDate;
 
 	/**
 	 * @var \SplObjectStorage
-	 * @lazy
+	 * @FLOW3\Lazy
 	 */
 	protected $someSplObjectStorage;
 
@@ -59,7 +61,7 @@ class Entity {
 	 * A transient string
 	 *
 	 * @var string
-	 * @transient
+	 * @FLOW3\Transient
 	 */
 	protected $someTransientString;
 

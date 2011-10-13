@@ -11,11 +11,13 @@ namespace TYPO3\FLOW3\Security\Policy;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * A specialized pointcut expression parser tailored to policy expressions
  *
- * @scope singleton
- * @proxy disable
+ * @FLOW3\Scope("singleton")
+ * @FLOW3\Proxy(false)
  */
 class PolicyExpressionParser extends \TYPO3\FLOW3\AOP\Pointcut\PointcutExpressionParser {
 

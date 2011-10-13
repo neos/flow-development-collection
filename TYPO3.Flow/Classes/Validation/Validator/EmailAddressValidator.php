@@ -11,11 +11,13 @@ namespace TYPO3\FLOW3\Validation\Validator;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Validator for email addresses
  *
  * @api
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class EmailAddressValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractValidator {
 

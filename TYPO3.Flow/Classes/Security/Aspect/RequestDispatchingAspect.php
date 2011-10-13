@@ -11,11 +11,13 @@ namespace TYPO3\FLOW3\Security\Aspect;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * The central security aspect, that invokes the security interceptors.
  *
- * @scope singleton
- * @aspect
+ * @FLOW3\Scope("singleton")
+ * @FLOW3\Aspect
  */
 class RequestDispatchingAspect {
 
@@ -52,7 +54,7 @@ class RequestDispatchingAspect {
 	 * Advices the dispatch method so that illegal requests are blocked before invoking
 	 * any controller.
 	 *
-	 * @around method(TYPO3\FLOW3\MVC\Dispatcher->dispatch()) && setting(TYPO3.FLOW3.security.enable)
+	 * @FLOW3\Around("method(TYPO3\FLOW3\MVC\Dispatcher->dispatch()) && setting(TYPO3.FLOW3.security.enable)")
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
 	 * @return mixed Result of the advice chain
 	 * @author Robert Lemke <robert@typo3.org>
@@ -95,7 +97,7 @@ class RequestDispatchingAspect {
 	 * Advices the dispatch method so that access denied exceptions are transformed into the correct
 	 * response status.
 	 *
-	 * @around method(TYPO3\FLOW3\MVC\Dispatcher->dispatch()) && setting(TYPO3.FLOW3.security.enable)
+	 * @FLOW3\Around("method(TYPO3\FLOW3\MVC\Dispatcher->dispatch()) && setting(TYPO3.FLOW3.security.enable)")
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
 	 * @return mixed Result of the advice chain
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>

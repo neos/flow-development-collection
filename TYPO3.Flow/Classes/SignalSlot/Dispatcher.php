@@ -11,12 +11,14 @@ namespace TYPO3\FLOW3\SignalSlot;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * A dispatcher which dispatches signals by calling its registered slot methods
  * and passing them the method arguments which were originally passed to the
  * signal method.
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  * @api
  */
 class Dispatcher {

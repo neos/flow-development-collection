@@ -11,10 +11,12 @@ namespace TYPO3\FLOW3\Resource;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * An type converter for ResourcePointer objects
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class ResourceTypeConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTypeConverter {
 
@@ -39,7 +41,7 @@ class ResourceTypeConverter extends \TYPO3\FLOW3\Property\TypeConverter\Abstract
 	protected $resourceManager;
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Persistence\PersistenceManagerInterface
 	 */
 	protected $persistenceManager;

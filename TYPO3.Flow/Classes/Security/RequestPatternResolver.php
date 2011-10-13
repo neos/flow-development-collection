@@ -11,10 +11,12 @@ namespace TYPO3\FLOW3\Security;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * The request pattern resolver. It resolves the class name of a request pattern based on names.
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class RequestPatternResolver {
 

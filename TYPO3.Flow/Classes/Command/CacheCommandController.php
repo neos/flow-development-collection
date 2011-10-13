@@ -11,14 +11,16 @@ namespace TYPO3\FLOW3\Command;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \TYPO3\FLOW3\MVC\CLI\Response;
+use TYPO3\FLOW3\Annotations as FLOW3;
+
+use TYPO3\FLOW3\MVC\CLI\Response;
 
 /**
  * Command controller for managing caches
  *
  * NOTE: This command controller will run in compile time (as defined in the package bootstrap)
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class CacheCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandController {
 
@@ -90,7 +92,7 @@ class CacheCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControll
 	/**
 	 * Call system function
 	 *
-	 * @internal
+	 * @FLOW3\Internal
 	 * @param integer $address
 	 * @return void
 	 */
@@ -114,7 +116,7 @@ class CacheCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControll
 	 * tasks for preparing the application for the first request.
 	 *
 	 * @return void
-	 * @signal
+	 * @FLOW3\Signal
 	 */
 	public function emitWarmupCaches() {
 	}

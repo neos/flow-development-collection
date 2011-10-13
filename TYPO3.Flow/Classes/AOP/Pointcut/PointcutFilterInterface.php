@@ -11,11 +11,13 @@ namespace TYPO3\FLOW3\AOP\Pointcut;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * The contract for an AOP Pointcut Filter class
  *
  * @author Robert Lemke <robert@typo3.org>
- * @proxy disable
+ * @FLOW3\Proxy(false)
  */
 interface PointcutFilterInterface {
 

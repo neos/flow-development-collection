@@ -11,11 +11,13 @@ namespace TYPO3\FLOW3\Security\Authorization\Interceptor;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * This security interceptor invokes the authentication of the authentication tokens in the security context.
  * It is usally used by the firewall to define secured request that need proper authentication.
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class RequireAuthentication implements \TYPO3\FLOW3\Security\Authorization\InterceptorInterface {
 

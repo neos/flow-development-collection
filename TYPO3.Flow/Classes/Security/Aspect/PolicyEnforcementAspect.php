@@ -11,11 +11,13 @@ namespace TYPO3\FLOW3\Security\Aspect;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * The central security aspect, that invokes the security interceptors.
  *
- * @scope singleton
- * @aspect
+ * @FLOW3\Scope("singleton")
+ * @FLOW3\Aspect
  */
 class PolicyEnforcementAspect {
 
@@ -48,7 +50,7 @@ class PolicyEnforcementAspect {
 	 * Note: If we have some kind of "run as" functionality in the future, we would have to manipulate the security context
 	 * before calling the policy enforcement interceptor
 	 *
-	 * @around filter(TYPO3\FLOW3\Security\Policy\PolicyService) && setting(TYPO3.FLOW3.security.enable)
+	 * @FLOW3\Around("filter(TYPO3\FLOW3\Security\Policy\PolicyService) && setting(TYPO3.FLOW3.security.enable)")
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
 	 * @return mixed The result of the target method if it has not been intercepted
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>

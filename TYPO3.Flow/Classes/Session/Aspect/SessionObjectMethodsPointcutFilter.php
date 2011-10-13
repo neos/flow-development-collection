@@ -13,10 +13,12 @@ namespace TYPO3\FLOW3\Session\Aspect;
 
 use \TYPO3\FLOW3\Object\Configuration\Configuration as ObjectConfiguration;
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Pointcut filter matching proxyable methods in objects of scope session
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class SessionObjectMethodsPointcutFilter implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 

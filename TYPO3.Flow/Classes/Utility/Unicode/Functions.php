@@ -11,11 +11,13 @@ namespace TYPO3\FLOW3\Utility\Unicode;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * A class with UTF-8 string functions, some inspired by what might be in some
  * future PHP version...
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  * @api
  */
 class Functions {

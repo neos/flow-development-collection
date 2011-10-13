@@ -11,13 +11,16 @@ namespace TYPO3\FLOW3\Object\Configuration;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Doctrine\ORM\Mapping as ORM;
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Object Configuration Builder which can build object configuration objects
  * from information collected by reflection combined with arrays of configuration
  * options as defined in an Objects.yaml file.
  *
- * @scope singleton
- * @proxy disable
+ * @FLOW3\Scope("singleton")
+ * @FLOW3\Proxy(false)
  */
 class ConfigurationBuilder {
 

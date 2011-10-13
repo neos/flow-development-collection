@@ -11,10 +11,12 @@ namespace TYPO3\FLOW3\Monitor;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * A monitor which detects changes in directories or files
  *
- * @scope prototype
+ * @FLOW3\Scope("prototype")
  * @api
  */
 class FileMonitor {
@@ -257,7 +259,7 @@ class FileMonitor {
 	 * @param array $changedFiles An array of changed files (key = path and filenmae) and their status (value)
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @signal
+	 * @FLOW3\Signal
 	 * @api
 	 */
 	protected function emitFilesHaveChanged($monitorIdentifier, array $changedFiles) {
@@ -271,7 +273,7 @@ class FileMonitor {
 	 * @param array $changedDirectories An array of changed directories (key = path) and their status (value)
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @signal
+	 * @FLOW3\Signal
 	 * @api
 	 */
 	protected function emitDirectoriesHaveChanged($monitorIdentifier, array $changedDirectories) {

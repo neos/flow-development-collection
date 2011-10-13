@@ -11,13 +11,15 @@ namespace TYPO3\FLOW3\Command;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Command controller for core commands
  *
  * NOTE: This command controller will run in compile time (as defined in the package bootstrap)
  *
- * @scope singleton
- * @proxy disable
+ * @FLOW3\Scope("singleton")
+ * @FLOW3\Proxy(false)
  */
 class CoreCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandController {
 
@@ -132,7 +134,7 @@ class CoreCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControlle
 	 * Although a compilation run is triggered automatically by FLOW3, there might
 	 * be cases in a production context where a manual compile run is needed.
 	 *
-	 * @internal
+	 * @FLOW3\Internal
 	 * @param boolean $force If set, classes will be compiled even though the cache says that everything is up to date.
 	 * @return void
 	 */
@@ -260,7 +262,7 @@ class CoreCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControlle
 	 *
 	 * @param integer $classCount Number of compiled proxy classes
 	 * @return void
-	 * @signal
+	 * @FLOW3\Signal
 	 */
 	protected function emitFinishedCompilationRun($classCount) {
 		$this->signalSlotDispatcher->dispatch(__CLASS__, 'finishedCompilationRun', array($classCount));

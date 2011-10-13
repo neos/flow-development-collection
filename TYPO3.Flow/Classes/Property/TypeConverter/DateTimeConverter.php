@@ -11,6 +11,8 @@ namespace TYPO3\FLOW3\Property\TypeConverter;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Converter which transforms from different input formats into DateTime objects.
  *
@@ -38,7 +40,7 @@ namespace TYPO3\FLOW3\Property\TypeConverter;
  * );
  *
  * @api
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class DateTimeConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTypeConverter {
 

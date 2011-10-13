@@ -14,7 +14,6 @@ namespace TYPO3\FLOW3\MVC\CLI;
 /**
  * A CLI specific response implementation
  *
- * @scope prototype
  */
 class Response extends \TYPO3\FLOW3\MVC\Response {
 

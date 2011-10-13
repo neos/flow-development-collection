@@ -16,11 +16,13 @@ use \TYPO3\FLOW3\Package\Package;
 use \TYPO3\FLOW3\Package\PackageInterface;
 use \TYPO3\FLOW3\Utility\Files;
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * The default TYPO3 Package Manager
  *
  * @api
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class PackageManager implements \TYPO3\FLOW3\Package\PackageManagerInterface {
 

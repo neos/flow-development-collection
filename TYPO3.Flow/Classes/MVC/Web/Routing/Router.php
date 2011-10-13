@@ -11,10 +11,12 @@ namespace TYPO3\FLOW3\MVC\Web\Routing;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * The default web router
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  * @api
  */
 class Router implements \TYPO3\FLOW3\MVC\Web\Routing\RouterInterface {

@@ -11,10 +11,13 @@ namespace TYPO3\FLOW3\Tests\Functional\Security\Authorization;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Doctrine\ORM\Mapping as ORM;
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * An access decision manager that can be overriden for functional tests
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class TestingAccessDecisionManager extends \TYPO3\FLOW3\Security\Authorization\AccessDecisionVoterManager {
 

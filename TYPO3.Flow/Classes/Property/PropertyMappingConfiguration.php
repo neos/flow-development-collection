@@ -11,11 +11,13 @@ namespace TYPO3\FLOW3\Property;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Concrete configuration object for the PropertyMapper.
  *
  * @api
- * @scope prototype
+ * @FLOW3\Scope("prototype")
  */
 class PropertyMappingConfiguration implements \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface {
 
@@ -50,7 +52,7 @@ class PropertyMappingConfiguration implements \TYPO3\FLOW3\Property\PropertyMapp
 
 	/**
 	 * @return TRUE if the given propertyName should be mapped, FALSE otherwise.
-	 * @todo: extend to enable whitelisting / blacklisting of properties.
+	 * @todo extend to enable whitelisting / blacklisting of properties.
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @api
 	 */

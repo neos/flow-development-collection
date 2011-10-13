@@ -11,13 +11,15 @@ namespace TYPO3\FLOW3\AOP\Pointcut;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * A settings filter which fires on configuration setting set to TRUE or equal to the given condition.
  *
  * Example: setting(FooPackage.configuration.option = 'AOP is cool')
  *
- * @scope prototype
- * @proxy disable
+ * @FLOW3\Scope("prototype")
+ * @FLOW3\Proxy(false)
  */
 class PointcutSettingFilter implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 

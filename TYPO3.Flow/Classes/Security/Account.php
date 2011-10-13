@@ -13,25 +13,29 @@ namespace TYPO3\FLOW3\Security;
 
 use \Doctrine\Common\Collections\ArrayCollection;
 
+use Doctrine\ORM\Mapping as ORM;
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * An account model
  *
- * @scope prototype
- * @entity
+ * @FLOW3\Scope("prototype")
+ * @FLOW3\Entity
  */
 class Account {
 
 	/**
 	 * @var string
-	 * @identity
-	 * @validate NotEmpty, StringLength(minimum = 1, maximum = 255)
+	 * @FLOW3\Identity
+	 * @FLOW3\Validate(type="NotEmpty")
+	 * @FLOW3\Validate(type="StringLength", options={ "minimum"=1, "maximum"=255 })
 	 */
 	protected $accountIdentifier;
 
 	/**
 	 * @var string
-	 * @identity
-	 * @validate NotEmpty
+	 * @FLOW3\Identity
+	 * @FLOW3\Validate(type="NotEmpty")
 	 */
 	protected $authenticationProviderName;
 
@@ -42,7 +46,7 @@ class Account {
 
 	/**
 	 * @var \TYPO3\Party\Domain\Model\AbstractParty
-	 * @ManyToOne(inversedBy="accounts")
+	 * @ORM\ManyToOne(inversedBy="accounts")
 	 */
 	protected $party;
 

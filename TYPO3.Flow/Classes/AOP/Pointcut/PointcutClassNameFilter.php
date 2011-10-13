@@ -11,11 +11,13 @@ namespace TYPO3\FLOW3\AOP\Pointcut;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * A simple class filter which fires on class names defined by a regular expression
  *
- * @scope prototype
- * @proxy disable
+ * @FLOW3\Scope("prototype")
+ * @FLOW3\Proxy(false)
  */
 class PointcutClassNameFilter implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 

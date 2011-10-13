@@ -13,10 +13,13 @@ namespace TYPO3\FLOW3\Object\Proxy;
 
 use \TYPO3\FLOW3\Cache\CacheManager;
 
+use Doctrine\ORM\Mapping as ORM;
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Representation of a Proxy Class during rendering time
  *
- * @proxy disable
+ * @FLOW3\Proxy(false)
  */
 class ProxyClass {
 

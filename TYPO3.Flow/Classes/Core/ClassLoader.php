@@ -11,12 +11,14 @@ namespace TYPO3\FLOW3\Core;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Class Loader implementation which loads .php files found in the classes
  * directory of an object.
  *
- * @proxy disable
- * @scope singleton
+ * @FLOW3\Proxy(false)
+ * @FLOW3\Scope("singleton")
  */
 class ClassLoader {
 

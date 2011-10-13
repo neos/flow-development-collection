@@ -11,6 +11,9 @@ namespace TYPO3\FLOW3\Object;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Doctrine\ORM\Mapping as ORM;
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * The object serializer. This serializer traverses an object tree and transforms
  * it into an array.
@@ -18,7 +21,7 @@ namespace TYPO3\FLOW3\Object;
  * is not annotated transient.
  * Afterwards it can reconstitute the objects from the array.
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class ObjectSerializer {
 

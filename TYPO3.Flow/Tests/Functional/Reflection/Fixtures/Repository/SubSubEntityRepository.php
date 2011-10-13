@@ -11,8 +11,10 @@ namespace TYPO3\FLOW3\Tests\Functional\Reflection\Fixtures\Repository;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class SubSubEntityRepository extends \TYPO3\FLOW3\Persistence\Repository {
 

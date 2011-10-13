@@ -11,21 +11,23 @@ namespace TYPO3\FLOW3\Command;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Package command controller to handle packages from CLI (create/activate/deactivate packages)
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class PackageCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandController {
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Package\PackageManagerInterface
 	 */
 	protected $packageManager;
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Core\Bootstrap
 	 */
 	protected $bootstrap;
@@ -36,7 +38,7 @@ class PackageCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContro
 	 * This command creates a new package which contains only the mandatory
 	 * directories and files.
 	 *
-	 * @flushesCaches
+	 * @FLOW3\FlushesCaches
 	 * @param string $packageKey The package key of the package to create
 	 * @return string
 	 * @see typo3.kickstart:kickstart:package
@@ -61,7 +63,7 @@ class PackageCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContro
 	 *
 	 * This command deletes an existing package identified by the package key.
 	 *
-	 * @flushesCaches
+	 * @FLOW3\FlushesCaches
 	 * @param string $packageKey The package key of the package to create
 	 * @return string
 	 * @author Robert Lemke <robert@typo3.org>
@@ -82,7 +84,7 @@ class PackageCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContro
 	 *
 	 * This command activates an existing, but currently inactive package.
 	 *
-	 * @flushesCaches
+	 * @FLOW3\FlushesCaches
 	 * @param string $packageKey The package key of the package to create
 	 * @return string
 	 * @author Tobias Liebig <mail_typo3@etobi.de>
@@ -105,7 +107,7 @@ class PackageCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContro
 	 *
 	 * This command deactivates a currently active package.
 	 *
-	 * @flushesCaches
+	 * @FLOW3\FlushesCaches
 	 * @param string $packageKey The package key of the package to create
 	 * @return string
 	 * @author Tobias Liebig <mail_typo3@etobi.de>

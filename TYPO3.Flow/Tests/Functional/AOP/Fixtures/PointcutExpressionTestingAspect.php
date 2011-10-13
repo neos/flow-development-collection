@@ -11,16 +11,18 @@ namespace TYPO3\FLOW3\Tests\Functional\AOP\Fixtures;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * An aspect for testing different kinds of pointcut expressions
  *
- * @aspect
+ * @FLOW3\Aspect
  */
 class PointcutExpressionTestingAspect {
 
 	/**
 	 *
-	 * @around method(TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\PointcutExpressionTestingTarget->testSettingFilter()) && setting(TYPO3.FLOW3.tests.functional.aop.pointcutExpressionSettingFilterOptionA)
+	 * @FLOW3\Around("method(TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\PointcutExpressionTestingTarget->testSettingFilter()) && setting(TYPO3.FLOW3.tests.functional.aop.pointcutExpressionSettingFilterOptionA)")
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint
 	 * @return void
 	 */

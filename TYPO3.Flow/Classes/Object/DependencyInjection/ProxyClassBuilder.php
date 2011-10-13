@@ -14,11 +14,14 @@ namespace TYPO3\FLOW3\Object\DependencyInjection;
 use \TYPO3\FLOW3\Utility\Arrays;
 use \TYPO3\FLOW3\Configuration\ConfigurationManager;
 
+use Doctrine\ORM\Mapping as ORM;
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * A Proxy Class Builder which integrates Dependency Injection.
  *
- * @scope singleton
- * @proxy disable
+ * @FLOW3\Scope("singleton")
+ * @FLOW3\Proxy(false)
  */
 class ProxyClassBuilder {
 

@@ -11,17 +11,20 @@ namespace TYPO3\FLOW3\Resource;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Doctrine\ORM\Mapping as ORM;
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Model describing a resource pointer
  *
- * @scope prototype
- * @valueobject
+ * @FLOW3\Scope("prototype")
+ * @FLOW3\ValueObject
  */
 class ResourcePointer {
 
 	/**
 	 * @var string
-	 * @Id
+	 * @ORM\Id
 	 */
 	protected $hash;
 

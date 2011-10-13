@@ -11,6 +11,8 @@ namespace TYPO3\FLOW3\I18n\Xliff;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * A model representing data from one XLIFF file.
  *
@@ -26,7 +28,7 @@ namespace TYPO3\FLOW3\I18n\Xliff;
  * and convert back to .xlf without any information loss (using po2xliff).
  *
  * @see http://docs.oasis-open.org/xliff/v1.2/xliff-profile-po/xliff-profile-po-1.2-cd02.html#s.detailed_mapping.tu
- * @scope prototype
+ * @FLOW3\Scope("prototype")
  */
 class XliffModel extends \TYPO3\FLOW3\I18n\Xml\AbstractXmlModel {
 

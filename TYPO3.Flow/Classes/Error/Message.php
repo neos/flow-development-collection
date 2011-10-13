@@ -11,6 +11,8 @@ namespace TYPO3\FLOW3\Error;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  */
 
@@ -18,7 +20,7 @@ namespace TYPO3\FLOW3\Error;
  * An object representation of a generic message. Usually, you will use Error, Warning or Notice instead of this one.
  *
  * @api
- * @scope prototype
+ * @FLOW3\Scope("prototype")
  */
 class Message {
 

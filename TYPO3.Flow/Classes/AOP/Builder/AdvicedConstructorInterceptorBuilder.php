@@ -11,11 +11,13 @@ namespace TYPO3\FLOW3\AOP\Builder;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * A method interceptor build for constructors with advice.
  *
- * @proxy disable
- * @scope singleton
+ * @FLOW3\Proxy(false)
+ * @FLOW3\Scope("singleton")
  */
 class AdvicedConstructorInterceptorBuilder extends \TYPO3\FLOW3\AOP\Builder\AbstractMethodInterceptorBuilder {
 

@@ -11,12 +11,15 @@ namespace TYPO3\FLOW3\Tests\Functional\Persistence\Fixtures;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Doctrine\ORM\Mapping as ORM;
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * A sample entity for tests
  *
- * @scope prototype
- * @entity
- * @InheritanceType("JOINED")
+ * @FLOW3\Scope("prototype")
+ * @FLOW3\Entity
+ * @ORM\InheritanceType("JOINED")
  */
 class SuperEntity {
 

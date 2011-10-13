@@ -11,11 +11,13 @@ namespace TYPO3\FLOW3\Security\Authorization\Resource;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Special configuration like access restrictions for persistent resources
  *
- * @scope prototype
- * @entity
+ * @FLOW3\Scope("prototype")
+ * @FLOW3\Entity
  */
 class SecurityPublishingConfiguration implements \TYPO3\FLOW3\Resource\Publishing\PublishingConfigurationInterface {
 

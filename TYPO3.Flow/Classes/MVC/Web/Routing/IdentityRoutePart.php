@@ -11,6 +11,8 @@ namespace TYPO3\FLOW3\MVC\Web\Routing;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Identity Route Part
  * This route part can be used to create and resolve ObjectPathMappings.
@@ -29,19 +31,19 @@ class IdentityRoutePart extends \TYPO3\FLOW3\MVC\Web\Routing\DynamicRoutePart {
 
 	/**
 	 * @var \TYPO3\FLOW3\Persistence\PersistenceManagerInterface
-	 * @inject
+	 * @FLOW3\Inject
 	 */
 	protected $persistenceManager;
 
 	/**
 	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
-	 * @inject
+	 * @FLOW3\Inject
 	 */
 	protected $reflectionService;
 
 	/**
 	 * @var \TYPO3\FLOW3\MVC\Web\Routing\ObjectPathMappingRepository
-	 * @inject
+	 * @FLOW3\Inject
 	 */
 	protected $objectPathMappingRepository;
 

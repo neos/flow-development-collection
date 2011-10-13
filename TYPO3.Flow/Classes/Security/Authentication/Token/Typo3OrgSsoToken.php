@@ -11,10 +11,12 @@ namespace TYPO3\FLOW3\Security\Authentication\Token;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * An authentication token used for sso credentials coming from typo3.org
  *
- * @scope prototype
+ * @FLOW3\Scope("prototype")
  */
 class Typo3OrgSsoToken implements \TYPO3\FLOW3\Security\Authentication\TokenInterface {
 
@@ -37,7 +39,7 @@ class Typo3OrgSsoToken implements \TYPO3\FLOW3\Security\Authentication\TokenInte
 	/**
 	 * The username/password credentials
 	 * @var array
-	 * @transient
+	 * @FLOW3\Transient
 	 */
 	protected $credentials = array('username' => '', 'signature' => '');
 

@@ -11,6 +11,8 @@ namespace TYPO3\FLOW3\I18n;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * A class for replacing placeholders in strings with formatted values.
  *
@@ -28,7 +30,7 @@ namespace TYPO3\FLOW3\I18n;
  * {0,number,decimal}
  * {1,datetime,time,full}
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  * @api
  */
 class FormatResolver {

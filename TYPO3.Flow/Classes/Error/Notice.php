@@ -11,6 +11,8 @@ namespace TYPO3\FLOW3\Error;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  */
 
@@ -19,7 +21,7 @@ namespace TYPO3\FLOW3\Error;
  * more specific notices if necessary.
  *
  * @api
- * @scope prototype
+ * @FLOW3\Scope("prototype")
  */
 class Notice extends \TYPO3\FLOW3\Error\Message {
 

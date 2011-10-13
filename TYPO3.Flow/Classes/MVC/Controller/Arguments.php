@@ -11,11 +11,13 @@ namespace TYPO3\FLOW3\MVC\Controller;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * A composite of controller arguments
  *
  * @api
- * @scope prototype
+ * @FLOW3\Scope("prototype")
  */
 class Arguments extends \ArrayObject {
 

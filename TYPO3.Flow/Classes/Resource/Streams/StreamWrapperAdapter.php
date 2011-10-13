@@ -11,6 +11,8 @@ namespace TYPO3\FLOW3\Resource\Streams;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * A generic stream wrapper sitting between PHP and stream wrappers implementing
  * \TYPO3\FLOW3\Resource\Streams\StreamWrapperInterface.
@@ -22,7 +24,7 @@ namespace TYPO3\FLOW3\Resource\Streams;
  * to FLOW3's object registry.
  *
  *
- * @scope prototype
+ * @FLOW3\Scope("prototype")
  */
 class StreamWrapperAdapter {
 

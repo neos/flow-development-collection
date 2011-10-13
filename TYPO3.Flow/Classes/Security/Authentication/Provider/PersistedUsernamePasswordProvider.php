@@ -11,24 +11,26 @@ namespace TYPO3\FLOW3\Security\Authentication\Provider;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * An authentication provider that authenticates
  * TYPO3\FLOW3\Security\Authentication\Token\UsernamePassword tokens.
  * The accounts are stored in the Content Repository.
  *
- * @scope prototype
+ * @FLOW3\Scope("prototype")
  */
 class PersistedUsernamePasswordProvider implements \TYPO3\FLOW3\Security\Authentication\AuthenticationProviderInterface {
 
 	/**
 	 * @var \TYPO3\FLOW3\Security\AccountRepository
-	 * @inject
+	 * @FLOW3\Inject
 	 */
 	protected $accountRepository;
 
 	/**
 	 * @var \TYPO3\FLOW3\Security\Cryptography\HashService
-	 * @inject
+	 * @FLOW3\Inject
 	 */
 	protected $hashService;
 

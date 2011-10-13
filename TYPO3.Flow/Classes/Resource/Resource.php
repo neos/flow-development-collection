@@ -11,18 +11,21 @@ namespace TYPO3\FLOW3\Resource;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Doctrine\ORM\Mapping as ORM;
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Model describing a resource
  *
- * @scope prototype
- * @entity
+ * @FLOW3\Scope("prototype")
+ * @FLOW3\Entity
  */
 class Resource {
 
 	/**
 	 * @var \TYPO3\FLOW3\Resource\ResourcePointer
-	 * @ManyToOne
-	 * @identity
+	 * @ORM\ManyToOne
+	 * @FLOW3\Identity
 	 */
 	protected $resourcePointer;
 
@@ -33,15 +36,15 @@ class Resource {
 
 	/**
 	 * @var string
-	 * @validate StringLength(maximum = 100)
-	 * @identity
+	 * @FLOW3\Validate(type="StringLength", options={ "maximum"=100 })
+	 * @FLOW3\Identity
 	 */
 	protected $filename = '';
 
 	/**
 	 * @var string
-	 * @validate StringLength(maximum = 100)
-	 * @identity
+	 * @FLOW3\Validate(type="StringLength", options={ "maximum"=100 })
+	 * @FLOW3\Identity
 	 */
 	protected $fileExtension = '';
 

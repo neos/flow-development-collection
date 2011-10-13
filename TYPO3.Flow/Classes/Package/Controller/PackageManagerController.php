@@ -11,10 +11,12 @@ namespace TYPO3\FLOW3\Package\Controller;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Package controller to handle packages from CLI (create/activate/deactivate packages)
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class PackageManagerController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 

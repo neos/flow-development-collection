@@ -11,6 +11,8 @@ namespace TYPO3\FLOW3\I18n\Cldr;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * A class which parses CLDR file to simple but useful array representation.
  *
@@ -44,7 +46,7 @@ namespace TYPO3\FLOW3\I18n\Cldr;
  *   )
  * )
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  * @see http://www.unicode.org/reports/tr35/#Inheritance_and_Validity [1]
  */
 class CldrParser extends \TYPO3\FLOW3\I18n\Xml\AbstractXmlParser {

@@ -11,15 +11,17 @@ namespace TYPO3\FLOW3\Tests\Functional\AOP\Fixtures;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * An aspect for testing functionality related to abstract classes
  *
- * @aspect
+ * @FLOW3\Aspect
  */
 class AbstractClassTestingAspect {
 
 	/**
-	 * @around method(public TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\SubClassOfAbstractClass->abstractMethod())
+	 * @FLOW3\Around("method(public TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\SubClassOfAbstractClass->abstractMethod())")
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint
 	 * @return void
 	 */
@@ -29,7 +31,7 @@ class AbstractClassTestingAspect {
 	}
 
 	/**
-	 * @around method(public TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\AbstractClass->concreteMethod())
+	 * @FLOW3\Around("method(public TYPO3\FLOW3\Tests\Functional\AOP\Fixtures\AbstractClass->concreteMethod())")
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint
 	 * @return void
 	 */

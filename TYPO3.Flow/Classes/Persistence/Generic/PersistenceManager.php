@@ -11,10 +11,12 @@ namespace TYPO3\FLOW3\Persistence\Generic;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * The generic FLOW3 Persistence Manager
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  * @api
  */
 class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceManager {
@@ -91,7 +93,7 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 	 *
 	 * @param \TYPO3\FLOW3\Persistence\Generic\Backend\BackendInterface $backend the backend to use for persistence
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @autowiring off
+	 * @FLOW3\Autowiring(false)
 	 */
 	public function injectBackend(\TYPO3\FLOW3\Persistence\Generic\Backend\BackendInterface $backend) {
 		$this->backend = $backend;
@@ -290,7 +292,7 @@ class PersistenceManager extends \TYPO3\FLOW3\Persistence\AbstractPersistenceMan
 	/**
 	 * Signals that all persistAll() has been executed successfully.
 	 *
-	 * @signal
+	 * @FLOW3\Signal
 	 * @return void
 	 */
 	protected function emitAllObjectsPersisted() {

@@ -13,13 +13,15 @@ namespace TYPO3\FLOW3\Security;
 
 require_once(FLOW3_PATH_FLOW3 . 'Resources/PHP/iSecurity/Security_Randomizer.php');
 
-use \TYPO3\FLOW3\Security\Policy\Role;
+use TYPO3\FLOW3\Annotations as FLOW3;
+
+use TYPO3\FLOW3\Security\Policy\Role;
 
 /**
  * This is the default implementation of a security context, which holds current
  * security information like Roles oder details auf authenticated users.
  *
- * @scope session
+ * @FLOW3\Scope("session")
  */
 class Context {
 
@@ -67,7 +69,7 @@ class Context {
 	 * TRUE if the context is initialized in the current request, FALSE or NULL otherwise.
 	 *
 	 * @var boolean
-	 * @transient
+	 * @FLOW3\Transient
 	 */
 	protected $initialized = FALSE;
 
@@ -80,26 +82,26 @@ class Context {
 	/**
 	 * Array of tokens currently active
 	 * @var array
-	 * @transient
+	 * @FLOW3\Transient
 	 */
 	protected $activeTokens = array();
 
 	/**
 	 * Array of tokens currently inactive
 	 * @var array
-	 * @transient
+	 * @FLOW3\Transient
 	 */
 	protected $inactiveTokens = array();
 
 	/**
 	 * One of the AUTHENTICATE_* constants to set the authentication strategy.
-	 * @var int
+	 * @var integer
 	 */
 	protected $authenticationStrategy = self::AUTHENTICATE_ANY_TOKEN;
 
 	/**
 	 * @var \TYPO3\FLOW3\MVC\RequestInterface
-	 * @transient
+	 * @FLOW3\Transient
 	 */
 	protected $request;
 
@@ -110,25 +112,25 @@ class Context {
 
 	/**
 	 * @var \TYPO3\FLOW3\Security\Policy\PolicyService
-	 * @inject
+	 * @FLOW3\Inject
 	 */
 	protected $policyService;
 
 	/**
 	 * @var \TYPO3\FLOW3\Security\Cryptography\HashService
-	 * @inject
+	 * @FLOW3\Inject
 	 */
 	protected $hashService;
 
 	/**
 	 * @var \TYPO3\FLOW3\MVC\RequestHandlerResolver
-	 * @inject
+	 * @FLOW3\Inject
 	 */
 	protected $requestHandlerResolver;
 
 	/**
 	 * One of the CSRF_* constants to set the csrf strategy
-	 * @var int
+	 * @var integer
 	 */
 	protected $csrfStrategy = self::CSRF_ONE_PER_SESSION;
 

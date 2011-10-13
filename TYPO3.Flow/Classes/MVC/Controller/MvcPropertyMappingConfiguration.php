@@ -11,12 +11,14 @@ namespace TYPO3\FLOW3\MVC\Controller;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * The default property mapping configuration is available
  * inside the Argument-object.
  *
  * @api
- * @scope prototype
+ * @FLOW3\Scope("prototype")
  */
 class MvcPropertyMappingConfiguration extends \TYPO3\FLOW3\Property\PropertyMappingConfiguration {
 

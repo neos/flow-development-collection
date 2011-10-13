@@ -11,6 +11,8 @@ namespace TYPO3\FLOW3\Persistence\Generic\Qom;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Evaluates to the lower-case string value (or values, if multi-valued) of
  * operand.
@@ -21,7 +23,7 @@ namespace TYPO3\FLOW3\Persistence\Generic\Qom;
  * If operand evaluates to null, the LowerCase operand also evaluates to null.
  *
  * @api
- * @scope prototype
+ * @FLOW3\Scope("prototype")
  */
 class LowerCase extends \TYPO3\FLOW3\Persistence\Generic\Qom\DynamicOperand {
 

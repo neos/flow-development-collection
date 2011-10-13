@@ -11,12 +11,14 @@ namespace TYPO3\FLOW3\Error;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * A basic but solid exception handler which catches everything which
  * falls through the other exception handlers and provides useful debugging
  * information.
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class DebugExceptionHandler extends \TYPO3\FLOW3\Error\AbstractExceptionHandler {
 

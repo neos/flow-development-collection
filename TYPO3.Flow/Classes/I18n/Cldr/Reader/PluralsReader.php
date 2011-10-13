@@ -11,6 +11,8 @@ namespace TYPO3\FLOW3\I18n\Cldr\Reader;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * A reader for data placed in "plurals" tag in CLDR.
  *
@@ -22,7 +24,7 @@ namespace TYPO3\FLOW3\I18n\Cldr\Reader;
  * - subrule: one of the conditions of rule. One rule can have many conditions
  *   joined with "and" or "or" logical operator.
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  * @see http://www.unicode.org/reports/tr35/#Language_Plural_Rules
  */
 class PluralsReader {

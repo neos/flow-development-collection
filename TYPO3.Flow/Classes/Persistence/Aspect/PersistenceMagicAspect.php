@@ -11,11 +11,14 @@ namespace TYPO3\FLOW3\Persistence\Aspect;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Doctrine\ORM\Mapping as ORM;
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Adds the aspect of persistence magic to relevant objects
  *
- * @aspect
- * @introduce TYPO3\FLOW3\Persistence\Aspect\PersistenceMagicInterface, TYPO3\FLOW3\Persistence\Aspect\PersistenceMagicAspect->isEntityOrValueObject
+ * @FLOW3\Aspect
+ * @FLOW3\Introduce("TYPO3\FLOW3\Persistence\Aspect\PersistenceMagicAspect->isEntityOrValueObject", interfaceName="TYPO3\FLOW3\Persistence\Aspect\PersistenceMagicInterface")
  */
 class PersistenceMagicAspect {
 
@@ -27,16 +30,16 @@ class PersistenceMagicAspect {
 	protected $useIgBinary;
 
 	/**
-	 * @pointcut classTaggedWith(entity) || classTaggedWith(valueobject)
+	 * @FLOW3\Pointcut("classTaggedWith(entity) || classTaggedWith(valueobject)")
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function isEntityOrValueObject() {}
 
 	/**
 	 * @var string
-	 * @Id
-	 * @Column(length=40)
-	 * @introduce TYPO3\FLOW3\Persistence\Aspect\PersistenceMagicAspect->isEntityOrValueObject && filter(TYPO3\FLOW3\Persistence\Doctrine\Mapping\Driver\Flow3AnnotationDriver)
+	 * @ORM\Id
+	 * @ORM\Column(length=40)
+	 * @FLOW3\Introduce("TYPO3\FLOW3\Persistence\Aspect\PersistenceMagicAspect->isEntityOrValueObject && filter(TYPO3\FLOW3\Persistence\Doctrine\Mapping\Driver\Flow3AnnotationDriver)")
 	 */
 	protected $FLOW3_Persistence_Identifier;
 
@@ -55,7 +58,7 @@ class PersistenceMagicAspect {
 	 *
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
 	 * @return void
-	 * @before classTaggedWith(entity) && method(.*->__construct())
+	 * @FLOW3\Before("classTaggedWith(entity) && method(.*->__construct())")
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function generateUUID(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
@@ -68,7 +71,7 @@ class PersistenceMagicAspect {
 	 *
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
 	 * @return void
-	 * @before classTaggedWith(valueobject) && method(.*->__construct())
+	 * @FLOW3\Before("classTaggedWith(valueobject) && method(.*->__construct())")
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function generateValueHash(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
@@ -97,7 +100,7 @@ class PersistenceMagicAspect {
 	 *
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint
 	 * @return void
-	 * @afterreturning TYPO3\FLOW3\Persistence\Aspect\PersistenceMagicAspect->isEntityOrValueObject && method(.*->__clone())
+	 * @FLOW3\AfterReturning("TYPO3\FLOW3\Persistence\Aspect\PersistenceMagicAspect->isEntityOrValueObject && method(.*->__clone())")
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function cloneObject(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
@@ -109,7 +112,7 @@ class PersistenceMagicAspect {
 	 *
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint
 	 * @return void
-	 * @afterreturning classTaggedWith(entity) && method(.*->__clone())
+	 * @FLOW3\AfterReturning("classTaggedWith(entity) && method(.*->__clone())")
 	 * @author Christian Müller <christian.mueller@typo3.org>
 	 */
 	public function generateNewUuidForClone(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {

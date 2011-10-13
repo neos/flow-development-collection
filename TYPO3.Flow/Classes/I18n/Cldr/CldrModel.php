@@ -11,6 +11,8 @@ namespace TYPO3\FLOW3\I18n\Cldr;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * A model representing data from one or few CLDR files.
  *
@@ -18,7 +20,7 @@ namespace TYPO3\FLOW3\I18n\Cldr;
  * all files will be parsed and merged according to the inheritance rules defined
  * in CLDR specification. Aliases are also resolved correctly.
  *
- * @scope prototype
+ * @FLOW3\Scope("prototype")
  */
 class CldrModel {
 

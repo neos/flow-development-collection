@@ -80,7 +80,6 @@ class ObjectAccess {
 	 * @param boolean $forceDirectAccess directly access property using reflection(!)
 	 * @param boolean $propertyExists (by reference) will be set to TRUE if the specified property exists and is gettable
 	 * @return mixed Value of the property
-	 * @internal
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>

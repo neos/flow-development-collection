@@ -11,16 +11,18 @@ namespace TYPO3\FLOW3\Command;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Command controller for tasks related to security
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class SecurityCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandController {
 
 	/**
 	 * @var \TYPO3\FLOW3\Security\Cryptography\RsaWalletServicePhp
-	 * @inject
+	 * @FLOW3\Inject
 	 */
 	protected $rsaWalletService;
 

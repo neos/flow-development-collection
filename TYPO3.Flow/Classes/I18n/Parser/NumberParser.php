@@ -11,13 +11,15 @@ namespace TYPO3\FLOW3\I18n\Parser;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Parser for numbers.
  *
  * This parser does not support full syntax of number formats as defined in
  * CLDR. It uses parsed formats from NumbersReader class.
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  * @see \TYPO3\FLOW3\I18n\Cldr\Reader\NumbersReader
  * @api
  * @todo Currency support

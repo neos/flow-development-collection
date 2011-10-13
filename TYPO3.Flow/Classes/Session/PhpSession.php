@@ -12,28 +12,29 @@ namespace TYPO3\FLOW3\Session;
  *                                                                        */
 
 use \TYPO3\FLOW3\Object\Configuration\Configuration as ObjectConfiguration;
+use TYPO3\FLOW3\Annotations as FLOW3;
 
 /**
  * A simple session based on PHP session functions.
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class PhpSession implements \TYPO3\FLOW3\Session\SessionInterface {
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Utility\Environment
 	 */
 	protected $environment;
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Session\Aspect\LazyLoadingAspect
 	 */
 	protected $lazyLoadingAspect;
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;

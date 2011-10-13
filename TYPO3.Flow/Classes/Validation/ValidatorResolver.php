@@ -11,10 +11,12 @@ namespace TYPO3\FLOW3\Validation;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Validator resolver to automatically find a appropriate validator for a given subject
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class ValidatorResolver {
 
@@ -223,7 +225,7 @@ class ValidatorResolver {
 	 * Builds a base validator conjunction for the given data type.
 	 *
 	 * The base validation rules are those which were declared directly in a class (typically
-	 * a model) through some @validate annotations on properties.
+	 * a model) through some validate annotations on properties.
 	 *
 	 * If a property holds a class for which a base validator exists, that property will be
 	 * checked as well, regardless of a validate annotation

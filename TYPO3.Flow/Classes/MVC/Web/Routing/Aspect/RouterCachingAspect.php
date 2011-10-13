@@ -11,11 +11,13 @@ namespace TYPO3\FLOW3\MVC\Web\Routing\Aspect;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Caching of findMatchResults() and resolve() calls on the web Router.
  *
- * @aspect
- * @scope singleton
+ * @FLOW3\Aspect
+ * @FLOW3\Scope("singleton")
  */
 class RouterCachingAspect {
 
@@ -54,7 +56,7 @@ class RouterCachingAspect {
 	/**
 	 * Around advice
 	 *
-	 * @around method(TYPO3\FLOW3\MVC\Web\Routing\Router->findMatchResults())
+	 * @FLOW3\Around("method(TYPO3\FLOW3\MVC\Web\Routing\Router->findMatchResults())")
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
 	 * @return array Result of the target method
 	 * @author Bastian Waidelich <bastian@typo3.org>
@@ -77,7 +79,7 @@ class RouterCachingAspect {
 	/**
 	 * Around advice
 	 *
-	 * @around method(TYPO3\FLOW3\MVC\Web\Routing\Router->resolve())
+	 * @FLOW3\Around("method(TYPO3\FLOW3\MVC\Web\Routing\Router->resolve())")
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
 	 * @return string Result of the target method
 	 * @author Bastian Waidelich <bastian@typo3.org>

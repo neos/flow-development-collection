@@ -11,21 +11,23 @@ namespace TYPO3\FLOW3\Tests\Functional\Object\Fixtures;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * A class of scope singleton
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class SingletonClassD {
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Tests\Functional\Object\Fixtures\PrototypeClassC
 	 */
 	public $prototypeClassC;
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Tests\Functional\Object\Fixtures\PrototypeClassAishInterface
 	 */
 	public $prototypeClassA;

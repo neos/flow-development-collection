@@ -11,10 +11,12 @@ namespace TYPO3\FLOW3\Resource\Streams;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * A stream wrapper for package resources.
  *
- * @scope prototype
+ * @FLOW3\Scope("prototype")
  */
 class ResourceStreamWrapper implements \TYPO3\FLOW3\Resource\Streams\StreamWrapperInterface {
 
@@ -38,13 +40,13 @@ class ResourceStreamWrapper implements \TYPO3\FLOW3\Resource\Streams\StreamWrapp
 	protected $uri;
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Package\PackageManagerInterface
 	 */
 	protected $packageManager;
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Resource\ResourceManager
 	 */
 	protected $resourceManager;

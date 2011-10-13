@@ -11,9 +11,12 @@ namespace TYPO3\FLOW3\Utility\Unicode;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Exception thrown if a feature is not supported by the PHP6 backport code.
  *
+ * @FLOW3\Scope("singleton")
  * @api
  */
 class UnsupportedFeatureException extends \Exception {

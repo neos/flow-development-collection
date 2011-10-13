@@ -11,10 +11,12 @@ namespace TYPO3\FLOW3\Configuration;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * A general purpose configuration manager
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  * @api
  */
 class ConfigurationManager {

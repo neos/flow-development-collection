@@ -11,10 +11,12 @@ namespace TYPO3\FLOW3\I18n\Formatter;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Formatter for numbers.
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  * @api
  */
 class NumberFormatter implements \TYPO3\FLOW3\I18n\Formatter\FormatterInterface {
@@ -225,7 +227,7 @@ class NumberFormatter implements \TYPO3\FLOW3\I18n\Formatter\FormatterInterface 
 
 		$number = str_replace(array('%', '‰', '-'), array($symbols['percentSign'], $symbols['perMille'], $symbols['minusSign']), $number);
 		if ($currency !== NULL) {
-				// @todo: When currency is set, min / max DecimalDigits and rounding is overrided with CLDR data
+				// @todo When currency is set, min / max DecimalDigits and rounding is overrided with CLDR data
 			$number = str_replace('¤', $currency, $number);
 		}
 

@@ -11,10 +11,12 @@ namespace TYPO3\FLOW3\Security\RequestPattern;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * This class holds an ipAddressRange pattern an decides, if a \TYPO3\FLOW3\MVC\RequestInterface object matches against this pattern
  *
- * @scope prototype
+ * @FLOW3\Scope("prototype")
  */
 class IpAddressRange implements \TYPO3\FLOW3\Security\RequestPatternInterface {
 

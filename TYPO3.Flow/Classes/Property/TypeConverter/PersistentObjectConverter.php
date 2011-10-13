@@ -11,6 +11,8 @@ namespace TYPO3\FLOW3\Property\TypeConverter;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * This converter transforms arrays or strings to persistent objects. It does the following:
  *
@@ -24,7 +26,7 @@ namespace TYPO3\FLOW3\Property\TypeConverter;
  *   However, we only do this if the configuration option "CONFIGURATION_CREATION_ALLOWED" is TRUE.
  *
  * @api
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class PersistentObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTypeConverter {
 

@@ -11,13 +11,15 @@ namespace TYPO3\FLOW3\MVC\CLI;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \TYPO3\FLOW3\MVC\CLI\Command;
-use \TYPO3\FLOW3\MVC\CLI\CommandManager;
+use TYPO3\FLOW3\MVC\CLI\Command;
+use TYPO3\FLOW3\MVC\CLI\CommandManager;
+
+use TYPO3\FLOW3\Annotations as FLOW3;
 
 /**
  * Builds a CLI request object from the raw command call
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class RequestBuilder {
 

@@ -11,6 +11,8 @@ namespace TYPO3\FLOW3\I18n\Cldr\Reader;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * A reader for data placed in "dates" tag in CLDR.
  *
@@ -18,7 +20,7 @@ namespace TYPO3\FLOW3\I18n\Cldr\Reader;
  * - support for other calendars than Gregorian
  * - some data from "dates" tag is not used (fields, timeZoneNames)
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  * @see http://www.unicode.org/reports/tr35/#Date_Elements
  * @see http://www.unicode.org/reports/tr35/#Date_Format_Patterns
  */
