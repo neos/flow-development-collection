@@ -11,6 +11,8 @@ namespace TYPO3\Kickstart\Service;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Service for the Kickstart generator
  *
@@ -19,31 +21,31 @@ class GeneratorService {
 
 	/**
 	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
-	 * @inject
+	 * @FLOW3\Inject
 	 */
 	protected $objectManager;
 
 	/**
 	 * @var \TYPO3\FLOW3\Package\PackageManagerInterface
-	 * @inject
+	 * @FLOW3\Inject
 	 */
 	protected $packageManager;
 
 	/**
 	 * @var \TYPO3\Fluid\Core\Parser\TemplateParser
-	 * @inject
+	 * @FLOW3\Inject
 	 */
 	protected $templateParser;
 
 	/**
 	 * @var \TYPO3\Kickstart\Utility\Inflector
-	 * @inject
+	 * @FLOW3\Inject
 	 */
 	protected $inflector;
 
 	/**
 	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
-	 * @inject
+	 * @FLOW3\Inject
 	 */
 	protected $reflectionService;
 

@@ -11,6 +11,8 @@ namespace TYPO3\Kickstart\ViewHelpers\Inflect;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Pluralize a word
  *
@@ -23,13 +25,13 @@ namespace TYPO3\Kickstart\ViewHelpers\Inflect;
  * Output:
  * foos
  *
- * @scope prototype
+ * @FLOW3\Scope("prototype")
  */
 class PluralizeViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper {
 
 	/**
 	 * @var TYPO3\Kickstart\Utility\Inflector
-	 * @inject
+	 * @FLOW3\Inject
 	 */
 	protected $inflector;
 

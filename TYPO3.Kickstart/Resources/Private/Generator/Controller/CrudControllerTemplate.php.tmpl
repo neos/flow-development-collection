@@ -6,18 +6,20 @@ namespace {packageNamespace}<f:if condition="{isInSubpackage}">\{subpackage}</f:
  *                                                                        *
  *                                                                        */
 
-use \TYPO3\FLOW3\MVC\Controller\ActionController;
+use TYPO3\FLOW3\Annotations as FLOW3;
+
+use TYPO3\FLOW3\MVC\Controller\ActionController;
 use {modelFullClassName};
 
 /**
  * {controllerName} controller for the {packageKey} package <f:if condition="{isInSubpackage}"> and subpackage {subpackage}</f:if>
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class {controllerClassName} extends ActionController {
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var {repositoryClassName}
 	 */
 	protected ${modelName}Repository;
@@ -35,7 +37,6 @@ class {controllerClassName} extends ActionController {
 	 * Shows a single <k:inflect.humanizeCamelCase lowercase="true">{modelName}</k:inflect.humanizeCamelCase> object
 	 *
 	 * @param {modelFullClassName} ${modelName} The <k:inflect.humanizeCamelCase lowercase="true">{modelName}</k:inflect.humanizeCamelCase> to show
-	 *
 	 * @return void
 	 */
 	public function showAction({modelClassName} ${modelName}) {
@@ -54,7 +55,6 @@ class {controllerClassName} extends ActionController {
 	 * Adds the given new <k:inflect.humanizeCamelCase lowercase="true">{modelName}</k:inflect.humanizeCamelCase> object to the <k:inflect.humanizeCamelCase lowercase="true">{modelName}</k:inflect.humanizeCamelCase> repository
 	 *
 	 * @param {modelFullClassName} ${modelName} A new <k:inflect.humanizeCamelCase lowercase="true">{modelName}</k:inflect.humanizeCamelCase> to add
-	 *
 	 * @return void
 	 */
 	public function createAction({modelClassName} $new<k:uppercaseFirst>{modelName}</k:uppercaseFirst>) {
@@ -67,7 +67,6 @@ class {controllerClassName} extends ActionController {
 	 * Shows a form for editing an existing <k:inflect.humanizeCamelCase lowercase="true">{modelName}</k:inflect.humanizeCamelCase> object
 	 *
 	 * @param {modelFullClassName} ${modelName} The <k:inflect.humanizeCamelCase lowercase="true">{modelName}</k:inflect.humanizeCamelCase> to edit
-	 *
 	 * @return void
 	 */
 	public function editAction({modelClassName} ${modelName}) {
@@ -78,7 +77,6 @@ class {controllerClassName} extends ActionController {
 	 * Updates the given <k:inflect.humanizeCamelCase lowercase="true">{modelName}</k:inflect.humanizeCamelCase> object
 	 *
 	 * @param {modelFullClassName} ${modelName} The <k:inflect.humanizeCamelCase lowercase="true">{modelName}</k:inflect.humanizeCamelCase> to update
-	 *
 	 * @return void
 	 */
 	public function updateAction({modelClassName} ${modelName}) {
@@ -91,7 +89,6 @@ class {controllerClassName} extends ActionController {
 	 * Removes the given <k:inflect.humanizeCamelCase lowercase="true">{modelName}</k:inflect.humanizeCamelCase> object from the <k:inflect.humanizeCamelCase lowercase="true">{modelName}</k:inflect.humanizeCamelCase> repository
 	 *
 	 * @param {modelFullClassName} ${modelName} The <k:inflect.humanizeCamelCase lowercase="true">{modelName}</k:inflect.humanizeCamelCase> to delete
-	 *
 	 * @return void
 	 */
 	public function deleteAction({modelClassName} ${modelName}) {

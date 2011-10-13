@@ -11,6 +11,8 @@ namespace TYPO3\Kickstart\Command;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Command controller for the Kickstart generator
  *
@@ -19,13 +21,13 @@ class KickstartCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandCont
 
 	/**
 	 * @var \TYPO3\FLOW3\Package\PackageManagerInterface
-	 * @inject
+	 * @FLOW3\Inject
 	 */
 	protected $packageManager;
 
 	/**
 	 * @var \TYPO3\Kickstart\Service\GeneratorService
-	 * @inject
+	 * @FLOW3\Inject
 	 */
 	protected $generatorService;
 

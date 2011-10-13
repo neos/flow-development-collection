@@ -6,10 +6,12 @@ namespace {packageNamespace}<f:if condition="{isInSubpackage}">\{subpackage}</f:
  *                                                                        *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * {controllerName} controller for the {packageKey} package <f:if condition="{isInSubpackage}"> and subpackage {subpackage}</f:if>
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class {controllerClassName} extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 
@@ -23,7 +25,7 @@ class {controllerClassName} extends \TYPO3\FLOW3\MVC\Controller\ActionController
 			'bar', 'baz'
 		));
 	}
-	
+
 }
 
 ?>
