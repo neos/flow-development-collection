@@ -16,7 +16,6 @@ namespace TYPO3\FLOW3\MVC;
  *
  * @author Robert Lemke <robert@typo3.org>
  * @api
- * @scope prototype
  */
 interface ResponseInterface {
 
