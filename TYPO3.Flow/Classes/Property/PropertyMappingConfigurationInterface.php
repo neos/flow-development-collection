@@ -21,7 +21,6 @@ namespace TYPO3\FLOW3\Property;
  * adjustments are needed there.
  *
  * @api
- * @scope prototype
  */
 interface PropertyMappingConfigurationInterface {
 

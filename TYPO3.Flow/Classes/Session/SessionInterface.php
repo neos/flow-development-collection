@@ -15,7 +15,6 @@ namespace TYPO3\FLOW3\Session;
  * Contract for a simple session.
  *
  * @author Andreas Förthner <andreas.foerthner@netlogix.de>
- * @scope singleton
  */
 interface SessionInterface {
 

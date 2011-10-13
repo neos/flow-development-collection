@@ -15,7 +15,6 @@ namespace TYPO3\FLOW3\AOP\Pointcut;
  * The contract for an AOP Pointcut Filter class
  *
  * @author Robert Lemke <robert@typo3.org>
- * @scope prototype
  * @proxy disable
  */
 interface PointcutFilterInterface {

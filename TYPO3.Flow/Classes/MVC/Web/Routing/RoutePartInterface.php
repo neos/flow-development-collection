@@ -17,8 +17,6 @@ namespace TYPO3\FLOW3\MVC\Web\Routing;
  * !!! Warning: If you write your own RoutePart handler which does some queries to the
  * persistence layer, be aware that *permission checks* are not yet done, i.e. you
  * get back *all* objects, not just the objects visible to the current role.
- *
- * @scope prototype
  */
 interface RoutePartInterface {
 
