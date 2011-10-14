@@ -35,7 +35,6 @@ class PointcutMethodTaggedWithFilter implements \TYPO3\FLOW3\AOP\Pointcut\Pointc
 	 * The constructor - initializes the method tag filter with the method tag filter expression
 	 *
 	 * @param string $methodTagFilterExpression A regular expression which defines which method tags should match
-	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct($methodTagFilterExpression) {

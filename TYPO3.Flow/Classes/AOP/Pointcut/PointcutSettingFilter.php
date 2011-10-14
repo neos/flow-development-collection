@@ -48,7 +48,6 @@ class PointcutSettingFilter implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterI
 	 * The constructor - initializes the configuration filter with the path to a configuration option
 	 *
 	 * @param string $settingComparisonExpression Path (and optional condition) leading to the setting
-	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function __construct($settingComparisonExpression) {

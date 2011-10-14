@@ -35,7 +35,6 @@ class PointcutClassNameFilter implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilte
 	 * The constructor - initializes the class filter with the class filter expression
 	 *
 	 * @param string $classFilterExpression A regular expression which defines which class names should match
-	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct($classFilterExpression) {

@@ -35,7 +35,6 @@ class PointcutClassTaggedWithFilter implements \TYPO3\FLOW3\AOP\Pointcut\Pointcu
 	 * The constructor - initializes the class tag filter with the class tag filter expression
 	 *
 	 * @param string $classTagFilterExpression A regular expression which defines which class tags should match
-	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct($classTagFilterExpression) {
