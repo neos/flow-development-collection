@@ -242,7 +242,7 @@ class Security_Randomizer
 			// Since we can't use any good random generators, we need to use as many poor "random" sources as possible.
 			$source = mt_rand(); // Weak pseudo random.
 			$source += microtime(true); // Non-random and is poor in tight loops - yes, like this one.
-			$source += uniqid('', true); // The only real reason to use uniqid() here is due to its use of the internal LCG.
+			// $source += uniqid('', true); // The only real reason to use uniqid() here is due to its use of the internal LCG.
 			$source += memory_get_usage(); // Has a weak avalance effect and is predictable.
 			$source += getmypid(); // Non-random and doesn't change until the next request.
 			$source += $stat[7] + substr($stat[8], -3, 3) + substr($stat[9], -3, 3) + substr($stat[10], -3, 3); // File stats.
