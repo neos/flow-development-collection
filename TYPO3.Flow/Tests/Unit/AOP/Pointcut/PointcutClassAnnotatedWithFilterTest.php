@@ -14,31 +14,32 @@ namespace TYPO3\FLOW3\Tests\Unit\AOP\Pointcut;
 require_once (FLOW3_PATH_FLOW3 . 'Tests/Unit/AOP/Fixtures/ClassTaggedWithSomething.php');
 
 /**
- * Testcase for the Pointcut Class-Tagged-With Filter
+ * Testcase for the Pointcut Class-Annotated-With Filter
  *
  */
-class PointcutClassTaggedWithFilterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class PointcutClassAnnotatedWithFilterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function matchesTellsIfTheSpecifiedRegularExpressionMatchesTheGivenTag() {
+	public function matchesTellsIfTheSpecifiedRegularExpressionMatchesTheGivenAnnotation() {
 		$className = 'TYPO3\FLOW3\Tests\AOP\Fixture\ClassTaggedWithSomething';
 
 		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'saveToCache'), array(), '', FALSE, TRUE);
+		$mockReflectionService->initializeObject();
 
-		$classTaggedWithFilter = new \TYPO3\FLOW3\AOP\Pointcut\PointcutClassTaggedWithFilter('aspect');
-		$classTaggedWithFilter->injectReflectionService($mockReflectionService);
-		$this->assertTrue($classTaggedWithFilter->matches($className, '', '', 1));
+		$classAnnotatedWithFilter = new \TYPO3\FLOW3\AOP\Pointcut\PointcutClassAnnotatedWithFilter('TYPO3\FLOW3\Annotations\Aspect');
+		$classAnnotatedWithFilter->injectReflectionService($mockReflectionService);
+		$this->assertTrue($classAnnotatedWithFilter->matches($className, '', '', 1));
 
-		$classTaggedWithFilter = new \TYPO3\FLOW3\AOP\Pointcut\PointcutClassTaggedWithFilter('as.*');
-		$classTaggedWithFilter->injectReflectionService($mockReflectionService);
-		$this->assertTrue($classTaggedWithFilter->matches($className, '', '', 1));
+		$classAnnotatedWithFilter = new \TYPO3\FLOW3\AOP\Pointcut\PointcutClassAnnotatedWithFilter('.*Aspect');
+		$classAnnotatedWithFilter->injectReflectionService($mockReflectionService);
+		$this->assertTrue($classAnnotatedWithFilter->matches($className, '', '', 1));
 
-		$classTaggedWithFilter = new \TYPO3\FLOW3\AOP\Pointcut\PointcutClassTaggedWithFilter('any.*');
-		$classTaggedWithFilter->injectReflectionService($mockReflectionService);
-		$this->assertFalse($classTaggedWithFilter->matches($className, '', '', 1));
+		$classAnnotatedWithFilter = new \TYPO3\FLOW3\AOP\Pointcut\PointcutClassAnnotatedWithFilter('any.*');
+		$classAnnotatedWithFilter->injectReflectionService($mockReflectionService);
+		$this->assertFalse($classAnnotatedWithFilter->matches($className, '', '', 1));
 	}
 }
 ?>

@@ -18,6 +18,7 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  *
  * @FLOW3\Scope("prototype")
  * @FLOW3\Proxy(false)
+ * @deprecated since 1.0
  */
 class PointcutMethodTaggedWithFilter implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 

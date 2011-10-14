@@ -21,12 +21,12 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 class LazyLoadingObjectAspect {
 
 	/**
-	 * @FLOW3\Pointcut("classTaggedWith(entity) || classTaggedWith(valueobject)")
+	 * @FLOW3\Pointcut("classAnnotatedWith(TYPO3\FLOW3\Annotations\Entity) || classAnnotatedWith(Doctrine\ORM\Mapping\Entity) || classAnnotatedWith(TYPO3\FLOW3\Annotations\ValueObject)")
 	 */
 	public function isEntityOrValueObject() {}
 
 	/**
-	 * @FLOW3\Pointcut("TYPO3\FLOW3\Persistence\Generic\Aspect\LazyLoadingObjectAspect->isEntityOrValueObject && classTaggedWith(lazy)")
+	 * @FLOW3\Pointcut("TYPO3\FLOW3\Persistence\Generic\Aspect\LazyLoadingObjectAspect->isEntityOrValueObject && classAnnotatedWith(TYPO3\FLOW3\Annotations\Lazy)")
 	 */
 	public function needsLazyLoadingObjectAspect() {}
 

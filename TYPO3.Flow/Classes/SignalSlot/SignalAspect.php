@@ -30,7 +30,7 @@ class SignalAspect {
 	/**
 	 * Passes the signal over to the Dispatcher
 	 *
-	 * @FLOW3\AfterReturning("methodTaggedWith(signal)")
+	 * @FLOW3\AfterReturning("methodAnnotatedWith(TYPO3\FLOW3\Annotations\Signal)")
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>

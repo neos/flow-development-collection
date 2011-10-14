@@ -11,6 +11,8 @@ namespace TYPO3\FLOW3\Tests\AOP\Fixture;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Methods tagged with something
  *
@@ -22,7 +24,7 @@ class MethodsTaggedWithSomething {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @someMethod
+	 * @FLOW3\Session(autoStart=false)
 	 */
 	public function someMethod() {
 	}
@@ -32,7 +34,7 @@ class MethodsTaggedWithSomething {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @someOtherMethod
+	 * @FLOW3\Internal
 	 */
 	public function someOtherMethod() {
 	}
@@ -42,7 +44,7 @@ class MethodsTaggedWithSomething {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @completelyDifferent
+	 * @FLOW3\Internal
 	 */
 	public function somethingCompletelyDifferent() {
 	}

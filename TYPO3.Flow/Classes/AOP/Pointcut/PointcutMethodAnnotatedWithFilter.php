@@ -14,13 +14,12 @@ namespace TYPO3\FLOW3\AOP\Pointcut;
 use TYPO3\FLOW3\Annotations as FLOW3;
 
 /**
- * A class filter which fires on classes tagged with a certain annotation
+ * A method filter which fires on methods annotated with a certain annotation
  *
  * @FLOW3\Scope("prototype")
  * @FLOW3\Proxy(false)
- * @deprecated since 1.0
  */
-class PointcutClassTaggedWithFilter implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
+class PointcutMethodAnnotatedWithFilter implements \TYPO3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 
 	/**
 	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
@@ -30,16 +29,15 @@ class PointcutClassTaggedWithFilter implements \TYPO3\FLOW3\AOP\Pointcut\Pointcu
 	/**
 	 * @var string A regular expression to match annotations
 	 */
-	protected $classTagFilterExpression;
+	protected $methodAnnotationFilterExpression;
 
 	/**
-	 * The constructor - initializes the class tag filter with the class tag filter expression
+	 * The constructor - initializes the method annotation filter with the method annotation filter expression
 	 *
-	 * @param string $classTagFilterExpression A regular expression which defines which class tags should match
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @param string $methodAnnotationFilterExpression A regular expression which defines which method annotations should match
 	 */
-	public function __construct($classTagFilterExpression) {
-		$this->classTagFilterExpression = $classTagFilterExpression;
+	public function __construct($methodAnnotationFilterExpression) {
+		$this->methodAnnotationFilterExpression = $methodAnnotationFilterExpression;
 	}
 
 	/**
@@ -47,29 +45,32 @@ class PointcutClassTaggedWithFilter implements \TYPO3\FLOW3\AOP\Pointcut\Pointcu
 	 *
 	 * @param \TYPO3\FLOW3\Reflection\ReflectionService $reflectionService The reflection service
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectReflectionService(\TYPO3\FLOW3\Reflection\ReflectionService $reflectionService) {
 		$this->reflectionService = $reflectionService;
 	}
 
 	/**
-	 * Checks if the specified class matches with the class tag filter pattern
+	 * Checks if the specified method matches with the method annotation filter pattern
 	 *
-	 * @param string $className Name of the class to check against
-	 * @param string $methodName Name of the method - not used here
-	 * @param string $methodDeclaringClassName Name of the class the method was originally declared in - not used here
-	 * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
+	 * @param string $className Name of the class to check against - not used here
+	 * @param string $methodName Name of the method
+	 * @param string $methodDeclaringClassName Name of the class the method was originally declared in
+	 * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection - not used here
 	 * @return boolean TRUE if the class matches, otherwise FALSE
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier) {
-		foreach ($this->reflectionService->getClassTagsValues($className) as $tag => $values) {
-			$matchResult = preg_match('/^' . $this->classTagFilterExpression . '$/i', $tag);
+		if ($methodDeclaringClassName === NULL || !$this->reflectionService->hasMethod($methodDeclaringClassName, $methodName)) {
+			return FALSE;
+		}
+		foreach ($this->reflectionService->getMethodAnnotations($methodDeclaringClassName, $methodName) as $annotation) {
+			$matchResult = preg_match('/^' . str_replace('\\', '\\\\', $this->methodAnnotationFilterExpression) . '$/', get_class($annotation));
 			if ($matchResult === FALSE) {
-				throw new \TYPO3\FLOW3\AOP\Exception('Error in regular expression "' . $this->classTagFilterExpression . '" in pointcut class tag filter', 1212576034);
+				throw new \TYPO3\FLOW3\AOP\Exception('Error in regular expression "' . $this->methodAnnotationFilterExpression . '" in pointcut method annotation filter', 1318619513);
 			}
-			if ($matchResult === 1) return TRUE;
+			if ($matchResult === 1) {
+				return TRUE;
+			}
 		}
 		return FALSE;
 	}
@@ -78,7 +79,6 @@ class PointcutClassTaggedWithFilter implements \TYPO3\FLOW3\AOP\Pointcut\Pointcu
 	 * Returns TRUE if this filter holds runtime evaluations for a previously matched pointcut
 	 *
 	 * @return boolean TRUE if this filter has runtime evaluations
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function hasRuntimeEvaluationsDefinition() {
 		return FALSE;
@@ -88,11 +88,10 @@ class PointcutClassTaggedWithFilter implements \TYPO3\FLOW3\AOP\Pointcut\Pointcu
 	 * Returns runtime evaluations for the pointcut.
 	 *
 	 * @return array Runtime evaluations
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getRuntimeEvaluationsDefinition() {
 		return array();
 	}
-}
 
+}
 ?>

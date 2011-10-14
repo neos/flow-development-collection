@@ -29,16 +29,16 @@ class PointcutMethodTaggedWithFilterTest extends \TYPO3\FLOW3\Tests\UnitTestCase
 		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'saveToCache', 'hasMethod'));
 		$mockReflectionService->expects($this->any())->method('hasMethod')->will($this->returnValue(TRUE));
 
-		$methodTaggedWithFilter = new \TYPO3\FLOW3\AOP\Pointcut\PointcutMethodTaggedWithFilter('someMethod');
+		$methodTaggedWithFilter = new \TYPO3\FLOW3\AOP\Pointcut\PointcutMethodTaggedWithFilter('session');
 		$methodTaggedWithFilter->injectReflectionService($mockReflectionService);
 		$this->assertTrue($methodTaggedWithFilter->matches(__CLASS__, 'someMethod', $className, 1));
 
-		$methodTaggedWithFilter = new \TYPO3\FLOW3\AOP\Pointcut\PointcutMethodTaggedWithFilter('some.*');
+		$methodTaggedWithFilter = new \TYPO3\FLOW3\AOP\Pointcut\PointcutMethodTaggedWithFilter('session|internal');
 		$methodTaggedWithFilter->injectReflectionService($mockReflectionService);
 		$this->assertTrue($methodTaggedWithFilter->matches(__CLASS__, 'someMethod', $className, 1));
 		$this->assertTrue($methodTaggedWithFilter->matches(__CLASS__, 'someOtherMethod', $className, 2));
 
-		$methodTaggedWithFilter = new \TYPO3\FLOW3\AOP\Pointcut\PointcutMethodTaggedWithFilter('some.*');
+		$methodTaggedWithFilter = new \TYPO3\FLOW3\AOP\Pointcut\PointcutMethodTaggedWithFilter('ext.*');
 		$methodTaggedWithFilter->injectReflectionService($mockReflectionService);
 		$this->assertFalse($methodTaggedWithFilter->matches(__CLASS__, 'somethingCompletelyDifferent', $className, 1));
 	}

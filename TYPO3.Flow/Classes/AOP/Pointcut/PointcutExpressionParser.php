@@ -25,7 +25,7 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 class PointcutExpressionParser {
 
 	const PATTERN_SPLITBYOPERATOR = '/\s*(\&\&|\|\|)\s*/';
-	const PATTERN_MATCHPOINTCUTDESIGNATOR = '/^\s*(classTaggedWith|class|methodTaggedWith|method|within|filter|setting|evaluate)/';
+	const PATTERN_MATCHPOINTCUTDESIGNATOR = '/^\s*(classAnnotatedWith|classTaggedWith|class|methodAnnotatedWith|methodTaggedWith|method|within|filter|setting|evaluate)/';
 	const PATTERN_MATCHVISIBILITYMODIFIER = '/^(public|protected) +/';
 	const PATTERN_MATCHRUNTIMEEVALUATIONSDEFINITION = '/(?:
 														(?:
@@ -140,8 +140,10 @@ class PointcutExpressionParser {
 				$pointcutDesignator = $matches[0];
 				$signaturePattern = $this->getSubstringBetweenParentheses($expression);
 				switch ($pointcutDesignator) {
+					case 'classAnnotatedWith':
 					case 'classTaggedWith' :
 					case 'class' :
+					case 'methodAnnotatedWith':
 					case 'methodTaggedWith' :
 					case 'method' :
 					case 'within' :
@@ -162,6 +164,21 @@ class PointcutExpressionParser {
 	}
 
 	/**
+	 * Takes a class annotation filter pattern and adds a so configured class annotation filter to the
+	 * filter composite object.
+	 *
+	 * @param string $operator The operator
+	 * @param string $classAnnotationPattern The pattern expression as configuration for the class annotation filter
+	 * @param PointcutFilterComposite $pointcutFilterComposite An instance of the pointcut filter composite. The result (ie. the class annotation filter) will be added to this composite object.
+	 * @return void
+	 */
+	protected function parseDesignatorClassAnnotatedWith($operator, $classAnnotationPattern, PointcutFilterComposite $pointcutFilterComposite) {
+		$filter = new PointcutClassAnnotatedWithFilter($classAnnotationPattern);
+		$filter->injectReflectionService($this->reflectionService);
+		$pointcutFilterComposite->addFilter($operator, $filter);
+	}
+
+	/**
 	 * Takes a class tag filter pattern and adds a so configured class tag filter to the
 	 * filter composite object.
 	 *
@@ -170,6 +187,7 @@ class PointcutExpressionParser {
 	 * @param PointcutFilterComposite $pointcutFilterComposite An instance of the pointcut filter composite. The result (ie. the class tag filter) will be added to this composite object.
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @deprecated since 1.0
 	 */
 	protected function parseDesignatorClassTaggedWith($operator, $classTagPattern, PointcutFilterComposite $pointcutFilterComposite) {
 		$filter = new PointcutClassTaggedWithFilter($classTagPattern);
@@ -189,6 +207,22 @@ class PointcutExpressionParser {
 	 */
 	protected function parseDesignatorClass($operator, $classPattern, PointcutFilterComposite $pointcutFilterComposite) {
 		$filter = new PointcutClassNameFilter($classPattern);
+		$filter->injectReflectionService($this->reflectionService);
+		$pointcutFilterComposite->addFilter($operator, $filter);
+	}
+
+	/**
+	 * Takes a method annotation filter pattern and adds a so configured method annotation filter to the
+	 * filter composite object.
+	 *
+	 * @param string $operator The operator
+	 * @param string $methodAnnotationPattern The pattern expression as configuration for the method annotation filter
+	 * @param PointcutFilterComposite $pointcutFilterComposite An instance of the pointcut filter composite. The result (ie. the method annotation filter) will be added to this composite object.
+	 * @return void
+	 * @deprecated since 1.0
+	 */
+	protected function parseDesignatorMethodAnnotatedWith($operator, $methodAnnotationPattern, PointcutFilterComposite $pointcutFilterComposite) {
+		$filter = new PointcutMethodAnnotatedWithFilter($methodAnnotationPattern);
 		$filter->injectReflectionService($this->reflectionService);
 		$pointcutFilterComposite->addFilter($operator, $filter);
 	}
