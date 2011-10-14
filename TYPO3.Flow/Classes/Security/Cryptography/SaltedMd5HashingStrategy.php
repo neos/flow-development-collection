@@ -1,5 +1,4 @@
 <?php
-declare(ENCODING = 'utf-8');
 namespace TYPO3\FLOW3\Security\Cryptography;
 
 /*                                                                        *
