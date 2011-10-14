@@ -33,6 +33,9 @@ class YamlSource implements \TYPO3\FLOW3\Configuration\Source\SourceInterface {
 			try {
 				\Symfony\Component\Yaml\Yaml::setSpecVersion('1.1');
 				$configuration = \Symfony\Component\Yaml\Yaml::load($pathAndFilename . '.yaml');
+				if (!is_array($configuration)) {
+					$configuration = array();
+				}
 			} catch (\TYPO3\FLOW3\Error\Exception $exception) {
 				throw new \TYPO3\FLOW3\Configuration\Exception\ParseErrorException('A parse error occurred while parsing file "' . $pathAndFilename . '.yaml". Error message: ' . $exception->getMessage(), 1232014321);
 			}
