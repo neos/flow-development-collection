@@ -246,7 +246,7 @@ TYPO3\FLOW3\Security\Authorization\FirewallInterface:
   className: TYPO3\FLOW3\Security\Authorization\FilterFirewall
 
 TYPO3\FLOW3\Security\Cryptography\PasswordHashingStrategyInterface:
-  className: TYPO3\FLOW3\Security\Cryptography\Pbkdf2HashingStrategy
+  className: TYPO3\FLOW3\Security\Cryptography\BCryptHashingStrategy
   scope: singleton
 
 TYPO3\FLOW3\Security\Cryptography\Pbkdf2HashingStrategy:
@@ -260,6 +260,12 @@ TYPO3\FLOW3\Security\Cryptography\Pbkdf2HashingStrategy:
       setting: TYPO3.FLOW3.security.cryptography.Pbkdf2HashingStrategy.derivedKeyLength
     4:
       setting: TYPO3.FLOW3.security.cryptography.Pbkdf2HashingStrategy.algorithm
+
+TYPO3\FLOW3\Security\Cryptography\BCryptHashingStrategy:
+  scope: singleton
+  arguments:
+    1:
+      setting: TYPO3.FLOW3.security.cryptography.BCryptHashingStrategy.cost
 
 
 #                                                                          #

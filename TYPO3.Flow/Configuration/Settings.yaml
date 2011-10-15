@@ -256,6 +256,12 @@ TYPO3:
           # Hash function to use for PBKDF2
           algorithm: sha256
 
+        BCryptHashingStrategy:
+
+          # Cost of a BCrypt operation, can be between 4 and 31
+          # The faster your machine is, the higher this number should be
+          cost: 14
+
     session:
       PHPSession:
 
