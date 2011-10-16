@@ -108,32 +108,35 @@ class KickstartCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandCont
 		}
 		$generatedFiles = array();
 		$generatedModels = FALSE;
-		if ($generateActions === TRUE) {
-			$modelClassName = str_replace('.', '\\', $packageKey) . '\Domain\Model\\' . $controllerName;
-			if (!class_exists($modelClassName)) {
-				if ($generateRelated === TRUE) {
-					$generatedFiles += $this->generatorService->generateModel($packageKey, $controllerName, array('name' => array('type' => 'string')));
-					$generatedModels = TRUE;
-				} else {
-					$this->outputLine('The model %s does not exist, but is necessary for creating the respective actions.', array($modelClassName));
-					$this->outputLine('Hint: Use --generate-related for creating it!');
-					$this->quit(3);
-				}
-			}
 
-			$repositoryClassName = str_replace('.', '\\', $packageKey) . '\Domain\Repository\\' . $controllerName . 'Repository';
-			if (!class_exists($repositoryClassName)) {
-				if ($generateRelated === TRUE) {
-					$generatedFiles += $this->generatorService->generateRepository($packageKey, $controllerName);
-				} else {
-					$this->outputLine('The repository %s does not exist, but is necessary for creating the respective actions.', array($repositoryClassName));
-					$this->outputLine('Hint: Use --generate-related for creating it!');
-					$this->quit(4);
+		$controllerNames = \TYPO3\FLOW3\Utility\Arrays::trimExplode(',', $controllerName);
+		if ($generateActions === TRUE) {
+			foreach ($controllerNames as $currentControllerName) {
+				$modelClassName = str_replace('.', '\\', $packageKey) . '\Domain\Model\\' . $currentControllerName;
+				if (!class_exists($modelClassName)) {
+					if ($generateRelated === TRUE) {
+						$generatedFiles += $this->generatorService->generateModel($packageKey, $currentControllerName, array('name' => array('type' => 'string')));
+						$generatedModels = TRUE;
+					} else {
+						$this->outputLine('The model %s does not exist, but is necessary for creating the respective actions.', array($modelClassName));
+						$this->outputLine('Hint: Use --generate-related for creating it!');
+						$this->quit(3);
+					}
+				}
+
+				$repositoryClassName = str_replace('.', '\\', $packageKey) . '\Domain\Repository\\' . $currentControllerName . 'Repository';
+				if (!class_exists($repositoryClassName)) {
+					if ($generateRelated === TRUE) {
+						$generatedFiles += $this->generatorService->generateRepository($packageKey, $currentControllerName);
+					} else {
+						$this->outputLine('The repository %s does not exist, but is necessary for creating the respective actions.', array($repositoryClassName));
+						$this->outputLine('Hint: Use --generate-related for creating it!');
+						$this->quit(4);
+					}
 				}
 			}
 		}
 
-		$controllerNames = \TYPO3\FLOW3\Utility\Arrays::trimExplode(',', $controllerName);
 		foreach ($controllerNames as $currentControllerName) {
 			if ($generateActions === TRUE) {
 				$generatedFiles += $this->generatorService->generateCrudController($packageKey, $subpackageName, $currentControllerName, $force);
