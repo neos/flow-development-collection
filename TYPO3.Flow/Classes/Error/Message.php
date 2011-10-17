@@ -27,7 +27,7 @@ class Message {
 	const SEVERITY_NOTICE = 'Notice';
 	const SEVERITY_WARNING = 'Warning';
 	const SEVERITY_ERROR = 'Error';
-	const SEVERITY_MESSAGE = 'Message';
+	const SEVERITY_OK = 'OK';
 
 	/**
 	 * The error message, could also be a key for translation.
@@ -54,10 +54,10 @@ class Message {
 	protected $arguments = array();
 
 	/**
-	 * The severity of this message ('Message'), overwrite in your own implementation.
+	 * The severity of this message ('OK'), overwrite in your own implementation.
 	 * @var string
 	 */
-	protected $severity = self::SEVERITY_MESSAGE;
+	protected $severity = self::SEVERITY_OK;
 
 	/**
 	 * Constructs this error
