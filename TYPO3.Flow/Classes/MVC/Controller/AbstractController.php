@@ -12,6 +12,7 @@ namespace TYPO3\FLOW3\MVC\Controller;
  *                                                                        */
 
 use \TYPO3\FLOW3\MVC\Web\Routing\UriBuilder;
+use \TYPO3\FLOW3\Error\Message;
 
 use TYPO3\FLOW3\Annotations as FLOW3;
 
@@ -83,7 +84,6 @@ abstract class AbstractController implements ControllerInterface {
 	 *
 	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\MVC\FlashMessageContainer
-	 * @api
 	 */
 	protected $flashMessageContainer;
 
@@ -177,6 +177,41 @@ abstract class AbstractController implements ControllerInterface {
 	 */
 	public function getControllerContext() {
 		return $this->controllerContext;
+	}
+
+	/**
+	 * Creates a Message object and adds it to the FlashMessageContainer.
+	 * This method should be used to add FlashMessages rather than interacting with the container directly.
+	 *
+	 * @param string $messageBody text of the FlashMessage
+	 * @param string $messageTitle optional header of the FlashMessage
+	 * @param string $severity severity of the FlashMessage (one of the \TYPO3\FLOW3\Error\Message::SEVERITY_* constants)
+	 * @param array $messageArguments arguments to be passed to the FlashMessage
+	 * @param integer $messageCode
+	 * @return void
+	 * @throws \InvalidArgumentException if the message body is no string
+	 * @see \TYPO3\FLOW3\Error\Message
+	 * @api
+	 */
+	public function addFlashMessage($messageBody, $messageTitle = '', $severity = Message::SEVERITY_OK, array $messageArguments = array(), $messageCode = NULL) {
+		if (!is_string($messageBody)) {
+			throw new \InvalidArgumentException('The message body must be of type string but "' . gettype($messageBody) . '" given.', 1243258395);
+		}
+		switch ($severity) {
+			case Message::SEVERITY_NOTICE:
+				$message = new \TYPO3\FLOW3\Error\Notice($messageBody, $messageCode, $messageArguments, $messageTitle);
+				break;
+			case Message::SEVERITY_WARNING:
+				$message = new \TYPO3\FLOW3\Error\Warning($messageBody, $messageCode, $messageArguments, $messageTitle);
+				break;
+			case Message::SEVERITY_ERROR:
+				$message = new \TYPO3\FLOW3\Error\Error($messageBody, $messageCode, $messageArguments, $messageTitle);
+				break;
+			default:
+				$message = new Message($messageBody, $messageCode, $messageArguments, $messageTitle);
+			break;
+		}
+		$this->flashMessageContainer->addMessage($message);
 	}
 
 	/**

@@ -44,7 +44,7 @@ class AbstractControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 		$controller = $this->getAccessibleMock('TYPO3\FLOW3\MVC\Controller\AbstractController', array('initializeArguments', 'initializeControllerArgumentsBaseValidators', 'mapRequestArgumentsToControllerArguments', 'buildControllerContext'), array(), '', FALSE);
 		$controller->_set('arguments', new \TYPO3\FLOW3\MVC\Controller\Arguments());
-		$controller->_set('flashMessageContainer', new \TYPO3\FLOW3\MVC\FlashMessageContainer());
+		$controller->_set('flashMessageContainer', $this->getMock('TYPO3\FLOW3\MVC\FlashMessageContainer'));
 		$controller->processRequest($mockRequest, $mockResponse);
 
 		$this->assertInstanceOf('TYPO3\FLOW3\MVC\Controller\ControllerContext', $controller->getControllerContext());
@@ -394,6 +394,63 @@ class AbstractControllerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$controller->_set('request', $mockRequest);
 
 		$controller->_call('mapRequestArgumentsToControllerArguments');
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function addFlashMessageCreatesMessageByDefaultAndAddsItToFlashMessageContainer() {
+		$expectedMessage = new \TYPO3\FLOW3\Error\Message('MessageBody');
+		$mockFlashMessageContainer = $this->getMock('TYPO3\FLOW3\MVC\FlashMessageContainer');
+		$mockFlashMessageContainer->expects($this->once())->method('addMessage')->with($expectedMessage);
+
+		$controller = $this->getAccessibleMock('TYPO3\FLOW3\MVC\Controller\AbstractController', array('initializeArguments', 'initializeControllerArgumentsBaseValidators', 'mapRequestArgumentsToControllerArguments', 'buildControllerContext'), array(), '', FALSE);
+		$controller->_set('flashMessageContainer', $mockFlashMessageContainer);
+		$controller->_call('addFlashMessage', 'MessageBody');
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function addFlashMessageDataProvider() {
+		return array(
+			array(
+				new \TYPO3\FLOW3\Error\Message('MessageBody'),
+				'MessageBody'
+			),
+			array(
+				new \TYPO3\FLOW3\Error\Message('Some Other Message', 123, array('foo' => 'bar'), 'Message Title'),
+				'Some Other Message', 'Message Title', \TYPO3\FLOW3\Error\Message::SEVERITY_OK, array('foo' => 'bar'), 123
+			),
+			array(
+				new \TYPO3\FLOW3\Error\Notice('Some Notice', 123, array('foo' => 'bar'), 'Message Title'),
+				'Some Notice', 'Message Title', \TYPO3\FLOW3\Error\Message::SEVERITY_NOTICE, array('foo' => 'bar'), 123
+			),
+			array(
+				new \TYPO3\FLOW3\Error\Warning('Some Warning', 123, array('foo' => 'bar'), 'Message Title'),
+				'Some Warning', 'Message Title', \TYPO3\FLOW3\Error\Message::SEVERITY_WARNING, array('foo' => 'bar'), 123
+			),
+			array(
+				new \TYPO3\FLOW3\Error\Error('Some Error', 123, array('foo' => 'bar'), 'Message Title'),
+				'Some Error', 'Message Title', \TYPO3\FLOW3\Error\Message::SEVERITY_ERROR, array('foo' => 'bar'), 123
+			),
+		);
+	}
+
+	/**
+	 * @test
+	 * @dataProvider addFlashMessageDataProvider()
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function addFlashMessageTests($expectedMessage, $messageBody, $messageTitle = '', $severity = \TYPO3\FLOW3\Error\Message::SEVERITY_OK, array $messageArguments = array(), $messageCode = NULL) {
+		$mockFlashMessageContainer = $this->getMock('TYPO3\FLOW3\MVC\FlashMessageContainer');
+		$mockFlashMessageContainer->expects($this->once())->method('addMessage')->with($expectedMessage);
+
+		$controller = $this->getAccessibleMock('TYPO3\FLOW3\MVC\Controller\AbstractController', array('initializeArguments', 'initializeControllerArgumentsBaseValidators', 'mapRequestArgumentsToControllerArguments', 'buildControllerContext'), array(), '', FALSE);
+		$controller->_set('flashMessageContainer', $mockFlashMessageContainer);
+		$controller->_call('addFlashMessage', $messageBody, $messageTitle, $severity, $messageArguments, $messageCode);
 	}
 }
 ?>
