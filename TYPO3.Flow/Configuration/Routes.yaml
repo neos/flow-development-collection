@@ -46,6 +46,7 @@
   defaults:
     '@action':     'index'
     '@format':     'html'
+  appendExceedingArguments: true
 
 ##
 # Default route with just the package
@@ -57,6 +58,7 @@
     '@controller': 'Standard'
     '@action':     'index'
     '@format':     'html'
+  appendExceedingArguments: true
 
 ##
 # Fallback route
