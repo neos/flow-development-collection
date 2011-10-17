@@ -86,9 +86,12 @@ class EntityManagerFactory {
 		$config->setClassMetadataFactoryName('TYPO3\FLOW3\Persistence\Doctrine\Mapping\ClassMetadataFactory');
 
 		if (class_exists($this->settings['doctrine']['cacheImplementation'])) {
-			$cache = new $this->settings['doctrine']['cacheImplementation']();
-			$config->setMetadataCacheImpl($cache);
-			$config->setQueryCacheImpl($cache);
+				// safeguard against apc being disabled in CLI...
+			if ($this->settings['doctrine']['cacheImplementation'] !== 'Doctrine\Common\Cache\ApcCache' || function_exists('apc_fetch')) {
+				$cache = new $this->settings['doctrine']['cacheImplementation']();
+				$config->setMetadataCacheImpl($cache);
+				$config->setQueryCacheImpl($cache);
+			}
 		}
 
 		if (class_exists($this->settings['doctrine']['sqlLogger'])) {
