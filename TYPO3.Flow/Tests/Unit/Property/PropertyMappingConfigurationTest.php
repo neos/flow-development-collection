@@ -43,9 +43,17 @@ class PropertyMappingConfigurationTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 * @covers \TYPO3\FLOW3\Property\PropertyMappingConfiguration::shouldMap
 	 */
-	public function shouldMapReturnsTrue() {
+	public function shouldMapReturnsTrueByDefault() {
 		$this->assertTrue($this->propertyMappingConfiguration->shouldMap('someSourceProperty'));
 		$this->assertTrue($this->propertyMappingConfiguration->shouldMap('someOtherSourceProperty'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function shouldMapReturnsFalseForUnmappedProperties() {
+		$this->propertyMappingConfiguration->doNotMapProperty('someSourceProperty');
+		$this->assertFalse($this->propertyMappingConfiguration->shouldMap('someSourceProperty'));
 	}
 
 	/**
