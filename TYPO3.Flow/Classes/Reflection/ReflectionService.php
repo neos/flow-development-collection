@@ -28,6 +28,11 @@ class ReflectionService {
 	protected $annotationReader;
 
 	/**
+	 * @var \TYPO3\FLOW3\Core\ClassLoader
+	 */
+	protected $classLoader;
+
+	/**
 	 * @var array
 	 */
 	protected $availableClassNames = array();
@@ -225,6 +230,14 @@ class ReflectionService {
 	}
 
 	/**
+	 * @param \TYPO3\FLOW3\Core\ClassLoader $classLoader
+	 * @return void
+	 */
+	public function injectClassLoader(\TYPO3\FLOW3\Core\ClassLoader $classLoader) {
+		$this->classLoader = $classLoader;
+	}
+
+	/**
 	 * Initializes this service after dependencies have been injected.
 	 *
 	 * @return void
@@ -237,7 +250,7 @@ class ReflectionService {
 		\Doctrine\Common\Annotations\AnnotationReader::addGlobalIgnoredName('test');
 		\Doctrine\Common\Annotations\AnnotationReader::addGlobalIgnoredName('expectedException');
 		\Doctrine\Common\Annotations\AnnotationReader::addGlobalIgnoredName('dataProvider');
-		\Doctrine\Common\Annotations\AnnotationRegistry::registerLoader(array(new \TYPO3\FLOW3\Core\ClassLoader(), 'loadClass'));
+		\Doctrine\Common\Annotations\AnnotationRegistry::registerLoader(array($this->classLoader, 'loadClass'));
 	}
 
 	/**

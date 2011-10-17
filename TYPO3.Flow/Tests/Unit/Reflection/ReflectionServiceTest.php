@@ -900,6 +900,7 @@ class ReflectionServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function repositoryClassNameIsDetectedForEntities() {
 		$reflectionService = $this->getAccessibleMock('TYPO3\FLOW3\Reflection\ReflectionService', array('isClassReflected', 'loadFromCache'));
+		$reflectionService->injectClassLoader(new \TYPO3\FLOW3\Core\ClassLoader());
 		$reflectionService->expects($this->atLeastOnce())->method('isClassReflected')->with('TYPO3\FLOW3\Tests\Reflection\Fixture\Repository\EntityRepository')->will($this->returnValue(TRUE));
 		$reflectionService->initializeObject();
 		$reflectionService->_call('buildClassSchemata', array('TYPO3\FLOW3\Tests\Reflection\Fixture\Model\Entity'));
@@ -917,6 +918,7 @@ class ReflectionServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function aggregateRootIsDetectedForEntitiesWithNonStandardRepository() {
 		$reflectionService = $this->getAccessibleMock('TYPO3\FLOW3\Reflection\ReflectionService', array('isClassReflected', 'getAllImplementationClassNamesForInterface', 'loadFromCache'));
+		$reflectionService->injectClassLoader(new \TYPO3\FLOW3\Core\ClassLoader());
 		$reflectionService->expects($this->atLeastOnce())->method('isClassReflected')->with('TYPO3\FLOW3\Tests\Reflection\Fixture\Repository\EntityRepository')->will($this->returnValue(FALSE));
 		$reflectionService->expects($this->once())->method('getAllImplementationClassNamesForInterface')->with('TYPO3\FLOW3\Persistence\RepositoryInterface')->will($this->returnValue(array('TYPO3\FLOW3\Tests\Reflection\Fixture\Repository\NonstandardEntityRepository')));
 		$reflectionService->initializeObject();

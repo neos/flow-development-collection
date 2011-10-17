@@ -27,6 +27,7 @@ class PointcutClassAnnotatedWithFilterTest extends \TYPO3\FLOW3\Tests\UnitTestCa
 		$className = 'TYPO3\FLOW3\Tests\AOP\Fixture\ClassTaggedWithSomething';
 
 		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'saveToCache'), array(), '', FALSE, TRUE);
+		$mockReflectionService->injectClassLoader(new \TYPO3\FLOW3\Core\ClassLoader());
 		$mockReflectionService->initializeObject();
 
 		$classAnnotatedWithFilter = new \TYPO3\FLOW3\AOP\Pointcut\PointcutClassAnnotatedWithFilter('TYPO3\FLOW3\Annotations\Aspect');

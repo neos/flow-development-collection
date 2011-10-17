@@ -27,6 +27,7 @@ class PointcutMethodAnnotatedWithFilterTest extends \TYPO3\FLOW3\Tests\UnitTestC
 		$className = 'TYPO3\FLOW3\Tests\AOP\Fixture\MethodsTaggedWithSomething';
 
 		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'saveToCache', 'hasMethod'));
+		$mockReflectionService->injectClassLoader(new \TYPO3\FLOW3\Core\ClassLoader());
 		$mockReflectionService->expects($this->any())->method('hasMethod')->will($this->returnValue(TRUE));
 		$mockReflectionService->initializeObject();
 

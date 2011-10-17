@@ -491,6 +491,7 @@ class Bootstrap {
 		$this->objectManager->setInstance('TYPO3\FLOW3\Utility\Environment', $this->environment);
 		$this->objectManager->setInstance('TYPO3\FLOW3\SignalSlot\Dispatcher', $this->signalSlotDispatcher);
 		$this->objectManager->setInstance('TYPO3\FLOW3\Reflection\ReflectionService', $this->reflectionService);
+		$this->objectManager->setInstance('TYPO3\FLOW3\Core\ClassLoader', $this->classLoader);
 
 		$this->signalSlotDispatcher->injectObjectManager($this->objectManager);
 		\TYPO3\FLOW3\Error\Debugger::injectObjectManager($this->objectManager);
@@ -635,6 +636,7 @@ class Bootstrap {
 	protected function initializeReflectionService() {
 		$this->reflectionService = new \TYPO3\FLOW3\Reflection\ReflectionService();
 		$this->reflectionService->injectSystemLogger($this->systemLogger);
+		$this->reflectionService->injectClassLoader($this->classLoader);
 		$this->reflectionService->setStatusCache($this->cacheManager->getCache('FLOW3_ReflectionStatus'));
 		$this->reflectionService->setDataCache($this->cacheManager->getCache('FLOW3_ReflectionData'));
 		$this->reflectionService->initializeObject();
