@@ -701,8 +701,14 @@ class Flow3AnnotationDriver implements \Doctrine\ORM\Mapping\Driver\Driver, \TYP
 	 * @return boolean TRUE if the class has *no* Id properties
 	 */
 	public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier) {
-		$tags = $this->reflectionService->getPropertyNamesByTag($className, 'id');
-		return $tags === array();
+		$class = new \ReflectionClass($className);
+		foreach ($class->getProperties() as $property) {
+			if ($this->reader->getPropertyAnnotation($property, 'Doctrine\ORM\Mapping\Id') !== NULL) {
+				return FALSE;
+			}
+		}
+
+		return TRUE;
 	}
 
 	/**

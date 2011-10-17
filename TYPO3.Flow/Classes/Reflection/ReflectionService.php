@@ -130,11 +130,25 @@ class ReflectionService {
 	protected $taggedClasses = array();
 
 	/**
+	 * Array of annotations classnames and the names of classes which are annotated with them
+	 *
+	 * @var array
+	 */
+	protected $annotatedClasses = array();
+
+	/**
 	 * Array of class names and their tags and values
 	 *
 	 * @var array
 	 */
 	protected $classTagsValues = array();
+
+	/**
+	 * Array of class names and their annotations
+	 *
+	 * @var array
+	 */
+	protected $classAnnotations = array();
 
 	/**
 	 * Array of class names, method names, their parameters and additional information about the parameters
@@ -163,6 +177,13 @@ class ReflectionService {
 	 * @var array
 	 */
 	protected $propertyTagsValues = array();
+
+	/**
+	 * Array of class names, property names and their annotations
+	 *
+	 * @var array
+	 */
+	protected $propertyAnnotations = array();
 
 	/**
 	 * List of tags which are ignored while reflecting class and method annotations
@@ -460,7 +481,15 @@ class ReflectionService {
 	 * @api
 	 */
 	public function isClassAnnotatedWith($className, $annotationName) {
-		return $this->getClassAnnotations($className, $annotationName) !== array();
+		$className = trim($className, '\\');
+		if (!isset($this->reflectedClassNames[$className])) $this->reflectClass($className);
+		if (!isset($this->classAnnotations[$className])) return FALSE;
+		foreach ($this->classAnnotations[$className] as $annotation) {
+			if ($annotation instanceof $annotationName) {
+				return TRUE;
+			}
+		}
+		return FALSE;
 	}
 
 	/**
@@ -472,12 +501,14 @@ class ReflectionService {
 	 */
 	public function getClassAnnotations($className, $annotationName = NULL) {
 		$className = trim($className, '\\');
-		$annotations = array();
-		$classAnnotations = $this->annotationReader->getClassAnnotations(new ClassReflection($className));
+		if (!isset($this->reflectedClassNames[$className])) $this->reflectClass($className);
+		if (!isset($this->classAnnotations[$className])) return array();
+
 		if ($annotationName === NULL) {
-			return $classAnnotations;
+			return $this->classAnnotations[$className];
 		} else {
-			foreach ($classAnnotations as $annotation) {
+			$annotations = array();
+			foreach ($this->classAnnotations[$className] as $annotation) {
 				if ($annotation instanceof $annotationName) {
 					$annotations[] = $annotation;
 				}
@@ -850,7 +881,12 @@ class ReflectionService {
 	 * @api
 	 */
 	public function isPropertyAnnotatedWith($className, $propertyName, $annotationName) {
-		return $this->getPropertyAnnotations($className, $propertyName, $annotationName) !== array();
+		$className = trim($className, '\\');
+		if (!isset($this->reflectedClassNames[$className])) $this->reflectClass($className);
+
+		if (!isset($this->propertyAnnotations[$className])) return FALSE;
+		if (!isset($this->propertyAnnotations[$className][$propertyName])) return FALSE;
+		return isset($this->propertyAnnotations[$className][$propertyName][$annotationName]);
 	}
 
 	/**
@@ -864,17 +900,16 @@ class ReflectionService {
 	 */
 	public function getPropertyAnnotations($className, $propertyName, $annotationName = NULL) {
 		$className = trim($className, '\\');
-		$annotations = array();
-		$propertyAnnotations = $this->annotationReader->getPropertyAnnotations(new PropertyReflection($className, $propertyName));
+		if (!isset($this->reflectedClassNames[$className])) $this->reflectClass($className);
+		if (!isset($this->propertyAnnotations[$className])) return array();
+		if (!isset($this->propertyAnnotations[$className][$propertyName])) return array();
+
 		if ($annotationName === NULL) {
-			return $propertyAnnotations;
+			return $this->propertyAnnotations[$className][$propertyName];
+		} elseif (isset($this->propertyAnnotations[$className][$propertyName][$annotationName])) {
+			return $this->propertyAnnotations[$className][$propertyName][$annotationName];
 		} else {
-			foreach ($propertyAnnotations as $annotation) {
-				if ($annotation instanceof $annotationName) {
-					$annotations[] = $annotation;
-				}
-			}
-			return $annotations;
+			return array();
 		}
 	}
 
@@ -995,6 +1030,11 @@ class ReflectionService {
 			}
 		}
 
+		foreach ($this->annotationReader->getClassAnnotations($class) as $annotation) {
+			$this->annotatedClasses[get_class($annotation)][] = $className;
+			$this->classAnnotations[$className][] = $annotation;
+		}
+
 		foreach ($class->getProperties() as $property) {
 			$propertyName = $property->getName();
 			$this->classPropertyNames[$className][] = $propertyName;
@@ -1003,6 +1043,9 @@ class ReflectionService {
 				if (array_search($tag, $this->ignoredTags) === FALSE) {
 					$this->propertyTagsValues[$className][$propertyName][$tag] = $values;
 				}
+			}
+			foreach ($this->annotationReader->getPropertyAnnotations($property, $propertyName) as $annotation) {
+				$this->propertyAnnotations[$className][$propertyName][get_class($annotation)][] = $annotation;
 			}
 		}
 
@@ -1323,11 +1366,16 @@ class ReflectionService {
 			$index = array_search($className, $classNames);
 			if ($index !== FALSE) unset($this->taggedClasses[$tag][$index]);
 		}
+		foreach ($this->annotatedClasses as $annotationClassName => $classNames) {
+			$index = array_search($className, $classNames);
+			if ($index !== FALSE) unset($this->taggedClasses[$annotationClassName][$index]);
+		}
 
 		$propertyNames = array(
 			'abstractClasses',
 			'classPropertyNames',
 			'classTagsValues',
+			'classAnnotations',
 			'subClasses',
 			'finalClasses',
 			'finalMethods',
@@ -1335,6 +1383,7 @@ class ReflectionService {
 			'methodParameters',
 			'methodVisibilities',
 			'propertyTagsValues',
+			'propertyAnnotations'
 		);
 		foreach ($propertyNames as $propertyName) {
 			if (isset($this->{$propertyName}[$className])) {
@@ -1395,6 +1444,7 @@ class ReflectionService {
 				'classPropertyNames',
 				'classSchemata',
 				'classTagsValues',
+				'classAnnotations',
 				'subClasses',
 				'finalClasses',
 				'finalMethods',
@@ -1403,7 +1453,9 @@ class ReflectionService {
 				'methodParameters',
 				'methodVisibilities',
 				'propertyTagsValues',
-				'taggedClasses'
+				'propertyAnnotations',
+				'taggedClasses',
+				'annotatedClasses'
 			);
 			foreach ($propertyNames as $propertyName) {
 				$data[$propertyName] = $this->$propertyName;
