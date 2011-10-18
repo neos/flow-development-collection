@@ -28,8 +28,46 @@ class AbstractMethodInterceptorBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCa
 				public function foo($arg1, array $arg2, \ArrayObject $arg3, $arg4= "foo", $arg5 = TRUE) {}
 			}
 		');
+		$methodParameters = array(
+			'arg1' => array(
+				'position' => 0,
+				'byReference' => FALSE,
+				'array' => FALSE,
+				'optional' => FALSE,
+				'allowsNull' => TRUE
+			),
+			'arg2' => array(
+				'position' => 1,
+				'byReference' => FALSE,
+				'array' => TRUE,
+				'optional' => FALSE,
+				'allowsNull' => TRUE
+			),
+			'arg3' => array(
+				'position' => 2,
+				'byReference' => FALSE,
+				'array' => FALSE,
+				'optional' => FALSE,
+				'allowsNull' => TRUE
+			),
+			'arg4' => array(
+				'position' => 3,
+				'byReference' => FALSE,
+				'array' => FALSE,
+				'optional' => TRUE,
+				'allowsNull' => TRUE
+			),
+			'arg5' => array(
+				'position' => 4,
+				'byReference' => FALSE,
+				'array' => FALSE,
+				'optional' => TRUE,
+				'allowsNull' => TRUE
+			),
+		);
 
-		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'saveToCache'), array(), '', FALSE, TRUE);
+		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService', array(), array(), '', FALSE);
+		$mockReflectionService->expects($this->any())->method('getMethodParameters')->with($className, 'foo')->will($this->returnValue($methodParameters));
 
 		$expectedCode = "
 					\$methodArguments = array();
@@ -70,8 +108,46 @@ class AbstractMethodInterceptorBuilderTest extends \TYPO3\FLOW3\Tests\UnitTestCa
 				public function __construct($arg1, array $arg2, \ArrayObject $arg3, $arg4= "__construct", $arg5 = TRUE) {}
 			}
 		');
+		$methodParameters = array(
+			'arg1' => array(
+				'position' => 0,
+				'byReference' => FALSE,
+				'array' => FALSE,
+				'optional' => FALSE,
+				'allowsNull' => TRUE
+			),
+			'arg2' => array(
+				'position' => 1,
+				'byReference' => FALSE,
+				'array' => TRUE,
+				'optional' => FALSE,
+				'allowsNull' => TRUE
+			),
+			'arg3' => array(
+				'position' => 2,
+				'byReference' => FALSE,
+				'array' => FALSE,
+				'optional' => FALSE,
+				'allowsNull' => TRUE
+			),
+			'arg4' => array(
+				'position' => 3,
+				'byReference' => FALSE,
+				'array' => FALSE,
+				'optional' => TRUE,
+				'allowsNull' => TRUE
+			),
+			'arg5' => array(
+				'position' => 4,
+				'byReference' => FALSE,
+				'array' => FALSE,
+				'optional' => TRUE,
+				'allowsNull' => TRUE
+			),
+		);
 
-		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'saveToCache'), array(), '', FALSE, TRUE);
+		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService', array(), array(), '', FALSE);
+		$mockReflectionService->expects($this->any())->method('getMethodParameters')->with($className, '__construct')->will($this->returnValue($methodParameters));
 
 		$builder = $this->getAccessibleMock('TYPO3\FLOW3\AOP\Builder\AdvicedConstructorInterceptorBuilder', array('dummy'), array(), '', FALSE);
 		$builder->injectReflectionService($mockReflectionService);

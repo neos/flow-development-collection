@@ -31,7 +31,8 @@ class PointcutMethodNameFilterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			}"
 		);
 
-		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'saveToCache'));
+		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService', array('isMethodFinal'), array(), '', FALSE);
+		$mockReflectionService->expects($this->atLeastOnce())->method('isMethodFinal')->with($className, 'someFinalMethod')->will($this->returnValue(TRUE));
 
 		$methodNameFilter = new \TYPO3\FLOW3\AOP\Pointcut\PointcutMethodNameFilter('someFinalMethod');
 		$methodNameFilter->injectReflectionService($mockReflectionService);
@@ -53,7 +54,11 @@ class PointcutMethodNameFilterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			}"
 		);
 
-		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'saveToCache'));
+		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService');
+		$mockReflectionService->expects($this->atLeastOnce())->method('isMethodPublic')->will($this->onConsecutiveCalls(TRUE, FALSE, FALSE, TRUE));
+		$mockReflectionService->expects($this->atLeastOnce())->method('isMethodProtected')->will($this->onConsecutiveCalls(FALSE, TRUE, FALSE, FALSE));
+		$mockReflectionService->expects($this->atLeastOnce())->method('isMethodFinal')->will($this->returnValue(FALSE));
+		$mockReflectionService->expects($this->atLeastOnce())->method('getMethodParameters')->will($this->returnValue(array()));
 
 		$methodNameFilter = new \TYPO3\FLOW3\AOP\Pointcut\PointcutMethodNameFilter('some.*', 'public');
 		$methodNameFilter->injectReflectionService($mockReflectionService);
@@ -84,7 +89,12 @@ class PointcutMethodNameFilterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			}"
 		);
 
-		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'saveToCache'));
+		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService');
+		$mockReflectionService->expects($this->exactly(3))->method('getMethodParameters')->will($this->onConsecutiveCalls(
+				array('arg1' => array()),
+				array('arg1' => array(), 'arg2' => array()),
+				array('arg1' => array(), 'arg2' => array(), 'arg3' => array())
+		));
 
 		$mockSystemLogger = $this->getMock('TYPO3\FLOW3\Log\Logger');
 		$mockSystemLogger->expects($this->once())->method('log')->with($this->equalTo(

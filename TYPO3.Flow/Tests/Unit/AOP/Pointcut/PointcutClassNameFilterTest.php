@@ -56,7 +56,8 @@ class PointcutClassNameFilterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			final class $className { }"
 		);
 
-		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'saveToCache'), array(), '', FALSE, TRUE);
+		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService', array('isClassFinal'), array(), '', FALSE);
+		$mockReflectionService->expects($this->atLeastOnce())->method('isClassFinal')->will($this->returnValue(TRUE));
 
 		$classFilter = new \TYPO3\FLOW3\AOP\Pointcut\PointcutClassNameFilter('TYPO3\Virtual\Foo\Bar');
 		$classFilter->injectReflectionService($mockReflectionService);
@@ -78,7 +79,9 @@ class PointcutClassNameFilterTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			}"
 		);
 
-		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'saveToCache'), array(), '', FALSE, TRUE);
+		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService', array('isClassFinal', 'isMethodFinal'), array(), '', FALSE);
+		$mockReflectionService->expects($this->atLeastOnce())->method('isClassFinal')->will($this->returnValue(FALSE));
+		$mockReflectionService->expects($this->atLeastOnce())->method('isMethodFinal')->with($className, '__construct')->will($this->returnValue(TRUE));
 
 		$classFilter = new \TYPO3\FLOW3\AOP\Pointcut\PointcutClassNameFilter('TYPO3\Virtual\Foo\Bar');
 		$classFilter->injectReflectionService($mockReflectionService);

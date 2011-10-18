@@ -25,8 +25,12 @@ class PointcutClassTaggedWithFilterTest extends \TYPO3\FLOW3\Tests\UnitTestCase 
 	 */
 	public function matchesTellsIfTheSpecifiedRegularExpressionMatchesTheGivenTag() {
 		$className = 'TYPO3\FLOW3\Tests\AOP\Fixture\ClassTaggedWithSomething';
+		$classTagsValues = array(
+			'aspect' => ''
+		);
 
-		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'saveToCache'), array(), '', FALSE, TRUE);
+		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService', array('getClassTagsValues'), array(), '', FALSE);
+		$mockReflectionService->expects($this->atLeastOnce())->method('getClassTagsValues')->with($className)->will($this->returnValue($classTagsValues));
 
 		$classTaggedWithFilter = new \TYPO3\FLOW3\AOP\Pointcut\PointcutClassTaggedWithFilter('aspect');
 		$classTaggedWithFilter->injectReflectionService($mockReflectionService);

@@ -67,16 +67,69 @@ class ProxyMethodTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 				public function foo($arg1, array $arg2, \ArrayObject $arg3, $arg4= "foo", $arg5 = TRUE, array $arg6 = array(TRUE, \'foo\' => \'bar\', NULL, 3 => 1, 2.3)) {}
 			}
 		');
+		$methodParameters = array(
+			'arg1' => array(
+				'position' => 0,
+				'byReference' => FALSE,
+				'array' => FALSE,
+				'optional' => FALSE,
+				'allowsNull' => TRUE,
+				'class' => NULL
+			),
+			'arg2' => array(
+				'position' => 1,
+				'byReference' => FALSE,
+				'array' => TRUE,
+				'optional' => FALSE,
+				'allowsNull' => TRUE,
+				'class' => NULL
+			),
+			'arg3' => array(
+				'position' => 2,
+				'byReference' => FALSE,
+				'array' => FALSE,
+				'optional' => FALSE,
+				'allowsNull' => TRUE,
+				'class' => 'ArrayObject'
+			),
+			'arg4' => array(
+				'position' => 3,
+				'byReference' => FALSE,
+				'array' => FALSE,
+				'optional' => TRUE,
+				'allowsNull' => TRUE,
+				'class' => NULL,
+				'defaultValue' => 'foo'
+			),
+			'arg5' => array(
+				'position' => 4,
+				'byReference' => FALSE,
+				'array' => FALSE,
+				'optional' => TRUE,
+				'allowsNull' => TRUE,
+				'class' => NULL,
+				'defaultValue' => TRUE
+			),
+			'arg6' => array(
+				'position' => 5,
+				'byReference' => FALSE,
+				'array' => TRUE,
+				'optional' => TRUE,
+				'allowsNull' => TRUE,
+				'class' => NULL,
+				'defaultValue' => array(0 => TRUE, 'foo' => 'bar', 1 => NULL, 3 => 1, 4 => 2.3)
+			),
+		);
 
-		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'saveToCache'), array(), '', FALSE, TRUE);
+		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService');
+		$mockReflectionService->expects($this->atLeastOnce())->method('getMethodParameters')->will($this->returnValue($methodParameters));
 
 		$expectedCode = '$arg1, array $arg2, \ArrayObject $arg3, $arg4 = \'foo\', $arg5 = TRUE, array $arg6 = array(0 => TRUE, \'foo\' => \'bar\', 1 => NULL, 3 => 1, 4 => 2.3)';
-		$parametersDocumentation = '';
 
-		$builder = $this->getMock('TYPO3\FLOW3\Object\Proxy\ProxyMethod', array('dummyy'), array(), '', FALSE);
+		$builder = $this->getMock('TYPO3\FLOW3\Object\Proxy\ProxyMethod', array('dummy'), array(), '', FALSE);
 		$builder->injectReflectionService($mockReflectionService);
 
-		$actualCode = $builder->buildMethodParametersCode($className, 'foo', TRUE, $parametersDocumentation);
+		$actualCode = $builder->buildMethodParametersCode($className, 'foo', TRUE);
 		$this->assertSame($expectedCode, $actualCode);
 	}
 
@@ -92,15 +145,21 @@ class ProxyMethodTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			}
 		');
 
-		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService', array('loadFromCache', 'saveToCache'), array(), '', FALSE, TRUE);
+		$mockReflectionService = $this->getMock('TYPO3\FLOW3\Reflection\ReflectionService');
+		$mockReflectionService->expects($this->atLeastOnce())->method('getMethodParameters')->will($this->returnValue(array(
+			'arg1' => array(),
+			'arg2' => array(),
+			'arg3' => array(),
+			'arg4' => array(),
+			'arg5' => array()
+		)));
 
 		$expectedCode = '$arg1, $arg2, $arg3, $arg4, $arg5';
-		$parametersDocumentation = '';
 
 		$builder = $this->getMock('TYPO3\FLOW3\Object\Proxy\ProxyMethod', array('dummy'), array(), '', FALSE);
 		$builder->injectReflectionService($mockReflectionService);
 
-		$actualCode = $builder->buildMethodParametersCode($className, 'foo', FALSE, $parametersDocumentation);
+		$actualCode = $builder->buildMethodParametersCode($className, 'foo', FALSE);
 		$this->assertSame($expectedCode, $actualCode);
 	}
 
@@ -111,8 +170,7 @@ class ProxyMethodTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function buildMethodParametersCodeReturnsAnEmptyStringIfTheClassNameIsNULL() {
 		$builder = $this->getMock('TYPO3\FLOW3\Object\Proxy\ProxyMethod', array('dummy'), array(), '', FALSE);
 
-		$parametersDocumentation = '';
-		$actualCode = $builder->buildMethodParametersCode(NULL, 'foo', TRUE, $parametersDocumentation);
+		$actualCode = $builder->buildMethodParametersCode(NULL, 'foo', TRUE);
 		$this->assertSame('', $actualCode);
 	}
 }

@@ -19,7 +19,7 @@ namespace TYPO3\FLOW3\AOP\Builder;
 abstract class AbstractMethodInterceptorBuilder {
 
 	/**
-	 * @var TYPO3\FLOW3\Reflection\ReflectionService
+	 * @var \TYPO3\FLOW3\Reflection\ReflectionService
 	 */
 	protected $reflectionService;
 
