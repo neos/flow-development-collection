@@ -54,8 +54,6 @@ class PackageCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContro
 		}
 		$package = $this->packageManager->createPackage($packageKey);
 		$this->outputLine('New package "' . $packageKey . '" created at "' . $package->getPackagePath() . '".');
-		$this->bootstrap->executeCommand('typo3.flow3:cache:flush');
-		$this->sendAndExit(0);
 	}
 
 	/**
