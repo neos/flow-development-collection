@@ -25,7 +25,6 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  * Output:
  * Camel cased model name
  *
- * @FLOW3\Scope("prototype")
  */
 class HumanizeCamelCaseViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper {
 

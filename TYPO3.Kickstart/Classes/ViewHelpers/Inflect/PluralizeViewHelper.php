@@ -25,7 +25,6 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  * Output:
  * foos
  *
- * @FLOW3\Scope("prototype")
  */
 class PluralizeViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper {
 
