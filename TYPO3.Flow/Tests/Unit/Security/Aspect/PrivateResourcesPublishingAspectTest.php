@@ -276,8 +276,8 @@ class PrivateResourcesPublishingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCa
 	 * @test
 	 */
 	public function rewritePersistentResourcePublishPathAndFilenameForPrivateResourcesCalculatesTheCorrectPathForAPrivateResourceThatIsPublishedInLinkModeAndNoFilenameIsRequested() {
-		$temporaryDirectoryPath = Files::concatenatePaths(array(sys_get_temp_dir(), 'FLOW3PrivateResourcesPublishingAspectTestTemporaryDirectory')) . '/';
-		$publishPath = Files::concatenatePaths(array(sys_get_temp_dir(), 'FLOW3PrivateResourcesPublishingAspectTestPublishDirectory')) . '/';
+		$temporaryDirectoryPath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array(dirname(tempnam('', '')), 'FLOW3PrivateResourcesPublishingAspectTestTemporaryDirectory')) . '/';
+		$publishPath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array(dirname(tempnam('', '')), 'FLOW3PrivateResourcesPublishingAspectTestPublishDirectory')) . '/';
 
 		$settings = array('resource' => array('publishing' => array('fileSystem' => array('mirrorMode' => 'link'))));
 
@@ -341,8 +341,8 @@ class PrivateResourcesPublishingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCa
 	 * @test
 	 */
 	public function rewritePersistentResourcePublishPathAndFilenameForPrivateResourcesCalculatesTheCorrectPathForAPrivateResourceThatIsPublishedInLinkModeAndTheFilenameIsRequested() {
-		$temporaryDirectoryPath = Files::concatenatePaths(array(sys_get_temp_dir(), 'FLOW3PrivateResourcesPublishingAspectTestTemporaryDirectory')) . '/';
-		$publishPath = Files::concatenatePaths(array(sys_get_temp_dir(), 'FLOW3PrivateResourcesPublishingAspectTestPublishDirectory')) . '/';
+		$temporaryDirectoryPath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array(dirname(tempnam('', '')), 'FLOW3PrivateResourcesPublishingAspectTestTemporaryDirectory')) . '/';
+		$publishPath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array(dirname(tempnam('', '')), 'FLOW3PrivateResourcesPublishingAspectTestPublishDirectory')) . '/';
 
 		$settings = array('resource' => array('publishing' => array('fileSystem' => array('mirrorMode' => 'link'))));
 
@@ -408,7 +408,7 @@ class PrivateResourcesPublishingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCa
 	 * @test
 	 */
 	public function rewritePersistentResourcePublishPathAndFilenameForPrivateResourcesCalculatesTheCorrectPathForAPrivateResourceThatIsPublishedInCopyModeAndNoFilenameIsRequested() {
-		$publishPath = Files::concatenatePaths(array(sys_get_temp_dir(), 'FLOW3PrivateResourcesPublishingAspectTestPublishDirectory')) . '/';
+		$publishPath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array(dirname(tempnam('', '')), 'FLOW3PrivateResourcesPublishingAspectTestPublishDirectory')) . '/';
 		$settings = array('resource' => array('publishing' => array('fileSystem' => array('mirrorMode' => 'copy'))));
 
 		$allowedRoles = array (
@@ -464,7 +464,7 @@ class PrivateResourcesPublishingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCa
 	 * @test
 	 */
 	public function rewritePersistentResourcePublishPathAndFilenameForPrivateResourcesCalculatesTheCorrectPathForAPrivateResourceThatIsPublishedInCopyModeAndTheFilenameIsRequested() {
-		$publishPath = Files::concatenatePaths(array(sys_get_temp_dir(), 'FLOW3PrivateResourcesPublishingAspectTestPublishDirectory')) . '/';
+		$publishPath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array(dirname(tempnam('', '')), 'FLOW3PrivateResourcesPublishingAspectTestPublishDirectory')) . '/';
 
 		$settings = array('resource' => array('publishing' => array('fileSystem' => array('mirrorMode' => 'copy'))));
 
@@ -578,8 +578,8 @@ class PrivateResourcesPublishingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCa
 	 * @test
 	 */
 	public function inLinkModeRewritePersistentResourcePublishPathAndFilenameForPrivateResourcesCreatesRoleDirectoriesForEachAllowedRoleAndSymlinksThemIntoTheCurrentSessionDirectory() {
-		$temporaryDirectoryPath = Files::concatenatePaths(array(sys_get_temp_dir(), 'FLOW3PrivateResourcesPublishingAspectTestTemporaryDirectory')) . '/';
-		$publishPath = Files::concatenatePaths(array(sys_get_temp_dir(), 'FLOW3PrivateResourcesPublishingAspectTestPublishDirectory')) . '/';
+		$temporaryDirectoryPath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array(dirname(tempnam('', '')), 'FLOW3PrivateResourcesPublishingAspectTestTemporaryDirectory')) . '/';
+		$publishPath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array(dirname(tempnam('', '')), 'FLOW3PrivateResourcesPublishingAspectTestPublishDirectory')) . '/';
 
 		$settings = array('resource' => array('publishing' => array('fileSystem' => array('mirrorMode' => 'link'))));
 
@@ -640,11 +640,16 @@ class PrivateResourcesPublishingAspectTest extends \TYPO3\FLOW3\Tests\UnitTestCa
 
 		$temporaryDirectoryPath = realpath($temporaryDirectoryPath) . '/';
 
-		$this->assertEquals($temporaryDirectoryPath . 'PrivateResourcePublishing/Role2', rtrim(realpath($publishPath . 'Persistent/TheCurrentSessionId/Role2'), '/'));
-		$this->assertEquals($temporaryDirectoryPath . 'PrivateResourcePublishing/Role3', rtrim(realpath($publishPath . 'Persistent/TheCurrentSessionId/Role3'), '/'));
+		$role2PrivateResourcePath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array($temporaryDirectoryPath, 'PrivateResourcePublishing/Role2'));
+		$role2SymlinkedPath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array(realpath($publishPath . 'Persistent/TheCurrentSessionId/Role2')));
+		$this->assertEquals($role2PrivateResourcePath, $role2SymlinkedPath);
 
-		Files::removeDirectoryRecursively($temporaryDirectoryPath);
-		Files::removeDirectoryRecursively($publishPath);
+		$role3PrivateResourcePath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array($temporaryDirectoryPath, 'PrivateResourcePublishing/Role3'));
+		$role3SymlinkedPath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array(realpath($publishPath . 'Persistent/TheCurrentSessionId/Role3')));
+		$this->assertEquals($role3PrivateResourcePath, $role3SymlinkedPath);
+
+		@Files::removeDirectoryRecursively($temporaryDirectoryPath);
+		@Files::removeDirectoryRecursively($publishPath);
 	}
 
 	/**

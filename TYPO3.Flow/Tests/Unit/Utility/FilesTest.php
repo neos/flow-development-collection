@@ -142,7 +142,7 @@ class FilesTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function is_linkReturnsFalseForExistingFileThatIsNoSymlink() {
-		$targetPathAndFilename = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array(sys_get_temp_dir(), 'FLOW3FilesTestFile'));
+		$targetPathAndFilename = tempnam('FLOW3FilesTestFile', '');
 		file_put_contents($targetPathAndFilename, 'some data');
 		$this->assertFalse(\TYPO3\FLOW3\Utility\Files::is_link($targetPathAndFilename));
 	}
@@ -151,11 +151,11 @@ class FilesTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function is_linkReturnsTrueForExistingSymlink() {
-		$targetPathAndFilename = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array(sys_get_temp_dir(), 'FLOW3FilesTestFile'));
+		$targetPathAndFilename = tempnam('FLOW3FilesTestFile', '');
 		file_put_contents($targetPathAndFilename, 'some data');
-		$linkPathAndFilename = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array(sys_get_temp_dir(), 'FLOW3FilesTestLink'));
+		$linkPathAndFilename = tempnam('FLOW3FilesTestLink', '');
 		if (file_exists($linkPathAndFilename)) {
-			unlink($linkPathAndFilename);
+			@unlink($linkPathAndFilename);
 		}
 		symlink($targetPathAndFilename, $linkPathAndFilename);
 		$this->assertTrue(\TYPO3\FLOW3\Utility\Files::is_link($linkPathAndFilename));
