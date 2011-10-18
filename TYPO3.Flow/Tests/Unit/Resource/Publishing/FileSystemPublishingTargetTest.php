@@ -88,8 +88,9 @@ class FileSystemPublishingTargetTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function publishStaticResourcesLinksTheSpecifiedDirectoryIfMirrorModeIsLink() {
-		$sourcePath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array(sys_get_temp_dir(), 'FLOW3FileSystemPublishingTargetTestSource'));
-		$targetPath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array(sys_get_temp_dir(), 'FLOW3FileSystemPublishingTargetTestTarget', '_Resources'));
+		$sourcePath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array(dirname(tempnam('', '')), 'FLOW3FileSystemPublishingTargetTestSource'));
+		$targetRootPath =  \TYPO3\FLOW3\Utility\Files::concatenatePaths(array(dirname(tempnam('', '')), 'FLOW3FileSystemPublishingTargetTestTarget'));
+		$targetPath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array($targetRootPath, '_Resources'));
 
 		mkdir($sourcePath);
 		\TYPO3\FLOW3\Utility\Files::createDirectoryRecursively($targetPath);
@@ -105,7 +106,7 @@ class FileSystemPublishingTargetTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$this->assertTrue($publishingTarget->publishStaticResources($sourcePath, 'Bar'));
 		$this->assertTrue(\TYPO3\FLOW3\Utility\Files::is_link(\TYPO3\FLOW3\Utility\Files::concatenatePaths(array($targetPath, 'Static/Bar'))));
 
-		\TYPO3\FLOW3\Utility\Files::removeDirectoryRecursively(\TYPO3\FLOW3\Utility\Files::concatenatePaths(array(sys_get_temp_dir(), 'FLOW3FileSystemPublishingTargetTestTarget')));
+		\TYPO3\FLOW3\Utility\Files::removeDirectoryRecursively($targetRootPath);
 		\TYPO3\FLOW3\Utility\Files::removeDirectoryRecursively($sourcePath);
 	}
 
@@ -285,8 +286,8 @@ class FileSystemPublishingTargetTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function mirrorFileCopiesTheGivenFileIfTheSettingSaysSo() {
-		$sourcePathAndFilename = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array(sys_get_temp_dir(), 'FLOW3FileSystemPublishingTargetTestSource'));
-		$targetPathAndFilename = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array(sys_get_temp_dir(), 'FLOW3FileSystemPublishingTargetTestTarget'));
+		$sourcePathAndFilename = tempnam('FLOW3FileSystemPublishingTargetTestSource', '');
+		$targetPathAndFilename = tempnam('FLOW3FileSystemPublishingTargetTestTarget', '');
 
 		file_put_contents($sourcePathAndFilename, 'some data');
 		touch($sourcePathAndFilename, time() - 5);
@@ -312,8 +313,8 @@ class FileSystemPublishingTargetTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function mirrorFileSymLinksTheGivenFileIfTheSettingSaysSo() {
-		$sourcePathAndFilename = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array(sys_get_temp_dir(), 'FLOW3FileSystemPublishingTargetTestSource'));
-		$targetPathAndFilename = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array(sys_get_temp_dir(), 'FLOW3FileSystemPublishingTargetTestTarget'));
+		$sourcePathAndFilename = tempnam('FLOW3FileSystemPublishingTargetTestSource', '');
+		$targetPathAndFilename = tempnam('FLOW3FileSystemPublishingTargetTestTarget', '');
 
 		file_put_contents($sourcePathAndFilename, 'some data');
 		touch($sourcePathAndFilename, time() - 5);
