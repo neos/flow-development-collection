@@ -182,7 +182,7 @@ class FilesTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		}
 		$linkPath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array(dirname(tempnam('', '')), 'FLOW3FilesTestDirectoryLink'));
 		if (is_dir($linkPath)) {
-			rmdir($linkPath);
+			\TYPO3\FLOW3\Utility\Files::removeDirectoryRecursively($linkPath);
 		}
 		symlink($targetPath, $linkPath);
 		$this->assertTrue(\TYPO3\FLOW3\Utility\Files::is_link($linkPath));
