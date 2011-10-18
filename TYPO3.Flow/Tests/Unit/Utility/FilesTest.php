@@ -178,5 +178,34 @@ class FilesTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		symlink($targetPathAndFilename, $linkPathAndFilename);
 		$this->assertTrue(\TYPO3\FLOW3\Utility\Files::is_link($linkPathAndFilename));
 	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function is_linkReturnsFalseForExistingDirectoryThatIsNoSymlink() {
+		$targetPath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array(dirname(tempnam('', '')), 'FLOW3FilesTestDirectory')) . '/';
+		if (!is_dir($targetPath)) {
+			\TYPO3\FLOW3\Utility\Files::createDirectoryRecursively($targetPath);
+		}
+		$this->assertFalse(\TYPO3\FLOW3\Utility\Files::is_link($targetPath));
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function is_linkReturnsTrueForExistingSymlinkDirectory() {
+		$targetPath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array(dirname(tempnam('', '')), 'FLOW3FilesTestDirectory'));
+		if (!is_dir($targetPath)) {
+			\TYPO3\FLOW3\Utility\Files::createDirectoryRecursively($targetPath);
+		}
+		$linkPath = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array(dirname(tempnam('', '')), 'FLOW3FilesTestDirectoryLink'));
+		if (is_dir($linkPath)) {
+			rmdir($linkPath);
+		}
+		symlink($targetPath, $linkPath);
+		$this->assertTrue(\TYPO3\FLOW3\Utility\Files::is_link($linkPath));
+	}
 }
 ?>

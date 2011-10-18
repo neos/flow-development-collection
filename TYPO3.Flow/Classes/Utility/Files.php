@@ -265,7 +265,7 @@ class Files {
 		if (!file_exists($pathAndFilename)) {
 			return FALSE;
 		}
-		$normalizedPathAndFilename = strtolower(self::getUnixStylePath($pathAndFilename));
+		$normalizedPathAndFilename = strtolower(rtrim(self::getUnixStylePath($pathAndFilename), '/'));
 		$normalizedTargetPathAndFilename = strtolower(self::getUnixStylePath(realpath($pathAndFilename)));
 		return $normalizedPathAndFilename !== $normalizedTargetPathAndFilename;
 	}
