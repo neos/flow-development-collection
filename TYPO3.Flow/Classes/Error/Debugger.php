@@ -41,7 +41,7 @@ class Debugger {
 		(TYPO3\\\\FLOW3\\\\Log.*) |
 		(TYPO3\\\\FLOW3\\\\Obj.*) |
 		(TYPO3\\\\FLOW3\\\\Pac.*) |
-		(TYPO3\\\\FLOW3\\\\Per.*) |
+		(TYPO3\\\\FLOW3\\\\Persistence\\\\(?!Doctrine\\\\Mapping).*) |
 		(TYPO3\\\\FLOW3\\\\Pro.*) |
 		(TYPO3\\\\FLOW3\\\\Ref.*) |
 		(TYPO3\\\\FLOW3\\\\Sec.*) |

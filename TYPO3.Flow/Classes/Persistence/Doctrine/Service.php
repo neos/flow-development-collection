@@ -122,8 +122,7 @@ class Service {
 		$info = array();
 		foreach ($entityClassNames as $entityClassName) {
 			try {
-				$this->entityManager->getClassMetadata($entityClassName);
-				$info[$entityClassName] = TRUE;
+				$info[$entityClassName] = $this->entityManager->getClassMetadata($entityClassName);
 			} catch (\Doctrine\ORM\Mapping\MappingException $e) {
 				$info[$entityClassName] = $e->getMessage();
 			}

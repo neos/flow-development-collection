@@ -135,10 +135,11 @@ class DoctrineCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContr
 	 * mapping information contains errors or not. To run a full validation, use
 	 * the validate command.
 	 *
+	 * @param boolean $dumpMappingData
 	 * @return void
 	 * @see typo3.flow3:doctrine:validate
 	 */
-	public function entityStatusCommand() {
+	public function entityStatusCommand($dumpMappingData = FALSE) {
 		$info = $this->doctrineService->getEntityStatus();
 
 		if ($info === array()) {
@@ -147,8 +148,12 @@ class DoctrineCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandContr
 		} else {
 			$this->outputLine('Found %d mapped entities:', array(count($info)));
 			foreach ($info as $entityClassName => $entityStatus) {
-				if ($entityStatus === TRUE) {
+				if ($entityStatus instanceof \Doctrine\Common\Persistence\Mapping\ClassMetadata) {
 					$this->outputLine('[OK]   %s', array($entityClassName));
+					if ($dumpMappingData) {
+						\TYPO3\FLOW3\Error\Debugger::clearState();
+						$this->outputLine(\TYPO3\FLOW3\Error\Debugger::renderDump($entityStatus, 0, TRUE, TRUE));
+					}
 				} else {
 					$this->outputLine('[FAIL] %s', array($entityClassName));
 					$this->outputLine($entityStatus);
