@@ -38,7 +38,7 @@ Call this script with the --migrate to actually do the changes.
 define('FLOW3_PATH_ROOT', str_replace('//', '/', str_replace('\\', '/', (realpath(__DIR__ . '/../../../../') . '/'))));
 define('FLOW3_PATH_PACKAGES', FLOW3_PATH_ROOT . 'Packages/');
 
-$ormAnnotations = array('MappedSuperclass', 'InheritanceType', 'DiscriminatorColumn', 'DiscriminatorMap', 'Id', 'GeneratedValue', 'Version', 'JoinColumn', 'JoinColumns', 'Column', 'OneToOne', 'OneToMany', 'ManyToOne', 'ManyToMany', 'ElementCollection', 'Table', 'UniqueConstraint', 'Index', 'JoinTable', 'SequenceGenerator', 'ChangeTrackingPolicy', 'OrderBy', 'NamedQueries', 'NamedQuery', 'HasLifecycleCallbacks', 'PrePersist', 'PostPersist', 'PreUpdate', 'PostUpdate', 'PreRemove', 'PostRemove', 'PostLoad');
+$ormAnnotations = array('MappedSuperclass', 'InheritanceType', 'DiscriminatorColumn', 'DiscriminatorMap', 'Id', 'GeneratedValue', 'Version', 'JoinColumns', 'JoinColumn', 'Column', 'OneToOne', 'OneToMany', 'ManyToOne', 'ManyToMany', 'ElementCollection', 'JoinTable', 'Table', 'UniqueConstraint', 'Index', 'SequenceGenerator', 'ChangeTrackingPolicy', 'OrderBy', 'NamedQueries', 'NamedQuery', 'HasLifecycleCallbacks', 'PrePersist', 'PostPersist', 'PreUpdate', 'PostUpdate', 'PreRemove', 'PostRemove', 'PostLoad');
 
 $allFlow3Annotations = array('AfterReturning', 'AfterThrowing', 'After', 'Around', 'Aspect', 'Autowiring', 'Before', 'Entity', 'FlushesCaches', 'Identity', 'IgnoreValidation', 'Inject', 'Internal', 'Pointcut', 'Proxy', 'Scope', 'Session', 'Signal', 'Transient', 'ValueObject');
 $singleArgumentAnnotations = array('AfterReturning', 'AfterThrowing', 'After', 'Around', 'Autowiring', 'Before', 'IgnoreValidation', 'Pointcut', 'Proxy', 'Scope', 'Session');
@@ -54,8 +54,7 @@ foreach ($pathsAndFilenames as $pathAndFilename) {
 
 	$file = file_get_contents($pathAndFilename);
 	$fileBackup = $file;
-
-	$file = preg_replace('/@(' . implode('|', $ormAnnotations) . ')(\(.*)*$/um', '@ORM\\\\$1$2', $file);
+	$file = preg_replace('/@(' . implode('|', $ormAnnotations) . ')/um', '@ORM\\\\$1', $file);
 
 	foreach ($allFlow3Annotations as $annotation) {
 		$file = str_replace('@' . strtolower($annotation), '@FLOW3\\' . $annotation, $file);
