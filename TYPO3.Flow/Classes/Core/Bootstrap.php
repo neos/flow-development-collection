@@ -266,38 +266,55 @@ class Bootstrap {
 		if (isset($commandLine[1]) && $commandLine[1] === '--start-slave') {
 			$this->handleCommandLineSlaveRequest();
 		} else {
-			if (isset($commandLine[1]) && $this->isCompiletimeCommand($commandLine[1])) {
-				$runLevel = 'compiletime';
-				$this->initializeForCompileTime();
+			try {
+				if (isset($commandLine[1]) && $this->isCompiletimeCommand($commandLine[1])) {
+					$runLevel = 'compiletime';
+					$this->initializeForCompileTime();
 
-				if ($this->context === 'Production') {
-					$this->lockManager->lockSite();
+					if ($this->context === 'Production') {
+						$this->lockManager->lockSite();
+					}
+
+					$request = $this->objectManager->get('TYPO3\FLOW3\MVC\CLI\RequestBuilder')->build(array_slice($commandLine, 1));
+					$response = new \TYPO3\FLOW3\MVC\CLI\Response();
+					$this->objectManager->get('TYPO3\FLOW3\MVC\Dispatcher')->dispatch($request, $response);
+
+					$this->emitFinishedCompiletimeRun();
+				} else {
+					$runLevel = 'runtime';
+					$this->initializeForRuntime();
+
+						// Functional tests are executed in "runtime" but don't need the regular request handling mechanism:
+					if ($this->context === 'Testing') {
+						return;
+					}
+
+					$request = $this->objectManager->get('TYPO3\FLOW3\MVC\CLI\RequestBuilder')->build(array_slice($commandLine, 1));
+					$command = $request->getCommand();
+					if ($this->isCompiletimeCommand($command->getCommandIdentifier())) {
+						throw new \TYPO3\FLOW3\MVC\Exception\InvalidCommandIdentifierException(sprintf('The command "%s" must be specified by its full command identifier because it is a compile time command which cannot be resolved from an abbreviated command identifier.', $command->getCommandIdentifier()), 1310992499);
+					}
+					$response = new \TYPO3\FLOW3\MVC\CLI\Response();
+					$this->objectManager->get('TYPO3\FLOW3\MVC\Dispatcher')->dispatch($request, $response);
+					$this->emitFinishedRuntimeRun();
 				}
-
-				$request = $this->objectManager->get('TYPO3\FLOW3\MVC\CLI\RequestBuilder')->build(array_slice($commandLine, 1));
+				$response->send();
+			} catch (\Exception $exception) {
 				$response = new \TYPO3\FLOW3\MVC\CLI\Response();
-				$this->objectManager->get('TYPO3\FLOW3\MVC\Dispatcher')->dispatch($request, $response);
+				$response->setExitCode(1);
 
-				$this->emitFinishedCompiletimeRun();
-			} else {
-				$runLevel = 'runtime';
-				$this->initializeForRuntime();
-
-					// Functional tests are executed in "runtime" but don't need the regular request handling mechanism:
-				if ($this->context === 'Testing') {
-					return;
+				$exceptionMessage = '';
+				$exceptionReference = "\n<b>More Information</b>\n";
+				$exceptionReference .= "  Exception code      #" . $exception->getCode() . "\n";
+				$exceptionReference .= "  File                " . $exception->getFile() . "\n";
+				$exceptionReference .= ($exception instanceof \TYPO3\FLOW3\Exception ? "  Exception reference #" . $exception->getReferenceCode() . "\n" : '');
+				foreach (explode(chr(10), wordwrap($exception->getMessage(), 73)) as $messageLine) {
+					$exceptionMessage .= "  $messageLine\n";
 				}
 
-				$request = $this->objectManager->get('TYPO3\FLOW3\MVC\CLI\RequestBuilder')->build(array_slice($commandLine, 1));
-				$command = $request->getCommand();
-				if ($this->isCompiletimeCommand($command->getCommandIdentifier())) {
-					throw new \TYPO3\FLOW3\MVC\Exception\InvalidCommandIdentifierException(sprintf('The command "%s" must be specified by its full command identifier because it is a compile time command which cannot be resolved from an abbreviated command identifier.', $command->getCommandIdentifier()), 1310992499);
-				}
-				$response = new \TYPO3\FLOW3\MVC\CLI\Response();
-				$this->objectManager->get('TYPO3\FLOW3\MVC\Dispatcher')->dispatch($request, $response);
-				$this->emitFinishedRuntimeRun();
+				$response->setContent(sprintf("<b>Uncaught Exception</b>\n%s%s\n", $exceptionMessage, $exceptionReference));
+				$response->send();
 			}
-			$response->send();
 		}
 		$this->emitBootstrapShuttingDown($runLevel);
 		if ($this->context === 'Production' && $this->lockManager->isSiteLocked()) {
