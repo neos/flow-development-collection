@@ -40,7 +40,7 @@ define('FLOW3_PATH_PACKAGES', FLOW3_PATH_ROOT . 'Packages/');
 
 $ormAnnotations = array('MappedSuperclass', 'InheritanceType', 'DiscriminatorColumn', 'DiscriminatorMap', 'Id', 'GeneratedValue', 'Version', 'JoinColumns', 'JoinColumn', 'Column', 'OneToOne', 'OneToMany', 'ManyToOne', 'ManyToMany', 'ElementCollection', 'JoinTable', 'Table', 'UniqueConstraint', 'Index', 'SequenceGenerator', 'ChangeTrackingPolicy', 'OrderBy', 'NamedQueries', 'NamedQuery', 'HasLifecycleCallbacks', 'PrePersist', 'PostPersist', 'PreUpdate', 'PostUpdate', 'PreRemove', 'PostRemove', 'PostLoad');
 
-$allFlow3Annotations = array('AfterReturning', 'AfterThrowing', 'After', 'Around', 'Aspect', 'Autowiring', 'Before', 'Entity', 'FlushesCaches', 'Identity', 'IgnoreValidation', 'Inject', 'Internal', 'Pointcut', 'Proxy', 'Scope', 'Session', 'Signal', 'Transient', 'ValueObject');
+$allFlow3Annotations = array('AfterReturning', 'AfterThrowing', 'After', 'Around', 'Aspect', 'Autowiring', 'Before', 'Entity', 'FlushesCaches', 'Identity', 'IgnoreValidation', 'Inject', 'Internal', 'Lazy', 'Pointcut', 'Proxy', 'Scope', 'Session', 'Signal', 'Transient', 'ValueObject');
 $singleArgumentAnnotations = array('AfterReturning', 'AfterThrowing', 'After', 'Around', 'Autowiring', 'Before', 'IgnoreValidation', 'Pointcut', 'Proxy', 'Scope', 'Session');
 
 $pathsAndFilenames = \TYPO3\FLOW3\Utility\Files::readDirectoryRecursively(FLOW3_PATH_PACKAGES, '.php', TRUE);
