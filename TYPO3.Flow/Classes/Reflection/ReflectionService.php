@@ -977,7 +977,7 @@ class ReflectionService {
 				if ($this->isClassAnnotatedWith($className, 'TYPO3\FLOW3\Annotations\Entity') || $this->isClassAnnotatedWith($className, 'Doctrine\ORM\Mapping\Entity') || $this->isClassAnnotatedWith($className, 'TYPO3\FLOW3\Annotations\ValueObject')) {
 					$scopeAnnotation = $this->getClassAnnotation($className, 'TYPO3\FLOW3\Annotations\Scope');
 					if ($scopeAnnotation !== NULL && $scopeAnnotation->value !== 'prototype') {
-						throw new \TYPO3\FLOW3\Reflection\Exception(sprintf('Classes tagged as entity or value object must be of scope prototype, however, %s is declared as %s.', $className, current($classTagValues)), 1264103349);
+						throw new \TYPO3\FLOW3\Reflection\Exception(sprintf('Classes tagged as entity or value object must be of scope prototype, however, %s is declared as %s.', $className, $scopeAnnotation->value), 1264103349);
 					}
 					$classNamesToBuildSchemaFor[] = $className;
 				}
