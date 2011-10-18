@@ -39,7 +39,6 @@ class PluralizeViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelpe
 	 * Pluralize a word
 	 *
 	 * @return string The pluralized string
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function render() {
 		$content = $this->renderChildren();

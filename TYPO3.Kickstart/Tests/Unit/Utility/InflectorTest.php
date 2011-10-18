@@ -20,7 +20,6 @@ require_once(__DIR__ . '/../../../Resources/Private/PHP/Sho_Inflect.php');
 class InflectorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function humanizeCamelCaseConvertsCamelCaseToSpacesAndUppercasesFirstWord() {
 		$inflector = new \TYPO3\Kickstart\Utility\Inflector();
@@ -30,7 +29,6 @@ class InflectorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function pluralizePluralizesWords() {
 		$inflector = new \TYPO3\Kickstart\Utility\Inflector();

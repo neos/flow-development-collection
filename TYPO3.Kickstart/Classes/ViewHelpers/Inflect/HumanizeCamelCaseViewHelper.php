@@ -40,7 +40,6 @@ class HumanizeCamelCaseViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractV
 	 *
 	 * @param boolean $lowercase Wether the result should be lowercased 
 	 * @return string The humanized string
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function render($lowercase = FALSE) {
 		$content = $this->renderChildren();

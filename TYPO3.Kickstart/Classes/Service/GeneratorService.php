@@ -62,7 +62,6 @@ class GeneratorService {
 	 * @param string $controllerName The name of the new controller
 	 * @param boolean $overwrite Overwrite any existing files?
 	 * @return array An array of generated filenames
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function generateActionController($packageKey, $subpackage, $controllerName, $overwrite = FALSE) {
 		$controllerClassName = ucfirst($controllerName) . 'Controller';
@@ -97,7 +96,6 @@ class GeneratorService {
 	 * @param string $controllerName The name of the new controller
 	 * @param boolean $overwrite Overwrite any existing files?
 	 * @return array An array of generated filenames
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function generateCrudController($packageKey, $subpackage, $controllerName, $overwrite = FALSE) {
 		$controllerClassName = ucfirst($controllerName) . 'Controller';
@@ -135,7 +133,6 @@ class GeneratorService {
 	 * @param string $controllerName The name of the new controller
 	 * @param boolean $overwrite Overwrite any existing files?
 	 * @return array An array of generated filenames
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function generateCommandController($packageKey, $controllerName, $overwrite = FALSE) {
 		$controllerClassName = ucfirst($controllerName) . 'CommandController';
@@ -168,7 +165,6 @@ class GeneratorService {
 	 * @param string $viewName The name of the view
 	 * @param boolean $overwrite Overwrite any existing files?
 	 * @return array An array of generated filenames
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function generateView($packageKey, $subpackage, $controllerName, $viewName, $templateName, $overwrite = FALSE) {
 		$viewName = ucfirst($viewName);
@@ -217,7 +213,6 @@ class GeneratorService {
 	 * @param string $layoutName The name of the layout
 	 * @param boolean $overwrite Overwrite any existing files?
 	 * @return array An array of generated filenames
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function generateLayout($packageKey, $layoutName, $overwrite = FALSE) {
 		$layoutName = ucfirst($layoutName);
@@ -246,7 +241,6 @@ class GeneratorService {
 	 * @param array $fieldDefinitions The field definitions
 	 * @param boolean $overwrite Overwrite any existing files?
 	 * @return array An array of generated filenames
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function generateModel($packageKey, $modelName, array $fieldDefinitions, $overwrite = FALSE) {
 		$modelName = ucfirst($modelName);
@@ -279,7 +273,6 @@ class GeneratorService {
 	 * @param string $modelName The name of the model
 	 * @return array An array of generated filenames
 	 * @param boolean $overwrite Overwrite any existing files?
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function generateRepository($packageKey, $modelName, $overwrite = FALSE) {
 		$modelName = ucfirst($modelName);
@@ -337,7 +330,6 @@ class GeneratorService {
 	 * @param string $fileContent
 	 * @param boolean $force
 	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	protected function generateFile($targetPathAndFilename, $fileContent, $force = FALSE) {
 		if (!is_dir(dirname($targetPathAndFilename))) {
@@ -366,7 +358,6 @@ class GeneratorService {
 	 * @param string $templatePathAndFilename
 	 * @param array $contextVariables
 	 * @return string
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	protected function renderTemplate($templatePathAndFilename, array $contextVariables) {
 		$templateSource = \TYPO3\FLOW3\Utility\Files::getFileContents($templatePathAndFilename, FILE_TEXT);

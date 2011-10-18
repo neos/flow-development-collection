@@ -21,7 +21,6 @@ class Inflector {
 	/**
 	 * @param string $word The word to pluralize
 	 * @return string The pluralized word
-	 * @author Christopher Hlubek
 	 */
 	public function pluralize($word) {
 		return \Sho_Inflect::pluralize($word);
@@ -34,7 +33,6 @@ class Inflector {
 	 * @param string $camelCased The camel cased value
 	 * @param boolean $lowercase Return lowercase value
 	 * @return The humanized value
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function humanizeCamelCase($camelCased, $lowercase = FALSE) {
 		$spacified = $this->spacify($camelCased);
@@ -52,7 +50,6 @@ class Inflector {
 	 * @param string $camelCased
 	 * @param string $glue
 	 * @return string
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	protected function spacify($camelCased, $glue = ' ') {
 		return preg_replace('/([a-z0-9])([A-Z])/', '$1' . $glue . '$2', $camelCased);

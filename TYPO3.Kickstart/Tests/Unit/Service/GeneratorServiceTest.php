@@ -18,7 +18,6 @@ namespace TYPO3\Kickstart\Tests\Unit\Service;
 class GeneratorServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function normalizeFieldDefinitionsConvertsBoolTypeToBoolean() {
 		$service = $this->getMock($this->buildAccessibleProxy('TYPO3\Kickstart\Service\GeneratorService'), array('dummy'));
@@ -33,7 +32,6 @@ class GeneratorServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function normalizeFieldDefinitionsPrefixesGlobalClassesWithBackslash() {
 		$service = $this->getMock($this->buildAccessibleProxy('TYPO3\Kickstart\Service\GeneratorService'), array('dummy'));
@@ -48,7 +46,6 @@ class GeneratorServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function normalizeFieldDefinitionsPrefixesLocalTypesWithNamespace() {
 		$service = $this->getMock($this->buildAccessibleProxy('TYPO3\Kickstart\Service\GeneratorService'), array('dummy'));

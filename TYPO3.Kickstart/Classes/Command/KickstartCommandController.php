@@ -41,7 +41,6 @@ class KickstartCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandCont
 	 *
 	 * @param string $packageKey The package key, for example "MyCompany.MyPackageName"
 	 * @return string
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @see typo3.flow3:package:create
 	 */
 	public function packageCommand($packageKey) {
@@ -88,7 +87,6 @@ class KickstartCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandCont
 	 * @param boolean $generateRelated Also create the mentioned package, related model and repository if neccessary.
 	 * @param boolean $force Overwrite any existing controller or template code. Regardless of this flag, the package, model and repository will never be overwritten.
 	 * @return string
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @see typo3.kickstart:kickstart:commandcontroller
 	 */
 	public function actionControllerCommand($packageKey, $controllerName, $generateActions = FALSE, $generateTemplates = TRUE, $generateRelated = FALSE, $force = FALSE) {
@@ -173,7 +171,6 @@ class KickstartCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandCont
 	 * @param string $controllerName The name for the new controller. This may also be a comma separated list of controller names.
 	 * @param boolean $force Overwrite any existing controller.
 	 * @return string
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @see typo3.kickstart:kickstart:actioncontroller
 	 */
 	public function commandControllerCommand($packageKey, $controllerName, $force = FALSE) {
@@ -204,7 +201,6 @@ class KickstartCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandCont
 	 * @param string $modelName The name of the new domain model class
 	 * @param boolean $force Overwrite any existing model.
 	 * @return string
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 * @see typo3.kickstart:kickstart:repository
 	 */
 	public function modelCommand($packageKey, $modelName, $force = FALSE) {
@@ -244,7 +240,6 @@ class KickstartCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandCont
 	 * @param string $modelName The name of the domain model class
 	 * @param boolean $force Overwrite any existing repository.
 	 * @return string
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 * @see typo3.kickstart:kickstart:model
 	 */
 	public function repositoryCommand($packageKey, $modelName, $force = FALSE) {

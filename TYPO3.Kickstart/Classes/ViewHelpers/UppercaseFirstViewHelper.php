@@ -34,7 +34,6 @@ class UppercaseFirstViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractView
 	 * Uppercase first character
 	 *
 	 * @return string The altered string.
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function render() {
 		$content = $this->renderChildren();
